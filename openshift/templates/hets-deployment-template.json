@@ -687,7 +687,7 @@
           }
         ],
         "selector": {
-          "name": "${RPROXY_NAME}"
+          "app": "${RPROXY_NAME}"
         }
       }
     },
