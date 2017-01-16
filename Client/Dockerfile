@@ -1,5 +1,5 @@
 FROM microsoft/dotnet:1.1.0-sdk-projectjson
-# Dockerfile for package SchoolBusClient
+# Dockerfile for package HETSClient
 
 # install rlwrap
  
