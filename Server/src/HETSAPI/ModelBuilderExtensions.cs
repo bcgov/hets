@@ -26,7 +26,7 @@ namespace HETSAPI.Models
         /// <summary>
         /// The table prefix for this application
         /// </summary>
-        public const string TABLE_PREFIX = "SBI_"; 
+        public const string TABLE_PREFIX = "HET_"; 
 
         /// <summary>
         /// Implements the following naming convention:
