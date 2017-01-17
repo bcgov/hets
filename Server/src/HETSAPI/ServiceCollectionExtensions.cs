@@ -35,7 +35,8 @@ namespace HETSAPI
             services.AddTransient<IRegionApiService, RegionApiService>();
             services.AddTransient<IRoleApiService, RoleApiService>();            
             services.AddTransient<IServiceAreaApiService, ServiceAreaApiService>();
-            services.AddTransient<IUserApiService, UserApiService>();            
+            services.AddTransient<IUserApiService, UserApiService>();
+            services.AddTransient<ICurrentUserApiService, CurrentUserApiService>();
             return services;
         }
     }
