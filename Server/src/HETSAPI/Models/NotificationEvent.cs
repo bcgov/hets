@@ -19,7 +19,7 @@ using System.Runtime.Serialization;
 using Newtonsoft.Json;
 using System.ComponentModel.DataAnnotations.Schema;
 
-namespace SchoolBusAPI.Models
+namespace HETSAPI.Models
 {
     /// <summary>
     /// 
@@ -47,7 +47,7 @@ namespace SchoolBusAPI.Models
         /// <param name="Notes">Notes.</param>
         /// <param name="NotificationGenerated">NotificationGenerated.</param>
         /// <param name="SchoolBus">SchoolBus.</param>
-        public NotificationEvent(int Id, string EventTime = null, string EventTypeCode = null, string EventSubTypeCode = null, string Notes = null, bool? NotificationGenerated = null, SchoolBus SchoolBus = null)
+        public NotificationEvent(int Id, string EventTime = null, string EventTypeCode = null, string EventSubTypeCode = null, string Notes = null, bool? NotificationGenerated = null)
         {
             
             this.Id = Id;
@@ -56,7 +56,7 @@ namespace SchoolBusAPI.Models
             this.EventSubTypeCode = EventSubTypeCode;
             this.Notes = Notes;
             this.NotificationGenerated = NotificationGenerated;
-            this.SchoolBus = SchoolBus;
+
             
         }
 
@@ -92,12 +92,6 @@ namespace SchoolBusAPI.Models
         /// </summary>
         public bool? NotificationGenerated { get; set; }
 
-        /// <summary>
-        /// Gets or Sets SchoolBus
-        /// </summary>
-        public SchoolBus SchoolBus { get; set; }
-        [ForeignKey("SchoolBus")]
-        public int? SchoolBusRefId { get; set; }
 
         /// <summary>
         /// Returns the string presentation of the object
@@ -112,8 +106,7 @@ namespace SchoolBusAPI.Models
             sb.Append("  EventTypeCode: ").Append(EventTypeCode).Append("\n");
             sb.Append("  EventSubTypeCode: ").Append(EventSubTypeCode).Append("\n");
             sb.Append("  Notes: ").Append(Notes).Append("\n");
-            sb.Append("  NotificationGenerated: ").Append(NotificationGenerated).Append("\n");
-            sb.Append("  SchoolBus: ").Append(SchoolBus).Append("\n");
+            sb.Append("  NotificationGenerated: ").Append(NotificationGenerated).Append("\n");            
             sb.Append("}\n");
             return sb.ToString();
         }
@@ -181,12 +174,7 @@ namespace SchoolBusAPI.Models
                     this.NotificationGenerated == other.NotificationGenerated ||
                     this.NotificationGenerated != null &&
                     this.NotificationGenerated.Equals(other.NotificationGenerated)
-                ) && 
-                (
-                    this.SchoolBus == other.SchoolBus ||
-                    this.SchoolBus != null &&
-                    this.SchoolBus.Equals(other.SchoolBus)
-                );
+                ) ;
         }
 
         /// <summary>
@@ -224,10 +212,7 @@ namespace SchoolBusAPI.Models
                 {
                     hash = hash * 59 + this.NotificationGenerated.GetHashCode();
                 }
-                if (this.SchoolBus != null)
-                {
-                    hash = hash * 59 + this.SchoolBus.GetHashCode();
-                }
+                
                 return hash;
             }
         }

@@ -9,9 +9,9 @@
  */
 
 using Microsoft.AspNetCore.Mvc;
-using SchoolBusCommon;
+using HETSCommon;
 
-namespace SchoolBusAPI.Controllers
+namespace HETSAPI.Controllers
 {
     [Route("api/test")]
     public class TestApiController : Controller

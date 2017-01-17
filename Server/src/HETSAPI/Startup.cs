@@ -23,10 +23,10 @@ using Newtonsoft.Json.Serialization;
 using Swashbuckle.Swagger.Model;
 using Swashbuckle.SwaggerGen.Annotations;
 using Microsoft.EntityFrameworkCore;
-using SchoolBusAPI.Models;
+using HETSAPI.Models;
 using System.Text;
 
-namespace SchoolBusAPI
+namespace HETSAPI
 {
     /// <summary>
     /// The application Startup class

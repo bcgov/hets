@@ -14,7 +14,7 @@ using System.Text.RegularExpressions;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Internal;
 
-namespace SchoolBusAPI.Models
+namespace HETSAPI.Models
 {
 
     /// <summary>

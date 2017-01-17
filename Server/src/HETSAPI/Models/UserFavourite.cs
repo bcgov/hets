@@ -19,7 +19,7 @@ using System.Runtime.Serialization;
 using Newtonsoft.Json;
 using System.ComponentModel.DataAnnotations.Schema;
 
-namespace SchoolBusAPI.Models
+namespace HETSAPI.Models
 {
     /// <summary>
     /// User specific settings for a specific location in the UI. The location and saved settings are internally defined by the UI.

@@ -24,12 +24,12 @@ using Newtonsoft.Json.Serialization;
 using Npgsql;
 using Microsoft.EntityFrameworkCore;
 using Moq;
-using SchoolBusAPI;
-using SchoolBusAPI.Models;
-using SchoolBusAPI.Controllers;
-using SchoolBusAPI.Services.Impl;
+using HETSAPI;
+using HETSAPI.Models;
+using HETSAPI.Controllers;
+using HETSAPI.Services.Impl;
 
-namespace SchoolBusAPI.Test
+namespace HETSAPI.Test
 {
 	public class RegionApiUnitTest 
     { 

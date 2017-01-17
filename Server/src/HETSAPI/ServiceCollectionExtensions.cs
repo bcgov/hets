@@ -9,10 +9,10 @@
  */
 
 using Microsoft.Extensions.DependencyInjection;
-using SchoolBusAPI.Services;
-using SchoolBusAPI.Services.Impl;
+using HETSAPI.Services;
+using HETSAPI.Services.Impl;
 
-namespace SchoolBusAPI
+namespace HETSAPI
 {
     /// <summary>
     /// Utility extension added to aspnet core to facilitate registration of application-specific services
@@ -27,26 +27,13 @@ namespace SchoolBusAPI
         public static IServiceCollection RegisterApplicationServices(this IServiceCollection services)
         {
             services.AddTransient<ICityApiService, CityApiService>();
-            services.AddTransient<ICurrentUserApiService, CurrentUserApiService>();
-            services.AddTransient<ICCWDataApiService, CCWDataApiService>();
             services.AddTransient<IDistrictApiService, DistrictApiService>();
-            services.AddTransient<IGroupApiService, GroupApiService>();
-            services.AddTransient<IInspectionApiService, InspectionApiService>();
+            services.AddTransient<IGroupApiService, GroupApiService>();            
             services.AddTransient<INotificationApiService, NotificationApiService>();
             services.AddTransient<INotificationEventApiService, NotificationEventApiService>();
             services.AddTransient<IPermissionApiService, PermissionApiService>();
             services.AddTransient<IRegionApiService, RegionApiService>();
-            services.AddTransient<IRoleApiService, RoleApiService>();
-            services.AddTransient<ISchoolBusApiService, SchoolBusApiService>();
-            services.AddTransient<ISchoolBusAttachmentApiService, SchoolBusAttachmentApiService>();
-            services.AddTransient<ISchoolBusHistoryApiService, SchoolBusHistoryApiService>();
-            services.AddTransient<ISchoolBusNoteApiService, SchoolBusNoteApiService>();
-            services.AddTransient<ISchoolBusOwnerApiService, SchoolBusOwnerApiService>();
-            services.AddTransient<ISchoolBusOwnerAttachmentApiService, SchoolBusOwnerAttachmentApiService>();
-            services.AddTransient<ISchoolBusOwnerContactApiService, SchoolBusOwnerContactApiService>();
-            services.AddTransient<ISchoolBusOwnerHistoryApiService, SchoolBusOwnerHistoryApiService>();
-            services.AddTransient<ISchoolBusOwnerNoteApiService, SchoolBusOwnerNoteApiService>();
-            services.AddTransient<ISchoolDistrictApiService, SchoolDistrictApiService>();
+            services.AddTransient<IRoleApiService, RoleApiService>();            
             services.AddTransient<IServiceAreaApiService, ServiceAreaApiService>();
             services.AddTransient<IUserApiService, UserApiService>();            
             return services;

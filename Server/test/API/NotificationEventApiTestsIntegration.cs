@@ -17,13 +17,13 @@ using System.Linq;
 using System.Net.Http;
 using System.Threading.Tasks;
 using Xunit;
-using SchoolBusAPI;
+using HETSAPI;
 using System.Text;
-using SchoolBusAPI.Models;
+using HETSAPI.Models;
 using Newtonsoft.Json;
 using System.Net;
 
-namespace SchoolBusAPI.Test
+namespace HETSAPI.Test
 {
 	public class NotificationEventApiIntegrationTest 
     { 

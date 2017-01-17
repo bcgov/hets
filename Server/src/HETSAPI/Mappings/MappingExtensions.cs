@@ -2,10 +2,10 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using SchoolBusAPI.Models;
-using SchoolBusAPI.ViewModels;
+using HETSAPI.Models;
+using HETSAPI.ViewModels;
 
-namespace SchoolBusAPI.Mappings
+namespace HETSAPI.Mappings
 {
     public static class MappingExtensions
     {

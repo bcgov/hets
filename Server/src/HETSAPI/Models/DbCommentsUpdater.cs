@@ -18,7 +18,7 @@ using Microsoft.EntityFrameworkCore.Metadata.Internal;
 /// <summary>
 /// 
 /// </summary>
-namespace SchoolBusAPI.Models
+namespace HETSAPI.Models
 {
     /// <summary>
     /// Uility class used to update database column comments or descriptions.

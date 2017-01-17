@@ -18,7 +18,7 @@ using System.Collections.ObjectModel;
 using System.Runtime.Serialization;
 using Newtonsoft.Json;
 
-namespace SchoolBusAPI.ViewModels
+namespace HETSAPI.ViewModels
 {
     /// <summary>
     /// 

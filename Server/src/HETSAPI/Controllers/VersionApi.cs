@@ -10,11 +10,11 @@
 
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using SchoolBusAPI.Models;
-using SchoolBusCommon;
+using HETSAPI.Models;
+using HETSCommon;
 using System.Reflection;
 
-namespace SchoolBusAPI.Controllers
+namespace HETSAPI.Controllers
 {
     [Route("api")]
     public class VersionApiController : Controller

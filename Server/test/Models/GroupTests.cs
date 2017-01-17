@@ -16,11 +16,11 @@ using System.Linq;
 using System.Net.Http;
 using System.Threading.Tasks;
 using Xunit;
-using SchoolBusAPI;
-using SchoolBusAPI.Models;
+using HETSAPI;
+using HETSAPI.Models;
 using System.Reflection;
 
-namespace SchoolBusAPI.Test
+namespace HETSAPI.Test
 {
     /// <summary>
     ///  Class for testing the model Group

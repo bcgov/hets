@@ -19,11 +19,11 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
 using Swashbuckle.SwaggerGen.Annotations;
-using SchoolBusAPI.Models;
-using SchoolBusAPI.ViewModels;
-using SchoolBusAPI.Services;
+using HETSAPI.Models;
+using HETSAPI.ViewModels;
+using HETSAPI.Services;
 
-namespace SchoolBusAPI.Controllers
+namespace HETSAPI.Controllers
 {
     /// <summary>
     /// 

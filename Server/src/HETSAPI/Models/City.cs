@@ -19,7 +19,7 @@ using System.Runtime.Serialization;
 using Newtonsoft.Json;
 using System.ComponentModel.DataAnnotations.Schema;
 
-namespace SchoolBusAPI.Models
+namespace HETSAPI.Models
 {
     /// <summary>
     /// A list of cities in BC. Authoritative source to be determined.

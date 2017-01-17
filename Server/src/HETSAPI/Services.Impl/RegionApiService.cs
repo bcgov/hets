@@ -18,10 +18,10 @@ using System.Net;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
-using SchoolBusAPI.Models;
+using HETSAPI.Models;
 using Microsoft.EntityFrameworkCore;
 
-namespace SchoolBusAPI.Services.Impl
+namespace HETSAPI.Services.Impl
 { 
     /// <summary>
     /// 

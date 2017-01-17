@@ -17,14 +17,14 @@ using System.Linq;
 using System.Net.Http;
 using System.Threading.Tasks;
 using Xunit;
-using SchoolBusAPI;
+using HETSAPI;
 using System.Text;
 using System.Net;
 using Newtonsoft.Json;
-using SchoolBusAPI.Models;
-using SchoolBusAPI.ViewModels;
+using HETSAPI.Models;
+using HETSAPI.ViewModels;
 
-namespace SchoolBusAPI.Test
+namespace HETSAPI.Test
 {
 	public class UserApiIntegrationTest 
     { 
