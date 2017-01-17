@@ -1,11 +1,9 @@
 import store from './store';
 
-import { formatDateTime } from './utils/date';
 import { ApiRequest } from './utils/http';
-import { lastFirstName, concat } from './utils/string';
+import { lastFirstName } from './utils/string';
 
 import _ from 'lodash';
-
 
 export function getCurrentUser() {
   return new ApiRequest('/users/current').get().then(response => {
