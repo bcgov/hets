@@ -1,6 +1,5 @@
 import React from 'react';
 import { connect } from 'react-redux';
-import { PageHeader, Row, Col } from 'react-bootstrap';
 
 var Home = React.createClass({
   propTypes: {

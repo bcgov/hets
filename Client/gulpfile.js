@@ -27,7 +27,7 @@ const JS_UNIT_TEST_GLOB = 'src/js/**/*_test.js';
 const CSS_DIR_GLOB = 'src/sass/**/*.scss';
 const HANDLEBARS_DIR_GLOB = 'src/html/**/*.{hbs,html}';
 const DIST_DIR = 'dist';
-const DEPLOY_PATH = path.join(__dirname, '..', 'Client', 'src', 'SchoolBusClient', 'wwwroot');
+const DEPLOY_PATH = path.join(__dirname, '..', 'Client', 'src', 'HETSClient', 'wwwroot');
 const NODE_MODULES_DIR = 'node_modules/';
 const JS_SHIMS = [
   // 'node_modules/es5-shim/es5-shim.js',

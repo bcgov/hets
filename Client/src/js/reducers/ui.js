@@ -2,8 +2,7 @@ const DEFAULT_STATE = {
   requests: {
     waiting: false,
     error: null,
-  },
-  schoolBuses: {},
+  },  
 };
 
 export default function uiReducer(state = DEFAULT_STATE, action) {
@@ -21,8 +20,6 @@ export default function uiReducer(state = DEFAULT_STATE, action) {
         waiting: false,
       }};
 
-    case 'UPDATE_BUSES_UI':
-      return { ...state, schoolBuses: action.schoolBuses };
   }
 
   return { ...state, ...newState };

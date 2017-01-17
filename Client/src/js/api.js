@@ -1,11 +1,9 @@
 import store from './store';
 
-import { formatDateTime } from './utils/date';
 import { ApiRequest } from './utils/http';
-import { lastFirstName, concat } from './utils/string';
+import { lastFirstName } from './utils/string';
 
 import _ from 'lodash';
-
 
 export function getCurrentUser() {
   return new ApiRequest('/users/current').get().then(response => {
@@ -38,92 +36,6 @@ export function getUser(userId) {
   });
 }
 
-export function searchSchoolBuses(params) {
-  return new ApiRequest('/schoolbuses/search').get(params).then(response => {
-    // Normalize the response
-    var schoolBuses = _.fromPairs(response.map(schoolBus => [ schoolBus.id, schoolBus ]));
-
-    // Add display fields
-    _.map(schoolBuses, bus => {
-      bus.ownerName = bus.schoolBusOwner ? bus.schoolBusOwner.name : '';
-      bus.serviceAreaName = bus.serviceArea ? bus.serviceArea.name : '';
-      bus.homeTerminal = concat(bus.homeTerminalCity ? bus.homeTerminalCity.name : '', bus.homeTerminalPostalCode, ', ');
-      bus.nextInspectionDate = formatDateTime(bus.nextInspectionDate, 'MM/DD/YYYY');
-    });
-
-    store.dispatch({ type: 'UPDATE_BUSES', schoolBuses: schoolBuses });
-  });
-}
-
-export function getSchoolBuses(params) {
-  return new ApiRequest('/schoolbuses').get(params).then(response => {
-    // Normalize the response
-    var schoolBuses = _.fromPairs(response.map(schoolBus => [ schoolBus.id, schoolBus ]));
-
-    store.dispatch({ type: 'UPDATE_BUSES', schoolBuses: schoolBuses });
-  });
-}
-
-export function getSchoolBus(schoolBusId) {
-  return new ApiRequest(`/schoolbuses/${schoolBusId}`).get().then(response => {
-    var schoolBus = response;
-
-    store.dispatch({ type: 'UPDATE_BUS', schoolBus: schoolBus });
-  });
-}
-
-export function getSchoolBusAttachments(schoolBusId) {
-  return new ApiRequest(`/schoolbuses/${schoolBusId}/attachments`).get().then(response => {
-    // Normalize the response
-    var schoolBusAttachments = _.fromPairs(response.map(attachment => [ attachment.id, attachment ]));
-
-    store.dispatch({ type: 'UPDATE_BUS_ATTACHMENTS', schoolBusAttachments: schoolBusAttachments });
-  });
-}
-
-export function getSchoolBusCCW(schoolBusId) {
-  return new ApiRequest(`/schoolbuses/${schoolBusId}/ccwdata`).get().then(response => {
-    var schoolBusCCW = response || {};
-
-    store.dispatch({ type: 'UPDATE_BUS_CCW', schoolBusCCW: schoolBusCCW });
-  });
-}
-
-export function getSchoolBusHistories(schoolBusId) {
-  return new ApiRequest(`/schoolbuses/${schoolBusId}/history`).get().then(response => {
-    // Normalize the response
-    var schoolBusHistories = _.fromPairs(response.map(history => [ history.id, history ]));
-
-    store.dispatch({ type: 'UPDATE_BUS_HISTORIES', schoolBusHistories: schoolBusHistories });
-  });
-}
-
-export function getSchoolBusInspections(schoolBusId) {
-  return new ApiRequest(`/schoolbuses/${schoolBusId}/inspections`).get().then(response => {
-    // Normalize the response
-    var schoolBusInspections = _.fromPairs(response.map(inspection => [ inspection.id, inspection ]));
-
-    store.dispatch({ type: 'UPDATE_BUS_INSPECTIONS', schoolBusInspections: schoolBusInspections });
-  });
-}
-
-export function getSchoolBusNotes(schoolBusId) {
-  return new ApiRequest(`/schoolbuses/${schoolBusId}/notes`).get().then(response => {
-    // Normalize the response
-    var schoolBusNotes = _.fromPairs(response.map(note => [ note.id, note ]));
-
-    store.dispatch({ type: 'UPDATE_BUS_NOTES', schoolBusNotes: schoolBusNotes });
-  });
-}
-
-export function getOwner(ownerId) {
-  return new ApiRequest(`/schoolbusowners/${ownerId}`).get().then(response => {
-    var owner = response;
-
-    store.dispatch({ type: 'UPDATE_OWNER', owner: owner });
-  });
-}
-
 // Look Ups
 
 export function getCities() {
@@ -150,15 +62,6 @@ export function getRegions() {
     var regions = _.fromPairs(response.map(region => [ region.id, region ]));
 
     store.dispatch({ type: 'UPDATE_REGIONS', regions: regions });
-  });
-}
-
-export function getSchoolDistricts() {
-  return new ApiRequest('/schooldistricts').get().then(response => {
-    // Normalize the response
-    var schoolDistricts = _.fromPairs(response.map(schoolDistrict => [ schoolDistrict.id, schoolDistrict ]));
-
-    store.dispatch({ type: 'UPDATE_SCHOOL_DISTRICTS', schoolDistricts: schoolDistricts });
   });
 }
 

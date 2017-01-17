@@ -1,18 +1,18 @@
 {
-  "name": "schoolbus-client",
+  "name": "hets-client",
   "version": "0.0.1",
-  "description": "School Bus JavaScript Web Application",
+  "description": "Hired Equipment Tracking System JavaScript Web Application",
   "main": "dist/index.html",
   "scripts": {
     "test": "gulp test"
   },
   "repository": {
     "type": "git",
-    "url": "git@github.com:bcgov/schoolbus.git"
+    "url": "git@github.com:bcgov/hets.git"
   },
   "keywords": [
     "bcgov",
-    "schoolbus"
+    "hets"
   ],
   "contributors": [
     "Séamus O'Connor <seamus.oconnor@pneumaticweb.com> (http://pneumaticweb.com/)",
