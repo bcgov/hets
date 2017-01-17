@@ -5,7 +5,7 @@
   },
   "dependencies": {
     "xunit": "2.1.0",
-    "SchoolBusAPI": {
+    "HETSAPI": {
       target: "project"
     },
     "moq.netcore": "4.4.0-beta8",
