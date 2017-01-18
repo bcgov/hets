@@ -1,0 +1,43 @@
+definitions:{{#list}}
+{{#table}}  {{Name}}:
+    type: object{{#Description}}
+    description: {{Description}}{{/Description}}
+    required:
+{{#Required}}      - {{req}}
+{{/Required}}
+    properties:{{/table}}{{#boolean}}{{!
+}}      {{Name}}:
+        type: boolean{{#Description}}
+        description: {{Description}}{{/Description}}{{/boolean}}{{#string}}{{!
+}}      {{Name}}:
+        type: string{{#Description}}
+        description: {{Description}}{{/Description}}{{/string}}{{#integer}}{{!
+}}      {{Name}}:
+        format: int32
+        type: integer{{#Description}}
+        description: {{Description}}{{/Description}}{{/integer}}{{#float}}{{!
+}}      {{Name}}:
+        format: float
+        type: decimal{{#Description}}
+        description: {{Description}}{{/Description}}{{/float}}{{#id}}{{!
+}}      {{Name}}:
+        format: int32
+        type: integer{{#Description}}
+        description: {{Description}}{{/Description}}{{/id}}{{#datetime}}{{!
+}}      {{Name}}:
+        type: string
+        format: date-time{{#Description}}
+        description: {{Description}}{{/Description}}{{/datetime}}{{#date}}{{!
+}}      {{Name}}:
+        type: string
+        format: date-time{{#Description}}
+        description: {{Description}}{{/Description}}{{/date}}{{#links}}{{!
+}}      {{Name}}:
+        type: array
+        items:
+          $ref: '#/definitions/{{RefDef}}'{{#Description}}
+        description: {{Description}}{{/Description}}{{/links}}{{#ref}}{{!
+}}      {{Name}}:
+        $ref: '#/definitions/{{RefDef}}'{{#Description}}
+        description: {{Description}}{{/Description}}{{/ref}}{{/list
+}}
