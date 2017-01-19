@@ -7,11 +7,11 @@ ENV DOTNET_CLI_TELEMETRY_OPTOUT 1
 ENV LTTNG_UST_REGISTER_TIMEOUT 0
 
 COPY Common /app/Common
-COPY Server /app/Server
 
 WORKDIR /app/Common/src/HETSCommon
 RUN dotnet restore
 
+COPY Server /app/Server
 WORKDIR /app/Server/src/HETSAPI/
 RUN dotnet restore
 
@@ -20,5 +20,5 @@ ENV ASPNETCORE_URLS http://*:8080
 EXPOSE 8080
 
 RUN dotnet publish -c Release -o /app/out
-WORKDIR /app
+WORKDIR /app/out
 ENTRYPOINT ["dotnet", "/app/out/HETSAPI.dll"]
