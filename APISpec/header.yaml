@@ -1,8 +1,0 @@
-swagger: '2.0'
-info:
-  version: v1
-  title: REST API Documentation for the MOTI Hired Equipment Tracking System (HETS) Application
-  description: 
-  termsOfService: N/A
-basePath: /api
-paths:
