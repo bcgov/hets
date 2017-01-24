@@ -1,16 +1,9 @@
 !type,!path,!tag,!paramDef,!respDef,!Description,File,crud,post,bulk,getById,putById,deleteById,fullpath,idpath,path,tag,paramDef,respDef,Description
-crud,block,Block,,,,Path,1,rg:None,rg:None,rg:None,rg:None,rg:None,rg:None,rg:None,block,Block,rg:None,rg:None,rg:None
-crud,dumptruck,DumpTruck,,,,Path,1,rg:None,rg:None,rg:None,rg:None,rg:None,rg:None,rg:None,dumptruck,DumpTruck,rg:None,rg:None,rg:None
-crud,equip,Equip,,,,Path,1,rg:None,rg:None,rg:None,rg:None,rg:None,rg:None,rg:None,equip,Equip,rg:None,rg:None,rg:None
-crud,equipattach,EquipAttach,,,,Path,1,rg:None,rg:None,rg:None,rg:None,rg:None,rg:None,rg:None,equipattach,EquipAttach,rg:None,rg:None,rg:None
-crud,equiptype,EquipType,,,,Path,1,rg:None,rg:None,rg:None,rg:None,rg:None,rg:None,rg:None,equiptype,EquipType,rg:None,rg:None,rg:None
-crud,equipusage,EquipUsage,,,,Path,1,rg:None,rg:None,rg:None,rg:None,rg:None,rg:None,rg:None,equipusage,EquipUsage,rg:None,rg:None,rg:None
-crud,audit,Audit,,,,Path,1,rg:None,rg:None,rg:None,rg:None,rg:None,rg:None,rg:None,audit,Audit,rg:None,rg:None,rg:None
-crud,seniorityaudit,SeniorityAudit,,,,Path,1,rg:None,rg:None,rg:None,rg:None,rg:None,rg:None,rg:None,seniorityaudit,SeniorityAudit,rg:None,rg:None,rg:None
-crud,shift,Shift,,,,Path,1,rg:None,rg:None,rg:None,rg:None,rg:None,rg:None,rg:None,shift,Shift,rg:None,rg:None,rg:None
-crud,owner,Owner,,,,Path,1,rg:None,rg:None,rg:None,rg:None,rg:None,rg:None,rg:None,owner,Owner,rg:None,rg:None,rg:None
-crud,project,Project,,,,Path,1,rg:None,rg:None,rg:None,rg:None,rg:None,rg:None,rg:None,project,Project,rg:None,rg:None,rg:None
-crud,rotationdoc,RotationDoc,,,,Path,1,rg:None,rg:None,rg:None,rg:None,rg:None,rg:None,rg:None,rotationdoc,RotationDoc,rg:None,rg:None,rg:None
+crud,equipment,Equipment,,,,Path,1,rg:None,rg:None,rg:None,rg:None,rg:None,rg:None,rg:None,equipment,Equipment,rg:None,rg:None,rg:None
+crud,equipmentTypes,EquipmentType,,,,Path,1,rg:None,rg:None,rg:None,rg:None,rg:None,rg:None,rg:None,equipmentTypes,EquipmentType,rg:None,rg:None,rg:None
+crud,equipmentAttachmentTypes,EquipmentAttachmentType,,,,Path,1,rg:None,rg:None,rg:None,rg:None,rg:None,rg:None,rg:None,equipmentAttachmentTypes,EquipmentAttachmentType,rg:None,rg:None,rg:None
+crud,owners,Owner,,,,Path,1,rg:None,rg:None,rg:None,rg:None,rg:None,rg:None,rg:None,owners,Owner,rg:None,rg:None,rg:None
+crud,projects,Project,,,,Path,1,rg:None,rg:None,rg:None,rg:None,rg:None,rg:None,rg:None,projects,Project,rg:None,rg:None,rg:None
 crud,groups,Group,,,,Path,1,rg:None,rg:None,rg:None,rg:None,rg:None,rg:None,rg:None,groups,Group,rg:None,rg:None,rg:None
 crud,permissions,Permission,PermissionViewModel,,,Path,1,rg:None,rg:None,rg:None,rg:None,rg:None,rg:None,rg:None,permissions,Permission,PermissionViewModel,rg:None,rg:None
 crud,roles,Role,RoleViewModel,,,Path,1,rg:None,rg:None,rg:None,rg:None,rg:None,rg:None,rg:None,roles,Role,RoleViewModel,rg:None,rg:None
@@ -22,3 +15,4 @@ crud,regions,Region,,,,Path,1,rg:None,rg:None,rg:None,rg:None,rg:None,rg:None,rg
 crud,districts,District,,,,Path,1,rg:None,rg:None,rg:None,rg:None,rg:None,rg:None,rg:None,districts,District,rg:None,rg:None,rg:None
 crud,serviceareas,ServiceArea,,,,Path,1,rg:None,rg:None,rg:None,rg:None,rg:None,rg:None,rg:None,serviceareas,ServiceArea,rg:None,rg:None,rg:None
 crud,cities,City,,,,Path,1,rg:None,rg:None,rg:None,rg:None,rg:None,rg:None,rg:None,cities,City,rg:None,rg:None,rg:None
+crud,localAreas,LocalArea,,,,Path,1,rg:None,rg:None,rg:None,rg:None,rg:None,rg:None,rg:None,localAreas,LocalArea,rg:None,rg:None,rg:None

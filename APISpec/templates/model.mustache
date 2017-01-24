@@ -9,16 +9,17 @@ definitions:{{#list}}
 }}      {{Name}}:
         type: boolean{{/boolean}}{{#binary}}{{!
 }}      {{Name}}:
-        type: binary{{/binary}}{{#string}}{{!
+        type: string
+        format: binary{{/binary}}{{#string}}{{!
 }}      {{Name}}:
         type: string{{#Length}}
         maxLength: {{Length}}{{/Length}}{{/string}}{{#integer}}{{!
-}}      {{Name}}
+}}      {{Name}}:
         format: int32
         type: integer{{/integer}}{{#float}}{{!
 }}      {{Name}}:
-        format: float
-        type: decimal{{/float}}{{#id}}{{!
+        type: number
+        format: float{{/float}}{{#id}}{{!
 }}      {{Name}}:
         format: int32
         type: integer{{/id}}{{#datetime}}{{!

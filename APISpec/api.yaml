@@ -1,7 +1,7 @@
-  /block:
+  /equipment:
     get:
       tags:
-        - Block
+        - Equipment
       consumes: []
       produces:
         - text/plain
@@ -13,10 +13,10 @@
           schema:
             type: array
             items:
-              $ref: "#/definitions/Block"
+              $ref: "#/definitions/Equipment"
     post:
       tags:
-        - Block
+        - Equipment
       consumes:
         - application/json
       produces:
@@ -28,21 +28,21 @@
           in: body
           required: true
           schema:
-            $ref: "#/definitions/Block"
+            $ref: "#/definitions/Equipment"
       responses:
         201:
-          description: Block created
+          description: Equipment created
           headers:
             Location:
-              description: A link to the Block
+              description: A link to the Equipment
               type: string
               format: url
           schema:
-            $ref: "#/definitions/Block"
-  /block/bulk:
+            $ref: "#/definitions/Equipment"
+  /equipment/bulk:
     post:
       tags:
-        - Block
+        - Equipment
       consumes:
         - application/json
       produces:
@@ -56,14 +56,14 @@
           schema:
             type: array
             items:
-              $ref: "#/definitions/Block"
+              $ref: "#/definitions/Equipment"
       responses:
         201:
-          description: Block created
-  /block/{id}:
+          description: Equipment created
+  /equipment/{id}:
     get:
       tags:
-        - Block
+        - Equipment
       consumes: []
       produces:
         - text/plain
@@ -73,18 +73,18 @@
         200:
           description: OK
           schema:
-            $ref: "#/definitions/Block"
+            $ref: "#/definitions/Equipment"
         404:
-          description: Block not found
+          description: Equipment not found
       parameters:
         - name: id
           in: path
-          description: id of Block to fetch
+          description: id of Equipment to fetch
           required: true
           type: integer
     put:
       tags:
-        - Block
+        - Equipment
       consumes:
         - application/json
       produces:
@@ -95,24 +95,24 @@
         200:
           description: OK
           schema:
-            $ref: "#/definitions/Block"
+            $ref: "#/definitions/Equipment"
         404:
-          description: Block not found
+          description: Equipment not found
       parameters:
         - name: id
           in: path
-          description: id of Block to fetch
+          description: id of Equipment to fetch
           required: true
           type: integer
         - name: item
           in: body
           required: true
           schema:
-            $ref: "#/definitions/Block"
-  /block/{id}/delete:
+            $ref: "#/definitions/Equipment"
+  /equipment/{id}/delete:
     post:
       tags:
-        - Block
+        - Equipment
       consumes: []
       produces:
         - text/plain
@@ -122,17 +122,17 @@
         200:
           description: OK
         404:
-          description: Block not found
+          description: Equipment not found
       parameters:
         - name: id
           in: path
-          description: id of Block to delete
+          description: id of Equipment to delete
           required: true
           type: integer
-  /dumptruck:
+  /equipmentTypes:
     get:
       tags:
-        - DumpTruck
+        - EquipmentType
       consumes: []
       produces:
         - text/plain
@@ -144,10 +144,10 @@
           schema:
             type: array
             items:
-              $ref: "#/definitions/DumpTruck"
+              $ref: "#/definitions/EquipmentType"
     post:
       tags:
-        - DumpTruck
+        - EquipmentType
       consumes:
         - application/json
       produces:
@@ -159,21 +159,21 @@
           in: body
           required: true
           schema:
-            $ref: "#/definitions/DumpTruck"
+            $ref: "#/definitions/EquipmentType"
       responses:
         201:
-          description: DumpTruck created
+          description: EquipmentType created
           headers:
             Location:
-              description: A link to the DumpTruck
+              description: A link to the EquipmentType
               type: string
               format: url
           schema:
-            $ref: "#/definitions/DumpTruck"
-  /dumptruck/bulk:
+            $ref: "#/definitions/EquipmentType"
+  /equipmentTypes/bulk:
     post:
       tags:
-        - DumpTruck
+        - EquipmentType
       consumes:
         - application/json
       produces:
@@ -187,14 +187,14 @@
           schema:
             type: array
             items:
-              $ref: "#/definitions/DumpTruck"
+              $ref: "#/definitions/EquipmentType"
       responses:
         201:
-          description: DumpTruck created
-  /dumptruck/{id}:
+          description: EquipmentType created
+  /equipmentTypes/{id}:
     get:
       tags:
-        - DumpTruck
+        - EquipmentType
       consumes: []
       produces:
         - text/plain
@@ -204,18 +204,18 @@
         200:
           description: OK
           schema:
-            $ref: "#/definitions/DumpTruck"
+            $ref: "#/definitions/EquipmentType"
         404:
-          description: DumpTruck not found
+          description: EquipmentType not found
       parameters:
         - name: id
           in: path
-          description: id of DumpTruck to fetch
+          description: id of EquipmentType to fetch
           required: true
           type: integer
     put:
       tags:
-        - DumpTruck
+        - EquipmentType
       consumes:
         - application/json
       produces:
@@ -226,24 +226,24 @@
         200:
           description: OK
           schema:
-            $ref: "#/definitions/DumpTruck"
+            $ref: "#/definitions/EquipmentType"
         404:
-          description: DumpTruck not found
+          description: EquipmentType not found
       parameters:
         - name: id
           in: path
-          description: id of DumpTruck to fetch
+          description: id of EquipmentType to fetch
           required: true
           type: integer
         - name: item
           in: body
           required: true
           schema:
-            $ref: "#/definitions/DumpTruck"
-  /dumptruck/{id}/delete:
+            $ref: "#/definitions/EquipmentType"
+  /equipmentTypes/{id}/delete:
     post:
       tags:
-        - DumpTruck
+        - EquipmentType
       consumes: []
       produces:
         - text/plain
@@ -253,17 +253,17 @@
         200:
           description: OK
         404:
-          description: DumpTruck not found
+          description: EquipmentType not found
       parameters:
         - name: id
           in: path
-          description: id of DumpTruck to delete
+          description: id of EquipmentType to delete
           required: true
           type: integer
-  /equip:
+  /equipmentAttachmentTypes:
     get:
       tags:
-        - Equip
+        - EquipmentAttachmentType
       consumes: []
       produces:
         - text/plain
@@ -275,10 +275,10 @@
           schema:
             type: array
             items:
-              $ref: "#/definitions/Equip"
+              $ref: "#/definitions/EquipmentAttachmentType"
     post:
       tags:
-        - Equip
+        - EquipmentAttachmentType
       consumes:
         - application/json
       produces:
@@ -290,21 +290,21 @@
           in: body
           required: true
           schema:
-            $ref: "#/definitions/Equip"
+            $ref: "#/definitions/EquipmentAttachmentType"
       responses:
         201:
-          description: Equip created
+          description: EquipmentAttachmentType created
           headers:
             Location:
-              description: A link to the Equip
+              description: A link to the EquipmentAttachmentType
               type: string
               format: url
           schema:
-            $ref: "#/definitions/Equip"
-  /equip/bulk:
+            $ref: "#/definitions/EquipmentAttachmentType"
+  /equipmentAttachmentTypes/bulk:
     post:
       tags:
-        - Equip
+        - EquipmentAttachmentType
       consumes:
         - application/json
       produces:
@@ -318,14 +318,14 @@
           schema:
             type: array
             items:
-              $ref: "#/definitions/Equip"
+              $ref: "#/definitions/EquipmentAttachmentType"
       responses:
         201:
-          description: Equip created
-  /equip/{id}:
+          description: EquipmentAttachmentType created
+  /equipmentAttachmentTypes/{id}:
     get:
       tags:
-        - Equip
+        - EquipmentAttachmentType
       consumes: []
       produces:
         - text/plain
@@ -335,18 +335,18 @@
         200:
           description: OK
           schema:
-            $ref: "#/definitions/Equip"
+            $ref: "#/definitions/EquipmentAttachmentType"
         404:
-          description: Equip not found
+          description: EquipmentAttachmentType not found
       parameters:
         - name: id
           in: path
-          description: id of Equip to fetch
+          description: id of EquipmentAttachmentType to fetch
           required: true
           type: integer
     put:
       tags:
-        - Equip
+        - EquipmentAttachmentType
       consumes:
         - application/json
       produces:
@@ -357,24 +357,24 @@
         200:
           description: OK
           schema:
-            $ref: "#/definitions/Equip"
+            $ref: "#/definitions/EquipmentAttachmentType"
         404:
-          description: Equip not found
+          description: EquipmentAttachmentType not found
       parameters:
         - name: id
           in: path
-          description: id of Equip to fetch
+          description: id of EquipmentAttachmentType to fetch
           required: true
           type: integer
         - name: item
           in: body
           required: true
           schema:
-            $ref: "#/definitions/Equip"
-  /equip/{id}/delete:
+            $ref: "#/definitions/EquipmentAttachmentType"
+  /equipmentAttachmentTypes/{id}/delete:
     post:
       tags:
-        - Equip
+        - EquipmentAttachmentType
       consumes: []
       produces:
         - text/plain
@@ -384,800 +384,14 @@
         200:
           description: OK
         404:
-          description: Equip not found
+          description: EquipmentAttachmentType not found
       parameters:
         - name: id
           in: path
-          description: id of Equip to delete
+          description: id of EquipmentAttachmentType to delete
           required: true
           type: integer
-  /equipattach:
-    get:
-      tags:
-        - EquipAttach
-      consumes: []
-      produces:
-        - text/plain
-        - application/json
-        - text/json
-      responses:
-        200:
-          description: OK
-          schema:
-            type: array
-            items:
-              $ref: "#/definitions/EquipAttach"
-    post:
-      tags:
-        - EquipAttach
-      consumes:
-        - application/json
-      produces:
-        - text/plain
-        - application/json
-        - text/json
-      parameters:
-        - name: item
-          in: body
-          required: true
-          schema:
-            $ref: "#/definitions/EquipAttach"
-      responses:
-        201:
-          description: EquipAttach created
-          headers:
-            Location:
-              description: A link to the EquipAttach
-              type: string
-              format: url
-          schema:
-            $ref: "#/definitions/EquipAttach"
-  /equipattach/bulk:
-    post:
-      tags:
-        - EquipAttach
-      consumes:
-        - application/json
-      produces:
-        - text/plain
-        - application/json
-        - text/json
-      parameters:
-        - name: items
-          in: body
-          required: true
-          schema:
-            type: array
-            items:
-              $ref: "#/definitions/EquipAttach"
-      responses:
-        201:
-          description: EquipAttach created
-  /equipattach/{id}:
-    get:
-      tags:
-        - EquipAttach
-      consumes: []
-      produces:
-        - text/plain
-        - application/json
-        - text/json
-      responses:
-        200:
-          description: OK
-          schema:
-            $ref: "#/definitions/EquipAttach"
-        404:
-          description: EquipAttach not found
-      parameters:
-        - name: id
-          in: path
-          description: id of EquipAttach to fetch
-          required: true
-          type: integer
-    put:
-      tags:
-        - EquipAttach
-      consumes:
-        - application/json
-      produces:
-        - text/plain
-        - application/json
-        - text/json
-      responses:
-        200:
-          description: OK
-          schema:
-            $ref: "#/definitions/EquipAttach"
-        404:
-          description: EquipAttach not found
-      parameters:
-        - name: id
-          in: path
-          description: id of EquipAttach to fetch
-          required: true
-          type: integer
-        - name: item
-          in: body
-          required: true
-          schema:
-            $ref: "#/definitions/EquipAttach"
-  /equipattach/{id}/delete:
-    post:
-      tags:
-        - EquipAttach
-      consumes: []
-      produces:
-        - text/plain
-        - application/json
-        - text/json
-      responses:
-        200:
-          description: OK
-        404:
-          description: EquipAttach not found
-      parameters:
-        - name: id
-          in: path
-          description: id of EquipAttach to delete
-          required: true
-          type: integer
-  /equiptype:
-    get:
-      tags:
-        - EquipType
-      consumes: []
-      produces:
-        - text/plain
-        - application/json
-        - text/json
-      responses:
-        200:
-          description: OK
-          schema:
-            type: array
-            items:
-              $ref: "#/definitions/EquipType"
-    post:
-      tags:
-        - EquipType
-      consumes:
-        - application/json
-      produces:
-        - text/plain
-        - application/json
-        - text/json
-      parameters:
-        - name: item
-          in: body
-          required: true
-          schema:
-            $ref: "#/definitions/EquipType"
-      responses:
-        201:
-          description: EquipType created
-          headers:
-            Location:
-              description: A link to the EquipType
-              type: string
-              format: url
-          schema:
-            $ref: "#/definitions/EquipType"
-  /equiptype/bulk:
-    post:
-      tags:
-        - EquipType
-      consumes:
-        - application/json
-      produces:
-        - text/plain
-        - application/json
-        - text/json
-      parameters:
-        - name: items
-          in: body
-          required: true
-          schema:
-            type: array
-            items:
-              $ref: "#/definitions/EquipType"
-      responses:
-        201:
-          description: EquipType created
-  /equiptype/{id}:
-    get:
-      tags:
-        - EquipType
-      consumes: []
-      produces:
-        - text/plain
-        - application/json
-        - text/json
-      responses:
-        200:
-          description: OK
-          schema:
-            $ref: "#/definitions/EquipType"
-        404:
-          description: EquipType not found
-      parameters:
-        - name: id
-          in: path
-          description: id of EquipType to fetch
-          required: true
-          type: integer
-    put:
-      tags:
-        - EquipType
-      consumes:
-        - application/json
-      produces:
-        - text/plain
-        - application/json
-        - text/json
-      responses:
-        200:
-          description: OK
-          schema:
-            $ref: "#/definitions/EquipType"
-        404:
-          description: EquipType not found
-      parameters:
-        - name: id
-          in: path
-          description: id of EquipType to fetch
-          required: true
-          type: integer
-        - name: item
-          in: body
-          required: true
-          schema:
-            $ref: "#/definitions/EquipType"
-  /equiptype/{id}/delete:
-    post:
-      tags:
-        - EquipType
-      consumes: []
-      produces:
-        - text/plain
-        - application/json
-        - text/json
-      responses:
-        200:
-          description: OK
-        404:
-          description: EquipType not found
-      parameters:
-        - name: id
-          in: path
-          description: id of EquipType to delete
-          required: true
-          type: integer
-  /equipusage:
-    get:
-      tags:
-        - EquipUsage
-      consumes: []
-      produces:
-        - text/plain
-        - application/json
-        - text/json
-      responses:
-        200:
-          description: OK
-          schema:
-            type: array
-            items:
-              $ref: "#/definitions/EquipUsage"
-    post:
-      tags:
-        - EquipUsage
-      consumes:
-        - application/json
-      produces:
-        - text/plain
-        - application/json
-        - text/json
-      parameters:
-        - name: item
-          in: body
-          required: true
-          schema:
-            $ref: "#/definitions/EquipUsage"
-      responses:
-        201:
-          description: EquipUsage created
-          headers:
-            Location:
-              description: A link to the EquipUsage
-              type: string
-              format: url
-          schema:
-            $ref: "#/definitions/EquipUsage"
-  /equipusage/bulk:
-    post:
-      tags:
-        - EquipUsage
-      consumes:
-        - application/json
-      produces:
-        - text/plain
-        - application/json
-        - text/json
-      parameters:
-        - name: items
-          in: body
-          required: true
-          schema:
-            type: array
-            items:
-              $ref: "#/definitions/EquipUsage"
-      responses:
-        201:
-          description: EquipUsage created
-  /equipusage/{id}:
-    get:
-      tags:
-        - EquipUsage
-      consumes: []
-      produces:
-        - text/plain
-        - application/json
-        - text/json
-      responses:
-        200:
-          description: OK
-          schema:
-            $ref: "#/definitions/EquipUsage"
-        404:
-          description: EquipUsage not found
-      parameters:
-        - name: id
-          in: path
-          description: id of EquipUsage to fetch
-          required: true
-          type: integer
-    put:
-      tags:
-        - EquipUsage
-      consumes:
-        - application/json
-      produces:
-        - text/plain
-        - application/json
-        - text/json
-      responses:
-        200:
-          description: OK
-          schema:
-            $ref: "#/definitions/EquipUsage"
-        404:
-          description: EquipUsage not found
-      parameters:
-        - name: id
-          in: path
-          description: id of EquipUsage to fetch
-          required: true
-          type: integer
-        - name: item
-          in: body
-          required: true
-          schema:
-            $ref: "#/definitions/EquipUsage"
-  /equipusage/{id}/delete:
-    post:
-      tags:
-        - EquipUsage
-      consumes: []
-      produces:
-        - text/plain
-        - application/json
-        - text/json
-      responses:
-        200:
-          description: OK
-        404:
-          description: EquipUsage not found
-      parameters:
-        - name: id
-          in: path
-          description: id of EquipUsage to delete
-          required: true
-          type: integer
-  /audit:
-    get:
-      tags:
-        - Audit
-      consumes: []
-      produces:
-        - text/plain
-        - application/json
-        - text/json
-      responses:
-        200:
-          description: OK
-          schema:
-            type: array
-            items:
-              $ref: "#/definitions/Audit"
-    post:
-      tags:
-        - Audit
-      consumes:
-        - application/json
-      produces:
-        - text/plain
-        - application/json
-        - text/json
-      parameters:
-        - name: item
-          in: body
-          required: true
-          schema:
-            $ref: "#/definitions/Audit"
-      responses:
-        201:
-          description: Audit created
-          headers:
-            Location:
-              description: A link to the Audit
-              type: string
-              format: url
-          schema:
-            $ref: "#/definitions/Audit"
-  /audit/bulk:
-    post:
-      tags:
-        - Audit
-      consumes:
-        - application/json
-      produces:
-        - text/plain
-        - application/json
-        - text/json
-      parameters:
-        - name: items
-          in: body
-          required: true
-          schema:
-            type: array
-            items:
-              $ref: "#/definitions/Audit"
-      responses:
-        201:
-          description: Audit created
-  /audit/{id}:
-    get:
-      tags:
-        - Audit
-      consumes: []
-      produces:
-        - text/plain
-        - application/json
-        - text/json
-      responses:
-        200:
-          description: OK
-          schema:
-            $ref: "#/definitions/Audit"
-        404:
-          description: Audit not found
-      parameters:
-        - name: id
-          in: path
-          description: id of Audit to fetch
-          required: true
-          type: integer
-    put:
-      tags:
-        - Audit
-      consumes:
-        - application/json
-      produces:
-        - text/plain
-        - application/json
-        - text/json
-      responses:
-        200:
-          description: OK
-          schema:
-            $ref: "#/definitions/Audit"
-        404:
-          description: Audit not found
-      parameters:
-        - name: id
-          in: path
-          description: id of Audit to fetch
-          required: true
-          type: integer
-        - name: item
-          in: body
-          required: true
-          schema:
-            $ref: "#/definitions/Audit"
-  /audit/{id}/delete:
-    post:
-      tags:
-        - Audit
-      consumes: []
-      produces:
-        - text/plain
-        - application/json
-        - text/json
-      responses:
-        200:
-          description: OK
-        404:
-          description: Audit not found
-      parameters:
-        - name: id
-          in: path
-          description: id of Audit to delete
-          required: true
-          type: integer
-  /seniorityaudit:
-    get:
-      tags:
-        - SeniorityAudit
-      consumes: []
-      produces:
-        - text/plain
-        - application/json
-        - text/json
-      responses:
-        200:
-          description: OK
-          schema:
-            type: array
-            items:
-              $ref: "#/definitions/SeniorityAudit"
-    post:
-      tags:
-        - SeniorityAudit
-      consumes:
-        - application/json
-      produces:
-        - text/plain
-        - application/json
-        - text/json
-      parameters:
-        - name: item
-          in: body
-          required: true
-          schema:
-            $ref: "#/definitions/SeniorityAudit"
-      responses:
-        201:
-          description: SeniorityAudit created
-          headers:
-            Location:
-              description: A link to the SeniorityAudit
-              type: string
-              format: url
-          schema:
-            $ref: "#/definitions/SeniorityAudit"
-  /seniorityaudit/bulk:
-    post:
-      tags:
-        - SeniorityAudit
-      consumes:
-        - application/json
-      produces:
-        - text/plain
-        - application/json
-        - text/json
-      parameters:
-        - name: items
-          in: body
-          required: true
-          schema:
-            type: array
-            items:
-              $ref: "#/definitions/SeniorityAudit"
-      responses:
-        201:
-          description: SeniorityAudit created
-  /seniorityaudit/{id}:
-    get:
-      tags:
-        - SeniorityAudit
-      consumes: []
-      produces:
-        - text/plain
-        - application/json
-        - text/json
-      responses:
-        200:
-          description: OK
-          schema:
-            $ref: "#/definitions/SeniorityAudit"
-        404:
-          description: SeniorityAudit not found
-      parameters:
-        - name: id
-          in: path
-          description: id of SeniorityAudit to fetch
-          required: true
-          type: integer
-    put:
-      tags:
-        - SeniorityAudit
-      consumes:
-        - application/json
-      produces:
-        - text/plain
-        - application/json
-        - text/json
-      responses:
-        200:
-          description: OK
-          schema:
-            $ref: "#/definitions/SeniorityAudit"
-        404:
-          description: SeniorityAudit not found
-      parameters:
-        - name: id
-          in: path
-          description: id of SeniorityAudit to fetch
-          required: true
-          type: integer
-        - name: item
-          in: body
-          required: true
-          schema:
-            $ref: "#/definitions/SeniorityAudit"
-  /seniorityaudit/{id}/delete:
-    post:
-      tags:
-        - SeniorityAudit
-      consumes: []
-      produces:
-        - text/plain
-        - application/json
-        - text/json
-      responses:
-        200:
-          description: OK
-        404:
-          description: SeniorityAudit not found
-      parameters:
-        - name: id
-          in: path
-          description: id of SeniorityAudit to delete
-          required: true
-          type: integer
-  /shift:
-    get:
-      tags:
-        - Shift
-      consumes: []
-      produces:
-        - text/plain
-        - application/json
-        - text/json
-      responses:
-        200:
-          description: OK
-          schema:
-            type: array
-            items:
-              $ref: "#/definitions/Shift"
-    post:
-      tags:
-        - Shift
-      consumes:
-        - application/json
-      produces:
-        - text/plain
-        - application/json
-        - text/json
-      parameters:
-        - name: item
-          in: body
-          required: true
-          schema:
-            $ref: "#/definitions/Shift"
-      responses:
-        201:
-          description: Shift created
-          headers:
-            Location:
-              description: A link to the Shift
-              type: string
-              format: url
-          schema:
-            $ref: "#/definitions/Shift"
-  /shift/bulk:
-    post:
-      tags:
-        - Shift
-      consumes:
-        - application/json
-      produces:
-        - text/plain
-        - application/json
-        - text/json
-      parameters:
-        - name: items
-          in: body
-          required: true
-          schema:
-            type: array
-            items:
-              $ref: "#/definitions/Shift"
-      responses:
-        201:
-          description: Shift created
-  /shift/{id}:
-    get:
-      tags:
-        - Shift
-      consumes: []
-      produces:
-        - text/plain
-        - application/json
-        - text/json
-      responses:
-        200:
-          description: OK
-          schema:
-            $ref: "#/definitions/Shift"
-        404:
-          description: Shift not found
-      parameters:
-        - name: id
-          in: path
-          description: id of Shift to fetch
-          required: true
-          type: integer
-    put:
-      tags:
-        - Shift
-      consumes:
-        - application/json
-      produces:
-        - text/plain
-        - application/json
-        - text/json
-      responses:
-        200:
-          description: OK
-          schema:
-            $ref: "#/definitions/Shift"
-        404:
-          description: Shift not found
-      parameters:
-        - name: id
-          in: path
-          description: id of Shift to fetch
-          required: true
-          type: integer
-        - name: item
-          in: body
-          required: true
-          schema:
-            $ref: "#/definitions/Shift"
-  /shift/{id}/delete:
-    post:
-      tags:
-        - Shift
-      consumes: []
-      produces:
-        - text/plain
-        - application/json
-        - text/json
-      responses:
-        200:
-          description: OK
-        404:
-          description: Shift not found
-      parameters:
-        - name: id
-          in: path
-          description: id of Shift to delete
-          required: true
-          type: integer
-  /owner:
+  /owners:
     get:
       tags:
         - Owner
@@ -1218,7 +432,7 @@
               format: url
           schema:
             $ref: "#/definitions/Owner"
-  /owner/bulk:
+  /owners/bulk:
     post:
       tags:
         - Owner
@@ -1239,7 +453,7 @@
       responses:
         201:
           description: Owner created
-  /owner/{id}:
+  /owners/{id}:
     get:
       tags:
         - Owner
@@ -1288,7 +502,7 @@
           required: true
           schema:
             $ref: "#/definitions/Owner"
-  /owner/{id}/delete:
+  /owners/{id}/delete:
     post:
       tags:
         - Owner
@@ -1308,7 +522,7 @@
           description: id of Owner to delete
           required: true
           type: integer
-  /project:
+  /projects:
     get:
       tags:
         - Project
@@ -1349,7 +563,7 @@
               format: url
           schema:
             $ref: "#/definitions/Project"
-  /project/bulk:
+  /projects/bulk:
     post:
       tags:
         - Project
@@ -1370,7 +584,7 @@
       responses:
         201:
           description: Project created
-  /project/{id}:
+  /projects/{id}:
     get:
       tags:
         - Project
@@ -1419,7 +633,7 @@
           required: true
           schema:
             $ref: "#/definitions/Project"
-  /project/{id}/delete:
+  /projects/{id}/delete:
     post:
       tags:
         - Project
@@ -1437,137 +651,6 @@
         - name: id
           in: path
           description: id of Project to delete
-          required: true
-          type: integer
-  /rotationdoc:
-    get:
-      tags:
-        - RotationDoc
-      consumes: []
-      produces:
-        - text/plain
-        - application/json
-        - text/json
-      responses:
-        200:
-          description: OK
-          schema:
-            type: array
-            items:
-              $ref: "#/definitions/RotationDoc"
-    post:
-      tags:
-        - RotationDoc
-      consumes:
-        - application/json
-      produces:
-        - text/plain
-        - application/json
-        - text/json
-      parameters:
-        - name: item
-          in: body
-          required: true
-          schema:
-            $ref: "#/definitions/RotationDoc"
-      responses:
-        201:
-          description: RotationDoc created
-          headers:
-            Location:
-              description: A link to the RotationDoc
-              type: string
-              format: url
-          schema:
-            $ref: "#/definitions/RotationDoc"
-  /rotationdoc/bulk:
-    post:
-      tags:
-        - RotationDoc
-      consumes:
-        - application/json
-      produces:
-        - text/plain
-        - application/json
-        - text/json
-      parameters:
-        - name: items
-          in: body
-          required: true
-          schema:
-            type: array
-            items:
-              $ref: "#/definitions/RotationDoc"
-      responses:
-        201:
-          description: RotationDoc created
-  /rotationdoc/{id}:
-    get:
-      tags:
-        - RotationDoc
-      consumes: []
-      produces:
-        - text/plain
-        - application/json
-        - text/json
-      responses:
-        200:
-          description: OK
-          schema:
-            $ref: "#/definitions/RotationDoc"
-        404:
-          description: RotationDoc not found
-      parameters:
-        - name: id
-          in: path
-          description: id of RotationDoc to fetch
-          required: true
-          type: integer
-    put:
-      tags:
-        - RotationDoc
-      consumes:
-        - application/json
-      produces:
-        - text/plain
-        - application/json
-        - text/json
-      responses:
-        200:
-          description: OK
-          schema:
-            $ref: "#/definitions/RotationDoc"
-        404:
-          description: RotationDoc not found
-      parameters:
-        - name: id
-          in: path
-          description: id of RotationDoc to fetch
-          required: true
-          type: integer
-        - name: item
-          in: body
-          required: true
-          schema:
-            $ref: "#/definitions/RotationDoc"
-  /rotationdoc/{id}/delete:
-    post:
-      tags:
-        - RotationDoc
-      consumes: []
-      produces:
-        - text/plain
-        - application/json
-        - text/json
-      responses:
-        200:
-          description: OK
-        404:
-          description: RotationDoc not found
-      parameters:
-        - name: id
-          in: path
-          description: id of RotationDoc to delete
           required: true
           type: integer
   /groups:
@@ -2682,5 +1765,136 @@
         - name: id
           in: path
           description: id of City to delete
+          required: true
+          type: integer
+  /localAreas:
+    get:
+      tags:
+        - LocalArea
+      consumes: []
+      produces:
+        - text/plain
+        - application/json
+        - text/json
+      responses:
+        200:
+          description: OK
+          schema:
+            type: array
+            items:
+              $ref: "#/definitions/LocalArea"
+    post:
+      tags:
+        - LocalArea
+      consumes:
+        - application/json
+      produces:
+        - text/plain
+        - application/json
+        - text/json
+      parameters:
+        - name: item
+          in: body
+          required: true
+          schema:
+            $ref: "#/definitions/LocalArea"
+      responses:
+        201:
+          description: LocalArea created
+          headers:
+            Location:
+              description: A link to the LocalArea
+              type: string
+              format: url
+          schema:
+            $ref: "#/definitions/LocalArea"
+  /localAreas/bulk:
+    post:
+      tags:
+        - LocalArea
+      consumes:
+        - application/json
+      produces:
+        - text/plain
+        - application/json
+        - text/json
+      parameters:
+        - name: items
+          in: body
+          required: true
+          schema:
+            type: array
+            items:
+              $ref: "#/definitions/LocalArea"
+      responses:
+        201:
+          description: LocalArea created
+  /localAreas/{id}:
+    get:
+      tags:
+        - LocalArea
+      consumes: []
+      produces:
+        - text/plain
+        - application/json
+        - text/json
+      responses:
+        200:
+          description: OK
+          schema:
+            $ref: "#/definitions/LocalArea"
+        404:
+          description: LocalArea not found
+      parameters:
+        - name: id
+          in: path
+          description: id of LocalArea to fetch
+          required: true
+          type: integer
+    put:
+      tags:
+        - LocalArea
+      consumes:
+        - application/json
+      produces:
+        - text/plain
+        - application/json
+        - text/json
+      responses:
+        200:
+          description: OK
+          schema:
+            $ref: "#/definitions/LocalArea"
+        404:
+          description: LocalArea not found
+      parameters:
+        - name: id
+          in: path
+          description: id of LocalArea to fetch
+          required: true
+          type: integer
+        - name: item
+          in: body
+          required: true
+          schema:
+            $ref: "#/definitions/LocalArea"
+  /localAreas/{id}/delete:
+    post:
+      tags:
+        - LocalArea
+      consumes: []
+      produces:
+        - text/plain
+        - application/json
+        - text/json
+      responses:
+        200:
+          description: OK
+        404:
+          description: LocalArea not found
+      parameters:
+        - name: id
+          in: path
+          description: id of LocalArea to delete
           required: true
           type: integer

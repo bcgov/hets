@@ -1,22 +1,3 @@
-  GroupMembership:
-    type: object
-    required:
-      - id
-      - active
-    properties:
-      id:
-        format: int32
-        type: integer
-        description: Primary Key
-        x-type-options:
-          min: 1
-          max: 1000
-      active:
-        type: boolean
-      group:
-        $ref: '#/definitions/Group'
-      user:
-        $ref: '#/definitions/User'
   UserViewModel:
     type: object
     x-codegen-viewmodel: true
@@ -262,5 +243,43 @@
         x-type-options:
           min: 1
           max: 1000
+  NotificationViewModel:
+    type: object
+    x-codegen-viewmodel: true
+    properties:
+      id:
+          format: int32
+          type: integer
+          x-type-options:
+            min: 1
+            max: 1000
+      eventId:
+          format: int32
+          type: integer
+          x-type-options:
+            min: 1
+            max: 1000
+      event2Id:
+          format: int32
+          type: integer
+          x-type-options:
+            min: 1
+            max: 1000
+      hasBeenViewed:
+        type: boolean
+      isWatchNotification:
+        type: boolean
+      isExpired:
+        type: boolean
+      isAllDay:
+        type: boolean
+      priorityCode:
+        type: string
+      userId:
+          format: int32
+          type: integer
+          x-type-options:
+            min: 1
+            max: 1000
 
 securityDefinitions: {}
