@@ -1,0 +1,3670 @@
+swagger: '2.0'
+info:
+  version: v1
+  title: REST API Documentation for the MOTI Hired Equipment Tracking System (HETS) Application
+  description: |
+    The Hired Equipment Program is for owners/operators who have a dump truck, bulldozer, backhoe or 
+    other piece of equipment they want to hire out to the transportation ministry for day labour and 
+    emergency projects. 
+    The Hired Equipment Program distributes available work to local equipment owners. The program is 
+    based on seniority and is designed to deliver work to registered users fairly and efficiently 
+    through the development of local area call-out lists.
+  termsOfService: N/A
+basePath: /api
+paths:
+  /equipment:
+    get:
+      tags:
+        - Equipment
+      consumes: []
+      produces:
+        - text/plain
+        - application/json
+        - text/json
+      responses:
+        200:
+          description: OK
+          schema:
+            type: array
+            items:
+              $ref: "#/definitions/Equipment"
+    post:
+      tags:
+        - Equipment
+      consumes:
+        - application/json
+      produces:
+        - text/plain
+        - application/json
+        - text/json
+      parameters:
+        - name: item
+          in: body
+          required: true
+          schema:
+            $ref: "#/definitions/Equipment"
+      responses:
+        201:
+          description: Equipment created
+          headers:
+            Location:
+              description: A link to the Equipment
+              type: string
+              format: url
+          schema:
+            $ref: "#/definitions/Equipment"
+  /equipment/bulk:
+    post:
+      tags:
+        - Equipment
+      consumes:
+        - application/json
+      produces:
+        - text/plain
+        - application/json
+        - text/json
+      parameters:
+        - name: items
+          in: body
+          required: true
+          schema:
+            type: array
+            items:
+              $ref: "#/definitions/Equipment"
+      responses:
+        201:
+          description: Equipment created
+  /equipment/{id}:
+    get:
+      tags:
+        - Equipment
+      consumes: []
+      produces:
+        - text/plain
+        - application/json
+        - text/json
+      responses:
+        200:
+          description: OK
+          schema:
+            $ref: "#/definitions/Equipment"
+        404:
+          description: Equipment not found
+      parameters:
+        - name: id
+          in: path
+          description: id of Equipment to fetch
+          required: true
+          type: integer
+    put:
+      tags:
+        - Equipment
+      consumes:
+        - application/json
+      produces:
+        - text/plain
+        - application/json
+        - text/json
+      responses:
+        200:
+          description: OK
+          schema:
+            $ref: "#/definitions/Equipment"
+        404:
+          description: Equipment not found
+      parameters:
+        - name: id
+          in: path
+          description: id of Equipment to fetch
+          required: true
+          type: integer
+        - name: item
+          in: body
+          required: true
+          schema:
+            $ref: "#/definitions/Equipment"
+  /equipment/{id}/delete:
+    post:
+      tags:
+        - Equipment
+      consumes: []
+      produces:
+        - text/plain
+        - application/json
+        - text/json
+      responses:
+        200:
+          description: OK
+        404:
+          description: Equipment not found
+      parameters:
+        - name: id
+          in: path
+          description: id of Equipment to delete
+          required: true
+          type: integer
+  /equipmentTypes:
+    get:
+      tags:
+        - EquipmentType
+      consumes: []
+      produces:
+        - text/plain
+        - application/json
+        - text/json
+      responses:
+        200:
+          description: OK
+          schema:
+            type: array
+            items:
+              $ref: "#/definitions/EquipmentType"
+    post:
+      tags:
+        - EquipmentType
+      consumes:
+        - application/json
+      produces:
+        - text/plain
+        - application/json
+        - text/json
+      parameters:
+        - name: item
+          in: body
+          required: true
+          schema:
+            $ref: "#/definitions/EquipmentType"
+      responses:
+        201:
+          description: EquipmentType created
+          headers:
+            Location:
+              description: A link to the EquipmentType
+              type: string
+              format: url
+          schema:
+            $ref: "#/definitions/EquipmentType"
+  /equipmentTypes/bulk:
+    post:
+      tags:
+        - EquipmentType
+      consumes:
+        - application/json
+      produces:
+        - text/plain
+        - application/json
+        - text/json
+      parameters:
+        - name: items
+          in: body
+          required: true
+          schema:
+            type: array
+            items:
+              $ref: "#/definitions/EquipmentType"
+      responses:
+        201:
+          description: EquipmentType created
+  /equipmentTypes/{id}:
+    get:
+      tags:
+        - EquipmentType
+      consumes: []
+      produces:
+        - text/plain
+        - application/json
+        - text/json
+      responses:
+        200:
+          description: OK
+          schema:
+            $ref: "#/definitions/EquipmentType"
+        404:
+          description: EquipmentType not found
+      parameters:
+        - name: id
+          in: path
+          description: id of EquipmentType to fetch
+          required: true
+          type: integer
+    put:
+      tags:
+        - EquipmentType
+      consumes:
+        - application/json
+      produces:
+        - text/plain
+        - application/json
+        - text/json
+      responses:
+        200:
+          description: OK
+          schema:
+            $ref: "#/definitions/EquipmentType"
+        404:
+          description: EquipmentType not found
+      parameters:
+        - name: id
+          in: path
+          description: id of EquipmentType to fetch
+          required: true
+          type: integer
+        - name: item
+          in: body
+          required: true
+          schema:
+            $ref: "#/definitions/EquipmentType"
+  /equipmentTypes/{id}/delete:
+    post:
+      tags:
+        - EquipmentType
+      consumes: []
+      produces:
+        - text/plain
+        - application/json
+        - text/json
+      responses:
+        200:
+          description: OK
+        404:
+          description: EquipmentType not found
+      parameters:
+        - name: id
+          in: path
+          description: id of EquipmentType to delete
+          required: true
+          type: integer
+  /equipmentAttachmentTypes:
+    get:
+      tags:
+        - EquipmentAttachmentType
+      consumes: []
+      produces:
+        - text/plain
+        - application/json
+        - text/json
+      responses:
+        200:
+          description: OK
+          schema:
+            type: array
+            items:
+              $ref: "#/definitions/EquipmentAttachmentType"
+    post:
+      tags:
+        - EquipmentAttachmentType
+      consumes:
+        - application/json
+      produces:
+        - text/plain
+        - application/json
+        - text/json
+      parameters:
+        - name: item
+          in: body
+          required: true
+          schema:
+            $ref: "#/definitions/EquipmentAttachmentType"
+      responses:
+        201:
+          description: EquipmentAttachmentType created
+          headers:
+            Location:
+              description: A link to the EquipmentAttachmentType
+              type: string
+              format: url
+          schema:
+            $ref: "#/definitions/EquipmentAttachmentType"
+  /equipmentAttachmentTypes/bulk:
+    post:
+      tags:
+        - EquipmentAttachmentType
+      consumes:
+        - application/json
+      produces:
+        - text/plain
+        - application/json
+        - text/json
+      parameters:
+        - name: items
+          in: body
+          required: true
+          schema:
+            type: array
+            items:
+              $ref: "#/definitions/EquipmentAttachmentType"
+      responses:
+        201:
+          description: EquipmentAttachmentType created
+  /equipmentAttachmentTypes/{id}:
+    get:
+      tags:
+        - EquipmentAttachmentType
+      consumes: []
+      produces:
+        - text/plain
+        - application/json
+        - text/json
+      responses:
+        200:
+          description: OK
+          schema:
+            $ref: "#/definitions/EquipmentAttachmentType"
+        404:
+          description: EquipmentAttachmentType not found
+      parameters:
+        - name: id
+          in: path
+          description: id of EquipmentAttachmentType to fetch
+          required: true
+          type: integer
+    put:
+      tags:
+        - EquipmentAttachmentType
+      consumes:
+        - application/json
+      produces:
+        - text/plain
+        - application/json
+        - text/json
+      responses:
+        200:
+          description: OK
+          schema:
+            $ref: "#/definitions/EquipmentAttachmentType"
+        404:
+          description: EquipmentAttachmentType not found
+      parameters:
+        - name: id
+          in: path
+          description: id of EquipmentAttachmentType to fetch
+          required: true
+          type: integer
+        - name: item
+          in: body
+          required: true
+          schema:
+            $ref: "#/definitions/EquipmentAttachmentType"
+  /equipmentAttachmentTypes/{id}/delete:
+    post:
+      tags:
+        - EquipmentAttachmentType
+      consumes: []
+      produces:
+        - text/plain
+        - application/json
+        - text/json
+      responses:
+        200:
+          description: OK
+        404:
+          description: EquipmentAttachmentType not found
+      parameters:
+        - name: id
+          in: path
+          description: id of EquipmentAttachmentType to delete
+          required: true
+          type: integer
+  /owners:
+    get:
+      tags:
+        - Owner
+      consumes: []
+      produces:
+        - text/plain
+        - application/json
+        - text/json
+      responses:
+        200:
+          description: OK
+          schema:
+            type: array
+            items:
+              $ref: "#/definitions/Owner"
+    post:
+      tags:
+        - Owner
+      consumes:
+        - application/json
+      produces:
+        - text/plain
+        - application/json
+        - text/json
+      parameters:
+        - name: item
+          in: body
+          required: true
+          schema:
+            $ref: "#/definitions/Owner"
+      responses:
+        201:
+          description: Owner created
+          headers:
+            Location:
+              description: A link to the Owner
+              type: string
+              format: url
+          schema:
+            $ref: "#/definitions/Owner"
+  /owners/bulk:
+    post:
+      tags:
+        - Owner
+      consumes:
+        - application/json
+      produces:
+        - text/plain
+        - application/json
+        - text/json
+      parameters:
+        - name: items
+          in: body
+          required: true
+          schema:
+            type: array
+            items:
+              $ref: "#/definitions/Owner"
+      responses:
+        201:
+          description: Owner created
+  /owners/{id}:
+    get:
+      tags:
+        - Owner
+      consumes: []
+      produces:
+        - text/plain
+        - application/json
+        - text/json
+      responses:
+        200:
+          description: OK
+          schema:
+            $ref: "#/definitions/Owner"
+        404:
+          description: Owner not found
+      parameters:
+        - name: id
+          in: path
+          description: id of Owner to fetch
+          required: true
+          type: integer
+    put:
+      tags:
+        - Owner
+      consumes:
+        - application/json
+      produces:
+        - text/plain
+        - application/json
+        - text/json
+      responses:
+        200:
+          description: OK
+          schema:
+            $ref: "#/definitions/Owner"
+        404:
+          description: Owner not found
+      parameters:
+        - name: id
+          in: path
+          description: id of Owner to fetch
+          required: true
+          type: integer
+        - name: item
+          in: body
+          required: true
+          schema:
+            $ref: "#/definitions/Owner"
+  /owners/{id}/delete:
+    post:
+      tags:
+        - Owner
+      consumes: []
+      produces:
+        - text/plain
+        - application/json
+        - text/json
+      responses:
+        200:
+          description: OK
+        404:
+          description: Owner not found
+      parameters:
+        - name: id
+          in: path
+          description: id of Owner to delete
+          required: true
+          type: integer
+  /projects:
+    get:
+      tags:
+        - Project
+      consumes: []
+      produces:
+        - text/plain
+        - application/json
+        - text/json
+      responses:
+        200:
+          description: OK
+          schema:
+            type: array
+            items:
+              $ref: "#/definitions/Project"
+    post:
+      tags:
+        - Project
+      consumes:
+        - application/json
+      produces:
+        - text/plain
+        - application/json
+        - text/json
+      parameters:
+        - name: item
+          in: body
+          required: true
+          schema:
+            $ref: "#/definitions/Project"
+      responses:
+        201:
+          description: Project created
+          headers:
+            Location:
+              description: A link to the Project
+              type: string
+              format: url
+          schema:
+            $ref: "#/definitions/Project"
+  /projects/bulk:
+    post:
+      tags:
+        - Project
+      consumes:
+        - application/json
+      produces:
+        - text/plain
+        - application/json
+        - text/json
+      parameters:
+        - name: items
+          in: body
+          required: true
+          schema:
+            type: array
+            items:
+              $ref: "#/definitions/Project"
+      responses:
+        201:
+          description: Project created
+  /projects/{id}:
+    get:
+      tags:
+        - Project
+      consumes: []
+      produces:
+        - text/plain
+        - application/json
+        - text/json
+      responses:
+        200:
+          description: OK
+          schema:
+            $ref: "#/definitions/Project"
+        404:
+          description: Project not found
+      parameters:
+        - name: id
+          in: path
+          description: id of Project to fetch
+          required: true
+          type: integer
+    put:
+      tags:
+        - Project
+      consumes:
+        - application/json
+      produces:
+        - text/plain
+        - application/json
+        - text/json
+      responses:
+        200:
+          description: OK
+          schema:
+            $ref: "#/definitions/Project"
+        404:
+          description: Project not found
+      parameters:
+        - name: id
+          in: path
+          description: id of Project to fetch
+          required: true
+          type: integer
+        - name: item
+          in: body
+          required: true
+          schema:
+            $ref: "#/definitions/Project"
+  /projects/{id}/delete:
+    post:
+      tags:
+        - Project
+      consumes: []
+      produces:
+        - text/plain
+        - application/json
+        - text/json
+      responses:
+        200:
+          description: OK
+        404:
+          description: Project not found
+      parameters:
+        - name: id
+          in: path
+          description: id of Project to delete
+          required: true
+          type: integer
+  /groups:
+    get:
+      tags:
+        - Group
+      consumes: []
+      produces:
+        - text/plain
+        - application/json
+        - text/json
+      responses:
+        200:
+          description: OK
+          schema:
+            type: array
+            items:
+              $ref: "#/definitions/Group"
+    post:
+      tags:
+        - Group
+      consumes:
+        - application/json
+      produces:
+        - text/plain
+        - application/json
+        - text/json
+      parameters:
+        - name: item
+          in: body
+          required: true
+          schema:
+            $ref: "#/definitions/Group"
+      responses:
+        201:
+          description: Group created
+          headers:
+            Location:
+              description: A link to the Group
+              type: string
+              format: url
+          schema:
+            $ref: "#/definitions/Group"
+  /groups/bulk:
+    post:
+      tags:
+        - Group
+      consumes:
+        - application/json
+      produces:
+        - text/plain
+        - application/json
+        - text/json
+      parameters:
+        - name: items
+          in: body
+          required: true
+          schema:
+            type: array
+            items:
+              $ref: "#/definitions/Group"
+      responses:
+        201:
+          description: Group created
+  /groups/{id}:
+    get:
+      tags:
+        - Group
+      consumes: []
+      produces:
+        - text/plain
+        - application/json
+        - text/json
+      responses:
+        200:
+          description: OK
+          schema:
+            $ref: "#/definitions/Group"
+        404:
+          description: Group not found
+      parameters:
+        - name: id
+          in: path
+          description: id of Group to fetch
+          required: true
+          type: integer
+    put:
+      tags:
+        - Group
+      consumes:
+        - application/json
+      produces:
+        - text/plain
+        - application/json
+        - text/json
+      responses:
+        200:
+          description: OK
+          schema:
+            $ref: "#/definitions/Group"
+        404:
+          description: Group not found
+      parameters:
+        - name: id
+          in: path
+          description: id of Group to fetch
+          required: true
+          type: integer
+        - name: item
+          in: body
+          required: true
+          schema:
+            $ref: "#/definitions/Group"
+  /groups/{id}/delete:
+    post:
+      tags:
+        - Group
+      consumes: []
+      produces:
+        - text/plain
+        - application/json
+        - text/json
+      responses:
+        200:
+          description: OK
+        404:
+          description: Group not found
+      parameters:
+        - name: id
+          in: path
+          description: id of Group to delete
+          required: true
+          type: integer
+  /permissions:
+    get:
+      tags:
+        - Permission
+      consumes: []
+      produces:
+        - text/plain
+        - application/json
+        - text/json
+      responses:
+        200:
+          description: OK
+          schema:
+            type: array
+            items:
+              $ref: "#/definitions/PermissionViewModel"
+    post:
+      tags:
+        - Permission
+      consumes:
+        - application/json
+      produces:
+        - text/plain
+        - application/json
+        - text/json
+      parameters:
+        - name: item
+          in: body
+          required: true
+          schema:
+            $ref: "#/definitions/PermissionViewModel"
+      responses:
+        201:
+          description: Permission created
+          headers:
+            Location:
+              description: A link to the Permission
+              type: string
+              format: url
+          schema:
+            $ref: "#/definitions/PermissionViewModel"
+  /permissions/bulk:
+    post:
+      tags:
+        - Permission
+      consumes:
+        - application/json
+      produces:
+        - text/plain
+        - application/json
+        - text/json
+      parameters:
+        - name: items
+          in: body
+          required: true
+          schema:
+            type: array
+            items:
+              $ref: "#/definitions/PermissionViewModel"
+      responses:
+        201:
+          description: Permission created
+  /permissions/{id}:
+    get:
+      tags:
+        - Permission
+      consumes: []
+      produces:
+        - text/plain
+        - application/json
+        - text/json
+      responses:
+        200:
+          description: OK
+          schema:
+            $ref: "#/definitions/PermissionViewModel"
+        404:
+          description: Permission not found
+      parameters:
+        - name: id
+          in: path
+          description: id of Permission to fetch
+          required: true
+          type: integer
+    put:
+      tags:
+        - Permission
+      consumes:
+        - application/json
+      produces:
+        - text/plain
+        - application/json
+        - text/json
+      responses:
+        200:
+          description: OK
+          schema:
+            $ref: "#/definitions/PermissionViewModel"
+        404:
+          description: Permission not found
+      parameters:
+        - name: id
+          in: path
+          description: id of Permission to fetch
+          required: true
+          type: integer
+        - name: item
+          in: body
+          required: true
+          schema:
+            $ref: "#/definitions/PermissionViewModel"
+  /permissions/{id}/delete:
+    post:
+      tags:
+        - Permission
+      consumes: []
+      produces:
+        - text/plain
+        - application/json
+        - text/json
+      responses:
+        200:
+          description: OK
+        404:
+          description: Permission not found
+      parameters:
+        - name: id
+          in: path
+          description: id of Permission to delete
+          required: true
+          type: integer
+  /roles:
+    get:
+      tags:
+        - Role
+      consumes: []
+      produces:
+        - text/plain
+        - application/json
+        - text/json
+      responses:
+        200:
+          description: OK
+          schema:
+            type: array
+            items:
+              $ref: "#/definitions/RoleViewModel"
+    post:
+      tags:
+        - Role
+      consumes:
+        - application/json
+      produces:
+        - text/plain
+        - application/json
+        - text/json
+      parameters:
+        - name: item
+          in: body
+          required: true
+          schema:
+            $ref: "#/definitions/RoleViewModel"
+      responses:
+        201:
+          description: Role created
+          headers:
+            Location:
+              description: A link to the Role
+              type: string
+              format: url
+          schema:
+            $ref: "#/definitions/RoleViewModel"
+  /roles/bulk:
+    post:
+      tags:
+        - Role
+      consumes:
+        - application/json
+      produces:
+        - text/plain
+        - application/json
+        - text/json
+      parameters:
+        - name: items
+          in: body
+          required: true
+          schema:
+            type: array
+            items:
+              $ref: "#/definitions/RoleViewModel"
+      responses:
+        201:
+          description: Role created
+  /roles/{id}:
+    get:
+      tags:
+        - Role
+      consumes: []
+      produces:
+        - text/plain
+        - application/json
+        - text/json
+      responses:
+        200:
+          description: OK
+          schema:
+            $ref: "#/definitions/RoleViewModel"
+        404:
+          description: Role not found
+      parameters:
+        - name: id
+          in: path
+          description: id of Role to fetch
+          required: true
+          type: integer
+    put:
+      tags:
+        - Role
+      consumes:
+        - application/json
+      produces:
+        - text/plain
+        - application/json
+        - text/json
+      responses:
+        200:
+          description: OK
+          schema:
+            $ref: "#/definitions/RoleViewModel"
+        404:
+          description: Role not found
+      parameters:
+        - name: id
+          in: path
+          description: id of Role to fetch
+          required: true
+          type: integer
+        - name: item
+          in: body
+          required: true
+          schema:
+            $ref: "#/definitions/RoleViewModel"
+  /roles/{id}/delete:
+    post:
+      tags:
+        - Role
+      consumes: []
+      produces:
+        - text/plain
+        - application/json
+        - text/json
+      responses:
+        200:
+          description: OK
+        404:
+          description: Role not found
+      parameters:
+        - name: id
+          in: path
+          description: id of Role to delete
+          required: true
+          type: integer
+
+  /rolepermissions/bulk:
+    post:
+      tags:
+        - Role
+      consumes:
+        - application/json
+      produces:
+        - text/plain
+        - application/json
+        - text/json
+      parameters:
+        - name: items
+          in: body
+          required: true
+          schema:
+            type: array
+            items:
+              $ref: "#/definitions/RolePermission"
+      responses:
+        201:
+          description: Role created
+  /users:
+    get:
+      tags:
+        - User
+      consumes: []
+      produces:
+        - text/plain
+        - application/json
+        - text/json
+      responses:
+        200:
+          description: OK
+          schema:
+            type: array
+            items:
+              $ref: "#/definitions/UserViewModel"
+    post:
+      tags:
+        - User
+      consumes:
+        - application/json
+      produces:
+        - text/plain
+        - application/json
+        - text/json
+      parameters:
+        - name: item
+          in: body
+          required: true
+          schema:
+            $ref: "#/definitions/UserViewModel"
+      responses:
+        201:
+          description: User created
+          headers:
+            Location:
+              description: A link to the User
+              type: string
+              format: url
+          schema:
+            $ref: "#/definitions/UserViewModel"
+  /users/bulk:
+    post:
+      tags:
+        - User
+      consumes:
+        - application/json
+      produces:
+        - text/plain
+        - application/json
+        - text/json
+      parameters:
+        - name: items
+          in: body
+          required: true
+          schema:
+            type: array
+            items:
+              $ref: "#/definitions/UserViewModel"
+      responses:
+        201:
+          description: User created
+  /users/{id}:
+    get:
+      tags:
+        - User
+      consumes: []
+      produces:
+        - text/plain
+        - application/json
+        - text/json
+      responses:
+        200:
+          description: OK
+          schema:
+            $ref: "#/definitions/UserViewModel"
+        404:
+          description: User not found
+      parameters:
+        - name: id
+          in: path
+          description: id of User to fetch
+          required: true
+          type: integer
+    put:
+      tags:
+        - User
+      consumes:
+        - application/json
+      produces:
+        - text/plain
+        - application/json
+        - text/json
+      responses:
+        200:
+          description: OK
+          schema:
+            $ref: "#/definitions/UserViewModel"
+        404:
+          description: User not found
+      parameters:
+        - name: id
+          in: path
+          description: id of User to fetch
+          required: true
+          type: integer
+        - name: item
+          in: body
+          required: true
+          schema:
+            $ref: "#/definitions/UserViewModel"
+  /users/{id}/delete:
+    post:
+      tags:
+        - User
+      consumes: []
+      produces:
+        - text/plain
+        - application/json
+        - text/json
+      responses:
+        200:
+          description: OK
+        404:
+          description: User not found
+      parameters:
+        - name: id
+          in: path
+          description: id of User to delete
+          required: true
+          type: integer
+
+  /usergroups/bulk:
+    post:
+      tags:
+        - User
+      consumes:
+        - application/json
+      produces:
+        - text/plain
+        - application/json
+        - text/json
+      parameters:
+        - name: items
+          in: body
+          required: true
+          schema:
+            type: array
+            items:
+              $ref: "#/definitions/GroupMembership"
+      responses:
+        201:
+          description: User created
+
+  /userroles/bulk:
+    post:
+      tags:
+        - User
+      consumes:
+        - application/json
+      produces:
+        - text/plain
+        - application/json
+        - text/json
+      parameters:
+        - name: items
+          in: body
+          required: true
+          schema:
+            type: array
+            items:
+              $ref: "#/definitions/UserRole"
+      responses:
+        201:
+          description: User created
+  /regions:
+    get:
+      tags:
+        - Region
+      consumes: []
+      produces:
+        - text/plain
+        - application/json
+        - text/json
+      responses:
+        200:
+          description: OK
+          schema:
+            type: array
+            items:
+              $ref: "#/definitions/Region"
+    post:
+      tags:
+        - Region
+      consumes:
+        - application/json
+      produces:
+        - text/plain
+        - application/json
+        - text/json
+      parameters:
+        - name: item
+          in: body
+          required: true
+          schema:
+            $ref: "#/definitions/Region"
+      responses:
+        201:
+          description: Region created
+          headers:
+            Location:
+              description: A link to the Region
+              type: string
+              format: url
+          schema:
+            $ref: "#/definitions/Region"
+  /regions/bulk:
+    post:
+      tags:
+        - Region
+      consumes:
+        - application/json
+      produces:
+        - text/plain
+        - application/json
+        - text/json
+      parameters:
+        - name: items
+          in: body
+          required: true
+          schema:
+            type: array
+            items:
+              $ref: "#/definitions/Region"
+      responses:
+        201:
+          description: Region created
+  /regions/{id}:
+    get:
+      tags:
+        - Region
+      consumes: []
+      produces:
+        - text/plain
+        - application/json
+        - text/json
+      responses:
+        200:
+          description: OK
+          schema:
+            $ref: "#/definitions/Region"
+        404:
+          description: Region not found
+      parameters:
+        - name: id
+          in: path
+          description: id of Region to fetch
+          required: true
+          type: integer
+    put:
+      tags:
+        - Region
+      consumes:
+        - application/json
+      produces:
+        - text/plain
+        - application/json
+        - text/json
+      responses:
+        200:
+          description: OK
+          schema:
+            $ref: "#/definitions/Region"
+        404:
+          description: Region not found
+      parameters:
+        - name: id
+          in: path
+          description: id of Region to fetch
+          required: true
+          type: integer
+        - name: item
+          in: body
+          required: true
+          schema:
+            $ref: "#/definitions/Region"
+  /regions/{id}/delete:
+    post:
+      tags:
+        - Region
+      consumes: []
+      produces:
+        - text/plain
+        - application/json
+        - text/json
+      responses:
+        200:
+          description: OK
+        404:
+          description: Region not found
+      parameters:
+        - name: id
+          in: path
+          description: id of Region to delete
+          required: true
+          type: integer
+  /districts:
+    get:
+      tags:
+        - District
+      consumes: []
+      produces:
+        - text/plain
+        - application/json
+        - text/json
+      responses:
+        200:
+          description: OK
+          schema:
+            type: array
+            items:
+              $ref: "#/definitions/District"
+    post:
+      tags:
+        - District
+      consumes:
+        - application/json
+      produces:
+        - text/plain
+        - application/json
+        - text/json
+      parameters:
+        - name: item
+          in: body
+          required: true
+          schema:
+            $ref: "#/definitions/District"
+      responses:
+        201:
+          description: District created
+          headers:
+            Location:
+              description: A link to the District
+              type: string
+              format: url
+          schema:
+            $ref: "#/definitions/District"
+  /districts/bulk:
+    post:
+      tags:
+        - District
+      consumes:
+        - application/json
+      produces:
+        - text/plain
+        - application/json
+        - text/json
+      parameters:
+        - name: items
+          in: body
+          required: true
+          schema:
+            type: array
+            items:
+              $ref: "#/definitions/District"
+      responses:
+        201:
+          description: District created
+  /districts/{id}:
+    get:
+      tags:
+        - District
+      consumes: []
+      produces:
+        - text/plain
+        - application/json
+        - text/json
+      responses:
+        200:
+          description: OK
+          schema:
+            $ref: "#/definitions/District"
+        404:
+          description: District not found
+      parameters:
+        - name: id
+          in: path
+          description: id of District to fetch
+          required: true
+          type: integer
+    put:
+      tags:
+        - District
+      consumes:
+        - application/json
+      produces:
+        - text/plain
+        - application/json
+        - text/json
+      responses:
+        200:
+          description: OK
+          schema:
+            $ref: "#/definitions/District"
+        404:
+          description: District not found
+      parameters:
+        - name: id
+          in: path
+          description: id of District to fetch
+          required: true
+          type: integer
+        - name: item
+          in: body
+          required: true
+          schema:
+            $ref: "#/definitions/District"
+  /districts/{id}/delete:
+    post:
+      tags:
+        - District
+      consumes: []
+      produces:
+        - text/plain
+        - application/json
+        - text/json
+      responses:
+        200:
+          description: OK
+        404:
+          description: District not found
+      parameters:
+        - name: id
+          in: path
+          description: id of District to delete
+          required: true
+          type: integer
+  /serviceareas:
+    get:
+      tags:
+        - ServiceArea
+      consumes: []
+      produces:
+        - text/plain
+        - application/json
+        - text/json
+      responses:
+        200:
+          description: OK
+          schema:
+            type: array
+            items:
+              $ref: "#/definitions/ServiceArea"
+    post:
+      tags:
+        - ServiceArea
+      consumes:
+        - application/json
+      produces:
+        - text/plain
+        - application/json
+        - text/json
+      parameters:
+        - name: item
+          in: body
+          required: true
+          schema:
+            $ref: "#/definitions/ServiceArea"
+      responses:
+        201:
+          description: ServiceArea created
+          headers:
+            Location:
+              description: A link to the ServiceArea
+              type: string
+              format: url
+          schema:
+            $ref: "#/definitions/ServiceArea"
+  /serviceareas/bulk:
+    post:
+      tags:
+        - ServiceArea
+      consumes:
+        - application/json
+      produces:
+        - text/plain
+        - application/json
+        - text/json
+      parameters:
+        - name: items
+          in: body
+          required: true
+          schema:
+            type: array
+            items:
+              $ref: "#/definitions/ServiceArea"
+      responses:
+        201:
+          description: ServiceArea created
+  /serviceareas/{id}:
+    get:
+      tags:
+        - ServiceArea
+      consumes: []
+      produces:
+        - text/plain
+        - application/json
+        - text/json
+      responses:
+        200:
+          description: OK
+          schema:
+            $ref: "#/definitions/ServiceArea"
+        404:
+          description: ServiceArea not found
+      parameters:
+        - name: id
+          in: path
+          description: id of ServiceArea to fetch
+          required: true
+          type: integer
+    put:
+      tags:
+        - ServiceArea
+      consumes:
+        - application/json
+      produces:
+        - text/plain
+        - application/json
+        - text/json
+      responses:
+        200:
+          description: OK
+          schema:
+            $ref: "#/definitions/ServiceArea"
+        404:
+          description: ServiceArea not found
+      parameters:
+        - name: id
+          in: path
+          description: id of ServiceArea to fetch
+          required: true
+          type: integer
+        - name: item
+          in: body
+          required: true
+          schema:
+            $ref: "#/definitions/ServiceArea"
+  /serviceareas/{id}/delete:
+    post:
+      tags:
+        - ServiceArea
+      consumes: []
+      produces:
+        - text/plain
+        - application/json
+        - text/json
+      responses:
+        200:
+          description: OK
+        404:
+          description: ServiceArea not found
+      parameters:
+        - name: id
+          in: path
+          description: id of ServiceArea to delete
+          required: true
+          type: integer
+  /cities:
+    get:
+      tags:
+        - City
+      consumes: []
+      produces:
+        - text/plain
+        - application/json
+        - text/json
+      responses:
+        200:
+          description: OK
+          schema:
+            type: array
+            items:
+              $ref: "#/definitions/City"
+    post:
+      tags:
+        - City
+      consumes:
+        - application/json
+      produces:
+        - text/plain
+        - application/json
+        - text/json
+      parameters:
+        - name: item
+          in: body
+          required: true
+          schema:
+            $ref: "#/definitions/City"
+      responses:
+        201:
+          description: City created
+          headers:
+            Location:
+              description: A link to the City
+              type: string
+              format: url
+          schema:
+            $ref: "#/definitions/City"
+  /cities/bulk:
+    post:
+      tags:
+        - City
+      consumes:
+        - application/json
+      produces:
+        - text/plain
+        - application/json
+        - text/json
+      parameters:
+        - name: items
+          in: body
+          required: true
+          schema:
+            type: array
+            items:
+              $ref: "#/definitions/City"
+      responses:
+        201:
+          description: City created
+  /cities/{id}:
+    get:
+      tags:
+        - City
+      consumes: []
+      produces:
+        - text/plain
+        - application/json
+        - text/json
+      responses:
+        200:
+          description: OK
+          schema:
+            $ref: "#/definitions/City"
+        404:
+          description: City not found
+      parameters:
+        - name: id
+          in: path
+          description: id of City to fetch
+          required: true
+          type: integer
+    put:
+      tags:
+        - City
+      consumes:
+        - application/json
+      produces:
+        - text/plain
+        - application/json
+        - text/json
+      responses:
+        200:
+          description: OK
+          schema:
+            $ref: "#/definitions/City"
+        404:
+          description: City not found
+      parameters:
+        - name: id
+          in: path
+          description: id of City to fetch
+          required: true
+          type: integer
+        - name: item
+          in: body
+          required: true
+          schema:
+            $ref: "#/definitions/City"
+  /cities/{id}/delete:
+    post:
+      tags:
+        - City
+      consumes: []
+      produces:
+        - text/plain
+        - application/json
+        - text/json
+      responses:
+        200:
+          description: OK
+        404:
+          description: City not found
+      parameters:
+        - name: id
+          in: path
+          description: id of City to delete
+          required: true
+          type: integer
+  /localAreas:
+    get:
+      tags:
+        - LocalArea
+      consumes: []
+      produces:
+        - text/plain
+        - application/json
+        - text/json
+      responses:
+        200:
+          description: OK
+          schema:
+            type: array
+            items:
+              $ref: "#/definitions/LocalArea"
+    post:
+      tags:
+        - LocalArea
+      consumes:
+        - application/json
+      produces:
+        - text/plain
+        - application/json
+        - text/json
+      parameters:
+        - name: item
+          in: body
+          required: true
+          schema:
+            $ref: "#/definitions/LocalArea"
+      responses:
+        201:
+          description: LocalArea created
+          headers:
+            Location:
+              description: A link to the LocalArea
+              type: string
+              format: url
+          schema:
+            $ref: "#/definitions/LocalArea"
+  /localAreas/bulk:
+    post:
+      tags:
+        - LocalArea
+      consumes:
+        - application/json
+      produces:
+        - text/plain
+        - application/json
+        - text/json
+      parameters:
+        - name: items
+          in: body
+          required: true
+          schema:
+            type: array
+            items:
+              $ref: "#/definitions/LocalArea"
+      responses:
+        201:
+          description: LocalArea created
+  /localAreas/{id}:
+    get:
+      tags:
+        - LocalArea
+      consumes: []
+      produces:
+        - text/plain
+        - application/json
+        - text/json
+      responses:
+        200:
+          description: OK
+          schema:
+            $ref: "#/definitions/LocalArea"
+        404:
+          description: LocalArea not found
+      parameters:
+        - name: id
+          in: path
+          description: id of LocalArea to fetch
+          required: true
+          type: integer
+    put:
+      tags:
+        - LocalArea
+      consumes:
+        - application/json
+      produces:
+        - text/plain
+        - application/json
+        - text/json
+      responses:
+        200:
+          description: OK
+          schema:
+            $ref: "#/definitions/LocalArea"
+        404:
+          description: LocalArea not found
+      parameters:
+        - name: id
+          in: path
+          description: id of LocalArea to fetch
+          required: true
+          type: integer
+        - name: item
+          in: body
+          required: true
+          schema:
+            $ref: "#/definitions/LocalArea"
+  /localAreas/{id}/delete:
+    post:
+      tags:
+        - LocalArea
+      consumes: []
+      produces:
+        - text/plain
+        - application/json
+        - text/json
+      responses:
+        200:
+          description: OK
+        404:
+          description: LocalArea not found
+      parameters:
+        - name: id
+          in: path
+          description: id of LocalArea to delete
+          required: true
+          type: integer
+  /favouritecontexttypes:
+    get:
+      description: Returns list of available FavouriteContextTypes
+      tags:
+        - SchoolBusOwner
+      produces:
+        - text/plain
+        - application/json
+        - text/json
+      responses:
+        '200':
+          description: OK
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/FavouriteContextType'
+  /roles/{id}/permissions:
+    get:
+      description: Get all the permissions for a role
+      tags:
+        - Role
+      produces:
+        - text/plain
+        - application/json
+        - text/json
+      parameters:
+        - name: id
+          in: path
+          description: id of Role to fetch
+          required: true
+          type: integer
+      responses:
+        200:
+          description: OK
+          schema:
+            type: array
+            items:
+              $ref: "#/definitions/PermissionViewModel"
+    put:
+      description: Updates the permissions for a role
+      tags:
+        - Role
+      consumes:
+        - application/json
+      produces:
+        - text/plain
+        - application/json
+        - text/json
+      parameters:
+        - name: id
+          in: path
+          description: id of Role to update
+          required: true
+          type: integer
+        - name: items
+          in: body
+          required: true
+          schema:
+            type: array
+            items:
+              $ref: "#/definitions/Permission"
+      responses:
+        200:
+          description: OK
+          schema:
+            type: array
+            items:
+              $ref: "#/definitions/PermissionViewModel"
+        404:
+          description: Role not found
+    post:
+      description: Adds a permissions to a role
+      tags:
+        - Role
+      consumes:
+        - application/json
+      produces:
+        - text/plain
+        - application/json
+        - text/json
+      parameters:
+        - name: id
+          in: path
+          description: id of Role to update
+          required: true
+          type: integer
+        - name: item
+          in: body
+          required: true
+          schema:
+            $ref: "#/definitions/Permission"
+      responses:
+        200:
+          description: OK
+          schema:
+            type: array
+            items:
+              $ref: "#/definitions/PermissionViewModel"
+        404:
+          description: Role not found
+  /roles/{id}/users:
+    get:
+      description: Gets all the users for a role
+      tags:
+        - Role
+      produces:
+        - text/plain
+        - application/json
+        - text/json
+      parameters:
+        - name: id
+          in: path
+          description: id of Role to fetch
+          required: true
+          type: integer
+      responses:
+        200:
+          description: OK
+          schema:
+            type: array
+            items:
+              $ref: "#/definitions/UserRoleViewModel"
+    put:
+      description: Updates the users for a role
+      tags:
+        - Role
+      consumes:
+        - application/json
+      produces:
+        - text/plain
+        - application/json
+        - text/json
+      parameters:
+        - name: id
+          in: path
+          description: id of Role to update
+          required: true
+          type: integer
+        - name: items
+          in: body
+          required: true
+          schema:
+            type: array
+            items:
+              $ref: "#/definitions/UserRoleViewModel"
+      responses:
+        200:
+          description: OK
+          schema:
+            type: array
+            items:
+              $ref: "#/definitions/UserRoleViewModel"
+        404:
+          description: Role not found
+  /users/current:
+    get:
+      description: Get the currently logged in user
+      tags:
+        - CurrentUser
+      produces:
+        - text/plain
+        - application/json
+        - text/json
+      responses:
+        200:
+          description: OK
+          schema:
+            $ref: "#/definitions/CurrentUserViewModel"
+  /users/{id}/roles:
+    get:
+      description: Returns the roles for a user
+      tags:
+        - User
+      produces:
+        - text/plain
+        - application/json
+        - text/json
+      parameters:
+        - name: id
+          in: path
+          description: id of User to fetch
+          required: true
+          type: integer
+      responses:
+        200:
+          description: OK
+          schema:
+            type: array
+            items:
+              $ref: "#/definitions/UserRoleViewModel"
+        404:
+           description: User not found
+    post:
+      description: Adds a role to a user
+      tags:
+        - User
+      consumes:
+        - application/json
+      produces:
+        - text/plain
+        - application/json
+        - text/json
+      parameters:
+        - name: id
+          in: path
+          description: id of User to update
+          required: true
+          type: integer
+        - name: item
+          in: body
+          required: true
+          schema:
+            $ref: "#/definitions/UserRoleViewModel"
+      responses:
+        201:
+          description: Role created for user
+          headers:
+            Location:
+              description: A link to the User Role
+              type: string
+              format: url
+          schema:
+            $ref: "#/definitions/UserRoleViewModel"
+    put:
+      description: Updates the roles for a user
+      tags:
+        - User
+      consumes:
+        - application/json
+      produces:
+        - text/plain
+        - application/json
+        - text/json
+      parameters:
+        - name: id
+          in: path
+          description: id of User to update
+          required: true
+          type: integer
+        - name: items
+          in: body
+          required: true
+          schema:
+            type: array
+            items:
+              $ref: "#/definitions/UserRoleViewModel"
+      responses:
+        200:
+          description: OK
+          schema:
+            type: array
+            items:
+              $ref: "#/definitions/UserRoleViewModel"
+        404:
+          description: User not found
+  /users/{id}/permissions:
+    get:
+      description: Returns the set of permissions for a user
+      tags:
+        - User
+      produces:
+        - text/plain
+        - application/json
+        - text/json
+      parameters:
+        - name: id
+          in: path
+          description: id of User to fetch
+          required: true
+          type: integer
+      responses:
+        200:
+          description: OK
+          schema:
+            type: array
+            items:
+              $ref: "#/definitions/PermissionViewModel"
+        404:
+           description: User not found
+  /users/{id}/groups:
+    get:
+      description: Returns all groups that a user is a member of
+      tags:
+        - User
+      produces:
+        - text/plain
+        - application/json
+        - text/json
+      parameters:
+        - name: id
+          in: path
+          description: id of User to fetch
+          required: true
+          type: integer
+      responses:
+        200:
+          description: OK
+          schema:
+            type: array
+            items:
+              $ref: "#/definitions/GroupMembershipViewModel"
+        404:
+           description: User not found
+    put:
+      description: Updates the active set of groups for a user
+      tags:
+        - User
+      consumes:
+        - application/json
+      produces:
+        - text/plain
+        - application/json
+        - text/json
+      parameters:
+        - name: id
+          in: path
+          description: id of User to update
+          required: true
+          type: integer
+        - name: items
+          in: body
+          required: true
+          schema:
+            type: array
+            items:
+              $ref: "#/definitions/GroupMembership"
+      responses:
+        200:
+          description: OK
+          schema:
+            type: array
+            items:
+              $ref: "#/definitions/GroupMembershipViewModel"
+        404:
+          description: User not found
+    post:
+      description: Add to the active set of groups for a user
+      tags:
+        - User
+      consumes:
+        - application/json
+      produces:
+        - text/plain
+        - application/json
+        - text/json
+      parameters:
+        - name: id
+          in: path
+          description: id of User to update
+          required: true
+          type: integer
+        - name: items
+          in: body
+          required: true
+          schema:
+            type: array
+            items:
+              $ref: "#/definitions/GroupMembership"
+      responses:
+        200:
+          description: OK
+          schema:
+            type: array
+            items:
+              $ref: "#/definitions/GroupMembershipViewModel"
+        404:
+          description: User not found
+  /users/{id}/favourites:
+    get:
+      description: Returns a user's favourites of a given context type
+      tags:
+        - User
+      produces:
+        - text/plain
+        - application/json
+        - text/json
+      responses:
+        '200':
+          description: OK
+          schema:
+            type: array
+            items:
+              $ref: "#/definitions/UserFavouriteViewModel"
+        "404":
+           description: User not found
+      parameters:
+        - name: id
+          in: path
+          description: id of User to fetch favorites for
+          required: true
+          type: integer
+  /regions/{id}/districts:
+    get:
+      description: Returns the districts for a specific region
+      tags:
+        - Region
+      produces:
+        - text/plain
+        - application/json
+        - text/json
+      responses:
+        '200':
+          description: OK
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/District'
+      parameters:
+        - name: id
+          in: path
+          description: id of Region for which to fetch the Districts
+          required: true
+          type: integer
+  /districts/{id}/serviceareas:
+    get:
+      description: Returns the Service Areas for a specific region
+      tags:
+        - District
+      produces:
+        - text/plain
+        - application/json
+        - text/json
+      responses:
+        '200':
+          description: OK
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/ServiceArea'
+      parameters:
+        - name: id
+          in: path
+          description: id of District for which to fetch the ServiceAreas
+          required: true
+          type: integer
+definitions:
+  Project:
+    type: object
+    required:
+      - id
+    properties:
+      id:
+        format: int32
+        type: integer
+        description: Primary Key
+      serviceArea:
+        $ref: '#/definitions/ServiceArea'
+      projectNum:
+        type: string
+      jobDesc1:
+        type: string
+      jobDesc2:
+        type: string
+      requests:
+        type: array
+        items:
+          $ref: '#/definitions/Request'
+      primaryContact:
+        $ref: '#/definitions/Contact'
+        description: Link to the designated Primary Contact.
+      contacts:
+        type: array
+        items:
+          $ref: '#/definitions/Contact'
+      notes:
+        type: array
+        items:
+          $ref: '#/definitions/Note'
+      attachments:
+        type: array
+        items:
+          $ref: '#/definitions/Attachment'
+      history:
+        type: array
+        items:
+          $ref: '#/definitions/History'
+  Request:
+    type: object
+    required:
+      - id
+    properties:
+      id:
+        format: int32
+        type: integer
+        description: Primary Key
+      project:
+        $ref: '#/definitions/Project'
+      localArea:
+        $ref: '#/definitions/LocalArea'
+      equipmentType:
+        $ref: '#/definitions/EquipmentType'
+      equipmentCount:
+        format: int32
+        type: integer
+      expectedHours:
+        format: int32
+        type: integer
+      expectedStartDate:
+        type: string
+        format: date-time
+      expectedEndDate:
+        type: string
+        format: date-time
+      rotationList:
+        $ref: '#/definitions/RotationList'
+      hireOffers:
+        type: array
+        items:
+          $ref: '#/definitions/HireOffer'
+      notes:
+        type: array
+        items:
+          $ref: '#/definitions/Note'
+      attachments:
+        type: array
+        items:
+          $ref: '#/definitions/Attachment'
+      history:
+        type: array
+        items:
+          $ref: '#/definitions/History'
+  RotationList:
+    type: object
+    required:
+      - id
+    properties:
+      id:
+        format: int32
+        type: integer
+        description: Primary Key
+      localArea:
+        $ref: '#/definitions/LocalArea'
+      equipmentType:
+        $ref: '#/definitions/EquipmentType'
+      blocks:
+        type: array
+        items:
+          $ref: '#/definitions/RotationListBlock'
+  RotationListBlock:
+    type: object
+    required:
+      - id
+    properties:
+      id:
+        format: int32
+        type: integer
+        description: Primary Key
+      rotationList:
+        $ref: '#/definitions/RotationList'
+      blockNum:
+        format: int32
+        type: integer
+        description: The block number. 1 for Primary, 2 for Secondary, 3 for Open
+      cycleNum:
+        type: number
+        format: float
+      maxCycle:
+        type: number
+        format: float
+      lastHiredEquipment:
+        $ref: '#/definitions/Equipment'
+      startCycleEquipment:
+        $ref: '#/definitions/Equipment'
+      moved:
+        type: string
+      startWasZero:
+        type: string
+      rotatedBlock:
+        format: int32
+        type: integer
+      blockName:
+        type: string
+      closed:
+        type: string
+      closedComments:
+        type: string
+      closedDate:
+        type: string
+        format: date-time
+      closedBy:
+        type: string
+      reservedDate:
+        type: string
+        format: date-time
+      reservedBy:
+        type: string
+  HireOffer:
+    type: object
+    required:
+      - id
+    properties:
+      id:
+        format: int32
+        type: integer
+        description: Primary Key
+      request:
+        $ref: '#/definitions/Request'
+      equipment:
+        $ref: '#/definitions/Equipment'
+      rentalAgreement:
+        $ref: '#/definitions/RentalAgreement'
+        description: The rental agreement created for this hire offer. Available only if status code is Yes
+      isForceHire:
+        type: boolean
+      asked:
+        type: boolean
+      askedDate:
+        type: string
+        format: date-time
+      acceptedOffer:
+        type: boolean
+        description: The response about the equipment. Either a No (move to next on the list) or Yes (move to on to the Rental Agreement)
+      refuseReason:
+        type: string
+      note:
+        type: string
+      equipmentVerifiedActive:
+        type: boolean
+      flagEquipmentUpdate:
+        type: boolean
+      equipmentUpdateReason:
+        type: string
+  RentalAgreement:
+    type: object
+    required:
+      - id
+    properties:
+      id:
+        format: int32
+        type: integer
+        description: Primary Key
+      equipment:
+        $ref: '#/definitions/Equipment'
+      project:
+        $ref: '#/definitions/Project'
+      timeRecords:
+        type: array
+        items:
+          $ref: '#/definitions/TimeRecord'
+  TimeRecord:
+    type: object
+    required:
+      - id
+    properties:
+      id:
+        format: int32
+        type: integer
+        description: Primary Key
+      rentalAgreement:
+        $ref: '#/definitions/RentalAgreement'
+      workedDate:
+        type: string
+        format: date-time
+      enteredDate:
+        type: string
+        format: date-time
+      hours:
+        type: number
+        format: float
+      rate:
+        type: number
+        format: float
+      hours2:
+        type: number
+        format: float
+      rate2:
+        type: number
+        format: float
+      hours3:
+        type: number
+        format: float
+      rate3:
+        type: number
+        format: float
+  Equipment:
+    type: object
+    required:
+      - id
+    properties:
+      id:
+        format: int32
+        type: integer
+        description: Primary Key
+      localArea:
+        $ref: '#/definitions/LocalArea'
+      equipmentType:
+        $ref: '#/definitions/EquipmentType'
+      dumpTruckDetails:
+        $ref: '#/definitions/DumpTruck'
+      owner:
+        $ref: '#/definitions/Owner'
+      equipCd:
+        type: string
+      approval:
+        type: string
+      approvedDate:
+        type: string
+        format: date-time
+      receivedDate:
+        type: string
+        format: date-time
+      addressLine1:
+        type: string
+        description: Address 1 line of the address.
+      addressLine2:
+        type: string
+        description: Address 2 line of the address.
+      addressLine3:
+        type: string
+        description: Address 3 line of the address.
+      addressLine4:
+        type: string
+        description: Address 4 line of the address.
+      city:
+        type: string
+      postal:
+        type: string
+      blockNumber:
+        type: number
+        format: float
+      comment:
+        type: string
+      cycleHrsWrk:
+        type: number
+        format: float
+      frozenOut:
+        type: string
+      lastDate:
+        type: string
+      licence:
+        type: string
+      make:
+        type: string
+      model:
+        type: string
+      year:
+        type: string
+      type:
+        type: string
+      numYears:
+        type: number
+        format: float
+      operator:
+        type: string
+      payRate:
+        type: number
+        format: float
+      refuseRate:
+        type: string
+      seniority:
+        type: number
+        format: float
+      serialNum:
+        type: string
+      size:
+        type: string
+      toDate:
+        type: string
+        format: date-time
+      working:
+        type: string
+      yearEndReg:
+        type: string
+      prevRegArea:
+        type: string
+      YTD:
+        type: number
+        format: float
+      YTD1:
+        type: number
+        format: float
+      YTD2:
+        type: number
+        format: float
+      YTD3:
+        type: number
+        format: float
+      statusCd:
+        type: string
+      archiveCd:
+        type: string
+      archiveReason:
+        type: string
+      archiveDate:
+        type: string
+        format: date-time
+      draftBlockNum:
+        type: number
+        format: float
+      regDumpTruck:
+        type: string
+      equipmentAttachments:
+        type: array
+        items:
+          $ref: '#/definitions/EquipmentAttachment'
+      notes:
+        type: array
+        items:
+          $ref: '#/definitions/Note'
+      attachments:
+        type: array
+        items:
+          $ref: '#/definitions/Attachment'
+      history:
+        type: array
+        items:
+          $ref: '#/definitions/History'
+      seniorityAudit:
+        type: array
+        items:
+          $ref: '#/definitions/SeniorityAudit'
+  DumpTruck:
+    type: object
+    required:
+      - id
+    properties:
+      id:
+        format: int32
+        type: integer
+        description: Primary Key
+      singleAxle:
+        type: string
+      tandemAxle:
+        type: string
+      PUP:
+        type: string
+      bellyDump:
+        type: string
+      tridem:
+        type: string
+      rockBox:
+        type: string
+      hiliftGate:
+        type: string
+      waterTruck:
+        type: string
+      sealCoatHitch:
+        type: string
+      rearAxleSpacing:
+        type: string
+      frontTireSize:
+        type: string
+      frontTireUOM:
+        type: string
+      frontAxleCapacity:
+        type: string
+      rearAxleCapacity:
+        type: string
+      legalLoad:
+        type: string
+      legalCapacity:
+        type: string
+      legalPUPTareWeight:
+        type: string
+      licencedGVW:
+        type: string
+      licencedGVWUOM:
+        type: string
+      licencedTareWeight:
+        type: string
+      licencedPUPTareWeight:
+        type: string
+      licencedLoad:
+        type: string
+      licencedCapacity:
+        type: string
+      boxLength:
+        type: string
+      boxWidth:
+        type: string
+      boxHeight:
+        type: string
+      boxCapacity:
+        type: string
+      trailerBoxLength:
+        type: string
+      trailerBoxWidth:
+        type: string
+      trailerBoxHeight:
+        type: string
+      trailerBoxCapacity:
+        type: string
+  EquipmentAttachment:
+    type: object
+    required:
+      - id
+    properties:
+      id:
+        format: int32
+        type: integer
+        description: Primary Key
+      equipment:
+        $ref: '#/definitions/Equipment'
+      type:
+        $ref: '#/definitions/EquipmentAttachmentType'
+        description: The type of the equipment attachment.
+      seqNum:
+        format: int32
+        type: integer
+      description:
+        type: string
+  EquipmentType:
+    type: object
+    required:
+      - id
+    properties:
+      id:
+        format: int32
+        type: integer
+        description: Primary Key
+      localArea:
+        $ref: '#/definitions/LocalArea'
+      code:
+        type: string
+      description:
+        type: string
+      equipRentalRateNo:
+        type: number
+        format: float
+      equipRentalRatePage:
+        type: number
+        format: float
+      maxHours:
+        type: number
+        format: float
+      extendHours:
+        type: number
+        format: float
+      maxHoursSub:
+        type: number
+        format: float
+      secondBlk:
+        type: string
+  EquipmentAttachmentType:
+    type: object
+    required:
+      - id
+    properties:
+      id:
+        format: int32
+        type: integer
+        description: Primary Key
+      code:
+        type: string
+      description:
+        type: string
+  SeniorityAudit:
+    type: object
+    required:
+      - id
+    properties:
+      id:
+        format: int32
+        type: integer
+        description: Primary Key
+      generatedTime:
+        type: string
+        format: date-time
+      localArea:
+        $ref: '#/definitions/LocalArea'
+      equipment:
+        $ref: '#/definitions/Equipment'
+      blockNum:
+        type: number
+        format: float
+      equipCd:
+        type: string
+      owner:
+        $ref: '#/definitions/Owner'
+      ownerName:
+        type: string
+      seniority:
+        type: number
+        format: float
+      YTD:
+        type: number
+        format: float
+      YTD1:
+        type: number
+        format: float
+      YTD2:
+        type: number
+        format: float
+      YTD3:
+        type: number
+        format: float
+      cycleHrsWrk:
+        type: number
+        format: float
+      frozenOut:
+        type: string
+      project:
+        $ref: '#/definitions/Project'
+      working:
+        type: string
+      yearEndReg:
+        type: string
+  Owner:
+    type: object
+    required:
+      - id
+    properties:
+      id:
+        format: int32
+        type: integer
+        description: Primary Key
+      ownerCd:
+        type: string
+      ownerFirstName:
+        type: string
+      ownerLastName:
+        type: string
+      contactPerson:
+        type: string
+      localToArea:
+        type: string
+      maintenanceContractor:
+        type: string
+      comment:
+        type: string
+      WCBNum:
+        format: int32
+        type: integer
+      WCBExpiryDate:
+        type: string
+        format: date-time
+      CGLCompany:
+        type: string
+      CGLPolicy:
+        type: string
+      CGLStartDate:
+        type: string
+        format: date-time
+      CGLEndDate:
+        type: string
+        format: date-time
+      statusCd:
+        type: string
+      archiveCd:
+        type: string
+      archiveReason:
+        type: string
+      localArea:
+        $ref: '#/definitions/LocalArea'
+      primaryContact:
+        $ref: '#/definitions/Contact'
+        description: Link to the designated Primary Contact.
+      contacts:
+        type: array
+        items:
+          $ref: '#/definitions/Contact'
+      notes:
+        type: array
+        items:
+          $ref: '#/definitions/Note'
+      attachments:
+        type: array
+        items:
+          $ref: '#/definitions/Attachment'
+      history:
+        type: array
+        items:
+          $ref: '#/definitions/History'
+      equipmentList:
+        type: array
+        items:
+          $ref: '#/definitions/Equipment'
+  Contact:
+    type: object
+    required:
+      - id
+    properties:
+      id:
+        format: int32
+        type: integer
+        description: Primary Key
+      givenName:
+        type: string
+        description: The given name of the contact.
+      surname:
+        type: string
+        description: The surname of the contact.
+      role:
+        type: string
+        description: The role of the contact. UI controlled as to whether it is free form or selected from an enumerated list.
+      notes:
+        type: string
+        description: Notes about the contact.
+      phones:
+        type: array
+        items:
+          $ref: '#/definitions/ContactPhone'
+      addresses:
+        type: array
+        items:
+          $ref: '#/definitions/ContactAddress'
+  ContactPhone:
+    type: object
+    required:
+      - id
+    properties:
+      id:
+        format: int32
+        type: integer
+        description: Primary Key
+      type:
+        type: string
+        description: The type of the phone number. UI controlled as to whether it is free form or selected from an enumerated list.
+      phoneNumber:
+        type: string
+        description: The phone number of the contact. Entered as free form to support a range of formats.
+  ContactAddress:
+    type: object
+    required:
+      - id
+    properties:
+      id:
+        format: int32
+        type: integer
+        description: Primary Key
+      type:
+        type: string
+        description: The type of the address. UI controlled as to whether it is free form or selected from an enumerated list.
+      addressLine1:
+        type: string
+        description: Address 1 line of the address.
+      addressLine2:
+        type: string
+        description: Address 2 line of the address.
+      city:
+        type: string
+        description: The City of the address.
+      province:
+        type: string
+        description: The Province of the address.
+      postalCode:
+        type: string
+        description: The postal code of the address.
+  Note:
+    type: object
+    description: Notes entered by users.
+    required:
+      - id
+    properties:
+      id:
+        format: int32
+        type: integer
+        description: Primary Key
+      note:
+        type: string
+        description: The contents of the note.
+      isNoLongerRelevant:
+        type: boolean
+        description: A user set flag that the note is no longer relevant. Allows the note to be retained for historical reasons, but identified to the user as no longer relevant.
+  Attachment:
+    type: object
+    description: Attachments uploaded by users. Attachments are stored in the file system, with rows in this table pointing to the file system location of the attachment.
+    required:
+      - id
+    properties:
+      id:
+        format: int32
+        type: integer
+        description: Primary Key
+      internalFileName:
+        type: string
+        description: The physical location of the attachment on the file system.
+      externalFileName:
+        type: string
+        description: The name of the attachment as defined by the user in uploading the document.
+      description:
+        type: string
+        description: A note about the attachment,  optionally maintained by the user.
+  History:
+    type: object
+    description: The history of updates made to a record. Exact format of the history TBD.
+    required:
+      - id
+    properties:
+      id:
+        format: int32
+        type: integer
+        description: Primary Key
+      historyText:
+        type: string
+        description: The text of the history entry tracked against the related entity.
+      createdDate:
+        type: string
+        format: date-time
+        description: Date the record is created.
+  LocalArea:
+    type: object
+    required:
+      - id
+    properties:
+      id:
+        format: int32
+        type: integer
+        description: Primary Key
+      name:
+        type: string
+        description: The full name of the Local Area
+      serviceArea:
+        $ref: '#/definitions/ServiceArea'
+        description: The Service Area in which the Local Area is found.
+  FavouriteContextType:
+    type: object
+    description: The name for a place in the UI where per user settings can be stored - for example, the School Bus search screen, School Bus Owner search screen, etc.
+    required:
+      - id
+    properties:
+      id:
+        format: int32
+        type: integer
+        description: Primary Key
+      name:
+        type: string
+        description: Context Name known by the UI.
+  UserFavourite:
+    type: object
+    description: User specific settings for a specific location in the UI. The location and saved settings are internally defined by the UI.
+    required:
+      - id
+    properties:
+      id:
+        format: int32
+        type: integer
+        description: Primary Key
+      name:
+        type: string
+        description: The user-defined name for the recorded settings. Allows the user to save different groups of settings and access each one easily when needed.
+      value:
+        type: string
+        description: The settings saved by the user. In general,  a UI defined chunk of json that stores the settings in place when the user created the favourite.
+      isDefault:
+        type: boolean
+        description: True if this Favourite is the default for this Context Type. On first access to a context in a session the default favourite for the context it is invoked. If there is no default favourite,  a system-wide default is invoked. On return to the context within a session,  the last parameters used are reapplied.
+      favouriteContextType:
+        $ref: '#/definitions/FavouriteContextType'
+  Region:
+    type: object
+    required:
+      - id
+    properties:
+      id:
+        format: int32
+        type: integer
+        description: Primary Key
+      ministryRegionID:
+        format: int32
+        type: integer
+        description: The Ministry ID for the Region
+      name:
+        type: string
+        description: The name of the Region
+      startDate:
+        type: string
+        format: date-time
+        description: The effective date of the Region - NOT CURRENTLY ENFORCED
+      endDate:
+        type: string
+        format: date-time
+        description: The end date of the Region; null if active - NOT CURRENTLY ENFORCED
+  District:
+    type: object
+    required:
+      - id
+    properties:
+      id:
+        format: int32
+        type: integer
+        description: Primary Key
+      ministryDistrictID:
+        format: int32
+        type: integer
+        description: The Ministry ID for the District
+      name:
+        type: string
+        description: The name of the District
+      region:
+        $ref: '#/definitions/Region'
+        description: The region in which the District is found.
+      startDate:
+        type: string
+        format: date-time
+        description: The effective date of the District ID - NOT CURRENTLY ENFORCED
+      endDate:
+        type: string
+        format: date-time
+        description: The end date of the District; null if active - NOT CURRENTLY ENFORCED
+  ServiceArea:
+    type: object
+    required:
+      - id
+    properties:
+      id:
+        format: int32
+        type: integer
+        description: Primary Key
+      ministryServiceAreaID:
+        format: int32
+        type: integer
+        description: The Ministry ID for the Service Area
+      name:
+        type: string
+        description: The name of the Service Area
+      district:
+        $ref: '#/definitions/District'
+        description: The district in which the Service Area is found.
+      startDate:
+        type: string
+        format: date-time
+        description: The effective date of the Service Area - NOT CURRENTLY ENFORCED
+      endDate:
+        type: string
+        format: date-time
+        description: The end date of the Service Area; null if active - NOT CURRENTLY ENFORCED
+  City:
+    type: object
+    description: A list of cities in BC. Authoritative source to be determined.
+    required:
+      - id
+    properties:
+      id:
+        format: int32
+        type: integer
+        description: Primary Key
+      name:
+        type: string
+        description: The name of the City
+  User:
+    type: object
+    description: Information about the users of the system.
+    required:
+      - id
+      - active
+    properties:
+      id:
+        format: int32
+        type: integer
+        description: Primary Key
+      givenName:
+        type: string
+      surname:
+        type: string
+      initials:
+        type: string
+      email:
+        type: string
+      active:
+        type: boolean
+      smUserId:
+        type: string
+        description: Security Manager User ID
+      guid:
+        type: string
+      smAuthorizationDirectory:
+        type: string
+      userRoles:
+        type: array
+        items:
+          $ref: '#/definitions/UserRole'
+      groupMemberships:
+        type: array
+        items:
+          $ref: '#/definitions/GroupMembership'
+  UserRole:
+    type: object
+    required:
+      - id
+      - effectiveDate
+    properties:
+      id:
+        format: int32
+        type: integer
+        description: Primary Key
+      effectiveDate:
+        type: string
+        format: date-time
+      expiryDate:
+        type: string
+        format: date-time
+      user:
+        $ref: '#/definitions/User'
+      role:
+        $ref: '#/definitions/Role'
+  Role:
+    type: object
+    required:
+      - id
+      - name
+      - description
+    properties:
+      id:
+        format: int32
+        type: integer
+        description: Primary Key
+      name:
+        type: string
+      description:
+        type: string
+      rolePermissions:
+        type: array
+        items:
+          $ref: '#/definitions/RolePermission'
+      userRoles:
+        type: array
+        items:
+          $ref: '#/definitions/UserRole'
+  RolePermission:
+    type: object
+    required:
+      - id
+    properties:
+      id:
+        format: int32
+        type: integer
+        description: Primary Key
+      role:
+        $ref: '#/definitions/Role'
+      permission:
+        $ref: '#/definitions/Permission'
+  Permission:
+    type: object
+    required:
+      - id
+      - code
+      - name
+      - description
+    properties:
+      id:
+        format: int32
+        type: integer
+        description: Primary Key
+      code:
+        type: string
+      name:
+        type: string
+      description:
+        type: string
+  GroupMembership:
+    type: object
+    required:
+      - id
+      - active
+    properties:
+      id:
+        format: int32
+        type: integer
+        description: Primary Key
+      active:
+        type: boolean
+      group:
+        $ref: '#/definitions/Group'
+      user:
+        $ref: '#/definitions/User'
+  Group:
+    type: object
+    required:
+      - id
+      - name
+      - description
+    properties:
+      id:
+        format: int32
+        type: integer
+        description: Primary Key
+      name:
+        type: string
+      description:
+        type: string
+  UserViewModel:
+    type: object
+    x-codegen-viewmodel: true
+    required:
+      - id
+      - active
+    properties:
+      id:
+        format: int32
+        type: integer
+        x-type-options:
+          min: 1
+          max: 1000
+      givenName:
+        type: string
+        x-chance-type: name
+      surname:
+        type: string
+        x-chance-type: name
+      initials:
+        type: string
+      email:
+        type: string
+        x-chance-type: email
+      active:
+        type: boolean
+  CurrentUserViewModel:
+    type: object
+    x-codegen-viewmodel: true
+    properties:
+      givenName:
+        type: string
+        x-chance-type: name
+      surname:
+        type: string
+        x-chance-type: name
+      fullName:
+        type: string
+      districtName:
+        type: string
+      overdueInspections:
+        format: int32
+        type: integer
+      scheduledInspections:
+        format: int32
+        type: integer
+      dueNextMonthInspections:
+        format: int32
+        type: integer
+  UserDetailsViewModel:
+    type: object
+    x-codegen-viewmodel: true
+    required:
+      - id
+      - active
+    properties:
+      id:
+        format: int32
+        type: integer
+        x-type-options:
+          min: 1
+          max: 1000
+      givenName:
+        type: string
+        x-chance-type: name
+      surname:
+        type: string
+        x-chance-type: name
+      initials:
+        type: string
+      email:
+        type: string
+        x-chance-type: email
+      active:
+        type: boolean
+      permissions:
+        type: array
+        items:
+          $ref: '#/definitions/PermissionViewModel'
+  UserRoleViewModel:
+    type: object
+    x-codegen-viewmodel: true
+    required:
+      - effectiveDate
+      - userId
+      - roleId
+    properties:
+      id:
+        format: int32
+        type: integer
+        x-type-options:
+          min: 1
+          max: 1000
+      effectiveDate:
+        type: string
+        format: date-time
+      expiryDate:
+        type: string
+        format: date-time
+      userId:
+        format: int32
+        type: integer
+        x-type-options:
+          min: 1
+          max: 1000
+      roleId:
+        format: int32
+        type: integer
+        x-type-options:
+          min: 1
+          max: 1000
+  RoleViewModel:
+    type: object
+    x-codegen-viewmodel: true
+    required:
+      - id
+      - name
+      - description
+    properties:
+      id:
+        format: int32
+        type: integer
+        x-type-options:
+          min: 1
+          max: 1000
+      name:
+        type: string
+        x-chance-type: name
+      description:
+        type: string
+        x-chance-type: sentence
+  RolePermissionViewModel:
+    type: object
+    x-codegen-viewmodel: true
+    required:
+      - roleId
+      - permissionId
+    properties:
+      id:
+        format: int32
+        type: integer
+        x-type-options:
+          min: 1
+          max: 1000
+      roleId:
+        format: int32
+        type: integer
+        x-type-options:
+          min: 1
+          max: 1000
+      permissionId:
+        format: int32
+        type: integer
+        x-type-options:
+          min: 1
+          max: 1000
+  PermissionViewModel:
+    type: object
+    x-codegen-viewmodel: true
+    required:
+      - code
+      - name
+      - description
+    properties:
+      code:
+        type: string
+      name:
+        type: string
+        x-chance-type: name
+      description:
+        type: string
+        x-chance-type: sentence
+  GroupMembershipViewModel:
+    type: object
+    x-codegen-viewmodel: true
+    required:
+      - active
+      - userId
+      - groupId
+    properties:
+      id:
+        format: int32
+        type: integer
+        x-type-options:
+          min: 1
+          max: 1000
+      active:
+        type: boolean
+      groupId:
+        format: int32
+        type: integer
+        x-type-options:
+          min: 1
+          max: 1000
+      userId:
+        format: int32
+        type: integer
+        x-type-options:
+          min: 1
+          max: 1000
+  GroupViewModel:
+    type: object
+    x-codegen-viewmodel: true
+    required:
+      - name
+      - description
+    properties:
+      id:
+        format: int32
+        type: integer
+        x-type-options:
+          min: 1
+          max: 1000
+      name:
+        type: string
+        x-chance-type: name
+      description:
+        type: string
+        x-chance-type: sentence
+  UserFavouriteViewModel:
+    type: object
+    x-codegen-viewmodel: true
+    properties:
+      id:
+        format: int32
+        type: integer
+        x-type-options:
+          min: 1
+          max: 1000
+      name:
+        type: string
+        description:  Context Name
+        x-chance-type: name
+      value:
+        type: string
+        description:  Saved search
+        x-chance-type: word
+      isDefault:
+        type: boolean
+      favouriteContextTypeId:
+        format: int32
+        type: integer
+        x-type-options:
+          min: 1
+          max: 1000
+  NotificationViewModel:
+    type: object
+    x-codegen-viewmodel: true
+    properties:
+      id:
+          format: int32
+          type: integer
+          x-type-options:
+            min: 1
+            max: 1000
+      eventId:
+          format: int32
+          type: integer
+          x-type-options:
+            min: 1
+            max: 1000
+      event2Id:
+          format: int32
+          type: integer
+          x-type-options:
+            min: 1
+            max: 1000
+      hasBeenViewed:
+        type: boolean
+      isWatchNotification:
+        type: boolean
+      isExpired:
+        type: boolean
+      isAllDay:
+        type: boolean
+      priorityCode:
+        type: string
+      userId:
+          format: int32
+          type: integer
+          x-type-options:
+            min: 1
+            max: 1000
+
+securityDefinitions: {}

@@ -1,0 +1,1900 @@
+  /equipment:
+    get:
+      tags:
+        - Equipment
+      consumes: []
+      produces:
+        - text/plain
+        - application/json
+        - text/json
+      responses:
+        200:
+          description: OK
+          schema:
+            type: array
+            items:
+              $ref: "#/definitions/Equipment"
+    post:
+      tags:
+        - Equipment
+      consumes:
+        - application/json
+      produces:
+        - text/plain
+        - application/json
+        - text/json
+      parameters:
+        - name: item
+          in: body
+          required: true
+          schema:
+            $ref: "#/definitions/Equipment"
+      responses:
+        201:
+          description: Equipment created
+          headers:
+            Location:
+              description: A link to the Equipment
+              type: string
+              format: url
+          schema:
+            $ref: "#/definitions/Equipment"
+  /equipment/bulk:
+    post:
+      tags:
+        - Equipment
+      consumes:
+        - application/json
+      produces:
+        - text/plain
+        - application/json
+        - text/json
+      parameters:
+        - name: items
+          in: body
+          required: true
+          schema:
+            type: array
+            items:
+              $ref: "#/definitions/Equipment"
+      responses:
+        201:
+          description: Equipment created
+  /equipment/{id}:
+    get:
+      tags:
+        - Equipment
+      consumes: []
+      produces:
+        - text/plain
+        - application/json
+        - text/json
+      responses:
+        200:
+          description: OK
+          schema:
+            $ref: "#/definitions/Equipment"
+        404:
+          description: Equipment not found
+      parameters:
+        - name: id
+          in: path
+          description: id of Equipment to fetch
+          required: true
+          type: integer
+    put:
+      tags:
+        - Equipment
+      consumes:
+        - application/json
+      produces:
+        - text/plain
+        - application/json
+        - text/json
+      responses:
+        200:
+          description: OK
+          schema:
+            $ref: "#/definitions/Equipment"
+        404:
+          description: Equipment not found
+      parameters:
+        - name: id
+          in: path
+          description: id of Equipment to fetch
+          required: true
+          type: integer
+        - name: item
+          in: body
+          required: true
+          schema:
+            $ref: "#/definitions/Equipment"
+  /equipment/{id}/delete:
+    post:
+      tags:
+        - Equipment
+      consumes: []
+      produces:
+        - text/plain
+        - application/json
+        - text/json
+      responses:
+        200:
+          description: OK
+        404:
+          description: Equipment not found
+      parameters:
+        - name: id
+          in: path
+          description: id of Equipment to delete
+          required: true
+          type: integer
+  /equipmentTypes:
+    get:
+      tags:
+        - EquipmentType
+      consumes: []
+      produces:
+        - text/plain
+        - application/json
+        - text/json
+      responses:
+        200:
+          description: OK
+          schema:
+            type: array
+            items:
+              $ref: "#/definitions/EquipmentType"
+    post:
+      tags:
+        - EquipmentType
+      consumes:
+        - application/json
+      produces:
+        - text/plain
+        - application/json
+        - text/json
+      parameters:
+        - name: item
+          in: body
+          required: true
+          schema:
+            $ref: "#/definitions/EquipmentType"
+      responses:
+        201:
+          description: EquipmentType created
+          headers:
+            Location:
+              description: A link to the EquipmentType
+              type: string
+              format: url
+          schema:
+            $ref: "#/definitions/EquipmentType"
+  /equipmentTypes/bulk:
+    post:
+      tags:
+        - EquipmentType
+      consumes:
+        - application/json
+      produces:
+        - text/plain
+        - application/json
+        - text/json
+      parameters:
+        - name: items
+          in: body
+          required: true
+          schema:
+            type: array
+            items:
+              $ref: "#/definitions/EquipmentType"
+      responses:
+        201:
+          description: EquipmentType created
+  /equipmentTypes/{id}:
+    get:
+      tags:
+        - EquipmentType
+      consumes: []
+      produces:
+        - text/plain
+        - application/json
+        - text/json
+      responses:
+        200:
+          description: OK
+          schema:
+            $ref: "#/definitions/EquipmentType"
+        404:
+          description: EquipmentType not found
+      parameters:
+        - name: id
+          in: path
+          description: id of EquipmentType to fetch
+          required: true
+          type: integer
+    put:
+      tags:
+        - EquipmentType
+      consumes:
+        - application/json
+      produces:
+        - text/plain
+        - application/json
+        - text/json
+      responses:
+        200:
+          description: OK
+          schema:
+            $ref: "#/definitions/EquipmentType"
+        404:
+          description: EquipmentType not found
+      parameters:
+        - name: id
+          in: path
+          description: id of EquipmentType to fetch
+          required: true
+          type: integer
+        - name: item
+          in: body
+          required: true
+          schema:
+            $ref: "#/definitions/EquipmentType"
+  /equipmentTypes/{id}/delete:
+    post:
+      tags:
+        - EquipmentType
+      consumes: []
+      produces:
+        - text/plain
+        - application/json
+        - text/json
+      responses:
+        200:
+          description: OK
+        404:
+          description: EquipmentType not found
+      parameters:
+        - name: id
+          in: path
+          description: id of EquipmentType to delete
+          required: true
+          type: integer
+  /equipmentAttachmentTypes:
+    get:
+      tags:
+        - EquipmentAttachmentType
+      consumes: []
+      produces:
+        - text/plain
+        - application/json
+        - text/json
+      responses:
+        200:
+          description: OK
+          schema:
+            type: array
+            items:
+              $ref: "#/definitions/EquipmentAttachmentType"
+    post:
+      tags:
+        - EquipmentAttachmentType
+      consumes:
+        - application/json
+      produces:
+        - text/plain
+        - application/json
+        - text/json
+      parameters:
+        - name: item
+          in: body
+          required: true
+          schema:
+            $ref: "#/definitions/EquipmentAttachmentType"
+      responses:
+        201:
+          description: EquipmentAttachmentType created
+          headers:
+            Location:
+              description: A link to the EquipmentAttachmentType
+              type: string
+              format: url
+          schema:
+            $ref: "#/definitions/EquipmentAttachmentType"
+  /equipmentAttachmentTypes/bulk:
+    post:
+      tags:
+        - EquipmentAttachmentType
+      consumes:
+        - application/json
+      produces:
+        - text/plain
+        - application/json
+        - text/json
+      parameters:
+        - name: items
+          in: body
+          required: true
+          schema:
+            type: array
+            items:
+              $ref: "#/definitions/EquipmentAttachmentType"
+      responses:
+        201:
+          description: EquipmentAttachmentType created
+  /equipmentAttachmentTypes/{id}:
+    get:
+      tags:
+        - EquipmentAttachmentType
+      consumes: []
+      produces:
+        - text/plain
+        - application/json
+        - text/json
+      responses:
+        200:
+          description: OK
+          schema:
+            $ref: "#/definitions/EquipmentAttachmentType"
+        404:
+          description: EquipmentAttachmentType not found
+      parameters:
+        - name: id
+          in: path
+          description: id of EquipmentAttachmentType to fetch
+          required: true
+          type: integer
+    put:
+      tags:
+        - EquipmentAttachmentType
+      consumes:
+        - application/json
+      produces:
+        - text/plain
+        - application/json
+        - text/json
+      responses:
+        200:
+          description: OK
+          schema:
+            $ref: "#/definitions/EquipmentAttachmentType"
+        404:
+          description: EquipmentAttachmentType not found
+      parameters:
+        - name: id
+          in: path
+          description: id of EquipmentAttachmentType to fetch
+          required: true
+          type: integer
+        - name: item
+          in: body
+          required: true
+          schema:
+            $ref: "#/definitions/EquipmentAttachmentType"
+  /equipmentAttachmentTypes/{id}/delete:
+    post:
+      tags:
+        - EquipmentAttachmentType
+      consumes: []
+      produces:
+        - text/plain
+        - application/json
+        - text/json
+      responses:
+        200:
+          description: OK
+        404:
+          description: EquipmentAttachmentType not found
+      parameters:
+        - name: id
+          in: path
+          description: id of EquipmentAttachmentType to delete
+          required: true
+          type: integer
+  /owners:
+    get:
+      tags:
+        - Owner
+      consumes: []
+      produces:
+        - text/plain
+        - application/json
+        - text/json
+      responses:
+        200:
+          description: OK
+          schema:
+            type: array
+            items:
+              $ref: "#/definitions/Owner"
+    post:
+      tags:
+        - Owner
+      consumes:
+        - application/json
+      produces:
+        - text/plain
+        - application/json
+        - text/json
+      parameters:
+        - name: item
+          in: body
+          required: true
+          schema:
+            $ref: "#/definitions/Owner"
+      responses:
+        201:
+          description: Owner created
+          headers:
+            Location:
+              description: A link to the Owner
+              type: string
+              format: url
+          schema:
+            $ref: "#/definitions/Owner"
+  /owners/bulk:
+    post:
+      tags:
+        - Owner
+      consumes:
+        - application/json
+      produces:
+        - text/plain
+        - application/json
+        - text/json
+      parameters:
+        - name: items
+          in: body
+          required: true
+          schema:
+            type: array
+            items:
+              $ref: "#/definitions/Owner"
+      responses:
+        201:
+          description: Owner created
+  /owners/{id}:
+    get:
+      tags:
+        - Owner
+      consumes: []
+      produces:
+        - text/plain
+        - application/json
+        - text/json
+      responses:
+        200:
+          description: OK
+          schema:
+            $ref: "#/definitions/Owner"
+        404:
+          description: Owner not found
+      parameters:
+        - name: id
+          in: path
+          description: id of Owner to fetch
+          required: true
+          type: integer
+    put:
+      tags:
+        - Owner
+      consumes:
+        - application/json
+      produces:
+        - text/plain
+        - application/json
+        - text/json
+      responses:
+        200:
+          description: OK
+          schema:
+            $ref: "#/definitions/Owner"
+        404:
+          description: Owner not found
+      parameters:
+        - name: id
+          in: path
+          description: id of Owner to fetch
+          required: true
+          type: integer
+        - name: item
+          in: body
+          required: true
+          schema:
+            $ref: "#/definitions/Owner"
+  /owners/{id}/delete:
+    post:
+      tags:
+        - Owner
+      consumes: []
+      produces:
+        - text/plain
+        - application/json
+        - text/json
+      responses:
+        200:
+          description: OK
+        404:
+          description: Owner not found
+      parameters:
+        - name: id
+          in: path
+          description: id of Owner to delete
+          required: true
+          type: integer
+  /projects:
+    get:
+      tags:
+        - Project
+      consumes: []
+      produces:
+        - text/plain
+        - application/json
+        - text/json
+      responses:
+        200:
+          description: OK
+          schema:
+            type: array
+            items:
+              $ref: "#/definitions/Project"
+    post:
+      tags:
+        - Project
+      consumes:
+        - application/json
+      produces:
+        - text/plain
+        - application/json
+        - text/json
+      parameters:
+        - name: item
+          in: body
+          required: true
+          schema:
+            $ref: "#/definitions/Project"
+      responses:
+        201:
+          description: Project created
+          headers:
+            Location:
+              description: A link to the Project
+              type: string
+              format: url
+          schema:
+            $ref: "#/definitions/Project"
+  /projects/bulk:
+    post:
+      tags:
+        - Project
+      consumes:
+        - application/json
+      produces:
+        - text/plain
+        - application/json
+        - text/json
+      parameters:
+        - name: items
+          in: body
+          required: true
+          schema:
+            type: array
+            items:
+              $ref: "#/definitions/Project"
+      responses:
+        201:
+          description: Project created
+  /projects/{id}:
+    get:
+      tags:
+        - Project
+      consumes: []
+      produces:
+        - text/plain
+        - application/json
+        - text/json
+      responses:
+        200:
+          description: OK
+          schema:
+            $ref: "#/definitions/Project"
+        404:
+          description: Project not found
+      parameters:
+        - name: id
+          in: path
+          description: id of Project to fetch
+          required: true
+          type: integer
+    put:
+      tags:
+        - Project
+      consumes:
+        - application/json
+      produces:
+        - text/plain
+        - application/json
+        - text/json
+      responses:
+        200:
+          description: OK
+          schema:
+            $ref: "#/definitions/Project"
+        404:
+          description: Project not found
+      parameters:
+        - name: id
+          in: path
+          description: id of Project to fetch
+          required: true
+          type: integer
+        - name: item
+          in: body
+          required: true
+          schema:
+            $ref: "#/definitions/Project"
+  /projects/{id}/delete:
+    post:
+      tags:
+        - Project
+      consumes: []
+      produces:
+        - text/plain
+        - application/json
+        - text/json
+      responses:
+        200:
+          description: OK
+        404:
+          description: Project not found
+      parameters:
+        - name: id
+          in: path
+          description: id of Project to delete
+          required: true
+          type: integer
+  /groups:
+    get:
+      tags:
+        - Group
+      consumes: []
+      produces:
+        - text/plain
+        - application/json
+        - text/json
+      responses:
+        200:
+          description: OK
+          schema:
+            type: array
+            items:
+              $ref: "#/definitions/Group"
+    post:
+      tags:
+        - Group
+      consumes:
+        - application/json
+      produces:
+        - text/plain
+        - application/json
+        - text/json
+      parameters:
+        - name: item
+          in: body
+          required: true
+          schema:
+            $ref: "#/definitions/Group"
+      responses:
+        201:
+          description: Group created
+          headers:
+            Location:
+              description: A link to the Group
+              type: string
+              format: url
+          schema:
+            $ref: "#/definitions/Group"
+  /groups/bulk:
+    post:
+      tags:
+        - Group
+      consumes:
+        - application/json
+      produces:
+        - text/plain
+        - application/json
+        - text/json
+      parameters:
+        - name: items
+          in: body
+          required: true
+          schema:
+            type: array
+            items:
+              $ref: "#/definitions/Group"
+      responses:
+        201:
+          description: Group created
+  /groups/{id}:
+    get:
+      tags:
+        - Group
+      consumes: []
+      produces:
+        - text/plain
+        - application/json
+        - text/json
+      responses:
+        200:
+          description: OK
+          schema:
+            $ref: "#/definitions/Group"
+        404:
+          description: Group not found
+      parameters:
+        - name: id
+          in: path
+          description: id of Group to fetch
+          required: true
+          type: integer
+    put:
+      tags:
+        - Group
+      consumes:
+        - application/json
+      produces:
+        - text/plain
+        - application/json
+        - text/json
+      responses:
+        200:
+          description: OK
+          schema:
+            $ref: "#/definitions/Group"
+        404:
+          description: Group not found
+      parameters:
+        - name: id
+          in: path
+          description: id of Group to fetch
+          required: true
+          type: integer
+        - name: item
+          in: body
+          required: true
+          schema:
+            $ref: "#/definitions/Group"
+  /groups/{id}/delete:
+    post:
+      tags:
+        - Group
+      consumes: []
+      produces:
+        - text/plain
+        - application/json
+        - text/json
+      responses:
+        200:
+          description: OK
+        404:
+          description: Group not found
+      parameters:
+        - name: id
+          in: path
+          description: id of Group to delete
+          required: true
+          type: integer
+  /permissions:
+    get:
+      tags:
+        - Permission
+      consumes: []
+      produces:
+        - text/plain
+        - application/json
+        - text/json
+      responses:
+        200:
+          description: OK
+          schema:
+            type: array
+            items:
+              $ref: "#/definitions/PermissionViewModel"
+    post:
+      tags:
+        - Permission
+      consumes:
+        - application/json
+      produces:
+        - text/plain
+        - application/json
+        - text/json
+      parameters:
+        - name: item
+          in: body
+          required: true
+          schema:
+            $ref: "#/definitions/PermissionViewModel"
+      responses:
+        201:
+          description: Permission created
+          headers:
+            Location:
+              description: A link to the Permission
+              type: string
+              format: url
+          schema:
+            $ref: "#/definitions/PermissionViewModel"
+  /permissions/bulk:
+    post:
+      tags:
+        - Permission
+      consumes:
+        - application/json
+      produces:
+        - text/plain
+        - application/json
+        - text/json
+      parameters:
+        - name: items
+          in: body
+          required: true
+          schema:
+            type: array
+            items:
+              $ref: "#/definitions/PermissionViewModel"
+      responses:
+        201:
+          description: Permission created
+  /permissions/{id}:
+    get:
+      tags:
+        - Permission
+      consumes: []
+      produces:
+        - text/plain
+        - application/json
+        - text/json
+      responses:
+        200:
+          description: OK
+          schema:
+            $ref: "#/definitions/PermissionViewModel"
+        404:
+          description: Permission not found
+      parameters:
+        - name: id
+          in: path
+          description: id of Permission to fetch
+          required: true
+          type: integer
+    put:
+      tags:
+        - Permission
+      consumes:
+        - application/json
+      produces:
+        - text/plain
+        - application/json
+        - text/json
+      responses:
+        200:
+          description: OK
+          schema:
+            $ref: "#/definitions/PermissionViewModel"
+        404:
+          description: Permission not found
+      parameters:
+        - name: id
+          in: path
+          description: id of Permission to fetch
+          required: true
+          type: integer
+        - name: item
+          in: body
+          required: true
+          schema:
+            $ref: "#/definitions/PermissionViewModel"
+  /permissions/{id}/delete:
+    post:
+      tags:
+        - Permission
+      consumes: []
+      produces:
+        - text/plain
+        - application/json
+        - text/json
+      responses:
+        200:
+          description: OK
+        404:
+          description: Permission not found
+      parameters:
+        - name: id
+          in: path
+          description: id of Permission to delete
+          required: true
+          type: integer
+  /roles:
+    get:
+      tags:
+        - Role
+      consumes: []
+      produces:
+        - text/plain
+        - application/json
+        - text/json
+      responses:
+        200:
+          description: OK
+          schema:
+            type: array
+            items:
+              $ref: "#/definitions/RoleViewModel"
+    post:
+      tags:
+        - Role
+      consumes:
+        - application/json
+      produces:
+        - text/plain
+        - application/json
+        - text/json
+      parameters:
+        - name: item
+          in: body
+          required: true
+          schema:
+            $ref: "#/definitions/RoleViewModel"
+      responses:
+        201:
+          description: Role created
+          headers:
+            Location:
+              description: A link to the Role
+              type: string
+              format: url
+          schema:
+            $ref: "#/definitions/RoleViewModel"
+  /roles/bulk:
+    post:
+      tags:
+        - Role
+      consumes:
+        - application/json
+      produces:
+        - text/plain
+        - application/json
+        - text/json
+      parameters:
+        - name: items
+          in: body
+          required: true
+          schema:
+            type: array
+            items:
+              $ref: "#/definitions/RoleViewModel"
+      responses:
+        201:
+          description: Role created
+  /roles/{id}:
+    get:
+      tags:
+        - Role
+      consumes: []
+      produces:
+        - text/plain
+        - application/json
+        - text/json
+      responses:
+        200:
+          description: OK
+          schema:
+            $ref: "#/definitions/RoleViewModel"
+        404:
+          description: Role not found
+      parameters:
+        - name: id
+          in: path
+          description: id of Role to fetch
+          required: true
+          type: integer
+    put:
+      tags:
+        - Role
+      consumes:
+        - application/json
+      produces:
+        - text/plain
+        - application/json
+        - text/json
+      responses:
+        200:
+          description: OK
+          schema:
+            $ref: "#/definitions/RoleViewModel"
+        404:
+          description: Role not found
+      parameters:
+        - name: id
+          in: path
+          description: id of Role to fetch
+          required: true
+          type: integer
+        - name: item
+          in: body
+          required: true
+          schema:
+            $ref: "#/definitions/RoleViewModel"
+  /roles/{id}/delete:
+    post:
+      tags:
+        - Role
+      consumes: []
+      produces:
+        - text/plain
+        - application/json
+        - text/json
+      responses:
+        200:
+          description: OK
+        404:
+          description: Role not found
+      parameters:
+        - name: id
+          in: path
+          description: id of Role to delete
+          required: true
+          type: integer
+
+  /rolepermissions/bulk:
+    post:
+      tags:
+        - Role
+      consumes:
+        - application/json
+      produces:
+        - text/plain
+        - application/json
+        - text/json
+      parameters:
+        - name: items
+          in: body
+          required: true
+          schema:
+            type: array
+            items:
+              $ref: "#/definitions/RolePermission"
+      responses:
+        201:
+          description: Role created
+  /users:
+    get:
+      tags:
+        - User
+      consumes: []
+      produces:
+        - text/plain
+        - application/json
+        - text/json
+      responses:
+        200:
+          description: OK
+          schema:
+            type: array
+            items:
+              $ref: "#/definitions/UserViewModel"
+    post:
+      tags:
+        - User
+      consumes:
+        - application/json
+      produces:
+        - text/plain
+        - application/json
+        - text/json
+      parameters:
+        - name: item
+          in: body
+          required: true
+          schema:
+            $ref: "#/definitions/UserViewModel"
+      responses:
+        201:
+          description: User created
+          headers:
+            Location:
+              description: A link to the User
+              type: string
+              format: url
+          schema:
+            $ref: "#/definitions/UserViewModel"
+  /users/bulk:
+    post:
+      tags:
+        - User
+      consumes:
+        - application/json
+      produces:
+        - text/plain
+        - application/json
+        - text/json
+      parameters:
+        - name: items
+          in: body
+          required: true
+          schema:
+            type: array
+            items:
+              $ref: "#/definitions/UserViewModel"
+      responses:
+        201:
+          description: User created
+  /users/{id}:
+    get:
+      tags:
+        - User
+      consumes: []
+      produces:
+        - text/plain
+        - application/json
+        - text/json
+      responses:
+        200:
+          description: OK
+          schema:
+            $ref: "#/definitions/UserViewModel"
+        404:
+          description: User not found
+      parameters:
+        - name: id
+          in: path
+          description: id of User to fetch
+          required: true
+          type: integer
+    put:
+      tags:
+        - User
+      consumes:
+        - application/json
+      produces:
+        - text/plain
+        - application/json
+        - text/json
+      responses:
+        200:
+          description: OK
+          schema:
+            $ref: "#/definitions/UserViewModel"
+        404:
+          description: User not found
+      parameters:
+        - name: id
+          in: path
+          description: id of User to fetch
+          required: true
+          type: integer
+        - name: item
+          in: body
+          required: true
+          schema:
+            $ref: "#/definitions/UserViewModel"
+  /users/{id}/delete:
+    post:
+      tags:
+        - User
+      consumes: []
+      produces:
+        - text/plain
+        - application/json
+        - text/json
+      responses:
+        200:
+          description: OK
+        404:
+          description: User not found
+      parameters:
+        - name: id
+          in: path
+          description: id of User to delete
+          required: true
+          type: integer
+
+  /usergroups/bulk:
+    post:
+      tags:
+        - User
+      consumes:
+        - application/json
+      produces:
+        - text/plain
+        - application/json
+        - text/json
+      parameters:
+        - name: items
+          in: body
+          required: true
+          schema:
+            type: array
+            items:
+              $ref: "#/definitions/GroupMembership"
+      responses:
+        201:
+          description: User created
+
+  /userroles/bulk:
+    post:
+      tags:
+        - User
+      consumes:
+        - application/json
+      produces:
+        - text/plain
+        - application/json
+        - text/json
+      parameters:
+        - name: items
+          in: body
+          required: true
+          schema:
+            type: array
+            items:
+              $ref: "#/definitions/UserRole"
+      responses:
+        201:
+          description: User created
+  /regions:
+    get:
+      tags:
+        - Region
+      consumes: []
+      produces:
+        - text/plain
+        - application/json
+        - text/json
+      responses:
+        200:
+          description: OK
+          schema:
+            type: array
+            items:
+              $ref: "#/definitions/Region"
+    post:
+      tags:
+        - Region
+      consumes:
+        - application/json
+      produces:
+        - text/plain
+        - application/json
+        - text/json
+      parameters:
+        - name: item
+          in: body
+          required: true
+          schema:
+            $ref: "#/definitions/Region"
+      responses:
+        201:
+          description: Region created
+          headers:
+            Location:
+              description: A link to the Region
+              type: string
+              format: url
+          schema:
+            $ref: "#/definitions/Region"
+  /regions/bulk:
+    post:
+      tags:
+        - Region
+      consumes:
+        - application/json
+      produces:
+        - text/plain
+        - application/json
+        - text/json
+      parameters:
+        - name: items
+          in: body
+          required: true
+          schema:
+            type: array
+            items:
+              $ref: "#/definitions/Region"
+      responses:
+        201:
+          description: Region created
+  /regions/{id}:
+    get:
+      tags:
+        - Region
+      consumes: []
+      produces:
+        - text/plain
+        - application/json
+        - text/json
+      responses:
+        200:
+          description: OK
+          schema:
+            $ref: "#/definitions/Region"
+        404:
+          description: Region not found
+      parameters:
+        - name: id
+          in: path
+          description: id of Region to fetch
+          required: true
+          type: integer
+    put:
+      tags:
+        - Region
+      consumes:
+        - application/json
+      produces:
+        - text/plain
+        - application/json
+        - text/json
+      responses:
+        200:
+          description: OK
+          schema:
+            $ref: "#/definitions/Region"
+        404:
+          description: Region not found
+      parameters:
+        - name: id
+          in: path
+          description: id of Region to fetch
+          required: true
+          type: integer
+        - name: item
+          in: body
+          required: true
+          schema:
+            $ref: "#/definitions/Region"
+  /regions/{id}/delete:
+    post:
+      tags:
+        - Region
+      consumes: []
+      produces:
+        - text/plain
+        - application/json
+        - text/json
+      responses:
+        200:
+          description: OK
+        404:
+          description: Region not found
+      parameters:
+        - name: id
+          in: path
+          description: id of Region to delete
+          required: true
+          type: integer
+  /districts:
+    get:
+      tags:
+        - District
+      consumes: []
+      produces:
+        - text/plain
+        - application/json
+        - text/json
+      responses:
+        200:
+          description: OK
+          schema:
+            type: array
+            items:
+              $ref: "#/definitions/District"
+    post:
+      tags:
+        - District
+      consumes:
+        - application/json
+      produces:
+        - text/plain
+        - application/json
+        - text/json
+      parameters:
+        - name: item
+          in: body
+          required: true
+          schema:
+            $ref: "#/definitions/District"
+      responses:
+        201:
+          description: District created
+          headers:
+            Location:
+              description: A link to the District
+              type: string
+              format: url
+          schema:
+            $ref: "#/definitions/District"
+  /districts/bulk:
+    post:
+      tags:
+        - District
+      consumes:
+        - application/json
+      produces:
+        - text/plain
+        - application/json
+        - text/json
+      parameters:
+        - name: items
+          in: body
+          required: true
+          schema:
+            type: array
+            items:
+              $ref: "#/definitions/District"
+      responses:
+        201:
+          description: District created
+  /districts/{id}:
+    get:
+      tags:
+        - District
+      consumes: []
+      produces:
+        - text/plain
+        - application/json
+        - text/json
+      responses:
+        200:
+          description: OK
+          schema:
+            $ref: "#/definitions/District"
+        404:
+          description: District not found
+      parameters:
+        - name: id
+          in: path
+          description: id of District to fetch
+          required: true
+          type: integer
+    put:
+      tags:
+        - District
+      consumes:
+        - application/json
+      produces:
+        - text/plain
+        - application/json
+        - text/json
+      responses:
+        200:
+          description: OK
+          schema:
+            $ref: "#/definitions/District"
+        404:
+          description: District not found
+      parameters:
+        - name: id
+          in: path
+          description: id of District to fetch
+          required: true
+          type: integer
+        - name: item
+          in: body
+          required: true
+          schema:
+            $ref: "#/definitions/District"
+  /districts/{id}/delete:
+    post:
+      tags:
+        - District
+      consumes: []
+      produces:
+        - text/plain
+        - application/json
+        - text/json
+      responses:
+        200:
+          description: OK
+        404:
+          description: District not found
+      parameters:
+        - name: id
+          in: path
+          description: id of District to delete
+          required: true
+          type: integer
+  /serviceareas:
+    get:
+      tags:
+        - ServiceArea
+      consumes: []
+      produces:
+        - text/plain
+        - application/json
+        - text/json
+      responses:
+        200:
+          description: OK
+          schema:
+            type: array
+            items:
+              $ref: "#/definitions/ServiceArea"
+    post:
+      tags:
+        - ServiceArea
+      consumes:
+        - application/json
+      produces:
+        - text/plain
+        - application/json
+        - text/json
+      parameters:
+        - name: item
+          in: body
+          required: true
+          schema:
+            $ref: "#/definitions/ServiceArea"
+      responses:
+        201:
+          description: ServiceArea created
+          headers:
+            Location:
+              description: A link to the ServiceArea
+              type: string
+              format: url
+          schema:
+            $ref: "#/definitions/ServiceArea"
+  /serviceareas/bulk:
+    post:
+      tags:
+        - ServiceArea
+      consumes:
+        - application/json
+      produces:
+        - text/plain
+        - application/json
+        - text/json
+      parameters:
+        - name: items
+          in: body
+          required: true
+          schema:
+            type: array
+            items:
+              $ref: "#/definitions/ServiceArea"
+      responses:
+        201:
+          description: ServiceArea created
+  /serviceareas/{id}:
+    get:
+      tags:
+        - ServiceArea
+      consumes: []
+      produces:
+        - text/plain
+        - application/json
+        - text/json
+      responses:
+        200:
+          description: OK
+          schema:
+            $ref: "#/definitions/ServiceArea"
+        404:
+          description: ServiceArea not found
+      parameters:
+        - name: id
+          in: path
+          description: id of ServiceArea to fetch
+          required: true
+          type: integer
+    put:
+      tags:
+        - ServiceArea
+      consumes:
+        - application/json
+      produces:
+        - text/plain
+        - application/json
+        - text/json
+      responses:
+        200:
+          description: OK
+          schema:
+            $ref: "#/definitions/ServiceArea"
+        404:
+          description: ServiceArea not found
+      parameters:
+        - name: id
+          in: path
+          description: id of ServiceArea to fetch
+          required: true
+          type: integer
+        - name: item
+          in: body
+          required: true
+          schema:
+            $ref: "#/definitions/ServiceArea"
+  /serviceareas/{id}/delete:
+    post:
+      tags:
+        - ServiceArea
+      consumes: []
+      produces:
+        - text/plain
+        - application/json
+        - text/json
+      responses:
+        200:
+          description: OK
+        404:
+          description: ServiceArea not found
+      parameters:
+        - name: id
+          in: path
+          description: id of ServiceArea to delete
+          required: true
+          type: integer
+  /cities:
+    get:
+      tags:
+        - City
+      consumes: []
+      produces:
+        - text/plain
+        - application/json
+        - text/json
+      responses:
+        200:
+          description: OK
+          schema:
+            type: array
+            items:
+              $ref: "#/definitions/City"
+    post:
+      tags:
+        - City
+      consumes:
+        - application/json
+      produces:
+        - text/plain
+        - application/json
+        - text/json
+      parameters:
+        - name: item
+          in: body
+          required: true
+          schema:
+            $ref: "#/definitions/City"
+      responses:
+        201:
+          description: City created
+          headers:
+            Location:
+              description: A link to the City
+              type: string
+              format: url
+          schema:
+            $ref: "#/definitions/City"
+  /cities/bulk:
+    post:
+      tags:
+        - City
+      consumes:
+        - application/json
+      produces:
+        - text/plain
+        - application/json
+        - text/json
+      parameters:
+        - name: items
+          in: body
+          required: true
+          schema:
+            type: array
+            items:
+              $ref: "#/definitions/City"
+      responses:
+        201:
+          description: City created
+  /cities/{id}:
+    get:
+      tags:
+        - City
+      consumes: []
+      produces:
+        - text/plain
+        - application/json
+        - text/json
+      responses:
+        200:
+          description: OK
+          schema:
+            $ref: "#/definitions/City"
+        404:
+          description: City not found
+      parameters:
+        - name: id
+          in: path
+          description: id of City to fetch
+          required: true
+          type: integer
+    put:
+      tags:
+        - City
+      consumes:
+        - application/json
+      produces:
+        - text/plain
+        - application/json
+        - text/json
+      responses:
+        200:
+          description: OK
+          schema:
+            $ref: "#/definitions/City"
+        404:
+          description: City not found
+      parameters:
+        - name: id
+          in: path
+          description: id of City to fetch
+          required: true
+          type: integer
+        - name: item
+          in: body
+          required: true
+          schema:
+            $ref: "#/definitions/City"
+  /cities/{id}/delete:
+    post:
+      tags:
+        - City
+      consumes: []
+      produces:
+        - text/plain
+        - application/json
+        - text/json
+      responses:
+        200:
+          description: OK
+        404:
+          description: City not found
+      parameters:
+        - name: id
+          in: path
+          description: id of City to delete
+          required: true
+          type: integer
+  /localAreas:
+    get:
+      tags:
+        - LocalArea
+      consumes: []
+      produces:
+        - text/plain
+        - application/json
+        - text/json
+      responses:
+        200:
+          description: OK
+          schema:
+            type: array
+            items:
+              $ref: "#/definitions/LocalArea"
+    post:
+      tags:
+        - LocalArea
+      consumes:
+        - application/json
+      produces:
+        - text/plain
+        - application/json
+        - text/json
+      parameters:
+        - name: item
+          in: body
+          required: true
+          schema:
+            $ref: "#/definitions/LocalArea"
+      responses:
+        201:
+          description: LocalArea created
+          headers:
+            Location:
+              description: A link to the LocalArea
+              type: string
+              format: url
+          schema:
+            $ref: "#/definitions/LocalArea"
+  /localAreas/bulk:
+    post:
+      tags:
+        - LocalArea
+      consumes:
+        - application/json
+      produces:
+        - text/plain
+        - application/json
+        - text/json
+      parameters:
+        - name: items
+          in: body
+          required: true
+          schema:
+            type: array
+            items:
+              $ref: "#/definitions/LocalArea"
+      responses:
+        201:
+          description: LocalArea created
+  /localAreas/{id}:
+    get:
+      tags:
+        - LocalArea
+      consumes: []
+      produces:
+        - text/plain
+        - application/json
+        - text/json
+      responses:
+        200:
+          description: OK
+          schema:
+            $ref: "#/definitions/LocalArea"
+        404:
+          description: LocalArea not found
+      parameters:
+        - name: id
+          in: path
+          description: id of LocalArea to fetch
+          required: true
+          type: integer
+    put:
+      tags:
+        - LocalArea
+      consumes:
+        - application/json
+      produces:
+        - text/plain
+        - application/json
+        - text/json
+      responses:
+        200:
+          description: OK
+          schema:
+            $ref: "#/definitions/LocalArea"
+        404:
+          description: LocalArea not found
+      parameters:
+        - name: id
+          in: path
+          description: id of LocalArea to fetch
+          required: true
+          type: integer
+        - name: item
+          in: body
+          required: true
+          schema:
+            $ref: "#/definitions/LocalArea"
+  /localAreas/{id}/delete:
+    post:
+      tags:
+        - LocalArea
+      consumes: []
+      produces:
+        - text/plain
+        - application/json
+        - text/json
+      responses:
+        200:
+          description: OK
+        404:
+          description: LocalArea not found
+      parameters:
+        - name: id
+          in: path
+          description: id of LocalArea to delete
+          required: true
+          type: integer
