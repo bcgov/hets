@@ -1,8 +1,8 @@
 {
   "title": "Swagger UI",
   "version": "1.0.0-*",
-  "copyright": "SchoolBusAPI",
-  "description": "SchoolBusAPI",
+  "copyright": "",
+  "description": "",
   
   "dependencies": {
     "Microsoft.AspNetCore.Antiforgery": "1.1.0",

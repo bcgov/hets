@@ -1,7 +1,7 @@
 /*
- * REST API Documentation for Schoolbus
+ * REST API Documentation for the MOTI Hired Equipment Tracking System (HETS) Application
  *
- * API Sample
+ * The Hired Equipment Program is for owners/operators who have a dump truck, bulldozer, backhoe or  other piece of equipment they want to hire out to the transportation ministry for day labour and  emergency projects.  The Hired Equipment Program distributes available work to local equipment owners. The program is  based on seniority and is designed to deliver work to registered users fairly and efficiently  through the development of local area call-out lists. 
  *
  * OpenAPI spec version: v1
  * 
@@ -54,7 +54,6 @@ namespace HETSAPI
         public void ConfigureServices(IServiceCollection services)
         {
             // Add database context
-            // - Pattern should be using Configuration.GetConnectionString("Schoolbus") directly; see GetConnectionString for more details.
             services.AddDbContext<DbAppContext>(options =>
                 options.UseNpgsql(GetConnectionString()));
 
@@ -74,8 +73,8 @@ namespace HETSAPI
                 options.SingleApiVersion(new Info
                 {
                     Version = "v1",
-                    Title = "SchoolBusAPI",
-                    Description = "SchoolBusAPI (ASP.NET Core 1.0.1)"
+                    Title = "HETS REST API",
+                    Description = "Hired Equipment Tracking System"
                 });
 
                 options.DescribeAllEnumsAsStrings();
@@ -92,7 +91,6 @@ namespace HETSAPI
         // ToDo:
         // - Replace the individual environment variables with one that naturally works with the configuration provider and how connection strings work.
         // -- For instance:
-        // --- ConnectionStrings:Schoolbus or ConnectionStrings__Schoolbus
         // -- This way the configuration provider is performing all of the lifting and the connection string can be retrieved in a single consistent manner.
         private string GetConnectionString()
         {
@@ -106,7 +104,7 @@ namespace HETSAPI
             if(string.IsNullOrEmpty(host) || string.IsNullOrEmpty(username) || string.IsNullOrEmpty(password) || string.IsNullOrEmpty(database))
             {
                 // When things get cleaned up properly, this is the only call we'll have to make.
-                connectionString = Configuration.GetConnectionString("Schoolbus");
+                connectionString = Configuration.GetConnectionString("ConnectionString");
             }
             else
             {

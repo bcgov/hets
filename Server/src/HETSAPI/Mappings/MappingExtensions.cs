@@ -94,20 +94,6 @@ namespace HETSAPI.Mappings
             dto.Id = model.Id;
             return dto;
         }
-
-        public static NotificationViewModel ToViewModel(this Notification model)
-        {
-            var dto = new NotificationViewModel();
-            dto.Event2Id = model.Event2.Id;
-            dto.EventId = model.Event.Id;
-            dto.HasBeenViewed = model.HasBeenViewed;
-            dto.IsAllDay = model.IsAllDay;
-            dto.IsExpired = model.IsExpired;
-            dto.IsWatchNotification = model.IsWatchNotification;
-            dto.PriorityCode = model.PriorityCode;
-            dto.UserId = model.User.Id;
-            dto.Id = model.Id;
-            return dto;
-        }
+        
     }
 }

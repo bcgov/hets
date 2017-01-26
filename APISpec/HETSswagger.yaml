@@ -929,6 +929,28 @@ paths:
           description: id of Permission to delete
           required: true
           type: integer
+
+  /permissions/bulk:
+    post:
+      tags:
+        - Permission
+      consumes:
+        - application/json
+      produces:
+        - text/plain
+        - application/json
+        - text/json
+      parameters:
+        - name: items
+          in: body
+          required: true
+          schema:
+            type: array
+            items:
+              $ref: "#/definitions/Permission"
+      responses:
+        201:
+          description: Permission created
   /roles:
     get:
       tags:
@@ -1060,6 +1082,28 @@ paths:
           description: id of Role to delete
           required: true
           type: integer
+
+  /roles/bulk:
+    post:
+      tags:
+        - Role
+      consumes:
+        - application/json
+      produces:
+        - text/plain
+        - application/json
+        - text/json
+      parameters:
+        - name: items
+          in: body
+          required: true
+          schema:
+            type: array
+            items:
+              $ref: "#/definitions/Role"
+      responses:
+        201:
+          description: Role created
 
   /rolepermissions/bulk:
     post:
@@ -1213,6 +1257,28 @@ paths:
           description: id of User to delete
           required: true
           type: integer
+
+  /users/bulk:
+    post:
+      tags:
+        - User
+      consumes:
+        - application/json
+      produces:
+        - text/plain
+        - application/json
+        - text/json
+      parameters:
+        - name: items
+          in: body
+          required: true
+          schema:
+            type: array
+            items:
+              $ref: "#/definitions/User"
+      responses:
+        201:
+          description: User created
 
   /usergroups/bulk:
     post:

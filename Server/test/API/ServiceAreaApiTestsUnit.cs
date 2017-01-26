@@ -34,7 +34,7 @@ namespace HETSAPI.Test
 	public class ServiceAreaApiUnitTest 
     { 
 		
-		private readonly ServiceAreaApiController _ServiceAreaApi;
+		private readonly ServiceAreaController _ServiceAreaApi;
 		
 		/// <summary>
         /// Setup the test
@@ -56,9 +56,9 @@ namespace HETSAPI.Test
 
                     */
 
-                    ServiceAreaApiService _service = new ServiceAreaApiService(dbAppContext.Object);
+                    ServiceAreaService _service = new ServiceAreaService(dbAppContext.Object);
 			
-                    _ServiceAreaApi = new ServiceAreaApiController (_service);
+                    _ServiceAreaApi = new ServiceAreaController (_service);
 
 		}
 	
@@ -71,7 +71,7 @@ namespace HETSAPI.Test
 		{
 			// Add test code here
 			// it may look like: 
-			//  var result = _ServiceAreaApiController.ServiceareasGet();
+			//  var result = _ServiceAreaController.ServiceareasGet();
 			//  Assert.True (result == expected-result);
 
             Assert.True(true);
@@ -86,7 +86,7 @@ namespace HETSAPI.Test
 		{
 			// Add test code here
 			// it may look like: 
-			//  var result = _ServiceAreaApiController.ServiceareasIdDeletePost();
+			//  var result = _ServiceAreaController.ServiceareasIdDeletePost();
 			//  Assert.True (result == expected-result);
 
             Assert.True(true);
@@ -101,7 +101,7 @@ namespace HETSAPI.Test
 		{
 			// Add test code here
 			// it may look like: 
-			//  var result = _ServiceAreaApiController.ServiceareasIdGet();
+			//  var result = _ServiceAreaController.ServiceareasIdGet();
 			//  Assert.True (result == expected-result);
 
             Assert.True(true);
@@ -116,7 +116,7 @@ namespace HETSAPI.Test
 		{
 			// Add test code here
 			// it may look like: 
-			//  var result = _ServiceAreaApiController.ServiceareasIdPut();
+			//  var result = _ServiceAreaController.ServiceareasIdPut();
 			//  Assert.True (result == expected-result);
 
             Assert.True(true);
@@ -131,7 +131,7 @@ namespace HETSAPI.Test
 		{
 			// Add test code here
 			// it may look like: 
-			//  var result = _ServiceAreaApiController.ServiceareasPost();
+			//  var result = _ServiceAreaController.ServiceareasPost();
 			//  Assert.True (result == expected-result);
 
             Assert.True(true);

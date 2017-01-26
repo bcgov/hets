@@ -1,7 +1,7 @@
 /*
- * REST API Documentation for Schoolbus
+ * REST API Documentation for the MOTI Hired Equipment Tracking System (HETS) Application
  *
- * API Sample
+ * The Hired Equipment Program is for owners/operators who have a dump truck, bulldozer, backhoe or  other piece of equipment they want to hire out to the transportation ministry for day labour and  emergency projects.  The Hired Equipment Program distributes available work to local equipment owners. The program is  based on seniority and is designed to deliver work to registered users fairly and efficiently  through the development of local area call-out lists. 
  *
  * OpenAPI spec version: v1
  * 
@@ -31,15 +31,15 @@ using HETSAPI.Services.Impl;
 
 namespace HETSAPI.Test
 {
-	public class UserApiUnitTest 
+	public class UserUnitTest 
     { 
 		
-		private readonly UserApiController _UserApi;
+		private readonly UserController _UserApi;
 		
 		/// <summary>
         /// Setup the test
         /// </summary>        
-		public UserApiUnitTest()
+		public UserUnitTest()
 		{
             DbContextOptions<DbAppContext> options = new DbContextOptions<DbAppContext>();
             Mock<DbAppContext> dbAppContext = new Mock<DbAppContext>(options);
@@ -56,9 +56,9 @@ namespace HETSAPI.Test
 
             */
 
-            UserApiService _service = new UserApiService(dbAppContext.Object);
+            UserService _service = new UserService(dbAppContext.Object);
 			
-                    _UserApi = new UserApiController (_service);
+                    _UserApi = new UserController (_service);
 
 		}
 	
@@ -71,7 +71,7 @@ namespace HETSAPI.Test
 		{
 			// Add test code here
 			// it may look like: 
-			//  var result = _UserApiController.UsersBulkPost();
+			//  var result = _UserController.UsersBulkPost();
 			//  Assert.True (result == expected-result);
 
             Assert.True(true);
@@ -86,7 +86,7 @@ namespace HETSAPI.Test
 		{
 			// Add test code here
 			// it may look like: 
-			//  var result = _UserApiController.UsersCurrentGet();
+			//  var result = _UserController.UsersCurrentGet();
 			//  Assert.True (result == expected-result);
 
             Assert.True(true);
@@ -101,7 +101,7 @@ namespace HETSAPI.Test
 		{
 			// Add test code here
 			// it may look like: 
-			//  var result = _UserApiController.UsersGet();
+			//  var result = _UserController.UsersGet();
 			//  Assert.True (result == expected-result);
 
             Assert.True(true);
@@ -116,7 +116,7 @@ namespace HETSAPI.Test
 		{
 			// Add test code here
 			// it may look like: 
-			//  var result = _UserApiController.UsersIdDelete();
+			//  var result = _UserController.UsersIdDelete();
 			//  Assert.True (result == expected-result);
 
             Assert.True(true);
@@ -131,7 +131,7 @@ namespace HETSAPI.Test
 		{
 			// Add test code here
 			// it may look like: 
-			//  var result = _UserApiController.UsersIdFavouritesGet();
+			//  var result = _UserController.UsersIdFavouritesGet();
 			//  Assert.True (result == expected-result);
 
             Assert.True(true);
@@ -146,7 +146,7 @@ namespace HETSAPI.Test
 		{
 			// Add test code here
 			// it may look like: 
-			//  var result = _UserApiController.UsersIdGet();
+			//  var result = _UserController.UsersIdGet();
 			//  Assert.True (result == expected-result);
 
             Assert.True(true);
@@ -161,7 +161,7 @@ namespace HETSAPI.Test
 		{
 			// Add test code here
 			// it may look like: 
-			//  var result = _UserApiController.UsersIdGroupsGet();
+			//  var result = _UserController.UsersIdGroupsGet();
 			//  Assert.True (result == expected-result);
 
             Assert.True(true);
@@ -176,7 +176,7 @@ namespace HETSAPI.Test
 		{
 			// Add test code here
 			// it may look like: 
-			//  var result = _UserApiController.UsersIdGroupsPut();
+			//  var result = _UserController.UsersIdGroupsPut();
 			//  Assert.True (result == expected-result);
 
             Assert.True(true);
@@ -191,7 +191,7 @@ namespace HETSAPI.Test
 		{
 			// Add test code here
 			// it may look like: 
-			//  var result = _UserApiController.UsersIdNotificationGet();
+			//  var result = _UserController.UsersIdNotificationGet();
 			//  Assert.True (result == expected-result);
 
             Assert.True(true);
@@ -206,7 +206,7 @@ namespace HETSAPI.Test
 		{
 			// Add test code here
 			// it may look like: 
-			//  var result = _UserApiController.UsersIdPermissionsGet();
+			//  var result = _UserController.UsersIdPermissionsGet();
 			//  Assert.True (result == expected-result);
 
             Assert.True(true);
@@ -221,7 +221,7 @@ namespace HETSAPI.Test
 		{
 			// Add test code here
 			// it may look like: 
-			//  var result = _UserApiController.UsersIdPut();
+			//  var result = _UserController.UsersIdPut();
 			//  Assert.True (result == expected-result);
 
             Assert.True(true);
@@ -236,7 +236,7 @@ namespace HETSAPI.Test
 		{
 			// Add test code here
 			// it may look like: 
-			//  var result = _UserApiController.UsersIdRolesGet();
+			//  var result = _UserController.UsersIdRolesGet();
 			//  Assert.True (result == expected-result);
 
             Assert.True(true);
@@ -251,7 +251,7 @@ namespace HETSAPI.Test
 		{
 			// Add test code here
 			// it may look like: 
-			//  var result = _UserApiController.UsersIdRolesPost();
+			//  var result = _UserController.UsersIdRolesPost();
 			//  Assert.True (result == expected-result);
 
             Assert.True(true);
@@ -266,7 +266,7 @@ namespace HETSAPI.Test
 		{
 			// Add test code here
 			// it may look like: 
-			//  var result = _UserApiController.UsersIdRolesPut();
+			//  var result = _UserController.UsersIdRolesPut();
 			//  Assert.True (result == expected-result);
 
             Assert.True(true);
@@ -281,7 +281,7 @@ namespace HETSAPI.Test
 		{
 			// Add test code here
 			// it may look like: 
-			//  var result = _UserApiController.UsersPost();
+			//  var result = _UserController.UsersPost();
 			//  Assert.True (result == expected-result);
 
             Assert.True(true);

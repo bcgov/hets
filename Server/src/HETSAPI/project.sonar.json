@@ -1,9 +1,9 @@
 {
   "title": "Swagger UI",
   "version": "1.0.0-*",
-  "copyright": "SchoolBusAPI",
-  "description": "SchoolBusAPI",
-  
+  "copyright": "Copyright 2017 Province of British Columbia",
+  "description": "Sonar Project",
+
   "dependencies": {
     "Microsoft.AspNetCore.Antiforgery": "1.1.0",
     "Microsoft.AspNetCore.Diagnostics": "1.1.0",
@@ -63,10 +63,10 @@
     }
   },
 
-  
 
-  "frameworks": {  
-"netcoreapp1.1": {
+
+  "frameworks": {
+    "netcoreapp1.1": {
       "dependencies": {
         "Microsoft.NETCore.App": {
           "version": "1.1.0",
@@ -79,7 +79,7 @@
         "netstandard1.6",
         "portable-net452+win81"
       ]
-    },  
+    },
     "netcore5.0": {
       "imports": [
         "dotnet5.6",

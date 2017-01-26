@@ -1,0 +1,7 @@
+{	
+	"packageName" : "HETSAPI",    
+	"apiPackage"  : "com.hets.client.api",
+	"modelPackage"  : "com.hets.client.model",
+    "packageVersion" : "1.0.0",
+    "sourceFolder" : "src"
+}

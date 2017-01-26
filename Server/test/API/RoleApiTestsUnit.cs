@@ -1,7 +1,7 @@
 /*
- * REST API Documentation for Schoolbus
+ * REST API Documentation for the MOTI Hired Equipment Tracking System (HETS) Application
  *
- * API Sample
+ * The Hired Equipment Program is for owners/operators who have a dump truck, bulldozer, backhoe or  other piece of equipment they want to hire out to the transportation ministry for day labour and  emergency projects.  The Hired Equipment Program distributes available work to local equipment owners. The program is  based on seniority and is designed to deliver work to registered users fairly and efficiently  through the development of local area call-out lists. 
  *
  * OpenAPI spec version: v1
  * 
@@ -34,7 +34,7 @@ namespace HETSAPI.Test
 	public class RoleApiUnitTest 
     { 
 		
-		private readonly RoleApiController _RoleApi;
+		private readonly RoleController _RoleApi;
 		
 		/// <summary>
         /// Setup the test
@@ -56,9 +56,9 @@ namespace HETSAPI.Test
 
             */
 
-            RoleApiService _service = new RoleApiService(dbAppContext.Object);
+            RoleService _service = new RoleService(dbAppContext.Object);
 			
-                    _RoleApi = new RoleApiController (_service);
+                    _RoleApi = new RoleController (_service);
 
 		}
 	
@@ -71,7 +71,7 @@ namespace HETSAPI.Test
 		{
 			// Add test code here
 			// it may look like: 
-			//  var result = _RoleApiController.RolesGet();
+			//  var result = _RoleController.RolesGet();
 			//  Assert.True (result == expected-result);
 
             Assert.True(true);
@@ -86,7 +86,7 @@ namespace HETSAPI.Test
 		{
 			// Add test code here
 			// it may look like: 
-			//  var result = _RoleApiController.RolesIdDelete();
+			//  var result = _RoleController.RolesIdDelete();
 			//  Assert.True (result == expected-result);
 
             Assert.True(true);
@@ -101,7 +101,7 @@ namespace HETSAPI.Test
 		{
 			// Add test code here
 			// it may look like: 
-			//  var result = _RoleApiController.RolesIdGet();
+			//  var result = _RoleController.RolesIdGet();
 			//  Assert.True (result == expected-result);
 
             Assert.True(true);
@@ -116,7 +116,7 @@ namespace HETSAPI.Test
 		{
 			// Add test code here
 			// it may look like: 
-			//  var result = _RoleApiController.RolesIdPermissionsGet();
+			//  var result = _RoleController.RolesIdPermissionsGet();
 			//  Assert.True (result == expected-result);
 
             Assert.True(true);
@@ -131,7 +131,7 @@ namespace HETSAPI.Test
 		{
 			// Add test code here
 			// it may look like: 
-			//  var result = _RoleApiController.RolesIdPermissionsPut();
+			//  var result = _RoleController.RolesIdPermissionsPut();
 			//  Assert.True (result == expected-result);
 
             Assert.True(true);
@@ -146,7 +146,7 @@ namespace HETSAPI.Test
 		{
 			// Add test code here
 			// it may look like: 
-			//  var result = _RoleApiController.RolesIdPut();
+			//  var result = _RoleController.RolesIdPut();
 			//  Assert.True (result == expected-result);
 
             Assert.True(true);
@@ -161,7 +161,7 @@ namespace HETSAPI.Test
 		{
 			// Add test code here
 			// it may look like: 
-			//  var result = _RoleApiController.RolesIdUsersGet();
+			//  var result = _RoleController.RolesIdUsersGet();
 			//  Assert.True (result == expected-result);
 
             Assert.True(true);
@@ -176,7 +176,7 @@ namespace HETSAPI.Test
 		{
 			// Add test code here
 			// it may look like: 
-			//  var result = _RoleApiController.RolesIdUsersPut();
+			//  var result = _RoleController.RolesIdUsersPut();
 			//  Assert.True (result == expected-result);
 
             Assert.True(true);
@@ -191,7 +191,7 @@ namespace HETSAPI.Test
 		{
 			// Add test code here
 			// it may look like: 
-			//  var result = _RoleApiController.RolesPost();
+			//  var result = _RoleController.RolesPost();
 			//  Assert.True (result == expected-result);
 
             Assert.True(true);
