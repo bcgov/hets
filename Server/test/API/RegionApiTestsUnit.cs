@@ -1,7 +1,7 @@
 /*
- * REST API Documentation for Schoolbus
+ * REST API Documentation for the MOTI Hired Equipment Tracking System (HETS) Application
  *
- * API Sample
+ * The Hired Equipment Program is for owners/operators who have a dump truck, bulldozer, backhoe or  other piece of equipment they want to hire out to the transportation ministry for day labour and  emergency projects.  The Hired Equipment Program distributes available work to local equipment owners. The program is  based on seniority and is designed to deliver work to registered users fairly and efficiently  through the development of local area call-out lists. 
  *
  * OpenAPI spec version: v1
  * 
@@ -34,7 +34,7 @@ namespace HETSAPI.Test
 	public class RegionApiUnitTest 
     { 
 		
-		private readonly RegionApiController _RegionApi;
+		private readonly RegionController _RegionApi;
 		
 		/// <summary>
         /// Setup the test
@@ -56,9 +56,9 @@ namespace HETSAPI.Test
 
             */
 
-            RegionApiService _service = new RegionApiService(dbAppContext.Object);
+            RegionService _service = new RegionService(dbAppContext.Object);
 			
-                    _RegionApi = new RegionApiController (_service);
+                    _RegionApi = new RegionController (_service);
 
 		}
 	
@@ -71,7 +71,7 @@ namespace HETSAPI.Test
 		{
 			// Add test code here
 			// it may look like: 
-			//  var result = _RegionApiController.RegionsGet();
+			//  var result = _RegionController.RegionsGet();
 			//  Assert.True (result == expected-result);
 
             Assert.True(true);
@@ -86,7 +86,7 @@ namespace HETSAPI.Test
 		{
 			// Add test code here
 			// it may look like: 
-			//  var result = _RegionApiController.RegionsIdCitiesGet();
+			//  var result = _RegionController.RegionsIdCitiesGet();
 			//  Assert.True (result == expected-result);
 
             Assert.True(true);
@@ -101,7 +101,7 @@ namespace HETSAPI.Test
 		{
 			// Add test code here
 			// it may look like: 
-			//  var result = _RegionApiController.RegionsIdGet();
+			//  var result = _RegionController.RegionsIdGet();
 			//  Assert.True (result == expected-result);
 
             Assert.True(true);
@@ -116,7 +116,7 @@ namespace HETSAPI.Test
 		{
 			// Add test code here
 			// it may look like: 
-			//  var result = _RegionApiController.RegionsIdLocalareasGet();
+			//  var result = _RegionController.RegionsIdLocalareasGet();
 			//  Assert.True (result == expected-result);
 
             Assert.True(true);
@@ -131,7 +131,7 @@ namespace HETSAPI.Test
 		{
 			// Add test code here
 			// it may look like: 
-			//  var result = _RegionApiController.RegionsPost();
+			//  var result = _RegionController.RegionsPost();
 			//  Assert.True (result == expected-result);
 
             Assert.True(true);

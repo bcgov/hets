@@ -34,7 +34,7 @@ namespace HETSAPI.Test
 	public class CityApiUnitTest 
     { 
 		
-		private readonly CityApiController _CityApi;
+		private readonly CityController _CityApi;
 		
 		/// <summary>
         /// Setup the test
@@ -56,9 +56,9 @@ namespace HETSAPI.Test
 
                     */
 
-                    CityApiService _service = new CityApiService(dbAppContext.Object);
+                    CityService _service = new CityService(dbAppContext.Object);
 			
-                    _CityApi = new CityApiController (_service);
+                    _CityApi = new CityController (_service);
 
 		}
 	
@@ -71,7 +71,7 @@ namespace HETSAPI.Test
 		{
 			// Add test code here
 			// it may look like: 
-			//  var result = _CityApiController.CitiesBulkPost();
+			//  var result = _CityController.CitiesBulkPost();
 			//  Assert.True (result == expected-result);
 
             Assert.True(true);
@@ -86,7 +86,7 @@ namespace HETSAPI.Test
 		{
 			// Add test code here
 			// it may look like: 
-			//  var result = _CityApiController.CitiesGet();
+			//  var result = _CityController.CitiesGet();
 			//  Assert.True (result == expected-result);
 
             Assert.True(true);
@@ -101,7 +101,7 @@ namespace HETSAPI.Test
 		{
 			// Add test code here
 			// it may look like: 
-			//  var result = _CityApiController.CitiesIdDeletePost();
+			//  var result = _CityController.CitiesIdDeletePost();
 			//  Assert.True (result == expected-result);
 
             Assert.True(true);
@@ -116,7 +116,7 @@ namespace HETSAPI.Test
 		{
 			// Add test code here
 			// it may look like: 
-			//  var result = _CityApiController.CitiesIdGet();
+			//  var result = _CityController.CitiesIdGet();
 			//  Assert.True (result == expected-result);
 
             Assert.True(true);
@@ -131,7 +131,7 @@ namespace HETSAPI.Test
 		{
 			// Add test code here
 			// it may look like: 
-			//  var result = _CityApiController.CitiesIdPut();
+			//  var result = _CityController.CitiesIdPut();
 			//  Assert.True (result == expected-result);
 
             Assert.True(true);
@@ -146,7 +146,7 @@ namespace HETSAPI.Test
 		{
 			// Add test code here
 			// it may look like: 
-			//  var result = _CityApiController.CitiesPost();
+			//  var result = _CityController.CitiesPost();
 			//  Assert.True (result == expected-result);
 
             Assert.True(true);

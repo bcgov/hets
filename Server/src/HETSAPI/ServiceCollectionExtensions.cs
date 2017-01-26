@@ -1,7 +1,7 @@
 ﻿/*
- * REST API Documentation for Schoolbus
+ * REST API Documentation for the MOTI Hired Equipment Tracking System (HETS) Application
  *
- * This project is to replace the existing permitting and inspection scheduling functionality in AVIS  such that the mainframe application can be retired. 
+ * The Hired Equipment Program is for owners/operators who have a dump truck, bulldozer, backhoe or  other piece of equipment they want to hire out to the transportation ministry for day labour and  emergency projects.  The Hired Equipment Program distributes available work to local equipment owners. The program is  based on seniority and is designed to deliver work to registered users fairly and efficiently  through the development of local area call-out lists. 
  *
  * OpenAPI spec version: 1.0.0
  * 
@@ -26,17 +26,15 @@ namespace HETSAPI
         /// <returns></returns>
         public static IServiceCollection RegisterApplicationServices(this IServiceCollection services)
         {
-            services.AddTransient<ICityApiService, CityApiService>();
-            services.AddTransient<IDistrictApiService, DistrictApiService>();
-            services.AddTransient<IGroupApiService, GroupApiService>();            
-            services.AddTransient<INotificationApiService, NotificationApiService>();
-            services.AddTransient<INotificationEventApiService, NotificationEventApiService>();
-            services.AddTransient<IPermissionApiService, PermissionApiService>();
-            services.AddTransient<IRegionApiService, RegionApiService>();
-            services.AddTransient<IRoleApiService, RoleApiService>();            
-            services.AddTransient<IServiceAreaApiService, ServiceAreaApiService>();
-            services.AddTransient<IUserApiService, UserApiService>();
-            services.AddTransient<ICurrentUserApiService, CurrentUserApiService>();
+            services.AddTransient<ICityService, CityService>();
+            services.AddTransient<IDistrictService, DistrictService>();
+            services.AddTransient<IGroupService, GroupService>();            
+            services.AddTransient<IPermissionService, PermissionService>();
+            services.AddTransient<IRegionService, RegionService>();
+            services.AddTransient<IRoleService, RoleService>();            
+            services.AddTransient<IServiceAreaService, ServiceAreaService>();
+            services.AddTransient<IUserService, UserService>();
+            services.AddTransient<ICurrentUserService, CurrentUserService>();
             return services;
         }
     }

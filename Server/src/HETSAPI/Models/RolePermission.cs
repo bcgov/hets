@@ -1,7 +1,7 @@
 /*
- * REST API Documentation for the MOTI School Bus Application
+ * REST API Documentation for the MOTI Hired Equipment Tracking System (HETS) Application
  *
- * The School Bus application tracks that inspections are performed in a timely fashion. For each school bus the application tracks information about the bus (including data from ICBC, NSC, etc.), it's past and next inspection dates and results, contacts, and the inspector responsible for next inspecting the bus.
+ * The Hired Equipment Program is for owners/operators who have a dump truck, bulldozer, backhoe or  other piece of equipment they want to hire out to the transportation ministry for day labour and  emergency projects.  The Hired Equipment Program distributes available work to local equipment owners. The program is  based on seniority and is designed to deliver work to registered users fairly and efficiently  through the development of local area call-out lists. 
  *
  * OpenAPI spec version: v1
  * 
@@ -25,8 +25,6 @@ namespace HETSAPI.Models
     /// 
     /// </summary>
 
-
-
     public partial class RolePermission : IEquatable<RolePermission>
     {
         /// <summary>
@@ -44,12 +42,10 @@ namespace HETSAPI.Models
         /// <param name="Role">Role.</param>
         /// <param name="Permission">Permission.</param>
         public RolePermission(int Id, Role Role = null, Permission Permission = null)
-        {
-            
+        {   
             this.Id = Id;
             this.Role = Role;
             this.Permission = Permission;
-            
         }
 
         /// <summary>
@@ -58,17 +54,29 @@ namespace HETSAPI.Models
         /// <value>Primary Key</value>
         [MetaDataExtension (Description = "Primary Key")]
         public int Id { get; set; }
-
+        
         /// <summary>
         /// Gets or Sets Role
         /// </summary>
         public Role Role { get; set; }
-
+        
+        /// <summary>
+        /// Foreign key for Role 
+        /// </summary>       
+        [ForeignKey("Role")]
+        public int? RoleRefId { get; set; }
+        
         /// <summary>
         /// Gets or Sets Permission
         /// </summary>
         public Permission Permission { get; set; }
-
+        
+        /// <summary>
+        /// Foreign key for Permission 
+        /// </summary>       
+        [ForeignKey("Permission")]
+        public int? PermissionRefId { get; set; }
+        
         /// <summary>
         /// Returns the string presentation of the object
         /// </summary>
@@ -117,16 +125,16 @@ namespace HETSAPI.Models
             if (ReferenceEquals(null, other)) { return false; }
             if (ReferenceEquals(this, other)) { return true; }
 
-            return 
+            return                 
                 (
                     this.Id == other.Id ||
                     this.Id.Equals(other.Id)
-                ) && 
+                ) &&                 
                 (
                     this.Role == other.Role ||
                     this.Role != null &&
                     this.Role.Equals(other.Role)
-                ) && 
+                ) &&                 
                 (
                     this.Permission == other.Permission ||
                     this.Permission != null &&
@@ -145,12 +153,12 @@ namespace HETSAPI.Models
             {
                 int hash = 41;
                 // Suitable nullity checks
-                hash = hash * 59 + this.Id.GetHashCode();
-                
+                                   
+                hash = hash * 59 + this.Id.GetHashCode();                   
                 if (this.Role != null)
                 {
                     hash = hash * 59 + this.Role.GetHashCode();
-                }
+                }                   
                 if (this.Permission != null)
                 {
                     hash = hash * 59 + this.Permission.GetHashCode();
@@ -160,12 +168,24 @@ namespace HETSAPI.Models
         }
 
         #region Operators
-
+        
+        /// <summary>
+        /// Equals
+        /// </summary>
+        /// <param name="left"></param>
+        /// <param name="right"></param>
+        /// <returns></returns>
         public static bool operator ==(RolePermission left, RolePermission right)
         {
             return Equals(left, right);
         }
 
+        /// <summary>
+        /// Not Equals
+        /// </summary>
+        /// <param name="left"></param>
+        /// <param name="right"></param>
+        /// <returns></returns>
         public static bool operator !=(RolePermission left, RolePermission right)
         {
             return !Equals(left, right);

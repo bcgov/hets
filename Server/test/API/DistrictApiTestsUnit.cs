@@ -34,7 +34,7 @@ namespace HETSAPI.Test
 	public class DistrictApiUnitTest 
     { 
 		
-		private readonly DistrictApiController _DistrictApi;
+		private readonly DistrictController _DistrictApi;
 		
 		/// <summary>
         /// Setup the test
@@ -56,9 +56,9 @@ namespace HETSAPI.Test
 
                     */
 
-                    DistrictApiService _service = new DistrictApiService(dbAppContext.Object);
+                    DistrictService _service = new DistrictService(dbAppContext.Object);
 			
-                    _DistrictApi = new DistrictApiController (_service);
+                    _DistrictApi = new DistrictController (_service);
 
 		}
 	
@@ -71,7 +71,7 @@ namespace HETSAPI.Test
 		{
 			// Add test code here
 			// it may look like: 
-			//  var result = _DistrictApiController.DistrictsBulkPost();
+			//  var result = _DistrictController.DistrictsBulkPost();
 			//  Assert.True (result == expected-result);
 
             Assert.True(true);
@@ -86,7 +86,7 @@ namespace HETSAPI.Test
 		{
 			// Add test code here
 			// it may look like: 
-			//  var result = _DistrictApiController.DistrictsGet();
+			//  var result = _DistrictController.DistrictsGet();
 			//  Assert.True (result == expected-result);
 
             Assert.True(true);
@@ -101,7 +101,7 @@ namespace HETSAPI.Test
 		{
 			// Add test code here
 			// it may look like: 
-			//  var result = _DistrictApiController.DistrictsIdDeletePost();
+			//  var result = _DistrictController.DistrictsIdDeletePost();
 			//  Assert.True (result == expected-result);
 
             Assert.True(true);
@@ -116,7 +116,7 @@ namespace HETSAPI.Test
 		{
 			// Add test code here
 			// it may look like: 
-			//  var result = _DistrictApiController.DistrictsIdGet();
+			//  var result = _DistrictController.DistrictsIdGet();
 			//  Assert.True (result == expected-result);
 
             Assert.True(true);
@@ -131,7 +131,7 @@ namespace HETSAPI.Test
 		{
 			// Add test code here
 			// it may look like: 
-			//  var result = _DistrictApiController.DistrictsIdPut();
+			//  var result = _DistrictController.DistrictsIdPut();
 			//  Assert.True (result == expected-result);
 
             Assert.True(true);
@@ -146,7 +146,7 @@ namespace HETSAPI.Test
 		{
 			// Add test code here
 			// it may look like: 
-			//  var result = _DistrictApiController.DistrictsIdServiceareasGet();
+			//  var result = _DistrictController.DistrictsIdServiceareasGet();
 			//  Assert.True (result == expected-result);
 
             Assert.True(true);
@@ -161,7 +161,7 @@ namespace HETSAPI.Test
 		{
 			// Add test code here
 			// it may look like: 
-			//  var result = _DistrictApiController.DistrictsPost();
+			//  var result = _DistrictController.DistrictsPost();
 			//  Assert.True (result == expected-result);
 
             Assert.True(true);
@@ -176,7 +176,7 @@ namespace HETSAPI.Test
 		{
 			// Add test code here
 			// it may look like: 
-			//  var result = _DistrictApiController.ServiceareasBulkPost();
+			//  var result = _DistrictController.ServiceareasBulkPost();
 			//  Assert.True (result == expected-result);
 
             Assert.True(true);

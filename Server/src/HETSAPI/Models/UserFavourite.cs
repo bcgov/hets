@@ -1,7 +1,7 @@
 /*
- * REST API Documentation for the MOTI School Bus Application
+ * REST API Documentation for the MOTI Hired Equipment Tracking System (HETS) Application
  *
- * The School Bus application tracks that inspections are performed in a timely fashion. For each school bus the application tracks information about the bus (including data from ICBC, NSC, etc.), it's past and next inspection dates and results, contacts, and the inspector responsible for next inspecting the bus.
+ * The Hired Equipment Program is for owners/operators who have a dump truck, bulldozer, backhoe or  other piece of equipment they want to hire out to the transportation ministry for day labour and  emergency projects.  The Hired Equipment Program distributes available work to local equipment owners. The program is  based on seniority and is designed to deliver work to registered users fairly and efficiently  through the development of local area call-out lists. 
  *
  * OpenAPI spec version: v1
  * 
@@ -26,7 +26,6 @@ namespace HETSAPI.Models
     /// </summary>
         [MetaDataExtension (Description = "User specific settings for a specific location in the UI. The location and saved settings are internally defined by the UI.")]
 
-
     public partial class UserFavourite : IEquatable<UserFavourite>
     {
         /// <summary>
@@ -42,18 +41,16 @@ namespace HETSAPI.Models
         /// </summary>
         /// <param name="Id">Primary Key (required).</param>
         /// <param name="Name">The user-defined name for the recorded settings. Allows the user to save different groups of settings and access each one easily when needed..</param>
-        /// <param name="Value">The settings saved by the user. In general, a UI defined chunk of json that stores the settings in place when the user created the favourite..</param>
-        /// <param name="IsDefault">True if this Favourite is the default for this Context Type. On first access to a context in a session the default favourite for the context it is invoked. If there is no default favourite, a system-wide default is invoked. On return to the context within a session, the last parameters used are reapplied..</param>
+        /// <param name="Value">The settings saved by the user. In general,  a UI defined chunk of json that stores the settings in place when the user created the favourite..</param>
+        /// <param name="IsDefault">True if this Favourite is the default for this Context Type. On first access to a context in a session the default favourite for the context it is invoked. If there is no default favourite,  a system-wide default is invoked. On return to the context within a session,  the last parameters used are reapplied..</param>
         /// <param name="FavouriteContextType">FavouriteContextType.</param>
         public UserFavourite(int Id, string Name = null, string Value = null, bool? IsDefault = null, FavouriteContextType FavouriteContextType = null)
-        {
-            
+        {   
             this.Id = Id;
             this.Name = Name;
             this.Value = Value;
             this.IsDefault = IsDefault;
             this.FavouriteContextType = FavouriteContextType;
-            
         }
 
         /// <summary>
@@ -62,33 +59,39 @@ namespace HETSAPI.Models
         /// <value>Primary Key</value>
         [MetaDataExtension (Description = "Primary Key")]
         public int Id { get; set; }
-
+        
         /// <summary>
         /// The user-defined name for the recorded settings. Allows the user to save different groups of settings and access each one easily when needed.
         /// </summary>
         /// <value>The user-defined name for the recorded settings. Allows the user to save different groups of settings and access each one easily when needed.</value>
         [MetaDataExtension (Description = "The user-defined name for the recorded settings. Allows the user to save different groups of settings and access each one easily when needed.")]
         public string Name { get; set; }
-
+        
         /// <summary>
-        /// The settings saved by the user. In general, a UI defined chunk of json that stores the settings in place when the user created the favourite.
+        /// The settings saved by the user. In general,  a UI defined chunk of json that stores the settings in place when the user created the favourite.
         /// </summary>
-        /// <value>The settings saved by the user. In general, a UI defined chunk of json that stores the settings in place when the user created the favourite.</value>
-        [MetaDataExtension (Description = "The settings saved by the user. In general, a UI defined chunk of json that stores the settings in place when the user created the favourite.")]
+        /// <value>The settings saved by the user. In general,  a UI defined chunk of json that stores the settings in place when the user created the favourite.</value>
+        [MetaDataExtension (Description = "The settings saved by the user. In general,  a UI defined chunk of json that stores the settings in place when the user created the favourite.")]
         public string Value { get; set; }
-
+        
         /// <summary>
-        /// True if this Favourite is the default for this Context Type. On first access to a context in a session the default favourite for the context it is invoked. If there is no default favourite, a system-wide default is invoked. On return to the context within a session, the last parameters used are reapplied.
+        /// True if this Favourite is the default for this Context Type. On first access to a context in a session the default favourite for the context it is invoked. If there is no default favourite,  a system-wide default is invoked. On return to the context within a session,  the last parameters used are reapplied.
         /// </summary>
-        /// <value>True if this Favourite is the default for this Context Type. On first access to a context in a session the default favourite for the context it is invoked. If there is no default favourite, a system-wide default is invoked. On return to the context within a session, the last parameters used are reapplied.</value>
-        [MetaDataExtension (Description = "True if this Favourite is the default for this Context Type. On first access to a context in a session the default favourite for the context it is invoked. If there is no default favourite, a system-wide default is invoked. On return to the context within a session, the last parameters used are reapplied.")]
+        /// <value>True if this Favourite is the default for this Context Type. On first access to a context in a session the default favourite for the context it is invoked. If there is no default favourite,  a system-wide default is invoked. On return to the context within a session,  the last parameters used are reapplied.</value>
+        [MetaDataExtension (Description = "True if this Favourite is the default for this Context Type. On first access to a context in a session the default favourite for the context it is invoked. If there is no default favourite,  a system-wide default is invoked. On return to the context within a session,  the last parameters used are reapplied.")]
         public bool? IsDefault { get; set; }
-
+        
         /// <summary>
         /// Gets or Sets FavouriteContextType
         /// </summary>
         public FavouriteContextType FavouriteContextType { get; set; }
-
+        
+        /// <summary>
+        /// Foreign key for FavouriteContextType 
+        /// </summary>       
+        [ForeignKey("FavouriteContextType")]
+        public int? FavouriteContextTypeRefId { get; set; }
+        
         /// <summary>
         /// Returns the string presentation of the object
         /// </summary>
@@ -139,26 +142,26 @@ namespace HETSAPI.Models
             if (ReferenceEquals(null, other)) { return false; }
             if (ReferenceEquals(this, other)) { return true; }
 
-            return 
+            return                 
                 (
-                    this.Id == other.Id ||                    
+                    this.Id == other.Id ||
                     this.Id.Equals(other.Id)
-                ) && 
+                ) &&                 
                 (
                     this.Name == other.Name ||
                     this.Name != null &&
                     this.Name.Equals(other.Name)
-                ) && 
+                ) &&                 
                 (
                     this.Value == other.Value ||
                     this.Value != null &&
                     this.Value.Equals(other.Value)
-                ) && 
+                ) &&                 
                 (
                     this.IsDefault == other.IsDefault ||
                     this.IsDefault != null &&
                     this.IsDefault.Equals(other.IsDefault)
-                ) && 
+                ) &&                 
                 (
                     this.FavouriteContextType == other.FavouriteContextType ||
                     this.FavouriteContextType != null &&
@@ -177,20 +180,20 @@ namespace HETSAPI.Models
             {
                 int hash = 41;
                 // Suitable nullity checks
-                hash = hash * 59 + this.Id.GetHashCode();
-                
-                if (this.Name != null)
+                                   
+                hash = hash * 59 + this.Id.GetHashCode();                if (this.Name != null)
                 {
                     hash = hash * 59 + this.Name.GetHashCode();
-                }
-                if (this.Value != null)
+                }                
+                                if (this.Value != null)
                 {
                     hash = hash * 59 + this.Value.GetHashCode();
-                }
-                if (this.IsDefault != null)
+                }                
+                                if (this.IsDefault != null)
                 {
                     hash = hash * 59 + this.IsDefault.GetHashCode();
-                }
+                }                
+                                   
                 if (this.FavouriteContextType != null)
                 {
                     hash = hash * 59 + this.FavouriteContextType.GetHashCode();
@@ -200,12 +203,24 @@ namespace HETSAPI.Models
         }
 
         #region Operators
-
+        
+        /// <summary>
+        /// Equals
+        /// </summary>
+        /// <param name="left"></param>
+        /// <param name="right"></param>
+        /// <returns></returns>
         public static bool operator ==(UserFavourite left, UserFavourite right)
         {
             return Equals(left, right);
         }
 
+        /// <summary>
+        /// Not Equals
+        /// </summary>
+        /// <param name="left"></param>
+        /// <param name="right"></param>
+        /// <returns></returns>
         public static bool operator !=(UserFavourite left, UserFavourite right)
         {
             return !Equals(left, right);

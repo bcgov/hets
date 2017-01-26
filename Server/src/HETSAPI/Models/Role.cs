@@ -1,7 +1,7 @@
 /*
- * REST API Documentation for the MOTI School Bus Application
+ * REST API Documentation for the MOTI Hired Equipment Tracking System (HETS) Application
  *
- * The School Bus application tracks that inspections are performed in a timely fashion. For each school bus the application tracks information about the bus (including data from ICBC, NSC, etc.), it's past and next inspection dates and results, contacts, and the inspector responsible for next inspecting the bus.
+ * The Hired Equipment Program is for owners/operators who have a dump truck, bulldozer, backhoe or  other piece of equipment they want to hire out to the transportation ministry for day labour and  emergency projects.  The Hired Equipment Program distributes available work to local equipment owners. The program is  based on seniority and is designed to deliver work to registered users fairly and efficiently  through the development of local area call-out lists. 
  *
  * OpenAPI spec version: v1
  * 
@@ -25,8 +25,6 @@ namespace HETSAPI.Models
     /// 
     /// </summary>
 
-
-
     public partial class Role : IEquatable<Role>
     {
         /// <summary>
@@ -46,16 +44,14 @@ namespace HETSAPI.Models
         /// <param name="RolePermissions">RolePermissions.</param>
         /// <param name="UserRoles">UserRoles.</param>
         public Role(int Id, string Name, string Description, List<RolePermission> RolePermissions = null, List<UserRole> UserRoles = null)
-        {
-            
+        {   
             this.Id = Id;
-            
             this.Name = Name;
-            
             this.Description = Description;
+
+
             this.RolePermissions = RolePermissions;
             this.UserRoles = UserRoles;
-            
         }
 
         /// <summary>
@@ -64,27 +60,27 @@ namespace HETSAPI.Models
         /// <value>Primary Key</value>
         [MetaDataExtension (Description = "Primary Key")]
         public int Id { get; set; }
-
+        
         /// <summary>
         /// Gets or Sets Name
         /// </summary>
         public string Name { get; set; }
-
+        
         /// <summary>
         /// Gets or Sets Description
         /// </summary>
         public string Description { get; set; }
-
+        
         /// <summary>
         /// Gets or Sets RolePermissions
         /// </summary>
         public List<RolePermission> RolePermissions { get; set; }
-
+        
         /// <summary>
         /// Gets or Sets UserRoles
         /// </summary>
         public List<UserRole> UserRoles { get; set; }
-
+        
         /// <summary>
         /// Returns the string presentation of the object
         /// </summary>
@@ -135,16 +131,16 @@ namespace HETSAPI.Models
             if (ReferenceEquals(null, other)) { return false; }
             if (ReferenceEquals(this, other)) { return true; }
 
-            return 
+            return                 
                 (
-                    this.Id == other.Id ||                    
+                    this.Id == other.Id ||
                     this.Id.Equals(other.Id)
-                ) && 
+                ) &&                 
                 (
                     this.Name == other.Name ||
                     this.Name != null &&
                     this.Name.Equals(other.Name)
-                ) && 
+                ) &&                 
                 (
                     this.Description == other.Description ||
                     this.Description != null &&
@@ -173,20 +169,20 @@ namespace HETSAPI.Models
             {
                 int hash = 41;
                 // Suitable nullity checks
-                hash = hash * 59 + this.Id.GetHashCode();
-                
-                if (this.Name != null)
+                                   
+                hash = hash * 59 + this.Id.GetHashCode();                if (this.Name != null)
                 {
                     hash = hash * 59 + this.Name.GetHashCode();
-                }
-                if (this.Description != null)
+                }                
+                                if (this.Description != null)
                 {
                     hash = hash * 59 + this.Description.GetHashCode();
-                }
+                }                
+                                   
                 if (this.RolePermissions != null)
                 {
                     hash = hash * 59 + this.RolePermissions.GetHashCode();
-                }
+                }                   
                 if (this.UserRoles != null)
                 {
                     hash = hash * 59 + this.UserRoles.GetHashCode();
@@ -196,12 +192,24 @@ namespace HETSAPI.Models
         }
 
         #region Operators
-
+        
+        /// <summary>
+        /// Equals
+        /// </summary>
+        /// <param name="left"></param>
+        /// <param name="right"></param>
+        /// <returns></returns>
         public static bool operator ==(Role left, Role right)
         {
             return Equals(left, right);
         }
 
+        /// <summary>
+        /// Not Equals
+        /// </summary>
+        /// <param name="left"></param>
+        /// <param name="right"></param>
+        /// <returns></returns>
         public static bool operator !=(Role left, Role right)
         {
             return !Equals(left, right);
