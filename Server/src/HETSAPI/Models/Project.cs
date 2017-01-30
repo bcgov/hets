@@ -18,6 +18,7 @@ using System.Collections.ObjectModel;
 using System.Runtime.Serialization;
 using Newtonsoft.Json;
 using System.ComponentModel.DataAnnotations.Schema;
+using System.ComponentModel.DataAnnotations;
 
 namespace HETSAPI.Models
 {
@@ -85,16 +86,22 @@ namespace HETSAPI.Models
         /// <summary>
         /// Gets or Sets ProjectNum
         /// </summary>
+        [MaxLength(255)]
+        
         public string ProjectNum { get; set; }
         
         /// <summary>
         /// Gets or Sets JobDesc1
         /// </summary>
+        [MaxLength(255)]
+        
         public string JobDesc1 { get; set; }
         
         /// <summary>
         /// Gets or Sets JobDesc2
         /// </summary>
+        [MaxLength(255)]
+        
         public string JobDesc2 { get; set; }
         
         /// <summary>

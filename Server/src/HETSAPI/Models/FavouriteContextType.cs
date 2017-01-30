@@ -18,6 +18,7 @@ using System.Collections.ObjectModel;
 using System.Runtime.Serialization;
 using Newtonsoft.Json;
 using System.ComponentModel.DataAnnotations.Schema;
+using System.ComponentModel.DataAnnotations;
 
 namespace HETSAPI.Models
 {
@@ -59,6 +60,8 @@ namespace HETSAPI.Models
         /// </summary>
         /// <value>Context Name known by the UI.</value>
         [MetaDataExtension (Description = "Context Name known by the UI.")]
+        [MaxLength(255)]
+        
         public string Name { get; set; }
         
         /// <summary>

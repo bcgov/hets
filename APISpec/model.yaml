@@ -12,10 +12,13 @@ definitions:
         $ref: '#/definitions/ServiceArea'
       projectNum:
         type: string
+        maxLength: 255
       jobDesc1:
         type: string
+        maxLength: 255
       jobDesc2:
         type: string
+        maxLength: 255
       requests:
         type: array
         items:
@@ -128,8 +131,10 @@ definitions:
         $ref: '#/definitions/Equipment'
       moved:
         type: string
+        maxLength: 255
       startWasZero:
         type: string
+        maxLength: 255
       rotatedBlock:
         format: int32
         type: integer
@@ -137,8 +142,10 @@ definitions:
         type: string
       closed:
         type: string
+        maxLength: 255
       closedComments:
         type: string
+        maxLength: 2048
       closedDate:
         type: string
         format: date-time
@@ -149,6 +156,7 @@ definitions:
         format: date-time
       reservedBy:
         type: string
+        maxLength: 255
   HireOffer:
     type: object
     required:
@@ -177,14 +185,17 @@ definitions:
         description: The response about the equipment. Either a No (move to next on the list) or Yes (move to on to the Rental Agreement)
       refuseReason:
         type: string
+        maxLength: 255
       note:
         type: string
+        maxLength: 255
       equipmentVerifiedActive:
         type: boolean
       flagEquipmentUpdate:
         type: boolean
       equipmentUpdateReason:
         type: string
+        maxLength: 255
   RentalAgreement:
     type: object
     required:
@@ -256,8 +267,10 @@ definitions:
         $ref: '#/definitions/Owner'
       equipCd:
         type: string
+        maxLength: 255
       approval:
         type: string
+        maxLength: 255
       approvedDate:
         type: string
         format: date-time
@@ -266,68 +279,89 @@ definitions:
         format: date-time
       addressLine1:
         type: string
+        maxLength: 255
         description: Address 1 line of the address.
       addressLine2:
         type: string
+        maxLength: 255
         description: Address 2 line of the address.
       addressLine3:
         type: string
+        maxLength: 255
         description: Address 3 line of the address.
       addressLine4:
         type: string
+        maxLength: 255
         description: Address 4 line of the address.
       city:
         type: string
+        maxLength: 255
       postal:
         type: string
+        maxLength: 255
       blockNumber:
         type: number
         format: float
       comment:
         type: string
+        maxLength: 255
       cycleHrsWrk:
         type: number
         format: float
       frozenOut:
         type: string
-      lastDate:
+        maxLength: 255
+      lastVerifiedDate:
         type: string
+        format: date-time
       licence:
         type: string
+        maxLength: 255
       make:
         type: string
+        maxLength: 255
       model:
         type: string
+        maxLength: 255
       year:
         type: string
+        maxLength: 255
       type:
         type: string
+        maxLength: 255
       numYears:
         type: number
         format: float
       operator:
         type: string
+        maxLength: 255
       payRate:
         type: number
         format: float
       refuseRate:
         type: string
+        maxLength: 255
       seniority:
         type: number
         format: float
       serialNum:
         type: string
+        maxLength: 255
       size:
         type: string
+        maxLength: 255
       toDate:
         type: string
         format: date-time
       working:
         type: string
+        maxLength: 255
       yearEndReg:
         type: string
+        maxLength: 255
       prevRegArea:
         type: string
+        maxLength: 255
       YTD:
         type: number
         format: float
@@ -342,10 +376,13 @@ definitions:
         format: float
       statusCd:
         type: string
+        maxLength: 255
       archiveCd:
         type: string
+        maxLength: 255
       archiveReason:
         type: string
+        maxLength: 255
       archiveDate:
         type: string
         format: date-time
@@ -354,6 +391,7 @@ definitions:
         format: float
       regDumpTruck:
         type: string
+        maxLength: 255
       equipmentAttachments:
         type: array
         items:
@@ -385,66 +423,97 @@ definitions:
         description: Primary Key
       singleAxle:
         type: string
+        maxLength: 255
       tandemAxle:
         type: string
+        maxLength: 255
       PUP:
         type: string
+        maxLength: 255
       bellyDump:
         type: string
+        maxLength: 255
       tridem:
         type: string
+        maxLength: 255
       rockBox:
         type: string
+        maxLength: 255
       hiliftGate:
         type: string
+        maxLength: 255
       waterTruck:
         type: string
+        maxLength: 255
       sealCoatHitch:
         type: string
+        maxLength: 255
       rearAxleSpacing:
         type: string
+        maxLength: 255
       frontTireSize:
         type: string
+        maxLength: 255
       frontTireUOM:
         type: string
+        maxLength: 255
       frontAxleCapacity:
         type: string
+        maxLength: 255
       rearAxleCapacity:
         type: string
+        maxLength: 255
       legalLoad:
         type: string
+        maxLength: 255
       legalCapacity:
         type: string
+        maxLength: 255
       legalPUPTareWeight:
         type: string
+        maxLength: 255
       licencedGVW:
         type: string
+        maxLength: 255
       licencedGVWUOM:
         type: string
+        maxLength: 255
       licencedTareWeight:
         type: string
+        maxLength: 255
       licencedPUPTareWeight:
         type: string
+        maxLength: 255
       licencedLoad:
         type: string
+        maxLength: 255
       licencedCapacity:
         type: string
+        maxLength: 255
       boxLength:
         type: string
+        maxLength: 255
       boxWidth:
         type: string
+        maxLength: 255
       boxHeight:
         type: string
+        maxLength: 255
       boxCapacity:
         type: string
+        maxLength: 255
       trailerBoxLength:
         type: string
+        maxLength: 255
       trailerBoxWidth:
         type: string
+        maxLength: 255
       trailerBoxHeight:
         type: string
+        maxLength: 255
       trailerBoxCapacity:
         type: string
+        maxLength: 255
   EquipmentAttachment:
     type: object
     required:
@@ -464,6 +533,7 @@ definitions:
         type: integer
       description:
         type: string
+        maxLength: 255
   EquipmentType:
     type: object
     required:
@@ -477,8 +547,10 @@ definitions:
         $ref: '#/definitions/LocalArea'
       code:
         type: string
+        maxLength: 255
       description:
         type: string
+        maxLength: 255
       equipRentalRateNo:
         type: number
         format: float
@@ -496,6 +568,7 @@ definitions:
         format: float
       secondBlk:
         type: string
+        maxLength: 255
   EquipmentAttachmentType:
     type: object
     required:
@@ -507,8 +580,10 @@ definitions:
         description: Primary Key
       code:
         type: string
+        maxLength: 255
       description:
         type: string
+        maxLength: 255
   SeniorityAudit:
     type: object
     required:
@@ -530,10 +605,12 @@ definitions:
         format: float
       equipCd:
         type: string
+        maxLength: 255
       owner:
         $ref: '#/definitions/Owner'
       ownerName:
         type: string
+        maxLength: 255
       seniority:
         type: number
         format: float
@@ -554,12 +631,15 @@ definitions:
         format: float
       frozenOut:
         type: string
+        maxLength: 255
       project:
         $ref: '#/definitions/Project'
       working:
         type: string
+        maxLength: 255
       yearEndReg:
         type: string
+        maxLength: 255
   Owner:
     type: object
     required:
@@ -571,18 +651,25 @@ definitions:
         description: Primary Key
       ownerCd:
         type: string
+        maxLength: 255
       ownerFirstName:
         type: string
+        maxLength: 255
       ownerLastName:
         type: string
+        maxLength: 255
       contactPerson:
         type: string
+        maxLength: 255
       localToArea:
         type: string
+        maxLength: 255
       maintenanceContractor:
         type: string
+        maxLength: 255
       comment:
         type: string
+        maxLength: 255
       WCBNum:
         format: int32
         type: integer
@@ -591,8 +678,10 @@ definitions:
         format: date-time
       CGLCompany:
         type: string
+        maxLength: 255
       CGLPolicy:
         type: string
+        maxLength: 255
       CGLStartDate:
         type: string
         format: date-time
@@ -601,10 +690,13 @@ definitions:
         format: date-time
       statusCd:
         type: string
+        maxLength: 255
       archiveCd:
         type: string
+        maxLength: 255
       archiveReason:
         type: string
+        maxLength: 255
       localArea:
         $ref: '#/definitions/LocalArea'
       primaryContact:
@@ -641,15 +733,19 @@ definitions:
         description: Primary Key
       givenName:
         type: string
+        maxLength: 255
         description: The given name of the contact.
       surname:
         type: string
+        maxLength: 255
         description: The surname of the contact.
       role:
         type: string
+        maxLength: 255
         description: The role of the contact. UI controlled as to whether it is free form or selected from an enumerated list.
       notes:
         type: string
+        maxLength: 255
         description: Notes about the contact.
       phones:
         type: array
@@ -670,9 +766,11 @@ definitions:
         description: Primary Key
       type:
         type: string
+        maxLength: 255
         description: The type of the phone number. UI controlled as to whether it is free form or selected from an enumerated list.
       phoneNumber:
         type: string
+        maxLength: 255
         description: The phone number of the contact. Entered as free form to support a range of formats.
   ContactAddress:
     type: object
@@ -685,21 +783,27 @@ definitions:
         description: Primary Key
       type:
         type: string
+        maxLength: 255
         description: The type of the address. UI controlled as to whether it is free form or selected from an enumerated list.
       addressLine1:
         type: string
+        maxLength: 255
         description: Address 1 line of the address.
       addressLine2:
         type: string
+        maxLength: 255
         description: Address 2 line of the address.
       city:
         type: string
+        maxLength: 255
         description: The City of the address.
       province:
         type: string
+        maxLength: 255
         description: The Province of the address.
       postalCode:
         type: string
+        maxLength: 255
         description: The postal code of the address.
   Note:
     type: object
@@ -713,6 +817,7 @@ definitions:
         description: Primary Key
       note:
         type: string
+        maxLength: 2048
         description: The contents of the note.
       isNoLongerRelevant:
         type: boolean
@@ -729,12 +834,15 @@ definitions:
         description: Primary Key
       internalFileName:
         type: string
+        maxLength: 2048
         description: The physical location of the attachment on the file system.
       externalFileName:
         type: string
+        maxLength: 2048
         description: The name of the attachment as defined by the user in uploading the document.
       description:
         type: string
+        maxLength: 255
         description: A note about the attachment,  optionally maintained by the user.
   History:
     type: object
@@ -748,6 +856,7 @@ definitions:
         description: Primary Key
       historyText:
         type: string
+        maxLength: 2048
         description: The text of the history entry tracked against the related entity.
       createdDate:
         type: string
@@ -764,6 +873,7 @@ definitions:
         description: Primary Key
       name:
         type: string
+        maxLength: 255
         description: The full name of the Local Area
       serviceArea:
         $ref: '#/definitions/ServiceArea'
@@ -780,6 +890,7 @@ definitions:
         description: Primary Key
       name:
         type: string
+        maxLength: 255
         description: Context Name known by the UI.
   UserFavourite:
     type: object
@@ -793,9 +904,11 @@ definitions:
         description: Primary Key
       name:
         type: string
+        maxLength: 255
         description: The user-defined name for the recorded settings. Allows the user to save different groups of settings and access each one easily when needed.
       value:
         type: string
+        maxLength: 2048
         description: The settings saved by the user. In general,  a UI defined chunk of json that stores the settings in place when the user created the favourite.
       isDefault:
         type: boolean
@@ -817,6 +930,7 @@ definitions:
         description: The Ministry ID for the Region
       name:
         type: string
+        maxLength: 255
         description: The name of the Region
       startDate:
         type: string
@@ -841,6 +955,7 @@ definitions:
         description: The Ministry ID for the District
       name:
         type: string
+        maxLength: 255
         description: The name of the District
       region:
         $ref: '#/definitions/Region'
@@ -868,6 +983,7 @@ definitions:
         description: The Ministry ID for the Service Area
       name:
         type: string
+        maxLength: 255
         description: The name of the Service Area
       district:
         $ref: '#/definitions/District'
@@ -892,6 +1008,7 @@ definitions:
         description: Primary Key
       name:
         type: string
+        maxLength: 255
         description: The name of the City
   User:
     type: object
@@ -906,21 +1023,28 @@ definitions:
         description: Primary Key
       givenName:
         type: string
+        maxLength: 255
       surname:
         type: string
+        maxLength: 255
       initials:
         type: string
+        maxLength: 255
       email:
         type: string
+        maxLength: 255
       active:
         type: boolean
       smUserId:
         type: string
+        maxLength: 255
         description: Security Manager User ID
       guid:
         type: string
+        maxLength: 255
       smAuthorizationDirectory:
         type: string
+        maxLength: 255
       userRoles:
         type: array
         items:
@@ -962,8 +1086,10 @@ definitions:
         description: Primary Key
       name:
         type: string
+        maxLength: 255
       description:
         type: string
+        maxLength: 255
       rolePermissions:
         type: array
         items:
@@ -999,10 +1125,13 @@ definitions:
         description: Primary Key
       code:
         type: string
+        maxLength: 255
       name:
         type: string
+        maxLength: 255
       description:
         type: string
+        maxLength: 255
   GroupMembership:
     type: object
     required:
@@ -1032,5 +1161,7 @@ definitions:
         description: Primary Key
       name:
         type: string
+        maxLength: 255
       description:
         type: string
+        maxLength: 255

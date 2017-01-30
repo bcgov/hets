@@ -39,6 +39,51 @@ namespace HETSAPI.Services.Impl
             _context = context;
         }
 
+        private void AdjustRecord(Owner item)
+        {
+            // Adjust the record to allow it to be updated / inserted
+            if (item.LocalArea != null)
+            {
+                int localarea_id = item.LocalArea.Id;
+                bool localarea_exists = _context.LocalAreas.Any(a => a.Id == localarea_id);
+                if (localarea_exists)
+                {
+                    LocalArea localarea = _context.LocalAreas.First(a => a.Id == localarea_id);
+                    item.LocalArea = localarea;
+                }
+                else
+                {
+                    item.LocalArea = null;
+                }
+            }
+
+            // Adjust the owner contacts.
+
+
+            // EquipmentAttachments is a list     
+            if (item.Contacts != null)
+            {
+                for (int i = 0; i < item.Contacts.Count; i++)
+                {
+                    Contact contact = item.Contacts[i];
+                    if (contact != null)
+                    {
+                        int contact_id = contact.Id;
+                        bool contact_exists = _context.Contacts.Any(a => a.Id == contact_id);
+                        if (contact_exists)
+                        {
+                            contact = _context.Contacts.First(a => a.Id == contact_id);
+                            item.Contacts[i] = contact;
+                        }
+                        else
+                        {
+                            item.Contacts[i] = null;
+                        }
+                    }
+                }
+            }
+        }
+
         /// <summary>
         /// 
         /// </summary>
@@ -46,8 +91,28 @@ namespace HETSAPI.Services.Impl
         /// <response code="201">Owner created</response>
         public virtual IActionResult OwnersBulkPostAsync(Owner[] items)
         {
-            var result = "";
-            return new ObjectResult(result);
+            if (items == null)
+            {
+                return new BadRequestResult();
+            }
+            foreach (Owner item in items)
+            {
+                AdjustRecord(item);
+
+                // determine if this is an insert or an update            
+                bool exists = _context.Owners.Any(a => a.Id == item.Id);
+                if (exists)
+                {
+                    _context.Update(item);
+                }
+                else
+                {
+                    _context.Add(item);
+                }
+            }
+            // Save the changes
+            _context.SaveChanges();
+            return new NoContentResult();
         }
 
         /// <summary>
@@ -56,7 +121,9 @@ namespace HETSAPI.Services.Impl
         /// <response code="200">OK</response>
         public virtual IActionResult OwnersGetAsync()
         {
-            var result = "";
+            var result = _context.Owners
+        .Include(x => x.LocalArea.ServiceArea.District.Region)        
+        .ToList();
             return new ObjectResult(result);
         }
 

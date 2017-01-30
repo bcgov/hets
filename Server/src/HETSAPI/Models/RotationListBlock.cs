@@ -18,6 +18,7 @@ using System.Collections.ObjectModel;
 using System.Runtime.Serialization;
 using Newtonsoft.Json;
 using System.ComponentModel.DataAnnotations.Schema;
+using System.ComponentModel.DataAnnotations;
 
 namespace HETSAPI.Models
 {
@@ -136,11 +137,15 @@ namespace HETSAPI.Models
         /// <summary>
         /// Gets or Sets Moved
         /// </summary>
+        [MaxLength(255)]
+        
         public string Moved { get; set; }
         
         /// <summary>
         /// Gets or Sets StartWasZero
         /// </summary>
+        [MaxLength(255)]
+        
         public string StartWasZero { get; set; }
         
         /// <summary>
@@ -156,11 +161,15 @@ namespace HETSAPI.Models
         /// <summary>
         /// Gets or Sets Closed
         /// </summary>
+        [MaxLength(255)]
+        
         public string Closed { get; set; }
         
         /// <summary>
         /// Gets or Sets ClosedComments
         /// </summary>
+        [MaxLength(2048)]
+        
         public string ClosedComments { get; set; }
         
         /// <summary>
@@ -181,6 +190,8 @@ namespace HETSAPI.Models
         /// <summary>
         /// Gets or Sets ReservedBy
         /// </summary>
+        [MaxLength(255)]
+        
         public string ReservedBy { get; set; }
         
         /// <summary>

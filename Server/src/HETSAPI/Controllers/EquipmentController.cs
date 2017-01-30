@@ -124,5 +124,26 @@ namespace HETSAPI.Controllers
         {
             return this._service.EquipmentPostAsync(item);
         }
+
+        /// <summary>
+        /// Searches Equipment
+        /// </summary>
+        /// <remarks>Used for the equipment search page.</remarks>
+        /// <param name="localareas">Local Areas (array of id numbers)</param>
+        /// <param name="types">Equipment Types (array of id numbers)</param>
+        /// <param name="attachments">Equipment Attachments (array of id numbers)</param>
+        /// <param name="owner"></param>
+        /// <param name="status">Status</param>
+        /// <param name="hired">Hired</param>
+        /// <param name="notverifiedsincedate">Not Verified Since Date</param>
+        /// <response code="200">OK</response>
+        [HttpGet]
+        [Route("/api/equipment/search")]
+        [SwaggerOperation("EquipmentSearchGet")]
+        [SwaggerResponse(200, type: typeof(List<Equipment>))]
+        public virtual IActionResult EquipmentSearchGet([FromQuery]int?[] localareas, [FromQuery]int?[] types, [FromQuery]int?[] attachments, [FromQuery]int? owner, [FromQuery]string status, [FromQuery]bool? hired, [FromQuery]DateTime? notverifiedsincedate)
+        {
+            return this._service.EquipmentSearchGetAsync(localareas, types, attachments, owner, status, hired, notverifiedsincedate);
+        }
     }
 }

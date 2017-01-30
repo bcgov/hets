@@ -18,6 +18,7 @@ using System.Collections.ObjectModel;
 using System.Runtime.Serialization;
 using Newtonsoft.Json;
 using System.ComponentModel.DataAnnotations.Schema;
+using System.ComponentModel.DataAnnotations;
 
 namespace HETSAPI.Models
 {
@@ -100,36 +101,50 @@ namespace HETSAPI.Models
         /// <summary>
         /// Gets or Sets OwnerCd
         /// </summary>
+        [MaxLength(255)]
+        
         public string OwnerCd { get; set; }
         
         /// <summary>
         /// Gets or Sets OwnerFirstName
         /// </summary>
+        [MaxLength(255)]
+        
         public string OwnerFirstName { get; set; }
         
         /// <summary>
         /// Gets or Sets OwnerLastName
         /// </summary>
+        [MaxLength(255)]
+        
         public string OwnerLastName { get; set; }
         
         /// <summary>
         /// Gets or Sets ContactPerson
         /// </summary>
+        [MaxLength(255)]
+        
         public string ContactPerson { get; set; }
         
         /// <summary>
         /// Gets or Sets LocalToArea
         /// </summary>
+        [MaxLength(255)]
+        
         public string LocalToArea { get; set; }
         
         /// <summary>
         /// Gets or Sets MaintenanceContractor
         /// </summary>
+        [MaxLength(255)]
+        
         public string MaintenanceContractor { get; set; }
         
         /// <summary>
         /// Gets or Sets Comment
         /// </summary>
+        [MaxLength(255)]
+        
         public string Comment { get; set; }
         
         /// <summary>
@@ -145,11 +160,15 @@ namespace HETSAPI.Models
         /// <summary>
         /// Gets or Sets CGLCompany
         /// </summary>
+        [MaxLength(255)]
+        
         public string CGLCompany { get; set; }
         
         /// <summary>
         /// Gets or Sets CGLPolicy
         /// </summary>
+        [MaxLength(255)]
+        
         public string CGLPolicy { get; set; }
         
         /// <summary>
@@ -165,16 +184,22 @@ namespace HETSAPI.Models
         /// <summary>
         /// Gets or Sets StatusCd
         /// </summary>
+        [MaxLength(255)]
+        
         public string StatusCd { get; set; }
         
         /// <summary>
         /// Gets or Sets ArchiveCd
         /// </summary>
+        [MaxLength(255)]
+        
         public string ArchiveCd { get; set; }
         
         /// <summary>
         /// Gets or Sets ArchiveReason
         /// </summary>
+        [MaxLength(255)]
+        
         public string ArchiveReason { get; set; }
         
         /// <summary>

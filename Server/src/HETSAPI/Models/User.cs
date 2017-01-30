@@ -18,6 +18,7 @@ using System.Collections.ObjectModel;
 using System.Runtime.Serialization;
 using Newtonsoft.Json;
 using System.ComponentModel.DataAnnotations.Schema;
+using System.ComponentModel.DataAnnotations;
 
 namespace HETSAPI.Models
 {
@@ -81,21 +82,29 @@ namespace HETSAPI.Models
         /// <summary>
         /// Gets or Sets GivenName
         /// </summary>
+        [MaxLength(255)]
+        
         public string GivenName { get; set; }
         
         /// <summary>
         /// Gets or Sets Surname
         /// </summary>
+        [MaxLength(255)]
+        
         public string Surname { get; set; }
         
         /// <summary>
         /// Gets or Sets Initials
         /// </summary>
+        [MaxLength(255)]
+        
         public string Initials { get; set; }
         
         /// <summary>
         /// Gets or Sets Email
         /// </summary>
+        [MaxLength(255)]
+        
         public string Email { get; set; }
         
         /// <summary>
@@ -103,16 +112,22 @@ namespace HETSAPI.Models
         /// </summary>
         /// <value>Security Manager User ID</value>
         [MetaDataExtension (Description = "Security Manager User ID")]
+        [MaxLength(255)]
+        
         public string SmUserId { get; set; }
         
         /// <summary>
         /// Gets or Sets Guid
         /// </summary>
+        [MaxLength(255)]
+        
         public string Guid { get; set; }
         
         /// <summary>
         /// Gets or Sets SmAuthorizationDirectory
         /// </summary>
+        [MaxLength(255)]
+        
         public string SmAuthorizationDirectory { get; set; }
         
         /// <summary>

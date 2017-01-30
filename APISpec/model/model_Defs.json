@@ -65,7 +65,7 @@
         },
         {
             "Description": null,
-            "Length": null,
+            "Length": "255",
             "Name": "projectNum",
             "RefDef": null,
             "Required": [
@@ -86,7 +86,7 @@
         },
         {
             "Description": null,
-            "Length": null,
+            "Length": "255",
             "Name": "jobDesc1",
             "RefDef": null,
             "Required": [
@@ -107,7 +107,7 @@
         },
         {
             "Description": null,
-            "Length": null,
+            "Length": "255",
             "Name": "jobDesc2",
             "RefDef": null,
             "Required": [
@@ -821,7 +821,7 @@
         },
         {
             "Description": null,
-            "Length": null,
+            "Length": "255",
             "Name": "moved",
             "RefDef": null,
             "Required": [
@@ -842,7 +842,7 @@
         },
         {
             "Description": null,
-            "Length": null,
+            "Length": "255",
             "Name": "startWasZero",
             "RefDef": null,
             "Required": [
@@ -905,7 +905,7 @@
         },
         {
             "Description": null,
-            "Length": null,
+            "Length": "255",
             "Name": "closed",
             "RefDef": null,
             "Required": [
@@ -926,7 +926,7 @@
         },
         {
             "Description": null,
-            "Length": null,
+            "Length": "2048",
             "Name": "closedComments",
             "RefDef": null,
             "Required": [
@@ -1010,7 +1010,7 @@
         },
         {
             "Description": null,
-            "Length": null,
+            "Length": "255",
             "Name": "reservedBy",
             "RefDef": null,
             "Required": [
@@ -1220,7 +1220,7 @@
         },
         {
             "Description": null,
-            "Length": null,
+            "Length": "255",
             "Name": "refuseReason",
             "RefDef": null,
             "Required": [
@@ -1241,7 +1241,7 @@
         },
         {
             "Description": null,
-            "Length": null,
+            "Length": "255",
             "Name": "note",
             "RefDef": null,
             "Required": [
@@ -1304,7 +1304,7 @@
         },
         {
             "Description": null,
-            "Length": null,
+            "Length": "255",
             "Name": "equipmentUpdateReason",
             "RefDef": null,
             "Required": [
@@ -1787,7 +1787,7 @@
         },
         {
             "Description": null,
-            "Length": null,
+            "Length": "255",
             "Name": "equipCd",
             "RefDef": null,
             "Required": [
@@ -1808,7 +1808,7 @@
         },
         {
             "Description": null,
-            "Length": null,
+            "Length": "255",
             "Name": "approval",
             "RefDef": null,
             "Required": [
@@ -1871,7 +1871,7 @@
         },
         {
             "Description": "Address 1 line of the address.",
-            "Length": null,
+            "Length": "255",
             "Name": "addressLine1",
             "RefDef": null,
             "Required": [
@@ -1892,7 +1892,7 @@
         },
         {
             "Description": "Address 2 line of the address.",
-            "Length": null,
+            "Length": "255",
             "Name": "addressLine2",
             "RefDef": null,
             "Required": [
@@ -1913,7 +1913,7 @@
         },
         {
             "Description": "Address 3 line of the address.",
-            "Length": null,
+            "Length": "255",
             "Name": "addressLine3",
             "RefDef": null,
             "Required": [
@@ -1934,7 +1934,7 @@
         },
         {
             "Description": "Address 4 line of the address.",
-            "Length": null,
+            "Length": "255",
             "Name": "addressLine4",
             "RefDef": null,
             "Required": [
@@ -1955,7 +1955,7 @@
         },
         {
             "Description": null,
-            "Length": null,
+            "Length": "255",
             "Name": "city",
             "RefDef": null,
             "Required": [
@@ -1976,7 +1976,7 @@
         },
         {
             "Description": null,
-            "Length": null,
+            "Length": "255",
             "Name": "postal",
             "RefDef": null,
             "Required": [
@@ -2018,7 +2018,7 @@
         },
         {
             "Description": null,
-            "Length": null,
+            "Length": "255",
             "Name": "comment",
             "RefDef": null,
             "Required": [
@@ -2060,7 +2060,7 @@
         },
         {
             "Description": null,
-            "Length": null,
+            "Length": "255",
             "Name": "frozenOut",
             "RefDef": null,
             "Required": [
@@ -2082,7 +2082,7 @@
         {
             "Description": null,
             "Length": null,
-            "Name": "lastDate",
+            "Name": "lastVerifiedDate",
             "RefDef": null,
             "Required": [
                 {
@@ -2091,18 +2091,18 @@
             ],
             "binary": null,
             "boolean": null,
-            "datetime": null,
+            "datetime": "datetime",
             "float": null,
             "id": null,
             "integer": null,
             "links": null,
             "ref": null,
-            "string": "string",
+            "string": null,
             "table": null
         },
         {
             "Description": null,
-            "Length": null,
+            "Length": "255",
             "Name": "licence",
             "RefDef": null,
             "Required": [
@@ -2123,7 +2123,7 @@
         },
         {
             "Description": null,
-            "Length": null,
+            "Length": "255",
             "Name": "make",
             "RefDef": null,
             "Required": [
@@ -2144,7 +2144,7 @@
         },
         {
             "Description": null,
-            "Length": null,
+            "Length": "255",
             "Name": "model",
             "RefDef": null,
             "Required": [
@@ -2165,7 +2165,7 @@
         },
         {
             "Description": null,
-            "Length": null,
+            "Length": "255",
             "Name": "year",
             "RefDef": null,
             "Required": [
@@ -2186,7 +2186,7 @@
         },
         {
             "Description": null,
-            "Length": null,
+            "Length": "255",
             "Name": "type",
             "RefDef": null,
             "Required": [
@@ -2228,7 +2228,7 @@
         },
         {
             "Description": null,
-            "Length": null,
+            "Length": "255",
             "Name": "operator",
             "RefDef": null,
             "Required": [
@@ -2270,7 +2270,7 @@
         },
         {
             "Description": null,
-            "Length": null,
+            "Length": "255",
             "Name": "refuseRate",
             "RefDef": null,
             "Required": [
@@ -2312,7 +2312,7 @@
         },
         {
             "Description": null,
-            "Length": null,
+            "Length": "255",
             "Name": "serialNum",
             "RefDef": null,
             "Required": [
@@ -2333,7 +2333,7 @@
         },
         {
             "Description": null,
-            "Length": null,
+            "Length": "255",
             "Name": "size",
             "RefDef": null,
             "Required": [
@@ -2375,7 +2375,7 @@
         },
         {
             "Description": null,
-            "Length": null,
+            "Length": "255",
             "Name": "working",
             "RefDef": null,
             "Required": [
@@ -2396,7 +2396,7 @@
         },
         {
             "Description": null,
-            "Length": null,
+            "Length": "255",
             "Name": "yearEndReg",
             "RefDef": null,
             "Required": [
@@ -2417,7 +2417,7 @@
         },
         {
             "Description": null,
-            "Length": null,
+            "Length": "255",
             "Name": "prevRegArea",
             "RefDef": null,
             "Required": [
@@ -2522,7 +2522,7 @@
         },
         {
             "Description": null,
-            "Length": null,
+            "Length": "255",
             "Name": "statusCd",
             "RefDef": null,
             "Required": [
@@ -2543,7 +2543,7 @@
         },
         {
             "Description": null,
-            "Length": null,
+            "Length": "255",
             "Name": "archiveCd",
             "RefDef": null,
             "Required": [
@@ -2564,7 +2564,7 @@
         },
         {
             "Description": null,
-            "Length": null,
+            "Length": "255",
             "Name": "archiveReason",
             "RefDef": null,
             "Required": [
@@ -2627,7 +2627,7 @@
         },
         {
             "Description": null,
-            "Length": null,
+            "Length": "255",
             "Name": "regDumpTruck",
             "RefDef": null,
             "Required": [
@@ -2795,7 +2795,7 @@
         },
         {
             "Description": null,
-            "Length": null,
+            "Length": "255",
             "Name": "singleAxle",
             "RefDef": null,
             "Required": [
@@ -2816,7 +2816,7 @@
         },
         {
             "Description": null,
-            "Length": null,
+            "Length": "255",
             "Name": "tandemAxle",
             "RefDef": null,
             "Required": [
@@ -2837,7 +2837,7 @@
         },
         {
             "Description": null,
-            "Length": null,
+            "Length": "255",
             "Name": "PUP",
             "RefDef": null,
             "Required": [
@@ -2858,7 +2858,7 @@
         },
         {
             "Description": null,
-            "Length": null,
+            "Length": "255",
             "Name": "bellyDump",
             "RefDef": null,
             "Required": [
@@ -2879,7 +2879,7 @@
         },
         {
             "Description": null,
-            "Length": null,
+            "Length": "255",
             "Name": "tridem",
             "RefDef": null,
             "Required": [
@@ -2900,7 +2900,7 @@
         },
         {
             "Description": null,
-            "Length": null,
+            "Length": "255",
             "Name": "rockBox",
             "RefDef": null,
             "Required": [
@@ -2921,7 +2921,7 @@
         },
         {
             "Description": null,
-            "Length": null,
+            "Length": "255",
             "Name": "hiliftGate",
             "RefDef": null,
             "Required": [
@@ -2942,7 +2942,7 @@
         },
         {
             "Description": null,
-            "Length": null,
+            "Length": "255",
             "Name": "waterTruck",
             "RefDef": null,
             "Required": [
@@ -2963,7 +2963,7 @@
         },
         {
             "Description": null,
-            "Length": null,
+            "Length": "255",
             "Name": "sealCoatHitch",
             "RefDef": null,
             "Required": [
@@ -2984,7 +2984,7 @@
         },
         {
             "Description": null,
-            "Length": null,
+            "Length": "255",
             "Name": "rearAxleSpacing",
             "RefDef": null,
             "Required": [
@@ -3005,7 +3005,7 @@
         },
         {
             "Description": null,
-            "Length": null,
+            "Length": "255",
             "Name": "frontTireSize",
             "RefDef": null,
             "Required": [
@@ -3026,7 +3026,7 @@
         },
         {
             "Description": null,
-            "Length": null,
+            "Length": "255",
             "Name": "frontTireUOM",
             "RefDef": null,
             "Required": [
@@ -3047,7 +3047,7 @@
         },
         {
             "Description": null,
-            "Length": null,
+            "Length": "255",
             "Name": "frontAxleCapacity",
             "RefDef": null,
             "Required": [
@@ -3068,7 +3068,7 @@
         },
         {
             "Description": null,
-            "Length": null,
+            "Length": "255",
             "Name": "rearAxleCapacity",
             "RefDef": null,
             "Required": [
@@ -3089,7 +3089,7 @@
         },
         {
             "Description": null,
-            "Length": null,
+            "Length": "255",
             "Name": "legalLoad",
             "RefDef": null,
             "Required": [
@@ -3110,7 +3110,7 @@
         },
         {
             "Description": null,
-            "Length": null,
+            "Length": "255",
             "Name": "legalCapacity",
             "RefDef": null,
             "Required": [
@@ -3131,7 +3131,7 @@
         },
         {
             "Description": null,
-            "Length": null,
+            "Length": "255",
             "Name": "legalPUPTareWeight",
             "RefDef": null,
             "Required": [
@@ -3152,7 +3152,7 @@
         },
         {
             "Description": null,
-            "Length": null,
+            "Length": "255",
             "Name": "licencedGVW",
             "RefDef": null,
             "Required": [
@@ -3173,7 +3173,7 @@
         },
         {
             "Description": null,
-            "Length": null,
+            "Length": "255",
             "Name": "licencedGVWUOM",
             "RefDef": null,
             "Required": [
@@ -3194,7 +3194,7 @@
         },
         {
             "Description": null,
-            "Length": null,
+            "Length": "255",
             "Name": "licencedTareWeight",
             "RefDef": null,
             "Required": [
@@ -3215,7 +3215,7 @@
         },
         {
             "Description": null,
-            "Length": null,
+            "Length": "255",
             "Name": "licencedPUPTareWeight",
             "RefDef": null,
             "Required": [
@@ -3236,7 +3236,7 @@
         },
         {
             "Description": null,
-            "Length": null,
+            "Length": "255",
             "Name": "licencedLoad",
             "RefDef": null,
             "Required": [
@@ -3257,7 +3257,7 @@
         },
         {
             "Description": null,
-            "Length": null,
+            "Length": "255",
             "Name": "licencedCapacity",
             "RefDef": null,
             "Required": [
@@ -3278,7 +3278,7 @@
         },
         {
             "Description": null,
-            "Length": null,
+            "Length": "255",
             "Name": "boxLength",
             "RefDef": null,
             "Required": [
@@ -3299,7 +3299,7 @@
         },
         {
             "Description": null,
-            "Length": null,
+            "Length": "255",
             "Name": "boxWidth",
             "RefDef": null,
             "Required": [
@@ -3320,7 +3320,7 @@
         },
         {
             "Description": null,
-            "Length": null,
+            "Length": "255",
             "Name": "boxHeight",
             "RefDef": null,
             "Required": [
@@ -3341,7 +3341,7 @@
         },
         {
             "Description": null,
-            "Length": null,
+            "Length": "255",
             "Name": "boxCapacity",
             "RefDef": null,
             "Required": [
@@ -3362,7 +3362,7 @@
         },
         {
             "Description": null,
-            "Length": null,
+            "Length": "255",
             "Name": "trailerBoxLength",
             "RefDef": null,
             "Required": [
@@ -3383,7 +3383,7 @@
         },
         {
             "Description": null,
-            "Length": null,
+            "Length": "255",
             "Name": "trailerBoxWidth",
             "RefDef": null,
             "Required": [
@@ -3404,7 +3404,7 @@
         },
         {
             "Description": null,
-            "Length": null,
+            "Length": "255",
             "Name": "trailerBoxHeight",
             "RefDef": null,
             "Required": [
@@ -3425,7 +3425,7 @@
         },
         {
             "Description": null,
-            "Length": null,
+            "Length": "255",
             "Name": "trailerBoxCapacity",
             "RefDef": null,
             "Required": [
@@ -3551,7 +3551,7 @@
         },
         {
             "Description": null,
-            "Length": null,
+            "Length": "255",
             "Name": "description",
             "RefDef": null,
             "Required": [
@@ -3635,7 +3635,7 @@
         },
         {
             "Description": null,
-            "Length": null,
+            "Length": "255",
             "Name": "code",
             "RefDef": null,
             "Required": [
@@ -3656,7 +3656,7 @@
         },
         {
             "Description": null,
-            "Length": null,
+            "Length": "255",
             "Name": "description",
             "RefDef": null,
             "Required": [
@@ -3782,7 +3782,7 @@
         },
         {
             "Description": null,
-            "Length": null,
+            "Length": "255",
             "Name": "secondBlk",
             "RefDef": null,
             "Required": [
@@ -3845,7 +3845,7 @@
         },
         {
             "Description": null,
-            "Length": null,
+            "Length": "255",
             "Name": "code",
             "RefDef": null,
             "Required": [
@@ -3866,7 +3866,7 @@
         },
         {
             "Description": null,
-            "Length": null,
+            "Length": "255",
             "Name": "description",
             "RefDef": null,
             "Required": [
@@ -4013,7 +4013,7 @@
         },
         {
             "Description": null,
-            "Length": null,
+            "Length": "255",
             "Name": "equipCd",
             "RefDef": null,
             "Required": [
@@ -4055,7 +4055,7 @@
         },
         {
             "Description": null,
-            "Length": null,
+            "Length": "255",
             "Name": "ownerName",
             "RefDef": null,
             "Required": [
@@ -4202,7 +4202,7 @@
         },
         {
             "Description": null,
-            "Length": null,
+            "Length": "255",
             "Name": "frozenOut",
             "RefDef": null,
             "Required": [
@@ -4244,7 +4244,7 @@
         },
         {
             "Description": null,
-            "Length": null,
+            "Length": "255",
             "Name": "working",
             "RefDef": null,
             "Required": [
@@ -4265,7 +4265,7 @@
         },
         {
             "Description": null,
-            "Length": null,
+            "Length": "255",
             "Name": "yearEndReg",
             "RefDef": null,
             "Required": [
@@ -4328,7 +4328,7 @@
         },
         {
             "Description": null,
-            "Length": null,
+            "Length": "255",
             "Name": "ownerCd",
             "RefDef": null,
             "Required": [
@@ -4349,7 +4349,7 @@
         },
         {
             "Description": null,
-            "Length": null,
+            "Length": "255",
             "Name": "ownerFirstName",
             "RefDef": null,
             "Required": [
@@ -4370,7 +4370,7 @@
         },
         {
             "Description": null,
-            "Length": null,
+            "Length": "255",
             "Name": "ownerLastName",
             "RefDef": null,
             "Required": [
@@ -4391,7 +4391,7 @@
         },
         {
             "Description": null,
-            "Length": null,
+            "Length": "255",
             "Name": "contactPerson",
             "RefDef": null,
             "Required": [
@@ -4412,7 +4412,7 @@
         },
         {
             "Description": null,
-            "Length": null,
+            "Length": "255",
             "Name": "localToArea",
             "RefDef": null,
             "Required": [
@@ -4433,7 +4433,7 @@
         },
         {
             "Description": null,
-            "Length": null,
+            "Length": "255",
             "Name": "maintenanceContractor",
             "RefDef": null,
             "Required": [
@@ -4454,7 +4454,7 @@
         },
         {
             "Description": null,
-            "Length": null,
+            "Length": "255",
             "Name": "comment",
             "RefDef": null,
             "Required": [
@@ -4517,7 +4517,7 @@
         },
         {
             "Description": null,
-            "Length": null,
+            "Length": "255",
             "Name": "CGLCompany",
             "RefDef": null,
             "Required": [
@@ -4538,7 +4538,7 @@
         },
         {
             "Description": null,
-            "Length": null,
+            "Length": "255",
             "Name": "CGLPolicy",
             "RefDef": null,
             "Required": [
@@ -4601,7 +4601,7 @@
         },
         {
             "Description": null,
-            "Length": null,
+            "Length": "255",
             "Name": "statusCd",
             "RefDef": null,
             "Required": [
@@ -4622,7 +4622,7 @@
         },
         {
             "Description": null,
-            "Length": null,
+            "Length": "255",
             "Name": "archiveCd",
             "RefDef": null,
             "Required": [
@@ -4643,7 +4643,7 @@
         },
         {
             "Description": null,
-            "Length": null,
+            "Length": "255",
             "Name": "archiveReason",
             "RefDef": null,
             "Required": [
@@ -4853,7 +4853,7 @@
         },
         {
             "Description": "The given name of the contact.",
-            "Length": null,
+            "Length": "255",
             "Name": "givenName",
             "RefDef": null,
             "Required": [
@@ -4874,7 +4874,7 @@
         },
         {
             "Description": "The surname of the contact.",
-            "Length": null,
+            "Length": "255",
             "Name": "surname",
             "RefDef": null,
             "Required": [
@@ -4895,7 +4895,7 @@
         },
         {
             "Description": "The role of the contact. UI controlled as to whether it is free form or selected from an enumerated list.",
-            "Length": null,
+            "Length": "255",
             "Name": "role",
             "RefDef": null,
             "Required": [
@@ -4916,7 +4916,7 @@
         },
         {
             "Description": "Notes about the contact.",
-            "Length": null,
+            "Length": "255",
             "Name": "notes",
             "RefDef": null,
             "Required": [
@@ -5021,7 +5021,7 @@
         },
         {
             "Description": "The type of the phone number. UI controlled as to whether it is free form or selected from an enumerated list.",
-            "Length": null,
+            "Length": "255",
             "Name": "type",
             "RefDef": null,
             "Required": [
@@ -5042,7 +5042,7 @@
         },
         {
             "Description": "The phone number of the contact. Entered as free form to support a range of formats.",
-            "Length": null,
+            "Length": "255",
             "Name": "phoneNumber",
             "RefDef": null,
             "Required": [
@@ -5105,7 +5105,7 @@
         },
         {
             "Description": "The type of the address. UI controlled as to whether it is free form or selected from an enumerated list.",
-            "Length": null,
+            "Length": "255",
             "Name": "type",
             "RefDef": null,
             "Required": [
@@ -5126,7 +5126,7 @@
         },
         {
             "Description": "Address 1 line of the address.",
-            "Length": null,
+            "Length": "255",
             "Name": "addressLine1",
             "RefDef": null,
             "Required": [
@@ -5147,7 +5147,7 @@
         },
         {
             "Description": "Address 2 line of the address.",
-            "Length": null,
+            "Length": "255",
             "Name": "addressLine2",
             "RefDef": null,
             "Required": [
@@ -5168,7 +5168,7 @@
         },
         {
             "Description": "The City of the address.",
-            "Length": null,
+            "Length": "255",
             "Name": "city",
             "RefDef": null,
             "Required": [
@@ -5189,7 +5189,7 @@
         },
         {
             "Description": "The Province of the address.",
-            "Length": null,
+            "Length": "255",
             "Name": "province",
             "RefDef": null,
             "Required": [
@@ -5210,7 +5210,7 @@
         },
         {
             "Description": "The postal code of the address.",
-            "Length": null,
+            "Length": "255",
             "Name": "postalCode",
             "RefDef": null,
             "Required": [
@@ -5273,7 +5273,7 @@
         },
         {
             "Description": "The contents of the note.",
-            "Length": null,
+            "Length": "2048",
             "Name": "note",
             "RefDef": null,
             "Required": [
@@ -5357,7 +5357,7 @@
         },
         {
             "Description": "The physical location of the attachment on the file system.",
-            "Length": null,
+            "Length": "2048",
             "Name": "internalFileName",
             "RefDef": null,
             "Required": [
@@ -5378,7 +5378,7 @@
         },
         {
             "Description": "The name of the attachment as defined by the user in uploading the document.",
-            "Length": null,
+            "Length": "2048",
             "Name": "externalFileName",
             "RefDef": null,
             "Required": [
@@ -5399,7 +5399,7 @@
         },
         {
             "Description": "A note about the attachment,  optionally maintained by the user.",
-            "Length": null,
+            "Length": "255",
             "Name": "description",
             "RefDef": null,
             "Required": [
@@ -5462,7 +5462,7 @@
         },
         {
             "Description": "The text of the history entry tracked against the related entity.",
-            "Length": null,
+            "Length": "2048",
             "Name": "historyText",
             "RefDef": null,
             "Required": [
@@ -5546,7 +5546,7 @@
         },
         {
             "Description": "The full name of the Local Area",
-            "Length": null,
+            "Length": "255",
             "Name": "name",
             "RefDef": null,
             "Required": [
@@ -5630,7 +5630,7 @@
         },
         {
             "Description": "Context Name known by the UI.",
-            "Length": null,
+            "Length": "255",
             "Name": "name",
             "RefDef": null,
             "Required": [
@@ -5693,7 +5693,7 @@
         },
         {
             "Description": "The user-defined name for the recorded settings. Allows the user to save different groups of settings and access each one easily when needed.",
-            "Length": null,
+            "Length": "255",
             "Name": "name",
             "RefDef": null,
             "Required": [
@@ -5714,7 +5714,7 @@
         },
         {
             "Description": "The settings saved by the user. In general,  a UI defined chunk of json that stores the settings in place when the user created the favourite.",
-            "Length": null,
+            "Length": "2048",
             "Name": "value",
             "RefDef": null,
             "Required": [
@@ -5840,7 +5840,7 @@
         },
         {
             "Description": "The name of the Region",
-            "Length": null,
+            "Length": "255",
             "Name": "name",
             "RefDef": null,
             "Required": [
@@ -5966,7 +5966,7 @@
         },
         {
             "Description": "The name of the District",
-            "Length": null,
+            "Length": "255",
             "Name": "name",
             "RefDef": null,
             "Required": [
@@ -6113,7 +6113,7 @@
         },
         {
             "Description": "The name of the Service Area",
-            "Length": null,
+            "Length": "255",
             "Name": "name",
             "RefDef": null,
             "Required": [
@@ -6239,7 +6239,7 @@
         },
         {
             "Description": "The name of the City",
-            "Length": null,
+            "Length": "255",
             "Name": "name",
             "RefDef": null,
             "Required": [
@@ -6308,7 +6308,7 @@
         },
         {
             "Description": null,
-            "Length": null,
+            "Length": "255",
             "Name": "givenName",
             "RefDef": null,
             "Required": [
@@ -6332,7 +6332,7 @@
         },
         {
             "Description": null,
-            "Length": null,
+            "Length": "255",
             "Name": "surname",
             "RefDef": null,
             "Required": [
@@ -6356,7 +6356,7 @@
         },
         {
             "Description": null,
-            "Length": null,
+            "Length": "255",
             "Name": "initials",
             "RefDef": null,
             "Required": [
@@ -6380,7 +6380,7 @@
         },
         {
             "Description": null,
-            "Length": null,
+            "Length": "255",
             "Name": "email",
             "RefDef": null,
             "Required": [
@@ -6428,7 +6428,7 @@
         },
         {
             "Description": "Security Manager User ID",
-            "Length": null,
+            "Length": "255",
             "Name": "smUserId",
             "RefDef": null,
             "Required": [
@@ -6452,7 +6452,7 @@
         },
         {
             "Description": null,
-            "Length": null,
+            "Length": "255",
             "Name": "guid",
             "RefDef": null,
             "Required": [
@@ -6476,7 +6476,7 @@
         },
         {
             "Description": null,
-            "Length": null,
+            "Length": "255",
             "Name": "smAuthorizationDirectory",
             "RefDef": null,
             "Required": [
@@ -6746,7 +6746,7 @@
         },
         {
             "Description": null,
-            "Length": null,
+            "Length": "255",
             "Name": "name",
             "RefDef": null,
             "Required": [
@@ -6773,7 +6773,7 @@
         },
         {
             "Description": null,
-            "Length": null,
+            "Length": "255",
             "Name": "description",
             "RefDef": null,
             "Required": [
@@ -6998,7 +6998,7 @@
         },
         {
             "Description": null,
-            "Length": null,
+            "Length": "255",
             "Name": "code",
             "RefDef": null,
             "Required": [
@@ -7028,7 +7028,7 @@
         },
         {
             "Description": null,
-            "Length": null,
+            "Length": "255",
             "Name": "name",
             "RefDef": null,
             "Required": [
@@ -7058,7 +7058,7 @@
         },
         {
             "Description": null,
-            "Length": null,
+            "Length": "255",
             "Name": "description",
             "RefDef": null,
             "Required": [
@@ -7262,7 +7262,7 @@
         },
         {
             "Description": null,
-            "Length": null,
+            "Length": "255",
             "Name": "name",
             "RefDef": null,
             "Required": [
@@ -7289,7 +7289,7 @@
         },
         {
             "Description": null,
-            "Length": null,
+            "Length": "255",
             "Name": "description",
             "RefDef": null,
             "Required": [

@@ -39,6 +39,28 @@ namespace HETSAPI.Services.Impl
             _context = context;
         }
 
+
+        private void AdjustRecord(EquipmentType item)
+        {
+            // Adjust the record to allow it to be updated / inserted
+            if (item.LocalArea != null)
+            {
+                int localarea_id = item.LocalArea.Id;
+                bool localarea_exists = _context.LocalAreas.Any(a => a.Id == localarea_id);
+                if (localarea_exists)
+                {
+                    LocalArea localarea = _context.LocalAreas.First(a => a.Id == localarea_id);
+                    item.LocalArea = localarea;
+                }
+                else
+                {
+                    item.LocalArea = null;
+                }
+            }
+
+        }
+
+
         /// <summary>
         /// 
         /// </summary>
@@ -46,8 +68,28 @@ namespace HETSAPI.Services.Impl
         /// <response code="201">EquipmentType created</response>
         public virtual IActionResult EquipmentTypesBulkPostAsync(EquipmentType[] items)
         {
-            var result = "";
-            return new ObjectResult(result);
+            if (items == null)
+            {
+                return new BadRequestResult();
+            }
+            foreach (EquipmentType item in items)
+            {
+                AdjustRecord(item);
+                
+                // determine if this is an insert or an update            
+                bool exists = _context.EquipmentTypes.Any(a => a.Id == item.Id);
+                if (exists)
+                {
+                    _context.Update(item);
+                }
+                else
+                {
+                    _context.Add(item);
+                }
+            }
+            // Save the changes
+            _context.SaveChanges();
+            return new NoContentResult();
         }
 
         /// <summary>
@@ -56,7 +98,9 @@ namespace HETSAPI.Services.Impl
         /// <response code="200">OK</response>
         public virtual IActionResult EquipmentTypesGetAsync()
         {
-            var result = "";
+            var result = _context.EquipmentTypes
+                .Include(x => x.LocalArea.ServiceArea.District.Region)
+                .ToList();
             return new ObjectResult(result);
         }
 

@@ -1,19 +1,59 @@
-  /favouritecontexttypes:
+  /equipment/search:
     get:
-      description: Returns list of available FavouriteContextTypes
+      summary: Searches Equipment
+      description:
+        Used for the equipment search page.
       tags:
-        - SchoolBusOwner
+        - Equipment
+      consumes:
+        - application/json
       produces:
         - text/plain
         - application/json
         - text/json
+      parameters:        
+        - name: localareas
+          in: query
+          description: Local Areas (array of id numbers)
+          collectionFormat: multi
+          type: array
+          items:
+            type: integer
+        - name: types
+          in: query
+          description: Equipment Types (array of id numbers)
+          type: array
+          items:
+            type: integer
+        - name: attachments
+          in: query
+          description: Equipment Attachments (array of id numbers)
+          type: array
+          items:
+            type: integer
+        - name: owner
+          in: query
+          type: integer
+        - name: status
+          in: query
+          description: Status
+          type: string
+        - name: hired
+          in: query
+          description: Hired
+          type: boolean
+        - name: notverifiedsincedate
+          in: query
+          description: Not Verified Since Date
+          type: string
+          format: date-time
       responses:
-        '200':
+        200:
           description: OK
           schema:
             type: array
             items:
-              $ref: '#/definitions/FavouriteContextType'
+              $ref: "#/definitions/Equipment"
   /roles/{id}/permissions:
     get:
       description: Get all the permissions for a role

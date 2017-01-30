@@ -18,6 +18,7 @@ using System.Collections.ObjectModel;
 using System.Runtime.Serialization;
 using Newtonsoft.Json;
 using System.ComponentModel.DataAnnotations.Schema;
+using System.ComponentModel.DataAnnotations;
 
 namespace HETSAPI.Models
 {
@@ -120,6 +121,8 @@ namespace HETSAPI.Models
         /// <summary>
         /// Gets or Sets EquipCd
         /// </summary>
+        [MaxLength(255)]
+        
         public string EquipCd { get; set; }
         
         /// <summary>
@@ -136,6 +139,8 @@ namespace HETSAPI.Models
         /// <summary>
         /// Gets or Sets OwnerName
         /// </summary>
+        [MaxLength(255)]
+        
         public string OwnerName { get; set; }
         
         /// <summary>
@@ -171,6 +176,8 @@ namespace HETSAPI.Models
         /// <summary>
         /// Gets or Sets FrozenOut
         /// </summary>
+        [MaxLength(255)]
+        
         public string FrozenOut { get; set; }
         
         /// <summary>
@@ -187,11 +194,15 @@ namespace HETSAPI.Models
         /// <summary>
         /// Gets or Sets Working
         /// </summary>
+        [MaxLength(255)]
+        
         public string Working { get; set; }
         
         /// <summary>
         /// Gets or Sets YearEndReg
         /// </summary>
+        [MaxLength(255)]
+        
         public string YearEndReg { get; set; }
         
         /// <summary>
