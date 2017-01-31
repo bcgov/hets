@@ -18,70 +18,63 @@ using System.Threading.Tasks;
 using Xunit;
 using HETSAPI;
 using HETSAPI.Models;
+using HETSAPI.ViewModels;
 using System.Reflection;
 
 namespace HETSAPI.Test
 {
     /// <summary>
-    ///  Class for testing the model GroupMembership
+    ///  Class for testing the model RolePermissionViewModel
     /// </summary>
     
-    public class GroupMembershipModelTests
+    public class RolePermissionViewModelModelTests
     {
-        // TODO uncomment below to declare an instance variable for GroupMembership
-        private GroupMembership instance;
+        // TODO uncomment below to declare an instance variable for RolePermissionViewModel
+        private RolePermissionViewModel instance;
 
         /// <summary>
         /// Setup the test.
         /// </summary>        
-        public GroupMembershipModelTests()
+        public RolePermissionViewModelModelTests()
         {
-            instance = new GroupMembership();
+            instance = new RolePermissionViewModel();
         }
 
     
         /// <summary>
-        /// Test an instance of GroupMembership
+        /// Test an instance of RolePermissionViewModel
         /// </summary>
         [Fact]
-        public void GroupMembershipInstanceTest()
+        public void RolePermissionViewModelInstanceTest()
         {
-            Assert.IsType<GroupMembership>(instance);  
+            Assert.IsType<RolePermissionViewModel>(instance);  
         }
 
+        /// <summary>
+        /// Test the property 'RoleId'
+        /// </summary>
+        [Fact]
+        public void RoleIdTest()
+        {
+            // TODO unit test for the property 'RoleId'
+			Assert.True(true);
+        }
+        /// <summary>
+        /// Test the property 'PermissionId'
+        /// </summary>
+        [Fact]
+        public void PermissionIdTest()
+        {
+            // TODO unit test for the property 'PermissionId'
+			Assert.True(true);
+        }
         /// <summary>
         /// Test the property 'Id'
         /// </summary>
         [Fact]
         public void IdTest()
         {
-            Assert.IsType<int>(instance.Id);
-        }
-        /// <summary>
-        /// Test the property 'Active'
-        /// </summary>
-        [Fact]
-        public void ActiveTest()
-        {
-            // TODO unit test for the property 'Active'
-			Assert.True(true);
-        }
-        /// <summary>
-        /// Test the property 'Group'
-        /// </summary>
-        [Fact]
-        public void GroupTest()
-        {
-            // TODO unit test for the property 'Group'
-			Assert.True(true);
-        }
-        /// <summary>
-        /// Test the property 'User'
-        /// </summary>
-        [Fact]
-        public void UserTest()
-        {
-            // TODO unit test for the property 'User'
+            // TODO unit test for the property 'Id'
 			Assert.True(true);
         }
 

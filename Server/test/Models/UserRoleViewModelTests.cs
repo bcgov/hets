@@ -19,69 +19,80 @@ using Xunit;
 using HETSAPI;
 using HETSAPI.Models;
 using System.Reflection;
+using HETSAPI.ViewModels;
 
 namespace HETSAPI.Test
 {
     /// <summary>
-    ///  Class for testing the model GroupMembership
+    ///  Class for testing the model UserRoleViewModel
     /// </summary>
     
-    public class GroupMembershipModelTests
+    public class UserRoleViewModelModelTests
     {
-        // TODO uncomment below to declare an instance variable for GroupMembership
-        private GroupMembership instance;
+        // TODO uncomment below to declare an instance variable for UserRoleViewModel
+        private UserRoleViewModel instance;
 
         /// <summary>
         /// Setup the test.
         /// </summary>        
-        public GroupMembershipModelTests()
+        public UserRoleViewModelModelTests()
         {
-            instance = new GroupMembership();
+            instance = new UserRoleViewModel();
         }
 
     
         /// <summary>
-        /// Test an instance of GroupMembership
+        /// Test an instance of UserRoleViewModel
         /// </summary>
         [Fact]
-        public void GroupMembershipInstanceTest()
+        public void UserRoleViewModelInstanceTest()
         {
-            Assert.IsType<GroupMembership>(instance);  
+            Assert.IsType<UserRoleViewModel>(instance);  
         }
 
+        /// <summary>
+        /// Test the property 'EffectiveDate'
+        /// </summary>
+        [Fact]
+        public void EffectiveDateTest()
+        {
+            // TODO unit test for the property 'EffectiveDate'
+			Assert.True(true);
+        }
+        /// <summary>
+        /// Test the property 'UserId'
+        /// </summary>
+        [Fact]
+        public void UserIdTest()
+        {
+            // TODO unit test for the property 'UserId'
+			Assert.True(true);
+        }
+        /// <summary>
+        /// Test the property 'RoleId'
+        /// </summary>
+        [Fact]
+        public void RoleIdTest()
+        {
+            // TODO unit test for the property 'RoleId'
+			Assert.True(true);
+        }
         /// <summary>
         /// Test the property 'Id'
         /// </summary>
         [Fact]
         public void IdTest()
         {
-            Assert.IsType<int>(instance.Id);
+            // TODO unit test for the property 'Id'
+            Assert.True(true);
         }
         /// <summary>
-        /// Test the property 'Active'
+        /// Test the property 'ExpiryDate'
         /// </summary>
         [Fact]
-        public void ActiveTest()
+        public void ExpiryDateTest()
         {
-            // TODO unit test for the property 'Active'
-			Assert.True(true);
-        }
-        /// <summary>
-        /// Test the property 'Group'
-        /// </summary>
-        [Fact]
-        public void GroupTest()
-        {
-            // TODO unit test for the property 'Group'
-			Assert.True(true);
-        }
-        /// <summary>
-        /// Test the property 'User'
-        /// </summary>
-        [Fact]
-        public void UserTest()
-        {
-            // TODO unit test for the property 'User'
+            // TODO unit test for the property 'ExpiryDate'
 			Assert.True(true);
         }
 

@@ -55,7 +55,42 @@ namespace HETSAPI.Test
         [Fact]
         public void IdTest()
         {
-            // TODO unit test for the property 'Id'
+            Assert.IsType<int>(instance.Id);
+        }
+        /// <summary>
+        /// Test the property 'MinistryRegionID'
+        /// </summary>
+        [Fact]
+        public void MinistryRegionIDTest()
+        {
+            // TODO unit test for the property 'MinistryRegionID'
+			Assert.True(true);
+        }
+        /// <summary>
+        /// Test the property 'Name'
+        /// </summary>
+        [Fact]
+        public void NameTest()
+        {
+            // TODO unit test for the property 'Name'
+			Assert.True(true);
+        }
+        /// <summary>
+        /// Test the property 'StartDate'
+        /// </summary>
+        [Fact]
+        public void StartDateTest()
+        {
+            // TODO unit test for the property 'StartDate'
+			Assert.True(true);
+        }
+        /// <summary>
+        /// Test the property 'EndDate'
+        /// </summary>
+        [Fact]
+        public void EndDateTest()
+        {
+            // TODO unit test for the property 'EndDate'
 			Assert.True(true);
         }
 

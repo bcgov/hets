@@ -23,30 +23,30 @@ using System.Reflection;
 namespace HETSAPI.Test
 {
     /// <summary>
-    ///  Class for testing the model User
+    ///  Class for testing the model Project
     /// </summary>
     
-    public class UserModelTests
+    public class ProjectModelTests
     {
-        // TODO uncomment below to declare an instance variable for User
-        private User instance;
+        // TODO uncomment below to declare an instance variable for Project
+        private Project instance;
 
         /// <summary>
         /// Setup the test.
         /// </summary>        
-        public UserModelTests()
+        public ProjectModelTests()
         {
-            instance = new User();
+            instance = new Project();
         }
 
     
         /// <summary>
-        /// Test an instance of User
+        /// Test an instance of Project
         /// </summary>
         [Fact]
-        public void UserInstanceTest()
+        public void ProjectInstanceTest()
         {
-            Assert.IsType<User>(instance);  
+            Assert.IsType<Project>(instance);  
         }
 
         /// <summary>
@@ -58,93 +58,93 @@ namespace HETSAPI.Test
             Assert.IsType<int>(instance.Id);
         }
         /// <summary>
-        /// Test the property 'Active'
+        /// Test the property 'ServiceArea'
         /// </summary>
         [Fact]
-        public void ActiveTest()
+        public void ServiceAreaTest()
         {
-            // TODO unit test for the property 'Active'
+            // TODO unit test for the property 'ServiceArea'
 			Assert.True(true);
         }
         /// <summary>
-        /// Test the property 'GivenName'
+        /// Test the property 'ProjectNum'
         /// </summary>
         [Fact]
-        public void GivenNameTest()
+        public void ProjectNumTest()
         {
-            // TODO unit test for the property 'GivenName'
+            // TODO unit test for the property 'ProjectNum'
 			Assert.True(true);
         }
         /// <summary>
-        /// Test the property 'Surname'
+        /// Test the property 'JobDesc1'
         /// </summary>
         [Fact]
-        public void SurnameTest()
+        public void JobDesc1Test()
         {
-            // TODO unit test for the property 'Surname'
+            // TODO unit test for the property 'JobDesc1'
 			Assert.True(true);
         }
         /// <summary>
-        /// Test the property 'Initials'
+        /// Test the property 'JobDesc2'
         /// </summary>
         [Fact]
-        public void InitialsTest()
+        public void JobDesc2Test()
         {
-            // TODO unit test for the property 'Initials'
+            // TODO unit test for the property 'JobDesc2'
 			Assert.True(true);
         }
         /// <summary>
-        /// Test the property 'Email'
+        /// Test the property 'Requests'
         /// </summary>
         [Fact]
-        public void EmailTest()
+        public void RequestsTest()
         {
-            // TODO unit test for the property 'Email'
+            // TODO unit test for the property 'Requests'
 			Assert.True(true);
         }
         /// <summary>
-        /// Test the property 'SmUserId'
+        /// Test the property 'PrimaryContact'
         /// </summary>
         [Fact]
-        public void SmUserIdTest()
+        public void PrimaryContactTest()
         {
-            // TODO unit test for the property 'SmUserId'
+            // TODO unit test for the property 'PrimaryContact'
 			Assert.True(true);
         }
         /// <summary>
-        /// Test the property 'Guid'
+        /// Test the property 'Contacts'
         /// </summary>
         [Fact]
-        public void GuidTest()
+        public void ContactsTest()
         {
-            // TODO unit test for the property 'Guid'
+            // TODO unit test for the property 'Contacts'
 			Assert.True(true);
         }
         /// <summary>
-        /// Test the property 'SmAuthorizationDirectory'
+        /// Test the property 'Notes'
         /// </summary>
         [Fact]
-        public void SmAuthorizationDirectoryTest()
+        public void NotesTest()
         {
-            // TODO unit test for the property 'SmAuthorizationDirectory'
+            // TODO unit test for the property 'Notes'
 			Assert.True(true);
         }
         /// <summary>
-        /// Test the property 'UserRoles'
+        /// Test the property 'Attachments'
         /// </summary>
         [Fact]
-        public void UserRolesTest()
+        public void AttachmentsTest()
         {
-            // TODO unit test for the property 'UserRoles'
+            // TODO unit test for the property 'Attachments'
 			Assert.True(true);
         }
         /// <summary>
-        /// Test the property 'GroupMemberships'
+        /// Test the property 'History'
         /// </summary>
         [Fact]
-        public void GroupMembershipsTest()
+        public void HistoryTest()
         {
-            // TODO unit test for the property 'GroupMemberships'
+            // TODO unit test for the property 'History'
 			Assert.True(true);
         }
 

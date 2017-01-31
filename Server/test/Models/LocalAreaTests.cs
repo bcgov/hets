@@ -23,30 +23,30 @@ using System.Reflection;
 namespace HETSAPI.Test
 {
     /// <summary>
-    ///  Class for testing the model GroupMembership
+    ///  Class for testing the model LocalArea
     /// </summary>
     
-    public class GroupMembershipModelTests
+    public class LocalAreaModelTests
     {
-        // TODO uncomment below to declare an instance variable for GroupMembership
-        private GroupMembership instance;
+        // TODO uncomment below to declare an instance variable for LocalArea
+        private LocalArea instance;
 
         /// <summary>
         /// Setup the test.
         /// </summary>        
-        public GroupMembershipModelTests()
+        public LocalAreaModelTests()
         {
-            instance = new GroupMembership();
+            instance = new LocalArea();
         }
 
     
         /// <summary>
-        /// Test an instance of GroupMembership
+        /// Test an instance of LocalArea
         /// </summary>
         [Fact]
-        public void GroupMembershipInstanceTest()
+        public void LocalAreaInstanceTest()
         {
-            Assert.IsType<GroupMembership>(instance);  
+            Assert.IsType<LocalArea>(instance);  
         }
 
         /// <summary>
@@ -58,30 +58,21 @@ namespace HETSAPI.Test
             Assert.IsType<int>(instance.Id);
         }
         /// <summary>
-        /// Test the property 'Active'
+        /// Test the property 'Name'
         /// </summary>
         [Fact]
-        public void ActiveTest()
+        public void NameTest()
         {
-            // TODO unit test for the property 'Active'
+            // TODO unit test for the property 'Name'
 			Assert.True(true);
         }
         /// <summary>
-        /// Test the property 'Group'
+        /// Test the property 'ServiceArea'
         /// </summary>
         [Fact]
-        public void GroupTest()
+        public void ServiceAreaTest()
         {
-            // TODO unit test for the property 'Group'
-			Assert.True(true);
-        }
-        /// <summary>
-        /// Test the property 'User'
-        /// </summary>
-        [Fact]
-        public void UserTest()
-        {
-            // TODO unit test for the property 'User'
+            // TODO unit test for the property 'ServiceArea'
 			Assert.True(true);
         }
 

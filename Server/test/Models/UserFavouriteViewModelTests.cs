@@ -18,35 +18,36 @@ using System.Threading.Tasks;
 using Xunit;
 using HETSAPI;
 using HETSAPI.Models;
+using HETSAPI.ViewModels;
 using System.Reflection;
 
 namespace HETSAPI.Test
 {
     /// <summary>
-    ///  Class for testing the model GroupMembership
+    ///  Class for testing the model UserFavouriteViewModel
     /// </summary>
     
-    public class GroupMembershipModelTests
+    public class UserFavouriteViewModelModelTests
     {
-        // TODO uncomment below to declare an instance variable for GroupMembership
-        private GroupMembership instance;
+        // TODO uncomment below to declare an instance variable for UserFavouriteViewModel
+        private UserFavouriteViewModel instance;
 
         /// <summary>
         /// Setup the test.
         /// </summary>        
-        public GroupMembershipModelTests()
+        public UserFavouriteViewModelModelTests()
         {
-            instance = new GroupMembership();
+            instance = new UserFavouriteViewModel();
         }
 
     
         /// <summary>
-        /// Test an instance of GroupMembership
+        /// Test an instance of UserFavouriteViewModel
         /// </summary>
         [Fact]
-        public void GroupMembershipInstanceTest()
+        public void UserFavouriteViewModelInstanceTest()
         {
-            Assert.IsType<GroupMembership>(instance);  
+            Assert.IsType<UserFavouriteViewModel>(instance);  
         }
 
         /// <summary>
@@ -58,30 +59,39 @@ namespace HETSAPI.Test
             Assert.IsType<int>(instance.Id);
         }
         /// <summary>
-        /// Test the property 'Active'
+        /// Test the property 'Name'
         /// </summary>
         [Fact]
-        public void ActiveTest()
+        public void NameTest()
         {
-            // TODO unit test for the property 'Active'
+            // TODO unit test for the property 'Name'
 			Assert.True(true);
         }
         /// <summary>
-        /// Test the property 'Group'
+        /// Test the property 'Value'
         /// </summary>
         [Fact]
-        public void GroupTest()
+        public void ValueTest()
         {
-            // TODO unit test for the property 'Group'
+            // TODO unit test for the property 'Value'
 			Assert.True(true);
         }
         /// <summary>
-        /// Test the property 'User'
+        /// Test the property 'IsDefault'
         /// </summary>
         [Fact]
-        public void UserTest()
+        public void IsDefaultTest()
         {
-            // TODO unit test for the property 'User'
+            // TODO unit test for the property 'IsDefault'
+			Assert.True(true);
+        }
+        /// <summary>
+        /// Test the property 'FavouriteContextTypeId'
+        /// </summary>
+        [Fact]
+        public void FavouriteContextTypeIdTest()
+        {
+            // TODO unit test for the property 'FavouriteContextTypeId'
 			Assert.True(true);
         }
 

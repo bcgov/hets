@@ -23,30 +23,30 @@ using System.Reflection;
 namespace HETSAPI.Test
 {
     /// <summary>
-    ///  Class for testing the model GroupMembership
+    ///  Class for testing the model Attachment
     /// </summary>
     
-    public class GroupMembershipModelTests
+    public class AttachmentModelTests
     {
-        // TODO uncomment below to declare an instance variable for GroupMembership
-        private GroupMembership instance;
+        // TODO uncomment below to declare an instance variable for Attachment
+        private Attachment instance;
 
         /// <summary>
         /// Setup the test.
         /// </summary>        
-        public GroupMembershipModelTests()
+        public AttachmentModelTests()
         {
-            instance = new GroupMembership();
+            instance = new Attachment();
         }
 
     
         /// <summary>
-        /// Test an instance of GroupMembership
+        /// Test an instance of Attachment
         /// </summary>
         [Fact]
-        public void GroupMembershipInstanceTest()
+        public void AttachmentInstanceTest()
         {
-            Assert.IsType<GroupMembership>(instance);  
+            Assert.IsType<Attachment>(instance);  
         }
 
         /// <summary>
@@ -54,35 +54,35 @@ namespace HETSAPI.Test
         /// </summary>
         [Fact]
         public void IdTest()
-        {
-            Assert.IsType<int>(instance.Id);
+        {            
+            Assert.IsType<int>(instance.Id);            
         }
         /// <summary>
-        /// Test the property 'Active'
+        /// Test the property 'InternalFileName'
         /// </summary>
         [Fact]
-        public void ActiveTest()
+        public void InternalFileNameTest()
         {
-            // TODO unit test for the property 'Active'
-			Assert.True(true);
+            // TODO unit test for this property
+            Assert.True(true);
         }
         /// <summary>
-        /// Test the property 'Group'
+        /// Test the property 'ExternalFileName'
         /// </summary>
         [Fact]
-        public void GroupTest()
+        public void ExternalFileNameTest()
         {
-            // TODO unit test for the property 'Group'
-			Assert.True(true);
+            // TODO unit test for this property
+            Assert.True(true);
         }
         /// <summary>
-        /// Test the property 'User'
+        /// Test the property 'Description'
         /// </summary>
         [Fact]
-        public void UserTest()
+        public void DescriptionTest()
         {
-            // TODO unit test for the property 'User'
-			Assert.True(true);
+            // TODO unit test for this property
+            Assert.True(true);
         }
 
 	}

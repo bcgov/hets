@@ -23,30 +23,30 @@ using System.Reflection;
 namespace HETSAPI.Test
 {
     /// <summary>
-    ///  Class for testing the model GroupMembership
+    ///  Class for testing the model ContactAddress
     /// </summary>
     
-    public class GroupMembershipModelTests
+    public class ContactAddressModelTests
     {
-        // TODO uncomment below to declare an instance variable for GroupMembership
-        private GroupMembership instance;
+        // TODO uncomment below to declare an instance variable for ContactAddress
+        private ContactAddress instance;
 
         /// <summary>
         /// Setup the test.
         /// </summary>        
-        public GroupMembershipModelTests()
+        public ContactAddressModelTests()
         {
-            instance = new GroupMembership();
+            instance = new ContactAddress();
         }
 
     
         /// <summary>
-        /// Test an instance of GroupMembership
+        /// Test an instance of ContactAddress
         /// </summary>
         [Fact]
-        public void GroupMembershipInstanceTest()
+        public void ContactAddressInstanceTest()
         {
-            Assert.IsType<GroupMembership>(instance);  
+            Assert.IsType<ContactAddress>(instance);  
         }
 
         /// <summary>
@@ -58,30 +58,57 @@ namespace HETSAPI.Test
             Assert.IsType<int>(instance.Id);
         }
         /// <summary>
-        /// Test the property 'Active'
+        /// Test the property 'Type'
         /// </summary>
         [Fact]
-        public void ActiveTest()
+        public void TypeTest()
         {
-            // TODO unit test for the property 'Active'
+            // TODO unit test for the property 'Type'
 			Assert.True(true);
         }
         /// <summary>
-        /// Test the property 'Group'
+        /// Test the property 'AddressLine1'
         /// </summary>
         [Fact]
-        public void GroupTest()
+        public void AddressLine1Test()
         {
-            // TODO unit test for the property 'Group'
+            // TODO unit test for the property 'AddressLine1'
 			Assert.True(true);
         }
         /// <summary>
-        /// Test the property 'User'
+        /// Test the property 'AddressLine2'
         /// </summary>
         [Fact]
-        public void UserTest()
+        public void AddressLine2Test()
         {
-            // TODO unit test for the property 'User'
+            // TODO unit test for the property 'AddressLine2'
+			Assert.True(true);
+        }
+        /// <summary>
+        /// Test the property 'City'
+        /// </summary>
+        [Fact]
+        public void CityTest()
+        {
+            // TODO unit test for the property 'City'
+			Assert.True(true);
+        }
+        /// <summary>
+        /// Test the property 'Province'
+        /// </summary>
+        [Fact]
+        public void ProvinceTest()
+        {
+            // TODO unit test for the property 'Province'
+			Assert.True(true);
+        }
+        /// <summary>
+        /// Test the property 'PostalCode'
+        /// </summary>
+        [Fact]
+        public void PostalCodeTest()
+        {
+            // TODO unit test for the property 'PostalCode'
 			Assert.True(true);
         }
 

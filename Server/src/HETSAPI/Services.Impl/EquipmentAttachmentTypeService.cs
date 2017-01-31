@@ -75,7 +75,8 @@ namespace HETSAPI.Services.Impl
         /// <response code="200">OK</response>
         public virtual IActionResult EquipmentAttachmentTypesGetAsync()
         {
-            var result = "";
+            var result = _context.EquipmentAttachmentTypes                    
+                    .ToList();
             return new ObjectResult(result);
         }
 

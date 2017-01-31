@@ -146,6 +146,7 @@ namespace HETSAPI.Test
             UserRoleViewModel userRole = new UserRoleViewModel();
             userRole.RoleId = role_id;
             userRole.UserId = user_id;
+            userRole.EffectiveDate = DateTime.Now;
 
             UserRoleViewModel[] items = new UserRoleViewModel[1];
             items[0] = userRole;
@@ -165,10 +166,9 @@ namespace HETSAPI.Test
 
             // parse as JSON.
             jsonString = await response.Content.ReadAsStringAsync();
-            UserRoleViewModel[] userRolesResponse = JsonConvert.DeserializeObject<UserRoleViewModel[]>(jsonString);
+            User[] userRolesResponse = JsonConvert.DeserializeObject<User[]>(jsonString);
 
-            Assert.Equal(items[0].RoleId, userRolesResponse[0].RoleId);
-            Assert.Equal(items[0].UserId, userRolesResponse[0].UserId);
+            Assert.Equal(items[0].UserId, userRolesResponse[0].Id);
 
             // cleanup
 
@@ -235,13 +235,9 @@ namespace HETSAPI.Test
             var permission_id = permission.Id;
 
 
-            // now add the permission to the role.           
-            Permission[] items = new Permission[1];
-            items[0] = permission;
-
-            // send the request.
+            // now add the permission to the role.                                  
             request = new HttpRequestMessage(HttpMethod.Post, "/api/roles/" + role_id + "/permissions");
-            jsonString = JsonConvert.SerializeObject(items, Formatting.Indented);
+            jsonString = JsonConvert.SerializeObject(permission, Formatting.Indented);
             request.Content = new StringContent(jsonString, Encoding.UTF8, "application/json");
             response = await _client.SendAsync(request);
             response.EnsureSuccessStatusCode();
@@ -260,6 +256,8 @@ namespace HETSAPI.Test
             Assert.Equal(permission.Name, rolePermissionsResponse[0].Name);
 
             // test the put.
+            Permission[] items = new Permission[1];
+            items[0] = permission;
 
             request = new HttpRequestMessage(HttpMethod.Put, "/api/roles/" + role_id + "/permissions");
             jsonString = JsonConvert.SerializeObject(items, Formatting.Indented);
@@ -289,5 +287,6 @@ namespace HETSAPI.Test
             response = await _client.SendAsync(request);
             Assert.Equal(response.StatusCode, HttpStatusCode.NotFound);
         }
+
     }
 }

@@ -55,8 +55,7 @@ namespace HETSAPI.Test
         [Fact]
         public void IdTest()
         {
-            // TODO unit test for the property 'Id'
-			Assert.True(true);
+            Assert.IsType<int>(instance.Id);
         }
         /// <summary>
         /// Test the property 'Role'
@@ -68,12 +67,12 @@ namespace HETSAPI.Test
 			Assert.True(true);
         }
         /// <summary>
-        /// Test the property 'Permision'
+        /// Test the property 'Permission'
         /// </summary>
         [Fact]
-        public void PermisionTest()
+        public void PermissionTest()
         {
-            // TODO unit test for the property 'Permision'
+            // TODO unit test for the property 'Permission'
 			Assert.True(true);
         }
 

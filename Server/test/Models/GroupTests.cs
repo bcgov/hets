@@ -55,8 +55,7 @@ namespace HETSAPI.Test
         [Fact]
         public void IdTest()
         {
-            // TODO unit test for the property 'Id'
-			Assert.True(true);
+            Assert.IsType<int>(instance.Id);
         }
         /// <summary>
         /// Test the property 'Name'
