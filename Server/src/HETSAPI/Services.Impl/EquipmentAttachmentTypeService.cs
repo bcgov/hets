@@ -39,6 +39,7 @@ namespace HETSAPI.Services.Impl
             _context = context;
         }
 
+
         /// <summary>
         /// 
         /// </summary>
@@ -46,8 +47,26 @@ namespace HETSAPI.Services.Impl
         /// <response code="201">EquipmentAttachmentType created</response>
         public virtual IActionResult EquipmentAttachmentTypesBulkPostAsync(EquipmentAttachmentType[] items)
         {
-            var result = "";
-            return new ObjectResult(result);
+            if (items == null)
+            {
+                return new BadRequestResult();
+            }
+            foreach (EquipmentAttachmentType item in items)
+            {
+                // determine if this is an insert or an update            
+                bool exists = _context.EquipmentAttachmentTypes.Any(a => a.Id == item.Id);
+                if (exists)
+                {
+                    _context.Update(item);
+                }
+                else
+                {
+                    _context.Add(item);
+                }
+            }
+            // Save the changes
+            _context.SaveChanges();
+            return new NoContentResult();
         }
 
         /// <summary>

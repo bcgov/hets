@@ -18,6 +18,7 @@ using System.Collections.ObjectModel;
 using System.Runtime.Serialization;
 using Newtonsoft.Json;
 using System.ComponentModel.DataAnnotations.Schema;
+using System.ComponentModel.DataAnnotations;
 
 namespace HETSAPI.Models
 {
@@ -61,6 +62,8 @@ namespace HETSAPI.Models
         /// </summary>
         /// <value>The text of the history entry tracked against the related entity.</value>
         [MetaDataExtension (Description = "The text of the history entry tracked against the related entity.")]
+        [MaxLength(2048)]
+        
         public string HistoryText { get; set; }
         
         /// <summary>

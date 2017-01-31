@@ -18,6 +18,7 @@ using System.Collections.ObjectModel;
 using System.Runtime.Serialization;
 using Newtonsoft.Json;
 using System.ComponentModel.DataAnnotations.Schema;
+using System.ComponentModel.DataAnnotations;
 
 namespace HETSAPI.Models
 {
@@ -60,6 +61,8 @@ namespace HETSAPI.Models
         /// </summary>
         /// <value>The full name of the Local Area</value>
         [MetaDataExtension (Description = "The full name of the Local Area")]
+        [MaxLength(255)]
+        
         public string Name { get; set; }
         
         /// <summary>

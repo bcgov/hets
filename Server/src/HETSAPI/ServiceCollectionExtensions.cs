@@ -26,15 +26,26 @@ namespace HETSAPI
         /// <returns></returns>
         public static IServiceCollection RegisterApplicationServices(this IServiceCollection services)
         {
+            services.AddTransient<IAttachmentService, AttachmentService>();
             services.AddTransient<ICityService, CityService>();
+            services.AddTransient<IContactService, ContactService>();
+            services.AddTransient<IContactAddressService, ContactAddressService>();
+            services.AddTransient<IContactPhoneService, ContactPhoneService>();
+            services.AddTransient<ICurrentUserService, CurrentUserService>();
             services.AddTransient<IDistrictService, DistrictService>();
-            services.AddTransient<IGroupService, GroupService>();            
+            services.AddTransient<IEquipmentAttachmentTypeService, EquipmentAttachmentTypeService>();
+            services.AddTransient<IEquipmentService, EquipmentService>();
+            services.AddTransient<IEquipmentTypeService, EquipmentTypeService>();
+            services.AddTransient<IGroupService, GroupService>();
+            services.AddTransient<ILocalAreaService, LocalAreaService>();
+            services.AddTransient<INoteService, NoteService>();
+            services.AddTransient<IOwnerService, OwnerService>();
             services.AddTransient<IPermissionService, PermissionService>();
+            services.AddTransient<IProjectService, ProjectService>();
             services.AddTransient<IRegionService, RegionService>();
-            services.AddTransient<IRoleService, RoleService>();            
+            services.AddTransient<IRoleService, RoleService>();
             services.AddTransient<IServiceAreaService, ServiceAreaService>();
             services.AddTransient<IUserService, UserService>();
-            services.AddTransient<ICurrentUserService, CurrentUserService>();
             return services;
         }
     }

@@ -39,6 +39,26 @@ namespace HETSAPI.Services.Impl
             _context = context;
         }
 
+        private void AdjustRecord(LocalArea item)
+        {
+            // Adjust the record to allow it to be updated / inserted
+            if (item.ServiceArea != null)
+            {
+                int servicearea_id = item.ServiceArea.Id;
+                bool servicearea_exists = _context.ServiceAreas.Any(a => a.Id == servicearea_id);
+                if (servicearea_exists)
+                {
+                    ServiceArea servicearea = _context.ServiceAreas.First(a => a.Id == servicearea_id);
+                    item.ServiceArea = servicearea;
+                }
+                else
+                {
+                    item.ServiceArea = null;
+                }
+            }
+
+        }
+
         /// <summary>
         /// 
         /// </summary>
@@ -46,8 +66,28 @@ namespace HETSAPI.Services.Impl
         /// <response code="201">LocalArea created</response>
         public virtual IActionResult LocalAreasBulkPostAsync(LocalArea[] items)
         {
-            var result = "";
-            return new ObjectResult(result);
+            if (items == null)
+            {
+                return new BadRequestResult();
+            }
+            foreach (LocalArea item in items)
+            {
+                AdjustRecord(item);
+
+                // determine if this is an insert or an update            
+                bool exists = _context.LocalAreas.Any(a => a.Id == item.Id);
+                if (exists)
+                {
+                    _context.Update(item);
+                }
+                else
+                {
+                    _context.Add(item);
+                }
+            }
+            // Save the changes
+            _context.SaveChanges();
+            return new NoContentResult();
         }
 
         /// <summary>
@@ -56,7 +96,9 @@ namespace HETSAPI.Services.Impl
         /// <response code="200">OK</response>
         public virtual IActionResult LocalAreasGetAsync()
         {
-            var result = "";
+            var result = _context.LocalAreas
+        .Include(x => x.ServiceArea.District.Region)
+        .ToList();
             return new ObjectResult(result);
         }
 

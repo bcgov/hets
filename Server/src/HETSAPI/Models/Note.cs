@@ -18,6 +18,7 @@ using System.Collections.ObjectModel;
 using System.Runtime.Serialization;
 using Newtonsoft.Json;
 using System.ComponentModel.DataAnnotations.Schema;
+using System.ComponentModel.DataAnnotations;
 
 namespace HETSAPI.Models
 {
@@ -61,6 +62,8 @@ namespace HETSAPI.Models
         /// </summary>
         /// <value>The contents of the note.</value>
         [MetaDataExtension (Description = "The contents of the note.")]
+        [MaxLength(2048)]
+        
         public string _Note { get; set; }
         
         /// <summary>

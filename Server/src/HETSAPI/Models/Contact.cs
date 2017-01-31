@@ -18,6 +18,7 @@ using System.Collections.ObjectModel;
 using System.Runtime.Serialization;
 using Newtonsoft.Json;
 using System.ComponentModel.DataAnnotations.Schema;
+using System.ComponentModel.DataAnnotations;
 
 namespace HETSAPI.Models
 {
@@ -68,6 +69,8 @@ namespace HETSAPI.Models
         /// </summary>
         /// <value>The given name of the contact.</value>
         [MetaDataExtension (Description = "The given name of the contact.")]
+        [MaxLength(255)]
+        
         public string GivenName { get; set; }
         
         /// <summary>
@@ -75,6 +78,8 @@ namespace HETSAPI.Models
         /// </summary>
         /// <value>The surname of the contact.</value>
         [MetaDataExtension (Description = "The surname of the contact.")]
+        [MaxLength(255)]
+        
         public string Surname { get; set; }
         
         /// <summary>
@@ -82,6 +87,8 @@ namespace HETSAPI.Models
         /// </summary>
         /// <value>The role of the contact. UI controlled as to whether it is free form or selected from an enumerated list.</value>
         [MetaDataExtension (Description = "The role of the contact. UI controlled as to whether it is free form or selected from an enumerated list.")]
+        [MaxLength(255)]
+        
         public string Role { get; set; }
         
         /// <summary>
@@ -89,6 +96,8 @@ namespace HETSAPI.Models
         /// </summary>
         /// <value>Notes about the contact.</value>
         [MetaDataExtension (Description = "Notes about the contact.")]
+        [MaxLength(255)]
+        
         public string Notes { get; set; }
         
         /// <summary>

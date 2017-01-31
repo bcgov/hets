@@ -23,16 +23,19 @@ namespace HETSAPI.Migrations
                         .HasColumnName("ATTACHMENT_ID");
 
                     b.Property<string>("Description")
-                        .HasColumnName("DESCRIPTION");
+                        .HasColumnName("DESCRIPTION")
+                        .HasMaxLength(255);
 
                     b.Property<int?>("EquipmentId")
                         .HasColumnName("EQUIPMENT_ID");
 
                     b.Property<string>("ExternalFileName")
-                        .HasColumnName("EXTERNAL_FILE_NAME");
+                        .HasColumnName("EXTERNAL_FILE_NAME")
+                        .HasMaxLength(2048);
 
                     b.Property<string>("InternalFileName")
-                        .HasColumnName("INTERNAL_FILE_NAME");
+                        .HasColumnName("INTERNAL_FILE_NAME")
+                        .HasMaxLength(2048);
 
                     b.Property<int?>("OwnerId")
                         .HasColumnName("OWNER_ID");
@@ -63,7 +66,8 @@ namespace HETSAPI.Migrations
                         .HasColumnName("CITY_ID");
 
                     b.Property<string>("Name")
-                        .HasColumnName("NAME");
+                        .HasColumnName("NAME")
+                        .HasMaxLength(255);
 
                     b.HasKey("Id");
 
@@ -77,10 +81,12 @@ namespace HETSAPI.Migrations
                         .HasColumnName("CONTACT_ID");
 
                     b.Property<string>("GivenName")
-                        .HasColumnName("GIVEN_NAME");
+                        .HasColumnName("GIVEN_NAME")
+                        .HasMaxLength(255);
 
                     b.Property<string>("Notes")
-                        .HasColumnName("NOTES");
+                        .HasColumnName("NOTES")
+                        .HasMaxLength(255);
 
                     b.Property<int?>("OwnerId")
                         .HasColumnName("OWNER_ID");
@@ -89,10 +95,12 @@ namespace HETSAPI.Migrations
                         .HasColumnName("PROJECT_ID");
 
                     b.Property<string>("Role")
-                        .HasColumnName("ROLE");
+                        .HasColumnName("ROLE")
+                        .HasMaxLength(255);
 
                     b.Property<string>("Surname")
-                        .HasColumnName("SURNAME");
+                        .HasColumnName("SURNAME")
+                        .HasMaxLength(255);
 
                     b.HasKey("Id");
 
@@ -110,25 +118,31 @@ namespace HETSAPI.Migrations
                         .HasColumnName("CONTACT_ADDRESS_ID");
 
                     b.Property<string>("AddressLine1")
-                        .HasColumnName("ADDRESS_LINE1");
+                        .HasColumnName("ADDRESS_LINE1")
+                        .HasMaxLength(255);
 
                     b.Property<string>("AddressLine2")
-                        .HasColumnName("ADDRESS_LINE2");
+                        .HasColumnName("ADDRESS_LINE2")
+                        .HasMaxLength(255);
 
                     b.Property<string>("City")
-                        .HasColumnName("CITY");
+                        .HasColumnName("CITY")
+                        .HasMaxLength(255);
 
                     b.Property<int?>("ContactId")
                         .HasColumnName("CONTACT_ID");
 
                     b.Property<string>("PostalCode")
-                        .HasColumnName("POSTAL_CODE");
+                        .HasColumnName("POSTAL_CODE")
+                        .HasMaxLength(255);
 
                     b.Property<string>("Province")
-                        .HasColumnName("PROVINCE");
+                        .HasColumnName("PROVINCE")
+                        .HasMaxLength(255);
 
                     b.Property<string>("Type")
-                        .HasColumnName("TYPE");
+                        .HasColumnName("TYPE")
+                        .HasMaxLength(255);
 
                     b.HasKey("Id");
 
@@ -147,10 +161,12 @@ namespace HETSAPI.Migrations
                         .HasColumnName("CONTACT_ID");
 
                     b.Property<string>("PhoneNumber")
-                        .HasColumnName("PHONE_NUMBER");
+                        .HasColumnName("PHONE_NUMBER")
+                        .HasMaxLength(255);
 
                     b.Property<string>("Type")
-                        .HasColumnName("TYPE");
+                        .HasColumnName("TYPE")
+                        .HasMaxLength(255);
 
                     b.HasKey("Id");
 
@@ -172,7 +188,8 @@ namespace HETSAPI.Migrations
                         .HasColumnName("MINISTRY_DISTRICT_ID");
 
                     b.Property<string>("Name")
-                        .HasColumnName("NAME");
+                        .HasColumnName("NAME")
+                        .HasMaxLength(255);
 
                     b.Property<int?>("RegionRefId")
                         .HasColumnName("REGION_REF_ID");
@@ -194,97 +211,128 @@ namespace HETSAPI.Migrations
                         .HasColumnName("DUMP_TRUCK_ID");
 
                     b.Property<string>("BellyDump")
-                        .HasColumnName("BELLY_DUMP");
+                        .HasColumnName("BELLY_DUMP")
+                        .HasMaxLength(255);
 
                     b.Property<string>("BoxCapacity")
-                        .HasColumnName("BOX_CAPACITY");
+                        .HasColumnName("BOX_CAPACITY")
+                        .HasMaxLength(255);
 
                     b.Property<string>("BoxHeight")
-                        .HasColumnName("BOX_HEIGHT");
+                        .HasColumnName("BOX_HEIGHT")
+                        .HasMaxLength(255);
 
                     b.Property<string>("BoxLength")
-                        .HasColumnName("BOX_LENGTH");
+                        .HasColumnName("BOX_LENGTH")
+                        .HasMaxLength(255);
 
                     b.Property<string>("BoxWidth")
-                        .HasColumnName("BOX_WIDTH");
+                        .HasColumnName("BOX_WIDTH")
+                        .HasMaxLength(255);
 
                     b.Property<string>("FrontAxleCapacity")
-                        .HasColumnName("FRONT_AXLE_CAPACITY");
+                        .HasColumnName("FRONT_AXLE_CAPACITY")
+                        .HasMaxLength(255);
 
                     b.Property<string>("FrontTireSize")
-                        .HasColumnName("FRONT_TIRE_SIZE");
+                        .HasColumnName("FRONT_TIRE_SIZE")
+                        .HasMaxLength(255);
 
                     b.Property<string>("FrontTireUOM")
-                        .HasColumnName("FRONT_TIRE_UOM");
+                        .HasColumnName("FRONT_TIRE_UOM")
+                        .HasMaxLength(255);
 
                     b.Property<string>("HiliftGate")
-                        .HasColumnName("HILIFT_GATE");
+                        .HasColumnName("HILIFT_GATE")
+                        .HasMaxLength(255);
 
                     b.Property<string>("LegalCapacity")
-                        .HasColumnName("LEGAL_CAPACITY");
+                        .HasColumnName("LEGAL_CAPACITY")
+                        .HasMaxLength(255);
 
                     b.Property<string>("LegalLoad")
-                        .HasColumnName("LEGAL_LOAD");
+                        .HasColumnName("LEGAL_LOAD")
+                        .HasMaxLength(255);
 
                     b.Property<string>("LegalPUPTareWeight")
-                        .HasColumnName("LEGAL_PUPTARE_WEIGHT");
+                        .HasColumnName("LEGAL_PUPTARE_WEIGHT")
+                        .HasMaxLength(255);
 
                     b.Property<string>("LicencedCapacity")
-                        .HasColumnName("LICENCED_CAPACITY");
+                        .HasColumnName("LICENCED_CAPACITY")
+                        .HasMaxLength(255);
 
                     b.Property<string>("LicencedGVW")
-                        .HasColumnName("LICENCED_GVW");
+                        .HasColumnName("LICENCED_GVW")
+                        .HasMaxLength(255);
 
                     b.Property<string>("LicencedGVWUOM")
-                        .HasColumnName("LICENCED_GVWUOM");
+                        .HasColumnName("LICENCED_GVWUOM")
+                        .HasMaxLength(255);
 
                     b.Property<string>("LicencedLoad")
-                        .HasColumnName("LICENCED_LOAD");
+                        .HasColumnName("LICENCED_LOAD")
+                        .HasMaxLength(255);
 
                     b.Property<string>("LicencedPUPTareWeight")
-                        .HasColumnName("LICENCED_PUPTARE_WEIGHT");
+                        .HasColumnName("LICENCED_PUPTARE_WEIGHT")
+                        .HasMaxLength(255);
 
                     b.Property<string>("LicencedTareWeight")
-                        .HasColumnName("LICENCED_TARE_WEIGHT");
+                        .HasColumnName("LICENCED_TARE_WEIGHT")
+                        .HasMaxLength(255);
 
                     b.Property<string>("PUP")
-                        .HasColumnName("PUP");
+                        .HasColumnName("PUP")
+                        .HasMaxLength(255);
 
                     b.Property<string>("RearAxleCapacity")
-                        .HasColumnName("REAR_AXLE_CAPACITY");
+                        .HasColumnName("REAR_AXLE_CAPACITY")
+                        .HasMaxLength(255);
 
                     b.Property<string>("RearAxleSpacing")
-                        .HasColumnName("REAR_AXLE_SPACING");
+                        .HasColumnName("REAR_AXLE_SPACING")
+                        .HasMaxLength(255);
 
                     b.Property<string>("RockBox")
-                        .HasColumnName("ROCK_BOX");
+                        .HasColumnName("ROCK_BOX")
+                        .HasMaxLength(255);
 
                     b.Property<string>("SealCoatHitch")
-                        .HasColumnName("SEAL_COAT_HITCH");
+                        .HasColumnName("SEAL_COAT_HITCH")
+                        .HasMaxLength(255);
 
                     b.Property<string>("SingleAxle")
-                        .HasColumnName("SINGLE_AXLE");
+                        .HasColumnName("SINGLE_AXLE")
+                        .HasMaxLength(255);
 
                     b.Property<string>("TandemAxle")
-                        .HasColumnName("TANDEM_AXLE");
+                        .HasColumnName("TANDEM_AXLE")
+                        .HasMaxLength(255);
 
                     b.Property<string>("TrailerBoxCapacity")
-                        .HasColumnName("TRAILER_BOX_CAPACITY");
+                        .HasColumnName("TRAILER_BOX_CAPACITY")
+                        .HasMaxLength(255);
 
                     b.Property<string>("TrailerBoxHeight")
-                        .HasColumnName("TRAILER_BOX_HEIGHT");
+                        .HasColumnName("TRAILER_BOX_HEIGHT")
+                        .HasMaxLength(255);
 
                     b.Property<string>("TrailerBoxLength")
-                        .HasColumnName("TRAILER_BOX_LENGTH");
+                        .HasColumnName("TRAILER_BOX_LENGTH")
+                        .HasMaxLength(255);
 
                     b.Property<string>("TrailerBoxWidth")
-                        .HasColumnName("TRAILER_BOX_WIDTH");
+                        .HasColumnName("TRAILER_BOX_WIDTH")
+                        .HasMaxLength(255);
 
                     b.Property<string>("Tridem")
-                        .HasColumnName("TRIDEM");
+                        .HasColumnName("TRIDEM")
+                        .HasMaxLength(255);
 
                     b.Property<string>("WaterTruck")
-                        .HasColumnName("WATER_TRUCK");
+                        .HasColumnName("WATER_TRUCK")
+                        .HasMaxLength(255);
 
                     b.HasKey("Id");
 
@@ -298,40 +346,49 @@ namespace HETSAPI.Migrations
                         .HasColumnName("EQUIPMENT_ID");
 
                     b.Property<string>("AddressLine1")
-                        .HasColumnName("ADDRESS_LINE1");
+                        .HasColumnName("ADDRESS_LINE1")
+                        .HasMaxLength(255);
 
                     b.Property<string>("AddressLine2")
-                        .HasColumnName("ADDRESS_LINE2");
+                        .HasColumnName("ADDRESS_LINE2")
+                        .HasMaxLength(255);
 
                     b.Property<string>("AddressLine3")
-                        .HasColumnName("ADDRESS_LINE3");
+                        .HasColumnName("ADDRESS_LINE3")
+                        .HasMaxLength(255);
 
                     b.Property<string>("AddressLine4")
-                        .HasColumnName("ADDRESS_LINE4");
+                        .HasColumnName("ADDRESS_LINE4")
+                        .HasMaxLength(255);
 
                     b.Property<string>("Approval")
-                        .HasColumnName("APPROVAL");
+                        .HasColumnName("APPROVAL")
+                        .HasMaxLength(255);
 
                     b.Property<DateTime?>("ApprovedDate")
                         .HasColumnName("APPROVED_DATE");
 
                     b.Property<string>("ArchiveCd")
-                        .HasColumnName("ARCHIVE_CD");
+                        .HasColumnName("ARCHIVE_CD")
+                        .HasMaxLength(255);
 
                     b.Property<DateTime?>("ArchiveDate")
                         .HasColumnName("ARCHIVE_DATE");
 
                     b.Property<string>("ArchiveReason")
-                        .HasColumnName("ARCHIVE_REASON");
+                        .HasColumnName("ARCHIVE_REASON")
+                        .HasMaxLength(255);
 
                     b.Property<float?>("BlockNumber")
                         .HasColumnName("BLOCK_NUMBER");
 
                     b.Property<string>("City")
-                        .HasColumnName("CITY");
+                        .HasColumnName("CITY")
+                        .HasMaxLength(255);
 
                     b.Property<string>("Comment")
-                        .HasColumnName("COMMENT");
+                        .HasColumnName("COMMENT")
+                        .HasMaxLength(255);
 
                     b.Property<float?>("CycleHrsWrk")
                         .HasColumnName("CYCLE_HRS_WRK");
@@ -343,34 +400,40 @@ namespace HETSAPI.Migrations
                         .HasColumnName("DUMP_TRUCK_DETAILS_REF_ID");
 
                     b.Property<string>("EquipCd")
-                        .HasColumnName("EQUIP_CD");
+                        .HasColumnName("EQUIP_CD")
+                        .HasMaxLength(255);
 
                     b.Property<int?>("EquipmentTypeRefId")
                         .HasColumnName("EQUIPMENT_TYPE_REF_ID");
 
                     b.Property<string>("FrozenOut")
-                        .HasColumnName("FROZEN_OUT");
+                        .HasColumnName("FROZEN_OUT")
+                        .HasMaxLength(255);
 
-                    b.Property<string>("LastDate")
-                        .HasColumnName("LAST_DATE");
+                    b.Property<DateTime?>("LastVerifiedDate")
+                        .HasColumnName("LAST_VERIFIED_DATE");
 
                     b.Property<string>("Licence")
-                        .HasColumnName("LICENCE");
+                        .HasColumnName("LICENCE")
+                        .HasMaxLength(255);
 
                     b.Property<int?>("LocalAreaRefId")
                         .HasColumnName("LOCAL_AREA_REF_ID");
 
                     b.Property<string>("Make")
-                        .HasColumnName("MAKE");
+                        .HasColumnName("MAKE")
+                        .HasMaxLength(255);
 
                     b.Property<string>("Model")
-                        .HasColumnName("MODEL");
+                        .HasColumnName("MODEL")
+                        .HasMaxLength(255);
 
                     b.Property<float?>("NumYears")
                         .HasColumnName("NUM_YEARS");
 
                     b.Property<string>("Operator")
-                        .HasColumnName("OPERATOR");
+                        .HasColumnName("OPERATOR")
+                        .HasMaxLength(255);
 
                     b.Property<int?>("OwnerRefId")
                         .HasColumnName("OWNER_REF_ID");
@@ -379,40 +442,49 @@ namespace HETSAPI.Migrations
                         .HasColumnName("PAY_RATE");
 
                     b.Property<string>("Postal")
-                        .HasColumnName("POSTAL");
+                        .HasColumnName("POSTAL")
+                        .HasMaxLength(255);
 
                     b.Property<string>("PrevRegArea")
-                        .HasColumnName("PREV_REG_AREA");
+                        .HasColumnName("PREV_REG_AREA")
+                        .HasMaxLength(255);
 
                     b.Property<DateTime?>("ReceivedDate")
                         .HasColumnName("RECEIVED_DATE");
 
                     b.Property<string>("RefuseRate")
-                        .HasColumnName("REFUSE_RATE");
+                        .HasColumnName("REFUSE_RATE")
+                        .HasMaxLength(255);
 
                     b.Property<string>("RegDumpTruck")
-                        .HasColumnName("REG_DUMP_TRUCK");
+                        .HasColumnName("REG_DUMP_TRUCK")
+                        .HasMaxLength(255);
 
                     b.Property<float?>("Seniority")
                         .HasColumnName("SENIORITY");
 
                     b.Property<string>("SerialNum")
-                        .HasColumnName("SERIAL_NUM");
+                        .HasColumnName("SERIAL_NUM")
+                        .HasMaxLength(255);
 
                     b.Property<string>("Size")
-                        .HasColumnName("SIZE");
+                        .HasColumnName("SIZE")
+                        .HasMaxLength(255);
 
                     b.Property<string>("StatusCd")
-                        .HasColumnName("STATUS_CD");
+                        .HasColumnName("STATUS_CD")
+                        .HasMaxLength(255);
 
                     b.Property<DateTime?>("ToDate")
                         .HasColumnName("TO_DATE");
 
                     b.Property<string>("Type")
-                        .HasColumnName("TYPE");
+                        .HasColumnName("TYPE")
+                        .HasMaxLength(255);
 
                     b.Property<string>("Working")
-                        .HasColumnName("WORKING");
+                        .HasColumnName("WORKING")
+                        .HasMaxLength(255);
 
                     b.Property<float?>("YTD")
                         .HasColumnName("YTD");
@@ -427,10 +499,12 @@ namespace HETSAPI.Migrations
                         .HasColumnName("YTD3");
 
                     b.Property<string>("Year")
-                        .HasColumnName("YEAR");
+                        .HasColumnName("YEAR")
+                        .HasMaxLength(255);
 
                     b.Property<string>("YearEndReg")
-                        .HasColumnName("YEAR_END_REG");
+                        .HasColumnName("YEAR_END_REG")
+                        .HasMaxLength(255);
 
                     b.HasKey("Id");
 
@@ -452,7 +526,8 @@ namespace HETSAPI.Migrations
                         .HasColumnName("EQUIPMENT_ATTACHMENT_ID");
 
                     b.Property<string>("Description")
-                        .HasColumnName("DESCRIPTION");
+                        .HasColumnName("DESCRIPTION")
+                        .HasMaxLength(255);
 
                     b.Property<int?>("EquipmentRefId")
                         .HasColumnName("EQUIPMENT_REF_ID");
@@ -479,10 +554,12 @@ namespace HETSAPI.Migrations
                         .HasColumnName("EQUIPMENT_ATTACHMENT_TYPE_ID");
 
                     b.Property<string>("Code")
-                        .HasColumnName("CODE");
+                        .HasColumnName("CODE")
+                        .HasMaxLength(255);
 
                     b.Property<string>("Description")
-                        .HasColumnName("DESCRIPTION");
+                        .HasColumnName("DESCRIPTION")
+                        .HasMaxLength(255);
 
                     b.HasKey("Id");
 
@@ -496,10 +573,12 @@ namespace HETSAPI.Migrations
                         .HasColumnName("EQUIPMENT_TYPE_ID");
 
                     b.Property<string>("Code")
-                        .HasColumnName("CODE");
+                        .HasColumnName("CODE")
+                        .HasMaxLength(255);
 
                     b.Property<string>("Description")
-                        .HasColumnName("DESCRIPTION");
+                        .HasColumnName("DESCRIPTION")
+                        .HasMaxLength(255);
 
                     b.Property<float?>("EquipRentalRateNo")
                         .HasColumnName("EQUIP_RENTAL_RATE_NO");
@@ -520,7 +599,8 @@ namespace HETSAPI.Migrations
                         .HasColumnName("MAX_HOURS_SUB");
 
                     b.Property<string>("SecondBlk")
-                        .HasColumnName("SECOND_BLK");
+                        .HasColumnName("SECOND_BLK")
+                        .HasMaxLength(255);
 
                     b.HasKey("Id");
 
@@ -536,7 +616,8 @@ namespace HETSAPI.Migrations
                         .HasColumnName("FAVOURITE_CONTEXT_TYPE_ID");
 
                     b.Property<string>("Name")
-                        .HasColumnName("NAME");
+                        .HasColumnName("NAME")
+                        .HasMaxLength(255);
 
                     b.HasKey("Id");
 
@@ -550,10 +631,12 @@ namespace HETSAPI.Migrations
                         .HasColumnName("GROUP_ID");
 
                     b.Property<string>("Description")
-                        .HasColumnName("DESCRIPTION");
+                        .HasColumnName("DESCRIPTION")
+                        .HasMaxLength(255);
 
                     b.Property<string>("Name")
-                        .HasColumnName("NAME");
+                        .HasColumnName("NAME")
+                        .HasMaxLength(255);
 
                     b.HasKey("Id");
 
@@ -603,7 +686,8 @@ namespace HETSAPI.Migrations
                         .HasColumnName("EQUIPMENT_REF_ID");
 
                     b.Property<string>("EquipmentUpdateReason")
-                        .HasColumnName("EQUIPMENT_UPDATE_REASON");
+                        .HasColumnName("EQUIPMENT_UPDATE_REASON")
+                        .HasMaxLength(255);
 
                     b.Property<bool?>("EquipmentVerifiedActive")
                         .HasColumnName("EQUIPMENT_VERIFIED_ACTIVE");
@@ -615,10 +699,12 @@ namespace HETSAPI.Migrations
                         .HasColumnName("IS_FORCE_HIRE");
 
                     b.Property<string>("Note")
-                        .HasColumnName("NOTE");
+                        .HasColumnName("NOTE")
+                        .HasMaxLength(255);
 
                     b.Property<string>("RefuseReason")
-                        .HasColumnName("REFUSE_REASON");
+                        .HasColumnName("REFUSE_REASON")
+                        .HasMaxLength(255);
 
                     b.Property<int?>("RentalAgreementRefId")
                         .HasColumnName("RENTAL_AGREEMENT_REF_ID");
@@ -650,7 +736,8 @@ namespace HETSAPI.Migrations
                         .HasColumnName("EQUIPMENT_ID");
 
                     b.Property<string>("HistoryText")
-                        .HasColumnName("HISTORY_TEXT");
+                        .HasColumnName("HISTORY_TEXT")
+                        .HasMaxLength(2048);
 
                     b.Property<int?>("OwnerId")
                         .HasColumnName("OWNER_ID");
@@ -681,7 +768,8 @@ namespace HETSAPI.Migrations
                         .HasColumnName("LOCAL_AREA_ID");
 
                     b.Property<string>("Name")
-                        .HasColumnName("NAME");
+                        .HasColumnName("NAME")
+                        .HasMaxLength(255);
 
                     b.Property<int?>("ServiceAreaRefId")
                         .HasColumnName("SERVICE_AREA_REF_ID");
@@ -715,7 +803,8 @@ namespace HETSAPI.Migrations
                         .HasColumnName("REQUEST_ID");
 
                     b.Property<string>("_Note")
-                        .HasColumnName("_NOTE");
+                        .HasColumnName("_NOTE")
+                        .HasMaxLength(2048);
 
                     b.HasKey("Id");
 
@@ -737,52 +826,64 @@ namespace HETSAPI.Migrations
                         .HasColumnName("OWNER_ID");
 
                     b.Property<string>("ArchiveCd")
-                        .HasColumnName("ARCHIVE_CD");
+                        .HasColumnName("ARCHIVE_CD")
+                        .HasMaxLength(255);
 
                     b.Property<string>("ArchiveReason")
-                        .HasColumnName("ARCHIVE_REASON");
+                        .HasColumnName("ARCHIVE_REASON")
+                        .HasMaxLength(255);
 
                     b.Property<string>("CGLCompany")
-                        .HasColumnName("CGLCOMPANY");
+                        .HasColumnName("CGLCOMPANY")
+                        .HasMaxLength(255);
 
                     b.Property<DateTime?>("CGLEndDate")
                         .HasColumnName("CGLEND_DATE");
 
                     b.Property<string>("CGLPolicy")
-                        .HasColumnName("CGLPOLICY");
+                        .HasColumnName("CGLPOLICY")
+                        .HasMaxLength(255);
 
                     b.Property<DateTime?>("CGLStartDate")
                         .HasColumnName("CGLSTART_DATE");
 
                     b.Property<string>("Comment")
-                        .HasColumnName("COMMENT");
+                        .HasColumnName("COMMENT")
+                        .HasMaxLength(255);
 
                     b.Property<string>("ContactPerson")
-                        .HasColumnName("CONTACT_PERSON");
+                        .HasColumnName("CONTACT_PERSON")
+                        .HasMaxLength(255);
 
                     b.Property<int?>("LocalAreaRefId")
                         .HasColumnName("LOCAL_AREA_REF_ID");
 
                     b.Property<string>("LocalToArea")
-                        .HasColumnName("LOCAL_TO_AREA");
+                        .HasColumnName("LOCAL_TO_AREA")
+                        .HasMaxLength(255);
 
                     b.Property<string>("MaintenanceContractor")
-                        .HasColumnName("MAINTENANCE_CONTRACTOR");
+                        .HasColumnName("MAINTENANCE_CONTRACTOR")
+                        .HasMaxLength(255);
 
                     b.Property<string>("OwnerCd")
-                        .HasColumnName("OWNER_CD");
+                        .HasColumnName("OWNER_CD")
+                        .HasMaxLength(255);
 
                     b.Property<string>("OwnerFirstName")
-                        .HasColumnName("OWNER_FIRST_NAME");
+                        .HasColumnName("OWNER_FIRST_NAME")
+                        .HasMaxLength(255);
 
                     b.Property<string>("OwnerLastName")
-                        .HasColumnName("OWNER_LAST_NAME");
+                        .HasColumnName("OWNER_LAST_NAME")
+                        .HasMaxLength(255);
 
                     b.Property<int?>("PrimaryContactRefId")
                         .HasColumnName("PRIMARY_CONTACT_REF_ID");
 
                     b.Property<string>("StatusCd")
-                        .HasColumnName("STATUS_CD");
+                        .HasColumnName("STATUS_CD")
+                        .HasMaxLength(255);
 
                     b.Property<DateTime?>("WCBExpiryDate")
                         .HasColumnName("WCBEXPIRY_DATE");
@@ -806,13 +907,16 @@ namespace HETSAPI.Migrations
                         .HasColumnName("PERMISSION_ID");
 
                     b.Property<string>("Code")
-                        .HasColumnName("CODE");
+                        .HasColumnName("CODE")
+                        .HasMaxLength(255);
 
                     b.Property<string>("Description")
-                        .HasColumnName("DESCRIPTION");
+                        .HasColumnName("DESCRIPTION")
+                        .HasMaxLength(255);
 
                     b.Property<string>("Name")
-                        .HasColumnName("NAME");
+                        .HasColumnName("NAME")
+                        .HasMaxLength(255);
 
                     b.HasKey("Id");
 
@@ -826,16 +930,19 @@ namespace HETSAPI.Migrations
                         .HasColumnName("PROJECT_ID");
 
                     b.Property<string>("JobDesc1")
-                        .HasColumnName("JOB_DESC1");
+                        .HasColumnName("JOB_DESC1")
+                        .HasMaxLength(255);
 
                     b.Property<string>("JobDesc2")
-                        .HasColumnName("JOB_DESC2");
+                        .HasColumnName("JOB_DESC2")
+                        .HasMaxLength(255);
 
                     b.Property<int?>("PrimaryContactRefId")
                         .HasColumnName("PRIMARY_CONTACT_REF_ID");
 
                     b.Property<string>("ProjectNum")
-                        .HasColumnName("PROJECT_NUM");
+                        .HasColumnName("PROJECT_NUM")
+                        .HasMaxLength(255);
 
                     b.Property<int?>("ServiceAreaRefId")
                         .HasColumnName("SERVICE_AREA_REF_ID");
@@ -862,7 +969,8 @@ namespace HETSAPI.Migrations
                         .HasColumnName("MINISTRY_REGION_ID");
 
                     b.Property<string>("Name")
-                        .HasColumnName("NAME");
+                        .HasColumnName("NAME")
+                        .HasMaxLength(255);
 
                     b.Property<DateTime?>("StartDate")
                         .HasColumnName("START_DATE");
@@ -943,10 +1051,12 @@ namespace HETSAPI.Migrations
                         .HasColumnName("ROLE_ID");
 
                     b.Property<string>("Description")
-                        .HasColumnName("DESCRIPTION");
+                        .HasColumnName("DESCRIPTION")
+                        .HasMaxLength(255);
 
                     b.Property<string>("Name")
-                        .HasColumnName("NAME");
+                        .HasColumnName("NAME")
+                        .HasMaxLength(255);
 
                     b.HasKey("Id");
 
@@ -1008,13 +1118,15 @@ namespace HETSAPI.Migrations
                         .HasColumnName("BLOCK_NUM");
 
                     b.Property<string>("Closed")
-                        .HasColumnName("CLOSED");
+                        .HasColumnName("CLOSED")
+                        .HasMaxLength(255);
 
                     b.Property<string>("ClosedBy")
                         .HasColumnName("CLOSED_BY");
 
                     b.Property<string>("ClosedComments")
-                        .HasColumnName("CLOSED_COMMENTS");
+                        .HasColumnName("CLOSED_COMMENTS")
+                        .HasMaxLength(2048);
 
                     b.Property<DateTime?>("ClosedDate")
                         .HasColumnName("CLOSED_DATE");
@@ -1029,10 +1141,12 @@ namespace HETSAPI.Migrations
                         .HasColumnName("MAX_CYCLE");
 
                     b.Property<string>("Moved")
-                        .HasColumnName("MOVED");
+                        .HasColumnName("MOVED")
+                        .HasMaxLength(255);
 
                     b.Property<string>("ReservedBy")
-                        .HasColumnName("RESERVED_BY");
+                        .HasColumnName("RESERVED_BY")
+                        .HasMaxLength(255);
 
                     b.Property<DateTime?>("ReservedDate")
                         .HasColumnName("RESERVED_DATE");
@@ -1047,7 +1161,8 @@ namespace HETSAPI.Migrations
                         .HasColumnName("START_CYCLE_EQUIPMENT_REF_ID");
 
                     b.Property<string>("StartWasZero")
-                        .HasColumnName("START_WAS_ZERO");
+                        .HasColumnName("START_WAS_ZERO")
+                        .HasMaxLength(255);
 
                     b.HasKey("Id");
 
@@ -1073,13 +1188,15 @@ namespace HETSAPI.Migrations
                         .HasColumnName("CYCLE_HRS_WRK");
 
                     b.Property<string>("EquipCd")
-                        .HasColumnName("EQUIP_CD");
+                        .HasColumnName("EQUIP_CD")
+                        .HasMaxLength(255);
 
                     b.Property<int?>("EquipmentRefId")
                         .HasColumnName("EQUIPMENT_REF_ID");
 
                     b.Property<string>("FrozenOut")
-                        .HasColumnName("FROZEN_OUT");
+                        .HasColumnName("FROZEN_OUT")
+                        .HasMaxLength(255);
 
                     b.Property<DateTime?>("GeneratedTime")
                         .HasColumnName("GENERATED_TIME");
@@ -1088,7 +1205,8 @@ namespace HETSAPI.Migrations
                         .HasColumnName("LOCAL_AREA_REF_ID");
 
                     b.Property<string>("OwnerName")
-                        .HasColumnName("OWNER_NAME");
+                        .HasColumnName("OWNER_NAME")
+                        .HasMaxLength(255);
 
                     b.Property<int?>("OwnerRefId")
                         .HasColumnName("OWNER_REF_ID");
@@ -1100,7 +1218,8 @@ namespace HETSAPI.Migrations
                         .HasColumnName("SENIORITY");
 
                     b.Property<string>("Working")
-                        .HasColumnName("WORKING");
+                        .HasColumnName("WORKING")
+                        .HasMaxLength(255);
 
                     b.Property<float?>("YTD")
                         .HasColumnName("YTD");
@@ -1115,7 +1234,8 @@ namespace HETSAPI.Migrations
                         .HasColumnName("YTD3");
 
                     b.Property<string>("YearEndReg")
-                        .HasColumnName("YEAR_END_REG");
+                        .HasColumnName("YEAR_END_REG")
+                        .HasMaxLength(255);
 
                     b.HasKey("Id");
 
@@ -1146,7 +1266,8 @@ namespace HETSAPI.Migrations
                         .HasColumnName("MINISTRY_SERVICE_AREA_ID");
 
                     b.Property<string>("Name")
-                        .HasColumnName("NAME");
+                        .HasColumnName("NAME")
+                        .HasMaxLength(255);
 
                     b.Property<DateTime?>("StartDate")
                         .HasColumnName("START_DATE");
@@ -1208,25 +1329,32 @@ namespace HETSAPI.Migrations
                         .HasColumnName("ACTIVE");
 
                     b.Property<string>("Email")
-                        .HasColumnName("EMAIL");
+                        .HasColumnName("EMAIL")
+                        .HasMaxLength(255);
 
                     b.Property<string>("GivenName")
-                        .HasColumnName("GIVEN_NAME");
+                        .HasColumnName("GIVEN_NAME")
+                        .HasMaxLength(255);
 
                     b.Property<string>("Guid")
-                        .HasColumnName("GUID");
+                        .HasColumnName("GUID")
+                        .HasMaxLength(255);
 
                     b.Property<string>("Initials")
-                        .HasColumnName("INITIALS");
+                        .HasColumnName("INITIALS")
+                        .HasMaxLength(255);
 
                     b.Property<string>("SmAuthorizationDirectory")
-                        .HasColumnName("SM_AUTHORIZATION_DIRECTORY");
+                        .HasColumnName("SM_AUTHORIZATION_DIRECTORY")
+                        .HasMaxLength(255);
 
                     b.Property<string>("SmUserId")
-                        .HasColumnName("SM_USER_ID");
+                        .HasColumnName("SM_USER_ID")
+                        .HasMaxLength(255);
 
                     b.Property<string>("Surname")
-                        .HasColumnName("SURNAME");
+                        .HasColumnName("SURNAME")
+                        .HasMaxLength(255);
 
                     b.HasKey("Id");
 
@@ -1246,10 +1374,12 @@ namespace HETSAPI.Migrations
                         .HasColumnName("IS_DEFAULT");
 
                     b.Property<string>("Name")
-                        .HasColumnName("NAME");
+                        .HasColumnName("NAME")
+                        .HasMaxLength(255);
 
                     b.Property<string>("Value")
-                        .HasColumnName("VALUE");
+                        .HasColumnName("VALUE")
+                        .HasMaxLength(2048);
 
                     b.HasKey("Id");
 

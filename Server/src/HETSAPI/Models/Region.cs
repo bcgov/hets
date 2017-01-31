@@ -18,6 +18,7 @@ using System.Collections.ObjectModel;
 using System.Runtime.Serialization;
 using Newtonsoft.Json;
 using System.ComponentModel.DataAnnotations.Schema;
+using System.ComponentModel.DataAnnotations;
 
 namespace HETSAPI.Models
 {
@@ -71,6 +72,8 @@ namespace HETSAPI.Models
         /// </summary>
         /// <value>The name of the Region</value>
         [MetaDataExtension (Description = "The name of the Region")]
+        [MaxLength(255)]
+        
         public string Name { get; set; }
         
         /// <summary>

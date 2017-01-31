@@ -18,6 +18,7 @@ using System.Collections.ObjectModel;
 using System.Runtime.Serialization;
 using Newtonsoft.Json;
 using System.ComponentModel.DataAnnotations.Schema;
+using System.ComponentModel.DataAnnotations;
 
 namespace HETSAPI.Models
 {
@@ -116,156 +117,218 @@ namespace HETSAPI.Models
         /// <summary>
         /// Gets or Sets SingleAxle
         /// </summary>
+        [MaxLength(255)]
+        
         public string SingleAxle { get; set; }
         
         /// <summary>
         /// Gets or Sets TandemAxle
         /// </summary>
+        [MaxLength(255)]
+        
         public string TandemAxle { get; set; }
         
         /// <summary>
         /// Gets or Sets PUP
         /// </summary>
+        [MaxLength(255)]
+        
         public string PUP { get; set; }
         
         /// <summary>
         /// Gets or Sets BellyDump
         /// </summary>
+        [MaxLength(255)]
+        
         public string BellyDump { get; set; }
         
         /// <summary>
         /// Gets or Sets Tridem
         /// </summary>
+        [MaxLength(255)]
+        
         public string Tridem { get; set; }
         
         /// <summary>
         /// Gets or Sets RockBox
         /// </summary>
+        [MaxLength(255)]
+        
         public string RockBox { get; set; }
         
         /// <summary>
         /// Gets or Sets HiliftGate
         /// </summary>
+        [MaxLength(255)]
+        
         public string HiliftGate { get; set; }
         
         /// <summary>
         /// Gets or Sets WaterTruck
         /// </summary>
+        [MaxLength(255)]
+        
         public string WaterTruck { get; set; }
         
         /// <summary>
         /// Gets or Sets SealCoatHitch
         /// </summary>
+        [MaxLength(255)]
+        
         public string SealCoatHitch { get; set; }
         
         /// <summary>
         /// Gets or Sets RearAxleSpacing
         /// </summary>
+        [MaxLength(255)]
+        
         public string RearAxleSpacing { get; set; }
         
         /// <summary>
         /// Gets or Sets FrontTireSize
         /// </summary>
+        [MaxLength(255)]
+        
         public string FrontTireSize { get; set; }
         
         /// <summary>
         /// Gets or Sets FrontTireUOM
         /// </summary>
+        [MaxLength(255)]
+        
         public string FrontTireUOM { get; set; }
         
         /// <summary>
         /// Gets or Sets FrontAxleCapacity
         /// </summary>
+        [MaxLength(255)]
+        
         public string FrontAxleCapacity { get; set; }
         
         /// <summary>
         /// Gets or Sets RearAxleCapacity
         /// </summary>
+        [MaxLength(255)]
+        
         public string RearAxleCapacity { get; set; }
         
         /// <summary>
         /// Gets or Sets LegalLoad
         /// </summary>
+        [MaxLength(255)]
+        
         public string LegalLoad { get; set; }
         
         /// <summary>
         /// Gets or Sets LegalCapacity
         /// </summary>
+        [MaxLength(255)]
+        
         public string LegalCapacity { get; set; }
         
         /// <summary>
         /// Gets or Sets LegalPUPTareWeight
         /// </summary>
+        [MaxLength(255)]
+        
         public string LegalPUPTareWeight { get; set; }
         
         /// <summary>
         /// Gets or Sets LicencedGVW
         /// </summary>
+        [MaxLength(255)]
+        
         public string LicencedGVW { get; set; }
         
         /// <summary>
         /// Gets or Sets LicencedGVWUOM
         /// </summary>
+        [MaxLength(255)]
+        
         public string LicencedGVWUOM { get; set; }
         
         /// <summary>
         /// Gets or Sets LicencedTareWeight
         /// </summary>
+        [MaxLength(255)]
+        
         public string LicencedTareWeight { get; set; }
         
         /// <summary>
         /// Gets or Sets LicencedPUPTareWeight
         /// </summary>
+        [MaxLength(255)]
+        
         public string LicencedPUPTareWeight { get; set; }
         
         /// <summary>
         /// Gets or Sets LicencedLoad
         /// </summary>
+        [MaxLength(255)]
+        
         public string LicencedLoad { get; set; }
         
         /// <summary>
         /// Gets or Sets LicencedCapacity
         /// </summary>
+        [MaxLength(255)]
+        
         public string LicencedCapacity { get; set; }
         
         /// <summary>
         /// Gets or Sets BoxLength
         /// </summary>
+        [MaxLength(255)]
+        
         public string BoxLength { get; set; }
         
         /// <summary>
         /// Gets or Sets BoxWidth
         /// </summary>
+        [MaxLength(255)]
+        
         public string BoxWidth { get; set; }
         
         /// <summary>
         /// Gets or Sets BoxHeight
         /// </summary>
+        [MaxLength(255)]
+        
         public string BoxHeight { get; set; }
         
         /// <summary>
         /// Gets or Sets BoxCapacity
         /// </summary>
+        [MaxLength(255)]
+        
         public string BoxCapacity { get; set; }
         
         /// <summary>
         /// Gets or Sets TrailerBoxLength
         /// </summary>
+        [MaxLength(255)]
+        
         public string TrailerBoxLength { get; set; }
         
         /// <summary>
         /// Gets or Sets TrailerBoxWidth
         /// </summary>
+        [MaxLength(255)]
+        
         public string TrailerBoxWidth { get; set; }
         
         /// <summary>
         /// Gets or Sets TrailerBoxHeight
         /// </summary>
+        [MaxLength(255)]
+        
         public string TrailerBoxHeight { get; set; }
         
         /// <summary>
         /// Gets or Sets TrailerBoxCapacity
         /// </summary>
+        [MaxLength(255)]
+        
         public string TrailerBoxCapacity { get; set; }
         
         /// <summary>

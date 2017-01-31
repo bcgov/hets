@@ -18,6 +18,7 @@ using System.Collections.ObjectModel;
 using System.Runtime.Serialization;
 using Newtonsoft.Json;
 using System.ComponentModel.DataAnnotations.Schema;
+using System.ComponentModel.DataAnnotations;
 
 namespace HETSAPI.Models
 {
@@ -57,7 +58,7 @@ namespace HETSAPI.Models
         /// <param name="Comment">Comment.</param>
         /// <param name="CycleHrsWrk">CycleHrsWrk.</param>
         /// <param name="FrozenOut">FrozenOut.</param>
-        /// <param name="LastDate">LastDate.</param>
+        /// <param name="LastVerifiedDate">LastVerifiedDate.</param>
         /// <param name="Licence">Licence.</param>
         /// <param name="Make">Make.</param>
         /// <param name="Model">Model.</param>
@@ -89,7 +90,7 @@ namespace HETSAPI.Models
         /// <param name="Attachments">Attachments.</param>
         /// <param name="History">History.</param>
         /// <param name="SeniorityAudit">SeniorityAudit.</param>
-        public Equipment(int Id, LocalArea LocalArea = null, EquipmentType EquipmentType = null, DumpTruck DumpTruckDetails = null, Owner Owner = null, string EquipCd = null, string Approval = null, DateTime? ApprovedDate = null, DateTime? ReceivedDate = null, string AddressLine1 = null, string AddressLine2 = null, string AddressLine3 = null, string AddressLine4 = null, string City = null, string Postal = null, float? BlockNumber = null, string Comment = null, float? CycleHrsWrk = null, string FrozenOut = null, string LastDate = null, string Licence = null, string Make = null, string Model = null, string Year = null, string Type = null, float? NumYears = null, string Operator = null, float? PayRate = null, string RefuseRate = null, float? Seniority = null, string SerialNum = null, string Size = null, DateTime? ToDate = null, string Working = null, string YearEndReg = null, string PrevRegArea = null, float? YTD = null, float? YTD1 = null, float? YTD2 = null, float? YTD3 = null, string StatusCd = null, string ArchiveCd = null, string ArchiveReason = null, DateTime? ArchiveDate = null, float? DraftBlockNum = null, string RegDumpTruck = null, List<EquipmentAttachment> EquipmentAttachments = null, List<Note> Notes = null, List<Attachment> Attachments = null, List<History> History = null, List<SeniorityAudit> SeniorityAudit = null)
+        public Equipment(int Id, LocalArea LocalArea = null, EquipmentType EquipmentType = null, DumpTruck DumpTruckDetails = null, Owner Owner = null, string EquipCd = null, string Approval = null, DateTime? ApprovedDate = null, DateTime? ReceivedDate = null, string AddressLine1 = null, string AddressLine2 = null, string AddressLine3 = null, string AddressLine4 = null, string City = null, string Postal = null, float? BlockNumber = null, string Comment = null, float? CycleHrsWrk = null, string FrozenOut = null, DateTime? LastVerifiedDate = null, string Licence = null, string Make = null, string Model = null, string Year = null, string Type = null, float? NumYears = null, string Operator = null, float? PayRate = null, string RefuseRate = null, float? Seniority = null, string SerialNum = null, string Size = null, DateTime? ToDate = null, string Working = null, string YearEndReg = null, string PrevRegArea = null, float? YTD = null, float? YTD1 = null, float? YTD2 = null, float? YTD3 = null, string StatusCd = null, string ArchiveCd = null, string ArchiveReason = null, DateTime? ArchiveDate = null, float? DraftBlockNum = null, string RegDumpTruck = null, List<EquipmentAttachment> EquipmentAttachments = null, List<Note> Notes = null, List<Attachment> Attachments = null, List<History> History = null, List<SeniorityAudit> SeniorityAudit = null)
         {   
             this.Id = Id;
             this.LocalArea = LocalArea;
@@ -110,7 +111,7 @@ namespace HETSAPI.Models
             this.Comment = Comment;
             this.CycleHrsWrk = CycleHrsWrk;
             this.FrozenOut = FrozenOut;
-            this.LastDate = LastDate;
+            this.LastVerifiedDate = LastVerifiedDate;
             this.Licence = Licence;
             this.Make = Make;
             this.Model = Model;
@@ -198,11 +199,15 @@ namespace HETSAPI.Models
         /// <summary>
         /// Gets or Sets EquipCd
         /// </summary>
+        [MaxLength(255)]
+        
         public string EquipCd { get; set; }
         
         /// <summary>
         /// Gets or Sets Approval
         /// </summary>
+        [MaxLength(255)]
+        
         public string Approval { get; set; }
         
         /// <summary>
@@ -220,6 +225,8 @@ namespace HETSAPI.Models
         /// </summary>
         /// <value>Address 1 line of the address.</value>
         [MetaDataExtension (Description = "Address 1 line of the address.")]
+        [MaxLength(255)]
+        
         public string AddressLine1 { get; set; }
         
         /// <summary>
@@ -227,6 +234,8 @@ namespace HETSAPI.Models
         /// </summary>
         /// <value>Address 2 line of the address.</value>
         [MetaDataExtension (Description = "Address 2 line of the address.")]
+        [MaxLength(255)]
+        
         public string AddressLine2 { get; set; }
         
         /// <summary>
@@ -234,6 +243,8 @@ namespace HETSAPI.Models
         /// </summary>
         /// <value>Address 3 line of the address.</value>
         [MetaDataExtension (Description = "Address 3 line of the address.")]
+        [MaxLength(255)]
+        
         public string AddressLine3 { get; set; }
         
         /// <summary>
@@ -241,16 +252,22 @@ namespace HETSAPI.Models
         /// </summary>
         /// <value>Address 4 line of the address.</value>
         [MetaDataExtension (Description = "Address 4 line of the address.")]
+        [MaxLength(255)]
+        
         public string AddressLine4 { get; set; }
         
         /// <summary>
         /// Gets or Sets City
         /// </summary>
+        [MaxLength(255)]
+        
         public string City { get; set; }
         
         /// <summary>
         /// Gets or Sets Postal
         /// </summary>
+        [MaxLength(255)]
+        
         public string Postal { get; set; }
         
         /// <summary>
@@ -261,6 +278,8 @@ namespace HETSAPI.Models
         /// <summary>
         /// Gets or Sets Comment
         /// </summary>
+        [MaxLength(255)]
+        
         public string Comment { get; set; }
         
         /// <summary>
@@ -271,36 +290,48 @@ namespace HETSAPI.Models
         /// <summary>
         /// Gets or Sets FrozenOut
         /// </summary>
+        [MaxLength(255)]
+        
         public string FrozenOut { get; set; }
         
         /// <summary>
-        /// Gets or Sets LastDate
+        /// Gets or Sets LastVerifiedDate
         /// </summary>
-        public string LastDate { get; set; }
+        public DateTime? LastVerifiedDate { get; set; }
         
         /// <summary>
         /// Gets or Sets Licence
         /// </summary>
+        [MaxLength(255)]
+        
         public string Licence { get; set; }
         
         /// <summary>
         /// Gets or Sets Make
         /// </summary>
+        [MaxLength(255)]
+        
         public string Make { get; set; }
         
         /// <summary>
         /// Gets or Sets Model
         /// </summary>
+        [MaxLength(255)]
+        
         public string Model { get; set; }
         
         /// <summary>
         /// Gets or Sets Year
         /// </summary>
+        [MaxLength(255)]
+        
         public string Year { get; set; }
         
         /// <summary>
         /// Gets or Sets Type
         /// </summary>
+        [MaxLength(255)]
+        
         public string Type { get; set; }
         
         /// <summary>
@@ -311,6 +342,8 @@ namespace HETSAPI.Models
         /// <summary>
         /// Gets or Sets Operator
         /// </summary>
+        [MaxLength(255)]
+        
         public string Operator { get; set; }
         
         /// <summary>
@@ -321,6 +354,8 @@ namespace HETSAPI.Models
         /// <summary>
         /// Gets or Sets RefuseRate
         /// </summary>
+        [MaxLength(255)]
+        
         public string RefuseRate { get; set; }
         
         /// <summary>
@@ -331,11 +366,15 @@ namespace HETSAPI.Models
         /// <summary>
         /// Gets or Sets SerialNum
         /// </summary>
+        [MaxLength(255)]
+        
         public string SerialNum { get; set; }
         
         /// <summary>
         /// Gets or Sets Size
         /// </summary>
+        [MaxLength(255)]
+        
         public string Size { get; set; }
         
         /// <summary>
@@ -346,16 +385,22 @@ namespace HETSAPI.Models
         /// <summary>
         /// Gets or Sets Working
         /// </summary>
+        [MaxLength(255)]
+        
         public string Working { get; set; }
         
         /// <summary>
         /// Gets or Sets YearEndReg
         /// </summary>
+        [MaxLength(255)]
+        
         public string YearEndReg { get; set; }
         
         /// <summary>
         /// Gets or Sets PrevRegArea
         /// </summary>
+        [MaxLength(255)]
+        
         public string PrevRegArea { get; set; }
         
         /// <summary>
@@ -381,16 +426,22 @@ namespace HETSAPI.Models
         /// <summary>
         /// Gets or Sets StatusCd
         /// </summary>
+        [MaxLength(255)]
+        
         public string StatusCd { get; set; }
         
         /// <summary>
         /// Gets or Sets ArchiveCd
         /// </summary>
+        [MaxLength(255)]
+        
         public string ArchiveCd { get; set; }
         
         /// <summary>
         /// Gets or Sets ArchiveReason
         /// </summary>
+        [MaxLength(255)]
+        
         public string ArchiveReason { get; set; }
         
         /// <summary>
@@ -406,6 +457,8 @@ namespace HETSAPI.Models
         /// <summary>
         /// Gets or Sets RegDumpTruck
         /// </summary>
+        [MaxLength(255)]
+        
         public string RegDumpTruck { get; set; }
         
         /// <summary>
@@ -460,7 +513,7 @@ namespace HETSAPI.Models
             sb.Append("  Comment: ").Append(Comment).Append("\n");
             sb.Append("  CycleHrsWrk: ").Append(CycleHrsWrk).Append("\n");
             sb.Append("  FrozenOut: ").Append(FrozenOut).Append("\n");
-            sb.Append("  LastDate: ").Append(LastDate).Append("\n");
+            sb.Append("  LastVerifiedDate: ").Append(LastVerifiedDate).Append("\n");
             sb.Append("  Licence: ").Append(Licence).Append("\n");
             sb.Append("  Make: ").Append(Make).Append("\n");
             sb.Append("  Model: ").Append(Model).Append("\n");
@@ -625,9 +678,9 @@ namespace HETSAPI.Models
                     this.FrozenOut.Equals(other.FrozenOut)
                 ) &&                 
                 (
-                    this.LastDate == other.LastDate ||
-                    this.LastDate != null &&
-                    this.LastDate.Equals(other.LastDate)
+                    this.LastVerifiedDate == other.LastVerifiedDate ||
+                    this.LastVerifiedDate != null &&
+                    this.LastVerifiedDate.Equals(other.LastVerifiedDate)
                 ) &&                 
                 (
                     this.Licence == other.Licence ||
@@ -870,9 +923,9 @@ namespace HETSAPI.Models
                 {
                     hash = hash * 59 + this.FrozenOut.GetHashCode();
                 }                
-                                if (this.LastDate != null)
+                                if (this.LastVerifiedDate != null)
                 {
-                    hash = hash * 59 + this.LastDate.GetHashCode();
+                    hash = hash * 59 + this.LastVerifiedDate.GetHashCode();
                 }                
                                 if (this.Licence != null)
                 {
