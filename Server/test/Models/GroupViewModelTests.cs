@@ -18,71 +18,64 @@ using System.Threading.Tasks;
 using Xunit;
 using HETSAPI;
 using HETSAPI.Models;
+using HETSAPI.ViewModels;
 using System.Reflection;
 
 namespace HETSAPI.Test
 {
     /// <summary>
-    ///  Class for testing the model GroupMembership
+    ///  Class for testing the model GroupViewModel
     /// </summary>
     
-    public class GroupMembershipModelTests
+    public class GroupViewModelModelTests
     {
-        // TODO uncomment below to declare an instance variable for GroupMembership
-        private GroupMembership instance;
+        // TODO uncomment below to declare an instance variable for GroupViewModel
+        private GroupViewModel instance;
 
         /// <summary>
         /// Setup the test.
         /// </summary>        
-        public GroupMembershipModelTests()
+        public GroupViewModelModelTests()
         {
-            instance = new GroupMembership();
+            instance = new GroupViewModel();
         }
 
     
         /// <summary>
-        /// Test an instance of GroupMembership
+        /// Test an instance of GroupViewModel
         /// </summary>
         [Fact]
-        public void GroupMembershipInstanceTest()
+        public void GroupViewModelInstanceTest()
         {
-            Assert.IsType<GroupMembership>(instance);  
+            Assert.IsType<GroupViewModel>(instance);  
         }
 
+        /// <summary>
+        /// Test the property 'Name'
+        /// </summary>
+        [Fact]
+        public void NameTest()
+        {
+            // TODO unit test for the property 'Name'
+			Assert.True(true);
+        }
+        /// <summary>
+        /// Test the property 'Description'
+        /// </summary>
+        [Fact]
+        public void DescriptionTest()
+        {
+            // TODO unit test for the property 'Description'
+			Assert.True(true);
+        }
         /// <summary>
         /// Test the property 'Id'
         /// </summary>
         [Fact]
         public void IdTest()
         {
-            Assert.IsType<int>(instance.Id);
-        }
-        /// <summary>
-        /// Test the property 'Active'
-        /// </summary>
-        [Fact]
-        public void ActiveTest()
-        {
-            // TODO unit test for the property 'Active'
-			Assert.True(true);
-        }
-        /// <summary>
-        /// Test the property 'Group'
-        /// </summary>
-        [Fact]
-        public void GroupTest()
-        {
-            // TODO unit test for the property 'Group'
-			Assert.True(true);
-        }
-        /// <summary>
-        /// Test the property 'User'
-        /// </summary>
-        [Fact]
-        public void UserTest()
-        {
-            // TODO unit test for the property 'User'
-			Assert.True(true);
+            // TODO unit test for this property
+            Assert.True(true);
         }
 
 	}

@@ -18,54 +18,38 @@ using System.Threading.Tasks;
 using Xunit;
 using HETSAPI;
 using HETSAPI.Models;
+using HETSAPI.ViewModels;
 using System.Reflection;
 
 namespace HETSAPI.Test
 {
     /// <summary>
-    ///  Class for testing the model User
+    ///  Class for testing the model CurrentUserViewModel
     /// </summary>
     
-    public class UserModelTests
+    public class CurrentUserViewModelModelTests
     {
-        // TODO uncomment below to declare an instance variable for User
-        private User instance;
+        // TODO uncomment below to declare an instance variable for CurrentUserViewModel
+        private CurrentUserViewModel instance;
 
         /// <summary>
         /// Setup the test.
         /// </summary>        
-        public UserModelTests()
+        public CurrentUserViewModelModelTests()
         {
-            instance = new User();
+            instance = new CurrentUserViewModel();
         }
 
     
         /// <summary>
-        /// Test an instance of User
+        /// Test an instance of CurrentUserViewModel
         /// </summary>
         [Fact]
-        public void UserInstanceTest()
+        public void CurrentUserViewModelInstanceTest()
         {
-            Assert.IsType<User>(instance);  
+            Assert.IsType<CurrentUserViewModel>(instance);  
         }
 
-        /// <summary>
-        /// Test the property 'Id'
-        /// </summary>
-        [Fact]
-        public void IdTest()
-        {
-            Assert.IsType<int>(instance.Id);
-        }
-        /// <summary>
-        /// Test the property 'Active'
-        /// </summary>
-        [Fact]
-        public void ActiveTest()
-        {
-            // TODO unit test for the property 'Active'
-			Assert.True(true);
-        }
         /// <summary>
         /// Test the property 'GivenName'
         /// </summary>
@@ -85,66 +69,48 @@ namespace HETSAPI.Test
 			Assert.True(true);
         }
         /// <summary>
-        /// Test the property 'Initials'
+        /// Test the property 'FullName'
         /// </summary>
         [Fact]
-        public void InitialsTest()
+        public void FullNameTest()
         {
-            // TODO unit test for the property 'Initials'
+            // TODO unit test for the property 'FullName'
 			Assert.True(true);
         }
         /// <summary>
-        /// Test the property 'Email'
+        /// Test the property 'DistrictName'
         /// </summary>
         [Fact]
-        public void EmailTest()
+        public void DistrictNameTest()
         {
-            // TODO unit test for the property 'Email'
+            // TODO unit test for the property 'DistrictName'
 			Assert.True(true);
         }
         /// <summary>
-        /// Test the property 'SmUserId'
+        /// Test the property 'OverdueInspections'
         /// </summary>
         [Fact]
-        public void SmUserIdTest()
+        public void OverdueInspectionsTest()
         {
-            // TODO unit test for the property 'SmUserId'
+            // TODO unit test for the property 'OverdueInspections'
 			Assert.True(true);
         }
         /// <summary>
-        /// Test the property 'Guid'
+        /// Test the property 'ScheduledInspections'
         /// </summary>
         [Fact]
-        public void GuidTest()
+        public void ScheduledInspectionsTest()
         {
-            // TODO unit test for the property 'Guid'
+            // TODO unit test for the property 'ScheduledInspections'
 			Assert.True(true);
         }
         /// <summary>
-        /// Test the property 'SmAuthorizationDirectory'
+        /// Test the property 'DueNextMonthInspections'
         /// </summary>
         [Fact]
-        public void SmAuthorizationDirectoryTest()
+        public void DueNextMonthInspectionsTest()
         {
-            // TODO unit test for the property 'SmAuthorizationDirectory'
-			Assert.True(true);
-        }
-        /// <summary>
-        /// Test the property 'UserRoles'
-        /// </summary>
-        [Fact]
-        public void UserRolesTest()
-        {
-            // TODO unit test for the property 'UserRoles'
-			Assert.True(true);
-        }
-        /// <summary>
-        /// Test the property 'GroupMemberships'
-        /// </summary>
-        [Fact]
-        public void GroupMembershipsTest()
-        {
-            // TODO unit test for the property 'GroupMemberships'
+            // TODO unit test for the property 'DueNextMonthInspections'
 			Assert.True(true);
         }
 

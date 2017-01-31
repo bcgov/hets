@@ -56,7 +56,7 @@ namespace HETSAPI.Services.Impl
         /// <response code="200">OK</response>
         public virtual IActionResult AttachmentGetAsync()
         {
-            var result = "";
+            var result = _context.Attachments.ToList();
             return new ObjectResult(result);
         }
 

@@ -23,30 +23,30 @@ using System.Reflection;
 namespace HETSAPI.Test
 {
     /// <summary>
-    ///  Class for testing the model GroupMembership
+    ///  Class for testing the model ContactPhone
     /// </summary>
     
-    public class GroupMembershipModelTests
+    public class ContactPhoneModelTests
     {
-        // TODO uncomment below to declare an instance variable for GroupMembership
-        private GroupMembership instance;
+        // TODO uncomment below to declare an instance variable for ContactPhone
+        private ContactPhone instance;
 
         /// <summary>
         /// Setup the test.
         /// </summary>        
-        public GroupMembershipModelTests()
+        public ContactPhoneModelTests()
         {
-            instance = new GroupMembership();
+            instance = new ContactPhone();
         }
 
     
         /// <summary>
-        /// Test an instance of GroupMembership
+        /// Test an instance of ContactPhone
         /// </summary>
         [Fact]
-        public void GroupMembershipInstanceTest()
+        public void ContactPhoneInstanceTest()
         {
-            Assert.IsType<GroupMembership>(instance);  
+            Assert.IsType<ContactPhone>(instance);  
         }
 
         /// <summary>
@@ -58,30 +58,21 @@ namespace HETSAPI.Test
             Assert.IsType<int>(instance.Id);
         }
         /// <summary>
-        /// Test the property 'Active'
+        /// Test the property 'Type'
         /// </summary>
         [Fact]
-        public void ActiveTest()
+        public void TypeTest()
         {
-            // TODO unit test for the property 'Active'
+            // TODO unit test for the property 'Type'
 			Assert.True(true);
         }
         /// <summary>
-        /// Test the property 'Group'
+        /// Test the property 'PhoneNumber'
         /// </summary>
         [Fact]
-        public void GroupTest()
+        public void PhoneNumberTest()
         {
-            // TODO unit test for the property 'Group'
-			Assert.True(true);
-        }
-        /// <summary>
-        /// Test the property 'User'
-        /// </summary>
-        [Fact]
-        public void UserTest()
-        {
-            // TODO unit test for the property 'User'
+            // TODO unit test for the property 'PhoneNumber'
 			Assert.True(true);
         }
 

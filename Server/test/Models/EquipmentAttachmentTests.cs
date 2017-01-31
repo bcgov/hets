@@ -23,30 +23,30 @@ using System.Reflection;
 namespace HETSAPI.Test
 {
     /// <summary>
-    ///  Class for testing the model GroupMembership
+    ///  Class for testing the model EquipmentAttachment
     /// </summary>
     
-    public class GroupMembershipModelTests
+    public class EquipmentAttachmentModelTests
     {
-        // TODO uncomment below to declare an instance variable for GroupMembership
-        private GroupMembership instance;
+        // TODO uncomment below to declare an instance variable for EquipmentAttachment
+        private EquipmentAttachment instance;
 
         /// <summary>
         /// Setup the test.
         /// </summary>        
-        public GroupMembershipModelTests()
+        public EquipmentAttachmentModelTests()
         {
-            instance = new GroupMembership();
+            instance = new EquipmentAttachment();
         }
 
     
         /// <summary>
-        /// Test an instance of GroupMembership
+        /// Test an instance of EquipmentAttachment
         /// </summary>
         [Fact]
-        public void GroupMembershipInstanceTest()
+        public void EquipmentAttachmentInstanceTest()
         {
-            Assert.IsType<GroupMembership>(instance);  
+            Assert.IsType<EquipmentAttachment>(instance);  
         }
 
         /// <summary>
@@ -58,30 +58,39 @@ namespace HETSAPI.Test
             Assert.IsType<int>(instance.Id);
         }
         /// <summary>
-        /// Test the property 'Active'
+        /// Test the property 'Equipment'
         /// </summary>
         [Fact]
-        public void ActiveTest()
+        public void EquipmentTest()
         {
-            // TODO unit test for the property 'Active'
+            // TODO unit test for the property 'Equipment'
 			Assert.True(true);
         }
         /// <summary>
-        /// Test the property 'Group'
+        /// Test the property 'Type'
         /// </summary>
         [Fact]
-        public void GroupTest()
+        public void TypeTest()
         {
-            // TODO unit test for the property 'Group'
+            // TODO unit test for the property 'Type'
 			Assert.True(true);
         }
         /// <summary>
-        /// Test the property 'User'
+        /// Test the property 'SeqNum'
         /// </summary>
         [Fact]
-        public void UserTest()
+        public void SeqNumTest()
         {
-            // TODO unit test for the property 'User'
+            // TODO unit test for the property 'SeqNum'
+			Assert.True(true);
+        }
+        /// <summary>
+        /// Test the property 'Description'
+        /// </summary>
+        [Fact]
+        public void DescriptionTest()
+        {
+            // TODO unit test for the property 'Description'
 			Assert.True(true);
         }
 

@@ -56,7 +56,7 @@ namespace HETSAPI.Services.Impl
         /// <response code="200">OK</response>
         public virtual IActionResult NotesGetAsync()
         {
-            var result = "";
+            var result = _context.Notes.ToList();
             return new ObjectResult(result);
         }
 

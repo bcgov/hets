@@ -23,30 +23,30 @@ using System.Reflection;
 namespace HETSAPI.Test
 {
     /// <summary>
-    ///  Class for testing the model User
+    ///  Class for testing the model TimeRecord
     /// </summary>
     
-    public class UserModelTests
+    public class TimeRecordModelTests
     {
-        // TODO uncomment below to declare an instance variable for User
-        private User instance;
+        // TODO uncomment below to declare an instance variable for TimeRecord
+        private TimeRecord instance;
 
         /// <summary>
         /// Setup the test.
         /// </summary>        
-        public UserModelTests()
+        public TimeRecordModelTests()
         {
-            instance = new User();
+            instance = new TimeRecord();
         }
 
     
         /// <summary>
-        /// Test an instance of User
+        /// Test an instance of TimeRecord
         /// </summary>
         [Fact]
-        public void UserInstanceTest()
+        public void TimeRecordInstanceTest()
         {
-            Assert.IsType<User>(instance);  
+            Assert.IsType<TimeRecord>(instance);  
         }
 
         /// <summary>
@@ -58,93 +58,84 @@ namespace HETSAPI.Test
             Assert.IsType<int>(instance.Id);
         }
         /// <summary>
-        /// Test the property 'Active'
+        /// Test the property 'RentalAgreement'
         /// </summary>
         [Fact]
-        public void ActiveTest()
+        public void RentalAgreementTest()
         {
-            // TODO unit test for the property 'Active'
+            // TODO unit test for the property 'RentalAgreement'
 			Assert.True(true);
         }
         /// <summary>
-        /// Test the property 'GivenName'
+        /// Test the property 'WorkedDate'
         /// </summary>
         [Fact]
-        public void GivenNameTest()
+        public void WorkedDateTest()
         {
-            // TODO unit test for the property 'GivenName'
+            // TODO unit test for the property 'WorkedDate'
 			Assert.True(true);
         }
         /// <summary>
-        /// Test the property 'Surname'
+        /// Test the property 'EnteredDate'
         /// </summary>
         [Fact]
-        public void SurnameTest()
+        public void EnteredDateTest()
         {
-            // TODO unit test for the property 'Surname'
+            // TODO unit test for the property 'EnteredDate'
 			Assert.True(true);
         }
         /// <summary>
-        /// Test the property 'Initials'
+        /// Test the property 'Hours'
         /// </summary>
         [Fact]
-        public void InitialsTest()
+        public void HoursTest()
         {
-            // TODO unit test for the property 'Initials'
+            // TODO unit test for the property 'Hours'
 			Assert.True(true);
         }
         /// <summary>
-        /// Test the property 'Email'
+        /// Test the property 'Rate'
         /// </summary>
         [Fact]
-        public void EmailTest()
+        public void RateTest()
         {
-            // TODO unit test for the property 'Email'
+            // TODO unit test for the property 'Rate'
 			Assert.True(true);
         }
         /// <summary>
-        /// Test the property 'SmUserId'
+        /// Test the property 'Hours2'
         /// </summary>
         [Fact]
-        public void SmUserIdTest()
+        public void Hours2Test()
         {
-            // TODO unit test for the property 'SmUserId'
+            // TODO unit test for the property 'Hours2'
 			Assert.True(true);
         }
         /// <summary>
-        /// Test the property 'Guid'
+        /// Test the property 'Rate2'
         /// </summary>
         [Fact]
-        public void GuidTest()
+        public void Rate2Test()
         {
-            // TODO unit test for the property 'Guid'
+            // TODO unit test for the property 'Rate2'
 			Assert.True(true);
         }
         /// <summary>
-        /// Test the property 'SmAuthorizationDirectory'
+        /// Test the property 'Hours3'
         /// </summary>
         [Fact]
-        public void SmAuthorizationDirectoryTest()
+        public void Hours3Test()
         {
-            // TODO unit test for the property 'SmAuthorizationDirectory'
+            // TODO unit test for the property 'Hours3'
 			Assert.True(true);
         }
         /// <summary>
-        /// Test the property 'UserRoles'
+        /// Test the property 'Rate3'
         /// </summary>
         [Fact]
-        public void UserRolesTest()
+        public void Rate3Test()
         {
-            // TODO unit test for the property 'UserRoles'
-			Assert.True(true);
-        }
-        /// <summary>
-        /// Test the property 'GroupMemberships'
-        /// </summary>
-        [Fact]
-        public void GroupMembershipsTest()
-        {
-            // TODO unit test for the property 'GroupMemberships'
+            // TODO unit test for the property 'Rate3'
 			Assert.True(true);
         }
 

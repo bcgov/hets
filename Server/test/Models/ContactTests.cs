@@ -23,30 +23,30 @@ using System.Reflection;
 namespace HETSAPI.Test
 {
     /// <summary>
-    ///  Class for testing the model GroupMembership
+    ///  Class for testing the model Contact
     /// </summary>
     
-    public class GroupMembershipModelTests
+    public class ContactModelTests
     {
-        // TODO uncomment below to declare an instance variable for GroupMembership
-        private GroupMembership instance;
+        // TODO uncomment below to declare an instance variable for Contact
+        private Contact instance;
 
         /// <summary>
         /// Setup the test.
         /// </summary>        
-        public GroupMembershipModelTests()
+        public ContactModelTests()
         {
-            instance = new GroupMembership();
+            instance = new Contact();
         }
 
     
         /// <summary>
-        /// Test an instance of GroupMembership
+        /// Test an instance of Contact
         /// </summary>
         [Fact]
-        public void GroupMembershipInstanceTest()
+        public void ContactInstanceTest()
         {
-            Assert.IsType<GroupMembership>(instance);  
+            Assert.IsType<Contact>(instance);  
         }
 
         /// <summary>
@@ -58,30 +58,57 @@ namespace HETSAPI.Test
             Assert.IsType<int>(instance.Id);
         }
         /// <summary>
-        /// Test the property 'Active'
+        /// Test the property 'GivenName'
         /// </summary>
         [Fact]
-        public void ActiveTest()
+        public void GivenNameTest()
         {
-            // TODO unit test for the property 'Active'
+            // TODO unit test for the property 'GivenName'
 			Assert.True(true);
         }
         /// <summary>
-        /// Test the property 'Group'
+        /// Test the property 'Surname'
         /// </summary>
         [Fact]
-        public void GroupTest()
+        public void SurnameTest()
         {
-            // TODO unit test for the property 'Group'
+            // TODO unit test for the property 'Surname'
 			Assert.True(true);
         }
         /// <summary>
-        /// Test the property 'User'
+        /// Test the property 'Role'
         /// </summary>
         [Fact]
-        public void UserTest()
+        public void RoleTest()
         {
-            // TODO unit test for the property 'User'
+            // TODO unit test for the property 'Role'
+			Assert.True(true);
+        }
+        /// <summary>
+        /// Test the property 'Notes'
+        /// </summary>
+        [Fact]
+        public void NotesTest()
+        {
+            // TODO unit test for the property 'Notes'
+			Assert.True(true);
+        }
+        /// <summary>
+        /// Test the property 'Phones'
+        /// </summary>
+        [Fact]
+        public void PhonesTest()
+        {
+            // TODO unit test for the property 'Phones'
+			Assert.True(true);
+        }
+        /// <summary>
+        /// Test the property 'Addresses'
+        /// </summary>
+        [Fact]
+        public void AddressesTest()
+        {
+            // TODO unit test for the property 'Addresses'
 			Assert.True(true);
         }
 

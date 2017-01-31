@@ -1,3 +1,31 @@
 # ignore intermediate generated files.
 
 in/*.csv
+api
+CCW
+cities
+ContactAddress
+ContactPhones
+Contacts
+defs
+Districts
+Equipment
+EquipmentTypes
+group
+Inspections
+LocalAreas
+model
+OwnerContacts
+Owners
+paths
+permissions
+Regions
+rolepermission
+roles
+SchoolBus
+schoolDistricts
+ServiceAreas
+userGroup
+userRole
+users
+

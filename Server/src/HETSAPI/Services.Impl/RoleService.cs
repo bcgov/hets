@@ -292,15 +292,10 @@ namespace HETSAPI.Services.Impl
                 }
 
                 var allPermissions = _context.Permissions.ToList();
-                List<string> permissionCodes = new List<string>();
-                permissionCodes.Add(item.Code);
                 var existingPermissionCodes = role.RolePermissions.Select(x => x.Permission.Code).ToList();
-                List<string> permissionCodesToAdd = permissionCodes.Where(x => !existingPermissionCodes.Contains(x)).ToList();
-
-                // Permissions to add
-                foreach (string code in permissionCodesToAdd)
+                if (!existingPermissionCodes.Contains(item.Code))
                 {
-                    var permToAdd = allPermissions.FirstOrDefault(x => x.Code == code);
+                    var permToAdd = allPermissions.FirstOrDefault(x => x.Code == item.Code);
                     if (permToAdd == null)
                     {
                         // TODO throw new BusinessLayerException(string.Format("Invalid Permission Code {0}", code));
@@ -361,7 +356,7 @@ namespace HETSAPI.Services.Impl
                     }
                     role.AddPermission(permToAdd);
                 }
-                
+
                 _context.Roles.Update(role);
                 _context.SaveChanges();
                 txn.Commit();
@@ -407,24 +402,39 @@ namespace HETSAPI.Services.Impl
         /// <param name="id">id of Role to fetch</param>
         /// <response code="200">OK</response>
         public virtual IActionResult RolesIdUsersGetAsync(int id)
-        {
-            // Eager loading of related data
-            var role = _context.Roles
-                .Where(x => x.Id == id)
-                .Include(x => x.UserRoles)
-                .ThenInclude(userRole => userRole.User)
-                .FirstOrDefault();
+        {            
+            List<User> result = new List<User>();
 
-            if (role == null)
+            List<User> users = _context.Users
+                    .Include(x => x.UserRoles)
+                    .ToList();
+
+            foreach (User user in users)
             {
-                // Not Found
-                return new StatusCodeResult(404);
+                bool found = false;
+
+                if (user.UserRoles != null)
+                {
+                    // ef core does not support lazy loading, so we need to explicitly get data here.
+                    foreach (var item in user.UserRoles)
+                    {
+                        UserRole userRole = _context.UserRoles
+                                .Include(x => x.Role)
+                                .First(x => x.Id == item.Id);
+                        if (userRole.Role.Id == id && userRole.EffectiveDate <= DateTimeOffset.Now && (userRole.ExpiryDate == null || userRole.ExpiryDate > DateTimeOffset.Now))
+                        {
+                            found = true;
+                            break;
+                        }
+                    }
+                }
+
+                if (found && !result.Contains(user))
+                {
+                    result.Add(user);
+                }
             }
 
-            var usersWithRole = role.UserRoles;
-
-            // Create DTO with serializable response
-            var result = usersWithRole.Select(x => x.ToViewModel()).ToList();
             return new ObjectResult(result);
         }
 
@@ -438,64 +448,61 @@ namespace HETSAPI.Services.Impl
         /// <response code="404">Role not found</response>
         public virtual IActionResult RolesIdUsersPutAsync(int id, UserRoleViewModel[] items)
         {
-            using (var txn = _context.BeginTransaction())
+            bool role_exists = _context.Roles.Any(x => x.Id == id);
+            if (role_exists)
             {
-                // Eager loading of related data
-                var role = _context.Roles
-                    .Where(x => x.Id == id)
-                    .Include(x => x.UserRoles)
-                    .ThenInclude(userRole => userRole.User)
-                    .FirstOrDefault();
+                Role role = _context.Roles.First(x => x.Id == id);
 
-                // Not Found
-                if (role == null)
+                foreach (UserRoleViewModel item in items)
                 {
-                    return new StatusCodeResult(404);
-                }
-
-                var userIds = items.Select(x => x.UserId).ToList();
-                var allUsers = _context.Users.Where(x => userIds.Contains(x.Id)).ToList();
-
-                foreach (var userRoleDto in items)
-                {
-                    if (userRoleDto.Id.HasValue)
+                    if (item != null)
                     {
-                        var existingUserRole = role.UserRoles.FirstOrDefault(x => x.Id == userRoleDto.Id.Value);
-                        if (existingUserRole == null)
+                        // see if there is a matching user
+                        bool user_exists = _context.Users.Any(x => x.Id == item.UserId);
+                        if (user_exists)
                         {
-                            // TODO throw new ResourceNotFoundException(string.Format("Cannot find userrole with id {0} on role {1}", userRole.Id.Value, roleId));
-                        }
-                        else
-                        {
-                            // TODO Check serialization of Dates
-                            existingUserRole.EffectiveDate = userRoleDto.EffectiveDate;
-                            existingUserRole.ExpiryDate = userRoleDto.ExpiryDate;
-                        }
-                    }
-                    else
-                    {
-                        var dbUserRole = new UserRole();
-                        dbUserRole.Role = role;
-                        dbUserRole.User = allUsers.FirstOrDefault(x => x.Id == userRoleDto.UserId);
-                        _context.UserRoles.Add(dbUserRole);
+                            User user = _context.Users.First(x => x.Id == item.UserId);
+                            bool found = false;
+                            if (user.UserRoles != null)
+                            {
+                                foreach (UserRole userrole in user.UserRoles)
+                                {
+                                    if (userrole.Role.Id == item.RoleId)
+                                    {
+                                        found = true;
+                                    }
+                                }
+                            }
 
-                        role.UserRoles.Add(dbUserRole);
+                            if (found == false) // add the user role
+                            {
+                                UserRole newRole = new UserRole();
+                                newRole.Role = role;
+                                newRole.EffectiveDate = item.EffectiveDate;
+                                newRole.ExpiryDate = null;
+                                _context.Add(newRole);
+
+                                if (user.UserRoles == null)
+                                {
+                                    user.UserRoles = new List<UserRole>();
+                                }
+
+                                user.UserRoles.Add(newRole);
+                                // update the user.
+                                _context.Update(user);
+                            }
+                        }
+
                     }
                 }
-
-                // Users to remove
-                var toRemove = role.UserRoles.Where(x => !userIds.Contains(x.User.Id)).ToList();
-                toRemove.ForEach(x => role.RemoveUser(x.User));
-                _context.UserRoles.RemoveRange(toRemove);
-                _context.Roles.Update(role);
-
-                // Save changes
                 _context.SaveChanges();
-                txn.Commit();
-
-                var result = role.UserRoles.ToList();
-                return new ObjectResult(result);
+                return new StatusCodeResult(200);
             }
+            else
+            {
+                return new StatusCodeResult(404);
+            }
+
         }
 
         /// <summary>

@@ -23,30 +23,30 @@ using System.Reflection;
 namespace HETSAPI.Test
 {
     /// <summary>
-    ///  Class for testing the model User
+    ///  Class for testing the model EquipmentType
     /// </summary>
     
-    public class UserModelTests
+    public class EquipmentTypeModelTests
     {
-        // TODO uncomment below to declare an instance variable for User
-        private User instance;
+        // TODO uncomment below to declare an instance variable for EquipmentType
+        private EquipmentType instance;
 
         /// <summary>
         /// Setup the test.
         /// </summary>        
-        public UserModelTests()
+        public EquipmentTypeModelTests()
         {
-            instance = new User();
+            instance = new EquipmentType();
         }
 
     
         /// <summary>
-        /// Test an instance of User
+        /// Test an instance of EquipmentType
         /// </summary>
         [Fact]
-        public void UserInstanceTest()
+        public void EquipmentTypeInstanceTest()
         {
-            Assert.IsType<User>(instance);  
+            Assert.IsType<EquipmentType>(instance);  
         }
 
         /// <summary>
@@ -58,93 +58,84 @@ namespace HETSAPI.Test
             Assert.IsType<int>(instance.Id);
         }
         /// <summary>
-        /// Test the property 'Active'
+        /// Test the property 'LocalArea'
         /// </summary>
         [Fact]
-        public void ActiveTest()
+        public void LocalAreaTest()
         {
-            // TODO unit test for the property 'Active'
+            // TODO unit test for the property 'LocalArea'
 			Assert.True(true);
         }
         /// <summary>
-        /// Test the property 'GivenName'
+        /// Test the property 'Code'
         /// </summary>
         [Fact]
-        public void GivenNameTest()
+        public void CodeTest()
         {
-            // TODO unit test for the property 'GivenName'
+            // TODO unit test for the property 'Code'
 			Assert.True(true);
         }
         /// <summary>
-        /// Test the property 'Surname'
+        /// Test the property 'Description'
         /// </summary>
         [Fact]
-        public void SurnameTest()
+        public void DescriptionTest()
         {
-            // TODO unit test for the property 'Surname'
+            // TODO unit test for the property 'Description'
 			Assert.True(true);
         }
         /// <summary>
-        /// Test the property 'Initials'
+        /// Test the property 'EquipRentalRateNo'
         /// </summary>
         [Fact]
-        public void InitialsTest()
+        public void EquipRentalRateNoTest()
         {
-            // TODO unit test for the property 'Initials'
+            // TODO unit test for the property 'EquipRentalRateNo'
 			Assert.True(true);
         }
         /// <summary>
-        /// Test the property 'Email'
+        /// Test the property 'EquipRentalRatePage'
         /// </summary>
         [Fact]
-        public void EmailTest()
+        public void EquipRentalRatePageTest()
         {
-            // TODO unit test for the property 'Email'
+            // TODO unit test for the property 'EquipRentalRatePage'
 			Assert.True(true);
         }
         /// <summary>
-        /// Test the property 'SmUserId'
+        /// Test the property 'MaxHours'
         /// </summary>
         [Fact]
-        public void SmUserIdTest()
+        public void MaxHoursTest()
         {
-            // TODO unit test for the property 'SmUserId'
+            // TODO unit test for the property 'MaxHours'
 			Assert.True(true);
         }
         /// <summary>
-        /// Test the property 'Guid'
+        /// Test the property 'ExtendHours'
         /// </summary>
         [Fact]
-        public void GuidTest()
+        public void ExtendHoursTest()
         {
-            // TODO unit test for the property 'Guid'
+            // TODO unit test for the property 'ExtendHours'
 			Assert.True(true);
         }
         /// <summary>
-        /// Test the property 'SmAuthorizationDirectory'
+        /// Test the property 'MaxHoursSub'
         /// </summary>
         [Fact]
-        public void SmAuthorizationDirectoryTest()
+        public void MaxHoursSubTest()
         {
-            // TODO unit test for the property 'SmAuthorizationDirectory'
+            // TODO unit test for the property 'MaxHoursSub'
 			Assert.True(true);
         }
         /// <summary>
-        /// Test the property 'UserRoles'
+        /// Test the property 'SecondBlk'
         /// </summary>
         [Fact]
-        public void UserRolesTest()
+        public void SecondBlkTest()
         {
-            // TODO unit test for the property 'UserRoles'
-			Assert.True(true);
-        }
-        /// <summary>
-        /// Test the property 'GroupMemberships'
-        /// </summary>
-        [Fact]
-        public void GroupMembershipsTest()
-        {
-            // TODO unit test for the property 'GroupMemberships'
+            // TODO unit test for the property 'SecondBlk'
 			Assert.True(true);
         }
 

@@ -55,16 +55,15 @@ namespace HETSAPI.Test
         [Fact]
         public void IdTest()
         {
-            // TODO unit test for the property 'Id'
-			Assert.True(true);
+            Assert.IsType<int>(instance.Id);
         }
         /// <summary>
-        /// Test the property 'Region'
+        /// Test the property 'Name'
         /// </summary>
         [Fact]
-        public void RegionTest()
+        public void NameTest()
         {
-            // TODO unit test for the property 'Region'
+            // TODO unit test for the property 'Name'
 			Assert.True(true);
         }
 

@@ -23,30 +23,30 @@ using System.Reflection;
 namespace HETSAPI.Test
 {
     /// <summary>
-    ///  Class for testing the model GroupMembership
+    ///  Class for testing the model Note
     /// </summary>
     
-    public class GroupMembershipModelTests
+    public class NoteModelTests
     {
-        // TODO uncomment below to declare an instance variable for GroupMembership
-        private GroupMembership instance;
+        // TODO uncomment below to declare an instance variable for Note
+        private Note instance;
 
         /// <summary>
         /// Setup the test.
         /// </summary>        
-        public GroupMembershipModelTests()
+        public NoteModelTests()
         {
-            instance = new GroupMembership();
+            instance = new Note();
         }
 
     
         /// <summary>
-        /// Test an instance of GroupMembership
+        /// Test an instance of Note
         /// </summary>
         [Fact]
-        public void GroupMembershipInstanceTest()
+        public void NoteInstanceTest()
         {
-            Assert.IsType<GroupMembership>(instance);  
+            Assert.IsType<Note>(instance);  
         }
 
         /// <summary>
@@ -58,30 +58,21 @@ namespace HETSAPI.Test
             Assert.IsType<int>(instance.Id);
         }
         /// <summary>
-        /// Test the property 'Active'
+        /// Test the property '_Note'
         /// </summary>
         [Fact]
-        public void ActiveTest()
+        public void _NoteTest()
         {
-            // TODO unit test for the property 'Active'
+            // TODO unit test for the property '_Note'
 			Assert.True(true);
         }
         /// <summary>
-        /// Test the property 'Group'
+        /// Test the property 'IsNoLongerRelevant'
         /// </summary>
         [Fact]
-        public void GroupTest()
+        public void IsNoLongerRelevantTest()
         {
-            // TODO unit test for the property 'Group'
-			Assert.True(true);
-        }
-        /// <summary>
-        /// Test the property 'User'
-        /// </summary>
-        [Fact]
-        public void UserTest()
-        {
-            // TODO unit test for the property 'User'
+            // TODO unit test for the property 'IsNoLongerRelevant'
 			Assert.True(true);
         }
 

@@ -23,30 +23,30 @@ using System.Reflection;
 namespace HETSAPI.Test
 {
     /// <summary>
-    ///  Class for testing the model GroupMembership
+    ///  Class for testing the model RotationList
     /// </summary>
     
-    public class GroupMembershipModelTests
+    public class RotationListModelTests
     {
-        // TODO uncomment below to declare an instance variable for GroupMembership
-        private GroupMembership instance;
+        // TODO uncomment below to declare an instance variable for RotationList
+        private RotationList instance;
 
         /// <summary>
         /// Setup the test.
         /// </summary>        
-        public GroupMembershipModelTests()
+        public RotationListModelTests()
         {
-            instance = new GroupMembership();
+            instance = new RotationList();
         }
 
     
         /// <summary>
-        /// Test an instance of GroupMembership
+        /// Test an instance of RotationList
         /// </summary>
         [Fact]
-        public void GroupMembershipInstanceTest()
+        public void RotationListInstanceTest()
         {
-            Assert.IsType<GroupMembership>(instance);  
+            Assert.IsType<RotationList>(instance);  
         }
 
         /// <summary>
@@ -58,30 +58,30 @@ namespace HETSAPI.Test
             Assert.IsType<int>(instance.Id);
         }
         /// <summary>
-        /// Test the property 'Active'
+        /// Test the property 'LocalArea'
         /// </summary>
         [Fact]
-        public void ActiveTest()
+        public void LocalAreaTest()
         {
-            // TODO unit test for the property 'Active'
+            // TODO unit test for the property 'LocalArea'
 			Assert.True(true);
         }
         /// <summary>
-        /// Test the property 'Group'
+        /// Test the property 'EquipmentType'
         /// </summary>
         [Fact]
-        public void GroupTest()
+        public void EquipmentTypeTest()
         {
-            // TODO unit test for the property 'Group'
+            // TODO unit test for the property 'EquipmentType'
 			Assert.True(true);
         }
         /// <summary>
-        /// Test the property 'User'
+        /// Test the property 'Blocks'
         /// </summary>
         [Fact]
-        public void UserTest()
+        public void BlocksTest()
         {
-            // TODO unit test for the property 'User'
+            // TODO unit test for the property 'Blocks'
 			Assert.True(true);
         }
 

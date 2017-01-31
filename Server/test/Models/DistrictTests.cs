@@ -23,30 +23,30 @@ using System.Reflection;
 namespace HETSAPI.Test
 {
     /// <summary>
-    ///  Class for testing the model GroupMembership
+    ///  Class for testing the model District
     /// </summary>
     
-    public class GroupMembershipModelTests
+    public class DistrictModelTests
     {
-        // TODO uncomment below to declare an instance variable for GroupMembership
-        private GroupMembership instance;
+        // TODO uncomment below to declare an instance variable for District
+        private District instance;
 
         /// <summary>
         /// Setup the test.
         /// </summary>        
-        public GroupMembershipModelTests()
+        public DistrictModelTests()
         {
-            instance = new GroupMembership();
+            instance = new District();
         }
 
     
         /// <summary>
-        /// Test an instance of GroupMembership
+        /// Test an instance of District
         /// </summary>
         [Fact]
-        public void GroupMembershipInstanceTest()
+        public void DistrictInstanceTest()
         {
-            Assert.IsType<GroupMembership>(instance);  
+            Assert.IsType<District>(instance);  
         }
 
         /// <summary>
@@ -58,30 +58,48 @@ namespace HETSAPI.Test
             Assert.IsType<int>(instance.Id);
         }
         /// <summary>
-        /// Test the property 'Active'
+        /// Test the property 'MinistryDistrictID'
         /// </summary>
         [Fact]
-        public void ActiveTest()
+        public void MinistryDistrictIDTest()
         {
-            // TODO unit test for the property 'Active'
+            // TODO unit test for the property 'MinistryDistrictID'
 			Assert.True(true);
         }
         /// <summary>
-        /// Test the property 'Group'
+        /// Test the property 'Name'
         /// </summary>
         [Fact]
-        public void GroupTest()
+        public void NameTest()
         {
-            // TODO unit test for the property 'Group'
+            // TODO unit test for the property 'Name'
 			Assert.True(true);
         }
         /// <summary>
-        /// Test the property 'User'
+        /// Test the property 'Region'
         /// </summary>
         [Fact]
-        public void UserTest()
+        public void RegionTest()
         {
-            // TODO unit test for the property 'User'
+            // TODO unit test for the property 'Region'
+			Assert.True(true);
+        }
+        /// <summary>
+        /// Test the property 'StartDate'
+        /// </summary>
+        [Fact]
+        public void StartDateTest()
+        {
+            // TODO unit test for the property 'StartDate'
+			Assert.True(true);
+        }
+        /// <summary>
+        /// Test the property 'EndDate'
+        /// </summary>
+        [Fact]
+        public void EndDateTest()
+        {
+            // TODO unit test for the property 'EndDate'
 			Assert.True(true);
         }
 

@@ -18,35 +18,36 @@ using System.Threading.Tasks;
 using Xunit;
 using HETSAPI;
 using HETSAPI.Models;
+using HETSAPI.ViewModels;
 using System.Reflection;
 
 namespace HETSAPI.Test
 {
     /// <summary>
-    ///  Class for testing the model GroupMembership
+    ///  Class for testing the model UserDetailsViewModel
     /// </summary>
     
-    public class GroupMembershipModelTests
+    public class UserDetailsViewModelModelTests
     {
-        // TODO uncomment below to declare an instance variable for GroupMembership
-        private GroupMembership instance;
+        // TODO uncomment below to declare an instance variable for UserDetailsViewModel
+        private UserDetailsViewModel instance;
 
         /// <summary>
         /// Setup the test.
         /// </summary>        
-        public GroupMembershipModelTests()
+        public UserDetailsViewModelModelTests()
         {
-            instance = new GroupMembership();
+            instance = new UserDetailsViewModel();
         }
 
     
         /// <summary>
-        /// Test an instance of GroupMembership
+        /// Test an instance of UserDetailsViewModel
         /// </summary>
         [Fact]
-        public void GroupMembershipInstanceTest()
+        public void UserDetailsViewModelInstanceTest()
         {
-            Assert.IsType<GroupMembership>(instance);  
+            Assert.IsType<UserDetailsViewModel>(instance);  
         }
 
         /// <summary>
@@ -67,21 +68,48 @@ namespace HETSAPI.Test
 			Assert.True(true);
         }
         /// <summary>
-        /// Test the property 'Group'
+        /// Test the property 'GivenName'
         /// </summary>
         [Fact]
-        public void GroupTest()
+        public void GivenNameTest()
         {
-            // TODO unit test for the property 'Group'
+            // TODO unit test for the property 'GivenName'
 			Assert.True(true);
         }
         /// <summary>
-        /// Test the property 'User'
+        /// Test the property 'Surname'
         /// </summary>
         [Fact]
-        public void UserTest()
+        public void SurnameTest()
         {
-            // TODO unit test for the property 'User'
+            // TODO unit test for the property 'Surname'
+			Assert.True(true);
+        }
+        /// <summary>
+        /// Test the property 'Initials'
+        /// </summary>
+        [Fact]
+        public void InitialsTest()
+        {
+            // TODO unit test for the property 'Initials'
+			Assert.True(true);
+        }
+        /// <summary>
+        /// Test the property 'Email'
+        /// </summary>
+        [Fact]
+        public void EmailTest()
+        {
+            // TODO unit test for the property 'Email'
+			Assert.True(true);
+        }
+        /// <summary>
+        /// Test the property 'Permissions'
+        /// </summary>
+        [Fact]
+        public void PermissionsTest()
+        {
+            // TODO unit test for the property 'Permissions'
 			Assert.True(true);
         }
 
