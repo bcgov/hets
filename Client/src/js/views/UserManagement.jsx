@@ -1,14 +1,16 @@
 import React from 'react';
+
 import { connect } from 'react-redux';
+
 import { PageHeader, Alert, Table, Button, Glyphicon } from 'react-bootstrap';
 
 import _ from 'lodash';
 
-import Spinner from '../components/Spinner.jsx';
-import OverlayTrigger from '../components/OverlayTrigger.jsx';
-import Confirm from '../components/Confirm.jsx';
-
 import * as Api from '../api';
+
+import Confirm from '../components/Confirm.jsx';
+import OverlayTrigger from '../components/OverlayTrigger.jsx';
+import Spinner from '../components/Spinner.jsx';
 
 
 var UserManagement = React.createClass({
@@ -69,7 +71,7 @@ var UserManagement = React.createClass({
                 <td style={{ verticalAlign: 'middle' }}>{ user.initials }</td>
                 <td style={{ textAlign: 'right' }}>
                   <Button onClick={ this.edit.bind(this, user) } style={{ marginRight: 10 }}><Glyphicon glyph="pencil" /> Edit</Button>
-                  <OverlayTrigger trigger="click" placement="top" rootClose overlay={ <Confirm params={ user } onConfirm={ this.delete }/>}>
+                  <OverlayTrigger trigger="click" placement="top" rootClose overlay={ <Confirm onConfirm={ this.delete.bind(this, user) }/> }>
                     <Button><Glyphicon glyph="trash" /> Delete</Button>
                   </OverlayTrigger>
                 </td>
