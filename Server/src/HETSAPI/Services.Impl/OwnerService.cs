@@ -58,9 +58,7 @@ namespace HETSAPI.Services.Impl
             }
 
             // Adjust the owner contacts.
-
-
-            // EquipmentAttachments is a list     
+            
             if (item.Contacts != null)
             {
                 for (int i = 0; i < item.Contacts.Count; i++)
@@ -81,6 +79,20 @@ namespace HETSAPI.Services.Impl
                         }
                     }
                 }
+            }
+
+            if (item.PrimaryContact != null)
+            {
+                int primaryContact_id = item.PrimaryContact.Id;
+                bool primaryContact_exists = _context.Contacts.Any(a => a.Id == primaryContact_id);
+                if (primaryContact_exists)
+                {
+                    item.PrimaryContact = _context.Contacts.First(a => a.Id == primaryContact_id);                         
+                }
+                else
+                {
+                    item.PrimaryContact = null;
+                }               
             }
         }
 
