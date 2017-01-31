@@ -2,3 +2,7 @@
 ~*
 *.bck
 orig.*
+in/*.csv
+api
+model
+
