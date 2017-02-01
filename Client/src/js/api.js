@@ -1,7 +1,6 @@
 import * as Action from './actionTypes';
 import store from './store';
 
-import { daysFromToday } from './utils/date';
 import { ApiRequest } from './utils/http';
 import { lastFirstName, firstLastName } from './utils/string';
 
@@ -54,14 +53,12 @@ export function getUser(userId) {
 ////////////////////
 
 export function getFavourites(type) {
-  return Promise.resolve();
-  
-  // return new ApiRequest(`/users/current/favourites/${type}`).get().then(response => {
-  //   // Normalize the response
-  //   var favourites = _.fromPairs(response.map(favourite => [ favourite.id, favourite ]));
+  return new ApiRequest(`/users/current/favourites/${type}`).get().then(response => {
+    // Normalize the response
+    var favourites = _.fromPairs(response.map(favourite => [ favourite.id, favourite ]));
 
-  //   store.dispatch({ type: Actions.UPDATE_FAVOURITES, favourites: favourites });
-  // });
+    store.dispatch({ type: Action.UPDATE_FAVOURITES, favourites: favourites });
+  });
 }
 
 export function addFavourite(favourite) {
