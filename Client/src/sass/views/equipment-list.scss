@@ -1,0 +1,121 @@
+#equipment-list {
+  #equipment-search-row-1 {
+    margin-top: -10px;
+
+    > label {
+      margin-top: 17px;
+      margin-left: 7px;
+    }
+
+    > div {
+      margin-top: 10px;
+    }
+
+    > form > span {
+      margin-top: 10px;
+    }
+  }
+
+  #equipment-search-row-2 {
+    margin-top: 10px;
+
+    label {
+      margin-top: 7px;
+      margin-left: 7px;
+    }
+
+    #equipment-attachments {
+      .multi-dropdown {
+        margin-left: 5px;
+      }
+
+      label {
+        float: left;
+        font-weight: normal;
+      }
+    }
+  }
+
+  #equipment-buttons {
+    float: right;
+
+    .btn {
+      width: 40px;
+    }
+  }
+
+  #equipment-faves {
+    float: right;
+    margin-top: 10px;
+  }
+
+  #equipment-faves-dropdown {
+    width: 79px;
+  }
+
+  #search-button {
+    float:right;
+  }
+}
+
+#school-buses-detail {
+  #school-buses-top {
+    margin-bottom: 10px;
+  }
+
+  #inspection-list {
+    height: 216px;
+    width: 100%;
+    overflow-y: scroll;
+    margin-bottom: 10px;
+  }
+
+  #school-buses-icbc-owner {
+    min-height: 80px;
+  }
+
+  .well {
+    margin-left: 5px;
+    margin-right: 5px;
+  }
+
+  .label {
+    font-size: 100%;
+    margin-right: 5px;
+  }
+
+  .checkbox {
+    margin-top: 0px;
+    margin-bottom: 0px;
+    height: 16px;
+  }
+
+  .btn {
+    margin-left: 5px;
+  }
+
+  .btn-group > .btn + .btn {
+    margin-left: -1px;
+  }
+
+  h1 {
+    small {
+      font-size: 85%;
+    }
+  }
+
+  h3 {
+    font-weight: 600;
+  }
+}
+
+#school-buses-edit {
+  [class*='col-'] {
+    padding-left: 7px;
+    padding-right: 7px;
+  }
+
+  h4 strong span {
+    margin-left: 10px;
+  }
+}
