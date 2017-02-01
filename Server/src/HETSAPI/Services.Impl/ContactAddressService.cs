@@ -89,8 +89,23 @@ namespace HETSAPI.Services.Impl
         /// <response code="404">ContactAddress not found</response>
         public virtual IActionResult ContactaddressesIdDeletePostAsync(int id)
         {
-            var result = "";
-            return new ObjectResult(result);
+            var exists = _context.ContactAddresss.Any(a => a.Id == id);
+            if (exists)
+            {
+                var item = _context.ContactAddresss.First(a => a.Id == id);
+                if (item != null)
+                {
+                    _context.ContactAddresss.Remove(item);
+                    // Save the changes
+                    _context.SaveChanges();
+                }
+                return new ObjectResult(item);
+            }
+            else
+            {
+                // record not found
+                return new StatusCodeResult(404);
+            }
         }
 
         /// <summary>
@@ -101,8 +116,17 @@ namespace HETSAPI.Services.Impl
         /// <response code="404">ContactAddress not found</response>
         public virtual IActionResult ContactaddressesIdGetAsync(int id)
         {
-            var result = "";
-            return new ObjectResult(result);
+            var exists = _context.ContactAddresss.Any(a => a.Id == id);
+            if (exists)
+            {
+                var result = _context.ContactAddresss.First(a => a.Id == id);
+                return new ObjectResult(result);
+            }
+            else
+            {
+                // record not found
+                return new StatusCodeResult(404);
+            }
         }
 
         /// <summary>
@@ -114,8 +138,19 @@ namespace HETSAPI.Services.Impl
         /// <response code="404">ContactAddress not found</response>
         public virtual IActionResult ContactaddressesIdPutAsync(int id, ContactAddress item)
         {
-            var result = "";
-            return new ObjectResult(result);
+            var exists = _context.ContactAddresss.Any(a => a.Id == id);
+            if (exists && id == item.Id)
+            {
+                _context.ContactAddresss.Update(item);
+                // Save the changes
+                _context.SaveChanges();
+                return new ObjectResult(item);
+            }
+            else
+            {
+                // record not found
+                return new StatusCodeResult(404);
+            }
         }
 
         /// <summary>
@@ -125,8 +160,19 @@ namespace HETSAPI.Services.Impl
         /// <response code="201">ContactAddress created</response>
         public virtual IActionResult ContactaddressesPostAsync(ContactAddress item)
         {
-            var result = "";
-            return new ObjectResult(result);
+            var exists = _context.ContactAddresss.Any(a => a.Id == item.Id);
+            if (exists)
+            {
+                _context.ContactAddresss.Update(item);
+            }
+            else
+            {
+                // record not found
+                _context.ContactAddresss.Add(item);
+            }
+            // Save the changes
+            _context.SaveChanges();
+            return new ObjectResult(item);
         }
     }
 }

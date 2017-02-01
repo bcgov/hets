@@ -68,8 +68,23 @@ namespace HETSAPI.Services.Impl
         /// <response code="404">Project not found</response>
         public virtual IActionResult ProjectsIdDeletePostAsync(int id)
         {
-            var result = "";
-            return new ObjectResult(result);
+            var exists = _context.Projects.Any(a => a.Id == id);
+            if (exists)
+            {
+                var item = _context.Projects.First(a => a.Id == id);
+                if (item != null)
+                {
+                    _context.Projects.Remove(item);
+                    // Save the changes
+                    _context.SaveChanges();
+                }
+                return new ObjectResult(item);
+            }
+            else
+            {
+                // record not found
+                return new StatusCodeResult(404);
+            }
         }
 
         /// <summary>
@@ -80,8 +95,17 @@ namespace HETSAPI.Services.Impl
         /// <response code="404">Project not found</response>
         public virtual IActionResult ProjectsIdGetAsync(int id)
         {
-            var result = "";
-            return new ObjectResult(result);
+            var exists = _context.Projects.Any(a => a.Id == id);
+            if (exists)
+            {
+                var result = _context.Projects.First(a => a.Id == id);
+                return new ObjectResult(result);
+            }
+            else
+            {
+                // record not found
+                return new StatusCodeResult(404);
+            }
         }
 
         /// <summary>
@@ -93,8 +117,19 @@ namespace HETSAPI.Services.Impl
         /// <response code="404">Project not found</response>
         public virtual IActionResult ProjectsIdPutAsync(int id, Project item)
         {
-            var result = "";
-            return new ObjectResult(result);
+            var exists = _context.Projects.Any(a => a.Id == id);
+            if (exists && id == item.Id)
+            {
+                _context.Projects.Update(item);
+                // Save the changes
+                _context.SaveChanges();
+                return new ObjectResult(item);
+            }
+            else
+            {
+                // record not found
+                return new StatusCodeResult(404);
+            }
         }
 
         /// <summary>
@@ -104,8 +139,19 @@ namespace HETSAPI.Services.Impl
         /// <response code="201">Project created</response>
         public virtual IActionResult ProjectsPostAsync(Project item)
         {
-            var result = "";
-            return new ObjectResult(result);
+            var exists = _context.Projects.Any(a => a.Id == item.Id);
+            if (exists)
+            {
+                _context.Projects.Update(item);                
+            }
+            else
+            {
+                // record not found
+                _context.Projects.Add(item);
+            }
+            // Save the changes
+            _context.SaveChanges();
+            return new ObjectResult(item);
         }
     }
 }

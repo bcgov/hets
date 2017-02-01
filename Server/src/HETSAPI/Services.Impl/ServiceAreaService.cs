@@ -171,13 +171,23 @@ namespace HETSAPI.Services.Impl
         /// 
         /// </summary>
         /// <remarks>Adds a Service Area</remarks>
-        /// <param name="body"></param>
+        /// <param name="item"></param>
         /// <response code="200">OK</response>
-        public virtual IActionResult ServiceareasPostAsync(ServiceArea body)
+        public virtual IActionResult ServiceareasPostAsync(ServiceArea item)
         {
-            _context.ServiceAreas.Add(body);
+            var exists = _context.ServiceAreas.Any(a => a.Id == item.Id);
+            if (exists)
+            {
+                _context.ServiceAreas.Update(item);
+            }
+            else
+            {
+                // record not found
+                _context.ServiceAreas.Add(item);
+            }
+            // Save the changes
             _context.SaveChanges();
-            return new ObjectResult(body);
+            return new ObjectResult(item);
         }
     }
 }
