@@ -1,4 +1,4 @@
-import * as Actions from '../actionTypes';
+import * as Action from '../actionTypes';
 
 import _ from 'lodash';
 
@@ -22,37 +22,37 @@ const DEFAULT_MODELS = {
 export default function modelsReducer(state = DEFAULT_MODELS, action) {
   switch(action.type) {
     // Users
-    case Actions.UPDATE_USERS:
+    case Action.UPDATE_USERS:
       return { ...state, users: action.users };
 
-    case Actions.UPDATE_USER:
+    case Action.UPDATE_USER:
       return { ...state, user: action.user };
 
     // Favourites
-    case Actions.UPDATE_FAVOURITES:
+    case Action.UPDATE_FAVOURITES:
       return { ...state, favourites: action.favourites };
 
-    case Actions.ADD_FAVOURITE:
+    case Action.ADD_FAVOURITE:
       return { ...state, favourites: { ...state.favourites, ...action.favourite } };
 
-    case Actions.UPDATE_FAVOURITE:
+    case Action.UPDATE_FAVOURITE:
       return { ...state, favourites: { ...state.favourites, ...action.favourite } };
 
-    case Actions.DELETE_FAVOURITE:
+    case Action.DELETE_FAVOURITE:
       return { ...state, favourites: _.omit(state.favourites, [ action.id ]) };
 
     // Equipment
-    case Actions.UPDATE_EQUIPMENT_LIST:
+    case Action.UPDATE_EQUIPMENT_LIST:
       return { ...state, equipmentList: action.equipmentList };
 
-    case Actions.UPDATE_EQUIPMENT:
+    case Action.UPDATE_EQUIPMENT:
       return { ...state, equipment: action.equipment };
 
     // Owners
-    case Actions.UPDATE_OWNERS:
+    case Action.UPDATE_OWNERS:
       return { ...state, owners: action.owners };
 
-    case Actions.UPDATE_OWNER:
+    case Action.UPDATE_OWNER:
       return { ...state, owner: action.owner };
   }
 
