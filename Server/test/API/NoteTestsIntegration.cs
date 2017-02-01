@@ -25,24 +25,8 @@ using System.Net;
 
 namespace HETSAPI.Test
 {
-	public class NoteIntegrationTest 
+	public class NoteIntegrationTest : ApiIntegrationTestBase
     { 
-		private readonly TestServer _server;
-		private readonly HttpClient _client;
-			
-		/// <summary>
-        /// Setup the test
-        /// </summary>        
-		public NoteIntegrationTest()
-		{
-			_server = new TestServer(new WebHostBuilder()
-            .UseEnvironment("Development")
-            .UseContentRoot(Directory.GetCurrentDirectory())
-            .UseStartup<Startup>());
-            _client = _server.CreateClient();
-		}
-	
-		
 		[Fact]
 		/// <summary>
         /// Integration test for NotesBulkPost

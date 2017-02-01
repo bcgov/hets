@@ -27,7 +27,6 @@ namespace HETSAPI.Mappings
             dto.EffectiveDate = model.EffectiveDate;
             dto.ExpiryDate = model.ExpiryDate;
             dto.RoleId = model.Role.Id;
-            dto.UserId = model.User.Id;
             dto.Id = model.Id;
             return dto;
         }

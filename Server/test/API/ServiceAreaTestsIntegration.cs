@@ -25,24 +25,8 @@ using HETSAPI.Models;
 
 namespace HETSAPI.Test
 {
-	public class ServiceAreaApiIntegrationTest 
+	public class ServiceAreaApiIntegrationTest : ApiIntegrationTestBase
     { 
-		private readonly TestServer _server;
-		private readonly HttpClient _client;
-			
-		/// <summary>
-        /// Setup the test
-        /// </summary>        
-		public ServiceAreaApiIntegrationTest()
-		{
-			_server = new TestServer(new WebHostBuilder()
-            .UseEnvironment("Development")
-            .UseContentRoot(Directory.GetCurrentDirectory())
-            .UseStartup<Startup>());
-            _client = _server.CreateClient();
-		}
-	
-		
 		[Fact]
 		/// <summary>
         /// Integration test for ServiceareasGet

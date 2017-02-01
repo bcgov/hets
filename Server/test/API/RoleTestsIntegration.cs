@@ -26,23 +26,8 @@ using HETSAPI.ViewModels;
 
 namespace HETSAPI.Test
 {
-    public class RoleApiIntegrationTest
+    public class RoleApiIntegrationTest : ApiIntegrationTestBase
     {
-        private readonly TestServer _server;
-        private readonly HttpClient _client;
-
-        /// <summary>
-        /// Setup the test
-        /// </summary>        
-        public RoleApiIntegrationTest()
-        {
-            _server = new TestServer(new WebHostBuilder()
-            .UseEnvironment("Development")
-            .UseContentRoot(Directory.GetCurrentDirectory())
-            .UseStartup<Startup>());
-            _client = _server.CreateClient();
-        }
-
         [Fact]
         /// <summary>
         /// Basic Integration test for Roles

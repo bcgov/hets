@@ -21,24 +21,8 @@ using HETSAPI;
 
 namespace HETSAPI.Test
 {
-	public class GroupApiIntegrationTest 
+	public class GroupApiIntegrationTest : ApiIntegrationTestBase
     { 
-		private readonly TestServer _server;
-		private readonly HttpClient _client;
-			
-		/// <summary>
-        /// Setup the test
-        /// </summary>        
-		public GroupApiIntegrationTest()
-		{
-			_server = new TestServer(new WebHostBuilder()
-            .UseEnvironment("Development")
-            .UseContentRoot(Directory.GetCurrentDirectory())
-            .UseStartup<Startup>());
-            _client = _server.CreateClient();
-		}
-	
-		
 		[Fact]
 		/// <summary>
         /// Integration test for GroupsGet

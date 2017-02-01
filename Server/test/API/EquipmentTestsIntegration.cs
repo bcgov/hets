@@ -25,24 +25,9 @@ using System.Net;
 
 namespace HETSAPI.Test
 {
-	public class EquipmentIntegrationTest 
+	public class EquipmentIntegrationTest : ApiIntegrationTestBase
     { 
-		private readonly TestServer _server;
-		private readonly HttpClient _client;
-			
-		/// <summary>
-        /// Setup the test
-        /// </summary>        
-		public EquipmentIntegrationTest()
-		{
-			_server = new TestServer(new WebHostBuilder()
-            .UseEnvironment("Development")
-            .UseContentRoot(Directory.GetCurrentDirectory())
-            .UseStartup<Startup>());
-            _client = _server.CreateClient();
-		}
-	
-		
+				
 		[Fact]
 		/// <summary>
         /// Integration test for EquipmentBulkPost

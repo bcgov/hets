@@ -25,24 +25,8 @@ using System.Net;
 
 namespace HETSAPI.Test
 {
-	public class LocalAreaIntegrationTest 
+	public class LocalAreaIntegrationTest : ApiIntegrationTestBase
     { 
-		private readonly TestServer _server;
-		private readonly HttpClient _client;
-			
-		/// <summary>
-        /// Setup the test
-        /// </summary>        
-		public LocalAreaIntegrationTest()
-		{
-			_server = new TestServer(new WebHostBuilder()
-            .UseEnvironment("Development")
-            .UseContentRoot(Directory.GetCurrentDirectory())
-            .UseStartup<Startup>());
-            _client = _server.CreateClient();
-		}
-	
-		
 		[Fact]
 		/// <summary>
         /// Integration test for LocalAreasBulkPost
@@ -69,20 +53,32 @@ namespace HETSAPI.Test
             // localAreas have service areas.
             ServiceArea servicearea = null;
 
-            
+            var request = new HttpRequestMessage(HttpMethod.Get, "/api/serviceareas");
+            var response = await _client.SendAsync(request);
+            response.EnsureSuccessStatusCode();
 
-            // first test the POST.
-            var request = new HttpRequestMessage(HttpMethod.Post, "/api/localAreas");
+            // parse as JSON.
+            string jsonString = await response.Content.ReadAsStringAsync();
+            ServiceArea[] serviceareas = JsonConvert.DeserializeObject<ServiceArea[]>(jsonString);
+
+            if (serviceareas.Any())
+            {
+                servicearea = serviceareas[0];
+            }
+
+
+            // test the POST.
+            request = new HttpRequestMessage(HttpMethod.Post, "/api/localAreas");
 
             // create a new object.
             LocalArea localarea = new LocalArea();
             localarea.ServiceArea = servicearea; 
             localarea.Name = initialName;
-            string jsonString = localarea.ToJson();
+            jsonString = localarea.ToJson();
 
             request.Content = new StringContent(jsonString, Encoding.UTF8, "application/json");
 
-            var response = await _client.SendAsync(request);
+            response = await _client.SendAsync(request);
             response.EnsureSuccessStatusCode();
 
             // parse as JSON.

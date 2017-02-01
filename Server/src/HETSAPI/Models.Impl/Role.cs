@@ -51,32 +51,5 @@ namespace HETSAPI.Models
                 RolePermissions.Remove(permissionToRemove);
             }
         }
-
-        /// <summary>
-        /// Adds a user to this role instance.
-        /// </summary>
-        /// <param name="user">The user to add.</param>
-        public void AddUser(User user)
-        {
-            var userRole = new UserRole()
-            {
-                User = user,
-                Role = this
-            };
-            UserRoles.Add(userRole);
-        }
-
-        /// <summary>
-        /// Removes a user from this role instance.
-        /// </summary>
-        /// <param name="user">The user to remove.</param>
-        public void RemoveUser(User user)
-        {
-            var userToRemove = UserRoles.FirstOrDefault(x => x.User.Id == user.Id);
-            if (userToRemove != null)
-            {
-                UserRoles.Remove(userToRemove);
-            }
-        }
     }
 }
