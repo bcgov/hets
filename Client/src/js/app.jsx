@@ -7,6 +7,8 @@ import store from './store';
 import Main from './views/Main.jsx';
 import Home from './views/Home.jsx';
 import Equipment from './views/Equipment.jsx';
+import EquipmentDetail from './views/EquipmentDetail.jsx';
+import OwnersDetail from './views/OwnersDetail.jsx';
 import Notifications from './views/Notifications.jsx';
 import UserManagement from './views/UserManagement.jsx';
 import UserManagementEdit from './views/UserManagementEdit.jsx';
@@ -21,6 +23,8 @@ const App = <Provider store={ store }>
     <Route path="/" component={ Main }>
       <Route path="home" component={ Home }/>
       <Route path="equipment" component={ Equipment }/>
+      <Route path="equipment/:equipmentId" component={ EquipmentDetail }/>
+      <Route path="owners/:ownerId" component={ OwnersDetail }/>
       <Route path="notifications" component={ Notifications }/>
       <Route path="user-management" component={ UserManagement }/>
       <Route path="user-management/:userId" component={ UserManagementEdit }/>

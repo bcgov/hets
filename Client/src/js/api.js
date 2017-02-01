@@ -1,4 +1,4 @@
-import * as Actions from './actionTypes';
+import * as Action from './actionTypes';
 import store from './store';
 
 import { daysFromToday } from './utils/date';
@@ -14,7 +14,7 @@ import _ from 'lodash';
 
 export function getCurrentUser() {
   return new ApiRequest('/users/current').get().then(response => {
-    store.dispatch({ type: Actions.UPDATE_CURRENT_USER, user: response });
+    store.dispatch({ type: Action.UPDATE_CURRENT_USER, user: response });
   });
 }
 
@@ -34,7 +34,7 @@ export function getUsers() {
     // Add display fields
     _.map(users, user => { parseUser(user); });
 
-    store.dispatch({ type: Actions.UPDATE_USERS, users: users });
+    store.dispatch({ type: Action.UPDATE_USERS, users: users });
   });
 }
 
@@ -45,7 +45,7 @@ export function getUser(userId) {
     // Add display fields
     parseUser(user);
 
-    store.dispatch({ type: Actions.UPDATE_USER, user: user });
+    store.dispatch({ type: Action.UPDATE_USER, user: user });
   });
 }
 
@@ -69,7 +69,7 @@ export function addFavourite(favourite) {
     // Normalize the response
     var favourite = _.fromPairs([[ response.id, response ]]);
 
-    store.dispatch({ type: Actions.ADD_FAVOURITE, favourite: favourite });
+    store.dispatch({ type: Action.ADD_FAVOURITE, favourite: favourite });
   });
 }
 
@@ -78,14 +78,14 @@ export function updateFavourite(favourite) {
     // Normalize the response
     var favourite = _.fromPairs([[ response.id, response ]]);
 
-    store.dispatch({ type: Actions.UPDATE_FAVOURITE, favourite: favourite });
+    store.dispatch({ type: Action.UPDATE_FAVOURITE, favourite: favourite });
   });
 }
 
 export function deleteFavourite(favourite) {
   return new ApiRequest(`/users/current/favourites/${favourite.id}/delete`).post().then(response => {
     // No needs to normalize, as we just want the id from the response.
-    store.dispatch({ type: Actions.DELETE_FAVOURITE, id: response.id });
+    store.dispatch({ type: Action.DELETE_FAVOURITE, id: response.id });
   });
 }
 
@@ -120,7 +120,7 @@ export function searchEquipmentList(params) {
     // Add display fields
     _.map(equipmentList, equip => { parseEquipment(equip); });
 
-    store.dispatch({ type: Actions.UPDATE_EQUIPMENT_LIST, equipmentList: equipmentList });
+    store.dispatch({ type: Action.UPDATE_EQUIPMENT_LIST, equipmentList: equipmentList });
   });
 }
 
@@ -132,7 +132,7 @@ export function getEquipmentList() {
     // Add display fields
     _.map(equipmentList, equip => { parseEquipment(equip); });
 
-    store.dispatch({ type: Actions.UPDATE_EQUIPMENT_LIST, equipmentList: equipmentList });
+    store.dispatch({ type: Action.UPDATE_EQUIPMENT_LIST, equipmentList: equipmentList });
   });
 }
 
@@ -143,7 +143,7 @@ export function getEquipment(equipmentId) {
     // Add display fields
     parseEquipment(equipment);
 
-    store.dispatch({ type: Actions.UPDATE_EQUIPMENT, equipment: equipment });
+    store.dispatch({ type: Action.UPDATE_EQUIPMENT, equipment: equipment });
   });
 }
 
@@ -152,14 +152,8 @@ export function getEquipment(equipmentId) {
 ////////////////////
 
 function parseOwner(owner) {
+  owner.name = firstLastName(owner.ownerFirstName, owner.ownerLastName);
   owner.primaryContactName = owner.primaryContact ? firstLastName(owner.primaryContact.givenName, owner.primaryContact.surname) : '';
-  owner.schoolBusCount = 1;
-  owner.nextInspectionDate = '2017-02-21';
-  owner.nextInspectionTypeCode = 'R';
-
-  owner.daysToInspection = daysFromToday(owner.nextInspectionDate);
-  owner.isOverdue = owner.daysToInspection < 0;
-  owner.isReinspection = owner.nextInspectionTypeCode === 'R';
 }
 
 export function searchOwners(params) {
@@ -170,7 +164,7 @@ export function searchOwners(params) {
     // Add display fields
     _.map(owners, owner => { parseOwner(owner); });
 
-    store.dispatch({ type: Actions.UPDATE_OWNERS, owners: owners });
+    store.dispatch({ type: Action.UPDATE_OWNERS, owners: owners });
   });
 }
 
@@ -178,7 +172,10 @@ export function getOwner(ownerId) {
   return new ApiRequest(`/owners/${ownerId}`).get().then(response => {
     var owner = response;
 
-    store.dispatch({ type: Actions.UPDATE_OWNER, owner: owner });
+    // Add display fields
+    parseOwner(owner);
+
+    store.dispatch({ type: Action.UPDATE_OWNER, owner: owner });
   });
 }
 
@@ -190,7 +187,7 @@ export function getOwners() {
     // Add display fields
     _.map(owners, owner => { parseOwner(owner); });
 
-    store.dispatch({ type: Actions.UPDATE_OWNERS_LOOKUP, owners: owners });
+    store.dispatch({ type: Action.UPDATE_OWNERS_LOOKUP, owners: owners });
   });
 }
 
@@ -203,7 +200,7 @@ export function getCities() {
     // Normalize the response
     var cities = _.fromPairs(response.map(city => [ city.id, city ]));
 
-    store.dispatch({ type: Actions.UPDATE_CITIES_LOOKUP, cities: cities });
+    store.dispatch({ type: Action.UPDATE_CITIES_LOOKUP, cities: cities });
   });
 }
 
@@ -212,7 +209,7 @@ export function getDistricts() {
     // Normalize the response
     var districts = _.fromPairs(response.map(district => [ district.id, district ]));
 
-    store.dispatch({ type: Actions.UPDATE_DISTRICTS_LOOKUP, districts: districts });
+    store.dispatch({ type: Action.UPDATE_DISTRICTS_LOOKUP, districts: districts });
   });
 }
 
@@ -221,7 +218,7 @@ export function getRegions() {
     // Normalize the response
     var regions = _.fromPairs(response.map(region => [ region.id, region ]));
 
-    store.dispatch({ type: Actions.UPDATE_REGIONS_LOOKUP, regions: regions });
+    store.dispatch({ type: Action.UPDATE_REGIONS_LOOKUP, regions: regions });
   });
 }
 
@@ -230,7 +227,7 @@ export function getLocalAreas() {
     // Normalize the response
     var localAreas = _.fromPairs(response.map(area => [ area.id, area ]));
 
-    store.dispatch({ type: Actions.UPDATE_LOCAL_AREAS_LOOKUP, localAreas: localAreas });
+    store.dispatch({ type: Action.UPDATE_LOCAL_AREAS_LOOKUP, localAreas: localAreas });
   });
 }
 
@@ -239,7 +236,7 @@ export function getServiceAreas() {
     // Normalize the response
     var serviceAreas = _.fromPairs(response.map(serviceArea => [ serviceArea.id, serviceArea ]));
 
-    store.dispatch({ type: Actions.UPDATE_SERVICE_AREAS_LOOKUP, serviceAreas: serviceAreas });
+    store.dispatch({ type: Action.UPDATE_SERVICE_AREAS_LOOKUP, serviceAreas: serviceAreas });
   });
 }
 
@@ -248,7 +245,7 @@ export function getEquipmentTypes() {
     // Normalize the response
     var equipmentTypes = _.fromPairs(response.map(equipType => [ equipType.id, equipType ]));
 
-    store.dispatch({ type: Actions.UPDATE_EQUIPMENT_TYPES_LOOKUP, equipmentTypes: equipmentTypes });
+    store.dispatch({ type: Action.UPDATE_EQUIPMENT_TYPES_LOOKUP, equipmentTypes: equipmentTypes });
   });
 }
 
@@ -257,7 +254,7 @@ export function getPhysicalAttachmentTypes() {
     // Normalize the response
     var physicalAttachmentTypes = _.fromPairs(response.map(attachType => [ attachType.id, attachType ]));
 
-    store.dispatch({ type: Actions.UPDATE_PHYSICAL_ATTACHMENT_TYPES_LOOKUP, physicalAttachmentTypes: physicalAttachmentTypes });
+    store.dispatch({ type: Action.UPDATE_PHYSICAL_ATTACHMENT_TYPES_LOOKUP, physicalAttachmentTypes: physicalAttachmentTypes });
   });
 }
 
@@ -267,6 +264,6 @@ export function getPhysicalAttachmentTypes() {
 
 export function getVersion() {
   return new ApiRequest('/version').get().then(response => {
-    store.dispatch({ type: Actions.UPDATE_VERSION, version: response });
+    store.dispatch({ type: Action.UPDATE_VERSION, version: response });
   });
 }

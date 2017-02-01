@@ -11,7 +11,7 @@ import _ from 'lodash';
 import Moment from 'moment';
 import Promise from 'bluebird';
 
-import * as Actions from '../actionTypes';
+import * as Action from '../actionTypes';
 import * as Api from '../api';
 import store from '../store';
 
@@ -121,14 +121,14 @@ var Equipment = React.createClass({
 
   updateSearchState(state, callback) {
     this.setState({ search: { ...this.state.search, ...state }}, () =>{
-      store.dispatch({ type: Actions.UPDATE_EQUIPMENT_LIST_SEARCH, equipmentList: this.state.search });
+      store.dispatch({ type: Action.UPDATE_EQUIPMENT_LIST_SEARCH, equipmentList: this.state.search });
       if (callback) { callback(); }
     });
   },
 
   updateUIState(state, callback) {
     this.setState({ ui: { ...this.state.ui, ...state }}, () =>{
-      store.dispatch({ type: Actions.UPDATE_EQUIPMENT_LIST_UI, equipmentList: this.state.ui });
+      store.dispatch({ type: Action.UPDATE_EQUIPMENT_LIST_UI, equipmentList: this.state.ui });
       if (callback) { callback(); }
     });
   },

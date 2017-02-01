@@ -1,4 +1,4 @@
-import * as Actions from '../actionTypes';
+import * as Action from '../actionTypes';
 
 const DEFAULT_VERSION = {
   applicationVersions: [{
@@ -13,7 +13,7 @@ export default function versionReducer(state = DEFAULT_VERSION, action) {
   var newState = {};
 
   switch(action.type) {
-    case Actions.UPDATE_VERSION:
+    case Action.UPDATE_VERSION:
       return { ...state, ...action.version };
   }
 
