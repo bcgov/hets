@@ -11,6 +11,7 @@
 using Microsoft.Extensions.DependencyInjection;
 using HETSAPI.Services;
 using HETSAPI.Services.Impl;
+using Microsoft.AspNetCore.Http;
 
 namespace HETSAPI
 {
@@ -26,6 +27,7 @@ namespace HETSAPI
         /// <returns></returns>
         public static IServiceCollection RegisterApplicationServices(this IServiceCollection services)
         {
+            services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
             services.AddTransient<IAttachmentService, AttachmentService>();
             services.AddTransient<ICityService, CityService>();
             services.AddTransient<IContactService, ContactService>();
