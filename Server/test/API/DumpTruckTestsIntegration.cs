@@ -47,84 +47,73 @@ namespace HETSAPI.Test
 		/// <summary>
         /// Integration test for DumptrucksBulkPost
         /// </summary>
-		public async void TestDumptrucksBulkPost()
+		public async void TestDumpTrucksBulkPost()
 		{
             var request = new HttpRequestMessage(HttpMethod.Post, "/api/dumptrucks/bulk");
             request.Content = new StringContent("[]", Encoding.UTF8, "application/json");
 
             var response = await _client.SendAsync(request);
             response.EnsureSuccessStatusCode();
-        }		
-        
-		
-		[Fact]
-		/// <summary>
-        /// Integration test for DumptrucksGet
+        }
+
+
+        [Fact]
+        /// <summary>
+        /// Basic Integration test for DumpTrucks
         /// </summary>
-		public async void TestDumptrucksGet()
-		{
-			var response = await _client.GetAsync("/api/dumptrucks");
+        public async void TestDumpTrucksBasic()
+        {
+            string initialName = "InitialName";
+            string changedName = "ChangedName";
+            // first test the POST.
+            var request = new HttpRequestMessage(HttpMethod.Post, "/api/dumptrucks");
+
+            // create a new object.
+            DumpTruck dumptruck = new DumpTruck();
+            dumptruck.BellyDump = initialName;
+            string jsonString = dumptruck.ToJson();
+
+            request.Content = new StringContent(jsonString, Encoding.UTF8, "application/json");
+
+            var response = await _client.SendAsync(request);
             response.EnsureSuccessStatusCode();
-			
-			// update this to test the API.
-			Assert.True(true);
-		}		
-        
-		
-		[Fact]
-		/// <summary>
-        /// Integration test for DumptrucksIdDeletePost
-        /// </summary>
-		public async void TestDumptrucksIdDeletePost()
-		{
-			var response = await _client.GetAsync("/api/dumptrucks/{id}/delete");
+
+            // parse as JSON.
+            jsonString = await response.Content.ReadAsStringAsync();
+
+            dumptruck = JsonConvert.DeserializeObject<DumpTruck>(jsonString);
+            // get the id
+            var id = dumptruck.Id;
+            // change the name
+            dumptruck.BellyDump = changedName;
+
+            // now do an update.
+            request = new HttpRequestMessage(HttpMethod.Put, "/api/dumptrucks/" + id);
+            request.Content = new StringContent(dumptruck.ToJson(), Encoding.UTF8, "application/json");
+            response = await _client.SendAsync(request);
             response.EnsureSuccessStatusCode();
-			
-			// update this to test the API.
-			Assert.True(true);
-		}		
-        
-		
-		[Fact]
-		/// <summary>
-        /// Integration test for DumptrucksIdGet
-        /// </summary>
-		public async void TestDumptrucksIdGet()
-		{
-			var response = await _client.GetAsync("/api/dumptrucks/{id}");
+
+            // do a get.
+            request = new HttpRequestMessage(HttpMethod.Get, "/api/dumptrucks/" + id);
+            response = await _client.SendAsync(request);
             response.EnsureSuccessStatusCode();
-			
-			// update this to test the API.
-			Assert.True(true);
-		}		
-        
-		
-		[Fact]
-		/// <summary>
-        /// Integration test for DumptrucksIdPut
-        /// </summary>
-		public async void TestDumptrucksIdPut()
-		{
-			var response = await _client.GetAsync("/api/dumptrucks/{id}");
+
+            // parse as JSON.
+            jsonString = await response.Content.ReadAsStringAsync();
+            dumptruck = JsonConvert.DeserializeObject<DumpTruck>(jsonString);
+
+            // verify the change went through.
+            Assert.Equal(dumptruck.BellyDump, changedName);
+
+            // do a delete.
+            request = new HttpRequestMessage(HttpMethod.Post, "/api/dumptrucks/" + id + "/delete");
+            response = await _client.SendAsync(request);
             response.EnsureSuccessStatusCode();
-			
-			// update this to test the API.
-			Assert.True(true);
-		}		
-        
-		
-		[Fact]
-		/// <summary>
-        /// Integration test for DumptrucksPost
-        /// </summary>
-		public async void TestDumptrucksPost()
-		{
-			var response = await _client.GetAsync("/api/dumptrucks");
-            response.EnsureSuccessStatusCode();
-			
-			// update this to test the API.
-			Assert.True(true);
-		}		
-        
+
+            // should get a 404 if we try a get now.
+            request = new HttpRequestMessage(HttpMethod.Get, "/api/dumptrucks/" + id);
+            response = await _client.SendAsync(request);
+            Assert.Equal(response.StatusCode, HttpStatusCode.NotFound);
+        }
     }
 }

@@ -17,6 +17,28 @@ using System;
 
 namespace HETSAPI.Models
 {
+    public interface IDbAppContextFactory
+    {
+        IDbAppContext Create();
+    }
+
+
+    public class DbAppContextFactory : IDbAppContextFactory
+    {
+        DbContextOptions<DbAppContext> _options;
+
+        public DbAppContextFactory(DbContextOptions<DbAppContext> options)
+        {
+            _options = options;
+        }
+
+        public IDbAppContext Create()
+        {
+            return new DbAppContext(_options);
+        }
+    }
+
+
     public interface IDbAppContext
     {
         DbSet<Attachment> Attachments { get; set; }
@@ -63,6 +85,8 @@ namespace HETSAPI.Models
         /// the started transaction.
         /// </returns>
         IDbContextTransaction BeginTransaction();
+
+        int SaveChanges();
     }
 
     public class DbAppContext : DbContext, IDbAppContext

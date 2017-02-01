@@ -54,77 +54,66 @@ namespace HETSAPI.Test
 
             var response = await _client.SendAsync(request);
             response.EnsureSuccessStatusCode();
-        }		
-        
-		
-		[Fact]
-		/// <summary>
-        /// Integration test for ContactphonesGet
+        }
+
+
+        [Fact]
+        /// <summary>
+        /// Basic Integration test for ContactPhones
         /// </summary>
-		public async void TestContactphonesGet()
-		{
-			var response = await _client.GetAsync("/api/contactphones");
+        public async void TestContactPhonesBasic()
+        {
+            string initialName = "2501231234";
+            string changedName = "2503214321";
+            // first test the POST.
+            var request = new HttpRequestMessage(HttpMethod.Post, "/api/contactphones");
+
+            // create a new object.
+            ContactPhone contactphone = new ContactPhone();
+            contactphone.PhoneNumber = initialName;
+            string jsonString = contactphone.ToJson();
+
+            request.Content = new StringContent(jsonString, Encoding.UTF8, "application/json");
+
+            var response = await _client.SendAsync(request);
             response.EnsureSuccessStatusCode();
-			
-			// update this to test the API.
-			Assert.True(true);
-		}		
-        
-		
-		[Fact]
-		/// <summary>
-        /// Integration test for ContactphonesIdDeletePost
-        /// </summary>
-		public async void TestContactphonesIdDeletePost()
-		{
-			var response = await _client.GetAsync("/api/contactphones/{id}/delete");
+
+            // parse as JSON.
+            jsonString = await response.Content.ReadAsStringAsync();
+
+            contactphone = JsonConvert.DeserializeObject<ContactPhone>(jsonString);
+            // get the id
+            var id = contactphone.Id;
+            // change the name
+            contactphone.PhoneNumber = changedName;
+
+            // now do an update.
+            request = new HttpRequestMessage(HttpMethod.Put, "/api/contactphones/" + id);
+            request.Content = new StringContent(contactphone.ToJson(), Encoding.UTF8, "application/json");
+            response = await _client.SendAsync(request);
             response.EnsureSuccessStatusCode();
-			
-			// update this to test the API.
-			Assert.True(true);
-		}		
-        
-		
-		[Fact]
-		/// <summary>
-        /// Integration test for ContactphonesIdGet
-        /// </summary>
-		public async void TestContactphonesIdGet()
-		{
-			var response = await _client.GetAsync("/api/contactphones/{id}");
+
+            // do a get.
+            request = new HttpRequestMessage(HttpMethod.Get, "/api/contactphones/" + id);
+            response = await _client.SendAsync(request);
             response.EnsureSuccessStatusCode();
-			
-			// update this to test the API.
-			Assert.True(true);
-		}		
-        
-		
-		[Fact]
-		/// <summary>
-        /// Integration test for ContactphonesIdPut
-        /// </summary>
-		public async void TestContactphonesIdPut()
-		{
-			var response = await _client.GetAsync("/api/contactphones/{id}");
+
+            // parse as JSON.
+            jsonString = await response.Content.ReadAsStringAsync();
+            contactphone = JsonConvert.DeserializeObject<ContactPhone>(jsonString);
+
+            // verify the change went through.
+            Assert.Equal(contactphone.PhoneNumber, changedName);
+
+            // do a delete.
+            request = new HttpRequestMessage(HttpMethod.Post, "/api/contactphones/" + id + "/delete");
+            response = await _client.SendAsync(request);
             response.EnsureSuccessStatusCode();
-			
-			// update this to test the API.
-			Assert.True(true);
-		}		
-        
-		
-		[Fact]
-		/// <summary>
-        /// Integration test for ContactphonesPost
-        /// </summary>
-		public async void TestContactphonesPost()
-		{
-			var response = await _client.GetAsync("/api/contactphones");
-            response.EnsureSuccessStatusCode();
-			
-			// update this to test the API.
-			Assert.True(true);
-		}		
-        
+
+            // should get a 404 if we try a get now.
+            request = new HttpRequestMessage(HttpMethod.Get, "/api/contactphones/" + id);
+            response = await _client.SendAsync(request);
+            Assert.Equal(response.StatusCode, HttpStatusCode.NotFound);
+        }                
     }
 }

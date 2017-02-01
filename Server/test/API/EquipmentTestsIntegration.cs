@@ -54,91 +54,67 @@ namespace HETSAPI.Test
 
             var response = await _client.SendAsync(request);
             response.EnsureSuccessStatusCode();
-        }		
-        
-		
-		[Fact]
-		/// <summary>
-        /// Integration test for EquipmentGet
+        }
+
+
+        [Fact]
+        /// <summary>
+        /// Basic Integration test for Equipment
         /// </summary>
-		public async void TestEquipmentGet()
-		{
-			var response = await _client.GetAsync("/api/equipment");
+        public async void TestEquipmentBasic()
+        {
+            string initialName = "InitialName";
+            string changedName = "ChangedName";
+            // first test the POST.
+            var request = new HttpRequestMessage(HttpMethod.Post, "/api/equipment");
+
+            // create a new object.
+            Equipment equipment = new Equipment();
+            equipment.AddressLine1 = initialName;
+            string jsonString = equipment.ToJson();
+
+            request.Content = new StringContent(jsonString, Encoding.UTF8, "application/json");
+
+            var response = await _client.SendAsync(request);
             response.EnsureSuccessStatusCode();
-			
-			// update this to test the API.
-			Assert.True(true);
-		}		
-        
-		
-		[Fact]
-		/// <summary>
-        /// Integration test for EquipmentIdDeletePost
-        /// </summary>
-		public async void TestEquipmentIdDeletePost()
-		{
-			var response = await _client.GetAsync("/api/equipment/{id}/delete");
+
+            // parse as JSON.
+            jsonString = await response.Content.ReadAsStringAsync();
+
+            equipment = JsonConvert.DeserializeObject<Equipment>(jsonString);
+            // get the id
+            var id = equipment.Id;
+            // change the name
+            equipment.AddressLine1 = changedName;
+
+            // now do an update.
+            request = new HttpRequestMessage(HttpMethod.Put, "/api/equipment/" + id);
+            request.Content = new StringContent(equipment.ToJson(), Encoding.UTF8, "application/json");
+            response = await _client.SendAsync(request);
             response.EnsureSuccessStatusCode();
-			
-			// update this to test the API.
-			Assert.True(true);
-		}		
-        
-		
-		[Fact]
-		/// <summary>
-        /// Integration test for EquipmentIdGet
-        /// </summary>
-		public async void TestEquipmentIdGet()
-		{
-			var response = await _client.GetAsync("/api/equipment/{id}");
+
+            // do a get.
+            request = new HttpRequestMessage(HttpMethod.Get, "/api/equipment/" + id);
+            response = await _client.SendAsync(request);
             response.EnsureSuccessStatusCode();
-			
-			// update this to test the API.
-			Assert.True(true);
-		}		
-        
-		
-		[Fact]
-		/// <summary>
-        /// Integration test for EquipmentIdPut
-        /// </summary>
-		public async void TestEquipmentIdPut()
-		{
-			var response = await _client.GetAsync("/api/equipment/{id}");
+
+            // parse as JSON.
+            jsonString = await response.Content.ReadAsStringAsync();
+            equipment = JsonConvert.DeserializeObject<Equipment>(jsonString);
+
+            // verify the change went through.
+            Assert.Equal(equipment.AddressLine1, changedName);
+
+            // do a delete.
+            request = new HttpRequestMessage(HttpMethod.Post, "/api/equipment/" + id + "/delete");
+            response = await _client.SendAsync(request);
             response.EnsureSuccessStatusCode();
-			
-			// update this to test the API.
-			Assert.True(true);
-		}		
-        
-		
-		[Fact]
-		/// <summary>
-        /// Integration test for EquipmentPost
-        /// </summary>
-		public async void TestEquipmentPost()
-		{
-			var response = await _client.GetAsync("/api/equipment");
-            response.EnsureSuccessStatusCode();
-			
-			// update this to test the API.
-			Assert.True(true);
-		}		
-        
-		
-		[Fact]
-		/// <summary>
-        /// Integration test for EquipmentSearchGet
-        /// </summary>
-		public async void TestEquipmentSearchGet()
-		{
-			var response = await _client.GetAsync("/api/equipment/search");
-            response.EnsureSuccessStatusCode();
-			
-			// update this to test the API.
-			Assert.True(true);
-		}		
-        
+
+            // should get a 404 if we try a get now.
+            request = new HttpRequestMessage(HttpMethod.Get, "/api/equipment/" + id);
+            response = await _client.SendAsync(request);
+            Assert.Equal(response.StatusCode, HttpStatusCode.NotFound);
+        }
+
     }
 }

@@ -54,77 +54,66 @@ namespace HETSAPI.Test
 
             var response = await _client.SendAsync(request);
             response.EnsureSuccessStatusCode();
-        }		
-        
-		
-		[Fact]
-		/// <summary>
-        /// Integration test for AttachmentGet
+        }
+
+        [Fact]
+        /// <summary>
+        /// Basic Integration test for Attachments
         /// </summary>
-		public async void TestAttachmentGet()
-		{
-			var response = await _client.GetAsync("/api/attachment");
+        public async void TestAttachmentBasic()
+        {
+            string initialName = "InitialName";
+            string changedName = "ChangedName";
+            // first test the POST.
+            var request = new HttpRequestMessage(HttpMethod.Post, "/api/attachment");
+
+            // create a new object.
+            Attachment attachment = new Attachment();
+            attachment.Description = initialName;
+            string jsonString = attachment.ToJson();
+
+            request.Content = new StringContent(jsonString, Encoding.UTF8, "application/json");
+
+            var response = await _client.SendAsync(request);
             response.EnsureSuccessStatusCode();
-			
-			// update this to test the API.
-			Assert.True(true);
-		}		
-        
-		
-		[Fact]
-		/// <summary>
-        /// Integration test for AttachmentIdDeletePost
-        /// </summary>
-		public async void TestAttachmentIdDeletePost()
-		{
-			var response = await _client.GetAsync("/api/attachment/{id}/delete");
+
+            // parse as JSON.
+            jsonString = await response.Content.ReadAsStringAsync();
+
+            attachment = JsonConvert.DeserializeObject<Attachment>(jsonString);
+            // get the id
+            var id = attachment.Id;
+            // change the name
+            attachment.Description = changedName;
+
+            // now do an update.
+            request = new HttpRequestMessage(HttpMethod.Put, "/api/attachment/" + id);
+            request.Content = new StringContent(attachment.ToJson(), Encoding.UTF8, "application/json");
+            response = await _client.SendAsync(request);
             response.EnsureSuccessStatusCode();
-			
-			// update this to test the API.
-			Assert.True(true);
-		}		
-        
-		
-		[Fact]
-		/// <summary>
-        /// Integration test for AttachmentIdGet
-        /// </summary>
-		public async void TestAttachmentIdGet()
-		{
-			var response = await _client.GetAsync("/api/attachment/{id}");
+
+            // do a get.
+            request = new HttpRequestMessage(HttpMethod.Get, "/api/attachment/" + id);
+            response = await _client.SendAsync(request);
             response.EnsureSuccessStatusCode();
-			
-			// update this to test the API.
-			Assert.True(true);
-		}		
-        
-		
-		[Fact]
-		/// <summary>
-        /// Integration test for AttachmentIdPut
-        /// </summary>
-		public async void TestAttachmentIdPut()
-		{
-			var response = await _client.GetAsync("/api/attachment/{id}");
+
+            // parse as JSON.
+            jsonString = await response.Content.ReadAsStringAsync();
+            attachment = JsonConvert.DeserializeObject<Attachment>(jsonString);
+
+            // verify the change went through.
+            Assert.Equal(attachment.Description, changedName);
+
+            // do a delete.
+            request = new HttpRequestMessage(HttpMethod.Post, "/api/attachment/" + id + "/delete");
+            response = await _client.SendAsync(request);
             response.EnsureSuccessStatusCode();
-			
-			// update this to test the API.
-			Assert.True(true);
-		}		
-        
-		
-		[Fact]
-		/// <summary>
-        /// Integration test for AttachmentPost
-        /// </summary>
-		public async void TestAttachmentPost()
-		{
-			var response = await _client.GetAsync("/api/attachment");
-            response.EnsureSuccessStatusCode();
-			
-			// update this to test the API.
-			Assert.True(true);
-		}		
-        
+
+            // should get a 404 if we try a get now.
+            request = new HttpRequestMessage(HttpMethod.Get, "/api/attachment/" + id);
+            response = await _client.SendAsync(request);
+            Assert.Equal(response.StatusCode, HttpStatusCode.NotFound);
+        }
+                
     }
 }

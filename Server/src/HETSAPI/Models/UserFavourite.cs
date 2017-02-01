@@ -44,14 +44,16 @@ namespace HETSAPI.Models
         /// <param name="Name">The user-defined name for the recorded settings. Allows the user to save different groups of settings and access each one easily when needed..</param>
         /// <param name="Value">The settings saved by the user. In general,  a UI defined chunk of json that stores the settings in place when the user created the favourite..</param>
         /// <param name="IsDefault">True if this Favourite is the default for this Context Type. On first access to a context in a session the default favourite for the context it is invoked. If there is no default favourite,  a system-wide default is invoked. On return to the context within a session,  the last parameters used are reapplied..</param>
-        /// <param name="FavouriteContextType">FavouriteContextType.</param>
-        public UserFavourite(int Id, string Name = null, string Value = null, bool? IsDefault = null, FavouriteContextType FavouriteContextType = null)
+        /// <param name="Type">The type of Favourite.</param>
+        /// <param name="User">The User who has this Favourite.</param>
+        public UserFavourite(int Id, string Name = null, string Value = null, bool? IsDefault = null, string Type = null, User User = null)
         {   
             this.Id = Id;
             this.Name = Name;
             this.Value = Value;
             this.IsDefault = IsDefault;
-            this.FavouriteContextType = FavouriteContextType;
+            this.Type = Type;
+            this.User = User;
         }
 
         /// <summary>
@@ -87,15 +89,24 @@ namespace HETSAPI.Models
         public bool? IsDefault { get; set; }
         
         /// <summary>
-        /// Gets or Sets FavouriteContextType
+        /// The type of Favourite
         /// </summary>
-        public FavouriteContextType FavouriteContextType { get; set; }
+        /// <value>The type of Favourite</value>
+        [MetaDataExtension (Description = "The type of Favourite")]
+        public string Type { get; set; }
         
         /// <summary>
-        /// Foreign key for FavouriteContextType 
+        /// The User who has this Favourite
+        /// </summary>
+        /// <value>The User who has this Favourite</value>
+        [MetaDataExtension (Description = "The User who has this Favourite")]
+        public User User { get; set; }
+        
+        /// <summary>
+        /// Foreign key for User 
         /// </summary>       
-        [ForeignKey("FavouriteContextType")]
-        public int? FavouriteContextTypeRefId { get; set; }
+        [ForeignKey("User")]
+        public int? UserRefId { get; set; }
         
         /// <summary>
         /// Returns the string presentation of the object
@@ -109,7 +120,8 @@ namespace HETSAPI.Models
             sb.Append("  Name: ").Append(Name).Append("\n");
             sb.Append("  Value: ").Append(Value).Append("\n");
             sb.Append("  IsDefault: ").Append(IsDefault).Append("\n");
-            sb.Append("  FavouriteContextType: ").Append(FavouriteContextType).Append("\n");
+            sb.Append("  Type: ").Append(Type).Append("\n");
+            sb.Append("  User: ").Append(User).Append("\n");
             sb.Append("}\n");
             return sb.ToString();
         }
@@ -168,9 +180,14 @@ namespace HETSAPI.Models
                     this.IsDefault.Equals(other.IsDefault)
                 ) &&                 
                 (
-                    this.FavouriteContextType == other.FavouriteContextType ||
-                    this.FavouriteContextType != null &&
-                    this.FavouriteContextType.Equals(other.FavouriteContextType)
+                    this.Type == other.Type ||
+                    this.Type != null &&
+                    this.Type.Equals(other.Type)
+                ) &&                 
+                (
+                    this.User == other.User ||
+                    this.User != null &&
+                    this.User.Equals(other.User)
                 );
         }
 
@@ -198,10 +215,14 @@ namespace HETSAPI.Models
                 {
                     hash = hash * 59 + this.IsDefault.GetHashCode();
                 }                
-                                   
-                if (this.FavouriteContextType != null)
+                                if (this.Type != null)
                 {
-                    hash = hash * 59 + this.FavouriteContextType.GetHashCode();
+                    hash = hash * 59 + this.Type.GetHashCode();
+                }                
+                                   
+                if (this.User != null)
+                {
+                    hash = hash * 59 + this.User.GetHashCode();
                 }
                 return hash;
             }

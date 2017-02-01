@@ -54,77 +54,73 @@ namespace HETSAPI.Test
 
             var response = await _client.SendAsync(request);
             response.EnsureSuccessStatusCode();
-        }		
-        
-		
-		[Fact]
-		/// <summary>
-        /// Integration test for LocalAreasGet
+        }
+
+
+        [Fact]
+        /// <summary>
+        /// Basic Integration test for LocalAreas
         /// </summary>
-		public async void TestLocalAreasGet()
-		{
-			var response = await _client.GetAsync("/api/localAreas");
+        public async void TestLocalAreasBasic()
+        {
+            string initialName = "InitialName";
+            string changedName = "ChangedName";
+
+            // localAreas have service areas.
+            ServiceArea servicearea = null;
+
+            
+
+            // first test the POST.
+            var request = new HttpRequestMessage(HttpMethod.Post, "/api/localAreas");
+
+            // create a new object.
+            LocalArea localarea = new LocalArea();
+            localarea.ServiceArea = servicearea; 
+            localarea.Name = initialName;
+            string jsonString = localarea.ToJson();
+
+            request.Content = new StringContent(jsonString, Encoding.UTF8, "application/json");
+
+            var response = await _client.SendAsync(request);
             response.EnsureSuccessStatusCode();
-			
-			// update this to test the API.
-			Assert.True(true);
-		}		
-        
-		
-		[Fact]
-		/// <summary>
-        /// Integration test for LocalAreasIdDeletePost
-        /// </summary>
-		public async void TestLocalAreasIdDeletePost()
-		{
-			var response = await _client.GetAsync("/api/localAreas/{id}/delete");
+
+            // parse as JSON.
+            jsonString = await response.Content.ReadAsStringAsync();
+
+            localarea = JsonConvert.DeserializeObject<LocalArea>(jsonString);
+            // get the id
+            var id = localarea.Id;
+            // change the name
+            localarea.Name = changedName;
+
+            // now do an update.
+            request = new HttpRequestMessage(HttpMethod.Put, "/api/localAreas/" + id);
+            request.Content = new StringContent(localarea.ToJson(), Encoding.UTF8, "application/json");
+            response = await _client.SendAsync(request);
             response.EnsureSuccessStatusCode();
-			
-			// update this to test the API.
-			Assert.True(true);
-		}		
-        
-		
-		[Fact]
-		/// <summary>
-        /// Integration test for LocalAreasIdGet
-        /// </summary>
-		public async void TestLocalAreasIdGet()
-		{
-			var response = await _client.GetAsync("/api/localAreas/{id}");
+
+            // do a get.
+            request = new HttpRequestMessage(HttpMethod.Get, "/api/localAreas/" + id);
+            response = await _client.SendAsync(request);
             response.EnsureSuccessStatusCode();
-			
-			// update this to test the API.
-			Assert.True(true);
-		}		
-        
-		
-		[Fact]
-		/// <summary>
-        /// Integration test for LocalAreasIdPut
-        /// </summary>
-		public async void TestLocalAreasIdPut()
-		{
-			var response = await _client.GetAsync("/api/localAreas/{id}");
+
+            // parse as JSON.
+            jsonString = await response.Content.ReadAsStringAsync();
+            localarea = JsonConvert.DeserializeObject<LocalArea>(jsonString);
+
+            // verify the change went through.
+            Assert.Equal(localarea.Name, changedName);
+
+            // do a delete.
+            request = new HttpRequestMessage(HttpMethod.Post, "/api/localAreas/" + id + "/delete");
+            response = await _client.SendAsync(request);
             response.EnsureSuccessStatusCode();
-			
-			// update this to test the API.
-			Assert.True(true);
-		}		
-        
-		
-		[Fact]
-		/// <summary>
-        /// Integration test for LocalAreasPost
-        /// </summary>
-		public async void TestLocalAreasPost()
-		{
-			var response = await _client.GetAsync("/api/localAreas");
-            response.EnsureSuccessStatusCode();
-			
-			// update this to test the API.
-			Assert.True(true);
-		}		
-        
+
+            // should get a 404 if we try a get now.
+            request = new HttpRequestMessage(HttpMethod.Get, "/api/localAreas/" + id);
+            response = await _client.SendAsync(request);
+            Assert.Equal(response.StatusCode, HttpStatusCode.NotFound);
+        }                
     }
 }

@@ -54,77 +54,66 @@ namespace HETSAPI.Test
 
             var response = await _client.SendAsync(request);
             response.EnsureSuccessStatusCode();
-        }		
-        
-		
-		[Fact]
-		/// <summary>
-        /// Integration test for EquipmentAttachmentTypesGet
+        }
+
+
+        [Fact]
+        /// <summary>
+        /// Basic Integration test for EquipmentAttachmentTypes
         /// </summary>
-		public async void TestEquipmentAttachmentTypesGet()
-		{
-			var response = await _client.GetAsync("/api/equipmentAttachmentTypes");
+        public async void TestEquipmentAttachmentTypesBasic()
+        {
+            string initialName = "InitialName";
+            string changedName = "ChangedName";
+            // first test the POST.
+            var request = new HttpRequestMessage(HttpMethod.Post, "/api/equipmentAttachmentTypes");
+
+            // create a new object.
+            EquipmentAttachmentType equipmentattachmenttype = new EquipmentAttachmentType();
+            equipmentattachmenttype.Description = initialName;
+            string jsonString = equipmentattachmenttype.ToJson();
+
+            request.Content = new StringContent(jsonString, Encoding.UTF8, "application/json");
+
+            var response = await _client.SendAsync(request);
             response.EnsureSuccessStatusCode();
-			
-			// update this to test the API.
-			Assert.True(true);
-		}		
-        
-		
-		[Fact]
-		/// <summary>
-        /// Integration test for EquipmentAttachmentTypesIdDeletePost
-        /// </summary>
-		public async void TestEquipmentAttachmentTypesIdDeletePost()
-		{
-			var response = await _client.GetAsync("/api/equipmentAttachmentTypes/{id}/delete");
+
+            // parse as JSON.
+            jsonString = await response.Content.ReadAsStringAsync();
+
+            equipmentattachmenttype = JsonConvert.DeserializeObject<EquipmentAttachmentType>(jsonString);
+            // get the id
+            var id = equipmentattachmenttype.Id;
+            // change the name
+            equipmentattachmenttype.Description = changedName;
+
+            // now do an update.
+            request = new HttpRequestMessage(HttpMethod.Put, "/api/equipmentAttachmentTypes/" + id);
+            request.Content = new StringContent(equipmentattachmenttype.ToJson(), Encoding.UTF8, "application/json");
+            response = await _client.SendAsync(request);
             response.EnsureSuccessStatusCode();
-			
-			// update this to test the API.
-			Assert.True(true);
-		}		
-        
-		
-		[Fact]
-		/// <summary>
-        /// Integration test for EquipmentAttachmentTypesIdGet
-        /// </summary>
-		public async void TestEquipmentAttachmentTypesIdGet()
-		{
-			var response = await _client.GetAsync("/api/equipmentAttachmentTypes/{id}");
+
+            // do a get.
+            request = new HttpRequestMessage(HttpMethod.Get, "/api/equipmentAttachmentTypes/" + id);
+            response = await _client.SendAsync(request);
             response.EnsureSuccessStatusCode();
-			
-			// update this to test the API.
-			Assert.True(true);
-		}		
-        
-		
-		[Fact]
-		/// <summary>
-        /// Integration test for EquipmentAttachmentTypesIdPut
-        /// </summary>
-		public async void TestEquipmentAttachmentTypesIdPut()
-		{
-			var response = await _client.GetAsync("/api/equipmentAttachmentTypes/{id}");
+
+            // parse as JSON.
+            jsonString = await response.Content.ReadAsStringAsync();
+            equipmentattachmenttype = JsonConvert.DeserializeObject<EquipmentAttachmentType>(jsonString);
+
+            // verify the change went through.
+            Assert.Equal(equipmentattachmenttype.Description, changedName);
+
+            // do a delete.
+            request = new HttpRequestMessage(HttpMethod.Post, "/api/equipmentAttachmentTypes/" + id + "/delete");
+            response = await _client.SendAsync(request);
             response.EnsureSuccessStatusCode();
-			
-			// update this to test the API.
-			Assert.True(true);
-		}		
-        
-		
-		[Fact]
-		/// <summary>
-        /// Integration test for EquipmentAttachmentTypesPost
-        /// </summary>
-		public async void TestEquipmentAttachmentTypesPost()
-		{
-			var response = await _client.GetAsync("/api/equipmentAttachmentTypes");
-            response.EnsureSuccessStatusCode();
-			
-			// update this to test the API.
-			Assert.True(true);
-		}		
-        
+
+            // should get a 404 if we try a get now.
+            request = new HttpRequestMessage(HttpMethod.Get, "/api/equipmentAttachmentTypes/" + id);
+            response = await _client.SendAsync(request);
+            Assert.Equal(response.StatusCode, HttpStatusCode.NotFound);
+        }
     }
 }

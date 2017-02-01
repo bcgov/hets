@@ -54,77 +54,66 @@ namespace HETSAPI.Test
 
             var response = await _client.SendAsync(request);
             response.EnsureSuccessStatusCode();
-        }		
-        
-		
-		[Fact]
-		/// <summary>
-        /// Integration test for ContactsGet
+        }
+
+
+        [Fact]
+        /// <summary>
+        /// Basic Integration test for Contacts
         /// </summary>
-		public async void TestContactsGet()
-		{
-			var response = await _client.GetAsync("/api/contacts");
+        public async void TestContactsBasic()
+        {
+            string initialName = "InitialName";
+            string changedName = "ChangedName";
+            // first test the POST.
+            var request = new HttpRequestMessage(HttpMethod.Post, "/api/contacts");
+
+            // create a new object.
+            Contact contact = new Contact();
+            contact.Notes = initialName;
+            string jsonString = contact.ToJson();
+
+            request.Content = new StringContent(jsonString, Encoding.UTF8, "application/json");
+
+            var response = await _client.SendAsync(request);
             response.EnsureSuccessStatusCode();
-			
-			// update this to test the API.
-			Assert.True(true);
-		}		
-        
-		
-		[Fact]
-		/// <summary>
-        /// Integration test for ContactsIdDeletePost
-        /// </summary>
-		public async void TestContactsIdDeletePost()
-		{
-			var response = await _client.GetAsync("/api/contacts/{id}/delete");
+
+            // parse as JSON.
+            jsonString = await response.Content.ReadAsStringAsync();
+
+            contact = JsonConvert.DeserializeObject<Contact>(jsonString);
+            // get the id
+            var id = contact.Id;
+            // change the name
+            contact.Notes = changedName;
+
+            // now do an update.
+            request = new HttpRequestMessage(HttpMethod.Put, "/api/contacts/" + id);
+            request.Content = new StringContent(contact.ToJson(), Encoding.UTF8, "application/json");
+            response = await _client.SendAsync(request);
             response.EnsureSuccessStatusCode();
-			
-			// update this to test the API.
-			Assert.True(true);
-		}		
-        
-		
-		[Fact]
-		/// <summary>
-        /// Integration test for ContactsIdGet
-        /// </summary>
-		public async void TestContactsIdGet()
-		{
-			var response = await _client.GetAsync("/api/contacts/{id}");
+
+            // do a get.
+            request = new HttpRequestMessage(HttpMethod.Get, "/api/contacts/" + id);
+            response = await _client.SendAsync(request);
             response.EnsureSuccessStatusCode();
-			
-			// update this to test the API.
-			Assert.True(true);
-		}		
-        
-		
-		[Fact]
-		/// <summary>
-        /// Integration test for ContactsIdPut
-        /// </summary>
-		public async void TestContactsIdPut()
-		{
-			var response = await _client.GetAsync("/api/contacts/{id}");
+
+            // parse as JSON.
+            jsonString = await response.Content.ReadAsStringAsync();
+            contact = JsonConvert.DeserializeObject<Contact>(jsonString);
+
+            // verify the change went through.
+            Assert.Equal(contact.Notes, changedName);
+
+            // do a delete.
+            request = new HttpRequestMessage(HttpMethod.Post, "/api/contacts/" + id + "/delete");
+            response = await _client.SendAsync(request);
             response.EnsureSuccessStatusCode();
-			
-			// update this to test the API.
-			Assert.True(true);
-		}		
-        
-		
-		[Fact]
-		/// <summary>
-        /// Integration test for ContactsPost
-        /// </summary>
-		public async void TestContactsPost()
-		{
-			var response = await _client.GetAsync("/api/contacts");
-            response.EnsureSuccessStatusCode();
-			
-			// update this to test the API.
-			Assert.True(true);
-		}		
-        
+
+            // should get a 404 if we try a get now.
+            request = new HttpRequestMessage(HttpMethod.Get, "/api/contacts/" + id);
+            response = await _client.SendAsync(request);
+            Assert.Equal(response.StatusCode, HttpStatusCode.NotFound);
+        }                
     }
 }

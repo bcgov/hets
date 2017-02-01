@@ -54,77 +54,66 @@ namespace HETSAPI.Test
 
             var response = await _client.SendAsync(request);
             response.EnsureSuccessStatusCode();
-        }		
-        
-		
-		[Fact]
-		/// <summary>
-        /// Integration test for ProjectsGet
+        }
+
+
+        [Fact]
+        /// <summary>
+        /// Basic Integration test for Roles
         /// </summary>
-		public async void TestProjectsGet()
-		{
-			var response = await _client.GetAsync("/api/projects");
+        public async void TestProjectsBasic()
+        {
+            string initialName = "InitialName";
+            string changedName = "ChangedName";
+            // first test the POST.
+            var request = new HttpRequestMessage(HttpMethod.Post, "/api/projects");
+
+            // create a new object.
+            Project project = new Project();
+            project.JobDesc1 = initialName;
+            string jsonString = project.ToJson();
+
+            request.Content = new StringContent(jsonString, Encoding.UTF8, "application/json");
+
+            var response = await _client.SendAsync(request);
             response.EnsureSuccessStatusCode();
-			
-			// update this to test the API.
-			Assert.True(true);
-		}		
-        
-		
-		[Fact]
-		/// <summary>
-        /// Integration test for ProjectsIdDeletePost
-        /// </summary>
-		public async void TestProjectsIdDeletePost()
-		{
-			var response = await _client.GetAsync("/api/projects/{id}/delete");
+
+            // parse as JSON.
+            jsonString = await response.Content.ReadAsStringAsync();
+
+            project = JsonConvert.DeserializeObject<Project>(jsonString);
+            // get the id
+            var id = project.Id;
+            // change the name
+            project.JobDesc1 = changedName;
+
+            // now do an update.
+            request = new HttpRequestMessage(HttpMethod.Put, "/api/projects/" + id);
+            request.Content = new StringContent(project.ToJson(), Encoding.UTF8, "application/json");
+            response = await _client.SendAsync(request);
             response.EnsureSuccessStatusCode();
-			
-			// update this to test the API.
-			Assert.True(true);
-		}		
-        
-		
-		[Fact]
-		/// <summary>
-        /// Integration test for ProjectsIdGet
-        /// </summary>
-		public async void TestProjectsIdGet()
-		{
-			var response = await _client.GetAsync("/api/projects/{id}");
+
+            // do a get.
+            request = new HttpRequestMessage(HttpMethod.Get, "/api/projects/" + id);
+            response = await _client.SendAsync(request);
             response.EnsureSuccessStatusCode();
-			
-			// update this to test the API.
-			Assert.True(true);
-		}		
-        
-		
-		[Fact]
-		/// <summary>
-        /// Integration test for ProjectsIdPut
-        /// </summary>
-		public async void TestProjectsIdPut()
-		{
-			var response = await _client.GetAsync("/api/projects/{id}");
+
+            // parse as JSON.
+            jsonString = await response.Content.ReadAsStringAsync();
+            project = JsonConvert.DeserializeObject<Project>(jsonString);
+
+            // verify the change went through.
+            Assert.Equal(project.JobDesc1, changedName);
+
+            // do a delete.
+            request = new HttpRequestMessage(HttpMethod.Post, "/api/projects/" + id + "/delete");
+            response = await _client.SendAsync(request);
             response.EnsureSuccessStatusCode();
-			
-			// update this to test the API.
-			Assert.True(true);
-		}		
-        
-		
-		[Fact]
-		/// <summary>
-        /// Integration test for ProjectsPost
-        /// </summary>
-		public async void TestProjectsPost()
-		{
-			var response = await _client.GetAsync("/api/projects");
-            response.EnsureSuccessStatusCode();
-			
-			// update this to test the API.
-			Assert.True(true);
-		}		
-        
+
+            // should get a 404 if we try a get now.
+            request = new HttpRequestMessage(HttpMethod.Get, "/api/projects/" + id);
+            response = await _client.SendAsync(request);
+            Assert.Equal(response.StatusCode, HttpStatusCode.NotFound);
+        }
     }
 }

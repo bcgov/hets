@@ -54,77 +54,67 @@ namespace HETSAPI.Test
 
             var response = await _client.SendAsync(request);
             response.EnsureSuccessStatusCode();
-        }		
-        
-		
-		[Fact]
-		/// <summary>
-        /// Integration test for ContactaddressesGet
+        }
+
+
+        [Fact]
+        /// <summary>
+        /// Basic Integration test for Roles
         /// </summary>
-		public async void TestContactaddressesGet()
-		{
-			var response = await _client.GetAsync("/api/contactaddresses");
+        public async void TestContactaddressesBasic()
+        {
+            string initialName = "InitialName";
+            string changedName = "ChangedName";
+            // first test the POST.
+            var request = new HttpRequestMessage(HttpMethod.Post, "/api/contactaddresses");
+
+            // create a new object.
+            ContactAddress contactaddress = new ContactAddress();
+            contactaddress.AddressLine1 = initialName;
+            string jsonString = contactaddress.ToJson();
+
+            request.Content = new StringContent(jsonString, Encoding.UTF8, "application/json");
+
+            var response = await _client.SendAsync(request);
             response.EnsureSuccessStatusCode();
-			
-			// update this to test the API.
-			Assert.True(true);
-		}		
-        
-		
-		[Fact]
-		/// <summary>
-        /// Integration test for ContactaddressesIdDeletePost
-        /// </summary>
-		public async void TestContactaddressesIdDeletePost()
-		{
-			var response = await _client.GetAsync("/api/contactaddresses/{id}/delete");
+
+            // parse as JSON.
+            jsonString = await response.Content.ReadAsStringAsync();
+
+            contactaddress = JsonConvert.DeserializeObject<ContactAddress>(jsonString);
+            // get the id
+            var id = contactaddress.Id;
+            // change the name
+            contactaddress.AddressLine1 = changedName;
+
+            // now do an update.
+            request = new HttpRequestMessage(HttpMethod.Put, "/api/contactaddresses/" + id);
+            request.Content = new StringContent(contactaddress.ToJson(), Encoding.UTF8, "application/json");
+            response = await _client.SendAsync(request);
             response.EnsureSuccessStatusCode();
-			
-			// update this to test the API.
-			Assert.True(true);
-		}		
-        
-		
-		[Fact]
-		/// <summary>
-        /// Integration test for ContactaddressesIdGet
-        /// </summary>
-		public async void TestContactaddressesIdGet()
-		{
-			var response = await _client.GetAsync("/api/contactaddresses/{id}");
+
+            // do a get.
+            request = new HttpRequestMessage(HttpMethod.Get, "/api/contactaddresses/" + id);
+            response = await _client.SendAsync(request);
             response.EnsureSuccessStatusCode();
-			
-			// update this to test the API.
-			Assert.True(true);
-		}		
-        
-		
-		[Fact]
-		/// <summary>
-        /// Integration test for ContactaddressesIdPut
-        /// </summary>
-		public async void TestContactaddressesIdPut()
-		{
-			var response = await _client.GetAsync("/api/contactaddresses/{id}");
+
+            // parse as JSON.
+            jsonString = await response.Content.ReadAsStringAsync();
+            contactaddress = JsonConvert.DeserializeObject<ContactAddress>(jsonString);
+
+            // verify the change went through.
+            Assert.Equal(contactaddress.AddressLine1, changedName);
+
+            // do a delete.
+            request = new HttpRequestMessage(HttpMethod.Post, "/api/contactaddresses/" + id + "/delete");
+            response = await _client.SendAsync(request);
             response.EnsureSuccessStatusCode();
-			
-			// update this to test the API.
-			Assert.True(true);
-		}		
-        
-		
-		[Fact]
-		/// <summary>
-        /// Integration test for ContactaddressesPost
-        /// </summary>
-		public async void TestContactaddressesPost()
-		{
-			var response = await _client.GetAsync("/api/contactaddresses");
-            response.EnsureSuccessStatusCode();
-			
-			// update this to test the API.
-			Assert.True(true);
-		}		
+
+            // should get a 404 if we try a get now.
+            request = new HttpRequestMessage(HttpMethod.Get, "/api/contactaddresses/" + id);
+            response = await _client.SendAsync(request);
+            Assert.Equal(response.StatusCode, HttpStatusCode.NotFound);
+        }        
         
     }
 }
