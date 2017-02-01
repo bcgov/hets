@@ -1,13 +1,20 @@
+function toString(str) {
+  if (str === null || str === undefined) { return ''; }
+  return String(str);
+}
+
 export function dasherize(str) {
-  return str.trim().replace(/([A-Z])/g, '-$1').replace(/[-_\s]+/g, '-').toLowerCase();
+  return toString(str).trim().replace(/([A-Z])/g, '-$1').replace(/[-_\s]+/g, '-').toLowerCase();
 }
 
 export function plural(num, singular, plural) {
-  return num === 1 ? singular : plural;
+  return num == 1 ? singular : plural;
 }
 
-export function concat(a, b, sep) {
+export function concat(left, right, sep) {
   if (!sep) { sep = ' '; }
+  var a = toString(left).trim();
+  var b = toString(right).trim();
   if (a && b) { return `${a}${sep}${b}`; }
   if (a) { return a; }
   if (b) { return b; }
@@ -23,9 +30,13 @@ export function lastFirstName(last, first) {
 }
 
 export function isBlank(str) {
-  return str.trim().length === 0;
+  return toString(str).trim().length === 0;
+}
+
+export function isBlankOrZero(str) {
+  return toString(str).trim() == 0;
 }
 
 export function notBlank(str) {
-  return str.trim().length > 0;
+  return !isBlank(str);
 }

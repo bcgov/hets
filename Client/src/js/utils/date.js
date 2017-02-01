@@ -7,9 +7,10 @@ export function dateIsBetween(date, startDate, endDate) {
 }
 
 export function formatDateTime(dateTime, format) {
+  if (!dateTime) { return ''; }
   var dt = Moment(dateTime);
   if (!dt || !dt.isValid()) { return ''; }
-  if (!format) { format = 'YYYY-MM-DDThh:mm:ss'; }
+  if (!format) { format = 'YYYY-MM-DDTHH:mm:ss'; }
   return dt.format(format);
 }
 
