@@ -68,8 +68,23 @@ namespace HETSAPI.Services.Impl
         /// <response code="404">Attachment not found</response>
         public virtual IActionResult AttachmentIdDeletePostAsync(int id)
         {
-            var result = "";
-            return new ObjectResult(result);
+            var exists = _context.Attachments.Any(a => a.Id == id);
+            if (exists)
+            {
+                var item = _context.Attachments.First(a => a.Id == id);
+                if (item != null)
+                {
+                    _context.Attachments.Remove(item);
+                    // Save the changes
+                    _context.SaveChanges();
+                }
+                return new ObjectResult(item);
+            }
+            else
+            {
+                // record not found
+                return new StatusCodeResult(404);
+            }
         }
 
         /// <summary>
@@ -93,8 +108,19 @@ namespace HETSAPI.Services.Impl
         /// <response code="404">Attachment not found</response>
         public virtual IActionResult AttachmentIdPutAsync(int id, Attachment item)
         {
-            var result = "";
-            return new ObjectResult(result);
+            var exists = _context.Attachments.Any(a => a.Id == id);
+            if (exists && id == item.Id)
+            {
+                _context.Attachments.Update(item);
+                // Save the changes
+                _context.SaveChanges();
+                return new ObjectResult(item);
+            }
+            else
+            {
+                // record not found
+                return new StatusCodeResult(404);
+            }
         }
 
         /// <summary>
@@ -104,8 +130,19 @@ namespace HETSAPI.Services.Impl
         /// <response code="201">Attachment created</response>
         public virtual IActionResult AttachmentPostAsync(Attachment item)
         {
-            var result = "";
-            return new ObjectResult(result);
+            var exists = _context.Attachments.Any(a => a.Id == item.Id);
+            if (exists)
+            {
+                _context.Attachments.Update(item);
+            }
+            else
+            {
+                // record not found
+                _context.Attachments.Add(item);
+            }
+            // Save the changes
+            _context.SaveChanges();
+            return new ObjectResult(item);
         }
     }
 }

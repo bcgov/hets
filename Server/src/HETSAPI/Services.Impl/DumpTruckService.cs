@@ -68,8 +68,23 @@ namespace HETSAPI.Services.Impl
         /// <response code="404">DumpTruck not found</response>
         public virtual IActionResult DumptrucksIdDeletePostAsync(int id)
         {
-            var result = "";
-            return new ObjectResult(result);
+            var exists = _context.DumpTrucks.Any(a => a.Id == id);
+            if (exists)
+            {
+                var item = _context.DumpTrucks.First(a => a.Id == id);
+                if (item != null)
+                {
+                    _context.DumpTrucks.Remove(item);
+                    // Save the changes
+                    _context.SaveChanges();
+                }
+                return new ObjectResult(item);
+            }
+            else
+            {
+                // record not found
+                return new StatusCodeResult(404);
+            }
         }
 
         /// <summary>
@@ -80,8 +95,17 @@ namespace HETSAPI.Services.Impl
         /// <response code="404">DumpTruck not found</response>
         public virtual IActionResult DumptrucksIdGetAsync(int id)
         {
-            var result = "";
-            return new ObjectResult(result);
+            var exists = _context.DumpTrucks.Any(a => a.Id == id);
+            if (exists)
+            {
+                var result = _context.DumpTrucks.First(a => a.Id == id);
+                return new ObjectResult(result);
+            }
+            else
+            {
+                // record not found
+                return new StatusCodeResult(404);
+            }
         }
 
         /// <summary>
@@ -93,8 +117,19 @@ namespace HETSAPI.Services.Impl
         /// <response code="404">DumpTruck not found</response>
         public virtual IActionResult DumptrucksIdPutAsync(int id, DumpTruck item)
         {
-            var result = "";
-            return new ObjectResult(result);
+            var exists = _context.DumpTrucks.Any(a => a.Id == id);
+            if (exists && id == item.Id)
+            {
+                _context.DumpTrucks.Update(item);
+                // Save the changes
+                _context.SaveChanges();
+                return new ObjectResult(item);
+            }
+            else
+            {
+                // record not found
+                return new StatusCodeResult(404);
+            }
         }
 
         /// <summary>
@@ -104,8 +139,19 @@ namespace HETSAPI.Services.Impl
         /// <response code="201">DumpTruck created</response>
         public virtual IActionResult DumptrucksPostAsync(DumpTruck item)
         {
-            var result = "";
-            return new ObjectResult(result);
+            var exists = _context.DumpTrucks.Any(a => a.Id == item.Id);
+            if (exists)
+            {
+                _context.DumpTrucks.Update(item);
+            }
+            else
+            {
+                // record not found
+                _context.DumpTrucks.Add(item);
+            }
+            // Save the changes
+            _context.SaveChanges();
+            return new ObjectResult(item);
         }
     }
 }

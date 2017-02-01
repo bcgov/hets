@@ -185,8 +185,18 @@ namespace HETSAPI.Services.Impl
         /// <response code="200">OK</response>
 
         public virtual IActionResult RegionsPostAsync (Region item)        
-        {            
-            _context.Regions.Add(item);        
+        {
+            var exists = _context.Regions.Any(a => a.Id == item.Id);
+            if (exists)
+            {
+                _context.Regions.Update(item);
+            }
+            else
+            {
+                // record not found
+                _context.Regions.Add(item);
+            }
+            // Save the changes
             _context.SaveChanges();
             return new ObjectResult(item);
         }

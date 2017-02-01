@@ -88,8 +88,23 @@ namespace HETSAPI.Services.Impl
         /// <response code="404">EquipmentAttachmentType not found</response>
         public virtual IActionResult EquipmentAttachmentTypesIdDeletePostAsync(int id)
         {
-            var result = "";
-            return new ObjectResult(result);
+            var exists = _context.EquipmentAttachmentTypes.Any(a => a.Id == id);
+            if (exists)
+            {
+                var item = _context.EquipmentAttachmentTypes.First(a => a.Id == id);
+                if (item != null)
+                {
+                    _context.EquipmentAttachmentTypes.Remove(item);
+                    // Save the changes
+                    _context.SaveChanges();
+                }
+                return new ObjectResult(item);
+            }
+            else
+            {
+                // record not found
+                return new StatusCodeResult(404);
+            }
         }
 
         /// <summary>
@@ -100,8 +115,17 @@ namespace HETSAPI.Services.Impl
         /// <response code="404">EquipmentAttachmentType not found</response>
         public virtual IActionResult EquipmentAttachmentTypesIdGetAsync(int id)
         {
-            var result = "";
-            return new ObjectResult(result);
+            var exists = _context.EquipmentAttachmentTypes.Any(a => a.Id == id);
+            if (exists)
+            {
+                var result = _context.EquipmentAttachmentTypes.First(a => a.Id == id);
+                return new ObjectResult(result);
+            }
+            else
+            {
+                // record not found
+                return new StatusCodeResult(404);
+            }
         }
 
         /// <summary>
@@ -113,8 +137,19 @@ namespace HETSAPI.Services.Impl
         /// <response code="404">EquipmentAttachmentType not found</response>
         public virtual IActionResult EquipmentAttachmentTypesIdPutAsync(int id, EquipmentAttachmentType item)
         {
-            var result = "";
-            return new ObjectResult(result);
+            var exists = _context.EquipmentAttachmentTypes.Any(a => a.Id == id);
+            if (exists && id == item.Id)
+            {
+                _context.EquipmentAttachmentTypes.Update(item);
+                // Save the changes
+                _context.SaveChanges();
+                return new ObjectResult(item);
+            }
+            else
+            {
+                // record not found
+                return new StatusCodeResult(404);
+            }
         }
 
         /// <summary>
@@ -124,8 +159,19 @@ namespace HETSAPI.Services.Impl
         /// <response code="201">EquipmentAttachmentType created</response>
         public virtual IActionResult EquipmentAttachmentTypesPostAsync(EquipmentAttachmentType item)
         {
-            var result = "";
-            return new ObjectResult(result);
+            var exists = _context.EquipmentAttachmentTypes.Any(a => a.Id == item.Id);
+            if (exists)
+            {
+                _context.EquipmentAttachmentTypes.Update(item);
+            }
+            else
+            {
+                // record not found
+                _context.EquipmentAttachmentTypes.Add(item);
+            }
+            // Save the changes
+            _context.SaveChanges();
+            return new ObjectResult(item);
         }
     }
 }

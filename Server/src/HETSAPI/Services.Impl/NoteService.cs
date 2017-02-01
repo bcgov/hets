@@ -68,8 +68,23 @@ namespace HETSAPI.Services.Impl
         /// <response code="404">Note not found</response>
         public virtual IActionResult NotesIdDeletePostAsync(int id)
         {
-            var result = "";
-            return new ObjectResult(result);
+            var exists = _context.Notes.Any(a => a.Id == id);
+            if (exists)
+            {
+                var item = _context.Notes.First(a => a.Id == id);
+                if (item != null)
+                {
+                    _context.Notes.Remove(item);
+                    // Save the changes
+                    _context.SaveChanges();
+                }
+                return new ObjectResult(item);
+            }
+            else
+            {
+                // record not found
+                return new StatusCodeResult(404);
+            }
         }
 
         /// <summary>
@@ -80,8 +95,17 @@ namespace HETSAPI.Services.Impl
         /// <response code="404">Note not found</response>
         public virtual IActionResult NotesIdGetAsync(int id)
         {
-            var result = "";
-            return new ObjectResult(result);
+            var exists = _context.Notes.Any(a => a.Id == id);
+            if (exists)
+            {
+                var result = _context.Notes.First(a => a.Id == id);
+                return new ObjectResult(result);
+            }
+            else
+            {
+                // record not found
+                return new StatusCodeResult(404);
+            }
         }
 
         /// <summary>
@@ -93,8 +117,19 @@ namespace HETSAPI.Services.Impl
         /// <response code="404">Note not found</response>
         public virtual IActionResult NotesIdPutAsync(int id, Note item)
         {
-            var result = "";
-            return new ObjectResult(result);
+            var exists = _context.Notes.Any(a => a.Id == id);
+            if (exists && id == item.Id)
+            {
+                _context.Notes.Update(item);
+                // Save the changes
+                _context.SaveChanges();
+                return new ObjectResult(item);
+            }
+            else
+            {
+                // record not found
+                return new StatusCodeResult(404);
+            }
         }
 
         /// <summary>
@@ -104,8 +139,19 @@ namespace HETSAPI.Services.Impl
         /// <response code="201">Note created</response>
         public virtual IActionResult NotesPostAsync(Note item)
         {
-            var result = "";
-            return new ObjectResult(result);
+            var exists = _context.Notes.Any(a => a.Id == item.Id);
+            if (exists)
+            {
+                _context.Notes.Update(item);
+            }
+            else
+            {
+                // record not found
+                _context.Notes.Add(item);
+            }
+            // Save the changes
+            _context.SaveChanges();
+            return new ObjectResult(item);
         }
     }
 }
