@@ -19,7 +19,7 @@
     "Randy Posynick <randy.posynick@gmail.com>",
     "Alejandro Sanchez <emailforasr@gmail.com>"
   ],
-  "license": "UNLICENSED",
+  "license": "Apache-2.0",
   "private": true,
   "dependencies": {
     "babel-core": "^6.9.1",

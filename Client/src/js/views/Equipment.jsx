@@ -231,7 +231,7 @@ var Equipment = React.createClass({
             <Row>
               <ButtonToolbar id="equipment-search-row-2">
                 <DateControl date={ this.state.search.lastVerifiedDate } onChange={ this.lastVerifiedDateChanged } placeholder="mm/dd/yyyy" label="Not Verified Since:" title="last verified date"/>
-                <Form inline>
+                <Form id="equipment-attachments" inline>
                   <ControlLabel>Attachment:</ControlLabel>
                   <MultiDropdown id="attachment-type-dropdown" placeholder="Select Attachments"
                     items={ attachmentTypes } selectedIds={ this.state.search.selectedPhysicalAttachmentsIds } onChange={ this.equipmentTypesChanged } showMaxItems={ 2 } />

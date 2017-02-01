@@ -55,7 +55,7 @@ export function getUser(userId) {
 
 export function getFavourites(type) {
   return Promise.resolve();
-
+  
   // return new ApiRequest(`/users/current/favourites/${type}`).get().then(response => {
   //   // Normalize the response
   //   var favourites = _.fromPairs(response.map(favourite => [ favourite.id, favourite ]));
@@ -253,16 +253,12 @@ export function getEquipmentTypes() {
 }
 
 export function getPhysicalAttachmentTypes() {
-  return Promise.resolve().then(() => {
-    store.dispatch({ type: Actions.UPDATE_PHYSICAL_ATTACHMENT_TYPES_LOOKUP, physicalAttachmentTypes: {} });
-  });
-  
-  // return new ApiRequest('/equipmentattachmenttypes').get().then(response => {
-  //   // Normalize the response
-  //   var physicalAttachmentTypes = _.fromPairs(response.map(attachType => [ attachType.id, attachType ]));
+  return new ApiRequest('/equipmentattachmenttypes').get().then(response => {
+    // Normalize the response
+    var physicalAttachmentTypes = _.fromPairs(response.map(attachType => [ attachType.id, attachType ]));
 
-  //   store.dispatch({ type: Actions.UPDATE_PHYSICAL_ATTACHMENT_TYPES_LOOKUP, physicalAttachmentTypes: physicalAttachmentTypes });
-  // });
+    store.dispatch({ type: Actions.UPDATE_PHYSICAL_ATTACHMENT_TYPES_LOOKUP, physicalAttachmentTypes: physicalAttachmentTypes });
+  });
 }
 
 ////////////////////
