@@ -42,49 +42,49 @@ namespace HETSAPI.ViewModels
         /// <param name="Value">Saved search.</param>
         /// <param name="IsDefault">IsDefault.</param>
         /// <param name="FavouriteContextTypeId">FavouriteContextTypeId.</param>
-        public UserFavouriteViewModel(int Id, string Name = null, string Value = null, bool? IsDefault = null, int? FavouriteContextTypeId = null)
+        public UserFavouriteViewModel(int Id, string Name = null, string Value = null, bool? IsDefault = null, string Type = null)
         {
             this.Id = Id;
             this.Name = Name;
             this.Value = Value;
             this.IsDefault = IsDefault;
-            this.FavouriteContextTypeId = FavouriteContextTypeId;
-            
+            this.Type = Type;
+
         }
 
         /// <summary>
         /// Gets or Sets Id
         /// </summary>
-        [DataMember(Name="id")]
+        [DataMember(Name = "id")]
         public int Id { get; set; }
 
         /// <summary>
         /// Context Name
         /// </summary>
         /// <value>Context Name</value>
-        [DataMember(Name="name")]
-        [MetaDataExtension (Description = "Context Name")]
+        [DataMember(Name = "name")]
+        [MetaDataExtension(Description = "Context Name")]
         public string Name { get; set; }
 
         /// <summary>
         /// Saved search
         /// </summary>
         /// <value>Saved search</value>
-        [DataMember(Name="value")]
-        [MetaDataExtension (Description = "Saved search")]
+        [DataMember(Name = "value")]
+        [MetaDataExtension(Description = "Saved search")]
         public string Value { get; set; }
 
         /// <summary>
         /// Gets or Sets IsDefault
         /// </summary>
-        [DataMember(Name="isDefault")]
+        [DataMember(Name = "isDefault")]
         public bool? IsDefault { get; set; }
 
         /// <summary>
         /// Gets or Sets FavouriteContextTypeId
         /// </summary>
-        [DataMember(Name="favouriteContextTypeId")]
-        public int? FavouriteContextTypeId { get; set; }
+        [DataMember(Name = "type")]
+        public string Type { get; set; }
 
         /// <summary>
         /// Returns the string presentation of the object
@@ -98,7 +98,7 @@ namespace HETSAPI.ViewModels
             sb.Append("  Name: ").Append(Name).Append("\n");
             sb.Append("  Value: ").Append(Value).Append("\n");
             sb.Append("  IsDefault: ").Append(IsDefault).Append("\n");
-            sb.Append("  FavouriteContextTypeId: ").Append(FavouriteContextTypeId).Append("\n");
+            sb.Append("  FavouriteContextTypeId: ").Append(Type).Append("\n");
             sb.Append("}\n");
             return sb.ToString();
         }
@@ -136,31 +136,30 @@ namespace HETSAPI.ViewModels
             if (ReferenceEquals(null, other)) { return false; }
             if (ReferenceEquals(this, other)) { return true; }
 
-            return 
+            return
                 (
                     this.Id == other.Id ||
-                    this.Id != null &&
                     this.Id.Equals(other.Id)
-                ) && 
+                ) &&
                 (
                     this.Name == other.Name ||
                     this.Name != null &&
                     this.Name.Equals(other.Name)
-                ) && 
+                ) &&
                 (
                     this.Value == other.Value ||
                     this.Value != null &&
                     this.Value.Equals(other.Value)
-                ) && 
+                ) &&
                 (
                     this.IsDefault == other.IsDefault ||
                     this.IsDefault != null &&
                     this.IsDefault.Equals(other.IsDefault)
-                ) && 
+                ) &&
                 (
-                    this.FavouriteContextTypeId == other.FavouriteContextTypeId ||
-                    this.FavouriteContextTypeId != null &&
-                    this.FavouriteContextTypeId.Equals(other.FavouriteContextTypeId)
+                    this.Type == other.Type ||
+                    this.Type != null &&
+                    this.Type.Equals(other.Type)
                 );
         }
 
@@ -191,9 +190,9 @@ namespace HETSAPI.ViewModels
                 {
                     hash = hash * 59 + this.IsDefault.GetHashCode();
                 }
-                if (this.FavouriteContextTypeId != null)
+                if (this.Type != null)
                 {
-                    hash = hash * 59 + this.FavouriteContextTypeId.GetHashCode();
+                    hash = hash * 59 + this.Type.GetHashCode();
                 }
                 return hash;
             }

@@ -20,13 +20,15 @@ using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
 using HETSAPI.Models;
 using HETSAPI.ViewModels;
+using System.Security.Claims;
+using Microsoft.AspNetCore.Http;
 
 namespace HETSAPI.Services.Impl
 { 
     /// <summary>
     /// 
     /// </summary>
-    public class CurrentUserService : ICurrentUserService
+    public class CurrentUserService : ServiceBase, ICurrentUserService
     {
 
         private readonly DbAppContext _context;
@@ -34,11 +36,156 @@ namespace HETSAPI.Services.Impl
         /// <summary>
         /// Create a service and set the database context
         /// </summary>
-        public CurrentUserService (DbAppContext context)
+        public CurrentUserService(IHttpContextAccessor httpContextAccessor, DbAppContext context) : base(httpContextAccessor, context)
         {
             _context = context;
         }
-	
+
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <remarks>Removes a specific user favourite</remarks>
+        /// <param name="id">id of Favourite to delete</param>
+        /// <response code="200">OK</response>
+        public virtual IActionResult UsersCurrentFavouritesIdDeletePostAsync(int id)
+        {
+            // get the current user id
+            int? user_id = GetCurrentUserId();
+            if (user_id != null)
+            {
+                bool exists = _context.UserFavourites.Where(x => x.User.Id == user_id)
+                    .Any(a => a.Id == id);
+                if (exists)
+                {
+                    var item = _context.UserFavourites.First(a => a.Id == id);
+
+                    _context.UserFavourites.Remove(item);
+                    // Save the changes
+                    _context.SaveChanges();
+                    return new ObjectResult(item);
+                }
+                else
+                {
+                    // record not found
+                    return new StatusCodeResult(404);
+                }
+            }
+            else
+            {
+                return new StatusCodeResult(403);
+            }
+
+
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <remarks>Create new favourite for the current user</remarks>
+        /// <param name="item"></param>
+        /// <response code="201">UserFavourite created</response>
+        public virtual IActionResult UsersCurrentFavouritesPostAsync(UserFavourite item)
+        {
+            item.User = null;
+            // get the current user id
+            int? id = GetCurrentUserId();
+            if (id != null)
+            {
+                bool user_exists = _context.Users.Any(a => a.Id == id);
+                if (user_exists)
+                {
+                    User user = _context.Users.First(a => a.Id == id);
+                    item.User = user;
+                }
+            }
+
+            bool exists = _context.UserFavourites.Any(a => a.Id == item.Id);
+            if (exists)
+            {
+                _context.UserFavourites.Update(item);
+                // Save the changes
+                _context.SaveChanges();
+                return new ObjectResult(item);
+            }
+            else
+            {
+                // record not found. add the record.
+                _context.UserFavourites.Add(item);
+                // Save the changes
+                _context.SaveChanges();
+                return new ObjectResult(item);
+            }
+
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <remarks>Updates a favourite</remarks>
+        /// <param name="item"></param>
+        /// <response code="201">UserFavourite created</response>
+        public virtual IActionResult UsersCurrentFavouritesPutAsync(UserFavourite item)
+        {
+            item.User = null;
+            // get the current user id
+            int? id = GetCurrentUserId();
+            if (id != null)
+            {
+                bool user_exists = _context.Users.Any(a => a.Id == id);
+                if (user_exists)
+                {
+                    User user = _context.Users.First(a => a.Id == id);
+                    item.User = user;
+                }
+            }
+
+            bool exists = _context.UserFavourites.Any(a => a.Id == item.Id);
+            if (exists)
+            {
+                _context.UserFavourites.Update(item);
+                // Save the changes
+                _context.SaveChanges();
+                return new ObjectResult(item);
+            }
+            else
+            {
+                // record not found
+                return new StatusCodeResult(404);
+            }
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <remarks>Returns a user&#39;s favourites of a given type.  If type is empty, returns all.</remarks>
+        /// <param name="type">type of favourite to return</param>
+        /// <response code="200">OK</response>
+        /// <response code="404">User not found</response>
+        public virtual IActionResult UsersCurrentFavouritesTypeGetAsync(string type)
+        {
+            // get the current user id
+            int? id = GetCurrentUserId();
+
+            if (id != null)
+            {
+                var data = _context.UserFavourites
+                    .Where(x => x.User.Id == id)
+                    .Select(x => x);
+                if (type != null)
+                {
+                    data = data.Where(x => x.Type == type);
+                }
+
+                return new ObjectResult(data.ToList());
+            }
+            else
+            {
+                // no user context.
+                return new StatusCodeResult(403);
+            }
+        }
+
         /// <summary>
         /// 
         /// </summary>
@@ -48,18 +195,23 @@ namespace HETSAPI.Services.Impl
         public virtual IActionResult UsersCurrentGetAsync ()        
         {
             var result = new CurrentUserViewModel();
-            // get the name for the current logged in user
-            result.GivenName = "Test";
-            result.Surname = "User";
-            result.FullName = result.GivenName + " " + result.Surname;
-            result.OverdueInspections = 1;
-            result.DueNextMonthInspections = 2;
-            result.DistrictName = "Victoria";
-            result.ScheduledInspections = 3;
 
+            // get the name for the current logged in user
+            result.GivenName = User.FindFirst(ClaimTypes.GivenName).Value;
+            result.Surname = User.FindFirst(ClaimTypes.Surname).Value;
+
+            result.FullName = result.GivenName + " " + result.Surname;
+
+            // get the current user id
+            int? id = GetCurrentUserId();
+
+            result.DistrictName = "Victoria";
+            
             // get the number of inspections available for the current logged in user
 
             return new ObjectResult(result);
         }
+
+
     }
 }

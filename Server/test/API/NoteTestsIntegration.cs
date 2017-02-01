@@ -54,77 +54,66 @@ namespace HETSAPI.Test
 
             var response = await _client.SendAsync(request);
             response.EnsureSuccessStatusCode();
-        }		
-        
-		
-		[Fact]
-		/// <summary>
-        /// Integration test for NotesGet
+        }
+
+
+        [Fact]
+        /// <summary>
+        /// Basic Integration test for Notes
         /// </summary>
-		public async void TestNotesGet()
-		{
-			var response = await _client.GetAsync("/api/notes");
+        public async void TestNotesBasic()
+        {
+            string initialName = "InitialName";
+            string changedName = "ChangedName";
+            // first test the POST.
+            var request = new HttpRequestMessage(HttpMethod.Post, "/api/notes");
+
+            // create a new object.
+            Note note = new Note();
+            note._Note = initialName;
+            string jsonString = note.ToJson();
+
+            request.Content = new StringContent(jsonString, Encoding.UTF8, "application/json");
+
+            var response = await _client.SendAsync(request);
             response.EnsureSuccessStatusCode();
-			
-			// update this to test the API.
-			Assert.True(true);
-		}		
-        
-		
-		[Fact]
-		/// <summary>
-        /// Integration test for NotesIdDeletePost
-        /// </summary>
-		public async void TestNotesIdDeletePost()
-		{
-			var response = await _client.GetAsync("/api/notes/{id}/delete");
+
+            // parse as JSON.
+            jsonString = await response.Content.ReadAsStringAsync();
+
+            note = JsonConvert.DeserializeObject<Note>(jsonString);
+            // get the id
+            var id = note.Id;
+            // change the name
+            note._Note = changedName;
+
+            // now do an update.
+            request = new HttpRequestMessage(HttpMethod.Put, "/api/notes/" + id);
+            request.Content = new StringContent(note.ToJson(), Encoding.UTF8, "application/json");
+            response = await _client.SendAsync(request);
             response.EnsureSuccessStatusCode();
-			
-			// update this to test the API.
-			Assert.True(true);
-		}		
-        
-		
-		[Fact]
-		/// <summary>
-        /// Integration test for NotesIdGet
-        /// </summary>
-		public async void TestNotesIdGet()
-		{
-			var response = await _client.GetAsync("/api/notes/{id}");
+
+            // do a get.
+            request = new HttpRequestMessage(HttpMethod.Get, "/api/notes/" + id);
+            response = await _client.SendAsync(request);
             response.EnsureSuccessStatusCode();
-			
-			// update this to test the API.
-			Assert.True(true);
-		}		
-        
-		
-		[Fact]
-		/// <summary>
-        /// Integration test for NotesIdPut
-        /// </summary>
-		public async void TestNotesIdPut()
-		{
-			var response = await _client.GetAsync("/api/notes/{id}");
+
+            // parse as JSON.
+            jsonString = await response.Content.ReadAsStringAsync();
+            note = JsonConvert.DeserializeObject<Note>(jsonString);
+
+            // verify the change went through.
+            Assert.Equal(note._Note, changedName);
+
+            // do a delete.
+            request = new HttpRequestMessage(HttpMethod.Post, "/api/notes/" + id + "/delete");
+            response = await _client.SendAsync(request);
             response.EnsureSuccessStatusCode();
-			
-			// update this to test the API.
-			Assert.True(true);
-		}		
-        
-		
-		[Fact]
-		/// <summary>
-        /// Integration test for NotesPost
-        /// </summary>
-		public async void TestNotesPost()
-		{
-			var response = await _client.GetAsync("/api/notes");
-            response.EnsureSuccessStatusCode();
-			
-			// update this to test the API.
-			Assert.True(true);
-		}		
-        
+
+            // should get a 404 if we try a get now.
+            request = new HttpRequestMessage(HttpMethod.Get, "/api/notes/" + id);
+            response = await _client.SendAsync(request);
+            Assert.Equal(response.StatusCode, HttpStatusCode.NotFound);
+        }
     }
 }

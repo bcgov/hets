@@ -206,6 +206,101 @@
           description: OK
           schema:
             $ref: "#/definitions/CurrentUserViewModel"
+  /users/current/favourites:
+    put:
+      description: Updates a favourite
+      tags:
+        - CurrentUser
+      consumes:
+        - application/json
+      produces:
+        - text/plain
+        - application/json
+        - text/json
+      parameters:
+        - name: item
+          in: body
+          required: true
+          schema:
+            $ref: "#/definitions/UserFavourite"
+      responses:
+        201:
+          description: UserFavourite created
+          headers:
+            Location:
+              description: A link to the UserFavourite
+              type: string
+              format: url
+          schema:
+            $ref: "#/definitions/UserFavourite"            
+    post:
+      description: Create new favourite for the current user
+      tags:
+        - CurrentUser
+      consumes:
+        - application/json
+      produces:
+        - text/plain
+        - application/json
+        - text/json
+      parameters:
+        - name: item
+          in: body
+          required: true
+          schema:
+            $ref: "#/definitions/UserFavourite"
+      responses:
+        201:
+          description: UserFavourite created
+          headers:
+            Location:
+              description: A link to the UserFavourite
+              type: string
+              format: url
+          schema:
+            $ref: "#/definitions/UserFavourite"
+  /users/current/favourites/{type}:
+    get:
+      description: Returns a user's favourites of a given type.  If type is empty, returns all.
+      tags:
+        - CurrentUser
+      produces:
+        - text/plain
+        - application/json
+        - text/json
+      responses:
+        '200':
+          description: OK
+          schema:
+            type: array
+            items:
+              $ref: "#/definitions/UserFavourite"
+        "404":
+           description: User not found
+      parameters:
+        - name: type
+          in: path
+          description: type of favourite to return
+          required: false
+          type: string
+  /users/current/favourites/{id}/delete:
+    post:
+      description: Removes a specific user favourite
+      tags:
+        - CurrentUser
+      produces:
+        - text/plain
+        - application/json
+        - text/json
+      responses:
+        '200':
+          description: OK
+      parameters:
+        - name: id
+          in: path
+          description: id of Favourite to delete
+          required: true
+          type: integer                  
   /users/{id}/roles:
     get:
       description: Returns the roles for a user

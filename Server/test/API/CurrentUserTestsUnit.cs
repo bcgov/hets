@@ -56,7 +56,7 @@ namespace HETSAPI.Test
 
                     */
 
-                    CurrentUserService _service = new CurrentUserService(dbAppContext.Object);
+                    CurrentUserService _service = new CurrentUserService(null, dbAppContext.Object);
 			
                     _CurrentUser = new CurrentUserController (_service);
 

@@ -54,77 +54,66 @@ namespace HETSAPI.Test
 
             var response = await _client.SendAsync(request);
             response.EnsureSuccessStatusCode();
-        }		
-        
-		
-		[Fact]
-		/// <summary>
-        /// Integration test for OwnersGet
+        }
+
+
+        [Fact]
+        /// <summary>
+        /// Basic Integration test for Owners
         /// </summary>
-		public async void TestOwnersGet()
-		{
-			var response = await _client.GetAsync("/api/owners");
+        public async void TestOwnersBasic()
+        {
+            string initialName = "InitialName";
+            string changedName = "ChangedName";
+            // first test the POST.
+            var request = new HttpRequestMessage(HttpMethod.Post, "/api/owners");
+
+            // create a new object.
+            Owner owner = new Owner();
+            owner.Comment = initialName;
+            string jsonString = owner.ToJson();
+
+            request.Content = new StringContent(jsonString, Encoding.UTF8, "application/json");
+
+            var response = await _client.SendAsync(request);
             response.EnsureSuccessStatusCode();
-			
-			// update this to test the API.
-			Assert.True(true);
-		}		
-        
-		
-		[Fact]
-		/// <summary>
-        /// Integration test for OwnersIdDeletePost
-        /// </summary>
-		public async void TestOwnersIdDeletePost()
-		{
-			var response = await _client.GetAsync("/api/owners/{id}/delete");
+
+            // parse as JSON.
+            jsonString = await response.Content.ReadAsStringAsync();
+
+            owner = JsonConvert.DeserializeObject<Owner>(jsonString);
+            // get the id
+            var id = owner.Id;
+            // change the name
+            owner.Comment = changedName;
+
+            // now do an update.
+            request = new HttpRequestMessage(HttpMethod.Put, "/api/owners/" + id);
+            request.Content = new StringContent(owner.ToJson(), Encoding.UTF8, "application/json");
+            response = await _client.SendAsync(request);
             response.EnsureSuccessStatusCode();
-			
-			// update this to test the API.
-			Assert.True(true);
-		}		
-        
-		
-		[Fact]
-		/// <summary>
-        /// Integration test for OwnersIdGet
-        /// </summary>
-		public async void TestOwnersIdGet()
-		{
-			var response = await _client.GetAsync("/api/owners/{id}");
+
+            // do a get.
+            request = new HttpRequestMessage(HttpMethod.Get, "/api/owners/" + id);
+            response = await _client.SendAsync(request);
             response.EnsureSuccessStatusCode();
-			
-			// update this to test the API.
-			Assert.True(true);
-		}		
-        
-		
-		[Fact]
-		/// <summary>
-        /// Integration test for OwnersIdPut
-        /// </summary>
-		public async void TestOwnersIdPut()
-		{
-			var response = await _client.GetAsync("/api/owners/{id}");
+
+            // parse as JSON.
+            jsonString = await response.Content.ReadAsStringAsync();
+            owner = JsonConvert.DeserializeObject<Owner>(jsonString);
+
+            // verify the change went through.
+            Assert.Equal(owner.Comment, changedName);
+
+            // do a delete.
+            request = new HttpRequestMessage(HttpMethod.Post, "/api/owners/" + id + "/delete");
+            response = await _client.SendAsync(request);
             response.EnsureSuccessStatusCode();
-			
-			// update this to test the API.
-			Assert.True(true);
-		}		
-        
-		
-		[Fact]
-		/// <summary>
-        /// Integration test for OwnersPost
-        /// </summary>
-		public async void TestOwnersPost()
-		{
-			var response = await _client.GetAsync("/api/owners");
-            response.EnsureSuccessStatusCode();
-			
-			// update this to test the API.
-			Assert.True(true);
-		}		
-        
+
+            // should get a 404 if we try a get now.
+            request = new HttpRequestMessage(HttpMethod.Get, "/api/owners/" + id);
+            response = await _client.SendAsync(request);
+            Assert.Equal(response.StatusCode, HttpStatusCode.NotFound);
+        }
     }
 }
