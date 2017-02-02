@@ -2,7 +2,7 @@ import * as Action from './actionTypes';
 import store from './store';
 
 import { ApiRequest } from './utils/http';
-import { lastFirstName, firstLastName } from './utils/string';
+import { lastFirstName, firstLastName, concat } from './utils/string';
 
 import _ from 'lodash';
 
@@ -90,23 +90,23 @@ export function deleteFavourite(favourite) {
 // Equipment
 ////////////////////
 
-function parseEquipment(equip) {
-  equip.isApproved = equip.statusCd === 'Approved';
-  equip.isNew = equip.statusCd === 'New';
-  equip.isArchived = equip.statusCd === 'Archived';
+function parseEquipment(equipment) {
+  if (!equipment.owner) { equipment.owner = { id: '', ownerFirstName: '',  ownerLastName: ''}; }
+  if (!equipment.equipmentType) { equipment.equipmentType = { id: '', description: ''}; }
 
-  equip.ownerName = equip.owner ? firstLastName(equip.owner.ownerFirstName, equip.owner.ownerLastName) : '';
-  equip.ownerPath = equip.owner ? ('#/owners/' + equip.owner.id) : '';
-  equip.typeName = equip.equipmentType ? equip.equipmentType.description : '';
+  equipment.isApproved = equipment.statusCd === 'Approved';
+  equipment.isNew = equipment.statusCd === 'New' || equipment.statusCd === null;
+  equipment.isArchived = equipment.statusCd === 'Archived';
+  equipment.isWorking = equipment.working === 'Y';
+  equipment.isMaintenanceContractor = equipment.owner.maintenanceContractor === 'Y';
 
-  if (equip.blockNumber && equip.seniority) {
-    equip.seniorityDisplayNumber = `${equip.blockNumber} - ${equip.seniority}`;
-  } else {
-    equip.seniorityDisplayNumber = '';
-  }
+  equipment.ownerName = firstLastName(equipment.owner.ownerFirstName, equipment.owner.ownerLastName);
+  equipment.ownerPath = equipment.owner.id ? `#/owners/${equipment.owner.id}` : '';
+  equipment.typeName = equipment.equipmentType ? equipment.equipmentType.description : '';
+  equipment.seniorityDisplayNumber = concat(equipment.blockNumber, equipment.seniority, ' - ');
 
   // TODO Implement (TBD)
-  equip.hiredStatus = 'N/A';
+  equipment.hiredStatus = 'N/A';
 }
 
 export function searchEquipmentList(params) {
