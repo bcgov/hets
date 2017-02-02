@@ -25,24 +25,9 @@ using System.Net;
 
 namespace HETSAPI.Test
 {
-	public class AttachmentIntegrationTest 
-    { 
-		private readonly TestServer _server;
-		private readonly HttpClient _client;
-			
-		/// <summary>
-        /// Setup the test
-        /// </summary>        
-		public AttachmentIntegrationTest()
-		{
-			_server = new TestServer(new WebHostBuilder()
-            .UseEnvironment("Development")
-            .UseContentRoot(Directory.GetCurrentDirectory())
-            .UseStartup<Startup>());
-            _client = _server.CreateClient();
-		}
-	
-		
+	public class AttachmentIntegrationTest : ApiIntegrationTestBase
+    { 		
+				
 		[Fact]
 		/// <summary>
         /// Integration test for AttachmentBulkPost

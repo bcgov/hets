@@ -25,27 +25,9 @@ using System.Net;
 
 namespace HETSAPI.Test
 {
-	public class RegionApiIntegrationTest 
+	public class RegionApiIntegrationTest : ApiIntegrationTestBase
     { 
-		private readonly TestServer _server;
-		private readonly HttpClient _client;
-			
-		/// <summary>
-        /// Setup the test
-        /// </summary>        
-		public RegionApiIntegrationTest()
-		{
-			_server = new TestServer(new WebHostBuilder()
-            .UseEnvironment("Development")
-            .UseContentRoot(Directory.GetCurrentDirectory())
-            .UseStartup<Startup>());
-            _client = _server.CreateClient();
-		}
-	
-		/// <summary>
-        /// Integration test for the bulk upload
-        /// </summary>
-        [Fact]
+		[Fact]
         public async void TestRegionBulkUpload()
         {
             var request = new HttpRequestMessage(HttpMethod.Post, "/api/regions/bulk");

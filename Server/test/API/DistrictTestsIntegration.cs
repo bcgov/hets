@@ -25,23 +25,8 @@ using System.Text;
 
 namespace HETSAPI.Test
 {
-	public class DistrictApiIntegrationTest 
+	public class DistrictApiIntegrationTest : ApiIntegrationTestBase
     { 
-		private readonly TestServer _server;
-		private readonly HttpClient _client;
-			
-		/// <summary>
-        /// Setup the test
-        /// </summary>        
-		public DistrictApiIntegrationTest()
-		{
-			_server = new TestServer(new WebHostBuilder()
-            .UseEnvironment("Development")
-            .UseContentRoot(Directory.GetCurrentDirectory())
-            .UseStartup<Startup>());
-            _client = _server.CreateClient();
-		}
-	
 		
 		[Fact]
 		/// <summary>

@@ -22,6 +22,7 @@ using Newtonsoft.Json;
 using HETSAPI.Models;
 using HETSAPI.ViewModels;
 using HETSAPI.Mappings;
+using HETSAPI.Services;
 
 namespace HETSAPI.Services.Impl
 {
@@ -64,6 +65,10 @@ namespace HETSAPI.Services.Impl
                         User user = _context.Users.First(a => a.Id == user_id);
                         item.User = user;
                     }
+                    else
+                    {
+                        item.User = null;
+                    }
                 }
                 // adjust the group
                 if (item.Group != null)
@@ -74,6 +79,10 @@ namespace HETSAPI.Services.Impl
                     {
                         Group group = _context.Groups.First(a => a.Id == group_id);
                         item.Group = group;
+                    }
+                    else
+                    {
+                        item.Group = null;
                     }
                 }
 
@@ -107,17 +116,6 @@ namespace HETSAPI.Services.Impl
             }
             foreach (UserRole item in items)
             {
-                // adjust the user
-                if (item.User != null)
-                {
-                    int user_id = item.User.Id;
-                    bool user_exists = _context.Users.Any(a => a.Id == user_id);
-                    if (user_exists)
-                    {
-                        User user = _context.Users.First(a => a.Id == user_id);
-                        item.User = user;
-                    }
-                }
                 // adjust the role
                 if (item.Role != null)
                 {
@@ -145,7 +143,7 @@ namespace HETSAPI.Services.Impl
             _context.SaveChanges();
             return new NoContentResult();
         }
-            
+
 
         /// <summary>
         /// 
@@ -169,7 +167,7 @@ namespace HETSAPI.Services.Impl
                 else
                 {
                     _context.Users.Add(item);
-                }                
+                }
             }
 
             // Save the changes
@@ -198,16 +196,21 @@ namespace HETSAPI.Services.Impl
         /// <response code="404">User not found</response>
         public virtual IActionResult UsersIdDeletePostAsync(int id)
         {
-            var user = _context.Users.FirstOrDefault(x => x.Id == id);
+            var user = _context.Users
+                .Include(x => x.UserRoles)
+                .FirstOrDefault(x => x.Id == id);
             if (user == null)
             {
                 // Not Found
                 return new StatusCodeResult(404);
             }
-            // remove any user role associations.            
-            var toRemove = _context.UserRoles.Where(x => x.User.Id == id ).ToList();
-            toRemove.ForEach(x => _context.UserRoles.Remove(x));
-            
+            if (user.UserRoles != null)
+            {
+                foreach (var item in user.UserRoles)
+                {
+                    _context.UserRoles.Remove(item);
+                }
+            }
             _context.Users.Remove(user);
             _context.SaveChanges();
             return new ObjectResult(user.ToViewModel());
@@ -229,9 +232,139 @@ namespace HETSAPI.Services.Impl
                 return new StatusCodeResult(404);
             }
             // TODO adjust UserFavourites model such that we can query to find a user's favourites.
-            // var result = _context.UserFavourites.Select(x => x.x.ToViewModel()).ToList();
-            var result = "";
-            return new ObjectResult(result);
+
+            var data = _context.UserFavourites
+                .Where(x => x.User.Id == user.Id)
+                .ToList();
+            return new ObjectResult(data);
+        }
+
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <remarks>Updates the active set of groups for a user</remarks>
+        /// <param name="id">id of User to update</param>
+        /// <param name="items"></param>
+        /// <response code="200">OK</response>
+        /// <response code="404">User not found</response>
+        public virtual IActionResult UsersIdFavouritesPutAsync(int id, UserFavourite[] items)
+        {
+            bool exists = _context.Users.Any(a => a.Id == id);
+            if (exists)
+            {
+                // update the given user's group membership.
+
+                User user = _context.Users.First(a => a.Id == id);
+                var data = _context.UserFavourites
+                    .Where(x => x.User.Id == user.Id);
+                foreach (UserFavourite item in data)
+                {
+                    bool found = false;
+                    foreach (UserFavourite parameterItem in items)
+                    {
+                        if (parameterItem == item)
+                        {
+                            found = true;
+                        }
+                    }
+                    if (found == false)
+                    {
+                        _context.UserFavourites.Remove(item);
+                    }
+                }
+
+                // add new items.
+                foreach (UserFavourite parameterItem in items)
+                {
+                    bool found = false;
+                    foreach (UserFavourite item in data)
+                    {
+                        if (parameterItem == item)
+                        {
+                            found = true;
+                        }
+                    }
+                    if (found == false)
+                    {
+                        // adjust user  
+                        parameterItem.User = user;
+                        _context.UserFavourites.Add(parameterItem);
+                    }
+                }
+
+                _context.SaveChanges();
+                return new NoContentResult();
+            }
+            else
+            {
+                // record not found
+                return new StatusCodeResult(404);
+            }
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <remarks>Adds a user to groups</remarks>
+        /// <param name="id">id of User to update</param>
+        /// <param name="items"></param>
+        /// <response code="200">OK</response>
+        /// <response code="404">User not found</response>
+        public virtual IActionResult UsersIdFavouritesPostAsync(int id, UserFavourite[] items)
+        {
+            bool exists = _context.Users.Any(a => a.Id == id);
+            if (exists)
+            {
+                // update the given user's group membership.
+
+                User user = _context.Users.First(a => a.Id == id);
+                var data = _context.UserFavourites
+                    .Where(x => x.User.Id == user.Id);
+                foreach (UserFavourite item in data)
+                {
+                    bool found = false;
+                    foreach (UserFavourite parameterItem in items)
+                    {
+                        if (parameterItem == item)
+                        {
+                            found = true;
+                        }
+                    }
+                    if (found == false)
+                    {
+                        _context.UserFavourites.Remove(item);
+                    }
+                }
+
+                // add new items.
+                foreach (UserFavourite parameterItem in items)
+                {
+                    bool found = false;
+                    foreach (UserFavourite item in data)
+                    {
+                        if (parameterItem == item)
+                        {
+                            found = true;
+                        }
+                    }
+                    if (found == false)
+                    {
+                        // adjust user and group. 
+                        parameterItem.User = user;
+
+                        _context.UserFavourites.Add(parameterItem);
+                    }
+                }
+
+                _context.SaveChanges();
+                return new NoContentResult();
+            }
+            else
+            {
+                // record not found
+                return new StatusCodeResult(404);
+            }
         }
 
         /// <summary>
@@ -285,8 +418,69 @@ namespace HETSAPI.Services.Impl
         /// <response code="404">User not found</response>
         public virtual IActionResult UsersIdGroupsPutAsync(int id, GroupMembership[] items)
         {
-            var result = "";
-            return new ObjectResult(result);
+            bool exists = _context.Users.Any(a => a.Id == id);
+            if (exists)
+            {
+                // update the given user's group membership.
+
+                User user = _context.Users.First(a => a.Id == id);
+                var data = _context.GroupMemberships
+                    .Where(x => x.User.Id == user.Id);
+                foreach (GroupMembership item in data)
+                {
+                    bool found = false;
+                    foreach (GroupMembership parameterItem in items)
+                    {
+                        if (parameterItem == item)
+                        {
+                            found = true;
+                        }
+                    }
+                    if (found == false)
+                    {
+                        _context.GroupMemberships.Remove(item);
+                    }
+                }
+
+                // add new items.
+                foreach (GroupMembership parameterItem in items)
+                {
+                    bool found = false;
+                    foreach (GroupMembership item in data)
+                    {
+                        if (parameterItem == item)
+                        {
+                            found = true;
+                        }
+                    }
+                    if (found == false)
+                    {
+                        // adjust user and group. 
+                        parameterItem.User = user;
+
+                        if (parameterItem.Group != null)
+                        {
+                            int group_id = parameterItem.Group.Id;
+                            bool group_exists = _context.Groups.Any(a => a.Id == group_id);
+                            if (group_exists)
+                            {
+                                Group group = _context.Groups.First(a => a.Id == group_id);
+                                parameterItem.Group = group;
+                            }
+                        }
+
+                        _context.GroupMemberships.Add(parameterItem);
+                    }
+                }
+
+                _context.SaveChanges();
+                return new NoContentResult();
+            }
+            else
+            {
+                // record not found
+                return new StatusCodeResult(404);
+            }
         }
 
         /// <summary>
@@ -299,20 +493,69 @@ namespace HETSAPI.Services.Impl
         /// <response code="404">User not found</response>
         public virtual IActionResult UsersIdGroupsPostAsync(int id, GroupMembership[] items)
         {
-            var result = "";
-            return new ObjectResult(result);
-        }
+            bool exists = _context.Users.Any(a => a.Id == id);
+            if (exists)
+            {
+                // update the given user's group membership.
 
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <remarks>Returns a user&#39;s notifications</remarks>
-        /// <param name="id">id of User to fetch notifications for</param>
-        /// <response code="200">OK</response>
-        public virtual IActionResult UsersIdNotificationsGetAsync(int id)
-        {
-            var result = "";
-            return new ObjectResult(result);
+                User user = _context.Users.First(a => a.Id == id);
+                var data = _context.GroupMemberships
+                    .Where(x => x.User.Id == user.Id);
+                foreach (GroupMembership item in data)
+                {
+                    bool found = false;
+                    foreach (GroupMembership parameterItem in items)
+                    {
+                        if (parameterItem == item)
+                        {
+                            found = true;
+                        }
+                    }
+                    if (found == false)
+                    {
+                        _context.GroupMemberships.Remove(item);
+                    }
+                }
+
+                // add new items.
+                foreach (GroupMembership parameterItem in items)
+                {
+                    bool found = false;
+                    foreach (GroupMembership item in data)
+                    {
+                        if (parameterItem == item)
+                        {
+                            found = true;
+                        }
+                    }
+                    if (found == false)
+                    {
+                        // adjust user and group. 
+                        parameterItem.User = user;
+
+                        if (parameterItem.Group != null)
+                        {
+                            int group_id = parameterItem.Group.Id;
+                            bool group_exists = _context.Groups.Any(a => a.Id == group_id);
+                            if (group_exists)
+                            {
+                                Group group = _context.Groups.First(a => a.Id == group_id);
+                                parameterItem.Group = group;
+                            }
+                        }
+
+                        _context.GroupMemberships.Add(parameterItem);
+                    }
+                }
+
+                _context.SaveChanges();
+                return new NoContentResult();
+            }
+            else
+            {
+                // record not found
+                return new StatusCodeResult(404);
+            }
         }
 
         /// <summary>
@@ -366,17 +609,14 @@ namespace HETSAPI.Services.Impl
         /// <response code="404">User not found</response>
         public virtual IActionResult UsersIdRolesGetAsync(int id)
         {
-            var user = _context.Users.FirstOrDefault(x => x.Id == id);
+            var user = _context.Users.First(x => x.Id == id);
             if (user == null)
             {
                 // Not Found
                 return new StatusCodeResult(404);
             }
 
-            var data = _context.UserRoles
-                .Where(x => x.User.Id == user.Id)
-                .ToList();
-
+            var data = user.UserRoles;
             return new ObjectResult(data);
         }
 
@@ -389,8 +629,38 @@ namespace HETSAPI.Services.Impl
         /// <response code="201">Role created for user</response>
         public virtual IActionResult UsersIdRolesPostAsync(int id, UserRoleViewModel item)
         {
-            var result = "";
-            return new ObjectResult(result);
+            bool exists = _context.Users.Any(x => x.Id == id);
+            bool success = false;
+            if (exists)
+            {
+                // check the role id
+                bool role_exists = _context.Roles.Any(x => x.Id == item.RoleId);
+                if (role_exists)
+                {
+                    User user = _context.Users.First(x => x.Id == id);
+                    // create a new UserRole based on the view model.
+                    UserRole userRole = new UserRole();
+                    Role role = _context.Roles.First(x => x.Id == item.RoleId);
+                    userRole.Role = role;
+
+                    if (!user.UserRoles.Contains(userRole))
+                    {
+                        user.UserRoles.Add(userRole);
+                    }
+                    _context.SaveChanges();
+                    success = true;
+                }
+            }
+
+            if (success)
+            {
+                return new StatusCodeResult(201);
+            }
+            else
+            {
+                return new StatusCodeResult(400);
+            }
+
         }
 
         /// <summary>
@@ -403,8 +673,42 @@ namespace HETSAPI.Services.Impl
         /// <response code="404">User not found</response>
         public virtual IActionResult UsersIdRolesPutAsync(int id, UserRoleViewModel[] items)
         {
-            var result = "";
-            return new ObjectResult(result);
+            bool exists = _context.Users.Any(x => x.Id == id);
+            bool success = false;
+            if (exists)
+            {
+                User user = _context.Users.First(x => x.Id == id);
+                user.UserRoles.Clear();
+                foreach (var item in items)
+                {
+                    // check the role id
+                    bool role_exists = _context.Roles.Any(x => x.Id == item.RoleId);
+                    if (role_exists)
+                    {
+                        // create a new UserRole based on the view model.
+                        UserRole userRole = new UserRole();
+                        Role role = _context.Roles.First(x => x.Id == item.RoleId);
+                        userRole.Role = role;
+
+                        if (!user.UserRoles.Contains(userRole))
+                        {
+                            user.UserRoles.Add(userRole);
+                        }
+
+                        success = true;
+                    }
+                }
+            }
+
+            if (success)
+            {
+                _context.SaveChanges();
+                return new StatusCodeResult(201);
+            }
+            else
+            {
+                return new StatusCodeResult(400);
+            }
         }
 
         /// <summary>
@@ -413,20 +717,19 @@ namespace HETSAPI.Services.Impl
         /// <remarks>Create new user</remarks>
         /// <param name="item"></param>
         /// <response code="201">User created</response>
-        public virtual IActionResult UsersPostAsync(UserViewModel item)
+        public virtual IActionResult UsersPostAsync(UserViewModel userviewmodel)
         {
-            User user = new User();
-            user.Active = item.Active;
-            user.Email = item.Email;
-            user.GivenName = item.GivenName;            
-            user.Guid = item.GivenName;
-            user.Initials = item.Initials;
-            user.Surname = item.Surname;
+            User item = new User();
+            item.Active = userviewmodel.Active;
+            item.Email = userviewmodel.Email;
+            item.GivenName = userviewmodel.GivenName;
+            item.Initials = userviewmodel.Initials;
+            item.Surname = userviewmodel.Surname;            
                         
-            // Save changes
-            _context.Users.Add(user);
+            _context.Users.Add(item);            
             _context.SaveChanges();
-            return new ObjectResult(user);
+
+            return new ObjectResult(item);
         }
     }
 }

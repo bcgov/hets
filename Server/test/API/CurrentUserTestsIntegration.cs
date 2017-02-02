@@ -25,7 +25,7 @@ using System.Net;
 
 namespace HETSAPI.Test
 {
-	public class CurrentUserIntegrationTest 
+	public class CurrentUserIntegrationTest : ApiIntegrationTestBase
     { 
 		private readonly TestServer _server;
 		private readonly HttpClient _client;

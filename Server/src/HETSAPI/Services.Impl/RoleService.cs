@@ -106,7 +106,7 @@ namespace HETSAPI.Services.Impl
                 return new BadRequestResult();
             }
             foreach (Role item in items)
-            {                
+            {
                 var exists = _context.Roles.Any(a => a.Id == item.Id);
                 if (exists)
                 {
@@ -115,7 +115,7 @@ namespace HETSAPI.Services.Impl
                 else
                 {
                     _context.Roles.Add(item);
-                }                
+                }
             }
             // Save the changes
             _context.SaveChanges();
@@ -274,56 +274,6 @@ namespace HETSAPI.Services.Impl
         /// <param name="items"></param>
         /// <response code="200">OK</response>
         /// <response code="404">Role not found</response>
-        public virtual IActionResult RolesIdPermissionsPostAsync(int id, Permission item)
-        {
-            using (var txn = _context.BeginTransaction())
-            {
-                // Eager loading of related data
-                var role = _context.Roles
-                    .Where(x => x.Id == id)
-                    .Include(x => x.RolePermissions)
-                    .ThenInclude(rolePerm => rolePerm.Permission)
-                    .FirstOrDefault();
-
-                if (role == null)
-                {
-                    // Not Found
-                    return new StatusCodeResult(404);
-                }
-
-                var allPermissions = _context.Permissions.ToList();
-                var existingPermissionCodes = role.RolePermissions.Select(x => x.Permission.Code).ToList();
-                if (!existingPermissionCodes.Contains(item.Code))
-                {
-                    var permToAdd = allPermissions.FirstOrDefault(x => x.Code == item.Code);
-                    if (permToAdd == null)
-                    {
-                        // TODO throw new BusinessLayerException(string.Format("Invalid Permission Code {0}", code));
-                    }
-                    role.AddPermission(permToAdd);
-                }
-
-                _context.Roles.Update(role);
-                _context.SaveChanges();
-                txn.Commit();
-
-                List<RolePermission> dbPermissions = _context.RolePermissions.ToList();
-
-                // Create DTO with serializable response
-                var result = dbPermissions.Select(x => x.ToViewModel()).ToList();
-                return new ObjectResult(result);
-            }
-        }
-
-
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <remarks>Adds permissions to a role</remarks>
-        /// <param name="id">id of Role to update</param>
-        /// <param name="items"></param>
-        /// <response code="200">OK</response>
-        /// <response code="404">Role not found</response>
         public virtual IActionResult RolesIdPermissionsPostAsync(int id, Permission[] items)
         {
             using (var txn = _context.BeginTransaction())
@@ -367,8 +317,56 @@ namespace HETSAPI.Services.Impl
                 var result = dbPermissions.Select(x => x.ToViewModel()).ToList();
                 return new ObjectResult(result);
             }
-        }        
+        }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <remarks>Adds permissions to a role</remarks>
+        /// <param name="id">id of Role to update</param>
+        /// <param name="items"></param>
+        /// <response code="200">OK</response>
+        /// <response code="404">Role not found</response>
+        public virtual IActionResult RolesIdPermissionsPostAsync(int id, Permission item)
+        {
+            using (var txn = _context.BeginTransaction())
+            {
+                // Eager loading of related data
+                var role = _context.Roles
+                    .Where(x => x.Id == id)
+                    .Include(x => x.RolePermissions)
+                    .ThenInclude(rolePerm => rolePerm.Permission)
+                    .FirstOrDefault();
+
+                if (role == null)
+                {
+                    // Not Found
+                    return new StatusCodeResult(404);
+                }
+
+                var allPermissions = _context.Permissions.ToList();
+                var existingPermissionCodes = role.RolePermissions.Select(x => x.Permission.Code).ToList();
+                if (!existingPermissionCodes.Contains(item.Code))
+                {
+                    var permToAdd = allPermissions.FirstOrDefault(x => x.Code == item.Code);
+                    if (permToAdd == null)
+                    {
+                        // TODO throw new BusinessLayerException(string.Format("Invalid Permission Code {0}", code));
+                    }
+                    role.AddPermission(permToAdd);
+                }
+
+                _context.Roles.Update(role);
+                _context.SaveChanges();
+                txn.Commit();
+
+                List<RolePermission> dbPermissions = _context.RolePermissions.ToList();
+
+                // Create DTO with serializable response
+                var result = dbPermissions.Select(x => x.ToViewModel()).ToList();
+                return new ObjectResult(result);
+            }
+        }
 
         /// <summary>
         /// 
@@ -402,7 +400,8 @@ namespace HETSAPI.Services.Impl
         /// <param name="id">id of Role to fetch</param>
         /// <response code="200">OK</response>
         public virtual IActionResult RolesIdUsersGetAsync(int id)
-        {            
+        {
+            // and the users with those UserRoles
             List<User> result = new List<User>();
 
             List<User> users = _context.Users
@@ -421,7 +420,7 @@ namespace HETSAPI.Services.Impl
                         UserRole userRole = _context.UserRoles
                                 .Include(x => x.Role)
                                 .First(x => x.Id == item.Id);
-                        if (userRole.Role.Id == id && userRole.EffectiveDate <= DateTimeOffset.Now && (userRole.ExpiryDate == null || userRole.ExpiryDate > DateTimeOffset.Now))
+                        if (userRole.Role != null && userRole.Role.Id == id && userRole.EffectiveDate <= DateTimeOffset.Now && (userRole.ExpiryDate == null || userRole.ExpiryDate > DateTimeOffset.Now))
                         {
                             found = true;
                             break;

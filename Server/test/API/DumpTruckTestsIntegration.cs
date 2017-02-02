@@ -25,23 +25,8 @@ using System.Net;
 
 namespace HETSAPI.Test
 {
-	public class DumpTruckIntegrationTest 
-    { 
-		private readonly TestServer _server;
-		private readonly HttpClient _client;
-			
-		/// <summary>
-        /// Setup the test
-        /// </summary>        
-		public DumpTruckIntegrationTest()
-		{
-			_server = new TestServer(new WebHostBuilder()
-            .UseEnvironment("Development")
-            .UseContentRoot(Directory.GetCurrentDirectory())
-            .UseStartup<Startup>());
-            _client = _server.CreateClient();
-		}
-	
+	public class DumpTruckIntegrationTest : ApiIntegrationTestBase
+    { 		
 		
 		[Fact]
 		/// <summary>
