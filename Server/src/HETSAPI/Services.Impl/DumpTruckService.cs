@@ -46,8 +46,26 @@ namespace HETSAPI.Services.Impl
         /// <response code="201">DumpTruck created</response>
         public virtual IActionResult DumptrucksBulkPostAsync(DumpTruck[] items)
         {
-            var result = "";
-            return new ObjectResult(result);
+            if (items == null)
+            {
+                return new BadRequestResult();
+            }
+            foreach (DumpTruck item in items)
+            {
+                // determine if this is an insert or an update            
+                bool exists = _context.DumpTrucks.Any(a => a.Id == item.Id);
+                if (exists)
+                {
+                    _context.Update(item);
+                }
+                else
+                {
+                    _context.Add(item);
+                }
+            }
+            // Save the changes
+            _context.SaveChanges();
+            return new NoContentResult();
         }
 
         /// <summary>
