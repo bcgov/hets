@@ -51,20 +51,21 @@ namespace HETSAPI.Test
             string changedName = "ChangedName";
 
             // localAreas have service areas.
-            ServiceArea servicearea = null;
+            ServiceArea servicearea = new ServiceArea();
+            servicearea.Name = initialName;
+            string jsonString = servicearea.ToJson();
 
-            var request = new HttpRequestMessage(HttpMethod.Get, "/api/serviceareas");
+            var request = new HttpRequestMessage(HttpMethod.Post, "/api/serviceareas");
+            
+            request.Content = new StringContent(jsonString, Encoding.UTF8, "application/json");
+
             var response = await _client.SendAsync(request);
             response.EnsureSuccessStatusCode();
 
             // parse as JSON.
-            string jsonString = await response.Content.ReadAsStringAsync();
-            ServiceArea[] serviceareas = JsonConvert.DeserializeObject<ServiceArea[]>(jsonString);
+            jsonString = await response.Content.ReadAsStringAsync();
+            servicearea = JsonConvert.DeserializeObject<ServiceArea>(jsonString);
 
-            if (serviceareas.Any())
-            {
-                servicearea = serviceareas[0];
-            }
 
 
             // test the POST.
@@ -115,6 +116,16 @@ namespace HETSAPI.Test
 
             // should get a 404 if we try a get now.
             request = new HttpRequestMessage(HttpMethod.Get, "/api/localAreas/" + id);
+            response = await _client.SendAsync(request);
+            Assert.Equal(response.StatusCode, HttpStatusCode.NotFound);
+
+            // do a delete.
+            request = new HttpRequestMessage(HttpMethod.Post, "/api/serviceareas/" + servicearea.Id + "/delete");
+            response = await _client.SendAsync(request);
+            response.EnsureSuccessStatusCode();
+
+            // should get a 404 if we try a get now.
+            request = new HttpRequestMessage(HttpMethod.Get, "/api/serviceareas/" + servicearea.Id);
             response = await _client.SendAsync(request);
             Assert.Equal(response.StatusCode, HttpStatusCode.NotFound);
         }                

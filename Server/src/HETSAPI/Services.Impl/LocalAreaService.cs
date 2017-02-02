@@ -110,8 +110,23 @@ namespace HETSAPI.Services.Impl
         /// <response code="404">LocalArea not found</response>
         public virtual IActionResult LocalAreasIdDeletePostAsync(int id)
         {
-            var result = "";
-            return new ObjectResult(result);
+            var exists = _context.LocalAreas.Any(a => a.Id == id);
+            if (exists)
+            {
+                var item = _context.LocalAreas.First(a => a.Id == id);
+                if (item != null)
+                {
+                    _context.LocalAreas.Remove(item);
+                    // Save the changes
+                    _context.SaveChanges();
+                }
+                return new ObjectResult(item);
+            }
+            else
+            {
+                // record not found
+                return new StatusCodeResult(404);
+            }
         }
 
         /// <summary>
@@ -122,8 +137,19 @@ namespace HETSAPI.Services.Impl
         /// <response code="404">LocalArea not found</response>
         public virtual IActionResult LocalAreasIdGetAsync(int id)
         {
-            var result = "";
-            return new ObjectResult(result);
+            var exists = _context.LocalAreas.Any(a => a.Id == id);
+            if (exists)
+            {
+                var result = _context.LocalAreas
+                    .Include(x => x.ServiceArea.District.Region)
+                    .First(a => a.Id == id);
+                return new ObjectResult(result);
+            }
+            else
+            {
+                // record not found
+                return new StatusCodeResult(404);
+            }
         }
 
         /// <summary>
@@ -135,8 +161,20 @@ namespace HETSAPI.Services.Impl
         /// <response code="404">LocalArea not found</response>
         public virtual IActionResult LocalAreasIdPutAsync(int id, LocalArea item)
         {
-            var result = "";
-            return new ObjectResult(result);
+            AdjustRecord(item);
+            var exists = _context.LocalAreas.Any(a => a.Id == id);
+            if (exists && id == item.Id)
+            {
+                _context.LocalAreas.Update(item);
+                // Save the changes
+                _context.SaveChanges();
+                return new ObjectResult(item);
+            }
+            else
+            {
+                // record not found
+                return new StatusCodeResult(404);
+            }
         }
 
         /// <summary>
@@ -146,8 +184,20 @@ namespace HETSAPI.Services.Impl
         /// <response code="201">LocalArea created</response>
         public virtual IActionResult LocalAreasPostAsync(LocalArea item)
         {
-            var result = "";
-            return new ObjectResult(result);
+            AdjustRecord(item);
+            var exists = _context.LocalAreas.Any(a => a.Id == item.Id);
+            if (exists)
+            {
+                _context.LocalAreas.Update(item);
+            }
+            else
+            {
+                // record not found
+                _context.LocalAreas.Add(item);
+            }
+            // Save the changes
+            _context.SaveChanges();
+            return new ObjectResult(item);
         }
     }
 }

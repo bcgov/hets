@@ -47,6 +47,8 @@ namespace HETSAPI.Test
             request.Headers.Add(_devAuthOptions.AuthenticationTokenKey, "JDow");
 
             var response = await _client.SendAsync(request);
+            
+            string content = await response.Content.ReadAsStringAsync();
             Assert.Equal(HttpStatusCode.OK, response.StatusCode);
         }
     }

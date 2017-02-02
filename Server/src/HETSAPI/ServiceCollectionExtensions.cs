@@ -12,6 +12,7 @@ using Microsoft.Extensions.DependencyInjection;
 using HETSAPI.Services;
 using HETSAPI.Services.Impl;
 using Microsoft.AspNetCore.Http;
+using HETSAPI.Controllers;
 
 namespace HETSAPI
 {
@@ -35,6 +36,7 @@ namespace HETSAPI
             services.AddTransient<IContactPhoneService, ContactPhoneService>();
             services.AddTransient<ICurrentUserService, CurrentUserService>();
             services.AddTransient<IDistrictService, DistrictService>();
+            services.AddTransient<IDumpTruckService, DumpTruckService>();
             services.AddTransient<IEquipmentAttachmentTypeService, EquipmentAttachmentTypeService>();
             services.AddTransient<IEquipmentService, EquipmentService>();
             services.AddTransient<IEquipmentTypeService, EquipmentTypeService>();
@@ -48,6 +50,7 @@ namespace HETSAPI
             services.AddTransient<IRoleService, RoleService>();
             services.AddTransient<IServiceAreaService, ServiceAreaService>();
             services.AddTransient<IUserService, UserService>();
+            services.AddTransient<ITestService, TestService>();
             return services;
         }
     }

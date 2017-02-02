@@ -46,8 +46,26 @@ namespace HETSAPI.Services.Impl
         /// <response code="201">Attachment created</response>
         public virtual IActionResult AttachmentBulkPostAsync(Attachment[] items)
         {
-            var result = "";
-            return new ObjectResult(result);
+            if (items == null)
+            {
+                return new BadRequestResult();
+            }
+            foreach (Attachment item in items)
+            {
+                // determine if this is an insert or an update            
+                bool exists = _context.Attachments.Any(a => a.Id == item.Id);
+                if (exists)
+                {
+                    _context.Update(item);
+                }
+                else
+                {
+                    _context.Add(item);
+                }
+            }
+            // Save the changes
+            _context.SaveChanges();
+            return new NoContentResult();
         }
 
         /// <summary>
@@ -95,8 +113,17 @@ namespace HETSAPI.Services.Impl
         /// <response code="404">Attachment not found</response>
         public virtual IActionResult AttachmentIdGetAsync(int id)
         {
-            var result = "";
-            return new ObjectResult(result);
+            var exists = _context.Attachments.Any(a => a.Id == id);
+            if (exists)
+            {
+                var result = _context.Attachments.First(a => a.Id == id);
+                return new ObjectResult(result);
+            }
+            else
+            {
+                // record not found
+                return new StatusCodeResult(404);
+            }
         }
 
         /// <summary>

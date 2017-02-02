@@ -367,16 +367,16 @@ namespace HETSAPI.Services.Impl
                 bool exists = _context.Equipments.Any(a => a.Id == item.Id);
                 if (exists)
                 {
-                    _context.Equipments.Update(item);
-                    // Save the changes
-                    _context.SaveChanges();
-                    return new ObjectResult(item);
+                    _context.Equipments.Update(item);                    
                 }
                 else
                 {
                     // record not found
-                    return new StatusCodeResult(404);
+                    _context.Equipments.Add(item);
                 }
+                // Save the changes                    
+                _context.SaveChanges();
+                return new ObjectResult(item);
             }
             else
             {
