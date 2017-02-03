@@ -93,6 +93,10 @@ export function deleteFavourite(favourite) {
 function parseEquipment(equipment) {
   if (!equipment.owner) { equipment.owner = { id: '', ownerFirstName: '',  ownerLastName: ''}; }
   if (!equipment.equipmentType) { equipment.equipmentType = { id: '', description: ''}; }
+  if (!equipment.localArea) { equipment.localArea = { id: '', name: ''}; }
+  if (!equipment.localArea.serviceArea) { equipment.localArea.serviceArea = { id: '', name: ''}; }
+  if (!equipment.localArea.serviceArea.district) { equipment.localArea.serviceArea.district = { id: '', name: ''}; }
+  if (!equipment.localArea.serviceArea.district.region) { equipment.localArea.serviceArea.district.region = { id: '', name: ''}; }
 
   equipment.isApproved = equipment.statusCd === 'Approved';
   equipment.isNew = equipment.statusCd === 'New' || equipment.statusCd === null;
@@ -104,6 +108,15 @@ function parseEquipment(equipment) {
   equipment.ownerPath = equipment.owner.id ? `#/owners/${equipment.owner.id}` : '';
   equipment.typeName = equipment.equipmentType ? equipment.equipmentType.description : '';
   equipment.seniorityDisplayNumber = concat(equipment.blockNumber, equipment.seniority, ' - ');
+  equipment.localAreaName = equipment.localArea.name;
+  equipment.districtName = equipment.localArea.serviceArea.district.name;
+
+  // TODO This probably needs to come from the back-end
+
+  // It is possible to have multiple instances of the same piece of equipment registered with HETS.
+  // However, the HETS clerks would like to know about it via this flag so they can deal with the duplicates.
+  equipment.hasDuplicates = false;
+  equipment.duplicateEquipmentId = null;
 
   // TODO Implement (TBD)
   equipment.hiredStatus = 'N/A';
@@ -141,6 +154,59 @@ export function getEquipment(equipmentId) {
     parseEquipment(equipment);
 
     store.dispatch({ type: Action.UPDATE_EQUIPMENT, equipment: equipment });
+  });
+}
+
+////////////////////
+// Physical Attachments
+////////////////////
+
+function parsePhysicalAttachment(attachment) {
+  if (!attachment.type) { attachment.type = { id: '', code: '', description: ''}; }
+  
+  attachment.typeName = attachment.type.description;
+  // TODO Add grace period logic to editing/deleting attachments
+  attachment.canEdit = true;
+  attachment.canDelete = true;
+}
+
+export function getPhysicalAttachment(id) {
+  // TODO Implement back-end endpoints
+  return Promise.resolve({ id: id}).then(response => {
+    var attachment = response;
+
+    // Add display fields
+    parsePhysicalAttachment(attachment);
+  });
+}
+
+export function addPhysicalAttachment(attachment) {
+  // TODO Implement back-end endpoints
+  return Promise.resolve(attachment).then(response => {
+    var attachment = response;
+
+    // Add display fields
+    parsePhysicalAttachment(attachment);
+  });
+}
+
+export function updatePhysicalAttachment(attachment) {
+  // TODO Implement back-end endpoints
+  return Promise.resolve(attachment).then(response => {
+    var attachment = response;
+
+    // Add display fields
+    parsePhysicalAttachment(attachment);
+  });
+}
+
+export function deletePhysicalAttachment(attachment) {
+  // TODO Implement back-end endpoints
+  return Promise.resolve(attachment).then(response => {
+    var attachment = response;
+
+    // Add display fields
+    parsePhysicalAttachment(attachment);
   });
 }
 
