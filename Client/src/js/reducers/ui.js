@@ -7,6 +7,7 @@ const DEFAULT_STATE = {
   },
 
   equipmentList: {},
+  physicalAttachments: {},
 };
 
 export default function uiReducer(state = DEFAULT_STATE, action) {
