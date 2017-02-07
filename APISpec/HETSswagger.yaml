@@ -3469,31 +3469,32 @@ paths:
 definitions:
   Project:
     type: object
+    description: The set of Provincial Construction Projects by Service Area that contact HETS Clerks to request equipment. The same Construction Project may be in the table multiple times - once per affected Service Area. Limited information is maintained on the projects - primarily a name, a collection of contacts and a collections of equipment rentals.
     required:
       - id
     properties:
       id:
         format: int32
         type: integer
-        description: Primary Key
+        description: A system-generated unique identifier for a Project
       serviceArea:
         $ref: '#/definitions/ServiceArea'
-      projectNum:
+        description: The service Area for which this project has requested&#x2F;hired equipment.
+      provincialProjectNumber:
         type: string
         maxLength: 255
-      jobDesc1:
+        description: TO BE VERIFIED - The Provincial charge code for the equipment hiring related to this project. This will be the same across multiple service areas that provide equipment for the same Project.
+      description:
         type: string
-        maxLength: 255
-      jobDesc2:
-        type: string
-        maxLength: 255
+        maxLength: 2048
+        description: A description entered by the HETS Clerk creating the Project record about the project. The description may contain other metadata about the project needed to process the requests related to the project.
       requests:
         type: array
         items:
           $ref: '#/definitions/Request'
       primaryContact:
         $ref: '#/definitions/Contact'
-        description: Link to the designated Primary Contact.
+        description: Link to the designated Primary Contact for the Project - usually the Project Manager requesting to hire equipment.
       contacts:
         type: array
         items:
@@ -3512,13 +3513,14 @@ definitions:
           $ref: '#/definitions/History'
   Request:
     type: object
+    description: A collection of requests for equipment to be hired for Provincial Projects. Each request is for one or more instances of a single type of equipment from a single local area.
     required:
       - id
     properties:
       id:
         format: int32
         type: integer
-        description: Primary Key
+        description: A system-generated unique identifier for a Request
       project:
         $ref: '#/definitions/Project'
       localArea:
@@ -3528,15 +3530,19 @@ definitions:
       equipmentCount:
         format: int32
         type: integer
+        description: The number of pieces of the equipment type to be procured as part of this request.
       expectedHours:
         format: int32
         type: integer
+        description: The expected number of rental hours for each piece equipment hired against this request, as provided by the Project Manager making the request. 
       expectedStartDate:
         type: string
         format: date-time
+        description: The expected start date of each piece of equipment hired against this request, as provided by the Project Manager making the request.
       expectedEndDate:
         type: string
         format: date-time
+        description: The expected end date of each piece of equipment hired against this request, as provided by the Project Manager making the request.
       rotationList:
         $ref: '#/definitions/RotationList'
       hireOffers:
@@ -3563,7 +3569,7 @@ definitions:
       id:
         format: int32
         type: integer
-        description: Primary Key
+        description: A system-generated unique identifier for a RotationList
       localArea:
         $ref: '#/definitions/LocalArea'
       equipmentType:
@@ -3580,7 +3586,7 @@ definitions:
       id:
         format: int32
         type: integer
-        description: Primary Key
+        description: A system-generated unique identifier for a RotationListBlock
       rotationList:
         $ref: '#/definitions/RotationList'
       blockNum:
@@ -3627,52 +3633,62 @@ definitions:
         maxLength: 255
   HireOffer:
     type: object
+    description: Offers made to hire equipment based on a Request. Each offer made and the result of that order is recorded.
     required:
       - id
     properties:
       id:
         format: int32
         type: integer
-        description: Primary Key
+        description: A system-generated unique identifier for a HireOffer
       request:
         $ref: '#/definitions/Request'
       equipment:
         $ref: '#/definitions/Equipment'
       rentalAgreement:
         $ref: '#/definitions/RentalAgreement'
-        description: The rental agreement created for this hire offer. Available only if status code is Yes
+        description: The rental agreement (if any) created for this accepted hire offer.
       isForceHire:
         type: boolean
-      asked:
+        description: True if the HETS Clerk designated this hire as being a Forced Hire. A Force Hire implies that the usual seniority rules for hiring are bypassed because of special circumstances related to the hire - e.g. a the hire requires an attachment only one piece of equipment has.
+      wasAsked:
         type: boolean
-      askedDate:
+        description: True if the HETS Clerk contacted the equipment owner and asked to hire the piece of equipment.
+      askedDateTime:
         type: string
         format: date-time
-      acceptedOffer:
-        type: boolean
-        description: The response about the equipment. Either a No (move to next on the list) or Yes (move to on to the Rental Agreement)
+        description: The Date&#x2F;Time the HETS clerk contacted the equipment owner and asked to hire the piece of equipment.
+      offerResponse:
+        type: string
+        description: The response to the offer to hire. Null prior to receiving a response; a string after with the response - likely just Yes or No
       refuseReason:
         type: string
         maxLength: 255
+        description: An optional reason given by the equipment owner for refusing the offer.
       note:
         type: string
         maxLength: 255
+        description: An optional general note about the offer.
       equipmentVerifiedActive:
         type: boolean
+        description: TO BE REMOVED - THIS IS AN ATTRIBUTE OF THE EQUIPMENT
       flagEquipmentUpdate:
         type: boolean
+        description: TO BE REMOVED - THIS IS AN ATTRIBUTE OF THE EQUIPMENT
       equipmentUpdateReason:
         type: string
         maxLength: 255
+        description: TO BE REMOVED - THIS IS AN ATTRIBUTE OF THE EQUIPMENT
   RentalAgreement:
     type: object
+    description: Information about the hiring of a specific piece of equipment to satisfy part or all of a request from a project.
     required:
       - id
     properties:
       id:
         format: int32
         type: integer
-        description: Primary Key
+        description: A system-generated unique identifier for a RentalAgreement
       equipment:
         $ref: '#/definitions/Equipment'
       project:
@@ -3683,48 +3699,62 @@ definitions:
           $ref: '#/definitions/TimeRecord'
   TimeRecord:
     type: object
+    description: The time records recorded for a piece of equipment hired for a specific project within a localarea.
     required:
       - id
     properties:
       id:
         format: int32
         type: integer
-        description: Primary Key
+        description: A system-generated unique identifier for a TimeRecord
       rentalAgreement:
         $ref: '#/definitions/RentalAgreement'
       workedDate:
         type: string
         format: date-time
+        description: The date of the time record entry - the day of the entry if it is a daily entry, or a date in the week in which the work occurred if tracked weekly.
       enteredDate:
         type: string
         format: date-time
+        description: The date&#x2F;time the time record information was entered.
+      timePeriod:
+        type: string
+        maxLength: 20
+        description: The time period of the entry - either day or week. HETS Clerk have the option of entering time records on a day-by-day or week-by-week basis.
       hours:
         type: number
         format: float
+        description: The number of hours worked by the equipment.
       rate:
         type: number
         format: float
+        description: TO BE REMOVED - REPLACE WITH A LINK TO A RATE ENTRY IN THE RENTAL AGREEMENT
       hours2:
         type: number
         format: float
+        description: TO BE REMOVED - REPLACE WITH A LINK TO A RATE ENTRY IN THE RENTAL AGREEMENT
       rate2:
         type: number
         format: float
+        description: TO BE REMOVED - REPLACE WITH A LINK TO A RATE ENTRY IN THE RENTAL AGREEMENT
       hours3:
         type: number
         format: float
+        description: TO BE REMOVED - REPLACE WITH A LINK TO A RATE ENTRY IN THE RENTAL AGREEMENT
       rate3:
         type: number
         format: float
+        description: TO BE REMOVED - REPLACE WITH A LINK TO A RATE ENTRY IN THE RENTAL AGREEMENT
   Equipment:
     type: object
+    description: The collection of all equipment tracked in the system. Each piece of equipment is of a specific type, is linked to an Equipment Owner, and is managed within a Local Area.
     required:
       - id
     properties:
       id:
         format: int32
         type: integer
-        description: Primary Key
+        description: A system-generated unique identifier for a Equipment
       localArea:
         $ref: '#/definitions/LocalArea'
       equipmentType:
@@ -3733,133 +3763,165 @@ definitions:
         $ref: '#/definitions/DumpTruck'
       owner:
         $ref: '#/definitions/Owner'
-      equipCd:
+      equipCode:
         type: string
         maxLength: 255
-      approval:
+        description: A human-visible unique code for the piece of equipment, referenced for convenience by the system users - HETS Clerks and Equipment Owners. Generated based on a unique Equipment owner prefix (e.g. EDW) and a zero-filled unique number - resulting in a code like EDW-0083.
+      status:
         type: string
         maxLength: 255
+        description: The current status of the equipment in a UI-controlled string. Initial values are Pending, Approved and Archived, but other values may be added.
       approvedDate:
         type: string
         format: date-time
+        description: The date the piece of equipment was first approved in HETS. Part of the seniority calculation for a piece of equipment is based on this date.
       receivedDate:
         type: string
         format: date-time
+        description: The date the piece of equipment was first received and recorded in HETS.
       addressLine1:
         type: string
         maxLength: 255
-        description: Address 1 line of the address.
+        description: TO BE REMOVED - display primary contact of owner
       addressLine2:
         type: string
         maxLength: 255
-        description: Address 2 line of the address.
+        description: TO BE REMOVED - display primary contact of owner
       addressLine3:
         type: string
         maxLength: 255
-        description: Address 3 line of the address.
+        description: TO BE REMOVED - display primary contact of owner
       addressLine4:
         type: string
         maxLength: 255
-        description: Address 4 line of the address.
+        description: TO BE REMOVED - display primary contact of owner
       city:
         type: string
         maxLength: 255
+        description: TO BE REMOVED - display primary contact of owner
       postal:
         type: string
         maxLength: 255
-      blockNumber:
-        type: number
-        format: float
+        description: TO BE REMOVED - display primary contact of owner
       comment:
         type: string
         maxLength: 255
+        description: TO BE REMOVED - REPLACE WITH NOTES
       cycleHrsWrk:
         type: number
         format: float
+        description: TO BE REMOVED - CALCULATED FROM TIME RECORDS
       frozenOut:
         type: string
         maxLength: 255
+        description: TO BE REMOVED - NO LONGER USED
       lastVerifiedDate:
         type: string
         format: date-time
-      licence:
+        description: The date the equipment was last verified by the HETS Clerk as being still in service in the Local Area and available for the HETS Programme.
+      licencePlate:
         type: string
         maxLength: 255
+        description: The licence plate (if any) of the piece of equipment, as entered by the HETS Clerk.
       make:
         type: string
         maxLength: 255
+        description: The make of the piece of equipment, as provided by the Equipment Owner.
       model:
         type: string
         maxLength: 255
+        description: The model of the piece of equipment, as provided by the Equipment Owner.
       year:
         type: string
         maxLength: 255
+        description: The model year of the piece of equipment, as provided by the Equipment Owner.
       type:
         type: string
         maxLength: 255
-      numYears:
-        type: number
-        format: float
+        description: TO BE REVIEWED - WHAT IS THIS?
       operator:
         type: string
         maxLength: 255
+        description: TO BE REVIEWED - IS THIS NEEDED?
       payRate:
         type: number
         format: float
+        description: TO BE REVIEWED - IS THIS NEEDED?
       refuseRate:
         type: string
         maxLength: 255
-      seniority:
-        type: number
-        format: float
+        description: TO BE REVIEWED - IS THIS NEEDED?
       serialNum:
         type: string
         maxLength: 255
+        description: The serial number of the piece of equipment as provided by the Equipment Owner. Used to detect and reconcile pieces of equipment moved between Local Areas. Duplicate serial numbers are flagged in the system but permitted. The duplicates are flagged in the UI until the HETS Clerks reconcile the differences - either correcting the serial number or archiving a piece of equipment moved to a new local area.
       size:
         type: string
         maxLength: 255
+        description: The size of the piece of equipment, as provided by the Equipment Owner.
       toDate:
         type: string
         format: date-time
+        description: WHAT IS THIS?
       working:
         type: string
         maxLength: 255
+        description: TO BE REMOVED - CALCULATED FROM RENTAL AGREEMENT RECORDS
       yearEndReg:
         type: string
         maxLength: 255
+        description: TO BE REMOVED - BASED ON OLD METHOD OF TRACKING ACTIVE EQUIPMENT
       prevRegArea:
         type: string
         maxLength: 255
+        description: TO BE REMOVED - AVAILABLE IN THE HISTORY OF THE EQUIPMENT
+      blockNumber:
+        type: number
+        format: float
+        description: The current block number for the piece of equipment as calculated by the Seniority Algorthm for this equipment type in the local area. As currently defined y the business  - 1, 2 or Open
+      seniority:
+        type: number
+        format: float
+        description: The current seniority calculation result for this piece of equipment. The calculation is based on the &quot;numYears&quot; of service + average hours of service over the last three fiscal years - as stored in the related fields (serviceHoursLastYear, serviceHoursTwoYearsAgo serviceHoursThreeYearsAgo).
+      numYears:
+        type: number
+        format: float
+        description: The number of years of active service of this piece of equipment at the time seniority is calculated - April 1 of the current FY.
       YTD:
         type: number
         format: float
-      YTD1:
+        description: TO BE REMOVED - Sum of Hours in time cards from the current fiscal year.
+      serviceHoursLastYear:
         type: number
         format: float
-      YTD2:
+        description: Number of hours of service by this piece of equipment in the previous fiscal year
+      serviceHoursTwoYearsAgo:
         type: number
         format: float
-      YTD3:
+        description: Number of hours of service by this piece of equipment in the fiscal year before the last one - e.g. if current year is FY2018 then hours in FY2016
+      serviceHoursThreeYearsAgo:
         type: number
         format: float
-      statusCd:
+        description: Number of hours of service by this piece of equipment in the fiscal year three years ago - e.g. if current year is FY2018 then hours in FY2015
+      archiveCode:
         type: string
         maxLength: 255
-      archiveCd:
-        type: string
-        maxLength: 255
+        description: A reason code indicating why a piece of equipment has been archived.
       archiveReason:
         type: string
         maxLength: 255
+        description: An optional comment about why this piece of equipment has been archived.
       archiveDate:
         type: string
         format: date-time
+        description: The date on which a user most recenly marked this piece of equipment as archived.
       draftBlockNum:
         type: number
         format: float
-      regDumpTruck:
-        type: string
-        maxLength: 255
+        description: TO BE REMOVED
+      dumpTruck:
+        $ref: '#/definitions/'
+        description: A link to a dump truck set if this piece of equipment is an equipment type flagged as a dump truck.
       equipmentAttachments:
         type: array
         items:
@@ -3882,294 +3944,354 @@ definitions:
           $ref: '#/definitions/SeniorityAudit'
   DumpTruck:
     type: object
+    description: Additional attributes of a piece of equipment stored because it is designated as a Dump Truck. Historically, there was a perceived need to track a lot of informatiion about a dump truck, but in practice, few fields are being completed by users. Places for the attributes are being maintained, but the UI is prompting only for a couple of the fields, and only those fields are likely to be populated. Additional basic information about the attributes can be found on Wikipedia, BC-specific details on MOTI&#39;s CVSE website and http:&#x2F;&#x2F;www.bclaws.ca&#x2F;EPLibraries&#x2F;bclaws_new&#x2F;document&#x2F;ID&#x2F;freeside&#x2F;30_78#AppendicesAtoK, Appendix A and  B. Any metrics information provided here is from the Equipment Owner.
     required:
       - id
     properties:
       id:
         format: int32
         type: integer
-        description: Primary Key
-      singleAxle:
-        type: string
-        maxLength: 255
-      tandemAxle:
-        type: string
-        maxLength: 255
-      PUP:
-        type: string
-        maxLength: 255
-      bellyDump:
-        type: string
-        maxLength: 255
-      tridem:
-        type: string
-        maxLength: 255
-      rockBox:
-        type: string
-        maxLength: 255
-      hiliftGate:
-        type: string
-        maxLength: 255
-      waterTruck:
-        type: string
-        maxLength: 255
-      sealCoatHitch:
-        type: string
-        maxLength: 255
+        description: A system-generated unique identifier for a DumpTruck
+      isSingleAxle:
+        type: boolean
+        description: True if the vehicle has a single axle. Can be false or null.
+      isTandemAxle:
+        type: boolean
+        description: True if the vehicle has a tandem axle. Can be false or null.
+      isTridem:
+        type: boolean
+        description: True if the Dump Truck is a tridem - a three axle dump truck. Can be false or null. 
+      hasPUP:
+        type: boolean
+        description: True if the Dump Truck has a PUP trailer - a trailer with it&#39;s own hydraulic unloading system. Can be false or null.
+      hasBellyDump:
+        type: boolean
+        description: True if the Dump Truck has a belly dump capability. Can be false or null.
+      hasRockBox:
+        type: boolean
+        description: True if the Dump Truck has a rock box. Can be false or null.
+      hasHiliftGate:
+        type: boolean
+        description: True if the Dump Truck has a high lift gate vs. a traditional gate. Can be false or null.
+      isWaterTruck:
+        type: boolean
+        description: True if the Dump Truck is a Water Truck. Can be false or null. 
+      hasSealcoatHitch:
+        type: boolean
+        description: True if the Dump Truck has a hitch for using sealcoat trailers. Can be false or null.
       rearAxleSpacing:
         type: string
         maxLength: 255
+        description: The spacing of the rear axles, if applicable. Usually in metres.
       frontTireSize:
         type: string
         maxLength: 255
+        description: The size of of the Front Tires of the Dump Truck.
       frontTireUOM:
         type: string
         maxLength: 255
+        description: The Unit of Measure of the Front Tire Size.
       frontAxleCapacity:
         type: string
         maxLength: 255
+        description: The rated capacity of the Front Axle.
       rearAxleCapacity:
         type: string
         maxLength: 255
+        description: The rated capacity of the Rear Axle.
       legalLoad:
         type: string
         maxLength: 255
+        description: The legal load of the vehicle in kg.
       legalCapacity:
         type: string
         maxLength: 255
+        description: The legal capacity of the dump truck.
       legalPUPTareWeight:
         type: string
         maxLength: 255
+        description: The legal Tare Weight (weight when unloaded) of the PUP trailer.
       licencedGVW:
         type: string
         maxLength: 255
+        description: The Gross Vehicle Weight for which the vehicle is licensed. GVW includes the vehicle&#39;s chassis, body, engine, engine fluids, fuel, accessories, driver, passengers and cargo but excluding that of any trailers.
       licencedGVWUOM:
         type: string
         maxLength: 255
+        description: The Unit of Measure (UOM) of the licenced GVW.
       licencedTareWeight:
         type: string
         maxLength: 255
+        description: The licenced Tare Weight (weight when unloaded) of the vehicle.
       licencedPUPTareWeight:
         type: string
         maxLength: 255
+        description: The licenced Tare Weight (weight when unloaded) of the PUP trailer.
       licencedLoad:
         type: string
         maxLength: 255
+        description: The licenced maximum load of the vehicle in kg.
       licencedCapacity:
         type: string
         maxLength: 255
+        description: The licenced maximum capacity of the vehicle.
       boxLength:
         type: string
         maxLength: 255
+        description: The length of the box, in metres. See: http:&#x2F;&#x2F;www.bclaws.ca&#x2F;EPLibraries&#x2F;bclaws_new&#x2F;document&#x2F;ID&#x2F;freeside&#x2F;30_7, appendix B
       boxWidth:
         type: string
         maxLength: 255
+        description: The width of the box, in metres. See: http:&#x2F;&#x2F;www.bclaws.ca&#x2F;EPLibraries&#x2F;bclaws_new&#x2F;document&#x2F;ID&#x2F;freeside&#x2F;30_7, appendix B
       boxHeight:
         type: string
         maxLength: 255
+        description: The height of the box, in metres. See: http:&#x2F;&#x2F;www.bclaws.ca&#x2F;EPLibraries&#x2F;bclaws_new&#x2F;document&#x2F;ID&#x2F;freeside&#x2F;30_7, appendix B
       boxCapacity:
         type: string
         maxLength: 255
+        description: The capacity of the box.
       trailerBoxLength:
         type: string
         maxLength: 255
+        description: The length of the trailer box, in metres. See: http:&#x2F;&#x2F;www.bclaws.ca&#x2F;EPLibraries&#x2F;bclaws_new&#x2F;document&#x2F;ID&#x2F;freeside&#x2F;30_7, appendix B
       trailerBoxWidth:
         type: string
         maxLength: 255
+        description: The width of the trailer box, in metres. See: http:&#x2F;&#x2F;www.bclaws.ca&#x2F;EPLibraries&#x2F;bclaws_new&#x2F;document&#x2F;ID&#x2F;freeside&#x2F;30_7, appendix B
       trailerBoxHeight:
         type: string
         maxLength: 255
+        description: The height of the trailer box, in metres. See: http:&#x2F;&#x2F;www.bclaws.ca&#x2F;EPLibraries&#x2F;bclaws_new&#x2F;document&#x2F;ID&#x2F;freeside&#x2F;30_7, appendix B
       trailerBoxCapacity:
         type: string
         maxLength: 255
-  EquipmentAttachment:
+        description: The capacity of the trailer box.
+  EquipmentType:
     type: object
+    description: A global and local area list of types of equipment for which a request can be generated and for which owners can register their equipment. If the local area is NULL, the type is visible Province-wide. In the previous instance of this application, all equipment types were assigned to the local area and transitioning to a province-wide model is being attempted (and may not work for the end users). An attempt to achieve a &quot;mostly province-wide&quot; list is being made during the data conversion process - mapping local area equipment types to provincial or local area types as part of data conversion.
     required:
       - id
     properties:
       id:
         format: int32
         type: integer
-        description: Primary Key
+        description: A system-generated unique identifier for an EquipmentType
+      localArea:
+        $ref: '#/definitions/LocalArea'
+      code:
+        type: string
+        maxLength: 255
+        description: CHECK WITH BUSINESS - IS THIS NEEDED - A unique but human-friendly code for the Equipment Type that can be displayed on screens with little screen real estate available.
+      description:
+        type: string
+        maxLength: 255
+        description: The name of the equipment type, as specified by the HETS Clerk creating the equipment type.
+      equipRentalRateNo:
+        type: number
+        format: float
+        description: CHECK WITH BUSINESS - IS THIS NEEDED
+      equipRentalRatePage:
+        type: number
+        format: float
+        description: CHECK WITH BUSINESS - IS THIS NEEDED
+      maxHours:
+        type: number
+        format: float
+        description: CHECK WITH BUSINESS - IS THIS NEEDED
+      extendHours:
+        type: number
+        format: float
+        description: CHECK WITH BUSINESS - IS THIS NEEDED
+      maxHoursSub:
+        type: number
+        format: float
+        description: CHECK WITH BUSINESS - IS THIS NEEDED
+      blocks:
+        format: int32
+        type: integer
+        description: The number of blocks defined for this equipment type. Currently, either 2 for Dump Truck equipment and 1 for non-Dump Truck equipment. Unlikely to change, particularly without a significant impact on code.
+  EquipmentAttachment:
+    type: object
+    description: A list of Equipment Attachments for pieces of equipment that have them. In the BC Bid system, attachments are free form, but in this model will try to have a predefined attachments type list.
+    required:
+      - id
+    properties:
+      id:
+        format: int32
+        type: integer
+        description: A system-generated unique identifier for an EquipmentAttachment
       equipment:
         $ref: '#/definitions/Equipment'
       type:
         $ref: '#/definitions/EquipmentAttachmentType'
-        description: The type of the equipment attachment.
       seqNum:
         format: int32
         type: integer
+        description: TO BE REMOVED - likely not needed. Will talk to business.
       description:
         type: string
         maxLength: 255
-  EquipmentType:
-    type: object
-    required:
-      - id
-    properties:
-      id:
-        format: int32
-        type: integer
-        description: Primary Key
-      localArea:
-        $ref: '#/definitions/LocalArea'
-      code:
-        type: string
-        maxLength: 255
-      description:
-        type: string
-        maxLength: 255
-      equipRentalRateNo:
-        type: number
-        format: float
-      equipRentalRatePage:
-        type: number
-        format: float
-      maxHours:
-        type: number
-        format: float
-      extendHours:
-        type: number
-        format: float
-      maxHoursSub:
-        type: number
-        format: float
-      secondBlk:
-        type: string
-        maxLength: 255
+        description: A description of the equipment attachment if the Equipment Attachment Type is insufficient.
   EquipmentAttachmentType:
     type: object
+    description: A system-wide list of Equipment Attachment Types. Each Attachment connected to a piece of equipment needs a defined and selected attachment type.
     required:
       - id
     properties:
       id:
         format: int32
         type: integer
-        description: Primary Key
+        description: A system-generated unique identifier for a EquipmentAttachmentType
       code:
         type: string
         maxLength: 255
+        description: CHECK WITH BUSINESS - IS THIS NEEDED - A unique but human-friendly code for the Equipment Attachment Type that can be displayed on screens with little screen real estate available.
       description:
         type: string
         maxLength: 255
+        description: The name of the equipment attachment type, as specified by the HETS Clerk creating the equipment type.
   SeniorityAudit:
     type: object
+    description: The history of all changes to the seniority of a piece of equipment. The current seniority information (underlying data elements and the calculation result) is in the equipment record. Every time that information changes, the old values are copied to here, with a start date, end date range. In the normal case, an annual update triggers the old values being copied here and the new values put into the equipment record. If a user manually changes the values, the existing values are copied into a record added here.
     required:
       - id
     properties:
       id:
         format: int32
         type: integer
-        description: Primary Key
+        description: A system-generated unique identifier for a SeniorityAudit
       generatedTime:
         type: string
         format: date-time
+        description: The effective starting date that these the Seniority data in this record went into effect.
       localArea:
         $ref: '#/definitions/LocalArea'
       equipment:
         $ref: '#/definitions/Equipment'
-      blockNum:
+      blockNumber:
         type: number
         format: float
+        description: The block number for the piece of equipment as calculated by the Seniority Algorthm for this equipment type in the local area. As currently defined by the business - 1, 2 or Open
       equipCd:
         type: string
         maxLength: 255
+        description: A human-visible unique code for the piece of equipment, referenced for convenience by the system users - HETS Clerks and Equipment Owners. Generated based on a unique Equipment owner prefix (e.g. EDW) and a zero-filled unique number - resulting in a code like EDW-0083.
       owner:
         $ref: '#/definitions/Owner'
       ownerName:
         type: string
         maxLength: 255
+        description: The name of the owner from the Owner Record, captured at the time this record was created.
       seniority:
         type: number
         format: float
+        description: The seniority calculation result for this piece of equipment. The calculation is based on the &quot;numYears&quot; of service + average hours of service over the last three fiscal years - as stored in the related fields (serviceHoursLastYear, serviceHoursTwoYearsAgo serviceHoursThreeYearsAgo).
       YTD:
         type: number
         format: float
-      YTD1:
+        description: Sum of hours in the current fiscal year&#39;s time cards captured at the time this record was created.
+      serviceHoursLastYear:
         type: number
         format: float
-      YTD2:
+        description: Number of hours of service by this piece of equipment in the previous fiscal year
+      serviceHoursTwoYearsAgo:
         type: number
         format: float
-      YTD3:
+        description: Number of hours of service by this piece of equipment in the fiscal year before the last one - e.g. if current year is FY2018 then hours in FY2016
+      serviceHoursThreeYearsAgo:
         type: number
         format: float
+        description: Number of hours of service by this piece of equipment in the fiscal year three years ago - e.g. if current year is FY2018 then hours in FY2015
       cycleHrsWrk:
         type: number
         format: float
+        description: TO BE REMOVED - Not sure why this would be needed
       frozenOut:
         type: string
         maxLength: 255
+        description: TO BE REMOVED - not to be supported in new version of HETS
       project:
         $ref: '#/definitions/Project'
+        description: TO BE REMOVED - Not sure why this would be needed
       working:
         type: string
         maxLength: 255
+        description: TO BE REMOVED - Not sure why this would be needed
       yearEndReg:
         type: string
         maxLength: 255
+        description: TO BE REMOVED - Not sure why this would be needed
   Owner:
     type: object
+    description: The list of Owners of equipment.
     required:
       - id
     properties:
       id:
         format: int32
         type: integer
-        description: Primary Key
-      ownerCd:
+        description: A system-generated unique identifier for a Owner
+      ownerCodePrefix:
         type: string
         maxLength: 255
+        description: A unique prefix in the system that is used to generate the human-friendly IDs of the equipment. E.g. An owner Edwards might have a prefix &quot;EDW&quot; and their equipment numbered sequentially with that prefix - e.g. EDW-0082.
       ownerFirstName:
         type: string
         maxLength: 255
+        description: The first name of the owner.
       ownerLastName:
         type: string
         maxLength: 255
-      contactPerson:
-        type: string
-        maxLength: 255
-      localToArea:
-        type: string
-        maxLength: 255
-      maintenanceContractor:
-        type: string
-        maxLength: 255
-      comment:
-        type: string
-        maxLength: 255
-      WCBNum:
-        format: int32
-        type: integer
-      WCBExpiryDate:
-        type: string
-        format: date-time
-      CGLCompany:
-        type: string
-        maxLength: 255
-      CGLPolicy:
-        type: string
-        maxLength: 255
-      CGLStartDate:
-        type: string
-        format: date-time
-      CGLEndDate:
-        type: string
-        format: date-time
-      statusCd:
-        type: string
-        maxLength: 255
-      archiveCd:
-        type: string
-        maxLength: 255
-      archiveReason:
-        type: string
-        maxLength: 255
-      localArea:
-        $ref: '#/definitions/LocalArea'
+        description: The last name of the owner.
       primaryContact:
         $ref: '#/definitions/Contact'
         description: Link to the designated Primary Contact.
+      localArea:
+        $ref: '#/definitions/LocalArea'
+      isMaintenanceContractor:
+        type: boolean
+        description: True if the owner is contracted by MOTI to handle Maintenance activities in the area - e.g. provided services in address unscheduled issues on the roads in the area.
+      comment:
+        type: string
+        maxLength: 255
+        description: TO BE REMOVED - replaced with Notes
+      WCBNum:
+        format: int32
+        type: integer
+        description: TO BE REMOVED - not maintained by HETS Clerks
+      WCBExpiryDate:
+        type: string
+        format: date-time
+        description: The expiration of the owner&#39;s current WCB permit.
+      CGLCompany:
+        type: string
+        maxLength: 255
+        description: TO BE REMOVED - not maintained by HETS Clerks
+      CGLPolicy:
+        type: string
+        maxLength: 255
+        description: TO BE REMOVED - not maintained by HETS Clerks
+      CGLStartDate:
+        type: string
+        format: date-time
+        description: TO BE REMOVED - not maintained by HETS Clerks
+      CGLEndDate:
+        type: string
+        format: date-time
+        description: The end date of the owner&#39;s Commercial General Liability insurance coverage. Coverage is only needed prior to an owner&#39;s piece of equipment starting a rental period (not when in the HETS program but not hired). The details of the coverage can be entered into a Note, or more often - attached as a scanned&#x2F;faxed document.
+      status:
+        type: string
+        maxLength: 255
+        description: The status of the owner record in the system. Current set of values are &quot;Pending&quot;, &quot;Approved&quot; and &quot;Archived&quot;. Pending is used when an owner self-registers and a HETS Clerk has not reviewed and Approved the record. Archived is when the owner is no longer part of the HETS programme. &quot;Approved&quot; is used in all other cases.
+      archiveCode:
+        type: string
+        maxLength: 255
+        description: A coded reason for why an owner record has been moved to Archived.
+      archiveReason:
+        type: string
+        maxLength: 2048
+        description: A text note about why the owner record has been changed to Archived.
       contacts:
         type: array
         items:
@@ -4192,29 +4314,34 @@ definitions:
           $ref: '#/definitions/Equipment'
   Contact:
     type: object
+    description: A table of contacts related to various entities in the system. FK fields are used to link contacts to records in the system.
     required:
       - id
+      - givenName
+      - surname
+      - role
     properties:
       id:
         format: int32
         type: integer
-        description: Primary Key
+        uniqueItems: true
+        description: A system-generated unique identifier for a Contact
       givenName:
         type: string
-        maxLength: 255
+        maxLength: 50
         description: The given name of the contact.
       surname:
         type: string
-        maxLength: 255
+        maxLength: 50
         description: The surname of the contact.
       role:
         type: string
-        maxLength: 255
-        description: The role of the contact. UI controlled as to whether it is free form or selected from an enumerated list.
+        maxLength: 100
+        description: The role of the contact. UI controlled as to whether it is free form or selected from an enumerated list - for initial implementation, the field is freeform.
       notes:
         type: string
-        maxLength: 255
-        description: Notes about the contact.
+        maxLength: 150
+        description: A note about the contact maintained by the users.
       phones:
         type: array
         items:
@@ -4225,34 +4352,40 @@ definitions:
           $ref: '#/definitions/ContactAddress'
   ContactPhone:
     type: object
+    description: SB Owner contact phone information
     required:
       - id
+      - type
+      - phoneNumber
     properties:
       id:
         format: int32
         type: integer
-        description: Primary Key
+        uniqueItems: true
+        description: A system-generated unique identifier for a ContactPhone
       type:
         type: string
-        maxLength: 255
-        description: The type of the phone number. UI controlled as to whether it is free form or selected from an enumerated list.
+        maxLength: 100
+        description: The type of the phone number. UI controlled as to whether it is free form or selected from an enumerated list.  Ex. Home, Cell, Work etc..
       phoneNumber:
         type: string
-        maxLength: 255
+        maxLength: 20
         description: The phone number of the contact. Entered as free form to support a range of formats.
   ContactAddress:
     type: object
+    description: SB Owner contact address information
     required:
       - id
     properties:
       id:
         format: int32
         type: integer
-        description: Primary Key
+        uniqueItems: true
+        description: A system-generated unique identifier for a ContactAddress
       type:
         type: string
-        maxLength: 255
-        description: The type of the address. UI controlled as to whether it is free form or selected from an enumerated list.
+        maxLength: 100
+        description: The type of the address. UI controlled as to whether it is free form or selected from an enumerated list ex. Home, Office, etc..
       addressLine1:
         type: string
         maxLength: 255
@@ -4263,43 +4396,48 @@ definitions:
         description: Address 2 line of the address.
       city:
         type: string
-        maxLength: 255
+        maxLength: 100
         description: The City of the address.
       province:
         type: string
-        maxLength: 255
+        maxLength: 50
         description: The Province of the address.
       postalCode:
         type: string
-        maxLength: 255
+        maxLength: 15
         description: The postal code of the address.
   Note:
     type: object
-    description: Notes entered by users.
+    description: Notes entered by users about instance of entities - e.g. School Buses and School Bus Owners
     required:
       - id
+      - text
     properties:
       id:
         format: int32
         type: integer
-        description: Primary Key
-      note:
+        uniqueItems: true
+        description: A system-generated unique identifier for a Note
+      text:
         type: string
         maxLength: 2048
-        description: The contents of the note.
+        description: Notes entered by users about instance of entities - e.g. School Buses and School Bus Owners
       isNoLongerRelevant:
         type: boolean
-        description: A user set flag that the note is no longer relevant. Allows the note to be retained for historical reasons, but identified to the user as no longer relevant.
+        description: A user set flag that the note is no longer relevant. Allows the note to be retained for historical reasons,  but identified to other users as no longer applicable.
   Attachment:
     type: object
-    description: Attachments uploaded by users. Attachments are stored in the file system, with rows in this table pointing to the file system location of the attachment.
+    description: Attachments uploaded by users about instance of entities - e.g. School Buses and School Bus Owners
     required:
       - id
+      - internalFileName
+      - externalFileName
     properties:
       id:
         format: int32
         type: integer
-        description: Primary Key
+        uniqueItems: true
+        description: A system-generated unique identifier for an Attachment
       internalFileName:
         type: string
         maxLength: 2048
@@ -4310,18 +4448,20 @@ definitions:
         description: The name of the attachment as defined by the user in uploading the document.
       description:
         type: string
-        maxLength: 255
+        maxLength: 2048
         description: A note about the attachment,  optionally maintained by the user.
   History:
     type: object
-    description: The history of updates made to a record. Exact format of the history TBD.
+    description: The history of updates made to an entity - e.g. a School Bus or a School Bus Owner
     required:
       - id
+      - historyText
     properties:
       id:
         format: int32
         type: integer
-        description: Primary Key
+        uniqueItems: true
+        description: A system-generated unique identifier for a History
       historyText:
         type: string
         maxLength: 2048
@@ -4338,7 +4478,7 @@ definitions:
       id:
         format: int32
         type: integer
-        description: Primary Key
+        description: A system-generated unique identifier for a LocalArea
       name:
         type: string
         maxLength: 255
@@ -4355,7 +4495,7 @@ definitions:
       id:
         format: int32
         type: integer
-        description: Primary Key
+        description: A system-generated unique identifier for a FavouriteContextType
       name:
         type: string
         maxLength: 255
@@ -4369,7 +4509,8 @@ definitions:
       id:
         format: int32
         type: integer
-        description: Primary Key
+        uniqueItems: true
+        description: A system-generated unique identifier for a UserFavourite
       name:
         type: string
         maxLength: 255
@@ -4383,22 +4524,28 @@ definitions:
         description: True if this Favourite is the default for this Context Type. On first access to a context in a session the default favourite for the context it is invoked. If there is no default favourite,  a system-wide default is invoked. On return to the context within a session,  the last parameters used are reapplied.
       type:
         type: string
+        maxLength: 255
         description: The type of Favourite
       User:
         $ref: '#/definitions/User'
         description: The User who has this Favourite
   Region:
     type: object
+    description: The MOTI-defined Regions - must match the official MOTI List
     required:
       - id
+      - ministryRegionID
+      - name
     properties:
       id:
         format: int32
         type: integer
-        description: Primary Key
+        uniqueItems: true
+        description: A system-generated unique identifier for a Region
       ministryRegionID:
         format: int32
         type: integer
+        uniqueItems: true
         description: The Ministry ID for the Region
       name:
         type: string
@@ -4407,20 +4554,24 @@ definitions:
       startDate:
         type: string
         format: date-time
-        description: The effective date of the Region - NOT CURRENTLY ENFORCED
+        description: The effective date of the Region record - NOT CURRENTLY ENFORCED IN SCHOOL BUS
       endDate:
         type: string
         format: date-time
-        description: The end date of the Region; null if active - NOT CURRENTLY ENFORCED
+        description: The end date of the Region record; null if active - NOT CURRENTLY ENFORCED IN SCHOOL BUS
   District:
     type: object
+    description: The MOTI-defined Districts - must match the official MOTI List
     required:
       - id
+      - ministryDistrictID
+      - name
     properties:
       id:
         format: int32
         type: integer
-        description: Primary Key
+        uniqueItems: true
+        description: A system-generated unique identifier for a District
       ministryDistrictID:
         format: int32
         type: integer
@@ -4435,20 +4586,24 @@ definitions:
       startDate:
         type: string
         format: date-time
-        description: The effective date of the District ID - NOT CURRENTLY ENFORCED
+        description: The effective date of the District record - NOT CURRENTLY ENFORCED IN SCHOOL BUS
       endDate:
         type: string
         format: date-time
-        description: The end date of the District; null if active - NOT CURRENTLY ENFORCED
+        description: The end date of the District record; null if active - NOT CURRENTLY ENFORCED IN SCHOOL BUS
   ServiceArea:
     type: object
+    description: The MOTI-defined Service Areas - must match the official MOTI List
     required:
       - id
+      - ministryServiceAreaID
+      - name
     properties:
       id:
         format: int32
         type: integer
-        description: Primary Key
+        uniqueItems: true
+        description: A system-generated unique identifier for a ServiceArea
       ministryServiceAreaID:
         format: int32
         type: integer
@@ -4463,11 +4618,11 @@ definitions:
       startDate:
         type: string
         format: date-time
-        description: The effective date of the Service Area - NOT CURRENTLY ENFORCED
+        description: The effective date of the Service Area record - NOT CURRENTLY ENFORCED IN SCHOOL BUS
       endDate:
         type: string
         format: date-time
-        description: The end date of the Service Area; null if active - NOT CURRENTLY ENFORCED
+        description: The end date of the Service Area record; null if active - NOT CURRENTLY ENFORCED IN SCHOOL BUS
   City:
     type: object
     description: A list of cities in BC. Authoritative source to be determined.
@@ -4477,7 +4632,8 @@ definitions:
       id:
         format: int32
         type: integer
-        description: Primary Key
+        uniqueItems: true
+        description: A system-generated unique identifier for a City
       name:
         type: string
         maxLength: 255
@@ -4487,26 +4643,34 @@ definitions:
     description: Information about the users of the system.
     required:
       - id
+      - givenName
+      - surname
       - active
     properties:
       id:
         format: int32
         type: integer
-        description: Primary Key
+        uniqueItems: true
+        description: A system-generated unique identifier for a User
       givenName:
         type: string
         maxLength: 255
+        description: Given name of the user.
       surname:
         type: string
-        maxLength: 255
+        maxLength: 50
+        description: Surname of the user.
       initials:
         type: string
-        maxLength: 255
+        maxLength: 10
+        description: Initials of the user, to be presented where screen space is at a premium.
       email:
         type: string
         maxLength: 255
+        description: The email address of the user in the system.
       active:
         type: boolean
+        description: A flag indicating the User is active in the system. Set false to remove access to the system for the user.
       smUserId:
         type: string
         maxLength: 255
@@ -4514,9 +4678,11 @@ definitions:
       guid:
         type: string
         maxLength: 255
+        description: The GUID unique to the user as provided by the authentication system. In this case, authentication is done by Siteminder and the GUID uniquely identifies the user within the user directories managed by Siteminder - e.g. IDIR and BCeID. The GUID is equivalent to the IDIR Id, but is guaranteed unique to a person, while the IDIR ID is not - IDIR IDs can be recycled.
       smAuthorizationDirectory:
         type: string
         maxLength: 255
+        description: The user directory service used by Siteminder to authenticate the user - usually IDIR or BCeID.
       userRoles:
         type: array
         items:
@@ -4527,6 +4693,7 @@ definitions:
           $ref: '#/definitions/GroupMembership'
   UserRole:
     type: object
+    description: A join table that provides allows each user to have any number of Roles in the system.  At login time the user is given the sum of the permissions of the roles assigned to that user. 
     required:
       - id
       - effectiveDate
@@ -4534,19 +4701,20 @@ definitions:
       id:
         format: int32
         type: integer
-        description: Primary Key
+        description: A system-generated unique identifier for a UserRole
       effectiveDate:
         type: string
         format: date-time
+        description: The date on which the user was given the related role.
       expiryDate:
         type: string
         format: date-time
-      user:
-        $ref: '#/definitions/User'
+        description: The date on which a role previously assigned to a user was removed from that user.
       role:
         $ref: '#/definitions/Role'
   Role:
     type: object
+    description: A table managed in the application by authorized users to create named Roles that can be assigned to Users as needed. Roles can be created as needed to support the users of the system and the roles they perform within the organization.
     required:
       - id
       - name
@@ -4555,13 +4723,15 @@ definitions:
       id:
         format: int32
         type: integer
-        description: Primary Key
+        description: A system-generated unique identifier for a Role
       name:
         type: string
         maxLength: 255
+        description: The name of the Role, as established by the user creating the role.
       description:
         type: string
         maxLength: 255
+        description: A description of the role as set by the user creating&#x2F;updating the role.
       rolePermissions:
         type: array
         items:
@@ -4572,19 +4742,21 @@ definitions:
           $ref: '#/definitions/UserRole'
   RolePermission:
     type: object
+    description: The collection of permissions included in a role.
     required:
       - id
     properties:
       id:
         format: int32
         type: integer
-        description: Primary Key
+        description: A system-generated unique identifier for a RolePermission
       role:
         $ref: '#/definitions/Role'
       permission:
         $ref: '#/definitions/Permission'
   Permission:
     type: object
+    description: The set of permissions defined in the application. Each permission is given a name and triggers some behavior defined in the application. For example, a permission might allow users to see data or to have access to functionality restricted to users without that permission. Permissions are created as needed to the application and are added to the permissions table by data migrations executed at the time the software that uses the permission is deployed.
     required:
       - id
       - code
@@ -4594,18 +4766,22 @@ definitions:
       id:
         format: int32
         type: integer
-        description: Primary Key
+        description: A system-generated unique identifier for a Permission
       code:
         type: string
         maxLength: 255
+        description: The name of the permission referenced in the software of the application.
       name:
         type: string
         maxLength: 255
+        description: The &#39;user friendly&#39; name of the permission exposed to the user selecting the permissions to be included in a Role.
       description:
         type: string
         maxLength: 255
+        description: A description of the purpose of the permission and exposed to the user selecting the permissions to be included in a Role.
   GroupMembership:
     type: object
+    description: The users associated with a given group that has been defined in the application.
     required:
       - id
       - active
@@ -4613,15 +4789,17 @@ definitions:
       id:
         format: int32
         type: integer
-        description: Primary Key
+        description: A system-generated unique identifier for a GroupMembership
       active:
         type: boolean
+        description: A flag indicating the User is active in the group. Set false to remove the user from the designated group.
       group:
         $ref: '#/definitions/Group'
       user:
         $ref: '#/definitions/User'
   Group:
     type: object
+    description: A named entity that is used to created a collection of users into a group. For example, the School Bus Inspectors are in the group Inspectors. Groups, like permissions are defined by the application and referenced in the code of the application.
     required:
       - id
       - name
@@ -4630,13 +4808,15 @@ definitions:
       id:
         format: int32
         type: integer
-        description: Primary Key
+        description: A system-generated unique identifier for a Group
       name:
         type: string
         maxLength: 255
+        description: The name of the group, as refenced in the code.
       description:
         type: string
         maxLength: 255
+        description: A description of the group that is presented to the user when they are setting a user into a group.
   UserViewModel:
     type: object
     x-codegen-viewmodel: true
