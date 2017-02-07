@@ -259,7 +259,7 @@
               format: url
           schema:
             $ref: "#/definitions/UserFavourite"
-  /users/current/favourites/{type}:
+  /users/current/favourites/{favouritetype}:
     get:
       description: Returns a user's favourites of a given type.  If type is empty, returns all.
       tags:
@@ -269,19 +269,18 @@
         - application/json
         - text/json
       responses:
-        '200':
+        200:
           description: OK
           schema:
             type: array
             items:
               $ref: "#/definitions/UserFavourite"
-        "404":
+        404:
            description: User not found
       parameters:
-        - name: type
+        - name: favouritetype
           in: path
           description: type of favourite to return
-          required: false
           type: string
   /users/current/favourites/{id}/delete:
     post:
@@ -293,7 +292,7 @@
         - application/json
         - text/json
       responses:
-        '200':
+        200:
           description: OK
       parameters:
         - name: id
