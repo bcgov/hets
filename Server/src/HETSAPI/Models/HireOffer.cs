@@ -23,8 +23,9 @@ using System.ComponentModel.DataAnnotations;
 namespace HETSAPI.Models
 {
     /// <summary>
-    /// 
+    /// Offers made to hire equipment based on a Request. Each offer made and the result of that order is recorded.
     /// </summary>
+        [MetaDataExtension (Description = "Offers made to hire equipment based on a Request. Each offer made and the result of that order is recorded.")]
 
     public partial class HireOffer : IEquatable<HireOffer>
     {
@@ -39,29 +40,29 @@ namespace HETSAPI.Models
         /// <summary>
         /// Initializes a new instance of the <see cref="HireOffer" /> class.
         /// </summary>
-        /// <param name="Id">Primary Key (required).</param>
+        /// <param name="Id">A system-generated unique identifier for a HireOffer (required).</param>
         /// <param name="Request">Request.</param>
         /// <param name="Equipment">Equipment.</param>
-        /// <param name="RentalAgreement">The rental agreement created for this hire offer. Available only if status code is Yes.</param>
-        /// <param name="IsForceHire">IsForceHire.</param>
-        /// <param name="Asked">Asked.</param>
-        /// <param name="AskedDate">AskedDate.</param>
-        /// <param name="AcceptedOffer">The response about the equipment. Either a No (move to next on the list) or Yes (move to on to the Rental Agreement).</param>
-        /// <param name="RefuseReason">RefuseReason.</param>
-        /// <param name="Note">Note.</param>
-        /// <param name="EquipmentVerifiedActive">EquipmentVerifiedActive.</param>
-        /// <param name="FlagEquipmentUpdate">FlagEquipmentUpdate.</param>
-        /// <param name="EquipmentUpdateReason">EquipmentUpdateReason.</param>
-        public HireOffer(int Id, Request Request = null, Equipment Equipment = null, RentalAgreement RentalAgreement = null, bool? IsForceHire = null, bool? Asked = null, DateTime? AskedDate = null, bool? AcceptedOffer = null, string RefuseReason = null, string Note = null, bool? EquipmentVerifiedActive = null, bool? FlagEquipmentUpdate = null, string EquipmentUpdateReason = null)
+        /// <param name="RentalAgreement">The rental agreement (if any) created for this accepted hire offer..</param>
+        /// <param name="IsForceHire">True if the HETS Clerk designated this hire as being a Forced Hire. A Force Hire implies that the usual seniority rules for hiring are bypassed because of special circumstances related to the hire - e.g. a the hire requires an attachment only one piece of equipment has..</param>
+        /// <param name="WasAsked">True if the HETS Clerk contacted the equipment owner and asked to hire the piece of equipment..</param>
+        /// <param name="AskedDateTime">The Date-Time the HETS clerk contacted the equipment owner and asked to hire the piece of equipment..</param>
+        /// <param name="OfferResponse">The response to the offer to hire. Null prior to receiving a response; a string after with the response - likely just Yes or No.</param>
+        /// <param name="RefuseReason">An optional reason given by the equipment owner for refusing the offer..</param>
+        /// <param name="Note">An optional general note about the offer..</param>
+        /// <param name="EquipmentVerifiedActive">TO BE REMOVED - THIS IS AN ATTRIBUTE OF THE EQUIPMENT.</param>
+        /// <param name="FlagEquipmentUpdate">TO BE REMOVED - THIS IS AN ATTRIBUTE OF THE EQUIPMENT.</param>
+        /// <param name="EquipmentUpdateReason">TO BE REMOVED - THIS IS AN ATTRIBUTE OF THE EQUIPMENT.</param>
+        public HireOffer(int Id, Request Request = null, Equipment Equipment = null, RentalAgreement RentalAgreement = null, bool? IsForceHire = null, bool? WasAsked = null, DateTime? AskedDateTime = null, string OfferResponse = null, string RefuseReason = null, string Note = null, bool? EquipmentVerifiedActive = null, bool? FlagEquipmentUpdate = null, string EquipmentUpdateReason = null)
         {   
             this.Id = Id;
             this.Request = Request;
             this.Equipment = Equipment;
             this.RentalAgreement = RentalAgreement;
             this.IsForceHire = IsForceHire;
-            this.Asked = Asked;
-            this.AskedDate = AskedDate;
-            this.AcceptedOffer = AcceptedOffer;
+            this.WasAsked = WasAsked;
+            this.AskedDateTime = AskedDateTime;
+            this.OfferResponse = OfferResponse;
             this.RefuseReason = RefuseReason;
             this.Note = Note;
             this.EquipmentVerifiedActive = EquipmentVerifiedActive;
@@ -70,10 +71,10 @@ namespace HETSAPI.Models
         }
 
         /// <summary>
-        /// Primary Key
+        /// A system-generated unique identifier for a HireOffer
         /// </summary>
-        /// <value>Primary Key</value>
-        [MetaDataExtension (Description = "Primary Key")]
+        /// <value>A system-generated unique identifier for a HireOffer</value>
+        [MetaDataExtension (Description = "A system-generated unique identifier for a HireOffer")]
         public int Id { get; set; }
         
         /// <summary>
@@ -99,10 +100,10 @@ namespace HETSAPI.Models
         public int? EquipmentRefId { get; set; }
         
         /// <summary>
-        /// The rental agreement created for this hire offer. Available only if status code is Yes
+        /// The rental agreement (if any) created for this accepted hire offer.
         /// </summary>
-        /// <value>The rental agreement created for this hire offer. Available only if status code is Yes</value>
-        [MetaDataExtension (Description = "The rental agreement created for this hire offer. Available only if status code is Yes")]
+        /// <value>The rental agreement (if any) created for this accepted hire offer.</value>
+        [MetaDataExtension (Description = "The rental agreement (if any) created for this accepted hire offer.")]
         public RentalAgreement RentalAgreement { get; set; }
         
         /// <summary>
@@ -112,54 +113,70 @@ namespace HETSAPI.Models
         public int? RentalAgreementRefId { get; set; }
         
         /// <summary>
-        /// Gets or Sets IsForceHire
+        /// True if the HETS Clerk designated this hire as being a Forced Hire. A Force Hire implies that the usual seniority rules for hiring are bypassed because of special circumstances related to the hire - e.g. a the hire requires an attachment only one piece of equipment has.
         /// </summary>
+        /// <value>True if the HETS Clerk designated this hire as being a Forced Hire. A Force Hire implies that the usual seniority rules for hiring are bypassed because of special circumstances related to the hire - e.g. a the hire requires an attachment only one piece of equipment has.</value>
+        [MetaDataExtension (Description = "True if the HETS Clerk designated this hire as being a Forced Hire. A Force Hire implies that the usual seniority rules for hiring are bypassed because of special circumstances related to the hire - e.g. a the hire requires an attachment only one piece of equipment has.")]
         public bool? IsForceHire { get; set; }
         
         /// <summary>
-        /// Gets or Sets Asked
+        /// True if the HETS Clerk contacted the equipment owner and asked to hire the piece of equipment.
         /// </summary>
-        public bool? Asked { get; set; }
+        /// <value>True if the HETS Clerk contacted the equipment owner and asked to hire the piece of equipment.</value>
+        [MetaDataExtension (Description = "True if the HETS Clerk contacted the equipment owner and asked to hire the piece of equipment.")]
+        public bool? WasAsked { get; set; }
         
         /// <summary>
-        /// Gets or Sets AskedDate
+        /// The Date-Time the HETS clerk contacted the equipment owner and asked to hire the piece of equipment.
         /// </summary>
-        public DateTime? AskedDate { get; set; }
+        /// <value>The Date-Time the HETS clerk contacted the equipment owner and asked to hire the piece of equipment.</value>
+        [MetaDataExtension (Description = "The Date-Time the HETS clerk contacted the equipment owner and asked to hire the piece of equipment.")]
+        public DateTime? AskedDateTime { get; set; }
         
         /// <summary>
-        /// The response about the equipment. Either a No (move to next on the list) or Yes (move to on to the Rental Agreement)
+        /// The response to the offer to hire. Null prior to receiving a response; a string after with the response - likely just Yes or No
         /// </summary>
-        /// <value>The response about the equipment. Either a No (move to next on the list) or Yes (move to on to the Rental Agreement)</value>
-        [MetaDataExtension (Description = "The response about the equipment. Either a No (move to next on the list) or Yes (move to on to the Rental Agreement)")]
-        public bool? AcceptedOffer { get; set; }
+        /// <value>The response to the offer to hire. Null prior to receiving a response; a string after with the response - likely just Yes or No</value>
+        [MetaDataExtension (Description = "The response to the offer to hire. Null prior to receiving a response; a string after with the response - likely just Yes or No")]
+        public string OfferResponse { get; set; }
         
         /// <summary>
-        /// Gets or Sets RefuseReason
+        /// An optional reason given by the equipment owner for refusing the offer.
         /// </summary>
+        /// <value>An optional reason given by the equipment owner for refusing the offer.</value>
+        [MetaDataExtension (Description = "An optional reason given by the equipment owner for refusing the offer.")]
         [MaxLength(255)]
         
         public string RefuseReason { get; set; }
         
         /// <summary>
-        /// Gets or Sets Note
+        /// An optional general note about the offer.
         /// </summary>
+        /// <value>An optional general note about the offer.</value>
+        [MetaDataExtension (Description = "An optional general note about the offer.")]
         [MaxLength(255)]
         
         public string Note { get; set; }
         
         /// <summary>
-        /// Gets or Sets EquipmentVerifiedActive
+        /// TO BE REMOVED - THIS IS AN ATTRIBUTE OF THE EQUIPMENT
         /// </summary>
+        /// <value>TO BE REMOVED - THIS IS AN ATTRIBUTE OF THE EQUIPMENT</value>
+        [MetaDataExtension (Description = "TO BE REMOVED - THIS IS AN ATTRIBUTE OF THE EQUIPMENT")]
         public bool? EquipmentVerifiedActive { get; set; }
         
         /// <summary>
-        /// Gets or Sets FlagEquipmentUpdate
+        /// TO BE REMOVED - THIS IS AN ATTRIBUTE OF THE EQUIPMENT
         /// </summary>
+        /// <value>TO BE REMOVED - THIS IS AN ATTRIBUTE OF THE EQUIPMENT</value>
+        [MetaDataExtension (Description = "TO BE REMOVED - THIS IS AN ATTRIBUTE OF THE EQUIPMENT")]
         public bool? FlagEquipmentUpdate { get; set; }
         
         /// <summary>
-        /// Gets or Sets EquipmentUpdateReason
+        /// TO BE REMOVED - THIS IS AN ATTRIBUTE OF THE EQUIPMENT
         /// </summary>
+        /// <value>TO BE REMOVED - THIS IS AN ATTRIBUTE OF THE EQUIPMENT</value>
+        [MetaDataExtension (Description = "TO BE REMOVED - THIS IS AN ATTRIBUTE OF THE EQUIPMENT")]
         [MaxLength(255)]
         
         public string EquipmentUpdateReason { get; set; }
@@ -177,9 +194,9 @@ namespace HETSAPI.Models
             sb.Append("  Equipment: ").Append(Equipment).Append("\n");
             sb.Append("  RentalAgreement: ").Append(RentalAgreement).Append("\n");
             sb.Append("  IsForceHire: ").Append(IsForceHire).Append("\n");
-            sb.Append("  Asked: ").Append(Asked).Append("\n");
-            sb.Append("  AskedDate: ").Append(AskedDate).Append("\n");
-            sb.Append("  AcceptedOffer: ").Append(AcceptedOffer).Append("\n");
+            sb.Append("  WasAsked: ").Append(WasAsked).Append("\n");
+            sb.Append("  AskedDateTime: ").Append(AskedDateTime).Append("\n");
+            sb.Append("  OfferResponse: ").Append(OfferResponse).Append("\n");
             sb.Append("  RefuseReason: ").Append(RefuseReason).Append("\n");
             sb.Append("  Note: ").Append(Note).Append("\n");
             sb.Append("  EquipmentVerifiedActive: ").Append(EquipmentVerifiedActive).Append("\n");
@@ -248,19 +265,19 @@ namespace HETSAPI.Models
                     this.IsForceHire.Equals(other.IsForceHire)
                 ) &&                 
                 (
-                    this.Asked == other.Asked ||
-                    this.Asked != null &&
-                    this.Asked.Equals(other.Asked)
+                    this.WasAsked == other.WasAsked ||
+                    this.WasAsked != null &&
+                    this.WasAsked.Equals(other.WasAsked)
                 ) &&                 
                 (
-                    this.AskedDate == other.AskedDate ||
-                    this.AskedDate != null &&
-                    this.AskedDate.Equals(other.AskedDate)
+                    this.AskedDateTime == other.AskedDateTime ||
+                    this.AskedDateTime != null &&
+                    this.AskedDateTime.Equals(other.AskedDateTime)
                 ) &&                 
                 (
-                    this.AcceptedOffer == other.AcceptedOffer ||
-                    this.AcceptedOffer != null &&
-                    this.AcceptedOffer.Equals(other.AcceptedOffer)
+                    this.OfferResponse == other.OfferResponse ||
+                    this.OfferResponse != null &&
+                    this.OfferResponse.Equals(other.OfferResponse)
                 ) &&                 
                 (
                     this.RefuseReason == other.RefuseReason ||
@@ -317,17 +334,17 @@ namespace HETSAPI.Models
                 {
                     hash = hash * 59 + this.IsForceHire.GetHashCode();
                 }                
-                                if (this.Asked != null)
+                                if (this.WasAsked != null)
                 {
-                    hash = hash * 59 + this.Asked.GetHashCode();
+                    hash = hash * 59 + this.WasAsked.GetHashCode();
                 }                
-                                if (this.AskedDate != null)
+                                if (this.AskedDateTime != null)
                 {
-                    hash = hash * 59 + this.AskedDate.GetHashCode();
+                    hash = hash * 59 + this.AskedDateTime.GetHashCode();
                 }                
-                                if (this.AcceptedOffer != null)
+                                if (this.OfferResponse != null)
                 {
-                    hash = hash * 59 + this.AcceptedOffer.GetHashCode();
+                    hash = hash * 59 + this.OfferResponse.GetHashCode();
                 }                
                                 if (this.RefuseReason != null)
                 {

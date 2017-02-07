@@ -39,7 +39,7 @@ namespace HETSAPI.Models
         /// <summary>
         /// Initializes a new instance of the <see cref="LocalArea" /> class.
         /// </summary>
-        /// <param name="Id">Primary Key (required).</param>
+        /// <param name="Id">A system-generated unique identifier for a LocalArea (required).</param>
         /// <param name="Name">The full name of the Local Area.</param>
         /// <param name="ServiceArea">The Service Area in which the Local Area is found..</param>
         public LocalArea(int Id, string Name = null, ServiceArea ServiceArea = null)
@@ -50,10 +50,10 @@ namespace HETSAPI.Models
         }
 
         /// <summary>
-        /// Primary Key
+        /// A system-generated unique identifier for a LocalArea
         /// </summary>
-        /// <value>Primary Key</value>
-        [MetaDataExtension (Description = "Primary Key")]
+        /// <value>A system-generated unique identifier for a LocalArea</value>
+        [MetaDataExtension (Description = "A system-generated unique identifier for a LocalArea")]
         public int Id { get; set; }
         
         /// <summary>

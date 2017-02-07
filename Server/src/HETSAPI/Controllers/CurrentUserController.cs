@@ -43,6 +43,22 @@ namespace HETSAPI.Controllers
         /// <summary>
         /// 
         /// </summary>
+        /// <remarks>Returns a users favourites of a given type.  If type is empty, returns all.</remarks>
+        /// <param name="favouritetype">type of favourite to return</param>
+        /// <response code="200">OK</response>
+        /// <response code="404">User not found</response>
+        [HttpGet]
+        [Route("/api/users/current/favourites/{favouritetype}")]
+        [SwaggerOperation("UsersCurrentFavouritesFavouritetypeGet")]
+        [SwaggerResponse(200, type: typeof(List<UserFavourite>))]
+        public virtual IActionResult UsersCurrentFavouritesFavouritetypeGet([FromRoute]string favouritetype)
+        {
+            return this._service.UsersCurrentFavouritesFavouritetypeGetAsync(favouritetype);
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
         /// <remarks>Removes a specific user favourite</remarks>
         /// <param name="id">id of Favourite to delete</param>
         /// <response code="200">OK</response>
@@ -82,22 +98,6 @@ namespace HETSAPI.Controllers
         public virtual IActionResult UsersCurrentFavouritesPut([FromBody]UserFavourite item)
         {
             return this._service.UsersCurrentFavouritesPutAsync(item);
-        }
-
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <remarks>Returns a user&#39;s favourites of a given type.  If type is empty, returns all.</remarks>
-        /// <param name="type">type of favourite to return</param>
-        /// <response code="200">OK</response>
-        /// <response code="404">User not found</response>
-        [HttpGet]
-        [Route("/api/users/current/favourites/{type}")]
-        [SwaggerOperation("UsersCurrentFavouritesTypeGet")]
-        [SwaggerResponse(200, type: typeof(List<UserFavourite>))]
-        public virtual IActionResult UsersCurrentFavouritesTypeGet([FromRoute]string type)
-        {
-            return this._service.UsersCurrentFavouritesTypeGetAsync(type);
         }
 
         /// <summary>

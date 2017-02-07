@@ -261,7 +261,7 @@
             $ref: "#/definitions/UserFavourite"
   /users/current/favourites/{favouritetype}:
     get:
-      description: Returns a user's favourites of a given type.  If type is empty, returns all.
+      description: Returns a users favourites of a given type.  If type is empty, returns all.
       tags:
         - CurrentUser
       produces:
@@ -281,6 +281,7 @@
         - name: favouritetype
           in: path
           description: type of favourite to return
+          required: true
           type: string
   /users/current/favourites/{id}/delete:
     post:

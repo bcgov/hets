@@ -23,8 +23,9 @@ using System.ComponentModel.DataAnnotations;
 namespace HETSAPI.Models
 {
     /// <summary>
-    /// 
+    /// A collection of requests for equipment to be hired for Provincial Projects. Each request is for one or more instances of a single type of equipment from a single local area.
     /// </summary>
+        [MetaDataExtension (Description = "A collection of requests for equipment to be hired for Provincial Projects. Each request is for one or more instances of a single type of equipment from a single local area.")]
 
     public partial class Request : IEquatable<Request>
     {
@@ -39,14 +40,14 @@ namespace HETSAPI.Models
         /// <summary>
         /// Initializes a new instance of the <see cref="Request" /> class.
         /// </summary>
-        /// <param name="Id">Primary Key (required).</param>
+        /// <param name="Id">A system-generated unique identifier for a Request (required).</param>
         /// <param name="Project">Project.</param>
         /// <param name="LocalArea">LocalArea.</param>
         /// <param name="EquipmentType">EquipmentType.</param>
-        /// <param name="EquipmentCount">EquipmentCount.</param>
-        /// <param name="ExpectedHours">ExpectedHours.</param>
-        /// <param name="ExpectedStartDate">ExpectedStartDate.</param>
-        /// <param name="ExpectedEndDate">ExpectedEndDate.</param>
+        /// <param name="EquipmentCount">The number of pieces of the equipment type to be procured as part of this request..</param>
+        /// <param name="ExpectedHours">The expected number of rental hours for each piece equipment hired against this request, as provided by the Project Manager making the request..</param>
+        /// <param name="ExpectedStartDate">The expected start date of each piece of equipment hired against this request, as provided by the Project Manager making the request..</param>
+        /// <param name="ExpectedEndDate">The expected end date of each piece of equipment hired against this request, as provided by the Project Manager making the request..</param>
         /// <param name="RotationList">RotationList.</param>
         /// <param name="HireOffers">HireOffers.</param>
         /// <param name="Notes">Notes.</param>
@@ -70,10 +71,10 @@ namespace HETSAPI.Models
         }
 
         /// <summary>
-        /// Primary Key
+        /// A system-generated unique identifier for a Request
         /// </summary>
-        /// <value>Primary Key</value>
-        [MetaDataExtension (Description = "Primary Key")]
+        /// <value>A system-generated unique identifier for a Request</value>
+        [MetaDataExtension (Description = "A system-generated unique identifier for a Request")]
         public int Id { get; set; }
         
         /// <summary>
@@ -110,23 +111,31 @@ namespace HETSAPI.Models
         public int? EquipmentTypeRefId { get; set; }
         
         /// <summary>
-        /// Gets or Sets EquipmentCount
+        /// The number of pieces of the equipment type to be procured as part of this request.
         /// </summary>
+        /// <value>The number of pieces of the equipment type to be procured as part of this request.</value>
+        [MetaDataExtension (Description = "The number of pieces of the equipment type to be procured as part of this request.")]
         public int? EquipmentCount { get; set; }
         
         /// <summary>
-        /// Gets or Sets ExpectedHours
+        /// The expected number of rental hours for each piece equipment hired against this request, as provided by the Project Manager making the request.
         /// </summary>
+        /// <value>The expected number of rental hours for each piece equipment hired against this request, as provided by the Project Manager making the request.</value>
+        [MetaDataExtension (Description = "The expected number of rental hours for each piece equipment hired against this request, as provided by the Project Manager making the request.")]
         public int? ExpectedHours { get; set; }
         
         /// <summary>
-        /// Gets or Sets ExpectedStartDate
+        /// The expected start date of each piece of equipment hired against this request, as provided by the Project Manager making the request.
         /// </summary>
+        /// <value>The expected start date of each piece of equipment hired against this request, as provided by the Project Manager making the request.</value>
+        [MetaDataExtension (Description = "The expected start date of each piece of equipment hired against this request, as provided by the Project Manager making the request.")]
         public DateTime? ExpectedStartDate { get; set; }
         
         /// <summary>
-        /// Gets or Sets ExpectedEndDate
+        /// The expected end date of each piece of equipment hired against this request, as provided by the Project Manager making the request.
         /// </summary>
+        /// <value>The expected end date of each piece of equipment hired against this request, as provided by the Project Manager making the request.</value>
+        [MetaDataExtension (Description = "The expected end date of each piece of equipment hired against this request, as provided by the Project Manager making the request.")]
         public DateTime? ExpectedEndDate { get; set; }
         
         /// <summary>

@@ -451,7 +451,7 @@ namespace HETSAPI.Services.Impl
 
             if (status != null)
             {
-                data = data.Where(x => x.StatusCd == status);
+                data = data.Where(x => x.Status == status);
             }
 
             if (hired != null)

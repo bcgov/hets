@@ -54,7 +54,7 @@ namespace HETSAPI.Test
 
             // create a new object.
             Note note = new Note();
-            note._Note = initialName;
+            note.Text = initialName;
             string jsonString = note.ToJson();
 
             request.Content = new StringContent(jsonString, Encoding.UTF8, "application/json");
@@ -69,7 +69,7 @@ namespace HETSAPI.Test
             // get the id
             var id = note.Id;
             // change the name
-            note._Note = changedName;
+            note.Text = changedName;
 
             // now do an update.
             request = new HttpRequestMessage(HttpMethod.Put, "/api/notes/" + id);
@@ -87,7 +87,7 @@ namespace HETSAPI.Test
             note = JsonConvert.DeserializeObject<Note>(jsonString);
 
             // verify the change went through.
-            Assert.Equal(note._Note, changedName);
+            Assert.Equal(note.Text, changedName);
 
             // do a delete.
             request = new HttpRequestMessage(HttpMethod.Post, "/api/notes/" + id + "/delete");

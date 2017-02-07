@@ -23,8 +23,9 @@ using System.ComponentModel.DataAnnotations;
 namespace HETSAPI.Models
 {
     /// <summary>
-    /// 
+    /// The history of all changes to the seniority of a piece of equipment. The current seniority information (underlying data elements and the calculation result) is in the equipment record. Every time that information changes, the old values are copied to here, with a start date, end date range. In the normal case, an annual update triggers the old values being copied here and the new values put into the equipment record. If a user manually changes the values, the existing values are copied into a record added here.
     /// </summary>
+        [MetaDataExtension (Description = "The history of all changes to the seniority of a piece of equipment. The current seniority information (underlying data elements and the calculation result) is in the equipment record. Every time that information changes, the old values are copied to here, with a start date, end date range. In the normal case, an annual update triggers the old values being copied here and the new values put into the equipment record. If a user manually changes the values, the existing values are copied into a record added here.")]
 
     public partial class SeniorityAudit : IEquatable<SeniorityAudit>
     {
@@ -39,39 +40,39 @@ namespace HETSAPI.Models
         /// <summary>
         /// Initializes a new instance of the <see cref="SeniorityAudit" /> class.
         /// </summary>
-        /// <param name="Id">Primary Key (required).</param>
-        /// <param name="GeneratedTime">GeneratedTime.</param>
+        /// <param name="Id">A system-generated unique identifier for a SeniorityAudit (required).</param>
+        /// <param name="GeneratedTime">The effective starting date that these the Seniority data in this record went into effect..</param>
         /// <param name="LocalArea">LocalArea.</param>
         /// <param name="Equipment">Equipment.</param>
-        /// <param name="BlockNum">BlockNum.</param>
-        /// <param name="EquipCd">EquipCd.</param>
+        /// <param name="BlockNumber">The block number for the piece of equipment as calculated by the Seniority Algorthm for this equipment type in the local area. As currently defined by the business - 1, 2 or Open.</param>
+        /// <param name="EquipCd">A human-visible unique code for the piece of equipment, referenced for convenience by the system users - HETS Clerks and Equipment Owners. Generated based on a unique Equipment owner prefix (e.g. EDW) and a zero-filled unique number - resulting in a code like EDW-0083..</param>
         /// <param name="Owner">Owner.</param>
-        /// <param name="OwnerName">OwnerName.</param>
-        /// <param name="Seniority">Seniority.</param>
-        /// <param name="YTD">YTD.</param>
-        /// <param name="YTD1">YTD1.</param>
-        /// <param name="YTD2">YTD2.</param>
-        /// <param name="YTD3">YTD3.</param>
-        /// <param name="CycleHrsWrk">CycleHrsWrk.</param>
-        /// <param name="FrozenOut">FrozenOut.</param>
-        /// <param name="Project">Project.</param>
-        /// <param name="Working">Working.</param>
-        /// <param name="YearEndReg">YearEndReg.</param>
-        public SeniorityAudit(int Id, DateTime? GeneratedTime = null, LocalArea LocalArea = null, Equipment Equipment = null, float? BlockNum = null, string EquipCd = null, Owner Owner = null, string OwnerName = null, float? Seniority = null, float? YTD = null, float? YTD1 = null, float? YTD2 = null, float? YTD3 = null, float? CycleHrsWrk = null, string FrozenOut = null, Project Project = null, string Working = null, string YearEndReg = null)
+        /// <param name="OwnerName">The name of the owner from the Owner Record, captured at the time this record was created..</param>
+        /// <param name="Seniority">The seniority calculation result for this piece of equipment. The calculation is based on the &amp;quot;numYears&amp;quot; of service + average hours of service over the last three fiscal years - as stored in the related fields (serviceHoursLastYear, serviceHoursTwoYearsAgo serviceHoursThreeYearsAgo)..</param>
+        /// <param name="YTD">Sum of hours in the current fiscal year&amp;#39;s time cards captured at the time this record was created..</param>
+        /// <param name="ServiceHoursLastYear">Number of hours of service by this piece of equipment in the previous fiscal year.</param>
+        /// <param name="ServiceHoursTwoYearsAgo">Number of hours of service by this piece of equipment in the fiscal year before the last one - e.g. if current year is FY2018 then hours in FY2016.</param>
+        /// <param name="ServiceHoursThreeYearsAgo">Number of hours of service by this piece of equipment in the fiscal year three years ago - e.g. if current year is FY2018 then hours in FY2015.</param>
+        /// <param name="CycleHrsWrk">TO BE REMOVED - Not sure why this would be needed.</param>
+        /// <param name="FrozenOut">TO BE REMOVED - not to be supported in new version of HETS.</param>
+        /// <param name="Project">TO BE REMOVED - Not sure why this would be needed.</param>
+        /// <param name="Working">TO BE REMOVED - Not sure why this would be needed.</param>
+        /// <param name="YearEndReg">TO BE REMOVED - Not sure why this would be needed.</param>
+        public SeniorityAudit(int Id, DateTime? GeneratedTime = null, LocalArea LocalArea = null, Equipment Equipment = null, float? BlockNumber = null, string EquipCd = null, Owner Owner = null, string OwnerName = null, float? Seniority = null, float? YTD = null, float? ServiceHoursLastYear = null, float? ServiceHoursTwoYearsAgo = null, float? ServiceHoursThreeYearsAgo = null, float? CycleHrsWrk = null, string FrozenOut = null, Project Project = null, string Working = null, string YearEndReg = null)
         {   
             this.Id = Id;
             this.GeneratedTime = GeneratedTime;
             this.LocalArea = LocalArea;
             this.Equipment = Equipment;
-            this.BlockNum = BlockNum;
+            this.BlockNumber = BlockNumber;
             this.EquipCd = EquipCd;
             this.Owner = Owner;
             this.OwnerName = OwnerName;
             this.Seniority = Seniority;
             this.YTD = YTD;
-            this.YTD1 = YTD1;
-            this.YTD2 = YTD2;
-            this.YTD3 = YTD3;
+            this.ServiceHoursLastYear = ServiceHoursLastYear;
+            this.ServiceHoursTwoYearsAgo = ServiceHoursTwoYearsAgo;
+            this.ServiceHoursThreeYearsAgo = ServiceHoursThreeYearsAgo;
             this.CycleHrsWrk = CycleHrsWrk;
             this.FrozenOut = FrozenOut;
             this.Project = Project;
@@ -80,15 +81,17 @@ namespace HETSAPI.Models
         }
 
         /// <summary>
-        /// Primary Key
+        /// A system-generated unique identifier for a SeniorityAudit
         /// </summary>
-        /// <value>Primary Key</value>
-        [MetaDataExtension (Description = "Primary Key")]
+        /// <value>A system-generated unique identifier for a SeniorityAudit</value>
+        [MetaDataExtension (Description = "A system-generated unique identifier for a SeniorityAudit")]
         public int Id { get; set; }
         
         /// <summary>
-        /// Gets or Sets GeneratedTime
+        /// The effective starting date that these the Seniority data in this record went into effect.
         /// </summary>
+        /// <value>The effective starting date that these the Seniority data in this record went into effect.</value>
+        [MetaDataExtension (Description = "The effective starting date that these the Seniority data in this record went into effect.")]
         public DateTime? GeneratedTime { get; set; }
         
         /// <summary>
@@ -114,13 +117,17 @@ namespace HETSAPI.Models
         public int? EquipmentRefId { get; set; }
         
         /// <summary>
-        /// Gets or Sets BlockNum
+        /// The block number for the piece of equipment as calculated by the Seniority Algorthm for this equipment type in the local area. As currently defined by the business - 1, 2 or Open
         /// </summary>
-        public float? BlockNum { get; set; }
+        /// <value>The block number for the piece of equipment as calculated by the Seniority Algorthm for this equipment type in the local area. As currently defined by the business - 1, 2 or Open</value>
+        [MetaDataExtension (Description = "The block number for the piece of equipment as calculated by the Seniority Algorthm for this equipment type in the local area. As currently defined by the business - 1, 2 or Open")]
+        public float? BlockNumber { get; set; }
         
         /// <summary>
-        /// Gets or Sets EquipCd
+        /// A human-visible unique code for the piece of equipment, referenced for convenience by the system users - HETS Clerks and Equipment Owners. Generated based on a unique Equipment owner prefix (e.g. EDW) and a zero-filled unique number - resulting in a code like EDW-0083.
         /// </summary>
+        /// <value>A human-visible unique code for the piece of equipment, referenced for convenience by the system users - HETS Clerks and Equipment Owners. Generated based on a unique Equipment owner prefix (e.g. EDW) and a zero-filled unique number - resulting in a code like EDW-0083.</value>
+        [MetaDataExtension (Description = "A human-visible unique code for the piece of equipment, referenced for convenience by the system users - HETS Clerks and Equipment Owners. Generated based on a unique Equipment owner prefix (e.g. EDW) and a zero-filled unique number - resulting in a code like EDW-0083.")]
         [MaxLength(255)]
         
         public string EquipCd { get; set; }
@@ -137,52 +144,70 @@ namespace HETSAPI.Models
         public int? OwnerRefId { get; set; }
         
         /// <summary>
-        /// Gets or Sets OwnerName
+        /// The name of the owner from the Owner Record, captured at the time this record was created.
         /// </summary>
+        /// <value>The name of the owner from the Owner Record, captured at the time this record was created.</value>
+        [MetaDataExtension (Description = "The name of the owner from the Owner Record, captured at the time this record was created.")]
         [MaxLength(255)]
         
         public string OwnerName { get; set; }
         
         /// <summary>
-        /// Gets or Sets Seniority
+        /// The seniority calculation result for this piece of equipment. The calculation is based on the &quot;numYears&quot; of service + average hours of service over the last three fiscal years - as stored in the related fields (serviceHoursLastYear, serviceHoursTwoYearsAgo serviceHoursThreeYearsAgo).
         /// </summary>
+        /// <value>The seniority calculation result for this piece of equipment. The calculation is based on the &quot;numYears&quot; of service + average hours of service over the last three fiscal years - as stored in the related fields (serviceHoursLastYear, serviceHoursTwoYearsAgo serviceHoursThreeYearsAgo).</value>
+        [MetaDataExtension (Description = "The seniority calculation result for this piece of equipment. The calculation is based on the &quot;numYears&quot; of service + average hours of service over the last three fiscal years - as stored in the related fields (serviceHoursLastYear, serviceHoursTwoYearsAgo serviceHoursThreeYearsAgo).")]
         public float? Seniority { get; set; }
         
         /// <summary>
-        /// Gets or Sets YTD
+        /// Sum of hours in the current fiscal year&#39;s time cards captured at the time this record was created.
         /// </summary>
+        /// <value>Sum of hours in the current fiscal year&#39;s time cards captured at the time this record was created.</value>
+        [MetaDataExtension (Description = "Sum of hours in the current fiscal year&#39;s time cards captured at the time this record was created.")]
         public float? YTD { get; set; }
         
         /// <summary>
-        /// Gets or Sets YTD1
+        /// Number of hours of service by this piece of equipment in the previous fiscal year
         /// </summary>
-        public float? YTD1 { get; set; }
+        /// <value>Number of hours of service by this piece of equipment in the previous fiscal year</value>
+        [MetaDataExtension (Description = "Number of hours of service by this piece of equipment in the previous fiscal year")]
+        public float? ServiceHoursLastYear { get; set; }
         
         /// <summary>
-        /// Gets or Sets YTD2
+        /// Number of hours of service by this piece of equipment in the fiscal year before the last one - e.g. if current year is FY2018 then hours in FY2016
         /// </summary>
-        public float? YTD2 { get; set; }
+        /// <value>Number of hours of service by this piece of equipment in the fiscal year before the last one - e.g. if current year is FY2018 then hours in FY2016</value>
+        [MetaDataExtension (Description = "Number of hours of service by this piece of equipment in the fiscal year before the last one - e.g. if current year is FY2018 then hours in FY2016")]
+        public float? ServiceHoursTwoYearsAgo { get; set; }
         
         /// <summary>
-        /// Gets or Sets YTD3
+        /// Number of hours of service by this piece of equipment in the fiscal year three years ago - e.g. if current year is FY2018 then hours in FY2015
         /// </summary>
-        public float? YTD3 { get; set; }
+        /// <value>Number of hours of service by this piece of equipment in the fiscal year three years ago - e.g. if current year is FY2018 then hours in FY2015</value>
+        [MetaDataExtension (Description = "Number of hours of service by this piece of equipment in the fiscal year three years ago - e.g. if current year is FY2018 then hours in FY2015")]
+        public float? ServiceHoursThreeYearsAgo { get; set; }
         
         /// <summary>
-        /// Gets or Sets CycleHrsWrk
+        /// TO BE REMOVED - Not sure why this would be needed
         /// </summary>
+        /// <value>TO BE REMOVED - Not sure why this would be needed</value>
+        [MetaDataExtension (Description = "TO BE REMOVED - Not sure why this would be needed")]
         public float? CycleHrsWrk { get; set; }
         
         /// <summary>
-        /// Gets or Sets FrozenOut
+        /// TO BE REMOVED - not to be supported in new version of HETS
         /// </summary>
+        /// <value>TO BE REMOVED - not to be supported in new version of HETS</value>
+        [MetaDataExtension (Description = "TO BE REMOVED - not to be supported in new version of HETS")]
         [MaxLength(255)]
         
         public string FrozenOut { get; set; }
         
         /// <summary>
-        /// Gets or Sets Project
+        /// TO BE REMOVED - Not sure why this would be needed
         /// </summary>
+        /// <value>TO BE REMOVED - Not sure why this would be needed</value>
+        [MetaDataExtension (Description = "TO BE REMOVED - Not sure why this would be needed")]
         public Project Project { get; set; }
         
         /// <summary>
@@ -192,15 +217,19 @@ namespace HETSAPI.Models
         public int? ProjectRefId { get; set; }
         
         /// <summary>
-        /// Gets or Sets Working
+        /// TO BE REMOVED - Not sure why this would be needed
         /// </summary>
+        /// <value>TO BE REMOVED - Not sure why this would be needed</value>
+        [MetaDataExtension (Description = "TO BE REMOVED - Not sure why this would be needed")]
         [MaxLength(255)]
         
         public string Working { get; set; }
         
         /// <summary>
-        /// Gets or Sets YearEndReg
+        /// TO BE REMOVED - Not sure why this would be needed
         /// </summary>
+        /// <value>TO BE REMOVED - Not sure why this would be needed</value>
+        [MetaDataExtension (Description = "TO BE REMOVED - Not sure why this would be needed")]
         [MaxLength(255)]
         
         public string YearEndReg { get; set; }
@@ -217,15 +246,15 @@ namespace HETSAPI.Models
             sb.Append("  GeneratedTime: ").Append(GeneratedTime).Append("\n");
             sb.Append("  LocalArea: ").Append(LocalArea).Append("\n");
             sb.Append("  Equipment: ").Append(Equipment).Append("\n");
-            sb.Append("  BlockNum: ").Append(BlockNum).Append("\n");
+            sb.Append("  BlockNumber: ").Append(BlockNumber).Append("\n");
             sb.Append("  EquipCd: ").Append(EquipCd).Append("\n");
             sb.Append("  Owner: ").Append(Owner).Append("\n");
             sb.Append("  OwnerName: ").Append(OwnerName).Append("\n");
             sb.Append("  Seniority: ").Append(Seniority).Append("\n");
             sb.Append("  YTD: ").Append(YTD).Append("\n");
-            sb.Append("  YTD1: ").Append(YTD1).Append("\n");
-            sb.Append("  YTD2: ").Append(YTD2).Append("\n");
-            sb.Append("  YTD3: ").Append(YTD3).Append("\n");
+            sb.Append("  ServiceHoursLastYear: ").Append(ServiceHoursLastYear).Append("\n");
+            sb.Append("  ServiceHoursTwoYearsAgo: ").Append(ServiceHoursTwoYearsAgo).Append("\n");
+            sb.Append("  ServiceHoursThreeYearsAgo: ").Append(ServiceHoursThreeYearsAgo).Append("\n");
             sb.Append("  CycleHrsWrk: ").Append(CycleHrsWrk).Append("\n");
             sb.Append("  FrozenOut: ").Append(FrozenOut).Append("\n");
             sb.Append("  Project: ").Append(Project).Append("\n");
@@ -289,9 +318,9 @@ namespace HETSAPI.Models
                     this.Equipment.Equals(other.Equipment)
                 ) &&                 
                 (
-                    this.BlockNum == other.BlockNum ||
-                    this.BlockNum != null &&
-                    this.BlockNum.Equals(other.BlockNum)
+                    this.BlockNumber == other.BlockNumber ||
+                    this.BlockNumber != null &&
+                    this.BlockNumber.Equals(other.BlockNumber)
                 ) &&                 
                 (
                     this.EquipCd == other.EquipCd ||
@@ -319,19 +348,19 @@ namespace HETSAPI.Models
                     this.YTD.Equals(other.YTD)
                 ) &&                 
                 (
-                    this.YTD1 == other.YTD1 ||
-                    this.YTD1 != null &&
-                    this.YTD1.Equals(other.YTD1)
+                    this.ServiceHoursLastYear == other.ServiceHoursLastYear ||
+                    this.ServiceHoursLastYear != null &&
+                    this.ServiceHoursLastYear.Equals(other.ServiceHoursLastYear)
                 ) &&                 
                 (
-                    this.YTD2 == other.YTD2 ||
-                    this.YTD2 != null &&
-                    this.YTD2.Equals(other.YTD2)
+                    this.ServiceHoursTwoYearsAgo == other.ServiceHoursTwoYearsAgo ||
+                    this.ServiceHoursTwoYearsAgo != null &&
+                    this.ServiceHoursTwoYearsAgo.Equals(other.ServiceHoursTwoYearsAgo)
                 ) &&                 
                 (
-                    this.YTD3 == other.YTD3 ||
-                    this.YTD3 != null &&
-                    this.YTD3.Equals(other.YTD3)
+                    this.ServiceHoursThreeYearsAgo == other.ServiceHoursThreeYearsAgo ||
+                    this.ServiceHoursThreeYearsAgo != null &&
+                    this.ServiceHoursThreeYearsAgo.Equals(other.ServiceHoursThreeYearsAgo)
                 ) &&                 
                 (
                     this.CycleHrsWrk == other.CycleHrsWrk ||
@@ -384,9 +413,9 @@ namespace HETSAPI.Models
                 if (this.Equipment != null)
                 {
                     hash = hash * 59 + this.Equipment.GetHashCode();
-                }                if (this.BlockNum != null)
+                }                if (this.BlockNumber != null)
                 {
-                    hash = hash * 59 + this.BlockNum.GetHashCode();
+                    hash = hash * 59 + this.BlockNumber.GetHashCode();
                 }                
                                 if (this.EquipCd != null)
                 {
@@ -408,17 +437,17 @@ namespace HETSAPI.Models
                 {
                     hash = hash * 59 + this.YTD.GetHashCode();
                 }                
-                                if (this.YTD1 != null)
+                                if (this.ServiceHoursLastYear != null)
                 {
-                    hash = hash * 59 + this.YTD1.GetHashCode();
+                    hash = hash * 59 + this.ServiceHoursLastYear.GetHashCode();
                 }                
-                                if (this.YTD2 != null)
+                                if (this.ServiceHoursTwoYearsAgo != null)
                 {
-                    hash = hash * 59 + this.YTD2.GetHashCode();
+                    hash = hash * 59 + this.ServiceHoursTwoYearsAgo.GetHashCode();
                 }                
-                                if (this.YTD3 != null)
+                                if (this.ServiceHoursThreeYearsAgo != null)
                 {
-                    hash = hash * 59 + this.YTD3.GetHashCode();
+                    hash = hash * 59 + this.ServiceHoursThreeYearsAgo.GetHashCode();
                 }                
                                 if (this.CycleHrsWrk != null)
                 {

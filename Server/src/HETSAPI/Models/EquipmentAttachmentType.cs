@@ -23,8 +23,9 @@ using System.ComponentModel.DataAnnotations;
 namespace HETSAPI.Models
 {
     /// <summary>
-    /// 
+    /// A system-wide list of Equipment Attachment Types. Each Attachment connected to a piece of equipment needs a defined and selected attachment type.
     /// </summary>
+        [MetaDataExtension (Description = "A system-wide list of Equipment Attachment Types. Each Attachment connected to a piece of equipment needs a defined and selected attachment type.")]
 
     public partial class EquipmentAttachmentType : IEquatable<EquipmentAttachmentType>
     {
@@ -39,9 +40,9 @@ namespace HETSAPI.Models
         /// <summary>
         /// Initializes a new instance of the <see cref="EquipmentAttachmentType" /> class.
         /// </summary>
-        /// <param name="Id">Primary Key (required).</param>
-        /// <param name="Code">Code.</param>
-        /// <param name="Description">Description.</param>
+        /// <param name="Id">A system-generated unique identifier for a EquipmentAttachmentType (required).</param>
+        /// <param name="Code">CHECK WITH BUSINESS - IS THIS NEEDED - A unique but human-friendly code for the Equipment Attachment Type that can be displayed on screens with little screen real estate available..</param>
+        /// <param name="Description">The name of the equipment attachment type, as specified by the HETS Clerk creating the equipment type..</param>
         public EquipmentAttachmentType(int Id, string Code = null, string Description = null)
         {   
             this.Id = Id;
@@ -50,22 +51,26 @@ namespace HETSAPI.Models
         }
 
         /// <summary>
-        /// Primary Key
+        /// A system-generated unique identifier for a EquipmentAttachmentType
         /// </summary>
-        /// <value>Primary Key</value>
-        [MetaDataExtension (Description = "Primary Key")]
+        /// <value>A system-generated unique identifier for a EquipmentAttachmentType</value>
+        [MetaDataExtension (Description = "A system-generated unique identifier for a EquipmentAttachmentType")]
         public int Id { get; set; }
         
         /// <summary>
-        /// Gets or Sets Code
+        /// CHECK WITH BUSINESS - IS THIS NEEDED - A unique but human-friendly code for the Equipment Attachment Type that can be displayed on screens with little screen real estate available.
         /// </summary>
+        /// <value>CHECK WITH BUSINESS - IS THIS NEEDED - A unique but human-friendly code for the Equipment Attachment Type that can be displayed on screens with little screen real estate available.</value>
+        [MetaDataExtension (Description = "CHECK WITH BUSINESS - IS THIS NEEDED - A unique but human-friendly code for the Equipment Attachment Type that can be displayed on screens with little screen real estate available.")]
         [MaxLength(255)]
         
         public string Code { get; set; }
         
         /// <summary>
-        /// Gets or Sets Description
+        /// The name of the equipment attachment type, as specified by the HETS Clerk creating the equipment type.
         /// </summary>
+        /// <value>The name of the equipment attachment type, as specified by the HETS Clerk creating the equipment type.</value>
+        [MetaDataExtension (Description = "The name of the equipment attachment type, as specified by the HETS Clerk creating the equipment type.")]
         [MaxLength(255)]
         
         public string Description { get; set; }

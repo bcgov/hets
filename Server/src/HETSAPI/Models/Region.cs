@@ -23,8 +23,9 @@ using System.ComponentModel.DataAnnotations;
 namespace HETSAPI.Models
 {
     /// <summary>
-    /// 
+    /// The MOTI-defined Regions - must match the official MOTI List
     /// </summary>
+        [MetaDataExtension (Description = "The MOTI-defined Regions - must match the official MOTI List")]
 
     public partial class Region : IEquatable<Region>
     {
@@ -39,25 +40,27 @@ namespace HETSAPI.Models
         /// <summary>
         /// Initializes a new instance of the <see cref="Region" /> class.
         /// </summary>
-        /// <param name="Id">Primary Key (required).</param>
-        /// <param name="MinistryRegionID">The Ministry ID for the Region.</param>
-        /// <param name="Name">The name of the Region.</param>
-        /// <param name="StartDate">The effective date of the Region - NOT CURRENTLY ENFORCED.</param>
-        /// <param name="EndDate">The end date of the Region; null if active - NOT CURRENTLY ENFORCED.</param>
-        public Region(int Id, int? MinistryRegionID = null, string Name = null, DateTime? StartDate = null, DateTime? EndDate = null)
+        /// <param name="Id">A system-generated unique identifier for a Region (required).</param>
+        /// <param name="MinistryRegionID">The Ministry ID for the Region (required).</param>
+        /// <param name="Name">The name of the Region (required).</param>
+        /// <param name="StartDate">The effective date of the Region record - NOT CURRENTLY ENFORCED IN HETS.</param>
+        /// <param name="EndDate">The end date of the Region record; null if active - NOT CURRENTLY ENFORCED IN HETS.</param>
+        public Region(int Id, int MinistryRegionID, string Name, DateTime? StartDate = null, DateTime? EndDate = null)
         {   
             this.Id = Id;
             this.MinistryRegionID = MinistryRegionID;
             this.Name = Name;
+
+
             this.StartDate = StartDate;
             this.EndDate = EndDate;
         }
 
         /// <summary>
-        /// Primary Key
+        /// A system-generated unique identifier for a Region
         /// </summary>
-        /// <value>Primary Key</value>
-        [MetaDataExtension (Description = "Primary Key")]
+        /// <value>A system-generated unique identifier for a Region</value>
+        [MetaDataExtension (Description = "A system-generated unique identifier for a Region")]
         public int Id { get; set; }
         
         /// <summary>
@@ -65,7 +68,7 @@ namespace HETSAPI.Models
         /// </summary>
         /// <value>The Ministry ID for the Region</value>
         [MetaDataExtension (Description = "The Ministry ID for the Region")]
-        public int? MinistryRegionID { get; set; }
+        public int MinistryRegionID { get; set; }
         
         /// <summary>
         /// The name of the Region
@@ -77,17 +80,17 @@ namespace HETSAPI.Models
         public string Name { get; set; }
         
         /// <summary>
-        /// The effective date of the Region - NOT CURRENTLY ENFORCED
+        /// The effective date of the Region record - NOT CURRENTLY ENFORCED IN HETS
         /// </summary>
-        /// <value>The effective date of the Region - NOT CURRENTLY ENFORCED</value>
-        [MetaDataExtension (Description = "The effective date of the Region - NOT CURRENTLY ENFORCED")]
+        /// <value>The effective date of the Region record - NOT CURRENTLY ENFORCED IN HETS</value>
+        [MetaDataExtension (Description = "The effective date of the Region record - NOT CURRENTLY ENFORCED IN HETS")]
         public DateTime? StartDate { get; set; }
         
         /// <summary>
-        /// The end date of the Region; null if active - NOT CURRENTLY ENFORCED
+        /// The end date of the Region record; null if active - NOT CURRENTLY ENFORCED IN HETS
         /// </summary>
-        /// <value>The end date of the Region; null if active - NOT CURRENTLY ENFORCED</value>
-        [MetaDataExtension (Description = "The end date of the Region; null if active - NOT CURRENTLY ENFORCED")]
+        /// <value>The end date of the Region record; null if active - NOT CURRENTLY ENFORCED IN HETS</value>
+        [MetaDataExtension (Description = "The end date of the Region record; null if active - NOT CURRENTLY ENFORCED IN HETS")]
         public DateTime? EndDate { get; set; }
         
         /// <summary>
@@ -147,7 +150,6 @@ namespace HETSAPI.Models
                 ) &&                 
                 (
                     this.MinistryRegionID == other.MinistryRegionID ||
-                    this.MinistryRegionID != null &&
                     this.MinistryRegionID.Equals(other.MinistryRegionID)
                 ) &&                 
                 (
@@ -179,11 +181,8 @@ namespace HETSAPI.Models
                 int hash = 41;
                 // Suitable nullity checks
                                    
-                hash = hash * 59 + this.Id.GetHashCode();                if (this.MinistryRegionID != null)
-                {
-                    hash = hash * 59 + this.MinistryRegionID.GetHashCode();
-                }                
-                                if (this.Name != null)
+                hash = hash * 59 + this.Id.GetHashCode();                                   
+                hash = hash * 59 + this.MinistryRegionID.GetHashCode();                if (this.Name != null)
                 {
                     hash = hash * 59 + this.Name.GetHashCode();
                 }                

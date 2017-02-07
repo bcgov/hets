@@ -258,7 +258,7 @@ paths:
   /equipmentTypes/bulk:
     post:
       tags:
-        - EquipmentTypes
+        - EquipmentType
       consumes:
         - application/json
       produces:
@@ -275,7 +275,7 @@ paths:
               $ref: "#/definitions/EquipmentType"
       responses:
         201:
-          description: EquipmentTypes created
+          description: EquipmentType created
   /equipmentAttachmentTypes:
     get:
       tags:
@@ -2981,7 +2981,7 @@ paths:
             $ref: "#/definitions/UserFavourite"
   /users/current/favourites/{favouritetype}:
     get:
-      description: Returns a user's favourites of a given type.  If type is empty, returns all.
+      description: Returns a users favourites of a given type.  If type is empty, returns all.
       tags:
         - CurrentUser
       produces:
@@ -3001,6 +3001,7 @@ paths:
         - name: favouritetype
           in: path
           description: type of favourite to return
+          required: true
           type: string
   /users/current/favourites/{id}/delete:
     post:
@@ -3765,7 +3766,7 @@ definitions:
           $ref: '#/definitions/SeniorityAudit'
   DumpTruck:
     type: object
-    description: Additional attributes of a piece of equipment stored because it is designated as a Dump Truck. Historically, there was a perceived need to track a lot of informatiion about a dump truck, but in practice, few fields are being completed by users. Places for the attributes are being maintained, but the UI is prompting only for a couple of the fields, and only those fields are likely to be populated. Additional basic information about the attributes can be found on Wikipedia, BC-specific details on MOTI&#39;s CVSE website and http-&#x2F;&#x2F;www.bclaws.ca&#x2F;EPLibraries&#x2F;bclaws_new&#x2F;document&#x2F;ID&#x2F;freeside&#x2F;30_78#AppendicesAtoK, Appendix A and  B. Any metrics information provided here is from the Equipment Owner.
+    description: Additional attributes of a piece of equipment stored because it is designated as a Dump Truck. Historically, there was a perceived need to track a lot of informatiion about a dump truck, but in practice, few fields are being completed by users. Places for the attributes are being maintained, but the UI is prompting only for a couple of the fields, and only those fields are likely to be populated. Additional basic information about the attributes can be found on Wikipedia, BC-specific details on MOTI&#39;s CVSE website and www.bclaws.ca&#x2F;EPLibraries&#x2F;bclaws_new&#x2F;document&#x2F;ID&#x2F;freeside&#x2F;30_78#AppendicesAtoK, Appendix A and  B. Any metrics information provided here is from the Equipment Owner.
     required:
       - id
     properties:
@@ -3867,7 +3868,7 @@ definitions:
       boxHeight:
         type: string
         maxLength: 255
-        description: &quot;The height of the box, in metres. See- http-&#x2F;&#x2F;www.bclaws.ca&#x2F;EPLibraries&#x2F;bclaws_new&#x2F;document&#x2F;ID&#x2F;freeside&#x2F;30_7, appendix B&quot;
+        description: The height of the box, in metres. See- http-&#x2F;&#x2F;www.bclaws.ca&#x2F;EPLibraries&#x2F;bclaws_new&#x2F;document&#x2F;ID&#x2F;freeside&#x2F;30_7, appendix B
       boxCapacity:
         type: string
         maxLength: 255
@@ -3875,15 +3876,15 @@ definitions:
       trailerBoxLength:
         type: string
         maxLength: 255
-        description: &quot;The length of the trailer box, in metres. See- http-&#x2F;&#x2F;www.bclaws.ca&#x2F;EPLibraries&#x2F;bclaws_new&#x2F;document&#x2F;ID&#x2F;freeside&#x2F;30_7, appendix B&quot;
+        description: The length of the trailer box, in metres. See www.bclaws.ca&#x2F;EPLibraries&#x2F;bclaws_new&#x2F;document&#x2F;ID&#x2F;freeside&#x2F;30_7, appendix B
       trailerBoxWidth:
         type: string
         maxLength: 255
-        description: &quot;The width of the trailer box, in metres. See- http-&#x2F;&#x2F;www.bclaws.ca&#x2F;EPLibraries&#x2F;bclaws_new&#x2F;document&#x2F;ID&#x2F;freeside&#x2F;30_7, appendix B&quot;
+        description: The width of the trailer box, in metres. See www.bclaws.ca&#x2F;EPLibraries&#x2F;bclaws_new&#x2F;document&#x2F;ID&#x2F;freeside&#x2F;30_7, appendix B
       trailerBoxHeight:
         type: string
         maxLength: 255
-        description: &quot;The height of the trailer box, in metres. See- http-&#x2F;&#x2F;www.bclaws.ca&#x2F;EPLibraries&#x2F;bclaws_new&#x2F;document&#x2F;ID&#x2F;freeside&#x2F;30_7, appendix B&quot;
+        description: The height of the trailer box, in metres. See www.bclaws.ca&#x2F;EPLibraries&#x2F;bclaws_new&#x2F;document&#x2F;ID&#x2F;freeside&#x2F;30_7, appendix B
       trailerBoxCapacity:
         type: string
         maxLength: 255
@@ -4375,11 +4376,11 @@ definitions:
       startDate:
         type: string
         format: date-time
-        description: The effective date of the Region record - NOT CURRENTLY ENFORCED IN SCHOOL BUS
+        description: The effective date of the Region record - NOT CURRENTLY ENFORCED IN HETS
       endDate:
         type: string
         format: date-time
-        description: The end date of the Region record; null if active - NOT CURRENTLY ENFORCED IN SCHOOL BUS
+        description: The end date of the Region record; null if active - NOT CURRENTLY ENFORCED IN HETS
   District:
     type: object
     description: The MOTI-defined Districts - must match the official MOTI List
@@ -4407,11 +4408,11 @@ definitions:
       startDate:
         type: string
         format: date-time
-        description: The effective date of the District record - NOT CURRENTLY ENFORCED IN SCHOOL BUS
+        description: The effective date of the District record - NOT CURRENTLY ENFORCED IN HETS
       endDate:
         type: string
         format: date-time
-        description: The end date of the District record; null if active - NOT CURRENTLY ENFORCED IN SCHOOL BUS
+        description: The end date of the District record; null if active - NOT CURRENTLY ENFORCED IN HETS
   ServiceArea:
     type: object
     description: The MOTI-defined Service Areas - must match the official MOTI List
@@ -4439,11 +4440,11 @@ definitions:
       startDate:
         type: string
         format: date-time
-        description: The effective date of the Service Area record - NOT CURRENTLY ENFORCED IN SCHOOL BUS
+        description: The effective date of the Service Area record - NOT CURRENTLY ENFORCED IN HETS
       endDate:
         type: string
         format: date-time
-        description: The end date of the Service Area record; null if active - NOT CURRENTLY ENFORCED IN SCHOOL BUS
+        description: The end date of the Service Area record; null if active - NOT CURRENTLY ENFORCED IN HETS
   City:
     type: object
     description: A list of cities in BC. Authoritative source to be determined.
