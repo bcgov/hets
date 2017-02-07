@@ -55,7 +55,7 @@ namespace HETSAPI.Test
 
             // create a new object.
             DumpTruck dumptruck = new DumpTruck();
-            dumptruck.BellyDump = initialName;
+            dumptruck.BoxCapacity = initialName;
             string jsonString = dumptruck.ToJson();
 
             request.Content = new StringContent(jsonString, Encoding.UTF8, "application/json");
@@ -70,7 +70,7 @@ namespace HETSAPI.Test
             // get the id
             var id = dumptruck.Id;
             // change the name
-            dumptruck.BellyDump = changedName;
+            dumptruck.BoxCapacity = changedName;
 
             // now do an update.
             request = new HttpRequestMessage(HttpMethod.Put, "/api/dumptrucks/" + id);
@@ -88,7 +88,7 @@ namespace HETSAPI.Test
             dumptruck = JsonConvert.DeserializeObject<DumpTruck>(jsonString);
 
             // verify the change went through.
-            Assert.Equal(dumptruck.BellyDump, changedName);
+            Assert.Equal(dumptruck.BoxCapacity, changedName);
 
             // do a delete.
             request = new HttpRequestMessage(HttpMethod.Post, "/api/dumptrucks/" + id + "/delete");

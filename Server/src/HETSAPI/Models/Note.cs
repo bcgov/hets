@@ -23,9 +23,9 @@ using System.ComponentModel.DataAnnotations;
 namespace HETSAPI.Models
 {
     /// <summary>
-    /// Notes entered by users.
+    /// Notes entered by users about instance of entities - e.g. School Buses and School Bus Owners
     /// </summary>
-        [MetaDataExtension (Description = "Notes entered by users.")]
+        [MetaDataExtension (Description = "Notes entered by users about instance of entities - e.g. School Buses and School Bus Owners")]
 
     public partial class Note : IEquatable<Note>
     {
@@ -40,37 +40,38 @@ namespace HETSAPI.Models
         /// <summary>
         /// Initializes a new instance of the <see cref="Note" /> class.
         /// </summary>
-        /// <param name="Id">Primary Key (required).</param>
-        /// <param name="_Note">The contents of the note..</param>
-        /// <param name="IsNoLongerRelevant">A user set flag that the note is no longer relevant. Allows the note to be retained for historical reasons, but identified to the user as no longer relevant..</param>
-        public Note(int Id, string _Note = null, bool? IsNoLongerRelevant = null)
+        /// <param name="Id">A system-generated unique identifier for a Note (required).</param>
+        /// <param name="Text">Notes entered by users about instance of entities - e.g. School Buses and School Bus Owners (required).</param>
+        /// <param name="IsNoLongerRelevant">A user set flag that the note is no longer relevant. Allows the note to be retained for historical reasons,  but identified to other users as no longer applicable..</param>
+        public Note(int Id, string Text, bool? IsNoLongerRelevant = null)
         {   
             this.Id = Id;
-            this._Note = _Note;
+            this.Text = Text;
+
             this.IsNoLongerRelevant = IsNoLongerRelevant;
         }
 
         /// <summary>
-        /// Primary Key
+        /// A system-generated unique identifier for a Note
         /// </summary>
-        /// <value>Primary Key</value>
-        [MetaDataExtension (Description = "Primary Key")]
+        /// <value>A system-generated unique identifier for a Note</value>
+        [MetaDataExtension (Description = "A system-generated unique identifier for a Note")]
         public int Id { get; set; }
         
         /// <summary>
-        /// The contents of the note.
+        /// Notes entered by users about instance of entities - e.g. School Buses and School Bus Owners
         /// </summary>
-        /// <value>The contents of the note.</value>
-        [MetaDataExtension (Description = "The contents of the note.")]
+        /// <value>Notes entered by users about instance of entities - e.g. School Buses and School Bus Owners</value>
+        [MetaDataExtension (Description = "Notes entered by users about instance of entities - e.g. School Buses and School Bus Owners")]
         [MaxLength(2048)]
         
-        public string _Note { get; set; }
+        public string Text { get; set; }
         
         /// <summary>
-        /// A user set flag that the note is no longer relevant. Allows the note to be retained for historical reasons, but identified to the user as no longer relevant.
+        /// A user set flag that the note is no longer relevant. Allows the note to be retained for historical reasons,  but identified to other users as no longer applicable.
         /// </summary>
-        /// <value>A user set flag that the note is no longer relevant. Allows the note to be retained for historical reasons, but identified to the user as no longer relevant.</value>
-        [MetaDataExtension (Description = "A user set flag that the note is no longer relevant. Allows the note to be retained for historical reasons, but identified to the user as no longer relevant.")]
+        /// <value>A user set flag that the note is no longer relevant. Allows the note to be retained for historical reasons,  but identified to other users as no longer applicable.</value>
+        [MetaDataExtension (Description = "A user set flag that the note is no longer relevant. Allows the note to be retained for historical reasons,  but identified to other users as no longer applicable.")]
         public bool? IsNoLongerRelevant { get; set; }
         
         /// <summary>
@@ -82,7 +83,7 @@ namespace HETSAPI.Models
             var sb = new StringBuilder();
             sb.Append("class Note {\n");
             sb.Append("  Id: ").Append(Id).Append("\n");
-            sb.Append("  _Note: ").Append(_Note).Append("\n");
+            sb.Append("  Text: ").Append(Text).Append("\n");
             sb.Append("  IsNoLongerRelevant: ").Append(IsNoLongerRelevant).Append("\n");
             sb.Append("}\n");
             return sb.ToString();
@@ -127,9 +128,9 @@ namespace HETSAPI.Models
                     this.Id.Equals(other.Id)
                 ) &&                 
                 (
-                    this._Note == other._Note ||
-                    this._Note != null &&
-                    this._Note.Equals(other._Note)
+                    this.Text == other.Text ||
+                    this.Text != null &&
+                    this.Text.Equals(other.Text)
                 ) &&                 
                 (
                     this.IsNoLongerRelevant == other.IsNoLongerRelevant ||
@@ -150,9 +151,9 @@ namespace HETSAPI.Models
                 int hash = 41;
                 // Suitable nullity checks
                                    
-                hash = hash * 59 + this.Id.GetHashCode();                if (this._Note != null)
+                hash = hash * 59 + this.Id.GetHashCode();                if (this.Text != null)
                 {
-                    hash = hash * 59 + this._Note.GetHashCode();
+                    hash = hash * 59 + this.Text.GetHashCode();
                 }                
                                 if (this.IsNoLongerRelevant != null)
                 {

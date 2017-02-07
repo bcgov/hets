@@ -23,8 +23,9 @@ using System.ComponentModel.DataAnnotations;
 namespace HETSAPI.Models
 {
     /// <summary>
-    /// 
+    /// Information about the hiring of a specific piece of equipment to satisfy part or all of a request from a project.
     /// </summary>
+        [MetaDataExtension (Description = "Information about the hiring of a specific piece of equipment to satisfy part or all of a request from a project.")]
 
     public partial class RentalAgreement : IEquatable<RentalAgreement>
     {
@@ -39,7 +40,7 @@ namespace HETSAPI.Models
         /// <summary>
         /// Initializes a new instance of the <see cref="RentalAgreement" /> class.
         /// </summary>
-        /// <param name="Id">Primary Key (required).</param>
+        /// <param name="Id">A system-generated unique identifier for a RentalAgreement (required).</param>
         /// <param name="Equipment">Equipment.</param>
         /// <param name="Project">Project.</param>
         /// <param name="TimeRecords">TimeRecords.</param>
@@ -52,10 +53,10 @@ namespace HETSAPI.Models
         }
 
         /// <summary>
-        /// Primary Key
+        /// A system-generated unique identifier for a RentalAgreement
         /// </summary>
-        /// <value>Primary Key</value>
-        [MetaDataExtension (Description = "Primary Key")]
+        /// <value>A system-generated unique identifier for a RentalAgreement</value>
+        [MetaDataExtension (Description = "A system-generated unique identifier for a RentalAgreement")]
         public int Id { get; set; }
         
         /// <summary>

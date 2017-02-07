@@ -73,7 +73,7 @@ namespace HETSAPI.Controllers
         [HttpGet]
         [Route("/api/roles")]
         [SwaggerOperation("RolesGet")]
-        [SwaggerResponse(200, type: typeof(List<RoleViewModel>))]
+        [SwaggerResponse(200, type: typeof(List<Role>))]
         public virtual IActionResult RolesGet()
         {
             return this._service.RolesGetAsync();
@@ -102,7 +102,7 @@ namespace HETSAPI.Controllers
         [HttpGet]
         [Route("/api/roles/{id}")]
         [SwaggerOperation("RolesIdGet")]
-        [SwaggerResponse(200, type: typeof(RoleViewModel))]
+        [SwaggerResponse(200, type: typeof(Role))]
         public virtual IActionResult RolesIdGet([FromRoute]int id)
         {
             return this._service.RolesIdGetAsync(id);
@@ -167,8 +167,8 @@ namespace HETSAPI.Controllers
         [HttpPut]
         [Route("/api/roles/{id}")]
         [SwaggerOperation("RolesIdPut")]
-        [SwaggerResponse(200, type: typeof(RoleViewModel))]
-        public virtual IActionResult RolesIdPut([FromRoute]int id, [FromBody]RoleViewModel item)
+        [SwaggerResponse(200, type: typeof(Role))]
+        public virtual IActionResult RolesIdPut([FromRoute]int id, [FromBody]Role item)
         {
             return this._service.RolesIdPutAsync(id, item);
         }
@@ -213,8 +213,8 @@ namespace HETSAPI.Controllers
         [HttpPost]
         [Route("/api/roles")]
         [SwaggerOperation("RolesPost")]
-        [SwaggerResponse(200, type: typeof(RoleViewModel))]
-        public virtual IActionResult RolesPost([FromBody]RoleViewModel item)
+        [SwaggerResponse(200, type: typeof(Role))]
+        public virtual IActionResult RolesPost([FromBody]Role item)
         {
             return this._service.RolesPostAsync(item);
         }

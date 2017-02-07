@@ -54,7 +54,7 @@ namespace HETSAPI.Test
 
             // create a new object.
             Project project = new Project();
-            project.JobDesc1 = initialName;
+            project.Description = initialName;
             string jsonString = project.ToJson();
 
             request.Content = new StringContent(jsonString, Encoding.UTF8, "application/json");
@@ -69,7 +69,7 @@ namespace HETSAPI.Test
             // get the id
             var id = project.Id;
             // change the name
-            project.JobDesc1 = changedName;
+            project.Description = changedName;
 
             // now do an update.
             request = new HttpRequestMessage(HttpMethod.Put, "/api/projects/" + id);
@@ -87,7 +87,7 @@ namespace HETSAPI.Test
             project = JsonConvert.DeserializeObject<Project>(jsonString);
 
             // verify the change went through.
-            Assert.Equal(project.JobDesc1, changedName);
+            Assert.Equal(project.Description, changedName);
 
             // do a delete.
             request = new HttpRequestMessage(HttpMethod.Post, "/api/projects/" + id + "/delete");

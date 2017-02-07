@@ -23,8 +23,9 @@ using System.ComponentModel.DataAnnotations;
 namespace HETSAPI.Models
 {
     /// <summary>
-    /// 
+    /// The set of Provincial Construction Projects by Service Area that contact HETS Clerks to request equipment. The same Construction Project may be in the table multiple times - once per affected Service Area. Limited information is maintained on the projects - primarily a name, a collection of contacts and a collections of equipment rentals.
     /// </summary>
+        [MetaDataExtension (Description = "The set of Provincial Construction Projects by Service Area that contact HETS Clerks to request equipment. The same Construction Project may be in the table multiple times - once per affected Service Area. Limited information is maintained on the projects - primarily a name, a collection of contacts and a collections of equipment rentals.")]
 
     public partial class Project : IEquatable<Project>
     {
@@ -39,24 +40,22 @@ namespace HETSAPI.Models
         /// <summary>
         /// Initializes a new instance of the <see cref="Project" /> class.
         /// </summary>
-        /// <param name="Id">Primary Key (required).</param>
-        /// <param name="ServiceArea">ServiceArea.</param>
-        /// <param name="ProjectNum">ProjectNum.</param>
-        /// <param name="JobDesc1">JobDesc1.</param>
-        /// <param name="JobDesc2">JobDesc2.</param>
+        /// <param name="Id">A system-generated unique identifier for a Project (required).</param>
+        /// <param name="ServiceArea">The service Area for which this project has requested hired equipment..</param>
+        /// <param name="ProvincialProjectNumber">TO BE VERIFIED - The Provincial charge code for the equipment hiring related to this project. This will be the same across multiple service areas that provide equipment for the same Project..</param>
+        /// <param name="Description">A description entered by the HETS Clerk creating the Project record about the project. The description may contain other metadata about the project needed to process the requests related to the project..</param>
         /// <param name="Requests">Requests.</param>
-        /// <param name="PrimaryContact">Link to the designated Primary Contact..</param>
+        /// <param name="PrimaryContact">Link to the designated Primary Contact for the Project - usually the Project Manager requesting to hire equipment..</param>
         /// <param name="Contacts">Contacts.</param>
         /// <param name="Notes">Notes.</param>
         /// <param name="Attachments">Attachments.</param>
         /// <param name="History">History.</param>
-        public Project(int Id, ServiceArea ServiceArea = null, string ProjectNum = null, string JobDesc1 = null, string JobDesc2 = null, List<Request> Requests = null, Contact PrimaryContact = null, List<Contact> Contacts = null, List<Note> Notes = null, List<Attachment> Attachments = null, List<History> History = null)
+        public Project(int Id, ServiceArea ServiceArea = null, string ProvincialProjectNumber = null, string Description = null, List<Request> Requests = null, Contact PrimaryContact = null, List<Contact> Contacts = null, List<Note> Notes = null, List<Attachment> Attachments = null, List<History> History = null)
         {   
             this.Id = Id;
             this.ServiceArea = ServiceArea;
-            this.ProjectNum = ProjectNum;
-            this.JobDesc1 = JobDesc1;
-            this.JobDesc2 = JobDesc2;
+            this.ProvincialProjectNumber = ProvincialProjectNumber;
+            this.Description = Description;
             this.Requests = Requests;
             this.PrimaryContact = PrimaryContact;
             this.Contacts = Contacts;
@@ -66,15 +65,17 @@ namespace HETSAPI.Models
         }
 
         /// <summary>
-        /// Primary Key
+        /// A system-generated unique identifier for a Project
         /// </summary>
-        /// <value>Primary Key</value>
-        [MetaDataExtension (Description = "Primary Key")]
+        /// <value>A system-generated unique identifier for a Project</value>
+        [MetaDataExtension (Description = "A system-generated unique identifier for a Project")]
         public int Id { get; set; }
         
         /// <summary>
-        /// Gets or Sets ServiceArea
+        /// The service Area for which this project has requested hired equipment.
         /// </summary>
+        /// <value>The service Area for which this project has requested hired equipment.</value>
+        [MetaDataExtension (Description = "The service Area for which this project has requested hired equipment.")]
         public ServiceArea ServiceArea { get; set; }
         
         /// <summary>
@@ -84,25 +85,22 @@ namespace HETSAPI.Models
         public int? ServiceAreaRefId { get; set; }
         
         /// <summary>
-        /// Gets or Sets ProjectNum
+        /// TO BE VERIFIED - The Provincial charge code for the equipment hiring related to this project. This will be the same across multiple service areas that provide equipment for the same Project.
         /// </summary>
+        /// <value>TO BE VERIFIED - The Provincial charge code for the equipment hiring related to this project. This will be the same across multiple service areas that provide equipment for the same Project.</value>
+        [MetaDataExtension (Description = "TO BE VERIFIED - The Provincial charge code for the equipment hiring related to this project. This will be the same across multiple service areas that provide equipment for the same Project.")]
         [MaxLength(255)]
         
-        public string ProjectNum { get; set; }
+        public string ProvincialProjectNumber { get; set; }
         
         /// <summary>
-        /// Gets or Sets JobDesc1
+        /// A description entered by the HETS Clerk creating the Project record about the project. The description may contain other metadata about the project needed to process the requests related to the project.
         /// </summary>
-        [MaxLength(255)]
+        /// <value>A description entered by the HETS Clerk creating the Project record about the project. The description may contain other metadata about the project needed to process the requests related to the project.</value>
+        [MetaDataExtension (Description = "A description entered by the HETS Clerk creating the Project record about the project. The description may contain other metadata about the project needed to process the requests related to the project.")]
+        [MaxLength(2048)]
         
-        public string JobDesc1 { get; set; }
-        
-        /// <summary>
-        /// Gets or Sets JobDesc2
-        /// </summary>
-        [MaxLength(255)]
-        
-        public string JobDesc2 { get; set; }
+        public string Description { get; set; }
         
         /// <summary>
         /// Gets or Sets Requests
@@ -110,10 +108,10 @@ namespace HETSAPI.Models
         public List<Request> Requests { get; set; }
         
         /// <summary>
-        /// Link to the designated Primary Contact.
+        /// Link to the designated Primary Contact for the Project - usually the Project Manager requesting to hire equipment.
         /// </summary>
-        /// <value>Link to the designated Primary Contact.</value>
-        [MetaDataExtension (Description = "Link to the designated Primary Contact.")]
+        /// <value>Link to the designated Primary Contact for the Project - usually the Project Manager requesting to hire equipment.</value>
+        [MetaDataExtension (Description = "Link to the designated Primary Contact for the Project - usually the Project Manager requesting to hire equipment.")]
         public Contact PrimaryContact { get; set; }
         
         /// <summary>
@@ -152,9 +150,8 @@ namespace HETSAPI.Models
             sb.Append("class Project {\n");
             sb.Append("  Id: ").Append(Id).Append("\n");
             sb.Append("  ServiceArea: ").Append(ServiceArea).Append("\n");
-            sb.Append("  ProjectNum: ").Append(ProjectNum).Append("\n");
-            sb.Append("  JobDesc1: ").Append(JobDesc1).Append("\n");
-            sb.Append("  JobDesc2: ").Append(JobDesc2).Append("\n");
+            sb.Append("  ProvincialProjectNumber: ").Append(ProvincialProjectNumber).Append("\n");
+            sb.Append("  Description: ").Append(Description).Append("\n");
             sb.Append("  Requests: ").Append(Requests).Append("\n");
             sb.Append("  PrimaryContact: ").Append(PrimaryContact).Append("\n");
             sb.Append("  Contacts: ").Append(Contacts).Append("\n");
@@ -209,19 +206,14 @@ namespace HETSAPI.Models
                     this.ServiceArea.Equals(other.ServiceArea)
                 ) &&                 
                 (
-                    this.ProjectNum == other.ProjectNum ||
-                    this.ProjectNum != null &&
-                    this.ProjectNum.Equals(other.ProjectNum)
+                    this.ProvincialProjectNumber == other.ProvincialProjectNumber ||
+                    this.ProvincialProjectNumber != null &&
+                    this.ProvincialProjectNumber.Equals(other.ProvincialProjectNumber)
                 ) &&                 
                 (
-                    this.JobDesc1 == other.JobDesc1 ||
-                    this.JobDesc1 != null &&
-                    this.JobDesc1.Equals(other.JobDesc1)
-                ) &&                 
-                (
-                    this.JobDesc2 == other.JobDesc2 ||
-                    this.JobDesc2 != null &&
-                    this.JobDesc2.Equals(other.JobDesc2)
+                    this.Description == other.Description ||
+                    this.Description != null &&
+                    this.Description.Equals(other.Description)
                 ) && 
                 (
                     this.Requests == other.Requests ||
@@ -271,17 +263,13 @@ namespace HETSAPI.Models
                 if (this.ServiceArea != null)
                 {
                     hash = hash * 59 + this.ServiceArea.GetHashCode();
-                }                if (this.ProjectNum != null)
+                }                if (this.ProvincialProjectNumber != null)
                 {
-                    hash = hash * 59 + this.ProjectNum.GetHashCode();
+                    hash = hash * 59 + this.ProvincialProjectNumber.GetHashCode();
                 }                
-                                if (this.JobDesc1 != null)
+                                if (this.Description != null)
                 {
-                    hash = hash * 59 + this.JobDesc1.GetHashCode();
-                }                
-                                if (this.JobDesc2 != null)
-                {
-                    hash = hash * 59 + this.JobDesc2.GetHashCode();
+                    hash = hash * 59 + this.Description.GetHashCode();
                 }                
                                    
                 if (this.Requests != null)

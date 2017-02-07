@@ -23,8 +23,9 @@ using System.ComponentModel.DataAnnotations;
 namespace HETSAPI.Models
 {
     /// <summary>
-    /// 
+    /// A list of Equipment Attachments for pieces of equipment that have them. In the BC Bid system, attachments are free form, but in this model will try to have a predefined attachments type list.
     /// </summary>
+        [MetaDataExtension (Description = "A list of Equipment Attachments for pieces of equipment that have them. In the BC Bid system, attachments are free form, but in this model will try to have a predefined attachments type list.")]
 
     public partial class EquipmentAttachment : IEquatable<EquipmentAttachment>
     {
@@ -39,11 +40,11 @@ namespace HETSAPI.Models
         /// <summary>
         /// Initializes a new instance of the <see cref="EquipmentAttachment" /> class.
         /// </summary>
-        /// <param name="Id">Primary Key (required).</param>
+        /// <param name="Id">A system-generated unique identifier for an EquipmentAttachment (required).</param>
         /// <param name="Equipment">Equipment.</param>
-        /// <param name="Type">The type of the equipment attachment..</param>
-        /// <param name="SeqNum">SeqNum.</param>
-        /// <param name="Description">Description.</param>
+        /// <param name="Type">Type.</param>
+        /// <param name="SeqNum">TO BE REMOVED - likely not needed. Will talk to business..</param>
+        /// <param name="Description">A description of the equipment attachment if the Equipment Attachment Type is insufficient..</param>
         public EquipmentAttachment(int Id, Equipment Equipment = null, EquipmentAttachmentType Type = null, int? SeqNum = null, string Description = null)
         {   
             this.Id = Id;
@@ -54,10 +55,10 @@ namespace HETSAPI.Models
         }
 
         /// <summary>
-        /// Primary Key
+        /// A system-generated unique identifier for an EquipmentAttachment
         /// </summary>
-        /// <value>Primary Key</value>
-        [MetaDataExtension (Description = "Primary Key")]
+        /// <value>A system-generated unique identifier for an EquipmentAttachment</value>
+        [MetaDataExtension (Description = "A system-generated unique identifier for an EquipmentAttachment")]
         public int Id { get; set; }
         
         /// <summary>
@@ -72,10 +73,8 @@ namespace HETSAPI.Models
         public int? EquipmentRefId { get; set; }
         
         /// <summary>
-        /// The type of the equipment attachment.
+        /// Gets or Sets Type
         /// </summary>
-        /// <value>The type of the equipment attachment.</value>
-        [MetaDataExtension (Description = "The type of the equipment attachment.")]
         public EquipmentAttachmentType Type { get; set; }
         
         /// <summary>
@@ -85,13 +84,17 @@ namespace HETSAPI.Models
         public int? TypeRefId { get; set; }
         
         /// <summary>
-        /// Gets or Sets SeqNum
+        /// TO BE REMOVED - likely not needed. Will talk to business.
         /// </summary>
+        /// <value>TO BE REMOVED - likely not needed. Will talk to business.</value>
+        [MetaDataExtension (Description = "TO BE REMOVED - likely not needed. Will talk to business.")]
         public int? SeqNum { get; set; }
         
         /// <summary>
-        /// Gets or Sets Description
+        /// A description of the equipment attachment if the Equipment Attachment Type is insufficient.
         /// </summary>
+        /// <value>A description of the equipment attachment if the Equipment Attachment Type is insufficient.</value>
+        [MetaDataExtension (Description = "A description of the equipment attachment if the Equipment Attachment Type is insufficient.")]
         [MaxLength(255)]
         
         public string Description { get; set; }
