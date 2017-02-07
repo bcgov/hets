@@ -52,28 +52,7 @@ paths:
               type: string
               format: url
           schema:
-            $ref: "#/definitions/Equipment"
-  /equipment/bulk:
-    post:
-      tags:
-        - Equipment
-      consumes:
-        - application/json
-      produces:
-        - text/plain
-        - application/json
-        - text/json
-      parameters:
-        - name: items
-          in: body
-          required: true
-          schema:
-            type: array
-            items:
-              $ref: "#/definitions/Equipment"
-      responses:
-        201:
-          description: Equipment created
+            $ref: "#/definitions/Equipment"  
   /equipment/{id}:
     get:
       tags:
@@ -143,6 +122,28 @@ paths:
           description: id of Equipment to delete
           required: true
           type: integer
+
+  /equipment/bulk:
+    post:
+      tags:
+        - Equipment
+      consumes:
+        - application/json
+      produces:
+        - text/plain
+        - application/json
+        - text/json
+      parameters:
+        - name: items
+          in: body
+          required: true
+          schema:
+            type: array
+            items:
+              $ref: "#/definitions/Equipment"
+      responses:
+        201:
+          description: Equipment created
   /equipmentTypes:
     get:
       tags:
@@ -183,28 +184,7 @@ paths:
               type: string
               format: url
           schema:
-            $ref: "#/definitions/EquipmentType"
-  /equipmentTypes/bulk:
-    post:
-      tags:
-        - EquipmentType
-      consumes:
-        - application/json
-      produces:
-        - text/plain
-        - application/json
-        - text/json
-      parameters:
-        - name: items
-          in: body
-          required: true
-          schema:
-            type: array
-            items:
-              $ref: "#/definitions/EquipmentType"
-      responses:
-        201:
-          description: EquipmentType created
+            $ref: "#/definitions/EquipmentType"  
   /equipmentTypes/{id}:
     get:
       tags:
@@ -274,6 +254,28 @@ paths:
           description: id of EquipmentType to delete
           required: true
           type: integer
+
+  /equipmentTypes/bulk:
+    post:
+      tags:
+        - EquipmentTypes
+      consumes:
+        - application/json
+      produces:
+        - text/plain
+        - application/json
+        - text/json
+      parameters:
+        - name: items
+          in: body
+          required: true
+          schema:
+            type: array
+            items:
+              $ref: "#/definitions/EquipmentType"
+      responses:
+        201:
+          description: EquipmentTypes created
   /equipmentAttachmentTypes:
     get:
       tags:
@@ -314,28 +316,7 @@ paths:
               type: string
               format: url
           schema:
-            $ref: "#/definitions/EquipmentAttachmentType"
-  /equipmentAttachmentTypes/bulk:
-    post:
-      tags:
-        - EquipmentAttachmentType
-      consumes:
-        - application/json
-      produces:
-        - text/plain
-        - application/json
-        - text/json
-      parameters:
-        - name: items
-          in: body
-          required: true
-          schema:
-            type: array
-            items:
-              $ref: "#/definitions/EquipmentAttachmentType"
-      responses:
-        201:
-          description: EquipmentAttachmentType created
+            $ref: "#/definitions/EquipmentAttachmentType"  
   /equipmentAttachmentTypes/{id}:
     get:
       tags:
@@ -405,6 +386,28 @@ paths:
           description: id of EquipmentAttachmentType to delete
           required: true
           type: integer
+
+  /equipmentAttachmentTypes/bulk:
+    post:
+      tags:
+        - EquipmentAttachmentType
+      consumes:
+        - application/json
+      produces:
+        - text/plain
+        - application/json
+        - text/json
+      parameters:
+        - name: items
+          in: body
+          required: true
+          schema:
+            type: array
+            items:
+              $ref: "#/definitions/EquipmentAttachmentType"
+      responses:
+        201:
+          description: EquipmentAttachmentType created
   /owners:
     get:
       tags:
@@ -445,28 +448,7 @@ paths:
               type: string
               format: url
           schema:
-            $ref: "#/definitions/Owner"
-  /owners/bulk:
-    post:
-      tags:
-        - Owner
-      consumes:
-        - application/json
-      produces:
-        - text/plain
-        - application/json
-        - text/json
-      parameters:
-        - name: items
-          in: body
-          required: true
-          schema:
-            type: array
-            items:
-              $ref: "#/definitions/Owner"
-      responses:
-        201:
-          description: Owner created
+            $ref: "#/definitions/Owner"  
   /owners/{id}:
     get:
       tags:
@@ -536,6 +518,28 @@ paths:
           description: id of Owner to delete
           required: true
           type: integer
+
+  /owners/bulk:
+    post:
+      tags:
+        - Owner
+      consumes:
+        - application/json
+      produces:
+        - text/plain
+        - application/json
+        - text/json
+      parameters:
+        - name: items
+          in: body
+          required: true
+          schema:
+            type: array
+            items:
+              $ref: "#/definitions/Owner"
+      responses:
+        201:
+          description: Owner created
   /projects:
     get:
       tags:
@@ -576,28 +580,7 @@ paths:
               type: string
               format: url
           schema:
-            $ref: "#/definitions/Project"
-  /projects/bulk:
-    post:
-      tags:
-        - Project
-      consumes:
-        - application/json
-      produces:
-        - text/plain
-        - application/json
-        - text/json
-      parameters:
-        - name: items
-          in: body
-          required: true
-          schema:
-            type: array
-            items:
-              $ref: "#/definitions/Project"
-      responses:
-        201:
-          description: Project created
+            $ref: "#/definitions/Project"  
   /projects/{id}:
     get:
       tags:
@@ -667,6 +650,28 @@ paths:
           description: id of Project to delete
           required: true
           type: integer
+
+  /projects/bulk:
+    post:
+      tags:
+        - Project
+      consumes:
+        - application/json
+      produces:
+        - text/plain
+        - application/json
+        - text/json
+      parameters:
+        - name: items
+          in: body
+          required: true
+          schema:
+            type: array
+            items:
+              $ref: "#/definitions/Project"
+      responses:
+        201:
+          description: Project created
   /groups:
     get:
       tags:
@@ -707,28 +712,7 @@ paths:
               type: string
               format: url
           schema:
-            $ref: "#/definitions/Group"
-  /groups/bulk:
-    post:
-      tags:
-        - Group
-      consumes:
-        - application/json
-      produces:
-        - text/plain
-        - application/json
-        - text/json
-      parameters:
-        - name: items
-          in: body
-          required: true
-          schema:
-            type: array
-            items:
-              $ref: "#/definitions/Group"
-      responses:
-        201:
-          description: Group created
+            $ref: "#/definitions/Group"  
   /groups/{id}:
     get:
       tags:
@@ -798,6 +782,28 @@ paths:
           description: id of Group to delete
           required: true
           type: integer
+
+  /groups/bulk:
+    post:
+      tags:
+        - Group
+      consumes:
+        - application/json
+      produces:
+        - text/plain
+        - application/json
+        - text/json
+      parameters:
+        - name: items
+          in: body
+          required: true
+          schema:
+            type: array
+            items:
+              $ref: "#/definitions/Group"
+      responses:
+        201:
+          description: Group created
   /permissions:
     get:
       tags:
@@ -838,28 +844,7 @@ paths:
               type: string
               format: url
           schema:
-            $ref: "#/definitions/PermissionViewModel"
-  /permissions/bulk:
-    post:
-      tags:
-        - Permission
-      consumes:
-        - application/json
-      produces:
-        - text/plain
-        - application/json
-        - text/json
-      parameters:
-        - name: items
-          in: body
-          required: true
-          schema:
-            type: array
-            items:
-              $ref: "#/definitions/PermissionViewModel"
-      responses:
-        201:
-          description: Permission created
+            $ref: "#/definitions/PermissionViewModel"  
   /permissions/{id}:
     get:
       tags:
@@ -966,7 +951,7 @@ paths:
           schema:
             type: array
             items:
-              $ref: "#/definitions/RoleViewModel"
+              $ref: "#/definitions/Role"
     post:
       tags:
         - Role
@@ -981,7 +966,7 @@ paths:
           in: body
           required: true
           schema:
-            $ref: "#/definitions/RoleViewModel"
+            $ref: "#/definitions/Role"
       responses:
         201:
           description: Role created
@@ -991,28 +976,7 @@ paths:
               type: string
               format: url
           schema:
-            $ref: "#/definitions/RoleViewModel"
-  /roles/bulk:
-    post:
-      tags:
-        - Role
-      consumes:
-        - application/json
-      produces:
-        - text/plain
-        - application/json
-        - text/json
-      parameters:
-        - name: items
-          in: body
-          required: true
-          schema:
-            type: array
-            items:
-              $ref: "#/definitions/RoleViewModel"
-      responses:
-        201:
-          description: Role created
+            $ref: "#/definitions/Role"  
   /roles/{id}:
     get:
       tags:
@@ -1026,7 +990,7 @@ paths:
         200:
           description: OK
           schema:
-            $ref: "#/definitions/RoleViewModel"
+            $ref: "#/definitions/Role"
         404:
           description: Role not found
       parameters:
@@ -1048,7 +1012,7 @@ paths:
         200:
           description: OK
           schema:
-            $ref: "#/definitions/RoleViewModel"
+            $ref: "#/definitions/Role"
         404:
           description: Role not found
       parameters:
@@ -1061,7 +1025,7 @@ paths:
           in: body
           required: true
           schema:
-            $ref: "#/definitions/RoleViewModel"
+            $ref: "#/definitions/Role"
   /roles/{id}/delete:
     post:
       tags:
@@ -1166,28 +1130,7 @@ paths:
               type: string
               format: url
           schema:
-            $ref: "#/definitions/UserViewModel"
-  /users/bulk:
-    post:
-      tags:
-        - User
-      consumes:
-        - application/json
-      produces:
-        - text/plain
-        - application/json
-        - text/json
-      parameters:
-        - name: items
-          in: body
-          required: true
-          schema:
-            type: array
-            items:
-              $ref: "#/definitions/UserViewModel"
-      responses:
-        201:
-          description: User created
+            $ref: "#/definitions/UserViewModel"  
   /users/{id}:
     get:
       tags:
@@ -1363,28 +1306,7 @@ paths:
               type: string
               format: url
           schema:
-            $ref: "#/definitions/Region"
-  /regions/bulk:
-    post:
-      tags:
-        - Region
-      consumes:
-        - application/json
-      produces:
-        - text/plain
-        - application/json
-        - text/json
-      parameters:
-        - name: items
-          in: body
-          required: true
-          schema:
-            type: array
-            items:
-              $ref: "#/definitions/Region"
-      responses:
-        201:
-          description: Region created
+            $ref: "#/definitions/Region"  
   /regions/{id}:
     get:
       tags:
@@ -1454,6 +1376,28 @@ paths:
           description: id of Region to delete
           required: true
           type: integer
+
+  /regions/bulk:
+    post:
+      tags:
+        - Region
+      consumes:
+        - application/json
+      produces:
+        - text/plain
+        - application/json
+        - text/json
+      parameters:
+        - name: items
+          in: body
+          required: true
+          schema:
+            type: array
+            items:
+              $ref: "#/definitions/Region"
+      responses:
+        201:
+          description: Region created
   /districts:
     get:
       tags:
@@ -1494,28 +1438,7 @@ paths:
               type: string
               format: url
           schema:
-            $ref: "#/definitions/District"
-  /districts/bulk:
-    post:
-      tags:
-        - District
-      consumes:
-        - application/json
-      produces:
-        - text/plain
-        - application/json
-        - text/json
-      parameters:
-        - name: items
-          in: body
-          required: true
-          schema:
-            type: array
-            items:
-              $ref: "#/definitions/District"
-      responses:
-        201:
-          description: District created
+            $ref: "#/definitions/District"  
   /districts/{id}:
     get:
       tags:
@@ -1585,6 +1508,28 @@ paths:
           description: id of District to delete
           required: true
           type: integer
+
+  /districts/bulk:
+    post:
+      tags:
+        - District
+      consumes:
+        - application/json
+      produces:
+        - text/plain
+        - application/json
+        - text/json
+      parameters:
+        - name: items
+          in: body
+          required: true
+          schema:
+            type: array
+            items:
+              $ref: "#/definitions/District"
+      responses:
+        201:
+          description: District created
   /serviceareas:
     get:
       tags:
@@ -1625,28 +1570,7 @@ paths:
               type: string
               format: url
           schema:
-            $ref: "#/definitions/ServiceArea"
-  /serviceareas/bulk:
-    post:
-      tags:
-        - ServiceArea
-      consumes:
-        - application/json
-      produces:
-        - text/plain
-        - application/json
-        - text/json
-      parameters:
-        - name: items
-          in: body
-          required: true
-          schema:
-            type: array
-            items:
-              $ref: "#/definitions/ServiceArea"
-      responses:
-        201:
-          description: ServiceArea created
+            $ref: "#/definitions/ServiceArea"  
   /serviceareas/{id}:
     get:
       tags:
@@ -1716,6 +1640,28 @@ paths:
           description: id of ServiceArea to delete
           required: true
           type: integer
+
+  /serviceareas/bulk:
+    post:
+      tags:
+        - ServiceArea
+      consumes:
+        - application/json
+      produces:
+        - text/plain
+        - application/json
+        - text/json
+      parameters:
+        - name: items
+          in: body
+          required: true
+          schema:
+            type: array
+            items:
+              $ref: "#/definitions/ServiceArea"
+      responses:
+        201:
+          description: ServiceArea created
   /cities:
     get:
       tags:
@@ -1756,28 +1702,7 @@ paths:
               type: string
               format: url
           schema:
-            $ref: "#/definitions/City"
-  /cities/bulk:
-    post:
-      tags:
-        - City
-      consumes:
-        - application/json
-      produces:
-        - text/plain
-        - application/json
-        - text/json
-      parameters:
-        - name: items
-          in: body
-          required: true
-          schema:
-            type: array
-            items:
-              $ref: "#/definitions/City"
-      responses:
-        201:
-          description: City created
+            $ref: "#/definitions/City"  
   /cities/{id}:
     get:
       tags:
@@ -1847,6 +1772,28 @@ paths:
           description: id of City to delete
           required: true
           type: integer
+
+  /cities/bulk:
+    post:
+      tags:
+        - City
+      consumes:
+        - application/json
+      produces:
+        - text/plain
+        - application/json
+        - text/json
+      parameters:
+        - name: items
+          in: body
+          required: true
+          schema:
+            type: array
+            items:
+              $ref: "#/definitions/City"
+      responses:
+        201:
+          description: City created
   /localAreas:
     get:
       tags:
@@ -1887,28 +1834,7 @@ paths:
               type: string
               format: url
           schema:
-            $ref: "#/definitions/LocalArea"
-  /localAreas/bulk:
-    post:
-      tags:
-        - LocalArea
-      consumes:
-        - application/json
-      produces:
-        - text/plain
-        - application/json
-        - text/json
-      parameters:
-        - name: items
-          in: body
-          required: true
-          schema:
-            type: array
-            items:
-              $ref: "#/definitions/LocalArea"
-      responses:
-        201:
-          description: LocalArea created
+            $ref: "#/definitions/LocalArea"  
   /localAreas/{id}:
     get:
       tags:
@@ -1978,6 +1904,28 @@ paths:
           description: id of LocalArea to delete
           required: true
           type: integer
+
+  /localAreas/bulk:
+    post:
+      tags:
+        - LocalArea
+      consumes:
+        - application/json
+      produces:
+        - text/plain
+        - application/json
+        - text/json
+      parameters:
+        - name: items
+          in: body
+          required: true
+          schema:
+            type: array
+            items:
+              $ref: "#/definitions/LocalArea"
+      responses:
+        201:
+          description: LocalArea created
   /contacts:
     get:
       tags:
@@ -2018,28 +1966,7 @@ paths:
               type: string
               format: url
           schema:
-            $ref: "#/definitions/Contact"
-  /contacts/bulk:
-    post:
-      tags:
-        - Contact
-      consumes:
-        - application/json
-      produces:
-        - text/plain
-        - application/json
-        - text/json
-      parameters:
-        - name: items
-          in: body
-          required: true
-          schema:
-            type: array
-            items:
-              $ref: "#/definitions/Contact"
-      responses:
-        201:
-          description: Contact created
+            $ref: "#/definitions/Contact"  
   /contacts/{id}:
     get:
       tags:
@@ -2171,28 +2098,7 @@ paths:
               type: string
               format: url
           schema:
-            $ref: "#/definitions/DumpTruck"
-  /dumptrucks/bulk:
-    post:
-      tags:
-        - DumpTruck
-      consumes:
-        - application/json
-      produces:
-        - text/plain
-        - application/json
-        - text/json
-      parameters:
-        - name: items
-          in: body
-          required: true
-          schema:
-            type: array
-            items:
-              $ref: "#/definitions/DumpTruck"
-      responses:
-        201:
-          description: DumpTruck created
+            $ref: "#/definitions/DumpTruck"  
   /dumptrucks/{id}:
     get:
       tags:
@@ -2324,28 +2230,7 @@ paths:
               type: string
               format: url
           schema:
-            $ref: "#/definitions/Note"
-  /notes/bulk:
-    post:
-      tags:
-        - Note
-      consumes:
-        - application/json
-      produces:
-        - text/plain
-        - application/json
-        - text/json
-      parameters:
-        - name: items
-          in: body
-          required: true
-          schema:
-            type: array
-            items:
-              $ref: "#/definitions/Note"
-      responses:
-        201:
-          description: Note created
+            $ref: "#/definitions/Note"  
   /notes/{id}:
     get:
       tags:
@@ -2477,28 +2362,7 @@ paths:
               type: string
               format: url
           schema:
-            $ref: "#/definitions/Attachment"
-  /attachment/bulk:
-    post:
-      tags:
-        - Attachment
-      consumes:
-        - application/json
-      produces:
-        - text/plain
-        - application/json
-        - text/json
-      parameters:
-        - name: items
-          in: body
-          required: true
-          schema:
-            type: array
-            items:
-              $ref: "#/definitions/Attachment"
-      responses:
-        201:
-          description: Attachment created
+            $ref: "#/definitions/Attachment"  
   /attachment/{id}:
     get:
       tags:
@@ -2630,28 +2494,7 @@ paths:
               type: string
               format: url
           schema:
-            $ref: "#/definitions/ContactPhone"
-  /contactphones/bulk:
-    post:
-      tags:
-        - ContactPhone
-      consumes:
-        - application/json
-      produces:
-        - text/plain
-        - application/json
-        - text/json
-      parameters:
-        - name: items
-          in: body
-          required: true
-          schema:
-            type: array
-            items:
-              $ref: "#/definitions/ContactPhone"
-      responses:
-        201:
-          description: ContactPhone created
+            $ref: "#/definitions/ContactPhone"  
   /contactphones/{id}:
     get:
       tags:
@@ -2783,28 +2626,7 @@ paths:
               type: string
               format: url
           schema:
-            $ref: "#/definitions/ContactAddress"
-  /contactaddresses/bulk:
-    post:
-      tags:
-        - ContactAddress
-      consumes:
-        - application/json
-      produces:
-        - text/plain
-        - application/json
-        - text/json
-      parameters:
-        - name: items
-          in: body
-          required: true
-          schema:
-            type: array
-            items:
-              $ref: "#/definitions/ContactAddress"
-      responses:
-        201:
-          description: ContactAddress created
+            $ref: "#/definitions/ContactAddress"  
   /contactaddresses/{id}:
     get:
       tags:
@@ -3157,7 +2979,7 @@ paths:
               format: url
           schema:
             $ref: "#/definitions/UserFavourite"
-  /users/current/favourites/{type}:
+  /users/current/favourites/{favouritetype}:
     get:
       description: Returns a user's favourites of a given type.  If type is empty, returns all.
       tags:
@@ -3167,19 +2989,18 @@ paths:
         - application/json
         - text/json
       responses:
-        '200':
+        200:
           description: OK
           schema:
             type: array
             items:
               $ref: "#/definitions/UserFavourite"
-        "404":
+        404:
            description: User not found
       parameters:
-        - name: type
+        - name: favouritetype
           in: path
           description: type of favourite to return
-          required: false
           type: string
   /users/current/favourites/{id}/delete:
     post:
@@ -3191,7 +3012,7 @@ paths:
         - application/json
         - text/json
       responses:
-        '200':
+        200:
           description: OK
       parameters:
         - name: id
@@ -3479,7 +3300,7 @@ definitions:
         description: A system-generated unique identifier for a Project
       serviceArea:
         $ref: '#/definitions/ServiceArea'
-        description: The service Area for which this project has requested&#x2F;hired equipment.
+        description: The service Area for which this project has requested hired equipment.
       provincialProjectNumber:
         type: string
         maxLength: 255
@@ -3657,7 +3478,7 @@ definitions:
       askedDateTime:
         type: string
         format: date-time
-        description: The Date&#x2F;Time the HETS clerk contacted the equipment owner and asked to hire the piece of equipment.
+        description: The Date-Time the HETS clerk contacted the equipment owner and asked to hire the piece of equipment.
       offerResponse:
         type: string
         description: The response to the offer to hire. Null prior to receiving a response; a string after with the response - likely just Yes or No
@@ -3716,7 +3537,7 @@ definitions:
       enteredDate:
         type: string
         format: date-time
-        description: The date&#x2F;time the time record information was entered.
+        description: The date-time the time record information was entered.
       timePeriod:
         type: string
         maxLength: 20
@@ -3920,7 +3741,7 @@ definitions:
         format: float
         description: TO BE REMOVED
       dumpTruck:
-        $ref: '#/definitions/'
+        $ref: '#/definitions/DumpTruck'
         description: A link to a dump truck set if this piece of equipment is an equipment type flagged as a dump truck.
       equipmentAttachments:
         type: array
@@ -3944,7 +3765,7 @@ definitions:
           $ref: '#/definitions/SeniorityAudit'
   DumpTruck:
     type: object
-    description: Additional attributes of a piece of equipment stored because it is designated as a Dump Truck. Historically, there was a perceived need to track a lot of informatiion about a dump truck, but in practice, few fields are being completed by users. Places for the attributes are being maintained, but the UI is prompting only for a couple of the fields, and only those fields are likely to be populated. Additional basic information about the attributes can be found on Wikipedia, BC-specific details on MOTI&#39;s CVSE website and http:&#x2F;&#x2F;www.bclaws.ca&#x2F;EPLibraries&#x2F;bclaws_new&#x2F;document&#x2F;ID&#x2F;freeside&#x2F;30_78#AppendicesAtoK, Appendix A and  B. Any metrics information provided here is from the Equipment Owner.
+    description: Additional attributes of a piece of equipment stored because it is designated as a Dump Truck. Historically, there was a perceived need to track a lot of informatiion about a dump truck, but in practice, few fields are being completed by users. Places for the attributes are being maintained, but the UI is prompting only for a couple of the fields, and only those fields are likely to be populated. Additional basic information about the attributes can be found on Wikipedia, BC-specific details on MOTI&#39;s CVSE website and http-&#x2F;&#x2F;www.bclaws.ca&#x2F;EPLibraries&#x2F;bclaws_new&#x2F;document&#x2F;ID&#x2F;freeside&#x2F;30_78#AppendicesAtoK, Appendix A and  B. Any metrics information provided here is from the Equipment Owner.
     required:
       - id
     properties:
@@ -4038,15 +3859,15 @@ definitions:
       boxLength:
         type: string
         maxLength: 255
-        description: The length of the box, in metres. See: http:&#x2F;&#x2F;www.bclaws.ca&#x2F;EPLibraries&#x2F;bclaws_new&#x2F;document&#x2F;ID&#x2F;freeside&#x2F;30_7, appendix B
+        description: The length of the box, in metres. See - http-&#x2F;&#x2F;www.bclaws.ca&#x2F;EPLibraries&#x2F;bclaws_new&#x2F;document&#x2F;ID&#x2F;freeside&#x2F;30_7, appendix B
       boxWidth:
         type: string
         maxLength: 255
-        description: The width of the box, in metres. See: http:&#x2F;&#x2F;www.bclaws.ca&#x2F;EPLibraries&#x2F;bclaws_new&#x2F;document&#x2F;ID&#x2F;freeside&#x2F;30_7, appendix B
+        description: The width of the box, in metres. See - http-&#x2F;&#x2F;www.bclaws.ca&#x2F;EPLibraries&#x2F;bclaws_new&#x2F;document&#x2F;ID&#x2F;freeside&#x2F;30_7, appendix B
       boxHeight:
         type: string
         maxLength: 255
-        description: The height of the box, in metres. See: http:&#x2F;&#x2F;www.bclaws.ca&#x2F;EPLibraries&#x2F;bclaws_new&#x2F;document&#x2F;ID&#x2F;freeside&#x2F;30_7, appendix B
+        description: &quot;The height of the box, in metres. See- http-&#x2F;&#x2F;www.bclaws.ca&#x2F;EPLibraries&#x2F;bclaws_new&#x2F;document&#x2F;ID&#x2F;freeside&#x2F;30_7, appendix B&quot;
       boxCapacity:
         type: string
         maxLength: 255
@@ -4054,15 +3875,15 @@ definitions:
       trailerBoxLength:
         type: string
         maxLength: 255
-        description: The length of the trailer box, in metres. See: http:&#x2F;&#x2F;www.bclaws.ca&#x2F;EPLibraries&#x2F;bclaws_new&#x2F;document&#x2F;ID&#x2F;freeside&#x2F;30_7, appendix B
+        description: &quot;The length of the trailer box, in metres. See- http-&#x2F;&#x2F;www.bclaws.ca&#x2F;EPLibraries&#x2F;bclaws_new&#x2F;document&#x2F;ID&#x2F;freeside&#x2F;30_7, appendix B&quot;
       trailerBoxWidth:
         type: string
         maxLength: 255
-        description: The width of the trailer box, in metres. See: http:&#x2F;&#x2F;www.bclaws.ca&#x2F;EPLibraries&#x2F;bclaws_new&#x2F;document&#x2F;ID&#x2F;freeside&#x2F;30_7, appendix B
+        description: &quot;The width of the trailer box, in metres. See- http-&#x2F;&#x2F;www.bclaws.ca&#x2F;EPLibraries&#x2F;bclaws_new&#x2F;document&#x2F;ID&#x2F;freeside&#x2F;30_7, appendix B&quot;
       trailerBoxHeight:
         type: string
         maxLength: 255
-        description: The height of the trailer box, in metres. See: http:&#x2F;&#x2F;www.bclaws.ca&#x2F;EPLibraries&#x2F;bclaws_new&#x2F;document&#x2F;ID&#x2F;freeside&#x2F;30_7, appendix B
+        description: &quot;The height of the trailer box, in metres. See- http-&#x2F;&#x2F;www.bclaws.ca&#x2F;EPLibraries&#x2F;bclaws_new&#x2F;document&#x2F;ID&#x2F;freeside&#x2F;30_7, appendix B&quot;
       trailerBoxCapacity:
         type: string
         maxLength: 255
@@ -5056,12 +4877,9 @@ definitions:
         x-chance-type: word
       isDefault:
         type: boolean
-      favouriteContextTypeId:
-        format: int32
-        type: integer
-        x-type-options:
-          min: 1
-          max: 1000
+      type:        
+        type: string
+        description: Type of favourite
   NotificationViewModel:
     type: object
     x-codegen-viewmodel: true
