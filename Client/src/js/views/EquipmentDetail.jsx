@@ -3,10 +3,12 @@ import React from 'react';
 import { connect } from 'react-redux';
 
 import { Well, Row, Col } from 'react-bootstrap';
-import { Alert, Button, ButtonGroup, Glyphicon, Label, DropdownButton, MenuItem, Checkbox } from 'react-bootstrap';
+import { Alert, Button, ButtonGroup, Glyphicon, Label, DropdownButton, MenuItem } from 'react-bootstrap';
+import { Form, FormControl, FormGroup, ControlLabel, Checkbox } from 'react-bootstrap';
 import { LinkContainer } from 'react-router-bootstrap';
 
 import _ from 'lodash';
+import Moment from 'moment';
 
 import * as Action from '../actionTypes';
 import * as Api from '../api';
@@ -33,6 +35,7 @@ var EquipmentDetail = React.createClass({
     physicalAttachments: React.PropTypes.object,
     notes: React.PropTypes.object,
     attachments: React.PropTypes.object,
+    equipmentHistory: React.PropTypes.object,
     params: React.PropTypes.object,
     ui: React.PropTypes.object,
   },
@@ -73,14 +76,20 @@ var EquipmentDetail = React.createClass({
   showNotes() {
   },
 
-  showAttachments() {
+  showDocuments() {
   },
 
   showHistory() {
   },
 
+  showSeniorityHistory() {
+  },
+
   print() {
     // TODO Implement
+  },
+
+  openAddDocumentDialog() {
   },
 
   updateUIState(state, callback) {
@@ -144,7 +153,7 @@ var EquipmentDetail = React.createClass({
             <Label bsStyle={ equipment.isWorking ? 'danger' : 'success' }>{ equipment.isWorking ? 'Working' : 'Not Working' }</Label>
             <Label bsStyle={ lastVerifiedStyle }>Last Verified: { formatDateTime(equipment.lastVerifiedDate, 'YYYY-MMM-DD') }</Label>
             <Button title="Notes" onClick={ this.showNotes }>Notes ({ Object.keys(this.props.notes).length })</Button>
-            <Button title="Attachments" onClick={ this.showAttachments }>Docs ({ Object.keys(this.props.attachments).length })</Button>
+            <Button title="Documents" onClick={ this.showDocuments }>Docs ({ Object.keys(this.props.attachments).length })</Button>
           </Col>
           <Col md={4}>
             <div className="pull-right">
@@ -279,6 +288,57 @@ var EquipmentDetail = React.createClass({
               {(() => {
                 if (this.state.loadingSeniorityData) { return <div style={{ textAlign: 'center' }}><Spinner/></div>; }
 
+                var year1 = Moment().subtract(1, 'years').year();
+                var year2 = Moment().subtract(2, 'years').year();
+                var year3 = Moment().subtract(3, 'years').year();
+
+                var seniorityHistory = [];  // TODO
+
+                return <div>
+                  <Row>
+                    <ColLabel md={4}>Hours YTD</ColLabel>
+                    <ColField md={8}>{ equipment.YTD }</ColField>
+                  </Row>
+                  <Row>
+                    <ColLabel md={4}>Hours {year1}</ColLabel>
+                    <ColField md={8}>{ equipment.YTD1 }</ColField>
+                  </Row>
+                  <Row>
+                    <ColLabel md={4}>Hours {year2}</ColLabel>
+                    <ColField md={8}>{ equipment.YTD2 }</ColField>
+                  </Row>
+                  <Row>
+                    <ColLabel md={4}>Hours {year3}</ColLabel>
+                    <ColField md={8}>{ equipment.YTD3 }</ColField>
+                  </Row>
+                  <Row>
+                    <ColLabel md={4}>Received Date</ColLabel>
+                    <ColField md={8}>{ formatDateTime(equipment.receivedDate, 'YYYY-MMM-DD') }</ColField>
+                  </Row>
+                  <Row>
+                    <ColLabel md={4}>Registered Date</ColLabel>
+                    <ColField md={8}>{ formatDateTime(equipment.approvedDate, 'YYYY-MMM-DD') }</ColField>
+                  </Row>
+                  <Row>
+                    <ColLabel md={4}>Years Registered</ColLabel>
+                    <ColField md={8}>{ equipment.numYears }</ColField>
+                  </Row>
+                  <Row>
+                    <ColLabel md={4}>Status</ColLabel>
+                    <ColField md={8}>{ equipment.statusCd }</ColField>
+                  </Row>
+                  <Row>
+                    <Form horizontal>
+                      <FormGroup controlId="updateReason">
+                        <Col md={4} className="text-right"><ControlLabel>Update Reason</ControlLabel></Col>
+                        <ColField md={6}><FormControl componentClass="textarea" rows={2} /></ColField>
+                        <ColField md={2}>
+                          <Button title="Seniority History" bsSize="small" onClick={ this.showSeniorityHistory} >All ({ Object.keys(seniorityHistory).length }})</Button>
+                        </ColField>
+                      </FormGroup>
+                    </Form>
+                  </Row>
+                </div>;
               })()}
             </Well>
           </Col>
@@ -288,6 +348,31 @@ var EquipmentDetail = React.createClass({
               {(() => {
                 if (this.state.loadingEquipmentHistory) { return <div style={{ textAlign: 'center' }}><Spinner/></div>; }
 
+                var history = _.sortBy(this.props.equipmentHistory, 'createdDate');    
+
+                return <div>
+                  <Form horizontal>
+                    <FormGroup controlId="notes">
+                      <Col md={2} className="text-right"><ControlLabel>Add Note</ControlLabel></Col>
+                      <ColField md={8}><FormControl componentClass="textarea" rows={2} /></ColField>
+                      <ColField md={2}><Button title="Add document" bsSize="small" onClick={this.openAddDocumentDialog}><Glyphicon glyph="paperclip" /></Button></ColField>
+                    </FormGroup>
+                  </Form>
+                  {(() => {
+                    if (!history || history.length === 0) { return <Alert bsStyle="success" style={{ marginTop: 10 }}>No history</Alert>; }
+
+                    return <div>
+                      {
+                        _.map(history, (historyEntry) => {
+                          return <Row>
+                            <ColLabel md={2}>{ formatDateTime(historyEntry.createdDate, 'YYYY-MMM-DD') }</ColLabel>
+                            <ColField md={10}>{ historyEntry.historyText }</ColField>
+                          </Row>;
+                        })
+                      }
+                    </div>;
+                  })()}
+                </div>;
               })()}
             </Well>
           </Col>
