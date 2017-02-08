@@ -105,6 +105,17 @@
   }
 
   h4 strong span {
-    margin-left: 10px;
+    margin-left: 20px;
+  }
+}
+
+#seniority-edit {
+  [class*='col-'] {
+    padding-left: 7px;
+    padding-right: 7px;
+  }
+
+  h4 strong span {
+    margin-left: 20px;
   }
 }

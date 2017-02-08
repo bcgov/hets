@@ -1,11 +1,13 @@
 import * as Action from './actionTypes';
+import * as Constant from './constants';
 import store from './store';
 
 import { ApiRequest } from './utils/http';
 import { lastFirstName, firstLastName, concat } from './utils/string';
+import { daysAgo } from './utils/date';
 
 import _ from 'lodash';
-
+import Moment from 'moment';
 
 ////////////////////
 // Current User
@@ -97,10 +99,11 @@ function parseEquipment(equipment) {
   if (!equipment.localArea.serviceArea) { equipment.localArea.serviceArea = { id: '', name: ''}; }
   if (!equipment.localArea.serviceArea.district) { equipment.localArea.serviceArea.district = { id: '', name: ''}; }
   if (!equipment.localArea.serviceArea.district.region) { equipment.localArea.serviceArea.district.region = { id: '', name: ''}; }
+  if (!equipment.statusCd) { equipment.statusCd = Constant.EQUIPMENT_STATUS_CODE_NEW; }
 
-  equipment.isApproved = equipment.statusCd === 'Approved';
-  equipment.isNew = equipment.statusCd === 'New' || equipment.statusCd === null;
-  equipment.isArchived = equipment.statusCd === 'Archived';
+  equipment.isApproved = equipment.statusCd === Constant.EQUIPMENT_STATUS_CODE_APPROVED;
+  equipment.isNew = equipment.statusCd === Constant.EQUIPMENT_STATUS_CODE_NEW;
+  equipment.isArchived = equipment.statusCd === Constant.EQUIPMENT_STATUS_CODE_ARCHIVED;
   equipment.isWorking = equipment.working === 'Y';
   equipment.isMaintenanceContractor = equipment.owner.maintenanceContractor === 'Y';
 
@@ -110,6 +113,18 @@ function parseEquipment(equipment) {
   equipment.seniorityDisplayNumber = concat(equipment.blockNumber, equipment.seniority, ' - ');
   equipment.localAreaName = equipment.localArea.name;
   equipment.districtName = equipment.localArea.serviceArea.district.name;
+  equipment.daysSinceVerified = daysAgo(equipment.lastVerifiedDate);
+
+  // Seniority data
+  equipment.ytd = equipment.ytd || 0;
+  equipment.serviceHoursLastYear = equipment.serviceHoursLastYear || 0;
+  equipment.serviceHoursTwoYearsAgo = equipment.serviceHoursTwoYearsAgo || 0;
+  equipment.serviceHoursThreeYearsAgo = equipment.serviceHoursThreeYearsAgo || 0;
+
+  equipment.currentYear = Moment().year();
+  equipment.lastYear = equipment.currentYear - 1;
+  equipment.twoYearsAgo = equipment.currentYear - 2;
+  equipment.threeYearsAgo = equipment.currentYear - 3;
 
   // TODO This probably needs to come from the back-end
 
@@ -120,6 +135,7 @@ function parseEquipment(equipment) {
 
   // TODO Implement (TBD)
   equipment.hiredStatus = 'N/A';
+  equipment.seniorityStatus = 'N/A';
 }
 
 export function searchEquipmentList(params) {
@@ -157,6 +173,17 @@ export function getEquipment(equipmentId) {
   });
 }
 
+export function updateEquipment(equipment) {
+  return new ApiRequest(`/equipment/${equipment.id}`).put(equipment).then(response => {
+    var equipment = response;
+
+    // Add display fields
+    parseEquipment(equipment);
+
+    store.dispatch({ type: Action.UPDATE_EQUIPMENT, equipment: equipment });
+  });
+}
+
 ////////////////////
 // Physical Attachments
 ////////////////////
@@ -172,7 +199,7 @@ function parsePhysicalAttachment(attachment) {
 
 export function getPhysicalAttachment(id) {
   // TODO Implement back-end endpoints
-  return Promise.resolve({ id: id}).then(response => {
+  return Promise.resolve({ id: id }).then(response => {
     var attachment = response;
 
     // Add display fields
