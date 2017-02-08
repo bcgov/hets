@@ -13,6 +13,7 @@ import Promise from 'bluebird';
 
 import * as Action from '../actionTypes';
 import * as Api from '../api';
+import * as Constant from '../constants';
 import store from '../store';
 
 import DateControl from '../components/DateControl.jsx';
@@ -30,10 +31,6 @@ TODO:
 */
 
 // Status code drop-down items
-const STATUS_CODE_NEW = 'New';
-const STATUS_CODE_APPROVED = 'Approved';
-const STATUS_CODE_ARCHIVED = 'Archived';
-
 var Equipment = React.createClass({
   propTypes: {
     equipmentList: React.PropTypes.object,
@@ -58,7 +55,7 @@ var Equipment = React.createClass({
         ownerName: this.props.search.ownerName || 'Owner',
         lastVerifiedDate: this.props.search.lastVerifiedDate || '',
         hired: this.props.search.hired !== false,
-        statusCode: this.props.search.statusCode || STATUS_CODE_APPROVED,
+        statusCode: this.props.search.statusCode || Constant.EQUIPMENT_STATUS_CODE_APPROVED,
       },
 
       ui : {
@@ -211,9 +208,9 @@ var Equipment = React.createClass({
                 <MultiDropdown id="local-area-dropdown" placeholder="Local Areas"
                   items={ localAreas } selectedIds={ this.state.search.selectedLocalAreasIds } onChange={ this.localAreasChanged } showMaxItems={ 2 } />
                 <DropdownButton id="status-code-dropdown" title={ this.state.search.statusCode } onSelect={ this.statusCodeSelected }>
-                  <MenuItem key={ STATUS_CODE_APPROVED } eventKey={ STATUS_CODE_APPROVED }>{ STATUS_CODE_APPROVED }</MenuItem>
-                  <MenuItem key={ STATUS_CODE_NEW } eventKey={ STATUS_CODE_NEW }>{ STATUS_CODE_NEW }</MenuItem>
-                  <MenuItem key={ STATUS_CODE_ARCHIVED } eventKey={ STATUS_CODE_ARCHIVED }>{ STATUS_CODE_ARCHIVED }</MenuItem>
+                  <MenuItem key={ Constant.EQUIPMENT_STATUS_CODE_APPROVED } eventKey={ Constant.EQUIPMENT_STATUS_CODE_APPROVED }>{ Constant.EQUIPMENT_STATUS_CODE_APPROVED }</MenuItem>
+                  <MenuItem key={ Constant.EQUIPMENT_STATUS_CODE_NEW } eventKey={ Constant.EQUIPMENT_STATUS_CODE_NEW }>{ Constant.EQUIPMENT_STATUS_CODE_NEW }</MenuItem>
+                  <MenuItem key={ Constant.EQUIPMENT_STATUS_CODE_ARCHIVED } eventKey={ Constant.EQUIPMENT_STATUS_CODE_ARCHIVED }>{ Constant.EQUIPMENT_STATUS_CODE_ARCHIVED }</MenuItem>
                 </DropdownButton>
                 <Checkbox inline checked={ this.state.search.hired } onChange={ this.hiredChanged }>Hired</Checkbox>
                 <MultiDropdown id="equipment-type-dropdown" placeholder="Equipment Types"

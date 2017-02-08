@@ -1,0 +1,8 @@
+// Equipment
+export const EQUIPMENT_DAYS_SINCE_VERIFIED_WARNING = 270;
+export const EQUIPMENT_DAYS_SINCE_VERIFIED_CRITICAL = 365;
+
+export const EQUIPMENT_STATUS_CODE_NEW = 'New';
+export const EQUIPMENT_STATUS_CODE_APPROVED = 'Approved';
+export const EQUIPMENT_STATUS_CODE_ARCHIVED = 'Archived';
+
