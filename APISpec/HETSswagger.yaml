@@ -276,6 +276,138 @@ paths:
       responses:
         201:
           description: EquipmentType created
+  /equipmentAttachments:
+    get:
+      tags:
+        - EquipmentAttachment
+      consumes: []
+      produces:
+        - text/plain
+        - application/json
+        - text/json
+      responses:
+        200:
+          description: OK
+          schema:
+            type: array
+            items:
+              $ref: "#/definitions/EquipmentAttachment"
+    post:
+      tags:
+        - EquipmentAttachment
+      consumes:
+        - application/json
+      produces:
+        - text/plain
+        - application/json
+        - text/json
+      parameters:
+        - name: item
+          in: body
+          required: true
+          schema:
+            $ref: "#/definitions/EquipmentAttachment"
+      responses:
+        201:
+          description: EquipmentAttachment created
+          headers:
+            Location:
+              description: A link to the EquipmentAttachment
+              type: string
+              format: url
+          schema:
+            $ref: "#/definitions/EquipmentAttachment"  
+  /equipmentAttachments/{id}:
+    get:
+      tags:
+        - EquipmentAttachment
+      consumes: []
+      produces:
+        - text/plain
+        - application/json
+        - text/json
+      responses:
+        200:
+          description: OK
+          schema:
+            $ref: "#/definitions/EquipmentAttachment"
+        404:
+          description: EquipmentAttachment not found
+      parameters:
+        - name: id
+          in: path
+          description: id of EquipmentAttachment to fetch
+          required: true
+          type: integer
+    put:
+      tags:
+        - EquipmentAttachment
+      consumes:
+        - application/json
+      produces:
+        - text/plain
+        - application/json
+        - text/json
+      responses:
+        200:
+          description: OK
+          schema:
+            $ref: "#/definitions/EquipmentAttachment"
+        404:
+          description: EquipmentAttachment not found
+      parameters:
+        - name: id
+          in: path
+          description: id of EquipmentAttachment to fetch
+          required: true
+          type: integer
+        - name: item
+          in: body
+          required: true
+          schema:
+            $ref: "#/definitions/EquipmentAttachment"
+  /equipmentAttachments/{id}/delete:
+    post:
+      tags:
+        - EquipmentAttachment
+      consumes: []
+      produces:
+        - text/plain
+        - application/json
+        - text/json
+      responses:
+        200:
+          description: OK
+        404:
+          description: EquipmentAttachment not found
+      parameters:
+        - name: id
+          in: path
+          description: id of EquipmentAttachment to delete
+          required: true
+          type: integer
+
+  /equipmentAttachments/bulk:
+    post:
+      tags:
+        - EquipmentAttachment
+      consumes:
+        - application/json
+      produces:
+        - text/plain
+        - application/json
+        - text/json
+      parameters:
+        - name: items
+          in: body
+          required: true
+          schema:
+            type: array
+            items:
+              $ref: "#/definitions/EquipmentAttachment"
+      responses:
+        201:
+          description: EquipmentAttachment created
   /equipmentAttachmentTypes:
     get:
       tags:
@@ -2774,6 +2906,28 @@ paths:
             type: array
             items:
               $ref: "#/definitions/Equipment"
+  /equipment/{id}/equipmentattachments:
+    get:
+      tags:
+        - Equipment
+      consumes: []
+      produces:
+        - text/plain
+        - application/json
+        - text/json
+      parameters:
+        - name: id
+          in: path
+          description: id of Equipment to fetch EquipmentAttachments for
+          required: true
+          type: integer
+      responses:
+        200:
+          description: OK
+          schema:
+            type: array
+            items:
+              $ref: "#/definitions/EquipmentAttachment"    
   /roles/{id}/permissions:
     get:
       description: Get all the permissions for a role

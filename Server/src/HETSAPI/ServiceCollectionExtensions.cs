@@ -36,8 +36,9 @@ namespace HETSAPI
             services.AddTransient<IContactPhoneService, ContactPhoneService>();
             services.AddTransient<ICurrentUserService, CurrentUserService>();
             services.AddTransient<IDistrictService, DistrictService>();
-            services.AddTransient<IDumpTruckService, DumpTruckService>();
+            services.AddTransient<IDumpTruckService, DumpTruckService>();            
             services.AddTransient<IEquipmentAttachmentTypeService, EquipmentAttachmentTypeService>();
+            services.AddTransient<IEquipmentAttachmentService, EquipmentAttachmentService>();
             services.AddTransient<IEquipmentService, EquipmentService>();
             services.AddTransient<IEquipmentTypeService, EquipmentTypeService>();
             services.AddTransient<IGroupService, GroupService>();
@@ -51,6 +52,7 @@ namespace HETSAPI
             services.AddTransient<IServiceAreaService, ServiceAreaService>();
             services.AddTransient<IUserService, UserService>();
             services.AddTransient<ITestService, TestService>();
+            
             return services;
         }
     }

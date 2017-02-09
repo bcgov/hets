@@ -300,6 +300,29 @@ namespace HETSAPI.Services.Impl
         /// <summary>
         /// 
         /// </summary>
+        /// <param name="id">id of Equipment to fetch EquipmentAttachments for</param>
+        /// <response code="200">OK</response>
+        public virtual IActionResult EquipmentIdEquipmentattachmentsGetAsync(int id)
+        {
+            bool exists = _context.Equipments.Any(x => x.Id == id);
+            if (exists)
+            {
+                var result = _context.EquipmentAttachments
+                    .Include(x => x.Equipment)
+                    .Include(x => x.Type)
+                    .Where(x => x.Equipment.Id == id);
+                return new ObjectResult(result);
+            }
+            else
+            {
+                // record not found
+                return new StatusCodeResult(404);
+            }
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
         /// <param name="id">id of Equipment to fetch</param>
         /// <response code="200">OK</response>
         /// <response code="404">Equipment not found</response>
