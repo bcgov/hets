@@ -19,7 +19,8 @@ const HOST = argv.host || 'localhost';
 var IS_PRODUCTION = !!argv.production;
 process.env.NODE_ENV = IS_PRODUCTION ? 'production' : 'development';
 
-var BUILD_NUMBER = $.util.env.buildno || 'dev';
+var BUILD_NUMBER = $.util.env.buildno || 'Dev';
+var BUILD_GIT_SHA = $.util.env.commit || 'Local';
 
 // var port = $.util.env.port || 1337;
 const IMAGES_DIR_GLOB = 'src/images/**/*.{png,jpg,jpeg,gif}';
@@ -30,7 +31,7 @@ const DIST_DIR = 'dist';
 const DEPLOY_PATH = path.join(__dirname, '..', 'Client', 'src', 'HETSClient', 'wwwroot');
 const NODE_MODULES_DIR = 'node_modules/';
 const JS_SHIMS = [
-  // 'node_modules/es5-shim/es5-shim.js',
+  'node_modules/object-assign-shim/index.js',
 ];
 const VENDOR_CSS = [
   'bootstrap/dist/css/bootstrap.css',
@@ -82,18 +83,13 @@ gulp.task('templates', function() {
   var TEMPLATE_DATA = {
     year: new Date().getFullYear(),
     buildNum: BUILD_NUMBER,
-    // buildSha: BUILD_GIT_SHA,
-    // buildBranch: BUILD_GIT_BRANCH,
+    buildSha: BUILD_GIT_SHA,
     buildTime: new Date(),
   };
 
-  var options = {
-    batch : ['./src/html/partials'],
-  };
-
-  return gulp.src(['src/html/**/*.hbs', '!src/html/{partials,partials/**}'])
+  return gulp.src(['src/html/**/*.hbs'])
     .pipe(devOnlyPlumber())
-    .pipe($.compileHandlebars(TEMPLATE_DATA, options))
+    .pipe($.compileHandlebars(TEMPLATE_DATA))
     .pipe($.rename({ extname: '.html' }))
     .pipe(gulp.dest(DIST_DIR));
 });
