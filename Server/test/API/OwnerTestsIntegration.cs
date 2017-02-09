@@ -99,5 +99,135 @@ namespace HETSAPI.Test
             response = await _client.SendAsync(request);
             Assert.Equal(response.StatusCode, HttpStatusCode.NotFound);
         }
+
+        [Fact]
+        /// <summary>
+        /// Basic Integration test for Owners
+        /// </summary>
+        public async void TestOwnerContacts()
+        {
+            string initialName = "InitialName";
+            string changedName = "ChangedName";
+            // first test the POST.
+            var request = new HttpRequestMessage(HttpMethod.Post, "/api/owners");
+
+            // create a new object.
+            Owner owner = new Owner();
+            owner.Comment = initialName;
+            string jsonString = owner.ToJson();
+
+            request.Content = new StringContent(jsonString, Encoding.UTF8, "application/json");
+
+            var response = await _client.SendAsync(request);
+            response.EnsureSuccessStatusCode();
+
+            // parse as JSON.
+            jsonString = await response.Content.ReadAsStringAsync();
+
+            owner = JsonConvert.DeserializeObject<Owner>(jsonString);
+            // get the id
+            var id = owner.Id;
+            // change the name
+            owner.Comment = changedName;
+
+            // get contacts should be empty.
+            request = new HttpRequestMessage(HttpMethod.Get, "/api/owners/" + id + "/contacts");
+            response = await _client.SendAsync(request);
+            response.EnsureSuccessStatusCode();
+
+            // parse as JSON.
+            jsonString = await response.Content.ReadAsStringAsync();
+            List<Contact> contacts  = JsonConvert.DeserializeObject<List<Contact>>(jsonString);
+
+            // verify the list is empty.
+            Assert.Equal(contacts.Count(), 0);
+
+
+            // add a contact.
+            Contact contact = new Contact();
+            contact.GivenName = initialName;
+            ContactPhone phone = new ContactPhone();
+            phone.PhoneNumber = "1234";
+            ContactAddress address = new ContactAddress();
+            address.AddressLine1 = initialName;
+
+            contact.Phones = new List<ContactPhone>();
+            contact.Phones.Add(phone);
+
+            contact.Addresses = new List<ContactAddress>();
+            contact.Addresses.Add(address);
+
+            contacts.Add(contact);
+
+
+            request = new HttpRequestMessage(HttpMethod.Put, "/api/owners/" + id + "/contacts");
+            request.Content = new StringContent(JsonConvert.SerializeObject(contacts), Encoding.UTF8, "application/json");
+
+            response = await _client.SendAsync(request);
+            response.EnsureSuccessStatusCode();
+
+            // parse as JSON.
+            jsonString = await response.Content.ReadAsStringAsync();
+            contacts = JsonConvert.DeserializeObject<List<Contact>>(jsonString);
+
+            // verify the list has one element.
+            Assert.Equal(contacts.Count, 1);
+            Assert.Equal(contacts[0].GivenName, initialName);
+            Assert.Equal(contacts[0].Addresses[0].AddressLine1, initialName);
+            Assert.Equal(contacts[0].Phones[0].PhoneNumber, "1234");
+
+            // get contacts should be 1
+            request = new HttpRequestMessage(HttpMethod.Get, "/api/owners/" + id + "/contacts");
+            response = await _client.SendAsync(request);
+            response.EnsureSuccessStatusCode();
+
+            // parse as JSON.
+            jsonString = await response.Content.ReadAsStringAsync();
+            contacts = JsonConvert.DeserializeObject<List<Contact>>(jsonString);
+
+            // verify the list has a record.
+            Assert.Equal(contacts.Count, 1);           
+            Assert.Equal(contacts[0].GivenName, initialName);
+            Assert.Equal(contacts[0].Addresses[0].AddressLine1, initialName);
+            Assert.Equal(contacts[0].Phones[0].PhoneNumber, "1234");
+
+            // test removing the contact.
+            contacts.Clear();
+
+            request = new HttpRequestMessage(HttpMethod.Put, "/api/owners/" + id + "/contacts");
+            request.Content = new StringContent(JsonConvert.SerializeObject(contacts), Encoding.UTF8, "application/json");
+
+            response = await _client.SendAsync(request);
+            response.EnsureSuccessStatusCode();
+
+            // parse as JSON.
+            jsonString = await response.Content.ReadAsStringAsync();
+            contacts = JsonConvert.DeserializeObject<List<Contact>>(jsonString);
+
+            // should be 0
+            Assert.Equal(contacts.Count, 0);
+            
+            // test the get
+            request = new HttpRequestMessage(HttpMethod.Get, "/api/owners/" + id + "/contacts");
+            response = await _client.SendAsync(request);
+            response.EnsureSuccessStatusCode();
+
+            // parse as JSON.
+            jsonString = await response.Content.ReadAsStringAsync();
+            contacts = JsonConvert.DeserializeObject<List<Contact>>(jsonString);
+
+            // verify the list has no records.
+            Assert.Equal(contacts.Count, 0);
+
+            // delete the owner.            
+            request = new HttpRequestMessage(HttpMethod.Post, "/api/owners/" + id + "/delete");
+            response = await _client.SendAsync(request);
+            response.EnsureSuccessStatusCode();
+
+            // should get a 404 if we try a get now.
+            request = new HttpRequestMessage(HttpMethod.Get, "/api/owners/" + id);
+            response = await _client.SendAsync(request);
+            Assert.Equal(response.StatusCode, HttpStatusCode.NotFound);
+        }
     }
 }

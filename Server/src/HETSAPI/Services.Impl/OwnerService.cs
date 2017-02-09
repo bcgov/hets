@@ -142,6 +142,120 @@ namespace HETSAPI.Services.Impl
         /// <summary>
         /// 
         /// </summary>
+        /// <param name="id">id of Owner to fetch Contacts for</param>
+        /// <response code="200">OK</response>
+        public virtual IActionResult OwnersIdContactsGetAsync(int id)
+        {
+            var exists = _context.Owners.Any(a => a.Id == id);
+            if (exists)
+            {
+                Owner owner = _context.Owners
+                        .Include(x => x.Contacts)
+                        .ThenInclude(y => y.Addresses)
+                        .Include(x => x.Contacts)
+                        .ThenInclude(y => y.Phones)
+                        .First(x => x.Id == id);
+                                                
+                return new ObjectResult(owner.Contacts);
+            }
+            else
+            {
+                // record not found
+                return new StatusCodeResult(404);
+            }
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <remarks>Replcaes an Owner&#39;s Contacts</remarks>
+        /// <param name="id">id of Owner to replace Contacts for</param>
+        /// <param name="items">Replacement Owner contacts.</param>
+        /// <response code="200">OK</response>
+        public virtual IActionResult OwnersIdContactsPutAsync(int id, Contact[] items)
+        {
+            var exists = _context.Owners.Any(a => a.Id == id);
+            if (exists && items != null)
+            {
+                Owner owner = _context.Owners
+                        .Include(x => x.Contacts)
+                        .ThenInclude(y => y.Addresses)
+                        .Include(x => x.Contacts)
+                        .ThenInclude(y => y.Phones)
+                        .First(x => x.Id == id);
+
+                // adjust the incoming list.
+
+                for (int i = 0; i < items.Count(); i++)
+                {
+                    Contact item = items[i];
+                    if (item != null)
+                    {
+                        bool contact_exists = _context.Contacts.Any(x => x.Id == item.Id);
+                        if (contact_exists)
+                        {
+                            items[i] = _context.Contacts
+                                .Include(x => x.Addresses)
+                                .Include(x => x.Phones)
+                                .First(x => x.Id == item.Id);
+                        }
+                        else
+                        {
+                            _context.Add(item);
+                            items[i] = item;
+                        }
+                    }                    
+                }
+
+                // remove contacts that are no longer attached.
+
+                foreach (Contact contact in owner.Contacts)
+                {
+                    if (contact != null && !items.Any(x => x.Id == contact.Id))
+                    {
+                        if (contact.Phones != null)
+                        {
+                            foreach (ContactPhone phone in contact.Phones)
+                            {
+                                if (phone != null)
+                                {
+                                    _context.Remove(phone);
+                                }
+                            }
+                        }
+                        if (contact.Addresses != null)
+                        {
+                            foreach (ContactAddress address in contact.Addresses)
+                            {
+                                if (address != null)
+                                {
+                                    _context.Remove(address);
+                                }
+                            }
+                        }
+
+                        _context.Remove(contact);
+                    }
+                }
+
+                // replace Contacts.
+                owner.Contacts = items.ToList();
+                _context.Update(owner);
+                _context.SaveChanges();
+
+                return new ObjectResult(items);
+            }
+            else
+            {
+                // record not found
+                return new StatusCodeResult(404);
+            }
+        }
+
+
+        /// <summary>
+        /// 
+        /// </summary>
         /// <param name="id">id of Owner to delete</param>
         /// <response code="200">OK</response>
         /// <response code="404">Owner not found</response>
