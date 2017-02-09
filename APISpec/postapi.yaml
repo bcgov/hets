@@ -102,7 +102,7 @@
     put:
       tags:
         - Owner
-      description: Replcaes an Owner's Contacts
+      description: Replaces an Owner's Contacts
       consumes: []
       produces:
         - text/plain

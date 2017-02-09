@@ -84,7 +84,7 @@ namespace HETSAPI.Controllers
         /// <summary>
         /// 
         /// </summary>
-        /// <remarks>Replcaes an Owner&#39;s Contacts</remarks>
+        /// <remarks>Replaces an Owner&#39;s Contacts</remarks>
         /// <param name="id">id of Owner to replace Contacts for</param>
         /// <param name="item">Replacement Owner contacts.</param>
         /// <response code="200">OK</response>
