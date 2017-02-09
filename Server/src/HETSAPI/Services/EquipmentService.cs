@@ -53,6 +53,13 @@ namespace HETSAPI.Services
         /// <summary>
         /// 
         /// </summary>
+        /// <param name="id">id of Equipment to fetch EquipmentAttachments for</param>
+        /// <response code="200">OK</response>
+        IActionResult EquipmentIdEquipmentattachmentsGetAsync(int id);
+
+        /// <summary>
+        /// 
+        /// </summary>
         /// <param name="id">id of Equipment to fetch</param>
         /// <response code="200">OK</response>
         /// <response code="404">Equipment not found</response>

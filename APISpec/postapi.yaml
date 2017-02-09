@@ -54,6 +54,28 @@
             type: array
             items:
               $ref: "#/definitions/Equipment"
+  /equipment/{id}/equipmentattachments:
+    get:
+      tags:
+        - Equipment
+      consumes: []
+      produces:
+        - text/plain
+        - application/json
+        - text/json
+      parameters:
+        - name: id
+          in: path
+          description: id of Equipment to fetch EquipmentAttachments for
+          required: true
+          type: integer
+      responses:
+        200:
+          description: OK
+          schema:
+            type: array
+            items:
+              $ref: "#/definitions/EquipmentAttachment"    
   /roles/{id}/permissions:
     get:
       description: Get all the permissions for a role
