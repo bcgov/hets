@@ -150,11 +150,17 @@ namespace HETSAPI.Services.Impl
             if (exists)
             {
                 Owner owner = _context.Owners
-                        .Include(x => x.Contacts)
-                        .ThenInclude(y => y.Addresses)
-                        .Include(x => x.Contacts)
-                        .ThenInclude(y => y.Phones)
-                        .First(x => x.Id == id);
+                    .Include(x => x.LocalArea.ServiceArea.District.Region)
+                    .Include(x => x.EquipmentList)
+                    .ThenInclude(y => y.EquipmentType)
+                    .Include(x => x.Notes)
+                    .Include(x => x.Attachments)
+                    .Include(x => x.History)
+                    .Include(x => x.Contacts)
+                    .ThenInclude(y => y.Addresses)
+                    .Include(x => x.Contacts)
+                    .ThenInclude(y => y.Phones)
+                    .First(x => x.Id == id);
                                                 
                 return new ObjectResult(owner.Contacts);
             }
@@ -178,11 +184,17 @@ namespace HETSAPI.Services.Impl
             if (exists && items != null)
             {
                 Owner owner = _context.Owners
-                        .Include(x => x.Contacts)
-                        .ThenInclude(y => y.Addresses)
-                        .Include(x => x.Contacts)
-                        .ThenInclude(y => y.Phones)
-                        .First(x => x.Id == id);
+                    .Include(x => x.LocalArea.ServiceArea.District.Region)
+                    .Include(x => x.EquipmentList)
+                    .ThenInclude(y => y.EquipmentType)
+                    .Include(x => x.Notes)
+                    .Include(x => x.Attachments)
+                    .Include(x => x.History)
+                    .Include(x => x.Contacts)
+                    .ThenInclude(y => y.Addresses)
+                    .Include(x => x.Contacts)
+                    .ThenInclude(y => y.Phones)
+                    .First(x => x.Id == id);
 
                 // adjust the incoming list.
 
@@ -291,7 +303,18 @@ namespace HETSAPI.Services.Impl
             var exists = _context.Owners.Any(a => a.Id == id);
             if (exists)
             {
-                var result = _context.Owners.First(a => a.Id == id);
+                var result = _context.Owners
+                    .Include(x => x.LocalArea.ServiceArea.District.Region)
+                    .Include(x => x.EquipmentList)
+                    .ThenInclude(y => y.EquipmentType)
+                    .Include(x => x.Notes)
+                    .Include(x => x.Attachments)
+                    .Include(x => x.History)
+                    .Include(x => x.Contacts)
+                    .ThenInclude(y => y.Addresses)
+                    .Include(x => x.Contacts)
+                    .ThenInclude(y => y.Phones)
+                    .First(a => a.Id == id);
                 return new ObjectResult(result);
             }
             else
@@ -345,6 +368,68 @@ namespace HETSAPI.Services.Impl
             // Save the changes
             _context.SaveChanges();
             return new ObjectResult(item);
+        }
+
+        /// <summary>
+        /// Searches Owners
+        /// </summary>
+        /// <remarks>Used for the owner search page.</remarks>
+        /// <param name="localareas">Local Areas (array of id numbers)</param>
+        /// <param name="equipmenttypes">Equipment Types (array of id numbers)</param>
+        /// <param name="ownername"></param>
+        /// <param name="status">Status</param>
+        /// <param name="hired">Hired</param>
+        /// <response code="200">OK</response>
+        public virtual IActionResult OwnersSearchGetAsync(int?[] localareas, int?[] equipmenttypes, string ownername, string status, bool? hired)
+        {
+            var data = _context.Owners
+                    .Include(x => x.LocalArea.ServiceArea.District.Region)
+                    .Include(x => x.EquipmentList)
+                    .ThenInclude(y => y.EquipmentType)
+                    .Include(x => x.Notes)
+                    .Include(x => x.Attachments)
+                    .Include(x => x.History)
+                    .Include(x => x.Contacts)
+                    .ThenInclude(y => y.Addresses)
+                    .Include(x => x.Contacts)
+                    .ThenInclude(y => y.Phones)
+                    .Select(x => x);
+
+            if (localareas != null)
+            {
+                foreach (int? localarea in localareas)
+                {
+                    if (localarea != null)
+                    {
+                        data = data.Where(x => x.LocalArea.Id == localarea);
+                    }
+                }
+            }
+
+            if (equipmenttypes != null)
+            {
+                foreach (int? item in equipmenttypes)
+                {
+                    if (item != null)
+                    {
+                        int equipmentType = (int) item;
+                        data = data.Where(x => x.EquipmentList.Select (y => y.Id).ToList().Contains (equipmentType));
+                    }
+                }
+            }
+                        
+            if (status != null)
+            {
+                data = data.Where(x => x.Status == status);
+            }
+
+            if (hired != null)
+            {
+                // hired is not currently implemented.                 
+            }
+            
+            var result = data.ToList();
+            return new ObjectResult(result);
         }
     }
 }

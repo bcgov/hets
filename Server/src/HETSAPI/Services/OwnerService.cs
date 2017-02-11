@@ -90,5 +90,17 @@ namespace HETSAPI.Services
         /// <param name="item"></param>
         /// <response code="201">Owner created</response>
         IActionResult OwnersPostAsync(Owner item);
+
+        /// <summary>
+        /// Searches Owners
+        /// </summary>
+        /// <remarks>Used for the owner search page.</remarks>
+        /// <param name="localareas">Local Areas (array of id numbers)</param>
+        /// <param name="equipmenttypes">Equipment Types (array of id numbers)</param>
+        /// <param name="ownername"></param>
+        /// <param name="status">Status</param>
+        /// <param name="hired">Hired</param>
+        /// <response code="200">OK</response>
+        IActionResult OwnersSearchGetAsync(int?[] localareas, int?[] equipmenttypes, string ownername, string status, bool? hired);
     }
 }
