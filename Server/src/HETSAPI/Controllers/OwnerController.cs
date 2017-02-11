@@ -155,5 +155,24 @@ namespace HETSAPI.Controllers
         {
             return this._service.OwnersPostAsync(item);
         }
+
+        /// <summary>
+        /// Searches Owners
+        /// </summary>
+        /// <remarks>Used for the owner search page.</remarks>
+        /// <param name="localareas">Local Areas (array of id numbers)</param>
+        /// <param name="equipmenttypes">Equipment Types (array of id numbers)</param>
+        /// <param name="ownername"></param>
+        /// <param name="status">Status</param>
+        /// <param name="hired">Hired</param>
+        /// <response code="200">OK</response>
+        [HttpGet]
+        [Route("/api/owners/search")]
+        [SwaggerOperation("OwnersSearchGet")]
+        [SwaggerResponse(200, type: typeof(List<Owner>))]
+        public virtual IActionResult OwnersSearchGet([FromQuery]int?[] localareas, [FromQuery]int?[] equipmenttypes, [FromQuery]string ownername, [FromQuery]string status, [FromQuery]bool? hired)
+        {
+            return this._service.OwnersSearchGetAsync(localareas, equipmenttypes, ownername, status, hired);
+        }
     }
 }
