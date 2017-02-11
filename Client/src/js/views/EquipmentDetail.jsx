@@ -180,7 +180,7 @@ var EquipmentDetail = React.createClass({
       <div>
         <Row id="equipment-top">
           <Col md={8}>
-            <Label bsStyle={ equipment.isApproved ? 'success' : 'danger'}>{ equipment.statusCd }</Label>
+            <Label bsStyle={ equipment.isApproved ? 'success' : 'danger'}>{ equipment.status }</Label>
             <Label className={ equipment.isMaintenanceContractor ? '' : 'hide' }>Maintenance Contractor</Label>
             <Label bsStyle={ equipment.isWorking ? 'danger' : 'success' }>{ equipment.isWorking ? 'Working' : 'Not Working' }</Label>
             <Label bsStyle={ lastVerifiedStyle }>Last Verified: { formatDateTime(equipment.lastVerifiedDate, 'YYYY-MMM-DD') }</Label>
@@ -212,7 +212,7 @@ var EquipmentDetail = React.createClass({
             </Row>
             <Row>
               <ColLabel md={2}><h1>EquipId:</h1></ColLabel>
-              <ColField md={10}><h1><small>{ equipment.equipCd } ({ equipment.typeName })</small></h1></ColField>
+              <ColField md={10}><h1><small>{ equipment.equipCode } ({ equipment.typeName })</small></h1></ColField>
             </Row>
             <Row>
               <Col md={6}>

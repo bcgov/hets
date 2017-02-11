@@ -2,9 +2,9 @@ import React from 'react';
 
 import { connect } from 'react-redux';
 
-import { Well, Alert, Table, Row, Col } from 'react-bootstrap';
-import { ButtonToolbar, DropdownButton, MenuItem, Button, ButtonGroup, Glyphicon } from 'react-bootstrap';
-import { Form, ControlLabel, Checkbox } from 'react-bootstrap';
+import { Well, Alert, Row, Col } from 'react-bootstrap';
+import { ButtonToolbar, Button, ButtonGroup, Glyphicon } from 'react-bootstrap';
+import { ControlLabel } from 'react-bootstrap';
 import { LinkContainer } from 'react-router-bootstrap';
 
 import _ from 'lodash';
@@ -16,9 +16,13 @@ import * as Api from '../api';
 import * as Constant from '../constants';
 import store from '../store';
 
+import CheckboxControl from '../components/CheckboxControl.jsx';
 import DateControl from '../components/DateControl.jsx';
+import DropdownControl from '../components/DropdownControl.jsx';
 import Favourites from '../components/Favourites.jsx';
+import FilterDropdown from '../components/FilterDropdown.jsx';
 import MultiDropdown from '../components/MultiDropdown.jsx';
+import SortTable from '../components/SortTable.jsx';
 import Spinner from '../components/Spinner.jsx';
 
 import { formatDateTime } from '../utils/date';
@@ -30,7 +34,6 @@ TODO:
 
 */
 
-// Status code drop-down items
 var Equipment = React.createClass({
   propTypes: {
     equipmentList: React.PropTypes.object,
@@ -51,7 +54,7 @@ var Equipment = React.createClass({
         selectedLocalAreasIds: this.props.search.selectedLocalAreasIds || [],
         selectedEquipmentTypesIds: this.props.search.selectedEquipmentTypesIds || [],
         selectedPhysicalAttachmentsIds: this.props.search.selectedPhysicalAttachmentsIds || [],
-        ownerId: this.props.search.ownerId || '',
+        ownerId: this.props.search.ownerId || 0,
         ownerName: this.props.search.ownerName || 'Owner',
         lastVerifiedDate: this.props.search.lastVerifiedDate || '',
         hired: this.props.search.hired !== false,
@@ -68,7 +71,7 @@ var Equipment = React.createClass({
   buildSearchParams() {
     var searchParams = {
       hired: this.state.search.hired,
-      owner: this.state.search.ownerId,
+      owner: this.state.search.ownerId || '',
       statusCode: this.state.search.statusCode,
     };
 
@@ -130,63 +133,8 @@ var Equipment = React.createClass({
     });
   },
 
-  localAreasChanged(selected) {
-    var selectedIds = _.map(selected, 'id');
-    this.updateSearchState({
-      selectedLocalAreasIds: selectedIds,
-    });
-  },
-
-  statusCodeSelected(eventKey) {
-    this.updateSearchState({
-      statusCode: eventKey,
-    });
-  },
-
-  hiredChanged(e) {
-    this.updateSearchState({
-      hired: e.target.checked,
-    });
-  },
-
-  equipmentTypesChanged(selected) {
-    var selectedIds = _.map(selected, 'id');
-    this.updateSearchState({
-      selectedEquipmentTypesIds: selectedIds,
-    });
-  },
-
-  ownerSelected(eventKey, e) {
-    this.updateSearchState({
-      ownerId: eventKey || '',
-      ownerName: eventKey !== 0 ? e.target.text : 'Owner',
-    });
-  },
-
-  lastVerifiedDateChanged(date) {
-    this.updateSearchState({
-      lastVerifiedDate: date,
-    });
-  },
-
-  saveFavourite(favourite) {
-    favourite.value = JSON.stringify(this.state.search);
-  },
-
   loadFavourite(favourite) {
     this.updateSearchState(JSON.parse(favourite.value), this.fetch);
-  },
-
-  sort(e) {
-    var newState = {};
-    if (this.state.ui.sortField !== e.currentTarget.id) {
-      newState.sortField = e.currentTarget.id;
-      newState.sortDesc = false;
-    } else {
-      newState.sortDesc = !this.state.ui.sortDesc;
-    }
-
-    this.updateUIState(newState);
   },
 
   print() {
@@ -195,8 +143,8 @@ var Equipment = React.createClass({
 
   render() {
     var localAreas = _.sortBy(this.props.localAreas, 'name');
-    var equipmentTypes = _.sortBy(this.props.equipmentTypes, 'name');
     var owners = _.sortBy(this.props.owners, 'name');
+    var equipmentTypes = _.sortBy(this.props.equipmentTypes, 'description');
     var attachmentTypes = _.sortBy(this.props.physicalAttachmentTypes, 'name');
 
     return <div id="equipment-list">
@@ -205,34 +153,26 @@ var Equipment = React.createClass({
           <Col md={11}>
             <Row>
               <ButtonToolbar id="equipment-search-row-1">
-                <MultiDropdown id="local-area-dropdown" placeholder="Local Areas"
-                  items={ localAreas } selectedIds={ this.state.search.selectedLocalAreasIds } onChange={ this.localAreasChanged } showMaxItems={ 2 } />
-                <DropdownButton id="status-code-dropdown" title={ this.state.search.statusCode } onSelect={ this.statusCodeSelected }>
-                  <MenuItem key={ Constant.EQUIPMENT_STATUS_CODE_APPROVED } eventKey={ Constant.EQUIPMENT_STATUS_CODE_APPROVED }>{ Constant.EQUIPMENT_STATUS_CODE_APPROVED }</MenuItem>
-                  <MenuItem key={ Constant.EQUIPMENT_STATUS_CODE_NEW } eventKey={ Constant.EQUIPMENT_STATUS_CODE_NEW }>{ Constant.EQUIPMENT_STATUS_CODE_NEW }</MenuItem>
-                  <MenuItem key={ Constant.EQUIPMENT_STATUS_CODE_ARCHIVED } eventKey={ Constant.EQUIPMENT_STATUS_CODE_ARCHIVED }>{ Constant.EQUIPMENT_STATUS_CODE_ARCHIVED }</MenuItem>
-                </DropdownButton>
-                <Checkbox inline checked={ this.state.search.hired } onChange={ this.hiredChanged }>Hired</Checkbox>
-                <MultiDropdown id="equipment-type-dropdown" placeholder="Equipment Types"
-                  items={ equipmentTypes } selectedIds={ this.state.search.selectedEquipmentTypesIds } onChange={ this.equipmentTypesChanged } showMaxItems={ 2 } />
-                <DropdownButton id="owner-dropdown" title={ this.state.search.ownerName } onSelect={ this.ownerSelected }>
-                  <MenuItem key={ 0 } eventKey={ 0 }>&nbsp;</MenuItem>
-                  {
-                    _.map(owners, (owner) => {
-                      return <MenuItem key={ owner.id } eventKey={ owner.id }>{ owner.name }</MenuItem>;
-                    })
-                  }
-                </DropdownButton>
+                <MultiDropdown id="selectedLocalAreasIds" placeholder="Local Areas"
+                  items={ localAreas } selectedIds={ this.state.search.selectedLocalAreasIds } updateState={ this.updateSearchState } showMaxItems={ 2 } />
+                <DropdownControl id="statusCode" title={ this.state.search.statusCode } updateState={ this.updateSearchState }
+                  items={[ Constant.EQUIPMENT_STATUS_CODE_APPROVED, Constant.EQUIPMENT_STATUS_CODE_PENDING, Constant.EQUIPMENT_STATUS_CODE_ARCHIVED ]}
+                />
+                <CheckboxControl inline id="hired" checked={ this.state.search.hired } updateState={ this.updateSearchState }>Hired</CheckboxControl>
+                <MultiDropdown id="selectedEquipmentTypesIds" placeholder="Equipment Types" fieldName="description"
+                  items={ equipmentTypes } selectedIds={ this.state.search.selectedEquipmentTypesIds } updateState={ this.updateSearchState } showMaxItems={ 2 } />
+                <FilterDropdown id="ownerId" placeholder="Owner" blankLine 
+                  items={ owners } selectedId={ this.state.search.ownerId } updateState={ this.updateSearchState } />
               </ButtonToolbar>
             </Row>
             <Row>
               <ButtonToolbar id="equipment-search-row-2">
-                <DateControl date={ this.state.search.lastVerifiedDate } onChange={ this.lastVerifiedDateChanged } placeholder="mm/dd/yyyy" label="Not Verified Since:" title="last verified date"/>
-                <Form id="equipment-attachments" inline>
+                <DateControl id="lastVerifiedDate" date={ this.state.search.lastVerifiedDate } updateState={ this.updateSearchState } placeholder="mm/dd/yyyy" label="Not Verified Since:" title="last verified date"/>
+                <div id="equipment-attachments">
                   <ControlLabel>Attachment:</ControlLabel>
-                  <MultiDropdown id="attachment-type-dropdown" placeholder="Select Attachments"
-                    items={ attachmentTypes } selectedIds={ this.state.search.selectedPhysicalAttachmentsIds } onChange={ this.equipmentTypesChanged } showMaxItems={ 2 } />
-                </Form>
+                  <MultiDropdown id="selectedPhysicalAttachmentsIds" placeholder="Select Attachments"
+                    items={ attachmentTypes } selectedIds={ this.state.search.selectedPhysicalAttachmentsIds } updateState={ this.updateSearchState } showMaxItems={ 2 } />
+                </div>
                 <Button id="search-button" bsStyle="primary" onClick={ this.fetch }>Search</Button>
               </ButtonToolbar>
             </Row>
@@ -244,7 +184,7 @@ var Equipment = React.createClass({
               </ButtonGroup>
             </Row>
             <Row id="equipment-faves">
-              <Favourites id="equipment-faves-dropdown" type="equipment" favourites={ this.props.favourites } onAdd={ this.saveFavourite } onSelect={ this.loadFavourite } pullRight />
+              <Favourites id="equipment-faves-dropdown" type="equipment" favourites={ this.props.favourites } data={ this.state.search } onSelect={ this.loadFavourite } pullRight />
             </Row>
           </Col>
         </Row>
@@ -258,38 +198,25 @@ var Equipment = React.createClass({
         if (this.state.ui.sortDesc) {
           _.reverse(equipmentList);
         }
-
-        var buildHeader = (id, title) => {
-          var sortGlyph = '';
-          if (this.state.ui.sortField === id) {
-            sortGlyph = <span>&nbsp;<Glyphicon glyph={ this.state.ui.sortDesc ? 'sort-by-attributes-alt' : 'sort-by-attributes' }/></span>;
-          }
-          return <th id={ id } onClick={ this.sort }>{ title }{ sortGlyph }</th>;
-        };
-
-        return <Table condensed striped>
-          <thead>
-            <tr>
-              { buildHeader('equipCode', 'ID') }
-              { buildHeader('typeName', 'Type') }
-              { buildHeader('ownerName', 'Owner') }
-              { buildHeader('seniorityNumber', 'Seniority') }
-              { buildHeader('hiredStatus', 'Hired') }
-              { buildHeader('make', 'Make') }
-              { buildHeader('model', 'Model') }
-              { buildHeader('size', 'Size') }
-              { buildHeader('attachments', 'Attachments') }
-              { buildHeader('lastVerifiedDate', 'Last Verified') }
-              <th></th>
-            </tr>
-          </thead>
-          <tbody>
+        return <SortTable sortField={ this.state.ui.sortField } sortDesc={ this.state.ui.sortDesc } onSort={ this.updateUIState } headers={[
+            { field: 'equipCode',        title: 'ID'            },
+            { field: 'typeName',         title: 'Type'          },
+            { field: 'companyName',      title: 'Owner'         },
+            { field: 'seniorityNumber',  title: 'Seniority'     },
+            { field: 'hiredStatus',      title: 'Hired'         },
+            { field: 'make',             title: 'Make'          },
+            { field: 'model',            title: 'Model'         },
+            { field: 'size',             title: 'Size'          },
+            { field: 'attachments',      title: 'Attachments'   },
+            { field: 'lastVerifiedDate', title: 'Last Verified' },
+            { field: 'blank' },
+        ]}>
           {
             _.map(equipmentList, (equip) => {
               return <tr key={ equip.id }>
-                <td>{ equip.equipCd }</td>
+                <td>{ equip.equipCode }</td>
                 <td>{ equip.typeName }</td>
-                <td><a href={ equip.ownerPath }>{ equip.ownerName }</a></td>
+                <td><a href={ equip.ownerPath }>{ equip.companyName }</a></td>
                 <td>{ equip.seniorityDisplayNumber }</td>
                 <td>{ equip.hiredStatus }</td>
                 <td>{ equip.make }</td>
@@ -305,8 +232,7 @@ var Equipment = React.createClass({
               </tr>;
             })
           }
-          </tbody>
-        </Table>;
+        </SortTable>;
       })()}
 
     </div>;
