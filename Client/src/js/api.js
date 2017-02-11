@@ -99,27 +99,31 @@ function parseEquipment(equipment) {
   if (!equipment.localArea.serviceArea) { equipment.localArea.serviceArea = { id: '', name: ''}; }
   if (!equipment.localArea.serviceArea.district) { equipment.localArea.serviceArea.district = { id: '', name: ''}; }
   if (!equipment.localArea.serviceArea.district.region) { equipment.localArea.serviceArea.district.region = { id: '', name: ''}; }
-  if (!equipment.statusCd) { equipment.statusCd = Constant.EQUIPMENT_STATUS_CODE_NEW; }
+  if (!equipment.status) { equipment.status = Constant.EQUIPMENT_STATUS_CODE_PENDING; }
 
-  equipment.isApproved = equipment.statusCd === Constant.EQUIPMENT_STATUS_CODE_APPROVED;
-  equipment.isNew = equipment.statusCd === Constant.EQUIPMENT_STATUS_CODE_NEW;
-  equipment.isArchived = equipment.statusCd === Constant.EQUIPMENT_STATUS_CODE_ARCHIVED;
+  equipment.isApproved = equipment.status === Constant.EQUIPMENT_STATUS_CODE_APPROVED;
+  equipment.isNew = equipment.status === Constant.EQUIPMENT_STATUS_CODE_PENDING;
+  equipment.isArchived = equipment.status === Constant.EQUIPMENT_STATUS_CODE_ARCHIVED;
   equipment.isWorking = equipment.working === 'Y';
   equipment.isMaintenanceContractor = equipment.owner.maintenanceContractor === 'Y';
 
+  // UI display fields
   equipment.ownerName = firstLastName(equipment.owner.ownerFirstName, equipment.owner.ownerLastName);
   equipment.ownerPath = equipment.owner.id ? `#/owners/${equipment.owner.id}` : '';
   equipment.typeName = equipment.equipmentType ? equipment.equipmentType.description : '';
-  equipment.seniorityDisplayNumber = concat(equipment.blockNumber, equipment.seniority, ' - ');
   equipment.localAreaName = equipment.localArea.name;
   equipment.districtName = equipment.localArea.serviceArea.district.name;
   equipment.daysSinceVerified = daysAgo(equipment.lastVerifiedDate);
+
+  // TODO Company name needs to be defined in the backend
+  equipment.companyName = equipment.owner.companyName || equipment.ownerName;
 
   // Seniority data
   equipment.ytd = equipment.ytd || 0;
   equipment.serviceHoursLastYear = equipment.serviceHoursLastYear || 0;
   equipment.serviceHoursTwoYearsAgo = equipment.serviceHoursTwoYearsAgo || 0;
   equipment.serviceHoursThreeYearsAgo = equipment.serviceHoursThreeYearsAgo || 0;
+  equipment.seniorityDisplayNumber = concat(equipment.blockNumber, equipment.seniority, ' - ');
 
   equipment.currentYear = Moment().year();
   equipment.lastYear = equipment.currentYear - 1;
@@ -242,8 +246,25 @@ export function deletePhysicalAttachment(attachment) {
 ////////////////////
 
 function parseOwner(owner) {
+  if (!owner.localArea) { owner.localArea = { id: '', name: ''}; }
+  if (!owner.localArea.serviceArea) { owner.localArea.serviceArea = { id: '', name: ''}; }
+  if (!owner.localArea.serviceArea.district) { owner.localArea.serviceArea.district = { id: '', name: ''}; }
+  if (!owner.localArea.serviceArea.district.region) { owner.localArea.serviceArea.district.region = { id: '', name: ''}; }
+  if (!owner.contacts) { owner.contacts = []; }
+  if (!owner.equipmentList) { owner.equipmentList = []; }
+
+  // TODO Owner status needs to be populated in sample data. Setting to Approved for the time being...
+  owner.status = owner.status || Constant.OWNER_STATUS_CODE_APPROVED;
+
+  // UI display fields
+  owner.isActive = owner.status === Constant.OWNER_STATUS_CODE_APPROVED;
   owner.name = firstLastName(owner.ownerFirstName, owner.ownerLastName);
   owner.primaryContactName = owner.primaryContact ? firstLastName(owner.primaryContact.givenName, owner.primaryContact.surname) : '';
+  owner.localAreaName = owner.localArea.name;
+  owner.numberOfEquipment = Object.keys(owner.equipmentList).length;
+
+  // TODO Company name needs to be implemented in the backend
+  owner.companyName = owner.companyName || owner.name;
 }
 
 export function searchOwners(params) {
