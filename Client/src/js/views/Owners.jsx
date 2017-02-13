@@ -25,7 +25,7 @@ import Spinner from '../components/Spinner.jsx';
 /*
 
 TODO:
-* Print / Email
+* Print / Email / Verify
 
 */
 
@@ -140,6 +140,10 @@ var Owners = React.createClass({
 
   },
 
+  verifyOwners() {
+
+  },
+  
   render() {
     var localAreas = _.sortBy(this.props.localAreas, 'name');
     var owners = _.sortBy(this.props.owners, 'name');
@@ -148,7 +152,7 @@ var Owners = React.createClass({
     return <div id="owners-list">
       <Well id="owners-bar" bsSize="small" className="clearfix">
         <Row>
-          <Col md={10}>
+          <Col md={9}>
             <ButtonToolbar id="owners-search">
               <MultiDropdown id="selectedLocalAreasIds" placeholder="Local Areas"
                 items={ localAreas } selectedIds={ this.state.search.selectedLocalAreasIds } updateState={ this.updateSearchState } showMaxItems={ 2 } />
@@ -166,7 +170,8 @@ var Owners = React.createClass({
           <Col md={1}>
             <Favourites id="owners-faves-dropdown" type="owner" favourites={ this.props.favourites } data={ this.state.search } onSelect={ this.loadFavourite } />
           </Col>
-          <Col md={1}>
+          <Col md={2}>
+            <Button onClick={ this.verifyOwners }>Verify</Button>
             <div id="owners-buttons">
               <ButtonGroup>
                 <Button onClick={ this.email }><Glyphicon glyph="envelope" title="E-mail" /></Button>
