@@ -45,6 +45,23 @@ namespace HETSAPI.Services
         /// <summary>
         /// 
         /// </summary>
+        /// <remarks>Gets an Owner&#39;s Contacts</remarks>
+        /// <param name="id">id of Owner to fetch Contacts for</param>
+        /// <response code="200">OK</response>
+        IActionResult OwnersIdContactsGetAsync(int id);
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <remarks>Replaces an Owner&#39;s Contacts</remarks>
+        /// <param name="id">id of Owner to replace Contacts for</param>
+        /// <param name="item">Replacement Owner contacts.</param>
+        /// <response code="200">OK</response>
+        IActionResult OwnersIdContactsPutAsync(int id, Contact[] item);
+
+        /// <summary>
+        /// 
+        /// </summary>
         /// <param name="id">id of Owner to delete</param>
         /// <response code="200">OK</response>
         /// <response code="404">Owner not found</response>
@@ -73,5 +90,17 @@ namespace HETSAPI.Services
         /// <param name="item"></param>
         /// <response code="201">Owner created</response>
         IActionResult OwnersPostAsync(Owner item);
+
+        /// <summary>
+        /// Searches Owners
+        /// </summary>
+        /// <remarks>Used for the owner search page.</remarks>
+        /// <param name="localareas">Local Areas (array of id numbers)</param>
+        /// <param name="equipmenttypes">Equipment Types (array of id numbers)</param>
+        /// <param name="ownername"></param>
+        /// <param name="status">Status</param>
+        /// <param name="hired">Hired</param>
+        /// <response code="200">OK</response>
+        IActionResult OwnersSearchGetAsync(int?[] localareas, int?[] equipmenttypes, string ownername, string status, bool? hired);
     }
 }

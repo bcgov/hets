@@ -142,6 +142,132 @@ namespace HETSAPI.Services.Impl
         /// <summary>
         /// 
         /// </summary>
+        /// <param name="id">id of Owner to fetch Contacts for</param>
+        /// <response code="200">OK</response>
+        public virtual IActionResult OwnersIdContactsGetAsync(int id)
+        {
+            var exists = _context.Owners.Any(a => a.Id == id);
+            if (exists)
+            {
+                Owner owner = _context.Owners
+                    .Include(x => x.LocalArea.ServiceArea.District.Region)
+                    .Include(x => x.EquipmentList)
+                    .ThenInclude(y => y.EquipmentType)
+                    .Include(x => x.Notes)
+                    .Include(x => x.Attachments)
+                    .Include(x => x.History)
+                    .Include(x => x.Contacts)
+                    .ThenInclude(y => y.Addresses)
+                    .Include(x => x.Contacts)
+                    .ThenInclude(y => y.Phones)
+                    .First(x => x.Id == id);
+                                                
+                return new ObjectResult(owner.Contacts);
+            }
+            else
+            {
+                // record not found
+                return new StatusCodeResult(404);
+            }
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <remarks>Replaces an Owner&#39;s Contacts</remarks>
+        /// <param name="id">id of Owner to replace Contacts for</param>
+        /// <param name="items">Replacement Owner contacts.</param>
+        /// <response code="200">OK</response>
+        public virtual IActionResult OwnersIdContactsPutAsync(int id, Contact[] items)
+        {
+            var exists = _context.Owners.Any(a => a.Id == id);
+            if (exists && items != null)
+            {
+                Owner owner = _context.Owners
+                    .Include(x => x.LocalArea.ServiceArea.District.Region)
+                    .Include(x => x.EquipmentList)
+                    .ThenInclude(y => y.EquipmentType)
+                    .Include(x => x.Notes)
+                    .Include(x => x.Attachments)
+                    .Include(x => x.History)
+                    .Include(x => x.Contacts)
+                    .ThenInclude(y => y.Addresses)
+                    .Include(x => x.Contacts)
+                    .ThenInclude(y => y.Phones)
+                    .First(x => x.Id == id);
+
+                // adjust the incoming list.
+
+                for (int i = 0; i < items.Count(); i++)
+                {
+                    Contact item = items[i];
+                    if (item != null)
+                    {
+                        bool contact_exists = _context.Contacts.Any(x => x.Id == item.Id);
+                        if (contact_exists)
+                        {
+                            items[i] = _context.Contacts
+                                .Include(x => x.Addresses)
+                                .Include(x => x.Phones)
+                                .First(x => x.Id == item.Id);
+                        }
+                        else
+                        {
+                            _context.Add(item);
+                            items[i] = item;
+                        }
+                    }                    
+                }
+
+                // remove contacts that are no longer attached.
+
+                foreach (Contact contact in owner.Contacts)
+                {
+                    if (contact != null && !items.Any(x => x.Id == contact.Id))
+                    {
+                        if (contact.Phones != null)
+                        {
+                            foreach (ContactPhone phone in contact.Phones)
+                            {
+                                if (phone != null)
+                                {
+                                    _context.Remove(phone);
+                                }
+                            }
+                        }
+                        if (contact.Addresses != null)
+                        {
+                            foreach (ContactAddress address in contact.Addresses)
+                            {
+                                if (address != null)
+                                {
+                                    _context.Remove(address);
+                                }
+                            }
+                        }
+
+                        _context.Remove(contact);
+                    }
+                }
+
+                // replace Contacts.
+                owner.Contacts = items.ToList();
+                _context.Update(owner);
+                _context.SaveChanges();
+
+                return new ObjectResult(items);
+            }
+            else
+            {
+                // record not found
+                return new StatusCodeResult(404);
+            }
+        }
+
+
+        /// <summary>
+        /// 
+        /// </summary>
         /// <param name="id">id of Owner to delete</param>
         /// <response code="200">OK</response>
         /// <response code="404">Owner not found</response>
@@ -177,7 +303,18 @@ namespace HETSAPI.Services.Impl
             var exists = _context.Owners.Any(a => a.Id == id);
             if (exists)
             {
-                var result = _context.Owners.First(a => a.Id == id);
+                var result = _context.Owners
+                    .Include(x => x.LocalArea.ServiceArea.District.Region)
+                    .Include(x => x.EquipmentList)
+                    .ThenInclude(y => y.EquipmentType)
+                    .Include(x => x.Notes)
+                    .Include(x => x.Attachments)
+                    .Include(x => x.History)
+                    .Include(x => x.Contacts)
+                    .ThenInclude(y => y.Addresses)
+                    .Include(x => x.Contacts)
+                    .ThenInclude(y => y.Phones)
+                    .First(a => a.Id == id);
                 return new ObjectResult(result);
             }
             else
@@ -231,6 +368,68 @@ namespace HETSAPI.Services.Impl
             // Save the changes
             _context.SaveChanges();
             return new ObjectResult(item);
+        }
+
+        /// <summary>
+        /// Searches Owners
+        /// </summary>
+        /// <remarks>Used for the owner search page.</remarks>
+        /// <param name="localareas">Local Areas (array of id numbers)</param>
+        /// <param name="equipmenttypes">Equipment Types (array of id numbers)</param>
+        /// <param name="ownername"></param>
+        /// <param name="status">Status</param>
+        /// <param name="hired">Hired</param>
+        /// <response code="200">OK</response>
+        public virtual IActionResult OwnersSearchGetAsync(int?[] localareas, int?[] equipmenttypes, string ownername, string status, bool? hired)
+        {
+            var data = _context.Owners
+                    .Include(x => x.LocalArea.ServiceArea.District.Region)
+                    .Include(x => x.EquipmentList)
+                    .ThenInclude(y => y.EquipmentType)
+                    .Include(x => x.Notes)
+                    .Include(x => x.Attachments)
+                    .Include(x => x.History)
+                    .Include(x => x.Contacts)
+                    .ThenInclude(y => y.Addresses)
+                    .Include(x => x.Contacts)
+                    .ThenInclude(y => y.Phones)
+                    .Select(x => x);
+
+            if (localareas != null)
+            {
+                foreach (int? localarea in localareas)
+                {
+                    if (localarea != null)
+                    {
+                        data = data.Where(x => x.LocalArea.Id == localarea);
+                    }
+                }
+            }
+
+            if (equipmenttypes != null)
+            {
+                foreach (int? item in equipmenttypes)
+                {
+                    if (item != null)
+                    {
+                        int equipmentType = (int) item;
+                        data = data.Where(x => x.EquipmentList.Select (y => y.Id).ToList().Contains (equipmentType));
+                    }
+                }
+            }
+                        
+            if (status != null)
+            {
+                data = data.Where(x => x.Status == status);
+            }
+
+            if (hired != null)
+            {
+                // hired is not currently implemented.                 
+            }
+            
+            var result = data.ToList();
+            return new ObjectResult(result);
         }
     }
 }

@@ -40,7 +40,7 @@ namespace HETSAPI.Models
         /// <summary>
         /// Initializes a new instance of the <see cref="UserFavourite" /> class.
         /// </summary>
-        /// <param name="Id">Primary Key (required).</param>
+        /// <param name="Id">A system-generated unique identifier for a UserFavourite (required).</param>
         /// <param name="Name">The user-defined name for the recorded settings. Allows the user to save different groups of settings and access each one easily when needed..</param>
         /// <param name="Value">The settings saved by the user. In general,  a UI defined chunk of json that stores the settings in place when the user created the favourite..</param>
         /// <param name="IsDefault">True if this Favourite is the default for this Context Type. On first access to a context in a session the default favourite for the context it is invoked. If there is no default favourite,  a system-wide default is invoked. On return to the context within a session,  the last parameters used are reapplied..</param>
@@ -57,10 +57,10 @@ namespace HETSAPI.Models
         }
 
         /// <summary>
-        /// Primary Key
+        /// A system-generated unique identifier for a UserFavourite
         /// </summary>
-        /// <value>Primary Key</value>
-        [MetaDataExtension (Description = "Primary Key")]
+        /// <value>A system-generated unique identifier for a UserFavourite</value>
+        [MetaDataExtension (Description = "A system-generated unique identifier for a UserFavourite")]
         public int Id { get; set; }
         
         /// <summary>
@@ -93,6 +93,8 @@ namespace HETSAPI.Models
         /// </summary>
         /// <value>The type of Favourite</value>
         [MetaDataExtension (Description = "The type of Favourite")]
+        [MaxLength(255)]
+        
         public string Type { get; set; }
         
         /// <summary>

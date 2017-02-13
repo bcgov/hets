@@ -32,6 +32,15 @@ namespace HETSAPI.Services
         /// <summary>
         /// 
         /// </summary>
+        /// <remarks>Returns a users favourites of a given type.  If type is empty, returns all.</remarks>
+        /// <param name="favouritetype">type of favourite to return</param>
+        /// <response code="200">OK</response>
+        /// <response code="404">User not found</response>
+        IActionResult UsersCurrentFavouritesFavouritetypeGetAsync(string favouritetype);
+
+        /// <summary>
+        /// 
+        /// </summary>
         /// <remarks>Removes a specific user favourite</remarks>
         /// <param name="id">id of Favourite to delete</param>
         /// <response code="200">OK</response>
@@ -52,15 +61,6 @@ namespace HETSAPI.Services
         /// <param name="item"></param>
         /// <response code="201">UserFavourite created</response>
         IActionResult UsersCurrentFavouritesPutAsync(UserFavourite item);
-
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <remarks>Returns a user&#39;s favourites of a given type.  If type is empty, returns all.</remarks>
-        /// <param name="type">type of favourite to return</param>
-        /// <response code="200">OK</response>
-        /// <response code="404">User not found</response>
-        IActionResult UsersCurrentFavouritesTypeGetAsync(string type);
 
         /// <summary>
         /// 

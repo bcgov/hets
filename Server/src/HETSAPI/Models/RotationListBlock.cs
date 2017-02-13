@@ -39,7 +39,7 @@ namespace HETSAPI.Models
         /// <summary>
         /// Initializes a new instance of the <see cref="RotationListBlock" /> class.
         /// </summary>
-        /// <param name="Id">Primary Key (required).</param>
+        /// <param name="Id">A system-generated unique identifier for a RotationListBlock (required).</param>
         /// <param name="RotationList">RotationList.</param>
         /// <param name="BlockNum">The block number. 1 for Primary, 2 for Secondary, 3 for Open.</param>
         /// <param name="CycleNum">CycleNum.</param>
@@ -78,10 +78,10 @@ namespace HETSAPI.Models
         }
 
         /// <summary>
-        /// Primary Key
+        /// A system-generated unique identifier for a RotationListBlock
         /// </summary>
-        /// <value>Primary Key</value>
-        [MetaDataExtension (Description = "Primary Key")]
+        /// <value>A system-generated unique identifier for a RotationListBlock</value>
+        [MetaDataExtension (Description = "A system-generated unique identifier for a RotationListBlock")]
         public int Id { get; set; }
         
         /// <summary>

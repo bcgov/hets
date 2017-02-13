@@ -162,7 +162,7 @@ namespace HETSAPI.Services.Impl
         /// <param name="type">type of favourite to return</param>
         /// <response code="200">OK</response>
         /// <response code="404">User not found</response>
-        public virtual IActionResult UsersCurrentFavouritesTypeGetAsync(string type)
+        public virtual IActionResult UsersCurrentFavouritesFavouritetypeGetAsync(string type)
         {
             // get the current user id
             int? id = GetCurrentUserId();

@@ -12,8 +12,11 @@
       "commandName": "IISExpress",
       "launchBrowser": true,
       "environmentVariables": {
+        "POSTGRESQL_DATABASE": "hets",
         "ASPNETCORE_ENVIRONMENT": "Development",
-        "UserInitializationFile": "C:\\repo\\users.json"
+        "POSTGRESQL_USER": "user6DA",
+        "UserInitializationFile": "C:\\repo\\users.json",
+        "POSTGRESQL_PASSWORD": "IhUFdcC0wGJeIMDJ"
       }
     }
   }

@@ -23,8 +23,9 @@ using System.ComponentModel.DataAnnotations;
 namespace HETSAPI.Models
 {
     /// <summary>
-    /// 
+    /// A global and local area list of types of equipment for which a request can be generated and for which owners can register their equipment. If the local area is NULL, the type is visible Province-wide. In the previous instance of this application, all equipment types were assigned to the local area and transitioning to a province-wide model is being attempted (and may not work for the end users). An attempt to achieve a &amp;quot;mostly province-wide&amp;quot; list is being made during the data conversion process - mapping local area equipment types to provincial or local area types as part of data conversion.
     /// </summary>
+        [MetaDataExtension (Description = "A global and local area list of types of equipment for which a request can be generated and for which owners can register their equipment. If the local area is NULL, the type is visible Province-wide. In the previous instance of this application, all equipment types were assigned to the local area and transitioning to a province-wide model is being attempted (and may not work for the end users). An attempt to achieve a &amp;quot;mostly province-wide&amp;quot; list is being made during the data conversion process - mapping local area equipment types to provincial or local area types as part of data conversion.")]
 
     public partial class EquipmentType : IEquatable<EquipmentType>
     {
@@ -39,17 +40,17 @@ namespace HETSAPI.Models
         /// <summary>
         /// Initializes a new instance of the <see cref="EquipmentType" /> class.
         /// </summary>
-        /// <param name="Id">Primary Key (required).</param>
+        /// <param name="Id">A system-generated unique identifier for an EquipmentType (required).</param>
         /// <param name="LocalArea">LocalArea.</param>
-        /// <param name="Code">Code.</param>
-        /// <param name="Description">Description.</param>
-        /// <param name="EquipRentalRateNo">EquipRentalRateNo.</param>
-        /// <param name="EquipRentalRatePage">EquipRentalRatePage.</param>
-        /// <param name="MaxHours">MaxHours.</param>
-        /// <param name="ExtendHours">ExtendHours.</param>
-        /// <param name="MaxHoursSub">MaxHoursSub.</param>
-        /// <param name="SecondBlk">SecondBlk.</param>
-        public EquipmentType(int Id, LocalArea LocalArea = null, string Code = null, string Description = null, float? EquipRentalRateNo = null, float? EquipRentalRatePage = null, float? MaxHours = null, float? ExtendHours = null, float? MaxHoursSub = null, string SecondBlk = null)
+        /// <param name="Code">CHECK WITH BUSINESS - IS THIS NEEDED - A unique but human-friendly code for the Equipment Type that can be displayed on screens with little screen real estate available..</param>
+        /// <param name="Description">The name of the equipment type, as specified by the HETS Clerk creating the equipment type..</param>
+        /// <param name="EquipRentalRateNo">CHECK WITH BUSINESS - IS THIS NEEDED.</param>
+        /// <param name="EquipRentalRatePage">CHECK WITH BUSINESS - IS THIS NEEDED.</param>
+        /// <param name="MaxHours">CHECK WITH BUSINESS - IS THIS NEEDED.</param>
+        /// <param name="ExtendHours">CHECK WITH BUSINESS - IS THIS NEEDED.</param>
+        /// <param name="MaxHoursSub">CHECK WITH BUSINESS - IS THIS NEEDED.</param>
+        /// <param name="Blocks">The number of blocks defined for this equipment type. Currently, either 2 for Dump Truck equipment and 1 for non-Dump Truck equipment. Unlikely to change, particularly without a significant impact on code..</param>
+        public EquipmentType(int Id, LocalArea LocalArea = null, string Code = null, string Description = null, float? EquipRentalRateNo = null, float? EquipRentalRatePage = null, float? MaxHours = null, float? ExtendHours = null, float? MaxHoursSub = null, int? Blocks = null)
         {   
             this.Id = Id;
             this.LocalArea = LocalArea;
@@ -60,14 +61,14 @@ namespace HETSAPI.Models
             this.MaxHours = MaxHours;
             this.ExtendHours = ExtendHours;
             this.MaxHoursSub = MaxHoursSub;
-            this.SecondBlk = SecondBlk;
+            this.Blocks = Blocks;
         }
 
         /// <summary>
-        /// Primary Key
+        /// A system-generated unique identifier for an EquipmentType
         /// </summary>
-        /// <value>Primary Key</value>
-        [MetaDataExtension (Description = "Primary Key")]
+        /// <value>A system-generated unique identifier for an EquipmentType</value>
+        [MetaDataExtension (Description = "A system-generated unique identifier for an EquipmentType")]
         public int Id { get; set; }
         
         /// <summary>
@@ -82,50 +83,64 @@ namespace HETSAPI.Models
         public int? LocalAreaRefId { get; set; }
         
         /// <summary>
-        /// Gets or Sets Code
+        /// CHECK WITH BUSINESS - IS THIS NEEDED - A unique but human-friendly code for the Equipment Type that can be displayed on screens with little screen real estate available.
         /// </summary>
+        /// <value>CHECK WITH BUSINESS - IS THIS NEEDED - A unique but human-friendly code for the Equipment Type that can be displayed on screens with little screen real estate available.</value>
+        [MetaDataExtension (Description = "CHECK WITH BUSINESS - IS THIS NEEDED - A unique but human-friendly code for the Equipment Type that can be displayed on screens with little screen real estate available.")]
         [MaxLength(255)]
         
         public string Code { get; set; }
         
         /// <summary>
-        /// Gets or Sets Description
+        /// The name of the equipment type, as specified by the HETS Clerk creating the equipment type.
         /// </summary>
+        /// <value>The name of the equipment type, as specified by the HETS Clerk creating the equipment type.</value>
+        [MetaDataExtension (Description = "The name of the equipment type, as specified by the HETS Clerk creating the equipment type.")]
         [MaxLength(255)]
         
         public string Description { get; set; }
         
         /// <summary>
-        /// Gets or Sets EquipRentalRateNo
+        /// CHECK WITH BUSINESS - IS THIS NEEDED
         /// </summary>
+        /// <value>CHECK WITH BUSINESS - IS THIS NEEDED</value>
+        [MetaDataExtension (Description = "CHECK WITH BUSINESS - IS THIS NEEDED")]
         public float? EquipRentalRateNo { get; set; }
         
         /// <summary>
-        /// Gets or Sets EquipRentalRatePage
+        /// CHECK WITH BUSINESS - IS THIS NEEDED
         /// </summary>
+        /// <value>CHECK WITH BUSINESS - IS THIS NEEDED</value>
+        [MetaDataExtension (Description = "CHECK WITH BUSINESS - IS THIS NEEDED")]
         public float? EquipRentalRatePage { get; set; }
         
         /// <summary>
-        /// Gets or Sets MaxHours
+        /// CHECK WITH BUSINESS - IS THIS NEEDED
         /// </summary>
+        /// <value>CHECK WITH BUSINESS - IS THIS NEEDED</value>
+        [MetaDataExtension (Description = "CHECK WITH BUSINESS - IS THIS NEEDED")]
         public float? MaxHours { get; set; }
         
         /// <summary>
-        /// Gets or Sets ExtendHours
+        /// CHECK WITH BUSINESS - IS THIS NEEDED
         /// </summary>
+        /// <value>CHECK WITH BUSINESS - IS THIS NEEDED</value>
+        [MetaDataExtension (Description = "CHECK WITH BUSINESS - IS THIS NEEDED")]
         public float? ExtendHours { get; set; }
         
         /// <summary>
-        /// Gets or Sets MaxHoursSub
+        /// CHECK WITH BUSINESS - IS THIS NEEDED
         /// </summary>
+        /// <value>CHECK WITH BUSINESS - IS THIS NEEDED</value>
+        [MetaDataExtension (Description = "CHECK WITH BUSINESS - IS THIS NEEDED")]
         public float? MaxHoursSub { get; set; }
         
         /// <summary>
-        /// Gets or Sets SecondBlk
+        /// The number of blocks defined for this equipment type. Currently, either 2 for Dump Truck equipment and 1 for non-Dump Truck equipment. Unlikely to change, particularly without a significant impact on code.
         /// </summary>
-        [MaxLength(255)]
-        
-        public string SecondBlk { get; set; }
+        /// <value>The number of blocks defined for this equipment type. Currently, either 2 for Dump Truck equipment and 1 for non-Dump Truck equipment. Unlikely to change, particularly without a significant impact on code.</value>
+        [MetaDataExtension (Description = "The number of blocks defined for this equipment type. Currently, either 2 for Dump Truck equipment and 1 for non-Dump Truck equipment. Unlikely to change, particularly without a significant impact on code.")]
+        public int? Blocks { get; set; }
         
         /// <summary>
         /// Returns the string presentation of the object
@@ -144,7 +159,7 @@ namespace HETSAPI.Models
             sb.Append("  MaxHours: ").Append(MaxHours).Append("\n");
             sb.Append("  ExtendHours: ").Append(ExtendHours).Append("\n");
             sb.Append("  MaxHoursSub: ").Append(MaxHoursSub).Append("\n");
-            sb.Append("  SecondBlk: ").Append(SecondBlk).Append("\n");
+            sb.Append("  Blocks: ").Append(Blocks).Append("\n");
             sb.Append("}\n");
             return sb.ToString();
         }
@@ -228,9 +243,9 @@ namespace HETSAPI.Models
                     this.MaxHoursSub.Equals(other.MaxHoursSub)
                 ) &&                 
                 (
-                    this.SecondBlk == other.SecondBlk ||
-                    this.SecondBlk != null &&
-                    this.SecondBlk.Equals(other.SecondBlk)
+                    this.Blocks == other.Blocks ||
+                    this.Blocks != null &&
+                    this.Blocks.Equals(other.Blocks)
                 );
         }
 
@@ -278,9 +293,9 @@ namespace HETSAPI.Models
                 {
                     hash = hash * 59 + this.MaxHoursSub.GetHashCode();
                 }                
-                                if (this.SecondBlk != null)
+                                if (this.Blocks != null)
                 {
-                    hash = hash * 59 + this.SecondBlk.GetHashCode();
+                    hash = hash * 59 + this.Blocks.GetHashCode();
                 }                
                 
                 return hash;

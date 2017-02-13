@@ -23,9 +23,9 @@ using System.ComponentModel.DataAnnotations;
 namespace HETSAPI.Models
 {
     /// <summary>
-    /// The history of updates made to a record. Exact format of the history TBD.
+    /// The history of updates made to an entity - e.g. a School Bus or a School Bus Owner
     /// </summary>
-        [MetaDataExtension (Description = "The history of updates made to a record. Exact format of the history TBD.")]
+        [MetaDataExtension (Description = "The history of updates made to an entity - e.g. a School Bus or a School Bus Owner")]
 
     public partial class History : IEquatable<History>
     {
@@ -40,21 +40,22 @@ namespace HETSAPI.Models
         /// <summary>
         /// Initializes a new instance of the <see cref="History" /> class.
         /// </summary>
-        /// <param name="Id">Primary Key (required).</param>
-        /// <param name="HistoryText">The text of the history entry tracked against the related entity..</param>
+        /// <param name="Id">A system-generated unique identifier for a History (required).</param>
+        /// <param name="HistoryText">The text of the history entry tracked against the related entity. (required).</param>
         /// <param name="CreatedDate">Date the record is created..</param>
-        public History(int Id, string HistoryText = null, DateTime? CreatedDate = null)
+        public History(int Id, string HistoryText, DateTime? CreatedDate = null)
         {   
             this.Id = Id;
             this.HistoryText = HistoryText;
+
             this.CreatedDate = CreatedDate;
         }
 
         /// <summary>
-        /// Primary Key
+        /// A system-generated unique identifier for a History
         /// </summary>
-        /// <value>Primary Key</value>
-        [MetaDataExtension (Description = "Primary Key")]
+        /// <value>A system-generated unique identifier for a History</value>
+        [MetaDataExtension (Description = "A system-generated unique identifier for a History")]
         public int Id { get; set; }
         
         /// <summary>

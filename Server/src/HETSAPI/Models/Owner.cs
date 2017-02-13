@@ -23,8 +23,9 @@ using System.ComponentModel.DataAnnotations;
 namespace HETSAPI.Models
 {
     /// <summary>
-    /// 
+    /// The list of Owners of equipment.
     /// </summary>
+        [MetaDataExtension (Description = "The list of Owners of equipment.")]
 
     public partial class Owner : IEquatable<Owner>
     {
@@ -39,39 +40,37 @@ namespace HETSAPI.Models
         /// <summary>
         /// Initializes a new instance of the <see cref="Owner" /> class.
         /// </summary>
-        /// <param name="Id">Primary Key (required).</param>
-        /// <param name="OwnerCd">OwnerCd.</param>
-        /// <param name="OwnerFirstName">OwnerFirstName.</param>
-        /// <param name="OwnerLastName">OwnerLastName.</param>
-        /// <param name="ContactPerson">ContactPerson.</param>
-        /// <param name="LocalToArea">LocalToArea.</param>
-        /// <param name="MaintenanceContractor">MaintenanceContractor.</param>
-        /// <param name="Comment">Comment.</param>
-        /// <param name="WCBNum">WCBNum.</param>
-        /// <param name="WCBExpiryDate">WCBExpiryDate.</param>
-        /// <param name="CGLCompany">CGLCompany.</param>
-        /// <param name="CGLPolicy">CGLPolicy.</param>
-        /// <param name="CGLStartDate">CGLStartDate.</param>
-        /// <param name="CGLEndDate">CGLEndDate.</param>
-        /// <param name="StatusCd">StatusCd.</param>
-        /// <param name="ArchiveCd">ArchiveCd.</param>
-        /// <param name="ArchiveReason">ArchiveReason.</param>
-        /// <param name="LocalArea">LocalArea.</param>
+        /// <param name="Id">A system-generated unique identifier for a Owner (required).</param>
+        /// <param name="OwnerCodePrefix">A unique prefix in the system that is used to generate the human-friendly IDs of the equipment. E.g. An owner Edwards might have a prefix &amp;quot;EDW&amp;quot; and their equipment numbered sequentially with that prefix - e.g. EDW-0082..</param>
+        /// <param name="OwnerFirstName">The first name of the owner..</param>
+        /// <param name="OwnerLastName">The last name of the owner..</param>
         /// <param name="PrimaryContact">Link to the designated Primary Contact..</param>
+        /// <param name="LocalArea">LocalArea.</param>
+        /// <param name="IsMaintenanceContractor">True if the owner is contracted by MOTI to handle Maintenance activities in the area - e.g. provided services in address unscheduled issues on the roads in the area..</param>
+        /// <param name="Comment">TO BE REMOVED - replaced with Notes.</param>
+        /// <param name="WCBNum">TO BE REMOVED - not maintained by HETS Clerks.</param>
+        /// <param name="WCBExpiryDate">The expiration of the owner&amp;#39;s current WCB permit..</param>
+        /// <param name="CGLCompany">TO BE REMOVED - not maintained by HETS Clerks.</param>
+        /// <param name="CGLPolicy">TO BE REMOVED - not maintained by HETS Clerks.</param>
+        /// <param name="CGLStartDate">TO BE REMOVED - not maintained by HETS Clerks.</param>
+        /// <param name="CGLEndDate">The end date of the owner&amp;#39;s Commercial General Liability insurance coverage. Coverage is only needed prior to an owner&amp;#39;s piece of equipment starting a rental period (not when in the HETS program but not hired). The details of the coverage can be entered into a Note, or more often - attached as a scanned&amp;#x2F;faxed document..</param>
+        /// <param name="Status">The status of the owner record in the system. Current set of values are &amp;quot;Pending&amp;quot;, &amp;quot;Approved&amp;quot; and &amp;quot;Archived&amp;quot;. Pending is used when an owner self-registers and a HETS Clerk has not reviewed and Approved the record. Archived is when the owner is no longer part of the HETS programme. &amp;quot;Approved&amp;quot; is used in all other cases..</param>
+        /// <param name="ArchiveCode">A coded reason for why an owner record has been moved to Archived..</param>
+        /// <param name="ArchiveReason">A text note about why the owner record has been changed to Archived..</param>
         /// <param name="Contacts">Contacts.</param>
         /// <param name="Notes">Notes.</param>
         /// <param name="Attachments">Attachments.</param>
         /// <param name="History">History.</param>
         /// <param name="EquipmentList">EquipmentList.</param>
-        public Owner(int Id, string OwnerCd = null, string OwnerFirstName = null, string OwnerLastName = null, string ContactPerson = null, string LocalToArea = null, string MaintenanceContractor = null, string Comment = null, int? WCBNum = null, DateTime? WCBExpiryDate = null, string CGLCompany = null, string CGLPolicy = null, DateTime? CGLStartDate = null, DateTime? CGLEndDate = null, string StatusCd = null, string ArchiveCd = null, string ArchiveReason = null, LocalArea LocalArea = null, Contact PrimaryContact = null, List<Contact> Contacts = null, List<Note> Notes = null, List<Attachment> Attachments = null, List<History> History = null, List<Equipment> EquipmentList = null)
+        public Owner(int Id, string OwnerCodePrefix = null, string OwnerFirstName = null, string OwnerLastName = null, Contact PrimaryContact = null, LocalArea LocalArea = null, bool? IsMaintenanceContractor = null, string Comment = null, int? WCBNum = null, DateTime? WCBExpiryDate = null, string CGLCompany = null, string CGLPolicy = null, DateTime? CGLStartDate = null, DateTime? CGLEndDate = null, string Status = null, string ArchiveCode = null, string ArchiveReason = null, List<Contact> Contacts = null, List<Note> Notes = null, List<Attachment> Attachments = null, List<History> History = null, List<Equipment> EquipmentList = null)
         {   
             this.Id = Id;
-            this.OwnerCd = OwnerCd;
+            this.OwnerCodePrefix = OwnerCodePrefix;
             this.OwnerFirstName = OwnerFirstName;
             this.OwnerLastName = OwnerLastName;
-            this.ContactPerson = ContactPerson;
-            this.LocalToArea = LocalToArea;
-            this.MaintenanceContractor = MaintenanceContractor;
+            this.PrimaryContact = PrimaryContact;
+            this.LocalArea = LocalArea;
+            this.IsMaintenanceContractor = IsMaintenanceContractor;
             this.Comment = Comment;
             this.WCBNum = WCBNum;
             this.WCBExpiryDate = WCBExpiryDate;
@@ -79,11 +78,9 @@ namespace HETSAPI.Models
             this.CGLPolicy = CGLPolicy;
             this.CGLStartDate = CGLStartDate;
             this.CGLEndDate = CGLEndDate;
-            this.StatusCd = StatusCd;
-            this.ArchiveCd = ArchiveCd;
+            this.Status = Status;
+            this.ArchiveCode = ArchiveCode;
             this.ArchiveReason = ArchiveReason;
-            this.LocalArea = LocalArea;
-            this.PrimaryContact = PrimaryContact;
             this.Contacts = Contacts;
             this.Notes = Notes;
             this.Attachments = Attachments;
@@ -92,126 +89,38 @@ namespace HETSAPI.Models
         }
 
         /// <summary>
-        /// Primary Key
+        /// A system-generated unique identifier for a Owner
         /// </summary>
-        /// <value>Primary Key</value>
-        [MetaDataExtension (Description = "Primary Key")]
+        /// <value>A system-generated unique identifier for a Owner</value>
+        [MetaDataExtension (Description = "A system-generated unique identifier for a Owner")]
         public int Id { get; set; }
         
         /// <summary>
-        /// Gets or Sets OwnerCd
+        /// A unique prefix in the system that is used to generate the human-friendly IDs of the equipment. E.g. An owner Edwards might have a prefix &quot;EDW&quot; and their equipment numbered sequentially with that prefix - e.g. EDW-0082.
         /// </summary>
+        /// <value>A unique prefix in the system that is used to generate the human-friendly IDs of the equipment. E.g. An owner Edwards might have a prefix &quot;EDW&quot; and their equipment numbered sequentially with that prefix - e.g. EDW-0082.</value>
+        [MetaDataExtension (Description = "A unique prefix in the system that is used to generate the human-friendly IDs of the equipment. E.g. An owner Edwards might have a prefix &quot;EDW&quot; and their equipment numbered sequentially with that prefix - e.g. EDW-0082.")]
         [MaxLength(255)]
         
-        public string OwnerCd { get; set; }
+        public string OwnerCodePrefix { get; set; }
         
         /// <summary>
-        /// Gets or Sets OwnerFirstName
+        /// The first name of the owner.
         /// </summary>
+        /// <value>The first name of the owner.</value>
+        [MetaDataExtension (Description = "The first name of the owner.")]
         [MaxLength(255)]
         
         public string OwnerFirstName { get; set; }
         
         /// <summary>
-        /// Gets or Sets OwnerLastName
+        /// The last name of the owner.
         /// </summary>
+        /// <value>The last name of the owner.</value>
+        [MetaDataExtension (Description = "The last name of the owner.")]
         [MaxLength(255)]
         
         public string OwnerLastName { get; set; }
-        
-        /// <summary>
-        /// Gets or Sets ContactPerson
-        /// </summary>
-        [MaxLength(255)]
-        
-        public string ContactPerson { get; set; }
-        
-        /// <summary>
-        /// Gets or Sets LocalToArea
-        /// </summary>
-        [MaxLength(255)]
-        
-        public string LocalToArea { get; set; }
-        
-        /// <summary>
-        /// Gets or Sets MaintenanceContractor
-        /// </summary>
-        [MaxLength(255)]
-        
-        public string MaintenanceContractor { get; set; }
-        
-        /// <summary>
-        /// Gets or Sets Comment
-        /// </summary>
-        [MaxLength(255)]
-        
-        public string Comment { get; set; }
-        
-        /// <summary>
-        /// Gets or Sets WCBNum
-        /// </summary>
-        public int? WCBNum { get; set; }
-        
-        /// <summary>
-        /// Gets or Sets WCBExpiryDate
-        /// </summary>
-        public DateTime? WCBExpiryDate { get; set; }
-        
-        /// <summary>
-        /// Gets or Sets CGLCompany
-        /// </summary>
-        [MaxLength(255)]
-        
-        public string CGLCompany { get; set; }
-        
-        /// <summary>
-        /// Gets or Sets CGLPolicy
-        /// </summary>
-        [MaxLength(255)]
-        
-        public string CGLPolicy { get; set; }
-        
-        /// <summary>
-        /// Gets or Sets CGLStartDate
-        /// </summary>
-        public DateTime? CGLStartDate { get; set; }
-        
-        /// <summary>
-        /// Gets or Sets CGLEndDate
-        /// </summary>
-        public DateTime? CGLEndDate { get; set; }
-        
-        /// <summary>
-        /// Gets or Sets StatusCd
-        /// </summary>
-        [MaxLength(255)]
-        
-        public string StatusCd { get; set; }
-        
-        /// <summary>
-        /// Gets or Sets ArchiveCd
-        /// </summary>
-        [MaxLength(255)]
-        
-        public string ArchiveCd { get; set; }
-        
-        /// <summary>
-        /// Gets or Sets ArchiveReason
-        /// </summary>
-        [MaxLength(255)]
-        
-        public string ArchiveReason { get; set; }
-        
-        /// <summary>
-        /// Gets or Sets LocalArea
-        /// </summary>
-        public LocalArea LocalArea { get; set; }
-        
-        /// <summary>
-        /// Foreign key for LocalArea 
-        /// </summary>       
-        [ForeignKey("LocalArea")]
-        public int? LocalAreaRefId { get; set; }
         
         /// <summary>
         /// Link to the designated Primary Contact.
@@ -225,6 +134,106 @@ namespace HETSAPI.Models
         /// </summary>       
         [ForeignKey("PrimaryContact")]
         public int? PrimaryContactRefId { get; set; }
+        
+        /// <summary>
+        /// Gets or Sets LocalArea
+        /// </summary>
+        public LocalArea LocalArea { get; set; }
+        
+        /// <summary>
+        /// Foreign key for LocalArea 
+        /// </summary>       
+        [ForeignKey("LocalArea")]
+        public int? LocalAreaRefId { get; set; }
+        
+        /// <summary>
+        /// True if the owner is contracted by MOTI to handle Maintenance activities in the area - e.g. provided services in address unscheduled issues on the roads in the area.
+        /// </summary>
+        /// <value>True if the owner is contracted by MOTI to handle Maintenance activities in the area - e.g. provided services in address unscheduled issues on the roads in the area.</value>
+        [MetaDataExtension (Description = "True if the owner is contracted by MOTI to handle Maintenance activities in the area - e.g. provided services in address unscheduled issues on the roads in the area.")]
+        public bool? IsMaintenanceContractor { get; set; }
+        
+        /// <summary>
+        /// TO BE REMOVED - replaced with Notes
+        /// </summary>
+        /// <value>TO BE REMOVED - replaced with Notes</value>
+        [MetaDataExtension (Description = "TO BE REMOVED - replaced with Notes")]
+        [MaxLength(255)]
+        
+        public string Comment { get; set; }
+        
+        /// <summary>
+        /// TO BE REMOVED - not maintained by HETS Clerks
+        /// </summary>
+        /// <value>TO BE REMOVED - not maintained by HETS Clerks</value>
+        [MetaDataExtension (Description = "TO BE REMOVED - not maintained by HETS Clerks")]
+        public int? WCBNum { get; set; }
+        
+        /// <summary>
+        /// The expiration of the owner&#39;s current WCB permit.
+        /// </summary>
+        /// <value>The expiration of the owner&#39;s current WCB permit.</value>
+        [MetaDataExtension (Description = "The expiration of the owner&#39;s current WCB permit.")]
+        public DateTime? WCBExpiryDate { get; set; }
+        
+        /// <summary>
+        /// TO BE REMOVED - not maintained by HETS Clerks
+        /// </summary>
+        /// <value>TO BE REMOVED - not maintained by HETS Clerks</value>
+        [MetaDataExtension (Description = "TO BE REMOVED - not maintained by HETS Clerks")]
+        [MaxLength(255)]
+        
+        public string CGLCompany { get; set; }
+        
+        /// <summary>
+        /// TO BE REMOVED - not maintained by HETS Clerks
+        /// </summary>
+        /// <value>TO BE REMOVED - not maintained by HETS Clerks</value>
+        [MetaDataExtension (Description = "TO BE REMOVED - not maintained by HETS Clerks")]
+        [MaxLength(255)]
+        
+        public string CGLPolicy { get; set; }
+        
+        /// <summary>
+        /// TO BE REMOVED - not maintained by HETS Clerks
+        /// </summary>
+        /// <value>TO BE REMOVED - not maintained by HETS Clerks</value>
+        [MetaDataExtension (Description = "TO BE REMOVED - not maintained by HETS Clerks")]
+        public DateTime? CGLStartDate { get; set; }
+        
+        /// <summary>
+        /// The end date of the owner&#39;s Commercial General Liability insurance coverage. Coverage is only needed prior to an owner&#39;s piece of equipment starting a rental period (not when in the HETS program but not hired). The details of the coverage can be entered into a Note, or more often - attached as a scanned&#x2F;faxed document.
+        /// </summary>
+        /// <value>The end date of the owner&#39;s Commercial General Liability insurance coverage. Coverage is only needed prior to an owner&#39;s piece of equipment starting a rental period (not when in the HETS program but not hired). The details of the coverage can be entered into a Note, or more often - attached as a scanned&#x2F;faxed document.</value>
+        [MetaDataExtension (Description = "The end date of the owner&#39;s Commercial General Liability insurance coverage. Coverage is only needed prior to an owner&#39;s piece of equipment starting a rental period (not when in the HETS program but not hired). The details of the coverage can be entered into a Note, or more often - attached as a scanned&#x2F;faxed document.")]
+        public DateTime? CGLEndDate { get; set; }
+        
+        /// <summary>
+        /// The status of the owner record in the system. Current set of values are &quot;Pending&quot;, &quot;Approved&quot; and &quot;Archived&quot;. Pending is used when an owner self-registers and a HETS Clerk has not reviewed and Approved the record. Archived is when the owner is no longer part of the HETS programme. &quot;Approved&quot; is used in all other cases.
+        /// </summary>
+        /// <value>The status of the owner record in the system. Current set of values are &quot;Pending&quot;, &quot;Approved&quot; and &quot;Archived&quot;. Pending is used when an owner self-registers and a HETS Clerk has not reviewed and Approved the record. Archived is when the owner is no longer part of the HETS programme. &quot;Approved&quot; is used in all other cases.</value>
+        [MetaDataExtension (Description = "The status of the owner record in the system. Current set of values are &quot;Pending&quot;, &quot;Approved&quot; and &quot;Archived&quot;. Pending is used when an owner self-registers and a HETS Clerk has not reviewed and Approved the record. Archived is when the owner is no longer part of the HETS programme. &quot;Approved&quot; is used in all other cases.")]
+        [MaxLength(255)]
+        
+        public string Status { get; set; }
+        
+        /// <summary>
+        /// A coded reason for why an owner record has been moved to Archived.
+        /// </summary>
+        /// <value>A coded reason for why an owner record has been moved to Archived.</value>
+        [MetaDataExtension (Description = "A coded reason for why an owner record has been moved to Archived.")]
+        [MaxLength(255)]
+        
+        public string ArchiveCode { get; set; }
+        
+        /// <summary>
+        /// A text note about why the owner record has been changed to Archived.
+        /// </summary>
+        /// <value>A text note about why the owner record has been changed to Archived.</value>
+        [MetaDataExtension (Description = "A text note about why the owner record has been changed to Archived.")]
+        [MaxLength(2048)]
+        
+        public string ArchiveReason { get; set; }
         
         /// <summary>
         /// Gets or Sets Contacts
@@ -260,12 +269,12 @@ namespace HETSAPI.Models
             var sb = new StringBuilder();
             sb.Append("class Owner {\n");
             sb.Append("  Id: ").Append(Id).Append("\n");
-            sb.Append("  OwnerCd: ").Append(OwnerCd).Append("\n");
+            sb.Append("  OwnerCodePrefix: ").Append(OwnerCodePrefix).Append("\n");
             sb.Append("  OwnerFirstName: ").Append(OwnerFirstName).Append("\n");
             sb.Append("  OwnerLastName: ").Append(OwnerLastName).Append("\n");
-            sb.Append("  ContactPerson: ").Append(ContactPerson).Append("\n");
-            sb.Append("  LocalToArea: ").Append(LocalToArea).Append("\n");
-            sb.Append("  MaintenanceContractor: ").Append(MaintenanceContractor).Append("\n");
+            sb.Append("  PrimaryContact: ").Append(PrimaryContact).Append("\n");
+            sb.Append("  LocalArea: ").Append(LocalArea).Append("\n");
+            sb.Append("  IsMaintenanceContractor: ").Append(IsMaintenanceContractor).Append("\n");
             sb.Append("  Comment: ").Append(Comment).Append("\n");
             sb.Append("  WCBNum: ").Append(WCBNum).Append("\n");
             sb.Append("  WCBExpiryDate: ").Append(WCBExpiryDate).Append("\n");
@@ -273,11 +282,9 @@ namespace HETSAPI.Models
             sb.Append("  CGLPolicy: ").Append(CGLPolicy).Append("\n");
             sb.Append("  CGLStartDate: ").Append(CGLStartDate).Append("\n");
             sb.Append("  CGLEndDate: ").Append(CGLEndDate).Append("\n");
-            sb.Append("  StatusCd: ").Append(StatusCd).Append("\n");
-            sb.Append("  ArchiveCd: ").Append(ArchiveCd).Append("\n");
+            sb.Append("  Status: ").Append(Status).Append("\n");
+            sb.Append("  ArchiveCode: ").Append(ArchiveCode).Append("\n");
             sb.Append("  ArchiveReason: ").Append(ArchiveReason).Append("\n");
-            sb.Append("  LocalArea: ").Append(LocalArea).Append("\n");
-            sb.Append("  PrimaryContact: ").Append(PrimaryContact).Append("\n");
             sb.Append("  Contacts: ").Append(Contacts).Append("\n");
             sb.Append("  Notes: ").Append(Notes).Append("\n");
             sb.Append("  Attachments: ").Append(Attachments).Append("\n");
@@ -326,9 +333,9 @@ namespace HETSAPI.Models
                     this.Id.Equals(other.Id)
                 ) &&                 
                 (
-                    this.OwnerCd == other.OwnerCd ||
-                    this.OwnerCd != null &&
-                    this.OwnerCd.Equals(other.OwnerCd)
+                    this.OwnerCodePrefix == other.OwnerCodePrefix ||
+                    this.OwnerCodePrefix != null &&
+                    this.OwnerCodePrefix.Equals(other.OwnerCodePrefix)
                 ) &&                 
                 (
                     this.OwnerFirstName == other.OwnerFirstName ||
@@ -341,19 +348,19 @@ namespace HETSAPI.Models
                     this.OwnerLastName.Equals(other.OwnerLastName)
                 ) &&                 
                 (
-                    this.ContactPerson == other.ContactPerson ||
-                    this.ContactPerson != null &&
-                    this.ContactPerson.Equals(other.ContactPerson)
+                    this.PrimaryContact == other.PrimaryContact ||
+                    this.PrimaryContact != null &&
+                    this.PrimaryContact.Equals(other.PrimaryContact)
                 ) &&                 
                 (
-                    this.LocalToArea == other.LocalToArea ||
-                    this.LocalToArea != null &&
-                    this.LocalToArea.Equals(other.LocalToArea)
+                    this.LocalArea == other.LocalArea ||
+                    this.LocalArea != null &&
+                    this.LocalArea.Equals(other.LocalArea)
                 ) &&                 
                 (
-                    this.MaintenanceContractor == other.MaintenanceContractor ||
-                    this.MaintenanceContractor != null &&
-                    this.MaintenanceContractor.Equals(other.MaintenanceContractor)
+                    this.IsMaintenanceContractor == other.IsMaintenanceContractor ||
+                    this.IsMaintenanceContractor != null &&
+                    this.IsMaintenanceContractor.Equals(other.IsMaintenanceContractor)
                 ) &&                 
                 (
                     this.Comment == other.Comment ||
@@ -391,29 +398,19 @@ namespace HETSAPI.Models
                     this.CGLEndDate.Equals(other.CGLEndDate)
                 ) &&                 
                 (
-                    this.StatusCd == other.StatusCd ||
-                    this.StatusCd != null &&
-                    this.StatusCd.Equals(other.StatusCd)
+                    this.Status == other.Status ||
+                    this.Status != null &&
+                    this.Status.Equals(other.Status)
                 ) &&                 
                 (
-                    this.ArchiveCd == other.ArchiveCd ||
-                    this.ArchiveCd != null &&
-                    this.ArchiveCd.Equals(other.ArchiveCd)
+                    this.ArchiveCode == other.ArchiveCode ||
+                    this.ArchiveCode != null &&
+                    this.ArchiveCode.Equals(other.ArchiveCode)
                 ) &&                 
                 (
                     this.ArchiveReason == other.ArchiveReason ||
                     this.ArchiveReason != null &&
                     this.ArchiveReason.Equals(other.ArchiveReason)
-                ) &&                 
-                (
-                    this.LocalArea == other.LocalArea ||
-                    this.LocalArea != null &&
-                    this.LocalArea.Equals(other.LocalArea)
-                ) &&                 
-                (
-                    this.PrimaryContact == other.PrimaryContact ||
-                    this.PrimaryContact != null &&
-                    this.PrimaryContact.Equals(other.PrimaryContact)
                 ) && 
                 (
                     this.Contacts == other.Contacts ||
@@ -454,9 +451,9 @@ namespace HETSAPI.Models
                 int hash = 41;
                 // Suitable nullity checks
                                    
-                hash = hash * 59 + this.Id.GetHashCode();                if (this.OwnerCd != null)
+                hash = hash * 59 + this.Id.GetHashCode();                if (this.OwnerCodePrefix != null)
                 {
-                    hash = hash * 59 + this.OwnerCd.GetHashCode();
+                    hash = hash * 59 + this.OwnerCodePrefix.GetHashCode();
                 }                
                                 if (this.OwnerFirstName != null)
                 {
@@ -466,17 +463,17 @@ namespace HETSAPI.Models
                 {
                     hash = hash * 59 + this.OwnerLastName.GetHashCode();
                 }                
-                                if (this.ContactPerson != null)
+                                   
+                if (this.PrimaryContact != null)
                 {
-                    hash = hash * 59 + this.ContactPerson.GetHashCode();
-                }                
-                                if (this.LocalToArea != null)
+                    hash = hash * 59 + this.PrimaryContact.GetHashCode();
+                }                   
+                if (this.LocalArea != null)
                 {
-                    hash = hash * 59 + this.LocalToArea.GetHashCode();
-                }                
-                                if (this.MaintenanceContractor != null)
+                    hash = hash * 59 + this.LocalArea.GetHashCode();
+                }                if (this.IsMaintenanceContractor != null)
                 {
-                    hash = hash * 59 + this.MaintenanceContractor.GetHashCode();
+                    hash = hash * 59 + this.IsMaintenanceContractor.GetHashCode();
                 }                
                                 if (this.Comment != null)
                 {
@@ -506,27 +503,19 @@ namespace HETSAPI.Models
                 {
                     hash = hash * 59 + this.CGLEndDate.GetHashCode();
                 }                
-                                if (this.StatusCd != null)
+                                if (this.Status != null)
                 {
-                    hash = hash * 59 + this.StatusCd.GetHashCode();
+                    hash = hash * 59 + this.Status.GetHashCode();
                 }                
-                                if (this.ArchiveCd != null)
+                                if (this.ArchiveCode != null)
                 {
-                    hash = hash * 59 + this.ArchiveCd.GetHashCode();
+                    hash = hash * 59 + this.ArchiveCode.GetHashCode();
                 }                
                                 if (this.ArchiveReason != null)
                 {
                     hash = hash * 59 + this.ArchiveReason.GetHashCode();
                 }                
                                    
-                if (this.LocalArea != null)
-                {
-                    hash = hash * 59 + this.LocalArea.GetHashCode();
-                }                   
-                if (this.PrimaryContact != null)
-                {
-                    hash = hash * 59 + this.PrimaryContact.GetHashCode();
-                }                   
                 if (this.Contacts != null)
                 {
                     hash = hash * 59 + this.Contacts.GetHashCode();

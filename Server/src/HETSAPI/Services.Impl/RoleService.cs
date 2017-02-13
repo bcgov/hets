@@ -122,6 +122,33 @@ namespace HETSAPI.Services.Impl
             return new NoContentResult();
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="items"></param>
+        /// <response code="201">Permissions created</response>
+        public IActionResult RolesBulkPostAsync(Role item)
+        {
+            if (item == null)
+            {
+                return new BadRequestResult();
+            }
+            
+            var exists = _context.Roles.Any(a => a.Id == item.Id);
+            if (exists)
+            {
+                _context.Roles.Update(item);
+            }
+            else
+            {
+                _context.Roles.Add(item);
+            }
+            
+            // Save the changes
+            _context.SaveChanges();
+            return new NoContentResult();
+        }
+
 
 
         /// <summary>
@@ -375,7 +402,7 @@ namespace HETSAPI.Services.Impl
         /// <param name="item"></param>
         /// <response code="200">OK</response>
         /// <response code="404">Role not found</response>
-        public virtual IActionResult RolesIdPutAsync(int id, RoleViewModel item)
+        public virtual IActionResult RolesIdPutAsync(int id, Role item)
         {
             var role = _context.Roles.FirstOrDefault(x => x.Id == id);
             if (role == null)
@@ -420,7 +447,7 @@ namespace HETSAPI.Services.Impl
                         UserRole userRole = _context.UserRoles
                                 .Include(x => x.Role)
                                 .First(x => x.Id == item.Id);
-                        if (userRole.Role != null && userRole.Role.Id == id && userRole.EffectiveDate <= DateTimeOffset.Now && (userRole.ExpiryDate == null || userRole.ExpiryDate > DateTimeOffset.Now))
+                        if (userRole.Role.Id == id && userRole.EffectiveDate <= DateTimeOffset.Now && (userRole.ExpiryDate == null || userRole.ExpiryDate > DateTimeOffset.Now))
                         {
                             found = true;
                             break;
@@ -460,7 +487,9 @@ namespace HETSAPI.Services.Impl
                         bool user_exists = _context.Users.Any(x => x.Id == item.UserId);
                         if (user_exists)
                         {
-                            User user = _context.Users.First(x => x.Id == item.UserId);
+                            User user = _context.Users
+                                .Include (x => x.UserRoles)
+                                .First(x => x.Id == item.UserId);
                             bool found = false;
                             if (user.UserRoles != null)
                             {
@@ -509,7 +538,7 @@ namespace HETSAPI.Services.Impl
         /// </summary>
         /// <param name="item"></param>
         /// <response code="201">Role created</response>
-        public virtual IActionResult RolesPostAsync(RoleViewModel item)
+        public virtual IActionResult RolesPostAsync(Role item)
         {
             var role = new Role();
             role.Description = item.Description;

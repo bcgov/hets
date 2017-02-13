@@ -3,15 +3,17 @@ import React from 'react';
 import { connect } from 'react-redux';
 
 import { Well, Row, Col } from 'react-bootstrap';
-import { Alert, Button, ButtonGroup, Glyphicon, Label, DropdownButton, MenuItem } from 'react-bootstrap';
-import { Form, FormControl, FormGroup, ControlLabel, Checkbox } from 'react-bootstrap';
+import { Alert, Button, ButtonGroup, Glyphicon, Label, DropdownButton, MenuItem, Checkbox } from 'react-bootstrap';
 import { LinkContainer } from 'react-router-bootstrap';
 
 import _ from 'lodash';
-import Moment from 'moment';
+
+import EquipmentEditDialog from './dialogs/EquipmentEditDialog.jsx';
+import SeniorityEditDialog from './dialogs/SeniorityEditDialog.jsx';
 
 import * as Action from '../actionTypes';
 import * as Api from '../api';
+import * as Constant from '../constants';
 import store from '../store';
 
 import BadgeLabel from '../components/BadgeLabel.jsx';
@@ -48,6 +50,7 @@ var EquipmentDetail = React.createClass({
       loadingEquipmentHistory: false,
 
       showEditDialog: false,
+      showSeniorityDialog: false,
       showPhysicalAttachmentDialog: false,
 
       physicalAttachment: {},
@@ -89,11 +92,14 @@ var EquipmentDetail = React.createClass({
     // TODO Implement
   },
 
-  openAddDocumentDialog() {
+  addNote() {
+  },
+
+  addDocument() {
   },
 
   updateUIState(state, callback) {
-    this.setState({ ui: { ...this.state.ui, ...state }}, () =>{
+    this.setState({ ui: { ...this.state.ui, ...state } }, () => {
       store.dispatch({ type: Action.UPDATE_PHYSICAL_ATTACHMENTS_UI, physicalAttachments: this.state.ui });
       if (callback) { callback(); }
     });
@@ -112,6 +118,26 @@ var EquipmentDetail = React.createClass({
 
   closeEditDialog() {
     this.setState({ showEditDialog: false });
+  },
+
+  saveEdit(equipment) {
+    Api.updateEquipment(equipment).finally(() => {
+      this.closeEditDialog();
+    });
+  },
+
+  openSeniorityDialog() {
+    this.setState({ showSeniorityDialog: true });
+  },
+
+  closeSeniorityDialog() {
+    this.setState({ showSeniorityDialog: false });
+  },
+
+  saveSeniorityEdit(equipment) {
+    Api.updateEquipment(equipment).finally(() => {
+      this.closeSeniorityDialog();
+    });
   },
 
   openPhysicalAttachmentDialog(attachment) {
@@ -139,16 +165,22 @@ var EquipmentDetail = React.createClass({
     });
   },
 
+  getLastVerifiedStyle(equipment) {
+    var daysSinceVerified = equipment.daysSinceVerified;
+    if (daysSinceVerified >= Constant.EQUIPMENT_DAYS_SINCE_VERIFIED_CRITICAL) { return 'danger'; }
+    if (daysSinceVerified >= Constant.EQUIPMENT_DAYS_SINCE_VERIFIED_WARNING) { return 'warning'; }
+    return 'success';
+  },
+
   render() {
     var equipment = this.props.equipment;
-    var equipmentStatus = equipment.statusCd || 'New';
-    var lastVerifiedStyle = 'danger'; // TODO Needs clarification
+    var lastVerifiedStyle = this.getLastVerifiedStyle(equipment);
 
     return <div id="equipment-detail">
       <div>
         <Row id="equipment-top">
           <Col md={8}>
-            <Label bsStyle={ equipment.isApproved ? 'success' : 'danger'}>{ equipmentStatus }</Label>
+            <Label bsStyle={ equipment.isApproved ? 'success' : 'danger'}>{ equipment.status }</Label>
             <Label className={ equipment.isMaintenanceContractor ? '' : 'hide' }>Maintenance Contractor</Label>
             <Label bsStyle={ equipment.isWorking ? 'danger' : 'success' }>{ equipment.isWorking ? 'Working' : 'Not Working' }</Label>
             <Label bsStyle={ lastVerifiedStyle }>Last Verified: { formatDateTime(equipment.lastVerifiedDate, 'YYYY-MMM-DD') }</Label>
@@ -180,7 +212,7 @@ var EquipmentDetail = React.createClass({
             </Row>
             <Row>
               <ColLabel md={2}><h1>EquipId:</h1></ColLabel>
-              <ColField md={10}><h1><small>{ equipment.equipCd } ({ equipment.typeName })</small></h1></ColField>
+              <ColField md={10}><h1><small>{ equipment.equipCode } ({ equipment.typeName })</small></h1></ColField>
             </Row>
             <Row>
               <Col md={6}>
@@ -230,7 +262,7 @@ var EquipmentDetail = React.createClass({
                     <ColLabel md={2}>Year</ColLabel>
                     <ColField md={2}>{ equipment.year }</ColField>
                     <ColLabel md={4}>Licence Number</ColLabel>
-                    <ColField md={4}>{ equipment.licence || 'N/A' }</ColField>
+                    <ColField md={4}>{ equipment.licencePlate || 'N/A' }</ColField>
                   </Row>
                   <Row>
                     <ColLabel md={6}></ColLabel>
@@ -284,32 +316,28 @@ var EquipmentDetail = React.createClass({
         <Row>
           <Col md={6}>
             <Well>
-              <h3>Seniority Data <span className="pull-right"><Button title="Edit" bsSize="small" onClick={this.openEditDialog}><Glyphicon glyph="edit" /></Button></span></h3>
+              <h3>Seniority Data <span className="pull-right"><Button title="Edit" bsSize="small" onClick={this.openSeniorityDialog}><Glyphicon glyph="edit" /></Button></span></h3>
               {(() => {
                 if (this.state.loadingSeniorityData) { return <div style={{ textAlign: 'center' }}><Spinner/></div>; }
-
-                var year1 = Moment().subtract(1, 'years').year();
-                var year2 = Moment().subtract(2, 'years').year();
-                var year3 = Moment().subtract(3, 'years').year();
 
                 var seniorityHistory = [];  // TODO
 
                 return <div>
                   <Row>
                     <ColLabel md={4}>Hours YTD</ColLabel>
-                    <ColField md={8}>{ equipment.YTD }</ColField>
+                    <ColField md={8}>{ equipment.ytd }</ColField>
                   </Row>
                   <Row>
-                    <ColLabel md={4}>Hours {year1}</ColLabel>
-                    <ColField md={8}>{ equipment.YTD1 }</ColField>
+                    <ColLabel md={4}>Hours { equipment.lastYear }</ColLabel>
+                    <ColField md={8}>{ equipment.serviceHoursLastYear }</ColField>
                   </Row>
                   <Row>
-                    <ColLabel md={4}>Hours {year2}</ColLabel>
-                    <ColField md={8}>{ equipment.YTD2 }</ColField>
+                    <ColLabel md={4}>Hours { equipment.twoYearsAgo }</ColLabel>
+                    <ColField md={8}>{ equipment.serviceHoursTwoYearsAgo }</ColField>
                   </Row>
                   <Row>
-                    <ColLabel md={4}>Hours {year3}</ColLabel>
-                    <ColField md={8}>{ equipment.YTD3 }</ColField>
+                    <ColLabel md={4}>Hours { equipment.threeYearsAgo }</ColLabel>
+                    <ColField md={8}>{ equipment.serviceHoursThreeYearsAgo }</ColField>
                   </Row>
                   <Row>
                     <ColLabel md={4}>Received Date</ColLabel>
@@ -321,22 +349,18 @@ var EquipmentDetail = React.createClass({
                   </Row>
                   <Row>
                     <ColLabel md={4}>Years Registered</ColLabel>
-                    <ColField md={8}>{ equipment.numYears }</ColField>
+                    <ColField md={8}>{ (equipment.numYears || 0).toString() }</ColField>
                   </Row>
                   <Row>
                     <ColLabel md={4}>Status</ColLabel>
-                    <ColField md={8}>{ equipment.statusCd }</ColField>
+                    <ColField md={8}>{ equipment.seniorityStatus }</ColField>
                   </Row>
                   <Row>
-                    <Form horizontal>
-                      <FormGroup controlId="updateReason">
-                        <Col md={4} className="text-right"><ControlLabel>Update Reason</ControlLabel></Col>
-                        <ColField md={6}><FormControl componentClass="textarea" rows={2} /></ColField>
-                        <ColField md={2}>
-                          <Button title="Seniority History" bsSize="small" onClick={ this.showSeniorityHistory} >All ({ Object.keys(seniorityHistory).length }})</Button>
-                        </ColField>
-                      </FormGroup>
-                    </Form>
+                    <ColLabel md={4} >Update Reason</ColLabel>
+                    <ColField md={6}>{ equipment.seniorityUpdateReasonText }</ColField>
+                    <ColField md={2}>
+                      <Button className="pull-right" title="Seniority History" bsSize="small" onClick={ this.showSeniorityHistory} >All ({ Object.keys(seniorityHistory).length }})</Button>
+                    </ColField>
                   </Row>
                 </div>;
               })()}
@@ -344,40 +368,34 @@ var EquipmentDetail = React.createClass({
           </Col>
           <Col md={6}>
             <Well>
-              <h3>History</h3>
+              <h3>History <span className="pull-right"><Button title="Add note" bsSize="small" onClick={this.addNote}><Glyphicon glyph="plus" /> Add Note</Button><Button title="Add document" bsSize="small" onClick={this.addDocument}><Glyphicon glyph="paperclip" /></Button></span></h3>
               {(() => {
                 if (this.state.loadingEquipmentHistory) { return <div style={{ textAlign: 'center' }}><Spinner/></div>; }
+                if (Object.keys(this.props.equipmentHistory || []).length === 0) { return <Alert bsStyle="success" style={{ marginTop: 10 }}>No history</Alert>; }
 
                 var history = _.sortBy(this.props.equipmentHistory, 'createdDate');    
 
-                return <div>
-                  <Form horizontal>
-                    <FormGroup controlId="notes">
-                      <Col md={2} className="text-right"><ControlLabel>Add Note</ControlLabel></Col>
-                      <ColField md={8}><FormControl componentClass="textarea" rows={2} /></ColField>
-                      <ColField md={2}><Button title="Add document" bsSize="small" onClick={this.openAddDocumentDialog}><Glyphicon glyph="paperclip" /></Button></ColField>
-                    </FormGroup>
-                  </Form>
-                  {(() => {
-                    if (!history || history.length === 0) { return <Alert bsStyle="success" style={{ marginTop: 10 }}>No history</Alert>; }
-
-                    return <div>
-                      {
-                        _.map(history, (historyEntry) => {
-                          return <Row>
-                            <ColLabel md={2}>{ formatDateTime(historyEntry.createdDate, 'YYYY-MMM-DD') }</ColLabel>
-                            <ColField md={10}>{ historyEntry.historyText }</ColField>
-                          </Row>;
-                        })
-                      }
-                    </div>;
-                  })()}
+                return <div id="equipment-history">
+                  {
+                    _.map(history, (historyEntry) => {
+                      return <Row>
+                        <ColLabel md={2}>{ formatDateTime(historyEntry.createdDate, 'YYYY-MMM-DD') }</ColLabel>
+                        <ColField md={10}>{ historyEntry.historyText }</ColField>
+                      </Row>;
+                    })
+                  }
                 </div>;
               })()}
             </Well>
           </Col>
         </Row>
       </div>
+      { this.state.showEditDialog &&
+        <EquipmentEditDialog show={ this.state.showEditDialog } onSave={ this.saveEdit } onClose= { this.closeEditDialog } />
+      }
+      { this.state.showSeniorityDialog &&
+        <SeniorityEditDialog show={ this.state.showSeniorityDialog } onSave={ this.saveSeniorityEdit } onClose= { this.closeSeniorityDialog } />
+      }
     </div>;
   },
 });

@@ -23,8 +23,9 @@ using System.ComponentModel.DataAnnotations;
 namespace HETSAPI.Models
 {
     /// <summary>
-    /// 
+    /// The time records recorded for a piece of equipment hired for a specific project within a localarea.
     /// </summary>
+        [MetaDataExtension (Description = "The time records recorded for a piece of equipment hired for a specific project within a localarea.")]
 
     public partial class TimeRecord : IEquatable<TimeRecord>
     {
@@ -39,22 +40,24 @@ namespace HETSAPI.Models
         /// <summary>
         /// Initializes a new instance of the <see cref="TimeRecord" /> class.
         /// </summary>
-        /// <param name="Id">Primary Key (required).</param>
+        /// <param name="Id">A system-generated unique identifier for a TimeRecord (required).</param>
         /// <param name="RentalAgreement">RentalAgreement.</param>
-        /// <param name="WorkedDate">WorkedDate.</param>
-        /// <param name="EnteredDate">EnteredDate.</param>
-        /// <param name="Hours">Hours.</param>
-        /// <param name="Rate">Rate.</param>
-        /// <param name="Hours2">Hours2.</param>
-        /// <param name="Rate2">Rate2.</param>
-        /// <param name="Hours3">Hours3.</param>
-        /// <param name="Rate3">Rate3.</param>
-        public TimeRecord(int Id, RentalAgreement RentalAgreement = null, DateTime? WorkedDate = null, DateTime? EnteredDate = null, float? Hours = null, float? Rate = null, float? Hours2 = null, float? Rate2 = null, float? Hours3 = null, float? Rate3 = null)
+        /// <param name="WorkedDate">The date of the time record entry - the day of the entry if it is a daily entry, or a date in the week in which the work occurred if tracked weekly..</param>
+        /// <param name="EnteredDate">The date-time the time record information was entered..</param>
+        /// <param name="TimePeriod">The time period of the entry - either day or week. HETS Clerk have the option of entering time records on a day-by-day or week-by-week basis..</param>
+        /// <param name="Hours">The number of hours worked by the equipment..</param>
+        /// <param name="Rate">TO BE REMOVED - REPLACE WITH A LINK TO A RATE ENTRY IN THE RENTAL AGREEMENT.</param>
+        /// <param name="Hours2">TO BE REMOVED - REPLACE WITH A LINK TO A RATE ENTRY IN THE RENTAL AGREEMENT.</param>
+        /// <param name="Rate2">TO BE REMOVED - REPLACE WITH A LINK TO A RATE ENTRY IN THE RENTAL AGREEMENT.</param>
+        /// <param name="Hours3">TO BE REMOVED - REPLACE WITH A LINK TO A RATE ENTRY IN THE RENTAL AGREEMENT.</param>
+        /// <param name="Rate3">TO BE REMOVED - REPLACE WITH A LINK TO A RATE ENTRY IN THE RENTAL AGREEMENT.</param>
+        public TimeRecord(int Id, RentalAgreement RentalAgreement = null, DateTime? WorkedDate = null, DateTime? EnteredDate = null, string TimePeriod = null, float? Hours = null, float? Rate = null, float? Hours2 = null, float? Rate2 = null, float? Hours3 = null, float? Rate3 = null)
         {   
             this.Id = Id;
             this.RentalAgreement = RentalAgreement;
             this.WorkedDate = WorkedDate;
             this.EnteredDate = EnteredDate;
+            this.TimePeriod = TimePeriod;
             this.Hours = Hours;
             this.Rate = Rate;
             this.Hours2 = Hours2;
@@ -64,10 +67,10 @@ namespace HETSAPI.Models
         }
 
         /// <summary>
-        /// Primary Key
+        /// A system-generated unique identifier for a TimeRecord
         /// </summary>
-        /// <value>Primary Key</value>
-        [MetaDataExtension (Description = "Primary Key")]
+        /// <value>A system-generated unique identifier for a TimeRecord</value>
+        [MetaDataExtension (Description = "A system-generated unique identifier for a TimeRecord")]
         public int Id { get; set; }
         
         /// <summary>
@@ -82,43 +85,68 @@ namespace HETSAPI.Models
         public int? RentalAgreementRefId { get; set; }
         
         /// <summary>
-        /// Gets or Sets WorkedDate
+        /// The date of the time record entry - the day of the entry if it is a daily entry, or a date in the week in which the work occurred if tracked weekly.
         /// </summary>
+        /// <value>The date of the time record entry - the day of the entry if it is a daily entry, or a date in the week in which the work occurred if tracked weekly.</value>
+        [MetaDataExtension (Description = "The date of the time record entry - the day of the entry if it is a daily entry, or a date in the week in which the work occurred if tracked weekly.")]
         public DateTime? WorkedDate { get; set; }
         
         /// <summary>
-        /// Gets or Sets EnteredDate
+        /// The date-time the time record information was entered.
         /// </summary>
+        /// <value>The date-time the time record information was entered.</value>
+        [MetaDataExtension (Description = "The date-time the time record information was entered.")]
         public DateTime? EnteredDate { get; set; }
         
         /// <summary>
-        /// Gets or Sets Hours
+        /// The time period of the entry - either day or week. HETS Clerk have the option of entering time records on a day-by-day or week-by-week basis.
         /// </summary>
+        /// <value>The time period of the entry - either day or week. HETS Clerk have the option of entering time records on a day-by-day or week-by-week basis.</value>
+        [MetaDataExtension (Description = "The time period of the entry - either day or week. HETS Clerk have the option of entering time records on a day-by-day or week-by-week basis.")]
+        [MaxLength(20)]
+        
+        public string TimePeriod { get; set; }
+        
+        /// <summary>
+        /// The number of hours worked by the equipment.
+        /// </summary>
+        /// <value>The number of hours worked by the equipment.</value>
+        [MetaDataExtension (Description = "The number of hours worked by the equipment.")]
         public float? Hours { get; set; }
         
         /// <summary>
-        /// Gets or Sets Rate
+        /// TO BE REMOVED - REPLACE WITH A LINK TO A RATE ENTRY IN THE RENTAL AGREEMENT
         /// </summary>
+        /// <value>TO BE REMOVED - REPLACE WITH A LINK TO A RATE ENTRY IN THE RENTAL AGREEMENT</value>
+        [MetaDataExtension (Description = "TO BE REMOVED - REPLACE WITH A LINK TO A RATE ENTRY IN THE RENTAL AGREEMENT")]
         public float? Rate { get; set; }
         
         /// <summary>
-        /// Gets or Sets Hours2
+        /// TO BE REMOVED - REPLACE WITH A LINK TO A RATE ENTRY IN THE RENTAL AGREEMENT
         /// </summary>
+        /// <value>TO BE REMOVED - REPLACE WITH A LINK TO A RATE ENTRY IN THE RENTAL AGREEMENT</value>
+        [MetaDataExtension (Description = "TO BE REMOVED - REPLACE WITH A LINK TO A RATE ENTRY IN THE RENTAL AGREEMENT")]
         public float? Hours2 { get; set; }
         
         /// <summary>
-        /// Gets or Sets Rate2
+        /// TO BE REMOVED - REPLACE WITH A LINK TO A RATE ENTRY IN THE RENTAL AGREEMENT
         /// </summary>
+        /// <value>TO BE REMOVED - REPLACE WITH A LINK TO A RATE ENTRY IN THE RENTAL AGREEMENT</value>
+        [MetaDataExtension (Description = "TO BE REMOVED - REPLACE WITH A LINK TO A RATE ENTRY IN THE RENTAL AGREEMENT")]
         public float? Rate2 { get; set; }
         
         /// <summary>
-        /// Gets or Sets Hours3
+        /// TO BE REMOVED - REPLACE WITH A LINK TO A RATE ENTRY IN THE RENTAL AGREEMENT
         /// </summary>
+        /// <value>TO BE REMOVED - REPLACE WITH A LINK TO A RATE ENTRY IN THE RENTAL AGREEMENT</value>
+        [MetaDataExtension (Description = "TO BE REMOVED - REPLACE WITH A LINK TO A RATE ENTRY IN THE RENTAL AGREEMENT")]
         public float? Hours3 { get; set; }
         
         /// <summary>
-        /// Gets or Sets Rate3
+        /// TO BE REMOVED - REPLACE WITH A LINK TO A RATE ENTRY IN THE RENTAL AGREEMENT
         /// </summary>
+        /// <value>TO BE REMOVED - REPLACE WITH A LINK TO A RATE ENTRY IN THE RENTAL AGREEMENT</value>
+        [MetaDataExtension (Description = "TO BE REMOVED - REPLACE WITH A LINK TO A RATE ENTRY IN THE RENTAL AGREEMENT")]
         public float? Rate3 { get; set; }
         
         /// <summary>
@@ -133,6 +161,7 @@ namespace HETSAPI.Models
             sb.Append("  RentalAgreement: ").Append(RentalAgreement).Append("\n");
             sb.Append("  WorkedDate: ").Append(WorkedDate).Append("\n");
             sb.Append("  EnteredDate: ").Append(EnteredDate).Append("\n");
+            sb.Append("  TimePeriod: ").Append(TimePeriod).Append("\n");
             sb.Append("  Hours: ").Append(Hours).Append("\n");
             sb.Append("  Rate: ").Append(Rate).Append("\n");
             sb.Append("  Hours2: ").Append(Hours2).Append("\n");
@@ -197,6 +226,11 @@ namespace HETSAPI.Models
                     this.EnteredDate.Equals(other.EnteredDate)
                 ) &&                 
                 (
+                    this.TimePeriod == other.TimePeriod ||
+                    this.TimePeriod != null &&
+                    this.TimePeriod.Equals(other.TimePeriod)
+                ) &&                 
+                (
                     this.Hours == other.Hours ||
                     this.Hours != null &&
                     this.Hours.Equals(other.Hours)
@@ -251,6 +285,10 @@ namespace HETSAPI.Models
                                 if (this.EnteredDate != null)
                 {
                     hash = hash * 59 + this.EnteredDate.GetHashCode();
+                }                
+                                if (this.TimePeriod != null)
+                {
+                    hash = hash * 59 + this.TimePeriod.GetHashCode();
                 }                
                                 if (this.Hours != null)
                 {

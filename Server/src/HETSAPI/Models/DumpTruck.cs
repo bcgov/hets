@@ -23,8 +23,9 @@ using System.ComponentModel.DataAnnotations;
 namespace HETSAPI.Models
 {
     /// <summary>
-    /// 
+    /// Additional attributes of a piece of equipment stored because it is designated as a Dump Truck. Historically, there was a perceived need to track a lot of informatiion about a dump truck, but in practice, few fields are being completed by users. Places for the attributes are being maintained, but the UI is prompting only for a couple of the fields, and only those fields are likely to be populated. Additional basic information about the attributes can be found on Wikipedia, BC-specific details on MOTI&amp;#39;s CVSE website and www.bclaws.ca&amp;#x2F;EPLibraries&amp;#x2F;bclaws_new&amp;#x2F;document&amp;#x2F;ID&amp;#x2F;freeside&amp;#x2F;30_78#AppendicesAtoK, Appendix A and  B. Any metrics information provided here is from the Equipment Owner.
     /// </summary>
+        [MetaDataExtension (Description = "Additional attributes of a piece of equipment stored because it is designated as a Dump Truck. Historically, there was a perceived need to track a lot of informatiion about a dump truck, but in practice, few fields are being completed by users. Places for the attributes are being maintained, but the UI is prompting only for a couple of the fields, and only those fields are likely to be populated. Additional basic information about the attributes can be found on Wikipedia, BC-specific details on MOTI&amp;#39;s CVSE website and www.bclaws.ca&amp;#x2F;EPLibraries&amp;#x2F;bclaws_new&amp;#x2F;document&amp;#x2F;ID&amp;#x2F;freeside&amp;#x2F;30_78#AppendicesAtoK, Appendix A and  B. Any metrics information provided here is from the Equipment Owner.")]
 
     public partial class DumpTruck : IEquatable<DumpTruck>
     {
@@ -39,50 +40,50 @@ namespace HETSAPI.Models
         /// <summary>
         /// Initializes a new instance of the <see cref="DumpTruck" /> class.
         /// </summary>
-        /// <param name="Id">Primary Key (required).</param>
-        /// <param name="SingleAxle">SingleAxle.</param>
-        /// <param name="TandemAxle">TandemAxle.</param>
-        /// <param name="PUP">PUP.</param>
-        /// <param name="BellyDump">BellyDump.</param>
-        /// <param name="Tridem">Tridem.</param>
-        /// <param name="RockBox">RockBox.</param>
-        /// <param name="HiliftGate">HiliftGate.</param>
-        /// <param name="WaterTruck">WaterTruck.</param>
-        /// <param name="SealCoatHitch">SealCoatHitch.</param>
-        /// <param name="RearAxleSpacing">RearAxleSpacing.</param>
-        /// <param name="FrontTireSize">FrontTireSize.</param>
-        /// <param name="FrontTireUOM">FrontTireUOM.</param>
-        /// <param name="FrontAxleCapacity">FrontAxleCapacity.</param>
-        /// <param name="RearAxleCapacity">RearAxleCapacity.</param>
-        /// <param name="LegalLoad">LegalLoad.</param>
-        /// <param name="LegalCapacity">LegalCapacity.</param>
-        /// <param name="LegalPUPTareWeight">LegalPUPTareWeight.</param>
-        /// <param name="LicencedGVW">LicencedGVW.</param>
-        /// <param name="LicencedGVWUOM">LicencedGVWUOM.</param>
-        /// <param name="LicencedTareWeight">LicencedTareWeight.</param>
-        /// <param name="LicencedPUPTareWeight">LicencedPUPTareWeight.</param>
-        /// <param name="LicencedLoad">LicencedLoad.</param>
-        /// <param name="LicencedCapacity">LicencedCapacity.</param>
-        /// <param name="BoxLength">BoxLength.</param>
-        /// <param name="BoxWidth">BoxWidth.</param>
-        /// <param name="BoxHeight">BoxHeight.</param>
-        /// <param name="BoxCapacity">BoxCapacity.</param>
-        /// <param name="TrailerBoxLength">TrailerBoxLength.</param>
-        /// <param name="TrailerBoxWidth">TrailerBoxWidth.</param>
-        /// <param name="TrailerBoxHeight">TrailerBoxHeight.</param>
-        /// <param name="TrailerBoxCapacity">TrailerBoxCapacity.</param>
-        public DumpTruck(int Id, string SingleAxle = null, string TandemAxle = null, string PUP = null, string BellyDump = null, string Tridem = null, string RockBox = null, string HiliftGate = null, string WaterTruck = null, string SealCoatHitch = null, string RearAxleSpacing = null, string FrontTireSize = null, string FrontTireUOM = null, string FrontAxleCapacity = null, string RearAxleCapacity = null, string LegalLoad = null, string LegalCapacity = null, string LegalPUPTareWeight = null, string LicencedGVW = null, string LicencedGVWUOM = null, string LicencedTareWeight = null, string LicencedPUPTareWeight = null, string LicencedLoad = null, string LicencedCapacity = null, string BoxLength = null, string BoxWidth = null, string BoxHeight = null, string BoxCapacity = null, string TrailerBoxLength = null, string TrailerBoxWidth = null, string TrailerBoxHeight = null, string TrailerBoxCapacity = null)
+        /// <param name="Id">A system-generated unique identifier for a DumpTruck (required).</param>
+        /// <param name="IsSingleAxle">True if the vehicle has a single axle. Can be false or null..</param>
+        /// <param name="IsTandemAxle">True if the vehicle has a tandem axle. Can be false or null..</param>
+        /// <param name="IsTridem">True if the Dump Truck is a tridem - a three axle dump truck. Can be false or null..</param>
+        /// <param name="HasPUP">True if the Dump Truck has a PUP trailer - a trailer with it&amp;#39;s own hydraulic unloading system. Can be false or null..</param>
+        /// <param name="HasBellyDump">True if the Dump Truck has a belly dump capability. Can be false or null..</param>
+        /// <param name="HasRockBox">True if the Dump Truck has a rock box. Can be false or null..</param>
+        /// <param name="HasHiliftGate">True if the Dump Truck has a high lift gate vs. a traditional gate. Can be false or null..</param>
+        /// <param name="IsWaterTruck">True if the Dump Truck is a Water Truck. Can be false or null..</param>
+        /// <param name="HasSealcoatHitch">True if the Dump Truck has a hitch for using sealcoat trailers. Can be false or null..</param>
+        /// <param name="RearAxleSpacing">The spacing of the rear axles, if applicable. Usually in metres..</param>
+        /// <param name="FrontTireSize">The size of of the Front Tires of the Dump Truck..</param>
+        /// <param name="FrontTireUOM">The Unit of Measure of the Front Tire Size..</param>
+        /// <param name="FrontAxleCapacity">The rated capacity of the Front Axle..</param>
+        /// <param name="RearAxleCapacity">The rated capacity of the Rear Axle..</param>
+        /// <param name="LegalLoad">The legal load of the vehicle in kg..</param>
+        /// <param name="LegalCapacity">The legal capacity of the dump truck..</param>
+        /// <param name="LegalPUPTareWeight">The legal Tare Weight (weight when unloaded) of the PUP trailer..</param>
+        /// <param name="LicencedGVW">The Gross Vehicle Weight for which the vehicle is licensed. GVW includes the vehicle&amp;#39;s chassis, body, engine, engine fluids, fuel, accessories, driver, passengers and cargo but excluding that of any trailers..</param>
+        /// <param name="LicencedGVWUOM">The Unit of Measure (UOM) of the licenced GVW..</param>
+        /// <param name="LicencedTareWeight">The licenced Tare Weight (weight when unloaded) of the vehicle..</param>
+        /// <param name="LicencedPUPTareWeight">The licenced Tare Weight (weight when unloaded) of the PUP trailer..</param>
+        /// <param name="LicencedLoad">The licenced maximum load of the vehicle in kg..</param>
+        /// <param name="LicencedCapacity">The licenced maximum capacity of the vehicle..</param>
+        /// <param name="BoxLength">The length of the box, in metres. See - http-&amp;#x2F;&amp;#x2F;www.bclaws.ca&amp;#x2F;EPLibraries&amp;#x2F;bclaws_new&amp;#x2F;document&amp;#x2F;ID&amp;#x2F;freeside&amp;#x2F;30_7, appendix B.</param>
+        /// <param name="BoxWidth">The width of the box, in metres. See - http-&amp;#x2F;&amp;#x2F;www.bclaws.ca&amp;#x2F;EPLibraries&amp;#x2F;bclaws_new&amp;#x2F;document&amp;#x2F;ID&amp;#x2F;freeside&amp;#x2F;30_7, appendix B.</param>
+        /// <param name="BoxHeight">The height of the box, in metres. See- http-&amp;#x2F;&amp;#x2F;www.bclaws.ca&amp;#x2F;EPLibraries&amp;#x2F;bclaws_new&amp;#x2F;document&amp;#x2F;ID&amp;#x2F;freeside&amp;#x2F;30_7, appendix B.</param>
+        /// <param name="BoxCapacity">The capacity of the box..</param>
+        /// <param name="TrailerBoxLength">The length of the trailer box, in metres. See www.bclaws.ca&amp;#x2F;EPLibraries&amp;#x2F;bclaws_new&amp;#x2F;document&amp;#x2F;ID&amp;#x2F;freeside&amp;#x2F;30_7, appendix B.</param>
+        /// <param name="TrailerBoxWidth">The width of the trailer box, in metres. See www.bclaws.ca&amp;#x2F;EPLibraries&amp;#x2F;bclaws_new&amp;#x2F;document&amp;#x2F;ID&amp;#x2F;freeside&amp;#x2F;30_7, appendix B.</param>
+        /// <param name="TrailerBoxHeight">The height of the trailer box, in metres. See www.bclaws.ca&amp;#x2F;EPLibraries&amp;#x2F;bclaws_new&amp;#x2F;document&amp;#x2F;ID&amp;#x2F;freeside&amp;#x2F;30_7, appendix B.</param>
+        /// <param name="TrailerBoxCapacity">The capacity of the trailer box..</param>
+        public DumpTruck(int Id, bool? IsSingleAxle = null, bool? IsTandemAxle = null, bool? IsTridem = null, bool? HasPUP = null, bool? HasBellyDump = null, bool? HasRockBox = null, bool? HasHiliftGate = null, bool? IsWaterTruck = null, bool? HasSealcoatHitch = null, string RearAxleSpacing = null, string FrontTireSize = null, string FrontTireUOM = null, string FrontAxleCapacity = null, string RearAxleCapacity = null, string LegalLoad = null, string LegalCapacity = null, string LegalPUPTareWeight = null, string LicencedGVW = null, string LicencedGVWUOM = null, string LicencedTareWeight = null, string LicencedPUPTareWeight = null, string LicencedLoad = null, string LicencedCapacity = null, string BoxLength = null, string BoxWidth = null, string BoxHeight = null, string BoxCapacity = null, string TrailerBoxLength = null, string TrailerBoxWidth = null, string TrailerBoxHeight = null, string TrailerBoxCapacity = null)
         {   
             this.Id = Id;
-            this.SingleAxle = SingleAxle;
-            this.TandemAxle = TandemAxle;
-            this.PUP = PUP;
-            this.BellyDump = BellyDump;
-            this.Tridem = Tridem;
-            this.RockBox = RockBox;
-            this.HiliftGate = HiliftGate;
-            this.WaterTruck = WaterTruck;
-            this.SealCoatHitch = SealCoatHitch;
+            this.IsSingleAxle = IsSingleAxle;
+            this.IsTandemAxle = IsTandemAxle;
+            this.IsTridem = IsTridem;
+            this.HasPUP = HasPUP;
+            this.HasBellyDump = HasBellyDump;
+            this.HasRockBox = HasRockBox;
+            this.HasHiliftGate = HasHiliftGate;
+            this.IsWaterTruck = IsWaterTruck;
+            this.HasSealcoatHitch = HasSealcoatHitch;
             this.RearAxleSpacing = RearAxleSpacing;
             this.FrontTireSize = FrontTireSize;
             this.FrontTireUOM = FrontTireUOM;
@@ -108,225 +109,269 @@ namespace HETSAPI.Models
         }
 
         /// <summary>
-        /// Primary Key
+        /// A system-generated unique identifier for a DumpTruck
         /// </summary>
-        /// <value>Primary Key</value>
-        [MetaDataExtension (Description = "Primary Key")]
+        /// <value>A system-generated unique identifier for a DumpTruck</value>
+        [MetaDataExtension (Description = "A system-generated unique identifier for a DumpTruck")]
         public int Id { get; set; }
         
         /// <summary>
-        /// Gets or Sets SingleAxle
+        /// True if the vehicle has a single axle. Can be false or null.
         /// </summary>
-        [MaxLength(255)]
-        
-        public string SingleAxle { get; set; }
+        /// <value>True if the vehicle has a single axle. Can be false or null.</value>
+        [MetaDataExtension (Description = "True if the vehicle has a single axle. Can be false or null.")]
+        public bool? IsSingleAxle { get; set; }
         
         /// <summary>
-        /// Gets or Sets TandemAxle
+        /// True if the vehicle has a tandem axle. Can be false or null.
         /// </summary>
-        [MaxLength(255)]
-        
-        public string TandemAxle { get; set; }
+        /// <value>True if the vehicle has a tandem axle. Can be false or null.</value>
+        [MetaDataExtension (Description = "True if the vehicle has a tandem axle. Can be false or null.")]
+        public bool? IsTandemAxle { get; set; }
         
         /// <summary>
-        /// Gets or Sets PUP
+        /// True if the Dump Truck is a tridem - a three axle dump truck. Can be false or null.
         /// </summary>
-        [MaxLength(255)]
-        
-        public string PUP { get; set; }
+        /// <value>True if the Dump Truck is a tridem - a three axle dump truck. Can be false or null.</value>
+        [MetaDataExtension (Description = "True if the Dump Truck is a tridem - a three axle dump truck. Can be false or null.")]
+        public bool? IsTridem { get; set; }
         
         /// <summary>
-        /// Gets or Sets BellyDump
+        /// True if the Dump Truck has a PUP trailer - a trailer with it&#39;s own hydraulic unloading system. Can be false or null.
         /// </summary>
-        [MaxLength(255)]
-        
-        public string BellyDump { get; set; }
+        /// <value>True if the Dump Truck has a PUP trailer - a trailer with it&#39;s own hydraulic unloading system. Can be false or null.</value>
+        [MetaDataExtension (Description = "True if the Dump Truck has a PUP trailer - a trailer with it&#39;s own hydraulic unloading system. Can be false or null.")]
+        public bool? HasPUP { get; set; }
         
         /// <summary>
-        /// Gets or Sets Tridem
+        /// True if the Dump Truck has a belly dump capability. Can be false or null.
         /// </summary>
-        [MaxLength(255)]
-        
-        public string Tridem { get; set; }
+        /// <value>True if the Dump Truck has a belly dump capability. Can be false or null.</value>
+        [MetaDataExtension (Description = "True if the Dump Truck has a belly dump capability. Can be false or null.")]
+        public bool? HasBellyDump { get; set; }
         
         /// <summary>
-        /// Gets or Sets RockBox
+        /// True if the Dump Truck has a rock box. Can be false or null.
         /// </summary>
-        [MaxLength(255)]
-        
-        public string RockBox { get; set; }
+        /// <value>True if the Dump Truck has a rock box. Can be false or null.</value>
+        [MetaDataExtension (Description = "True if the Dump Truck has a rock box. Can be false or null.")]
+        public bool? HasRockBox { get; set; }
         
         /// <summary>
-        /// Gets or Sets HiliftGate
+        /// True if the Dump Truck has a high lift gate vs. a traditional gate. Can be false or null.
         /// </summary>
-        [MaxLength(255)]
-        
-        public string HiliftGate { get; set; }
+        /// <value>True if the Dump Truck has a high lift gate vs. a traditional gate. Can be false or null.</value>
+        [MetaDataExtension (Description = "True if the Dump Truck has a high lift gate vs. a traditional gate. Can be false or null.")]
+        public bool? HasHiliftGate { get; set; }
         
         /// <summary>
-        /// Gets or Sets WaterTruck
+        /// True if the Dump Truck is a Water Truck. Can be false or null.
         /// </summary>
-        [MaxLength(255)]
-        
-        public string WaterTruck { get; set; }
+        /// <value>True if the Dump Truck is a Water Truck. Can be false or null.</value>
+        [MetaDataExtension (Description = "True if the Dump Truck is a Water Truck. Can be false or null.")]
+        public bool? IsWaterTruck { get; set; }
         
         /// <summary>
-        /// Gets or Sets SealCoatHitch
+        /// True if the Dump Truck has a hitch for using sealcoat trailers. Can be false or null.
         /// </summary>
-        [MaxLength(255)]
-        
-        public string SealCoatHitch { get; set; }
+        /// <value>True if the Dump Truck has a hitch for using sealcoat trailers. Can be false or null.</value>
+        [MetaDataExtension (Description = "True if the Dump Truck has a hitch for using sealcoat trailers. Can be false or null.")]
+        public bool? HasSealcoatHitch { get; set; }
         
         /// <summary>
-        /// Gets or Sets RearAxleSpacing
+        /// The spacing of the rear axles, if applicable. Usually in metres.
         /// </summary>
+        /// <value>The spacing of the rear axles, if applicable. Usually in metres.</value>
+        [MetaDataExtension (Description = "The spacing of the rear axles, if applicable. Usually in metres.")]
         [MaxLength(255)]
         
         public string RearAxleSpacing { get; set; }
         
         /// <summary>
-        /// Gets or Sets FrontTireSize
+        /// The size of of the Front Tires of the Dump Truck.
         /// </summary>
+        /// <value>The size of of the Front Tires of the Dump Truck.</value>
+        [MetaDataExtension (Description = "The size of of the Front Tires of the Dump Truck.")]
         [MaxLength(255)]
         
         public string FrontTireSize { get; set; }
         
         /// <summary>
-        /// Gets or Sets FrontTireUOM
+        /// The Unit of Measure of the Front Tire Size.
         /// </summary>
+        /// <value>The Unit of Measure of the Front Tire Size.</value>
+        [MetaDataExtension (Description = "The Unit of Measure of the Front Tire Size.")]
         [MaxLength(255)]
         
         public string FrontTireUOM { get; set; }
         
         /// <summary>
-        /// Gets or Sets FrontAxleCapacity
+        /// The rated capacity of the Front Axle.
         /// </summary>
+        /// <value>The rated capacity of the Front Axle.</value>
+        [MetaDataExtension (Description = "The rated capacity of the Front Axle.")]
         [MaxLength(255)]
         
         public string FrontAxleCapacity { get; set; }
         
         /// <summary>
-        /// Gets or Sets RearAxleCapacity
+        /// The rated capacity of the Rear Axle.
         /// </summary>
+        /// <value>The rated capacity of the Rear Axle.</value>
+        [MetaDataExtension (Description = "The rated capacity of the Rear Axle.")]
         [MaxLength(255)]
         
         public string RearAxleCapacity { get; set; }
         
         /// <summary>
-        /// Gets or Sets LegalLoad
+        /// The legal load of the vehicle in kg.
         /// </summary>
+        /// <value>The legal load of the vehicle in kg.</value>
+        [MetaDataExtension (Description = "The legal load of the vehicle in kg.")]
         [MaxLength(255)]
         
         public string LegalLoad { get; set; }
         
         /// <summary>
-        /// Gets or Sets LegalCapacity
+        /// The legal capacity of the dump truck.
         /// </summary>
+        /// <value>The legal capacity of the dump truck.</value>
+        [MetaDataExtension (Description = "The legal capacity of the dump truck.")]
         [MaxLength(255)]
         
         public string LegalCapacity { get; set; }
         
         /// <summary>
-        /// Gets or Sets LegalPUPTareWeight
+        /// The legal Tare Weight (weight when unloaded) of the PUP trailer.
         /// </summary>
+        /// <value>The legal Tare Weight (weight when unloaded) of the PUP trailer.</value>
+        [MetaDataExtension (Description = "The legal Tare Weight (weight when unloaded) of the PUP trailer.")]
         [MaxLength(255)]
         
         public string LegalPUPTareWeight { get; set; }
         
         /// <summary>
-        /// Gets or Sets LicencedGVW
+        /// The Gross Vehicle Weight for which the vehicle is licensed. GVW includes the vehicle&#39;s chassis, body, engine, engine fluids, fuel, accessories, driver, passengers and cargo but excluding that of any trailers.
         /// </summary>
+        /// <value>The Gross Vehicle Weight for which the vehicle is licensed. GVW includes the vehicle&#39;s chassis, body, engine, engine fluids, fuel, accessories, driver, passengers and cargo but excluding that of any trailers.</value>
+        [MetaDataExtension (Description = "The Gross Vehicle Weight for which the vehicle is licensed. GVW includes the vehicle&#39;s chassis, body, engine, engine fluids, fuel, accessories, driver, passengers and cargo but excluding that of any trailers.")]
         [MaxLength(255)]
         
         public string LicencedGVW { get; set; }
         
         /// <summary>
-        /// Gets or Sets LicencedGVWUOM
+        /// The Unit of Measure (UOM) of the licenced GVW.
         /// </summary>
+        /// <value>The Unit of Measure (UOM) of the licenced GVW.</value>
+        [MetaDataExtension (Description = "The Unit of Measure (UOM) of the licenced GVW.")]
         [MaxLength(255)]
         
         public string LicencedGVWUOM { get; set; }
         
         /// <summary>
-        /// Gets or Sets LicencedTareWeight
+        /// The licenced Tare Weight (weight when unloaded) of the vehicle.
         /// </summary>
+        /// <value>The licenced Tare Weight (weight when unloaded) of the vehicle.</value>
+        [MetaDataExtension (Description = "The licenced Tare Weight (weight when unloaded) of the vehicle.")]
         [MaxLength(255)]
         
         public string LicencedTareWeight { get; set; }
         
         /// <summary>
-        /// Gets or Sets LicencedPUPTareWeight
+        /// The licenced Tare Weight (weight when unloaded) of the PUP trailer.
         /// </summary>
+        /// <value>The licenced Tare Weight (weight when unloaded) of the PUP trailer.</value>
+        [MetaDataExtension (Description = "The licenced Tare Weight (weight when unloaded) of the PUP trailer.")]
         [MaxLength(255)]
         
         public string LicencedPUPTareWeight { get; set; }
         
         /// <summary>
-        /// Gets or Sets LicencedLoad
+        /// The licenced maximum load of the vehicle in kg.
         /// </summary>
+        /// <value>The licenced maximum load of the vehicle in kg.</value>
+        [MetaDataExtension (Description = "The licenced maximum load of the vehicle in kg.")]
         [MaxLength(255)]
         
         public string LicencedLoad { get; set; }
         
         /// <summary>
-        /// Gets or Sets LicencedCapacity
+        /// The licenced maximum capacity of the vehicle.
         /// </summary>
+        /// <value>The licenced maximum capacity of the vehicle.</value>
+        [MetaDataExtension (Description = "The licenced maximum capacity of the vehicle.")]
         [MaxLength(255)]
         
         public string LicencedCapacity { get; set; }
         
         /// <summary>
-        /// Gets or Sets BoxLength
+        /// The length of the box, in metres. See - http-&#x2F;&#x2F;www.bclaws.ca&#x2F;EPLibraries&#x2F;bclaws_new&#x2F;document&#x2F;ID&#x2F;freeside&#x2F;30_7, appendix B
         /// </summary>
+        /// <value>The length of the box, in metres. See - http-&#x2F;&#x2F;www.bclaws.ca&#x2F;EPLibraries&#x2F;bclaws_new&#x2F;document&#x2F;ID&#x2F;freeside&#x2F;30_7, appendix B</value>
+        [MetaDataExtension (Description = "The length of the box, in metres. See - http-&#x2F;&#x2F;www.bclaws.ca&#x2F;EPLibraries&#x2F;bclaws_new&#x2F;document&#x2F;ID&#x2F;freeside&#x2F;30_7, appendix B")]
         [MaxLength(255)]
         
         public string BoxLength { get; set; }
         
         /// <summary>
-        /// Gets or Sets BoxWidth
+        /// The width of the box, in metres. See - http-&#x2F;&#x2F;www.bclaws.ca&#x2F;EPLibraries&#x2F;bclaws_new&#x2F;document&#x2F;ID&#x2F;freeside&#x2F;30_7, appendix B
         /// </summary>
+        /// <value>The width of the box, in metres. See - http-&#x2F;&#x2F;www.bclaws.ca&#x2F;EPLibraries&#x2F;bclaws_new&#x2F;document&#x2F;ID&#x2F;freeside&#x2F;30_7, appendix B</value>
+        [MetaDataExtension (Description = "The width of the box, in metres. See - http-&#x2F;&#x2F;www.bclaws.ca&#x2F;EPLibraries&#x2F;bclaws_new&#x2F;document&#x2F;ID&#x2F;freeside&#x2F;30_7, appendix B")]
         [MaxLength(255)]
         
         public string BoxWidth { get; set; }
         
         /// <summary>
-        /// Gets or Sets BoxHeight
+        /// The height of the box, in metres. See- http-&#x2F;&#x2F;www.bclaws.ca&#x2F;EPLibraries&#x2F;bclaws_new&#x2F;document&#x2F;ID&#x2F;freeside&#x2F;30_7, appendix B
         /// </summary>
+        /// <value>The height of the box, in metres. See- http-&#x2F;&#x2F;www.bclaws.ca&#x2F;EPLibraries&#x2F;bclaws_new&#x2F;document&#x2F;ID&#x2F;freeside&#x2F;30_7, appendix B</value>
+        [MetaDataExtension (Description = "The height of the box, in metres. See- http-&#x2F;&#x2F;www.bclaws.ca&#x2F;EPLibraries&#x2F;bclaws_new&#x2F;document&#x2F;ID&#x2F;freeside&#x2F;30_7, appendix B")]
         [MaxLength(255)]
         
         public string BoxHeight { get; set; }
         
         /// <summary>
-        /// Gets or Sets BoxCapacity
+        /// The capacity of the box.
         /// </summary>
+        /// <value>The capacity of the box.</value>
+        [MetaDataExtension (Description = "The capacity of the box.")]
         [MaxLength(255)]
         
         public string BoxCapacity { get; set; }
         
         /// <summary>
-        /// Gets or Sets TrailerBoxLength
+        /// The length of the trailer box, in metres. See www.bclaws.ca&#x2F;EPLibraries&#x2F;bclaws_new&#x2F;document&#x2F;ID&#x2F;freeside&#x2F;30_7, appendix B
         /// </summary>
+        /// <value>The length of the trailer box, in metres. See www.bclaws.ca&#x2F;EPLibraries&#x2F;bclaws_new&#x2F;document&#x2F;ID&#x2F;freeside&#x2F;30_7, appendix B</value>
+        [MetaDataExtension (Description = "The length of the trailer box, in metres. See www.bclaws.ca&#x2F;EPLibraries&#x2F;bclaws_new&#x2F;document&#x2F;ID&#x2F;freeside&#x2F;30_7, appendix B")]
         [MaxLength(255)]
         
         public string TrailerBoxLength { get; set; }
         
         /// <summary>
-        /// Gets or Sets TrailerBoxWidth
+        /// The width of the trailer box, in metres. See www.bclaws.ca&#x2F;EPLibraries&#x2F;bclaws_new&#x2F;document&#x2F;ID&#x2F;freeside&#x2F;30_7, appendix B
         /// </summary>
+        /// <value>The width of the trailer box, in metres. See www.bclaws.ca&#x2F;EPLibraries&#x2F;bclaws_new&#x2F;document&#x2F;ID&#x2F;freeside&#x2F;30_7, appendix B</value>
+        [MetaDataExtension (Description = "The width of the trailer box, in metres. See www.bclaws.ca&#x2F;EPLibraries&#x2F;bclaws_new&#x2F;document&#x2F;ID&#x2F;freeside&#x2F;30_7, appendix B")]
         [MaxLength(255)]
         
         public string TrailerBoxWidth { get; set; }
         
         /// <summary>
-        /// Gets or Sets TrailerBoxHeight
+        /// The height of the trailer box, in metres. See www.bclaws.ca&#x2F;EPLibraries&#x2F;bclaws_new&#x2F;document&#x2F;ID&#x2F;freeside&#x2F;30_7, appendix B
         /// </summary>
+        /// <value>The height of the trailer box, in metres. See www.bclaws.ca&#x2F;EPLibraries&#x2F;bclaws_new&#x2F;document&#x2F;ID&#x2F;freeside&#x2F;30_7, appendix B</value>
+        [MetaDataExtension (Description = "The height of the trailer box, in metres. See www.bclaws.ca&#x2F;EPLibraries&#x2F;bclaws_new&#x2F;document&#x2F;ID&#x2F;freeside&#x2F;30_7, appendix B")]
         [MaxLength(255)]
         
         public string TrailerBoxHeight { get; set; }
         
         /// <summary>
-        /// Gets or Sets TrailerBoxCapacity
+        /// The capacity of the trailer box.
         /// </summary>
+        /// <value>The capacity of the trailer box.</value>
+        [MetaDataExtension (Description = "The capacity of the trailer box.")]
         [MaxLength(255)]
         
         public string TrailerBoxCapacity { get; set; }
@@ -340,15 +385,15 @@ namespace HETSAPI.Models
             var sb = new StringBuilder();
             sb.Append("class DumpTruck {\n");
             sb.Append("  Id: ").Append(Id).Append("\n");
-            sb.Append("  SingleAxle: ").Append(SingleAxle).Append("\n");
-            sb.Append("  TandemAxle: ").Append(TandemAxle).Append("\n");
-            sb.Append("  PUP: ").Append(PUP).Append("\n");
-            sb.Append("  BellyDump: ").Append(BellyDump).Append("\n");
-            sb.Append("  Tridem: ").Append(Tridem).Append("\n");
-            sb.Append("  RockBox: ").Append(RockBox).Append("\n");
-            sb.Append("  HiliftGate: ").Append(HiliftGate).Append("\n");
-            sb.Append("  WaterTruck: ").Append(WaterTruck).Append("\n");
-            sb.Append("  SealCoatHitch: ").Append(SealCoatHitch).Append("\n");
+            sb.Append("  IsSingleAxle: ").Append(IsSingleAxle).Append("\n");
+            sb.Append("  IsTandemAxle: ").Append(IsTandemAxle).Append("\n");
+            sb.Append("  IsTridem: ").Append(IsTridem).Append("\n");
+            sb.Append("  HasPUP: ").Append(HasPUP).Append("\n");
+            sb.Append("  HasBellyDump: ").Append(HasBellyDump).Append("\n");
+            sb.Append("  HasRockBox: ").Append(HasRockBox).Append("\n");
+            sb.Append("  HasHiliftGate: ").Append(HasHiliftGate).Append("\n");
+            sb.Append("  IsWaterTruck: ").Append(IsWaterTruck).Append("\n");
+            sb.Append("  HasSealcoatHitch: ").Append(HasSealcoatHitch).Append("\n");
             sb.Append("  RearAxleSpacing: ").Append(RearAxleSpacing).Append("\n");
             sb.Append("  FrontTireSize: ").Append(FrontTireSize).Append("\n");
             sb.Append("  FrontTireUOM: ").Append(FrontTireUOM).Append("\n");
@@ -414,49 +459,49 @@ namespace HETSAPI.Models
                     this.Id.Equals(other.Id)
                 ) &&                 
                 (
-                    this.SingleAxle == other.SingleAxle ||
-                    this.SingleAxle != null &&
-                    this.SingleAxle.Equals(other.SingleAxle)
+                    this.IsSingleAxle == other.IsSingleAxle ||
+                    this.IsSingleAxle != null &&
+                    this.IsSingleAxle.Equals(other.IsSingleAxle)
                 ) &&                 
                 (
-                    this.TandemAxle == other.TandemAxle ||
-                    this.TandemAxle != null &&
-                    this.TandemAxle.Equals(other.TandemAxle)
+                    this.IsTandemAxle == other.IsTandemAxle ||
+                    this.IsTandemAxle != null &&
+                    this.IsTandemAxle.Equals(other.IsTandemAxle)
                 ) &&                 
                 (
-                    this.PUP == other.PUP ||
-                    this.PUP != null &&
-                    this.PUP.Equals(other.PUP)
+                    this.IsTridem == other.IsTridem ||
+                    this.IsTridem != null &&
+                    this.IsTridem.Equals(other.IsTridem)
                 ) &&                 
                 (
-                    this.BellyDump == other.BellyDump ||
-                    this.BellyDump != null &&
-                    this.BellyDump.Equals(other.BellyDump)
+                    this.HasPUP == other.HasPUP ||
+                    this.HasPUP != null &&
+                    this.HasPUP.Equals(other.HasPUP)
                 ) &&                 
                 (
-                    this.Tridem == other.Tridem ||
-                    this.Tridem != null &&
-                    this.Tridem.Equals(other.Tridem)
+                    this.HasBellyDump == other.HasBellyDump ||
+                    this.HasBellyDump != null &&
+                    this.HasBellyDump.Equals(other.HasBellyDump)
                 ) &&                 
                 (
-                    this.RockBox == other.RockBox ||
-                    this.RockBox != null &&
-                    this.RockBox.Equals(other.RockBox)
+                    this.HasRockBox == other.HasRockBox ||
+                    this.HasRockBox != null &&
+                    this.HasRockBox.Equals(other.HasRockBox)
                 ) &&                 
                 (
-                    this.HiliftGate == other.HiliftGate ||
-                    this.HiliftGate != null &&
-                    this.HiliftGate.Equals(other.HiliftGate)
+                    this.HasHiliftGate == other.HasHiliftGate ||
+                    this.HasHiliftGate != null &&
+                    this.HasHiliftGate.Equals(other.HasHiliftGate)
                 ) &&                 
                 (
-                    this.WaterTruck == other.WaterTruck ||
-                    this.WaterTruck != null &&
-                    this.WaterTruck.Equals(other.WaterTruck)
+                    this.IsWaterTruck == other.IsWaterTruck ||
+                    this.IsWaterTruck != null &&
+                    this.IsWaterTruck.Equals(other.IsWaterTruck)
                 ) &&                 
                 (
-                    this.SealCoatHitch == other.SealCoatHitch ||
-                    this.SealCoatHitch != null &&
-                    this.SealCoatHitch.Equals(other.SealCoatHitch)
+                    this.HasSealcoatHitch == other.HasSealcoatHitch ||
+                    this.HasSealcoatHitch != null &&
+                    this.HasSealcoatHitch.Equals(other.HasSealcoatHitch)
                 ) &&                 
                 (
                     this.RearAxleSpacing == other.RearAxleSpacing ||
@@ -582,41 +627,41 @@ namespace HETSAPI.Models
                 int hash = 41;
                 // Suitable nullity checks
                                    
-                hash = hash * 59 + this.Id.GetHashCode();                if (this.SingleAxle != null)
+                hash = hash * 59 + this.Id.GetHashCode();                if (this.IsSingleAxle != null)
                 {
-                    hash = hash * 59 + this.SingleAxle.GetHashCode();
+                    hash = hash * 59 + this.IsSingleAxle.GetHashCode();
                 }                
-                                if (this.TandemAxle != null)
+                                if (this.IsTandemAxle != null)
                 {
-                    hash = hash * 59 + this.TandemAxle.GetHashCode();
+                    hash = hash * 59 + this.IsTandemAxle.GetHashCode();
                 }                
-                                if (this.PUP != null)
+                                if (this.IsTridem != null)
                 {
-                    hash = hash * 59 + this.PUP.GetHashCode();
+                    hash = hash * 59 + this.IsTridem.GetHashCode();
                 }                
-                                if (this.BellyDump != null)
+                                if (this.HasPUP != null)
                 {
-                    hash = hash * 59 + this.BellyDump.GetHashCode();
+                    hash = hash * 59 + this.HasPUP.GetHashCode();
                 }                
-                                if (this.Tridem != null)
+                                if (this.HasBellyDump != null)
                 {
-                    hash = hash * 59 + this.Tridem.GetHashCode();
+                    hash = hash * 59 + this.HasBellyDump.GetHashCode();
                 }                
-                                if (this.RockBox != null)
+                                if (this.HasRockBox != null)
                 {
-                    hash = hash * 59 + this.RockBox.GetHashCode();
+                    hash = hash * 59 + this.HasRockBox.GetHashCode();
                 }                
-                                if (this.HiliftGate != null)
+                                if (this.HasHiliftGate != null)
                 {
-                    hash = hash * 59 + this.HiliftGate.GetHashCode();
+                    hash = hash * 59 + this.HasHiliftGate.GetHashCode();
                 }                
-                                if (this.WaterTruck != null)
+                                if (this.IsWaterTruck != null)
                 {
-                    hash = hash * 59 + this.WaterTruck.GetHashCode();
+                    hash = hash * 59 + this.IsWaterTruck.GetHashCode();
                 }                
-                                if (this.SealCoatHitch != null)
+                                if (this.HasSealcoatHitch != null)
                 {
-                    hash = hash * 59 + this.SealCoatHitch.GetHashCode();
+                    hash = hash * 59 + this.HasSealcoatHitch.GetHashCode();
                 }                
                                 if (this.RearAxleSpacing != null)
                 {

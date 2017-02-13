@@ -300,6 +300,29 @@ namespace HETSAPI.Services.Impl
         /// <summary>
         /// 
         /// </summary>
+        /// <param name="id">id of Equipment to fetch EquipmentAttachments for</param>
+        /// <response code="200">OK</response>
+        public virtual IActionResult EquipmentIdEquipmentattachmentsGetAsync(int id)
+        {
+            bool exists = _context.Equipments.Any(x => x.Id == id);
+            if (exists)
+            {
+                var result = _context.EquipmentAttachments
+                    .Include(x => x.Equipment)
+                    .Include(x => x.Type)
+                    .Where(x => x.Equipment.Id == id);
+                return new ObjectResult(result);
+            }
+            else
+            {
+                // record not found
+                return new StatusCodeResult(404);
+            }
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
         /// <param name="id">id of Equipment to fetch</param>
         /// <response code="200">OK</response>
         /// <response code="404">Equipment not found</response>
@@ -336,15 +359,36 @@ namespace HETSAPI.Services.Impl
         /// <response code="404">Equipment not found</response>
         public virtual IActionResult EquipmentIdPutAsync(int id, Equipment item)
         {
-            AdjustRecord(item);
-
-            var exists = _context.Equipments.Any(a => a.Id == id);
-            if (exists && id == item.Id)
+            if (item != null)
             {
-                _context.Equipments.Update(item);
-                // Save the changes
-                _context.SaveChanges();
-                return new ObjectResult(item);
+                AdjustRecord(item);
+
+                var exists = _context.Equipments                    
+                    .Any(a => a.Id == id);
+                if (exists && id == item.Id)
+                {
+                    _context.Equipments.Update(item);
+                    // Save the changes
+                    _context.SaveChanges();
+
+                    var result = _context.Equipments
+                    .Include(x => x.LocalArea.ServiceArea.District.Region)
+                    .Include(x => x.EquipmentType)
+                    .Include(x => x.DumpTruckDetails)
+                    .Include(x => x.Owner)
+                    .Include(x => x.EquipmentAttachments)
+                    .Include(x => x.Notes)
+                    .Include(x => x.Attachments)
+                    .Include(x => x.History)
+                    .First(a => a.Id == id);
+                    
+                    return new ObjectResult(result);
+                }
+                else
+                {
+                    // record not found
+                    return new StatusCodeResult(404);
+                }
             }
             else
             {
@@ -376,7 +420,19 @@ namespace HETSAPI.Services.Impl
                 }
                 // Save the changes                    
                 _context.SaveChanges();
-                return new ObjectResult(item);
+                int item_id = item.Id;
+                var result = _context.Equipments
+                    .Include(x => x.LocalArea.ServiceArea.District.Region)
+                    .Include(x => x.EquipmentType)
+                    .Include(x => x.DumpTruckDetails)
+                    .Include(x => x.Owner)
+                    .Include(x => x.EquipmentAttachments)
+                    .Include(x => x.Notes)
+                    .Include(x => x.Attachments)
+                    .Include(x => x.History)
+                    .First(a => a.Id == item_id);
+
+                return new ObjectResult(result);                
             }
             else
             {
@@ -451,7 +507,7 @@ namespace HETSAPI.Services.Impl
 
             if (status != null)
             {
-                data = data.Where(x => x.StatusCd == status);
+                data = data.Where(x => x.Status == status);
             }
 
             if (hired != null)

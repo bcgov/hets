@@ -54,6 +54,81 @@
             type: array
             items:
               $ref: "#/definitions/Equipment"
+  /equipment/{id}/equipmentattachments:
+    get:
+      tags:
+        - Equipment
+      consumes: []
+      produces:
+        - text/plain
+        - application/json
+        - text/json
+      parameters:
+        - name: id
+          in: path
+          description: id of Equipment to fetch EquipmentAttachments for
+          required: true
+          type: integer
+      responses:
+        200:
+          description: OK
+          schema:
+            type: array
+            items:
+              $ref: "#/definitions/EquipmentAttachment"
+  /owners/{id}/contacts:
+    get:
+      tags:
+        - Owner
+      description: Gets an Owner's Contacts      
+      consumes: []
+      produces:
+        - text/plain
+        - application/json
+        - text/json
+      parameters:
+        - name: id
+          in: path
+          description: id of Owner to fetch Contacts for
+          required: true
+          type: integer
+      responses:
+        200:
+          description: OK
+          schema:
+            type: array
+            items:
+              $ref: "#/definitions/Contact"
+    put:
+      tags:
+        - Owner
+      description: Replaces an Owner's Contacts
+      consumes: []
+      produces:
+        - text/plain
+        - application/json
+        - text/json
+      parameters:
+        - name: id
+          in: path
+          description: id of Owner to replace Contacts for
+          required: true
+          type: integer
+        - name: item
+          in: body
+          description: Replacement Owner contacts.
+          required: true
+          schema:
+            type: array
+            items:
+              $ref: "#/definitions/Contact"
+      responses:
+        200:
+          description: OK
+          schema:
+            type: array
+            items:
+              $ref: "#/definitions/Contact"    
   /roles/{id}/permissions:
     get:
       description: Get all the permissions for a role
@@ -261,7 +336,7 @@
             $ref: "#/definitions/UserFavourite"
   /users/current/favourites/{favouritetype}:
     get:
-      description: Returns a user's favourites of a given type.  If type is empty, returns all.
+      description: Returns a users favourites of a given type.  If type is empty, returns all.
       tags:
         - CurrentUser
       produces:
@@ -281,6 +356,7 @@
         - name: favouritetype
           in: path
           description: type of favourite to return
+          required: true
           type: string
   /users/current/favourites/{id}/delete:
     post:
