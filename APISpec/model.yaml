@@ -14,7 +14,7 @@ definitions:
         description: The Service Area associated with this Project record.
       provincialProjectNumber:
         type: string
-        maxLength: 255
+        maxLength: 150
         description: TO BE VERIFIED - The Provincial charge code for the equipment hiring related to this project. This will be the same across multiple service areas that provide equipment for the same Project.
       name:
         type: string
@@ -82,10 +82,6 @@ definitions:
       firstOnRotationList:
         $ref: '#/definitions/Equipment'
         description: The first piece of equipment on the rotation list at the time of the creation of the request.
-      hireOffers:
-        type: array
-        items:
-          $ref: '#/definitions/HireOffer'
       notes:
         type: array
         items:
@@ -98,6 +94,10 @@ definitions:
         type: array
         items:
           $ref: '#/definitions/History'
+      requestRotationList:
+        type: array
+        items:
+          $ref: '#/definitions/RequestRotationList'
   RequestRotationList:
     type: object
     description: An eligible piece of equipment for a request and a tracking of the hire offer and response process related to a request for that piece of equipment. Includes a link from the equipment to a Rental Agreement if the equipment was hired to satisfy a part of the request.
@@ -110,10 +110,10 @@ definitions:
         description: A system-generated unique identifier for a RequestRotationList
       request:
         $ref: '#/definitions/Request'
-      rotationListOrder:
+      rotationListSortOrder:
         format: int32
         type: integer
-        description: The order of the piece of equipment on the rotaton list at the time the request was created.
+        description: The sort order of the piece of equipment on the rotaton list at the time the request was created. This is the order the equipment will be offered the available work.
       equipment:
         $ref: '#/definitions/Equipment'
       rentalAgreement:
@@ -134,11 +134,11 @@ definitions:
         description: The response to the offer to hire. Null prior to receiving a response; a string after with the response - likely just Yes or No
       refuseReason:
         type: string
-        maxLength: 255
+        maxLength: 2048
         description: An optional reason given by the equipment owner for refusing the offer.
       note:
         type: string
-        maxLength: 255
+        maxLength: 2048
         description: An optional general note about the offer.
   RentalAgreement:
     type: object
@@ -283,7 +283,7 @@ definitions:
         description: TO BE REVIEWED - IS THIS NEEDED?
       serialNum:
         type: string
-        maxLength: 255
+        maxLength: 100
         description: The serial number of the piece of equipment as provided by the Equipment Owner. Used to detect and reconcile pieces of equipment moved between Local Areas. Duplicate serial numbers are flagged in the system but permitted. The duplicates are flagged in the UI until the HETS Clerks reconcile the differences - either correcting the serial number or archiving a piece of equipment moved to a new local area.
       size:
         type: string
@@ -323,11 +323,11 @@ definitions:
         description: Number of hours of service by this piece of equipment in the fiscal year three years ago - e.g. if current year is FY2018 then hours in FY2015
       archiveCode:
         type: string
-        maxLength: 255
-        description: A reason code indicating why a piece of equipment has been archived.
+        maxLength: 50
+        description: TO BE REVIEWED - A reason code indicating why a piece of equipment has been archived.
       archiveReason:
         type: string
-        maxLength: 255
+        maxLength: 2048
         description: An optional comment about why this piece of equipment has been archived.
       archiveDate:
         type: string
@@ -395,91 +395,91 @@ definitions:
         description: True if the Dump Truck has a hitch for using sealcoat trailers. Can be false or null.
       rearAxleSpacing:
         type: string
-        maxLength: 255
+        maxLength: 150
         description: The spacing of the rear axles, if applicable. Usually in metres.
       frontTireSize:
         type: string
-        maxLength: 255
+        maxLength: 150
         description: The size of of the Front Tires of the Dump Truck.
       frontTireUOM:
         type: string
-        maxLength: 255
+        maxLength: 150
         description: The Unit of Measure of the Front Tire Size.
       frontAxleCapacity:
         type: string
-        maxLength: 255
+        maxLength: 150
         description: The rated capacity of the Front Axle.
       rearAxleCapacity:
         type: string
-        maxLength: 255
+        maxLength: 150
         description: The rated capacity of the Rear Axle.
       legalLoad:
         type: string
-        maxLength: 255
+        maxLength: 150
         description: The legal load of the vehicle in kg.
       legalCapacity:
         type: string
-        maxLength: 255
+        maxLength: 150
         description: The legal capacity of the dump truck.
       legalPUPTareWeight:
         type: string
-        maxLength: 255
+        maxLength: 150
         description: The legal Tare Weight (weight when unloaded) of the PUP trailer.
       licencedGVW:
         type: string
-        maxLength: 255
+        maxLength: 150
         description: The Gross Vehicle Weight for which the vehicle is licensed. GVW includes the vehicle&#39;s chassis, body, engine, engine fluids, fuel, accessories, driver, passengers and cargo but excluding that of any trailers.
       licencedGVWUOM:
         type: string
-        maxLength: 255
+        maxLength: 150
         description: The Unit of Measure (UOM) of the licenced GVW.
       licencedTareWeight:
         type: string
-        maxLength: 255
+        maxLength: 150
         description: The licenced Tare Weight (weight when unloaded) of the vehicle.
       licencedPUPTareWeight:
         type: string
-        maxLength: 255
+        maxLength: 150
         description: The licenced Tare Weight (weight when unloaded) of the PUP trailer.
       licencedLoad:
         type: string
-        maxLength: 255
+        maxLength: 150
         description: The licenced maximum load of the vehicle in kg.
       licencedCapacity:
         type: string
-        maxLength: 255
+        maxLength: 150
         description: The licenced maximum capacity of the vehicle.
       boxLength:
         type: string
-        maxLength: 255
+        maxLength: 150
         description: The length of the box, in metres. See - http-&#x2F;&#x2F;www.bclaws.ca&#x2F;EPLibraries&#x2F;bclaws_new&#x2F;document&#x2F;ID&#x2F;freeside&#x2F;30_7, appendix B
       boxWidth:
         type: string
-        maxLength: 255
+        maxLength: 150
         description: The width of the box, in metres. See - http-&#x2F;&#x2F;www.bclaws.ca&#x2F;EPLibraries&#x2F;bclaws_new&#x2F;document&#x2F;ID&#x2F;freeside&#x2F;30_7, appendix B
       boxHeight:
         type: string
-        maxLength: 255
+        maxLength: 150
         description: The height of the box, in metres. See- http-&#x2F;&#x2F;www.bclaws.ca&#x2F;EPLibraries&#x2F;bclaws_new&#x2F;document&#x2F;ID&#x2F;freeside&#x2F;30_7, appendix B
       boxCapacity:
         type: string
-        maxLength: 255
+        maxLength: 150
         description: The capacity of the box.
       trailerBoxLength:
         type: string
-        maxLength: 255
+        maxLength: 150
         description: The length of the trailer box, in metres. See www.bclaws.ca&#x2F;EPLibraries&#x2F;bclaws_new&#x2F;document&#x2F;ID&#x2F;freeside&#x2F;30_7, appendix B
       trailerBoxWidth:
         type: string
-        maxLength: 255
+        maxLength: 150
         description: The width of the trailer box, in metres. See www.bclaws.ca&#x2F;EPLibraries&#x2F;bclaws_new&#x2F;document&#x2F;ID&#x2F;freeside&#x2F;30_7, appendix B
       trailerBoxHeight:
         type: string
-        maxLength: 255
+        maxLength: 150
         description: The height of the trailer box, in metres. See www.bclaws.ca&#x2F;EPLibraries&#x2F;bclaws_new&#x2F;document&#x2F;ID&#x2F;freeside&#x2F;30_7, appendix B
       trailerBoxCapacity:
         type: string
-        maxLength: 255
+        maxLength: 150
         description: The capacity of the trailer box.
   EquipmentType:
     type: object
@@ -495,11 +495,11 @@ definitions:
         $ref: '#/definitions/LocalArea'
       code:
         type: string
-        maxLength: 255
+        maxLength: 50
         description: CHECK WITH BUSINESS - IS THIS NEEDED - A unique but human-friendly code for the Equipment Type that can be displayed on screens with little screen real estate available.
       description:
         type: string
-        maxLength: 255
+        maxLength: 2048
         description: The name of the equipment type, as specified by the HETS Clerk creating the equipment type.
       equipRentalRateNo:
         type: number
@@ -545,7 +545,7 @@ definitions:
         description: TO BE REMOVED - likely not needed. Will talk to business.
       description:
         type: string
-        maxLength: 255
+        maxLength: 2048
         description: A description of the equipment attachment if the Equipment Attachment Type is insufficient.
   EquipmentAttachmentType:
     type: object
@@ -559,11 +559,11 @@ definitions:
         description: A system-generated unique identifier for a EquipmentAttachmentType
       code:
         type: string
-        maxLength: 255
+        maxLength: 50
         description: CHECK WITH BUSINESS - IS THIS NEEDED - A unique but human-friendly code for the Equipment Attachment Type that can be displayed on screens with little screen real estate available.
       description:
         type: string
-        maxLength: 255
+        maxLength: 2048
         description: The name of the equipment attachment type, as specified by the HETS Clerk creating the equipment type.
   SeniorityAudit:
     type: object
@@ -595,7 +595,7 @@ definitions:
         $ref: '#/definitions/Owner'
       ownerOrganizationName:
         type: string
-        maxLength: 255
+        maxLength: 150
         description: The name of the organization of the owner from the Owner Record, captured at the time this record was created.
       seniority:
         type: number
@@ -622,21 +622,21 @@ definitions:
     description: The person or company to which a piece of construction equipment belongs.
     required:
       - id
-      - ownerCodePrefix
+      - ownerEquipmentCodePrefix
     properties:
       id:
         format: int32
         type: integer
         uniqueItems: true
         description: A system-generated unique identifier for a Owner
-      ownerCodePrefix:
+      ownerEquipmentCodePrefix:
         type: string
-        maxLength: 255
+        maxLength: 20
         uniqueItems: true
         description: A unique prefix in the system that is used to generate the human-friendly IDs of the equipment. E.g. An owner Edwards might have a prefix &quot;EDW&quot; and their equipment numbered sequentially with that prefix - e.g. EDW-0082.
       organizationName:
         type: string
-        maxLength: 255
+        maxLength: 150
         description: The name of the organization of the Owner. May simply be the First Name, Last Name of the Owner if the Owner is a sole proprietorship, or the name of a company.
       primaryContact:
         $ref: '#/definitions/Contact'
@@ -646,46 +646,30 @@ definitions:
       isMaintenanceContractor:
         type: boolean
         description: True if the owner is contracted by MOTI to handle Maintenance activities in the area - e.g. provided services in address unscheduled issues on the roads in the area.
-      comment:
-        type: string
-        maxLength: 255
-        description: TO BE REMOVED - replaced with Notes
-      WCBNum:
-        format: int32
-        type: integer
-        description: TO BE REMOVED - not maintained by HETS Clerks
       WCBExpiryDate:
         type: string
         format: date-time
         description: The expiration of the owner&#39;s current WCB permit.
-      CGLCompany:
-        type: string
-        maxLength: 255
-        description: TO BE REMOVED - not maintained by HETS Clerks
-      CGLPolicy:
-        type: string
-        maxLength: 255
-        description: TO BE REMOVED - not maintained by HETS Clerks
-      CGLStartDate:
-        type: string
-        format: date-time
-        description: TO BE REMOVED - not maintained by HETS Clerks
       CGLEndDate:
         type: string
         format: date-time
         description: The end date of the owner&#39;s Commercial General Liability insurance coverage. Coverage is only needed prior to an owner&#39;s piece of equipment starting a rental period (not when in the HETS program but not hired). The details of the coverage can be entered into a Note, or more often - attached as a scanned&#x2F;faxed document.
       status:
         type: string
-        maxLength: 255
+        maxLength: 50
         description: The status of the owner record in the system. Current set of values are &quot;Pending&quot;, &quot;Approved&quot; and &quot;Archived&quot;. Pending is used when an owner self-registers and a HETS Clerk has not reviewed and Approved the record. Archived is when the owner is no longer part of the HETS programme. &quot;Approved&quot; is used in all other cases.
       archiveCode:
         type: string
-        maxLength: 255
-        description: A coded reason for why an owner record has been moved to Archived.
+        maxLength: 50
+        description: CHECK WITH BUSINESS - IS THIS NEEDED -A coded reason for why an owner record has been moved to Archived.
       archiveReason:
         type: string
         maxLength: 2048
         description: A text note about why the owner record has been changed to Archived.
+      archiveDate:
+        type: string
+        format: date-time
+        description: The date the Owner record was changed to Archived and removed from active use in the system.
       contacts:
         type: array
         items:
@@ -782,11 +766,11 @@ definitions:
         description: The type of the address. UI controlled as to whether it is free form or selected from an enumerated list ex. Home, Office, etc..
       addressLine1:
         type: string
-        maxLength: 255
+        maxLength: 150
         description: Address 1 line of the address.
       addressLine2:
         type: string
-        maxLength: 255
+        maxLength: 150
         description: Address 2 line of the address.
       city:
         type: string
@@ -876,7 +860,7 @@ definitions:
         description: A system-generated unique identifier for a FavouriteContextType
       name:
         type: string
-        maxLength: 255
+        maxLength: 150
         description: Context Name known by the UI.
   UserFavourite:
     type: object
@@ -891,7 +875,7 @@ definitions:
         description: A system-generated unique identifier for a UserFavourite
       name:
         type: string
-        maxLength: 255
+        maxLength: 150
         description: The user-defined name for the recorded settings. Allows the user to save different groups of settings and access each one easily when needed.
       value:
         type: string
@@ -902,7 +886,7 @@ definitions:
         description: True if this Favourite is the default for this Context Type. On first access to a context in a session the default favourite for the context it is invoked. If there is no default favourite,  a system-wide default is invoked. On return to the context within a session,  the last parameters used are reapplied.
       type:
         type: string
-        maxLength: 255
+        maxLength: 150
         description: The type of Favourite
       User:
         $ref: '#/definitions/User'
@@ -1035,7 +1019,7 @@ definitions:
         description: A system-generated, visible to the user number for the Local Area
       name:
         type: string
-        maxLength: 255
+        maxLength: 150
         description: The full name of the Local Area
       serviceArea:
         $ref: '#/definitions/ServiceArea'
@@ -1061,7 +1045,7 @@ definitions:
         description: A system-generated unique identifier for a City
       name:
         type: string
-        maxLength: 255
+        maxLength: 150
         description: The name of the City
   User:
     type: object
@@ -1079,7 +1063,7 @@ definitions:
         description: A system-generated unique identifier for a User
       givenName:
         type: string
-        maxLength: 255
+        maxLength: 50
         description: Given name of the user.
       surname:
         type: string
@@ -1155,7 +1139,7 @@ definitions:
         description: The name of the Role, as established by the user creating the role.
       description:
         type: string
-        maxLength: 255
+        maxLength: 2048
         description: A description of the role as set by the user creating&#x2F;updating the role.
       rolePermissions:
         type: array
@@ -1194,15 +1178,15 @@ definitions:
         description: A system-generated unique identifier for a Permission
       code:
         type: string
-        maxLength: 255
+        maxLength: 50
         description: The name of the permission referenced in the software of the application.
       name:
         type: string
-        maxLength: 255
+        maxLength: 150
         description: The &#39;user friendly&#39; name of the permission exposed to the user selecting the permissions to be included in a Role.
       description:
         type: string
-        maxLength: 255
+        maxLength: 2048
         description: A description of the purpose of the permission and exposed to the user selecting the permissions to be included in a Role.
   GroupMembership:
     type: object
@@ -1236,9 +1220,9 @@ definitions:
         description: A system-generated unique identifier for a Group
       name:
         type: string
-        maxLength: 255
+        maxLength: 150
         description: The name of the group, as refenced in the code.
       description:
         type: string
-        maxLength: 255
+        maxLength: 2048
         description: A description of the group that is presented to the user when they are setting a user into a group.
