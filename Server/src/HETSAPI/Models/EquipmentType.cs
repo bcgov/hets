@@ -87,7 +87,7 @@ namespace HETSAPI.Models
         /// </summary>
         /// <value>CHECK WITH BUSINESS - IS THIS NEEDED - A unique but human-friendly code for the Equipment Type that can be displayed on screens with little screen real estate available.</value>
         [MetaDataExtension (Description = "CHECK WITH BUSINESS - IS THIS NEEDED - A unique but human-friendly code for the Equipment Type that can be displayed on screens with little screen real estate available.")]
-        [MaxLength(255)]
+        [MaxLength(50)]
         
         public string Code { get; set; }
         
@@ -96,7 +96,7 @@ namespace HETSAPI.Models
         /// </summary>
         /// <value>The name of the equipment type, as specified by the HETS Clerk creating the equipment type.</value>
         [MetaDataExtension (Description = "The name of the equipment type, as specified by the HETS Clerk creating the equipment type.")]
-        [MaxLength(255)]
+        [MaxLength(2048)]
         
         public string Description { get; set; }
         

@@ -23,9 +23,9 @@ using System.ComponentModel.DataAnnotations;
 namespace HETSAPI.Models
 {
     /// <summary>
-    /// The collection of all equipment tracked in the system. Each piece of equipment is of a specific type, is linked to an Equipment Owner, and is managed within a Local Area.
+    /// A piece of equipment in the HETS system. Each piece of equipment is of a specific equipment type, owned by an Owner, and is within a Local Area.
     /// </summary>
-        [MetaDataExtension (Description = "The collection of all equipment tracked in the system. Each piece of equipment is of a specific type, is linked to an Equipment Owner, and is managed within a Local Area.")]
+        [MetaDataExtension (Description = "A piece of equipment in the HETS system. Each piece of equipment is of a specific equipment type, owned by an Owner, and is within a Local Area.")]
 
     public partial class Equipment : IEquatable<Equipment>
     {
@@ -43,22 +43,14 @@ namespace HETSAPI.Models
         /// <param name="Id">A system-generated unique identifier for a Equipment (required).</param>
         /// <param name="LocalArea">LocalArea.</param>
         /// <param name="EquipmentType">EquipmentType.</param>
-        /// <param name="DumpTruckDetails">DumpTruckDetails.</param>
         /// <param name="Owner">Owner.</param>
-        /// <param name="EquipCode">A human-visible unique code for the piece of equipment, referenced for convenience by the system users - HETS Clerks and Equipment Owners. Generated based on a unique Equipment owner prefix (e.g. EDW) and a zero-filled unique number - resulting in a code like EDW-0083..</param>
+        /// <param name="EquipCode">A human-visible unique code for the piece of equipment, referenced for convenience by the system users - HETS Clerks and Equipment Owners. Generated at record creation time based on the unique Owner prefix (e.g. EDW) and a zero-filled unique number - resulting in a code like EDW-0083..</param>
         /// <param name="Status">The current status of the equipment in a UI-controlled string. Initial values are Pending, Approved and Archived, but other values may be added..</param>
-        /// <param name="ApprovedDate">The date the piece of equipment was first approved in HETS. Part of the seniority calculation for a piece of equipment is based on this date..</param>
         /// <param name="ReceivedDate">The date the piece of equipment was first received and recorded in HETS..</param>
-        /// <param name="AddressLine1">TO BE REMOVED - display primary contact of owner.</param>
-        /// <param name="AddressLine2">TO BE REMOVED - display primary contact of owner.</param>
-        /// <param name="AddressLine3">TO BE REMOVED - display primary contact of owner.</param>
-        /// <param name="AddressLine4">TO BE REMOVED - display primary contact of owner.</param>
-        /// <param name="City">TO BE REMOVED - display primary contact of owner.</param>
-        /// <param name="Postal">TO BE REMOVED - display primary contact of owner.</param>
-        /// <param name="Comment">TO BE REMOVED - REPLACE WITH NOTES.</param>
-        /// <param name="CycleHrsWrk">TO BE REMOVED - CALCULATED FROM TIME RECORDS.</param>
-        /// <param name="FrozenOut">TO BE REMOVED - NO LONGER USED.</param>
+        /// <param name="ApprovedDate">The date the piece of equipment was first approved in HETS. Part of the seniority calculation for a piece of equipment is based on this date..</param>
         /// <param name="LastVerifiedDate">The date the equipment was last verified by the HETS Clerk as being still in service in the Local Area and available for the HETS Programme..</param>
+        /// <param name="IsInformationUpdateNeeded">Set true if a need to update the information&amp;#x2F;status of the equipment is needed. Used during the processing of a request when an update is noted, but the Clerk does not have time to make the update..</param>
+        /// <param name="InformationUpdateNeededReason">A note about why the needed information&amp;#x2F;status update that is needed about the equipment..</param>
         /// <param name="LicencePlate">The licence plate (if any) of the piece of equipment, as entered by the HETS Clerk..</param>
         /// <param name="Make">The make of the piece of equipment, as provided by the Equipment Owner..</param>
         /// <param name="Model">The model of the piece of equipment, as provided by the Equipment Owner..</param>
@@ -70,47 +62,35 @@ namespace HETSAPI.Models
         /// <param name="SerialNum">The serial number of the piece of equipment as provided by the Equipment Owner. Used to detect and reconcile pieces of equipment moved between Local Areas. Duplicate serial numbers are flagged in the system but permitted. The duplicates are flagged in the UI until the HETS Clerks reconcile the differences - either correcting the serial number or archiving a piece of equipment moved to a new local area..</param>
         /// <param name="Size">The size of the piece of equipment, as provided by the Equipment Owner..</param>
         /// <param name="ToDate">WHAT IS THIS?.</param>
-        /// <param name="Working">TO BE REMOVED - CALCULATED FROM RENTAL AGREEMENT RECORDS.</param>
-        /// <param name="YearEndReg">TO BE REMOVED - BASED ON OLD METHOD OF TRACKING ACTIVE EQUIPMENT.</param>
-        /// <param name="PrevRegArea">TO BE REMOVED - AVAILABLE IN THE HISTORY OF THE EQUIPMENT.</param>
         /// <param name="BlockNumber">The current block number for the piece of equipment as calculated by the Seniority Algorthm for this equipment type in the local area. As currently defined y the business  - 1, 2 or Open.</param>
         /// <param name="Seniority">The current seniority calculation result for this piece of equipment. The calculation is based on the &amp;quot;numYears&amp;quot; of service + average hours of service over the last three fiscal years - as stored in the related fields (serviceHoursLastYear, serviceHoursTwoYearsAgo serviceHoursThreeYearsAgo)..</param>
-        /// <param name="NumYears">The number of years of active service of this piece of equipment at the time seniority is calculated - April 1 of the current FY..</param>
-        /// <param name="YTD">TO BE REMOVED - Sum of Hours in time cards from the current fiscal year..</param>
+        /// <param name="SeniorityEffectiveDate">The time the seniority data in the record went into effect. Used to populate the SeniorityAudit table when the seniority data is next updated..</param>
+        /// <param name="YearsOfService">The number of years of active service of this piece of equipment at the time seniority is calculated - April 1 of the current FY..</param>
         /// <param name="ServiceHoursLastYear">Number of hours of service by this piece of equipment in the previous fiscal year.</param>
         /// <param name="ServiceHoursTwoYearsAgo">Number of hours of service by this piece of equipment in the fiscal year before the last one - e.g. if current year is FY2018 then hours in FY2016.</param>
         /// <param name="ServiceHoursThreeYearsAgo">Number of hours of service by this piece of equipment in the fiscal year three years ago - e.g. if current year is FY2018 then hours in FY2015.</param>
-        /// <param name="ArchiveCode">A reason code indicating why a piece of equipment has been archived..</param>
+        /// <param name="ArchiveCode">TO BE REVIEWED - A reason code indicating why a piece of equipment has been archived..</param>
         /// <param name="ArchiveReason">An optional comment about why this piece of equipment has been archived..</param>
         /// <param name="ArchiveDate">The date on which a user most recenly marked this piece of equipment as archived..</param>
-        /// <param name="DraftBlockNum">TO BE REMOVED.</param>
         /// <param name="DumpTruck">A link to a dump truck set if this piece of equipment is an equipment type flagged as a dump truck..</param>
         /// <param name="EquipmentAttachments">EquipmentAttachments.</param>
         /// <param name="Notes">Notes.</param>
         /// <param name="Attachments">Attachments.</param>
         /// <param name="History">History.</param>
         /// <param name="SeniorityAudit">SeniorityAudit.</param>
-        public Equipment(int Id, LocalArea LocalArea = null, EquipmentType EquipmentType = null, DumpTruck DumpTruckDetails = null, Owner Owner = null, string EquipCode = null, string Status = null, DateTime? ApprovedDate = null, DateTime? ReceivedDate = null, string AddressLine1 = null, string AddressLine2 = null, string AddressLine3 = null, string AddressLine4 = null, string City = null, string Postal = null, string Comment = null, float? CycleHrsWrk = null, string FrozenOut = null, DateTime? LastVerifiedDate = null, string LicencePlate = null, string Make = null, string Model = null, string Year = null, string Type = null, string Operator = null, float? PayRate = null, string RefuseRate = null, string SerialNum = null, string Size = null, DateTime? ToDate = null, string Working = null, string YearEndReg = null, string PrevRegArea = null, float? BlockNumber = null, float? Seniority = null, float? NumYears = null, float? YTD = null, float? ServiceHoursLastYear = null, float? ServiceHoursTwoYearsAgo = null, float? ServiceHoursThreeYearsAgo = null, string ArchiveCode = null, string ArchiveReason = null, DateTime? ArchiveDate = null, float? DraftBlockNum = null, DumpTruck DumpTruck = null, List<EquipmentAttachment> EquipmentAttachments = null, List<Note> Notes = null, List<Attachment> Attachments = null, List<History> History = null, List<SeniorityAudit> SeniorityAudit = null)
+        public Equipment(int Id, LocalArea LocalArea = null, EquipmentType EquipmentType = null, Owner Owner = null, string EquipCode = null, string Status = null, DateTime? ReceivedDate = null, DateTime? ApprovedDate = null, DateTime? LastVerifiedDate = null, bool? IsInformationUpdateNeeded = null, string InformationUpdateNeededReason = null, string LicencePlate = null, string Make = null, string Model = null, string Year = null, string Type = null, string Operator = null, float? PayRate = null, string RefuseRate = null, string SerialNum = null, string Size = null, DateTime? ToDate = null, float? BlockNumber = null, float? Seniority = null, DateTime? SeniorityEffectiveDate = null, float? YearsOfService = null, float? ServiceHoursLastYear = null, float? ServiceHoursTwoYearsAgo = null, float? ServiceHoursThreeYearsAgo = null, string ArchiveCode = null, string ArchiveReason = null, DateTime? ArchiveDate = null, DumpTruck DumpTruck = null, List<EquipmentAttachment> EquipmentAttachments = null, List<Note> Notes = null, List<Attachment> Attachments = null, List<History> History = null, List<SeniorityAudit> SeniorityAudit = null)
         {   
             this.Id = Id;
             this.LocalArea = LocalArea;
             this.EquipmentType = EquipmentType;
-            this.DumpTruckDetails = DumpTruckDetails;
             this.Owner = Owner;
             this.EquipCode = EquipCode;
             this.Status = Status;
-            this.ApprovedDate = ApprovedDate;
             this.ReceivedDate = ReceivedDate;
-            this.AddressLine1 = AddressLine1;
-            this.AddressLine2 = AddressLine2;
-            this.AddressLine3 = AddressLine3;
-            this.AddressLine4 = AddressLine4;
-            this.City = City;
-            this.Postal = Postal;
-            this.Comment = Comment;
-            this.CycleHrsWrk = CycleHrsWrk;
-            this.FrozenOut = FrozenOut;
+            this.ApprovedDate = ApprovedDate;
             this.LastVerifiedDate = LastVerifiedDate;
+            this.IsInformationUpdateNeeded = IsInformationUpdateNeeded;
+            this.InformationUpdateNeededReason = InformationUpdateNeededReason;
             this.LicencePlate = LicencePlate;
             this.Make = Make;
             this.Model = Model;
@@ -122,20 +102,16 @@ namespace HETSAPI.Models
             this.SerialNum = SerialNum;
             this.Size = Size;
             this.ToDate = ToDate;
-            this.Working = Working;
-            this.YearEndReg = YearEndReg;
-            this.PrevRegArea = PrevRegArea;
             this.BlockNumber = BlockNumber;
             this.Seniority = Seniority;
-            this.NumYears = NumYears;
-            this.YTD = YTD;
+            this.SeniorityEffectiveDate = SeniorityEffectiveDate;
+            this.YearsOfService = YearsOfService;
             this.ServiceHoursLastYear = ServiceHoursLastYear;
             this.ServiceHoursTwoYearsAgo = ServiceHoursTwoYearsAgo;
             this.ServiceHoursThreeYearsAgo = ServiceHoursThreeYearsAgo;
             this.ArchiveCode = ArchiveCode;
             this.ArchiveReason = ArchiveReason;
             this.ArchiveDate = ArchiveDate;
-            this.DraftBlockNum = DraftBlockNum;
             this.DumpTruck = DumpTruck;
             this.EquipmentAttachments = EquipmentAttachments;
             this.Notes = Notes;
@@ -174,17 +150,6 @@ namespace HETSAPI.Models
         public int? EquipmentTypeRefId { get; set; }
         
         /// <summary>
-        /// Gets or Sets DumpTruckDetails
-        /// </summary>
-        public DumpTruck DumpTruckDetails { get; set; }
-        
-        /// <summary>
-        /// Foreign key for DumpTruckDetails 
-        /// </summary>       
-        [ForeignKey("DumpTruckDetails")]
-        public int? DumpTruckDetailsRefId { get; set; }
-        
-        /// <summary>
         /// Gets or Sets Owner
         /// </summary>
         public Owner Owner { get; set; }
@@ -196,11 +161,11 @@ namespace HETSAPI.Models
         public int? OwnerRefId { get; set; }
         
         /// <summary>
-        /// A human-visible unique code for the piece of equipment, referenced for convenience by the system users - HETS Clerks and Equipment Owners. Generated based on a unique Equipment owner prefix (e.g. EDW) and a zero-filled unique number - resulting in a code like EDW-0083.
+        /// A human-visible unique code for the piece of equipment, referenced for convenience by the system users - HETS Clerks and Equipment Owners. Generated at record creation time based on the unique Owner prefix (e.g. EDW) and a zero-filled unique number - resulting in a code like EDW-0083.
         /// </summary>
-        /// <value>A human-visible unique code for the piece of equipment, referenced for convenience by the system users - HETS Clerks and Equipment Owners. Generated based on a unique Equipment owner prefix (e.g. EDW) and a zero-filled unique number - resulting in a code like EDW-0083.</value>
-        [MetaDataExtension (Description = "A human-visible unique code for the piece of equipment, referenced for convenience by the system users - HETS Clerks and Equipment Owners. Generated based on a unique Equipment owner prefix (e.g. EDW) and a zero-filled unique number - resulting in a code like EDW-0083.")]
-        [MaxLength(255)]
+        /// <value>A human-visible unique code for the piece of equipment, referenced for convenience by the system users - HETS Clerks and Equipment Owners. Generated at record creation time based on the unique Owner prefix (e.g. EDW) and a zero-filled unique number - resulting in a code like EDW-0083.</value>
+        [MetaDataExtension (Description = "A human-visible unique code for the piece of equipment, referenced for convenience by the system users - HETS Clerks and Equipment Owners. Generated at record creation time based on the unique Owner prefix (e.g. EDW) and a zero-filled unique number - resulting in a code like EDW-0083.")]
+        [MaxLength(25)]
         
         public string EquipCode { get; set; }
         
@@ -209,16 +174,9 @@ namespace HETSAPI.Models
         /// </summary>
         /// <value>The current status of the equipment in a UI-controlled string. Initial values are Pending, Approved and Archived, but other values may be added.</value>
         [MetaDataExtension (Description = "The current status of the equipment in a UI-controlled string. Initial values are Pending, Approved and Archived, but other values may be added.")]
-        [MaxLength(255)]
+        [MaxLength(50)]
         
         public string Status { get; set; }
-        
-        /// <summary>
-        /// The date the piece of equipment was first approved in HETS. Part of the seniority calculation for a piece of equipment is based on this date.
-        /// </summary>
-        /// <value>The date the piece of equipment was first approved in HETS. Part of the seniority calculation for a piece of equipment is based on this date.</value>
-        [MetaDataExtension (Description = "The date the piece of equipment was first approved in HETS. Part of the seniority calculation for a piece of equipment is based on this date.")]
-        public DateTime? ApprovedDate { get; set; }
         
         /// <summary>
         /// The date the piece of equipment was first received and recorded in HETS.
@@ -228,83 +186,11 @@ namespace HETSAPI.Models
         public DateTime? ReceivedDate { get; set; }
         
         /// <summary>
-        /// TO BE REMOVED - display primary contact of owner
+        /// The date the piece of equipment was first approved in HETS. Part of the seniority calculation for a piece of equipment is based on this date.
         /// </summary>
-        /// <value>TO BE REMOVED - display primary contact of owner</value>
-        [MetaDataExtension (Description = "TO BE REMOVED - display primary contact of owner")]
-        [MaxLength(255)]
-        
-        public string AddressLine1 { get; set; }
-        
-        /// <summary>
-        /// TO BE REMOVED - display primary contact of owner
-        /// </summary>
-        /// <value>TO BE REMOVED - display primary contact of owner</value>
-        [MetaDataExtension (Description = "TO BE REMOVED - display primary contact of owner")]
-        [MaxLength(255)]
-        
-        public string AddressLine2 { get; set; }
-        
-        /// <summary>
-        /// TO BE REMOVED - display primary contact of owner
-        /// </summary>
-        /// <value>TO BE REMOVED - display primary contact of owner</value>
-        [MetaDataExtension (Description = "TO BE REMOVED - display primary contact of owner")]
-        [MaxLength(255)]
-        
-        public string AddressLine3 { get; set; }
-        
-        /// <summary>
-        /// TO BE REMOVED - display primary contact of owner
-        /// </summary>
-        /// <value>TO BE REMOVED - display primary contact of owner</value>
-        [MetaDataExtension (Description = "TO BE REMOVED - display primary contact of owner")]
-        [MaxLength(255)]
-        
-        public string AddressLine4 { get; set; }
-        
-        /// <summary>
-        /// TO BE REMOVED - display primary contact of owner
-        /// </summary>
-        /// <value>TO BE REMOVED - display primary contact of owner</value>
-        [MetaDataExtension (Description = "TO BE REMOVED - display primary contact of owner")]
-        [MaxLength(255)]
-        
-        public string City { get; set; }
-        
-        /// <summary>
-        /// TO BE REMOVED - display primary contact of owner
-        /// </summary>
-        /// <value>TO BE REMOVED - display primary contact of owner</value>
-        [MetaDataExtension (Description = "TO BE REMOVED - display primary contact of owner")]
-        [MaxLength(255)]
-        
-        public string Postal { get; set; }
-        
-        /// <summary>
-        /// TO BE REMOVED - REPLACE WITH NOTES
-        /// </summary>
-        /// <value>TO BE REMOVED - REPLACE WITH NOTES</value>
-        [MetaDataExtension (Description = "TO BE REMOVED - REPLACE WITH NOTES")]
-        [MaxLength(255)]
-        
-        public string Comment { get; set; }
-        
-        /// <summary>
-        /// TO BE REMOVED - CALCULATED FROM TIME RECORDS
-        /// </summary>
-        /// <value>TO BE REMOVED - CALCULATED FROM TIME RECORDS</value>
-        [MetaDataExtension (Description = "TO BE REMOVED - CALCULATED FROM TIME RECORDS")]
-        public float? CycleHrsWrk { get; set; }
-        
-        /// <summary>
-        /// TO BE REMOVED - NO LONGER USED
-        /// </summary>
-        /// <value>TO BE REMOVED - NO LONGER USED</value>
-        [MetaDataExtension (Description = "TO BE REMOVED - NO LONGER USED")]
-        [MaxLength(255)]
-        
-        public string FrozenOut { get; set; }
+        /// <value>The date the piece of equipment was first approved in HETS. Part of the seniority calculation for a piece of equipment is based on this date.</value>
+        [MetaDataExtension (Description = "The date the piece of equipment was first approved in HETS. Part of the seniority calculation for a piece of equipment is based on this date.")]
+        public DateTime? ApprovedDate { get; set; }
         
         /// <summary>
         /// The date the equipment was last verified by the HETS Clerk as being still in service in the Local Area and available for the HETS Programme.
@@ -314,11 +200,27 @@ namespace HETSAPI.Models
         public DateTime? LastVerifiedDate { get; set; }
         
         /// <summary>
+        /// Set true if a need to update the information&#x2F;status of the equipment is needed. Used during the processing of a request when an update is noted, but the Clerk does not have time to make the update.
+        /// </summary>
+        /// <value>Set true if a need to update the information&#x2F;status of the equipment is needed. Used during the processing of a request when an update is noted, but the Clerk does not have time to make the update.</value>
+        [MetaDataExtension (Description = "Set true if a need to update the information&#x2F;status of the equipment is needed. Used during the processing of a request when an update is noted, but the Clerk does not have time to make the update.")]
+        public bool? IsInformationUpdateNeeded { get; set; }
+        
+        /// <summary>
+        /// A note about why the needed information&#x2F;status update that is needed about the equipment.
+        /// </summary>
+        /// <value>A note about why the needed information&#x2F;status update that is needed about the equipment.</value>
+        [MetaDataExtension (Description = "A note about why the needed information&#x2F;status update that is needed about the equipment.")]
+        [MaxLength(2048)]
+        
+        public string InformationUpdateNeededReason { get; set; }
+        
+        /// <summary>
         /// The licence plate (if any) of the piece of equipment, as entered by the HETS Clerk.
         /// </summary>
         /// <value>The licence plate (if any) of the piece of equipment, as entered by the HETS Clerk.</value>
         [MetaDataExtension (Description = "The licence plate (if any) of the piece of equipment, as entered by the HETS Clerk.")]
-        [MaxLength(255)]
+        [MaxLength(20)]
         
         public string LicencePlate { get; set; }
         
@@ -327,7 +229,7 @@ namespace HETSAPI.Models
         /// </summary>
         /// <value>The make of the piece of equipment, as provided by the Equipment Owner.</value>
         [MetaDataExtension (Description = "The make of the piece of equipment, as provided by the Equipment Owner.")]
-        [MaxLength(255)]
+        [MaxLength(50)]
         
         public string Make { get; set; }
         
@@ -336,7 +238,7 @@ namespace HETSAPI.Models
         /// </summary>
         /// <value>The model of the piece of equipment, as provided by the Equipment Owner.</value>
         [MetaDataExtension (Description = "The model of the piece of equipment, as provided by the Equipment Owner.")]
-        [MaxLength(255)]
+        [MaxLength(50)]
         
         public string Model { get; set; }
         
@@ -345,7 +247,7 @@ namespace HETSAPI.Models
         /// </summary>
         /// <value>The model year of the piece of equipment, as provided by the Equipment Owner.</value>
         [MetaDataExtension (Description = "The model year of the piece of equipment, as provided by the Equipment Owner.")]
-        [MaxLength(255)]
+        [MaxLength(15)]
         
         public string Year { get; set; }
         
@@ -388,7 +290,7 @@ namespace HETSAPI.Models
         /// </summary>
         /// <value>The serial number of the piece of equipment as provided by the Equipment Owner. Used to detect and reconcile pieces of equipment moved between Local Areas. Duplicate serial numbers are flagged in the system but permitted. The duplicates are flagged in the UI until the HETS Clerks reconcile the differences - either correcting the serial number or archiving a piece of equipment moved to a new local area.</value>
         [MetaDataExtension (Description = "The serial number of the piece of equipment as provided by the Equipment Owner. Used to detect and reconcile pieces of equipment moved between Local Areas. Duplicate serial numbers are flagged in the system but permitted. The duplicates are flagged in the UI until the HETS Clerks reconcile the differences - either correcting the serial number or archiving a piece of equipment moved to a new local area.")]
-        [MaxLength(255)]
+        [MaxLength(100)]
         
         public string SerialNum { get; set; }
         
@@ -397,7 +299,7 @@ namespace HETSAPI.Models
         /// </summary>
         /// <value>The size of the piece of equipment, as provided by the Equipment Owner.</value>
         [MetaDataExtension (Description = "The size of the piece of equipment, as provided by the Equipment Owner.")]
-        [MaxLength(255)]
+        [MaxLength(128)]
         
         public string Size { get; set; }
         
@@ -407,33 +309,6 @@ namespace HETSAPI.Models
         /// <value>WHAT IS THIS?</value>
         [MetaDataExtension (Description = "WHAT IS THIS?")]
         public DateTime? ToDate { get; set; }
-        
-        /// <summary>
-        /// TO BE REMOVED - CALCULATED FROM RENTAL AGREEMENT RECORDS
-        /// </summary>
-        /// <value>TO BE REMOVED - CALCULATED FROM RENTAL AGREEMENT RECORDS</value>
-        [MetaDataExtension (Description = "TO BE REMOVED - CALCULATED FROM RENTAL AGREEMENT RECORDS")]
-        [MaxLength(255)]
-        
-        public string Working { get; set; }
-        
-        /// <summary>
-        /// TO BE REMOVED - BASED ON OLD METHOD OF TRACKING ACTIVE EQUIPMENT
-        /// </summary>
-        /// <value>TO BE REMOVED - BASED ON OLD METHOD OF TRACKING ACTIVE EQUIPMENT</value>
-        [MetaDataExtension (Description = "TO BE REMOVED - BASED ON OLD METHOD OF TRACKING ACTIVE EQUIPMENT")]
-        [MaxLength(255)]
-        
-        public string YearEndReg { get; set; }
-        
-        /// <summary>
-        /// TO BE REMOVED - AVAILABLE IN THE HISTORY OF THE EQUIPMENT
-        /// </summary>
-        /// <value>TO BE REMOVED - AVAILABLE IN THE HISTORY OF THE EQUIPMENT</value>
-        [MetaDataExtension (Description = "TO BE REMOVED - AVAILABLE IN THE HISTORY OF THE EQUIPMENT")]
-        [MaxLength(255)]
-        
-        public string PrevRegArea { get; set; }
         
         /// <summary>
         /// The current block number for the piece of equipment as calculated by the Seniority Algorthm for this equipment type in the local area. As currently defined y the business  - 1, 2 or Open
@@ -450,18 +325,18 @@ namespace HETSAPI.Models
         public float? Seniority { get; set; }
         
         /// <summary>
+        /// The time the seniority data in the record went into effect. Used to populate the SeniorityAudit table when the seniority data is next updated.
+        /// </summary>
+        /// <value>The time the seniority data in the record went into effect. Used to populate the SeniorityAudit table when the seniority data is next updated.</value>
+        [MetaDataExtension (Description = "The time the seniority data in the record went into effect. Used to populate the SeniorityAudit table when the seniority data is next updated.")]
+        public DateTime? SeniorityEffectiveDate { get; set; }
+        
+        /// <summary>
         /// The number of years of active service of this piece of equipment at the time seniority is calculated - April 1 of the current FY.
         /// </summary>
         /// <value>The number of years of active service of this piece of equipment at the time seniority is calculated - April 1 of the current FY.</value>
         [MetaDataExtension (Description = "The number of years of active service of this piece of equipment at the time seniority is calculated - April 1 of the current FY.")]
-        public float? NumYears { get; set; }
-        
-        /// <summary>
-        /// TO BE REMOVED - Sum of Hours in time cards from the current fiscal year.
-        /// </summary>
-        /// <value>TO BE REMOVED - Sum of Hours in time cards from the current fiscal year.</value>
-        [MetaDataExtension (Description = "TO BE REMOVED - Sum of Hours in time cards from the current fiscal year.")]
-        public float? YTD { get; set; }
+        public float? YearsOfService { get; set; }
         
         /// <summary>
         /// Number of hours of service by this piece of equipment in the previous fiscal year
@@ -485,11 +360,11 @@ namespace HETSAPI.Models
         public float? ServiceHoursThreeYearsAgo { get; set; }
         
         /// <summary>
-        /// A reason code indicating why a piece of equipment has been archived.
+        /// TO BE REVIEWED - A reason code indicating why a piece of equipment has been archived.
         /// </summary>
-        /// <value>A reason code indicating why a piece of equipment has been archived.</value>
-        [MetaDataExtension (Description = "A reason code indicating why a piece of equipment has been archived.")]
-        [MaxLength(255)]
+        /// <value>TO BE REVIEWED - A reason code indicating why a piece of equipment has been archived.</value>
+        [MetaDataExtension (Description = "TO BE REVIEWED - A reason code indicating why a piece of equipment has been archived.")]
+        [MaxLength(50)]
         
         public string ArchiveCode { get; set; }
         
@@ -498,7 +373,7 @@ namespace HETSAPI.Models
         /// </summary>
         /// <value>An optional comment about why this piece of equipment has been archived.</value>
         [MetaDataExtension (Description = "An optional comment about why this piece of equipment has been archived.")]
-        [MaxLength(255)]
+        [MaxLength(2048)]
         
         public string ArchiveReason { get; set; }
         
@@ -508,13 +383,6 @@ namespace HETSAPI.Models
         /// <value>The date on which a user most recenly marked this piece of equipment as archived.</value>
         [MetaDataExtension (Description = "The date on which a user most recenly marked this piece of equipment as archived.")]
         public DateTime? ArchiveDate { get; set; }
-        
-        /// <summary>
-        /// TO BE REMOVED
-        /// </summary>
-        /// <value>TO BE REMOVED</value>
-        [MetaDataExtension (Description = "TO BE REMOVED")]
-        public float? DraftBlockNum { get; set; }
         
         /// <summary>
         /// A link to a dump truck set if this piece of equipment is an equipment type flagged as a dump truck.
@@ -565,22 +433,14 @@ namespace HETSAPI.Models
             sb.Append("  Id: ").Append(Id).Append("\n");
             sb.Append("  LocalArea: ").Append(LocalArea).Append("\n");
             sb.Append("  EquipmentType: ").Append(EquipmentType).Append("\n");
-            sb.Append("  DumpTruckDetails: ").Append(DumpTruckDetails).Append("\n");
             sb.Append("  Owner: ").Append(Owner).Append("\n");
             sb.Append("  EquipCode: ").Append(EquipCode).Append("\n");
             sb.Append("  Status: ").Append(Status).Append("\n");
-            sb.Append("  ApprovedDate: ").Append(ApprovedDate).Append("\n");
             sb.Append("  ReceivedDate: ").Append(ReceivedDate).Append("\n");
-            sb.Append("  AddressLine1: ").Append(AddressLine1).Append("\n");
-            sb.Append("  AddressLine2: ").Append(AddressLine2).Append("\n");
-            sb.Append("  AddressLine3: ").Append(AddressLine3).Append("\n");
-            sb.Append("  AddressLine4: ").Append(AddressLine4).Append("\n");
-            sb.Append("  City: ").Append(City).Append("\n");
-            sb.Append("  Postal: ").Append(Postal).Append("\n");
-            sb.Append("  Comment: ").Append(Comment).Append("\n");
-            sb.Append("  CycleHrsWrk: ").Append(CycleHrsWrk).Append("\n");
-            sb.Append("  FrozenOut: ").Append(FrozenOut).Append("\n");
+            sb.Append("  ApprovedDate: ").Append(ApprovedDate).Append("\n");
             sb.Append("  LastVerifiedDate: ").Append(LastVerifiedDate).Append("\n");
+            sb.Append("  IsInformationUpdateNeeded: ").Append(IsInformationUpdateNeeded).Append("\n");
+            sb.Append("  InformationUpdateNeededReason: ").Append(InformationUpdateNeededReason).Append("\n");
             sb.Append("  LicencePlate: ").Append(LicencePlate).Append("\n");
             sb.Append("  Make: ").Append(Make).Append("\n");
             sb.Append("  Model: ").Append(Model).Append("\n");
@@ -592,20 +452,16 @@ namespace HETSAPI.Models
             sb.Append("  SerialNum: ").Append(SerialNum).Append("\n");
             sb.Append("  Size: ").Append(Size).Append("\n");
             sb.Append("  ToDate: ").Append(ToDate).Append("\n");
-            sb.Append("  Working: ").Append(Working).Append("\n");
-            sb.Append("  YearEndReg: ").Append(YearEndReg).Append("\n");
-            sb.Append("  PrevRegArea: ").Append(PrevRegArea).Append("\n");
             sb.Append("  BlockNumber: ").Append(BlockNumber).Append("\n");
             sb.Append("  Seniority: ").Append(Seniority).Append("\n");
-            sb.Append("  NumYears: ").Append(NumYears).Append("\n");
-            sb.Append("  YTD: ").Append(YTD).Append("\n");
+            sb.Append("  SeniorityEffectiveDate: ").Append(SeniorityEffectiveDate).Append("\n");
+            sb.Append("  YearsOfService: ").Append(YearsOfService).Append("\n");
             sb.Append("  ServiceHoursLastYear: ").Append(ServiceHoursLastYear).Append("\n");
             sb.Append("  ServiceHoursTwoYearsAgo: ").Append(ServiceHoursTwoYearsAgo).Append("\n");
             sb.Append("  ServiceHoursThreeYearsAgo: ").Append(ServiceHoursThreeYearsAgo).Append("\n");
             sb.Append("  ArchiveCode: ").Append(ArchiveCode).Append("\n");
             sb.Append("  ArchiveReason: ").Append(ArchiveReason).Append("\n");
             sb.Append("  ArchiveDate: ").Append(ArchiveDate).Append("\n");
-            sb.Append("  DraftBlockNum: ").Append(DraftBlockNum).Append("\n");
             sb.Append("  DumpTruck: ").Append(DumpTruck).Append("\n");
             sb.Append("  EquipmentAttachments: ").Append(EquipmentAttachments).Append("\n");
             sb.Append("  Notes: ").Append(Notes).Append("\n");
@@ -665,11 +521,6 @@ namespace HETSAPI.Models
                     this.EquipmentType.Equals(other.EquipmentType)
                 ) &&                 
                 (
-                    this.DumpTruckDetails == other.DumpTruckDetails ||
-                    this.DumpTruckDetails != null &&
-                    this.DumpTruckDetails.Equals(other.DumpTruckDetails)
-                ) &&                 
-                (
                     this.Owner == other.Owner ||
                     this.Owner != null &&
                     this.Owner.Equals(other.Owner)
@@ -685,64 +536,29 @@ namespace HETSAPI.Models
                     this.Status.Equals(other.Status)
                 ) &&                 
                 (
-                    this.ApprovedDate == other.ApprovedDate ||
-                    this.ApprovedDate != null &&
-                    this.ApprovedDate.Equals(other.ApprovedDate)
-                ) &&                 
-                (
                     this.ReceivedDate == other.ReceivedDate ||
                     this.ReceivedDate != null &&
                     this.ReceivedDate.Equals(other.ReceivedDate)
                 ) &&                 
                 (
-                    this.AddressLine1 == other.AddressLine1 ||
-                    this.AddressLine1 != null &&
-                    this.AddressLine1.Equals(other.AddressLine1)
-                ) &&                 
-                (
-                    this.AddressLine2 == other.AddressLine2 ||
-                    this.AddressLine2 != null &&
-                    this.AddressLine2.Equals(other.AddressLine2)
-                ) &&                 
-                (
-                    this.AddressLine3 == other.AddressLine3 ||
-                    this.AddressLine3 != null &&
-                    this.AddressLine3.Equals(other.AddressLine3)
-                ) &&                 
-                (
-                    this.AddressLine4 == other.AddressLine4 ||
-                    this.AddressLine4 != null &&
-                    this.AddressLine4.Equals(other.AddressLine4)
-                ) &&                 
-                (
-                    this.City == other.City ||
-                    this.City != null &&
-                    this.City.Equals(other.City)
-                ) &&                 
-                (
-                    this.Postal == other.Postal ||
-                    this.Postal != null &&
-                    this.Postal.Equals(other.Postal)
-                ) &&                 
-                (
-                    this.Comment == other.Comment ||
-                    this.Comment != null &&
-                    this.Comment.Equals(other.Comment)
-                ) &&                 
-                (
-                    this.CycleHrsWrk == other.CycleHrsWrk ||
-                    this.CycleHrsWrk != null &&
-                    this.CycleHrsWrk.Equals(other.CycleHrsWrk)
-                ) &&                 
-                (
-                    this.FrozenOut == other.FrozenOut ||
-                    this.FrozenOut != null &&
-                    this.FrozenOut.Equals(other.FrozenOut)
+                    this.ApprovedDate == other.ApprovedDate ||
+                    this.ApprovedDate != null &&
+                    this.ApprovedDate.Equals(other.ApprovedDate)
                 ) &&                 
                 (
                     this.LastVerifiedDate == other.LastVerifiedDate ||
                     this.LastVerifiedDate != null &&
                     this.LastVerifiedDate.Equals(other.LastVerifiedDate)
+                ) &&                 
+                (
+                    this.IsInformationUpdateNeeded == other.IsInformationUpdateNeeded ||
+                    this.IsInformationUpdateNeeded != null &&
+                    this.IsInformationUpdateNeeded.Equals(other.IsInformationUpdateNeeded)
+                ) &&                 
+                (
+                    this.InformationUpdateNeededReason == other.InformationUpdateNeededReason ||
+                    this.InformationUpdateNeededReason != null &&
+                    this.InformationUpdateNeededReason.Equals(other.InformationUpdateNeededReason)
                 ) &&                 
                 (
                     this.LicencePlate == other.LicencePlate ||
@@ -800,21 +616,6 @@ namespace HETSAPI.Models
                     this.ToDate.Equals(other.ToDate)
                 ) &&                 
                 (
-                    this.Working == other.Working ||
-                    this.Working != null &&
-                    this.Working.Equals(other.Working)
-                ) &&                 
-                (
-                    this.YearEndReg == other.YearEndReg ||
-                    this.YearEndReg != null &&
-                    this.YearEndReg.Equals(other.YearEndReg)
-                ) &&                 
-                (
-                    this.PrevRegArea == other.PrevRegArea ||
-                    this.PrevRegArea != null &&
-                    this.PrevRegArea.Equals(other.PrevRegArea)
-                ) &&                 
-                (
                     this.BlockNumber == other.BlockNumber ||
                     this.BlockNumber != null &&
                     this.BlockNumber.Equals(other.BlockNumber)
@@ -825,14 +626,14 @@ namespace HETSAPI.Models
                     this.Seniority.Equals(other.Seniority)
                 ) &&                 
                 (
-                    this.NumYears == other.NumYears ||
-                    this.NumYears != null &&
-                    this.NumYears.Equals(other.NumYears)
+                    this.SeniorityEffectiveDate == other.SeniorityEffectiveDate ||
+                    this.SeniorityEffectiveDate != null &&
+                    this.SeniorityEffectiveDate.Equals(other.SeniorityEffectiveDate)
                 ) &&                 
                 (
-                    this.YTD == other.YTD ||
-                    this.YTD != null &&
-                    this.YTD.Equals(other.YTD)
+                    this.YearsOfService == other.YearsOfService ||
+                    this.YearsOfService != null &&
+                    this.YearsOfService.Equals(other.YearsOfService)
                 ) &&                 
                 (
                     this.ServiceHoursLastYear == other.ServiceHoursLastYear ||
@@ -863,11 +664,6 @@ namespace HETSAPI.Models
                     this.ArchiveDate == other.ArchiveDate ||
                     this.ArchiveDate != null &&
                     this.ArchiveDate.Equals(other.ArchiveDate)
-                ) &&                 
-                (
-                    this.DraftBlockNum == other.DraftBlockNum ||
-                    this.DraftBlockNum != null &&
-                    this.DraftBlockNum.Equals(other.DraftBlockNum)
                 ) &&                 
                 (
                     this.DumpTruck == other.DumpTruck ||
@@ -922,10 +718,6 @@ namespace HETSAPI.Models
                 {
                     hash = hash * 59 + this.EquipmentType.GetHashCode();
                 }                   
-                if (this.DumpTruckDetails != null)
-                {
-                    hash = hash * 59 + this.DumpTruckDetails.GetHashCode();
-                }                   
                 if (this.Owner != null)
                 {
                     hash = hash * 59 + this.Owner.GetHashCode();
@@ -937,53 +729,25 @@ namespace HETSAPI.Models
                 {
                     hash = hash * 59 + this.Status.GetHashCode();
                 }                
-                                if (this.ApprovedDate != null)
-                {
-                    hash = hash * 59 + this.ApprovedDate.GetHashCode();
-                }                
                                 if (this.ReceivedDate != null)
                 {
                     hash = hash * 59 + this.ReceivedDate.GetHashCode();
                 }                
-                                if (this.AddressLine1 != null)
+                                if (this.ApprovedDate != null)
                 {
-                    hash = hash * 59 + this.AddressLine1.GetHashCode();
-                }                
-                                if (this.AddressLine2 != null)
-                {
-                    hash = hash * 59 + this.AddressLine2.GetHashCode();
-                }                
-                                if (this.AddressLine3 != null)
-                {
-                    hash = hash * 59 + this.AddressLine3.GetHashCode();
-                }                
-                                if (this.AddressLine4 != null)
-                {
-                    hash = hash * 59 + this.AddressLine4.GetHashCode();
-                }                
-                                if (this.City != null)
-                {
-                    hash = hash * 59 + this.City.GetHashCode();
-                }                
-                                if (this.Postal != null)
-                {
-                    hash = hash * 59 + this.Postal.GetHashCode();
-                }                
-                                if (this.Comment != null)
-                {
-                    hash = hash * 59 + this.Comment.GetHashCode();
-                }                
-                                if (this.CycleHrsWrk != null)
-                {
-                    hash = hash * 59 + this.CycleHrsWrk.GetHashCode();
-                }                
-                                if (this.FrozenOut != null)
-                {
-                    hash = hash * 59 + this.FrozenOut.GetHashCode();
+                    hash = hash * 59 + this.ApprovedDate.GetHashCode();
                 }                
                                 if (this.LastVerifiedDate != null)
                 {
                     hash = hash * 59 + this.LastVerifiedDate.GetHashCode();
+                }                
+                                if (this.IsInformationUpdateNeeded != null)
+                {
+                    hash = hash * 59 + this.IsInformationUpdateNeeded.GetHashCode();
+                }                
+                                if (this.InformationUpdateNeededReason != null)
+                {
+                    hash = hash * 59 + this.InformationUpdateNeededReason.GetHashCode();
                 }                
                                 if (this.LicencePlate != null)
                 {
@@ -1029,18 +793,6 @@ namespace HETSAPI.Models
                 {
                     hash = hash * 59 + this.ToDate.GetHashCode();
                 }                
-                                if (this.Working != null)
-                {
-                    hash = hash * 59 + this.Working.GetHashCode();
-                }                
-                                if (this.YearEndReg != null)
-                {
-                    hash = hash * 59 + this.YearEndReg.GetHashCode();
-                }                
-                                if (this.PrevRegArea != null)
-                {
-                    hash = hash * 59 + this.PrevRegArea.GetHashCode();
-                }                
                                 if (this.BlockNumber != null)
                 {
                     hash = hash * 59 + this.BlockNumber.GetHashCode();
@@ -1049,13 +801,13 @@ namespace HETSAPI.Models
                 {
                     hash = hash * 59 + this.Seniority.GetHashCode();
                 }                
-                                if (this.NumYears != null)
+                                if (this.SeniorityEffectiveDate != null)
                 {
-                    hash = hash * 59 + this.NumYears.GetHashCode();
+                    hash = hash * 59 + this.SeniorityEffectiveDate.GetHashCode();
                 }                
-                                if (this.YTD != null)
+                                if (this.YearsOfService != null)
                 {
-                    hash = hash * 59 + this.YTD.GetHashCode();
+                    hash = hash * 59 + this.YearsOfService.GetHashCode();
                 }                
                                 if (this.ServiceHoursLastYear != null)
                 {
@@ -1080,10 +832,6 @@ namespace HETSAPI.Models
                                 if (this.ArchiveDate != null)
                 {
                     hash = hash * 59 + this.ArchiveDate.GetHashCode();
-                }                
-                                if (this.DraftBlockNum != null)
-                {
-                    hash = hash * 59 + this.DraftBlockNum.GetHashCode();
                 }                
                                    
                 if (this.DumpTruck != null)

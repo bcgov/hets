@@ -74,18 +74,18 @@ namespace HETSAPI.Services.Impl
             }
             
             // dump truck details
-            if (item.DumpTruckDetails != null)
+            if (item.DumpTruck != null)
             {
-                int dump_truck_details_id = item.DumpTruckDetails.Id;
+                int dump_truck_details_id = item.DumpTruck.Id;
                 bool dump_truck_details_exists = _context.DumpTrucks.Any(a => a.Id == dump_truck_details_id);
                 if (dump_truck_details_exists)
                 {
                     DumpTruck dumptruck = _context.DumpTrucks.First(a => a.Id == dump_truck_details_id);
-                    item.DumpTruckDetails = dumptruck;
+                    item.DumpTruck = dumptruck;
                 }
                 else
                 {
-                    item.DumpTruckDetails = null;
+                    item.DumpTruck = null;
                 }
             }
             
@@ -263,7 +263,7 @@ namespace HETSAPI.Services.Impl
             var result = _context.Equipments
                     .Include(x => x.LocalArea.ServiceArea.District.Region)
                     .Include(x => x.EquipmentType)
-                    .Include(x => x.DumpTruckDetails)
+                    .Include(x => x.DumpTruck)
                     .Include(x => x.Owner)
                     .Include(x => x.EquipmentAttachments)
                     .Include(x => x.Notes)
@@ -334,7 +334,7 @@ namespace HETSAPI.Services.Impl
                 var result = _context.Equipments
                     .Include(x => x.LocalArea.ServiceArea.District.Region)
                     .Include(x => x.EquipmentType)
-                    .Include(x => x.DumpTruckDetails)
+                    .Include(x => x.DumpTruck)
                     .Include(x => x.Owner)
                     .Include(x => x.EquipmentAttachments)
                     .Include(x => x.Notes)
@@ -374,7 +374,7 @@ namespace HETSAPI.Services.Impl
                     var result = _context.Equipments
                     .Include(x => x.LocalArea.ServiceArea.District.Region)
                     .Include(x => x.EquipmentType)
-                    .Include(x => x.DumpTruckDetails)
+                    .Include(x => x.DumpTruck)
                     .Include(x => x.Owner)
                     .Include(x => x.EquipmentAttachments)
                     .Include(x => x.Notes)
@@ -424,7 +424,7 @@ namespace HETSAPI.Services.Impl
                 var result = _context.Equipments
                     .Include(x => x.LocalArea.ServiceArea.District.Region)
                     .Include(x => x.EquipmentType)
-                    .Include(x => x.DumpTruckDetails)
+                    .Include(x => x.DumpTruck)
                     .Include(x => x.Owner)
                     .Include(x => x.EquipmentAttachments)
                     .Include(x => x.Notes)
@@ -459,7 +459,7 @@ namespace HETSAPI.Services.Impl
             var data = _context.Equipments
                     .Include(x => x.LocalArea.ServiceArea.District.Region)
                     .Include(x => x.EquipmentType)
-                    .Include(x => x.DumpTruckDetails)
+                    .Include(x => x.DumpTruck)
                     .Include(x => x.Owner)
                     .Include(x => x.EquipmentAttachments)
                     .Include(x => x.Notes)

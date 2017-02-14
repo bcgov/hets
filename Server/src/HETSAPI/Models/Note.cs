@@ -23,9 +23,9 @@ using System.ComponentModel.DataAnnotations;
 namespace HETSAPI.Models
 {
     /// <summary>
-    /// Notes entered by users about instance of entities - e.g. School Buses and School Bus Owners
+    /// Text entered about an entity in the application - e.g. piece of Equipment, an Owner, a Project and so on.
     /// </summary>
-        [MetaDataExtension (Description = "Notes entered by users about instance of entities - e.g. School Buses and School Bus Owners")]
+        [MetaDataExtension (Description = "Text entered about an entity in the application - e.g. piece of Equipment, an Owner, a Project and so on.")]
 
     public partial class Note : IEquatable<Note>
     {

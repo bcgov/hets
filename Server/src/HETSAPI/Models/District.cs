@@ -23,9 +23,9 @@ using System.ComponentModel.DataAnnotations;
 namespace HETSAPI.Models
 {
     /// <summary>
-    /// The MOTI-defined Districts - must match the official MOTI List
+    /// The Ministry of Transportion and Infrastructure DISTRICT
     /// </summary>
-        [MetaDataExtension (Description = "The MOTI-defined Districts - must match the official MOTI List")]
+        [MetaDataExtension (Description = "The Ministry of Transportion and Infrastructure DISTRICT")]
 
     public partial class District : IEquatable<District>
     {
@@ -41,20 +41,24 @@ namespace HETSAPI.Models
         /// Initializes a new instance of the <see cref="District" /> class.
         /// </summary>
         /// <param name="Id">A system-generated unique identifier for a District (required).</param>
-        /// <param name="MinistryDistrictID">The Ministry ID for the District (required).</param>
-        /// <param name="Name">The name of the District (required).</param>
-        /// <param name="Region">The region in which the District is found..</param>
-        /// <param name="StartDate">The effective date of the District record - NOT CURRENTLY ENFORCED IN HETS.</param>
-        /// <param name="EndDate">The end date of the District record; null if active - NOT CURRENTLY ENFORCED IN HETS.</param>
-        public District(int Id, int MinistryDistrictID, string Name, Region Region = null, DateTime? StartDate = null, DateTime? EndDate = null)
+        /// <param name="MinistryDistrictID">A system generated unique identifier. NOT GENERATED IN THIS SYSTEM. (required).</param>
+        /// <param name="Name">The Name of a Ministry District. (required).</param>
+        /// <param name="Region">The region in which the District is found. (required).</param>
+        /// <param name="StartDate">The DATE the business information came into effect. - NOT CURRENTLY ENFORCED IN THIS SYSTEM (required).</param>
+        /// <param name="DistrictNumber">A number that uniquely defines a Ministry District..</param>
+        /// <param name="EndDate">The DATE the business information ceased to be in effect. - NOT CURRENTLY ENFORCED IN THIS SYSTEM.</param>
+        public District(int Id, int MinistryDistrictID, string Name, Region Region, DateTime StartDate, int? DistrictNumber = null, DateTime? EndDate = null)
         {   
             this.Id = Id;
             this.MinistryDistrictID = MinistryDistrictID;
             this.Name = Name;
-
-
             this.Region = Region;
             this.StartDate = StartDate;
+
+
+
+
+            this.DistrictNumber = DistrictNumber;
             this.EndDate = EndDate;
         }
 
@@ -66,18 +70,18 @@ namespace HETSAPI.Models
         public int Id { get; set; }
         
         /// <summary>
-        /// The Ministry ID for the District
+        /// A system generated unique identifier. NOT GENERATED IN THIS SYSTEM.
         /// </summary>
-        /// <value>The Ministry ID for the District</value>
-        [MetaDataExtension (Description = "The Ministry ID for the District")]
+        /// <value>A system generated unique identifier. NOT GENERATED IN THIS SYSTEM.</value>
+        [MetaDataExtension (Description = "A system generated unique identifier. NOT GENERATED IN THIS SYSTEM.")]
         public int MinistryDistrictID { get; set; }
         
         /// <summary>
-        /// The name of the District
+        /// The Name of a Ministry District.
         /// </summary>
-        /// <value>The name of the District</value>
-        [MetaDataExtension (Description = "The name of the District")]
-        [MaxLength(255)]
+        /// <value>The Name of a Ministry District.</value>
+        [MetaDataExtension (Description = "The Name of a Ministry District.")]
+        [MaxLength(150)]
         
         public string Name { get; set; }
         
@@ -95,17 +99,24 @@ namespace HETSAPI.Models
         public int? RegionRefId { get; set; }
         
         /// <summary>
-        /// The effective date of the District record - NOT CURRENTLY ENFORCED IN HETS
+        /// The DATE the business information came into effect. - NOT CURRENTLY ENFORCED IN THIS SYSTEM
         /// </summary>
-        /// <value>The effective date of the District record - NOT CURRENTLY ENFORCED IN HETS</value>
-        [MetaDataExtension (Description = "The effective date of the District record - NOT CURRENTLY ENFORCED IN HETS")]
-        public DateTime? StartDate { get; set; }
+        /// <value>The DATE the business information came into effect. - NOT CURRENTLY ENFORCED IN THIS SYSTEM</value>
+        [MetaDataExtension (Description = "The DATE the business information came into effect. - NOT CURRENTLY ENFORCED IN THIS SYSTEM")]
+        public DateTime StartDate { get; set; }
         
         /// <summary>
-        /// The end date of the District record; null if active - NOT CURRENTLY ENFORCED IN HETS
+        /// A number that uniquely defines a Ministry District.
         /// </summary>
-        /// <value>The end date of the District record; null if active - NOT CURRENTLY ENFORCED IN HETS</value>
-        [MetaDataExtension (Description = "The end date of the District record; null if active - NOT CURRENTLY ENFORCED IN HETS")]
+        /// <value>A number that uniquely defines a Ministry District.</value>
+        [MetaDataExtension (Description = "A number that uniquely defines a Ministry District.")]
+        public int? DistrictNumber { get; set; }
+        
+        /// <summary>
+        /// The DATE the business information ceased to be in effect. - NOT CURRENTLY ENFORCED IN THIS SYSTEM
+        /// </summary>
+        /// <value>The DATE the business information ceased to be in effect. - NOT CURRENTLY ENFORCED IN THIS SYSTEM</value>
+        [MetaDataExtension (Description = "The DATE the business information ceased to be in effect. - NOT CURRENTLY ENFORCED IN THIS SYSTEM")]
         public DateTime? EndDate { get; set; }
         
         /// <summary>
@@ -121,6 +132,7 @@ namespace HETSAPI.Models
             sb.Append("  Name: ").Append(Name).Append("\n");
             sb.Append("  Region: ").Append(Region).Append("\n");
             sb.Append("  StartDate: ").Append(StartDate).Append("\n");
+            sb.Append("  DistrictNumber: ").Append(DistrictNumber).Append("\n");
             sb.Append("  EndDate: ").Append(EndDate).Append("\n");
             sb.Append("}\n");
             return sb.ToString();
@@ -184,6 +196,11 @@ namespace HETSAPI.Models
                     this.StartDate.Equals(other.StartDate)
                 ) &&                 
                 (
+                    this.DistrictNumber == other.DistrictNumber ||
+                    this.DistrictNumber != null &&
+                    this.DistrictNumber.Equals(other.DistrictNumber)
+                ) &&                 
+                (
                     this.EndDate == other.EndDate ||
                     this.EndDate != null &&
                     this.EndDate.Equals(other.EndDate)
@@ -211,9 +228,13 @@ namespace HETSAPI.Models
                 if (this.Region != null)
                 {
                     hash = hash * 59 + this.Region.GetHashCode();
-                }                if (this.StartDate != null)
+                }                   
+                if (this.StartDate != null)
                 {
                     hash = hash * 59 + this.StartDate.GetHashCode();
+                }                if (this.DistrictNumber != null)
+                {
+                    hash = hash * 59 + this.DistrictNumber.GetHashCode();
                 }                
                                 if (this.EndDate != null)
                 {

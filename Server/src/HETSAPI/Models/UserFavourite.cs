@@ -68,7 +68,7 @@ namespace HETSAPI.Models
         /// </summary>
         /// <value>The user-defined name for the recorded settings. Allows the user to save different groups of settings and access each one easily when needed.</value>
         [MetaDataExtension (Description = "The user-defined name for the recorded settings. Allows the user to save different groups of settings and access each one easily when needed.")]
-        [MaxLength(255)]
+        [MaxLength(150)]
         
         public string Name { get; set; }
         
@@ -93,7 +93,7 @@ namespace HETSAPI.Models
         /// </summary>
         /// <value>The type of Favourite</value>
         [MetaDataExtension (Description = "The type of Favourite")]
-        [MaxLength(255)]
+        [MaxLength(150)]
         
         public string Type { get; set; }
         

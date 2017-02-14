@@ -23,9 +23,9 @@ using System.ComponentModel.DataAnnotations;
 namespace HETSAPI.Models
 {
     /// <summary>
-    /// A list of Equipment Attachments for pieces of equipment that have them. In the BC Bid system, attachments are free form, but in this model will try to have a predefined attachments type list.
+    /// An Equipment Attachment associated with a piece of Equipment.
     /// </summary>
-        [MetaDataExtension (Description = "A list of Equipment Attachments for pieces of equipment that have them. In the BC Bid system, attachments are free form, but in this model will try to have a predefined attachments type list.")]
+        [MetaDataExtension (Description = "An Equipment Attachment associated with a piece of Equipment.")]
 
     public partial class EquipmentAttachment : IEquatable<EquipmentAttachment>
     {
@@ -95,7 +95,7 @@ namespace HETSAPI.Models
         /// </summary>
         /// <value>A description of the equipment attachment if the Equipment Attachment Type is insufficient.</value>
         [MetaDataExtension (Description = "A description of the equipment attachment if the Equipment Attachment Type is insufficient.")]
-        [MaxLength(255)]
+        [MaxLength(2048)]
         
         public string Description { get; set; }
         

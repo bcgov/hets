@@ -23,9 +23,9 @@ using System.ComponentModel.DataAnnotations;
 namespace HETSAPI.Models
 {
     /// <summary>
-    /// The name for a place in the UI where per user settings can be stored - for example, the School Bus search screen, School Bus Owner search screen, etc.
+    /// The name for a place in the UI where per user settings can be stored - for example, the Equipment search screen, Owner search screen, etc.
     /// </summary>
-        [MetaDataExtension (Description = "The name for a place in the UI where per user settings can be stored - for example, the School Bus search screen, School Bus Owner search screen, etc.")]
+        [MetaDataExtension (Description = "The name for a place in the UI where per user settings can be stored - for example, the Equipment search screen, Owner search screen, etc.")]
 
     public partial class FavouriteContextType : IEquatable<FavouriteContextType>
     {
@@ -60,7 +60,7 @@ namespace HETSAPI.Models
         /// </summary>
         /// <value>Context Name known by the UI.</value>
         [MetaDataExtension (Description = "Context Name known by the UI.")]
-        [MaxLength(255)]
+        [MaxLength(150)]
         
         public string Name { get; set; }
         

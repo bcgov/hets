@@ -57,8 +57,7 @@ namespace HETSAPI.Services.Impl
                 }
             }
 
-            // Adjust the owner contacts.
-            
+            // Adjust the owner contacts.            
             if (item.Contacts != null)
             {
                 for (int i = 0; i < item.Contacts.Count; i++)
@@ -284,6 +283,124 @@ namespace HETSAPI.Services.Impl
                     _context.SaveChanges();
                 }
                 return new ObjectResult(item);
+            }
+            else
+            {
+                // record not found
+                return new StatusCodeResult(404);
+            }
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <remarks>Gets an Owner&#39;s Equipment</remarks>
+        /// <param name="id">id of Owner to fetch Equipment for</param>
+        /// <response code="200">OK</response>
+        public virtual IActionResult OwnersIdEquipmentGetAsync(int id)
+        {
+            var exists = _context.Owners.Any(a => a.Id == id);
+            if (exists)
+            {
+                Owner owner = _context.Owners
+                    .Include(x => x.EquipmentList)
+                        .ThenInclude(y => y.EquipmentType)
+                    .Include(x => x.EquipmentList)
+                        .ThenInclude(x => x.LocalArea.ServiceArea.District.Region)
+                    .Include(x => x.EquipmentList)
+                        .ThenInclude(x => x.EquipmentType)
+                    .Include(x => x.EquipmentList)
+                        .ThenInclude(x => x.DumpTruck)
+                    .Include(x => x.EquipmentList)
+                        .ThenInclude(x => x.Owner)
+                    .Include(x => x.EquipmentList)
+                        .ThenInclude(x => x.EquipmentAttachments)
+                    .Include(x => x.EquipmentList)
+                        .ThenInclude(x => x.Notes)
+                    .Include(x => x.EquipmentList)
+                        .ThenInclude(x => x.Attachments)
+                    .Include(x => x.EquipmentList)
+                        .ThenInclude(x => x.History)
+                    .First(a => a.Id == id);
+                return new ObjectResult(owner.Contacts);
+            }
+            else
+            {
+                // record not found
+                return new StatusCodeResult(404);
+            }
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <remarks>Replaces an Owner&#39;s Equipment</remarks>
+        /// <param name="id">id of Owner to replace Equipment for</param>
+        /// <param name="items">Replacement Owner Equipment.</param>
+        /// <response code="200">OK</response>
+        public virtual IActionResult OwnersIdEquipmentPutAsync(int id, Equipment[] items)
+        {
+            var exists = _context.Owners.Any(a => a.Id == id);
+            if (exists && items != null)
+            {
+                Owner owner = _context.Owners
+                    .Include(x => x.LocalArea.ServiceArea.District.Region)
+                    .Include(x => x.EquipmentList)
+                    .ThenInclude(y => y.EquipmentType)
+                    .Include(x => x.Notes)
+                    .Include(x => x.Attachments)
+                    .Include(x => x.History)
+                    .Include(x => x.Contacts)
+                    .ThenInclude(y => y.Addresses)
+                    .Include(x => x.Contacts)
+                    .ThenInclude(y => y.Phones)
+                    .First(x => x.Id == id);
+
+                // adjust the incoming list.
+
+                for (int i = 0; i < items.Count(); i++)
+                {
+                    Equipment item = items[i];
+                    if (item != null)
+                    {
+                        bool equipment_exists = _context.Equipments.Any(x => x.Id == item.Id);
+                        if (equipment_exists)
+                        {
+                            items[i] = _context.Equipments
+                                .Include(x => x.LocalArea.ServiceArea.District.Region)
+                                .Include(x => x.EquipmentType)
+                                .Include(x => x.DumpTruck)
+                                .Include(x => x.Owner)
+                                .Include(x => x.EquipmentAttachments)
+                                .Include(x => x.Notes)
+                                .Include(x => x.Attachments)
+                                .Include(x => x.History)
+                                .First(x => x.Id == item.Id);
+                        }
+                        else
+                        {
+                            _context.Add(item);
+                            items[i] = item;
+                        }
+                    }
+                }
+
+                // remove contacts that are no longer attached.
+
+                foreach (Equipment equipment in owner.EquipmentList)
+                {
+                    if (equipment != null && !items.Any(x => x.Id == equipment.Id))
+                    {
+                        owner.EquipmentList.Remove(equipment);                        
+                    }
+                }
+
+                // replace Contacts.
+                owner.EquipmentList = items.ToList();
+                _context.Update(owner);
+                _context.SaveChanges();
+
+                return new ObjectResult(items);
             }
             else
             {

@@ -23,9 +23,9 @@ using System.ComponentModel.DataAnnotations;
 namespace HETSAPI.Models
 {
     /// <summary>
-    /// Information about the users of the system.
+    /// An identified user in the HETS Application that has a defined authorization level.
     /// </summary>
-        [MetaDataExtension (Description = "Information about the users of the system.")]
+        [MetaDataExtension (Description = "An identified user in the HETS Application that has a defined authorization level.")]
 
     public partial class User : IEquatable<User>
     {
@@ -81,7 +81,7 @@ namespace HETSAPI.Models
         /// </summary>
         /// <value>Given name of the user.</value>
         [MetaDataExtension (Description = "Given name of the user.")]
-        [MaxLength(255)]
+        [MaxLength(50)]
         
         public string GivenName { get; set; }
         

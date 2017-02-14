@@ -23,9 +23,9 @@ using System.ComponentModel.DataAnnotations;
 namespace HETSAPI.Models
 {
     /// <summary>
-    /// The set of permissions defined in the application. Each permission is given a name and triggers some behavior defined in the application. For example, a permission might allow users to see data or to have access to functionality restricted to users without that permission. Permissions are created as needed to the application and are added to the permissions table by data migrations executed at the time the software that uses the permission is deployed.
+    /// A named element of authorization defined in the code that triggers some behavior in the application. For example, a permission might allow users to see data or to have access to functionality not accessible to users without that permission. Permissions are created as needed to the application code and are added to the permissions table by data migrations executed at the time the software that uses the permission is deployed.
     /// </summary>
-        [MetaDataExtension (Description = "The set of permissions defined in the application. Each permission is given a name and triggers some behavior defined in the application. For example, a permission might allow users to see data or to have access to functionality restricted to users without that permission. Permissions are created as needed to the application and are added to the permissions table by data migrations executed at the time the software that uses the permission is deployed.")]
+        [MetaDataExtension (Description = "A named element of authorization defined in the code that triggers some behavior in the application. For example, a permission might allow users to see data or to have access to functionality not accessible to users without that permission. Permissions are created as needed to the application code and are added to the permissions table by data migrations executed at the time the software that uses the permission is deployed.")]
 
     public partial class Permission : IEquatable<Permission>
     {
@@ -67,7 +67,7 @@ namespace HETSAPI.Models
         /// </summary>
         /// <value>The name of the permission referenced in the software of the application.</value>
         [MetaDataExtension (Description = "The name of the permission referenced in the software of the application.")]
-        [MaxLength(255)]
+        [MaxLength(50)]
         
         public string Code { get; set; }
         
@@ -76,7 +76,7 @@ namespace HETSAPI.Models
         /// </summary>
         /// <value>The &#39;user friendly&#39; name of the permission exposed to the user selecting the permissions to be included in a Role.</value>
         [MetaDataExtension (Description = "The &#39;user friendly&#39; name of the permission exposed to the user selecting the permissions to be included in a Role.")]
-        [MaxLength(255)]
+        [MaxLength(150)]
         
         public string Name { get; set; }
         
@@ -85,7 +85,7 @@ namespace HETSAPI.Models
         /// </summary>
         /// <value>A description of the purpose of the permission and exposed to the user selecting the permissions to be included in a Role.</value>
         [MetaDataExtension (Description = "A description of the purpose of the permission and exposed to the user selecting the permissions to be included in a Role.")]
-        [MaxLength(255)]
+        [MaxLength(2048)]
         
         public string Description { get; set; }
         

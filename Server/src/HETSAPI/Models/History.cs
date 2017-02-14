@@ -23,9 +23,9 @@ using System.ComponentModel.DataAnnotations;
 namespace HETSAPI.Models
 {
     /// <summary>
-    /// The history of updates made to an entity - e.g. a School Bus or a School Bus Owner
+    /// A log entry created by the system based on a triggering event and related to an entity in the application - e.g. piece of Equipment, an Owner, a Project and so on.
     /// </summary>
-        [MetaDataExtension (Description = "The history of updates made to an entity - e.g. a School Bus or a School Bus Owner")]
+        [MetaDataExtension (Description = "A log entry created by the system based on a triggering event and related to an entity in the application - e.g. piece of Equipment, an Owner, a Project and so on.")]
 
     public partial class History : IEquatable<History>
     {
