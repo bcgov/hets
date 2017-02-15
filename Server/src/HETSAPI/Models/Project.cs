@@ -42,7 +42,7 @@ namespace HETSAPI.Models
         /// </summary>
         /// <param name="Id">A system-generated unique identifier for a Project (required).</param>
         /// <param name="ServiceArea">The Service Area associated with this Project record..</param>
-        /// <param name="ProvincialProjectNumber">TO BE VERIFIED - The Provincial charge code for the equipment hiring related to this project. This will be the same across multiple service areas that provide equipment for the same Project..</param>
+        /// <param name="ProvincialProjectNumber">TO BE REVIEWED WITH THE BUSINESS - The Provincial charge code for the equipment hiring related to this project. This will be the same across multiple service areas that provide equipment for the same Project..</param>
         /// <param name="Name">A descriptive name for the Project, useful to the HETS Clerk and Project Manager..</param>
         /// <param name="Information">Information about the Project needed by the HETS Clerks. Used for capturing varying (project by project) metadata needed to process requests related to the project..</param>
         /// <param name="Requests">Requests.</param>
@@ -87,10 +87,10 @@ namespace HETSAPI.Models
         public int? ServiceAreaRefId { get; set; }
         
         /// <summary>
-        /// TO BE VERIFIED - The Provincial charge code for the equipment hiring related to this project. This will be the same across multiple service areas that provide equipment for the same Project.
+        /// TO BE REVIEWED WITH THE BUSINESS - The Provincial charge code for the equipment hiring related to this project. This will be the same across multiple service areas that provide equipment for the same Project.
         /// </summary>
-        /// <value>TO BE VERIFIED - The Provincial charge code for the equipment hiring related to this project. This will be the same across multiple service areas that provide equipment for the same Project.</value>
-        [MetaDataExtension (Description = "TO BE VERIFIED - The Provincial charge code for the equipment hiring related to this project. This will be the same across multiple service areas that provide equipment for the same Project.")]
+        /// <value>TO BE REVIEWED WITH THE BUSINESS - The Provincial charge code for the equipment hiring related to this project. This will be the same across multiple service areas that provide equipment for the same Project.</value>
+        [MetaDataExtension (Description = "TO BE REVIEWED WITH THE BUSINESS - The Provincial charge code for the equipment hiring related to this project. This will be the same across multiple service areas that provide equipment for the same Project.")]
         [MaxLength(150)]
         
         public string ProvincialProjectNumber { get; set; }

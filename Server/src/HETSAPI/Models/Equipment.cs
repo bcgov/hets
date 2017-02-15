@@ -55,13 +55,13 @@ namespace HETSAPI.Models
         /// <param name="Make">The make of the piece of equipment, as provided by the Equipment Owner..</param>
         /// <param name="Model">The model of the piece of equipment, as provided by the Equipment Owner..</param>
         /// <param name="Year">The model year of the piece of equipment, as provided by the Equipment Owner..</param>
-        /// <param name="Type">TO BE REVIEWED - WHAT IS THIS?.</param>
-        /// <param name="Operator">TO BE REVIEWED - IS THIS NEEDED?.</param>
-        /// <param name="PayRate">TO BE REVIEWED - IS THIS NEEDED?.</param>
-        /// <param name="RefuseRate">TO BE REVIEWED - IS THIS NEEDED?.</param>
+        /// <param name="Type">TO BE REVIEWED WITH THE BUSINESS - WHAT IS THIS?.</param>
+        /// <param name="Operator">TO BE REVIEWED WITH THE BUSINESS - WHAT IS THIS?.</param>
+        /// <param name="PayRate">TO BE REVIEWED WITH THE BUSINESS - WHAT IS THIS?.</param>
+        /// <param name="RefuseRate">TO BE REVIEWED WITH THE BUSINESS - WHAT IS THIS?.</param>
         /// <param name="SerialNum">The serial number of the piece of equipment as provided by the Equipment Owner. Used to detect and reconcile pieces of equipment moved between Local Areas. Duplicate serial numbers are flagged in the system but permitted. The duplicates are flagged in the UI until the HETS Clerks reconcile the differences - either correcting the serial number or archiving a piece of equipment moved to a new local area..</param>
         /// <param name="Size">The size of the piece of equipment, as provided by the Equipment Owner..</param>
-        /// <param name="ToDate">WHAT IS THIS?.</param>
+        /// <param name="ToDate">TO BE REVIEWED WITH THE BUSINESS - WHAT IS THIS?.</param>
         /// <param name="BlockNumber">The current block number for the piece of equipment as calculated by the Seniority Algorthm for this equipment type in the local area. As currently defined y the business  - 1, 2 or Open.</param>
         /// <param name="Seniority">The current seniority calculation result for this piece of equipment. The calculation is based on the &amp;quot;numYears&amp;quot; of service + average hours of service over the last three fiscal years - as stored in the related fields (serviceHoursLastYear, serviceHoursTwoYearsAgo serviceHoursThreeYearsAgo)..</param>
         /// <param name="SeniorityEffectiveDate">The time the seniority data in the record went into effect. Used to populate the SeniorityAudit table when the seniority data is next updated..</param>
@@ -252,35 +252,35 @@ namespace HETSAPI.Models
         public string Year { get; set; }
         
         /// <summary>
-        /// TO BE REVIEWED - WHAT IS THIS?
+        /// TO BE REVIEWED WITH THE BUSINESS - WHAT IS THIS?
         /// </summary>
-        /// <value>TO BE REVIEWED - WHAT IS THIS?</value>
-        [MetaDataExtension (Description = "TO BE REVIEWED - WHAT IS THIS?")]
+        /// <value>TO BE REVIEWED WITH THE BUSINESS - WHAT IS THIS?</value>
+        [MetaDataExtension (Description = "TO BE REVIEWED WITH THE BUSINESS - WHAT IS THIS?")]
         [MaxLength(255)]
         
         public string Type { get; set; }
         
         /// <summary>
-        /// TO BE REVIEWED - IS THIS NEEDED?
+        /// TO BE REVIEWED WITH THE BUSINESS - WHAT IS THIS?
         /// </summary>
-        /// <value>TO BE REVIEWED - IS THIS NEEDED?</value>
-        [MetaDataExtension (Description = "TO BE REVIEWED - IS THIS NEEDED?")]
+        /// <value>TO BE REVIEWED WITH THE BUSINESS - WHAT IS THIS?</value>
+        [MetaDataExtension (Description = "TO BE REVIEWED WITH THE BUSINESS - WHAT IS THIS?")]
         [MaxLength(255)]
         
         public string Operator { get; set; }
         
         /// <summary>
-        /// TO BE REVIEWED - IS THIS NEEDED?
+        /// TO BE REVIEWED WITH THE BUSINESS - WHAT IS THIS?
         /// </summary>
-        /// <value>TO BE REVIEWED - IS THIS NEEDED?</value>
-        [MetaDataExtension (Description = "TO BE REVIEWED - IS THIS NEEDED?")]
+        /// <value>TO BE REVIEWED WITH THE BUSINESS - WHAT IS THIS?</value>
+        [MetaDataExtension (Description = "TO BE REVIEWED WITH THE BUSINESS - WHAT IS THIS?")]
         public float? PayRate { get; set; }
         
         /// <summary>
-        /// TO BE REVIEWED - IS THIS NEEDED?
+        /// TO BE REVIEWED WITH THE BUSINESS - WHAT IS THIS?
         /// </summary>
-        /// <value>TO BE REVIEWED - IS THIS NEEDED?</value>
-        [MetaDataExtension (Description = "TO BE REVIEWED - IS THIS NEEDED?")]
+        /// <value>TO BE REVIEWED WITH THE BUSINESS - WHAT IS THIS?</value>
+        [MetaDataExtension (Description = "TO BE REVIEWED WITH THE BUSINESS - WHAT IS THIS?")]
         [MaxLength(255)]
         
         public string RefuseRate { get; set; }
@@ -304,10 +304,10 @@ namespace HETSAPI.Models
         public string Size { get; set; }
         
         /// <summary>
-        /// WHAT IS THIS?
+        /// TO BE REVIEWED WITH THE BUSINESS - WHAT IS THIS?
         /// </summary>
-        /// <value>WHAT IS THIS?</value>
-        [MetaDataExtension (Description = "WHAT IS THIS?")]
+        /// <value>TO BE REVIEWED WITH THE BUSINESS - WHAT IS THIS?</value>
+        [MetaDataExtension (Description = "TO BE REVIEWED WITH THE BUSINESS - WHAT IS THIS?")]
         public DateTime? ToDate { get; set; }
         
         /// <summary>

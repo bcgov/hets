@@ -41,7 +41,7 @@ namespace HETSAPI.Models
         /// Initializes a new instance of the <see cref="EquipmentAttachmentType" /> class.
         /// </summary>
         /// <param name="Id">A system-generated unique identifier for a EquipmentAttachmentType (required).</param>
-        /// <param name="Code">CHECK WITH BUSINESS - IS THIS NEEDED - A unique but human-friendly code for the Equipment Attachment Type that can be displayed on screens with little screen real estate available..</param>
+        /// <param name="Code">TO BE REVIEWED WITH THE BUSINESS - IS THIS NEEDED - A unique but human-friendly code for the Equipment Attachment Type that can be displayed on screens with little screen real estate available..</param>
         /// <param name="Description">The name of the equipment attachment type, as specified by the HETS Clerk creating the equipment type..</param>
         public EquipmentAttachmentType(int Id, string Code = null, string Description = null)
         {   
@@ -58,10 +58,10 @@ namespace HETSAPI.Models
         public int Id { get; set; }
         
         /// <summary>
-        /// CHECK WITH BUSINESS - IS THIS NEEDED - A unique but human-friendly code for the Equipment Attachment Type that can be displayed on screens with little screen real estate available.
+        /// TO BE REVIEWED WITH THE BUSINESS - IS THIS NEEDED - A unique but human-friendly code for the Equipment Attachment Type that can be displayed on screens with little screen real estate available.
         /// </summary>
-        /// <value>CHECK WITH BUSINESS - IS THIS NEEDED - A unique but human-friendly code for the Equipment Attachment Type that can be displayed on screens with little screen real estate available.</value>
-        [MetaDataExtension (Description = "CHECK WITH BUSINESS - IS THIS NEEDED - A unique but human-friendly code for the Equipment Attachment Type that can be displayed on screens with little screen real estate available.")]
+        /// <value>TO BE REVIEWED WITH THE BUSINESS - IS THIS NEEDED - A unique but human-friendly code for the Equipment Attachment Type that can be displayed on screens with little screen real estate available.</value>
+        [MetaDataExtension (Description = "TO BE REVIEWED WITH THE BUSINESS - IS THIS NEEDED - A unique but human-friendly code for the Equipment Attachment Type that can be displayed on screens with little screen real estate available.")]
         [MaxLength(50)]
         
         public string Code { get; set; }

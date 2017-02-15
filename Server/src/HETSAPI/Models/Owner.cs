@@ -49,7 +49,7 @@ namespace HETSAPI.Models
         /// <param name="WCBExpiryDate">The expiration of the owner&amp;#39;s current WCB permit..</param>
         /// <param name="CGLEndDate">The end date of the owner&amp;#39;s Commercial General Liability insurance coverage. Coverage is only needed prior to an owner&amp;#39;s piece of equipment starting a rental period (not when in the HETS program but not hired). The details of the coverage can be entered into a Note, or more often - attached as a scanned&amp;#x2F;faxed document..</param>
         /// <param name="Status">The status of the owner record in the system. Current set of values are &amp;quot;Pending&amp;quot;, &amp;quot;Approved&amp;quot; and &amp;quot;Archived&amp;quot;. Pending is used when an owner self-registers and a HETS Clerk has not reviewed and Approved the record. Archived is when the owner is no longer part of the HETS programme. &amp;quot;Approved&amp;quot; is used in all other cases..</param>
-        /// <param name="ArchiveCode">CHECK WITH BUSINESS - IS THIS NEEDED -A coded reason for why an owner record has been moved to Archived..</param>
+        /// <param name="ArchiveCode">TO BE REVIEWED WITH THE BUSINESS - IS THIS NEEDED -A coded reason for why an owner record has been moved to Archived..</param>
         /// <param name="ArchiveReason">A text note about why the owner record has been changed to Archived..</param>
         /// <param name="ArchiveDate">The date the Owner record was changed to Archived and removed from active use in the system..</param>
         /// <param name="Contacts">Contacts.</param>
@@ -159,10 +159,10 @@ namespace HETSAPI.Models
         public string Status { get; set; }
         
         /// <summary>
-        /// CHECK WITH BUSINESS - IS THIS NEEDED -A coded reason for why an owner record has been moved to Archived.
+        /// TO BE REVIEWED WITH THE BUSINESS - IS THIS NEEDED -A coded reason for why an owner record has been moved to Archived.
         /// </summary>
-        /// <value>CHECK WITH BUSINESS - IS THIS NEEDED -A coded reason for why an owner record has been moved to Archived.</value>
-        [MetaDataExtension (Description = "CHECK WITH BUSINESS - IS THIS NEEDED -A coded reason for why an owner record has been moved to Archived.")]
+        /// <value>TO BE REVIEWED WITH THE BUSINESS - IS THIS NEEDED -A coded reason for why an owner record has been moved to Archived.</value>
+        [MetaDataExtension (Description = "TO BE REVIEWED WITH THE BUSINESS - IS THIS NEEDED -A coded reason for why an owner record has been moved to Archived.")]
         [MaxLength(50)]
         
         public string ArchiveCode { get; set; }

@@ -1,7 +1,7 @@
 SET TARGET_SERVER=http://localhost:55217
-SET TARGET_SERVER=http://server-tran-hets-dev.pathfinder.gov.bc.ca
+rem SET TARGET_SERVER=http://server-tran-hets-dev.pathfinder.gov.bc.ca
 
-curl -c cookie %TARGET_SERVER%/api/authentication/dev/token?userId=
+curl -c cookie %TARGET_SERVER%/api/authentication/dev/token?userId=GEWALKER
 
 call load.bat "cities\cities_city.json" api/cities/bulk "%TARGET_SERVER%"
 call load.bat "Regions\Regions_Region.json" api/regions/bulk "%TARGET_SERVER%"

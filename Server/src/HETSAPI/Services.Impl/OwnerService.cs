@@ -322,7 +322,7 @@ namespace HETSAPI.Services.Impl
                     .Include(x => x.EquipmentList)
                         .ThenInclude(x => x.History)
                     .First(a => a.Id == id);
-                return new ObjectResult(owner.Contacts);
+                return new ObjectResult(owner.EquipmentList);
             }
             else
             {
@@ -386,16 +386,24 @@ namespace HETSAPI.Services.Impl
                 }
 
                 // remove contacts that are no longer attached.
-
+                List<Equipment> equipmentToRemove = new List<Equipment>();
                 foreach (Equipment equipment in owner.EquipmentList)
                 {
                     if (equipment != null && !items.Any(x => x.Id == equipment.Id))
                     {
-                        owner.EquipmentList.Remove(equipment);                        
+                        equipmentToRemove.Add(equipment);                                             
                     }
                 }
 
-                // replace Contacts.
+                if (equipmentToRemove.Count > 0)
+                {
+                    foreach (Equipment equipment in equipmentToRemove)
+                    {
+                        owner.EquipmentList.Remove(equipment);
+                    }
+                }                
+
+                // replace Equipment List.
                 owner.EquipmentList = items.ToList();
                 _context.Update(owner);
                 _context.SaveChanges();

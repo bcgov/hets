@@ -114,6 +114,37 @@ namespace HETSAPI.Controllers
         /// <summary>
         /// 
         /// </summary>
+        /// <remarks>Gets an Owner&#39;s Equipment</remarks>
+        /// <param name="id">id of Owner to fetch Equipment for</param>
+        /// <response code="200">OK</response>
+        [HttpGet]
+        [Route("/api/owners/{id}/equipment")]
+        [SwaggerOperation("OwnersIdEquipmentGet")]
+        [SwaggerResponse(200, type: typeof(List<Equipment>))]
+        public virtual IActionResult OwnersIdEquipmentGet([FromRoute]int id)
+        {
+            return this._service.OwnersIdEquipmentGetAsync(id);
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <remarks>Replaces an Owner&#39;s Equipment</remarks>
+        /// <param name="id">id of Owner to replace Equipment for</param>
+        /// <param name="item">Replacement Owner Equipment.</param>
+        /// <response code="200">OK</response>
+        [HttpPut]
+        [Route("/api/owners/{id}/equipment")]
+        [SwaggerOperation("OwnersIdEquipmentPut")]
+        [SwaggerResponse(200, type: typeof(List<Equipment>))]
+        public virtual IActionResult OwnersIdEquipmentPut([FromRoute]int id, [FromBody]Equipment[] item)
+        {
+            return this._service.OwnersIdEquipmentPutAsync(id, item);
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
         /// <param name="id">id of Owner to fetch</param>
         /// <response code="200">OK</response>
         /// <response code="404">Owner not found</response>
@@ -154,6 +185,25 @@ namespace HETSAPI.Controllers
         public virtual IActionResult OwnersPost([FromBody]Owner item)
         {
             return this._service.OwnersPostAsync(item);
+        }
+
+        /// <summary>
+        /// Searches Owners
+        /// </summary>
+        /// <remarks>Used for the owner search page.</remarks>
+        /// <param name="localareas">Local Areas (array of id numbers)</param>
+        /// <param name="equipmenttypes">Equipment Types (array of id numbers)</param>
+        /// <param name="owner">Id for a specific Owner</param>
+        /// <param name="status">Status</param>
+        /// <param name="hired">Hired</param>
+        /// <response code="200">OK</response>
+        [HttpGet]
+        [Route("/api/owners/search")]
+        [SwaggerOperation("OwnersSearchGet")]
+        [SwaggerResponse(200, type: typeof(List<Owner>))]
+        public virtual IActionResult OwnersSearchGet([FromQuery]int?[] localareas, [FromQuery]int?[] equipmenttypes, [FromQuery]int? owner, [FromQuery]string status, [FromQuery]bool? hired)
+        {
+            return this._service.OwnersSearchGetAsync(localareas, equipmenttypes, owner, status, hired);
         }
     }
 }
