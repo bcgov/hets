@@ -15,7 +15,7 @@ definitions:
       provincialProjectNumber:
         type: string
         maxLength: 150
-        description: TO BE VERIFIED - The Provincial charge code for the equipment hiring related to this project. This will be the same across multiple service areas that provide equipment for the same Project.
+        description: TO BE REVIEWED WITH THE BUSINESS - The Provincial charge code for the equipment hiring related to this project. This will be the same across multiple service areas that provide equipment for the same Project.
       name:
         type: string
         maxLength: 100
@@ -24,10 +24,10 @@ definitions:
         type: string
         maxLength: 2048
         description: Information about the Project needed by the HETS Clerks. Used for capturing varying (project by project) metadata needed to process requests related to the project.
-      requests:
+      rentalRequests:
         type: array
         items:
-          $ref: '#/definitions/Request'
+          $ref: '#/definitions/RentalRequest'
       primaryContact:
         $ref: '#/definitions/Contact'
         description: Link to the designated Primary Contact for the Project - usually the Project Manager requesting to hire equipment.
@@ -47,7 +47,7 @@ definitions:
         type: array
         items:
           $ref: '#/definitions/History'
-  Request:
+  RentalRequest:
     type: object
     description: A request from a Project for one or more of a type of equipment from a specific Local Area.
     required:
@@ -94,11 +94,11 @@ definitions:
         type: array
         items:
           $ref: '#/definitions/History'
-      requestRotationList:
+      rentalRequestRotationList:
         type: array
         items:
-          $ref: '#/definitions/RequestRotationList'
-  RequestRotationList:
+          $ref: '#/definitions/RentalRequestRotationList'
+  RentalRequestRotationList:
     type: object
     description: An eligible piece of equipment for a request and a tracking of the hire offer and response process related to a request for that piece of equipment. Includes a link from the equipment to a Rental Agreement if the equipment was hired to satisfy a part of the request.
     required:
@@ -108,8 +108,8 @@ definitions:
         format: int32
         type: integer
         description: A system-generated unique identifier for a RequestRotationList
-      request:
-        $ref: '#/definitions/Request'
+      rentalRequest:
+        $ref: '#/definitions/RentalRequest'
       rotationListSortOrder:
         format: int32
         type: integer
@@ -268,19 +268,19 @@ definitions:
       type:
         type: string
         maxLength: 255
-        description: TO BE REVIEWED - WHAT IS THIS?
+        description: TO BE REVIEWED WITH THE BUSINESS - WHAT IS THIS?
       operator:
         type: string
         maxLength: 255
-        description: TO BE REVIEWED - IS THIS NEEDED?
+        description: TO BE REVIEWED WITH THE BUSINESS - WHAT IS THIS?
       payRate:
         type: number
         format: float
-        description: TO BE REVIEWED - IS THIS NEEDED?
+        description: TO BE REVIEWED WITH THE BUSINESS - WHAT IS THIS?
       refuseRate:
         type: string
         maxLength: 255
-        description: TO BE REVIEWED - IS THIS NEEDED?
+        description: TO BE REVIEWED WITH THE BUSINESS - WHAT IS THIS?
       serialNum:
         type: string
         maxLength: 100
@@ -292,7 +292,7 @@ definitions:
       toDate:
         type: string
         format: date-time
-        description: WHAT IS THIS?
+        description: TO BE REVIEWED WITH THE BUSINESS - WHAT IS THIS?
       blockNumber:
         type: number
         format: float
@@ -504,23 +504,23 @@ definitions:
       equipRentalRateNo:
         type: number
         format: float
-        description: CHECK WITH BUSINESS - IS THIS NEEDED
+        description: TO BE REVIEWED WITH THE BUSINESS - WHAT IS THIS?
       equipRentalRatePage:
         type: number
         format: float
-        description: CHECK WITH BUSINESS - IS THIS NEEDED
+        description: TO BE REVIEWED WITH THE BUSINESS - WHAT IS THIS?
       maxHours:
         type: number
         format: float
-        description: CHECK WITH BUSINESS - IS THIS NEEDED
+        description: TO BE REVIEWED WITH THE BUSINESS - WHAT IS THIS?
       extendHours:
         type: number
         format: float
-        description: CHECK WITH BUSINESS - IS THIS NEEDED
+        description: TO BE REVIEWED WITH THE BUSINESS - WHAT IS THIS?
       maxHoursSub:
         type: number
         format: float
-        description: CHECK WITH BUSINESS - IS THIS NEEDED
+        description: TO BE REVIEWED WITH THE BUSINESS - WHAT IS THIS?
       blocks:
         format: int32
         type: integer
@@ -542,7 +542,7 @@ definitions:
       seqNum:
         format: int32
         type: integer
-        description: TO BE REMOVED - likely not needed. Will talk to business.
+        description: TO BE REVIEWED WITH THE BUSINESS - WHAT IS THIS?
       description:
         type: string
         maxLength: 2048
@@ -560,7 +560,7 @@ definitions:
       code:
         type: string
         maxLength: 50
-        description: CHECK WITH BUSINESS - IS THIS NEEDED - A unique but human-friendly code for the Equipment Attachment Type that can be displayed on screens with little screen real estate available.
+        description: TO BE REVIEWED WITH THE BUSINESS - IS THIS NEEDED - A unique but human-friendly code for the Equipment Attachment Type that can be displayed on screens with little screen real estate available.
       description:
         type: string
         maxLength: 2048
@@ -661,7 +661,7 @@ definitions:
       archiveCode:
         type: string
         maxLength: 50
-        description: CHECK WITH BUSINESS - IS THIS NEEDED -A coded reason for why an owner record has been moved to Archived.
+        description: TO BE REVIEWED WITH THE BUSINESS - IS THIS NEEDED -A coded reason for why an owner record has been moved to Archived.
       archiveReason:
         type: string
         maxLength: 2048
