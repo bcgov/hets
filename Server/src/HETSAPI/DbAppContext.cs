@@ -54,8 +54,7 @@ namespace HETSAPI.Models
         DbSet<EquipmentType> EquipmentTypes { get; set; }
         DbSet<FavouriteContextType> FavouriteContextTypes { get; set; }
         DbSet<Group> Groups { get; set; }
-        DbSet<GroupMembership> GroupMemberships { get; set; }
-        DbSet<HireOffer> HireOffers { get; set; }
+        DbSet<GroupMembership> GroupMemberships { get; set; }        
         DbSet<History> Historys { get; set; }
         DbSet<LocalArea> LocalAreas { get; set; }
         DbSet<Note> Notes { get; set; }
@@ -64,11 +63,10 @@ namespace HETSAPI.Models
         DbSet<Project> Projects { get; set; }
         DbSet<Region> Regions { get; set; }
         DbSet<RentalAgreement> RentalAgreements { get; set; }
-        DbSet<Request> Requests { get; set; }
+        DbSet<RentalRequest> RentalRequests { get; set; }
+        DbSet<RentalRequestRotationList> RentalRequestRotationLists { get; set; }
         DbSet<Role> Roles { get; set; }
-        DbSet<RolePermission> RolePermissions { get; set; }
-        DbSet<RotationList> RotationLists { get; set; }
-        DbSet<RotationListBlock> RotationListBlocks { get; set; }
+        DbSet<RolePermission> RolePermissions { get; set; }        
         DbSet<SeniorityAudit> SeniorityAudits { get; set; }
         DbSet<ServiceArea> ServiceAreas { get; set; }
         DbSet<TimeRecord> TimeRecords { get; set; }
@@ -123,8 +121,7 @@ namespace HETSAPI.Models
         public virtual DbSet<EquipmentType> EquipmentTypes { get; set; }
         public virtual DbSet<FavouriteContextType> FavouriteContextTypes { get; set; }
         public virtual DbSet<Group> Groups { get; set; }
-        public virtual DbSet<GroupMembership> GroupMemberships { get; set; }
-        public virtual DbSet<HireOffer> HireOffers { get; set; }
+        public virtual DbSet<GroupMembership> GroupMemberships { get; set; }        
         public virtual DbSet<History> Historys { get; set; }
         public virtual DbSet<LocalArea> LocalAreas { get; set; }
         public virtual DbSet<Note> Notes { get; set; }
@@ -133,11 +130,10 @@ namespace HETSAPI.Models
         public virtual DbSet<Project> Projects { get; set; }
         public virtual DbSet<Region> Regions { get; set; }
         public virtual DbSet<RentalAgreement> RentalAgreements { get; set; }
-        public virtual DbSet<Request> Requests { get; set; }
+        public virtual DbSet<RentalRequest> RentalRequests { get; set; }
+        public virtual DbSet<RentalRequestRotationList> RentalRequestRotationLists { get; set; }        
         public virtual DbSet<Role> Roles { get; set; }
-        public virtual DbSet<RolePermission> RolePermissions { get; set; }
-        public virtual DbSet<RotationList> RotationLists { get; set; }
-        public virtual DbSet<RotationListBlock> RotationListBlocks { get; set; }
+        public virtual DbSet<RolePermission> RolePermissions { get; set; }                
         public virtual DbSet<SeniorityAudit> SeniorityAudits { get; set; }
         public virtual DbSet<ServiceArea> ServiceAreas { get; set; }
         public virtual DbSet<TimeRecord> TimeRecords { get; set; }

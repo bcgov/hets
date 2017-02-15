@@ -8,9 +8,10 @@ using HETSAPI.Models;
 namespace HETSAPI.Migrations
 {
     [DbContext(typeof(DbAppContext))]
-    partial class DbAppContextModelSnapshot : ModelSnapshot
+    [Migration("20170215171447_HETS-93-2-15-2")]
+    partial class HETS932152
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
             modelBuilder
                 .HasAnnotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.SerialColumn)
@@ -46,6 +47,9 @@ namespace HETSAPI.Migrations
                     b.Property<int?>("RentalRequestId")
                         .HasColumnName("RENTAL_REQUEST_ID");
 
+                    b.Property<int?>("RequestId")
+                        .HasColumnName("REQUEST_ID");
+
                     b.HasKey("Id");
 
                     b.HasIndex("EquipmentId");
@@ -55,6 +59,8 @@ namespace HETSAPI.Migrations
                     b.HasIndex("ProjectId");
 
                     b.HasIndex("RentalRequestId");
+
+                    b.HasIndex("RequestId");
 
                     b.ToTable("HET_ATTACHMENT");
                 });
@@ -609,6 +615,62 @@ namespace HETSAPI.Migrations
                     b.ToTable("HET_GROUP_MEMBERSHIP");
                 });
 
+            modelBuilder.Entity("HETSAPI.Models.HireOffer", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnName("HIRE_OFFER_ID");
+
+                    b.Property<DateTime?>("AskedDateTime")
+                        .HasColumnName("ASKED_DATE_TIME");
+
+                    b.Property<int?>("EquipmentRefId")
+                        .HasColumnName("EQUIPMENT_REF_ID");
+
+                    b.Property<string>("EquipmentUpdateReason")
+                        .HasColumnName("EQUIPMENT_UPDATE_REASON")
+                        .HasMaxLength(255);
+
+                    b.Property<bool?>("EquipmentVerifiedActive")
+                        .HasColumnName("EQUIPMENT_VERIFIED_ACTIVE");
+
+                    b.Property<bool?>("FlagEquipmentUpdate")
+                        .HasColumnName("FLAG_EQUIPMENT_UPDATE");
+
+                    b.Property<bool?>("IsForceHire")
+                        .HasColumnName("IS_FORCE_HIRE");
+
+                    b.Property<string>("Note")
+                        .HasColumnName("NOTE")
+                        .HasMaxLength(255);
+
+                    b.Property<string>("OfferResponse")
+                        .HasColumnName("OFFER_RESPONSE");
+
+                    b.Property<string>("RefuseReason")
+                        .HasColumnName("REFUSE_REASON")
+                        .HasMaxLength(255);
+
+                    b.Property<int?>("RentalAgreementRefId")
+                        .HasColumnName("RENTAL_AGREEMENT_REF_ID");
+
+                    b.Property<int?>("RequestRefId")
+                        .HasColumnName("REQUEST_REF_ID");
+
+                    b.Property<bool?>("WasAsked")
+                        .HasColumnName("WAS_ASKED");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("EquipmentRefId");
+
+                    b.HasIndex("RentalAgreementRefId");
+
+                    b.HasIndex("RequestRefId");
+
+                    b.ToTable("HET_HIRE_OFFER");
+                });
+
             modelBuilder.Entity("HETSAPI.Models.History", b =>
                 {
                     b.Property<int>("Id")
@@ -634,6 +696,9 @@ namespace HETSAPI.Migrations
                     b.Property<int?>("RentalRequestId")
                         .HasColumnName("RENTAL_REQUEST_ID");
 
+                    b.Property<int?>("RequestId")
+                        .HasColumnName("REQUEST_ID");
+
                     b.HasKey("Id");
 
                     b.HasIndex("EquipmentId");
@@ -643,6 +708,8 @@ namespace HETSAPI.Migrations
                     b.HasIndex("ProjectId");
 
                     b.HasIndex("RentalRequestId");
+
+                    b.HasIndex("RequestId");
 
                     b.ToTable("HET_HISTORY");
                 });
@@ -697,6 +764,9 @@ namespace HETSAPI.Migrations
                     b.Property<int?>("RentalRequestId")
                         .HasColumnName("RENTAL_REQUEST_ID");
 
+                    b.Property<int?>("RequestId")
+                        .HasColumnName("REQUEST_ID");
+
                     b.Property<string>("Text")
                         .HasColumnName("TEXT")
                         .HasMaxLength(2048);
@@ -710,6 +780,8 @@ namespace HETSAPI.Migrations
                     b.HasIndex("ProjectId");
 
                     b.HasIndex("RentalRequestId");
+
+                    b.HasIndex("RequestId");
 
                     b.ToTable("HET_NOTE");
                 });
@@ -963,6 +1035,98 @@ namespace HETSAPI.Migrations
                     b.ToTable("HET_RENTAL_REQUEST_ROTATION_LIST");
                 });
 
+            modelBuilder.Entity("HETSAPI.Models.Request", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnName("REQUEST_ID");
+
+                    b.Property<int?>("EquipmentCount")
+                        .HasColumnName("EQUIPMENT_COUNT");
+
+                    b.Property<int?>("EquipmentTypeRefId")
+                        .HasColumnName("EQUIPMENT_TYPE_REF_ID");
+
+                    b.Property<DateTime?>("ExpectedEndDate")
+                        .HasColumnName("EXPECTED_END_DATE");
+
+                    b.Property<int?>("ExpectedHours")
+                        .HasColumnName("EXPECTED_HOURS");
+
+                    b.Property<DateTime?>("ExpectedStartDate")
+                        .HasColumnName("EXPECTED_START_DATE");
+
+                    b.Property<int?>("FirstOnRotationListRefId")
+                        .HasColumnName("FIRST_ON_ROTATION_LIST_REF_ID");
+
+                    b.Property<int?>("LocalAreaRefId")
+                        .HasColumnName("LOCAL_AREA_REF_ID");
+
+                    b.Property<int?>("ProjectRefId")
+                        .HasColumnName("PROJECT_REF_ID");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("EquipmentTypeRefId");
+
+                    b.HasIndex("FirstOnRotationListRefId");
+
+                    b.HasIndex("LocalAreaRefId");
+
+                    b.HasIndex("ProjectRefId");
+
+                    b.ToTable("HET_REQUEST");
+                });
+
+            modelBuilder.Entity("HETSAPI.Models.RequestRotationList", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnName("REQUEST_ROTATION_LIST_ID");
+
+                    b.Property<DateTime?>("AskedDateTime")
+                        .HasColumnName("ASKED_DATE_TIME");
+
+                    b.Property<int?>("EquipmentRefId")
+                        .HasColumnName("EQUIPMENT_REF_ID");
+
+                    b.Property<bool?>("IsForceHire")
+                        .HasColumnName("IS_FORCE_HIRE");
+
+                    b.Property<string>("Note")
+                        .HasColumnName("NOTE")
+                        .HasMaxLength(2048);
+
+                    b.Property<string>("OfferResponse")
+                        .HasColumnName("OFFER_RESPONSE");
+
+                    b.Property<string>("RefuseReason")
+                        .HasColumnName("REFUSE_REASON")
+                        .HasMaxLength(2048);
+
+                    b.Property<int?>("RentalAgreementRefId")
+                        .HasColumnName("RENTAL_AGREEMENT_REF_ID");
+
+                    b.Property<int?>("RequestRefId")
+                        .HasColumnName("REQUEST_REF_ID");
+
+                    b.Property<int?>("RotationListSortOrder")
+                        .HasColumnName("ROTATION_LIST_SORT_ORDER");
+
+                    b.Property<bool?>("WasAsked")
+                        .HasColumnName("WAS_ASKED");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("EquipmentRefId");
+
+                    b.HasIndex("RentalAgreementRefId");
+
+                    b.HasIndex("RequestRefId");
+
+                    b.ToTable("HET_REQUEST_ROTATION_LIST");
+                });
+
             modelBuilder.Entity("HETSAPI.Models.Role", b =>
                 {
                     b.Property<int>("Id")
@@ -1001,6 +1165,97 @@ namespace HETSAPI.Migrations
                     b.HasIndex("RoleRefId");
 
                     b.ToTable("HET_ROLE_PERMISSION");
+                });
+
+            modelBuilder.Entity("HETSAPI.Models.RotationList", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnName("ROTATION_LIST_ID");
+
+                    b.Property<int?>("EquipmentTypeRefId")
+                        .HasColumnName("EQUIPMENT_TYPE_REF_ID");
+
+                    b.Property<int?>("LocalAreaRefId")
+                        .HasColumnName("LOCAL_AREA_REF_ID");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("EquipmentTypeRefId");
+
+                    b.HasIndex("LocalAreaRefId");
+
+                    b.ToTable("HET_ROTATION_LIST");
+                });
+
+            modelBuilder.Entity("HETSAPI.Models.RotationListBlock", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnName("ROTATION_LIST_BLOCK_ID");
+
+                    b.Property<string>("BlockName")
+                        .HasColumnName("BLOCK_NAME");
+
+                    b.Property<int?>("BlockNum")
+                        .HasColumnName("BLOCK_NUM");
+
+                    b.Property<string>("Closed")
+                        .HasColumnName("CLOSED")
+                        .HasMaxLength(255);
+
+                    b.Property<string>("ClosedBy")
+                        .HasColumnName("CLOSED_BY");
+
+                    b.Property<string>("ClosedComments")
+                        .HasColumnName("CLOSED_COMMENTS")
+                        .HasMaxLength(2048);
+
+                    b.Property<DateTime?>("ClosedDate")
+                        .HasColumnName("CLOSED_DATE");
+
+                    b.Property<float?>("CycleNum")
+                        .HasColumnName("CYCLE_NUM");
+
+                    b.Property<int?>("LastHiredEquipmentRefId")
+                        .HasColumnName("LAST_HIRED_EQUIPMENT_REF_ID");
+
+                    b.Property<float?>("MaxCycle")
+                        .HasColumnName("MAX_CYCLE");
+
+                    b.Property<string>("Moved")
+                        .HasColumnName("MOVED")
+                        .HasMaxLength(255);
+
+                    b.Property<string>("ReservedBy")
+                        .HasColumnName("RESERVED_BY")
+                        .HasMaxLength(255);
+
+                    b.Property<DateTime?>("ReservedDate")
+                        .HasColumnName("RESERVED_DATE");
+
+                    b.Property<int?>("RotatedBlock")
+                        .HasColumnName("ROTATED_BLOCK");
+
+                    b.Property<int?>("RotationListRefId")
+                        .HasColumnName("ROTATION_LIST_REF_ID");
+
+                    b.Property<int?>("StartCycleEquipmentRefId")
+                        .HasColumnName("START_CYCLE_EQUIPMENT_REF_ID");
+
+                    b.Property<string>("StartWasZero")
+                        .HasColumnName("START_WAS_ZERO")
+                        .HasMaxLength(255);
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("LastHiredEquipmentRefId");
+
+                    b.HasIndex("RotationListRefId");
+
+                    b.HasIndex("StartCycleEquipmentRefId");
+
+                    b.ToTable("HET_ROTATION_LIST_BLOCK");
                 });
 
             modelBuilder.Entity("HETSAPI.Models.SeniorityAudit", b =>
@@ -1255,6 +1510,10 @@ namespace HETSAPI.Migrations
                     b.HasOne("HETSAPI.Models.RentalRequest")
                         .WithMany("Attachments")
                         .HasForeignKey("RentalRequestId");
+
+                    b.HasOne("HETSAPI.Models.Request")
+                        .WithMany("Attachments")
+                        .HasForeignKey("RequestId");
                 });
 
             modelBuilder.Entity("HETSAPI.Models.Contact", b =>
@@ -1337,6 +1596,21 @@ namespace HETSAPI.Migrations
                         .HasForeignKey("UserRefId");
                 });
 
+            modelBuilder.Entity("HETSAPI.Models.HireOffer", b =>
+                {
+                    b.HasOne("HETSAPI.Models.Equipment", "Equipment")
+                        .WithMany()
+                        .HasForeignKey("EquipmentRefId");
+
+                    b.HasOne("HETSAPI.Models.RentalAgreement", "RentalAgreement")
+                        .WithMany()
+                        .HasForeignKey("RentalAgreementRefId");
+
+                    b.HasOne("HETSAPI.Models.Request", "Request")
+                        .WithMany()
+                        .HasForeignKey("RequestRefId");
+                });
+
             modelBuilder.Entity("HETSAPI.Models.History", b =>
                 {
                     b.HasOne("HETSAPI.Models.Equipment")
@@ -1354,6 +1628,10 @@ namespace HETSAPI.Migrations
                     b.HasOne("HETSAPI.Models.RentalRequest")
                         .WithMany("History")
                         .HasForeignKey("RentalRequestId");
+
+                    b.HasOne("HETSAPI.Models.Request")
+                        .WithMany("History")
+                        .HasForeignKey("RequestId");
                 });
 
             modelBuilder.Entity("HETSAPI.Models.LocalArea", b =>
@@ -1380,6 +1658,10 @@ namespace HETSAPI.Migrations
                     b.HasOne("HETSAPI.Models.RentalRequest")
                         .WithMany("Notes")
                         .HasForeignKey("RentalRequestId");
+
+                    b.HasOne("HETSAPI.Models.Request")
+                        .WithMany("Notes")
+                        .HasForeignKey("RequestId");
                 });
 
             modelBuilder.Entity("HETSAPI.Models.Owner", b =>
@@ -1449,6 +1731,40 @@ namespace HETSAPI.Migrations
                         .HasForeignKey("RentalRequestRefId");
                 });
 
+            modelBuilder.Entity("HETSAPI.Models.Request", b =>
+                {
+                    b.HasOne("HETSAPI.Models.EquipmentType", "EquipmentType")
+                        .WithMany()
+                        .HasForeignKey("EquipmentTypeRefId");
+
+                    b.HasOne("HETSAPI.Models.Equipment", "FirstOnRotationList")
+                        .WithMany()
+                        .HasForeignKey("FirstOnRotationListRefId");
+
+                    b.HasOne("HETSAPI.Models.LocalArea", "LocalArea")
+                        .WithMany()
+                        .HasForeignKey("LocalAreaRefId");
+
+                    b.HasOne("HETSAPI.Models.Project", "Project")
+                        .WithMany()
+                        .HasForeignKey("ProjectRefId");
+                });
+
+            modelBuilder.Entity("HETSAPI.Models.RequestRotationList", b =>
+                {
+                    b.HasOne("HETSAPI.Models.Equipment", "Equipment")
+                        .WithMany()
+                        .HasForeignKey("EquipmentRefId");
+
+                    b.HasOne("HETSAPI.Models.RentalAgreement", "RentalAgreement")
+                        .WithMany()
+                        .HasForeignKey("RentalAgreementRefId");
+
+                    b.HasOne("HETSAPI.Models.Request", "Request")
+                        .WithMany("RequestRotationList")
+                        .HasForeignKey("RequestRefId");
+                });
+
             modelBuilder.Entity("HETSAPI.Models.RolePermission", b =>
                 {
                     b.HasOne("HETSAPI.Models.Permission", "Permission")
@@ -1458,6 +1774,32 @@ namespace HETSAPI.Migrations
                     b.HasOne("HETSAPI.Models.Role", "Role")
                         .WithMany("RolePermissions")
                         .HasForeignKey("RoleRefId");
+                });
+
+            modelBuilder.Entity("HETSAPI.Models.RotationList", b =>
+                {
+                    b.HasOne("HETSAPI.Models.EquipmentType", "EquipmentType")
+                        .WithMany()
+                        .HasForeignKey("EquipmentTypeRefId");
+
+                    b.HasOne("HETSAPI.Models.LocalArea", "LocalArea")
+                        .WithMany()
+                        .HasForeignKey("LocalAreaRefId");
+                });
+
+            modelBuilder.Entity("HETSAPI.Models.RotationListBlock", b =>
+                {
+                    b.HasOne("HETSAPI.Models.Equipment", "LastHiredEquipment")
+                        .WithMany()
+                        .HasForeignKey("LastHiredEquipmentRefId");
+
+                    b.HasOne("HETSAPI.Models.RotationList", "RotationList")
+                        .WithMany("Blocks")
+                        .HasForeignKey("RotationListRefId");
+
+                    b.HasOne("HETSAPI.Models.Equipment", "StartCycleEquipment")
+                        .WithMany()
+                        .HasForeignKey("StartCycleEquipmentRefId");
                 });
 
             modelBuilder.Entity("HETSAPI.Models.SeniorityAudit", b =>

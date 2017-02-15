@@ -4228,6 +4228,7 @@ definitions:
       id:
         format: int32
         type: integer
+        uniqueItems: true
         description: A system-generated unique identifier for a Owner
       ownerEquipmentCodePrefix:
         type: string
@@ -4302,6 +4303,7 @@ definitions:
       id:
         format: int32
         type: integer
+        uniqueItems: true
         description: A system-generated unique identifier for a Contact
       givenName:
         type: string
@@ -4568,6 +4570,7 @@ definitions:
       id:
         format: int32
         type: integer
+        uniqueItems: true
         description: A system-generated unique identifier for a ServiceArea
       ministryServiceAreaID:
         format: int32
@@ -4631,7 +4634,6 @@ definitions:
       id:
         format: int32
         type: integer
-        uniqueItems: true
         description: A system-generated unique identifier for a City
       name:
         type: string

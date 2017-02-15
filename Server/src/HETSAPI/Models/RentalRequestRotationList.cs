@@ -27,21 +27,21 @@ namespace HETSAPI.Models
     /// </summary>
         [MetaDataExtension (Description = "An eligible piece of equipment for a request and a tracking of the hire offer and response process related to a request for that piece of equipment. Includes a link from the equipment to a Rental Agreement if the equipment was hired to satisfy a part of the request.")]
 
-    public partial class RequestRotationList : IEquatable<RequestRotationList>
+    public partial class RentalRequestRotationList : IEquatable<RentalRequestRotationList>
     {
         /// <summary>
         /// Default constructor, required by entity framework
         /// </summary>
-        public RequestRotationList()
+        public RentalRequestRotationList()
         {
             this.Id = 0;
         }
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="RequestRotationList" /> class.
+        /// Initializes a new instance of the <see cref="RentalRequestRotationList" /> class.
         /// </summary>
         /// <param name="Id">A system-generated unique identifier for a RequestRotationList (required).</param>
-        /// <param name="Request">Request.</param>
+        /// <param name="RentalRequest">RentalRequest.</param>
         /// <param name="RotationListSortOrder">The sort order of the piece of equipment on the rotaton list at the time the request was created. This is the order the equipment will be offered the available work..</param>
         /// <param name="Equipment">Equipment.</param>
         /// <param name="RentalAgreement">The rental agreement (if any) created for an accepted hire offer..</param>
@@ -51,10 +51,10 @@ namespace HETSAPI.Models
         /// <param name="OfferResponse">The response to the offer to hire. Null prior to receiving a response; a string after with the response - likely just Yes or No.</param>
         /// <param name="RefuseReason">An optional reason given by the equipment owner for refusing the offer..</param>
         /// <param name="Note">An optional general note about the offer..</param>
-        public RequestRotationList(int Id, Request Request = null, int? RotationListSortOrder = null, Equipment Equipment = null, RentalAgreement RentalAgreement = null, bool? IsForceHire = null, bool? WasAsked = null, DateTime? AskedDateTime = null, string OfferResponse = null, string RefuseReason = null, string Note = null)
+        public RentalRequestRotationList(int Id, RentalRequest RentalRequest = null, int? RotationListSortOrder = null, Equipment Equipment = null, RentalAgreement RentalAgreement = null, bool? IsForceHire = null, bool? WasAsked = null, DateTime? AskedDateTime = null, string OfferResponse = null, string RefuseReason = null, string Note = null)
         {   
             this.Id = Id;
-            this.Request = Request;
+            this.RentalRequest = RentalRequest;
             this.RotationListSortOrder = RotationListSortOrder;
             this.Equipment = Equipment;
             this.RentalAgreement = RentalAgreement;
@@ -74,15 +74,15 @@ namespace HETSAPI.Models
         public int Id { get; set; }
         
         /// <summary>
-        /// Gets or Sets Request
+        /// Gets or Sets RentalRequest
         /// </summary>
-        public Request Request { get; set; }
+        public RentalRequest RentalRequest { get; set; }
         
         /// <summary>
-        /// Foreign key for Request 
+        /// Foreign key for RentalRequest 
         /// </summary>       
-        [ForeignKey("Request")]
-        public int? RequestRefId { get; set; }
+        [ForeignKey("RentalRequest")]
+        public int? RentalRequestRefId { get; set; }
         
         /// <summary>
         /// The sort order of the piece of equipment on the rotaton list at the time the request was created. This is the order the equipment will be offered the available work.
@@ -168,9 +168,9 @@ namespace HETSAPI.Models
         public override string ToString()
         {
             var sb = new StringBuilder();
-            sb.Append("class RequestRotationList {\n");
+            sb.Append("class RentalRequestRotationList {\n");
             sb.Append("  Id: ").Append(Id).Append("\n");
-            sb.Append("  Request: ").Append(Request).Append("\n");
+            sb.Append("  RentalRequest: ").Append(RentalRequest).Append("\n");
             sb.Append("  RotationListSortOrder: ").Append(RotationListSortOrder).Append("\n");
             sb.Append("  Equipment: ").Append(Equipment).Append("\n");
             sb.Append("  RentalAgreement: ").Append(RentalAgreement).Append("\n");
@@ -203,15 +203,15 @@ namespace HETSAPI.Models
             if (ReferenceEquals(null, obj)) { return false; }
             if (ReferenceEquals(this, obj)) { return true; }
             if (obj.GetType() != GetType()) { return false; }
-            return Equals((RequestRotationList)obj);
+            return Equals((RentalRequestRotationList)obj);
         }
 
         /// <summary>
-        /// Returns true if RequestRotationList instances are equal
+        /// Returns true if RentalRequestRotationList instances are equal
         /// </summary>
-        /// <param name="other">Instance of RequestRotationList to be compared</param>
+        /// <param name="other">Instance of RentalRequestRotationList to be compared</param>
         /// <returns>Boolean</returns>
-        public bool Equals(RequestRotationList other)
+        public bool Equals(RentalRequestRotationList other)
         {
 
             if (ReferenceEquals(null, other)) { return false; }
@@ -223,9 +223,9 @@ namespace HETSAPI.Models
                     this.Id.Equals(other.Id)
                 ) &&                 
                 (
-                    this.Request == other.Request ||
-                    this.Request != null &&
-                    this.Request.Equals(other.Request)
+                    this.RentalRequest == other.RentalRequest ||
+                    this.RentalRequest != null &&
+                    this.RentalRequest.Equals(other.RentalRequest)
                 ) &&                 
                 (
                     this.RotationListSortOrder == other.RotationListSortOrder ||
@@ -287,9 +287,9 @@ namespace HETSAPI.Models
                 // Suitable nullity checks
                                    
                 hash = hash * 59 + this.Id.GetHashCode();                   
-                if (this.Request != null)
+                if (this.RentalRequest != null)
                 {
-                    hash = hash * 59 + this.Request.GetHashCode();
+                    hash = hash * 59 + this.RentalRequest.GetHashCode();
                 }                if (this.RotationListSortOrder != null)
                 {
                     hash = hash * 59 + this.RotationListSortOrder.GetHashCode();
@@ -339,7 +339,7 @@ namespace HETSAPI.Models
         /// <param name="left"></param>
         /// <param name="right"></param>
         /// <returns></returns>
-        public static bool operator ==(RequestRotationList left, RequestRotationList right)
+        public static bool operator ==(RentalRequestRotationList left, RentalRequestRotationList right)
         {
             return Equals(left, right);
         }
@@ -350,7 +350,7 @@ namespace HETSAPI.Models
         /// <param name="left"></param>
         /// <param name="right"></param>
         /// <returns></returns>
-        public static bool operator !=(RequestRotationList left, RequestRotationList right)
+        public static bool operator !=(RentalRequestRotationList left, RentalRequestRotationList right)
         {
             return !Equals(left, right);
         }

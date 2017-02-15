@@ -45,20 +45,20 @@ namespace HETSAPI.Models
         /// <param name="ProvincialProjectNumber">TO BE REVIEWED WITH THE BUSINESS - The Provincial charge code for the equipment hiring related to this project. This will be the same across multiple service areas that provide equipment for the same Project..</param>
         /// <param name="Name">A descriptive name for the Project, useful to the HETS Clerk and Project Manager..</param>
         /// <param name="Information">Information about the Project needed by the HETS Clerks. Used for capturing varying (project by project) metadata needed to process requests related to the project..</param>
-        /// <param name="Requests">Requests.</param>
+        /// <param name="RentalRequests">RentalRequests.</param>
         /// <param name="PrimaryContact">Link to the designated Primary Contact for the Project - usually the Project Manager requesting to hire equipment..</param>
         /// <param name="Contacts">Contacts.</param>
         /// <param name="Notes">Notes.</param>
         /// <param name="Attachments">Attachments.</param>
         /// <param name="History">History.</param>
-        public Project(int Id, ServiceArea ServiceArea = null, string ProvincialProjectNumber = null, string Name = null, string Information = null, List<Request> Requests = null, Contact PrimaryContact = null, List<Contact> Contacts = null, List<Note> Notes = null, List<Attachment> Attachments = null, List<History> History = null)
+        public Project(int Id, ServiceArea ServiceArea = null, string ProvincialProjectNumber = null, string Name = null, string Information = null, List<RentalRequest> RentalRequests = null, Contact PrimaryContact = null, List<Contact> Contacts = null, List<Note> Notes = null, List<Attachment> Attachments = null, List<History> History = null)
         {   
             this.Id = Id;
             this.ServiceArea = ServiceArea;
             this.ProvincialProjectNumber = ProvincialProjectNumber;
             this.Name = Name;
             this.Information = Information;
-            this.Requests = Requests;
+            this.RentalRequests = RentalRequests;
             this.PrimaryContact = PrimaryContact;
             this.Contacts = Contacts;
             this.Notes = Notes;
@@ -114,9 +114,9 @@ namespace HETSAPI.Models
         public string Information { get; set; }
         
         /// <summary>
-        /// Gets or Sets Requests
+        /// Gets or Sets RentalRequests
         /// </summary>
-        public List<Request> Requests { get; set; }
+        public List<RentalRequest> RentalRequests { get; set; }
         
         /// <summary>
         /// Link to the designated Primary Contact for the Project - usually the Project Manager requesting to hire equipment.
@@ -164,7 +164,7 @@ namespace HETSAPI.Models
             sb.Append("  ProvincialProjectNumber: ").Append(ProvincialProjectNumber).Append("\n");
             sb.Append("  Name: ").Append(Name).Append("\n");
             sb.Append("  Information: ").Append(Information).Append("\n");
-            sb.Append("  Requests: ").Append(Requests).Append("\n");
+            sb.Append("  RentalRequests: ").Append(RentalRequests).Append("\n");
             sb.Append("  PrimaryContact: ").Append(PrimaryContact).Append("\n");
             sb.Append("  Contacts: ").Append(Contacts).Append("\n");
             sb.Append("  Notes: ").Append(Notes).Append("\n");
@@ -233,9 +233,9 @@ namespace HETSAPI.Models
                     this.Information.Equals(other.Information)
                 ) && 
                 (
-                    this.Requests == other.Requests ||
-                    this.Requests != null &&
-                    this.Requests.SequenceEqual(other.Requests)
+                    this.RentalRequests == other.RentalRequests ||
+                    this.RentalRequests != null &&
+                    this.RentalRequests.SequenceEqual(other.RentalRequests)
                 ) &&                 
                 (
                     this.PrimaryContact == other.PrimaryContact ||
@@ -293,9 +293,9 @@ namespace HETSAPI.Models
                     hash = hash * 59 + this.Information.GetHashCode();
                 }                
                                    
-                if (this.Requests != null)
+                if (this.RentalRequests != null)
                 {
-                    hash = hash * 59 + this.Requests.GetHashCode();
+                    hash = hash * 59 + this.RentalRequests.GetHashCode();
                 }                   
                 if (this.PrimaryContact != null)
                 {
