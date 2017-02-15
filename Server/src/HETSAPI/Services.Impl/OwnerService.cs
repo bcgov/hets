@@ -376,11 +376,11 @@ namespace HETSAPI.Services.Impl
         /// <remarks>Used for the owner search page.</remarks>
         /// <param name="localareas">Local Areas (array of id numbers)</param>
         /// <param name="equipmenttypes">Equipment Types (array of id numbers)</param>
-        /// <param name="ownername"></param>
+        /// <param name="owner"></param>
         /// <param name="status">Status</param>
         /// <param name="hired">Hired</param>
         /// <response code="200">OK</response>
-        public virtual IActionResult OwnersSearchGetAsync(int?[] localareas, int?[] equipmenttypes, string ownername, string status, bool? hired)
+        public virtual IActionResult OwnersSearchGetAsync(int?[] localareas, int?[] equipmenttypes, int? owner, string status, bool? hired)
         {
             var data = _context.Owners
                     .Include(x => x.LocalArea.ServiceArea.District.Region)
@@ -426,6 +426,11 @@ namespace HETSAPI.Services.Impl
             if (hired != null)
             {
                 // hired is not currently implemented.                 
+            }
+
+            if (owner != null)
+            {
+                data = data.Where(x => x.Id == owner);
             }
             
             var result = data.ToList();
