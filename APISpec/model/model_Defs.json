@@ -67,7 +67,7 @@
             "table": null
         },
         {
-            "Description": "TO BE VERIFIED - The Provincial charge code for the equipment hiring related to this project. This will be the same across multiple service areas that provide equipment for the same Project.",
+            "Description": "TO BE REVIEWED WITH THE BUSINESS - The Provincial charge code for the equipment hiring related to this project. This will be the same across multiple service areas that provide equipment for the same Project.",
             "Length": "150",
             "Name": "provincialProjectNumber",
             "RefDef": null,
@@ -135,8 +135,8 @@
         {
             "Description": null,
             "Length": null,
-            "Name": "requests",
-            "RefDef": "Request",
+            "Name": "rentalRequests",
+            "RefDef": "RentalRequest",
             "Required": [
                 {
                     "req": "id"
@@ -267,7 +267,7 @@
         {
             "Description": "A request from a Project for one or more of a type of equipment from a specific Local Area.",
             "Length": null,
-            "Name": "Request",
+            "Name": "RentalRequest",
             "RefDef": null,
             "Required": [
                 {
@@ -553,8 +553,8 @@
         {
             "Description": null,
             "Length": null,
-            "Name": "requestRotationList",
-            "RefDef": "RequestRotationList",
+            "Name": "rentalRequestRotationList",
+            "RefDef": "RentalRequestRotationList",
             "Required": [
                 {
                     "req": "id"
@@ -575,7 +575,7 @@
         {
             "Description": "An eligible piece of equipment for a request and a tracking of the hire offer and response process related to a request for that piece of equipment. Includes a link from the equipment to a Rental Agreement if the equipment was hired to satisfy a part of the request.",
             "Length": null,
-            "Name": "RequestRotationList",
+            "Name": "RentalRequestRotationList",
             "RefDef": null,
             "Required": [
                 {
@@ -619,8 +619,8 @@
         {
             "Description": null,
             "Length": null,
-            "Name": "request",
-            "RefDef": "Request",
+            "Name": "rentalRequest",
+            "RefDef": "RentalRequest",
             "Required": [
                 {
                     "req": "id"
@@ -1563,7 +1563,7 @@
             "table": null
         },
         {
-            "Description": "TO BE REVIEWED - WHAT IS THIS?",
+            "Description": "TO BE REVIEWED WITH THE BUSINESS - WHAT IS THIS?",
             "Length": "255",
             "Name": "type",
             "RefDef": null,
@@ -1585,7 +1585,7 @@
             "table": null
         },
         {
-            "Description": "TO BE REVIEWED - IS THIS NEEDED?",
+            "Description": "TO BE REVIEWED WITH THE BUSINESS - WHAT IS THIS?",
             "Length": "255",
             "Name": "operator",
             "RefDef": null,
@@ -1607,7 +1607,7 @@
             "table": null
         },
         {
-            "Description": "TO BE REVIEWED - IS THIS NEEDED?",
+            "Description": "TO BE REVIEWED WITH THE BUSINESS - WHAT IS THIS?",
             "Length": null,
             "Name": "payRate",
             "RefDef": null,
@@ -1629,7 +1629,7 @@
             "table": null
         },
         {
-            "Description": "TO BE REVIEWED - IS THIS NEEDED?",
+            "Description": "TO BE REVIEWED WITH THE BUSINESS - WHAT IS THIS?",
             "Length": "255",
             "Name": "refuseRate",
             "RefDef": null,
@@ -1695,7 +1695,7 @@
             "table": null
         },
         {
-            "Description": "WHAT IS THIS?",
+            "Description": "TO BE REVIEWED WITH THE BUSINESS - WHAT IS THIS?",
             "Length": null,
             "Name": "toDate",
             "RefDef": null,
@@ -2905,7 +2905,7 @@
             "table": null
         },
         {
-            "Description": "CHECK WITH BUSINESS - IS THIS NEEDED",
+            "Description": "TO BE REVIEWED WITH THE BUSINESS - WHAT IS THIS?",
             "Length": null,
             "Name": "equipRentalRateNo",
             "RefDef": null,
@@ -2927,7 +2927,7 @@
             "table": null
         },
         {
-            "Description": "CHECK WITH BUSINESS - IS THIS NEEDED",
+            "Description": "TO BE REVIEWED WITH THE BUSINESS - WHAT IS THIS?",
             "Length": null,
             "Name": "equipRentalRatePage",
             "RefDef": null,
@@ -2949,7 +2949,7 @@
             "table": null
         },
         {
-            "Description": "CHECK WITH BUSINESS - IS THIS NEEDED",
+            "Description": "TO BE REVIEWED WITH THE BUSINESS - WHAT IS THIS?",
             "Length": null,
             "Name": "maxHours",
             "RefDef": null,
@@ -2971,7 +2971,7 @@
             "table": null
         },
         {
-            "Description": "CHECK WITH BUSINESS - IS THIS NEEDED",
+            "Description": "TO BE REVIEWED WITH THE BUSINESS - WHAT IS THIS?",
             "Length": null,
             "Name": "extendHours",
             "RefDef": null,
@@ -2993,7 +2993,7 @@
             "table": null
         },
         {
-            "Description": "CHECK WITH BUSINESS - IS THIS NEEDED",
+            "Description": "TO BE REVIEWED WITH THE BUSINESS - WHAT IS THIS?",
             "Length": null,
             "Name": "maxHoursSub",
             "RefDef": null,
@@ -3125,7 +3125,7 @@
             "table": null
         },
         {
-            "Description": "TO BE REMOVED - likely not needed. Will talk to business.",
+            "Description": "TO BE REVIEWED WITH THE BUSINESS - WHAT IS THIS?",
             "Length": null,
             "Name": "seqNum",
             "RefDef": null,
@@ -3213,7 +3213,7 @@
             "table": null
         },
         {
-            "Description": "CHECK WITH BUSINESS - IS THIS NEEDED - A unique but human-friendly code for the Equipment Attachment Type that can be displayed on screens with little screen real estate available.",
+            "Description": "TO BE REVIEWED WITH THE BUSINESS - IS THIS NEEDED - A unique but human-friendly code for the Equipment Attachment Type that can be displayed on screens with little screen real estate available.",
             "Length": "50",
             "Name": "code",
             "RefDef": null,
@@ -3815,7 +3815,7 @@
             "table": null
         },
         {
-            "Description": "CHECK WITH BUSINESS - IS THIS NEEDED -A coded reason for why an owner record has been moved to Archived.",
+            "Description": "TO BE REVIEWED WITH THE BUSINESS - IS THIS NEEDED -A coded reason for why an owner record has been moved to Archived.",
             "Length": "50",
             "Name": "archiveCode",
             "RefDef": null,
