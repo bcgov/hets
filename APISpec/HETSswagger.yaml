@@ -2928,6 +2928,57 @@ paths:
             type: array
             items:
               $ref: "#/definitions/EquipmentAttachment"
+  /owners/search:
+    get:
+      summary: Searches Owners
+      description:
+        Used for the owner search page.
+      tags:
+        - Owner
+      consumes:
+        - application/json
+      produces:
+        - text/plain
+        - application/json
+        - text/json
+      parameters:        
+        - name: localareas
+          in: query
+          description: Local Areas (array of id numbers)
+          collectionFormat: multi
+          required: false
+          type: array
+          items:
+            type: integer
+        - name: equipmenttypes
+          in: query
+          description: Equipment Types (array of id numbers)
+          required: false
+          type: array
+          items:
+            type: integer
+        - name: owner
+          in: query
+          description: Id for a specific Owner
+          required: false
+          type: integer
+        - name: status
+          in: query
+          description: Status
+          required: false
+          type: string
+        - name: hired
+          in: query
+          description: Hired
+          required: false
+          type: boolean
+      responses:
+        200:
+          description: OK
+          schema:
+            type: array
+            items:
+              $ref: "#/definitions/Owner"              
   /owners/{id}/contacts:
     get:
       tags:
@@ -2980,7 +3031,60 @@ paths:
           schema:
             type: array
             items:
-              $ref: "#/definitions/Contact"    
+              $ref: "#/definitions/Contact"
+  /owners/{id}/equipment:
+    get:
+      tags:
+        - Owner
+      description: Gets an Owner's Equipment      
+      consumes: []
+      produces:
+        - text/plain
+        - application/json
+        - text/json
+      parameters:
+        - name: id
+          in: path
+          description: id of Owner to fetch Equipment for
+          required: true
+          type: integer
+      responses:
+        200:
+          description: OK
+          schema:
+            type: array
+            items:
+              $ref: "#/definitions/Equipment"
+    put:
+      tags:
+        - Owner
+      description: Replaces an Owner's Equipment
+      consumes: []
+      produces:
+        - text/plain
+        - application/json
+        - text/json
+      parameters:
+        - name: id
+          in: path
+          description: id of Owner to replace Equipment for
+          required: true
+          type: integer
+        - name: item
+          in: body
+          description: Replacement Owner Equipment.
+          required: true
+          schema:
+            type: array
+            items:
+              $ref: "#/definitions/Equipment"
+      responses:
+        200:
+          description: OK
+          schema:
+            type: array
+            items:
+              $ref: "#/definitions/Equipment"              
   /roles/{id}/permissions:
     get:
       description: Get all the permissions for a role
@@ -4236,7 +4340,6 @@ definitions:
       id:
         format: int32
         type: integer
-        uniqueItems: true
         description: A system-generated unique identifier for a ContactPhone
       type:
         type: string
@@ -4255,7 +4358,6 @@ definitions:
       id:
         format: int32
         type: integer
-        uniqueItems: true
         description: A system-generated unique identifier for a ContactAddress
       type:
         type: string
@@ -4291,7 +4393,6 @@ definitions:
       id:
         format: int32
         type: integer
-        uniqueItems: true
         description: A system-generated unique identifier for a Note
       text:
         type: string
@@ -4311,7 +4412,6 @@ definitions:
       id:
         format: int32
         type: integer
-        uniqueItems: true
         description: A system-generated unique identifier for an Attachment
       internalFileName:
         type: string
@@ -4335,7 +4435,6 @@ definitions:
       id:
         format: int32
         type: integer
-        uniqueItems: true
         description: A system-generated unique identifier for a History
       historyText:
         type: string
@@ -4368,7 +4467,6 @@ definitions:
       id:
         format: int32
         type: integer
-        uniqueItems: true
         description: A system-generated unique identifier for a UserFavourite
       name:
         type: string
@@ -4400,7 +4498,6 @@ definitions:
       id:
         format: int32
         type: integer
-        uniqueItems: true
         description: A system-generated unique identifier for a Region
       ministryRegionID:
         format: int32
@@ -4436,7 +4533,6 @@ definitions:
       id:
         format: int32
         type: integer
-        uniqueItems: true
         description: A system-generated unique identifier for a District
       ministryDistrictID:
         format: int32
@@ -4538,7 +4634,6 @@ definitions:
       id:
         format: int32
         type: integer
-        uniqueItems: true
         description: A system-generated unique identifier for a City
       name:
         type: string
@@ -4556,7 +4651,6 @@ definitions:
       id:
         format: int32
         type: integer
-        uniqueItems: true
         description: A system-generated unique identifier for a User
       givenName:
         type: string
@@ -4597,6 +4691,9 @@ definitions:
         type: array
         items:
           $ref: '#/definitions/GroupMembership'
+      District:
+        $ref: '#/definitions/District'
+        description: The District that the User belongs to
   UserRole:
     type: object
     description: A join table that provides allows each user to have any number of Roles in the system.  At login time the user is given the sum of the permissions of the roles assigned to that user. 

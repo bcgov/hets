@@ -60,7 +60,7 @@ namespace HETSAPI.Models
         /// </summary>
         /// <value>The name of the City</value>
         [MetaDataExtension (Description = "The name of the City")]
-        [MaxLength(255)]
+        [MaxLength(150)]
         
         public string Name { get; set; }
         

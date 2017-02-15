@@ -23,9 +23,9 @@ using System.ComponentModel.DataAnnotations;
 namespace HETSAPI.Models
 {
     /// <summary>
-    /// The MOTI-defined Service Areas - must match the official MOTI List
+    /// The Ministry of Transportation and Infrastructure SERVICE AREA.
     /// </summary>
-        [MetaDataExtension (Description = "The MOTI-defined Service Areas - must match the official MOTI List")]
+        [MetaDataExtension (Description = "The Ministry of Transportation and Infrastructure SERVICE AREA.")]
 
     public partial class ServiceArea : IEquatable<ServiceArea>
     {
@@ -41,20 +41,24 @@ namespace HETSAPI.Models
         /// Initializes a new instance of the <see cref="ServiceArea" /> class.
         /// </summary>
         /// <param name="Id">A system-generated unique identifier for a ServiceArea (required).</param>
-        /// <param name="MinistryServiceAreaID">The Ministry ID for the Service Area (required).</param>
-        /// <param name="Name">The name of the Service Area (required).</param>
-        /// <param name="District">The district in which the Service Area is found..</param>
-        /// <param name="StartDate">The effective date of the Service Area record - NOT CURRENTLY ENFORCED IN HETS.</param>
-        /// <param name="EndDate">The end date of the Service Area record; null if active - NOT CURRENTLY ENFORCED IN HETS.</param>
-        public ServiceArea(int Id, int MinistryServiceAreaID, string Name, District District = null, DateTime? StartDate = null, DateTime? EndDate = null)
+        /// <param name="MinistryServiceAreaID">A system generated unique identifier. NOT GENERATED IN THIS SYSTEM. (required).</param>
+        /// <param name="Name">The Name of a Ministry Service Area. (required).</param>
+        /// <param name="District">The district in which the Service Area is found. (required).</param>
+        /// <param name="StartDate">The DATE the business information came into effect. - NOT CURRENTLY ENFORCED IN THIS SYSTEM (required).</param>
+        /// <param name="AreaNumber">A number that uniquely defines a Ministry Service Area..</param>
+        /// <param name="EndDate">The DATE the business information ceased to be in effect. - NOT CURRENTLY ENFORCED IN THIS SYSTEM.</param>
+        public ServiceArea(int Id, int MinistryServiceAreaID, string Name, District District, DateTime StartDate, int? AreaNumber = null, DateTime? EndDate = null)
         {   
             this.Id = Id;
             this.MinistryServiceAreaID = MinistryServiceAreaID;
             this.Name = Name;
-
-
             this.District = District;
             this.StartDate = StartDate;
+
+
+
+
+            this.AreaNumber = AreaNumber;
             this.EndDate = EndDate;
         }
 
@@ -66,18 +70,18 @@ namespace HETSAPI.Models
         public int Id { get; set; }
         
         /// <summary>
-        /// The Ministry ID for the Service Area
+        /// A system generated unique identifier. NOT GENERATED IN THIS SYSTEM.
         /// </summary>
-        /// <value>The Ministry ID for the Service Area</value>
-        [MetaDataExtension (Description = "The Ministry ID for the Service Area")]
+        /// <value>A system generated unique identifier. NOT GENERATED IN THIS SYSTEM.</value>
+        [MetaDataExtension (Description = "A system generated unique identifier. NOT GENERATED IN THIS SYSTEM.")]
         public int MinistryServiceAreaID { get; set; }
         
         /// <summary>
-        /// The name of the Service Area
+        /// The Name of a Ministry Service Area.
         /// </summary>
-        /// <value>The name of the Service Area</value>
-        [MetaDataExtension (Description = "The name of the Service Area")]
-        [MaxLength(255)]
+        /// <value>The Name of a Ministry Service Area.</value>
+        [MetaDataExtension (Description = "The Name of a Ministry Service Area.")]
+        [MaxLength(150)]
         
         public string Name { get; set; }
         
@@ -95,17 +99,24 @@ namespace HETSAPI.Models
         public int? DistrictRefId { get; set; }
         
         /// <summary>
-        /// The effective date of the Service Area record - NOT CURRENTLY ENFORCED IN HETS
+        /// The DATE the business information came into effect. - NOT CURRENTLY ENFORCED IN THIS SYSTEM
         /// </summary>
-        /// <value>The effective date of the Service Area record - NOT CURRENTLY ENFORCED IN HETS</value>
-        [MetaDataExtension (Description = "The effective date of the Service Area record - NOT CURRENTLY ENFORCED IN HETS")]
-        public DateTime? StartDate { get; set; }
+        /// <value>The DATE the business information came into effect. - NOT CURRENTLY ENFORCED IN THIS SYSTEM</value>
+        [MetaDataExtension (Description = "The DATE the business information came into effect. - NOT CURRENTLY ENFORCED IN THIS SYSTEM")]
+        public DateTime StartDate { get; set; }
         
         /// <summary>
-        /// The end date of the Service Area record; null if active - NOT CURRENTLY ENFORCED IN HETS
+        /// A number that uniquely defines a Ministry Service Area.
         /// </summary>
-        /// <value>The end date of the Service Area record; null if active - NOT CURRENTLY ENFORCED IN HETS</value>
-        [MetaDataExtension (Description = "The end date of the Service Area record; null if active - NOT CURRENTLY ENFORCED IN HETS")]
+        /// <value>A number that uniquely defines a Ministry Service Area.</value>
+        [MetaDataExtension (Description = "A number that uniquely defines a Ministry Service Area.")]
+        public int? AreaNumber { get; set; }
+        
+        /// <summary>
+        /// The DATE the business information ceased to be in effect. - NOT CURRENTLY ENFORCED IN THIS SYSTEM
+        /// </summary>
+        /// <value>The DATE the business information ceased to be in effect. - NOT CURRENTLY ENFORCED IN THIS SYSTEM</value>
+        [MetaDataExtension (Description = "The DATE the business information ceased to be in effect. - NOT CURRENTLY ENFORCED IN THIS SYSTEM")]
         public DateTime? EndDate { get; set; }
         
         /// <summary>
@@ -121,6 +132,7 @@ namespace HETSAPI.Models
             sb.Append("  Name: ").Append(Name).Append("\n");
             sb.Append("  District: ").Append(District).Append("\n");
             sb.Append("  StartDate: ").Append(StartDate).Append("\n");
+            sb.Append("  AreaNumber: ").Append(AreaNumber).Append("\n");
             sb.Append("  EndDate: ").Append(EndDate).Append("\n");
             sb.Append("}\n");
             return sb.ToString();
@@ -184,6 +196,11 @@ namespace HETSAPI.Models
                     this.StartDate.Equals(other.StartDate)
                 ) &&                 
                 (
+                    this.AreaNumber == other.AreaNumber ||
+                    this.AreaNumber != null &&
+                    this.AreaNumber.Equals(other.AreaNumber)
+                ) &&                 
+                (
                     this.EndDate == other.EndDate ||
                     this.EndDate != null &&
                     this.EndDate.Equals(other.EndDate)
@@ -211,9 +228,13 @@ namespace HETSAPI.Models
                 if (this.District != null)
                 {
                     hash = hash * 59 + this.District.GetHashCode();
-                }                if (this.StartDate != null)
+                }                   
+                if (this.StartDate != null)
                 {
                     hash = hash * 59 + this.StartDate.GetHashCode();
+                }                if (this.AreaNumber != null)
+                {
+                    hash = hash * 59 + this.AreaNumber.GetHashCode();
                 }                
                                 if (this.EndDate != null)
                 {

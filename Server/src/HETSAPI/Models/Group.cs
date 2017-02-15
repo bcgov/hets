@@ -23,9 +23,9 @@ using System.ComponentModel.DataAnnotations;
 namespace HETSAPI.Models
 {
     /// <summary>
-    /// A named entity that is used to created a collection of users into a group. For example, the School Bus Inspectors are in the group Inspectors. Groups, like permissions are defined by the application and referenced in the code of the application.
+    /// A named entity that is used to create a arbitrary collection of users into a group. For example, the HETS Clerks are in the group Clerks. Groups, like permissions are defined by and referenced in code.
     /// </summary>
-        [MetaDataExtension (Description = "A named entity that is used to created a collection of users into a group. For example, the School Bus Inspectors are in the group Inspectors. Groups, like permissions are defined by the application and referenced in the code of the application.")]
+        [MetaDataExtension (Description = "A named entity that is used to create a arbitrary collection of users into a group. For example, the HETS Clerks are in the group Clerks. Groups, like permissions are defined by and referenced in code.")]
 
     public partial class Group : IEquatable<Group>
     {
@@ -64,7 +64,7 @@ namespace HETSAPI.Models
         /// </summary>
         /// <value>The name of the group, as refenced in the code.</value>
         [MetaDataExtension (Description = "The name of the group, as refenced in the code.")]
-        [MaxLength(255)]
+        [MaxLength(150)]
         
         public string Name { get; set; }
         
@@ -73,7 +73,7 @@ namespace HETSAPI.Models
         /// </summary>
         /// <value>A description of the group that is presented to the user when they are setting a user into a group.</value>
         [MetaDataExtension (Description = "A description of the group that is presented to the user when they are setting a user into a group.")]
-        [MaxLength(255)]
+        [MaxLength(2048)]
         
         public string Description { get; set; }
         

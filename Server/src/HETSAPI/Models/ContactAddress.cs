@@ -23,9 +23,9 @@ using System.ComponentModel.DataAnnotations;
 namespace HETSAPI.Models
 {
     /// <summary>
-    /// SB Owner contact address information
+    /// Address information related to a contact.
     /// </summary>
-        [MetaDataExtension (Description = "SB Owner contact address information")]
+        [MetaDataExtension (Description = "Address information related to a contact.")]
 
     public partial class ContactAddress : IEquatable<ContactAddress>
     {
@@ -79,7 +79,7 @@ namespace HETSAPI.Models
         /// </summary>
         /// <value>Address 1 line of the address.</value>
         [MetaDataExtension (Description = "Address 1 line of the address.")]
-        [MaxLength(255)]
+        [MaxLength(150)]
         
         public string AddressLine1 { get; set; }
         
@@ -88,7 +88,7 @@ namespace HETSAPI.Models
         /// </summary>
         /// <value>Address 2 line of the address.</value>
         [MetaDataExtension (Description = "Address 2 line of the address.")]
-        [MaxLength(255)]
+        [MaxLength(150)]
         
         public string AddressLine2 { get; set; }
         

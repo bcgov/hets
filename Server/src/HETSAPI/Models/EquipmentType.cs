@@ -44,11 +44,11 @@ namespace HETSAPI.Models
         /// <param name="LocalArea">LocalArea.</param>
         /// <param name="Code">CHECK WITH BUSINESS - IS THIS NEEDED - A unique but human-friendly code for the Equipment Type that can be displayed on screens with little screen real estate available..</param>
         /// <param name="Description">The name of the equipment type, as specified by the HETS Clerk creating the equipment type..</param>
-        /// <param name="EquipRentalRateNo">CHECK WITH BUSINESS - IS THIS NEEDED.</param>
-        /// <param name="EquipRentalRatePage">CHECK WITH BUSINESS - IS THIS NEEDED.</param>
-        /// <param name="MaxHours">CHECK WITH BUSINESS - IS THIS NEEDED.</param>
-        /// <param name="ExtendHours">CHECK WITH BUSINESS - IS THIS NEEDED.</param>
-        /// <param name="MaxHoursSub">CHECK WITH BUSINESS - IS THIS NEEDED.</param>
+        /// <param name="EquipRentalRateNo">TO BE REVIEWED WITH THE BUSINESS - WHAT IS THIS?.</param>
+        /// <param name="EquipRentalRatePage">TO BE REVIEWED WITH THE BUSINESS - WHAT IS THIS?.</param>
+        /// <param name="MaxHours">TO BE REVIEWED WITH THE BUSINESS - WHAT IS THIS?.</param>
+        /// <param name="ExtendHours">TO BE REVIEWED WITH THE BUSINESS - WHAT IS THIS?.</param>
+        /// <param name="MaxHoursSub">TO BE REVIEWED WITH THE BUSINESS - WHAT IS THIS?.</param>
         /// <param name="Blocks">The number of blocks defined for this equipment type. Currently, either 2 for Dump Truck equipment and 1 for non-Dump Truck equipment. Unlikely to change, particularly without a significant impact on code..</param>
         public EquipmentType(int Id, LocalArea LocalArea = null, string Code = null, string Description = null, float? EquipRentalRateNo = null, float? EquipRentalRatePage = null, float? MaxHours = null, float? ExtendHours = null, float? MaxHoursSub = null, int? Blocks = null)
         {   
@@ -87,7 +87,7 @@ namespace HETSAPI.Models
         /// </summary>
         /// <value>CHECK WITH BUSINESS - IS THIS NEEDED - A unique but human-friendly code for the Equipment Type that can be displayed on screens with little screen real estate available.</value>
         [MetaDataExtension (Description = "CHECK WITH BUSINESS - IS THIS NEEDED - A unique but human-friendly code for the Equipment Type that can be displayed on screens with little screen real estate available.")]
-        [MaxLength(255)]
+        [MaxLength(50)]
         
         public string Code { get; set; }
         
@@ -96,43 +96,43 @@ namespace HETSAPI.Models
         /// </summary>
         /// <value>The name of the equipment type, as specified by the HETS Clerk creating the equipment type.</value>
         [MetaDataExtension (Description = "The name of the equipment type, as specified by the HETS Clerk creating the equipment type.")]
-        [MaxLength(255)]
+        [MaxLength(2048)]
         
         public string Description { get; set; }
         
         /// <summary>
-        /// CHECK WITH BUSINESS - IS THIS NEEDED
+        /// TO BE REVIEWED WITH THE BUSINESS - WHAT IS THIS?
         /// </summary>
-        /// <value>CHECK WITH BUSINESS - IS THIS NEEDED</value>
-        [MetaDataExtension (Description = "CHECK WITH BUSINESS - IS THIS NEEDED")]
+        /// <value>TO BE REVIEWED WITH THE BUSINESS - WHAT IS THIS?</value>
+        [MetaDataExtension (Description = "TO BE REVIEWED WITH THE BUSINESS - WHAT IS THIS?")]
         public float? EquipRentalRateNo { get; set; }
         
         /// <summary>
-        /// CHECK WITH BUSINESS - IS THIS NEEDED
+        /// TO BE REVIEWED WITH THE BUSINESS - WHAT IS THIS?
         /// </summary>
-        /// <value>CHECK WITH BUSINESS - IS THIS NEEDED</value>
-        [MetaDataExtension (Description = "CHECK WITH BUSINESS - IS THIS NEEDED")]
+        /// <value>TO BE REVIEWED WITH THE BUSINESS - WHAT IS THIS?</value>
+        [MetaDataExtension (Description = "TO BE REVIEWED WITH THE BUSINESS - WHAT IS THIS?")]
         public float? EquipRentalRatePage { get; set; }
         
         /// <summary>
-        /// CHECK WITH BUSINESS - IS THIS NEEDED
+        /// TO BE REVIEWED WITH THE BUSINESS - WHAT IS THIS?
         /// </summary>
-        /// <value>CHECK WITH BUSINESS - IS THIS NEEDED</value>
-        [MetaDataExtension (Description = "CHECK WITH BUSINESS - IS THIS NEEDED")]
+        /// <value>TO BE REVIEWED WITH THE BUSINESS - WHAT IS THIS?</value>
+        [MetaDataExtension (Description = "TO BE REVIEWED WITH THE BUSINESS - WHAT IS THIS?")]
         public float? MaxHours { get; set; }
         
         /// <summary>
-        /// CHECK WITH BUSINESS - IS THIS NEEDED
+        /// TO BE REVIEWED WITH THE BUSINESS - WHAT IS THIS?
         /// </summary>
-        /// <value>CHECK WITH BUSINESS - IS THIS NEEDED</value>
-        [MetaDataExtension (Description = "CHECK WITH BUSINESS - IS THIS NEEDED")]
+        /// <value>TO BE REVIEWED WITH THE BUSINESS - WHAT IS THIS?</value>
+        [MetaDataExtension (Description = "TO BE REVIEWED WITH THE BUSINESS - WHAT IS THIS?")]
         public float? ExtendHours { get; set; }
         
         /// <summary>
-        /// CHECK WITH BUSINESS - IS THIS NEEDED
+        /// TO BE REVIEWED WITH THE BUSINESS - WHAT IS THIS?
         /// </summary>
-        /// <value>CHECK WITH BUSINESS - IS THIS NEEDED</value>
-        [MetaDataExtension (Description = "CHECK WITH BUSINESS - IS THIS NEEDED")]
+        /// <value>TO BE REVIEWED WITH THE BUSINESS - WHAT IS THIS?</value>
+        [MetaDataExtension (Description = "TO BE REVIEWED WITH THE BUSINESS - WHAT IS THIS?")]
         public float? MaxHoursSub { get; set; }
         
         /// <summary>

@@ -23,9 +23,9 @@ using System.ComponentModel.DataAnnotations;
 namespace HETSAPI.Models
 {
     /// <summary>
-    /// SB Owner contact phone information
+    /// Phone number information related to a contact.
     /// </summary>
-        [MetaDataExtension (Description = "SB Owner contact phone information")]
+        [MetaDataExtension (Description = "Phone number information related to a contact.")]
 
     public partial class ContactPhone : IEquatable<ContactPhone>
     {

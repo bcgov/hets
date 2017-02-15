@@ -23,9 +23,9 @@ using System.ComponentModel.DataAnnotations;
 namespace HETSAPI.Models
 {
     /// <summary>
-    /// A list of Equipment Attachments for pieces of equipment that have them. In the BC Bid system, attachments are free form, but in this model will try to have a predefined attachments type list.
+    /// An Equipment Attachment associated with a piece of Equipment.
     /// </summary>
-        [MetaDataExtension (Description = "A list of Equipment Attachments for pieces of equipment that have them. In the BC Bid system, attachments are free form, but in this model will try to have a predefined attachments type list.")]
+        [MetaDataExtension (Description = "An Equipment Attachment associated with a piece of Equipment.")]
 
     public partial class EquipmentAttachment : IEquatable<EquipmentAttachment>
     {
@@ -43,7 +43,7 @@ namespace HETSAPI.Models
         /// <param name="Id">A system-generated unique identifier for an EquipmentAttachment (required).</param>
         /// <param name="Equipment">Equipment.</param>
         /// <param name="Type">Type.</param>
-        /// <param name="SeqNum">TO BE REMOVED - likely not needed. Will talk to business..</param>
+        /// <param name="SeqNum">TO BE REVIEWED WITH THE BUSINESS - WHAT IS THIS?.</param>
         /// <param name="Description">A description of the equipment attachment if the Equipment Attachment Type is insufficient..</param>
         public EquipmentAttachment(int Id, Equipment Equipment = null, EquipmentAttachmentType Type = null, int? SeqNum = null, string Description = null)
         {   
@@ -84,10 +84,10 @@ namespace HETSAPI.Models
         public int? TypeRefId { get; set; }
         
         /// <summary>
-        /// TO BE REMOVED - likely not needed. Will talk to business.
+        /// TO BE REVIEWED WITH THE BUSINESS - WHAT IS THIS?
         /// </summary>
-        /// <value>TO BE REMOVED - likely not needed. Will talk to business.</value>
-        [MetaDataExtension (Description = "TO BE REMOVED - likely not needed. Will talk to business.")]
+        /// <value>TO BE REVIEWED WITH THE BUSINESS - WHAT IS THIS?</value>
+        [MetaDataExtension (Description = "TO BE REVIEWED WITH THE BUSINESS - WHAT IS THIS?")]
         public int? SeqNum { get; set; }
         
         /// <summary>
@@ -95,7 +95,7 @@ namespace HETSAPI.Models
         /// </summary>
         /// <value>A description of the equipment attachment if the Equipment Attachment Type is insufficient.</value>
         [MetaDataExtension (Description = "A description of the equipment attachment if the Equipment Attachment Type is insufficient.")]
-        [MaxLength(255)]
+        [MaxLength(2048)]
         
         public string Description { get; set; }
         

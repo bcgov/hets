@@ -23,9 +23,9 @@ using System.ComponentModel.DataAnnotations;
 namespace HETSAPI.Models
 {
     /// <summary>
-    /// The collection of permissions included in a role.
+    /// A permission that is part of a Role - a component of the authorization provided by the Role to the user to which the Role is assigned.
     /// </summary>
-        [MetaDataExtension (Description = "The collection of permissions included in a role.")]
+        [MetaDataExtension (Description = "A permission that is part of a Role - a component of the authorization provided by the Role to the user to which the Role is assigned.")]
 
     public partial class RolePermission : IEquatable<RolePermission>
     {

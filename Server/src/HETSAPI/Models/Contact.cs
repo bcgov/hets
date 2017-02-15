@@ -23,9 +23,9 @@ using System.ComponentModel.DataAnnotations;
 namespace HETSAPI.Models
 {
     /// <summary>
-    /// A table of contacts related to various entities in the system. FK fields are used to link contacts to records in the system.
+    /// A person and their related contact information linked to one or more entities in the system. For examples, there are contacts for Owners, Projects.
     /// </summary>
-        [MetaDataExtension (Description = "A table of contacts related to various entities in the system. FK fields are used to link contacts to records in the system.")]
+        [MetaDataExtension (Description = "A person and their related contact information linked to one or more entities in the system. For examples, there are contacts for Owners, Projects.")]
 
     public partial class Contact : IEquatable<Contact>
     {

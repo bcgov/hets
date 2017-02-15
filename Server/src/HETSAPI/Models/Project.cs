@@ -23,9 +23,9 @@ using System.ComponentModel.DataAnnotations;
 namespace HETSAPI.Models
 {
     /// <summary>
-    /// The set of Provincial Construction Projects by Service Area that contact HETS Clerks to request equipment. The same Construction Project may be in the table multiple times - once per affected Service Area. Limited information is maintained on the projects - primarily a name, a collection of contacts and a collections of equipment rentals.
+    /// A Provincial Project that my from time to time request equipment under the HETS programme from a Service Area.
     /// </summary>
-        [MetaDataExtension (Description = "The set of Provincial Construction Projects by Service Area that contact HETS Clerks to request equipment. The same Construction Project may be in the table multiple times - once per affected Service Area. Limited information is maintained on the projects - primarily a name, a collection of contacts and a collections of equipment rentals.")]
+        [MetaDataExtension (Description = "A Provincial Project that my from time to time request equipment under the HETS programme from a Service Area.")]
 
     public partial class Project : IEquatable<Project>
     {
@@ -41,22 +41,24 @@ namespace HETSAPI.Models
         /// Initializes a new instance of the <see cref="Project" /> class.
         /// </summary>
         /// <param name="Id">A system-generated unique identifier for a Project (required).</param>
-        /// <param name="ServiceArea">The service Area for which this project has requested hired equipment..</param>
-        /// <param name="ProvincialProjectNumber">TO BE VERIFIED - The Provincial charge code for the equipment hiring related to this project. This will be the same across multiple service areas that provide equipment for the same Project..</param>
-        /// <param name="Description">A description entered by the HETS Clerk creating the Project record about the project. The description may contain other metadata about the project needed to process the requests related to the project..</param>
-        /// <param name="Requests">Requests.</param>
+        /// <param name="ServiceArea">The Service Area associated with this Project record..</param>
+        /// <param name="ProvincialProjectNumber">TO BE REVIEWED WITH THE BUSINESS - The Provincial charge code for the equipment hiring related to this project. This will be the same across multiple service areas that provide equipment for the same Project..</param>
+        /// <param name="Name">A descriptive name for the Project, useful to the HETS Clerk and Project Manager..</param>
+        /// <param name="Information">Information about the Project needed by the HETS Clerks. Used for capturing varying (project by project) metadata needed to process requests related to the project..</param>
+        /// <param name="RentalRequests">RentalRequests.</param>
         /// <param name="PrimaryContact">Link to the designated Primary Contact for the Project - usually the Project Manager requesting to hire equipment..</param>
         /// <param name="Contacts">Contacts.</param>
         /// <param name="Notes">Notes.</param>
         /// <param name="Attachments">Attachments.</param>
         /// <param name="History">History.</param>
-        public Project(int Id, ServiceArea ServiceArea = null, string ProvincialProjectNumber = null, string Description = null, List<Request> Requests = null, Contact PrimaryContact = null, List<Contact> Contacts = null, List<Note> Notes = null, List<Attachment> Attachments = null, List<History> History = null)
+        public Project(int Id, ServiceArea ServiceArea = null, string ProvincialProjectNumber = null, string Name = null, string Information = null, List<RentalRequest> RentalRequests = null, Contact PrimaryContact = null, List<Contact> Contacts = null, List<Note> Notes = null, List<Attachment> Attachments = null, List<History> History = null)
         {   
             this.Id = Id;
             this.ServiceArea = ServiceArea;
             this.ProvincialProjectNumber = ProvincialProjectNumber;
-            this.Description = Description;
-            this.Requests = Requests;
+            this.Name = Name;
+            this.Information = Information;
+            this.RentalRequests = RentalRequests;
             this.PrimaryContact = PrimaryContact;
             this.Contacts = Contacts;
             this.Notes = Notes;
@@ -72,10 +74,10 @@ namespace HETSAPI.Models
         public int Id { get; set; }
         
         /// <summary>
-        /// The service Area for which this project has requested hired equipment.
+        /// The Service Area associated with this Project record.
         /// </summary>
-        /// <value>The service Area for which this project has requested hired equipment.</value>
-        [MetaDataExtension (Description = "The service Area for which this project has requested hired equipment.")]
+        /// <value>The Service Area associated with this Project record.</value>
+        [MetaDataExtension (Description = "The Service Area associated with this Project record.")]
         public ServiceArea ServiceArea { get; set; }
         
         /// <summary>
@@ -85,27 +87,36 @@ namespace HETSAPI.Models
         public int? ServiceAreaRefId { get; set; }
         
         /// <summary>
-        /// TO BE VERIFIED - The Provincial charge code for the equipment hiring related to this project. This will be the same across multiple service areas that provide equipment for the same Project.
+        /// TO BE REVIEWED WITH THE BUSINESS - The Provincial charge code for the equipment hiring related to this project. This will be the same across multiple service areas that provide equipment for the same Project.
         /// </summary>
-        /// <value>TO BE VERIFIED - The Provincial charge code for the equipment hiring related to this project. This will be the same across multiple service areas that provide equipment for the same Project.</value>
-        [MetaDataExtension (Description = "TO BE VERIFIED - The Provincial charge code for the equipment hiring related to this project. This will be the same across multiple service areas that provide equipment for the same Project.")]
-        [MaxLength(255)]
+        /// <value>TO BE REVIEWED WITH THE BUSINESS - The Provincial charge code for the equipment hiring related to this project. This will be the same across multiple service areas that provide equipment for the same Project.</value>
+        [MetaDataExtension (Description = "TO BE REVIEWED WITH THE BUSINESS - The Provincial charge code for the equipment hiring related to this project. This will be the same across multiple service areas that provide equipment for the same Project.")]
+        [MaxLength(150)]
         
         public string ProvincialProjectNumber { get; set; }
         
         /// <summary>
-        /// A description entered by the HETS Clerk creating the Project record about the project. The description may contain other metadata about the project needed to process the requests related to the project.
+        /// A descriptive name for the Project, useful to the HETS Clerk and Project Manager.
         /// </summary>
-        /// <value>A description entered by the HETS Clerk creating the Project record about the project. The description may contain other metadata about the project needed to process the requests related to the project.</value>
-        [MetaDataExtension (Description = "A description entered by the HETS Clerk creating the Project record about the project. The description may contain other metadata about the project needed to process the requests related to the project.")]
-        [MaxLength(2048)]
+        /// <value>A descriptive name for the Project, useful to the HETS Clerk and Project Manager.</value>
+        [MetaDataExtension (Description = "A descriptive name for the Project, useful to the HETS Clerk and Project Manager.")]
+        [MaxLength(100)]
         
-        public string Description { get; set; }
+        public string Name { get; set; }
         
         /// <summary>
-        /// Gets or Sets Requests
+        /// Information about the Project needed by the HETS Clerks. Used for capturing varying (project by project) metadata needed to process requests related to the project.
         /// </summary>
-        public List<Request> Requests { get; set; }
+        /// <value>Information about the Project needed by the HETS Clerks. Used for capturing varying (project by project) metadata needed to process requests related to the project.</value>
+        [MetaDataExtension (Description = "Information about the Project needed by the HETS Clerks. Used for capturing varying (project by project) metadata needed to process requests related to the project.")]
+        [MaxLength(2048)]
+        
+        public string Information { get; set; }
+        
+        /// <summary>
+        /// Gets or Sets RentalRequests
+        /// </summary>
+        public List<RentalRequest> RentalRequests { get; set; }
         
         /// <summary>
         /// Link to the designated Primary Contact for the Project - usually the Project Manager requesting to hire equipment.
@@ -151,8 +162,9 @@ namespace HETSAPI.Models
             sb.Append("  Id: ").Append(Id).Append("\n");
             sb.Append("  ServiceArea: ").Append(ServiceArea).Append("\n");
             sb.Append("  ProvincialProjectNumber: ").Append(ProvincialProjectNumber).Append("\n");
-            sb.Append("  Description: ").Append(Description).Append("\n");
-            sb.Append("  Requests: ").Append(Requests).Append("\n");
+            sb.Append("  Name: ").Append(Name).Append("\n");
+            sb.Append("  Information: ").Append(Information).Append("\n");
+            sb.Append("  RentalRequests: ").Append(RentalRequests).Append("\n");
             sb.Append("  PrimaryContact: ").Append(PrimaryContact).Append("\n");
             sb.Append("  Contacts: ").Append(Contacts).Append("\n");
             sb.Append("  Notes: ").Append(Notes).Append("\n");
@@ -211,14 +223,19 @@ namespace HETSAPI.Models
                     this.ProvincialProjectNumber.Equals(other.ProvincialProjectNumber)
                 ) &&                 
                 (
-                    this.Description == other.Description ||
-                    this.Description != null &&
-                    this.Description.Equals(other.Description)
+                    this.Name == other.Name ||
+                    this.Name != null &&
+                    this.Name.Equals(other.Name)
+                ) &&                 
+                (
+                    this.Information == other.Information ||
+                    this.Information != null &&
+                    this.Information.Equals(other.Information)
                 ) && 
                 (
-                    this.Requests == other.Requests ||
-                    this.Requests != null &&
-                    this.Requests.SequenceEqual(other.Requests)
+                    this.RentalRequests == other.RentalRequests ||
+                    this.RentalRequests != null &&
+                    this.RentalRequests.SequenceEqual(other.RentalRequests)
                 ) &&                 
                 (
                     this.PrimaryContact == other.PrimaryContact ||
@@ -267,14 +284,18 @@ namespace HETSAPI.Models
                 {
                     hash = hash * 59 + this.ProvincialProjectNumber.GetHashCode();
                 }                
-                                if (this.Description != null)
+                                if (this.Name != null)
                 {
-                    hash = hash * 59 + this.Description.GetHashCode();
+                    hash = hash * 59 + this.Name.GetHashCode();
+                }                
+                                if (this.Information != null)
+                {
+                    hash = hash * 59 + this.Information.GetHashCode();
                 }                
                                    
-                if (this.Requests != null)
+                if (this.RentalRequests != null)
                 {
-                    hash = hash * 59 + this.Requests.GetHashCode();
+                    hash = hash * 59 + this.RentalRequests.GetHashCode();
                 }                   
                 if (this.PrimaryContact != null)
                 {

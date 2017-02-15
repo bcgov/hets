@@ -23,9 +23,9 @@ using System.ComponentModel.DataAnnotations;
 namespace HETSAPI.Models
 {
     /// <summary>
-    /// The MOTI-defined Regions - must match the official MOTI List
+    /// The Ministry of Transportion and Infrastructure REGION.
     /// </summary>
-        [MetaDataExtension (Description = "The MOTI-defined Regions - must match the official MOTI List")]
+        [MetaDataExtension (Description = "The Ministry of Transportion and Infrastructure REGION.")]
 
     public partial class Region : IEquatable<Region>
     {
@@ -41,18 +41,21 @@ namespace HETSAPI.Models
         /// Initializes a new instance of the <see cref="Region" /> class.
         /// </summary>
         /// <param name="Id">A system-generated unique identifier for a Region (required).</param>
-        /// <param name="MinistryRegionID">The Ministry ID for the Region (required).</param>
-        /// <param name="Name">The name of the Region (required).</param>
-        /// <param name="StartDate">The effective date of the Region record - NOT CURRENTLY ENFORCED IN HETS.</param>
-        /// <param name="EndDate">The end date of the Region record; null if active - NOT CURRENTLY ENFORCED IN HETS.</param>
-        public Region(int Id, int MinistryRegionID, string Name, DateTime? StartDate = null, DateTime? EndDate = null)
+        /// <param name="MinistryRegionID">A system generated unique identifier. NOT GENERATED IN THIS SYSTEM. (required).</param>
+        /// <param name="Name">The name of a Minsitry Region. (required).</param>
+        /// <param name="StartDate">The DATE the business information came into effect. - NOT CURRENTLY ENFORCED IN THIS SYSTEM (required).</param>
+        /// <param name="RegionNumber">A code that uniquely defines a Region..</param>
+        /// <param name="EndDate">The DATE the business information ceased to be in effect. - NOT CURRENTLY ENFORCED IN THIS SYSTEM.</param>
+        public Region(int Id, int MinistryRegionID, string Name, DateTime StartDate, int? RegionNumber = null, DateTime? EndDate = null)
         {   
             this.Id = Id;
             this.MinistryRegionID = MinistryRegionID;
             this.Name = Name;
-
-
             this.StartDate = StartDate;
+
+
+
+            this.RegionNumber = RegionNumber;
             this.EndDate = EndDate;
         }
 
@@ -64,33 +67,40 @@ namespace HETSAPI.Models
         public int Id { get; set; }
         
         /// <summary>
-        /// The Ministry ID for the Region
+        /// A system generated unique identifier. NOT GENERATED IN THIS SYSTEM.
         /// </summary>
-        /// <value>The Ministry ID for the Region</value>
-        [MetaDataExtension (Description = "The Ministry ID for the Region")]
+        /// <value>A system generated unique identifier. NOT GENERATED IN THIS SYSTEM.</value>
+        [MetaDataExtension (Description = "A system generated unique identifier. NOT GENERATED IN THIS SYSTEM.")]
         public int MinistryRegionID { get; set; }
         
         /// <summary>
-        /// The name of the Region
+        /// The name of a Minsitry Region.
         /// </summary>
-        /// <value>The name of the Region</value>
-        [MetaDataExtension (Description = "The name of the Region")]
-        [MaxLength(255)]
+        /// <value>The name of a Minsitry Region.</value>
+        [MetaDataExtension (Description = "The name of a Minsitry Region.")]
+        [MaxLength(150)]
         
         public string Name { get; set; }
         
         /// <summary>
-        /// The effective date of the Region record - NOT CURRENTLY ENFORCED IN HETS
+        /// The DATE the business information came into effect. - NOT CURRENTLY ENFORCED IN THIS SYSTEM
         /// </summary>
-        /// <value>The effective date of the Region record - NOT CURRENTLY ENFORCED IN HETS</value>
-        [MetaDataExtension (Description = "The effective date of the Region record - NOT CURRENTLY ENFORCED IN HETS")]
-        public DateTime? StartDate { get; set; }
+        /// <value>The DATE the business information came into effect. - NOT CURRENTLY ENFORCED IN THIS SYSTEM</value>
+        [MetaDataExtension (Description = "The DATE the business information came into effect. - NOT CURRENTLY ENFORCED IN THIS SYSTEM")]
+        public DateTime StartDate { get; set; }
         
         /// <summary>
-        /// The end date of the Region record; null if active - NOT CURRENTLY ENFORCED IN HETS
+        /// A code that uniquely defines a Region.
         /// </summary>
-        /// <value>The end date of the Region record; null if active - NOT CURRENTLY ENFORCED IN HETS</value>
-        [MetaDataExtension (Description = "The end date of the Region record; null if active - NOT CURRENTLY ENFORCED IN HETS")]
+        /// <value>A code that uniquely defines a Region.</value>
+        [MetaDataExtension (Description = "A code that uniquely defines a Region.")]
+        public int? RegionNumber { get; set; }
+        
+        /// <summary>
+        /// The DATE the business information ceased to be in effect. - NOT CURRENTLY ENFORCED IN THIS SYSTEM
+        /// </summary>
+        /// <value>The DATE the business information ceased to be in effect. - NOT CURRENTLY ENFORCED IN THIS SYSTEM</value>
+        [MetaDataExtension (Description = "The DATE the business information ceased to be in effect. - NOT CURRENTLY ENFORCED IN THIS SYSTEM")]
         public DateTime? EndDate { get; set; }
         
         /// <summary>
@@ -105,6 +115,7 @@ namespace HETSAPI.Models
             sb.Append("  MinistryRegionID: ").Append(MinistryRegionID).Append("\n");
             sb.Append("  Name: ").Append(Name).Append("\n");
             sb.Append("  StartDate: ").Append(StartDate).Append("\n");
+            sb.Append("  RegionNumber: ").Append(RegionNumber).Append("\n");
             sb.Append("  EndDate: ").Append(EndDate).Append("\n");
             sb.Append("}\n");
             return sb.ToString();
@@ -163,6 +174,11 @@ namespace HETSAPI.Models
                     this.StartDate.Equals(other.StartDate)
                 ) &&                 
                 (
+                    this.RegionNumber == other.RegionNumber ||
+                    this.RegionNumber != null &&
+                    this.RegionNumber.Equals(other.RegionNumber)
+                ) &&                 
+                (
                     this.EndDate == other.EndDate ||
                     this.EndDate != null &&
                     this.EndDate.Equals(other.EndDate)
@@ -186,9 +202,13 @@ namespace HETSAPI.Models
                 {
                     hash = hash * 59 + this.Name.GetHashCode();
                 }                
-                                if (this.StartDate != null)
+                                   
+                if (this.StartDate != null)
                 {
                     hash = hash * 59 + this.StartDate.GetHashCode();
+                }                if (this.RegionNumber != null)
+                {
+                    hash = hash * 59 + this.RegionNumber.GetHashCode();
                 }                
                                 if (this.EndDate != null)
                 {

@@ -23,9 +23,9 @@ using System.ComponentModel.DataAnnotations;
 namespace HETSAPI.Models
 {
     /// <summary>
-    /// Attachments uploaded by users about instance of entities - e.g. School Buses and School Bus Owners
+    /// Uploaded documents related to entity in the application - e.g. piece of Equipment, an Owner, a Project and so on.
     /// </summary>
-        [MetaDataExtension (Description = "Attachments uploaded by users about instance of entities - e.g. School Buses and School Bus Owners")]
+        [MetaDataExtension (Description = "Uploaded documents related to entity in the application - e.g. piece of Equipment, an Owner, a Project and so on.")]
 
     public partial class Attachment : IEquatable<Attachment>
     {

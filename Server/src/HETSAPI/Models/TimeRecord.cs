@@ -23,9 +23,9 @@ using System.ComponentModel.DataAnnotations;
 namespace HETSAPI.Models
 {
     /// <summary>
-    /// The time records recorded for a piece of equipment hired for a specific project within a localarea.
+    /// A record of time worked for a piece of equipment hired for a specific project within a Local Area.
     /// </summary>
-        [MetaDataExtension (Description = "The time records recorded for a piece of equipment hired for a specific project within a localarea.")]
+        [MetaDataExtension (Description = "A record of time worked for a piece of equipment hired for a specific project within a Local Area.")]
 
     public partial class TimeRecord : IEquatable<TimeRecord>
     {

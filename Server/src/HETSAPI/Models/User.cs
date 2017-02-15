@@ -23,9 +23,9 @@ using System.ComponentModel.DataAnnotations;
 namespace HETSAPI.Models
 {
     /// <summary>
-    /// Information about the users of the system.
+    /// An identified user in the HETS Application that has a defined authorization level.
     /// </summary>
-        [MetaDataExtension (Description = "Information about the users of the system.")]
+        [MetaDataExtension (Description = "An identified user in the HETS Application that has a defined authorization level.")]
 
     public partial class User : IEquatable<User>
     {
@@ -51,7 +51,8 @@ namespace HETSAPI.Models
         /// <param name="SmAuthorizationDirectory">The user directory service used by Siteminder to authenticate the user - usually IDIR or BCeID..</param>
         /// <param name="UserRoles">UserRoles.</param>
         /// <param name="GroupMemberships">GroupMemberships.</param>
-        public User(int Id, string GivenName, string Surname, bool Active, string Initials = null, string Email = null, string SmUserId = null, string Guid = null, string SmAuthorizationDirectory = null, List<UserRole> UserRoles = null, List<GroupMembership> GroupMemberships = null)
+        /// <param name="District">The District that the User belongs to.</param>
+        public User(int Id, string GivenName, string Surname, bool Active, string Initials = null, string Email = null, string SmUserId = null, string Guid = null, string SmAuthorizationDirectory = null, List<UserRole> UserRoles = null, List<GroupMembership> GroupMemberships = null, District District = null)
         {   
             this.Id = Id;
             this.GivenName = GivenName;
@@ -67,6 +68,7 @@ namespace HETSAPI.Models
             this.SmAuthorizationDirectory = SmAuthorizationDirectory;
             this.UserRoles = UserRoles;
             this.GroupMemberships = GroupMemberships;
+            this.District = District;
         }
 
         /// <summary>
@@ -81,7 +83,7 @@ namespace HETSAPI.Models
         /// </summary>
         /// <value>Given name of the user.</value>
         [MetaDataExtension (Description = "Given name of the user.")]
-        [MaxLength(255)]
+        [MaxLength(50)]
         
         public string GivenName { get; set; }
         
@@ -157,6 +159,19 @@ namespace HETSAPI.Models
         public List<GroupMembership> GroupMemberships { get; set; }
         
         /// <summary>
+        /// The District that the User belongs to
+        /// </summary>
+        /// <value>The District that the User belongs to</value>
+        [MetaDataExtension (Description = "The District that the User belongs to")]
+        public District District { get; set; }
+        
+        /// <summary>
+        /// Foreign key for District 
+        /// </summary>       
+        [ForeignKey("District")]
+        public int? DistrictRefId { get; set; }
+        
+        /// <summary>
         /// Returns the string presentation of the object
         /// </summary>
         /// <returns>String presentation of the object</returns>
@@ -175,6 +190,7 @@ namespace HETSAPI.Models
             sb.Append("  SmAuthorizationDirectory: ").Append(SmAuthorizationDirectory).Append("\n");
             sb.Append("  UserRoles: ").Append(UserRoles).Append("\n");
             sb.Append("  GroupMemberships: ").Append(GroupMemberships).Append("\n");
+            sb.Append("  District: ").Append(District).Append("\n");
             sb.Append("}\n");
             return sb.ToString();
         }
@@ -265,6 +281,11 @@ namespace HETSAPI.Models
                     this.GroupMemberships == other.GroupMemberships ||
                     this.GroupMemberships != null &&
                     this.GroupMemberships.SequenceEqual(other.GroupMemberships)
+                ) &&                 
+                (
+                    this.District == other.District ||
+                    this.District != null &&
+                    this.District.Equals(other.District)
                 );
         }
 
@@ -318,6 +339,10 @@ namespace HETSAPI.Models
                 if (this.GroupMemberships != null)
                 {
                     hash = hash * 59 + this.GroupMemberships.GetHashCode();
+                }                   
+                if (this.District != null)
+                {
+                    hash = hash * 59 + this.District.GetHashCode();
                 }
                 return hash;
             }

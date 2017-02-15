@@ -23,37 +23,37 @@ using System.ComponentModel.DataAnnotations;
 namespace HETSAPI.Models
 {
     /// <summary>
-    /// A collection of requests for equipment to be hired for Provincial Projects. Each request is for one or more instances of a single type of equipment from a single local area.
+    /// A request from a Project for one or more of a type of equipment from a specific Local Area.
     /// </summary>
-        [MetaDataExtension (Description = "A collection of requests for equipment to be hired for Provincial Projects. Each request is for one or more instances of a single type of equipment from a single local area.")]
+        [MetaDataExtension (Description = "A request from a Project for one or more of a type of equipment from a specific Local Area.")]
 
-    public partial class Request : IEquatable<Request>
+    public partial class RentalRequest : IEquatable<RentalRequest>
     {
         /// <summary>
         /// Default constructor, required by entity framework
         /// </summary>
-        public Request()
+        public RentalRequest()
         {
             this.Id = 0;
         }
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="Request" /> class.
+        /// Initializes a new instance of the <see cref="RentalRequest" /> class.
         /// </summary>
         /// <param name="Id">A system-generated unique identifier for a Request (required).</param>
         /// <param name="Project">Project.</param>
         /// <param name="LocalArea">LocalArea.</param>
         /// <param name="EquipmentType">EquipmentType.</param>
-        /// <param name="EquipmentCount">The number of pieces of the equipment type to be procured as part of this request..</param>
+        /// <param name="EquipmentCount">The number of pieces of the equipment type wanted for hire as part of this request..</param>
         /// <param name="ExpectedHours">The expected number of rental hours for each piece equipment hired against this request, as provided by the Project Manager making the request..</param>
         /// <param name="ExpectedStartDate">The expected start date of each piece of equipment hired against this request, as provided by the Project Manager making the request..</param>
         /// <param name="ExpectedEndDate">The expected end date of each piece of equipment hired against this request, as provided by the Project Manager making the request..</param>
-        /// <param name="RotationList">RotationList.</param>
-        /// <param name="HireOffers">HireOffers.</param>
+        /// <param name="FirstOnRotationList">The first piece of equipment on the rotation list at the time of the creation of the request..</param>
         /// <param name="Notes">Notes.</param>
         /// <param name="Attachments">Attachments.</param>
         /// <param name="History">History.</param>
-        public Request(int Id, Project Project = null, LocalArea LocalArea = null, EquipmentType EquipmentType = null, int? EquipmentCount = null, int? ExpectedHours = null, DateTime? ExpectedStartDate = null, DateTime? ExpectedEndDate = null, RotationList RotationList = null, List<HireOffer> HireOffers = null, List<Note> Notes = null, List<Attachment> Attachments = null, List<History> History = null)
+        /// <param name="RentalRequestRotationList">RentalRequestRotationList.</param>
+        public RentalRequest(int Id, Project Project = null, LocalArea LocalArea = null, EquipmentType EquipmentType = null, int? EquipmentCount = null, int? ExpectedHours = null, DateTime? ExpectedStartDate = null, DateTime? ExpectedEndDate = null, Equipment FirstOnRotationList = null, List<Note> Notes = null, List<Attachment> Attachments = null, List<History> History = null, List<RentalRequestRotationList> RentalRequestRotationList = null)
         {   
             this.Id = Id;
             this.Project = Project;
@@ -63,11 +63,11 @@ namespace HETSAPI.Models
             this.ExpectedHours = ExpectedHours;
             this.ExpectedStartDate = ExpectedStartDate;
             this.ExpectedEndDate = ExpectedEndDate;
-            this.RotationList = RotationList;
-            this.HireOffers = HireOffers;
+            this.FirstOnRotationList = FirstOnRotationList;
             this.Notes = Notes;
             this.Attachments = Attachments;
             this.History = History;
+            this.RentalRequestRotationList = RentalRequestRotationList;
         }
 
         /// <summary>
@@ -111,10 +111,10 @@ namespace HETSAPI.Models
         public int? EquipmentTypeRefId { get; set; }
         
         /// <summary>
-        /// The number of pieces of the equipment type to be procured as part of this request.
+        /// The number of pieces of the equipment type wanted for hire as part of this request.
         /// </summary>
-        /// <value>The number of pieces of the equipment type to be procured as part of this request.</value>
-        [MetaDataExtension (Description = "The number of pieces of the equipment type to be procured as part of this request.")]
+        /// <value>The number of pieces of the equipment type wanted for hire as part of this request.</value>
+        [MetaDataExtension (Description = "The number of pieces of the equipment type wanted for hire as part of this request.")]
         public int? EquipmentCount { get; set; }
         
         /// <summary>
@@ -139,20 +139,17 @@ namespace HETSAPI.Models
         public DateTime? ExpectedEndDate { get; set; }
         
         /// <summary>
-        /// Gets or Sets RotationList
+        /// The first piece of equipment on the rotation list at the time of the creation of the request.
         /// </summary>
-        public RotationList RotationList { get; set; }
+        /// <value>The first piece of equipment on the rotation list at the time of the creation of the request.</value>
+        [MetaDataExtension (Description = "The first piece of equipment on the rotation list at the time of the creation of the request.")]
+        public Equipment FirstOnRotationList { get; set; }
         
         /// <summary>
-        /// Foreign key for RotationList 
+        /// Foreign key for FirstOnRotationList 
         /// </summary>       
-        [ForeignKey("RotationList")]
-        public int? RotationListRefId { get; set; }
-        
-        /// <summary>
-        /// Gets or Sets HireOffers
-        /// </summary>
-        public List<HireOffer> HireOffers { get; set; }
+        [ForeignKey("FirstOnRotationList")]
+        public int? FirstOnRotationListRefId { get; set; }
         
         /// <summary>
         /// Gets or Sets Notes
@@ -170,13 +167,18 @@ namespace HETSAPI.Models
         public List<History> History { get; set; }
         
         /// <summary>
+        /// Gets or Sets RentalRequestRotationList
+        /// </summary>
+        public List<RentalRequestRotationList> RentalRequestRotationList { get; set; }
+        
+        /// <summary>
         /// Returns the string presentation of the object
         /// </summary>
         /// <returns>String presentation of the object</returns>
         public override string ToString()
         {
             var sb = new StringBuilder();
-            sb.Append("class Request {\n");
+            sb.Append("class RentalRequest {\n");
             sb.Append("  Id: ").Append(Id).Append("\n");
             sb.Append("  Project: ").Append(Project).Append("\n");
             sb.Append("  LocalArea: ").Append(LocalArea).Append("\n");
@@ -185,11 +187,11 @@ namespace HETSAPI.Models
             sb.Append("  ExpectedHours: ").Append(ExpectedHours).Append("\n");
             sb.Append("  ExpectedStartDate: ").Append(ExpectedStartDate).Append("\n");
             sb.Append("  ExpectedEndDate: ").Append(ExpectedEndDate).Append("\n");
-            sb.Append("  RotationList: ").Append(RotationList).Append("\n");
-            sb.Append("  HireOffers: ").Append(HireOffers).Append("\n");
+            sb.Append("  FirstOnRotationList: ").Append(FirstOnRotationList).Append("\n");
             sb.Append("  Notes: ").Append(Notes).Append("\n");
             sb.Append("  Attachments: ").Append(Attachments).Append("\n");
             sb.Append("  History: ").Append(History).Append("\n");
+            sb.Append("  RentalRequestRotationList: ").Append(RentalRequestRotationList).Append("\n");
             sb.Append("}\n");
             return sb.ToString();
         }
@@ -213,15 +215,15 @@ namespace HETSAPI.Models
             if (ReferenceEquals(null, obj)) { return false; }
             if (ReferenceEquals(this, obj)) { return true; }
             if (obj.GetType() != GetType()) { return false; }
-            return Equals((Request)obj);
+            return Equals((RentalRequest)obj);
         }
 
         /// <summary>
-        /// Returns true if Request instances are equal
+        /// Returns true if RentalRequest instances are equal
         /// </summary>
-        /// <param name="other">Instance of Request to be compared</param>
+        /// <param name="other">Instance of RentalRequest to be compared</param>
         /// <returns>Boolean</returns>
-        public bool Equals(Request other)
+        public bool Equals(RentalRequest other)
         {
 
             if (ReferenceEquals(null, other)) { return false; }
@@ -268,14 +270,9 @@ namespace HETSAPI.Models
                     this.ExpectedEndDate.Equals(other.ExpectedEndDate)
                 ) &&                 
                 (
-                    this.RotationList == other.RotationList ||
-                    this.RotationList != null &&
-                    this.RotationList.Equals(other.RotationList)
-                ) && 
-                (
-                    this.HireOffers == other.HireOffers ||
-                    this.HireOffers != null &&
-                    this.HireOffers.SequenceEqual(other.HireOffers)
+                    this.FirstOnRotationList == other.FirstOnRotationList ||
+                    this.FirstOnRotationList != null &&
+                    this.FirstOnRotationList.Equals(other.FirstOnRotationList)
                 ) && 
                 (
                     this.Notes == other.Notes ||
@@ -291,6 +288,11 @@ namespace HETSAPI.Models
                     this.History == other.History ||
                     this.History != null &&
                     this.History.SequenceEqual(other.History)
+                ) && 
+                (
+                    this.RentalRequestRotationList == other.RentalRequestRotationList ||
+                    this.RentalRequestRotationList != null &&
+                    this.RentalRequestRotationList.SequenceEqual(other.RentalRequestRotationList)
                 );
         }
 
@@ -335,13 +337,9 @@ namespace HETSAPI.Models
                     hash = hash * 59 + this.ExpectedEndDate.GetHashCode();
                 }                
                                    
-                if (this.RotationList != null)
+                if (this.FirstOnRotationList != null)
                 {
-                    hash = hash * 59 + this.RotationList.GetHashCode();
-                }                   
-                if (this.HireOffers != null)
-                {
-                    hash = hash * 59 + this.HireOffers.GetHashCode();
+                    hash = hash * 59 + this.FirstOnRotationList.GetHashCode();
                 }                   
                 if (this.Notes != null)
                 {
@@ -354,6 +352,10 @@ namespace HETSAPI.Models
                 if (this.History != null)
                 {
                     hash = hash * 59 + this.History.GetHashCode();
+                }                   
+                if (this.RentalRequestRotationList != null)
+                {
+                    hash = hash * 59 + this.RentalRequestRotationList.GetHashCode();
                 }
                 return hash;
             }
@@ -367,7 +369,7 @@ namespace HETSAPI.Models
         /// <param name="left"></param>
         /// <param name="right"></param>
         /// <returns></returns>
-        public static bool operator ==(Request left, Request right)
+        public static bool operator ==(RentalRequest left, RentalRequest right)
         {
             return Equals(left, right);
         }
@@ -378,7 +380,7 @@ namespace HETSAPI.Models
         /// <param name="left"></param>
         /// <param name="right"></param>
         /// <returns></returns>
-        public static bool operator !=(Request left, Request right)
+        public static bool operator !=(RentalRequest left, RentalRequest right)
         {
             return !Equals(left, right);
         }

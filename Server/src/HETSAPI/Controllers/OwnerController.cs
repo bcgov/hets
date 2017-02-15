@@ -114,6 +114,37 @@ namespace HETSAPI.Controllers
         /// <summary>
         /// 
         /// </summary>
+        /// <remarks>Gets an Owner&#39;s Equipment</remarks>
+        /// <param name="id">id of Owner to fetch Equipment for</param>
+        /// <response code="200">OK</response>
+        [HttpGet]
+        [Route("/api/owners/{id}/equipment")]
+        [SwaggerOperation("OwnersIdEquipmentGet")]
+        [SwaggerResponse(200, type: typeof(List<Equipment>))]
+        public virtual IActionResult OwnersIdEquipmentGet([FromRoute]int id)
+        {
+            return this._service.OwnersIdEquipmentGetAsync(id);
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <remarks>Replaces an Owner&#39;s Equipment</remarks>
+        /// <param name="id">id of Owner to replace Equipment for</param>
+        /// <param name="item">Replacement Owner Equipment.</param>
+        /// <response code="200">OK</response>
+        [HttpPut]
+        [Route("/api/owners/{id}/equipment")]
+        [SwaggerOperation("OwnersIdEquipmentPut")]
+        [SwaggerResponse(200, type: typeof(List<Equipment>))]
+        public virtual IActionResult OwnersIdEquipmentPut([FromRoute]int id, [FromBody]Equipment[] item)
+        {
+            return this._service.OwnersIdEquipmentPutAsync(id, item);
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
         /// <param name="id">id of Owner to fetch</param>
         /// <response code="200">OK</response>
         /// <response code="404">Owner not found</response>

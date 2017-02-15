@@ -54,7 +54,7 @@ namespace HETSAPI.Test
 
             // create a new object.
             Owner owner = new Owner();
-            owner.Comment = initialName;
+            owner.OrganizationName = initialName;
             string jsonString = owner.ToJson();
 
             request.Content = new StringContent(jsonString, Encoding.UTF8, "application/json");
@@ -69,7 +69,7 @@ namespace HETSAPI.Test
             // get the id
             var id = owner.Id;
             // change the name
-            owner.Comment = changedName;
+            owner.OrganizationName = changedName;
 
             // now do an update.
             request = new HttpRequestMessage(HttpMethod.Put, "/api/owners/" + id);
@@ -87,7 +87,7 @@ namespace HETSAPI.Test
             owner = JsonConvert.DeserializeObject<Owner>(jsonString);
 
             // verify the change went through.
-            Assert.Equal(owner.Comment, changedName);
+            Assert.Equal(owner.OrganizationName, changedName);
 
             // do a delete.
             request = new HttpRequestMessage(HttpMethod.Post, "/api/owners/" + id + "/delete");
@@ -113,7 +113,7 @@ namespace HETSAPI.Test
 
             // create a new object.
             Owner owner = new Owner();
-            owner.Comment = initialName;
+            owner.OrganizationName = initialName;
             string jsonString = owner.ToJson();
 
             request.Content = new StringContent(jsonString, Encoding.UTF8, "application/json");
@@ -128,7 +128,7 @@ namespace HETSAPI.Test
             // get the id
             var id = owner.Id;
             // change the name
-            owner.Comment = changedName;
+            owner.OrganizationName = changedName;
 
             // get contacts should be empty.
             request = new HttpRequestMessage(HttpMethod.Get, "/api/owners/" + id + "/contacts");

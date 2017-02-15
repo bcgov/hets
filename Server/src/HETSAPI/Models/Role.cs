@@ -23,9 +23,9 @@ using System.ComponentModel.DataAnnotations;
 namespace HETSAPI.Models
 {
     /// <summary>
-    /// A table managed in the application by authorized users to create named Roles that can be assigned to Users as needed. Roles can be created as needed to support the users of the system and the roles they perform within the organization.
+    /// A HETS application-managed Role that has a selected list of permissions and can be assigned to Users. A role coresponds to the authorization level provided a user based on the work for which they are responsible.
     /// </summary>
-        [MetaDataExtension (Description = "A table managed in the application by authorized users to create named Roles that can be assigned to Users as needed. Roles can be created as needed to support the users of the system and the roles they perform within the organization.")]
+        [MetaDataExtension (Description = "A HETS application-managed Role that has a selected list of permissions and can be assigned to Users. A role coresponds to the authorization level provided a user based on the work for which they are responsible.")]
 
     public partial class Role : IEquatable<Role>
     {
@@ -77,7 +77,7 @@ namespace HETSAPI.Models
         /// </summary>
         /// <value>A description of the role as set by the user creating&#x2F;updating the role.</value>
         [MetaDataExtension (Description = "A description of the role as set by the user creating&#x2F;updating the role.")]
-        [MaxLength(255)]
+        [MaxLength(2048)]
         
         public string Description { get; set; }
         
