@@ -128,6 +128,20 @@ namespace HETSAPI.Controllers
         /// <summary>
         /// 
         /// </summary>
+        /// <param name="id">id of Equipment to fetch EquipmentViewModel for</param>
+        /// <response code="200">OK</response>
+        [HttpGet]
+        [Route("/api/equipment/{id}/view")]
+        [SwaggerOperation("EquipmentIdViewGet")]
+        [SwaggerResponse(200, type: typeof(EquipmentViewModel))]
+        public virtual IActionResult EquipmentIdViewGet([FromRoute]int id)
+        {
+            return this._service.EquipmentIdViewGetAsync(id);
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
         /// <param name="item"></param>
         /// <response code="201">Equipment created</response>
         [HttpPost]

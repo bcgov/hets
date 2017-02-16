@@ -76,6 +76,26 @@
             type: array
             items:
               $ref: "#/definitions/EquipmentAttachment"
+  /equipment/{id}/view:
+    get:
+      tags:
+        - Equipment
+      consumes: []
+      produces:
+        - text/plain
+        - application/json
+        - text/json
+      parameters:
+        - name: id
+          in: path
+          description: id of Equipment to fetch EquipmentViewModel for
+          required: true
+          type: integer
+      responses:
+        200:
+          description: OK
+          schema:
+            $ref: "#/definitions/EquipmentViewModel"
   /owners/search:
     get:
       summary: Searches Owners

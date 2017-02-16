@@ -15,9 +15,9 @@ namespace HETSAPI.Mappings
             dto.Active = model.Active;
             dto.Email = model.Email;
             dto.GivenName = model.GivenName;
-            dto.Initials = model.Initials;
             dto.Surname = model.Surname;
             dto.Id = model.Id;
+            dto.District = model.District;
             return dto;
         }
 
@@ -61,6 +61,53 @@ namespace HETSAPI.Mappings
             dto.Code = model.Code;
             dto.Name = model.Name;
             dto.Description = model.Description;
+            return dto;
+        }
+
+        public static EquipmentViewModel ToViewModel(this Equipment model)
+        {
+            var dto = new EquipmentViewModel();
+            dto.ApprovedDate = model.ApprovedDate;
+            dto.ArchiveCode = model.ArchiveCode;
+            dto.ArchiveDate = model.ArchiveDate;
+            dto.ArchiveReason = model.ArchiveReason;
+            dto.Attachments = model.Attachments;
+            dto.BlockNumber = model.BlockNumber;
+            dto.DumpTruck = model.DumpTruck;            
+            dto.EquipCode = model.EquipCode;
+            dto.EquipmentAttachments = model.EquipmentAttachments;
+            dto.EquipmentType = model.EquipmentType;
+            dto.History = model.History;
+            dto.Id = model.Id;
+            dto.InformationUpdateNeededReason = model.InformationUpdateNeededReason;
+            dto.IsInformationUpdateNeeded = model.IsInformationUpdateNeeded;
+            dto.IsSeniorityOverridden = model.IsSeniorityOverridden;
+            dto.LastVerifiedDate = model.LastVerifiedDate;
+            dto.LicencePlate = model.LicencePlate;
+            dto.LocalArea = model.LocalArea;
+            dto.Make = model.Make;
+            dto.Model = model.Model;
+            dto.Notes = model.Notes;
+            dto.Operator = model.Operator;
+            dto.Owner = model.Owner;
+            dto.PayRate = model.PayRate;
+            dto.ReceivedDate = model.ReceivedDate;
+            dto.RefuseRate = model.RefuseRate;
+            dto.Seniority = model.Seniority;
+            dto.SeniorityAudit = model.SeniorityAudit;
+            dto.SeniorityEffectiveDate = model.SeniorityEffectiveDate;
+            dto.SeniorityOverrideReason = model.SeniorityOverrideReason;
+            dto.SerialNum = model.SerialNum;
+            dto.ServiceHoursLastYear = model.ServiceHoursLastYear;
+            dto.ServiceHoursTwoYearsAgo = model.ServiceHoursTwoYearsAgo;
+            dto.ServiceHoursThreeYearsAgo = model.ServiceHoursThreeYearsAgo;
+            dto.Size = model.Size;
+            dto.Status = model.Status;
+            dto.ToDate = model.ToDate;
+            dto.Type = model.Type;
+            dto.Year = model.Year;
+            dto.YearsOfService = model.YearsOfService;
+
             return dto;
         }
 

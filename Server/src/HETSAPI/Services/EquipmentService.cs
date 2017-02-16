@@ -77,6 +77,13 @@ namespace HETSAPI.Services
         /// <summary>
         /// 
         /// </summary>
+        /// <param name="id">id of Equipment to fetch EquipmentViewModel for</param>
+        /// <response code="200">OK</response>
+        IActionResult EquipmentIdViewGetAsync(int id);
+
+        /// <summary>
+        /// 
+        /// </summary>
         /// <param name="item"></param>
         /// <response code="201">Equipment created</response>
         IActionResult EquipmentPostAsync(Equipment item);
