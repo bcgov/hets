@@ -301,6 +301,13 @@ definitions:
         type: number
         format: float
         description: The current seniority calculation result for this piece of equipment. The calculation is based on the &quot;numYears&quot; of service + average hours of service over the last three fiscal years - as stored in the related fields (serviceHoursLastYear, serviceHoursTwoYearsAgo serviceHoursThreeYearsAgo).
+      isSeniorityOverridden:
+        type: boolean
+        description: True if the Seniority for the piece of equipment was manually overridden. Set if a user has gone in and explicitly updated the seniority base information. Indicates that underlying numbers were manually overridden.
+      seniorityOverrideReason:
+        type: string
+        maxLength: 2048
+        description: A text reason for why the piece of equipments underlying data was overridden to change their seniority number.
       seniorityEffectiveDate:
         type: string
         format: date-time
@@ -638,6 +645,17 @@ definitions:
         type: string
         maxLength: 150
         description: The name of the organization of the Owner. May simply be the First Name, Last Name of the Owner if the Owner is a sole proprietorship, or the name of a company.
+      doingBusinessAs:
+        type: string
+        maxLength: 150
+        description: An official (per BC Registries) alternate name for an Owner organization under which it does business. The application does not verify the name against any registry&#x2F;lookup. 
+      registeredCompanyNumber:
+        type: string
+        maxLength: 150
+        description: The BC Registries number under which the business is registered.  The application does not verify the number against any registry&#x2F;lookup.
+      meetsResidency:
+        type: boolean
+        description: True to indicate that the owner of the business has confirmed to the HETS Clerk that they meet the residency requirements of the HETS programme. See the published information about the MOTI HETS programme for information on the owner residency requirements.
       primaryContact:
         $ref: '#/definitions/Contact'
         description: Link to the designated Primary Contact.
@@ -739,7 +757,6 @@ definitions:
       id:
         format: int32
         type: integer
-        uniqueItems: true
         description: A system-generated unique identifier for a ContactPhone
       type:
         type: string
@@ -758,7 +775,6 @@ definitions:
       id:
         format: int32
         type: integer
-        uniqueItems: true
         description: A system-generated unique identifier for a ContactAddress
       type:
         type: string
@@ -794,7 +810,6 @@ definitions:
       id:
         format: int32
         type: integer
-        uniqueItems: true
         description: A system-generated unique identifier for a Note
       text:
         type: string
@@ -814,7 +829,6 @@ definitions:
       id:
         format: int32
         type: integer
-        uniqueItems: true
         description: A system-generated unique identifier for an Attachment
       internalFileName:
         type: string
@@ -838,7 +852,6 @@ definitions:
       id:
         format: int32
         type: integer
-        uniqueItems: true
         description: A system-generated unique identifier for a History
       historyText:
         type: string
@@ -871,7 +884,6 @@ definitions:
       id:
         format: int32
         type: integer
-        uniqueItems: true
         description: A system-generated unique identifier for a UserFavourite
       name:
         type: string
@@ -903,7 +915,6 @@ definitions:
       id:
         format: int32
         type: integer
-        uniqueItems: true
         description: A system-generated unique identifier for a Region
       ministryRegionID:
         format: int32
@@ -939,7 +950,6 @@ definitions:
       id:
         format: int32
         type: integer
-        uniqueItems: true
         description: A system-generated unique identifier for a District
       ministryDistrictID:
         format: int32
@@ -1041,7 +1051,6 @@ definitions:
       id:
         format: int32
         type: integer
-        uniqueItems: true
         description: A system-generated unique identifier for a City
       name:
         type: string
@@ -1059,7 +1068,6 @@ definitions:
       id:
         format: int32
         type: integer
-        uniqueItems: true
         description: A system-generated unique identifier for a User
       givenName:
         type: string
@@ -1100,6 +1108,9 @@ definitions:
         type: array
         items:
           $ref: '#/definitions/GroupMembership'
+      District:
+        $ref: '#/definitions/District'
+        description: The District that the User belongs to
   UserRole:
     type: object
     description: A join table that provides allows each user to have any number of Roles in the system.  At login time the user is given the sum of the permissions of the roles assigned to that user. 
