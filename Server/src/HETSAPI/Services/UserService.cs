@@ -95,10 +95,10 @@ namespace HETSAPI.Services
         /// </summary>
         /// <remarks>Add to the active set of groups for a user</remarks>
         /// <param name="id">id of User to update</param>
-        /// <param name="items"></param>
+        /// <param name="item"></param>
         /// <response code="200">OK</response>
         /// <response code="404">User not found</response>
-        IActionResult UsersIdGroupsPostAsync(int id, GroupMembership[] items);
+        IActionResult UsersIdGroupsPostAsync(int id, GroupMembershipViewModel item);
 
         /// <summary>
         /// 
@@ -108,7 +108,7 @@ namespace HETSAPI.Services
         /// <param name="items"></param>
         /// <response code="200">OK</response>
         /// <response code="404">User not found</response>
-        IActionResult UsersIdGroupsPutAsync(int id, GroupMembership[] items);
+        IActionResult UsersIdGroupsPutAsync(int id, GroupMembershipViewModel[] items);
 
         /// <summary>
         /// 

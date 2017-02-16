@@ -1083,7 +1083,7 @@ paths:
           schema:
             type: array
             items:
-              $ref: "#/definitions/Role"
+              $ref: "#/definitions/RoleViewModel"
     post:
       tags:
         - Role
@@ -1098,7 +1098,7 @@ paths:
           in: body
           required: true
           schema:
-            $ref: "#/definitions/Role"
+            $ref: "#/definitions/RoleViewModel"
       responses:
         201:
           description: Role created
@@ -1108,7 +1108,7 @@ paths:
               type: string
               format: url
           schema:
-            $ref: "#/definitions/Role"  
+            $ref: "#/definitions/RoleViewModel"  
   /roles/{id}:
     get:
       tags:
@@ -1122,7 +1122,7 @@ paths:
         200:
           description: OK
           schema:
-            $ref: "#/definitions/Role"
+            $ref: "#/definitions/RoleViewModel"
         404:
           description: Role not found
       parameters:
@@ -1144,7 +1144,7 @@ paths:
         200:
           description: OK
           schema:
-            $ref: "#/definitions/Role"
+            $ref: "#/definitions/RoleViewModel"
         404:
           description: Role not found
       parameters:
@@ -1157,7 +1157,7 @@ paths:
           in: body
           required: true
           schema:
-            $ref: "#/definitions/Role"
+            $ref: "#/definitions/RoleViewModel"
   /roles/{id}/delete:
     post:
       tags:
@@ -3489,7 +3489,7 @@ paths:
           schema:
             type: array
             items:
-              $ref: "#/definitions/GroupMembership"
+              $ref: "#/definitions/GroupMembershipViewModel"
       responses:
         200:
           description: OK
@@ -3515,13 +3515,11 @@ paths:
           description: id of User to update
           required: true
           type: integer
-        - name: items
+        - name: item
           in: body
           required: true
           schema:
-            type: array
-            items:
-              $ref: "#/definitions/GroupMembership"
+            $ref: "#/definitions/GroupMembershipViewModel"
       responses:
         200:
           description: OK
@@ -3530,7 +3528,7 @@ paths:
             items:
               $ref: "#/definitions/GroupMembershipViewModel"
         404:
-          description: User not found
+          description: User not found  
   /users/{id}/favourites:
     get:
       description: Returns a user's favourites of a given context type
@@ -3599,6 +3597,32 @@ paths:
           description: id of District for which to fetch the ServiceAreas
           required: true
           type: integer
+  /groups/{id}/users:
+    get:
+      summary: returns users in a given Group
+      description:
+        Used to get users in a given Group
+      tags:
+        - Group
+      consumes:
+        - application/json
+      produces:
+        - text/plain
+        - application/json
+        - text/json
+      parameters:
+        - name: id
+          in: path
+          description: id of Group to fetch Users for
+          required: true
+          type: integer
+      responses:
+        200:
+          description: OK
+          schema:
+            type: array
+            items:
+              $ref: "#/definitions/UserViewModel"
 definitions:
   Project:
     type: object
@@ -4856,14 +4880,25 @@ definitions:
         x-chance-type: name
       surname:
         type: string
-        x-chance-type: name
-      initials:
-        type: string
+        x-chance-type: name      
       email:
         type: string
         x-chance-type: email
       active:
         type: boolean
+      smUserId:
+        type: string
+      userRoles:
+        type: array
+        items:
+          $ref: '#/definitions/UserRole'
+      groupMemberships:
+        type: array
+        items:
+          $ref: '#/definitions/GroupMembership'
+      district:
+        $ref: '#/definitions/District'
+        description: The District to which this User is affliated.
   CurrentUserViewModel:
     type: object
     x-codegen-viewmodel: true
@@ -4873,20 +4908,23 @@ definitions:
         x-chance-type: name
       surname:
         type: string
-        x-chance-type: name
-      fullName:
+        x-chance-type: name      
+      email:
         type: string
-      districtName:
-        type: string
-      overdueInspections:
-        format: int32
-        type: integer
-      scheduledInspections:
-        format: int32
-        type: integer
-      dueNextMonthInspections:
-        format: int32
-        type: integer
+        x-chance-type: email
+      active:
+        type: boolean
+      userRoles:
+        type: array
+        items:
+          $ref: '#/definitions/UserRole'
+      groupMemberships:
+        type: array
+        items:
+          $ref: '#/definitions/GroupMembership'
+      district:
+        $ref: '#/definitions/District'
+        description: The District to which this User is affliated.
   UserDetailsViewModel:
     type: object
     x-codegen-viewmodel: true
@@ -4937,12 +4975,6 @@ definitions:
       expiryDate:
         type: string
         format: date-time
-      userId:
-        format: int32
-        type: integer
-        x-type-options:
-          min: 1
-          max: 1000
       roleId:
         format: int32
         type: integer

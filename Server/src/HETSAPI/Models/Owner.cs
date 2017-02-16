@@ -43,6 +43,9 @@ namespace HETSAPI.Models
         /// <param name="Id">A system-generated unique identifier for a Owner (required).</param>
         /// <param name="OwnerEquipmentCodePrefix">A unique prefix in the system that is used to generate the human-friendly IDs of the equipment. E.g. An owner Edwards might have a prefix &amp;quot;EDW&amp;quot; and their equipment numbered sequentially with that prefix - e.g. EDW-0082. (required).</param>
         /// <param name="OrganizationName">The name of the organization of the Owner. May simply be the First Name, Last Name of the Owner if the Owner is a sole proprietorship, or the name of a company..</param>
+        /// <param name="DoingBusinessAs">An official (per BC Registries) alternate name for an Owner organization under which it does business. The application does not verify the name against any registry&amp;#x2F;lookup..</param>
+        /// <param name="RegisteredCompanyNumber">The BC Registries number under which the business is registered.  The application does not verify the number against any registry&amp;#x2F;lookup..</param>
+        /// <param name="MeetsResidency">True to indicate that the owner of the business has confirmed to the HETS Clerk that they meet the residency requirements of the HETS programme. See the published information about the MOTI HETS programme for information on the owner residency requirements..</param>
         /// <param name="PrimaryContact">Link to the designated Primary Contact..</param>
         /// <param name="LocalArea">LocalArea.</param>
         /// <param name="IsMaintenanceContractor">True if the owner is contracted by MOTI to handle Maintenance activities in the area - e.g. provided services in address unscheduled issues on the roads in the area..</param>
@@ -57,12 +60,15 @@ namespace HETSAPI.Models
         /// <param name="Attachments">Attachments.</param>
         /// <param name="History">History.</param>
         /// <param name="EquipmentList">EquipmentList.</param>
-        public Owner(int Id, string OwnerEquipmentCodePrefix, string OrganizationName = null, Contact PrimaryContact = null, LocalArea LocalArea = null, bool? IsMaintenanceContractor = null, DateTime? WCBExpiryDate = null, DateTime? CGLEndDate = null, string Status = null, string ArchiveCode = null, string ArchiveReason = null, DateTime? ArchiveDate = null, List<Contact> Contacts = null, List<Note> Notes = null, List<Attachment> Attachments = null, List<History> History = null, List<Equipment> EquipmentList = null)
+        public Owner(int Id, string OwnerEquipmentCodePrefix, string OrganizationName = null, string DoingBusinessAs = null, string RegisteredCompanyNumber = null, bool? MeetsResidency = null, Contact PrimaryContact = null, LocalArea LocalArea = null, bool? IsMaintenanceContractor = null, DateTime? WCBExpiryDate = null, DateTime? CGLEndDate = null, string Status = null, string ArchiveCode = null, string ArchiveReason = null, DateTime? ArchiveDate = null, List<Contact> Contacts = null, List<Note> Notes = null, List<Attachment> Attachments = null, List<History> History = null, List<Equipment> EquipmentList = null)
         {   
             this.Id = Id;
             this.OwnerEquipmentCodePrefix = OwnerEquipmentCodePrefix;
 
             this.OrganizationName = OrganizationName;
+            this.DoingBusinessAs = DoingBusinessAs;
+            this.RegisteredCompanyNumber = RegisteredCompanyNumber;
+            this.MeetsResidency = MeetsResidency;
             this.PrimaryContact = PrimaryContact;
             this.LocalArea = LocalArea;
             this.IsMaintenanceContractor = IsMaintenanceContractor;
@@ -103,6 +109,31 @@ namespace HETSAPI.Models
         [MaxLength(150)]
         
         public string OrganizationName { get; set; }
+        
+        /// <summary>
+        /// An official (per BC Registries) alternate name for an Owner organization under which it does business. The application does not verify the name against any registry&#x2F;lookup.
+        /// </summary>
+        /// <value>An official (per BC Registries) alternate name for an Owner organization under which it does business. The application does not verify the name against any registry&#x2F;lookup.</value>
+        [MetaDataExtension (Description = "An official (per BC Registries) alternate name for an Owner organization under which it does business. The application does not verify the name against any registry&#x2F;lookup.")]
+        [MaxLength(150)]
+        
+        public string DoingBusinessAs { get; set; }
+        
+        /// <summary>
+        /// The BC Registries number under which the business is registered.  The application does not verify the number against any registry&#x2F;lookup.
+        /// </summary>
+        /// <value>The BC Registries number under which the business is registered.  The application does not verify the number against any registry&#x2F;lookup.</value>
+        [MetaDataExtension (Description = "The BC Registries number under which the business is registered.  The application does not verify the number against any registry&#x2F;lookup.")]
+        [MaxLength(150)]
+        
+        public string RegisteredCompanyNumber { get; set; }
+        
+        /// <summary>
+        /// True to indicate that the owner of the business has confirmed to the HETS Clerk that they meet the residency requirements of the HETS programme. See the published information about the MOTI HETS programme for information on the owner residency requirements.
+        /// </summary>
+        /// <value>True to indicate that the owner of the business has confirmed to the HETS Clerk that they meet the residency requirements of the HETS programme. See the published information about the MOTI HETS programme for information on the owner residency requirements.</value>
+        [MetaDataExtension (Description = "True to indicate that the owner of the business has confirmed to the HETS Clerk that they meet the residency requirements of the HETS programme. See the published information about the MOTI HETS programme for information on the owner residency requirements.")]
+        public bool? MeetsResidency { get; set; }
         
         /// <summary>
         /// Link to the designated Primary Contact.
@@ -219,6 +250,9 @@ namespace HETSAPI.Models
             sb.Append("  Id: ").Append(Id).Append("\n");
             sb.Append("  OwnerEquipmentCodePrefix: ").Append(OwnerEquipmentCodePrefix).Append("\n");
             sb.Append("  OrganizationName: ").Append(OrganizationName).Append("\n");
+            sb.Append("  DoingBusinessAs: ").Append(DoingBusinessAs).Append("\n");
+            sb.Append("  RegisteredCompanyNumber: ").Append(RegisteredCompanyNumber).Append("\n");
+            sb.Append("  MeetsResidency: ").Append(MeetsResidency).Append("\n");
             sb.Append("  PrimaryContact: ").Append(PrimaryContact).Append("\n");
             sb.Append("  LocalArea: ").Append(LocalArea).Append("\n");
             sb.Append("  IsMaintenanceContractor: ").Append(IsMaintenanceContractor).Append("\n");
@@ -284,6 +318,21 @@ namespace HETSAPI.Models
                     this.OrganizationName == other.OrganizationName ||
                     this.OrganizationName != null &&
                     this.OrganizationName.Equals(other.OrganizationName)
+                ) &&                 
+                (
+                    this.DoingBusinessAs == other.DoingBusinessAs ||
+                    this.DoingBusinessAs != null &&
+                    this.DoingBusinessAs.Equals(other.DoingBusinessAs)
+                ) &&                 
+                (
+                    this.RegisteredCompanyNumber == other.RegisteredCompanyNumber ||
+                    this.RegisteredCompanyNumber != null &&
+                    this.RegisteredCompanyNumber.Equals(other.RegisteredCompanyNumber)
+                ) &&                 
+                (
+                    this.MeetsResidency == other.MeetsResidency ||
+                    this.MeetsResidency != null &&
+                    this.MeetsResidency.Equals(other.MeetsResidency)
                 ) &&                 
                 (
                     this.PrimaryContact == other.PrimaryContact ||
@@ -376,6 +425,18 @@ namespace HETSAPI.Models
                                 if (this.OrganizationName != null)
                 {
                     hash = hash * 59 + this.OrganizationName.GetHashCode();
+                }                
+                                if (this.DoingBusinessAs != null)
+                {
+                    hash = hash * 59 + this.DoingBusinessAs.GetHashCode();
+                }                
+                                if (this.RegisteredCompanyNumber != null)
+                {
+                    hash = hash * 59 + this.RegisteredCompanyNumber.GetHashCode();
+                }                
+                                if (this.MeetsResidency != null)
+                {
+                    hash = hash * 59 + this.MeetsResidency.GetHashCode();
                 }                
                                    
                 if (this.PrimaryContact != null)

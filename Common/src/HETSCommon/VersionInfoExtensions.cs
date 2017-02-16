@@ -3,6 +3,7 @@ using Microsoft.EntityFrameworkCore.Infrastructure;
 using System;
 using System.Collections.Generic;
 using System.Data.Common;
+using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Runtime.Versioning;
@@ -38,16 +39,19 @@ namespace HETSCommon
             return info;
         }
 
-        public static ApplicationVersionInfo GetApplicationVersionInfo(this Assembly assembly)
+        public static ApplicationVersionInfo GetApplicationVersionInfo(this Assembly assembly, string commit = null)
         {
+            DateTime creationTime = File.GetLastWriteTimeUtc(assembly.Location);
+
             ApplicationVersionInfo info = new ApplicationVersionInfo()
             {
                 Name = assembly.GetName().Name,
                 Version = assembly.GetName().Version.ToString(),
                 Copyright = assembly.GetCustomAttribute<AssemblyCopyrightAttribute>().Copyright,
+                Commit = commit,
                 Description = assembly.GetCustomAttribute<AssemblyDescriptionAttribute>().Description,
                 FileVersion = assembly.GetCustomAttribute<AssemblyFileVersionAttribute>().Version,
-                FileCreationTime = assembly.GetCreationTime().ToString("MMMM dd, yyyy HH:mm:ss"),
+                FileCreationTime = creationTime.ToString("O"), // Use the round trip format as it includes the time zone.
                 InformationalVersion = assembly.GetCustomAttribute<AssemblyInformationalVersionAttribute>().InformationalVersion,
                 TargetFramework = assembly.GetCustomAttribute<TargetFrameworkAttribute>().FrameworkName,
                 Title = assembly.GetCustomAttribute<AssemblyTitleAttribute>().Title,

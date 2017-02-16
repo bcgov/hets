@@ -13,19 +13,36 @@ using Microsoft.EntityFrameworkCore;
 using HETSAPI.Models;
 using HETSCommon;
 using System.Reflection;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.Extensions.Configuration;
 
 namespace HETSAPI.Controllers
 {
+    [Authorize]
     [Route("api")]
-    public class VersionApiController : Controller
+    public class VersionController : Controller
     {
-        private readonly DbContext _context;
+        // Hack in the git commit id.
+        private const string _commitKey = "OPENSHIFT_BUILD_COMMIT";
 
-        public VersionApiController(DbAppContext context)
+        private readonly DbContext _context;
+        private readonly IConfiguration _configuration;
+
+        public VersionController(IConfiguration configuration, DbAppContext context)
         {
+            _configuration = configuration;
             _context = context;
         }
 
+        private string CommitId
+        {
+            get
+            {
+                return _configuration[_commitKey];
+            }
+        }
+
+        [AllowAnonymous]
         [HttpGet]
         [Route("version")]
         public virtual IActionResult GetServerVersionInfo()
@@ -36,6 +53,7 @@ namespace HETSAPI.Controllers
             return Ok(info);
         }
 
+        [AllowAnonymous]
         [HttpGet]
         [Route("server/version")]
         public virtual IActionResult GetServerVersion()
@@ -43,6 +61,7 @@ namespace HETSAPI.Controllers
             return Ok(GetApplicationVersionInfo());
         }
 
+        [AllowAnonymous]
         [HttpGet]
         [Route("database/version")]
         public virtual IActionResult GetDatabaseVersion()
@@ -53,7 +72,7 @@ namespace HETSAPI.Controllers
         private ApplicationVersionInfo GetApplicationVersionInfo()
         {
             Assembly assembly = this.GetType().GetTypeInfo().Assembly;
-            return assembly.GetApplicationVersionInfo();
+            return assembly.GetApplicationVersionInfo(this.CommitId);
         }
 
         private DatabaseVersionInfo GetDatabaseVersionInfo()

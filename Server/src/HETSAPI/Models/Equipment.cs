@@ -64,6 +64,8 @@ namespace HETSAPI.Models
         /// <param name="ToDate">TO BE REVIEWED WITH THE BUSINESS - WHAT IS THIS?.</param>
         /// <param name="BlockNumber">The current block number for the piece of equipment as calculated by the Seniority Algorthm for this equipment type in the local area. As currently defined y the business  - 1, 2 or Open.</param>
         /// <param name="Seniority">The current seniority calculation result for this piece of equipment. The calculation is based on the &amp;quot;numYears&amp;quot; of service + average hours of service over the last three fiscal years - as stored in the related fields (serviceHoursLastYear, serviceHoursTwoYearsAgo serviceHoursThreeYearsAgo)..</param>
+        /// <param name="IsSeniorityOverridden">True if the Seniority for the piece of equipment was manually overridden. Set if a user has gone in and explicitly updated the seniority base information. Indicates that underlying numbers were manually overridden..</param>
+        /// <param name="SeniorityOverrideReason">A text reason for why the piece of equipments underlying data was overridden to change their seniority number..</param>
         /// <param name="SeniorityEffectiveDate">The time the seniority data in the record went into effect. Used to populate the SeniorityAudit table when the seniority data is next updated..</param>
         /// <param name="YearsOfService">The number of years of active service of this piece of equipment at the time seniority is calculated - April 1 of the current FY..</param>
         /// <param name="ServiceHoursLastYear">Number of hours of service by this piece of equipment in the previous fiscal year.</param>
@@ -78,7 +80,7 @@ namespace HETSAPI.Models
         /// <param name="Attachments">Attachments.</param>
         /// <param name="History">History.</param>
         /// <param name="SeniorityAudit">SeniorityAudit.</param>
-        public Equipment(int Id, LocalArea LocalArea = null, EquipmentType EquipmentType = null, Owner Owner = null, string EquipCode = null, string Status = null, DateTime? ReceivedDate = null, DateTime? ApprovedDate = null, DateTime? LastVerifiedDate = null, bool? IsInformationUpdateNeeded = null, string InformationUpdateNeededReason = null, string LicencePlate = null, string Make = null, string Model = null, string Year = null, string Type = null, string Operator = null, float? PayRate = null, string RefuseRate = null, string SerialNum = null, string Size = null, DateTime? ToDate = null, float? BlockNumber = null, float? Seniority = null, DateTime? SeniorityEffectiveDate = null, float? YearsOfService = null, float? ServiceHoursLastYear = null, float? ServiceHoursTwoYearsAgo = null, float? ServiceHoursThreeYearsAgo = null, string ArchiveCode = null, string ArchiveReason = null, DateTime? ArchiveDate = null, DumpTruck DumpTruck = null, List<EquipmentAttachment> EquipmentAttachments = null, List<Note> Notes = null, List<Attachment> Attachments = null, List<History> History = null, List<SeniorityAudit> SeniorityAudit = null)
+        public Equipment(int Id, LocalArea LocalArea = null, EquipmentType EquipmentType = null, Owner Owner = null, string EquipCode = null, string Status = null, DateTime? ReceivedDate = null, DateTime? ApprovedDate = null, DateTime? LastVerifiedDate = null, bool? IsInformationUpdateNeeded = null, string InformationUpdateNeededReason = null, string LicencePlate = null, string Make = null, string Model = null, string Year = null, string Type = null, string Operator = null, float? PayRate = null, string RefuseRate = null, string SerialNum = null, string Size = null, DateTime? ToDate = null, float? BlockNumber = null, float? Seniority = null, bool? IsSeniorityOverridden = null, string SeniorityOverrideReason = null, DateTime? SeniorityEffectiveDate = null, float? YearsOfService = null, float? ServiceHoursLastYear = null, float? ServiceHoursTwoYearsAgo = null, float? ServiceHoursThreeYearsAgo = null, string ArchiveCode = null, string ArchiveReason = null, DateTime? ArchiveDate = null, DumpTruck DumpTruck = null, List<EquipmentAttachment> EquipmentAttachments = null, List<Note> Notes = null, List<Attachment> Attachments = null, List<History> History = null, List<SeniorityAudit> SeniorityAudit = null)
         {   
             this.Id = Id;
             this.LocalArea = LocalArea;
@@ -104,6 +106,8 @@ namespace HETSAPI.Models
             this.ToDate = ToDate;
             this.BlockNumber = BlockNumber;
             this.Seniority = Seniority;
+            this.IsSeniorityOverridden = IsSeniorityOverridden;
+            this.SeniorityOverrideReason = SeniorityOverrideReason;
             this.SeniorityEffectiveDate = SeniorityEffectiveDate;
             this.YearsOfService = YearsOfService;
             this.ServiceHoursLastYear = ServiceHoursLastYear;
@@ -325,6 +329,22 @@ namespace HETSAPI.Models
         public float? Seniority { get; set; }
         
         /// <summary>
+        /// True if the Seniority for the piece of equipment was manually overridden. Set if a user has gone in and explicitly updated the seniority base information. Indicates that underlying numbers were manually overridden.
+        /// </summary>
+        /// <value>True if the Seniority for the piece of equipment was manually overridden. Set if a user has gone in and explicitly updated the seniority base information. Indicates that underlying numbers were manually overridden.</value>
+        [MetaDataExtension (Description = "True if the Seniority for the piece of equipment was manually overridden. Set if a user has gone in and explicitly updated the seniority base information. Indicates that underlying numbers were manually overridden.")]
+        public bool? IsSeniorityOverridden { get; set; }
+        
+        /// <summary>
+        /// A text reason for why the piece of equipments underlying data was overridden to change their seniority number.
+        /// </summary>
+        /// <value>A text reason for why the piece of equipments underlying data was overridden to change their seniority number.</value>
+        [MetaDataExtension (Description = "A text reason for why the piece of equipments underlying data was overridden to change their seniority number.")]
+        [MaxLength(2048)]
+        
+        public string SeniorityOverrideReason { get; set; }
+        
+        /// <summary>
         /// The time the seniority data in the record went into effect. Used to populate the SeniorityAudit table when the seniority data is next updated.
         /// </summary>
         /// <value>The time the seniority data in the record went into effect. Used to populate the SeniorityAudit table when the seniority data is next updated.</value>
@@ -454,6 +474,8 @@ namespace HETSAPI.Models
             sb.Append("  ToDate: ").Append(ToDate).Append("\n");
             sb.Append("  BlockNumber: ").Append(BlockNumber).Append("\n");
             sb.Append("  Seniority: ").Append(Seniority).Append("\n");
+            sb.Append("  IsSeniorityOverridden: ").Append(IsSeniorityOverridden).Append("\n");
+            sb.Append("  SeniorityOverrideReason: ").Append(SeniorityOverrideReason).Append("\n");
             sb.Append("  SeniorityEffectiveDate: ").Append(SeniorityEffectiveDate).Append("\n");
             sb.Append("  YearsOfService: ").Append(YearsOfService).Append("\n");
             sb.Append("  ServiceHoursLastYear: ").Append(ServiceHoursLastYear).Append("\n");
@@ -624,6 +646,16 @@ namespace HETSAPI.Models
                     this.Seniority == other.Seniority ||
                     this.Seniority != null &&
                     this.Seniority.Equals(other.Seniority)
+                ) &&                 
+                (
+                    this.IsSeniorityOverridden == other.IsSeniorityOverridden ||
+                    this.IsSeniorityOverridden != null &&
+                    this.IsSeniorityOverridden.Equals(other.IsSeniorityOverridden)
+                ) &&                 
+                (
+                    this.SeniorityOverrideReason == other.SeniorityOverrideReason ||
+                    this.SeniorityOverrideReason != null &&
+                    this.SeniorityOverrideReason.Equals(other.SeniorityOverrideReason)
                 ) &&                 
                 (
                     this.SeniorityEffectiveDate == other.SeniorityEffectiveDate ||
@@ -800,6 +832,14 @@ namespace HETSAPI.Models
                                 if (this.Seniority != null)
                 {
                     hash = hash * 59 + this.Seniority.GetHashCode();
+                }                
+                                if (this.IsSeniorityOverridden != null)
+                {
+                    hash = hash * 59 + this.IsSeniorityOverridden.GetHashCode();
+                }                
+                                if (this.SeniorityOverrideReason != null)
+                {
+                    hash = hash * 59 + this.SeniorityOverrideReason.GetHashCode();
                 }                
                                 if (this.SeniorityEffectiveDate != null)
                 {

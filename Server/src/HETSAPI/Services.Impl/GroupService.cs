@@ -41,6 +41,37 @@ namespace HETSAPI.Services.Impl
         }
 
         /// <summary>
+        /// returns users in a given Group
+        /// </summary>
+        /// <remarks>Used to get users in a given Group</remarks>
+        /// <param name="id">id of Group to fetch Users for</param>
+        /// <response code="200">OK</response>
+        public IActionResult GroupsIdUsersGetAsync(int id)
+        {
+            bool exists = _context.Groups.Any(a => a.Id == id);
+            if (exists)
+            {
+                var result = new List<UserViewModel>();
+                var data = _context.GroupMemberships
+                    .Include("User")
+                    .Include("Group")
+                    .Where(x => x.Group.Id == id);
+
+                // extract the users
+                foreach (var item in data)
+                {
+                    result.Add(item.User.ToViewModel());
+                }
+                return new ObjectResult(result);
+            }
+            else
+            {
+                // record not found
+                return new StatusCodeResult(404);
+            }
+        }
+
+        /// <summary>
         /// 
         /// </summary>
         /// <param name="items"></param>
@@ -52,7 +83,7 @@ namespace HETSAPI.Services.Impl
                 return new BadRequestResult();
             }
             foreach (Group item in items)
-            {                
+            {
 
                 bool exists = _context.Groups.Any(a => a.Id == item.Id);
                 if (exists)
@@ -62,7 +93,7 @@ namespace HETSAPI.Services.Impl
                 else
                 {
                     _context.Groups.Add(item);
-                }               
+                }
             }
             // Save the changes
             _context.SaveChanges();
@@ -159,7 +190,17 @@ namespace HETSAPI.Services.Impl
         /// <response code="201">Group created</response>
         public IActionResult GroupsPostAsync(Group item)
         {
-            _context.Groups.Add(item);
+            var exists = _context.Groups.Any(a => a.Id == item.Id);
+            if (exists)
+            {
+                _context.Groups.Update(item);
+            }
+            else
+            {
+                // record not found
+                _context.Groups.Add(item);
+            }
+
             _context.SaveChanges();
             return new ObjectResult(item);
         }
