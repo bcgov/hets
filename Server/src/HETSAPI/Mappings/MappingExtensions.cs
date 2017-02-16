@@ -64,6 +64,16 @@ namespace HETSAPI.Mappings
             return dto;
         }
 
+        public static ProjectSearchResultViewModel ToViewModel(this Project model)
+        {
+            var dto = new ProjectSearchResultViewModel();
+            dto.Id = model.Id;
+            dto.Name = model.Name;
+            dto.PrimaryContact = model.PrimaryContact;
+            dto.ServiceArea = model.ServiceArea;
+            return dto;         
+        }
+
         public static EquipmentViewModel ToViewModel(this Equipment model)
         {
             var dto = new EquipmentViewModel();

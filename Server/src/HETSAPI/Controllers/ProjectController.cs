@@ -124,5 +124,23 @@ namespace HETSAPI.Controllers
         {
             return this._service.ProjectsPostAsync(item);
         }
+
+        /// <summary>
+        /// Searches Projects
+        /// </summary>
+        /// <remarks>Used for the project search page.</remarks>
+        /// <param name="serviceareas">Service Areas (array of id numbers)</param>
+        /// <param name="project">name or partial name for a Project</param>
+        /// <param name="hasRequests">if true then only include Projects with active Requests</param>
+        /// <param name="hasHires">if true then only include Projects with active Rental Agreements</param>
+        /// <response code="200">OK</response>
+        [HttpGet]
+        [Route("/api/projects/search")]
+        [SwaggerOperation("ProjectsSearchGet")]
+        [SwaggerResponse(200, type: typeof(List<Project>))]
+        public virtual IActionResult ProjectsSearchGet([FromQuery]int?[] serviceareas, [FromQuery]string project, [FromQuery]bool? hasRequests, [FromQuery]bool? hasHires)
+        {
+            return this._service.ProjectsSearchGetAsync(serviceareas, project, hasRequests, hasHires);
+        }
     }
 }

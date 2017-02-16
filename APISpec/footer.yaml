@@ -1,3 +1,201 @@
+  EquipmentViewModel:
+    type: object
+    x-codegen-viewmodel: true        
+    description: A piece of equipment in the HETS system. Each piece of equipment is of a specific equipment type, owned by an Owner, and is within a Local Area.
+    required:
+      - id
+    properties:
+      id:
+        format: int32
+        type: integer
+        description: A system-generated unique identifier for a Equipment
+      localArea:
+        $ref: '#/definitions/LocalArea'
+      equipmentType:
+        $ref: '#/definitions/EquipmentType'
+      owner:
+        $ref: '#/definitions/Owner'
+      equipCode:
+        type: string
+        maxLength: 25
+        description: A human-visible unique code for the piece of equipment, referenced for convenience by the system users - HETS Clerks and Equipment Owners. Generated at record creation time based on the unique Owner prefix (e.g. EDW) and a zero-filled unique number - resulting in a code like EDW-0083.
+      status:
+        type: string
+        maxLength: 50
+        description: The current status of the equipment in a UI-controlled string. Initial values are Pending, Approved and Archived, but other values may be added.
+      receivedDate:
+        type: string
+        format: date-time
+        description: The date the piece of equipment was first received and recorded in HETS.
+      approvedDate:
+        type: string
+        format: date-time
+        description: The date the piece of equipment was first approved in HETS. Part of the seniority calculation for a piece of equipment is based on this date.
+      lastVerifiedDate:
+        type: string
+        format: date-time
+        description: The date the equipment was last verified by the HETS Clerk as being still in service in the Local Area and available for the HETS Programme.
+      isInformationUpdateNeeded:
+        type: boolean
+        description: Set true if a need to update the information&#x2F;status of the equipment is needed. Used during the processing of a request when an update is noted, but the Clerk does not have time to make the update.
+      informationUpdateNeededReason:
+        type: string
+        maxLength: 2048
+        description: A note about why the needed information&#x2F;status update that is needed about the equipment.
+      licencePlate:
+        type: string
+        maxLength: 20
+        description: The licence plate (if any) of the piece of equipment, as entered by the HETS Clerk.
+      make:
+        type: string
+        maxLength: 50
+        description: The make of the piece of equipment, as provided by the Equipment Owner.
+      model:
+        type: string
+        maxLength: 50
+        description: The model of the piece of equipment, as provided by the Equipment Owner.
+      year:
+        type: string
+        maxLength: 15
+        description: The model year of the piece of equipment, as provided by the Equipment Owner.
+      type:
+        type: string
+        maxLength: 255
+        description: TO BE REVIEWED WITH THE BUSINESS - WHAT IS THIS?
+      operator:
+        type: string
+        maxLength: 255
+        description: TO BE REVIEWED WITH THE BUSINESS - WHAT IS THIS?
+      payRate:
+        type: number
+        format: float
+        description: TO BE REVIEWED WITH THE BUSINESS - WHAT IS THIS?
+      refuseRate:
+        type: string
+        maxLength: 255
+        description: TO BE REVIEWED WITH THE BUSINESS - WHAT IS THIS?
+      serialNum:
+        type: string
+        maxLength: 100
+        description: The serial number of the piece of equipment as provided by the Equipment Owner. Used to detect and reconcile pieces of equipment moved between Local Areas. Duplicate serial numbers are flagged in the system but permitted. The duplicates are flagged in the UI until the HETS Clerks reconcile the differences - either correcting the serial number or archiving a piece of equipment moved to a new local area.
+      size:
+        type: string
+        maxLength: 128
+        description: The size of the piece of equipment, as provided by the Equipment Owner.
+      toDate:
+        type: string
+        format: date-time
+        description: TO BE REVIEWED WITH THE BUSINESS - WHAT IS THIS?
+      blockNumber:
+        type: number
+        format: float
+        description: The current block number for the piece of equipment as calculated by the Seniority Algorthm for this equipment type in the local area. As currently defined y the business  - 1, 2 or Open
+      seniority:
+        type: number
+        format: float
+        description: The current seniority calculation result for this piece of equipment. The calculation is based on the &quot;numYears&quot; of service + average hours of service over the last three fiscal years - as stored in the related fields (serviceHoursLastYear, serviceHoursTwoYearsAgo serviceHoursThreeYearsAgo).
+      isSeniorityOverridden:
+        type: boolean
+        description: True if the Seniority for the piece of equipment was manually overridden. Set if a user has gone in and explicitly updated the seniority base information. Indicates that underlying numbers were manually overridden.
+      seniorityOverrideReason:
+        type: string
+        maxLength: 2048
+        description: A text reason for why the piece of equipments underlying data was overridden to change their seniority number.
+      seniorityEffectiveDate:
+        type: string
+        format: date-time
+        description: The time the seniority data in the record went into effect. Used to populate the SeniorityAudit table when the seniority data is next updated.
+      yearsOfService:
+        type: number
+        format: float
+        description: The number of years of active service of this piece of equipment at the time seniority is calculated - April 1 of the current FY.
+      serviceHoursLastYear:
+        type: number
+        format: float
+        description: Number of hours of service by this piece of equipment in the previous fiscal year
+      serviceHoursTwoYearsAgo:
+        type: number
+        format: float
+        description: Number of hours of service by this piece of equipment in the fiscal year before the last one - e.g. if current year is FY2018 then hours in FY2016
+      serviceHoursThreeYearsAgo:
+        type: number
+        format: float
+        description: Number of hours of service by this piece of equipment in the fiscal year three years ago - e.g. if current year is FY2018 then hours in FY2015
+      archiveCode:
+        type: string
+        maxLength: 50
+        description: TO BE REVIEWED - A reason code indicating why a piece of equipment has been archived.
+      archiveReason:
+        type: string
+        maxLength: 2048
+        description: An optional comment about why this piece of equipment has been archived.
+      archiveDate:
+        type: string
+        format: date-time
+        description: The date on which a user most recenly marked this piece of equipment as archived.
+      dumpTruck:
+        $ref: '#/definitions/DumpTruck'
+        description: A link to a dump truck set if this piece of equipment is an equipment type flagged as a dump truck.
+      equipmentAttachments:
+        type: array
+        items:
+          $ref: '#/definitions/EquipmentAttachment'
+      notes:
+        type: array
+        items:
+          $ref: '#/definitions/Note'
+      attachments:
+        type: array
+        items:
+          $ref: '#/definitions/Attachment'
+      history:
+        type: array
+        items:
+          $ref: '#/definitions/History'
+      seniorityAudit:
+        type: array
+        items:
+          $ref: '#/definitions/SeniorityAudit'
+      serviceHoursThisYear:
+        type: integer
+        description: number of hours worked on current fiscal year
+      hasDuplicates:
+        type: boolean
+      duplicateEquipment:
+        type: array
+        items:
+          $ref: '#/definitions/Equipment'
+      isWorking:
+        type: boolean
+        description: true if the equipment is working
+      lastTimeRecordDateThisYear:
+        type: string
+        format: date-time      
+  ProjectSearchResultViewModel:
+    type: object
+    x-codegen-viewmodel: true
+    required:
+      - id
+    properties:
+      serviceArea:
+        $ref: '#/definitions/ServiceArea'  
+      name:
+        type: string
+        description: name of Project
+      id:
+        type: integer
+        description: Id of Project
+      primaryContact:
+        $ref: '#/definitions/Contact'
+      hires:
+        type: integer
+        description: count of RentalAgreement.status is Active for the project
+      requests:
+        type: integer
+        description: count of RentalRequest.status is "Active" for the project
+      status:
+        type: string
+        description: project status
   UserViewModel:
     type: object
     x-codegen-viewmodel: true
