@@ -13,6 +13,7 @@ using HETSAPI.Services;
 using HETSAPI.Services.Impl;
 using Microsoft.AspNetCore.Http;
 using HETSAPI.Controllers;
+using SchoolBusAPI.Controllers;
 
 namespace HETSAPI
 {
@@ -52,7 +53,7 @@ namespace HETSAPI
             services.AddTransient<IServiceAreaService, ServiceAreaService>();
             services.AddTransient<IUserService, UserService>();
             services.AddTransient<ITestService, TestService>();
-            
+            services.AddTransient<IImportService, ImportService>();            
             return services;
         }
     }
