@@ -1761,6 +1761,50 @@
             "table": null
         },
         {
+            "Description": "True if the Seniority for the piece of equipment was manually overridden. Set if a user has gone in and explicitly updated the seniority base information. Indicates that underlying numbers were manually overridden.",
+            "Length": null,
+            "Name": "isSeniorityOverridden",
+            "RefDef": null,
+            "Required": [
+                {
+                    "req": "id"
+                }
+            ],
+            "Unique": null,
+            "binary": null,
+            "boolean": "boolean",
+            "datetime": null,
+            "float": null,
+            "id": null,
+            "integer": null,
+            "links": null,
+            "ref": null,
+            "string": null,
+            "table": null
+        },
+        {
+            "Description": "A text reason for why the piece of equipments underlying data was overridden to change their seniority number.",
+            "Length": "2048",
+            "Name": "seniorityOverrideReason",
+            "RefDef": null,
+            "Required": [
+                {
+                    "req": "id"
+                }
+            ],
+            "Unique": null,
+            "binary": null,
+            "boolean": null,
+            "datetime": null,
+            "float": null,
+            "id": null,
+            "integer": null,
+            "links": null,
+            "ref": null,
+            "string": "string",
+            "table": null
+        },
+        {
             "Description": "The time the seniority data in the record went into effect. Used to populate the SeniorityAudit table when the seniority data is next updated.",
             "Length": null,
             "Name": "seniorityEffectiveDate",
@@ -3665,6 +3709,81 @@
             "table": null
         },
         {
+            "Description": "An official (per BC Registries) alternate name for an Owner organization under which it does business. The application does not verify the name against any registry/lookup. ",
+            "Length": "150",
+            "Name": "doingBusinessAs",
+            "RefDef": null,
+            "Required": [
+                {
+                    "req": "id"
+                },
+                {
+                    "req": "ownerEquipmentCodePrefix"
+                }
+            ],
+            "Unique": null,
+            "binary": null,
+            "boolean": null,
+            "datetime": null,
+            "float": null,
+            "id": null,
+            "integer": null,
+            "links": null,
+            "ref": null,
+            "string": "string",
+            "table": null
+        },
+        {
+            "Description": "The BC Registries number under which the business is registered.  The application does not verify the number against any registry/lookup.",
+            "Length": "150",
+            "Name": "registeredCompanyNumber",
+            "RefDef": null,
+            "Required": [
+                {
+                    "req": "id"
+                },
+                {
+                    "req": "ownerEquipmentCodePrefix"
+                }
+            ],
+            "Unique": null,
+            "binary": null,
+            "boolean": null,
+            "datetime": null,
+            "float": null,
+            "id": null,
+            "integer": null,
+            "links": null,
+            "ref": null,
+            "string": "string",
+            "table": null
+        },
+        {
+            "Description": "True to indicate that the owner of the business has confirmed to the HETS Clerk that they meet the residency requirements of the HETS programme. See the published information about the MOTI HETS programme for information on the owner residency requirements.",
+            "Length": null,
+            "Name": "meetsResidency",
+            "RefDef": null,
+            "Required": [
+                {
+                    "req": "id"
+                },
+                {
+                    "req": "ownerEquipmentCodePrefix"
+                }
+            ],
+            "Unique": null,
+            "binary": null,
+            "boolean": "boolean",
+            "datetime": null,
+            "float": null,
+            "id": null,
+            "integer": null,
+            "links": null,
+            "ref": null,
+            "string": null,
+            "table": null
+        },
+        {
             "Description": "Link to the designated Primary Contact.",
             "Length": null,
             "Name": "primaryContact",
@@ -4306,7 +4425,7 @@
                     "req": "phoneNumber"
                 }
             ],
-            "Unique": true,
+            "Unique": null,
             "binary": null,
             "boolean": null,
             "datetime": null,
@@ -4406,7 +4525,7 @@
                     "req": "id"
                 }
             ],
-            "Unique": true,
+            "Unique": null,
             "binary": null,
             "boolean": null,
             "datetime": null,
@@ -4588,7 +4707,7 @@
                     "req": "text"
                 }
             ],
-            "Unique": true,
+            "Unique": null,
             "binary": null,
             "boolean": null,
             "datetime": null,
@@ -4694,7 +4813,7 @@
                     "req": "externalFileName"
                 }
             ],
-            "Unique": true,
+            "Unique": null,
             "binary": null,
             "boolean": null,
             "datetime": null,
@@ -4828,7 +4947,7 @@
                     "req": "historyText"
                 }
             ],
-            "Unique": true,
+            "Unique": null,
             "binary": null,
             "boolean": null,
             "datetime": null,
@@ -4988,7 +5107,7 @@
                     "req": "id"
                 }
             ],
-            "Unique": true,
+            "Unique": null,
             "binary": null,
             "boolean": null,
             "datetime": null,
@@ -5160,7 +5279,7 @@
                     "req": "startDate"
                 }
             ],
-            "Unique": true,
+            "Unique": null,
             "binary": null,
             "boolean": null,
             "datetime": null,
@@ -5383,7 +5502,7 @@
                     "req": "startDate"
                 }
             ],
-            "Unique": true,
+            "Unique": null,
             "binary": null,
             "boolean": null,
             "datetime": null,
@@ -6078,7 +6197,7 @@
                     "req": "id"
                 }
             ],
-            "Unique": true,
+            "Unique": null,
             "binary": null,
             "boolean": null,
             "datetime": null,
@@ -6162,7 +6281,7 @@
                     "req": "active"
                 }
             ],
-            "Unique": true,
+            "Unique": null,
             "binary": null,
             "boolean": null,
             "datetime": null,
@@ -6481,6 +6600,37 @@
             "integer": null,
             "links": "links",
             "ref": null,
+            "string": null,
+            "table": null
+        },
+        {
+            "Description": "The District that the User belongs to",
+            "Length": null,
+            "Name": "District",
+            "RefDef": "District",
+            "Required": [
+                {
+                    "req": "id"
+                },
+                {
+                    "req": "givenName"
+                },
+                {
+                    "req": "surname"
+                },
+                {
+                    "req": "active"
+                }
+            ],
+            "Unique": null,
+            "binary": null,
+            "boolean": null,
+            "datetime": null,
+            "float": null,
+            "id": null,
+            "integer": null,
+            "links": null,
+            "ref": "ref",
             "string": null,
             "table": null
         },
