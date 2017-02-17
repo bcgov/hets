@@ -99,6 +99,7 @@ namespace HETSAPI.Test
             var request = new HttpRequestMessage(HttpMethod.Post, "/api/roles");
             RoleViewModel role = new RoleViewModel();
             role.Name = initialName;
+            role.Description = "test";
             string jsonString = role.ToJson();
             request.Content = new StringContent(jsonString, Encoding.UTF8, "application/json");
 
@@ -186,7 +187,6 @@ namespace HETSAPI.Test
         public async void TestRolePermissions()
         {
             // first create a role.
-
             string initialName = "InitialName";
             var request = new HttpRequestMessage(HttpMethod.Post, "/api/roles");
             RoleViewModel roleViewModel = new RoleViewModel();
@@ -272,6 +272,5 @@ namespace HETSAPI.Test
             response = await _client.SendAsync(request);
             Assert.Equal(response.StatusCode, HttpStatusCode.NotFound);
         }
-
     }
 }

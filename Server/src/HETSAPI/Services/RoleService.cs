@@ -100,7 +100,7 @@ namespace HETSAPI.Services
         /// <param name="item"></param>
         /// <response code="200">OK</response>
         /// <response code="404">Role not found</response>
-        IActionResult RolesIdPutAsync(int id, Role item);
+        IActionResult RolesIdPutAsync(int id, RoleViewModel item);
 
         /// <summary>
         /// 
@@ -125,6 +125,6 @@ namespace HETSAPI.Services
         /// </summary>
         /// <param name="item"></param>
         /// <response code="201">Role created</response>
-        IActionResult RolesPostAsync(Role item);
+        IActionResult RolesPostAsync(RoleViewModel item);
     }
 }

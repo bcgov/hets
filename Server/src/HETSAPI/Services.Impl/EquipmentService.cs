@@ -21,6 +21,7 @@ using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json;
 using HETSAPI.Models;
 using HETSAPI.ViewModels;
+using HETSAPI.Mappings;
 
 namespace HETSAPI.Services.Impl
 {
@@ -389,6 +390,80 @@ namespace HETSAPI.Services.Impl
                     // record not found
                     return new StatusCodeResult(404);
                 }
+            }
+            else
+            {
+                // record not found
+                return new StatusCodeResult(404);
+            }
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="id">id of Equipment to fetch EquipmentViewModel for</param>
+        /// <response code="200">OK</response>
+        public virtual IActionResult EquipmentIdViewGetAsync(int id)
+        {
+            var exists = _context.Equipments.Any(a => a.Id == id);
+            if (exists)
+            {
+                var equipment = _context.Equipments
+                    .Include(x => x.LocalArea.ServiceArea.District.Region)
+                    .Include(x => x.EquipmentType)
+                    .Include(x => x.DumpTruck)
+                    .Include(x => x.Owner)
+                    .Include(x => x.EquipmentAttachments)
+                    .Include(x => x.Notes)
+                    .Include(x => x.Attachments)
+                    .Include(x => x.History)
+                    .First(a => a.Id == id);
+                var result = equipment.ToViewModel();
+
+                // populate the calculated fields.
+
+                // ServiceHoursThisYear is the sum of TimeCard hours for the current fiscal year (April 1 - March 31) for the equipment.
+
+                // At this time the structure for timecard hours is not set, so it is set to a constant.
+
+                // TODO: change to a real calculation once the structure for timecard hours is established.
+
+                result.ServiceHoursThisYear = 99;
+
+                // lastTimeRecordDateThisYear is the most recent time card date this year.  Can be null.
+
+                // TODO: change to a real calculation once the structure for timecard hours is established.
+
+                result.LastTimeRecordDateThisYear = null;
+
+                // isWorking is true if there is an active Rental Agreements for the equipment. 
+
+                result.IsWorking = _context.RentalAgreements
+                    .Include(x => x.Equipment)
+                    .Any(x => x.Equipment.Id == result.Id);
+
+               // hasDuplicates is true if there is other equipment with the same serial number.
+
+                result.HasDuplicates = _context.Equipments.Any(x => x.SerialNum == result.SerialNum && x.Status == "Active");
+                
+                // duplicate Equipment uses the same criteria as hasDuplicates.
+
+                if (result.HasDuplicates == true)
+                {
+                    result.DuplicateEquipment = _context.Equipments
+                        .Include(x => x.LocalArea.ServiceArea.District.Region)
+                        .Include(x => x.EquipmentType)
+                        .Include(x => x.DumpTruck)
+                        .Include(x => x.Owner)
+                        .Include(x => x.EquipmentAttachments)
+                        .Include(x => x.Notes)
+                        .Include(x => x.Attachments)
+                        .Include(x => x.History)
+                        .Where(x => x.SerialNum == result.SerialNum && x.Status == "Active")
+                        .ToList();
+                }
+
+                return new ObjectResult(result);
             }
             else
             {

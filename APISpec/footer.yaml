@@ -16,14 +16,25 @@
         x-chance-type: name
       surname:
         type: string
-        x-chance-type: name
-      initials:
-        type: string
+        x-chance-type: name      
       email:
         type: string
         x-chance-type: email
       active:
         type: boolean
+      smUserId:
+        type: string
+      userRoles:
+        type: array
+        items:
+          $ref: '#/definitions/UserRole'
+      groupMemberships:
+        type: array
+        items:
+          $ref: '#/definitions/GroupMembership'
+      district:
+        $ref: '#/definitions/District'
+        description: The District to which this User is affliated.
   CurrentUserViewModel:
     type: object
     x-codegen-viewmodel: true
@@ -33,20 +44,23 @@
         x-chance-type: name
       surname:
         type: string
-        x-chance-type: name
-      fullName:
+        x-chance-type: name      
+      email:
         type: string
-      districtName:
-        type: string
-      overdueInspections:
-        format: int32
-        type: integer
-      scheduledInspections:
-        format: int32
-        type: integer
-      dueNextMonthInspections:
-        format: int32
-        type: integer
+        x-chance-type: email
+      active:
+        type: boolean
+      userRoles:
+        type: array
+        items:
+          $ref: '#/definitions/UserRole'
+      groupMemberships:
+        type: array
+        items:
+          $ref: '#/definitions/GroupMembership'
+      district:
+        $ref: '#/definitions/District'
+        description: The District to which this User is affliated.
   UserDetailsViewModel:
     type: object
     x-codegen-viewmodel: true
@@ -97,12 +111,6 @@
       expiryDate:
         type: string
         format: date-time
-      userId:
-        format: int32
-        type: integer
-        x-type-options:
-          min: 1
-          max: 1000
       roleId:
         format: int32
         type: integer

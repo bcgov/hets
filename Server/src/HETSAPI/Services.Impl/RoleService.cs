@@ -122,33 +122,6 @@ namespace HETSAPI.Services.Impl
             return new NoContentResult();
         }
 
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="items"></param>
-        /// <response code="201">Permissions created</response>
-        public IActionResult RolesBulkPostAsync(Role item)
-        {
-            if (item == null)
-            {
-                return new BadRequestResult();
-            }
-            
-            var exists = _context.Roles.Any(a => a.Id == item.Id);
-            if (exists)
-            {
-                _context.Roles.Update(item);
-            }
-            else
-            {
-                _context.Roles.Add(item);
-            }
-            
-            // Save the changes
-            _context.SaveChanges();
-            return new NoContentResult();
-        }
-
 
 
         /// <summary>
@@ -158,7 +131,12 @@ namespace HETSAPI.Services.Impl
         /// <response code="200">OK</response>
         public virtual IActionResult RolesGetAsync()
         {
-            var result = _context.Roles.Select(x => x.ToViewModel()).ToList();
+            List<RoleViewModel> result = new List<RoleViewModel>();
+            var data = _context.Roles.Select(x => x);
+            foreach (var item in data)
+            {
+                result.Add(item.ToViewModel());
+            }
             return new ObjectResult(result);
         }
 
@@ -402,7 +380,7 @@ namespace HETSAPI.Services.Impl
         /// <param name="item"></param>
         /// <response code="200">OK</response>
         /// <response code="404">Role not found</response>
-        public virtual IActionResult RolesIdPutAsync(int id, Role item)
+        public virtual IActionResult RolesIdPutAsync(int id, RoleViewModel item)
         {
             var role = _context.Roles.FirstOrDefault(x => x.Id == id);
             if (role == null)
@@ -428,6 +406,7 @@ namespace HETSAPI.Services.Impl
         /// <response code="200">OK</response>
         public virtual IActionResult RolesIdUsersGetAsync(int id)
         {
+            // and the users with those UserRoles
             List<User> result = new List<User>();
 
             List<User> users = _context.Users
@@ -540,6 +519,7 @@ namespace HETSAPI.Services.Impl
             {
                 return new StatusCodeResult(404);
             }
+
         }
 
         /// <summary>
@@ -547,7 +527,7 @@ namespace HETSAPI.Services.Impl
         /// </summary>
         /// <param name="item"></param>
         /// <response code="201">Role created</response>
-        public virtual IActionResult RolesPostAsync(Role item)
+        public virtual IActionResult RolesPostAsync(RoleViewModel item)
         {
             var role = new Role();
             role.Description = item.Description;

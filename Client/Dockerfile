@@ -30,7 +30,6 @@ RUN npm install
 # copy the full source
 COPY . /app/out/src
 
-# compile the source
-
-RUN /bin/bash -c './node_modules/.bin/gulp --production --commit=$GIT_COMMIT'
+# compile will happen at the next build stage (frontend)
+# otherwise there is no git commit in the environment.
 
