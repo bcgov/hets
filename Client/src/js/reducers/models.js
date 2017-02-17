@@ -10,13 +10,17 @@ const DEFAULT_MODELS = {
 
   equipmentList: {},
   equipment: {},
-  physicalAttachments: {},
-  equipmentAttachments: {},
-  equipmentHistories: {},
+  equipmentPhysicalAttachments: {},
+  equipmentSeniorityHistory: {},
   equipmentNotes: {},
+  equipmentAttachments: {},
+  equipmentHistory: {},
 
   owners: {},
   owner: {},
+  ownerNotes: {},
+  ownerAttachments: {},
+  ownerHistory: {},
 };
 
 export default function modelsReducer(state = DEFAULT_MODELS, action) {

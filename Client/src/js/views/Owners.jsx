@@ -193,8 +193,7 @@ var Owners = React.createClass({
 
         return <SortTable sortField={ this.state.ui.sortField } sortDesc={ this.state.ui.sortDesc } onSort={ this.updateUIState } headers={[
           { field: 'localAreaName',          title: 'Local Area'      },
-          { field: 'companyName',            title: 'Company'         },
-          { field: 'name',                   title: 'Owner'           },
+          { field: 'organizationName',       title: 'Company'         },
           { field: 'primaryContactName',     title: 'Primary Contact' },
           { field: 'numberOfEquipment',      title: 'Equipment',       style: { textAlign: 'center' } },
           { field: 'status',                 title: 'Status',          style: { textAlign: 'center' } },
@@ -204,10 +203,9 @@ var Owners = React.createClass({
         ]}>
           {
             _.map(ownerList, (owner) => {
-              return <tr key={ owner.id } className={ owner.isActive ? null : 'info' }>
+              return <tr key={ owner.id } className={ owner.isApproved ? null : 'info' }>
                 <td>{ owner.localAreaName }</td>
-                <td>{ owner.companyName }</td>
-                <td>{ owner.name }</td>
+                <td>{ owner.organizationName }</td>
                 <td>{ owner.primaryContactName }</td>
                 <td style={{ textAlign: 'center' }}>{ owner.numberOfEquipment }</td>
                 <td style={{ textAlign: 'center' }}>{ owner.status }</td>
