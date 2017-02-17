@@ -21,6 +21,9 @@ const DEFAULT_MODELS = {
   ownerNotes: {},
   ownerAttachments: {},
   ownerHistory: {},
+
+  projects: {},
+  project: {},
 };
 
 export default function modelsReducer(state = DEFAULT_MODELS, action) {
@@ -58,6 +61,13 @@ export default function modelsReducer(state = DEFAULT_MODELS, action) {
 
     case Action.UPDATE_OWNER:
       return { ...state, owner: action.owner };
+
+    // Projects
+    case Action.UPDATE_PROJECTS:
+      return { ...state, projects: action.projects };
+
+    case Action.UPDATE_PROJECT:
+      return { ...state, project: action.project };
   }
 
   return state;
