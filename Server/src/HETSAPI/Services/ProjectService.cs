@@ -73,5 +73,16 @@ namespace HETSAPI.Services
         /// <param name="item"></param>
         /// <response code="201">Project created</response>
         IActionResult ProjectsPostAsync(Project item);
+
+        /// <summary>
+        /// Searches Projects
+        /// </summary>
+        /// <remarks>Used for the project search page.</remarks>
+        /// <param name="serviceareas">Service Areas (array of id numbers)</param>
+        /// <param name="project">name or partial name for a Project</param>
+        /// <param name="hasRequests">if true then only include Projects with active Requests</param>
+        /// <param name="hasHires">if true then only include Projects with active Rental Agreements</param>
+        /// <response code="200">OK</response>
+        IActionResult ProjectsSearchGetAsync(int?[] serviceareas, string project, bool? hasRequests, bool? hasHires);
     }
 }

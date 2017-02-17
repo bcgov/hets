@@ -21,6 +21,7 @@ using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json;
 using HETSAPI.Models;
 using HETSAPI.ViewModels;
+using HETSAPI.Mappings;
 
 namespace HETSAPI.Services.Impl
 {
@@ -152,6 +153,72 @@ namespace HETSAPI.Services.Impl
             // Save the changes
             _context.SaveChanges();
             return new ObjectResult(item);
+        }
+
+        /// <summary>
+        /// Searches Projects
+        /// </summary>
+        /// <remarks>Used for the project search page.</remarks>
+        /// <param name="serviceareas">Service Areas (array of id numbers)</param>
+        /// <param name="project">name or partial name for a Project</param>
+        /// <param name="hasRequests">if true then only include Projects with active Requests</param>
+        /// <param name="hasHires">if true then only include Projects with active Rental Agreements</param>
+        /// <response code="200">OK</response>
+        public virtual IActionResult ProjectsSearchGetAsync(int?[] serviceareas, string project, bool? hasRequests, bool? hasHires)
+        {
+            var data = _context.Projects
+                    .Include(x => x.ServiceArea.District.Region)
+                    .Include(x => x.PrimaryContact)
+                    .ThenInclude(y=>y.Addresses)
+                    .Include(x => x.PrimaryContact)
+                    .ThenInclude(y => y.Phones)
+                    .Select(x => x);
+
+            if (serviceareas != null)
+            {
+                foreach (int? servicearea in serviceareas)
+                {
+                    if (servicearea != null)
+                    {
+                        data = data.Where(x => x.ServiceArea.Id == servicearea);
+                    }
+                }
+            }
+
+            if (hasRequests != null)
+            {
+                
+            }
+
+            if (hasHires != null)
+            {
+                // hired is not currently implemented.                 
+            }
+
+            if (project != null)
+            {
+                data = data.Where(x => x.Name.Contains (project));
+            }
+
+            var result = new List<ProjectSearchResultViewModel>();
+            foreach (var item in data)
+            {
+                ProjectSearchResultViewModel newItem = item.ToViewModel();
+                // calculated fields.
+                newItem.Requests = _context.RentalRequests
+                    .Include(x => x.Project)
+                    .Where(x => x.Project.Id == item.Id)
+                    .Count();
+
+                // TODO filter on status once RentalAgreements has a status field.
+                newItem.Hires = _context.RentalAgreements
+                    .Include(x => x.Project)
+                    .Where(x => x.Project.Id == item.Id)
+                    .Count();
+                
+                result.Add(newItem);               
+            }
+            return new ObjectResult(result);
         }
     }
 }
