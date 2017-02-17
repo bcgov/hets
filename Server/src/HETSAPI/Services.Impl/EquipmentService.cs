@@ -444,7 +444,7 @@ namespace HETSAPI.Services.Impl
 
                // hasDuplicates is true if there is other equipment with the same serial number.
 
-                result.HasDuplicates = _context.Equipments.Any(x => x.SerialNum == result.SerialNum && x.Status == "Active");
+                result.HasDuplicates = _context.Equipments.Any(x => x.SerialNumber == result.SerialNumber && x.Status == "Active");
                 
                 // duplicate Equipment uses the same criteria as hasDuplicates.
 
@@ -459,7 +459,7 @@ namespace HETSAPI.Services.Impl
                         .Include(x => x.Notes)
                         .Include(x => x.Attachments)
                         .Include(x => x.History)
-                        .Where(x => x.SerialNum == result.SerialNum && x.Status == "Active")
+                        .Where(x => x.SerialNumber == result.SerialNumber && x.Status == "Active")
                         .ToList();
                 }
 

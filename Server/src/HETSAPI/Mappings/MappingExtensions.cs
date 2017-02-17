@@ -84,7 +84,7 @@ namespace HETSAPI.Mappings
             dto.Attachments = model.Attachments;
             dto.BlockNumber = model.BlockNumber;
             dto.DumpTruck = model.DumpTruck;            
-            dto.EquipCode = model.EquipCode;
+            dto.EquipmentCode = model.EquipmentCode;
             dto.EquipmentAttachments = model.EquipmentAttachments;
             dto.EquipmentType = model.EquipmentType;
             dto.History = model.History;
@@ -107,7 +107,7 @@ namespace HETSAPI.Mappings
             dto.SeniorityAudit = model.SeniorityAudit;
             dto.SeniorityEffectiveDate = model.SeniorityEffectiveDate;
             dto.SeniorityOverrideReason = model.SeniorityOverrideReason;
-            dto.SerialNum = model.SerialNum;
+            dto.SerialNumber = model.SerialNumber;
             dto.ServiceHoursLastYear = model.ServiceHoursLastYear;
             dto.ServiceHoursTwoYearsAgo = model.ServiceHoursTwoYearsAgo;
             dto.ServiceHoursThreeYearsAgo = model.ServiceHoursThreeYearsAgo;

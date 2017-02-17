@@ -49,9 +49,11 @@ namespace HETSAPI.Models
         /// <param name="WasAsked">True if the HETS Clerk contacted the equipment owner and asked to hire the piece of equipment..</param>
         /// <param name="AskedDateTime">The Date-Time the HETS clerk contacted the equipment owner and asked to hire the piece of equipment..</param>
         /// <param name="OfferResponse">The response to the offer to hire. Null prior to receiving a response; a string after with the response - likely just Yes or No.</param>
-        /// <param name="RefuseReason">An optional reason given by the equipment owner for refusing the offer..</param>
+        /// <param name="OfferRefusalReason">The reason why the user refused the offer based on a selection of values from the UI..</param>
+        /// <param name="OfferResponseDatetime">The date and time the final response to the offer was established..</param>
+        /// <param name="OfferResponseNote">An optional note entered about the response to the offer from the equipment owner about the offer. Usually used when the offer is a &amp;quot;No&amp;quot;..</param>
         /// <param name="Note">An optional general note about the offer..</param>
-        public RentalRequestRotationList(int Id, RentalRequest RentalRequest = null, int? RotationListSortOrder = null, Equipment Equipment = null, RentalAgreement RentalAgreement = null, bool? IsForceHire = null, bool? WasAsked = null, DateTime? AskedDateTime = null, string OfferResponse = null, string RefuseReason = null, string Note = null)
+        public RentalRequestRotationList(int Id, RentalRequest RentalRequest = null, int? RotationListSortOrder = null, Equipment Equipment = null, RentalAgreement RentalAgreement = null, bool? IsForceHire = null, bool? WasAsked = null, DateTime? AskedDateTime = null, string OfferResponse = null, string OfferRefusalReason = null, DateTime? OfferResponseDatetime = null, string OfferResponseNote = null, string Note = null)
         {   
             this.Id = Id;
             this.RentalRequest = RentalRequest;
@@ -62,7 +64,9 @@ namespace HETSAPI.Models
             this.WasAsked = WasAsked;
             this.AskedDateTime = AskedDateTime;
             this.OfferResponse = OfferResponse;
-            this.RefuseReason = RefuseReason;
+            this.OfferRefusalReason = OfferRefusalReason;
+            this.OfferResponseDatetime = OfferResponseDatetime;
+            this.OfferResponseNote = OfferResponseNote;
             this.Note = Note;
         }
 
@@ -144,13 +148,29 @@ namespace HETSAPI.Models
         public string OfferResponse { get; set; }
         
         /// <summary>
-        /// An optional reason given by the equipment owner for refusing the offer.
+        /// The reason why the user refused the offer based on a selection of values from the UI.
         /// </summary>
-        /// <value>An optional reason given by the equipment owner for refusing the offer.</value>
-        [MetaDataExtension (Description = "An optional reason given by the equipment owner for refusing the offer.")]
+        /// <value>The reason why the user refused the offer based on a selection of values from the UI.</value>
+        [MetaDataExtension (Description = "The reason why the user refused the offer based on a selection of values from the UI.")]
+        [MaxLength(50)]
+        
+        public string OfferRefusalReason { get; set; }
+        
+        /// <summary>
+        /// The date and time the final response to the offer was established.
+        /// </summary>
+        /// <value>The date and time the final response to the offer was established.</value>
+        [MetaDataExtension (Description = "The date and time the final response to the offer was established.")]
+        public DateTime? OfferResponseDatetime { get; set; }
+        
+        /// <summary>
+        /// An optional note entered about the response to the offer from the equipment owner about the offer. Usually used when the offer is a &quot;No&quot;.
+        /// </summary>
+        /// <value>An optional note entered about the response to the offer from the equipment owner about the offer. Usually used when the offer is a &quot;No&quot;.</value>
+        [MetaDataExtension (Description = "An optional note entered about the response to the offer from the equipment owner about the offer. Usually used when the offer is a &quot;No&quot;.")]
         [MaxLength(2048)]
         
-        public string RefuseReason { get; set; }
+        public string OfferResponseNote { get; set; }
         
         /// <summary>
         /// An optional general note about the offer.
@@ -178,7 +198,9 @@ namespace HETSAPI.Models
             sb.Append("  WasAsked: ").Append(WasAsked).Append("\n");
             sb.Append("  AskedDateTime: ").Append(AskedDateTime).Append("\n");
             sb.Append("  OfferResponse: ").Append(OfferResponse).Append("\n");
-            sb.Append("  RefuseReason: ").Append(RefuseReason).Append("\n");
+            sb.Append("  OfferRefusalReason: ").Append(OfferRefusalReason).Append("\n");
+            sb.Append("  OfferResponseDatetime: ").Append(OfferResponseDatetime).Append("\n");
+            sb.Append("  OfferResponseNote: ").Append(OfferResponseNote).Append("\n");
             sb.Append("  Note: ").Append(Note).Append("\n");
             sb.Append("}\n");
             return sb.ToString();
@@ -263,9 +285,19 @@ namespace HETSAPI.Models
                     this.OfferResponse.Equals(other.OfferResponse)
                 ) &&                 
                 (
-                    this.RefuseReason == other.RefuseReason ||
-                    this.RefuseReason != null &&
-                    this.RefuseReason.Equals(other.RefuseReason)
+                    this.OfferRefusalReason == other.OfferRefusalReason ||
+                    this.OfferRefusalReason != null &&
+                    this.OfferRefusalReason.Equals(other.OfferRefusalReason)
+                ) &&                 
+                (
+                    this.OfferResponseDatetime == other.OfferResponseDatetime ||
+                    this.OfferResponseDatetime != null &&
+                    this.OfferResponseDatetime.Equals(other.OfferResponseDatetime)
+                ) &&                 
+                (
+                    this.OfferResponseNote == other.OfferResponseNote ||
+                    this.OfferResponseNote != null &&
+                    this.OfferResponseNote.Equals(other.OfferResponseNote)
                 ) &&                 
                 (
                     this.Note == other.Note ||
@@ -318,9 +350,17 @@ namespace HETSAPI.Models
                 {
                     hash = hash * 59 + this.OfferResponse.GetHashCode();
                 }                
-                                if (this.RefuseReason != null)
+                                if (this.OfferRefusalReason != null)
                 {
-                    hash = hash * 59 + this.RefuseReason.GetHashCode();
+                    hash = hash * 59 + this.OfferRefusalReason.GetHashCode();
+                }                
+                                if (this.OfferResponseDatetime != null)
+                {
+                    hash = hash * 59 + this.OfferResponseDatetime.GetHashCode();
+                }                
+                                if (this.OfferResponseNote != null)
+                {
+                    hash = hash * 59 + this.OfferResponseNote.GetHashCode();
                 }                
                                 if (this.Note != null)
                 {

@@ -59,7 +59,7 @@ namespace HETSAPI.ViewModels
         /// <param name="Operator">TO BE REVIEWED WITH THE BUSINESS - WHAT IS THIS?.</param>
         /// <param name="PayRate">TO BE REVIEWED WITH THE BUSINESS - WHAT IS THIS?.</param>
         /// <param name="RefuseRate">TO BE REVIEWED WITH THE BUSINESS - WHAT IS THIS?.</param>
-        /// <param name="SerialNum">The serial number of the piece of equipment as provided by the Equipment Owner. Used to detect and reconcile pieces of equipment moved between Local Areas. Duplicate serial numbers are flagged in the system but permitted. The duplicates are flagged in the UI until the HETS Clerks reconcile the differences - either correcting the serial number or archiving a piece of equipment moved to a new local area..</param>
+        /// <param name="SerialNumber">The serial number of the piece of equipment as provided by the Equipment Owner. Used to detect and reconcile pieces of equipment moved between Local Areas. Duplicate serial numbers are flagged in the system but permitted. The duplicates are flagged in the UI until the HETS Clerks reconcile the differences - either correcting the serial number or archiving a piece of equipment moved to a new local area..</param>
         /// <param name="Size">The size of the piece of equipment, as provided by the Equipment Owner..</param>
         /// <param name="ToDate">TO BE REVIEWED WITH THE BUSINESS - WHAT IS THIS?.</param>
         /// <param name="BlockNumber">The current block number for the piece of equipment as calculated by the Seniority Algorthm for this equipment type in the local area. As currently defined y the business  - 1, 2 or Open.</param>
@@ -85,13 +85,13 @@ namespace HETSAPI.ViewModels
         /// <param name="DuplicateEquipment">DuplicateEquipment.</param>
         /// <param name="IsWorking">true if the equipment is working.</param>
         /// <param name="LastTimeRecordDateThisYear">LastTimeRecordDateThisYear.</param>
-        public EquipmentViewModel(int Id, LocalArea LocalArea = null, EquipmentType EquipmentType = null, Owner Owner = null, string EquipCode = null, string Status = null, DateTime? ReceivedDate = null, DateTime? ApprovedDate = null, DateTime? LastVerifiedDate = null, bool? IsInformationUpdateNeeded = null, string InformationUpdateNeededReason = null, string LicencePlate = null, string Make = null, string Model = null, string Year = null, string Type = null, string Operator = null, float? PayRate = null, string RefuseRate = null, string SerialNum = null, string Size = null, DateTime? ToDate = null, float? BlockNumber = null, float? Seniority = null, bool? IsSeniorityOverridden = null, string SeniorityOverrideReason = null, DateTime? SeniorityEffectiveDate = null, float? YearsOfService = null, float? ServiceHoursLastYear = null, float? ServiceHoursTwoYearsAgo = null, float? ServiceHoursThreeYearsAgo = null, string ArchiveCode = null, string ArchiveReason = null, DateTime? ArchiveDate = null, DumpTruck DumpTruck = null, List<EquipmentAttachment> EquipmentAttachments = null, List<Note> Notes = null, List<Attachment> Attachments = null, List<History> History = null, List<SeniorityAudit> SeniorityAudit = null, int? ServiceHoursThisYear = null, bool? HasDuplicates = null, List<Equipment> DuplicateEquipment = null, bool? IsWorking = null, DateTime? LastTimeRecordDateThisYear = null)
+        public EquipmentViewModel(int Id, LocalArea LocalArea = null, EquipmentType EquipmentType = null, Owner Owner = null, string EquipCode = null, string Status = null, DateTime? ReceivedDate = null, DateTime? ApprovedDate = null, DateTime? LastVerifiedDate = null, bool? IsInformationUpdateNeeded = null, string InformationUpdateNeededReason = null, string LicencePlate = null, string Make = null, string Model = null, string Year = null, string Type = null, string Operator = null, float? PayRate = null, string RefuseRate = null, string SerialNumber = null, string Size = null, DateTime? ToDate = null, float? BlockNumber = null, float? Seniority = null, bool? IsSeniorityOverridden = null, string SeniorityOverrideReason = null, DateTime? SeniorityEffectiveDate = null, float? YearsOfService = null, float? ServiceHoursLastYear = null, float? ServiceHoursTwoYearsAgo = null, float? ServiceHoursThreeYearsAgo = null, string ArchiveCode = null, string ArchiveReason = null, DateTime? ArchiveDate = null, DumpTruck DumpTruck = null, List<EquipmentAttachment> EquipmentAttachments = null, List<Note> Notes = null, List<Attachment> Attachments = null, List<History> History = null, List<SeniorityAudit> SeniorityAudit = null, int? ServiceHoursThisYear = null, bool? HasDuplicates = null, List<Equipment> DuplicateEquipment = null, bool? IsWorking = null, DateTime? LastTimeRecordDateThisYear = null)
         {   
             this.Id = Id;
             this.LocalArea = LocalArea;
             this.EquipmentType = EquipmentType;
             this.Owner = Owner;
-            this.EquipCode = EquipCode;
+            this.EquipmentCode = EquipCode;
             this.Status = Status;
             this.ReceivedDate = ReceivedDate;
             this.ApprovedDate = ApprovedDate;
@@ -106,7 +106,7 @@ namespace HETSAPI.ViewModels
             this.Operator = Operator;
             this.PayRate = PayRate;
             this.RefuseRate = RefuseRate;
-            this.SerialNum = SerialNum;
+            this.SerialNumber = SerialNumber;
             this.Size = Size;
             this.ToDate = ToDate;
             this.BlockNumber = BlockNumber;
@@ -166,7 +166,7 @@ namespace HETSAPI.ViewModels
         /// <value>A human-visible unique code for the piece of equipment, referenced for convenience by the system users - HETS Clerks and Equipment Owners. Generated at record creation time based on the unique Owner prefix (e.g. EDW) and a zero-filled unique number - resulting in a code like EDW-0083.</value>
         [DataMember(Name="equipCode")]
         [MetaDataExtension (Description = "A human-visible unique code for the piece of equipment, referenced for convenience by the system users - HETS Clerks and Equipment Owners. Generated at record creation time based on the unique Owner prefix (e.g. EDW) and a zero-filled unique number - resulting in a code like EDW-0083.")]
-        public string EquipCode { get; set; }
+        public string EquipmentCode { get; set; }
 
         /// <summary>
         /// The current status of the equipment in a UI-controlled string. Initial values are Pending, Approved and Archived, but other values may be added.
@@ -284,9 +284,9 @@ namespace HETSAPI.ViewModels
         /// The serial number of the piece of equipment as provided by the Equipment Owner. Used to detect and reconcile pieces of equipment moved between Local Areas. Duplicate serial numbers are flagged in the system but permitted. The duplicates are flagged in the UI until the HETS Clerks reconcile the differences - either correcting the serial number or archiving a piece of equipment moved to a new local area.
         /// </summary>
         /// <value>The serial number of the piece of equipment as provided by the Equipment Owner. Used to detect and reconcile pieces of equipment moved between Local Areas. Duplicate serial numbers are flagged in the system but permitted. The duplicates are flagged in the UI until the HETS Clerks reconcile the differences - either correcting the serial number or archiving a piece of equipment moved to a new local area.</value>
-        [DataMember(Name="serialNum")]
+        [DataMember(Name="SerialNumber")]
         [MetaDataExtension (Description = "The serial number of the piece of equipment as provided by the Equipment Owner. Used to detect and reconcile pieces of equipment moved between Local Areas. Duplicate serial numbers are flagged in the system but permitted. The duplicates are flagged in the UI until the HETS Clerks reconcile the differences - either correcting the serial number or archiving a piece of equipment moved to a new local area.")]
-        public string SerialNum { get; set; }
+        public string SerialNumber { get; set; }
 
         /// <summary>
         /// The size of the piece of equipment, as provided by the Equipment Owner.
@@ -484,7 +484,7 @@ namespace HETSAPI.ViewModels
             sb.Append("  LocalArea: ").Append(LocalArea).Append("\n");
             sb.Append("  EquipmentType: ").Append(EquipmentType).Append("\n");
             sb.Append("  Owner: ").Append(Owner).Append("\n");
-            sb.Append("  EquipCode: ").Append(EquipCode).Append("\n");
+            sb.Append("  EquipCode: ").Append(EquipmentCode).Append("\n");
             sb.Append("  Status: ").Append(Status).Append("\n");
             sb.Append("  ReceivedDate: ").Append(ReceivedDate).Append("\n");
             sb.Append("  ApprovedDate: ").Append(ApprovedDate).Append("\n");
@@ -499,7 +499,7 @@ namespace HETSAPI.ViewModels
             sb.Append("  Operator: ").Append(Operator).Append("\n");
             sb.Append("  PayRate: ").Append(PayRate).Append("\n");
             sb.Append("  RefuseRate: ").Append(RefuseRate).Append("\n");
-            sb.Append("  SerialNum: ").Append(SerialNum).Append("\n");
+            sb.Append("  SerialNumber: ").Append(SerialNumber).Append("\n");
             sb.Append("  Size: ").Append(Size).Append("\n");
             sb.Append("  ToDate: ").Append(ToDate).Append("\n");
             sb.Append("  BlockNumber: ").Append(BlockNumber).Append("\n");
@@ -583,9 +583,9 @@ namespace HETSAPI.ViewModels
                     this.Owner.Equals(other.Owner)
                 ) &&                 
                 (
-                    this.EquipCode == other.EquipCode ||
-                    this.EquipCode != null &&
-                    this.EquipCode.Equals(other.EquipCode)
+                    this.EquipmentCode == other.EquipmentCode ||
+                    this.EquipmentCode != null &&
+                    this.EquipmentCode.Equals(other.EquipmentCode)
                 ) &&                 
                 (
                     this.Status == other.Status ||
@@ -658,9 +658,9 @@ namespace HETSAPI.ViewModels
                     this.RefuseRate.Equals(other.RefuseRate)
                 ) &&                 
                 (
-                    this.SerialNum == other.SerialNum ||
-                    this.SerialNum != null &&
-                    this.SerialNum.Equals(other.SerialNum)
+                    this.SerialNumber == other.SerialNumber ||
+                    this.SerialNumber != null &&
+                    this.SerialNumber.Equals(other.SerialNumber)
                 ) &&                 
                 (
                     this.Size == other.Size ||
@@ -813,9 +813,9 @@ namespace HETSAPI.ViewModels
                 if (this.Owner != null)
                 {
                     hash = hash * 59 + this.Owner.GetHashCode();
-                }                if (this.EquipCode != null)
+                }                if (this.EquipmentCode != null)
                 {
-                    hash = hash * 59 + this.EquipCode.GetHashCode();
+                    hash = hash * 59 + this.EquipmentCode.GetHashCode();
                 }                
                                 if (this.Status != null)
                 {
@@ -873,9 +873,9 @@ namespace HETSAPI.ViewModels
                 {
                     hash = hash * 59 + this.RefuseRate.GetHashCode();
                 }                
-                                if (this.SerialNum != null)
+                                if (this.SerialNumber != null)
                 {
-                    hash = hash * 59 + this.SerialNum.GetHashCode();
+                    hash = hash * 59 + this.SerialNumber.GetHashCode();
                 }                
                                 if (this.Size != null)
                 {

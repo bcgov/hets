@@ -4546,20 +4546,6 @@ definitions:
         type: string
         format: date-time
         description: Date the record is created.
-  FavouriteContextType:
-    type: object
-    description: The name for a place in the UI where per user settings can be stored - for example, the Equipment search screen, Owner search screen, etc.
-    required:
-      - id
-    properties:
-      id:
-        format: int32
-        type: integer
-        description: A system-generated unique identifier for a FavouriteContextType
-      name:
-        type: string
-        maxLength: 150
-        description: Context Name known by the UI.
   UserFavourite:
     type: object
     description: User specific settings for a specific location in the UI. The location and saved settings are internally defined by the UI.
@@ -4939,7 +4925,7 @@ definitions:
         $ref: '#/definitions/EquipmentType'
       owner:
         $ref: '#/definitions/Owner'
-      equipCode:
+      equipmentCode:
         type: string
         maxLength: 25
         description: A human-visible unique code for the piece of equipment, referenced for convenience by the system users - HETS Clerks and Equipment Owners. Generated at record creation time based on the unique Owner prefix (e.g. EDW) and a zero-filled unique number - resulting in a code like EDW-0083.
@@ -4998,7 +4984,7 @@ definitions:
         type: string
         maxLength: 255
         description: TO BE REVIEWED WITH THE BUSINESS - WHAT IS THIS?
-      serialNum:
+      serialNumber:
         type: string
         maxLength: 100
         description: The serial number of the piece of equipment as provided by the Equipment Owner. Used to detect and reconcile pieces of equipment moved between Local Areas. Duplicate serial numbers are flagged in the system but permitted. The duplicates are flagged in the UI until the HETS Clerks reconcile the differences - either correcting the serial number or archiving a piece of equipment moved to a new local area.
