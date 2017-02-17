@@ -5,9 +5,6 @@ const DEFAULT_USER = {
   lastName                : null,
   fullName                : null,
   districtName            : null,
-  overdueInspections      : 0,
-  scheduledReinspections  : 0,
-  dueNextMonthInspections : 0,
 };
 
 export default function userReducer(state = DEFAULT_USER, action) {

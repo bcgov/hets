@@ -3,6 +3,7 @@ import * as Action from '../actionTypes';
 const DEFAULT_SEARCHES = {
   equipmentList: {},
   owners: {},
+  projects: {},
 };
 
 export default function searchReducer(state = DEFAULT_SEARCHES, action) {
@@ -12,6 +13,9 @@ export default function searchReducer(state = DEFAULT_SEARCHES, action) {
 
     case Action.UPDATE_OWNERS_SEARCH:
       return { ...state, owners: action.owners };
+
+    case Action.UPDATE_PROJECTS_SEARCH:
+      return { ...state, projects: action.projects };
   }
 
   return state;

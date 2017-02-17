@@ -14,6 +14,7 @@ const DEFAULT_STATE = {
   ownerEquipment: {},
 
   users: {},
+  projects: {},
 };
 
 export default function uiReducer(state = DEFAULT_STATE, action) {
@@ -53,6 +54,9 @@ export default function uiReducer(state = DEFAULT_STATE, action) {
 
     case Action.UPDATE_OWNER_EQUIPMENT_UI:
       return { ...state, ownerEquipment: action.ownerEquipment };  
+
+    case Action.UPDATE_PROJECTS_UI:
+      return { ...state, projects: action.projects };
   }
 
   return { ...state, ...newState };
