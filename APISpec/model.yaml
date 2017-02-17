@@ -61,6 +61,10 @@ definitions:
         $ref: '#/definitions/Project'
       localArea:
         $ref: '#/definitions/LocalArea'
+      status:
+        type: string
+        maxLength: 50
+        description: The status of the Rental Request - whether it in progress, completed or was cancelled.
       equipmentType:
         $ref: '#/definitions/EquipmentType'
       equipmentCount:
@@ -89,7 +93,7 @@ definitions:
       attachments:
         type: array
         items:
-          $ref: '#/definitions/Attachment'
+          $ref: '#/definitions/RentalRequestAttachment'
       history:
         type: array
         items:
@@ -98,6 +102,23 @@ definitions:
         type: array
         items:
           $ref: '#/definitions/RentalRequestRotationList'
+  RentalRequestAttachment:
+    type: object
+    description: Attachments that are required as part of the Rental Requests
+    required:
+      - id
+      - attachment
+    properties:
+      id:
+        format: int32
+        type: integer
+        description: A system-generated unique identifier for a RentalRequestAttachment
+      rentalRequest:
+        $ref: '#/definitions/RentalRequest'
+      attachment:
+        type: string
+        maxLength: 150
+        description: The name&#x2F;type attachment needed as part of the fulfillment of the request
   RentalRequestRotationList:
     type: object
     description: An eligible piece of equipment for a request and a tracking of the hire offer and response process related to a request for that piece of equipment. Includes a link from the equipment to a Rental Agreement if the equipment was hired to satisfy a part of the request.
@@ -132,10 +153,18 @@ definitions:
       offerResponse:
         type: string
         description: The response to the offer to hire. Null prior to receiving a response; a string after with the response - likely just Yes or No
-      refuseReason:
+      offerRefusalReason:
+        type: string
+        maxLength: 50
+        description: The reason why the user refused the offer based on a selection of values from the UI.
+      offerResponseDatetime:
+        type: string
+        format: date-time
+        description: The date and time the final response to the offer was established.
+      offerResponseNote:
         type: string
         maxLength: 2048
-        description: An optional reason given by the equipment owner for refusing the offer.
+        description: An optional note entered about the response to the offer from the equipment owner about the offer. Usually used when the offer is a &quot;No&quot;.
       note:
         type: string
         maxLength: 2048
@@ -150,6 +179,10 @@ definitions:
         format: int32
         type: integer
         description: A system-generated unique identifier for a RentalAgreement
+      status:
+        type: string
+        maxLength: 50
+        description: The current status of the Rental Agreement, such as Active or Complete
       equipment:
         $ref: '#/definitions/Equipment'
       project:
@@ -222,7 +255,7 @@ definitions:
         $ref: '#/definitions/EquipmentType'
       owner:
         $ref: '#/definitions/Owner'
-      equipCode:
+      equipmentCode:
         type: string
         maxLength: 25
         description: A human-visible unique code for the piece of equipment, referenced for convenience by the system users - HETS Clerks and Equipment Owners. Generated at record creation time based on the unique Owner prefix (e.g. EDW) and a zero-filled unique number - resulting in a code like EDW-0083.
@@ -281,7 +314,7 @@ definitions:
         type: string
         maxLength: 255
         description: TO BE REVIEWED WITH THE BUSINESS - WHAT IS THIS?
-      serialNum:
+      serialNumber:
         type: string
         maxLength: 100
         description: The serial number of the piece of equipment as provided by the Equipment Owner. Used to detect and reconcile pieces of equipment moved between Local Areas. Duplicate serial numbers are flagged in the system but permitted. The duplicates are flagged in the UI until the HETS Clerks reconcile the differences - either correcting the serial number or archiving a piece of equipment moved to a new local area.
@@ -301,6 +334,10 @@ definitions:
         type: number
         format: float
         description: The current seniority calculation result for this piece of equipment. The calculation is based on the &quot;numYears&quot; of service + average hours of service over the last three fiscal years - as stored in the related fields (serviceHoursLastYear, serviceHoursTwoYearsAgo serviceHoursThreeYearsAgo).
+      numberInBlock:
+        format: int32
+        type: integer
+        description: The number in the block of the piece of equipment so that it can be displayed to the user where it will be useful. This saves the user from having to figure out in their head the order when the list is displayed in Rotation Order.
       isSeniorityOverridden:
         type: boolean
         description: True if the Seniority for the piece of equipment was manually overridden. Set if a user has gone in and explicitly updated the seniority base information. Indicates that underlying numbers were manually overridden.
@@ -500,14 +537,17 @@ definitions:
         description: A system-generated unique identifier for an EquipmentType
       localArea:
         $ref: '#/definitions/LocalArea'
-      code:
+      name:
         type: string
         maxLength: 50
-        description: CHECK WITH BUSINESS - IS THIS NEEDED - A unique but human-friendly code for the Equipment Type that can be displayed on screens with little screen real estate available.
+        description: A human-friendly name for the Equipment Type that is displayed on screens with limited screen real estate available.
       description:
         type: string
         maxLength: 2048
-        description: The name of the equipment type, as specified by the HETS Clerk creating the equipment type.
+        description: A extended description of the equipment type.
+      askNextBlock1:
+        $ref: '#/definitions/Equipment'
+        description: The id of the next piece of Block 1 Equipment to be asked for a Rental Request. Only needed for Block 1 because all requests of other Blocks start from the first entry in the list.
       equipRentalRateNo:
         type: number
         format: float

@@ -353,6 +353,28 @@
             "table": null
         },
         {
+            "Description": "The status of the Rental Request - whether it in progress, completed or was cancelled.",
+            "Length": "50",
+            "Name": "status",
+            "RefDef": null,
+            "Required": [
+                {
+                    "req": "id"
+                }
+            ],
+            "Unique": null,
+            "binary": null,
+            "boolean": null,
+            "datetime": null,
+            "float": null,
+            "id": null,
+            "integer": null,
+            "links": null,
+            "ref": null,
+            "string": "string",
+            "table": null
+        },
+        {
             "Description": null,
             "Length": null,
             "Name": "equipmentType",
@@ -510,7 +532,7 @@
             "Description": null,
             "Length": null,
             "Name": "attachments",
-            "RefDef": "Attachment",
+            "RefDef": "RentalRequestAttachment",
             "Required": [
                 {
                     "req": "id"
@@ -570,6 +592,106 @@
             "links": "links",
             "ref": null,
             "string": null,
+            "table": null
+        },
+        {
+            "Description": "Attachments that are required as part of the Rental Requests",
+            "Length": null,
+            "Name": "RentalRequestAttachment",
+            "RefDef": null,
+            "Required": [
+                {
+                    "req": "id"
+                },
+                {
+                    "req": "attachment"
+                }
+            ],
+            "Unique": null,
+            "binary": null,
+            "boolean": null,
+            "datetime": null,
+            "float": null,
+            "id": null,
+            "integer": null,
+            "links": null,
+            "ref": null,
+            "string": null,
+            "table": "table"
+        },
+        {
+            "Description": "A system-generated unique identifier for a RentalRequestAttachment",
+            "Length": null,
+            "Name": "id",
+            "RefDef": null,
+            "Required": [
+                {
+                    "req": "id"
+                },
+                {
+                    "req": "attachment"
+                }
+            ],
+            "Unique": null,
+            "binary": null,
+            "boolean": null,
+            "datetime": null,
+            "float": null,
+            "id": "id",
+            "integer": null,
+            "links": null,
+            "ref": null,
+            "string": null,
+            "table": null
+        },
+        {
+            "Description": null,
+            "Length": null,
+            "Name": "rentalRequest",
+            "RefDef": "RentalRequest",
+            "Required": [
+                {
+                    "req": "id"
+                },
+                {
+                    "req": "attachment"
+                }
+            ],
+            "Unique": null,
+            "binary": null,
+            "boolean": null,
+            "datetime": null,
+            "float": null,
+            "id": null,
+            "integer": null,
+            "links": null,
+            "ref": "ref",
+            "string": null,
+            "table": null
+        },
+        {
+            "Description": "The name/type attachment needed as part of the fulfillment of the request",
+            "Length": "150",
+            "Name": "attachment",
+            "RefDef": null,
+            "Required": [
+                {
+                    "req": "id"
+                },
+                {
+                    "req": "attachment"
+                }
+            ],
+            "Unique": null,
+            "binary": null,
+            "boolean": null,
+            "datetime": null,
+            "float": null,
+            "id": null,
+            "integer": null,
+            "links": null,
+            "ref": null,
+            "string": "string",
             "table": null
         },
         {
@@ -793,9 +915,53 @@
             "table": null
         },
         {
-            "Description": "An optional reason given by the equipment owner for refusing the offer.",
+            "Description": "The reason why the user refused the offer based on a selection of values from the UI.",
+            "Length": "50",
+            "Name": "offerRefusalReason",
+            "RefDef": null,
+            "Required": [
+                {
+                    "req": "id"
+                }
+            ],
+            "Unique": null,
+            "binary": null,
+            "boolean": null,
+            "datetime": null,
+            "float": null,
+            "id": null,
+            "integer": null,
+            "links": null,
+            "ref": null,
+            "string": "string",
+            "table": null
+        },
+        {
+            "Description": "The date and time the final response to the offer was established.",
+            "Length": null,
+            "Name": "offerResponseDatetime",
+            "RefDef": null,
+            "Required": [
+                {
+                    "req": "id"
+                }
+            ],
+            "Unique": null,
+            "binary": null,
+            "boolean": null,
+            "datetime": "datetime",
+            "float": null,
+            "id": null,
+            "integer": null,
+            "links": null,
+            "ref": null,
+            "string": null,
+            "table": null
+        },
+        {
+            "Description": "An optional note entered about the response to the offer from the equipment owner about the offer. Usually used when the offer is a \"No\".",
             "Length": "2048",
-            "Name": "refuseReason",
+            "Name": "offerResponseNote",
             "RefDef": null,
             "Required": [
                 {
@@ -878,6 +1044,28 @@
             "links": null,
             "ref": null,
             "string": null,
+            "table": null
+        },
+        {
+            "Description": "The current status of the Rental Agreement, such as Active or Complete",
+            "Length": "50",
+            "Name": "status",
+            "RefDef": null,
+            "Required": [
+                {
+                    "req": "id"
+                }
+            ],
+            "Unique": null,
+            "binary": null,
+            "boolean": null,
+            "datetime": null,
+            "float": null,
+            "id": null,
+            "integer": null,
+            "links": null,
+            "ref": null,
+            "string": "string",
             "table": null
         },
         {
@@ -1323,7 +1511,7 @@
         {
             "Description": "A human-visible unique code for the piece of equipment, referenced for convenience by the system users - HETS Clerks and Equipment Owners. Generated at record creation time based on the unique Owner prefix (e.g. EDW) and a zero-filled unique number - resulting in a code like EDW-0083.",
             "Length": "25",
-            "Name": "equipCode",
+            "Name": "equipmentCode",
             "RefDef": null,
             "Required": [
                 {
@@ -1653,7 +1841,7 @@
         {
             "Description": "The serial number of the piece of equipment as provided by the Equipment Owner. Used to detect and reconcile pieces of equipment moved between Local Areas. Duplicate serial numbers are flagged in the system but permitted. The duplicates are flagged in the UI until the HETS Clerks reconcile the differences - either correcting the serial number or archiving a piece of equipment moved to a new local area.",
             "Length": "100",
-            "Name": "serialNum",
+            "Name": "serialNumber",
             "RefDef": null,
             "Required": [
                 {
@@ -1755,6 +1943,28 @@
             "float": "float",
             "id": null,
             "integer": null,
+            "links": null,
+            "ref": null,
+            "string": null,
+            "table": null
+        },
+        {
+            "Description": "The number in the block of the piece of equipment so that it can be displayed to the user where it will be useful. This saves the user from having to figure out in their head the order when the list is displayed in Rotation Order.",
+            "Length": null,
+            "Name": "numberInBlock",
+            "RefDef": null,
+            "Required": [
+                {
+                    "req": "id"
+                }
+            ],
+            "Unique": null,
+            "binary": null,
+            "boolean": null,
+            "datetime": null,
+            "float": null,
+            "id": null,
+            "integer": "integer",
             "links": null,
             "ref": null,
             "string": null,
@@ -2905,9 +3115,9 @@
             "table": null
         },
         {
-            "Description": "CHECK WITH BUSINESS - IS THIS NEEDED - A unique but human-friendly code for the Equipment Type that can be displayed on screens with little screen real estate available.",
+            "Description": "A human-friendly name for the Equipment Type that is displayed on screens with limited screen real estate available.",
             "Length": "50",
-            "Name": "code",
+            "Name": "name",
             "RefDef": null,
             "Required": [
                 {
@@ -2927,7 +3137,7 @@
             "table": null
         },
         {
-            "Description": "The name of the equipment type, as specified by the HETS Clerk creating the equipment type.",
+            "Description": "A extended description of the equipment type.",
             "Length": "2048",
             "Name": "description",
             "RefDef": null,
@@ -2946,6 +3156,28 @@
             "links": null,
             "ref": null,
             "string": "string",
+            "table": null
+        },
+        {
+            "Description": "The id of the next piece of Block 1 Equipment to be asked for a Rental Request. Only needed for Block 1 because all requests of other Blocks start from the first entry in the list.",
+            "Length": null,
+            "Name": "askNextBlock1",
+            "RefDef": "Equipment",
+            "Required": [
+                {
+                    "req": "id"
+                }
+            ],
+            "Unique": null,
+            "binary": null,
+            "boolean": null,
+            "datetime": null,
+            "float": null,
+            "id": null,
+            "integer": null,
+            "links": null,
+            "ref": "ref",
+            "string": null,
             "table": null
         },
         {

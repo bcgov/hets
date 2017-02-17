@@ -93,53 +93,49 @@ export function deleteFavourite(favourite) {
 ////////////////////
 
 function parseEquipment(equipment) {
-  if (!equipment.owner) { equipment.owner = { id: '', ownerFirstName: '',  ownerLastName: ''}; }
-  if (!equipment.equipmentType) { equipment.equipmentType = { id: '', description: ''}; }
-  if (!equipment.localArea) { equipment.localArea = { id: '', name: ''}; }
-  if (!equipment.localArea.serviceArea) { equipment.localArea.serviceArea = { id: '', name: ''}; }
-  if (!equipment.localArea.serviceArea.district) { equipment.localArea.serviceArea.district = { id: '', name: ''}; }
-  if (!equipment.localArea.serviceArea.district.region) { equipment.localArea.serviceArea.district.region = { id: '', name: ''}; }
+  if (!equipment.owner) { equipment.owner = { id: '', organizationName: '' }; }
+  if (!equipment.equipmentType) { equipment.equipmentType = { id: '', description: '' }; }
+  if (!equipment.localArea) { equipment.localArea = { id: '', name: '' }; }
+  if (!equipment.localArea.serviceArea) { equipment.localArea.serviceArea = { id: '', name: '' }; }
+  if (!equipment.localArea.serviceArea.district) { equipment.localArea.serviceArea.district = { id: '', name: '' }; }
+  if (!equipment.localArea.serviceArea.district.region) { equipment.localArea.serviceArea.district.region = { id: '', name: '' }; }
   if (!equipment.status) { equipment.status = Constant.EQUIPMENT_STATUS_CODE_PENDING; }
 
   equipment.isApproved = equipment.status === Constant.EQUIPMENT_STATUS_CODE_APPROVED;
   equipment.isNew = equipment.status === Constant.EQUIPMENT_STATUS_CODE_PENDING;
   equipment.isArchived = equipment.status === Constant.EQUIPMENT_STATUS_CODE_ARCHIVED;
-  equipment.isWorking = equipment.working === 'Y';
-  equipment.isMaintenanceContractor = equipment.owner.maintenanceContractor === 'Y';
+  equipment.isMaintenanceContractor = equipment.owner.isMaintenanceContractor === true;
 
   // UI display fields
-  equipment.ownerName = firstLastName(equipment.owner.ownerFirstName, equipment.owner.ownerLastName);
+  equipment.organizationName = equipment.owner.organizationName;
   equipment.ownerPath = equipment.owner.id ? `#/owners/${equipment.owner.id}` : '';
   equipment.typeName = equipment.equipmentType ? equipment.equipmentType.description : '';
   equipment.localAreaName = equipment.localArea.name;
   equipment.districtName = equipment.localArea.serviceArea.district.name;
   equipment.daysSinceVerified = daysAgo(equipment.lastVerifiedDate);
 
-  // TODO Company name needs to be defined in the backend
-  equipment.companyName = equipment.owner.companyName || equipment.ownerName;
-
   // Seniority data
   equipment.ytd = equipment.ytd || 0;
   equipment.serviceHoursLastYear = equipment.serviceHoursLastYear || 0;
   equipment.serviceHoursTwoYearsAgo = equipment.serviceHoursTwoYearsAgo || 0;
   equipment.serviceHoursThreeYearsAgo = equipment.serviceHoursThreeYearsAgo || 0;
-  equipment.seniorityDisplayNumber = concat(equipment.blockNumber, equipment.seniority, ' - ');
+  equipment.seniorityText = concat(equipment.blockNumber, equipment.seniority, ' - ');
+  equipment.isSeniorityOverridden = equipment.isSeniorityOverridden || false;
+  equipment.seniorityOverrideReason = equipment.seniorityOverrideReason || '';
 
   equipment.currentYear = Moment().year();
   equipment.lastYear = equipment.currentYear - 1;
   equipment.twoYearsAgo = equipment.currentYear - 2;
   equipment.threeYearsAgo = equipment.currentYear - 3;
 
-  // TODO This probably needs to come from the back-end
+  // TODO Everything below needs to be implemented by the back-end.
+  equipment.isWorking = equipment.isWorking || false;
+  equipment.workDescription = equipment.workDescription || 'N/A' ;
 
   // It is possible to have multiple instances of the same piece of equipment registered with HETS.
   // However, the HETS clerks would like to know about it via this flag so they can deal with the duplicates.
   equipment.hasDuplicates = false;
   equipment.duplicateEquipmentId = null;
-
-  // TODO Implement (TBD)
-  equipment.hiredStatus = 'N/A';
-  equipment.seniorityStatus = 'N/A';
 }
 
 export function searchEquipmentList(params) {
@@ -253,18 +249,24 @@ function parseOwner(owner) {
   if (!owner.contacts) { owner.contacts = []; }
   if (!owner.equipmentList) { owner.equipmentList = []; }
 
+  // Add display fields for owner contacts
+  _.map(owner.contacts, contact => { parseContact(contact); });
+
   // TODO Owner status needs to be populated in sample data. Setting to Approved for the time being...
   owner.status = owner.status || Constant.OWNER_STATUS_CODE_APPROVED;
 
+  owner.doingBusinessAs = owner.doingBusinessAs || '';
+  owner.registeredCompanyNumber = owner.registeredCompanyNumber || '';
+  owner.meetsResidency = owner.meetsResidency || false;
+
   // UI display fields
-  owner.isActive = owner.status === Constant.OWNER_STATUS_CODE_APPROVED;
-  owner.name = firstLastName(owner.ownerFirstName, owner.ownerLastName);
+  owner.isMaintenanceContractor = owner.isMaintenanceContractor || false;
+  owner.isApproved = owner.status === Constant.OWNER_STATUS_CODE_APPROVED;
   owner.primaryContactName = owner.primaryContact ? firstLastName(owner.primaryContact.givenName, owner.primaryContact.surname) : '';
   owner.localAreaName = owner.localArea.name;
+  owner.districtName = owner.localArea.serviceArea.district.name;
   owner.numberOfEquipment = Object.keys(owner.equipmentList).length;
-
-  // TODO Company name needs to be implemented in the backend
-  owner.companyName = owner.companyName || owner.name;
+  owner.numberOfPolicyDocuments = owner.numberOfPolicyDocuments || 0;  // TODO
 }
 
 export function searchOwners(params) {
@@ -300,6 +302,29 @@ export function getOwners() {
 
     store.dispatch({ type: Action.UPDATE_OWNERS_LOOKUP, owners: owners });
   });
+}
+
+export function updateOwner(owner) {
+  return new ApiRequest(`/owners/${ owner.id }`).put(owner).then(response => {
+    var owner = response;
+
+    // Add display fields
+    parseOwner(owner);
+
+    store.dispatch({ type: Action.UPDATE_OWNER, owner: owner });
+  });
+}
+
+////////////////////
+// Contacts
+////////////////////
+
+function parseContact(contact) {
+  contact.name = firstLastName(contact.givenName, contact.surname);
+
+  // TODO
+  contact.canEdit = true;
+  contact.canDelete = true;
 }
 
 ////////////////////
