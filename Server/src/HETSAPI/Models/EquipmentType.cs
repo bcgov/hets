@@ -42,20 +42,22 @@ namespace HETSAPI.Models
         /// </summary>
         /// <param name="Id">A system-generated unique identifier for an EquipmentType (required).</param>
         /// <param name="LocalArea">LocalArea.</param>
-        /// <param name="Code">CHECK WITH BUSINESS - IS THIS NEEDED - A unique but human-friendly code for the Equipment Type that can be displayed on screens with little screen real estate available..</param>
-        /// <param name="Description">The name of the equipment type, as specified by the HETS Clerk creating the equipment type..</param>
+        /// <param name="Name">A human-friendly name for the Equipment Type that is displayed on screens with limited screen real estate available..</param>
+        /// <param name="Description">A extended description of the equipment type..</param>
+        /// <param name="AskNextBlock1">The id of the next piece of Block 1 Equipment to be asked for a Rental Request. Only needed for Block 1 because all requests of other Blocks start from the first entry in the list..</param>
         /// <param name="EquipRentalRateNo">TO BE REVIEWED WITH THE BUSINESS - WHAT IS THIS?.</param>
         /// <param name="EquipRentalRatePage">TO BE REVIEWED WITH THE BUSINESS - WHAT IS THIS?.</param>
         /// <param name="MaxHours">TO BE REVIEWED WITH THE BUSINESS - WHAT IS THIS?.</param>
         /// <param name="ExtendHours">TO BE REVIEWED WITH THE BUSINESS - WHAT IS THIS?.</param>
         /// <param name="MaxHoursSub">TO BE REVIEWED WITH THE BUSINESS - WHAT IS THIS?.</param>
         /// <param name="Blocks">The number of blocks defined for this equipment type. Currently, either 2 for Dump Truck equipment and 1 for non-Dump Truck equipment. Unlikely to change, particularly without a significant impact on code..</param>
-        public EquipmentType(int Id, LocalArea LocalArea = null, string Code = null, string Description = null, float? EquipRentalRateNo = null, float? EquipRentalRatePage = null, float? MaxHours = null, float? ExtendHours = null, float? MaxHoursSub = null, int? Blocks = null)
+        public EquipmentType(int Id, LocalArea LocalArea = null, string Name = null, string Description = null, Equipment AskNextBlock1 = null, float? EquipRentalRateNo = null, float? EquipRentalRatePage = null, float? MaxHours = null, float? ExtendHours = null, float? MaxHoursSub = null, int? Blocks = null)
         {   
             this.Id = Id;
             this.LocalArea = LocalArea;
-            this.Code = Code;
+            this.Name = Name;
             this.Description = Description;
+            this.AskNextBlock1 = AskNextBlock1;
             this.EquipRentalRateNo = EquipRentalRateNo;
             this.EquipRentalRatePage = EquipRentalRatePage;
             this.MaxHours = MaxHours;
@@ -83,22 +85,35 @@ namespace HETSAPI.Models
         public int? LocalAreaRefId { get; set; }
         
         /// <summary>
-        /// CHECK WITH BUSINESS - IS THIS NEEDED - A unique but human-friendly code for the Equipment Type that can be displayed on screens with little screen real estate available.
+        /// A human-friendly name for the Equipment Type that is displayed on screens with limited screen real estate available.
         /// </summary>
-        /// <value>CHECK WITH BUSINESS - IS THIS NEEDED - A unique but human-friendly code for the Equipment Type that can be displayed on screens with little screen real estate available.</value>
-        [MetaDataExtension (Description = "CHECK WITH BUSINESS - IS THIS NEEDED - A unique but human-friendly code for the Equipment Type that can be displayed on screens with little screen real estate available.")]
+        /// <value>A human-friendly name for the Equipment Type that is displayed on screens with limited screen real estate available.</value>
+        [MetaDataExtension (Description = "A human-friendly name for the Equipment Type that is displayed on screens with limited screen real estate available.")]
         [MaxLength(50)]
         
-        public string Code { get; set; }
+        public string Name { get; set; }
         
         /// <summary>
-        /// The name of the equipment type, as specified by the HETS Clerk creating the equipment type.
+        /// A extended description of the equipment type.
         /// </summary>
-        /// <value>The name of the equipment type, as specified by the HETS Clerk creating the equipment type.</value>
-        [MetaDataExtension (Description = "The name of the equipment type, as specified by the HETS Clerk creating the equipment type.")]
+        /// <value>A extended description of the equipment type.</value>
+        [MetaDataExtension (Description = "A extended description of the equipment type.")]
         [MaxLength(2048)]
         
         public string Description { get; set; }
+        
+        /// <summary>
+        /// The id of the next piece of Block 1 Equipment to be asked for a Rental Request. Only needed for Block 1 because all requests of other Blocks start from the first entry in the list.
+        /// </summary>
+        /// <value>The id of the next piece of Block 1 Equipment to be asked for a Rental Request. Only needed for Block 1 because all requests of other Blocks start from the first entry in the list.</value>
+        [MetaDataExtension (Description = "The id of the next piece of Block 1 Equipment to be asked for a Rental Request. Only needed for Block 1 because all requests of other Blocks start from the first entry in the list.")]
+        public Equipment AskNextBlock1 { get; set; }
+        
+        /// <summary>
+        /// Foreign key for AskNextBlock1 
+        /// </summary>       
+        [ForeignKey("AskNextBlock1")]
+        public int? AskNextBlock1RefId { get; set; }
         
         /// <summary>
         /// TO BE REVIEWED WITH THE BUSINESS - WHAT IS THIS?
@@ -152,8 +167,9 @@ namespace HETSAPI.Models
             sb.Append("class EquipmentType {\n");
             sb.Append("  Id: ").Append(Id).Append("\n");
             sb.Append("  LocalArea: ").Append(LocalArea).Append("\n");
-            sb.Append("  Code: ").Append(Code).Append("\n");
+            sb.Append("  Name: ").Append(Name).Append("\n");
             sb.Append("  Description: ").Append(Description).Append("\n");
+            sb.Append("  AskNextBlock1: ").Append(AskNextBlock1).Append("\n");
             sb.Append("  EquipRentalRateNo: ").Append(EquipRentalRateNo).Append("\n");
             sb.Append("  EquipRentalRatePage: ").Append(EquipRentalRatePage).Append("\n");
             sb.Append("  MaxHours: ").Append(MaxHours).Append("\n");
@@ -208,14 +224,19 @@ namespace HETSAPI.Models
                     this.LocalArea.Equals(other.LocalArea)
                 ) &&                 
                 (
-                    this.Code == other.Code ||
-                    this.Code != null &&
-                    this.Code.Equals(other.Code)
+                    this.Name == other.Name ||
+                    this.Name != null &&
+                    this.Name.Equals(other.Name)
                 ) &&                 
                 (
                     this.Description == other.Description ||
                     this.Description != null &&
                     this.Description.Equals(other.Description)
+                ) &&                 
+                (
+                    this.AskNextBlock1 == other.AskNextBlock1 ||
+                    this.AskNextBlock1 != null &&
+                    this.AskNextBlock1.Equals(other.AskNextBlock1)
                 ) &&                 
                 (
                     this.EquipRentalRateNo == other.EquipRentalRateNo ||
@@ -265,15 +286,19 @@ namespace HETSAPI.Models
                 if (this.LocalArea != null)
                 {
                     hash = hash * 59 + this.LocalArea.GetHashCode();
-                }                if (this.Code != null)
+                }                if (this.Name != null)
                 {
-                    hash = hash * 59 + this.Code.GetHashCode();
+                    hash = hash * 59 + this.Name.GetHashCode();
                 }                
                                 if (this.Description != null)
                 {
                     hash = hash * 59 + this.Description.GetHashCode();
                 }                
-                                if (this.EquipRentalRateNo != null)
+                                   
+                if (this.AskNextBlock1 != null)
+                {
+                    hash = hash * 59 + this.AskNextBlock1.GetHashCode();
+                }                if (this.EquipRentalRateNo != null)
                 {
                     hash = hash * 59 + this.EquipRentalRateNo.GetHashCode();
                 }                

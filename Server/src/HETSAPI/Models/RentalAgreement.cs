@@ -41,12 +41,14 @@ namespace HETSAPI.Models
         /// Initializes a new instance of the <see cref="RentalAgreement" /> class.
         /// </summary>
         /// <param name="Id">A system-generated unique identifier for a RentalAgreement (required).</param>
+        /// <param name="Status">The current status of the Rental Agreement, such as Active or Complete.</param>
         /// <param name="Equipment">Equipment.</param>
         /// <param name="Project">Project.</param>
         /// <param name="TimeRecords">TimeRecords.</param>
-        public RentalAgreement(int Id, Equipment Equipment = null, Project Project = null, List<TimeRecord> TimeRecords = null)
+        public RentalAgreement(int Id, string Status = null, Equipment Equipment = null, Project Project = null, List<TimeRecord> TimeRecords = null)
         {   
             this.Id = Id;
+            this.Status = Status;
             this.Equipment = Equipment;
             this.Project = Project;
             this.TimeRecords = TimeRecords;
@@ -58,6 +60,15 @@ namespace HETSAPI.Models
         /// <value>A system-generated unique identifier for a RentalAgreement</value>
         [MetaDataExtension (Description = "A system-generated unique identifier for a RentalAgreement")]
         public int Id { get; set; }
+        
+        /// <summary>
+        /// The current status of the Rental Agreement, such as Active or Complete
+        /// </summary>
+        /// <value>The current status of the Rental Agreement, such as Active or Complete</value>
+        [MetaDataExtension (Description = "The current status of the Rental Agreement, such as Active or Complete")]
+        [MaxLength(50)]
+        
+        public string Status { get; set; }
         
         /// <summary>
         /// Gets or Sets Equipment
@@ -95,6 +106,7 @@ namespace HETSAPI.Models
             var sb = new StringBuilder();
             sb.Append("class RentalAgreement {\n");
             sb.Append("  Id: ").Append(Id).Append("\n");
+            sb.Append("  Status: ").Append(Status).Append("\n");
             sb.Append("  Equipment: ").Append(Equipment).Append("\n");
             sb.Append("  Project: ").Append(Project).Append("\n");
             sb.Append("  TimeRecords: ").Append(TimeRecords).Append("\n");
@@ -141,6 +153,11 @@ namespace HETSAPI.Models
                     this.Id.Equals(other.Id)
                 ) &&                 
                 (
+                    this.Status == other.Status ||
+                    this.Status != null &&
+                    this.Status.Equals(other.Status)
+                ) &&                 
+                (
                     this.Equipment == other.Equipment ||
                     this.Equipment != null &&
                     this.Equipment.Equals(other.Equipment)
@@ -169,7 +186,11 @@ namespace HETSAPI.Models
                 int hash = 41;
                 // Suitable nullity checks
                                    
-                hash = hash * 59 + this.Id.GetHashCode();                   
+                hash = hash * 59 + this.Id.GetHashCode();                if (this.Status != null)
+                {
+                    hash = hash * 59 + this.Status.GetHashCode();
+                }                
+                                   
                 if (this.Equipment != null)
                 {
                     hash = hash * 59 + this.Equipment.GetHashCode();

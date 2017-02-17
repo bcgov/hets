@@ -761,6 +761,8 @@ namespace HETSAPI.Services.Impl
                     UserRole userRole = new UserRole();
                     Role role = _context.Roles.First(x => x.Id == item.RoleId);
                     userRole.Role = role;
+                    userRole.EffectiveDate = item.EffectiveDate;
+                    userRole.ExpiryDate = item.ExpiryDate;
 
                     if (!user.UserRoles.Contains(userRole))
                     {
@@ -795,7 +797,7 @@ namespace HETSAPI.Services.Impl
         {
             bool exists = _context.Users.Any(x => x.Id == id);
             bool success = false;
-            if (exists)
+            if (exists  && items != null)
             {
                 User user = _context.Users
                     .Include(x => x.District)
