@@ -31,13 +31,21 @@ const EQUIPMENT_ACTION_ARCHIVE = 'Archive';
 const EQUIPMENT_ACTION_VERIFIED = 'Verified';
 const EQUIPMENT_ACTION_FOR_HIRE = 'For Hire';
 
+/*
+
+TODO:
+* Print
+
+*/
+
 var EquipmentDetail = React.createClass({
   propTypes: {
     equipment: React.PropTypes.object,
-    physicalAttachments: React.PropTypes.object,
+    equipmentPhysicalAttachments: React.PropTypes.object,
+    equipmentSeniorityHistory: React.PropTypes.object,
     notes: React.PropTypes.object,
     attachments: React.PropTypes.object,
-    equipmentHistory: React.PropTypes.object,
+    history: React.PropTypes.object,
     params: React.PropTypes.object,
     ui: React.PropTypes.object,
   },
@@ -53,7 +61,7 @@ var EquipmentDetail = React.createClass({
       showSeniorityDialog: false,
       showPhysicalAttachmentDialog: false,
 
-      physicalAttachment: {},
+      equipmentPhysicalAttachment: {},
 
       ui : {
         // Physical Attachments
@@ -71,6 +79,8 @@ var EquipmentDetail = React.createClass({
     this.setState({ loadingEquipment: true });
     var equipId = this.props.params.equipmentId;
     // Make several calls here
+    // TODO Load equipment history, notes and attachments (docs)
+    // TODO Load equipment seniority history
     Api.getEquipment(equipId).finally(() => {
       this.setState({ loadingEquipment: false });
     });
@@ -100,7 +110,7 @@ var EquipmentDetail = React.createClass({
 
   updateUIState(state, callback) {
     this.setState({ ui: { ...this.state.ui, ...state } }, () => {
-      store.dispatch({ type: Action.UPDATE_PHYSICAL_ATTACHMENTS_UI, physicalAttachments: this.state.ui });
+      store.dispatch({ type: Action.UPDATE_PHYSICAL_ATTACHMENTS_UI, equipmentPhysicalAttachments: this.state.ui });
       if (callback) { callback(); }
     });
   },
@@ -109,7 +119,7 @@ var EquipmentDetail = React.createClass({
     // TODO Implement
   },
 
-  registeredInAreaChanged(/*e*/) {
+  registeredInAreaChanged() {
   },
 
   openEditDialog() {
@@ -142,7 +152,7 @@ var EquipmentDetail = React.createClass({
 
   openPhysicalAttachmentDialog(attachment) {
     this.setState({
-      physicalAttachment: attachment,
+      equipmentPhysicalAttachment: attachment,
       showPhysicalAttachmentDialog: true,
     });
   },
@@ -156,7 +166,7 @@ var EquipmentDetail = React.createClass({
       id: 0,
       equipment: this.props.equipment,
     };
-    this.openInspectionDialog(newAttachment);
+    this.openPhysicalAttachmentDialog(newAttachment);
   },
 
   deletePhysicalAttachment(attachment) {
@@ -194,7 +204,7 @@ var EquipmentDetail = React.createClass({
                 <MenuItem key={ EQUIPMENT_ACTION_VERIFIED } eventKey={ EQUIPMENT_ACTION_VERIFIED }>{ EQUIPMENT_ACTION_VERIFIED }</MenuItem>
                 <MenuItem key={ EQUIPMENT_ACTION_FOR_HIRE } eventKey={ EQUIPMENT_ACTION_FOR_HIRE }>{ EQUIPMENT_ACTION_FOR_HIRE }</MenuItem>
               </DropdownButton>
-              <Button><Glyphicon glyph="print" title="Print" /></Button>
+              <Button onClick={ this.print }><Glyphicon glyph="print" title="Print" /></Button>
               <LinkContainer to={{ pathname: 'equipment' }}>
                 <Button title="Return to List"><Glyphicon glyph="arrow-left" /> Return to List</Button>
               </LinkContainer>
@@ -208,7 +218,7 @@ var EquipmentDetail = React.createClass({
           return <div id="equipment-header">
             <Row>
               <ColLabel md={2}><h1>Company:</h1></ColLabel>
-              <ColField md={10}><h1><small>{ equipment.ownerName }</small></h1></ColField>
+              <ColField md={10}><h1><small>{ equipment.organizationName }</small></h1></ColField>
             </Row>
             <Row>
               <ColLabel md={2}><h1>EquipId:</h1></ColLabel>
@@ -235,7 +245,9 @@ var EquipmentDetail = React.createClass({
         <Row>
           <Col md={6}>
             <Well>
-              <h3>Equipment Information <span className="pull-right"><Button title="Edit" bsSize="small" onClick={ this.openEditDialog }><Glyphicon glyph="edit" /></Button></span></h3>
+              <h3>Equipment Information <span className="pull-right">
+                <Button title="Edit" bsSize="small" onClick={ this.openEditDialog }><Glyphicon glyph="edit" /></Button>
+              </span></h3>
               {(() => {
                 if (this.state.loadingEquipment) { return <div style={{ textAlign: 'center' }}><Spinner /></div>; }
 
@@ -275,12 +287,14 @@ var EquipmentDetail = React.createClass({
           </Col>
           <Col md={6}>
             <Well>
-              <h3>Attachments <span className="pull-right"><Button title="Add Attachment" bsSize="small" onClick={this.addPhysicalAttachment}><Glyphicon glyph="plus" /></Button></span></h3>
+              <h3>Attachments <span className="pull-right">
+                <Button title="Add Attachment" bsSize="small" onClick={this.addPhysicalAttachment}><Glyphicon glyph="plus" /></Button>
+              </span></h3>
               {(() => {
                 if (this.state.loadingPhysicalAttachments ) { return <div style={{ textAlign: 'center' }}><Spinner/></div>; }
-                if (Object.keys(this.props.physicalAttachments).length === 0) { return <Alert bsStyle="success" style={{ marginTop: 10 }}>No Attachments</Alert>; }
+                if (Object.keys(this.props.equipmentPhysicalAttachments).length === 0) { return <Alert bsStyle="success" style={{ marginTop: 10 }}>No Attachments</Alert>; }
 
-                var physicalAttachments = _.sortBy(this.props.physicalAttachments, this.state.ui.sortField);
+                var physicalAttachments = _.sortBy(this.props.equipmentPhysicalAttachments, this.state.ui.sortField);
                 if (this.state.ui.sortDesc) {
                   _.reverse(physicalAttachments);
                 }
@@ -316,13 +330,19 @@ var EquipmentDetail = React.createClass({
         <Row>
           <Col md={6}>
             <Well>
-              <h3>Seniority Data <span className="pull-right"><Button title="Edit" bsSize="small" onClick={this.openSeniorityDialog}><Glyphicon glyph="edit" /></Button></span></h3>
+              <h3>Seniority<span className="pull-right">
+                <Button title="Edit" bsSize="small" onClick={this.openSeniorityDialog}><Glyphicon glyph="edit" /></Button>
+              </span></h3>
               {(() => {
                 if (this.state.loadingSeniorityData) { return <div style={{ textAlign: 'center' }}><Spinner/></div>; }
 
-                var seniorityHistory = [];  // TODO
+                var seniorityHistory = this.props.equipmentSeniorityHistory;  // TODO
 
                 return <div>
+                  <Row>
+                    <ColLabel md={4}>Seniority</ColLabel>
+                    <ColField md={8}>{ equipment.seniorityText }</ColField>
+                  </Row>
                   <Row>
                     <ColLabel md={4}>Hours YTD</ColLabel>
                     <ColField md={8}>{ equipment.ytd }</ColField>
@@ -349,17 +369,17 @@ var EquipmentDetail = React.createClass({
                   </Row>
                   <Row>
                     <ColLabel md={4}>Years Registered</ColLabel>
-                    <ColField md={8}>{ (equipment.numYears || 0).toString() }</ColField>
+                    <ColField md={8}>{ equipment.yearsOfService || 0 }</ColField>
                   </Row>
                   <Row>
-                    <ColLabel md={4}>Status</ColLabel>
-                    <ColField md={8}>{ equipment.seniorityStatus }</ColField>
+                    <ColLabel md={4}>Override Status</ColLabel>
+                    <ColField md={8}>{ equipment.isSeniorityOverridden ? 'Manually Updated' : 'Not Overriden'}</ColField>
                   </Row>
                   <Row>
-                    <ColLabel md={4} >Update Reason</ColLabel>
-                    <ColField md={6}>{ equipment.seniorityUpdateReasonText }</ColField>
+                    <ColLabel md={4} >Override Reason</ColLabel>
+                    <ColField md={6}>{ equipment.seniorityOverrideReason }</ColField>
                     <ColField md={2}>
-                      <Button className="pull-right" title="Seniority History" bsSize="small" onClick={ this.showSeniorityHistory} >All ({ Object.keys(seniorityHistory).length }})</Button>
+                      <Button className="pull-right" title="Seniority History" bsSize="small" onClick={ this.showSeniorityHistory} >All ({ Object.keys(seniorityHistory).length })</Button>
                     </ColField>
                   </Row>
                 </div>;
@@ -368,19 +388,22 @@ var EquipmentDetail = React.createClass({
           </Col>
           <Col md={6}>
             <Well>
-              <h3>History <span className="pull-right"><Button title="Add note" bsSize="small" onClick={this.addNote}><Glyphicon glyph="plus" /> Add Note</Button><Button title="Add document" bsSize="small" onClick={this.addDocument}><Glyphicon glyph="paperclip" /></Button></span></h3>
+              <h3>History <span className="pull-right">
+                <Button title="Add note" bsSize="small" onClick={this.addNote}><Glyphicon glyph="plus" /> Add Note</Button>
+                <Button title="Add document" bsSize="small" onClick={this.addDocument}><Glyphicon glyph="paperclip" /></Button>
+              </span></h3>
               {(() => {
                 if (this.state.loadingEquipmentHistory) { return <div style={{ textAlign: 'center' }}><Spinner/></div>; }
-                if (Object.keys(this.props.equipmentHistory || []).length === 0) { return <Alert bsStyle="success" style={{ marginTop: 10 }}>No history</Alert>; }
+                if (Object.keys(this.props.history || []).length === 0) { return <Alert bsStyle="success" style={{ marginTop: 10 }}>No history</Alert>; }
 
-                var history = _.sortBy(this.props.equipmentHistory, 'createdDate');    
+                var history = _.sortBy(this.props.history, 'createdDate');    
 
                 return <div id="equipment-history">
                   {
-                    _.map(history, (historyEntry) => {
+                    _.map(history, (entry) => {
                       return <Row>
-                        <ColLabel md={2}>{ formatDateTime(historyEntry.createdDate, 'YYYY-MMM-DD') }</ColLabel>
-                        <ColField md={10}>{ historyEntry.historyText }</ColField>
+                        <ColLabel md={2}>{ formatDateTime(entry.createdDate, 'YYYY-MMM-DD') }</ColLabel>
+                        <ColField md={10}>{ entry.historyText }</ColField>
                       </Row>;
                     })
                   }
@@ -404,11 +427,12 @@ var EquipmentDetail = React.createClass({
 function mapStateToProps(state) {
   return {
     equipment: state.models.equipment,
-    physicalAttachments: state.models.physicalAttachments,
-    equipmentHistory: state.models.equipmentHistory,
-    attachments: state.models.equipmentAttachments,
+    equipmentPhysicalAttachments: state.models.equipmentPhysicalAttachments,
+    equipmentSeniorityHistory: state.models.equipmentSeniorityHistory,
     notes: state.models.equipmentNotes,
-    ui: state.ui.physicalAttachments,
+    attachments: state.models.equipmentAttachments,
+    history: state.models.equipmentHistory,
+    ui: state.ui.equipmentPhysicalAttachments,
   };
 }
 

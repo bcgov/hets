@@ -62,7 +62,7 @@ var Equipment = React.createClass({
       },
 
       ui : {
-        sortField: this.props.ui.sortField || 'ownerName',
+        sortField: this.props.ui.sortField || 'organizationName',
         sortDesc: this.props.ui.sortDesc === true,
       },
     };
@@ -199,16 +199,16 @@ var Equipment = React.createClass({
           _.reverse(equipmentList);
         }
         return <SortTable sortField={ this.state.ui.sortField } sortDesc={ this.state.ui.sortDesc } onSort={ this.updateUIState } headers={[
-            { field: 'equipCode',        title: 'ID'            },
-            { field: 'typeName',         title: 'Type'          },
-            { field: 'companyName',      title: 'Owner'         },
-            { field: 'seniorityNumber',  title: 'Seniority'     },
-            { field: 'hiredStatus',      title: 'Hired'         },
-            { field: 'make',             title: 'Make'          },
-            { field: 'model',            title: 'Model'         },
-            { field: 'size',             title: 'Size'          },
-            { field: 'attachments',      title: 'Attachments'   },
-            { field: 'lastVerifiedDate', title: 'Last Verified' },
+            { field: 'equipCode',            title: 'ID'            },
+            { field: 'typeName',             title: 'Type'          },
+            { field: 'organizationName',     title: 'Owner'         },
+            { field: 'seniorityText',        title: 'Seniority'     },
+            { field: 'isWorking',            title: 'Hired'         },
+            { field: 'make',                 title: 'Make'          },
+            { field: 'model',                title: 'Model'         },
+            { field: 'size',                 title: 'Size'          },
+            { field: 'attachments',          title: 'Attachments'   },
+            { field: 'lastVerifiedDate',     title: 'Last Verified' },
             { field: 'blank' },
         ]}>
           {
@@ -216,14 +216,14 @@ var Equipment = React.createClass({
               return <tr key={ equip.id }>
                 <td>{ equip.equipCode }</td>
                 <td>{ equip.typeName }</td>
-                <td><a href={ equip.ownerPath }>{ equip.companyName }</a></td>
-                <td>{ equip.seniorityDisplayNumber }</td>
-                <td>{ equip.hiredStatus }</td>
+                <td><a href={ equip.ownerPath }>{ equip.organizationName }</a></td>
+                <td>{ equip.seniorityText }</td>
+                <td>{ equip.isWorking ? equip.workDescription : 'N' }</td>
                 <td>{ equip.make }</td>
                 <td>{ equip.model }</td>
                 <td>{ equip.size }</td>
                 <td>{ Object.keys(equip.equipmentAttachments).length }</td>
-                <td>{ formatDateTime(equip.lastVerifiedDate, 'MM/DD/YYYY') }</td>
+                <td>{ equip.isApproved ? formatDateTime(equip.lastVerifiedDate, 'YYYY-MMM-DD') : 'Not Approved' }</td>
                 <td style={{ textAlign: 'right' }}>
                   <LinkContainer to={{ pathname: 'equipment/' + equip.id }}>
                     <Button title="edit" bsSize="xsmall"><Glyphicon glyph="edit" /></Button>
