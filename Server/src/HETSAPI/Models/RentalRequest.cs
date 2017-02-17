@@ -43,6 +43,7 @@ namespace HETSAPI.Models
         /// <param name="Id">A system-generated unique identifier for a Request (required).</param>
         /// <param name="Project">Project.</param>
         /// <param name="LocalArea">LocalArea.</param>
+        /// <param name="Status">The status of the Rental Request - whether it in progress, completed or was cancelled..</param>
         /// <param name="EquipmentType">EquipmentType.</param>
         /// <param name="EquipmentCount">The number of pieces of the equipment type wanted for hire as part of this request..</param>
         /// <param name="ExpectedHours">The expected number of rental hours for each piece equipment hired against this request, as provided by the Project Manager making the request..</param>
@@ -53,11 +54,12 @@ namespace HETSAPI.Models
         /// <param name="Attachments">Attachments.</param>
         /// <param name="History">History.</param>
         /// <param name="RentalRequestRotationList">RentalRequestRotationList.</param>
-        public RentalRequest(int Id, Project Project = null, LocalArea LocalArea = null, EquipmentType EquipmentType = null, int? EquipmentCount = null, int? ExpectedHours = null, DateTime? ExpectedStartDate = null, DateTime? ExpectedEndDate = null, Equipment FirstOnRotationList = null, List<Note> Notes = null, List<Attachment> Attachments = null, List<History> History = null, List<RentalRequestRotationList> RentalRequestRotationList = null)
+        public RentalRequest(int Id, Project Project = null, LocalArea LocalArea = null, string Status = null, EquipmentType EquipmentType = null, int? EquipmentCount = null, int? ExpectedHours = null, DateTime? ExpectedStartDate = null, DateTime? ExpectedEndDate = null, Equipment FirstOnRotationList = null, List<Note> Notes = null, List<RentalRequestAttachment> Attachments = null, List<History> History = null, List<RentalRequestRotationList> RentalRequestRotationList = null)
         {   
             this.Id = Id;
             this.Project = Project;
             this.LocalArea = LocalArea;
+            this.Status = Status;
             this.EquipmentType = EquipmentType;
             this.EquipmentCount = EquipmentCount;
             this.ExpectedHours = ExpectedHours;
@@ -98,6 +100,15 @@ namespace HETSAPI.Models
         /// </summary>       
         [ForeignKey("LocalArea")]
         public int? LocalAreaRefId { get; set; }
+        
+        /// <summary>
+        /// The status of the Rental Request - whether it in progress, completed or was cancelled.
+        /// </summary>
+        /// <value>The status of the Rental Request - whether it in progress, completed or was cancelled.</value>
+        [MetaDataExtension (Description = "The status of the Rental Request - whether it in progress, completed or was cancelled.")]
+        [MaxLength(50)]
+        
+        public string Status { get; set; }
         
         /// <summary>
         /// Gets or Sets EquipmentType
@@ -159,7 +170,7 @@ namespace HETSAPI.Models
         /// <summary>
         /// Gets or Sets Attachments
         /// </summary>
-        public List<Attachment> Attachments { get; set; }
+        public List<RentalRequestAttachment> Attachments { get; set; }
         
         /// <summary>
         /// Gets or Sets History
@@ -182,6 +193,7 @@ namespace HETSAPI.Models
             sb.Append("  Id: ").Append(Id).Append("\n");
             sb.Append("  Project: ").Append(Project).Append("\n");
             sb.Append("  LocalArea: ").Append(LocalArea).Append("\n");
+            sb.Append("  Status: ").Append(Status).Append("\n");
             sb.Append("  EquipmentType: ").Append(EquipmentType).Append("\n");
             sb.Append("  EquipmentCount: ").Append(EquipmentCount).Append("\n");
             sb.Append("  ExpectedHours: ").Append(ExpectedHours).Append("\n");
@@ -243,6 +255,11 @@ namespace HETSAPI.Models
                     this.LocalArea == other.LocalArea ||
                     this.LocalArea != null &&
                     this.LocalArea.Equals(other.LocalArea)
+                ) &&                 
+                (
+                    this.Status == other.Status ||
+                    this.Status != null &&
+                    this.Status.Equals(other.Status)
                 ) &&                 
                 (
                     this.EquipmentType == other.EquipmentType ||
@@ -316,7 +333,11 @@ namespace HETSAPI.Models
                 if (this.LocalArea != null)
                 {
                     hash = hash * 59 + this.LocalArea.GetHashCode();
-                }                   
+                }                if (this.Status != null)
+                {
+                    hash = hash * 59 + this.Status.GetHashCode();
+                }                
+                                   
                 if (this.EquipmentType != null)
                 {
                     hash = hash * 59 + this.EquipmentType.GetHashCode();
