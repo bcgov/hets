@@ -328,6 +328,53 @@ function parseContact(contact) {
 }
 
 ////////////////////
+// Projects
+////////////////////
+
+function parseProject(project) {
+  if (!project.serviceArea) { project.serviceArea = { id: '', name: ''}; }
+  if (!project.serviceArea.district) { project.serviceArea.district = { id: '', name: ''}; }
+  if (!project.serviceArea.district.region) { project.serviceArea.district.region = { id: '', name: ''}; }
+  if (!project.contacts) { project.contacts = []; }
+  if (!project.rentalRequests) { project.rentalRequests = []; }
+
+  // TODO Project status needs to be populated in sample data. Setting to Active for the time being...
+  project.status = project.status || Constant.PROJECT_STATUS_CODE_ACTIVE;
+
+  // TODO The following fields must be populated by the back-end
+  project.numberOfHires = project.numberOfHires || 0;
+  project.numberOfRequests = project.numberOfRequests || 0;
+
+  // UI display fields
+  project.isActive = project.status === Constant.PROJECT_STATUS_CODE_ACTIVE;
+  project.primaryContactName = project.primaryContact ? firstLastName(project.primaryContact.givenName, project.primaryContact.surname) : '';
+  project.serviceAreaName = project.serviceArea.name;
+}
+
+export function searchProjects(params) {
+  return new ApiRequest('/projects/search').get(params).then(response => {
+    // Normalize the response
+    var projects = _.fromPairs(response.map(project => [ project.id, project ]));
+
+    // Add display fields
+    _.map(projects, project => { parseProject(project); });
+
+    store.dispatch({ type: Action.UPDATE_PROJECTS, projects: projects });
+  });
+}
+
+export function getProject(projectId) {
+  return new ApiRequest(`/projects/${projectId}`).get().then(response => {
+    var project = response;
+
+    // Add display fields
+    parseProject(project);
+
+    store.dispatch({ type: Action.UPDATE_PROJECT, project: project });
+  });
+}
+
+////////////////////
 // Look-ups
 ////////////////////
 

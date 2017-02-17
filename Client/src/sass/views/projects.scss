@@ -1,0 +1,40 @@
+#projects-list {
+  #projects-search {
+    margin-top: -10px;
+
+    > div {
+      margin-top: 10px;
+    }
+
+    > label {
+      margin-top: 17px;
+      margin-left: 10px;
+      float: left;
+    }
+
+    > button {
+      margin-top: 10px;
+      margin-left: 20px;
+    }
+
+    > input {
+      float: left;
+      min-width: 175px;
+      width: auto;
+      margin-top: 10px;
+      margin-left: 10px;
+    }
+  }
+
+  #projects-buttons {
+    float: right;
+
+    .btn {
+      width: 40px;
+    }
+  }
+
+  #projects-faves-dropdown {
+    width: 79px;
+  }
+}
