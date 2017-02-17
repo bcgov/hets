@@ -1083,7 +1083,7 @@ paths:
           schema:
             type: array
             items:
-              $ref: "#/definitions/RoleViewModel"
+              $ref: "#/definitions/Role"
     post:
       tags:
         - Role
@@ -1098,7 +1098,7 @@ paths:
           in: body
           required: true
           schema:
-            $ref: "#/definitions/RoleViewModel"
+            $ref: "#/definitions/Role"
       responses:
         201:
           description: Role created
@@ -1108,7 +1108,7 @@ paths:
               type: string
               format: url
           schema:
-            $ref: "#/definitions/RoleViewModel"  
+            $ref: "#/definitions/Role"  
   /roles/{id}:
     get:
       tags:
@@ -1122,7 +1122,7 @@ paths:
         200:
           description: OK
           schema:
-            $ref: "#/definitions/RoleViewModel"
+            $ref: "#/definitions/Role"
         404:
           description: Role not found
       parameters:
@@ -1144,7 +1144,7 @@ paths:
         200:
           description: OK
           schema:
-            $ref: "#/definitions/RoleViewModel"
+            $ref: "#/definitions/Role"
         404:
           description: Role not found
       parameters:
@@ -1157,7 +1157,7 @@ paths:
           in: body
           required: true
           schema:
-            $ref: "#/definitions/RoleViewModel"
+            $ref: "#/definitions/Role"
   /roles/{id}/delete:
     post:
       tags:
@@ -2928,26 +2928,6 @@ paths:
             type: array
             items:
               $ref: "#/definitions/EquipmentAttachment"
-  /equipment/{id}/view:
-    get:
-      tags:
-        - Equipment
-      consumes: []
-      produces:
-        - text/plain
-        - application/json
-        - text/json
-      parameters:
-        - name: id
-          in: path
-          description: id of Equipment to fetch EquipmentViewModel for
-          required: true
-          type: integer
-      responses:
-        200:
-          description: OK
-          schema:
-            $ref: "#/definitions/EquipmentViewModel"
   /owners/search:
     get:
       summary: Searches Owners
@@ -3509,7 +3489,7 @@ paths:
           schema:
             type: array
             items:
-              $ref: "#/definitions/GroupMembershipViewModel"
+              $ref: "#/definitions/GroupMembership"
       responses:
         200:
           description: OK
@@ -3535,11 +3515,13 @@ paths:
           description: id of User to update
           required: true
           type: integer
-        - name: item
+        - name: items
           in: body
           required: true
           schema:
-            $ref: "#/definitions/GroupMembershipViewModel"
+            type: array
+            items:
+              $ref: "#/definitions/GroupMembership"
       responses:
         200:
           description: OK
@@ -3548,7 +3530,7 @@ paths:
             items:
               $ref: "#/definitions/GroupMembershipViewModel"
         404:
-          description: User not found  
+          description: User not found
   /users/{id}/favourites:
     get:
       description: Returns a user's favourites of a given context type
@@ -3617,32 +3599,6 @@ paths:
           description: id of District for which to fetch the ServiceAreas
           required: true
           type: integer
-  /groups/{id}/users:
-    get:
-      summary: returns users in a given Group
-      description:
-        Used to get users in a given Group
-      tags:
-        - Group
-      consumes:
-        - application/json
-      produces:
-        - text/plain
-        - application/json
-        - text/json
-      parameters:
-        - name: id
-          in: path
-          description: id of Group to fetch Users for
-          required: true
-          type: integer
-      responses:
-        200:
-          description: OK
-          schema:
-            type: array
-            items:
-              $ref: "#/definitions/UserViewModel"
 definitions:
   Project:
     type: object
@@ -3706,6 +3662,10 @@ definitions:
         $ref: '#/definitions/Project'
       localArea:
         $ref: '#/definitions/LocalArea'
+      status:
+        type: string
+        maxLength: 50
+        description: The status of the Rental Request - whether it in progress, completed or was cancelled.
       equipmentType:
         $ref: '#/definitions/EquipmentType'
       equipmentCount:
@@ -3734,7 +3694,7 @@ definitions:
       attachments:
         type: array
         items:
-          $ref: '#/definitions/Attachment'
+          $ref: '#/definitions/RentalRequestAttachment'
       history:
         type: array
         items:
@@ -3743,6 +3703,23 @@ definitions:
         type: array
         items:
           $ref: '#/definitions/RentalRequestRotationList'
+  RentalRequestAttachment:
+    type: object
+    description: Attachments that are required as part of the Rental Requests
+    required:
+      - id
+      - attachment
+    properties:
+      id:
+        format: int32
+        type: integer
+        description: A system-generated unique identifier for a RentalRequestAttachment
+      rentalRequest:
+        $ref: '#/definitions/RentalRequest'
+      attachment:
+        type: string
+        maxLength: 150
+        description: The name&#x2F;type attachment needed as part of the fulfillment of the request
   RentalRequestRotationList:
     type: object
     description: An eligible piece of equipment for a request and a tracking of the hire offer and response process related to a request for that piece of equipment. Includes a link from the equipment to a Rental Agreement if the equipment was hired to satisfy a part of the request.
@@ -3777,10 +3754,18 @@ definitions:
       offerResponse:
         type: string
         description: The response to the offer to hire. Null prior to receiving a response; a string after with the response - likely just Yes or No
-      refuseReason:
+      offerRefusalReason:
+        type: string
+        maxLength: 50
+        description: The reason why the user refused the offer based on a selection of values from the UI.
+      offerResponseDatetime:
+        type: string
+        format: date-time
+        description: The date and time the final response to the offer was established.
+      offerResponseNote:
         type: string
         maxLength: 2048
-        description: An optional reason given by the equipment owner for refusing the offer.
+        description: An optional note entered about the response to the offer from the equipment owner about the offer. Usually used when the offer is a &quot;No&quot;.
       note:
         type: string
         maxLength: 2048
@@ -3795,6 +3780,10 @@ definitions:
         format: int32
         type: integer
         description: A system-generated unique identifier for a RentalAgreement
+      status:
+        type: string
+        maxLength: 50
+        description: The current status of the Rental Agreement, such as Active or Complete
       equipment:
         $ref: '#/definitions/Equipment'
       project:
@@ -3867,7 +3856,7 @@ definitions:
         $ref: '#/definitions/EquipmentType'
       owner:
         $ref: '#/definitions/Owner'
-      equipCode:
+      equipmentCode:
         type: string
         maxLength: 25
         description: A human-visible unique code for the piece of equipment, referenced for convenience by the system users - HETS Clerks and Equipment Owners. Generated at record creation time based on the unique Owner prefix (e.g. EDW) and a zero-filled unique number - resulting in a code like EDW-0083.
@@ -3926,7 +3915,7 @@ definitions:
         type: string
         maxLength: 255
         description: TO BE REVIEWED WITH THE BUSINESS - WHAT IS THIS?
-      serialNum:
+      serialNumber:
         type: string
         maxLength: 100
         description: The serial number of the piece of equipment as provided by the Equipment Owner. Used to detect and reconcile pieces of equipment moved between Local Areas. Duplicate serial numbers are flagged in the system but permitted. The duplicates are flagged in the UI until the HETS Clerks reconcile the differences - either correcting the serial number or archiving a piece of equipment moved to a new local area.
@@ -3946,6 +3935,10 @@ definitions:
         type: number
         format: float
         description: The current seniority calculation result for this piece of equipment. The calculation is based on the &quot;numYears&quot; of service + average hours of service over the last three fiscal years - as stored in the related fields (serviceHoursLastYear, serviceHoursTwoYearsAgo serviceHoursThreeYearsAgo).
+      numberInBlock:
+        format: int32
+        type: integer
+        description: The number in the block of the piece of equipment so that it can be displayed to the user where it will be useful. This saves the user from having to figure out in their head the order when the list is displayed in Rotation Order.
       isSeniorityOverridden:
         type: boolean
         description: True if the Seniority for the piece of equipment was manually overridden. Set if a user has gone in and explicitly updated the seniority base information. Indicates that underlying numbers were manually overridden.
@@ -4145,14 +4138,17 @@ definitions:
         description: A system-generated unique identifier for an EquipmentType
       localArea:
         $ref: '#/definitions/LocalArea'
-      code:
+      name:
         type: string
         maxLength: 50
-        description: CHECK WITH BUSINESS - IS THIS NEEDED - A unique but human-friendly code for the Equipment Type that can be displayed on screens with little screen real estate available.
+        description: A human-friendly name for the Equipment Type that is displayed on screens with limited screen real estate available.
       description:
         type: string
         maxLength: 2048
-        description: The name of the equipment type, as specified by the HETS Clerk creating the equipment type.
+        description: A extended description of the equipment type.
+      askNextBlock1:
+        $ref: '#/definitions/Equipment'
+        description: The id of the next piece of Block 1 Equipment to be asked for a Rental Request. Only needed for Block 1 because all requests of other Blocks start from the first entry in the list.
       equipRentalRateNo:
         type: number
         format: float
@@ -4882,179 +4878,6 @@ definitions:
         type: string
         maxLength: 2048
         description: A description of the group that is presented to the user when they are setting a user into a group.
-  EquipmentViewModel:
-    type: object
-    x-codegen-viewmodel: true        
-    description: A piece of equipment in the HETS system. Each piece of equipment is of a specific equipment type, owned by an Owner, and is within a Local Area.
-    required:
-      - id
-    properties:
-      id:
-        format: int32
-        type: integer
-        description: A system-generated unique identifier for a Equipment
-      localArea:
-        $ref: '#/definitions/LocalArea'
-      equipmentType:
-        $ref: '#/definitions/EquipmentType'
-      owner:
-        $ref: '#/definitions/Owner'
-      equipCode:
-        type: string
-        maxLength: 25
-        description: A human-visible unique code for the piece of equipment, referenced for convenience by the system users - HETS Clerks and Equipment Owners. Generated at record creation time based on the unique Owner prefix (e.g. EDW) and a zero-filled unique number - resulting in a code like EDW-0083.
-      status:
-        type: string
-        maxLength: 50
-        description: The current status of the equipment in a UI-controlled string. Initial values are Pending, Approved and Archived, but other values may be added.
-      receivedDate:
-        type: string
-        format: date-time
-        description: The date the piece of equipment was first received and recorded in HETS.
-      approvedDate:
-        type: string
-        format: date-time
-        description: The date the piece of equipment was first approved in HETS. Part of the seniority calculation for a piece of equipment is based on this date.
-      lastVerifiedDate:
-        type: string
-        format: date-time
-        description: The date the equipment was last verified by the HETS Clerk as being still in service in the Local Area and available for the HETS Programme.
-      isInformationUpdateNeeded:
-        type: boolean
-        description: Set true if a need to update the information&#x2F;status of the equipment is needed. Used during the processing of a request when an update is noted, but the Clerk does not have time to make the update.
-      informationUpdateNeededReason:
-        type: string
-        maxLength: 2048
-        description: A note about why the needed information&#x2F;status update that is needed about the equipment.
-      licencePlate:
-        type: string
-        maxLength: 20
-        description: The licence plate (if any) of the piece of equipment, as entered by the HETS Clerk.
-      make:
-        type: string
-        maxLength: 50
-        description: The make of the piece of equipment, as provided by the Equipment Owner.
-      model:
-        type: string
-        maxLength: 50
-        description: The model of the piece of equipment, as provided by the Equipment Owner.
-      year:
-        type: string
-        maxLength: 15
-        description: The model year of the piece of equipment, as provided by the Equipment Owner.
-      type:
-        type: string
-        maxLength: 255
-        description: TO BE REVIEWED WITH THE BUSINESS - WHAT IS THIS?
-      operator:
-        type: string
-        maxLength: 255
-        description: TO BE REVIEWED WITH THE BUSINESS - WHAT IS THIS?
-      payRate:
-        type: number
-        format: float
-        description: TO BE REVIEWED WITH THE BUSINESS - WHAT IS THIS?
-      refuseRate:
-        type: string
-        maxLength: 255
-        description: TO BE REVIEWED WITH THE BUSINESS - WHAT IS THIS?
-      serialNum:
-        type: string
-        maxLength: 100
-        description: The serial number of the piece of equipment as provided by the Equipment Owner. Used to detect and reconcile pieces of equipment moved between Local Areas. Duplicate serial numbers are flagged in the system but permitted. The duplicates are flagged in the UI until the HETS Clerks reconcile the differences - either correcting the serial number or archiving a piece of equipment moved to a new local area.
-      size:
-        type: string
-        maxLength: 128
-        description: The size of the piece of equipment, as provided by the Equipment Owner.
-      toDate:
-        type: string
-        format: date-time
-        description: TO BE REVIEWED WITH THE BUSINESS - WHAT IS THIS?
-      blockNumber:
-        type: number
-        format: float
-        description: The current block number for the piece of equipment as calculated by the Seniority Algorthm for this equipment type in the local area. As currently defined y the business  - 1, 2 or Open
-      seniority:
-        type: number
-        format: float
-        description: The current seniority calculation result for this piece of equipment. The calculation is based on the &quot;numYears&quot; of service + average hours of service over the last three fiscal years - as stored in the related fields (serviceHoursLastYear, serviceHoursTwoYearsAgo serviceHoursThreeYearsAgo).
-      isSeniorityOverridden:
-        type: boolean
-        description: True if the Seniority for the piece of equipment was manually overridden. Set if a user has gone in and explicitly updated the seniority base information. Indicates that underlying numbers were manually overridden.
-      seniorityOverrideReason:
-        type: string
-        maxLength: 2048
-        description: A text reason for why the piece of equipments underlying data was overridden to change their seniority number.
-      seniorityEffectiveDate:
-        type: string
-        format: date-time
-        description: The time the seniority data in the record went into effect. Used to populate the SeniorityAudit table when the seniority data is next updated.
-      yearsOfService:
-        type: number
-        format: float
-        description: The number of years of active service of this piece of equipment at the time seniority is calculated - April 1 of the current FY.
-      serviceHoursLastYear:
-        type: number
-        format: float
-        description: Number of hours of service by this piece of equipment in the previous fiscal year
-      serviceHoursTwoYearsAgo:
-        type: number
-        format: float
-        description: Number of hours of service by this piece of equipment in the fiscal year before the last one - e.g. if current year is FY2018 then hours in FY2016
-      serviceHoursThreeYearsAgo:
-        type: number
-        format: float
-        description: Number of hours of service by this piece of equipment in the fiscal year three years ago - e.g. if current year is FY2018 then hours in FY2015
-      archiveCode:
-        type: string
-        maxLength: 50
-        description: TO BE REVIEWED - A reason code indicating why a piece of equipment has been archived.
-      archiveReason:
-        type: string
-        maxLength: 2048
-        description: An optional comment about why this piece of equipment has been archived.
-      archiveDate:
-        type: string
-        format: date-time
-        description: The date on which a user most recenly marked this piece of equipment as archived.
-      dumpTruck:
-        $ref: '#/definitions/DumpTruck'
-        description: A link to a dump truck set if this piece of equipment is an equipment type flagged as a dump truck.
-      equipmentAttachments:
-        type: array
-        items:
-          $ref: '#/definitions/EquipmentAttachment'
-      notes:
-        type: array
-        items:
-          $ref: '#/definitions/Note'
-      attachments:
-        type: array
-        items:
-          $ref: '#/definitions/Attachment'
-      history:
-        type: array
-        items:
-          $ref: '#/definitions/History'
-      seniorityAudit:
-        type: array
-        items:
-          $ref: '#/definitions/SeniorityAudit'
-      serviceHoursThisYear:
-        type: integer
-        description: number of hours worked on current fiscal year
-      hasDuplicates:
-        type: boolean
-      duplicateEquipment:
-        type: array
-        items:
-          $ref: '#/definitions/Equipment'
-      isWorking:
-        type: boolean
-        description: true if the equipment is working
-      lastTimeRecordDateThisYear:
-        type: string
-        format: date-time      
   UserViewModel:
     type: object
     x-codegen-viewmodel: true
@@ -5073,25 +4896,14 @@ definitions:
         x-chance-type: name
       surname:
         type: string
-        x-chance-type: name      
+        x-chance-type: name
+      initials:
+        type: string
       email:
         type: string
         x-chance-type: email
       active:
         type: boolean
-      smUserId:
-        type: string
-      userRoles:
-        type: array
-        items:
-          $ref: '#/definitions/UserRole'
-      groupMemberships:
-        type: array
-        items:
-          $ref: '#/definitions/GroupMembership'
-      district:
-        $ref: '#/definitions/District'
-        description: The District to which this User is affliated.
   CurrentUserViewModel:
     type: object
     x-codegen-viewmodel: true
@@ -5101,23 +4913,20 @@ definitions:
         x-chance-type: name
       surname:
         type: string
-        x-chance-type: name      
-      email:
+        x-chance-type: name
+      fullName:
         type: string
-        x-chance-type: email
-      active:
-        type: boolean
-      userRoles:
-        type: array
-        items:
-          $ref: '#/definitions/UserRole'
-      groupMemberships:
-        type: array
-        items:
-          $ref: '#/definitions/GroupMembership'
-      district:
-        $ref: '#/definitions/District'
-        description: The District to which this User is affliated.
+      districtName:
+        type: string
+      overdueInspections:
+        format: int32
+        type: integer
+      scheduledInspections:
+        format: int32
+        type: integer
+      dueNextMonthInspections:
+        format: int32
+        type: integer
   UserDetailsViewModel:
     type: object
     x-codegen-viewmodel: true
@@ -5168,6 +4977,12 @@ definitions:
       expiryDate:
         type: string
         format: date-time
+      userId:
+        format: int32
+        type: integer
+        x-type-options:
+          min: 1
+          max: 1000
       roleId:
         format: int32
         type: integer

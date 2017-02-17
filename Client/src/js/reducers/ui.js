@@ -7,10 +7,13 @@ const DEFAULT_STATE = {
   },
 
   equipmentList: {},
-  physicalAttachments: {},
+  equipmentPhysicalAttachments: {},
+
   owners: {},
+  ownerContacts: {},
+  ownerEquipment: {},
+
   users: {},
-  contacts: {},
 };
 
 export default function uiReducer(state = DEFAULT_STATE, action) {
@@ -37,7 +40,7 @@ export default function uiReducer(state = DEFAULT_STATE, action) {
       return { ...state, equipmentList: action.equipmentList };
 
     case Action.UPDATE_PHYSICAL_ATTACHMENTS_UI:
-      return { ...state, physicalAttachments: action.physicalAttachments };
+      return { ...state, equipmentPhysicalAttachments: action.equipmentPhysicalAttachments };
 
     case Action.UPDATE_OWNERS_UI:
       return { ...state, owners: action.owners };
@@ -45,8 +48,11 @@ export default function uiReducer(state = DEFAULT_STATE, action) {
     case Action.UPDATE_USERS_UI:
       return { ...state, users: action.users };
 
-    case Action.UPDATE_CONTACTS_UI:
-      return { ...state, contacts: action.contacts };  
+    case Action.UPDATE_OWNER_CONTACTS_UI:
+      return { ...state, ownerContacts: action.ownerContacts };  
+
+    case Action.UPDATE_OWNER_EQUIPMENT_UI:
+      return { ...state, ownerEquipment: action.ownerEquipment };  
   }
 
   return { ...state, ...newState };
