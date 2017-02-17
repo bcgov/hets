@@ -252,7 +252,51 @@
           schema:
             type: array
             items:
-              $ref: "#/definitions/Equipment"              
+              $ref: "#/definitions/Equipment"
+  /projects/search:
+    get:
+      summary: Searches Projects
+      description:
+        Used for the project search page.
+      tags:
+        - Project
+      consumes:
+        - application/json
+      produces:
+        - text/plain
+        - application/json
+        - text/json
+      parameters:        
+        - name: serviceareas
+          in: query
+          description: Service Areas (array of id numbers)
+          collectionFormat: multi
+          required: false
+          type: array
+          items:
+            type: integer       
+        - name: project
+          in: query
+          description: name or partial name for a Project
+          required: false
+          type: string
+        - name: hasRequests
+          in: query
+          description: if true then only include Projects with active Requests
+          required: false
+          type: boolean
+        - name: hasHires
+          in: query
+          description: if true then only include Projects with active Rental Agreements
+          required: false
+          type: boolean
+      responses:
+        200:
+          description: OK
+          schema:
+            type: array
+            items:
+              $ref: "#/definitions/ProjectSearchResultViewModel"                            
   /roles/{id}/permissions:
     get:
       description: Get all the permissions for a role
