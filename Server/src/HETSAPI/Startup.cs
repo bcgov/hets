@@ -27,6 +27,7 @@ using HETSAPI.Models;
 using System.Text;
 using HETSAPI.Authorization;
 using HETSAPI.Authentication;
+using Microsoft.AspNetCore.Http.Features;
 
 namespace HETSAPI
 {
@@ -63,6 +64,12 @@ namespace HETSAPI
             // Add database context
             // - Pattern should be using Configuration.GetConnectionString("Schoolbus") directly; see GetConnectionString for more details.
             services.AddDbContext<DbAppContext>(options => options.UseNpgsql(GetConnectionString()));
+
+            // allow for large files to be uploaded
+            services.Configure<FormOptions>(options =>
+            {
+                options.MultipartBodyLengthLimit = 1073741824; // 1 GB
+            });
 
             // Add framework services.
             services.AddMvc(options => options.AddDefaultAuthorizationPolicyFilter())
