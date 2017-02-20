@@ -164,7 +164,7 @@ definitions:
       offerResponseNote:
         type: string
         maxLength: 2048
-        description: An optional note entered about the response to the offer from the equipment owner about the offer. Usually used when the offer is a &quot;No&quot;.
+        description: A note entered about the response to the offer from the equipment owner about the offer. Usually used when the offer is a &quot;No&quot; or &quot;Force Hire&quot;.
       note:
         type: string
         maxLength: 2048
@@ -179,6 +179,10 @@ definitions:
         format: int32
         type: integer
         description: A system-generated unique identifier for a RentalAgreement
+      number:
+        type: string
+        maxLength: 30
+        description: A system-generated unique rental agreement number in a format defined by the business as suitable for the business and client to see and use.
       status:
         type: string
         maxLength: 50
@@ -187,10 +191,104 @@ definitions:
         $ref: '#/definitions/Equipment'
       project:
         $ref: '#/definitions/Project'
+      rentalAgreementRates:
+        type: array
+        items:
+          $ref: '#/definitions/RentalAgreementRate'
+      rentalAgreementConditions:
+        type: array
+        items:
+          $ref: '#/definitions/RentalAgreementCondition'
       timeRecords:
         type: array
         items:
           $ref: '#/definitions/TimeRecord'
+      note:
+        type: string
+        maxLength: 2048
+        description: An optional note to be placed onto the Rental Agreement.
+      estimateStartWork:
+        type: string
+        format: date-time
+        description: The estimated start date of the work to be placed on the rental agreement.
+      datedOn:
+        type: string
+        format: date-time
+        description: The dated on date to put on the Rental Agreement.
+      estimateHours:
+        format: int32
+        type: integer
+        description: The estimated number of hours of work to be put onto the Rental Agreement.
+      equipmentRate:
+        type: number
+        format: float
+        description: The dollar rate for the piece of equipment itself for this Rental Agreement. Other rates associated with the Rental Agreement are in the Rental Agreement Rate table.
+      ratePeriod:
+        type: string
+        maxLength: 50
+        description: The period of the rental rate. The vast majority will be hourly, but the rate could apply across a different period, e.g. daily.
+      rateComment:
+        type: string
+        maxLength: 2048
+        description: A comment about the rate for the piece of equipment.
+  RentalAgreementRate:
+    type: object
+    description: The rate associated with an element of a rental agreement.
+    required:
+      - id
+    properties:
+      id:
+        format: int32
+        type: integer
+        description: A system-generated unique identifier for a RentalAgreementRate
+      rentalAgreement:
+        $ref: '#/definitions/'
+      componentName:
+        type: string
+        maxLength: 150
+        description: Name of the component for the Rental Agreement for which the attached rates apply.
+      isAttachment:
+        type: boolean
+        description: True if this rate is for an attachment to the piece of equipment.
+      rate:
+        type: number
+        format: float
+        description: The dollar rate associated with this component of the rental agreement.
+      percentOfEquipmentRate:
+        format: int32
+        type: integer
+        description: For other than the actual piece of equipment, the percent of the equipment rate to use for this component of the rental agreement.
+      ratePeriod:
+        type: string
+        maxLength: 50
+        description: The period of the rental rate. The vast majority will be hourly, but the rate could apply across a different period, e.g. daily.
+      comment:
+        type: string
+        maxLength: 2048
+        description: A comment about the rental of this component of the Rental Agreement.
+      timeRecords:
+        type: array
+        items:
+          $ref: '#/definitions/TimeRecord'
+  RentalAgreementCondition:
+    type: object
+    description: A condition about the rental agreement to be displayed on the Rental Agreement.
+    required:
+    properties:
+      id:
+        format: int32
+        type: integer
+        description: A system-generated unique identifier for a RentalAgreementCondition
+      rentalAgreement:
+        $ref: '#/definitions/'
+      conditionName:
+        type: string
+        maxLength: 150
+        description: The name of the condition to be placed onto the Rental Agreement.
+      comment:
+        type: string
+        maxLength: 2048
+        description: A comment about the condition to be applied to the Rental Agreement.
   TimeRecord:
     type: object
     description: A record of time worked for a piece of equipment hired for a specific project within a Local Area.
@@ -203,6 +301,9 @@ definitions:
         description: A system-generated unique identifier for a TimeRecord
       rentalAgreement:
         $ref: '#/definitions/RentalAgreement'
+      rentalAgreementRate:
+        $ref: '#/definitions/RentalAgreementRate'
+        description: The Rental Agreement Rate component to which this Rental Agreement applies. If null, this time applies to the equipment itself.
       workedDate:
         type: string
         format: date-time
@@ -219,26 +320,6 @@ definitions:
         type: number
         format: float
         description: The number of hours worked by the equipment.
-      rate:
-        type: number
-        format: float
-        description: TO BE REMOVED - REPLACE WITH A LINK TO A RATE ENTRY IN THE RENTAL AGREEMENT
-      hours2:
-        type: number
-        format: float
-        description: TO BE REMOVED - REPLACE WITH A LINK TO A RATE ENTRY IN THE RENTAL AGREEMENT
-      rate2:
-        type: number
-        format: float
-        description: TO BE REMOVED - REPLACE WITH A LINK TO A RATE ENTRY IN THE RENTAL AGREEMENT
-      hours3:
-        type: number
-        format: float
-        description: TO BE REMOVED - REPLACE WITH A LINK TO A RATE ENTRY IN THE RENTAL AGREEMENT
-      rate3:
-        type: number
-        format: float
-        description: TO BE REMOVED - REPLACE WITH A LINK TO A RATE ENTRY IN THE RENTAL AGREEMENT
   Equipment:
     type: object
     description: A piece of equipment in the HETS system. Each piece of equipment is of a specific equipment type, owned by an Owner, and is within a Local Area.
@@ -704,10 +785,14 @@ definitions:
       isMaintenanceContractor:
         type: boolean
         description: True if the owner is contracted by MOTI to handle Maintenance activities in the area - e.g. provided services in address unscheduled issues on the roads in the area.
-      WCBExpiryDate:
+      workSafeBCPolicyNumber:
+        type: string
+        maxLength: 50
+        description: The Owner&#39;s WorkSafeBC (aka WCB) Insurance Policy Number.
+      workSafeBCExpiryDate:
         type: string
         format: date-time
-        description: The expiration of the owner&#39;s current WCB permit.
+        description: The expiration of the owner&#39;s current WorkSafeBC (aka WCB) permit.
       CGLEndDate:
         type: string
         format: date-time
@@ -901,20 +986,6 @@ definitions:
         type: string
         format: date-time
         description: Date the record is created.
-  FavouriteContextType:
-    type: object
-    description: The name for a place in the UI where per user settings can be stored - for example, the Equipment search screen, Owner search screen, etc.
-    required:
-      - id
-    properties:
-      id:
-        format: int32
-        type: integer
-        description: A system-generated unique identifier for a FavouriteContextType
-      name:
-        type: string
-        maxLength: 150
-        description: Context Name known by the UI.
   UserFavourite:
     type: object
     description: User specific settings for a specific location in the UI. The location and saved settings are internally defined by the UI.

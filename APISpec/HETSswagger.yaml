@@ -2850,6 +2850,1722 @@ paths:
       responses:
         201:
           description: ContactAddress created
+  /groupmemberships:
+    get:
+      tags:
+        - GroupMembership
+      consumes: []
+      produces:
+        - text/plain
+        - application/json
+        - text/json
+      responses:
+        200:
+          description: OK
+          schema:
+            type: array
+            items:
+              $ref: "#/definitions/GroupMembership"
+    post:
+      tags:
+        - GroupMembership
+      consumes:
+        - application/json
+      produces:
+        - text/plain
+        - application/json
+        - text/json
+      parameters:
+        - name: item
+          in: body
+          required: true
+          schema:
+            $ref: "#/definitions/GroupMembership"
+      responses:
+        201:
+          description: GroupMembership created
+          headers:
+            Location:
+              description: A link to the GroupMembership
+              type: string
+              format: url
+          schema:
+            $ref: "#/definitions/GroupMembership"  
+  /groupmemberships/{id}:
+    get:
+      tags:
+        - GroupMembership
+      consumes: []
+      produces:
+        - text/plain
+        - application/json
+        - text/json
+      responses:
+        200:
+          description: OK
+          schema:
+            $ref: "#/definitions/GroupMembership"
+        404:
+          description: GroupMembership not found
+      parameters:
+        - name: id
+          in: path
+          description: id of GroupMembership to fetch
+          required: true
+          type: integer
+    put:
+      tags:
+        - GroupMembership
+      consumes:
+        - application/json
+      produces:
+        - text/plain
+        - application/json
+        - text/json
+      responses:
+        200:
+          description: OK
+          schema:
+            $ref: "#/definitions/GroupMembership"
+        404:
+          description: GroupMembership not found
+      parameters:
+        - name: id
+          in: path
+          description: id of GroupMembership to fetch
+          required: true
+          type: integer
+        - name: item
+          in: body
+          required: true
+          schema:
+            $ref: "#/definitions/GroupMembership"
+  /groupmemberships/{id}/delete:
+    post:
+      tags:
+        - GroupMembership
+      consumes: []
+      produces:
+        - text/plain
+        - application/json
+        - text/json
+      responses:
+        200:
+          description: OK
+        404:
+          description: GroupMembership not found
+      parameters:
+        - name: id
+          in: path
+          description: id of GroupMembership to delete
+          required: true
+          type: integer
+
+  /groupmemberships/bulk:
+    post:
+      tags:
+        - GroupMembership
+      consumes:
+        - application/json
+      produces:
+        - text/plain
+        - application/json
+        - text/json
+      parameters:
+        - name: items
+          in: body
+          required: true
+          schema:
+            type: array
+            items:
+              $ref: "#/definitions/GroupMembership"
+      responses:
+        201:
+          description: GroupMembership created
+  /histories:
+    get:
+      tags:
+        - History
+      consumes: []
+      produces:
+        - text/plain
+        - application/json
+        - text/json
+      responses:
+        200:
+          description: OK
+          schema:
+            type: array
+            items:
+              $ref: "#/definitions/History"
+    post:
+      tags:
+        - History
+      consumes:
+        - application/json
+      produces:
+        - text/plain
+        - application/json
+        - text/json
+      parameters:
+        - name: item
+          in: body
+          required: true
+          schema:
+            $ref: "#/definitions/History"
+      responses:
+        201:
+          description: History created
+          headers:
+            Location:
+              description: A link to the History
+              type: string
+              format: url
+          schema:
+            $ref: "#/definitions/History"  
+  /histories/{id}:
+    get:
+      tags:
+        - History
+      consumes: []
+      produces:
+        - text/plain
+        - application/json
+        - text/json
+      responses:
+        200:
+          description: OK
+          schema:
+            $ref: "#/definitions/History"
+        404:
+          description: History not found
+      parameters:
+        - name: id
+          in: path
+          description: id of History to fetch
+          required: true
+          type: integer
+    put:
+      tags:
+        - History
+      consumes:
+        - application/json
+      produces:
+        - text/plain
+        - application/json
+        - text/json
+      responses:
+        200:
+          description: OK
+          schema:
+            $ref: "#/definitions/History"
+        404:
+          description: History not found
+      parameters:
+        - name: id
+          in: path
+          description: id of History to fetch
+          required: true
+          type: integer
+        - name: item
+          in: body
+          required: true
+          schema:
+            $ref: "#/definitions/History"
+  /histories/{id}/delete:
+    post:
+      tags:
+        - History
+      consumes: []
+      produces:
+        - text/plain
+        - application/json
+        - text/json
+      responses:
+        200:
+          description: OK
+        404:
+          description: History not found
+      parameters:
+        - name: id
+          in: path
+          description: id of History to delete
+          required: true
+          type: integer
+
+  /histories/bulk:
+    post:
+      tags:
+        - History
+      consumes:
+        - application/json
+      produces:
+        - text/plain
+        - application/json
+        - text/json
+      parameters:
+        - name: items
+          in: body
+          required: true
+          schema:
+            type: array
+            items:
+              $ref: "#/definitions/History"
+      responses:
+        201:
+          description: History created
+  /rentalagreements:
+    get:
+      tags:
+        - RentalAgreement
+      consumes: []
+      produces:
+        - text/plain
+        - application/json
+        - text/json
+      responses:
+        200:
+          description: OK
+          schema:
+            type: array
+            items:
+              $ref: "#/definitions/RentalAgreement"
+    post:
+      tags:
+        - RentalAgreement
+      consumes:
+        - application/json
+      produces:
+        - text/plain
+        - application/json
+        - text/json
+      parameters:
+        - name: item
+          in: body
+          required: true
+          schema:
+            $ref: "#/definitions/RentalAgreement"
+      responses:
+        201:
+          description: RentalAgreement created
+          headers:
+            Location:
+              description: A link to the RentalAgreement
+              type: string
+              format: url
+          schema:
+            $ref: "#/definitions/RentalAgreement"  
+  /rentalagreements/{id}:
+    get:
+      tags:
+        - RentalAgreement
+      consumes: []
+      produces:
+        - text/plain
+        - application/json
+        - text/json
+      responses:
+        200:
+          description: OK
+          schema:
+            $ref: "#/definitions/RentalAgreement"
+        404:
+          description: RentalAgreement not found
+      parameters:
+        - name: id
+          in: path
+          description: id of RentalAgreement to fetch
+          required: true
+          type: integer
+    put:
+      tags:
+        - RentalAgreement
+      consumes:
+        - application/json
+      produces:
+        - text/plain
+        - application/json
+        - text/json
+      responses:
+        200:
+          description: OK
+          schema:
+            $ref: "#/definitions/RentalAgreement"
+        404:
+          description: RentalAgreement not found
+      parameters:
+        - name: id
+          in: path
+          description: id of RentalAgreement to fetch
+          required: true
+          type: integer
+        - name: item
+          in: body
+          required: true
+          schema:
+            $ref: "#/definitions/RentalAgreement"
+  /rentalagreements/{id}/delete:
+    post:
+      tags:
+        - RentalAgreement
+      consumes: []
+      produces:
+        - text/plain
+        - application/json
+        - text/json
+      responses:
+        200:
+          description: OK
+        404:
+          description: RentalAgreement not found
+      parameters:
+        - name: id
+          in: path
+          description: id of RentalAgreement to delete
+          required: true
+          type: integer
+
+  /rentalagreements/bulk:
+    post:
+      tags:
+        - RentalAgreement
+      consumes:
+        - application/json
+      produces:
+        - text/plain
+        - application/json
+        - text/json
+      parameters:
+        - name: items
+          in: body
+          required: true
+          schema:
+            type: array
+            items:
+              $ref: "#/definitions/RentalAgreement"
+      responses:
+        201:
+          description: RentalAgreement created
+  /rentalagreementconditions:
+    get:
+      tags:
+        - RentalAgreementCondition
+      consumes: []
+      produces:
+        - text/plain
+        - application/json
+        - text/json
+      responses:
+        200:
+          description: OK
+          schema:
+            type: array
+            items:
+              $ref: "#/definitions/RentalAgreementCondition"
+    post:
+      tags:
+        - RentalAgreementCondition
+      consumes:
+        - application/json
+      produces:
+        - text/plain
+        - application/json
+        - text/json
+      parameters:
+        - name: item
+          in: body
+          required: true
+          schema:
+            $ref: "#/definitions/RentalAgreementCondition"
+      responses:
+        201:
+          description: RentalAgreementCondition created
+          headers:
+            Location:
+              description: A link to the RentalAgreementCondition
+              type: string
+              format: url
+          schema:
+            $ref: "#/definitions/RentalAgreementCondition"  
+  /rentalagreementconditions/{id}:
+    get:
+      tags:
+        - RentalAgreementCondition
+      consumes: []
+      produces:
+        - text/plain
+        - application/json
+        - text/json
+      responses:
+        200:
+          description: OK
+          schema:
+            $ref: "#/definitions/RentalAgreementCondition"
+        404:
+          description: RentalAgreementCondition not found
+      parameters:
+        - name: id
+          in: path
+          description: id of RentalAgreementCondition to fetch
+          required: true
+          type: integer
+    put:
+      tags:
+        - RentalAgreementCondition
+      consumes:
+        - application/json
+      produces:
+        - text/plain
+        - application/json
+        - text/json
+      responses:
+        200:
+          description: OK
+          schema:
+            $ref: "#/definitions/RentalAgreementCondition"
+        404:
+          description: RentalAgreementCondition not found
+      parameters:
+        - name: id
+          in: path
+          description: id of RentalAgreementCondition to fetch
+          required: true
+          type: integer
+        - name: item
+          in: body
+          required: true
+          schema:
+            $ref: "#/definitions/RentalAgreementCondition"
+  /rentalagreementconditions/{id}/delete:
+    post:
+      tags:
+        - RentalAgreementCondition
+      consumes: []
+      produces:
+        - text/plain
+        - application/json
+        - text/json
+      responses:
+        200:
+          description: OK
+        404:
+          description: RentalAgreementCondition not found
+      parameters:
+        - name: id
+          in: path
+          description: id of RentalAgreementCondition to delete
+          required: true
+          type: integer
+
+  /rentalagreementconditions/bulk:
+    post:
+      tags:
+        - RentalAgreementCondition
+      consumes:
+        - application/json
+      produces:
+        - text/plain
+        - application/json
+        - text/json
+      parameters:
+        - name: items
+          in: body
+          required: true
+          schema:
+            type: array
+            items:
+              $ref: "#/definitions/RentalAgreementCondition"
+      responses:
+        201:
+          description: RentalAgreementCondition created
+  /rentalagreementrates:
+    get:
+      tags:
+        - RentalAgreementRate
+      consumes: []
+      produces:
+        - text/plain
+        - application/json
+        - text/json
+      responses:
+        200:
+          description: OK
+          schema:
+            type: array
+            items:
+              $ref: "#/definitions/RentalAgreementRate"
+    post:
+      tags:
+        - RentalAgreementRate
+      consumes:
+        - application/json
+      produces:
+        - text/plain
+        - application/json
+        - text/json
+      parameters:
+        - name: item
+          in: body
+          required: true
+          schema:
+            $ref: "#/definitions/RentalAgreementRate"
+      responses:
+        201:
+          description: RentalAgreementRate created
+          headers:
+            Location:
+              description: A link to the RentalAgreementRate
+              type: string
+              format: url
+          schema:
+            $ref: "#/definitions/RentalAgreementRate"  
+  /rentalagreementrates/{id}:
+    get:
+      tags:
+        - RentalAgreementRate
+      consumes: []
+      produces:
+        - text/plain
+        - application/json
+        - text/json
+      responses:
+        200:
+          description: OK
+          schema:
+            $ref: "#/definitions/RentalAgreementRate"
+        404:
+          description: RentalAgreementRate not found
+      parameters:
+        - name: id
+          in: path
+          description: id of RentalAgreementRate to fetch
+          required: true
+          type: integer
+    put:
+      tags:
+        - RentalAgreementRate
+      consumes:
+        - application/json
+      produces:
+        - text/plain
+        - application/json
+        - text/json
+      responses:
+        200:
+          description: OK
+          schema:
+            $ref: "#/definitions/RentalAgreementRate"
+        404:
+          description: RentalAgreementRate not found
+      parameters:
+        - name: id
+          in: path
+          description: id of RentalAgreementRate to fetch
+          required: true
+          type: integer
+        - name: item
+          in: body
+          required: true
+          schema:
+            $ref: "#/definitions/RentalAgreementRate"
+  /rentalagreementrates/{id}/delete:
+    post:
+      tags:
+        - RentalAgreementRate
+      consumes: []
+      produces:
+        - text/plain
+        - application/json
+        - text/json
+      responses:
+        200:
+          description: OK
+        404:
+          description: RentalAgreementRate not found
+      parameters:
+        - name: id
+          in: path
+          description: id of RentalAgreementRate to delete
+          required: true
+          type: integer
+
+  /rentalagreementrates/bulk:
+    post:
+      tags:
+        - RentalAgreementRate
+      consumes:
+        - application/json
+      produces:
+        - text/plain
+        - application/json
+        - text/json
+      parameters:
+        - name: items
+          in: body
+          required: true
+          schema:
+            type: array
+            items:
+              $ref: "#/definitions/RentalAgreementRate"
+      responses:
+        201:
+          description: RentalAgreementRate created
+  /rentalrequests:
+    get:
+      tags:
+        - RentalRequest
+      consumes: []
+      produces:
+        - text/plain
+        - application/json
+        - text/json
+      responses:
+        200:
+          description: OK
+          schema:
+            type: array
+            items:
+              $ref: "#/definitions/RentalRequest"
+    post:
+      tags:
+        - RentalRequest
+      consumes:
+        - application/json
+      produces:
+        - text/plain
+        - application/json
+        - text/json
+      parameters:
+        - name: item
+          in: body
+          required: true
+          schema:
+            $ref: "#/definitions/RentalRequest"
+      responses:
+        201:
+          description: RentalRequest created
+          headers:
+            Location:
+              description: A link to the RentalRequest
+              type: string
+              format: url
+          schema:
+            $ref: "#/definitions/RentalRequest"  
+  /rentalrequests/{id}:
+    get:
+      tags:
+        - RentalRequest
+      consumes: []
+      produces:
+        - text/plain
+        - application/json
+        - text/json
+      responses:
+        200:
+          description: OK
+          schema:
+            $ref: "#/definitions/RentalRequest"
+        404:
+          description: RentalRequest not found
+      parameters:
+        - name: id
+          in: path
+          description: id of RentalRequest to fetch
+          required: true
+          type: integer
+    put:
+      tags:
+        - RentalRequest
+      consumes:
+        - application/json
+      produces:
+        - text/plain
+        - application/json
+        - text/json
+      responses:
+        200:
+          description: OK
+          schema:
+            $ref: "#/definitions/RentalRequest"
+        404:
+          description: RentalRequest not found
+      parameters:
+        - name: id
+          in: path
+          description: id of RentalRequest to fetch
+          required: true
+          type: integer
+        - name: item
+          in: body
+          required: true
+          schema:
+            $ref: "#/definitions/RentalRequest"
+  /rentalrequests/{id}/delete:
+    post:
+      tags:
+        - RentalRequest
+      consumes: []
+      produces:
+        - text/plain
+        - application/json
+        - text/json
+      responses:
+        200:
+          description: OK
+        404:
+          description: RentalRequest not found
+      parameters:
+        - name: id
+          in: path
+          description: id of RentalRequest to delete
+          required: true
+          type: integer
+
+  /rentalrequests/bulk:
+    post:
+      tags:
+        - RentalRequest
+      consumes:
+        - application/json
+      produces:
+        - text/plain
+        - application/json
+        - text/json
+      parameters:
+        - name: items
+          in: body
+          required: true
+          schema:
+            type: array
+            items:
+              $ref: "#/definitions/RentalRequest"
+      responses:
+        201:
+          description: RentalRequest created
+  /rentalrequestattachments:
+    get:
+      tags:
+        - RentalRequestAttachment
+      consumes: []
+      produces:
+        - text/plain
+        - application/json
+        - text/json
+      responses:
+        200:
+          description: OK
+          schema:
+            type: array
+            items:
+              $ref: "#/definitions/RentalRequestAttachment"
+    post:
+      tags:
+        - RentalRequestAttachment
+      consumes:
+        - application/json
+      produces:
+        - text/plain
+        - application/json
+        - text/json
+      parameters:
+        - name: item
+          in: body
+          required: true
+          schema:
+            $ref: "#/definitions/RentalRequestAttachment"
+      responses:
+        201:
+          description: RentalRequestAttachment created
+          headers:
+            Location:
+              description: A link to the RentalRequestAttachment
+              type: string
+              format: url
+          schema:
+            $ref: "#/definitions/RentalRequestAttachment"  
+  /rentalrequestattachments/{id}:
+    get:
+      tags:
+        - RentalRequestAttachment
+      consumes: []
+      produces:
+        - text/plain
+        - application/json
+        - text/json
+      responses:
+        200:
+          description: OK
+          schema:
+            $ref: "#/definitions/RentalRequestAttachment"
+        404:
+          description: RentalRequestAttachment not found
+      parameters:
+        - name: id
+          in: path
+          description: id of RentalRequestAttachment to fetch
+          required: true
+          type: integer
+    put:
+      tags:
+        - RentalRequestAttachment
+      consumes:
+        - application/json
+      produces:
+        - text/plain
+        - application/json
+        - text/json
+      responses:
+        200:
+          description: OK
+          schema:
+            $ref: "#/definitions/RentalRequestAttachment"
+        404:
+          description: RentalRequestAttachment not found
+      parameters:
+        - name: id
+          in: path
+          description: id of RentalRequestAttachment to fetch
+          required: true
+          type: integer
+        - name: item
+          in: body
+          required: true
+          schema:
+            $ref: "#/definitions/RentalRequestAttachment"
+  /rentalrequestattachments/{id}/delete:
+    post:
+      tags:
+        - RentalRequestAttachment
+      consumes: []
+      produces:
+        - text/plain
+        - application/json
+        - text/json
+      responses:
+        200:
+          description: OK
+        404:
+          description: RentalRequestAttachment not found
+      parameters:
+        - name: id
+          in: path
+          description: id of RentalRequestAttachment to delete
+          required: true
+          type: integer
+
+  /rentalrequestattachments/bulk:
+    post:
+      tags:
+        - RentalRequestAttachment
+      consumes:
+        - application/json
+      produces:
+        - text/plain
+        - application/json
+        - text/json
+      parameters:
+        - name: items
+          in: body
+          required: true
+          schema:
+            type: array
+            items:
+              $ref: "#/definitions/RentalRequestAttachment"
+      responses:
+        201:
+          description: RentalRequestAttachment created
+  /rentalrequestrotationlists:
+    get:
+      tags:
+        - RentalRequestRotationList
+      consumes: []
+      produces:
+        - text/plain
+        - application/json
+        - text/json
+      responses:
+        200:
+          description: OK
+          schema:
+            type: array
+            items:
+              $ref: "#/definitions/RentalRequestRotationList"
+    post:
+      tags:
+        - RentalRequestRotationList
+      consumes:
+        - application/json
+      produces:
+        - text/plain
+        - application/json
+        - text/json
+      parameters:
+        - name: item
+          in: body
+          required: true
+          schema:
+            $ref: "#/definitions/RentalRequestRotationList"
+      responses:
+        201:
+          description: RentalRequestRotationList created
+          headers:
+            Location:
+              description: A link to the RentalRequestRotationList
+              type: string
+              format: url
+          schema:
+            $ref: "#/definitions/RentalRequestRotationList"  
+  /rentalrequestrotationlists/{id}:
+    get:
+      tags:
+        - RentalRequestRotationList
+      consumes: []
+      produces:
+        - text/plain
+        - application/json
+        - text/json
+      responses:
+        200:
+          description: OK
+          schema:
+            $ref: "#/definitions/RentalRequestRotationList"
+        404:
+          description: RentalRequestRotationList not found
+      parameters:
+        - name: id
+          in: path
+          description: id of RentalRequestRotationList to fetch
+          required: true
+          type: integer
+    put:
+      tags:
+        - RentalRequestRotationList
+      consumes:
+        - application/json
+      produces:
+        - text/plain
+        - application/json
+        - text/json
+      responses:
+        200:
+          description: OK
+          schema:
+            $ref: "#/definitions/RentalRequestRotationList"
+        404:
+          description: RentalRequestRotationList not found
+      parameters:
+        - name: id
+          in: path
+          description: id of RentalRequestRotationList to fetch
+          required: true
+          type: integer
+        - name: item
+          in: body
+          required: true
+          schema:
+            $ref: "#/definitions/RentalRequestRotationList"
+  /rentalrequestrotationlists/{id}/delete:
+    post:
+      tags:
+        - RentalRequestRotationList
+      consumes: []
+      produces:
+        - text/plain
+        - application/json
+        - text/json
+      responses:
+        200:
+          description: OK
+        404:
+          description: RentalRequestRotationList not found
+      parameters:
+        - name: id
+          in: path
+          description: id of RentalRequestRotationList to delete
+          required: true
+          type: integer
+
+  /rentalrequestrotationlists/bulk:
+    post:
+      tags:
+        - RentalRequestRotationList
+      consumes:
+        - application/json
+      produces:
+        - text/plain
+        - application/json
+        - text/json
+      parameters:
+        - name: items
+          in: body
+          required: true
+          schema:
+            type: array
+            items:
+              $ref: "#/definitions/RentalRequestRotationList"
+      responses:
+        201:
+          description: RentalRequestRotationList created
+  /rolepermissions:
+    get:
+      tags:
+        - RolePermission
+      consumes: []
+      produces:
+        - text/plain
+        - application/json
+        - text/json
+      responses:
+        200:
+          description: OK
+          schema:
+            type: array
+            items:
+              $ref: "#/definitions/RolePermission"
+    post:
+      tags:
+        - RolePermission
+      consumes:
+        - application/json
+      produces:
+        - text/plain
+        - application/json
+        - text/json
+      parameters:
+        - name: item
+          in: body
+          required: true
+          schema:
+            $ref: "#/definitions/RolePermission"
+      responses:
+        201:
+          description: RolePermission created
+          headers:
+            Location:
+              description: A link to the RolePermission
+              type: string
+              format: url
+          schema:
+            $ref: "#/definitions/RolePermission"  
+  /rolepermissions/{id}:
+    get:
+      tags:
+        - RolePermission
+      consumes: []
+      produces:
+        - text/plain
+        - application/json
+        - text/json
+      responses:
+        200:
+          description: OK
+          schema:
+            $ref: "#/definitions/RolePermission"
+        404:
+          description: RolePermission not found
+      parameters:
+        - name: id
+          in: path
+          description: id of RolePermission to fetch
+          required: true
+          type: integer
+    put:
+      tags:
+        - RolePermission
+      consumes:
+        - application/json
+      produces:
+        - text/plain
+        - application/json
+        - text/json
+      responses:
+        200:
+          description: OK
+          schema:
+            $ref: "#/definitions/RolePermission"
+        404:
+          description: RolePermission not found
+      parameters:
+        - name: id
+          in: path
+          description: id of RolePermission to fetch
+          required: true
+          type: integer
+        - name: item
+          in: body
+          required: true
+          schema:
+            $ref: "#/definitions/RolePermission"
+  /rolepermissions/{id}/delete:
+    post:
+      tags:
+        - RolePermission
+      consumes: []
+      produces:
+        - text/plain
+        - application/json
+        - text/json
+      responses:
+        200:
+          description: OK
+        404:
+          description: RolePermission not found
+      parameters:
+        - name: id
+          in: path
+          description: id of RolePermission to delete
+          required: true
+          type: integer
+
+  /rolepermissions/bulk:
+    post:
+      tags:
+        - RolePermission
+      consumes:
+        - application/json
+      produces:
+        - text/plain
+        - application/json
+        - text/json
+      parameters:
+        - name: items
+          in: body
+          required: true
+          schema:
+            type: array
+            items:
+              $ref: "#/definitions/RolePermission"
+      responses:
+        201:
+          description: RolePermission created
+  /seniorityaudits:
+    get:
+      tags:
+        - SeniorityAudit
+      consumes: []
+      produces:
+        - text/plain
+        - application/json
+        - text/json
+      responses:
+        200:
+          description: OK
+          schema:
+            type: array
+            items:
+              $ref: "#/definitions/SeniorityAudit"
+    post:
+      tags:
+        - SeniorityAudit
+      consumes:
+        - application/json
+      produces:
+        - text/plain
+        - application/json
+        - text/json
+      parameters:
+        - name: item
+          in: body
+          required: true
+          schema:
+            $ref: "#/definitions/SeniorityAudit"
+      responses:
+        201:
+          description: SeniorityAudit created
+          headers:
+            Location:
+              description: A link to the SeniorityAudit
+              type: string
+              format: url
+          schema:
+            $ref: "#/definitions/SeniorityAudit"  
+  /seniorityaudits/{id}:
+    get:
+      tags:
+        - SeniorityAudit
+      consumes: []
+      produces:
+        - text/plain
+        - application/json
+        - text/json
+      responses:
+        200:
+          description: OK
+          schema:
+            $ref: "#/definitions/SeniorityAudit"
+        404:
+          description: SeniorityAudit not found
+      parameters:
+        - name: id
+          in: path
+          description: id of SeniorityAudit to fetch
+          required: true
+          type: integer
+    put:
+      tags:
+        - SeniorityAudit
+      consumes:
+        - application/json
+      produces:
+        - text/plain
+        - application/json
+        - text/json
+      responses:
+        200:
+          description: OK
+          schema:
+            $ref: "#/definitions/SeniorityAudit"
+        404:
+          description: SeniorityAudit not found
+      parameters:
+        - name: id
+          in: path
+          description: id of SeniorityAudit to fetch
+          required: true
+          type: integer
+        - name: item
+          in: body
+          required: true
+          schema:
+            $ref: "#/definitions/SeniorityAudit"
+  /seniorityaudits/{id}/delete:
+    post:
+      tags:
+        - SeniorityAudit
+      consumes: []
+      produces:
+        - text/plain
+        - application/json
+        - text/json
+      responses:
+        200:
+          description: OK
+        404:
+          description: SeniorityAudit not found
+      parameters:
+        - name: id
+          in: path
+          description: id of SeniorityAudit to delete
+          required: true
+          type: integer
+
+  /seniorityaudits/bulk:
+    post:
+      tags:
+        - SeniorityAudit
+      consumes:
+        - application/json
+      produces:
+        - text/plain
+        - application/json
+        - text/json
+      parameters:
+        - name: items
+          in: body
+          required: true
+          schema:
+            type: array
+            items:
+              $ref: "#/definitions/SeniorityAudit"
+      responses:
+        201:
+          description: SeniorityAudit created
+  /timerecords:
+    get:
+      tags:
+        - TimeRecord
+      consumes: []
+      produces:
+        - text/plain
+        - application/json
+        - text/json
+      responses:
+        200:
+          description: OK
+          schema:
+            type: array
+            items:
+              $ref: "#/definitions/TimeRecord"
+    post:
+      tags:
+        - TimeRecord
+      consumes:
+        - application/json
+      produces:
+        - text/plain
+        - application/json
+        - text/json
+      parameters:
+        - name: item
+          in: body
+          required: true
+          schema:
+            $ref: "#/definitions/TimeRecord"
+      responses:
+        201:
+          description: TimeRecord created
+          headers:
+            Location:
+              description: A link to the TimeRecord
+              type: string
+              format: url
+          schema:
+            $ref: "#/definitions/TimeRecord"  
+  /timerecords/{id}:
+    get:
+      tags:
+        - TimeRecord
+      consumes: []
+      produces:
+        - text/plain
+        - application/json
+        - text/json
+      responses:
+        200:
+          description: OK
+          schema:
+            $ref: "#/definitions/TimeRecord"
+        404:
+          description: TimeRecord not found
+      parameters:
+        - name: id
+          in: path
+          description: id of TimeRecord to fetch
+          required: true
+          type: integer
+    put:
+      tags:
+        - TimeRecord
+      consumes:
+        - application/json
+      produces:
+        - text/plain
+        - application/json
+        - text/json
+      responses:
+        200:
+          description: OK
+          schema:
+            $ref: "#/definitions/TimeRecord"
+        404:
+          description: TimeRecord not found
+      parameters:
+        - name: id
+          in: path
+          description: id of TimeRecord to fetch
+          required: true
+          type: integer
+        - name: item
+          in: body
+          required: true
+          schema:
+            $ref: "#/definitions/TimeRecord"
+  /timerecords/{id}/delete:
+    post:
+      tags:
+        - TimeRecord
+      consumes: []
+      produces:
+        - text/plain
+        - application/json
+        - text/json
+      responses:
+        200:
+          description: OK
+        404:
+          description: TimeRecord not found
+      parameters:
+        - name: id
+          in: path
+          description: id of TimeRecord to delete
+          required: true
+          type: integer
+
+  /timerecords/bulk:
+    post:
+      tags:
+        - TimeRecord
+      consumes:
+        - application/json
+      produces:
+        - text/plain
+        - application/json
+        - text/json
+      parameters:
+        - name: items
+          in: body
+          required: true
+          schema:
+            type: array
+            items:
+              $ref: "#/definitions/TimeRecord"
+      responses:
+        201:
+          description: TimeRecord created
+  /userfavourites:
+    get:
+      tags:
+        - UserFavourite
+      consumes: []
+      produces:
+        - text/plain
+        - application/json
+        - text/json
+      responses:
+        200:
+          description: OK
+          schema:
+            type: array
+            items:
+              $ref: "#/definitions/UserFavourite"
+    post:
+      tags:
+        - UserFavourite
+      consumes:
+        - application/json
+      produces:
+        - text/plain
+        - application/json
+        - text/json
+      parameters:
+        - name: item
+          in: body
+          required: true
+          schema:
+            $ref: "#/definitions/UserFavourite"
+      responses:
+        201:
+          description: UserFavourite created
+          headers:
+            Location:
+              description: A link to the UserFavourite
+              type: string
+              format: url
+          schema:
+            $ref: "#/definitions/UserFavourite"  
+  /userfavourites/{id}:
+    get:
+      tags:
+        - UserFavourite
+      consumes: []
+      produces:
+        - text/plain
+        - application/json
+        - text/json
+      responses:
+        200:
+          description: OK
+          schema:
+            $ref: "#/definitions/UserFavourite"
+        404:
+          description: UserFavourite not found
+      parameters:
+        - name: id
+          in: path
+          description: id of UserFavourite to fetch
+          required: true
+          type: integer
+    put:
+      tags:
+        - UserFavourite
+      consumes:
+        - application/json
+      produces:
+        - text/plain
+        - application/json
+        - text/json
+      responses:
+        200:
+          description: OK
+          schema:
+            $ref: "#/definitions/UserFavourite"
+        404:
+          description: UserFavourite not found
+      parameters:
+        - name: id
+          in: path
+          description: id of UserFavourite to fetch
+          required: true
+          type: integer
+        - name: item
+          in: body
+          required: true
+          schema:
+            $ref: "#/definitions/UserFavourite"
+  /userfavourites/{id}/delete:
+    post:
+      tags:
+        - UserFavourite
+      consumes: []
+      produces:
+        - text/plain
+        - application/json
+        - text/json
+      responses:
+        200:
+          description: OK
+        404:
+          description: UserFavourite not found
+      parameters:
+        - name: id
+          in: path
+          description: id of UserFavourite to delete
+          required: true
+          type: integer
+
+  /userfavourites/bulk:
+    post:
+      tags:
+        - UserFavourite
+      consumes:
+        - application/json
+      produces:
+        - text/plain
+        - application/json
+        - text/json
+      parameters:
+        - name: items
+          in: body
+          required: true
+          schema:
+            type: array
+            items:
+              $ref: "#/definitions/UserFavourite"
+      responses:
+        201:
+          description: UserFavourite created
+  /userroles:
+    get:
+      tags:
+        - UserRole
+      consumes: []
+      produces:
+        - text/plain
+        - application/json
+        - text/json
+      responses:
+        200:
+          description: OK
+          schema:
+            type: array
+            items:
+              $ref: "#/definitions/UserRole"
+    post:
+      tags:
+        - UserRole
+      consumes:
+        - application/json
+      produces:
+        - text/plain
+        - application/json
+        - text/json
+      parameters:
+        - name: item
+          in: body
+          required: true
+          schema:
+            $ref: "#/definitions/UserRole"
+      responses:
+        201:
+          description: UserRole created
+          headers:
+            Location:
+              description: A link to the UserRole
+              type: string
+              format: url
+          schema:
+            $ref: "#/definitions/UserRole"  
+  /userroles/{id}:
+    get:
+      tags:
+        - UserRole
+      consumes: []
+      produces:
+        - text/plain
+        - application/json
+        - text/json
+      responses:
+        200:
+          description: OK
+          schema:
+            $ref: "#/definitions/UserRole"
+        404:
+          description: UserRole not found
+      parameters:
+        - name: id
+          in: path
+          description: id of UserRole to fetch
+          required: true
+          type: integer
+    put:
+      tags:
+        - UserRole
+      consumes:
+        - application/json
+      produces:
+        - text/plain
+        - application/json
+        - text/json
+      responses:
+        200:
+          description: OK
+          schema:
+            $ref: "#/definitions/UserRole"
+        404:
+          description: UserRole not found
+      parameters:
+        - name: id
+          in: path
+          description: id of UserRole to fetch
+          required: true
+          type: integer
+        - name: item
+          in: body
+          required: true
+          schema:
+            $ref: "#/definitions/UserRole"
+  /userroles/{id}/delete:
+    post:
+      tags:
+        - UserRole
+      consumes: []
+      produces:
+        - text/plain
+        - application/json
+        - text/json
+      responses:
+        200:
+          description: OK
+        404:
+          description: UserRole not found
+      parameters:
+        - name: id
+          in: path
+          description: id of UserRole to delete
+          required: true
+          type: integer
+
+  /userroles/bulk:
+    post:
+      tags:
+        - UserRole
+      consumes:
+        - application/json
+      produces:
+        - text/plain
+        - application/json
+        - text/json
+      parameters:
+        - name: items
+          in: body
+          required: true
+          schema:
+            type: array
+            items:
+              $ref: "#/definitions/UserRole"
+      responses:
+        201:
+          description: UserRole created
   /equipment/search:
     get:
       summary: Searches Equipment
@@ -3104,7 +4820,51 @@ paths:
           schema:
             type: array
             items:
-              $ref: "#/definitions/Equipment"              
+              $ref: "#/definitions/Equipment"
+  /projects/search:
+    get:
+      summary: Searches Projects
+      description:
+        Used for the project search page.
+      tags:
+        - Project
+      consumes:
+        - application/json
+      produces:
+        - text/plain
+        - application/json
+        - text/json
+      parameters:        
+        - name: serviceareas
+          in: query
+          description: Service Areas (array of id numbers)
+          collectionFormat: multi
+          required: false
+          type: array
+          items:
+            type: integer       
+        - name: project
+          in: query
+          description: name or partial name for a Project
+          required: false
+          type: string
+        - name: hasRequests
+          in: query
+          description: if true then only include Projects with active Requests
+          required: false
+          type: boolean
+        - name: hasHires
+          in: query
+          description: if true then only include Projects with active Rental Agreements
+          required: false
+          type: boolean
+      responses:
+        200:
+          description: OK
+          schema:
+            type: array
+            items:
+              $ref: "#/definitions/ProjectSearchResultViewModel"                            
   /roles/{id}/permissions:
     get:
       description: Get all the permissions for a role
@@ -3809,7 +5569,7 @@ definitions:
       offerResponseNote:
         type: string
         maxLength: 2048
-        description: An optional note entered about the response to the offer from the equipment owner about the offer. Usually used when the offer is a &quot;No&quot;.
+        description: A note entered about the response to the offer from the equipment owner about the offer. Usually used when the offer is a &quot;No&quot; or &quot;Force Hire&quot;.
       note:
         type: string
         maxLength: 2048
@@ -3824,6 +5584,10 @@ definitions:
         format: int32
         type: integer
         description: A system-generated unique identifier for a RentalAgreement
+      number:
+        type: string
+        maxLength: 30
+        description: A system-generated unique rental agreement number in a format defined by the business as suitable for the business and client to see and use.
       status:
         type: string
         maxLength: 50
@@ -3832,10 +5596,104 @@ definitions:
         $ref: '#/definitions/Equipment'
       project:
         $ref: '#/definitions/Project'
+      rentalAgreementRates:
+        type: array
+        items:
+          $ref: '#/definitions/RentalAgreementRate'
+      rentalAgreementConditions:
+        type: array
+        items:
+          $ref: '#/definitions/RentalAgreementCondition'
       timeRecords:
         type: array
         items:
           $ref: '#/definitions/TimeRecord'
+      note:
+        type: string
+        maxLength: 2048
+        description: An optional note to be placed onto the Rental Agreement.
+      estimateStartWork:
+        type: string
+        format: date-time
+        description: The estimated start date of the work to be placed on the rental agreement.
+      datedOn:
+        type: string
+        format: date-time
+        description: The dated on date to put on the Rental Agreement.
+      estimateHours:
+        format: int32
+        type: integer
+        description: The estimated number of hours of work to be put onto the Rental Agreement.
+      equipmentRate:
+        type: number
+        format: float
+        description: The dollar rate for the piece of equipment itself for this Rental Agreement. Other rates associated with the Rental Agreement are in the Rental Agreement Rate table.
+      ratePeriod:
+        type: string
+        maxLength: 50
+        description: The period of the rental rate. The vast majority will be hourly, but the rate could apply across a different period, e.g. daily.
+      rateComment:
+        type: string
+        maxLength: 2048
+        description: A comment about the rate for the piece of equipment.
+  RentalAgreementRate:
+    type: object
+    description: The rate associated with an element of a rental agreement.
+    required:
+      - id
+    properties:
+      id:
+        format: int32
+        type: integer
+        description: A system-generated unique identifier for a RentalAgreementRate
+      rentalAgreement:
+        $ref: '#/definitions/'
+      componentName:
+        type: string
+        maxLength: 150
+        description: Name of the component for the Rental Agreement for which the attached rates apply.
+      isAttachment:
+        type: boolean
+        description: True if this rate is for an attachment to the piece of equipment.
+      rate:
+        type: number
+        format: float
+        description: The dollar rate associated with this component of the rental agreement.
+      percentOfEquipmentRate:
+        format: int32
+        type: integer
+        description: For other than the actual piece of equipment, the percent of the equipment rate to use for this component of the rental agreement.
+      ratePeriod:
+        type: string
+        maxLength: 50
+        description: The period of the rental rate. The vast majority will be hourly, but the rate could apply across a different period, e.g. daily.
+      comment:
+        type: string
+        maxLength: 2048
+        description: A comment about the rental of this component of the Rental Agreement.
+      timeRecords:
+        type: array
+        items:
+          $ref: '#/definitions/TimeRecord'
+  RentalAgreementCondition:
+    type: object
+    description: A condition about the rental agreement to be displayed on the Rental Agreement.
+    required:
+    properties:
+      id:
+        format: int32
+        type: integer
+        description: A system-generated unique identifier for a RentalAgreementCondition
+      rentalAgreement:
+        $ref: '#/definitions/'
+      conditionName:
+        type: string
+        maxLength: 150
+        description: The name of the condition to be placed onto the Rental Agreement.
+      comment:
+        type: string
+        maxLength: 2048
+        description: A comment about the condition to be applied to the Rental Agreement.
   TimeRecord:
     type: object
     description: A record of time worked for a piece of equipment hired for a specific project within a Local Area.
@@ -3848,6 +5706,9 @@ definitions:
         description: A system-generated unique identifier for a TimeRecord
       rentalAgreement:
         $ref: '#/definitions/RentalAgreement'
+      rentalAgreementRate:
+        $ref: '#/definitions/RentalAgreementRate'
+        description: The Rental Agreement Rate component to which this Rental Agreement applies. If null, this time applies to the equipment itself.
       workedDate:
         type: string
         format: date-time
@@ -3864,26 +5725,6 @@ definitions:
         type: number
         format: float
         description: The number of hours worked by the equipment.
-      rate:
-        type: number
-        format: float
-        description: TO BE REMOVED - REPLACE WITH A LINK TO A RATE ENTRY IN THE RENTAL AGREEMENT
-      hours2:
-        type: number
-        format: float
-        description: TO BE REMOVED - REPLACE WITH A LINK TO A RATE ENTRY IN THE RENTAL AGREEMENT
-      rate2:
-        type: number
-        format: float
-        description: TO BE REMOVED - REPLACE WITH A LINK TO A RATE ENTRY IN THE RENTAL AGREEMENT
-      hours3:
-        type: number
-        format: float
-        description: TO BE REMOVED - REPLACE WITH A LINK TO A RATE ENTRY IN THE RENTAL AGREEMENT
-      rate3:
-        type: number
-        format: float
-        description: TO BE REMOVED - REPLACE WITH A LINK TO A RATE ENTRY IN THE RENTAL AGREEMENT
   Equipment:
     type: object
     description: A piece of equipment in the HETS system. Each piece of equipment is of a specific equipment type, owned by an Owner, and is within a Local Area.
@@ -4349,10 +6190,14 @@ definitions:
       isMaintenanceContractor:
         type: boolean
         description: True if the owner is contracted by MOTI to handle Maintenance activities in the area - e.g. provided services in address unscheduled issues on the roads in the area.
-      WCBExpiryDate:
+      workSafeBCPolicyNumber:
+        type: string
+        maxLength: 50
+        description: The Owner&#39;s WorkSafeBC (aka WCB) Insurance Policy Number.
+      workSafeBCExpiryDate:
         type: string
         format: date-time
-        description: The expiration of the owner&#39;s current WCB permit.
+        description: The expiration of the owner&#39;s current WorkSafeBC (aka WCB) permit.
       CGLEndDate:
         type: string
         format: date-time
