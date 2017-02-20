@@ -959,7 +959,7 @@
             "table": null
         },
         {
-            "Description": "An optional note entered about the response to the offer from the equipment owner about the offer. Usually used when the offer is a \"No\".",
+            "Description": "A note entered about the response to the offer from the equipment owner about the offer. Usually used when the offer is a \"No\" or \"Force Hire\".",
             "Length": "2048",
             "Name": "offerResponseNote",
             "RefDef": null,
@@ -1047,6 +1047,28 @@
             "table": null
         },
         {
+            "Description": "A system-generated unique rental agreement number in a format defined by the business as suitable for the business and client to see and use.",
+            "Length": "30",
+            "Name": "number",
+            "RefDef": null,
+            "Required": [
+                {
+                    "req": "id"
+                }
+            ],
+            "Unique": null,
+            "binary": null,
+            "boolean": null,
+            "datetime": null,
+            "float": null,
+            "id": null,
+            "integer": null,
+            "links": null,
+            "ref": null,
+            "string": "string",
+            "table": null
+        },
+        {
             "Description": "The current status of the Rental Agreement, such as Active or Complete",
             "Length": "50",
             "Name": "status",
@@ -1115,6 +1137,50 @@
         {
             "Description": null,
             "Length": null,
+            "Name": "rentalAgreementRates",
+            "RefDef": "RentalAgreementRate",
+            "Required": [
+                {
+                    "req": "id"
+                }
+            ],
+            "Unique": null,
+            "binary": null,
+            "boolean": null,
+            "datetime": null,
+            "float": null,
+            "id": null,
+            "integer": null,
+            "links": "links",
+            "ref": null,
+            "string": null,
+            "table": null
+        },
+        {
+            "Description": null,
+            "Length": null,
+            "Name": "rentalAgreementConditions",
+            "RefDef": "RentalAgreementCondition",
+            "Required": [
+                {
+                    "req": "id"
+                }
+            ],
+            "Unique": null,
+            "binary": null,
+            "boolean": null,
+            "datetime": null,
+            "float": null,
+            "id": null,
+            "integer": null,
+            "links": "links",
+            "ref": null,
+            "string": null,
+            "table": null
+        },
+        {
+            "Description": null,
+            "Length": null,
             "Name": "timeRecords",
             "RefDef": "TimeRecord",
             "Required": [
@@ -1132,6 +1198,470 @@
             "links": "links",
             "ref": null,
             "string": null,
+            "table": null
+        },
+        {
+            "Description": "An optional note to be placed onto the Rental Agreement.",
+            "Length": "2048",
+            "Name": "note",
+            "RefDef": null,
+            "Required": [
+                {
+                    "req": "id"
+                }
+            ],
+            "Unique": null,
+            "binary": null,
+            "boolean": null,
+            "datetime": null,
+            "float": null,
+            "id": null,
+            "integer": null,
+            "links": null,
+            "ref": null,
+            "string": "string",
+            "table": null
+        },
+        {
+            "Description": "The estimated start date of the work to be placed on the rental agreement.",
+            "Length": null,
+            "Name": "estimateStartWork",
+            "RefDef": null,
+            "Required": [
+                {
+                    "req": "id"
+                }
+            ],
+            "Unique": null,
+            "binary": null,
+            "boolean": null,
+            "datetime": "datetime",
+            "float": null,
+            "id": null,
+            "integer": null,
+            "links": null,
+            "ref": null,
+            "string": null,
+            "table": null
+        },
+        {
+            "Description": "The dated on date to put on the Rental Agreement.",
+            "Length": null,
+            "Name": "datedOn",
+            "RefDef": null,
+            "Required": [
+                {
+                    "req": "id"
+                }
+            ],
+            "Unique": null,
+            "binary": null,
+            "boolean": null,
+            "datetime": "datetime",
+            "float": null,
+            "id": null,
+            "integer": null,
+            "links": null,
+            "ref": null,
+            "string": null,
+            "table": null
+        },
+        {
+            "Description": "The estimated number of hours of work to be put onto the Rental Agreement.",
+            "Length": null,
+            "Name": "estimateHours",
+            "RefDef": null,
+            "Required": [
+                {
+                    "req": "id"
+                }
+            ],
+            "Unique": null,
+            "binary": null,
+            "boolean": null,
+            "datetime": null,
+            "float": null,
+            "id": null,
+            "integer": "integer",
+            "links": null,
+            "ref": null,
+            "string": null,
+            "table": null
+        },
+        {
+            "Description": "The dollar rate for the piece of equipment itself for this Rental Agreement. Other rates associated with the Rental Agreement are in the Rental Agreement Rate table.",
+            "Length": null,
+            "Name": "equipmentRate",
+            "RefDef": null,
+            "Required": [
+                {
+                    "req": "id"
+                }
+            ],
+            "Unique": null,
+            "binary": null,
+            "boolean": null,
+            "datetime": null,
+            "float": "float",
+            "id": null,
+            "integer": null,
+            "links": null,
+            "ref": null,
+            "string": null,
+            "table": null
+        },
+        {
+            "Description": "The period of the rental rate. The vast majority will be hourly, but the rate could apply across a different period, e.g. daily.",
+            "Length": "50",
+            "Name": "ratePeriod",
+            "RefDef": null,
+            "Required": [
+                {
+                    "req": "id"
+                }
+            ],
+            "Unique": null,
+            "binary": null,
+            "boolean": null,
+            "datetime": null,
+            "float": null,
+            "id": null,
+            "integer": null,
+            "links": null,
+            "ref": null,
+            "string": "string",
+            "table": null
+        },
+        {
+            "Description": "A comment about the rate for the piece of equipment.",
+            "Length": "2048",
+            "Name": "rateComment",
+            "RefDef": null,
+            "Required": [
+                {
+                    "req": "id"
+                }
+            ],
+            "Unique": null,
+            "binary": null,
+            "boolean": null,
+            "datetime": null,
+            "float": null,
+            "id": null,
+            "integer": null,
+            "links": null,
+            "ref": null,
+            "string": "string",
+            "table": null
+        },
+        {
+            "Description": "The rate associated with an element of a rental agreement.",
+            "Length": null,
+            "Name": "RentalAgreementRate",
+            "RefDef": null,
+            "Required": [
+                {
+                    "req": "id"
+                }
+            ],
+            "Unique": null,
+            "binary": null,
+            "boolean": null,
+            "datetime": null,
+            "float": null,
+            "id": null,
+            "integer": null,
+            "links": null,
+            "ref": null,
+            "string": null,
+            "table": "table"
+        },
+        {
+            "Description": "A system-generated unique identifier for a RentalAgreementRate",
+            "Length": null,
+            "Name": "id",
+            "RefDef": null,
+            "Required": [
+                {
+                    "req": "id"
+                }
+            ],
+            "Unique": null,
+            "binary": null,
+            "boolean": null,
+            "datetime": null,
+            "float": null,
+            "id": "id",
+            "integer": null,
+            "links": null,
+            "ref": null,
+            "string": null,
+            "table": null
+        },
+        {
+            "Description": null,
+            "Length": null,
+            "Name": "rentalAgreement",
+            "RefDef": null,
+            "Required": [
+                {
+                    "req": "id"
+                }
+            ],
+            "Unique": null,
+            "binary": null,
+            "boolean": null,
+            "datetime": null,
+            "float": null,
+            "id": null,
+            "integer": null,
+            "links": null,
+            "ref": "ref",
+            "string": null,
+            "table": null
+        },
+        {
+            "Description": "Name of the component for the Rental Agreement for which the attached rates apply.",
+            "Length": "150",
+            "Name": "componentName",
+            "RefDef": null,
+            "Required": [
+                {
+                    "req": "id"
+                }
+            ],
+            "Unique": null,
+            "binary": null,
+            "boolean": null,
+            "datetime": null,
+            "float": null,
+            "id": null,
+            "integer": null,
+            "links": null,
+            "ref": null,
+            "string": "string",
+            "table": null
+        },
+        {
+            "Description": "True if this rate is for an attachment to the piece of equipment.",
+            "Length": null,
+            "Name": "isAttachment",
+            "RefDef": null,
+            "Required": [
+                {
+                    "req": "id"
+                }
+            ],
+            "Unique": null,
+            "binary": null,
+            "boolean": "boolean",
+            "datetime": null,
+            "float": null,
+            "id": null,
+            "integer": null,
+            "links": null,
+            "ref": null,
+            "string": null,
+            "table": null
+        },
+        {
+            "Description": "The dollar rate associated with this component of the rental agreement.",
+            "Length": null,
+            "Name": "rate",
+            "RefDef": null,
+            "Required": [
+                {
+                    "req": "id"
+                }
+            ],
+            "Unique": null,
+            "binary": null,
+            "boolean": null,
+            "datetime": null,
+            "float": "float",
+            "id": null,
+            "integer": null,
+            "links": null,
+            "ref": null,
+            "string": null,
+            "table": null
+        },
+        {
+            "Description": "For other than the actual piece of equipment, the percent of the equipment rate to use for this component of the rental agreement.",
+            "Length": null,
+            "Name": "percentOfEquipmentRate",
+            "RefDef": null,
+            "Required": [
+                {
+                    "req": "id"
+                }
+            ],
+            "Unique": null,
+            "binary": null,
+            "boolean": null,
+            "datetime": null,
+            "float": null,
+            "id": null,
+            "integer": "integer",
+            "links": null,
+            "ref": null,
+            "string": null,
+            "table": null
+        },
+        {
+            "Description": "The period of the rental rate. The vast majority will be hourly, but the rate could apply across a different period, e.g. daily.",
+            "Length": "50",
+            "Name": "ratePeriod",
+            "RefDef": null,
+            "Required": [
+                {
+                    "req": "id"
+                }
+            ],
+            "Unique": null,
+            "binary": null,
+            "boolean": null,
+            "datetime": null,
+            "float": null,
+            "id": null,
+            "integer": null,
+            "links": null,
+            "ref": null,
+            "string": "string",
+            "table": null
+        },
+        {
+            "Description": "A comment about the rental of this component of the Rental Agreement.",
+            "Length": "2048",
+            "Name": "comment",
+            "RefDef": null,
+            "Required": [
+                {
+                    "req": "id"
+                }
+            ],
+            "Unique": null,
+            "binary": null,
+            "boolean": null,
+            "datetime": null,
+            "float": null,
+            "id": null,
+            "integer": null,
+            "links": null,
+            "ref": null,
+            "string": "string",
+            "table": null
+        },
+        {
+            "Description": null,
+            "Length": null,
+            "Name": "timeRecords",
+            "RefDef": "TimeRecord",
+            "Required": [
+                {
+                    "req": "id"
+                }
+            ],
+            "Unique": null,
+            "binary": null,
+            "boolean": null,
+            "datetime": null,
+            "float": null,
+            "id": null,
+            "integer": null,
+            "links": "links",
+            "ref": null,
+            "string": null,
+            "table": null
+        },
+        {
+            "Description": "A condition about the rental agreement to be displayed on the Rental Agreement.",
+            "Length": null,
+            "Name": "RentalAgreementCondition",
+            "RefDef": null,
+            "Required": [],
+            "Unique": null,
+            "binary": null,
+            "boolean": null,
+            "datetime": null,
+            "float": null,
+            "id": null,
+            "integer": null,
+            "links": null,
+            "ref": null,
+            "string": null,
+            "table": "table"
+        },
+        {
+            "Description": "A system-generated unique identifier for a RentalAgreementCondition",
+            "Length": null,
+            "Name": "id",
+            "RefDef": null,
+            "Required": [],
+            "Unique": null,
+            "binary": null,
+            "boolean": null,
+            "datetime": null,
+            "float": null,
+            "id": "id",
+            "integer": null,
+            "links": null,
+            "ref": null,
+            "string": null,
+            "table": null
+        },
+        {
+            "Description": null,
+            "Length": null,
+            "Name": "rentalAgreement",
+            "RefDef": null,
+            "Required": [],
+            "Unique": null,
+            "binary": null,
+            "boolean": null,
+            "datetime": null,
+            "float": null,
+            "id": null,
+            "integer": null,
+            "links": null,
+            "ref": "ref",
+            "string": null,
+            "table": null
+        },
+        {
+            "Description": "The name of the condition to be placed onto the Rental Agreement.",
+            "Length": "150",
+            "Name": "conditionName",
+            "RefDef": null,
+            "Required": [],
+            "Unique": null,
+            "binary": null,
+            "boolean": null,
+            "datetime": null,
+            "float": null,
+            "id": null,
+            "integer": null,
+            "links": null,
+            "ref": null,
+            "string": "string",
+            "table": null
+        },
+        {
+            "Description": "A comment about the condition to be applied to the Rental Agreement.",
+            "Length": "2048",
+            "Name": "comment",
+            "RefDef": null,
+            "Required": [],
+            "Unique": null,
+            "binary": null,
+            "boolean": null,
+            "datetime": null,
+            "float": null,
+            "id": null,
+            "integer": null,
+            "links": null,
+            "ref": null,
+            "string": "string",
             "table": null
         },
         {
@@ -1183,6 +1713,28 @@
             "Length": null,
             "Name": "rentalAgreement",
             "RefDef": "RentalAgreement",
+            "Required": [
+                {
+                    "req": "id"
+                }
+            ],
+            "Unique": null,
+            "binary": null,
+            "boolean": null,
+            "datetime": null,
+            "float": null,
+            "id": null,
+            "integer": null,
+            "links": null,
+            "ref": "ref",
+            "string": null,
+            "table": null
+        },
+        {
+            "Description": "The Rental Agreement Rate component to which this Rental Agreement applies. If null, this time applies to the equipment itself.",
+            "Length": null,
+            "Name": "rentalAgreementRate",
+            "RefDef": "RentalAgreementRate",
             "Required": [
                 {
                     "req": "id"
@@ -1270,116 +1822,6 @@
             "Description": "The number of hours worked by the equipment.",
             "Length": null,
             "Name": "hours",
-            "RefDef": null,
-            "Required": [
-                {
-                    "req": "id"
-                }
-            ],
-            "Unique": null,
-            "binary": null,
-            "boolean": null,
-            "datetime": null,
-            "float": "float",
-            "id": null,
-            "integer": null,
-            "links": null,
-            "ref": null,
-            "string": null,
-            "table": null
-        },
-        {
-            "Description": "TO BE REMOVED - REPLACE WITH A LINK TO A RATE ENTRY IN THE RENTAL AGREEMENT",
-            "Length": null,
-            "Name": "rate",
-            "RefDef": null,
-            "Required": [
-                {
-                    "req": "id"
-                }
-            ],
-            "Unique": null,
-            "binary": null,
-            "boolean": null,
-            "datetime": null,
-            "float": "float",
-            "id": null,
-            "integer": null,
-            "links": null,
-            "ref": null,
-            "string": null,
-            "table": null
-        },
-        {
-            "Description": "TO BE REMOVED - REPLACE WITH A LINK TO A RATE ENTRY IN THE RENTAL AGREEMENT",
-            "Length": null,
-            "Name": "hours2",
-            "RefDef": null,
-            "Required": [
-                {
-                    "req": "id"
-                }
-            ],
-            "Unique": null,
-            "binary": null,
-            "boolean": null,
-            "datetime": null,
-            "float": "float",
-            "id": null,
-            "integer": null,
-            "links": null,
-            "ref": null,
-            "string": null,
-            "table": null
-        },
-        {
-            "Description": "TO BE REMOVED - REPLACE WITH A LINK TO A RATE ENTRY IN THE RENTAL AGREEMENT",
-            "Length": null,
-            "Name": "rate2",
-            "RefDef": null,
-            "Required": [
-                {
-                    "req": "id"
-                }
-            ],
-            "Unique": null,
-            "binary": null,
-            "boolean": null,
-            "datetime": null,
-            "float": "float",
-            "id": null,
-            "integer": null,
-            "links": null,
-            "ref": null,
-            "string": null,
-            "table": null
-        },
-        {
-            "Description": "TO BE REMOVED - REPLACE WITH A LINK TO A RATE ENTRY IN THE RENTAL AGREEMENT",
-            "Length": null,
-            "Name": "hours3",
-            "RefDef": null,
-            "Required": [
-                {
-                    "req": "id"
-                }
-            ],
-            "Unique": null,
-            "binary": null,
-            "boolean": null,
-            "datetime": null,
-            "float": "float",
-            "id": null,
-            "integer": null,
-            "links": null,
-            "ref": null,
-            "string": null,
-            "table": null
-        },
-        {
-            "Description": "TO BE REMOVED - REPLACE WITH A LINK TO A RATE ENTRY IN THE RENTAL AGREEMENT",
-            "Length": null,
-            "Name": "rate3",
             "RefDef": null,
             "Required": [
                 {
@@ -4091,9 +4533,34 @@
             "table": null
         },
         {
-            "Description": "The expiration of the owner's current WCB permit.",
+            "Description": "The Owner's WorkSafeBC (aka WCB) Insurance Policy Number.",
+            "Length": "50",
+            "Name": "workSafeBCPolicyNumber",
+            "RefDef": null,
+            "Required": [
+                {
+                    "req": "id"
+                },
+                {
+                    "req": "ownerEquipmentCodePrefix"
+                }
+            ],
+            "Unique": null,
+            "binary": null,
+            "boolean": null,
+            "datetime": null,
+            "float": null,
+            "id": null,
+            "integer": null,
+            "links": null,
+            "ref": null,
+            "string": "string",
+            "table": null
+        },
+        {
+            "Description": "The expiration of the owner's current WorkSafeBC (aka WCB) permit.",
             "Length": null,
-            "Name": "WCBExpiryDate",
+            "Name": "workSafeBCExpiryDate",
             "RefDef": null,
             "Required": [
                 {
@@ -5239,72 +5706,6 @@
             "links": null,
             "ref": null,
             "string": null,
-            "table": null
-        },
-        {
-            "Description": "The name for a place in the UI where per user settings can be stored - for example, the Equipment search screen, Owner search screen, etc.",
-            "Length": null,
-            "Name": "FavouriteContextType",
-            "RefDef": null,
-            "Required": [
-                {
-                    "req": "id"
-                }
-            ],
-            "Unique": null,
-            "binary": null,
-            "boolean": null,
-            "datetime": null,
-            "float": null,
-            "id": null,
-            "integer": null,
-            "links": null,
-            "ref": null,
-            "string": null,
-            "table": "table"
-        },
-        {
-            "Description": "A system-generated unique identifier for a FavouriteContextType",
-            "Length": null,
-            "Name": "id",
-            "RefDef": null,
-            "Required": [
-                {
-                    "req": "id"
-                }
-            ],
-            "Unique": null,
-            "binary": null,
-            "boolean": null,
-            "datetime": null,
-            "float": null,
-            "id": "id",
-            "integer": null,
-            "links": null,
-            "ref": null,
-            "string": null,
-            "table": null
-        },
-        {
-            "Description": "Context Name known by the UI.",
-            "Length": "150",
-            "Name": "name",
-            "RefDef": null,
-            "Required": [
-                {
-                    "req": "id"
-                }
-            ],
-            "Unique": null,
-            "binary": null,
-            "boolean": null,
-            "datetime": null,
-            "float": null,
-            "id": null,
-            "integer": null,
-            "links": null,
-            "ref": null,
-            "string": "string",
             "table": null
         },
         {
