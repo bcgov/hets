@@ -23,7 +23,7 @@ var EquipmentEditDialog = React.createClass({
     return {
       isNew: this.props.equipment.id === 0,
 
-      serialNum: this.props.equipment.serialNum || '',
+      serialNumber: this.props.equipment.serialNumber || '',
       make: this.props.equipment.make || '',
       size: this.props.equipment.size || '',
       model: this.props.equipment.model || '',
@@ -45,7 +45,7 @@ var EquipmentEditDialog = React.createClass({
   },
 
   didChange() {
-    if (this.state.serialNum !== this.props.equipment.serialNum) { return true; }
+    if (this.state.serialNumber !== this.props.equipment.serialNumber) { return true; }
     if (this.state.make !== this.props.equipment.make) { return true; }
     if (this.state.size !== this.props.equipment.size) { return true; }
     if (this.state.model !== this.props.equipment.model) { return true; }
@@ -64,7 +64,7 @@ var EquipmentEditDialog = React.createClass({
 
     var valid = true;
 
-    if (isBlank(this.state.serialNum)) {
+    if (isBlank(this.state.serialNumber)) {
       this.setState({ serialNumberError: 'Serial number is required' });
       valid = false;
     }
@@ -79,7 +79,7 @@ var EquipmentEditDialog = React.createClass({
 
   onSave() {
     this.props.onSave({ ...this.props.equipment, ...{
-      serialNum: this.state.serialNum,
+      serialNumber: this.state.serialNumber,
       make: this.state.make,
       size: this.state.size,
       model: this.state.model,
@@ -94,7 +94,7 @@ var EquipmentEditDialog = React.createClass({
       onClose={ this.props.onClose } onSave={ this.onSave } didChange={ this.didChange } isValid={ this.isValid }
       title= { 
         <strong>Equipment
-          <span>Serial Number: <small>{ this.props.equipment.serialNum }</small></span>
+          <span>Serial Number: <small>{ this.props.equipment.serialNumber }</small></span>
           <span>Plate: <small>{ this.props.equipment.licencePlate }</small></span>
         </strong>
       }>
@@ -103,9 +103,9 @@ var EquipmentEditDialog = React.createClass({
           <Grid fluid>
             <Row>
               <Col md={6}>
-                <FormGroup controlId="serialNum" validationState={ this.state.serialNumberError ? 'error' : null }>
+                <FormGroup controlId="serialNumber" validationState={ this.state.serialNumberError ? 'error' : null }>
                   <ControlLabel>Serial Number <sup>*</sup></ControlLabel>
-                  <FormInputControl type="text" defaultValue={ this.state.serialNum } updateState={ this.updateState } inputRef={ ref => { this.input = ref; }}/>
+                  <FormInputControl type="text" defaultValue={ this.state.serialNumber } updateState={ this.updateState } inputRef={ ref => { this.input = ref; }}/>
                   <HelpBlock>{ this.state.serialNumberError }</HelpBlock>
                 </FormGroup>
               </Col>
