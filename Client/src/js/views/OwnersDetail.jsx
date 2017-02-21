@@ -64,7 +64,7 @@ var OwnersDetail = React.createClass({
 
       uiEquipment : {
         // Equipment
-        sortField: this.props.uiEquipment.sortField || 'equipCode',
+        sortField: this.props.uiEquipment.sortField || 'equipmentCode',
         sortDesc: this.props.uiEquipment.sortDesc != false, // defaults to true
       },
     };
@@ -82,14 +82,14 @@ var OwnersDetail = React.createClass({
   },
 
   updateContactsUIState(state, callback) {
-    this.setState({ uiContacts: { ...this.state.uiContacts, ...state }}, () =>{
+    this.setState({ uiContacts: { ...this.state.uiContacts, ...state }}, () => {
       store.dispatch({ type: Action.UPDATE_OWNER_CONTACTS_UI, ownerContacts: this.state.uiContacts });
       if (callback) { callback(); }
     });
   },
 
   updateEquipmentUIState(state, callback) {
-    this.setState({ uiEquipment: { ...this.state.uiEquipment, ...state }}, () =>{
+    this.setState({ uiEquipment: { ...this.state.uiEquipment, ...state }}, () => {
       store.dispatch({ type: Action.UPDATE_OWNER_EQUIPMENT_UI, ownerEquipment: this.state.uiEquipment });
       if (callback) { callback(); }
     });
@@ -281,7 +281,7 @@ var OwnersDetail = React.createClass({
                 }
 
                 var headers = [
-                  { field: 'equipCode',        title: 'ID'                  },
+                  { field: 'equipmentCode',    title: 'ID'                  },
                   { field: 'typeName',         title: 'Type'                },
                   { field: 'make',             title: 'Make/Model/Size' },
                   { field: 'lastVerifiedDate', title: 'Last Verified'       },
@@ -310,7 +310,7 @@ var OwnersDetail = React.createClass({
             <Well>        
               <h3>Policy <span className="pull-right">
                 <Button title="Proof Documents" bsSize="small" onClick={ this.openPolicyDocumentsDialog }>Proof Documents ({ owner.numberOfPolicyDocuments })</Button>
-                <Button title="Add Policy Document" onClick={ this.addPolicyDocument } bsSize="small"><Glyphicon glyph="plus" /> Add Policy Doc</Button>
+                <Button title="Add Policy Document" onClick={ this.addPolicyDocument } bsSize="small"><Glyphicon glyph="plus" /> Attach Proof</Button>
                 <Button title="Edit Policy Information" bsSize="small" onClick={ this.openPolicyDialog }><Glyphicon glyph="edit" /></Button>
               </span></h3>
               {(() => {
@@ -318,11 +318,12 @@ var OwnersDetail = React.createClass({
 
                 return <div id="owners-policy">
                   <Row>
-                    <ColLabel md={4}>WCB Expiry Date</ColLabel>
-                    <ColField md={4}>{ formatDateTime(owner.wcbExpiryDate, 'YYYY-MMM-DD') }</ColField>
-                    <ColField md={4}>
-                      
-                    </ColField>
+                    <ColLabel md={4}>WorkSafeBC Policy</ColLabel>
+                    <ColField md={8}>{ owner.workSafeBCPolicyNumber }</ColField>
+                  </Row>
+                  <Row>
+                    <ColLabel md={4}>WorkSafeBC Expiry Date</ColLabel>
+                    <ColField md={8}>{ formatDateTime(owner.workSafeBCExpiryDate, 'YYYY-MMM-DD') }</ColField>
                   </Row>
                   <Row>
                     <ColLabel md={4}>CGL Policy End Date</ColLabel>
