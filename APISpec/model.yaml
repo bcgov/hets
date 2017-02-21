@@ -628,7 +628,13 @@ definitions:
         description: A extended description of the equipment type.
       askNextBlock1:
         $ref: '#/definitions/Equipment'
-        description: The id of the next piece of Block 1 Equipment to be asked for a Rental Request. Only needed for Block 1 because all requests of other Blocks start from the first entry in the list.
+        description: The id of the next piece of Block 1 Equipment to be asked for a Rental Request. If null, start from the first piece of equipment in Block 1.
+      askNextBlock2:
+        $ref: '#/definitions/Equipment'
+        description: The id of the next piece of Block 2 Equipment to be asked for a Rental Request. If null, start from the first piece of equipment in Block 2.
+      askNextBlockOpen:
+        $ref: '#/definitions/Equipment'
+        description: The id of the next piece of Block Open Equipment to be asked for a Rental Request. If null, start from the first piece of equipment in Block Open.
       equipRentalRateNo:
         type: number
         format: float
@@ -658,6 +664,7 @@ definitions:
     description: An Equipment Attachment associated with a piece of Equipment.
     required:
       - id
+      - attachment
     properties:
       id:
         format: int32
@@ -665,34 +672,14 @@ definitions:
         description: A system-generated unique identifier for an EquipmentAttachment
       equipment:
         $ref: '#/definitions/Equipment'
-      type:
-        $ref: '#/definitions/EquipmentAttachmentType'
-      seqNum:
-        format: int32
-        type: integer
-        description: TO BE REVIEWED WITH THE BUSINESS - WHAT IS THIS?
+      attachment:
+        type: string
+        maxLength: 255
+        description: The attachment type as entered by the user (per the business - no lookup).
       description:
         type: string
         maxLength: 2048
         description: A description of the equipment attachment if the Equipment Attachment Type is insufficient.
-  EquipmentAttachmentType:
-    type: object
-    description: An Equipment Attachment Type.
-    required:
-      - id
-    properties:
-      id:
-        format: int32
-        type: integer
-        description: A system-generated unique identifier for a EquipmentAttachmentType
-      code:
-        type: string
-        maxLength: 50
-        description: TO BE REVIEWED WITH THE BUSINESS - IS THIS NEEDED - A unique but human-friendly code for the Equipment Attachment Type that can be displayed on screens with little screen real estate available.
-      description:
-        type: string
-        maxLength: 2048
-        description: The name of the equipment attachment type, as specified by the HETS Clerk creating the equipment type.
   SeniorityAudit:
     type: object
     description: The history of all changes to the seniority of a piece of equipment. The current seniority information (underlying data elements and the calculation result) is in the equipment record. Every time that information changes, the old values are copied to here, with a start date, end date range. In the normal case, an annual update triggers the old values being copied here and the new values put into the equipment record. If a user manually changes the values, the existing values are copied into a record added here.
@@ -838,9 +825,6 @@ definitions:
     description: A person and their related contact information linked to one or more entities in the system. For examples, there are contacts for Owners, Projects.
     required:
       - id
-      - givenName
-      - surname
-      - role
     properties:
       id:
         format: int32
@@ -855,6 +839,10 @@ definitions:
         type: string
         maxLength: 50
         description: The surname of the contact.
+      organizationName:
+        type: string
+        maxLength: 150
+        description: The organization name of the contact.
       role:
         type: string
         maxLength: 100
@@ -863,55 +851,29 @@ definitions:
         type: string
         maxLength: 150
         description: A note about the contact maintained by the users.
-      phones:
-        type: array
-        items:
-          $ref: '#/definitions/ContactPhone'
-      addresses:
-        type: array
-        items:
-          $ref: '#/definitions/ContactAddress'
-  ContactPhone:
-    type: object
-    description: Phone number information related to a contact.
-    required:
-      - id
-      - type
-      - phoneNumber
-    properties:
-      id:
-        format: int32
-        type: integer
-        description: A system-generated unique identifier for a ContactPhone
-      type:
+      emailAddress:
         type: string
-        maxLength: 100
-        description: The type of the phone number. UI controlled as to whether it is free form or selected from an enumerated list.  Ex. Home, Cell, Work etc..
-      phoneNumber:
+        maxLength: 255
+        description: The email address for the contact.
+      workPhoneNumber:
         type: string
         maxLength: 20
-        description: The phone number of the contact. Entered as free form to support a range of formats.
-  ContactAddress:
-    type: object
-    description: Address information related to a contact.
-    required:
-      - id
-    properties:
-      id:
-        format: int32
-        type: integer
-        description: A system-generated unique identifier for a ContactAddress
-      type:
+        description: The work phone number for the contact.
+      mobilePhoneNumber:
         type: string
-        maxLength: 100
-        description: The type of the address. UI controlled as to whether it is free form or selected from an enumerated list ex. Home, Office, etc..
-      addressLine1:
+        maxLength: 20
+        description: The mobile phone number for the contact.
+      faxPhoneNumber:
         type: string
-        maxLength: 150
+        maxLength: 20
+        description: The fax phone number for the contact.
+      address1:
+        type: string
+        maxLength: 80
         description: Address 1 line of the address.
-      addressLine2:
+      address2:
         type: string
-        maxLength: 150
+        maxLength: 80
         description: Address 2 line of the address.
       city:
         type: string
@@ -948,25 +910,28 @@ definitions:
     description: Uploaded documents related to entity in the application - e.g. piece of Equipment, an Owner, a Project and so on.
     required:
       - id
-      - internalFileName
-      - externalFileName
     properties:
       id:
         format: int32
         type: integer
+        uniqueItems: true
         description: A system-generated unique identifier for an Attachment
-      internalFileName:
+      fileName:
         type: string
         maxLength: 2048
-        description: The physical location of the attachment on the file system.
-      externalFileName:
+        description: Filename as passed by the user uploading the file
+      fileContents:
         type: string
-        maxLength: 2048
-        description: The name of the attachment as defined by the user in uploading the document.
+        format: binary
+        description: Binary contents of the file
       description:
         type: string
         maxLength: 2048
         description: A note about the attachment,  optionally maintained by the user.
+      type:
+        type: string
+        maxLength: 255
+        description: Type of attachment
   History:
     type: object
     description: A log entry created by the system based on a triggering event and related to an entity in the application - e.g. piece of Equipment, an Owner, a Project and so on.
