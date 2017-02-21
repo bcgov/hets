@@ -3601,9 +3601,53 @@
             "table": null
         },
         {
-            "Description": "The id of the next piece of Block 1 Equipment to be asked for a Rental Request. Only needed for Block 1 because all requests of other Blocks start from the first entry in the list.",
+            "Description": "The id of the next piece of Block 1 Equipment to be asked for a Rental Request. If null, start from the first piece of equipment in Block 1.",
             "Length": null,
             "Name": "askNextBlock1",
+            "RefDef": "Equipment",
+            "Required": [
+                {
+                    "req": "id"
+                }
+            ],
+            "Unique": null,
+            "binary": null,
+            "boolean": null,
+            "datetime": null,
+            "float": null,
+            "id": null,
+            "integer": null,
+            "links": null,
+            "ref": "ref",
+            "string": null,
+            "table": null
+        },
+        {
+            "Description": "The id of the next piece of Block 2 Equipment to be asked for a Rental Request. If null, start from the first piece of equipment in Block 2.",
+            "Length": null,
+            "Name": "askNextBlock2",
+            "RefDef": "Equipment",
+            "Required": [
+                {
+                    "req": "id"
+                }
+            ],
+            "Unique": null,
+            "binary": null,
+            "boolean": null,
+            "datetime": null,
+            "float": null,
+            "id": null,
+            "integer": null,
+            "links": null,
+            "ref": "ref",
+            "string": null,
+            "table": null
+        },
+        {
+            "Description": "The id of the next piece of Block Open Equipment to be asked for a Rental Request. If null, start from the first piece of equipment in Block Open.",
+            "Length": null,
+            "Name": "askNextBlockOpen",
             "RefDef": "Equipment",
             "Required": [
                 {
@@ -3762,6 +3806,9 @@
             "Required": [
                 {
                     "req": "id"
+                },
+                {
+                    "req": "attachment"
                 }
             ],
             "Unique": null,
@@ -3784,6 +3831,9 @@
             "Required": [
                 {
                     "req": "id"
+                },
+                {
+                    "req": "attachment"
                 }
             ],
             "Unique": null,
@@ -3806,28 +3856,9 @@
             "Required": [
                 {
                     "req": "id"
-                }
-            ],
-            "Unique": null,
-            "binary": null,
-            "boolean": null,
-            "datetime": null,
-            "float": null,
-            "id": null,
-            "integer": null,
-            "links": null,
-            "ref": "ref",
-            "string": null,
-            "table": null
-        },
-        {
-            "Description": null,
-            "Length": null,
-            "Name": "type",
-            "RefDef": "EquipmentAttachmentType",
-            "Required": [
+                },
                 {
-                    "req": "id"
+                    "req": "attachment"
                 }
             ],
             "Unique": null,
@@ -3843,13 +3874,16 @@
             "table": null
         },
         {
-            "Description": "TO BE REVIEWED WITH THE BUSINESS - WHAT IS THIS?",
-            "Length": null,
-            "Name": "seqNum",
+            "Description": "The attachment type as entered by the user (per the business - no lookup).",
+            "Length": "255",
+            "Name": "attachment",
             "RefDef": null,
             "Required": [
                 {
                     "req": "id"
+                },
+                {
+                    "req": "attachment"
                 }
             ],
             "Unique": null,
@@ -3858,10 +3892,10 @@
             "datetime": null,
             "float": null,
             "id": null,
-            "integer": "integer",
+            "integer": null,
             "links": null,
             "ref": null,
-            "string": null,
+            "string": "string",
             "table": null
         },
         {
@@ -3872,94 +3906,9 @@
             "Required": [
                 {
                     "req": "id"
-                }
-            ],
-            "Unique": null,
-            "binary": null,
-            "boolean": null,
-            "datetime": null,
-            "float": null,
-            "id": null,
-            "integer": null,
-            "links": null,
-            "ref": null,
-            "string": "string",
-            "table": null
-        },
-        {
-            "Description": "An Equipment Attachment Type.",
-            "Length": null,
-            "Name": "EquipmentAttachmentType",
-            "RefDef": null,
-            "Required": [
+                },
                 {
-                    "req": "id"
-                }
-            ],
-            "Unique": null,
-            "binary": null,
-            "boolean": null,
-            "datetime": null,
-            "float": null,
-            "id": null,
-            "integer": null,
-            "links": null,
-            "ref": null,
-            "string": null,
-            "table": "table"
-        },
-        {
-            "Description": "A system-generated unique identifier for a EquipmentAttachmentType",
-            "Length": null,
-            "Name": "id",
-            "RefDef": null,
-            "Required": [
-                {
-                    "req": "id"
-                }
-            ],
-            "Unique": null,
-            "binary": null,
-            "boolean": null,
-            "datetime": null,
-            "float": null,
-            "id": "id",
-            "integer": null,
-            "links": null,
-            "ref": null,
-            "string": null,
-            "table": null
-        },
-        {
-            "Description": "TO BE REVIEWED WITH THE BUSINESS - IS THIS NEEDED - A unique but human-friendly code for the Equipment Attachment Type that can be displayed on screens with little screen real estate available.",
-            "Length": "50",
-            "Name": "code",
-            "RefDef": null,
-            "Required": [
-                {
-                    "req": "id"
-                }
-            ],
-            "Unique": null,
-            "binary": null,
-            "boolean": null,
-            "datetime": null,
-            "float": null,
-            "id": null,
-            "integer": null,
-            "links": null,
-            "ref": null,
-            "string": "string",
-            "table": null
-        },
-        {
-            "Description": "The name of the equipment attachment type, as specified by the HETS Clerk creating the equipment type.",
-            "Length": "2048",
-            "Name": "description",
-            "RefDef": null,
-            "Required": [
-                {
-                    "req": "id"
+                    "req": "attachment"
                 }
             ],
             "Unique": null,
@@ -4840,15 +4789,6 @@
             "Required": [
                 {
                     "req": "id"
-                },
-                {
-                    "req": "givenName"
-                },
-                {
-                    "req": "surname"
-                },
-                {
-                    "req": "role"
                 }
             ],
             "Unique": null,
@@ -4871,15 +4811,6 @@
             "Required": [
                 {
                     "req": "id"
-                },
-                {
-                    "req": "givenName"
-                },
-                {
-                    "req": "surname"
-                },
-                {
-                    "req": "role"
                 }
             ],
             "Unique": true,
@@ -4902,15 +4833,6 @@
             "Required": [
                 {
                     "req": "id"
-                },
-                {
-                    "req": "givenName"
-                },
-                {
-                    "req": "surname"
-                },
-                {
-                    "req": "role"
                 }
             ],
             "Unique": null,
@@ -4933,15 +4855,28 @@
             "Required": [
                 {
                     "req": "id"
-                },
+                }
+            ],
+            "Unique": null,
+            "binary": null,
+            "boolean": null,
+            "datetime": null,
+            "float": null,
+            "id": null,
+            "integer": null,
+            "links": null,
+            "ref": null,
+            "string": "string",
+            "table": null
+        },
+        {
+            "Description": "The organization name of the contact.",
+            "Length": "150",
+            "Name": "organizationName",
+            "RefDef": null,
+            "Required": [
                 {
-                    "req": "givenName"
-                },
-                {
-                    "req": "surname"
-                },
-                {
-                    "req": "role"
+                    "req": "id"
                 }
             ],
             "Unique": null,
@@ -4964,15 +4899,6 @@
             "Required": [
                 {
                     "req": "id"
-                },
-                {
-                    "req": "givenName"
-                },
-                {
-                    "req": "surname"
-                },
-                {
-                    "req": "role"
                 }
             ],
             "Unique": null,
@@ -4995,15 +4921,6 @@
             "Required": [
                 {
                     "req": "id"
-                },
-                {
-                    "req": "givenName"
-                },
-                {
-                    "req": "surname"
-                },
-                {
-                    "req": "role"
                 }
             ],
             "Unique": null,
@@ -5019,137 +4936,13 @@
             "table": null
         },
         {
-            "Description": null,
-            "Length": null,
-            "Name": "phones",
-            "RefDef": "ContactPhone",
-            "Required": [
-                {
-                    "req": "id"
-                },
-                {
-                    "req": "givenName"
-                },
-                {
-                    "req": "surname"
-                },
-                {
-                    "req": "role"
-                }
-            ],
-            "Unique": null,
-            "binary": null,
-            "boolean": null,
-            "datetime": null,
-            "float": null,
-            "id": null,
-            "integer": null,
-            "links": "links",
-            "ref": null,
-            "string": null,
-            "table": null
-        },
-        {
-            "Description": null,
-            "Length": null,
-            "Name": "addresses",
-            "RefDef": "ContactAddress",
-            "Required": [
-                {
-                    "req": "id"
-                },
-                {
-                    "req": "givenName"
-                },
-                {
-                    "req": "surname"
-                },
-                {
-                    "req": "role"
-                }
-            ],
-            "Unique": null,
-            "binary": null,
-            "boolean": null,
-            "datetime": null,
-            "float": null,
-            "id": null,
-            "integer": null,
-            "links": "links",
-            "ref": null,
-            "string": null,
-            "table": null
-        },
-        {
-            "Description": "Phone number information related to a contact.",
-            "Length": null,
-            "Name": "ContactPhone",
+            "Description": "The email address for the contact.",
+            "Length": "255",
+            "Name": "emailAddress",
             "RefDef": null,
             "Required": [
                 {
                     "req": "id"
-                },
-                {
-                    "req": "type"
-                },
-                {
-                    "req": "phoneNumber"
-                }
-            ],
-            "Unique": null,
-            "binary": null,
-            "boolean": null,
-            "datetime": null,
-            "float": null,
-            "id": null,
-            "integer": null,
-            "links": null,
-            "ref": null,
-            "string": null,
-            "table": "table"
-        },
-        {
-            "Description": "A system-generated unique identifier for a ContactPhone",
-            "Length": null,
-            "Name": "id",
-            "RefDef": null,
-            "Required": [
-                {
-                    "req": "id"
-                },
-                {
-                    "req": "type"
-                },
-                {
-                    "req": "phoneNumber"
-                }
-            ],
-            "Unique": null,
-            "binary": null,
-            "boolean": null,
-            "datetime": null,
-            "float": null,
-            "id": "id",
-            "integer": null,
-            "links": null,
-            "ref": null,
-            "string": null,
-            "table": null
-        },
-        {
-            "Description": "The type of the phone number. UI controlled as to whether it is free form or selected from an enumerated list.  Ex. Home, Cell, Work etc..",
-            "Length": "100",
-            "Name": "type",
-            "RefDef": null,
-            "Required": [
-                {
-                    "req": "id"
-                },
-                {
-                    "req": "type"
-                },
-                {
-                    "req": "phoneNumber"
                 }
             ],
             "Unique": null,
@@ -5165,19 +4958,13 @@
             "table": null
         },
         {
-            "Description": "The phone number of the contact. Entered as free form to support a range of formats.",
+            "Description": "The work phone number for the contact.",
             "Length": "20",
-            "Name": "phoneNumber",
+            "Name": "workPhoneNumber",
             "RefDef": null,
             "Required": [
                 {
                     "req": "id"
-                },
-                {
-                    "req": "type"
-                },
-                {
-                    "req": "phoneNumber"
                 }
             ],
             "Unique": null,
@@ -5193,9 +4980,9 @@
             "table": null
         },
         {
-            "Description": "Address information related to a contact.",
-            "Length": null,
-            "Name": "ContactAddress",
+            "Description": "The mobile phone number for the contact.",
+            "Length": "20",
+            "Name": "mobilePhoneNumber",
             "RefDef": null,
             "Required": [
                 {
@@ -5211,35 +4998,13 @@
             "integer": null,
             "links": null,
             "ref": null,
-            "string": null,
-            "table": "table"
-        },
-        {
-            "Description": "A system-generated unique identifier for a ContactAddress",
-            "Length": null,
-            "Name": "id",
-            "RefDef": null,
-            "Required": [
-                {
-                    "req": "id"
-                }
-            ],
-            "Unique": null,
-            "binary": null,
-            "boolean": null,
-            "datetime": null,
-            "float": null,
-            "id": "id",
-            "integer": null,
-            "links": null,
-            "ref": null,
-            "string": null,
+            "string": "string",
             "table": null
         },
         {
-            "Description": "The type of the address. UI controlled as to whether it is free form or selected from an enumerated list ex. Home, Office, etc..",
-            "Length": "100",
-            "Name": "type",
+            "Description": "The fax phone number for the contact.",
+            "Length": "20",
+            "Name": "faxPhoneNumber",
             "RefDef": null,
             "Required": [
                 {
@@ -5260,8 +5025,8 @@
         },
         {
             "Description": "Address 1 line of the address.",
-            "Length": "150",
-            "Name": "addressLine1",
+            "Length": "80",
+            "Name": "address1",
             "RefDef": null,
             "Required": [
                 {
@@ -5282,8 +5047,8 @@
         },
         {
             "Description": "Address 2 line of the address.",
-            "Length": "150",
-            "Name": "addressLine2",
+            "Length": "80",
+            "Name": "address2",
             "RefDef": null,
             "Required": [
                 {
@@ -5476,12 +5241,6 @@
             "Required": [
                 {
                     "req": "id"
-                },
-                {
-                    "req": "internalFileName"
-                },
-                {
-                    "req": "externalFileName"
                 }
             ],
             "Unique": null,
@@ -5504,15 +5263,9 @@
             "Required": [
                 {
                     "req": "id"
-                },
-                {
-                    "req": "internalFileName"
-                },
-                {
-                    "req": "externalFileName"
                 }
             ],
-            "Unique": null,
+            "Unique": true,
             "binary": null,
             "boolean": null,
             "datetime": null,
@@ -5525,19 +5278,13 @@
             "table": null
         },
         {
-            "Description": "The physical location of the attachment on the file system.",
+            "Description": "Filename as passed by the user uploading the file",
             "Length": "2048",
-            "Name": "internalFileName",
+            "Name": "fileName",
             "RefDef": null,
             "Required": [
                 {
                     "req": "id"
-                },
-                {
-                    "req": "internalFileName"
-                },
-                {
-                    "req": "externalFileName"
                 }
             ],
             "Unique": null,
@@ -5553,23 +5300,17 @@
             "table": null
         },
         {
-            "Description": "The name of the attachment as defined by the user in uploading the document.",
-            "Length": "2048",
-            "Name": "externalFileName",
+            "Description": "Binary contents of the file",
+            "Length": null,
+            "Name": "fileContents",
             "RefDef": null,
             "Required": [
                 {
                     "req": "id"
-                },
-                {
-                    "req": "internalFileName"
-                },
-                {
-                    "req": "externalFileName"
                 }
             ],
             "Unique": null,
-            "binary": null,
+            "binary": "binary",
             "boolean": null,
             "datetime": null,
             "float": null,
@@ -5577,7 +5318,7 @@
             "integer": null,
             "links": null,
             "ref": null,
-            "string": "string",
+            "string": null,
             "table": null
         },
         {
@@ -5588,12 +5329,28 @@
             "Required": [
                 {
                     "req": "id"
-                },
+                }
+            ],
+            "Unique": null,
+            "binary": null,
+            "boolean": null,
+            "datetime": null,
+            "float": null,
+            "id": null,
+            "integer": null,
+            "links": null,
+            "ref": null,
+            "string": "string",
+            "table": null
+        },
+        {
+            "Description": "Type of attachment",
+            "Length": "255",
+            "Name": "type",
+            "RefDef": null,
+            "Required": [
                 {
-                    "req": "internalFileName"
-                },
-                {
-                    "req": "externalFileName"
+                    "req": "id"
                 }
             ],
             "Unique": null,
