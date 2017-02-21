@@ -94,12 +94,13 @@ export function deleteFavourite(favourite) {
 
 function parseEquipment(equipment) {
   if (!equipment.owner) { equipment.owner = { id: '', organizationName: '' }; }
-  if (!equipment.equipmentType) { equipment.equipmentType = { id: '', description: '' }; }
+  if (!equipment.equipmentType) { equipment.equipmentType = { id: '', name: '', description: '' }; }
   if (!equipment.localArea) { equipment.localArea = { id: '', name: '' }; }
   if (!equipment.localArea.serviceArea) { equipment.localArea.serviceArea = { id: '', name: '' }; }
   if (!equipment.localArea.serviceArea.district) { equipment.localArea.serviceArea.district = { id: '', name: '' }; }
   if (!equipment.localArea.serviceArea.district.region) { equipment.localArea.serviceArea.district.region = { id: '', name: '' }; }
   if (!equipment.status) { equipment.status = Constant.EQUIPMENT_STATUS_CODE_PENDING; }
+  if (!equipment.equipmentAttachments) { equipment.equipmentAttachments = []; }
 
   equipment.isApproved = equipment.status === Constant.EQUIPMENT_STATUS_CODE_APPROVED;
   equipment.isNew = equipment.status === Constant.EQUIPMENT_STATUS_CODE_PENDING;
@@ -107,35 +108,49 @@ function parseEquipment(equipment) {
   equipment.isMaintenanceContractor = equipment.owner.isMaintenanceContractor === true;
 
   // UI display fields
+  equipment.serialNumber = equipment.serialNumber || '';
+  equipment.equipmentCode = equipment.equipmentCode || '';
+  equipment.licencePlate = equipment.licencePlate || '';
+  equipment.operator = equipment.operator || ''; // TODO Needs review from business
   equipment.organizationName = equipment.owner.organizationName;
   equipment.ownerPath = equipment.owner.id ? `#/owners/${equipment.owner.id}` : '';
-  equipment.typeName = equipment.equipmentType ? equipment.equipmentType.description : '';
+  equipment.typeName = equipment.equipmentType ? equipment.equipmentType.name : '';
   equipment.localAreaName = equipment.localArea.name;
   equipment.districtName = equipment.localArea.serviceArea.district.name;
+  equipment.lastVerifiedDate = equipment.lastVerifiedDate || '';
   equipment.daysSinceVerified = daysAgo(equipment.lastVerifiedDate);
 
   // Seniority data
-  equipment.ytd = equipment.ytd || 0;
+  equipment.serviceHoursThisYear = equipment.serviceHoursThisYear || 0;
   equipment.serviceHoursLastYear = equipment.serviceHoursLastYear || 0;
   equipment.serviceHoursTwoYearsAgo = equipment.serviceHoursTwoYearsAgo || 0;
   equipment.serviceHoursThreeYearsAgo = equipment.serviceHoursThreeYearsAgo || 0;
-  equipment.seniorityText = concat(equipment.blockNumber, equipment.seniority, ' - ');
+
   equipment.isSeniorityOverridden = equipment.isSeniorityOverridden || false;
   equipment.seniorityOverrideReason = equipment.seniorityOverrideReason || '';
+
+  // The number of years of active service of this piece of equipment at the time seniority is calculated - April 1 of the current fiscal year
+  equipment.yearsOfService = equipment.yearsOfService || 0;
+  equipment.receivedDate = equipment.receivedDate || '';
+  equipment.approvedDate = equipment.approvedDate || '';
+  // The max date of a time card for this fiscal year - can be null if there are none.
+  equipment.lastTimeRecordDateThisYear = equipment.lastTimeRecordDateThisYear || '';
+  // TODO Replace "3-500"" with "Open-500"
+  equipment.seniorityText = concat(equipment.blockNumber, equipment.seniority, ' - ');
 
   equipment.currentYear = Moment().year();
   equipment.lastYear = equipment.currentYear - 1;
   equipment.twoYearsAgo = equipment.currentYear - 2;
   equipment.threeYearsAgo = equipment.currentYear - 3;
 
-  // TODO Everything below needs to be implemented by the back-end.
-  equipment.isWorking = equipment.isWorking || false;
-  equipment.workDescription = equipment.workDescription || 'N/A' ;
-
   // It is possible to have multiple instances of the same piece of equipment registered with HETS.
   // However, the HETS clerks would like to know about it via this flag so they can deal with the duplicates.
-  equipment.hasDuplicates = false;
-  equipment.duplicateEquipmentId = null;
+  equipment.hasDuplicates = equipment.hasDuplicates || false;
+  equipment.duplicateEquipment = equipment.duplicateEquipment || [];
+
+  equipment.isWorking = equipment.isWorking || false;  
+  // TODO Descriptive text for time entries. Needs to be added to backend
+  equipment.currentWorkDescription = equipment.currentWorkDescription || '' ;
 }
 
 export function searchEquipmentList(params) {
@@ -255,9 +270,14 @@ function parseOwner(owner) {
   // TODO Owner status needs to be populated in sample data. Setting to Approved for the time being...
   owner.status = owner.status || Constant.OWNER_STATUS_CODE_APPROVED;
 
+  owner.organizationName = owner.organizationName || '';
+  owner.ownerEquipmentCodePrefix = owner.ownerEquipmentCodePrefix || '';
   owner.doingBusinessAs = owner.doingBusinessAs || '';
   owner.registeredCompanyNumber = owner.registeredCompanyNumber || '';
   owner.meetsResidency = owner.meetsResidency || false;
+  owner.workSafeBCPolicyNumber = owner.workSafeBCPolicyNumber || '';
+  owner.workSafeBCExpiryDate = owner.workSafeBCExpiryDate || '';
+  owner.cglEndDate = owner.cglEndDate || '';
 
   // UI display fields
   owner.isMaintenanceContractor = owner.isMaintenanceContractor || false;

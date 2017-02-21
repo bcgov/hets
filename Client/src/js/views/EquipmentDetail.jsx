@@ -222,7 +222,7 @@ var EquipmentDetail = React.createClass({
             </Row>
             <Row>
               <ColLabel md={2}><h1>EquipId:</h1></ColLabel>
-              <ColField md={10}><h1><small>{ equipment.equipCode } ({ equipment.typeName })</small></h1></ColField>
+              <ColField md={10}><h1><small>{ equipment.equipmentCode } ({ equipment.typeName })</small></h1></ColField>
             </Row>
             <Row>
               <Col md={6}>
@@ -254,7 +254,7 @@ var EquipmentDetail = React.createClass({
                 return <div>
                   <Row>
                     <ColLabel md={2}>Serial Number</ColLabel>
-                    <ColField md={10}>{ equipment.serialNum || 'N/A' }
+                    <ColField md={10}>{ equipment.serialNumber }
                       { equipment.hasDuplicates ? <BadgeLabel bsStyle="danger">!</BadgeLabel> : null } 
                     </ColField>
                   </Row>
@@ -274,12 +274,12 @@ var EquipmentDetail = React.createClass({
                     <ColLabel md={2}>Year</ColLabel>
                     <ColField md={2}>{ equipment.year }</ColField>
                     <ColLabel md={4}>Licence Number</ColLabel>
-                    <ColField md={4}>{ equipment.licencePlate || 'N/A' }</ColField>
+                    <ColField md={4}>{ equipment.licencePlate }</ColField>
                   </Row>
                   <Row>
                     <ColLabel md={6}></ColLabel>
                     <ColLabel md={2}>Operator</ColLabel>
-                    <ColField md={4}>{ equipment.operator || 'N/A' }</ColField>
+                    <ColField md={4}>{ equipment.operator }</ColField>
                   </Row>
                 </div>;
               })()}
@@ -345,7 +345,7 @@ var EquipmentDetail = React.createClass({
                   </Row>
                   <Row>
                     <ColLabel md={4}>Hours YTD</ColLabel>
-                    <ColField md={8}>{ equipment.ytd }</ColField>
+                    <ColField md={8}>{ equipment.serviceHoursThisYear }</ColField>
                   </Row>
                   <Row>
                     <ColLabel md={4}>Hours { equipment.lastYear }</ColLabel>
@@ -369,7 +369,7 @@ var EquipmentDetail = React.createClass({
                   </Row>
                   <Row>
                     <ColLabel md={4}>Years Registered</ColLabel>
-                    <ColField md={8}>{ equipment.yearsOfService || 0 }</ColField>
+                    <ColField md={8}>{ equipment.yearsOfService }</ColField>
                   </Row>
                   <Row>
                     <ColLabel md={4}>Override Status</ColLabel>

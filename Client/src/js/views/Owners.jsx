@@ -57,7 +57,7 @@ var Owners = React.createClass({
       },
 
       ui : {
-        sortField: this.props.ui.sortField || 'name',
+        sortField: this.props.ui.sortField || 'organizationName',
         sortDesc: this.props.ui.sortDesc === true,
       },
     };
@@ -107,14 +107,14 @@ var Owners = React.createClass({
   },
 
   updateSearchState(state, callback) {
-    this.setState({ search: { ...this.state.search, ...state, ...{ loaded: true } }}, () =>{
+    this.setState({ search: { ...this.state.search, ...state, ...{ loaded: true } }}, () => {
       store.dispatch({ type: Action.UPDATE_OWNERS_SEARCH, owners: this.state.search });
       if (callback) { callback(); }
     });
   },
 
   updateUIState(state, callback) {
-    this.setState({ ui: { ...this.state.ui, ...state }}, () =>{
+    this.setState({ ui: { ...this.state.ui, ...state }}, () => {
       store.dispatch({ type: Action.UPDATE_OWNERS_UI, owners: this.state.ui });
       if (callback) { callback(); }
     });

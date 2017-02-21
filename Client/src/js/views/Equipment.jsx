@@ -120,14 +120,14 @@ var Equipment = React.createClass({
   },
 
   updateSearchState(state, callback) {
-    this.setState({ search: { ...this.state.search, ...state }}, () =>{
+    this.setState({ search: { ...this.state.search, ...state }}, () => {
       store.dispatch({ type: Action.UPDATE_EQUIPMENT_LIST_SEARCH, equipmentList: this.state.search });
       if (callback) { callback(); }
     });
   },
 
   updateUIState(state, callback) {
-    this.setState({ ui: { ...this.state.ui, ...state }}, () =>{
+    this.setState({ ui: { ...this.state.ui, ...state }}, () => {
       store.dispatch({ type: Action.UPDATE_EQUIPMENT_LIST_UI, equipmentList: this.state.ui });
       if (callback) { callback(); }
     });
@@ -199,7 +199,7 @@ var Equipment = React.createClass({
           _.reverse(equipmentList);
         }
         return <SortTable sortField={ this.state.ui.sortField } sortDesc={ this.state.ui.sortDesc } onSort={ this.updateUIState } headers={[
-            { field: 'equipCode',            title: 'ID'            },
+            { field: 'equipmentCode',        title: 'ID'            },
             { field: 'typeName',             title: 'Type'          },
             { field: 'organizationName',     title: 'Owner'         },
             { field: 'seniorityText',        title: 'Seniority'     },
@@ -214,11 +214,11 @@ var Equipment = React.createClass({
           {
             _.map(equipmentList, (equip) => {
               return <tr key={ equip.id }>
-                <td>{ equip.equipCode }</td>
+                <td>{ equip.equipmentCode }</td>
                 <td>{ equip.typeName }</td>
                 <td><a href={ equip.ownerPath }>{ equip.organizationName }</a></td>
                 <td>{ equip.seniorityText }</td>
-                <td>{ equip.isWorking ? equip.workDescription : 'N' }</td>
+                <td>{ equip.isWorking ? equip.currentWorkDescription : 'N' }</td>
                 <td>{ equip.make }</td>
                 <td>{ equip.model }</td>
                 <td>{ equip.size }</td>
