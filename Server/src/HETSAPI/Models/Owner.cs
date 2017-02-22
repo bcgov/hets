@@ -27,7 +27,7 @@ namespace HETSAPI.Models
     /// </summary>
         [MetaDataExtension (Description = "The person or company to which a piece of construction equipment belongs.")]
 
-    public partial class Owner : IEquatable<Owner>
+    public partial class Owner : AuditableEntity,  IEquatable<Owner>
     {
         /// <summary>
         /// Default constructor, required by entity framework
@@ -49,7 +49,8 @@ namespace HETSAPI.Models
         /// <param name="PrimaryContact">Link to the designated Primary Contact..</param>
         /// <param name="LocalArea">LocalArea.</param>
         /// <param name="IsMaintenanceContractor">True if the owner is contracted by MOTI to handle Maintenance activities in the area - e.g. provided services in address unscheduled issues on the roads in the area..</param>
-        /// <param name="WCBExpiryDate">The expiration of the owner&amp;#39;s current WCB permit..</param>
+        /// <param name="WorkSafeBCPolicyNumber">The Owner&amp;#39;s WorkSafeBC (aka WCB) Insurance Policy Number..</param>
+        /// <param name="WorkSafeBCExpiryDate">The expiration of the owner&amp;#39;s current WorkSafeBC (aka WCB) permit..</param>
         /// <param name="CGLEndDate">The end date of the owner&amp;#39;s Commercial General Liability insurance coverage. Coverage is only needed prior to an owner&amp;#39;s piece of equipment starting a rental period (not when in the HETS program but not hired). The details of the coverage can be entered into a Note, or more often - attached as a scanned&amp;#x2F;faxed document..</param>
         /// <param name="Status">The status of the owner record in the system. Current set of values are &amp;quot;Pending&amp;quot;, &amp;quot;Approved&amp;quot; and &amp;quot;Archived&amp;quot;. Pending is used when an owner self-registers and a HETS Clerk has not reviewed and Approved the record. Archived is when the owner is no longer part of the HETS programme. &amp;quot;Approved&amp;quot; is used in all other cases..</param>
         /// <param name="ArchiveCode">TO BE REVIEWED WITH THE BUSINESS - IS THIS NEEDED -A coded reason for why an owner record has been moved to Archived..</param>
@@ -60,7 +61,7 @@ namespace HETSAPI.Models
         /// <param name="Attachments">Attachments.</param>
         /// <param name="History">History.</param>
         /// <param name="EquipmentList">EquipmentList.</param>
-        public Owner(int Id, string OwnerEquipmentCodePrefix, string OrganizationName = null, string DoingBusinessAs = null, string RegisteredCompanyNumber = null, bool? MeetsResidency = null, Contact PrimaryContact = null, LocalArea LocalArea = null, bool? IsMaintenanceContractor = null, DateTime? WCBExpiryDate = null, DateTime? CGLEndDate = null, string Status = null, string ArchiveCode = null, string ArchiveReason = null, DateTime? ArchiveDate = null, List<Contact> Contacts = null, List<Note> Notes = null, List<Attachment> Attachments = null, List<History> History = null, List<Equipment> EquipmentList = null)
+        public Owner(int Id, string OwnerEquipmentCodePrefix, string OrganizationName = null, string DoingBusinessAs = null, string RegisteredCompanyNumber = null, bool? MeetsResidency = null, Contact PrimaryContact = null, LocalArea LocalArea = null, bool? IsMaintenanceContractor = null, string WorkSafeBCPolicyNumber = null, DateTime? WorkSafeBCExpiryDate = null, DateTime? CGLEndDate = null, string Status = null, string ArchiveCode = null, string ArchiveReason = null, DateTime? ArchiveDate = null, List<Contact> Contacts = null, List<Note> Notes = null, List<Attachment> Attachments = null, List<History> History = null, List<Equipment> EquipmentList = null)
         {   
             this.Id = Id;
             this.OwnerEquipmentCodePrefix = OwnerEquipmentCodePrefix;
@@ -72,7 +73,8 @@ namespace HETSAPI.Models
             this.PrimaryContact = PrimaryContact;
             this.LocalArea = LocalArea;
             this.IsMaintenanceContractor = IsMaintenanceContractor;
-            this.WCBExpiryDate = WCBExpiryDate;
+            this.WorkSafeBCPolicyNumber = WorkSafeBCPolicyNumber;
+            this.WorkSafeBCExpiryDate = WorkSafeBCExpiryDate;
             this.CGLEndDate = CGLEndDate;
             this.Status = Status;
             this.ArchiveCode = ArchiveCode;
@@ -167,11 +169,20 @@ namespace HETSAPI.Models
         public bool? IsMaintenanceContractor { get; set; }
         
         /// <summary>
-        /// The expiration of the owner&#39;s current WCB permit.
+        /// The Owner&#39;s WorkSafeBC (aka WCB) Insurance Policy Number.
         /// </summary>
-        /// <value>The expiration of the owner&#39;s current WCB permit.</value>
-        [MetaDataExtension (Description = "The expiration of the owner&#39;s current WCB permit.")]
-        public DateTime? WCBExpiryDate { get; set; }
+        /// <value>The Owner&#39;s WorkSafeBC (aka WCB) Insurance Policy Number.</value>
+        [MetaDataExtension (Description = "The Owner&#39;s WorkSafeBC (aka WCB) Insurance Policy Number.")]
+        [MaxLength(50)]
+        
+        public string WorkSafeBCPolicyNumber { get; set; }
+        
+        /// <summary>
+        /// The expiration of the owner&#39;s current WorkSafeBC (aka WCB) permit.
+        /// </summary>
+        /// <value>The expiration of the owner&#39;s current WorkSafeBC (aka WCB) permit.</value>
+        [MetaDataExtension (Description = "The expiration of the owner&#39;s current WorkSafeBC (aka WCB) permit.")]
+        public DateTime? WorkSafeBCExpiryDate { get; set; }
         
         /// <summary>
         /// The end date of the owner&#39;s Commercial General Liability insurance coverage. Coverage is only needed prior to an owner&#39;s piece of equipment starting a rental period (not when in the HETS program but not hired). The details of the coverage can be entered into a Note, or more often - attached as a scanned&#x2F;faxed document.
@@ -256,7 +267,8 @@ namespace HETSAPI.Models
             sb.Append("  PrimaryContact: ").Append(PrimaryContact).Append("\n");
             sb.Append("  LocalArea: ").Append(LocalArea).Append("\n");
             sb.Append("  IsMaintenanceContractor: ").Append(IsMaintenanceContractor).Append("\n");
-            sb.Append("  WCBExpiryDate: ").Append(WCBExpiryDate).Append("\n");
+            sb.Append("  WorkSafeBCPolicyNumber: ").Append(WorkSafeBCPolicyNumber).Append("\n");
+            sb.Append("  WorkSafeBCExpiryDate: ").Append(WorkSafeBCExpiryDate).Append("\n");
             sb.Append("  CGLEndDate: ").Append(CGLEndDate).Append("\n");
             sb.Append("  Status: ").Append(Status).Append("\n");
             sb.Append("  ArchiveCode: ").Append(ArchiveCode).Append("\n");
@@ -350,9 +362,14 @@ namespace HETSAPI.Models
                     this.IsMaintenanceContractor.Equals(other.IsMaintenanceContractor)
                 ) &&                 
                 (
-                    this.WCBExpiryDate == other.WCBExpiryDate ||
-                    this.WCBExpiryDate != null &&
-                    this.WCBExpiryDate.Equals(other.WCBExpiryDate)
+                    this.WorkSafeBCPolicyNumber == other.WorkSafeBCPolicyNumber ||
+                    this.WorkSafeBCPolicyNumber != null &&
+                    this.WorkSafeBCPolicyNumber.Equals(other.WorkSafeBCPolicyNumber)
+                ) &&                 
+                (
+                    this.WorkSafeBCExpiryDate == other.WorkSafeBCExpiryDate ||
+                    this.WorkSafeBCExpiryDate != null &&
+                    this.WorkSafeBCExpiryDate.Equals(other.WorkSafeBCExpiryDate)
                 ) &&                 
                 (
                     this.CGLEndDate == other.CGLEndDate ||
@@ -450,9 +467,13 @@ namespace HETSAPI.Models
                 {
                     hash = hash * 59 + this.IsMaintenanceContractor.GetHashCode();
                 }                
-                                if (this.WCBExpiryDate != null)
+                                if (this.WorkSafeBCPolicyNumber != null)
                 {
-                    hash = hash * 59 + this.WCBExpiryDate.GetHashCode();
+                    hash = hash * 59 + this.WorkSafeBCPolicyNumber.GetHashCode();
+                }                
+                                if (this.WorkSafeBCExpiryDate != null)
+                {
+                    hash = hash * 59 + this.WorkSafeBCExpiryDate.GetHashCode();
                 }                
                                 if (this.CGLEndDate != null)
                 {

@@ -27,7 +27,7 @@ namespace HETSAPI.Models
     /// </summary>
         [MetaDataExtension (Description = "An eligible piece of equipment for a request and a tracking of the hire offer and response process related to a request for that piece of equipment. Includes a link from the equipment to a Rental Agreement if the equipment was hired to satisfy a part of the request.")]
 
-    public partial class RentalRequestRotationList : IEquatable<RentalRequestRotationList>
+    public partial class RentalRequestRotationList : AuditableEntity,  IEquatable<RentalRequestRotationList>
     {
         /// <summary>
         /// Default constructor, required by entity framework
@@ -51,7 +51,7 @@ namespace HETSAPI.Models
         /// <param name="OfferResponse">The response to the offer to hire. Null prior to receiving a response; a string after with the response - likely just Yes or No.</param>
         /// <param name="OfferRefusalReason">The reason why the user refused the offer based on a selection of values from the UI..</param>
         /// <param name="OfferResponseDatetime">The date and time the final response to the offer was established..</param>
-        /// <param name="OfferResponseNote">An optional note entered about the response to the offer from the equipment owner about the offer. Usually used when the offer is a &amp;quot;No&amp;quot;..</param>
+        /// <param name="OfferResponseNote">A note entered about the response to the offer from the equipment owner about the offer. Usually used when the offer is a &amp;quot;No&amp;quot; or &amp;quot;Force Hire&amp;quot;..</param>
         /// <param name="Note">An optional general note about the offer..</param>
         public RentalRequestRotationList(int Id, RentalRequest RentalRequest = null, int? RotationListSortOrder = null, Equipment Equipment = null, RentalAgreement RentalAgreement = null, bool? IsForceHire = null, bool? WasAsked = null, DateTime? AskedDateTime = null, string OfferResponse = null, string OfferRefusalReason = null, DateTime? OfferResponseDatetime = null, string OfferResponseNote = null, string Note = null)
         {   
@@ -164,10 +164,10 @@ namespace HETSAPI.Models
         public DateTime? OfferResponseDatetime { get; set; }
         
         /// <summary>
-        /// An optional note entered about the response to the offer from the equipment owner about the offer. Usually used when the offer is a &quot;No&quot;.
+        /// A note entered about the response to the offer from the equipment owner about the offer. Usually used when the offer is a &quot;No&quot; or &quot;Force Hire&quot;.
         /// </summary>
-        /// <value>An optional note entered about the response to the offer from the equipment owner about the offer. Usually used when the offer is a &quot;No&quot;.</value>
-        [MetaDataExtension (Description = "An optional note entered about the response to the offer from the equipment owner about the offer. Usually used when the offer is a &quot;No&quot;.")]
+        /// <value>A note entered about the response to the offer from the equipment owner about the offer. Usually used when the offer is a &quot;No&quot; or &quot;Force Hire&quot;.</value>
+        [MetaDataExtension (Description = "A note entered about the response to the offer from the equipment owner about the offer. Usually used when the offer is a &quot;No&quot; or &quot;Force Hire&quot;.")]
         [MaxLength(2048)]
         
         public string OfferResponseNote { get; set; }

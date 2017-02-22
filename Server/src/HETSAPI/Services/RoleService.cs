@@ -34,13 +34,6 @@ namespace HETSAPI.Services
         /// </summary>
         /// <param name="items"></param>
         /// <response code="201">Role created</response>
-        IActionResult RolepermissionsBulkPostAsync(RolePermission[] items);
-
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="items"></param>
-        /// <response code="201">Role created</response>
         IActionResult RolesBulkPostAsync(Role[] items);
 
         /// <summary>

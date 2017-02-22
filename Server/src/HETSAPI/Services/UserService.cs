@@ -41,13 +41,6 @@ namespace HETSAPI.Services
         /// </summary>
         /// <param name="items"></param>
         /// <response code="201">User created</response>
-        IActionResult UserrolesBulkPostAsync(UserRole[] items);
-
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="items"></param>
-        /// <response code="201">User created</response>
         IActionResult UsersBulkPostAsync(User[] items);
 
         /// <summary>

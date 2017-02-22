@@ -32,13 +32,10 @@ namespace HETSAPI
             services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
             services.AddTransient<IAttachmentService, AttachmentService>();
             services.AddTransient<ICityService, CityService>();
-            services.AddTransient<IContactService, ContactService>();
-            services.AddTransient<IContactAddressService, ContactAddressService>();
-            services.AddTransient<IContactPhoneService, ContactPhoneService>();
+            services.AddTransient<IContactService, ContactService>();            
             services.AddTransient<ICurrentUserService, CurrentUserService>();
             services.AddTransient<IDistrictService, DistrictService>();
-            services.AddTransient<IDumpTruckService, DumpTruckService>();            
-            services.AddTransient<IEquipmentAttachmentTypeService, EquipmentAttachmentTypeService>();
+            services.AddTransient<IDumpTruckService, DumpTruckService>();                        
             services.AddTransient<IEquipmentAttachmentService, EquipmentAttachmentService>();
             services.AddTransient<IEquipmentService, EquipmentService>();
             services.AddTransient<IEquipmentTypeService, EquipmentTypeService>();

@@ -14,6 +14,9 @@ using Npgsql;
 using Npgsql.EntityFrameworkCore.PostgreSQL;
 using System.Collections.Generic;
 using System;
+using Microsoft.AspNetCore.Http;
+using System.Linq;
+using System.Security.Claims;
 
 namespace HETSAPI.Models
 {
@@ -26,15 +29,17 @@ namespace HETSAPI.Models
     public class DbAppContextFactory : IDbAppContextFactory
     {
         DbContextOptions<DbAppContext> _options;
+        IHttpContextAccessor _httpContextAccessor;
 
-        public DbAppContextFactory(DbContextOptions<DbAppContext> options)
+        public DbAppContextFactory(IHttpContextAccessor httpContextAccessor, DbContextOptions<DbAppContext> options)
         {
             _options = options;
+            _httpContextAccessor = httpContextAccessor;
         }
 
         public IDbAppContext Create()
         {
-            return new DbAppContext(_options);
+            return new DbAppContext(_httpContextAccessor, _options);
         }
     }
 
@@ -43,16 +48,12 @@ namespace HETSAPI.Models
     {
         DbSet<Attachment> Attachments { get; set; }
         DbSet<City> Cities { get; set; }
-        DbSet<Contact> Contacts { get; set; }
-        DbSet<ContactAddress> ContactAddresss { get; set; }
-        DbSet<ContactPhone> ContactPhones { get; set; }
+        DbSet<Contact> Contacts { get; set; }        
         DbSet<District> Districts { get; set; }
         DbSet<DumpTruck> DumpTrucks { get; set; }
         DbSet<Equipment> Equipments { get; set; }
-        DbSet<EquipmentAttachment> EquipmentAttachments { get; set; }
-        DbSet<EquipmentAttachmentType> EquipmentAttachmentTypes { get; set; }
-        DbSet<EquipmentType> EquipmentTypes { get; set; }
-        DbSet<FavouriteContextType> FavouriteContextTypes { get; set; }
+        DbSet<EquipmentAttachment> EquipmentAttachments { get; set; }        
+        DbSet<EquipmentType> EquipmentTypes { get; set; }        
         DbSet<Group> Groups { get; set; }
         DbSet<GroupMembership> GroupMemberships { get; set; }        
         DbSet<History> Historys { get; set; }
@@ -89,12 +90,16 @@ namespace HETSAPI.Models
 
     public class DbAppContext : DbContext, IDbAppContext
     {
+        private readonly IHttpContextAccessor _httpContextAccessor;
+
         /// <summary>
         /// Constructor for Class used for Entity Framework access.
         /// </summary>
-        public DbAppContext(DbContextOptions<DbAppContext> options)
+        public DbAppContext(IHttpContextAccessor httpContextAccessor, DbContextOptions<DbAppContext> options)
                                 : base(options)
-        { }
+        {
+            _httpContextAccessor = httpContextAccessor;
+        }
 
         /// <summary>
         /// Override for OnModelCreating - used to change the database naming convention.
@@ -110,16 +115,12 @@ namespace HETSAPI.Models
 
         public virtual DbSet<Attachment> Attachments { get; set; }
         public virtual DbSet<City> Cities { get; set; }
-        public virtual DbSet<Contact> Contacts { get; set; }
-        public virtual DbSet<ContactAddress> ContactAddresss { get; set; }
-        public virtual DbSet<ContactPhone> ContactPhones { get; set; }
+        public virtual DbSet<Contact> Contacts { get; set; }        
         public virtual DbSet<District> Districts { get; set; }
         public virtual DbSet<DumpTruck> DumpTrucks { get; set; }
         public virtual DbSet<Equipment> Equipments { get; set; }
-        public virtual DbSet<EquipmentAttachment> EquipmentAttachments { get; set; }
-        public virtual DbSet<EquipmentAttachmentType> EquipmentAttachmentTypes { get; set; }
-        public virtual DbSet<EquipmentType> EquipmentTypes { get; set; }
-        public virtual DbSet<FavouriteContextType> FavouriteContextTypes { get; set; }
+        public virtual DbSet<EquipmentAttachment> EquipmentAttachments { get; set; }        
+        public virtual DbSet<EquipmentType> EquipmentTypes { get; set; }        
         public virtual DbSet<Group> Groups { get; set; }
         public virtual DbSet<GroupMembership> GroupMemberships { get; set; }        
         public virtual DbSet<History> Historys { get; set; }
@@ -159,6 +160,68 @@ namespace HETSAPI.Models
                 transaction = this.Database.BeginTransaction();
             }
             return new DbContextTransactionWrapper(transaction, existingTransaction);
+        }
+
+        /// <summary>
+        /// Returns the current web user
+        /// </summary>
+        protected ClaimsPrincipal HttpContextUser
+        {
+            get { return _httpContextAccessor.HttpContext.User; }
+        }
+
+        /// <summary>
+        /// Returns the current user ID 
+        /// </summary>
+        /// <returns></returns>
+        protected string GetCurrentUserId()
+        {
+            string result = null;
+
+            try
+            {
+                result = HttpContextUser.FindFirst(ClaimTypes.Name).Value;
+            }
+            catch (Exception e)
+            {
+                result = null;
+            }
+            return result;
+        }
+
+        /// <summary>
+        /// Override for Save Changes to implement the audit log
+        /// </summary>
+        /// <returns></returns>
+        public override int SaveChanges()
+        {
+            // update the audit fields for this item.
+            string smUserId = null;
+            if (_httpContextAccessor != null)
+                smUserId = GetCurrentUserId();
+
+            var modifiedEntries = ChangeTracker.Entries()
+                    .Where(e => e.State == EntityState.Added || e.State == EntityState.Modified);
+
+            DateTime currentTime = DateTime.UtcNow;
+
+            foreach (var entry in modifiedEntries)
+            {
+                if (entry.Entity.GetType().InheritsOrImplements(typeof(AuditableEntity)))
+                {
+                    var theObject = (AuditableEntity)entry.Entity;
+                    theObject.LastUpdateUserid = smUserId;
+                    theObject.LastUpdateTimestamp = currentTime;
+
+                    if (entry.State == EntityState.Added)
+                    {
+                        theObject.CreateUserid = smUserId;
+                        theObject.CreateTimestamp = currentTime;
+                    }
+                }
+            }
+
+            return base.SaveChanges();
         }
     }
 }

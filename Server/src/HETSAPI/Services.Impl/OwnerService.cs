@@ -156,9 +156,6 @@ namespace HETSAPI.Services.Impl
                     .Include(x => x.Attachments)
                     .Include(x => x.History)
                     .Include(x => x.Contacts)
-                    .ThenInclude(y => y.Addresses)
-                    .Include(x => x.Contacts)
-                    .ThenInclude(y => y.Phones)
                     .First(x => x.Id == id);
                                                 
                 return new ObjectResult(owner.Contacts);
@@ -190,9 +187,6 @@ namespace HETSAPI.Services.Impl
                     .Include(x => x.Attachments)
                     .Include(x => x.History)
                     .Include(x => x.Contacts)
-                    .ThenInclude(y => y.Addresses)
-                    .Include(x => x.Contacts)
-                    .ThenInclude(y => y.Phones)
                     .First(x => x.Id == id);
 
                 // adjust the incoming list.
@@ -206,8 +200,6 @@ namespace HETSAPI.Services.Impl
                         if (contact_exists)
                         {
                             items[i] = _context.Contacts
-                                .Include(x => x.Addresses)
-                                .Include(x => x.Phones)
                                 .First(x => x.Id == item.Id);
                         }
                         else
@@ -224,27 +216,6 @@ namespace HETSAPI.Services.Impl
                 {
                     if (contact != null && !items.Any(x => x.Id == contact.Id))
                     {
-                        if (contact.Phones != null)
-                        {
-                            foreach (ContactPhone phone in contact.Phones)
-                            {
-                                if (phone != null)
-                                {
-                                    _context.Remove(phone);
-                                }
-                            }
-                        }
-                        if (contact.Addresses != null)
-                        {
-                            foreach (ContactAddress address in contact.Addresses)
-                            {
-                                if (address != null)
-                                {
-                                    _context.Remove(address);
-                                }
-                            }
-                        }
-
                         _context.Remove(contact);
                     }
                 }
@@ -351,9 +322,6 @@ namespace HETSAPI.Services.Impl
                     .Include(x => x.Attachments)
                     .Include(x => x.History)
                     .Include(x => x.Contacts)
-                    .ThenInclude(y => y.Addresses)
-                    .Include(x => x.Contacts)
-                    .ThenInclude(y => y.Phones)
                     .First(x => x.Id == id);
 
                 // adjust the incoming list.
@@ -436,9 +404,6 @@ namespace HETSAPI.Services.Impl
                     .Include(x => x.Attachments)
                     .Include(x => x.History)
                     .Include(x => x.Contacts)
-                    .ThenInclude(y => y.Addresses)
-                    .Include(x => x.Contacts)
-                    .ThenInclude(y => y.Phones)
                     .First(a => a.Id == id);
                 return new ObjectResult(result);
             }
@@ -515,9 +480,6 @@ namespace HETSAPI.Services.Impl
                     .Include(x => x.Attachments)
                     .Include(x => x.History)
                     .Include(x => x.Contacts)
-                    .ThenInclude(y => y.Addresses)
-                    .Include(x => x.Contacts)
-                    .ThenInclude(y => y.Phones)
                     .Select(x => x);
 
             if (localareas != null)

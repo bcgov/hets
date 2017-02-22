@@ -201,7 +201,7 @@ namespace HETSAPI
         {
             DbContextOptionsBuilder<DbAppContext> options = new DbContextOptionsBuilder<DbAppContext>();
             options.UseNpgsql(GetConnectionString());
-            DbAppContextFactory dbAppContextFactory = new DbAppContextFactory(options.Options);
+            DbAppContextFactory dbAppContextFactory = new DbAppContextFactory(null, options.Options);
             return dbAppContextFactory;
         }
     }

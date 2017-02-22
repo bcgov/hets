@@ -27,7 +27,7 @@ namespace HETSAPI.Models
     /// </summary>
         [MetaDataExtension (Description = "Attachments that are required as part of the Rental Requests")]
 
-    public partial class RentalRequestAttachment : IEquatable<RentalRequestAttachment>
+    public partial class RentalRequestAttachment : AuditableEntity,  IEquatable<RentalRequestAttachment>
     {
         /// <summary>
         /// Default constructor, required by entity framework

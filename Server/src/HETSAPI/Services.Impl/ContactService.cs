@@ -41,53 +41,7 @@ namespace HETSAPI.Services.Impl
 
         private void AdjustRecord(Contact item)
         {
-            // Addresses is a list
-
-            if (item.Addresses != null)
-            {
-                for (int i = 0; i < item.Addresses.Count; i++)
-                {
-                    ContactAddress address = item.Addresses[i];
-                    if (address != null)
-                    {
-                        int address_id = address.Id;
-                        bool address_exists = _context.ContactAddresss.Any(a => a.Id == address_id);
-                        if (address_exists)
-                        {
-                            address = _context.ContactAddresss.First(a => a.Id == address_id);
-                            item.Addresses[i] = address;
-                        }
-                        else
-                        {
-                            item.Addresses[i] = null;
-                        }
-                    }
-                }
-            }
-
-
-            // Phones is a list     
-            if (item.Phones != null)
-            {
-                for (int i = 0; i < item.Phones.Count; i++)
-                {
-                    ContactPhone contactphone = item.Phones[i];
-                    if (contactphone != null)
-                    {
-                        int contactphone_id = contactphone.Id;
-                        bool contactphone_exists = _context.ContactPhones.Any(a => a.Id == contactphone_id);
-                        if (contactphone_exists)
-                        {
-                            contactphone = _context.ContactPhones.First(a => a.Id == contactphone_id);
-                            item.Phones[i] = contactphone;
-                        }
-                        else
-                        {
-                            item.Phones[i] = null;
-                        }
-                    }
-                }
-            }
+            
 
         }
         /// <summary>
@@ -128,9 +82,7 @@ namespace HETSAPI.Services.Impl
         /// <response code="200">OK</response>
         public virtual IActionResult ContactsGetAsync()
         {
-            var result = _context.Contacts
-                .Include(x => x.Addresses)
-                .Include(x => x.Phones)                
+            var result = _context.Contacts                               
                 .ToList();
             return new ObjectResult(result);
         }

@@ -27,7 +27,7 @@ namespace HETSAPI.Models
     /// </summary>
         [MetaDataExtension (Description = "A named entity that is used to create a arbitrary collection of users into a group. For example, the HETS Clerks are in the group Clerks. Groups, like permissions are defined by and referenced in code.")]
 
-    public partial class Group : IEquatable<Group>
+    public partial class Group : AuditableEntity,  IEquatable<Group>
     {
         /// <summary>
         /// Default constructor, required by entity framework

@@ -27,7 +27,7 @@ namespace HETSAPI.Models
     /// </summary>
         [MetaDataExtension (Description = "A global and local area list of types of equipment for which a request can be generated and for which owners can register their equipment. If the local area is NULL, the type is visible Province-wide. In the previous instance of this application, all equipment types were assigned to the local area and transitioning to a province-wide model is being attempted (and may not work for the end users). An attempt to achieve a &amp;quot;mostly province-wide&amp;quot; list is being made during the data conversion process - mapping local area equipment types to provincial or local area types as part of data conversion.")]
 
-    public partial class EquipmentType : IEquatable<EquipmentType>
+    public partial class EquipmentType : AuditableEntity,  IEquatable<EquipmentType>
     {
         /// <summary>
         /// Default constructor, required by entity framework
@@ -44,20 +44,24 @@ namespace HETSAPI.Models
         /// <param name="LocalArea">LocalArea.</param>
         /// <param name="Name">A human-friendly name for the Equipment Type that is displayed on screens with limited screen real estate available..</param>
         /// <param name="Description">A extended description of the equipment type..</param>
-        /// <param name="AskNextBlock1">The id of the next piece of Block 1 Equipment to be asked for a Rental Request. Only needed for Block 1 because all requests of other Blocks start from the first entry in the list..</param>
+        /// <param name="AskNextBlock1">The id of the next piece of Block 1 Equipment to be asked for a Rental Request. If null, start from the first piece of equipment in Block 1..</param>
+        /// <param name="AskNextBlock2">The id of the next piece of Block 2 Equipment to be asked for a Rental Request. If null, start from the first piece of equipment in Block 2..</param>
+        /// <param name="AskNextBlockOpen">The id of the next piece of Block Open Equipment to be asked for a Rental Request. If null, start from the first piece of equipment in Block Open..</param>
         /// <param name="EquipRentalRateNo">TO BE REVIEWED WITH THE BUSINESS - WHAT IS THIS?.</param>
         /// <param name="EquipRentalRatePage">TO BE REVIEWED WITH THE BUSINESS - WHAT IS THIS?.</param>
         /// <param name="MaxHours">TO BE REVIEWED WITH THE BUSINESS - WHAT IS THIS?.</param>
         /// <param name="ExtendHours">TO BE REVIEWED WITH THE BUSINESS - WHAT IS THIS?.</param>
         /// <param name="MaxHoursSub">TO BE REVIEWED WITH THE BUSINESS - WHAT IS THIS?.</param>
         /// <param name="Blocks">The number of blocks defined for this equipment type. Currently, either 2 for Dump Truck equipment and 1 for non-Dump Truck equipment. Unlikely to change, particularly without a significant impact on code..</param>
-        public EquipmentType(int Id, LocalArea LocalArea = null, string Name = null, string Description = null, Equipment AskNextBlock1 = null, float? EquipRentalRateNo = null, float? EquipRentalRatePage = null, float? MaxHours = null, float? ExtendHours = null, float? MaxHoursSub = null, int? Blocks = null)
+        public EquipmentType(int Id, LocalArea LocalArea = null, string Name = null, string Description = null, Equipment AskNextBlock1 = null, Equipment AskNextBlock2 = null, Equipment AskNextBlockOpen = null, float? EquipRentalRateNo = null, float? EquipRentalRatePage = null, float? MaxHours = null, float? ExtendHours = null, float? MaxHoursSub = null, int? Blocks = null)
         {   
             this.Id = Id;
             this.LocalArea = LocalArea;
             this.Name = Name;
             this.Description = Description;
             this.AskNextBlock1 = AskNextBlock1;
+            this.AskNextBlock2 = AskNextBlock2;
+            this.AskNextBlockOpen = AskNextBlockOpen;
             this.EquipRentalRateNo = EquipRentalRateNo;
             this.EquipRentalRatePage = EquipRentalRatePage;
             this.MaxHours = MaxHours;
@@ -103,10 +107,10 @@ namespace HETSAPI.Models
         public string Description { get; set; }
         
         /// <summary>
-        /// The id of the next piece of Block 1 Equipment to be asked for a Rental Request. Only needed for Block 1 because all requests of other Blocks start from the first entry in the list.
+        /// The id of the next piece of Block 1 Equipment to be asked for a Rental Request. If null, start from the first piece of equipment in Block 1.
         /// </summary>
-        /// <value>The id of the next piece of Block 1 Equipment to be asked for a Rental Request. Only needed for Block 1 because all requests of other Blocks start from the first entry in the list.</value>
-        [MetaDataExtension (Description = "The id of the next piece of Block 1 Equipment to be asked for a Rental Request. Only needed for Block 1 because all requests of other Blocks start from the first entry in the list.")]
+        /// <value>The id of the next piece of Block 1 Equipment to be asked for a Rental Request. If null, start from the first piece of equipment in Block 1.</value>
+        [MetaDataExtension (Description = "The id of the next piece of Block 1 Equipment to be asked for a Rental Request. If null, start from the first piece of equipment in Block 1.")]
         public Equipment AskNextBlock1 { get; set; }
         
         /// <summary>
@@ -114,6 +118,32 @@ namespace HETSAPI.Models
         /// </summary>       
         [ForeignKey("AskNextBlock1")]
         public int? AskNextBlock1RefId { get; set; }
+        
+        /// <summary>
+        /// The id of the next piece of Block 2 Equipment to be asked for a Rental Request. If null, start from the first piece of equipment in Block 2.
+        /// </summary>
+        /// <value>The id of the next piece of Block 2 Equipment to be asked for a Rental Request. If null, start from the first piece of equipment in Block 2.</value>
+        [MetaDataExtension (Description = "The id of the next piece of Block 2 Equipment to be asked for a Rental Request. If null, start from the first piece of equipment in Block 2.")]
+        public Equipment AskNextBlock2 { get; set; }
+        
+        /// <summary>
+        /// Foreign key for AskNextBlock2 
+        /// </summary>       
+        [ForeignKey("AskNextBlock2")]
+        public int? AskNextBlock2RefId { get; set; }
+        
+        /// <summary>
+        /// The id of the next piece of Block Open Equipment to be asked for a Rental Request. If null, start from the first piece of equipment in Block Open.
+        /// </summary>
+        /// <value>The id of the next piece of Block Open Equipment to be asked for a Rental Request. If null, start from the first piece of equipment in Block Open.</value>
+        [MetaDataExtension (Description = "The id of the next piece of Block Open Equipment to be asked for a Rental Request. If null, start from the first piece of equipment in Block Open.")]
+        public Equipment AskNextBlockOpen { get; set; }
+        
+        /// <summary>
+        /// Foreign key for AskNextBlockOpen 
+        /// </summary>       
+        [ForeignKey("AskNextBlockOpen")]
+        public int? AskNextBlockOpenRefId { get; set; }
         
         /// <summary>
         /// TO BE REVIEWED WITH THE BUSINESS - WHAT IS THIS?
@@ -170,6 +200,8 @@ namespace HETSAPI.Models
             sb.Append("  Name: ").Append(Name).Append("\n");
             sb.Append("  Description: ").Append(Description).Append("\n");
             sb.Append("  AskNextBlock1: ").Append(AskNextBlock1).Append("\n");
+            sb.Append("  AskNextBlock2: ").Append(AskNextBlock2).Append("\n");
+            sb.Append("  AskNextBlockOpen: ").Append(AskNextBlockOpen).Append("\n");
             sb.Append("  EquipRentalRateNo: ").Append(EquipRentalRateNo).Append("\n");
             sb.Append("  EquipRentalRatePage: ").Append(EquipRentalRatePage).Append("\n");
             sb.Append("  MaxHours: ").Append(MaxHours).Append("\n");
@@ -239,6 +271,16 @@ namespace HETSAPI.Models
                     this.AskNextBlock1.Equals(other.AskNextBlock1)
                 ) &&                 
                 (
+                    this.AskNextBlock2 == other.AskNextBlock2 ||
+                    this.AskNextBlock2 != null &&
+                    this.AskNextBlock2.Equals(other.AskNextBlock2)
+                ) &&                 
+                (
+                    this.AskNextBlockOpen == other.AskNextBlockOpen ||
+                    this.AskNextBlockOpen != null &&
+                    this.AskNextBlockOpen.Equals(other.AskNextBlockOpen)
+                ) &&                 
+                (
                     this.EquipRentalRateNo == other.EquipRentalRateNo ||
                     this.EquipRentalRateNo != null &&
                     this.EquipRentalRateNo.Equals(other.EquipRentalRateNo)
@@ -298,6 +340,14 @@ namespace HETSAPI.Models
                 if (this.AskNextBlock1 != null)
                 {
                     hash = hash * 59 + this.AskNextBlock1.GetHashCode();
+                }                   
+                if (this.AskNextBlock2 != null)
+                {
+                    hash = hash * 59 + this.AskNextBlock2.GetHashCode();
+                }                   
+                if (this.AskNextBlockOpen != null)
+                {
+                    hash = hash * 59 + this.AskNextBlockOpen.GetHashCode();
                 }                if (this.EquipRentalRateNo != null)
                 {
                     hash = hash * 59 + this.EquipRentalRateNo.GetHashCode();

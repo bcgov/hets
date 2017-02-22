@@ -27,7 +27,7 @@ namespace HETSAPI.Models
     /// </summary>
         [MetaDataExtension (Description = "An Equipment Attachment associated with a piece of Equipment.")]
 
-    public partial class EquipmentAttachment : IEquatable<EquipmentAttachment>
+    public partial class EquipmentAttachment : AuditableEntity,  IEquatable<EquipmentAttachment>
     {
         /// <summary>
         /// Default constructor, required by entity framework
@@ -41,16 +41,15 @@ namespace HETSAPI.Models
         /// Initializes a new instance of the <see cref="EquipmentAttachment" /> class.
         /// </summary>
         /// <param name="Id">A system-generated unique identifier for an EquipmentAttachment (required).</param>
+        /// <param name="Attachment">The attachment type as entered by the user (per the business - no lookup). (required).</param>
         /// <param name="Equipment">Equipment.</param>
-        /// <param name="Type">Type.</param>
-        /// <param name="SeqNum">TO BE REVIEWED WITH THE BUSINESS - WHAT IS THIS?.</param>
         /// <param name="Description">A description of the equipment attachment if the Equipment Attachment Type is insufficient..</param>
-        public EquipmentAttachment(int Id, Equipment Equipment = null, EquipmentAttachmentType Type = null, int? SeqNum = null, string Description = null)
+        public EquipmentAttachment(int Id, string Attachment, Equipment Equipment = null, string Description = null)
         {   
             this.Id = Id;
+            this.Attachment = Attachment;
+
             this.Equipment = Equipment;
-            this.Type = Type;
-            this.SeqNum = SeqNum;
             this.Description = Description;
         }
 
@@ -62,6 +61,15 @@ namespace HETSAPI.Models
         public int Id { get; set; }
         
         /// <summary>
+        /// The attachment type as entered by the user (per the business - no lookup).
+        /// </summary>
+        /// <value>The attachment type as entered by the user (per the business - no lookup).</value>
+        [MetaDataExtension (Description = "The attachment type as entered by the user (per the business - no lookup).")]
+        [MaxLength(255)]
+        
+        public string Attachment { get; set; }
+        
+        /// <summary>
         /// Gets or Sets Equipment
         /// </summary>
         public Equipment Equipment { get; set; }
@@ -71,24 +79,6 @@ namespace HETSAPI.Models
         /// </summary>       
         [ForeignKey("Equipment")]
         public int? EquipmentRefId { get; set; }
-        
-        /// <summary>
-        /// Gets or Sets Type
-        /// </summary>
-        public EquipmentAttachmentType Type { get; set; }
-        
-        /// <summary>
-        /// Foreign key for Type 
-        /// </summary>       
-        [ForeignKey("Type")]
-        public int? TypeRefId { get; set; }
-        
-        /// <summary>
-        /// TO BE REVIEWED WITH THE BUSINESS - WHAT IS THIS?
-        /// </summary>
-        /// <value>TO BE REVIEWED WITH THE BUSINESS - WHAT IS THIS?</value>
-        [MetaDataExtension (Description = "TO BE REVIEWED WITH THE BUSINESS - WHAT IS THIS?")]
-        public int? SeqNum { get; set; }
         
         /// <summary>
         /// A description of the equipment attachment if the Equipment Attachment Type is insufficient.
@@ -108,9 +98,8 @@ namespace HETSAPI.Models
             var sb = new StringBuilder();
             sb.Append("class EquipmentAttachment {\n");
             sb.Append("  Id: ").Append(Id).Append("\n");
+            sb.Append("  Attachment: ").Append(Attachment).Append("\n");
             sb.Append("  Equipment: ").Append(Equipment).Append("\n");
-            sb.Append("  Type: ").Append(Type).Append("\n");
-            sb.Append("  SeqNum: ").Append(SeqNum).Append("\n");
             sb.Append("  Description: ").Append(Description).Append("\n");
             sb.Append("}\n");
             return sb.ToString();
@@ -155,19 +144,14 @@ namespace HETSAPI.Models
                     this.Id.Equals(other.Id)
                 ) &&                 
                 (
+                    this.Attachment == other.Attachment ||
+                    this.Attachment != null &&
+                    this.Attachment.Equals(other.Attachment)
+                ) &&                 
+                (
                     this.Equipment == other.Equipment ||
                     this.Equipment != null &&
                     this.Equipment.Equals(other.Equipment)
-                ) &&                 
-                (
-                    this.Type == other.Type ||
-                    this.Type != null &&
-                    this.Type.Equals(other.Type)
-                ) &&                 
-                (
-                    this.SeqNum == other.SeqNum ||
-                    this.SeqNum != null &&
-                    this.SeqNum.Equals(other.SeqNum)
                 ) &&                 
                 (
                     this.Description == other.Description ||
@@ -188,19 +172,15 @@ namespace HETSAPI.Models
                 int hash = 41;
                 // Suitable nullity checks
                                    
-                hash = hash * 59 + this.Id.GetHashCode();                   
+                hash = hash * 59 + this.Id.GetHashCode();                if (this.Attachment != null)
+                {
+                    hash = hash * 59 + this.Attachment.GetHashCode();
+                }                
+                                   
                 if (this.Equipment != null)
                 {
                     hash = hash * 59 + this.Equipment.GetHashCode();
-                }                   
-                if (this.Type != null)
-                {
-                    hash = hash * 59 + this.Type.GetHashCode();
-                }                if (this.SeqNum != null)
-                {
-                    hash = hash * 59 + this.SeqNum.GetHashCode();
-                }                
-                                if (this.Description != null)
+                }                if (this.Description != null)
                 {
                     hash = hash * 59 + this.Description.GetHashCode();
                 }                

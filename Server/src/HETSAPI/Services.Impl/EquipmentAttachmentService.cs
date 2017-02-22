@@ -55,23 +55,7 @@ namespace HETSAPI.Services.Impl
                 {
                     item.Equipment = null;
                 }
-            }            
-
-            // Equipment Attachment Type
-            if (item.Type != null)
-            {
-                int equipment_attachment_type_id = item.Type.Id;
-                bool equipment_attachment_type_exists = _context.EquipmentAttachmentTypes.Any(a => a.Id == equipment_attachment_type_id);
-                if (equipment_attachment_type_exists)
-                {
-                    EquipmentAttachmentType equipmentAttachmentType = _context.EquipmentAttachmentTypes.First(a => a.Id == equipment_attachment_type_id);
-                    item.Type = equipmentAttachmentType;
-                }
-                else
-                {
-                    item.Type = null;
-                }
-            }
+            }                        
 
         }
 
@@ -113,8 +97,7 @@ namespace HETSAPI.Services.Impl
         public virtual IActionResult EquipmentAttachmentsGetAsync()
         {            
             var result = _context.EquipmentAttachments
-                    .Include(x => x.Equipment)
-                    .Include(x => x.Type)                    
+                    .Include(x => x.Equipment)                  
                     .ToList();
             return new ObjectResult(result);
         }
@@ -155,8 +138,7 @@ namespace HETSAPI.Services.Impl
             if (exists)
             {
                 var result = _context.EquipmentAttachments
-                    .Include(x => x.Equipment)
-                    .Include(x => x.Type)                    
+                    .Include(x => x.Equipment)                  
                     .First(a => a.Id == id);
                 return new ObjectResult(result);
             }
@@ -189,8 +171,7 @@ namespace HETSAPI.Services.Impl
                     _context.SaveChanges();
 
                     var result = _context.EquipmentAttachments
-                    .Include(x => x.Equipment)
-                    .Include(x => x.Type)                    
+                    .Include(x => x.Equipment)                   
                     .First(a => a.Id == id);
                     
                     return new ObjectResult(result);
@@ -234,7 +215,6 @@ namespace HETSAPI.Services.Impl
                 int item_id = item.Id;
                 var result = _context.EquipmentAttachments
                     .Include(x => x.Equipment)
-                    .Include(x => x.Type)
                     .First(a => a.Id == item_id);
 
                 return new ObjectResult(result);                

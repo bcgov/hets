@@ -169,9 +169,6 @@ namespace HETSAPI.Services.Impl
             var data = _context.Projects
                     .Include(x => x.ServiceArea.District.Region)
                     .Include(x => x.PrimaryContact)
-                    .ThenInclude(y=>y.Addresses)
-                    .Include(x => x.PrimaryContact)
-                    .ThenInclude(y => y.Phones)
                     .Select(x => x);
 
             if (serviceareas != null)

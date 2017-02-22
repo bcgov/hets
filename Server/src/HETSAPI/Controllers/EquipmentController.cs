@@ -168,7 +168,7 @@ namespace HETSAPI.Controllers
         [HttpGet]
         [Route("/api/equipment/search")]
         [SwaggerOperation("EquipmentSearchGet")]
-        [SwaggerResponse(200, type: typeof(List<Equipment>))]
+        [SwaggerResponse(200, type: typeof(List<EquipmentViewModel>))]
         public virtual IActionResult EquipmentSearchGet([FromQuery]int?[] localareas, [FromQuery]int?[] types, [FromQuery]int?[] attachments, [FromQuery]int? owner, [FromQuery]string status, [FromQuery]bool? hired, [FromQuery]DateTime? notverifiedsincedate)
         {
             return this._service.EquipmentSearchGetAsync(localareas, types, attachments, owner, status, hired, notverifiedsincedate);
