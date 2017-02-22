@@ -24,13 +24,14 @@ import FilterDropdown from '../components/FilterDropdown.jsx';
 import MultiDropdown from '../components/MultiDropdown.jsx';
 import SortTable from '../components/SortTable.jsx';
 import Spinner from '../components/Spinner.jsx';
+import Unimplemented from '../components/Unimplemented.jsx';
 
 import { formatDateTime } from '../utils/date';
 
 /*
 
 TODO:
-* Print
+* Print / Add Equipment
 
 */
 
@@ -143,8 +144,8 @@ var Equipment = React.createClass({
 
   render() {
     var localAreas = _.sortBy(this.props.localAreas, 'name');
-    var owners = _.sortBy(this.props.owners, 'name');
-    var equipmentTypes = _.sortBy(this.props.equipmentTypes, 'description');
+    var owners = _.sortBy(this.props.owners, 'organizationName');
+    var equipmentTypes = _.sortBy(this.props.equipmentTypes, 'name');
     var attachmentTypes = _.sortBy(this.props.physicalAttachmentTypes, 'name');
 
     return <div id="equipment-list">
@@ -180,7 +181,9 @@ var Equipment = React.createClass({
           <Col md={1}>
             <Row id="equipment-buttons">
               <ButtonGroup>
-                <Button onClick={ this.print }><Glyphicon glyph="print" title="Print" /></Button>
+                <Unimplemented>
+                  <Button onClick={ this.print }><Glyphicon glyph="print" title="Print" /></Button>
+                </Unimplemented>
               </ButtonGroup>
             </Row>
             <Row id="equipment-faves">

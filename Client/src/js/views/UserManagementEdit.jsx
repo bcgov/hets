@@ -36,6 +36,7 @@ var UserManagementEdit = React.createClass({
   render: function() {
     return <div id="user-management-edit">
       <PageHeader>User Management Edit</PageHeader>
+      This feature has not been released yet.
 
       {(() => {
         if (this.state.loading) { return <div style={{ textAlign: 'center' }}><Spinner/></div>; }

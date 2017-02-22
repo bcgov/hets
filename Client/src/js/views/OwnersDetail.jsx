@@ -20,6 +20,7 @@ import Confirm from '../components/Confirm.jsx';
 import OverlayTrigger from '../components/OverlayTrigger.jsx';
 import SortTable from '../components/SortTable.jsx';
 import Spinner from '../components/Spinner.jsx';
+import Unimplemented from '../components/Unimplemented.jsx';
 
 import { formatDateTime } from '../utils/date';
 import { concat } from '../utils/string';
@@ -27,7 +28,8 @@ import { concat } from '../utils/string';
 /*
 
 TODO:
-* Print / Verify / Contacts (TBD)
+* Print / Notes / Docs / Contacts (TBD) / Owner Equipment / Owner History
+* Proof Documents / Policy Data / Edit Owner dialog
 
 */
 
@@ -112,6 +114,7 @@ var OwnersDetail = React.createClass({
   },
 
   openEditDialog() {
+    // TODO Edit owner data
     this.setState({ showEditDialog: true });
   },
 
@@ -141,11 +144,12 @@ var OwnersDetail = React.createClass({
   },
 
   deleteContact(contact) {
-    // TODO
+    // TODO Delete contacts
     return contact;   
   },
 
   saveContact() {
+    // TODO Save contact
   },
 
   addEquipment() {
@@ -164,6 +168,7 @@ var OwnersDetail = React.createClass({
   },
 
   openPolicyDialog() {
+    // TODO Edit policy data
     this.setState({ showPolicyDialog: true });
   },
   
@@ -172,6 +177,7 @@ var OwnersDetail = React.createClass({
   },
 
   openPolicyDocumentsDialog() {
+    // TODO Show popup with links to policy documents
     this.setState({ showPolicyDocumentsDialog: true });
   },
 
@@ -180,7 +186,7 @@ var OwnersDetail = React.createClass({
   },
 
   addPolicyDocument() {
-
+    // TODO Upload policy document (proof of policy coverage)
   },
 
   print() {
@@ -196,12 +202,18 @@ var OwnersDetail = React.createClass({
           <Col md={10}>
             <Label bsStyle={ owner.isApproved ? 'success' : 'danger'}>{ owner.status }</Label>
             <Label className={ owner.isMaintenanceContractor ? '' : 'hide' }>Maintenance Contractor</Label>
-            <Button title="Notes" onClick={ this.showNotes }>Notes ({ Object.keys(this.props.notes).length })</Button>
-            <Button title="Documents" onClick={ this.showDocuments }>Docs ({ Object.keys(this.props.attachments).length })</Button>
+            <Unimplemented>
+              <Button title="Notes" onClick={ this.showNotes }>Notes ({ Object.keys(this.props.notes).length })</Button>
+            </Unimplemented>
+            <Unimplemented>
+              <Button title="Documents" onClick={ this.showDocuments }>Docs ({ Object.keys(this.props.attachments).length })</Button>
+            </Unimplemented>
           </Col>
           <Col md={2}>
             <div className="pull-right">
-              <Button onClick={ this.print }><Glyphicon glyph="print" title="Print" /></Button>
+              <Unimplemented>
+                <Button onClick={ this.print }><Glyphicon glyph="print" title="Print" /></Button>
+              </Unimplemented>
               <LinkContainer to={{ pathname: 'owners' }}>
                 <Button title="Return to List"><Glyphicon glyph="arrow-left" /> Return to List</Button>
               </LinkContainer>
@@ -225,7 +237,9 @@ var OwnersDetail = React.createClass({
           <Col md={6}>
             <Well>
               <h3>Owner Information <span className="pull-right">
-                <Button title="Edit Owner" bsSize="small" onClick={ this.openEditDialog }><Glyphicon glyph="edit" /></Button>
+                <Unimplemented>
+                  <Button title="Edit Owner" bsSize="small" onClick={ this.openEditDialog }><Glyphicon glyph="edit" /></Button>
+                </Unimplemented>
               </span></h3>              
               {(() => {
                 if (this.state.loading) { return <div style={{ textAlign: 'center' }}><Spinner/></div>; }
@@ -268,8 +282,12 @@ var OwnersDetail = React.createClass({
             </Well>            
             <Well>
               <h3>Equipment ({ owner.numberOfEquipment }) <span className="pull-right">
-                <Button title="Verify All" bsSize="small" onClick={ this.equipmentVerifyAll }>Verify All</Button>
-                <Button title="Add Equipment" bsSize="small" onClick={ this.addEquipment }><Glyphicon glyph="plus" /></Button>
+                <Unimplemented>
+                  <Button title="Verify All" bsSize="small" onClick={ this.equipmentVerifyAll }>Verify All</Button>
+                </Unimplemented>
+                <Unimplemented>
+                  <Button title="Add Equipment" bsSize="small" onClick={ this.addEquipment }><Glyphicon glyph="plus" /></Button>
+                </Unimplemented>
               </span></h3>
               {(() => {
                 if (this.state.loading) { return <div style={{ textAlign: 'center' }}><Spinner/></div>; }
@@ -297,7 +315,9 @@ var OwnersDetail = React.createClass({
                         <td>{ concat(equipment.make, concat(equipment.model, equipment.size, '/'), '/') }</td>
                         <td>{ equipment.isApproved ? formatDateTime(equipment.lastVerifiedDate, 'YYYY-MMM-DD') : 'Not Approved' }</td>
                         <td style={{ textAlign: 'right' }}>
-                          <Button title="Verify Equipment" bsSize="xsmall" onClick={ this.equipmentVerify.bind(this, equipment) }><Glyphicon glyph="ok" /> OK</Button>
+                          <Unimplemented>
+                            <Button title="Verify Equipment" bsSize="xsmall" onClick={ this.equipmentVerify.bind(this, equipment) }><Glyphicon glyph="ok" /> OK</Button>
+                          </Unimplemented>
                         </td>
                       </tr>;
                     })
@@ -309,9 +329,15 @@ var OwnersDetail = React.createClass({
           <Col md={6}>
             <Well>        
               <h3>Policy <span className="pull-right">
-                <Button title="Proof Documents" bsSize="small" onClick={ this.openPolicyDocumentsDialog }>Proof Documents ({ owner.numberOfPolicyDocuments })</Button>
-                <Button title="Add Policy Document" onClick={ this.addPolicyDocument } bsSize="small"><Glyphicon glyph="plus" /> Attach Proof</Button>
-                <Button title="Edit Policy Information" bsSize="small" onClick={ this.openPolicyDialog }><Glyphicon glyph="edit" /></Button>
+                <Unimplemented>
+                  <Button title="Proof Documents" bsSize="small" onClick={ this.openPolicyDocumentsDialog }>Proof Documents ({ owner.numberOfPolicyDocuments })</Button>
+                </Unimplemented>
+                <Unimplemented>
+                  <Button title="Add Policy Document" onClick={ this.addPolicyDocument } bsSize="small"><Glyphicon glyph="plus" /> Attach Proof</Button>
+                </Unimplemented>
+                <Unimplemented>
+                  <Button title="Edit Policy Information" bsSize="small" onClick={ this.openPolicyDialog }><Glyphicon glyph="edit" /></Button>
+                </Unimplemented>
               </span></h3>
               {(() => {
                 if (this.state.loading) { return <div style={{ textAlign: 'center' }}><Spinner/></div>; }
@@ -334,7 +360,9 @@ var OwnersDetail = React.createClass({
             </Well>
             <Well>
               <h3>Contacts <span className="pull-right">
-                <Button title="Add Contact" onClick={ this.addContact } bsSize="small"><Glyphicon glyph="plus" /></Button>
+                <Unimplemented>
+                  <Button title="Add Contact" onClick={ this.addContact } bsSize="small"><Glyphicon glyph="plus" /></Button>
+                </Unimplemented>
               </span></h3>
               {(() => {
                 if (this.state.loading ) { return <div style={{ textAlign: 'center' }}><Spinner/></div>; }
@@ -365,10 +393,14 @@ var OwnersDetail = React.createClass({
                         <td>{ contact.role }</td>
                         <td style={{ textAlign: 'right' }}>
                           <ButtonGroup>
-                            <Button className={ contact.canEdit ? '' : 'hidden' } title="editContact" bsSize="xsmall" onClick={ this.openContactDialog.bind(this, contact) }><Glyphicon glyph="pencil" /></Button>
-                            <OverlayTrigger trigger="click" placement="top" rootClose overlay={ <Confirm onConfirm={ this.deleteContact.bind(this, contact) }/> }>
-                              <Button className={ contact.canDelete ? '' : 'hidden' } title="deleteContact" bsSize="xsmall"><Glyphicon glyph="trash" /></Button>
-                            </OverlayTrigger>
+                            <Unimplemented>
+                              <Button className={ contact.canEdit ? '' : 'hidden' } title="editContact" bsSize="xsmall" onClick={ this.openContactDialog.bind(this, contact) }><Glyphicon glyph="pencil" /></Button>
+                            </Unimplemented>
+                            <Unimplemented>
+                              <OverlayTrigger trigger="click" placement="top" rootClose overlay={ <Confirm onConfirm={ this.deleteContact.bind(this, contact) }/> }>
+                                <Button className={ contact.canDelete ? '' : 'hidden' } title="deleteContact" bsSize="xsmall"><Glyphicon glyph="trash" /></Button>
+                              </OverlayTrigger>
+                            </Unimplemented>
                           </ButtonGroup>
                         </td>
                       </tr>;
@@ -379,8 +411,12 @@ var OwnersDetail = React.createClass({
             </Well>            
             <Well>
               <h3>History <span className="pull-right">
-                <Button title="Add note" bsSize="small" onClick={ this.addNote }><Glyphicon glyph="plus" /> Add Note</Button>
-                <Button title="Add document" bsSize="small" onClick={ this.addDocument }><Glyphicon glyph="paperclip" /></Button>
+                <Unimplemented>
+                  <Button title="Add note" bsSize="small" onClick={ this.addNote }><Glyphicon glyph="plus" /> Add Note</Button>
+                </Unimplemented>
+                <Unimplemented>
+                  <Button title="Add document" bsSize="small" onClick={ this.addDocument }><Glyphicon glyph="paperclip" /></Button>
+                </Unimplemented>
               </span></h3>
               {(() => {
                 if (this.state.loadingOwnerHistory) { return <div style={{ textAlign: 'center' }}><Spinner/></div>; }
