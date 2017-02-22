@@ -2454,270 +2454,6 @@ paths:
       responses:
         201:
           description: Attachment created
-  /contactphones:
-    get:
-      tags:
-        - ContactPhone
-      consumes: []
-      produces:
-        - text/plain
-        - application/json
-        - text/json
-      responses:
-        200:
-          description: OK
-          schema:
-            type: array
-            items:
-              $ref: "#/definitions/ContactPhone"
-    post:
-      tags:
-        - ContactPhone
-      consumes:
-        - application/json
-      produces:
-        - text/plain
-        - application/json
-        - text/json
-      parameters:
-        - name: item
-          in: body
-          required: true
-          schema:
-            $ref: "#/definitions/ContactPhone"
-      responses:
-        201:
-          description: ContactPhone created
-          headers:
-            Location:
-              description: A link to the ContactPhone
-              type: string
-              format: url
-          schema:
-            $ref: "#/definitions/ContactPhone"  
-  /contactphones/{id}:
-    get:
-      tags:
-        - ContactPhone
-      consumes: []
-      produces:
-        - text/plain
-        - application/json
-        - text/json
-      responses:
-        200:
-          description: OK
-          schema:
-            $ref: "#/definitions/ContactPhone"
-        404:
-          description: ContactPhone not found
-      parameters:
-        - name: id
-          in: path
-          description: id of ContactPhone to fetch
-          required: true
-          type: integer
-    put:
-      tags:
-        - ContactPhone
-      consumes:
-        - application/json
-      produces:
-        - text/plain
-        - application/json
-        - text/json
-      responses:
-        200:
-          description: OK
-          schema:
-            $ref: "#/definitions/ContactPhone"
-        404:
-          description: ContactPhone not found
-      parameters:
-        - name: id
-          in: path
-          description: id of ContactPhone to fetch
-          required: true
-          type: integer
-        - name: item
-          in: body
-          required: true
-          schema:
-            $ref: "#/definitions/ContactPhone"
-  /contactphones/{id}/delete:
-    post:
-      tags:
-        - ContactPhone
-      consumes: []
-      produces:
-        - text/plain
-        - application/json
-        - text/json
-      responses:
-        200:
-          description: OK
-        404:
-          description: ContactPhone not found
-      parameters:
-        - name: id
-          in: path
-          description: id of ContactPhone to delete
-          required: true
-          type: integer
-
-  /contactphones/bulk:
-    post:
-      tags:
-        - ContactPhone
-      consumes:
-        - application/json
-      produces:
-        - text/plain
-        - application/json
-        - text/json
-      parameters:
-        - name: items
-          in: body
-          required: true
-          schema:
-            type: array
-            items:
-              $ref: "#/definitions/ContactPhone"
-      responses:
-        201:
-          description: ContactPhone created
-  /contactaddresses:
-    get:
-      tags:
-        - ContactAddress
-      consumes: []
-      produces:
-        - text/plain
-        - application/json
-        - text/json
-      responses:
-        200:
-          description: OK
-          schema:
-            type: array
-            items:
-              $ref: "#/definitions/ContactAddress"
-    post:
-      tags:
-        - ContactAddress
-      consumes:
-        - application/json
-      produces:
-        - text/plain
-        - application/json
-        - text/json
-      parameters:
-        - name: item
-          in: body
-          required: true
-          schema:
-            $ref: "#/definitions/ContactAddress"
-      responses:
-        201:
-          description: ContactAddress created
-          headers:
-            Location:
-              description: A link to the ContactAddress
-              type: string
-              format: url
-          schema:
-            $ref: "#/definitions/ContactAddress"  
-  /contactaddresses/{id}:
-    get:
-      tags:
-        - ContactAddress
-      consumes: []
-      produces:
-        - text/plain
-        - application/json
-        - text/json
-      responses:
-        200:
-          description: OK
-          schema:
-            $ref: "#/definitions/ContactAddress"
-        404:
-          description: ContactAddress not found
-      parameters:
-        - name: id
-          in: path
-          description: id of ContactAddress to fetch
-          required: true
-          type: integer
-    put:
-      tags:
-        - ContactAddress
-      consumes:
-        - application/json
-      produces:
-        - text/plain
-        - application/json
-        - text/json
-      responses:
-        200:
-          description: OK
-          schema:
-            $ref: "#/definitions/ContactAddress"
-        404:
-          description: ContactAddress not found
-      parameters:
-        - name: id
-          in: path
-          description: id of ContactAddress to fetch
-          required: true
-          type: integer
-        - name: item
-          in: body
-          required: true
-          schema:
-            $ref: "#/definitions/ContactAddress"
-  /contactaddresses/{id}/delete:
-    post:
-      tags:
-        - ContactAddress
-      consumes: []
-      produces:
-        - text/plain
-        - application/json
-        - text/json
-      responses:
-        200:
-          description: OK
-        404:
-          description: ContactAddress not found
-      parameters:
-        - name: id
-          in: path
-          description: id of ContactAddress to delete
-          required: true
-          type: integer
-
-  /contactaddresses/bulk:
-    post:
-      tags:
-        - ContactAddress
-      consumes:
-        - application/json
-      produces:
-        - text/plain
-        - application/json
-        - text/json
-      parameters:
-        - name: items
-          in: body
-          required: true
-          schema:
-            type: array
-            items:
-              $ref: "#/definitions/ContactAddress"
-      responses:
-        201:
-          description: ContactAddress created
   /groupmemberships:
     get:
       tags:
@@ -4489,7 +4225,7 @@ paths:
           schema:
             type: array
             items:
-              $ref: "#/definitions/Equipment"
+              $ref: "#/definitions/EquipmentViewModel"
   /equipment/{id}/equipmentattachments:
     get:
       tags:
@@ -5515,7 +5251,7 @@ definitions:
         type: integer
         description: A system-generated unique identifier for a RentalAgreementRate
       rentalAgreement:
-        $ref: '#/definitions/'
+        $ref: '#/definitions/RentalAgreement'
       componentName:
         type: string
         maxLength: 150
@@ -5553,7 +5289,7 @@ definitions:
         type: integer
         description: A system-generated unique identifier for a RentalAgreementCondition
       rentalAgreement:
-        $ref: '#/definitions/'
+        $ref: '#/definitions/RentalAgreement'
       conditionName:
         type: string
         maxLength: 150
@@ -5899,15 +5635,6 @@ definitions:
         type: string
         maxLength: 2048
         description: A extended description of the equipment type.
-      askNextBlock1:
-        $ref: '#/definitions/Equipment'
-        description: The id of the next piece of Block 1 Equipment to be asked for a Rental Request. If null, start from the first piece of equipment in Block 1.
-      askNextBlock2:
-        $ref: '#/definitions/Equipment'
-        description: The id of the next piece of Block 2 Equipment to be asked for a Rental Request. If null, start from the first piece of equipment in Block 2.
-      askNextBlockOpen:
-        $ref: '#/definitions/Equipment'
-        description: The id of the next piece of Block Open Equipment to be asked for a Rental Request. If null, start from the first piece of equipment in Block Open.
       equipRentalRateNo:
         type: number
         format: float
@@ -5932,6 +5659,25 @@ definitions:
         format: int32
         type: integer
         description: The number of blocks defined for this equipment type. Currently, either 2 for Dump Truck equipment and 1 for non-Dump Truck equipment. Unlikely to change, particularly without a significant impact on code.
+  EquipmentTypeNextRental:
+    type: object
+    required:
+      - id
+    properties:
+      id:
+        format: int32
+        type: integer
+      equipmentType:
+        $ref: '#/definitions/EquipmentType'
+      askNextBlock1:
+        $ref: '#/definitions/Equipment'
+        description: The id of the next piece of Block 1 Equipment to be asked for a Rental Request. If null, start from the first piece of equipment in Block 1.
+      askNextBlock2:
+        $ref: '#/definitions/Equipment'
+        description: The id of the next piece of Block 2 Equipment to be asked for a Rental Request. If null, start from the first piece of equipment in Block 2.
+      askNextBlockOpen:
+        $ref: '#/definitions/Equipment'
+        description: The id of the next piece of Block Open Equipment to be asked for a Rental Request. If null, start from the first piece of equipment in Block Open.
   EquipmentAttachment:
     type: object
     description: An Equipment Attachment associated with a piece of Equipment.
