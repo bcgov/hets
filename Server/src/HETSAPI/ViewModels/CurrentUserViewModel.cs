@@ -48,11 +48,7 @@ namespace HETSAPI.ViewModels
             this.GivenName = GivenName;
             this.Surname = Surname;
             this.FullName = FullName;
-            this.DistrictName = DistrictName;
-            this.OverdueInspections = OverdueInspections;
-            this.ScheduledInspections = ScheduledInspections;
-            this.DueNextMonthInspections = DueNextMonthInspections;
-            
+            this.DistrictName = DistrictName;                      
         }
 
         /// <summary>
@@ -79,23 +75,7 @@ namespace HETSAPI.ViewModels
         [DataMember(Name="districtName")]
         public string DistrictName { get; set; }
 
-        /// <summary>
-        /// Gets or Sets OverdueInspections
-        /// </summary>
-        [DataMember(Name="overdueInspections")]
-        public int? OverdueInspections { get; set; }
-
-        /// <summary>
-        /// Gets or Sets ScheduledInspections
-        /// </summary>
-        [DataMember(Name="scheduledInspections")]
-        public int? ScheduledInspections { get; set; }
-
-        /// <summary>
-        /// Gets or Sets DueNextMonthInspections
-        /// </summary>
-        [DataMember(Name="dueNextMonthInspections")]
-        public int? DueNextMonthInspections { get; set; }
+        
 
         /// <summary>
         /// Returns the string presentation of the object
@@ -109,9 +89,6 @@ namespace HETSAPI.ViewModels
             sb.Append("  Surname: ").Append(Surname).Append("\n");
             sb.Append("  FullName: ").Append(FullName).Append("\n");
             sb.Append("  DistrictName: ").Append(DistrictName).Append("\n");
-            sb.Append("  OverdueInspections: ").Append(OverdueInspections).Append("\n");
-            sb.Append("  ScheduledInspections: ").Append(ScheduledInspections).Append("\n");
-            sb.Append("  DueNextMonthInspections: ").Append(DueNextMonthInspections).Append("\n");
             sb.Append("}\n");
             return sb.ToString();
         }
@@ -169,21 +146,6 @@ namespace HETSAPI.ViewModels
                     this.DistrictName == other.DistrictName ||
                     this.DistrictName != null &&
                     this.DistrictName.Equals(other.DistrictName)
-                ) && 
-                (
-                    this.OverdueInspections == other.OverdueInspections ||
-                    this.OverdueInspections != null &&
-                    this.OverdueInspections.Equals(other.OverdueInspections)
-                ) && 
-                (
-                    this.ScheduledInspections == other.ScheduledInspections ||
-                    this.ScheduledInspections != null &&
-                    this.ScheduledInspections.Equals(other.ScheduledInspections)
-                ) && 
-                (
-                    this.DueNextMonthInspections == other.DueNextMonthInspections ||
-                    this.DueNextMonthInspections != null &&
-                    this.DueNextMonthInspections.Equals(other.DueNextMonthInspections)
                 );
         }
 
@@ -213,18 +175,6 @@ namespace HETSAPI.ViewModels
                 if (this.DistrictName != null)
                 {
                     hash = hash * 59 + this.DistrictName.GetHashCode();
-                }
-                if (this.OverdueInspections != null)
-                {
-                    hash = hash * 59 + this.OverdueInspections.GetHashCode();
-                }
-                if (this.ScheduledInspections != null)
-                {
-                    hash = hash * 59 + this.ScheduledInspections.GetHashCode();
-                }
-                if (this.DueNextMonthInspections != null)
-                {
-                    hash = hash * 59 + this.DueNextMonthInspections.GetHashCode();
                 }
                 return hash;
             }

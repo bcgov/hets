@@ -9,6 +9,41 @@ namespace HETSAPI.Mappings
 {
     public static class MappingExtensions
     {
+        /// <summary>
+        /// Convert Attachment to AttachmentViewModel
+        /// </summary>
+        /// <param name="model"></param>
+        /// <returns></returns>
+        public static AttachmentViewModel ToViewModel(this Attachment model)
+        {
+            var dto = new AttachmentViewModel();
+            if (model != null)
+            {
+                dto.Description = model.Description;
+                dto.FileName = model.FileName;
+                dto.Id = model.Id;
+                dto.Type = model.Type;
+            }
+            return dto;
+        }
+
+        /// <summary>
+        /// Converts a list of Attachments to a list of AttachmentViewModels
+        /// </summary>
+        /// <param name="attachments"></param>
+        /// <returns></returns>
+        public static List<AttachmentViewModel> GetAttachmentListAsViewModel(List<Attachment> attachments)
+        {
+            List<AttachmentViewModel> result = new List<AttachmentViewModel>();
+            foreach (Attachment attachment in attachments)
+            {
+                if (attachment != null)
+                {
+                    result.Add(attachment.ToViewModel());
+                }
+            }
+            return result;
+        }
         public static UserViewModel ToViewModel(this User model)
         {
             var dto = new UserViewModel();

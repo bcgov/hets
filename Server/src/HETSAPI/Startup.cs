@@ -28,6 +28,7 @@ using System.Text;
 using HETSAPI.Authorization;
 using HETSAPI.Authentication;
 using Microsoft.AspNetCore.Http.Features;
+using Microsoft.AspNetCore.Http;
 
 namespace HETSAPI
 {
@@ -58,6 +59,7 @@ namespace HETSAPI
         {
             services.AddAuthorization();
             services.RegisterPermissionHandler();
+            services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
             services.AddSingleton<IDbAppContextFactory, DbAppContextFactory>(CreateDbAppContextFactory);
             services.AddSingleton<IConfiguration>(Configuration);
 

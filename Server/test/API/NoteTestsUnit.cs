@@ -42,7 +42,7 @@ namespace HETSAPI.Test
 		public NoteUnitTest()
 		{			
                     DbContextOptions<DbAppContext> options = new DbContextOptions<DbAppContext>();
-                    Mock<DbAppContext> dbAppContext = new Mock<DbAppContext>(options);
+                    Mock<DbAppContext> dbAppContext = new Mock<DbAppContext>(null, options);
 			
                     /*
 			

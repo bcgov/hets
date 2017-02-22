@@ -2,10 +2,10 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using SchoolBusAPI.Authorization;
-using SchoolBusAPI.Models;
-using SchoolBusAPI.Services.Impl;
-using SchoolBusCommon;
+using HETSAPI.Authorization;
+using HETSAPI.Models;
+using HETSAPI.Services.Impl;
+using HETSCommon;
 using System.Collections.Generic;
 using System.IO;
 using System;
@@ -13,10 +13,10 @@ using Microsoft.Extensions.Configuration;
 using Newtonsoft.Json;
 using System.Linq;
 using Microsoft.EntityFrameworkCore;
-using SchoolBusAPI.ViewModels;
-using SchoolBusAPI.Mappings;
+using HETSAPI.ViewModels;
+using HETSAPI.Mappings;
 
-namespace SchoolBusAPI.Controllers
+namespace HETSAPI.Controllers
 {
     public class AttachmentUploadController
     {
@@ -27,33 +27,25 @@ namespace SchoolBusAPI.Controllers
         }
 
         [HttpPost]
-        [Route("/api/schoolbuses/{id}/attachments")]
+        [Route("/api/equipments/{id}/attachments")]
         public virtual IActionResult SchoolbusesIdAttachmentsPost([FromRoute] int Id, [FromForm] IList<IFormFile> files)
         {
-            return _service.SchoolbusesIdAttachmentsPostAsync(Id, files);
+            return _service.EquipmentIdAttachmentsPostAsync(Id, files);
         }
 
         [HttpGet]
-        [Route("/api/schoolbuses/{id}/attachmentsForm")]
+        [Route("/api/equipments/{id}/attachmentsForm")]
         [Produces("text/html")]
         public virtual IActionResult SchoolbusesIdAttachmentsFormGet([FromRoute] int Id)
         {
             return new ObjectResult("<html><body><form method=\"post\" action=\"/api/schoolbuses/"+Id+"/attachments\" enctype=\"multipart/form-data\"><input type=\"file\" name = \"files\" multiple /><input type = \"submit\" value = \"Upload\" /></body></html>");
-        }
-
-        [HttpPost]
-        [Route("/api/schoolbusowners/{id}/attachments")]
-        public virtual IActionResult SchoolbusownersIdAttachmentsPost([FromRoute] int Id, [FromForm] IList<IFormFile> files)
-        {
-            return _service.SchoolbusownersIdAttachmentsPostAsync(Id, files);
-        }
+        }        
     }
 
     public interface IAttachmentUploadService
     {
-        IActionResult SchoolbusesIdAttachmentsPostAsync(int Id, IList<IFormFile> files);
-
-        IActionResult SchoolbusownersIdAttachmentsPostAsync(int Id, IList<IFormFile> files);        
+        IActionResult EquipmentIdAttachmentsPostAsync(int Id, IList<IFormFile> files);
+      
     }
 
     public class AttachmentUploadService : ServiceBase, IAttachmentUploadService
@@ -115,28 +107,22 @@ namespace SchoolBusAPI.Controllers
         /// <param name="id">Schoolbus Id</param>
         /// <param name="files">Files to add to attachments</param>
         /// <returns></returns>
-        public IActionResult SchoolbusesIdAttachmentsPostAsync(int id, IList<IFormFile> files)
+        public IActionResult EquipmentIdAttachmentsPostAsync(int id, IList<IFormFile> files)
         {
             // validate the bus id            
-            bool exists = _context.SchoolBuss.Any(a => a.Id == id);
+            bool exists = _context.Equipments.Any(a => a.Id == id);
             if (exists)
             {
-                SchoolBus schoolbus = _context.SchoolBuss
-                    .Include(x => x.Attachments)
-                    .Include(x => x.HomeTerminalCity)
-                    .Include(x => x.SchoolDistrict)
-                    .Include(x => x.SchoolBusOwner.PrimaryContact)
-                    .Include(x => x.District.Region)
-                    .Include(x => x.Inspector)
-                    .Include(x => x.CCWData)                
+                Equipment equipment = _context.Equipments
+                    .Include(x => x.Attachments)     
                     .First(a => a.Id == id);
 
-                AddFilesToAttachments(schoolbus.Attachments, files);
+                AddFilesToAttachments(equipment.Attachments, files);
 
-                _context.SchoolBuss.Update(schoolbus);
+                _context.Equipments.Update(equipment);
                 _context.SaveChanges();
 
-                List<AttachmentViewModel> result = MappingExtensions.GetAttachmentListAsViewModel(schoolbus.Attachments);
+                List<AttachmentViewModel> result = MappingExtensions.GetAttachmentListAsViewModel(equipment.Attachments);
 
                 return new ObjectResult(result);
             }
@@ -145,44 +131,6 @@ namespace SchoolBusAPI.Controllers
                 // record not found
                 return new StatusCodeResult(404);
             }
-        }
-
-
-        /// <summary>
-        ///  Basic file receiver for .NET Core
-        /// </summary>
-        /// <param name="id">SchoolBus Owner Id</param>
-        /// <param name="files">Files to add to attachments</param>
-        /// <returns></returns>
-        public IActionResult SchoolbusownersIdAttachmentsPostAsync(int id, IList<IFormFile> files)
-        {
-            // validate the bus id            
-            bool exists = _context.SchoolBusOwners.Any(a => a.Id == id);
-            if (exists)
-            {
-                SchoolBusOwner schoolBusOwner = _context.SchoolBusOwners
-                    .Include(x => x.Attachments)
-                    .Include(x => x.Contacts)
-                    .Include(x => x.District.Region)
-                    .Include(x => x.History)
-                    .Include(x => x.Notes)
-                    .Include(x => x.PrimaryContact)
-                    .First(a => a.Id == id);
-
-                AddFilesToAttachments(schoolBusOwner.Attachments, files);
-
-                _context.SchoolBusOwners.Update(schoolBusOwner);
-                _context.SaveChanges();
-
-                List<AttachmentViewModel> result = MappingExtensions.GetAttachmentListAsViewModel(schoolBusOwner.Attachments);
-
-                return new ObjectResult(result);
-            }
-            else
-            {
-                // record not found
-                return new StatusCodeResult(404);
-            }
-        }
+        }        
     }
 }

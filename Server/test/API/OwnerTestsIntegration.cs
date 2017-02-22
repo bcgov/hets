@@ -145,17 +145,7 @@ namespace HETSAPI.Test
 
             // add a contact.
             Contact contact = new Contact();
-            contact.GivenName = initialName;
-            ContactPhone phone = new ContactPhone();
-            phone.PhoneNumber = "1234";
-            ContactAddress address = new ContactAddress();
-            address.AddressLine1 = initialName;
-
-            contact.Phones = new List<ContactPhone>();
-            contact.Phones.Add(phone);
-
-            contact.Addresses = new List<ContactAddress>();
-            contact.Addresses.Add(address);
+            contact.GivenName = initialName;            
 
             contacts.Add(contact);
 
@@ -173,8 +163,6 @@ namespace HETSAPI.Test
             // verify the list has one element.
             Assert.Equal(contacts.Count, 1);
             Assert.Equal(contacts[0].GivenName, initialName);
-            Assert.Equal(contacts[0].Addresses[0].AddressLine1, initialName);
-            Assert.Equal(contacts[0].Phones[0].PhoneNumber, "1234");
 
             // get contacts should be 1
             request = new HttpRequestMessage(HttpMethod.Get, "/api/owners/" + id + "/contacts");
@@ -188,8 +176,6 @@ namespace HETSAPI.Test
             // verify the list has a record.
             Assert.Equal(contacts.Count, 1);           
             Assert.Equal(contacts[0].GivenName, initialName);
-            Assert.Equal(contacts[0].Addresses[0].AddressLine1, initialName);
-            Assert.Equal(contacts[0].Phones[0].PhoneNumber, "1234");
 
             // test removing the contact.
             contacts.Clear();
