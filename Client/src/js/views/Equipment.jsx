@@ -50,6 +50,8 @@ var Equipment = React.createClass({
   getInitialState() {
     return {
       loading: false,
+      
+      showAddDialog: false,
 
       search: {
         selectedLocalAreasIds: this.props.search.selectedLocalAreasIds || [],
@@ -138,6 +140,15 @@ var Equipment = React.createClass({
     this.updateSearchState(JSON.parse(favourite.value), this.fetch);
   },
 
+  openAddDialog() {
+    // TODO Add Equipment
+    this.setState({ showAddDialog: true });
+  },
+
+  closeAddDialog() {
+    this.setState({ showAddDialog: false });
+  },
+
   print() {
     // TODO Implement
   },
@@ -194,25 +205,33 @@ var Equipment = React.createClass({
       </Well>
 
       {(() => {
+        var addEquipmentButton = (
+          <Unimplemented>
+            <Button title="add" bsSize="xsmall" onClick={this.openAddDialog}><Glyphicon glyph="plus" />&nbsp;<strong>Add Equipment</strong></Button>
+          </Unimplemented>
+        );
+
         if (this.state.loading) { return <div style={{ textAlign: 'center' }}><Spinner/></div>; }
-        if (Object.keys(this.props.equipmentList).length === 0) { return <Alert bsStyle="success">No equipment</Alert>; }
+        if (Object.keys(this.props.equipmentList).length === 0) { return <Alert bsStyle="success">No equipment { addEquipmentButton }</Alert>; }
 
         var equipmentList = _.sortBy(this.props.equipmentList, this.state.ui.sortField);
         if (this.state.ui.sortDesc) {
           _.reverse(equipmentList);
         }
         return <SortTable sortField={ this.state.ui.sortField } sortDesc={ this.state.ui.sortDesc } onSort={ this.updateUIState } headers={[
-            { field: 'equipmentCode',        title: 'ID'            },
-            { field: 'typeName',             title: 'Type'          },
-            { field: 'organizationName',     title: 'Owner'         },
-            { field: 'seniorityText',        title: 'Seniority'     },
-            { field: 'isWorking',            title: 'Hired'         },
-            { field: 'make',                 title: 'Make'          },
-            { field: 'model',                title: 'Model'         },
-            { field: 'size',                 title: 'Size'          },
-            { field: 'attachments',          title: 'Attachments'   },
-            { field: 'lastVerifiedDate',     title: 'Last Verified' },
-            { field: 'blank' },
+          { field: 'equipmentCode',        title: 'ID'            },
+          { field: 'typeName',             title: 'Type'          },
+          { field: 'organizationName',     title: 'Owner'         },
+          { field: 'seniorityText',        title: 'Seniority'     },
+          { field: 'isWorking',            title: 'Hired'         },
+          { field: 'make',                 title: 'Make'          },
+          { field: 'model',                title: 'Model'         },
+          { field: 'size',                 title: 'Size'          },
+          { field: 'attachments',          title: 'Attachments'   },
+          { field: 'lastVerifiedDate',     title: 'Last Verified' },
+          { field: 'addEquipment',         title: 'Add Equipment',       style: { textAlign: 'right' },
+            node: addEquipmentButton,
+          },
         ]}>
           {
             _.map(equipmentList, (equip) => {

@@ -197,7 +197,7 @@ var Owners = React.createClass({
         );
 
         if (this.state.loading) { return <div style={{ textAlign: 'center' }}><Spinner/></div>; }
-        if (Object.keys(this.props.ownerList).length === 0) { return <Alert bsStyle="success">No owners</Alert>; }
+        if (Object.keys(this.props.ownerList).length === 0) { return <Alert bsStyle="success">No owners { addOwnerButton }</Alert>; }
 
         var ownerList = _.sortBy(this.props.ownerList, this.state.ui.sortField);
         if (this.state.ui.sortDesc) {
@@ -205,9 +205,9 @@ var Owners = React.createClass({
         }
 
         return <SortTable sortField={ this.state.ui.sortField } sortDesc={ this.state.ui.sortDesc } onSort={ this.updateUIState } headers={[
-          { field: 'localAreaName',          title: 'Local Area'      },
-          { field: 'organizationName',       title: 'Company'         },
-          { field: 'primaryContactName',     title: 'Primary Contact' },
+          { field: 'localAreaName',          title: 'Local Area'                                      },
+          { field: 'organizationName',       title: 'Company'                                         },
+          { field: 'primaryContactName',     title: 'Primary Contact'                                 },
           { field: 'numberOfEquipment',      title: 'Equipment',       style: { textAlign: 'center' } },
           { field: 'status',                 title: 'Status',          style: { textAlign: 'center' } },
           { field: 'addOwner',               title: 'Add Owner',       style: { textAlign: 'right'  },

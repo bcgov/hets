@@ -178,7 +178,7 @@ var Projects = React.createClass({
         );
 
         if (this.state.loading) { return <div style={{ textAlign: 'center' }}><Spinner/></div>; }
-        if (Object.keys(this.props.projects).length === 0) { return <Alert bsStyle="success">No Projects</Alert>; }
+        if (Object.keys(this.props.projects).length === 0) { return <Alert bsStyle="success">No Projects { addProjectButton }</Alert>; }
 
         var projects = _.sortBy(this.props.projects, this.state.ui.sortField);
         if (this.state.ui.sortDesc) {
