@@ -27,7 +27,7 @@ namespace HETSAPI.Models
     /// </summary>
         [MetaDataExtension (Description = "Text entered about an entity in the application - e.g. piece of Equipment, an Owner, a Project and so on.")]
 
-    public partial class Note : IEquatable<Note>
+    public partial class Note : AuditableEntity,  IEquatable<Note>
     {
         /// <summary>
         /// Default constructor, required by entity framework

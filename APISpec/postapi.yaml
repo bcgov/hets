@@ -53,7 +53,7 @@
           schema:
             type: array
             items:
-              $ref: "#/definitions/Equipment"
+              $ref: "#/definitions/EquipmentViewModel"
   /equipment/{id}/equipmentattachments:
     get:
       tags:

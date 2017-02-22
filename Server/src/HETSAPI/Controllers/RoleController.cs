@@ -46,19 +46,6 @@ namespace HETSAPI.Controllers
         /// <param name="items"></param>
         /// <response code="201">Role created</response>
         [HttpPost]
-        [Route("/api/rolepermissions/bulk")]
-        [SwaggerOperation("RolepermissionsBulkPost")]
-        public virtual IActionResult RolepermissionsBulkPost([FromBody]RolePermission[] items)
-        {
-            return this._service.RolepermissionsBulkPostAsync(items);
-        }
-
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="items"></param>
-        /// <response code="201">Role created</response>
-        [HttpPost]
         [Route("/api/roles/bulk")]
         [SwaggerOperation("RolesBulkPost")]
         public virtual IActionResult RolesBulkPost([FromBody]Role[] items)

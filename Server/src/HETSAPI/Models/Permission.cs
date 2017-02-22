@@ -27,7 +27,7 @@ namespace HETSAPI.Models
     /// </summary>
         [MetaDataExtension (Description = "A named element of authorization defined in the code that triggers some behavior in the application. For example, a permission might allow users to see data or to have access to functionality not accessible to users without that permission. Permissions are created as needed to the application code and are added to the permissions table by data migrations executed at the time the software that uses the permission is deployed.")]
 
-    public partial class Permission : IEquatable<Permission>
+    public partial class Permission : AuditableEntity,  IEquatable<Permission>
     {
         /// <summary>
         /// Default constructor, required by entity framework

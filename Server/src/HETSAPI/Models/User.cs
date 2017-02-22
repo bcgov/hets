@@ -27,7 +27,7 @@ namespace HETSAPI.Models
     /// </summary>
         [MetaDataExtension (Description = "An identified user in the HETS Application that has a defined authorization level.")]
 
-    public partial class User : IEquatable<User>
+    public partial class User : AuditableEntity,  IEquatable<User>
     {
         /// <summary>
         /// Default constructor, required by entity framework

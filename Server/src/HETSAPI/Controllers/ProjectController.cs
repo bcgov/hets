@@ -137,7 +137,7 @@ namespace HETSAPI.Controllers
         [HttpGet]
         [Route("/api/projects/search")]
         [SwaggerOperation("ProjectsSearchGet")]
-        [SwaggerResponse(200, type: typeof(List<Project>))]
+        [SwaggerResponse(200, type: typeof(List<ProjectSearchResultViewModel>))]
         public virtual IActionResult ProjectsSearchGet([FromQuery]int?[] serviceareas, [FromQuery]string project, [FromQuery]bool? hasRequests, [FromQuery]bool? hasHires)
         {
             return this._service.ProjectsSearchGetAsync(serviceareas, project, hasRequests, hasHires);

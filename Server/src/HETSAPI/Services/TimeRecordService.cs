@@ -26,52 +26,52 @@ namespace HETSAPI.Services
     /// <summary>
     /// 
     /// </summary>
-    public interface IContactPhoneService
+    public interface ITimeRecordService
     {
 
         /// <summary>
         /// 
         /// </summary>
         /// <param name="items"></param>
-        /// <response code="201">ContactPhone created</response>
-        IActionResult ContactphonesBulkPostAsync(ContactPhone[] items);
+        /// <response code="201">TimeRecord created</response>
+        IActionResult TimerecordsBulkPostAsync(TimeRecord[] items);
 
         /// <summary>
         /// 
         /// </summary>
         /// <response code="200">OK</response>
-        IActionResult ContactphonesGetAsync();
+        IActionResult TimerecordsGetAsync();
 
         /// <summary>
         /// 
         /// </summary>
-        /// <param name="id">id of ContactPhone to delete</param>
+        /// <param name="id">id of TimeRecord to delete</param>
         /// <response code="200">OK</response>
-        /// <response code="404">ContactPhone not found</response>
-        IActionResult ContactphonesIdDeletePostAsync(int id);
+        /// <response code="404">TimeRecord not found</response>
+        IActionResult TimerecordsIdDeletePostAsync(int id);
 
         /// <summary>
         /// 
         /// </summary>
-        /// <param name="id">id of ContactPhone to fetch</param>
+        /// <param name="id">id of TimeRecord to fetch</param>
         /// <response code="200">OK</response>
-        /// <response code="404">ContactPhone not found</response>
-        IActionResult ContactphonesIdGetAsync(int id);
+        /// <response code="404">TimeRecord not found</response>
+        IActionResult TimerecordsIdGetAsync(int id);
 
         /// <summary>
         /// 
         /// </summary>
-        /// <param name="id">id of ContactPhone to fetch</param>
+        /// <param name="id">id of TimeRecord to fetch</param>
         /// <param name="item"></param>
         /// <response code="200">OK</response>
-        /// <response code="404">ContactPhone not found</response>
-        IActionResult ContactphonesIdPutAsync(int id, ContactPhone item);
+        /// <response code="404">TimeRecord not found</response>
+        IActionResult TimerecordsIdPutAsync(int id, TimeRecord item);
 
         /// <summary>
         /// 
         /// </summary>
         /// <param name="item"></param>
-        /// <response code="201">ContactPhone created</response>
-        IActionResult ContactphonesPostAsync(ContactPhone item);
+        /// <response code="201">TimeRecord created</response>
+        IActionResult TimerecordsPostAsync(TimeRecord item);
     }
 }

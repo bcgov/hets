@@ -27,7 +27,7 @@ namespace HETSAPI.Models
     /// </summary>
         [MetaDataExtension (Description = "The Ministry of Transportion and Infrastructure DISTRICT")]
 
-    public partial class District : IEquatable<District>
+    public partial class District : AuditableEntity,  IEquatable<District>
     {
         /// <summary>
         /// Default constructor, required by entity framework

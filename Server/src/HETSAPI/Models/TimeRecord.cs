@@ -27,7 +27,7 @@ namespace HETSAPI.Models
     /// </summary>
         [MetaDataExtension (Description = "A record of time worked for a piece of equipment hired for a specific project within a Local Area.")]
 
-    public partial class TimeRecord : IEquatable<TimeRecord>
+    public partial class TimeRecord : AuditableEntity,  IEquatable<TimeRecord>
     {
         /// <summary>
         /// Default constructor, required by entity framework
@@ -42,28 +42,20 @@ namespace HETSAPI.Models
         /// </summary>
         /// <param name="Id">A system-generated unique identifier for a TimeRecord (required).</param>
         /// <param name="RentalAgreement">RentalAgreement.</param>
+        /// <param name="RentalAgreementRate">The Rental Agreement Rate component to which this Rental Agreement applies. If null, this time applies to the equipment itself..</param>
         /// <param name="WorkedDate">The date of the time record entry - the day of the entry if it is a daily entry, or a date in the week in which the work occurred if tracked weekly..</param>
         /// <param name="EnteredDate">The date-time the time record information was entered..</param>
         /// <param name="TimePeriod">The time period of the entry - either day or week. HETS Clerk have the option of entering time records on a day-by-day or week-by-week basis..</param>
         /// <param name="Hours">The number of hours worked by the equipment..</param>
-        /// <param name="Rate">TO BE REMOVED - REPLACE WITH A LINK TO A RATE ENTRY IN THE RENTAL AGREEMENT.</param>
-        /// <param name="Hours2">TO BE REMOVED - REPLACE WITH A LINK TO A RATE ENTRY IN THE RENTAL AGREEMENT.</param>
-        /// <param name="Rate2">TO BE REMOVED - REPLACE WITH A LINK TO A RATE ENTRY IN THE RENTAL AGREEMENT.</param>
-        /// <param name="Hours3">TO BE REMOVED - REPLACE WITH A LINK TO A RATE ENTRY IN THE RENTAL AGREEMENT.</param>
-        /// <param name="Rate3">TO BE REMOVED - REPLACE WITH A LINK TO A RATE ENTRY IN THE RENTAL AGREEMENT.</param>
-        public TimeRecord(int Id, RentalAgreement RentalAgreement = null, DateTime? WorkedDate = null, DateTime? EnteredDate = null, string TimePeriod = null, float? Hours = null, float? Rate = null, float? Hours2 = null, float? Rate2 = null, float? Hours3 = null, float? Rate3 = null)
+        public TimeRecord(int Id, RentalAgreement RentalAgreement = null, RentalAgreementRate RentalAgreementRate = null, DateTime? WorkedDate = null, DateTime? EnteredDate = null, string TimePeriod = null, float? Hours = null)
         {   
             this.Id = Id;
             this.RentalAgreement = RentalAgreement;
+            this.RentalAgreementRate = RentalAgreementRate;
             this.WorkedDate = WorkedDate;
             this.EnteredDate = EnteredDate;
             this.TimePeriod = TimePeriod;
             this.Hours = Hours;
-            this.Rate = Rate;
-            this.Hours2 = Hours2;
-            this.Rate2 = Rate2;
-            this.Hours3 = Hours3;
-            this.Rate3 = Rate3;
         }
 
         /// <summary>
@@ -83,6 +75,19 @@ namespace HETSAPI.Models
         /// </summary>       
         [ForeignKey("RentalAgreement")]
         public int? RentalAgreementRefId { get; set; }
+        
+        /// <summary>
+        /// The Rental Agreement Rate component to which this Rental Agreement applies. If null, this time applies to the equipment itself.
+        /// </summary>
+        /// <value>The Rental Agreement Rate component to which this Rental Agreement applies. If null, this time applies to the equipment itself.</value>
+        [MetaDataExtension (Description = "The Rental Agreement Rate component to which this Rental Agreement applies. If null, this time applies to the equipment itself.")]
+        public RentalAgreementRate RentalAgreementRate { get; set; }
+        
+        /// <summary>
+        /// Foreign key for RentalAgreementRate 
+        /// </summary>       
+        [ForeignKey("RentalAgreementRate")]
+        public int? RentalAgreementRateRefId { get; set; }
         
         /// <summary>
         /// The date of the time record entry - the day of the entry if it is a daily entry, or a date in the week in which the work occurred if tracked weekly.
@@ -115,41 +120,6 @@ namespace HETSAPI.Models
         public float? Hours { get; set; }
         
         /// <summary>
-        /// TO BE REMOVED - REPLACE WITH A LINK TO A RATE ENTRY IN THE RENTAL AGREEMENT
-        /// </summary>
-        /// <value>TO BE REMOVED - REPLACE WITH A LINK TO A RATE ENTRY IN THE RENTAL AGREEMENT</value>
-        [MetaDataExtension (Description = "TO BE REMOVED - REPLACE WITH A LINK TO A RATE ENTRY IN THE RENTAL AGREEMENT")]
-        public float? Rate { get; set; }
-        
-        /// <summary>
-        /// TO BE REMOVED - REPLACE WITH A LINK TO A RATE ENTRY IN THE RENTAL AGREEMENT
-        /// </summary>
-        /// <value>TO BE REMOVED - REPLACE WITH A LINK TO A RATE ENTRY IN THE RENTAL AGREEMENT</value>
-        [MetaDataExtension (Description = "TO BE REMOVED - REPLACE WITH A LINK TO A RATE ENTRY IN THE RENTAL AGREEMENT")]
-        public float? Hours2 { get; set; }
-        
-        /// <summary>
-        /// TO BE REMOVED - REPLACE WITH A LINK TO A RATE ENTRY IN THE RENTAL AGREEMENT
-        /// </summary>
-        /// <value>TO BE REMOVED - REPLACE WITH A LINK TO A RATE ENTRY IN THE RENTAL AGREEMENT</value>
-        [MetaDataExtension (Description = "TO BE REMOVED - REPLACE WITH A LINK TO A RATE ENTRY IN THE RENTAL AGREEMENT")]
-        public float? Rate2 { get; set; }
-        
-        /// <summary>
-        /// TO BE REMOVED - REPLACE WITH A LINK TO A RATE ENTRY IN THE RENTAL AGREEMENT
-        /// </summary>
-        /// <value>TO BE REMOVED - REPLACE WITH A LINK TO A RATE ENTRY IN THE RENTAL AGREEMENT</value>
-        [MetaDataExtension (Description = "TO BE REMOVED - REPLACE WITH A LINK TO A RATE ENTRY IN THE RENTAL AGREEMENT")]
-        public float? Hours3 { get; set; }
-        
-        /// <summary>
-        /// TO BE REMOVED - REPLACE WITH A LINK TO A RATE ENTRY IN THE RENTAL AGREEMENT
-        /// </summary>
-        /// <value>TO BE REMOVED - REPLACE WITH A LINK TO A RATE ENTRY IN THE RENTAL AGREEMENT</value>
-        [MetaDataExtension (Description = "TO BE REMOVED - REPLACE WITH A LINK TO A RATE ENTRY IN THE RENTAL AGREEMENT")]
-        public float? Rate3 { get; set; }
-        
-        /// <summary>
         /// Returns the string presentation of the object
         /// </summary>
         /// <returns>String presentation of the object</returns>
@@ -159,15 +129,11 @@ namespace HETSAPI.Models
             sb.Append("class TimeRecord {\n");
             sb.Append("  Id: ").Append(Id).Append("\n");
             sb.Append("  RentalAgreement: ").Append(RentalAgreement).Append("\n");
+            sb.Append("  RentalAgreementRate: ").Append(RentalAgreementRate).Append("\n");
             sb.Append("  WorkedDate: ").Append(WorkedDate).Append("\n");
             sb.Append("  EnteredDate: ").Append(EnteredDate).Append("\n");
             sb.Append("  TimePeriod: ").Append(TimePeriod).Append("\n");
             sb.Append("  Hours: ").Append(Hours).Append("\n");
-            sb.Append("  Rate: ").Append(Rate).Append("\n");
-            sb.Append("  Hours2: ").Append(Hours2).Append("\n");
-            sb.Append("  Rate2: ").Append(Rate2).Append("\n");
-            sb.Append("  Hours3: ").Append(Hours3).Append("\n");
-            sb.Append("  Rate3: ").Append(Rate3).Append("\n");
             sb.Append("}\n");
             return sb.ToString();
         }
@@ -216,6 +182,11 @@ namespace HETSAPI.Models
                     this.RentalAgreement.Equals(other.RentalAgreement)
                 ) &&                 
                 (
+                    this.RentalAgreementRate == other.RentalAgreementRate ||
+                    this.RentalAgreementRate != null &&
+                    this.RentalAgreementRate.Equals(other.RentalAgreementRate)
+                ) &&                 
+                (
                     this.WorkedDate == other.WorkedDate ||
                     this.WorkedDate != null &&
                     this.WorkedDate.Equals(other.WorkedDate)
@@ -234,31 +205,6 @@ namespace HETSAPI.Models
                     this.Hours == other.Hours ||
                     this.Hours != null &&
                     this.Hours.Equals(other.Hours)
-                ) &&                 
-                (
-                    this.Rate == other.Rate ||
-                    this.Rate != null &&
-                    this.Rate.Equals(other.Rate)
-                ) &&                 
-                (
-                    this.Hours2 == other.Hours2 ||
-                    this.Hours2 != null &&
-                    this.Hours2.Equals(other.Hours2)
-                ) &&                 
-                (
-                    this.Rate2 == other.Rate2 ||
-                    this.Rate2 != null &&
-                    this.Rate2.Equals(other.Rate2)
-                ) &&                 
-                (
-                    this.Hours3 == other.Hours3 ||
-                    this.Hours3 != null &&
-                    this.Hours3.Equals(other.Hours3)
-                ) &&                 
-                (
-                    this.Rate3 == other.Rate3 ||
-                    this.Rate3 != null &&
-                    this.Rate3.Equals(other.Rate3)
                 );
         }
 
@@ -278,6 +224,10 @@ namespace HETSAPI.Models
                 if (this.RentalAgreement != null)
                 {
                     hash = hash * 59 + this.RentalAgreement.GetHashCode();
+                }                   
+                if (this.RentalAgreementRate != null)
+                {
+                    hash = hash * 59 + this.RentalAgreementRate.GetHashCode();
                 }                if (this.WorkedDate != null)
                 {
                     hash = hash * 59 + this.WorkedDate.GetHashCode();
@@ -293,26 +243,6 @@ namespace HETSAPI.Models
                                 if (this.Hours != null)
                 {
                     hash = hash * 59 + this.Hours.GetHashCode();
-                }                
-                                if (this.Rate != null)
-                {
-                    hash = hash * 59 + this.Rate.GetHashCode();
-                }                
-                                if (this.Hours2 != null)
-                {
-                    hash = hash * 59 + this.Hours2.GetHashCode();
-                }                
-                                if (this.Rate2 != null)
-                {
-                    hash = hash * 59 + this.Rate2.GetHashCode();
-                }                
-                                if (this.Hours3 != null)
-                {
-                    hash = hash * 59 + this.Hours3.GetHashCode();
-                }                
-                                if (this.Rate3 != null)
-                {
-                    hash = hash * 59 + this.Rate3.GetHashCode();
                 }                
                 
                 return hash;

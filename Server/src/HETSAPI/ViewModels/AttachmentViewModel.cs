@@ -1,7 +1,7 @@
 /*
- * REST API Documentation for the MOTI Hired Equipment Tracking System (HETS) Application
+ * REST API Documentation for the MOTI School Bus Application
  *
- * The Hired Equipment Program is for owners/operators who have a dump truck, bulldozer, backhoe or  other piece of equipment they want to hire out to the transportation ministry for day labour and  emergency projects.  The Hired Equipment Program distributes available work to local equipment owners. The program is  based on seniority and is designed to deliver work to registered users fairly and efficiently  through the development of local area call-out lists. 
+ * The School Bus application tracks that inspections are performed in a timely fashion. For each school bus the application tracks information about the bus (including data from ICBC, NSC, etc.), it's past and next inspection dates and results, contacts, and the inspector responsible for next inspecting the bus.
  *
  * OpenAPI spec version: v1
  * 
@@ -19,62 +19,70 @@ using System.Runtime.Serialization;
 using Newtonsoft.Json;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.ComponentModel.DataAnnotations;
+using HETSAPI.Models;
 
-namespace HETSAPI.Models
+namespace HETSAPI.ViewModels
 {
     /// <summary>
-    /// An Equipment Attachment Type.
+    /// 
     /// </summary>
-        [MetaDataExtension (Description = "An Equipment Attachment Type.")]
-
-    public partial class EquipmentAttachmentType : IEquatable<EquipmentAttachmentType>
+    [DataContract]
+    public partial class AttachmentViewModel : IEquatable<AttachmentViewModel>
     {
         /// <summary>
         /// Default constructor, required by entity framework
         /// </summary>
-        public EquipmentAttachmentType()
+        public AttachmentViewModel()
         {
-            this.Id = 0;
         }
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="EquipmentAttachmentType" /> class.
+        /// Initializes a new instance of the <see cref="AttachmentViewModel" /> class.
         /// </summary>
-        /// <param name="Id">A system-generated unique identifier for a EquipmentAttachmentType (required).</param>
-        /// <param name="Code">TO BE REVIEWED WITH THE BUSINESS - IS THIS NEEDED - A unique but human-friendly code for the Equipment Attachment Type that can be displayed on screens with little screen real estate available..</param>
-        /// <param name="Description">The name of the equipment attachment type, as specified by the HETS Clerk creating the equipment type..</param>
-        public EquipmentAttachmentType(int Id, string Code = null, string Description = null)
+        /// <param name="Id">Primary Key (required).</param>
+        /// <param name="FileName">Filename as passed by the user uploading the file.</param>
+        /// <param name="Description">A note about the attachment,  optionally maintained by the user..</param>
+        /// <param name="Type">Type of attachment.</param>
+        public AttachmentViewModel(int Id, string FileName = null, string Description = null, string Type = null)
         {   
             this.Id = Id;
-            this.Code = Code;
+            this.FileName = FileName;
             this.Description = Description;
+            this.Type = Type;
         }
 
         /// <summary>
-        /// A system-generated unique identifier for a EquipmentAttachmentType
+        /// Primary Key
         /// </summary>
-        /// <value>A system-generated unique identifier for a EquipmentAttachmentType</value>
-        [MetaDataExtension (Description = "A system-generated unique identifier for a EquipmentAttachmentType")]
+        /// <value>Primary Key</value>
+        [DataMember(Name="id")]
+        [MetaDataExtension (Description = "Primary Key")]
         public int Id { get; set; }
-        
+
         /// <summary>
-        /// TO BE REVIEWED WITH THE BUSINESS - IS THIS NEEDED - A unique but human-friendly code for the Equipment Attachment Type that can be displayed on screens with little screen real estate available.
+        /// Filename as passed by the user uploading the file
         /// </summary>
-        /// <value>TO BE REVIEWED WITH THE BUSINESS - IS THIS NEEDED - A unique but human-friendly code for the Equipment Attachment Type that can be displayed on screens with little screen real estate available.</value>
-        [MetaDataExtension (Description = "TO BE REVIEWED WITH THE BUSINESS - IS THIS NEEDED - A unique but human-friendly code for the Equipment Attachment Type that can be displayed on screens with little screen real estate available.")]
-        [MaxLength(50)]
-        
-        public string Code { get; set; }
-        
+        /// <value>Filename as passed by the user uploading the file</value>
+        [DataMember(Name="fileName")]
+        [MetaDataExtension (Description = "Filename as passed by the user uploading the file")]
+        public string FileName { get; set; }
+
         /// <summary>
-        /// The name of the equipment attachment type, as specified by the HETS Clerk creating the equipment type.
+        /// A note about the attachment,  optionally maintained by the user.
         /// </summary>
-        /// <value>The name of the equipment attachment type, as specified by the HETS Clerk creating the equipment type.</value>
-        [MetaDataExtension (Description = "The name of the equipment attachment type, as specified by the HETS Clerk creating the equipment type.")]
-        [MaxLength(2048)]
-        
+        /// <value>A note about the attachment,  optionally maintained by the user.</value>
+        [DataMember(Name="description")]
+        [MetaDataExtension (Description = "A note about the attachment,  optionally maintained by the user.")]
         public string Description { get; set; }
-        
+
+        /// <summary>
+        /// Type of attachment
+        /// </summary>
+        /// <value>Type of attachment</value>
+        [DataMember(Name="type")]
+        [MetaDataExtension (Description = "Type of attachment")]
+        public string Type { get; set; }
+
         /// <summary>
         /// Returns the string presentation of the object
         /// </summary>
@@ -82,10 +90,11 @@ namespace HETSAPI.Models
         public override string ToString()
         {
             var sb = new StringBuilder();
-            sb.Append("class EquipmentAttachmentType {\n");
+            sb.Append("class AttachmentViewModel {\n");
             sb.Append("  Id: ").Append(Id).Append("\n");
-            sb.Append("  Code: ").Append(Code).Append("\n");
+            sb.Append("  FileName: ").Append(FileName).Append("\n");
             sb.Append("  Description: ").Append(Description).Append("\n");
+            sb.Append("  Type: ").Append(Type).Append("\n");
             sb.Append("}\n");
             return sb.ToString();
         }
@@ -109,15 +118,15 @@ namespace HETSAPI.Models
             if (ReferenceEquals(null, obj)) { return false; }
             if (ReferenceEquals(this, obj)) { return true; }
             if (obj.GetType() != GetType()) { return false; }
-            return Equals((EquipmentAttachmentType)obj);
+            return Equals((AttachmentViewModel)obj);
         }
 
         /// <summary>
-        /// Returns true if EquipmentAttachmentType instances are equal
+        /// Returns true if AttachmentViewModel instances are equal
         /// </summary>
-        /// <param name="other">Instance of EquipmentAttachmentType to be compared</param>
+        /// <param name="other">Instance of AttachmentViewModel to be compared</param>
         /// <returns>Boolean</returns>
-        public bool Equals(EquipmentAttachmentType other)
+        public bool Equals(AttachmentViewModel other)
         {
 
             if (ReferenceEquals(null, other)) { return false; }
@@ -129,14 +138,19 @@ namespace HETSAPI.Models
                     this.Id.Equals(other.Id)
                 ) &&                 
                 (
-                    this.Code == other.Code ||
-                    this.Code != null &&
-                    this.Code.Equals(other.Code)
+                    this.FileName == other.FileName ||
+                    this.FileName != null &&
+                    this.FileName.Equals(other.FileName)
                 ) &&                 
                 (
                     this.Description == other.Description ||
                     this.Description != null &&
                     this.Description.Equals(other.Description)
+                ) &&                 
+                (
+                    this.Type == other.Type ||
+                    this.Type != null &&
+                    this.Type.Equals(other.Type)
                 );
         }
 
@@ -152,13 +166,17 @@ namespace HETSAPI.Models
                 int hash = 41;
                 // Suitable nullity checks
                                    
-                hash = hash * 59 + this.Id.GetHashCode();                if (this.Code != null)
+                hash = hash * 59 + this.Id.GetHashCode();                if (this.FileName != null)
                 {
-                    hash = hash * 59 + this.Code.GetHashCode();
+                    hash = hash * 59 + this.FileName.GetHashCode();
                 }                
                                 if (this.Description != null)
                 {
                     hash = hash * 59 + this.Description.GetHashCode();
+                }                
+                                if (this.Type != null)
+                {
+                    hash = hash * 59 + this.Type.GetHashCode();
                 }                
                 
                 return hash;
@@ -173,7 +191,7 @@ namespace HETSAPI.Models
         /// <param name="left"></param>
         /// <param name="right"></param>
         /// <returns></returns>
-        public static bool operator ==(EquipmentAttachmentType left, EquipmentAttachmentType right)
+        public static bool operator ==(AttachmentViewModel left, AttachmentViewModel right)
         {
             return Equals(left, right);
         }
@@ -184,7 +202,7 @@ namespace HETSAPI.Models
         /// <param name="left"></param>
         /// <param name="right"></param>
         /// <returns></returns>
-        public static bool operator !=(EquipmentAttachmentType left, EquipmentAttachmentType right)
+        public static bool operator !=(AttachmentViewModel left, AttachmentViewModel right)
         {
             return !Equals(left, right);
         }

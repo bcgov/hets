@@ -309,8 +309,7 @@ namespace HETSAPI.Services.Impl
             if (exists)
             {
                 var result = _context.EquipmentAttachments
-                    .Include(x => x.Equipment)
-                    .Include(x => x.Type)
+                    .Include(x => x.Equipment)                    
                     .Where(x => x.Equipment.Id == id);
                 return new ObjectResult(result);
             }

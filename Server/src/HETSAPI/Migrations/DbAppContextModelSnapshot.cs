@@ -22,6 +22,13 @@ namespace HETSAPI.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnName("ATTACHMENT_ID");
 
+                    b.Property<DateTime>("CreateTimestamp")
+                        .HasColumnName("CREATE_TIMESTAMP");
+
+                    b.Property<string>("CreateUserid")
+                        .HasColumnName("CREATE_USERID")
+                        .HasMaxLength(50);
+
                     b.Property<string>("Description")
                         .HasColumnName("DESCRIPTION")
                         .HasMaxLength(2048);
@@ -29,19 +36,29 @@ namespace HETSAPI.Migrations
                     b.Property<int?>("EquipmentId")
                         .HasColumnName("EQUIPMENT_ID");
 
-                    b.Property<string>("ExternalFileName")
-                        .HasColumnName("EXTERNAL_FILE_NAME")
+                    b.Property<byte[]>("FileContents")
+                        .HasColumnName("FILE_CONTENTS");
+
+                    b.Property<string>("FileName")
+                        .HasColumnName("FILE_NAME")
                         .HasMaxLength(2048);
 
-                    b.Property<string>("InternalFileName")
-                        .HasColumnName("INTERNAL_FILE_NAME")
-                        .HasMaxLength(2048);
+                    b.Property<DateTime>("LastUpdateTimestamp")
+                        .HasColumnName("LAST_UPDATE_TIMESTAMP");
+
+                    b.Property<string>("LastUpdateUserid")
+                        .HasColumnName("LAST_UPDATE_USERID")
+                        .HasMaxLength(50);
 
                     b.Property<int?>("OwnerId")
                         .HasColumnName("OWNER_ID");
 
                     b.Property<int?>("ProjectId")
                         .HasColumnName("PROJECT_ID");
+
+                    b.Property<string>("Type")
+                        .HasColumnName("TYPE")
+                        .HasMaxLength(255);
 
                     b.HasKey("Id");
 
@@ -60,6 +77,20 @@ namespace HETSAPI.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnName("CITY_ID");
 
+                    b.Property<DateTime>("CreateTimestamp")
+                        .HasColumnName("CREATE_TIMESTAMP");
+
+                    b.Property<string>("CreateUserid")
+                        .HasColumnName("CREATE_USERID")
+                        .HasMaxLength(50);
+
+                    b.Property<DateTime>("LastUpdateTimestamp")
+                        .HasColumnName("LAST_UPDATE_TIMESTAMP");
+
+                    b.Property<string>("LastUpdateUserid")
+                        .HasColumnName("LAST_UPDATE_USERID")
+                        .HasMaxLength(50);
+
                     b.Property<string>("Name")
                         .HasColumnName("NAME")
                         .HasMaxLength(150);
@@ -75,19 +106,69 @@ namespace HETSAPI.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnName("CONTACT_ID");
 
+                    b.Property<string>("Address1")
+                        .HasColumnName("ADDRESS1")
+                        .HasMaxLength(80);
+
+                    b.Property<string>("Address2")
+                        .HasColumnName("ADDRESS2")
+                        .HasMaxLength(80);
+
+                    b.Property<string>("City")
+                        .HasColumnName("CITY")
+                        .HasMaxLength(100);
+
+                    b.Property<DateTime>("CreateTimestamp")
+                        .HasColumnName("CREATE_TIMESTAMP");
+
+                    b.Property<string>("CreateUserid")
+                        .HasColumnName("CREATE_USERID")
+                        .HasMaxLength(50);
+
+                    b.Property<string>("EmailAddress")
+                        .HasColumnName("EMAIL_ADDRESS")
+                        .HasMaxLength(255);
+
+                    b.Property<string>("FaxPhoneNumber")
+                        .HasColumnName("FAX_PHONE_NUMBER")
+                        .HasMaxLength(20);
+
                     b.Property<string>("GivenName")
                         .HasColumnName("GIVEN_NAME")
                         .HasMaxLength(50);
+
+                    b.Property<DateTime>("LastUpdateTimestamp")
+                        .HasColumnName("LAST_UPDATE_TIMESTAMP");
+
+                    b.Property<string>("LastUpdateUserid")
+                        .HasColumnName("LAST_UPDATE_USERID")
+                        .HasMaxLength(50);
+
+                    b.Property<string>("MobilePhoneNumber")
+                        .HasColumnName("MOBILE_PHONE_NUMBER")
+                        .HasMaxLength(20);
 
                     b.Property<string>("Notes")
                         .HasColumnName("NOTES")
                         .HasMaxLength(150);
 
+                    b.Property<string>("OrganizationName")
+                        .HasColumnName("ORGANIZATION_NAME")
+                        .HasMaxLength(150);
+
                     b.Property<int?>("OwnerId")
                         .HasColumnName("OWNER_ID");
 
+                    b.Property<string>("PostalCode")
+                        .HasColumnName("POSTAL_CODE")
+                        .HasMaxLength(15);
+
                     b.Property<int?>("ProjectId")
                         .HasColumnName("PROJECT_ID");
+
+                    b.Property<string>("Province")
+                        .HasColumnName("PROVINCE")
+                        .HasMaxLength(50);
 
                     b.Property<string>("Role")
                         .HasColumnName("ROLE")
@@ -96,6 +177,10 @@ namespace HETSAPI.Migrations
                     b.Property<string>("Surname")
                         .HasColumnName("SURNAME")
                         .HasMaxLength(50);
+
+                    b.Property<string>("WorkPhoneNumber")
+                        .HasColumnName("WORK_PHONE_NUMBER")
+                        .HasMaxLength(20);
 
                     b.HasKey("Id");
 
@@ -106,81 +191,31 @@ namespace HETSAPI.Migrations
                     b.ToTable("HET_CONTACT");
                 });
 
-            modelBuilder.Entity("HETSAPI.Models.ContactAddress", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnName("CONTACT_ADDRESS_ID");
-
-                    b.Property<string>("AddressLine1")
-                        .HasColumnName("ADDRESS_LINE1")
-                        .HasMaxLength(150);
-
-                    b.Property<string>("AddressLine2")
-                        .HasColumnName("ADDRESS_LINE2")
-                        .HasMaxLength(150);
-
-                    b.Property<string>("City")
-                        .HasColumnName("CITY")
-                        .HasMaxLength(100);
-
-                    b.Property<int?>("ContactId")
-                        .HasColumnName("CONTACT_ID");
-
-                    b.Property<string>("PostalCode")
-                        .HasColumnName("POSTAL_CODE")
-                        .HasMaxLength(15);
-
-                    b.Property<string>("Province")
-                        .HasColumnName("PROVINCE")
-                        .HasMaxLength(50);
-
-                    b.Property<string>("Type")
-                        .HasColumnName("TYPE")
-                        .HasMaxLength(100);
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("ContactId");
-
-                    b.ToTable("HET_CONTACT_ADDRESS");
-                });
-
-            modelBuilder.Entity("HETSAPI.Models.ContactPhone", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnName("CONTACT_PHONE_ID");
-
-                    b.Property<int?>("ContactId")
-                        .HasColumnName("CONTACT_ID");
-
-                    b.Property<string>("PhoneNumber")
-                        .HasColumnName("PHONE_NUMBER")
-                        .HasMaxLength(20);
-
-                    b.Property<string>("Type")
-                        .HasColumnName("TYPE")
-                        .HasMaxLength(100);
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("ContactId");
-
-                    b.ToTable("HET_CONTACT_PHONE");
-                });
-
             modelBuilder.Entity("HETSAPI.Models.District", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnName("DISTRICT_ID");
 
+                    b.Property<DateTime>("CreateTimestamp")
+                        .HasColumnName("CREATE_TIMESTAMP");
+
+                    b.Property<string>("CreateUserid")
+                        .HasColumnName("CREATE_USERID")
+                        .HasMaxLength(50);
+
                     b.Property<int?>("DistrictNumber")
                         .HasColumnName("DISTRICT_NUMBER");
 
                     b.Property<DateTime?>("EndDate")
                         .HasColumnName("END_DATE");
+
+                    b.Property<DateTime>("LastUpdateTimestamp")
+                        .HasColumnName("LAST_UPDATE_TIMESTAMP");
+
+                    b.Property<string>("LastUpdateUserid")
+                        .HasColumnName("LAST_UPDATE_USERID")
+                        .HasMaxLength(50);
 
                     b.Property<int>("MinistryDistrictID")
                         .HasColumnName("MINISTRY_DISTRICT_ID");
@@ -224,6 +259,13 @@ namespace HETSAPI.Migrations
                         .HasColumnName("BOX_WIDTH")
                         .HasMaxLength(150);
 
+                    b.Property<DateTime>("CreateTimestamp")
+                        .HasColumnName("CREATE_TIMESTAMP");
+
+                    b.Property<string>("CreateUserid")
+                        .HasColumnName("CREATE_USERID")
+                        .HasMaxLength(50);
+
                     b.Property<string>("FrontAxleCapacity")
                         .HasColumnName("FRONT_AXLE_CAPACITY")
                         .HasMaxLength(150);
@@ -262,6 +304,13 @@ namespace HETSAPI.Migrations
 
                     b.Property<bool?>("IsWaterTruck")
                         .HasColumnName("IS_WATER_TRUCK");
+
+                    b.Property<DateTime>("LastUpdateTimestamp")
+                        .HasColumnName("LAST_UPDATE_TIMESTAMP");
+
+                    b.Property<string>("LastUpdateUserid")
+                        .HasColumnName("LAST_UPDATE_USERID")
+                        .HasMaxLength(50);
 
                     b.Property<string>("LegalCapacity")
                         .HasColumnName("LEGAL_CAPACITY")
@@ -351,6 +400,13 @@ namespace HETSAPI.Migrations
                     b.Property<float?>("BlockNumber")
                         .HasColumnName("BLOCK_NUMBER");
 
+                    b.Property<DateTime>("CreateTimestamp")
+                        .HasColumnName("CREATE_TIMESTAMP");
+
+                    b.Property<string>("CreateUserid")
+                        .HasColumnName("CREATE_USERID")
+                        .HasMaxLength(50);
+
                     b.Property<int?>("DumpTruckRefId")
                         .HasColumnName("DUMP_TRUCK_REF_ID");
 
@@ -370,6 +426,13 @@ namespace HETSAPI.Migrations
 
                     b.Property<bool?>("IsSeniorityOverridden")
                         .HasColumnName("IS_SENIORITY_OVERRIDDEN");
+
+                    b.Property<DateTime>("LastUpdateTimestamp")
+                        .HasColumnName("LAST_UPDATE_TIMESTAMP");
+
+                    b.Property<string>("LastUpdateUserid")
+                        .HasColumnName("LAST_UPDATE_USERID")
+                        .HasMaxLength(50);
 
                     b.Property<DateTime?>("LastVerifiedDate")
                         .HasColumnName("LAST_VERIFIED_DATE");
@@ -473,6 +536,17 @@ namespace HETSAPI.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnName("EQUIPMENT_ATTACHMENT_ID");
 
+                    b.Property<string>("Attachment")
+                        .HasColumnName("ATTACHMENT")
+                        .HasMaxLength(255);
+
+                    b.Property<DateTime>("CreateTimestamp")
+                        .HasColumnName("CREATE_TIMESTAMP");
+
+                    b.Property<string>("CreateUserid")
+                        .HasColumnName("CREATE_USERID")
+                        .HasMaxLength(50);
+
                     b.Property<string>("Description")
                         .HasColumnName("DESCRIPTION")
                         .HasMaxLength(2048);
@@ -480,38 +554,18 @@ namespace HETSAPI.Migrations
                     b.Property<int?>("EquipmentRefId")
                         .HasColumnName("EQUIPMENT_REF_ID");
 
-                    b.Property<int?>("SeqNum")
-                        .HasColumnName("SEQ_NUM");
+                    b.Property<DateTime>("LastUpdateTimestamp")
+                        .HasColumnName("LAST_UPDATE_TIMESTAMP");
 
-                    b.Property<int?>("TypeRefId")
-                        .HasColumnName("TYPE_REF_ID");
+                    b.Property<string>("LastUpdateUserid")
+                        .HasColumnName("LAST_UPDATE_USERID")
+                        .HasMaxLength(50);
 
                     b.HasKey("Id");
 
                     b.HasIndex("EquipmentRefId");
 
-                    b.HasIndex("TypeRefId");
-
                     b.ToTable("HET_EQUIPMENT_ATTACHMENT");
-                });
-
-            modelBuilder.Entity("HETSAPI.Models.EquipmentAttachmentType", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnName("EQUIPMENT_ATTACHMENT_TYPE_ID");
-
-                    b.Property<string>("Code")
-                        .HasColumnName("CODE")
-                        .HasMaxLength(50);
-
-                    b.Property<string>("Description")
-                        .HasColumnName("DESCRIPTION")
-                        .HasMaxLength(2048);
-
-                    b.HasKey("Id");
-
-                    b.ToTable("HET_EQUIPMENT_ATTACHMENT_TYPE");
                 });
 
             modelBuilder.Entity("HETSAPI.Models.EquipmentType", b =>
@@ -520,11 +574,15 @@ namespace HETSAPI.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnName("EQUIPMENT_TYPE_ID");
 
-                    b.Property<int?>("AskNextBlock1RefId")
-                        .HasColumnName("ASK_NEXT_BLOCK1_REF_ID");
-
                     b.Property<int?>("Blocks")
                         .HasColumnName("BLOCKS");
+
+                    b.Property<DateTime>("CreateTimestamp")
+                        .HasColumnName("CREATE_TIMESTAMP");
+
+                    b.Property<string>("CreateUserid")
+                        .HasColumnName("CREATE_USERID")
+                        .HasMaxLength(50);
 
                     b.Property<string>("Description")
                         .HasColumnName("DESCRIPTION")
@@ -538,6 +596,13 @@ namespace HETSAPI.Migrations
 
                     b.Property<float?>("ExtendHours")
                         .HasColumnName("EXTEND_HOURS");
+
+                    b.Property<DateTime>("LastUpdateTimestamp")
+                        .HasColumnName("LAST_UPDATE_TIMESTAMP");
+
+                    b.Property<string>("LastUpdateUserid")
+                        .HasColumnName("LAST_UPDATE_USERID")
+                        .HasMaxLength(50);
 
                     b.Property<int?>("LocalAreaRefId")
                         .HasColumnName("LOCAL_AREA_REF_ID");
@@ -554,26 +619,54 @@ namespace HETSAPI.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("AskNextBlock1RefId");
-
                     b.HasIndex("LocalAreaRefId");
 
                     b.ToTable("HET_EQUIPMENT_TYPE");
                 });
 
-            modelBuilder.Entity("HETSAPI.Models.FavouriteContextType", b =>
+            modelBuilder.Entity("HETSAPI.Models.EquipmentTypeNextRental", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnName("FAVOURITE_CONTEXT_TYPE_ID");
+                        .HasColumnName("EQUIPMENT_TYPE_NEXT_RENTAL_ID");
 
-                    b.Property<string>("Name")
-                        .HasColumnName("NAME")
-                        .HasMaxLength(150);
+                    b.Property<int?>("AskNextBlock1RefId")
+                        .HasColumnName("ASK_NEXT_BLOCK1_REF_ID");
+
+                    b.Property<int?>("AskNextBlock2RefId")
+                        .HasColumnName("ASK_NEXT_BLOCK2_REF_ID");
+
+                    b.Property<int?>("AskNextBlockOpenRefId")
+                        .HasColumnName("ASK_NEXT_BLOCK_OPEN_REF_ID");
+
+                    b.Property<DateTime>("CreateTimestamp")
+                        .HasColumnName("CREATE_TIMESTAMP");
+
+                    b.Property<string>("CreateUserid")
+                        .HasColumnName("CREATE_USERID")
+                        .HasMaxLength(50);
+
+                    b.Property<int?>("EquipmentTypeRefId")
+                        .HasColumnName("EQUIPMENT_TYPE_REF_ID");
+
+                    b.Property<DateTime>("LastUpdateTimestamp")
+                        .HasColumnName("LAST_UPDATE_TIMESTAMP");
+
+                    b.Property<string>("LastUpdateUserid")
+                        .HasColumnName("LAST_UPDATE_USERID")
+                        .HasMaxLength(50);
 
                     b.HasKey("Id");
 
-                    b.ToTable("HET_FAVOURITE_CONTEXT_TYPE");
+                    b.HasIndex("AskNextBlock1RefId");
+
+                    b.HasIndex("AskNextBlock2RefId");
+
+                    b.HasIndex("AskNextBlockOpenRefId");
+
+                    b.HasIndex("EquipmentTypeRefId");
+
+                    b.ToTable("HET_EQUIPMENT_TYPE_NEXT_RENTAL");
                 });
 
             modelBuilder.Entity("HETSAPI.Models.Group", b =>
@@ -582,9 +675,23 @@ namespace HETSAPI.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnName("GROUP_ID");
 
+                    b.Property<DateTime>("CreateTimestamp")
+                        .HasColumnName("CREATE_TIMESTAMP");
+
+                    b.Property<string>("CreateUserid")
+                        .HasColumnName("CREATE_USERID")
+                        .HasMaxLength(50);
+
                     b.Property<string>("Description")
                         .HasColumnName("DESCRIPTION")
                         .HasMaxLength(2048);
+
+                    b.Property<DateTime>("LastUpdateTimestamp")
+                        .HasColumnName("LAST_UPDATE_TIMESTAMP");
+
+                    b.Property<string>("LastUpdateUserid")
+                        .HasColumnName("LAST_UPDATE_USERID")
+                        .HasMaxLength(50);
 
                     b.Property<string>("Name")
                         .HasColumnName("NAME")
@@ -604,8 +711,22 @@ namespace HETSAPI.Migrations
                     b.Property<bool>("Active")
                         .HasColumnName("ACTIVE");
 
+                    b.Property<DateTime>("CreateTimestamp")
+                        .HasColumnName("CREATE_TIMESTAMP");
+
+                    b.Property<string>("CreateUserid")
+                        .HasColumnName("CREATE_USERID")
+                        .HasMaxLength(50);
+
                     b.Property<int?>("GroupRefId")
                         .HasColumnName("GROUP_REF_ID");
+
+                    b.Property<DateTime>("LastUpdateTimestamp")
+                        .HasColumnName("LAST_UPDATE_TIMESTAMP");
+
+                    b.Property<string>("LastUpdateUserid")
+                        .HasColumnName("LAST_UPDATE_USERID")
+                        .HasMaxLength(50);
 
                     b.Property<int?>("UserRefId")
                         .HasColumnName("USER_REF_ID");
@@ -625,6 +746,13 @@ namespace HETSAPI.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnName("HISTORY_ID");
 
+                    b.Property<DateTime>("CreateTimestamp")
+                        .HasColumnName("CREATE_TIMESTAMP");
+
+                    b.Property<string>("CreateUserid")
+                        .HasColumnName("CREATE_USERID")
+                        .HasMaxLength(50);
+
                     b.Property<DateTime?>("CreatedDate")
                         .HasColumnName("CREATED_DATE");
 
@@ -634,6 +762,13 @@ namespace HETSAPI.Migrations
                     b.Property<string>("HistoryText")
                         .HasColumnName("HISTORY_TEXT")
                         .HasMaxLength(2048);
+
+                    b.Property<DateTime>("LastUpdateTimestamp")
+                        .HasColumnName("LAST_UPDATE_TIMESTAMP");
+
+                    b.Property<string>("LastUpdateUserid")
+                        .HasColumnName("LAST_UPDATE_USERID")
+                        .HasMaxLength(50);
 
                     b.Property<int?>("OwnerId")
                         .HasColumnName("OWNER_ID");
@@ -663,8 +798,22 @@ namespace HETSAPI.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnName("LOCAL_AREA_ID");
 
+                    b.Property<DateTime>("CreateTimestamp")
+                        .HasColumnName("CREATE_TIMESTAMP");
+
+                    b.Property<string>("CreateUserid")
+                        .HasColumnName("CREATE_USERID")
+                        .HasMaxLength(50);
+
                     b.Property<DateTime?>("EndDate")
                         .HasColumnName("END_DATE");
+
+                    b.Property<DateTime>("LastUpdateTimestamp")
+                        .HasColumnName("LAST_UPDATE_TIMESTAMP");
+
+                    b.Property<string>("LastUpdateUserid")
+                        .HasColumnName("LAST_UPDATE_USERID")
+                        .HasMaxLength(50);
 
                     b.Property<int?>("LocalAreaNumber")
                         .HasColumnName("LOCAL_AREA_NUMBER");
@@ -692,11 +841,25 @@ namespace HETSAPI.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnName("NOTE_ID");
 
+                    b.Property<DateTime>("CreateTimestamp")
+                        .HasColumnName("CREATE_TIMESTAMP");
+
+                    b.Property<string>("CreateUserid")
+                        .HasColumnName("CREATE_USERID")
+                        .HasMaxLength(50);
+
                     b.Property<int?>("EquipmentId")
                         .HasColumnName("EQUIPMENT_ID");
 
                     b.Property<bool?>("IsNoLongerRelevant")
                         .HasColumnName("IS_NO_LONGER_RELEVANT");
+
+                    b.Property<DateTime>("LastUpdateTimestamp")
+                        .HasColumnName("LAST_UPDATE_TIMESTAMP");
+
+                    b.Property<string>("LastUpdateUserid")
+                        .HasColumnName("LAST_UPDATE_USERID")
+                        .HasMaxLength(50);
 
                     b.Property<int?>("OwnerId")
                         .HasColumnName("OWNER_ID");
@@ -744,12 +907,26 @@ namespace HETSAPI.Migrations
                     b.Property<DateTime?>("CGLEndDate")
                         .HasColumnName("CGLEND_DATE");
 
+                    b.Property<DateTime>("CreateTimestamp")
+                        .HasColumnName("CREATE_TIMESTAMP");
+
+                    b.Property<string>("CreateUserid")
+                        .HasColumnName("CREATE_USERID")
+                        .HasMaxLength(50);
+
                     b.Property<string>("DoingBusinessAs")
                         .HasColumnName("DOING_BUSINESS_AS")
                         .HasMaxLength(150);
 
                     b.Property<bool?>("IsMaintenanceContractor")
                         .HasColumnName("IS_MAINTENANCE_CONTRACTOR");
+
+                    b.Property<DateTime>("LastUpdateTimestamp")
+                        .HasColumnName("LAST_UPDATE_TIMESTAMP");
+
+                    b.Property<string>("LastUpdateUserid")
+                        .HasColumnName("LAST_UPDATE_USERID")
+                        .HasMaxLength(50);
 
                     b.Property<int?>("LocalAreaRefId")
                         .HasColumnName("LOCAL_AREA_REF_ID");
@@ -776,8 +953,12 @@ namespace HETSAPI.Migrations
                         .HasColumnName("STATUS")
                         .HasMaxLength(50);
 
-                    b.Property<DateTime?>("WCBExpiryDate")
-                        .HasColumnName("WCBEXPIRY_DATE");
+                    b.Property<DateTime?>("WorkSafeBCExpiryDate")
+                        .HasColumnName("WORK_SAFE_BCEXPIRY_DATE");
+
+                    b.Property<string>("WorkSafeBCPolicyNumber")
+                        .HasColumnName("WORK_SAFE_BCPOLICY_NUMBER")
+                        .HasMaxLength(50);
 
                     b.HasKey("Id");
 
@@ -798,9 +979,23 @@ namespace HETSAPI.Migrations
                         .HasColumnName("CODE")
                         .HasMaxLength(50);
 
+                    b.Property<DateTime>("CreateTimestamp")
+                        .HasColumnName("CREATE_TIMESTAMP");
+
+                    b.Property<string>("CreateUserid")
+                        .HasColumnName("CREATE_USERID")
+                        .HasMaxLength(50);
+
                     b.Property<string>("Description")
                         .HasColumnName("DESCRIPTION")
                         .HasMaxLength(2048);
+
+                    b.Property<DateTime>("LastUpdateTimestamp")
+                        .HasColumnName("LAST_UPDATE_TIMESTAMP");
+
+                    b.Property<string>("LastUpdateUserid")
+                        .HasColumnName("LAST_UPDATE_USERID")
+                        .HasMaxLength(50);
 
                     b.Property<string>("Name")
                         .HasColumnName("NAME")
@@ -817,9 +1012,23 @@ namespace HETSAPI.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnName("PROJECT_ID");
 
+                    b.Property<DateTime>("CreateTimestamp")
+                        .HasColumnName("CREATE_TIMESTAMP");
+
+                    b.Property<string>("CreateUserid")
+                        .HasColumnName("CREATE_USERID")
+                        .HasMaxLength(50);
+
                     b.Property<string>("Information")
                         .HasColumnName("INFORMATION")
                         .HasMaxLength(2048);
+
+                    b.Property<DateTime>("LastUpdateTimestamp")
+                        .HasColumnName("LAST_UPDATE_TIMESTAMP");
+
+                    b.Property<string>("LastUpdateUserid")
+                        .HasColumnName("LAST_UPDATE_USERID")
+                        .HasMaxLength(50);
 
                     b.Property<string>("Name")
                         .HasColumnName("NAME")
@@ -850,8 +1059,22 @@ namespace HETSAPI.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnName("REGION_ID");
 
+                    b.Property<DateTime>("CreateTimestamp")
+                        .HasColumnName("CREATE_TIMESTAMP");
+
+                    b.Property<string>("CreateUserid")
+                        .HasColumnName("CREATE_USERID")
+                        .HasMaxLength(50);
+
                     b.Property<DateTime?>("EndDate")
                         .HasColumnName("END_DATE");
+
+                    b.Property<DateTime>("LastUpdateTimestamp")
+                        .HasColumnName("LAST_UPDATE_TIMESTAMP");
+
+                    b.Property<string>("LastUpdateUserid")
+                        .HasColumnName("LAST_UPDATE_USERID")
+                        .HasMaxLength(50);
 
                     b.Property<int>("MinistryRegionID")
                         .HasColumnName("MINISTRY_REGION_ID");
@@ -877,11 +1100,53 @@ namespace HETSAPI.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnName("RENTAL_AGREEMENT_ID");
 
+                    b.Property<DateTime>("CreateTimestamp")
+                        .HasColumnName("CREATE_TIMESTAMP");
+
+                    b.Property<string>("CreateUserid")
+                        .HasColumnName("CREATE_USERID")
+                        .HasMaxLength(50);
+
+                    b.Property<DateTime?>("DatedOn")
+                        .HasColumnName("DATED_ON");
+
+                    b.Property<float?>("EquipmentRate")
+                        .HasColumnName("EQUIPMENT_RATE");
+
                     b.Property<int?>("EquipmentRefId")
                         .HasColumnName("EQUIPMENT_REF_ID");
 
+                    b.Property<int?>("EstimateHours")
+                        .HasColumnName("ESTIMATE_HOURS");
+
+                    b.Property<DateTime?>("EstimateStartWork")
+                        .HasColumnName("ESTIMATE_START_WORK");
+
+                    b.Property<DateTime>("LastUpdateTimestamp")
+                        .HasColumnName("LAST_UPDATE_TIMESTAMP");
+
+                    b.Property<string>("LastUpdateUserid")
+                        .HasColumnName("LAST_UPDATE_USERID")
+                        .HasMaxLength(50);
+
+                    b.Property<string>("Note")
+                        .HasColumnName("NOTE")
+                        .HasMaxLength(2048);
+
+                    b.Property<string>("Number")
+                        .HasColumnName("NUMBER")
+                        .HasMaxLength(30);
+
                     b.Property<int?>("ProjectRefId")
                         .HasColumnName("PROJECT_REF_ID");
+
+                    b.Property<string>("RateComment")
+                        .HasColumnName("RATE_COMMENT")
+                        .HasMaxLength(2048);
+
+                    b.Property<string>("RatePeriod")
+                        .HasColumnName("RATE_PERIOD")
+                        .HasMaxLength(50);
 
                     b.Property<string>("Status")
                         .HasColumnName("STATUS")
@@ -896,11 +1161,107 @@ namespace HETSAPI.Migrations
                     b.ToTable("HET_RENTAL_AGREEMENT");
                 });
 
+            modelBuilder.Entity("HETSAPI.Models.RentalAgreementCondition", b =>
+                {
+                    b.Property<int?>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnName("RENTAL_AGREEMENT_CONDITION_ID");
+
+                    b.Property<string>("Comment")
+                        .HasColumnName("COMMENT")
+                        .HasMaxLength(2048);
+
+                    b.Property<string>("ConditionName")
+                        .HasColumnName("CONDITION_NAME")
+                        .HasMaxLength(150);
+
+                    b.Property<DateTime>("CreateTimestamp")
+                        .HasColumnName("CREATE_TIMESTAMP");
+
+                    b.Property<string>("CreateUserid")
+                        .HasColumnName("CREATE_USERID")
+                        .HasMaxLength(50);
+
+                    b.Property<DateTime>("LastUpdateTimestamp")
+                        .HasColumnName("LAST_UPDATE_TIMESTAMP");
+
+                    b.Property<string>("LastUpdateUserid")
+                        .HasColumnName("LAST_UPDATE_USERID")
+                        .HasMaxLength(50);
+
+                    b.Property<int?>("RentalAgreementRefId")
+                        .HasColumnName("RENTAL_AGREEMENT_REF_ID");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("RentalAgreementRefId");
+
+                    b.ToTable("HET_RENTAL_AGREEMENT_CONDITION");
+                });
+
+            modelBuilder.Entity("HETSAPI.Models.RentalAgreementRate", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnName("RENTAL_AGREEMENT_RATE_ID");
+
+                    b.Property<string>("Comment")
+                        .HasColumnName("COMMENT")
+                        .HasMaxLength(2048);
+
+                    b.Property<string>("ComponentName")
+                        .HasColumnName("COMPONENT_NAME")
+                        .HasMaxLength(150);
+
+                    b.Property<DateTime>("CreateTimestamp")
+                        .HasColumnName("CREATE_TIMESTAMP");
+
+                    b.Property<string>("CreateUserid")
+                        .HasColumnName("CREATE_USERID")
+                        .HasMaxLength(50);
+
+                    b.Property<bool?>("IsAttachment")
+                        .HasColumnName("IS_ATTACHMENT");
+
+                    b.Property<DateTime>("LastUpdateTimestamp")
+                        .HasColumnName("LAST_UPDATE_TIMESTAMP");
+
+                    b.Property<string>("LastUpdateUserid")
+                        .HasColumnName("LAST_UPDATE_USERID")
+                        .HasMaxLength(50);
+
+                    b.Property<int?>("PercentOfEquipmentRate")
+                        .HasColumnName("PERCENT_OF_EQUIPMENT_RATE");
+
+                    b.Property<float?>("Rate")
+                        .HasColumnName("RATE");
+
+                    b.Property<string>("RatePeriod")
+                        .HasColumnName("RATE_PERIOD")
+                        .HasMaxLength(50);
+
+                    b.Property<int?>("RentalAgreementRefId")
+                        .HasColumnName("RENTAL_AGREEMENT_REF_ID");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("RentalAgreementRefId");
+
+                    b.ToTable("HET_RENTAL_AGREEMENT_RATE");
+                });
+
             modelBuilder.Entity("HETSAPI.Models.RentalRequest", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnName("RENTAL_REQUEST_ID");
+
+                    b.Property<DateTime>("CreateTimestamp")
+                        .HasColumnName("CREATE_TIMESTAMP");
+
+                    b.Property<string>("CreateUserid")
+                        .HasColumnName("CREATE_USERID")
+                        .HasMaxLength(50);
 
                     b.Property<int?>("EquipmentCount")
                         .HasColumnName("EQUIPMENT_COUNT");
@@ -919,6 +1280,13 @@ namespace HETSAPI.Migrations
 
                     b.Property<int?>("FirstOnRotationListRefId")
                         .HasColumnName("FIRST_ON_ROTATION_LIST_REF_ID");
+
+                    b.Property<DateTime>("LastUpdateTimestamp")
+                        .HasColumnName("LAST_UPDATE_TIMESTAMP");
+
+                    b.Property<string>("LastUpdateUserid")
+                        .HasColumnName("LAST_UPDATE_USERID")
+                        .HasMaxLength(50);
 
                     b.Property<int?>("LocalAreaRefId")
                         .HasColumnName("LOCAL_AREA_REF_ID");
@@ -953,6 +1321,20 @@ namespace HETSAPI.Migrations
                         .HasColumnName("ATTACHMENT")
                         .HasMaxLength(150);
 
+                    b.Property<DateTime>("CreateTimestamp")
+                        .HasColumnName("CREATE_TIMESTAMP");
+
+                    b.Property<string>("CreateUserid")
+                        .HasColumnName("CREATE_USERID")
+                        .HasMaxLength(50);
+
+                    b.Property<DateTime>("LastUpdateTimestamp")
+                        .HasColumnName("LAST_UPDATE_TIMESTAMP");
+
+                    b.Property<string>("LastUpdateUserid")
+                        .HasColumnName("LAST_UPDATE_USERID")
+                        .HasMaxLength(50);
+
                     b.Property<int?>("RentalRequestRefId")
                         .HasColumnName("RENTAL_REQUEST_REF_ID");
 
@@ -972,11 +1354,25 @@ namespace HETSAPI.Migrations
                     b.Property<DateTime?>("AskedDateTime")
                         .HasColumnName("ASKED_DATE_TIME");
 
+                    b.Property<DateTime>("CreateTimestamp")
+                        .HasColumnName("CREATE_TIMESTAMP");
+
+                    b.Property<string>("CreateUserid")
+                        .HasColumnName("CREATE_USERID")
+                        .HasMaxLength(50);
+
                     b.Property<int?>("EquipmentRefId")
                         .HasColumnName("EQUIPMENT_REF_ID");
 
                     b.Property<bool?>("IsForceHire")
                         .HasColumnName("IS_FORCE_HIRE");
+
+                    b.Property<DateTime>("LastUpdateTimestamp")
+                        .HasColumnName("LAST_UPDATE_TIMESTAMP");
+
+                    b.Property<string>("LastUpdateUserid")
+                        .HasColumnName("LAST_UPDATE_USERID")
+                        .HasMaxLength(50);
 
                     b.Property<string>("Note")
                         .HasColumnName("NOTE")
@@ -1025,9 +1421,23 @@ namespace HETSAPI.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnName("ROLE_ID");
 
+                    b.Property<DateTime>("CreateTimestamp")
+                        .HasColumnName("CREATE_TIMESTAMP");
+
+                    b.Property<string>("CreateUserid")
+                        .HasColumnName("CREATE_USERID")
+                        .HasMaxLength(50);
+
                     b.Property<string>("Description")
                         .HasColumnName("DESCRIPTION")
                         .HasMaxLength(2048);
+
+                    b.Property<DateTime>("LastUpdateTimestamp")
+                        .HasColumnName("LAST_UPDATE_TIMESTAMP");
+
+                    b.Property<string>("LastUpdateUserid")
+                        .HasColumnName("LAST_UPDATE_USERID")
+                        .HasMaxLength(50);
 
                     b.Property<string>("Name")
                         .HasColumnName("NAME")
@@ -1043,6 +1453,20 @@ namespace HETSAPI.Migrations
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnName("ROLE_PERMISSION_ID");
+
+                    b.Property<DateTime>("CreateTimestamp")
+                        .HasColumnName("CREATE_TIMESTAMP");
+
+                    b.Property<string>("CreateUserid")
+                        .HasColumnName("CREATE_USERID")
+                        .HasMaxLength(50);
+
+                    b.Property<DateTime>("LastUpdateTimestamp")
+                        .HasColumnName("LAST_UPDATE_TIMESTAMP");
+
+                    b.Property<string>("LastUpdateUserid")
+                        .HasColumnName("LAST_UPDATE_USERID")
+                        .HasMaxLength(50);
 
                     b.Property<int?>("PermissionRefId")
                         .HasColumnName("PERMISSION_REF_ID");
@@ -1068,11 +1492,25 @@ namespace HETSAPI.Migrations
                     b.Property<float?>("BlockNumber")
                         .HasColumnName("BLOCK_NUMBER");
 
+                    b.Property<DateTime>("CreateTimestamp")
+                        .HasColumnName("CREATE_TIMESTAMP");
+
+                    b.Property<string>("CreateUserid")
+                        .HasColumnName("CREATE_USERID")
+                        .HasMaxLength(50);
+
                     b.Property<DateTime?>("EndDate")
                         .HasColumnName("END_DATE");
 
                     b.Property<int?>("EquipmentRefId")
                         .HasColumnName("EQUIPMENT_REF_ID");
+
+                    b.Property<DateTime>("LastUpdateTimestamp")
+                        .HasColumnName("LAST_UPDATE_TIMESTAMP");
+
+                    b.Property<string>("LastUpdateUserid")
+                        .HasColumnName("LAST_UPDATE_USERID")
+                        .HasMaxLength(50);
 
                     b.Property<int?>("LocalAreaRefId")
                         .HasColumnName("LOCAL_AREA_REF_ID");
@@ -1122,11 +1560,25 @@ namespace HETSAPI.Migrations
                     b.Property<int?>("AreaNumber")
                         .HasColumnName("AREA_NUMBER");
 
+                    b.Property<DateTime>("CreateTimestamp")
+                        .HasColumnName("CREATE_TIMESTAMP");
+
+                    b.Property<string>("CreateUserid")
+                        .HasColumnName("CREATE_USERID")
+                        .HasMaxLength(50);
+
                     b.Property<int?>("DistrictRefId")
                         .HasColumnName("DISTRICT_REF_ID");
 
                     b.Property<DateTime?>("EndDate")
                         .HasColumnName("END_DATE");
+
+                    b.Property<DateTime>("LastUpdateTimestamp")
+                        .HasColumnName("LAST_UPDATE_TIMESTAMP");
+
+                    b.Property<string>("LastUpdateUserid")
+                        .HasColumnName("LAST_UPDATE_USERID")
+                        .HasMaxLength(50);
 
                     b.Property<int>("MinistryServiceAreaID")
                         .HasColumnName("MINISTRY_SERVICE_AREA_ID");
@@ -1151,26 +1603,28 @@ namespace HETSAPI.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnName("TIME_RECORD_ID");
 
+                    b.Property<DateTime>("CreateTimestamp")
+                        .HasColumnName("CREATE_TIMESTAMP");
+
+                    b.Property<string>("CreateUserid")
+                        .HasColumnName("CREATE_USERID")
+                        .HasMaxLength(50);
+
                     b.Property<DateTime?>("EnteredDate")
                         .HasColumnName("ENTERED_DATE");
 
                     b.Property<float?>("Hours")
                         .HasColumnName("HOURS");
 
-                    b.Property<float?>("Hours2")
-                        .HasColumnName("HOURS2");
+                    b.Property<DateTime>("LastUpdateTimestamp")
+                        .HasColumnName("LAST_UPDATE_TIMESTAMP");
 
-                    b.Property<float?>("Hours3")
-                        .HasColumnName("HOURS3");
+                    b.Property<string>("LastUpdateUserid")
+                        .HasColumnName("LAST_UPDATE_USERID")
+                        .HasMaxLength(50);
 
-                    b.Property<float?>("Rate")
-                        .HasColumnName("RATE");
-
-                    b.Property<float?>("Rate2")
-                        .HasColumnName("RATE2");
-
-                    b.Property<float?>("Rate3")
-                        .HasColumnName("RATE3");
+                    b.Property<int?>("RentalAgreementRateRefId")
+                        .HasColumnName("RENTAL_AGREEMENT_RATE_REF_ID");
 
                     b.Property<int?>("RentalAgreementRefId")
                         .HasColumnName("RENTAL_AGREEMENT_REF_ID");
@@ -1183,6 +1637,8 @@ namespace HETSAPI.Migrations
                         .HasColumnName("WORKED_DATE");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("RentalAgreementRateRefId");
 
                     b.HasIndex("RentalAgreementRefId");
 
@@ -1197,6 +1653,13 @@ namespace HETSAPI.Migrations
 
                     b.Property<bool>("Active")
                         .HasColumnName("ACTIVE");
+
+                    b.Property<DateTime>("CreateTimestamp")
+                        .HasColumnName("CREATE_TIMESTAMP");
+
+                    b.Property<string>("CreateUserid")
+                        .HasColumnName("CREATE_USERID")
+                        .HasMaxLength(50);
 
                     b.Property<int?>("DistrictRefId")
                         .HasColumnName("DISTRICT_REF_ID");
@@ -1216,6 +1679,13 @@ namespace HETSAPI.Migrations
                     b.Property<string>("Initials")
                         .HasColumnName("INITIALS")
                         .HasMaxLength(10);
+
+                    b.Property<DateTime>("LastUpdateTimestamp")
+                        .HasColumnName("LAST_UPDATE_TIMESTAMP");
+
+                    b.Property<string>("LastUpdateUserid")
+                        .HasColumnName("LAST_UPDATE_USERID")
+                        .HasMaxLength(50);
 
                     b.Property<string>("SmAuthorizationDirectory")
                         .HasColumnName("SM_AUTHORIZATION_DIRECTORY")
@@ -1242,8 +1712,22 @@ namespace HETSAPI.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnName("USER_FAVOURITE_ID");
 
+                    b.Property<DateTime>("CreateTimestamp")
+                        .HasColumnName("CREATE_TIMESTAMP");
+
+                    b.Property<string>("CreateUserid")
+                        .HasColumnName("CREATE_USERID")
+                        .HasMaxLength(50);
+
                     b.Property<bool?>("IsDefault")
                         .HasColumnName("IS_DEFAULT");
+
+                    b.Property<DateTime>("LastUpdateTimestamp")
+                        .HasColumnName("LAST_UPDATE_TIMESTAMP");
+
+                    b.Property<string>("LastUpdateUserid")
+                        .HasColumnName("LAST_UPDATE_USERID")
+                        .HasMaxLength(50);
 
                     b.Property<string>("Name")
                         .HasColumnName("NAME")
@@ -1273,11 +1757,25 @@ namespace HETSAPI.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnName("USER_ROLE_ID");
 
+                    b.Property<DateTime>("CreateTimestamp")
+                        .HasColumnName("CREATE_TIMESTAMP");
+
+                    b.Property<string>("CreateUserid")
+                        .HasColumnName("CREATE_USERID")
+                        .HasMaxLength(50);
+
                     b.Property<DateTime>("EffectiveDate")
                         .HasColumnName("EFFECTIVE_DATE");
 
                     b.Property<DateTime?>("ExpiryDate")
                         .HasColumnName("EXPIRY_DATE");
+
+                    b.Property<DateTime>("LastUpdateTimestamp")
+                        .HasColumnName("LAST_UPDATE_TIMESTAMP");
+
+                    b.Property<string>("LastUpdateUserid")
+                        .HasColumnName("LAST_UPDATE_USERID")
+                        .HasMaxLength(50);
 
                     b.Property<int?>("RoleRefId")
                         .HasColumnName("ROLE_REF_ID");
@@ -1320,20 +1818,6 @@ namespace HETSAPI.Migrations
                         .HasForeignKey("ProjectId");
                 });
 
-            modelBuilder.Entity("HETSAPI.Models.ContactAddress", b =>
-                {
-                    b.HasOne("HETSAPI.Models.Contact")
-                        .WithMany("Addresses")
-                        .HasForeignKey("ContactId");
-                });
-
-            modelBuilder.Entity("HETSAPI.Models.ContactPhone", b =>
-                {
-                    b.HasOne("HETSAPI.Models.Contact")
-                        .WithMany("Phones")
-                        .HasForeignKey("ContactId");
-                });
-
             modelBuilder.Entity("HETSAPI.Models.District", b =>
                 {
                     b.HasOne("HETSAPI.Models.Region", "Region")
@@ -1365,21 +1849,32 @@ namespace HETSAPI.Migrations
                     b.HasOne("HETSAPI.Models.Equipment", "Equipment")
                         .WithMany("EquipmentAttachments")
                         .HasForeignKey("EquipmentRefId");
-
-                    b.HasOne("HETSAPI.Models.EquipmentAttachmentType", "Type")
-                        .WithMany()
-                        .HasForeignKey("TypeRefId");
                 });
 
             modelBuilder.Entity("HETSAPI.Models.EquipmentType", b =>
+                {
+                    b.HasOne("HETSAPI.Models.LocalArea", "LocalArea")
+                        .WithMany()
+                        .HasForeignKey("LocalAreaRefId");
+                });
+
+            modelBuilder.Entity("HETSAPI.Models.EquipmentTypeNextRental", b =>
                 {
                     b.HasOne("HETSAPI.Models.Equipment", "AskNextBlock1")
                         .WithMany()
                         .HasForeignKey("AskNextBlock1RefId");
 
-                    b.HasOne("HETSAPI.Models.LocalArea", "LocalArea")
+                    b.HasOne("HETSAPI.Models.Equipment", "AskNextBlock2")
                         .WithMany()
-                        .HasForeignKey("LocalAreaRefId");
+                        .HasForeignKey("AskNextBlock2RefId");
+
+                    b.HasOne("HETSAPI.Models.Equipment", "AskNextBlockOpen")
+                        .WithMany()
+                        .HasForeignKey("AskNextBlockOpenRefId");
+
+                    b.HasOne("HETSAPI.Models.EquipmentType", "EquipmentType")
+                        .WithMany()
+                        .HasForeignKey("EquipmentTypeRefId");
                 });
 
             modelBuilder.Entity("HETSAPI.Models.GroupMembership", b =>
@@ -1471,6 +1966,20 @@ namespace HETSAPI.Migrations
                         .HasForeignKey("ProjectRefId");
                 });
 
+            modelBuilder.Entity("HETSAPI.Models.RentalAgreementCondition", b =>
+                {
+                    b.HasOne("HETSAPI.Models.RentalAgreement", "RentalAgreement")
+                        .WithMany("RentalAgreementConditions")
+                        .HasForeignKey("RentalAgreementRefId");
+                });
+
+            modelBuilder.Entity("HETSAPI.Models.RentalAgreementRate", b =>
+                {
+                    b.HasOne("HETSAPI.Models.RentalAgreement", "RentalAgreement")
+                        .WithMany("RentalAgreementRates")
+                        .HasForeignKey("RentalAgreementRefId");
+                });
+
             modelBuilder.Entity("HETSAPI.Models.RentalRequest", b =>
                 {
                     b.HasOne("HETSAPI.Models.EquipmentType", "EquipmentType")
@@ -1547,6 +2056,10 @@ namespace HETSAPI.Migrations
 
             modelBuilder.Entity("HETSAPI.Models.TimeRecord", b =>
                 {
+                    b.HasOne("HETSAPI.Models.RentalAgreementRate", "RentalAgreementRate")
+                        .WithMany("TimeRecords")
+                        .HasForeignKey("RentalAgreementRateRefId");
+
                     b.HasOne("HETSAPI.Models.RentalAgreement", "RentalAgreement")
                         .WithMany("TimeRecords")
                         .HasForeignKey("RentalAgreementRefId");
