@@ -50,6 +50,7 @@ var UserManagement = React.createClass({
   render() {
     return <div id="user-management">
       <PageHeader>User Management</PageHeader>
+      This feature has not been released yet.
 
       {(() => {
         if (this.state.loading) { return <div style={{ textAlign: 'center' }}><Spinner/></div>; }

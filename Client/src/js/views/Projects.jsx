@@ -20,11 +20,12 @@ import FormInputControl from '../components/FormInputControl.jsx';
 import MultiDropdown from '../components/MultiDropdown.jsx';
 import SortTable from '../components/SortTable.jsx';
 import Spinner from '../components/Spinner.jsx';
+import Unimplemented from '../components/Unimplemented.jsx';
 
 /*
 
 TODO:
-* Print / Email
+* Print / Email / Add Project
 
 */
 
@@ -116,6 +117,7 @@ var Projects = React.createClass({
   },
 
   openAddDialog() {
+    // TODO Add Project
     this.setState({ showAddDialog: true });
   },
 
@@ -142,12 +144,11 @@ var Projects = React.createClass({
             <ButtonToolbar id="projects-search">
               <MultiDropdown id="selectedLocalAreasIds" placeholder="Local Areas"
                 items={ localAreas } selectedIds={ this.state.search.selectedLocalAreasIds } updateState={ this.updateSearchState } showMaxItems={ 2 } />
-                <DropdownControl id="statusCode" title={ this.state.search.statusCode } updateState={ this.updateSearchState }
-                  items={[ Constant.PROJECT_STATUS_CODE_ACTIVE, Constant.PROJECT_STATUS_CODE_COMPLETE ]}
-                />
+              <DropdownControl id="statusCode" title={ this.state.search.statusCode } updateState={ this.updateSearchState }
+                  items={[ Constant.PROJECT_STATUS_CODE_ACTIVE, Constant.PROJECT_STATUS_CODE_COMPLETE ]} />
               <CheckboxControl inline id="hires" checked={ this.state.search.hires } updateState={ this.updateSearchState }> Hires</CheckboxControl>
               <CheckboxControl inline id="requests" checked={ this.state.search.requests } updateState={ this.updateSearchState }> Requests</CheckboxControl>
-              <FormInputControl id="projectName" type="text" value={ this.state.search.projectName } updateState={ this.updateSearchState }></FormInputControl>
+              <FormInputControl id="projectName" type="text" placeholder="Project name" value={ this.state.search.projectName } updateState={ this.updateSearchState }></FormInputControl>
               <Button id="search-button" bsStyle="primary" onClick={ this.fetch }>Search</Button>
             </ButtonToolbar>
           </Col>
@@ -157,8 +158,12 @@ var Projects = React.createClass({
           <Col md={1}>
             <div id="projects-buttons">
               <ButtonGroup>
-                <Button onClick={ this.email }><Glyphicon glyph="envelope" title="E-mail" /></Button>
-                <Button onClick={ this.print }><Glyphicon glyph="print" title="Print" /></Button>
+                <Unimplemented>
+                  <Button onClick={ this.email }><Glyphicon glyph="envelope" title="E-mail" /></Button>
+                </Unimplemented>
+                <Unimplemented>
+                  <Button onClick={ this.print }><Glyphicon glyph="print" title="Print" /></Button>
+                </Unimplemented>
               </ButtonGroup>
             </div>
           </Col>
@@ -166,6 +171,12 @@ var Projects = React.createClass({
       </Well>
 
       {(() => {
+        var addProjectButton = (
+          <Unimplemented>
+            <Button title="add" bsSize="xsmall" onClick={ this.openAddDialog }><Glyphicon glyph="plus" />&nbsp;<strong>Add Project</strong></Button>
+          </Unimplemented>
+        );
+
         if (this.state.loading) { return <div style={{ textAlign: 'center' }}><Spinner/></div>; }
         if (Object.keys(this.props.projects).length === 0) { return <Alert bsStyle="success">No Projects</Alert>; }
 
@@ -183,7 +194,7 @@ var Projects = React.createClass({
           { field: 'numberOfRequests',       title: 'Requests',       style: { textAlign: 'center' } },
           { field: 'status',                 title: 'Status',         style: { textAlign: 'center' } },
           { field: 'addProject',             title: 'Add Project',    style: { textAlign: 'right'  },
-            node: <Button title="add" bsSize="xsmall" onClick={ this.openAddDialog }><Glyphicon glyph="plus" />&nbsp;<strong>Add Owner</strong></Button>,
+            node: addProjectButton,
           },
         ]}>
           {
@@ -196,7 +207,7 @@ var Projects = React.createClass({
                 <td style={{ textAlign: 'center' }}>{ project.numberOfEquipment }</td>
                 <td style={{ textAlign: 'center' }}>{ project.status }</td>
                 <td style={{ textAlign: 'right' }}>
-                  <LinkContainer to={{ pathname: 'owners/' + project.id }}>
+                  <LinkContainer to={{ pathname: `projects/${project.id}` }}>
                     <Button title="edit" bsSize="xsmall"><Glyphicon glyph="edit" /></Button>
                   </LinkContainer>
                 </td>

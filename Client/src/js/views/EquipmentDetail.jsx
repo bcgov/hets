@@ -23,6 +23,7 @@ import Confirm from '../components/Confirm.jsx';
 import OverlayTrigger from '../components/OverlayTrigger.jsx';
 import SortTable from '../components/SortTable.jsx';
 import Spinner from '../components/Spinner.jsx';
+import Unimplemented from '../components/Unimplemented.jsx';
 
 import { formatDateTime } from '../utils/date';
 
@@ -34,7 +35,7 @@ const EQUIPMENT_ACTION_FOR_HIRE = 'For Hire';
 /*
 
 TODO:
-* Print
+* Print / Notes / Docs / History / Actions on Equipment / Seniority Data History / Equipment Attachments
 
 */
 
@@ -194,17 +195,25 @@ var EquipmentDetail = React.createClass({
             <Label className={ equipment.isMaintenanceContractor ? '' : 'hide' }>Maintenance Contractor</Label>
             <Label bsStyle={ equipment.isWorking ? 'danger' : 'success' }>{ equipment.isWorking ? 'Working' : 'Not Working' }</Label>
             <Label bsStyle={ lastVerifiedStyle }>Last Verified: { formatDateTime(equipment.lastVerifiedDate, 'YYYY-MMM-DD') }</Label>
-            <Button title="Notes" onClick={ this.showNotes }>Notes ({ Object.keys(this.props.notes).length })</Button>
-            <Button title="Documents" onClick={ this.showDocuments }>Docs ({ Object.keys(this.props.attachments).length })</Button>
+            <Unimplemented>
+              <Button title="Notes" onClick={ this.showNotes }>Notes ({ Object.keys(this.props.notes).length })</Button>
+            </Unimplemented>
+            <Unimplemented>
+              <Button title="Documents" onClick={ this.showDocuments }>Docs ({ Object.keys(this.props.attachments).length })</Button>
+            </Unimplemented>
           </Col>
           <Col md={4}>
             <div className="pull-right">
-              <DropdownButton id='equipment-action-drop-down' title='Actions' onSelect={ this.actionSelected }>
-                <MenuItem key={ EQUIPMENT_ACTION_ARCHIVE } eventKey={ EQUIPMENT_ACTION_ARCHIVE }>{ EQUIPMENT_ACTION_ARCHIVE }</MenuItem>
-                <MenuItem key={ EQUIPMENT_ACTION_VERIFIED } eventKey={ EQUIPMENT_ACTION_VERIFIED }>{ EQUIPMENT_ACTION_VERIFIED }</MenuItem>
-                <MenuItem key={ EQUIPMENT_ACTION_FOR_HIRE } eventKey={ EQUIPMENT_ACTION_FOR_HIRE }>{ EQUIPMENT_ACTION_FOR_HIRE }</MenuItem>
-              </DropdownButton>
-              <Button onClick={ this.print }><Glyphicon glyph="print" title="Print" /></Button>
+              <Unimplemented>
+                <DropdownButton id='equipment-action-drop-down' title='Actions' onSelect={ this.actionSelected }>
+                  <MenuItem key={ EQUIPMENT_ACTION_ARCHIVE } eventKey={ EQUIPMENT_ACTION_ARCHIVE }>{ EQUIPMENT_ACTION_ARCHIVE }</MenuItem>
+                  <MenuItem key={ EQUIPMENT_ACTION_VERIFIED } eventKey={ EQUIPMENT_ACTION_VERIFIED }>{ EQUIPMENT_ACTION_VERIFIED }</MenuItem>
+                  <MenuItem key={ EQUIPMENT_ACTION_FOR_HIRE } eventKey={ EQUIPMENT_ACTION_FOR_HIRE }>{ EQUIPMENT_ACTION_FOR_HIRE }</MenuItem>
+                </DropdownButton>
+              </Unimplemented>
+              <Unimplemented>
+                <Button onClick={ this.print }><Glyphicon glyph="print" title="Print" /></Button>
+              </Unimplemented>
               <LinkContainer to={{ pathname: 'equipment' }}>
                 <Button title="Return to List"><Glyphicon glyph="arrow-left" /> Return to List</Button>
               </LinkContainer>
@@ -236,7 +245,9 @@ var EquipmentDetail = React.createClass({
                 </Row>
               </Col>
               <Col md={6}>
-                <Checkbox onChange={this.registeredInAreaChanged}>Have you registered this piece of equipment in this area before?</Checkbox>
+                <Unimplemented>
+                  <Checkbox onChange={this.registeredInAreaChanged}>Have you registered this piece of equipment in this area before?</Checkbox>
+                </Unimplemented>
               </Col>
             </Row>
           </div>;
@@ -288,7 +299,9 @@ var EquipmentDetail = React.createClass({
           <Col md={6}>
             <Well>
               <h3>Attachments <span className="pull-right">
-                <Button title="Add Attachment" bsSize="small" onClick={this.addPhysicalAttachment}><Glyphicon glyph="plus" /></Button>
+                <Unimplemented>
+                  <Button title="Add Attachment" bsSize="small" onClick={this.addPhysicalAttachment}><Glyphicon glyph="plus" /></Button>
+                </Unimplemented>
               </span></h3>
               {(() => {
                 if (this.state.loadingPhysicalAttachments ) { return <div style={{ textAlign: 'center' }}><Spinner/></div>; }
@@ -313,10 +326,14 @@ var EquipmentDetail = React.createClass({
                         <td>{ attachment.description }</td>
                         <td style={{ textAlign: 'right' }}>
                           <ButtonGroup>
-                            <Button className={ attachment.canEdit ? '' : 'hidden' } title="Edit Attachment" bsSize="xsmall" onClick={ this.openPhysicalAttachmentDialog.bind(this, attachment) }><Glyphicon glyph="pencil" /></Button>
-                            <OverlayTrigger trigger="click" placement="top" rootClose overlay={ <Confirm onConfirm={ this.deletePhysicalAttachment.bind(this, attachment) }/> }>
-                              <Button className={ attachment.canDelete ? '' : 'hidden' } title="Delete Attachment" bsSize="xsmall"><Glyphicon glyph="trash" /></Button>
-                            </OverlayTrigger>
+                            <Unimplemented>
+                              <Button className={ attachment.canEdit ? '' : 'hidden' } title="Edit Attachment" bsSize="xsmall" onClick={ this.openPhysicalAttachmentDialog.bind(this, attachment) }><Glyphicon glyph="pencil" /></Button>
+                            </Unimplemented>
+                            <Unimplemented>
+                              <OverlayTrigger trigger="click" placement="top" rootClose overlay={ <Confirm onConfirm={ this.deletePhysicalAttachment.bind(this, attachment) }/> }>
+                                <Button className={ attachment.canDelete ? '' : 'hidden' } title="Delete Attachment" bsSize="xsmall"><Glyphicon glyph="trash" /></Button>
+                              </OverlayTrigger>
+                            </Unimplemented>
                           </ButtonGroup>
                         </td>
                       </tr>;
@@ -379,7 +396,9 @@ var EquipmentDetail = React.createClass({
                     <ColLabel md={4} >Override Reason</ColLabel>
                     <ColField md={6}>{ equipment.seniorityOverrideReason }</ColField>
                     <ColField md={2}>
-                      <Button className="pull-right" title="Seniority History" bsSize="small" onClick={ this.showSeniorityHistory} >All ({ Object.keys(seniorityHistory).length })</Button>
+                      <Unimplemented>
+                        <Button className="pull-right" title="Seniority History" bsSize="small" onClick={ this.showSeniorityHistory} >All ({ Object.keys(seniorityHistory).length })</Button>
+                      </Unimplemented>
                     </ColField>
                   </Row>
                 </div>;
@@ -389,8 +408,12 @@ var EquipmentDetail = React.createClass({
           <Col md={6}>
             <Well>
               <h3>History <span className="pull-right">
-                <Button title="Add note" bsSize="small" onClick={this.addNote}><Glyphicon glyph="plus" /> Add Note</Button>
-                <Button title="Add document" bsSize="small" onClick={this.addDocument}><Glyphicon glyph="paperclip" /></Button>
+                <Unimplemented>
+                  <Button title="Add note" bsSize="small" onClick={this.addNote}><Glyphicon glyph="plus" /> Add Note</Button>
+                </Unimplemented>
+                <Unimplemented>
+                  <Button title="Add document" bsSize="small" onClick={this.addDocument}><Glyphicon glyph="paperclip" /></Button>
+                </Unimplemented>
               </span></h3>
               {(() => {
                 if (this.state.loadingEquipmentHistory) { return <div style={{ textAlign: 'center' }}><Spinner/></div>; }
