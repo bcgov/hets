@@ -45,9 +45,9 @@
             "table": null
         },
         {
-            "Description": "The Service Area associated with this Project record.",
+            "Description": "The Local Area associated with this Project record.",
             "Length": null,
-            "Name": "serviceArea",
+            "Name": "localArea",
             "RefDef": "ServiceArea",
             "Required": [
                 {
@@ -92,6 +92,28 @@
             "Description": "A descriptive name for the Project, useful to the HETS Clerk and Project Manager.",
             "Length": "100",
             "Name": "name",
+            "RefDef": null,
+            "Required": [
+                {
+                    "req": "id"
+                }
+            ],
+            "Unique": null,
+            "binary": null,
+            "boolean": null,
+            "datetime": null,
+            "float": null,
+            "id": null,
+            "integer": null,
+            "links": null,
+            "ref": null,
+            "string": "string",
+            "table": null
+        },
+        {
+            "Description": "The status of the project to determine if it is listed when creating new requests",
+            "Length": "50",
+            "Name": "status",
             "RefDef": null,
             "Required": [
                 {
@@ -1402,7 +1424,7 @@
             "Description": null,
             "Length": null,
             "Name": "rentalAgreement",
-            "RefDef": null,
+            "RefDef": "RentalAgreement",
             "Required": [
                 {
                     "req": "id"
@@ -1614,7 +1636,7 @@
             "Description": null,
             "Length": null,
             "Name": "rentalAgreement",
-            "RefDef": null,
+            "RefDef": "RentalAgreement",
             "Required": [],
             "Unique": null,
             "binary": null,
@@ -3601,72 +3623,6 @@
             "table": null
         },
         {
-            "Description": "The id of the next piece of Block 1 Equipment to be asked for a Rental Request. If null, start from the first piece of equipment in Block 1.",
-            "Length": null,
-            "Name": "askNextBlock1",
-            "RefDef": "Equipment",
-            "Required": [
-                {
-                    "req": "id"
-                }
-            ],
-            "Unique": null,
-            "binary": null,
-            "boolean": null,
-            "datetime": null,
-            "float": null,
-            "id": null,
-            "integer": null,
-            "links": null,
-            "ref": "ref",
-            "string": null,
-            "table": null
-        },
-        {
-            "Description": "The id of the next piece of Block 2 Equipment to be asked for a Rental Request. If null, start from the first piece of equipment in Block 2.",
-            "Length": null,
-            "Name": "askNextBlock2",
-            "RefDef": "Equipment",
-            "Required": [
-                {
-                    "req": "id"
-                }
-            ],
-            "Unique": null,
-            "binary": null,
-            "boolean": null,
-            "datetime": null,
-            "float": null,
-            "id": null,
-            "integer": null,
-            "links": null,
-            "ref": "ref",
-            "string": null,
-            "table": null
-        },
-        {
-            "Description": "The id of the next piece of Block Open Equipment to be asked for a Rental Request. If null, start from the first piece of equipment in Block Open.",
-            "Length": null,
-            "Name": "askNextBlockOpen",
-            "RefDef": "Equipment",
-            "Required": [
-                {
-                    "req": "id"
-                }
-            ],
-            "Unique": null,
-            "binary": null,
-            "boolean": null,
-            "datetime": null,
-            "float": null,
-            "id": null,
-            "integer": null,
-            "links": null,
-            "ref": "ref",
-            "string": null,
-            "table": null
-        },
-        {
             "Description": "TO BE REVIEWED WITH THE BUSINESS - WHAT IS THIS?",
             "Length": null,
             "Name": "equipRentalRateNo",
@@ -3795,6 +3751,138 @@
             "integer": "integer",
             "links": null,
             "ref": null,
+            "string": null,
+            "table": null
+        },
+        {
+            "Description": null,
+            "Length": null,
+            "Name": "EquipmentTypeNextRental",
+            "RefDef": null,
+            "Required": [
+                {
+                    "req": "id"
+                }
+            ],
+            "Unique": null,
+            "binary": null,
+            "boolean": null,
+            "datetime": null,
+            "float": null,
+            "id": null,
+            "integer": null,
+            "links": null,
+            "ref": null,
+            "string": null,
+            "table": "table"
+        },
+        {
+            "Description": null,
+            "Length": null,
+            "Name": "id",
+            "RefDef": null,
+            "Required": [
+                {
+                    "req": "id"
+                }
+            ],
+            "Unique": null,
+            "binary": null,
+            "boolean": null,
+            "datetime": null,
+            "float": null,
+            "id": "id",
+            "integer": null,
+            "links": null,
+            "ref": null,
+            "string": null,
+            "table": null
+        },
+        {
+            "Description": null,
+            "Length": null,
+            "Name": "equipmentType",
+            "RefDef": "EquipmentType",
+            "Required": [
+                {
+                    "req": "id"
+                }
+            ],
+            "Unique": null,
+            "binary": null,
+            "boolean": null,
+            "datetime": null,
+            "float": null,
+            "id": null,
+            "integer": null,
+            "links": null,
+            "ref": "ref",
+            "string": null,
+            "table": null
+        },
+        {
+            "Description": "The id of the next piece of Block 1 Equipment to be asked for a Rental Request. If null, start from the first piece of equipment in Block 1.",
+            "Length": null,
+            "Name": "askNextBlock1",
+            "RefDef": "Equipment",
+            "Required": [
+                {
+                    "req": "id"
+                }
+            ],
+            "Unique": null,
+            "binary": null,
+            "boolean": null,
+            "datetime": null,
+            "float": null,
+            "id": null,
+            "integer": null,
+            "links": null,
+            "ref": "ref",
+            "string": null,
+            "table": null
+        },
+        {
+            "Description": "The id of the next piece of Block 2 Equipment to be asked for a Rental Request. If null, start from the first piece of equipment in Block 2.",
+            "Length": null,
+            "Name": "askNextBlock2",
+            "RefDef": "Equipment",
+            "Required": [
+                {
+                    "req": "id"
+                }
+            ],
+            "Unique": null,
+            "binary": null,
+            "boolean": null,
+            "datetime": null,
+            "float": null,
+            "id": null,
+            "integer": null,
+            "links": null,
+            "ref": "ref",
+            "string": null,
+            "table": null
+        },
+        {
+            "Description": "The id of the next piece of Block Open Equipment to be asked for a Rental Request. If null, start from the first piece of equipment in Block Open.",
+            "Length": null,
+            "Name": "askNextBlockOpen",
+            "RefDef": "Equipment",
+            "Required": [
+                {
+                    "req": "id"
+                }
+            ],
+            "Unique": null,
+            "binary": null,
+            "boolean": null,
+            "datetime": null,
+            "float": null,
+            "id": null,
+            "integer": null,
+            "links": null,
+            "ref": "ref",
             "string": null,
             "table": null
         },
