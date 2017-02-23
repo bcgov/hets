@@ -19,6 +19,7 @@ using System.Runtime.Serialization;
 using Newtonsoft.Json;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.ComponentModel.DataAnnotations;
+using HETSAPI.Models;
 
 namespace HETSAPI.Models
 {
@@ -27,7 +28,7 @@ namespace HETSAPI.Models
     /// </summary>
         [MetaDataExtension (Description = "A permission that is part of a Role - a component of the authorization provided by the Role to the user to which the Role is assigned.")]
 
-    public partial class RolePermission : AuditableEntity,  IEquatable<RolePermission>
+    public partial class RolePermission : AuditableEntity, IEquatable<RolePermission>
     {
         /// <summary>
         /// Default constructor, required by entity framework

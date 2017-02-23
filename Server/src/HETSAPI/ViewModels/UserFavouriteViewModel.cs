@@ -1,7 +1,7 @@
 /*
- * REST API Documentation for the MOTI School Bus Application
+ * REST API Documentation for the MOTI Hired Equipment Tracking System (HETS) Application
  *
- * The School Bus application tracks that inspections are performed in a timely fashion. For each school bus the application tracks information about the bus (including data from ICBC, NSC, etc.), it's past and next inspection dates and results, contacts, and the inspector responsible for next inspecting the bus.
+ * The Hired Equipment Program is for owners/operators who have a dump truck, bulldozer, backhoe or  other piece of equipment they want to hire out to the transportation ministry for day labour and  emergency projects.  The Hired Equipment Program distributes available work to local equipment owners. The program is  based on seniority and is designed to deliver work to registered users fairly and efficiently  through the development of local area call-out lists. 
  *
  * OpenAPI spec version: v1
  * 
@@ -17,6 +17,8 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Runtime.Serialization;
 using Newtonsoft.Json;
+using System.ComponentModel.DataAnnotations.Schema;
+using System.ComponentModel.DataAnnotations;
 using HETSAPI.Models;
 
 namespace HETSAPI.ViewModels
@@ -41,49 +43,49 @@ namespace HETSAPI.ViewModels
         /// <param name="Name">Context Name.</param>
         /// <param name="Value">Saved search.</param>
         /// <param name="IsDefault">IsDefault.</param>
-        /// <param name="FavouriteContextTypeId">FavouriteContextTypeId.</param>
-        public UserFavouriteViewModel(int Id, string Name = null, string Value = null, bool? IsDefault = null, string Type = null)
-        {
-            this.Id = Id;
+        /// <param name="Type">Type of favourite.</param>
+        public UserFavouriteViewModel(int? Id = null, string Name = null, string Value = null, bool? IsDefault = null, string Type = null)
+        {               this.Id = Id;
             this.Name = Name;
             this.Value = Value;
             this.IsDefault = IsDefault;
             this.Type = Type;
-
         }
 
         /// <summary>
         /// Gets or Sets Id
         /// </summary>
-        [DataMember(Name = "id")]
-        public int Id { get; set; }
+        [DataMember(Name="id")]
+        public int? Id { get; set; }
 
         /// <summary>
         /// Context Name
         /// </summary>
         /// <value>Context Name</value>
-        [DataMember(Name = "name")]
-        [MetaDataExtension(Description = "Context Name")]
+        [DataMember(Name="name")]
+        [MetaDataExtension (Description = "Context Name")]
         public string Name { get; set; }
 
         /// <summary>
         /// Saved search
         /// </summary>
         /// <value>Saved search</value>
-        [DataMember(Name = "value")]
-        [MetaDataExtension(Description = "Saved search")]
+        [DataMember(Name="value")]
+        [MetaDataExtension (Description = "Saved search")]
         public string Value { get; set; }
 
         /// <summary>
         /// Gets or Sets IsDefault
         /// </summary>
-        [DataMember(Name = "isDefault")]
+        [DataMember(Name="isDefault")]
         public bool? IsDefault { get; set; }
 
         /// <summary>
-        /// Gets or Sets FavouriteContextTypeId
+        /// Type of favourite
         /// </summary>
-        [DataMember(Name = "type")]
+        /// <value>Type of favourite</value>
+        [DataMember(Name="type")]
+        [MetaDataExtension (Description = "Type of favourite")]
         public string Type { get; set; }
 
         /// <summary>
@@ -98,7 +100,7 @@ namespace HETSAPI.ViewModels
             sb.Append("  Name: ").Append(Name).Append("\n");
             sb.Append("  Value: ").Append(Value).Append("\n");
             sb.Append("  IsDefault: ").Append(IsDefault).Append("\n");
-            sb.Append("  FavouriteContextTypeId: ").Append(Type).Append("\n");
+            sb.Append("  Type: ").Append(Type).Append("\n");
             sb.Append("}\n");
             return sb.ToString();
         }
@@ -136,26 +138,27 @@ namespace HETSAPI.ViewModels
             if (ReferenceEquals(null, other)) { return false; }
             if (ReferenceEquals(this, other)) { return true; }
 
-            return
+            return                 
                 (
                     this.Id == other.Id ||
+                    this.Id != null &&
                     this.Id.Equals(other.Id)
-                ) &&
+                ) &&                 
                 (
                     this.Name == other.Name ||
                     this.Name != null &&
                     this.Name.Equals(other.Name)
-                ) &&
+                ) &&                 
                 (
                     this.Value == other.Value ||
                     this.Value != null &&
                     this.Value.Equals(other.Value)
-                ) &&
+                ) &&                 
                 (
                     this.IsDefault == other.IsDefault ||
                     this.IsDefault != null &&
                     this.IsDefault.Equals(other.IsDefault)
-                ) &&
+                ) &&                 
                 (
                     this.Type == other.Type ||
                     this.Type != null &&
@@ -177,34 +180,47 @@ namespace HETSAPI.ViewModels
                 if (this.Id != null)
                 {
                     hash = hash * 59 + this.Id.GetHashCode();
-                }
-                if (this.Name != null)
+                }                
+                                if (this.Name != null)
                 {
                     hash = hash * 59 + this.Name.GetHashCode();
-                }
-                if (this.Value != null)
+                }                
+                                if (this.Value != null)
                 {
                     hash = hash * 59 + this.Value.GetHashCode();
-                }
-                if (this.IsDefault != null)
+                }                
+                                if (this.IsDefault != null)
                 {
                     hash = hash * 59 + this.IsDefault.GetHashCode();
-                }
-                if (this.Type != null)
+                }                
+                                if (this.Type != null)
                 {
                     hash = hash * 59 + this.Type.GetHashCode();
-                }
+                }                
+                
                 return hash;
             }
         }
 
         #region Operators
-
+        
+        /// <summary>
+        /// Equals
+        /// </summary>
+        /// <param name="left"></param>
+        /// <param name="right"></param>
+        /// <returns></returns>
         public static bool operator ==(UserFavouriteViewModel left, UserFavouriteViewModel right)
         {
             return Equals(left, right);
         }
 
+        /// <summary>
+        /// Not Equals
+        /// </summary>
+        /// <param name="left"></param>
+        /// <param name="right"></param>
+        /// <returns></returns>
         public static bool operator !=(UserFavouriteViewModel left, UserFavouriteViewModel right)
         {
             return !Equals(left, right);

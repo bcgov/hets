@@ -31,6 +31,7 @@ namespace HETSAPI.Services.Impl
     public class ProjectService : IProjectService
     {
         private readonly DbAppContext _context;
+        
 
         /// <summary>
         /// Create a service and set the database context
@@ -38,6 +39,28 @@ namespace HETSAPI.Services.Impl
         public ProjectService(DbAppContext context)
         {
             _context = context;
+        }
+
+        private void AdjustRecord(Project item)
+        {
+            if (item != null)
+            {
+                // Adjust the record to allow it to be updated / inserted
+                if (item.LocalArea != null)
+                {
+                    int localarea_id = item.LocalArea.Id;
+                    bool localarea_exists = _context.LocalAreas.Any(a => a.Id == localarea_id);
+                    if (localarea_exists)
+                    {
+                        LocalArea localarea = _context.LocalAreas.First(a => a.Id == localarea_id);
+                        item.LocalArea = localarea;
+                    }
+                    else
+                    {
+                        item.LocalArea = null;
+                    }
+                }
+            }
         }
 
         /// <summary>
@@ -159,25 +182,25 @@ namespace HETSAPI.Services.Impl
         /// Searches Projects
         /// </summary>
         /// <remarks>Used for the project search page.</remarks>
-        /// <param name="serviceareas">Service Areas (array of id numbers)</param>
+        /// <param name="localareas">Local areas (array of id numbers)</param>
         /// <param name="project">name or partial name for a Project</param>
         /// <param name="hasRequests">if true then only include Projects with active Requests</param>
         /// <param name="hasHires">if true then only include Projects with active Rental Agreements</param>
         /// <response code="200">OK</response>
-        public virtual IActionResult ProjectsSearchGetAsync(int?[] serviceareas, string project, bool? hasRequests, bool? hasHires)
+        public virtual IActionResult ProjectsSearchGetAsync(int?[] localareas, string project, bool? hasRequests, bool? hasHires)
         {
             var data = _context.Projects
-                    .Include(x => x.ServiceArea.District.Region)
+                    .Include(x => x.LocalArea.ServiceArea.District.Region)
                     .Include(x => x.PrimaryContact)
                     .Select(x => x);
 
-            if (serviceareas != null)
+            if (localareas != null)
             {
-                foreach (int? servicearea in serviceareas)
+                foreach (int? localarea in localareas)
                 {
-                    if (servicearea != null)
+                    if (localarea != null)
                     {
-                        data = data.Where(x => x.ServiceArea.Id == servicearea);
+                        data = data.Where(x => x.LocalArea.Id == localarea);
                     }
                 }
             }

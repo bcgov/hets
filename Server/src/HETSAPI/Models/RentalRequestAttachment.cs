@@ -19,6 +19,7 @@ using System.Runtime.Serialization;
 using Newtonsoft.Json;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.ComponentModel.DataAnnotations;
+using HETSAPI.Models;
 
 namespace HETSAPI.Models
 {
@@ -27,7 +28,7 @@ namespace HETSAPI.Models
     /// </summary>
         [MetaDataExtension (Description = "Attachments that are required as part of the Rental Requests")]
 
-    public partial class RentalRequestAttachment : AuditableEntity,  IEquatable<RentalRequestAttachment>
+    public partial class RentalRequestAttachment : AuditableEntity, IEquatable<RentalRequestAttachment>
     {
         /// <summary>
         /// Default constructor, required by entity framework

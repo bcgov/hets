@@ -265,9 +265,9 @@
         - application/json
         - text/json
       parameters:        
-        - name: serviceareas
+        - name: localareas
           in: query
-          description: Service Areas (array of id numbers)
+          description: Local Areas (array of id numbers)
           collectionFormat: multi
           required: false
           type: array

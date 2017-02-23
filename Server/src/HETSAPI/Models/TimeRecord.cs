@@ -19,6 +19,7 @@ using System.Runtime.Serialization;
 using Newtonsoft.Json;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.ComponentModel.DataAnnotations;
+using HETSAPI.Models;
 
 namespace HETSAPI.Models
 {
@@ -27,7 +28,7 @@ namespace HETSAPI.Models
     /// </summary>
         [MetaDataExtension (Description = "A record of time worked for a piece of equipment hired for a specific project within a Local Area.")]
 
-    public partial class TimeRecord : AuditableEntity,  IEquatable<TimeRecord>
+    public partial class TimeRecord : AuditableEntity, IEquatable<TimeRecord>
     {
         /// <summary>
         /// Default constructor, required by entity framework

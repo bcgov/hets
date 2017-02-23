@@ -22,6 +22,8 @@ using HETSAPI.Models;
 using HETSAPI.ViewModels;
 using System.Security.Claims;
 using Microsoft.AspNetCore.Http;
+using Microsoft.EntityFrameworkCore;
+using HETSAPI.Mappings;
 
 namespace HETSAPI.Services.Impl
 { 
@@ -194,22 +196,34 @@ namespace HETSAPI.Services.Impl
 
         public virtual IActionResult UsersCurrentGetAsync ()        
         {
-            var result = new CurrentUserViewModel();
-
-            // get the name for the current logged in user
-            result.GivenName = User.FindFirst(ClaimTypes.GivenName).Value;
-            result.Surname = User.FindFirst(ClaimTypes.Surname).Value;
-
-            result.FullName = result.GivenName + " " + result.Surname;
-
             // get the current user id
             int? id = GetCurrentUserId();
 
-            result.DistrictName = "Victoria";
-            
-            // get the number of inspections available for the current logged in user
+            if (id != null)
+            {
+                User currentUser = _context.Users
+                                        .Include(x => x.District)
+                                        .Include(x => x.GroupMemberships)
+                                        .ThenInclude(y => y.Group)
+                                        .Include(x => x.UserRoles)
+                                        .ThenInclude(y => y.Role)
+                                        .ThenInclude(z => z.RolePermissions)
+                                        .ThenInclude(z => z.Permission)
+                                        .First(x => x.Id == id);
 
-            return new ObjectResult(result);
+                var result = currentUser.ToCurrentUserViewModel();
+
+                // get the name for the current logged in user
+                result.GivenName = User.FindFirst(ClaimTypes.GivenName).Value;
+                result.Surname = User.FindFirst(ClaimTypes.Surname).Value;
+                               
+
+                return new ObjectResult(result);
+            }
+            else
+            {
+                return new StatusCodeResult(404); // no current user ID
+            }
         }
 
 

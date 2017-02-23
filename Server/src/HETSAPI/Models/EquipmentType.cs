@@ -19,6 +19,7 @@ using System.Runtime.Serialization;
 using Newtonsoft.Json;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.ComponentModel.DataAnnotations;
+using HETSAPI.Models;
 
 namespace HETSAPI.Models
 {
@@ -27,7 +28,7 @@ namespace HETSAPI.Models
     /// </summary>
         [MetaDataExtension (Description = "A global and local area list of types of equipment for which a request can be generated and for which owners can register their equipment. If the local area is NULL, the type is visible Province-wide. In the previous instance of this application, all equipment types were assigned to the local area and transitioning to a province-wide model is being attempted (and may not work for the end users). An attempt to achieve a &amp;quot;mostly province-wide&amp;quot; list is being made during the data conversion process - mapping local area equipment types to provincial or local area types as part of data conversion.")]
 
-    public partial class EquipmentType : AuditableEntity,  IEquatable<EquipmentType>
+    public partial class EquipmentType : AuditableEntity, IEquatable<EquipmentType>
     {
         /// <summary>
         /// Default constructor, required by entity framework

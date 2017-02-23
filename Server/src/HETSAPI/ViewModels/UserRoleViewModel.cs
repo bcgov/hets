@@ -1,7 +1,7 @@
 /*
- * REST API Documentation for the MOTI School Bus Application
+ * REST API Documentation for the MOTI Hired Equipment Tracking System (HETS) Application
  *
- * The School Bus application tracks that inspections are performed in a timely fashion. For each school bus the application tracks information about the bus (including data from ICBC, NSC, etc.), it's past and next inspection dates and results, contacts, and the inspector responsible for next inspecting the bus.
+ * The Hired Equipment Program is for owners/operators who have a dump truck, bulldozer, backhoe or  other piece of equipment they want to hire out to the transportation ministry for day labour and  emergency projects.  The Hired Equipment Program distributes available work to local equipment owners. The program is  based on seniority and is designed to deliver work to registered users fairly and efficiently  through the development of local area call-out lists. 
  *
  * OpenAPI spec version: v1
  * 
@@ -17,6 +17,9 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Runtime.Serialization;
 using Newtonsoft.Json;
+using System.ComponentModel.DataAnnotations.Schema;
+using System.ComponentModel.DataAnnotations;
+using HETSAPI.Models;
 
 namespace HETSAPI.ViewModels
 {
@@ -42,16 +45,14 @@ namespace HETSAPI.ViewModels
         /// <param name="Id">Id.</param>
         /// <param name="ExpiryDate">ExpiryDate.</param>
         public UserRoleViewModel(DateTime EffectiveDate, int UserId, int RoleId, int? Id = null, DateTime? ExpiryDate = null)
-        {
-            
+        {   
             this.EffectiveDate = EffectiveDate;
-            
             this.UserId = UserId;
-            
             this.RoleId = RoleId;
+
+
             this.Id = Id;
             this.ExpiryDate = ExpiryDate;
-            
         }
 
         /// <summary>
@@ -134,24 +135,25 @@ namespace HETSAPI.ViewModels
             if (ReferenceEquals(null, other)) { return false; }
             if (ReferenceEquals(this, other)) { return true; }
 
-            return 
+            return                 
                 (
                     this.EffectiveDate == other.EffectiveDate ||
+                    this.EffectiveDate != null &&
                     this.EffectiveDate.Equals(other.EffectiveDate)
-                ) && 
+                ) &&                 
                 (
                     this.UserId == other.UserId ||
                     this.UserId.Equals(other.UserId)
-                ) && 
+                ) &&                 
                 (
                     this.RoleId == other.RoleId ||
                     this.RoleId.Equals(other.RoleId)
-                ) && 
+                ) &&                 
                 (
                     this.Id == other.Id ||
-                    
+                    this.Id != null &&
                     this.Id.Equals(other.Id)
-                ) && 
+                ) &&                 
                 (
                     this.ExpiryDate == other.ExpiryDate ||
                     this.ExpiryDate != null &&
@@ -170,31 +172,44 @@ namespace HETSAPI.ViewModels
             {
                 int hash = 41;
                 // Suitable nullity checks
-                hash = hash * 59 + this.EffectiveDate.GetHashCode();
-                
-                hash = hash * 59 + this.UserId.GetHashCode();
-                
-                hash = hash * 59 + this.RoleId.GetHashCode();
-                
-                if (this.Id != null)
+                   
+                if (this.EffectiveDate != null)
+                {
+                    hash = hash * 59 + this.EffectiveDate.GetHashCode();
+                }                                   
+                hash = hash * 59 + this.UserId.GetHashCode();                                   
+                hash = hash * 59 + this.RoleId.GetHashCode();                if (this.Id != null)
                 {
                     hash = hash * 59 + this.Id.GetHashCode();
-                }
-                if (this.ExpiryDate != null)
+                }                
+                                if (this.ExpiryDate != null)
                 {
                     hash = hash * 59 + this.ExpiryDate.GetHashCode();
-                }
+                }                
+                
                 return hash;
             }
         }
 
         #region Operators
-
+        
+        /// <summary>
+        /// Equals
+        /// </summary>
+        /// <param name="left"></param>
+        /// <param name="right"></param>
+        /// <returns></returns>
         public static bool operator ==(UserRoleViewModel left, UserRoleViewModel right)
         {
             return Equals(left, right);
         }
 
+        /// <summary>
+        /// Not Equals
+        /// </summary>
+        /// <param name="left"></param>
+        /// <param name="right"></param>
+        /// <returns></returns>
         public static bool operator !=(UserRoleViewModel left, UserRoleViewModel right)
         {
             return !Equals(left, right);

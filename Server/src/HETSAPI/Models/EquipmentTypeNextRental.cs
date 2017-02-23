@@ -19,6 +19,7 @@ using System.Runtime.Serialization;
 using Newtonsoft.Json;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.ComponentModel.DataAnnotations;
+using HETSAPI.Models;
 
 namespace HETSAPI.Models
 {
@@ -26,7 +27,7 @@ namespace HETSAPI.Models
     /// 
     /// </summary>
 
-    public partial class EquipmentTypeNextRental : AuditableEntity,  IEquatable<EquipmentTypeNextRental>
+    public partial class EquipmentTypeNextRental : AuditableEntity, IEquatable<EquipmentTypeNextRental>
     {
         /// <summary>
         /// Default constructor, required by entity framework

@@ -19,6 +19,7 @@ using System.Runtime.Serialization;
 using Newtonsoft.Json;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.ComponentModel.DataAnnotations;
+using HETSAPI.Models;
 
 namespace HETSAPI.Models
 {
@@ -27,7 +28,7 @@ namespace HETSAPI.Models
     /// </summary>
         [MetaDataExtension (Description = "An identified user in the HETS Application that has a defined authorization level.")]
 
-    public partial class User : AuditableEntity,  IEquatable<User>
+    public partial class User : AuditableEntity, IEquatable<User>
     {
         /// <summary>
         /// Default constructor, required by entity framework
