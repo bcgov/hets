@@ -1,6 +1,11 @@
 FROM microsoft/dotnet:1.1.0-sdk-projectjson
 # Dockerfile for package HETSAPI
 
+RUN apt-get update \
+ && apt-get upgrade -y --force-yes \
+ && apt-get install unzip less \
+ && rm -rf /var/lib/apt/lists/*;
+
 ENV DOTNET_CLI_TELEMETRY_OPTOUT 1
 
 # This setting is a workaround for issues with dotnet and certain docker versions
