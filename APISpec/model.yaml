@@ -10,7 +10,7 @@ definitions:
         type: integer
         description: A system-generated unique identifier for a Project
       localArea:
-        $ref: '#/definitions/ServiceArea'
+        $ref: '#/definitions/LocalArea'
         description: The Local Area associated with this Project record.
       provincialProjectNumber:
         type: string

@@ -48,7 +48,7 @@
             "Description": "The Local Area associated with this Project record.",
             "Length": null,
             "Name": "localArea",
-            "RefDef": "ServiceArea",
+            "RefDef": "LocalArea",
             "Required": [
                 {
                     "req": "id"
