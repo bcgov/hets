@@ -21,6 +21,7 @@ import DateControl from '../components/DateControl.jsx';
 import DropdownControl from '../components/DropdownControl.jsx';
 import Favourites from '../components/Favourites.jsx';
 import FilterDropdown from '../components/FilterDropdown.jsx';
+import FormInputControl from '../components/FormInputControl.jsx';
 import MultiDropdown from '../components/MultiDropdown.jsx';
 import SortTable from '../components/SortTable.jsx';
 import Spinner from '../components/Spinner.jsx';
@@ -40,7 +41,6 @@ var Equipment = React.createClass({
     equipmentList: React.PropTypes.object,
     localAreas: React.PropTypes.object,
     equipmentTypes: React.PropTypes.object,
-    physicalAttachmentTypes: React.PropTypes.object,
     owners: React.PropTypes.object,
     favourites: React.PropTypes.object,
     search: React.PropTypes.object,
@@ -56,7 +56,7 @@ var Equipment = React.createClass({
       search: {
         selectedLocalAreasIds: this.props.search.selectedLocalAreasIds || [],
         selectedEquipmentTypesIds: this.props.search.selectedEquipmentTypesIds || [],
-        selectedPhysicalAttachmentsIds: this.props.search.selectedPhysicalAttachmentsIds || [],
+        equipmentAttachment: this.props.search.equipmentAttachment || '',
         ownerId: this.props.search.ownerId || 0,
         ownerName: this.props.search.ownerName || 'Owner',
         lastVerifiedDate: this.props.search.lastVerifiedDate || '',
@@ -76,6 +76,7 @@ var Equipment = React.createClass({
       hired: this.state.search.hired,
       owner: this.state.search.ownerId || '',
       statusCode: this.state.search.statusCode,
+      equipmentAttachment: this.state.search.equipmentAttachment || '',
     };
 
     if (this.state.search.selectedLocalAreasIds.length > 0) {
@@ -83,9 +84,6 @@ var Equipment = React.createClass({
     }
     if (this.state.search.selectedEquipmentTypesIds.length > 0) {
       searchParams.types = this.state.search.selectedEquipmentTypesIds;
-    }
-    if (this.state.search.selectedPhysicalAttachmentsIds.length > 0) {
-      searchParams.attachments = this.state.search.selectedPhysicalAttachmentsIds;
     }
 
     var notVerifiedSinceDate = Moment(this.state.search.lastVerifiedDate);
@@ -99,10 +97,11 @@ var Equipment = React.createClass({
   componentDidMount() {
     this.setState({ loading: true });
 
+    var equipmentTypesPromise = Api.getEquipmentTypes();
     var ownersPromise = Api.getOwners();
     var favouritesPromise = Api.getFavourites('equipment');
 
-    Promise.all([ownersPromise, favouritesPromise]).then(() => {
+    Promise.all([equipmentTypesPromise, ownersPromise, favouritesPromise]).then(() => {
       // If this is the first load, then look for a default favourite
       if (!this.props.search.loaded) {
         var favourite = _.find(this.props.favourites, (favourite) => { return favourite.isDefault; });
@@ -157,7 +156,6 @@ var Equipment = React.createClass({
     var localAreas = _.sortBy(this.props.localAreas, 'name');
     var owners = _.sortBy(this.props.owners, 'organizationName');
     var equipmentTypes = _.sortBy(this.props.equipmentTypes, 'name');
-    var attachmentTypes = _.sortBy(this.props.physicalAttachmentTypes, 'name');
 
     return <div id="equipment-list">
       <Well id="equipment-bar" bsSize="small" className="clearfix">
@@ -182,8 +180,7 @@ var Equipment = React.createClass({
                 <DateControl id="lastVerifiedDate" date={ this.state.search.lastVerifiedDate } updateState={ this.updateSearchState } placeholder="mm/dd/yyyy" label="Not Verified Since:" title="last verified date"/>
                 <div id="equipment-attachments">
                   <ControlLabel>Attachment:</ControlLabel>
-                  <MultiDropdown id="selectedPhysicalAttachmentsIds" placeholder="Select Attachments"
-                    items={ attachmentTypes } selectedIds={ this.state.search.selectedPhysicalAttachmentsIds } updateState={ this.updateSearchState } showMaxItems={ 2 } />
+                  <FormInputControl id="equipmentAttachment" type="text" value={ this.state.search.equipmentAttachment } updateState={ this.updateSearchState } />
                 </div>
                 <Button id="search-button" bsStyle="primary" onClick={ this.fetch }>Search</Button>
               </ButtonToolbar>
@@ -227,7 +224,7 @@ var Equipment = React.createClass({
           { field: 'make',                 title: 'Make'          },
           { field: 'model',                title: 'Model'         },
           { field: 'size',                 title: 'Size'          },
-          { field: 'attachments',          title: 'Attachments'   },
+          { field: 'equipmentAttachments', title: 'Attachments'   },
           { field: 'lastVerifiedDate',     title: 'Last Verified' },
           { field: 'addEquipment',         title: 'Add Equipment',       style: { textAlign: 'right' },
             node: addEquipmentButton,
@@ -267,7 +264,6 @@ function mapStateToProps(state) {
     equipmentList: state.models.equipmentList,
     localAreas: state.lookups.localAreas,
     equipmentTypes: state.lookups.equipmentTypes,
-    physicalAttachmentTypes: state.lookups.physicalAttachmentTypes,
     owners: state.lookups.owners,
     favourites: state.models.favourites,
     search: state.search.equipmentList,

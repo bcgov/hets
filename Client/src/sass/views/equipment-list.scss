@@ -29,13 +29,16 @@
     }
 
     #equipment-attachments {
-      .multi-dropdown {
-        margin-left: 5px;
-      }
-
       label {
         float: left;
         font-weight: normal;
+      }
+
+      input {
+        float: left;
+        min-width: 175px;
+        width: auto;
+        margin-left: 10px;
       }
     }
   }
