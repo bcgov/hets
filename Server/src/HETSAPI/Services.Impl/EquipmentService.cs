@@ -397,6 +397,52 @@ namespace HETSAPI.Services.Impl
             }
         }
 
+        private void CalculateViewModel(EquipmentViewModel result)
+        {
+            // populate the calculated fields.
+
+            // ServiceHoursThisYear is the sum of TimeCard hours for the current fiscal year (April 1 - March 31) for the equipment.
+
+            // At this time the structure for timecard hours is not set, so it is set to a constant.
+
+            // TODO: change to a real calculation once the structure for timecard hours is established.
+
+            result.ServiceHoursThisYear = 99;
+
+            // lastTimeRecordDateThisYear is the most recent time card date this year.  Can be null.
+
+            // TODO: change to a real calculation once the structure for timecard hours is established.
+
+            result.LastTimeRecordDateThisYear = null;
+
+            // isWorking is true if there is an active Rental Agreements for the equipment. 
+
+            result.IsWorking = _context.RentalAgreements
+                .Include(x => x.Equipment)
+                .Any(x => x.Equipment.Id == result.Id);
+
+            // hasDuplicates is true if there is other equipment with the same serial number.
+
+            result.HasDuplicates = _context.Equipments.Any(x => x.SerialNumber == result.SerialNumber && x.Status == "Active");
+
+            // duplicate Equipment uses the same criteria as hasDuplicates.
+
+            if (result.HasDuplicates == true)
+            {
+                result.DuplicateEquipment = _context.Equipments
+                    .Include(x => x.LocalArea.ServiceArea.District.Region)
+                    .Include(x => x.EquipmentType)
+                    .Include(x => x.DumpTruck)
+                    .Include(x => x.Owner)
+                    .Include(x => x.EquipmentAttachments)
+                    .Include(x => x.Notes)
+                    .Include(x => x.Attachments)
+                    .Include(x => x.History)
+                    .Where(x => x.SerialNumber == result.SerialNumber && x.Status == "Active")
+                    .ToList();
+            }
+        }
+
         /// <summary>
         /// 
         /// </summary>
@@ -419,48 +465,7 @@ namespace HETSAPI.Services.Impl
                     .First(a => a.Id == id);
                 var result = equipment.ToViewModel();
 
-                // populate the calculated fields.
-
-                // ServiceHoursThisYear is the sum of TimeCard hours for the current fiscal year (April 1 - March 31) for the equipment.
-
-                // At this time the structure for timecard hours is not set, so it is set to a constant.
-
-                // TODO: change to a real calculation once the structure for timecard hours is established.
-
-                result.ServiceHoursThisYear = 99;
-
-                // lastTimeRecordDateThisYear is the most recent time card date this year.  Can be null.
-
-                // TODO: change to a real calculation once the structure for timecard hours is established.
-
-                result.LastTimeRecordDateThisYear = null;
-
-                // isWorking is true if there is an active Rental Agreements for the equipment. 
-
-                result.IsWorking = _context.RentalAgreements
-                    .Include(x => x.Equipment)
-                    .Any(x => x.Equipment.Id == result.Id);
-
-               // hasDuplicates is true if there is other equipment with the same serial number.
-
-                result.HasDuplicates = _context.Equipments.Any(x => x.SerialNumber == result.SerialNumber && x.Status == "Active");
-                
-                // duplicate Equipment uses the same criteria as hasDuplicates.
-
-                if (result.HasDuplicates == true)
-                {
-                    result.DuplicateEquipment = _context.Equipments
-                        .Include(x => x.LocalArea.ServiceArea.District.Region)
-                        .Include(x => x.EquipmentType)
-                        .Include(x => x.DumpTruck)
-                        .Include(x => x.Owner)
-                        .Include(x => x.EquipmentAttachments)
-                        .Include(x => x.Notes)
-                        .Include(x => x.Attachments)
-                        .Include(x => x.History)
-                        .Where(x => x.SerialNumber == result.SerialNumber && x.Status == "Active")
-                        .ToList();
-                }
+                CalculateViewModel(result);
 
                 return new ObjectResult(result);
             }
@@ -522,13 +527,13 @@ namespace HETSAPI.Services.Impl
         /// <remarks>Used for the equipment search page.</remarks>
         /// <param name="localareas">Local Areas (array of id numbers)</param>
         /// <param name="types">Equipment Types (array of id numbers)</param>
-        /// <param name="attachments">Equipment Attachments (array of id numbers)</param>
+        /// <param name="equipmentAttachment">Equipment Attachments </param>
         /// <param name="owner"></param>
         /// <param name="status">Status</param>
         /// <param name="hired">Hired</param>
         /// <param name="notverifiedsincedate">Not Verified Since Date</param>
         /// <response code="200">OK</response>
-        public virtual IActionResult EquipmentSearchGetAsync(int?[] localareas, int?[] types, int?[] attachments, int? owner, string status, bool? hired, DateTime? notverifiedsincedate)
+        public virtual IActionResult EquipmentSearchGetAsync(int?[] localareas, int?[] types, string equipmentAttachment, int? owner, string status, bool? hired, DateTime? notverifiedsincedate)
         {
             var data = _context.Equipments
                     .Include(x => x.LocalArea.ServiceArea.District.Region)
@@ -562,18 +567,12 @@ namespace HETSAPI.Services.Impl
                     }
                 }
             }
-
-            if (attachments != null)
+            
+            if (equipmentAttachment != null)
             {
-                foreach (int? attachment in attachments)
-                {
-                    if (attachment != null)
-                    {
-                        data = data.Where(x => x.EquipmentAttachments.Any(y => y.Id == attachment));
-                    }
-                }
+                data = data.Where(x => x.EquipmentAttachments.Any(y => y.Attachment.ToLower().Contains (equipmentAttachment.ToLower())));
             }
-
+            
             if (owner != null)
             {
                 data = data.Where(x => x.Owner.Id == owner);                
@@ -594,7 +593,14 @@ namespace HETSAPI.Services.Impl
                 data = data.Where(x => x.LastVerifiedDate >= notverifiedsincedate);
             }
 
-            var result = data.ToList();
+            List<EquipmentViewModel> result = new List<EquipmentViewModel>();
+            foreach (var item in data)
+            {
+                EquipmentViewModel newItem = item.ToViewModel();
+                CalculateViewModel(newItem);
+                result.Add(newItem);
+            }
+            
             return new ObjectResult(result);
 
         }

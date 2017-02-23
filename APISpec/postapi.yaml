@@ -25,12 +25,10 @@
           type: array
           items:
             type: integer
-        - name: attachments
+        - name: equipmentAttachment
           in: query
-          description: Equipment Attachments (array of id numbers)
-          type: array
-          items:
-            type: integer
+          description: Searches equipmentAttachment type
+          type: string          
         - name: owner
           in: query
           type: integer
