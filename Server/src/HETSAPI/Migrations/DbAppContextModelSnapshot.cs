@@ -1030,6 +1030,9 @@ namespace HETSAPI.Migrations
                         .HasColumnName("LAST_UPDATE_USERID")
                         .HasMaxLength(50);
 
+                    b.Property<int?>("LocalAreaRefId")
+                        .HasColumnName("LOCAL_AREA_REF_ID");
+
                     b.Property<string>("Name")
                         .HasColumnName("NAME")
                         .HasMaxLength(100);
@@ -1041,14 +1044,15 @@ namespace HETSAPI.Migrations
                         .HasColumnName("PROVINCIAL_PROJECT_NUMBER")
                         .HasMaxLength(150);
 
-                    b.Property<int?>("ServiceAreaRefId")
-                        .HasColumnName("SERVICE_AREA_REF_ID");
+                    b.Property<string>("Status")
+                        .HasColumnName("STATUS")
+                        .HasMaxLength(50);
 
                     b.HasKey("Id");
 
-                    b.HasIndex("PrimaryContactRefId");
+                    b.HasIndex("LocalAreaRefId");
 
-                    b.HasIndex("ServiceAreaRefId");
+                    b.HasIndex("PrimaryContactRefId");
 
                     b.ToTable("HET_PROJECT");
                 });
@@ -1946,13 +1950,13 @@ namespace HETSAPI.Migrations
 
             modelBuilder.Entity("HETSAPI.Models.Project", b =>
                 {
+                    b.HasOne("HETSAPI.Models.LocalArea", "LocalArea")
+                        .WithMany()
+                        .HasForeignKey("LocalAreaRefId");
+
                     b.HasOne("HETSAPI.Models.Contact", "PrimaryContact")
                         .WithMany()
                         .HasForeignKey("PrimaryContactRefId");
-
-                    b.HasOne("HETSAPI.Models.ServiceArea", "ServiceArea")
-                        .WithMany()
-                        .HasForeignKey("ServiceAreaRefId");
                 });
 
             modelBuilder.Entity("HETSAPI.Models.RentalAgreement", b =>

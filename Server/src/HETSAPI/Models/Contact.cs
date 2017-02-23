@@ -19,6 +19,7 @@ using System.Runtime.Serialization;
 using Newtonsoft.Json;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.ComponentModel.DataAnnotations;
+using HETSAPI.Models;
 
 namespace HETSAPI.Models
 {
@@ -27,7 +28,7 @@ namespace HETSAPI.Models
     /// </summary>
         [MetaDataExtension (Description = "A person and their related contact information linked to one or more entities in the system. For examples, there are contacts for Owners, Projects.")]
 
-    public partial class Contact : AuditableEntity,  IEquatable<Contact>
+    public partial class Contact : AuditableEntity, IEquatable<Contact>
     {
         /// <summary>
         /// Default constructor, required by entity framework

@@ -19,6 +19,7 @@ using System.Runtime.Serialization;
 using Newtonsoft.Json;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.ComponentModel.DataAnnotations;
+using HETSAPI.Models;
 
 namespace HETSAPI.Models
 {
@@ -27,7 +28,7 @@ namespace HETSAPI.Models
     /// </summary>
         [MetaDataExtension (Description = "A condition about the rental agreement to be displayed on the Rental Agreement.")]
 
-    public partial class RentalAgreementCondition : AuditableEntity,  IEquatable<RentalAgreementCondition>
+    public partial class RentalAgreementCondition : AuditableEntity, IEquatable<RentalAgreementCondition>
     {
         /// <summary>
         /// Default constructor, required by entity framework

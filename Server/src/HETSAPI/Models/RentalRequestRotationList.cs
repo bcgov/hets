@@ -19,6 +19,7 @@ using System.Runtime.Serialization;
 using Newtonsoft.Json;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.ComponentModel.DataAnnotations;
+using HETSAPI.Models;
 
 namespace HETSAPI.Models
 {
@@ -27,7 +28,7 @@ namespace HETSAPI.Models
     /// </summary>
         [MetaDataExtension (Description = "An eligible piece of equipment for a request and a tracking of the hire offer and response process related to a request for that piece of equipment. Includes a link from the equipment to a Rental Agreement if the equipment was hired to satisfy a part of the request.")]
 
-    public partial class RentalRequestRotationList : AuditableEntity,  IEquatable<RentalRequestRotationList>
+    public partial class RentalRequestRotationList : AuditableEntity, IEquatable<RentalRequestRotationList>
     {
         /// <summary>
         /// Default constructor, required by entity framework

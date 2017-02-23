@@ -19,6 +19,7 @@ using System.Runtime.Serialization;
 using Newtonsoft.Json;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.ComponentModel.DataAnnotations;
+using HETSAPI.Models;
 
 namespace HETSAPI.Models
 {
@@ -27,7 +28,7 @@ namespace HETSAPI.Models
     /// </summary>
         [MetaDataExtension (Description = "The Ministry of Transportion and Infrastructure REGION.")]
 
-    public partial class Region : AuditableEntity,  IEquatable<Region>
+    public partial class Region : AuditableEntity, IEquatable<Region>
     {
         /// <summary>
         /// Default constructor, required by entity framework

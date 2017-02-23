@@ -19,6 +19,7 @@ using System.Runtime.Serialization;
 using Newtonsoft.Json;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.ComponentModel.DataAnnotations;
+using HETSAPI.Models;
 
 namespace HETSAPI.Models
 {
@@ -27,7 +28,7 @@ namespace HETSAPI.Models
     /// </summary>
         [MetaDataExtension (Description = "Uploaded documents related to entity in the application - e.g. piece of Equipment, an Owner, a Project and so on.")]
 
-    public partial class Attachment : AuditableEntity,  IEquatable<Attachment>
+    public partial class Attachment : AuditableEntity, IEquatable<Attachment>
     {
         /// <summary>
         /// Default constructor, required by entity framework

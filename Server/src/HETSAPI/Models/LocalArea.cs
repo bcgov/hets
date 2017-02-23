@@ -19,6 +19,7 @@ using System.Runtime.Serialization;
 using Newtonsoft.Json;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.ComponentModel.DataAnnotations;
+using HETSAPI.Models;
 
 namespace HETSAPI.Models
 {
@@ -27,7 +28,7 @@ namespace HETSAPI.Models
     /// </summary>
         [MetaDataExtension (Description = "A HETS-application defined area that is within a Service Area.")]
 
-    public partial class LocalArea : AuditableEntity,  IEquatable<LocalArea>
+    public partial class LocalArea : AuditableEntity, IEquatable<LocalArea>
     {
         /// <summary>
         /// Default constructor, required by entity framework

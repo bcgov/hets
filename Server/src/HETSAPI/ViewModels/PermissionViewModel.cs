@@ -1,7 +1,7 @@
 /*
- * REST API Documentation for the MOTI School Bus Application
+ * REST API Documentation for the MOTI Hired Equipment Tracking System (HETS) Application
  *
- * The School Bus application tracks that inspections are performed in a timely fashion. For each school bus the application tracks information about the bus (including data from ICBC, NSC, etc.), it's past and next inspection dates and results, contacts, and the inspector responsible for next inspecting the bus.
+ * The Hired Equipment Program is for owners/operators who have a dump truck, bulldozer, backhoe or  other piece of equipment they want to hire out to the transportation ministry for day labour and  emergency projects.  The Hired Equipment Program distributes available work to local equipment owners. The program is  based on seniority and is designed to deliver work to registered users fairly and efficiently  through the development of local area call-out lists. 
  *
  * OpenAPI spec version: v1
  * 
@@ -17,6 +17,9 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Runtime.Serialization;
 using Newtonsoft.Json;
+using System.ComponentModel.DataAnnotations.Schema;
+using System.ComponentModel.DataAnnotations;
+using HETSAPI.Models;
 
 namespace HETSAPI.ViewModels
 {
@@ -40,14 +43,12 @@ namespace HETSAPI.ViewModels
         /// <param name="Name">Name (required).</param>
         /// <param name="Description">Description (required).</param>
         public PermissionViewModel(string Code, string Name, string Description)
-        {
-            
+        {   
             this.Code = Code;
-            
             this.Name = Name;
-            
             this.Description = Description;
-            
+
+
         }
 
         /// <summary>
@@ -116,17 +117,17 @@ namespace HETSAPI.ViewModels
             if (ReferenceEquals(null, other)) { return false; }
             if (ReferenceEquals(this, other)) { return true; }
 
-            return 
+            return                 
                 (
                     this.Code == other.Code ||
                     this.Code != null &&
                     this.Code.Equals(other.Code)
-                ) && 
+                ) &&                 
                 (
                     this.Name == other.Name ||
                     this.Name != null &&
                     this.Name.Equals(other.Name)
-                ) && 
+                ) &&                 
                 (
                     this.Description == other.Description ||
                     this.Description != null &&
@@ -148,26 +149,39 @@ namespace HETSAPI.ViewModels
                 if (this.Code != null)
                 {
                     hash = hash * 59 + this.Code.GetHashCode();
-                }
-                if (this.Name != null)
+                }                
+                                if (this.Name != null)
                 {
                     hash = hash * 59 + this.Name.GetHashCode();
-                }
-                if (this.Description != null)
+                }                
+                                if (this.Description != null)
                 {
                     hash = hash * 59 + this.Description.GetHashCode();
-                }
+                }                
+                
                 return hash;
             }
         }
 
         #region Operators
-
+        
+        /// <summary>
+        /// Equals
+        /// </summary>
+        /// <param name="left"></param>
+        /// <param name="right"></param>
+        /// <returns></returns>
         public static bool operator ==(PermissionViewModel left, PermissionViewModel right)
         {
             return Equals(left, right);
         }
 
+        /// <summary>
+        /// Not Equals
+        /// </summary>
+        /// <param name="left"></param>
+        /// <param name="right"></param>
+        /// <returns></returns>
         public static bool operator !=(PermissionViewModel left, PermissionViewModel right)
         {
             return !Equals(left, right);

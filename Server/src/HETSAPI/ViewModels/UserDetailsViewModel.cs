@@ -1,7 +1,7 @@
 /*
- * REST API Documentation for the MOTI School Bus Application
+ * REST API Documentation for the MOTI Hired Equipment Tracking System (HETS) Application
  *
- * The School Bus application tracks that inspections are performed in a timely fashion. For each school bus the application tracks information about the bus (including data from ICBC, NSC, etc.), it's past and next inspection dates and results, contacts, and the inspector responsible for next inspecting the bus.
+ * The Hired Equipment Program is for owners/operators who have a dump truck, bulldozer, backhoe or  other piece of equipment they want to hire out to the transportation ministry for day labour and  emergency projects.  The Hired Equipment Program distributes available work to local equipment owners. The program is  based on seniority and is designed to deliver work to registered users fairly and efficiently  through the development of local area call-out lists. 
  *
  * OpenAPI spec version: v1
  * 
@@ -17,6 +17,9 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Runtime.Serialization;
 using Newtonsoft.Json;
+using System.ComponentModel.DataAnnotations.Schema;
+using System.ComponentModel.DataAnnotations;
+using HETSAPI.Models;
 
 namespace HETSAPI.ViewModels
 {
@@ -44,17 +47,15 @@ namespace HETSAPI.ViewModels
         /// <param name="Email">Email.</param>
         /// <param name="Permissions">Permissions.</param>
         public UserDetailsViewModel(int Id, bool Active, string GivenName = null, string Surname = null, string Initials = null, string Email = null, List<PermissionViewModel> Permissions = null)
-        {
-            
+        {   
             this.Id = Id;
-            
             this.Active = Active;
+
             this.GivenName = GivenName;
             this.Surname = Surname;
             this.Initials = Initials;
             this.Email = Email;
             this.Permissions = Permissions;
-            
         }
 
         /// <summary>
@@ -151,31 +152,30 @@ namespace HETSAPI.ViewModels
             if (ReferenceEquals(null, other)) { return false; }
             if (ReferenceEquals(this, other)) { return true; }
 
-            return 
+            return                 
                 (
                     this.Id == other.Id ||
-                    
                     this.Id.Equals(other.Id)
-                ) && 
+                ) &&                 
                 (
                     this.Active == other.Active ||
                     this.Active.Equals(other.Active)
-                ) && 
+                ) &&                 
                 (
                     this.GivenName == other.GivenName ||
                     this.GivenName != null &&
                     this.GivenName.Equals(other.GivenName)
-                ) && 
+                ) &&                 
                 (
                     this.Surname == other.Surname ||
                     this.Surname != null &&
                     this.Surname.Equals(other.Surname)
-                ) && 
+                ) &&                 
                 (
                     this.Initials == other.Initials ||
                     this.Initials != null &&
                     this.Initials.Equals(other.Initials)
-                ) && 
+                ) &&                 
                 (
                     this.Email == other.Email ||
                     this.Email != null &&
@@ -199,24 +199,26 @@ namespace HETSAPI.ViewModels
             {
                 int hash = 41;
                 // Suitable nullity checks
-                hash = hash * 59 + this.Id.GetHashCode();             
-                hash = hash * 59 + this.Active.GetHashCode();                
-                if (this.GivenName != null)
+                                   
+                hash = hash * 59 + this.Id.GetHashCode();                   
+                hash = hash * 59 + this.Active.GetHashCode();
+                                if (this.GivenName != null)
                 {
                     hash = hash * 59 + this.GivenName.GetHashCode();
-                }
-                if (this.Surname != null)
+                }                
+                                if (this.Surname != null)
                 {
                     hash = hash * 59 + this.Surname.GetHashCode();
-                }
-                if (this.Initials != null)
+                }                
+                                if (this.Initials != null)
                 {
                     hash = hash * 59 + this.Initials.GetHashCode();
-                }
-                if (this.Email != null)
+                }                
+                                if (this.Email != null)
                 {
                     hash = hash * 59 + this.Email.GetHashCode();
-                }
+                }                
+                                   
                 if (this.Permissions != null)
                 {
                     hash = hash * 59 + this.Permissions.GetHashCode();
@@ -226,12 +228,24 @@ namespace HETSAPI.ViewModels
         }
 
         #region Operators
-
+        
+        /// <summary>
+        /// Equals
+        /// </summary>
+        /// <param name="left"></param>
+        /// <param name="right"></param>
+        /// <returns></returns>
         public static bool operator ==(UserDetailsViewModel left, UserDetailsViewModel right)
         {
             return Equals(left, right);
         }
 
+        /// <summary>
+        /// Not Equals
+        /// </summary>
+        /// <param name="left"></param>
+        /// <param name="right"></param>
+        /// <returns></returns>
         public static bool operator !=(UserDetailsViewModel left, UserDetailsViewModel right)
         {
             return !Equals(left, right);

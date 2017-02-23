@@ -9,6 +9,28 @@ namespace HETSAPI.Mappings
 {
     public static class MappingExtensions
     {
+
+        /// <summary>
+        /// Convert User to CurrentUserViewModel
+        /// </summary>
+        /// <param name="model"></param>
+        /// <returns></returns>
+        public static CurrentUserViewModel ToCurrentUserViewModel(this User model)
+        {
+            var dto = new CurrentUserViewModel();
+            if (model != null)
+            {
+                dto.Email = model.Email;
+                dto.GivenName = model.GivenName;
+                dto.Surname = model.Surname;
+                dto.Id = model.Id;
+                dto.District = model.District;
+                dto.GroupMemberships = model.GroupMemberships;
+                dto.UserRoles = model.UserRoles;
+            }
+            return dto;
+        }
+
         /// <summary>
         /// Convert Attachment to AttachmentViewModel
         /// </summary>
@@ -105,7 +127,7 @@ namespace HETSAPI.Mappings
             dto.Id = model.Id;
             dto.Name = model.Name;
             dto.PrimaryContact = model.PrimaryContact;
-            dto.ServiceArea = model.ServiceArea;
+            dto.LocalArea = model.LocalArea;
             return dto;         
         }
 
