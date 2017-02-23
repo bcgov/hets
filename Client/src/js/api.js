@@ -452,15 +452,6 @@ export function getEquipmentTypes() {
   });
 }
 
-export function getPhysicalAttachmentTypes() {
-  return new ApiRequest('/equipmentattachmenttypes').get().then(response => {
-    // Normalize the response
-    var physicalAttachmentTypes = _.fromPairs(response.map(attachType => [ attachType.id, attachType ]));
-
-    store.dispatch({ type: Action.UPDATE_PHYSICAL_ATTACHMENT_TYPES_LOOKUP, physicalAttachmentTypes: physicalAttachmentTypes });
-  });
-}
-
 ////////////////////
 // Version
 ////////////////////
