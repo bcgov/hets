@@ -21,16 +21,18 @@ import DateControl from '../components/DateControl.jsx';
 import DropdownControl from '../components/DropdownControl.jsx';
 import Favourites from '../components/Favourites.jsx';
 import FilterDropdown from '../components/FilterDropdown.jsx';
+import FormInputControl from '../components/FormInputControl.jsx';
 import MultiDropdown from '../components/MultiDropdown.jsx';
 import SortTable from '../components/SortTable.jsx';
 import Spinner from '../components/Spinner.jsx';
+import Unimplemented from '../components/Unimplemented.jsx';
 
 import { formatDateTime } from '../utils/date';
 
 /*
 
 TODO:
-* Print
+* Print / Add Equipment
 
 */
 
@@ -39,7 +41,6 @@ var Equipment = React.createClass({
     equipmentList: React.PropTypes.object,
     localAreas: React.PropTypes.object,
     equipmentTypes: React.PropTypes.object,
-    physicalAttachmentTypes: React.PropTypes.object,
     owners: React.PropTypes.object,
     favourites: React.PropTypes.object,
     search: React.PropTypes.object,
@@ -49,11 +50,13 @@ var Equipment = React.createClass({
   getInitialState() {
     return {
       loading: false,
+      
+      showAddDialog: false,
 
       search: {
         selectedLocalAreasIds: this.props.search.selectedLocalAreasIds || [],
         selectedEquipmentTypesIds: this.props.search.selectedEquipmentTypesIds || [],
-        selectedPhysicalAttachmentsIds: this.props.search.selectedPhysicalAttachmentsIds || [],
+        equipmentAttachment: this.props.search.equipmentAttachment || '',
         ownerId: this.props.search.ownerId || 0,
         ownerName: this.props.search.ownerName || 'Owner',
         lastVerifiedDate: this.props.search.lastVerifiedDate || '',
@@ -73,6 +76,7 @@ var Equipment = React.createClass({
       hired: this.state.search.hired,
       owner: this.state.search.ownerId || '',
       statusCode: this.state.search.statusCode,
+      equipmentAttachment: this.state.search.equipmentAttachment || '',
     };
 
     if (this.state.search.selectedLocalAreasIds.length > 0) {
@@ -80,9 +84,6 @@ var Equipment = React.createClass({
     }
     if (this.state.search.selectedEquipmentTypesIds.length > 0) {
       searchParams.types = this.state.search.selectedEquipmentTypesIds;
-    }
-    if (this.state.search.selectedPhysicalAttachmentsIds.length > 0) {
-      searchParams.attachments = this.state.search.selectedPhysicalAttachmentsIds;
     }
 
     var notVerifiedSinceDate = Moment(this.state.search.lastVerifiedDate);
@@ -96,10 +97,11 @@ var Equipment = React.createClass({
   componentDidMount() {
     this.setState({ loading: true });
 
+    var equipmentTypesPromise = Api.getEquipmentTypes();
     var ownersPromise = Api.getOwners();
     var favouritesPromise = Api.getFavourites('equipment');
 
-    Promise.all([ownersPromise, favouritesPromise]).then(() => {
+    Promise.all([equipmentTypesPromise, ownersPromise, favouritesPromise]).then(() => {
       // If this is the first load, then look for a default favourite
       if (!this.props.search.loaded) {
         var favourite = _.find(this.props.favourites, (favourite) => { return favourite.isDefault; });
@@ -137,15 +139,23 @@ var Equipment = React.createClass({
     this.updateSearchState(JSON.parse(favourite.value), this.fetch);
   },
 
+  openAddDialog() {
+    // TODO Add Equipment
+    this.setState({ showAddDialog: true });
+  },
+
+  closeAddDialog() {
+    this.setState({ showAddDialog: false });
+  },
+
   print() {
     // TODO Implement
   },
 
   render() {
     var localAreas = _.sortBy(this.props.localAreas, 'name');
-    var owners = _.sortBy(this.props.owners, 'name');
-    var equipmentTypes = _.sortBy(this.props.equipmentTypes, 'description');
-    var attachmentTypes = _.sortBy(this.props.physicalAttachmentTypes, 'name');
+    var owners = _.sortBy(this.props.owners, 'organizationName');
+    var equipmentTypes = _.sortBy(this.props.equipmentTypes, 'name');
 
     return <div id="equipment-list">
       <Well id="equipment-bar" bsSize="small" className="clearfix">
@@ -170,8 +180,7 @@ var Equipment = React.createClass({
                 <DateControl id="lastVerifiedDate" date={ this.state.search.lastVerifiedDate } updateState={ this.updateSearchState } placeholder="mm/dd/yyyy" label="Not Verified Since:" title="last verified date"/>
                 <div id="equipment-attachments">
                   <ControlLabel>Attachment:</ControlLabel>
-                  <MultiDropdown id="selectedPhysicalAttachmentsIds" placeholder="Select Attachments"
-                    items={ attachmentTypes } selectedIds={ this.state.search.selectedPhysicalAttachmentsIds } updateState={ this.updateSearchState } showMaxItems={ 2 } />
+                  <FormInputControl id="equipmentAttachment" type="text" value={ this.state.search.equipmentAttachment } updateState={ this.updateSearchState } />
                 </div>
                 <Button id="search-button" bsStyle="primary" onClick={ this.fetch }>Search</Button>
               </ButtonToolbar>
@@ -180,7 +189,9 @@ var Equipment = React.createClass({
           <Col md={1}>
             <Row id="equipment-buttons">
               <ButtonGroup>
-                <Button onClick={ this.print }><Glyphicon glyph="print" title="Print" /></Button>
+                <Unimplemented>
+                  <Button onClick={ this.print }><Glyphicon glyph="print" title="Print" /></Button>
+                </Unimplemented>
               </ButtonGroup>
             </Row>
             <Row id="equipment-faves">
@@ -191,25 +202,33 @@ var Equipment = React.createClass({
       </Well>
 
       {(() => {
+        var addEquipmentButton = (
+          <Unimplemented>
+            <Button title="add" bsSize="xsmall" onClick={this.openAddDialog}><Glyphicon glyph="plus" />&nbsp;<strong>Add Equipment</strong></Button>
+          </Unimplemented>
+        );
+
         if (this.state.loading) { return <div style={{ textAlign: 'center' }}><Spinner/></div>; }
-        if (Object.keys(this.props.equipmentList).length === 0) { return <Alert bsStyle="success">No equipment</Alert>; }
+        if (Object.keys(this.props.equipmentList).length === 0) { return <Alert bsStyle="success">No equipment { addEquipmentButton }</Alert>; }
 
         var equipmentList = _.sortBy(this.props.equipmentList, this.state.ui.sortField);
         if (this.state.ui.sortDesc) {
           _.reverse(equipmentList);
         }
         return <SortTable sortField={ this.state.ui.sortField } sortDesc={ this.state.ui.sortDesc } onSort={ this.updateUIState } headers={[
-            { field: 'equipmentCode',        title: 'ID'            },
-            { field: 'typeName',             title: 'Type'          },
-            { field: 'organizationName',     title: 'Owner'         },
-            { field: 'seniorityText',        title: 'Seniority'     },
-            { field: 'isWorking',            title: 'Hired'         },
-            { field: 'make',                 title: 'Make'          },
-            { field: 'model',                title: 'Model'         },
-            { field: 'size',                 title: 'Size'          },
-            { field: 'attachments',          title: 'Attachments'   },
-            { field: 'lastVerifiedDate',     title: 'Last Verified' },
-            { field: 'blank' },
+          { field: 'equipmentCode',        title: 'ID'            },
+          { field: 'typeName',             title: 'Type'          },
+          { field: 'organizationName',     title: 'Owner'         },
+          { field: 'seniorityText',        title: 'Seniority'     },
+          { field: 'isWorking',            title: 'Hired'         },
+          { field: 'make',                 title: 'Make'          },
+          { field: 'model',                title: 'Model'         },
+          { field: 'size',                 title: 'Size'          },
+          { field: 'equipmentAttachments', title: 'Attachments'   },
+          { field: 'lastVerifiedDate',     title: 'Last Verified' },
+          { field: 'addEquipment',         title: 'Add Equipment',       style: { textAlign: 'right' },
+            node: addEquipmentButton,
+          },
         ]}>
           {
             _.map(equipmentList, (equip) => {
@@ -245,7 +264,6 @@ function mapStateToProps(state) {
     equipmentList: state.models.equipmentList,
     localAreas: state.lookups.localAreas,
     equipmentTypes: state.lookups.equipmentTypes,
-    physicalAttachmentTypes: state.lookups.physicalAttachmentTypes,
     owners: state.lookups.owners,
     favourites: state.models.favourites,
     search: state.search.equipmentList,

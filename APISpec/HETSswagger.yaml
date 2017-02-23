@@ -4197,12 +4197,10 @@ paths:
           type: array
           items:
             type: integer
-        - name: attachments
+        - name: equipmentAttachment
           in: query
-          description: Equipment Attachments (array of id numbers)
-          type: array
-          items:
-            type: integer
+          description: Searches equipmentAttachment type
+          type: string          
         - name: owner
           in: query
           type: integer
@@ -5018,9 +5016,9 @@ definitions:
         format: int32
         type: integer
         description: A system-generated unique identifier for a Project
-      serviceArea:
+      localArea:
         $ref: '#/definitions/ServiceArea'
-        description: The Service Area associated with this Project record.
+        description: The Local Area associated with this Project record.
       provincialProjectNumber:
         type: string
         maxLength: 150
@@ -5029,6 +5027,10 @@ definitions:
         type: string
         maxLength: 100
         description: A descriptive name for the Project, useful to the HETS Clerk and Project Manager.
+      status:
+        type: string
+        maxLength: 50
+        description: The status of the project to determine if it is listed when creating new requests
       information:
         type: string
         maxLength: 2048

@@ -8,7 +8,6 @@ const DEFAULT_LOOKUPS = {
   localAreas: {},
 
   equipmentTypes: {},
-  physicalAttachmentTypes: {},
 
   owners: {},  
 };
@@ -36,9 +35,6 @@ export default function lookupsReducer(state = DEFAULT_LOOKUPS, action) {
 
     case Action.UPDATE_EQUIPMENT_TYPES_LOOKUP:
       return { ...state, equipmentTypes: action.equipmentTypes };
-
-    case Action.UPDATE_PHYSICAL_ATTACHMENT_TYPES_LOOKUP:
-      return { ...state, physicalAttachmentTypes: action.physicalAttachmentTypes };
 
     // Not typical lookups, because they can change within the app, so
     // ensure they're loaded/updated as needed.

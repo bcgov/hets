@@ -21,11 +21,12 @@ import FilterDropdown from '../components/FilterDropdown.jsx';
 import MultiDropdown from '../components/MultiDropdown.jsx';
 import SortTable from '../components/SortTable.jsx';
 import Spinner from '../components/Spinner.jsx';
+import Unimplemented from '../components/Unimplemented.jsx';
 
 /*
 
 TODO:
-* Print / Email / Verify
+* Print / Email / Verify / Add Owner
 
 */
 
@@ -125,6 +126,7 @@ var Owners = React.createClass({
   },
 
   openAddDialog() {
+    // TODO Add Owner
     this.setState({ showAddDialog: true });
   },
 
@@ -146,8 +148,8 @@ var Owners = React.createClass({
   
   render() {
     var localAreas = _.sortBy(this.props.localAreas, 'name');
-    var owners = _.sortBy(this.props.owners, 'name');
-    var equipmentTypes = _.sortBy(this.props.equipmentTypes, 'description');
+    var owners = _.sortBy(this.props.owners, 'organizationName');
+    var equipmentTypes = _.sortBy(this.props.equipmentTypes, 'name');
 
     return <div id="owners-list">
       <Well id="owners-bar" bsSize="small" className="clearfix">
@@ -156,9 +158,8 @@ var Owners = React.createClass({
             <ButtonToolbar id="owners-search">
               <MultiDropdown id="selectedLocalAreasIds" placeholder="Local Areas"
                 items={ localAreas } selectedIds={ this.state.search.selectedLocalAreasIds } updateState={ this.updateSearchState } showMaxItems={ 2 } />
-                <DropdownControl id="statusCode" title={ this.state.search.statusCode } updateState={ this.updateSearchState }
-                  items={[ Constant.EQUIPMENT_STATUS_CODE_APPROVED, Constant.EQUIPMENT_STATUS_CODE_PENDING, Constant.EQUIPMENT_STATUS_CODE_ARCHIVED ]}
-                />
+              <DropdownControl id="statusCode" title={ this.state.search.statusCode } updateState={ this.updateSearchState }
+                  items={[ Constant.EQUIPMENT_STATUS_CODE_APPROVED, Constant.EQUIPMENT_STATUS_CODE_PENDING, Constant.EQUIPMENT_STATUS_CODE_ARCHIVED ]} />
               <CheckboxControl inline id="hired" checked={ this.state.search.hired } updateState={ this.updateSearchState }>Hired</CheckboxControl>
               <MultiDropdown id="selectedEquipmentTypesIds" placeholder="Equipment Types" fieldName="description"
                 items={ equipmentTypes } selectedIds={ this.state.search.selectedEquipmentTypesIds } updateState={ this.updateSearchState } showMaxItems={ 2 } />
@@ -171,11 +172,17 @@ var Owners = React.createClass({
             <Favourites id="owners-faves-dropdown" type="owner" favourites={ this.props.favourites } data={ this.state.search } onSelect={ this.loadFavourite } />
           </Col>
           <Col md={2}>
-            <Button onClick={ this.verifyOwners }>Verify</Button>
+            <Unimplemented>
+              <Button onClick={ this.verifyOwners }>Verify</Button>
+            </Unimplemented>
             <div id="owners-buttons">
               <ButtonGroup>
-                <Button onClick={ this.email }><Glyphicon glyph="envelope" title="E-mail" /></Button>
-                <Button onClick={ this.print }><Glyphicon glyph="print" title="Print" /></Button>
+                <Unimplemented>
+                  <Button onClick={ this.email }><Glyphicon glyph="envelope" title="E-mail" /></Button>
+                </Unimplemented>
+                <Unimplemented>
+                  <Button onClick={ this.print }><Glyphicon glyph="print" title="Print" /></Button>
+                </Unimplemented>
               </ButtonGroup>
             </div>
           </Col>
@@ -183,8 +190,14 @@ var Owners = React.createClass({
       </Well>
 
       {(() => {
+        var addOwnerButton = (
+          <Unimplemented>
+            <Button title="add" bsSize="xsmall" onClick={this.openAddDialog}><Glyphicon glyph="plus" />&nbsp;<strong>Add Owner</strong></Button>
+          </Unimplemented>
+        );
+
         if (this.state.loading) { return <div style={{ textAlign: 'center' }}><Spinner/></div>; }
-        if (Object.keys(this.props.ownerList).length === 0) { return <Alert bsStyle="success">No owners</Alert>; }
+        if (Object.keys(this.props.ownerList).length === 0) { return <Alert bsStyle="success">No owners { addOwnerButton }</Alert>; }
 
         var ownerList = _.sortBy(this.props.ownerList, this.state.ui.sortField);
         if (this.state.ui.sortDesc) {
@@ -192,13 +205,13 @@ var Owners = React.createClass({
         }
 
         return <SortTable sortField={ this.state.ui.sortField } sortDesc={ this.state.ui.sortDesc } onSort={ this.updateUIState } headers={[
-          { field: 'localAreaName',          title: 'Local Area'      },
-          { field: 'organizationName',       title: 'Company'         },
-          { field: 'primaryContactName',     title: 'Primary Contact' },
+          { field: 'localAreaName',          title: 'Local Area'                                      },
+          { field: 'organizationName',       title: 'Company'                                         },
+          { field: 'primaryContactName',     title: 'Primary Contact'                                 },
           { field: 'numberOfEquipment',      title: 'Equipment',       style: { textAlign: 'center' } },
           { field: 'status',                 title: 'Status',          style: { textAlign: 'center' } },
           { field: 'addOwner',               title: 'Add Owner',       style: { textAlign: 'right'  },
-            node: <Button title="add" bsSize="xsmall" onClick={ this.openAddDialog }><Glyphicon glyph="plus" />&nbsp;<strong>Add Owner</strong></Button>,
+            node: addOwnerButton,
           },
         ]}>
           {
@@ -210,7 +223,7 @@ var Owners = React.createClass({
                 <td style={{ textAlign: 'center' }}>{ owner.numberOfEquipment }</td>
                 <td style={{ textAlign: 'center' }}>{ owner.status }</td>
                 <td style={{ textAlign: 'right' }}>
-                  <LinkContainer to={{ pathname: 'owners/' + owner.id }}>
+                  <LinkContainer to={{ pathname: `owners/${owner.id}` }}>
                     <Button title="edit" bsSize="xsmall"><Glyphicon glyph="edit" /></Button>
                   </LinkContainer>
                 </td>

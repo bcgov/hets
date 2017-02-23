@@ -9,9 +9,9 @@ definitions:
         format: int32
         type: integer
         description: A system-generated unique identifier for a Project
-      serviceArea:
+      localArea:
         $ref: '#/definitions/ServiceArea'
-        description: The Service Area associated with this Project record.
+        description: The Local Area associated with this Project record.
       provincialProjectNumber:
         type: string
         maxLength: 150
@@ -20,6 +20,10 @@ definitions:
         type: string
         maxLength: 100
         description: A descriptive name for the Project, useful to the HETS Clerk and Project Manager.
+      status:
+        type: string
+        maxLength: 50
+        description: The status of the project to determine if it is listed when creating new requests
       information:
         type: string
         maxLength: 2048
@@ -242,7 +246,7 @@ definitions:
         type: integer
         description: A system-generated unique identifier for a RentalAgreementRate
       rentalAgreement:
-        $ref: '#/definitions/'
+        $ref: '#/definitions/RentalAgreement'
       componentName:
         type: string
         maxLength: 150
@@ -280,7 +284,7 @@ definitions:
         type: integer
         description: A system-generated unique identifier for a RentalAgreementCondition
       rentalAgreement:
-        $ref: '#/definitions/'
+        $ref: '#/definitions/RentalAgreement'
       conditionName:
         type: string
         maxLength: 150
@@ -626,15 +630,6 @@ definitions:
         type: string
         maxLength: 2048
         description: A extended description of the equipment type.
-      askNextBlock1:
-        $ref: '#/definitions/Equipment'
-        description: The id of the next piece of Block 1 Equipment to be asked for a Rental Request. If null, start from the first piece of equipment in Block 1.
-      askNextBlock2:
-        $ref: '#/definitions/Equipment'
-        description: The id of the next piece of Block 2 Equipment to be asked for a Rental Request. If null, start from the first piece of equipment in Block 2.
-      askNextBlockOpen:
-        $ref: '#/definitions/Equipment'
-        description: The id of the next piece of Block Open Equipment to be asked for a Rental Request. If null, start from the first piece of equipment in Block Open.
       equipRentalRateNo:
         type: number
         format: float
@@ -659,6 +654,25 @@ definitions:
         format: int32
         type: integer
         description: The number of blocks defined for this equipment type. Currently, either 2 for Dump Truck equipment and 1 for non-Dump Truck equipment. Unlikely to change, particularly without a significant impact on code.
+  EquipmentTypeNextRental:
+    type: object
+    required:
+      - id
+    properties:
+      id:
+        format: int32
+        type: integer
+      equipmentType:
+        $ref: '#/definitions/EquipmentType'
+      askNextBlock1:
+        $ref: '#/definitions/Equipment'
+        description: The id of the next piece of Block 1 Equipment to be asked for a Rental Request. If null, start from the first piece of equipment in Block 1.
+      askNextBlock2:
+        $ref: '#/definitions/Equipment'
+        description: The id of the next piece of Block 2 Equipment to be asked for a Rental Request. If null, start from the first piece of equipment in Block 2.
+      askNextBlockOpen:
+        $ref: '#/definitions/Equipment'
+        description: The id of the next piece of Block Open Equipment to be asked for a Rental Request. If null, start from the first piece of equipment in Block Open.
   EquipmentAttachment:
     type: object
     description: An Equipment Attachment associated with a piece of Equipment.
