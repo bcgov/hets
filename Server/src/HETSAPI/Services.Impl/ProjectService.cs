@@ -141,6 +141,7 @@ namespace HETSAPI.Services.Impl
         /// <response code="404">Project not found</response>
         public virtual IActionResult ProjectsIdPutAsync(int id, Project item)
         {
+            AdjustRecord(item);
             var exists = _context.Projects.Any(a => a.Id == id);
             if (exists && id == item.Id)
             {
@@ -163,19 +164,28 @@ namespace HETSAPI.Services.Impl
         /// <response code="201">Project created</response>
         public virtual IActionResult ProjectsPostAsync(Project item)
         {
-            var exists = _context.Projects.Any(a => a.Id == item.Id);
-            if (exists)
+            if (item != null)
             {
-                _context.Projects.Update(item);                
+                AdjustRecord(item);
+
+                var exists = _context.Projects.Any(a => a.Id == item.Id);
+                if (exists)
+                {
+                    _context.Projects.Update(item);
+                }
+                else
+                {
+                    // record not found
+                    _context.Projects.Add(item);
+                }
+                // Save the changes
+                _context.SaveChanges();
+                return new ObjectResult(item);
             }
             else
             {
-                // record not found
-                _context.Projects.Add(item);
+                return new StatusCodeResult(400);
             }
-            // Save the changes
-            _context.SaveChanges();
-            return new ObjectResult(item);
         }
 
         /// <summary>
@@ -224,20 +234,25 @@ namespace HETSAPI.Services.Impl
             foreach (var item in data)
             {
                 ProjectSearchResultViewModel newItem = item.ToViewModel();
+                result.Add(item.ToViewModel());
+            }
+
+            // second pass to do calculated fields.            
+            foreach (ProjectSearchResultViewModel projectSearchResultViewModel in result)
+            {
                 // calculated fields.
-                newItem.Requests = _context.RentalRequests
+                projectSearchResultViewModel.Requests = _context.RentalRequests
                     .Include(x => x.Project)
-                    .Where(x => x.Project.Id == item.Id)
+                    .Where(x => x.Project.Id == projectSearchResultViewModel.Id)
                     .Count();
 
                 // TODO filter on status once RentalAgreements has a status field.
-                newItem.Hires = _context.RentalAgreements
+                projectSearchResultViewModel.Hires = _context.RentalAgreements
                     .Include(x => x.Project)
-                    .Where(x => x.Project.Id == item.Id)
+                    .Where(x => x.Project.Id == projectSearchResultViewModel.Id)
                     .Count();
-                
-                result.Add(newItem);               
             }
+                           
             return new ObjectResult(result);
         }
     }
