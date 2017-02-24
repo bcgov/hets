@@ -275,7 +275,7 @@ var OwnersDetail = React.createClass({
                   </Row>
                   <Row>
                     <ColLabel md={4}>Meets Residency?</ColLabel>
-                    <ColField md={8}><CheckboxControl checked={ owner.meetsResidency } disabled></CheckboxControl></ColField>
+                    <ColField md={8}><CheckboxControl checked={ owner.meetsResidency } disabled /></ColField>
                   </Row>
                 </div>;
               })()}
@@ -424,7 +424,7 @@ var OwnersDetail = React.createClass({
 
                 var history = _.sortBy(this.props.history, 'createdDate');    
 
-                return <div id="owner-history">
+                return <div id="owners-history">
                   {
                     _.map(history, (entry) => {
                       return <Row>

@@ -38,3 +38,44 @@
     width: 79px;
   }
 }
+
+#projects-detail {
+  #projects-top {
+    margin-bottom: 10px;
+
+    .btn {
+      margin-left: 5px;
+    }
+  }
+
+  .well {
+    margin-left: 5px;
+    margin-right: 5px;
+  }
+
+  .label {
+    font-size: 100%;
+    margin-right: 5px;
+  }
+
+  .btn {
+    margin-left: 20px;
+  }
+
+  h1 {
+    small {
+      font-size: 85%;
+    }
+  }
+
+  h3 {
+    font-weight: 600;
+  }
+}
+
+#projects-edit {
+  [class*='col-'] {
+    padding-left: 7px;
+    padding-right: 7px;
+  }
+}
