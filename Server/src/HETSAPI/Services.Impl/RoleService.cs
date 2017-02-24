@@ -423,7 +423,7 @@ namespace HETSAPI.Services.Impl
                     // ef core does not support lazy loading, so we need to explicitly get data here.
                     foreach (UserRole userRole in user.UserRoles)
                     {
-                        if (userRole.Role != null && userRole.Role.Id == id && userRole.EffectiveDate <= DateTimeOffset.Now && (userRole.ExpiryDate == null || userRole.ExpiryDate > DateTimeOffset.Now))
+                        if (userRole.Role != null && userRole.Role.Id == id && userRole.EffectiveDate <= DateTime.UtcNow && (userRole.ExpiryDate == null || userRole.ExpiryDate > DateTime.UtcNow))
                         {
                             found = true;
                             break;
