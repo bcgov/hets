@@ -62,8 +62,8 @@ namespace HETSAPI.Models
                 return roles;
 
             roles = user.UserRoles.Where(
-                x => x.EffectiveDate <= DateTimeOffset.Now 
-                && (x.ExpiryDate == null || x.ExpiryDate > DateTimeOffset.Now))
+                x => x.EffectiveDate <= DateTime.UtcNow 
+                && (x.ExpiryDate == null || x.ExpiryDate > DateTime.UtcNow))
                 .Select(x => x.Role).ToList();
 
             return roles;
