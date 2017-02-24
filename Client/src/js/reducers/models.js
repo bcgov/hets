@@ -24,6 +24,9 @@ const DEFAULT_MODELS = {
 
   projects: {},
   project: {},
+  projectNotes: {},
+  projectAttachments: {},
+  projectHistory: {},
 };
 
 export default function modelsReducer(state = DEFAULT_MODELS, action) {
