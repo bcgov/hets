@@ -80,7 +80,15 @@ namespace HETSAPI.Services.Impl
         /// <response code="200">OK</response>
         public virtual IActionResult ProjectsGetAsync()
         {
-            var result = _context.Projects.ToList();
+            var result = _context.Projects
+                .Include(x => x.Attachments)
+                .Include(x => x.Contacts)
+                .Include(x => x.History)
+                .Include(x => x.LocalArea.ServiceArea.District.Region)
+                .Include(x => x.Notes)
+                .Include(x => x.PrimaryContact)
+                .Include(x => x.RentalRequests)                
+                .ToList();
             return new ObjectResult(result);
         }
 
@@ -122,7 +130,15 @@ namespace HETSAPI.Services.Impl
             var exists = _context.Projects.Any(a => a.Id == id);
             if (exists)
             {
-                var result = _context.Projects.First(a => a.Id == id);
+                var result = _context.Projects
+                    .Include(x => x.Attachments)
+                    .Include(x => x.Contacts)
+                    .Include(x => x.History)
+                    .Include(x => x.LocalArea.ServiceArea.District.Region)
+                    .Include(x => x.Notes)
+                    .Include(x => x.PrimaryContact)
+                    .Include(x => x.RentalRequests)
+                    .First(a => a.Id == id);
                 return new ObjectResult(result);
             }
             else
