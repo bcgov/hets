@@ -132,6 +132,9 @@ namespace HETSAPI.Models
 
             user.District = district;
 
+            context.Users.Add(user);
+            context.SaveChanges();
+
             string[] userRoles = initialUser.UserRoles.Select(x => x.Role.Name).ToArray();
             if (user.UserRoles == null)
                 user.UserRoles = new List<UserRole>();
@@ -140,11 +143,11 @@ namespace HETSAPI.Models
             {
                 Role role = context.GetRole(userRole);
                 if (role != null)
-                { 
+                {
                     user.UserRoles.Add(
                         new UserRole
                         {
-                            EffectiveDate = DateTime.Now,
+                            EffectiveDate = DateTime.UtcNow,
                             Role = role
                         });
                 }
@@ -167,8 +170,8 @@ namespace HETSAPI.Models
                         });
                 }
             }
-
-            context.Users.Add(user);
+            
+            context.Users.Update(user);            
         }
 
 
