@@ -385,7 +385,7 @@
       description:
         Used for the rental request search page.
       tags:
-        - RentalRequests
+        - RentalRequest
       consumes:
         - application/json
       produces:
