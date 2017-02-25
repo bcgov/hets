@@ -46,6 +46,7 @@ namespace HETSAPI
             services.AddTransient<IPermissionService, PermissionService>();
             services.AddTransient<IProjectService, ProjectService>();
             services.AddTransient<IRegionService, RegionService>();
+            services.AddTransient<IRentalRequestService, RentalRequestService>();
             services.AddTransient<IRoleService, RoleService>();
             services.AddTransient<IServiceAreaService, ServiceAreaService>();
             services.AddTransient<IUserService, UserService>();

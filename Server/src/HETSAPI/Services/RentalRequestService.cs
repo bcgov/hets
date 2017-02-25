@@ -73,5 +73,17 @@ namespace HETSAPI.Services
         /// <param name="item"></param>
         /// <response code="201">RentalRequest created</response>
         IActionResult RentalrequestsPostAsync(RentalRequest item);
+
+        /// <summary>
+        /// Searches RentalRequests
+        /// </summary>
+        /// <remarks>Used for the rental request search page.</remarks>
+        /// <param name="localareas">Local Areas (array of id numbers)</param>
+        /// <param name="project">Searches equipmentAttachment type</param>
+        /// <param name="status">Status</param>
+        /// <param name="startDate">Inspection start date</param>
+        /// <param name="endDate">Inspection end date</param>
+        /// <response code="200">OK</response>
+        IActionResult RentalrequestsSearchGetAsync(int?[] localareas, string project, string status, DateTime? startDate, DateTime? endDate);
     }
 }

@@ -379,6 +379,52 @@
               $ref: "#/definitions/PermissionViewModel"
         404:
           description: Role not found
+  /rentalrequests/search:
+    get:
+      summary: Searches RentalRequests
+      description:
+        Used for the rental request search page.
+      tags:
+        - RentalRequest
+      consumes:
+        - application/json
+      produces:
+        - text/plain
+        - application/json
+        - text/json
+      parameters:        
+        - name: localareas
+          in: query
+          description: Local Areas (array of id numbers)
+          collectionFormat: multi
+          type: array
+          items:
+            type: integer       
+        - name: project
+          in: query
+          description: Searches equipmentAttachment type
+          type: string                  
+        - name: status
+          in: query
+          description: Status
+          type: string
+        - name: startDate
+          description: Inspection start date
+          in: query
+          type: string
+          format: date-time
+        - name: endDate
+          description: Inspection end date
+          in: query
+          type: string
+          format: date-time
+      responses:
+        200:
+          description: OK
+          schema:
+            type: array
+            items:
+              $ref: "#/definitions/RentalRequestSearchResultViewModel"
   /roles/{id}/users:
     get:
       description: Gets all the users for a role

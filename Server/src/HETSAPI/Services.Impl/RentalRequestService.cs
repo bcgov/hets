@@ -28,20 +28,19 @@ namespace HETSAPI.Services.Impl
     /// <summary>
     /// 
     /// </summary>
-    public class ProjectService : IProjectService
+    public class RentalRequestService : IRentalRequestService
     {
-        private readonly DbAppContext _context;
-        
+        private readonly DbAppContext _context;        
 
         /// <summary>
         /// Create a service and set the database context
         /// </summary>
-        public ProjectService(DbAppContext context)
+        public RentalRequestService(DbAppContext context)
         {
             _context = context;
         }
 
-        private void AdjustRecord(Project item)
+        private void AdjustRecord(RentalRequest item)
         {
             if (item != null)
             {
@@ -60,6 +59,36 @@ namespace HETSAPI.Services.Impl
                         item.LocalArea = null;
                     }
                 }
+
+                if (item.Project != null)
+                {
+                    int project_id = item.Project.Id;
+                    bool project_exists = _context.Projects.Any(a => a.Id == project_id);
+                    if (project_exists)
+                    {
+                        Project project = _context.Projects.First(a => a.Id == project_id);
+                        item.Project = project;
+                    }
+                    else
+                    {
+                        item.LocalArea = null;
+                    }
+                }
+
+                if (item.EquipmentType != null)
+                {
+                    int equipment_type_id = item.EquipmentType.Id;
+                    bool equipment_type_exists = _context.EquipmentTypes.Any(a => a.Id == equipment_type_id);
+                    if (equipment_type_exists)
+                    {
+                        EquipmentType equipmentType = _context.EquipmentTypes.First(a => a.Id == equipment_type_id);
+                        item.EquipmentType = equipmentType;
+                    }
+                    else
+                    {
+                        item.LocalArea = null;
+                    }
+                }
             }
         }
 
@@ -68,26 +97,44 @@ namespace HETSAPI.Services.Impl
         /// </summary>
         /// <param name="items"></param>
         /// <response code="201">Project created</response>
-        public virtual IActionResult ProjectsBulkPostAsync(Project[] items)
+        public virtual IActionResult RentalrequestsBulkPostAsync(RentalRequest[] items)
         {
-            var result = "";
-            return new ObjectResult(result);
+            if (items == null)
+            {
+                return new BadRequestResult();
+            }
+            foreach (RentalRequest item in items)
+            {
+                AdjustRecord(item);
+                bool exists = _context.RentalRequests.Any(a => a.Id == item.Id);
+                if (exists)
+                {
+                    _context.RentalRequests.Update(item);
+                }
+                else
+                {
+                    _context.RentalRequests.Add(item);
+                }
+            }
+            // Save the changes
+            _context.SaveChanges();
+            return new NoContentResult();
         }
 
         /// <summary>
         /// 
         /// </summary>
         /// <response code="200">OK</response>
-        public virtual IActionResult ProjectsGetAsync()
+        public virtual IActionResult RentalrequestsGetAsync()
         {
-            var result = _context.Projects
+            var result = _context.RentalRequests
                 .Include(x => x.Attachments)
-                .Include(x => x.Contacts)
-                .Include(x => x.History)
+                .Include(x => x.EquipmentType)
+                .Include(x => x.FirstOnRotationList)
                 .Include(x => x.LocalArea.ServiceArea.District.Region)
                 .Include(x => x.Notes)
-                .Include(x => x.PrimaryContact)
-                .Include(x => x.RentalRequests)                
+                .Include(x => x.Project)
+                .Include(x => x.RentalRequestRotationList)
                 .ToList();
             return new ObjectResult(result);
         }
@@ -98,15 +145,15 @@ namespace HETSAPI.Services.Impl
         /// <param name="id">id of Project to delete</param>
         /// <response code="200">OK</response>
         /// <response code="404">Project not found</response>
-        public virtual IActionResult ProjectsIdDeletePostAsync(int id)
+        public virtual IActionResult RentalrequestsIdDeletePostAsync(int id)
         {
-            var exists = _context.Projects.Any(a => a.Id == id);
+            var exists = _context.RentalRequests.Any(a => a.Id == id);
             if (exists)
             {
-                var item = _context.Projects.First(a => a.Id == id);
+                var item = _context.RentalRequests.First(a => a.Id == id);
                 if (item != null)
                 {
-                    _context.Projects.Remove(item);
+                    _context.RentalRequests.Remove(item);
                     // Save the changes
                     _context.SaveChanges();
                 }
@@ -125,19 +172,19 @@ namespace HETSAPI.Services.Impl
         /// <param name="id">id of Project to fetch</param>
         /// <response code="200">OK</response>
         /// <response code="404">Project not found</response>
-        public virtual IActionResult ProjectsIdGetAsync(int id)
+        public virtual IActionResult RentalrequestsIdGetAsync(int id)
         {
-            var exists = _context.Projects.Any(a => a.Id == id);
+            var exists = _context.RentalRequests.Any(a => a.Id == id);
             if (exists)
             {
-                var result = _context.Projects
+                var result = _context.RentalRequests
                     .Include(x => x.Attachments)
-                    .Include(x => x.Contacts)
-                    .Include(x => x.History)
+                    .Include(x => x.EquipmentType)
+                    .Include(x => x.FirstOnRotationList)
                     .Include(x => x.LocalArea.ServiceArea.District.Region)
                     .Include(x => x.Notes)
-                    .Include(x => x.PrimaryContact)
-                    .Include(x => x.RentalRequests)
+                    .Include(x => x.Project)
+                    .Include(x => x.RentalRequestRotationList)
                     .First(a => a.Id == id);
                 return new ObjectResult(result);
             }
@@ -155,13 +202,13 @@ namespace HETSAPI.Services.Impl
         /// <param name="item"></param>
         /// <response code="200">OK</response>
         /// <response code="404">Project not found</response>
-        public virtual IActionResult ProjectsIdPutAsync(int id, Project item)
+        public virtual IActionResult RentalrequestsIdPutAsync(int id, RentalRequest item)
         {
             AdjustRecord(item);
-            var exists = _context.Projects.Any(a => a.Id == id);
+            var exists = _context.RentalRequests.Any(a => a.Id == id);
             if (exists && id == item.Id)
             {
-                _context.Projects.Update(item);
+                _context.RentalRequests.Update(item);
                 // Save the changes
                 _context.SaveChanges();
                 return new ObjectResult(item);
@@ -178,21 +225,21 @@ namespace HETSAPI.Services.Impl
         /// </summary>
         /// <param name="item"></param>
         /// <response code="201">Project created</response>
-        public virtual IActionResult ProjectsPostAsync(Project item)
+        public virtual IActionResult RentalrequestsPostAsync(RentalRequest item)
         {
             if (item != null)
             {
                 AdjustRecord(item);
 
-                var exists = _context.Projects.Any(a => a.Id == item.Id);
+                var exists = _context.RentalRequests.Any(a => a.Id == item.Id);
                 if (exists)
                 {
-                    _context.Projects.Update(item);
+                    _context.RentalRequests.Update(item);
                 }
                 else
                 {
                     // record not found
-                    _context.Projects.Add(item);
+                    _context.RentalRequests.Add(item);
                 }
                 // Save the changes
                 _context.SaveChanges();
@@ -213,11 +260,12 @@ namespace HETSAPI.Services.Impl
         /// <param name="hasRequests">if true then only include Projects with active Requests</param>
         /// <param name="hasHires">if true then only include Projects with active Rental Agreements</param>
         /// <response code="200">OK</response>
-        public virtual IActionResult ProjectsSearchGetAsync(int?[] localareas, string project, bool? hasRequests, bool? hasHires)
+        public virtual IActionResult RentalrequestsSearchGetAsync(int?[] localareas, string project, string status, bool? hasHires)
         {
-            var data = _context.Projects
+            var data = _context.RentalRequests
                     .Include(x => x.LocalArea.ServiceArea.District.Region)
-                    .Include(x => x.PrimaryContact)
+                    .Include(x => x.EquipmentType)
+                    .Include(x => x.Project.PrimaryContact)
                     .Select(x => x);
 
             if (localareas != null)
@@ -230,12 +278,7 @@ namespace HETSAPI.Services.Impl
                     }
                 }
             }
-
-            if (hasRequests != null)
-            {
-                
-            }
-
+            
             if (hasHires != null)
             {
                 // hired is not currently implemented.                 
@@ -243,31 +286,17 @@ namespace HETSAPI.Services.Impl
 
             if (project != null)
             {
-                data = data.Where(x => x.Name.Contains (project));
+                data = data.Where(x => x.Project.Name.Contains (project));
             }
 
-            var result = new List<ProjectSearchResultViewModel>();
+            var result = new List<RentalRequestSearchResultViewModel>();
             foreach (var item in data)
             {
-                ProjectSearchResultViewModel newItem = item.ToViewModel();
+                RentalRequestSearchResultViewModel newItem = item.ToViewModel();
                 result.Add(item.ToViewModel());
             }
 
-            // second pass to do calculated fields.            
-            foreach (ProjectSearchResultViewModel projectSearchResultViewModel in result)
-            {
-                // calculated fields.
-                projectSearchResultViewModel.Requests = _context.RentalRequests
-                    .Include(x => x.Project)
-                    .Where(x => x.Project.Id == projectSearchResultViewModel.Id)
-                    .Count();
-
-                // TODO filter on status once RentalAgreements has a status field.
-                projectSearchResultViewModel.Hires = _context.RentalAgreements
-                    .Include(x => x.Project)
-                    .Where(x => x.Project.Id == projectSearchResultViewModel.Id)
-                    .Count();
-            }
+           // no calculated fields in a RentalRequest search yet.
                            
             return new ObjectResult(result);
         }

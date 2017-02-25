@@ -31,6 +31,24 @@ namespace HETSAPI.Mappings
             return dto;
         }
 
+        public static RentalRequestSearchResultViewModel ToViewModel(this RentalRequest model)
+        {
+            var dto = new RentalRequestSearchResultViewModel();
+            if (model != null)
+            {
+                dto.EquipmentType = model.EquipmentType.Name;
+                dto.Id = model.Id;
+                dto.LocalArea = model.LocalArea;
+                dto.PrimaryContact = model.Project.PrimaryContact;
+                dto.ProjectName = model.Project.Name;
+                dto.Status = model.Status;
+                dto.EquipmentCount = model.EquipmentCount;                
+            }
+            return dto;
+        }
+
+        // ********* COMMON VIEW MODEL MAPPINGS
+
         /// <summary>
         /// Convert Attachment to AttachmentViewModel
         /// </summary>
@@ -66,6 +84,7 @@ namespace HETSAPI.Mappings
             }
             return result;
         }
+
         public static UserViewModel ToViewModel(this User model)
         {
             var dto = new UserViewModel();

@@ -200,6 +200,31 @@
       status:
         type: string
         description: Project status        
+  RentalRequestSearchResultViewModel:
+    type: object
+    x-codegen-viewmodel: true
+    required:
+      - id
+    properties:
+      id:
+        format: int32
+        type: integer
+        x-type-options:
+          min: 1
+          max: 1000
+      localArea:
+        $ref: '#/definitions/LocalArea'
+      equipmentCount:
+        type: integer
+      equipmentType:
+        type: string
+      projectName:
+        type: string
+      primaryContact:
+        $ref: '#/definitions/Contact'
+      status:
+        type: string
+        description: Project status        
   UserViewModel:
     type: object
     x-codegen-viewmodel: true

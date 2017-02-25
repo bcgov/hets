@@ -124,5 +124,24 @@ namespace HETSAPI.Controllers
         {
             return this._service.RentalrequestsPostAsync(item);
         }
+
+        /// <summary>
+        /// Searches RentalRequests
+        /// </summary>
+        /// <remarks>Used for the rental request search page.</remarks>
+        /// <param name="localareas">Local Areas (array of id numbers)</param>
+        /// <param name="project">Searches equipmentAttachment type</param>
+        /// <param name="status">Status</param>
+        /// <param name="startDate">Inspection start date</param>
+        /// <param name="endDate">Inspection end date</param>
+        /// <response code="200">OK</response>
+        [HttpGet]
+        [Route("/api/rentalrequests/search")]
+        [SwaggerOperation("RentalrequestsSearchGet")]
+        [SwaggerResponse(200, type: typeof(List<RentalRequestSearchResultViewModel>))]
+        public virtual IActionResult RentalrequestsSearchGet([FromQuery]int?[] localareas, [FromQuery]string project, [FromQuery]string status, [FromQuery]DateTime? startDate, [FromQuery]DateTime? endDate)
+        {
+            return this._service.RentalrequestsSearchGetAsync(localareas, project, status, startDate, endDate);
+        }
     }
 }
