@@ -260,7 +260,7 @@ namespace HETSAPI.Services.Impl
         /// <param name="hasRequests">if true then only include Projects with active Requests</param>
         /// <param name="hasHires">if true then only include Projects with active Rental Agreements</param>
         /// <response code="200">OK</response>
-        public virtual IActionResult RentalrequestsSearchGetAsync(int?[] localareas, string project, string status, bool? hasHires)
+        public virtual IActionResult RentalrequestsSearchGetAsync(int?[] localareas, string project, string status, DateTime? startDate, DateTime? endDate)
         {
             var data = _context.RentalRequests
                     .Include(x => x.LocalArea.ServiceArea.District.Region)
@@ -278,15 +278,10 @@ namespace HETSAPI.Services.Impl
                     }
                 }
             }
-            
-            if (hasHires != null)
-            {
-                // hired is not currently implemented.                 
-            }
-
+                        
             if (project != null)
             {
-                data = data.Where(x => x.Project.Name.Contains (project));
+                data = data.Where(x => x.Project.Name.ToLower().Contains (project.ToLower()));
             }
 
             var result = new List<RentalRequestSearchResultViewModel>();
@@ -296,8 +291,17 @@ namespace HETSAPI.Services.Impl
                 result.Add(item.ToViewModel());
             }
 
-           // no calculated fields in a RentalRequest search yet.
-                           
+            if (startDate != null)
+            {
+                data = data.Where(x => x.ExpectedStartDate >= startDate);
+            }
+
+            if (endDate != null)
+            {
+                data = data.Where(x => x.ExpectedStartDate <= endDate);
+            }
+
+            // no calculated fields in a RentalRequest search yet.                           
             return new ObjectResult(result);
         }
     }
