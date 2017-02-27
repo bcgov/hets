@@ -41,7 +41,7 @@ namespace HETSAPI.Models
         /// Initializes a new instance of the <see cref="EquipmentTypeNextRental" /> class.
         /// </summary>
         /// <param name="Id">Id (required).</param>
-        /// <param name="EquipmentType">EquipmentType.</param>
+        /// <param name="EquipmentType">A foreign key reference to the system-generated unique identifier for an Equipment Type.</param>
         /// <param name="AskNextBlock1">The id of the next piece of Block 1 Equipment to be asked for a Rental Request. If null, start from the first piece of equipment in Block 1..</param>
         /// <param name="AskNextBlock2">The id of the next piece of Block 2 Equipment to be asked for a Rental Request. If null, start from the first piece of equipment in Block 2..</param>
         /// <param name="AskNextBlockOpen">The id of the next piece of Block Open Equipment to be asked for a Rental Request. If null, start from the first piece of equipment in Block Open..</param>
@@ -60,8 +60,10 @@ namespace HETSAPI.Models
         public int Id { get; set; }
         
         /// <summary>
-        /// Gets or Sets EquipmentType
+        /// A foreign key reference to the system-generated unique identifier for an Equipment Type
         /// </summary>
+        /// <value>A foreign key reference to the system-generated unique identifier for an Equipment Type</value>
+        [MetaDataExtension (Description = "A foreign key reference to the system-generated unique identifier for an Equipment Type")]
         public EquipmentType EquipmentType { get; set; }
         
         /// <summary>
@@ -69,6 +71,7 @@ namespace HETSAPI.Models
         /// </summary>   
         [ForeignKey("EquipmentType")]
 		[JsonIgnore]
+		[MetaDataExtension (Description = "A foreign key reference to the system-generated unique identifier for an Equipment Type")]
         public int? EquipmentTypeId { get; set; }
         
         /// <summary>
@@ -83,6 +86,7 @@ namespace HETSAPI.Models
         /// </summary>   
         [ForeignKey("AskNextBlock1")]
 		[JsonIgnore]
+		[MetaDataExtension (Description = "The id of the next piece of Block 1 Equipment to be asked for a Rental Request. If null, start from the first piece of equipment in Block 1.")]
         public int? AskNextBlock1Id { get; set; }
         
         /// <summary>
@@ -97,6 +101,7 @@ namespace HETSAPI.Models
         /// </summary>   
         [ForeignKey("AskNextBlock2")]
 		[JsonIgnore]
+		[MetaDataExtension (Description = "The id of the next piece of Block 2 Equipment to be asked for a Rental Request. If null, start from the first piece of equipment in Block 2.")]
         public int? AskNextBlock2Id { get; set; }
         
         /// <summary>
@@ -111,6 +116,7 @@ namespace HETSAPI.Models
         /// </summary>   
         [ForeignKey("AskNextBlockOpen")]
 		[JsonIgnore]
+		[MetaDataExtension (Description = "The id of the next piece of Block Open Equipment to be asked for a Rental Request. If null, start from the first piece of equipment in Block Open.")]
         public int? AskNextBlockOpenId { get; set; }
         
         /// <summary>

@@ -150,6 +150,7 @@ namespace HETSAPI.Models
         /// </summary>   
         [ForeignKey("PrimaryContact")]
 		[JsonIgnore]
+		[MetaDataExtension (Description = "Link to the designated Primary Contact.")]
         public int? PrimaryContactId { get; set; }
         
         /// <summary>
@@ -162,6 +163,7 @@ namespace HETSAPI.Models
         /// </summary>   
         [ForeignKey("LocalArea")]
 		[JsonIgnore]
+		
         public int? LocalAreaId { get; set; }
         
         /// <summary>

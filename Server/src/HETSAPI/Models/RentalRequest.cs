@@ -43,9 +43,9 @@ namespace HETSAPI.Models
         /// </summary>
         /// <param name="Id">A system-generated unique identifier for a Request (required).</param>
         /// <param name="Project">Project.</param>
-        /// <param name="LocalArea">LocalArea.</param>
+        /// <param name="LocalArea">A foreign key reference to the system-generated unique identifier for a Local Area.</param>
         /// <param name="Status">The status of the Rental Request - whether it in progress, completed or was cancelled..</param>
-        /// <param name="EquipmentType">EquipmentType.</param>
+        /// <param name="EquipmentType">A foreign key reference to the system-generated unique identifier for an Equipment Type.</param>
         /// <param name="EquipmentCount">The number of pieces of the equipment type wanted for hire as part of this request..</param>
         /// <param name="ExpectedHours">The expected number of rental hours for each piece equipment hired against this request, as provided by the Project Manager making the request..</param>
         /// <param name="ExpectedStartDate">The expected start date of each piece of equipment hired against this request, as provided by the Project Manager making the request..</param>
@@ -90,11 +90,14 @@ namespace HETSAPI.Models
         /// </summary>   
         [ForeignKey("Project")]
 		[JsonIgnore]
+		
         public int? ProjectId { get; set; }
         
         /// <summary>
-        /// Gets or Sets LocalArea
+        /// A foreign key reference to the system-generated unique identifier for a Local Area
         /// </summary>
+        /// <value>A foreign key reference to the system-generated unique identifier for a Local Area</value>
+        [MetaDataExtension (Description = "A foreign key reference to the system-generated unique identifier for a Local Area")]
         public LocalArea LocalArea { get; set; }
         
         /// <summary>
@@ -102,6 +105,7 @@ namespace HETSAPI.Models
         /// </summary>   
         [ForeignKey("LocalArea")]
 		[JsonIgnore]
+		[MetaDataExtension (Description = "A foreign key reference to the system-generated unique identifier for a Local Area")]
         public int? LocalAreaId { get; set; }
         
         /// <summary>
@@ -114,8 +118,10 @@ namespace HETSAPI.Models
         public string Status { get; set; }
         
         /// <summary>
-        /// Gets or Sets EquipmentType
+        /// A foreign key reference to the system-generated unique identifier for an Equipment Type
         /// </summary>
+        /// <value>A foreign key reference to the system-generated unique identifier for an Equipment Type</value>
+        [MetaDataExtension (Description = "A foreign key reference to the system-generated unique identifier for an Equipment Type")]
         public EquipmentType EquipmentType { get; set; }
         
         /// <summary>
@@ -123,6 +129,7 @@ namespace HETSAPI.Models
         /// </summary>   
         [ForeignKey("EquipmentType")]
 		[JsonIgnore]
+		[MetaDataExtension (Description = "A foreign key reference to the system-generated unique identifier for an Equipment Type")]
         public int? EquipmentTypeId { get; set; }
         
         /// <summary>
@@ -165,6 +172,7 @@ namespace HETSAPI.Models
         /// </summary>   
         [ForeignKey("FirstOnRotationList")]
 		[JsonIgnore]
+		[MetaDataExtension (Description = "The first piece of equipment on the rotation list at the time of the creation of the request.")]
         public int? FirstOnRotationListId { get; set; }
         
         /// <summary>

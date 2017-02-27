@@ -171,6 +171,7 @@ namespace HETSAPI.Models
         /// </summary>   
         [ForeignKey("District")]
 		[JsonIgnore]
+		[MetaDataExtension (Description = "The District that the User belongs to")]
         public int? DistrictId { get; set; }
         
         /// <summary>

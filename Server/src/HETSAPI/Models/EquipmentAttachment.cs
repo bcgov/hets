@@ -80,6 +80,7 @@ namespace HETSAPI.Models
         /// </summary>   
         [ForeignKey("Equipment")]
 		[JsonIgnore]
+		
         public int? EquipmentId { get; set; }
         
         /// <summary>

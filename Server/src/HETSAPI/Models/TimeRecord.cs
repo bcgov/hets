@@ -42,7 +42,7 @@ namespace HETSAPI.Models
         /// Initializes a new instance of the <see cref="TimeRecord" /> class.
         /// </summary>
         /// <param name="Id">A system-generated unique identifier for a TimeRecord (required).</param>
-        /// <param name="RentalAgreement">RentalAgreement.</param>
+        /// <param name="RentalAgreement">A foreign key reference to the system-generated unique identifier for a Rental Agreement.</param>
         /// <param name="RentalAgreementRate">The Rental Agreement Rate component to which this Rental Agreement applies. If null, this time applies to the equipment itself..</param>
         /// <param name="WorkedDate">The date of the time record entry - the day of the entry if it is a daily entry, or a date in the week in which the work occurred if tracked weekly..</param>
         /// <param name="EnteredDate">The date-time the time record information was entered..</param>
@@ -67,8 +67,10 @@ namespace HETSAPI.Models
         public int Id { get; set; }
         
         /// <summary>
-        /// Gets or Sets RentalAgreement
+        /// A foreign key reference to the system-generated unique identifier for a Rental Agreement
         /// </summary>
+        /// <value>A foreign key reference to the system-generated unique identifier for a Rental Agreement</value>
+        [MetaDataExtension (Description = "A foreign key reference to the system-generated unique identifier for a Rental Agreement")]
         public RentalAgreement RentalAgreement { get; set; }
         
         /// <summary>
@@ -76,6 +78,7 @@ namespace HETSAPI.Models
         /// </summary>   
         [ForeignKey("RentalAgreement")]
 		[JsonIgnore]
+		[MetaDataExtension (Description = "A foreign key reference to the system-generated unique identifier for a Rental Agreement")]
         public int? RentalAgreementId { get; set; }
         
         /// <summary>
@@ -90,6 +93,7 @@ namespace HETSAPI.Models
         /// </summary>   
         [ForeignKey("RentalAgreementRate")]
 		[JsonIgnore]
+		[MetaDataExtension (Description = "The Rental Agreement Rate component to which this Rental Agreement applies. If null, this time applies to the equipment itself.")]
         public int? RentalAgreementRateId { get; set; }
         
         /// <summary>

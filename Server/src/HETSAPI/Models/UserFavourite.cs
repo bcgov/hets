@@ -110,6 +110,7 @@ namespace HETSAPI.Models
         /// </summary>   
         [ForeignKey("User")]
 		[JsonIgnore]
+		[MetaDataExtension (Description = "The User who has this Favourite")]
         public int? UserId { get; set; }
         
         /// <summary>

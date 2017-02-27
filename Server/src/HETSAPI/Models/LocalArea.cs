@@ -100,6 +100,7 @@ namespace HETSAPI.Models
         /// </summary>   
         [ForeignKey("ServiceArea")]
 		[JsonIgnore]
+		[MetaDataExtension (Description = "The Service Area in which the Local Area is found.")]
         public int? ServiceAreaId { get; set; }
         
         /// <summary>
