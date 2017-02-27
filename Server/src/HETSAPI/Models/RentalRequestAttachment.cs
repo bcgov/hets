@@ -75,9 +75,10 @@ namespace HETSAPI.Models
         
         /// <summary>
         /// Foreign key for RentalRequest 
-        /// </summary>       
+        /// </summary>   
         [ForeignKey("RentalRequest")]
-        public int? RentalRequestRefId { get; set; }
+		[JsonIgnore]
+        public int? RentalRequestId { get; set; }
         
         /// <summary>
         /// Returns the string presentation of the object

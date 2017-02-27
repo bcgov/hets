@@ -66,9 +66,10 @@ namespace HETSAPI.Models
         
         /// <summary>
         /// Foreign key for RentalAgreement 
-        /// </summary>       
+        /// </summary>   
         [ForeignKey("RentalAgreement")]
-        public int? RentalAgreementRefId { get; set; }
+		[JsonIgnore]
+        public int? RentalAgreementId { get; set; }
         
         /// <summary>
         /// The name of the condition to be placed onto the Rental Agreement.

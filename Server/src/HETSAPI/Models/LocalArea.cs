@@ -97,9 +97,10 @@ namespace HETSAPI.Models
         
         /// <summary>
         /// Foreign key for ServiceArea 
-        /// </summary>       
+        /// </summary>   
         [ForeignKey("ServiceArea")]
-        public int? ServiceAreaRefId { get; set; }
+		[JsonIgnore]
+        public int? ServiceAreaId { get; set; }
         
         /// <summary>
         /// The DATE the business information ceased to be in effect. - NOT CURRENTLY ENFORCED IN THIS SYSTEM

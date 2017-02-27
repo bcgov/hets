@@ -73,9 +73,10 @@ namespace HETSAPI.Models
         
         /// <summary>
         /// Foreign key for RentalAgreement 
-        /// </summary>       
+        /// </summary>   
         [ForeignKey("RentalAgreement")]
-        public int? RentalAgreementRefId { get; set; }
+		[JsonIgnore]
+        public int? RentalAgreementId { get; set; }
         
         /// <summary>
         /// The Rental Agreement Rate component to which this Rental Agreement applies. If null, this time applies to the equipment itself.
@@ -86,9 +87,10 @@ namespace HETSAPI.Models
         
         /// <summary>
         /// Foreign key for RentalAgreementRate 
-        /// </summary>       
+        /// </summary>   
         [ForeignKey("RentalAgreementRate")]
-        public int? RentalAgreementRateRefId { get; set; }
+		[JsonIgnore]
+        public int? RentalAgreementRateId { get; set; }
         
         /// <summary>
         /// The date of the time record entry - the day of the entry if it is a daily entry, or a date in the week in which the work occurred if tracked weekly.

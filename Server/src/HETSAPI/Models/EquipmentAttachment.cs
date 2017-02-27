@@ -77,9 +77,10 @@ namespace HETSAPI.Models
         
         /// <summary>
         /// Foreign key for Equipment 
-        /// </summary>       
+        /// </summary>   
         [ForeignKey("Equipment")]
-        public int? EquipmentRefId { get; set; }
+		[JsonIgnore]
+        public int? EquipmentId { get; set; }
         
         /// <summary>
         /// A description of the equipment attachment if the Equipment Attachment Type is insufficient.

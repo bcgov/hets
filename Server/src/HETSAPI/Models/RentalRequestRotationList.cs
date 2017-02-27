@@ -85,9 +85,10 @@ namespace HETSAPI.Models
         
         /// <summary>
         /// Foreign key for RentalRequest 
-        /// </summary>       
+        /// </summary>   
         [ForeignKey("RentalRequest")]
-        public int? RentalRequestRefId { get; set; }
+		[JsonIgnore]
+        public int? RentalRequestId { get; set; }
         
         /// <summary>
         /// The sort order of the piece of equipment on the rotaton list at the time the request was created. This is the order the equipment will be offered the available work.
@@ -103,9 +104,10 @@ namespace HETSAPI.Models
         
         /// <summary>
         /// Foreign key for Equipment 
-        /// </summary>       
+        /// </summary>   
         [ForeignKey("Equipment")]
-        public int? EquipmentRefId { get; set; }
+		[JsonIgnore]
+        public int? EquipmentId { get; set; }
         
         /// <summary>
         /// The rental agreement (if any) created for an accepted hire offer.
@@ -116,9 +118,10 @@ namespace HETSAPI.Models
         
         /// <summary>
         /// Foreign key for RentalAgreement 
-        /// </summary>       
+        /// </summary>   
         [ForeignKey("RentalAgreement")]
-        public int? RentalAgreementRefId { get; set; }
+		[JsonIgnore]
+        public int? RentalAgreementId { get; set; }
         
         /// <summary>
         /// True if the HETS Clerk designated the hire of this equipment as being a Forced Hire. A Force Hire implies that the usual seniority rules for hiring are bypassed because of special circumstances related to the hire - e.g. a the hire requires an attachment only one piece of equipment has.

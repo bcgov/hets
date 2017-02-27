@@ -85,9 +85,10 @@ namespace HETSAPI.Models
         
         /// <summary>
         /// Foreign key for LocalArea 
-        /// </summary>       
+        /// </summary>   
         [ForeignKey("LocalArea")]
-        public int? LocalAreaRefId { get; set; }
+		[JsonIgnore]
+        public int? LocalAreaId { get; set; }
         
         /// <summary>
         /// TO BE REVIEWED WITH THE BUSINESS - The Provincial charge code for the equipment hiring related to this project. This will be the same across multiple service areas that provide equipment for the same Project.
@@ -139,9 +140,10 @@ namespace HETSAPI.Models
         
         /// <summary>
         /// Foreign key for PrimaryContact 
-        /// </summary>       
+        /// </summary>   
         [ForeignKey("PrimaryContact")]
-        public int? PrimaryContactRefId { get; set; }
+		[JsonIgnore]
+        public int? PrimaryContactId { get; set; }
         
         /// <summary>
         /// Gets or Sets Contacts

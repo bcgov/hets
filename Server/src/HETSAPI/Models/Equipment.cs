@@ -141,9 +141,10 @@ namespace HETSAPI.Models
         
         /// <summary>
         /// Foreign key for LocalArea 
-        /// </summary>       
+        /// </summary>   
         [ForeignKey("LocalArea")]
-        public int? LocalAreaRefId { get; set; }
+		[JsonIgnore]
+        public int? LocalAreaId { get; set; }
         
         /// <summary>
         /// Gets or Sets EquipmentType
@@ -152,9 +153,10 @@ namespace HETSAPI.Models
         
         /// <summary>
         /// Foreign key for EquipmentType 
-        /// </summary>       
+        /// </summary>   
         [ForeignKey("EquipmentType")]
-        public int? EquipmentTypeRefId { get; set; }
+		[JsonIgnore]
+        public int? EquipmentTypeId { get; set; }
         
         /// <summary>
         /// Gets or Sets Owner
@@ -163,9 +165,10 @@ namespace HETSAPI.Models
         
         /// <summary>
         /// Foreign key for Owner 
-        /// </summary>       
+        /// </summary>   
         [ForeignKey("Owner")]
-        public int? OwnerRefId { get; set; }
+		[JsonIgnore]
+        public int? OwnerId { get; set; }
         
         /// <summary>
         /// A human-visible unique code for the piece of equipment, referenced for convenience by the system users - HETS Clerks and Equipment Owners. Generated at record creation time based on the unique Owner prefix (e.g. EDW) and a zero-filled unique number - resulting in a code like EDW-0083.
@@ -423,9 +426,10 @@ namespace HETSAPI.Models
         
         /// <summary>
         /// Foreign key for DumpTruck 
-        /// </summary>       
+        /// </summary>   
         [ForeignKey("DumpTruck")]
-        public int? DumpTruckRefId { get; set; }
+		[JsonIgnore]
+        public int? DumpTruckId { get; set; }
         
         /// <summary>
         /// Gets or Sets EquipmentAttachments
