@@ -14,6 +14,7 @@ using HETSAPI.Services.Impl;
 using Microsoft.AspNetCore.Http;
 using HETSAPI.Controllers;
 using SchoolBusAPI.Controllers;
+using SchoolBusAPI.Services.Impl;
 
 namespace HETSAPI
 {
@@ -46,7 +47,11 @@ namespace HETSAPI
             services.AddTransient<IPermissionService, PermissionService>();
             services.AddTransient<IProjectService, ProjectService>();
             services.AddTransient<IRegionService, RegionService>();
+            services.AddTransient<IRentalAgreementConditionService, RentalAgreementConditionService>();
+            services.AddTransient<IRentalAgreementRateService, RentalAgreementRateService>();
+            services.AddTransient<IRentalAgreementService, RentalAgreementService>();
             services.AddTransient<IRentalRequestService, RentalRequestService>();
+            services.AddTransient<IRentalRequestRotationListService, RentalRequestRotationListService>();
             services.AddTransient<IRoleService, RoleService>();
             services.AddTransient<IServiceAreaService, ServiceAreaService>();
             services.AddTransient<IUserService, UserService>();

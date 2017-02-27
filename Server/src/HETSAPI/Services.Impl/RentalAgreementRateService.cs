@@ -1,14 +1,4 @@
-/*
- * REST API Documentation for the MOTI Hired Equipment Tracking System (HETS) Application
- *
- * The Hired Equipment Program is for owners/operators who have a dump truck, bulldozer, backhoe or  other piece of equipment they want to hire out to the transportation ministry for day labour and  emergency projects.  The Hired Equipment Program distributes available work to local equipment owners. The program is  based on seniority and is designed to deliver work to registered users fairly and efficiently  through the development of local area call-out lists. 
- *
- * OpenAPI spec version: v1
- * 
- * 
- */
-
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
@@ -22,33 +12,31 @@ using Newtonsoft.Json;
 using HETSAPI.Models;
 using HETSAPI.ViewModels;
 using HETSAPI.Mappings;
+using HETSAPI.Services;
 
-namespace HETSAPI.Services.Impl
+namespace SchoolBusAPI.Services.Impl
 {
-    /// <summary>
-    /// 
-    /// </summary>
-    public class RentalRequestRotationListService : IRentalRequestRotationListService
+    public class RentalAgreementRateService : IRentalAgreementRateService
     {
-        private readonly DbAppContext _context;        
+        private readonly DbAppContext _context;
 
         /// <summary>
         /// Create a service and set the database context
         /// </summary>
-        public RentalRequestRotationListService(DbAppContext context)
+        public RentalAgreementRateService(DbAppContext context)
         {
             _context = context;
         }
 
-        private void AdjustRecord(RentalRequestRotationList item)
+        private void AdjustRecord(RentalAgreementRate item)
         {
             if (item != null)
             {
-                
+
                 if (item.RentalAgreement != null)
                 {
                     int rentalAgreement_id = item.RentalAgreement.Id;
-                    bool rentalAgreement_exists = _context.RentalAgreements.Any(a => a.Id == rentalAgreement_id);
+                    bool rentalAgreement_exists = _context.Equipments.Any(a => a.Id == rentalAgreement_id);
                     if (rentalAgreement_exists)
                     {
                         RentalAgreement rentalAgreement = _context.RentalAgreements.First(a => a.Id == rentalAgreement_id);
@@ -59,6 +47,28 @@ namespace HETSAPI.Services.Impl
                         item.RentalAgreement = null;
                     }
                 }
+
+                if (item.TimeRecords != null)
+                {
+                    for (int i = 0; i < item.TimeRecords.Count; i++)
+                    {
+                        TimeRecord timeRecord = item.TimeRecords[i];
+                        if (timeRecord != null)
+                        {
+                            int timeRecord_id = item.Id;
+                            bool timeRecord_exists = _context.TimeRecords.Any(a => a.Id == timeRecord_id);
+                            if (timeRecord_exists)
+                            {
+                                TimeRecord newItem = _context.TimeRecords.First(a => a.Id == timeRecord_id);
+                                item.TimeRecords[i] = newItem;
+                            }
+                            else
+                            {
+                                item.TimeRecords[i] = null;
+                            }
+                        }
+                    }
+                }                
             }
         }
 
@@ -66,24 +76,24 @@ namespace HETSAPI.Services.Impl
         /// 
         /// </summary>
         /// <param name="items"></param>
-        /// <response code="201">Project created</response>
-        public virtual IActionResult RentalrequestrotationlistsBulkPostAsync(RentalRequestRotationList[] items)
+        /// <response code="201">RentalAgreementRate created</response>
+        public virtual IActionResult RentalagreementratesBulkPostAsync(RentalAgreementRate[] items)
         {
             if (items == null)
             {
                 return new BadRequestResult();
             }
-            foreach (RentalRequestRotationList item in items)
+            foreach (RentalAgreementRate item in items)
             {
                 AdjustRecord(item);
-                bool exists = _context.RentalRequestRotationLists.Any(a => a.Id == item.Id);
+                bool exists = _context.RentalAgreementRates.Any(a => a.Id == item.Id);
                 if (exists)
                 {
-                    _context.RentalRequestRotationLists.Update(item);
+                    _context.RentalAgreementRates.Update(item);
                 }
                 else
                 {
-                    _context.RentalRequestRotationLists.Add(item);
+                    _context.RentalAgreementRates.Add(item);
                 }
             }
             // Save the changes
@@ -95,12 +105,11 @@ namespace HETSAPI.Services.Impl
         /// 
         /// </summary>
         /// <response code="200">OK</response>
-        public virtual IActionResult RentalrequestrotationlistsGetAsync()
+        public virtual IActionResult RentalagreementratesGetAsync()
         {
-            var result = _context.RentalRequestRotationLists
+            var result = _context.RentalAgreementRates
                 .Include(x => x.RentalAgreement)
-                .Include(x => x.RentalRequest)                
-                .Include(x => x.Equipment)
+                .Include(x => x.TimeRecords)
                 .ToList();
             return new ObjectResult(result);
         }
@@ -111,15 +120,15 @@ namespace HETSAPI.Services.Impl
         /// <param name="id">id of Project to delete</param>
         /// <response code="200">OK</response>
         /// <response code="404">Project not found</response>
-        public virtual IActionResult RentalrequestrotationlistsIdDeletePostAsync(int id)
+        public virtual IActionResult RentalagreementratesIdDeletePostAsync(int id)
         {
-            var exists = _context.RentalRequestRotationLists.Any(a => a.Id == id);
+            var exists = _context.RentalAgreementRates.Any(a => a.Id == id);
             if (exists)
             {
-                var item = _context.RentalRequestRotationLists.First(a => a.Id == id);
+                var item = _context.RentalAgreementRates.First(a => a.Id == id);
                 if (item != null)
                 {
-                    _context.RentalRequestRotationLists.Remove(item);
+                    _context.RentalAgreementRates.Remove(item);
                     // Save the changes
                     _context.SaveChanges();
                 }
@@ -138,16 +147,14 @@ namespace HETSAPI.Services.Impl
         /// <param name="id">id of Project to fetch</param>
         /// <response code="200">OK</response>
         /// <response code="404">Project not found</response>
-        public virtual IActionResult RentalrequestrotationlistsIdGetAsync(int id)
+        public virtual IActionResult RentalagreementratesIdGetAsync(int id)
         {
-            var exists = _context.RentalRequestRotationLists.Any(a => a.Id == id);
+            var exists = _context.RentalAgreementRates.Any(a => a.Id == id);
             if (exists)
             {
-                var result = _context.RentalRequestRotationLists
+                var result = _context.RentalAgreementRates                    
                     .Include(x => x.RentalAgreement)
-                    .Include(x => x.RentalRequest)
-                    .Include(x => x.Equipment)
-
+                    .Include(x => x.TimeRecords)
                     .First(a => a.Id == id);
                 return new ObjectResult(result);
             }
@@ -165,13 +172,13 @@ namespace HETSAPI.Services.Impl
         /// <param name="item"></param>
         /// <response code="200">OK</response>
         /// <response code="404">Project not found</response>
-        public virtual IActionResult RentalrequestrotationlistsIdPutAsync(int id, RentalRequestRotationList item)
+        public virtual IActionResult RentalagreementratesIdPutAsync(int id, RentalAgreementRate item)
         {
             AdjustRecord(item);
-            var exists = _context.RentalRequestRotationLists.Any(a => a.Id == id);
+            var exists = _context.RentalAgreementRates.Any(a => a.Id == id);
             if (exists && id == item.Id)
             {
-                _context.RentalRequestRotationLists.Update(item);
+                _context.RentalAgreementRates.Update(item);
                 // Save the changes
                 _context.SaveChanges();
                 return new ObjectResult(item);
@@ -188,21 +195,21 @@ namespace HETSAPI.Services.Impl
         /// </summary>
         /// <param name="item"></param>
         /// <response code="201">Project created</response>
-        public virtual IActionResult RentalrequestrotationlistsPostAsync(RentalRequestRotationList item)
+        public virtual IActionResult RentalagreementratesPostAsync(RentalAgreementRate item)
         {
             if (item != null)
             {
                 AdjustRecord(item);
 
-                var exists = _context.RentalRequestRotationLists.Any(a => a.Id == item.Id);
+                var exists = _context.RentalAgreementRates.Any(a => a.Id == item.Id);
                 if (exists)
                 {
-                    _context.RentalRequestRotationLists.Update(item);
+                    _context.RentalAgreementRates.Update(item);
                 }
                 else
                 {
                     // record not found
-                    _context.RentalRequestRotationLists.Add(item);
+                    _context.RentalAgreementRates.Add(item);
                 }
                 // Save the changes
                 _context.SaveChanges();
@@ -213,6 +220,5 @@ namespace HETSAPI.Services.Impl
                 return new StatusCodeResult(400);
             }
         }
-        
     }
 }

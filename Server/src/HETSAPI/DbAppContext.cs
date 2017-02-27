@@ -65,6 +65,8 @@ namespace HETSAPI.Models
         DbSet<Project> Projects { get; set; }
         DbSet<Region> Regions { get; set; }
         DbSet<RentalAgreement> RentalAgreements { get; set; }
+        DbSet<RentalAgreementCondition> RentalAgreementConditions { get; set; }
+        DbSet<RentalAgreementRate> RentalAgreementRates { get; set; }
         DbSet<RentalRequest> RentalRequests { get; set; }
         DbSet<RentalRequestRotationList> RentalRequestRotationLists { get; set; }
         DbSet<Role> Roles { get; set; }
@@ -133,6 +135,8 @@ namespace HETSAPI.Models
         public virtual DbSet<Project> Projects { get; set; }
         public virtual DbSet<Region> Regions { get; set; }
         public virtual DbSet<RentalAgreement> RentalAgreements { get; set; }
+        public virtual DbSet<RentalAgreementCondition> RentalAgreementConditions { get; set; }
+        public virtual DbSet<RentalAgreementRate> RentalAgreementRates { get; set; }
         public virtual DbSet<RentalRequest> RentalRequests { get; set; }
         public virtual DbSet<RentalRequestRotationList> RentalRequestRotationLists { get; set; }        
         public virtual DbSet<Role> Roles { get; set; }
