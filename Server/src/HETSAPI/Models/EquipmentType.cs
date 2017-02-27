@@ -79,9 +79,10 @@ namespace HETSAPI.Models
         
         /// <summary>
         /// Foreign key for LocalArea 
-        /// </summary>       
+        /// </summary>   
         [ForeignKey("LocalArea")]
-        public int? LocalAreaRefId { get; set; }
+		[JsonIgnore]
+        public int? LocalAreaId { get; set; }
         
         /// <summary>
         /// A human-friendly name for the Equipment Type that is displayed on screens with limited screen real estate available.

@@ -66,9 +66,10 @@ namespace HETSAPI.Models
         
         /// <summary>
         /// Foreign key for EquipmentType 
-        /// </summary>       
+        /// </summary>   
         [ForeignKey("EquipmentType")]
-        public int? EquipmentTypeRefId { get; set; }
+		[JsonIgnore]
+        public int? EquipmentTypeId { get; set; }
         
         /// <summary>
         /// The id of the next piece of Block 1 Equipment to be asked for a Rental Request. If null, start from the first piece of equipment in Block 1.
@@ -79,9 +80,10 @@ namespace HETSAPI.Models
         
         /// <summary>
         /// Foreign key for AskNextBlock1 
-        /// </summary>       
+        /// </summary>   
         [ForeignKey("AskNextBlock1")]
-        public int? AskNextBlock1RefId { get; set; }
+		[JsonIgnore]
+        public int? AskNextBlock1Id { get; set; }
         
         /// <summary>
         /// The id of the next piece of Block 2 Equipment to be asked for a Rental Request. If null, start from the first piece of equipment in Block 2.
@@ -92,9 +94,10 @@ namespace HETSAPI.Models
         
         /// <summary>
         /// Foreign key for AskNextBlock2 
-        /// </summary>       
+        /// </summary>   
         [ForeignKey("AskNextBlock2")]
-        public int? AskNextBlock2RefId { get; set; }
+		[JsonIgnore]
+        public int? AskNextBlock2Id { get; set; }
         
         /// <summary>
         /// The id of the next piece of Block Open Equipment to be asked for a Rental Request. If null, start from the first piece of equipment in Block Open.
@@ -105,9 +108,10 @@ namespace HETSAPI.Models
         
         /// <summary>
         /// Foreign key for AskNextBlockOpen 
-        /// </summary>       
+        /// </summary>   
         [ForeignKey("AskNextBlockOpen")]
-        public int? AskNextBlockOpenRefId { get; set; }
+		[JsonIgnore]
+        public int? AskNextBlockOpenId { get; set; }
         
         /// <summary>
         /// Returns the string presentation of the object

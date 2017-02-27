@@ -87,9 +87,10 @@ namespace HETSAPI.Models
         
         /// <summary>
         /// Foreign key for Project 
-        /// </summary>       
+        /// </summary>   
         [ForeignKey("Project")]
-        public int? ProjectRefId { get; set; }
+		[JsonIgnore]
+        public int? ProjectId { get; set; }
         
         /// <summary>
         /// Gets or Sets LocalArea
@@ -98,9 +99,10 @@ namespace HETSAPI.Models
         
         /// <summary>
         /// Foreign key for LocalArea 
-        /// </summary>       
+        /// </summary>   
         [ForeignKey("LocalArea")]
-        public int? LocalAreaRefId { get; set; }
+		[JsonIgnore]
+        public int? LocalAreaId { get; set; }
         
         /// <summary>
         /// The status of the Rental Request - whether it in progress, completed or was cancelled.
@@ -118,9 +120,10 @@ namespace HETSAPI.Models
         
         /// <summary>
         /// Foreign key for EquipmentType 
-        /// </summary>       
+        /// </summary>   
         [ForeignKey("EquipmentType")]
-        public int? EquipmentTypeRefId { get; set; }
+		[JsonIgnore]
+        public int? EquipmentTypeId { get; set; }
         
         /// <summary>
         /// The number of pieces of the equipment type wanted for hire as part of this request.
@@ -159,9 +162,10 @@ namespace HETSAPI.Models
         
         /// <summary>
         /// Foreign key for FirstOnRotationList 
-        /// </summary>       
+        /// </summary>   
         [ForeignKey("FirstOnRotationList")]
-        public int? FirstOnRotationListRefId { get; set; }
+		[JsonIgnore]
+        public int? FirstOnRotationListId { get; set; }
         
         /// <summary>
         /// Gets or Sets Notes

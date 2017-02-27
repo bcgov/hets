@@ -95,9 +95,10 @@ namespace HETSAPI.Models
         
         /// <summary>
         /// Foreign key for Region 
-        /// </summary>       
+        /// </summary>   
         [ForeignKey("Region")]
-        public int? RegionRefId { get; set; }
+		[JsonIgnore]
+        public int? RegionId { get; set; }
         
         /// <summary>
         /// The DATE the business information came into effect. - NOT CURRENTLY ENFORCED IN THIS SYSTEM

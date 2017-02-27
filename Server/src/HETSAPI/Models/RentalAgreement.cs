@@ -107,9 +107,10 @@ namespace HETSAPI.Models
         
         /// <summary>
         /// Foreign key for Equipment 
-        /// </summary>       
+        /// </summary>   
         [ForeignKey("Equipment")]
-        public int? EquipmentRefId { get; set; }
+		[JsonIgnore]
+        public int? EquipmentId { get; set; }
         
         /// <summary>
         /// Gets or Sets Project
@@ -118,9 +119,10 @@ namespace HETSAPI.Models
         
         /// <summary>
         /// Foreign key for Project 
-        /// </summary>       
+        /// </summary>   
         [ForeignKey("Project")]
-        public int? ProjectRefId { get; set; }
+		[JsonIgnore]
+        public int? ProjectId { get; set; }
         
         /// <summary>
         /// Gets or Sets RentalAgreementRates

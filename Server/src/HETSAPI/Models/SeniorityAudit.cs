@@ -99,9 +99,10 @@ namespace HETSAPI.Models
         
         /// <summary>
         /// Foreign key for LocalArea 
-        /// </summary>       
+        /// </summary>   
         [ForeignKey("LocalArea")]
-        public int? LocalAreaRefId { get; set; }
+		[JsonIgnore]
+        public int? LocalAreaId { get; set; }
         
         /// <summary>
         /// Gets or Sets Equipment
@@ -110,9 +111,10 @@ namespace HETSAPI.Models
         
         /// <summary>
         /// Foreign key for Equipment 
-        /// </summary>       
+        /// </summary>   
         [ForeignKey("Equipment")]
-        public int? EquipmentRefId { get; set; }
+		[JsonIgnore]
+        public int? EquipmentId { get; set; }
         
         /// <summary>
         /// The block number for the piece of equipment as calculated by the Seniority Algorthm for this equipment type in the local area. As currently defined by the business - 1, 2 or Open
@@ -128,9 +130,10 @@ namespace HETSAPI.Models
         
         /// <summary>
         /// Foreign key for Owner 
-        /// </summary>       
+        /// </summary>   
         [ForeignKey("Owner")]
-        public int? OwnerRefId { get; set; }
+		[JsonIgnore]
+        public int? OwnerId { get; set; }
         
         /// <summary>
         /// The name of the organization of the owner from the Owner Record, captured at the time this record was created.
