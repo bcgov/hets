@@ -171,7 +171,8 @@ namespace HETSAPI.Models
                 }
             }
             
-            context.Users.Update(user);            
+            context.Users.Update(user);
+            context.SaveChanges();
         }
 
 
@@ -215,6 +216,7 @@ namespace HETSAPI.Models
             region.StartDate = initialRegion.StartDate;
 
             context.Regions.Add(region);
+            context.SaveChanges();
         }
 
         /// <summary>
@@ -271,6 +273,7 @@ namespace HETSAPI.Models
             }
 
             context.Districts.Add(district);
+            context.SaveChanges();
         }
 
 
@@ -323,6 +326,7 @@ namespace HETSAPI.Models
             }
 
             context.ServiceAreas.Add(serviceArea);
+            context.SaveChanges();
         }
 
         public static void UpdateSeedDistrictInfo(this DbAppContext context, District districtInfo)
