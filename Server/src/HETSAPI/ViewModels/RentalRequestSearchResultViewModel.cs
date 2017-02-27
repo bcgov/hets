@@ -42,16 +42,16 @@ namespace HETSAPI.ViewModels
         /// <param name="Id">Id (required).</param>
         /// <param name="LocalArea">LocalArea.</param>
         /// <param name="EquipmentCount">EquipmentCount.</param>
-        /// <param name="EquipmentType">EquipmentType.</param>
+        /// <param name="EquipmentTypeName">EquipmentTypeName.</param>
         /// <param name="ProjectName">ProjectName.</param>
         /// <param name="PrimaryContact">PrimaryContact.</param>
         /// <param name="Status">Project status.</param>
-        public RentalRequestSearchResultViewModel(int Id, LocalArea LocalArea = null, int? EquipmentCount = null, string EquipmentType = null, string ProjectName = null, Contact PrimaryContact = null, string Status = null)
+        public RentalRequestSearchResultViewModel(int Id, LocalArea LocalArea = null, int? EquipmentCount = null, string EquipmentTypeName = null, string ProjectName = null, Contact PrimaryContact = null, string Status = null)
         {   
             this.Id = Id;
             this.LocalArea = LocalArea;
             this.EquipmentCount = EquipmentCount;
-            this.EquipmentType = EquipmentType;
+            this.EquipmentTypeName = EquipmentTypeName;
             this.ProjectName = ProjectName;
             this.PrimaryContact = PrimaryContact;
             this.Status = Status;
@@ -76,10 +76,10 @@ namespace HETSAPI.ViewModels
         public int? EquipmentCount { get; set; }
 
         /// <summary>
-        /// Gets or Sets EquipmentType
+        /// Gets or Sets EquipmentTypeName
         /// </summary>
-        [DataMember(Name="equipmentType")]
-        public string EquipmentType { get; set; }
+        [DataMember(Name="equipmentTypeName")]
+        public string EquipmentTypeName { get; set; }
 
         /// <summary>
         /// Gets or Sets ProjectName
@@ -112,7 +112,7 @@ namespace HETSAPI.ViewModels
             sb.Append("  Id: ").Append(Id).Append("\n");
             sb.Append("  LocalArea: ").Append(LocalArea).Append("\n");
             sb.Append("  EquipmentCount: ").Append(EquipmentCount).Append("\n");
-            sb.Append("  EquipmentType: ").Append(EquipmentType).Append("\n");
+            sb.Append("  EquipmentTypeName: ").Append(EquipmentTypeName).Append("\n");
             sb.Append("  ProjectName: ").Append(ProjectName).Append("\n");
             sb.Append("  PrimaryContact: ").Append(PrimaryContact).Append("\n");
             sb.Append("  Status: ").Append(Status).Append("\n");
@@ -169,9 +169,9 @@ namespace HETSAPI.ViewModels
                     this.EquipmentCount.Equals(other.EquipmentCount)
                 ) &&                 
                 (
-                    this.EquipmentType == other.EquipmentType ||
-                    this.EquipmentType != null &&
-                    this.EquipmentType.Equals(other.EquipmentType)
+                    this.EquipmentTypeName == other.EquipmentTypeName ||
+                    this.EquipmentTypeName != null &&
+                    this.EquipmentTypeName.Equals(other.EquipmentTypeName)
                 ) &&                 
                 (
                     this.ProjectName == other.ProjectName ||
@@ -210,9 +210,9 @@ namespace HETSAPI.ViewModels
                 {
                     hash = hash * 59 + this.EquipmentCount.GetHashCode();
                 }                
-                                if (this.EquipmentType != null)
+                                if (this.EquipmentTypeName != null)
                 {
-                    hash = hash * 59 + this.EquipmentType.GetHashCode();
+                    hash = hash * 59 + this.EquipmentTypeName.GetHashCode();
                 }                
                                 if (this.ProjectName != null)
                 {

@@ -216,7 +216,7 @@
         $ref: '#/definitions/LocalArea'
       equipmentCount:
         type: integer
-      equipmentType:
+      equipmentTypeName:
         type: string
       projectName:
         type: string
