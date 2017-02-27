@@ -36,7 +36,7 @@ namespace HETSAPI.Mappings
             var dto = new RentalRequestSearchResultViewModel();
             if (model != null)
             {
-                dto.EquipmentType = model.EquipmentType.Name;
+                dto.EquipmentTypeName = model.EquipmentType.Name;
                 dto.Id = model.Id;
                 dto.LocalArea = model.LocalArea;
                 dto.PrimaryContact = model.Project.PrimaryContact;
