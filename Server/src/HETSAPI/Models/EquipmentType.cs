@@ -82,6 +82,7 @@ namespace HETSAPI.Models
         /// </summary>   
         [ForeignKey("LocalArea")]
 		[JsonIgnore]
+		
         public int? LocalAreaId { get; set; }
         
         /// <summary>

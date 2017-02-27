@@ -43,7 +43,7 @@ namespace HETSAPI.Models
         /// </summary>
         /// <param name="Id">A system-generated unique identifier for a RolePermission (required).</param>
         /// <param name="Role">Role.</param>
-        /// <param name="Permission">Permission.</param>
+        /// <param name="Permission">A foreign key reference to the system-generated unique identifier for a Permission.</param>
         public RolePermission(int Id, Role Role = null, Permission Permission = null)
         {   
             this.Id = Id;
@@ -68,11 +68,14 @@ namespace HETSAPI.Models
         /// </summary>   
         [ForeignKey("Role")]
 		[JsonIgnore]
+		
         public int? RoleId { get; set; }
         
         /// <summary>
-        /// Gets or Sets Permission
+        /// A foreign key reference to the system-generated unique identifier for a Permission
         /// </summary>
+        /// <value>A foreign key reference to the system-generated unique identifier for a Permission</value>
+        [MetaDataExtension (Description = "A foreign key reference to the system-generated unique identifier for a Permission")]
         public Permission Permission { get; set; }
         
         /// <summary>
@@ -80,6 +83,7 @@ namespace HETSAPI.Models
         /// </summary>   
         [ForeignKey("Permission")]
 		[JsonIgnore]
+		[MetaDataExtension (Description = "A foreign key reference to the system-generated unique identifier for a Permission")]
         public int? PermissionId { get; set; }
         
         /// <summary>

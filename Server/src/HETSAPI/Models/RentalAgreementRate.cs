@@ -42,7 +42,7 @@ namespace HETSAPI.Models
         /// Initializes a new instance of the <see cref="RentalAgreementRate" /> class.
         /// </summary>
         /// <param name="Id">A system-generated unique identifier for a RentalAgreementRate (required).</param>
-        /// <param name="RentalAgreement">RentalAgreement.</param>
+        /// <param name="RentalAgreement">A foreign key reference to the system-generated unique identifier for a Rental Agreement.</param>
         /// <param name="ComponentName">Name of the component for the Rental Agreement for which the attached rates apply..</param>
         /// <param name="IsAttachment">True if this rate is for an attachment to the piece of equipment..</param>
         /// <param name="Rate">The dollar rate associated with this component of the rental agreement..</param>
@@ -71,8 +71,10 @@ namespace HETSAPI.Models
         public int Id { get; set; }
         
         /// <summary>
-        /// Gets or Sets RentalAgreement
+        /// A foreign key reference to the system-generated unique identifier for a Rental Agreement
         /// </summary>
+        /// <value>A foreign key reference to the system-generated unique identifier for a Rental Agreement</value>
+        [MetaDataExtension (Description = "A foreign key reference to the system-generated unique identifier for a Rental Agreement")]
         public RentalAgreement RentalAgreement { get; set; }
         
         /// <summary>
@@ -80,6 +82,7 @@ namespace HETSAPI.Models
         /// </summary>   
         [ForeignKey("RentalAgreement")]
 		[JsonIgnore]
+		[MetaDataExtension (Description = "A foreign key reference to the system-generated unique identifier for a Rental Agreement")]
         public int? RentalAgreementId { get; set; }
         
         /// <summary>

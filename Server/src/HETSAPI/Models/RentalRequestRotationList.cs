@@ -88,6 +88,7 @@ namespace HETSAPI.Models
         /// </summary>   
         [ForeignKey("RentalRequest")]
 		[JsonIgnore]
+		
         public int? RentalRequestId { get; set; }
         
         /// <summary>
@@ -107,6 +108,7 @@ namespace HETSAPI.Models
         /// </summary>   
         [ForeignKey("Equipment")]
 		[JsonIgnore]
+		
         public int? EquipmentId { get; set; }
         
         /// <summary>
@@ -121,6 +123,7 @@ namespace HETSAPI.Models
         /// </summary>   
         [ForeignKey("RentalAgreement")]
 		[JsonIgnore]
+		[MetaDataExtension (Description = "The rental agreement (if any) created for an accepted hire offer.")]
         public int? RentalAgreementId { get; set; }
         
         /// <summary>

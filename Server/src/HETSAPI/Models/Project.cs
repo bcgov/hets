@@ -88,6 +88,7 @@ namespace HETSAPI.Models
         /// </summary>   
         [ForeignKey("LocalArea")]
 		[JsonIgnore]
+		[MetaDataExtension (Description = "The Local Area associated with this Project record.")]
         public int? LocalAreaId { get; set; }
         
         /// <summary>
@@ -143,6 +144,7 @@ namespace HETSAPI.Models
         /// </summary>   
         [ForeignKey("PrimaryContact")]
 		[JsonIgnore]
+		[MetaDataExtension (Description = "Link to the designated Primary Contact for the Project - usually the Project Manager requesting to hire equipment.")]
         public int? PrimaryContactId { get; set; }
         
         /// <summary>

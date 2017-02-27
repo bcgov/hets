@@ -43,7 +43,7 @@ namespace HETSAPI.Models
         /// </summary>
         /// <param name="Id">A system-generated unique identifier for a RentalRequestAttachment (required).</param>
         /// <param name="Attachment">The name&amp;#x2F;type attachment needed as part of the fulfillment of the request (required).</param>
-        /// <param name="RentalRequest">RentalRequest.</param>
+        /// <param name="RentalRequest">A foreign key reference to the system-generated unique identifier for a Rental Request.</param>
         public RentalRequestAttachment(int Id, string Attachment, RentalRequest RentalRequest = null)
         {   
             this.Id = Id;
@@ -69,8 +69,10 @@ namespace HETSAPI.Models
         public string Attachment { get; set; }
         
         /// <summary>
-        /// Gets or Sets RentalRequest
+        /// A foreign key reference to the system-generated unique identifier for a Rental Request
         /// </summary>
+        /// <value>A foreign key reference to the system-generated unique identifier for a Rental Request</value>
+        [MetaDataExtension (Description = "A foreign key reference to the system-generated unique identifier for a Rental Request")]
         public RentalRequest RentalRequest { get; set; }
         
         /// <summary>
@@ -78,6 +80,7 @@ namespace HETSAPI.Models
         /// </summary>   
         [ForeignKey("RentalRequest")]
 		[JsonIgnore]
+		[MetaDataExtension (Description = "A foreign key reference to the system-generated unique identifier for a Rental Request")]
         public int? RentalRequestId { get; set; }
         
         /// <summary>

@@ -44,8 +44,8 @@ namespace HETSAPI.Models
         /// <param name="Id">A system-generated unique identifier for a RentalAgreement (required).</param>
         /// <param name="Number">A system-generated unique rental agreement number in a format defined by the business as suitable for the business and client to see and use..</param>
         /// <param name="Status">The current status of the Rental Agreement, such as Active or Complete.</param>
-        /// <param name="Equipment">Equipment.</param>
-        /// <param name="Project">Project.</param>
+        /// <param name="Equipment">A foreign key reference to the system-generated unique identifier for an Equipment.</param>
+        /// <param name="Project">A foreign key reference to the system-generated unique identifier for a Project.</param>
         /// <param name="RentalAgreementRates">RentalAgreementRates.</param>
         /// <param name="RentalAgreementConditions">RentalAgreementConditions.</param>
         /// <param name="TimeRecords">TimeRecords.</param>
@@ -101,8 +101,10 @@ namespace HETSAPI.Models
         public string Status { get; set; }
         
         /// <summary>
-        /// Gets or Sets Equipment
+        /// A foreign key reference to the system-generated unique identifier for an Equipment
         /// </summary>
+        /// <value>A foreign key reference to the system-generated unique identifier for an Equipment</value>
+        [MetaDataExtension (Description = "A foreign key reference to the system-generated unique identifier for an Equipment")]
         public Equipment Equipment { get; set; }
         
         /// <summary>
@@ -110,11 +112,14 @@ namespace HETSAPI.Models
         /// </summary>   
         [ForeignKey("Equipment")]
 		[JsonIgnore]
+		[MetaDataExtension (Description = "A foreign key reference to the system-generated unique identifier for an Equipment")]
         public int? EquipmentId { get; set; }
         
         /// <summary>
-        /// Gets or Sets Project
+        /// A foreign key reference to the system-generated unique identifier for a Project
         /// </summary>
+        /// <value>A foreign key reference to the system-generated unique identifier for a Project</value>
+        [MetaDataExtension (Description = "A foreign key reference to the system-generated unique identifier for a Project")]
         public Project Project { get; set; }
         
         /// <summary>
@@ -122,6 +127,7 @@ namespace HETSAPI.Models
         /// </summary>   
         [ForeignKey("Project")]
 		[JsonIgnore]
+		[MetaDataExtension (Description = "A foreign key reference to the system-generated unique identifier for a Project")]
         public int? ProjectId { get; set; }
         
         /// <summary>

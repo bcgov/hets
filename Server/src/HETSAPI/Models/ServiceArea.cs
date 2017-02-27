@@ -98,6 +98,7 @@ namespace HETSAPI.Models
         /// </summary>   
         [ForeignKey("District")]
 		[JsonIgnore]
+		[MetaDataExtension (Description = "The district in which the Service Area is found.")]
         public int? DistrictId { get; set; }
         
         /// <summary>
