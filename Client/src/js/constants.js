@@ -13,4 +13,13 @@ export const OWNER_STATUS_CODE_ARCHIVED = 'Archived';
 
 // Project
 export const PROJECT_STATUS_CODE_ACTIVE = 'Active';
-export const PROJECT_STATUS_CODE_COMPLETE = 'Complete';
+export const PROJECT_STATUS_CODE_COMPLETED = 'Completed';
+
+// Rental Request
+export const RENTAL_REQUEST_STATUS_CODE_IN_PROGRESS = 'In Progress';
+export const RENTAL_REQUEST_STATUS_CODE_COMPLETED = 'Completed';
+export const RENTAL_REQUEST_STATUS_CODE_CANCELLED = 'Cancelled';
+
+// Rental Agreement
+export const RENTAL_AGREEMENT_STATUS_CODE_ACTIVE = 'Active';
+export const RENTAL_AGREEMENT_STATUS_CODE_COMPLETED = 'Completed';

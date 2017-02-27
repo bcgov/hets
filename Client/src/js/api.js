@@ -40,7 +40,7 @@ export function getUsers() {
 }
 
 export function getUser(userId) {
-  return new ApiRequest(`/users/${userId}`).get().then(response => {
+  return new ApiRequest(`/users/${ userId }`).get().then(response => {
     var user = response;
 
     // Add display fields
@@ -55,7 +55,7 @@ export function getUser(userId) {
 ////////////////////
 
 export function getFavourites(type) {
-  return new ApiRequest(`/users/current/favourites/${type}`).get().then(response => {
+  return new ApiRequest(`/users/current/favourites/${ type }`).get().then(response => {
     // Normalize the response
     var favourites = _.fromPairs(response.map(favourite => [ favourite.id, favourite ]));
 
@@ -82,7 +82,7 @@ export function updateFavourite(favourite) {
 }
 
 export function deleteFavourite(favourite) {
-  return new ApiRequest(`/users/current/favourites/${favourite.id}/delete`).post().then(response => {
+  return new ApiRequest(`/users/current/favourites/${ favourite.id }/delete`).post().then(response => {
     // No needs to normalize, as we just want the id from the response.
     store.dispatch({ type: Action.DELETE_FAVOURITE, id: response.id });
   });
@@ -113,7 +113,7 @@ function parseEquipment(equipment) {
   equipment.licencePlate = equipment.licencePlate || '';
   equipment.operator = equipment.operator || ''; // TODO Needs review from business
   equipment.organizationName = equipment.owner.organizationName;
-  equipment.ownerPath = equipment.owner.id ? `#/owners/${equipment.owner.id}` : '';
+  equipment.ownerPath = equipment.owner.id ? `#/owners/${ equipment.owner.id }` : '';
   equipment.typeName = equipment.equipmentType ? equipment.equipmentType.name : '';
   equipment.localAreaName = equipment.localArea.name;
   equipment.districtName = equipment.localArea.serviceArea.district.name;
@@ -178,7 +178,7 @@ export function getEquipmentList() {
 }
 
 export function getEquipment(equipmentId) {
-  return new ApiRequest(`/equipment/${equipmentId}`).get().then(response => {
+  return new ApiRequest(`/equipment/${ equipmentId }`).get().then(response => {
     var equipment = response;
 
     // Add display fields
@@ -189,7 +189,7 @@ export function getEquipment(equipmentId) {
 }
 
 export function updateEquipment(equipment) {
-  return new ApiRequest(`/equipment/${equipment.id}`).put(equipment).then(response => {
+  return new ApiRequest(`/equipment/${ equipment.id }`).put(equipment).then(response => {
     var equipment = response;
 
     // Add display fields
@@ -257,10 +257,10 @@ export function deletePhysicalAttachment(attachment) {
 ////////////////////
 
 function parseOwner(owner) {
-  if (!owner.localArea) { owner.localArea = { id: '', name: ''}; }
-  if (!owner.localArea.serviceArea) { owner.localArea.serviceArea = { id: '', name: ''}; }
-  if (!owner.localArea.serviceArea.district) { owner.localArea.serviceArea.district = { id: '', name: ''}; }
-  if (!owner.localArea.serviceArea.district.region) { owner.localArea.serviceArea.district.region = { id: '', name: ''}; }
+  if (!owner.localArea) { owner.localArea = { id: '', name: '' }; }
+  if (!owner.localArea.serviceArea) { owner.localArea.serviceArea = { id: '', name: '' }; }
+  if (!owner.localArea.serviceArea.district) { owner.localArea.serviceArea.district = { id: '', name: '' }; }
+  if (!owner.localArea.serviceArea.district.region) { owner.localArea.serviceArea.district.region = { id: '', name: '' }; }
   if (!owner.contacts) { owner.contacts = []; }
   if (!owner.equipmentList) { owner.equipmentList = []; }
 
@@ -302,7 +302,7 @@ export function searchOwners(params) {
 }
 
 export function getOwner(ownerId) {
-  return new ApiRequest(`/owners/${ownerId}`).get().then(response => {
+  return new ApiRequest(`/owners/${ ownerId }`).get().then(response => {
     var owner = response;
 
     // Add display fields
@@ -352,23 +352,35 @@ function parseContact(contact) {
 ////////////////////
 
 function parseProject(project) {
-  if (!project.serviceArea) { project.serviceArea = { id: '', name: ''}; }
-  if (!project.serviceArea.district) { project.serviceArea.district = { id: '', name: ''}; }
-  if (!project.serviceArea.district.region) { project.serviceArea.district.region = { id: '', name: ''}; }
+  if (!project.localArea) { project.localArea = { id: '', name: '' }; }
+  if (!project.localArea.serviceArea) { project.localArea.serviceArea = { id: '', name: '' }; }
+  if (!project.localArea.serviceArea.district) { project.localArea.serviceArea.district = { id: '', name: '' }; }
+  if (!project.localArea.serviceArea.district.region) { project.localArea.serviceArea.district.region = { id: '', name: '' }; }
   if (!project.contacts) { project.contacts = []; }
   if (!project.rentalRequests) { project.rentalRequests = []; }
+  if (!project.rentalAgreements) { project.rentalAgreements = []; }  // TODO Server needs to send this (HETS-153)
 
-  // TODO Project status needs to be populated in sample data. Setting to Active for the time being...
-  project.status = project.status || Constant.PROJECT_STATUS_CODE_ACTIVE;
+  // Add display fields for rental requests and rental agreements
+  _.map(project.rentalRequests, obj => { parseRentalRequest(obj); });
+  _.map(project.rentalAgreements, obj => { parseRentalAgreement(obj); });
 
-  // TODO The following fields must be populated by the back-end
-  project.numberOfHires = project.numberOfHires || 0;
-  project.numberOfRequests = project.numberOfRequests || 0;
+  project.name = project.name || '';
+  project.provincialProjectNumber = project.provincialProjectNumber || '';
+  project.information = project.information || '';
+
+  project.numberOfRequests = project.numberOfRequests || Object.keys(project.rentalRequests).length;
+  project.numberOfHires = project.numberOfHires || Object.keys(project.rentalAgreements).length;
 
   // UI display fields
+  project.status = project.status || Constant.PROJECT_STATUS_CODE_ACTIVE;
   project.isActive = project.status === Constant.PROJECT_STATUS_CODE_ACTIVE;
+  project.localAreaName = project.localArea.name;
+
   project.primaryContactName = project.primaryContact ? firstLastName(project.primaryContact.givenName, project.primaryContact.surname) : '';
-  project.serviceAreaName = project.serviceArea.name;
+  project.primaryContactRole = project.primaryContact ? project.primaryContact.role : '';
+  project.primaryContactEmail = project.primaryContact ? project.primaryContact.emailAddress : '';
+  project.primaryContactRole = project.primaryContact ? project.primaryContact.role : '';
+  project.primaryContactPhone = project.primaryContact ? project.primaryContact.workPhoneNumber || project.primaryContact.mobilePhoneNumber || '' : '';
 }
 
 export function searchProjects(params) {
@@ -384,7 +396,7 @@ export function searchProjects(params) {
 }
 
 export function getProject(projectId) {
-  return new ApiRequest(`/projects/${projectId}`).get().then(response => {
+  return new ApiRequest(`/projects/${ projectId }`).get().then(response => {
     var project = response;
 
     // Add display fields
@@ -392,6 +404,84 @@ export function getProject(projectId) {
 
     store.dispatch({ type: Action.UPDATE_PROJECT, project: project });
   });
+}
+
+export function updateProject(project) {
+  return new ApiRequest(`/projects/${ project.id }`).put(project).then(response => {
+    var project = response;
+
+    // Add display fields
+    parseProject(project);
+
+    store.dispatch({ type: Action.UPDATE_PROJECT, project: project });
+  });
+}
+
+////////////////////
+// Rental Requests
+////////////////////
+
+function parseRentalRequest(request) {
+  if (!request.localArea) { request.localArea = { id: '', name: '' }; }
+  if (!request.localArea.serviceArea) { request.localArea.serviceArea = { id: '', name: '' }; }
+  if (!request.localArea.serviceArea.district) { request.localArea.serviceArea.district = { id: '', name: '' }; }
+  if (!request.localArea.serviceArea.district.region) { request.localArea.serviceArea.district.region = { id: '', name: '' }; }
+  if (!request.equipmentType) { request.equipmentType = { id: '', name: '' }; }
+  if (!request.rentalRequestRotationList) { request.rentalRequestRotationList = []; }
+
+  request.equipmentCount = request.equipmentCount || 0;
+  request.expectedHours = request.expectedHours || 0;
+  request.expectedStartDate = request.expectedStartDate || '';
+  request.expectedEndDate = request.expectedEndDate || '';
+
+  // UI display fields
+  request.status = request.status || Constant.RENTAL_REQUEST_STATUS_CODE_ACTIVE; // TODO
+  request.isActive = request.status === Constant.RENTAL_REQUEST_STATUS_CODE_ACTIVE;
+  request.isCompleted = request.status === Constant.RENTAL_REQUEST_STATUS_CODE_COMPLETED;
+  request.isCancelled = request.status === Constant.RENTAL_REQUEST_STATUS_CODE_CANCELLED;
+  request.equipmentTypeName = request.equipmentType.name;
+
+  // Flag element as a rental request. 
+  // Rental requests and rentals are merged and shown in a single list on Project Details screen
+  request.isRentalRequest = true;
+}
+
+////////////////////
+// Rental Agreements
+////////////////////
+
+function parseRentalAgreement(agreement) {
+  if (!agreement.equipment) { agreement.equipment = { id: '', equipmentCode: '' }; }
+  if (!agreement.equipment.equipmentType) { agreement.equipment.equipmentType = { id: '', name: '' }; }
+  if (!agreement.project) { agreement.project = { id: '', name: '' }; }
+  if (!agreement.rentalAgreementRates) { agreement.rentalAgreementRates = []; }
+  if (!agreement.rentalAgreementConditions) { agreement.rentalAgreementConditions = []; }
+  if (!agreement.timeRecords) { agreement.timeRecords = []; }
+
+  agreement.number = agreement.number || '';
+  agreement.note = agreement.note || '';
+  agreement.estimateStartWork = agreement.estimateStartWork || '';
+  agreement.datedOn = agreement.datedOn || '';
+  agreement.estimateHours = agreement.estimateHours || 0;
+  agreement.equipmentRate = agreement.equipmentRate || 0.0;
+  agreement.ratePeriod = agreement.ratePeriod || '';  // e.g. hourly, daily, etc.
+  agreement.rateComment = agreement.rateComment || '';
+
+  // UI display fields
+  agreement.status = agreement.status || Constant.RENTAL_AGREEMENT_STATUS_CODE_ACTIVE;  // TODO
+  agreement.isActive = agreement.status === Constant.RENTAL_AGREEMENT_STATUS_CODE_ACTIVE;
+  agreement.isCompleted = agreement.status === Constant.RENTAL_AGREEMENT_STATUS_CODE_COMPLETED;
+  agreement.equipmentId = agreement.equipment.id;
+  agreement.equipmentCode = agreement.equipment.equipmentCode;
+  agreement.equipmentMake = agreement.equipment.make;
+  agreement.equipmentModel = agreement.equipment.model;
+  agreement.equipmentSize = agreement.equipment.size;
+  agreement.equipmentTypeName = agreement.equipment.equipmentType.name;
+  agreement.lastTimeRecord = agreement.lastTimeRecord || '';  // TODO Server needs to send this
+
+  // Flag element as a rental agreement
+  // Rental requests and rentals are merged and shown in a single list on Project Details screen
+  agreement.isRentalAgreement = true;
 }
 
 ////////////////////

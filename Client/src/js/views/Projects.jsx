@@ -145,7 +145,7 @@ var Projects = React.createClass({
               <MultiDropdown id="selectedLocalAreasIds" placeholder="Local Areas"
                 items={ localAreas } selectedIds={ this.state.search.selectedLocalAreasIds } updateState={ this.updateSearchState } showMaxItems={ 2 } />
               <DropdownControl id="statusCode" title={ this.state.search.statusCode } updateState={ this.updateSearchState }
-                  items={[ Constant.PROJECT_STATUS_CODE_ACTIVE, Constant.PROJECT_STATUS_CODE_COMPLETE ]} />
+                  items={[ Constant.PROJECT_STATUS_CODE_ACTIVE, Constant.PROJECT_STATUS_CODE_COMPLETED ]} />
               <CheckboxControl inline id="hires" checked={ this.state.search.hires } updateState={ this.updateSearchState }> Hires</CheckboxControl>
               <CheckboxControl inline id="requests" checked={ this.state.search.requests } updateState={ this.updateSearchState }> Requests</CheckboxControl>
               <FormInputControl id="projectName" type="text" placeholder="Project name" value={ this.state.search.projectName } updateState={ this.updateSearchState }></FormInputControl>
@@ -207,7 +207,7 @@ var Projects = React.createClass({
                 <td style={{ textAlign: 'center' }}>{ project.numberOfEquipment }</td>
                 <td style={{ textAlign: 'center' }}>{ project.status }</td>
                 <td style={{ textAlign: 'right' }}>
-                  <LinkContainer to={{ pathname: `projects/${project.id}` }}>
+                  <LinkContainer to={{ pathname: `projects/${ project.id }` }}>
                     <Button title="edit" bsSize="xsmall"><Glyphicon glyph="edit" /></Button>
                   </LinkContainer>
                 </td>
