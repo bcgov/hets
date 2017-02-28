@@ -1,0 +1,81 @@
+#rental-requests-list {
+  #rental-requests-search {
+    margin-top: -10px;
+
+    > div {
+      margin-top: 10px;
+    }
+
+    > label {
+      margin-top: 17px;
+      margin-left: 10px;
+      float: left;
+    }
+
+    > button {
+      margin-top: 10px;
+      margin-left: 20px;
+    }
+
+    > input {
+      float: left;
+      min-width: 175px;
+      width: auto;
+      margin-top: 10px;
+      margin-left: 10px;
+    }
+  }
+
+  #rental-requests-buttons {
+    float: right;
+
+    .btn {
+      width: 40px;
+    }
+  }
+
+  #rental-requests-faves-dropdown {
+    width: 79px;
+  }
+}
+
+#rental-requests-detail {
+  #rental-requests-top {
+    margin-bottom: 10px;
+
+    .btn {
+      margin-left: 5px;
+    }
+  }
+
+  .well {
+    margin-left: 5px;
+    margin-right: 5px;
+  }
+
+  .label {
+    font-size: 100%;
+    margin-right: 5px;
+  }
+
+  .btn {
+    margin-left: 20px;
+  }
+
+  h1 {
+    small {
+      font-size: 85%;
+    }
+  }
+
+  h3 {
+    font-weight: 600;
+  }
+}
+
+#rental-requests-edit {
+  [class*='col-'] {
+    padding-left: 7px;
+    padding-right: 7px;
+  }
+}

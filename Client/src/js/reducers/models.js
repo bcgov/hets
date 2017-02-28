@@ -27,6 +27,9 @@ const DEFAULT_MODELS = {
   projectNotes: {},
   projectAttachments: {},
   projectHistory: {},
+
+  rentalRequests: {},
+  rentalRequest: {},
 };
 
 export default function modelsReducer(state = DEFAULT_MODELS, action) {
@@ -71,6 +74,13 @@ export default function modelsReducer(state = DEFAULT_MODELS, action) {
 
     case Action.UPDATE_PROJECT:
       return { ...state, project: action.project };
+
+    // Rental Requests
+    case Action.UPDATE_RENTAL_REQUESTS:
+      return { ...state, rentalRequests: action.rentalRequests };
+
+    case Action.UPDATE_RENTAL_REQUEST:
+      return { ...state, rentalRequest: action.rentalRequest };
   }
 
   return state;

@@ -68,3 +68,35 @@ export function isValidDate(dateTime) {
   var dt = Moment(dateTime);
   return (dt && dt.isValid());
 }
+
+export function startOfCurrentFiscal(dateTime) {
+  var dt = Moment(dateTime);
+  if (!dt || !dt.isValid()) { return ''; }
+  // January-March
+  if (dt.quarter() == 1) {
+    dt.subtract(1, 'year');
+  }
+  return dt.month('April').startOf('month');
+}
+
+export function endOfCurrentFiscal(dateTime) {
+  var dt = Moment(dateTime);
+  if (!dt || !dt.isValid()) { return ''; }
+  // April-December
+  if (dt.quarter() > 1) {
+    dt.add(1, 'year');
+  }
+  return dt.month('March').endOf('month');
+}
+
+export function startOfPreviousFiscal(dateTime) {
+  var fiscalStart = Moment(startOfCurrentFiscal(dateTime));
+  if (!fiscalStart || !fiscalStart.isValid()) { return ''; }
+  return fiscalStart.subtract(1, 'year').month('April').startOf('month');
+}
+
+export function endOfPreviousFiscal(dateTime) {
+  var fiscalEnd = Moment(endOfCurrentFiscal(dateTime));
+  if (!fiscalEnd || !fiscalEnd.isValid()) { return ''; }
+  return fiscalEnd.subtract(1, 'year').month('March').endOf('month');
+}
