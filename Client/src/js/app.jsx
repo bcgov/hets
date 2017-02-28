@@ -12,6 +12,7 @@ import Owners from './views/Owners.jsx';
 import OwnersDetail from './views/OwnersDetail.jsx';
 import Projects from './views/Projects.jsx';
 import ProjectsDetail from './views/ProjectsDetail.jsx';
+import RentalRequests from './views/RentalRequests.jsx';
 import Notifications from './views/Notifications.jsx';
 import UserManagement from './views/UserManagement.jsx';
 import UserManagementEdit from './views/UserManagementEdit.jsx';
@@ -31,6 +32,7 @@ const App = <Provider store={ store }>
       <Route path="owners/:ownerId" component={ OwnersDetail }/>
       <Route path="projects" component={ Projects }/>
       <Route path="projects/:projectId" component={ ProjectsDetail }/>
+      <Route path="rentalrequests" component={ RentalRequests }/>
       <Route path="notifications" component={ Notifications }/>
       <Route path="user-management" component={ UserManagement }/>
       <Route path="user-management/:userId" component={ UserManagementEdit }/>

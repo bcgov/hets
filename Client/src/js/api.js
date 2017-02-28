@@ -426,24 +426,68 @@ function parseRentalRequest(request) {
   if (!request.localArea.serviceArea) { request.localArea.serviceArea = { id: '', name: '' }; }
   if (!request.localArea.serviceArea.district) { request.localArea.serviceArea.district = { id: '', name: '' }; }
   if (!request.localArea.serviceArea.district.region) { request.localArea.serviceArea.district.region = { id: '', name: '' }; }
+  if (!request.project) { request.project = { id: '', name: '' }; }
   if (!request.equipmentType) { request.equipmentType = { id: '', name: '' }; }
+  if (!request.primaryContact) { request.primaryContact = { id: '', givenName: '', surname: '' }; }
   if (!request.rentalRequestRotationList) { request.rentalRequestRotationList = []; }
 
+  request.status = request.status || Constant.RENTAL_REQUEST_STATUS_CODE_IN_PROGRESS;
   request.equipmentCount = request.equipmentCount || 0;
   request.expectedHours = request.expectedHours || 0;
+
+  request.projectId = request.projectId || request.project.id;
+  request.projectName = request.projectName || request.project.name;
+  request.projectPath = request.projectId ? `projects/${ request.projectId }`: '';
+
   request.expectedStartDate = request.expectedStartDate || '';
   request.expectedEndDate = request.expectedEndDate || '';
 
   // UI display fields
-  request.status = request.status || Constant.RENTAL_REQUEST_STATUS_CODE_ACTIVE; // TODO
-  request.isActive = request.status === Constant.RENTAL_REQUEST_STATUS_CODE_ACTIVE;
+  request.isActive = request.status === Constant.RENTAL_REQUEST_STATUS_CODE_IN_PROGRESS;
   request.isCompleted = request.status === Constant.RENTAL_REQUEST_STATUS_CODE_COMPLETED;
   request.isCancelled = request.status === Constant.RENTAL_REQUEST_STATUS_CODE_CANCELLED;
-  request.equipmentTypeName = request.equipmentType.name;
+  request.localAreaName = request.localArea.name;
+  request.equipmentTypeName = request.equipmentTypeName || request.equipmentType.name;
+  request.primaryContactName = request.primaryContact ? firstLastName(request.primaryContact.givenName, request.primaryContact.surname) : '';
+  request.primaryContactEmail = request.primaryContact ? request.primaryContact.emailAddress : '';
 
   // Flag element as a rental request. 
   // Rental requests and rentals are merged and shown in a single list on Project Details screen
   request.isRentalRequest = true;
+}
+
+export function searchRentalRequests(params) {
+  return new ApiRequest('/rentalrequests/search').get(params).then(response => {
+    // Normalize the response
+    var rentalRequests = _.fromPairs(response.map(req => [ req.id, req ]));
+
+    // Add display fields
+    _.map(rentalRequests, req => { parseRentalRequest(req); });
+
+    store.dispatch({ type: Action.UPDATE_RENTAL_REQUESTS, rentalRequests: rentalRequests });
+  });
+}
+
+export function getRentalRequest(id) {
+  return new ApiRequest(`/rentalrequests/${ id }`).get().then(response => {
+    var rentalRequest = response;
+
+    // Add display fields
+    parseRentalRequest(rentalRequest);
+
+    store.dispatch({ type: Action.UPDATE_RENTAL_REQUEST, rentalRequest: rentalRequest });
+  });
+}
+
+export function updateRentalRequest(rentalRequest) {
+  return new ApiRequest(`/rentalrequests/${ rentalRequest.id }`).put(rentalRequest).then(response => {
+    var rentalRequest = response;
+
+    // Add display fields
+    parseRentalRequest(rentalRequest);
+
+    store.dispatch({ type: Action.UPDATE_RENTAL_REQUEST, rentalRequest: rentalRequest });
+  });
 }
 
 ////////////////////
