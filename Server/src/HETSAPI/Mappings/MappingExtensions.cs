@@ -42,7 +42,10 @@ namespace HETSAPI.Mappings
                 dto.PrimaryContact = model.Project.PrimaryContact;
                 dto.ProjectName = model.Project.Name;
                 dto.Status = model.Status;
-                dto.EquipmentCount = model.EquipmentCount;                
+                dto.EquipmentCount = model.EquipmentCount;
+                dto.ProjectId = model.Project.Id;                
+                dto.ExpectedEndDate = model.ExpectedEndDate;
+                dto.ExpectedStartDate = model.ExpectedStartDate;
             }
             return dto;
         }

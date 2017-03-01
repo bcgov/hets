@@ -46,7 +46,10 @@ namespace HETSAPI.ViewModels
         /// <param name="ProjectName">ProjectName.</param>
         /// <param name="PrimaryContact">PrimaryContact.</param>
         /// <param name="Status">Project status.</param>
-        public RentalRequestSearchResultViewModel(int Id, LocalArea LocalArea = null, int? EquipmentCount = null, string EquipmentTypeName = null, string ProjectName = null, Contact PrimaryContact = null, string Status = null)
+        /// <param name="ProjectId">ProjectId.</param>
+        /// <param name="ExpectedStartDate">ExpectedStartDate.</param>
+        /// <param name="ExpectedEndDate">ExpectedEndDate.</param>
+        public RentalRequestSearchResultViewModel(int Id, LocalArea LocalArea = null, int? EquipmentCount = null, string EquipmentTypeName = null, string ProjectName = null, Contact PrimaryContact = null, string Status = null, int? ProjectId = null, DateTime? ExpectedStartDate = null, DateTime? ExpectedEndDate = null)
         {   
             this.Id = Id;
             this.LocalArea = LocalArea;
@@ -55,6 +58,9 @@ namespace HETSAPI.ViewModels
             this.ProjectName = ProjectName;
             this.PrimaryContact = PrimaryContact;
             this.Status = Status;
+            this.ProjectId = ProjectId;
+            this.ExpectedStartDate = ExpectedStartDate;
+            this.ExpectedEndDate = ExpectedEndDate;
         }
 
         /// <summary>
@@ -102,6 +108,24 @@ namespace HETSAPI.ViewModels
         public string Status { get; set; }
 
         /// <summary>
+        /// Gets or Sets ProjectId
+        /// </summary>
+        [DataMember(Name="projectId")]
+        public int? ProjectId { get; set; }
+
+        /// <summary>
+        /// Gets or Sets ExpectedStartDate
+        /// </summary>
+        [DataMember(Name="expectedStartDate")]
+        public DateTime? ExpectedStartDate { get; set; }
+
+        /// <summary>
+        /// Gets or Sets ExpectedEndDate
+        /// </summary>
+        [DataMember(Name="expectedEndDate")]
+        public DateTime? ExpectedEndDate { get; set; }
+
+        /// <summary>
         /// Returns the string presentation of the object
         /// </summary>
         /// <returns>String presentation of the object</returns>
@@ -116,6 +140,9 @@ namespace HETSAPI.ViewModels
             sb.Append("  ProjectName: ").Append(ProjectName).Append("\n");
             sb.Append("  PrimaryContact: ").Append(PrimaryContact).Append("\n");
             sb.Append("  Status: ").Append(Status).Append("\n");
+            sb.Append("  ProjectId: ").Append(ProjectId).Append("\n");
+            sb.Append("  ExpectedStartDate: ").Append(ExpectedStartDate).Append("\n");
+            sb.Append("  ExpectedEndDate: ").Append(ExpectedEndDate).Append("\n");
             sb.Append("}\n");
             return sb.ToString();
         }
@@ -187,6 +214,21 @@ namespace HETSAPI.ViewModels
                     this.Status == other.Status ||
                     this.Status != null &&
                     this.Status.Equals(other.Status)
+                ) &&                 
+                (
+                    this.ProjectId == other.ProjectId ||
+                    this.ProjectId != null &&
+                    this.ProjectId.Equals(other.ProjectId)
+                ) &&                 
+                (
+                    this.ExpectedStartDate == other.ExpectedStartDate ||
+                    this.ExpectedStartDate != null &&
+                    this.ExpectedStartDate.Equals(other.ExpectedStartDate)
+                ) &&                 
+                (
+                    this.ExpectedEndDate == other.ExpectedEndDate ||
+                    this.ExpectedEndDate != null &&
+                    this.ExpectedEndDate.Equals(other.ExpectedEndDate)
                 );
         }
 
@@ -225,6 +267,18 @@ namespace HETSAPI.ViewModels
                 }                if (this.Status != null)
                 {
                     hash = hash * 59 + this.Status.GetHashCode();
+                }                
+                                if (this.ProjectId != null)
+                {
+                    hash = hash * 59 + this.ProjectId.GetHashCode();
+                }                
+                                if (this.ExpectedStartDate != null)
+                {
+                    hash = hash * 59 + this.ExpectedStartDate.GetHashCode();
+                }                
+                                if (this.ExpectedEndDate != null)
+                {
+                    hash = hash * 59 + this.ExpectedEndDate.GetHashCode();
                 }                
                 
                 return hash;
