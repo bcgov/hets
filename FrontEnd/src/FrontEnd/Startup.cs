@@ -90,14 +90,19 @@ namespace FrontEnd
             Console.WriteLine("Web root is " +  webFileFolder);
 
             // Only serve up static files if they exist.
-            if (Directory.Exists(webFileFolder))
+            FileServerOptions options = new FileServerOptions()
+            {              
+                FileProvider = new PhysicalFileProvider(webFileFolder)
+            };
+            options.StaticFileOptions.OnPrepareResponse = ctx =>
             {
-                app.UseFileServer(new FileServerOptions()
-                {
-                    // first see if the production folder is present.                
-                    FileProvider = new PhysicalFileProvider(webFileFolder)
-                });
-            }
+                ctx.Context.Response.Headers[HeaderNames.CacheControl] = "no-cache";
+                ctx.Context.Response.Headers["X-Frame-Options"] = "SAMEORIGIN";
+                ctx.Context.Response.Headers["X-XSS-Protection"] = "1; mode=block";
+                ctx.Context.Response.Headers["X-Content-Type-Options"] = "nosniff";
+            };
+
+            app.UseFileServer(options);
 
             app.UseApiProxyServer();
         }

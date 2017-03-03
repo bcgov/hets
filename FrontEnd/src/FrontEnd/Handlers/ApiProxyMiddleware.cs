@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Proxy;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
+using Microsoft.Net.Http.Headers;
 using System;
 using System.Threading.Tasks;
 
@@ -33,6 +34,13 @@ namespace FrontEnd.Handlers
                 string requestPath = context.Request.Path.Value;
                 int indexOfApi = requestPath.IndexOf(_apiPathKey);
                 context.Request.Path = requestPath.Remove(0, indexOfApi);
+
+                // Set security headers
+                context.Response.Headers[HeaderNames.CacheControl] = "no-cache";
+                context.Response.Headers["X-Frame-Options"] = "SAMEORIGIN";
+                context.Response.Headers["X-XSS-Protection"] = "1; mode=block";
+                context.Response.Headers["X-Content-Type-Options"] = "nosniff";
+
                 await _proxy.Invoke(context);
             }
             catch (Exception e)
