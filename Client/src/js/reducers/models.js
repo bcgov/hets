@@ -30,6 +30,9 @@ const DEFAULT_MODELS = {
 
   rentalRequests: {},
   rentalRequest: {},
+  rentalRequestNotes: {},
+  rentalRequestAttachments: {},
+  rentalRequestHistory: {},
 };
 
 export default function modelsReducer(state = DEFAULT_MODELS, action) {
