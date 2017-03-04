@@ -1,12 +1,8 @@
 @import "gov3";
 @import "init";
 @import "header";
-@import "components/all";
 @import "views/all";
-
-html {
-  font-size: 14px;
-}
+@import "components/all";
 
 #app {
   height: 100%;
@@ -14,6 +10,10 @@ html {
 
 #main {
   height: 100%;
+}
+
+.page-header {
+  margin: 20px 0px;
 }
 
 .nowrap {
@@ -32,6 +32,10 @@ html {
   margin-bottom: -2px;
 }
 
+html {
+  font-size: 14px;
+}
+
 button {
   .spinner {
     margin-left: 10px;
@@ -46,11 +50,11 @@ button {
   }
 }
 
+th {
+  text-align: left;
+}
+
 @keyframes rotate {
   0%    { transform: rotate(0deg); }
   100%  { transform: rotate(360deg); }
-}
-
-th {
-  text-align: left;
 }

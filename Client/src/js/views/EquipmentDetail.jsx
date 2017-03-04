@@ -17,8 +17,7 @@ import * as Constant from '../constants';
 import store from '../store';
 
 import BadgeLabel from '../components/BadgeLabel.jsx';
-import ColField from '../components/ColField.jsx';
-import ColLabel from '../components/ColLabel.jsx';
+import ColDisplay from '../components/ColDisplay.jsx';
 import Confirm from '../components/Confirm.jsx';
 import OverlayTrigger from '../components/OverlayTrigger.jsx';
 import SortTable from '../components/SortTable.jsx';
@@ -226,22 +225,18 @@ var EquipmentDetail = React.createClass({
 
           return <div id="equipment-header">
             <Row>
-              <ColLabel md={2}><h1>Company:</h1></ColLabel>
-              <ColField md={10}><h1><small>{ equipment.organizationName }</small></h1></ColField>
+              <ColDisplay md={12} labelProps={{ md: 4 }} label={ <h1>Company:</h1> }><h1><small>{ equipment.organizationName }</small></h1></ColDisplay>
             </Row>
             <Row>
-              <ColLabel md={2}><h1>EquipId:</h1></ColLabel>
-              <ColField md={10}><h1><small>{ equipment.equipmentCode } ({ equipment.typeName })</small></h1></ColField>
+              <ColDisplay md={12} labelProps={{ md: 4 }} label={ <h1>EquipId:</h1> }><h1><small>{ equipment.equipmentCode } ({ equipment.typeName })</small></h1></ColDisplay>
             </Row>
             <Row>
               <Col md={6}>
                 <Row>
-                  <ColLabel md={4}>District Office:</ColLabel>
-                  <ColField md={8}>{ equipment.districtName }</ColField>
+                  <ColDisplay md={12} labelProps={{ md: 4 }} label="District Office:">{ equipment.districtName }</ColDisplay>
                 </Row>
                 <Row>
-                  <ColLabel md={4}>Service/Local Area:</ColLabel>
-                  <ColField md={8}>{ equipment.localAreaName }</ColField>
+                  <ColDisplay md={12} labelProps={{ md: 4 }} label="Service/Local Area:">{ equipment.localAreaName }</ColDisplay>
                 </Row>
               </Col>
               <Col md={6}>
@@ -262,37 +257,40 @@ var EquipmentDetail = React.createClass({
               {(() => {
                 if (this.state.loadingEquipment) { return <div style={{ textAlign: 'center' }}><Spinner /></div>; }
 
-                return <div>
-                  <Row>
-                    <ColLabel md={2}>Serial Number</ColLabel>
-                    <ColField md={10}>{ equipment.serialNumber }
-                      { equipment.hasDuplicates ? <BadgeLabel bsStyle="danger">!</BadgeLabel> : null } 
-                    </ColField>
-                  </Row>
-                  <Row>
-                    <ColLabel md={2}>Make</ColLabel>
-                    <ColField md={4}>{ equipment.make }</ColField>
-                    <ColLabel md={2}>Size</ColLabel>
-                    <ColField md={4}>{ equipment.size }</ColField>
-                  </Row>
-                  <Row>
-                    <ColLabel md={2}>Model</ColLabel>
-                    <ColField md={4}>{ equipment.model }</ColField>
-                    <ColLabel md={2}>Type</ColLabel>
-                    <ColField md={4}>{ equipment.typeName }</ColField>
-                  </Row>
-                  <Row>
-                    <ColLabel md={2}>Year</ColLabel>
-                    <ColField md={2}>{ equipment.year }</ColField>
-                    <ColLabel md={4}>Licence Number</ColLabel>
-                    <ColField md={4}>{ equipment.licencePlate }</ColField>
-                  </Row>
-                  <Row>
-                    <ColLabel md={6}></ColLabel>
-                    <ColLabel md={2}>Operator</ColLabel>
-                    <ColField md={4}>{ equipment.operator }</ColField>
-                  </Row>
-                </div>;
+                return <Row>
+                  <Col md={4}>
+                    <Row>
+                      <ColDisplay labelProps={{ md: 6 }} label="Serial Number">{ equipment.serialNumber }
+                        { equipment.hasDuplicates ? <BadgeLabel bsStyle="danger">!</BadgeLabel> : null }
+                      </ColDisplay>
+                    </Row>
+                    <Row>
+                      <ColDisplay labelProps={{ md: 6 }} label="Make">{ equipment.make }</ColDisplay>
+                    </Row>
+                    <Row>
+                      <ColDisplay labelProps={{ md: 6 }} label="Model">{ equipment.model }</ColDisplay>
+                    </Row>
+                    <Row>
+                      <ColDisplay labelProps={{ md: 6 }} label="Year">{ equipment.year }</ColDisplay>
+                    </Row>
+                    <Row>&nbsp;</Row>
+                  </Col>
+                  <Col md={8}>
+                    <Row>&nbsp;</Row>
+                    <Row>
+                      <ColDisplay labelProps={{ md: 4 }} label="Size">{ equipment.size }</ColDisplay>
+                    </Row>
+                    <Row>
+                      <ColDisplay labelProps={{ md: 4 }} label="Type">{ equipment.typeName }</ColDisplay>
+                    </Row>
+                    <Row>
+                      <ColDisplay labelProps={{ md: 4 }} label="Licence Number">{ equipment.licencePlate }</ColDisplay>
+                    </Row>
+                    <Row>
+                      <ColDisplay labelProps={{ md: 4 }} label="Operator">{ equipment.operator }</ColDisplay>
+                    </Row>
+                  </Col>
+                </Row>;
               })()}
             </Well>
           </Col>
@@ -357,49 +355,45 @@ var EquipmentDetail = React.createClass({
 
                 return <div>
                   <Row>
-                    <ColLabel md={4}>Seniority</ColLabel>
-                    <ColField md={8}>{ equipment.seniorityText }</ColField>
+                    <ColDisplay md={12} labelProps={{ md: 4 }} label="Seniority">{ equipment.seniorityText }</ColDisplay>
                   </Row>
                   <Row>
-                    <ColLabel md={4}>Hours YTD</ColLabel>
-                    <ColField md={8}>{ equipment.serviceHoursThisYear }</ColField>
+                    <ColDisplay md={12} labelProps={{ md: 4 }} label="Hours YTD">{ equipment.serviceHoursThisYear }</ColDisplay>
                   </Row>
                   <Row>
-                    <ColLabel md={4}>Hours { equipment.lastYear }</ColLabel>
-                    <ColField md={8}>{ equipment.serviceHoursLastYear }</ColField>
+                    <ColDisplay md={12} labelProps={{ md: 4 }} label={ <span>Hours { equipment.lastYear }</span> }>{ equipment.serviceHoursLastYear }</ColDisplay>
                   </Row>
                   <Row>
-                    <ColLabel md={4}>Hours { equipment.twoYearsAgo }</ColLabel>
-                    <ColField md={8}>{ equipment.serviceHoursTwoYearsAgo }</ColField>
+                    <ColDisplay md={12} labelProps={{ md: 4 }} label={ <span>Hours { equipment.twoYearsAgo }</span> }>{ equipment.serviceHoursTwoYearsAgo }</ColDisplay>
                   </Row>
                   <Row>
-                    <ColLabel md={4}>Hours { equipment.threeYearsAgo }</ColLabel>
-                    <ColField md={8}>{ equipment.serviceHoursThreeYearsAgo }</ColField>
+                    <ColDisplay md={12} labelProps={{ md: 4 }} label={ <span>Hours { equipment.threeYearsAgo }</span> }>{ equipment.serviceHoursThreeYearsAgo }</ColDisplay>
                   </Row>
                   <Row>
-                    <ColLabel md={4}>Received Date</ColLabel>
-                    <ColField md={8}>{ formatDateTime(equipment.receivedDate, 'YYYY-MMM-DD') }</ColField>
+                    <ColDisplay md={12} labelProps={{ md: 4 }} label="Received Date">
+                      { formatDateTime(equipment.receivedDate, Constant.DATE_YEAR_SHORT_MONTH_DAY) }
+                    </ColDisplay>
                   </Row>
                   <Row>
-                    <ColLabel md={4}>Registered Date</ColLabel>
-                    <ColField md={8}>{ formatDateTime(equipment.approvedDate, 'YYYY-MMM-DD') }</ColField>
+                    <ColDisplay md={12} labelProps={{ md: 4 }} label="Registered Date">
+                      { formatDateTime(equipment.approvedDate, Constant.DATE_YEAR_SHORT_MONTH_DAY) }
+                    </ColDisplay>
                   </Row>
                   <Row>
-                    <ColLabel md={4}>Years Registered</ColLabel>
-                    <ColField md={8}>{ equipment.yearsOfService }</ColField>
+                    <ColDisplay md={12} labelProps={{ md: 4 }} label="Years Registered">{ equipment.yearsOfService }</ColDisplay>
                   </Row>
                   <Row>
-                    <ColLabel md={4}>Override Status</ColLabel>
-                    <ColField md={8}>{ equipment.isSeniorityOverridden ? 'Manually Updated' : 'Not Overriden'}</ColField>
+                    <ColDisplay md={12} labelProps={{ md: 4 }} label="Override Status">
+                      { equipment.isSeniorityOverridden ? 'Manually Updated' : 'Not Overriden'}
+                    </ColDisplay>
                   </Row>
                   <Row>
-                    <ColLabel md={4} >Override Reason</ColLabel>
-                    <ColField md={6}>{ equipment.seniorityOverrideReason }</ColField>
-                    <ColField md={2}>
+                    <ColDisplay labelProps={{ md: 4 }} label="Override Reason">{ equipment.seniorityOverrideReason }</ColDisplay>
+                    <span className="pull-right">
                       <Unimplemented>
                         <Button className="pull-right" title="Seniority History" bsSize="small" onClick={ this.showSeniorityHistory} >All ({ Object.keys(seniorityHistory).length })</Button>
                       </Unimplemented>
-                    </ColField>
+                    </span>
                   </Row>
                 </div>;
               })()}
@@ -419,16 +413,19 @@ var EquipmentDetail = React.createClass({
                 if (this.state.loadingEquipmentHistory) { return <div style={{ textAlign: 'center' }}><Spinner/></div>; }
                 if (Object.keys(this.props.history || []).length === 0) { return <Alert bsStyle="success" style={{ marginTop: 10 }}>No history</Alert>; }
 
-                var history = _.sortBy(this.props.history, 'createdDate');    
+                var history = _.sortBy(this.props.history, 'createdDate');
 
+                const HistoryEntry = ({ createdDate, historyText }) => (
+                  <Row>
+                    <ColDisplay md={12} labelProps={{ md: 2 }} label={ formatDateTime(createdDate, Constant.DATE_YEAR_SHORT_MONTH_DAY) }>
+                      { historyText }
+                    </ColDisplay>
+                  </Row>
+                );
+                
                 return <div id="equipment-history">
                   {
-                    _.map(history, (entry) => {
-                      return <Row>
-                        <ColLabel md={2}>{ formatDateTime(entry.createdDate, 'YYYY-MMM-DD') }</ColLabel>
-                        <ColField md={10}>{ entry.historyText }</ColField>
-                      </Row>;
-                    })
+                    _.map(history, (entry) => <HistoryEntry { ...entry } />)
                   }
                 </div>;
               })()}

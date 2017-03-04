@@ -11,11 +11,11 @@ import _ from 'lodash';
 
 import * as Action from '../actionTypes';
 import * as Api from '../api';
+import * as Constant from '../constants';
 import store from '../store';
 
 import CheckboxControl from '../components/CheckboxControl.jsx';
-import ColField from '../components/ColField.jsx';
-import ColLabel from '../components/ColLabel.jsx';
+import ColDisplay from '../components/ColDisplay.jsx';
 import Confirm from '../components/Confirm.jsx';
 import OverlayTrigger from '../components/OverlayTrigger.jsx';
 import SortTable from '../components/SortTable.jsx';
@@ -246,36 +246,28 @@ var OwnersDetail = React.createClass({
 
                 return <div id="owners-data">
                   <Row>
-                    <ColLabel md={4}>Company</ColLabel>
-                    <ColField md={8}>{ owner.organizationName }</ColField>
+                    <ColDisplay md={12} labelProps={{ md: 4 }} label="Company">{ owner.organizationName }</ColDisplay>
                   </Row>
                   <Row>
-                    <ColLabel md={4}>Equipment Prefix</ColLabel>
-                    <ColField md={8}>{ owner.ownerEquipmentCodePrefix }</ColField>
+                    <ColDisplay md={12} labelProps={{ md: 4 }} label="Equipment Prefix">{ owner.ownerEquipmentCodePrefix }</ColDisplay>
                   </Row>
                   <Row>
-                    <ColLabel md={4}>Primary Contact</ColLabel>
-                    <ColField md={8}>{ owner.primaryContactName }</ColField>
+                    <ColDisplay md={12} labelProps={{ md: 4 }} label="Primary Contact">{ owner.primaryContactName }</ColDisplay>
                   </Row>
                   <Row>
-                    <ColLabel md={4}>Doing Business As</ColLabel>
-                    <ColField md={8}>{ owner.doingBusinessAs }</ColField>
+                    <ColDisplay md={12} labelProps={{ md: 4 }} label="Doing Business As">{ owner.doingBusinessAs }</ColDisplay>
                   </Row>
                   <Row>
-                    <ColLabel md={4}>Registered BC Company Number</ColLabel>
-                    <ColField md={8}>{ owner.registeredCompanyNumber }</ColField>
+                    <ColDisplay md={12} labelProps={{ md: 4 }} label="Registered BC Company Number">{ owner.registeredCompanyNumber }</ColDisplay>
                   </Row>
                   <Row>
-                    <ColLabel md={4}>District Office</ColLabel>
-                    <ColField md={8}>{ owner.districtName }</ColField>
+                    <ColDisplay md={12} labelProps={{ md: 4 }} label="District Office">{ owner.districtName }</ColDisplay>
                   </Row>
                   <Row>
-                    <ColLabel md={4}>Service/Local Area</ColLabel>
-                    <ColField md={8}>{ owner.localAreaName }</ColField>
+                    <ColDisplay md={12} labelProps={{ md: 4 }} label="Service/Local Area">{ owner.localAreaName }</ColDisplay>
                   </Row>
                   <Row>
-                    <ColLabel md={4}>Meets Residency?</ColLabel>
-                    <ColField md={8}><CheckboxControl checked={ owner.meetsResidency } disabled /></ColField>
+                    <ColDisplay md={12} labelProps={{ md: 4 }} label="Meets Residency?"><CheckboxControl checked={ owner.meetsResidency } disabled /></ColDisplay>
                   </Row>
                 </div>;
               })()}
@@ -313,7 +305,7 @@ var OwnersDetail = React.createClass({
                         <td><Link to={`equipment/${equipment.id}`}>{ equipment.equipCode }</Link></td>
                         <td>{ equipment.typeName }</td>
                         <td>{ concat(equipment.make, concat(equipment.model, equipment.size, '/'), '/') }</td>
-                        <td>{ equipment.isApproved ? formatDateTime(equipment.lastVerifiedDate, 'YYYY-MMM-DD') : 'Not Approved' }</td>
+                        <td>{ equipment.isApproved ? formatDateTime(equipment.lastVerifiedDate, Constant.DATE_YEAR_SHORT_MONTH_DAY) : 'Not Approved' }</td>
                         <td style={{ textAlign: 'right' }}>
                           <Unimplemented>
                             <Button title="Verify Equipment" bsSize="xsmall" onClick={ this.equipmentVerify.bind(this, equipment) }><Glyphicon glyph="ok" /> OK</Button>
@@ -344,16 +336,17 @@ var OwnersDetail = React.createClass({
 
                 return <div id="owners-policy">
                   <Row>
-                    <ColLabel md={4}>WorkSafeBC Policy</ColLabel>
-                    <ColField md={8}>{ owner.workSafeBCPolicyNumber }</ColField>
+                    <ColDisplay md={12} labelProps={{ md: 4 }} label="WorkSafeBC Policy">{ owner.workSafeBCPolicyNumber }</ColDisplay>
                   </Row>
                   <Row>
-                    <ColLabel md={4}>WorkSafeBC Expiry Date</ColLabel>
-                    <ColField md={8}>{ formatDateTime(owner.workSafeBCExpiryDate, 'YYYY-MMM-DD') }</ColField>
+                    <ColDisplay md={12} labelProps={{ md: 4 }} label="WorkSafeBC Expiry Date">
+                      { formatDateTime(owner.workSafeBCExpiryDate, Constant.DATE_YEAR_SHORT_MONTH_DAY) }
+                    </ColDisplay>
                   </Row>
                   <Row>
-                    <ColLabel md={4}>CGL Policy End Date</ColLabel>
-                    <ColField md={4}>{ formatDateTime(owner.cglEndDate, 'YYYY-MMM-DD') }</ColField>
+                    <ColDisplay md={12} labelProps={{ md: 4 }} label="CGL Policy End Date">
+                      { formatDateTime(owner.cglEndDate, Constant.DATE_YEAR_SHORT_MONTH_DAY) }
+                    </ColDisplay>
                   </Row>
                 </div>;
               })()}
@@ -424,14 +417,17 @@ var OwnersDetail = React.createClass({
 
                 var history = _.sortBy(this.props.history, 'createdDate');    
 
+                const HistoryEntry = ({ createdDate, historyText }) => (
+                  <Row>
+                    <ColDisplay md={12} labelProps={{ md: 2 }} label={ formatDateTime(createdDate, Constant.DATE_YEAR_SHORT_MONTH_DAY) }>
+                      { historyText }
+                    </ColDisplay>
+                  </Row>
+                );
+
                 return <div id="owners-history">
                   {
-                    _.map(history, (entry) => {
-                      return <Row>
-                        <ColLabel md={2}>{ formatDateTime(entry.createdDate, 'YYYY-MMM-DD') }</ColLabel>
-                        <ColField md={10}>{ entry.historyText }</ColField>
-                      </Row>;
-                    })
+                    _.map(history, (entry) => <HistoryEntry { ...entry } />)
                   }
                 </div>;
               })()}

@@ -11,11 +11,11 @@ import _ from 'lodash';
 
 import * as Action from '../actionTypes';
 import * as Api from '../api';
+import * as Constant from '../constants';
 import store from '../store';
 
 import CheckboxControl from '../components/CheckboxControl.jsx';
-import ColField from '../components/ColField.jsx';
-import ColLabel from '../components/ColLabel.jsx';
+import ColDisplay from '../components/ColDisplay.jsx';
 import Spinner from '../components/Spinner.jsx';
 import TableControl from '../components/TableControl.jsx';
 import Unimplemented from '../components/Unimplemented.jsx';
@@ -188,44 +188,41 @@ var RentalRequestsDetail = React.createClass({
 
                 return <div id="rental-requests-data">
                   <Row>
-                    <ColLabel md={4}>Project</ColLabel>
-                    <ColField md={8}>{ rentalRequest.projectName }</ColField>
+                    <ColDisplay md={12} labelProps={{ md: 4 }} label="Project">{ rentalRequest.projectName }</ColDisplay>
                   </Row>
                   <Row>
-                    <ColLabel md={4}>{ rentalRequest.primaryContactRole || 'Primary Contact' }</ColLabel>
-                    <ColField md={8}>
+                    <ColDisplay md={12} labelProps={{ md: 4 }} label={ rentalRequest.primaryContactRole || 'Primary Contact' }>
                       <Unimplemented>
                         <Button bsStyle="link" title="show contact" onClick={ this.openContactDialog.bind(this, rentalRequest.primaryContact) }>
                           { concat(rentalRequest.primaryContactName, rentalRequest.primaryContactPhone, ', ') }
                         </Button>
                       </Unimplemented>
-                    </ColField>
+                    </ColDisplay>
                   </Row>
                   <Row>
-                    <ColLabel md={4}>Local Area</ColLabel>
-                    <ColField md={8}>{ rentalRequest.localAreaName }</ColField>
+                    <ColDisplay md={12} labelProps={{ md: 4 }} label="Local Area">{ rentalRequest.localAreaName }</ColDisplay>
                   </Row>
                   <Row>
-                    <ColLabel md={4}>Equipment Type</ColLabel>
-                    <ColField md={2}>{ rentalRequest.equipmentTypeName }</ColField>
-                    <ColLabel md={2}>Count</ColLabel>
-                    <ColField md={4}>{ rentalRequest.equipmentCount }</ColField>
+                    <ColDisplay md={6} labelProps={{ md: 4 }} label="Equipment Type">{ rentalRequest.equipmentTypeName }</ColDisplay>
+                    <ColDisplay md={6} labelProps={{ md: 2 }} label="Count">{ rentalRequest.equipmentCount }</ColDisplay>
                   </Row>
                   <Row>
-                    <ColLabel md={4}>Attachment(s)</ColLabel>
-                    <ColField md={8}>{ 'None' /* TODO */ }</ColField>
+                    <ColDisplay md={12} labelProps={{ md: 4 }} label="Attachment(s)">
+                      { 'None' /* TODO */ }
+                    </ColDisplay>
                   </Row>
                   <Row>
-                    <ColLabel md={4}>Expected Hours</ColLabel>
-                    <ColField md={8}>{ rentalRequest.expectedHours }</ColField>
+                    <ColDisplay md={12} labelProps={{ md: 4 }} label="Expected Hours">{ rentalRequest.expectedHours }</ColDisplay>
                   </Row>
                   <Row>
-                    <ColLabel md={4}>Expected Start Date</ColLabel>
-                    <ColField md={8}>{ rentalRequest.expectedStartDate }</ColField>
+                    <ColDisplay md={12} labelProps={{ md: 4 }} label="Expected Start Date">
+                      {  formatDateTime(rentalRequest.expectedStartDate, Constant.DATE_YEAR_SHORT_MONTH_DAY) }
+                    </ColDisplay>
                   </Row>
                   <Row>
-                    <ColLabel md={4}>Expected End Data</ColLabel>
-                    <ColField md={8}>{ rentalRequest.expectedEndDate }</ColField>
+                    <ColDisplay md={12} labelProps={{ md: 4 }} label="Expected End Data">
+                      { formatDateTime(rentalRequest.expectedEndDate, Constant.DATE_YEAR_SHORT_MONTH_DAY) }
+                    </ColDisplay>
                   </Row>
                 </div>;
               })()}
@@ -302,14 +299,17 @@ var RentalRequestsDetail = React.createClass({
 
                 var history = _.sortBy(this.props.history, 'createdDate');    
 
+                const HistoryEntry = ({ createdDate, historyText }) => (
+                  <Row>
+                    <ColDisplay md={12} labelProps={{ md: 2 }} label={ formatDateTime(createdDate, Constant.DATE_YEAR_SHORT_MONTH_DAY) }>
+                      { historyText }
+                    </ColDisplay>
+                  </Row>
+                );
+
                 return <div id="rental-requests-history">
                   {
-                    _.map(history, (entry) => {
-                      return <Row>
-                        <ColLabel md={2}>{ formatDateTime(entry.createdDate, 'YYYY-MMM-DD') }</ColLabel>
-                        <ColField md={10}>{ entry.historyText }</ColField>
-                      </Row>;
-                    })
+                    _.map(history, (entry) => <HistoryEntry { ...entry } />)
                   }
                 </div>;
               })()}

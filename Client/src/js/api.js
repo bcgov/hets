@@ -98,12 +98,12 @@ function getBlockDisplayName(blockNumber) {
 }
 
 function parseEquipment(equipment) {
-  if (!equipment.owner) { equipment.owner = { id: '', organizationName: '' }; }
-  if (!equipment.equipmentType) { equipment.equipmentType = { id: '', name: '', description: '' }; }
-  if (!equipment.localArea) { equipment.localArea = { id: '', name: '' }; }
-  if (!equipment.localArea.serviceArea) { equipment.localArea.serviceArea = { id: '', name: '' }; }
-  if (!equipment.localArea.serviceArea.district) { equipment.localArea.serviceArea.district = { id: '', name: '' }; }
-  if (!equipment.localArea.serviceArea.district.region) { equipment.localArea.serviceArea.district.region = { id: '', name: '' }; }
+  if (!equipment.owner) { equipment.owner = { id: 0, organizationName: '' }; }
+  if (!equipment.equipmentType) { equipment.equipmentType = { id: 0, name: '', description: '' }; }
+  if (!equipment.localArea) { equipment.localArea = { id: 0, name: '' }; }
+  if (!equipment.localArea.serviceArea) { equipment.localArea.serviceArea = { id: 0, name: '' }; }
+  if (!equipment.localArea.serviceArea.district) { equipment.localArea.serviceArea.district = { id: 0, name: '' }; }
+  if (!equipment.localArea.serviceArea.district.region) { equipment.localArea.serviceArea.district.region = { id: 0, name: '' }; }
   if (!equipment.status) { equipment.status = Constant.EQUIPMENT_STATUS_CODE_PENDING; }
   if (!equipment.equipmentAttachments) { equipment.equipmentAttachments = []; }
 
@@ -210,7 +210,7 @@ export function updateEquipment(equipment) {
 ////////////////////
 
 function parsePhysicalAttachment(attachment) {
-  if (!attachment.type) { attachment.type = { id: '', code: '', description: ''}; }
+  if (!attachment.type) { attachment.type = { id: 0, code: '', description: ''}; }
   
   attachment.typeName = attachment.type.description;
   // TODO Add grace period logic to editing/deleting attachments
@@ -263,10 +263,10 @@ export function deletePhysicalAttachment(attachment) {
 ////////////////////
 
 function parseOwner(owner) {
-  if (!owner.localArea) { owner.localArea = { id: '', name: '' }; }
-  if (!owner.localArea.serviceArea) { owner.localArea.serviceArea = { id: '', name: '' }; }
-  if (!owner.localArea.serviceArea.district) { owner.localArea.serviceArea.district = { id: '', name: '' }; }
-  if (!owner.localArea.serviceArea.district.region) { owner.localArea.serviceArea.district.region = { id: '', name: '' }; }
+  if (!owner.localArea) { owner.localArea = { id: 0, name: '' }; }
+  if (!owner.localArea.serviceArea) { owner.localArea.serviceArea = { id: 0, name: '' }; }
+  if (!owner.localArea.serviceArea.district) { owner.localArea.serviceArea.district = { id: 0, name: '' }; }
+  if (!owner.localArea.serviceArea.district.region) { owner.localArea.serviceArea.district.region = { id: 0, name: '' }; }
   if (!owner.contacts) { owner.contacts = []; }
   if (!owner.equipmentList) { owner.equipmentList = []; }
 
@@ -358,10 +358,10 @@ function parseContact(contact) {
 ////////////////////
 
 function parseProject(project) {
-  if (!project.localArea) { project.localArea = { id: '', name: '' }; }
-  if (!project.localArea.serviceArea) { project.localArea.serviceArea = { id: '', name: '' }; }
-  if (!project.localArea.serviceArea.district) { project.localArea.serviceArea.district = { id: '', name: '' }; }
-  if (!project.localArea.serviceArea.district.region) { project.localArea.serviceArea.district.region = { id: '', name: '' }; }
+  if (!project.localArea) { project.localArea = { id: 0, name: '' }; }
+  if (!project.localArea.serviceArea) { project.localArea.serviceArea = { id: 0, name: '' }; }
+  if (!project.localArea.serviceArea.district) { project.localArea.serviceArea.district = { id: 0, name: '' }; }
+  if (!project.localArea.serviceArea.district.region) { project.localArea.serviceArea.district.region = { id: 0, name: '' }; }
   if (!project.contacts) { project.contacts = []; }
   if (!project.rentalRequests) { project.rentalRequests = []; }
   if (!project.rentalAgreements) { project.rentalAgreements = []; }  // TODO Server needs to send this (HETS-153)
@@ -430,13 +430,13 @@ export function updateProject(project) {
 ////////////////////
 
 function parseRentalRequest(request) {
-  if (!request.localArea) { request.localArea = { id: '', name: '' }; }
-  if (!request.localArea.serviceArea) { request.localArea.serviceArea = { id: '', name: '' }; }
-  if (!request.localArea.serviceArea.district) { request.localArea.serviceArea.district = { id: '', name: '' }; }
-  if (!request.localArea.serviceArea.district.region) { request.localArea.serviceArea.district.region = { id: '', name: '' }; }
-  if (!request.project) { request.project = { id: '', name: '' }; }
-  if (!request.equipmentType) { request.equipmentType = { id: '', name: '' }; }
-  if (!request.primaryContact) { request.primaryContact = { id: '', givenName: '', surname: '' }; }
+  if (!request.localArea) { request.localArea = { id: 0, name: '' }; }
+  if (!request.localArea.serviceArea) { request.localArea.serviceArea = { id: 0, name: '' }; }
+  if (!request.localArea.serviceArea.district) { request.localArea.serviceArea.district = { id: 0, name: '' }; }
+  if (!request.localArea.serviceArea.district.region) { request.localArea.serviceArea.district.region = { id: 0, name: '' }; }
+  if (!request.project) { request.project = { id: 0, name: '' }; }
+  if (!request.equipmentType) { request.equipmentType = { id: 0, name: '' }; }
+  if (!request.primaryContact) { request.primaryContact = { id: 0, givenName: '', surname: '' }; }
   if (!request.attachments) { request.attachments = []; }
   if (!request.rentalRequestRotationList) { request.rentalRequestRotationList = []; }
 
@@ -514,10 +514,10 @@ export function updateRentalRequest(rentalRequest) {
 ////////////////////
 
 function parseRentalRequestRotationList(rotationListItem) {
-  if (!rotationListItem.rentalRequest) { rotationListItem.rentalRequest = { id: '', isRentalRequest: true }; }
-  if (!rotationListItem.equipment) { rotationListItem.equipment = { id: '', equipmentCode: '' }; }
-  if (!rotationListItem.equipment.equipmentType) { rotationListItem.equipment.equipmentType = { id: '', name: '' }; }
-  if (!rotationListItem.equipment.owner) { rotationListItem.equipment.owner = { id: '', organizationName: '' }; }
+  if (!rotationListItem.rentalRequest) { rotationListItem.rentalRequest = { id: 0, isRentalRequest: true }; }
+  if (!rotationListItem.equipment) { rotationListItem.equipment = { id: 0, equipmentCode: '' }; }
+  if (!rotationListItem.equipment.equipmentType) { rotationListItem.equipment.equipmentType = { id: 0, name: '' }; }
+  if (!rotationListItem.equipment.owner) { rotationListItem.equipment.owner = { id: 0, organizationName: '' }; }
 
   // The rental agreement (if any) created for an accepted hire offer.
   rotationListItem.rentalAgreement = rotationListItem.rentalAgreement || null;
@@ -562,9 +562,9 @@ function parseRentalRequestRotationList(rotationListItem) {
 ////////////////////
 
 function parseRentalAgreement(agreement) {
-  if (!agreement.equipment) { agreement.equipment = { id: '', equipmentCode: '' }; }
-  if (!agreement.equipment.equipmentType) { agreement.equipment.equipmentType = { id: '', name: '' }; }
-  if (!agreement.project) { agreement.project = { id: '', name: '' }; }
+  if (!agreement.equipment) { agreement.equipment = { id: 0, equipmentCode: '' }; }
+  if (!agreement.equipment.equipmentType) { agreement.equipment.equipmentType = { id: 0, name: '' }; }
+  if (!agreement.project) { agreement.project = { id: 0, name: '' }; }
   if (!agreement.rentalAgreementRates) { agreement.rentalAgreementRates = []; }
   if (!agreement.rentalAgreementConditions) { agreement.rentalAgreementConditions = []; }
   if (!agreement.timeRecords) { agreement.timeRecords = []; }
