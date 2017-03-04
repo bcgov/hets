@@ -1,0 +1,5924 @@
+[
+    {
+        "attachments": "",
+        "equipmentCount": "5",
+        "equipmentType": {
+            "id": "200035"
+        },
+        "expectedEndDate": "5/24/2017",
+        "expectedHours": "76",
+        "expectedStartDate": "4/7/2017",
+        "firstOnRotationList": "",
+        "history": "",
+        "id": "600000",
+        "localArea": "#REF!",
+        "notes": "",
+        "project": "Burdett Avenue Building",
+        "rentalRequestRotationList": "",
+        "status": "In progress"
+    },
+    {
+        "attachments": "",
+        "equipmentCount": "1",
+        "equipmentType": {
+            "id": "200061"
+        },
+        "expectedEndDate": "4/15/2017",
+        "expectedHours": "91",
+        "expectedStartDate": "4/4/2017",
+        "firstOnRotationList": "",
+        "history": "",
+        "id": "600001",
+        "localArea": "#REF!",
+        "notes": "",
+        "project": "Brew Creek Rd Bridge",
+        "rentalRequestRotationList": "",
+        "status": "Completed"
+    },
+    {
+        "attachments": "",
+        "equipmentCount": "1",
+        "equipmentType": {
+            "id": "200039"
+        },
+        "expectedEndDate": "4/19/2017",
+        "expectedHours": "67",
+        "expectedStartDate": "4/11/2017",
+        "firstOnRotationList": "",
+        "history": "",
+        "id": "600002",
+        "localArea": "#REF!",
+        "notes": "",
+        "project": "Mesa Vista Drive HOV Lane",
+        "rentalRequestRotationList": "",
+        "status": "In progress"
+    },
+    {
+        "attachments": "",
+        "equipmentCount": "1",
+        "equipmentType": {
+            "id": "200007"
+        },
+        "expectedEndDate": "4/1/2017",
+        "expectedHours": "43",
+        "expectedStartDate": "3/27/2017",
+        "firstOnRotationList": "",
+        "history": "",
+        "id": "600003",
+        "localArea": "#REF!",
+        "notes": "",
+        "project": "Burdett Avenue HOV Lane",
+        "rentalRequestRotationList": "",
+        "status": "In progress"
+    },
+    {
+        "attachments": "",
+        "equipmentCount": "1",
+        "equipmentType": {
+            "id": "200015"
+        },
+        "expectedEndDate": "4/10/2017",
+        "expectedHours": "38",
+        "expectedStartDate": "4/6/2017",
+        "firstOnRotationList": "",
+        "history": "",
+        "id": "600004",
+        "localArea": "#REF!",
+        "notes": "",
+        "project": "Noble Rd Upgrade",
+        "rentalRequestRotationList": "",
+        "status": "In progress"
+    },
+    {
+        "attachments": "",
+        "equipmentCount": "1",
+        "equipmentType": {
+            "id": "200015"
+        },
+        "expectedEndDate": "4/6/2017",
+        "expectedHours": "53",
+        "expectedStartDate": "3/31/2017",
+        "firstOnRotationList": "",
+        "history": "",
+        "id": "600005",
+        "localArea": "#REF!",
+        "notes": "",
+        "project": "Essendene Avenue Bridge",
+        "rentalRequestRotationList": "",
+        "status": "Completed"
+    },
+    {
+        "attachments": "",
+        "equipmentCount": "1",
+        "equipmentType": {
+            "id": "200084"
+        },
+        "expectedEndDate": "4/2/2017",
+        "expectedHours": "56",
+        "expectedStartDate": "3/26/2017",
+        "firstOnRotationList": "",
+        "history": "",
+        "id": "600006",
+        "localArea": "#REF!",
+        "notes": "",
+        "project": "Cordova Street Overpass",
+        "rentalRequestRotationList": "",
+        "status": "Completed"
+    },
+    {
+        "attachments": "",
+        "equipmentCount": "1",
+        "equipmentType": {
+            "id": "200050"
+        },
+        "expectedEndDate": "3/14/2017",
+        "expectedHours": "87",
+        "expectedStartDate": "3/4/2017",
+        "firstOnRotationList": "",
+        "history": "",
+        "id": "600007",
+        "localArea": "#REF!",
+        "notes": "",
+        "project": "Hardy Street HOV Lane",
+        "rentalRequestRotationList": "",
+        "status": "Completed"
+    },
+    {
+        "attachments": "",
+        "equipmentCount": "1",
+        "equipmentType": {
+            "id": "200035"
+        },
+        "expectedEndDate": "4/8/2017",
+        "expectedHours": "68",
+        "expectedStartDate": "3/31/2017",
+        "firstOnRotationList": "",
+        "history": "",
+        "id": "600008",
+        "localArea": "#REF!",
+        "notes": "",
+        "project": "Robson St Expressway",
+        "rentalRequestRotationList": "",
+        "status": "Completed"
+    },
+    {
+        "attachments": "",
+        "equipmentCount": "1",
+        "equipmentType": {
+            "id": "200063"
+        },
+        "expectedEndDate": "3/27/2017",
+        "expectedHours": "14",
+        "expectedStartDate": "3/26/2017",
+        "firstOnRotationList": "",
+        "history": "",
+        "id": "600009",
+        "localArea": "#REF!",
+        "notes": "",
+        "project": "Wellington Ave Express Lane",
+        "rentalRequestRotationList": "",
+        "status": "In progress"
+    },
+    {
+        "attachments": "",
+        "equipmentCount": "1",
+        "equipmentType": {
+            "id": "200002"
+        },
+        "expectedEndDate": "5/1/2017",
+        "expectedHours": "77",
+        "expectedStartDate": "4/22/2017",
+        "firstOnRotationList": "",
+        "history": "",
+        "id": "600010",
+        "localArea": "#REF!",
+        "notes": "",
+        "project": "Old Spallumcheen Rd Expressway",
+        "rentalRequestRotationList": "",
+        "status": "In progress"
+    },
+    {
+        "attachments": "",
+        "equipmentCount": "1",
+        "equipmentType": {
+            "id": "200084"
+        },
+        "expectedEndDate": "4/1/2017",
+        "expectedHours": "11",
+        "expectedStartDate": "3/31/2017",
+        "firstOnRotationList": "",
+        "history": "",
+        "id": "600011",
+        "localArea": "#REF!",
+        "notes": "",
+        "project": "Noble Rd Overpass",
+        "rentalRequestRotationList": "",
+        "status": "In progress"
+    },
+    {
+        "attachments": "",
+        "equipmentCount": "2",
+        "equipmentType": {
+            "id": "200059"
+        },
+        "expectedEndDate": "3/28/2017",
+        "expectedHours": "20",
+        "expectedStartDate": "3/23/2017",
+        "firstOnRotationList": "",
+        "history": "",
+        "id": "600012",
+        "localArea": "#REF!",
+        "notes": "",
+        "project": "Jade St Building",
+        "rentalRequestRotationList": "",
+        "status": "In progress"
+    },
+    {
+        "attachments": "",
+        "equipmentCount": "1",
+        "equipmentType": {
+            "id": "200035"
+        },
+        "expectedEndDate": "3/17/2017",
+        "expectedHours": "78",
+        "expectedStartDate": "3/8/2017",
+        "firstOnRotationList": "",
+        "history": "",
+        "id": "600013",
+        "localArea": "#REF!",
+        "notes": "",
+        "project": "Wallace Street Express Lane",
+        "rentalRequestRotationList": "",
+        "status": "In progress"
+    },
+    {
+        "attachments": "",
+        "equipmentCount": "1",
+        "equipmentType": {
+            "id": "200039"
+        },
+        "expectedEndDate": "4/19/2017",
+        "expectedHours": "91",
+        "expectedStartDate": "4/8/2017",
+        "firstOnRotationList": "",
+        "history": "",
+        "id": "600014",
+        "localArea": "#REF!",
+        "notes": "",
+        "project": "James Street HOV Lane",
+        "rentalRequestRotationList": "",
+        "status": "In progress"
+    },
+    {
+        "attachments": "",
+        "equipmentCount": "1",
+        "equipmentType": {
+            "id": "200057"
+        },
+        "expectedEndDate": "3/31/2017",
+        "expectedHours": "55",
+        "expectedStartDate": "3/25/2017",
+        "firstOnRotationList": "",
+        "history": "",
+        "id": "600015",
+        "localArea": "#REF!",
+        "notes": "",
+        "project": "Holdom Avenue Cloverleaf",
+        "rentalRequestRotationList": "",
+        "status": "In progress"
+    },
+    {
+        "attachments": "",
+        "equipmentCount": "2",
+        "equipmentType": {
+            "id": "200084"
+        },
+        "expectedEndDate": "4/5/2017",
+        "expectedHours": "25",
+        "expectedStartDate": "3/30/2017",
+        "firstOnRotationList": "",
+        "history": "",
+        "id": "600016",
+        "localArea": "#REF!",
+        "notes": "",
+        "project": "Roger Street Expressway",
+        "rentalRequestRotationList": "",
+        "status": "In progress"
+    },
+    {
+        "attachments": "",
+        "equipmentCount": "1",
+        "equipmentType": {
+            "id": "200059"
+        },
+        "expectedEndDate": "3/27/2017",
+        "expectedHours": "21",
+        "expectedStartDate": "3/25/2017",
+        "firstOnRotationList": "",
+        "history": "",
+        "id": "600017",
+        "localArea": "#REF!",
+        "notes": "",
+        "project": "Scotts Lane Bypass",
+        "rentalRequestRotationList": "",
+        "status": "In progress"
+    },
+    {
+        "attachments": "",
+        "equipmentCount": "1",
+        "equipmentType": {
+            "id": "200027"
+        },
+        "expectedEndDate": "3/18/2017",
+        "expectedHours": "71",
+        "expectedStartDate": "3/10/2017",
+        "firstOnRotationList": "",
+        "history": "",
+        "id": "600018",
+        "localArea": "#REF!",
+        "notes": "",
+        "project": "Findlay Creek Road HOV Lane",
+        "rentalRequestRotationList": "",
+        "status": "In progress"
+    },
+    {
+        "attachments": "",
+        "equipmentCount": "1",
+        "equipmentType": {
+            "id": "200000"
+        },
+        "expectedEndDate": "3/30/2017",
+        "expectedHours": "22",
+        "expectedStartDate": "3/28/2017",
+        "firstOnRotationList": "",
+        "history": "",
+        "id": "600019",
+        "localArea": "#REF!",
+        "notes": "",
+        "project": "Sixth Street Bypass",
+        "rentalRequestRotationList": "",
+        "status": "In progress"
+    },
+    {
+        "attachments": "",
+        "equipmentCount": "1",
+        "equipmentType": {
+            "id": "200051"
+        },
+        "expectedEndDate": "3/23/2017",
+        "expectedHours": "50",
+        "expectedStartDate": "3/17/2017",
+        "firstOnRotationList": "",
+        "history": "",
+        "id": "600020",
+        "localArea": "#REF!",
+        "notes": "",
+        "project": "Blanshard Bypass",
+        "rentalRequestRotationList": "",
+        "status": "In progress"
+    },
+    {
+        "attachments": "",
+        "equipmentCount": "1",
+        "equipmentType": {
+            "id": "200057"
+        },
+        "expectedEndDate": "4/1/2017",
+        "expectedHours": "34",
+        "expectedStartDate": "3/28/2017",
+        "firstOnRotationList": "",
+        "history": "",
+        "id": "600021",
+        "localArea": "#REF!",
+        "notes": "",
+        "project": "King George Hwy HOV Lane",
+        "rentalRequestRotationList": "",
+        "status": "In progress"
+    },
+    {
+        "attachments": "",
+        "equipmentCount": "1",
+        "equipmentType": {
+            "id": "200049"
+        },
+        "expectedEndDate": "4/27/2017",
+        "expectedHours": "76",
+        "expectedStartDate": "4/18/2017",
+        "firstOnRotationList": "",
+        "history": "",
+        "id": "600022",
+        "localArea": "#REF!",
+        "notes": "",
+        "project": "Glover Road Cloverleaf",
+        "rentalRequestRotationList": "",
+        "status": "In progress"
+    },
+    {
+        "attachments": "",
+        "equipmentCount": "4",
+        "equipmentType": {
+            "id": "200066"
+        },
+        "expectedEndDate": "4/13/2017",
+        "expectedHours": "25",
+        "expectedStartDate": "4/1/2017",
+        "firstOnRotationList": "",
+        "history": "",
+        "id": "600023",
+        "localArea": "#REF!",
+        "notes": "",
+        "project": "Wallace Street Bridge",
+        "rentalRequestRotationList": "",
+        "status": "In progress"
+    },
+    {
+        "attachments": "",
+        "equipmentCount": "5",
+        "equipmentType": {
+            "id": "200068"
+        },
+        "expectedEndDate": "5/17/2017",
+        "expectedHours": "73",
+        "expectedStartDate": "4/2/2017",
+        "firstOnRotationList": "",
+        "history": "",
+        "id": "600024",
+        "localArea": "#REF!",
+        "notes": "",
+        "project": "Yoho Valley Road Bypass",
+        "rentalRequestRotationList": "",
+        "status": "In progress"
+    },
+    {
+        "attachments": "",
+        "equipmentCount": "1",
+        "equipmentType": {
+            "id": "200002"
+        },
+        "expectedEndDate": "4/18/2017",
+        "expectedHours": "87",
+        "expectedStartDate": "4/8/2017",
+        "firstOnRotationList": "",
+        "history": "",
+        "id": "600025",
+        "localArea": "#REF!",
+        "notes": "",
+        "project": "Burdett Avenue Expressway",
+        "rentalRequestRotationList": "",
+        "status": "In progress"
+    },
+    {
+        "attachments": "",
+        "equipmentCount": "1",
+        "equipmentType": {
+            "id": "200084"
+        },
+        "expectedEndDate": "3/20/2017",
+        "expectedHours": "24",
+        "expectedStartDate": "3/17/2017",
+        "firstOnRotationList": "",
+        "history": "",
+        "id": "600026",
+        "localArea": "#REF!",
+        "notes": "",
+        "project": "Cordova Street Building",
+        "rentalRequestRotationList": "",
+        "status": "In progress"
+    },
+    {
+        "attachments": "",
+        "equipmentCount": "5",
+        "equipmentType": {
+            "id": "200035"
+        },
+        "expectedEndDate": "5/26/2017",
+        "expectedHours": "65",
+        "expectedStartDate": "4/16/2017",
+        "firstOnRotationList": "",
+        "history": "",
+        "id": "600027",
+        "localArea": "#REF!",
+        "notes": "",
+        "project": "Glover Road Expressway",
+        "rentalRequestRotationList": "",
+        "status": "In progress"
+    },
+    {
+        "attachments": "",
+        "equipmentCount": "1",
+        "equipmentType": {
+            "id": "200057"
+        },
+        "expectedEndDate": "3/26/2017",
+        "expectedHours": "16",
+        "expectedStartDate": "3/24/2017",
+        "firstOnRotationList": "",
+        "history": "",
+        "id": "600028",
+        "localArea": "#REF!",
+        "notes": "",
+        "project": "Scotts Lane Upgrade",
+        "rentalRequestRotationList": "",
+        "status": "In progress"
+    },
+    {
+        "attachments": "",
+        "equipmentCount": "1",
+        "equipmentType": {
+            "id": "200084"
+        },
+        "expectedEndDate": "3/21/2017",
+        "expectedHours": "70",
+        "expectedStartDate": "3/13/2017",
+        "firstOnRotationList": "",
+        "history": "",
+        "id": "600029",
+        "localArea": "#REF!",
+        "notes": "",
+        "project": "Nootka Street Upgrade",
+        "rentalRequestRotationList": "",
+        "status": "In progress"
+    },
+    {
+        "attachments": "",
+        "equipmentCount": "1",
+        "equipmentType": {
+            "id": "200000"
+        },
+        "expectedEndDate": "4/15/2017",
+        "expectedHours": "52",
+        "expectedStartDate": "4/9/2017",
+        "firstOnRotationList": "",
+        "history": "",
+        "id": "600030",
+        "localArea": "#REF!",
+        "notes": "",
+        "project": "Nootka Street Cloverleaf",
+        "rentalRequestRotationList": "",
+        "status": "In progress"
+    },
+    {
+        "attachments": "",
+        "equipmentCount": "1",
+        "equipmentType": {
+            "id": "200000"
+        },
+        "expectedEndDate": "5/2/2017",
+        "expectedHours": "59",
+        "expectedStartDate": "4/25/2017",
+        "firstOnRotationList": "",
+        "history": "",
+        "id": "600031",
+        "localArea": "#REF!",
+        "notes": "",
+        "project": "Kinchant St Cloverleaf",
+        "rentalRequestRotationList": "",
+        "status": "In progress"
+    },
+    {
+        "attachments": "",
+        "equipmentCount": "4",
+        "equipmentType": {
+            "id": "200061"
+        },
+        "expectedEndDate": "3/16/2017",
+        "expectedHours": "23",
+        "expectedStartDate": "3/5/2017",
+        "firstOnRotationList": "",
+        "history": "",
+        "id": "600032",
+        "localArea": "#REF!",
+        "notes": "",
+        "project": "Queens Bay Bypass",
+        "rentalRequestRotationList": "",
+        "status": "In progress"
+    },
+    {
+        "attachments": "",
+        "equipmentCount": "3",
+        "equipmentType": {
+            "id": "200062"
+        },
+        "expectedEndDate": "4/28/2017",
+        "expectedHours": "53",
+        "expectedStartDate": "4/9/2017",
+        "firstOnRotationList": "",
+        "history": "",
+        "id": "600033",
+        "localArea": "#REF!",
+        "notes": "",
+        "project": "102nd Avenue Overpass",
+        "rentalRequestRotationList": "",
+        "status": "In progress"
+    },
+    {
+        "attachments": "",
+        "equipmentCount": "1",
+        "equipmentType": {
+            "id": "200039"
+        },
+        "expectedEndDate": "3/14/2017",
+        "expectedHours": "44",
+        "expectedStartDate": "3/9/2017",
+        "firstOnRotationList": "",
+        "history": "",
+        "id": "600034",
+        "localArea": "#REF!",
+        "notes": "",
+        "project": "Kinchant St Building",
+        "rentalRequestRotationList": "",
+        "status": "Completed"
+    },
+    {
+        "attachments": "",
+        "equipmentCount": "5",
+        "equipmentType": {
+            "id": "200051"
+        },
+        "expectedEndDate": "4/22/2017",
+        "expectedHours": "66",
+        "expectedStartDate": "3/12/2017",
+        "firstOnRotationList": "",
+        "history": "",
+        "id": "600035",
+        "localArea": "#REF!",
+        "notes": "",
+        "project": "Blanshard Bridge",
+        "rentalRequestRotationList": "",
+        "status": "Completed"
+    },
+    {
+        "attachments": "",
+        "equipmentCount": "4",
+        "equipmentType": {
+            "id": "200061"
+        },
+        "expectedEndDate": "4/13/2017",
+        "expectedHours": "70",
+        "expectedStartDate": "3/9/2017",
+        "firstOnRotationList": "",
+        "history": "",
+        "id": "600036",
+        "localArea": "#REF!",
+        "notes": "",
+        "project": "Robson St HOV Lane",
+        "rentalRequestRotationList": "",
+        "status": "In progress"
+    },
+    {
+        "attachments": "",
+        "equipmentCount": "5",
+        "equipmentType": {
+            "id": "200062"
+        },
+        "expectedEndDate": "6/6/2017",
+        "expectedHours": "90",
+        "expectedStartDate": "4/11/2017",
+        "firstOnRotationList": "",
+        "history": "",
+        "id": "600037",
+        "localArea": "#REF!",
+        "notes": "",
+        "project": "Findlay Creek Road Bridge Replacement",
+        "rentalRequestRotationList": "",
+        "status": "In progress"
+    },
+    {
+        "attachments": "",
+        "equipmentCount": "1",
+        "equipmentType": {
+            "id": "200057"
+        },
+        "expectedEndDate": "3/21/2017",
+        "expectedHours": "63",
+        "expectedStartDate": "3/14/2017",
+        "firstOnRotationList": "",
+        "history": "",
+        "id": "600038",
+        "localArea": "#REF!",
+        "notes": "",
+        "project": "Roger Street Express Lane",
+        "rentalRequestRotationList": "",
+        "status": "In progress"
+    },
+    {
+        "attachments": "",
+        "equipmentCount": "1",
+        "equipmentType": {
+            "id": "200057"
+        },
+        "expectedEndDate": "4/14/2017",
+        "expectedHours": "44",
+        "expectedStartDate": "4/9/2017",
+        "firstOnRotationList": "",
+        "history": "",
+        "id": "600039",
+        "localArea": "#REF!",
+        "notes": "",
+        "project": "Cardero St Express Lane",
+        "rentalRequestRotationList": "",
+        "status": "In progress"
+    },
+    {
+        "attachments": "",
+        "equipmentCount": "1",
+        "equipmentType": {
+            "id": "200007"
+        },
+        "expectedEndDate": "4/26/2017",
+        "expectedHours": "86",
+        "expectedStartDate": "4/16/2017",
+        "firstOnRotationList": "",
+        "history": "",
+        "id": "600040",
+        "localArea": "#REF!",
+        "notes": "",
+        "project": "Blind Bay Road Building",
+        "rentalRequestRotationList": "",
+        "status": "In progress"
+    },
+    {
+        "attachments": "",
+        "equipmentCount": "1",
+        "equipmentType": {
+            "id": "200015"
+        },
+        "expectedEndDate": "3/12/2017",
+        "expectedHours": "45",
+        "expectedStartDate": "3/7/2017",
+        "firstOnRotationList": "",
+        "history": "",
+        "id": "600041",
+        "localArea": "#REF!",
+        "notes": "",
+        "project": "Old Spallumcheen Rd Bypass",
+        "rentalRequestRotationList": "",
+        "status": "In progress"
+    },
+    {
+        "attachments": "",
+        "equipmentCount": "3",
+        "equipmentType": {
+            "id": "200068"
+        },
+        "expectedEndDate": "4/21/2017",
+        "expectedHours": "74",
+        "expectedStartDate": "3/25/2017",
+        "firstOnRotationList": "",
+        "history": "",
+        "id": "600042",
+        "localArea": "#REF!",
+        "notes": "",
+        "project": "Roger Street Bypass",
+        "rentalRequestRotationList": "",
+        "status": "Completed"
+    },
+    {
+        "attachments": "",
+        "equipmentCount": "3",
+        "equipmentType": {
+            "id": "200062"
+        },
+        "expectedEndDate": "4/28/2017",
+        "expectedHours": "28",
+        "expectedStartDate": "4/18/2017",
+        "firstOnRotationList": "",
+        "history": "",
+        "id": "600043",
+        "localArea": "#REF!",
+        "notes": "",
+        "project": "Keith Road Upgrade",
+        "rentalRequestRotationList": "",
+        "status": "In progress"
+    },
+    {
+        "attachments": "",
+        "equipmentCount": "1",
+        "equipmentType": {
+            "id": "200068"
+        },
+        "expectedEndDate": "3/10/2017",
+        "expectedHours": "39",
+        "expectedStartDate": "3/6/2017",
+        "firstOnRotationList": "",
+        "history": "",
+        "id": "600044",
+        "localArea": "#REF!",
+        "notes": "",
+        "project": "Burdett Avenue Bridge Replacement",
+        "rentalRequestRotationList": "",
+        "status": "In progress"
+    },
+    {
+        "attachments": "",
+        "equipmentCount": "1",
+        "equipmentType": {
+            "id": "200061"
+        },
+        "expectedEndDate": "3/11/2017",
+        "expectedHours": "47",
+        "expectedStartDate": "3/6/2017",
+        "firstOnRotationList": "",
+        "history": "",
+        "id": "600045",
+        "localArea": "#REF!",
+        "notes": "",
+        "project": "Brew Creek Rd Upgrade",
+        "rentalRequestRotationList": "",
+        "status": "In progress"
+    },
+    {
+        "attachments": "",
+        "equipmentCount": "1",
+        "equipmentType": {
+            "id": "200028"
+        },
+        "expectedEndDate": "4/4/2017",
+        "expectedHours": "62",
+        "expectedStartDate": "3/28/2017",
+        "firstOnRotationList": "",
+        "history": "",
+        "id": "600046",
+        "localArea": "#REF!",
+        "notes": "",
+        "project": "Coldstream Avenue Expressway",
+        "rentalRequestRotationList": "",
+        "status": "In progress"
+    },
+    {
+        "attachments": "",
+        "equipmentCount": "1",
+        "equipmentType": {
+            "id": "200027"
+        },
+        "expectedEndDate": "4/22/2017",
+        "expectedHours": "40",
+        "expectedStartDate": "4/17/2017",
+        "firstOnRotationList": "",
+        "history": "",
+        "id": "600047",
+        "localArea": "#REF!",
+        "notes": "",
+        "project": "Roger Street Bridge Replacement",
+        "rentalRequestRotationList": "",
+        "status": "In progress"
+    },
+    {
+        "attachments": "",
+        "equipmentCount": "3",
+        "equipmentType": {
+            "id": "200026"
+        },
+        "expectedEndDate": "4/17/2017",
+        "expectedHours": "42",
+        "expectedStartDate": "4/2/2017",
+        "firstOnRotationList": "",
+        "history": "",
+        "id": "600048",
+        "localArea": "#REF!",
+        "notes": "",
+        "project": "Wellington Ave Express Lane",
+        "rentalRequestRotationList": "",
+        "status": "In progress"
+    },
+    {
+        "attachments": "",
+        "equipmentCount": "1",
+        "equipmentType": {
+            "id": "200002"
+        },
+        "expectedEndDate": "3/29/2017",
+        "expectedHours": "53",
+        "expectedStartDate": "3/23/2017",
+        "firstOnRotationList": "",
+        "history": "",
+        "id": "600049",
+        "localArea": "#REF!",
+        "notes": "",
+        "project": "Hardy Street Building",
+        "rentalRequestRotationList": "",
+        "status": "Completed"
+    },
+    {
+        "attachments": "",
+        "equipmentCount": "1",
+        "equipmentType": {
+            "id": "200049"
+        },
+        "expectedEndDate": "3/11/2017",
+        "expectedHours": "32",
+        "expectedStartDate": "3/7/2017",
+        "firstOnRotationList": "",
+        "history": "",
+        "id": "600050",
+        "localArea": "#REF!",
+        "notes": "",
+        "project": "Hastings Street HOV Lane",
+        "rentalRequestRotationList": "",
+        "status": "In progress"
+    },
+    {
+        "attachments": "",
+        "equipmentCount": "1",
+        "equipmentType": {
+            "id": "200035"
+        },
+        "expectedEndDate": "3/15/2017",
+        "expectedHours": "95",
+        "expectedStartDate": "3/4/2017",
+        "firstOnRotationList": "",
+        "history": "",
+        "id": "600051",
+        "localArea": "#REF!",
+        "notes": "",
+        "project": "Queens Bay Cloverleaf",
+        "rentalRequestRotationList": "",
+        "status": "In progress"
+    },
+    {
+        "attachments": "",
+        "equipmentCount": "1",
+        "equipmentType": {
+            "id": "200035"
+        },
+        "expectedEndDate": "5/1/2017",
+        "expectedHours": "33",
+        "expectedStartDate": "4/27/2017",
+        "firstOnRotationList": "",
+        "history": "",
+        "id": "600052",
+        "localArea": "#REF!",
+        "notes": "",
+        "project": "Hastings Street Upgrade",
+        "rentalRequestRotationList": "",
+        "status": "In progress"
+    },
+    {
+        "attachments": "",
+        "equipmentCount": "1",
+        "equipmentType": {
+            "id": "200049"
+        },
+        "expectedEndDate": "5/5/2017",
+        "expectedHours": "59",
+        "expectedStartDate": "4/28/2017",
+        "firstOnRotationList": "",
+        "history": "",
+        "id": "600053",
+        "localArea": "#REF!",
+        "notes": "",
+        "project": "Findlay Creek Road Extension",
+        "rentalRequestRotationList": "",
+        "status": "In progress"
+    },
+    {
+        "attachments": "",
+        "equipmentCount": "1",
+        "equipmentType": {
+            "id": "200066"
+        },
+        "expectedEndDate": "4/9/2017",
+        "expectedHours": "43",
+        "expectedStartDate": "4/4/2017",
+        "firstOnRotationList": "",
+        "history": "",
+        "id": "600054",
+        "localArea": "#REF!",
+        "notes": "",
+        "project": "Burdett Avenue Bridge",
+        "rentalRequestRotationList": "",
+        "status": "Cancelled"
+    },
+    {
+        "attachments": "",
+        "equipmentCount": "1",
+        "equipmentType": {
+            "id": "200057"
+        },
+        "expectedEndDate": "4/28/2017",
+        "expectedHours": "65",
+        "expectedStartDate": "4/20/2017",
+        "firstOnRotationList": "",
+        "history": "",
+        "id": "600055",
+        "localArea": "#REF!",
+        "notes": "",
+        "project": "Alaska Hwy Cloverleaf",
+        "rentalRequestRotationList": "",
+        "status": "Cancelled"
+    },
+    {
+        "attachments": "",
+        "equipmentCount": "1",
+        "equipmentType": {
+            "id": "200015"
+        },
+        "expectedEndDate": "4/16/2017",
+        "expectedHours": "56",
+        "expectedStartDate": "4/9/2017",
+        "firstOnRotationList": "",
+        "history": "",
+        "id": "600056",
+        "localArea": "#REF!",
+        "notes": "",
+        "project": "Burdett Avenue Upgrade",
+        "rentalRequestRotationList": "",
+        "status": "In progress"
+    },
+    {
+        "attachments": "",
+        "equipmentCount": "1",
+        "equipmentType": {
+            "id": "200039"
+        },
+        "expectedEndDate": "4/12/2017",
+        "expectedHours": "50",
+        "expectedStartDate": "4/6/2017",
+        "firstOnRotationList": "",
+        "history": "",
+        "id": "600057",
+        "localArea": "#REF!",
+        "notes": "",
+        "project": "James Street Expressway",
+        "rentalRequestRotationList": "",
+        "status": "In progress"
+    },
+    {
+        "attachments": "",
+        "equipmentCount": "1",
+        "equipmentType": {
+            "id": "200066"
+        },
+        "expectedEndDate": "4/2/2017",
+        "expectedHours": "42",
+        "expectedStartDate": "3/28/2017",
+        "firstOnRotationList": "",
+        "history": "",
+        "id": "600058",
+        "localArea": "#REF!",
+        "notes": "",
+        "project": "Tolmie St Cloverleaf",
+        "rentalRequestRotationList": "",
+        "status": "In progress"
+    },
+    {
+        "attachments": "",
+        "equipmentCount": "1",
+        "equipmentType": {
+            "id": "200000"
+        },
+        "expectedEndDate": "3/12/2017",
+        "expectedHours": "64",
+        "expectedStartDate": "3/4/2017",
+        "firstOnRotationList": "",
+        "history": "",
+        "id": "600059",
+        "localArea": "#REF!",
+        "notes": "",
+        "project": "Quayside Dr Express Lane",
+        "rentalRequestRotationList": "",
+        "status": "Cancelled"
+    },
+    {
+        "attachments": "",
+        "equipmentCount": "1",
+        "equipmentType": {
+            "id": "200057"
+        },
+        "expectedEndDate": "3/23/2017",
+        "expectedHours": "48",
+        "expectedStartDate": "3/17/2017",
+        "firstOnRotationList": "",
+        "history": "",
+        "id": "600060",
+        "localArea": "#REF!",
+        "notes": "",
+        "project": "Jade St Cloverleaf",
+        "rentalRequestRotationList": "",
+        "status": "In progress"
+    },
+    {
+        "attachments": "",
+        "equipmentCount": "1",
+        "equipmentType": {
+            "id": "200039"
+        },
+        "expectedEndDate": "4/11/2017",
+        "expectedHours": "67",
+        "expectedStartDate": "4/3/2017",
+        "firstOnRotationList": "",
+        "history": "",
+        "id": "600061",
+        "localArea": "#REF!",
+        "notes": "",
+        "project": "Alaska Hwy HOV Lane",
+        "rentalRequestRotationList": "",
+        "status": "In progress"
+    },
+    {
+        "attachments": "",
+        "equipmentCount": "1",
+        "equipmentType": {
+            "id": "200035"
+        },
+        "expectedEndDate": "4/13/2017",
+        "expectedHours": "19",
+        "expectedStartDate": "4/11/2017",
+        "firstOnRotationList": "",
+        "history": "",
+        "id": "600062",
+        "localArea": "#REF!",
+        "notes": "",
+        "project": "Sixth Street HOV Lane",
+        "rentalRequestRotationList": "",
+        "status": "Cancelled"
+    },
+    {
+        "attachments": "",
+        "equipmentCount": "1",
+        "equipmentType": {
+            "id": "200027"
+        },
+        "expectedEndDate": "4/7/2017",
+        "expectedHours": "30",
+        "expectedStartDate": "4/4/2017",
+        "firstOnRotationList": "",
+        "history": "",
+        "id": "600063",
+        "localArea": "#REF!",
+        "notes": "",
+        "project": "King George Hwy Upgrade",
+        "rentalRequestRotationList": "",
+        "status": "In progress"
+    },
+    {
+        "attachments": "",
+        "equipmentCount": "1",
+        "equipmentType": {
+            "id": "200057"
+        },
+        "expectedEndDate": "3/28/2017",
+        "expectedHours": "67",
+        "expectedStartDate": "3/20/2017",
+        "firstOnRotationList": "",
+        "history": "",
+        "id": "600064",
+        "localArea": "#REF!",
+        "notes": "",
+        "project": "Burdett Avenue Overpass",
+        "rentalRequestRotationList": "",
+        "status": "In progress"
+    },
+    {
+        "attachments": "",
+        "equipmentCount": "1",
+        "equipmentType": {
+            "id": "200035"
+        },
+        "expectedEndDate": "3/12/2017",
+        "expectedHours": "38",
+        "expectedStartDate": "3/8/2017",
+        "firstOnRotationList": "",
+        "history": "",
+        "id": "600065",
+        "localArea": "#REF!",
+        "notes": "",
+        "project": "Stum Lake Road Extension",
+        "rentalRequestRotationList": "",
+        "status": "In progress"
+    },
+    {
+        "attachments": "",
+        "equipmentCount": "1",
+        "equipmentType": {
+            "id": "200084"
+        },
+        "expectedEndDate": "3/30/2017",
+        "expectedHours": "65",
+        "expectedStartDate": "3/22/2017",
+        "firstOnRotationList": "",
+        "history": "",
+        "id": "600066",
+        "localArea": "#REF!",
+        "notes": "",
+        "project": "James Street Building",
+        "rentalRequestRotationList": "",
+        "status": "In progress"
+    },
+    {
+        "attachments": "",
+        "equipmentCount": "1",
+        "equipmentType": {
+            "id": "200028"
+        },
+        "expectedEndDate": "3/26/2017",
+        "expectedHours": "7",
+        "expectedStartDate": "3/26/2017",
+        "firstOnRotationList": "",
+        "history": "",
+        "id": "600067",
+        "localArea": "#REF!",
+        "notes": "",
+        "project": "Tolmie St Extension",
+        "rentalRequestRotationList": "",
+        "status": "Cancelled"
+    },
+    {
+        "attachments": "",
+        "equipmentCount": "1",
+        "equipmentType": {
+            "id": "200002"
+        },
+        "expectedEndDate": "3/21/2017",
+        "expectedHours": "11",
+        "expectedStartDate": "3/20/2017",
+        "firstOnRotationList": "",
+        "history": "",
+        "id": "600068",
+        "localArea": "#REF!",
+        "notes": "",
+        "project": "Blanshard Cloverleaf",
+        "rentalRequestRotationList": "",
+        "status": "In progress"
+    },
+    {
+        "attachments": "",
+        "equipmentCount": "1",
+        "equipmentType": {
+            "id": "200061"
+        },
+        "expectedEndDate": "4/24/2017",
+        "expectedHours": "40",
+        "expectedStartDate": "4/19/2017",
+        "firstOnRotationList": "",
+        "history": "",
+        "id": "600069",
+        "localArea": "#REF!",
+        "notes": "",
+        "project": "Glover Road Expressway",
+        "rentalRequestRotationList": "",
+        "status": "In progress"
+    },
+    {
+        "attachments": "",
+        "equipmentCount": "1",
+        "equipmentType": {
+            "id": "200066"
+        },
+        "expectedEndDate": "4/30/2017",
+        "expectedHours": "99",
+        "expectedStartDate": "4/18/2017",
+        "firstOnRotationList": "",
+        "history": "",
+        "id": "600070",
+        "localArea": "#REF!",
+        "notes": "",
+        "project": "Coldstream Avenue Cloverleaf",
+        "rentalRequestRotationList": "",
+        "status": "In progress"
+    },
+    {
+        "attachments": "",
+        "equipmentCount": "1",
+        "equipmentType": {
+            "id": "200084"
+        },
+        "expectedEndDate": "5/5/2017",
+        "expectedHours": "68",
+        "expectedStartDate": "4/27/2017",
+        "firstOnRotationList": "",
+        "history": "",
+        "id": "600071",
+        "localArea": "#REF!",
+        "notes": "",
+        "project": "Lake City Way Cloverleaf",
+        "rentalRequestRotationList": "",
+        "status": "Cancelled"
+    },
+    {
+        "attachments": "",
+        "equipmentCount": "1",
+        "equipmentType": {
+            "id": "200068"
+        },
+        "expectedEndDate": "3/29/2017",
+        "expectedHours": "9",
+        "expectedStartDate": "3/28/2017",
+        "firstOnRotationList": "",
+        "history": "",
+        "id": "600072",
+        "localArea": "#REF!",
+        "notes": "",
+        "project": "Roger Street HOV Lane",
+        "rentalRequestRotationList": "",
+        "status": "In progress"
+    },
+    {
+        "attachments": "",
+        "equipmentCount": "1",
+        "equipmentType": {
+            "id": "200066"
+        },
+        "expectedEndDate": "3/21/2017",
+        "expectedHours": "83",
+        "expectedStartDate": "3/11/2017",
+        "firstOnRotationList": "",
+        "history": "",
+        "id": "600073",
+        "localArea": "#REF!",
+        "notes": "",
+        "project": "Essendene Avenue Bypass",
+        "rentalRequestRotationList": "",
+        "status": "In progress"
+    },
+    {
+        "attachments": "",
+        "equipmentCount": "1",
+        "equipmentType": {
+            "id": "200000"
+        },
+        "expectedEndDate": "3/29/2017",
+        "expectedHours": "40",
+        "expectedStartDate": "3/24/2017",
+        "firstOnRotationList": "",
+        "history": "",
+        "id": "600074",
+        "localArea": "#REF!",
+        "notes": "",
+        "project": "Blanshard Overpass",
+        "rentalRequestRotationList": "",
+        "status": "In progress"
+    },
+    {
+        "attachments": "",
+        "equipmentCount": "1",
+        "equipmentType": {
+            "id": "200080"
+        },
+        "expectedEndDate": "4/24/2017",
+        "expectedHours": "32",
+        "expectedStartDate": "4/20/2017",
+        "firstOnRotationList": "",
+        "history": "",
+        "id": "600075",
+        "localArea": "#REF!",
+        "notes": "",
+        "project": "Wallace Street Upgrade",
+        "rentalRequestRotationList": "",
+        "status": "In progress"
+    },
+    {
+        "attachments": "",
+        "equipmentCount": "1",
+        "equipmentType": {
+            "id": "200039"
+        },
+        "expectedEndDate": "3/14/2017",
+        "expectedHours": "15",
+        "expectedStartDate": "3/13/2017",
+        "firstOnRotationList": "",
+        "history": "",
+        "id": "600076",
+        "localArea": "#REF!",
+        "notes": "",
+        "project": "Glover Road Extension",
+        "rentalRequestRotationList": "",
+        "status": "In progress"
+    },
+    {
+        "attachments": "",
+        "equipmentCount": "1",
+        "equipmentType": {
+            "id": "200061"
+        },
+        "expectedEndDate": "4/2/2017",
+        "expectedHours": "75",
+        "expectedStartDate": "3/24/2017",
+        "firstOnRotationList": "",
+        "history": "",
+        "id": "600077",
+        "localArea": "#REF!",
+        "notes": "",
+        "project": "Burdett Avenue Overpass",
+        "rentalRequestRotationList": "",
+        "status": "Cancelled"
+    },
+    {
+        "attachments": "",
+        "equipmentCount": "1",
+        "equipmentType": {
+            "id": "200084"
+        },
+        "expectedEndDate": "4/22/2017",
+        "expectedHours": "21",
+        "expectedStartDate": "4/20/2017",
+        "firstOnRotationList": "",
+        "history": "",
+        "id": "600078",
+        "localArea": "#REF!",
+        "notes": "",
+        "project": "Burdett Avenue Building",
+        "rentalRequestRotationList": "",
+        "status": "In progress"
+    },
+    {
+        "attachments": "",
+        "equipmentCount": "1",
+        "equipmentType": {
+            "id": "200057"
+        },
+        "expectedEndDate": "3/31/2017",
+        "expectedHours": "64",
+        "expectedStartDate": "3/23/2017",
+        "firstOnRotationList": "",
+        "history": "",
+        "id": "600079",
+        "localArea": "#REF!",
+        "notes": "",
+        "project": "Shaughnessy St Expressway",
+        "rentalRequestRotationList": "",
+        "status": "In progress"
+    },
+    {
+        "attachments": "",
+        "equipmentCount": "1",
+        "equipmentType": {
+            "id": "200063"
+        },
+        "expectedEndDate": "3/26/2017",
+        "expectedHours": "90",
+        "expectedStartDate": "3/15/2017",
+        "firstOnRotationList": "",
+        "history": "",
+        "id": "600080",
+        "localArea": "#REF!",
+        "notes": "",
+        "project": "Tchesinkut Lake Rd Overpass",
+        "rentalRequestRotationList": "",
+        "status": "In progress"
+    },
+    {
+        "attachments": "",
+        "equipmentCount": "1",
+        "equipmentType": {
+            "id": "200007"
+        },
+        "expectedEndDate": "4/15/2017",
+        "expectedHours": "100",
+        "expectedStartDate": "4/3/2017",
+        "firstOnRotationList": "",
+        "history": "",
+        "id": "600081",
+        "localArea": "#REF!",
+        "notes": "",
+        "project": "Blind Bay Road Bypass",
+        "rentalRequestRotationList": "",
+        "status": "Cancelled"
+    },
+    {
+        "attachments": "",
+        "equipmentCount": "1",
+        "equipmentType": {
+            "id": "200061"
+        },
+        "expectedEndDate": "4/19/2017",
+        "expectedHours": "12",
+        "expectedStartDate": "4/18/2017",
+        "firstOnRotationList": "",
+        "history": "",
+        "id": "600082",
+        "localArea": "#REF!",
+        "notes": "",
+        "project": "Blind Bay Road Bridge",
+        "rentalRequestRotationList": "",
+        "status": "Completed"
+    },
+    {
+        "attachments": "",
+        "equipmentCount": "1",
+        "equipmentType": {
+            "id": "200039"
+        },
+        "expectedEndDate": "4/5/2017",
+        "expectedHours": "27",
+        "expectedStartDate": "4/2/2017",
+        "firstOnRotationList": "",
+        "history": "",
+        "id": "600083",
+        "localArea": "#REF!",
+        "notes": "",
+        "project": "James Street Building",
+        "rentalRequestRotationList": "",
+        "status": "Completed"
+    },
+    {
+        "attachments": "",
+        "equipmentCount": "1",
+        "equipmentType": {
+            "id": "200002"
+        },
+        "expectedEndDate": "3/17/2017",
+        "expectedHours": "24",
+        "expectedStartDate": "3/14/2017",
+        "firstOnRotationList": "",
+        "history": "",
+        "id": "600084",
+        "localArea": "#REF!",
+        "notes": "",
+        "project": "Glover Road Building",
+        "rentalRequestRotationList": "",
+        "status": "In progress"
+    },
+    {
+        "attachments": "",
+        "equipmentCount": "1",
+        "equipmentType": {
+            "id": "200002"
+        },
+        "expectedEndDate": "4/18/2017",
+        "expectedHours": "36",
+        "expectedStartDate": "4/14/2017",
+        "firstOnRotationList": "",
+        "history": "",
+        "id": "600085",
+        "localArea": "#REF!",
+        "notes": "",
+        "project": "Wellington Ave Bypass",
+        "rentalRequestRotationList": "",
+        "status": "Cancelled"
+    },
+    {
+        "attachments": "",
+        "equipmentCount": "4",
+        "equipmentType": {
+            "id": "200035"
+        },
+        "expectedEndDate": "5/22/2017",
+        "expectedHours": "71",
+        "expectedStartDate": "4/17/2017",
+        "firstOnRotationList": "",
+        "history": "",
+        "id": "600086",
+        "localArea": "#REF!",
+        "notes": "",
+        "project": "Roger Street Bridge",
+        "rentalRequestRotationList": "",
+        "status": "Cancelled"
+    },
+    {
+        "attachments": "",
+        "equipmentCount": "1",
+        "equipmentType": {
+            "id": "200062"
+        },
+        "expectedEndDate": "4/4/2017",
+        "expectedHours": "56",
+        "expectedStartDate": "3/28/2017",
+        "firstOnRotationList": "",
+        "history": "",
+        "id": "600087",
+        "localArea": "#REF!",
+        "notes": "",
+        "project": "Hastings Street Express Lane",
+        "rentalRequestRotationList": "",
+        "status": "In progress"
+    },
+    {
+        "attachments": "",
+        "equipmentCount": "1",
+        "equipmentType": {
+            "id": "200051"
+        },
+        "expectedEndDate": "4/30/2017",
+        "expectedHours": "20",
+        "expectedStartDate": "4/28/2017",
+        "firstOnRotationList": "",
+        "history": "",
+        "id": "600088",
+        "localArea": "#REF!",
+        "notes": "",
+        "project": "Tchesinkut Lake Rd Bridge Replacement",
+        "rentalRequestRotationList": "",
+        "status": "In progress"
+    },
+    {
+        "attachments": "",
+        "equipmentCount": "1",
+        "equipmentType": {
+            "id": "200007"
+        },
+        "expectedEndDate": "3/24/2017",
+        "expectedHours": "30",
+        "expectedStartDate": "3/21/2017",
+        "firstOnRotationList": "",
+        "history": "",
+        "id": "600089",
+        "localArea": "#REF!",
+        "notes": "",
+        "project": "Blanshard Building",
+        "rentalRequestRotationList": "",
+        "status": "In progress"
+    },
+    {
+        "attachments": "",
+        "equipmentCount": "1",
+        "equipmentType": {
+            "id": "200066"
+        },
+        "expectedEndDate": "4/8/2017",
+        "expectedHours": "52",
+        "expectedStartDate": "4/2/2017",
+        "firstOnRotationList": "",
+        "history": "",
+        "id": "600090",
+        "localArea": "#REF!",
+        "notes": "",
+        "project": "St George Street Building",
+        "rentalRequestRotationList": "",
+        "status": "Completed"
+    },
+    {
+        "attachments": "",
+        "equipmentCount": "1",
+        "equipmentType": {
+            "id": "200026"
+        },
+        "expectedEndDate": "4/26/2017",
+        "expectedHours": "25",
+        "expectedStartDate": "4/23/2017",
+        "firstOnRotationList": "",
+        "history": "",
+        "id": "600091",
+        "localArea": "#REF!",
+        "notes": "",
+        "project": "Stum Lake Road Overpass",
+        "rentalRequestRotationList": "",
+        "status": "In progress"
+    },
+    {
+        "attachments": "",
+        "equipmentCount": "1",
+        "equipmentType": {
+            "id": "200007"
+        },
+        "expectedEndDate": "4/5/2017",
+        "expectedHours": "13",
+        "expectedStartDate": "4/4/2017",
+        "firstOnRotationList": "",
+        "history": "",
+        "id": "600092",
+        "localArea": "#REF!",
+        "notes": "",
+        "project": "Yoho Valley Road Extension",
+        "rentalRequestRotationList": "",
+        "status": "Completed"
+    },
+    {
+        "attachments": "",
+        "equipmentCount": "1",
+        "equipmentType": {
+            "id": "200061"
+        },
+        "expectedEndDate": "3/30/2017",
+        "expectedHours": "92",
+        "expectedStartDate": "3/19/2017",
+        "firstOnRotationList": "",
+        "history": "",
+        "id": "600093",
+        "localArea": "#REF!",
+        "notes": "",
+        "project": "Keith Road HOV Lane",
+        "rentalRequestRotationList": "",
+        "status": "In progress"
+    },
+    {
+        "attachments": "",
+        "equipmentCount": "1",
+        "equipmentType": {
+            "id": "200051"
+        },
+        "expectedEndDate": "3/25/2017",
+        "expectedHours": "85",
+        "expectedStartDate": "3/15/2017",
+        "firstOnRotationList": "",
+        "history": "",
+        "id": "600094",
+        "localArea": "#REF!",
+        "notes": "",
+        "project": "Burdett Avenue Overpass",
+        "rentalRequestRotationList": "",
+        "status": "Cancelled"
+    },
+    {
+        "attachments": "",
+        "equipmentCount": "5",
+        "equipmentType": {
+            "id": "200080"
+        },
+        "expectedEndDate": "3/19/2017",
+        "expectedHours": "12",
+        "expectedStartDate": "3/12/2017",
+        "firstOnRotationList": "",
+        "history": "",
+        "id": "600095",
+        "localArea": "#REF!",
+        "notes": "",
+        "project": "Blanshard Cloverleaf",
+        "rentalRequestRotationList": "",
+        "status": "In progress"
+    },
+    {
+        "attachments": "",
+        "equipmentCount": "1",
+        "equipmentType": {
+            "id": "200051"
+        },
+        "expectedEndDate": "3/26/2017",
+        "expectedHours": "94",
+        "expectedStartDate": "3/15/2017",
+        "firstOnRotationList": "",
+        "history": "",
+        "id": "600096",
+        "localArea": "#REF!",
+        "notes": "",
+        "project": "Quayside Dr Overpass",
+        "rentalRequestRotationList": "",
+        "status": "Cancelled"
+    },
+    {
+        "attachments": "",
+        "equipmentCount": "1",
+        "equipmentType": {
+            "id": "200061"
+        },
+        "expectedEndDate": "5/3/2017",
+        "expectedHours": "73",
+        "expectedStartDate": "4/24/2017",
+        "firstOnRotationList": "",
+        "history": "",
+        "id": "600097",
+        "localArea": "#REF!",
+        "notes": "",
+        "project": "Jade St Express Lane",
+        "rentalRequestRotationList": "",
+        "status": "In progress"
+    },
+    {
+        "attachments": "",
+        "equipmentCount": "1",
+        "equipmentType": {
+            "id": "200049"
+        },
+        "expectedEndDate": "4/28/2017",
+        "expectedHours": "71",
+        "expectedStartDate": "4/20/2017",
+        "firstOnRotationList": "",
+        "history": "",
+        "id": "600098",
+        "localArea": "#REF!",
+        "notes": "",
+        "project": "Robson St Extension",
+        "rentalRequestRotationList": "",
+        "status": "In progress"
+    },
+    {
+        "attachments": "",
+        "equipmentCount": "3",
+        "equipmentType": {
+            "id": "200057"
+        },
+        "expectedEndDate": "3/14/2017",
+        "expectedHours": "28",
+        "expectedStartDate": "3/4/2017",
+        "firstOnRotationList": "",
+        "history": "",
+        "id": "600099",
+        "localArea": "#REF!",
+        "notes": "",
+        "project": "Robson St Bypass",
+        "rentalRequestRotationList": "",
+        "status": "In progress"
+    },
+    {
+        "attachments": "",
+        "equipmentCount": "1",
+        "equipmentType": {
+            "id": "200059"
+        },
+        "expectedEndDate": "3/23/2017",
+        "expectedHours": "51",
+        "expectedStartDate": "3/17/2017",
+        "firstOnRotationList": "",
+        "history": "",
+        "id": "600100",
+        "localArea": "#REF!",
+        "notes": "",
+        "project": "Kinchant St Express Lane",
+        "rentalRequestRotationList": "",
+        "status": "In progress"
+    },
+    {
+        "attachments": "",
+        "equipmentCount": "3",
+        "equipmentType": {
+            "id": "200028"
+        },
+        "expectedEndDate": "5/10/2017",
+        "expectedHours": "89",
+        "expectedStartDate": "4/7/2017",
+        "firstOnRotationList": "",
+        "history": "",
+        "id": "600101",
+        "localArea": "#REF!",
+        "notes": "",
+        "project": "Alaska Hwy HOV Lane",
+        "rentalRequestRotationList": "",
+        "status": "In progress"
+    },
+    {
+        "attachments": "",
+        "equipmentCount": "1",
+        "equipmentType": {
+            "id": "200057"
+        },
+        "expectedEndDate": "4/10/2017",
+        "expectedHours": "47",
+        "expectedStartDate": "4/5/2017",
+        "firstOnRotationList": "",
+        "history": "",
+        "id": "600102",
+        "localArea": "#REF!",
+        "notes": "",
+        "project": "Carlson Road Building",
+        "rentalRequestRotationList": "",
+        "status": "In progress"
+    },
+    {
+        "attachments": "",
+        "equipmentCount": "1",
+        "equipmentType": {
+            "id": "200034"
+        },
+        "expectedEndDate": "4/9/2017",
+        "expectedHours": "20",
+        "expectedStartDate": "4/7/2017",
+        "firstOnRotationList": "",
+        "history": "",
+        "id": "600103",
+        "localArea": "#REF!",
+        "notes": "",
+        "project": "102nd Avenue Extension",
+        "rentalRequestRotationList": "",
+        "status": "In progress"
+    },
+    {
+        "attachments": "",
+        "equipmentCount": "1",
+        "equipmentType": {
+            "id": "200007"
+        },
+        "expectedEndDate": "4/8/2017",
+        "expectedHours": "62",
+        "expectedStartDate": "4/1/2017",
+        "firstOnRotationList": "",
+        "history": "",
+        "id": "600104",
+        "localArea": "#REF!",
+        "notes": "",
+        "project": "Roger Street Cloverleaf",
+        "rentalRequestRotationList": "",
+        "status": "In progress"
+    },
+    {
+        "attachments": "",
+        "equipmentCount": "1",
+        "equipmentType": {
+            "id": "200063"
+        },
+        "expectedEndDate": "3/20/2017",
+        "expectedHours": "62",
+        "expectedStartDate": "3/13/2017",
+        "firstOnRotationList": "",
+        "history": "",
+        "id": "600105",
+        "localArea": "#REF!",
+        "notes": "",
+        "project": "McGill Road Bridge Replacement",
+        "rentalRequestRotationList": "",
+        "status": "In progress"
+    },
+    {
+        "attachments": "",
+        "equipmentCount": "1",
+        "equipmentType": {
+            "id": "200007"
+        },
+        "expectedEndDate": "4/14/2017",
+        "expectedHours": "78",
+        "expectedStartDate": "4/5/2017",
+        "firstOnRotationList": "",
+        "history": "",
+        "id": "600106",
+        "localArea": "#REF!",
+        "notes": "",
+        "project": "Russell Avenue Upgrade",
+        "rentalRequestRotationList": "",
+        "status": "In progress"
+    },
+    {
+        "attachments": "",
+        "equipmentCount": "2",
+        "equipmentType": {
+            "id": "200026"
+        },
+        "expectedEndDate": "4/14/2017",
+        "expectedHours": "49",
+        "expectedStartDate": "4/2/2017",
+        "firstOnRotationList": "",
+        "history": "",
+        "id": "600107",
+        "localArea": "#REF!",
+        "notes": "",
+        "project": "Cardero St Extension",
+        "rentalRequestRotationList": "",
+        "status": "In progress"
+    },
+    {
+        "attachments": "",
+        "equipmentCount": "5",
+        "equipmentType": {
+            "id": "200050"
+        },
+        "expectedEndDate": "5/9/2017",
+        "expectedHours": "28",
+        "expectedStartDate": "4/22/2017",
+        "firstOnRotationList": "",
+        "history": "",
+        "id": "600108",
+        "localArea": "#REF!",
+        "notes": "",
+        "project": "Findlay Creek Road Bridge Replacement",
+        "rentalRequestRotationList": "",
+        "status": "In progress"
+    },
+    {
+        "attachments": "",
+        "equipmentCount": "1",
+        "equipmentType": {
+            "id": "200028"
+        },
+        "expectedEndDate": "4/30/2017",
+        "expectedHours": "61",
+        "expectedStartDate": "4/23/2017",
+        "firstOnRotationList": "",
+        "history": "",
+        "id": "600109",
+        "localArea": "#REF!",
+        "notes": "",
+        "project": "Queens Bay Bypass",
+        "rentalRequestRotationList": "",
+        "status": "In progress"
+    },
+    {
+        "attachments": "",
+        "equipmentCount": "1",
+        "equipmentType": {
+            "id": "200002"
+        },
+        "expectedEndDate": "4/27/2017",
+        "expectedHours": "61",
+        "expectedStartDate": "4/20/2017",
+        "firstOnRotationList": "",
+        "history": "",
+        "id": "600110",
+        "localArea": "#REF!",
+        "notes": "",
+        "project": "Brew Creek Rd Bridge Replacement",
+        "rentalRequestRotationList": "",
+        "status": "In progress"
+    },
+    {
+        "attachments": "",
+        "equipmentCount": "1",
+        "equipmentType": {
+            "id": "200034"
+        },
+        "expectedEndDate": "4/24/2017",
+        "expectedHours": "100",
+        "expectedStartDate": "4/12/2017",
+        "firstOnRotationList": "",
+        "history": "",
+        "id": "600111",
+        "localArea": "#REF!",
+        "notes": "",
+        "project": "Robson St Cloverleaf",
+        "rentalRequestRotationList": "",
+        "status": "In progress"
+    },
+    {
+        "attachments": "",
+        "equipmentCount": "1",
+        "equipmentType": {
+            "id": "200015"
+        },
+        "expectedEndDate": "4/15/2017",
+        "expectedHours": "55",
+        "expectedStartDate": "4/9/2017",
+        "firstOnRotationList": "",
+        "history": "",
+        "id": "600112",
+        "localArea": "#REF!",
+        "notes": "",
+        "project": "Roger Street Cloverleaf",
+        "rentalRequestRotationList": "",
+        "status": "In progress"
+    },
+    {
+        "attachments": "",
+        "equipmentCount": "1",
+        "equipmentType": {
+            "id": "200000"
+        },
+        "expectedEndDate": "4/13/2017",
+        "expectedHours": "45",
+        "expectedStartDate": "4/8/2017",
+        "firstOnRotationList": "",
+        "history": "",
+        "id": "600113",
+        "localArea": "#REF!",
+        "notes": "",
+        "project": "Queens Bay Overpass",
+        "rentalRequestRotationList": "",
+        "status": "In progress"
+    },
+    {
+        "attachments": "",
+        "equipmentCount": "1",
+        "equipmentType": {
+            "id": "200007"
+        },
+        "expectedEndDate": "4/26/2017",
+        "expectedHours": "18",
+        "expectedStartDate": "4/24/2017",
+        "firstOnRotationList": "",
+        "history": "",
+        "id": "600114",
+        "localArea": "#REF!",
+        "notes": "",
+        "project": "Jade St Cloverleaf",
+        "rentalRequestRotationList": "",
+        "status": "In progress"
+    },
+    {
+        "attachments": "",
+        "equipmentCount": "1",
+        "equipmentType": {
+            "id": "200051"
+        },
+        "expectedEndDate": "4/5/2017",
+        "expectedHours": "77",
+        "expectedStartDate": "3/27/2017",
+        "firstOnRotationList": "",
+        "history": "",
+        "id": "600115",
+        "localArea": "#REF!",
+        "notes": "",
+        "project": "Brew Creek Rd Cloverleaf",
+        "rentalRequestRotationList": "",
+        "status": "In progress"
+    },
+    {
+        "attachments": "",
+        "equipmentCount": "1",
+        "equipmentType": {
+            "id": "200068"
+        },
+        "expectedEndDate": "5/3/2017",
+        "expectedHours": "45",
+        "expectedStartDate": "4/28/2017",
+        "firstOnRotationList": "",
+        "history": "",
+        "id": "600116",
+        "localArea": "#REF!",
+        "notes": "",
+        "project": "Roger Street Extension",
+        "rentalRequestRotationList": "",
+        "status": "In progress"
+    },
+    {
+        "attachments": "",
+        "equipmentCount": "5",
+        "equipmentType": {
+            "id": "200059"
+        },
+        "expectedEndDate": "5/20/2017",
+        "expectedHours": "88",
+        "expectedStartDate": "3/26/2017",
+        "firstOnRotationList": "",
+        "history": "",
+        "id": "600117",
+        "localArea": "#REF!",
+        "notes": "",
+        "project": "Quayside Dr Express Lane",
+        "rentalRequestRotationList": "",
+        "status": "In progress"
+    },
+    {
+        "attachments": "",
+        "equipmentCount": "1",
+        "equipmentType": {
+            "id": "200039"
+        },
+        "expectedEndDate": "3/30/2017",
+        "expectedHours": "69",
+        "expectedStartDate": "3/22/2017",
+        "firstOnRotationList": "",
+        "history": "",
+        "id": "600118",
+        "localArea": "#REF!",
+        "notes": "",
+        "project": "Haaglund Rd Overpass",
+        "rentalRequestRotationList": "",
+        "status": "In progress"
+    },
+    {
+        "attachments": "",
+        "equipmentCount": "1",
+        "equipmentType": {
+            "id": "200061"
+        },
+        "expectedEndDate": "3/11/2017",
+        "expectedHours": "27",
+        "expectedStartDate": "3/8/2017",
+        "firstOnRotationList": "",
+        "history": "",
+        "id": "600119",
+        "localArea": "#REF!",
+        "notes": "",
+        "project": "Tchesinkut Lake Rd Upgrade",
+        "rentalRequestRotationList": "",
+        "status": "In progress"
+    },
+    {
+        "attachments": "",
+        "equipmentCount": "1",
+        "equipmentType": {
+            "id": "200080"
+        },
+        "expectedEndDate": "4/21/2017",
+        "expectedHours": "30",
+        "expectedStartDate": "4/18/2017",
+        "firstOnRotationList": "",
+        "history": "",
+        "id": "600120",
+        "localArea": "#REF!",
+        "notes": "",
+        "project": "Roger Street Extension",
+        "rentalRequestRotationList": "",
+        "status": "In progress"
+    },
+    {
+        "attachments": "",
+        "equipmentCount": "1",
+        "equipmentType": {
+            "id": "200000"
+        },
+        "expectedEndDate": "5/8/2017",
+        "expectedHours": "93",
+        "expectedStartDate": "4/27/2017",
+        "firstOnRotationList": "",
+        "history": "",
+        "id": "600121",
+        "localArea": "#REF!",
+        "notes": "",
+        "project": "Glover Road Express Lane",
+        "rentalRequestRotationList": "",
+        "status": "In progress"
+    },
+    {
+        "attachments": "",
+        "equipmentCount": "1",
+        "equipmentType": {
+            "id": "200027"
+        },
+        "expectedEndDate": "3/25/2017",
+        "expectedHours": "66",
+        "expectedStartDate": "3/17/2017",
+        "firstOnRotationList": "",
+        "history": "",
+        "id": "600122",
+        "localArea": "#REF!",
+        "notes": "",
+        "project": "Stum Lake Road Building",
+        "rentalRequestRotationList": "",
+        "status": "In progress"
+    },
+    {
+        "attachments": "",
+        "equipmentCount": "1",
+        "equipmentType": {
+            "id": "200000"
+        },
+        "expectedEndDate": "4/14/2017",
+        "expectedHours": "33",
+        "expectedStartDate": "4/10/2017",
+        "firstOnRotationList": "",
+        "history": "",
+        "id": "600123",
+        "localArea": "#REF!",
+        "notes": "",
+        "project": "Queens Bay Express Lane",
+        "rentalRequestRotationList": "",
+        "status": "In progress"
+    },
+    {
+        "attachments": "",
+        "equipmentCount": "1",
+        "equipmentType": {
+            "id": "200015"
+        },
+        "expectedEndDate": "3/21/2017",
+        "expectedHours": "15",
+        "expectedStartDate": "3/20/2017",
+        "firstOnRotationList": "",
+        "history": "",
+        "id": "600124",
+        "localArea": "#REF!",
+        "notes": "",
+        "project": "Shaughnessy St Upgrade",
+        "rentalRequestRotationList": "",
+        "status": "Completed"
+    },
+    {
+        "attachments": "",
+        "equipmentCount": "1",
+        "equipmentType": {
+            "id": "200026"
+        },
+        "expectedEndDate": "5/1/2017",
+        "expectedHours": "80",
+        "expectedStartDate": "4/21/2017",
+        "firstOnRotationList": "",
+        "history": "",
+        "id": "600125",
+        "localArea": "#REF!",
+        "notes": "",
+        "project": "Burdett Avenue Bridge",
+        "rentalRequestRotationList": "",
+        "status": "Completed"
+    },
+    {
+        "attachments": "",
+        "equipmentCount": "1",
+        "equipmentType": {
+            "id": "200084"
+        },
+        "expectedEndDate": "3/29/2017",
+        "expectedHours": "81",
+        "expectedStartDate": "3/19/2017",
+        "firstOnRotationList": "",
+        "history": "",
+        "id": "600126",
+        "localArea": "#REF!",
+        "notes": "",
+        "project": "Shaughnessy St Building",
+        "rentalRequestRotationList": "",
+        "status": "Completed"
+    },
+    {
+        "attachments": "",
+        "equipmentCount": "1",
+        "equipmentType": {
+            "id": "200061"
+        },
+        "expectedEndDate": "3/25/2017",
+        "expectedHours": "29",
+        "expectedStartDate": "3/22/2017",
+        "firstOnRotationList": "",
+        "history": "",
+        "id": "600127",
+        "localArea": "#REF!",
+        "notes": "",
+        "project": "Cordova Street Extension",
+        "rentalRequestRotationList": "",
+        "status": "In progress"
+    },
+    {
+        "attachments": "",
+        "equipmentCount": "1",
+        "equipmentType": {
+            "id": "200035"
+        },
+        "expectedEndDate": "4/16/2017",
+        "expectedHours": "40",
+        "expectedStartDate": "4/11/2017",
+        "firstOnRotationList": "",
+        "history": "",
+        "id": "600128",
+        "localArea": "#REF!",
+        "notes": "",
+        "project": "Mesa Vista Drive Bridge Replacement",
+        "rentalRequestRotationList": "",
+        "status": "In progress"
+    },
+    {
+        "attachments": "",
+        "equipmentCount": "1",
+        "equipmentType": {
+            "id": "200015"
+        },
+        "expectedEndDate": "4/30/2017",
+        "expectedHours": "42",
+        "expectedStartDate": "4/25/2017",
+        "firstOnRotationList": "",
+        "history": "",
+        "id": "600129",
+        "localArea": "#REF!",
+        "notes": "",
+        "project": "Blanshard Expressway",
+        "rentalRequestRotationList": "",
+        "status": "In progress"
+    },
+    {
+        "attachments": "",
+        "equipmentCount": "1",
+        "equipmentType": {
+            "id": "200080"
+        },
+        "expectedEndDate": "3/18/2017",
+        "expectedHours": "64",
+        "expectedStartDate": "3/10/2017",
+        "firstOnRotationList": "",
+        "history": "",
+        "id": "600130",
+        "localArea": "#REF!",
+        "notes": "",
+        "project": "Roger Street Upgrade",
+        "rentalRequestRotationList": "",
+        "status": "In progress"
+    },
+    {
+        "attachments": "",
+        "equipmentCount": "1",
+        "equipmentType": {
+            "id": "200062"
+        },
+        "expectedEndDate": "3/31/2017",
+        "expectedHours": "10",
+        "expectedStartDate": "3/30/2017",
+        "firstOnRotationList": "",
+        "history": "",
+        "id": "600131",
+        "localArea": "#REF!",
+        "notes": "",
+        "project": "Cordova Street Extension",
+        "rentalRequestRotationList": "",
+        "status": "In progress"
+    },
+    {
+        "attachments": "",
+        "equipmentCount": "1",
+        "equipmentType": {
+            "id": "200049"
+        },
+        "expectedEndDate": "4/18/2017",
+        "expectedHours": "38",
+        "expectedStartDate": "4/14/2017",
+        "firstOnRotationList": "",
+        "history": "",
+        "id": "600132",
+        "localArea": "#REF!",
+        "notes": "",
+        "project": "Kinchant St Expressway",
+        "rentalRequestRotationList": "",
+        "status": "In progress"
+    },
+    {
+        "attachments": "",
+        "equipmentCount": "1",
+        "equipmentType": {
+            "id": "200063"
+        },
+        "expectedEndDate": "4/20/2017",
+        "expectedHours": "80",
+        "expectedStartDate": "4/10/2017",
+        "firstOnRotationList": "",
+        "history": "",
+        "id": "600133",
+        "localArea": "#REF!",
+        "notes": "",
+        "project": "Blanshard Cloverleaf",
+        "rentalRequestRotationList": "",
+        "status": "In progress"
+    },
+    {
+        "attachments": "",
+        "equipmentCount": "1",
+        "equipmentType": {
+            "id": "200059"
+        },
+        "expectedEndDate": "4/24/2017",
+        "expectedHours": "67",
+        "expectedStartDate": "4/16/2017",
+        "firstOnRotationList": "",
+        "history": "",
+        "id": "600134",
+        "localArea": "#REF!",
+        "notes": "",
+        "project": "St George Street Express Lane",
+        "rentalRequestRotationList": "",
+        "status": "In progress"
+    },
+    {
+        "attachments": "",
+        "equipmentCount": "1",
+        "equipmentType": {
+            "id": "200080"
+        },
+        "expectedEndDate": "4/19/2017",
+        "expectedHours": "58",
+        "expectedStartDate": "4/12/2017",
+        "firstOnRotationList": "",
+        "history": "",
+        "id": "600135",
+        "localArea": "#REF!",
+        "notes": "",
+        "project": "Brew Creek Rd Upgrade",
+        "rentalRequestRotationList": "",
+        "status": "In progress"
+    },
+    {
+        "attachments": "",
+        "equipmentCount": "1",
+        "equipmentType": {
+            "id": "200007"
+        },
+        "expectedEndDate": "4/7/2017",
+        "expectedHours": "48",
+        "expectedStartDate": "4/1/2017",
+        "firstOnRotationList": "",
+        "history": "",
+        "id": "600136",
+        "localArea": "#REF!",
+        "notes": "",
+        "project": "Alaska Hwy Bridge Replacement",
+        "rentalRequestRotationList": "",
+        "status": "In progress"
+    },
+    {
+        "attachments": "",
+        "equipmentCount": "1",
+        "equipmentType": {
+            "id": "200002"
+        },
+        "expectedEndDate": "4/30/2017",
+        "expectedHours": "68",
+        "expectedStartDate": "4/22/2017",
+        "firstOnRotationList": "",
+        "history": "",
+        "id": "600137",
+        "localArea": "#REF!",
+        "notes": "",
+        "project": "Stum Lake Road Upgrade",
+        "rentalRequestRotationList": "",
+        "status": "In progress"
+    },
+    {
+        "attachments": "",
+        "equipmentCount": "1",
+        "equipmentType": {
+            "id": "200035"
+        },
+        "expectedEndDate": "3/16/2017",
+        "expectedHours": "21",
+        "expectedStartDate": "3/14/2017",
+        "firstOnRotationList": "",
+        "history": "",
+        "id": "600138",
+        "localArea": "#REF!",
+        "notes": "",
+        "project": "Blind Bay Road Bridge Replacement",
+        "rentalRequestRotationList": "",
+        "status": "In progress"
+    },
+    {
+        "attachments": "",
+        "equipmentCount": "5",
+        "equipmentType": {
+            "id": "200027"
+        },
+        "expectedEndDate": "3/11/2017",
+        "expectedHours": "6",
+        "expectedStartDate": "3/8/2017",
+        "firstOnRotationList": "",
+        "history": "",
+        "id": "600139",
+        "localArea": "#REF!",
+        "notes": "",
+        "project": "Shaughnessy St Bridge Replacement",
+        "rentalRequestRotationList": "",
+        "status": "In progress"
+    },
+    {
+        "attachments": "",
+        "equipmentCount": "1",
+        "equipmentType": {
+            "id": "200084"
+        },
+        "expectedEndDate": "4/15/2017",
+        "expectedHours": "26",
+        "expectedStartDate": "4/12/2017",
+        "firstOnRotationList": "",
+        "history": "",
+        "id": "600140",
+        "localArea": "#REF!",
+        "notes": "",
+        "project": "King George Hwy Express Lane",
+        "rentalRequestRotationList": "",
+        "status": "In progress"
+    },
+    {
+        "attachments": "",
+        "equipmentCount": "2",
+        "equipmentType": {
+            "id": "200049"
+        },
+        "expectedEndDate": "4/13/2017",
+        "expectedHours": "46",
+        "expectedStartDate": "4/2/2017",
+        "firstOnRotationList": "",
+        "history": "",
+        "id": "600141",
+        "localArea": "#REF!",
+        "notes": "",
+        "project": "Brew Creek Rd Bridge Replacement",
+        "rentalRequestRotationList": "",
+        "status": "In progress"
+    },
+    {
+        "attachments": "",
+        "equipmentCount": "1",
+        "equipmentType": {
+            "id": "200080"
+        },
+        "expectedEndDate": "3/6/2017",
+        "expectedHours": "23",
+        "expectedStartDate": "3/4/2017",
+        "firstOnRotationList": "",
+        "history": "",
+        "id": "600142",
+        "localArea": "#REF!",
+        "notes": "",
+        "project": "Burdett Avenue Building",
+        "rentalRequestRotationList": "",
+        "status": "Completed"
+    },
+    {
+        "attachments": "",
+        "equipmentCount": "1",
+        "equipmentType": {
+            "id": "200034"
+        },
+        "expectedEndDate": "3/15/2017",
+        "expectedHours": "52",
+        "expectedStartDate": "3/9/2017",
+        "firstOnRotationList": "",
+        "history": "",
+        "id": "600143",
+        "localArea": "#REF!",
+        "notes": "",
+        "project": "Yoho Valley Road Upgrade",
+        "rentalRequestRotationList": "",
+        "status": "Completed"
+    },
+    {
+        "attachments": "",
+        "equipmentCount": "1",
+        "equipmentType": {
+            "id": "200080"
+        },
+        "expectedEndDate": "4/29/2017",
+        "expectedHours": "68",
+        "expectedStartDate": "4/21/2017",
+        "firstOnRotationList": "",
+        "history": "",
+        "id": "600144",
+        "localArea": "#REF!",
+        "notes": "",
+        "project": "Hastings Street Bridge",
+        "rentalRequestRotationList": "",
+        "status": "Completed"
+    },
+    {
+        "attachments": "",
+        "equipmentCount": "1",
+        "equipmentType": {
+            "id": "200039"
+        },
+        "expectedEndDate": "3/24/2017",
+        "expectedHours": "45",
+        "expectedStartDate": "3/19/2017",
+        "firstOnRotationList": "",
+        "history": "",
+        "id": "600145",
+        "localArea": "#REF!",
+        "notes": "",
+        "project": "Old Spallumcheen Rd HOV Lane",
+        "rentalRequestRotationList": "",
+        "status": "Completed"
+    },
+    {
+        "attachments": "",
+        "equipmentCount": "1",
+        "equipmentType": {
+            "id": "200062"
+        },
+        "expectedEndDate": "3/25/2017",
+        "expectedHours": "22",
+        "expectedStartDate": "3/23/2017",
+        "firstOnRotationList": "",
+        "history": "",
+        "id": "600146",
+        "localArea": "#REF!",
+        "notes": "",
+        "project": "Glover Road Bridge Replacement",
+        "rentalRequestRotationList": "",
+        "status": "In progress"
+    },
+    {
+        "attachments": "",
+        "equipmentCount": "1",
+        "equipmentType": {
+            "id": "200035"
+        },
+        "expectedEndDate": "3/18/2017",
+        "expectedHours": "33",
+        "expectedStartDate": "3/14/2017",
+        "firstOnRotationList": "",
+        "history": "",
+        "id": "600147",
+        "localArea": "#REF!",
+        "notes": "",
+        "project": "Coldstream Avenue Building",
+        "rentalRequestRotationList": "",
+        "status": "Completed"
+    },
+    {
+        "attachments": "",
+        "equipmentCount": "1",
+        "equipmentType": {
+            "id": "200000"
+        },
+        "expectedEndDate": "3/20/2017",
+        "expectedHours": "14",
+        "expectedStartDate": "3/19/2017",
+        "firstOnRotationList": "",
+        "history": "",
+        "id": "600148",
+        "localArea": "#REF!",
+        "notes": "",
+        "project": "Kinchant St Building",
+        "rentalRequestRotationList": "",
+        "status": "Completed"
+    },
+    {
+        "attachments": "",
+        "equipmentCount": "1",
+        "equipmentType": {
+            "id": "200035"
+        },
+        "expectedEndDate": "5/3/2017",
+        "expectedHours": "73",
+        "expectedStartDate": "4/24/2017",
+        "firstOnRotationList": "",
+        "history": "",
+        "id": "600149",
+        "localArea": "#REF!",
+        "notes": "",
+        "project": "Holdom Avenue Bridge",
+        "rentalRequestRotationList": "",
+        "status": "In progress"
+    },
+    {
+        "attachments": "",
+        "equipmentCount": "1",
+        "equipmentType": {
+            "id": "200084"
+        },
+        "expectedEndDate": "4/27/2017",
+        "expectedHours": "8",
+        "expectedStartDate": "4/26/2017",
+        "firstOnRotationList": "",
+        "history": "",
+        "id": "600150",
+        "localArea": "#REF!",
+        "notes": "",
+        "project": "Roger Street Cloverleaf",
+        "rentalRequestRotationList": "",
+        "status": "In progress"
+    },
+    {
+        "attachments": "",
+        "equipmentCount": "1",
+        "equipmentType": {
+            "id": "200028"
+        },
+        "expectedEndDate": "4/22/2017",
+        "expectedHours": "78",
+        "expectedStartDate": "4/13/2017",
+        "firstOnRotationList": "",
+        "history": "",
+        "id": "600151",
+        "localArea": "#REF!",
+        "notes": "",
+        "project": "Scotts Lane Overpass",
+        "rentalRequestRotationList": "",
+        "status": "In progress"
+    },
+    {
+        "attachments": "",
+        "equipmentCount": "3",
+        "equipmentType": {
+            "id": "200062"
+        },
+        "expectedEndDate": "4/23/2017",
+        "expectedHours": "25",
+        "expectedStartDate": "4/14/2017",
+        "firstOnRotationList": "",
+        "history": "",
+        "id": "600152",
+        "localArea": "#REF!",
+        "notes": "",
+        "project": "Findlay Creek Road Bypass",
+        "rentalRequestRotationList": "",
+        "status": "In progress"
+    },
+    {
+        "attachments": "",
+        "equipmentCount": "1",
+        "equipmentType": {
+            "id": "200059"
+        },
+        "expectedEndDate": "3/18/2017",
+        "expectedHours": "30",
+        "expectedStartDate": "3/15/2017",
+        "firstOnRotationList": "",
+        "history": "",
+        "id": "600153",
+        "localArea": "#REF!",
+        "notes": "",
+        "project": "Sixth Street Bridge Replacement",
+        "rentalRequestRotationList": "",
+        "status": "In progress"
+    },
+    {
+        "attachments": "",
+        "equipmentCount": "1",
+        "equipmentType": {
+            "id": "200035"
+        },
+        "expectedEndDate": "5/2/2017",
+        "expectedHours": "81",
+        "expectedStartDate": "4/22/2017",
+        "firstOnRotationList": "",
+        "history": "",
+        "id": "600154",
+        "localArea": "#REF!",
+        "notes": "",
+        "project": "Blanshard Overpass",
+        "rentalRequestRotationList": "",
+        "status": "In progress"
+    },
+    {
+        "attachments": "",
+        "equipmentCount": "1",
+        "equipmentType": {
+            "id": "200057"
+        },
+        "expectedEndDate": "4/6/2017",
+        "expectedHours": "56",
+        "expectedStartDate": "3/30/2017",
+        "firstOnRotationList": "",
+        "history": "",
+        "id": "600155",
+        "localArea": "#REF!",
+        "notes": "",
+        "project": "King George Hwy Bridge",
+        "rentalRequestRotationList": "",
+        "status": "In progress"
+    },
+    {
+        "attachments": "",
+        "equipmentCount": "1",
+        "equipmentType": {
+            "id": "200028"
+        },
+        "expectedEndDate": "3/25/2017",
+        "expectedHours": "58",
+        "expectedStartDate": "3/18/2017",
+        "firstOnRotationList": "",
+        "history": "",
+        "id": "600156",
+        "localArea": "#REF!",
+        "notes": "",
+        "project": "Glover Road HOV Lane",
+        "rentalRequestRotationList": "",
+        "status": "In progress"
+    },
+    {
+        "attachments": "",
+        "equipmentCount": "1",
+        "equipmentType": {
+            "id": "200002"
+        },
+        "expectedEndDate": "4/7/2017",
+        "expectedHours": "68",
+        "expectedStartDate": "3/30/2017",
+        "firstOnRotationList": "",
+        "history": "",
+        "id": "600157",
+        "localArea": "#REF!",
+        "notes": "",
+        "project": "Wallace Street HOV Lane",
+        "rentalRequestRotationList": "",
+        "status": "Completed"
+    },
+    {
+        "attachments": "",
+        "equipmentCount": "4",
+        "equipmentType": {
+            "id": "200039"
+        },
+        "expectedEndDate": "5/4/2017",
+        "expectedHours": "64",
+        "expectedStartDate": "4/2/2017",
+        "firstOnRotationList": "",
+        "history": "",
+        "id": "600158",
+        "localArea": "#REF!",
+        "notes": "",
+        "project": "Yoho Valley Road Bridge",
+        "rentalRequestRotationList": "",
+        "status": "In progress"
+    },
+    {
+        "attachments": "",
+        "equipmentCount": "1",
+        "equipmentType": {
+            "id": "200000"
+        },
+        "expectedEndDate": "3/17/2017",
+        "expectedHours": "68",
+        "expectedStartDate": "3/9/2017",
+        "firstOnRotationList": "",
+        "history": "",
+        "id": "600159",
+        "localArea": "#REF!",
+        "notes": "",
+        "project": "Burdett Avenue HOV Lane",
+        "rentalRequestRotationList": "",
+        "status": "In progress"
+    },
+    {
+        "attachments": "",
+        "equipmentCount": "1",
+        "equipmentType": {
+            "id": "200049"
+        },
+        "expectedEndDate": "4/7/2017",
+        "expectedHours": "73",
+        "expectedStartDate": "3/29/2017",
+        "firstOnRotationList": "",
+        "history": "",
+        "id": "600160",
+        "localArea": "#REF!",
+        "notes": "",
+        "project": "Cordova Street Extension",
+        "rentalRequestRotationList": "",
+        "status": "In progress"
+    },
+    {
+        "attachments": "",
+        "equipmentCount": "1",
+        "equipmentType": {
+            "id": "200084"
+        },
+        "expectedEndDate": "4/7/2017",
+        "expectedHours": "83",
+        "expectedStartDate": "3/28/2017",
+        "firstOnRotationList": "",
+        "history": "",
+        "id": "600161",
+        "localArea": "#REF!",
+        "notes": "",
+        "project": "Glover Road Expressway",
+        "rentalRequestRotationList": "",
+        "status": "Completed"
+    },
+    {
+        "attachments": "",
+        "equipmentCount": "1",
+        "equipmentType": {
+            "id": "200035"
+        },
+        "expectedEndDate": "4/8/2017",
+        "expectedHours": "40",
+        "expectedStartDate": "4/3/2017",
+        "firstOnRotationList": "",
+        "history": "",
+        "id": "600162",
+        "localArea": "#REF!",
+        "notes": "",
+        "project": "Scotts Lane Building",
+        "rentalRequestRotationList": "",
+        "status": "In progress"
+    },
+    {
+        "attachments": "",
+        "equipmentCount": "1",
+        "equipmentType": {
+            "id": "200000"
+        },
+        "expectedEndDate": "4/15/2017",
+        "expectedHours": "21",
+        "expectedStartDate": "4/13/2017",
+        "firstOnRotationList": "",
+        "history": "",
+        "id": "600163",
+        "localArea": "#REF!",
+        "notes": "",
+        "project": "Nootka Street HOV Lane",
+        "rentalRequestRotationList": "",
+        "status": "In progress"
+    },
+    {
+        "attachments": "",
+        "equipmentCount": "1",
+        "equipmentType": {
+            "id": "200084"
+        },
+        "expectedEndDate": "3/13/2017",
+        "expectedHours": "4",
+        "expectedStartDate": "3/13/2017",
+        "firstOnRotationList": "",
+        "history": "",
+        "id": "600164",
+        "localArea": "#REF!",
+        "notes": "",
+        "project": "Nootka Street Extension",
+        "rentalRequestRotationList": "",
+        "status": "Completed"
+    },
+    {
+        "attachments": "",
+        "equipmentCount": "1",
+        "equipmentType": {
+            "id": "200061"
+        },
+        "expectedEndDate": "4/2/2017",
+        "expectedHours": "84",
+        "expectedStartDate": "3/23/2017",
+        "firstOnRotationList": "",
+        "history": "",
+        "id": "600165",
+        "localArea": "#REF!",
+        "notes": "",
+        "project": "Kinchant St Expressway",
+        "rentalRequestRotationList": "",
+        "status": "In progress"
+    },
+    {
+        "attachments": "",
+        "equipmentCount": "3",
+        "equipmentType": {
+            "id": "200039"
+        },
+        "expectedEndDate": "4/21/2017",
+        "expectedHours": "62",
+        "expectedStartDate": "3/29/2017",
+        "firstOnRotationList": "",
+        "history": "",
+        "id": "600166",
+        "localArea": "#REF!",
+        "notes": "",
+        "project": "Queens Bay Cloverleaf",
+        "rentalRequestRotationList": "",
+        "status": "In progress"
+    },
+    {
+        "attachments": "",
+        "equipmentCount": "1",
+        "equipmentType": {
+            "id": "200062"
+        },
+        "expectedEndDate": "4/13/2017",
+        "expectedHours": "55",
+        "expectedStartDate": "4/7/2017",
+        "firstOnRotationList": "",
+        "history": "",
+        "id": "600167",
+        "localArea": "#REF!",
+        "notes": "",
+        "project": "102nd Avenue HOV Lane",
+        "rentalRequestRotationList": "",
+        "status": "In progress"
+    },
+    {
+        "attachments": "",
+        "equipmentCount": "1",
+        "equipmentType": {
+            "id": "200061"
+        },
+        "expectedEndDate": "3/20/2017",
+        "expectedHours": "82",
+        "expectedStartDate": "3/10/2017",
+        "firstOnRotationList": "",
+        "history": "",
+        "id": "600168",
+        "localArea": "#REF!",
+        "notes": "",
+        "project": "Kinchant St HOV Lane",
+        "rentalRequestRotationList": "",
+        "status": "Completed"
+    },
+    {
+        "attachments": "",
+        "equipmentCount": "1",
+        "equipmentType": {
+            "id": "200051"
+        },
+        "expectedEndDate": "3/19/2017",
+        "expectedHours": "65",
+        "expectedStartDate": "3/11/2017",
+        "firstOnRotationList": "",
+        "history": "",
+        "id": "600169",
+        "localArea": "#REF!",
+        "notes": "",
+        "project": "Blanshard Building",
+        "rentalRequestRotationList": "",
+        "status": "In progress"
+    },
+    {
+        "attachments": "",
+        "equipmentCount": "4",
+        "equipmentType": {
+            "id": "200061"
+        },
+        "expectedEndDate": "5/5/2017",
+        "expectedHours": "77",
+        "expectedStartDate": "3/28/2017",
+        "firstOnRotationList": "",
+        "history": "",
+        "id": "600170",
+        "localArea": "#REF!",
+        "notes": "",
+        "project": "Robson St Extension",
+        "rentalRequestRotationList": "",
+        "status": "In progress"
+    },
+    {
+        "attachments": "",
+        "equipmentCount": "2",
+        "equipmentType": {
+            "id": "200000"
+        },
+        "expectedEndDate": "4/4/2017",
+        "expectedHours": "53",
+        "expectedStartDate": "3/22/2017",
+        "firstOnRotationList": "",
+        "history": "",
+        "id": "600171",
+        "localArea": "#REF!",
+        "notes": "",
+        "project": "Findlay Creek Road Extension",
+        "rentalRequestRotationList": "",
+        "status": "In progress"
+    },
+    {
+        "attachments": "",
+        "equipmentCount": "1",
+        "equipmentType": {
+            "id": "200059"
+        },
+        "expectedEndDate": "4/17/2017",
+        "expectedHours": "64",
+        "expectedStartDate": "4/9/2017",
+        "firstOnRotationList": "",
+        "history": "",
+        "id": "600172",
+        "localArea": "#REF!",
+        "notes": "",
+        "project": "Roger Street Express Lane",
+        "rentalRequestRotationList": "",
+        "status": "In progress"
+    },
+    {
+        "attachments": "",
+        "equipmentCount": "1",
+        "equipmentType": {
+            "id": "200007"
+        },
+        "expectedEndDate": "3/31/2017",
+        "expectedHours": "13",
+        "expectedStartDate": "3/30/2017",
+        "firstOnRotationList": "",
+        "history": "",
+        "id": "600173",
+        "localArea": "#REF!",
+        "notes": "",
+        "project": "Cardero St Cloverleaf",
+        "rentalRequestRotationList": "",
+        "status": "In progress"
+    },
+    {
+        "attachments": "",
+        "equipmentCount": "2",
+        "equipmentType": {
+            "id": "200035"
+        },
+        "expectedEndDate": "4/23/2017",
+        "expectedHours": "84",
+        "expectedStartDate": "4/2/2017",
+        "firstOnRotationList": "",
+        "history": "",
+        "id": "600174",
+        "localArea": "#REF!",
+        "notes": "",
+        "project": "Blind Bay Road Upgrade",
+        "rentalRequestRotationList": "",
+        "status": "In progress"
+    },
+    {
+        "attachments": "",
+        "equipmentCount": "1",
+        "equipmentType": {
+            "id": "200002"
+        },
+        "expectedEndDate": "4/23/2017",
+        "expectedHours": "68",
+        "expectedStartDate": "4/15/2017",
+        "firstOnRotationList": "",
+        "history": "",
+        "id": "600175",
+        "localArea": "#REF!",
+        "notes": "",
+        "project": "Old Spallumcheen Rd Cloverleaf",
+        "rentalRequestRotationList": "",
+        "status": "In progress"
+    },
+    {
+        "attachments": "",
+        "equipmentCount": "1",
+        "equipmentType": {
+            "id": "200059"
+        },
+        "expectedEndDate": "4/11/2017",
+        "expectedHours": "63",
+        "expectedStartDate": "4/4/2017",
+        "firstOnRotationList": "",
+        "history": "",
+        "id": "600176",
+        "localArea": "#REF!",
+        "notes": "",
+        "project": "Roger Street Express Lane",
+        "rentalRequestRotationList": "",
+        "status": "In progress"
+    },
+    {
+        "attachments": "",
+        "equipmentCount": "1",
+        "equipmentType": {
+            "id": "200084"
+        },
+        "expectedEndDate": "3/23/2017",
+        "expectedHours": "24",
+        "expectedStartDate": "3/20/2017",
+        "firstOnRotationList": "",
+        "history": "",
+        "id": "600177",
+        "localArea": "#REF!",
+        "notes": "",
+        "project": "Keith Road Bridge Replacement",
+        "rentalRequestRotationList": "",
+        "status": "In progress"
+    },
+    {
+        "attachments": "",
+        "equipmentCount": "1",
+        "equipmentType": {
+            "id": "200059"
+        },
+        "expectedEndDate": "4/23/2017",
+        "expectedHours": "49",
+        "expectedStartDate": "4/17/2017",
+        "firstOnRotationList": "",
+        "history": "",
+        "id": "600178",
+        "localArea": "#REF!",
+        "notes": "",
+        "project": "Burdett Avenue Expressway",
+        "rentalRequestRotationList": "",
+        "status": "In progress"
+    },
+    {
+        "attachments": "",
+        "equipmentCount": "1",
+        "equipmentType": {
+            "id": "200039"
+        },
+        "expectedEndDate": "3/26/2017",
+        "expectedHours": "65",
+        "expectedStartDate": "3/18/2017",
+        "firstOnRotationList": "",
+        "history": "",
+        "id": "600179",
+        "localArea": "#REF!",
+        "notes": "",
+        "project": "Brew Creek Rd Extension",
+        "rentalRequestRotationList": "",
+        "status": "In progress"
+    },
+    {
+        "attachments": "",
+        "equipmentCount": "1",
+        "equipmentType": {
+            "id": "200035"
+        },
+        "expectedEndDate": "4/13/2017",
+        "expectedHours": "91",
+        "expectedStartDate": "4/2/2017",
+        "firstOnRotationList": "",
+        "history": "",
+        "id": "600180",
+        "localArea": "#REF!",
+        "notes": "",
+        "project": "Coldstream Avenue HOV Lane",
+        "rentalRequestRotationList": "",
+        "status": "In progress"
+    },
+    {
+        "attachments": "",
+        "equipmentCount": "4",
+        "equipmentType": {
+            "id": "200050"
+        },
+        "expectedEndDate": "5/17/2017",
+        "expectedHours": "51",
+        "expectedStartDate": "4/22/2017",
+        "firstOnRotationList": "",
+        "history": "",
+        "id": "600181",
+        "localArea": "#REF!",
+        "notes": "",
+        "project": "Roger Street Bridge Replacement",
+        "rentalRequestRotationList": "",
+        "status": "In progress"
+    },
+    {
+        "attachments": "",
+        "equipmentCount": "1",
+        "equipmentType": {
+            "id": "200002"
+        },
+        "expectedEndDate": "4/11/2017",
+        "expectedHours": "64",
+        "expectedStartDate": "4/3/2017",
+        "firstOnRotationList": "",
+        "history": "",
+        "id": "600182",
+        "localArea": "#REF!",
+        "notes": "",
+        "project": "Wellington Ave Overpass",
+        "rentalRequestRotationList": "",
+        "status": "In progress"
+    },
+    {
+        "attachments": "",
+        "equipmentCount": "1",
+        "equipmentType": {
+            "id": "200026"
+        },
+        "expectedEndDate": "5/3/2017",
+        "expectedHours": "93",
+        "expectedStartDate": "4/22/2017",
+        "firstOnRotationList": "",
+        "history": "",
+        "id": "600183",
+        "localArea": "#REF!",
+        "notes": "",
+        "project": "Hardy Street Overpass",
+        "rentalRequestRotationList": "",
+        "status": "In progress"
+    },
+    {
+        "attachments": "",
+        "equipmentCount": "1",
+        "equipmentType": {
+            "id": "200049"
+        },
+        "expectedEndDate": "3/30/2017",
+        "expectedHours": "63",
+        "expectedStartDate": "3/23/2017",
+        "firstOnRotationList": "",
+        "history": "",
+        "id": "600184",
+        "localArea": "#REF!",
+        "notes": "",
+        "project": "Hastings Street Bypass",
+        "rentalRequestRotationList": "",
+        "status": "In progress"
+    },
+    {
+        "attachments": "",
+        "equipmentCount": "5",
+        "equipmentType": {
+            "id": "200059"
+        },
+        "expectedEndDate": "5/23/2017",
+        "expectedHours": "43",
+        "expectedStartDate": "4/27/2017",
+        "firstOnRotationList": "",
+        "history": "",
+        "id": "600185",
+        "localArea": "#REF!",
+        "notes": "",
+        "project": "Queens Bay Bypass",
+        "rentalRequestRotationList": "",
+        "status": "In progress"
+    },
+    {
+        "attachments": "",
+        "equipmentCount": "2",
+        "equipmentType": {
+            "id": "200035"
+        },
+        "expectedEndDate": "4/29/2017",
+        "expectedHours": "61",
+        "expectedStartDate": "4/14/2017",
+        "firstOnRotationList": "",
+        "history": "",
+        "id": "600186",
+        "localArea": "#REF!",
+        "notes": "",
+        "project": "Hastings Street HOV Lane",
+        "rentalRequestRotationList": "",
+        "status": "In progress"
+    },
+    {
+        "attachments": "",
+        "equipmentCount": "1",
+        "equipmentType": {
+            "id": "200061"
+        },
+        "expectedEndDate": "4/23/2017",
+        "expectedHours": "23",
+        "expectedStartDate": "4/21/2017",
+        "firstOnRotationList": "",
+        "history": "",
+        "id": "600187",
+        "localArea": "#REF!",
+        "notes": "",
+        "project": "Findlay Creek Road Overpass",
+        "rentalRequestRotationList": "",
+        "status": "In progress"
+    },
+    {
+        "attachments": "",
+        "equipmentCount": "1",
+        "equipmentType": {
+            "id": "200062"
+        },
+        "expectedEndDate": "3/28/2017",
+        "expectedHours": "67",
+        "expectedStartDate": "3/20/2017",
+        "firstOnRotationList": "",
+        "history": "",
+        "id": "600188",
+        "localArea": "#REF!",
+        "notes": "",
+        "project": "Burdett Avenue Cloverleaf",
+        "rentalRequestRotationList": "",
+        "status": "In progress"
+    },
+    {
+        "attachments": "",
+        "equipmentCount": "1",
+        "equipmentType": {
+            "id": "200035"
+        },
+        "expectedEndDate": "4/4/2017",
+        "expectedHours": "46",
+        "expectedStartDate": "3/30/2017",
+        "firstOnRotationList": "",
+        "history": "",
+        "id": "600189",
+        "localArea": "#REF!",
+        "notes": "",
+        "project": "Alaska Hwy Bridge Replacement",
+        "rentalRequestRotationList": "",
+        "status": "In progress"
+    },
+    {
+        "attachments": "",
+        "equipmentCount": "1",
+        "equipmentType": {
+            "id": "200026"
+        },
+        "expectedEndDate": "4/30/2017",
+        "expectedHours": "37",
+        "expectedStartDate": "4/26/2017",
+        "firstOnRotationList": "",
+        "history": "",
+        "id": "600190",
+        "localArea": "#REF!",
+        "notes": "",
+        "project": "Burdett Avenue Overpass",
+        "rentalRequestRotationList": "",
+        "status": "In progress"
+    },
+    {
+        "attachments": "",
+        "equipmentCount": "1",
+        "equipmentType": {
+            "id": "200034"
+        },
+        "expectedEndDate": "4/12/2017",
+        "expectedHours": "60",
+        "expectedStartDate": "4/5/2017",
+        "firstOnRotationList": "",
+        "history": "",
+        "id": "600191",
+        "localArea": "#REF!",
+        "notes": "",
+        "project": "James Street Bypass",
+        "rentalRequestRotationList": "",
+        "status": "In progress"
+    },
+    {
+        "attachments": "",
+        "equipmentCount": "1",
+        "equipmentType": {
+            "id": "200057"
+        },
+        "expectedEndDate": "3/12/2017",
+        "expectedHours": "17",
+        "expectedStartDate": "3/10/2017",
+        "firstOnRotationList": "",
+        "history": "",
+        "id": "600192",
+        "localArea": "#REF!",
+        "notes": "",
+        "project": "Tolmie St Upgrade",
+        "rentalRequestRotationList": "",
+        "status": "In progress"
+    },
+    {
+        "attachments": "",
+        "equipmentCount": "1",
+        "equipmentType": {
+            "id": "200050"
+        },
+        "expectedEndDate": "4/10/2017",
+        "expectedHours": "8",
+        "expectedStartDate": "4/9/2017",
+        "firstOnRotationList": "",
+        "history": "",
+        "id": "600193",
+        "localArea": "#REF!",
+        "notes": "",
+        "project": "Quayside Dr Building",
+        "rentalRequestRotationList": "",
+        "status": "In progress"
+    },
+    {
+        "attachments": "",
+        "equipmentCount": "1",
+        "equipmentType": {
+            "id": "200026"
+        },
+        "expectedEndDate": "4/25/2017",
+        "expectedHours": "4",
+        "expectedStartDate": "4/25/2017",
+        "firstOnRotationList": "",
+        "history": "",
+        "id": "600194",
+        "localArea": "#REF!",
+        "notes": "",
+        "project": "Jade St Building",
+        "rentalRequestRotationList": "",
+        "status": "In progress"
+    },
+    {
+        "attachments": "",
+        "equipmentCount": "1",
+        "equipmentType": {
+            "id": "200059"
+        },
+        "expectedEndDate": "3/14/2017",
+        "expectedHours": "67",
+        "expectedStartDate": "3/6/2017",
+        "firstOnRotationList": "",
+        "history": "",
+        "id": "600195",
+        "localArea": "#REF!",
+        "notes": "",
+        "project": "Alaska Hwy Bridge Replacement",
+        "rentalRequestRotationList": "",
+        "status": "In progress"
+    },
+    {
+        "attachments": "",
+        "equipmentCount": "1",
+        "equipmentType": {
+            "id": "200002"
+        },
+        "expectedEndDate": "4/9/2017",
+        "expectedHours": "52",
+        "expectedStartDate": "4/3/2017",
+        "firstOnRotationList": "",
+        "history": "",
+        "id": "600196",
+        "localArea": "#REF!",
+        "notes": "",
+        "project": "Sixth Street Building",
+        "rentalRequestRotationList": "",
+        "status": "In progress"
+    },
+    {
+        "attachments": "",
+        "equipmentCount": "1",
+        "equipmentType": {
+            "id": "200026"
+        },
+        "expectedEndDate": "4/5/2017",
+        "expectedHours": "91",
+        "expectedStartDate": "3/25/2017",
+        "firstOnRotationList": "",
+        "history": "",
+        "id": "600197",
+        "localArea": "#REF!",
+        "notes": "",
+        "project": "King George Hwy Express Lane",
+        "rentalRequestRotationList": "",
+        "status": "In progress"
+    },
+    {
+        "attachments": "",
+        "equipmentCount": "1",
+        "equipmentType": {
+            "id": "200002"
+        },
+        "expectedEndDate": "4/19/2017",
+        "expectedHours": "80",
+        "expectedStartDate": "4/9/2017",
+        "firstOnRotationList": "",
+        "history": "",
+        "id": "600198",
+        "localArea": "#REF!",
+        "notes": "",
+        "project": "Burdett Avenue Overpass",
+        "rentalRequestRotationList": "",
+        "status": "In progress"
+    },
+    {
+        "attachments": "",
+        "equipmentCount": "5",
+        "equipmentType": {
+            "id": "200028"
+        },
+        "expectedEndDate": "5/11/2017",
+        "expectedHours": "83",
+        "expectedStartDate": "3/21/2017",
+        "firstOnRotationList": "",
+        "history": "",
+        "id": "600199",
+        "localArea": "#REF!",
+        "notes": "",
+        "project": "Stum Lake Road Overpass",
+        "rentalRequestRotationList": "",
+        "status": "In progress"
+    },
+    {
+        "attachments": "",
+        "equipmentCount": "1",
+        "equipmentType": {
+            "id": "200002"
+        },
+        "expectedEndDate": "4/12/2017",
+        "expectedHours": "74",
+        "expectedStartDate": "4/3/2017",
+        "firstOnRotationList": "",
+        "history": "",
+        "id": "600200",
+        "localArea": "#REF!",
+        "notes": "",
+        "project": "James Street Overpass",
+        "rentalRequestRotationList": "",
+        "status": "In progress"
+    },
+    {
+        "attachments": "",
+        "equipmentCount": "1",
+        "equipmentType": {
+            "id": "200084"
+        },
+        "expectedEndDate": "4/9/2017",
+        "expectedHours": "66",
+        "expectedStartDate": "4/1/2017",
+        "firstOnRotationList": "",
+        "history": "",
+        "id": "600201",
+        "localArea": "#REF!",
+        "notes": "",
+        "project": "Tolmie St Bypass",
+        "rentalRequestRotationList": "",
+        "status": "In progress"
+    },
+    {
+        "attachments": "",
+        "equipmentCount": "1",
+        "equipmentType": {
+            "id": "200002"
+        },
+        "expectedEndDate": "4/9/2017",
+        "expectedHours": "44",
+        "expectedStartDate": "4/4/2017",
+        "firstOnRotationList": "",
+        "history": "",
+        "id": "600202",
+        "localArea": "#REF!",
+        "notes": "",
+        "project": "Blanshard Cloverleaf",
+        "rentalRequestRotationList": "",
+        "status": "In progress"
+    },
+    {
+        "attachments": "",
+        "equipmentCount": "1",
+        "equipmentType": {
+            "id": "200063"
+        },
+        "expectedEndDate": "3/18/2017",
+        "expectedHours": "73",
+        "expectedStartDate": "3/9/2017",
+        "firstOnRotationList": "",
+        "history": "",
+        "id": "600203",
+        "localArea": "#REF!",
+        "notes": "",
+        "project": "Glover Road Extension",
+        "rentalRequestRotationList": "",
+        "status": "In progress"
+    },
+    {
+        "attachments": "",
+        "equipmentCount": "1",
+        "equipmentType": {
+            "id": "200027"
+        },
+        "expectedEndDate": "4/21/2017",
+        "expectedHours": "30",
+        "expectedStartDate": "4/18/2017",
+        "firstOnRotationList": "",
+        "history": "",
+        "id": "600204",
+        "localArea": "#REF!",
+        "notes": "",
+        "project": "Coldstream Avenue Bypass",
+        "rentalRequestRotationList": "",
+        "status": "In progress"
+    },
+    {
+        "attachments": "",
+        "equipmentCount": "5",
+        "equipmentType": {
+            "id": "200059"
+        },
+        "expectedEndDate": "6/12/2017",
+        "expectedHours": "87",
+        "expectedStartDate": "4/19/2017",
+        "firstOnRotationList": "",
+        "history": "",
+        "id": "600205",
+        "localArea": "#REF!",
+        "notes": "",
+        "project": "Lake City Way Upgrade",
+        "rentalRequestRotationList": "",
+        "status": "In progress"
+    },
+    {
+        "attachments": "",
+        "equipmentCount": "4",
+        "equipmentType": {
+            "id": "200066"
+        },
+        "expectedEndDate": "4/5/2017",
+        "expectedHours": "24",
+        "expectedStartDate": "3/24/2017",
+        "firstOnRotationList": "",
+        "history": "",
+        "id": "600206",
+        "localArea": "#REF!",
+        "notes": "",
+        "project": "Coldstream Avenue Bypass",
+        "rentalRequestRotationList": "",
+        "status": "In progress"
+    },
+    {
+        "attachments": "",
+        "equipmentCount": "1",
+        "equipmentType": {
+            "id": "200057"
+        },
+        "expectedEndDate": "4/2/2017",
+        "expectedHours": "30",
+        "expectedStartDate": "3/30/2017",
+        "firstOnRotationList": "",
+        "history": "",
+        "id": "600207",
+        "localArea": "#REF!",
+        "notes": "",
+        "project": "Lake City Way Upgrade",
+        "rentalRequestRotationList": "",
+        "status": "In progress"
+    },
+    {
+        "attachments": "",
+        "equipmentCount": "1",
+        "equipmentType": {
+            "id": "200002"
+        },
+        "expectedEndDate": "5/3/2017",
+        "expectedHours": "83",
+        "expectedStartDate": "4/23/2017",
+        "firstOnRotationList": "",
+        "history": "",
+        "id": "600208",
+        "localArea": "#REF!",
+        "notes": "",
+        "project": "Roger Street Building",
+        "rentalRequestRotationList": "",
+        "status": "In progress"
+    },
+    {
+        "attachments": "",
+        "equipmentCount": "1",
+        "equipmentType": {
+            "id": "200035"
+        },
+        "expectedEndDate": "4/27/2017",
+        "expectedHours": "76",
+        "expectedStartDate": "4/18/2017",
+        "firstOnRotationList": "",
+        "history": "",
+        "id": "600209",
+        "localArea": "#REF!",
+        "notes": "",
+        "project": "Essendene Avenue Bridge Replacement",
+        "rentalRequestRotationList": "",
+        "status": "In progress"
+    },
+    {
+        "attachments": "",
+        "equipmentCount": "2",
+        "equipmentType": {
+            "id": "200084"
+        },
+        "expectedEndDate": "4/27/2017",
+        "expectedHours": "5",
+        "expectedStartDate": "4/26/2017",
+        "firstOnRotationList": "",
+        "history": "",
+        "id": "600210",
+        "localArea": "#REF!",
+        "notes": "",
+        "project": "Blanshard Bridge Replacement",
+        "rentalRequestRotationList": "",
+        "status": "In progress"
+    },
+    {
+        "attachments": "",
+        "equipmentCount": "1",
+        "equipmentType": {
+            "id": "200007"
+        },
+        "expectedEndDate": "3/27/2017",
+        "expectedHours": "20",
+        "expectedStartDate": "3/25/2017",
+        "firstOnRotationList": "",
+        "history": "",
+        "id": "600211",
+        "localArea": "#REF!",
+        "notes": "",
+        "project": "Wallace Street Expressway",
+        "rentalRequestRotationList": "",
+        "status": "In progress"
+    },
+    {
+        "attachments": "",
+        "equipmentCount": "4",
+        "equipmentType": {
+            "id": "200015"
+        },
+        "expectedEndDate": "5/9/2017",
+        "expectedHours": "81",
+        "expectedStartDate": "3/30/2017",
+        "firstOnRotationList": "",
+        "history": "",
+        "id": "600212",
+        "localArea": "#REF!",
+        "notes": "",
+        "project": "Glover Road Upgrade",
+        "rentalRequestRotationList": "",
+        "status": "In progress"
+    },
+    {
+        "attachments": "",
+        "equipmentCount": "1",
+        "equipmentType": {
+            "id": "200028"
+        },
+        "expectedEndDate": "4/30/2017",
+        "expectedHours": "66",
+        "expectedStartDate": "4/22/2017",
+        "firstOnRotationList": "",
+        "history": "",
+        "id": "600213",
+        "localArea": "#REF!",
+        "notes": "",
+        "project": "Burdett Avenue Expressway",
+        "rentalRequestRotationList": "",
+        "status": "In progress"
+    },
+    {
+        "attachments": "",
+        "equipmentCount": "1",
+        "equipmentType": {
+            "id": "200068"
+        },
+        "expectedEndDate": "4/28/2017",
+        "expectedHours": "44",
+        "expectedStartDate": "4/23/2017",
+        "firstOnRotationList": "",
+        "history": "",
+        "id": "600214",
+        "localArea": "#REF!",
+        "notes": "",
+        "project": "Burdett Avenue Extension",
+        "rentalRequestRotationList": "",
+        "status": "In progress"
+    },
+    {
+        "attachments": "",
+        "equipmentCount": "1",
+        "equipmentType": {
+            "id": "200051"
+        },
+        "expectedEndDate": "3/19/2017",
+        "expectedHours": "71",
+        "expectedStartDate": "3/11/2017",
+        "firstOnRotationList": "",
+        "history": "",
+        "id": "600215",
+        "localArea": "#REF!",
+        "notes": "",
+        "project": "Shaughnessy St Overpass",
+        "rentalRequestRotationList": "",
+        "status": "In progress"
+    },
+    {
+        "attachments": "",
+        "equipmentCount": "1",
+        "equipmentType": {
+            "id": "200035"
+        },
+        "expectedEndDate": "4/13/2017",
+        "expectedHours": "31",
+        "expectedStartDate": "4/10/2017",
+        "firstOnRotationList": "",
+        "history": "",
+        "id": "600216",
+        "localArea": "#REF!",
+        "notes": "",
+        "project": "Tchesinkut Lake Rd Extension",
+        "rentalRequestRotationList": "",
+        "status": "In progress"
+    },
+    {
+        "attachments": "",
+        "equipmentCount": "2",
+        "equipmentType": {
+            "id": "200061"
+        },
+        "expectedEndDate": "4/22/2017",
+        "expectedHours": "5",
+        "expectedStartDate": "4/21/2017",
+        "firstOnRotationList": "",
+        "history": "",
+        "id": "600217",
+        "localArea": "#REF!",
+        "notes": "",
+        "project": "Blind Bay Road Overpass",
+        "rentalRequestRotationList": "",
+        "status": "In progress"
+    },
+    {
+        "attachments": "",
+        "equipmentCount": "1",
+        "equipmentType": {
+            "id": "200057"
+        },
+        "expectedEndDate": "4/21/2017",
+        "expectedHours": "88",
+        "expectedStartDate": "4/10/2017",
+        "firstOnRotationList": "",
+        "history": "",
+        "id": "600218",
+        "localArea": "#REF!",
+        "notes": "",
+        "project": "Blind Bay Road Building",
+        "rentalRequestRotationList": "",
+        "status": "In progress"
+    },
+    {
+        "attachments": "",
+        "equipmentCount": "1",
+        "equipmentType": {
+            "id": "200035"
+        },
+        "expectedEndDate": "3/16/2017",
+        "expectedHours": "51",
+        "expectedStartDate": "3/10/2017",
+        "firstOnRotationList": "",
+        "history": "",
+        "id": "600219",
+        "localArea": "#REF!",
+        "notes": "",
+        "project": "James Street Bypass",
+        "rentalRequestRotationList": "",
+        "status": "In progress"
+    },
+    {
+        "attachments": "",
+        "equipmentCount": "1",
+        "equipmentType": {
+            "id": "200066"
+        },
+        "expectedEndDate": "3/17/2017",
+        "expectedHours": "85",
+        "expectedStartDate": "3/7/2017",
+        "firstOnRotationList": "",
+        "history": "",
+        "id": "600220",
+        "localArea": "#REF!",
+        "notes": "",
+        "project": "Glover Road HOV Lane",
+        "rentalRequestRotationList": "",
+        "status": "In progress"
+    },
+    {
+        "attachments": "",
+        "equipmentCount": "1",
+        "equipmentType": {
+            "id": "200015"
+        },
+        "expectedEndDate": "3/10/2017",
+        "expectedHours": "27",
+        "expectedStartDate": "3/7/2017",
+        "firstOnRotationList": "",
+        "history": "",
+        "id": "600221",
+        "localArea": "#REF!",
+        "notes": "",
+        "project": "Wellington Ave Express Lane",
+        "rentalRequestRotationList": "",
+        "status": "In progress"
+    },
+    {
+        "attachments": "",
+        "equipmentCount": "1",
+        "equipmentType": {
+            "id": "200062"
+        },
+        "expectedEndDate": "3/25/2017",
+        "expectedHours": "90",
+        "expectedStartDate": "3/14/2017",
+        "firstOnRotationList": "",
+        "history": "",
+        "id": "600222",
+        "localArea": "#REF!",
+        "notes": "",
+        "project": "Roger Street Bridge",
+        "rentalRequestRotationList": "",
+        "status": "In progress"
+    },
+    {
+        "attachments": "",
+        "equipmentCount": "1",
+        "equipmentType": {
+            "id": "200035"
+        },
+        "expectedEndDate": "4/13/2017",
+        "expectedHours": "15",
+        "expectedStartDate": "4/12/2017",
+        "firstOnRotationList": "",
+        "history": "",
+        "id": "600223",
+        "localArea": "#REF!",
+        "notes": "",
+        "project": "Hastings Street Bridge",
+        "rentalRequestRotationList": "",
+        "status": "In progress"
+    },
+    {
+        "attachments": "",
+        "equipmentCount": "1",
+        "equipmentType": {
+            "id": "200007"
+        },
+        "expectedEndDate": "3/23/2017",
+        "expectedHours": "49",
+        "expectedStartDate": "3/17/2017",
+        "firstOnRotationList": "",
+        "history": "",
+        "id": "600224",
+        "localArea": "#REF!",
+        "notes": "",
+        "project": "Tchesinkut Lake Rd Expressway",
+        "rentalRequestRotationList": "",
+        "status": "In progress"
+    },
+    {
+        "attachments": "",
+        "equipmentCount": "1",
+        "equipmentType": {
+            "id": "200027"
+        },
+        "expectedEndDate": "3/18/2017",
+        "expectedHours": "95",
+        "expectedStartDate": "3/7/2017",
+        "firstOnRotationList": "",
+        "history": "",
+        "id": "600225",
+        "localArea": "#REF!",
+        "notes": "",
+        "project": "Blanshard Expressway",
+        "rentalRequestRotationList": "",
+        "status": "In progress"
+    },
+    {
+        "attachments": "",
+        "equipmentCount": "1",
+        "equipmentType": {
+            "id": "200000"
+        },
+        "expectedEndDate": "4/17/2017",
+        "expectedHours": "60",
+        "expectedStartDate": "4/10/2017",
+        "firstOnRotationList": "",
+        "history": "",
+        "id": "600226",
+        "localArea": "#REF!",
+        "notes": "",
+        "project": "St George Street Building",
+        "rentalRequestRotationList": "",
+        "status": "In progress"
+    },
+    {
+        "attachments": "",
+        "equipmentCount": "1",
+        "equipmentType": {
+            "id": "200000"
+        },
+        "expectedEndDate": "4/25/2017",
+        "expectedHours": "12",
+        "expectedStartDate": "4/24/2017",
+        "firstOnRotationList": "",
+        "history": "",
+        "id": "600227",
+        "localArea": "#REF!",
+        "notes": "",
+        "project": "Stum Lake Road HOV Lane",
+        "rentalRequestRotationList": "",
+        "status": "In progress"
+    },
+    {
+        "attachments": "",
+        "equipmentCount": "1",
+        "equipmentType": {
+            "id": "200039"
+        },
+        "expectedEndDate": "3/24/2017",
+        "expectedHours": "62",
+        "expectedStartDate": "3/17/2017",
+        "firstOnRotationList": "",
+        "history": "",
+        "id": "600228",
+        "localArea": "#REF!",
+        "notes": "",
+        "project": "Yoho Valley Road Building",
+        "rentalRequestRotationList": "",
+        "status": "In progress"
+    },
+    {
+        "attachments": "",
+        "equipmentCount": "2",
+        "equipmentType": {
+            "id": "200028"
+        },
+        "expectedEndDate": "4/29/2017",
+        "expectedHours": "13",
+        "expectedStartDate": "4/26/2017",
+        "firstOnRotationList": "",
+        "history": "",
+        "id": "600229",
+        "localArea": "#REF!",
+        "notes": "",
+        "project": "Keith Road Expressway",
+        "rentalRequestRotationList": "",
+        "status": "In progress"
+    },
+    {
+        "attachments": "",
+        "equipmentCount": "1",
+        "equipmentType": {
+            "id": "200080"
+        },
+        "expectedEndDate": "3/22/2017",
+        "expectedHours": "85",
+        "expectedStartDate": "3/12/2017",
+        "firstOnRotationList": "",
+        "history": "",
+        "id": "600230",
+        "localArea": "#REF!",
+        "notes": "",
+        "project": "Burdett Avenue Express Lane",
+        "rentalRequestRotationList": "",
+        "status": "In progress"
+    },
+    {
+        "attachments": "",
+        "equipmentCount": "1",
+        "equipmentType": {
+            "id": "200080"
+        },
+        "expectedEndDate": "3/29/2017",
+        "expectedHours": "27",
+        "expectedStartDate": "3/26/2017",
+        "firstOnRotationList": "",
+        "history": "",
+        "id": "600231",
+        "localArea": "#REF!",
+        "notes": "",
+        "project": "Blanshard Cloverleaf",
+        "rentalRequestRotationList": "",
+        "status": "In progress"
+    },
+    {
+        "attachments": "",
+        "equipmentCount": "1",
+        "equipmentType": {
+            "id": "200026"
+        },
+        "expectedEndDate": "3/25/2017",
+        "expectedHours": "55",
+        "expectedStartDate": "3/19/2017",
+        "firstOnRotationList": "",
+        "history": "",
+        "id": "600232",
+        "localArea": "#REF!",
+        "notes": "",
+        "project": "Quayside Dr Bridge",
+        "rentalRequestRotationList": "",
+        "status": "In progress"
+    },
+    {
+        "attachments": "",
+        "equipmentCount": "1",
+        "equipmentType": {
+            "id": "200002"
+        },
+        "expectedEndDate": "4/27/2017",
+        "expectedHours": "40",
+        "expectedStartDate": "4/22/2017",
+        "firstOnRotationList": "",
+        "history": "",
+        "id": "600233",
+        "localArea": "#REF!",
+        "notes": "",
+        "project": "Jade St Expressway",
+        "rentalRequestRotationList": "",
+        "status": "In progress"
+    },
+    {
+        "attachments": "",
+        "equipmentCount": "1",
+        "equipmentType": {
+            "id": "200002"
+        },
+        "expectedEndDate": "3/15/2017",
+        "expectedHours": "17",
+        "expectedStartDate": "3/13/2017",
+        "firstOnRotationList": "",
+        "history": "",
+        "id": "600234",
+        "localArea": "#REF!",
+        "notes": "",
+        "project": "Robson St Express Lane",
+        "rentalRequestRotationList": "",
+        "status": "In progress"
+    },
+    {
+        "attachments": "",
+        "equipmentCount": "2",
+        "equipmentType": {
+            "id": "200015"
+        },
+        "expectedEndDate": "4/20/2017",
+        "expectedHours": "76",
+        "expectedStartDate": "4/1/2017",
+        "firstOnRotationList": "",
+        "history": "",
+        "id": "600235",
+        "localArea": "#REF!",
+        "notes": "",
+        "project": "Robson St Bridge Replacement",
+        "rentalRequestRotationList": "",
+        "status": "In progress"
+    },
+    {
+        "attachments": "",
+        "equipmentCount": "1",
+        "equipmentType": {
+            "id": "200039"
+        },
+        "expectedEndDate": "5/2/2017",
+        "expectedHours": "64",
+        "expectedStartDate": "4/24/2017",
+        "firstOnRotationList": "",
+        "history": "",
+        "id": "600236",
+        "localArea": "#REF!",
+        "notes": "",
+        "project": "Kinchant St Express Lane",
+        "rentalRequestRotationList": "",
+        "status": "In progress"
+    },
+    {
+        "attachments": "",
+        "equipmentCount": "1",
+        "equipmentType": {
+            "id": "200059"
+        },
+        "expectedEndDate": "3/17/2017",
+        "expectedHours": "89",
+        "expectedStartDate": "3/6/2017",
+        "firstOnRotationList": "",
+        "history": "",
+        "id": "600237",
+        "localArea": "#REF!",
+        "notes": "",
+        "project": "Alaska Hwy Express Lane",
+        "rentalRequestRotationList": "",
+        "status": "In progress"
+    },
+    {
+        "attachments": "",
+        "equipmentCount": "2",
+        "equipmentType": {
+            "id": "200059"
+        },
+        "expectedEndDate": "4/20/2017",
+        "expectedHours": "91",
+        "expectedStartDate": "3/29/2017",
+        "firstOnRotationList": "",
+        "history": "",
+        "id": "600238",
+        "localArea": "#REF!",
+        "notes": "",
+        "project": "Carlson Road Express Lane",
+        "rentalRequestRotationList": "",
+        "status": "In progress"
+    },
+    {
+        "attachments": "",
+        "equipmentCount": "1",
+        "equipmentType": {
+            "id": "200063"
+        },
+        "expectedEndDate": "4/22/2017",
+        "expectedHours": "69",
+        "expectedStartDate": "4/14/2017",
+        "firstOnRotationList": "",
+        "history": "",
+        "id": "600239",
+        "localArea": "#REF!",
+        "notes": "",
+        "project": "102nd Avenue Extension",
+        "rentalRequestRotationList": "",
+        "status": "In progress"
+    },
+    {
+        "attachments": "",
+        "equipmentCount": "1",
+        "equipmentType": {
+            "id": "200061"
+        },
+        "expectedEndDate": "4/30/2017",
+        "expectedHours": "93",
+        "expectedStartDate": "4/19/2017",
+        "firstOnRotationList": "",
+        "history": "",
+        "id": "600240",
+        "localArea": "#REF!",
+        "notes": "",
+        "project": "Roger Street Expressway",
+        "rentalRequestRotationList": "",
+        "status": "In progress"
+    },
+    {
+        "attachments": "",
+        "equipmentCount": "1",
+        "equipmentType": {
+            "id": "200049"
+        },
+        "expectedEndDate": "4/15/2017",
+        "expectedHours": "54",
+        "expectedStartDate": "4/9/2017",
+        "firstOnRotationList": "",
+        "history": "",
+        "id": "600241",
+        "localArea": "#REF!",
+        "notes": "",
+        "project": "McGill Road Express Lane",
+        "rentalRequestRotationList": "",
+        "status": "In progress"
+    },
+    {
+        "attachments": "",
+        "equipmentCount": "1",
+        "equipmentType": {
+            "id": "200027"
+        },
+        "expectedEndDate": "4/4/2017",
+        "expectedHours": "69",
+        "expectedStartDate": "3/27/2017",
+        "firstOnRotationList": "",
+        "history": "",
+        "id": "600242",
+        "localArea": "#REF!",
+        "notes": "",
+        "project": "Russell Avenue HOV Lane",
+        "rentalRequestRotationList": "",
+        "status": "In progress"
+    },
+    {
+        "attachments": "",
+        "equipmentCount": "2",
+        "equipmentType": {
+            "id": "200061"
+        },
+        "expectedEndDate": "4/13/2017",
+        "expectedHours": "43",
+        "expectedStartDate": "4/3/2017",
+        "firstOnRotationList": "",
+        "history": "",
+        "id": "600243",
+        "localArea": "#REF!",
+        "notes": "",
+        "project": "Cardero St Extension",
+        "rentalRequestRotationList": "",
+        "status": "In progress"
+    },
+    {
+        "attachments": "",
+        "equipmentCount": "1",
+        "equipmentType": {
+            "id": "200063"
+        },
+        "expectedEndDate": "4/20/2017",
+        "expectedHours": "15",
+        "expectedStartDate": "4/19/2017",
+        "firstOnRotationList": "",
+        "history": "",
+        "id": "600244",
+        "localArea": "#REF!",
+        "notes": "",
+        "project": "Findlay Creek Road Upgrade",
+        "rentalRequestRotationList": "",
+        "status": "In progress"
+    },
+    {
+        "attachments": "",
+        "equipmentCount": "3",
+        "equipmentType": {
+            "id": "200049"
+        },
+        "expectedEndDate": "4/8/2017",
+        "expectedHours": "70",
+        "expectedStartDate": "3/13/2017",
+        "firstOnRotationList": "",
+        "history": "",
+        "id": "600245",
+        "localArea": "#REF!",
+        "notes": "",
+        "project": "Queens Bay Overpass",
+        "rentalRequestRotationList": "",
+        "status": "In progress"
+    },
+    {
+        "attachments": "",
+        "equipmentCount": "4",
+        "equipmentType": {
+            "id": "200027"
+        },
+        "expectedEndDate": "5/17/2017",
+        "expectedHours": "65",
+        "expectedStartDate": "4/15/2017",
+        "firstOnRotationList": "",
+        "history": "",
+        "id": "600246",
+        "localArea": "#REF!",
+        "notes": "",
+        "project": "Brew Creek Rd Bypass",
+        "rentalRequestRotationList": "",
+        "status": "In progress"
+    },
+    {
+        "attachments": "",
+        "equipmentCount": "1",
+        "equipmentType": {
+            "id": "200062"
+        },
+        "expectedEndDate": "4/19/2017",
+        "expectedHours": "11",
+        "expectedStartDate": "4/18/2017",
+        "firstOnRotationList": "",
+        "history": "",
+        "id": "600247",
+        "localArea": "#REF!",
+        "notes": "",
+        "project": "Robson St HOV Lane",
+        "rentalRequestRotationList": "",
+        "status": "In progress"
+    },
+    {
+        "attachments": "",
+        "equipmentCount": "1",
+        "equipmentType": {
+            "id": "200061"
+        },
+        "expectedEndDate": "4/22/2017",
+        "expectedHours": "15",
+        "expectedStartDate": "4/21/2017",
+        "firstOnRotationList": "",
+        "history": "",
+        "id": "600248",
+        "localArea": "#REF!",
+        "notes": "",
+        "project": "Roger Street Express Lane",
+        "rentalRequestRotationList": "",
+        "status": "In progress"
+    },
+    {
+        "attachments": "",
+        "equipmentCount": "4",
+        "equipmentType": {
+            "id": "200015"
+        },
+        "expectedEndDate": "4/22/2017",
+        "expectedHours": "23",
+        "expectedStartDate": "4/11/2017",
+        "firstOnRotationList": "",
+        "history": "",
+        "id": "600249",
+        "localArea": "#REF!",
+        "notes": "",
+        "project": "Queens Bay Express Lane",
+        "rentalRequestRotationList": "",
+        "status": "In progress"
+    },
+    {
+        "attachments": "",
+        "equipmentCount": "1",
+        "equipmentType": {
+            "id": "200084"
+        },
+        "expectedEndDate": "4/14/2017",
+        "expectedHours": "22",
+        "expectedStartDate": "4/12/2017",
+        "firstOnRotationList": "",
+        "history": "",
+        "id": "600250",
+        "localArea": "#REF!",
+        "notes": "",
+        "project": "Jade St Building",
+        "rentalRequestRotationList": "",
+        "status": "In progress"
+    },
+    {
+        "attachments": "",
+        "equipmentCount": "1",
+        "equipmentType": {
+            "id": "200084"
+        },
+        "expectedEndDate": "4/5/2017",
+        "expectedHours": "9",
+        "expectedStartDate": "4/4/2017",
+        "firstOnRotationList": "",
+        "history": "",
+        "id": "600251",
+        "localArea": "#REF!",
+        "notes": "",
+        "project": "Brew Creek Rd HOV Lane",
+        "rentalRequestRotationList": "",
+        "status": "In progress"
+    },
+    {
+        "attachments": "",
+        "equipmentCount": "1",
+        "equipmentType": {
+            "id": "200061"
+        },
+        "expectedEndDate": "4/9/2017",
+        "expectedHours": "30",
+        "expectedStartDate": "4/6/2017",
+        "firstOnRotationList": "",
+        "history": "",
+        "id": "600252",
+        "localArea": "#REF!",
+        "notes": "",
+        "project": "Roger Street Overpass",
+        "rentalRequestRotationList": "",
+        "status": "In progress"
+    },
+    {
+        "attachments": "",
+        "equipmentCount": "1",
+        "equipmentType": {
+            "id": "200066"
+        },
+        "expectedEndDate": "4/20/2017",
+        "expectedHours": "31",
+        "expectedStartDate": "4/17/2017",
+        "firstOnRotationList": "",
+        "history": "",
+        "id": "600253",
+        "localArea": "#REF!",
+        "notes": "",
+        "project": "Quayside Dr Expressway",
+        "rentalRequestRotationList": "",
+        "status": "In progress"
+    },
+    {
+        "attachments": "",
+        "equipmentCount": "1",
+        "equipmentType": {
+            "id": "200068"
+        },
+        "expectedEndDate": "4/6/2017",
+        "expectedHours": "83",
+        "expectedStartDate": "3/27/2017",
+        "firstOnRotationList": "",
+        "history": "",
+        "id": "600254",
+        "localArea": "#REF!",
+        "notes": "",
+        "project": "Haaglund Rd HOV Lane",
+        "rentalRequestRotationList": "",
+        "status": "In progress"
+    },
+    {
+        "attachments": "",
+        "equipmentCount": "1",
+        "equipmentType": {
+            "id": "200066"
+        },
+        "expectedEndDate": "3/20/2017",
+        "expectedHours": "77",
+        "expectedStartDate": "3/11/2017",
+        "firstOnRotationList": "",
+        "history": "",
+        "id": "600255",
+        "localArea": "#REF!",
+        "notes": "",
+        "project": "Tchesinkut Lake Rd Cloverleaf",
+        "rentalRequestRotationList": "",
+        "status": "In progress"
+    },
+    {
+        "attachments": "",
+        "equipmentCount": "1",
+        "equipmentType": {
+            "id": "200080"
+        },
+        "expectedEndDate": "3/30/2017",
+        "expectedHours": "14",
+        "expectedStartDate": "3/29/2017",
+        "firstOnRotationList": "",
+        "history": "",
+        "id": "600256",
+        "localArea": "#REF!",
+        "notes": "",
+        "project": "Roger Street HOV Lane",
+        "rentalRequestRotationList": "",
+        "status": "In progress"
+    },
+    {
+        "attachments": "",
+        "equipmentCount": "1",
+        "equipmentType": {
+            "id": "200034"
+        },
+        "expectedEndDate": "4/11/2017",
+        "expectedHours": "53",
+        "expectedStartDate": "4/5/2017",
+        "firstOnRotationList": "",
+        "history": "",
+        "id": "600257",
+        "localArea": "#REF!",
+        "notes": "",
+        "project": "Glover Road Upgrade",
+        "rentalRequestRotationList": "",
+        "status": "In progress"
+    },
+    {
+        "attachments": "",
+        "equipmentCount": "1",
+        "equipmentType": {
+            "id": "200007"
+        },
+        "expectedEndDate": "4/12/2017",
+        "expectedHours": "5",
+        "expectedStartDate": "4/12/2017",
+        "firstOnRotationList": "",
+        "history": "",
+        "id": "600258",
+        "localArea": "#REF!",
+        "notes": "",
+        "project": "Stum Lake Road Bridge Replacement",
+        "rentalRequestRotationList": "",
+        "status": "In progress"
+    },
+    {
+        "attachments": "",
+        "equipmentCount": "3",
+        "equipmentType": {
+            "id": "200035"
+        },
+        "expectedEndDate": "3/23/2017",
+        "expectedHours": "22",
+        "expectedStartDate": "3/15/2017",
+        "firstOnRotationList": "",
+        "history": "",
+        "id": "600259",
+        "localArea": "#REF!",
+        "notes": "",
+        "project": "Queens Bay Cloverleaf",
+        "rentalRequestRotationList": "",
+        "status": "In progress"
+    },
+    {
+        "attachments": "",
+        "equipmentCount": "1",
+        "equipmentType": {
+            "id": "200084"
+        },
+        "expectedEndDate": "4/27/2017",
+        "expectedHours": "75",
+        "expectedStartDate": "4/18/2017",
+        "firstOnRotationList": "",
+        "history": "",
+        "id": "600260",
+        "localArea": "#REF!",
+        "notes": "",
+        "project": "Shaughnessy St Bypass",
+        "rentalRequestRotationList": "",
+        "status": "In progress"
+    },
+    {
+        "attachments": "",
+        "equipmentCount": "1",
+        "equipmentType": {
+            "id": "200061"
+        },
+        "expectedEndDate": "4/30/2017",
+        "expectedHours": "70",
+        "expectedStartDate": "4/22/2017",
+        "firstOnRotationList": "",
+        "history": "",
+        "id": "600261",
+        "localArea": "#REF!",
+        "notes": "",
+        "project": "Burdett Avenue Expressway",
+        "rentalRequestRotationList": "",
+        "status": "In progress"
+    },
+    {
+        "attachments": "",
+        "equipmentCount": "1",
+        "equipmentType": {
+            "id": "200026"
+        },
+        "expectedEndDate": "4/23/2017",
+        "expectedHours": "28",
+        "expectedStartDate": "4/20/2017",
+        "firstOnRotationList": "",
+        "history": "",
+        "id": "600262",
+        "localArea": "#REF!",
+        "notes": "",
+        "project": "Shaughnessy St Bridge",
+        "rentalRequestRotationList": "",
+        "status": "In progress"
+    },
+    {
+        "attachments": "",
+        "equipmentCount": "1",
+        "equipmentType": {
+            "id": "200035"
+        },
+        "expectedEndDate": "4/30/2017",
+        "expectedHours": "37",
+        "expectedStartDate": "4/26/2017",
+        "firstOnRotationList": "",
+        "history": "",
+        "id": "600263",
+        "localArea": "#REF!",
+        "notes": "",
+        "project": "Cordova Street HOV Lane",
+        "rentalRequestRotationList": "",
+        "status": "In progress"
+    },
+    {
+        "attachments": "",
+        "equipmentCount": "1",
+        "equipmentType": {
+            "id": "200059"
+        },
+        "expectedEndDate": "4/14/2017",
+        "expectedHours": "89",
+        "expectedStartDate": "4/3/2017",
+        "firstOnRotationList": "",
+        "history": "",
+        "id": "600264",
+        "localArea": "#REF!",
+        "notes": "",
+        "project": "Mesa Vista Drive Upgrade",
+        "rentalRequestRotationList": "",
+        "status": "In progress"
+    },
+    {
+        "attachments": "",
+        "equipmentCount": "1",
+        "equipmentType": {
+            "id": "200084"
+        },
+        "expectedEndDate": "3/10/2017",
+        "expectedHours": "14",
+        "expectedStartDate": "3/9/2017",
+        "firstOnRotationList": "",
+        "history": "",
+        "id": "600265",
+        "localArea": "#REF!",
+        "notes": "",
+        "project": "Blanshard Express Lane",
+        "rentalRequestRotationList": "",
+        "status": "In progress"
+    },
+    {
+        "attachments": "",
+        "equipmentCount": "1",
+        "equipmentType": {
+            "id": "200039"
+        },
+        "expectedEndDate": "4/7/2017",
+        "expectedHours": "64",
+        "expectedStartDate": "3/30/2017",
+        "firstOnRotationList": "",
+        "history": "",
+        "id": "600266",
+        "localArea": "#REF!",
+        "notes": "",
+        "project": "Roger Street Cloverleaf",
+        "rentalRequestRotationList": "",
+        "status": "In progress"
+    },
+    {
+        "attachments": "",
+        "equipmentCount": "1",
+        "equipmentType": {
+            "id": "200002"
+        },
+        "expectedEndDate": "3/20/2017",
+        "expectedHours": "37",
+        "expectedStartDate": "3/16/2017",
+        "firstOnRotationList": "",
+        "history": "",
+        "id": "600267",
+        "localArea": "#REF!",
+        "notes": "",
+        "project": "Cordova Street Cloverleaf",
+        "rentalRequestRotationList": "",
+        "status": "In progress"
+    },
+    {
+        "attachments": "",
+        "equipmentCount": "1",
+        "equipmentType": {
+            "id": "200062"
+        },
+        "expectedEndDate": "4/18/2017",
+        "expectedHours": "13",
+        "expectedStartDate": "4/17/2017",
+        "firstOnRotationList": "",
+        "history": "",
+        "id": "600268",
+        "localArea": "#REF!",
+        "notes": "",
+        "project": "Kinchant St Bypass",
+        "rentalRequestRotationList": "",
+        "status": "In progress"
+    },
+    {
+        "attachments": "",
+        "equipmentCount": "1",
+        "equipmentType": {
+            "id": "200035"
+        },
+        "expectedEndDate": "3/26/2017",
+        "expectedHours": "10",
+        "expectedStartDate": "3/25/2017",
+        "firstOnRotationList": "",
+        "history": "",
+        "id": "600269",
+        "localArea": "#REF!",
+        "notes": "",
+        "project": "Blanshard Cloverleaf",
+        "rentalRequestRotationList": "",
+        "status": "In progress"
+    },
+    {
+        "attachments": "",
+        "equipmentCount": "1",
+        "equipmentType": {
+            "id": "200084"
+        },
+        "expectedEndDate": "4/25/2017",
+        "expectedHours": "89",
+        "expectedStartDate": "4/14/2017",
+        "firstOnRotationList": "",
+        "history": "",
+        "id": "600270",
+        "localArea": "#REF!",
+        "notes": "",
+        "project": "St George Street Express Lane",
+        "rentalRequestRotationList": "",
+        "status": "In progress"
+    },
+    {
+        "attachments": "",
+        "equipmentCount": "1",
+        "equipmentType": {
+            "id": "200061"
+        },
+        "expectedEndDate": "3/19/2017",
+        "expectedHours": "16",
+        "expectedStartDate": "3/17/2017",
+        "firstOnRotationList": "",
+        "history": "",
+        "id": "600271",
+        "localArea": "#REF!",
+        "notes": "",
+        "project": "Brew Creek Rd Bridge",
+        "rentalRequestRotationList": "",
+        "status": "In progress"
+    },
+    {
+        "attachments": "",
+        "equipmentCount": "1",
+        "equipmentType": {
+            "id": "200027"
+        },
+        "expectedEndDate": "4/22/2017",
+        "expectedHours": "91",
+        "expectedStartDate": "4/11/2017",
+        "firstOnRotationList": "",
+        "history": "",
+        "id": "600272",
+        "localArea": "#REF!",
+        "notes": "",
+        "project": "Alaska Hwy Bridge",
+        "rentalRequestRotationList": "",
+        "status": "In progress"
+    },
+    {
+        "attachments": "",
+        "equipmentCount": "1",
+        "equipmentType": {
+            "id": "200075"
+        },
+        "expectedEndDate": "4/1/2017",
+        "expectedHours": "79",
+        "expectedStartDate": "3/23/2017",
+        "firstOnRotationList": "",
+        "history": "",
+        "id": "600273",
+        "localArea": "#REF!",
+        "notes": "",
+        "project": "Stum Lake Road Expressway",
+        "rentalRequestRotationList": "",
+        "status": "In progress"
+    },
+    {
+        "attachments": "",
+        "equipmentCount": "1",
+        "equipmentType": {
+            "id": "200000"
+        },
+        "expectedEndDate": "4/28/2017",
+        "expectedHours": "80",
+        "expectedStartDate": "4/18/2017",
+        "firstOnRotationList": "",
+        "history": "",
+        "id": "600274",
+        "localArea": "#REF!",
+        "notes": "",
+        "project": "Blind Bay Road Bridge",
+        "rentalRequestRotationList": "",
+        "status": "In progress"
+    },
+    {
+        "attachments": "",
+        "equipmentCount": "1",
+        "equipmentType": {
+            "id": "200051"
+        },
+        "expectedEndDate": "3/14/2017",
+        "expectedHours": "38",
+        "expectedStartDate": "3/10/2017",
+        "firstOnRotationList": "",
+        "history": "",
+        "id": "600275",
+        "localArea": "#REF!",
+        "notes": "",
+        "project": "Shaughnessy St Overpass",
+        "rentalRequestRotationList": "",
+        "status": "In progress"
+    },
+    {
+        "attachments": "",
+        "equipmentCount": "3",
+        "equipmentType": {
+            "id": "200049"
+        },
+        "expectedEndDate": "4/19/2017",
+        "expectedHours": "51",
+        "expectedStartDate": "3/31/2017",
+        "firstOnRotationList": "",
+        "history": "",
+        "id": "600276",
+        "localArea": "#REF!",
+        "notes": "",
+        "project": "King George Hwy Building",
+        "rentalRequestRotationList": "",
+        "status": "In progress"
+    },
+    {
+        "attachments": "",
+        "equipmentCount": "2",
+        "equipmentType": {
+            "id": "200002"
+        },
+        "expectedEndDate": "3/28/2017",
+        "expectedHours": "98",
+        "expectedStartDate": "3/4/2017",
+        "firstOnRotationList": "",
+        "history": "",
+        "id": "600277",
+        "localArea": "#REF!",
+        "notes": "",
+        "project": "Brew Creek Rd Cloverleaf",
+        "rentalRequestRotationList": "",
+        "status": "In progress"
+    },
+    {
+        "attachments": "",
+        "equipmentCount": "1",
+        "equipmentType": {
+            "id": "200028"
+        },
+        "expectedEndDate": "3/24/2017",
+        "expectedHours": "93",
+        "expectedStartDate": "3/13/2017",
+        "firstOnRotationList": "",
+        "history": "",
+        "id": "600278",
+        "localArea": "#REF!",
+        "notes": "",
+        "project": "Burdett Avenue Bypass",
+        "rentalRequestRotationList": "",
+        "status": "In progress"
+    },
+    {
+        "attachments": "",
+        "equipmentCount": "1",
+        "equipmentType": {
+            "id": "200015"
+        },
+        "expectedEndDate": "4/15/2017",
+        "expectedHours": "92",
+        "expectedStartDate": "4/4/2017",
+        "firstOnRotationList": "",
+        "history": "",
+        "id": "600279",
+        "localArea": "#REF!",
+        "notes": "",
+        "project": "Yoho Valley Road Bridge",
+        "rentalRequestRotationList": "",
+        "status": "In progress"
+    },
+    {
+        "attachments": "",
+        "equipmentCount": "1",
+        "equipmentType": {
+            "id": "200059"
+        },
+        "expectedEndDate": "3/10/2017",
+        "expectedHours": "14",
+        "expectedStartDate": "3/9/2017",
+        "firstOnRotationList": "",
+        "history": "",
+        "id": "600280",
+        "localArea": "#REF!",
+        "notes": "",
+        "project": "Hastings Street Extension",
+        "rentalRequestRotationList": "",
+        "status": "In progress"
+    },
+    {
+        "attachments": "",
+        "equipmentCount": "1",
+        "equipmentType": {
+            "id": "200039"
+        },
+        "expectedEndDate": "3/18/2017",
+        "expectedHours": "22",
+        "expectedStartDate": "3/16/2017",
+        "firstOnRotationList": "",
+        "history": "",
+        "id": "600281",
+        "localArea": "#REF!",
+        "notes": "",
+        "project": "Old Spallumcheen Rd Building",
+        "rentalRequestRotationList": "",
+        "status": "In progress"
+    },
+    {
+        "attachments": "",
+        "equipmentCount": "1",
+        "equipmentType": {
+            "id": "200035"
+        },
+        "expectedEndDate": "4/1/2017",
+        "expectedHours": "96",
+        "expectedStartDate": "3/20/2017",
+        "firstOnRotationList": "",
+        "history": "",
+        "id": "600282",
+        "localArea": "#REF!",
+        "notes": "",
+        "project": "Glover Road Extension",
+        "rentalRequestRotationList": "",
+        "status": "In progress"
+    },
+    {
+        "attachments": "",
+        "equipmentCount": "1",
+        "equipmentType": {
+            "id": "200080"
+        },
+        "expectedEndDate": "4/1/2017",
+        "expectedHours": "14",
+        "expectedStartDate": "3/31/2017",
+        "firstOnRotationList": "",
+        "history": "",
+        "id": "600283",
+        "localArea": "#REF!",
+        "notes": "",
+        "project": "Coldstream Avenue Extension",
+        "rentalRequestRotationList": "",
+        "status": "In progress"
+    },
+    {
+        "attachments": "",
+        "equipmentCount": "1",
+        "equipmentType": {
+            "id": "200059"
+        },
+        "expectedEndDate": "4/17/2017",
+        "expectedHours": "17",
+        "expectedStartDate": "4/15/2017",
+        "firstOnRotationList": "",
+        "history": "",
+        "id": "600284",
+        "localArea": "#REF!",
+        "notes": "",
+        "project": "Kinchant St HOV Lane",
+        "rentalRequestRotationList": "",
+        "status": "In progress"
+    },
+    {
+        "attachments": "",
+        "equipmentCount": "1",
+        "equipmentType": {
+            "id": "200002"
+        },
+        "expectedEndDate": "5/2/2017",
+        "expectedHours": "83",
+        "expectedStartDate": "4/22/2017",
+        "firstOnRotationList": "",
+        "history": "",
+        "id": "600285",
+        "localArea": "#REF!",
+        "notes": "",
+        "project": "Robson St Overpass",
+        "rentalRequestRotationList": "",
+        "status": "In progress"
+    },
+    {
+        "attachments": "",
+        "equipmentCount": "1",
+        "equipmentType": {
+            "id": "200063"
+        },
+        "expectedEndDate": "4/22/2017",
+        "expectedHours": "60",
+        "expectedStartDate": "4/15/2017",
+        "firstOnRotationList": "",
+        "history": "",
+        "id": "600286",
+        "localArea": "#REF!",
+        "notes": "",
+        "project": "Kinchant St Express Lane",
+        "rentalRequestRotationList": "",
+        "status": "In progress"
+    },
+    {
+        "attachments": "",
+        "equipmentCount": "1",
+        "equipmentType": {
+            "id": "200035"
+        },
+        "expectedEndDate": "4/3/2017",
+        "expectedHours": "70",
+        "expectedStartDate": "3/26/2017",
+        "firstOnRotationList": "",
+        "history": "",
+        "id": "600287",
+        "localArea": "#REF!",
+        "notes": "",
+        "project": "Alaska Hwy Express Lane",
+        "rentalRequestRotationList": "",
+        "status": "In progress"
+    },
+    {
+        "attachments": "",
+        "equipmentCount": "1",
+        "equipmentType": {
+            "id": "200057"
+        },
+        "expectedEndDate": "3/24/2017",
+        "expectedHours": "79",
+        "expectedStartDate": "3/15/2017",
+        "firstOnRotationList": "",
+        "history": "",
+        "id": "600288",
+        "localArea": "#REF!",
+        "notes": "",
+        "project": "Carlson Road Cloverleaf",
+        "rentalRequestRotationList": "",
+        "status": "In progress"
+    },
+    {
+        "attachments": "",
+        "equipmentCount": "3",
+        "equipmentType": {
+            "id": "200049"
+        },
+        "expectedEndDate": "5/4/2017",
+        "expectedHours": "41",
+        "expectedStartDate": "4/19/2017",
+        "firstOnRotationList": "",
+        "history": "",
+        "id": "600289",
+        "localArea": "#REF!",
+        "notes": "",
+        "project": "102nd Avenue Cloverleaf",
+        "rentalRequestRotationList": "",
+        "status": "In progress"
+    },
+    {
+        "attachments": "",
+        "equipmentCount": "1",
+        "equipmentType": {
+            "id": "200057"
+        },
+        "expectedEndDate": "5/1/2017",
+        "expectedHours": "75",
+        "expectedStartDate": "4/22/2017",
+        "firstOnRotationList": "",
+        "history": "",
+        "id": "600290",
+        "localArea": "#REF!",
+        "notes": "",
+        "project": "Roger Street Express Lane",
+        "rentalRequestRotationList": "",
+        "status": "In progress"
+    },
+    {
+        "attachments": "",
+        "equipmentCount": "4",
+        "equipmentType": {
+            "id": "200039"
+        },
+        "expectedEndDate": "5/14/2017",
+        "expectedHours": "43",
+        "expectedStartDate": "4/23/2017",
+        "firstOnRotationList": "",
+        "history": "",
+        "id": "600291",
+        "localArea": "#REF!",
+        "notes": "",
+        "project": "McGill Road HOV Lane",
+        "rentalRequestRotationList": "",
+        "status": "In progress"
+    },
+    {
+        "attachments": "",
+        "equipmentCount": "1",
+        "equipmentType": {
+            "id": "200059"
+        },
+        "expectedEndDate": "3/13/2017",
+        "expectedHours": "72",
+        "expectedStartDate": "3/4/2017",
+        "firstOnRotationList": "",
+        "history": "",
+        "id": "600292",
+        "localArea": "#REF!",
+        "notes": "",
+        "project": "Russell Avenue Extension",
+        "rentalRequestRotationList": "",
+        "status": "In progress"
+    },
+    {
+        "attachments": "",
+        "equipmentCount": "1",
+        "equipmentType": {
+            "id": "200035"
+        },
+        "expectedEndDate": "4/7/2017",
+        "expectedHours": "55",
+        "expectedStartDate": "4/1/2017",
+        "firstOnRotationList": "",
+        "history": "",
+        "id": "600293",
+        "localArea": "#REF!",
+        "notes": "",
+        "project": "Cardero St Upgrade",
+        "rentalRequestRotationList": "",
+        "status": "In progress"
+    },
+    {
+        "attachments": "",
+        "equipmentCount": "1",
+        "equipmentType": {
+            "id": "200035"
+        },
+        "expectedEndDate": "3/12/2017",
+        "expectedHours": "13",
+        "expectedStartDate": "3/11/2017",
+        "firstOnRotationList": "",
+        "history": "",
+        "id": "600294",
+        "localArea": "#REF!",
+        "notes": "",
+        "project": "Findlay Creek Road Building",
+        "rentalRequestRotationList": "",
+        "status": "In progress"
+    },
+    {
+        "attachments": "",
+        "equipmentCount": "1",
+        "equipmentType": {
+            "id": "200035"
+        },
+        "expectedEndDate": "4/25/2017",
+        "expectedHours": "57",
+        "expectedStartDate": "4/18/2017",
+        "firstOnRotationList": "",
+        "history": "",
+        "id": "600295",
+        "localArea": "#REF!",
+        "notes": "",
+        "project": "Queens Bay Expressway",
+        "rentalRequestRotationList": "",
+        "status": "In progress"
+    },
+    {
+        "attachments": "",
+        "equipmentCount": "1",
+        "equipmentType": {
+            "id": "200051"
+        },
+        "expectedEndDate": "4/9/2017",
+        "expectedHours": "83",
+        "expectedStartDate": "3/30/2017",
+        "firstOnRotationList": "",
+        "history": "",
+        "id": "600296",
+        "localArea": "#REF!",
+        "notes": "",
+        "project": "Brew Creek Rd Bypass",
+        "rentalRequestRotationList": "",
+        "status": "In progress"
+    },
+    {
+        "attachments": "",
+        "equipmentCount": "4",
+        "equipmentType": {
+            "id": "200061"
+        },
+        "expectedEndDate": "5/13/2017",
+        "expectedHours": "83",
+        "expectedStartDate": "4/2/2017",
+        "firstOnRotationList": "",
+        "history": "",
+        "id": "600297",
+        "localArea": "#REF!",
+        "notes": "",
+        "project": "Robson St Extension",
+        "rentalRequestRotationList": "",
+        "status": "In progress"
+    },
+    {
+        "attachments": "",
+        "equipmentCount": "1",
+        "equipmentType": {
+            "id": "200000"
+        },
+        "expectedEndDate": "4/3/2017",
+        "expectedHours": "71",
+        "expectedStartDate": "3/26/2017",
+        "firstOnRotationList": "",
+        "history": "",
+        "id": "600298",
+        "localArea": "#REF!",
+        "notes": "",
+        "project": "Roger Street Bypass",
+        "rentalRequestRotationList": "",
+        "status": "In progress"
+    },
+    {
+        "attachments": "",
+        "equipmentCount": "4",
+        "equipmentType": {
+            "id": "200084"
+        },
+        "expectedEndDate": "4/28/2017",
+        "expectedHours": "73",
+        "expectedStartDate": "3/23/2017",
+        "firstOnRotationList": "",
+        "history": "",
+        "id": "600299",
+        "localArea": "#REF!",
+        "notes": "",
+        "project": "Queens Bay Overpass",
+        "rentalRequestRotationList": "",
+        "status": "In progress"
+    },
+    {
+        "attachments": "",
+        "equipmentCount": "1",
+        "equipmentType": {
+            "id": "200061"
+        },
+        "expectedEndDate": "3/25/2017",
+        "expectedHours": "55",
+        "expectedStartDate": "3/19/2017",
+        "firstOnRotationList": "",
+        "history": "",
+        "id": "600300",
+        "localArea": "#REF!",
+        "notes": "",
+        "project": "Jade St Upgrade",
+        "rentalRequestRotationList": "",
+        "status": "In progress"
+    },
+    {
+        "attachments": "",
+        "equipmentCount": "1",
+        "equipmentType": {
+            "id": "200002"
+        },
+        "expectedEndDate": "3/27/2017",
+        "expectedHours": "85",
+        "expectedStartDate": "3/17/2017",
+        "firstOnRotationList": "",
+        "history": "",
+        "id": "600301",
+        "localArea": "#REF!",
+        "notes": "",
+        "project": "Blind Bay Road Building",
+        "rentalRequestRotationList": "",
+        "status": "In progress"
+    },
+    {
+        "attachments": "",
+        "equipmentCount": "1",
+        "equipmentType": {
+            "id": "200026"
+        },
+        "expectedEndDate": "4/10/2017",
+        "expectedHours": "89",
+        "expectedStartDate": "3/30/2017",
+        "firstOnRotationList": "",
+        "history": "",
+        "id": "600302",
+        "localArea": "#REF!",
+        "notes": "",
+        "project": "Old Spallumcheen Rd Bypass",
+        "rentalRequestRotationList": "",
+        "status": "In progress"
+    },
+    {
+        "attachments": "",
+        "equipmentCount": "5",
+        "equipmentType": {
+            "id": "200075"
+        },
+        "expectedEndDate": "4/25/2017",
+        "expectedHours": "29",
+        "expectedStartDate": "4/7/2017",
+        "firstOnRotationList": "",
+        "history": "",
+        "id": "600303",
+        "localArea": "#REF!",
+        "notes": "",
+        "project": "Roger Street Bypass",
+        "rentalRequestRotationList": "",
+        "status": "In progress"
+    },
+    {
+        "attachments": "",
+        "equipmentCount": "1",
+        "equipmentType": {
+            "id": "200035"
+        },
+        "expectedEndDate": "4/19/2017",
+        "expectedHours": "50",
+        "expectedStartDate": "4/13/2017",
+        "firstOnRotationList": "",
+        "history": "",
+        "id": "600304",
+        "localArea": "#REF!",
+        "notes": "",
+        "project": "Keith Road Upgrade",
+        "rentalRequestRotationList": "",
+        "status": "In progress"
+    },
+    {
+        "attachments": "",
+        "equipmentCount": "5",
+        "equipmentType": {
+            "id": "200002"
+        },
+        "expectedEndDate": "4/2/2017",
+        "expectedHours": "36",
+        "expectedStartDate": "3/11/2017",
+        "firstOnRotationList": "",
+        "history": "",
+        "id": "600305",
+        "localArea": "#REF!",
+        "notes": "",
+        "project": "Burdett Avenue Bridge Replacement",
+        "rentalRequestRotationList": "",
+        "status": "In progress"
+    },
+    {
+        "attachments": "",
+        "equipmentCount": "1",
+        "equipmentType": {
+            "id": "200061"
+        },
+        "expectedEndDate": "3/13/2017",
+        "expectedHours": "50",
+        "expectedStartDate": "3/7/2017",
+        "firstOnRotationList": "",
+        "history": "",
+        "id": "600306",
+        "localArea": "#REF!",
+        "notes": "",
+        "project": "Brew Creek Rd Upgrade",
+        "rentalRequestRotationList": "",
+        "status": "In progress"
+    },
+    {
+        "attachments": "",
+        "equipmentCount": "4",
+        "equipmentType": {
+            "id": "200059"
+        },
+        "expectedEndDate": "3/18/2017",
+        "expectedHours": "14",
+        "expectedStartDate": "3/11/2017",
+        "firstOnRotationList": "",
+        "history": "",
+        "id": "600307",
+        "localArea": "#REF!",
+        "notes": "",
+        "project": "Coldstream Avenue Expressway",
+        "rentalRequestRotationList": "",
+        "status": "In progress"
+    },
+    {
+        "attachments": "",
+        "equipmentCount": "1",
+        "equipmentType": {
+            "id": "200007"
+        },
+        "expectedEndDate": "4/5/2017",
+        "expectedHours": "69",
+        "expectedStartDate": "3/28/2017",
+        "firstOnRotationList": "",
+        "history": "",
+        "id": "600308",
+        "localArea": "#REF!",
+        "notes": "",
+        "project": "Roger Street Bridge Replacement",
+        "rentalRequestRotationList": "",
+        "status": "In progress"
+    },
+    {
+        "attachments": "",
+        "equipmentCount": "1",
+        "equipmentType": {
+            "id": "200000"
+        },
+        "expectedEndDate": "4/7/2017",
+        "expectedHours": "76",
+        "expectedStartDate": "3/29/2017",
+        "firstOnRotationList": "",
+        "history": "",
+        "id": "600309",
+        "localArea": "#REF!",
+        "notes": "",
+        "project": "Wellington Ave Express Lane",
+        "rentalRequestRotationList": "",
+        "status": "In progress"
+    },
+    {
+        "attachments": "",
+        "equipmentCount": "2",
+        "equipmentType": {
+            "id": "200068"
+        },
+        "expectedEndDate": "4/7/2017",
+        "expectedHours": "54",
+        "expectedStartDate": "3/25/2017",
+        "firstOnRotationList": "",
+        "history": "",
+        "id": "600310",
+        "localArea": "#REF!",
+        "notes": "",
+        "project": "Hardy Street Building",
+        "rentalRequestRotationList": "",
+        "status": "In progress"
+    },
+    {
+        "attachments": "",
+        "equipmentCount": "1",
+        "equipmentType": {
+            "id": "200049"
+        },
+        "expectedEndDate": "4/11/2017",
+        "expectedHours": "19",
+        "expectedStartDate": "4/9/2017",
+        "firstOnRotationList": "",
+        "history": "",
+        "id": "600311",
+        "localArea": "#REF!",
+        "notes": "",
+        "project": "Hastings Street HOV Lane",
+        "rentalRequestRotationList": "",
+        "status": "In progress"
+    },
+    {
+        "attachments": "",
+        "equipmentCount": "1",
+        "equipmentType": {
+            "id": "200068"
+        },
+        "expectedEndDate": "4/1/2017",
+        "expectedHours": "95",
+        "expectedStartDate": "3/21/2017",
+        "firstOnRotationList": "",
+        "history": "",
+        "id": "600312",
+        "localArea": "#REF!",
+        "notes": "",
+        "project": "Queens Bay Cloverleaf",
+        "rentalRequestRotationList": "",
+        "status": "In progress"
+    },
+    {
+        "attachments": "",
+        "equipmentCount": "4",
+        "equipmentType": {
+            "id": "200084"
+        },
+        "expectedEndDate": "5/9/2017",
+        "expectedHours": "62",
+        "expectedStartDate": "4/8/2017",
+        "firstOnRotationList": "",
+        "history": "",
+        "id": "600313",
+        "localArea": "#REF!",
+        "notes": "",
+        "project": "Hastings Street Upgrade",
+        "rentalRequestRotationList": "",
+        "status": "In progress"
+    },
+    {
+        "attachments": "",
+        "equipmentCount": "1",
+        "equipmentType": {
+            "id": "200062"
+        },
+        "expectedEndDate": "4/15/2017",
+        "expectedHours": "81",
+        "expectedStartDate": "4/5/2017",
+        "firstOnRotationList": "",
+        "history": "",
+        "id": "600314",
+        "localArea": "#REF!",
+        "notes": "",
+        "project": "Findlay Creek Road Extension",
+        "rentalRequestRotationList": "",
+        "status": "In progress"
+    },
+    {
+        "attachments": "",
+        "equipmentCount": "1",
+        "equipmentType": {
+            "id": "200035"
+        },
+        "expectedEndDate": "4/3/2017",
+        "expectedHours": "26",
+        "expectedStartDate": "3/31/2017",
+        "firstOnRotationList": "",
+        "history": "",
+        "id": "600315",
+        "localArea": "#REF!",
+        "notes": "",
+        "project": "Burdett Avenue Bridge",
+        "rentalRequestRotationList": "",
+        "status": "In progress"
+    },
+    {
+        "attachments": "",
+        "equipmentCount": "4",
+        "equipmentType": {
+            "id": "200057"
+        },
+        "expectedEndDate": "5/10/2017",
+        "expectedHours": "46",
+        "expectedStartDate": "4/17/2017",
+        "firstOnRotationList": "",
+        "history": "",
+        "id": "600316",
+        "localArea": "#REF!",
+        "notes": "",
+        "project": "Alaska Hwy Cloverleaf",
+        "rentalRequestRotationList": "",
+        "status": "In progress"
+    },
+    {
+        "attachments": "",
+        "equipmentCount": "1",
+        "equipmentType": {
+            "id": "200015"
+        },
+        "expectedEndDate": "4/9/2017",
+        "expectedHours": "75",
+        "expectedStartDate": "3/31/2017",
+        "firstOnRotationList": "",
+        "history": "",
+        "id": "600317",
+        "localArea": "#REF!",
+        "notes": "",
+        "project": "Burdett Avenue Upgrade",
+        "rentalRequestRotationList": "",
+        "status": "In progress"
+    },
+    {
+        "attachments": "",
+        "equipmentCount": "1",
+        "equipmentType": {
+            "id": "200002"
+        },
+        "expectedEndDate": "5/9/2017",
+        "expectedHours": "91",
+        "expectedStartDate": "4/28/2017",
+        "firstOnRotationList": "",
+        "history": "",
+        "id": "600318",
+        "localArea": "#REF!",
+        "notes": "",
+        "project": "James Street Expressway",
+        "rentalRequestRotationList": "",
+        "status": "In progress"
+    },
+    {
+        "attachments": "",
+        "equipmentCount": "2",
+        "equipmentType": {
+            "id": "200035"
+        },
+        "expectedEndDate": "3/29/2017",
+        "expectedHours": "76",
+        "expectedStartDate": "3/10/2017",
+        "firstOnRotationList": "",
+        "history": "",
+        "id": "600319",
+        "localArea": "#REF!",
+        "notes": "",
+        "project": "Tolmie St Cloverleaf",
+        "rentalRequestRotationList": "",
+        "status": "In progress"
+    },
+    {
+        "attachments": "",
+        "equipmentCount": "1",
+        "equipmentType": {
+            "id": "200062"
+        },
+        "expectedEndDate": "4/11/2017",
+        "expectedHours": "11",
+        "expectedStartDate": "4/10/2017",
+        "firstOnRotationList": "",
+        "history": "",
+        "id": "600320",
+        "localArea": "#REF!",
+        "notes": "",
+        "project": "Quayside Dr Express Lane",
+        "rentalRequestRotationList": "",
+        "status": "In progress"
+    },
+    {
+        "attachments": "",
+        "equipmentCount": "1",
+        "equipmentType": {
+            "id": "200000"
+        },
+        "expectedEndDate": "4/2/2017",
+        "expectedHours": "90",
+        "expectedStartDate": "3/22/2017",
+        "firstOnRotationList": "",
+        "history": "",
+        "id": "600321",
+        "localArea": "#REF!",
+        "notes": "",
+        "project": "Jade St Cloverleaf",
+        "rentalRequestRotationList": "",
+        "status": "In progress"
+    },
+    {
+        "attachments": "",
+        "equipmentCount": "1",
+        "equipmentType": {
+            "id": "200080"
+        },
+        "expectedEndDate": "4/18/2017",
+        "expectedHours": "71",
+        "expectedStartDate": "4/10/2017",
+        "firstOnRotationList": "",
+        "history": "",
+        "id": "600322",
+        "localArea": "#REF!",
+        "notes": "",
+        "project": "Alaska Hwy HOV Lane",
+        "rentalRequestRotationList": "",
+        "status": "In progress"
+    },
+    {
+        "attachments": "",
+        "equipmentCount": "1",
+        "equipmentType": {
+            "id": "200015"
+        },
+        "expectedEndDate": "3/24/2017",
+        "expectedHours": "74",
+        "expectedStartDate": "3/15/2017",
+        "firstOnRotationList": "",
+        "history": "",
+        "id": "600323",
+        "localArea": "#REF!",
+        "notes": "",
+        "project": "Sixth Street HOV Lane",
+        "rentalRequestRotationList": "",
+        "status": "In progress"
+    },
+    {
+        "attachments": "",
+        "equipmentCount": "5",
+        "equipmentType": {
+            "id": "200051"
+        },
+        "expectedEndDate": "4/28/2017",
+        "expectedHours": "9",
+        "expectedStartDate": "4/23/2017",
+        "firstOnRotationList": "",
+        "history": "",
+        "id": "600324",
+        "localArea": "#REF!",
+        "notes": "",
+        "project": "King George Hwy Upgrade",
+        "rentalRequestRotationList": "",
+        "status": "In progress"
+    },
+    {
+        "attachments": "",
+        "equipmentCount": "1",
+        "equipmentType": {
+            "id": "200000"
+        },
+        "expectedEndDate": "4/25/2017",
+        "expectedHours": "22",
+        "expectedStartDate": "4/23/2017",
+        "firstOnRotationList": "",
+        "history": "",
+        "id": "600325",
+        "localArea": "#REF!",
+        "notes": "",
+        "project": "Burdett Avenue Overpass",
+        "rentalRequestRotationList": "",
+        "status": "In progress"
+    },
+    {
+        "attachments": "",
+        "equipmentCount": "1",
+        "equipmentType": {
+            "id": "200050"
+        },
+        "expectedEndDate": "3/25/2017",
+        "expectedHours": "15",
+        "expectedStartDate": "3/24/2017",
+        "firstOnRotationList": "",
+        "history": "",
+        "id": "600326",
+        "localArea": "#REF!",
+        "notes": "",
+        "project": "Stum Lake Road Extension",
+        "rentalRequestRotationList": "",
+        "status": "In progress"
+    },
+    {
+        "attachments": "",
+        "equipmentCount": "1",
+        "equipmentType": {
+            "id": "200027"
+        },
+        "expectedEndDate": "4/7/2017",
+        "expectedHours": "76",
+        "expectedStartDate": "3/29/2017",
+        "firstOnRotationList": "",
+        "history": "",
+        "id": "600327",
+        "localArea": "#REF!",
+        "notes": "",
+        "project": "James Street Building",
+        "rentalRequestRotationList": "",
+        "status": "In progress"
+    },
+    {
+        "attachments": "",
+        "equipmentCount": "1",
+        "equipmentType": {
+            "id": "200084"
+        },
+        "expectedEndDate": "4/8/2017",
+        "expectedHours": "40",
+        "expectedStartDate": "4/3/2017",
+        "firstOnRotationList": "",
+        "history": "",
+        "id": "600328",
+        "localArea": "#REF!",
+        "notes": "",
+        "project": "Tolmie St Extension",
+        "rentalRequestRotationList": "",
+        "status": "In progress"
+    }
+]
