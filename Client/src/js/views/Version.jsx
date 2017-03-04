@@ -2,15 +2,18 @@ import React from 'react';
 
 import { connect } from 'react-redux';
 
-import { PageHeader, Well, Row, Button } from 'react-bootstrap';
+import { PageHeader, Well, Row, Col } from 'react-bootstrap';
+import { Button, ButtonGroup, Glyphicon } from 'react-bootstrap';
+
 
 import $ from 'jquery';
 
 import * as Api from '../api';
+import * as Constant from '../constants';
 
-import ColField from '../components/ColField.jsx';
-import ColLabel from '../components/ColLabel.jsx';
+import ColDisplay from '../components/ColDisplay.jsx';
 import Spinner from '../components/Spinner.jsx';
+import Unimplemented from '../components/Unimplemented.jsx';
 
 import { formatDateTime } from '../utils/date';
 import { request } from '../utils/http';
@@ -64,9 +67,34 @@ var Version = React.createClass({
     }
   },
 
+  email() {
+
+  },
+
+  print() {
+
+  },
+
   render: function() {
     return <div id="version">
-      <PageHeader>Version</PageHeader>
+      <PageHeader>
+        <Row id="version-header">
+          <Col md={11}>Version</Col>
+          <Col md={1}>
+            <div id="version-buttons">
+              <ButtonGroup>
+                <Unimplemented>
+                  <Button onClick={ this.email }><Glyphicon glyph="envelope" title="E-mail" /></Button>
+                </Unimplemented>
+                <Unimplemented>
+                  <Button onClick={ this.print }><Glyphicon glyph="print" title="Print" /></Button>
+                </Unimplemented>
+              </ButtonGroup>
+            </div>
+          </Col>
+        </Row>
+      </PageHeader>
+
 
       {(() => {
         if (this.state.loading) { return <div style={{ textAlign: 'center' }}><Spinner/></div>; }
@@ -88,64 +116,55 @@ var Version = React.createClass({
           <Well>
             <h3>Client</h3>
             <Row>
-              <ColLabel md={2}>Name</ColLabel>
-              <ColField md={10}>MOTI School Bus Inspection Tracking System</ColField>
+              <ColDisplay md={12} labelProps={{ md: 2 }} label="Name">MOTI Hired Equipment Tracking System</ColDisplay>
             </Row>
             <Row>
-              <ColLabel md={2}>Build Time</ColLabel>
-              <ColField md={10}>{ formatDateTime(this.state.buildTime) }</ColField>
+              <ColDisplay md={12} labelProps={{ md: 2 }} label="Build Time">{ formatDateTime(this.state.buildTime, Constant.DATE_TIME_READABLE) }</ColDisplay>
             </Row>
 {/*
             <Row>
-              <ColLabel md={2}>Version</ColLabel>
-              <ColField md={10}>{ this.state.version }</ColField>
+              <ColDisplay md={12} labelProps={{ md: 2 }} label="Version">{ this.state.version }</ColDisplay>
             </Row>
 */}
             <Row>
-              <ColLabel md={2}>Git Commit</ColLabel>
-              <ColField md={10}>{ this.state.commit }</ColField>
+              <ColDisplay md={12} labelProps={{ md: 2 }} label="Git Commit">{ this.state.commit }</ColDisplay>
+            </Row>
+            <Row>
+              <ColDisplay md={12} labelProps={{ md: 2 }} label="User Agent">{ navigator.userAgent }</ColDisplay>
             </Row>
           </Well>
           <Well>
             <h3>Application</h3>
             <Row>
-              <ColLabel md={2}>Name</ColLabel>
-              <ColField md={10}>{ applicationVersion.title }</ColField>
+              <ColDisplay md={12} labelProps={{ md: 2 }} label="Name">{ applicationVersion.title }</ColDisplay>
             </Row>
             <Row>
-              <ColLabel md={2}>Build Time</ColLabel>
-              <ColField md={10}>{ formatDateTime(applicationVersion.fileCreationTime) }</ColField>
+              <ColDisplay md={12} labelProps={{ md: 2 }} label="Build Time">{ formatDateTime(applicationVersion.fileCreationTime, Constant.DATE_TIME_READABLE) }</ColDisplay>
             </Row>
             <Row>
-              <ColLabel md={2}>Version</ColLabel>
-              <ColField md={10}>{ applicationVersion.informationalVersion }</ColField>
+              <ColDisplay md={12} labelProps={{ md: 2 }} label="Version">{ applicationVersion.informationalVersion }</ColDisplay>
             </Row>
             <Row>
-              <ColLabel md={2}>Git Commit</ColLabel>
-              <ColField md={10}>{ applicationVersion.commit }</ColField>
+              <ColDisplay md={12} labelProps={{ md: 2 }} label="Git Commit">{ applicationVersion.commit }</ColDisplay>
             </Row>
           </Well>
           <Well>
             <h3>Database</h3>
             <Row>
-              <ColLabel md={2}>Name</ColLabel>
-              <ColField md={10}>{ databaseVersion.database }</ColField>
+              <ColDisplay md={12} labelProps={{ md: 2 }} label="Name">{ databaseVersion.database }</ColDisplay>
             </Row>
             <Row>
-              <ColLabel md={2}>Server</ColLabel>
-              <ColField md={10}>{ databaseVersion.server }</ColField>
+              <ColDisplay md={12} labelProps={{ md: 2 }} label="Server">{ databaseVersion.server }</ColDisplay>
             </Row>
             <Row>
-              <ColLabel md={2}>Version</ColLabel>
-              <ColField md={10}>{ databaseVersion.version }</ColField>
+              <ColDisplay md={12} labelProps={{ md: 2 }} label="Version">{ databaseVersion.version }</ColDisplay>
             </Row>
             <Row>
-              <ColLabel md={2}>Last Migration</ColLabel>
-              <ColField md={10}>{ lastMigration }</ColField>
+              <ColDisplay md={12} labelProps={{ md: 2 }} label="Last Migration">{ lastMigration }</ColDisplay>
             </Row>
           </Well>
           <Button onClick={ this.showRaw }>Show Raw Versions</Button>
-          <Well className={ this.state.showRawSection ? '' : 'hide' }>
+          <Well style={{ marginTop: '20px' }} className={ this.state.showRawSection ? '' : 'hide' }>
             <div>{ JSON.stringify(this.props.version) }</div>
           </Well>
         </div>;

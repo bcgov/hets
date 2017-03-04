@@ -1,6 +1,8 @@
-import Promise from 'bluebird';
-import store from '../store';
 import _ from 'lodash';
+import Promise from 'bluebird';
+
+import * as Action from '../actionTypes';
+import store from '../store';
 
 const ROOT_API_PREFIX = location.pathname === '/' ? '' : location.pathname.split('/').slice(0, -1).join('/');
 
@@ -9,7 +11,7 @@ var numRequestsInFlight = 0;
 function incrementRequests() {
   numRequestsInFlight += 1;
   if(numRequestsInFlight === 1) {
-    store.dispatch({ type: 'REQUESTS_BEGIN' });
+    store.dispatch({ type: Action.REQUESTS_BEGIN });
   }
 }
 
@@ -17,7 +19,7 @@ function decrementRequests() {
   numRequestsInFlight -= 1;
   if(numRequestsInFlight <= 0) {
     numRequestsInFlight = 0; // sanity check;
-    store.dispatch({ type: 'REQUESTS_END' });
+    store.dispatch({ type: Action.REQUESTS_END });
   }
 }
 
@@ -77,7 +79,6 @@ export function request(path, options) {
     xhr.addEventListener('load', function() {
       if(xhr.status >= 400) {
         var err = new HttpError(`API ${method} ${path} failed (${xhr.status}) "${xhr.responseText}"`, method, path, xhr.status, xhr.responseText);
-        store.dispatch({ type: 'REQUEST_ERROR', error: err });
         reject(err);
       } else {
         resolve(xhr);
@@ -128,7 +129,7 @@ export function jsonRequest(path, options) {
     if (err instanceof HttpError) {
       var apiError = new ApiError(`API ${err.method} ${err.path} failed (${err.status})`, err.method, err.path, err.status, err.body);
 
-      store.dispatch({ type: 'REQUESTS_ERROR', error: apiError });
+      store.dispatch({ type: Action.REQUESTS_ERROR, error: apiError });
 
       throw apiError;
     } else {
