@@ -51,7 +51,23 @@ namespace HETSAPI.Models
 
         private static List<Permission> GetActivePermissions(this User user)
         {
-            return user.GetActiveRoles().SelectMany(x => x.RolePermissions).Select(x => x.Permission).Distinct().ToList();
+            List<Permission> result = null;
+
+            var activeRoles = user.GetActiveRoles();
+
+            if (activeRoles != null)
+            {                
+                var rolePermissions = activeRoles
+                        .Where (x => x != null && x.RolePermissions != null)
+                        .SelectMany(x => x.RolePermissions);
+
+                if (rolePermissions != null)
+                {
+                    result = rolePermissions.Select(x => x.Permission).Distinct().ToList();
+                }
+            }
+
+            return result;            
         }
 
         private static List<Role> GetActiveRoles(this User user)
@@ -62,8 +78,9 @@ namespace HETSAPI.Models
                 return roles;
 
             roles = user.UserRoles.Where(
-                x => x.EffectiveDate <= DateTimeOffset.Now 
-                && (x.ExpiryDate == null || x.ExpiryDate > DateTimeOffset.Now))
+                x => x.Role != null
+                && x.EffectiveDate <= DateTime.UtcNow 
+                && (x.ExpiryDate == null || x.ExpiryDate > DateTime.UtcNow))
                 .Select(x => x.Role).ToList();
 
             return roles;

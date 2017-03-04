@@ -39,8 +39,8 @@ var TopNav = React.createClass({
             <LinkContainer to={{ pathname: '/equipment' }}>
               <NavItem eventKey={3} href="/equipment">Equipment</NavItem>
             </LinkContainer>
-            <LinkContainer to={{ pathname: '/requests' }}>
-              <NavItem eventKey={4} href="/requests">Requests</NavItem>
+            <LinkContainer to={{ pathname: '/rentalrequests' }}>
+              <NavItem eventKey={4} href="/rentalrequests">Requests</NavItem>
             </LinkContainer>
             <LinkContainer to={{ pathname: '/projects' }}>
               <NavItem eventKey={6} href="/projects">Projects</NavItem>

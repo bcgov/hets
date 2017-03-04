@@ -35,9 +35,9 @@ namespace HETSAPI.Seeders
             foreach (Region Region in seedUsers)
             {
                 context.UpdateSeedRegionInfo(Region);
+                context.SaveChanges();
             }
-            AddInitialRegions(context);
-            context.SaveChanges();
+            AddInitialRegions(context);            
         }
 
         private void AddInitialRegions(DbAppContext context)

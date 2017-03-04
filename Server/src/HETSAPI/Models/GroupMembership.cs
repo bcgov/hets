@@ -19,6 +19,7 @@ using System.Runtime.Serialization;
 using Newtonsoft.Json;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.ComponentModel.DataAnnotations;
+using HETSAPI.Models;
 
 namespace HETSAPI.Models
 {
@@ -27,7 +28,7 @@ namespace HETSAPI.Models
     /// </summary>
         [MetaDataExtension (Description = "The users associated with a given group that has been defined in the application.")]
 
-    public partial class GroupMembership : AuditableEntity,  IEquatable<GroupMembership>
+    public partial class GroupMembership : AuditableEntity, IEquatable<GroupMembership>
     {
         /// <summary>
         /// Default constructor, required by entity framework
@@ -42,8 +43,8 @@ namespace HETSAPI.Models
         /// </summary>
         /// <param name="Id">A system-generated unique identifier for a GroupMembership (required).</param>
         /// <param name="Active">A flag indicating the User is active in the group. Set false to remove the user from the designated group. (required).</param>
-        /// <param name="Group">Group.</param>
-        /// <param name="User">User.</param>
+        /// <param name="Group">A foreign key reference to the system-generated unique identifier for a Group.</param>
+        /// <param name="User">A foreign key reference to the system-generated unique identifier for a User.</param>
         public GroupMembership(int Id, bool Active, Group Group = null, User User = null)
         {   
             this.Id = Id;
@@ -68,26 +69,34 @@ namespace HETSAPI.Models
         public bool Active { get; set; }
         
         /// <summary>
-        /// Gets or Sets Group
+        /// A foreign key reference to the system-generated unique identifier for a Group
         /// </summary>
+        /// <value>A foreign key reference to the system-generated unique identifier for a Group</value>
+        [MetaDataExtension (Description = "A foreign key reference to the system-generated unique identifier for a Group")]
         public Group Group { get; set; }
         
         /// <summary>
         /// Foreign key for Group 
-        /// </summary>       
+        /// </summary>   
         [ForeignKey("Group")]
-        public int? GroupRefId { get; set; }
+		[JsonIgnore]
+		[MetaDataExtension (Description = "A foreign key reference to the system-generated unique identifier for a Group")]
+        public int? GroupId { get; set; }
         
         /// <summary>
-        /// Gets or Sets User
+        /// A foreign key reference to the system-generated unique identifier for a User
         /// </summary>
+        /// <value>A foreign key reference to the system-generated unique identifier for a User</value>
+        [MetaDataExtension (Description = "A foreign key reference to the system-generated unique identifier for a User")]
         public User User { get; set; }
         
         /// <summary>
         /// Foreign key for User 
-        /// </summary>       
+        /// </summary>   
         [ForeignKey("User")]
-        public int? UserRefId { get; set; }
+		[JsonIgnore]
+		[MetaDataExtension (Description = "A foreign key reference to the system-generated unique identifier for a User")]
+        public int? UserId { get; set; }
         
         /// <summary>
         /// Returns the string presentation of the object

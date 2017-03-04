@@ -19,6 +19,7 @@ using System.Runtime.Serialization;
 using Newtonsoft.Json;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.ComponentModel.DataAnnotations;
+using HETSAPI.Models;
 
 namespace HETSAPI.Models
 {
@@ -27,7 +28,7 @@ namespace HETSAPI.Models
     /// </summary>
         [MetaDataExtension (Description = "The Ministry of Transportion and Infrastructure DISTRICT")]
 
-    public partial class District : AuditableEntity,  IEquatable<District>
+    public partial class District : AuditableEntity, IEquatable<District>
     {
         /// <summary>
         /// Default constructor, required by entity framework
@@ -94,9 +95,11 @@ namespace HETSAPI.Models
         
         /// <summary>
         /// Foreign key for Region 
-        /// </summary>       
+        /// </summary>   
         [ForeignKey("Region")]
-        public int? RegionRefId { get; set; }
+		[JsonIgnore]
+		[MetaDataExtension (Description = "The region in which the District is found.")]
+        public int? RegionId { get; set; }
         
         /// <summary>
         /// The DATE the business information came into effect. - NOT CURRENTLY ENFORCED IN THIS SYSTEM

@@ -19,6 +19,7 @@ using System.Runtime.Serialization;
 using Newtonsoft.Json;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.ComponentModel.DataAnnotations;
+using HETSAPI.Models;
 
 namespace HETSAPI.Models
 {
@@ -27,7 +28,7 @@ namespace HETSAPI.Models
     /// </summary>
         [MetaDataExtension (Description = "An Equipment Attachment associated with a piece of Equipment.")]
 
-    public partial class EquipmentAttachment : AuditableEntity,  IEquatable<EquipmentAttachment>
+    public partial class EquipmentAttachment : AuditableEntity, IEquatable<EquipmentAttachment>
     {
         /// <summary>
         /// Default constructor, required by entity framework
@@ -76,9 +77,11 @@ namespace HETSAPI.Models
         
         /// <summary>
         /// Foreign key for Equipment 
-        /// </summary>       
+        /// </summary>   
         [ForeignKey("Equipment")]
-        public int? EquipmentRefId { get; set; }
+		[JsonIgnore]
+		
+        public int? EquipmentId { get; set; }
         
         /// <summary>
         /// A description of the equipment attachment if the Equipment Attachment Type is insufficient.

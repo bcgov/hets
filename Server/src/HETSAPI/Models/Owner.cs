@@ -19,6 +19,7 @@ using System.Runtime.Serialization;
 using Newtonsoft.Json;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.ComponentModel.DataAnnotations;
+using HETSAPI.Models;
 
 namespace HETSAPI.Models
 {
@@ -27,7 +28,7 @@ namespace HETSAPI.Models
     /// </summary>
         [MetaDataExtension (Description = "The person or company to which a piece of construction equipment belongs.")]
 
-    public partial class Owner : AuditableEntity,  IEquatable<Owner>
+    public partial class Owner : AuditableEntity, IEquatable<Owner>
     {
         /// <summary>
         /// Default constructor, required by entity framework
@@ -146,9 +147,11 @@ namespace HETSAPI.Models
         
         /// <summary>
         /// Foreign key for PrimaryContact 
-        /// </summary>       
+        /// </summary>   
         [ForeignKey("PrimaryContact")]
-        public int? PrimaryContactRefId { get; set; }
+		[JsonIgnore]
+		[MetaDataExtension (Description = "Link to the designated Primary Contact.")]
+        public int? PrimaryContactId { get; set; }
         
         /// <summary>
         /// Gets or Sets LocalArea
@@ -157,9 +160,11 @@ namespace HETSAPI.Models
         
         /// <summary>
         /// Foreign key for LocalArea 
-        /// </summary>       
+        /// </summary>   
         [ForeignKey("LocalArea")]
-        public int? LocalAreaRefId { get; set; }
+		[JsonIgnore]
+		
+        public int? LocalAreaId { get; set; }
         
         /// <summary>
         /// True if the owner is contracted by MOTI to handle Maintenance activities in the area - e.g. provided services in address unscheduled issues on the roads in the area.

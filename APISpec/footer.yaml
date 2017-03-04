@@ -170,7 +170,61 @@
         description: true if the equipment is working
       lastTimeRecordDateThisYear:
         type: string
-        format: date-time      
+        format: date-time 
+  ProjectSearchResultViewModel:
+    type: object
+    x-codegen-viewmodel: true
+    required:
+      - id
+    properties:
+      id:
+        format: int32
+        type: integer
+        x-type-options:
+          min: 1
+          max: 1000
+      localArea:
+        $ref: '#/definitions/LocalArea'
+      name:
+        type: string
+      primaryContact:
+        $ref: '#/definitions/Contact'
+      hires:
+        format: int32
+        type: integer
+        description: count of RentalAgreement.status is Active for the project
+      requests:
+        format: int32
+        type: integer
+        description: count of RentalRequest.status is Active for the project
+      status:
+        type: string
+        description: Project status        
+  RentalRequestSearchResultViewModel:
+    type: object
+    x-codegen-viewmodel: true
+    required:
+      - id
+    properties:
+      id:
+        format: int32
+        type: integer
+        x-type-options:
+          min: 1
+          max: 1000
+      localArea:
+        $ref: '#/definitions/LocalArea'
+      equipmentCount:
+        type: integer
+      equipmentTypeName:
+        type: string
+      projectName:
+        type: string
+      primaryContact:
+        $ref: '#/definitions/Contact'
+      status:
+        type: string
+        description: Project status        
   UserViewModel:
     type: object
     x-codegen-viewmodel: true
@@ -212,6 +266,12 @@
     type: object
     x-codegen-viewmodel: true
     properties:
+      id:
+        format: int32
+        type: integer
+        x-type-options:
+          min: 1
+          max: 1000
       givenName:
         type: string
         x-chance-type: name
@@ -284,6 +344,12 @@
       expiryDate:
         type: string
         format: date-time
+      userId:
+        format: int32
+        type: integer
+        x-type-options:
+          min: 1
+          max: 1000
       roleId:
         format: int32
         type: integer

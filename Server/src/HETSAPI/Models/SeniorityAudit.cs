@@ -19,6 +19,7 @@ using System.Runtime.Serialization;
 using Newtonsoft.Json;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.ComponentModel.DataAnnotations;
+using HETSAPI.Models;
 
 namespace HETSAPI.Models
 {
@@ -27,7 +28,7 @@ namespace HETSAPI.Models
     /// </summary>
         [MetaDataExtension (Description = "The history of all changes to the seniority of a piece of equipment. The current seniority information (underlying data elements and the calculation result) is in the equipment record. Every time that information changes, the old values are copied to here, with a start date, end date range. In the normal case, an annual update triggers the old values being copied here and the new values put into the equipment record. If a user manually changes the values, the existing values are copied into a record added here.")]
 
-    public partial class SeniorityAudit : AuditableEntity,  IEquatable<SeniorityAudit>
+    public partial class SeniorityAudit : AuditableEntity, IEquatable<SeniorityAudit>
     {
         /// <summary>
         /// Default constructor, required by entity framework
@@ -43,10 +44,10 @@ namespace HETSAPI.Models
         /// <param name="Id">A system-generated unique identifier for a SeniorityAudit (required).</param>
         /// <param name="StartDate">The effective date that the Seniority data in this record went into effect..</param>
         /// <param name="EndDate">The effective date at which the Seniority data in this record ceased to be in effect..</param>
-        /// <param name="LocalArea">LocalArea.</param>
-        /// <param name="Equipment">Equipment.</param>
+        /// <param name="LocalArea">A foreign key reference to the system-generated unique identifier for a Local Area.</param>
+        /// <param name="Equipment">A foreign key reference to the system-generated unique identifier for an Equipment.</param>
         /// <param name="BlockNumber">The block number for the piece of equipment as calculated by the Seniority Algorthm for this equipment type in the local area. As currently defined by the business - 1, 2 or Open.</param>
-        /// <param name="Owner">Owner.</param>
+        /// <param name="Owner">A foreign key reference to the system-generated unique identifier for an Owner.</param>
         /// <param name="OwnerOrganizationName">The name of the organization of the owner from the Owner Record, captured at the time this record was created..</param>
         /// <param name="Seniority">The seniority calculation result for this piece of equipment. The calculation is based on the &amp;quot;numYears&amp;quot; of service + average hours of service over the last three fiscal years - as stored in the related fields (serviceHoursLastYear, serviceHoursTwoYearsAgo serviceHoursThreeYearsAgo)..</param>
         /// <param name="ServiceHoursCurrentYearToDate">Sum of hours in the current fiscal year&amp;#39;s time cards captured at the time this record was created..</param>
@@ -92,26 +93,34 @@ namespace HETSAPI.Models
         public DateTime? EndDate { get; set; }
         
         /// <summary>
-        /// Gets or Sets LocalArea
+        /// A foreign key reference to the system-generated unique identifier for a Local Area
         /// </summary>
+        /// <value>A foreign key reference to the system-generated unique identifier for a Local Area</value>
+        [MetaDataExtension (Description = "A foreign key reference to the system-generated unique identifier for a Local Area")]
         public LocalArea LocalArea { get; set; }
         
         /// <summary>
         /// Foreign key for LocalArea 
-        /// </summary>       
+        /// </summary>   
         [ForeignKey("LocalArea")]
-        public int? LocalAreaRefId { get; set; }
+		[JsonIgnore]
+		[MetaDataExtension (Description = "A foreign key reference to the system-generated unique identifier for a Local Area")]
+        public int? LocalAreaId { get; set; }
         
         /// <summary>
-        /// Gets or Sets Equipment
+        /// A foreign key reference to the system-generated unique identifier for an Equipment
         /// </summary>
+        /// <value>A foreign key reference to the system-generated unique identifier for an Equipment</value>
+        [MetaDataExtension (Description = "A foreign key reference to the system-generated unique identifier for an Equipment")]
         public Equipment Equipment { get; set; }
         
         /// <summary>
         /// Foreign key for Equipment 
-        /// </summary>       
+        /// </summary>   
         [ForeignKey("Equipment")]
-        public int? EquipmentRefId { get; set; }
+		[JsonIgnore]
+		[MetaDataExtension (Description = "A foreign key reference to the system-generated unique identifier for an Equipment")]
+        public int? EquipmentId { get; set; }
         
         /// <summary>
         /// The block number for the piece of equipment as calculated by the Seniority Algorthm for this equipment type in the local area. As currently defined by the business - 1, 2 or Open
@@ -121,15 +130,19 @@ namespace HETSAPI.Models
         public float? BlockNumber { get; set; }
         
         /// <summary>
-        /// Gets or Sets Owner
+        /// A foreign key reference to the system-generated unique identifier for an Owner
         /// </summary>
+        /// <value>A foreign key reference to the system-generated unique identifier for an Owner</value>
+        [MetaDataExtension (Description = "A foreign key reference to the system-generated unique identifier for an Owner")]
         public Owner Owner { get; set; }
         
         /// <summary>
         /// Foreign key for Owner 
-        /// </summary>       
+        /// </summary>   
         [ForeignKey("Owner")]
-        public int? OwnerRefId { get; set; }
+		[JsonIgnore]
+		[MetaDataExtension (Description = "A foreign key reference to the system-generated unique identifier for an Owner")]
+        public int? OwnerId { get; set; }
         
         /// <summary>
         /// The name of the organization of the owner from the Owner Record, captured at the time this record was created.

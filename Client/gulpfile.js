@@ -15,6 +15,9 @@ const argv = require('minimist')(process.argv.slice(2));
 const PORT = argv.port || 9058;
 const HOST = argv.host || 'localhost';
 
+const API_HOST = argv.apihost || 'server-tran-hets-dev.pathfinder.gov.bc.ca';
+const API_PORT = argv.apiport || process.env.BC_GOV_HETS_API_PORT || 80;
+
 // set variable via $ gulp --production
 var IS_PRODUCTION = !!argv.production;
 process.env.NODE_ENV = IS_PRODUCTION ? 'production' : 'development';
@@ -195,7 +198,7 @@ gulp.task('watch', function() {
 
 /* Dev Server Task */
 
-var server = $.liveServer(['server/main.js', `--port=${PORT}`, `--host=${HOST}`], {}, false);
+var server = $.liveServer(['server/main.js', `--port=${PORT}`, `--host=${HOST}`, `--apiport=${API_PORT}`, `--apihost=${API_HOST}`], {}, false);
 
 gulp.task('server:dev', function(done) {
   server.start();

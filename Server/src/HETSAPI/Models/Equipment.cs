@@ -19,6 +19,7 @@ using System.Runtime.Serialization;
 using Newtonsoft.Json;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.ComponentModel.DataAnnotations;
+using HETSAPI.Models;
 
 namespace HETSAPI.Models
 {
@@ -27,7 +28,7 @@ namespace HETSAPI.Models
     /// </summary>
         [MetaDataExtension (Description = "A piece of equipment in the HETS system. Each piece of equipment is of a specific equipment type, owned by an Owner, and is within a Local Area.")]
 
-    public partial class Equipment : AuditableEntity,  IEquatable<Equipment>
+    public partial class Equipment : AuditableEntity, IEquatable<Equipment>
     {
         /// <summary>
         /// Default constructor, required by entity framework
@@ -41,9 +42,9 @@ namespace HETSAPI.Models
         /// Initializes a new instance of the <see cref="Equipment" /> class.
         /// </summary>
         /// <param name="Id">A system-generated unique identifier for a Equipment (required).</param>
-        /// <param name="LocalArea">LocalArea.</param>
-        /// <param name="EquipmentType">EquipmentType.</param>
-        /// <param name="Owner">Owner.</param>
+        /// <param name="LocalArea">A foreign key reference to the system-generated unique identifier for a Local Area.</param>
+        /// <param name="EquipmentType">A foreign key reference to the system-generated unique identifier for a Equipment Type.</param>
+        /// <param name="Owner">A foreign key reference to the system-generated unique identifier for an Owner.</param>
         /// <param name="EquipmentCode">A human-visible unique code for the piece of equipment, referenced for convenience by the system users - HETS Clerks and Equipment Owners. Generated at record creation time based on the unique Owner prefix (e.g. EDW) and a zero-filled unique number - resulting in a code like EDW-0083..</param>
         /// <param name="Status">The current status of the equipment in a UI-controlled string. Initial values are Pending, Approved and Archived, but other values may be added..</param>
         /// <param name="ReceivedDate">The date the piece of equipment was first received and recorded in HETS..</param>
@@ -134,37 +135,49 @@ namespace HETSAPI.Models
         public int Id { get; set; }
         
         /// <summary>
-        /// Gets or Sets LocalArea
+        /// A foreign key reference to the system-generated unique identifier for a Local Area
         /// </summary>
+        /// <value>A foreign key reference to the system-generated unique identifier for a Local Area</value>
+        [MetaDataExtension (Description = "A foreign key reference to the system-generated unique identifier for a Local Area")]
         public LocalArea LocalArea { get; set; }
         
         /// <summary>
         /// Foreign key for LocalArea 
-        /// </summary>       
+        /// </summary>   
         [ForeignKey("LocalArea")]
-        public int? LocalAreaRefId { get; set; }
+		[JsonIgnore]
+		[MetaDataExtension (Description = "A foreign key reference to the system-generated unique identifier for a Local Area")]
+        public int? LocalAreaId { get; set; }
         
         /// <summary>
-        /// Gets or Sets EquipmentType
+        /// A foreign key reference to the system-generated unique identifier for a Equipment Type
         /// </summary>
+        /// <value>A foreign key reference to the system-generated unique identifier for a Equipment Type</value>
+        [MetaDataExtension (Description = "A foreign key reference to the system-generated unique identifier for a Equipment Type")]
         public EquipmentType EquipmentType { get; set; }
         
         /// <summary>
         /// Foreign key for EquipmentType 
-        /// </summary>       
+        /// </summary>   
         [ForeignKey("EquipmentType")]
-        public int? EquipmentTypeRefId { get; set; }
+		[JsonIgnore]
+		[MetaDataExtension (Description = "A foreign key reference to the system-generated unique identifier for a Equipment Type")]
+        public int? EquipmentTypeId { get; set; }
         
         /// <summary>
-        /// Gets or Sets Owner
+        /// A foreign key reference to the system-generated unique identifier for an Owner
         /// </summary>
+        /// <value>A foreign key reference to the system-generated unique identifier for an Owner</value>
+        [MetaDataExtension (Description = "A foreign key reference to the system-generated unique identifier for an Owner")]
         public Owner Owner { get; set; }
         
         /// <summary>
         /// Foreign key for Owner 
-        /// </summary>       
+        /// </summary>   
         [ForeignKey("Owner")]
-        public int? OwnerRefId { get; set; }
+		[JsonIgnore]
+		[MetaDataExtension (Description = "A foreign key reference to the system-generated unique identifier for an Owner")]
+        public int? OwnerId { get; set; }
         
         /// <summary>
         /// A human-visible unique code for the piece of equipment, referenced for convenience by the system users - HETS Clerks and Equipment Owners. Generated at record creation time based on the unique Owner prefix (e.g. EDW) and a zero-filled unique number - resulting in a code like EDW-0083.
@@ -422,9 +435,11 @@ namespace HETSAPI.Models
         
         /// <summary>
         /// Foreign key for DumpTruck 
-        /// </summary>       
+        /// </summary>   
         [ForeignKey("DumpTruck")]
-        public int? DumpTruckRefId { get; set; }
+		[JsonIgnore]
+		[MetaDataExtension (Description = "A link to a dump truck set if this piece of equipment is an equipment type flagged as a dump truck.")]
+        public int? DumpTruckId { get; set; }
         
         /// <summary>
         /// Gets or Sets EquipmentAttachments

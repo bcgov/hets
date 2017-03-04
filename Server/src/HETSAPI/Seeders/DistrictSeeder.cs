@@ -43,9 +43,10 @@ namespace HETSAPI.Seeders
             foreach (District district in seedUsers)
             {
                 context.UpdateSeedDistrictInfo(district);
+                context.SaveChanges();
             }
             AddInitialDistricts(context);
-            context.SaveChanges();
+            
         }
 
         private void AddInitialDistricts(DbAppContext context)

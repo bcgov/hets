@@ -42,10 +42,11 @@ namespace HETSAPI.Seeders
             foreach (var user in seedUsers)
             {
                 context.UpdateSeedUserInfo(user);
+                context.SaveChanges();
             }
 
             AddInitialUsers(context);
-            context.SaveChanges();
+           
         }
 
         private void AddInitialUsers(DbAppContext context)

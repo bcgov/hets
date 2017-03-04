@@ -9,6 +9,49 @@ namespace HETSAPI.Mappings
 {
     public static class MappingExtensions
     {
+
+        /// <summary>
+        /// Convert User to CurrentUserViewModel
+        /// </summary>
+        /// <param name="model"></param>
+        /// <returns></returns>
+        public static CurrentUserViewModel ToCurrentUserViewModel(this User model)
+        {
+            var dto = new CurrentUserViewModel();
+            if (model != null)
+            {
+                dto.Email = model.Email;
+                dto.GivenName = model.GivenName;
+                dto.Surname = model.Surname;
+                dto.Id = model.Id;
+                dto.District = model.District;
+                dto.GroupMemberships = model.GroupMemberships;
+                dto.UserRoles = model.UserRoles;
+            }
+            return dto;
+        }
+
+        public static RentalRequestSearchResultViewModel ToViewModel(this RentalRequest model)
+        {
+            var dto = new RentalRequestSearchResultViewModel();
+            if (model != null)
+            {
+                dto.EquipmentTypeName = model.EquipmentType.Name;
+                dto.Id = model.Id;
+                dto.LocalArea = model.LocalArea;
+                dto.PrimaryContact = model.Project.PrimaryContact;
+                dto.ProjectName = model.Project.Name;
+                dto.Status = model.Status;
+                dto.EquipmentCount = model.EquipmentCount;
+                dto.ProjectId = model.Project.Id;                
+                dto.ExpectedEndDate = model.ExpectedEndDate;
+                dto.ExpectedStartDate = model.ExpectedStartDate;
+            }
+            return dto;
+        }
+
+        // ********* COMMON VIEW MODEL MAPPINGS
+
         /// <summary>
         /// Convert Attachment to AttachmentViewModel
         /// </summary>
@@ -44,6 +87,7 @@ namespace HETSAPI.Mappings
             }
             return result;
         }
+
         public static UserViewModel ToViewModel(this User model)
         {
             var dto = new UserViewModel();
@@ -105,7 +149,7 @@ namespace HETSAPI.Mappings
             dto.Id = model.Id;
             dto.Name = model.Name;
             dto.PrimaryContact = model.PrimaryContact;
-            dto.ServiceArea = model.ServiceArea;
+            dto.LocalArea = model.LocalArea;
             return dto;         
         }
 

@@ -19,6 +19,7 @@ using System.Runtime.Serialization;
 using Newtonsoft.Json;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.ComponentModel.DataAnnotations;
+using HETSAPI.Models;
 
 namespace HETSAPI.Models
 {
@@ -27,7 +28,7 @@ namespace HETSAPI.Models
     /// </summary>
         [MetaDataExtension (Description = "A join table that provides allows each user to have any number of Roles in the system.  At login time the user is given the sum of the permissions of the roles assigned to that user.")]
 
-    public partial class UserRole : AuditableEntity,  IEquatable<UserRole>
+    public partial class UserRole : AuditableEntity, IEquatable<UserRole>
     {
         /// <summary>
         /// Default constructor, required by entity framework
@@ -43,7 +44,7 @@ namespace HETSAPI.Models
         /// <param name="Id">A system-generated unique identifier for a UserRole (required).</param>
         /// <param name="EffectiveDate">The date on which the user was given the related role. (required).</param>
         /// <param name="ExpiryDate">The date on which a role previously assigned to a user was removed from that user..</param>
-        /// <param name="Role">Role.</param>
+        /// <param name="Role">A foreign key reference to the system-generated unique identifier for a Role.</param>
         public UserRole(int Id, DateTime EffectiveDate, DateTime? ExpiryDate = null, Role Role = null)
         {   
             this.Id = Id;
@@ -75,15 +76,19 @@ namespace HETSAPI.Models
         public DateTime? ExpiryDate { get; set; }
         
         /// <summary>
-        /// Gets or Sets Role
+        /// A foreign key reference to the system-generated unique identifier for a Role
         /// </summary>
+        /// <value>A foreign key reference to the system-generated unique identifier for a Role</value>
+        [MetaDataExtension (Description = "A foreign key reference to the system-generated unique identifier for a Role")]
         public Role Role { get; set; }
         
         /// <summary>
         /// Foreign key for Role 
-        /// </summary>       
+        /// </summary>   
         [ForeignKey("Role")]
-        public int? RoleRefId { get; set; }
+		[JsonIgnore]
+		[MetaDataExtension (Description = "A foreign key reference to the system-generated unique identifier for a Role")]
+        public int? RoleId { get; set; }
         
         /// <summary>
         /// Returns the string presentation of the object

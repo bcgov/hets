@@ -19,6 +19,7 @@ using System.Runtime.Serialization;
 using Newtonsoft.Json;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.ComponentModel.DataAnnotations;
+using HETSAPI.Models;
 
 namespace HETSAPI.Models
 {
@@ -27,7 +28,7 @@ namespace HETSAPI.Models
     /// </summary>
         [MetaDataExtension (Description = "The rate associated with an element of a rental agreement.")]
 
-    public partial class RentalAgreementRate : AuditableEntity,  IEquatable<RentalAgreementRate>
+    public partial class RentalAgreementRate : AuditableEntity, IEquatable<RentalAgreementRate>
     {
         /// <summary>
         /// Default constructor, required by entity framework
@@ -41,7 +42,7 @@ namespace HETSAPI.Models
         /// Initializes a new instance of the <see cref="RentalAgreementRate" /> class.
         /// </summary>
         /// <param name="Id">A system-generated unique identifier for a RentalAgreementRate (required).</param>
-        /// <param name="RentalAgreement">RentalAgreement.</param>
+        /// <param name="RentalAgreement">A foreign key reference to the system-generated unique identifier for a Rental Agreement.</param>
         /// <param name="ComponentName">Name of the component for the Rental Agreement for which the attached rates apply..</param>
         /// <param name="IsAttachment">True if this rate is for an attachment to the piece of equipment..</param>
         /// <param name="Rate">The dollar rate associated with this component of the rental agreement..</param>
@@ -70,15 +71,19 @@ namespace HETSAPI.Models
         public int Id { get; set; }
         
         /// <summary>
-        /// Gets or Sets RentalAgreement
+        /// A foreign key reference to the system-generated unique identifier for a Rental Agreement
         /// </summary>
+        /// <value>A foreign key reference to the system-generated unique identifier for a Rental Agreement</value>
+        [MetaDataExtension (Description = "A foreign key reference to the system-generated unique identifier for a Rental Agreement")]
         public RentalAgreement RentalAgreement { get; set; }
         
         /// <summary>
         /// Foreign key for RentalAgreement 
-        /// </summary>       
+        /// </summary>   
         [ForeignKey("RentalAgreement")]
-        public int? RentalAgreementRefId { get; set; }
+		[JsonIgnore]
+		[MetaDataExtension (Description = "A foreign key reference to the system-generated unique identifier for a Rental Agreement")]
+        public int? RentalAgreementId { get; set; }
         
         /// <summary>
         /// Name of the component for the Rental Agreement for which the attached rates apply.

@@ -19,6 +19,7 @@ using System.Runtime.Serialization;
 using Newtonsoft.Json;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.ComponentModel.DataAnnotations;
+using HETSAPI.Models;
 
 namespace HETSAPI.Models
 {
@@ -27,7 +28,7 @@ namespace HETSAPI.Models
     /// </summary>
         [MetaDataExtension (Description = "Information about the hiring of a specific piece of equipment to satisfy part or all of a request from a project. TABLE DEFINITION IN PROGRESS - MORE COLUMNS TO BE ADDED")]
 
-    public partial class RentalAgreement : AuditableEntity,  IEquatable<RentalAgreement>
+    public partial class RentalAgreement : AuditableEntity, IEquatable<RentalAgreement>
     {
         /// <summary>
         /// Default constructor, required by entity framework
@@ -43,8 +44,8 @@ namespace HETSAPI.Models
         /// <param name="Id">A system-generated unique identifier for a RentalAgreement (required).</param>
         /// <param name="Number">A system-generated unique rental agreement number in a format defined by the business as suitable for the business and client to see and use..</param>
         /// <param name="Status">The current status of the Rental Agreement, such as Active or Complete.</param>
-        /// <param name="Equipment">Equipment.</param>
-        /// <param name="Project">Project.</param>
+        /// <param name="Equipment">A foreign key reference to the system-generated unique identifier for an Equipment.</param>
+        /// <param name="Project">A foreign key reference to the system-generated unique identifier for a Project.</param>
         /// <param name="RentalAgreementRates">RentalAgreementRates.</param>
         /// <param name="RentalAgreementConditions">RentalAgreementConditions.</param>
         /// <param name="TimeRecords">TimeRecords.</param>
@@ -100,26 +101,34 @@ namespace HETSAPI.Models
         public string Status { get; set; }
         
         /// <summary>
-        /// Gets or Sets Equipment
+        /// A foreign key reference to the system-generated unique identifier for an Equipment
         /// </summary>
+        /// <value>A foreign key reference to the system-generated unique identifier for an Equipment</value>
+        [MetaDataExtension (Description = "A foreign key reference to the system-generated unique identifier for an Equipment")]
         public Equipment Equipment { get; set; }
         
         /// <summary>
         /// Foreign key for Equipment 
-        /// </summary>       
+        /// </summary>   
         [ForeignKey("Equipment")]
-        public int? EquipmentRefId { get; set; }
+		[JsonIgnore]
+		[MetaDataExtension (Description = "A foreign key reference to the system-generated unique identifier for an Equipment")]
+        public int? EquipmentId { get; set; }
         
         /// <summary>
-        /// Gets or Sets Project
+        /// A foreign key reference to the system-generated unique identifier for a Project
         /// </summary>
+        /// <value>A foreign key reference to the system-generated unique identifier for a Project</value>
+        [MetaDataExtension (Description = "A foreign key reference to the system-generated unique identifier for a Project")]
         public Project Project { get; set; }
         
         /// <summary>
         /// Foreign key for Project 
-        /// </summary>       
+        /// </summary>   
         [ForeignKey("Project")]
-        public int? ProjectRefId { get; set; }
+		[JsonIgnore]
+		[MetaDataExtension (Description = "A foreign key reference to the system-generated unique identifier for a Project")]
+        public int? ProjectId { get; set; }
         
         /// <summary>
         /// Gets or Sets RentalAgreementRates

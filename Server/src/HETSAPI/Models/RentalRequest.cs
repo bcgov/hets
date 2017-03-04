@@ -19,6 +19,7 @@ using System.Runtime.Serialization;
 using Newtonsoft.Json;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.ComponentModel.DataAnnotations;
+using HETSAPI.Models;
 
 namespace HETSAPI.Models
 {
@@ -27,7 +28,7 @@ namespace HETSAPI.Models
     /// </summary>
         [MetaDataExtension (Description = "A request from a Project for one or more of a type of equipment from a specific Local Area.")]
 
-    public partial class RentalRequest : AuditableEntity,  IEquatable<RentalRequest>
+    public partial class RentalRequest : AuditableEntity, IEquatable<RentalRequest>
     {
         /// <summary>
         /// Default constructor, required by entity framework
@@ -42,9 +43,9 @@ namespace HETSAPI.Models
         /// </summary>
         /// <param name="Id">A system-generated unique identifier for a Request (required).</param>
         /// <param name="Project">Project.</param>
-        /// <param name="LocalArea">LocalArea.</param>
+        /// <param name="LocalArea">A foreign key reference to the system-generated unique identifier for a Local Area.</param>
         /// <param name="Status">The status of the Rental Request - whether it in progress, completed or was cancelled..</param>
-        /// <param name="EquipmentType">EquipmentType.</param>
+        /// <param name="EquipmentType">A foreign key reference to the system-generated unique identifier for an Equipment Type.</param>
         /// <param name="EquipmentCount">The number of pieces of the equipment type wanted for hire as part of this request..</param>
         /// <param name="ExpectedHours">The expected number of rental hours for each piece equipment hired against this request, as provided by the Project Manager making the request..</param>
         /// <param name="ExpectedStartDate">The expected start date of each piece of equipment hired against this request, as provided by the Project Manager making the request..</param>
@@ -86,20 +87,26 @@ namespace HETSAPI.Models
         
         /// <summary>
         /// Foreign key for Project 
-        /// </summary>       
+        /// </summary>   
         [ForeignKey("Project")]
-        public int? ProjectRefId { get; set; }
+		[JsonIgnore]
+		
+        public int? ProjectId { get; set; }
         
         /// <summary>
-        /// Gets or Sets LocalArea
+        /// A foreign key reference to the system-generated unique identifier for a Local Area
         /// </summary>
+        /// <value>A foreign key reference to the system-generated unique identifier for a Local Area</value>
+        [MetaDataExtension (Description = "A foreign key reference to the system-generated unique identifier for a Local Area")]
         public LocalArea LocalArea { get; set; }
         
         /// <summary>
         /// Foreign key for LocalArea 
-        /// </summary>       
+        /// </summary>   
         [ForeignKey("LocalArea")]
-        public int? LocalAreaRefId { get; set; }
+		[JsonIgnore]
+		[MetaDataExtension (Description = "A foreign key reference to the system-generated unique identifier for a Local Area")]
+        public int? LocalAreaId { get; set; }
         
         /// <summary>
         /// The status of the Rental Request - whether it in progress, completed or was cancelled.
@@ -111,15 +118,19 @@ namespace HETSAPI.Models
         public string Status { get; set; }
         
         /// <summary>
-        /// Gets or Sets EquipmentType
+        /// A foreign key reference to the system-generated unique identifier for an Equipment Type
         /// </summary>
+        /// <value>A foreign key reference to the system-generated unique identifier for an Equipment Type</value>
+        [MetaDataExtension (Description = "A foreign key reference to the system-generated unique identifier for an Equipment Type")]
         public EquipmentType EquipmentType { get; set; }
         
         /// <summary>
         /// Foreign key for EquipmentType 
-        /// </summary>       
+        /// </summary>   
         [ForeignKey("EquipmentType")]
-        public int? EquipmentTypeRefId { get; set; }
+		[JsonIgnore]
+		[MetaDataExtension (Description = "A foreign key reference to the system-generated unique identifier for an Equipment Type")]
+        public int? EquipmentTypeId { get; set; }
         
         /// <summary>
         /// The number of pieces of the equipment type wanted for hire as part of this request.
@@ -158,9 +169,11 @@ namespace HETSAPI.Models
         
         /// <summary>
         /// Foreign key for FirstOnRotationList 
-        /// </summary>       
+        /// </summary>   
         [ForeignKey("FirstOnRotationList")]
-        public int? FirstOnRotationListRefId { get; set; }
+		[JsonIgnore]
+		[MetaDataExtension (Description = "The first piece of equipment on the rotation list at the time of the creation of the request.")]
+        public int? FirstOnRotationListId { get; set; }
         
         /// <summary>
         /// Gets or Sets Notes

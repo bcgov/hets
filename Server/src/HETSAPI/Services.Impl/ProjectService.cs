@@ -31,6 +31,7 @@ namespace HETSAPI.Services.Impl
     public class ProjectService : IProjectService
     {
         private readonly DbAppContext _context;
+        
 
         /// <summary>
         /// Create a service and set the database context
@@ -38,6 +39,28 @@ namespace HETSAPI.Services.Impl
         public ProjectService(DbAppContext context)
         {
             _context = context;
+        }
+
+        private void AdjustRecord(Project item)
+        {
+            if (item != null)
+            {
+                // Adjust the record to allow it to be updated / inserted
+                if (item.LocalArea != null)
+                {
+                    int localarea_id = item.LocalArea.Id;
+                    bool localarea_exists = _context.LocalAreas.Any(a => a.Id == localarea_id);
+                    if (localarea_exists)
+                    {
+                        LocalArea localarea = _context.LocalAreas.First(a => a.Id == localarea_id);
+                        item.LocalArea = localarea;
+                    }
+                    else
+                    {
+                        item.LocalArea = null;
+                    }
+                }
+            }
         }
 
         /// <summary>
@@ -57,7 +80,15 @@ namespace HETSAPI.Services.Impl
         /// <response code="200">OK</response>
         public virtual IActionResult ProjectsGetAsync()
         {
-            var result = _context.Projects.ToList();
+            var result = _context.Projects
+                .Include(x => x.Attachments)
+                .Include(x => x.Contacts)
+                .Include(x => x.History)
+                .Include(x => x.LocalArea.ServiceArea.District.Region)
+                .Include(x => x.Notes)
+                .Include(x => x.PrimaryContact)
+                .Include(x => x.RentalRequests)                
+                .ToList();
             return new ObjectResult(result);
         }
 
@@ -99,7 +130,15 @@ namespace HETSAPI.Services.Impl
             var exists = _context.Projects.Any(a => a.Id == id);
             if (exists)
             {
-                var result = _context.Projects.First(a => a.Id == id);
+                var result = _context.Projects
+                    .Include(x => x.Attachments)
+                    .Include(x => x.Contacts)
+                    .Include(x => x.History)
+                    .Include(x => x.LocalArea.ServiceArea.District.Region)
+                    .Include(x => x.Notes)
+                    .Include(x => x.PrimaryContact)
+                    .Include(x => x.RentalRequests)
+                    .First(a => a.Id == id);
                 return new ObjectResult(result);
             }
             else
@@ -118,6 +157,7 @@ namespace HETSAPI.Services.Impl
         /// <response code="404">Project not found</response>
         public virtual IActionResult ProjectsIdPutAsync(int id, Project item)
         {
+            AdjustRecord(item);
             var exists = _context.Projects.Any(a => a.Id == id);
             if (exists && id == item.Id)
             {
@@ -140,44 +180,53 @@ namespace HETSAPI.Services.Impl
         /// <response code="201">Project created</response>
         public virtual IActionResult ProjectsPostAsync(Project item)
         {
-            var exists = _context.Projects.Any(a => a.Id == item.Id);
-            if (exists)
+            if (item != null)
             {
-                _context.Projects.Update(item);                
+                AdjustRecord(item);
+
+                var exists = _context.Projects.Any(a => a.Id == item.Id);
+                if (exists)
+                {
+                    _context.Projects.Update(item);
+                }
+                else
+                {
+                    // record not found
+                    _context.Projects.Add(item);
+                }
+                // Save the changes
+                _context.SaveChanges();
+                return new ObjectResult(item);
             }
             else
             {
-                // record not found
-                _context.Projects.Add(item);
+                return new StatusCodeResult(400);
             }
-            // Save the changes
-            _context.SaveChanges();
-            return new ObjectResult(item);
         }
 
         /// <summary>
         /// Searches Projects
         /// </summary>
         /// <remarks>Used for the project search page.</remarks>
-        /// <param name="serviceareas">Service Areas (array of id numbers)</param>
+        /// <param name="localareas">Local areas (array of id numbers)</param>
         /// <param name="project">name or partial name for a Project</param>
         /// <param name="hasRequests">if true then only include Projects with active Requests</param>
         /// <param name="hasHires">if true then only include Projects with active Rental Agreements</param>
         /// <response code="200">OK</response>
-        public virtual IActionResult ProjectsSearchGetAsync(int?[] serviceareas, string project, bool? hasRequests, bool? hasHires)
+        public virtual IActionResult ProjectsSearchGetAsync(int?[] localareas, string project, bool? hasRequests, bool? hasHires)
         {
             var data = _context.Projects
-                    .Include(x => x.ServiceArea.District.Region)
+                    .Include(x => x.LocalArea.ServiceArea.District.Region)
                     .Include(x => x.PrimaryContact)
                     .Select(x => x);
 
-            if (serviceareas != null)
+            if (localareas != null)
             {
-                foreach (int? servicearea in serviceareas)
+                foreach (int? localarea in localareas)
                 {
-                    if (servicearea != null)
+                    if (localarea != null)
                     {
-                        data = data.Where(x => x.ServiceArea.Id == servicearea);
+                        data = data.Where(x => x.LocalArea.Id == localarea);
                     }
                 }
             }
@@ -201,20 +250,25 @@ namespace HETSAPI.Services.Impl
             foreach (var item in data)
             {
                 ProjectSearchResultViewModel newItem = item.ToViewModel();
+                result.Add(item.ToViewModel());
+            }
+
+            // second pass to do calculated fields.            
+            foreach (ProjectSearchResultViewModel projectSearchResultViewModel in result)
+            {
                 // calculated fields.
-                newItem.Requests = _context.RentalRequests
+                projectSearchResultViewModel.Requests = _context.RentalRequests
                     .Include(x => x.Project)
-                    .Where(x => x.Project.Id == item.Id)
+                    .Where(x => x.Project.Id == projectSearchResultViewModel.Id)
                     .Count();
 
                 // TODO filter on status once RentalAgreements has a status field.
-                newItem.Hires = _context.RentalAgreements
+                projectSearchResultViewModel.Hires = _context.RentalAgreements
                     .Include(x => x.Project)
-                    .Where(x => x.Project.Id == item.Id)
+                    .Where(x => x.Project.Id == projectSearchResultViewModel.Id)
                     .Count();
-                
-                result.Add(newItem);               
             }
+                           
             return new ObjectResult(result);
         }
     }

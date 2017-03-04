@@ -19,6 +19,7 @@ using System.Runtime.Serialization;
 using Newtonsoft.Json;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.ComponentModel.DataAnnotations;
+using HETSAPI.Models;
 
 namespace HETSAPI.Models
 {
@@ -27,7 +28,7 @@ namespace HETSAPI.Models
     /// </summary>
         [MetaDataExtension (Description = "An eligible piece of equipment for a request and a tracking of the hire offer and response process related to a request for that piece of equipment. Includes a link from the equipment to a Rental Agreement if the equipment was hired to satisfy a part of the request.")]
 
-    public partial class RentalRequestRotationList : AuditableEntity,  IEquatable<RentalRequestRotationList>
+    public partial class RentalRequestRotationList : AuditableEntity, IEquatable<RentalRequestRotationList>
     {
         /// <summary>
         /// Default constructor, required by entity framework
@@ -84,9 +85,11 @@ namespace HETSAPI.Models
         
         /// <summary>
         /// Foreign key for RentalRequest 
-        /// </summary>       
+        /// </summary>   
         [ForeignKey("RentalRequest")]
-        public int? RentalRequestRefId { get; set; }
+		[JsonIgnore]
+		
+        public int? RentalRequestId { get; set; }
         
         /// <summary>
         /// The sort order of the piece of equipment on the rotaton list at the time the request was created. This is the order the equipment will be offered the available work.
@@ -102,9 +105,11 @@ namespace HETSAPI.Models
         
         /// <summary>
         /// Foreign key for Equipment 
-        /// </summary>       
+        /// </summary>   
         [ForeignKey("Equipment")]
-        public int? EquipmentRefId { get; set; }
+		[JsonIgnore]
+		
+        public int? EquipmentId { get; set; }
         
         /// <summary>
         /// The rental agreement (if any) created for an accepted hire offer.
@@ -115,9 +120,11 @@ namespace HETSAPI.Models
         
         /// <summary>
         /// Foreign key for RentalAgreement 
-        /// </summary>       
+        /// </summary>   
         [ForeignKey("RentalAgreement")]
-        public int? RentalAgreementRefId { get; set; }
+		[JsonIgnore]
+		[MetaDataExtension (Description = "The rental agreement (if any) created for an accepted hire offer.")]
+        public int? RentalAgreementId { get; set; }
         
         /// <summary>
         /// True if the HETS Clerk designated the hire of this equipment as being a Forced Hire. A Force Hire implies that the usual seniority rules for hiring are bypassed because of special circumstances related to the hire - e.g. a the hire requires an attachment only one piece of equipment has.

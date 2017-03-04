@@ -1,7 +1,7 @@
 /*
- * REST API Documentation for the MOTI School Bus Application
+ * REST API Documentation for the MOTI Hired Equipment Tracking System (HETS) Application
  *
- * The School Bus application tracks that inspections are performed in a timely fashion. For each school bus the application tracks information about the bus (including data from ICBC, NSC, etc.), it's past and next inspection dates and results, contacts, and the inspector responsible for next inspecting the bus.
+ * The Hired Equipment Program is for owners/operators who have a dump truck, bulldozer, backhoe or  other piece of equipment they want to hire out to the transportation ministry for day labour and  emergency projects.  The Hired Equipment Program distributes available work to local equipment owners. The program is  based on seniority and is designed to deliver work to registered users fairly and efficiently  through the development of local area call-out lists. 
  *
  * OpenAPI spec version: v1
  * 
@@ -17,6 +17,9 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Runtime.Serialization;
 using Newtonsoft.Json;
+using System.ComponentModel.DataAnnotations.Schema;
+using System.ComponentModel.DataAnnotations;
+using HETSAPI.Models;
 
 namespace HETSAPI.ViewModels
 {
@@ -40,13 +43,11 @@ namespace HETSAPI.ViewModels
         /// <param name="Description">Description (required).</param>
         /// <param name="Id">Id.</param>
         public GroupViewModel(string Name, string Description, int? Id = null)
-        {
-            
+        {   
             this.Name = Name;
-            
             this.Description = Description;
+
             this.Id = Id;
-            
         }
 
         /// <summary>
@@ -115,20 +116,20 @@ namespace HETSAPI.ViewModels
             if (ReferenceEquals(null, other)) { return false; }
             if (ReferenceEquals(this, other)) { return true; }
 
-            return 
+            return                 
                 (
                     this.Name == other.Name ||
                     this.Name != null &&
                     this.Name.Equals(other.Name)
-                ) && 
+                ) &&                 
                 (
                     this.Description == other.Description ||
                     this.Description != null &&
                     this.Description.Equals(other.Description)
-                ) && 
+                ) &&                 
                 (
                     this.Id == other.Id ||
-                    
+                    this.Id != null &&
                     this.Id.Equals(other.Id)
                 );
         }
@@ -147,26 +148,39 @@ namespace HETSAPI.ViewModels
                 if (this.Name != null)
                 {
                     hash = hash * 59 + this.Name.GetHashCode();
-                }
-                if (this.Description != null)
+                }                
+                                if (this.Description != null)
                 {
                     hash = hash * 59 + this.Description.GetHashCode();
-                }
-                if (this.Id != null)
+                }                
+                                if (this.Id != null)
                 {
                     hash = hash * 59 + this.Id.GetHashCode();
-                }
+                }                
+                
                 return hash;
             }
         }
 
         #region Operators
-
+        
+        /// <summary>
+        /// Equals
+        /// </summary>
+        /// <param name="left"></param>
+        /// <param name="right"></param>
+        /// <returns></returns>
         public static bool operator ==(GroupViewModel left, GroupViewModel right)
         {
             return Equals(left, right);
         }
 
+        /// <summary>
+        /// Not Equals
+        /// </summary>
+        /// <param name="left"></param>
+        /// <param name="right"></param>
+        /// <returns></returns>
         public static bool operator !=(GroupViewModel left, GroupViewModel right)
         {
             return !Equals(left, right);

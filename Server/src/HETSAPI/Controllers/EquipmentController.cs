@@ -159,7 +159,7 @@ namespace HETSAPI.Controllers
         /// <remarks>Used for the equipment search page.</remarks>
         /// <param name="localareas">Local Areas (array of id numbers)</param>
         /// <param name="types">Equipment Types (array of id numbers)</param>
-        /// <param name="attachments">Equipment Attachments (array of id numbers)</param>
+        /// <param name="equipmentAttachment">Searches equipmentAttachment type</param>
         /// <param name="owner"></param>
         /// <param name="status">Status</param>
         /// <param name="hired">Hired</param>
@@ -169,9 +169,9 @@ namespace HETSAPI.Controllers
         [Route("/api/equipment/search")]
         [SwaggerOperation("EquipmentSearchGet")]
         [SwaggerResponse(200, type: typeof(List<EquipmentViewModel>))]
-        public virtual IActionResult EquipmentSearchGet([FromQuery]int?[] localareas, [FromQuery]int?[] types, [FromQuery]int?[] attachments, [FromQuery]int? owner, [FromQuery]string status, [FromQuery]bool? hired, [FromQuery]DateTime? notverifiedsincedate)
+        public virtual IActionResult EquipmentSearchGet([FromQuery]int?[] localareas, [FromQuery]int?[] types, [FromQuery]string equipmentAttachment, [FromQuery]int? owner, [FromQuery]string status, [FromQuery]bool? hired, [FromQuery]DateTime? notverifiedsincedate)
         {
-            return this._service.EquipmentSearchGetAsync(localareas, types, attachments, owner, status, hired, notverifiedsincedate);
+            return this._service.EquipmentSearchGetAsync(localareas, types, equipmentAttachment, owner, status, hired, notverifiedsincedate);
         }
     }
 }

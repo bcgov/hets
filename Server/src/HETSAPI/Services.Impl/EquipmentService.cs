@@ -597,10 +597,15 @@ namespace HETSAPI.Services.Impl
             foreach (var item in data)
             {
                 EquipmentViewModel newItem = item.ToViewModel();
-                CalculateViewModel(newItem);
                 result.Add(newItem);
             }
             
+            // second pass to do calculated fields.            
+            foreach (var equipmentViewModel in result)
+            {
+                CalculateViewModel(equipmentViewModel);                
+            }            
+
             return new ObjectResult(result);
 
         }

@@ -19,6 +19,7 @@ using System.Runtime.Serialization;
 using Newtonsoft.Json;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.ComponentModel.DataAnnotations;
+using HETSAPI.Models;
 
 namespace HETSAPI.Models
 {
@@ -27,7 +28,7 @@ namespace HETSAPI.Models
     /// </summary>
         [MetaDataExtension (Description = "A condition about the rental agreement to be displayed on the Rental Agreement.")]
 
-    public partial class RentalAgreementCondition : AuditableEntity,  IEquatable<RentalAgreementCondition>
+    public partial class RentalAgreementCondition : AuditableEntity, IEquatable<RentalAgreementCondition>
     {
         /// <summary>
         /// Default constructor, required by entity framework
@@ -41,7 +42,7 @@ namespace HETSAPI.Models
         /// Initializes a new instance of the <see cref="RentalAgreementCondition" /> class.
         /// </summary>
         /// <param name="Id">A system-generated unique identifier for a RentalAgreementCondition.</param>
-        /// <param name="RentalAgreement">RentalAgreement.</param>
+        /// <param name="RentalAgreement">A foreign key reference to the system-generated unique identifier for a Rental Agreement.</param>
         /// <param name="ConditionName">The name of the condition to be placed onto the Rental Agreement..</param>
         /// <param name="Comment">A comment about the condition to be applied to the Rental Agreement..</param>
         public RentalAgreementCondition(int? Id = null, RentalAgreement RentalAgreement = null, string ConditionName = null, string Comment = null)
@@ -59,15 +60,19 @@ namespace HETSAPI.Models
         public int? Id { get; set; }
         
         /// <summary>
-        /// Gets or Sets RentalAgreement
+        /// A foreign key reference to the system-generated unique identifier for a Rental Agreement
         /// </summary>
+        /// <value>A foreign key reference to the system-generated unique identifier for a Rental Agreement</value>
+        [MetaDataExtension (Description = "A foreign key reference to the system-generated unique identifier for a Rental Agreement")]
         public RentalAgreement RentalAgreement { get; set; }
         
         /// <summary>
         /// Foreign key for RentalAgreement 
-        /// </summary>       
+        /// </summary>   
         [ForeignKey("RentalAgreement")]
-        public int? RentalAgreementRefId { get; set; }
+		[JsonIgnore]
+		[MetaDataExtension (Description = "A foreign key reference to the system-generated unique identifier for a Rental Agreement")]
+        public int? RentalAgreementId { get; set; }
         
         /// <summary>
         /// The name of the condition to be placed onto the Rental Agreement.

@@ -146,7 +146,7 @@ namespace HETSAPI
                     context.Database.Migrate();
                     log.LogInformation("The database migration complete.");
 
-                    log.LogInformation("Updating the databse documentation ...");
+                    log.LogInformation("Updating the database documentation ...");
                     DbCommentsUpdater<DbAppContext> updater = new DbCommentsUpdater<DbAppContext>((DbAppContext)context);
                     updater.UpdateDatabaseDescriptions();
                     log.LogInformation("The database documentation has been updated.");
