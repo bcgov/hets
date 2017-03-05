@@ -5732,12 +5732,24 @@ definitions:
       askNextBlock1:
         $ref: '#/definitions/Equipment'
         description: The id of the next piece of Block 1 Equipment to be asked for a Rental Request. If null, start from the first piece of equipment in Block 1.
+      askNextBlock1Seniority:
+        type: number
+        format: float
+        description: The seniority score of the piece of equipment that is the next to be asked in Block 1.
       askNextBlock2:
         $ref: '#/definitions/Equipment'
         description: The id of the next piece of Block 2 Equipment to be asked for a Rental Request. If null, start from the first piece of equipment in Block 2.
+      askNextBlock2Seniority:
+        type: number
+        format: float
+        description: The seniority score of the piece of equipment that is the next to be asked in Block 1.
       askNextBlockOpen:
         $ref: '#/definitions/Equipment'
         description: The id of the next piece of Block Open Equipment to be asked for a Rental Request. If null, start from the first piece of equipment in Block Open.
+      askNextBlock2Seniority:
+        type: number
+        format: float
+        description: The seniority score of the piece of equipment that is the next to be asked in Block 1.
   EquipmentAttachment:
     type: object
     description: An Equipment Attachment associated with a piece of Equipment.
@@ -5798,10 +5810,6 @@ definitions:
         type: number
         format: float
         description: The seniority calculation result for this piece of equipment. The calculation is based on the &quot;numYears&quot; of service + average hours of service over the last three fiscal years - as stored in the related fields (serviceHoursLastYear, serviceHoursTwoYearsAgo serviceHoursThreeYearsAgo).
-      serviceHoursCurrentYearToDate:
-        type: number
-        format: float
-        description: Sum of hours in the current fiscal year&#39;s time cards captured at the time this record was created.
       serviceHoursLastYear:
         type: number
         format: float

@@ -353,7 +353,7 @@
             "table": null
         },
         {
-            "Description": null,
+            "Description": "A foreign key reference to the system-generated unique identifier for a Local Area",
             "Length": null,
             "Name": "localArea",
             "RefDef": "LocalArea",
@@ -397,7 +397,7 @@
             "table": null
         },
         {
-            "Description": null,
+            "Description": "A foreign key reference to the system-generated unique identifier for an Equipment Type",
             "Length": null,
             "Name": "equipmentType",
             "RefDef": "EquipmentType",
@@ -667,7 +667,7 @@
             "table": null
         },
         {
-            "Description": null,
+            "Description": "A foreign key reference to the system-generated unique identifier for a Rental Request",
             "Length": null,
             "Name": "rentalRequest",
             "RefDef": "RentalRequest",
@@ -1113,7 +1113,7 @@
             "table": null
         },
         {
-            "Description": null,
+            "Description": "A foreign key reference to the system-generated unique identifier for an Equipment",
             "Length": null,
             "Name": "equipment",
             "RefDef": "Equipment",
@@ -1135,7 +1135,7 @@
             "table": null
         },
         {
-            "Description": null,
+            "Description": "A foreign key reference to the system-generated unique identifier for a Project",
             "Length": null,
             "Name": "project",
             "RefDef": "Project",
@@ -1421,7 +1421,7 @@
             "table": null
         },
         {
-            "Description": null,
+            "Description": "A foreign key reference to the system-generated unique identifier for a Rental Agreement",
             "Length": null,
             "Name": "rentalAgreement",
             "RefDef": "RentalAgreement",
@@ -1633,7 +1633,7 @@
             "table": null
         },
         {
-            "Description": null,
+            "Description": "A foreign key reference to the system-generated unique identifier for a Rental Agreement",
             "Length": null,
             "Name": "rentalAgreement",
             "RefDef": "RentalAgreement",
@@ -1731,7 +1731,7 @@
             "table": null
         },
         {
-            "Description": null,
+            "Description": "A foreign key reference to the system-generated unique identifier for a Rental Agreement",
             "Length": null,
             "Name": "rentalAgreement",
             "RefDef": "RentalAgreement",
@@ -1907,7 +1907,7 @@
             "table": null
         },
         {
-            "Description": null,
+            "Description": "A foreign key reference to the system-generated unique identifier for a Local Area",
             "Length": null,
             "Name": "localArea",
             "RefDef": "LocalArea",
@@ -1929,7 +1929,7 @@
             "table": null
         },
         {
-            "Description": null,
+            "Description": "A foreign key reference to the system-generated unique identifier for a Equipment Type",
             "Length": null,
             "Name": "equipmentType",
             "RefDef": "EquipmentType",
@@ -1951,7 +1951,7 @@
             "table": null
         },
         {
-            "Description": null,
+            "Description": "A foreign key reference to the system-generated unique identifier for an Owner",
             "Length": null,
             "Name": "owner",
             "RefDef": "Owner",
@@ -3799,7 +3799,7 @@
             "table": null
         },
         {
-            "Description": null,
+            "Description": "A foreign key reference to the system-generated unique identifier for an Equipment Type",
             "Length": null,
             "Name": "equipmentType",
             "RefDef": "EquipmentType",
@@ -3843,6 +3843,28 @@
             "table": null
         },
         {
+            "Description": "The seniority score of the piece of equipment that is the next to be asked in Block 1.",
+            "Length": null,
+            "Name": "askNextBlock1Seniority",
+            "RefDef": null,
+            "Required": [
+                {
+                    "req": "id"
+                }
+            ],
+            "Unique": null,
+            "binary": null,
+            "boolean": null,
+            "datetime": null,
+            "float": "float",
+            "id": null,
+            "integer": null,
+            "links": null,
+            "ref": null,
+            "string": null,
+            "table": null
+        },
+        {
             "Description": "The id of the next piece of Block 2 Equipment to be asked for a Rental Request. If null, start from the first piece of equipment in Block 2.",
             "Length": null,
             "Name": "askNextBlock2",
@@ -3865,6 +3887,28 @@
             "table": null
         },
         {
+            "Description": "The seniority score of the piece of equipment that is the next to be asked in Block 1.",
+            "Length": null,
+            "Name": "askNextBlock2Seniority",
+            "RefDef": null,
+            "Required": [
+                {
+                    "req": "id"
+                }
+            ],
+            "Unique": null,
+            "binary": null,
+            "boolean": null,
+            "datetime": null,
+            "float": "float",
+            "id": null,
+            "integer": null,
+            "links": null,
+            "ref": null,
+            "string": null,
+            "table": null
+        },
+        {
             "Description": "The id of the next piece of Block Open Equipment to be asked for a Rental Request. If null, start from the first piece of equipment in Block Open.",
             "Length": null,
             "Name": "askNextBlockOpen",
@@ -3883,6 +3927,28 @@
             "integer": null,
             "links": null,
             "ref": "ref",
+            "string": null,
+            "table": null
+        },
+        {
+            "Description": "The seniority score of the piece of equipment that is the next to be asked in Block 1.",
+            "Length": null,
+            "Name": "askNextBlock2Seniority",
+            "RefDef": null,
+            "Required": [
+                {
+                    "req": "id"
+                }
+            ],
+            "Unique": null,
+            "binary": null,
+            "boolean": null,
+            "datetime": null,
+            "float": "float",
+            "id": null,
+            "integer": null,
+            "links": null,
+            "ref": null,
             "string": null,
             "table": null
         },
@@ -4100,7 +4166,7 @@
             "table": null
         },
         {
-            "Description": null,
+            "Description": "A foreign key reference to the system-generated unique identifier for a Local Area",
             "Length": null,
             "Name": "localArea",
             "RefDef": "LocalArea",
@@ -4122,7 +4188,7 @@
             "table": null
         },
         {
-            "Description": null,
+            "Description": "A foreign key reference to the system-generated unique identifier for an Equipment",
             "Length": null,
             "Name": "equipment",
             "RefDef": "Equipment",
@@ -4166,7 +4232,7 @@
             "table": null
         },
         {
-            "Description": null,
+            "Description": "A foreign key reference to the system-generated unique identifier for an Owner",
             "Length": null,
             "Name": "owner",
             "RefDef": "Owner",
@@ -4213,28 +4279,6 @@
             "Description": "The seniority calculation result for this piece of equipment. The calculation is based on the \"numYears\" of service + average hours of service over the last three fiscal years - as stored in the related fields (serviceHoursLastYear, serviceHoursTwoYearsAgo serviceHoursThreeYearsAgo).",
             "Length": null,
             "Name": "seniority",
-            "RefDef": null,
-            "Required": [
-                {
-                    "req": "id"
-                }
-            ],
-            "Unique": null,
-            "binary": null,
-            "boolean": null,
-            "datetime": null,
-            "float": "float",
-            "id": null,
-            "integer": null,
-            "links": null,
-            "ref": null,
-            "string": null,
-            "table": null
-        },
-        {
-            "Description": "Sum of hours in the current fiscal year's time cards captured at the time this record was created.",
-            "Length": null,
-            "Name": "serviceHoursCurrentYearToDate",
             "RefDef": null,
             "Required": [
                 {
@@ -7213,7 +7257,7 @@
             "table": null
         },
         {
-            "Description": null,
+            "Description": "A foreign key reference to the system-generated unique identifier for a Role",
             "Length": null,
             "Name": "role",
             "RefDef": "Role",
@@ -7472,7 +7516,7 @@
             "table": null
         },
         {
-            "Description": null,
+            "Description": "A foreign key reference to the system-generated unique identifier for a Permission",
             "Length": null,
             "Name": "permission",
             "RefDef": "Permission",
@@ -7724,7 +7768,7 @@
             "table": null
         },
         {
-            "Description": null,
+            "Description": "A foreign key reference to the system-generated unique identifier for a Group",
             "Length": null,
             "Name": "group",
             "RefDef": "Group",
@@ -7749,7 +7793,7 @@
             "table": null
         },
         {
-            "Description": null,
+            "Description": "A foreign key reference to the system-generated unique identifier for a User",
             "Length": null,
             "Name": "user",
             "RefDef": "User",

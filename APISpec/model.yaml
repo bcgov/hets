@@ -65,12 +65,14 @@ definitions:
         $ref: '#/definitions/Project'
       localArea:
         $ref: '#/definitions/LocalArea'
+        description: A foreign key reference to the system-generated unique identifier for a Local Area
       status:
         type: string
         maxLength: 50
         description: The status of the Rental Request - whether it in progress, completed or was cancelled.
       equipmentType:
         $ref: '#/definitions/EquipmentType'
+        description: A foreign key reference to the system-generated unique identifier for an Equipment Type
       equipmentCount:
         format: int32
         type: integer
@@ -119,6 +121,7 @@ definitions:
         description: A system-generated unique identifier for a RentalRequestAttachment
       rentalRequest:
         $ref: '#/definitions/RentalRequest'
+        description: A foreign key reference to the system-generated unique identifier for a Rental Request
       attachment:
         type: string
         maxLength: 150
@@ -193,8 +196,10 @@ definitions:
         description: The current status of the Rental Agreement, such as Active or Complete
       equipment:
         $ref: '#/definitions/Equipment'
+        description: A foreign key reference to the system-generated unique identifier for an Equipment
       project:
         $ref: '#/definitions/Project'
+        description: A foreign key reference to the system-generated unique identifier for a Project
       rentalAgreementRates:
         type: array
         items:
@@ -247,6 +252,7 @@ definitions:
         description: A system-generated unique identifier for a RentalAgreementRate
       rentalAgreement:
         $ref: '#/definitions/RentalAgreement'
+        description: A foreign key reference to the system-generated unique identifier for a Rental Agreement
       componentName:
         type: string
         maxLength: 150
@@ -285,6 +291,7 @@ definitions:
         description: A system-generated unique identifier for a RentalAgreementCondition
       rentalAgreement:
         $ref: '#/definitions/RentalAgreement'
+        description: A foreign key reference to the system-generated unique identifier for a Rental Agreement
       conditionName:
         type: string
         maxLength: 150
@@ -305,6 +312,7 @@ definitions:
         description: A system-generated unique identifier for a TimeRecord
       rentalAgreement:
         $ref: '#/definitions/RentalAgreement'
+        description: A foreign key reference to the system-generated unique identifier for a Rental Agreement
       rentalAgreementRate:
         $ref: '#/definitions/RentalAgreementRate'
         description: The Rental Agreement Rate component to which this Rental Agreement applies. If null, this time applies to the equipment itself.
@@ -336,10 +344,13 @@ definitions:
         description: A system-generated unique identifier for a Equipment
       localArea:
         $ref: '#/definitions/LocalArea'
+        description: A foreign key reference to the system-generated unique identifier for a Local Area
       equipmentType:
         $ref: '#/definitions/EquipmentType'
+        description: A foreign key reference to the system-generated unique identifier for a Equipment Type
       owner:
         $ref: '#/definitions/Owner'
+        description: A foreign key reference to the system-generated unique identifier for an Owner
       equipmentCode:
         type: string
         maxLength: 25
@@ -664,15 +675,28 @@ definitions:
         type: integer
       equipmentType:
         $ref: '#/definitions/EquipmentType'
+        description: A foreign key reference to the system-generated unique identifier for an Equipment Type
       askNextBlock1:
         $ref: '#/definitions/Equipment'
         description: The id of the next piece of Block 1 Equipment to be asked for a Rental Request. If null, start from the first piece of equipment in Block 1.
+      askNextBlock1Seniority:
+        type: number
+        format: float
+        description: The seniority score of the piece of equipment that is the next to be asked in Block 1.
       askNextBlock2:
         $ref: '#/definitions/Equipment'
         description: The id of the next piece of Block 2 Equipment to be asked for a Rental Request. If null, start from the first piece of equipment in Block 2.
+      askNextBlock2Seniority:
+        type: number
+        format: float
+        description: The seniority score of the piece of equipment that is the next to be asked in Block 1.
       askNextBlockOpen:
         $ref: '#/definitions/Equipment'
         description: The id of the next piece of Block Open Equipment to be asked for a Rental Request. If null, start from the first piece of equipment in Block Open.
+      askNextBlock2Seniority:
+        type: number
+        format: float
+        description: The seniority score of the piece of equipment that is the next to be asked in Block 1.
   EquipmentAttachment:
     type: object
     description: An Equipment Attachment associated with a piece of Equipment.
@@ -714,14 +738,17 @@ definitions:
         description: The effective date at which the Seniority data in this record ceased to be in effect.
       localArea:
         $ref: '#/definitions/LocalArea'
+        description: A foreign key reference to the system-generated unique identifier for a Local Area
       equipment:
         $ref: '#/definitions/Equipment'
+        description: A foreign key reference to the system-generated unique identifier for an Equipment
       blockNumber:
         type: number
         format: float
         description: The block number for the piece of equipment as calculated by the Seniority Algorthm for this equipment type in the local area. As currently defined by the business - 1, 2 or Open
       owner:
         $ref: '#/definitions/Owner'
+        description: A foreign key reference to the system-generated unique identifier for an Owner
       ownerOrganizationName:
         type: string
         maxLength: 150
@@ -730,10 +757,6 @@ definitions:
         type: number
         format: float
         description: The seniority calculation result for this piece of equipment. The calculation is based on the &quot;numYears&quot; of service + average hours of service over the last three fiscal years - as stored in the related fields (serviceHoursLastYear, serviceHoursTwoYearsAgo serviceHoursThreeYearsAgo).
-      serviceHoursCurrentYearToDate:
-        type: number
-        format: float
-        description: Sum of hours in the current fiscal year&#39;s time cards captured at the time this record was created.
       serviceHoursLastYear:
         type: number
         format: float
@@ -1222,6 +1245,7 @@ definitions:
         description: The date on which a role previously assigned to a user was removed from that user.
       role:
         $ref: '#/definitions/Role'
+        description: A foreign key reference to the system-generated unique identifier for a Role
   Role:
     type: object
     description: A HETS application-managed Role that has a selected list of permissions and can be assigned to Users. A role coresponds to the authorization level provided a user based on the work for which they are responsible.
@@ -1264,6 +1288,7 @@ definitions:
         $ref: '#/definitions/Role'
       permission:
         $ref: '#/definitions/Permission'
+        description: A foreign key reference to the system-generated unique identifier for a Permission
   Permission:
     type: object
     description: A named element of authorization defined in the code that triggers some behavior in the application. For example, a permission might allow users to see data or to have access to functionality not accessible to users without that permission. Permissions are created as needed to the application code and are added to the permissions table by data migrations executed at the time the software that uses the permission is deployed.
@@ -1305,8 +1330,10 @@ definitions:
         description: A flag indicating the User is active in the group. Set false to remove the user from the designated group.
       group:
         $ref: '#/definitions/Group'
+        description: A foreign key reference to the system-generated unique identifier for a Group
       user:
         $ref: '#/definitions/User'
+        description: A foreign key reference to the system-generated unique identifier for a User
   Group:
     type: object
     description: A named entity that is used to create a arbitrary collection of users into a group. For example, the HETS Clerks are in the group Clerks. Groups, like permissions are defined by and referenced in code.
