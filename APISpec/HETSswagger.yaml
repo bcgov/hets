@@ -5085,6 +5085,12 @@ definitions:
         type: array
         items:
           $ref: '#/definitions/RentalRequest'
+        description: The Rental Requests associated with this Project
+      rentalAgreements:
+        type: array
+        items:
+          $ref: '#/definitions/RentalAgreement'
+        description: The Rental Agreements associated with this Project
       primaryContact:
         $ref: '#/definitions/Contact'
         description: Link to the designated Primary Contact for the Project - usually the Project Manager requesting to hire equipment.

@@ -155,10 +155,32 @@
             "table": null
         },
         {
-            "Description": null,
+            "Description": "The Rental Requests associated with this Project",
             "Length": null,
             "Name": "rentalRequests",
             "RefDef": "RentalRequest",
+            "Required": [
+                {
+                    "req": "id"
+                }
+            ],
+            "Unique": null,
+            "binary": null,
+            "boolean": null,
+            "datetime": null,
+            "float": null,
+            "id": null,
+            "integer": null,
+            "links": "links",
+            "ref": null,
+            "string": null,
+            "table": null
+        },
+        {
+            "Description": "The Rental Agreements associated with this Project",
+            "Length": null,
+            "Name": "rentalAgreements",
+            "RefDef": "RentalAgreement",
             "Required": [
                 {
                     "req": "id"
