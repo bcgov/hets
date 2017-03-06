@@ -10,8 +10,8 @@ RUN apt-get update \
 
 RUN createdb hets
 RUN createuser -s hets 
-postgres --command 'CREATE ROLE hets WITH LOGIN ENCRYPTED PASSWORD 'hets';'
-postgres --command 'GRANT ALL PRIVILEGES ON DATABASE hets TO hets;'
+RUN postgres --command 'CREATE ROLE hets WITH LOGIN ENCRYPTED PASSWORD 'hets';'
+RUN postgres --command 'GRANT ALL PRIVILEGES ON DATABASE hets TO hets;'
  
 ENV ASPNETCORE_ENVIRONMENT Development
 ENV ASPNETCORE_URLS http://*:8080 
