@@ -11,11 +11,11 @@ import _ from 'lodash';
 
 import * as Action from '../actionTypes';
 import * as Api from '../api';
+import * as Constant from '../constants';
 import store from '../store';
 
 import CheckboxControl from '../components/CheckboxControl.jsx';
-import ColField from '../components/ColField.jsx';
-import ColLabel from '../components/ColLabel.jsx';
+import ColDisplay from '../components/ColDisplay.jsx';
 import Confirm from '../components/Confirm.jsx';
 import OverlayTrigger from '../components/OverlayTrigger.jsx';
 import SortTable from '../components/SortTable.jsx';
@@ -206,24 +206,21 @@ var ProjectsDetail = React.createClass({
 
                 return <div id="projects-data">
                   <Row>
-                    <ColLabel md={4}>Project</ColLabel>
-                    <ColField md={8}>{ project.name }</ColField>
+                    <ColDisplay md={12} labelProps={{ md: 4 }} label="Project">{ project.name }</ColDisplay>
                   </Row>
                   <Row>
-                    <ColLabel md={4}>{ project.primaryContactRole || 'Primary Contact' }</ColLabel>
-                    <ColField md={8}>{ mailto }{ project.primaryContactPhone ? `, ${project.primaryContactPhone}` : '' }</ColField>
+                    <ColDisplay md={12} labelProps={{ md: 4 }} label={ project.primaryContactRole || 'Primary Contact' }>
+                      { mailto }{ project.primaryContactPhone ? `, ${project.primaryContactPhone}` : '' }
+                    </ColDisplay>
                   </Row>
                   <Row>
-                    <ColLabel md={4}>Local Area</ColLabel>
-                    <ColField md={8}>{ project.localAreaName }</ColField>
+                    <ColDisplay md={12} labelProps={{ md: 4 }} label="Local Area">{ project.localAreaName }</ColDisplay>
                   </Row>
                   <Row>
-                    <ColLabel md={4}>Provincial Project Number</ColLabel>
-                    <ColField md={8}>{ project.provincialProjectNumber }</ColField>
+                    <ColDisplay md={12} labelProps={{ md: 4 }} label="Provincial Project Number">{ project.provincialProjectNumber }</ColDisplay>
                   </Row>
                   <Row>
-                    <ColLabel md={4}>Information</ColLabel>
-                    <ColField md={8}>{ project.information }</ColField>
+                    <ColDisplay md={12} labelProps={{ md: 4 }} label="Information">{ project.information }</ColDisplay>
                   </Row>
                 </div>;
               })()}
@@ -264,7 +261,7 @@ var ProjectsDetail = React.createClass({
 
                 // TODO Wire-up link to Time Records screen
                 const TimeEntryLink = ({ item }) => (
-                  <Link to={ '#' }>{ item.lastTimeRecord ? formatDateTime(item.lastTimeRecord, 'YYYY-MMM-DD') : 'None' }</Link>
+                  <Link to={ '#' }>{ item.lastTimeRecord ? formatDateTime(item.lastTimeRecord, Constant.DATE_YEAR_SHORT_MONTH_DAY) : 'None' }</Link>
                 );
 
                 const RentalAgreementListItem = ({ item }) => (
@@ -364,14 +361,17 @@ var ProjectsDetail = React.createClass({
 
                 var history = _.sortBy(this.props.history, 'createdDate');    
 
+                const HistoryEntry = ({ createdDate, historyText }) => (
+                  <Row>
+                    <ColDisplay md={12} labelProps={{ md: 2 }} label={ formatDateTime(createdDate, Constant.DATE_YEAR_SHORT_MONTH_DAY) }>
+                      { historyText }
+                    </ColDisplay>
+                  </Row>
+                );
+
                 return <div id="projects-history">
                   {
-                    _.map(history, (entry) => {
-                      return <Row>
-                        <ColLabel md={2}>{ formatDateTime(entry.createdDate, 'YYYY-MMM-DD') }</ColLabel>
-                        <ColField md={10}>{ entry.historyText }</ColField>
-                      </Row>;
-                    })
+                    _.map(history, (entry) => <HistoryEntry { ...entry } />)
                   }
                 </div>;
               })()}
