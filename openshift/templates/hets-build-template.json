@@ -751,6 +751,94 @@
         ]
       },
       "status": {}
+    },
+	{
+      "kind": "ImageStream",
+      "apiVersion": "v1",
+      "metadata":
+      {
+        "name": "servertest",
+        "generation": 1,
+        "creationTimestamp": null
+      },
+      "spec":
+      {
+        "tags": [
+          {
+            "name": "${DEPLOYMENT_TYPE}",
+            "annotations": null,
+            "generation": null,
+            "importPolicy": {}
+          }
+
+        ]
+      },
+      "status": {}
+    },
+	{
+      "kind": "BuildConfig",
+      "apiVersion": "v1",
+      "metadata":
+      {
+        "name": "${BACKEND_NAME}test",
+        "creationTimestamp": null,
+        "labels":
+        {
+          "app": "${BACKEND_NAME}test"
+        }
+      },
+      "spec":
+      {
+        "triggers": [
+          {
+            "type": "ImageChange",
+            "imageChange": {}
+          },
+          {
+            "type": "ConfigChange"
+          }
+        ],
+        "runPolicy": "Serial",
+        "source":
+        {
+          "type": "Git",
+          "git":
+          {
+            "uri": "${SRC_REPO}",
+			"ref": "${GIT_REFERENCE}"			
+          },
+          "contextDir": ""
+        },
+        "strategy":
+        {
+          "type": "Docker",
+          "dockerStrategy":
+          {
+			"dockerfilePath" : "server.Test.Dockerfile",
+            "from":
+            {
+              "kind": "ImageStreamTag",
+              "name": "server:latest"
+            }
+          }
+        },
+        "output":
+        {
+          "to":
+          {
+            "kind": "ImageStreamTag",
+            "namespace": "${BUILD_PROJECT}",
+            "name": "servertest:${DEPLOYMENT_TYPE}"
+          }
+        },
+        "resources": {},
+        "postCommit": {},
+        "nodeSelector": null
+      },
+      "status":
+      {
+        "lastVersion": 0
+      }
     }
   ],
   "parameters": [
