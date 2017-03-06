@@ -91,14 +91,19 @@ export function deleteFavourite(favourite) {
 ////////////////////
 // Equipment
 ////////////////////
+function getBlockDisplayName(blockNumber) {
+  if (blockNumber == 1) { return '1'; }
+  if (blockNumber == 2) { return '2'; }
+  return 'Open';
+}
 
 function parseEquipment(equipment) {
-  if (!equipment.owner) { equipment.owner = { id: '', organizationName: '' }; }
-  if (!equipment.equipmentType) { equipment.equipmentType = { id: '', name: '', description: '' }; }
-  if (!equipment.localArea) { equipment.localArea = { id: '', name: '' }; }
-  if (!equipment.localArea.serviceArea) { equipment.localArea.serviceArea = { id: '', name: '' }; }
-  if (!equipment.localArea.serviceArea.district) { equipment.localArea.serviceArea.district = { id: '', name: '' }; }
-  if (!equipment.localArea.serviceArea.district.region) { equipment.localArea.serviceArea.district.region = { id: '', name: '' }; }
+  if (!equipment.owner) { equipment.owner = { id: 0, organizationName: '' }; }
+  if (!equipment.equipmentType) { equipment.equipmentType = { id: 0, name: '', description: '' }; }
+  if (!equipment.localArea) { equipment.localArea = { id: 0, name: '' }; }
+  if (!equipment.localArea.serviceArea) { equipment.localArea.serviceArea = { id: 0, name: '' }; }
+  if (!equipment.localArea.serviceArea.district) { equipment.localArea.serviceArea.district = { id: 0, name: '' }; }
+  if (!equipment.localArea.serviceArea.district.region) { equipment.localArea.serviceArea.district.region = { id: 0, name: '' }; }
   if (!equipment.status) { equipment.status = Constant.EQUIPMENT_STATUS_CODE_PENDING; }
   if (!equipment.equipmentAttachments) { equipment.equipmentAttachments = []; }
 
@@ -135,8 +140,9 @@ function parseEquipment(equipment) {
   equipment.approvedDate = equipment.approvedDate || '';
   // The max date of a time card for this fiscal year - can be null if there are none.
   equipment.lastTimeRecordDateThisYear = equipment.lastTimeRecordDateThisYear || '';
-  // TODO Replace "3-500"" with "Open-500"
-  equipment.seniorityText = concat(equipment.blockNumber, equipment.seniority, ' - ');
+  // e.g. "Open-500" or "1-744"
+  var block = getBlockDisplayName(equipment.blockNumber);
+  equipment.seniorityText = concat(block, equipment.seniority, ' - ');
 
   equipment.currentYear = Moment().year();
   equipment.lastYear = equipment.currentYear - 1;
@@ -204,7 +210,7 @@ export function updateEquipment(equipment) {
 ////////////////////
 
 function parsePhysicalAttachment(attachment) {
-  if (!attachment.type) { attachment.type = { id: '', code: '', description: ''}; }
+  if (!attachment.type) { attachment.type = { id: 0, code: '', description: ''}; }
   
   attachment.typeName = attachment.type.description;
   // TODO Add grace period logic to editing/deleting attachments
@@ -257,10 +263,10 @@ export function deletePhysicalAttachment(attachment) {
 ////////////////////
 
 function parseOwner(owner) {
-  if (!owner.localArea) { owner.localArea = { id: '', name: '' }; }
-  if (!owner.localArea.serviceArea) { owner.localArea.serviceArea = { id: '', name: '' }; }
-  if (!owner.localArea.serviceArea.district) { owner.localArea.serviceArea.district = { id: '', name: '' }; }
-  if (!owner.localArea.serviceArea.district.region) { owner.localArea.serviceArea.district.region = { id: '', name: '' }; }
+  if (!owner.localArea) { owner.localArea = { id: 0, name: '' }; }
+  if (!owner.localArea.serviceArea) { owner.localArea.serviceArea = { id: 0, name: '' }; }
+  if (!owner.localArea.serviceArea.district) { owner.localArea.serviceArea.district = { id: 0, name: '' }; }
+  if (!owner.localArea.serviceArea.district.region) { owner.localArea.serviceArea.district.region = { id: 0, name: '' }; }
   if (!owner.contacts) { owner.contacts = []; }
   if (!owner.equipmentList) { owner.equipmentList = []; }
 
@@ -352,13 +358,16 @@ function parseContact(contact) {
 ////////////////////
 
 function parseProject(project) {
-  if (!project.localArea) { project.localArea = { id: '', name: '' }; }
-  if (!project.localArea.serviceArea) { project.localArea.serviceArea = { id: '', name: '' }; }
-  if (!project.localArea.serviceArea.district) { project.localArea.serviceArea.district = { id: '', name: '' }; }
-  if (!project.localArea.serviceArea.district.region) { project.localArea.serviceArea.district.region = { id: '', name: '' }; }
+  if (!project.localArea) { project.localArea = { id: 0, name: '' }; }
+  if (!project.localArea.serviceArea) { project.localArea.serviceArea = { id: 0, name: '' }; }
+  if (!project.localArea.serviceArea.district) { project.localArea.serviceArea.district = { id: 0, name: '' }; }
+  if (!project.localArea.serviceArea.district.region) { project.localArea.serviceArea.district.region = { id: 0, name: '' }; }
   if (!project.contacts) { project.contacts = []; }
   if (!project.rentalRequests) { project.rentalRequests = []; }
   if (!project.rentalAgreements) { project.rentalAgreements = []; }  // TODO Server needs to send this (HETS-153)
+
+  // Add display fields for contacts
+  _.map(project.contacts, contact => { parseContact(contact); });
 
   // Add display fields for rental requests and rental agreements
   _.map(project.rentalRequests, obj => { parseRentalRequest(obj); });
@@ -379,7 +388,6 @@ function parseProject(project) {
   project.primaryContactName = project.primaryContact ? firstLastName(project.primaryContact.givenName, project.primaryContact.surname) : '';
   project.primaryContactRole = project.primaryContact ? project.primaryContact.role : '';
   project.primaryContactEmail = project.primaryContact ? project.primaryContact.emailAddress : '';
-  project.primaryContactRole = project.primaryContact ? project.primaryContact.role : '';
   project.primaryContactPhone = project.primaryContact ? project.primaryContact.workPhoneNumber || project.primaryContact.mobilePhoneNumber || '' : '';
 }
 
@@ -422,14 +430,21 @@ export function updateProject(project) {
 ////////////////////
 
 function parseRentalRequest(request) {
-  if (!request.localArea) { request.localArea = { id: '', name: '' }; }
-  if (!request.localArea.serviceArea) { request.localArea.serviceArea = { id: '', name: '' }; }
-  if (!request.localArea.serviceArea.district) { request.localArea.serviceArea.district = { id: '', name: '' }; }
-  if (!request.localArea.serviceArea.district.region) { request.localArea.serviceArea.district.region = { id: '', name: '' }; }
-  if (!request.project) { request.project = { id: '', name: '' }; }
-  if (!request.equipmentType) { request.equipmentType = { id: '', name: '' }; }
-  if (!request.primaryContact) { request.primaryContact = { id: '', givenName: '', surname: '' }; }
+  if (!request.localArea) { request.localArea = { id: 0, name: '' }; }
+  if (!request.localArea.serviceArea) { request.localArea.serviceArea = { id: 0, name: '' }; }
+  if (!request.localArea.serviceArea.district) { request.localArea.serviceArea.district = { id: 0, name: '' }; }
+  if (!request.localArea.serviceArea.district.region) { request.localArea.serviceArea.district.region = { id: 0, name: '' }; }
+  if (!request.project) { request.project = { id: 0, name: '' }; }
+  if (!request.equipmentType) { request.equipmentType = { id: 0, name: '' }; }
+  if (!request.primaryContact) { request.primaryContact = { id: 0, givenName: '', surname: '' }; }
+  if (!request.attachments) { request.attachments = []; }
   if (!request.rentalRequestRotationList) { request.rentalRequestRotationList = []; }
+
+  // Add display fields for primary contact
+  parseContact(request.primaryContact);
+
+  // Add display fields for rotation list items
+  _.map(request.rentalRequestRotationList, listItem => { parseRentalRequestRotationList(listItem); });
 
   request.status = request.status || Constant.RENTAL_REQUEST_STATUS_CODE_IN_PROGRESS;
   request.equipmentCount = request.equipmentCount || 0;
@@ -448,8 +463,12 @@ function parseRentalRequest(request) {
   request.isCancelled = request.status === Constant.RENTAL_REQUEST_STATUS_CODE_CANCELLED;
   request.localAreaName = request.localArea.name;
   request.equipmentTypeName = request.equipmentTypeName || request.equipmentType.name;
+
+  // Primary contact for the rental request/project
   request.primaryContactName = request.primaryContact ? firstLastName(request.primaryContact.givenName, request.primaryContact.surname) : '';
   request.primaryContactEmail = request.primaryContact ? request.primaryContact.emailAddress : '';
+  request.primaryContactRole = request.primaryContact ? request.primaryContact.role : '';
+  request.primaryContactPhone = request.primaryContact ? request.primaryContact.workPhoneNumber || request.primaryContact.mobilePhoneNumber || '' : '';
 
   // Flag element as a rental request. 
   // Rental requests and rentals are merged and shown in a single list on Project Details screen
@@ -491,13 +510,61 @@ export function updateRentalRequest(rentalRequest) {
 }
 
 ////////////////////
+// Rental Request Rotation List
+////////////////////
+
+function parseRentalRequestRotationList(rotationListItem) {
+  if (!rotationListItem.rentalRequest) { rotationListItem.rentalRequest = { id: 0, isRentalRequest: true }; }
+  if (!rotationListItem.equipment) { rotationListItem.equipment = { id: 0, equipmentCode: '' }; }
+  if (!rotationListItem.equipment.equipmentType) { rotationListItem.equipment.equipmentType = { id: 0, name: '' }; }
+  if (!rotationListItem.equipment.owner) { rotationListItem.equipment.owner = { id: 0, organizationName: '' }; }
+
+  // The rental agreement (if any) created for an accepted hire offer.
+  rotationListItem.rentalAgreement = rotationListItem.rentalAgreement || null;
+
+  // The sort order of the piece of equipment on the rotaton list at the time the request was created.
+  // This is the order the equipment will be offered the available work.
+  rotationListItem.rotationListSortOrder = rotationListItem.rotationListSortOrder || 0;
+  
+  rotationListItem.isForceHire = rotationListItem.isForceHire || false;
+  rotationListItem.wasAsked = rotationListItem.wasAsked || false;
+  rotationListItem.askedDateTime = rotationListItem.askedDateTime || '';
+  rotationListItem.offerResponseDatetime = rotationListItem.offerResponseDatetime || '';
+  rotationListItem.offerResponse = rotationListItem.offerResponse || '';
+  rotationListItem.offerRefusalReason = rotationListItem.offerRefusalReason || '';
+  rotationListItem.offerResponseNote = rotationListItem.offerResponseNote || '';
+  rotationListItem.note = rotationListItem.note || '';
+
+  var equipment = rotationListItem.equipment;
+
+  // UI display fields
+  rotationListItem.isHired = rotationListItem.isHired || false;
+  rotationListItem.seniority = `${getBlockDisplayName(equipment.blockNumber)}-${equipment.seniority} (${equipment.numberInBlock})`;
+  rotationListItem.serviceHoursThisYear = rotationListItem.serviceHoursThisYear || equipment.serviceHoursThisYear || 0; // TODO calculated field from the server
+  rotationListItem.equipmentId = equipment.id;
+  rotationListItem.equipmentCode = equipment.equipmentCode;
+
+  // String format: "{year} {make}/{model}/{serialNumber}/{size}" - e.g. "1991 Bobcat/KOM450/442K00547/Medium"
+  rotationListItem.equipmentDetails = concat(equipment.year, concat(equipment.make, concat(equipment.model, concat(equipment.serialNumber, equipment.size, '/'), '/'), '/'), ' ');
+
+  // Primary contact for the owner of the piece of equipment
+  rotationListItem.contact = rotationListItem.contact || (equipment.owner ? equipment.owner.primaryContact : null);
+  rotationListItem.contactName = rotationListItem.contact ? firstLastName(rotationListItem.contact.givenName, rotationListItem.contact.surname) : '';
+  rotationListItem.contactEmail = rotationListItem.contact ? rotationListItem.contact.emailAddress : '';
+  rotationListItem.contactPhone = rotationListItem.contact ? rotationListItem.contact.workPhoneNumber || rotationListItem.contact.mobilePhoneNumber || '' : '';
+
+  // TODO Status TBD
+  rotationListItem.status = 'N/A';
+}
+
+////////////////////
 // Rental Agreements
 ////////////////////
 
 function parseRentalAgreement(agreement) {
-  if (!agreement.equipment) { agreement.equipment = { id: '', equipmentCode: '' }; }
-  if (!agreement.equipment.equipmentType) { agreement.equipment.equipmentType = { id: '', name: '' }; }
-  if (!agreement.project) { agreement.project = { id: '', name: '' }; }
+  if (!agreement.equipment) { agreement.equipment = { id: 0, equipmentCode: '' }; }
+  if (!agreement.equipment.equipmentType) { agreement.equipment.equipmentType = { id: 0, name: '' }; }
+  if (!agreement.project) { agreement.project = { id: 0, name: '' }; }
   if (!agreement.rentalAgreementRates) { agreement.rentalAgreementRates = []; }
   if (!agreement.rentalAgreementConditions) { agreement.rentalAgreementConditions = []; }
   if (!agreement.timeRecords) { agreement.timeRecords = []; }
