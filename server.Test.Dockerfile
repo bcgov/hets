@@ -3,7 +3,7 @@ FROM tran-hets-tools/server
 
 RUN apt-get update \
  && apt-get upgrade -y --force-yes \
- && apt-get install postgresql-9.4 postgresql-client-9.4 \
+ && apt-get -y --force-yes install postgresql-9.4 postgresql-client-9.4 \
  && rm -rf /var/lib/apt/lists/*;
 
 # create database and user.
