@@ -5,6 +5,7 @@ const DEFAULT_SEARCHES = {
   owners: {},
   projects: {},
   rentalRequests: {},
+  users: {},
 };
 
 export default function searchReducer(state = DEFAULT_SEARCHES, action) {
@@ -20,6 +21,9 @@ export default function searchReducer(state = DEFAULT_SEARCHES, action) {
 
     case Action.UPDATE_RENTAL_REQUESTS_SEARCH:
       return { ...state, rentalRequests: action.rentalRequests };
+
+    case Action.UPDATE_USERS_SEARCH:
+      return { ...state, users: action.users };
   }
 
   return state;

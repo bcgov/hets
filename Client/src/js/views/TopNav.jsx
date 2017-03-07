@@ -46,8 +46,8 @@ var TopNav = React.createClass({
               <NavItem eventKey={6} href="/projects">Projects</NavItem>
             </LinkContainer>
             <NavDropdown id="admin-dropdown" title="Administration">
-              <LinkContainer to={{ pathname: '/user-management' }}>
-                <MenuItem eventKey={7} href="/user-management">User Management</MenuItem>
+              <LinkContainer to={{ pathname: '/users' }}>
+                <MenuItem eventKey={7} href="/users">User Management</MenuItem>
               </LinkContainer>
               <LinkContainer to={{ pathname: '/roles-permissions' }}>
                 <MenuItem eventKey={8} href="/roles-permissions">Roles and Permissions</MenuItem>

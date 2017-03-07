@@ -44,6 +44,12 @@ export default function modelsReducer(state = DEFAULT_MODELS, action) {
     case Action.UPDATE_USER:
       return { ...state, user: action.user };
 
+    case Action.ADD_USER:
+      return { ...state, user: action.user };
+
+    case Action.DELETE_USER:
+      return { ...state, user: action.user };
+
     // Favourites
     case Action.UPDATE_FAVOURITES:
       return { ...state, favourites: action.favourites };

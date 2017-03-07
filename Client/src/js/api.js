@@ -4,27 +4,68 @@ import store from './store';
 
 import { ApiRequest } from './utils/http';
 import { lastFirstName, firstLastName, concat } from './utils/string';
-import { daysAgo } from './utils/date';
+import { daysAgo, sortableDateTime } from './utils/date';
 
 import _ from 'lodash';
 import Moment from 'moment';
-
-////////////////////
-// Current User
-////////////////////
-
-export function getCurrentUser() {
-  return new ApiRequest('/users/current').get().then(response => {
-    store.dispatch({ type: Action.UPDATE_CURRENT_USER, user: response });
-  });
-}
 
 ////////////////////
 // Users
 ////////////////////
 
 function parseUser(user) {
+  if (!user.district) { user.district = { id: 0, name: '' }; }
+  if (!user.userRoles) { user.userRoles = []; }
+  if (!user.groupMemberships) { user.groupMemberships = []; }
+
   user.name = lastFirstName(user.surname, user.givenName);
+  user.fullName = firstLastName(user.givenName, user.surname);
+  user.districtName = user.district.name;
+
+  user.groupNames = _.chain(user.groupMemberships)
+    .filter(membership => membership.group && membership.group.name)
+    .map(membership => membership.group.name)
+    .sortBy(name => name)
+    .join(', ')
+    .value();
+
+  // This field is formatted to be used in updateUserGroups(), which expects
+  // [ { groupId: 1 }, { groupId: 2 }, ... ]
+  user.groupIds = _.filter(user.groupMemberships, membership => membership.group && membership.group.id)
+    .map(membership => { return { groupId: membership.group.id }; });
+
+  _.each(user.userRoles, userRole => {
+    userRole.roleId = userRole.role && userRole.role.id ? userRole.role.id : 0;
+    userRole.roleName = userRole.role && userRole.role.name ? userRole.role.name : '';
+    userRole.effectiveDateSort = sortableDateTime(user.effectiveDate);
+    userRole.expiryDateSort = sortableDateTime(user.expiryDate);
+  });
+
+  user.canEdit = true;
+  user.canDelete = true;
+}
+
+export function getCurrentUser() {
+  return new ApiRequest('/users/current').get().then(response => {
+    var user = response;
+
+    // Add display fields
+    parseUser(user);
+
+    store.dispatch({ type: Action.UPDATE_CURRENT_USER, user: user });
+  });
+}
+
+export function searchUsers(params) {
+  return new ApiRequest('/users/search').get(params).then(response => {
+    // Normalize the response
+    var users = _.fromPairs(response.map(user => [ user.id, user ]));
+
+    // Add display fields
+    _.map(users, user => { parseUser(user); });
+
+    store.dispatch({ type: Action.UPDATE_USERS, users: users });
+  });
 }
 
 export function getUsers() {
@@ -47,6 +88,60 @@ export function getUser(userId) {
     parseUser(user);
 
     store.dispatch({ type: Action.UPDATE_USER, user: user });
+  });
+}
+
+export function addUser(user) {
+  return new ApiRequest('/users').post(user).then(response => {
+    var user = response;
+
+    // Add display fields
+    parseUser(user);
+
+    store.dispatch({ type: Action.ADD_USER, user: user });
+  });
+}
+
+export function updateUser(user) {
+  return new ApiRequest(`/users/${ user.id }`).put(user).then(response => {
+    var user = response;
+
+    // Add display fields
+    parseUser(user);
+
+    store.dispatch({ type: Action.UPDATE_USER, user: user });
+  });
+}
+
+export function deleteUser(user) {
+  return new ApiRequest(`/users/${ user.id }/delete`).post().then(response => {
+    var user = response;
+
+    // Add display fields
+    parseUser(user);
+
+    store.dispatch({ type: Action.DELETE_USER, user: user });
+  });
+}
+
+export function updateUserGroups(user) {
+  return new ApiRequest(`/users/${ user.id }/groups`).put(user.groupIds).then(() => {
+    // After updating the user's group, refresh the user state.
+    return getUser(user.id);
+  });
+}
+
+export function addUserRole(userId, userRole) {
+  return new ApiRequest(`/users/${ userId }/roles`).post(userRole).then(() => {
+    // After updating the user's role, refresh the user state.
+    return getUser(userId);
+  });
+}
+
+export function updateUserRoles(userId, userRoleArray) {
+  return new ApiRequest(`/users/${ userId }/roles`).put(userRoleArray).then(() => {
+    // After updating the user's role, refresh the user state.
+    return getUser(userId);
   });
 }
 
@@ -650,6 +745,33 @@ export function getEquipmentTypes() {
     var equipmentTypes = _.fromPairs(response.map(equipType => [ equipType.id, equipType ]));
 
     store.dispatch({ type: Action.UPDATE_EQUIPMENT_TYPES_LOOKUP, equipmentTypes: equipmentTypes });
+  });
+}
+
+export function getGroups() {
+  return new ApiRequest('/groups').get().then(response => {
+    // Normalize the response
+    var groups = _.fromPairs(response.map(group => [ group.id, group ]));
+
+    store.dispatch({ type: Action.UPDATE_GROUPS_LOOKUP, groups: groups });
+  });
+}
+
+export function getRoles() {
+  return new ApiRequest('/roles').get().then(response => {
+    // Normalize the response
+    var roles = _.fromPairs(response.map(role => [ role.id, role ]));
+
+    store.dispatch({ type: Action.UPDATE_ROLES_LOOKUP, roles: roles });
+  });
+}
+
+export function getPermissions() {
+  return new ApiRequest('/permissions').get().then(response => {
+    // Normalize the response
+    var permissions = _.fromPairs(response.map(permission => [ permission.id, permission ]));
+
+    store.dispatch({ type: Action.UPDATE_PERMISSIONS_LOOKUP, permissions: permissions });
   });
 }
 

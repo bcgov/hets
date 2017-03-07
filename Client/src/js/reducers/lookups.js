@@ -6,10 +6,12 @@ const DEFAULT_LOOKUPS = {
   regions: {},
   serviceAreas: {},
   localAreas: {},
-
   equipmentTypes: {},
+  groups: {},
+  permissions: {},
 
   owners: {},  
+  roles: {},
 };
 
 export default function lookupsReducer(state = DEFAULT_LOOKUPS, action) {
@@ -36,11 +38,20 @@ export default function lookupsReducer(state = DEFAULT_LOOKUPS, action) {
     case Action.UPDATE_EQUIPMENT_TYPES_LOOKUP:
       return { ...state, equipmentTypes: action.equipmentTypes };
 
+    case Action.UPDATE_GROUPS_LOOKUP:
+      return { ...state, groups: action.groups };
+
+    case Action.UPDATE_PERMISSIONS_LOOKUP:
+      return { ...state, permissions: action.permissions };
+
     // Not typical lookups, because they can change within the app, so
     // ensure they're loaded/updated as needed.
 
     case Action.UPDATE_OWNERS_LOOKUP:
       return { ...state, owners: action.owners };
+
+    case Action.UPDATE_ROLES_LOOKUP:
+      return { ...state, roles: action.roles };
   }
 
   return state;
