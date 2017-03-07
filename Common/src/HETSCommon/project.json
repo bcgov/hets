@@ -6,8 +6,8 @@
 
   "dependencies": {
     "Microsoft.AspNetCore.Http.Features": "1.1.0",
-    "Microsoft.EntityFrameworkCore": "1.1.0",
-    "Microsoft.EntityFrameworkCore.Relational": "1.1.0",
+    "Microsoft.EntityFrameworkCore": "1.1.1",
+    "Microsoft.EntityFrameworkCore.Relational": "1.1.1",
     "NETStandard.Library": "1.6.1",
     "System.Data.Common": "4.3.0"
   },
