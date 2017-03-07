@@ -62,6 +62,9 @@ ENV PGDATA /var/lib/postgresql/data
 RUN mkdir -p "$PGDATA" && chown -R postgres:postgres "$PGDATA" && chmod 777 "$PGDATA" # this 777 will be replaced by 700 at runtime (allows semi-arbitrary "--user" values)
 VOLUME /var/lib/postgresql/data
 
+COPY /Server/test/postgres-docker-entrypoint.sh /usr/local/bin/
+RUN /bin/bash -c '/usr/local/bin/postgres-docker-entrypoint.sh'
+
 USER 999
 
 RUN postgres
