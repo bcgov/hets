@@ -14,6 +14,7 @@ const DEFAULT_STATE = {
   ownerEquipment: {},
 
   users: {},
+  userRoles: {},
 
   projects: {},
   projectContacts: {},
@@ -52,6 +53,9 @@ export default function uiReducer(state = DEFAULT_STATE, action) {
 
     case Action.UPDATE_USERS_UI:
       return { ...state, users: action.users };
+
+    case Action.UPDATE_USER_ROLES_UI:
+      return { ...state, userRoles: action.userRoles };
 
     case Action.UPDATE_OWNER_CONTACTS_UI:
       return { ...state, ownerContacts: action.ownerContacts };  
