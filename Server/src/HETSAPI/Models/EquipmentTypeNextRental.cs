@@ -43,14 +43,18 @@ namespace HETSAPI.Models
         /// <param name="Id">Id (required).</param>
         /// <param name="EquipmentType">A foreign key reference to the system-generated unique identifier for an Equipment Type.</param>
         /// <param name="AskNextBlock1">The id of the next piece of Block 1 Equipment to be asked for a Rental Request. If null, start from the first piece of equipment in Block 1..</param>
+        /// <param name="AskNextBlock1Seniority">The seniority score of the piece of equipment that is the next to be asked in Block 1..</param>
         /// <param name="AskNextBlock2">The id of the next piece of Block 2 Equipment to be asked for a Rental Request. If null, start from the first piece of equipment in Block 2..</param>
+        /// <param name="AskNextBlock2Seniority">The seniority score of the piece of equipment that is the next to be asked in Block 1..</param>
         /// <param name="AskNextBlockOpen">The id of the next piece of Block Open Equipment to be asked for a Rental Request. If null, start from the first piece of equipment in Block Open..</param>
-        public EquipmentTypeNextRental(int Id, EquipmentType EquipmentType = null, Equipment AskNextBlock1 = null, Equipment AskNextBlock2 = null, Equipment AskNextBlockOpen = null)
+        public EquipmentTypeNextRental(int Id, EquipmentType EquipmentType = null, Equipment AskNextBlock1 = null, float? AskNextBlock1Seniority = null, Equipment AskNextBlock2 = null, float? AskNextBlock2Seniority = null, Equipment AskNextBlockOpen = null)
         {   
             this.Id = Id;
             this.EquipmentType = EquipmentType;
             this.AskNextBlock1 = AskNextBlock1;
+            this.AskNextBlock1Seniority = AskNextBlock1Seniority;
             this.AskNextBlock2 = AskNextBlock2;
+            this.AskNextBlock2Seniority = AskNextBlock2Seniority;
             this.AskNextBlockOpen = AskNextBlockOpen;
         }
 
@@ -90,6 +94,13 @@ namespace HETSAPI.Models
         public int? AskNextBlock1Id { get; set; }
         
         /// <summary>
+        /// The seniority score of the piece of equipment that is the next to be asked in Block 1.
+        /// </summary>
+        /// <value>The seniority score of the piece of equipment that is the next to be asked in Block 1.</value>
+        [MetaDataExtension (Description = "The seniority score of the piece of equipment that is the next to be asked in Block 1.")]
+        public float? AskNextBlock1Seniority { get; set; }
+        
+        /// <summary>
         /// The id of the next piece of Block 2 Equipment to be asked for a Rental Request. If null, start from the first piece of equipment in Block 2.
         /// </summary>
         /// <value>The id of the next piece of Block 2 Equipment to be asked for a Rental Request. If null, start from the first piece of equipment in Block 2.</value>
@@ -103,6 +114,13 @@ namespace HETSAPI.Models
 		[JsonIgnore]
 		[MetaDataExtension (Description = "The id of the next piece of Block 2 Equipment to be asked for a Rental Request. If null, start from the first piece of equipment in Block 2.")]
         public int? AskNextBlock2Id { get; set; }
+        
+        /// <summary>
+        /// The seniority score of the piece of equipment that is the next to be asked in Block 1.
+        /// </summary>
+        /// <value>The seniority score of the piece of equipment that is the next to be asked in Block 1.</value>
+        [MetaDataExtension (Description = "The seniority score of the piece of equipment that is the next to be asked in Block 1.")]
+        public float? AskNextBlock2Seniority { get; set; }
         
         /// <summary>
         /// The id of the next piece of Block Open Equipment to be asked for a Rental Request. If null, start from the first piece of equipment in Block Open.
@@ -130,7 +148,9 @@ namespace HETSAPI.Models
             sb.Append("  Id: ").Append(Id).Append("\n");
             sb.Append("  EquipmentType: ").Append(EquipmentType).Append("\n");
             sb.Append("  AskNextBlock1: ").Append(AskNextBlock1).Append("\n");
+            sb.Append("  AskNextBlock1Seniority: ").Append(AskNextBlock1Seniority).Append("\n");
             sb.Append("  AskNextBlock2: ").Append(AskNextBlock2).Append("\n");
+            sb.Append("  AskNextBlock2Seniority: ").Append(AskNextBlock2Seniority).Append("\n");
             sb.Append("  AskNextBlockOpen: ").Append(AskNextBlockOpen).Append("\n");
             sb.Append("}\n");
             return sb.ToString();
@@ -185,9 +205,19 @@ namespace HETSAPI.Models
                     this.AskNextBlock1.Equals(other.AskNextBlock1)
                 ) &&                 
                 (
+                    this.AskNextBlock1Seniority == other.AskNextBlock1Seniority ||
+                    this.AskNextBlock1Seniority != null &&
+                    this.AskNextBlock1Seniority.Equals(other.AskNextBlock1Seniority)
+                ) &&                 
+                (
                     this.AskNextBlock2 == other.AskNextBlock2 ||
                     this.AskNextBlock2 != null &&
                     this.AskNextBlock2.Equals(other.AskNextBlock2)
+                ) &&                 
+                (
+                    this.AskNextBlock2Seniority == other.AskNextBlock2Seniority ||
+                    this.AskNextBlock2Seniority != null &&
+                    this.AskNextBlock2Seniority.Equals(other.AskNextBlock2Seniority)
                 ) &&                 
                 (
                     this.AskNextBlockOpen == other.AskNextBlockOpen ||
@@ -216,11 +246,19 @@ namespace HETSAPI.Models
                 if (this.AskNextBlock1 != null)
                 {
                     hash = hash * 59 + this.AskNextBlock1.GetHashCode();
-                }                   
+                }                if (this.AskNextBlock1Seniority != null)
+                {
+                    hash = hash * 59 + this.AskNextBlock1Seniority.GetHashCode();
+                }                
+                                   
                 if (this.AskNextBlock2 != null)
                 {
                     hash = hash * 59 + this.AskNextBlock2.GetHashCode();
-                }                   
+                }                if (this.AskNextBlock2Seniority != null)
+                {
+                    hash = hash * 59 + this.AskNextBlock2Seniority.GetHashCode();
+                }                
+                                   
                 if (this.AskNextBlockOpen != null)
                 {
                     hash = hash * 59 + this.AskNextBlockOpen.GetHashCode();
