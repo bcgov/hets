@@ -8,18 +8,15 @@ const DEFAULT_STATE = {
 
   equipmentList: {},
   equipmentPhysicalAttachments: {},
-
   owners: {},
   ownerContacts: {},
   ownerEquipment: {},
-
   users: {},
   userRoles: {},
-
   projects: {},
   projectContacts: {},
-
   rentalRequests: {},
+  roles: {},
 };
 
 export default function uiReducer(state = DEFAULT_STATE, action) {
@@ -71,6 +68,9 @@ export default function uiReducer(state = DEFAULT_STATE, action) {
 
     case Action.UPDATE_RENTAL_REQUESTS_UI:
       return { ...state, rentalRequests: action.rentalRequests };
+
+    case Action.UPDATE_ROLES_UI:
+      return { ...state, roles: action.roles };
   }
 
   return { ...state, ...newState };

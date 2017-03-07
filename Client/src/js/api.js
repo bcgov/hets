@@ -146,6 +146,86 @@ export function updateUserRoles(userId, userRoleArray) {
 }
 
 ////////////////////
+// Roles,  Permissions
+////////////////////
+
+function parseRole(role) {
+  role.canEdit = true;
+  role.canDelete = false;
+}
+
+export function searchRoles(params) {
+  return new ApiRequest('/roles').get(params).then(response => {
+    // Normalize the response
+    var roles = _.fromPairs(response.map(role => [ role.id, role ]));
+
+    // Add display fields
+    _.map(roles, role => { parseRole(role); });
+
+    store.dispatch({ type: Action.UPDATE_ROLES, roles: roles });
+  });
+}
+
+export function getRole(roleId) {
+  return new ApiRequest(`/roles/${ roleId }`).get().then(response => {
+    var role = response;
+
+    // Add display fields
+    parseRole(role);
+
+    store.dispatch({ type: Action.UPDATE_ROLE, role: role });
+  });
+}
+
+export function addRole(role) {
+  return new ApiRequest('/roles').post(role).then(response => {
+    var role = response;
+
+    // Add display fields
+    parseRole(role);
+
+    store.dispatch({ type: Action.ADD_ROLE, role: role });
+  });
+}
+
+export function updateRole(role) {
+  return new ApiRequest(`/roles/${ role.id }`).put(role).then(response => {
+    var role = response;
+
+    // Add display fields
+    parseRole(role);
+
+    store.dispatch({ type: Action.UPDATE_ROLE, role: role });
+  });
+}
+
+export function deleteRole(role) {
+  return new ApiRequest(`/roles/${ role.id }/delete`).post().then(response => {
+    var role = response;
+
+    // Add display fields
+    parseRole(role);
+
+    store.dispatch({ type: Action.DELETE_ROLE, role: role });
+  });
+}
+
+export function getRolePermissions(roleId) {
+  return new ApiRequest(`/roles/${ roleId }/permissions`).get().then(response => {
+    var permissions = _.fromPairs(response.map(permission => [ permission.id, permission ]));
+
+    store.dispatch({ type: Action.UPDATE_ROLE_PERMISSIONS, rolePermissions: permissions });
+  });
+}
+
+export function updateRolePermissions(roleId, permissionsArray) {
+  return new ApiRequest(`/roles/${ roleId }/permissions`).put(permissionsArray).then(() => {
+    // After updating the role's permissions, refresh the permissions state.
+    return getRolePermissions(roleId);
+  });
+}
+
+////////////////////
 // Favourites
 ////////////////////
 
