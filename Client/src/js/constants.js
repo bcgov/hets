@@ -1,5 +1,6 @@
 // Paths
 export const USERS_PATHNAME = 'users';
+export const ROLES_PATHNAME = 'roles';
 
 // Equipments
 export const EQUIPMENT_DAYS_SINCE_VERIFIED_WARNING = 270;
