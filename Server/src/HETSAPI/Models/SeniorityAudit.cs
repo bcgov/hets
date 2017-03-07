@@ -50,11 +50,10 @@ namespace HETSAPI.Models
         /// <param name="Owner">A foreign key reference to the system-generated unique identifier for an Owner.</param>
         /// <param name="OwnerOrganizationName">The name of the organization of the owner from the Owner Record, captured at the time this record was created..</param>
         /// <param name="Seniority">The seniority calculation result for this piece of equipment. The calculation is based on the &amp;quot;numYears&amp;quot; of service + average hours of service over the last three fiscal years - as stored in the related fields (serviceHoursLastYear, serviceHoursTwoYearsAgo serviceHoursThreeYearsAgo)..</param>
-        /// <param name="ServiceHoursCurrentYearToDate">Sum of hours in the current fiscal year&amp;#39;s time cards captured at the time this record was created..</param>
         /// <param name="ServiceHoursLastYear">Number of hours of service by this piece of equipment in the previous fiscal year.</param>
         /// <param name="ServiceHoursTwoYearsAgo">Number of hours of service by this piece of equipment in the fiscal year before the last one - e.g. if current year is FY2018 then hours in FY2016.</param>
         /// <param name="ServiceHoursThreeYearsAgo">Number of hours of service by this piece of equipment in the fiscal year three years ago - e.g. if current year is FY2018 then hours in FY2015.</param>
-        public SeniorityAudit(int Id, DateTime? StartDate = null, DateTime? EndDate = null, LocalArea LocalArea = null, Equipment Equipment = null, float? BlockNumber = null, Owner Owner = null, string OwnerOrganizationName = null, float? Seniority = null, float? ServiceHoursCurrentYearToDate = null, float? ServiceHoursLastYear = null, float? ServiceHoursTwoYearsAgo = null, float? ServiceHoursThreeYearsAgo = null)
+        public SeniorityAudit(int Id, DateTime? StartDate = null, DateTime? EndDate = null, LocalArea LocalArea = null, Equipment Equipment = null, float? BlockNumber = null, Owner Owner = null, string OwnerOrganizationName = null, float? Seniority = null, float? ServiceHoursLastYear = null, float? ServiceHoursTwoYearsAgo = null, float? ServiceHoursThreeYearsAgo = null)
         {   
             this.Id = Id;
             this.StartDate = StartDate;
@@ -65,7 +64,6 @@ namespace HETSAPI.Models
             this.Owner = Owner;
             this.OwnerOrganizationName = OwnerOrganizationName;
             this.Seniority = Seniority;
-            this.ServiceHoursCurrentYearToDate = ServiceHoursCurrentYearToDate;
             this.ServiceHoursLastYear = ServiceHoursLastYear;
             this.ServiceHoursTwoYearsAgo = ServiceHoursTwoYearsAgo;
             this.ServiceHoursThreeYearsAgo = ServiceHoursThreeYearsAgo;
@@ -161,13 +159,6 @@ namespace HETSAPI.Models
         public float? Seniority { get; set; }
         
         /// <summary>
-        /// Sum of hours in the current fiscal year&#39;s time cards captured at the time this record was created.
-        /// </summary>
-        /// <value>Sum of hours in the current fiscal year&#39;s time cards captured at the time this record was created.</value>
-        [MetaDataExtension (Description = "Sum of hours in the current fiscal year&#39;s time cards captured at the time this record was created.")]
-        public float? ServiceHoursCurrentYearToDate { get; set; }
-        
-        /// <summary>
         /// Number of hours of service by this piece of equipment in the previous fiscal year
         /// </summary>
         /// <value>Number of hours of service by this piece of equipment in the previous fiscal year</value>
@@ -205,7 +196,6 @@ namespace HETSAPI.Models
             sb.Append("  Owner: ").Append(Owner).Append("\n");
             sb.Append("  OwnerOrganizationName: ").Append(OwnerOrganizationName).Append("\n");
             sb.Append("  Seniority: ").Append(Seniority).Append("\n");
-            sb.Append("  ServiceHoursCurrentYearToDate: ").Append(ServiceHoursCurrentYearToDate).Append("\n");
             sb.Append("  ServiceHoursLastYear: ").Append(ServiceHoursLastYear).Append("\n");
             sb.Append("  ServiceHoursTwoYearsAgo: ").Append(ServiceHoursTwoYearsAgo).Append("\n");
             sb.Append("  ServiceHoursThreeYearsAgo: ").Append(ServiceHoursThreeYearsAgo).Append("\n");
@@ -292,11 +282,6 @@ namespace HETSAPI.Models
                     this.Seniority.Equals(other.Seniority)
                 ) &&                 
                 (
-                    this.ServiceHoursCurrentYearToDate == other.ServiceHoursCurrentYearToDate ||
-                    this.ServiceHoursCurrentYearToDate != null &&
-                    this.ServiceHoursCurrentYearToDate.Equals(other.ServiceHoursCurrentYearToDate)
-                ) &&                 
-                (
                     this.ServiceHoursLastYear == other.ServiceHoursLastYear ||
                     this.ServiceHoursLastYear != null &&
                     this.ServiceHoursLastYear.Equals(other.ServiceHoursLastYear)
@@ -356,10 +341,6 @@ namespace HETSAPI.Models
                                 if (this.Seniority != null)
                 {
                     hash = hash * 59 + this.Seniority.GetHashCode();
-                }                
-                                if (this.ServiceHoursCurrentYearToDate != null)
-                {
-                    hash = hash * 59 + this.ServiceHoursCurrentYearToDate.GetHashCode();
                 }                
                                 if (this.ServiceHoursLastYear != null)
                 {

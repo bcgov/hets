@@ -224,7 +224,15 @@
         $ref: '#/definitions/Contact'
       status:
         type: string
-        description: Project status        
+        description: Project status
+      projectId:
+        type: integer
+      expectedStartDate:
+        type: string
+        format: date-time
+      expectedEndDate:
+        type: string
+        format: date-time      
   UserViewModel:
     type: object
     x-codegen-viewmodel: true
