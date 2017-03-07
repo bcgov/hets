@@ -73,6 +73,8 @@ namespace HETSAPI
                 options.MultipartBodyLengthLimit = 1073741824; // 1 GB
             });
 
+            services.AddResponseCompression();
+
             // Add framework services.
             services.AddMvc(options => options.AddDefaultAuthorizationPolicyFilter())
                 .AddJsonOptions(
