@@ -252,7 +252,7 @@ var EquipmentDetail = React.createClass({
           <Col md={6}>
             <Well>
               <h3>Equipment Information <span className="pull-right">
-                <Button title="Edit" bsSize="small" onClick={ this.openEditDialog }><Glyphicon glyph="edit" /></Button>
+                <Button title="Edit Equipment" bsSize="small" onClick={ this.openEditDialog }><Glyphicon glyph="pencil" /></Button>
               </span></h3>
               {(() => {
                 if (this.state.loadingEquipment) { return <div style={{ textAlign: 'center' }}><Spinner /></div>; }
@@ -346,7 +346,7 @@ var EquipmentDetail = React.createClass({
           <Col md={6}>
             <Well>
               <h3>Seniority<span className="pull-right">
-                <Button title="Edit" bsSize="small" onClick={this.openSeniorityDialog}><Glyphicon glyph="edit" /></Button>
+                <Button title="Edit Seniority" bsSize="small" onClick={this.openSeniorityDialog}><Glyphicon glyph="pencil" /></Button>
               </span></h3>
               {(() => {
                 if (this.state.loadingSeniorityData) { return <div style={{ textAlign: 'center' }}><Spinner/></div>; }
@@ -391,7 +391,7 @@ var EquipmentDetail = React.createClass({
                     <ColDisplay labelProps={{ md: 4 }} label="Override Reason">{ equipment.seniorityOverrideReason }</ColDisplay>
                     <span className="pull-right">
                       <Unimplemented>
-                        <Button className="pull-right" title="Seniority History" bsSize="small" onClick={ this.showSeniorityHistory} >All ({ Object.keys(seniorityHistory).length })</Button>
+                        <Button className="pull-right" title="Show Seniority History" bsSize="small" onClick={ this.showSeniorityHistory} >All ({ Object.keys(seniorityHistory).length })</Button>
                       </Unimplemented>
                     </span>
                   </Row>

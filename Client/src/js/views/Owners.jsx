@@ -2,7 +2,7 @@ import React from 'react';
 
 import { connect } from 'react-redux';
 
-import { Well, Alert, Row, Col } from 'react-bootstrap';
+import { PageHeader, Well, Alert, Row, Col } from 'react-bootstrap';
 import { ButtonToolbar, Button, ButtonGroup, Glyphicon } from 'react-bootstrap';
 import { LinkContainer } from 'react-router-bootstrap';
 
@@ -151,40 +151,42 @@ var Owners = React.createClass({
     var owners = _.sortBy(this.props.owners, 'organizationName');
     var equipmentTypes = _.sortBy(this.props.equipmentTypes, 'name');
 
+    var numOwners = this.state.loading ? '...' : Object.keys(this.props.ownerList).length;
+
     return <div id="owners-list">
+      <PageHeader>Owners ({ numOwners })
+        <ButtonGroup id="owners-buttons">
+          <Unimplemented>
+            <Button onClick={ this.email }><Glyphicon glyph="envelope" title="E-mail" /></Button>
+          </Unimplemented>
+          <Unimplemented>
+            <Button onClick={ this.print }><Glyphicon glyph="print" title="Print" /></Button>
+          </Unimplemented>
+        </ButtonGroup>
+      </PageHeader>
       <Well id="owners-bar" bsSize="small" className="clearfix">
         <Row>
-          <Col md={9}>
-            <ButtonToolbar id="owners-search">
+          <Col md={11}>
+            <ButtonToolbar id="owners-filters">
               <MultiDropdown id="selectedLocalAreasIds" placeholder="Local Areas"
                 items={ localAreas } selectedIds={ this.state.search.selectedLocalAreasIds } updateState={ this.updateSearchState } showMaxItems={ 2 } />
               <DropdownControl id="statusCode" title={ this.state.search.statusCode } updateState={ this.updateSearchState }
                   items={[ Constant.EQUIPMENT_STATUS_CODE_APPROVED, Constant.EQUIPMENT_STATUS_CODE_PENDING, Constant.EQUIPMENT_STATUS_CODE_ARCHIVED ]} />
-              <CheckboxControl inline id="hired" checked={ this.state.search.hired } updateState={ this.updateSearchState }>Hired</CheckboxControl>
               <MultiDropdown id="selectedEquipmentTypesIds" placeholder="Equipment Types" fieldName="description"
                 items={ equipmentTypes } selectedIds={ this.state.search.selectedEquipmentTypesIds } updateState={ this.updateSearchState } showMaxItems={ 2 } />
               <FilterDropdown id="ownerId" placeholder="Owner" blankLine 
                 items={ owners } selectedId={ this.state.search.ownerId } updateState={ this.updateSearchState } />
+              <CheckboxControl inline id="hired" checked={ this.state.search.hired } updateState={ this.updateSearchState }>Hired</CheckboxControl>
               <Button id="search-button" bsStyle="primary" onClick={ this.fetch }>Search</Button>
+              <Unimplemented>
+                <Button onClick={ this.verifyOwners }>Verify</Button>
+              </Unimplemented>
             </ButtonToolbar>
           </Col>
           <Col md={1}>
-            <Favourites id="owners-faves-dropdown" type="owner" favourites={ this.props.favourites } data={ this.state.search } onSelect={ this.loadFavourite } />
-          </Col>
-          <Col md={2}>
-            <Unimplemented>
-              <Button onClick={ this.verifyOwners }>Verify</Button>
-            </Unimplemented>
-            <div id="owners-buttons">
-              <ButtonGroup>
-                <Unimplemented>
-                  <Button onClick={ this.email }><Glyphicon glyph="envelope" title="E-mail" /></Button>
-                </Unimplemented>
-                <Unimplemented>
-                  <Button onClick={ this.print }><Glyphicon glyph="print" title="Print" /></Button>
-                </Unimplemented>
-              </ButtonGroup>
-            </div>
+            <Row id="owners-faves">
+              <Favourites id="owners-faves-dropdown" type="owner" favourites={ this.props.favourites } data={ this.state.search } onSelect={ this.loadFavourite } />
+            </Row>
           </Col>
         </Row>
       </Well>
@@ -192,7 +194,7 @@ var Owners = React.createClass({
       {(() => {
         var addOwnerButton = (
           <Unimplemented>
-            <Button title="add" bsSize="xsmall" onClick={this.openAddDialog}><Glyphicon glyph="plus" />&nbsp;<strong>Add Owner</strong></Button>
+            <Button title="Add Owner" bsSize="xsmall" onClick={this.openAddDialog}><Glyphicon glyph="plus" />&nbsp;<strong>Add Owner</strong></Button>
           </Unimplemented>
         );
 
@@ -224,7 +226,7 @@ var Owners = React.createClass({
                 <td style={{ textAlign: 'center' }}>{ owner.status }</td>
                 <td style={{ textAlign: 'right' }}>
                   <LinkContainer to={{ pathname: `owners/${owner.id}` }}>
-                    <Button title="edit" bsSize="xsmall"><Glyphicon glyph="edit" /></Button>
+                    <Button title="View Owner" bsSize="xsmall"><Glyphicon glyph="edit" /></Button>
                   </LinkContainer>
                 </td>
               </tr>;

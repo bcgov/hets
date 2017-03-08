@@ -103,7 +103,7 @@ var Roles = React.createClass({
         <Well id="roles-bar" bsSize="small" className="clearfix">
           <Row>
             <Col md={12}>
-              <ButtonToolbar id="roles-search">
+              <ButtonToolbar id="roles-filters">
                 <SearchControl id="search" search={ this.state.search } updateState={ this.updateSearchState }
                   items={[
                     { id: 'name',        name: 'Name' },

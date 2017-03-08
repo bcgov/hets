@@ -1,5 +1,5 @@
 #rental-requests-list {
-  #rental-requests-search {
+  #rental-requests-filters {
     margin-top: -10px;
 
     > div {
@@ -32,6 +32,10 @@
     .btn {
       width: 40px;
     }
+  }
+
+  #rental-requests-faves {
+    float: right;
   }
 
   #rental-requests-faves-dropdown {

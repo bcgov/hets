@@ -194,7 +194,7 @@ var ProjectsDetail = React.createClass({
             <Well>
               <h3>Project Information <span className="pull-right">
                 <Unimplemented>
-                  <Button title="Edit Project" bsSize="small" onClick={ this.openEditDialog }><Glyphicon glyph="edit" /></Button>
+                  <Button title="Edit Project" bsSize="small" onClick={ this.openEditDialog }><Glyphicon glyph="pencil" /></Button>
                 </Unimplemented>
               </span></h3>              
               {(() => {
@@ -331,11 +331,11 @@ var ProjectsDetail = React.createClass({
                         <td style={{ textAlign: 'right' }}>
                           <ButtonGroup>
                             <Unimplemented>
-                              <Button className={ contact.canEdit ? '' : 'hidden' } title="editContact" bsSize="xsmall" onClick={ this.openContactDialog.bind(this, contact) }><Glyphicon glyph="pencil" /></Button>
+                              <Button className={ contact.canEdit ? '' : 'hidden' } title="Edit Contact" bsSize="xsmall" onClick={ this.openContactDialog.bind(this, contact) }><Glyphicon glyph="pencil" /></Button>
                             </Unimplemented>
                             <Unimplemented>
                               <OverlayTrigger trigger="click" placement="top" rootClose overlay={ <Confirm onConfirm={ this.deleteContact.bind(this, contact) }/> }>
-                                <Button className={ contact.canDelete ? '' : 'hidden' } title="deleteContact" bsSize="xsmall"><Glyphicon glyph="trash" /></Button>
+                                <Button className={ contact.canDelete ? '' : 'hidden' } title="Delete Contact" bsSize="xsmall"><Glyphicon glyph="trash" /></Button>
                               </OverlayTrigger>
                             </Unimplemented>
                           </ButtonGroup>

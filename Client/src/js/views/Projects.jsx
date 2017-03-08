@@ -2,7 +2,7 @@ import React from 'react';
 
 import { connect } from 'react-redux';
 
-import { Well, Alert, Row, Col } from 'react-bootstrap';
+import { PageHeader, Well, Alert, Row, Col } from 'react-bootstrap';
 import { ButtonToolbar, Button, ButtonGroup, Glyphicon } from 'react-bootstrap';
 import { LinkContainer } from 'react-router-bootstrap';
 
@@ -136,36 +136,37 @@ var Projects = React.createClass({
   
   render() {
     var localAreas = _.sortBy(this.props.localAreas, 'name');
+    var numProjects = this.state.loading ? '...' : Object.keys(this.props.projects).length;
 
     return <div id="projects-list">
+      <PageHeader>Projects ({ numProjects })
+        <ButtonGroup id="projects-buttons">
+          <Unimplemented>
+            <Button onClick={ this.email }><Glyphicon glyph="envelope" title="E-mail" /></Button>
+          </Unimplemented>
+          <Unimplemented>
+            <Button onClick={ this.print }><Glyphicon glyph="print" title="Print" /></Button>
+          </Unimplemented>
+        </ButtonGroup>
+      </PageHeader>
       <Well id="projects-bar" bsSize="small" className="clearfix">
         <Row>
-          <Col md={10}>
-            <ButtonToolbar id="projects-search">
+          <Col md={11}>
+            <ButtonToolbar id="projects-filters">
               <MultiDropdown id="selectedLocalAreasIds" placeholder="Local Areas"
                 items={ localAreas } selectedIds={ this.state.search.selectedLocalAreasIds } updateState={ this.updateSearchState } showMaxItems={ 2 } />
               <DropdownControl id="statusCode" title={ this.state.search.statusCode } updateState={ this.updateSearchState }
                   items={[ Constant.PROJECT_STATUS_CODE_ACTIVE, Constant.PROJECT_STATUS_CODE_COMPLETED ]} />
+              <FormInputControl id="projectName" type="text" placeholder="Project name" value={ this.state.search.projectName } updateState={ this.updateSearchState }></FormInputControl>
               <CheckboxControl inline id="hires" checked={ this.state.search.hires } updateState={ this.updateSearchState }> Hires</CheckboxControl>
               <CheckboxControl inline id="requests" checked={ this.state.search.requests } updateState={ this.updateSearchState }> Requests</CheckboxControl>
-              <FormInputControl id="projectName" type="text" placeholder="Project name" value={ this.state.search.projectName } updateState={ this.updateSearchState }></FormInputControl>
               <Button id="search-button" bsStyle="primary" onClick={ this.fetch }>Search</Button>
             </ButtonToolbar>
           </Col>
           <Col md={1}>
-            <Favourites id="projects-faves-dropdown" type="project" favourites={ this.props.favourites } data={ this.state.search } onSelect={ this.loadFavourite } />
-          </Col>
-          <Col md={1}>
-            <div id="projects-buttons">
-              <ButtonGroup>
-                <Unimplemented>
-                  <Button onClick={ this.email }><Glyphicon glyph="envelope" title="E-mail" /></Button>
-                </Unimplemented>
-                <Unimplemented>
-                  <Button onClick={ this.print }><Glyphicon glyph="print" title="Print" /></Button>
-                </Unimplemented>
-              </ButtonGroup>
-            </div>
+            <Row id="projects-faves">
+              <Favourites id="projects-faves-dropdown" type="project" favourites={ this.props.favourites } data={ this.state.search } onSelect={ this.loadFavourite } />
+            </Row>
           </Col>
         </Row>
       </Well>
@@ -173,7 +174,7 @@ var Projects = React.createClass({
       {(() => {
         var addProjectButton = (
           <Unimplemented>
-            <Button title="add" bsSize="xsmall" onClick={ this.openAddDialog }><Glyphicon glyph="plus" />&nbsp;<strong>Add Project</strong></Button>
+            <Button title="Add Project" bsSize="xsmall" onClick={ this.openAddDialog }><Glyphicon glyph="plus" />&nbsp;<strong>Add Project</strong></Button>
           </Unimplemented>
         );
 
@@ -201,14 +202,15 @@ var Projects = React.createClass({
             _.map(projects, (project) => {
               return <tr key={ project.id } className={ project.isActive ? null : 'info' }>
                 <td>{ project.localAreaName }</td>
-                <td>{ project.companyName }</td>
                 <td>{ project.name }</td>
                 <td>{ project.primaryContactName }</td>
-                <td style={{ textAlign: 'center' }}>{ project.numberOfEquipment }</td>
+                <td>{ project.primaryContactPhone }</td>
+                <td style={{ textAlign: 'center' }}>{ project.numberOfHires }</td>
+                <td style={{ textAlign: 'center' }}>{ project.numberOfRequests }</td>
                 <td style={{ textAlign: 'center' }}>{ project.status }</td>
                 <td style={{ textAlign: 'right' }}>
                   <LinkContainer to={{ pathname: `projects/${ project.id }` }}>
-                    <Button title="edit" bsSize="xsmall"><Glyphicon glyph="edit" /></Button>
+                    <Button title="View Project" bsSize="xsmall"><Glyphicon glyph="edit" /></Button>
                   </LinkContainer>
                 </td>
               </tr>;

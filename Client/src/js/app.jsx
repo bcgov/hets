@@ -14,7 +14,6 @@ import Projects from './views/Projects.jsx';
 import ProjectsDetail from './views/ProjectsDetail.jsx';
 import RentalRequests from './views/RentalRequests.jsx';
 import RentalRequestsDetail from './views/RentalRequestsDetail.jsx';
-import Notifications from './views/Notifications.jsx';
 import Users from './views/Users.jsx';
 import UsersDetail from './views/UsersDetail.jsx';
 import Roles from './views/Roles.jsx';
@@ -36,7 +35,6 @@ const App = <Provider store={ store }>
       <Route path="projects/:projectId" component={ ProjectsDetail }/>
       <Route path="rentalrequests" component={ RentalRequests }/>
       <Route path="rentalrequests/:rentalRequestId" component={ RentalRequestsDetail }/>
-      <Route path="notifications" component={ Notifications }/>
       <Route path="users" component={ Users }/>
       <Route path="users/:userId" component={ UsersDetail }/>
       <Route path="roles" component={ Roles }/>
