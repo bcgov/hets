@@ -139,7 +139,7 @@ namespace HETSAPI.Services.Impl
             }
             
             permission.Code = item.Code;
-            permission.Description = item.Code;
+            permission.Description = item.Description;
             permission.Name = item.Name;            
 
             // Save changes

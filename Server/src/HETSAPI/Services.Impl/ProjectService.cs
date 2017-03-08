@@ -195,7 +195,6 @@ namespace HETSAPI.Services.Impl
                     }
                 }
 
-
             }   
         }
 
@@ -221,15 +220,16 @@ namespace HETSAPI.Services.Impl
                 bool exists = _context.Projects.Any(a => a.Id == item.Id);
                 if (exists)
                 {
-                    _context.Update(item);
+                    _context.Projects.Update(item);
                 }
                 else
-                {
-                    _context.Add(item);
+                {                   
+                    _context.Projects.Add(item);
                 }
+                // Save the changes
+                _context.SaveChanges();
             }
-            // Save the changes
-            _context.SaveChanges();
+            
             return new NoContentResult();
         }
 

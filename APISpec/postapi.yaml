@@ -369,7 +369,7 @@
           in: body
           required: true
           schema:
-            $ref: "#/definitions/Permission"
+            $ref: "#/definitions/PermissionViewModel"
       responses:
         200:
           description: OK

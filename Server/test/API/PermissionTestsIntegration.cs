@@ -55,6 +55,7 @@ namespace HETSAPI.Test
             // create a new object.
             Permission permission = new Permission();
             permission.Name = initialName;
+            permission.Code = initialName;
             string jsonString = permission.ToJson();
 
             request.Content = new StringContent(jsonString, Encoding.UTF8, "application/json");
@@ -67,7 +68,7 @@ namespace HETSAPI.Test
 
             permission = JsonConvert.DeserializeObject<Permission>(jsonString);
             // get the id
-            var id = permission.Id;
+            int id = permission.Id;
             // change the name
             permission.Name = changedName;
 
@@ -75,6 +76,7 @@ namespace HETSAPI.Test
             request = new HttpRequestMessage(HttpMethod.Put, "/api/permissions/" + id);
             request.Content = new StringContent(permission.ToJson(), Encoding.UTF8, "application/json");
             response = await _client.SendAsync(request);
+            Assert.Equal(id, 1234);
             response.EnsureSuccessStatusCode();
 
             // do a get.

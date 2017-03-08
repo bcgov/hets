@@ -208,6 +208,7 @@ namespace HETSAPI.Test
             request = new HttpRequestMessage(HttpMethod.Post, "/api/permissions");
             Permission permission = new Permission();
             permission.Name = initialName;
+            permission.Code = initialName;
             jsonString = permission.ToJson();
             request.Content = new StringContent(jsonString, Encoding.UTF8, "application/json");
             response = await _client.SendAsync(request);
@@ -235,7 +236,7 @@ namespace HETSAPI.Test
 
             // parse as JSON.
             jsonString = await response.Content.ReadAsStringAsync();
-            Permission[] rolePermissionsResponse = JsonConvert.DeserializeObject<Permission[]>(jsonString);
+            PermissionViewModel[] rolePermissionsResponse = JsonConvert.DeserializeObject<PermissionViewModel[]>(jsonString);
 
             Assert.Equal(permission.Code, rolePermissionsResponse[0].Code);
             Assert.Equal(permission.Name, rolePermissionsResponse[0].Name);

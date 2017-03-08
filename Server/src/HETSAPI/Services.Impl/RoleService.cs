@@ -329,10 +329,10 @@ namespace HETSAPI.Services.Impl
         /// </summary>
         /// <remarks>Adds permissions to a role</remarks>
         /// <param name="id">id of Role to update</param>
-        /// <param name="items"></param>
+        /// <param name="item"></param>
         /// <response code="200">OK</response>
         /// <response code="404">Role not found</response>
-        public virtual IActionResult RolesIdPermissionsPostAsync(int id, Permission item)
+        public virtual IActionResult RolesIdPermissionsPostAsync(int id, PermissionViewModel item)
         {
             using (var txn = _context.BeginTransaction())
             {

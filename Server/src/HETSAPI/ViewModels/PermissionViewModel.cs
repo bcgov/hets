@@ -42,13 +42,15 @@ namespace HETSAPI.ViewModels
         /// <param name="Code">Code (required).</param>
         /// <param name="Name">Name (required).</param>
         /// <param name="Description">Description (required).</param>
-        public PermissionViewModel(string Code, string Name, string Description)
+        /// <param name="Id">Id.</param>
+        public PermissionViewModel(string Code, string Name, string Description, int? Id = null)
         {   
             this.Code = Code;
             this.Name = Name;
             this.Description = Description;
 
 
+            this.Id = Id;
         }
 
         /// <summary>
@@ -70,6 +72,12 @@ namespace HETSAPI.ViewModels
         public string Description { get; set; }
 
         /// <summary>
+        /// Gets or Sets Id
+        /// </summary>
+        [DataMember(Name="id")]
+        public int? Id { get; set; }
+
+        /// <summary>
         /// Returns the string presentation of the object
         /// </summary>
         /// <returns>String presentation of the object</returns>
@@ -80,6 +88,7 @@ namespace HETSAPI.ViewModels
             sb.Append("  Code: ").Append(Code).Append("\n");
             sb.Append("  Name: ").Append(Name).Append("\n");
             sb.Append("  Description: ").Append(Description).Append("\n");
+            sb.Append("  Id: ").Append(Id).Append("\n");
             sb.Append("}\n");
             return sb.ToString();
         }
@@ -132,6 +141,11 @@ namespace HETSAPI.ViewModels
                     this.Description == other.Description ||
                     this.Description != null &&
                     this.Description.Equals(other.Description)
+                ) &&                 
+                (
+                    this.Id == other.Id ||
+                    this.Id != null &&
+                    this.Id.Equals(other.Id)
                 );
         }
 
@@ -157,6 +171,10 @@ namespace HETSAPI.ViewModels
                                 if (this.Description != null)
                 {
                     hash = hash * 59 + this.Description.GetHashCode();
+                }                
+                                if (this.Id != null)
+                {
+                    hash = hash * 59 + this.Id.GetHashCode();
                 }                
                 
                 return hash;

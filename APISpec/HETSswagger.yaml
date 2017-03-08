@@ -4541,7 +4541,7 @@ paths:
           in: body
           required: true
           schema:
-            $ref: "#/definitions/Permission"
+            $ref: "#/definitions/PermissionViewModel"
       responses:
         200:
           description: OK
@@ -6867,6 +6867,12 @@ definitions:
       - name
       - description
     properties:
+      id:
+        format: int32
+        type: integer
+        x-type-options:
+          min: 1
+          max: 1000
       code:
         type: string
       name:

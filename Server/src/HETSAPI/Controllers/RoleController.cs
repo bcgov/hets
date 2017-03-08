@@ -122,7 +122,7 @@ namespace HETSAPI.Controllers
         [Route("/api/roles/{id}/permissions")]
         [SwaggerOperation("RolesIdPermissionsPost")]
         [SwaggerResponse(200, type: typeof(List<PermissionViewModel>))]
-        public virtual IActionResult RolesIdPermissionsPost([FromRoute]int id, [FromBody]Permission item)
+        public virtual IActionResult RolesIdPermissionsPost([FromRoute]int id, [FromBody]PermissionViewModel item)
         {
             return this._service.RolesIdPermissionsPostAsync(id, item);
         }
