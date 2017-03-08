@@ -123,6 +123,7 @@ namespace HETSAPI
                 app.UseDeveloperExceptionPage();
             }
 
+            app.UseResponseCompression();
             app.UseMvc();
             app.UseDefaultFiles();
             app.UseStaticFiles();

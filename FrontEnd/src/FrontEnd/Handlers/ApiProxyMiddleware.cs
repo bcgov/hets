@@ -37,10 +37,11 @@ namespace FrontEnd.Handlers
 
                 // Set security headers
                 context.Response.Headers[HeaderNames.CacheControl] = "no-cache";
+                context.Response.Headers[HeaderNames.CacheControl] = "no-cache, no-store, must-revalidate, private";
+                context.Response.Headers[HeaderNames.Pragma] = "no-cache";
                 context.Response.Headers["X-Frame-Options"] = "SAMEORIGIN";
                 context.Response.Headers["X-XSS-Protection"] = "1; mode=block";
                 context.Response.Headers["X-Content-Type-Options"] = "nosniff";
-
                 await _proxy.Invoke(context);
             }
             catch (Exception e)

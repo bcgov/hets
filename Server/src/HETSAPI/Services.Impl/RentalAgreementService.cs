@@ -222,7 +222,7 @@ namespace SchoolBusAPI.Services.Impl
         /// <response code="404">Project not found</response>
         public virtual IActionResult RentalagreementsIdGetAsync(int id)
         {
-            var exists = _context.RentalRequests.Any(a => a.Id == id);
+            var exists = _context.RentalAgreements.Any(a => a.Id == id);
             if (exists)
             {
                 var result = _context.RentalAgreements
@@ -251,7 +251,7 @@ namespace SchoolBusAPI.Services.Impl
         public virtual IActionResult RentalagreementsIdPutAsync(int id, RentalAgreement item)
         {
             AdjustRecord(item);
-            var exists = _context.RentalRequestRotationLists.Any(a => a.Id == id);
+            var exists = _context.RentalAgreements.Any(a => a.Id == id);
             if (exists && id == item.Id)
             {
                 _context.RentalAgreements.Update(item);
