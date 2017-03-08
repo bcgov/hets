@@ -871,6 +871,8 @@ namespace HETSAPI.Services.Impl
             item.GivenName = model.GivenName;            
             item.Surname = model.Surname;
             item.District = model.District;
+            item.SmUserId = model.SmUserId;
+
             AdjustUser(item);
             bool exists = _context.Users.Any(x => x.Id == item.Id);
             if (exists)
