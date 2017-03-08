@@ -80,7 +80,8 @@ namespace FrontEnd
             {
                 app.UseDeveloperExceptionPage();
             }
-
+            
+            app.UseResponseCompression();
             app.UseMvc();
             app.UseDefaultFiles();
 
@@ -96,7 +97,8 @@ namespace FrontEnd
             };
             options.StaticFileOptions.OnPrepareResponse = ctx =>
             {
-                ctx.Context.Response.Headers[HeaderNames.CacheControl] = "no-cache";
+                ctx.Context.Response.Headers[HeaderNames.CacheControl] = "no-cache, no-store, must-revalidate, private";
+                ctx.Context.Response.Headers[HeaderNames.Pragma] = "no-cache";                       
                 ctx.Context.Response.Headers["X-Frame-Options"] = "SAMEORIGIN";
                 ctx.Context.Response.Headers["X-XSS-Protection"] = "1; mode=block";
                 ctx.Context.Response.Headers["X-Content-Type-Options"] = "nosniff";

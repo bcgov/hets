@@ -60,8 +60,147 @@ namespace HETSAPI.Services.Impl
                         item.LocalArea = null;
                     }
                 }
-            }
+
+
+
+
+                // Notes is a list     
+                if (item.Notes != null)
+                {
+                    for (int i = 0; i < item.Notes.Count; i++)
+                    {
+                        Note note = item.Notes[i];
+                        if (note != null)
+                        {
+                            int note_id = note.Id;
+                            bool note_exists = _context.Notes.Any(a => a.Id == note_id);
+                            if (note_exists)
+                            {
+                                note = _context.Notes.First(a => a.Id == note_id);
+                                item.Notes[i] = note;
+                            }
+                            else
+                            {
+                                item.Notes[i] = null;
+                            }
+                        }
+                    }
+                }
+
+                // History is a list     
+                if (item.History != null)
+                {
+                    for (int i = 0; i < item.History.Count; i++)
+                    {
+                        History history = item.History[i];
+                        if (history != null)
+                        {
+                            int history_id = history.Id;
+                            bool history_exists = _context.Historys.Any(a => a.Id == history_id);
+                            if (history_exists)
+                            {
+                                history = _context.Historys.First(a => a.Id == history_id);
+                                item.History[i] = history;
+                            }
+                            else
+                            {
+                                item.History[i] = null;
+                            }
+                        }
+                    }
+                }
+
+                // Adjust the record to allow it to be updated / inserted
+                if (item.PrimaryContact != null)
+                {
+                    int primaryContact_id = item.PrimaryContact.Id;
+                    bool primaryContact_exists = _context.Contacts.Any(a => a.Id == primaryContact_id);
+                    if (primaryContact_exists)
+                    {
+                        Contact contact = _context.Contacts.First(a => a.Id == primaryContact_id);
+                        item.PrimaryContact = contact;
+                    }
+                    else
+                    {
+                        item.LocalArea = null;
+                    }
+                }
+
+                // Contacts is a list     
+                if (item.Contacts != null)
+                {
+                    for (int i = 0; i < item.Contacts.Count; i++)
+                    {
+                        Contact contact = item.Contacts[i];
+                        if (contact != null)
+                        {
+                            int contact_id = contact.Id;
+                            bool history_exists = _context.Contacts.Any(a => a.Id == contact_id);
+                            if (history_exists)
+                            {
+                                contact = _context.Contacts.First(a => a.Id == contact_id);
+                                item.Contacts[i] = contact;
+                            }
+                            else
+                            {
+                                item.Contacts[i] = null;
+                            }
+                        }
+                    }
+                }
+
+                // RentalRequests is a list     
+                if (item.RentalRequests != null)
+                {
+                    for (int i = 0; i < item.RentalRequests.Count; i++)
+                    {
+                        RentalRequest rentalRequest = item.RentalRequests[i];
+                        if (rentalRequest != null)
+                        {
+                            int contact_id = rentalRequest.Id;
+                            bool history_exists = _context.RentalRequests.Any(a => a.Id == contact_id);
+                            if (history_exists)
+                            {
+                                rentalRequest = _context.RentalRequests.First(a => a.Id == contact_id);
+                                item.RentalRequests[i] = rentalRequest;
+                            }
+                            else
+                            {
+                                item.RentalRequests[i] = null;
+                            }
+                        }
+                    }
+                }
+
+                // RentalAgreements is a list     
+                if (item.RentalAgreements != null)
+                {
+                    for (int i = 0; i < item.RentalAgreements.Count; i++)
+                    {
+                        RentalAgreement rentalAgreement = item.RentalAgreements[i];
+                        if (rentalAgreement != null)
+                        {
+                            int contact_id = rentalAgreement.Id;
+                            bool history_exists = _context.RentalRequests.Any(a => a.Id == contact_id);
+                            if (history_exists)
+                            {
+                                rentalAgreement = _context.RentalAgreements.First(a => a.Id == contact_id);
+                                item.RentalAgreements[i] = rentalAgreement;
+                            }
+                            else
+                            {
+                                item.RentalAgreements[i] = null;
+                            }
+                        }
+                    }
+                }
+
+
+            }   
         }
+
+
+
 
         /// <summary>
         /// 
@@ -70,8 +209,28 @@ namespace HETSAPI.Services.Impl
         /// <response code="201">Project created</response>
         public virtual IActionResult ProjectsBulkPostAsync(Project[] items)
         {
-            var result = "";
-            return new ObjectResult(result);
+            if (items == null)
+            {
+                return new BadRequestResult();
+            }
+            foreach (Project item in items)
+            {
+                AdjustRecord(item);
+
+                // determine if this is an insert or an update            
+                bool exists = _context.Projects.Any(a => a.Id == item.Id);
+                if (exists)
+                {
+                    _context.Update(item);
+                }
+                else
+                {
+                    _context.Add(item);
+                }
+            }
+            // Save the changes
+            _context.SaveChanges();
+            return new NoContentResult();
         }
 
         /// <summary>
