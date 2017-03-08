@@ -74,7 +74,7 @@ namespace HETSAPI.Services
         /// <param name="item"></param>
         /// <response code="200">OK</response>
         /// <response code="404">Role not found</response>
-        IActionResult RolesIdPermissionsPostAsync(int id, Permission item);
+        IActionResult RolesIdPermissionsPostAsync(int id, PermissionViewModel item);
 
         /// <summary>
         /// 
