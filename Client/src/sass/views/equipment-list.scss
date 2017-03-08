@@ -1,5 +1,5 @@
 #equipment-list {
-  #equipment-search-row-1 {
+  #equipment-filters-first-row {
     margin-top: -10px;
 
     > label {
@@ -20,7 +20,7 @@
     }
   }
 
-  #equipment-search-row-2 {
+  #equipment-filters-second-row {
     margin-top: 10px;
 
     label {
@@ -53,7 +53,6 @@
 
   #equipment-faves {
     float: right;
-    margin-top: 10px;
   }
 
   #equipment-faves-dropdown {
@@ -62,6 +61,8 @@
 
   #search-button {
     float:right;
+    width: 79px;
+    margin-top: 10px;
   }
 }
 

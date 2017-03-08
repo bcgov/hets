@@ -3,7 +3,7 @@ import React from 'react';
 import { connect } from 'react-redux';
 
 import { Well, Alert, Row, Col } from 'react-bootstrap';
-import { ButtonToolbar, Button, ButtonGroup, Glyphicon } from 'react-bootstrap';
+import { PageHeader, ButtonToolbar, Button, ButtonGroup, Glyphicon } from 'react-bootstrap';
 import { Link } from 'react-router';
 import { LinkContainer } from 'react-router-bootstrap';
 
@@ -199,12 +199,23 @@ var RentalRequests = React.createClass({
   
   render() {
     var localAreas = _.sortBy(this.props.localAreas, 'name');
+    var numRentalRequests = this.state.loading ? '...' : Object.keys(this.props.rentalRequests).length;
 
     return <div id="rental-requests-list">
+      <PageHeader>Rental Requests ({ numRentalRequests })
+        <ButtonGroup id="rental-requests-buttons">
+          <Unimplemented>
+            <Button onClick={ this.email }><Glyphicon glyph="envelope" title="E-mail" /></Button>
+          </Unimplemented>
+          <Unimplemented>
+            <Button onClick={ this.print }><Glyphicon glyph="print" title="Print" /></Button>
+          </Unimplemented>
+        </ButtonGroup>
+      </PageHeader>
       <Well id="rental-requests-bar" bsSize="small" className="clearfix">
         <Row>
-          <Col md={10}>
-            <ButtonToolbar id="rental-requests-search">
+          <Col md={11}>
+            <ButtonToolbar id="rental-requests-filters">
               <MultiDropdown id="selectedLocalAreasIds" placeholder="Local Areas"
                 items={ localAreas } selectedIds={ this.state.search.selectedLocalAreasIds } updateState={ this.updateSearchState } showMaxItems={ 2 } />
               <FormInputControl id="projectName" type="text" placeholder="Project name" value={ this.state.search.projectName } updateState={ this.updateSearchState }></FormInputControl>
@@ -225,19 +236,9 @@ var RentalRequests = React.createClass({
             </ButtonToolbar>
           </Col>
           <Col md={1}>
-            <Favourites id="rental-requests-faves-dropdown" type="project" favourites={ this.props.favourites } data={ this.state.search } onSelect={ this.loadFavourite } />
-          </Col>
-          <Col md={1}>
-            <div id="rental-requests-buttons">
-              <ButtonGroup>
-                <Unimplemented>
-                  <Button onClick={ this.email }><Glyphicon glyph="envelope" title="E-mail" /></Button>
-                </Unimplemented>
-                <Unimplemented>
-                  <Button onClick={ this.print }><Glyphicon glyph="print" title="Print" /></Button>
-                </Unimplemented>
-              </ButtonGroup>
-            </div>
+            <Row id="rental-requests-faves">
+              <Favourites id="rental-requests-faves-dropdown" type="rentalRequests" favourites={ this.props.favourites } data={ this.state.search } onSelect={ this.loadFavourite } />
+            </Row>
           </Col>
         </Row>
       </Well>
@@ -245,7 +246,7 @@ var RentalRequests = React.createClass({
       {(() => {
         var addRentalRequestButton = (
           <Unimplemented>
-            <Button title="add" bsSize="xsmall" onClick={ this.openAddDialog }><Glyphicon glyph="plus" />&nbsp;<strong>Add Rental Request</strong></Button>
+            <Button title="Add Rental Request" bsSize="xsmall" onClick={ this.openAddDialog }><Glyphicon glyph="plus" />&nbsp;<strong>Add Rental Request</strong></Button>
           </Unimplemented>
         );
 
@@ -291,7 +292,7 @@ var RentalRequests = React.createClass({
                 <td style={{ textAlign: 'center' }}>{ req.status }</td>
                 <td style={{ textAlign: 'right' }}>
                   <LinkContainer to={{ pathname: `rentalRequests/${ req.id }` }}>
-                    <Button title="edit" bsSize="xsmall"><Glyphicon glyph="edit" /></Button>
+                    <Button title="View Rental Request" bsSize="xsmall"><Glyphicon glyph="edit" /></Button>
                   </LinkContainer>
                 </td>
               </tr>;

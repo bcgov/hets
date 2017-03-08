@@ -2,7 +2,7 @@ import React from 'react';
 
 import { connect } from 'react-redux';
 
-import { Well, Alert, Row, Col } from 'react-bootstrap';
+import { PageHeader, Well, Alert, Row, Col } from 'react-bootstrap';
 import { ButtonToolbar, Button, ButtonGroup, Glyphicon } from 'react-bootstrap';
 import { ControlLabel } from 'react-bootstrap';
 import { LinkContainer } from 'react-router-bootstrap';
@@ -32,7 +32,7 @@ import { formatDateTime } from '../utils/date';
 /*
 
 TODO:
-* Print / Add Equipment
+* Print / Email / Add Equipment
 
 */
 
@@ -148,8 +148,12 @@ var Equipment = React.createClass({
     this.setState({ showAddDialog: false });
   },
 
+  email() {
+
+  },
+
   print() {
-    // TODO Implement
+
   },
 
   render() {
@@ -157,45 +161,52 @@ var Equipment = React.createClass({
     var owners = _.sortBy(this.props.owners, 'organizationName');
     var equipmentTypes = _.sortBy(this.props.equipmentTypes, 'name');
 
+    var numResults = this.state.loading ? '...' : Object.keys(this.props.equipmentList).length;
+
     return <div id="equipment-list">
+      <PageHeader>Equipment ({ numResults })
+        <ButtonGroup id="equipment-buttons">
+          <Unimplemented>
+            <Button onClick={ this.email }><Glyphicon glyph="envelope" title="E-mail" /></Button>
+          </Unimplemented>
+          <Unimplemented>
+            <Button onClick={ this.print }><Glyphicon glyph="print" title="Print" /></Button>
+          </Unimplemented>
+        </ButtonGroup>
+      </PageHeader>
       <Well id="equipment-bar" bsSize="small" className="clearfix">
         <Row>
           <Col md={11}>
             <Row>
-              <ButtonToolbar id="equipment-search-row-1">
+              <ButtonToolbar id="equipment-filters-first-row">
                 <MultiDropdown id="selectedLocalAreasIds" placeholder="Local Areas"
                   items={ localAreas } selectedIds={ this.state.search.selectedLocalAreasIds } updateState={ this.updateSearchState } showMaxItems={ 2 } />
                 <DropdownControl id="statusCode" title={ this.state.search.statusCode } updateState={ this.updateSearchState }
                   items={[ Constant.EQUIPMENT_STATUS_CODE_APPROVED, Constant.EQUIPMENT_STATUS_CODE_PENDING, Constant.EQUIPMENT_STATUS_CODE_ARCHIVED ]}
                 />
-                <CheckboxControl inline id="hired" checked={ this.state.search.hired } updateState={ this.updateSearchState }>Hired</CheckboxControl>
                 <MultiDropdown id="selectedEquipmentTypesIds" placeholder="Equipment Types" fieldName="description"
                   items={ equipmentTypes } selectedIds={ this.state.search.selectedEquipmentTypesIds } updateState={ this.updateSearchState } showMaxItems={ 2 } />
                 <FilterDropdown id="ownerId" placeholder="Owner" blankLine 
                   items={ owners } selectedId={ this.state.search.ownerId } updateState={ this.updateSearchState } />
+                <CheckboxControl inline id="hired" checked={ this.state.search.hired } updateState={ this.updateSearchState }>Hired</CheckboxControl>
               </ButtonToolbar>
             </Row>
             <Row>
-              <ButtonToolbar id="equipment-search-row-2">
-                <DateControl id="lastVerifiedDate" date={ this.state.search.lastVerifiedDate } updateState={ this.updateSearchState } placeholder="mm/dd/yyyy" label="Not Verified Since:" title="last verified date"/>
+              <ButtonToolbar id="equipment-filters-second-row">
+                <DateControl id="lastVerifiedDate" date={ this.state.search.lastVerifiedDate } updateState={ this.updateSearchState } placeholder="mm/dd/yyyy" label="Not Verified Since:" title="Last Verified Date"/>
                 <div id="equipment-attachments">
                   <ControlLabel>Attachment:</ControlLabel>
                   <FormInputControl id="equipmentAttachment" type="text" value={ this.state.search.equipmentAttachment } updateState={ this.updateSearchState } />
                 </div>
-                <Button id="search-button" bsStyle="primary" onClick={ this.fetch }>Search</Button>
               </ButtonToolbar>
             </Row>
           </Col>
           <Col md={1}>
-            <Row id="equipment-buttons">
-              <ButtonGroup>
-                <Unimplemented>
-                  <Button onClick={ this.print }><Glyphicon glyph="print" title="Print" /></Button>
-                </Unimplemented>
-              </ButtonGroup>
-            </Row>
             <Row id="equipment-faves">
               <Favourites id="equipment-faves-dropdown" type="equipment" favourites={ this.props.favourites } data={ this.state.search } onSelect={ this.loadFavourite } pullRight />
+            </Row>
+            <Row id="equipment-search">
+              <Button id="search-button" bsStyle="primary" onClick={ this.fetch }>Search</Button>
             </Row>
           </Col>
         </Row>
@@ -204,7 +215,7 @@ var Equipment = React.createClass({
       {(() => {
         var addEquipmentButton = (
           <Unimplemented>
-            <Button title="add" bsSize="xsmall" onClick={this.openAddDialog}><Glyphicon glyph="plus" />&nbsp;<strong>Add Equipment</strong></Button>
+            <Button title="Add Equipment" bsSize="xsmall" onClick={this.openAddDialog}><Glyphicon glyph="plus" />&nbsp;<strong>Add Equipment</strong></Button>
           </Unimplemented>
         );
 
@@ -245,7 +256,7 @@ var Equipment = React.createClass({
                 <td>{ equip.isApproved ? formatDateTime(equip.lastVerifiedDate, 'YYYY-MMM-DD') : 'Not Approved' }</td>
                 <td style={{ textAlign: 'right' }}>
                   <LinkContainer to={{ pathname: 'equipment/' + equip.id }}>
-                    <Button title="edit" bsSize="xsmall"><Glyphicon glyph="edit" /></Button>
+                    <Button title="View Equipment" bsSize="xsmall"><Glyphicon glyph="edit" /></Button>
                   </LinkContainer>
                 </td>
               </tr>;

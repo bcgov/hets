@@ -238,7 +238,7 @@ var OwnersDetail = React.createClass({
             <Well>
               <h3>Owner Information <span className="pull-right">
                 <Unimplemented>
-                  <Button title="Edit Owner" bsSize="small" onClick={ this.openEditDialog }><Glyphicon glyph="edit" /></Button>
+                  <Button title="Edit Owner" bsSize="small" onClick={ this.openEditDialog }><Glyphicon glyph="pencil" /></Button>
                 </Unimplemented>
               </span></h3>              
               {(() => {
@@ -275,7 +275,7 @@ var OwnersDetail = React.createClass({
             <Well>
               <h3>Equipment ({ owner.numberOfEquipment }) <span className="pull-right">
                 <Unimplemented>
-                  <Button title="Verify All" bsSize="small" onClick={ this.equipmentVerifyAll }>Verify All</Button>
+                  <Button title="Verify All Equipment" bsSize="small" onClick={ this.equipmentVerifyAll }>Verify All</Button>
                 </Unimplemented>
                 <Unimplemented>
                   <Button title="Add Equipment" bsSize="small" onClick={ this.addEquipment }><Glyphicon glyph="plus" /></Button>
@@ -322,13 +322,13 @@ var OwnersDetail = React.createClass({
             <Well>        
               <h3>Policy <span className="pull-right">
                 <Unimplemented>
-                  <Button title="Proof Documents" bsSize="small" onClick={ this.openPolicyDocumentsDialog }>Proof Documents ({ owner.numberOfPolicyDocuments })</Button>
+                  <Button title="Show Proof Documents" bsSize="small" onClick={ this.openPolicyDocumentsDialog }>Proof Documents ({ owner.numberOfPolicyDocuments })</Button>
                 </Unimplemented>
                 <Unimplemented>
                   <Button title="Add Policy Document" onClick={ this.addPolicyDocument } bsSize="small"><Glyphicon glyph="plus" /> Attach Proof</Button>
                 </Unimplemented>
                 <Unimplemented>
-                  <Button title="Edit Policy Information" bsSize="small" onClick={ this.openPolicyDialog }><Glyphicon glyph="edit" /></Button>
+                  <Button title="Edit Policy Information" bsSize="small" onClick={ this.openPolicyDialog }><Glyphicon glyph="pencil" /></Button>
                 </Unimplemented>
               </span></h3>
               {(() => {
@@ -387,11 +387,11 @@ var OwnersDetail = React.createClass({
                         <td style={{ textAlign: 'right' }}>
                           <ButtonGroup>
                             <Unimplemented>
-                              <Button className={ contact.canEdit ? '' : 'hidden' } title="editContact" bsSize="xsmall" onClick={ this.openContactDialog.bind(this, contact) }><Glyphicon glyph="pencil" /></Button>
+                              <Button className={ contact.canEdit ? '' : 'hidden' } title="Edit Contact" bsSize="xsmall" onClick={ this.openContactDialog.bind(this, contact) }><Glyphicon glyph="pencil" /></Button>
                             </Unimplemented>
                             <Unimplemented>
                               <OverlayTrigger trigger="click" placement="top" rootClose overlay={ <Confirm onConfirm={ this.deleteContact.bind(this, contact) }/> }>
-                                <Button className={ contact.canDelete ? '' : 'hidden' } title="deleteContact" bsSize="xsmall"><Glyphicon glyph="trash" /></Button>
+                                <Button className={ contact.canDelete ? '' : 'hidden' } title="Delete Contact" bsSize="xsmall"><Glyphicon glyph="trash" /></Button>
                               </OverlayTrigger>
                             </Unimplemented>
                           </ButtonGroup>

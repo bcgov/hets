@@ -180,7 +180,7 @@ var RentalRequestsDetail = React.createClass({
             <Well>
               <h3>Request Information <span className="pull-right">
                 <Unimplemented>
-                  <Button title="Edit Rental Request" bsSize="small" onClick={ this.openEditDialog }><Glyphicon glyph="edit" /></Button>
+                  <Button title="Edit Rental Request" bsSize="small" onClick={ this.openEditDialog }><Glyphicon glyph="pencil" /></Button>
                 </Unimplemented>
               </span></h3>              
               {(() => {
@@ -193,7 +193,7 @@ var RentalRequestsDetail = React.createClass({
                   <Row>
                     <ColDisplay md={12} labelProps={{ md: 4 }} label={ rentalRequest.primaryContactRole || 'Primary Contact' }>
                       <Unimplemented>
-                        <Button bsStyle="link" title="show contact" onClick={ this.openContactDialog.bind(this, rentalRequest.primaryContact) }>
+                        <Button bsStyle="link" title="Show Contact" onClick={ this.openContactDialog.bind(this, rentalRequest.primaryContact) }>
                           { concat(rentalRequest.primaryContactName, rentalRequest.primaryContactPhone, ', ') }
                         </Button>
                       </Unimplemented>
@@ -264,7 +264,7 @@ var RentalRequestsDetail = React.createClass({
                         <td>{ listItem.equipmentDetails }</td>
                         <td>
                           <Unimplemented>
-                            <Button bsStyle="link" title="show contact" onClick={ this.openContactDialog.bind(this, listItem.contact) }>
+                            <Button bsStyle="link" title="Show Contact" onClick={ this.openContactDialog.bind(this, listItem.contact) }>
                               { concat(listItem.contactName, listItem.contactPhone, ': ') }
                             </Button>
                           </Unimplemented>

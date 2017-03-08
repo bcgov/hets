@@ -1,5 +1,5 @@
 #projects-list {
-  #projects-search {
+  #projects-filters {
     margin-top: -10px;
 
     > div {
@@ -32,6 +32,10 @@
     .btn {
       width: 40px;
     }
+  }
+
+  #projects-faves {
+    float: right;
   }
 
   #projects-faves-dropdown {
