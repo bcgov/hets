@@ -7,6 +7,8 @@ using Microsoft.Extensions.Logging;
 using FrontEnd.Handlers;
 using System;
 using System.IO;
+using Microsoft.Net.Http.Headers;
+using Newtonsoft.Json.Serialization;
 
 namespace FrontEnd
 {
@@ -31,8 +33,18 @@ namespace FrontEnd
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+            // enable gzip compression
+            services.AddResponseCompression();
+ 
             // Add framework services.
-            services.AddMvc();
+            services.AddMvc()
+                .AddJsonOptions(
+                    opts => {
+                        opts.SerializerSettings.ContractResolver = new CamelCasePropertyNamesContractResolver();
+                        opts.SerializerSettings.Formatting = Newtonsoft.Json.Formatting.Indented;
+                        // ReferenceLoopHandling is set to Ignore to prevent JSON parser issues with the user / roles model.
+                        opts.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore;
+                    });
 
             // Allow access to the Configuration object
             services.AddSingleton<IConfiguration>(Configuration);
