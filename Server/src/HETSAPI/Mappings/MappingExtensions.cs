@@ -25,6 +25,8 @@ namespace HETSAPI.Mappings
                 dto.Surname = model.Surname;
                 dto.Id = model.Id;
                 dto.District = model.District;
+                dto.SmAuthorizationDirectory = model.SmAuthorizationDirectory;
+                dto.SmUserId = model.SmUserId;
                 dto.GroupMemberships = model.GroupMemberships;
                 dto.UserRoles = model.UserRoles;
             }

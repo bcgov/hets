@@ -291,6 +291,10 @@
         x-chance-type: email
       active:
         type: boolean
+      smUserId:
+        type: string
+      smAuthorizationDirectory:
+        type: string
       userRoles:
         type: array
         items:
