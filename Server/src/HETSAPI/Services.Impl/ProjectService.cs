@@ -246,7 +246,8 @@ namespace HETSAPI.Services.Impl
                 .Include(x => x.LocalArea.ServiceArea.District.Region)
                 .Include(x => x.Notes)
                 .Include(x => x.PrimaryContact)
-                .Include(x => x.RentalRequests)                
+                .Include(x => x.RentalRequests)
+                .Include(x => x.RentalAgreements)
                 .ToList();
             return new ObjectResult(result);
         }
@@ -297,6 +298,7 @@ namespace HETSAPI.Services.Impl
                     .Include(x => x.Notes)
                     .Include(x => x.PrimaryContact)
                     .Include(x => x.RentalRequests)
+                    .Include(x => x.RentalAgreements)
                     .First(a => a.Id == id);
                 return new ObjectResult(result);
             }
