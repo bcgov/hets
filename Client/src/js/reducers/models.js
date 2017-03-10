@@ -78,7 +78,13 @@ export default function modelsReducer(state = DEFAULT_MODELS, action) {
     case Action.UPDATE_OWNERS:
       return { ...state, owners: action.owners };
 
+    case Action.ADD_OWNER:
+      return { ...state, owner: action.owner };
+
     case Action.UPDATE_OWNER:
+      return { ...state, owner: action.owner };
+
+    case Action.DELETE_OWNER:
       return { ...state, owner: action.owner };
 
     // Projects
