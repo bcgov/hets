@@ -1,6 +1,6 @@
 import React from 'react';
 
-import { Dropdown, MenuItem } from 'react-bootstrap';
+import { Dropdown, MenuItem, Popover, OverlayTrigger } from 'react-bootstrap';
 
 import RootCloseMenu from './RootCloseMenu.jsx';
 
@@ -26,8 +26,9 @@ var DropdownControl = React.createClass({
     // Displayed when there's no selection
     placeholder: React.PropTypes.string,
 
-    // If true, include an "empty" line at the top;
-    blankLine: React.PropTypes.bool,
+    // If blankLine is supplied, include an "empty" line at the top;
+    // If it has a string value, use that in place of blank.
+    blankLine: React.PropTypes.any,
 
     className: React.PropTypes.string,
     disabled: React.PropTypes.bool,
@@ -125,14 +126,23 @@ var DropdownControl = React.createClass({
           <ul>
             { this.props.blankLine &&
               <MenuItem key={ this.state.simple ? '' : 0 } eventKey={ this.state.simple ? '' : 0 } onSelect={ this.itemSelected }>
-                &nbsp;
+                { typeof this.props.blankLine === 'string' ? this.props.blankLine : ' ' }
               </MenuItem>
             }
             {
               _.map(this.props.items, item => {
-                return <MenuItem key={ this.state.simple ? item : item.id } eventKey={ this.state.simple ? item : item.id } onSelect={ this.itemSelected }>
+                var menuItem = <MenuItem key={ this.state.simple ? item : item.id } eventKey={ this.state.simple ? item : item.id } onSelect={ this.itemSelected }>
                   { this.state.simple ? item : item[this.state.fieldName] }
                 </MenuItem>;
+                // Check for hover items
+                if (!this.state.simple && item.hoverText) {
+                  return <OverlayTrigger trigger="hover" placement="right" rootClose
+                    overlay={ <Popover id={ `popover-${ item.id }` } title={ item[this.state.fieldName] }>{ item.hoverText }</Popover> }
+                  >
+                    { menuItem }
+                  </OverlayTrigger>;
+                }
+                return menuItem;
               })
             }
           </ul>

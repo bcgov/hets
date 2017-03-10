@@ -65,6 +65,8 @@ export const UPDATE_EQUIPMENT = 'UPDATE_EQUIPMENT';
 // Owners
 export const UPDATE_OWNERS = 'UPDATE_OWNERS';
 export const UPDATE_OWNER = 'UPDATE_OWNER';
+export const ADD_OWNER = 'ADD_OWNER';
+export const DELETE_OWNER = 'DELETE_OWNER';
 
 // Projects
 export const UPDATE_PROJECTS = 'UPDATE_PROJECTS';

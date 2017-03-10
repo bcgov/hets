@@ -468,6 +468,10 @@ function parseOwner(owner) {
   owner.districtName = owner.localArea.serviceArea.district.name;
   owner.numberOfEquipment = Object.keys(owner.equipmentList).length;
   owner.numberOfPolicyDocuments = owner.numberOfPolicyDocuments || 0;  // TODO
+
+  owner.canView = true;
+  owner.canEdit = true;
+  owner.canDelete = false; // TODO Needs input from Business whether this is needed.
 }
 
 export function searchOwners(params) {
@@ -505,6 +509,17 @@ export function getOwners() {
   });
 }
 
+export function addOwner(owner) {
+  return new ApiRequest('/owners').post(owner).then(response => {
+    var owner = response;
+
+    // Add display fields
+    parseOwner(owner);
+
+    store.dispatch({ type: Action.ADD_OWNER, owner: owner });
+  });
+}
+
 export function updateOwner(owner) {
   return new ApiRequest(`/owners/${ owner.id }`).put(owner).then(response => {
     var owner = response;
@@ -513,6 +528,17 @@ export function updateOwner(owner) {
     parseOwner(owner);
 
     store.dispatch({ type: Action.UPDATE_OWNER, owner: owner });
+  });
+}
+
+export function deleteOwner(owner) {
+  return new ApiRequest(`/owners/${ owner.id }/delete`).post().then(response => {
+    var owner = response;
+
+    // Add display fields
+    parseOwner(owner);
+
+    store.dispatch({ type: Action.DELETE_OWNER, owner: owner });
   });
 }
 

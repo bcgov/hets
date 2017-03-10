@@ -4,10 +4,11 @@ import { connect } from 'react-redux';
 
 import { PageHeader, Well, Alert, Row, Col } from 'react-bootstrap';
 import { ButtonToolbar, Button, ButtonGroup, Glyphicon } from 'react-bootstrap';
-import { LinkContainer } from 'react-router-bootstrap';
 
 import _ from 'lodash';
 import Promise from 'bluebird';
+
+import OwnersAddDialog from './dialogs/OwnersAddDialog.jsx';
 
 import * as Action from '../actionTypes';
 import * as Api from '../api';
@@ -16,6 +17,7 @@ import store from '../store';
 
 import CheckboxControl from '../components/CheckboxControl.jsx';
 import DropdownControl from '../components/DropdownControl.jsx';
+import EditButton from '../components/EditButton.jsx';
 import Favourites from '../components/Favourites.jsx';
 import FilterDropdown from '../components/FilterDropdown.jsx';
 import MultiDropdown from '../components/MultiDropdown.jsx';
@@ -33,6 +35,7 @@ TODO:
 var Owners = React.createClass({
   propTypes: {
     ownerList: React.PropTypes.object,
+    owner: React.PropTypes.object,
     localAreas: React.PropTypes.object,
     equipmentTypes: React.PropTypes.object,
     owners: React.PropTypes.object,
@@ -134,6 +137,15 @@ var Owners = React.createClass({
     this.setState({ showAddDialog: false });
   },
 
+  saveNewOwner(owner) {
+    Api.addOwner(owner).then(() => {
+      // Open it up
+      this.props.router.push({
+        pathname: `${ Constant.OWNERS_PATHNAME }/${ this.props.owner.id }`,
+      });
+    });
+  },
+
   email() {
 
   },
@@ -171,7 +183,7 @@ var Owners = React.createClass({
               <MultiDropdown id="selectedLocalAreasIds" placeholder="Local Areas"
                 items={ localAreas } selectedIds={ this.state.search.selectedLocalAreasIds } updateState={ this.updateSearchState } showMaxItems={ 2 } />
               <DropdownControl id="statusCode" title={ this.state.search.statusCode } updateState={ this.updateSearchState }
-                  items={[ Constant.EQUIPMENT_STATUS_CODE_APPROVED, Constant.EQUIPMENT_STATUS_CODE_PENDING, Constant.EQUIPMENT_STATUS_CODE_ARCHIVED ]} />
+                  items={[ Constant.OWNER_STATUS_CODE_APPROVED, Constant.OWNER_STATUS_CODE_PENDING, Constant.OWNER_STATUS_CODE_ARCHIVED ]} />
               <MultiDropdown id="selectedEquipmentTypesIds" placeholder="Equipment Types" fieldName="description"
                 items={ equipmentTypes } selectedIds={ this.state.search.selectedEquipmentTypesIds } updateState={ this.updateSearchState } showMaxItems={ 2 } />
               <FilterDropdown id="ownerId" placeholder="Owner" blankLine 
@@ -192,11 +204,9 @@ var Owners = React.createClass({
       </Well>
 
       {(() => {
-        var addOwnerButton = (
-          <Unimplemented>
-            <Button title="Add Owner" bsSize="xsmall" onClick={this.openAddDialog}><Glyphicon glyph="plus" />&nbsp;<strong>Add Owner</strong></Button>
-          </Unimplemented>
-        );
+        var addOwnerButton = <Button title="Add Owner" bsSize="xsmall" onClick={this.openAddDialog}>
+          <Glyphicon glyph="plus" />&nbsp;<strong>Add Owner</strong>
+        </Button>;
 
         if (this.state.loading) { return <div style={{ textAlign: 'center' }}><Spinner/></div>; }
         if (Object.keys(this.props.ownerList).length === 0) { return <Alert bsStyle="success">No owners { addOwnerButton }</Alert>; }
@@ -225,16 +235,18 @@ var Owners = React.createClass({
                 <td style={{ textAlign: 'center' }}>{ owner.numberOfEquipment }</td>
                 <td style={{ textAlign: 'center' }}>{ owner.status }</td>
                 <td style={{ textAlign: 'right' }}>
-                  <LinkContainer to={{ pathname: `owners/${owner.id}` }}>
-                    <Button title="View Owner" bsSize="xsmall"><Glyphicon glyph="edit" /></Button>
-                  </LinkContainer>
+                  <ButtonGroup>
+                    <EditButton name="Owner" hide={ !owner.canView } view pathname={ `${ Constant.OWNERS_PATHNAME }/${ owner.id }` }/>
+                  </ButtonGroup>
                 </td>
               </tr>;
             })
           }
         </SortTable>;
       })()}
-
+      { this.state.showAddDialog &&
+        <OwnersAddDialog show={ this.state.showAddDialog } onSave={ this.saveNewOwner } onClose={ this.closeAddDialog } />
+      }
     </div>;
   },
 });
@@ -243,6 +255,7 @@ var Owners = React.createClass({
 function mapStateToProps(state) {
   return {
     ownerList: state.models.owners,
+    owner: state.models.owner,
     localAreas: state.lookups.localAreas,
     equipmentTypes: state.lookups.equipmentTypes,
     owners: state.lookups.owners,

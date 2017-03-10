@@ -40,3 +40,8 @@ export function isBlankOrZero(str) {
 export function notBlank(str) {
   return !isBlank(str);
 }
+
+export function onlyLetters(str) {
+  var a = toString(str).trim();
+  return /^[a-zA-Z]+$/.test(a);
+}
