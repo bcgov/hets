@@ -183,7 +183,7 @@ var Owners = React.createClass({
               <MultiDropdown id="selectedLocalAreasIds" placeholder="Local Areas"
                 items={ localAreas } selectedIds={ this.state.search.selectedLocalAreasIds } updateState={ this.updateSearchState } showMaxItems={ 2 } />
               <DropdownControl id="statusCode" title={ this.state.search.statusCode } updateState={ this.updateSearchState }
-                  items={[ Constant.EQUIPMENT_STATUS_CODE_APPROVED, Constant.EQUIPMENT_STATUS_CODE_PENDING, Constant.EQUIPMENT_STATUS_CODE_ARCHIVED ]} />
+                  items={[ Constant.OWNER_STATUS_CODE_APPROVED, Constant.OWNER_STATUS_CODE_PENDING, Constant.OWNER_STATUS_CODE_ARCHIVED ]} />
               <MultiDropdown id="selectedEquipmentTypesIds" placeholder="Equipment Types" fieldName="description"
                 items={ equipmentTypes } selectedIds={ this.state.search.selectedEquipmentTypesIds } updateState={ this.updateSearchState } showMaxItems={ 2 } />
               <FilterDropdown id="ownerId" placeholder="Owner" blankLine 
