@@ -423,6 +423,8 @@ namespace HETSAPI.Services.Impl
         /// <response code="404">Owner not found</response>
         public virtual IActionResult OwnersIdPutAsync(int id, Owner item)
         {
+            AdjustRecord(item);
+
             var exists = _context.Owners.Any(a => a.Id == id);
             if (exists && id == item.Id)
             {
@@ -445,6 +447,8 @@ namespace HETSAPI.Services.Impl
         /// <response code="201">Owner created</response>
         public virtual IActionResult OwnersPostAsync(Owner item)
         {
+            AdjustRecord(item);
+
             var exists = _context.Owners.Any(a => a.Id == item.Id);
             if (exists)
             {
