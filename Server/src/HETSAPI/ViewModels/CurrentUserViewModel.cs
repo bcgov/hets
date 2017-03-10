@@ -44,15 +44,19 @@ namespace HETSAPI.ViewModels
         /// <param name="Surname">Surname.</param>
         /// <param name="Email">Email.</param>
         /// <param name="Active">Active.</param>
+        /// <param name="SmUserId">SmUserId.</param>
+        /// <param name="SmAuthorizationDirectory">SmAuthorizationDirectory.</param>
         /// <param name="UserRoles">UserRoles.</param>
         /// <param name="GroupMemberships">GroupMemberships.</param>
         /// <param name="District">The District to which this User is affliated..</param>
-        public CurrentUserViewModel(int? Id = null, string GivenName = null, string Surname = null, string Email = null, bool? Active = null, List<UserRole> UserRoles = null, List<GroupMembership> GroupMemberships = null, District District = null)
+        public CurrentUserViewModel(int? Id = null, string GivenName = null, string Surname = null, string Email = null, bool? Active = null, string SmUserId = null, string SmAuthorizationDirectory = null, List<UserRole> UserRoles = null, List<GroupMembership> GroupMemberships = null, District District = null)
         {               this.Id = Id;
             this.GivenName = GivenName;
             this.Surname = Surname;
             this.Email = Email;
             this.Active = Active;
+            this.SmUserId = SmUserId;
+            this.SmAuthorizationDirectory = SmAuthorizationDirectory;
             this.UserRoles = UserRoles;
             this.GroupMemberships = GroupMemberships;
             this.District = District;
@@ -89,6 +93,18 @@ namespace HETSAPI.ViewModels
         public bool? Active { get; set; }
 
         /// <summary>
+        /// Gets or Sets SmUserId
+        /// </summary>
+        [DataMember(Name="smUserId")]
+        public string SmUserId { get; set; }
+
+        /// <summary>
+        /// Gets or Sets SmAuthorizationDirectory
+        /// </summary>
+        [DataMember(Name="smAuthorizationDirectory")]
+        public string SmAuthorizationDirectory { get; set; }
+
+        /// <summary>
         /// Gets or Sets UserRoles
         /// </summary>
         [DataMember(Name="userRoles")]
@@ -121,6 +137,8 @@ namespace HETSAPI.ViewModels
             sb.Append("  Surname: ").Append(Surname).Append("\n");
             sb.Append("  Email: ").Append(Email).Append("\n");
             sb.Append("  Active: ").Append(Active).Append("\n");
+            sb.Append("  SmUserId: ").Append(SmUserId).Append("\n");
+            sb.Append("  SmAuthorizationDirectory: ").Append(SmAuthorizationDirectory).Append("\n");
             sb.Append("  UserRoles: ").Append(UserRoles).Append("\n");
             sb.Append("  GroupMemberships: ").Append(GroupMemberships).Append("\n");
             sb.Append("  District: ").Append(District).Append("\n");
@@ -186,6 +204,16 @@ namespace HETSAPI.ViewModels
                     this.Active == other.Active ||
                     this.Active != null &&
                     this.Active.Equals(other.Active)
+                ) &&                 
+                (
+                    this.SmUserId == other.SmUserId ||
+                    this.SmUserId != null &&
+                    this.SmUserId.Equals(other.SmUserId)
+                ) &&                 
+                (
+                    this.SmAuthorizationDirectory == other.SmAuthorizationDirectory ||
+                    this.SmAuthorizationDirectory != null &&
+                    this.SmAuthorizationDirectory.Equals(other.SmAuthorizationDirectory)
                 ) && 
                 (
                     this.UserRoles == other.UserRoles ||
@@ -234,6 +262,14 @@ namespace HETSAPI.ViewModels
                                 if (this.Active != null)
                 {
                     hash = hash * 59 + this.Active.GetHashCode();
+                }                
+                                if (this.SmUserId != null)
+                {
+                    hash = hash * 59 + this.SmUserId.GetHashCode();
+                }                
+                                if (this.SmAuthorizationDirectory != null)
+                {
+                    hash = hash * 59 + this.SmAuthorizationDirectory.GetHashCode();
                 }                
                                    
                 if (this.UserRoles != null)
