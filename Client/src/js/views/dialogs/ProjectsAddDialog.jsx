@@ -114,8 +114,7 @@ var ProjectsAddDialog = React.createClass({
         </FormGroup>
         <FormGroup controlId="localAreaId" validationState={ this.state.localAreaError ? 'error' : null }>
           <ControlLabel>Local Area <sup>*</sup></ControlLabel>
-          <FilterDropdown id="localAreaId" placeholder="None" blankLine="(None)"
-            items={ localAreas } selectedId={ this.state.localAreaId } updateState={ this.updateState } />
+          <FilterDropdown id="localAreaId" items={ localAreas } selectedId={ this.state.localAreaId } updateState={ this.updateState } />
           <HelpBlock>{ this.state.localAreaError }</HelpBlock>
         </FormGroup>
         <FormGroup controlId="information">
