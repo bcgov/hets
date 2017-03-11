@@ -91,6 +91,9 @@ export default function modelsReducer(state = DEFAULT_MODELS, action) {
     case Action.UPDATE_PROJECTS:
       return { ...state, projects: action.projects };
 
+    case Action.ADD_PROJECT:
+      return { ...state, project: action.project };
+
     case Action.UPDATE_PROJECT:
       return { ...state, project: action.project };
 

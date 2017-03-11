@@ -590,6 +590,10 @@ function parseProject(project) {
   project.primaryContactRole = project.primaryContact ? project.primaryContact.role : '';
   project.primaryContactEmail = project.primaryContact ? project.primaryContact.emailAddress : '';
   project.primaryContactPhone = project.primaryContact ? project.primaryContact.workPhoneNumber || project.primaryContact.mobilePhoneNumber || '' : '';
+
+  project.canView = true;
+  project.canEdit = true;
+  project.canDelete = false; // TODO Needs input from Business whether this is needed.
 }
 
 export function searchProjects(params) {
@@ -612,6 +616,17 @@ export function getProject(projectId) {
     parseProject(project);
 
     store.dispatch({ type: Action.UPDATE_PROJECT, project: project });
+  });
+}
+
+export function addProject(project) {
+  return new ApiRequest('/projects').post(project).then(response => {
+    var project = response;
+
+    // Add display fields
+    parseProject(project);
+
+    store.dispatch({ type: Action.ADD_PROJECT, project: project });
   });
 }
 

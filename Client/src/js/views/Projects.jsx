@@ -4,9 +4,10 @@ import { connect } from 'react-redux';
 
 import { PageHeader, Well, Alert, Row, Col } from 'react-bootstrap';
 import { ButtonToolbar, Button, ButtonGroup, Glyphicon } from 'react-bootstrap';
-import { LinkContainer } from 'react-router-bootstrap';
 
 import _ from 'lodash';
+
+import ProjectsAddDialog from './dialogs/ProjectsAddDialog.jsx';
 
 import * as Action from '../actionTypes';
 import * as Api from '../api';
@@ -15,6 +16,7 @@ import store from '../store';
 
 import CheckboxControl from '../components/CheckboxControl.jsx';
 import DropdownControl from '../components/DropdownControl.jsx';
+import EditButton from '../components/EditButton.jsx';
 import Favourites from '../components/Favourites.jsx';
 import FormInputControl from '../components/FormInputControl.jsx';
 import MultiDropdown from '../components/MultiDropdown.jsx';
@@ -25,13 +27,14 @@ import Unimplemented from '../components/Unimplemented.jsx';
 /*
 
 TODO:
-* Print / Email / Add Project
+* Print / Email
 
 */
 
 var Projects = React.createClass({
   propTypes: {
     projects: React.PropTypes.object,
+    project: React.PropTypes.object,
     localAreas: React.PropTypes.object,
     favourites: React.PropTypes.object,
     search: React.PropTypes.object,
@@ -117,12 +120,20 @@ var Projects = React.createClass({
   },
 
   openAddDialog() {
-    // TODO Add Project
     this.setState({ showAddDialog: true });
   },
 
   closeAddDialog() {
     this.setState({ showAddDialog: false });
+  },
+  
+  saveNewProject(project) {
+    Api.addProject(project).then(() => {
+      // Open it up
+      this.props.router.push({
+        pathname: `${ Constant.PROJECT_PATHNAME }/${ this.props.project.id }`,
+      });
+    });
   },
 
   email() {
@@ -132,7 +143,6 @@ var Projects = React.createClass({
   print() {
 
   },
-
   
   render() {
     var localAreas = _.sortBy(this.props.localAreas, 'name');
@@ -172,11 +182,9 @@ var Projects = React.createClass({
       </Well>
 
       {(() => {
-        var addProjectButton = (
-          <Unimplemented>
-            <Button title="Add Project" bsSize="xsmall" onClick={ this.openAddDialog }><Glyphicon glyph="plus" />&nbsp;<strong>Add Project</strong></Button>
-          </Unimplemented>
-        );
+        var addProjectButton = <Button title="Add Project" bsSize="xsmall" onClick={ this.openAddDialog }>
+          <Glyphicon glyph="plus" />&nbsp;<strong>Add Project</strong>
+        </Button>;
 
         if (this.state.loading) { return <div style={{ textAlign: 'center' }}><Spinner/></div>; }
         if (Object.keys(this.props.projects).length === 0) { return <Alert bsStyle="success">No Projects { addProjectButton }</Alert>; }
@@ -209,16 +217,18 @@ var Projects = React.createClass({
                 <td style={{ textAlign: 'center' }}>{ project.numberOfRequests }</td>
                 <td style={{ textAlign: 'center' }}>{ project.status }</td>
                 <td style={{ textAlign: 'right' }}>
-                  <LinkContainer to={{ pathname: `projects/${ project.id }` }}>
-                    <Button title="View Project" bsSize="xsmall"><Glyphicon glyph="edit" /></Button>
-                  </LinkContainer>
+                  <ButtonGroup>
+                    <EditButton name="Project" hide={ !project.canView } view pathname={ `${ Constant.PROJECT_PATHNAME }/${ project.id }` }/>
+                  </ButtonGroup>
                 </td>
               </tr>;
             })
           }
         </SortTable>;
       })()}
-
+      { this.state.showAddDialog &&
+        <ProjectsAddDialog show={ this.state.showAddDialog } onSave={ this.saveNewProject } onClose={ this.closeAddDialog } />
+      }
     </div>;
   },
 });
@@ -227,6 +237,7 @@ var Projects = React.createClass({
 function mapStateToProps(state) {
   return {
     projects: state.models.projects,
+    project: state.models.project,
     localAreas: state.lookups.localAreas,
     favourites: state.models.favourites,
     search: state.search.projects,

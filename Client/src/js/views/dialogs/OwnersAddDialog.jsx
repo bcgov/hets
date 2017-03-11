@@ -58,7 +58,10 @@ var OwnersAddDialog = React.createClass({
   },
 
   didChange() {
-    return notBlank(this.state.name) && notBlank(this.state.equipmentPrefix) && this.state.meetsResidency !== false && this.state.localAreaId !== 0;
+    return notBlank(this.state.name) ||
+      notBlank(this.state.equipmentPrefix) ||
+      this.state.meetsResidency !== false ||
+      this.state.localAreaId !== 0;
   },
 
   isValid() {
