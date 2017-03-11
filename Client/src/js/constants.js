@@ -2,6 +2,7 @@
 export const USERS_PATHNAME = 'users';
 export const ROLES_PATHNAME = 'roles';
 export const OWNERS_PATHNAME = 'owners';
+export const PROJECT_PATHNAME = 'projects';
 
 // Equipments
 export const EQUIPMENT_DAYS_SINCE_VERIFIED_WARNING = 270;

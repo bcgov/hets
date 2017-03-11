@@ -28,7 +28,7 @@ import Unimplemented from '../components/Unimplemented.jsx';
 /*
 
 TODO:
-* Print / Email / Verify / Add Owner
+* Print / Email / Verify
 
 */
 
@@ -204,7 +204,7 @@ var Owners = React.createClass({
       </Well>
 
       {(() => {
-        var addOwnerButton = <Button title="Add Owner" bsSize="xsmall" onClick={this.openAddDialog}>
+        var addOwnerButton = <Button title="Add Owner" bsSize="xsmall" onClick={ this.openAddDialog }>
           <Glyphicon glyph="plus" />&nbsp;<strong>Add Owner</strong>
         </Button>;
 
