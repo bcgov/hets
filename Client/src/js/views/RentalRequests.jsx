@@ -5,10 +5,11 @@ import { connect } from 'react-redux';
 import { Well, Alert, Row, Col } from 'react-bootstrap';
 import { PageHeader, ButtonToolbar, Button, ButtonGroup, Glyphicon } from 'react-bootstrap';
 import { Link } from 'react-router';
-import { LinkContainer } from 'react-router-bootstrap';
 
 import _ from 'lodash';
 import Moment from 'moment';
+
+import RentalRequestsAddDialog from './dialogs/RentalRequestsAddDialog.jsx';
 
 import * as Action from '../actionTypes';
 import * as Api from '../api';
@@ -17,6 +18,7 @@ import store from '../store';
 
 import DateControl from '../components/DateControl.jsx';
 import DropdownControl from '../components/DropdownControl.jsx';
+import EditButton from '../components/EditButton.jsx';
 import Favourites from '../components/Favourites.jsx';
 import FormInputControl from '../components/FormInputControl.jsx';
 import Mailto from '../components/Mailto.jsx';
@@ -30,7 +32,7 @@ import { formatDateTime, startOfCurrentFiscal, endOfCurrentFiscal, startOfPrevio
 /*
 
 TODO:
-* Print / Email / Add Rental Request
+* Print / Email
 
 */
 
@@ -47,6 +49,7 @@ const ALL = 'All';
 var RentalRequests = React.createClass({
   propTypes: {
     rentalRequests: React.PropTypes.object,
+    rentalRequest: React.PropTypes.object,
     localAreas: React.PropTypes.object,
     favourites: React.PropTypes.object,
     search: React.PropTypes.object,
@@ -180,12 +183,20 @@ var RentalRequests = React.createClass({
   },
 
   openAddDialog() {
-    // TODO Add Rental Request
     this.setState({ showAddDialog: true });
   },
 
   closeAddDialog() {
     this.setState({ showAddDialog: false });
+  },
+
+  saveNewRequest(request) {
+    Api.addRentalRequest(request).then(() => {
+      // Open it up
+      this.props.router.push({
+        pathname: `${ Constant.RENTAL_REQUEST_PATHNAME }/${ this.props.rentalRequest.id }`,
+      });
+    });
   },
 
   email() {
@@ -244,11 +255,9 @@ var RentalRequests = React.createClass({
       </Well>
 
       {(() => {
-        var addRentalRequestButton = (
-          <Unimplemented>
-            <Button title="Add Rental Request" bsSize="xsmall" onClick={ this.openAddDialog }><Glyphicon glyph="plus" />&nbsp;<strong>Add Rental Request</strong></Button>
-          </Unimplemented>
-        );
+        var addRentalRequestButton = <Button title="Add Rental Request" bsSize="xsmall" onClick={ this.openAddDialog }>
+          <Glyphicon glyph="plus" />&nbsp;<strong>Add Rental Request</strong>
+        </Button>;
 
         if (this.state.loading) { return <div style={{ textAlign: 'center' }}><Spinner/></div>; }
         if (Object.keys(this.props.rentalRequests).length === 0) { return <Alert bsStyle="success">No Rental Requests { addRentalRequestButton }</Alert>; }
@@ -272,35 +281,37 @@ var RentalRequests = React.createClass({
           },
         ]}>
           {
-            _.map(rentalRequests, (req) => {
-              return <tr key={ req.id } className={ req.isActive ? null : 'info' }>
-                <td>{ req.localAreaName }</td>
-                <td style={{ textAlign: 'center' }}>{ req.equipmentCount }</td>
-                <td>{ req.equipmentTypeName }</td>
-                <td style={{ textAlign: 'center' }}>{ formatDateTime(req.expectedStartDate, Constant.DATE_YEAR_SHORT_MONTH_DAY) }</td>
-                <td style={{ textAlign: 'center' }}>{ formatDateTime(req.expectedEndDate, Constant.DATE_YEAR_SHORT_MONTH_DAY) }</td>
+            _.map(rentalRequests, (request) => {
+              return <tr key={ request.id } className={ request.isActive ? null : 'info' }>
+                <td>{ request.localAreaName }</td>
+                <td style={{ textAlign: 'center' }}>{ request.equipmentCount }</td>
+                <td>{ request.equipmentTypeName }</td>
+                <td style={{ textAlign: 'center' }}>{ formatDateTime(request.expectedStartDate, Constant.DATE_YEAR_SHORT_MONTH_DAY) }</td>
+                <td style={{ textAlign: 'center' }}>{ formatDateTime(request.expectedEndDate, Constant.DATE_YEAR_SHORT_MONTH_DAY) }</td>
                 <td>
-                  <Link to={ req.projectPath }>{ req.projectName }</Link>
+                  <Link to={ request.projectPath }>{ request.projectName }</Link>
                 </td>
                 <td>
                   {
-                    req.primaryContactName ?
-                      <Mailto email={ req.primaryContactEmail }>{ req.primaryContactName }</Mailto> :
+                    request.primaryContactName ?
+                      <Mailto email={ request.primaryContactEmail }>{ request.primaryContactName }</Mailto> :
                       'None'
                   }
                 </td>
-                <td style={{ textAlign: 'center' }}>{ req.status }</td>
+                <td style={{ textAlign: 'center' }}>{ request.status }</td>
                 <td style={{ textAlign: 'right' }}>
-                  <LinkContainer to={{ pathname: `rentalRequests/${ req.id }` }}>
-                    <Button title="View Rental Request" bsSize="xsmall"><Glyphicon glyph="edit" /></Button>
-                  </LinkContainer>
+                  <ButtonGroup>
+                    <EditButton name="Rental Request" hide={ !request.canView } view pathname={ `${ Constant.RENTAL_REQUEST_PATHNAME }/${ request.id }` }/>
+                  </ButtonGroup>
                 </td>
               </tr>;
             })
           }
         </SortTable>;
       })()}
-
+      { this.state.showAddDialog &&
+        <RentalRequestsAddDialog show={ this.state.showAddDialog } onSave={ this.saveNewRequest } onClose={ this.closeAddDialog } />
+      }
     </div>;
   },
 });
@@ -309,6 +320,7 @@ var RentalRequests = React.createClass({
 function mapStateToProps(state) {
   return {
     rentalRequests: state.models.rentalRequests,
+    rentalRequest: state.models.rentalRequest,
     localAreas: state.lookups.localAreas,
     favourites: state.models.favourites,
     search: state.search.rentalRequests,

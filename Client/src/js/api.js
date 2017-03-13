@@ -608,6 +608,18 @@ export function searchProjects(params) {
   });
 }
 
+export function getProjects() {
+  return new ApiRequest('/projects').get().then(response => {
+    // Normalize the response
+    var projects = _.fromPairs(response.map(project => [ project.id, project ]));
+
+    // Add display fields
+    _.map(projects, project => { parseProject(project); });
+
+    store.dispatch({ type: Action.UPDATE_PROJECTS_LOOKUP, projects: projects });
+  });
+}
+
 export function getProject(projectId) {
   return new ApiRequest(`/projects/${ projectId }`).get().then(response => {
     var project = response;
@@ -678,7 +690,7 @@ function parseRentalRequest(request) {
   request.isCompleted = request.status === Constant.RENTAL_REQUEST_STATUS_CODE_COMPLETED;
   request.isCancelled = request.status === Constant.RENTAL_REQUEST_STATUS_CODE_CANCELLED;
   request.localAreaName = request.localArea.name;
-  request.equipmentTypeName = request.equipmentTypeName || request.equipmentType.name;
+  request.equipmentTypeName = request.equipmentTypeName || request.equipmentType.name || request.equipmentType.description;
 
   // Primary contact for the rental request/project
   request.primaryContactName = request.primaryContact ? firstLastName(request.primaryContact.givenName, request.primaryContact.surname) : '';
@@ -689,6 +701,10 @@ function parseRentalRequest(request) {
   // Flag element as a rental request. 
   // Rental requests and rentals are merged and shown in a single list on Project Details screen
   request.isRentalRequest = true;
+
+  request.canView = true;
+  request.canEdit = true;
+  request.canDelete = false; // TODO Needs input from Business whether this is needed.
 }
 
 export function searchRentalRequests(params) {
@@ -711,6 +727,17 @@ export function getRentalRequest(id) {
     parseRentalRequest(rentalRequest);
 
     store.dispatch({ type: Action.UPDATE_RENTAL_REQUEST, rentalRequest: rentalRequest });
+  });
+}
+
+export function addRentalRequest(rentalRequest) {
+  return new ApiRequest('/rentalrequests').post(rentalRequest).then(response => {
+    var rentalRequest = response;
+
+    // Add display fields
+    parseRentalRequest(rentalRequest);
+
+    store.dispatch({ type: Action.ADD_RENTAL_REQUEST, rentalRequest: rentalRequest });
   });
 }
 
