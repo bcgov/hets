@@ -3,6 +3,7 @@ export const USERS_PATHNAME = 'users';
 export const ROLES_PATHNAME = 'roles';
 export const OWNERS_PATHNAME = 'owners';
 export const PROJECT_PATHNAME = 'projects';
+export const RENTAL_REQUEST_PATHNAME = 'rentalrequests';
 
 // Equipments
 export const EQUIPMENT_DAYS_SINCE_VERIFIED_WARNING = 270;

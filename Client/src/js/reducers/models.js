@@ -101,6 +101,9 @@ export default function modelsReducer(state = DEFAULT_MODELS, action) {
     case Action.UPDATE_RENTAL_REQUESTS:
       return { ...state, rentalRequests: action.rentalRequests };
 
+    case Action.ADD_RENTAL_REQUEST:
+      return { ...state, rentalRequest: action.rentalRequest };
+
     case Action.UPDATE_RENTAL_REQUEST:
       return { ...state, rentalRequest: action.rentalRequest };
 
