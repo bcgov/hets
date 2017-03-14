@@ -5,6 +5,7 @@ import { connect } from 'react-redux';
 import { Form, FormGroup, HelpBlock, ControlLabel } from 'react-bootstrap';
 
 import _ from 'lodash';
+import Promise from 'bluebird';
 
 import * as Api from '../../api';
 import * as Constant from '../../constants';
@@ -141,7 +142,7 @@ var RentalRequestsAddDialog = React.createClass({
         </FormGroup>
         <FormGroup controlId="count" validationState={ this.state.countError ? 'error' : null }>
           <ControlLabel>Count <sup>*</sup></ControlLabel>
-          <FormInputControl type="number" value={ this.state.count } updateState={ this.updateState } />
+          <FormInputControl type="number" min="0" value={ this.state.count } updateState={ this.updateState } />
           <HelpBlock>{ this.state.countError }</HelpBlock>
         </FormGroup>
       </Form>
