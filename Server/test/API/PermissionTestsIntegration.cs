@@ -75,8 +75,7 @@ namespace HETSAPI.Test
             // now do an update.
             request = new HttpRequestMessage(HttpMethod.Put, "/api/permissions/" + id);
             request.Content = new StringContent(permission.ToJson(), Encoding.UTF8, "application/json");
-            response = await _client.SendAsync(request);
-            Assert.Equal(id, 1234);
+            response = await _client.SendAsync(request);            
             response.EnsureSuccessStatusCode();
 
             // do a get.
