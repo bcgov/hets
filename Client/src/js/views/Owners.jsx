@@ -129,7 +129,6 @@ var Owners = React.createClass({
   },
 
   openAddDialog() {
-    // TODO Add Owner
     this.setState({ showAddDialog: true });
   },
 

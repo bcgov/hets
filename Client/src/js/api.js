@@ -332,6 +332,10 @@ function parseEquipment(equipment) {
   equipment.isWorking = equipment.isWorking || false;  
   // TODO Descriptive text for time entries. Needs to be added to backend
   equipment.currentWorkDescription = equipment.currentWorkDescription || '' ;
+
+  equipment.canView = true;
+  equipment.canEdit = true;
+  equipment.canDelete = false; // TODO Needs input from Business whether this is needed.
 }
 
 export function searchEquipmentList(params) {
@@ -360,6 +364,17 @@ export function getEquipmentList() {
 
 export function getEquipment(equipmentId) {
   return new ApiRequest(`/equipment/${ equipmentId }`).get().then(response => {
+    var equipment = response;
+
+    // Add display fields
+    parseEquipment(equipment);
+
+    store.dispatch({ type: Action.UPDATE_EQUIPMENT, equipment: equipment });
+  });
+}
+
+export function addEquipment(equipment) {
+  return new ApiRequest('/equipment').post(equipment).then(response => {
     var equipment = response;
 
     // Add display fields

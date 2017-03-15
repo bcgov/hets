@@ -32,7 +32,7 @@ import { formatDateTime } from '../utils/date';
 /*
 
 TODO:
-* Print / Email / Add Equipment
+* Print / Email
 
 */
 
@@ -139,15 +139,6 @@ var Equipment = React.createClass({
     this.updateSearchState(JSON.parse(favourite.value), this.fetch);
   },
 
-  openAddDialog() {
-    // TODO Add Equipment
-    this.setState({ showAddDialog: true });
-  },
-
-  closeAddDialog() {
-    this.setState({ showAddDialog: false });
-  },
-
   email() {
 
   },
@@ -213,14 +204,8 @@ var Equipment = React.createClass({
       </Well>
 
       {(() => {
-        var addEquipmentButton = (
-          <Unimplemented>
-            <Button title="Add Equipment" bsSize="xsmall" onClick={this.openAddDialog}><Glyphicon glyph="plus" />&nbsp;<strong>Add Equipment</strong></Button>
-          </Unimplemented>
-        );
-
         if (this.state.loading) { return <div style={{ textAlign: 'center' }}><Spinner/></div>; }
-        if (Object.keys(this.props.equipmentList).length === 0) { return <Alert bsStyle="success">No equipment { addEquipmentButton }</Alert>; }
+        if (Object.keys(this.props.equipmentList).length === 0) { return <Alert bsStyle="success">No equipment</Alert>; }
 
         var equipmentList = _.sortBy(this.props.equipmentList, this.state.ui.sortField);
         if (this.state.ui.sortDesc) {
@@ -237,9 +222,7 @@ var Equipment = React.createClass({
           { field: 'size',                 title: 'Size'          },
           { field: 'equipmentAttachments', title: 'Attachments'   },
           { field: 'lastVerifiedDate',     title: 'Last Verified' },
-          { field: 'addEquipment',         title: 'Add Equipment',       style: { textAlign: 'right' },
-            node: addEquipmentButton,
-          },
+          { field: 'blank'                                        },
         ]}>
           {
             _.map(equipmentList, (equip) => {
