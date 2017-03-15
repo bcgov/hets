@@ -71,6 +71,9 @@ export default function modelsReducer(state = DEFAULT_MODELS, action) {
     case Action.UPDATE_EQUIPMENT_LIST:
       return { ...state, equipmentList: action.equipmentList };
 
+    case Action.ADD_EQUIPMENT:
+      return { ...state, equipment: action.equipment };
+
     case Action.UPDATE_EQUIPMENT:
       return { ...state, equipment: action.equipment };
 

@@ -6,6 +6,7 @@ const DEFAULT_STATE = {
     error: {}, // ApiError
   },
 
+  returnUrl: '',
   equipmentList: {},
   equipmentPhysicalAttachments: {},
   owners: {},
@@ -36,6 +37,14 @@ export default function uiReducer(state = DEFAULT_STATE, action) {
 
     case Action.REQUESTS_ERROR:
       return { ...state, requests: { ...state.requests, ...{ error: action.error } } };
+
+    // Return URL
+
+    case Action.UPDATE_RETURN_URL:
+      return { ...state, returnUrl: action.returnUrl };
+
+    case Action.CLEAR_RETURN_URL:
+      return { ...state, returnUrl: '' };
 
     // Screens
 

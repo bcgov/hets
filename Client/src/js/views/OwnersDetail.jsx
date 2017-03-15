@@ -9,6 +9,8 @@ import { LinkContainer } from 'react-router-bootstrap';
 
 import _ from 'lodash';
 
+import EquipmentAddDialog from './dialogs/EquipmentAddDialog.jsx';
+
 import * as Action from '../actionTypes';
 import * as Api from '../api';
 import * as Constant from '../constants';
@@ -28,7 +30,7 @@ import { concat } from '../utils/string';
 /*
 
 TODO:
-* Print / Notes / Docs / Contacts (TBD) / Owner Equipment / Owner History
+* Print / Notes / Docs / Contacts (TBD) / Owner History
 * Proof Documents / Policy Data / Edit Owner dialog
 
 */
@@ -36,12 +38,14 @@ TODO:
 var OwnersDetail = React.createClass({
   propTypes: {
     owner: React.PropTypes.object,
+    equipment: React.PropTypes.object,
     notes: React.PropTypes.object,
     attachments: React.PropTypes.object,
     history: React.PropTypes.object,
     params: React.PropTypes.object,
     uiContacts: React.PropTypes.object,
     uiEquipment: React.PropTypes.object,
+    router: React.PropTypes.object,
   },
 
   getInitialState() {
@@ -53,6 +57,7 @@ var OwnersDetail = React.createClass({
       showContactDialog: false,
       showPolicyDialog: false,
       showPolicyDocumentsDialog: false,
+      showEquipmentDialog: false,
 
       contact: {},
 
@@ -152,8 +157,26 @@ var OwnersDetail = React.createClass({
     // TODO Save contact
   },
 
-  addEquipment() {
+  openEquipmentDialog() {
+    this.setState({ showEquipmentDialog: true });
+  },
 
+  closeEquipmentDialog() {
+    this.setState({ showEquipmentDialog: false });
+  },
+
+  saveNewEquipment(equipment) {
+    Api.addEquipment(equipment).then(() => {
+      // Ensure the owner information is pre-populated for this new equipment
+      var owner = this.props.owner;
+      store.dispatch({ type: Action.UPDATE_OWNER, owner: owner });
+      store.dispatch({ type: Action.UPDATE_RETURN_URL, returnUrl: `${Constant.OWNERS_PATHNAME}/${owner.id}` });
+
+      // Open it up
+      this.props.router.push({
+        pathname: `${Constant.EQUIPMENT_PATHNAME}/${this.props.equipment.id}`,
+      });
+    });
   },
 
   equipmentVerifyAll() {
@@ -277,9 +300,7 @@ var OwnersDetail = React.createClass({
                 <Unimplemented>
                   <Button title="Verify All Equipment" bsSize="small" onClick={ this.equipmentVerifyAll }>Verify All</Button>
                 </Unimplemented>
-                <Unimplemented>
-                  <Button title="Add Equipment" bsSize="small" onClick={ this.addEquipment }><Glyphicon glyph="plus" /></Button>
-                </Unimplemented>
+                <Button title="Add Equipment" bsSize="small" onClick={ this.openEquipmentDialog }><Glyphicon glyph="plus" /></Button>
               </span></h3>
               {(() => {
                 if (this.state.loading) { return <div style={{ textAlign: 'center' }}><Spinner/></div>; }
@@ -435,6 +456,9 @@ var OwnersDetail = React.createClass({
           </Col>
         </Row>
       </div>
+      { this.state.showEquipmentDialog &&
+        <EquipmentAddDialog show={ this.state.showEquipmentDialog } onSave={ this.saveNewEquipment } onClose={ this.closeEquipmentDialog } />
+      }
       { /* TODO this.state.showEditDialog && <OwnerEditDialog /> */}
       { /* TODO this.state.showContactDialog && <ContactEditDialog /> */}
       { /* TODO this.state.showPolicyDialog && <OwnerPolicyDialog /> */}
@@ -447,6 +471,7 @@ var OwnersDetail = React.createClass({
 function mapStateToProps(state) {
   return {
     owner: state.models.owner,
+    equipment: state.models.equipment,
     notes: state.models.ownerNotes,
     attachments: state.models.ownerAttachments,
     history: state.models.ownerHistory,

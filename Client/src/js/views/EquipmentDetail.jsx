@@ -25,6 +25,7 @@ import Spinner from '../components/Spinner.jsx';
 import Unimplemented from '../components/Unimplemented.jsx';
 
 import { formatDateTime } from '../utils/date';
+import { notBlank } from '../utils/string';
 
 // Action drop-down items
 const EQUIPMENT_ACTION_ARCHIVE = 'Archive';
@@ -48,6 +49,7 @@ var EquipmentDetail = React.createClass({
     history: React.PropTypes.object,
     params: React.PropTypes.object,
     ui: React.PropTypes.object,
+    returnUrl: React.PropTypes.string,
   },
 
   getInitialState() {
@@ -56,10 +58,12 @@ var EquipmentDetail = React.createClass({
       loadingPhysicalAttachments: false,
       loadingSeniorityData: false,
       loadingEquipmentHistory: false,
-
       showEditDialog: false,
       showSeniorityDialog: false,
       showPhysicalAttachmentDialog: false,
+
+      // If we are coming in through the Owner screen then return to it; otherwise go back to Equipment search
+      returnUrl: Constant.EQUIPMENT_PATHNAME,
 
       equipmentPhysicalAttachment: {},
 
@@ -72,6 +76,12 @@ var EquipmentDetail = React.createClass({
   },
 
   componentDidMount() {
+    // If we are coming in through the Owner screen then return to it; otherwise go back to Equipment search
+    if (notBlank(this.props.returnUrl)) {
+      this.setState({ returnUrl: this.props.returnUrl });
+      store.dispatch({ type: Action.CLEAR_RETURN_URL });
+    }
+
     this.fetch();
   },
 
@@ -213,7 +223,7 @@ var EquipmentDetail = React.createClass({
               <Unimplemented>
                 <Button onClick={ this.print }><Glyphicon glyph="print" title="Print" /></Button>
               </Unimplemented>
-              <LinkContainer to={{ pathname: 'equipment' }}>
+              <LinkContainer to={{ pathname: this.state.returnUrl }}>
                 <Button title="Return to List"><Glyphicon glyph="arrow-left" /> Return to List</Button>
               </LinkContainer>
             </div>
@@ -453,6 +463,7 @@ function mapStateToProps(state) {
     attachments: state.models.equipmentAttachments,
     history: state.models.equipmentHistory,
     ui: state.ui.equipmentPhysicalAttachments,
+    returnUrl: state.ui.returnUrl,
   };
 }
 
