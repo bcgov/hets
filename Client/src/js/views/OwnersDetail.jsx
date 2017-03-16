@@ -10,6 +10,7 @@ import { LinkContainer } from 'react-router-bootstrap';
 import _ from 'lodash';
 
 import EquipmentAddDialog from './dialogs/EquipmentAddDialog.jsx';
+import OwnersEditDialog from './dialogs/OwnersEditDialog.jsx';
 
 import * as Action from '../actionTypes';
 import * as Api from '../api';
@@ -31,7 +32,7 @@ import { concat } from '../utils/string';
 
 TODO:
 * Print / Notes / Docs / Contacts (TBD) / Owner History
-* Proof Documents / Policy Data / Edit Owner dialog
+* Proof Documents / Policy Data
 
 */
 
@@ -119,7 +120,6 @@ var OwnersDetail = React.createClass({
   },
 
   openEditDialog() {
-    // TODO Edit owner data
     this.setState({ showEditDialog: true });
   },
 
@@ -260,9 +260,7 @@ var OwnersDetail = React.createClass({
           <Col md={6}>
             <Well>
               <h3>Owner Information <span className="pull-right">
-                <Unimplemented>
-                  <Button title="Edit Owner" bsSize="small" onClick={ this.openEditDialog }><Glyphicon glyph="pencil" /></Button>
-                </Unimplemented>
+                <Button title="Edit Owner" bsSize="small" onClick={ this.openEditDialog }><Glyphicon glyph="pencil" /></Button>
               </span></h3>              
               {(() => {
                 if (this.state.loading) { return <div style={{ textAlign: 'center' }}><Spinner/></div>; }
@@ -459,7 +457,9 @@ var OwnersDetail = React.createClass({
       { this.state.showEquipmentDialog &&
         <EquipmentAddDialog show={ this.state.showEquipmentDialog } onSave={ this.saveNewEquipment } onClose={ this.closeEquipmentDialog } />
       }
-      { /* TODO this.state.showEditDialog && <OwnerEditDialog /> */}
+      { this.state.showEditDialog &&
+        <OwnersEditDialog show={ this.state.showEditDialog } onSave={ this.saveEdit } onClose={ this.closeEditDialog } />
+      }
       { /* TODO this.state.showContactDialog && <ContactEditDialog /> */}
       { /* TODO this.state.showPolicyDialog && <OwnerPolicyDialog /> */}
       { /* TODO this.state.showPolicyDocumentsDialog && <OwnerPolicyDocumentsDialog /> */}
