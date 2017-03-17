@@ -50,7 +50,7 @@ var UsersDetail = React.createClass({
       ui: {
         // User roles
         sortField: this.props.ui.sortField || 'roleName',
-        sortDesc: this.props.ui.sortDesc != false, // defaults to true
+        sortDesc: this.props.ui.sortDesc === true,
         showExpiredOnly: false,
       },
     };

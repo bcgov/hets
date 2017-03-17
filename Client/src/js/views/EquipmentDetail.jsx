@@ -25,7 +25,6 @@ import Spinner from '../components/Spinner.jsx';
 import Unimplemented from '../components/Unimplemented.jsx';
 
 import { formatDateTime } from '../utils/date';
-import { notBlank } from '../utils/string';
 
 // Action drop-down items
 const EQUIPMENT_ACTION_ARCHIVE = 'Archive';
@@ -49,11 +48,13 @@ var EquipmentDetail = React.createClass({
     history: React.PropTypes.object,
     params: React.PropTypes.object,
     ui: React.PropTypes.object,
-    returnUrl: React.PropTypes.string,
+    location: React.PropTypes.object,
   },
 
   getInitialState() {
     return {
+      // If we are coming in through the Owner screen then return to it; otherwise go back to Equipment search
+      returnUrl: (this.props.location.state || {}).returnUrl || Constant.EQUIPMENT_PATHNAME,
       loadingEquipment: false,
       loadingPhysicalAttachments: false,
       loadingSeniorityData: false,
@@ -61,27 +62,16 @@ var EquipmentDetail = React.createClass({
       showEditDialog: false,
       showSeniorityDialog: false,
       showPhysicalAttachmentDialog: false,
-
-      // If we are coming in through the Owner screen then return to it; otherwise go back to Equipment search
-      returnUrl: Constant.EQUIPMENT_PATHNAME,
-
       equipmentPhysicalAttachment: {},
-
       ui : {
         // Physical Attachments
         sortField: this.props.ui.sortField || 'attachmentTypeName',
-        sortDesc: this.props.ui.sortDesc != false, // defaults to true
+        sortDesc: this.props.ui.sortDesc === true,
       },
     };
   },
 
   componentDidMount() {
-    // If we are coming in through the Owner screen then return to it; otherwise go back to Equipment search
-    if (notBlank(this.props.returnUrl)) {
-      this.setState({ returnUrl: this.props.returnUrl });
-      store.dispatch({ type: Action.CLEAR_RETURN_URL });
-    }
-
     this.fetch();
   },
 
@@ -203,7 +193,7 @@ var EquipmentDetail = React.createClass({
             <Label bsStyle={ equipment.isApproved ? 'success' : 'danger'}>{ equipment.status }</Label>
             <Label className={ equipment.isMaintenanceContractor ? '' : 'hide' }>Maintenance Contractor</Label>
             <Label bsStyle={ equipment.isWorking ? 'danger' : 'success' }>{ equipment.isWorking ? 'Working' : 'Not Working' }</Label>
-            <Label bsStyle={ lastVerifiedStyle }>Last Verified: { formatDateTime(equipment.lastVerifiedDate, 'YYYY-MMM-DD') }</Label>
+            <Label bsStyle={ lastVerifiedStyle }>Last Verified: { formatDateTime(equipment.lastVerifiedDate, Constant.DATE_YEAR_SHORT_MONTH_DAY) }</Label>
             <Unimplemented>
               <Button title="Notes" onClick={ this.showNotes }>Notes ({ Object.keys(this.props.notes).length })</Button>
             </Unimplemented>
@@ -432,7 +422,7 @@ var EquipmentDetail = React.createClass({
                     </ColDisplay>
                   </Row>
                 );
-                
+
                 return <div id="equipment-history">
                   {
                     _.map(history, (entry) => <HistoryEntry { ...entry } />)
@@ -463,7 +453,6 @@ function mapStateToProps(state) {
     attachments: state.models.equipmentAttachments,
     history: state.models.equipmentHistory,
     ui: state.ui.equipmentPhysicalAttachments,
-    returnUrl: state.ui.returnUrl,
   };
 }
 

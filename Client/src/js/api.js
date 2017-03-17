@@ -329,7 +329,7 @@ function parseEquipment(equipment) {
   equipment.hasDuplicates = equipment.hasDuplicates || false;
   equipment.duplicateEquipment = equipment.duplicateEquipment || [];
 
-  equipment.isWorking = equipment.isWorking || false;  
+  equipment.isWorking = equipment.isWorking || false;
   // TODO Descriptive text for time entries. Needs to be added to backend
   equipment.currentWorkDescription = equipment.currentWorkDescription || '' ;
 
@@ -401,7 +401,7 @@ export function updateEquipment(equipment) {
 
 function parsePhysicalAttachment(attachment) {
   if (!attachment.type) { attachment.type = { id: 0, code: '', description: ''}; }
-  
+
   attachment.typeName = attachment.type.description;
   // TODO Add grace period logic to editing/deleting attachments
   attachment.canEdit = true;
@@ -462,6 +462,7 @@ function parseOwner(owner) {
 
   // Add display fields for owner contacts
   _.map(owner.contacts, contact => { parseContact(contact); });
+  _.map(owner.equipmentList, equipment => { parseEquipment(equipment); });
 
   // TODO Owner status needs to be populated in sample data. Setting to Approved for the time being...
   owner.status = owner.status || Constant.OWNER_STATUS_CODE_APPROVED;
@@ -554,6 +555,13 @@ export function deleteOwner(owner) {
     parseOwner(owner);
 
     store.dispatch({ type: Action.DELETE_OWNER, owner: owner });
+  });
+}
+
+export function updateOwnerEquipment(owner, equipmentArray) {
+  return new ApiRequest(`/owners/${ owner.id }/equipment`).put(equipmentArray).then(() => {
+    // After updating the owner's equipment, refresh the owner state.
+    return getOwner(owner.id);
   });
 }
 
@@ -705,7 +713,7 @@ function parseRentalRequest(request) {
   request.isCompleted = request.status === Constant.RENTAL_REQUEST_STATUS_CODE_COMPLETED;
   request.isCancelled = request.status === Constant.RENTAL_REQUEST_STATUS_CODE_CANCELLED;
   request.localAreaName = request.localArea.name;
-  request.equipmentTypeName = request.equipmentTypeName || request.equipmentType.name || request.equipmentType.description;
+  request.equipmentTypeName = request.equipmentTypeName || request.equipmentType.name;
 
   // Primary contact for the rental request/project
   request.primaryContactName = request.primaryContact ? firstLastName(request.primaryContact.givenName, request.primaryContact.surname) : '';
@@ -713,7 +721,7 @@ function parseRentalRequest(request) {
   request.primaryContactRole = request.primaryContact ? request.primaryContact.role : '';
   request.primaryContactPhone = request.primaryContact ? request.primaryContact.workPhoneNumber || request.primaryContact.mobilePhoneNumber || '' : '';
 
-  // Flag element as a rental request. 
+  // Flag element as a rental request.
   // Rental requests and rentals are merged and shown in a single list on Project Details screen
   request.isRentalRequest = true;
 
@@ -783,7 +791,7 @@ function parseRentalRequestRotationList(rotationListItem) {
   // The sort order of the piece of equipment on the rotaton list at the time the request was created.
   // This is the order the equipment will be offered the available work.
   rotationListItem.rotationListSortOrder = rotationListItem.rotationListSortOrder || 0;
-  
+
   rotationListItem.isForceHire = rotationListItem.isForceHire || false;
   rotationListItem.wasAsked = rotationListItem.wasAsked || false;
   rotationListItem.askedDateTime = rotationListItem.askedDateTime || '';

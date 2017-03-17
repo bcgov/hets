@@ -110,7 +110,7 @@ var RentalRequestsAddDialog = React.createClass({
     if (this.state.loading) { return <div style={{ textAlign: 'center' }}><Spinner/></div>; }
 
     var localAreas = _.sortBy(this.props.localAreas, 'name');
-    var equipmentTypes = _.sortBy(this.props.equipmentTypes, 'description');
+    var equipmentTypes = _.sortBy(this.props.equipmentTypes, 'name');
     var projects = _.sortBy(this.props.projects, 'name');
 
     return <EditDialog id="add-rental-request" show={ this.props.show } bsSize="small"
@@ -121,21 +121,21 @@ var RentalRequestsAddDialog = React.createClass({
       <Form>
         <FormGroup controlId="projectId" validationState={ this.state.projectError ? 'error' : null }>
           <ControlLabel>Project <sup>*</sup></ControlLabel>
-          <FilterDropdown id="projectId" selectedId={ this.state.projectId } onSelect={ this.onProjectSelected } updateState={ this.updateState } 
-            items={ projects } 
+          <FilterDropdown id="projectId" selectedId={ this.state.projectId } onSelect={ this.onProjectSelected } updateState={ this.updateState }
+            items={ projects }
           />
           <HelpBlock>{ this.state.projectError }</HelpBlock>
         </FormGroup>
         <FormGroup controlId="localAreaId" validationState={ this.state.localAreaError ? 'error' : null }>
           <ControlLabel>Local Area <sup>*</sup></ControlLabel>
           <FilterDropdown id="localAreaId" selectedId={ this.state.localAreaId } updateState={ this.updateState }
-            items={ localAreas } 
+            items={ localAreas }
           />
           <HelpBlock>{ this.state.localAreaError }</HelpBlock>
         </FormGroup>
         <FormGroup controlId="equipmentTypeId" validationState={ this.state.equipmentTypeError ? 'error' : null }>
           <ControlLabel>Equipment Type <sup>*</sup></ControlLabel>
-          <FilterDropdown id="equipmentTypeId" fieldName="description" selectedId={ this.state.equipmentTypeId } updateState={ this.updateState }
+          <FilterDropdown id="equipmentTypeId" fieldName="name" selectedId={ this.state.equipmentTypeId } updateState={ this.updateState }
             items={ equipmentTypes }
           />
           <HelpBlock>{ this.state.equipmentTypeError }</HelpBlock>

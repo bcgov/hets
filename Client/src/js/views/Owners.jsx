@@ -156,7 +156,7 @@ var Owners = React.createClass({
   verifyOwners() {
 
   },
-  
+
   render() {
     var localAreas = _.sortBy(this.props.localAreas, 'name');
     var owners = _.sortBy(this.props.owners, 'organizationName');
@@ -183,9 +183,9 @@ var Owners = React.createClass({
                 items={ localAreas } selectedIds={ this.state.search.selectedLocalAreasIds } updateState={ this.updateSearchState } showMaxItems={ 2 } />
               <DropdownControl id="statusCode" title={ this.state.search.statusCode } updateState={ this.updateSearchState }
                   items={[ Constant.OWNER_STATUS_CODE_APPROVED, Constant.OWNER_STATUS_CODE_PENDING, Constant.OWNER_STATUS_CODE_ARCHIVED ]} />
-              <MultiDropdown id="selectedEquipmentTypesIds" placeholder="Equipment Types" fieldName="description"
+              <MultiDropdown id="selectedEquipmentTypesIds" placeholder="Equipment Types" fieldName="name"
                 items={ equipmentTypes } selectedIds={ this.state.search.selectedEquipmentTypesIds } updateState={ this.updateSearchState } showMaxItems={ 2 } />
-              <FilterDropdown id="ownerId" placeholder="Owner" blankLine 
+              <FilterDropdown id="ownerId" placeholder="Owner" fieldName="organizationName" blankLine
                 items={ owners } selectedId={ this.state.search.ownerId } updateState={ this.updateSearchState } />
               <CheckboxControl inline id="hired" checked={ this.state.search.hired } updateState={ this.updateSearchState }>Hired</CheckboxControl>
               <Button id="search-button" bsStyle="primary" onClick={ this.fetch }>Search</Button>
