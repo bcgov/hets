@@ -12,7 +12,7 @@ const _ = require('lodash');
 require('babel-core/register');
 
 const argv = require('minimist')(process.argv.slice(2));
-const PORT = argv.port || 9058;
+const PORT = argv.port || 4375;
 const HOST = argv.host || 'localhost';
 
 const API_HOST = argv.apihost || 'server-tran-hets-dev.pathfinder.gov.bc.ca';
