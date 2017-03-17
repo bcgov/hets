@@ -78,7 +78,7 @@ namespace HETSAPI.Services.Impl
                         }
                     }
                 }
-            }
+            }            
 
             if (item.PrimaryContact != null)
             {
@@ -92,6 +92,29 @@ namespace HETSAPI.Services.Impl
                 {
                     item.PrimaryContact = null;
                 }               
+            }
+
+            // Adjust the equipment list.            
+            if (item.EquipmentList != null)
+            {
+                for (int i = 0; i < item.EquipmentList.Count; i++)
+                {
+                    Equipment equipment = item.EquipmentList[i];
+                    if (equipment != null)
+                    {
+                        int equipment_id = equipment.Id;
+                        bool equipment_exists = _context.Equipments.Any(a => a.Id == equipment_id);
+                        if (equipment_exists)
+                        {
+                            equipment = _context.Equipments.First(a => a.Id == equipment_id);
+                            item.EquipmentList[i] = equipment;
+                        }
+                        else
+                        {
+                            item.EquipmentList[i] = null;
+                        }
+                    }
+                }
             }
         }
 
