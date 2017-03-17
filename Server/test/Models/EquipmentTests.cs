@@ -78,7 +78,7 @@ namespace HETSAPI.Test
             instance.DumpTruck = new DumpTruck();
             instance.CalculateSeniority();
 
-            Assert.Equal(instance.Seniority, 1322);
+            Assert.Equal(instance.Seniority, 1322.33337F);
         }
 
     }	
