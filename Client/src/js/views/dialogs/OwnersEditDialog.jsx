@@ -6,6 +6,9 @@ import { Form, FormGroup, HelpBlock, ControlLabel } from 'react-bootstrap';
 
 import _ from 'lodash';
 
+import * as Constant from '../../constants';
+
+import DropdownControl from '../../components/DropdownControl.jsx';
 import EditDialog from '../../components/EditDialog.jsx';
 import FilterDropdown from '../../components/FilterDropdown.jsx';
 import FormInputControl from '../../components/FormInputControl.jsx';
@@ -29,8 +32,10 @@ var OwnersEditDialog = React.createClass({
       localAreaId: owner.localArea.id || 0,
       doingBusinessAs: owner.doingBusinessAs || '',
       registeredCompanyNumber: owner.registeredCompanyNumber || '',
+      status: owner.status || '',
       organizationNameError: '',
       localAreaError: '',
+      statusError: '',
     };
   },
 
@@ -49,6 +54,7 @@ var OwnersEditDialog = React.createClass({
     if (this.state.localAreaId !== owner.localArea.id) { return true; }
     if (this.state.doingBusinessAs !== owner.doingBusinessAs) { return true; }
     if (this.state.registeredCompanyNumber !== owner.registeredCompanyNumber) { return true; }
+    if (this.state.status !== owner.status) { return true; }
 
     return false;
   },
@@ -57,6 +63,7 @@ var OwnersEditDialog = React.createClass({
     this.setState({
       organizationNameError: '',
       localAreaError: '',
+      statusError: '',
     });
 
     var valid = true;
@@ -82,6 +89,11 @@ var OwnersEditDialog = React.createClass({
       valid = false;
     }
 
+    if (isBlank(this.state.status)) {
+      this.setState({ statusError: 'Status is required' });
+      valid = false;
+    }
+
     return valid;
   },
 
@@ -91,6 +103,7 @@ var OwnersEditDialog = React.createClass({
       localArea: { id: this.state.localAreaId },
       doingBusinessAs: this.state.doingBusinessAs,
       registeredCompanyNumber: this.state.registeredCompanyNumber,
+      status: this.state.status,
     }});
   },
 
@@ -117,6 +130,12 @@ var OwnersEditDialog = React.createClass({
           <ControlLabel>Local Area <sup>*</sup></ControlLabel>
           <FilterDropdown id="localAreaId" items={ localAreas } selectedId={ this.state.localAreaId } updateState={ this.updateState } />
           <HelpBlock>{ this.state.localAreaError }</HelpBlock>
+        </FormGroup>
+        <FormGroup controlId="status" validationState={ this.state.statusError ? 'error' : null }>
+          <ControlLabel>Status <sup>*</sup></ControlLabel>
+          <DropdownControl id="status" title={ this.state.status } updateState={ this.updateState }
+              items={[ Constant.OWNER_STATUS_CODE_APPROVED, Constant.OWNER_STATUS_CODE_PENDING, Constant.OWNER_STATUS_CODE_ARCHIVED ]} />
+          <HelpBlock>{ this.state.statusError }</HelpBlock>
         </FormGroup>
         <FormGroup controlId="doingBusinessAs">
           <ControlLabel>Doing Business As</ControlLabel>
