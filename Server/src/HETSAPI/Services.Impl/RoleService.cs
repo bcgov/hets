@@ -262,8 +262,8 @@ namespace HETSAPI.Services.Impl
                 _context.Roles.Update(role);
                 _context.SaveChanges();
                 txn.Commit();
-
-                List<RolePermission> dbPermissions = _context.RolePermissions.ToList();
+                
+                var dbPermissions = role.RolePermissions.Select(x => x.Permission);
 
                 // Create DTO with serializable response
                 var result = dbPermissions.Select(x => x.ToViewModel()).ToList();

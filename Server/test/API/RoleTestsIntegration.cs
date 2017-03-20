@@ -259,6 +259,22 @@ namespace HETSAPI.Test
             response = await _client.SendAsync(request);
             response.EnsureSuccessStatusCode();
 
+            // parse as JSON.
+            jsonString = await response.Content.ReadAsStringAsync();
+            rolePermissionsResponse = JsonConvert.DeserializeObject<PermissionViewModel[]>(jsonString);
+
+            found = false;
+            foreach (var item in rolePermissionsResponse)
+            {
+                if (permission.Code.Equals(item.Code) && permission.Name.Equals(item.Name))
+                {
+                    found = true;
+                }
+            }
+
+            Assert.Equal(found, true);
+
+
             // cleanup
 
             // Delete permission

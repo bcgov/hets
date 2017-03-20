@@ -422,7 +422,9 @@ namespace HETSAPI.Test
             DateTime dateVerified = DateTime.UtcNow;
 
             e1.LastVerifiedDate = dateVerified;
-            
+            e2.LastVerifiedDate = dateVerified;
+            e3.LastVerifiedDate = dateVerified;
+
             equipmentList[0] = e1;
             equipmentList[1] = e2;
             equipmentList[2] = e3;
