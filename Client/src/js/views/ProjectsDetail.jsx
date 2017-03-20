@@ -57,10 +57,10 @@ var ProjectsDetail = React.createClass({
 
       isNew: this.props.params.projectId == 0,
 
+      // Contacts
       ui : {
-        // Contacts
         sortField: this.props.ui.sortField || 'name',
-        sortDesc: this.props.ui.sortDesc != false, // defaults to true
+        sortDesc: this.props.ui.sortDesc === true,
       },
     };
   },
@@ -135,7 +135,7 @@ var ProjectsDetail = React.createClass({
 
   deleteContact(contact) {
     // TODO Delete contacts
-    return contact;   
+    return contact;
   },
 
   saveContact() {
@@ -149,7 +149,7 @@ var ProjectsDetail = React.createClass({
   addRequest() {
 
   },
-  
+
   render() {
     var project = this.props.project;
 
@@ -196,10 +196,10 @@ var ProjectsDetail = React.createClass({
                 <Unimplemented>
                   <Button title="Edit Project" bsSize="small" onClick={ this.openEditDialog }><Glyphicon glyph="pencil" /></Button>
                 </Unimplemented>
-              </span></h3>              
+              </span></h3>
               {(() => {
                 if (this.state.loading) { return <div style={{ textAlign: 'center' }}><Spinner/></div>; }
-                
+
                 var mailto = <a href={ `mailto:${project.primaryContactEmail}` }>
                   { project.primaryContactName }
                 </a>;
@@ -224,7 +224,7 @@ var ProjectsDetail = React.createClass({
                   </Row>
                 </div>;
               })()}
-            </Well>            
+            </Well>
             <Well>
               <h3>Hired Equipment ({ (project.numberOfRequests) }) <span className="pull-right">
                 <Unimplemented>
@@ -237,13 +237,13 @@ var ProjectsDetail = React.createClass({
               {(() => {
                 if (this.state.loading) { return <div style={{ textAlign: 'center' }}><Spinner/></div>; }
 
-                // As per business requirements: 
+                // As per business requirements:
                 // "Lists the records - requests then rental agreements, within the groups, list in largest-to-smallest ID order (aka reverse chronological create)."
                 var rentalRequests = _.orderBy(project.rentalRequests, ['id'], ['desc']);
                 var rentalAgreements = _.orderBy(project.rentalAgreements, ['id'], ['desc']);
                 var combinedList =_.concat(rentalRequests, rentalAgreements);
 
-                // Exclude completed items 
+                // Exclude completed items
                 if (!this.state.includeCompletedRequests) {
                   _.remove(combinedList, (x) => !x.isActive);
                 }
@@ -283,8 +283,8 @@ var ProjectsDetail = React.createClass({
                 return <TableControl id="equipment-list" headers={ headers }>
                   {
                     _.map(combinedList, (listItem) => {
-                      if (listItem.isRentalRequest) { 
-                        return <RentalRequestListItem item={ listItem } project={ project } />; 
+                      if (listItem.isRentalRequest) {
+                        return <RentalRequestListItem item={ listItem } project={ project } />;
                       } else {
                         return <RentalAgreementListItem item={ listItem } />;
                       }
@@ -309,9 +309,9 @@ var ProjectsDetail = React.createClass({
                 if (this.state.ui.sortDesc) {
                   _.reverse(contacts);
                 }
-                
+
                 // TODO The Contact model will be simplified (TBD)
-                
+
                 var headers = [
                   { field: 'name',  title: 'Name'         },
                   { field: 'phone', title: 'Phone Number' },
@@ -345,7 +345,7 @@ var ProjectsDetail = React.createClass({
                   }
                 </SortTable>;
               })()}
-            </Well>            
+            </Well>
             <Well>
               <h3>History <span className="pull-right">
                 <Unimplemented>
@@ -359,7 +359,7 @@ var ProjectsDetail = React.createClass({
                 if (this.state.loadingHistory) { return <div style={{ textAlign: 'center' }}><Spinner/></div>; }
                 if (Object.keys(this.props.history).length === 0) { return <Alert bsStyle="success" style={{ marginTop: 10 }}>No history</Alert>; }
 
-                var history = _.sortBy(this.props.history, 'createdDate');    
+                var history = _.sortBy(this.props.history, 'createdDate');
 
                 const HistoryEntry = ({ createdDate, historyText }) => (
                   <Row>

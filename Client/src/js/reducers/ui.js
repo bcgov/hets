@@ -6,7 +6,6 @@ const DEFAULT_STATE = {
     error: {}, // ApiError
   },
 
-  returnUrl: '',
   equipmentList: {},
   equipmentPhysicalAttachments: {},
   owners: {},
@@ -38,14 +37,6 @@ export default function uiReducer(state = DEFAULT_STATE, action) {
     case Action.REQUESTS_ERROR:
       return { ...state, requests: { ...state.requests, ...{ error: action.error } } };
 
-    // Return URL
-
-    case Action.UPDATE_RETURN_URL:
-      return { ...state, returnUrl: action.returnUrl };
-
-    case Action.CLEAR_RETURN_URL:
-      return { ...state, returnUrl: '' };
-
     // Screens
 
     case Action.UPDATE_EQUIPMENT_LIST_UI:
@@ -64,16 +55,16 @@ export default function uiReducer(state = DEFAULT_STATE, action) {
       return { ...state, userRoles: action.userRoles };
 
     case Action.UPDATE_OWNER_CONTACTS_UI:
-      return { ...state, ownerContacts: action.ownerContacts };  
+      return { ...state, ownerContacts: action.ownerContacts };
 
     case Action.UPDATE_OWNER_EQUIPMENT_UI:
-      return { ...state, ownerEquipment: action.ownerEquipment };  
+      return { ...state, ownerEquipment: action.ownerEquipment };
 
     case Action.UPDATE_PROJECTS_UI:
       return { ...state, projects: action.projects };
 
     case Action.UPDATE_PROJECT_CONTACTS_UI:
-      return { ...state, projectContacts: action.projectContacts };  
+      return { ...state, projectContacts: action.projectContacts };
 
     case Action.UPDATE_RENTAL_REQUESTS_UI:
       return { ...state, rentalRequests: action.rentalRequests };

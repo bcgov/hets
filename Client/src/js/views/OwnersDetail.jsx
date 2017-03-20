@@ -25,7 +25,7 @@ import SortTable from '../components/SortTable.jsx';
 import Spinner from '../components/Spinner.jsx';
 import Unimplemented from '../components/Unimplemented.jsx';
 
-import { formatDateTime } from '../utils/date';
+import { formatDateTime, today } from '../utils/date';
 import { concat } from '../utils/string';
 
 /*
@@ -64,16 +64,16 @@ var OwnersDetail = React.createClass({
 
       isNew: this.props.params.ownerId == 0,
 
+      // Contacts
       uiContacts : {
-        // Contacts
         sortField: this.props.uiContacts.sortField || 'name',
-        sortDesc: this.props.uiContacts.sortDesc != false, // defaults to true
+        sortDesc: this.props.uiContacts.sortDesc  === true,
       },
 
+      // Equipment
       uiEquipment : {
-        // Equipment
         sortField: this.props.uiEquipment.sortField || 'equipmentCode',
-        sortDesc: this.props.uiEquipment.sortDesc != false, // defaults to true
+        sortDesc: this.props.uiEquipment.sortDesc  === true,
       },
     };
   },
@@ -150,7 +150,7 @@ var OwnersDetail = React.createClass({
 
   deleteContact(contact) {
     // TODO Delete contacts
-    return contact;   
+    return contact;
   },
 
   saveContact() {
@@ -167,34 +167,38 @@ var OwnersDetail = React.createClass({
 
   saveNewEquipment(equipment) {
     Api.addEquipment(equipment).then(() => {
-      // Ensure the owner information is pre-populated for this new equipment
-      var owner = this.props.owner;
-      store.dispatch({ type: Action.UPDATE_OWNER, owner: owner });
-      store.dispatch({ type: Action.UPDATE_RETURN_URL, returnUrl: `${Constant.OWNERS_PATHNAME}/${owner.id}` });
-
       // Open it up
       this.props.router.push({
         pathname: `${Constant.EQUIPMENT_PATHNAME}/${this.props.equipment.id}`,
+        state: { returnUrl: `${Constant.OWNERS_PATHNAME}/${this.props.owner.id}` },
       });
     });
   },
 
   equipmentVerifyAll() {
+    var now = today();
+    var owner = this.props.owner;
 
+    // Update the last verified date on all pieces of equipment
+    var equipmentList =_.map(owner.equipmentList, equipment => {
+      return {...equipment, lastVerifiedDate: now };
+    });
+
+    Api.updateOwnerEquipment(owner, equipmentList);
   },
 
   equipmentVerify(equipment) {
-    // TODO
-    // equipment.lastVerifiedDate = today();
-    // store.dispatch(...);
-    return equipment;
+    equipment.lastVerifiedDate = today();
+    Api.updateEquipment(equipment).then(() => {
+      this.fetch();
+    });
   },
 
   openPolicyDialog() {
     // TODO Edit policy data
     this.setState({ showPolicyDialog: true });
   },
-  
+
   closePolicyDialog() {
     this.setState({ showPolicyDialog: false });
   },
@@ -215,7 +219,7 @@ var OwnersDetail = React.createClass({
   print() {
 
   },
-  
+
   render() {
     var owner = this.props.owner;
 
@@ -261,7 +265,7 @@ var OwnersDetail = React.createClass({
             <Well>
               <h3>Owner Information <span className="pull-right">
                 <Button title="Edit Owner" bsSize="small" onClick={ this.openEditDialog }><Glyphicon glyph="pencil" /></Button>
-              </span></h3>              
+              </span></h3>
               {(() => {
                 if (this.state.loading) { return <div style={{ textAlign: 'center' }}><Spinner/></div>; }
 
@@ -292,12 +296,10 @@ var OwnersDetail = React.createClass({
                   </Row>
                 </div>;
               })()}
-            </Well>            
+            </Well>
             <Well>
               <h3>Equipment ({ owner.numberOfEquipment }) <span className="pull-right">
-                <Unimplemented>
-                  <Button title="Verify All Equipment" bsSize="small" onClick={ this.equipmentVerifyAll }>Verify All</Button>
-                </Unimplemented>
+                <Button title="Verify All Equipment" bsSize="small" onClick={ this.equipmentVerifyAll }>Verify All</Button>
                 <Button title="Add Equipment" bsSize="small" onClick={ this.openEquipmentDialog }><Glyphicon glyph="plus" /></Button>
               </span></h3>
               {(() => {
@@ -320,15 +322,17 @@ var OwnersDetail = React.createClass({
                 return <SortTable id="equipment-list" sortField={ this.state.uiEquipment.sortField } sortDesc={ this.state.uiEquipment.sortDesc } onSort={ this.updateEquipmentUIState } headers={ headers }>
                   {
                     _.map(equipmentList, (equipment) => {
+                      const location = {
+                        pathname: `${Constant.EQUIPMENT_PATHNAME}/${equipment.id}`,
+                        state: { returnUrl: `${Constant.OWNERS_PATHNAME}/${owner.id}` },
+                      };
                       return <tr key={ equipment.id }>
-                        <td><Link to={`equipment/${equipment.id}`}>{ equipment.equipCode }</Link></td>
+                        <td><Link to={ location }>{ equipment.equipmentCode }</Link></td>
                         <td>{ equipment.typeName }</td>
                         <td>{ concat(equipment.make, concat(equipment.model, equipment.size, '/'), '/') }</td>
                         <td>{ equipment.isApproved ? formatDateTime(equipment.lastVerifiedDate, Constant.DATE_YEAR_SHORT_MONTH_DAY) : 'Not Approved' }</td>
                         <td style={{ textAlign: 'right' }}>
-                          <Unimplemented>
-                            <Button title="Verify Equipment" bsSize="xsmall" onClick={ this.equipmentVerify.bind(this, equipment) }><Glyphicon glyph="ok" /> OK</Button>
-                          </Unimplemented>
+                          <Button title="Verify Equipment" bsSize="xsmall" onClick={ this.equipmentVerify.bind(this, equipment) }><Glyphicon glyph="ok" /> OK</Button>
                         </td>
                       </tr>;
                     })
@@ -338,7 +342,7 @@ var OwnersDetail = React.createClass({
             </Well>
           </Col>
           <Col md={6}>
-            <Well>        
+            <Well>
               <h3>Policy <span className="pull-right">
                 <Unimplemented>
                   <Button title="Show Proof Documents" bsSize="small" onClick={ this.openPolicyDocumentsDialog }>Proof Documents ({ owner.numberOfPolicyDocuments })</Button>
@@ -384,9 +388,9 @@ var OwnersDetail = React.createClass({
                 if (this.state.uiContacts.sortDesc) {
                   _.reverse(contacts);
                 }
-                
+
                 // TODO The Contact model will be simplified (TBD)
-                
+
                 var headers = [
                   { field: 'name',  title: 'Name'         },
                   { field: 'phone', title: 'Phone Number' },
@@ -420,7 +424,7 @@ var OwnersDetail = React.createClass({
                   }
                 </SortTable>;
               })()}
-            </Well>            
+            </Well>
             <Well>
               <h3>History <span className="pull-right">
                 <Unimplemented>
@@ -434,7 +438,7 @@ var OwnersDetail = React.createClass({
                 if (this.state.loadingOwnerHistory) { return <div style={{ textAlign: 'center' }}><Spinner/></div>; }
                 if (Object.keys(this.props.history || []).length === 0) { return <Alert bsStyle="success" style={{ marginTop: 10 }}>No history</Alert>; }
 
-                var history = _.sortBy(this.props.history, 'createdDate');    
+                var history = _.sortBy(this.props.history, 'createdDate');
 
                 const HistoryEntry = ({ createdDate, historyText }) => (
                   <Row>

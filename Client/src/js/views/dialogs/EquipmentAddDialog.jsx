@@ -123,7 +123,7 @@ var EquipmentAddDialog = React.createClass({
         </FormGroup>
         <FormGroup controlId="equipmentTypeId" validationState={ this.state.equipmentTypeError ? 'error' : null }>
           <ControlLabel>Equipment Type <sup>*</sup></ControlLabel>
-          <FilterDropdown id="equipmentTypeId" fieldName="description" selectedId={ this.state.equipmentTypeId } updateState={ this.updateState }
+          <FilterDropdown id="equipmentTypeId" fieldName="name" selectedId={ this.state.equipmentTypeId } updateState={ this.updateState }
             items={ equipmentTypes }
           />
           <HelpBlock>{ this.state.equipmentTypeError }</HelpBlock>
