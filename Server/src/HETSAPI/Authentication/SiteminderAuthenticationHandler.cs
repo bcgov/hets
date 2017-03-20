@@ -127,6 +127,13 @@ namespace HETSAPI.Authentication
                 return Task.FromResult(AuthenticateResult.Fail("Invalid credentials!"));
             }
 
+            if (user.Active == false)
+            {
+                // Defer to another layer ...
+                _logger.LogWarning($"Inactive user attempting to login {username}!");
+                return Task.FromResult(AuthenticateResult.Fail("Inactive user cannot login!"));
+            }
+
             ClaimsPrincipal principal = user.ToClaimsPrincipal(Options.AuthenticationScheme);
             _logger.LogInformation($"Setting identity to {principal.Identity.Name} ...");
             AuthenticationTicket ticket = new AuthenticationTicket(principal, null, Options.AuthenticationScheme);
