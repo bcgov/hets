@@ -177,6 +177,21 @@ namespace HETSAPI.Controllers
         /// <summary>
         /// 
         /// </summary>
+        /// <remarks>Returns the next Equipment Code for the given Owner.  Equipment Code is a combination of the Owner Equipment Prefix and the numeric identifier for the next piece of equipment.</remarks>
+        /// <param name="id">id of Owner to fetch the Equipment Code for</param>
+        /// <response code="200">OK</response>
+        [HttpGet]
+        [Route("/api/owners/{id}/nextEquipmentCode")]
+        [SwaggerOperation("OwnersIdNextEquipmentCodeGet")]
+        [SwaggerResponse(200, type: typeof(EquipmentCodeViewModel))]
+        public virtual IActionResult OwnersIdNextEquipmentCodeGet([FromRoute]int id)
+        {
+            return this._service.OwnersIdNextEquipmentCodeGetAsync(id);
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
         /// <param name="id">id of Owner to fetch</param>
         /// <param name="item"></param>
         /// <response code="200">OK</response>

@@ -198,6 +198,32 @@
             type: array
             items:
               $ref: "#/definitions/Contact"
+    post:
+      tags:
+        - Owner
+      description: Adds Owner Contact
+      consumes: []
+      produces:
+        - text/plain
+        - application/json
+        - text/json
+      parameters:
+        - name: id
+          in: path
+          description: id of Owner to add a contact for
+          required: true
+          type: integer
+        - name: item
+          in: body
+          description: Adds to Owner Contact
+          required: true
+          schema:
+            $ref: "#/definitions/Contact"
+      responses:
+        200:
+          description: OK
+          schema:
+            $ref: "#/definitions/Contact"
   /owners/{id}/equipment:
     get:
       tags:
@@ -251,6 +277,27 @@
             type: array
             items:
               $ref: "#/definitions/Equipment"
+  /owners/{id}/nextEquipmentCode:
+    get:
+      tags:
+        - Owner
+      description: Returns the next Equipment Code for the given Owner.  Equipment Code is a combination of the Owner Equipment Prefix and the numeric identifier for the next piece of equipment.      
+      consumes: []
+      produces:
+        - text/plain
+        - application/json
+        - text/json
+      parameters:
+        - name: id
+          in: path
+          description: id of Owner to fetch the Equipment Code for
+          required: true
+          type: integer
+      responses:
+        200:
+          description: OK
+          schema:
+            ref: "#/definitions/EquipmentCodeViewModel"
   /projects/search:
     get:
       summary: Searches Projects
@@ -294,7 +341,86 @@
           schema:
             type: array
             items:
-              $ref: "#/definitions/ProjectSearchResultViewModel"                            
+              $ref: "#/definitions/ProjectSearchResultViewModel"
+  /projects/{id}/contacts:
+    get:
+      tags:
+        - Project
+      description: Gets an Project's Contacts      
+      consumes: []
+      produces:
+        - text/plain
+        - application/json
+        - text/json
+      parameters:
+        - name: id
+          in: path
+          description: id of Project to fetch Contacts for
+          required: true
+          type: integer
+      responses:
+        200:
+          description: OK
+          schema:
+            type: array
+            items:
+              $ref: "#/definitions/Contact"
+    put:
+      tags:
+        - Project
+      description: Replaces an Project's Contacts
+      consumes: []
+      produces:
+        - text/plain
+        - application/json
+        - text/json
+      parameters:
+        - name: id
+          in: path
+          description: id of Project to replace Contacts for
+          required: true
+          type: integer
+        - name: item
+          in: body
+          description: Replacement Project contacts.
+          required: true
+          schema:
+            type: array
+            items:
+              $ref: "#/definitions/Contact"
+      responses:
+        200:
+          description: OK
+          schema:
+            type: array
+            items:
+              $ref: "#/definitions/Contact"
+    post:
+      tags:
+        - Project
+      description: Adds Project Contact
+      consumes: []
+      produces:
+        - text/plain
+        - application/json
+        - text/json
+      parameters:
+        - name: id
+          in: path
+          description: id of Project to add a contact for
+          required: true
+          type: integer
+        - name: item
+          in: body
+          description: Adds to Project Contact
+          required: true
+          schema:
+            $ref: "#/definitions/Contact"
+      responses:
+        200:
+          description: OK
+          schema:
+            $ref: "#/definitions/Contact"  
   /roles/{id}/permissions:
     get:
       description: Get all the permissions for a role

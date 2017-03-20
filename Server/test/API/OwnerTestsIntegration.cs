@@ -22,6 +22,7 @@ using System.Text;
 using HETSAPI.Models;
 using Newtonsoft.Json;
 using System.Net;
+using HETSAPI.ViewModels;
 
 namespace HETSAPI.Test
 {
@@ -398,6 +399,7 @@ namespace HETSAPI.Test
             // create a new object.
             Owner owner = new Owner();
             owner.OrganizationName = initialName;
+            owner.OwnerEquipmentCodePrefix = "TST";
             string jsonString = owner.ToJson();
 
             request.Content = new StringContent(jsonString, Encoding.UTF8, "application/json");
@@ -410,7 +412,7 @@ namespace HETSAPI.Test
 
             owner = JsonConvert.DeserializeObject<Owner>(jsonString);
             // get the id
-            var owner_id = owner.Id;
+            var owner_id = owner.Id;        
 
             // create equipment.
             Equipment e1 = createEquipment(owner, "test1");
@@ -477,6 +479,67 @@ namespace HETSAPI.Test
             response = await _client.SendAsync(request);
             Assert.Equal(response.StatusCode, HttpStatusCode.NotFound);
         }
-        
+
+
+
+        [Fact]
+        /// <summary>
+        /// TestOwnerEquipmentList
+        /// </summary>
+        /// 
+        public async void TestOwnerEquipmentCode()
+        {
+            /*
+             * Create Owner
+             * Create several pieces of equipment
+             * Populate the equipment list
+             * Verify that all items in the equipment list still have owner.
+            */
+            string initialName = "InitialName";
+            // first test the POST.
+            var request = new HttpRequestMessage(HttpMethod.Post, "/api/owners");
+
+            // create a new object.
+            Owner owner = new Owner();
+            owner.OrganizationName = initialName;
+            owner.OwnerEquipmentCodePrefix = "TST";
+            string jsonString = owner.ToJson();
+
+            request.Content = new StringContent(jsonString, Encoding.UTF8, "application/json");
+
+            var response = await _client.SendAsync(request);
+            response.EnsureSuccessStatusCode();
+
+            // parse as JSON.
+            jsonString = await response.Content.ReadAsStringAsync();
+
+            owner = JsonConvert.DeserializeObject<Owner>(jsonString);
+            // get the id
+            var owner_id = owner.Id;
+
+            
+
+            // now get the equipment list.
+            request = new HttpRequestMessage(HttpMethod.Get, "/api/owners/" + owner_id + "/nextEquipmentCode");
+            response = await _client.SendAsync(request);
+            response.EnsureSuccessStatusCode();
+
+            jsonString = await response.Content.ReadAsStringAsync();
+            EquipmentCodeViewModel equipmentCode = JsonConvert.DeserializeObject<EquipmentCodeViewModel>(jsonString);
+
+            Assert.Equal(equipmentCode.EquipmentCode, "TST-0001");
+            
+            // delete owner
+            request = new HttpRequestMessage(HttpMethod.Post, "/api/owners/" + owner_id + "/delete");
+            response = await _client.SendAsync(request);
+            response.EnsureSuccessStatusCode();
+
+            // should get a 404 if we try a get now.
+            request = new HttpRequestMessage(HttpMethod.Get, "/api/owners/" + owner_id);
+            response = await _client.SendAsync(request);
+            Assert.Equal(response.StatusCode, HttpStatusCode.NotFound);
+        }
+
+
     }
 }

@@ -1,3 +1,11 @@
+  EquipmentCodeViewModel:
+    type: object
+    x-codegen-viewmodel: true        
+    description: Equipment Code is a combination of the Owner Equipment Prefix and the numeric identifier for the next piece of equipment.
+    properties:
+      equipmentCode:
+        type: string
+        description: The Equipment Code
   EquipmentViewModel:
     type: object
     x-codegen-viewmodel: true        
