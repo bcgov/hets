@@ -297,7 +297,7 @@
         200:
           description: OK
           schema:
-            ref: "#/definitions/EquipmentCodeViewModel"
+            $ref: "#/definitions/EquipmentCodeViewModel"
   /projects/search:
     get:
       summary: Searches Projects
