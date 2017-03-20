@@ -36,13 +36,13 @@ namespace HETSAPI.Seeders
                 },
                 new Group
                 {
-                    Name = "Manager",
-                    Description = "The AVI Managers group."
+                    Name = "Managers",
+                    Description = "The Managers group."
                 },
                 new Group
                 {
-                    Name = "Inspector",
-                    Description = "The AVI Inspectors group."
+                    Name = "HETS Clerks",
+                    Description = "The HETS Clerks group."
                 },
             };
 
