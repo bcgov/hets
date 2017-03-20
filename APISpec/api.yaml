@@ -262,6 +262,138 @@
       responses:
         201:
           description: EquipmentType created
+  /districtEquipmentTypes:
+    get:
+      tags:
+        - DistrictEquipmentType
+      consumes: []
+      produces:
+        - text/plain
+        - application/json
+        - text/json
+      responses:
+        200:
+          description: OK
+          schema:
+            type: array
+            items:
+              $ref: "#/definitions/DistrictEquipmentType"
+    post:
+      tags:
+        - DistrictEquipmentType
+      consumes:
+        - application/json
+      produces:
+        - text/plain
+        - application/json
+        - text/json
+      parameters:
+        - name: item
+          in: body
+          required: true
+          schema:
+            $ref: "#/definitions/DistrictEquipmentType"
+      responses:
+        201:
+          description: DistrictEquipmentType created
+          headers:
+            Location:
+              description: A link to the DistrictEquipmentType
+              type: string
+              format: url
+          schema:
+            $ref: "#/definitions/DistrictEquipmentType"  
+  /districtEquipmentTypes/{id}:
+    get:
+      tags:
+        - DistrictEquipmentType
+      consumes: []
+      produces:
+        - text/plain
+        - application/json
+        - text/json
+      responses:
+        200:
+          description: OK
+          schema:
+            $ref: "#/definitions/DistrictEquipmentType"
+        404:
+          description: DistrictEquipmentType not found
+      parameters:
+        - name: id
+          in: path
+          description: id of DistrictEquipmentType to fetch
+          required: true
+          type: integer
+    put:
+      tags:
+        - DistrictEquipmentType
+      consumes:
+        - application/json
+      produces:
+        - text/plain
+        - application/json
+        - text/json
+      responses:
+        200:
+          description: OK
+          schema:
+            $ref: "#/definitions/DistrictEquipmentType"
+        404:
+          description: DistrictEquipmentType not found
+      parameters:
+        - name: id
+          in: path
+          description: id of DistrictEquipmentType to fetch
+          required: true
+          type: integer
+        - name: item
+          in: body
+          required: true
+          schema:
+            $ref: "#/definitions/DistrictEquipmentType"
+  /districtEquipmentTypes/{id}/delete:
+    post:
+      tags:
+        - DistrictEquipmentType
+      consumes: []
+      produces:
+        - text/plain
+        - application/json
+        - text/json
+      responses:
+        200:
+          description: OK
+        404:
+          description: DistrictEquipmentType not found
+      parameters:
+        - name: id
+          in: path
+          description: id of DistrictEquipmentType to delete
+          required: true
+          type: integer
+
+  /districtEquipmentTypes/bulk:
+    post:
+      tags:
+        - DistrictEquipmentType
+      consumes:
+        - application/json
+      produces:
+        - text/plain
+        - application/json
+        - text/json
+      parameters:
+        - name: items
+          in: body
+          required: true
+          schema:
+            type: array
+            items:
+              $ref: "#/definitions/DistrictEquipmentType"
+      responses:
+        201:
+          description: DistrictEquipmentType created
   /equipmentAttachments:
     get:
       tags:

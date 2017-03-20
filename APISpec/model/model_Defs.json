@@ -45,10 +45,10 @@
             "table": null
         },
         {
-            "Description": "The Local Area associated with this Project record.",
+            "Description": "The District associated with this Project record.",
             "Length": null,
-            "Name": "localArea",
-            "RefDef": "LocalArea",
+            "Name": "district",
+            "RefDef": "District",
             "Required": [
                 {
                     "req": "id"
@@ -421,8 +421,8 @@
         {
             "Description": "A foreign key reference to the system-generated unique identifier for an Equipment Type",
             "Length": null,
-            "Name": "equipmentType",
-            "RefDef": "EquipmentType",
+            "Name": "districtEquipmentType",
+            "RefDef": "DistrictEquipmentType",
             "Required": [
                 {
                     "req": "id"
@@ -1953,8 +1953,8 @@
         {
             "Description": "A foreign key reference to the system-generated unique identifier for a Equipment Type",
             "Length": null,
-            "Name": "equipmentType",
-            "RefDef": "EquipmentType",
+            "Name": "districtEquipmentType",
+            "RefDef": "DistrictEquipmentType",
             "Required": [
                 {
                     "req": "id"
@@ -2218,28 +2218,6 @@
             "Description": "The model year of the piece of equipment, as provided by the Equipment Owner.",
             "Length": "15",
             "Name": "year",
-            "RefDef": null,
-            "Required": [
-                {
-                    "req": "id"
-                }
-            ],
-            "Unique": null,
-            "binary": null,
-            "boolean": null,
-            "datetime": null,
-            "float": null,
-            "id": null,
-            "integer": null,
-            "links": null,
-            "ref": null,
-            "string": "string",
-            "table": null
-        },
-        {
-            "Description": "TO BE REVIEWED WITH THE BUSINESS - WHAT IS THIS?",
-            "Length": "255",
-            "Name": "type",
             "RefDef": null,
             "Required": [
                 {
@@ -3827,7 +3805,7 @@
         {
             "Description": null,
             "Length": null,
-            "Name": "EquipmentTypeNextRental",
+            "Name": "LocalAreaRotationList",
             "RefDef": null,
             "Required": [
                 {
@@ -3871,8 +3849,30 @@
         {
             "Description": "A foreign key reference to the system-generated unique identifier for an Equipment Type",
             "Length": null,
-            "Name": "equipmentType",
-            "RefDef": "EquipmentType",
+            "Name": "districtEquipmentType",
+            "RefDef": "DistrictEquipmentType",
+            "Required": [
+                {
+                    "req": "id"
+                }
+            ],
+            "Unique": null,
+            "binary": null,
+            "boolean": null,
+            "datetime": null,
+            "float": null,
+            "id": null,
+            "integer": null,
+            "links": null,
+            "ref": "ref",
+            "string": null,
+            "table": null
+        },
+        {
+            "Description": null,
+            "Length": null,
+            "Name": "localArea",
+            "RefDef": "LocalArea",
             "Required": [
                 {
                     "req": "id"
@@ -4032,7 +4032,7 @@
                     "req": "id"
                 },
                 {
-                    "req": "attachment"
+                    "req": "typeName"
                 }
             ],
             "Unique": null,
@@ -4057,7 +4057,7 @@
                     "req": "id"
                 },
                 {
-                    "req": "attachment"
+                    "req": "typeName"
                 }
             ],
             "Unique": null,
@@ -4082,7 +4082,7 @@
                     "req": "id"
                 },
                 {
-                    "req": "attachment"
+                    "req": "typeName"
                 }
             ],
             "Unique": null,
@@ -4098,16 +4098,16 @@
             "table": null
         },
         {
-            "Description": "The attachment type as entered by the user (per the business - no lookup).",
-            "Length": "255",
-            "Name": "attachment",
+            "Description": "The name of the attachment type",
+            "Length": "100",
+            "Name": "typeName",
             "RefDef": null,
             "Required": [
                 {
                     "req": "id"
                 },
                 {
-                    "req": "attachment"
+                    "req": "typeName"
                 }
             ],
             "Unique": null,
@@ -4123,7 +4123,7 @@
             "table": null
         },
         {
-            "Description": "A description of the equipment attachment if the Equipment Attachment Type is insufficient.",
+            "Description": "A description of the equipment attachment if the Equipment Attachment Type Name is insufficient.",
             "Length": "2048",
             "Name": "description",
             "RefDef": null,
@@ -4132,7 +4132,7 @@
                     "req": "id"
                 },
                 {
-                    "req": "attachment"
+                    "req": "typeName"
                 }
             ],
             "Unique": null,

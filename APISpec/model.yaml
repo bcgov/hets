@@ -9,9 +9,9 @@ definitions:
         format: int32
         type: integer
         description: A system-generated unique identifier for a Project
-      localArea:
-        $ref: '#/definitions/LocalArea'
-        description: The Local Area associated with this Project record.
+      district:
+        $ref: '#/definitions/District'
+        description: The District associated with this Project record.
       provincialProjectNumber:
         type: string
         maxLength: 150
@@ -76,8 +76,8 @@ definitions:
         type: string
         maxLength: 50
         description: The status of the Rental Request - whether it in progress, completed or was cancelled.
-      equipmentType:
-        $ref: '#/definitions/EquipmentType'
+      districtEquipmentType:
+        $ref: '#/definitions/DistrictEquipmentType'
         description: A foreign key reference to the system-generated unique identifier for an Equipment Type
       equipmentCount:
         format: int32
@@ -351,8 +351,8 @@ definitions:
       localArea:
         $ref: '#/definitions/LocalArea'
         description: A foreign key reference to the system-generated unique identifier for a Local Area
-      equipmentType:
-        $ref: '#/definitions/EquipmentType'
+      districtEquipmentType:
+        $ref: '#/definitions/DistrictEquipmentType'
         description: A foreign key reference to the system-generated unique identifier for a Equipment Type
       owner:
         $ref: '#/definitions/Owner'
@@ -400,10 +400,6 @@ definitions:
         type: string
         maxLength: 15
         description: The model year of the piece of equipment, as provided by the Equipment Owner.
-      type:
-        type: string
-        maxLength: 255
-        description: TO BE REVIEWED WITH THE BUSINESS - WHAT IS THIS?
       operator:
         type: string
         maxLength: 255
@@ -685,7 +681,7 @@ definitions:
         type: string
         maxLength: 50
         description: The name of this equipment type used at the District Level. This could be just the equipmentName if this is the only EquipmentType defined in this District, or could be a name that separates out multiple EquipmentTypes used within a District to, for instance, separate out the same EquipmentName by size.
-  EquipmentTypeNextRental:
+  LocalAreaRotationList:
     type: object
     required:
       - id
@@ -693,9 +689,11 @@ definitions:
       id:
         format: int32
         type: integer
-      equipmentType:
-        $ref: '#/definitions/EquipmentType'
+      districtEquipmentType:
+        $ref: '#/definitions/DistrictEquipmentType'
         description: A foreign key reference to the system-generated unique identifier for an Equipment Type
+      localArea:
+        $ref: '#/definitions/LocalArea'
       askNextBlock1:
         $ref: '#/definitions/Equipment'
         description: The id of the next piece of Block 1 Equipment to be asked for a Rental Request. If null, start from the first piece of equipment in Block 1.
@@ -722,7 +720,7 @@ definitions:
     description: An Equipment Attachment associated with a piece of Equipment.
     required:
       - id
-      - attachment
+      - typeName
     properties:
       id:
         format: int32
@@ -730,14 +728,14 @@ definitions:
         description: A system-generated unique identifier for an EquipmentAttachment
       equipment:
         $ref: '#/definitions/Equipment'
-      attachment:
+      typeName:
         type: string
-        maxLength: 255
-        description: The attachment type as entered by the user (per the business - no lookup).
+        maxLength: 100
+        description: The name of the attachment type
       description:
         type: string
         maxLength: 2048
-        description: A description of the equipment attachment if the Equipment Attachment Type is insufficient.
+        description: A description of the equipment attachment if the Equipment Attachment Type Name is insufficient.
   SeniorityAudit:
     type: object
     description: The history of all changes to the seniority of a piece of equipment. The current seniority information (underlying data elements and the calculation result) is in the equipment record. Every time that information changes, the old values are copied to here, with a start date, end date range. In the normal case, an annual update triggers the old values being copied here and the new values put into the equipment record. If a user manually changes the values, the existing values are copied into a record added here.
