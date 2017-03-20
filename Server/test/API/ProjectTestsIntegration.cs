@@ -99,5 +99,152 @@ namespace HETSAPI.Test
             response = await _client.SendAsync(request);
             Assert.Equal(response.StatusCode, HttpStatusCode.NotFound);
         }
+
+        [Fact]
+        /// <summary>
+        /// Test project contacts
+        /// </summary>
+        public async void TestProjectContacts()
+        {
+            string initialName = "InitialName";
+            string changedName = "ChangedName";
+            // first test the POST.
+            var request = new HttpRequestMessage(HttpMethod.Post, "/api/projects");
+
+            // create a new object.
+            Owner owner = new Owner();
+            owner.OrganizationName = initialName;
+            string jsonString = owner.ToJson();
+
+            request.Content = new StringContent(jsonString, Encoding.UTF8, "application/json");
+
+            var response = await _client.SendAsync(request);
+            response.EnsureSuccessStatusCode();
+
+            // parse as JSON.
+            jsonString = await response.Content.ReadAsStringAsync();
+
+            owner = JsonConvert.DeserializeObject<Owner>(jsonString);
+            // get the id
+            var id = owner.Id;
+            // change the name
+            owner.OrganizationName = changedName;
+
+            // get contacts should be empty.
+            request = new HttpRequestMessage(HttpMethod.Get, "/api/projects/" + id + "/contacts");
+            response = await _client.SendAsync(request);
+            response.EnsureSuccessStatusCode();
+
+            // parse as JSON.
+            jsonString = await response.Content.ReadAsStringAsync();
+            List<Contact> contacts = JsonConvert.DeserializeObject<List<Contact>>(jsonString);
+
+            // verify the list is empty.
+            Assert.Equal(contacts.Count(), 0);
+
+
+            // add a contact.
+            Contact contact = new Contact();
+            contact.GivenName = initialName;
+
+            contacts.Add(contact);
+
+
+            request = new HttpRequestMessage(HttpMethod.Put, "/api/projects/" + id + "/contacts");
+            request.Content = new StringContent(JsonConvert.SerializeObject(contacts), Encoding.UTF8, "application/json");
+
+            response = await _client.SendAsync(request);
+            response.EnsureSuccessStatusCode();
+
+            // parse as JSON.
+            jsonString = await response.Content.ReadAsStringAsync();
+            contacts = JsonConvert.DeserializeObject<List<Contact>>(jsonString);
+
+            // verify the list has one element.
+            Assert.Equal(contacts.Count, 1);
+            Assert.Equal(contacts[0].GivenName, initialName);
+
+            // get contacts should be 1
+            request = new HttpRequestMessage(HttpMethod.Get, "/api/projects/" + id + "/contacts");
+            response = await _client.SendAsync(request);
+            response.EnsureSuccessStatusCode();
+
+            // parse as JSON.
+            jsonString = await response.Content.ReadAsStringAsync();
+            contacts = JsonConvert.DeserializeObject<List<Contact>>(jsonString);
+
+            // verify the list has a record.
+            Assert.Equal(contacts.Count, 1);
+            Assert.Equal(contacts[0].GivenName, initialName);
+
+            // test removing the contact.
+            contacts.Clear();
+
+            request = new HttpRequestMessage(HttpMethod.Put, "/api/projects/" + id + "/contacts");
+            request.Content = new StringContent(JsonConvert.SerializeObject(contacts), Encoding.UTF8, "application/json");
+
+            response = await _client.SendAsync(request);
+            response.EnsureSuccessStatusCode();
+
+            // parse as JSON.
+            jsonString = await response.Content.ReadAsStringAsync();
+            contacts = JsonConvert.DeserializeObject<List<Contact>>(jsonString);
+
+            // should be 0
+            Assert.Equal(contacts.Count, 0);
+
+            // test the get
+            request = new HttpRequestMessage(HttpMethod.Get, "/api/projects/" + id + "/contacts");
+            response = await _client.SendAsync(request);
+            response.EnsureSuccessStatusCode();
+
+            // parse as JSON.
+            jsonString = await response.Content.ReadAsStringAsync();
+            contacts = JsonConvert.DeserializeObject<List<Contact>>(jsonString);
+
+            // verify the list has no records.
+            Assert.Equal(contacts.Count, 0);
+
+            // test the post.
+
+            Contact newContact = new Contact();
+            newContact.OrganizationName = "asdf";
+
+            request = new HttpRequestMessage(HttpMethod.Post, "/api/projects/" + id + "/contacts");
+            request.Content = new StringContent(JsonConvert.SerializeObject(newContact), Encoding.UTF8, "application/json");
+
+            response = await _client.SendAsync(request);
+            response.EnsureSuccessStatusCode();
+
+            // parse as JSON.
+            jsonString = await response.Content.ReadAsStringAsync();
+            newContact = JsonConvert.DeserializeObject<Contact>(jsonString);
+
+            // should be 0
+            Assert.NotEqual(newContact.Id, 0);
+
+            request = new HttpRequestMessage(HttpMethod.Put, "/api/projects/" + id + "/contacts");
+            request.Content = new StringContent(JsonConvert.SerializeObject(contacts), Encoding.UTF8, "application/json");
+
+            response = await _client.SendAsync(request);
+            response.EnsureSuccessStatusCode();
+
+            // parse as JSON.
+            jsonString = await response.Content.ReadAsStringAsync();
+            contacts = JsonConvert.DeserializeObject<List<Contact>>(jsonString);
+
+            // should be 0
+            Assert.Equal(contacts.Count, 0);
+
+            // delete the owner.            
+            request = new HttpRequestMessage(HttpMethod.Post, "/api/projects/" + id + "/delete");
+            response = await _client.SendAsync(request);
+            response.EnsureSuccessStatusCode();
+
+            // should get a 404 if we try a get now.
+            request = new HttpRequestMessage(HttpMethod.Get, "/api/projects/" + id);
+            response = await _client.SendAsync(request);
+            Assert.Equal(response.StatusCode, HttpStatusCode.NotFound);
+        }
     }
 }

@@ -260,7 +260,6 @@ namespace HETSAPI.Test
             response.EnsureSuccessStatusCode();
 
             // cleanup
-            Assert.Equal(permission_id, 1234);
 
             // Delete permission
             request = new HttpRequestMessage(HttpMethod.Post, "/api/permissions/" + permission_id + "/delete");

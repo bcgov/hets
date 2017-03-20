@@ -205,6 +205,37 @@ namespace HETSAPI.Test
             // verify the list has no records.
             Assert.Equal(contacts.Count, 0);
 
+            // test the post.
+
+            Contact newContact = new Contact();
+            newContact.OrganizationName = "asdf";
+
+            request = new HttpRequestMessage(HttpMethod.Post, "/api/owners/" + id + "/contacts");
+            request.Content = new StringContent(JsonConvert.SerializeObject(newContact), Encoding.UTF8, "application/json");
+
+            response = await _client.SendAsync(request);
+            response.EnsureSuccessStatusCode();
+
+            // parse as JSON.
+            jsonString = await response.Content.ReadAsStringAsync();
+            newContact = JsonConvert.DeserializeObject<Contact>(jsonString);
+
+            // should be 0
+            Assert.NotEqual(newContact.Id, 0);
+
+            request = new HttpRequestMessage(HttpMethod.Put, "/api/owners/" + id + "/contacts");
+            request.Content = new StringContent(JsonConvert.SerializeObject(contacts), Encoding.UTF8, "application/json");
+
+            response = await _client.SendAsync(request);
+            response.EnsureSuccessStatusCode();
+
+            // parse as JSON.
+            jsonString = await response.Content.ReadAsStringAsync();
+            contacts = JsonConvert.DeserializeObject<List<Contact>>(jsonString);
+
+            // should be 0
+            Assert.Equal(contacts.Count, 0);
+
             // delete the owner.            
             request = new HttpRequestMessage(HttpMethod.Post, "/api/owners/" + id + "/delete");
             response = await _client.SendAsync(request);
@@ -444,5 +475,6 @@ namespace HETSAPI.Test
             response = await _client.SendAsync(request);
             Assert.Equal(response.StatusCode, HttpStatusCode.NotFound);
         }
+        
     }
 }

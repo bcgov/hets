@@ -199,6 +199,47 @@ namespace HETSAPI.Services.Impl
             }
         }
 
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <remarks>Replaces an Owner&#39;s Contacts</remarks>
+        /// <param name="id">id of Owner to replace Contacts for</param>
+        /// <param name="items">Replacement Owner contacts.</param>
+        /// <response code="200">OK</response>
+        public virtual IActionResult OwnersIdContactsPostAsync(int id, Contact item)
+        {
+            var exists = _context.Owners.Any(a => a.Id == id);
+            if (exists && item != null)
+            {
+                Owner owner = _context.Owners
+                    .Include(x => x.LocalArea.ServiceArea.District.Region)
+                    .Include(x => x.EquipmentList)
+                    .ThenInclude(y => y.EquipmentType)
+                    .Include(x => x.Notes)
+                    .Include(x => x.Attachments)
+                    .Include(x => x.History)
+                    .Include(x => x.Contacts)
+                    .First(x => x.Id == id);
+
+                // adjust the incoming list.
+                item.Id = 0;
+
+                _context.Contacts.Add(item);
+                owner.Contacts.Add(item);
+                _context.Owners.Update(owner);
+                _context.SaveChanges();                
+
+                return new ObjectResult(item);
+            }
+            else
+            {
+                // record not found
+                return new StatusCodeResult(404);
+            }
+        }
+
+
         /// <summary>
         /// 
         /// </summary>
