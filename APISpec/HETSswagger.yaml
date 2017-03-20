@@ -540,6 +540,138 @@ paths:
       responses:
         201:
           description: EquipmentAttachment created
+  /localAreaRotationLists:
+    get:
+      tags:
+        - LocalAreaRotationList
+      consumes: []
+      produces:
+        - text/plain
+        - application/json
+        - text/json
+      responses:
+        200:
+          description: OK
+          schema:
+            type: array
+            items:
+              $ref: "#/definitions/LocalAreaRotationList"
+    post:
+      tags:
+        - LocalAreaRotationList
+      consumes:
+        - application/json
+      produces:
+        - text/plain
+        - application/json
+        - text/json
+      parameters:
+        - name: item
+          in: body
+          required: true
+          schema:
+            $ref: "#/definitions/LocalAreaRotationList"
+      responses:
+        201:
+          description: LocalAreaRotationList created
+          headers:
+            Location:
+              description: A link to the LocalAreaRotationList
+              type: string
+              format: url
+          schema:
+            $ref: "#/definitions/LocalAreaRotationList"  
+  /localAreaRotationLists/{id}:
+    get:
+      tags:
+        - LocalAreaRotationList
+      consumes: []
+      produces:
+        - text/plain
+        - application/json
+        - text/json
+      responses:
+        200:
+          description: OK
+          schema:
+            $ref: "#/definitions/LocalAreaRotationList"
+        404:
+          description: LocalAreaRotationList not found
+      parameters:
+        - name: id
+          in: path
+          description: id of LocalAreaRotationList to fetch
+          required: true
+          type: integer
+    put:
+      tags:
+        - LocalAreaRotationList
+      consumes:
+        - application/json
+      produces:
+        - text/plain
+        - application/json
+        - text/json
+      responses:
+        200:
+          description: OK
+          schema:
+            $ref: "#/definitions/LocalAreaRotationList"
+        404:
+          description: LocalAreaRotationList not found
+      parameters:
+        - name: id
+          in: path
+          description: id of LocalAreaRotationList to fetch
+          required: true
+          type: integer
+        - name: item
+          in: body
+          required: true
+          schema:
+            $ref: "#/definitions/LocalAreaRotationList"
+  /localAreaRotationLists/{id}/delete:
+    post:
+      tags:
+        - LocalAreaRotationList
+      consumes: []
+      produces:
+        - text/plain
+        - application/json
+        - text/json
+      responses:
+        200:
+          description: OK
+        404:
+          description: LocalAreaRotationList not found
+      parameters:
+        - name: id
+          in: path
+          description: id of LocalAreaRotationList to delete
+          required: true
+          type: integer
+
+  /localAreaRotationLists/bulk:
+    post:
+      tags:
+        - LocalAreaRotationList
+      consumes:
+        - application/json
+      produces:
+        - text/plain
+        - application/json
+        - text/json
+      parameters:
+        - name: items
+          in: body
+          required: true
+          schema:
+            type: array
+            items:
+              $ref: "#/definitions/LocalAreaRotationList"
+      responses:
+        201:
+          description: LocalAreaRotationList created
   /owners:
     get:
       tags:
