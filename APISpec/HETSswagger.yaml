@@ -6227,6 +6227,36 @@ definitions:
         type: array
         items:
           $ref: '#/definitions/Equipment'
+  LookupLists:
+    type: object
+    description: Lookup values for various enumerated types in the systems - entity status values, rate types, conditions and others. Used to pull the values out of the code and into the database but without having to have a table for each lookup instance.
+    required:
+      - id
+    properties:
+      id:
+        format: int32
+        type: integer
+        uniqueItems: true
+        description: A system-generated unique identifier for a LookupList
+      contextName:
+        type: string
+        maxLength: 100
+        description: The context within the app in which this lookup list if used. Defined and referenced in the code of the application.
+      isDefault:
+        type: boolean
+        description: True of the value within the lookup list context should be the default for the lookup instance.
+      displaySortOrder:
+        format: int32
+        type: integer
+        description: The sort order for list of values within a list context.
+      codeName:
+        type: string
+        maxLength: 30
+        description: The a shorter lookup name to find the value. Can be used at the option of the application to present on the screen a short version of the lookup list value.
+      value:
+        type: string
+        maxLength: 100
+        description: The fully spelled out value of the lookup entry.
   Contact:
     type: object
     description: A person and their related contact information linked to one or more entities in the system. For examples, there are contacts for Owners, Projects.
