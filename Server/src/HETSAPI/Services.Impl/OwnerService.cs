@@ -307,8 +307,6 @@ namespace HETSAPI.Services.Impl
             {
                 Owner owner = _context.Owners
                     .Include(x => x.EquipmentList)
-                        .ThenInclude(y => y.EquipmentType)
-                    .Include(x => x.EquipmentList)
                         .ThenInclude(x => x.LocalArea.ServiceArea.District.Region)
                     .Include(x => x.EquipmentList)
                         .ThenInclude(x => x.EquipmentType)
@@ -365,6 +363,8 @@ namespace HETSAPI.Services.Impl
                     Equipment item = items[i];
                     if (item != null)
                     {
+                        DateTime? lastVerifiedDate = item.LastVerifiedDate;
+
                         bool equipment_exists = _context.Equipments.Any(x => x.Id == item.Id);
                         if (equipment_exists)
                         {
@@ -378,6 +378,11 @@ namespace HETSAPI.Services.Impl
                                 .Include(x => x.Attachments)
                                 .Include(x => x.History)
                                 .First(x => x.Id == item.Id);
+                            if (items[i].LastVerifiedDate != lastVerifiedDate)
+                            {
+                                items[i].LastVerifiedDate = lastVerifiedDate;
+                                _context.Equipments.Update(items[i]);
+                            }
                         }
                         else
                         {
