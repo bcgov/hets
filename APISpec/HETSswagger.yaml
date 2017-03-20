@@ -5717,7 +5717,47 @@ definitions:
         description: The capacity of the trailer box.
   EquipmentType:
     type: object
-    description: A global and local area list of types of equipment for which a request can be generated and for which owners can register their equipment. If the local area is NULL, the type is visible Province-wide. In the previous instance of this application, all equipment types were assigned to the local area and transitioning to a province-wide model is being attempted (and may not work for the end users). An attempt to achieve a &quot;mostly province-wide&quot; list is being made during the data conversion process - mapping local area equipment types to provincial or local area types as part of data conversion.
+    description: A provincial-wide Equipment Type, the related Blue Book Chapter Section and related usage attributes.
+    required:
+    properties:
+      id:
+        format: int32
+        type: integer
+        description: A system-generated unique identifier for an EquipmentName
+      name:
+        type: string
+        maxLength: 50
+        description: The generic name of an equipment type - e.g. Dump Truck, Excavator and so on.
+      isDumpTruck:
+        type: boolean
+        description: True if the Equipment Type is a Dump Truck. Equipment of this type will have a related Dump Truck record containing dump truck-related attributes.
+      blueBookSection:
+        type: number
+        format: float
+        description: The section of the Blue Book that is related to equipment types of this name.
+      blueBookRateNumber:
+        type: number
+        format: float
+        description: The rate number in the Blue Book that is related to equipment types of this name.
+      numberOfBlocks:
+        format: int32
+        type: integer
+        description: The number of blocks defined for the equipment of this name and Blue Book section. In general Dump Truck-class equipment types have 3 blocks, while non-Dump Truck equipment types have 2 blocks.
+      maximumHours:
+        type: number
+        format: float
+        description: The maximum number of hours per year that equipment types of this name&#x2F;Blue Book section can work in a year
+      extendHours:
+        type: number
+        format: float
+        description: The number of extended hours per year that equipment types of this name&#x2F;Blue Book section can work.
+      maxHoursSub:
+        type: number
+        format: float
+        description: The number of substitute hours per year that equipment types of this name&#x2F;Blue Book section can work.
+  DistrictEquipmentType:
+    type: object
+    description: An Equipment Type defined at the District level. Links to a provincial Equipment Type for the name of the equipment but supports the District HETS Clerk setting a local name for the Equipment Type. Within a given District, the same provincial Equipment Type might be reused multiple times in, for example, separate sizes (small, medium, large). This enables local areas with large number of the same Equipment Type to have multiple lists.
     required:
       - id
     properties:
@@ -5725,40 +5765,14 @@ definitions:
         format: int32
         type: integer
         description: A system-generated unique identifier for an EquipmentType
-      localArea:
-        $ref: '#/definitions/LocalArea'
-      name:
+      equipmentType:
+        $ref: '#/definitions/EquipmentType'
+      district:
+        $ref: '#/definitions/District'
+      districtEquipmentName:
         type: string
         maxLength: 50
-        description: A human-friendly name for the Equipment Type that is displayed on screens with limited screen real estate available.
-      description:
-        type: string
-        maxLength: 2048
-        description: A extended description of the equipment type.
-      equipRentalRateNo:
-        type: number
-        format: float
-        description: TO BE REVIEWED WITH THE BUSINESS - WHAT IS THIS?
-      equipRentalRatePage:
-        type: number
-        format: float
-        description: TO BE REVIEWED WITH THE BUSINESS - WHAT IS THIS?
-      maxHours:
-        type: number
-        format: float
-        description: TO BE REVIEWED WITH THE BUSINESS - WHAT IS THIS?
-      extendHours:
-        type: number
-        format: float
-        description: TO BE REVIEWED WITH THE BUSINESS - WHAT IS THIS?
-      maxHoursSub:
-        type: number
-        format: float
-        description: TO BE REVIEWED WITH THE BUSINESS - WHAT IS THIS?
-      blocks:
-        format: int32
-        type: integer
-        description: The number of blocks defined for this equipment type. Currently, either 2 for Dump Truck equipment and 1 for non-Dump Truck equipment. Unlikely to change, particularly without a significant impact on code.
+        description: The name of this equipment type used at the District Level. This could be just the equipmentName if this is the only EquipmentType defined in this District, or could be a name that separates out multiple EquipmentTypes used within a District to, for instance, separate out the same EquipmentName by size.
   EquipmentTypeNextRental:
     type: object
     required:
@@ -6741,6 +6755,10 @@ definitions:
         x-chance-type: email
       active:
         type: boolean
+      smUserId:
+        type: string
+      smAuthorizationDirectory:
+        type: string
       userRoles:
         type: array
         items:
