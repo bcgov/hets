@@ -42,7 +42,7 @@ namespace HETSAPI.ViewModels
         /// </summary>
         /// <param name="Id">A system-generated unique identifier for a Equipment (required).</param>
         /// <param name="LocalArea">LocalArea.</param>
-        /// <param name="EquipmentType">EquipmentType.</param>
+        /// <param name="DistrictEquipmentType">A foreign key reference to the system-generated unique identifier for a Equipment Type.</param>
         /// <param name="Owner">Owner.</param>
         /// <param name="EquipmentCode">A human-visible unique code for the piece of equipment, referenced for convenience by the system users - HETS Clerks and Equipment Owners. Generated at record creation time based on the unique Owner prefix (e.g. EDW) and a zero-filled unique number - resulting in a code like EDW-0083..</param>
         /// <param name="Status">The current status of the equipment in a UI-controlled string. Initial values are Pending, Approved and Archived, but other values may be added..</param>
@@ -85,11 +85,11 @@ namespace HETSAPI.ViewModels
         /// <param name="DuplicateEquipment">DuplicateEquipment.</param>
         /// <param name="IsWorking">true if the equipment is working.</param>
         /// <param name="LastTimeRecordDateThisYear">LastTimeRecordDateThisYear.</param>
-        public EquipmentViewModel(int Id, LocalArea LocalArea = null, EquipmentType EquipmentType = null, Owner Owner = null, string EquipmentCode = null, string Status = null, DateTime? ReceivedDate = null, DateTime? ApprovedDate = null, DateTime? LastVerifiedDate = null, bool? IsInformationUpdateNeeded = null, string InformationUpdateNeededReason = null, string LicencePlate = null, string Make = null, string Model = null, string Year = null, string Type = null, string Operator = null, float? PayRate = null, string RefuseRate = null, string SerialNumber = null, string Size = null, DateTime? ToDate = null, float? BlockNumber = null, float? Seniority = null, bool? IsSeniorityOverridden = null, string SeniorityOverrideReason = null, DateTime? SeniorityEffectiveDate = null, float? YearsOfService = null, float? ServiceHoursLastYear = null, float? ServiceHoursTwoYearsAgo = null, float? ServiceHoursThreeYearsAgo = null, string ArchiveCode = null, string ArchiveReason = null, DateTime? ArchiveDate = null, DumpTruck DumpTruck = null, List<EquipmentAttachment> EquipmentAttachments = null, List<Note> Notes = null, List<Attachment> Attachments = null, List<History> History = null, List<SeniorityAudit> SeniorityAudit = null, int? ServiceHoursThisYear = null, bool? HasDuplicates = null, List<Equipment> DuplicateEquipment = null, bool? IsWorking = null, DateTime? LastTimeRecordDateThisYear = null)
+        public EquipmentViewModel(int Id, LocalArea LocalArea = null, DistrictEquipmentType DistrictEquipmentType = null, Owner Owner = null, string EquipmentCode = null, string Status = null, DateTime? ReceivedDate = null, DateTime? ApprovedDate = null, DateTime? LastVerifiedDate = null, bool? IsInformationUpdateNeeded = null, string InformationUpdateNeededReason = null, string LicencePlate = null, string Make = null, string Model = null, string Year = null, string Type = null, string Operator = null, float? PayRate = null, string RefuseRate = null, string SerialNumber = null, string Size = null, DateTime? ToDate = null, float? BlockNumber = null, float? Seniority = null, bool? IsSeniorityOverridden = null, string SeniorityOverrideReason = null, DateTime? SeniorityEffectiveDate = null, float? YearsOfService = null, float? ServiceHoursLastYear = null, float? ServiceHoursTwoYearsAgo = null, float? ServiceHoursThreeYearsAgo = null, string ArchiveCode = null, string ArchiveReason = null, DateTime? ArchiveDate = null, DumpTruck DumpTruck = null, List<EquipmentAttachment> EquipmentAttachments = null, List<Note> Notes = null, List<Attachment> Attachments = null, List<History> History = null, List<SeniorityAudit> SeniorityAudit = null, int? ServiceHoursThisYear = null, bool? HasDuplicates = null, List<Equipment> DuplicateEquipment = null, bool? IsWorking = null, DateTime? LastTimeRecordDateThisYear = null)
         {   
             this.Id = Id;
             this.LocalArea = LocalArea;
-            this.EquipmentType = EquipmentType;
+            this.DistrictEquipmentType = DistrictEquipmentType;
             this.Owner = Owner;
             this.EquipmentCode = EquipmentCode;
             this.Status = Status;
@@ -149,10 +149,12 @@ namespace HETSAPI.ViewModels
         public LocalArea LocalArea { get; set; }
 
         /// <summary>
-        /// Gets or Sets EquipmentType
+        /// A foreign key reference to the system-generated unique identifier for a Equipment Type
         /// </summary>
-        [DataMember(Name="equipmentType")]
-        public EquipmentType EquipmentType { get; set; }
+        /// <value>A foreign key reference to the system-generated unique identifier for a Equipment Type</value>
+        [DataMember(Name="districtEquipmentType")]
+        [MetaDataExtension (Description = "A foreign key reference to the system-generated unique identifier for a Equipment Type")]
+        public DistrictEquipmentType DistrictEquipmentType { get; set; }
 
         /// <summary>
         /// Gets or Sets Owner
@@ -482,7 +484,7 @@ namespace HETSAPI.ViewModels
             sb.Append("class EquipmentViewModel {\n");
             sb.Append("  Id: ").Append(Id).Append("\n");
             sb.Append("  LocalArea: ").Append(LocalArea).Append("\n");
-            sb.Append("  EquipmentType: ").Append(EquipmentType).Append("\n");
+            sb.Append("  DistrictEquipmentType: ").Append(DistrictEquipmentType).Append("\n");
             sb.Append("  Owner: ").Append(Owner).Append("\n");
             sb.Append("  EquipmentCode: ").Append(EquipmentCode).Append("\n");
             sb.Append("  Status: ").Append(Status).Append("\n");
@@ -573,9 +575,9 @@ namespace HETSAPI.ViewModels
                     this.LocalArea.Equals(other.LocalArea)
                 ) &&                 
                 (
-                    this.EquipmentType == other.EquipmentType ||
-                    this.EquipmentType != null &&
-                    this.EquipmentType.Equals(other.EquipmentType)
+                    this.DistrictEquipmentType == other.DistrictEquipmentType ||
+                    this.DistrictEquipmentType != null &&
+                    this.DistrictEquipmentType.Equals(other.DistrictEquipmentType)
                 ) &&                 
                 (
                     this.Owner == other.Owner ||
@@ -806,9 +808,9 @@ namespace HETSAPI.ViewModels
                 {
                     hash = hash * 59 + this.LocalArea.GetHashCode();
                 }                   
-                if (this.EquipmentType != null)
+                if (this.DistrictEquipmentType != null)
                 {
-                    hash = hash * 59 + this.EquipmentType.GetHashCode();
+                    hash = hash * 59 + this.DistrictEquipmentType.GetHashCode();
                 }                   
                 if (this.Owner != null)
                 {

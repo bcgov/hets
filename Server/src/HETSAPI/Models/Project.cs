@@ -42,7 +42,7 @@ namespace HETSAPI.Models
         /// Initializes a new instance of the <see cref="Project" /> class.
         /// </summary>
         /// <param name="Id">A system-generated unique identifier for a Project (required).</param>
-        /// <param name="LocalArea">The Local Area associated with this Project record..</param>
+        /// <param name="District">The District associated with this Project record..</param>
         /// <param name="ProvincialProjectNumber">TO BE REVIEWED WITH THE BUSINESS - The Provincial charge code for the equipment hiring related to this project. This will be the same across multiple service areas that provide equipment for the same Project..</param>
         /// <param name="Name">A descriptive name for the Project, useful to the HETS Clerk and Project Manager..</param>
         /// <param name="Status">The status of the project to determine if it is listed when creating new requests.</param>
@@ -54,10 +54,10 @@ namespace HETSAPI.Models
         /// <param name="Notes">Notes.</param>
         /// <param name="Attachments">Attachments.</param>
         /// <param name="History">History.</param>
-        public Project(int Id, LocalArea LocalArea = null, string ProvincialProjectNumber = null, string Name = null, string Status = null, string Information = null, List<RentalRequest> RentalRequests = null, List<RentalAgreement> RentalAgreements = null, Contact PrimaryContact = null, List<Contact> Contacts = null, List<Note> Notes = null, List<Attachment> Attachments = null, List<History> History = null)
+        public Project(int Id, District District = null, string ProvincialProjectNumber = null, string Name = null, string Status = null, string Information = null, List<RentalRequest> RentalRequests = null, List<RentalAgreement> RentalAgreements = null, Contact PrimaryContact = null, List<Contact> Contacts = null, List<Note> Notes = null, List<Attachment> Attachments = null, List<History> History = null)
         {   
             this.Id = Id;
-            this.LocalArea = LocalArea;
+            this.District = District;
             this.ProvincialProjectNumber = ProvincialProjectNumber;
             this.Name = Name;
             this.Status = Status;
@@ -79,19 +79,19 @@ namespace HETSAPI.Models
         public int Id { get; set; }
         
         /// <summary>
-        /// The Local Area associated with this Project record.
+        /// The District associated with this Project record.
         /// </summary>
-        /// <value>The Local Area associated with this Project record.</value>
-        [MetaDataExtension (Description = "The Local Area associated with this Project record.")]
-        public LocalArea LocalArea { get; set; }
+        /// <value>The District associated with this Project record.</value>
+        [MetaDataExtension (Description = "The District associated with this Project record.")]
+        public District District { get; set; }
         
         /// <summary>
-        /// Foreign key for LocalArea 
+        /// Foreign key for District 
         /// </summary>   
-        [ForeignKey("LocalArea")]
+        [ForeignKey("District")]
 		[JsonIgnore]
-		[MetaDataExtension (Description = "The Local Area associated with this Project record.")]
-        public int? LocalAreaId { get; set; }
+		[MetaDataExtension (Description = "The District associated with this Project record.")]
+        public int? DistrictId { get; set; }
         
         /// <summary>
         /// TO BE REVIEWED WITH THE BUSINESS - The Provincial charge code for the equipment hiring related to this project. This will be the same across multiple service areas that provide equipment for the same Project.
@@ -187,7 +187,7 @@ namespace HETSAPI.Models
             var sb = new StringBuilder();
             sb.Append("class Project {\n");
             sb.Append("  Id: ").Append(Id).Append("\n");
-            sb.Append("  LocalArea: ").Append(LocalArea).Append("\n");
+            sb.Append("  District: ").Append(District).Append("\n");
             sb.Append("  ProvincialProjectNumber: ").Append(ProvincialProjectNumber).Append("\n");
             sb.Append("  Name: ").Append(Name).Append("\n");
             sb.Append("  Status: ").Append(Status).Append("\n");
@@ -242,9 +242,9 @@ namespace HETSAPI.Models
                     this.Id.Equals(other.Id)
                 ) &&                 
                 (
-                    this.LocalArea == other.LocalArea ||
-                    this.LocalArea != null &&
-                    this.LocalArea.Equals(other.LocalArea)
+                    this.District == other.District ||
+                    this.District != null &&
+                    this.District.Equals(other.District)
                 ) &&                 
                 (
                     this.ProvincialProjectNumber == other.ProvincialProjectNumber ||
@@ -316,9 +316,9 @@ namespace HETSAPI.Models
                 // Suitable nullity checks
                                    
                 hash = hash * 59 + this.Id.GetHashCode();                   
-                if (this.LocalArea != null)
+                if (this.District != null)
                 {
-                    hash = hash * 59 + this.LocalArea.GetHashCode();
+                    hash = hash * 59 + this.District.GetHashCode();
                 }                if (this.ProvincialProjectNumber != null)
                 {
                     hash = hash * 59 + this.ProvincialProjectNumber.GetHashCode();

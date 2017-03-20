@@ -43,7 +43,7 @@ namespace HETSAPI.Models
         /// </summary>
         /// <param name="Id">A system-generated unique identifier for a Equipment (required).</param>
         /// <param name="LocalArea">A foreign key reference to the system-generated unique identifier for a Local Area.</param>
-        /// <param name="EquipmentType">A foreign key reference to the system-generated unique identifier for a Equipment Type.</param>
+        /// <param name="DistrictEquipmentType">A foreign key reference to the system-generated unique identifier for a Equipment Type.</param>
         /// <param name="Owner">A foreign key reference to the system-generated unique identifier for an Owner.</param>
         /// <param name="EquipmentCode">A human-visible unique code for the piece of equipment, referenced for convenience by the system users - HETS Clerks and Equipment Owners. Generated at record creation time based on the unique Owner prefix (e.g. EDW) and a zero-filled unique number - resulting in a code like EDW-0083..</param>
         /// <param name="Status">The current status of the equipment in a UI-controlled string. Initial values are Pending, Approved and Archived, but other values may be added..</param>
@@ -56,7 +56,6 @@ namespace HETSAPI.Models
         /// <param name="Make">The make of the piece of equipment, as provided by the Equipment Owner..</param>
         /// <param name="Model">The model of the piece of equipment, as provided by the Equipment Owner..</param>
         /// <param name="Year">The model year of the piece of equipment, as provided by the Equipment Owner..</param>
-        /// <param name="Type">TO BE REVIEWED WITH THE BUSINESS - WHAT IS THIS?.</param>
         /// <param name="Operator">TO BE REVIEWED WITH THE BUSINESS - WHAT IS THIS?.</param>
         /// <param name="PayRate">TO BE REVIEWED WITH THE BUSINESS - WHAT IS THIS?.</param>
         /// <param name="RefuseRate">TO BE REVIEWED WITH THE BUSINESS - WHAT IS THIS?.</param>
@@ -82,11 +81,11 @@ namespace HETSAPI.Models
         /// <param name="Attachments">Attachments.</param>
         /// <param name="History">History.</param>
         /// <param name="SeniorityAudit">SeniorityAudit.</param>
-        public Equipment(int Id, LocalArea LocalArea = null, EquipmentType EquipmentType = null, Owner Owner = null, string EquipmentCode = null, string Status = null, DateTime? ReceivedDate = null, DateTime? ApprovedDate = null, DateTime? LastVerifiedDate = null, bool? IsInformationUpdateNeeded = null, string InformationUpdateNeededReason = null, string LicencePlate = null, string Make = null, string Model = null, string Year = null, string Type = null, string Operator = null, float? PayRate = null, string RefuseRate = null, string SerialNumber = null, string Size = null, DateTime? ToDate = null, float? BlockNumber = null, float? Seniority = null, int? NumberInBlock = null, bool? IsSeniorityOverridden = null, string SeniorityOverrideReason = null, DateTime? SeniorityEffectiveDate = null, float? YearsOfService = null, float? ServiceHoursLastYear = null, float? ServiceHoursTwoYearsAgo = null, float? ServiceHoursThreeYearsAgo = null, string ArchiveCode = null, string ArchiveReason = null, DateTime? ArchiveDate = null, DumpTruck DumpTruck = null, List<EquipmentAttachment> EquipmentAttachments = null, List<Note> Notes = null, List<Attachment> Attachments = null, List<History> History = null, List<SeniorityAudit> SeniorityAudit = null)
+        public Equipment(int Id, LocalArea LocalArea = null, DistrictEquipmentType DistrictEquipmentType = null, Owner Owner = null, string EquipmentCode = null, string Status = null, DateTime? ReceivedDate = null, DateTime? ApprovedDate = null, DateTime? LastVerifiedDate = null, bool? IsInformationUpdateNeeded = null, string InformationUpdateNeededReason = null, string LicencePlate = null, string Make = null, string Model = null, string Year = null, string Operator = null, float? PayRate = null, string RefuseRate = null, string SerialNumber = null, string Size = null, DateTime? ToDate = null, float? BlockNumber = null, float? Seniority = null, int? NumberInBlock = null, bool? IsSeniorityOverridden = null, string SeniorityOverrideReason = null, DateTime? SeniorityEffectiveDate = null, float? YearsOfService = null, float? ServiceHoursLastYear = null, float? ServiceHoursTwoYearsAgo = null, float? ServiceHoursThreeYearsAgo = null, string ArchiveCode = null, string ArchiveReason = null, DateTime? ArchiveDate = null, DumpTruck DumpTruck = null, List<EquipmentAttachment> EquipmentAttachments = null, List<Note> Notes = null, List<Attachment> Attachments = null, List<History> History = null, List<SeniorityAudit> SeniorityAudit = null)
         {   
             this.Id = Id;
             this.LocalArea = LocalArea;
-            this.EquipmentType = EquipmentType;
+            this.DistrictEquipmentType = DistrictEquipmentType;
             this.Owner = Owner;
             this.EquipmentCode = EquipmentCode;
             this.Status = Status;
@@ -99,7 +98,6 @@ namespace HETSAPI.Models
             this.Make = Make;
             this.Model = Model;
             this.Year = Year;
-            this.Type = Type;
             this.Operator = Operator;
             this.PayRate = PayRate;
             this.RefuseRate = RefuseRate;
@@ -154,15 +152,15 @@ namespace HETSAPI.Models
         /// </summary>
         /// <value>A foreign key reference to the system-generated unique identifier for a Equipment Type</value>
         [MetaDataExtension (Description = "A foreign key reference to the system-generated unique identifier for a Equipment Type")]
-        public EquipmentType EquipmentType { get; set; }
+        public DistrictEquipmentType DistrictEquipmentType { get; set; }
         
         /// <summary>
-        /// Foreign key for EquipmentType 
+        /// Foreign key for DistrictEquipmentType 
         /// </summary>   
-        [ForeignKey("EquipmentType")]
+        [ForeignKey("DistrictEquipmentType")]
 		[JsonIgnore]
 		[MetaDataExtension (Description = "A foreign key reference to the system-generated unique identifier for a Equipment Type")]
-        public int? EquipmentTypeId { get; set; }
+        public int? DistrictEquipmentTypeId { get; set; }
         
         /// <summary>
         /// A foreign key reference to the system-generated unique identifier for an Owner
@@ -269,15 +267,6 @@ namespace HETSAPI.Models
         [MaxLength(15)]
         
         public string Year { get; set; }
-        
-        /// <summary>
-        /// TO BE REVIEWED WITH THE BUSINESS - WHAT IS THIS?
-        /// </summary>
-        /// <value>TO BE REVIEWED WITH THE BUSINESS - WHAT IS THIS?</value>
-        [MetaDataExtension (Description = "TO BE REVIEWED WITH THE BUSINESS - WHAT IS THIS?")]
-        [MaxLength(255)]
-        
-        public string Type { get; set; }
         
         /// <summary>
         /// TO BE REVIEWED WITH THE BUSINESS - WHAT IS THIS?
@@ -476,7 +465,7 @@ namespace HETSAPI.Models
             sb.Append("class Equipment {\n");
             sb.Append("  Id: ").Append(Id).Append("\n");
             sb.Append("  LocalArea: ").Append(LocalArea).Append("\n");
-            sb.Append("  EquipmentType: ").Append(EquipmentType).Append("\n");
+            sb.Append("  DistrictEquipmentType: ").Append(DistrictEquipmentType).Append("\n");
             sb.Append("  Owner: ").Append(Owner).Append("\n");
             sb.Append("  EquipmentCode: ").Append(EquipmentCode).Append("\n");
             sb.Append("  Status: ").Append(Status).Append("\n");
@@ -489,7 +478,6 @@ namespace HETSAPI.Models
             sb.Append("  Make: ").Append(Make).Append("\n");
             sb.Append("  Model: ").Append(Model).Append("\n");
             sb.Append("  Year: ").Append(Year).Append("\n");
-            sb.Append("  Type: ").Append(Type).Append("\n");
             sb.Append("  Operator: ").Append(Operator).Append("\n");
             sb.Append("  PayRate: ").Append(PayRate).Append("\n");
             sb.Append("  RefuseRate: ").Append(RefuseRate).Append("\n");
@@ -563,9 +551,9 @@ namespace HETSAPI.Models
                     this.LocalArea.Equals(other.LocalArea)
                 ) &&                 
                 (
-                    this.EquipmentType == other.EquipmentType ||
-                    this.EquipmentType != null &&
-                    this.EquipmentType.Equals(other.EquipmentType)
+                    this.DistrictEquipmentType == other.DistrictEquipmentType ||
+                    this.DistrictEquipmentType != null &&
+                    this.DistrictEquipmentType.Equals(other.DistrictEquipmentType)
                 ) &&                 
                 (
                     this.Owner == other.Owner ||
@@ -626,11 +614,6 @@ namespace HETSAPI.Models
                     this.Year == other.Year ||
                     this.Year != null &&
                     this.Year.Equals(other.Year)
-                ) &&                 
-                (
-                    this.Type == other.Type ||
-                    this.Type != null &&
-                    this.Type.Equals(other.Type)
                 ) &&                 
                 (
                     this.Operator == other.Operator ||
@@ -776,9 +759,9 @@ namespace HETSAPI.Models
                 {
                     hash = hash * 59 + this.LocalArea.GetHashCode();
                 }                   
-                if (this.EquipmentType != null)
+                if (this.DistrictEquipmentType != null)
                 {
-                    hash = hash * 59 + this.EquipmentType.GetHashCode();
+                    hash = hash * 59 + this.DistrictEquipmentType.GetHashCode();
                 }                   
                 if (this.Owner != null)
                 {
@@ -826,10 +809,6 @@ namespace HETSAPI.Models
                                 if (this.Year != null)
                 {
                     hash = hash * 59 + this.Year.GetHashCode();
-                }                
-                                if (this.Type != null)
-                {
-                    hash = hash * 59 + this.Type.GetHashCode();
                 }                
                                 if (this.Operator != null)
                 {

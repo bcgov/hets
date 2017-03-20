@@ -38,7 +38,7 @@ namespace HETSAPI.Mappings
             var dto = new RentalRequestSearchResultViewModel();
             if (model != null)
             {
-                dto.EquipmentTypeName = model.EquipmentType.Name;
+                dto.EquipmentTypeName = model.DistrictEquipmentType.EquipmentType.Name;
                 dto.Id = model.Id;
                 dto.LocalArea = model.LocalArea;
                 dto.PrimaryContact = model.Project.PrimaryContact;
@@ -175,7 +175,7 @@ namespace HETSAPI.Mappings
                 dto.Id = model.Id;
                 dto.Name = model.Name;
                 dto.PrimaryContact = model.PrimaryContact;
-                dto.LocalArea = model.LocalArea;
+                dto.District= model.District;
             }
             return dto;         
         }
@@ -194,7 +194,7 @@ namespace HETSAPI.Mappings
                 dto.DumpTruck = model.DumpTruck;
                 dto.EquipmentCode = model.EquipmentCode;
                 dto.EquipmentAttachments = model.EquipmentAttachments;
-                dto.EquipmentType = model.EquipmentType;
+                dto.DistrictEquipmentType = model.DistrictEquipmentType;
                 dto.History = model.History;
                 dto.Id = model.Id;
                 dto.InformationUpdateNeededReason = model.InformationUpdateNeededReason;
@@ -221,8 +221,7 @@ namespace HETSAPI.Mappings
                 dto.ServiceHoursThreeYearsAgo = model.ServiceHoursThreeYearsAgo;
                 dto.Size = model.Size;
                 dto.Status = model.Status;
-                dto.ToDate = model.ToDate;
-                dto.Type = model.Type;
+                dto.ToDate = model.ToDate;                
                 dto.Year = model.Year;
                 dto.YearsOfService = model.YearsOfService;
             }

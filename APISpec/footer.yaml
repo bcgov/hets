@@ -19,8 +19,9 @@
         description: A system-generated unique identifier for a Equipment
       localArea:
         $ref: '#/definitions/LocalArea'
-      equipmentType:
-        $ref: '#/definitions/EquipmentType'
+      districtEquipmentType:
+        $ref: '#/definitions/DistrictEquipmentType'
+        description: A foreign key reference to the system-generated unique identifier for a Equipment Type
       owner:
         $ref: '#/definitions/Owner'
       equipmentCode:
@@ -191,8 +192,8 @@
         x-type-options:
           min: 1
           max: 1000
-      localArea:
-        $ref: '#/definitions/LocalArea'
+      district:
+        $ref: '#/definitions/District'
       name:
         type: string
       primaryContact:

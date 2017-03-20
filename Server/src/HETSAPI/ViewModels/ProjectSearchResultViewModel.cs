@@ -40,16 +40,16 @@ namespace HETSAPI.ViewModels
         /// Initializes a new instance of the <see cref="ProjectSearchResultViewModel" /> class.
         /// </summary>
         /// <param name="Id">Id (required).</param>
-        /// <param name="LocalArea">LocalArea.</param>
+        /// <param name="District">District.</param>
         /// <param name="Name">Name.</param>
         /// <param name="PrimaryContact">PrimaryContact.</param>
         /// <param name="Hires">count of RentalAgreement.status is Active for the project.</param>
         /// <param name="Requests">count of RentalRequest.status is Active for the project.</param>
         /// <param name="Status">Project status.</param>
-        public ProjectSearchResultViewModel(int Id, LocalArea LocalArea = null, string Name = null, Contact PrimaryContact = null, int? Hires = null, int? Requests = null, string Status = null)
+        public ProjectSearchResultViewModel(int Id, District District = null, string Name = null, Contact PrimaryContact = null, int? Hires = null, int? Requests = null, string Status = null)
         {   
             this.Id = Id;
-            this.LocalArea = LocalArea;
+            this.District = District;
             this.Name = Name;
             this.PrimaryContact = PrimaryContact;
             this.Hires = Hires;
@@ -64,10 +64,10 @@ namespace HETSAPI.ViewModels
         public int Id { get; set; }
 
         /// <summary>
-        /// Gets or Sets LocalArea
+        /// Gets or Sets District
         /// </summary>
-        [DataMember(Name="localArea")]
-        public LocalArea LocalArea { get; set; }
+        [DataMember(Name="district")]
+        public District District { get; set; }
 
         /// <summary>
         /// Gets or Sets Name
@@ -114,7 +114,7 @@ namespace HETSAPI.ViewModels
             var sb = new StringBuilder();
             sb.Append("class ProjectSearchResultViewModel {\n");
             sb.Append("  Id: ").Append(Id).Append("\n");
-            sb.Append("  LocalArea: ").Append(LocalArea).Append("\n");
+            sb.Append("  District: ").Append(District).Append("\n");
             sb.Append("  Name: ").Append(Name).Append("\n");
             sb.Append("  PrimaryContact: ").Append(PrimaryContact).Append("\n");
             sb.Append("  Hires: ").Append(Hires).Append("\n");
@@ -163,9 +163,9 @@ namespace HETSAPI.ViewModels
                     this.Id.Equals(other.Id)
                 ) &&                 
                 (
-                    this.LocalArea == other.LocalArea ||
-                    this.LocalArea != null &&
-                    this.LocalArea.Equals(other.LocalArea)
+                    this.District == other.District ||
+                    this.District != null &&
+                    this.District.Equals(other.District)
                 ) &&                 
                 (
                     this.Name == other.Name ||
@@ -207,9 +207,9 @@ namespace HETSAPI.ViewModels
                 // Suitable nullity checks
                                    
                 hash = hash * 59 + this.Id.GetHashCode();                   
-                if (this.LocalArea != null)
+                if (this.District != null)
                 {
-                    hash = hash * 59 + this.LocalArea.GetHashCode();
+                    hash = hash * 59 + this.District.GetHashCode();
                 }                if (this.Name != null)
                 {
                     hash = hash * 59 + this.Name.GetHashCode();
