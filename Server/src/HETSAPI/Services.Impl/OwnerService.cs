@@ -106,7 +106,16 @@ namespace HETSAPI.Services.Impl
                         bool equipment_exists = _context.Equipments.Any(a => a.Id == equipment_id);
                         if (equipment_exists)
                         {
-                            equipment = _context.Equipments.First(a => a.Id == equipment_id);
+                            equipment = _context.Equipments
+                                .Include(x => x.LocalArea.ServiceArea.District.Region)
+                                .Include(x => x.EquipmentType)
+                                .Include(x => x.DumpTruck)
+                                .Include(x => x.Owner)
+                                .Include(x => x.EquipmentAttachments)
+                                .Include(x => x.Notes)
+                                .Include(x => x.Attachments)
+                                .Include(x => x.History)
+                                .First(a => a.Id == equipment_id);
                             item.EquipmentList[i] = equipment;
                         }
                         else
@@ -341,6 +350,8 @@ namespace HETSAPI.Services.Impl
                     .Include(x => x.LocalArea.ServiceArea.District.Region)
                     .Include(x => x.EquipmentList)
                     .ThenInclude(y => y.EquipmentType)
+                    .Include(x => x.EquipmentList)
+                    .ThenInclude(y => y.Owner)
                     .Include(x => x.Notes)
                     .Include(x => x.Attachments)
                     .Include(x => x.History)
@@ -396,7 +407,7 @@ namespace HETSAPI.Services.Impl
 
                 // replace Equipment List.
                 owner.EquipmentList = items.ToList();
-                _context.Update(owner);
+                _context.Owners.Update(owner);
                 _context.SaveChanges();
 
                 return new ObjectResult(items);
@@ -420,9 +431,15 @@ namespace HETSAPI.Services.Impl
             if (exists)
             {
                 var result = _context.Owners
-                    .Include(x => x.LocalArea.ServiceArea.District.Region)
-                    .Include(x => x.EquipmentList)
-                    .ThenInclude(y => y.EquipmentType)
+                    .Include(x => x.LocalArea.ServiceArea.District.Region)                    
+                    .Include(x => x.EquipmentList).ThenInclude(y => y.LocalArea.ServiceArea.District.Region)
+                    .Include(x => x.EquipmentList).ThenInclude(y => y.EquipmentType)
+                    .Include(x => x.EquipmentList).ThenInclude(y => y.DumpTruck)
+                    .Include(x => x.EquipmentList).ThenInclude(y => y.Owner)
+                    .Include(x => x.EquipmentList).ThenInclude(y => y.EquipmentAttachments)
+                    .Include(x => x.EquipmentList).ThenInclude(y => y.Notes)
+                    .Include(x => x.EquipmentList).ThenInclude(y => y.Attachments)
+                    .Include(x => x.EquipmentList).ThenInclude(y => y.History)
                     .Include(x => x.Notes)
                     .Include(x => x.Attachments)
                     .Include(x => x.History)
