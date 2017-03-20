@@ -922,6 +922,138 @@
       responses:
         201:
           description: Project created
+  /lookupLists:
+    get:
+      tags:
+        - LookupLists
+      consumes: []
+      produces:
+        - text/plain
+        - application/json
+        - text/json
+      responses:
+        200:
+          description: OK
+          schema:
+            type: array
+            items:
+              $ref: "#/definitions/LookupLists"
+    post:
+      tags:
+        - LookupLists
+      consumes:
+        - application/json
+      produces:
+        - text/plain
+        - application/json
+        - text/json
+      parameters:
+        - name: item
+          in: body
+          required: true
+          schema:
+            $ref: "#/definitions/LookupLists"
+      responses:
+        201:
+          description: LookupLists created
+          headers:
+            Location:
+              description: A link to the LookupLists
+              type: string
+              format: url
+          schema:
+            $ref: "#/definitions/LookupLists"  
+  /lookupLists/{id}:
+    get:
+      tags:
+        - LookupLists
+      consumes: []
+      produces:
+        - text/plain
+        - application/json
+        - text/json
+      responses:
+        200:
+          description: OK
+          schema:
+            $ref: "#/definitions/LookupLists"
+        404:
+          description: LookupLists not found
+      parameters:
+        - name: id
+          in: path
+          description: id of LookupLists to fetch
+          required: true
+          type: integer
+    put:
+      tags:
+        - LookupLists
+      consumes:
+        - application/json
+      produces:
+        - text/plain
+        - application/json
+        - text/json
+      responses:
+        200:
+          description: OK
+          schema:
+            $ref: "#/definitions/LookupLists"
+        404:
+          description: LookupLists not found
+      parameters:
+        - name: id
+          in: path
+          description: id of LookupLists to fetch
+          required: true
+          type: integer
+        - name: item
+          in: body
+          required: true
+          schema:
+            $ref: "#/definitions/LookupLists"
+  /lookupLists/{id}/delete:
+    post:
+      tags:
+        - LookupLists
+      consumes: []
+      produces:
+        - text/plain
+        - application/json
+        - text/json
+      responses:
+        200:
+          description: OK
+        404:
+          description: LookupLists not found
+      parameters:
+        - name: id
+          in: path
+          description: id of LookupLists to delete
+          required: true
+          type: integer
+
+  /lookupLists/bulk:
+    post:
+      tags:
+        - LookupLists
+      consumes:
+        - application/json
+      produces:
+        - text/plain
+        - application/json
+        - text/json
+      parameters:
+        - name: items
+          in: body
+          required: true
+          schema:
+            type: array
+            items:
+              $ref: "#/definitions/LookupLists"
+      responses:
+        201:
+          description: LookupLists created
   /groups:
     get:
       tags:
