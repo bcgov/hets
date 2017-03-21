@@ -61,7 +61,7 @@ namespace SchoolBusAPI.Services.Impl
 
                 if (item.Project != null)
                 {
-                    int project_id = item.Equipment.Id;
+                    int project_id = item.Project.Id;
                     bool rentalAgreement_exists = _context.Projects.Any(a => a.Id == project_id);
                     if (rentalAgreement_exists)
                     {
