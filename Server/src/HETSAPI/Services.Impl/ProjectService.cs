@@ -252,6 +252,140 @@ namespace HETSAPI.Services.Impl
             return new ObjectResult(result);
         }
 
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="id">id of Owner to fetch Contacts for</param>
+        /// <response code="200">OK</response>
+        public virtual IActionResult ProjectsIdContactsGetAsync(int id)
+        {
+            var exists = _context.Projects.Any(a => a.Id == id);
+            if (exists)
+            {
+                Project project = _context.Projects
+                    .Include(x => x.LocalArea.ServiceArea.District.Region)
+                    .Include(x => x.Notes)
+                    .Include(x => x.Attachments)
+                    .Include(x => x.History)
+                    .Include(x => x.Contacts)
+                    .First(x => x.Id == id);
+
+                return new ObjectResult(project.Contacts);
+            }
+            else
+            {
+                // record not found
+                return new StatusCodeResult(404);
+            }
+        }
+
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <remarks>Replaces an Owner&#39;s Contacts</remarks>
+        /// <param name="id">id of Owner to replace Contacts for</param>
+        /// <param name="item">Replacement Owner contacts.</param>
+        /// <response code="200">OK</response>
+        public virtual IActionResult ProjectsIdContactsPostAsync(int id, Contact item)
+        {
+            var exists = _context.Projects.Any(a => a.Id == id);
+            if (exists && item != null)
+            {
+                Project project = _context.Projects
+                    .Include(x => x.LocalArea.ServiceArea.District.Region)
+                    .Include(x => x.Notes)
+                    .Include(x => x.Attachments)
+                    .Include(x => x.History)
+                    .Include(x => x.Contacts)
+                    .First(x => x.Id == id);
+
+                // adjust the incoming list.
+                item.Id = 0;
+
+                _context.Contacts.Add(item);
+                project.Contacts.Add(item);
+                _context.Projects.Update(project);
+                _context.SaveChanges();
+
+                return new ObjectResult(item);
+            }
+            else
+            {
+                // record not found
+                return new StatusCodeResult(404);
+            }
+        }
+
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <remarks>Replaces an Project&#39;s Contacts</remarks>
+        /// <param name="id">id of Project to replace Contacts for</param>
+        /// <param name="items">Replacement Project contacts.</param>
+        /// <response code="200">OK</response>
+        public virtual IActionResult ProjectsIdContactsPutAsync(int id, Contact[] items)
+        {
+            var exists = _context.Projects.Any(a => a.Id == id);
+            if (exists && items != null)
+            {
+                Project project = _context.Projects
+                    .Include(x => x.LocalArea.ServiceArea.District.Region)
+                    .Include(x => x.Notes)
+                    .Include(x => x.Attachments)
+                    .Include(x => x.History)
+                    .Include(x => x.Contacts)
+                    .First(x => x.Id == id);
+
+                // adjust the incoming list.
+
+                for (int i = 0; i < items.Count(); i++)
+                {
+                    Contact item = items[i];
+                    if (item != null)
+                    {
+                        bool contact_exists = _context.Contacts.Any(x => x.Id == item.Id);
+                        if (contact_exists)
+                        {
+                            items[i] = _context.Contacts
+                                .First(x => x.Id == item.Id);
+                        }
+                        else
+                        {
+                            _context.Add(item);
+                            items[i] = item;
+                        }
+                    }
+                }
+
+                // remove contacts that are no longer attached.
+
+                foreach (Contact contact in project.Contacts)
+                {
+                    if (contact != null && !items.Any(x => x.Id == contact.Id))
+                    {
+                        _context.Remove(contact);
+                    }
+                }
+
+                // replace Contacts.
+                project.Contacts = items.ToList();
+                _context.Update(project);
+                _context.SaveChanges();
+
+                return new ObjectResult(items);
+            }
+            else
+            {
+                // record not found
+                return new StatusCodeResult(404);
+            }
+        }
+
+
+
         /// <summary>
         /// 
         /// </summary>

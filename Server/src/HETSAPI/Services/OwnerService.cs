@@ -53,6 +53,15 @@ namespace HETSAPI.Services
         /// <summary>
         /// 
         /// </summary>
+        /// <remarks>Adds Owner Contact</remarks>
+        /// <param name="id">id of Owner to add a contact for</param>
+        /// <param name="item">Adds to Owner Contact</param>
+        /// <response code="200">OK</response>
+        IActionResult OwnersIdContactsPostAsync(int id, Contact item);
+
+        /// <summary>
+        /// 
+        /// </summary>
         /// <remarks>Replaces an Owner&#39;s Contacts</remarks>
         /// <param name="id">id of Owner to replace Contacts for</param>
         /// <param name="item">Replacement Owner contacts.</param>

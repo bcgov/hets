@@ -22,6 +22,7 @@ using Swashbuckle.SwaggerGen.Annotations;
 using HETSAPI.Models;
 using HETSAPI.ViewModels;
 using HETSAPI.Services;
+using HETSAPI.Authorization;
 
 namespace HETSAPI.Controllers
 {
@@ -79,6 +80,22 @@ namespace HETSAPI.Controllers
         public virtual IActionResult OwnersIdContactsGet([FromRoute]int id)
         {
             return this._service.OwnersIdContactsGetAsync(id);
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <remarks>Adds Owner Contact</remarks>
+        /// <param name="id">id of Owner to add a contact for</param>
+        /// <param name="item">Adds to Owner Contact</param>
+        /// <response code="200">OK</response>
+        [HttpPost]
+        [Route("/api/owners/{id}/contacts")]
+        [SwaggerOperation("OwnersIdContactsPost")]
+        [SwaggerResponse(200, type: typeof(Contact))]
+        public virtual IActionResult OwnersIdContactsPost([FromRoute]int id, [FromBody]Contact item)
+        {
+            return this._service.OwnersIdContactsPostAsync(id, item);
         }
 
         /// <summary>

@@ -22,6 +22,7 @@ using Swashbuckle.SwaggerGen.Annotations;
 using HETSAPI.Models;
 using HETSAPI.ViewModels;
 using HETSAPI.Services;
+using HETSAPI.Authorization;
 
 namespace HETSAPI.Controllers
 {
@@ -64,6 +65,53 @@ namespace HETSAPI.Controllers
         public virtual IActionResult ProjectsGet()
         {
             return this._service.ProjectsGetAsync();
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <remarks>Gets an Project&#39;s Contacts</remarks>
+        /// <param name="id">id of Project to fetch Contacts for</param>
+        /// <response code="200">OK</response>
+        [HttpGet]
+        [Route("/api/projects/{id}/contacts")]
+        [SwaggerOperation("ProjectsIdContactsGet")]
+        [SwaggerResponse(200, type: typeof(List<Contact>))]
+        public virtual IActionResult ProjectsIdContactsGet([FromRoute]int id)
+        {
+            return this._service.ProjectsIdContactsGetAsync(id);
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <remarks>Adds Project Contact</remarks>
+        /// <param name="id">id of Project to add a contact for</param>
+        /// <param name="item">Adds to Project Contact</param>
+        /// <response code="200">OK</response>
+        [HttpPost]
+        [Route("/api/projects/{id}/contacts")]
+        [SwaggerOperation("ProjectsIdContactsPost")]
+        [SwaggerResponse(200, type: typeof(Contact))]
+        public virtual IActionResult ProjectsIdContactsPost([FromRoute]int id, [FromBody]Contact item)
+        {
+            return this._service.ProjectsIdContactsPostAsync(id, item);
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <remarks>Replaces an Project&#39;s Contacts</remarks>
+        /// <param name="id">id of Project to replace Contacts for</param>
+        /// <param name="item">Replacement Project contacts.</param>
+        /// <response code="200">OK</response>
+        [HttpPut]
+        [Route("/api/projects/{id}/contacts")]
+        [SwaggerOperation("ProjectsIdContactsPut")]
+        [SwaggerResponse(200, type: typeof(List<Contact>))]
+        public virtual IActionResult ProjectsIdContactsPut([FromRoute]int id, [FromBody]Contact[] item)
+        {
+            return this._service.ProjectsIdContactsPutAsync(id, item);
         }
 
         /// <summary>

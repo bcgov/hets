@@ -22,6 +22,7 @@ using Swashbuckle.SwaggerGen.Annotations;
 using HETSAPI.Models;
 using HETSAPI.ViewModels;
 using HETSAPI.Services;
+using HETSAPI.Authorization;
 
 namespace HETSAPI.Controllers
 {

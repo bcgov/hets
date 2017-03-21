@@ -45,6 +45,32 @@ namespace HETSAPI.Services
         /// <summary>
         /// 
         /// </summary>
+        /// <remarks>Gets an Project&#39;s Contacts</remarks>
+        /// <param name="id">id of Project to fetch Contacts for</param>
+        /// <response code="200">OK</response>
+        IActionResult ProjectsIdContactsGetAsync(int id);
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <remarks>Adds Project Contact</remarks>
+        /// <param name="id">id of Project to add a contact for</param>
+        /// <param name="item">Adds to Project Contact</param>
+        /// <response code="200">OK</response>
+        IActionResult ProjectsIdContactsPostAsync(int id, Contact item);
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <remarks>Replaces an Project&#39;s Contacts</remarks>
+        /// <param name="id">id of Project to replace Contacts for</param>
+        /// <param name="item">Replacement Project contacts.</param>
+        /// <response code="200">OK</response>
+        IActionResult ProjectsIdContactsPutAsync(int id, Contact[] item);
+
+        /// <summary>
+        /// 
+        /// </summary>
         /// <param name="id">id of Project to delete</param>
         /// <response code="200">OK</response>
         /// <response code="404">Project not found</response>
