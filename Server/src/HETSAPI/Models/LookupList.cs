@@ -28,18 +28,18 @@ namespace HETSAPI.Models
     /// </summary>
         [MetaDataExtension (Description = "Lookup values for various enumerated types in the systems - entity status values, rate types, conditions and others. Used to pull the values out of the code and into the database but without having to have a table for each lookup instance.")]
 
-    public partial class LookupLists : AuditableEntity, IEquatable<LookupLists>
+    public partial class LookupList : AuditableEntity, IEquatable<LookupList>
     {
         /// <summary>
         /// Default constructor, required by entity framework
         /// </summary>
-        public LookupLists()
+        public LookupList()
         {
             this.Id = 0;
         }
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="LookupLists" /> class.
+        /// Initializes a new instance of the <see cref="LookupList" /> class.
         /// </summary>
         /// <param name="Id">A system-generated unique identifier for a LookupList (required).</param>
         /// <param name="ContextName">The context within the app in which this lookup list if used. Defined and referenced in the code of the application..</param>
@@ -47,7 +47,7 @@ namespace HETSAPI.Models
         /// <param name="DisplaySortOrder">The sort order for list of values within a list context..</param>
         /// <param name="CodeName">The a shorter lookup name to find the value. Can be used at the option of the application to present on the screen a short version of the lookup list value..</param>
         /// <param name="Value">The fully spelled out value of the lookup entry..</param>
-        public LookupLists(int Id, string ContextName = null, bool? IsDefault = null, int? DisplaySortOrder = null, string CodeName = null, string Value = null)
+        public LookupList(int Id, string ContextName = null, bool? IsDefault = null, int? DisplaySortOrder = null, string CodeName = null, string Value = null)
         {   
             this.Id = Id;
             this.ContextName = ContextName;
@@ -112,7 +112,7 @@ namespace HETSAPI.Models
         public override string ToString()
         {
             var sb = new StringBuilder();
-            sb.Append("class LookupLists {\n");
+            sb.Append("class LookupList {\n");
             sb.Append("  Id: ").Append(Id).Append("\n");
             sb.Append("  ContextName: ").Append(ContextName).Append("\n");
             sb.Append("  IsDefault: ").Append(IsDefault).Append("\n");
@@ -142,15 +142,15 @@ namespace HETSAPI.Models
             if (ReferenceEquals(null, obj)) { return false; }
             if (ReferenceEquals(this, obj)) { return true; }
             if (obj.GetType() != GetType()) { return false; }
-            return Equals((LookupLists)obj);
+            return Equals((LookupList)obj);
         }
 
         /// <summary>
-        /// Returns true if LookupLists instances are equal
+        /// Returns true if LookupList instances are equal
         /// </summary>
-        /// <param name="other">Instance of LookupLists to be compared</param>
+        /// <param name="other">Instance of LookupList to be compared</param>
         /// <returns>Boolean</returns>
-        public bool Equals(LookupLists other)
+        public bool Equals(LookupList other)
         {
 
             if (ReferenceEquals(null, other)) { return false; }
@@ -233,7 +233,7 @@ namespace HETSAPI.Models
         /// <param name="left"></param>
         /// <param name="right"></param>
         /// <returns></returns>
-        public static bool operator ==(LookupLists left, LookupLists right)
+        public static bool operator ==(LookupList left, LookupList right)
         {
             return Equals(left, right);
         }
@@ -244,7 +244,7 @@ namespace HETSAPI.Models
         /// <param name="left"></param>
         /// <param name="right"></param>
         /// <returns></returns>
-        public static bool operator !=(LookupLists left, LookupLists right)
+        public static bool operator !=(LookupList left, LookupList right)
         {
             return !Equals(left, right);
         }

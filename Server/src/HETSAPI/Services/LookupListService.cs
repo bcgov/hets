@@ -26,52 +26,52 @@ namespace HETSAPI.Services
     /// <summary>
     /// 
     /// </summary>
-    public interface ILookupListsService
+    public interface ILookupListService
     {
 
         /// <summary>
         /// 
         /// </summary>
         /// <param name="items"></param>
-        /// <response code="201">LookupLists created</response>
-        IActionResult LookupListsBulkPostAsync(LookupLists[] items);
+        /// <response code="201">LookupList created</response>
+        IActionResult LookuplistsBulkPostAsync(LookupList[] items);
 
         /// <summary>
         /// 
         /// </summary>
         /// <response code="200">OK</response>
-        IActionResult LookupListsGetAsync();
+        IActionResult LookuplistsGetAsync();
 
         /// <summary>
         /// 
         /// </summary>
-        /// <param name="id">id of LookupLists to delete</param>
+        /// <param name="id">id of LookupList to delete</param>
         /// <response code="200">OK</response>
-        /// <response code="404">LookupLists not found</response>
-        IActionResult LookupListsIdDeletePostAsync(int id);
+        /// <response code="404">LookupList not found</response>
+        IActionResult LookuplistsIdDeletePostAsync(int id);
 
         /// <summary>
         /// 
         /// </summary>
-        /// <param name="id">id of LookupLists to fetch</param>
+        /// <param name="id">id of LookupList to fetch</param>
         /// <response code="200">OK</response>
-        /// <response code="404">LookupLists not found</response>
-        IActionResult LookupListsIdGetAsync(int id);
+        /// <response code="404">LookupList not found</response>
+        IActionResult LookuplistsIdGetAsync(int id);
 
         /// <summary>
         /// 
         /// </summary>
-        /// <param name="id">id of LookupLists to fetch</param>
+        /// <param name="id">id of LookupList to fetch</param>
         /// <param name="item"></param>
         /// <response code="200">OK</response>
-        /// <response code="404">LookupLists not found</response>
-        IActionResult LookupListsIdPutAsync(int id, LookupLists item);
+        /// <response code="404">LookupList not found</response>
+        IActionResult LookuplistsIdPutAsync(int id, LookupList item);
 
         /// <summary>
         /// 
         /// </summary>
         /// <param name="item"></param>
-        /// <response code="201">LookupLists created</response>
-        IActionResult LookupListsPostAsync(LookupLists item);
+        /// <response code="201">LookupList created</response>
+        IActionResult LookuplistsPostAsync(LookupList item);
     }
 }

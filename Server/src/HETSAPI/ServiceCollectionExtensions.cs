@@ -54,11 +54,11 @@ namespace HETSAPI
             services.AddTransient<IRentalRequestService, RentalRequestService>();
             services.AddTransient<IRentalRequestRotationListService, RentalRequestRotationListService>();
             services.AddTransient<IRoleService, RoleService>();
-            services.AddTransient<IServiceAreaService, ServiceAreaService>();
-            services.AddTransient<IUserService, UserService>();
+            services.AddTransient<IServiceAreaService, ServiceAreaService>();            
             services.AddTransient<ITestService, TestService>();
             services.AddTransient<IImportService, ImportService>();
             services.AddTransient<ITimeRecordService, TimeRecordService>();
+            services.AddTransient<IUserService, UserService>();
             return services;
         }
     }
