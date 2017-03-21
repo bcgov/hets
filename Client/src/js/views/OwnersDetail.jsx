@@ -181,15 +181,20 @@ var OwnersDetail = React.createClass({
 
     // Update the last verified date on all pieces of equipment
     var equipmentList =_.map(owner.equipmentList, equipment => {
-      return {...equipment, lastVerifiedDate: now };
+      return {...equipment, ...{
+        lastVerifiedDate: now,
+        owner: { id: owner.id },
+      }};
     });
 
     Api.updateOwnerEquipment(owner, equipmentList);
   },
 
   equipmentVerify(equipment) {
-    equipment.lastVerifiedDate = today();
-    Api.updateEquipment(equipment).then(() => {
+    Api.updateEquipment({...equipment, ...{
+      lastVerifiedDate: today(),
+      owner: { id: this.props.owner.id },
+    }}).then(() => {
       this.fetch();
     });
   },
