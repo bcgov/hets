@@ -50,16 +50,18 @@ namespace HETSAPI.Models
         DbSet<City> Cities { get; set; }
         DbSet<Contact> Contacts { get; set; }        
         DbSet<District> Districts { get; set; }
+        DbSet<DistrictEquipmentType> DistrictEquipmentTypes { get; set; }
         DbSet<DumpTruck> DumpTrucks { get; set; }
         DbSet<Equipment> Equipments { get; set; }
         DbSet<EquipmentAttachment> EquipmentAttachments { get; set; }        
-        DbSet<EquipmentType> EquipmentTypes { get; set; }
-        DbSet<DistrictEquipmentType> DistrictEquipmentTypes { get; set; }
+        DbSet<EquipmentType> EquipmentTypes { get; set; }        
         DbSet<EquipmentTypeNextRental> EquipmentTypeNextRentals { get; set; }
         DbSet<Group> Groups { get; set; }
         DbSet<GroupMembership> GroupMemberships { get; set; }        
         DbSet<History> Historys { get; set; }
         DbSet<LocalArea> LocalAreas { get; set; }
+        DbSet<LocalAreaRotationList> LocalAreaRotationLists { get; set; }
+        DbSet<LookupList> LookupLists { get; set; }
         DbSet<Note> Notes { get; set; }
         DbSet<Owner> Owners { get; set; }
         DbSet<Permission> Permissions { get; set; }
@@ -69,6 +71,7 @@ namespace HETSAPI.Models
         DbSet<RentalAgreementCondition> RentalAgreementConditions { get; set; }
         DbSet<RentalAgreementRate> RentalAgreementRates { get; set; }
         DbSet<RentalRequest> RentalRequests { get; set; }
+        DbSet<RentalRequestAttachment> RentalRequestAttachments { get; set; }
         DbSet<RentalRequestRotationList> RentalRequestRotationLists { get; set; }
         DbSet<Role> Roles { get; set; }
         DbSet<RolePermission> RolePermissions { get; set; }        
@@ -131,6 +134,8 @@ namespace HETSAPI.Models
         public virtual DbSet<GroupMembership> GroupMemberships { get; set; }        
         public virtual DbSet<History> Historys { get; set; }
         public virtual DbSet<LocalArea> LocalAreas { get; set; }
+        public virtual DbSet<LocalAreaRotationList> LocalAreaRotationLists { get; set; }
+        public virtual DbSet<LookupList> LookupLists { get; set; }
         public virtual DbSet<Note> Notes { get; set; }
         public virtual DbSet<Owner> Owners { get; set; }
         public virtual DbSet<Permission> Permissions { get; set; }
@@ -140,6 +145,7 @@ namespace HETSAPI.Models
         public virtual DbSet<RentalAgreementCondition> RentalAgreementConditions { get; set; }
         public virtual DbSet<RentalAgreementRate> RentalAgreementRates { get; set; }
         public virtual DbSet<RentalRequest> RentalRequests { get; set; }
+        public virtual DbSet<RentalRequestAttachment> RentalRequestAttachments { get; set; }
         public virtual DbSet<RentalRequestRotationList> RentalRequestRotationLists { get; set; }        
         public virtual DbSet<Role> Roles { get; set; }
         public virtual DbSet<RolePermission> RolePermissions { get; set; }                

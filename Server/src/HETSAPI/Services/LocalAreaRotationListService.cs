@@ -34,13 +34,13 @@ namespace HETSAPI.Services
         /// </summary>
         /// <param name="items"></param>
         /// <response code="201">LocalAreaRotationList created</response>
-        IActionResult LocalAreaRotationListsBulkPostAsync(LocalAreaRotationList[] items);
+        IActionResult LocalarearotationlistsBulkPostAsync(LocalAreaRotationList[] items);
 
         /// <summary>
         /// 
         /// </summary>
         /// <response code="200">OK</response>
-        IActionResult LocalAreaRotationListsGetAsync();
+        IActionResult LocalarearotationlistsGetAsync();
 
         /// <summary>
         /// 
@@ -48,7 +48,7 @@ namespace HETSAPI.Services
         /// <param name="id">id of LocalAreaRotationList to delete</param>
         /// <response code="200">OK</response>
         /// <response code="404">LocalAreaRotationList not found</response>
-        IActionResult LocalAreaRotationListsIdDeletePostAsync(int id);
+        IActionResult LocalarearotationlistsIdDeletePostAsync(int id);
 
         /// <summary>
         /// 
@@ -56,7 +56,7 @@ namespace HETSAPI.Services
         /// <param name="id">id of LocalAreaRotationList to fetch</param>
         /// <response code="200">OK</response>
         /// <response code="404">LocalAreaRotationList not found</response>
-        IActionResult LocalAreaRotationListsIdGetAsync(int id);
+        IActionResult LocalarearotationlistsIdGetAsync(int id);
 
         /// <summary>
         /// 
@@ -65,13 +65,13 @@ namespace HETSAPI.Services
         /// <param name="item"></param>
         /// <response code="200">OK</response>
         /// <response code="404">LocalAreaRotationList not found</response>
-        IActionResult LocalAreaRotationListsIdPutAsync(int id, LocalAreaRotationList item);
+        IActionResult LocalarearotationlistsIdPutAsync(int id, LocalAreaRotationList item);
 
         /// <summary>
         /// 
         /// </summary>
         /// <param name="item"></param>
         /// <response code="201">LocalAreaRotationList created</response>
-        IActionResult LocalAreaRotationListsPostAsync(LocalAreaRotationList item);
+        IActionResult LocalarearotationlistsPostAsync(LocalAreaRotationList item);
     }
 }

@@ -540,7 +540,7 @@ paths:
       responses:
         201:
           description: EquipmentAttachment created
-  /localAreaRotationLists:
+  /localarearotationlists:
     get:
       tags:
         - LocalAreaRotationList
@@ -581,7 +581,7 @@ paths:
               format: url
           schema:
             $ref: "#/definitions/LocalAreaRotationList"  
-  /localAreaRotationLists/{id}:
+  /localarearotationlists/{id}:
     get:
       tags:
         - LocalAreaRotationList
@@ -630,7 +630,7 @@ paths:
           required: true
           schema:
             $ref: "#/definitions/LocalAreaRotationList"
-  /localAreaRotationLists/{id}/delete:
+  /localarearotationlists/{id}/delete:
     post:
       tags:
         - LocalAreaRotationList
@@ -651,7 +651,7 @@ paths:
           required: true
           type: integer
 
-  /localAreaRotationLists/bulk:
+  /localarearotationlists/bulk:
     post:
       tags:
         - LocalAreaRotationList
@@ -936,10 +936,10 @@ paths:
       responses:
         201:
           description: Project created
-  /lookupLists:
+  /lookuplists:
     get:
       tags:
-        - LookupLists
+        - LookupList
       consumes: []
       produces:
         - text/plain
@@ -951,10 +951,10 @@ paths:
           schema:
             type: array
             items:
-              $ref: "#/definitions/LookupLists"
+              $ref: "#/definitions/LookupList"
     post:
       tags:
-        - LookupLists
+        - LookupList
       consumes:
         - application/json
       produces:
@@ -966,21 +966,21 @@ paths:
           in: body
           required: true
           schema:
-            $ref: "#/definitions/LookupLists"
+            $ref: "#/definitions/LookupList"
       responses:
         201:
-          description: LookupLists created
+          description: LookupList created
           headers:
             Location:
-              description: A link to the LookupLists
+              description: A link to the LookupList
               type: string
               format: url
           schema:
-            $ref: "#/definitions/LookupLists"  
-  /lookupLists/{id}:
+            $ref: "#/definitions/LookupList"  
+  /lookuplists/{id}:
     get:
       tags:
-        - LookupLists
+        - LookupList
       consumes: []
       produces:
         - text/plain
@@ -990,18 +990,18 @@ paths:
         200:
           description: OK
           schema:
-            $ref: "#/definitions/LookupLists"
+            $ref: "#/definitions/LookupList"
         404:
-          description: LookupLists not found
+          description: LookupList not found
       parameters:
         - name: id
           in: path
-          description: id of LookupLists to fetch
+          description: id of LookupList to fetch
           required: true
           type: integer
     put:
       tags:
-        - LookupLists
+        - LookupList
       consumes:
         - application/json
       produces:
@@ -1012,24 +1012,24 @@ paths:
         200:
           description: OK
           schema:
-            $ref: "#/definitions/LookupLists"
+            $ref: "#/definitions/LookupList"
         404:
-          description: LookupLists not found
+          description: LookupList not found
       parameters:
         - name: id
           in: path
-          description: id of LookupLists to fetch
+          description: id of LookupList to fetch
           required: true
           type: integer
         - name: item
           in: body
           required: true
           schema:
-            $ref: "#/definitions/LookupLists"
-  /lookupLists/{id}/delete:
+            $ref: "#/definitions/LookupList"
+  /lookuplists/{id}/delete:
     post:
       tags:
-        - LookupLists
+        - LookupList
       consumes: []
       produces:
         - text/plain
@@ -1039,18 +1039,18 @@ paths:
         200:
           description: OK
         404:
-          description: LookupLists not found
+          description: LookupList not found
       parameters:
         - name: id
           in: path
-          description: id of LookupLists to delete
+          description: id of LookupList to delete
           required: true
           type: integer
 
-  /lookupLists/bulk:
+  /lookuplists/bulk:
     post:
       tags:
-        - LookupLists
+        - LookupList
       consumes:
         - application/json
       produces:
@@ -1064,10 +1064,10 @@ paths:
           schema:
             type: array
             items:
-              $ref: "#/definitions/LookupLists"
+              $ref: "#/definitions/LookupList"
       responses:
         201:
-          description: LookupLists created
+          description: LookupList created
   /groups:
     get:
       tags:
@@ -4766,6 +4766,32 @@ paths:
             type: array
             items:
               $ref: "#/definitions/Contact"
+    post:
+      tags:
+        - Owner
+      description: Adds Owner Contact
+      consumes: []
+      produces:
+        - text/plain
+        - application/json
+        - text/json
+      parameters:
+        - name: id
+          in: path
+          description: id of Owner to add a contact for
+          required: true
+          type: integer
+        - name: item
+          in: body
+          description: Adds to Owner Contact
+          required: true
+          schema:
+            $ref: "#/definitions/Contact"
+      responses:
+        200:
+          description: OK
+          schema:
+            $ref: "#/definitions/Contact"
   /owners/{id}/equipment:
     get:
       tags:
@@ -4819,6 +4845,27 @@ paths:
             type: array
             items:
               $ref: "#/definitions/Equipment"
+  /owners/{id}/nextEquipmentCode:
+    get:
+      tags:
+        - Owner
+      description: Returns the next Equipment Code for the given Owner.  Equipment Code is a combination of the Owner Equipment Prefix and the numeric identifier for the next piece of equipment.      
+      consumes: []
+      produces:
+        - text/plain
+        - application/json
+        - text/json
+      parameters:
+        - name: id
+          in: path
+          description: id of Owner to fetch the Equipment Code for
+          required: true
+          type: integer
+      responses:
+        200:
+          description: OK
+          schema:
+            $ref: "#/definitions/EquipmentCodeViewModel"
   /projects/search:
     get:
       summary: Searches Projects
@@ -4862,7 +4909,86 @@ paths:
           schema:
             type: array
             items:
-              $ref: "#/definitions/ProjectSearchResultViewModel"                            
+              $ref: "#/definitions/ProjectSearchResultViewModel"
+  /projects/{id}/contacts:
+    get:
+      tags:
+        - Project
+      description: Gets an Project's Contacts      
+      consumes: []
+      produces:
+        - text/plain
+        - application/json
+        - text/json
+      parameters:
+        - name: id
+          in: path
+          description: id of Project to fetch Contacts for
+          required: true
+          type: integer
+      responses:
+        200:
+          description: OK
+          schema:
+            type: array
+            items:
+              $ref: "#/definitions/Contact"
+    put:
+      tags:
+        - Project
+      description: Replaces an Project's Contacts
+      consumes: []
+      produces:
+        - text/plain
+        - application/json
+        - text/json
+      parameters:
+        - name: id
+          in: path
+          description: id of Project to replace Contacts for
+          required: true
+          type: integer
+        - name: item
+          in: body
+          description: Replacement Project contacts.
+          required: true
+          schema:
+            type: array
+            items:
+              $ref: "#/definitions/Contact"
+      responses:
+        200:
+          description: OK
+          schema:
+            type: array
+            items:
+              $ref: "#/definitions/Contact"
+    post:
+      tags:
+        - Project
+      description: Adds Project Contact
+      consumes: []
+      produces:
+        - text/plain
+        - application/json
+        - text/json
+      parameters:
+        - name: id
+          in: path
+          description: id of Project to add a contact for
+          required: true
+          type: integer
+        - name: item
+          in: body
+          description: Adds to Project Contact
+          required: true
+          schema:
+            $ref: "#/definitions/Contact"
+      responses:
+        200:
+          description: OK
+          schema:
+            $ref: "#/definitions/Contact"  
   /roles/{id}/permissions:
     get:
       description: Get all the permissions for a role
@@ -6359,7 +6485,7 @@ definitions:
         type: array
         items:
           $ref: '#/definitions/Equipment'
-  LookupLists:
+  LookupList:
     type: object
     description: Lookup values for various enumerated types in the systems - entity status values, rate types, conditions and others. Used to pull the values out of the code and into the database but without having to have a table for each lookup instance.
     required:
@@ -6886,6 +7012,14 @@ definitions:
         type: string
         maxLength: 2048
         description: A description of the group that is presented to the user when they are setting a user into a group.
+  EquipmentCodeViewModel:
+    type: object
+    x-codegen-viewmodel: true        
+    description: Equipment Code is a combination of the Owner Equipment Prefix and the numeric identifier for the next piece of equipment.
+    properties:
+      equipmentCode:
+        type: string
+        description: The Equipment Code
   EquipmentViewModel:
     type: object
     x-codegen-viewmodel: true        
@@ -6899,8 +7033,9 @@ definitions:
         description: A system-generated unique identifier for a Equipment
       localArea:
         $ref: '#/definitions/LocalArea'
-      equipmentType:
-        $ref: '#/definitions/EquipmentType'
+      districtEquipmentType:
+        $ref: '#/definitions/DistrictEquipmentType'
+        description: A foreign key reference to the system-generated unique identifier for a Equipment Type
       owner:
         $ref: '#/definitions/Owner'
       equipmentCode:
@@ -7071,8 +7206,8 @@ definitions:
         x-type-options:
           min: 1
           max: 1000
-      localArea:
-        $ref: '#/definitions/LocalArea'
+      district:
+        $ref: '#/definitions/District'
       name:
         type: string
       primaryContact:
