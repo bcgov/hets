@@ -45,10 +45,10 @@
             "table": null
         },
         {
-            "Description": "The Local Area associated with this Project record.",
+            "Description": "The District associated with this Project record.",
             "Length": null,
-            "Name": "localArea",
-            "RefDef": "LocalArea",
+            "Name": "district",
+            "RefDef": "District",
             "Required": [
                 {
                     "req": "id"
@@ -421,8 +421,8 @@
         {
             "Description": "A foreign key reference to the system-generated unique identifier for an Equipment Type",
             "Length": null,
-            "Name": "equipmentType",
-            "RefDef": "EquipmentType",
+            "Name": "districtEquipmentType",
+            "RefDef": "DistrictEquipmentType",
             "Required": [
                 {
                     "req": "id"
@@ -1953,8 +1953,8 @@
         {
             "Description": "A foreign key reference to the system-generated unique identifier for a Equipment Type",
             "Length": null,
-            "Name": "equipmentType",
-            "RefDef": "EquipmentType",
+            "Name": "districtEquipmentType",
+            "RefDef": "DistrictEquipmentType",
             "Required": [
                 {
                     "req": "id"
@@ -2218,28 +2218,6 @@
             "Description": "The model year of the piece of equipment, as provided by the Equipment Owner.",
             "Length": "15",
             "Name": "year",
-            "RefDef": null,
-            "Required": [
-                {
-                    "req": "id"
-                }
-            ],
-            "Unique": null,
-            "binary": null,
-            "boolean": null,
-            "datetime": null,
-            "float": null,
-            "id": null,
-            "integer": null,
-            "links": null,
-            "ref": null,
-            "string": "string",
-            "table": null
-        },
-        {
-            "Description": "TO BE REVIEWED WITH THE BUSINESS - WHAT IS THIS?",
-            "Length": "255",
-            "Name": "type",
             "RefDef": null,
             "Required": [
                 {
@@ -3535,9 +3513,189 @@
             "table": null
         },
         {
-            "Description": "A global and local area list of types of equipment for which a request can be generated and for which owners can register their equipment. If the local area is NULL, the type is visible Province-wide. In the previous instance of this application, all equipment types were assigned to the local area and transitioning to a province-wide model is being attempted (and may not work for the end users). An attempt to achieve a \"mostly province-wide\" list is being made during the data conversion process - mapping local area equipment types to provincial or local area types as part of data conversion.",
+            "Description": "A provincial-wide Equipment Type, the related Blue Book Chapter Section and related usage attributes.",
             "Length": null,
             "Name": "EquipmentType",
+            "RefDef": null,
+            "Required": [],
+            "Unique": null,
+            "binary": null,
+            "boolean": null,
+            "datetime": null,
+            "float": null,
+            "id": null,
+            "integer": null,
+            "links": null,
+            "ref": null,
+            "string": null,
+            "table": "table"
+        },
+        {
+            "Description": "A system-generated unique identifier for an EquipmentName",
+            "Length": null,
+            "Name": "id",
+            "RefDef": null,
+            "Required": [],
+            "Unique": null,
+            "binary": null,
+            "boolean": null,
+            "datetime": null,
+            "float": null,
+            "id": "id",
+            "integer": null,
+            "links": null,
+            "ref": null,
+            "string": null,
+            "table": null
+        },
+        {
+            "Description": "The generic name of an equipment type - e.g. Dump Truck, Excavator and so on.",
+            "Length": "50",
+            "Name": "name",
+            "RefDef": null,
+            "Required": [],
+            "Unique": null,
+            "binary": null,
+            "boolean": null,
+            "datetime": null,
+            "float": null,
+            "id": null,
+            "integer": null,
+            "links": null,
+            "ref": null,
+            "string": "string",
+            "table": null
+        },
+        {
+            "Description": "True if the Equipment Type is a Dump Truck. Equipment of this type will have a related Dump Truck record containing dump truck-related attributes.",
+            "Length": null,
+            "Name": "isDumpTruck",
+            "RefDef": null,
+            "Required": [],
+            "Unique": null,
+            "binary": null,
+            "boolean": "boolean",
+            "datetime": null,
+            "float": null,
+            "id": null,
+            "integer": null,
+            "links": null,
+            "ref": null,
+            "string": null,
+            "table": null
+        },
+        {
+            "Description": "The section of the Blue Book that is related to equipment types of this name.",
+            "Length": null,
+            "Name": "blueBookSection",
+            "RefDef": null,
+            "Required": [],
+            "Unique": null,
+            "binary": null,
+            "boolean": null,
+            "datetime": null,
+            "float": "float",
+            "id": null,
+            "integer": null,
+            "links": null,
+            "ref": null,
+            "string": null,
+            "table": null
+        },
+        {
+            "Description": "The rate number in the Blue Book that is related to equipment types of this name.",
+            "Length": null,
+            "Name": "blueBookRateNumber",
+            "RefDef": null,
+            "Required": [],
+            "Unique": null,
+            "binary": null,
+            "boolean": null,
+            "datetime": null,
+            "float": "float",
+            "id": null,
+            "integer": null,
+            "links": null,
+            "ref": null,
+            "string": null,
+            "table": null
+        },
+        {
+            "Description": "The number of blocks defined for the equipment of this name and Blue Book section. In general Dump Truck-class equipment types have 3 blocks, while non-Dump Truck equipment types have 2 blocks.",
+            "Length": null,
+            "Name": "numberOfBlocks",
+            "RefDef": null,
+            "Required": [],
+            "Unique": null,
+            "binary": null,
+            "boolean": null,
+            "datetime": null,
+            "float": null,
+            "id": null,
+            "integer": "integer",
+            "links": null,
+            "ref": null,
+            "string": null,
+            "table": null
+        },
+        {
+            "Description": "The maximum number of hours per year that equipment types of this name/Blue Book section can work in a year",
+            "Length": null,
+            "Name": "maximumHours",
+            "RefDef": null,
+            "Required": [],
+            "Unique": null,
+            "binary": null,
+            "boolean": null,
+            "datetime": null,
+            "float": "float",
+            "id": null,
+            "integer": null,
+            "links": null,
+            "ref": null,
+            "string": null,
+            "table": null
+        },
+        {
+            "Description": "The number of extended hours per year that equipment types of this name/Blue Book section can work.",
+            "Length": null,
+            "Name": "extendHours",
+            "RefDef": null,
+            "Required": [],
+            "Unique": null,
+            "binary": null,
+            "boolean": null,
+            "datetime": null,
+            "float": "float",
+            "id": null,
+            "integer": null,
+            "links": null,
+            "ref": null,
+            "string": null,
+            "table": null
+        },
+        {
+            "Description": "The number of substitute hours per year that equipment types of this name/Blue Book section can work.",
+            "Length": null,
+            "Name": "maxHoursSub",
+            "RefDef": null,
+            "Required": [],
+            "Unique": null,
+            "binary": null,
+            "boolean": null,
+            "datetime": null,
+            "float": "float",
+            "id": null,
+            "integer": null,
+            "links": null,
+            "ref": null,
+            "string": null,
+            "table": null
+        },
+        {
+            "Description": "An Equipment Type defined at the District level. Links to a provincial Equipment Type for the name of the equipment but supports the District HETS Clerk setting a local name for the Equipment Type. Within a given District, the same provincial Equipment Type might be reused multiple times in, for example, separate sizes (small, medium, large). This enables local areas with large number of the same Equipment Type to have multiple lists.",
+            "Length": null,
+            "Name": "DistrictEquipmentType",
             "RefDef": null,
             "Required": [
                 {
@@ -3581,8 +3739,8 @@
         {
             "Description": null,
             "Length": null,
-            "Name": "localArea",
-            "RefDef": "LocalArea",
+            "Name": "equipmentType",
+            "RefDef": "EquipmentType",
             "Required": [
                 {
                     "req": "id"
@@ -3601,9 +3759,31 @@
             "table": null
         },
         {
-            "Description": "A human-friendly name for the Equipment Type that is displayed on screens with limited screen real estate available.",
+            "Description": null,
+            "Length": null,
+            "Name": "district",
+            "RefDef": "District",
+            "Required": [
+                {
+                    "req": "id"
+                }
+            ],
+            "Unique": null,
+            "binary": null,
+            "boolean": null,
+            "datetime": null,
+            "float": null,
+            "id": null,
+            "integer": null,
+            "links": null,
+            "ref": "ref",
+            "string": null,
+            "table": null
+        },
+        {
+            "Description": "The name of this equipment type used at the District Level. This could be just the equipmentName if this is the only EquipmentType defined in this District, or could be a name that separates out multiple EquipmentTypes used within a District to, for instance, separate out the same EquipmentName by size.",
             "Length": "50",
-            "Name": "name",
+            "Name": "districtEquipmentName",
             "RefDef": null,
             "Required": [
                 {
@@ -3620,166 +3800,12 @@
             "links": null,
             "ref": null,
             "string": "string",
-            "table": null
-        },
-        {
-            "Description": "A extended description of the equipment type.",
-            "Length": "2048",
-            "Name": "description",
-            "RefDef": null,
-            "Required": [
-                {
-                    "req": "id"
-                }
-            ],
-            "Unique": null,
-            "binary": null,
-            "boolean": null,
-            "datetime": null,
-            "float": null,
-            "id": null,
-            "integer": null,
-            "links": null,
-            "ref": null,
-            "string": "string",
-            "table": null
-        },
-        {
-            "Description": "TO BE REVIEWED WITH THE BUSINESS - WHAT IS THIS?",
-            "Length": null,
-            "Name": "equipRentalRateNo",
-            "RefDef": null,
-            "Required": [
-                {
-                    "req": "id"
-                }
-            ],
-            "Unique": null,
-            "binary": null,
-            "boolean": null,
-            "datetime": null,
-            "float": "float",
-            "id": null,
-            "integer": null,
-            "links": null,
-            "ref": null,
-            "string": null,
-            "table": null
-        },
-        {
-            "Description": "TO BE REVIEWED WITH THE BUSINESS - WHAT IS THIS?",
-            "Length": null,
-            "Name": "equipRentalRatePage",
-            "RefDef": null,
-            "Required": [
-                {
-                    "req": "id"
-                }
-            ],
-            "Unique": null,
-            "binary": null,
-            "boolean": null,
-            "datetime": null,
-            "float": "float",
-            "id": null,
-            "integer": null,
-            "links": null,
-            "ref": null,
-            "string": null,
-            "table": null
-        },
-        {
-            "Description": "TO BE REVIEWED WITH THE BUSINESS - WHAT IS THIS?",
-            "Length": null,
-            "Name": "maxHours",
-            "RefDef": null,
-            "Required": [
-                {
-                    "req": "id"
-                }
-            ],
-            "Unique": null,
-            "binary": null,
-            "boolean": null,
-            "datetime": null,
-            "float": "float",
-            "id": null,
-            "integer": null,
-            "links": null,
-            "ref": null,
-            "string": null,
-            "table": null
-        },
-        {
-            "Description": "TO BE REVIEWED WITH THE BUSINESS - WHAT IS THIS?",
-            "Length": null,
-            "Name": "extendHours",
-            "RefDef": null,
-            "Required": [
-                {
-                    "req": "id"
-                }
-            ],
-            "Unique": null,
-            "binary": null,
-            "boolean": null,
-            "datetime": null,
-            "float": "float",
-            "id": null,
-            "integer": null,
-            "links": null,
-            "ref": null,
-            "string": null,
-            "table": null
-        },
-        {
-            "Description": "TO BE REVIEWED WITH THE BUSINESS - WHAT IS THIS?",
-            "Length": null,
-            "Name": "maxHoursSub",
-            "RefDef": null,
-            "Required": [
-                {
-                    "req": "id"
-                }
-            ],
-            "Unique": null,
-            "binary": null,
-            "boolean": null,
-            "datetime": null,
-            "float": "float",
-            "id": null,
-            "integer": null,
-            "links": null,
-            "ref": null,
-            "string": null,
-            "table": null
-        },
-        {
-            "Description": "The number of blocks defined for this equipment type. Currently, either 2 for Dump Truck equipment and 1 for non-Dump Truck equipment. Unlikely to change, particularly without a significant impact on code.",
-            "Length": null,
-            "Name": "blocks",
-            "RefDef": null,
-            "Required": [
-                {
-                    "req": "id"
-                }
-            ],
-            "Unique": null,
-            "binary": null,
-            "boolean": null,
-            "datetime": null,
-            "float": null,
-            "id": null,
-            "integer": "integer",
-            "links": null,
-            "ref": null,
-            "string": null,
             "table": null
         },
         {
             "Description": null,
             "Length": null,
-            "Name": "EquipmentTypeNextRental",
+            "Name": "LocalAreaRotationList",
             "RefDef": null,
             "Required": [
                 {
@@ -3823,8 +3849,30 @@
         {
             "Description": "A foreign key reference to the system-generated unique identifier for an Equipment Type",
             "Length": null,
-            "Name": "equipmentType",
-            "RefDef": "EquipmentType",
+            "Name": "districtEquipmentType",
+            "RefDef": "DistrictEquipmentType",
+            "Required": [
+                {
+                    "req": "id"
+                }
+            ],
+            "Unique": null,
+            "binary": null,
+            "boolean": null,
+            "datetime": null,
+            "float": null,
+            "id": null,
+            "integer": null,
+            "links": null,
+            "ref": "ref",
+            "string": null,
+            "table": null
+        },
+        {
+            "Description": null,
+            "Length": null,
+            "Name": "localArea",
+            "RefDef": "LocalArea",
             "Required": [
                 {
                     "req": "id"
@@ -3984,7 +4032,7 @@
                     "req": "id"
                 },
                 {
-                    "req": "attachment"
+                    "req": "typeName"
                 }
             ],
             "Unique": null,
@@ -4009,7 +4057,7 @@
                     "req": "id"
                 },
                 {
-                    "req": "attachment"
+                    "req": "typeName"
                 }
             ],
             "Unique": null,
@@ -4034,7 +4082,7 @@
                     "req": "id"
                 },
                 {
-                    "req": "attachment"
+                    "req": "typeName"
                 }
             ],
             "Unique": null,
@@ -4050,16 +4098,16 @@
             "table": null
         },
         {
-            "Description": "The attachment type as entered by the user (per the business - no lookup).",
-            "Length": "255",
-            "Name": "attachment",
+            "Description": "The name of the attachment type",
+            "Length": "100",
+            "Name": "typeName",
             "RefDef": null,
             "Required": [
                 {
                     "req": "id"
                 },
                 {
-                    "req": "attachment"
+                    "req": "typeName"
                 }
             ],
             "Unique": null,
@@ -4075,7 +4123,7 @@
             "table": null
         },
         {
-            "Description": "A description of the equipment attachment if the Equipment Attachment Type is insufficient.",
+            "Description": "A description of the equipment attachment if the Equipment Attachment Type Name is insufficient.",
             "Length": "2048",
             "Name": "description",
             "RefDef": null,
@@ -4084,7 +4132,7 @@
                     "req": "id"
                 },
                 {
-                    "req": "attachment"
+                    "req": "typeName"
                 }
             ],
             "Unique": null,
@@ -4933,6 +4981,160 @@
             "links": "links",
             "ref": null,
             "string": null,
+            "table": null
+        },
+        {
+            "Description": "Lookup values for various enumerated types in the systems - entity status values, rate types, conditions and others. Used to pull the values out of the code and into the database but without having to have a table for each lookup instance.",
+            "Length": null,
+            "Name": "LookupLists",
+            "RefDef": null,
+            "Required": [
+                {
+                    "req": "id"
+                }
+            ],
+            "Unique": null,
+            "binary": null,
+            "boolean": null,
+            "datetime": null,
+            "float": null,
+            "id": null,
+            "integer": null,
+            "links": null,
+            "ref": null,
+            "string": null,
+            "table": "table"
+        },
+        {
+            "Description": "A system-generated unique identifier for a LookupList",
+            "Length": null,
+            "Name": "id",
+            "RefDef": null,
+            "Required": [
+                {
+                    "req": "id"
+                }
+            ],
+            "Unique": true,
+            "binary": null,
+            "boolean": null,
+            "datetime": null,
+            "float": null,
+            "id": "id",
+            "integer": null,
+            "links": null,
+            "ref": null,
+            "string": null,
+            "table": null
+        },
+        {
+            "Description": "The context within the app in which this lookup list if used. Defined and referenced in the code of the application.",
+            "Length": "100",
+            "Name": "contextName",
+            "RefDef": null,
+            "Required": [
+                {
+                    "req": "id"
+                }
+            ],
+            "Unique": null,
+            "binary": null,
+            "boolean": null,
+            "datetime": null,
+            "float": null,
+            "id": null,
+            "integer": null,
+            "links": null,
+            "ref": null,
+            "string": "string",
+            "table": null
+        },
+        {
+            "Description": "True of the value within the lookup list context should be the default for the lookup instance.",
+            "Length": null,
+            "Name": "isDefault",
+            "RefDef": null,
+            "Required": [
+                {
+                    "req": "id"
+                }
+            ],
+            "Unique": null,
+            "binary": null,
+            "boolean": "boolean",
+            "datetime": null,
+            "float": null,
+            "id": null,
+            "integer": null,
+            "links": null,
+            "ref": null,
+            "string": null,
+            "table": null
+        },
+        {
+            "Description": "The sort order for list of values within a list context.",
+            "Length": null,
+            "Name": "displaySortOrder",
+            "RefDef": null,
+            "Required": [
+                {
+                    "req": "id"
+                }
+            ],
+            "Unique": null,
+            "binary": null,
+            "boolean": null,
+            "datetime": null,
+            "float": null,
+            "id": null,
+            "integer": "integer",
+            "links": null,
+            "ref": null,
+            "string": null,
+            "table": null
+        },
+        {
+            "Description": "The a shorter lookup name to find the value. Can be used at the option of the application to present on the screen a short version of the lookup list value.",
+            "Length": "30",
+            "Name": "codeName",
+            "RefDef": null,
+            "Required": [
+                {
+                    "req": "id"
+                }
+            ],
+            "Unique": null,
+            "binary": null,
+            "boolean": null,
+            "datetime": null,
+            "float": null,
+            "id": null,
+            "integer": null,
+            "links": null,
+            "ref": null,
+            "string": "string",
+            "table": null
+        },
+        {
+            "Description": "The fully spelled out value of the lookup entry.",
+            "Length": "100",
+            "Name": "value",
+            "RefDef": null,
+            "Required": [
+                {
+                    "req": "id"
+                }
+            ],
+            "Unique": null,
+            "binary": null,
+            "boolean": null,
+            "datetime": null,
+            "float": null,
+            "id": null,
+            "integer": null,
+            "links": null,
+            "ref": null,
+            "string": "string",
             "table": null
         },
         {

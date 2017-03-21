@@ -1,0 +1,373 @@
+[
+    {
+        "codeName": "Appr",
+        "contextName": "OwnerStatus",
+        "displaySortOrder": "2",
+        "isDefault": true,
+        "value": "Approved"
+    },
+    {
+        "codeName": "Arch",
+        "contextName": "OwnerStatus",
+        "displaySortOrder": "3",
+        "isDefault": null,
+        "value": "Archived"
+    },
+    {
+        "codeName": "Pend",
+        "contextName": "OwnerStatus",
+        "displaySortOrder": "1",
+        "isDefault": null,
+        "value": "Pending"
+    },
+    {
+        "codeName": "Appr",
+        "contextName": "EquipmentStatus",
+        "displaySortOrder": "2",
+        "isDefault": true,
+        "value": "Approved"
+    },
+    {
+        "codeName": "Arch",
+        "contextName": "EquipmentStatus",
+        "displaySortOrder": "3",
+        "isDefault": null,
+        "value": "Archived"
+    },
+    {
+        "codeName": "Pend",
+        "contextName": "EquipmentStatus",
+        "displaySortOrder": "1",
+        "isDefault": null,
+        "value": "Pending"
+    },
+    {
+        "codeName": "InProg",
+        "contextName": "RentalRequestStatus",
+        "displaySortOrder": "1",
+        "isDefault": true,
+        "value": "In Progress"
+    },
+    {
+        "codeName": "Comp",
+        "contextName": "RentalRequestStatus",
+        "displaySortOrder": "2",
+        "isDefault": null,
+        "value": "Completed"
+    },
+    {
+        "codeName": "Canc",
+        "contextName": "RentalRequestStatus",
+        "displaySortOrder": "3",
+        "isDefault": null,
+        "value": "Cancelled"
+    },
+    {
+        "codeName": "Proof",
+        "contextName": "AttachmentType",
+        "displaySortOrder": "1",
+        "isDefault": true,
+        "value": "Proof of Insurance Document"
+    },
+    {
+        "codeName": "Other",
+        "contextName": "AttachmentType",
+        "displaySortOrder": "2",
+        "isDefault": null,
+        "value": "Document"
+    },
+    {
+        "codeName": "Asked",
+        "contextName": "RentalRequestRotationListOfferResponse",
+        "displaySortOrder": "1",
+        "isDefault": null,
+        "value": "Asked"
+    },
+    {
+        "codeName": "Yes",
+        "contextName": "RentalRequestRotationListOfferResponse",
+        "displaySortOrder": "2",
+        "isDefault": null,
+        "value": "Yes"
+    },
+    {
+        "codeName": "No",
+        "contextName": "RentalRequestRotationListOfferResponse",
+        "displaySortOrder": "3",
+        "isDefault": null,
+        "value": "No"
+    },
+    {
+        "codeName": "ForceHire",
+        "contextName": "RentalRequestRotationListOfferResponse",
+        "displaySortOrder": "4",
+        "isDefault": null,
+        "value": "Force Hire"
+    },
+    {
+        "codeName": "CurrentHire",
+        "contextName": "RentalRequestRotationListOfferResponse",
+        "displaySortOrder": "5",
+        "isDefault": null,
+        "value": "Currently Hired"
+    },
+    {
+        "codeName": "NEMaxHours",
+        "contextName": "RentalRequestRotationListOfferResponse",
+        "displaySortOrder": "6",
+        "isDefault": null,
+        "value": "Not Eligible: Max Hours"
+    },
+    {
+        "codeName": "NotAvailable",
+        "contextName": "RentalRequestRotationListOfferRefusalReason",
+        "displaySortOrder": "1",
+        "isDefault": true,
+        "value": "Equipment Not Available"
+    },
+    {
+        "codeName": "HourLimitReached",
+        "contextName": "RentalRequestRotationListOfferRefusalReason",
+        "displaySortOrder": "2",
+        "isDefault": null,
+        "value": "Hour Limit Reached"
+    },
+    {
+        "codeName": "NoReply",
+        "contextName": "RentalRequestRotationListOfferRefusalReason",
+        "displaySortOrder": "3",
+        "isDefault": null,
+        "value": "No Reply"
+    },
+    {
+        "codeName": "Other",
+        "contextName": "RentalRequestRotationListOfferRefusalReason",
+        "displaySortOrder": "4",
+        "isDefault": null,
+        "value": "Other - see comment"
+    },
+    {
+        "codeName": "InProg",
+        "contextName": "RentalAgreementStatus",
+        "displaySortOrder": "1",
+        "isDefault": true,
+        "value": "In Progress"
+    },
+    {
+        "codeName": "Comp",
+        "contextName": "RentalAgreementStatus",
+        "displaySortOrder": "2",
+        "isDefault": null,
+        "value": "Completed"
+    },
+    {
+        "codeName": "Canc",
+        "contextName": "RentalAgreementStatus",
+        "displaySortOrder": "3",
+        "isDefault": null,
+        "value": "Cancelled"
+    },
+    {
+        "codeName": "Active",
+        "contextName": "ProjectStatus",
+        "displaySortOrder": "1",
+        "isDefault": true,
+        "value": "Active"
+    },
+    {
+        "codeName": "Comp",
+        "contextName": "ProjectStatus",
+        "displaySortOrder": "2",
+        "isDefault": null,
+        "value": "Completed"
+    },
+    {
+        "codeName": "Plus",
+        "contextName": "RentalAgreementConditions",
+        "displaySortOrder": "1",
+        "isDefault": null,
+        "value": "Plus Fuel Adjustment"
+    },
+    {
+        "codeName": "Trav",
+        "contextName": "RentalAgreementConditions",
+        "displaySortOrder": "2",
+        "isDefault": null,
+        "value": "Travel as Per Time Card if Applicable"
+    },
+    {
+        "codeName": "Nonstd",
+        "contextName": "RentalAgreementConditions",
+        "displaySortOrder": "3",
+        "isDefault": null,
+        "value": "Non-Standard Conditions"
+    },
+    {
+        "codeName": "Base",
+        "contextName": "RentalAgreementRate",
+        "displaySortOrder": "1",
+        "isDefault": null,
+        "value": "Base Rate"
+    },
+    {
+        "codeName": "Rest",
+        "contextName": "RentalAgreementRate",
+        "displaySortOrder": "2",
+        "isDefault": null,
+        "value": "Rest Break Rate"
+    },
+    {
+        "codeName": "Standby",
+        "contextName": "RentalAgreementRate",
+        "displaySortOrder": "3",
+        "isDefault": null,
+        "value": "Stand-By Rate"
+    },
+    {
+        "codeName": "OT8",
+        "contextName": "RentalAgreementRate",
+        "displaySortOrder": "4",
+        "isDefault": null,
+        "value": "OT after 8 hours"
+    },
+    {
+        "codeName": "OT12",
+        "contextName": "RentalAgreementRate",
+        "displaySortOrder": "5",
+        "isDefault": null,
+        "value": "OT after 12 hours"
+    },
+    {
+        "codeName": "Thumb",
+        "contextName": "ExcavatorAttachment",
+        "displaySortOrder": "",
+        "isDefault": null,
+        "value": "Hydraulic Thumb"
+    },
+    {
+        "codeName": "BrshGrd",
+        "contextName": "ExcavatorAttachment",
+        "displaySortOrder": "",
+        "isDefault": null,
+        "value": "Brush Guard"
+    },
+    {
+        "codeName": "Wrist",
+        "contextName": "ExcavatorAttachment",
+        "displaySortOrder": "",
+        "isDefault": null,
+        "value": "Wrist-o-Twist"
+    },
+    {
+        "codeName": "Long",
+        "contextName": "ExcavatorAttachment",
+        "displaySortOrder": "",
+        "isDefault": null,
+        "value": "Long Reach"
+    },
+    {
+        "codeName": "SixBld",
+        "contextName": "ExcavatorAttachment",
+        "displaySortOrder": "",
+        "isDefault": null,
+        "value": "Six Way Blade"
+    },
+    {
+        "codeName": "ForPro",
+        "contextName": "ExcavatorAttachment",
+        "displaySortOrder": "",
+        "isDefault": null,
+        "value": "Forestry Processor"
+    },
+    {
+        "codeName": "Plate",
+        "contextName": "ExcavatorAttachment",
+        "displaySortOrder": "",
+        "isDefault": null,
+        "value": "Plate Tamper"
+    },
+    {
+        "codeName": "Ham",
+        "contextName": "ExcavatorAttachment",
+        "displaySortOrder": "",
+        "isDefault": null,
+        "value": "Hydraulic Hammer"
+    },
+    {
+        "codeName": "AWD",
+        "contextName": "GraderAttachment",
+        "displaySortOrder": "",
+        "isDefault": null,
+        "value": "AWD"
+    },
+    {
+        "codeName": "Snow",
+        "contextName": "GraderAttachment",
+        "displaySortOrder": "",
+        "isDefault": null,
+        "value": "Snow Wing"
+    },
+    {
+        "codeName": "Rip",
+        "contextName": "GraderAttachment",
+        "displaySortOrder": "",
+        "isDefault": null,
+        "value": "Ripper"
+    },
+    {
+        "codeName": "DozBld",
+        "contextName": "GraderAttachment",
+        "displaySortOrder": "",
+        "isDefault": null,
+        "value": "Dozer Blade"
+    },
+    {
+        "codeName": "AWD",
+        "contextName": "LoaderAttachment",
+        "displaySortOrder": "",
+        "isDefault": null,
+        "value": "AWD"
+    },
+    {
+        "codeName": "Padft",
+        "contextName": "RollerAttachment",
+        "displaySortOrder": "",
+        "isDefault": null,
+        "value": "Padfoot"
+    },
+    {
+        "codeName": "Drum100",
+        "contextName": "RollerAttachment",
+        "displaySortOrder": "",
+        "isDefault": null,
+        "value": "100\" Drum"
+    },
+    {
+        "codeName": "LGP",
+        "contextName": "DozerAttachment",
+        "displaySortOrder": "",
+        "isDefault": null,
+        "value": "LGP"
+    },
+    {
+        "codeName": "Rip",
+        "contextName": "DozerAttachment",
+        "displaySortOrder": "",
+        "isDefault": null,
+        "value": "Ripper"
+    },
+    {
+        "codeName": "Buck",
+        "contextName": "BackhoeAttachment",
+        "displaySortOrder": "",
+        "isDefault": null,
+        "value": "Loader Bucket"
+    },
+    {
+        "codeName": "Backhoe",
+        "contextName": "BackhoeAttachment",
+        "displaySortOrder": "",
+        "isDefault": null,
+        "value": "Backhoe"
+    }
+]

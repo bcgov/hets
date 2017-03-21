@@ -276,6 +276,138 @@ paths:
       responses:
         201:
           description: EquipmentType created
+  /districtEquipmentTypes:
+    get:
+      tags:
+        - DistrictEquipmentType
+      consumes: []
+      produces:
+        - text/plain
+        - application/json
+        - text/json
+      responses:
+        200:
+          description: OK
+          schema:
+            type: array
+            items:
+              $ref: "#/definitions/DistrictEquipmentType"
+    post:
+      tags:
+        - DistrictEquipmentType
+      consumes:
+        - application/json
+      produces:
+        - text/plain
+        - application/json
+        - text/json
+      parameters:
+        - name: item
+          in: body
+          required: true
+          schema:
+            $ref: "#/definitions/DistrictEquipmentType"
+      responses:
+        201:
+          description: DistrictEquipmentType created
+          headers:
+            Location:
+              description: A link to the DistrictEquipmentType
+              type: string
+              format: url
+          schema:
+            $ref: "#/definitions/DistrictEquipmentType"  
+  /districtEquipmentTypes/{id}:
+    get:
+      tags:
+        - DistrictEquipmentType
+      consumes: []
+      produces:
+        - text/plain
+        - application/json
+        - text/json
+      responses:
+        200:
+          description: OK
+          schema:
+            $ref: "#/definitions/DistrictEquipmentType"
+        404:
+          description: DistrictEquipmentType not found
+      parameters:
+        - name: id
+          in: path
+          description: id of DistrictEquipmentType to fetch
+          required: true
+          type: integer
+    put:
+      tags:
+        - DistrictEquipmentType
+      consumes:
+        - application/json
+      produces:
+        - text/plain
+        - application/json
+        - text/json
+      responses:
+        200:
+          description: OK
+          schema:
+            $ref: "#/definitions/DistrictEquipmentType"
+        404:
+          description: DistrictEquipmentType not found
+      parameters:
+        - name: id
+          in: path
+          description: id of DistrictEquipmentType to fetch
+          required: true
+          type: integer
+        - name: item
+          in: body
+          required: true
+          schema:
+            $ref: "#/definitions/DistrictEquipmentType"
+  /districtEquipmentTypes/{id}/delete:
+    post:
+      tags:
+        - DistrictEquipmentType
+      consumes: []
+      produces:
+        - text/plain
+        - application/json
+        - text/json
+      responses:
+        200:
+          description: OK
+        404:
+          description: DistrictEquipmentType not found
+      parameters:
+        - name: id
+          in: path
+          description: id of DistrictEquipmentType to delete
+          required: true
+          type: integer
+
+  /districtEquipmentTypes/bulk:
+    post:
+      tags:
+        - DistrictEquipmentType
+      consumes:
+        - application/json
+      produces:
+        - text/plain
+        - application/json
+        - text/json
+      parameters:
+        - name: items
+          in: body
+          required: true
+          schema:
+            type: array
+            items:
+              $ref: "#/definitions/DistrictEquipmentType"
+      responses:
+        201:
+          description: DistrictEquipmentType created
   /equipmentAttachments:
     get:
       tags:
@@ -408,6 +540,138 @@ paths:
       responses:
         201:
           description: EquipmentAttachment created
+  /localAreaRotationLists:
+    get:
+      tags:
+        - LocalAreaRotationList
+      consumes: []
+      produces:
+        - text/plain
+        - application/json
+        - text/json
+      responses:
+        200:
+          description: OK
+          schema:
+            type: array
+            items:
+              $ref: "#/definitions/LocalAreaRotationList"
+    post:
+      tags:
+        - LocalAreaRotationList
+      consumes:
+        - application/json
+      produces:
+        - text/plain
+        - application/json
+        - text/json
+      parameters:
+        - name: item
+          in: body
+          required: true
+          schema:
+            $ref: "#/definitions/LocalAreaRotationList"
+      responses:
+        201:
+          description: LocalAreaRotationList created
+          headers:
+            Location:
+              description: A link to the LocalAreaRotationList
+              type: string
+              format: url
+          schema:
+            $ref: "#/definitions/LocalAreaRotationList"  
+  /localAreaRotationLists/{id}:
+    get:
+      tags:
+        - LocalAreaRotationList
+      consumes: []
+      produces:
+        - text/plain
+        - application/json
+        - text/json
+      responses:
+        200:
+          description: OK
+          schema:
+            $ref: "#/definitions/LocalAreaRotationList"
+        404:
+          description: LocalAreaRotationList not found
+      parameters:
+        - name: id
+          in: path
+          description: id of LocalAreaRotationList to fetch
+          required: true
+          type: integer
+    put:
+      tags:
+        - LocalAreaRotationList
+      consumes:
+        - application/json
+      produces:
+        - text/plain
+        - application/json
+        - text/json
+      responses:
+        200:
+          description: OK
+          schema:
+            $ref: "#/definitions/LocalAreaRotationList"
+        404:
+          description: LocalAreaRotationList not found
+      parameters:
+        - name: id
+          in: path
+          description: id of LocalAreaRotationList to fetch
+          required: true
+          type: integer
+        - name: item
+          in: body
+          required: true
+          schema:
+            $ref: "#/definitions/LocalAreaRotationList"
+  /localAreaRotationLists/{id}/delete:
+    post:
+      tags:
+        - LocalAreaRotationList
+      consumes: []
+      produces:
+        - text/plain
+        - application/json
+        - text/json
+      responses:
+        200:
+          description: OK
+        404:
+          description: LocalAreaRotationList not found
+      parameters:
+        - name: id
+          in: path
+          description: id of LocalAreaRotationList to delete
+          required: true
+          type: integer
+
+  /localAreaRotationLists/bulk:
+    post:
+      tags:
+        - LocalAreaRotationList
+      consumes:
+        - application/json
+      produces:
+        - text/plain
+        - application/json
+        - text/json
+      parameters:
+        - name: items
+          in: body
+          required: true
+          schema:
+            type: array
+            items:
+              $ref: "#/definitions/LocalAreaRotationList"
+      responses:
+        201:
+          description: LocalAreaRotationList created
   /owners:
     get:
       tags:
@@ -672,6 +936,138 @@ paths:
       responses:
         201:
           description: Project created
+  /lookupLists:
+    get:
+      tags:
+        - LookupLists
+      consumes: []
+      produces:
+        - text/plain
+        - application/json
+        - text/json
+      responses:
+        200:
+          description: OK
+          schema:
+            type: array
+            items:
+              $ref: "#/definitions/LookupLists"
+    post:
+      tags:
+        - LookupLists
+      consumes:
+        - application/json
+      produces:
+        - text/plain
+        - application/json
+        - text/json
+      parameters:
+        - name: item
+          in: body
+          required: true
+          schema:
+            $ref: "#/definitions/LookupLists"
+      responses:
+        201:
+          description: LookupLists created
+          headers:
+            Location:
+              description: A link to the LookupLists
+              type: string
+              format: url
+          schema:
+            $ref: "#/definitions/LookupLists"  
+  /lookupLists/{id}:
+    get:
+      tags:
+        - LookupLists
+      consumes: []
+      produces:
+        - text/plain
+        - application/json
+        - text/json
+      responses:
+        200:
+          description: OK
+          schema:
+            $ref: "#/definitions/LookupLists"
+        404:
+          description: LookupLists not found
+      parameters:
+        - name: id
+          in: path
+          description: id of LookupLists to fetch
+          required: true
+          type: integer
+    put:
+      tags:
+        - LookupLists
+      consumes:
+        - application/json
+      produces:
+        - text/plain
+        - application/json
+        - text/json
+      responses:
+        200:
+          description: OK
+          schema:
+            $ref: "#/definitions/LookupLists"
+        404:
+          description: LookupLists not found
+      parameters:
+        - name: id
+          in: path
+          description: id of LookupLists to fetch
+          required: true
+          type: integer
+        - name: item
+          in: body
+          required: true
+          schema:
+            $ref: "#/definitions/LookupLists"
+  /lookupLists/{id}/delete:
+    post:
+      tags:
+        - LookupLists
+      consumes: []
+      produces:
+        - text/plain
+        - application/json
+        - text/json
+      responses:
+        200:
+          description: OK
+        404:
+          description: LookupLists not found
+      parameters:
+        - name: id
+          in: path
+          description: id of LookupLists to delete
+          required: true
+          type: integer
+
+  /lookupLists/bulk:
+    post:
+      tags:
+        - LookupLists
+      consumes:
+        - application/json
+      produces:
+        - text/plain
+        - application/json
+        - text/json
+      parameters:
+        - name: items
+          in: body
+          required: true
+          schema:
+            type: array
+            items:
+              $ref: "#/definitions/LookupLists"
+      responses:
+        201:
+          description: LookupLists created
   /groups:
     get:
       tags:
@@ -5097,9 +5493,9 @@ definitions:
         format: int32
         type: integer
         description: A system-generated unique identifier for a Project
-      localArea:
-        $ref: '#/definitions/LocalArea'
-        description: The Local Area associated with this Project record.
+      district:
+        $ref: '#/definitions/District'
+        description: The District associated with this Project record.
       provincialProjectNumber:
         type: string
         maxLength: 150
@@ -5164,8 +5560,8 @@ definitions:
         type: string
         maxLength: 50
         description: The status of the Rental Request - whether it in progress, completed or was cancelled.
-      equipmentType:
-        $ref: '#/definitions/EquipmentType'
+      districtEquipmentType:
+        $ref: '#/definitions/DistrictEquipmentType'
         description: A foreign key reference to the system-generated unique identifier for an Equipment Type
       equipmentCount:
         format: int32
@@ -5439,8 +5835,8 @@ definitions:
       localArea:
         $ref: '#/definitions/LocalArea'
         description: A foreign key reference to the system-generated unique identifier for a Local Area
-      equipmentType:
-        $ref: '#/definitions/EquipmentType'
+      districtEquipmentType:
+        $ref: '#/definitions/DistrictEquipmentType'
         description: A foreign key reference to the system-generated unique identifier for a Equipment Type
       owner:
         $ref: '#/definitions/Owner'
@@ -5488,10 +5884,6 @@ definitions:
         type: string
         maxLength: 15
         description: The model year of the piece of equipment, as provided by the Equipment Owner.
-      type:
-        type: string
-        maxLength: 255
-        description: TO BE REVIEWED WITH THE BUSINESS - WHAT IS THIS?
       operator:
         type: string
         maxLength: 255
@@ -5717,7 +6109,47 @@ definitions:
         description: The capacity of the trailer box.
   EquipmentType:
     type: object
-    description: A global and local area list of types of equipment for which a request can be generated and for which owners can register their equipment. If the local area is NULL, the type is visible Province-wide. In the previous instance of this application, all equipment types were assigned to the local area and transitioning to a province-wide model is being attempted (and may not work for the end users). An attempt to achieve a &quot;mostly province-wide&quot; list is being made during the data conversion process - mapping local area equipment types to provincial or local area types as part of data conversion.
+    description: A provincial-wide Equipment Type, the related Blue Book Chapter Section and related usage attributes.
+    required:
+    properties:
+      id:
+        format: int32
+        type: integer
+        description: A system-generated unique identifier for an EquipmentName
+      name:
+        type: string
+        maxLength: 50
+        description: The generic name of an equipment type - e.g. Dump Truck, Excavator and so on.
+      isDumpTruck:
+        type: boolean
+        description: True if the Equipment Type is a Dump Truck. Equipment of this type will have a related Dump Truck record containing dump truck-related attributes.
+      blueBookSection:
+        type: number
+        format: float
+        description: The section of the Blue Book that is related to equipment types of this name.
+      blueBookRateNumber:
+        type: number
+        format: float
+        description: The rate number in the Blue Book that is related to equipment types of this name.
+      numberOfBlocks:
+        format: int32
+        type: integer
+        description: The number of blocks defined for the equipment of this name and Blue Book section. In general Dump Truck-class equipment types have 3 blocks, while non-Dump Truck equipment types have 2 blocks.
+      maximumHours:
+        type: number
+        format: float
+        description: The maximum number of hours per year that equipment types of this name&#x2F;Blue Book section can work in a year
+      extendHours:
+        type: number
+        format: float
+        description: The number of extended hours per year that equipment types of this name&#x2F;Blue Book section can work.
+      maxHoursSub:
+        type: number
+        format: float
+        description: The number of substitute hours per year that equipment types of this name&#x2F;Blue Book section can work.
+  DistrictEquipmentType:
+    type: object
+    description: An Equipment Type defined at the District level. Links to a provincial Equipment Type for the name of the equipment but supports the District HETS Clerk setting a local name for the Equipment Type. Within a given District, the same provincial Equipment Type might be reused multiple times in, for example, separate sizes (small, medium, large). This enables local areas with large number of the same Equipment Type to have multiple lists.
     required:
       - id
     properties:
@@ -5725,41 +6157,15 @@ definitions:
         format: int32
         type: integer
         description: A system-generated unique identifier for an EquipmentType
-      localArea:
-        $ref: '#/definitions/LocalArea'
-      name:
+      equipmentType:
+        $ref: '#/definitions/EquipmentType'
+      district:
+        $ref: '#/definitions/District'
+      districtEquipmentName:
         type: string
         maxLength: 50
-        description: A human-friendly name for the Equipment Type that is displayed on screens with limited screen real estate available.
-      description:
-        type: string
-        maxLength: 2048
-        description: A extended description of the equipment type.
-      equipRentalRateNo:
-        type: number
-        format: float
-        description: TO BE REVIEWED WITH THE BUSINESS - WHAT IS THIS?
-      equipRentalRatePage:
-        type: number
-        format: float
-        description: TO BE REVIEWED WITH THE BUSINESS - WHAT IS THIS?
-      maxHours:
-        type: number
-        format: float
-        description: TO BE REVIEWED WITH THE BUSINESS - WHAT IS THIS?
-      extendHours:
-        type: number
-        format: float
-        description: TO BE REVIEWED WITH THE BUSINESS - WHAT IS THIS?
-      maxHoursSub:
-        type: number
-        format: float
-        description: TO BE REVIEWED WITH THE BUSINESS - WHAT IS THIS?
-      blocks:
-        format: int32
-        type: integer
-        description: The number of blocks defined for this equipment type. Currently, either 2 for Dump Truck equipment and 1 for non-Dump Truck equipment. Unlikely to change, particularly without a significant impact on code.
-  EquipmentTypeNextRental:
+        description: The name of this equipment type used at the District Level. This could be just the equipmentName if this is the only EquipmentType defined in this District, or could be a name that separates out multiple EquipmentTypes used within a District to, for instance, separate out the same EquipmentName by size.
+  LocalAreaRotationList:
     type: object
     required:
       - id
@@ -5767,9 +6173,11 @@ definitions:
       id:
         format: int32
         type: integer
-      equipmentType:
-        $ref: '#/definitions/EquipmentType'
+      districtEquipmentType:
+        $ref: '#/definitions/DistrictEquipmentType'
         description: A foreign key reference to the system-generated unique identifier for an Equipment Type
+      localArea:
+        $ref: '#/definitions/LocalArea'
       askNextBlock1:
         $ref: '#/definitions/Equipment'
         description: The id of the next piece of Block 1 Equipment to be asked for a Rental Request. If null, start from the first piece of equipment in Block 1.
@@ -5796,7 +6204,7 @@ definitions:
     description: An Equipment Attachment associated with a piece of Equipment.
     required:
       - id
-      - attachment
+      - typeName
     properties:
       id:
         format: int32
@@ -5804,14 +6212,14 @@ definitions:
         description: A system-generated unique identifier for an EquipmentAttachment
       equipment:
         $ref: '#/definitions/Equipment'
-      attachment:
+      typeName:
         type: string
-        maxLength: 255
-        description: The attachment type as entered by the user (per the business - no lookup).
+        maxLength: 100
+        description: The name of the attachment type
       description:
         type: string
         maxLength: 2048
-        description: A description of the equipment attachment if the Equipment Attachment Type is insufficient.
+        description: A description of the equipment attachment if the Equipment Attachment Type Name is insufficient.
   SeniorityAudit:
     type: object
     description: The history of all changes to the seniority of a piece of equipment. The current seniority information (underlying data elements and the calculation result) is in the equipment record. Every time that information changes, the old values are copied to here, with a start date, end date range. In the normal case, an annual update triggers the old values being copied here and the new values put into the equipment record. If a user manually changes the values, the existing values are copied into a record added here.
@@ -5951,6 +6359,36 @@ definitions:
         type: array
         items:
           $ref: '#/definitions/Equipment'
+  LookupLists:
+    type: object
+    description: Lookup values for various enumerated types in the systems - entity status values, rate types, conditions and others. Used to pull the values out of the code and into the database but without having to have a table for each lookup instance.
+    required:
+      - id
+    properties:
+      id:
+        format: int32
+        type: integer
+        uniqueItems: true
+        description: A system-generated unique identifier for a LookupList
+      contextName:
+        type: string
+        maxLength: 100
+        description: The context within the app in which this lookup list if used. Defined and referenced in the code of the application.
+      isDefault:
+        type: boolean
+        description: True of the value within the lookup list context should be the default for the lookup instance.
+      displaySortOrder:
+        format: int32
+        type: integer
+        description: The sort order for list of values within a list context.
+      codeName:
+        type: string
+        maxLength: 30
+        description: The a shorter lookup name to find the value. Can be used at the option of the application to present on the screen a short version of the lookup list value.
+      value:
+        type: string
+        maxLength: 100
+        description: The fully spelled out value of the lookup entry.
   Contact:
     type: object
     description: A person and their related contact information linked to one or more entities in the system. For examples, there are contacts for Owners, Projects.
@@ -6741,6 +7179,10 @@ definitions:
         x-chance-type: email
       active:
         type: boolean
+      smUserId:
+        type: string
+      smAuthorizationDirectory:
+        type: string
       userRoles:
         type: array
         items:
