@@ -108,7 +108,7 @@ namespace HETSAPI.Services.Impl
                         {
                             equipment = _context.Equipments
                                 .Include(x => x.LocalArea.ServiceArea.District.Region)
-                                .Include(x => x.EquipmentType)
+                                .Include(x => x.DistrictEquipmentType)
                                 .Include(x => x.DumpTruck)
                                 .Include(x => x.Owner)
                                 .Include(x => x.EquipmentAttachments)
@@ -183,7 +183,7 @@ namespace HETSAPI.Services.Impl
                 Owner owner = _context.Owners
                     .Include(x => x.LocalArea.ServiceArea.District.Region)
                     .Include(x => x.EquipmentList)
-                    .ThenInclude(y => y.EquipmentType)
+                    .ThenInclude(y => y.DistrictEquipmentType)
                     .Include(x => x.Notes)
                     .Include(x => x.Attachments)
                     .Include(x => x.History)
@@ -215,7 +215,7 @@ namespace HETSAPI.Services.Impl
                 Owner owner = _context.Owners
                     .Include(x => x.LocalArea.ServiceArea.District.Region)
                     .Include(x => x.EquipmentList)
-                    .ThenInclude(y => y.EquipmentType)
+                    .ThenInclude(y => y.DistrictEquipmentType)
                     .Include(x => x.Notes)
                     .Include(x => x.Attachments)
                     .Include(x => x.History)
@@ -255,7 +255,7 @@ namespace HETSAPI.Services.Impl
                 Owner owner = _context.Owners
                     .Include(x => x.LocalArea.ServiceArea.District.Region)
                     .Include(x => x.EquipmentList)
-                    .ThenInclude(y => y.EquipmentType)
+                    .ThenInclude(y => y.DistrictEquipmentType)
                     .Include(x => x.Notes)
                     .Include(x => x.Attachments)
                     .Include(x => x.History)
@@ -350,7 +350,7 @@ namespace HETSAPI.Services.Impl
                     .Include(x => x.EquipmentList)
                         .ThenInclude(x => x.LocalArea.ServiceArea.District.Region)
                     .Include(x => x.EquipmentList)
-                        .ThenInclude(x => x.EquipmentType)
+                        .ThenInclude(x => x.DistrictEquipmentType)
                     .Include(x => x.EquipmentList)
                         .ThenInclude(x => x.DumpTruck)
                     .Include(x => x.EquipmentList)
@@ -388,7 +388,7 @@ namespace HETSAPI.Services.Impl
                 Owner owner = _context.Owners
                     .Include(x => x.LocalArea.ServiceArea.District.Region)
                     .Include(x => x.EquipmentList)
-                    .ThenInclude(y => y.EquipmentType)
+                    .ThenInclude(y => y.DistrictEquipmentType)
                     .Include(x => x.EquipmentList)
                     .ThenInclude(y => y.Owner)
                     .Include(x => x.Notes)
@@ -411,7 +411,7 @@ namespace HETSAPI.Services.Impl
                         {
                             items[i] = _context.Equipments
                                 .Include(x => x.LocalArea.ServiceArea.District.Region)
-                                .Include(x => x.EquipmentType)
+                                .Include(x => x.DistrictEquipmentType)
                                 .Include(x => x.DumpTruck)
                                 .Include(x => x.Owner)
                                 .Include(x => x.EquipmentAttachments)
@@ -532,7 +532,7 @@ namespace HETSAPI.Services.Impl
                 var result = _context.Owners
                     .Include(x => x.LocalArea.ServiceArea.District.Region)                    
                     .Include(x => x.EquipmentList).ThenInclude(y => y.LocalArea.ServiceArea.District.Region)
-                    .Include(x => x.EquipmentList).ThenInclude(y => y.EquipmentType)
+                    .Include(x => x.EquipmentList).ThenInclude(y => y.DistrictEquipmentType)
                     .Include(x => x.EquipmentList).ThenInclude(y => y.DumpTruck)
                     .Include(x => x.EquipmentList).ThenInclude(y => y.Owner)
                     .Include(x => x.EquipmentList).ThenInclude(y => y.EquipmentAttachments)
@@ -618,7 +618,7 @@ namespace HETSAPI.Services.Impl
             var data = _context.Owners
                     .Include(x => x.LocalArea.ServiceArea.District.Region)
                     .Include(x => x.EquipmentList)
-                    .ThenInclude(y => y.EquipmentType)
+                    .ThenInclude(y => y.DistrictEquipmentType)
                     .Include(x => x.Notes)
                     .Include(x => x.Attachments)
                     .Include(x => x.History)

@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 
 namespace HETSAPI.Models
 {
-    public partial class EquipmentType
+    public partial class DistrictEquipmentType
     {
         public const int DUMP_TRUCK_BLOCKS = 3;
         public const int OTHER_BLOCKS = 2;

@@ -27,30 +27,32 @@ namespace HETSAPI.Models
     /// 
     /// </summary>
 
-    public partial class EquipmentTypeNextRental : AuditableEntity, IEquatable<EquipmentTypeNextRental>
+    public partial class LocalAreaRotationList : AuditableEntity, IEquatable<LocalAreaRotationList>
     {
         /// <summary>
         /// Default constructor, required by entity framework
         /// </summary>
-        public EquipmentTypeNextRental()
+        public LocalAreaRotationList()
         {
             this.Id = 0;
         }
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="EquipmentTypeNextRental" /> class.
+        /// Initializes a new instance of the <see cref="LocalAreaRotationList" /> class.
         /// </summary>
         /// <param name="Id">Id (required).</param>
         /// <param name="DistrictEquipmentType">A foreign key reference to the system-generated unique identifier for an Equipment Type.</param>
+        /// <param name="LocalArea">LocalArea.</param>
         /// <param name="AskNextBlock1">The id of the next piece of Block 1 Equipment to be asked for a Rental Request. If null, start from the first piece of equipment in Block 1..</param>
         /// <param name="AskNextBlock1Seniority">The seniority score of the piece of equipment that is the next to be asked in Block 1..</param>
         /// <param name="AskNextBlock2">The id of the next piece of Block 2 Equipment to be asked for a Rental Request. If null, start from the first piece of equipment in Block 2..</param>
         /// <param name="AskNextBlock2Seniority">The seniority score of the piece of equipment that is the next to be asked in Block 1..</param>
         /// <param name="AskNextBlockOpen">The id of the next piece of Block Open Equipment to be asked for a Rental Request. If null, start from the first piece of equipment in Block Open..</param>
-        public EquipmentTypeNextRental(int Id, DistrictEquipmentType DistrictEquipmentType = null, Equipment AskNextBlock1 = null, float? AskNextBlock1Seniority = null, Equipment AskNextBlock2 = null, float? AskNextBlock2Seniority = null, Equipment AskNextBlockOpen = null)
+        public LocalAreaRotationList(int Id, DistrictEquipmentType DistrictEquipmentType = null, LocalArea LocalArea = null, Equipment AskNextBlock1 = null, float? AskNextBlock1Seniority = null, Equipment AskNextBlock2 = null, float? AskNextBlock2Seniority = null, Equipment AskNextBlockOpen = null)
         {   
             this.Id = Id;
             this.DistrictEquipmentType = DistrictEquipmentType;
+            this.LocalArea = LocalArea;
             this.AskNextBlock1 = AskNextBlock1;
             this.AskNextBlock1Seniority = AskNextBlock1Seniority;
             this.AskNextBlock2 = AskNextBlock2;
@@ -76,7 +78,20 @@ namespace HETSAPI.Models
         [ForeignKey("DistrictEquipmentType")]
 		[JsonIgnore]
 		[MetaDataExtension (Description = "A foreign key reference to the system-generated unique identifier for an Equipment Type")]
-        public int? EquipmentTypeId { get; set; }
+        public int? DistrictEquipmentTypeId { get; set; }
+        
+        /// <summary>
+        /// Gets or Sets LocalArea
+        /// </summary>
+        public LocalArea LocalArea { get; set; }
+        
+        /// <summary>
+        /// Foreign key for LocalArea 
+        /// </summary>   
+        [ForeignKey("LocalArea")]
+		[JsonIgnore]
+		
+        public int? LocalAreaId { get; set; }
         
         /// <summary>
         /// The id of the next piece of Block 1 Equipment to be asked for a Rental Request. If null, start from the first piece of equipment in Block 1.
@@ -144,9 +159,10 @@ namespace HETSAPI.Models
         public override string ToString()
         {
             var sb = new StringBuilder();
-            sb.Append("class EquipmentTypeNextRental {\n");
+            sb.Append("class LocalAreaRotationList {\n");
             sb.Append("  Id: ").Append(Id).Append("\n");
             sb.Append("  DistrictEquipmentType: ").Append(DistrictEquipmentType).Append("\n");
+            sb.Append("  LocalArea: ").Append(LocalArea).Append("\n");
             sb.Append("  AskNextBlock1: ").Append(AskNextBlock1).Append("\n");
             sb.Append("  AskNextBlock1Seniority: ").Append(AskNextBlock1Seniority).Append("\n");
             sb.Append("  AskNextBlock2: ").Append(AskNextBlock2).Append("\n");
@@ -175,15 +191,15 @@ namespace HETSAPI.Models
             if (ReferenceEquals(null, obj)) { return false; }
             if (ReferenceEquals(this, obj)) { return true; }
             if (obj.GetType() != GetType()) { return false; }
-            return Equals((EquipmentTypeNextRental)obj);
+            return Equals((LocalAreaRotationList)obj);
         }
 
         /// <summary>
-        /// Returns true if EquipmentTypeNextRental instances are equal
+        /// Returns true if LocalAreaRotationList instances are equal
         /// </summary>
-        /// <param name="other">Instance of EquipmentTypeNextRental to be compared</param>
+        /// <param name="other">Instance of LocalAreaRotationList to be compared</param>
         /// <returns>Boolean</returns>
-        public bool Equals(EquipmentTypeNextRental other)
+        public bool Equals(LocalAreaRotationList other)
         {
 
             if (ReferenceEquals(null, other)) { return false; }
@@ -198,6 +214,11 @@ namespace HETSAPI.Models
                     this.DistrictEquipmentType == other.DistrictEquipmentType ||
                     this.DistrictEquipmentType != null &&
                     this.DistrictEquipmentType.Equals(other.DistrictEquipmentType)
+                ) &&                 
+                (
+                    this.LocalArea == other.LocalArea ||
+                    this.LocalArea != null &&
+                    this.LocalArea.Equals(other.LocalArea)
                 ) &&                 
                 (
                     this.AskNextBlock1 == other.AskNextBlock1 ||
@@ -243,6 +264,10 @@ namespace HETSAPI.Models
                 {
                     hash = hash * 59 + this.DistrictEquipmentType.GetHashCode();
                 }                   
+                if (this.LocalArea != null)
+                {
+                    hash = hash * 59 + this.LocalArea.GetHashCode();
+                }                   
                 if (this.AskNextBlock1 != null)
                 {
                     hash = hash * 59 + this.AskNextBlock1.GetHashCode();
@@ -275,7 +300,7 @@ namespace HETSAPI.Models
         /// <param name="left"></param>
         /// <param name="right"></param>
         /// <returns></returns>
-        public static bool operator ==(EquipmentTypeNextRental left, EquipmentTypeNextRental right)
+        public static bool operator ==(LocalAreaRotationList left, LocalAreaRotationList right)
         {
             return Equals(left, right);
         }
@@ -286,7 +311,7 @@ namespace HETSAPI.Models
         /// <param name="left"></param>
         /// <param name="right"></param>
         /// <returns></returns>
-        public static bool operator !=(EquipmentTypeNextRental left, EquipmentTypeNextRental right)
+        public static bool operator !=(LocalAreaRotationList left, LocalAreaRotationList right)
         {
             return !Equals(left, right);
         }

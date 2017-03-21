@@ -23,30 +23,30 @@ using System.Reflection;
 namespace HETSAPI.Test
 {
     /// <summary>
-    ///  Class for testing the model EquipmentType
+    ///  Class for testing the model DistrictEquipmentType
     /// </summary>
     
     public class EquipmentTypeModelTests
     {
-        // TODO uncomment below to declare an instance variable for EquipmentType
-        private EquipmentType instance;
+        // TODO uncomment below to declare an instance variable for DistrictEquipmentType
+        private DistrictEquipmentType instance;
 
         /// <summary>
         /// Setup the test.
         /// </summary>        
         public EquipmentTypeModelTests()
         {
-            instance = new EquipmentType();
+            instance = new DistrictEquipmentType();
         }
 
     
         /// <summary>
-        /// Test an instance of EquipmentType
+        /// Test an instance of DistrictEquipmentType
         /// </summary>
         [Fact]
         public void EquipmentTypeInstanceTest()
         {
-            Assert.IsType<EquipmentType>(instance);  
+            Assert.IsType<DistrictEquipmentType>(instance);  
         }
 
         /// <summary>

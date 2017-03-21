@@ -27,22 +27,49 @@ namespace HETSAPI.Services.Impl
     /// <summary>
     /// 
     /// </summary>
-    public class EquipmentTypeService : IEquipmentTypeService
+    public class DistrictEquipmentTypeService : IDistrictEquipmentTypeService
     {
         private readonly DbAppContext _context;
 
         /// <summary>
         /// Create a service and set the database context
         /// </summary>
-        public EquipmentTypeService(DbAppContext context)
+        public DistrictEquipmentTypeService(DbAppContext context)
         {
             _context = context;
         }
 
 
-        private void AdjustRecord(EquipmentType item)
-        {
-            // Equipment Type no longer has any child objects.
+        private void AdjustRecord(DistrictEquipmentType item)
+        {            
+            int district_id = item.District.Id;
+            var exists = _context.Districts.Any(a => a.Id == district_id);
+            if (exists)
+            {
+                District district = _context.Districts.First(a => a.Id == district_id);
+                item.District = district;
+            }
+            else
+            {
+                item.District = null;
+            }
+            if (item.EquipmentType != null)
+            {
+                int equipment_type_id = (int) item.EquipmentType.Id;
+                var equipment_type_exists = _context.EquipmentTypes.Any(a => a.Id == equipment_type_id);
+                if (equipment_type_exists)
+                {
+                    EquipmentType equipmentType = _context.EquipmentTypes.First(a => a.Id == district_id);
+                    item.EquipmentType = equipmentType;
+                }
+                else
+                {
+                    item.EquipmentType = null;
+                }
+
+            }
+
+
         }
 
 
@@ -51,18 +78,18 @@ namespace HETSAPI.Services.Impl
         /// </summary>
         /// <param name="items"></param>
         /// <response code="201">DistrictEquipmentType created</response>
-        public virtual IActionResult EquipmentTypesBulkPostAsync(EquipmentType[] items)
+        public virtual IActionResult DistrictEquipmentTypesBulkPostAsync(DistrictEquipmentType[] items)
         {
             if (items == null)
             {
                 return new BadRequestResult();
             }
-            foreach (EquipmentType item in items)
+            foreach (DistrictEquipmentType item in items)
             {
                 AdjustRecord(item);
                 
                 // determine if this is an insert or an update            
-                bool exists = _context.EquipmentTypes.Any(a => a.Id == item.Id);
+                bool exists = _context.DistrictEquipmentTypes.Any(a => a.Id == item.Id);
                 if (exists)
                 {
                     _context.Update(item);
@@ -81,9 +108,9 @@ namespace HETSAPI.Services.Impl
         /// 
         /// </summary>
         /// <response code="200">OK</response>
-        public virtual IActionResult EquipmentTypesGetAsync()
+        public virtual IActionResult DistrictEquipmentTypesGetAsync()
         {
-            var result = _context.EquipmentTypes
+            var result = _context.DistrictEquipmentTypes
                 .ToList();
             return new ObjectResult(result);
         }
@@ -94,15 +121,15 @@ namespace HETSAPI.Services.Impl
         /// <param name="id">id of DistrictEquipmentType to delete</param>
         /// <response code="200">OK</response>
         /// <response code="404">DistrictEquipmentType not found</response>
-        public virtual IActionResult EquipmentTypesIdDeletePostAsync(int id)
+        public virtual IActionResult DistrictEquipmentTypesIdDeletePostAsync(int id)
         {
-            var exists = _context.EquipmentTypes.Any(a => a.Id == id);
+            var exists = _context.DistrictEquipmentTypes.Any(a => a.Id == id);
             if (exists)
             {
-                var item = _context.EquipmentTypes.First(a => a.Id == id);
+                var item = _context.DistrictEquipmentTypes.First(a => a.Id == id);
                 if (item != null)
                 {
-                    _context.EquipmentTypes.Remove(item);
+                    _context.DistrictEquipmentTypes.Remove(item);
                     // Save the changes
                     _context.SaveChanges();
                 }
@@ -121,12 +148,12 @@ namespace HETSAPI.Services.Impl
         /// <param name="id">id of DistrictEquipmentType to fetch</param>
         /// <response code="200">OK</response>
         /// <response code="404">DistrictEquipmentType not found</response>
-        public virtual IActionResult EquipmentTypesIdGetAsync(int id)
+        public virtual IActionResult DistrictEquipmentTypesIdGetAsync(int id)
         {
-            var exists = _context.EquipmentTypes.Any(a => a.Id == id);
+            var exists = _context.DistrictEquipmentTypes.Any(a => a.Id == id);
             if (exists)
             {
-                var result = _context.EquipmentTypes.First(a => a.Id == id);
+                var result = _context.DistrictEquipmentTypes.First(a => a.Id == id);
                 return new ObjectResult(result);
             }
             else
@@ -143,12 +170,13 @@ namespace HETSAPI.Services.Impl
         /// <param name="item"></param>
         /// <response code="200">OK</response>
         /// <response code="404">DistrictEquipmentType not found</response>
-        public virtual IActionResult EquipmentTypesIdPutAsync(int id, EquipmentType item)
+        public virtual IActionResult DistrictEquipmentTypesIdPutAsync(int id, DistrictEquipmentType item)
         {
-            var exists = _context.EquipmentTypes.Any(a => a.Id == id);
+            AdjustRecord(item);
+            var exists = _context.DistrictEquipmentTypes.Any(a => a.Id == id);
             if (exists && id == item.Id)
             {
-                _context.EquipmentTypes.Update(item);
+                _context.DistrictEquipmentTypes.Update(item);
                 // Save the changes
                 _context.SaveChanges();
                 return new ObjectResult(item);
@@ -165,17 +193,18 @@ namespace HETSAPI.Services.Impl
         /// </summary>
         /// <param name="item"></param>
         /// <response code="201">DistrictEquipmentType created</response>
-        public virtual IActionResult EquipmentTypesPostAsync(EquipmentType item)
+        public virtual IActionResult DistrictEquipmentTypesPostAsync(DistrictEquipmentType item)
         {
-            var exists = _context.EquipmentTypes.Any(a => a.Id == item.Id);
+            AdjustRecord(item);
+            var exists = _context.DistrictEquipmentTypes.Any(a => a.Id == item.Id);
             if (exists)
             {
-                _context.EquipmentTypes.Update(item);
+                _context.DistrictEquipmentTypes.Update(item);
             }
             else
             {
                 // record not found
-                _context.EquipmentTypes.Add(item);
+                _context.DistrictEquipmentTypes.Add(item);
             }
             // Save the changes
             _context.SaveChanges();

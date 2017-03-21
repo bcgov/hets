@@ -10,9 +10,7 @@ using Newtonsoft.Json;
 namespace JsonValidator
 {
     public class Program
-    {
-
-        HETSAPI.Models.Attachment attachment = null;
+    {        
 
         public static void Main(string[] args)
         {

@@ -42,13 +42,13 @@ namespace HETSAPI.Models
         /// Initializes a new instance of the <see cref="EquipmentAttachment" /> class.
         /// </summary>
         /// <param name="Id">A system-generated unique identifier for an EquipmentAttachment (required).</param>
-        /// <param name="Attachment">The attachment type as entered by the user (per the business - no lookup). (required).</param>
+        /// <param name="TypeName">The name of the attachment type (required).</param>
         /// <param name="Equipment">Equipment.</param>
-        /// <param name="Description">A description of the equipment attachment if the Equipment Attachment Type is insufficient..</param>
-        public EquipmentAttachment(int Id, string Attachment, Equipment Equipment = null, string Description = null)
+        /// <param name="Description">A description of the equipment attachment if the Equipment Attachment Type Name is insufficient..</param>
+        public EquipmentAttachment(int Id, string TypeName, Equipment Equipment = null, string Description = null)
         {   
             this.Id = Id;
-            this.Attachment = Attachment;
+            this.TypeName = TypeName;
 
             this.Equipment = Equipment;
             this.Description = Description;
@@ -62,13 +62,13 @@ namespace HETSAPI.Models
         public int Id { get; set; }
         
         /// <summary>
-        /// The attachment type as entered by the user (per the business - no lookup).
+        /// The name of the attachment type
         /// </summary>
-        /// <value>The attachment type as entered by the user (per the business - no lookup).</value>
-        [MetaDataExtension (Description = "The attachment type as entered by the user (per the business - no lookup).")]
-        [MaxLength(255)]
+        /// <value>The name of the attachment type</value>
+        [MetaDataExtension (Description = "The name of the attachment type")]
+        [MaxLength(100)]
         
-        public string Attachment { get; set; }
+        public string TypeName { get; set; }
         
         /// <summary>
         /// Gets or Sets Equipment
@@ -84,10 +84,10 @@ namespace HETSAPI.Models
         public int? EquipmentId { get; set; }
         
         /// <summary>
-        /// A description of the equipment attachment if the Equipment Attachment Type is insufficient.
+        /// A description of the equipment attachment if the Equipment Attachment Type Name is insufficient.
         /// </summary>
-        /// <value>A description of the equipment attachment if the Equipment Attachment Type is insufficient.</value>
-        [MetaDataExtension (Description = "A description of the equipment attachment if the Equipment Attachment Type is insufficient.")]
+        /// <value>A description of the equipment attachment if the Equipment Attachment Type Name is insufficient.</value>
+        [MetaDataExtension (Description = "A description of the equipment attachment if the Equipment Attachment Type Name is insufficient.")]
         [MaxLength(2048)]
         
         public string Description { get; set; }
@@ -101,7 +101,7 @@ namespace HETSAPI.Models
             var sb = new StringBuilder();
             sb.Append("class EquipmentAttachment {\n");
             sb.Append("  Id: ").Append(Id).Append("\n");
-            sb.Append("  Attachment: ").Append(Attachment).Append("\n");
+            sb.Append("  TypeName: ").Append(TypeName).Append("\n");
             sb.Append("  Equipment: ").Append(Equipment).Append("\n");
             sb.Append("  Description: ").Append(Description).Append("\n");
             sb.Append("}\n");
@@ -147,9 +147,9 @@ namespace HETSAPI.Models
                     this.Id.Equals(other.Id)
                 ) &&                 
                 (
-                    this.Attachment == other.Attachment ||
-                    this.Attachment != null &&
-                    this.Attachment.Equals(other.Attachment)
+                    this.TypeName == other.TypeName ||
+                    this.TypeName != null &&
+                    this.TypeName.Equals(other.TypeName)
                 ) &&                 
                 (
                     this.Equipment == other.Equipment ||
@@ -175,9 +175,9 @@ namespace HETSAPI.Models
                 int hash = 41;
                 // Suitable nullity checks
                                    
-                hash = hash * 59 + this.Id.GetHashCode();                if (this.Attachment != null)
+                hash = hash * 59 + this.Id.GetHashCode();                if (this.TypeName != null)
                 {
-                    hash = hash * 59 + this.Attachment.GetHashCode();
+                    hash = hash * 59 + this.TypeName.GetHashCode();
                 }                
                                    
                 if (this.Equipment != null)

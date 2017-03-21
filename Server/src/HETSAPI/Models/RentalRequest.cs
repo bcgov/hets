@@ -45,7 +45,7 @@ namespace HETSAPI.Models
         /// <param name="Project">Project.</param>
         /// <param name="LocalArea">A foreign key reference to the system-generated unique identifier for a Local Area.</param>
         /// <param name="Status">The status of the Rental Request - whether it in progress, completed or was cancelled..</param>
-        /// <param name="EquipmentType">A foreign key reference to the system-generated unique identifier for an Equipment Type.</param>
+        /// <param name="DistrictEquipmentType">A foreign key reference to the system-generated unique identifier for an Equipment Type.</param>
         /// <param name="EquipmentCount">The number of pieces of the equipment type wanted for hire as part of this request..</param>
         /// <param name="ExpectedHours">The expected number of rental hours for each piece equipment hired against this request, as provided by the Project Manager making the request..</param>
         /// <param name="ExpectedStartDate">The expected start date of each piece of equipment hired against this request, as provided by the Project Manager making the request..</param>
@@ -55,13 +55,13 @@ namespace HETSAPI.Models
         /// <param name="Attachments">Attachments.</param>
         /// <param name="History">History.</param>
         /// <param name="RentalRequestRotationList">RentalRequestRotationList.</param>
-        public RentalRequest(int Id, Project Project = null, LocalArea LocalArea = null, string Status = null, EquipmentType EquipmentType = null, int? EquipmentCount = null, int? ExpectedHours = null, DateTime? ExpectedStartDate = null, DateTime? ExpectedEndDate = null, Equipment FirstOnRotationList = null, List<Note> Notes = null, List<RentalRequestAttachment> Attachments = null, List<History> History = null, List<RentalRequestRotationList> RentalRequestRotationList = null)
+        public RentalRequest(int Id, Project Project = null, LocalArea LocalArea = null, string Status = null, DistrictEquipmentType DistrictEquipmentType = null, int? EquipmentCount = null, int? ExpectedHours = null, DateTime? ExpectedStartDate = null, DateTime? ExpectedEndDate = null, Equipment FirstOnRotationList = null, List<Note> Notes = null, List<RentalRequestAttachment> Attachments = null, List<History> History = null, List<RentalRequestRotationList> RentalRequestRotationList = null)
         {   
             this.Id = Id;
             this.Project = Project;
             this.LocalArea = LocalArea;
             this.Status = Status;
-            this.EquipmentType = EquipmentType;
+            this.DistrictEquipmentType = DistrictEquipmentType;
             this.EquipmentCount = EquipmentCount;
             this.ExpectedHours = ExpectedHours;
             this.ExpectedStartDate = ExpectedStartDate;
@@ -122,15 +122,15 @@ namespace HETSAPI.Models
         /// </summary>
         /// <value>A foreign key reference to the system-generated unique identifier for an Equipment Type</value>
         [MetaDataExtension (Description = "A foreign key reference to the system-generated unique identifier for an Equipment Type")]
-        public EquipmentType EquipmentType { get; set; }
+        public DistrictEquipmentType DistrictEquipmentType { get; set; }
         
         /// <summary>
-        /// Foreign key for EquipmentType 
+        /// Foreign key for DistrictEquipmentType 
         /// </summary>   
-        [ForeignKey("EquipmentType")]
+        [ForeignKey("DistrictEquipmentType")]
 		[JsonIgnore]
 		[MetaDataExtension (Description = "A foreign key reference to the system-generated unique identifier for an Equipment Type")]
-        public int? EquipmentTypeId { get; set; }
+        public int? DistrictEquipmentTypeId { get; set; }
         
         /// <summary>
         /// The number of pieces of the equipment type wanted for hire as part of this request.
@@ -207,7 +207,7 @@ namespace HETSAPI.Models
             sb.Append("  Project: ").Append(Project).Append("\n");
             sb.Append("  LocalArea: ").Append(LocalArea).Append("\n");
             sb.Append("  Status: ").Append(Status).Append("\n");
-            sb.Append("  EquipmentType: ").Append(EquipmentType).Append("\n");
+            sb.Append("  DistrictEquipmentType: ").Append(DistrictEquipmentType).Append("\n");
             sb.Append("  EquipmentCount: ").Append(EquipmentCount).Append("\n");
             sb.Append("  ExpectedHours: ").Append(ExpectedHours).Append("\n");
             sb.Append("  ExpectedStartDate: ").Append(ExpectedStartDate).Append("\n");
@@ -275,9 +275,9 @@ namespace HETSAPI.Models
                     this.Status.Equals(other.Status)
                 ) &&                 
                 (
-                    this.EquipmentType == other.EquipmentType ||
-                    this.EquipmentType != null &&
-                    this.EquipmentType.Equals(other.EquipmentType)
+                    this.DistrictEquipmentType == other.DistrictEquipmentType ||
+                    this.DistrictEquipmentType != null &&
+                    this.DistrictEquipmentType.Equals(other.DistrictEquipmentType)
                 ) &&                 
                 (
                     this.EquipmentCount == other.EquipmentCount ||
@@ -351,9 +351,9 @@ namespace HETSAPI.Models
                     hash = hash * 59 + this.Status.GetHashCode();
                 }                
                                    
-                if (this.EquipmentType != null)
+                if (this.DistrictEquipmentType != null)
                 {
-                    hash = hash * 59 + this.EquipmentType.GetHashCode();
+                    hash = hash * 59 + this.DistrictEquipmentType.GetHashCode();
                 }                if (this.EquipmentCount != null)
                 {
                     hash = hash * 59 + this.EquipmentCount.GetHashCode();

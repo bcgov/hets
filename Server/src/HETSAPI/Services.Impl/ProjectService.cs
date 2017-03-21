@@ -45,24 +45,23 @@ namespace HETSAPI.Services.Impl
         {
             if (item != null)
             {
-                // Adjust the record to allow it to be updated / inserted
-                if (item.LocalArea != null)
+                if (item.District != null)
                 {
-                    int localarea_id = item.LocalArea.Id;
-                    bool localarea_exists = _context.LocalAreas.Any(a => a.Id == localarea_id);
-                    if (localarea_exists)
+                    // Adjust the record to allow it to be updated / inserted
+                    // avoid inserting a District if possible.
+                    int district_id = item.District.Id;
+                    var exists = _context.Districts.Any(a => a.Id == district_id);
+                    if (exists)
                     {
-                        LocalArea localarea = _context.LocalAreas.First(a => a.Id == localarea_id);
-                        item.LocalArea = localarea;
+                        District district = _context.Districts.First(a => a.Id == district_id);
+                        item.District = district;
                     }
                     else
                     {
-                        item.LocalArea = null;
+                        item.District = null;
                     }
                 }
-
-
-
+                
 
                 // Notes is a list     
                 if (item.Notes != null)
@@ -122,7 +121,7 @@ namespace HETSAPI.Services.Impl
                     }
                     else
                     {
-                        item.LocalArea = null;
+                        item.PrimaryContact = null;
                     }
                 }
 
@@ -243,7 +242,7 @@ namespace HETSAPI.Services.Impl
                 .Include(x => x.Attachments)
                 .Include(x => x.Contacts)
                 .Include(x => x.History)
-                .Include(x => x.LocalArea.ServiceArea.District.Region)
+                .Include(x => x.District.Region)
                 .Include(x => x.Notes)
                 .Include(x => x.PrimaryContact)
                 .Include(x => x.RentalRequests)
@@ -264,7 +263,7 @@ namespace HETSAPI.Services.Impl
             if (exists)
             {
                 Project project = _context.Projects
-                    .Include(x => x.LocalArea.ServiceArea.District.Region)
+                    .Include(x => x.District.Region)
                     .Include(x => x.Notes)
                     .Include(x => x.Attachments)
                     .Include(x => x.History)
@@ -294,7 +293,7 @@ namespace HETSAPI.Services.Impl
             if (exists && item != null)
             {
                 Project project = _context.Projects
-                    .Include(x => x.LocalArea.ServiceArea.District.Region)
+                    .Include(x => x.District.Region)
                     .Include(x => x.Notes)
                     .Include(x => x.Attachments)
                     .Include(x => x.History)
@@ -332,7 +331,7 @@ namespace HETSAPI.Services.Impl
             if (exists && items != null)
             {
                 Project project = _context.Projects
-                    .Include(x => x.LocalArea.ServiceArea.District.Region)
+                    .Include(x => x.District.Region)
                     .Include(x => x.Notes)
                     .Include(x => x.Attachments)
                     .Include(x => x.History)
@@ -428,7 +427,7 @@ namespace HETSAPI.Services.Impl
                     .Include(x => x.Attachments)
                     .Include(x => x.Contacts)
                     .Include(x => x.History)
-                    .Include(x => x.LocalArea.ServiceArea.District.Region)
+                    .Include(x => x.District.Region)
                     .Include(x => x.Notes)
                     .Include(x => x.PrimaryContact)
                     .Include(x => x.RentalRequests)
@@ -508,20 +507,20 @@ namespace HETSAPI.Services.Impl
         /// <param name="hasRequests">if true then only include Projects with active Requests</param>
         /// <param name="hasHires">if true then only include Projects with active Rental Agreements</param>
         /// <response code="200">OK</response>
-        public virtual IActionResult ProjectsSearchGetAsync(int?[] localareas, string project, bool? hasRequests, bool? hasHires)
+        public virtual IActionResult ProjectsSearchGetAsync(int?[] districts, string project, bool? hasRequests, bool? hasHires)
         {
             var data = _context.Projects
-                    .Include(x => x.LocalArea.ServiceArea.District.Region)
+                    .Include(x => x.District.Region)
                     .Include(x => x.PrimaryContact)
                     .Select(x => x);
 
-            if (localareas != null)
+            if (districts != null)
             {
-                foreach (int? localarea in localareas)
+                foreach (int? localarea in districts)
                 {
                     if (localarea != null)
                     {
-                        data = data.Where(x => x.LocalArea.Id == localarea);
+                        data = data.Where(x => x.District.Id == localarea);
                     }
                 }
             }

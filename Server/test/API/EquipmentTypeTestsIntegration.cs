@@ -55,7 +55,7 @@ namespace HETSAPI.Test
 
             // create a new object.
             EquipmentType equipmenttype = new EquipmentType();
-            equipmenttype.Description = initialName;
+            equipmenttype.Name = initialName;
             string jsonString = equipmenttype.ToJson();
 
             request.Content = new StringContent(jsonString, Encoding.UTF8, "application/json");
@@ -70,7 +70,7 @@ namespace HETSAPI.Test
             // get the id
             var id = equipmenttype.Id;
             // change the name
-            equipmenttype.Description = changedName;
+            equipmenttype.Name = changedName;
 
             // now do an update.
             request = new HttpRequestMessage(HttpMethod.Put, "/api/equipmentTypes/" + id);
@@ -88,7 +88,7 @@ namespace HETSAPI.Test
             equipmenttype = JsonConvert.DeserializeObject<EquipmentType>(jsonString);
 
             // verify the change went through.
-            Assert.Equal(equipmenttype.Description, changedName);
+            Assert.Equal(equipmenttype.Name, changedName);
 
             // do a delete.
             request = new HttpRequestMessage(HttpMethod.Post, "/api/equipmentTypes/" + id + "/delete");

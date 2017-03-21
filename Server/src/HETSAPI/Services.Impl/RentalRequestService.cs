@@ -75,14 +75,14 @@ namespace HETSAPI.Services.Impl
                     }
                 }
 
-                if (item.EquipmentType != null)
+                if (item.DistrictEquipmentType != null)
                 {
-                    int equipment_type_id = item.EquipmentType.Id;
+                    int equipment_type_id = item.DistrictEquipmentType.Id;
                     bool equipment_type_exists = _context.EquipmentTypes.Any(a => a.Id == equipment_type_id);
                     if (equipment_type_exists)
                     {
-                        EquipmentType equipmentType = _context.EquipmentTypes.First(a => a.Id == equipment_type_id);
-                        item.EquipmentType = equipmentType;
+                        DistrictEquipmentType districtEquipmentType = _context.DistrictEquipmentTypes.First(a => a.Id == equipment_type_id);
+                        item.DistrictEquipmentType = districtEquipmentType;
                     }
                     else
                     {
@@ -129,7 +129,7 @@ namespace HETSAPI.Services.Impl
         {
             var result = _context.RentalRequests
                 .Include(x => x.Attachments)
-                .Include(x => x.EquipmentType)
+                .Include(x => x.DistrictEquipmentType)
                 .Include(x => x.FirstOnRotationList)
                 .Include(x => x.LocalArea.ServiceArea.District.Region)
                 .Include(x => x.Notes)
@@ -179,7 +179,7 @@ namespace HETSAPI.Services.Impl
             {
                 var result = _context.RentalRequests
                     .Include(x => x.Attachments)
-                    .Include(x => x.EquipmentType)
+                    .Include(x => x.DistrictEquipmentType)
                     .Include(x => x.FirstOnRotationList)
                     .Include(x => x.LocalArea.ServiceArea.District.Region)
                     .Include(x => x.Notes)
@@ -264,7 +264,7 @@ namespace HETSAPI.Services.Impl
         {
             var data = _context.RentalRequests
                     .Include(x => x.LocalArea.ServiceArea.District.Region)
-                    .Include(x => x.EquipmentType)
+                    .Include(x => x.DistrictEquipmentType)
                     .Include(x => x.Project.PrimaryContact)
                     .Select(x => x);
 

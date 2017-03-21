@@ -24,10 +24,10 @@ namespace HETSAPI.Models
 
                 EquipmentType equipmentTypeRecord = context.EquipmentTypes.First(x => x.Id == equipmentType);
 
-                int blocks = EquipmentType.OTHER_BLOCKS;
-                if (equipmentTypeRecord.Blocks != null)
+                int blocks = DistrictEquipmentType.OTHER_BLOCKS;
+                if (equipmentTypeRecord.NumberOfBlocks != null)
                 {
-                    blocks = (int)equipmentTypeRecord.Blocks;
+                    blocks = (int)equipmentTypeRecord.NumberOfBlocks;
                 }
 
                 // get the list of equipment in this seniority list.
@@ -35,7 +35,7 @@ namespace HETSAPI.Models
                 // first pass will update the seniority score.
 
                 var data = context.Equipments
-                     .Where(x => x.Status == Equipment.STATUS_ACTIVE && x.LocalArea.Id == localAreaId && x.EquipmentType.Id == equipmentType)
+                     .Where(x => x.Status == Equipment.STATUS_ACTIVE && x.LocalArea.Id == localAreaId && x.DistrictEquipmentType.Id == equipmentType)
                      .Select(x => x);
 
                 foreach (Equipment equipment in data)
@@ -47,7 +47,7 @@ namespace HETSAPI.Models
                 context.SaveChanges();
 
                 // special case for dump trucks.
-                if (blocks == EquipmentType.DUMP_TRUCK_BLOCKS)
+                if (blocks == DistrictEquipmentType.DUMP_TRUCK_BLOCKS)
                 {
                     AssignBlocksDumpTruck(context, localAreaId, equipmentType);
                 }
@@ -74,7 +74,7 @@ namespace HETSAPI.Models
 
 
             var data = context.Equipments
-                 .Where(x => x.Status == Equipment.STATUS_ACTIVE && x.LocalArea.Id == localAreaId && x.EquipmentType.Id == equipmentType)
+                 .Where(x => x.Status == Equipment.STATUS_ACTIVE && x.LocalArea.Id == localAreaId && x.DistrictEquipmentType.Id == equipmentType)
                  .OrderByDescending(x => x.Seniority)
                  .Select(x => x);
 
@@ -105,13 +105,13 @@ namespace HETSAPI.Models
                     }
                     if (secondaryFound || secondaryCount >= 10) // has to go in the Open block.
                     {
-                        equipment.BlockNumber = EquipmentType.OPEN_BLOCK_DUMP_TRUCK;
+                        equipment.BlockNumber = DistrictEquipmentType.OPEN_BLOCK_DUMP_TRUCK;
                         openCount++;
                     }
                     else
                     {
                         secondaryBlock.Add(equipment);
-                        equipment.BlockNumber = EquipmentType.SECONDARY_BLOCK;
+                        equipment.BlockNumber = DistrictEquipmentType.SECONDARY_BLOCK;
                         openCount++;
                     }
 
@@ -119,7 +119,7 @@ namespace HETSAPI.Models
                 else // can go in primary block.
                 {
                     primaryBlock.Add(equipment);
-                    equipment.BlockNumber = EquipmentType.PRIMARY_BLOCK;
+                    equipment.BlockNumber = DistrictEquipmentType.PRIMARY_BLOCK;
                     primaryCount++;
                 }                
                 context.Equipments.Update(equipment);
@@ -138,7 +138,7 @@ namespace HETSAPI.Models
             int primaryCount = 0;
             
             var data = context.Equipments
-                 .Where(x => x.Status == Equipment.STATUS_ACTIVE && x.LocalArea.Id == localAreaId && x.EquipmentType.Id == equipmentType)
+                 .Where(x => x.Status == Equipment.STATUS_ACTIVE && x.LocalArea.Id == localAreaId && x.DistrictEquipmentType.Id == equipmentType)
                  .OrderByDescending(x => x.Seniority)
                  .Select(x => x);
 
@@ -157,12 +157,12 @@ namespace HETSAPI.Models
                 }
                 if (primaryFound || primaryCount >= 10) // has to go in open block.
                 {
-                    equipment.BlockNumber = EquipmentType.OPEN_BLOCK_NON_DUMP_TRUCK;
+                    equipment.BlockNumber = DistrictEquipmentType.OPEN_BLOCK_NON_DUMP_TRUCK;
                 }
                 else // can go in primary block.
                 {
                     primaryBlock.Add(equipment);
-                    equipment.BlockNumber = EquipmentType.PRIMARY_BLOCK;
+                    equipment.BlockNumber = DistrictEquipmentType.PRIMARY_BLOCK;
                     primaryCount++;
                 }
                 context.Equipments.Update(equipment);
