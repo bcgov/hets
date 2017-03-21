@@ -11,6 +11,7 @@ import _ from 'lodash';
 
 import EquipmentAddDialog from './dialogs/EquipmentAddDialog.jsx';
 import OwnersEditDialog from './dialogs/OwnersEditDialog.jsx';
+import OwnersPolicyEditDialog from './dialogs/OwnersPolicyEditDialog.jsx';
 
 import * as Action from '../actionTypes';
 import * as Api from '../api';
@@ -31,8 +32,7 @@ import { concat } from '../utils/string';
 /*
 
 TODO:
-* Print / Notes / Docs / Contacts (TBD) / Owner History
-* Proof Documents / Policy Data
+* Print / Notes / Attachments / Contacts / History / Policy Proof Documents (attachments)
 
 */
 
@@ -195,12 +195,17 @@ var OwnersDetail = React.createClass({
   },
 
   openPolicyDialog() {
-    // TODO Edit policy data
     this.setState({ showPolicyDialog: true });
   },
 
   closePolicyDialog() {
     this.setState({ showPolicyDialog: false });
+  },
+
+  savePolicyEdit(owner) {
+    Api.updateOwner(owner).finally(() => {
+      this.closePolicyDialog();
+    });
   },
 
   openPolicyDocumentsDialog() {
@@ -350,9 +355,7 @@ var OwnersDetail = React.createClass({
                 <Unimplemented>
                   <Button title="Add Policy Document" onClick={ this.addPolicyDocument } bsSize="small"><Glyphicon glyph="plus" /> Attach Proof</Button>
                 </Unimplemented>
-                <Unimplemented>
-                  <Button title="Edit Policy Information" bsSize="small" onClick={ this.openPolicyDialog }><Glyphicon glyph="pencil" /></Button>
-                </Unimplemented>
+                <Button title="Edit Policy Information" bsSize="small" onClick={ this.openPolicyDialog }><Glyphicon glyph="pencil" /></Button>
               </span></h3>
               {(() => {
                 if (this.state.loading) { return <div style={{ textAlign: 'center' }}><Spinner/></div>; }
@@ -464,8 +467,10 @@ var OwnersDetail = React.createClass({
       { this.state.showEditDialog &&
         <OwnersEditDialog show={ this.state.showEditDialog } onSave={ this.saveEdit } onClose={ this.closeEditDialog } />
       }
+      { this.state.showPolicyDialog &&
+        <OwnersPolicyEditDialog show={ this.state.showPolicyDialog } onSave={ this.savePolicyEdit } onClose={ this.closePolicyDialog } />
+      }
       { /* TODO this.state.showContactDialog && <ContactEditDialog /> */}
-      { /* TODO this.state.showPolicyDialog && <OwnerPolicyDialog /> */}
       { /* TODO this.state.showPolicyDocumentsDialog && <OwnerPolicyDocumentsDialog /> */}
     </div>;
   },
