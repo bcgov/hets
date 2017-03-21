@@ -346,5 +346,103 @@ namespace HETSAPI.Test
             response = await _client.SendAsync(request);
             Assert.Equal(response.StatusCode, HttpStatusCode.NotFound);
         }
+
+        [Fact]
+        /// <summary>
+        /// TestOwnerEquipmentList
+        /// </summary>
+        /// 
+        public async void TestOwnerEquipmentListDateVerified()
+        {
+            /*
+             * Create Owner
+             * Create several pieces of equipment
+             * Populate the equipment list
+             * Verify that all items in the equipment list still have owner.
+            */
+            string initialName = "InitialName";
+            // first test the POST.
+            var request = new HttpRequestMessage(HttpMethod.Post, "/api/owners");
+
+            // create a new object.
+            Owner owner = new Owner();
+            owner.OrganizationName = initialName;
+            string jsonString = owner.ToJson();
+
+            request.Content = new StringContent(jsonString, Encoding.UTF8, "application/json");
+
+            var response = await _client.SendAsync(request);
+            response.EnsureSuccessStatusCode();
+
+            // parse as JSON.
+            jsonString = await response.Content.ReadAsStringAsync();
+
+            owner = JsonConvert.DeserializeObject<Owner>(jsonString);
+            // get the id
+            var owner_id = owner.Id;
+
+            // create equipment.
+            Equipment e1 = createEquipment(owner, "test1");
+            Equipment e2 = createEquipment(owner, "test2");
+            Equipment e3 = createEquipment(owner, "test3");
+
+            Equipment[] equipmentList = new Equipment[3];
+
+            DateTime dateVerified = DateTime.UtcNow;
+
+            e1.LastVerifiedDate = dateVerified;
+            
+            equipmentList[0] = e1;
+            equipmentList[1] = e2;
+            equipmentList[2] = e3;
+
+            // update the equipment list.
+
+            request = new HttpRequestMessage(HttpMethod.Put, "/api/owners/" + owner_id + "/equipment");
+            jsonString = JsonConvert.SerializeObject(equipmentList, Formatting.Indented);
+
+            request.Content = new StringContent(jsonString, Encoding.UTF8, "application/json");
+            response = await _client.SendAsync(request);
+            response.EnsureSuccessStatusCode();
+
+            jsonString = await response.Content.ReadAsStringAsync();
+            Equipment[] putReceived = JsonConvert.DeserializeObject<Equipment[]>(jsonString);
+            Assert.Equal(putReceived[0].Owner.Id, owner_id);
+
+            // now get the equipment list.
+            request = new HttpRequestMessage(HttpMethod.Get, "/api/owners/" + owner_id + "/equipment");
+            response = await _client.SendAsync(request);
+            response.EnsureSuccessStatusCode();
+
+            jsonString = await response.Content.ReadAsStringAsync();
+            Equipment[] getReceived = JsonConvert.DeserializeObject<Equipment[]>(jsonString);
+
+            Assert.Equal(getReceived[0].LastVerifiedDate.Value.ToString ("MM/dd/yyyy HH:mm"), dateVerified.ToString("MM/dd/yyyy HH:mm"));
+
+            // clean up equipment
+
+            Equipment[] blankList = new Equipment[0];
+
+            request = new HttpRequestMessage(HttpMethod.Put, "/api/owners/" + owner_id + "/equipment");
+            jsonString = JsonConvert.SerializeObject(blankList, Formatting.Indented);
+
+            request.Content = new StringContent(jsonString, Encoding.UTF8, "application/json");
+            response = await _client.SendAsync(request);
+            response.EnsureSuccessStatusCode();
+
+            deleteEquipment(e1.Id);
+            deleteEquipment(e2.Id);
+            deleteEquipment(e3.Id);
+
+            // delete owner
+            request = new HttpRequestMessage(HttpMethod.Post, "/api/owners/" + owner_id + "/delete");
+            response = await _client.SendAsync(request);
+            response.EnsureSuccessStatusCode();
+
+            // should get a 404 if we try a get now.
+            request = new HttpRequestMessage(HttpMethod.Get, "/api/owners/" + owner_id);
+            response = await _client.SendAsync(request);
+            Assert.Equal(response.StatusCode, HttpStatusCode.NotFound);
+        }
     }
 }
