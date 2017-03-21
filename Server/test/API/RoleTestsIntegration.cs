@@ -218,7 +218,7 @@ namespace HETSAPI.Test
             jsonString = await response.Content.ReadAsStringAsync();
             permission = JsonConvert.DeserializeObject<Permission>(jsonString);
             // get the permission id
-            var permission_id = permission.Id;
+            int permission_id = permission.Id;
 
 
             // now add the permission to the role.                                  
@@ -238,8 +238,16 @@ namespace HETSAPI.Test
             jsonString = await response.Content.ReadAsStringAsync();
             PermissionViewModel[] rolePermissionsResponse = JsonConvert.DeserializeObject<PermissionViewModel[]>(jsonString);
 
-            Assert.Equal(permission.Code, rolePermissionsResponse[0].Code);
-            Assert.Equal(permission.Name, rolePermissionsResponse[0].Name);
+            bool found = false;
+            foreach (var item in rolePermissionsResponse)
+            {
+                if (permission.Code.Equals (item.Code) && permission.Name.Equals (item.Name))
+                {
+                    found = true;
+                }
+            }
+
+            Assert.Equal(found, true);            
 
             // test the put.
             Permission[] items = new Permission[1];
@@ -252,6 +260,7 @@ namespace HETSAPI.Test
             response.EnsureSuccessStatusCode();
 
             // cleanup
+            Assert.Equal(permission_id, 1234);
 
             // Delete permission
             request = new HttpRequestMessage(HttpMethod.Post, "/api/permissions/" + permission_id + "/delete");
