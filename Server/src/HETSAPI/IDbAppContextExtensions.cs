@@ -122,6 +122,7 @@ namespace HETSAPI.Models
             user.SmAuthorizationDirectory = initialUser.SmAuthorizationDirectory;
             user.SmUserId = initialUser.SmUserId;
             user.Surname = initialUser.Surname;
+            
 
             District district = null;
 
@@ -452,7 +453,5 @@ namespace HETSAPI.Models
                 }
             }
         }
-
-
     }
 }

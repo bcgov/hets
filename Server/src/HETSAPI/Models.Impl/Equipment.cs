@@ -1,4 +1,14 @@
-﻿using System;
+﻿/*
+ * REST API Documentation for the MOTI Hired Equipment Tracking System (HETS) Application
+ *
+ * The Hired Equipment Program is for owners/operators who have a dump truck, bulldozer, backhoe or  other piece of equipment they want to hire out to the transportation ministry for day labour and  emergency projects.  The Hired Equipment Program distributes available work to local equipment owners. The program is  based on seniority and is designed to deliver work to registered users fairly and efficiently  through the development of local area call-out lists. 
+ *
+ * OpenAPI spec version: v1
+ * 
+ * 
+ */
+
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -7,8 +17,10 @@ namespace HETSAPI.Models
 {
     public partial class Equipment
     {
-        const float DUMP_TRUCK_CONSTANT = 60.0F;
-        const float OTHER_CONSTANT = 50.0F;
+        private const float DUMP_TRUCK_CONSTANT = 60.0F;
+        private const float OTHER_CONSTANT = 50.0F;
+
+        public const string STATUS_ACTIVE = "Active";
 
         /// <summary>
         /// Calculate the Seniority for a piece of equipment.
@@ -78,5 +90,6 @@ namespace HETSAPI.Models
             this.YearsOfService = (float)yearDifference + remainder;
                        
         }
+        
     }
 }
