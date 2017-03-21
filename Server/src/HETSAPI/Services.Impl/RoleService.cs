@@ -252,11 +252,14 @@ namespace HETSAPI.Services.Impl
                 }
 
                 // Permissions to remove
-                List<RolePermission> permissionsToRemove = role.RolePermissions.Where(x => !permissionCodes.Contains(x.Permission.Code)).ToList();
-                foreach (RolePermission perm in permissionsToRemove)
+                if (role.RolePermissions != null)
                 {
-                    role.RemovePermission(perm.Permission);
-                    _context.RolePermissions.Remove(perm);
+                    List<RolePermission> permissionsToRemove = role.RolePermissions.Where(x => !permissionCodes.Contains(x.Permission.Code)).ToList();
+                    foreach (RolePermission perm in permissionsToRemove)
+                    {
+                        role.RemovePermission(perm.Permission);
+                        _context.RolePermissions.Remove(perm);
+                    }
                 }
 
                 _context.Roles.Update(role);
