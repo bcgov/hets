@@ -37,6 +37,9 @@ const DEFAULT_MODELS = {
   roles: {},
   role: {},
   rolePermissions: {},
+
+  contacts: {},
+  contact: {},
 };
 
 export default function modelsReducer(state = DEFAULT_MODELS, action) {
@@ -66,6 +69,19 @@ export default function modelsReducer(state = DEFAULT_MODELS, action) {
 
     case Action.DELETE_FAVOURITE:
       return { ...state, favourites: _.omit(state.favourites, [ action.id ]) };
+
+    // Contacts
+    case Action.UPDATE_CONTACTS:
+      return { ...state, contacts: action.contacts };
+
+    case Action.ADD_CONTACT:
+      return { ...state, contact: action.contact };
+
+    case Action.UPDATE_CONTACT:
+      return { ...state, contact: action.contact };
+
+    case Action.DELETE_CONTACT:
+      return { ...state, contact: action.contact };
 
     // Equipment
     case Action.UPDATE_EQUIPMENT_LIST:

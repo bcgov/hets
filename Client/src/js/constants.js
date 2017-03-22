@@ -1,10 +1,13 @@
 // Paths
+export const HOME_PATHNAME = 'home';
+export const OWNERS_PATHNAME = 'owners';
+export const EQUIPMENT_PATHNAME = 'equipment';
+export const RENTAL_REQUESTS_PATHNAME = 'rental-requests';
+export const PROJECTS_PATHNAME = 'projects';
 export const USERS_PATHNAME = 'users';
 export const ROLES_PATHNAME = 'roles';
-export const OWNERS_PATHNAME = 'owners';
-export const PROJECT_PATHNAME = 'projects';
-export const RENTAL_REQUEST_PATHNAME = 'rentalrequests';
-export const EQUIPMENT_PATHNAME = 'equipment';
+export const VERSION_PATHNAME = 'version';
+export const CONTACTS_PATHNAME = 'contacts';
 
 // Equipments
 export const EQUIPMENT_DAYS_SINCE_VERIFIED_WARNING = 270;
@@ -46,3 +49,7 @@ export const DATE_ZULU = 'YYYY-MM-DDT00:00:00Z';
 
 export const DATE_TIME_ISO_8601 = 'YYYY-MM-DDTHH:mm:ss';
 export const DATE_TIME_READABLE = 'MMMM D, YYYY [at] h:mm:ss A';
+
+// RegEx
+export const EMAIL_REGEX = /\S+@\S+\.\S+/;
+export const NANP_REGEX = /^(?:(?:\+?1\s*(?:[.-]\s*)?)?(?:\(\s*([2-9]1[02-9]|[2-9][02-8]1|[2-9][02-8][02-9])\s*\)|([2-9]1[02-9]|[2-9][02-8]1|[2-9][02-8][02-9]))\s*(?:[.-]\s*)?)?([2-9]1[02-9]|[2-9][02-9]1|[2-9][02-9]{2})\s*(?:[.-]\s*)?([0-9]{4})(?:\s*(?:#|x\.?|ext\.?|extension)\s*(\d+))?$/;

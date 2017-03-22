@@ -194,7 +194,7 @@ var RentalRequests = React.createClass({
     Api.addRentalRequest(request).then(() => {
       // Open it up
       this.props.router.push({
-        pathname: `${ Constant.RENTAL_REQUEST_PATHNAME }/${ this.props.rentalRequest.id }`,
+        pathname: `${ Constant.RENTAL_REQUESTS_PATHNAME }/${ this.props.rentalRequest.id }`,
       });
     });
   },
@@ -207,7 +207,7 @@ var RentalRequests = React.createClass({
 
   },
 
-  
+
   render() {
     var localAreas = _.sortBy(this.props.localAreas, 'name');
     var numRentalRequests = this.state.loading ? '...' : Object.keys(this.props.rentalRequests).length;
@@ -301,7 +301,7 @@ var RentalRequests = React.createClass({
                 <td style={{ textAlign: 'center' }}>{ request.status }</td>
                 <td style={{ textAlign: 'right' }}>
                   <ButtonGroup>
-                    <EditButton name="Rental Request" hide={ !request.canView } view pathname={ `${ Constant.RENTAL_REQUEST_PATHNAME }/${ request.id }` }/>
+                    <EditButton name="Rental Request" hide={ !request.canView } view pathname={ `${ Constant.RENTAL_REQUESTS_PATHNAME }/${ request.id }` }/>
                   </ButtonGroup>
                 </td>
               </tr>;
