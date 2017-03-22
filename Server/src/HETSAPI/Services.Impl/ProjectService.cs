@@ -412,6 +412,87 @@ namespace HETSAPI.Services.Impl
             }
         }
 
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <remarks>Returns History for a particular Project</remarks>
+        /// <param name="id">id of Project to fetch History for</param>
+        /// <response code="200">OK</response>
+
+        public virtual IActionResult ProjectsIdHistoryGetAsync(int id, int? offset, int? limit)
+        {
+            bool exists = _context.Projects.Any(a => a.Id == id);
+            if (exists)
+            {
+                Project project = _context.Projects
+                    .Include(x => x.History)
+                    .First(a => a.Id == id);
+
+                List<History> data = project.History.OrderByDescending(y => y.LastUpdateTimestamp).ToList();
+
+                if (offset == null)
+                {
+                    offset = 0;
+                }
+                if (limit == null)
+                {
+                    limit = data.Count() - offset;
+                }
+                List<HistoryViewModel> result = new List<HistoryViewModel>();
+
+                for (int i = (int)offset; i < data.Count() && i < offset + limit; i++)
+                {
+                    result.Add(data[i].ToViewModel(id));
+                }
+
+                return new ObjectResult(result);
+            }
+            else
+            {
+                // record not found
+                return new StatusCodeResult(404);
+            }
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <remarks>Add a History record to the Project</remarks>
+        /// <param name="id">id of Project to fetch History for</param>
+        /// <param name="item"></param>
+        /// <response code="201">History created</response>
+        public virtual IActionResult ProjectsIdHistoryPostAsync(int id, History item)
+        {
+            HistoryViewModel result = new HistoryViewModel();
+
+            bool exists = _context.Projects.Any(a => a.Id == id);
+            if (exists)
+            {
+                Project project = _context.Projects
+                    .Include(x => x.History)
+                    .First(a => a.Id == id);
+                if (project.History == null)
+                {
+                    project.History = new List<History>();
+                }
+                // force add
+                item.Id = 0;
+                project.History.Add(item);
+                _context.Projects.Update(project);
+                _context.SaveChanges();
+            }
+
+            result.HistoryText = item.HistoryText;
+            result.Id = item.Id;
+            result.LastUpdateTimestamp = item.LastUpdateTimestamp;
+            result.LastUpdateUserid = item.LastUpdateUserid;
+            result.AffectedEntityId = id;
+
+            return new ObjectResult(result);
+        }
+
+
         /// <summary>
         /// 
         /// </summary>

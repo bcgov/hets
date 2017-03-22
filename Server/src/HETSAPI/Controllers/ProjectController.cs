@@ -146,6 +146,39 @@ namespace HETSAPI.Controllers
         /// <summary>
         /// 
         /// </summary>
+        /// <remarks>Returns History for a particular Project</remarks>
+        /// <param name="id">id of Project to fetch History for</param>
+        /// <param name="offset">offset for records that are returned</param>
+        /// <param name="limit">limits the number of records returned.</param>
+        /// <response code="200">OK</response>
+        [HttpGet]
+        [Route("/api/projects/{id}/history")]
+        [SwaggerOperation("ProjectsIdHistoryGet")]
+        [SwaggerResponse(200, type: typeof(List<HistoryViewModel>))]
+        public virtual IActionResult ProjectsIdHistoryGet([FromRoute]int id, [FromQuery]int? offset, [FromQuery]int? limit)
+        {
+            return this._service.ProjectsIdHistoryGetAsync(id, offset, limit);
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <remarks>Add a History record to the Project</remarks>
+        /// <param name="id">id of Project to fetch History for</param>
+        /// <param name="item"></param>
+        /// <response code="201">History created</response>
+        [HttpPost]
+        [Route("/api/projects/{id}/history")]
+        [SwaggerOperation("ProjectsIdHistoryPost")]
+        [SwaggerResponse(200, type: typeof(History))]
+        public virtual IActionResult ProjectsIdHistoryPost([FromRoute]int id, [FromBody]History item)
+        {
+            return this._service.ProjectsIdHistoryPostAsync(id, item);
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
         /// <param name="id">id of Project to fetch</param>
         /// <param name="item"></param>
         /// <response code="200">OK</response>

@@ -21,6 +21,7 @@ using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json;
 using HETSAPI.Models;
 using HETSAPI.ViewModels;
+using HETSAPI.Mappings;
 
 namespace HETSAPI.Services.Impl
 {
@@ -337,6 +338,87 @@ namespace HETSAPI.Services.Impl
                 return new StatusCodeResult(404);
             }
         }
+
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <remarks>Returns History for a particular Owner</remarks>
+        /// <param name="id">id of Owner to fetch History for</param>
+        /// <response code="200">OK</response>
+
+        public virtual IActionResult OwnersIdHistoryGetAsync(int id, int? offset, int? limit)
+        {
+            bool exists = _context.Owners.Any(a => a.Id == id);
+            if (exists)
+            {
+                Owner owner = _context.Owners
+                    .Include(x => x.History)
+                    .First(a => a.Id == id);
+
+                List<History> data = owner.History.OrderByDescending(y => y.LastUpdateTimestamp).ToList();
+
+                if (offset == null)
+                {
+                    offset = 0;
+                }
+                if (limit == null)
+                {
+                    limit = data.Count() - offset;
+                }
+                List<HistoryViewModel> result = new List<HistoryViewModel>();
+
+                for (int i = (int)offset; i < data.Count() && i < offset + limit; i++)
+                {
+                    result.Add(data[i].ToViewModel(id));
+                }
+
+                return new ObjectResult(result);
+            }
+            else
+            {
+                // record not found
+                return new StatusCodeResult(404);
+            }
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <remarks>Add a History record to the Owner</remarks>
+        /// <param name="id">id of Owner to add History for</param>
+        /// <param name="item"></param>
+        /// <response code="201">History added</response>
+        public virtual IActionResult OwnersIdHistoryPostAsync(int id, History item)
+        {
+            HistoryViewModel result = new HistoryViewModel();
+
+            bool exists = _context.Owners.Any(a => a.Id == id);
+            if (exists)
+            {
+                Owner owner = _context.Owners
+                    .Include(x => x.History)
+                    .First(a => a.Id == id);
+                if (owner.History == null)
+                {
+                    owner.History = new List<History>();
+                }
+                // force add
+                item.Id = 0;
+                owner.History.Add(item);
+                _context.Owners.Update(owner);
+                _context.SaveChanges();
+            }
+
+            result.HistoryText = item.HistoryText;
+            result.Id = item.Id;
+            result.LastUpdateTimestamp = item.LastUpdateTimestamp;
+            result.LastUpdateUserid = item.LastUpdateUserid;
+            result.AffectedEntityId = id;
+
+            return new ObjectResult(result);
+        }
+
 
         /// <summary>
         /// 

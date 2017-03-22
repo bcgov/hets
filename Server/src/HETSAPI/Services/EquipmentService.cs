@@ -68,6 +68,25 @@ namespace HETSAPI.Services
         /// <summary>
         /// 
         /// </summary>
+        /// <remarks>Returns History for a particular Equipment</remarks>
+        /// <param name="id">id of Equipment to fetch History for</param>
+        /// <param name="offset">offset for records that are returned</param>
+        /// <param name="limit">limits the number of records returned.</param>
+        /// <response code="200">OK</response>
+        IActionResult EquipmentIdHistoryGetAsync(int id, int? offset, int? limit);
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <remarks>Add a History record to the Equipment</remarks>
+        /// <param name="id">id of Equipment to add History for</param>
+        /// <param name="item"></param>
+        /// <response code="201">History created</response>
+        IActionResult EquipmentIdHistoryPostAsync(int id, History item);
+
+        /// <summary>
+        /// 
+        /// </summary>
         /// <param name="id">id of Equipment to fetch</param>
         /// <param name="item"></param>
         /// <response code="200">OK</response>
