@@ -95,7 +95,7 @@ var ContactsEditDialog = React.createClass({
     var valid = true;
 
     if (isBlank(this.state.givenName)) {
-      this.setState({ givenNameError: 'Given Name is required' });
+      this.setState({ givenNameError: 'Given name is required' });
       valid = false;
     }
 
@@ -104,33 +104,40 @@ var ContactsEditDialog = React.createClass({
       valid = false;
     }
 
-    if (isBlank(this.state.emailAddress)) {
-      this.setState({ emailAddressError: 'Email is required' });
-      valid = false;
-    } else if (!Constant.EMAIL_REGEX.test(this.state.emailAddress)) {
-      // Just a simple RegEx test for X@Y.Z
-      this.setState({ emailAddressError: 'Invalid Email format' });
+    // Check the phone numbers against the North American Numbering Plan format. We basically want to
+    // make sure that there's the right number of digits to make an actual phone number. Note for testers:
+    // an area code and an exchange code cannot start with 0 or 1.
+    if (!isBlank(this.state.workPhoneNumber) && !Constant.NANP_REGEX.test(this.state.workPhoneNumber)) {
+      this.setState({ workPhoneNumberError: 'Invalid phone number' });
       valid = false;
     }
 
-    // TODO: Check validity of email address and phone number formats
+    if (!isBlank(this.state.mobilePhoneNumber) && !Constant.NANP_REGEX.test(this.state.mobilePhoneNumber)) {
+      this.setState({ mobilePhoneNumberError: 'Invalid phone number' });
+      valid = false;
+    }
 
-    if (isBlank(this.state.workPhoneNumber) && isBlank(this.state.mobilePhoneNumber)) {
+    if (!isBlank(this.state.faxPhoneNumber) && !Constant.NANP_REGEX.test(this.state.faxPhoneNumber)) {
+      this.setState({ faxPhoneNumberError: 'Invalid phone number' });
+      valid = false;
+    }
+
+    if (!isBlank(this.state.emailAddress) && !Constant.EMAIL_REGEX.test(this.state.emailAddress)) {
+      // Just a simple RegEx test for X@Y.Z
+      this.setState({ emailAddressError: 'Invalid email' });
+      valid = false;
+    }
+
+    // A Primary Contact requires at least one of the phone/email fields to be filled out.
+    if (this.state.isPrimary && isBlank(this.state.workPhoneNumber) && isBlank(this.state.mobilePhoneNumber) && isBlank(this.state.emailAddress)) {
       this.setState({
-        workPhoneNumberError: 'A work or cell phone number is required',
+        workPhoneNumberError: 'A primary contact requires a phone number or email address',
         mobilePhoneNumberError: ' ',
+        emailAddressError: ' ',
       });
       valid = false;
-    } else if (!isBlank(this.state.workPhoneNumber) && !Constant.NANP_REGEX.test(this.state.workPhoneNumber)) {
-      this.setState({ workPhoneNumberError: 'Invalid phone number format' });
-      valid = false;
-    } else if (!isBlank(this.state.mobilePhoneNumber) && !Constant.NANP_REGEX.test(this.state.mobilePhoneNumber)) {
-      this.setState({ mobilePhoneNumberError: 'Invalid phone number format' });
-      valid = false;
-    } else if (!isBlank(this.state.faxPhoneNumber) && !Constant.NANP_REGEX.test(this.state.faxPhoneNumber)) {
-      this.setState({ faxPhoneNumberError: 'Invalid phone number format' });
-      valid = false;
     }
+
 
     return valid;
   },
@@ -234,28 +241,28 @@ var ContactsEditDialog = React.createClass({
             <Row>
               <Col md={3}>
                 <FormGroup controlId="workPhoneNumber" validationState={ this.state.workPhoneNumberError ? 'error' : null }>
-                  <ControlLabel>Work Phone <sup>*</sup></ControlLabel>
-                  <FormInputControl type="text" defaultValue={ this.state.workPhoneNumber } readOnly={ isReadOnly } updateState={ this.updateState }/>
+                  <ControlLabel>Work Phone</ControlLabel>
+                  <FormInputControl type="text" defaultValue={ this.state.workPhoneNumber } placeholder="250-555-1212x123" readOnly={ isReadOnly } updateState={ this.updateState }/>
                   <HelpBlock>{ this.state.workPhoneNumberError }</HelpBlock>
                 </FormGroup>
               </Col>
               <Col md={3}>
                 <FormGroup controlId="mobilePhoneNumber" validationState={ this.state.mobilePhoneNumberError ? 'error' : null }>
-                  <ControlLabel>Cell Phone <sup>*</sup></ControlLabel>
-                  <FormInputControl type="text" defaultValue={ this.state.mobilePhoneNumber } readOnly={ isReadOnly } updateState={ this.updateState }/>
+                  <ControlLabel>Cell Phone</ControlLabel>
+                  <FormInputControl type="text" defaultValue={ this.state.mobilePhoneNumber } placeholder="250-555-1212" readOnly={ isReadOnly } updateState={ this.updateState }/>
                   <HelpBlock>{ this.state.mobilePhoneNumberError }</HelpBlock>
                 </FormGroup>
               </Col>
               <Col md={3}>
                 <FormGroup controlId="faxPhoneNumber" validationState={ this.state.faxPhoneNumberError ? 'error' : null }>
                   <ControlLabel>Fax</ControlLabel>
-                  <FormInputControl type="text" defaultValue={ this.state.faxPhoneNumber } readOnly={ isReadOnly } updateState={ this.updateState }/>
+                  <FormInputControl type="text" defaultValue={ this.state.faxPhoneNumber } placeholder="250-555-1212" readOnly={ isReadOnly } updateState={ this.updateState }/>
                   <HelpBlock>{ this.state.faxPhoneNumberError }</HelpBlock>
                 </FormGroup>
               </Col>
               <Col md={3}>
                 <FormGroup controlId="emailAddress" validationState={ this.state.emailAddressError ? 'error' : null }>
-                  <ControlLabel>Email <sup>*</sup></ControlLabel>
+                  <ControlLabel>Email</ControlLabel>
                   <FormInputControl type="text" defaultValue={ this.state.emailAddress } readOnly={ isReadOnly } updateState={ this.updateState }/>
                   <HelpBlock>{ this.state.emailAddressError }</HelpBlock>
                 </FormGroup>
