@@ -2,11 +2,12 @@ import React from 'react';
 
 import { connect } from 'react-redux';
 
-import { Navbar, Nav, NavItem, NavDropdown, MenuItem } from 'react-bootstrap';
+import { Navbar, Nav, NavItem, NavDropdown, MenuItem, OverlayTrigger } from 'react-bootstrap';
 import { Popover, Button, Glyphicon } from 'react-bootstrap';
 import { LinkContainer } from 'react-router-bootstrap';
 
-import OverlayTrigger from '../components/OverlayTrigger.jsx';
+import * as Constant from '../constants';
+
 import Spinner from '../components/Spinner.jsx';
 
 
@@ -30,27 +31,27 @@ var TopNav = React.createClass({
         </div>
         <Navbar id="top-nav">
           <Nav>
-            <LinkContainer to={{ pathname: '/home' }}>
-              <NavItem eventKey={1} href="/home">Home</NavItem>
+            <LinkContainer to={{ pathname: `/${ Constant.HOME_PATHNAME }` }}>
+              <NavItem eventKey={ 1 }>Home</NavItem>
             </LinkContainer>
-            <LinkContainer to={{ pathname: '/owners' }}>
-              <NavItem eventKey={2} href="/owners">Owners</NavItem>
+            <LinkContainer to={{ pathname: `/${ Constant.OWNERS_PATHNAME }` }}>
+              <NavItem eventKey={ 2 }>Owners</NavItem>
             </LinkContainer>
-            <LinkContainer to={{ pathname: '/equipment' }}>
-              <NavItem eventKey={3} href="/equipment">Equipment</NavItem>
+            <LinkContainer to={{ pathname: `/${ Constant.EQUIPMENT_PATHNAME }` }}>
+              <NavItem eventKey={ 3 }>Equipment</NavItem>
             </LinkContainer>
-            <LinkContainer to={{ pathname: '/rentalrequests' }}>
-              <NavItem eventKey={4} href="/rentalrequests">Requests</NavItem>
+            <LinkContainer to={{ pathname: `/${ Constant.RENTAL_REQUESTS_PATHNAME }` }}>
+              <NavItem eventKey={ 4 }>Requests</NavItem>
             </LinkContainer>
-            <LinkContainer to={{ pathname: '/projects' }}>
-              <NavItem eventKey={6} href="/projects">Projects</NavItem>
+            <LinkContainer to={{ pathname: `/${ Constant.PROJECTS_PATHNAME }` }}>
+              <NavItem eventKey={ 5 }>Projects</NavItem>
             </LinkContainer>
             <NavDropdown id="admin-dropdown" title="Administration">
-              <LinkContainer to={{ pathname: '/users' }}>
-                <MenuItem eventKey={7} href="/users">User Management</MenuItem>
+              <LinkContainer to={{ pathname: `/${ Constant.USERS_PATHNAME }` }}>
+                <MenuItem eventKey={ 6 }>User Management</MenuItem>
               </LinkContainer>
-              <LinkContainer to={{ pathname: '/roles' }}>
-                <MenuItem eventKey={8} href="/roles">Roles and Permissions</MenuItem>
+              <LinkContainer to={{ pathname: `/${ Constant.ROLES_PATHNAME }` }}>
+                <MenuItem eventKey={ 7 }>Roles and Permissions</MenuItem>
               </LinkContainer>
             </NavDropdown>
           </Nav>

@@ -9,6 +9,7 @@ import { LinkContainer } from 'react-router-bootstrap';
 
 import _ from 'lodash';
 
+import ContactsEditDialog from './dialogs/ContactsEditDialog.jsx';
 import EquipmentAddDialog from './dialogs/EquipmentAddDialog.jsx';
 import OwnersEditDialog from './dialogs/OwnersEditDialog.jsx';
 import OwnersPolicyEditDialog from './dialogs/OwnersPolicyEditDialog.jsx';
@@ -20,8 +21,8 @@ import store from '../store';
 
 import CheckboxControl from '../components/CheckboxControl.jsx';
 import ColDisplay from '../components/ColDisplay.jsx';
-import Confirm from '../components/Confirm.jsx';
-import OverlayTrigger from '../components/OverlayTrigger.jsx';
+import DeleteButton from '../components/DeleteButton.jsx';
+import EditButton from '../components/EditButton.jsx';
 import SortTable from '../components/SortTable.jsx';
 import Spinner from '../components/Spinner.jsx';
 import Unimplemented from '../components/Unimplemented.jsx';
@@ -32,7 +33,7 @@ import { concat } from '../utils/string';
 /*
 
 TODO:
-* Print / Notes / Attachments / Contacts / History / Policy Proof Documents (attachments)
+* Print / Notes / Attachments / History / Policy Proof Documents (attachments)
 
 */
 
@@ -51,7 +52,7 @@ var OwnersDetail = React.createClass({
 
   getInitialState() {
     return {
-      loading: false,
+      loading: true,
       loadingOwnerHistory: false,
 
       showEditDialog: false,
@@ -61,8 +62,6 @@ var OwnersDetail = React.createClass({
       showEquipmentDialog: false,
 
       contact: {},
-
-      isNew: this.props.params.ownerId == 0,
 
       // Contacts
       uiContacts : {
@@ -79,12 +78,43 @@ var OwnersDetail = React.createClass({
   },
 
   componentDidMount() {
-    this.fetch();
+    this.fetch().then(() => {
+      if (this.props.params.contactId) {
+        this.openContact(this.props);
+      }
+    });
+  },
+
+  componentWillReceiveProps(nextProps) {
+    if (!_.isEqual(nextProps.params, this.props.params)) {
+      if (nextProps.params.contactId &&  nextProps.params.contactId !== this.props.params.contactId) {
+        this.openContact(nextProps);
+      }
+    }
+  },
+
+  openContact(props) {
+    var contact = null;
+
+    if (props.params.contactId === '0') {
+      // New
+      contact = {
+        id: 0,
+        owner: props.owner,
+      };
+    } else if (props.params.contactId) {
+      // Open the contact for viewing if possible
+      contact = props.owner.contacts[props.params.contactId];
+    }
+
+    if (contact) {
+      this.openContactDialog(contact);
+    }
   },
 
   fetch() {
     this.setState({ loading: true });
-    Api.getOwner(this.props.params.ownerId).finally(() => {
+    return Api.getOwner(this.props.params.ownerId).finally(() => {
       this.setState({ loading: false });
     });
   },
@@ -141,20 +171,46 @@ var OwnersDetail = React.createClass({
   },
 
   closeContactDialog() {
-    this.setState({ showContactDialog: false });
+    this.setState({ showContactDialog: false }, () => {
+      // Reset owner location
+      this.props.router.push({
+        pathname: this.props.owner.path,
+      });
+    });
   },
 
   addContact() {
-    this.openContactDialog({ id: 0 });
+    this.props.router.push({
+      pathname: `${ this.props.owner.path }/${ Constant.CONTACTS_PATHNAME }/0`,
+    });
   },
 
   deleteContact(contact) {
-    // TODO Delete contacts
-    return contact;
+    Api.deleteContact(contact).then(() => {
+      // In addition to refreshing the contacts, we need to update the owner
+      // to get possibly new primary contact info.
+      this.fetch();
+    });
   },
 
-  saveContact() {
-    // TODO Save contact
+  saveContact(contact) {
+    // Update or add accordingly
+    var isNew = !contact.id;
+
+    var contactPromise = isNew ? Api.addOwnerContact : Api.updateContact;
+
+    contactPromise(contact, this.props.owner.id).then(() => {
+      // Update primary contact info
+      if (contact.isPrimary) {
+        return Api.updateOwner({ ...this.props.owner, ...{
+          contacts: null, // this just ensures that the normalized data doesn't mess up the PUT call
+          primaryContact: { id: this.state.contact.id },
+        }});
+      }
+    }).finally(() => {
+      this.fetch();
+      this.closeContactDialog();
+    });
   },
 
   openEquipmentDialog() {
@@ -383,48 +439,41 @@ var OwnersDetail = React.createClass({
               })()}
             </Well>
             <Well>
-              <h3>Contacts <span className="pull-right">
-                <Unimplemented>
-                  <Button title="Add Contact" onClick={ this.addContact } bsSize="small"><Glyphicon glyph="plus" /></Button>
-                </Unimplemented>
-              </span></h3>
+              <h3>Contacts</h3>
               {(() => {
                 if (this.state.loading ) { return <div style={{ textAlign: 'center' }}><Spinner/></div>; }
-                if (!owner.contacts || owner.contacts.length === 0) { return <Alert bsStyle="success" style={{ marginTop: 10 }}>No contacts</Alert>; }
+
+                var addContactButton = <Button title="Add Contact" onClick={ this.addContact } bsSize="xsmall"><Glyphicon glyph="plus" />&nbsp;<strong>Add</strong></Button>;
+
+                if (!owner.contacts || Object.keys(owner.contacts).length === 0) { return <Alert bsStyle="success">No contacts { addContactButton }</Alert>; }
 
                 var contacts = _.sortBy(owner.contacts, this.state.uiContacts.sortField);
                 if (this.state.uiContacts.sortDesc) {
                   _.reverse(contacts);
                 }
 
-                // TODO The Contact model will be simplified (TBD)
-
                 var headers = [
-                  { field: 'name',  title: 'Name'         },
-                  { field: 'phone', title: 'Phone Number' },
-                  { field: 'email', title: 'Email'        },
-                  { field: 'role',  title: 'Role'         },
-                  { field: 'blank' },
+                  { field: 'name',         title: 'Name'  },
+                  { field: 'phone',        title: 'Phone' },
+                  { field: 'emailAddress', title: 'Email' },
+                  { field: 'role',         title: 'Role'  },
+                  { field: 'addContact',   title: 'Add Contact', style: { textAlign: 'right'  },
+                    node: addContactButton,
+                  },
                 ];
 
                 return <SortTable id="contact-list" sortField={ this.state.uiContacts.sortField } sortDesc={ this.state.uiContacts.sortDesc } onSort={ this.updateContactsUIState } headers={ headers }>
                   {
                     _.map(contacts, (contact) => {
                       return <tr key={ contact.id }>
-                        <td>{ contact.name }</td>
+                        <td>{ contact.isPrimary && <Glyphicon glyph="star" /> } { contact.name }</td>
                         <td>{ contact.phone }</td>
-                        <td>{ contact.email }</td>
+                        <td><a href={ `mailto:${ contact.emailAddress }` } target="_blank">{ contact.emailAddress }</a></td>
                         <td>{ contact.role }</td>
                         <td style={{ textAlign: 'right' }}>
                           <ButtonGroup>
-                            <Unimplemented>
-                              <Button className={ contact.canEdit ? '' : 'hidden' } title="Edit Contact" bsSize="xsmall" onClick={ this.openContactDialog.bind(this, contact) }><Glyphicon glyph="pencil" /></Button>
-                            </Unimplemented>
-                            <Unimplemented>
-                              <OverlayTrigger trigger="click" placement="top" rootClose overlay={ <Confirm onConfirm={ this.deleteContact.bind(this, contact) }/> }>
-                                <Button className={ contact.canDelete ? '' : 'hidden' } title="Delete Contact" bsSize="xsmall"><Glyphicon glyph="trash" /></Button>
-                              </OverlayTrigger>
-                            </Unimplemented>
+                            <DeleteButton name="Contact" hide={ !contact.canDelete || contact.isPrimary } onConfirm={ this.deleteContact.bind(this, contact) }/>
+                            <EditButton name="Contact" view={ !contact.canEdit } pathname={ contact.path }/>
                           </ButtonGroup>
                         </td>
                       </tr>;
@@ -475,7 +524,9 @@ var OwnersDetail = React.createClass({
       { this.state.showPolicyDialog &&
         <OwnersPolicyEditDialog show={ this.state.showPolicyDialog } onSave={ this.savePolicyEdit } onClose={ this.closePolicyDialog } />
       }
-      { /* TODO this.state.showContactDialog && <ContactEditDialog /> */}
+      { this.state.showContactDialog &&
+        <ContactsEditDialog show={ this.state.showContactDialog } contact={ this.state.contact } onSave={ this.saveContact } onClose={ this.closeContactDialog } />
+      }
       { /* TODO this.state.showPolicyDocumentsDialog && <OwnerPolicyDocumentsDialog /> */}
     </div>;
   },

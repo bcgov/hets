@@ -2,6 +2,7 @@ import React from 'react';
 import { Provider } from 'react-redux';
 import { Router, Route, Redirect, hashHistory } from 'react-router';
 
+import * as Constant from './constants';
 import store from './store';
 
 import Main from './views/Main.jsx';
@@ -26,20 +27,21 @@ const App = <Provider store={ store }>
   <Router history={ hashHistory }>
     <Redirect from="/" to="/home"/>
     <Route path="/" component={ Main }>
-      <Route path="home" component={ Home }/>
-      <Route path="equipment" component={ Equipment }/>
-      <Route path="equipment/:equipmentId" component={ EquipmentDetail }/>
-      <Route path="owners" component={ Owners }/>
-      <Route path="owners/:ownerId" component={ OwnersDetail }/>
-      <Route path="projects" component={ Projects }/>
-      <Route path="projects/:projectId" component={ ProjectsDetail }/>
-      <Route path="rentalrequests" component={ RentalRequests }/>
-      <Route path="rentalrequests/:rentalRequestId" component={ RentalRequestsDetail }/>
-      <Route path="users" component={ Users }/>
-      <Route path="users/:userId" component={ UsersDetail }/>
-      <Route path="roles" component={ Roles }/>
-      <Route path="roles/:roleId" component={ RolesDetail }/>
-      <Route path="version" component={ Version }/>
+      <Route path={ Constant.HOME_PATHNAME } component={ Home }/>
+      <Route path={ Constant.EQUIPMENT_PATHNAME } component={ Equipment }/>
+      <Route path={ `${ Constant.EQUIPMENT_PATHNAME }/:equipmentId` } component={ EquipmentDetail }/>
+      <Route path={ Constant.OWNERS_PATHNAME } component={ Owners }/>
+      <Route path={ `${ Constant.OWNERS_PATHNAME }/:ownerId` } component={ OwnersDetail }/>
+      <Route path={ `${ Constant.OWNERS_PATHNAME }/:ownerId/${ Constant.CONTACTS_PATHNAME }/:contactId` } component={ OwnersDetail }/>
+      <Route path={ Constant.PROJECTS_PATHNAME } component={ Projects }/>
+      <Route path={ `${ Constant.PROJECTS_PATHNAME }/:projectId` } component={ ProjectsDetail }/>
+      <Route path={ Constant.RENTAL_REQUESTS_PATHNAME } component={ RentalRequests }/>
+      <Route path={ `${ Constant.RENTAL_REQUESTS_PATHNAME }/:rentalRequestId` } component={ RentalRequestsDetail }/>
+      <Route path={ Constant.USERS_PATHNAME } component={ Users }/>
+      <Route path={ `${ Constant.USERS_PATHNAME }/:userId` } component={ UsersDetail }/>
+      <Route path={ Constant.ROLES_PATHNAME } component={ Roles }/>
+      <Route path={ `${ Constant.ROLES_PATHNAME }/:roleId` } component={ RolesDetail }/>
+      <Route path={ Constant.VERSION_PATHNAME } component={ Version }/>
       <Route path="*" component={ FourOhFour }/>
     </Route>
   </Router>

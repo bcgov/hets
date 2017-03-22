@@ -52,6 +52,12 @@ export const ADD_FAVOURITE = 'ADD_FAVOURITE';
 export const UPDATE_FAVOURITE = 'UPDATE_FAVOURITE';
 export const DELETE_FAVOURITE = 'DELETE_FAVOURITE';
 
+// Contacts
+export const UPDATE_CONTACTS = 'UPDATE_CONTACTS';
+export const ADD_CONTACT = 'ADD_CONTACT';
+export const UPDATE_CONTACT = 'UPDATE_CONTACT';
+export const DELETE_CONTACT = 'DELETE_CONTACT';
+
 // Roles, Permissions
 export const UPDATE_ROLES = 'UPDATE_ROLES';
 export const UPDATE_ROLE = 'UPDATE_ROLE';

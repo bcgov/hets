@@ -51,6 +51,30 @@
       height: 16px;
     }
   }
+
+  #contact-list {
+    max-height: 150px;
+    width: 100%;
+    overflow-y: scroll;
+    margin-bottom: 10px;
+
+    table {
+      margin: 0px;
+    }
+
+    th, td {
+      max-width: 125px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .btn {
+      margin-left: 0px;
+    }
+
+  }
+
   .well {
     margin-left: 5px;
     margin-right: 5px;
@@ -67,6 +91,14 @@
 
   .col-display-label {
     width: 170px;
+  }
+
+  .alert {
+    top-margin: 10px;
+
+    .btn {
+      float: right;
+    }
   }
 
   h1 {

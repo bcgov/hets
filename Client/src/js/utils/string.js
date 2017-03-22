@@ -1,3 +1,6 @@
+import * as Constant from '../constants';
+
+
 function toString(str) {
   if (str === null || str === undefined) { return ''; }
   return String(str);
@@ -39,6 +42,23 @@ export function isBlankOrZero(str) {
 
 export function notBlank(str) {
   return !isBlank(str);
+}
+
+export function padLeft(str, padChar, len) {
+  if (!str || !padChar || !len) { return ''; }
+  if (str.length >= len) { return str; }
+  var pad = Array(len + 1).join(padChar);
+  return pad.substring(str.length) + str;
+}
+
+export function formatPhoneNumber(str) {
+  var phoneNumber = toString(str);
+  var match = phoneNumber.match(Constant.NANP_REGEX);
+  if (match) {
+    match.shift();
+    return match.filter(x => { return x; }).join('-');
+  }
+  return phoneNumber;
 }
 
 export function onlyLetters(str) {
