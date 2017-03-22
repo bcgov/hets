@@ -526,7 +526,7 @@
       responses:
         201:
           description: EquipmentAttachment created
-  /localAreaRotationLists:
+  /localarearotationlists:
     get:
       tags:
         - LocalAreaRotationList
@@ -567,7 +567,7 @@
               format: url
           schema:
             $ref: "#/definitions/LocalAreaRotationList"  
-  /localAreaRotationLists/{id}:
+  /localarearotationlists/{id}:
     get:
       tags:
         - LocalAreaRotationList
@@ -616,7 +616,7 @@
           required: true
           schema:
             $ref: "#/definitions/LocalAreaRotationList"
-  /localAreaRotationLists/{id}/delete:
+  /localarearotationlists/{id}/delete:
     post:
       tags:
         - LocalAreaRotationList
@@ -637,7 +637,7 @@
           required: true
           type: integer
 
-  /localAreaRotationLists/bulk:
+  /localarearotationlists/bulk:
     post:
       tags:
         - LocalAreaRotationList
@@ -922,10 +922,10 @@
       responses:
         201:
           description: Project created
-  /lookupLists:
+  /lookuplists:
     get:
       tags:
-        - LookupLists
+        - LookupList
       consumes: []
       produces:
         - text/plain
@@ -937,10 +937,10 @@
           schema:
             type: array
             items:
-              $ref: "#/definitions/LookupLists"
+              $ref: "#/definitions/LookupList"
     post:
       tags:
-        - LookupLists
+        - LookupList
       consumes:
         - application/json
       produces:
@@ -952,21 +952,21 @@
           in: body
           required: true
           schema:
-            $ref: "#/definitions/LookupLists"
+            $ref: "#/definitions/LookupList"
       responses:
         201:
-          description: LookupLists created
+          description: LookupList created
           headers:
             Location:
-              description: A link to the LookupLists
+              description: A link to the LookupList
               type: string
               format: url
           schema:
-            $ref: "#/definitions/LookupLists"  
-  /lookupLists/{id}:
+            $ref: "#/definitions/LookupList"  
+  /lookuplists/{id}:
     get:
       tags:
-        - LookupLists
+        - LookupList
       consumes: []
       produces:
         - text/plain
@@ -976,18 +976,18 @@
         200:
           description: OK
           schema:
-            $ref: "#/definitions/LookupLists"
+            $ref: "#/definitions/LookupList"
         404:
-          description: LookupLists not found
+          description: LookupList not found
       parameters:
         - name: id
           in: path
-          description: id of LookupLists to fetch
+          description: id of LookupList to fetch
           required: true
           type: integer
     put:
       tags:
-        - LookupLists
+        - LookupList
       consumes:
         - application/json
       produces:
@@ -998,24 +998,24 @@
         200:
           description: OK
           schema:
-            $ref: "#/definitions/LookupLists"
+            $ref: "#/definitions/LookupList"
         404:
-          description: LookupLists not found
+          description: LookupList not found
       parameters:
         - name: id
           in: path
-          description: id of LookupLists to fetch
+          description: id of LookupList to fetch
           required: true
           type: integer
         - name: item
           in: body
           required: true
           schema:
-            $ref: "#/definitions/LookupLists"
-  /lookupLists/{id}/delete:
+            $ref: "#/definitions/LookupList"
+  /lookuplists/{id}/delete:
     post:
       tags:
-        - LookupLists
+        - LookupList
       consumes: []
       produces:
         - text/plain
@@ -1025,18 +1025,18 @@
         200:
           description: OK
         404:
-          description: LookupLists not found
+          description: LookupList not found
       parameters:
         - name: id
           in: path
-          description: id of LookupLists to delete
+          description: id of LookupList to delete
           required: true
           type: integer
 
-  /lookupLists/bulk:
+  /lookuplists/bulk:
     post:
       tags:
-        - LookupLists
+        - LookupList
       consumes:
         - application/json
       produces:
@@ -1050,10 +1050,10 @@
           schema:
             type: array
             items:
-              $ref: "#/definitions/LookupLists"
+              $ref: "#/definitions/LookupList"
       responses:
         201:
-          description: LookupLists created
+          description: LookupList created
   /groups:
     get:
       tags:
