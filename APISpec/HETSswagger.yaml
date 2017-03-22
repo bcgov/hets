@@ -5614,6 +5614,9 @@ definitions:
     description: A Provincial Project that my from time to time request equipment under the HETS programme from a Service Area.
     required:
       - id
+      - district
+      - name
+      - status
     properties:
       id:
         format: int32
@@ -5672,6 +5675,11 @@ definitions:
     description: A request from a Project for one or more of a type of equipment from a specific Local Area.
     required:
       - id
+      - project
+      - localArea
+      - status
+      - districtEquipmentType
+      - equipmentCount
     properties:
       id:
         format: int32
@@ -5729,6 +5737,7 @@ definitions:
     description: Attachments that are required as part of the Rental Requests
     required:
       - id
+      - rentalRequest
       - attachment
     properties:
       id:
@@ -5747,6 +5756,9 @@ definitions:
     description: An eligible piece of equipment for a request and a tracking of the hire offer and response process related to a request for that piece of equipment. Includes a link from the equipment to a Rental Agreement if the equipment was hired to satisfy a part of the request.
     required:
       - id
+      - rentalRequest
+      - rotationListSortOrder
+      - equipment
     properties:
       id:
         format: int32
@@ -5757,7 +5769,7 @@ definitions:
       rotationListSortOrder:
         format: int32
         type: integer
-        description: The sort order of the piece of equipment on the rotaton list at the time the request was created. This is the order the equipment will be offered the available work.
+        description: The sort order of the piece of equipment on the rotation list at the time the request was created. This is the order the equipment will be offered the available work.
       equipment:
         $ref: '#/definitions/Equipment'
       rentalAgreement:
@@ -5797,6 +5809,10 @@ definitions:
     description: Information about the hiring of a specific piece of equipment to satisfy part or all of a request from a project. TABLE DEFINITION IN PROGRESS - MORE COLUMNS TO BE ADDED
     required:
       - id
+      - number
+      - status
+      - equipment
+      - project
     properties:
       id:
         format: int32
@@ -5861,6 +5877,7 @@ definitions:
     description: The rate associated with an element of a rental agreement.
     required:
       - id
+      - rentalAgreement
     properties:
       id:
         format: int32
@@ -5900,6 +5917,9 @@ definitions:
     type: object
     description: A condition about the rental agreement to be displayed on the Rental Agreement.
     required:
+      - id
+      - rentalAgreement
+      - conditionName
     properties:
       id:
         format: int32
@@ -5921,6 +5941,9 @@ definitions:
     description: A record of time worked for a piece of equipment hired for a specific project within a Local Area.
     required:
       - id
+      - rentalAgreement
+      - workedDate
+      - hours
     properties:
       id:
         format: int32
@@ -5953,6 +5976,13 @@ definitions:
     description: A piece of equipment in the HETS system. Each piece of equipment is of a specific equipment type, owned by an Owner, and is within a Local Area.
     required:
       - id
+      - localArea
+      - districtEquipmentType
+      - owner
+      - equipmentCode
+      - status
+      - receivedDate
+      - lastVerifiedDate
     properties:
       id:
         format: int32
@@ -6237,6 +6267,11 @@ definitions:
     type: object
     description: A provincial-wide Equipment Type, the related Blue Book Chapter Section and related usage attributes.
     required:
+      - id
+      - name
+      - isDumpTruck
+      - blueBookSection
+      - numberOfBlocks
     properties:
       id:
         format: int32
@@ -6245,6 +6280,7 @@ definitions:
       name:
         type: string
         maxLength: 50
+        uniqueItems: true
         description: The generic name of an equipment type - e.g. Dump Truck, Excavator and so on.
       isDumpTruck:
         type: boolean
@@ -6278,6 +6314,9 @@ definitions:
     description: An Equipment Type defined at the District level. Links to a provincial Equipment Type for the name of the equipment but supports the District HETS Clerk setting a local name for the Equipment Type. Within a given District, the same provincial Equipment Type might be reused multiple times in, for example, separate sizes (small, medium, large). This enables local areas with large number of the same Equipment Type to have multiple lists.
     required:
       - id
+      - equipmentType
+      - district
+      - districtEquipmentName
     properties:
       id:
         format: int32
@@ -6295,6 +6334,8 @@ definitions:
     type: object
     required:
       - id
+      - districtEquipmentType
+      - localArea
     properties:
       id:
         format: int32
@@ -6330,6 +6371,7 @@ definitions:
     description: An Equipment Attachment associated with a piece of Equipment.
     required:
       - id
+      - equipment
       - typeName
     properties:
       id:
@@ -6351,6 +6393,10 @@ definitions:
     description: The history of all changes to the seniority of a piece of equipment. The current seniority information (underlying data elements and the calculation result) is in the equipment record. Every time that information changes, the old values are copied to here, with a start date, end date range. In the normal case, an annual update triggers the old values being copied here and the new values put into the equipment record. If a user manually changes the values, the existing values are copied into a record added here.
     required:
       - id
+      - startDate
+      - endDate
+      - localArea
+      - equipment
     properties:
       id:
         format: int32
@@ -6397,17 +6443,27 @@ definitions:
         type: number
         format: float
         description: Number of hours of service by this piece of equipment in the fiscal year three years ago - e.g. if current year is FY2018 then hours in FY2015
+      isSeniorityOverridden:
+        type: boolean
+        description: True if the Seniority for the piece of equipment was manually overridden. Set if a user has gone in and explicitly updated the seniority base information. Indicates that underlying numbers were manually overridden.
+      seniorityOverrideReason:
+        type: string
+        maxLength: 2048
+        description: A text reason for why the piece of equipments underlying data was overridden to change their seniority number.
   Owner:
     type: object
     description: The person or company to which a piece of construction equipment belongs.
     required:
       - id
       - ownerEquipmentCodePrefix
+      - organizationName
+      - meetsResidency
+      - localArea
+      - status
     properties:
       id:
         format: int32
         type: integer
-        uniqueItems: true
         description: A system-generated unique identifier for a Owner
       ownerEquipmentCodePrefix:
         type: string
@@ -6490,11 +6546,14 @@ definitions:
     description: Lookup values for various enumerated types in the systems - entity status values, rate types, conditions and others. Used to pull the values out of the code and into the database but without having to have a table for each lookup instance.
     required:
       - id
+      - contextName
+      - isDefault
+      - codeName
+      - value
     properties:
       id:
         format: int32
         type: integer
-        uniqueItems: true
         description: A system-generated unique identifier for a LookupList
       contextName:
         type: string
@@ -6524,7 +6583,6 @@ definitions:
       id:
         format: int32
         type: integer
-        uniqueItems: true
         description: A system-generated unique identifier for a Contact
       givenName:
         type: string
@@ -6605,11 +6663,12 @@ definitions:
     description: Uploaded documents related to entity in the application - e.g. piece of Equipment, an Owner, a Project and so on.
     required:
       - id
+      - fileName
+      - fileContents
     properties:
       id:
         format: int32
         type: integer
-        uniqueItems: true
         description: A system-generated unique identifier for an Attachment
       fileName:
         type: string
@@ -6651,6 +6710,10 @@ definitions:
     description: User specific settings for a specific location in the UI. The location and saved settings are internally defined by the UI.
     required:
       - id
+      - name
+      - value
+      - type
+      - User
     properties:
       id:
         format: int32
@@ -6758,7 +6821,6 @@ definitions:
       id:
         format: int32
         type: integer
-        uniqueItems: true
         description: A system-generated unique identifier for a ServiceArea
       ministryServiceAreaID:
         format: int32
@@ -6788,6 +6850,9 @@ definitions:
     description: A HETS-application defined area that is within a Service Area.
     required:
       - id
+      - localAreaNumber
+      - name
+      - serviceArea
       - startDate
     properties:
       id:
@@ -6801,6 +6866,7 @@ definitions:
       name:
         type: string
         maxLength: 150
+        uniqueItems: true
         description: The full name of the Local Area
       serviceArea:
         $ref: '#/definitions/ServiceArea'
@@ -6818,6 +6884,7 @@ definitions:
     description: A list of cities in BC. Authoritative source to be determined.
     required:
       - id
+      - name
     properties:
       id:
         format: int32
@@ -6937,6 +7004,8 @@ definitions:
     description: A permission that is part of a Role - a component of the authorization provided by the Role to the user to which the Role is assigned.
     required:
       - id
+      - role
+      - permission
     properties:
       id:
         format: int32
@@ -6954,7 +7023,6 @@ definitions:
       - id
       - code
       - name
-      - description
     properties:
       id:
         format: int32
@@ -6963,10 +7031,12 @@ definitions:
       code:
         type: string
         maxLength: 50
+        uniqueItems: true
         description: The name of the permission referenced in the software of the application.
       name:
         type: string
         maxLength: 150
+        uniqueItems: true
         description: The &#39;user friendly&#39; name of the permission exposed to the user selecting the permissions to be included in a Role.
       description:
         type: string
@@ -6978,6 +7048,8 @@ definitions:
     required:
       - id
       - active
+      - group
+      - user
     properties:
       id:
         format: int32
@@ -7007,6 +7079,7 @@ definitions:
       name:
         type: string
         maxLength: 150
+        uniqueItems: true
         description: The name of the group, as refenced in the code.
       description:
         type: string

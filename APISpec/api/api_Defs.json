@@ -13,7 +13,8 @@
             "post": null,
             "putById": null,
             "respDef": null,
-            "tag": "Equipment"
+            "tag": "Equipment",
+            "x-codegen-permission": null
         },
         {
             "Description": null,
@@ -28,7 +29,8 @@
             "post": null,
             "putById": null,
             "respDef": null,
-            "tag": "Equipment"
+            "tag": "Equipment",
+            "x-codegen-permission": "ADMIN"
         },
         {
             "Description": null,
@@ -43,7 +45,8 @@
             "post": null,
             "putById": null,
             "respDef": null,
-            "tag": "EquipmentType"
+            "tag": "EquipmentType",
+            "x-codegen-permission": null
         },
         {
             "Description": null,
@@ -58,7 +61,8 @@
             "post": null,
             "putById": null,
             "respDef": null,
-            "tag": "EquipmentType"
+            "tag": "EquipmentType",
+            "x-codegen-permission": "ADMIN"
         },
         {
             "Description": null,
@@ -73,7 +77,8 @@
             "post": null,
             "putById": null,
             "respDef": null,
-            "tag": "DistrictEquipmentType"
+            "tag": "DistrictEquipmentType",
+            "x-codegen-permission": null
         },
         {
             "Description": null,
@@ -88,7 +93,8 @@
             "post": null,
             "putById": null,
             "respDef": null,
-            "tag": "DistrictEquipmentType"
+            "tag": "DistrictEquipmentType",
+            "x-codegen-permission": "ADMIN"
         },
         {
             "Description": null,
@@ -103,7 +109,8 @@
             "post": null,
             "putById": null,
             "respDef": null,
-            "tag": "EquipmentAttachment"
+            "tag": "EquipmentAttachment",
+            "x-codegen-permission": null
         },
         {
             "Description": null,
@@ -118,7 +125,8 @@
             "post": null,
             "putById": null,
             "respDef": null,
-            "tag": "EquipmentAttachment"
+            "tag": "EquipmentAttachment",
+            "x-codegen-permission": "ADMIN"
         },
         {
             "Description": null,
@@ -129,11 +137,12 @@
             "getById": null,
             "idpath": null,
             "paramDef": null,
-            "path": "localAreaRotationLists",
+            "path": "localarearotationlists",
             "post": null,
             "putById": null,
             "respDef": null,
-            "tag": "LocalAreaRotationList"
+            "tag": "LocalAreaRotationList",
+            "x-codegen-permission": null
         },
         {
             "Description": null,
@@ -144,11 +153,12 @@
             "getById": null,
             "idpath": null,
             "paramDef": "LocalAreaRotationList",
-            "path": "localAreaRotationLists",
+            "path": "localarearotationlists",
             "post": null,
             "putById": null,
             "respDef": null,
-            "tag": "LocalAreaRotationList"
+            "tag": "LocalAreaRotationList",
+            "x-codegen-permission": "ADMIN"
         },
         {
             "Description": null,
@@ -163,7 +173,8 @@
             "post": null,
             "putById": null,
             "respDef": null,
-            "tag": "Owner"
+            "tag": "Owner",
+            "x-codegen-permission": null
         },
         {
             "Description": null,
@@ -178,7 +189,8 @@
             "post": null,
             "putById": null,
             "respDef": null,
-            "tag": "Owner"
+            "tag": "Owner",
+            "x-codegen-permission": "ADMIN"
         },
         {
             "Description": null,
@@ -193,7 +205,8 @@
             "post": null,
             "putById": null,
             "respDef": null,
-            "tag": "Project"
+            "tag": "Project",
+            "x-codegen-permission": null
         },
         {
             "Description": null,
@@ -208,7 +221,8 @@
             "post": null,
             "putById": null,
             "respDef": null,
-            "tag": "Project"
+            "tag": "Project",
+            "x-codegen-permission": "ADMIN"
         },
         {
             "Description": null,
@@ -219,11 +233,12 @@
             "getById": null,
             "idpath": null,
             "paramDef": null,
-            "path": "lookupLists",
+            "path": "lookuplists",
             "post": null,
             "putById": null,
             "respDef": null,
-            "tag": "LookupLists"
+            "tag": "LookupList",
+            "x-codegen-permission": null
         },
         {
             "Description": null,
@@ -233,12 +248,13 @@
             "fullpath": null,
             "getById": null,
             "idpath": null,
-            "paramDef": "LookupLists",
-            "path": "lookupLists",
+            "paramDef": "LookupList",
+            "path": "lookuplists",
             "post": null,
             "putById": null,
             "respDef": null,
-            "tag": "LookupLists"
+            "tag": "LookupList",
+            "x-codegen-permission": "ADMIN"
         },
         {
             "Description": null,
@@ -253,7 +269,8 @@
             "post": null,
             "putById": null,
             "respDef": null,
-            "tag": "Group"
+            "tag": "Group",
+            "x-codegen-permission": null
         },
         {
             "Description": null,
@@ -268,7 +285,8 @@
             "post": null,
             "putById": null,
             "respDef": null,
-            "tag": "Group"
+            "tag": "Group",
+            "x-codegen-permission": "ADMIN"
         },
         {
             "Description": null,
@@ -283,7 +301,8 @@
             "post": null,
             "putById": null,
             "respDef": null,
-            "tag": "Permission"
+            "tag": "Permission",
+            "x-codegen-permission": null
         },
         {
             "Description": null,
@@ -298,7 +317,8 @@
             "post": null,
             "putById": null,
             "respDef": null,
-            "tag": "Permission"
+            "tag": "Permission",
+            "x-codegen-permission": "ADMIN"
         },
         {
             "Description": null,
@@ -313,7 +333,8 @@
             "post": null,
             "putById": null,
             "respDef": null,
-            "tag": "Role"
+            "tag": "Role",
+            "x-codegen-permission": null
         },
         {
             "Description": null,
@@ -328,7 +349,8 @@
             "post": null,
             "putById": null,
             "respDef": null,
-            "tag": "Role"
+            "tag": "Role",
+            "x-codegen-permission": "ADMIN"
         },
         {
             "Description": null,
@@ -343,7 +365,8 @@
             "post": null,
             "putById": null,
             "respDef": null,
-            "tag": "Role"
+            "tag": "Role",
+            "x-codegen-permission": null
         },
         {
             "Description": null,
@@ -358,7 +381,8 @@
             "post": null,
             "putById": null,
             "respDef": null,
-            "tag": "User"
+            "tag": "User",
+            "x-codegen-permission": null
         },
         {
             "Description": null,
@@ -373,7 +397,8 @@
             "post": null,
             "putById": null,
             "respDef": null,
-            "tag": "User"
+            "tag": "User",
+            "x-codegen-permission": "ADMIN"
         },
         {
             "Description": null,
@@ -388,7 +413,8 @@
             "post": null,
             "putById": null,
             "respDef": null,
-            "tag": "User"
+            "tag": "User",
+            "x-codegen-permission": "ADMIN"
         },
         {
             "Description": null,
@@ -403,7 +429,8 @@
             "post": null,
             "putById": null,
             "respDef": null,
-            "tag": "User"
+            "tag": "User",
+            "x-codegen-permission": "ADMIN"
         },
         {
             "Description": null,
@@ -418,7 +445,8 @@
             "post": null,
             "putById": null,
             "respDef": null,
-            "tag": "Region"
+            "tag": "Region",
+            "x-codegen-permission": null
         },
         {
             "Description": null,
@@ -433,7 +461,8 @@
             "post": null,
             "putById": null,
             "respDef": null,
-            "tag": "Region"
+            "tag": "Region",
+            "x-codegen-permission": "ADMIN"
         },
         {
             "Description": null,
@@ -448,7 +477,8 @@
             "post": null,
             "putById": null,
             "respDef": null,
-            "tag": "District"
+            "tag": "District",
+            "x-codegen-permission": null
         },
         {
             "Description": null,
@@ -463,7 +493,8 @@
             "post": null,
             "putById": null,
             "respDef": null,
-            "tag": "District"
+            "tag": "District",
+            "x-codegen-permission": "ADMIN"
         },
         {
             "Description": null,
@@ -478,7 +509,8 @@
             "post": null,
             "putById": null,
             "respDef": null,
-            "tag": "ServiceArea"
+            "tag": "ServiceArea",
+            "x-codegen-permission": null
         },
         {
             "Description": null,
@@ -493,7 +525,8 @@
             "post": null,
             "putById": null,
             "respDef": null,
-            "tag": "ServiceArea"
+            "tag": "ServiceArea",
+            "x-codegen-permission": "ADMIN"
         },
         {
             "Description": null,
@@ -508,7 +541,8 @@
             "post": null,
             "putById": null,
             "respDef": null,
-            "tag": "City"
+            "tag": "City",
+            "x-codegen-permission": null
         },
         {
             "Description": null,
@@ -523,7 +557,8 @@
             "post": null,
             "putById": null,
             "respDef": null,
-            "tag": "City"
+            "tag": "City",
+            "x-codegen-permission": "ADMIN"
         },
         {
             "Description": null,
@@ -538,7 +573,8 @@
             "post": null,
             "putById": null,
             "respDef": null,
-            "tag": "LocalArea"
+            "tag": "LocalArea",
+            "x-codegen-permission": null
         },
         {
             "Description": null,
@@ -553,7 +589,8 @@
             "post": null,
             "putById": null,
             "respDef": null,
-            "tag": "LocalArea"
+            "tag": "LocalArea",
+            "x-codegen-permission": "ADMIN"
         },
         {
             "Description": null,
@@ -568,7 +605,8 @@
             "post": null,
             "putById": null,
             "respDef": null,
-            "tag": "Contact"
+            "tag": "Contact",
+            "x-codegen-permission": null
         },
         {
             "Description": null,
@@ -583,7 +621,8 @@
             "post": null,
             "putById": null,
             "respDef": null,
-            "tag": "Contact"
+            "tag": "Contact",
+            "x-codegen-permission": "ADMIN"
         },
         {
             "Description": null,
@@ -598,7 +637,8 @@
             "post": null,
             "putById": null,
             "respDef": null,
-            "tag": "DumpTruck"
+            "tag": "DumpTruck",
+            "x-codegen-permission": null
         },
         {
             "Description": null,
@@ -613,7 +653,8 @@
             "post": null,
             "putById": null,
             "respDef": null,
-            "tag": "DumpTruck"
+            "tag": "DumpTruck",
+            "x-codegen-permission": "ADMIN"
         },
         {
             "Description": null,
@@ -628,7 +669,8 @@
             "post": null,
             "putById": null,
             "respDef": null,
-            "tag": "Note"
+            "tag": "Note",
+            "x-codegen-permission": null
         },
         {
             "Description": null,
@@ -643,7 +685,8 @@
             "post": null,
             "putById": null,
             "respDef": null,
-            "tag": "Note"
+            "tag": "Note",
+            "x-codegen-permission": "ADMIN"
         },
         {
             "Description": null,
@@ -658,7 +701,8 @@
             "post": null,
             "putById": null,
             "respDef": null,
-            "tag": "Attachment"
+            "tag": "Attachment",
+            "x-codegen-permission": null
         },
         {
             "Description": null,
@@ -673,7 +717,8 @@
             "post": null,
             "putById": null,
             "respDef": null,
-            "tag": "Attachment"
+            "tag": "Attachment",
+            "x-codegen-permission": "ADMIN"
         },
         {
             "Description": null,
@@ -688,7 +733,8 @@
             "post": null,
             "putById": null,
             "respDef": null,
-            "tag": "GroupMembership"
+            "tag": "GroupMembership",
+            "x-codegen-permission": null
         },
         {
             "Description": null,
@@ -703,7 +749,8 @@
             "post": null,
             "putById": null,
             "respDef": null,
-            "tag": "GroupMembership"
+            "tag": "GroupMembership",
+            "x-codegen-permission": "ADMIN"
         },
         {
             "Description": null,
@@ -718,7 +765,8 @@
             "post": null,
             "putById": null,
             "respDef": null,
-            "tag": "History"
+            "tag": "History",
+            "x-codegen-permission": null
         },
         {
             "Description": null,
@@ -733,7 +781,8 @@
             "post": null,
             "putById": null,
             "respDef": null,
-            "tag": "History"
+            "tag": "History",
+            "x-codegen-permission": "ADMIN"
         },
         {
             "Description": null,
@@ -748,7 +797,8 @@
             "post": null,
             "putById": null,
             "respDef": null,
-            "tag": "RentalAgreement"
+            "tag": "RentalAgreement",
+            "x-codegen-permission": null
         },
         {
             "Description": null,
@@ -763,7 +813,8 @@
             "post": null,
             "putById": null,
             "respDef": null,
-            "tag": "RentalAgreement"
+            "tag": "RentalAgreement",
+            "x-codegen-permission": "ADMIN"
         },
         {
             "Description": null,
@@ -778,7 +829,8 @@
             "post": null,
             "putById": null,
             "respDef": null,
-            "tag": "RentalAgreementCondition"
+            "tag": "RentalAgreementCondition",
+            "x-codegen-permission": null
         },
         {
             "Description": null,
@@ -793,7 +845,8 @@
             "post": null,
             "putById": null,
             "respDef": null,
-            "tag": "RentalAgreementCondition"
+            "tag": "RentalAgreementCondition",
+            "x-codegen-permission": "ADMIN"
         },
         {
             "Description": null,
@@ -808,7 +861,8 @@
             "post": null,
             "putById": null,
             "respDef": null,
-            "tag": "RentalAgreementRate"
+            "tag": "RentalAgreementRate",
+            "x-codegen-permission": null
         },
         {
             "Description": null,
@@ -823,7 +877,8 @@
             "post": null,
             "putById": null,
             "respDef": null,
-            "tag": "RentalAgreementRate"
+            "tag": "RentalAgreementRate",
+            "x-codegen-permission": "ADMIN"
         },
         {
             "Description": null,
@@ -838,7 +893,8 @@
             "post": null,
             "putById": null,
             "respDef": null,
-            "tag": "RentalRequest"
+            "tag": "RentalRequest",
+            "x-codegen-permission": null
         },
         {
             "Description": null,
@@ -853,7 +909,8 @@
             "post": null,
             "putById": null,
             "respDef": null,
-            "tag": "RentalRequest"
+            "tag": "RentalRequest",
+            "x-codegen-permission": "ADMIN"
         },
         {
             "Description": null,
@@ -868,7 +925,8 @@
             "post": null,
             "putById": null,
             "respDef": null,
-            "tag": "RentalRequestAttachment"
+            "tag": "RentalRequestAttachment",
+            "x-codegen-permission": null
         },
         {
             "Description": null,
@@ -883,7 +941,8 @@
             "post": null,
             "putById": null,
             "respDef": null,
-            "tag": "RentalRequestAttachment"
+            "tag": "RentalRequestAttachment",
+            "x-codegen-permission": "ADMIN"
         },
         {
             "Description": null,
@@ -898,7 +957,8 @@
             "post": null,
             "putById": null,
             "respDef": null,
-            "tag": "RentalRequestRotationList"
+            "tag": "RentalRequestRotationList",
+            "x-codegen-permission": null
         },
         {
             "Description": null,
@@ -913,7 +973,8 @@
             "post": null,
             "putById": null,
             "respDef": null,
-            "tag": "RentalRequestRotationList"
+            "tag": "RentalRequestRotationList",
+            "x-codegen-permission": "ADMIN"
         },
         {
             "Description": null,
@@ -928,7 +989,8 @@
             "post": null,
             "putById": null,
             "respDef": null,
-            "tag": "RolePermission"
+            "tag": "RolePermission",
+            "x-codegen-permission": null
         },
         {
             "Description": null,
@@ -943,7 +1005,8 @@
             "post": null,
             "putById": null,
             "respDef": null,
-            "tag": "RolePermission"
+            "tag": "RolePermission",
+            "x-codegen-permission": "ADMIN"
         },
         {
             "Description": null,
@@ -958,7 +1021,8 @@
             "post": null,
             "putById": null,
             "respDef": null,
-            "tag": "SeniorityAudit"
+            "tag": "SeniorityAudit",
+            "x-codegen-permission": null
         },
         {
             "Description": null,
@@ -973,7 +1037,8 @@
             "post": null,
             "putById": null,
             "respDef": null,
-            "tag": "SeniorityAudit"
+            "tag": "SeniorityAudit",
+            "x-codegen-permission": "ADMIN"
         },
         {
             "Description": null,
@@ -988,7 +1053,8 @@
             "post": null,
             "putById": null,
             "respDef": null,
-            "tag": "TimeRecord"
+            "tag": "TimeRecord",
+            "x-codegen-permission": null
         },
         {
             "Description": null,
@@ -1003,7 +1069,8 @@
             "post": null,
             "putById": null,
             "respDef": null,
-            "tag": "TimeRecord"
+            "tag": "TimeRecord",
+            "x-codegen-permission": "ADMIN"
         },
         {
             "Description": null,
@@ -1018,7 +1085,8 @@
             "post": null,
             "putById": null,
             "respDef": null,
-            "tag": "UserFavourite"
+            "tag": "UserFavourite",
+            "x-codegen-permission": null
         },
         {
             "Description": null,
@@ -1033,7 +1101,8 @@
             "post": null,
             "putById": null,
             "respDef": null,
-            "tag": "UserFavourite"
+            "tag": "UserFavourite",
+            "x-codegen-permission": "ADMIN"
         },
         {
             "Description": null,
@@ -1048,7 +1117,8 @@
             "post": null,
             "putById": null,
             "respDef": null,
-            "tag": "UserRole"
+            "tag": "UserRole",
+            "x-codegen-permission": null
         },
         {
             "Description": null,
@@ -1063,7 +1133,8 @@
             "post": null,
             "putById": null,
             "respDef": null,
-            "tag": "UserRole"
+            "tag": "UserRole",
+            "x-codegen-permission": "ADMIN"
         }
     ]
 }
