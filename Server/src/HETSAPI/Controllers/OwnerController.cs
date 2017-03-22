@@ -177,16 +177,34 @@ namespace HETSAPI.Controllers
         /// <summary>
         /// 
         /// </summary>
-        /// <remarks>Returns the next Equipment Code for the given Owner.  Equipment Code is a combination of the Owner Equipment Prefix and the numeric identifier for the next piece of equipment.</remarks>
-        /// <param name="id">id of Owner to fetch the Equipment Code for</param>
+        /// <remarks>Returns History for a particular Owner</remarks>
+        /// <param name="id">id of Owner to fetch History for</param>
+        /// <param name="offset">offset for records that are returned</param>
+        /// <param name="limit">limits the number of records returned.</param>
         /// <response code="200">OK</response>
         [HttpGet]
-        [Route("/api/owners/{id}/nextEquipmentCode")]
-        [SwaggerOperation("OwnersIdNextEquipmentCodeGet")]
-        [SwaggerResponse(200, type: typeof(EquipmentCodeViewModel))]
-        public virtual IActionResult OwnersIdNextEquipmentCodeGet([FromRoute]int id)
+        [Route("/api/owners/{id}/history")]
+        [SwaggerOperation("OwnersIdHistoryGet")]
+        [SwaggerResponse(200, type: typeof(List<HistoryViewModel>))]
+        public virtual IActionResult OwnersIdHistoryGet([FromRoute]int id, [FromQuery]int? offset, [FromQuery]int? limit)
         {
-            return this._service.OwnersIdNextEquipmentCodeGetAsync(id);
+            return this._service.OwnersIdHistoryGetAsync(id, offset, limit);
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <remarks>Add a History record to the Owner</remarks>
+        /// <param name="id">id of Owner to add History for</param>
+        /// <param name="item"></param>
+        /// <response code="201">History created</response>
+        [HttpPost]
+        [Route("/api/owners/{id}/history")]
+        [SwaggerOperation("OwnersIdHistoryPost")]
+        [SwaggerResponse(200, type: typeof(History))]
+        public virtual IActionResult OwnersIdHistoryPost([FromRoute]int id, [FromBody]History item)
+        {
+            return this._service.OwnersIdHistoryPostAsync(id, item);
         }
 
         /// <summary>

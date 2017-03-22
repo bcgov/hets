@@ -99,6 +99,39 @@ namespace HETSAPI.Controllers
         /// <summary>
         /// 
         /// </summary>
+        /// <remarks>Returns History for a particular RentalRequest</remarks>
+        /// <param name="id">id of RentalRequest to fetch History for</param>
+        /// <param name="offset">offset for records that are returned</param>
+        /// <param name="limit">limits the number of records returned.</param>
+        /// <response code="200">OK</response>
+        [HttpGet]
+        [Route("/api/rentalrequests/{id}/history")]
+        [SwaggerOperation("RentalrequestsIdHistoryGet")]
+        [SwaggerResponse(200, type: typeof(List<HistoryViewModel>))]
+        public virtual IActionResult RentalrequestsIdHistoryGet([FromRoute]int id, [FromQuery]int? offset, [FromQuery]int? limit)
+        {
+            return this._service.RentalrequestsIdHistoryGetAsync(id, offset, limit);
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <remarks>Add a History record to the RentalRequest</remarks>
+        /// <param name="id">id of RentalRequest to add History for</param>
+        /// <param name="item"></param>
+        /// <response code="201">History created</response>
+        [HttpPost]
+        [Route("/api/rentalrequests/{id}/history")]
+        [SwaggerOperation("RentalrequestsIdHistoryPost")]
+        [SwaggerResponse(200, type: typeof(History))]
+        public virtual IActionResult RentalrequestsIdHistoryPost([FromRoute]int id, [FromBody]History item)
+        {
+            return this._service.RentalrequestsIdHistoryPostAsync(id, item);
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
         /// <param name="id">id of RentalRequest to fetch</param>
         /// <param name="item"></param>
         /// <response code="200">OK</response>

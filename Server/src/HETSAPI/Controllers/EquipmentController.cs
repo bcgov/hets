@@ -113,6 +113,39 @@ namespace HETSAPI.Controllers
         /// <summary>
         /// 
         /// </summary>
+        /// <remarks>Returns History for a particular Equipment</remarks>
+        /// <param name="id">id of Equipment to fetch History for</param>
+        /// <param name="offset">offset for records that are returned</param>
+        /// <param name="limit">limits the number of records returned.</param>
+        /// <response code="200">OK</response>
+        [HttpGet]
+        [Route("/api/equipment/{id}/history")]
+        [SwaggerOperation("EquipmentIdHistoryGet")]
+        [SwaggerResponse(200, type: typeof(List<HistoryViewModel>))]
+        public virtual IActionResult EquipmentIdHistoryGet([FromRoute]int id, [FromQuery]int? offset, [FromQuery]int? limit)
+        {
+            return this._service.EquipmentIdHistoryGetAsync(id, offset, limit);
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <remarks>Add a History record to the Equipment</remarks>
+        /// <param name="id">id of Equipment to add History for</param>
+        /// <param name="item"></param>
+        /// <response code="201">History created</response>
+        [HttpPost]
+        [Route("/api/equipment/{id}/history")]
+        [SwaggerOperation("EquipmentIdHistoryPost")]
+        [SwaggerResponse(200, type: typeof(History))]
+        public virtual IActionResult EquipmentIdHistoryPost([FromRoute]int id, [FromBody]History item)
+        {
+            return this._service.EquipmentIdHistoryPostAsync(id, item);
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
         /// <param name="id">id of Equipment to fetch</param>
         /// <param name="item"></param>
         /// <response code="200">OK</response>

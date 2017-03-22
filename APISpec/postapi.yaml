@@ -74,6 +74,69 @@
             type: array
             items:
               $ref: "#/definitions/EquipmentAttachment"
+  /equipment/{id}/history:
+    get:
+      description: Returns History for a particular Equipment
+      tags:
+        - Equipment
+      produces:
+        - text/plain
+        - application/json
+        - text/json
+      responses:
+        '200':
+          description: OK
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/HistoryViewModel'
+      parameters:
+        - name: id
+          in: path
+          description: id of Equipment to fetch History for
+          required: true
+          type: integer
+        - name: offset
+          in: query
+          description: offset for records that are returned 
+          required: false
+          type: integer
+        - name: limit
+          in: query
+          description: limits the number of records returned.  
+          required: false
+          type: integer
+    post:
+      description: Add a History record to the Equipment
+      tags:
+        - Equipment
+      produces:
+        - text/plain
+        - application/json
+        - text/json
+      responses:
+        '200': OK
+      parameters:
+        - name: id
+          in: path
+          description: id of Equipment to add History for
+          required: true
+          type: integer
+        - name: item
+          in: body
+          required: true
+          schema:
+            $ref: "#/definitions/History"
+      responses:
+        201:
+          description: History created
+          headers:
+            Location:
+              description: A link to the History
+              type: string
+              format: url
+          schema:
+            $ref: "#/definitions/History" 
   /equipment/{id}/view:
     get:
       tags:
@@ -277,27 +340,132 @@
             type: array
             items:
               $ref: "#/definitions/Equipment"
-  /owners/{id}/nextEquipmentCode:
+  /owners/{id}/history:
     get:
+      description: Returns History for a particular Owner
       tags:
         - Owner
-      description: Returns the next Equipment Code for the given Owner.  Equipment Code is a combination of the Owner Equipment Prefix and the numeric identifier for the next piece of equipment.      
-      consumes: []
       produces:
         - text/plain
         - application/json
         - text/json
+      responses:
+        '200':
+          description: OK
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/HistoryViewModel'
       parameters:
         - name: id
           in: path
-          description: id of Owner to fetch the Equipment Code for
+          description: id of Owner to fetch History for
           required: true
           type: integer
+        - name: offset
+          in: query
+          description: offset for records that are returned 
+          required: false
+          type: integer
+        - name: limit
+          in: query
+          description: limits the number of records returned.  
+          required: false
+          type: integer
+    post:
+      description: Add a History record to the Owner
+      tags:
+        - Owner
+      produces:
+        - text/plain
+        - application/json
+        - text/json
       responses:
-        200:
+        '200': OK
+      parameters:
+        - name: id
+          in: path
+          description: id of Owner to add History for
+          required: true
+          type: integer
+        - name: item
+          in: body
+          required: true
+          schema:
+            $ref: "#/definitions/History"
+      responses:
+        201:
+          description: History created
+          headers:
+            Location:
+              description: A link to the History
+              type: string
+              format: url
+          schema:
+            $ref: "#/definitions/History" 
+  /projects/{id}/history:
+    get:
+      description: Returns History for a particular Project
+      tags:
+        - Project
+      produces:
+        - text/plain
+        - application/json
+        - text/json
+      responses:
+        '200':
           description: OK
           schema:
-            $ref: "#/definitions/EquipmentCodeViewModel"
+            type: array
+            items:
+              $ref: '#/definitions/HistoryViewModel'
+      parameters:
+        - name: id
+          in: path
+          description: id of Project to fetch History for
+          required: true
+          type: integer
+        - name: offset
+          in: query
+          description: offset for records that are returned 
+          required: false
+          type: integer
+        - name: limit
+          in: query
+          description: limits the number of records returned.  
+          required: false
+          type: integer
+    post:
+      description: Add a History record to the Project
+      tags:
+        - Project
+      produces:
+        - text/plain
+        - application/json
+        - text/json
+      responses:
+        '200': OK
+      parameters:
+        - name: id
+          in: path
+          description: id of Project to fetch History for
+          required: true
+          type: integer
+        - name: item
+          in: body
+          required: true
+          schema:
+            $ref: "#/definitions/History"
+      responses:
+        201:
+          description: History created
+          headers:
+            Location:
+              description: A link to the History
+              type: string
+              format: url
+          schema:
+            $ref: "#/definitions/History" 
   /projects/search:
     get:
       summary: Searches Projects
@@ -505,6 +673,69 @@
               $ref: "#/definitions/PermissionViewModel"
         404:
           description: Role not found
+  /rentalrequests/{id}/history:
+    get:
+      description: Returns History for a particular RentalRequest
+      tags:
+        - RentalRequest
+      produces:
+        - text/plain
+        - application/json
+        - text/json
+      responses:
+        '200':
+          description: OK
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/HistoryViewModel'
+      parameters:
+        - name: id
+          in: path
+          description: id of RentalRequest to fetch History for
+          required: true
+          type: integer
+        - name: offset
+          in: query
+          description: offset for records that are returned 
+          required: false
+          type: integer
+        - name: limit
+          in: query
+          description: limits the number of records returned.  
+          required: false
+          type: integer
+    post:
+      description: Add a History record to the RentalRequest
+      tags:
+        - RentalRequest
+      produces:
+        - text/plain
+        - application/json
+        - text/json
+      responses:
+        '200': OK
+      parameters:
+        - name: id
+          in: path
+          description: id of RentalRequest to add History for
+          required: true
+          type: integer
+        - name: item
+          in: body
+          required: true
+          schema:
+            $ref: "#/definitions/History"
+      responses:
+        201:
+          description: History created
+          headers:
+            Location:
+              description: A link to the History
+              type: string
+              format: url
+          schema:
+            $ref: "#/definitions/History" 
   /rentalrequests/search:
     get:
       summary: Searches RentalRequests

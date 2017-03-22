@@ -7,6 +7,9 @@ using HETSAPI.ViewModels;
 
 namespace HETSAPI.Mappings
 {
+    /// <summary>
+    /// Mappoing Extensions used to convert from Models to ViewModels
+    /// </summary>
     public static class MappingExtensions
     {
 
@@ -33,6 +36,11 @@ namespace HETSAPI.Mappings
             return dto;
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="model"></param>
+        /// <returns></returns>
         public static RentalRequestSearchResultViewModel ToViewModel(this RentalRequest model)
         {
             var dto = new RentalRequestSearchResultViewModel();
@@ -252,6 +260,26 @@ namespace HETSAPI.Mappings
                 dto.Description = model.Description;
                 dto.Name = model.Name;
                 dto.Id = model.Id;
+            }
+            return dto;
+        }
+
+        /// <summary>
+        /// Converts a History record to a view model
+        /// </summary>
+        /// <param name="model"></param>
+        /// <param name="AffectedEntityId"></param>
+        /// <returns></returns>
+        public static HistoryViewModel ToViewModel(this History model, int AffectedEntityId)
+        {
+            HistoryViewModel dto = new HistoryViewModel();
+            dto.AffectedEntityId = AffectedEntityId;
+            if (model != null)
+            {
+                dto.HistoryText = model.HistoryText;
+                dto.Id = model.Id;
+                dto.LastUpdateTimestamp = model.LastUpdateTimestamp;
+                dto.LastUpdateUserid = model.LastUpdateUserid;
             }
             return dto;
         }

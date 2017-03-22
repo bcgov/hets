@@ -87,6 +87,25 @@ namespace HETSAPI.Services
         /// <summary>
         /// 
         /// </summary>
+        /// <remarks>Returns History for a particular Project</remarks>
+        /// <param name="id">id of Project to fetch History for</param>
+        /// <param name="offset">offset for records that are returned</param>
+        /// <param name="limit">limits the number of records returned.</param>
+        /// <response code="200">OK</response>
+        IActionResult ProjectsIdHistoryGetAsync(int id, int? offset, int? limit);
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <remarks>Add a History record to the Project</remarks>
+        /// <param name="id">id of Project to fetch History for</param>
+        /// <param name="item"></param>
+        /// <response code="201">History created</response>
+        IActionResult ProjectsIdHistoryPostAsync(int id, History item);
+
+        /// <summary>
+        /// 
+        /// </summary>
         /// <param name="id">id of Project to fetch</param>
         /// <param name="item"></param>
         /// <response code="200">OK</response>
