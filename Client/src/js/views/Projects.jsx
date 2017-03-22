@@ -126,12 +126,12 @@ var Projects = React.createClass({
   closeAddDialog() {
     this.setState({ showAddDialog: false });
   },
-  
+
   saveNewProject(project) {
     Api.addProject(project).then(() => {
       // Open it up
       this.props.router.push({
-        pathname: `${ Constant.PROJECT_PATHNAME }/${ this.props.project.id }`,
+        pathname: `${ Constant.PROJECTS_PATHNAME }/${ this.props.project.id }`,
       });
     });
   },
@@ -143,7 +143,7 @@ var Projects = React.createClass({
   print() {
 
   },
-  
+
   render() {
     var localAreas = _.sortBy(this.props.localAreas, 'name');
     var numProjects = this.state.loading ? '...' : Object.keys(this.props.projects).length;
@@ -218,7 +218,7 @@ var Projects = React.createClass({
                 <td style={{ textAlign: 'center' }}>{ project.status }</td>
                 <td style={{ textAlign: 'right' }}>
                   <ButtonGroup>
-                    <EditButton name="Project" hide={ !project.canView } view pathname={ `${ Constant.PROJECT_PATHNAME }/${ project.id }` }/>
+                    <EditButton name="Project" hide={ !project.canView } view pathname={ `${ Constant.PROJECTS_PATHNAME }/${ project.id }` }/>
                   </ButtonGroup>
                 </td>
               </tr>;

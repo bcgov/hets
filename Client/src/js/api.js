@@ -3,11 +3,16 @@ import * as Constant from './constants';
 import store from './store';
 
 import { ApiRequest } from './utils/http';
-import { lastFirstName, firstLastName, concat } from './utils/string';
+import { lastFirstName, firstLastName, concat, formatPhoneNumber } from './utils/string';
 import { daysAgo, sortableDateTime } from './utils/date';
 
 import _ from 'lodash';
 import Moment from 'moment';
+
+
+function normalize(response) {
+  return _.fromPairs(response.map(object => [ object.id, object ]));
+}
 
 ////////////////////
 // Users
@@ -41,6 +46,9 @@ function parseUser(user) {
     userRole.expiryDateSort = sortableDateTime(user.expiryDate);
   });
 
+  user.path = `${ Constant.USERS_PATHNAME }/${ user.id }`;
+  user.url = `#/${ user.path }`;
+
   user.canEdit = true;
   user.canDelete = true;
 }
@@ -58,8 +66,7 @@ export function getCurrentUser() {
 
 export function searchUsers(params) {
   return new ApiRequest('/users/search').get(params).then(response => {
-    // Normalize the response
-    var users = _.fromPairs(response.map(user => [ user.id, user ]));
+    var users = normalize(response);
 
     // Add display fields
     _.map(users, user => { parseUser(user); });
@@ -70,8 +77,7 @@ export function searchUsers(params) {
 
 export function getUsers() {
   return new ApiRequest('/users').get().then(response => {
-    // Normalize the response
-    var users = _.fromPairs(response.map(user => [ user.id, user ]));
+    var users = normalize(response);
 
     // Add display fields
     _.map(users, user => { parseUser(user); });
@@ -150,14 +156,16 @@ export function updateUserRoles(userId, userRoleArray) {
 ////////////////////
 
 function parseRole(role) {
+  role.path = `${ Constant.ROLES_PATHNAME }/${ role.id }`;
+  role.url = `#/${ role.path }`;
+
   role.canEdit = true;
   role.canDelete = false;
 }
 
 export function searchRoles(params) {
   return new ApiRequest('/roles').get(params).then(response => {
-    // Normalize the response
-    var roles = _.fromPairs(response.map(role => [ role.id, role ]));
+    var roles = normalize(response);
 
     // Add display fields
     _.map(roles, role => { parseRole(role); });
@@ -212,7 +220,7 @@ export function deleteRole(role) {
 
 export function getRolePermissions(roleId) {
   return new ApiRequest(`/roles/${ roleId }/permissions`).get().then(response => {
-    var permissions = _.fromPairs(response.map(permission => [ permission.id, permission ]));
+    var permissions = normalize(response);
 
     store.dispatch({ type: Action.UPDATE_ROLE_PERMISSIONS, rolePermissions: permissions });
   });
@@ -231,8 +239,7 @@ export function updateRolePermissions(roleId, permissionsArray) {
 
 export function getFavourites(type) {
   return new ApiRequest(`/users/current/favourites/${ type }`).get().then(response => {
-    // Normalize the response
-    var favourites = _.fromPairs(response.map(favourite => [ favourite.id, favourite ]));
+    var favourites = normalize(response);
 
     store.dispatch({ type: Action.UPDATE_FAVOURITES, favourites: favourites });
   });
@@ -333,6 +340,9 @@ function parseEquipment(equipment) {
   // TODO Descriptive text for time entries. Needs to be added to backend
   equipment.currentWorkDescription = equipment.currentWorkDescription || '' ;
 
+  equipment.path = `${ Constant.EQUIPMENT_PATHNAME }/${ equipment.id }`;
+  equipment.url = `#/${ equipment.path }`;
+
   equipment.canView = true;
   equipment.canEdit = true;
   equipment.canDelete = false; // TODO Needs input from Business whether this is needed.
@@ -340,8 +350,7 @@ function parseEquipment(equipment) {
 
 export function searchEquipmentList(params) {
   return new ApiRequest('/equipment/search').get(params).then(response => {
-    // Normalize the response
-    var equipmentList = _.fromPairs(response.map(equip => [ equip.id, equip ]));
+    var equipmentList = normalize(response);
 
     // Add display fields
     _.map(equipmentList, equip => { parseEquipment(equip); });
@@ -352,8 +361,7 @@ export function searchEquipmentList(params) {
 
 export function getEquipmentList() {
   return new ApiRequest('/equipment').get().then(response => {
-    // Normalize the response
-    var equipmentList = _.fromPairs(response.map(equip => [ equip.id, equip ]));
+    var equipmentList = normalize(response);
 
     // Add display fields
     _.map(equipmentList, equip => { parseEquipment(equip); });
@@ -460,8 +468,13 @@ function parseOwner(owner) {
   if (!owner.contacts) { owner.contacts = []; }
   if (!owner.equipmentList) { owner.equipmentList = []; }
 
+  owner.path = `${ Constant.OWNERS_PATHNAME }/${ owner.id }`;
+  owner.url = `#/${ owner.path }`;
+
   // Add display fields for owner contacts
-  _.map(owner.contacts, contact => { parseContact(contact); });
+  owner.contacts = normalize(owner.contacts);
+  _.map(owner.contacts, contact => { parseContact(contact, owner.path, owner.primaryContact ? owner.primaryContact.id : 0); });
+
   _.map(owner.equipmentList, equipment => { parseEquipment(equipment); });
 
   // TODO Owner status needs to be populated in sample data. Setting to Approved for the time being...
@@ -492,8 +505,7 @@ function parseOwner(owner) {
 
 export function searchOwners(params) {
   return new ApiRequest('/owners/search').get(params).then(response => {
-    // Normalize the response
-    var owners = _.fromPairs(response.map(owner => [ owner.id, owner ]));
+    var owners = normalize(response);
 
     // Add display fields
     _.map(owners, owner => { parseOwner(owner); });
@@ -515,8 +527,7 @@ export function getOwner(ownerId) {
 
 export function getOwners() {
   return new ApiRequest('/owners').get().then(response => {
-    // Normalize the response
-    var owners = _.fromPairs(response.map(owner => [ owner.id, owner ]));
+    var owners = normalize(response);
 
     // Add display fields
     _.map(owners, owner => { parseOwner(owner); });
@@ -558,6 +569,17 @@ export function deleteOwner(owner) {
   });
 }
 
+export function addOwnerContact(contact, ownerId) {
+  return new ApiRequest(`/owners/${ ownerId }/contacts`).post(contact).then(response => {
+    var contact = response;
+
+    // Add display fields
+    parseContact(contact);
+
+    store.dispatch({ type: Action.ADD_CONTACT, contact: contact });
+  });
+}
+
 export function updateOwnerEquipment(owner, equipmentArray) {
   return new ApiRequest(`/owners/${ owner.id }/equipment`).put(equipmentArray).then(() => {
     // After updating the owner's equipment, refresh the owner state.
@@ -569,12 +591,74 @@ export function updateOwnerEquipment(owner, equipmentArray) {
 // Contacts
 ////////////////////
 
-function parseContact(contact) {
+function parseContact(contact, parentPath, primaryContactId) {
   contact.name = firstLastName(contact.givenName, contact.surname);
+  contact.phone = contact.workPhoneNumber ?
+    `${ formatPhoneNumber(contact.workPhoneNumber) } (w)` :
+    (contact.mobilePhoneNumber ? `${ formatPhoneNumber(contact.mobilePhoneNumber) } (c)` : '');
 
-  // TODO
+  contact.isPrimary = contact.id === primaryContactId;
+
+  contact.path = parentPath ? `${ parentPath }/${ Constant.CONTACTS_PATHNAME }/${ contact.id }` : null;
+  contact.url = contact.path ? `#/${ contact.path }` : null;
+
   contact.canEdit = true;
   contact.canDelete = true;
+}
+
+export function getContacts() {
+  return new ApiRequest('/contacts').get().then(response => {
+    var contacts = normalize(response);
+
+    // Add display fields
+    _.map(contacts, contact => { parseContact(contact); });
+
+    store.dispatch({ type: Action.UPDATE_CONTACTS, contacts: contacts });
+  });
+}
+
+export function getContact(contactId) {
+  return new ApiRequest(`/contacts/${ contactId }`).get().then(response => {
+    var contact = response;
+
+    // Add display fields
+    parseContact(contact);
+
+    store.dispatch({ type: Action.UPDATE_CONTACT, contact: contact });
+  });
+}
+
+export function addContact(contact) {
+  return new ApiRequest('/contacts').post(contact).then(response => {
+    var contact = response;
+
+    // Add display fields
+    parseContact(contact);
+
+    store.dispatch({ type: Action.ADD_CONTACT, contact: contact });
+  });
+}
+
+export function updateContact(contact) {
+  return new ApiRequest(`/contacts/${ contact.id }`).put(contact).then(response => {
+    var contact = response;
+
+    // Add display fields
+    parseContact(contact);
+
+    store.dispatch({ type: Action.UPDATE_CONTACT, contact: contact });
+  });
+}
+
+export function deleteContact(contact) {
+  return new ApiRequest(`/contacts/${ contact.id }/delete`).post().then(response => {
+    var contact = response;
+
+    // Add display fields
+    parseContact(contact);
+
+    store.dispatch({ type: Action.DELETE_CONTACT, contact: contact });
+  });
 }
 
 ////////////////////
@@ -590,8 +674,11 @@ function parseProject(project) {
   if (!project.rentalRequests) { project.rentalRequests = []; }
   if (!project.rentalAgreements) { project.rentalAgreements = []; }  // TODO Server needs to send this (HETS-153)
 
+  project.path = `${ Constant.PROJECTS_PATHNAME }/${ project.id }`;
+  project.url = `#/${ project.path }`;
+
   // Add display fields for contacts
-  _.map(project.contacts, contact => { parseContact(contact); });
+  _.map(project.contacts, contact => { parseContact(contact, project.path, project.primaryContact ? project.primaryContact.id : 0); });
 
   // Add display fields for rental requests and rental agreements
   _.map(project.rentalRequests, obj => { parseRentalRequest(obj); });
@@ -621,8 +708,7 @@ function parseProject(project) {
 
 export function searchProjects(params) {
   return new ApiRequest('/projects/search').get(params).then(response => {
-    // Normalize the response
-    var projects = _.fromPairs(response.map(project => [ project.id, project ]));
+    var projects = normalize(response);
 
     // Add display fields
     _.map(projects, project => { parseProject(project); });
@@ -633,8 +719,7 @@ export function searchProjects(params) {
 
 export function getProjects() {
   return new ApiRequest('/projects').get().then(response => {
-    // Normalize the response
-    var projects = _.fromPairs(response.map(project => [ project.id, project ]));
+    var projects = normalize(response);
 
     // Add display fields
     _.map(projects, project => { parseProject(project); });
@@ -725,6 +810,9 @@ function parseRentalRequest(request) {
   // Rental requests and rentals are merged and shown in a single list on Project Details screen
   request.isRentalRequest = true;
 
+  request.path = `${ Constant.RENTAL_REQUESTS_PATHNAME }/${ request.id }`;
+  request.url = `#/${ request.path }`;
+
   request.canView = true;
   request.canEdit = true;
   request.canDelete = false; // TODO Needs input from Business whether this is needed.
@@ -732,8 +820,7 @@ function parseRentalRequest(request) {
 
 export function searchRentalRequests(params) {
   return new ApiRequest('/rentalrequests/search').get(params).then(response => {
-    // Normalize the response
-    var rentalRequests = _.fromPairs(response.map(req => [ req.id, req ]));
+    var rentalRequests = normalize(response);
 
     // Add display fields
     _.map(rentalRequests, req => { parseRentalRequest(req); });
@@ -867,8 +954,7 @@ function parseRentalAgreement(agreement) {
 
 export function getCities() {
   return new ApiRequest('/cities').get().then(response => {
-    // Normalize the response
-    var cities = _.fromPairs(response.map(city => [ city.id, city ]));
+    var cities = normalize(response);
 
     store.dispatch({ type: Action.UPDATE_CITIES_LOOKUP, cities: cities });
   });
@@ -876,8 +962,7 @@ export function getCities() {
 
 export function getDistricts() {
   return new ApiRequest('/districts').get().then(response => {
-    // Normalize the response
-    var districts = _.fromPairs(response.map(district => [ district.id, district ]));
+    var districts = normalize(response);
 
     store.dispatch({ type: Action.UPDATE_DISTRICTS_LOOKUP, districts: districts });
   });
@@ -885,8 +970,7 @@ export function getDistricts() {
 
 export function getRegions() {
   return new ApiRequest('/regions').get().then(response => {
-    // Normalize the response
-    var regions = _.fromPairs(response.map(region => [ region.id, region ]));
+    var regions = normalize(response);
 
     store.dispatch({ type: Action.UPDATE_REGIONS_LOOKUP, regions: regions });
   });
@@ -894,8 +978,7 @@ export function getRegions() {
 
 export function getLocalAreas() {
   return new ApiRequest('/localareas').get().then(response => {
-    // Normalize the response
-    var localAreas = _.fromPairs(response.map(area => [ area.id, area ]));
+    var localAreas = normalize(response);
 
     store.dispatch({ type: Action.UPDATE_LOCAL_AREAS_LOOKUP, localAreas: localAreas });
   });
@@ -903,8 +986,7 @@ export function getLocalAreas() {
 
 export function getServiceAreas() {
   return new ApiRequest('/serviceareas').get().then(response => {
-    // Normalize the response
-    var serviceAreas = _.fromPairs(response.map(serviceArea => [ serviceArea.id, serviceArea ]));
+    var serviceAreas = normalize(response);
 
     store.dispatch({ type: Action.UPDATE_SERVICE_AREAS_LOOKUP, serviceAreas: serviceAreas });
   });
@@ -912,8 +994,7 @@ export function getServiceAreas() {
 
 export function getEquipmentTypes() {
   return new ApiRequest('/equipmenttypes').get().then(response => {
-    // Normalize the response
-    var equipmentTypes = _.fromPairs(response.map(equipType => [ equipType.id, equipType ]));
+    var equipmentTypes = normalize(response);
 
     store.dispatch({ type: Action.UPDATE_EQUIPMENT_TYPES_LOOKUP, equipmentTypes: equipmentTypes });
   });
@@ -921,8 +1002,7 @@ export function getEquipmentTypes() {
 
 export function getGroups() {
   return new ApiRequest('/groups').get().then(response => {
-    // Normalize the response
-    var groups = _.fromPairs(response.map(group => [ group.id, group ]));
+    var groups = normalize(response);
 
     store.dispatch({ type: Action.UPDATE_GROUPS_LOOKUP, groups: groups });
   });
@@ -930,8 +1010,7 @@ export function getGroups() {
 
 export function getRoles() {
   return new ApiRequest('/roles').get().then(response => {
-    // Normalize the response
-    var roles = _.fromPairs(response.map(role => [ role.id, role ]));
+    var roles = normalize(response);
 
     store.dispatch({ type: Action.UPDATE_ROLES_LOOKUP, roles: roles });
   });
@@ -939,8 +1018,7 @@ export function getRoles() {
 
 export function getPermissions() {
   return new ApiRequest('/permissions').get().then(response => {
-    // Normalize the response
-    var permissions = _.fromPairs(response.map(permission => [ permission.id, permission ]));
+    var permissions = normalize(response);
 
     store.dispatch({ type: Action.UPDATE_PERMISSIONS_LOOKUP, permissions: permissions });
   });
