@@ -516,18 +516,10 @@ namespace HETSAPI.Test
             owner = JsonConvert.DeserializeObject<Owner>(jsonString);
             // get the id
             var owner_id = owner.Id;
-
             
 
-            // now get the equipment list.
-            request = new HttpRequestMessage(HttpMethod.Get, "/api/owners/" + owner_id + "/nextEquipmentCode");
-            response = await _client.SendAsync(request);
-            response.EnsureSuccessStatusCode();
-
-            jsonString = await response.Content.ReadAsStringAsync();
-            EquipmentCodeViewModel equipmentCode = JsonConvert.DeserializeObject<EquipmentCodeViewModel>(jsonString);
-
-            Assert.Equal(equipmentCode.EquipmentCode, "TST-0001");
+            // This test will be enabled when the new workflow for equipment code is implemented
+            // Assert.Equal(equipmentCode.EquipmentCode, "TST-0001");
             
             // delete owner
             request = new HttpRequestMessage(HttpMethod.Post, "/api/owners/" + owner_id + "/delete");
