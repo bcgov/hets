@@ -180,7 +180,8 @@ namespace SchoolBusAPI.Services.Impl
             var result = _context.RentalAgreements                                
                 .Include(x => x.Equipment).ThenInclude(y => y.Owner)
                 .Include(x => x.Equipment).ThenInclude(y => y.EquipmentAttachments)
-                .Include(x => x.Project)
+                .Include(x => x.Equipment).ThenInclude(y => y.LocalArea.ServiceArea.District.Region)
+                .Include(x => x.Project).ThenInclude (p => p.District.Region)
                 .Include(x => x.RentalAgreementConditions)
                 .Include(x => x.RentalAgreementRates)
                 .Include(x => x.TimeRecords)
@@ -229,7 +230,8 @@ namespace SchoolBusAPI.Services.Impl
                 var result = _context.RentalAgreements
                     .Include(x => x.Equipment).ThenInclude(y => y.Owner)
                     .Include(x => x.Equipment).ThenInclude(y => y.EquipmentAttachments)
-                    .Include(x => x.Project)
+                    .Include(x => x.Equipment).ThenInclude(y => y.LocalArea.ServiceArea.District.Region)
+                    .Include(x => x.Project).ThenInclude(p => p.District.Region)
                     .Include(x => x.RentalAgreementConditions)
                     .Include(x => x.RentalAgreementRates)
                     .Include(x => x.TimeRecords)
