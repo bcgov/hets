@@ -41,86 +41,89 @@ namespace HETSAPI.Services.Impl
 
         private void AdjustRecord(Owner item)
         {
-            // Adjust the record to allow it to be updated / inserted
-            if (item.LocalArea != null)
+            if (item != null)
             {
-                int localarea_id = item.LocalArea.Id;
-                bool localarea_exists = _context.LocalAreas.Any(a => a.Id == localarea_id);
-                if (localarea_exists)
+                // Adjust the record to allow it to be updated / inserted
+                if (item.LocalArea != null)
                 {
-                    LocalArea localarea = _context.LocalAreas.First(a => a.Id == localarea_id);
-                    item.LocalArea = localarea;
-                }
-                else
-                {
-                    item.LocalArea = null;
-                }
-            }
-
-            // Adjust the owner contacts.            
-            if (item.Contacts != null)
-            {
-                for (int i = 0; i < item.Contacts.Count; i++)
-                {
-                    Contact contact = item.Contacts[i];
-                    if (contact != null)
+                    int localarea_id = item.LocalArea.Id;
+                    bool localarea_exists = _context.LocalAreas.Any(a => a.Id == localarea_id);
+                    if (localarea_exists)
                     {
-                        int contact_id = contact.Id;
-                        bool contact_exists = _context.Contacts.Any(a => a.Id == contact_id);
-                        if (contact_exists)
+                        LocalArea localarea = _context.LocalAreas.First(a => a.Id == localarea_id);
+                        item.LocalArea = localarea;
+                    }
+                    else
+                    {
+                        item.LocalArea = null;
+                    }
+                }
+
+                // Adjust the owner contacts.            
+                if (item.Contacts != null)
+                {
+                    for (int i = 0; i < item.Contacts.Count; i++)
+                    {
+                        Contact contact = item.Contacts[i];
+                        if (contact != null)
                         {
-                            contact = _context.Contacts.First(a => a.Id == contact_id);
-                            item.Contacts[i] = contact;
-                        }
-                        else
-                        {
-                            item.Contacts[i] = null;
+                            int contact_id = contact.Id;
+                            bool contact_exists = _context.Contacts.Any(a => a.Id == contact_id);
+                            if (contact_exists)
+                            {
+                                contact = _context.Contacts.First(a => a.Id == contact_id);
+                                item.Contacts[i] = contact;
+                            }
+                            else
+                            {
+                                item.Contacts[i] = null;
+                            }
                         }
                     }
                 }
-            }            
 
-            if (item.PrimaryContact != null)
-            {
-                int primaryContact_id = item.PrimaryContact.Id;
-                bool primaryContact_exists = _context.Contacts.Any(a => a.Id == primaryContact_id);
-                if (primaryContact_exists)
+                if (item.PrimaryContact != null)
                 {
-                    item.PrimaryContact = _context.Contacts.First(a => a.Id == primaryContact_id);                         
-                }
-                else
-                {
-                    item.PrimaryContact = null;
-                }               
-            }
-
-            // Adjust the equipment list.            
-            if (item.EquipmentList != null)
-            {
-                for (int i = 0; i < item.EquipmentList.Count; i++)
-                {
-                    Equipment equipment = item.EquipmentList[i];
-                    if (equipment != null)
+                    int primaryContact_id = item.PrimaryContact.Id;
+                    bool primaryContact_exists = _context.Contacts.Any(a => a.Id == primaryContact_id);
+                    if (primaryContact_exists)
                     {
-                        int equipment_id = equipment.Id;
-                        bool equipment_exists = _context.Equipments.Any(a => a.Id == equipment_id);
-                        if (equipment_exists)
+                        item.PrimaryContact = _context.Contacts.First(a => a.Id == primaryContact_id);
+                    }
+                    else
+                    {
+                        item.PrimaryContact = null;
+                    }
+                }
+
+                // Adjust the equipment list.            
+                if (item.EquipmentList != null)
+                {
+                    for (int i = 0; i < item.EquipmentList.Count; i++)
+                    {
+                        Equipment equipment = item.EquipmentList[i];
+                        if (equipment != null)
                         {
-                            equipment = _context.Equipments
-                                .Include(x => x.LocalArea.ServiceArea.District.Region)
-                                .Include(x => x.DistrictEquipmentType)
-                                .Include(x => x.DumpTruck)
-                                .Include(x => x.Owner)
-                                .Include(x => x.EquipmentAttachments)
-                                .Include(x => x.Notes)
-                                .Include(x => x.Attachments)
-                                .Include(x => x.History)
-                                .First(a => a.Id == equipment_id);
-                            item.EquipmentList[i] = equipment;
-                        }
-                        else
-                        {
-                            item.EquipmentList[i] = null;
+                            int equipment_id = equipment.Id;
+                            bool equipment_exists = _context.Equipments.Any(a => a.Id == equipment_id);
+                            if (equipment_exists)
+                            {
+                                equipment = _context.Equipments
+                                    .Include(x => x.LocalArea.ServiceArea.District.Region)
+                                    .Include(x => x.DistrictEquipmentType)
+                                    .Include(x => x.DumpTruck)
+                                    .Include(x => x.Owner)
+                                    .Include(x => x.EquipmentAttachments)
+                                    .Include(x => x.Notes)
+                                    .Include(x => x.Attachments)
+                                    .Include(x => x.History)
+                                    .First(a => a.Id == equipment_id);
+                                item.EquipmentList[i] = equipment;
+                            }
+                            else
+                            {
+                                item.EquipmentList[i] = null;
+                            }
                         }
                     }
                 }
@@ -562,15 +565,23 @@ namespace HETSAPI.Services.Impl
         /// <response code="404">Owner not found</response>
         public virtual IActionResult OwnersIdPutAsync(int id, Owner item)
         {
-            AdjustRecord(item);
-
-            var exists = _context.Owners.Any(a => a.Id == id);
-            if (exists && id == item.Id)
+            if (item != null)
             {
-                _context.Owners.Update(item);
-                // Save the changes
-                _context.SaveChanges();
-                return new ObjectResult(item);
+                AdjustRecord(item);
+
+                var exists = _context.Owners.Any(a => a.Id == id);
+                if (exists && id == item.Id)
+                {
+                    _context.Owners.Update(item);
+                    // Save the changes
+                    _context.SaveChanges();
+                    return new ObjectResult(item);
+                }
+                else
+                {
+                    // record not found
+                    return new StatusCodeResult(404);
+                }
             }
             else
             {
