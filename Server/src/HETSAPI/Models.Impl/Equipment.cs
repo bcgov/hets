@@ -90,6 +90,29 @@ namespace HETSAPI.Models
             this.YearsOfService = (float)yearDifference + remainder;
                        
         }
+
+        /// <summary>
+        /// Determine if a Seniority Audit Record is required
+        /// </summary>
+        /// <param name="changed"></param>
+        /// <returns>True if the changed record differes from this one</returns>
+        public bool IsSeniorityAuditRequired( Equipment changed)            
+        {
+            bool result = false;
+            if ( (this.Seniority != changed.Seniority)
+                || (this.LocalArea != changed.LocalArea)
+                || (this.BlockNumber != changed.BlockNumber)
+                || (this.Owner != changed.Owner)
+                || (this.ServiceHoursLastYear != changed.ServiceHoursLastYear)
+                || (this.ServiceHoursTwoYearsAgo != changed.ServiceHoursTwoYearsAgo)
+                || (this.ServiceHoursThreeYearsAgo != changed.ServiceHoursThreeYearsAgo)
+                )
+            {
+                result = true;
+            }
+            return result;
+        }
+               
         
     }
 }

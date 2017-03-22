@@ -17,6 +17,7 @@ using System;
 using Microsoft.AspNetCore.Http;
 using System.Linq;
 using System.Security.Claims;
+using Microsoft.EntityFrameworkCore.ChangeTracking;
 
 namespace HETSAPI.Models
 {
@@ -203,6 +204,61 @@ namespace HETSAPI.Models
             return result;
         }
 
+        Object getOriginalValue (EntityEntry entry, string fieldName)
+        {
+            Object result = null;
+            var property = entry.Metadata.FindProperty(fieldName);
+            if (property != null)
+            {
+                result = entry.OriginalValues[fieldName];
+            }
+            return result;
+        }
+
+        private void DoEquipmentAudit(List<SeniorityAudit> audits, EntityEntry entry , string smUserId)
+        {
+            Equipment changed = (Equipment)entry.Entity;
+            Equipment original = new Equipment();
+            // set the original values.
+            original.SeniorityEffectiveDate = (DateTime?) getOriginalValue(entry, "SeniorityEffectiveDate");
+            original.Seniority = (float?) getOriginalValue(entry, "Seniority");
+            original.LocalArea = (LocalArea) getOriginalValue(entry, "LocalArea");            
+            original.BlockNumber = (float?) getOriginalValue(entry, "BlockNumber");
+            original.Owner = (Owner) getOriginalValue(entry, "Owner");           
+            original.ServiceHoursLastYear = (float?) getOriginalValue(entry, "ServiceHoursLastYear");
+            original.ServiceHoursTwoYearsAgo = (float?) getOriginalValue(entry, "ServiceHoursTwoYearsAgo");
+            original.ServiceHoursThreeYearsAgo = (float?) getOriginalValue(entry, "ServiceHoursThreeYearsAgo");
+
+            // compare the old and new
+            if (changed.IsSeniorityAuditRequired (original))
+            {
+                DateTime currentTime = DateTime.UtcNow;
+
+                // create the audit entry.
+                SeniorityAudit seniorityAudit = new SeniorityAudit();
+                seniorityAudit.BlockNumber = original.BlockNumber;
+                seniorityAudit.StartDate = original.SeniorityEffectiveDate;
+                seniorityAudit.EndDate = currentTime;
+                changed.SeniorityEffectiveDate = currentTime;
+                seniorityAudit.Equipment = changed;
+                seniorityAudit.CreateTimestamp = currentTime;
+                seniorityAudit.LastUpdateTimestamp = currentTime;
+                seniorityAudit.CreateUserid = smUserId;
+                seniorityAudit.LastUpdateUserid = smUserId;
+                seniorityAudit.LocalArea = original.LocalArea;
+                seniorityAudit.Owner = original.Owner;
+                if (seniorityAudit.Owner != null)
+                {
+                    seniorityAudit.OwnerOrganizationName = seniorityAudit.Owner.OrganizationName;
+                }
+                seniorityAudit.Seniority = original.Seniority;
+                seniorityAudit.ServiceHoursLastYear = original.ServiceHoursLastYear;
+                seniorityAudit.ServiceHoursTwoYearsAgo = original.ServiceHoursTwoYearsAgo;
+                seniorityAudit.ServiceHoursThreeYearsAgo = original.ServiceHoursThreeYearsAgo;
+                audits.Add(seniorityAudit);
+            }
+        }
+
         /// <summary>
         /// Override for Save Changes to implement the audit log
         /// </summary>
@@ -219,6 +275,8 @@ namespace HETSAPI.Models
 
             DateTime currentTime = DateTime.UtcNow;
 
+            List<SeniorityAudit> seniorityAudits = new List<SeniorityAudit>();
+
             foreach (var entry in modifiedEntries)
             {
                 if (entry.Entity.GetType().InheritsOrImplements(typeof(AuditableEntity)))
@@ -232,6 +290,21 @@ namespace HETSAPI.Models
                         theObject.CreateUserid = smUserId;
                         theObject.CreateTimestamp = currentTime;
                     }
+                }
+
+                if (entry.Entity.GetType().InheritsOrImplements(typeof(Equipment)))
+                {
+                    DoEquipmentAudit(seniorityAudits, entry, smUserId);
+                }                    
+
+            }
+            
+
+            if (seniorityAudits.Count > 0)
+            {
+                foreach (SeniorityAudit seniorityAudit in seniorityAudits)
+                {
+                    SeniorityAudits.Add(seniorityAudit);
                 }
             }
 
