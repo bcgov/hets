@@ -178,7 +178,8 @@ namespace SchoolBusAPI.Services.Impl
         public virtual IActionResult RentalagreementsGetAsync()
         {
             var result = _context.RentalAgreements                                
-                .Include(x => x.Equipment)
+                .Include(x => x.Equipment).ThenInclude(y => y.Owner)
+                .Include(x => x.Equipment).ThenInclude(y => y.EquipmentAttachments)
                 .Include(x => x.Project)
                 .Include(x => x.RentalAgreementConditions)
                 .Include(x => x.RentalAgreementRates)
@@ -226,7 +227,8 @@ namespace SchoolBusAPI.Services.Impl
             if (exists)
             {
                 var result = _context.RentalAgreements
-                    .Include(x => x.Equipment)
+                    .Include(x => x.Equipment).ThenInclude(y => y.Owner)
+                    .Include(x => x.Equipment).ThenInclude(y => y.EquipmentAttachments)
                     .Include(x => x.Project)
                     .Include(x => x.RentalAgreementConditions)
                     .Include(x => x.RentalAgreementRates)
