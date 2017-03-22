@@ -56,7 +56,6 @@ namespace HETSAPI.Models
         DbSet<Equipment> Equipments { get; set; }
         DbSet<EquipmentAttachment> EquipmentAttachments { get; set; }        
         DbSet<EquipmentType> EquipmentTypes { get; set; }        
-        DbSet<EquipmentTypeNextRental> EquipmentTypeNextRentals { get; set; }
         DbSet<Group> Groups { get; set; }
         DbSet<GroupMembership> GroupMemberships { get; set; }        
         DbSet<History> Historys { get; set; }
@@ -129,8 +128,7 @@ namespace HETSAPI.Models
         public virtual DbSet<Equipment> Equipments { get; set; }
         public virtual DbSet<EquipmentAttachment> EquipmentAttachments { get; set; }        
         public virtual DbSet<DistrictEquipmentType> DistrictEquipmentTypes { get; set; }
-        public virtual DbSet<EquipmentType> EquipmentTypes { get; set; }
-        public virtual DbSet<EquipmentTypeNextRental> EquipmentTypeNextRentals { get; set; }
+        public virtual DbSet<EquipmentType> EquipmentTypes { get; set; }        
         public virtual DbSet<Group> Groups { get; set; }
         public virtual DbSet<GroupMembership> GroupMemberships { get; set; }        
         public virtual DbSet<History> Historys { get; set; }
