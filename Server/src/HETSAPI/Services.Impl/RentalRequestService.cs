@@ -284,13 +284,6 @@ namespace HETSAPI.Services.Impl
                 data = data.Where(x => x.Project.Name.ToLower().Contains (project.ToLower()));
             }
 
-            var result = new List<RentalRequestSearchResultViewModel>();
-            foreach (var item in data)
-            {
-                RentalRequestSearchResultViewModel newItem = item.ToViewModel();
-                result.Add(item.ToViewModel());
-            }
-
             if (startDate != null)
             {
                 data = data.Where(x => x.ExpectedStartDate >= startDate);
@@ -299,6 +292,16 @@ namespace HETSAPI.Services.Impl
             if (endDate != null)
             {
                 data = data.Where(x => x.ExpectedStartDate <= endDate);
+            }
+
+            var result = new List<RentalRequestSearchResultViewModel>();
+            foreach (var item in data)
+            {
+                if (item != null)
+                {
+                    RentalRequestSearchResultViewModel newItem = item.ToViewModel();
+                    result.Add(newItem);
+                }
             }
 
             // no calculated fields in a RentalRequest search yet.                           
