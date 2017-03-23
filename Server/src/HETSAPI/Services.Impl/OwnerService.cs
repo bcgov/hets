@@ -184,17 +184,9 @@ namespace HETSAPI.Services.Impl
             var exists = _context.Owners.Any(a => a.Id == id);
             if (exists)
             {
-                Owner owner = _context.Owners
-                    .Include(x => x.LocalArea.ServiceArea.District.Region)
-                    .Include(x => x.EquipmentList)
-                    .ThenInclude(y => y.DistrictEquipmentType)
-                    .Include(x => x.Notes)
-                    .Include(x => x.Attachments)
-                    .Include(x => x.History)
-                    .Include(x => x.Contacts)
-                    .First(x => x.Id == id);
+                List <Contact> contacts = GetOwnerContacts(id);
                                                 
-                return new ObjectResult(owner.Contacts);
+                return new ObjectResult(contacts);
             }
             else
             {
@@ -638,10 +630,26 @@ namespace HETSAPI.Services.Impl
             }
         }
 
+        // Returns contacts for a specific owner.
+        private List<Contact> GetOwnerContacts (int id)
+        {
+            List<Contact> result = null;
+            Owner owner = _context.Owners
+                        .Include(x => x.Contacts)
+                        .FirstOrDefault(x => x.Id == id);
+            if (owner != null)
+            {
+                result = owner.Contacts;
+            }
+            _context.Entry(owner).State = EntityState.Detached;
+
+            return result;
+        }
+
         /// <summary>
         /// 
         /// </summary>
-        /// <param name="id">id of Owner to fetch</param>
+        /// <param name="id">id of Owner to update</param>
         /// <param name="item"></param>
         /// <response code="200">OK</response>
         /// <response code="404">Owner not found</response>
@@ -650,10 +658,12 @@ namespace HETSAPI.Services.Impl
             if (item != null)
             {
                 AdjustRecord(item);
+                // we specifically do not want to change contacts from this service.
+                item.Contacts = GetOwnerContacts(id);
 
                 var exists = _context.Owners.Any(a => a.Id == id);
                 if (exists && id == item.Id)
-                {
+                {                    
                     _context.Owners.Update(item);
                     // Save the changes
                     _context.SaveChanges();
