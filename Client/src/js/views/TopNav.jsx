@@ -46,14 +46,16 @@ var TopNav = React.createClass({
             <LinkContainer to={{ pathname: `/${ Constant.PROJECTS_PATHNAME }` }}>
               <NavItem eventKey={ 5 }>Projects</NavItem>
             </LinkContainer>
-            <NavDropdown id="admin-dropdown" title="Administration">
-              <LinkContainer to={{ pathname: `/${ Constant.USERS_PATHNAME }` }}>
-                <MenuItem eventKey={ 6 }>User Management</MenuItem>
-              </LinkContainer>
-              <LinkContainer to={{ pathname: `/${ Constant.ROLES_PATHNAME }` }}>
-                <MenuItem eventKey={ 7 }>Roles and Permissions</MenuItem>
-              </LinkContainer>
-            </NavDropdown>
+            { this.props.currentUser.hasPermission('ADMIN') &&
+              <NavDropdown id="admin-dropdown" title="Administration">
+                <LinkContainer to={{ pathname: `/${ Constant.USERS_PATHNAME }` }}>
+                  <MenuItem eventKey={ 6 }>User Management</MenuItem>
+                </LinkContainer>
+                <LinkContainer to={{ pathname: `/${ Constant.ROLES_PATHNAME }` }}>
+                  <MenuItem eventKey={ 7 }>Roles and Permissions</MenuItem>
+                </LinkContainer>
+              </NavDropdown>
+            }
           </Nav>
           <Nav id="navbar-current-user" pullRight>
             <NavItem>
