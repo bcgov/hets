@@ -60,6 +60,19 @@ export function getCurrentUser() {
     // Add display fields
     parseUser(user);
 
+    // Get permissions
+    var permissions = [];
+    _.each(user.userRoles, userRole => {
+      _.each(userRole.role.rolePermissions, rolePermission => {
+        permissions.push(rolePermission.permission.code);
+      });
+    });
+    user.permissions = _.uniq(permissions);
+
+    user.hasPermission = function(permission) {
+      return user.permissions.indexOf(permission) !== -1;
+    };
+
     store.dispatch({ type: Action.UPDATE_CURRENT_USER, user: user });
   });
 }
