@@ -301,6 +301,67 @@ namespace HETSAPI.Services.Impl
             }
         }
 
+
+        private void BuildRentalRequestRotationList (RentalRequest item)
+        {
+            int currentSortOrder = 0;
+
+            item.RentalRequestRotationList = new List<RentalRequestRotationList>();
+
+            // first get the localAreaRotationList.askNextBlock1 for the given local area.
+            LocalAreaRotationList localAreaRotationList = _context.LocalAreaRotationLists
+                    .Include(x => x.LocalArea)
+                    .Include(x => x.AskNextBlock1)
+                    .Include(x => x.AskNextBlock2)
+                    .Include(x => x.AskNextBlockOpen)
+                    .FirstOrDefault(x => x.LocalArea.Id == item.LocalArea.Id);
+            
+            int numberOfBlocks = item.DistrictEquipmentType.EquipmentType.NumberOfBlocks; 
+            
+            for (int currentBlock = 1; currentBlock < numberOfBlocks; currentBlock++ )
+            {
+                // start by getting the current set of equipment for the given equipment type.
+
+                List<Equipment> block1equipment = _context.Equipments
+                    .Where(x => x.DistrictEquipmentType == item.DistrictEquipmentType && x.BlockNumber == 1)
+                    .OrderByDescending(x => x.Seniority)
+                    .ToList();
+
+                int listSize = block1equipment.Count;
+
+                // find the starting position.
+                int currentPosition = 0;
+                if (localAreaRotationList != null && localAreaRotationList.AskNextBlock1 != null)
+                {
+                    for (int i = 0; i < listSize; i++)
+                    {
+                        if (block1equipment[i] != null && block1equipment[i].Id == localAreaRotationList.AskNextBlock1.Id)
+                        {
+                            currentPosition = i;
+                        }
+                    }
+                }
+
+                // next pass sets the rotation list sort order.
+                for (int i = 0; i < listSize; i++)
+                {
+                    RentalRequestRotationList rentalRequestRotationList = new RentalRequestRotationList();
+                    rentalRequestRotationList.Equipment = block1equipment[currentPosition];
+                    rentalRequestRotationList.CreateTimestamp = DateTime.UtcNow;
+                    rentalRequestRotationList.RentalRequest = item;
+                    rentalRequestRotationList.RotationListSortOrder = currentSortOrder;
+
+                    currentPosition++;
+                    currentSortOrder++;
+                    if (currentPosition >= listSize)
+                    {
+                        currentPosition = 0;
+                    }
+                }
+            } 
+                       
+        }
+
         /// <summary>
         /// 
         /// </summary>
@@ -319,6 +380,7 @@ namespace HETSAPI.Services.Impl
                 }
                 else
                 {
+                    
                     // record not found
                     _context.RentalRequests.Add(item);
                 }
