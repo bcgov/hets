@@ -49,6 +49,7 @@ namespace HETSAPI.Controllers
         [HttpPost]
         [Route("/api/groups/bulk")]
         [SwaggerOperation("GroupsBulkPost")]
+        [RequiresPermission(Permission.ADMIN)]
         public virtual IActionResult GroupsBulkPost([FromBody]Group[] items)
         {
             return this._service.GroupsBulkPostAsync(items);
@@ -76,6 +77,7 @@ namespace HETSAPI.Controllers
         [HttpPost]
         [Route("/api/groups/{id}/delete")]
         [SwaggerOperation("GroupsIdDeletePost")]
+        [RequiresPermission(Permission.ADMIN)]
         public virtual IActionResult GroupsIdDeletePost([FromRoute]int id)
         {
             return this._service.GroupsIdDeletePostAsync(id);
@@ -107,6 +109,7 @@ namespace HETSAPI.Controllers
         [Route("/api/groups/{id}")]
         [SwaggerOperation("GroupsIdPut")]
         [SwaggerResponse(200, type: typeof(Group))]
+        [RequiresPermission(Permission.ADMIN)]
         public virtual IActionResult GroupsIdPut([FromRoute]int id, [FromBody]Group item)
         {
             return this._service.GroupsIdPutAsync(id, item);
@@ -136,6 +139,7 @@ namespace HETSAPI.Controllers
         [Route("/api/groups")]
         [SwaggerOperation("GroupsPost")]
         [SwaggerResponse(200, type: typeof(Group))]
+        [RequiresPermission(Permission.ADMIN)]
         public virtual IActionResult GroupsPost([FromBody]Group item)
         {
             return this._service.GroupsPostAsync(item);

@@ -49,6 +49,7 @@ namespace HETSAPI.Controllers
         [HttpPost]
         [Route("/api/userfavourites/bulk")]
         [SwaggerOperation("UserfavouritesBulkPost")]
+        [RequiresPermission(Permission.ADMIN)]
         public virtual IActionResult UserfavouritesBulkPost([FromBody]UserFavourite[] items)
         {
             return this._service.UserfavouritesBulkPostAsync(items);

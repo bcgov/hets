@@ -49,6 +49,7 @@ namespace HETSAPI.Controllers
         [HttpPost]
         [Route("/api/usergroups/bulk")]
         [SwaggerOperation("UsergroupsBulkPost")]
+        [RequiresPermission(Permission.ADMIN)]
         public virtual IActionResult UsergroupsBulkPost([FromBody]GroupMembership[] items)
         {
             return this._service.UsergroupsBulkPostAsync(items);
@@ -62,6 +63,7 @@ namespace HETSAPI.Controllers
         [HttpPost]
         [Route("/api/users/bulk")]
         [SwaggerOperation("UsersBulkPost")]
+        [RequiresPermission(Permission.ADMIN)]
         public virtual IActionResult UsersBulkPost([FromBody]User[] items)
         {
             return this._service.UsersBulkPostAsync(items);
@@ -89,6 +91,7 @@ namespace HETSAPI.Controllers
         [HttpPost]
         [Route("/api/users/{id}/delete")]
         [SwaggerOperation("UsersIdDeletePost")]
+        [RequiresPermission(Permission.ADMIN)]
         public virtual IActionResult UsersIdDeletePost([FromRoute]int id)
         {
             return this._service.UsersIdDeletePostAsync(id);
@@ -153,6 +156,7 @@ namespace HETSAPI.Controllers
         [Route("/api/users/{id}/groups")]
         [SwaggerOperation("UsersIdGroupsPost")]
         [SwaggerResponse(200, type: typeof(List<GroupMembershipViewModel>))]
+        [RequiresPermission(Permission.ADMIN)]
         public virtual IActionResult UsersIdGroupsPost([FromRoute]int id, [FromBody]GroupMembershipViewModel item)
         {
             return this._service.UsersIdGroupsPostAsync(id, item);
@@ -170,6 +174,7 @@ namespace HETSAPI.Controllers
         [Route("/api/users/{id}/groups")]
         [SwaggerOperation("UsersIdGroupsPut")]
         [SwaggerResponse(200, type: typeof(List<GroupMembershipViewModel>))]
+        [RequiresPermission(Permission.ADMIN)]
         public virtual IActionResult UsersIdGroupsPut([FromRoute]int id, [FromBody]GroupMembershipViewModel[] items)
         {
             return this._service.UsersIdGroupsPutAsync(id, items);
@@ -186,6 +191,7 @@ namespace HETSAPI.Controllers
         [Route("/api/users/{id}/permissions")]
         [SwaggerOperation("UsersIdPermissionsGet")]
         [SwaggerResponse(200, type: typeof(List<PermissionViewModel>))]
+        [RequiresPermission(Permission.ADMIN)]
         public virtual IActionResult UsersIdPermissionsGet([FromRoute]int id)
         {
             return this._service.UsersIdPermissionsGetAsync(id);
@@ -202,6 +208,7 @@ namespace HETSAPI.Controllers
         [Route("/api/users/{id}")]
         [SwaggerOperation("UsersIdPut")]
         [SwaggerResponse(200, type: typeof(UserViewModel))]
+        [RequiresPermission(Permission.ADMIN)]
         public virtual IActionResult UsersIdPut([FromRoute]int id, [FromBody]UserViewModel item)
         {
             return this._service.UsersIdPutAsync(id, item);
@@ -234,6 +241,7 @@ namespace HETSAPI.Controllers
         [Route("/api/users/{id}/roles")]
         [SwaggerOperation("UsersIdRolesPost")]
         [SwaggerResponse(200, type: typeof(UserRoleViewModel))]
+        [RequiresPermission(Permission.ADMIN)]
         public virtual IActionResult UsersIdRolesPost([FromRoute]int id, [FromBody]UserRoleViewModel item)
         {
             return this._service.UsersIdRolesPostAsync(id, item);
@@ -251,6 +259,7 @@ namespace HETSAPI.Controllers
         [Route("/api/users/{id}/roles")]
         [SwaggerOperation("UsersIdRolesPut")]
         [SwaggerResponse(200, type: typeof(List<UserRoleViewModel>))]
+        [RequiresPermission(Permission.ADMIN)]
         public virtual IActionResult UsersIdRolesPut([FromRoute]int id, [FromBody]UserRoleViewModel[] items)
         {
             return this._service.UsersIdRolesPutAsync(id, items);
@@ -265,6 +274,7 @@ namespace HETSAPI.Controllers
         [Route("/api/users")]
         [SwaggerOperation("UsersPost")]
         [SwaggerResponse(200, type: typeof(UserViewModel))]
+        [RequiresPermission(Permission.ADMIN)]
         public virtual IActionResult UsersPost([FromBody]UserViewModel item)
         {
             return this._service.UsersPostAsync(item);

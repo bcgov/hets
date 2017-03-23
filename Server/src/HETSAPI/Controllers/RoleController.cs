@@ -49,6 +49,7 @@ namespace HETSAPI.Controllers
         [HttpPost]
         [Route("/api/roles/bulk")]
         [SwaggerOperation("RolesBulkPost")]
+        [RequiresPermission(Permission.ADMIN)]
         public virtual IActionResult RolesBulkPost([FromBody]Role[] items)
         {
             return this._service.RolesBulkPostAsync(items);
@@ -76,6 +77,7 @@ namespace HETSAPI.Controllers
         [HttpPost]
         [Route("/api/roles/{id}/delete")]
         [SwaggerOperation("RolesIdDeletePost")]
+        [RequiresPermission(Permission.ADMIN)]
         public virtual IActionResult RolesIdDeletePost([FromRoute]int id)
         {
             return this._service.RolesIdDeletePostAsync(id);
@@ -123,6 +125,7 @@ namespace HETSAPI.Controllers
         [Route("/api/roles/{id}/permissions")]
         [SwaggerOperation("RolesIdPermissionsPost")]
         [SwaggerResponse(200, type: typeof(List<PermissionViewModel>))]
+        [RequiresPermission(Permission.ADMIN)]
         public virtual IActionResult RolesIdPermissionsPost([FromRoute]int id, [FromBody]PermissionViewModel item)
         {
             return this._service.RolesIdPermissionsPostAsync(id, item);
@@ -140,6 +143,7 @@ namespace HETSAPI.Controllers
         [Route("/api/roles/{id}/permissions")]
         [SwaggerOperation("RolesIdPermissionsPut")]
         [SwaggerResponse(200, type: typeof(List<PermissionViewModel>))]
+        [RequiresPermission(Permission.ADMIN)]
         public virtual IActionResult RolesIdPermissionsPut([FromRoute]int id, [FromBody]PermissionViewModel[] items)
         {
             return this._service.RolesIdPermissionsPutAsync(id, items);
@@ -156,6 +160,7 @@ namespace HETSAPI.Controllers
         [Route("/api/roles/{id}")]
         [SwaggerOperation("RolesIdPut")]
         [SwaggerResponse(200, type: typeof(RoleViewModel))]
+        [RequiresPermission(Permission.ADMIN)]
         public virtual IActionResult RolesIdPut([FromRoute]int id, [FromBody]RoleViewModel item)
         {
             return this._service.RolesIdPutAsync(id, item);
@@ -188,6 +193,7 @@ namespace HETSAPI.Controllers
         [Route("/api/roles/{id}/users")]
         [SwaggerOperation("RolesIdUsersPut")]
         [SwaggerResponse(200, type: typeof(List<UserRoleViewModel>))]
+        [RequiresPermission(Permission.ADMIN)]
         public virtual IActionResult RolesIdUsersPut([FromRoute]int id, [FromBody]UserRoleViewModel[] items)
         {
             return this._service.RolesIdUsersPutAsync(id, items);
@@ -202,6 +208,7 @@ namespace HETSAPI.Controllers
         [Route("/api/roles")]
         [SwaggerOperation("RolesPost")]
         [SwaggerResponse(200, type: typeof(RoleViewModel))]
+        [RequiresPermission(Permission.ADMIN)]
         public virtual IActionResult RolesPost([FromBody]RoleViewModel item)
         {
             return this._service.RolesPostAsync(item);

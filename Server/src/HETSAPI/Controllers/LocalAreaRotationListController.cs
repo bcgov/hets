@@ -49,6 +49,7 @@ namespace HETSAPI.Controllers
         [HttpPost]
         [Route("/api/localarearotationlists/bulk")]
         [SwaggerOperation("LocalarearotationlistsBulkPost")]
+        [RequiresPermission(Permission.ADMIN)]
         public virtual IActionResult LocalarearotationlistsBulkPost([FromBody]LocalAreaRotationList[] items)
         {
             return this._service.LocalarearotationlistsBulkPostAsync(items);

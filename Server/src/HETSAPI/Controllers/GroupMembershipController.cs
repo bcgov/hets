@@ -49,6 +49,7 @@ namespace HETSAPI.Controllers
         [HttpPost]
         [Route("/api/groupmemberships/bulk")]
         [SwaggerOperation("GroupmembershipsBulkPost")]
+        [RequiresPermission(Permission.ADMIN)]
         public virtual IActionResult GroupmembershipsBulkPost([FromBody]GroupMembership[] items)
         {
             return this._service.GroupmembershipsBulkPostAsync(items);

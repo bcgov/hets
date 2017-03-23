@@ -49,6 +49,7 @@ namespace HETSAPI.Controllers
         [HttpPost]
         [Route("/api/contacts/bulk")]
         [SwaggerOperation("ContactsBulkPost")]
+        [RequiresPermission(Permission.ADMIN)]
         public virtual IActionResult ContactsBulkPost([FromBody]Contact[] items)
         {
             return this._service.ContactsBulkPostAsync(items);
