@@ -694,9 +694,9 @@
             "table": null
         },
         {
-            "Description": "The expected number of rental hours for each piece equipment hired against this request, as provided by the Project Manager making the request. ",
+            "Description": "The estimated number of rental hours for each piece equipment hired against this request, as provided by the Project Manager making the request. ",
             "Length": null,
-            "Name": "expectedHours",
+            "Name": "estimatedHours",
             "RefDef": null,
             "Required": [
                 {
@@ -731,9 +731,9 @@
             "table": null
         },
         {
-            "Description": "The expected start date of each piece of equipment hired against this request, as provided by the Project Manager making the request.",
+            "Description": "The estimated start date of each piece of equipment hired against this request, as provided by the Project Manager making the request.",
             "Length": null,
-            "Name": "expectedStartDate",
+            "Name": "estimatedStartDate",
             "RefDef": null,
             "Required": [
                 {
@@ -768,9 +768,9 @@
             "table": null
         },
         {
-            "Description": "The expected end date of each piece of equipment hired against this request, as provided by the Project Manager making the request.",
+            "Description": "The estimated end date of each piece of equipment hired against this request, as provided by the Project Manager making the request.",
             "Length": null,
-            "Name": "expectedEndDate",
+            "Name": "estimatedEndDate",
             "RefDef": null,
             "Required": [
                 {
@@ -1878,7 +1878,7 @@
         {
             "Description": "The estimated start date of the work to be placed on the rental agreement.",
             "Length": null,
-            "Name": "estimateStartWork",
+            "Name": "estimatedStartDate",
             "RefDef": null,
             "Required": [
                 {
@@ -1946,7 +1946,7 @@
         {
             "Description": "The estimated number of hours of work to be put onto the Rental Agreement.",
             "Length": null,
-            "Name": "estimateHours",
+            "Name": "estimatedHours",
             "RefDef": null,
             "Required": [
                 {

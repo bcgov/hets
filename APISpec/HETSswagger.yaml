@@ -5992,18 +5992,18 @@ definitions:
         format: int32
         type: integer
         description: The number of pieces of the equipment type wanted for hire as part of this request.
-      expectedHours:
+      estimatedHours:
         format: int32
         type: integer
-        description: The expected number of rental hours for each piece equipment hired against this request, as provided by the Project Manager making the request. 
-      expectedStartDate:
+        description: The estimated number of rental hours for each piece equipment hired against this request, as provided by the Project Manager making the request. 
+      estimatedStartDate:
         type: string
         format: date-time
-        description: The expected start date of each piece of equipment hired against this request, as provided by the Project Manager making the request.
-      expectedEndDate:
+        description: The estimated start date of each piece of equipment hired against this request, as provided by the Project Manager making the request.
+      estimatedEndDate:
         type: string
         format: date-time
-        description: The expected end date of each piece of equipment hired against this request, as provided by the Project Manager making the request.
+        description: The estimated end date of each piece of equipment hired against this request, as provided by the Project Manager making the request.
       firstOnRotationList:
         $ref: '#/definitions/Equipment'
         description: The first piece of equipment on the rotation list at the time of the creation of the request.
@@ -6139,7 +6139,7 @@ definitions:
         type: string
         maxLength: 2048
         description: An optional note to be placed onto the Rental Agreement.
-      estimateStartWork:
+      estimatedStartDate:
         type: string
         format: date-time
         description: The estimated start date of the work to be placed on the rental agreement.
@@ -6147,7 +6147,7 @@ definitions:
         type: string
         format: date-time
         description: The dated on date to put on the Rental Agreement.
-      estimateHours:
+      estimatedHours:
         format: int32
         type: integer
         description: The estimated number of hours of work to be put onto the Rental Agreement.
