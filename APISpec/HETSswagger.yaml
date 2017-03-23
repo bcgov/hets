@@ -127,6 +127,7 @@ paths:
     post:
       tags:
         - Equipment
+      x-codegen-permission: ADMIN
       consumes:
         - application/json
       produces:
@@ -259,6 +260,7 @@ paths:
     post:
       tags:
         - EquipmentType
+      x-codegen-permission: ADMIN
       consumes:
         - application/json
       produces:
@@ -391,6 +393,7 @@ paths:
     post:
       tags:
         - DistrictEquipmentType
+      x-codegen-permission: ADMIN
       consumes:
         - application/json
       produces:
@@ -523,6 +526,7 @@ paths:
     post:
       tags:
         - EquipmentAttachment
+      x-codegen-permission: ADMIN
       consumes:
         - application/json
       produces:
@@ -655,6 +659,7 @@ paths:
     post:
       tags:
         - LocalAreaRotationList
+      x-codegen-permission: ADMIN
       consumes:
         - application/json
       produces:
@@ -787,6 +792,7 @@ paths:
     post:
       tags:
         - Owner
+      x-codegen-permission: ADMIN
       consumes:
         - application/json
       produces:
@@ -919,6 +925,7 @@ paths:
     post:
       tags:
         - Project
+      x-codegen-permission: ADMIN
       consumes:
         - application/json
       produces:
@@ -1051,6 +1058,7 @@ paths:
     post:
       tags:
         - LookupList
+      x-codegen-permission: ADMIN
       consumes:
         - application/json
       produces:
@@ -1087,6 +1095,7 @@ paths:
     post:
       tags:
         - Group
+      x-codegen-permission: ADMIN
       consumes:
         - application/json
       produces:
@@ -1134,6 +1143,7 @@ paths:
     put:
       tags:
         - Group
+      x-codegen-permission: ADMIN
       consumes:
         - application/json
       produces:
@@ -1162,6 +1172,7 @@ paths:
     post:
       tags:
         - Group
+      x-codegen-permission: ADMIN
       consumes: []
       produces:
         - text/plain
@@ -1183,6 +1194,7 @@ paths:
     post:
       tags:
         - Group
+      x-codegen-permission: ADMIN
       consumes:
         - application/json
       produces:
@@ -1219,6 +1231,7 @@ paths:
     post:
       tags:
         - Permission
+      x-codegen-permission: ADMIN
       consumes:
         - application/json
       produces:
@@ -1266,6 +1279,7 @@ paths:
     put:
       tags:
         - Permission
+      x-codegen-permission: ADMIN
       consumes:
         - application/json
       produces:
@@ -1294,6 +1308,7 @@ paths:
     post:
       tags:
         - Permission
+      x-codegen-permission: ADMIN
       consumes: []
       produces:
         - text/plain
@@ -1315,6 +1330,7 @@ paths:
     post:
       tags:
         - Permission
+      x-codegen-permission: ADMIN
       consumes:
         - application/json
       produces:
@@ -1351,6 +1367,7 @@ paths:
     post:
       tags:
         - Role
+      x-codegen-permission: ADMIN
       consumes:
         - application/json
       produces:
@@ -1398,6 +1415,7 @@ paths:
     put:
       tags:
         - Role
+      x-codegen-permission: ADMIN
       consumes:
         - application/json
       produces:
@@ -1426,6 +1444,7 @@ paths:
     post:
       tags:
         - Role
+      x-codegen-permission: ADMIN
       consumes: []
       produces:
         - text/plain
@@ -1447,6 +1466,7 @@ paths:
     post:
       tags:
         - Role
+      x-codegen-permission: ADMIN
       consumes:
         - application/json
       produces:
@@ -1469,6 +1489,7 @@ paths:
     post:
       tags:
         - Role
+      x-codegen-permission: ADMIN
       consumes:
         - application/json
       produces:
@@ -1505,6 +1526,7 @@ paths:
     post:
       tags:
         - User
+      x-codegen-permission: ADMIN
       consumes:
         - application/json
       produces:
@@ -1552,6 +1574,7 @@ paths:
     put:
       tags:
         - User
+      x-codegen-permission: ADMIN
       consumes:
         - application/json
       produces:
@@ -1580,6 +1603,7 @@ paths:
     post:
       tags:
         - User
+      x-codegen-permission: ADMIN
       consumes: []
       produces:
         - text/plain
@@ -1601,6 +1625,7 @@ paths:
     post:
       tags:
         - User
+      x-codegen-permission: ADMIN
       consumes:
         - application/json
       produces:
@@ -1623,6 +1648,7 @@ paths:
     post:
       tags:
         - User
+      x-codegen-permission: ADMIN
       consumes:
         - application/json
       produces:
@@ -1645,6 +1671,7 @@ paths:
     post:
       tags:
         - User
+      x-codegen-permission: ADMIN
       consumes:
         - application/json
       produces:
@@ -1777,6 +1804,7 @@ paths:
     post:
       tags:
         - Region
+      x-codegen-permission: ADMIN
       consumes:
         - application/json
       produces:
@@ -1909,6 +1937,7 @@ paths:
     post:
       tags:
         - District
+      x-codegen-permission: ADMIN
       consumes:
         - application/json
       produces:
@@ -2041,6 +2070,7 @@ paths:
     post:
       tags:
         - ServiceArea
+      x-codegen-permission: ADMIN
       consumes:
         - application/json
       produces:
@@ -2173,6 +2203,7 @@ paths:
     post:
       tags:
         - City
+      x-codegen-permission: ADMIN
       consumes:
         - application/json
       produces:
@@ -2305,6 +2336,7 @@ paths:
     post:
       tags:
         - LocalArea
+      x-codegen-permission: ADMIN
       consumes:
         - application/json
       produces:
@@ -2437,6 +2469,7 @@ paths:
     post:
       tags:
         - Contact
+      x-codegen-permission: ADMIN
       consumes:
         - application/json
       produces:
@@ -2569,6 +2602,7 @@ paths:
     post:
       tags:
         - DumpTruck
+      x-codegen-permission: ADMIN
       consumes:
         - application/json
       produces:
@@ -2701,6 +2735,7 @@ paths:
     post:
       tags:
         - Note
+      x-codegen-permission: ADMIN
       consumes:
         - application/json
       produces:
@@ -2833,6 +2868,7 @@ paths:
     post:
       tags:
         - Attachment
+      x-codegen-permission: ADMIN
       consumes:
         - application/json
       produces:
@@ -2965,6 +3001,7 @@ paths:
     post:
       tags:
         - GroupMembership
+      x-codegen-permission: ADMIN
       consumes:
         - application/json
       produces:
@@ -3097,6 +3134,7 @@ paths:
     post:
       tags:
         - History
+      x-codegen-permission: ADMIN
       consumes:
         - application/json
       produces:
@@ -3229,6 +3267,7 @@ paths:
     post:
       tags:
         - RentalAgreement
+      x-codegen-permission: ADMIN
       consumes:
         - application/json
       produces:
@@ -3361,6 +3400,7 @@ paths:
     post:
       tags:
         - RentalAgreementCondition
+      x-codegen-permission: ADMIN
       consumes:
         - application/json
       produces:
@@ -3493,6 +3533,7 @@ paths:
     post:
       tags:
         - RentalAgreementRate
+      x-codegen-permission: ADMIN
       consumes:
         - application/json
       produces:
@@ -3625,6 +3666,7 @@ paths:
     post:
       tags:
         - RentalRequest
+      x-codegen-permission: ADMIN
       consumes:
         - application/json
       produces:
@@ -3757,6 +3799,7 @@ paths:
     post:
       tags:
         - RentalRequestAttachment
+      x-codegen-permission: ADMIN
       consumes:
         - application/json
       produces:
@@ -3889,6 +3932,7 @@ paths:
     post:
       tags:
         - RentalRequestRotationList
+      x-codegen-permission: ADMIN
       consumes:
         - application/json
       produces:
@@ -4021,6 +4065,7 @@ paths:
     post:
       tags:
         - RolePermission
+      x-codegen-permission: ADMIN
       consumes:
         - application/json
       produces:
@@ -4153,6 +4198,7 @@ paths:
     post:
       tags:
         - SeniorityAudit
+      x-codegen-permission: ADMIN
       consumes:
         - application/json
       produces:
@@ -4285,6 +4331,7 @@ paths:
     post:
       tags:
         - TimeRecord
+      x-codegen-permission: ADMIN
       consumes:
         - application/json
       produces:
@@ -4417,6 +4464,7 @@ paths:
     post:
       tags:
         - UserFavourite
+      x-codegen-permission: ADMIN
       consumes:
         - application/json
       produces:
@@ -4453,6 +4501,7 @@ paths:
     post:
       tags:
         - UserRole
+      x-codegen-permission: ADMIN
       consumes:
         - application/json
       produces:
@@ -4500,6 +4549,7 @@ paths:
     put:
       tags:
         - UserRole
+      x-codegen-permission: ADMIN
       consumes:
         - application/json
       produces:
@@ -4528,6 +4578,7 @@ paths:
     post:
       tags:
         - UserRole
+      x-codegen-permission: ADMIN
       consumes: []
       produces:
         - text/plain
@@ -4549,6 +4600,7 @@ paths:
     post:
       tags:
         - UserRole
+      x-codegen-permission: ADMIN
       consumes:
         - application/json
       produces:
@@ -4642,6 +4694,69 @@ paths:
             type: array
             items:
               $ref: "#/definitions/EquipmentAttachment"
+  /equipment/{id}/history:
+    get:
+      description: Returns History for a particular Equipment
+      tags:
+        - Equipment
+      produces:
+        - text/plain
+        - application/json
+        - text/json
+      responses:
+        '200':
+          description: OK
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/HistoryViewModel'
+      parameters:
+        - name: id
+          in: path
+          description: id of Equipment to fetch History for
+          required: true
+          type: integer
+        - name: offset
+          in: query
+          description: offset for records that are returned 
+          required: false
+          type: integer
+        - name: limit
+          in: query
+          description: limits the number of records returned.  
+          required: false
+          type: integer
+    post:
+      description: Add a History record to the Equipment
+      tags:
+        - Equipment
+      produces:
+        - text/plain
+        - application/json
+        - text/json
+      responses:
+        '200': OK
+      parameters:
+        - name: id
+          in: path
+          description: id of Equipment to add History for
+          required: true
+          type: integer
+        - name: item
+          in: body
+          required: true
+          schema:
+            $ref: "#/definitions/History"
+      responses:
+        201:
+          description: History created
+          headers:
+            Location:
+              description: A link to the History
+              type: string
+              format: url
+          schema:
+            $ref: "#/definitions/History" 
   /equipment/{id}/view:
     get:
       tags:
@@ -4845,27 +4960,132 @@ paths:
             type: array
             items:
               $ref: "#/definitions/Equipment"
-  /owners/{id}/nextEquipmentCode:
+  /owners/{id}/history:
     get:
+      description: Returns History for a particular Owner
       tags:
         - Owner
-      description: Returns the next Equipment Code for the given Owner.  Equipment Code is a combination of the Owner Equipment Prefix and the numeric identifier for the next piece of equipment.      
-      consumes: []
       produces:
         - text/plain
         - application/json
         - text/json
+      responses:
+        '200':
+          description: OK
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/HistoryViewModel'
       parameters:
         - name: id
           in: path
-          description: id of Owner to fetch the Equipment Code for
+          description: id of Owner to fetch History for
           required: true
           type: integer
+        - name: offset
+          in: query
+          description: offset for records that are returned 
+          required: false
+          type: integer
+        - name: limit
+          in: query
+          description: limits the number of records returned.  
+          required: false
+          type: integer
+    post:
+      description: Add a History record to the Owner
+      tags:
+        - Owner
+      produces:
+        - text/plain
+        - application/json
+        - text/json
       responses:
-        200:
+        '200': OK
+      parameters:
+        - name: id
+          in: path
+          description: id of Owner to add History for
+          required: true
+          type: integer
+        - name: item
+          in: body
+          required: true
+          schema:
+            $ref: "#/definitions/History"
+      responses:
+        201:
+          description: History created
+          headers:
+            Location:
+              description: A link to the History
+              type: string
+              format: url
+          schema:
+            $ref: "#/definitions/History" 
+  /projects/{id}/history:
+    get:
+      description: Returns History for a particular Project
+      tags:
+        - Project
+      produces:
+        - text/plain
+        - application/json
+        - text/json
+      responses:
+        '200':
           description: OK
           schema:
-            $ref: "#/definitions/EquipmentCodeViewModel"
+            type: array
+            items:
+              $ref: '#/definitions/HistoryViewModel'
+      parameters:
+        - name: id
+          in: path
+          description: id of Project to fetch History for
+          required: true
+          type: integer
+        - name: offset
+          in: query
+          description: offset for records that are returned 
+          required: false
+          type: integer
+        - name: limit
+          in: query
+          description: limits the number of records returned.  
+          required: false
+          type: integer
+    post:
+      description: Add a History record to the Project
+      tags:
+        - Project
+      produces:
+        - text/plain
+        - application/json
+        - text/json
+      responses:
+        '200': OK
+      parameters:
+        - name: id
+          in: path
+          description: id of Project to fetch History for
+          required: true
+          type: integer
+        - name: item
+          in: body
+          required: true
+          schema:
+            $ref: "#/definitions/History"
+      responses:
+        201:
+          description: History created
+          headers:
+            Location:
+              description: A link to the History
+              type: string
+              format: url
+          schema:
+            $ref: "#/definitions/History" 
   /projects/search:
     get:
       summary: Searches Projects
@@ -5015,6 +5235,7 @@ paths:
       description: Updates the permissions for a role
       tags:
         - Role
+      x-codegen-permission: ADMIN
       consumes:
         - application/json
       produces:
@@ -5033,7 +5254,7 @@ paths:
           schema:
             type: array
             items:
-              $ref: "#/definitions/Permission"
+              $ref: "#/definitions/PermissionViewModel"
       responses:
         200:
           description: OK
@@ -5047,6 +5268,7 @@ paths:
       description: Adds a permissions to a role
       tags:
         - Role
+      x-codegen-permission: ADMIN
       consumes:
         - application/json
       produces:
@@ -5073,6 +5295,69 @@ paths:
               $ref: "#/definitions/PermissionViewModel"
         404:
           description: Role not found
+  /rentalrequests/{id}/history:
+    get:
+      description: Returns History for a particular RentalRequest
+      tags:
+        - RentalRequest
+      produces:
+        - text/plain
+        - application/json
+        - text/json
+      responses:
+        '200':
+          description: OK
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/HistoryViewModel'
+      parameters:
+        - name: id
+          in: path
+          description: id of RentalRequest to fetch History for
+          required: true
+          type: integer
+        - name: offset
+          in: query
+          description: offset for records that are returned 
+          required: false
+          type: integer
+        - name: limit
+          in: query
+          description: limits the number of records returned.  
+          required: false
+          type: integer
+    post:
+      description: Add a History record to the RentalRequest
+      tags:
+        - RentalRequest
+      produces:
+        - text/plain
+        - application/json
+        - text/json
+      responses:
+        '200': OK
+      parameters:
+        - name: id
+          in: path
+          description: id of RentalRequest to add History for
+          required: true
+          type: integer
+        - name: item
+          in: body
+          required: true
+          schema:
+            $ref: "#/definitions/History"
+      responses:
+        201:
+          description: History created
+          headers:
+            Location:
+              description: A link to the History
+              type: string
+              format: url
+          schema:
+            $ref: "#/definitions/History" 
   /rentalrequests/search:
     get:
       summary: Searches RentalRequests
@@ -5145,6 +5430,7 @@ paths:
       description: Updates the users for a role
       tags:
         - Role
+      x-codegen-permission: ADMIN
       consumes:
         - application/json
       produces:
@@ -5310,6 +5596,7 @@ paths:
       description: Adds a role to a user
       tags:
         - User
+      x-codegen-permission: ADMIN
       consumes:
         - application/json
       produces:
@@ -5341,6 +5628,7 @@ paths:
       description: Updates the roles for a user
       tags:
         - User
+      x-codegen-permission: ADMIN
       consumes:
         - application/json
       produces:
@@ -5374,6 +5662,7 @@ paths:
       description: Returns the set of permissions for a user
       tags:
         - User
+      x-codegen-permission: ADMIN
       produces:
         - text/plain
         - application/json
@@ -5421,6 +5710,7 @@ paths:
       description: Updates the active set of groups for a user
       tags:
         - User
+      x-codegen-permission: ADMIN
       consumes:
         - application/json
       produces:
@@ -5453,6 +5743,7 @@ paths:
       description: Add to the active set of groups for a user
       tags:
         - User
+      x-codegen-permission: ADMIN
       consumes:
         - application/json
       produces:
@@ -7085,6 +7376,32 @@ definitions:
         type: string
         maxLength: 2048
         description: A description of the group that is presented to the user when they are setting a user into a group.
+  HistoryViewModel:
+    type: object
+    x-codegen-viewmodel: true
+    required:
+      - id      
+    properties:
+      id:
+        format: int32
+        type: integer
+        uniqueItems: true
+        description: A system-generated unique identifier for a History
+      historyText:
+        type: string
+        maxLength: 2048
+        description: The text of the history entry tracked against the related entity.
+      lastUpdateUserid:
+        type: string
+        description: Audit information - SM User Id for the User who most recently updated the record.
+      lastUpdateTimestamp:
+        type: string
+        format: date-time
+        description: Audit information - Timestamp for record modification       
+      affectedEntityId:
+        format: int32
+        type: integer
+        description: The primary key of the affected record        
   EquipmentCodeViewModel:
     type: object
     x-codegen-viewmodel: true        
