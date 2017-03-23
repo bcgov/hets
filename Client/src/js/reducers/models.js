@@ -40,6 +40,8 @@ const DEFAULT_MODELS = {
 
   contacts: {},
   contact: {},
+
+  history: {},
 };
 
 export default function modelsReducer(state = DEFAULT_MODELS, action) {
@@ -141,6 +143,10 @@ export default function modelsReducer(state = DEFAULT_MODELS, action) {
 
     case Action.UPDATE_ROLE_PERMISSIONS:
       return { ...state, rolePermissions: action.rolePermissions };
+
+      // History
+    case Action.UPDATE_HISTORY:
+      return { ...state, history: action.history };
   }
 
   return state;

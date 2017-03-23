@@ -57,6 +57,7 @@ export const DATE_ZULU = 'YYYY-MM-DDT00:00:00Z';
 
 export const DATE_TIME_ISO_8601 = 'YYYY-MM-DDTHH:mm:ss';
 export const DATE_TIME_READABLE = 'MMMM D, YYYY [at] h:mm:ss A';
+export const DATE_TIME_LOG = 'YYYY/MM/DD HH:mm:ss';
 
 // RegEx
 export const EMAIL_REGEX = /\S+@\S+\.\S+/;
