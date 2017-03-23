@@ -41,18 +41,20 @@ namespace HETSAPI.Models
         /// Initializes a new instance of the <see cref="LocalAreaRotationList" /> class.
         /// </summary>
         /// <param name="Id">Id (required).</param>
-        /// <param name="DistrictEquipmentType">A foreign key reference to the system-generated unique identifier for an Equipment Type.</param>
-        /// <param name="LocalArea">LocalArea.</param>
+        /// <param name="DistrictEquipmentType">A foreign key reference to the system-generated unique identifier for an Equipment Type (required).</param>
+        /// <param name="LocalArea">LocalArea (required).</param>
         /// <param name="AskNextBlock1">The id of the next piece of Block 1 Equipment to be asked for a Rental Request. If null, start from the first piece of equipment in Block 1..</param>
         /// <param name="AskNextBlock1Seniority">The seniority score of the piece of equipment that is the next to be asked in Block 1..</param>
         /// <param name="AskNextBlock2">The id of the next piece of Block 2 Equipment to be asked for a Rental Request. If null, start from the first piece of equipment in Block 2..</param>
         /// <param name="AskNextBlock2Seniority">The seniority score of the piece of equipment that is the next to be asked in Block 1..</param>
         /// <param name="AskNextBlockOpen">The id of the next piece of Block Open Equipment to be asked for a Rental Request. If null, start from the first piece of equipment in Block Open..</param>
-        public LocalAreaRotationList(int Id, DistrictEquipmentType DistrictEquipmentType = null, LocalArea LocalArea = null, Equipment AskNextBlock1 = null, float? AskNextBlock1Seniority = null, Equipment AskNextBlock2 = null, float? AskNextBlock2Seniority = null, Equipment AskNextBlockOpen = null)
+        public LocalAreaRotationList(int Id, DistrictEquipmentType DistrictEquipmentType, LocalArea LocalArea, Equipment AskNextBlock1 = null, float? AskNextBlock1Seniority = null, Equipment AskNextBlock2 = null, float? AskNextBlock2Seniority = null, Equipment AskNextBlockOpen = null)
         {   
             this.Id = Id;
             this.DistrictEquipmentType = DistrictEquipmentType;
             this.LocalArea = LocalArea;
+
+
             this.AskNextBlock1 = AskNextBlock1;
             this.AskNextBlock1Seniority = AskNextBlock1Seniority;
             this.AskNextBlock2 = AskNextBlock2;

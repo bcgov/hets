@@ -234,8 +234,7 @@ namespace HETSAPI.Models
 
                 // create the audit entry.
                 SeniorityAudit seniorityAudit = new SeniorityAudit();
-                seniorityAudit.BlockNumber = original.BlockNumber;
-                seniorityAudit.StartDate = original.SeniorityEffectiveDate;
+                seniorityAudit.BlockNumber = original.BlockNumber;                
                 seniorityAudit.EndDate = currentTime;
                 changed.SeniorityEffectiveDate = currentTime;
                 seniorityAudit.Equipment = changed;
@@ -248,6 +247,10 @@ namespace HETSAPI.Models
                 if (seniorityAudit.Owner != null)
                 {
                     seniorityAudit.OwnerOrganizationName = seniorityAudit.Owner.OrganizationName;
+                }
+                if (original.SeniorityEffectiveDate != null)
+                {
+                    seniorityAudit.StartDate = (DateTime) original.SeniorityEffectiveDate;
                 }
                 seniorityAudit.Seniority = original.Seniority;
                 seniorityAudit.ServiceHoursLastYear = original.ServiceHoursLastYear;

@@ -42,15 +42,17 @@ namespace HETSAPI.Models
         /// Initializes a new instance of the <see cref="Attachment" /> class.
         /// </summary>
         /// <param name="Id">A system-generated unique identifier for an Attachment (required).</param>
-        /// <param name="FileName">Filename as passed by the user uploading the file.</param>
-        /// <param name="FileContents">Binary contents of the file.</param>
+        /// <param name="FileName">Filename as passed by the user uploading the file (required).</param>
+        /// <param name="FileContents">Binary contents of the file (required).</param>
         /// <param name="Description">A note about the attachment,  optionally maintained by the user..</param>
         /// <param name="Type">Type of attachment.</param>
-        public Attachment(int Id, string FileName = null, byte[] FileContents = null, string Description = null, string Type = null)
+        public Attachment(int Id, string FileName, byte[] FileContents, string Description = null, string Type = null)
         {   
             this.Id = Id;
             this.FileName = FileName;
             this.FileContents = FileContents;
+
+
             this.Description = Description;
             this.Type = Type;
         }

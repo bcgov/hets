@@ -42,14 +42,14 @@ namespace HETSAPI.Models
         /// Initializes a new instance of the <see cref="Equipment" /> class.
         /// </summary>
         /// <param name="Id">A system-generated unique identifier for a Equipment (required).</param>
-        /// <param name="LocalArea">A foreign key reference to the system-generated unique identifier for a Local Area.</param>
-        /// <param name="DistrictEquipmentType">A foreign key reference to the system-generated unique identifier for a Equipment Type.</param>
-        /// <param name="Owner">A foreign key reference to the system-generated unique identifier for an Owner.</param>
-        /// <param name="EquipmentCode">A human-visible unique code for the piece of equipment, referenced for convenience by the system users - HETS Clerks and Equipment Owners. Generated at record creation time based on the unique Owner prefix (e.g. EDW) and a zero-filled unique number - resulting in a code like EDW-0083..</param>
-        /// <param name="Status">The current status of the equipment in a UI-controlled string. Initial values are Pending, Approved and Archived, but other values may be added..</param>
-        /// <param name="ReceivedDate">The date the piece of equipment was first received and recorded in HETS..</param>
+        /// <param name="LocalArea">A foreign key reference to the system-generated unique identifier for a Local Area (required).</param>
+        /// <param name="DistrictEquipmentType">A foreign key reference to the system-generated unique identifier for a Equipment Type (required).</param>
+        /// <param name="Owner">A foreign key reference to the system-generated unique identifier for an Owner (required).</param>
+        /// <param name="EquipmentCode">A human-visible unique code for the piece of equipment, referenced for convenience by the system users - HETS Clerks and Equipment Owners. Generated at record creation time based on the unique Owner prefix (e.g. EDW) and a zero-filled unique number - resulting in a code like EDW-0083. (required).</param>
+        /// <param name="Status">The current status of the equipment in a UI-controlled string. Initial values are Pending, Approved and Archived, but other values may be added. (required).</param>
+        /// <param name="ReceivedDate">The date the piece of equipment was first received and recorded in HETS. (required).</param>
+        /// <param name="LastVerifiedDate">The date the equipment was last verified by the HETS Clerk as being still in service in the Local Area and available for the HETS Programme. (required).</param>
         /// <param name="ApprovedDate">The date the piece of equipment was first approved in HETS. Part of the seniority calculation for a piece of equipment is based on this date..</param>
-        /// <param name="LastVerifiedDate">The date the equipment was last verified by the HETS Clerk as being still in service in the Local Area and available for the HETS Programme..</param>
         /// <param name="IsInformationUpdateNeeded">Set true if a need to update the information&amp;#x2F;status of the equipment is needed. Used during the processing of a request when an update is noted, but the Clerk does not have time to make the update..</param>
         /// <param name="InformationUpdateNeededReason">A note about why the needed information&amp;#x2F;status update that is needed about the equipment..</param>
         /// <param name="LicencePlate">The licence plate (if any) of the piece of equipment, as entered by the HETS Clerk..</param>
@@ -81,7 +81,7 @@ namespace HETSAPI.Models
         /// <param name="Attachments">Attachments.</param>
         /// <param name="History">History.</param>
         /// <param name="SeniorityAudit">SeniorityAudit.</param>
-        public Equipment(int Id, LocalArea LocalArea = null, DistrictEquipmentType DistrictEquipmentType = null, Owner Owner = null, string EquipmentCode = null, string Status = null, DateTime? ReceivedDate = null, DateTime? ApprovedDate = null, DateTime? LastVerifiedDate = null, bool? IsInformationUpdateNeeded = null, string InformationUpdateNeededReason = null, string LicencePlate = null, string Make = null, string Model = null, string Year = null, string Operator = null, float? PayRate = null, string RefuseRate = null, string SerialNumber = null, string Size = null, DateTime? ToDate = null, float? BlockNumber = null, float? Seniority = null, int? NumberInBlock = null, bool? IsSeniorityOverridden = null, string SeniorityOverrideReason = null, DateTime? SeniorityEffectiveDate = null, float? YearsOfService = null, float? ServiceHoursLastYear = null, float? ServiceHoursTwoYearsAgo = null, float? ServiceHoursThreeYearsAgo = null, string ArchiveCode = null, string ArchiveReason = null, DateTime? ArchiveDate = null, DumpTruck DumpTruck = null, List<EquipmentAttachment> EquipmentAttachments = null, List<Note> Notes = null, List<Attachment> Attachments = null, List<History> History = null, List<SeniorityAudit> SeniorityAudit = null)
+        public Equipment(int Id, LocalArea LocalArea, DistrictEquipmentType DistrictEquipmentType, Owner Owner, string EquipmentCode, string Status, DateTime ReceivedDate, DateTime LastVerifiedDate, DateTime? ApprovedDate = null, bool? IsInformationUpdateNeeded = null, string InformationUpdateNeededReason = null, string LicencePlate = null, string Make = null, string Model = null, string Year = null, string Operator = null, float? PayRate = null, string RefuseRate = null, string SerialNumber = null, string Size = null, DateTime? ToDate = null, float? BlockNumber = null, float? Seniority = null, int? NumberInBlock = null, bool? IsSeniorityOverridden = null, string SeniorityOverrideReason = null, DateTime? SeniorityEffectiveDate = null, float? YearsOfService = null, float? ServiceHoursLastYear = null, float? ServiceHoursTwoYearsAgo = null, float? ServiceHoursThreeYearsAgo = null, string ArchiveCode = null, string ArchiveReason = null, DateTime? ArchiveDate = null, DumpTruck DumpTruck = null, List<EquipmentAttachment> EquipmentAttachments = null, List<Note> Notes = null, List<Attachment> Attachments = null, List<History> History = null, List<SeniorityAudit> SeniorityAudit = null)
         {   
             this.Id = Id;
             this.LocalArea = LocalArea;
@@ -90,8 +90,15 @@ namespace HETSAPI.Models
             this.EquipmentCode = EquipmentCode;
             this.Status = Status;
             this.ReceivedDate = ReceivedDate;
-            this.ApprovedDate = ApprovedDate;
             this.LastVerifiedDate = LastVerifiedDate;
+
+
+
+
+
+
+
+            this.ApprovedDate = ApprovedDate;
             this.IsInformationUpdateNeeded = IsInformationUpdateNeeded;
             this.InformationUpdateNeededReason = InformationUpdateNeededReason;
             this.LicencePlate = LicencePlate;
@@ -200,7 +207,14 @@ namespace HETSAPI.Models
         /// </summary>
         /// <value>The date the piece of equipment was first received and recorded in HETS.</value>
         [MetaDataExtension (Description = "The date the piece of equipment was first received and recorded in HETS.")]
-        public DateTime? ReceivedDate { get; set; }
+        public DateTime ReceivedDate { get; set; }
+        
+        /// <summary>
+        /// The date the equipment was last verified by the HETS Clerk as being still in service in the Local Area and available for the HETS Programme.
+        /// </summary>
+        /// <value>The date the equipment was last verified by the HETS Clerk as being still in service in the Local Area and available for the HETS Programme.</value>
+        [MetaDataExtension (Description = "The date the equipment was last verified by the HETS Clerk as being still in service in the Local Area and available for the HETS Programme.")]
+        public DateTime LastVerifiedDate { get; set; }
         
         /// <summary>
         /// The date the piece of equipment was first approved in HETS. Part of the seniority calculation for a piece of equipment is based on this date.
@@ -208,13 +222,6 @@ namespace HETSAPI.Models
         /// <value>The date the piece of equipment was first approved in HETS. Part of the seniority calculation for a piece of equipment is based on this date.</value>
         [MetaDataExtension (Description = "The date the piece of equipment was first approved in HETS. Part of the seniority calculation for a piece of equipment is based on this date.")]
         public DateTime? ApprovedDate { get; set; }
-        
-        /// <summary>
-        /// The date the equipment was last verified by the HETS Clerk as being still in service in the Local Area and available for the HETS Programme.
-        /// </summary>
-        /// <value>The date the equipment was last verified by the HETS Clerk as being still in service in the Local Area and available for the HETS Programme.</value>
-        [MetaDataExtension (Description = "The date the equipment was last verified by the HETS Clerk as being still in service in the Local Area and available for the HETS Programme.")]
-        public DateTime? LastVerifiedDate { get; set; }
         
         /// <summary>
         /// Set true if a need to update the information&#x2F;status of the equipment is needed. Used during the processing of a request when an update is noted, but the Clerk does not have time to make the update.
@@ -470,8 +477,8 @@ namespace HETSAPI.Models
             sb.Append("  EquipmentCode: ").Append(EquipmentCode).Append("\n");
             sb.Append("  Status: ").Append(Status).Append("\n");
             sb.Append("  ReceivedDate: ").Append(ReceivedDate).Append("\n");
-            sb.Append("  ApprovedDate: ").Append(ApprovedDate).Append("\n");
             sb.Append("  LastVerifiedDate: ").Append(LastVerifiedDate).Append("\n");
+            sb.Append("  ApprovedDate: ").Append(ApprovedDate).Append("\n");
             sb.Append("  IsInformationUpdateNeeded: ").Append(IsInformationUpdateNeeded).Append("\n");
             sb.Append("  InformationUpdateNeededReason: ").Append(InformationUpdateNeededReason).Append("\n");
             sb.Append("  LicencePlate: ").Append(LicencePlate).Append("\n");
@@ -576,14 +583,14 @@ namespace HETSAPI.Models
                     this.ReceivedDate.Equals(other.ReceivedDate)
                 ) &&                 
                 (
-                    this.ApprovedDate == other.ApprovedDate ||
-                    this.ApprovedDate != null &&
-                    this.ApprovedDate.Equals(other.ApprovedDate)
-                ) &&                 
-                (
                     this.LastVerifiedDate == other.LastVerifiedDate ||
                     this.LastVerifiedDate != null &&
                     this.LastVerifiedDate.Equals(other.LastVerifiedDate)
+                ) &&                 
+                (
+                    this.ApprovedDate == other.ApprovedDate ||
+                    this.ApprovedDate != null &&
+                    this.ApprovedDate.Equals(other.ApprovedDate)
                 ) &&                 
                 (
                     this.IsInformationUpdateNeeded == other.IsInformationUpdateNeeded ||
@@ -774,17 +781,17 @@ namespace HETSAPI.Models
                 {
                     hash = hash * 59 + this.Status.GetHashCode();
                 }                
-                                if (this.ReceivedDate != null)
+                                   
+                if (this.ReceivedDate != null)
                 {
                     hash = hash * 59 + this.ReceivedDate.GetHashCode();
-                }                
-                                if (this.ApprovedDate != null)
-                {
-                    hash = hash * 59 + this.ApprovedDate.GetHashCode();
-                }                
-                                if (this.LastVerifiedDate != null)
+                }                   
+                if (this.LastVerifiedDate != null)
                 {
                     hash = hash * 59 + this.LastVerifiedDate.GetHashCode();
+                }                if (this.ApprovedDate != null)
+                {
+                    hash = hash * 59 + this.ApprovedDate.GetHashCode();
                 }                
                                 if (this.IsInformationUpdateNeeded != null)
                 {

@@ -42,19 +42,22 @@ namespace HETSAPI.Models
         /// Initializes a new instance of the <see cref="LocalArea" /> class.
         /// </summary>
         /// <param name="Id">A system-generated unique identifier for a LocalArea (required).</param>
+        /// <param name="LocalAreaNumber">A system-generated, visible to the user number for the Local Area (required).</param>
+        /// <param name="Name">The full name of the Local Area (required).</param>
+        /// <param name="ServiceArea">The Service Area in which the Local Area is found. (required).</param>
         /// <param name="StartDate">The DATE the business information came into effect. - NOT CURRENTLY ENFORCED IN THIS SYSTEM (required).</param>
-        /// <param name="LocalAreaNumber">A system-generated, visible to the user number for the Local Area.</param>
-        /// <param name="Name">The full name of the Local Area.</param>
-        /// <param name="ServiceArea">The Service Area in which the Local Area is found..</param>
         /// <param name="EndDate">The DATE the business information ceased to be in effect. - NOT CURRENTLY ENFORCED IN THIS SYSTEM.</param>
-        public LocalArea(int Id, DateTime StartDate, int? LocalAreaNumber = null, string Name = null, ServiceArea ServiceArea = null, DateTime? EndDate = null)
+        public LocalArea(int Id, int LocalAreaNumber, string Name, ServiceArea ServiceArea, DateTime StartDate, DateTime? EndDate = null)
         {   
             this.Id = Id;
-            this.StartDate = StartDate;
-
             this.LocalAreaNumber = LocalAreaNumber;
             this.Name = Name;
             this.ServiceArea = ServiceArea;
+            this.StartDate = StartDate;
+
+
+
+
             this.EndDate = EndDate;
         }
 
@@ -66,18 +69,11 @@ namespace HETSAPI.Models
         public int Id { get; set; }
         
         /// <summary>
-        /// The DATE the business information came into effect. - NOT CURRENTLY ENFORCED IN THIS SYSTEM
-        /// </summary>
-        /// <value>The DATE the business information came into effect. - NOT CURRENTLY ENFORCED IN THIS SYSTEM</value>
-        [MetaDataExtension (Description = "The DATE the business information came into effect. - NOT CURRENTLY ENFORCED IN THIS SYSTEM")]
-        public DateTime StartDate { get; set; }
-        
-        /// <summary>
         /// A system-generated, visible to the user number for the Local Area
         /// </summary>
         /// <value>A system-generated, visible to the user number for the Local Area</value>
         [MetaDataExtension (Description = "A system-generated, visible to the user number for the Local Area")]
-        public int? LocalAreaNumber { get; set; }
+        public int LocalAreaNumber { get; set; }
         
         /// <summary>
         /// The full name of the Local Area
@@ -104,6 +100,13 @@ namespace HETSAPI.Models
         public int? ServiceAreaId { get; set; }
         
         /// <summary>
+        /// The DATE the business information came into effect. - NOT CURRENTLY ENFORCED IN THIS SYSTEM
+        /// </summary>
+        /// <value>The DATE the business information came into effect. - NOT CURRENTLY ENFORCED IN THIS SYSTEM</value>
+        [MetaDataExtension (Description = "The DATE the business information came into effect. - NOT CURRENTLY ENFORCED IN THIS SYSTEM")]
+        public DateTime StartDate { get; set; }
+        
+        /// <summary>
         /// The DATE the business information ceased to be in effect. - NOT CURRENTLY ENFORCED IN THIS SYSTEM
         /// </summary>
         /// <value>The DATE the business information ceased to be in effect. - NOT CURRENTLY ENFORCED IN THIS SYSTEM</value>
@@ -119,10 +122,10 @@ namespace HETSAPI.Models
             var sb = new StringBuilder();
             sb.Append("class LocalArea {\n");
             sb.Append("  Id: ").Append(Id).Append("\n");
-            sb.Append("  StartDate: ").Append(StartDate).Append("\n");
             sb.Append("  LocalAreaNumber: ").Append(LocalAreaNumber).Append("\n");
             sb.Append("  Name: ").Append(Name).Append("\n");
             sb.Append("  ServiceArea: ").Append(ServiceArea).Append("\n");
+            sb.Append("  StartDate: ").Append(StartDate).Append("\n");
             sb.Append("  EndDate: ").Append(EndDate).Append("\n");
             sb.Append("}\n");
             return sb.ToString();
@@ -167,13 +170,7 @@ namespace HETSAPI.Models
                     this.Id.Equals(other.Id)
                 ) &&                 
                 (
-                    this.StartDate == other.StartDate ||
-                    this.StartDate != null &&
-                    this.StartDate.Equals(other.StartDate)
-                ) &&                 
-                (
                     this.LocalAreaNumber == other.LocalAreaNumber ||
-                    this.LocalAreaNumber != null &&
                     this.LocalAreaNumber.Equals(other.LocalAreaNumber)
                 ) &&                 
                 (
@@ -185,6 +182,11 @@ namespace HETSAPI.Models
                     this.ServiceArea == other.ServiceArea ||
                     this.ServiceArea != null &&
                     this.ServiceArea.Equals(other.ServiceArea)
+                ) &&                 
+                (
+                    this.StartDate == other.StartDate ||
+                    this.StartDate != null &&
+                    this.StartDate.Equals(other.StartDate)
                 ) &&                 
                 (
                     this.EndDate == other.EndDate ||
@@ -205,15 +207,8 @@ namespace HETSAPI.Models
                 int hash = 41;
                 // Suitable nullity checks
                                    
-                hash = hash * 59 + this.Id.GetHashCode();                   
-                if (this.StartDate != null)
-                {
-                    hash = hash * 59 + this.StartDate.GetHashCode();
-                }                if (this.LocalAreaNumber != null)
-                {
-                    hash = hash * 59 + this.LocalAreaNumber.GetHashCode();
-                }                
-                                if (this.Name != null)
+                hash = hash * 59 + this.Id.GetHashCode();                                   
+                hash = hash * 59 + this.LocalAreaNumber.GetHashCode();                if (this.Name != null)
                 {
                     hash = hash * 59 + this.Name.GetHashCode();
                 }                
@@ -221,6 +216,10 @@ namespace HETSAPI.Models
                 if (this.ServiceArea != null)
                 {
                     hash = hash * 59 + this.ServiceArea.GetHashCode();
+                }                   
+                if (this.StartDate != null)
+                {
+                    hash = hash * 59 + this.StartDate.GetHashCode();
                 }                if (this.EndDate != null)
                 {
                     hash = hash * 59 + this.EndDate.GetHashCode();

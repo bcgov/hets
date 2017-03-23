@@ -489,7 +489,7 @@ namespace HETSAPI.Services.Impl
                     Equipment item = items[i];
                     if (item != null)
                     {
-                        DateTime? lastVerifiedDate = item.LastVerifiedDate;
+                        DateTime lastVerifiedDate = item.LastVerifiedDate;
 
                         bool equipment_exists = _context.Equipments.Any(x => x.Id == item.Id);
                         if (equipment_exists)

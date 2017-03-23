@@ -42,14 +42,15 @@ namespace HETSAPI.Models
         /// Initializes a new instance of the <see cref="RentalRequestAttachment" /> class.
         /// </summary>
         /// <param name="Id">A system-generated unique identifier for a RentalRequestAttachment (required).</param>
+        /// <param name="RentalRequest">A foreign key reference to the system-generated unique identifier for a Rental Request (required).</param>
         /// <param name="Attachment">The name&amp;#x2F;type attachment needed as part of the fulfillment of the request (required).</param>
-        /// <param name="RentalRequest">A foreign key reference to the system-generated unique identifier for a Rental Request.</param>
-        public RentalRequestAttachment(int Id, string Attachment, RentalRequest RentalRequest = null)
+        public RentalRequestAttachment(int Id, RentalRequest RentalRequest, string Attachment)
         {   
             this.Id = Id;
+            this.RentalRequest = RentalRequest;
             this.Attachment = Attachment;
 
-            this.RentalRequest = RentalRequest;
+
         }
 
         /// <summary>
@@ -58,15 +59,6 @@ namespace HETSAPI.Models
         /// <value>A system-generated unique identifier for a RentalRequestAttachment</value>
         [MetaDataExtension (Description = "A system-generated unique identifier for a RentalRequestAttachment")]
         public int Id { get; set; }
-        
-        /// <summary>
-        /// The name&#x2F;type attachment needed as part of the fulfillment of the request
-        /// </summary>
-        /// <value>The name&#x2F;type attachment needed as part of the fulfillment of the request</value>
-        [MetaDataExtension (Description = "The name&#x2F;type attachment needed as part of the fulfillment of the request")]
-        [MaxLength(150)]
-        
-        public string Attachment { get; set; }
         
         /// <summary>
         /// A foreign key reference to the system-generated unique identifier for a Rental Request
@@ -84,6 +76,15 @@ namespace HETSAPI.Models
         public int? RentalRequestId { get; set; }
         
         /// <summary>
+        /// The name&#x2F;type attachment needed as part of the fulfillment of the request
+        /// </summary>
+        /// <value>The name&#x2F;type attachment needed as part of the fulfillment of the request</value>
+        [MetaDataExtension (Description = "The name&#x2F;type attachment needed as part of the fulfillment of the request")]
+        [MaxLength(150)]
+        
+        public string Attachment { get; set; }
+        
+        /// <summary>
         /// Returns the string presentation of the object
         /// </summary>
         /// <returns>String presentation of the object</returns>
@@ -92,8 +93,8 @@ namespace HETSAPI.Models
             var sb = new StringBuilder();
             sb.Append("class RentalRequestAttachment {\n");
             sb.Append("  Id: ").Append(Id).Append("\n");
-            sb.Append("  Attachment: ").Append(Attachment).Append("\n");
             sb.Append("  RentalRequest: ").Append(RentalRequest).Append("\n");
+            sb.Append("  Attachment: ").Append(Attachment).Append("\n");
             sb.Append("}\n");
             return sb.ToString();
         }
@@ -137,14 +138,14 @@ namespace HETSAPI.Models
                     this.Id.Equals(other.Id)
                 ) &&                 
                 (
-                    this.Attachment == other.Attachment ||
-                    this.Attachment != null &&
-                    this.Attachment.Equals(other.Attachment)
-                ) &&                 
-                (
                     this.RentalRequest == other.RentalRequest ||
                     this.RentalRequest != null &&
                     this.RentalRequest.Equals(other.RentalRequest)
+                ) &&                 
+                (
+                    this.Attachment == other.Attachment ||
+                    this.Attachment != null &&
+                    this.Attachment.Equals(other.Attachment)
                 );
         }
 
@@ -160,15 +161,15 @@ namespace HETSAPI.Models
                 int hash = 41;
                 // Suitable nullity checks
                                    
-                hash = hash * 59 + this.Id.GetHashCode();                if (this.Attachment != null)
-                {
-                    hash = hash * 59 + this.Attachment.GetHashCode();
-                }                
-                                   
+                hash = hash * 59 + this.Id.GetHashCode();                   
                 if (this.RentalRequest != null)
                 {
                     hash = hash * 59 + this.RentalRequest.GetHashCode();
-                }
+                }                if (this.Attachment != null)
+                {
+                    hash = hash * 59 + this.Attachment.GetHashCode();
+                }                
+                
                 return hash;
             }
         }

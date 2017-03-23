@@ -41,22 +41,27 @@ namespace HETSAPI.Models
         /// <summary>
         /// Initializes a new instance of the <see cref="EquipmentType" /> class.
         /// </summary>
-        /// <param name="Id">A system-generated unique identifier for an EquipmentName.</param>
-        /// <param name="Name">The generic name of an equipment type - e.g. Dump Truck, Excavator and so on..</param>
-        /// <param name="IsDumpTruck">True if the Equipment Type is a Dump Truck. Equipment of this type will have a related Dump Truck record containing dump truck-related attributes..</param>
-        /// <param name="BlueBookSection">The section of the Blue Book that is related to equipment types of this name..</param>
+        /// <param name="Id">A system-generated unique identifier for an EquipmentName (required).</param>
+        /// <param name="Name">The generic name of an equipment type - e.g. Dump Truck, Excavator and so on. (required).</param>
+        /// <param name="IsDumpTruck">True if the Equipment Type is a Dump Truck. Equipment of this type will have a related Dump Truck record containing dump truck-related attributes. (required).</param>
+        /// <param name="BlueBookSection">The section of the Blue Book that is related to equipment types of this name. (required).</param>
+        /// <param name="NumberOfBlocks">The number of blocks defined for the equipment of this name and Blue Book section. In general Dump Truck-class equipment types have 3 blocks, while non-Dump Truck equipment types have 2 blocks. (required).</param>
         /// <param name="BlueBookRateNumber">The rate number in the Blue Book that is related to equipment types of this name..</param>
-        /// <param name="NumberOfBlocks">The number of blocks defined for the equipment of this name and Blue Book section. In general Dump Truck-class equipment types have 3 blocks, while non-Dump Truck equipment types have 2 blocks..</param>
         /// <param name="MaximumHours">The maximum number of hours per year that equipment types of this name&amp;#x2F;Blue Book section can work in a year.</param>
         /// <param name="ExtendHours">The number of extended hours per year that equipment types of this name&amp;#x2F;Blue Book section can work..</param>
         /// <param name="MaxHoursSub">The number of substitute hours per year that equipment types of this name&amp;#x2F;Blue Book section can work..</param>
-        public EquipmentType(int? Id = null, string Name = null, bool? IsDumpTruck = null, float? BlueBookSection = null, float? BlueBookRateNumber = null, int? NumberOfBlocks = null, float? MaximumHours = null, float? ExtendHours = null, float? MaxHoursSub = null)
-        {               this.Id = Id;
+        public EquipmentType(int Id, string Name, bool IsDumpTruck, float? BlueBookSection, int NumberOfBlocks, float? BlueBookRateNumber = null, float? MaximumHours = null, float? ExtendHours = null, float? MaxHoursSub = null)
+        {   
+            this.Id = Id;
             this.Name = Name;
             this.IsDumpTruck = IsDumpTruck;
             this.BlueBookSection = BlueBookSection;
-            this.BlueBookRateNumber = BlueBookRateNumber;
             this.NumberOfBlocks = NumberOfBlocks;
+
+
+
+
+            this.BlueBookRateNumber = BlueBookRateNumber;
             this.MaximumHours = MaximumHours;
             this.ExtendHours = ExtendHours;
             this.MaxHoursSub = MaxHoursSub;
@@ -67,7 +72,7 @@ namespace HETSAPI.Models
         /// </summary>
         /// <value>A system-generated unique identifier for an EquipmentName</value>
         [MetaDataExtension (Description = "A system-generated unique identifier for an EquipmentName")]
-        public int? Id { get; set; }
+        public int Id { get; set; }
         
         /// <summary>
         /// The generic name of an equipment type - e.g. Dump Truck, Excavator and so on.
@@ -83,7 +88,7 @@ namespace HETSAPI.Models
         /// </summary>
         /// <value>True if the Equipment Type is a Dump Truck. Equipment of this type will have a related Dump Truck record containing dump truck-related attributes.</value>
         [MetaDataExtension (Description = "True if the Equipment Type is a Dump Truck. Equipment of this type will have a related Dump Truck record containing dump truck-related attributes.")]
-        public bool? IsDumpTruck { get; set; }
+        public bool IsDumpTruck { get; set; }
         
         /// <summary>
         /// The section of the Blue Book that is related to equipment types of this name.
@@ -93,18 +98,18 @@ namespace HETSAPI.Models
         public float? BlueBookSection { get; set; }
         
         /// <summary>
+        /// The number of blocks defined for the equipment of this name and Blue Book section. In general Dump Truck-class equipment types have 3 blocks, while non-Dump Truck equipment types have 2 blocks.
+        /// </summary>
+        /// <value>The number of blocks defined for the equipment of this name and Blue Book section. In general Dump Truck-class equipment types have 3 blocks, while non-Dump Truck equipment types have 2 blocks.</value>
+        [MetaDataExtension (Description = "The number of blocks defined for the equipment of this name and Blue Book section. In general Dump Truck-class equipment types have 3 blocks, while non-Dump Truck equipment types have 2 blocks.")]
+        public int NumberOfBlocks { get; set; }
+        
+        /// <summary>
         /// The rate number in the Blue Book that is related to equipment types of this name.
         /// </summary>
         /// <value>The rate number in the Blue Book that is related to equipment types of this name.</value>
         [MetaDataExtension (Description = "The rate number in the Blue Book that is related to equipment types of this name.")]
         public float? BlueBookRateNumber { get; set; }
-        
-        /// <summary>
-        /// The number of blocks defined for the equipment of this name and Blue Book section. In general Dump Truck-class equipment types have 3 blocks, while non-Dump Truck equipment types have 2 blocks.
-        /// </summary>
-        /// <value>The number of blocks defined for the equipment of this name and Blue Book section. In general Dump Truck-class equipment types have 3 blocks, while non-Dump Truck equipment types have 2 blocks.</value>
-        [MetaDataExtension (Description = "The number of blocks defined for the equipment of this name and Blue Book section. In general Dump Truck-class equipment types have 3 blocks, while non-Dump Truck equipment types have 2 blocks.")]
-        public int? NumberOfBlocks { get; set; }
         
         /// <summary>
         /// The maximum number of hours per year that equipment types of this name&#x2F;Blue Book section can work in a year
@@ -139,8 +144,8 @@ namespace HETSAPI.Models
             sb.Append("  Name: ").Append(Name).Append("\n");
             sb.Append("  IsDumpTruck: ").Append(IsDumpTruck).Append("\n");
             sb.Append("  BlueBookSection: ").Append(BlueBookSection).Append("\n");
-            sb.Append("  BlueBookRateNumber: ").Append(BlueBookRateNumber).Append("\n");
             sb.Append("  NumberOfBlocks: ").Append(NumberOfBlocks).Append("\n");
+            sb.Append("  BlueBookRateNumber: ").Append(BlueBookRateNumber).Append("\n");
             sb.Append("  MaximumHours: ").Append(MaximumHours).Append("\n");
             sb.Append("  ExtendHours: ").Append(ExtendHours).Append("\n");
             sb.Append("  MaxHoursSub: ").Append(MaxHoursSub).Append("\n");
@@ -184,7 +189,6 @@ namespace HETSAPI.Models
             return                 
                 (
                     this.Id == other.Id ||
-                    this.Id != null &&
                     this.Id.Equals(other.Id)
                 ) &&                 
                 (
@@ -194,7 +198,6 @@ namespace HETSAPI.Models
                 ) &&                 
                 (
                     this.IsDumpTruck == other.IsDumpTruck ||
-                    this.IsDumpTruck != null &&
                     this.IsDumpTruck.Equals(other.IsDumpTruck)
                 ) &&                 
                 (
@@ -203,14 +206,13 @@ namespace HETSAPI.Models
                     this.BlueBookSection.Equals(other.BlueBookSection)
                 ) &&                 
                 (
+                    this.NumberOfBlocks == other.NumberOfBlocks ||
+                    this.NumberOfBlocks.Equals(other.NumberOfBlocks)
+                ) &&                 
+                (
                     this.BlueBookRateNumber == other.BlueBookRateNumber ||
                     this.BlueBookRateNumber != null &&
                     this.BlueBookRateNumber.Equals(other.BlueBookRateNumber)
-                ) &&                 
-                (
-                    this.NumberOfBlocks == other.NumberOfBlocks ||
-                    this.NumberOfBlocks != null &&
-                    this.NumberOfBlocks.Equals(other.NumberOfBlocks)
                 ) &&                 
                 (
                     this.MaximumHours == other.MaximumHours ||
@@ -240,29 +242,21 @@ namespace HETSAPI.Models
             {
                 int hash = 41;
                 // Suitable nullity checks
-                if (this.Id != null)
-                {
-                    hash = hash * 59 + this.Id.GetHashCode();
-                }                
-                                if (this.Name != null)
+                                   
+                hash = hash * 59 + this.Id.GetHashCode();                if (this.Name != null)
                 {
                     hash = hash * 59 + this.Name.GetHashCode();
                 }                
-                                if (this.IsDumpTruck != null)
-                {
-                    hash = hash * 59 + this.IsDumpTruck.GetHashCode();
-                }                
-                                if (this.BlueBookSection != null)
+                                   
+                hash = hash * 59 + this.IsDumpTruck.GetHashCode();
+                                   
+                if (this.BlueBookSection != null)
                 {
                     hash = hash * 59 + this.BlueBookSection.GetHashCode();
-                }                
-                                if (this.BlueBookRateNumber != null)
+                }                                   
+                hash = hash * 59 + this.NumberOfBlocks.GetHashCode();                if (this.BlueBookRateNumber != null)
                 {
                     hash = hash * 59 + this.BlueBookRateNumber.GetHashCode();
-                }                
-                                if (this.NumberOfBlocks != null)
-                {
-                    hash = hash * 59 + this.NumberOfBlocks.GetHashCode();
                 }                
                                 if (this.MaximumHours != null)
                 {

@@ -42,19 +42,23 @@ namespace HETSAPI.Models
         /// Initializes a new instance of the <see cref="LookupList" /> class.
         /// </summary>
         /// <param name="Id">A system-generated unique identifier for a LookupList (required).</param>
-        /// <param name="ContextName">The context within the app in which this lookup list if used. Defined and referenced in the code of the application..</param>
-        /// <param name="IsDefault">True of the value within the lookup list context should be the default for the lookup instance..</param>
+        /// <param name="ContextName">The context within the app in which this lookup list if used. Defined and referenced in the code of the application. (required).</param>
+        /// <param name="IsDefault">True of the value within the lookup list context should be the default for the lookup instance. (required).</param>
+        /// <param name="CodeName">The a shorter lookup name to find the value. Can be used at the option of the application to present on the screen a short version of the lookup list value. (required).</param>
+        /// <param name="Value">The fully spelled out value of the lookup entry. (required).</param>
         /// <param name="DisplaySortOrder">The sort order for list of values within a list context..</param>
-        /// <param name="CodeName">The a shorter lookup name to find the value. Can be used at the option of the application to present on the screen a short version of the lookup list value..</param>
-        /// <param name="Value">The fully spelled out value of the lookup entry..</param>
-        public LookupList(int Id, string ContextName = null, bool? IsDefault = null, int? DisplaySortOrder = null, string CodeName = null, string Value = null)
+        public LookupList(int Id, string ContextName, bool IsDefault, string CodeName, string Value, int? DisplaySortOrder = null)
         {   
             this.Id = Id;
             this.ContextName = ContextName;
             this.IsDefault = IsDefault;
-            this.DisplaySortOrder = DisplaySortOrder;
             this.CodeName = CodeName;
             this.Value = Value;
+
+
+
+
+            this.DisplaySortOrder = DisplaySortOrder;
         }
 
         /// <summary>
@@ -78,14 +82,7 @@ namespace HETSAPI.Models
         /// </summary>
         /// <value>True of the value within the lookup list context should be the default for the lookup instance.</value>
         [MetaDataExtension (Description = "True of the value within the lookup list context should be the default for the lookup instance.")]
-        public bool? IsDefault { get; set; }
-        
-        /// <summary>
-        /// The sort order for list of values within a list context.
-        /// </summary>
-        /// <value>The sort order for list of values within a list context.</value>
-        [MetaDataExtension (Description = "The sort order for list of values within a list context.")]
-        public int? DisplaySortOrder { get; set; }
+        public bool IsDefault { get; set; }
         
         /// <summary>
         /// The a shorter lookup name to find the value. Can be used at the option of the application to present on the screen a short version of the lookup list value.
@@ -106,6 +103,13 @@ namespace HETSAPI.Models
         public string Value { get; set; }
         
         /// <summary>
+        /// The sort order for list of values within a list context.
+        /// </summary>
+        /// <value>The sort order for list of values within a list context.</value>
+        [MetaDataExtension (Description = "The sort order for list of values within a list context.")]
+        public int? DisplaySortOrder { get; set; }
+        
+        /// <summary>
         /// Returns the string presentation of the object
         /// </summary>
         /// <returns>String presentation of the object</returns>
@@ -116,9 +120,9 @@ namespace HETSAPI.Models
             sb.Append("  Id: ").Append(Id).Append("\n");
             sb.Append("  ContextName: ").Append(ContextName).Append("\n");
             sb.Append("  IsDefault: ").Append(IsDefault).Append("\n");
-            sb.Append("  DisplaySortOrder: ").Append(DisplaySortOrder).Append("\n");
             sb.Append("  CodeName: ").Append(CodeName).Append("\n");
             sb.Append("  Value: ").Append(Value).Append("\n");
+            sb.Append("  DisplaySortOrder: ").Append(DisplaySortOrder).Append("\n");
             sb.Append("}\n");
             return sb.ToString();
         }
@@ -168,13 +172,7 @@ namespace HETSAPI.Models
                 ) &&                 
                 (
                     this.IsDefault == other.IsDefault ||
-                    this.IsDefault != null &&
                     this.IsDefault.Equals(other.IsDefault)
-                ) &&                 
-                (
-                    this.DisplaySortOrder == other.DisplaySortOrder ||
-                    this.DisplaySortOrder != null &&
-                    this.DisplaySortOrder.Equals(other.DisplaySortOrder)
                 ) &&                 
                 (
                     this.CodeName == other.CodeName ||
@@ -185,6 +183,11 @@ namespace HETSAPI.Models
                     this.Value == other.Value ||
                     this.Value != null &&
                     this.Value.Equals(other.Value)
+                ) &&                 
+                (
+                    this.DisplaySortOrder == other.DisplaySortOrder ||
+                    this.DisplaySortOrder != null &&
+                    this.DisplaySortOrder.Equals(other.DisplaySortOrder)
                 );
         }
 
@@ -204,14 +207,8 @@ namespace HETSAPI.Models
                 {
                     hash = hash * 59 + this.ContextName.GetHashCode();
                 }                
-                                if (this.IsDefault != null)
-                {
-                    hash = hash * 59 + this.IsDefault.GetHashCode();
-                }                
-                                if (this.DisplaySortOrder != null)
-                {
-                    hash = hash * 59 + this.DisplaySortOrder.GetHashCode();
-                }                
+                                   
+                hash = hash * 59 + this.IsDefault.GetHashCode();
                                 if (this.CodeName != null)
                 {
                     hash = hash * 59 + this.CodeName.GetHashCode();
@@ -219,6 +216,10 @@ namespace HETSAPI.Models
                                 if (this.Value != null)
                 {
                     hash = hash * 59 + this.Value.GetHashCode();
+                }                
+                                if (this.DisplaySortOrder != null)
+                {
+                    hash = hash * 59 + this.DisplaySortOrder.GetHashCode();
                 }                
                 
                 return hash;

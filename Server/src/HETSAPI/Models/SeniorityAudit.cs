@@ -42,10 +42,10 @@ namespace HETSAPI.Models
         /// Initializes a new instance of the <see cref="SeniorityAudit" /> class.
         /// </summary>
         /// <param name="Id">A system-generated unique identifier for a SeniorityAudit (required).</param>
-        /// <param name="StartDate">The effective date that the Seniority data in this record went into effect..</param>
-        /// <param name="EndDate">The effective date at which the Seniority data in this record ceased to be in effect..</param>
-        /// <param name="LocalArea">A foreign key reference to the system-generated unique identifier for a Local Area.</param>
-        /// <param name="Equipment">A foreign key reference to the system-generated unique identifier for an Equipment.</param>
+        /// <param name="StartDate">The effective date that the Seniority data in this record went into effect. (required).</param>
+        /// <param name="EndDate">The effective date at which the Seniority data in this record ceased to be in effect. (required).</param>
+        /// <param name="LocalArea">A foreign key reference to the system-generated unique identifier for a Local Area (required).</param>
+        /// <param name="Equipment">A foreign key reference to the system-generated unique identifier for an Equipment (required).</param>
         /// <param name="BlockNumber">The block number for the piece of equipment as calculated by the Seniority Algorthm for this equipment type in the local area. As currently defined by the business - 1, 2 or Open.</param>
         /// <param name="Owner">A foreign key reference to the system-generated unique identifier for an Owner.</param>
         /// <param name="OwnerOrganizationName">The name of the organization of the owner from the Owner Record, captured at the time this record was created..</param>
@@ -53,13 +53,19 @@ namespace HETSAPI.Models
         /// <param name="ServiceHoursLastYear">Number of hours of service by this piece of equipment in the previous fiscal year.</param>
         /// <param name="ServiceHoursTwoYearsAgo">Number of hours of service by this piece of equipment in the fiscal year before the last one - e.g. if current year is FY2018 then hours in FY2016.</param>
         /// <param name="ServiceHoursThreeYearsAgo">Number of hours of service by this piece of equipment in the fiscal year three years ago - e.g. if current year is FY2018 then hours in FY2015.</param>
-        public SeniorityAudit(int Id, DateTime? StartDate = null, DateTime? EndDate = null, LocalArea LocalArea = null, Equipment Equipment = null, float? BlockNumber = null, Owner Owner = null, string OwnerOrganizationName = null, float? Seniority = null, float? ServiceHoursLastYear = null, float? ServiceHoursTwoYearsAgo = null, float? ServiceHoursThreeYearsAgo = null)
+        /// <param name="IsSeniorityOverridden">True if the Seniority for the piece of equipment was manually overridden. Set if a user has gone in and explicitly updated the seniority base information. Indicates that underlying numbers were manually overridden..</param>
+        /// <param name="SeniorityOverrideReason">A text reason for why the piece of equipments underlying data was overridden to change their seniority number..</param>
+        public SeniorityAudit(int Id, DateTime StartDate, DateTime EndDate, LocalArea LocalArea, Equipment Equipment, float? BlockNumber = null, Owner Owner = null, string OwnerOrganizationName = null, float? Seniority = null, float? ServiceHoursLastYear = null, float? ServiceHoursTwoYearsAgo = null, float? ServiceHoursThreeYearsAgo = null, bool? IsSeniorityOverridden = null, string SeniorityOverrideReason = null)
         {   
             this.Id = Id;
             this.StartDate = StartDate;
             this.EndDate = EndDate;
             this.LocalArea = LocalArea;
             this.Equipment = Equipment;
+
+
+
+
             this.BlockNumber = BlockNumber;
             this.Owner = Owner;
             this.OwnerOrganizationName = OwnerOrganizationName;
@@ -67,6 +73,8 @@ namespace HETSAPI.Models
             this.ServiceHoursLastYear = ServiceHoursLastYear;
             this.ServiceHoursTwoYearsAgo = ServiceHoursTwoYearsAgo;
             this.ServiceHoursThreeYearsAgo = ServiceHoursThreeYearsAgo;
+            this.IsSeniorityOverridden = IsSeniorityOverridden;
+            this.SeniorityOverrideReason = SeniorityOverrideReason;
         }
 
         /// <summary>
@@ -81,14 +89,14 @@ namespace HETSAPI.Models
         /// </summary>
         /// <value>The effective date that the Seniority data in this record went into effect.</value>
         [MetaDataExtension (Description = "The effective date that the Seniority data in this record went into effect.")]
-        public DateTime? StartDate { get; set; }
+        public DateTime StartDate { get; set; }
         
         /// <summary>
         /// The effective date at which the Seniority data in this record ceased to be in effect.
         /// </summary>
         /// <value>The effective date at which the Seniority data in this record ceased to be in effect.</value>
         [MetaDataExtension (Description = "The effective date at which the Seniority data in this record ceased to be in effect.")]
-        public DateTime? EndDate { get; set; }
+        public DateTime EndDate { get; set; }
         
         /// <summary>
         /// A foreign key reference to the system-generated unique identifier for a Local Area
@@ -180,6 +188,22 @@ namespace HETSAPI.Models
         public float? ServiceHoursThreeYearsAgo { get; set; }
         
         /// <summary>
+        /// True if the Seniority for the piece of equipment was manually overridden. Set if a user has gone in and explicitly updated the seniority base information. Indicates that underlying numbers were manually overridden.
+        /// </summary>
+        /// <value>True if the Seniority for the piece of equipment was manually overridden. Set if a user has gone in and explicitly updated the seniority base information. Indicates that underlying numbers were manually overridden.</value>
+        [MetaDataExtension (Description = "True if the Seniority for the piece of equipment was manually overridden. Set if a user has gone in and explicitly updated the seniority base information. Indicates that underlying numbers were manually overridden.")]
+        public bool? IsSeniorityOverridden { get; set; }
+        
+        /// <summary>
+        /// A text reason for why the piece of equipments underlying data was overridden to change their seniority number.
+        /// </summary>
+        /// <value>A text reason for why the piece of equipments underlying data was overridden to change their seniority number.</value>
+        [MetaDataExtension (Description = "A text reason for why the piece of equipments underlying data was overridden to change their seniority number.")]
+        [MaxLength(2048)]
+        
+        public string SeniorityOverrideReason { get; set; }
+        
+        /// <summary>
         /// Returns the string presentation of the object
         /// </summary>
         /// <returns>String presentation of the object</returns>
@@ -199,6 +223,8 @@ namespace HETSAPI.Models
             sb.Append("  ServiceHoursLastYear: ").Append(ServiceHoursLastYear).Append("\n");
             sb.Append("  ServiceHoursTwoYearsAgo: ").Append(ServiceHoursTwoYearsAgo).Append("\n");
             sb.Append("  ServiceHoursThreeYearsAgo: ").Append(ServiceHoursThreeYearsAgo).Append("\n");
+            sb.Append("  IsSeniorityOverridden: ").Append(IsSeniorityOverridden).Append("\n");
+            sb.Append("  SeniorityOverrideReason: ").Append(SeniorityOverrideReason).Append("\n");
             sb.Append("}\n");
             return sb.ToString();
         }
@@ -295,6 +321,16 @@ namespace HETSAPI.Models
                     this.ServiceHoursThreeYearsAgo == other.ServiceHoursThreeYearsAgo ||
                     this.ServiceHoursThreeYearsAgo != null &&
                     this.ServiceHoursThreeYearsAgo.Equals(other.ServiceHoursThreeYearsAgo)
+                ) &&                 
+                (
+                    this.IsSeniorityOverridden == other.IsSeniorityOverridden ||
+                    this.IsSeniorityOverridden != null &&
+                    this.IsSeniorityOverridden.Equals(other.IsSeniorityOverridden)
+                ) &&                 
+                (
+                    this.SeniorityOverrideReason == other.SeniorityOverrideReason ||
+                    this.SeniorityOverrideReason != null &&
+                    this.SeniorityOverrideReason.Equals(other.SeniorityOverrideReason)
                 );
         }
 
@@ -310,15 +346,15 @@ namespace HETSAPI.Models
                 int hash = 41;
                 // Suitable nullity checks
                                    
-                hash = hash * 59 + this.Id.GetHashCode();                if (this.StartDate != null)
+                hash = hash * 59 + this.Id.GetHashCode();                   
+                if (this.StartDate != null)
                 {
                     hash = hash * 59 + this.StartDate.GetHashCode();
-                }                
-                                if (this.EndDate != null)
+                }                   
+                if (this.EndDate != null)
                 {
                     hash = hash * 59 + this.EndDate.GetHashCode();
-                }                
-                                   
+                }                   
                 if (this.LocalArea != null)
                 {
                     hash = hash * 59 + this.LocalArea.GetHashCode();
@@ -353,6 +389,14 @@ namespace HETSAPI.Models
                                 if (this.ServiceHoursThreeYearsAgo != null)
                 {
                     hash = hash * 59 + this.ServiceHoursThreeYearsAgo.GetHashCode();
+                }                
+                                if (this.IsSeniorityOverridden != null)
+                {
+                    hash = hash * 59 + this.IsSeniorityOverridden.GetHashCode();
+                }                
+                                if (this.SeniorityOverrideReason != null)
+                {
+                    hash = hash * 59 + this.SeniorityOverrideReason.GetHashCode();
                 }                
                 
                 return hash;

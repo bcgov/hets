@@ -42,11 +42,11 @@ namespace HETSAPI.Models
         /// Initializes a new instance of the <see cref="RentalRequest" /> class.
         /// </summary>
         /// <param name="Id">A system-generated unique identifier for a Request (required).</param>
-        /// <param name="Project">Project.</param>
-        /// <param name="LocalArea">A foreign key reference to the system-generated unique identifier for a Local Area.</param>
-        /// <param name="Status">The status of the Rental Request - whether it in progress, completed or was cancelled..</param>
-        /// <param name="DistrictEquipmentType">A foreign key reference to the system-generated unique identifier for an Equipment Type.</param>
-        /// <param name="EquipmentCount">The number of pieces of the equipment type wanted for hire as part of this request..</param>
+        /// <param name="Project">Project (required).</param>
+        /// <param name="LocalArea">A foreign key reference to the system-generated unique identifier for a Local Area (required).</param>
+        /// <param name="Status">The status of the Rental Request - whether it in progress, completed or was cancelled. (required).</param>
+        /// <param name="DistrictEquipmentType">A foreign key reference to the system-generated unique identifier for an Equipment Type (required).</param>
+        /// <param name="EquipmentCount">The number of pieces of the equipment type wanted for hire as part of this request. (required).</param>
         /// <param name="ExpectedHours">The expected number of rental hours for each piece equipment hired against this request, as provided by the Project Manager making the request..</param>
         /// <param name="ExpectedStartDate">The expected start date of each piece of equipment hired against this request, as provided by the Project Manager making the request..</param>
         /// <param name="ExpectedEndDate">The expected end date of each piece of equipment hired against this request, as provided by the Project Manager making the request..</param>
@@ -55,7 +55,7 @@ namespace HETSAPI.Models
         /// <param name="Attachments">Attachments.</param>
         /// <param name="History">History.</param>
         /// <param name="RentalRequestRotationList">RentalRequestRotationList.</param>
-        public RentalRequest(int Id, Project Project = null, LocalArea LocalArea = null, string Status = null, DistrictEquipmentType DistrictEquipmentType = null, int? EquipmentCount = null, int? ExpectedHours = null, DateTime? ExpectedStartDate = null, DateTime? ExpectedEndDate = null, Equipment FirstOnRotationList = null, List<Note> Notes = null, List<RentalRequestAttachment> Attachments = null, List<History> History = null, List<RentalRequestRotationList> RentalRequestRotationList = null)
+        public RentalRequest(int Id, Project Project, LocalArea LocalArea, string Status, DistrictEquipmentType DistrictEquipmentType, int EquipmentCount, int? ExpectedHours = null, DateTime? ExpectedStartDate = null, DateTime? ExpectedEndDate = null, Equipment FirstOnRotationList = null, List<Note> Notes = null, List<RentalRequestAttachment> Attachments = null, List<History> History = null, List<RentalRequestRotationList> RentalRequestRotationList = null)
         {   
             this.Id = Id;
             this.Project = Project;
@@ -63,6 +63,11 @@ namespace HETSAPI.Models
             this.Status = Status;
             this.DistrictEquipmentType = DistrictEquipmentType;
             this.EquipmentCount = EquipmentCount;
+
+
+
+
+
             this.ExpectedHours = ExpectedHours;
             this.ExpectedStartDate = ExpectedStartDate;
             this.ExpectedEndDate = ExpectedEndDate;
@@ -137,7 +142,7 @@ namespace HETSAPI.Models
         /// </summary>
         /// <value>The number of pieces of the equipment type wanted for hire as part of this request.</value>
         [MetaDataExtension (Description = "The number of pieces of the equipment type wanted for hire as part of this request.")]
-        public int? EquipmentCount { get; set; }
+        public int EquipmentCount { get; set; }
         
         /// <summary>
         /// The expected number of rental hours for each piece equipment hired against this request, as provided by the Project Manager making the request.
@@ -281,7 +286,6 @@ namespace HETSAPI.Models
                 ) &&                 
                 (
                     this.EquipmentCount == other.EquipmentCount ||
-                    this.EquipmentCount != null &&
                     this.EquipmentCount.Equals(other.EquipmentCount)
                 ) &&                 
                 (
@@ -354,11 +358,8 @@ namespace HETSAPI.Models
                 if (this.DistrictEquipmentType != null)
                 {
                     hash = hash * 59 + this.DistrictEquipmentType.GetHashCode();
-                }                if (this.EquipmentCount != null)
-                {
-                    hash = hash * 59 + this.EquipmentCount.GetHashCode();
-                }                
-                                if (this.ExpectedHours != null)
+                }                                   
+                hash = hash * 59 + this.EquipmentCount.GetHashCode();                if (this.ExpectedHours != null)
                 {
                     hash = hash * 59 + this.ExpectedHours.GetHashCode();
                 }                

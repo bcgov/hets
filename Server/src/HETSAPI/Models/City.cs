@@ -42,11 +42,12 @@ namespace HETSAPI.Models
         /// Initializes a new instance of the <see cref="City" /> class.
         /// </summary>
         /// <param name="Id">A system-generated unique identifier for a City (required).</param>
-        /// <param name="Name">The name of the City.</param>
-        public City(int Id, string Name = null)
+        /// <param name="Name">The name of the City (required).</param>
+        public City(int Id, string Name)
         {   
             this.Id = Id;
             this.Name = Name;
+
         }
 
         /// <summary>

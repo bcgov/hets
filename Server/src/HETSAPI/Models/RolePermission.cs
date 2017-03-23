@@ -42,13 +42,15 @@ namespace HETSAPI.Models
         /// Initializes a new instance of the <see cref="RolePermission" /> class.
         /// </summary>
         /// <param name="Id">A system-generated unique identifier for a RolePermission (required).</param>
-        /// <param name="Role">Role.</param>
-        /// <param name="Permission">A foreign key reference to the system-generated unique identifier for a Permission.</param>
-        public RolePermission(int Id, Role Role = null, Permission Permission = null)
+        /// <param name="Role">Role (required).</param>
+        /// <param name="Permission">A foreign key reference to the system-generated unique identifier for a Permission (required).</param>
+        public RolePermission(int Id, Role Role, Permission Permission)
         {   
             this.Id = Id;
             this.Role = Role;
             this.Permission = Permission;
+
+
         }
 
         /// <summary>
