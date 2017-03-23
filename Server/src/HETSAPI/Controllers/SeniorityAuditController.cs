@@ -49,6 +49,7 @@ namespace HETSAPI.Controllers
         [HttpPost]
         [Route("/api/seniorityaudits/bulk")]
         [SwaggerOperation("SeniorityauditsBulkPost")]
+        [RequiresPermission(Permission.ADMIN)]
         public virtual IActionResult SeniorityauditsBulkPost([FromBody]SeniorityAudit[] items)
         {
             return this._service.SeniorityauditsBulkPostAsync(items);

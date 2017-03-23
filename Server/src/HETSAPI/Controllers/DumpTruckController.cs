@@ -49,6 +49,7 @@ namespace HETSAPI.Controllers
         [HttpPost]
         [Route("/api/dumptrucks/bulk")]
         [SwaggerOperation("DumptrucksBulkPost")]
+        [RequiresPermission(Permission.ADMIN)]
         public virtual IActionResult DumptrucksBulkPost([FromBody]DumpTruck[] items)
         {
             return this._service.DumptrucksBulkPostAsync(items);

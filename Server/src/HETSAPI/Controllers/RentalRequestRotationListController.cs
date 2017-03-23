@@ -49,6 +49,7 @@ namespace HETSAPI.Controllers
         [HttpPost]
         [Route("/api/rentalrequestrotationlists/bulk")]
         [SwaggerOperation("RentalrequestrotationlistsBulkPost")]
+        [RequiresPermission(Permission.ADMIN)]
         public virtual IActionResult RentalrequestrotationlistsBulkPost([FromBody]RentalRequestRotationList[] items)
         {
             return this._service.RentalrequestrotationlistsBulkPostAsync(items);

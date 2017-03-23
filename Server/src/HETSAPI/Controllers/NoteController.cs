@@ -49,6 +49,7 @@ namespace HETSAPI.Controllers
         [HttpPost]
         [Route("/api/notes/bulk")]
         [SwaggerOperation("NotesBulkPost")]
+        [RequiresPermission(Permission.ADMIN)]
         public virtual IActionResult NotesBulkPost([FromBody]Note[] items)
         {
             return this._service.NotesBulkPostAsync(items);

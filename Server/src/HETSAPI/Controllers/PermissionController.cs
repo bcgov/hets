@@ -49,6 +49,7 @@ namespace HETSAPI.Controllers
         [HttpPost]
         [Route("/api/permissions/bulk")]
         [SwaggerOperation("PermissionsBulkPost")]
+        [RequiresPermission(Permission.ADMIN)]
         public virtual IActionResult PermissionsBulkPost([FromBody]Permission[] items)
         {
             return this._service.PermissionsBulkPostAsync(items);
@@ -76,6 +77,7 @@ namespace HETSAPI.Controllers
         [HttpPost]
         [Route("/api/permissions/{id}/delete")]
         [SwaggerOperation("PermissionsIdDeletePost")]
+        [RequiresPermission(Permission.ADMIN)]
         public virtual IActionResult PermissionsIdDeletePost([FromRoute]int id)
         {
             return this._service.PermissionsIdDeletePostAsync(id);
@@ -107,6 +109,7 @@ namespace HETSAPI.Controllers
         [Route("/api/permissions/{id}")]
         [SwaggerOperation("PermissionsIdPut")]
         [SwaggerResponse(200, type: typeof(PermissionViewModel))]
+        [RequiresPermission(Permission.ADMIN)]
         public virtual IActionResult PermissionsIdPut([FromRoute]int id, [FromBody]PermissionViewModel item)
         {
             return this._service.PermissionsIdPutAsync(id, item);
@@ -121,6 +124,7 @@ namespace HETSAPI.Controllers
         [Route("/api/permissions")]
         [SwaggerOperation("PermissionsPost")]
         [SwaggerResponse(200, type: typeof(PermissionViewModel))]
+        [RequiresPermission(Permission.ADMIN)]
         public virtual IActionResult PermissionsPost([FromBody]PermissionViewModel item)
         {
             return this._service.PermissionsPostAsync(item);

@@ -49,6 +49,7 @@ namespace HETSAPI.Controllers
         [HttpPost]
         [Route("/api/districts/bulk")]
         [SwaggerOperation("DistrictsBulkPost")]
+        [RequiresPermission(Permission.ADMIN)]
         public virtual IActionResult DistrictsBulkPost([FromBody]District[] items)
         {
             return this._service.DistrictsBulkPostAsync(items);
