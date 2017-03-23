@@ -46,7 +46,7 @@ var TopNav = React.createClass({
             <LinkContainer to={{ pathname: `/${ Constant.PROJECTS_PATHNAME }` }}>
               <NavItem eventKey={ 5 }>Projects</NavItem>
             </LinkContainer>
-            { this.props.currentUser.hasPermission('ADMIN') &&
+            { this.props.currentUser.hasPermission(Constant.PERMISSION_ADMIN) &&
               <NavDropdown id="admin-dropdown" title="Administration">
                 <LinkContainer to={{ pathname: `/${ Constant.USERS_PATHNAME }` }}>
                   <MenuItem eventKey={ 6 }>User Management</MenuItem>
