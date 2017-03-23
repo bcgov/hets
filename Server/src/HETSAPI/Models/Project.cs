@@ -42,10 +42,10 @@ namespace HETSAPI.Models
         /// Initializes a new instance of the <see cref="Project" /> class.
         /// </summary>
         /// <param name="Id">A system-generated unique identifier for a Project (required).</param>
-        /// <param name="District">The District associated with this Project record..</param>
+        /// <param name="District">The District associated with this Project record. (required).</param>
+        /// <param name="Name">A descriptive name for the Project, useful to the HETS Clerk and Project Manager. (required).</param>
+        /// <param name="Status">The status of the project to determine if it is listed when creating new requests (required).</param>
         /// <param name="ProvincialProjectNumber">TO BE REVIEWED WITH THE BUSINESS - The Provincial charge code for the equipment hiring related to this project. This will be the same across multiple service areas that provide equipment for the same Project..</param>
-        /// <param name="Name">A descriptive name for the Project, useful to the HETS Clerk and Project Manager..</param>
-        /// <param name="Status">The status of the project to determine if it is listed when creating new requests.</param>
         /// <param name="Information">Information about the Project needed by the HETS Clerks. Used for capturing varying (project by project) metadata needed to process requests related to the project..</param>
         /// <param name="RentalRequests">The Rental Requests associated with this Project.</param>
         /// <param name="RentalAgreements">The Rental Agreements associated with this Project.</param>
@@ -54,13 +54,16 @@ namespace HETSAPI.Models
         /// <param name="Notes">Notes.</param>
         /// <param name="Attachments">Attachments.</param>
         /// <param name="History">History.</param>
-        public Project(int Id, District District = null, string ProvincialProjectNumber = null, string Name = null, string Status = null, string Information = null, List<RentalRequest> RentalRequests = null, List<RentalAgreement> RentalAgreements = null, Contact PrimaryContact = null, List<Contact> Contacts = null, List<Note> Notes = null, List<Attachment> Attachments = null, List<History> History = null)
+        public Project(int Id, District District, string Name, string Status, string ProvincialProjectNumber = null, string Information = null, List<RentalRequest> RentalRequests = null, List<RentalAgreement> RentalAgreements = null, Contact PrimaryContact = null, List<Contact> Contacts = null, List<Note> Notes = null, List<Attachment> Attachments = null, List<History> History = null)
         {   
             this.Id = Id;
             this.District = District;
-            this.ProvincialProjectNumber = ProvincialProjectNumber;
             this.Name = Name;
             this.Status = Status;
+
+
+
+            this.ProvincialProjectNumber = ProvincialProjectNumber;
             this.Information = Information;
             this.RentalRequests = RentalRequests;
             this.RentalAgreements = RentalAgreements;
@@ -94,15 +97,6 @@ namespace HETSAPI.Models
         public int? DistrictId { get; set; }
         
         /// <summary>
-        /// TO BE REVIEWED WITH THE BUSINESS - The Provincial charge code for the equipment hiring related to this project. This will be the same across multiple service areas that provide equipment for the same Project.
-        /// </summary>
-        /// <value>TO BE REVIEWED WITH THE BUSINESS - The Provincial charge code for the equipment hiring related to this project. This will be the same across multiple service areas that provide equipment for the same Project.</value>
-        [MetaDataExtension (Description = "TO BE REVIEWED WITH THE BUSINESS - The Provincial charge code for the equipment hiring related to this project. This will be the same across multiple service areas that provide equipment for the same Project.")]
-        [MaxLength(150)]
-        
-        public string ProvincialProjectNumber { get; set; }
-        
-        /// <summary>
         /// A descriptive name for the Project, useful to the HETS Clerk and Project Manager.
         /// </summary>
         /// <value>A descriptive name for the Project, useful to the HETS Clerk and Project Manager.</value>
@@ -119,6 +113,15 @@ namespace HETSAPI.Models
         [MaxLength(50)]
         
         public string Status { get; set; }
+        
+        /// <summary>
+        /// TO BE REVIEWED WITH THE BUSINESS - The Provincial charge code for the equipment hiring related to this project. This will be the same across multiple service areas that provide equipment for the same Project.
+        /// </summary>
+        /// <value>TO BE REVIEWED WITH THE BUSINESS - The Provincial charge code for the equipment hiring related to this project. This will be the same across multiple service areas that provide equipment for the same Project.</value>
+        [MetaDataExtension (Description = "TO BE REVIEWED WITH THE BUSINESS - The Provincial charge code for the equipment hiring related to this project. This will be the same across multiple service areas that provide equipment for the same Project.")]
+        [MaxLength(150)]
+        
+        public string ProvincialProjectNumber { get; set; }
         
         /// <summary>
         /// Information about the Project needed by the HETS Clerks. Used for capturing varying (project by project) metadata needed to process requests related to the project.
@@ -188,9 +191,9 @@ namespace HETSAPI.Models
             sb.Append("class Project {\n");
             sb.Append("  Id: ").Append(Id).Append("\n");
             sb.Append("  District: ").Append(District).Append("\n");
-            sb.Append("  ProvincialProjectNumber: ").Append(ProvincialProjectNumber).Append("\n");
             sb.Append("  Name: ").Append(Name).Append("\n");
             sb.Append("  Status: ").Append(Status).Append("\n");
+            sb.Append("  ProvincialProjectNumber: ").Append(ProvincialProjectNumber).Append("\n");
             sb.Append("  Information: ").Append(Information).Append("\n");
             sb.Append("  RentalRequests: ").Append(RentalRequests).Append("\n");
             sb.Append("  RentalAgreements: ").Append(RentalAgreements).Append("\n");
@@ -247,11 +250,6 @@ namespace HETSAPI.Models
                     this.District.Equals(other.District)
                 ) &&                 
                 (
-                    this.ProvincialProjectNumber == other.ProvincialProjectNumber ||
-                    this.ProvincialProjectNumber != null &&
-                    this.ProvincialProjectNumber.Equals(other.ProvincialProjectNumber)
-                ) &&                 
-                (
                     this.Name == other.Name ||
                     this.Name != null &&
                     this.Name.Equals(other.Name)
@@ -260,6 +258,11 @@ namespace HETSAPI.Models
                     this.Status == other.Status ||
                     this.Status != null &&
                     this.Status.Equals(other.Status)
+                ) &&                 
+                (
+                    this.ProvincialProjectNumber == other.ProvincialProjectNumber ||
+                    this.ProvincialProjectNumber != null &&
+                    this.ProvincialProjectNumber.Equals(other.ProvincialProjectNumber)
                 ) &&                 
                 (
                     this.Information == other.Information ||
@@ -319,17 +322,17 @@ namespace HETSAPI.Models
                 if (this.District != null)
                 {
                     hash = hash * 59 + this.District.GetHashCode();
-                }                if (this.ProvincialProjectNumber != null)
-                {
-                    hash = hash * 59 + this.ProvincialProjectNumber.GetHashCode();
-                }                
-                                if (this.Name != null)
+                }                if (this.Name != null)
                 {
                     hash = hash * 59 + this.Name.GetHashCode();
                 }                
                                 if (this.Status != null)
                 {
                     hash = hash * 59 + this.Status.GetHashCode();
+                }                
+                                if (this.ProvincialProjectNumber != null)
+                {
+                    hash = hash * 59 + this.ProvincialProjectNumber.GetHashCode();
                 }                
                                 if (this.Information != null)
                 {

@@ -633,7 +633,7 @@
           schema:
             type: array
             items:
-              $ref: "#/definitions/Permission"
+              $ref: "#/definitions/PermissionViewModel"
       responses:
         200:
           description: OK

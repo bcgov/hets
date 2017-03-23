@@ -44,16 +44,15 @@ namespace HETSAPI.Models
         /// <param name="Id">A system-generated unique identifier for a Permission (required).</param>
         /// <param name="Code">The name of the permission referenced in the software of the application. (required).</param>
         /// <param name="Name">The &amp;#39;user friendly&amp;#39; name of the permission exposed to the user selecting the permissions to be included in a Role. (required).</param>
-        /// <param name="Description">A description of the purpose of the permission and exposed to the user selecting the permissions to be included in a Role. (required).</param>
-        public Permission(int Id, string Code, string Name, string Description)
+        /// <param name="Description">A description of the purpose of the permission and exposed to the user selecting the permissions to be included in a Role..</param>
+        public Permission(int Id, string Code, string Name, string Description = null)
         {   
             this.Id = Id;
             this.Code = Code;
             this.Name = Name;
+
+
             this.Description = Description;
-
-
-
         }
 
         /// <summary>

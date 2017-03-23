@@ -42,7 +42,7 @@ namespace HETSAPI.Models
         /// Initializes a new instance of the <see cref="RentalAgreementRate" /> class.
         /// </summary>
         /// <param name="Id">A system-generated unique identifier for a RentalAgreementRate (required).</param>
-        /// <param name="RentalAgreement">A foreign key reference to the system-generated unique identifier for a Rental Agreement.</param>
+        /// <param name="RentalAgreement">A foreign key reference to the system-generated unique identifier for a Rental Agreement (required).</param>
         /// <param name="ComponentName">Name of the component for the Rental Agreement for which the attached rates apply..</param>
         /// <param name="IsAttachment">True if this rate is for an attachment to the piece of equipment..</param>
         /// <param name="Rate">The dollar rate associated with this component of the rental agreement..</param>
@@ -50,10 +50,11 @@ namespace HETSAPI.Models
         /// <param name="RatePeriod">The period of the rental rate. The vast majority will be hourly, but the rate could apply across a different period, e.g. daily..</param>
         /// <param name="Comment">A comment about the rental of this component of the Rental Agreement..</param>
         /// <param name="TimeRecords">TimeRecords.</param>
-        public RentalAgreementRate(int Id, RentalAgreement RentalAgreement = null, string ComponentName = null, bool? IsAttachment = null, float? Rate = null, int? PercentOfEquipmentRate = null, string RatePeriod = null, string Comment = null, List<TimeRecord> TimeRecords = null)
+        public RentalAgreementRate(int Id, RentalAgreement RentalAgreement, string ComponentName = null, bool? IsAttachment = null, float? Rate = null, int? PercentOfEquipmentRate = null, string RatePeriod = null, string Comment = null, List<TimeRecord> TimeRecords = null)
         {   
             this.Id = Id;
             this.RentalAgreement = RentalAgreement;
+
             this.ComponentName = ComponentName;
             this.IsAttachment = IsAttachment;
             this.Rate = Rate;

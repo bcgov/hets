@@ -41,14 +41,17 @@ namespace HETSAPI.Models
         /// <summary>
         /// Initializes a new instance of the <see cref="RentalAgreementCondition" /> class.
         /// </summary>
-        /// <param name="Id">A system-generated unique identifier for a RentalAgreementCondition.</param>
-        /// <param name="RentalAgreement">A foreign key reference to the system-generated unique identifier for a Rental Agreement.</param>
-        /// <param name="ConditionName">The name of the condition to be placed onto the Rental Agreement..</param>
+        /// <param name="Id">A system-generated unique identifier for a RentalAgreementCondition (required).</param>
+        /// <param name="RentalAgreement">A foreign key reference to the system-generated unique identifier for a Rental Agreement (required).</param>
+        /// <param name="ConditionName">The name of the condition to be placed onto the Rental Agreement. (required).</param>
         /// <param name="Comment">A comment about the condition to be applied to the Rental Agreement..</param>
-        public RentalAgreementCondition(int? Id = null, RentalAgreement RentalAgreement = null, string ConditionName = null, string Comment = null)
-        {               this.Id = Id;
+        public RentalAgreementCondition(int Id, RentalAgreement RentalAgreement, string ConditionName, string Comment = null)
+        {   
+            this.Id = Id;
             this.RentalAgreement = RentalAgreement;
             this.ConditionName = ConditionName;
+
+
             this.Comment = Comment;
         }
 
@@ -57,7 +60,7 @@ namespace HETSAPI.Models
         /// </summary>
         /// <value>A system-generated unique identifier for a RentalAgreementCondition</value>
         [MetaDataExtension (Description = "A system-generated unique identifier for a RentalAgreementCondition")]
-        public int? Id { get; set; }
+        public int Id { get; set; }
         
         /// <summary>
         /// A foreign key reference to the system-generated unique identifier for a Rental Agreement
@@ -144,7 +147,6 @@ namespace HETSAPI.Models
             return                 
                 (
                     this.Id == other.Id ||
-                    this.Id != null &&
                     this.Id.Equals(other.Id)
                 ) &&                 
                 (
@@ -175,11 +177,8 @@ namespace HETSAPI.Models
             {
                 int hash = 41;
                 // Suitable nullity checks
-                if (this.Id != null)
-                {
-                    hash = hash * 59 + this.Id.GetHashCode();
-                }                
                                    
+                hash = hash * 59 + this.Id.GetHashCode();                   
                 if (this.RentalAgreement != null)
                 {
                     hash = hash * 59 + this.RentalAgreement.GetHashCode();

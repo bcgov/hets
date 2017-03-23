@@ -218,7 +218,7 @@ namespace HETSAPI.Services.Impl
         /// <param name="items"></param>
         /// <response code="200">OK</response>
         /// <response code="404">Role not found</response>
-        public virtual IActionResult RolesIdPermissionsPutAsync(int id, Permission[] items)
+        public virtual IActionResult RolesIdPermissionsPutAsync(int id, PermissionViewModel[] items)
         {
             using (var txn = _context.BeginTransaction())
             {
@@ -236,14 +236,14 @@ namespace HETSAPI.Services.Impl
                 }
 
                 var allPermissions = _context.Permissions.ToList();
-                var permissionCodes = items.Select(x => x.Code).ToList();
-                var existingPermissionCodes = role.RolePermissions.Select(x => x.Permission.Code).ToList();
-                var permissionCodesToAdd = permissionCodes.Where(x => !existingPermissionCodes.Contains(x)).ToList();
+                var permissionIds = items.Select(x => x.Id).ToList();
+                var existingPermissionIds = role.RolePermissions.Select(x => x.Permission.Id).ToList();
+                var permissionIdsToAdd = permissionIds.Where(x => !existingPermissionIds.Contains((int)x)).ToList();
 
                 // Permissions to add
-                foreach (var code in permissionCodesToAdd)
+                foreach (var permissionId in permissionIdsToAdd)
                 {
-                    var permToAdd = allPermissions.FirstOrDefault(x => x.Code == code);
+                    var permToAdd = allPermissions.FirstOrDefault(x => x.Id == permissionId);
                     if (permToAdd == null)
                     {
                         // TODO throw new BusinessLayerException(string.Format("Invalid Permission Code {0}", code));
@@ -252,20 +252,17 @@ namespace HETSAPI.Services.Impl
                 }
 
                 // Permissions to remove
-                if (role.RolePermissions != null && permissionCodes != null)
+                List<RolePermission> permissionsToRemove = role.RolePermissions.Where(x => x.Permission != null && !permissionIds.Contains(x.Permission.Id)).ToList();
+                foreach (RolePermission perm in permissionsToRemove)
                 {
-                    List<RolePermission> permissionsToRemove = role.RolePermissions.Where(x => x.Permission != null && !permissionCodes.Contains(x.Permission.Code)).ToList();
-                    foreach (RolePermission perm in permissionsToRemove)
-                    {
-                        role.RemovePermission(perm.Permission);
-                        _context.RolePermissions.Remove(perm);
-                    }
+                    role.RemovePermission(perm.Permission);
+                    _context.RolePermissions.Remove(perm);
                 }
 
                 _context.Roles.Update(role);
                 _context.SaveChanges();
                 txn.Commit();
-                
+
                 var dbPermissions = role.RolePermissions.Select(x => x.Permission);
 
                 // Create DTO with serializable response
@@ -284,6 +281,7 @@ namespace HETSAPI.Services.Impl
         /// <response code="404">Role not found</response>
         public virtual IActionResult RolesIdPermissionsPostAsync(int id, Permission[] items)
         {
+
             using (var txn = _context.BeginTransaction())
             {
                 // Eager loading of related data
@@ -300,14 +298,14 @@ namespace HETSAPI.Services.Impl
                 }
 
                 var allPermissions = _context.Permissions.ToList();
-                var permissionCodes = items.Select(x => x.Code).ToList();
-                var existingPermissionCodes = role.RolePermissions.Select(x => x.Permission.Code).ToList();
-                var permissionCodesToAdd = permissionCodes.Where(x => !existingPermissionCodes.Contains(x)).ToList();
+                var permissionIds = items.Select(x => x.Id).ToList();
+                var existingPermissionIds = role.RolePermissions.Select(x => x.Permission.Id).ToList();
+                var permissionIdsToAdd = permissionIds.Where(x => !existingPermissionIds.Contains((int)x)).ToList();
 
                 // Permissions to add
-                foreach (var code in permissionCodesToAdd)
+                foreach (var permissionId in permissionIdsToAdd)
                 {
-                    var permToAdd = allPermissions.FirstOrDefault(x => x.Code == code);
+                    var permToAdd = allPermissions.FirstOrDefault(x => x.Id == permissionId);
                     if (permToAdd == null)
                     {
                         // TODO throw new BusinessLayerException(string.Format("Invalid Permission Code {0}", code));
@@ -319,12 +317,12 @@ namespace HETSAPI.Services.Impl
                 _context.SaveChanges();
                 txn.Commit();
 
-                List<RolePermission> dbPermissions = _context.RolePermissions.ToList();
+                var dbPermissions = role.RolePermissions.Select(x => x.Permission);
 
                 // Create DTO with serializable response
                 var result = dbPermissions.Select(x => x.ToViewModel()).ToList();
                 return new ObjectResult(result);
-            }
+            }            
         }
 
         /// <summary>

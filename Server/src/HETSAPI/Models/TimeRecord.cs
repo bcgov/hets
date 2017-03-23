@@ -42,21 +42,24 @@ namespace HETSAPI.Models
         /// Initializes a new instance of the <see cref="TimeRecord" /> class.
         /// </summary>
         /// <param name="Id">A system-generated unique identifier for a TimeRecord (required).</param>
-        /// <param name="RentalAgreement">A foreign key reference to the system-generated unique identifier for a Rental Agreement.</param>
+        /// <param name="RentalAgreement">A foreign key reference to the system-generated unique identifier for a Rental Agreement (required).</param>
+        /// <param name="WorkedDate">The date of the time record entry - the day of the entry if it is a daily entry, or a date in the week in which the work occurred if tracked weekly. (required).</param>
+        /// <param name="Hours">The number of hours worked by the equipment. (required).</param>
         /// <param name="RentalAgreementRate">The Rental Agreement Rate component to which this Rental Agreement applies. If null, this time applies to the equipment itself..</param>
-        /// <param name="WorkedDate">The date of the time record entry - the day of the entry if it is a daily entry, or a date in the week in which the work occurred if tracked weekly..</param>
         /// <param name="EnteredDate">The date-time the time record information was entered..</param>
         /// <param name="TimePeriod">The time period of the entry - either day or week. HETS Clerk have the option of entering time records on a day-by-day or week-by-week basis..</param>
-        /// <param name="Hours">The number of hours worked by the equipment..</param>
-        public TimeRecord(int Id, RentalAgreement RentalAgreement = null, RentalAgreementRate RentalAgreementRate = null, DateTime? WorkedDate = null, DateTime? EnteredDate = null, string TimePeriod = null, float? Hours = null)
+        public TimeRecord(int Id, RentalAgreement RentalAgreement, DateTime WorkedDate, float? Hours, RentalAgreementRate RentalAgreementRate = null, DateTime? EnteredDate = null, string TimePeriod = null)
         {   
             this.Id = Id;
             this.RentalAgreement = RentalAgreement;
-            this.RentalAgreementRate = RentalAgreementRate;
             this.WorkedDate = WorkedDate;
+            this.Hours = Hours;
+
+
+
+            this.RentalAgreementRate = RentalAgreementRate;
             this.EnteredDate = EnteredDate;
             this.TimePeriod = TimePeriod;
-            this.Hours = Hours;
         }
 
         /// <summary>
@@ -82,6 +85,20 @@ namespace HETSAPI.Models
         public int? RentalAgreementId { get; set; }
         
         /// <summary>
+        /// The date of the time record entry - the day of the entry if it is a daily entry, or a date in the week in which the work occurred if tracked weekly.
+        /// </summary>
+        /// <value>The date of the time record entry - the day of the entry if it is a daily entry, or a date in the week in which the work occurred if tracked weekly.</value>
+        [MetaDataExtension (Description = "The date of the time record entry - the day of the entry if it is a daily entry, or a date in the week in which the work occurred if tracked weekly.")]
+        public DateTime WorkedDate { get; set; }
+        
+        /// <summary>
+        /// The number of hours worked by the equipment.
+        /// </summary>
+        /// <value>The number of hours worked by the equipment.</value>
+        [MetaDataExtension (Description = "The number of hours worked by the equipment.")]
+        public float? Hours { get; set; }
+        
+        /// <summary>
         /// The Rental Agreement Rate component to which this Rental Agreement applies. If null, this time applies to the equipment itself.
         /// </summary>
         /// <value>The Rental Agreement Rate component to which this Rental Agreement applies. If null, this time applies to the equipment itself.</value>
@@ -95,13 +112,6 @@ namespace HETSAPI.Models
 		[JsonIgnore]
 		[MetaDataExtension (Description = "The Rental Agreement Rate component to which this Rental Agreement applies. If null, this time applies to the equipment itself.")]
         public int? RentalAgreementRateId { get; set; }
-        
-        /// <summary>
-        /// The date of the time record entry - the day of the entry if it is a daily entry, or a date in the week in which the work occurred if tracked weekly.
-        /// </summary>
-        /// <value>The date of the time record entry - the day of the entry if it is a daily entry, or a date in the week in which the work occurred if tracked weekly.</value>
-        [MetaDataExtension (Description = "The date of the time record entry - the day of the entry if it is a daily entry, or a date in the week in which the work occurred if tracked weekly.")]
-        public DateTime? WorkedDate { get; set; }
         
         /// <summary>
         /// The date-time the time record information was entered.
@@ -120,13 +130,6 @@ namespace HETSAPI.Models
         public string TimePeriod { get; set; }
         
         /// <summary>
-        /// The number of hours worked by the equipment.
-        /// </summary>
-        /// <value>The number of hours worked by the equipment.</value>
-        [MetaDataExtension (Description = "The number of hours worked by the equipment.")]
-        public float? Hours { get; set; }
-        
-        /// <summary>
         /// Returns the string presentation of the object
         /// </summary>
         /// <returns>String presentation of the object</returns>
@@ -136,11 +139,11 @@ namespace HETSAPI.Models
             sb.Append("class TimeRecord {\n");
             sb.Append("  Id: ").Append(Id).Append("\n");
             sb.Append("  RentalAgreement: ").Append(RentalAgreement).Append("\n");
-            sb.Append("  RentalAgreementRate: ").Append(RentalAgreementRate).Append("\n");
             sb.Append("  WorkedDate: ").Append(WorkedDate).Append("\n");
+            sb.Append("  Hours: ").Append(Hours).Append("\n");
+            sb.Append("  RentalAgreementRate: ").Append(RentalAgreementRate).Append("\n");
             sb.Append("  EnteredDate: ").Append(EnteredDate).Append("\n");
             sb.Append("  TimePeriod: ").Append(TimePeriod).Append("\n");
-            sb.Append("  Hours: ").Append(Hours).Append("\n");
             sb.Append("}\n");
             return sb.ToString();
         }
@@ -189,14 +192,19 @@ namespace HETSAPI.Models
                     this.RentalAgreement.Equals(other.RentalAgreement)
                 ) &&                 
                 (
-                    this.RentalAgreementRate == other.RentalAgreementRate ||
-                    this.RentalAgreementRate != null &&
-                    this.RentalAgreementRate.Equals(other.RentalAgreementRate)
-                ) &&                 
-                (
                     this.WorkedDate == other.WorkedDate ||
                     this.WorkedDate != null &&
                     this.WorkedDate.Equals(other.WorkedDate)
+                ) &&                 
+                (
+                    this.Hours == other.Hours ||
+                    this.Hours != null &&
+                    this.Hours.Equals(other.Hours)
+                ) &&                 
+                (
+                    this.RentalAgreementRate == other.RentalAgreementRate ||
+                    this.RentalAgreementRate != null &&
+                    this.RentalAgreementRate.Equals(other.RentalAgreementRate)
                 ) &&                 
                 (
                     this.EnteredDate == other.EnteredDate ||
@@ -207,11 +215,6 @@ namespace HETSAPI.Models
                     this.TimePeriod == other.TimePeriod ||
                     this.TimePeriod != null &&
                     this.TimePeriod.Equals(other.TimePeriod)
-                ) &&                 
-                (
-                    this.Hours == other.Hours ||
-                    this.Hours != null &&
-                    this.Hours.Equals(other.Hours)
                 );
         }
 
@@ -232,24 +235,24 @@ namespace HETSAPI.Models
                 {
                     hash = hash * 59 + this.RentalAgreement.GetHashCode();
                 }                   
+                if (this.WorkedDate != null)
+                {
+                    hash = hash * 59 + this.WorkedDate.GetHashCode();
+                }                   
+                if (this.Hours != null)
+                {
+                    hash = hash * 59 + this.Hours.GetHashCode();
+                }                   
                 if (this.RentalAgreementRate != null)
                 {
                     hash = hash * 59 + this.RentalAgreementRate.GetHashCode();
-                }                if (this.WorkedDate != null)
-                {
-                    hash = hash * 59 + this.WorkedDate.GetHashCode();
-                }                
-                                if (this.EnteredDate != null)
+                }                if (this.EnteredDate != null)
                 {
                     hash = hash * 59 + this.EnteredDate.GetHashCode();
                 }                
                                 if (this.TimePeriod != null)
                 {
                     hash = hash * 59 + this.TimePeriod.GetHashCode();
-                }                
-                                if (this.Hours != null)
-                {
-                    hash = hash * 59 + this.Hours.GetHashCode();
                 }                
                 
                 return hash;

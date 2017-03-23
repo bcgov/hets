@@ -452,7 +452,7 @@ namespace HETSAPI.Test
             jsonString = await response.Content.ReadAsStringAsync();
             Equipment[] getReceived = JsonConvert.DeserializeObject<Equipment[]>(jsonString);
 
-            Assert.Equal(getReceived[0].LastVerifiedDate.Value.ToString ("MM/dd/yyyy HH:mm"), dateVerified.ToString("MM/dd/yyyy HH:mm"));
+            Assert.Equal(getReceived[0].LastVerifiedDate.ToString ("MM/dd/yyyy HH:mm"), dateVerified.ToString("MM/dd/yyyy HH:mm"));
 
             // clean up equipment
 

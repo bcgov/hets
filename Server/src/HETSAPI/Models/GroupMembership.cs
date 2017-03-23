@@ -43,15 +43,17 @@ namespace HETSAPI.Models
         /// </summary>
         /// <param name="Id">A system-generated unique identifier for a GroupMembership (required).</param>
         /// <param name="Active">A flag indicating the User is active in the group. Set false to remove the user from the designated group. (required).</param>
-        /// <param name="Group">A foreign key reference to the system-generated unique identifier for a Group.</param>
-        /// <param name="User">A foreign key reference to the system-generated unique identifier for a User.</param>
-        public GroupMembership(int Id, bool Active, Group Group = null, User User = null)
+        /// <param name="Group">A foreign key reference to the system-generated unique identifier for a Group (required).</param>
+        /// <param name="User">A foreign key reference to the system-generated unique identifier for a User (required).</param>
+        public GroupMembership(int Id, bool Active, Group Group, User User)
         {   
             this.Id = Id;
             this.Active = Active;
-
             this.Group = Group;
             this.User = User;
+
+
+
         }
 
         /// <summary>

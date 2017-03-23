@@ -42,15 +42,16 @@ namespace HETSAPI.Models
         /// Initializes a new instance of the <see cref="EquipmentAttachment" /> class.
         /// </summary>
         /// <param name="Id">A system-generated unique identifier for an EquipmentAttachment (required).</param>
+        /// <param name="Equipment">Equipment (required).</param>
         /// <param name="TypeName">The name of the attachment type (required).</param>
-        /// <param name="Equipment">Equipment.</param>
         /// <param name="Description">A description of the equipment attachment if the Equipment Attachment Type Name is insufficient..</param>
-        public EquipmentAttachment(int Id, string TypeName, Equipment Equipment = null, string Description = null)
+        public EquipmentAttachment(int Id, Equipment Equipment, string TypeName, string Description = null)
         {   
             this.Id = Id;
+            this.Equipment = Equipment;
             this.TypeName = TypeName;
 
-            this.Equipment = Equipment;
+
             this.Description = Description;
         }
 
@@ -60,15 +61,6 @@ namespace HETSAPI.Models
         /// <value>A system-generated unique identifier for an EquipmentAttachment</value>
         [MetaDataExtension (Description = "A system-generated unique identifier for an EquipmentAttachment")]
         public int Id { get; set; }
-        
-        /// <summary>
-        /// The name of the attachment type
-        /// </summary>
-        /// <value>The name of the attachment type</value>
-        [MetaDataExtension (Description = "The name of the attachment type")]
-        [MaxLength(100)]
-        
-        public string TypeName { get; set; }
         
         /// <summary>
         /// Gets or Sets Equipment
@@ -82,6 +74,15 @@ namespace HETSAPI.Models
 		[JsonIgnore]
 		
         public int? EquipmentId { get; set; }
+        
+        /// <summary>
+        /// The name of the attachment type
+        /// </summary>
+        /// <value>The name of the attachment type</value>
+        [MetaDataExtension (Description = "The name of the attachment type")]
+        [MaxLength(100)]
+        
+        public string TypeName { get; set; }
         
         /// <summary>
         /// A description of the equipment attachment if the Equipment Attachment Type Name is insufficient.
@@ -101,8 +102,8 @@ namespace HETSAPI.Models
             var sb = new StringBuilder();
             sb.Append("class EquipmentAttachment {\n");
             sb.Append("  Id: ").Append(Id).Append("\n");
-            sb.Append("  TypeName: ").Append(TypeName).Append("\n");
             sb.Append("  Equipment: ").Append(Equipment).Append("\n");
+            sb.Append("  TypeName: ").Append(TypeName).Append("\n");
             sb.Append("  Description: ").Append(Description).Append("\n");
             sb.Append("}\n");
             return sb.ToString();
@@ -147,14 +148,14 @@ namespace HETSAPI.Models
                     this.Id.Equals(other.Id)
                 ) &&                 
                 (
-                    this.TypeName == other.TypeName ||
-                    this.TypeName != null &&
-                    this.TypeName.Equals(other.TypeName)
-                ) &&                 
-                (
                     this.Equipment == other.Equipment ||
                     this.Equipment != null &&
                     this.Equipment.Equals(other.Equipment)
+                ) &&                 
+                (
+                    this.TypeName == other.TypeName ||
+                    this.TypeName != null &&
+                    this.TypeName.Equals(other.TypeName)
                 ) &&                 
                 (
                     this.Description == other.Description ||
@@ -175,15 +176,15 @@ namespace HETSAPI.Models
                 int hash = 41;
                 // Suitable nullity checks
                                    
-                hash = hash * 59 + this.Id.GetHashCode();                if (this.TypeName != null)
-                {
-                    hash = hash * 59 + this.TypeName.GetHashCode();
-                }                
-                                   
+                hash = hash * 59 + this.Id.GetHashCode();                   
                 if (this.Equipment != null)
                 {
                     hash = hash * 59 + this.Equipment.GetHashCode();
-                }                if (this.Description != null)
+                }                if (this.TypeName != null)
+                {
+                    hash = hash * 59 + this.TypeName.GetHashCode();
+                }                
+                                if (this.Description != null)
                 {
                     hash = hash * 59 + this.Description.GetHashCode();
                 }                

@@ -43,17 +43,17 @@ namespace HETSAPI.Models
         /// </summary>
         /// <param name="Id">A system-generated unique identifier for a Owner (required).</param>
         /// <param name="OwnerEquipmentCodePrefix">A unique prefix in the system that is used to generate the human-friendly IDs of the equipment. E.g. An owner Edwards might have a prefix &amp;quot;EDW&amp;quot; and their equipment numbered sequentially with that prefix - e.g. EDW-0082. (required).</param>
-        /// <param name="OrganizationName">The name of the organization of the Owner. May simply be the First Name, Last Name of the Owner if the Owner is a sole proprietorship, or the name of a company..</param>
+        /// <param name="OrganizationName">The name of the organization of the Owner. May simply be the First Name, Last Name of the Owner if the Owner is a sole proprietorship, or the name of a company. (required).</param>
+        /// <param name="MeetsResidency">True to indicate that the owner of the business has confirmed to the HETS Clerk that they meet the residency requirements of the HETS programme. See the published information about the MOTI HETS programme for information on the owner residency requirements. (required).</param>
+        /// <param name="LocalArea">LocalArea (required).</param>
+        /// <param name="Status">The status of the owner record in the system. Current set of values are &amp;quot;Pending&amp;quot;, &amp;quot;Approved&amp;quot; and &amp;quot;Archived&amp;quot;. Pending is used when an owner self-registers and a HETS Clerk has not reviewed and Approved the record. Archived is when the owner is no longer part of the HETS programme. &amp;quot;Approved&amp;quot; is used in all other cases. (required).</param>
         /// <param name="DoingBusinessAs">An official (per BC Registries) alternate name for an Owner organization under which it does business. The application does not verify the name against any registry&amp;#x2F;lookup..</param>
         /// <param name="RegisteredCompanyNumber">The BC Registries number under which the business is registered.  The application does not verify the number against any registry&amp;#x2F;lookup..</param>
-        /// <param name="MeetsResidency">True to indicate that the owner of the business has confirmed to the HETS Clerk that they meet the residency requirements of the HETS programme. See the published information about the MOTI HETS programme for information on the owner residency requirements..</param>
         /// <param name="PrimaryContact">Link to the designated Primary Contact..</param>
-        /// <param name="LocalArea">LocalArea.</param>
         /// <param name="IsMaintenanceContractor">True if the owner is contracted by MOTI to handle Maintenance activities in the area - e.g. provided services in address unscheduled issues on the roads in the area..</param>
         /// <param name="WorkSafeBCPolicyNumber">The Owner&amp;#39;s WorkSafeBC (aka WCB) Insurance Policy Number..</param>
         /// <param name="WorkSafeBCExpiryDate">The expiration of the owner&amp;#39;s current WorkSafeBC (aka WCB) permit..</param>
         /// <param name="CGLEndDate">The end date of the owner&amp;#39;s Commercial General Liability insurance coverage. Coverage is only needed prior to an owner&amp;#39;s piece of equipment starting a rental period (not when in the HETS program but not hired). The details of the coverage can be entered into a Note, or more often - attached as a scanned&amp;#x2F;faxed document..</param>
-        /// <param name="Status">The status of the owner record in the system. Current set of values are &amp;quot;Pending&amp;quot;, &amp;quot;Approved&amp;quot; and &amp;quot;Archived&amp;quot;. Pending is used when an owner self-registers and a HETS Clerk has not reviewed and Approved the record. Archived is when the owner is no longer part of the HETS programme. &amp;quot;Approved&amp;quot; is used in all other cases..</param>
         /// <param name="ArchiveCode">TO BE REVIEWED WITH THE BUSINESS - IS THIS NEEDED -A coded reason for why an owner record has been moved to Archived..</param>
         /// <param name="ArchiveReason">A text note about why the owner record has been changed to Archived..</param>
         /// <param name="ArchiveDate">The date the Owner record was changed to Archived and removed from active use in the system..</param>
@@ -62,22 +62,26 @@ namespace HETSAPI.Models
         /// <param name="Attachments">Attachments.</param>
         /// <param name="History">History.</param>
         /// <param name="EquipmentList">EquipmentList.</param>
-        public Owner(int Id, string OwnerEquipmentCodePrefix, string OrganizationName = null, string DoingBusinessAs = null, string RegisteredCompanyNumber = null, bool? MeetsResidency = null, Contact PrimaryContact = null, LocalArea LocalArea = null, bool? IsMaintenanceContractor = null, string WorkSafeBCPolicyNumber = null, DateTime? WorkSafeBCExpiryDate = null, DateTime? CGLEndDate = null, string Status = null, string ArchiveCode = null, string ArchiveReason = null, DateTime? ArchiveDate = null, List<Contact> Contacts = null, List<Note> Notes = null, List<Attachment> Attachments = null, List<History> History = null, List<Equipment> EquipmentList = null)
+        public Owner(int Id, string OwnerEquipmentCodePrefix, string OrganizationName, bool MeetsResidency, LocalArea LocalArea, string Status, string DoingBusinessAs = null, string RegisteredCompanyNumber = null, Contact PrimaryContact = null, bool? IsMaintenanceContractor = null, string WorkSafeBCPolicyNumber = null, DateTime? WorkSafeBCExpiryDate = null, DateTime? CGLEndDate = null, string ArchiveCode = null, string ArchiveReason = null, DateTime? ArchiveDate = null, List<Contact> Contacts = null, List<Note> Notes = null, List<Attachment> Attachments = null, List<History> History = null, List<Equipment> EquipmentList = null)
         {   
             this.Id = Id;
             this.OwnerEquipmentCodePrefix = OwnerEquipmentCodePrefix;
-
             this.OrganizationName = OrganizationName;
+            this.MeetsResidency = MeetsResidency;
+            this.LocalArea = LocalArea;
+            this.Status = Status;
+
+
+
+
+
             this.DoingBusinessAs = DoingBusinessAs;
             this.RegisteredCompanyNumber = RegisteredCompanyNumber;
-            this.MeetsResidency = MeetsResidency;
             this.PrimaryContact = PrimaryContact;
-            this.LocalArea = LocalArea;
             this.IsMaintenanceContractor = IsMaintenanceContractor;
             this.WorkSafeBCPolicyNumber = WorkSafeBCPolicyNumber;
             this.WorkSafeBCExpiryDate = WorkSafeBCExpiryDate;
             this.CGLEndDate = CGLEndDate;
-            this.Status = Status;
             this.ArchiveCode = ArchiveCode;
             this.ArchiveReason = ArchiveReason;
             this.ArchiveDate = ArchiveDate;
@@ -114,6 +118,35 @@ namespace HETSAPI.Models
         public string OrganizationName { get; set; }
         
         /// <summary>
+        /// True to indicate that the owner of the business has confirmed to the HETS Clerk that they meet the residency requirements of the HETS programme. See the published information about the MOTI HETS programme for information on the owner residency requirements.
+        /// </summary>
+        /// <value>True to indicate that the owner of the business has confirmed to the HETS Clerk that they meet the residency requirements of the HETS programme. See the published information about the MOTI HETS programme for information on the owner residency requirements.</value>
+        [MetaDataExtension (Description = "True to indicate that the owner of the business has confirmed to the HETS Clerk that they meet the residency requirements of the HETS programme. See the published information about the MOTI HETS programme for information on the owner residency requirements.")]
+        public bool MeetsResidency { get; set; }
+        
+        /// <summary>
+        /// Gets or Sets LocalArea
+        /// </summary>
+        public LocalArea LocalArea { get; set; }
+        
+        /// <summary>
+        /// Foreign key for LocalArea 
+        /// </summary>   
+        [ForeignKey("LocalArea")]
+		[JsonIgnore]
+		
+        public int? LocalAreaId { get; set; }
+        
+        /// <summary>
+        /// The status of the owner record in the system. Current set of values are &quot;Pending&quot;, &quot;Approved&quot; and &quot;Archived&quot;. Pending is used when an owner self-registers and a HETS Clerk has not reviewed and Approved the record. Archived is when the owner is no longer part of the HETS programme. &quot;Approved&quot; is used in all other cases.
+        /// </summary>
+        /// <value>The status of the owner record in the system. Current set of values are &quot;Pending&quot;, &quot;Approved&quot; and &quot;Archived&quot;. Pending is used when an owner self-registers and a HETS Clerk has not reviewed and Approved the record. Archived is when the owner is no longer part of the HETS programme. &quot;Approved&quot; is used in all other cases.</value>
+        [MetaDataExtension (Description = "The status of the owner record in the system. Current set of values are &quot;Pending&quot;, &quot;Approved&quot; and &quot;Archived&quot;. Pending is used when an owner self-registers and a HETS Clerk has not reviewed and Approved the record. Archived is when the owner is no longer part of the HETS programme. &quot;Approved&quot; is used in all other cases.")]
+        [MaxLength(50)]
+        
+        public string Status { get; set; }
+        
+        /// <summary>
         /// An official (per BC Registries) alternate name for an Owner organization under which it does business. The application does not verify the name against any registry&#x2F;lookup.
         /// </summary>
         /// <value>An official (per BC Registries) alternate name for an Owner organization under which it does business. The application does not verify the name against any registry&#x2F;lookup.</value>
@@ -132,13 +165,6 @@ namespace HETSAPI.Models
         public string RegisteredCompanyNumber { get; set; }
         
         /// <summary>
-        /// True to indicate that the owner of the business has confirmed to the HETS Clerk that they meet the residency requirements of the HETS programme. See the published information about the MOTI HETS programme for information on the owner residency requirements.
-        /// </summary>
-        /// <value>True to indicate that the owner of the business has confirmed to the HETS Clerk that they meet the residency requirements of the HETS programme. See the published information about the MOTI HETS programme for information on the owner residency requirements.</value>
-        [MetaDataExtension (Description = "True to indicate that the owner of the business has confirmed to the HETS Clerk that they meet the residency requirements of the HETS programme. See the published information about the MOTI HETS programme for information on the owner residency requirements.")]
-        public bool? MeetsResidency { get; set; }
-        
-        /// <summary>
         /// Link to the designated Primary Contact.
         /// </summary>
         /// <value>Link to the designated Primary Contact.</value>
@@ -152,19 +178,6 @@ namespace HETSAPI.Models
 		[JsonIgnore]
 		[MetaDataExtension (Description = "Link to the designated Primary Contact.")]
         public int? PrimaryContactId { get; set; }
-        
-        /// <summary>
-        /// Gets or Sets LocalArea
-        /// </summary>
-        public LocalArea LocalArea { get; set; }
-        
-        /// <summary>
-        /// Foreign key for LocalArea 
-        /// </summary>   
-        [ForeignKey("LocalArea")]
-		[JsonIgnore]
-		
-        public int? LocalAreaId { get; set; }
         
         /// <summary>
         /// True if the owner is contracted by MOTI to handle Maintenance activities in the area - e.g. provided services in address unscheduled issues on the roads in the area.
@@ -195,15 +208,6 @@ namespace HETSAPI.Models
         /// <value>The end date of the owner&#39;s Commercial General Liability insurance coverage. Coverage is only needed prior to an owner&#39;s piece of equipment starting a rental period (not when in the HETS program but not hired). The details of the coverage can be entered into a Note, or more often - attached as a scanned&#x2F;faxed document.</value>
         [MetaDataExtension (Description = "The end date of the owner&#39;s Commercial General Liability insurance coverage. Coverage is only needed prior to an owner&#39;s piece of equipment starting a rental period (not when in the HETS program but not hired). The details of the coverage can be entered into a Note, or more often - attached as a scanned&#x2F;faxed document.")]
         public DateTime? CGLEndDate { get; set; }
-        
-        /// <summary>
-        /// The status of the owner record in the system. Current set of values are &quot;Pending&quot;, &quot;Approved&quot; and &quot;Archived&quot;. Pending is used when an owner self-registers and a HETS Clerk has not reviewed and Approved the record. Archived is when the owner is no longer part of the HETS programme. &quot;Approved&quot; is used in all other cases.
-        /// </summary>
-        /// <value>The status of the owner record in the system. Current set of values are &quot;Pending&quot;, &quot;Approved&quot; and &quot;Archived&quot;. Pending is used when an owner self-registers and a HETS Clerk has not reviewed and Approved the record. Archived is when the owner is no longer part of the HETS programme. &quot;Approved&quot; is used in all other cases.</value>
-        [MetaDataExtension (Description = "The status of the owner record in the system. Current set of values are &quot;Pending&quot;, &quot;Approved&quot; and &quot;Archived&quot;. Pending is used when an owner self-registers and a HETS Clerk has not reviewed and Approved the record. Archived is when the owner is no longer part of the HETS programme. &quot;Approved&quot; is used in all other cases.")]
-        [MaxLength(50)]
-        
-        public string Status { get; set; }
         
         /// <summary>
         /// TO BE REVIEWED WITH THE BUSINESS - IS THIS NEEDED -A coded reason for why an owner record has been moved to Archived.
@@ -266,16 +270,16 @@ namespace HETSAPI.Models
             sb.Append("  Id: ").Append(Id).Append("\n");
             sb.Append("  OwnerEquipmentCodePrefix: ").Append(OwnerEquipmentCodePrefix).Append("\n");
             sb.Append("  OrganizationName: ").Append(OrganizationName).Append("\n");
+            sb.Append("  MeetsResidency: ").Append(MeetsResidency).Append("\n");
+            sb.Append("  LocalArea: ").Append(LocalArea).Append("\n");
+            sb.Append("  Status: ").Append(Status).Append("\n");
             sb.Append("  DoingBusinessAs: ").Append(DoingBusinessAs).Append("\n");
             sb.Append("  RegisteredCompanyNumber: ").Append(RegisteredCompanyNumber).Append("\n");
-            sb.Append("  MeetsResidency: ").Append(MeetsResidency).Append("\n");
             sb.Append("  PrimaryContact: ").Append(PrimaryContact).Append("\n");
-            sb.Append("  LocalArea: ").Append(LocalArea).Append("\n");
             sb.Append("  IsMaintenanceContractor: ").Append(IsMaintenanceContractor).Append("\n");
             sb.Append("  WorkSafeBCPolicyNumber: ").Append(WorkSafeBCPolicyNumber).Append("\n");
             sb.Append("  WorkSafeBCExpiryDate: ").Append(WorkSafeBCExpiryDate).Append("\n");
             sb.Append("  CGLEndDate: ").Append(CGLEndDate).Append("\n");
-            sb.Append("  Status: ").Append(Status).Append("\n");
             sb.Append("  ArchiveCode: ").Append(ArchiveCode).Append("\n");
             sb.Append("  ArchiveReason: ").Append(ArchiveReason).Append("\n");
             sb.Append("  ArchiveDate: ").Append(ArchiveDate).Append("\n");
@@ -337,6 +341,20 @@ namespace HETSAPI.Models
                     this.OrganizationName.Equals(other.OrganizationName)
                 ) &&                 
                 (
+                    this.MeetsResidency == other.MeetsResidency ||
+                    this.MeetsResidency.Equals(other.MeetsResidency)
+                ) &&                 
+                (
+                    this.LocalArea == other.LocalArea ||
+                    this.LocalArea != null &&
+                    this.LocalArea.Equals(other.LocalArea)
+                ) &&                 
+                (
+                    this.Status == other.Status ||
+                    this.Status != null &&
+                    this.Status.Equals(other.Status)
+                ) &&                 
+                (
                     this.DoingBusinessAs == other.DoingBusinessAs ||
                     this.DoingBusinessAs != null &&
                     this.DoingBusinessAs.Equals(other.DoingBusinessAs)
@@ -347,19 +365,9 @@ namespace HETSAPI.Models
                     this.RegisteredCompanyNumber.Equals(other.RegisteredCompanyNumber)
                 ) &&                 
                 (
-                    this.MeetsResidency == other.MeetsResidency ||
-                    this.MeetsResidency != null &&
-                    this.MeetsResidency.Equals(other.MeetsResidency)
-                ) &&                 
-                (
                     this.PrimaryContact == other.PrimaryContact ||
                     this.PrimaryContact != null &&
                     this.PrimaryContact.Equals(other.PrimaryContact)
-                ) &&                 
-                (
-                    this.LocalArea == other.LocalArea ||
-                    this.LocalArea != null &&
-                    this.LocalArea.Equals(other.LocalArea)
                 ) &&                 
                 (
                     this.IsMaintenanceContractor == other.IsMaintenanceContractor ||
@@ -380,11 +388,6 @@ namespace HETSAPI.Models
                     this.CGLEndDate == other.CGLEndDate ||
                     this.CGLEndDate != null &&
                     this.CGLEndDate.Equals(other.CGLEndDate)
-                ) &&                 
-                (
-                    this.Status == other.Status ||
-                    this.Status != null &&
-                    this.Status.Equals(other.Status)
                 ) &&                 
                 (
                     this.ArchiveCode == other.ArchiveCode ||
@@ -448,6 +451,16 @@ namespace HETSAPI.Models
                 {
                     hash = hash * 59 + this.OrganizationName.GetHashCode();
                 }                
+                                   
+                hash = hash * 59 + this.MeetsResidency.GetHashCode();
+                                   
+                if (this.LocalArea != null)
+                {
+                    hash = hash * 59 + this.LocalArea.GetHashCode();
+                }                if (this.Status != null)
+                {
+                    hash = hash * 59 + this.Status.GetHashCode();
+                }                
                                 if (this.DoingBusinessAs != null)
                 {
                     hash = hash * 59 + this.DoingBusinessAs.GetHashCode();
@@ -456,18 +469,10 @@ namespace HETSAPI.Models
                 {
                     hash = hash * 59 + this.RegisteredCompanyNumber.GetHashCode();
                 }                
-                                if (this.MeetsResidency != null)
-                {
-                    hash = hash * 59 + this.MeetsResidency.GetHashCode();
-                }                
                                    
                 if (this.PrimaryContact != null)
                 {
                     hash = hash * 59 + this.PrimaryContact.GetHashCode();
-                }                   
-                if (this.LocalArea != null)
-                {
-                    hash = hash * 59 + this.LocalArea.GetHashCode();
                 }                if (this.IsMaintenanceContractor != null)
                 {
                     hash = hash * 59 + this.IsMaintenanceContractor.GetHashCode();
@@ -483,10 +488,6 @@ namespace HETSAPI.Models
                                 if (this.CGLEndDate != null)
                 {
                     hash = hash * 59 + this.CGLEndDate.GetHashCode();
-                }                
-                                if (this.Status != null)
-                {
-                    hash = hash * 59 + this.Status.GetHashCode();
                 }                
                                 if (this.ArchiveCode != null)
                 {

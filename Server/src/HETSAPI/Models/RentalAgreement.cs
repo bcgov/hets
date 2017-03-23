@@ -42,10 +42,10 @@ namespace HETSAPI.Models
         /// Initializes a new instance of the <see cref="RentalAgreement" /> class.
         /// </summary>
         /// <param name="Id">A system-generated unique identifier for a RentalAgreement (required).</param>
-        /// <param name="Number">A system-generated unique rental agreement number in a format defined by the business as suitable for the business and client to see and use..</param>
-        /// <param name="Status">The current status of the Rental Agreement, such as Active or Complete.</param>
-        /// <param name="Equipment">A foreign key reference to the system-generated unique identifier for an Equipment.</param>
-        /// <param name="Project">A foreign key reference to the system-generated unique identifier for a Project.</param>
+        /// <param name="Number">A system-generated unique rental agreement number in a format defined by the business as suitable for the business and client to see and use. (required).</param>
+        /// <param name="Status">The current status of the Rental Agreement, such as Active or Complete (required).</param>
+        /// <param name="Equipment">A foreign key reference to the system-generated unique identifier for an Equipment (required).</param>
+        /// <param name="Project">A foreign key reference to the system-generated unique identifier for a Project (required).</param>
         /// <param name="RentalAgreementRates">RentalAgreementRates.</param>
         /// <param name="RentalAgreementConditions">RentalAgreementConditions.</param>
         /// <param name="TimeRecords">TimeRecords.</param>
@@ -56,13 +56,17 @@ namespace HETSAPI.Models
         /// <param name="EquipmentRate">The dollar rate for the piece of equipment itself for this Rental Agreement. Other rates associated with the Rental Agreement are in the Rental Agreement Rate table..</param>
         /// <param name="RatePeriod">The period of the rental rate. The vast majority will be hourly, but the rate could apply across a different period, e.g. daily..</param>
         /// <param name="RateComment">A comment about the rate for the piece of equipment..</param>
-        public RentalAgreement(int Id, string Number = null, string Status = null, Equipment Equipment = null, Project Project = null, List<RentalAgreementRate> RentalAgreementRates = null, List<RentalAgreementCondition> RentalAgreementConditions = null, List<TimeRecord> TimeRecords = null, string Note = null, DateTime? EstimateStartWork = null, DateTime? DatedOn = null, int? EstimateHours = null, float? EquipmentRate = null, string RatePeriod = null, string RateComment = null)
+        public RentalAgreement(int Id, string Number, string Status, Equipment Equipment, Project Project, List<RentalAgreementRate> RentalAgreementRates = null, List<RentalAgreementCondition> RentalAgreementConditions = null, List<TimeRecord> TimeRecords = null, string Note = null, DateTime? EstimateStartWork = null, DateTime? DatedOn = null, int? EstimateHours = null, float? EquipmentRate = null, string RatePeriod = null, string RateComment = null)
         {   
             this.Id = Id;
             this.Number = Number;
             this.Status = Status;
             this.Equipment = Equipment;
             this.Project = Project;
+
+
+
+
             this.RentalAgreementRates = RentalAgreementRates;
             this.RentalAgreementConditions = RentalAgreementConditions;
             this.TimeRecords = TimeRecords;

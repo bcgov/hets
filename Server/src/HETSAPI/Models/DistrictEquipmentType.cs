@@ -42,15 +42,18 @@ namespace HETSAPI.Models
         /// Initializes a new instance of the <see cref="DistrictEquipmentType" /> class.
         /// </summary>
         /// <param name="Id">A system-generated unique identifier for an EquipmentType (required).</param>
-        /// <param name="EquipmentType">EquipmentType.</param>
-        /// <param name="District">District.</param>
-        /// <param name="DistrictEquipmentName">The name of this equipment type used at the District Level. This could be just the equipmentName if this is the only EquipmentType defined in this District, or could be a name that separates out multiple EquipmentTypes used within a District to, for instance, separate out the same EquipmentName by size..</param>
-        public DistrictEquipmentType(int Id, EquipmentType EquipmentType = null, District District = null, string DistrictEquipmentName = null)
+        /// <param name="EquipmentType">EquipmentType (required).</param>
+        /// <param name="District">District (required).</param>
+        /// <param name="DistrictEquipmentName">The name of this equipment type used at the District Level. This could be just the equipmentName if this is the only EquipmentType defined in this District, or could be a name that separates out multiple EquipmentTypes used within a District to, for instance, separate out the same EquipmentName by size. (required).</param>
+        public DistrictEquipmentType(int Id, EquipmentType EquipmentType, District District, string DistrictEquipmentName)
         {   
             this.Id = Id;
             this.EquipmentType = EquipmentType;
             this.District = District;
             this.DistrictEquipmentName = DistrictEquipmentName;
+
+
+
         }
 
         /// <summary>

@@ -42,9 +42,9 @@ namespace HETSAPI.Models
         /// Initializes a new instance of the <see cref="RentalRequestRotationList" /> class.
         /// </summary>
         /// <param name="Id">A system-generated unique identifier for a RequestRotationList (required).</param>
-        /// <param name="RentalRequest">RentalRequest.</param>
-        /// <param name="RotationListSortOrder">The sort order of the piece of equipment on the rotaton list at the time the request was created. This is the order the equipment will be offered the available work..</param>
-        /// <param name="Equipment">Equipment.</param>
+        /// <param name="RentalRequest">RentalRequest (required).</param>
+        /// <param name="RotationListSortOrder">The sort order of the piece of equipment on the rotation list at the time the request was created. This is the order the equipment will be offered the available work. (required).</param>
+        /// <param name="Equipment">Equipment (required).</param>
         /// <param name="RentalAgreement">The rental agreement (if any) created for an accepted hire offer..</param>
         /// <param name="IsForceHire">True if the HETS Clerk designated the hire of this equipment as being a Forced Hire. A Force Hire implies that the usual seniority rules for hiring are bypassed because of special circumstances related to the hire - e.g. a the hire requires an attachment only one piece of equipment has..</param>
         /// <param name="WasAsked">True if the HETS Clerk contacted the equipment owner and asked to hire the piece of equipment..</param>
@@ -54,12 +54,15 @@ namespace HETSAPI.Models
         /// <param name="OfferResponseDatetime">The date and time the final response to the offer was established..</param>
         /// <param name="OfferResponseNote">A note entered about the response to the offer from the equipment owner about the offer. Usually used when the offer is a &amp;quot;No&amp;quot; or &amp;quot;Force Hire&amp;quot;..</param>
         /// <param name="Note">An optional general note about the offer..</param>
-        public RentalRequestRotationList(int Id, RentalRequest RentalRequest = null, int? RotationListSortOrder = null, Equipment Equipment = null, RentalAgreement RentalAgreement = null, bool? IsForceHire = null, bool? WasAsked = null, DateTime? AskedDateTime = null, string OfferResponse = null, string OfferRefusalReason = null, DateTime? OfferResponseDatetime = null, string OfferResponseNote = null, string Note = null)
+        public RentalRequestRotationList(int Id, RentalRequest RentalRequest, int RotationListSortOrder, Equipment Equipment, RentalAgreement RentalAgreement = null, bool? IsForceHire = null, bool? WasAsked = null, DateTime? AskedDateTime = null, string OfferResponse = null, string OfferRefusalReason = null, DateTime? OfferResponseDatetime = null, string OfferResponseNote = null, string Note = null)
         {   
             this.Id = Id;
             this.RentalRequest = RentalRequest;
             this.RotationListSortOrder = RotationListSortOrder;
             this.Equipment = Equipment;
+
+
+
             this.RentalAgreement = RentalAgreement;
             this.IsForceHire = IsForceHire;
             this.WasAsked = WasAsked;
@@ -92,11 +95,11 @@ namespace HETSAPI.Models
         public int? RentalRequestId { get; set; }
         
         /// <summary>
-        /// The sort order of the piece of equipment on the rotaton list at the time the request was created. This is the order the equipment will be offered the available work.
+        /// The sort order of the piece of equipment on the rotation list at the time the request was created. This is the order the equipment will be offered the available work.
         /// </summary>
-        /// <value>The sort order of the piece of equipment on the rotaton list at the time the request was created. This is the order the equipment will be offered the available work.</value>
-        [MetaDataExtension (Description = "The sort order of the piece of equipment on the rotaton list at the time the request was created. This is the order the equipment will be offered the available work.")]
-        public int? RotationListSortOrder { get; set; }
+        /// <value>The sort order of the piece of equipment on the rotation list at the time the request was created. This is the order the equipment will be offered the available work.</value>
+        [MetaDataExtension (Description = "The sort order of the piece of equipment on the rotation list at the time the request was created. This is the order the equipment will be offered the available work.")]
+        public int RotationListSortOrder { get; set; }
         
         /// <summary>
         /// Gets or Sets Equipment
@@ -258,7 +261,6 @@ namespace HETSAPI.Models
                 ) &&                 
                 (
                     this.RotationListSortOrder == other.RotationListSortOrder ||
-                    this.RotationListSortOrder != null &&
                     this.RotationListSortOrder.Equals(other.RotationListSortOrder)
                 ) &&                 
                 (
@@ -329,11 +331,8 @@ namespace HETSAPI.Models
                 if (this.RentalRequest != null)
                 {
                     hash = hash * 59 + this.RentalRequest.GetHashCode();
-                }                if (this.RotationListSortOrder != null)
-                {
-                    hash = hash * 59 + this.RotationListSortOrder.GetHashCode();
-                }                
-                                   
+                }                                   
+                hash = hash * 59 + this.RotationListSortOrder.GetHashCode();                   
                 if (this.Equipment != null)
                 {
                     hash = hash * 59 + this.Equipment.GetHashCode();

@@ -42,19 +42,23 @@ namespace HETSAPI.Models
         /// Initializes a new instance of the <see cref="UserFavourite" /> class.
         /// </summary>
         /// <param name="Id">A system-generated unique identifier for a UserFavourite (required).</param>
-        /// <param name="Name">The user-defined name for the recorded settings. Allows the user to save different groups of settings and access each one easily when needed..</param>
-        /// <param name="Value">The settings saved by the user. In general,  a UI defined chunk of json that stores the settings in place when the user created the favourite..</param>
+        /// <param name="Name">The user-defined name for the recorded settings. Allows the user to save different groups of settings and access each one easily when needed. (required).</param>
+        /// <param name="Value">The settings saved by the user. In general,  a UI defined chunk of json that stores the settings in place when the user created the favourite. (required).</param>
+        /// <param name="Type">The type of Favourite (required).</param>
+        /// <param name="User">The User who has this Favourite (required).</param>
         /// <param name="IsDefault">True if this Favourite is the default for this Context Type. On first access to a context in a session the default favourite for the context it is invoked. If there is no default favourite,  a system-wide default is invoked. On return to the context within a session,  the last parameters used are reapplied..</param>
-        /// <param name="Type">The type of Favourite.</param>
-        /// <param name="User">The User who has this Favourite.</param>
-        public UserFavourite(int Id, string Name = null, string Value = null, bool? IsDefault = null, string Type = null, User User = null)
+        public UserFavourite(int Id, string Name, string Value, string Type, User User, bool? IsDefault = null)
         {   
             this.Id = Id;
             this.Name = Name;
             this.Value = Value;
-            this.IsDefault = IsDefault;
             this.Type = Type;
             this.User = User;
+
+
+
+
+            this.IsDefault = IsDefault;
         }
 
         /// <summary>
@@ -83,13 +87,6 @@ namespace HETSAPI.Models
         public string Value { get; set; }
         
         /// <summary>
-        /// True if this Favourite is the default for this Context Type. On first access to a context in a session the default favourite for the context it is invoked. If there is no default favourite,  a system-wide default is invoked. On return to the context within a session,  the last parameters used are reapplied.
-        /// </summary>
-        /// <value>True if this Favourite is the default for this Context Type. On first access to a context in a session the default favourite for the context it is invoked. If there is no default favourite,  a system-wide default is invoked. On return to the context within a session,  the last parameters used are reapplied.</value>
-        [MetaDataExtension (Description = "True if this Favourite is the default for this Context Type. On first access to a context in a session the default favourite for the context it is invoked. If there is no default favourite,  a system-wide default is invoked. On return to the context within a session,  the last parameters used are reapplied.")]
-        public bool? IsDefault { get; set; }
-        
-        /// <summary>
         /// The type of Favourite
         /// </summary>
         /// <value>The type of Favourite</value>
@@ -114,6 +111,13 @@ namespace HETSAPI.Models
         public int? UserId { get; set; }
         
         /// <summary>
+        /// True if this Favourite is the default for this Context Type. On first access to a context in a session the default favourite for the context it is invoked. If there is no default favourite,  a system-wide default is invoked. On return to the context within a session,  the last parameters used are reapplied.
+        /// </summary>
+        /// <value>True if this Favourite is the default for this Context Type. On first access to a context in a session the default favourite for the context it is invoked. If there is no default favourite,  a system-wide default is invoked. On return to the context within a session,  the last parameters used are reapplied.</value>
+        [MetaDataExtension (Description = "True if this Favourite is the default for this Context Type. On first access to a context in a session the default favourite for the context it is invoked. If there is no default favourite,  a system-wide default is invoked. On return to the context within a session,  the last parameters used are reapplied.")]
+        public bool? IsDefault { get; set; }
+        
+        /// <summary>
         /// Returns the string presentation of the object
         /// </summary>
         /// <returns>String presentation of the object</returns>
@@ -124,9 +128,9 @@ namespace HETSAPI.Models
             sb.Append("  Id: ").Append(Id).Append("\n");
             sb.Append("  Name: ").Append(Name).Append("\n");
             sb.Append("  Value: ").Append(Value).Append("\n");
-            sb.Append("  IsDefault: ").Append(IsDefault).Append("\n");
             sb.Append("  Type: ").Append(Type).Append("\n");
             sb.Append("  User: ").Append(User).Append("\n");
+            sb.Append("  IsDefault: ").Append(IsDefault).Append("\n");
             sb.Append("}\n");
             return sb.ToString();
         }
@@ -180,11 +184,6 @@ namespace HETSAPI.Models
                     this.Value.Equals(other.Value)
                 ) &&                 
                 (
-                    this.IsDefault == other.IsDefault ||
-                    this.IsDefault != null &&
-                    this.IsDefault.Equals(other.IsDefault)
-                ) &&                 
-                (
                     this.Type == other.Type ||
                     this.Type != null &&
                     this.Type.Equals(other.Type)
@@ -193,6 +192,11 @@ namespace HETSAPI.Models
                     this.User == other.User ||
                     this.User != null &&
                     this.User.Equals(other.User)
+                ) &&                 
+                (
+                    this.IsDefault == other.IsDefault ||
+                    this.IsDefault != null &&
+                    this.IsDefault.Equals(other.IsDefault)
                 );
         }
 
@@ -216,10 +220,6 @@ namespace HETSAPI.Models
                 {
                     hash = hash * 59 + this.Value.GetHashCode();
                 }                
-                                if (this.IsDefault != null)
-                {
-                    hash = hash * 59 + this.IsDefault.GetHashCode();
-                }                
                                 if (this.Type != null)
                 {
                     hash = hash * 59 + this.Type.GetHashCode();
@@ -228,7 +228,11 @@ namespace HETSAPI.Models
                 if (this.User != null)
                 {
                     hash = hash * 59 + this.User.GetHashCode();
-                }
+                }                if (this.IsDefault != null)
+                {
+                    hash = hash * 59 + this.IsDefault.GetHashCode();
+                }                
+                
                 return hash;
             }
         }
