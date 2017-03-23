@@ -542,58 +542,6 @@ namespace HETSAPI.Services.Impl
             }
         }
 
-        private string GenerateEquipmentCode (string ownerEquipmentCodePrefix, int equipmentNumber)
-        {
-            string result = ownerEquipmentCodePrefix + "-" + equipmentNumber.ToString("D4");
-            return result; 
-        }
-
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <remarks>Returns the next Equipment Code for the given Owner.  Equipment Code is a combination of the Owner Equipment Prefix and the numeric identifier for the next piece of equipment.</remarks>
-        /// <param name="id">id of Owner to fetch the Equipment Code for</param>
-        /// <response code="200">OK</response>
-        public virtual IActionResult OwnersIdNextEquipmentCodeGetAsync(int id)
-        {
-            EquipmentCodeViewModel result = new EquipmentCodeViewModel();
-            var exists = _context.Owners.Any(a => a.Id == id);
-            if (exists)
-            {
-                Owner owner = _context.Owners
-                    .Include( x => x.EquipmentList)
-                    .First(a => a.Id == id);
-                int equipmentNumber = 1;
-                if (owner.EquipmentList != null)
-                {
-                    bool looking = true;
-                    equipmentNumber = owner.EquipmentList.Count + 1;
-                    
-                    // generate a unique equipment number
-                    while (looking)
-                    {
-                        string candidate = GenerateEquipmentCode(owner.OwnerEquipmentCodePrefix, equipmentNumber);
-                        if ((owner.EquipmentList).Any (x => x.EquipmentCode == candidate ))
-                        {
-                            equipmentNumber++;
-                        }
-                        else
-                        {
-                            looking = false;
-                        }                        
-                    }
-                }
-                result.EquipmentCode = GenerateEquipmentCode (owner.OwnerEquipmentCodePrefix, equipmentNumber);
-
-                
-                return new ObjectResult(result);
-            }
-            else
-            {
-                // record not found
-                return new StatusCodeResult(404);
-            }
-        }
 
         /// <summary>
         /// 

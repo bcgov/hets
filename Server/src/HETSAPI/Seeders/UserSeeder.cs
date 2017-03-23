@@ -105,7 +105,7 @@ namespace HETSAPI.Seeders
                         new UserRole
                         {
                             EffectiveDate = DateTime.Now,
-                            Role = context.GetRole("User")
+                            Role = context.GetRole("Administrator")
                         }
                     }
                 }

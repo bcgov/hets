@@ -48,15 +48,17 @@ namespace HETSAPI.Test
         /// </summary>
         public async void TestEquipmentBasic()
         {
+
             string initialName = "InitialName";
             string changedName = "ChangedName";
             // first test the POST.
-            var request = new HttpRequestMessage(HttpMethod.Post, "/api/equipment");
+            var request = new HttpRequestMessage(HttpMethod.Post, "/api/owners");
 
             // create a new object.
-            Equipment equipment = new Equipment();
-            equipment.Model = initialName;
-            string jsonString = equipment.ToJson();
+            Owner owner = new Owner();
+            owner.OrganizationName = initialName;
+            owner.OwnerEquipmentCodePrefix = "TST";
+            string jsonString = owner.ToJson();
 
             request.Content = new StringContent(jsonString, Encoding.UTF8, "application/json");
 
@@ -66,9 +68,48 @@ namespace HETSAPI.Test
             // parse as JSON.
             jsonString = await response.Content.ReadAsStringAsync();
 
+            owner = JsonConvert.DeserializeObject<Owner>(jsonString);
+            // get the id
+            var ownerId = owner.Id;
+
+            // now create the equipment.
+            request = new HttpRequestMessage(HttpMethod.Post, "/api/equipment");
+
+            Equipment equipment = new Equipment();
+            equipment.Model = initialName;
+            equipment.Owner = owner;
+            jsonString = equipment.ToJson();
+
+            request.Content = new StringContent(jsonString, Encoding.UTF8, "application/json");
+
+            response = await _client.SendAsync(request);
+            response.EnsureSuccessStatusCode();
+
+            // parse as JSON.
+            jsonString = await response.Content.ReadAsStringAsync();
+
             equipment = JsonConvert.DeserializeObject<Equipment>(jsonString);
             // get the id
             var id = equipment.Id;
+
+            // verify the fields that are created server side.
+            Assert.Equal(equipment.EquipmentCode, "TST-0001");
+
+            bool dateValid = true;
+            DateTime twoDaysAgo = DateTime.UtcNow.AddDays(-2);
+            if (equipment.LastVerifiedDate < twoDaysAgo)
+            {
+                dateValid = false;
+            }
+            Assert.Equal(dateValid, true);
+
+            dateValid = true;
+            if (equipment.LastVerifiedDate < twoDaysAgo)
+            {
+                dateValid = false;
+            }
+            Assert.Equal(dateValid, true);
+
             // change the name
             equipment.Model = changedName;
 
@@ -100,6 +141,5 @@ namespace HETSAPI.Test
             response = await _client.SendAsync(request);
             Assert.Equal(response.StatusCode, HttpStatusCode.NotFound);
         }
-
     }
 }
