@@ -106,6 +106,8 @@ namespace HETSAPI.Models
                                 : base(options)
         {
             _httpContextAccessor = httpContextAccessor;
+            // override the default timeout as some operations are time intensive
+            this.Database.SetCommandTimeout(180);
         }
 
         /// <summary>
@@ -221,7 +223,7 @@ namespace HETSAPI.Models
             original.SeniorityEffectiveDate = (DateTime?) getOriginalValue(entry, "SeniorityEffectiveDate");
             original.Seniority = (float?) getOriginalValue(entry, "Seniority");
             original.LocalArea = (LocalArea) getOriginalValue(entry, "LocalArea");            
-            original.BlockNumber = (float?) getOriginalValue(entry, "BlockNumber");
+            original.BlockNumber = (int?) getOriginalValue(entry, "BlockNumber");
             original.Owner = (Owner) getOriginalValue(entry, "Owner");           
             original.ServiceHoursLastYear = (float?) getOriginalValue(entry, "ServiceHoursLastYear");
             original.ServiceHoursTwoYearsAgo = (float?) getOriginalValue(entry, "ServiceHoursTwoYearsAgo");
@@ -297,9 +299,7 @@ namespace HETSAPI.Models
                 {
                     DoEquipmentAudit(seniorityAudits, entry, smUserId);
                 }                    
-
-            }
-            
+            }            
 
             if (seniorityAudits.Count > 0)
             {

@@ -39,6 +39,17 @@ namespace HETSAPI.Services.Impl
             _context = context;
         }
 
+        public void AdjustRecord (District item)
+        {
+            if (item != null)
+            {
+                if (item.Region != null)
+                {
+                    item.Region = _context.Regions.FirstOrDefault(x => x.Id == item.Region.Id);
+                }
+            }
+        }
+
         /// <summary>
         /// 
         /// </summary>
@@ -53,16 +64,9 @@ namespace HETSAPI.Services.Impl
             }
             foreach (District item in items)
             {
-                // avoid inserting a Region if possible.
-                int region_id = item.Region.Id;
-                var exists = _context.Regions.Any(a => a.Id == region_id);
-                if (exists)
-                {
-                    Region region = _context.Regions.First(a => a.Id == region_id);
-                    item.Region = region;
-                }
+                AdjustRecord(item);
 
-                exists = _context.Districts.Any(a => a.Id == item.Id);
+                bool exists = _context.Districts.Any(a => a.Id == item.Id);
                 if (exists)
                 {
                     _context.Districts.Update(item);
@@ -157,6 +161,7 @@ namespace HETSAPI.Services.Impl
             var exists = _context.Districts.Any(a => a.Id == id);
             if (exists && id == body.Id)
             {
+                AdjustRecord(body);
                 _context.Districts.Update(body);
                 // Save the changes
                 _context.SaveChanges();
@@ -188,20 +193,23 @@ namespace HETSAPI.Services.Impl
         /// <param name="body"></param>
         /// <response code="200">OK</response>
         public virtual IActionResult DistrictsPostAsync(District body)
-        {
-            // adjust region
-            int region_id = body.Region.Id;
-            var exists = _context.Regions.Any(a => a.Id == region_id);
-            if (exists)
-            {
-                Region region = _context.Regions.First(a => a.Id == region_id);
-                body.Region = region;
-            }
-            _context.Districts.Add(body);
-            _context.SaveChanges();
-            return new ObjectResult(body);
-        }
+        {            
+            AdjustRecord(body);
 
-        
+            var exists = _context.Districts.Any(a => a.Id == body.Id);
+            if (exists )
+            {
+                _context.Districts.Update(body);
+                // Save the changes             
+            }
+            else
+            {
+                // record not found
+                _context.Districts.Add(body);                
+            }
+
+            _context.SaveChanges();
+            return new ObjectResult(body);                        
+        }
     }
 }

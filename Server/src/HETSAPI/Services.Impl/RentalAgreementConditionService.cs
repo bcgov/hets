@@ -32,20 +32,9 @@ namespace SchoolBusAPI.Services.Impl
         {
             if (item != null)
             {
-
                 if (item.RentalAgreement != null)
                 {
-                    int rentalAgreement_id = item.RentalAgreement.Id;
-                    bool rentalAgreement_exists = _context.RentalAgreements.Any(a => a.Id == rentalAgreement_id);
-                    if (rentalAgreement_exists)
-                    {
-                        RentalAgreement rentalAgreement = _context.RentalAgreements.First(a => a.Id == rentalAgreement_id);
-                        item.RentalAgreement = rentalAgreement;
-                    }
-                    else
-                    {
-                        item.RentalAgreement = null;
-                    }
+                    item.RentalAgreement = _context.RentalAgreements.FirstOrDefault(a => a.Id == item.RentalAgreement.Id);                       
                 }
             }
         }

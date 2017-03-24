@@ -37,186 +37,94 @@ namespace HETSAPI.Services.Impl
         /// </summary>
         public EquipmentService(DbAppContext context)
         {
-            _context = context;
+            _context = context;            
         }
 
         private void AdjustRecord (Equipment item)
         {
-            // Adjust the record to allow it to be updated / inserted
-            if (item.LocalArea != null)
+            if (item != null)
             {
-                int localarea_id = item.LocalArea.Id;
-                bool localarea_exists = _context.LocalAreas.Any(a => a.Id == localarea_id);
-                if (localarea_exists)
+                // Adjust the record to allow it to be updated / inserted
+                if (item.LocalArea != null)
                 {
-                    LocalArea localarea = _context.LocalAreas.First(a => a.Id == localarea_id);
-                    item.LocalArea = localarea;
+                    item.LocalArea = _context.LocalAreas.FirstOrDefault(a => a.Id == item.LocalArea.Id);
                 }
-                else
-                {
-                    item.LocalArea = null;
-                }
-            }            
 
-            // EquiptmentType
-            if (item.DistrictEquipmentType != null)
-            {
-                int district_equipment_type_id = item.DistrictEquipmentType.Id;
-                bool district_equipment_type_exists = _context.DistrictEquipmentTypes.Any(a => a.Id == district_equipment_type_id);
-                if (district_equipment_type_exists)
+                // DistrictEquiptmentType
+                if (item.DistrictEquipmentType != null)
                 {
-                    DistrictEquipmentType districtEquipmentType = _context.DistrictEquipmentTypes.First(a => a.Id == district_equipment_type_id);
-                    item.DistrictEquipmentType = districtEquipmentType;
+                    item.DistrictEquipmentType = _context.DistrictEquipmentTypes.FirstOrDefault(a => a.Id == item.DistrictEquipmentType.Id);
                 }
-                else
+
+                // dump truck details
+                if (item.DumpTruck != null)
                 {
-                    item.DistrictEquipmentType = null;
+                    item.DumpTruck = _context.DumpTrucks.FirstOrDefault(a => a.Id == item.DumpTruck.Id);
                 }
-            }
-            
-            // dump truck details
-            if (item.DumpTruck != null)
-            {
-                int dump_truck_details_id = item.DumpTruck.Id;
-                bool dump_truck_details_exists = _context.DumpTrucks.Any(a => a.Id == dump_truck_details_id);
-                if (dump_truck_details_exists)
+
+                // owner
+                if (item.Owner != null)
                 {
-                    DumpTruck dumptruck = _context.DumpTrucks.First(a => a.Id == dump_truck_details_id);
-                    item.DumpTruck = dumptruck;
+                    item.Owner = _context.Owners.FirstOrDefault(a => a.Id == item.Owner.Id);
                 }
-                else
-                {
-                    item.DumpTruck = null;
-                }
-            }
-            
-            // owner
-            if (item.Owner != null)
-            {
-                int owner_id = item.Owner.Id;
-                bool owner_exists = _context.Owners.Any(a => a.Id == owner_id);
-                if (owner_exists)
-                {
-                    Owner owner = _context.Owners.First(a => a.Id == owner_id);
-                    item.Owner = owner;
-                }
-                else
-                {
-                    item.Owner = null;
-                }
-            }
 
 
-            // EquipmentAttachments is a list     
-            if (item.EquipmentAttachments != null)
-            {
-                for (int i = 0; i < item.EquipmentAttachments.Count; i++)
+                // EquipmentAttachments is a list     
+                if (item.EquipmentAttachments != null)
                 {
-                    EquipmentAttachment equipmentAttachment = item.EquipmentAttachments[i];
-                    if (equipmentAttachment != null)
+                    for (int i = 0; i < item.EquipmentAttachments.Count; i++)
                     {
-                        int equipmentAttachment_id = equipmentAttachment.Id;
-                        bool equipmentAttachment_exists = _context.EquipmentAttachments.Any(a => a.Id == equipmentAttachment_id);
-                        if (equipmentAttachment_exists)
+                        if (item.EquipmentAttachments[i] != null)
                         {
-                            equipmentAttachment = _context.EquipmentAttachments.First(a => a.Id == equipmentAttachment_id);
-                            item.EquipmentAttachments[i] = equipmentAttachment;
-                        }
-                        else
-                        {
-                            item.EquipmentAttachments[i] = null;
+                            item.EquipmentAttachments[i] = _context.EquipmentAttachments.FirstOrDefault(a => a.Id == item.EquipmentAttachments[i].Id);
                         }
                     }
                 }
-            }
 
-            // Attachments is a list     
-            if (item.Attachments != null)
-            {
-                for (int i = 0; i < item.Attachments.Count; i++)
+                // Attachments is a list     
+                if (item.Attachments != null)
                 {
-                    Attachment attachment = item.Attachments[i];
-                    if (attachment != null)
+                    for (int i = 0; i < item.Attachments.Count; i++)
                     {
-                        int attachment_id = attachment.Id;
-                        bool attachment_exists = _context.Attachments.Any(a => a.Id == attachment_id);
-                        if (attachment_exists)
+                        if (item.Attachments[i] != null)
                         {
-                            attachment = _context.Attachments.First(a => a.Id == attachment_id);
-                            item.Attachments[i] = attachment;
-                        }
-                        else
-                        {
-                            item.Attachments[i] = null;
+                            item.Attachments[i] = _context.Attachments.FirstOrDefault(a => a.Id == item.Attachments[i].Id);
                         }
                     }
                 }
-            }
 
-            // Notes is a list     
-            if (item.Notes != null)
-            {
-                for (int i = 0; i < item.Notes.Count; i++)
+                // Notes is a list     
+                if (item.Notes != null)
                 {
-                    Note note = item.Notes[i];
-                    if (note != null)
+                    for (int i = 0; i < item.Notes.Count; i++)
                     {
-                        int note_id = note.Id;
-                        bool note_exists = _context.Notes.Any(a => a.Id == note_id);
-                        if (note_exists)
+                        if (item.Notes[i] != null)
                         {
-                            note = _context.Notes.First(a => a.Id == note_id);
-                            item.Notes[i] = note;
-                        }
-                        else
-                        {
-                            item.Notes[i] = null;
+                            item.Notes[i] = _context.Notes.FirstOrDefault(a => a.Id == item.Notes[i].Id);
                         }
                     }
                 }
-            }
 
-            // History is a list     
-            if (item.History != null)
-            {
-                for (int i = 0; i < item.History.Count; i++)
+                // History is a list     
+                if (item.History != null)
                 {
-                    History history = item.History[i];
-                    if (history != null)
+                    for (int i = 0; i < item.History.Count; i++)
                     {
-                        int history_id = history.Id;
-                        bool history_exists = _context.Historys.Any(a => a.Id == history_id);
-                        if (history_exists)
+                        if (item.History[i] != null)
                         {
-                            history = _context.Historys.First(a => a.Id == history_id);
-                            item.History[i] = history;
-                        }
-                        else
-                        {
-                            item.History[i] = null;
+                            item.History[i] = _context.Historys.FirstOrDefault(a => a.Id == item.History[i].Id);
                         }
                     }
                 }
-            }
 
-            // Seniority Audit is a list     
-            if (item.SeniorityAudit != null)
-            {
-                for (int i = 0; i < item.SeniorityAudit.Count; i++)
+                // SeniorityAudit is a list     
+                if (item.SeniorityAudit != null)
                 {
-                    SeniorityAudit seniorityaudit = item.SeniorityAudit[i];
-                    if (seniorityaudit != null)
+                    for (int i = 0; i < item.SeniorityAudit.Count; i++)
                     {
-                        int seniorityaudit_id = seniorityaudit.Id;
-                        bool seniorityaudit_exists = _context.SeniorityAudits.Any(a => a.Id == seniorityaudit_id);
-                        if (seniorityaudit_exists)
+                        if (item.SeniorityAudit[i] != null)
                         {
-                            seniorityaudit = _context.SeniorityAudits.First(a => a.Id == seniorityaudit_id);
-                            item.SeniorityAudit[i] = seniorityaudit;
-                        }
-                        else
-                        {
-                            item.SeniorityAudit[i] = null;
+                            item.SeniorityAudit[i] = _context.SeniorityAudits.FirstOrDefault(a => a.Id == item.SeniorityAudit[i].Id);
                         }
                     }
                 }

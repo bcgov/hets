@@ -41,22 +41,13 @@ namespace HETSAPI.Services.Impl
 
         private void AdjustRecord(LocalArea item)
         {
-            // Adjust the record to allow it to be updated / inserted
-            if (item.ServiceArea != null)
+            if (item != null)
             {
-                int servicearea_id = item.ServiceArea.Id;
-                bool servicearea_exists = _context.ServiceAreas.Any(a => a.Id == servicearea_id);
-                if (servicearea_exists)
+                if (item.ServiceArea != null)
                 {
-                    ServiceArea servicearea = _context.ServiceAreas.First(a => a.Id == servicearea_id);
-                    item.ServiceArea = servicearea;
-                }
-                else
-                {
-                    item.ServiceArea = null;
+                    item.ServiceArea = _context.ServiceAreas.FirstOrDefault(a => a.Id == item.ServiceArea.Id);
                 }
             }
-
         }
 
         /// <summary>

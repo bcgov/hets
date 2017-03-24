@@ -45,43 +45,20 @@ namespace HETSAPI.Services.Impl
         {
             if (item != null)
             {
+                // Adjust district
                 if (item.District != null)
                 {
-                    // Adjust the record to allow it to be updated / inserted
-                    // avoid inserting a District if possible.
-                    int district_id = item.District.Id;
-                    var exists = _context.Districts.Any(a => a.Id == district_id);
-                    if (exists)
-                    {
-                        District district = _context.Districts.First(a => a.Id == district_id);
-                        item.District = district;
-                    }
-                    else
-                    {
-                        item.District = null;
-                    }
+                    item.District = _context.Districts.FirstOrDefault(a => a.Id == item.District.Id);
                 }
-                
 
                 // Notes is a list     
                 if (item.Notes != null)
                 {
                     for (int i = 0; i < item.Notes.Count; i++)
                     {
-                        Note note = item.Notes[i];
-                        if (note != null)
+                        if (item.Notes[i] != null)
                         {
-                            int note_id = note.Id;
-                            bool note_exists = _context.Notes.Any(a => a.Id == note_id);
-                            if (note_exists)
-                            {
-                                note = _context.Notes.First(a => a.Id == note_id);
-                                item.Notes[i] = note;
-                            }
-                            else
-                            {
-                                item.Notes[i] = null;
-                            }
+                            item.Notes[i] = _context.Notes.FirstOrDefault(a => a.Id == item.Notes[i].Id);
                         }
                     }
                 }
@@ -91,82 +68,36 @@ namespace HETSAPI.Services.Impl
                 {
                     for (int i = 0; i < item.History.Count; i++)
                     {
-                        History history = item.History[i];
-                        if (history != null)
+                        if (item.History[i] != null)
                         {
-                            int history_id = history.Id;
-                            bool history_exists = _context.Historys.Any(a => a.Id == history_id);
-                            if (history_exists)
-                            {
-                                history = _context.Historys.First(a => a.Id == history_id);
-                                item.History[i] = history;
-                            }
-                            else
-                            {
-                                item.History[i] = null;
-                            }
+                            item.History[i] = _context.Historys.FirstOrDefault(a => a.Id == item.History[i].Id);
                         }
                     }
                 }
 
-                // Adjust the record to allow it to be updated / inserted
                 if (item.PrimaryContact != null)
                 {
-                    int primaryContact_id = item.PrimaryContact.Id;
-                    bool primaryContact_exists = _context.Contacts.Any(a => a.Id == primaryContact_id);
-                    if (primaryContact_exists)
-                    {
-                        Contact contact = _context.Contacts.First(a => a.Id == primaryContact_id);
-                        item.PrimaryContact = contact;
-                    }
-                    else
-                    {
-                        item.PrimaryContact = null;
-                    }
+                    item.PrimaryContact = _context.Contacts.FirstOrDefault(a => a.Id == item.PrimaryContact.Id);
                 }
 
-                // Contacts is a list     
                 if (item.Contacts != null)
                 {
                     for (int i = 0; i < item.Contacts.Count; i++)
                     {
-                        Contact contact = item.Contacts[i];
-                        if (contact != null)
+                        if (item.Contacts[i] != null)
                         {
-                            int contact_id = contact.Id;
-                            bool history_exists = _context.Contacts.Any(a => a.Id == contact_id);
-                            if (history_exists)
-                            {
-                                contact = _context.Contacts.First(a => a.Id == contact_id);
-                                item.Contacts[i] = contact;
-                            }
-                            else
-                            {
-                                item.Contacts[i] = null;
-                            }
+                            item.Contacts[i] = _context.Contacts.FirstOrDefault(a => a.Id == item.Contacts[i].Id);
                         }
                     }
                 }
 
-                // RentalRequests is a list     
                 if (item.RentalRequests != null)
                 {
                     for (int i = 0; i < item.RentalRequests.Count; i++)
                     {
-                        RentalRequest rentalRequest = item.RentalRequests[i];
-                        if (rentalRequest != null)
+                        if (item.RentalRequests[i] != null)
                         {
-                            int contact_id = rentalRequest.Id;
-                            bool history_exists = _context.RentalRequests.Any(a => a.Id == contact_id);
-                            if (history_exists)
-                            {
-                                rentalRequest = _context.RentalRequests.First(a => a.Id == contact_id);
-                                item.RentalRequests[i] = rentalRequest;
-                            }
-                            else
-                            {
-                                item.RentalRequests[i] = null;
-                            }
+                            item.RentalRequests[i] = _context.RentalRequests.FirstOrDefault(a => a.Id == item.RentalRequests[i].Id);
                         }
                     }
                 }
@@ -176,24 +107,12 @@ namespace HETSAPI.Services.Impl
                 {
                     for (int i = 0; i < item.RentalAgreements.Count; i++)
                     {
-                        RentalAgreement rentalAgreement = item.RentalAgreements[i];
-                        if (rentalAgreement != null)
+                        if (item.RentalAgreements[i] != null)
                         {
-                            int contact_id = rentalAgreement.Id;
-                            bool history_exists = _context.RentalRequests.Any(a => a.Id == contact_id);
-                            if (history_exists)
-                            {
-                                rentalAgreement = _context.RentalAgreements.First(a => a.Id == contact_id);
-                                item.RentalAgreements[i] = rentalAgreement;
-                            }
-                            else
-                            {
-                                item.RentalAgreements[i] = null;
-                            }
+                            item.RentalAgreements[i] = _context.RentalAgreements.FirstOrDefault(a => a.Id == item.RentalAgreements[i].Id);
                         }
                     }
                 }
-
             }   
         }
 

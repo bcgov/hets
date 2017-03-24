@@ -39,6 +39,18 @@ namespace HETSAPI.Services.Impl
             _context = context;
         }
 
+        private void AdjustRecord(ServiceArea item)
+        {
+            if (item != null)
+            {
+                // Adjust district
+                if (item.District != null)
+                {
+                    item.District = _context.Districts.FirstOrDefault(a => a.Id == item.District.Id);
+                }
+            }            
+        }
+
         /// <summary>
         /// 
         /// </summary>
@@ -53,16 +65,9 @@ namespace HETSAPI.Services.Impl
             }
             foreach (ServiceArea item in items)
             {
-                // avoid inserting a District if possible.
-                int district_id = item.District.Id;
-                var exists = _context.Districts.Any(a => a.Id == district_id);
-                if (exists)
-                {
-                    District district = _context.Districts.First(a => a.Id == district_id);
-                    item.District = district;
-                }
+                AdjustRecord(item);
 
-                exists = _context.ServiceAreas.Any(a => a.Id == item.Id);
+                bool exists = _context.ServiceAreas.Any(a => a.Id == item.Id);
                 if (exists)
                 {
                     _context.ServiceAreas.Update(item);
@@ -150,15 +155,16 @@ namespace HETSAPI.Services.Impl
         /// <param name="item"></param>
         /// <response code="200">OK</response>
         /// <response code="404">Service Area not found</response>
-        public virtual IActionResult ServiceareasIdPutAsync(int id, ServiceArea body)
+        public virtual IActionResult ServiceareasIdPutAsync(int id, ServiceArea item)
         {
             var exists = _context.ServiceAreas.Any(a => a.Id == id);
-            if (exists && id == body.Id)
+            if (exists && id == item.Id)
             {
-                _context.ServiceAreas.Update(body);
+                AdjustRecord(item);
+                _context.ServiceAreas.Update(item);
                 // Save the changes
                 _context.SaveChanges();
-                return new ObjectResult(body);
+                return new ObjectResult(item);
             }
             else
             {
@@ -175,6 +181,7 @@ namespace HETSAPI.Services.Impl
         /// <response code="200">OK</response>
         public virtual IActionResult ServiceareasPostAsync(ServiceArea item)
         {
+            AdjustRecord(item);
             var exists = _context.ServiceAreas.Any(a => a.Id == item.Id);
             if (exists)
             {

@@ -45,12 +45,7 @@ namespace HETSAPI.Services.Impl
         {
             if (item.District != null)
             {
-                bool district_exists = _context.Districts.Any(x => x.Id == item.District.Id);
-                if (district_exists)
-                {
-                    District district = _context.Districts.First(x => x.Id == item.District.Id);
-                    item.District = district;
-                }
+                item.District = _context.Districts.FirstOrDefault(x => x.Id == item.District.Id);
             }
         }
 

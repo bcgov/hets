@@ -5992,18 +5992,18 @@ definitions:
         format: int32
         type: integer
         description: The number of pieces of the equipment type wanted for hire as part of this request.
-      estimatedHours:
+      expectedHours:
         format: int32
         type: integer
-        description: The estimated number of rental hours for each piece equipment hired against this request, as provided by the Project Manager making the request. 
-      estimatedStartDate:
+        description: The expected number of rental hours for each piece equipment hired against this request, as provided by the Project Manager making the request. 
+      expectedStartDate:
         type: string
         format: date-time
-        description: The estimated start date of each piece of equipment hired against this request, as provided by the Project Manager making the request.
-      estimatedEndDate:
+        description: The expected start date of each piece of equipment hired against this request, as provided by the Project Manager making the request.
+      expectedEndDate:
         type: string
         format: date-time
-        description: The estimated end date of each piece of equipment hired against this request, as provided by the Project Manager making the request.
+        description: The expected end date of each piece of equipment hired against this request, as provided by the Project Manager making the request.
       firstOnRotationList:
         $ref: '#/definitions/Equipment'
         description: The first piece of equipment on the rotation list at the time of the creation of the request.
@@ -6047,7 +6047,6 @@ definitions:
     description: An eligible piece of equipment for a request and a tracking of the hire offer and response process related to a request for that piece of equipment. Includes a link from the equipment to a Rental Agreement if the equipment was hired to satisfy a part of the request.
     required:
       - id
-      - rentalRequest
       - rotationListSortOrder
       - equipment
     properties:
@@ -6055,8 +6054,6 @@ definitions:
         format: int32
         type: integer
         description: A system-generated unique identifier for a RequestRotationList
-      rentalRequest:
-        $ref: '#/definitions/RentalRequest'
       rotationListSortOrder:
         format: int32
         type: integer
@@ -6139,7 +6136,7 @@ definitions:
         type: string
         maxLength: 2048
         description: An optional note to be placed onto the Rental Agreement.
-      estimatedStartDate:
+      estimateStartWork:
         type: string
         format: date-time
         description: The estimated start date of the work to be placed on the rental agreement.
@@ -6147,7 +6144,7 @@ definitions:
         type: string
         format: date-time
         description: The dated on date to put on the Rental Agreement.
-      estimatedHours:
+      estimateHours:
         format: int32
         type: integer
         description: The estimated number of hours of work to be put onto the Rental Agreement.
@@ -6356,8 +6353,8 @@ definitions:
         format: date-time
         description: TO BE REVIEWED WITH THE BUSINESS - WHAT IS THIS?
       blockNumber:
-        type: number
-        format: float
+        format: int32
+        type: integer
         description: The current block number for the piece of equipment as calculated by the Seniority Algorthm for this equipment type in the local area. As currently defined y the business  - 1, 2 or Open
       seniority:
         type: number
@@ -6708,8 +6705,8 @@ definitions:
         $ref: '#/definitions/Equipment'
         description: A foreign key reference to the system-generated unique identifier for an Equipment
       blockNumber:
-        type: number
-        format: float
+        format: int32
+        type: integer
         description: The block number for the piece of equipment as calculated by the Seniority Algorthm for this equipment type in the local area. As currently defined by the business - 1, 2 or Open
       owner:
         $ref: '#/definitions/Owner'

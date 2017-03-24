@@ -47,17 +47,7 @@ namespace HETSAPI.Services.Impl
                 
                 if (item.RentalAgreement != null)
                 {
-                    int rentalAgreement_id = item.RentalAgreement.Id;
-                    bool rentalAgreement_exists = _context.RentalAgreements.Any(a => a.Id == rentalAgreement_id);
-                    if (rentalAgreement_exists)
-                    {
-                        RentalAgreement rentalAgreement = _context.RentalAgreements.First(a => a.Id == rentalAgreement_id);
-                        item.RentalAgreement = rentalAgreement;
-                    }
-                    else
-                    {
-                        item.RentalAgreement = null;
-                    }
+                    item.RentalAgreement = _context.RentalAgreements.First(a => a.Id == item.RentalAgreement.Id);
                 }
             }
         }
@@ -98,8 +88,7 @@ namespace HETSAPI.Services.Impl
         public virtual IActionResult RentalrequestrotationlistsGetAsync()
         {
             var result = _context.RentalRequestRotationLists
-                .Include(x => x.RentalAgreement)
-                .Include(x => x.RentalRequest)                
+                .Include(x => x.RentalAgreement)                            
                 .Include(x => x.Equipment)
                 .ToList();
             return new ObjectResult(result);
@@ -144,8 +133,7 @@ namespace HETSAPI.Services.Impl
             if (exists)
             {
                 var result = _context.RentalRequestRotationLists
-                    .Include(x => x.RentalAgreement)
-                    .Include(x => x.RentalRequest)
+                    .Include(x => x.RentalAgreement)                   
                     .Include(x => x.Equipment)
 
                     .First(a => a.Id == id);

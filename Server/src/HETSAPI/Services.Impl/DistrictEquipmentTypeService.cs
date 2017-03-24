@@ -41,35 +41,19 @@ namespace HETSAPI.Services.Impl
 
 
         private void AdjustRecord(DistrictEquipmentType item)
-        {            
-            int district_id = item.District.Id;
-            var exists = _context.Districts.Any(a => a.Id == district_id);
-            if (exists)
+        {  
+            if (item != null)
             {
-                District district = _context.Districts.First(a => a.Id == district_id);
-                item.District = district;
-            }
-            else
-            {
-                item.District = null;
-            }
-            if (item.EquipmentType != null)
-            {
-                int equipment_type_id = (int) item.EquipmentType.Id;
-                var equipment_type_exists = _context.EquipmentTypes.Any(a => a.Id == equipment_type_id);
-                if (equipment_type_exists)
+                if (item.District != null)
                 {
-                    EquipmentType equipmentType = _context.EquipmentTypes.First(a => a.Id == district_id);
-                    item.EquipmentType = equipmentType;
+                    item.District = _context.Districts.FirstOrDefault(a => a.Id == item.District.Id);                    
                 }
-                else
+                
+                if (item.EquipmentType != null)
                 {
-                    item.EquipmentType = null;
+                    item.EquipmentType = _context.EquipmentTypes.FirstOrDefault(a => a.Id == item.EquipmentType.Id);
                 }
-
-            }
-
-
+            }                     
         }
 
 
@@ -153,7 +137,10 @@ namespace HETSAPI.Services.Impl
             var exists = _context.DistrictEquipmentTypes.Any(a => a.Id == id);
             if (exists)
             {
-                var result = _context.DistrictEquipmentTypes.First(a => a.Id == id);
+                var result = _context.DistrictEquipmentTypes
+                    .Include(x => x.District)
+                    .Include(x => x.EquipmentType)
+                    .First(a => a.Id == id);
                 return new ObjectResult(result);
             }
             else

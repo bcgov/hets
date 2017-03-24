@@ -44,57 +44,26 @@ namespace HETSAPI.Services.Impl
         {
             if (item != null)
             {
-                // Adjust the record to allow it to be updated / inserted
                 if (item.LocalArea != null)
                 {
-                    int localarea_id = item.LocalArea.Id;
-                    bool localarea_exists = _context.LocalAreas.Any(a => a.Id == localarea_id);
-                    if (localarea_exists)
-                    {
-                        LocalArea localarea = _context.LocalAreas.First(a => a.Id == localarea_id);
-                        item.LocalArea = localarea;
-                    }
-                    else
-                    {
-                        item.LocalArea = null;
-                    }
+                    item.LocalArea = _context.LocalAreas.FirstOrDefault(a => a.Id == item.LocalArea.Id);
                 }
 
                 // Adjust the owner contacts.            
                 if (item.Contacts != null)
                 {
                     for (int i = 0; i < item.Contacts.Count; i++)
-                    {
-                        Contact contact = item.Contacts[i];
-                        if (contact != null)
+                    {                        
+                        if (item.Contacts[i] != null)
                         {
-                            int contact_id = contact.Id;
-                            bool contact_exists = _context.Contacts.Any(a => a.Id == contact_id);
-                            if (contact_exists)
-                            {
-                                contact = _context.Contacts.First(a => a.Id == contact_id);
-                                item.Contacts[i] = contact;
-                            }
-                            else
-                            {
-                                item.Contacts[i] = null;
-                            }
+                            item.Contacts[i] = _context.Contacts.FirstOrDefault(a => a.Id == item.Contacts[i].Id);                            
                         }
                     }
                 }
 
                 if (item.PrimaryContact != null)
                 {
-                    int primaryContact_id = item.PrimaryContact.Id;
-                    bool primaryContact_exists = _context.Contacts.Any(a => a.Id == primaryContact_id);
-                    if (primaryContact_exists)
-                    {
-                        item.PrimaryContact = _context.Contacts.First(a => a.Id == primaryContact_id);
-                    }
-                    else
-                    {
-                        item.PrimaryContact = null;
-                    }
+                    item.PrimaryContact = _context.Contacts.FirstOrDefault(a => a.Id == item.PrimaryContact.Id);
                 }
 
                 // Adjust the equipment list.            
@@ -102,14 +71,9 @@ namespace HETSAPI.Services.Impl
                 {
                     for (int i = 0; i < item.EquipmentList.Count; i++)
                     {
-                        Equipment equipment = item.EquipmentList[i];
-                        if (equipment != null)
+                        if (item.EquipmentList[i] != null)
                         {
-                            int equipment_id = equipment.Id;
-                            bool equipment_exists = _context.Equipments.Any(a => a.Id == equipment_id);
-                            if (equipment_exists)
-                            {
-                                equipment = _context.Equipments
+                            item.EquipmentList[i] = _context.Equipments
                                     .Include(x => x.LocalArea.ServiceArea.District.Region)
                                     .Include(x => x.DistrictEquipmentType)
                                     .Include(x => x.DumpTruck)
@@ -118,13 +82,7 @@ namespace HETSAPI.Services.Impl
                                     .Include(x => x.Notes)
                                     .Include(x => x.Attachments)
                                     .Include(x => x.History)
-                                    .First(a => a.Id == equipment_id);
-                                item.EquipmentList[i] = equipment;
-                            }
-                            else
-                            {
-                                item.EquipmentList[i] = null;
-                            }
+                                    .FirstOrDefault(a => a.Id == item.EquipmentList[i].Id);
                         }
                     }
                 }
