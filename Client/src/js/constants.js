@@ -9,6 +9,14 @@ export const ROLES_PATHNAME = 'roles';
 export const VERSION_PATHNAME = 'version';
 export const CONTACTS_PATHNAME = 'contacts';
 
+// Permissions
+export const PERMISSION_LOGIN = 'LOGIN';
+export const PERMISSION_ADMIN = 'ADMIN';
+export const PERMISSION_ASSIGN_INSPECTORS = 'ASSIGN_INSPECTORS';
+export const PERMISSION_RECEIVE_NOTIFICATIONS = 'RECEIVE_NOTIFICATIONS';
+export const PERMISSION_ROLES_AND_PERMISSIONS = 'ROLES_AND_PERMISSIONS';
+export const PERMISSION_USER_MANAGEMENT = 'USER_MANAGEMENT';
+
 // Equipments
 export const EQUIPMENT_DAYS_SINCE_VERIFIED_WARNING = 270;
 export const EQUIPMENT_DAYS_SINCE_VERIFIED_CRITICAL = 365;
@@ -49,6 +57,7 @@ export const DATE_ZULU = 'YYYY-MM-DDT00:00:00Z';
 
 export const DATE_TIME_ISO_8601 = 'YYYY-MM-DDTHH:mm:ss';
 export const DATE_TIME_READABLE = 'MMMM D, YYYY [at] h:mm:ss A';
+export const DATE_TIME_LOG = 'YYYY/MM/DD HH:mm:ss';
 
 // RegEx
 export const EMAIL_REGEX = /\S+@\S+\.\S+/;

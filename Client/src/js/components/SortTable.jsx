@@ -32,7 +32,7 @@ var SortTable = React.createClass({
             {
               _.map(this.props.headers, (header) => {
                 if (header.node) {
-                  return <th key={ header.field } style={ header.style }>{ header.node }</th>;
+                  return <th id={ header.field } key={ header.field } style={ header.style }>{ header.node }</th>;
                 }
 
                 var sortGlyph = '';

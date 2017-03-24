@@ -1,5 +1,6 @@
 import * as Action from './actionTypes';
 import * as Constant from './constants';
+import * as History from './history';
 import store from './store';
 
 import { ApiRequest } from './utils/http';
@@ -48,6 +49,7 @@ function parseUser(user) {
 
   user.path = `${ Constant.USERS_PATHNAME }/${ user.id }`;
   user.url = `#/${ user.path }`;
+  user.historyEntity = History.makeHistoryEntity(History.USER, user);
 
   user.canEdit = true;
   user.canDelete = true;
@@ -59,6 +61,19 @@ export function getCurrentUser() {
 
     // Add display fields
     parseUser(user);
+
+    // Get permissions
+    var permissions = [];
+    _.each(user.userRoles, userRole => {
+      _.each(userRole.role.rolePermissions, rolePermission => {
+        permissions.push(rolePermission.permission.code);
+      });
+    });
+    user.permissions = _.uniq(permissions);
+
+    user.hasPermission = function(permission) {
+      return user.permissions.indexOf(permission) !== -1;
+    };
 
     store.dispatch({ type: Action.UPDATE_CURRENT_USER, user: user });
   });
@@ -158,6 +173,7 @@ export function updateUserRoles(userId, userRoleArray) {
 function parseRole(role) {
   role.path = `${ Constant.ROLES_PATHNAME }/${ role.id }`;
   role.url = `#/${ role.path }`;
+  role.historyEntity = History.makeHistoryEntity(History.ROLE, role);
 
   role.canEdit = true;
   role.canDelete = false;
@@ -342,6 +358,8 @@ function parseEquipment(equipment) {
 
   equipment.path = `${ Constant.EQUIPMENT_PATHNAME }/${ equipment.id }`;
   equipment.url = `#/${ equipment.path }`;
+  equipment.name = `code ${ equipment.equipmentCode }`;
+  equipment.historyEntity = History.makeHistoryEntity(History.EQUIPMENT, equipment);
 
   equipment.canView = true;
   equipment.canEdit = true;
@@ -400,6 +418,21 @@ export function updateEquipment(equipment) {
     parseEquipment(equipment);
 
     store.dispatch({ type: Action.UPDATE_EQUIPMENT, equipment: equipment });
+  });
+}
+
+export function addEquipmentHistory(equipmentId, history) {
+  return new ApiRequest(`/equipment/${ equipmentId }/history`).post(history);
+}
+
+export function getEquipmentHistory(equipmentId, params) {
+  return new ApiRequest(`/equipment/${ equipmentId }/history`).get(params).then(response => {
+    var history = normalize(response);
+
+    // Add display fields
+    _.map(history, history => { parseHistory(history); });
+
+    store.dispatch({ type: Action.UPDATE_HISTORY, history: history });
   });
 }
 
@@ -468,18 +501,6 @@ function parseOwner(owner) {
   if (!owner.contacts) { owner.contacts = []; }
   if (!owner.equipmentList) { owner.equipmentList = []; }
 
-  owner.path = `${ Constant.OWNERS_PATHNAME }/${ owner.id }`;
-  owner.url = `#/${ owner.path }`;
-
-  // Add display fields for owner contacts
-  owner.contacts = normalize(owner.contacts);
-  _.map(owner.contacts, contact => { parseContact(contact, owner.path, owner.primaryContact ? owner.primaryContact.id : 0); });
-
-  _.map(owner.equipmentList, equipment => { parseEquipment(equipment); });
-
-  // TODO Owner status needs to be populated in sample data. Setting to Approved for the time being...
-  owner.status = owner.status || Constant.OWNER_STATUS_CODE_APPROVED;
-
   owner.organizationName = owner.organizationName || '';
   owner.ownerEquipmentCodePrefix = owner.ownerEquipmentCodePrefix || '';
   owner.doingBusinessAs = owner.doingBusinessAs || '';
@@ -488,6 +509,20 @@ function parseOwner(owner) {
   owner.workSafeBCPolicyNumber = owner.workSafeBCPolicyNumber || '';
   owner.workSafeBCExpiryDate = owner.workSafeBCExpiryDate || '';
   owner.cglEndDate = owner.cglEndDate || '';
+
+  owner.path = `${ Constant.OWNERS_PATHNAME }/${ owner.id }`;
+  owner.url = `#/${ owner.path }`;
+  owner.name = owner.organizationName;
+  owner.historyEntity = History.makeHistoryEntity(History.OWNER, owner);
+
+  // Add display fields for owner contacts
+  owner.contacts = normalize(owner.contacts);
+  _.map(owner.contacts, contact => { parseContact(contact, owner); });
+
+  _.map(owner.equipmentList, equipment => { parseEquipment(equipment); });
+
+  // TODO Owner status needs to be populated in sample data. Setting to Approved for the time being...
+  owner.status = owner.status || Constant.OWNER_STATUS_CODE_APPROVED;
 
   // UI display fields
   owner.isMaintenanceContractor = owner.isMaintenanceContractor || false;
@@ -569,14 +604,29 @@ export function deleteOwner(owner) {
   });
 }
 
-export function addOwnerContact(contact, ownerId) {
-  return new ApiRequest(`/owners/${ ownerId }/contacts`).post(contact).then(response => {
+export function addOwnerContact(owner, contact) {
+  return new ApiRequest(`/owners/${ owner.id }/contacts`).post(contact).then(response => {
     var contact = response;
 
     // Add display fields
-    parseContact(contact);
+    parseContact(contact, owner);
 
     store.dispatch({ type: Action.ADD_CONTACT, contact: contact });
+  });
+}
+
+export function addOwnerHistory(ownerId, history) {
+  return new ApiRequest(`/owners/${ ownerId }/history`).post(history);
+}
+
+export function getOwnerHistory(ownerId, params) {
+  return new ApiRequest(`/owners/${ ownerId }/history`).get(params).then(response => {
+    var history = normalize(response);
+
+    // Add display fields
+    _.map(history, history => { parseHistory(history); });
+
+    store.dispatch({ type: Action.UPDATE_HISTORY, history: history });
   });
 }
 
@@ -591,16 +641,24 @@ export function updateOwnerEquipment(owner, equipmentArray) {
 // Contacts
 ////////////////////
 
-function parseContact(contact, parentPath, primaryContactId) {
+function parseContact(contact, parent) {
   contact.name = firstLastName(contact.givenName, contact.surname);
   contact.phone = contact.workPhoneNumber ?
     `${ formatPhoneNumber(contact.workPhoneNumber) } (w)` :
     (contact.mobilePhoneNumber ? `${ formatPhoneNumber(contact.mobilePhoneNumber) } (c)` : '');
 
+  var parentPath = '';
+  var primaryContactId = 0;
+  if (parent) {
+    parentPath = parent.path || '';
+    primaryContactId = parent.primaryContact ? parent.primaryContact.id : 0;
+  }
+
   contact.isPrimary = contact.id === primaryContactId;
 
   contact.path = parentPath ? `${ parentPath }/${ Constant.CONTACTS_PATHNAME }/${ contact.id }` : null;
   contact.url = contact.path ? `#/${ contact.path }` : null;
+  contact.historyEntity = History.makeHistoryEntity(History.CONTACT, contact);
 
   contact.canEdit = true;
   contact.canDelete = true;
@@ -628,23 +686,23 @@ export function getContact(contactId) {
   });
 }
 
-export function addContact(contact) {
+export function addContact(parent, contact) {
   return new ApiRequest('/contacts').post(contact).then(response => {
     var contact = response;
 
     // Add display fields
-    parseContact(contact);
+    parseContact(contact, parent);
 
     store.dispatch({ type: Action.ADD_CONTACT, contact: contact });
   });
 }
 
-export function updateContact(contact) {
+export function updateContact(parent, contact) {
   return new ApiRequest(`/contacts/${ contact.id }`).put(contact).then(response => {
     var contact = response;
 
     // Add display fields
-    parseContact(contact);
+    parseContact(contact, parent);
 
     store.dispatch({ type: Action.UPDATE_CONTACT, contact: contact });
   });
@@ -662,6 +720,14 @@ export function deleteContact(contact) {
 }
 
 ////////////////////
+// History
+////////////////////
+
+function parseHistory(history) {
+  history.timestampSort = sortableDateTime(history.lastUpdateTimestamp);
+}
+
+////////////////////
 // Projects
 ////////////////////
 
@@ -674,19 +740,20 @@ function parseProject(project) {
   if (!project.rentalRequests) { project.rentalRequests = []; }
   if (!project.rentalAgreements) { project.rentalAgreements = []; }  // TODO Server needs to send this (HETS-153)
 
+  project.name = project.name || '';
+  project.provincialProjectNumber = project.provincialProjectNumber || '';
+  project.information = project.information || '';
+
   project.path = `${ Constant.PROJECTS_PATHNAME }/${ project.id }`;
   project.url = `#/${ project.path }`;
+  project.historyEntity = History.makeHistoryEntity(History.PROJECT, project);
 
   // Add display fields for contacts
-  _.map(project.contacts, contact => { parseContact(contact, project.path, project.primaryContact ? project.primaryContact.id : 0); });
+  _.map(project.contacts, contact => { parseContact(contact, parent); });
 
   // Add display fields for rental requests and rental agreements
   _.map(project.rentalRequests, obj => { parseRentalRequest(obj); });
   _.map(project.rentalAgreements, obj => { parseRentalAgreement(obj); });
-
-  project.name = project.name || '';
-  project.provincialProjectNumber = project.provincialProjectNumber || '';
-  project.information = project.information || '';
 
   project.numberOfRequests = project.numberOfRequests || Object.keys(project.rentalRequests).length;
   project.numberOfHires = project.numberOfHires || Object.keys(project.rentalAgreements).length;
@@ -761,6 +828,21 @@ export function updateProject(project) {
   });
 }
 
+export function addProjectHistory(projectId, history) {
+  return new ApiRequest(`/project/${ projectId }/history`).post(history);
+}
+
+export function getProjectHistory(projectId, params) {
+  return new ApiRequest(`/project/${ projectId }/history`).get(params).then(response => {
+    var history = normalize(response);
+
+    // Add display fields
+    _.map(history, history => { parseHistory(history); });
+
+    store.dispatch({ type: Action.UPDATE_HISTORY, history: history });
+  });
+}
+
 ////////////////////
 // Rental Requests
 ////////////////////
@@ -812,6 +894,8 @@ function parseRentalRequest(request) {
 
   request.path = `${ Constant.RENTAL_REQUESTS_PATHNAME }/${ request.id }`;
   request.url = `#/${ request.path }`;
+  request.name = 'TBD';
+  request.historyEntity = History.makeHistoryEntity(History.REQUEST, request);
 
   request.canView = true;
   request.canEdit = true;
@@ -859,6 +943,21 @@ export function updateRentalRequest(rentalRequest) {
     parseRentalRequest(rentalRequest);
 
     store.dispatch({ type: Action.UPDATE_RENTAL_REQUEST, rentalRequest: rentalRequest });
+  });
+}
+
+export function addRentalRequestHistory(requestId, history) {
+  return new ApiRequest(`/rentalrequests/${ requestId }/history`).post(history);
+}
+
+export function getRentalRequestHistory(requestId, params) {
+  return new ApiRequest(`/rentalrequests/${ requestId }/history`).get(params).then(response => {
+    var history = normalize(response);
+
+    // Add display fields
+    _.map(history, history => { parseHistory(history); });
+
+    store.dispatch({ type: Action.UPDATE_HISTORY, history: history });
   });
 }
 

@@ -17,6 +17,7 @@ const DEFAULT_STATE = {
   projectContacts: {},
   rentalRequests: {},
   roles: {},
+  history: {},
 };
 
 export default function uiReducer(state = DEFAULT_STATE, action) {
@@ -71,6 +72,9 @@ export default function uiReducer(state = DEFAULT_STATE, action) {
 
     case Action.UPDATE_ROLES_UI:
       return { ...state, roles: action.roles };
+
+    case Action.UPDATE_HISTORY_UI:
+      return { ...state, history: action.history };
   }
 
   return { ...state, ...newState };

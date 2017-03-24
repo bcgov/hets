@@ -17,23 +17,25 @@ import OwnersPolicyEditDialog from './dialogs/OwnersPolicyEditDialog.jsx';
 import * as Action from '../actionTypes';
 import * as Api from '../api';
 import * as Constant from '../constants';
+import * as Log from '../history';
 import store from '../store';
 
 import CheckboxControl from '../components/CheckboxControl.jsx';
 import ColDisplay from '../components/ColDisplay.jsx';
 import DeleteButton from '../components/DeleteButton.jsx';
 import EditButton from '../components/EditButton.jsx';
+import History from '../components/History.jsx';
 import SortTable from '../components/SortTable.jsx';
 import Spinner from '../components/Spinner.jsx';
 import Unimplemented from '../components/Unimplemented.jsx';
 
-import { formatDateTime, today } from '../utils/date';
+import { formatDateTime, today, toZuluTime } from '../utils/date';
 import { concat } from '../utils/string';
 
 /*
 
 TODO:
-* Print / Notes / Attachments / History / Policy Proof Documents (attachments)
+* Print / Notes / Attachments / Policy Proof Documents (attachments)
 
 */
 
@@ -41,6 +43,7 @@ var OwnersDetail = React.createClass({
   propTypes: {
     owner: React.PropTypes.object,
     equipment: React.PropTypes.object,
+    contact: React.PropTypes.object,
     notes: React.PropTypes.object,
     attachments: React.PropTypes.object,
     history: React.PropTypes.object,
@@ -109,6 +112,11 @@ var OwnersDetail = React.createClass({
 
     if (contact) {
       this.openContactDialog(contact);
+    } else {
+      // Reset owner location
+      this.props.router.push({
+        pathname: this.props.owner.path,
+      });
     }
   },
 
@@ -187,9 +195,11 @@ var OwnersDetail = React.createClass({
 
   deleteContact(contact) {
     Api.deleteContact(contact).then(() => {
-      // In addition to refreshing the contacts, we need to update the owner
-      // to get possibly new primary contact info.
-      this.fetch();
+      Log.ownerContactDeleted(this.props.owner, this.props.contact).then(() => {
+        // In addition to refreshing the contacts, we need to update the owner
+        // to get primary contact info and history.
+        this.fetch();
+      });
     });
   },
 
@@ -198,16 +208,22 @@ var OwnersDetail = React.createClass({
     var isNew = !contact.id;
 
     var contactPromise = isNew ? Api.addOwnerContact : Api.updateContact;
+    var log = isNew ? Log.ownerContactAdded : Log.ownerContactUpdated;
 
-    contactPromise(contact, this.props.owner.id).then(() => {
-      // Update primary contact info
-      if (contact.isPrimary) {
-        return Api.updateOwner({ ...this.props.owner, ...{
-          contacts: null, // this just ensures that the normalized data doesn't mess up the PUT call
-          primaryContact: { id: this.state.contact.id },
-        }});
-      }
+    contactPromise(this.props.owner, contact).then(() => {
+      // Use this.props.contact to get the contact id
+      return log(this.props.owner, this.props.contact).then(() => {
+        // Update primary contact info
+        if (contact.isPrimary) {
+          return Api.updateOwner({ ...this.props.owner, ...{
+            contacts: null, // this just ensures that the normalized data doesn't mess up the PUT call
+            primaryContact: { id: this.state.contact.id },
+          }});
+        }
+      });
     }).finally(() => {
+      // In addition to refreshing the contacts, we need to update the owner
+      // to get primary contact info and history.
       this.fetch();
       this.closeContactDialog();
     });
@@ -238,7 +254,7 @@ var OwnersDetail = React.createClass({
     // Update the last verified date on all pieces of equipment
     var equipmentList =_.map(owner.equipmentList, equipment => {
       return {...equipment, ...{
-        lastVerifiedDate: now,
+        lastVerifiedDate: toZuluTime(now),
         owner: { id: owner.id },
       }};
     });
@@ -248,7 +264,7 @@ var OwnersDetail = React.createClass({
 
   equipmentVerify(equipment) {
     Api.updateEquipment({...equipment, ...{
-      lastVerifiedDate: today(),
+      lastVerifiedDate: toZuluTime(today()),
       owner: { id: this.props.owner.id },
     }}).then(() => {
       this.fetch();
@@ -485,32 +501,13 @@ var OwnersDetail = React.createClass({
             <Well>
               <h3>History <span className="pull-right">
                 <Unimplemented>
-                  <Button title="Add note" bsSize="small" onClick={ this.addNote }><Glyphicon glyph="plus" /> Add Note</Button>
+                  <Button title="Add note" bsSize="xsmall" onClick={ this.addNote }><Glyphicon glyph="plus" /> Add Note</Button>
                 </Unimplemented>
                 <Unimplemented>
-                  <Button title="Add document" bsSize="small" onClick={ this.addDocument }><Glyphicon glyph="paperclip" /></Button>
+                  <Button title="Add document" bsSize="xsmall" onClick={ this.addDocument }><Glyphicon glyph="paperclip" /></Button>
                 </Unimplemented>
               </span></h3>
-              {(() => {
-                if (this.state.loadingOwnerHistory) { return <div style={{ textAlign: 'center' }}><Spinner/></div>; }
-                if (Object.keys(this.props.history || []).length === 0) { return <Alert bsStyle="success" style={{ marginTop: 10 }}>No history</Alert>; }
-
-                var history = _.sortBy(this.props.history, 'createdDate');
-
-                const HistoryEntry = ({ createdDate, historyText }) => (
-                  <Row>
-                    <ColDisplay md={12} labelProps={{ md: 2 }} label={ formatDateTime(createdDate, Constant.DATE_YEAR_SHORT_MONTH_DAY) }>
-                      { historyText }
-                    </ColDisplay>
-                  </Row>
-                );
-
-                return <div id="owners-history">
-                  {
-                    _.map(history, (entry) => <HistoryEntry { ...entry } />)
-                  }
-                </div>;
-              })()}
+              { owner.historyEntity && <History historyEntity={ owner.historyEntity } refresh={ this.state.loading } /> }
             </Well>
           </Col>
         </Row>
@@ -537,6 +534,7 @@ function mapStateToProps(state) {
   return {
     owner: state.models.owner,
     equipment: state.models.equipment,
+    contact: state.models.contact,
     notes: state.models.ownerNotes,
     attachments: state.models.ownerAttachments,
     history: state.models.ownerHistory,
