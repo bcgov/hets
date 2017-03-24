@@ -9,7 +9,7 @@ import DateControl from '../../components/DateControl.jsx';
 import EditDialog from '../../components/EditDialog.jsx';
 import FormInputControl from '../../components/FormInputControl.jsx';
 
-import { daysFromToday, isValidDate } from '../../utils/date';
+import { daysFromToday, isValidDate, toZuluTime } from '../../utils/date';
 import { isBlank } from '../../utils/string';
 
 var SeniorityEditDialog = React.createClass({
@@ -116,7 +116,7 @@ var SeniorityEditDialog = React.createClass({
       serviceHoursLastYear: this.state.serviceHoursLastYear,
       serviceHoursTwoYearsAgo: this.state.serviceHoursTwoYearsAgo,
       serviceHoursThreeYearsAgo: this.state.serviceHoursThreeYearsAgo,
-      approvedDate: this.state.approvedDate,
+      approvedDate: toZuluTime(this.state.approvedDate),
       isSeniorityOverridden: this.state.isSeniorityOverridden,
       seniorityOverrideReason: this.state.seniorityOverrideReason,
     }});
@@ -125,7 +125,7 @@ var SeniorityEditDialog = React.createClass({
   render() {
     return <EditDialog id="seniority-edit" show={ this.props.show }
       onClose={ this.props.onClose } onSave={ this.onSave } didChange={ this.didChange } isValid={ this.isValid }
-      title= { 
+      title= {
         <strong>Equipment
           <span>Serial Number: <small>{ this.props.equipment.serialNumber }</small></span>
           <span>Plate: <small>{ this.props.equipment.licencePlate }</small></span>
@@ -146,7 +146,7 @@ var SeniorityEditDialog = React.createClass({
               <Col>
                 <FormGroup controlId="serviceHoursLastYear" validationState={ this.state.serviceHoursLastYearError ? 'error' : null }>
                   <ControlLabel>Hours { this.props.equipment.lastYear } <sup>*</sup></ControlLabel>
-                  <FormInputControl type="number" value={ this.state.serviceHoursLastYear } onChange={ this.serviceHoursChanged } updateState={ this.updateState } inputRef={ ref => { this.input = ref; }}/>                  
+                  <FormInputControl type="number" value={ this.state.serviceHoursLastYear } onChange={ this.serviceHoursChanged } updateState={ this.updateState } inputRef={ ref => { this.input = ref; }}/>
                   <HelpBlock>{ this.state.serviceHoursLastYearError }</HelpBlock>
                 </FormGroup>
               </Col>
@@ -155,7 +155,7 @@ var SeniorityEditDialog = React.createClass({
               <Col>
                 <FormGroup controlId="serviceHoursTwoYearsAgo" validationState={ this.state.serviceHoursTwoYearsAgoError ? 'error' : null }>
                   <ControlLabel>Hours { this.props.equipment.twoYearsAgo } <sup>*</sup></ControlLabel>
-                  <FormInputControl type="number" value={ this.state.serviceHoursTwoYearsAgo } onChange={ this.serviceHoursChanged } updateState={ this.updateState }/>                  
+                  <FormInputControl type="number" value={ this.state.serviceHoursTwoYearsAgo } onChange={ this.serviceHoursChanged } updateState={ this.updateState }/>
                   <HelpBlock>{ this.state.serviceHoursTwoYearsAgoError }</HelpBlock>
                 </FormGroup>
               </Col>
@@ -164,7 +164,7 @@ var SeniorityEditDialog = React.createClass({
               <Col>
                 <FormGroup controlId="serviceHoursThreeYearsAgo" validationState={ this.state.serviceHoursThreeYearsAgoError ? 'error' : null }>
                   <ControlLabel>Hours { this.props.equipment.threeYearsAgo } <sup>*</sup></ControlLabel>
-                  <FormInputControl type="number" value={ this.state.serviceHoursThreeYearsAgo } onChange={ this.serviceHoursChanged } updateState={ this.updateState }/>                  
+                  <FormInputControl type="number" value={ this.state.serviceHoursThreeYearsAgo } onChange={ this.serviceHoursChanged } updateState={ this.updateState }/>
                   <HelpBlock>{ this.state.serviceHoursThreeYearsAgoError }</HelpBlock>
                 </FormGroup>
               </Col>

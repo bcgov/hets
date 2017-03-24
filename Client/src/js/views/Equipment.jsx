@@ -27,7 +27,7 @@ import SortTable from '../components/SortTable.jsx';
 import Spinner from '../components/Spinner.jsx';
 import Unimplemented from '../components/Unimplemented.jsx';
 
-import { formatDateTime } from '../utils/date';
+import { formatDateTime, toZuluTime } from '../utils/date';
 
 /*
 
@@ -88,7 +88,7 @@ var Equipment = React.createClass({
 
     var notVerifiedSinceDate = Moment(this.state.search.lastVerifiedDate);
     if (notVerifiedSinceDate && notVerifiedSinceDate.isValid()) {
-      searchParams.notverifiedsincedate = notVerifiedSinceDate.format('YYYY-MM-DDT00:00:00');
+      searchParams.notverifiedsincedate = toZuluTime(notVerifiedSinceDate.startOf('day'));
     }
 
     return searchParams;

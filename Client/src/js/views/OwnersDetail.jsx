@@ -29,7 +29,7 @@ import SortTable from '../components/SortTable.jsx';
 import Spinner from '../components/Spinner.jsx';
 import Unimplemented from '../components/Unimplemented.jsx';
 
-import { formatDateTime, today } from '../utils/date';
+import { formatDateTime, today, toZuluTime } from '../utils/date';
 import { concat } from '../utils/string';
 
 /*
@@ -254,7 +254,7 @@ var OwnersDetail = React.createClass({
     // Update the last verified date on all pieces of equipment
     var equipmentList =_.map(owner.equipmentList, equipment => {
       return {...equipment, ...{
-        lastVerifiedDate: now,
+        lastVerifiedDate: toZuluTime(now),
         owner: { id: owner.id },
       }};
     });
@@ -264,7 +264,7 @@ var OwnersDetail = React.createClass({
 
   equipmentVerify(equipment) {
     Api.updateEquipment({...equipment, ...{
-      lastVerifiedDate: today(),
+      lastVerifiedDate: toZuluTime(today()),
       owner: { id: this.props.owner.id },
     }}).then(() => {
       this.fetch();
