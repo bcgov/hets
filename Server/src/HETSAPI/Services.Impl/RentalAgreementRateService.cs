@@ -35,37 +35,16 @@ namespace SchoolBusAPI.Services.Impl
 
                 if (item.RentalAgreement != null)
                 {
-                    int rentalAgreement_id = item.RentalAgreement.Id;
-                    bool rentalAgreement_exists = _context.Equipments.Any(a => a.Id == rentalAgreement_id);
-                    if (rentalAgreement_exists)
-                    {
-                        RentalAgreement rentalAgreement = _context.RentalAgreements.First(a => a.Id == rentalAgreement_id);
-                        item.RentalAgreement = rentalAgreement;
-                    }
-                    else
-                    {
-                        item.RentalAgreement = null;
-                    }
+                    item.RentalAgreement = _context.RentalAgreements.FirstOrDefault(a => a.Id == item.RentalAgreement.Id);
                 }
 
                 if (item.TimeRecords != null)
                 {
                     for (int i = 0; i < item.TimeRecords.Count; i++)
-                    {
-                        TimeRecord timeRecord = item.TimeRecords[i];
-                        if (timeRecord != null)
+                    {                        
+                        if (item.TimeRecords[i] != null)
                         {
-                            int timeRecord_id = item.Id;
-                            bool timeRecord_exists = _context.TimeRecords.Any(a => a.Id == timeRecord_id);
-                            if (timeRecord_exists)
-                            {
-                                TimeRecord newItem = _context.TimeRecords.First(a => a.Id == timeRecord_id);
-                                item.TimeRecords[i] = newItem;
-                            }
-                            else
-                            {
-                                item.TimeRecords[i] = null;
-                            }
+                            item.TimeRecords[i] = _context.TimeRecords.FirstOrDefault(a => a.Id == item.TimeRecords[i].Id);
                         }
                     }
                 }                

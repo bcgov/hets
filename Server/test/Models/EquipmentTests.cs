@@ -106,7 +106,7 @@ namespace HETSAPI.Test
 
 
             changed = new Equipment();
-            changed.BlockNumber = 1.0f;
+            changed.BlockNumber = 1;
             Assert.Equal(original.IsSeniorityAuditRequired(changed), true);
             Assert.Equal(changed.IsSeniorityAuditRequired(original), true);
 
@@ -151,8 +151,8 @@ namespace HETSAPI.Test
 
             changed = new Equipment();
             original = new Equipment();
-            changed.BlockNumber = 1.0f;
-            original.BlockNumber = 2.0f;
+            changed.BlockNumber = 1;
+            original.BlockNumber = 2;
             Assert.Equal(original.IsSeniorityAuditRequired(changed), true);
             Assert.Equal(changed.IsSeniorityAuditRequired(original), true);
 
@@ -209,8 +209,8 @@ namespace HETSAPI.Test
 
             changed = new Equipment();
             original = new Equipment();
-            changed.BlockNumber = 1.0f;
-            original.BlockNumber = 1.0f;
+            changed.BlockNumber = 1;
+            original.BlockNumber = 1;
             Assert.Equal(original.IsSeniorityAuditRequired(changed), false);
             Assert.Equal(changed.IsSeniorityAuditRequired(original), false);
 
@@ -253,7 +253,7 @@ namespace HETSAPI.Test
             original.Seniority = 1.0f;            
             original.LocalArea = new LocalArea();
             original.LocalArea.Name = "Area 1";
-            original.BlockNumber = 1.0f;            
+            original.BlockNumber = 1;            
             original.Owner = new Owner();
             original.Owner.OrganizationName = "Org 1";
             original.ServiceHoursLastYear = 1.0f;
@@ -263,7 +263,7 @@ namespace HETSAPI.Test
             changed.Seniority = 1.0f;            
             changed.LocalArea = new LocalArea();
             changed.LocalArea.Name = "Area 1";
-            changed.BlockNumber = 1.0f;
+            changed.BlockNumber = 1;
             changed.Owner = new Owner();
             changed.Owner.OrganizationName = "Org 1";
             changed.ServiceHoursLastYear = 1.0f;
@@ -279,7 +279,7 @@ namespace HETSAPI.Test
             original.Seniority = 1.0f;            
             original.LocalArea = new LocalArea();
             original.LocalArea.Name = "Area 1";
-            original.BlockNumber = 1.0f;
+            original.BlockNumber = 1;
             original.Owner = new Owner();
             original.Owner.OrganizationName = "Org 1";
             original.ServiceHoursLastYear = 1.0f;
@@ -289,7 +289,7 @@ namespace HETSAPI.Test
             changed.Seniority = 2.0f;
             changed.LocalArea = new LocalArea();
             changed.LocalArea.Name = "Area 2";
-            changed.BlockNumber = 2.0f;
+            changed.BlockNumber = 2;
             changed.Owner = new Owner();
             changed.Owner.OrganizationName = "Org 2";
             changed.ServiceHoursLastYear = 2.0f;

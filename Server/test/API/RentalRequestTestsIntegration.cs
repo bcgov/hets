@@ -102,5 +102,286 @@ namespace HETSAPI.Test
             Assert.Equal(response.StatusCode, HttpStatusCode.NotFound);
         }
 
+
+        Equipment CreateEquipment (Equipment equipment)
+        {
+            var request = new HttpRequestMessage(HttpMethod.Post, "/api/equipment");
+
+            // create a new object.
+            string jsonString = equipment.ToJson();
+
+            request.Content = new StringContent(jsonString, Encoding.UTF8, "application/json");
+
+            Task<HttpResponseMessage> responseTask = _client.SendAsync(request);
+            responseTask.Wait();
+
+            HttpResponseMessage response = responseTask.Result;
+
+            Task<string> stringTask  = response.Content.ReadAsStringAsync();
+            stringTask.Wait();
+            jsonString = stringTask.Result;
+
+            // parse as JSON.
+            Equipment result = JsonConvert.DeserializeObject<Equipment>(jsonString);
+            return result;
+        }
+        
+        [Fact]
+        /// <summary>
+        /// Test the creation of the rotation list, a side effect of rental request record creation.
+        /// </summary>
+        public async void TestRotationListNonDumpTruck()
+        {
+            /* 
+             * Create a temporary region, district, service area, local area
+             * Create an equipment type
+             * Create a district equipment type
+             * Create equipment for the various blocks in this region.
+             * Calculate the seniority for the region.
+             * Create a rental request
+             * verify that the rotation list was created properly.
+             * Delete rotation list
+             * Delete district equipment type, district equipment type, equipment type
+             * Delete local area, service area, district, region
+             */
+
+            string initialName = "InitialName";
+            string changedName = "ChangedName";
+
+
+            // create a temporary region.
+
+            var request = new HttpRequestMessage(HttpMethod.Post, "/api/regions");
+            Region region = new Region();
+            region.Name = initialName;
+
+            request.Content = new StringContent(region.ToJson(), Encoding.UTF8, "application/json");
+
+            var response = await _client.SendAsync(request);
+            response.EnsureSuccessStatusCode();
+
+            // parse as JSON.
+            string jsonString = await response.Content.ReadAsStringAsync();
+
+            region = JsonConvert.DeserializeObject<Region>(jsonString);
+            // get the id
+            var region_id = region.Id;
+
+            
+            request = new HttpRequestMessage(HttpMethod.Post, "/api/districts");
+
+            // create a new District
+            District district = new District();
+            district.Id = 0;
+            district.Name = initialName;
+            district.Region = region;
+            jsonString = district.ToJson();
+            request.Content = new StringContent(jsonString, Encoding.UTF8, "application/json");
+            response = await _client.SendAsync(request);
+            response.EnsureSuccessStatusCode();       
+            // parse as JSON.
+            jsonString = await response.Content.ReadAsStringAsync();
+            district = JsonConvert.DeserializeObject<District>(jsonString);            
+            var district_id = district.Id;
+
+            // create a new Service Area
+            request = new HttpRequestMessage(HttpMethod.Post, "/api/serviceareas");
+            ServiceArea serviceArea = new ServiceArea();
+            serviceArea.Id = 0;
+            serviceArea.Name = initialName;
+            serviceArea.District= district;
+            jsonString = serviceArea.ToJson();
+            request.Content = new StringContent(jsonString, Encoding.UTF8, "application/json");
+            response = await _client.SendAsync(request);
+            response.EnsureSuccessStatusCode();
+            // parse as JSON.
+            jsonString = await response.Content.ReadAsStringAsync();
+            serviceArea = JsonConvert.DeserializeObject<ServiceArea>(jsonString);
+            var servicearea_id = serviceArea.Id;
+
+            // create a new Local Area
+            request = new HttpRequestMessage(HttpMethod.Post, "/api/localAreas");
+            LocalArea localArea = new LocalArea();
+            localArea.Id = 0;
+            localArea.LocalAreaNumber = 1234;
+            localArea.ServiceArea = serviceArea;
+            jsonString = localArea.ToJson();
+            request.Content = new StringContent(jsonString, Encoding.UTF8, "application/json");
+            response = await _client.SendAsync(request);
+            response.EnsureSuccessStatusCode();
+            // parse as JSON.
+            jsonString = await response.Content.ReadAsStringAsync();
+            localArea = JsonConvert.DeserializeObject<LocalArea>(jsonString);
+            var localarea_id = localArea.Id;
+
+            // create a new Equipment Type
+            request = new HttpRequestMessage(HttpMethod.Post, "/api/equipmentTypes");
+
+            // create a new equipment type
+            EquipmentType equipmentType = new EquipmentType();
+            equipmentType.Id = 0;
+            equipmentType.Name = initialName;            
+            equipmentType.IsDumpTruck = false;
+            equipmentType.NumberOfBlocks = 2;
+
+            jsonString = equipmentType.ToJson();
+            request.Content = new StringContent(jsonString, Encoding.UTF8, "application/json");
+            response = await _client.SendAsync(request);
+            response.EnsureSuccessStatusCode();
+            // parse as JSON.
+            jsonString = await response.Content.ReadAsStringAsync();
+            equipmentType = JsonConvert.DeserializeObject<EquipmentType>(jsonString);
+            var equipmentType_id = district.Id;
+
+
+            request = new HttpRequestMessage(HttpMethod.Post, "/api/districtEquipmentTypes");
+
+            // create a new District Equipment Type
+            DistrictEquipmentType districtEquipmentType = new DistrictEquipmentType();
+            districtEquipmentType.Id = 0;
+            districtEquipmentType.DistrictEquipmentName = initialName;
+            districtEquipmentType.District = district;
+            districtEquipmentType.EquipmentType = equipmentType;
+            jsonString = districtEquipmentType.ToJson();
+            request.Content = new StringContent(jsonString, Encoding.UTF8, "application/json");
+            response = await _client.SendAsync(request);
+            response.EnsureSuccessStatusCode();
+            // parse as JSON.
+            jsonString = await response.Content.ReadAsStringAsync();
+            districtEquipmentType = JsonConvert.DeserializeObject<DistrictEquipmentType>(jsonString);
+            var districtEquipmentTypeId = districtEquipmentType.Id;
+
+            // create equipment.
+            int numberEquipment = 75;
+            Equipment[] testEquipment = new Equipment[numberEquipment];
+            int blockCount = 0;
+            int currentBlock = 1;
+            for (int i = 0; i < numberEquipment; i++)
+            {
+                testEquipment[i] = new Equipment();
+                testEquipment[i].LocalArea = localArea;
+                testEquipment[i].DistrictEquipmentType = districtEquipmentType;
+                testEquipment[i].Seniority = (numberEquipment - i + 1) * 1.05F;
+                testEquipment[i].BlockNumber = currentBlock;
+                testEquipment[i] = CreateEquipment(testEquipment[i]);
+                ++blockCount;
+                if (blockCount >= 10 && currentBlock < 2)
+                {
+                    currentBlock++;
+                    blockCount = 0;
+                }                    
+
+                // avoid database problems due to too many requests
+                System.Threading.Thread.Sleep(200);
+            }
+            
+            // Now create the rental request.
+            request = new HttpRequestMessage(HttpMethod.Post, "/api/rentalrequests");            
+            RentalRequest rentalRequest = new RentalRequest();
+            rentalRequest.Status = initialName;
+            rentalRequest.LocalArea = localArea;
+            rentalRequest.DistrictEquipmentType = districtEquipmentType;
+
+            jsonString = rentalRequest.ToJson();
+            request.Content = new StringContent(jsonString, Encoding.UTF8, "application/json");
+            response = await _client.SendAsync(request);
+            response.EnsureSuccessStatusCode();
+
+            // parse as JSON.
+            jsonString = await response.Content.ReadAsStringAsync();
+
+            rentalRequest = JsonConvert.DeserializeObject<RentalRequest>(jsonString);
+            // get the id
+            var id = rentalRequest.Id;
+
+            // do a get.
+            request = new HttpRequestMessage(HttpMethod.Get, "/api/rentalrequests/" + id);
+            response = await _client.SendAsync(request);
+            response.EnsureSuccessStatusCode();
+
+            // parse as JSON.
+            jsonString = await response.Content.ReadAsStringAsync();
+            rentalRequest = JsonConvert.DeserializeObject<RentalRequest>(jsonString);
+
+            // should be the same number of equipment.
+            Assert.Equal(rentalRequest.RentalRequestRotationList.Count, numberEquipment);
+            
+            Assert.Equal(rentalRequest.RentalRequestRotationList[rentalRequest.RentalRequestRotationList.Count -1 ].Equipment.Id, testEquipment[0].Id );
+
+            // do a delete.
+            request = new HttpRequestMessage(HttpMethod.Post, "/api/rentalrequests/" + id + "/delete");
+            response = await _client.SendAsync(request);
+            response.EnsureSuccessStatusCode();
+
+            // should get a 404 if we try a get now.
+            request = new HttpRequestMessage(HttpMethod.Get, "/api/rentalrequests/" + id);
+            response = await _client.SendAsync(request);
+            Assert.Equal(response.StatusCode, HttpStatusCode.NotFound);
+
+            // remove equipment.
+
+            for (int i = 0; i < numberEquipment; i++)
+            {
+                request = new HttpRequestMessage(HttpMethod.Post, "/api/equipment/" + testEquipment[i].Id + "/delete");
+                response = await _client.SendAsync(request);
+                response.EnsureSuccessStatusCode();
+
+                // should get a 404 if we try a get now.
+                request = new HttpRequestMessage(HttpMethod.Get, "/api/equipment/" + testEquipment[i].Id);
+                response = await _client.SendAsync(request);
+                Assert.Equal(response.StatusCode, HttpStatusCode.NotFound);
+            }
+
+            // now remove the other temporary objects.
+
+            // districtEquipmentType
+            request = new HttpRequestMessage(HttpMethod.Post, "/api/districtEquipmentTypes/" + districtEquipmentType.Id + "/delete");
+            response = await _client.SendAsync(request);
+            response.EnsureSuccessStatusCode();
+            request = new HttpRequestMessage(HttpMethod.Get, "/api/districtEquipmentTypes/" + districtEquipmentType.Id);
+            response = await _client.SendAsync(request);
+            Assert.Equal(response.StatusCode, HttpStatusCode.NotFound);
+
+            // equipmentType
+            request = new HttpRequestMessage(HttpMethod.Post, "/api/equipmentTypes/" + equipmentType.Id + "/delete");
+            response = await _client.SendAsync(request);
+            response.EnsureSuccessStatusCode();
+            request = new HttpRequestMessage(HttpMethod.Get, "/api/equipmentTypes/" + equipmentType.Id);
+            response = await _client.SendAsync(request);
+            Assert.Equal(response.StatusCode, HttpStatusCode.NotFound);
+
+            // localArea
+            request = new HttpRequestMessage(HttpMethod.Post, "/api/localAreas/" + localArea.Id + "/delete");
+            response = await _client.SendAsync(request);
+            response.EnsureSuccessStatusCode();
+            request = new HttpRequestMessage(HttpMethod.Get, "/api/localAreas/" + localArea.Id);
+            response = await _client.SendAsync(request);
+            Assert.Equal(response.StatusCode, HttpStatusCode.NotFound);
+
+            // Service Area
+            request = new HttpRequestMessage(HttpMethod.Post, "/api/serviceareas/" + serviceArea.Id + "/delete");
+            response = await _client.SendAsync(request);
+            response.EnsureSuccessStatusCode();
+            request = new HttpRequestMessage(HttpMethod.Get, "/api/serviceareas/" + serviceArea.Id);
+            response = await _client.SendAsync(request);
+            Assert.Equal(response.StatusCode, HttpStatusCode.NotFound);
+
+            // District
+            request = new HttpRequestMessage(HttpMethod.Post, "/api/districts/" + district.Id + "/delete");
+            response = await _client.SendAsync(request);
+            response.EnsureSuccessStatusCode();
+            request = new HttpRequestMessage(HttpMethod.Get, "/api/districts/" + district.Id);
+            response = await _client.SendAsync(request);
+            Assert.Equal(response.StatusCode, HttpStatusCode.NotFound);
+
+            // Region
+            request = new HttpRequestMessage(HttpMethod.Post, "/api/regions/" + region.Id + "/delete");
+            response = await _client.SendAsync(request);
+            response.EnsureSuccessStatusCode();
+            request = new HttpRequestMessage(HttpMethod.Get, "/api/regions/" + region.Id);
+            response = await _client.SendAsync(request);
+            Assert.Equal(response.StatusCode, HttpStatusCode.NotFound);
+        }
+
     }
 }

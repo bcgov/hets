@@ -8,9 +8,10 @@ using HETSAPI.Models;
 namespace HETSAPI.Migrations
 {
     [DbContext(typeof(DbAppContext))]
-    partial class DbAppContextModelSnapshot : ModelSnapshot
+    [Migration("20170324205513_HETS-164-3-24-1")]
+    partial class HETS1643241
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
             modelBuilder
                 .HasAnnotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.SerialColumn)
@@ -436,7 +437,7 @@ namespace HETSAPI.Migrations
                         .HasColumnName("ARCHIVE_REASON")
                         .HasMaxLength(2048);
 
-                    b.Property<int?>("BlockNumber")
+                    b.Property<float?>("BlockNumber")
                         .HasColumnName("BLOCK_NUMBER");
 
                     b.Property<DateTime>("CreateTimestamp")
@@ -1576,7 +1577,7 @@ namespace HETSAPI.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnName("SENIORITY_AUDIT_ID");
 
-                    b.Property<int?>("BlockNumber")
+                    b.Property<float?>("BlockNumber")
                         .HasColumnName("BLOCK_NUMBER");
 
                     b.Property<DateTime>("CreateTimestamp")

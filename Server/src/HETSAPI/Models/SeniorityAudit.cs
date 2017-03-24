@@ -55,7 +55,7 @@ namespace HETSAPI.Models
         /// <param name="ServiceHoursThreeYearsAgo">Number of hours of service by this piece of equipment in the fiscal year three years ago - e.g. if current year is FY2018 then hours in FY2015.</param>
         /// <param name="IsSeniorityOverridden">True if the Seniority for the piece of equipment was manually overridden. Set if a user has gone in and explicitly updated the seniority base information. Indicates that underlying numbers were manually overridden..</param>
         /// <param name="SeniorityOverrideReason">A text reason for why the piece of equipments underlying data was overridden to change their seniority number..</param>
-        public SeniorityAudit(int Id, DateTime StartDate, DateTime EndDate, LocalArea LocalArea, Equipment Equipment, float? BlockNumber = null, Owner Owner = null, string OwnerOrganizationName = null, float? Seniority = null, float? ServiceHoursLastYear = null, float? ServiceHoursTwoYearsAgo = null, float? ServiceHoursThreeYearsAgo = null, bool? IsSeniorityOverridden = null, string SeniorityOverrideReason = null)
+        public SeniorityAudit(int Id, DateTime StartDate, DateTime EndDate, LocalArea LocalArea, Equipment Equipment, int? BlockNumber = null, Owner Owner = null, string OwnerOrganizationName = null, float? Seniority = null, float? ServiceHoursLastYear = null, float? ServiceHoursTwoYearsAgo = null, float? ServiceHoursThreeYearsAgo = null, bool? IsSeniorityOverridden = null, string SeniorityOverrideReason = null)
         {   
             this.Id = Id;
             this.StartDate = StartDate;
@@ -133,7 +133,7 @@ namespace HETSAPI.Models
         /// </summary>
         /// <value>The block number for the piece of equipment as calculated by the Seniority Algorthm for this equipment type in the local area. As currently defined by the business - 1, 2 or Open</value>
         [MetaDataExtension (Description = "The block number for the piece of equipment as calculated by the Seniority Algorthm for this equipment type in the local area. As currently defined by the business - 1, 2 or Open")]
-        public float? BlockNumber { get; set; }
+        public int? BlockNumber { get; set; }
         
         /// <summary>
         /// A foreign key reference to the system-generated unique identifier for an Owner

@@ -43,55 +43,24 @@ namespace SchoolBusAPI.Services.Impl
         {
             if (item != null)
             {
-
                 if (item.Equipment != null)
                 {
-                    int equipment_id = item.Equipment.Id;
-                    bool rentalAgreement_exists = _context.Equipments.Any(a => a.Id == equipment_id);
-                    if (rentalAgreement_exists)
-                    {
-                        Equipment equipment = _context.Equipments.First(a => a.Id == equipment_id);
-                        item.Equipment = equipment;
-                    }
-                    else
-                    {
-                        item.Equipment = null;
-                    }
+                    item.Equipment = _context.Equipments.FirstOrDefault(a => a.Id == item.Equipment.Id);
                 }
 
                 if (item.Project != null)
                 {
-                    int project_id = item.Project.Id;
-                    bool rentalAgreement_exists = _context.Projects.Any(a => a.Id == project_id);
-                    if (rentalAgreement_exists)
-                    {
-                        Project project = _context.Projects.First(a => a.Id == project_id);
-                        item.Project = project;
-                    }
-                    else
-                    {
-                        item.Project = null;
-                    }
+                    item.Project = _context.Projects.FirstOrDefault(a => a.Id == item.Project.Id);
                 }
+                
 
                 if (item.RentalAgreementConditions != null)
                 {
                     for (int i = 0; i < item.RentalAgreementConditions.Count; i++)
-                    {
-                        RentalAgreementCondition rentalAgreementCondition = item.RentalAgreementConditions[i];
-                        if (rentalAgreementCondition != null)
+                    {                        
+                        if (item.RentalAgreementConditions[i] != null)
                         {
-                            int rentalAgreementCondition_id = item.Id;
-                            bool rentalAgreementCondition_exists = _context.RentalAgreementConditions.Any(a => a.Id == rentalAgreementCondition_id);
-                            if (rentalAgreementCondition_exists)
-                            {
-                                RentalAgreementCondition newItem = _context.RentalAgreementConditions.First(a => a.Id == rentalAgreementCondition_id);
-                                item.RentalAgreementConditions[i] = newItem;
-                            }
-                            else
-                            {
-                                item.RentalAgreementConditions[i] = null;
-                            }
+                            item.RentalAgreementConditions[i] = _context.RentalAgreementConditions.FirstOrDefault(a => a.Id == item.RentalAgreementConditions[i].Id);
                         }
                     }
                 }
@@ -100,20 +69,9 @@ namespace SchoolBusAPI.Services.Impl
                 {
                     for (int i = 0; i < item.RentalAgreementRates.Count; i++)
                     {
-                        RentalAgreementRate rentalAgreementRate = item.RentalAgreementRates[i];
-                        if (rentalAgreementRate != null)
+                        if (item.RentalAgreementRates[i] != null)
                         {
-                            int rentalAgreementRate_id = item.Id;
-                            bool rentalAgreementRate_exists = _context.RentalAgreementRates.Any(a => a.Id == rentalAgreementRate_id);
-                            if (rentalAgreementRate_exists)
-                            {
-                                RentalAgreementRate newItem = _context.RentalAgreementRates.First(a => a.Id == rentalAgreementRate_id);
-                                item.RentalAgreementRates[i] = newItem;
-                            }
-                            else
-                            {
-                                item.RentalAgreementRates[i] = null;
-                            }
+                            item.RentalAgreementRates[i] = _context.RentalAgreementRates.FirstOrDefault(a => a.Id == item.RentalAgreementRates[i].Id);
                         }
                     }
                 }
@@ -122,20 +80,9 @@ namespace SchoolBusAPI.Services.Impl
                 {
                     for (int i = 0; i < item.TimeRecords.Count; i++)
                     {
-                        TimeRecord timeRecord = item.TimeRecords[i];
-                        if (timeRecord != null)
+                        if (item.TimeRecords[i] != null)
                         {
-                            int timeRecord_id = item.Id;
-                            bool timeRecord_exists = _context.TimeRecords.Any(a => a.Id == timeRecord_id);
-                            if (timeRecord_exists)
-                            {
-                                TimeRecord newItem = _context.TimeRecords.First(a => a.Id == timeRecord_id);
-                                item.TimeRecords[i] = newItem;
-                            }
-                            else
-                            {
-                                item.TimeRecords[i] = null;
-                            }
+                            item.TimeRecords[i] = _context.TimeRecords.First(a => a.Id == item.TimeRecords[i].Id);
                         }
                     }
                 }
