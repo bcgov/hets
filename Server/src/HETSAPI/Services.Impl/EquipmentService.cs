@@ -275,6 +275,26 @@ namespace HETSAPI.Services.Impl
         }
 
         /// <summary>
+        /// Remove seniority audits associated with an equipment ID
+        /// </summary>
+        /// <param name="equipmentId"></param>
+        private void RemoveSeniorityAudits (int equipmentId)
+        {
+            var seniorityAudits = _context.SeniorityAudits
+                    .Include(x => x.Equipment)
+                    .Where(x => x.Equipment.Id == equipmentId)
+                    .ToList();
+            if (seniorityAudits != null)
+            {
+                foreach (SeniorityAudit seniorityAudit in seniorityAudits)
+                {
+                    _context.SeniorityAudits.Remove(seniorityAudit);
+                }
+            }
+            _context.SaveChanges();            
+        }
+
+        /// <summary>
         /// 
         /// </summary>
         /// <param name="id">id of Equipment to delete</param>
@@ -285,6 +305,9 @@ namespace HETSAPI.Services.Impl
             var exists = _context.Equipments.Any(a => a.Id == id);
             if (exists)
             {
+                // remove associated seniority audits.
+                RemoveSeniorityAudits(id);
+
                 var item = _context.Equipments.First(a => a.Id == id);
                 _context.Equipments.Remove(item);
                 // Save the changes
@@ -557,6 +580,50 @@ namespace HETSAPI.Services.Impl
             }
         }
 
+
+        private string GenerateEquipmentCode(string ownerEquipmentCodePrefix, int equipmentNumber)
+        {
+            string result = ownerEquipmentCodePrefix + "-" + equipmentNumber.ToString("D4");
+            return result;
+        }
+
+        /// <summary>
+        /// Set the Equipment fields for a new record for fields that are not provided by the front end.
+        /// </summary>
+        /// <param name="item"></param>
+        private void SetNewRecordFields(Equipment item)
+        {
+            item.ReceivedDate = DateTime.UtcNow;
+            item.LastVerifiedDate = DateTime.UtcNow;
+            // generate a new equipment code.
+            if (item.Owner != null)
+            {
+                int equipmentNumber = 1;
+                if (item.Owner.EquipmentList != null)
+                {
+                    bool looking = true;
+                    equipmentNumber = item.Owner.EquipmentList.Count + 1;
+
+                    // generate a unique equipment number
+                    while (looking)
+                    {
+                        string candidate = GenerateEquipmentCode(item.Owner.OwnerEquipmentCodePrefix, equipmentNumber);
+                        if ((item.Owner.EquipmentList).Any(x => x.EquipmentCode == candidate))
+                        {
+                            equipmentNumber++;
+                        }
+                        else
+                        {
+                            looking = false;
+                        }
+                    }
+                }
+                // set the equipment code
+                item.EquipmentCode = GenerateEquipmentCode(item.Owner.OwnerEquipmentCodePrefix, equipmentNumber);
+            }
+            
+        }
+
         /// <summary>
         /// 
         /// </summary>
@@ -571,15 +638,34 @@ namespace HETSAPI.Services.Impl
                 bool exists = _context.Equipments.Any(a => a.Id == item.Id);
                 if (exists)
                 {
-                    _context.Equipments.Update(item);                    
+                    _context.Equipments.Update(item);
+                    _context.SaveChanges();
                 }
                 else
                 {
                     // record not found
+                    // Certain fields are set on new record.
+                    SetNewRecordFields(item);
                     _context.Equipments.Add(item);
+                    _context.SaveChanges();
+                    // add the equipment to the Owner's equipment list.
+                    Owner owner = item.Owner;
+                    if (owner != null)
+                    {
+                        if (owner.EquipmentList == null)
+                        {
+                            owner.EquipmentList = new List<Equipment>();
+                        }
+                        if (! owner.EquipmentList.Contains (item))
+                        {
+                            owner.EquipmentList.Add(item);
+                            _context.Owners.Update(owner);
+                        }
+                    }
+                    _context.SaveChanges();
                 }
                 // Save the changes                    
-                _context.SaveChanges();
+                
                 int item_id = item.Id;
                 var result = _context.Equipments
                     .Include(x => x.LocalArea.ServiceArea.District.Region)
