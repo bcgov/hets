@@ -107,7 +107,11 @@ namespace HETSAPI.Models
         {
             _httpContextAccessor = httpContextAccessor;
             // override the default timeout as some operations are time intensive
-            this.Database.SetCommandTimeout(180);
+            if (this.Database != null)
+            {
+                this.Database.SetCommandTimeout(180);
+            }
+            
         }
 
         /// <summary>
