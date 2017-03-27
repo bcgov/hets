@@ -233,6 +233,19 @@ namespace HETSAPI.Models
             original.ServiceHoursTwoYearsAgo = (float?) getOriginalValue(entry, "ServiceHoursTwoYearsAgo");
             original.ServiceHoursThreeYearsAgo = (float?) getOriginalValue(entry, "ServiceHoursThreeYearsAgo");
 
+            // If there was no seniority override, recalc the seniority.
+            if (changed.IsSeniorityOverridden == null || changed.IsSeniorityOverridden == false)
+            {
+                changed.CalculateSeniority();
+            }
+
+            if (original.Seniority != changed.Seniority)
+            {
+                // update the block number for the list.
+                
+                
+            }
+
             // compare the old and new
             if (changed.IsSeniorityAuditRequired (original))
             {
@@ -304,16 +317,18 @@ namespace HETSAPI.Models
                     DoEquipmentAudit(seniorityAudits, entry, smUserId);
                 }                    
             }            
-
+            int result = base.SaveChanges();
             if (seniorityAudits.Count > 0)
             {
                 foreach (SeniorityAudit seniorityAudit in seniorityAudits)
                 {
                     SeniorityAudits.Add(seniorityAudit);
                 }
+                // trigger a recalculation of the equipment's seniority.
+                //
             }
-
-            return base.SaveChanges();
+            base.SaveChanges();
+            return result;
         }
     }
 }

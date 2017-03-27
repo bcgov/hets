@@ -9,6 +9,18 @@ namespace HETSAPI.Models
 {
     public static class SeniorityListExtensions
     {
+
+        static public float GetEquipmentSeniority (this DbAppContext context, int equipmentId)
+        {
+            float result = -1.0f;
+            Equipment equipment = context.Equipments.FirstOrDefault(x => x.Id == equipmentId);
+            if (equipment != null && equipment.Seniority != null)
+            {
+                result = (float) equipment.Seniority;
+            }
+            context.Entry(equipment).State = EntityState.Detached;
+            return result;
+        }
         /// <summary>
         /// 
         /// </summary>
@@ -22,38 +34,66 @@ namespace HETSAPI.Models
             {
                 // get the associated equipment type
 
-                EquipmentType equipmentTypeRecord = context.EquipmentTypes.First(x => x.Id == equipmentType);
-
-                int blocks = DistrictEquipmentType.OTHER_BLOCKS;
-                if (equipmentTypeRecord.NumberOfBlocks != null)
+                EquipmentType equipmentTypeRecord = context.EquipmentTypes.FirstOrDefault(x => x.Id == equipmentType);
+                if (equipmentTypeRecord != null)
                 {
+                    int blocks = DistrictEquipmentType.OTHER_BLOCKS;
                     blocks = (int)equipmentTypeRecord.NumberOfBlocks;
+
+                    // get the list of equipment in this seniority list.
+
+                    // first pass will update the seniority score.
+
+                    var data = context.Equipments
+                         .Where(x => x.Status == Equipment.STATUS_ACTIVE && x.LocalArea.Id == localAreaId && x.DistrictEquipmentType.Id == equipmentType)
+                         .Select(x => x);
+
+                    foreach (Equipment equipment in data)
+                    {
+                        // update the seniority score.
+                        equipment.CalculateSeniority();
+                        context.Equipments.Update(equipment);
+                    }
+                    context.SaveChanges();
+
+                    AssignBlocks(context, localAreaId, equipmentTypeRecord);
+
+                    context.SaveChanges();
                 }
+                
+            }
+        }
 
-                // get the list of equipment in this seniority list.
+        /// <summary>
+        /// update blocks for the seniority list of a given piece of equipment
+        /// </summary>
+        /// <param name="context"></param>
+        /// <param name="equipment"></param>
+        static public void UpdateBlocksFromEquipment(this DbAppContext context, Equipment equipment)
+        {
+            if (equipment != null && equipment.LocalArea != null && equipment.DistrictEquipmentType != null && equipment.DistrictEquipmentType.EquipmentType != null)
+            {
+                AssignBlocks(context, equipment.LocalArea.Id, equipment.DistrictEquipmentType.EquipmentType);
+            }
+        }
 
-                // first pass will update the seniority score.
-
-                var data = context.Equipments
-                     .Where(x => x.Status == Equipment.STATUS_ACTIVE && x.LocalArea.Id == localAreaId && x.DistrictEquipmentType.Id == equipmentType)
-                     .Select(x => x);
-
-                foreach (Equipment equipment in data)
+        /// <summary>
+        /// Assign blocks for the given local area and equipment type
+        /// </summary>
+        /// <param name="context"></param>
+        /// <param name="localAreaId"></param>
+        /// <param name="equipmentType"></param>
+        static public void AssignBlocks (DbAppContext context, int localAreaId, EquipmentType equipmentType)
+        {            
+            if (equipmentType != null)
+            {
+                if (equipmentType.IsDumpTruck)
                 {
-                    // update the seniority score.
-                    equipment.CalculateSeniority();
-                    context.Equipments.Update(equipment);
-                }
-                context.SaveChanges();
-
-                // special case for dump trucks.
-                if (blocks == DistrictEquipmentType.DUMP_TRUCK_BLOCKS)
-                {
-                    AssignBlocksDumpTruck(context, localAreaId, equipmentType);
+                    AssignBlocksDumpTruck(context, localAreaId, equipmentType.Id);
                 }
                 else
                 {
-                    AssignBlocksNonDumpTruck(context, localAreaId, equipmentType);
+                    AssignBlocksNonDumpTruck(context, localAreaId, equipmentType.Id);
                 }
             }
         }
@@ -114,7 +154,6 @@ namespace HETSAPI.Models
                         equipment.BlockNumber = DistrictEquipmentType.SECONDARY_BLOCK;
                         openCount++;
                     }
-
                 }
                 else // can go in primary block.
                 {
@@ -123,8 +162,7 @@ namespace HETSAPI.Models
                     primaryCount++;
                 }                
                 context.Equipments.Update(equipment);
-            }
-            context.SaveChanges();
+            }            
         }
 
         /// <summary>
@@ -166,8 +204,7 @@ namespace HETSAPI.Models
                     primaryCount++;
                 }
                 context.Equipments.Update(equipment);
-            }
-            context.SaveChanges();
+            }            
         }
     }
 }
