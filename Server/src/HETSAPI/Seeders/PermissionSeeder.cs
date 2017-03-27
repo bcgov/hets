@@ -52,19 +52,7 @@ namespace HETSAPI.Seeders
                     p.Description = permission.Description;
                     p.Name = permission.Name;
                 }
-            }
-
-            // Remove any that don't exist anymore
-            _logger.LogDebug("Removing permissions that don't exit anymore ...");
-            foreach (var permission in context.Permissions.ToList())
-            {
-                var p = permissions.Where(x => x.Code == permission.Code).FirstOrDefault();
-                if (p == null)
-                {
-                    _logger.LogDebug($"Removing {permission.Code} ...");
-                    context.Permissions.Remove(permission);
-                }
-            }
+            }            
         }
     }
 }
