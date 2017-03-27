@@ -692,6 +692,22 @@
               $ref: "#/definitions/PermissionViewModel"
         404:
           description: Role not found
+  /rentalagreements/{id}/pdf:
+    get:
+      description:  Returns a PDF version of the specified rental agreement
+      tags:
+        - RentalAgreement
+      produces:
+        - application/pdf
+      responses:
+        '200':
+          description: OK
+      parameters:
+        - name: id
+          in: path
+          description: id of RentalAgreement to obtain the PDF for
+          required: true
+          type: integer                            
   /rentalrequests/{id}/history:
     get:
       description: Returns History for a particular RentalRequest
