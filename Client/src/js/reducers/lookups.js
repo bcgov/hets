@@ -9,8 +9,9 @@ const DEFAULT_LOOKUPS = {
   equipmentTypes: {},
   groups: {},
   permissions: {},
+  rentalConditions: {},
 
-  owners: {},  
+  owners: {},
   roles: {},
   projects: {},
 };

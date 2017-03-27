@@ -48,7 +48,7 @@ var RentalRequestsDetail = React.createClass({
       showEditDialog: false,
       showContactDialog: false,
 
-      includeHiredEquipment: false,
+      showHiredEquipment: false,
 
       contact: {},
 
@@ -131,7 +131,7 @@ var RentalRequestsDetail = React.createClass({
   addRequest() {
 
   },
-  
+
   cloneRequest() {
     // TODO
   },
@@ -182,7 +182,7 @@ var RentalRequestsDetail = React.createClass({
                 <Unimplemented>
                   <Button title="Edit Rental Request" bsSize="small" onClick={ this.openEditDialog }><Glyphicon glyph="pencil" /></Button>
                 </Unimplemented>
-              </span></h3>              
+              </span></h3>
               {(() => {
                 if (this.state.loading) { return <div style={{ textAlign: 'center' }}><Spinner/></div>; }
 
@@ -226,21 +226,26 @@ var RentalRequestsDetail = React.createClass({
                   </Row>
                 </div>;
               })()}
-            </Well>            
+            </Well>
+            <Well>
+              <h3>Temporary Link Section </h3>
+              <Link to="rental-agreements/500000">Agreement</Link>
+            </Well>
             <Well>
               <h3>Request Status <span className="pull-right">
                 <Unimplemented>
                   <Button onClick={ this.print }><Glyphicon glyph="print" title="Print" /></Button>
                 </Unimplemented>
-                <CheckboxControl id="includeHiredEquipment" inline checked={ this.state.includeHiredEquipment } updateState={ this.updateState }><small>Show Hired</small></CheckboxControl>
+                <CheckboxControl id="showHiredEquipment" inline checked={ this.state.showHiredEquipment } updateState={ this.updateState }><small>Show Hired</small></CheckboxControl>
               </span></h3>
               {(() => {
                 if (this.state.loading) { return <div style={{ textAlign: 'center' }}><Spinner/></div>; }
 
-                // Exclude equipment already hired 
                 var rotationList = rentalRequest.rentalRequestRotationList;
-                if (!this.state.includeHiredEquipment) {
-                  rotationList = _.filter(rotationList, (x) => !x.isHired);
+
+                if (!this.state.showHiredEquipment) {
+                  // Exclude equipment already hired
+                  rotationList = _.reject(rotationList, { isHired: true });
                 }
 
                 if (Object.keys(rotationList || []).length === 0) { return <Alert bsStyle="success" style={{ marginTop: 10 }}>No equipment</Alert>; }
@@ -248,7 +253,7 @@ var RentalRequestsDetail = React.createClass({
                 var headers = [
                   { field: 'seniority',            title: 'Seniority'         },
                   { field: 'serviceHoursThisYear', title: 'YTD Hours'         },
-                  { field: 'equipmentCode',        title: 'Equipment ID'      },                  
+                  { field: 'equipmentCode',        title: 'Equipment ID'      },
                   { field: 'equipmentDetails',     title: 'Equipment Details' },
                   { field: 'primaryContactName',   title: 'Contact'           },
                   { field: 'status',               title: 'Status'            },
@@ -297,7 +302,7 @@ var RentalRequestsDetail = React.createClass({
                 if (this.state.loadingHistory) { return <div style={{ textAlign: 'center' }}><Spinner/></div>; }
                 if (Object.keys(this.props.history).length === 0) { return <Alert bsStyle="success" style={{ marginTop: 10 }}>No history</Alert>; }
 
-                var history = _.sortBy(this.props.history, 'createdDate');    
+                var history = _.sortBy(this.props.history, 'createdDate');
 
                 const HistoryEntry = ({ createdDate, historyText }) => (
                   <Row>

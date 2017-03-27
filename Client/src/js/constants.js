@@ -3,6 +3,7 @@ export const HOME_PATHNAME = 'home';
 export const OWNERS_PATHNAME = 'owners';
 export const EQUIPMENT_PATHNAME = 'equipment';
 export const RENTAL_REQUESTS_PATHNAME = 'rental-requests';
+export const RENTAL_AGREEMENTS_PATHNAME = 'rental-agreements';
 export const PROJECTS_PATHNAME = 'projects';
 export const USERS_PATHNAME = 'users';
 export const ROLES_PATHNAME = 'roles';
@@ -42,6 +43,8 @@ export const RENTAL_REQUEST_STATUS_CODE_CANCELLED = 'Cancelled';
 // Rental Agreements
 export const RENTAL_AGREEMENT_STATUS_CODE_ACTIVE = 'Active';
 export const RENTAL_AGREEMENT_STATUS_CODE_COMPLETED = 'Completed';
+export const RENTAL_RATE_PERIOD_HOURLY = 'Hr';
+export const RENTAL_RATE_PERIOD_DAILY = 'Daily';
 
 // Users
 export const USER_STATUS_ACTIVE = 'Active';
