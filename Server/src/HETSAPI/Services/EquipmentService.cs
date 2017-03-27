@@ -108,6 +108,13 @@ namespace HETSAPI.Services
         IActionResult EquipmentPostAsync(Equipment item);
 
         /// <summary>
+        /// Recalculates seniority for the database
+        /// </summary>
+        /// <remarks>Used to calculate seniority for all database records.</remarks>
+        /// <response code="200">OK</response>
+        IActionResult EquipmentRecalcSeniorityGetAsync();
+
+        /// <summary>
         /// Searches Equipment
         /// </summary>
         /// <remarks>Used for the equipment search page.</remarks>

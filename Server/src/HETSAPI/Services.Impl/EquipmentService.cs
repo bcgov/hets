@@ -37,10 +37,10 @@ namespace HETSAPI.Services.Impl
         /// </summary>
         public EquipmentService(DbAppContext context)
         {
-            _context = context;            
+            _context = context;
         }
 
-        private void AdjustRecord (Equipment item)
+        private void AdjustRecord(Equipment item)
         {
             if (item != null)
             {
@@ -149,7 +149,7 @@ namespace HETSAPI.Services.Impl
 
                 // determine if this is an insert or an update            
                 bool exists = _context.Equipments.Any(a => a.Id == item.Id);
-                if (exists)                
+                if (exists)
                 {
                     _context.Update(item);
                 }
@@ -168,7 +168,7 @@ namespace HETSAPI.Services.Impl
         /// </summary>
         /// <response code="200">OK</response>
         public virtual IActionResult EquipmentGetAsync()
-        {            
+        {
             var result = _context.Equipments
                     .Include(x => x.LocalArea.ServiceArea.District.Region)
                     .Include(x => x.DistrictEquipmentType)
@@ -186,7 +186,7 @@ namespace HETSAPI.Services.Impl
         /// Remove seniority audits associated with an equipment ID
         /// </summary>
         /// <param name="equipmentId"></param>
-        private void RemoveSeniorityAudits (int equipmentId)
+        private void RemoveSeniorityAudits(int equipmentId)
         {
             var seniorityAudits = _context.SeniorityAudits
                     .Include(x => x.Equipment)
@@ -199,7 +199,7 @@ namespace HETSAPI.Services.Impl
                     _context.SeniorityAudits.Remove(seniorityAudit);
                 }
             }
-            _context.SaveChanges();            
+            _context.SaveChanges();
         }
 
         /// <summary>
@@ -217,8 +217,8 @@ namespace HETSAPI.Services.Impl
                 RemoveSeniorityAudits(id);
 
                 var item = _context.Equipments
-                    .Include (x => x.LocalArea)
-                    .Include (x => x.DistrictEquipmentType.EquipmentType)
+                    .Include(x => x.LocalArea)
+                    .Include(x => x.DistrictEquipmentType.EquipmentType)
                     .First(a => a.Id == id);
 
                 int localAreaId = -1;
@@ -341,7 +341,7 @@ namespace HETSAPI.Services.Impl
             if (exists)
             {
                 var result = _context.EquipmentAttachments
-                    .Include(x => x.Equipment)                    
+                    .Include(x => x.Equipment)
                     .Where(x => x.Equipment.Id == id);
                 return new ObjectResult(result);
             }
@@ -393,14 +393,14 @@ namespace HETSAPI.Services.Impl
         {
             if (item != null)
             {
-                AdjustRecord(item);                
+                AdjustRecord(item);
                 float originalSeniority = _context.GetEquipmentSeniority(id);
 
-                var exists = _context.Equipments                    
+                var exists = _context.Equipments
                     .Any(a => a.Id == id);
 
                 if (exists && id == item.Id)
-                {                    
+                {
                     _context.Equipments.Update(item);
                     // Save the changes
                     _context.SaveChanges();
@@ -422,7 +422,7 @@ namespace HETSAPI.Services.Impl
                     .Include(x => x.Attachments)
                     .Include(x => x.History)
                     .First(a => a.Id == id);
-                    
+
                     return new ObjectResult(result);
                 }
                 else
@@ -557,7 +557,7 @@ namespace HETSAPI.Services.Impl
                 // set the equipment code
                 item.EquipmentCode = GenerateEquipmentCode(item.Owner.OwnerEquipmentCodePrefix, equipmentNumber);
             }
-            
+
         }
 
         /// <summary>
@@ -592,7 +592,7 @@ namespace HETSAPI.Services.Impl
                         {
                             owner.EquipmentList = new List<Equipment>();
                         }
-                        if (! owner.EquipmentList.Contains (item))
+                        if (!owner.EquipmentList.Contains(item))
                         {
                             owner.EquipmentList.Add(item);
                             _context.Owners.Update(owner);
@@ -604,12 +604,12 @@ namespace HETSAPI.Services.Impl
                     {
                         _context.CalculateSeniorityList(item.LocalArea.Id, item.DistrictEquipmentType.EquipmentType.Id);
                     }
-                    
+
 
 
                 }
                 // return the full object for the client side code.                    
-                
+
                 int item_id = item.Id;
                 var result = _context.Equipments
                     .Include(x => x.LocalArea.ServiceArea.District.Region)
@@ -622,7 +622,7 @@ namespace HETSAPI.Services.Impl
                     .Include(x => x.History)
                     .First(a => a.Id == item_id);
 
-                return new ObjectResult(result);                
+                return new ObjectResult(result);
             }
             else
             {
@@ -630,6 +630,29 @@ namespace HETSAPI.Services.Impl
                 return new StatusCodeResult(404);
             }
 
+        }
+
+        /// <summary>
+        /// Recalculates seniority for the database
+        /// </summary>
+        /// <remarks>Used to calculate seniority for all database records.</remarks>
+        /// <response code="200">OK</response>
+        public virtual IActionResult EquipmentRecalcSeniorityGetAsync()
+        {
+            // calculate all of the rotation lists.
+
+            var localAreas = _context.LocalAreas.Select (x => x).ToList();
+            var equipmentTypes = _context.EquipmentTypes.Select (x => x).ToList();
+
+            foreach (LocalArea localArea in localAreas)
+            {                
+                foreach (EquipmentType equipmentType in equipmentTypes)
+                {
+                    _context.CalculateSeniorityList(localArea.Id, equipmentType.Id);
+                }
+            }
+
+            return new ObjectResult("Done Recalc.");
         }
 
         /// <summary>
