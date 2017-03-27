@@ -216,10 +216,30 @@ namespace HETSAPI.Services.Impl
                 // remove associated seniority audits.
                 RemoveSeniorityAudits(id);
 
-                var item = _context.Equipments.First(a => a.Id == id);
+                var item = _context.Equipments
+                    .Include (x => x.LocalArea)
+                    .Include (x => x.DistrictEquipmentType.EquipmentType)
+                    .First(a => a.Id == id);
+
+                int localAreaId = -1;
+                int equipmentTypeId = -1;
+
+                if (item.LocalArea != null && item.DistrictEquipmentType != null && item.DistrictEquipmentType.EquipmentType != null)
+                {
+                    localAreaId = item.LocalArea.Id;
+                    equipmentTypeId = item.DistrictEquipmentType.EquipmentType.Id;
+                }
+
                 _context.Equipments.Remove(item);
                 // Save the changes
+
                 _context.SaveChanges();
+                // update the seniority list 
+                if (localAreaId != -1 && equipmentTypeId != -1)
+                {
+                    _context.CalculateSeniorityList(localAreaId, equipmentTypeId);
+                }
+
                 return new ObjectResult(item);
             }
             else
@@ -373,14 +393,23 @@ namespace HETSAPI.Services.Impl
         {
             if (item != null)
             {
-                AdjustRecord(item);
+                AdjustRecord(item);                
+                float originalSeniority = _context.GetEquipmentSeniority(id);
 
                 var exists = _context.Equipments                    
                     .Any(a => a.Id == id);
+
                 if (exists && id == item.Id)
-                {
+                {                    
                     _context.Equipments.Update(item);
                     // Save the changes
+                    _context.SaveChanges();
+
+                    // if seniority has changed, update blocks.
+                    if (originalSeniority != item.Seniority)
+                    {
+                        _context.UpdateBlocksFromEquipment(item);
+                    }
                     _context.SaveChanges();
 
                     var result = _context.Equipments
@@ -488,7 +517,6 @@ namespace HETSAPI.Services.Impl
             }
         }
 
-
         private string GenerateEquipmentCode(string ownerEquipmentCodePrefix, int equipmentNumber)
         {
             string result = ownerEquipmentCodePrefix + "-" + equipmentNumber.ToString("D4");
@@ -571,8 +599,16 @@ namespace HETSAPI.Services.Impl
                         }
                     }
                     _context.SaveChanges();
+                    // now update the seniority list.
+                    if (item.LocalArea != null && item.DistrictEquipmentType != null && item.DistrictEquipmentType.EquipmentType != null)
+                    {
+                        _context.CalculateSeniorityList(item.LocalArea.Id, item.DistrictEquipmentType.EquipmentType.Id);
+                    }
+                    
+
+
                 }
-                // Save the changes                    
+                // return the full object for the client side code.                    
                 
                 int item_id = item.Id;
                 var result = _context.Equipments

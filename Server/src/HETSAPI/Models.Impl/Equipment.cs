@@ -41,8 +41,21 @@ namespace HETSAPI.Models
             {
                 seniorityConstant = DUMP_TRUCK_CONSTANT;
             }
+            float totalHoursWorked = 0.0F;
+            if (ServiceHoursLastYear != null)
+            {
+                totalHoursWorked += (float) ServiceHoursLastYear;
+            }
+            if (ServiceHoursTwoYearsAgo != null)
+            {
+                totalHoursWorked += (float)ServiceHoursTwoYearsAgo;
+            }
+            if (ServiceHoursThreeYearsAgo != null)
+            {
+                totalHoursWorked += (float)ServiceHoursThreeYearsAgo;
+            }
 
-            float averageHoursWorked = ((float)this.ServiceHoursLastYear + (float)this.ServiceHoursTwoYearsAgo + (float)this.ServiceHoursThreeYearsAgo) / 3.0F;
+            float averageHoursWorked = totalHoursWorked / 3.0F;
 
             this.Seniority = (this.YearsOfService * seniorityConstant) + averageHoursWorked;
         }

@@ -262,6 +262,7 @@ namespace HETSAPI.Test
                 testEquipment[i].LocalArea = localArea;
                 testEquipment[i].DistrictEquipmentType = districtEquipmentType;
                 testEquipment[i].Seniority = (numberEquipment - i + 1) * 1.05F;
+                testEquipment[i].IsSeniorityOverridden = true;
                 testEquipment[i].BlockNumber = currentBlock;
                 testEquipment[i] = CreateEquipment(testEquipment[i]);
                 ++blockCount;
