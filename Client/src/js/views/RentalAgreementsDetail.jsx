@@ -146,9 +146,9 @@ var RentalAgreementsDetail = React.createClass({
     });
   },
 
-  openAttachmentRateDialog(rentalRate) {
+  openAttachmentRateDialog(attachmentRate) {
     this.setState({
-      rentalRate: rentalRate,
+      attachmentRate: attachmentRate,
       showAttachmentRateDialog: true,
     });
   },
@@ -165,20 +165,20 @@ var RentalAgreementsDetail = React.createClass({
     });
   },
 
-  deleteAttachmentRate(rentalRate) {
-    Api.deleteRentalRate(rentalRate).then(() => {
+  deleteAttachmentRate(attachmentRate) {
+    Api.deleteRentalRate(attachmentRate).then(() => {
       // In addition to refreshing the rental rates, we need to update the rental agreement
       // to get possibly new info.
       this.fetch();
     });
   },
 
-  saveAttachmentRate(rentalRate) {
+  saveAttachmentRate(attachmentRate) {
     // Update or add accordingly
-    var isNew = !rentalRate.id;
+    var isNew = !attachmentRate.id;
     var savePromise = isNew ? Api.addRentalRate : Api.updateRentalRate;
 
-    savePromise(rentalRate).finally(() => {
+    savePromise(attachmentRate).finally(() => {
       this.fetch();
       this.closeAttachmentRateDialog();
     });
@@ -552,7 +552,7 @@ var RentalAgreementsDetail = React.createClass({
         <RentalRatesEditDialog show={ this.state.showRentalRateDialog } rentalRate={ this.state.rentalRate } onSave={ this.saveRentalRate } onClose={ this.closeRentalRateDialog } />
       }
       { this.state.showAttachmentRateDialog &&
-        <AttachmentRatesEditDialog show={ this.state.showAttachmentRateDialog } rentalRate={ this.state.attachmentRate } onSave={ this.saveAttachmentRate } onClose={ this.closeAttachmentRateDialog } />
+        <AttachmentRatesEditDialog show={ this.state.showAttachmentRateDialog } attachmentRate={ this.state.attachmentRate } onSave={ this.saveAttachmentRate } onClose={ this.closeAttachmentRateDialog } />
       }
       { this.state.showConditionDialog &&
         <RentalConditionsEditDialog show={ this.state.showConditionDialog } rentalCondition={ this.state.rentalCondition } rentalConditions={ rentalConditions } onSave={ this.saveCondition } onClose={ this.closeConditionDialog } />

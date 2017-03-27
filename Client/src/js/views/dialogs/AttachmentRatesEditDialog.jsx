@@ -5,8 +5,6 @@ import { Form, FormGroup, HelpBlock, ControlLabel, FormControl } from 'react-boo
 
 import _ from 'lodash';
 
-import * as Constant from '../../constants';
-
 import DropdownControl from '../../components/DropdownControl.jsx';
 import EditDialog from '../../components/EditDialog.jsx';
 import FormInputControl from '../../components/FormInputControl.jsx';
@@ -18,40 +16,37 @@ const DOLLAR_RATE = '$';
 
 var AttachmentRatesEditDialog = React.createClass({
   propTypes: {
-    rentalRate: React.PropTypes.object.isRequired,
+    attachmentRate: React.PropTypes.object.isRequired,
     onSave: React.PropTypes.func.isRequired,
     onClose: React.PropTypes.func.isRequired,
     show: React.PropTypes.bool,
   },
 
   getInitialState() {
-    var isNew = this.props.rentalRate.id === 0;
+    var attachmentRate = this.props.attachmentRate;
+    var rentalAgreement = attachmentRate.rentalAgreement;
+    var isNew = attachmentRate.id === 0;
 
     return {
       isNew: isNew,
 
-      componentName: this.props.rentalRate.componentName || '',
-      rate: this.props.rentalRate.rate || 0.0,
-      percentOfEquipmentRate: this.props.rentalRate.percentOfEquipmentRate || 0,
-      ratePeriod: this.props.rentalRate.ratePeriod || '',
-      comment: this.props.rentalRate.comment || '',
+      componentName: attachmentRate.componentName || '',
+      rate: attachmentRate.rate || 0.0,
+      percentOfEquipmentRate: attachmentRate.percentOfEquipmentRate || 0,
+      comment: attachmentRate.comment || '',
+      ratePeriod: rentalAgreement.ratePeriod,  // The period for attachments is the same as for the Pay Rate so is there, but not displayed.
 
       ui : {
-        percentOrRateOption: isNew || this.props.rentalRate.percentOfEquipmentRate > 0 ? PERCENT_RATE : DOLLAR_RATE,
-        percentOrRateValue: this.props.rentalRate.rate || this.props.rentalRate.percentOfEquipmentRate || 0,
+        percentOrRateOption: isNew || this.props.attachmentRate.percentOfEquipmentRate > 0 ? PERCENT_RATE : DOLLAR_RATE,
+        percentOrRateValue: isNew ? 10 : this.props.attachmentRate.rate || this.props.attachmentRate.percentOfEquipmentRate || 0,  // Default for new records is 10%
       },
 
       componentNameError: '',
       rateError: '',
-      ratePeriodError: '',
     };
   },
 
   componentDidMount() {
-    // TODO - use lookup list
-    if (this.state.isNew) {
-      this.setState({ ratePeriod: Constant.RENTAL_RATE_PERIOD_HOURLY });
-    }
   },
 
   updateState(state, callback) {
@@ -72,11 +67,10 @@ var AttachmentRatesEditDialog = React.createClass({
   },
 
   didChange() {
-    if (this.state.componentName !== this.props.rentalRate.componentName) { return true; }
-    if (this.state.rate !== this.props.rentalRate.rate) { return true; }
-    if (this.state.percentOfEquipmentRate !== this.props.rentalRate.percentOfEquipmentRate) { return true; }
-    if (this.state.ratePeriod !== this.props.rentalRate.ratePeriod) { return true; }
-    if (this.state.comment !== this.props.rentalRate.comment) { return true; }
+    if (this.state.componentName !== this.props.attachmentRate.componentName) { return true; }
+    if (this.state.rate !== this.props.attachmentRate.rate) { return true; }
+    if (this.state.percentOfEquipmentRate !== this.props.attachmentRate.percentOfEquipmentRate) { return true; }
+    if (this.state.comment !== this.props.attachmentRate.comment) { return true; }
 
     return false;
   },
@@ -85,7 +79,6 @@ var AttachmentRatesEditDialog = React.createClass({
     this.setState({
       componentNameError: '',
       rateError: '',
-      ratePeriodError: '',
     });
 
     var valid = true;
@@ -103,16 +96,11 @@ var AttachmentRatesEditDialog = React.createClass({
       valid = false;
     }
 
-    if (isBlank(this.state.ratePeriod)) {
-      this.setState({ ratePeriodError: 'Period is required' });
-      valid = false;
-    }
-
     return valid;
   },
 
   onSave() {
-    this.props.onSave({ ...this.props.rentalRate, ...{
+    this.props.onSave({ ...this.props.attachmentRate, ...{
       componentName: this.state.componentName,
       rate: this.state.rate,
       percentOfEquipmentRate: this.state.percentOfEquipmentRate,
@@ -124,7 +112,7 @@ var AttachmentRatesEditDialog = React.createClass({
   dollarValue() {
     var option = this.state.ui.percentOrRateOption;
     var value = this.state.ui.percentOrRateValue;
-    var equipmentRate = this.props.rentalRate.rentalAgreement ? this.props.rentalRate.rentalAgreement.equipmentRate : 0;
+    var equipmentRate = this.props.attachmentRate.rentalAgreement ? this.props.attachmentRate.rentalAgreement.equipmentRate : 0;
 
     if (option == PERCENT_RATE && value > 0) {
       return equipmentRate * value / 100;
@@ -133,37 +121,28 @@ var AttachmentRatesEditDialog = React.createClass({
   },
 
   render() {
-    var rentalRate = this.props.rentalRate;
-    var rentalAgreement = rentalRate.rentalAgreement;
-    var attachments = _.sortBy(rentalAgreement.equipment.equipmentAttachments, 'typeName');
+    var attachmentRate = this.props.attachmentRate;
+    var rentalAgreement = attachmentRate.rentalAgreement;
+    var attachments = _.sortBy(rentalAgreement.equipment.equipmentAttachments || [], 'typeName');
 
     // Read-only if the user cannot edit the rental agreement
-    var isReadOnly = !rentalRate.canEdit && rentalRate.id !== 0;
+    var isReadOnly = !attachmentRate.canEdit && attachmentRate.id !== 0;
 
     return <EditDialog id="rental-rates-edit" show={ this.props.show }
       onClose={ this.props.onClose } onSave={ this.onSave } didChange={ this.didChange } isValid={ this.isValid }
       title={
-        <strong>Rental Agreement - Additional Rates</strong>
+        <strong>Rental Agreement - Attachments</strong>
       }>
       <Form>
         <Grid fluid>
           <Row>
-            <Col md={4}>
+            <Col md={6}>
               <FormGroup controlId="componentName" validationState={ this.state.componentNameError ? 'error' : null }>
                 <ControlLabel>Rate Component <sup>*</sup></ControlLabel>
                 {/*TODO - use lookup list*/}
                 <DropdownControl id="componentName" disabled={ isReadOnly } title={ this.state.componentName } updateState={ this.updateState }
                   items={ attachments } />
                 <HelpBlock>{ this.state.componentNameError }</HelpBlock>
-              </FormGroup>
-            </Col>
-            <Col md={2}>
-              <FormGroup controlId="ratePeriod" validationState={ this.state.ratePeriodError ? 'error' : null }>
-                <ControlLabel>Period <sup>*</sup></ControlLabel>
-                {/*TODO - use lookup list*/}
-                <DropdownControl id="ratePeriod" disabled={ isReadOnly } title={ this.state.ratePeriod } updateState={ this.updateState }
-                  items={[ Constant.RENTAL_RATE_PERIOD_HOURLY, Constant.RENTAL_RATE_PERIOD_DAILY ]} />
-                <HelpBlock>{ this.state.ratePeriodError }</HelpBlock>
               </FormGroup>
             </Col>
             <Col md={2}>
