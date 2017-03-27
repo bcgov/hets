@@ -45,6 +45,15 @@ namespace HETSAPI.Services
         /// <summary>
         /// 
         /// </summary>
+        /// <remarks>Returns attachments for a particular RentalRequest</remarks>
+        /// <param name="id">id of RentalRequest to fetch attachments for</param>
+        /// <response code="200">OK</response>
+        /// <response code="404">RentalRequest not found</response>
+        IActionResult RentalrequestsIdAttachmentsGetAsync(int id);
+
+        /// <summary>
+        /// 
+        /// </summary>
         /// <param name="id">id of RentalRequest to delete</param>
         /// <response code="200">OK</response>
         /// <response code="404">RentalRequest not found</response>

@@ -45,6 +45,15 @@ namespace HETSAPI.Services
         /// <summary>
         /// 
         /// </summary>
+        /// <remarks>Returns attachments for a particular Owner</remarks>
+        /// <param name="id">id of Owner to fetch attachments for</param>
+        /// <response code="200">OK</response>
+        /// <response code="404">Owner not found</response>
+        IActionResult OwnersIdAttachmentsGetAsync(int id);
+
+        /// <summary>
+        /// 
+        /// </summary>
         /// <remarks>Gets an Owner&#39;s Contacts</remarks>
         /// <param name="id">id of Owner to fetch Contacts for</param>
         /// <response code="200">OK</response>

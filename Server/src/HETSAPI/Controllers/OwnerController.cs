@@ -71,6 +71,22 @@ namespace HETSAPI.Controllers
         /// <summary>
         /// 
         /// </summary>
+        /// <remarks>Returns attachments for a particular Owner</remarks>
+        /// <param name="id">id of Owner to fetch attachments for</param>
+        /// <response code="200">OK</response>
+        /// <response code="404">Owner not found</response>
+        [HttpGet]
+        [Route("/api/owners/{id}/attachments")]
+        [SwaggerOperation("OwnersIdAttachmentsGet")]
+        [SwaggerResponse(200, type: typeof(List<AttachmentViewModel>))]
+        public virtual IActionResult OwnersIdAttachmentsGet([FromRoute]int id)
+        {
+            return this._service.OwnersIdAttachmentsGetAsync(id);
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
         /// <remarks>Gets an Owner&#39;s Contacts</remarks>
         /// <param name="id">id of Owner to fetch Contacts for</param>
         /// <response code="200">OK</response>

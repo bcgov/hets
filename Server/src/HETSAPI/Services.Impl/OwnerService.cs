@@ -135,6 +135,32 @@ namespace HETSAPI.Services.Impl
         /// <summary>
         /// 
         /// </summary>
+        /// <remarks>Returns attachments for a particular Owner</remarks>
+        /// <param name="id">id of Owner to fetch attachments for</param>
+        /// <response code="200">OK</response>
+        /// <response code="404">Owner not found</response>
+
+        public virtual IActionResult OwnersIdAttachmentsGetAsync(int id)
+        {
+            bool exists = _context.Owners.Any(a => a.Id == id);
+            if (exists)
+            {
+                Owner owner = _context.Owners
+                    .Include(x => x.Attachments)
+                    .First(a => a.Id == id);
+                var result = MappingExtensions.GetAttachmentListAsViewModel(owner.Attachments);
+                return new ObjectResult(result);
+            }
+            else
+            {
+                // record not found
+                return new StatusCodeResult(404);
+            }
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
         /// <param name="id">id of Owner to fetch Contacts for</param>
         /// <response code="200">OK</response>
         public virtual IActionResult OwnersIdContactsGetAsync(int id)
