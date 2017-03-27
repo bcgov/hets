@@ -46,14 +46,20 @@ namespace HETSAPI.Mappings
             var dto = new RentalRequestSearchResultViewModel();
             if (model != null)
             {
-                dto.EquipmentTypeName = model.DistrictEquipmentType.EquipmentType.Name;
+                if (model.DistrictEquipmentType != null && model.DistrictEquipmentType != null)
+                {
+                    dto.EquipmentTypeName = model.DistrictEquipmentType.EquipmentType.Name;
+                }                
                 dto.Id = model.Id;
                 dto.LocalArea = model.LocalArea;
-                dto.PrimaryContact = model.Project.PrimaryContact;
-                dto.ProjectName = model.Project.Name;
+                if (model.Project != null)
+                {
+                    dto.PrimaryContact = model.Project.PrimaryContact;
+                    dto.ProjectName = model.Project.Name;
+                    dto.ProjectId = model.Project.Id;
+                }                
                 dto.Status = model.Status;
-                dto.EquipmentCount = model.EquipmentCount;
-                dto.ProjectId = model.Project.Id;                
+                dto.EquipmentCount = model.EquipmentCount;                
                 dto.ExpectedEndDate = model.ExpectedEndDate;
                 dto.ExpectedStartDate = model.ExpectedStartDate;
             }
