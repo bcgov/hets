@@ -234,7 +234,23 @@
         description: count of RentalRequest.status is Active for the project
       status:
         type: string
-        description: Project status        
+        description: Project status  
+  RentalAgreementPdfViewModel:
+    type: object
+    x-codegen-viewmodel: true
+    required:
+      - id
+    properties:
+      id:
+        format: int32
+        type: integer
+        x-type-options:
+          min: 1
+          max: 1000
+      number:
+        type: string
+        maxLength: 30
+        description: A system-generated unique rental agreement number in a format defined by the business as suitable for the business and client to see and use.   
   RentalRequestSearchResultViewModel:
     type: object
     x-codegen-viewmodel: true

@@ -24,19 +24,26 @@ using HETSAPI.Models;
 using HETSAPI.ViewModels;
 using HETSAPI.Mappings;
 using HETSAPI.Services;
+using HETSAPI.Services.Impl;
+using Microsoft.AspNetCore.Http;
+using Microsoft.Extensions.Configuration;
+using System.Net.Http;
+using System.Text;
 
-namespace SchoolBusAPI.Services.Impl
+namespace HETSAPI.Services.Impl
 {
-    public class RentalAgreementService : IRentalAgreementService
+    public class RentalAgreementService : ServiceBase, IRentalAgreementService
     {
         private readonly DbAppContext _context;
+        private readonly IConfiguration Configuration;
 
         /// <summary>
         /// Create a service and set the database context
         /// </summary>
-        public RentalAgreementService(DbAppContext context)
+        public RentalAgreementService(IHttpContextAccessor httpContextAccessor, IConfiguration configuration, DbAppContext context) : base(httpContextAccessor, context)
         {
             _context = context;
+            Configuration = configuration;
         }
 
         private void AdjustRecord(RentalAgreement item)
@@ -184,6 +191,87 @@ namespace SchoolBusAPI.Services.Impl
                     .Include(x => x.TimeRecords)
                     .First(a => a.Id == id);
                 return new ObjectResult(result);
+            }
+            else
+            {
+                // record not found
+                return new StatusCodeResult(404);
+            }
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <remarks>Returns a PDF version of the specified rental agreement</remarks>
+        /// <param name="id">id of RentalAgreement to obtain the PDF for</param>
+        /// <response code="200">OK</response>
+        public virtual IActionResult RentalagreementsIdPdfGetAsync(int id)
+        {
+            FileContentResult result = null;
+            RentalAgreement rentalAgreement = _context.RentalAgreements.FirstOrDefault(a => a.Id == id);
+            if (rentalAgreement != null)
+            {
+
+                // construct the view model.
+
+                RentalAgreementPdfViewModel rentalAgreementPdfViewModel = new RentalAgreementPdfViewModel();
+
+                rentalAgreementPdfViewModel.Id = rentalAgreement.Id;
+                rentalAgreementPdfViewModel.Number = rentalAgreement.Number;
+                
+
+                string payload = JsonConvert.SerializeObject(rentalAgreementPdfViewModel);
+
+                // pass the request on to the PDF Micro Service
+                string pdfHost = Configuration["PDF_SERVICE_NAME"];
+
+                string targetUrl = pdfHost + "/api/PDF/GetPDF";
+
+                // call the microservice
+                try
+                {
+                    HttpClient client = new HttpClient();
+
+                    var request = new HttpRequestMessage(HttpMethod.Post, targetUrl);
+                    request.Content = new StringContent(payload, Encoding.UTF8, "application/json");
+
+                    request.Headers.Clear();
+                    // transfer over the request headers.
+                    foreach (var item in Request.Headers)
+                    {
+                        string key = item.Key;
+                        string value = item.Value;
+                        request.Headers.Add(key, value);
+                    }
+
+                    Task<HttpResponseMessage> responseTask = client.SendAsync(request);
+                    responseTask.Wait();
+
+                    HttpResponseMessage response = responseTask.Result;
+                    if (response.StatusCode == HttpStatusCode.OK) // success
+                    {
+                        var bytetask = response.Content.ReadAsByteArrayAsync();
+                        bytetask.Wait();
+
+                        result = new FileContentResult(bytetask.Result, "application/pdf");
+                        result.FileDownloadName = "RentalAgreement-" + rentalAgreement.Number + ".pdf";
+                    }
+                }
+                catch (Exception e)
+                {
+                    result = null;
+                }
+
+                // check that the result has a value
+                if (result != null)
+                {
+                    return result;
+                }
+                else
+                {
+                    return new StatusCodeResult(400); // problem occured
+                }
+
             }
             else
             {

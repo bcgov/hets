@@ -202,6 +202,33 @@ namespace HETSAPI.Services.Impl
             _context.SaveChanges();
         }
 
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <remarks>Returns attachments for a particular Equipment</remarks>
+        /// <param name="id">id of Equipment to fetch attachments for</param>
+        /// <response code="200">OK</response>
+        /// <response code="404">Equipment not found</response>
+
+        public virtual IActionResult EquipmentIdAttachmentsGetAsync(int id)
+        {
+            bool exists = _context.Owners.Any(a => a.Id == id);
+            if (exists)
+            {
+                Equipment equipment = _context.Equipments
+                    .Include(x => x.Attachments)
+                    .First(a => a.Id == id);
+                var result = MappingExtensions.GetAttachmentListAsViewModel(equipment.Attachments);
+                return new ObjectResult(result);
+            }
+            else
+            {
+                // record not found
+                return new StatusCodeResult(404);
+            }
+        }
+
         /// <summary>
         /// 
         /// </summary>

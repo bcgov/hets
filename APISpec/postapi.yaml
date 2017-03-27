@@ -1,3 +1,21 @@
+  /attachments/{id}/download:
+    get:
+      summary: Returns the binary file component of an attachment
+      tags:
+        - Attachment
+      consumes: []
+      produces:      
+        - application/octet-stream        
+      parameters:                
+        - name: id
+          in: path
+          description: Attachment Id
+          type: integer
+      responses:
+        200:
+          description: OK
+        404:
+          description: Attachment not found in system  
   /equipment/recalcSeniority:
     get:
       summary: Recalculates seniority for the database
@@ -69,6 +87,30 @@
             type: array
             items:
               $ref: "#/definitions/EquipmentViewModel"
+  /equipment/{id}/attachments:
+    get:
+      description: Returns attachments for a particular Equipment
+      tags:
+        - Equipment
+      produces:
+        - text/plain
+        - application/json
+        - text/json
+      responses:
+        '200':
+          description: OK
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/AttachmentViewModel'
+        "404":
+           description: Equipment not found
+      parameters:
+        - name: id
+          in: path
+          description: id of Equipment to fetch attachments for
+          required: true
+          type: integer 
   /equipment/{id}/equipmentattachments:
     get:
       tags:
@@ -224,7 +266,31 @@
           schema:
             type: array
             items:
-              $ref: "#/definitions/Owner"              
+              $ref: "#/definitions/Owner"
+  /owners/{id}/attachments:
+    get:
+      description: Returns attachments for a particular Owner
+      tags:
+        - Owner
+      produces:
+        - text/plain
+        - application/json
+        - text/json
+      responses:
+        '200':
+          description: OK
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/AttachmentViewModel'
+        "404":
+           description: Owner not found
+      parameters:
+        - name: id
+          in: path
+          description: id of Owner to fetch attachments for
+          required: true
+          type: integer               
   /owners/{id}/contacts:
     get:
       tags:
@@ -420,6 +486,30 @@
               format: url
           schema:
             $ref: "#/definitions/History" 
+  /projects/{id}/attachments:
+    get:
+      description: Returns attachments for a particular Project
+      tags:
+        - Project
+      produces:
+        - text/plain
+        - application/json
+        - text/json
+      responses:
+        '200':
+          description: OK
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/AttachmentViewModel'
+        "404":
+           description: Project not found
+      parameters:
+        - name: id
+          in: path
+          description: id of Project to fetch attachments for
+          required: true
+          type: integer 
   /projects/{id}/history:
     get:
       description: Returns History for a particular Project
@@ -692,6 +782,46 @@
               $ref: "#/definitions/PermissionViewModel"
         404:
           description: Role not found
+  /rentalagreements/{id}/pdf:
+    get:
+      description:  Returns a PDF version of the specified rental agreement
+      tags:
+        - RentalAgreement
+      produces:
+        - application/pdf
+      responses:
+        '200':
+          description: OK
+      parameters:
+        - name: id
+          in: path
+          description: id of RentalAgreement to obtain the PDF for
+          required: true
+          type: integer                            
+  /rentalrequests/{id}/attachments:
+    get:
+      description: Returns attachments for a particular RentalRequest
+      tags:
+        - RentalRequest
+      produces:
+        - text/plain
+        - application/json
+        - text/json
+      responses:
+        '200':
+          description: OK
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/AttachmentViewModel'
+        "404":
+           description: RentalRequest not found
+      parameters:
+        - name: id
+          in: path
+          description: id of RentalRequest to fetch attachments for
+          required: true
+          type: integer 
   /rentalrequests/{id}/history:
     get:
       description: Returns History for a particular RentalRequest

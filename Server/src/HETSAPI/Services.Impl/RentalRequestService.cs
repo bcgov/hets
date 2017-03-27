@@ -114,6 +114,33 @@ namespace HETSAPI.Services.Impl
         /// <summary>
         /// 
         /// </summary>
+        /// <remarks>Returns attachments for a particular RentalRequest</remarks>
+        /// <param name="id">id of RentalRequest to fetch attachments for</param>
+        /// <response code="200">OK</response>
+        /// <response code="404">RentalRequest not found</response>
+
+        public virtual IActionResult RentalrequestsIdAttachmentsGetAsync(int id)
+        {
+            bool exists = _context.RentalRequests.Any(a => a.Id == id);
+            if (exists)
+            {
+                RentalRequest rentalRequest = _context.RentalRequests
+                    .Include(x => x.Attachments)
+                    .First(a => a.Id == id);
+                var result = MappingExtensions.GetAttachmentListAsViewModel(rentalRequest.Attachments);
+                return new ObjectResult(result);
+            }
+            else
+            {
+                // record not found
+                return new StatusCodeResult(404);
+            }
+
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
         /// <param name="id">id of Project to delete</param>
         /// <response code="200">OK</response>
         /// <response code="404">Project not found</response>

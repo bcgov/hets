@@ -100,6 +100,20 @@ namespace HETSAPI.Controllers
         /// <summary>
         /// 
         /// </summary>
+        /// <remarks>Returns a PDF version of the specified rental agreement</remarks>
+        /// <param name="id">id of RentalAgreement to obtain the PDF for</param>
+        /// <response code="200">OK</response>
+        [HttpGet]
+        [Route("/api/rentalagreements/{id}/pdf")]
+        [SwaggerOperation("RentalagreementsIdPdfGet")]
+        public virtual IActionResult RentalagreementsIdPdfGet([FromRoute]int id)
+        {
+            return this._service.RentalagreementsIdPdfGetAsync(id);
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
         /// <param name="id">id of RentalAgreement to fetch</param>
         /// <param name="item"></param>
         /// <response code="200">OK</response>

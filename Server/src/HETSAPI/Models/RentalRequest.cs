@@ -54,8 +54,9 @@ namespace HETSAPI.Models
         /// <param name="Notes">Notes.</param>
         /// <param name="Attachments">Attachments.</param>
         /// <param name="History">History.</param>
+        /// <param name="RentalRequestAttachment">RentalRequestAttachment.</param>
         /// <param name="RentalRequestRotationList">RentalRequestRotationList.</param>
-        public RentalRequest(int Id, Project Project, LocalArea LocalArea, string Status, DistrictEquipmentType DistrictEquipmentType, int EquipmentCount, int? ExpectedHours = null, DateTime? ExpectedStartDate = null, DateTime? ExpectedEndDate = null, Equipment FirstOnRotationList = null, List<Note> Notes = null, List<RentalRequestAttachment> Attachments = null, List<History> History = null, List<RentalRequestRotationList> RentalRequestRotationList = null)
+        public RentalRequest(int Id, Project Project, LocalArea LocalArea, string Status, DistrictEquipmentType DistrictEquipmentType, int EquipmentCount, int? ExpectedHours = null, DateTime? ExpectedStartDate = null, DateTime? ExpectedEndDate = null, Equipment FirstOnRotationList = null, List<Note> Notes = null, List<Attachment> Attachments = null, List<History> History = null, List<RentalRequestAttachment> RentalRequestAttachment = null, List<RentalRequestRotationList> RentalRequestRotationList = null)
         {   
             this.Id = Id;
             this.Project = Project;
@@ -75,6 +76,7 @@ namespace HETSAPI.Models
             this.Notes = Notes;
             this.Attachments = Attachments;
             this.History = History;
+            this.RentalRequestAttachment = RentalRequestAttachment;
             this.RentalRequestRotationList = RentalRequestRotationList;
         }
 
@@ -188,12 +190,17 @@ namespace HETSAPI.Models
         /// <summary>
         /// Gets or Sets Attachments
         /// </summary>
-        public List<RentalRequestAttachment> Attachments { get; set; }
+        public List<Attachment> Attachments { get; set; }
         
         /// <summary>
         /// Gets or Sets History
         /// </summary>
         public List<History> History { get; set; }
+        
+        /// <summary>
+        /// Gets or Sets RentalRequestAttachment
+        /// </summary>
+        public List<RentalRequestAttachment> RentalRequestAttachment { get; set; }
         
         /// <summary>
         /// Gets or Sets RentalRequestRotationList
@@ -221,6 +228,7 @@ namespace HETSAPI.Models
             sb.Append("  Notes: ").Append(Notes).Append("\n");
             sb.Append("  Attachments: ").Append(Attachments).Append("\n");
             sb.Append("  History: ").Append(History).Append("\n");
+            sb.Append("  RentalRequestAttachment: ").Append(RentalRequestAttachment).Append("\n");
             sb.Append("  RentalRequestRotationList: ").Append(RentalRequestRotationList).Append("\n");
             sb.Append("}\n");
             return sb.ToString();
@@ -324,6 +332,11 @@ namespace HETSAPI.Models
                     this.History.SequenceEqual(other.History)
                 ) && 
                 (
+                    this.RentalRequestAttachment == other.RentalRequestAttachment ||
+                    this.RentalRequestAttachment != null &&
+                    this.RentalRequestAttachment.SequenceEqual(other.RentalRequestAttachment)
+                ) && 
+                (
                     this.RentalRequestRotationList == other.RentalRequestRotationList ||
                     this.RentalRequestRotationList != null &&
                     this.RentalRequestRotationList.SequenceEqual(other.RentalRequestRotationList)
@@ -387,6 +400,10 @@ namespace HETSAPI.Models
                 if (this.History != null)
                 {
                     hash = hash * 59 + this.History.GetHashCode();
+                }                   
+                if (this.RentalRequestAttachment != null)
+                {
+                    hash = hash * 59 + this.RentalRequestAttachment.GetHashCode();
                 }                   
                 if (this.RentalRequestRotationList != null)
                 {

@@ -71,6 +71,22 @@ namespace HETSAPI.Controllers
         /// <summary>
         /// 
         /// </summary>
+        /// <remarks>Returns attachments for a particular RentalRequest</remarks>
+        /// <param name="id">id of RentalRequest to fetch attachments for</param>
+        /// <response code="200">OK</response>
+        /// <response code="404">RentalRequest not found</response>
+        [HttpGet]
+        [Route("/api/rentalrequests/{id}/attachments")]
+        [SwaggerOperation("RentalrequestsIdAttachmentsGet")]
+        [SwaggerResponse(200, type: typeof(List<AttachmentViewModel>))]
+        public virtual IActionResult RentalrequestsIdAttachmentsGet([FromRoute]int id)
+        {
+            return this._service.RentalrequestsIdAttachmentsGetAsync(id);
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
         /// <param name="id">id of RentalRequest to delete</param>
         /// <response code="200">OK</response>
         /// <response code="404">RentalRequest not found</response>

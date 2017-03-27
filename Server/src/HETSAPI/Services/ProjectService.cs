@@ -45,6 +45,15 @@ namespace HETSAPI.Services
         /// <summary>
         /// 
         /// </summary>
+        /// <remarks>Returns attachments for a particular Project</remarks>
+        /// <param name="id">id of Project to fetch attachments for</param>
+        /// <response code="200">OK</response>
+        /// <response code="404">Project not found</response>
+        IActionResult ProjectsIdAttachmentsGetAsync(int id);
+
+        /// <summary>
+        /// 
+        /// </summary>
         /// <remarks>Gets an Project&#39;s Contacts</remarks>
         /// <param name="id">id of Project to fetch Contacts for</param>
         /// <response code="200">OK</response>

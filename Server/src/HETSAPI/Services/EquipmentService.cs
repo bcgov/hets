@@ -45,6 +45,15 @@ namespace HETSAPI.Services
         /// <summary>
         /// 
         /// </summary>
+        /// <remarks>Returns attachments for a particular Equipment</remarks>
+        /// <param name="id">id of Equipment to fetch attachments for</param>
+        /// <response code="200">OK</response>
+        /// <response code="404">Equipment not found</response>
+        IActionResult EquipmentIdAttachmentsGetAsync(int id);
+
+        /// <summary>
+        /// 
+        /// </summary>
         /// <param name="id">id of Equipment to delete</param>
         /// <response code="200">OK</response>
         /// <response code="404">Equipment not found</response>

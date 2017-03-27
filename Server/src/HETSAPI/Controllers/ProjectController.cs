@@ -71,6 +71,22 @@ namespace HETSAPI.Controllers
         /// <summary>
         /// 
         /// </summary>
+        /// <remarks>Returns attachments for a particular Project</remarks>
+        /// <param name="id">id of Project to fetch attachments for</param>
+        /// <response code="200">OK</response>
+        /// <response code="404">Project not found</response>
+        [HttpGet]
+        [Route("/api/projects/{id}/attachments")]
+        [SwaggerOperation("ProjectsIdAttachmentsGet")]
+        [SwaggerResponse(200, type: typeof(List<AttachmentViewModel>))]
+        public virtual IActionResult ProjectsIdAttachmentsGet([FromRoute]int id)
+        {
+            return this._service.ProjectsIdAttachmentsGetAsync(id);
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
         /// <remarks>Gets an Project&#39;s Contacts</remarks>
         /// <param name="id">id of Project to fetch Contacts for</param>
         /// <response code="200">OK</response>

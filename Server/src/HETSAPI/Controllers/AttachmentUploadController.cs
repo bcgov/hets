@@ -27,25 +27,57 @@ namespace HETSAPI.Controllers
         }
 
         [HttpPost]
-        [Route("/api/equipments/{id}/attachments")]
-        public virtual IActionResult SchoolbusesIdAttachmentsPost([FromRoute] int Id, [FromForm] IList<IFormFile> files)
+        [Route("/api/equipment/{id}/attachments")]
+        public virtual IActionResult EquipmentIdAttachmentsPost([FromRoute] int Id, [FromForm] IList<IFormFile> files)
         {
             return _service.EquipmentIdAttachmentsPostAsync(Id, files);
         }
 
         [HttpGet]
-        [Route("/api/equipments/{id}/attachmentsForm")]
+        [Route("/api/equipment/{id}/attachmentsForm")]
         [Produces("text/html")]
-        public virtual IActionResult SchoolbusesIdAttachmentsFormGet([FromRoute] int Id)
+        public virtual IActionResult EquipmentIdAttachmentsFormGet([FromRoute] int Id)
         {
-            return new ObjectResult("<html><body><form method=\"post\" action=\"/api/schoolbuses/"+Id+"/attachments\" enctype=\"multipart/form-data\"><input type=\"file\" name = \"files\" multiple /><input type = \"submit\" value = \"Upload\" /></body></html>");
-        }        
+            return new ObjectResult("<html><body><form method=\"post\" action=\"/api/equipment/"+Id+"/attachments\" enctype=\"multipart/form-data\"><input type=\"file\" name = \"files\" multiple /><input type = \"submit\" value = \"Upload\" /></body></html>");
+        }
+
+        [HttpPost]
+        [Route("/api/projects/{id}/attachments")]
+        public virtual IActionResult ProjectIdAttachmentsPost([FromRoute] int Id, [FromForm] IList<IFormFile> files)
+        {
+            return _service.EquipmentIdAttachmentsPostAsync(Id, files);
+        }
+
+        [HttpGet]
+        [Route("/api/projects/{id}/attachmentsForm")]
+        [Produces("text/html")]
+        public virtual IActionResult ProjectIdAttachmentsFormGet([FromRoute] int Id)
+        {
+            return new ObjectResult("<html><body><form method=\"post\" action=\"/api/projects/" + Id + "/attachments\" enctype=\"multipart/form-data\"><input type=\"file\" name = \"files\" multiple /><input type = \"submit\" value = \"Upload\" /></body></html>");
+        }
+
+        [HttpPost]
+        [Route("/api/owners/{id}/attachments")]
+        public virtual IActionResult OwnerIdAttachmentsPost([FromRoute] int Id, [FromForm] IList<IFormFile> files)
+        {
+            return _service.EquipmentIdAttachmentsPostAsync(Id, files);
+        }
+
+        [HttpGet]
+        [Route("/api/owners/{id}/attachmentsForm")]
+        [Produces("text/html")]
+        public virtual IActionResult OwnerIdAttachmentsFormGet([FromRoute] int Id)
+        {
+            return new ObjectResult("<html><body><form method=\"post\" action=\"/api/owners/" + Id + "/attachments\" enctype=\"multipart/form-data\"><input type=\"file\" name = \"files\" multiple /><input type = \"submit\" value = \"Upload\" /></body></html>");
+        }
     }
 
     public interface IAttachmentUploadService
     {
         IActionResult EquipmentIdAttachmentsPostAsync(int Id, IList<IFormFile> files);
-      
+        IActionResult ProjectIdAttachmentsPostAsync(int Id, IList<IFormFile> files);
+        IActionResult RentalRequestIdAttachmentsPostAsync(int Id, IList<IFormFile> files);
+
     }
 
     public class AttachmentUploadService : ServiceBase, IAttachmentUploadService
@@ -131,6 +163,104 @@ namespace HETSAPI.Controllers
                 // record not found
                 return new StatusCodeResult(404);
             }
-        }        
+        }
+
+        /// <summary>
+        ///  Basic file receiver for .NET Core
+        /// </summary>
+        /// <param name="id">Schoolbus Id</param>
+        /// <param name="files">Files to add to attachments</param>
+        /// <returns></returns>
+        public IActionResult ProjectIdAttachmentsPostAsync(int id, IList<IFormFile> files)
+        {
+            // validate the bus id            
+            bool exists = _context.Projects.Any(a => a.Id == id);
+            if (exists)
+            {
+                Project project = _context.Projects
+                    .Include(x => x.Attachments)
+                    .First(a => a.Id == id);
+
+                AddFilesToAttachments(project.Attachments, files);
+
+                _context.Projects.Update(project);
+                _context.SaveChanges();
+
+                List<AttachmentViewModel> result = MappingExtensions.GetAttachmentListAsViewModel(project.Attachments);
+
+                return new ObjectResult(result);
+            }
+            else
+            {
+                // record not found
+                return new StatusCodeResult(404);
+            }
+        }
+
+        /// <summary>
+        ///  Basic file receiver for .NET Core
+        /// </summary>
+        /// <param name="id">Schoolbus Id</param>
+        /// <param name="files">Files to add to attachments</param>
+        /// <returns></returns>
+        public IActionResult RentalRequestIdAttachmentsPostAsync(int id, IList<IFormFile> files)
+        {
+            // validate the bus id            
+            bool exists = _context.Equipments.Any(a => a.Id == id);
+            if (exists)
+            {
+                RentalRequest rentalRequest = _context.RentalRequests
+                    .Include(x => x.Attachments)
+                    .First(a => a.Id == id);
+
+                AddFilesToAttachments(rentalRequest.Attachments, files);
+
+                _context.RentalRequests.Update(rentalRequest);
+                _context.SaveChanges();
+
+                List<AttachmentViewModel> result = MappingExtensions.GetAttachmentListAsViewModel(rentalRequest.Attachments);
+
+                return new ObjectResult(result);
+            }
+            else
+            {
+                // record not found
+                return new StatusCodeResult(404);
+            }
+        }
+
+
+        /// <summary>
+        ///  Basic file receiver for .NET Core
+        /// </summary>
+        /// <param name="id">Owner Id</param>
+        /// <param name="files">Files to add to attachments</param>
+        /// <returns></returns>
+        public IActionResult OwnerRequestIdAttachmentsPostAsync(int id, IList<IFormFile> files)
+        {
+            // validate the bus id            
+            bool exists = _context.Owners.Any(a => a.Id == id);
+            if (exists)
+            {
+                Owner owner = _context.Owners
+                    .Include(x => x.Attachments)
+                    .First(a => a.Id == id);
+
+                AddFilesToAttachments(owner.Attachments, files);
+
+                _context.Owners.Update(owner);
+                _context.SaveChanges();
+
+                List<AttachmentViewModel> result = MappingExtensions.GetAttachmentListAsViewModel(owner.Attachments);
+
+                return new ObjectResult(result);
+            }
+            else
+            {
+                // record not found
+                return new StatusCodeResult(404);
+            }
+        }
+
     }
 }

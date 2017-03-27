@@ -302,7 +302,32 @@ namespace HETSAPI.Services.Impl
             }
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <remarks>Returns attachments for a particular Project</remarks>
+        /// <param name="id">id of Project to fetch attachments for</param>
+        /// <response code="200">OK</response>
+        /// <response code="404">Project not found</response>
 
+        public virtual IActionResult ProjectsIdAttachmentsGetAsync(int id)
+        {
+            bool exists = _context.Projects.Any(a => a.Id == id);
+            if (exists)
+            {
+                Project project = _context.Projects
+                    .Include(x => x.Attachments)
+                    .First(a => a.Id == id);
+                var result = MappingExtensions.GetAttachmentListAsViewModel(project.Attachments);
+                return new ObjectResult(result);
+            }
+            else
+            {
+                // record not found
+                return new StatusCodeResult(404);
+            }
+
+        }
 
         /// <summary>
         /// 
