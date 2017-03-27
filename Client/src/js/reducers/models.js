@@ -34,6 +34,12 @@ const DEFAULT_MODELS = {
   rentalRequestAttachments: {},
   rentalRequestHistory: {},
 
+  rentalAgreement: {},
+  rentalAgreementNotes: {},
+  rentalAgreementHistory: {},
+  rentalRate: {},
+  rentalCondition: {},
+
   roles: {},
   role: {},
   rolePermissions: {},
@@ -127,6 +133,32 @@ export default function modelsReducer(state = DEFAULT_MODELS, action) {
 
     case Action.UPDATE_RENTAL_REQUEST:
       return { ...state, rentalRequest: action.rentalRequest };
+
+    // Rental Agreements
+    case Action.ADD_RENTAL_AGREEMENT:
+      return { ...state, rentalAgreement: action.rentalAgreement };
+
+    case Action.UPDATE_RENTAL_AGREEMENT:
+      return { ...state, rentalAgreement: action.rentalAgreement };
+
+    // Rental Rates, Conditions
+    case Action.ADD_RENTAL_RATE:
+      return { ...state, rentalRate: action.rentalRate };
+
+    case Action.UPDATE_RENTAL_RATE:
+      return { ...state, rentalRate: action.rentalRate };
+
+    case Action.DELETE_RENTAL_RATE:
+      return { ...state, rentalRate: action.rentalRate };
+
+    case Action.ADD_RENTAL_CONDITION:
+      return { ...state, rentalCondition: action.rentalCondition };
+
+    case Action.UPDATE_RENTAL_CONDITION:
+      return { ...state, rentalCondition: action.rentalCondition };
+
+    case Action.DELETE_RENTAL_CONDITION:
+      return { ...state, rentalCondition: action.rentalCondition };
 
     // Roles, Permissions
     case Action.UPDATE_ROLES:

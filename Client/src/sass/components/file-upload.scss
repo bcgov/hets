@@ -1,0 +1,72 @@
+.file-picker {
+  display: inline-block;
+
+  input[type="file"] {
+    display: none;
+  }
+
+  label {
+    display: inline-block;
+    margin-bottom: 0;
+  }
+}
+
+.file-upload {
+  .progress {
+    width: 100px;
+  }
+
+  .file-upload-error-message {
+    color: #9A133E;
+    position: relative;
+    cursor: pointer;
+    padding-right: 20px;
+
+    .glyphicon-remove {
+      width: 16px;
+      height: 16px;
+      font-size: 16px;
+      position: absolute;
+      top: 50%;
+      right: 0;
+      margin-top: -8px;
+    }
+  }
+}
+
+.file-upload-dialog {
+  .note {
+    text-align: center;
+  }
+
+  ol.file-list {
+    border-bottom: 1px solid #EEE;
+    margin: 0 0 20px 0;
+    padding: 0 0 15px 0;
+    list-style: none;
+
+    li {
+      padding: 5px 15px;
+      margin: 0 -15px;
+
+      &:hover {
+        background-color: #EEE;
+      }
+
+      .glyphicon {
+        float: right;
+        cursor: pointer;
+
+        &:hover {
+          color: #9E0A0A;
+        }
+      }
+    }
+  }
+
+  .modal-footer {
+    .file-upload {
+      float: right;
+    }
+  }
+}

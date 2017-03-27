@@ -10,6 +10,10 @@ export function dasherize(str) {
   return toString(str).trim().replace(/([A-Z])/g, '-$1').replace(/[-_\s]+/g, '-').toLowerCase();
 }
 
+export function titleCase(str) {
+  return toString(str).replace(/\b\w/g, l => l.toUpperCase());
+}
+
 export function plural(num, singular, plural) {
   return num == 1 ? singular : plural;
 }
@@ -64,4 +68,9 @@ export function formatPhoneNumber(str) {
 export function onlyLetters(str) {
   var a = toString(str).trim();
   return /^[a-zA-Z]+$/.test(a);
+}
+
+export function formatCurrency(number) {
+  if (number === null || number === undefined) { return ''; }
+  return new Intl.NumberFormat('en-CA', { style: 'currency', currency: 'CAD' }).format(number);
 }

@@ -5,7 +5,7 @@ import store from './store';
 
 import { ApiRequest } from './utils/http';
 import { lastFirstName, firstLastName, concat, formatPhoneNumber } from './utils/string';
-import { daysAgo, sortableDateTime } from './utils/date';
+import { daysAgo, sortableDateTime, today } from './utils/date';
 
 import _ from 'lodash';
 import Moment from 'moment';
@@ -1015,20 +1015,35 @@ function parseRentalRequestRotationList(rotationListItem) {
 
 function parseRentalAgreement(agreement) {
   if (!agreement.equipment) { agreement.equipment = { id: 0, equipmentCode: '' }; }
+  if (!agreement.equipment.owner) { agreement.equipment.owner = { id: 0, organizationName: '' }; }
   if (!agreement.equipment.equipmentType) { agreement.equipment.equipmentType = { id: 0, name: '' }; }
+  if (!agreement.equipment.equipmentAttachments) { agreement.equipment.equipmentAttachments = []; }
+  if (!agreement.equipment.localArea) { agreement.equipment.localArea = { id: 0, name: '' }; }
+  if (!agreement.equipment.localArea.serviceArea) { agreement.equipment.localArea.serviceArea = { id: 0, name: '' }; }
+  if (!agreement.equipment.localArea.serviceArea.district) { agreement.equipment.localArea.serviceArea.district = { id: 0, name: '' }; }
+  if (!agreement.equipment.localArea.serviceArea.district.region) { agreement.equipment.localArea.serviceArea.district.region = { id: 0, name: '' }; }
   if (!agreement.project) { agreement.project = { id: 0, name: '' }; }
   if (!agreement.rentalAgreementRates) { agreement.rentalAgreementRates = []; }
   if (!agreement.rentalAgreementConditions) { agreement.rentalAgreementConditions = []; }
   if (!agreement.timeRecords) { agreement.timeRecords = []; }
 
+  agreement.path = `${ Constant.RENTAL_AGREEMENTS_PATHNAME }/${ agreement.id }`;
+  agreement.url = `#/${ agreement.path }`;
+
   agreement.number = agreement.number || '';
   agreement.note = agreement.note || '';
-  agreement.estimateStartWork = agreement.estimateStartWork || '';
-  agreement.datedOn = agreement.datedOn || '';
-  agreement.estimateHours = agreement.estimateHours || 0;
+  agreement.datedOn = agreement.datedOn || today();
   agreement.equipmentRate = agreement.equipmentRate || 0.0;
   agreement.ratePeriod = agreement.ratePeriod || '';  // e.g. hourly, daily, etc.
   agreement.rateComment = agreement.rateComment || '';
+
+  agreement.estimateStartWork = agreement.estimateStartWork || '';
+  agreement.estimateHours = agreement.estimateHours || 0;
+
+  agreement.rentalAgreementRates = normalize(agreement.rentalAgreementRates);
+  agreement.rentalAgreementConditions = normalize(agreement.rentalAgreementConditions);
+  _.map(agreement.rentalAgreementRates, obj => parseRentalRate(obj, agreement));
+  _.map(agreement.rentalAgreementConditions, obj => parseRentalCondition(obj, agreement));
 
   // UI display fields
   agreement.status = agreement.status || Constant.RENTAL_AGREEMENT_STATUS_CODE_ACTIVE;  // TODO
@@ -1040,11 +1055,202 @@ function parseRentalAgreement(agreement) {
   agreement.equipmentModel = agreement.equipment.model;
   agreement.equipmentSize = agreement.equipment.size;
   agreement.equipmentTypeName = agreement.equipment.equipmentType.name;
-  agreement.lastTimeRecord = agreement.lastTimeRecord || '';  // TODO Server needs to send this
+  agreement.ownerId = agreement.equipment.owner.id || 0;
+  agreement.ownerName = agreement.equipment.owner.organizationName || '';
+  agreement.workSafeBCPolicyNumber = agreement.equipment.owner.workSafeBCPolicyNumber || '';
+  agreement.pointOfHire = agreement.equipment.localArea.name || '';
+  agreement.districtName = agreement.equipment.localArea.serviceArea.district.name || '';
+
+  agreement.projectId = agreement.projectId || agreement.project.id;
+  agreement.projectName = agreement.projectName || agreement.project.name;
+
+  agreement.projectPath = agreement.projectId ? `${ Constant.PROJECTS_PATHNAME }/${ agreement.projectId }` : '';
+  agreement.projectUrl = agreement.projectPath ? `#/${ agreement.projectPath }` : '';
+
+  agreement.canEdit = true;
+  agreement.canDelete = false;  // TODO Check with business
 
   // Flag element as a rental agreement
   // Rental requests and rentals are merged and shown in a single list on Project Details screen
   agreement.isRentalAgreement = true;
+
+  // TODO HETS-115 Server needs to send this
+  agreement.lastTimeRecord = agreement.lastTimeRecord || '';
+}
+
+export function getRentalAgreement(id) {
+  return new ApiRequest(`/rentalagreements/${ id }`).get().then(response => {
+    var agreement = response;
+
+    // Add display fields
+    parseRentalAgreement(agreement);
+
+    store.dispatch({ type: Action.UPDATE_RENTAL_AGREEMENT, rentalAgreement: agreement });
+  });
+}
+
+export function addRentalAgreement(agreement) {
+  return new ApiRequest('/rentalagreements').post(agreement).then(response => {
+    var agreement = response;
+
+    // Add display fields
+    parseRentalAgreement(agreement);
+
+    store.dispatch({ type: Action.ADD_RENTAL_AGREEMENT, rentalAgreement: agreement });
+  });
+}
+
+export function updateRentalAgreement(agreement) {
+  return new ApiRequest(`/rentalagreements/${ agreement.id }`).put({...agreement, rentalAgreementConditions: null, rentalAgreementRates: null }).then(response => {
+    var agreement = response;
+
+    // Add display fields
+    parseRentalAgreement(agreement);
+
+    store.dispatch({ type: Action.UPDATE_RENTAL_AGREEMENT, rentalAgreement: agreement });
+  });
+}
+
+////////////////////
+// Rental Rates
+////////////////////
+
+function parseRentalRate(rentalRate, parent = {}) {
+  // Pick only the properties that we need
+  if (!rentalRate.rentalAgreement) { rentalRate.rentalAgreement = _.extend({ id: 0, equipmentRate: 0 }, _.pick(parent, 'id', 'number', 'path', 'equipmentRate')); }
+  if (!rentalRate.timeRecords) { rentalRate.timeRecords = []; }
+
+  rentalRate.path = rentalRate.rentalAgreement.path ? `${ rentalRate.rentalAgreement.path }/${ Constant.RENTAL_RATES_PATHNAME }/${ rentalRate.id }` : null;
+  rentalRate.url = rentalRate.path ? `#/${ rentalRate.path }` : null;
+
+  rentalRate.componentName = rentalRate.componentName || '';
+  rentalRate.isAttachment = rentalRate.isAttachment || false;
+  rentalRate.rate = rentalRate.rate || 0.0;
+  rentalRate.percentOfEquipmentRate = rentalRate.percentOfEquipmentRate || 0;
+  rentalRate.ratePeriod = rentalRate.ratePeriod || Constant.RENTAL_RATE_PERIOD_HOURLY;  // One of: Hr, Daily
+  rentalRate.comment = rentalRate.comment || '';
+
+  // UI display fields
+  rentalRate.rentalAgreementId = rentalRate.rentalAgreement.id;
+  rentalRate.rentalAgreementNumber = rentalRate.rentalAgreement.number;
+  rentalRate.dollarValue = 0;
+  if (rentalRate.rate > 0) {
+    rentalRate.dollarValue = rentalRate.rate;
+  } else if (rentalRate.percentOfEquipmentRate > 0) {
+    rentalRate.dollarValue = rentalRate.rentalAgreement.equipmentRate * rentalRate.percentOfEquipmentRate / 100;
+  }
+
+  rentalRate.canEdit = true;
+  rentalRate.canDelete = true;
+}
+
+export function getRentalRate(id) {
+  return new ApiRequest(`/rentalagreementrates/${ id }`).get().then(response => {
+    var rentalRate = response;
+
+    // Add display fields
+    parseRentalRate(rentalRate);
+
+    store.dispatch({ type: Action.UPDATE_RENTAL_RATE, rentalRate: rentalRate });
+  });
+}
+
+export function addRentalRate(rentalRate) {
+  return new ApiRequest('/rentalagreementrates').post({ ...rentalRate, rentalAgreement: { id: rentalRate.rentalAgreement.id } }).then(response => {
+    var rentalRate = response;
+
+    // Add display fields
+    parseRentalRate(rentalRate);
+
+    store.dispatch({ type: Action.ADD_RENTAL_RATE, rentalRate: rentalRate });
+  });
+}
+
+export function updateRentalRate(rentalRate) {
+  return new ApiRequest(`/rentalagreementrates/${ rentalRate.id }`).put(rentalRate).then(response => {
+    var rentalRate = response;
+
+    // Add display fields
+    parseRentalRate(rentalRate);
+
+    store.dispatch({ type: Action.UPDATE_RENTAL_RATE, rentalRate: rentalRate });
+  });
+}
+
+export function deleteRentalRate(rentalRate) {
+  return new ApiRequest(`/rentalagreementrates/${ rentalRate.id }/delete`).post().then(response => {
+    var rentalRate = response;
+
+    // Add display fields
+    parseRentalRate(rentalRate);
+
+    store.dispatch({ type: Action.DELETE_RENTAL_RATE, rentalRate: rentalRate });
+  });
+}
+
+////////////////////
+// Rental Conditions
+////////////////////
+
+function parseRentalCondition(rentalCondition, parent = {}) {
+  // Pick only the properties that we need
+  if (!rentalCondition.rentalAgreement) { rentalCondition.rentalAgreement = _.extend({ id: 0 }, _.pick(parent, 'id', 'number', 'path')); }
+
+  rentalCondition.conditionName = rentalCondition.conditionName || '';
+  rentalCondition.comment = rentalCondition.comment || '';
+
+  // UI display fields
+  rentalCondition.rentalAgreementId = rentalCondition.rentalAgreement.id;
+  rentalCondition.rentalAgreementNumber = rentalCondition.rentalAgreement.number;
+  rentalCondition.path = rentalCondition.rentalAgreement.path ? `${ rentalCondition.rentalAgreement.path }/${ Constant.RENTAL_CONDITIONS_PATHNAME }/${ rentalCondition.id }` : null;
+  rentalCondition.url = rentalCondition.path ? `#/${ rentalCondition.path }` : null;
+
+  rentalCondition.canEdit = true;
+  rentalCondition.canDelete = true;
+}
+
+export function getRentalCondition(id) {
+  return new ApiRequest(`/rentalagreementconditions/${ id }`).get().then(response => {
+    var rentalCondition = response;
+
+    // Add display fields
+    parseRentalCondition(rentalCondition);
+
+    store.dispatch({ type: Action.UPDATE_RENTAL_CONDITION, rentalCondition: rentalCondition });
+  });
+}
+
+export function addRentalCondition(rentalCondition) {
+  return new ApiRequest('/rentalagreementconditions').post({ ...rentalCondition, rentalAgreement: { id: rentalCondition.rentalAgreement.id } }).then(response => {
+    var rentalCondition = response;
+
+    // Add display fields
+    parseRentalCondition(rentalCondition);
+
+    store.dispatch({ type: Action.ADD_RENTAL_CONDITION, rentalCondition: rentalCondition });
+  });
+}
+
+export function updateRentalCondition(rentalCondition) {
+  return new ApiRequest(`/rentalagreementconditions/${ rentalCondition.id }`).put(rentalCondition).then(response => {
+    var rentalCondition = response;
+
+    // Add display fields
+    parseRentalCondition(rentalCondition);
+
+    store.dispatch({ type: Action.UPDATE_RENTAL_CONDITION, rentalCondition: rentalCondition });
+  });
+}
+
+export function deleteRentalCondition(rentalCondition) {
+  return new ApiRequest(`/rentalagreementconditions/${ rentalCondition.id }/delete`).post().then(response => {
+    var rentalCondition = response;
+
+    // Add display fields
+    parseRentalCondition(rentalCondition);
+
+    store.dispatch({ type: Action.DELETE_RENTAL_CONDITION, rentalCondition: rentalCondition });
+  });
 }
 
 ////////////////////

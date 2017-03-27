@@ -144,7 +144,7 @@ var RentalRequests = React.createClass({
   componentDidMount() {
     this.setState({ loading: true });
 
-    Api.getFavourites('rentalRequests').then(() => {
+    Api.getFavourites('rentalrequest').then(() => {
       // If this is the first load, then look for a default favourite
       if (!this.props.search.loaded) {
         var favourite = _.find(this.props.favourites, (favourite) => { return favourite.isDefault; });

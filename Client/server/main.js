@@ -26,6 +26,23 @@ const app = express();
 
 app.use(morgan('dev'));
 
+app.post('/api/test-file-upload', function(req, res) {
+  var buf = '';
+  req.on('data', function(chunk){ buf += chunk; });
+  req.setEncoding('utf8');
+  req.on('end', function() {
+    var v = Math.random();
+    console.log(v);
+    if(v > 0.5) {
+      console.log('successful upload');
+      setTimeout(function() {res.end();}, 2 * 1000);
+    } else {
+      console.log('failed upload');
+      res.status(400).send('upload failed').end();
+    }
+  });
+});
+
 app.use('/api', proxy(`http://${API_HOST}:${API_PORT}/api`, {
   changeOrigin: true,
   headers: {
