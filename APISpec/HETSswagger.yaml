@@ -4618,6 +4618,23 @@ paths:
       responses:
         201:
           description: UserRole created
+  /equipment/recalcSeniority:
+    get:
+      summary: Recalculates seniority for the database
+      description:
+        Used to calculate seniority for all database records.      
+      tags:
+        - Equipment
+      x-codegen-permission: ADMIN
+      consumes:
+        - application/json
+      produces:
+        - text/plain
+        - application/json
+        - text/json
+      responses:
+        200:
+          description: OK          
   /equipment/search:
     get:
       summary: Searches Equipment

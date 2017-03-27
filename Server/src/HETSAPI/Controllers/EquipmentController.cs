@@ -189,6 +189,20 @@ namespace HETSAPI.Controllers
         }
 
         /// <summary>
+        /// Recalculates seniority for the database
+        /// </summary>
+        /// <remarks>Used to calculate seniority for all database records.</remarks>
+        /// <response code="200">OK</response>
+        [HttpGet]
+        [Route("/api/equipment/recalcSeniority")]
+        [SwaggerOperation("EquipmentRecalcSeniorityGet")]
+        [RequiresPermission(Permission.ADMIN)]
+        public virtual IActionResult EquipmentRecalcSeniorityGet()
+        {
+            return this._service.EquipmentRecalcSeniorityGetAsync();
+        }
+
+        /// <summary>
         /// Searches Equipment
         /// </summary>
         /// <remarks>Used for the equipment search page.</remarks>
