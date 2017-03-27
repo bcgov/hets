@@ -65,3 +65,8 @@ export function onlyLetters(str) {
   var a = toString(str).trim();
   return /^[a-zA-Z]+$/.test(a);
 }
+
+export function formatCurrency(number) {
+  if (number === null || number === undefined) { return ''; }
+  return new Intl.NumberFormat('en-CA', { style: 'currency', currency: 'CAD' }).format(number);
+}
