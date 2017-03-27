@@ -10,6 +10,10 @@ export function dasherize(str) {
   return toString(str).trim().replace(/([A-Z])/g, '-$1').replace(/[-_\s]+/g, '-').toLowerCase();
 }
 
+export function titleCase(str) {
+  return toString(str).replace(/\b\w/g, l => l.toUpperCase());
+}
+
 export function plural(num, singular, plural) {
   return num == 1 ? singular : plural;
 }

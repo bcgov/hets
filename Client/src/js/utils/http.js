@@ -65,11 +65,27 @@ Resource404.prototype = Object.create(Error.prototype, {
 
 export function request(path, options) {
   options = options || {};
-  options.headers = Object.assign({
-    'Content-Type': 'application/x-www-form-urlencoded',
-  }, options.headers || {});
+
   var xhr = new XMLHttpRequest();
+  var contentTypeHeader = options.files ? 'multipart/form-data' : 'application/x-www-form-urlencoded';
+  options.headers = Object.assign({
+    'Content-Type': contentTypeHeader,
+  }, options.headers || {});
   var method = (options.method || 'GET').toUpperCase();
+
+  if(options.onUploadProgress) {
+    xhr.upload.addEventListener('progress', function(e) {
+      if(e.lengthComputable) {
+        options.onUploadProgress(e.loaded / e.total * 100);
+      } else {
+        options.onUploadProgress(null);
+      }
+    });
+
+    xhr.upload.addEventListener('load', function(/*e*/) {
+      options.onUploadProgress(100);
+    });
+  }
 
   return new Promise((resolve, reject, onCancel) => {
     onCancel(function() {
@@ -100,7 +116,21 @@ export function request(path, options) {
       incrementRequests();
     }
 
-    xhr.send(options.body || null);
+    var payload = options.body || null;
+
+    if(options.files) {
+      payload = new FormData();
+      if(typeof options.body === 'object') {
+        Object.keys(options.body).forEach(key => {
+          payload.append(key, options.body[key]);
+        });
+      }
+      options.files.forEach((file, i) => {
+        payload.append(`file-${i}`, file, file.name);
+      });
+    }
+
+    xhr.send(payload);
   }).finally(() => {
     if(!options.silent) { decrementRequests(); }
   });
@@ -138,9 +168,12 @@ export function jsonRequest(path, options) {
   });
 }
 
+export function buildApiPath(path) {
+  return `${ROOT_API_PREFIX}/api/${path}`.replace('//', '/'); // remove double slashes
+}
 
 export function ApiRequest(path) {
-  this.path = `${ROOT_API_PREFIX}/api/${path}`.replace('//', '/'); // remove double slashes
+  this.path = buildApiPath(path);
 }
 
 ApiRequest.prototype.get = function apiGet(params) {
