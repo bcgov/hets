@@ -17,26 +17,23 @@ import { isBlank, notBlank } from '../../utils/string';
 var ProjectsAddDialog = React.createClass({
   propTypes: {
     currentUser: React.PropTypes.object,
-    localAreas: React.PropTypes.object,
+    districts: React.PropTypes.object,
     onSave: React.PropTypes.func.isRequired,
     onClose: React.PropTypes.func.isRequired,
     show: React.PropTypes.bool,
   },
 
   getInitialState() {
-    // Local Area (default to the first local area of the District of the logged in User, but allow any local area to be selected)
-    var currentUser = this.props.currentUser;
-    var localAreas = this.props.localAreas;
-    var defaultLocalAreaId = _.find(localAreas, (x) => x.serviceArea.district.id === currentUser.district.id);
-    
+    // Project district should default to the district of the logged-in user
     return {
       name: '',
       provincialProjectNumber: '',
-      localAreaId: defaultLocalAreaId || 0,
+      districtId: this.props.districts[this.props.currentUser.district.id] || 0,
       information: '',
+
       nameError: '',
       provincialProjectNumberError: '',
-      localAreaError: '',
+      districtError: '',
     };
   },
 
@@ -52,7 +49,7 @@ var ProjectsAddDialog = React.createClass({
     return notBlank(this.state.name) ||
       notBlank(this.state.provincialProjectNumber) ||
       notBlank(this.state.information) ||
-      this.state.localAreaId !== 0;
+      this.state.districtId !== 0;
   },
 
   isValid() {
@@ -62,7 +59,7 @@ var ProjectsAddDialog = React.createClass({
     this.setState({
       nameError: '',
       provincialProjectNumberError: '',
-      localAreaError: '',
+      districtError: '',
     });
 
     if (isBlank(this.state.name)) {
@@ -75,8 +72,8 @@ var ProjectsAddDialog = React.createClass({
       valid = false;
     }
 
-    if (this.state.localAreaId === 0) {
-      this.setState({ localAreaError: 'Local area is required' });
+    if (this.state.districtId === 0) {
+      this.setState({ districtError: 'District is required' });
       valid = false;
     }
 
@@ -87,14 +84,14 @@ var ProjectsAddDialog = React.createClass({
     this.props.onSave({
       name: this.state.name,
       provincialProjectNumber: this.state.provincialProjectNumber,
-      localArea: { id: this.state.localAreaId }, 
+      district: { id: this.state.districtId },
       information: this.state.information,
       status: Constant.PROJECT_STATUS_CODE_ACTIVE,
     });
   },
 
   render() {
-    var localAreas = _.sortBy(this.props.localAreas, 'name');
+    var districts = _.sortBy(this.props.districts, 'name');
 
     return <EditDialog id="add-project" show={ this.props.show } bsSize="small"
       onClose={ this.props.onClose } onSave={ this.onSave } didChange={ this.didChange } isValid={ this.isValid }
@@ -112,10 +109,10 @@ var ProjectsAddDialog = React.createClass({
           <FormInputControl type="text" value={ this.state.provincialProjectNumber } updateState={ this.updateState } />
           <HelpBlock>{ this.state.provincialProjectNumberError }</HelpBlock>
         </FormGroup>
-        <FormGroup controlId="localAreaId" validationState={ this.state.localAreaError ? 'error' : null }>
-          <ControlLabel>Local Area <sup>*</sup></ControlLabel>
-          <FilterDropdown id="localAreaId" items={ localAreas } selectedId={ this.state.localAreaId } updateState={ this.updateState } />
-          <HelpBlock>{ this.state.localAreaError }</HelpBlock>
+        <FormGroup controlId="districtId" validationState={ this.state.districtError ? 'error' : null }>
+          <ControlLabel>District <sup>*</sup></ControlLabel>
+          <FilterDropdown id="districtId" items={ districts } selectedId={ this.state.districtId } updateState={ this.updateState } />
+          <HelpBlock>{ this.state.districtError }</HelpBlock>
         </FormGroup>
         <FormGroup controlId="information">
           <ControlLabel>Information</ControlLabel>
@@ -129,7 +126,7 @@ var ProjectsAddDialog = React.createClass({
 function mapStateToProps(state) {
   return {
     currentUser: state.user,
-    localAreas: state.lookups.localAreas,
+    districts: state.lookups.districts,
   };
 }
 
