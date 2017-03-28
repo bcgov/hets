@@ -7,6 +7,7 @@ const DEFAULT_LOOKUPS = {
   serviceAreas: {},
   localAreas: {},
   equipmentTypes: {},
+  districtEquipmentTypes: {},
   groups: {},
   permissions: {},
   rentalConditions: {},
@@ -39,6 +40,9 @@ export default function lookupsReducer(state = DEFAULT_LOOKUPS, action) {
 
     case Action.UPDATE_EQUIPMENT_TYPES_LOOKUP:
       return { ...state, equipmentTypes: action.equipmentTypes };
+
+    case Action.UPDATE_DISTRICT_EQUIPMENT_TYPES_LOOKUP:
+      return { ...state, districtEquipmentTypes: action.districtEquipmentTypes };
 
     case Action.UPDATE_GROUPS_LOOKUP:
       return { ...state, groups: action.groups };
