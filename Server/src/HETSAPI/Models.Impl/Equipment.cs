@@ -20,7 +20,7 @@ namespace HETSAPI.Models
         private const float DUMP_TRUCK_CONSTANT = 60.0F;
         private const float OTHER_CONSTANT = 50.0F;
 
-        public const string STATUS_ACTIVE = "Active";
+        public const string STATUS_APPROVED = "Approved";
 
         /// <summary>
         /// Calculate the Seniority for a piece of equipment.

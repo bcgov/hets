@@ -95,6 +95,8 @@ namespace HETSAPI.Services.Impl
         public virtual IActionResult DistrictEquipmentTypesGetAsync()
         {
             var result = _context.DistrictEquipmentTypes
+                .Include(x => x.District.Region)
+                .Include(x => x.EquipmentType)
                 .ToList();
             return new ObjectResult(result);
         }

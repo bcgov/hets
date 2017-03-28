@@ -10,13 +10,13 @@ namespace HETSAPI.Models
     public static class SeniorityListExtensions
     {
 
-        static public float GetEquipmentSeniority (this DbAppContext context, int equipmentId)
+        static public DateTime? GetEquipmentSeniorityEffectiveDate (this DbAppContext context, int equipmentId)
         {
-            float result = -1.0f;
+            DateTime? result = null;
             Equipment equipment = context.Equipments.FirstOrDefault(x => x.Id == equipmentId);
-            if (equipment != null && equipment.Seniority != null)
+            if (equipment != null)
             {
-                result = (float) equipment.Seniority;
+                result = equipment.SeniorityEffectiveDate;
             }
             context.Entry(equipment).State = EntityState.Detached;
             return result;
@@ -45,7 +45,7 @@ namespace HETSAPI.Models
                     // first pass will update the seniority score.
 
                     var data = context.Equipments
-                         .Where(x => x.Status == Equipment.STATUS_ACTIVE && x.LocalArea.Id == localAreaId && x.DistrictEquipmentType.Id == equipmentType)
+                         .Where(x => x.Status == Equipment.STATUS_APPROVED && x.LocalArea.Id == localAreaId && x.DistrictEquipmentType.Id == equipmentType)
                          .Select(x => x);
 
                     foreach (Equipment equipment in data)
@@ -112,9 +112,8 @@ namespace HETSAPI.Models
             int secondaryCount = 0;
             int openCount = 0;
 
-
             var data = context.Equipments
-                 .Where(x => x.Status == Equipment.STATUS_ACTIVE && x.LocalArea.Id == localAreaId && x.DistrictEquipmentType.Id == equipmentType)
+                 .Where(x => x.Status == Equipment.STATUS_APPROVED && x.LocalArea.Id == localAreaId && x.DistrictEquipmentType.Id == equipmentType)
                  .OrderByDescending(x => x.Seniority)
                  .Select(x => x);
 
@@ -127,7 +126,7 @@ namespace HETSAPI.Models
                 bool primaryFound = false;
                 foreach (Equipment item in primaryBlock)
                 {
-                    if (item.Owner.Id == equipment.Owner.Id)
+                    if (item.Owner != null && equipment.Owner != null && item.Owner.Id == equipment.Owner.Id)
                     {
                         primaryFound = true;
                     }
@@ -138,7 +137,7 @@ namespace HETSAPI.Models
                     bool secondaryFound = false;
                     foreach (Equipment item in secondaryBlock)
                     {
-                        if (item.Owner.Id == equipment.Owner.Id)
+                        if (item.Owner != null && equipment.Owner != null && item.Owner.Id == equipment.Owner.Id)
                         {
                             secondaryFound = true;
                         }
@@ -147,12 +146,14 @@ namespace HETSAPI.Models
                     {
                         equipment.BlockNumber = DistrictEquipmentType.OPEN_BLOCK_DUMP_TRUCK;
                         openCount++;
+                        equipment.NumberInBlock = openCount;
                     }
                     else
                     {
                         secondaryBlock.Add(equipment);
                         equipment.BlockNumber = DistrictEquipmentType.SECONDARY_BLOCK;
-                        openCount++;
+                        secondaryCount++;
+                        equipment.NumberInBlock = secondaryCount;                        
                     }
                 }
                 else // can go in primary block.
@@ -160,6 +161,7 @@ namespace HETSAPI.Models
                     primaryBlock.Add(equipment);
                     equipment.BlockNumber = DistrictEquipmentType.PRIMARY_BLOCK;
                     primaryCount++;
+                    equipment.NumberInBlock = primaryCount;
                 }                
                 context.Equipments.Update(equipment);
             }            
@@ -174,9 +176,10 @@ namespace HETSAPI.Models
         static public void AssignBlocksNonDumpTruck(this DbAppContext context, int localAreaId, int equipmentType)
         {            
             int primaryCount = 0;
+            int openCount = 0;
             
             var data = context.Equipments
-                 .Where(x => x.Status == Equipment.STATUS_ACTIVE && x.LocalArea.Id == localAreaId && x.DistrictEquipmentType.Id == equipmentType)
+                 .Where(x => x.Status == Equipment.STATUS_APPROVED && x.LocalArea.Id == localAreaId && x.DistrictEquipmentType.Id == equipmentType)
                  .OrderByDescending(x => x.Seniority)
                  .Select(x => x);
 
@@ -188,7 +191,7 @@ namespace HETSAPI.Models
                 bool primaryFound = false;
                 foreach (Equipment item in primaryBlock)
                 {
-                    if (item.Owner.Id == equipment.Owner.Id)
+                    if (item.Owner != null && equipment.Owner != null && item.Owner.Id == equipment.Owner.Id)
                     {
                         primaryFound = true;
                     }
@@ -196,12 +199,15 @@ namespace HETSAPI.Models
                 if (primaryFound || primaryCount >= 10) // has to go in open block.
                 {
                     equipment.BlockNumber = DistrictEquipmentType.OPEN_BLOCK_NON_DUMP_TRUCK;
+                    openCount++;
+                    equipment.NumberInBlock = openCount;
                 }
                 else // can go in primary block.
                 {
                     primaryBlock.Add(equipment);
                     equipment.BlockNumber = DistrictEquipmentType.PRIMARY_BLOCK;
                     primaryCount++;
+                    equipment.NumberInBlock = primaryCount;
                 }
                 context.Equipments.Update(equipment);
             }            

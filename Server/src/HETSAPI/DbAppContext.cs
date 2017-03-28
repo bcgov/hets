@@ -237,14 +237,7 @@ namespace HETSAPI.Models
             if (changed.IsSeniorityOverridden == null || changed.IsSeniorityOverridden == false)
             {
                 changed.CalculateSeniority();
-            }
-
-            if (original.Seniority != changed.Seniority)
-            {
-                // update the block number for the list.
-                
-                
-            }
+            }            
 
             // compare the old and new
             if (changed.IsSeniorityAuditRequired (original))
@@ -324,8 +317,6 @@ namespace HETSAPI.Models
                 {
                     SeniorityAudits.Add(seniorityAudit);
                 }
-                // trigger a recalculation of the equipment's seniority.
-                //
             }
             base.SaveChanges();
             return result;
