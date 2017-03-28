@@ -44,7 +44,7 @@ namespace HETSAPI.Services.Impl
         /// </summary>
         /// <param name="items"></param>
         /// <response code="201">Attachment created</response>
-        public virtual IActionResult AttachmentBulkPostAsync(Attachment[] items)
+        public virtual IActionResult AttachmentsBulkPostAsync(Attachment[] items)
         {
             if (items == null)
             {
@@ -72,7 +72,7 @@ namespace HETSAPI.Services.Impl
         /// 
         /// </summary>
         /// <response code="200">OK</response>
-        public virtual IActionResult AttachmentGetAsync()
+        public virtual IActionResult AttachmentsGetAsync()
         {
             var result = _context.Attachments.ToList();
             return new ObjectResult(result);
@@ -84,7 +84,7 @@ namespace HETSAPI.Services.Impl
         /// <param name="id">id of Attachment to delete</param>
         /// <response code="200">OK</response>
         /// <response code="404">Attachment not found</response>
-        public virtual IActionResult AttachmentIdDeletePostAsync(int id)
+        public virtual IActionResult AttachmentsIdDeletePostAsync(int id)
         {
             var exists = _context.Attachments.Any(a => a.Id == id);
             if (exists)
@@ -137,7 +137,7 @@ namespace HETSAPI.Services.Impl
         /// <param name="id">id of Attachment to fetch</param>
         /// <response code="200">OK</response>
         /// <response code="404">Attachment not found</response>
-        public virtual IActionResult AttachmentIdGetAsync(int id)
+        public virtual IActionResult AttachmentsIdGetAsync(int id)
         {
             var exists = _context.Attachments.Any(a => a.Id == id);
             if (exists)
@@ -159,7 +159,7 @@ namespace HETSAPI.Services.Impl
         /// <param name="item"></param>
         /// <response code="200">OK</response>
         /// <response code="404">Attachment not found</response>
-        public virtual IActionResult AttachmentIdPutAsync(int id, Attachment item)
+        public virtual IActionResult AttachmentsIdPutAsync(int id, Attachment item)
         {
             var exists = _context.Attachments.Any(a => a.Id == id);
             if (exists && id == item.Id)
@@ -181,7 +181,7 @@ namespace HETSAPI.Services.Impl
         /// </summary>
         /// <param name="item"></param>
         /// <response code="201">Attachment created</response>
-        public virtual IActionResult AttachmentPostAsync(Attachment item)
+        public virtual IActionResult AttachmentsPostAsync(Attachment item)
         {
             var exists = _context.Attachments.Any(a => a.Id == item.Id);
             if (exists)
