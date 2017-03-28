@@ -233,11 +233,8 @@ namespace HETSAPI.Models
             original.ServiceHoursTwoYearsAgo = (float?) getOriginalValue(entry, "ServiceHoursTwoYearsAgo");
             original.ServiceHoursThreeYearsAgo = (float?) getOriginalValue(entry, "ServiceHoursThreeYearsAgo");
 
-            // If there was no seniority override, recalc the seniority.
-            if (changed.IsSeniorityOverridden == null || changed.IsSeniorityOverridden == false)
-            {
-                changed.CalculateSeniority();
-            }            
+            // Calculate Seniority.  In the current UI design it is expected that this occurs after each change to the service hours.
+            changed.CalculateSeniority();                        
 
             // compare the old and new
             if (changed.IsSeniorityAuditRequired (original))

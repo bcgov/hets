@@ -678,7 +678,7 @@ namespace HETSAPI.Services.Impl
                     if (item != null)
                     {
                         int equipmentType = (int) item;
-                        data = data.Where(x => x.EquipmentList.Select (y => y.Id).ToList().Contains (equipmentType));
+                        data = data.Where(x => x.EquipmentList.Select (y => y.DistrictEquipmentType.Id).ToList().Contains (equipmentType));
                     }
                 }
             }
