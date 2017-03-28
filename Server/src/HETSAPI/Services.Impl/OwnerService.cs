@@ -660,15 +660,9 @@ namespace HETSAPI.Services.Impl
                     .Include(x => x.Contacts)
                     .Select(x => x);
 
-            if (localareas != null)
+            if (localareas != null && localareas.Length > 0)
             {
-                foreach (int? localarea in localareas)
-                {
-                    if (localarea != null)
-                    {
-                        data = data.Where(x => x.LocalArea.Id == localarea);
-                    }
-                }
+                data = data.Where(x => localareas.Contains (x.LocalArea.Id));                
             }
 
             if (equipmenttypes != null)

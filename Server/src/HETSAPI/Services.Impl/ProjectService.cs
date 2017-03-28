@@ -539,15 +539,9 @@ namespace HETSAPI.Services.Impl
                     .Include(x => x.PrimaryContact)
                     .Select(x => x);
 
-            if (districts != null)
+            if (districts != null && districts.Length > 0)
             {
-                foreach (int? localarea in districts)
-                {
-                    if (localarea != null)
-                    {
-                        data = data.Where(x => x.District.Id == localarea);
-                    }
-                }
+                data = data.Where(x => districts.Contains (x.District.Id));                
             }
 
             if (hasRequests != null)

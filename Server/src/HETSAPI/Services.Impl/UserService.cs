@@ -906,16 +906,9 @@ namespace HETSAPI.Services.Impl
                 .Select(x => x);
 
             // Note that Districts searches SchoolBus Districts, not SchoolBusOwner Districts
-            if (districts != null)
+            if (districts != null && districts.Length > 0)
             {
-
-                foreach (int? district in districts)
-                {
-                    if (district != null)
-                    {
-                        data = data.Where(x => x.District.Id == district);
-                    }
-                }
+                data = data.Where(x => districts.Contains (x.District.Id));
             }
 
             if (surname != null)
