@@ -392,7 +392,7 @@ namespace HETSAPI.Services.Impl
             {
                 var result = _context.Equipments
                     .Include(x => x.LocalArea.ServiceArea.District.Region)
-                    .Include(x => x.DistrictEquipmentType)
+                    .Include(x => x.DistrictEquipmentType.EquipmentType)
                     .Include(x => x.DumpTruck)
                     .Include(x => x.Owner)
                     .Include(x => x.EquipmentAttachments)
@@ -421,7 +421,8 @@ namespace HETSAPI.Services.Impl
             if (item != null)
             {
                 AdjustRecord(item);
-                float originalSeniority = _context.GetEquipmentSeniority(id);
+
+                DateTime? originalSeniorityEffectiveDate = _context.GetEquipmentSeniorityEffectiveDate(id);
 
                 var exists = _context.Equipments
                     .Any(a => a.Id == id);
@@ -433,7 +434,9 @@ namespace HETSAPI.Services.Impl
                     _context.SaveChanges();
 
                     // if seniority has changed, update blocks.
-                    if (originalSeniority != item.Seniority)
+                    if ((originalSeniorityEffectiveDate == null && item.SeniorityEffectiveDate != null)  ||
+                        (originalSeniorityEffectiveDate != null && item.SeniorityEffectiveDate != null 
+                            && originalSeniorityEffectiveDate < item.SeniorityEffectiveDate ))
                     {
                         _context.UpdateBlocksFromEquipment(item);
                     }
@@ -664,11 +667,14 @@ namespace HETSAPI.Services.Impl
         /// </summary>
         /// <remarks>Used to calculate seniority for all database records.</remarks>
         /// <response code="200">OK</response>
-        public virtual IActionResult EquipmentRecalcSeniorityGetAsync()
+        public virtual IActionResult EquipmentRecalcSeniorityGetAsync(int region)
         {
             // calculate all of the rotation lists.
 
-            var localAreas = _context.LocalAreas.Select (x => x).ToList();
+            var localAreas = _context.LocalAreas
+                .Where(x => x.ServiceArea.District.Region.Id == region) 
+                .Select (x => x)
+                .ToList();
             var equipmentTypes = _context.EquipmentTypes.Select (x => x).ToList();
 
             foreach (LocalArea localArea in localAreas)

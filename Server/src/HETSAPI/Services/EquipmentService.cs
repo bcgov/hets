@@ -120,8 +120,9 @@ namespace HETSAPI.Services
         /// Recalculates seniority for the database
         /// </summary>
         /// <remarks>Used to calculate seniority for all database records.</remarks>
+        /// <param name="region">Region to recalculate</param>
         /// <response code="200">OK</response>
-        IActionResult EquipmentRecalcSeniorityGetAsync();
+        IActionResult EquipmentRecalcSeniorityGetAsync(int region);
 
         /// <summary>
         /// Searches Equipment
