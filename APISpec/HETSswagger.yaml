@@ -4650,6 +4650,12 @@ paths:
         - text/plain
         - application/json
         - text/json
+      parameters:        
+        - name: region
+          in: query
+          description: Region to recalculate
+          type: integer
+          required: true          
       responses:
         200:
           description: OK          
@@ -7524,6 +7530,42 @@ definitions:
         type: string
         maxLength: 2048
         description: A description of the group that is presented to the user when they are setting a user into a group.
+  AttachmentViewModel:
+    type: object
+    x-codegen-viewmodel: true
+    description: Uploaded documents related to entity in the application - e.g. piece of Equipment, an Owner, a Project and so on.
+    required:
+      - id
+      - fileName
+      - fileContents
+    properties:
+      id:
+        format: int32
+        type: integer
+        description: A system-generated unique identifier for an Attachment
+      fileName:
+        type: string
+        maxLength: 2048
+        description: Filename as passed by the user uploading the file
+      fileContents:
+        type: string
+        format: binary
+        description: Binary contents of the file
+      description:
+        type: string
+        maxLength: 2048
+        description: A note about the attachment,  optionally maintained by the user.
+      type:
+        type: string
+        maxLength: 255
+        description: Type of attachment
+      lastUpdateUserid:
+        type: string
+        description: Audit information - SM User Id for the User who most recently updated the record.
+      lastUpdateTimestamp:
+        type: string
+        format: date-time
+        description: Audit information - Timestamp for record modification     
   HistoryViewModel:
     type: object
     x-codegen-viewmodel: true

@@ -1,7 +1,7 @@
 /*
- * REST API Documentation for the MOTI School Bus Application
+ * REST API Documentation for the MOTI Hired Equipment Tracking System (HETS) Application
  *
- * The School Bus application tracks that inspections are performed in a timely fashion. For each school bus the application tracks information about the bus (including data from ICBC, NSC, etc.), it's past and next inspection dates and results, contacts, and the inspector responsible for next inspecting the bus.
+ * The Hired Equipment Program is for owners/operators who have a dump truck, bulldozer, backhoe or  other piece of equipment they want to hire out to the transportation ministry for day labour and  emergency projects.  The Hired Equipment Program distributes available work to local equipment owners. The program is  based on seniority and is designed to deliver work to registered users fairly and efficiently  through the development of local area call-out lists. 
  *
  * OpenAPI spec version: v1
  * 
@@ -24,8 +24,9 @@ using HETSAPI.Models;
 namespace HETSAPI.ViewModels
 {
     /// <summary>
-    /// 
+    /// Uploaded documents related to entity in the application - e.g. piece of Equipment, an Owner, a Project and so on.
     /// </summary>
+        [MetaDataExtension (Description = "Uploaded documents related to entity in the application - e.g. piece of Equipment, an Owner, a Project and so on.")]
     [DataContract]
     public partial class AttachmentViewModel : IEquatable<AttachmentViewModel>
     {
@@ -39,24 +40,32 @@ namespace HETSAPI.ViewModels
         /// <summary>
         /// Initializes a new instance of the <see cref="AttachmentViewModel" /> class.
         /// </summary>
-        /// <param name="Id">Primary Key (required).</param>
-        /// <param name="FileName">Filename as passed by the user uploading the file.</param>
+        /// <param name="Id">A system-generated unique identifier for an Attachment (required).</param>
+        /// <param name="FileName">Filename as passed by the user uploading the file (required).</param>
+        /// <param name="FileContents">Binary contents of the file (required).</param>
         /// <param name="Description">A note about the attachment,  optionally maintained by the user..</param>
         /// <param name="Type">Type of attachment.</param>
-        public AttachmentViewModel(int Id, string FileName = null, string Description = null, string Type = null)
+        /// <param name="LastUpdateUserid">Audit information - SM User Id for the User who most recently updated the record..</param>
+        /// <param name="LastUpdateTimestamp">Audit information - Timestamp for record modification.</param>
+        public AttachmentViewModel(int Id, string FileName, byte[] FileContents, string Description = null, string Type = null, string LastUpdateUserid = null, DateTime? LastUpdateTimestamp = null)
         {   
             this.Id = Id;
             this.FileName = FileName;
+            this.FileContents = FileContents;
+
+
             this.Description = Description;
             this.Type = Type;
+            this.LastUpdateUserid = LastUpdateUserid;
+            this.LastUpdateTimestamp = LastUpdateTimestamp;
         }
 
         /// <summary>
-        /// Primary Key
+        /// A system-generated unique identifier for an Attachment
         /// </summary>
-        /// <value>Primary Key</value>
+        /// <value>A system-generated unique identifier for an Attachment</value>
         [DataMember(Name="id")]
-        [MetaDataExtension (Description = "Primary Key")]
+        [MetaDataExtension (Description = "A system-generated unique identifier for an Attachment")]
         public int Id { get; set; }
 
         /// <summary>
@@ -66,6 +75,14 @@ namespace HETSAPI.ViewModels
         [DataMember(Name="fileName")]
         [MetaDataExtension (Description = "Filename as passed by the user uploading the file")]
         public string FileName { get; set; }
+
+        /// <summary>
+        /// Binary contents of the file
+        /// </summary>
+        /// <value>Binary contents of the file</value>
+        [DataMember(Name="fileContents")]
+        [MetaDataExtension (Description = "Binary contents of the file")]
+        public byte[] FileContents { get; set; }
 
         /// <summary>
         /// A note about the attachment,  optionally maintained by the user.
@@ -84,6 +101,22 @@ namespace HETSAPI.ViewModels
         public string Type { get; set; }
 
         /// <summary>
+        /// Audit information - SM User Id for the User who most recently updated the record.
+        /// </summary>
+        /// <value>Audit information - SM User Id for the User who most recently updated the record.</value>
+        [DataMember(Name="lastUpdateUserid")]
+        [MetaDataExtension (Description = "Audit information - SM User Id for the User who most recently updated the record.")]
+        public string LastUpdateUserid { get; set; }
+
+        /// <summary>
+        /// Audit information - Timestamp for record modification
+        /// </summary>
+        /// <value>Audit information - Timestamp for record modification</value>
+        [DataMember(Name="lastUpdateTimestamp")]
+        [MetaDataExtension (Description = "Audit information - Timestamp for record modification")]
+        public DateTime? LastUpdateTimestamp { get; set; }
+
+        /// <summary>
         /// Returns the string presentation of the object
         /// </summary>
         /// <returns>String presentation of the object</returns>
@@ -93,8 +126,11 @@ namespace HETSAPI.ViewModels
             sb.Append("class AttachmentViewModel {\n");
             sb.Append("  Id: ").Append(Id).Append("\n");
             sb.Append("  FileName: ").Append(FileName).Append("\n");
+            sb.Append("  FileContents: ").Append(FileContents).Append("\n");
             sb.Append("  Description: ").Append(Description).Append("\n");
             sb.Append("  Type: ").Append(Type).Append("\n");
+            sb.Append("  LastUpdateUserid: ").Append(LastUpdateUserid).Append("\n");
+            sb.Append("  LastUpdateTimestamp: ").Append(LastUpdateTimestamp).Append("\n");
             sb.Append("}\n");
             return sb.ToString();
         }
@@ -143,6 +179,11 @@ namespace HETSAPI.ViewModels
                     this.FileName.Equals(other.FileName)
                 ) &&                 
                 (
+                    this.FileContents == other.FileContents ||
+                    this.FileContents != null &&
+                    this.FileContents.Equals(other.FileContents)
+                ) &&                 
+                (
                     this.Description == other.Description ||
                     this.Description != null &&
                     this.Description.Equals(other.Description)
@@ -151,6 +192,16 @@ namespace HETSAPI.ViewModels
                     this.Type == other.Type ||
                     this.Type != null &&
                     this.Type.Equals(other.Type)
+                ) &&                 
+                (
+                    this.LastUpdateUserid == other.LastUpdateUserid ||
+                    this.LastUpdateUserid != null &&
+                    this.LastUpdateUserid.Equals(other.LastUpdateUserid)
+                ) &&                 
+                (
+                    this.LastUpdateTimestamp == other.LastUpdateTimestamp ||
+                    this.LastUpdateTimestamp != null &&
+                    this.LastUpdateTimestamp.Equals(other.LastUpdateTimestamp)
                 );
         }
 
@@ -170,6 +221,10 @@ namespace HETSAPI.ViewModels
                 {
                     hash = hash * 59 + this.FileName.GetHashCode();
                 }                
+                                if (this.FileContents != null)
+                {
+                    hash = hash * 59 + this.FileContents.GetHashCode();
+                }                
                                 if (this.Description != null)
                 {
                     hash = hash * 59 + this.Description.GetHashCode();
@@ -177,6 +232,14 @@ namespace HETSAPI.ViewModels
                                 if (this.Type != null)
                 {
                     hash = hash * 59 + this.Type.GetHashCode();
+                }                
+                                if (this.LastUpdateUserid != null)
+                {
+                    hash = hash * 59 + this.LastUpdateUserid.GetHashCode();
+                }                
+                                if (this.LastUpdateTimestamp != null)
+                {
+                    hash = hash * 59 + this.LastUpdateTimestamp.GetHashCode();
                 }                
                 
                 return hash;
