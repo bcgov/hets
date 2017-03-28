@@ -186,6 +186,11 @@ var ProjectsDetail = React.createClass({
                 <h1>Project: <small>{ project.name }</small></h1>
               </Col>
             </Row>
+            <Row>
+              <Col md={12}>
+                <h1>District: <small>{ project.districtName }</small></h1>
+              </Col>
+            </Row>
           </div>;
         })()}
 
@@ -212,9 +217,6 @@ var ProjectsDetail = React.createClass({
                     <ColDisplay md={12} labelProps={{ md: 4 }} label={ project.primaryContactRole || 'Primary Contact' }>
                       { mailto }{ project.primaryContactPhone ? `, ${project.primaryContactPhone}` : '' }
                     </ColDisplay>
-                  </Row>
-                  <Row>
-                    <ColDisplay md={12} labelProps={{ md: 4 }} label="District">{ project.districtName }</ColDisplay>
                   </Row>
                   <Row>
                     <ColDisplay md={12} labelProps={{ md: 4 }} label="Provincial Project Number">{ project.provincialProjectNumber }</ColDisplay>
