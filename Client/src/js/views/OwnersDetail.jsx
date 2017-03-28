@@ -166,7 +166,8 @@ var OwnersDetail = React.createClass({
   },
 
   saveEdit(owner) {
-    Api.updateOwner(owner).finally(() => {
+    // This just ensures that the normalized data doesn't mess up the PUT call
+    Api.updateOwner({ ...owner, contacts: null }).finally(() => {
       this.closeEditDialog();
     });
   },
@@ -280,7 +281,8 @@ var OwnersDetail = React.createClass({
   },
 
   savePolicyEdit(owner) {
-    Api.updateOwner(owner).finally(() => {
+    // This just ensures that the normalized data doesn't mess up the PUT call
+    Api.updateOwner({ ...owner, contacts: null }).finally(() => {
       this.closePolicyDialog();
     });
   },
