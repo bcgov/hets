@@ -2753,7 +2753,7 @@ paths:
       responses:
         201:
           description: Note created
-  /attachment:
+  /attachments:
     get:
       tags:
         - Attachment
@@ -2794,7 +2794,7 @@ paths:
               format: url
           schema:
             $ref: "#/definitions/Attachment"  
-  /attachment/{id}:
+  /attachments/{id}:
     get:
       tags:
         - Attachment
@@ -2843,7 +2843,7 @@ paths:
           required: true
           schema:
             $ref: "#/definitions/Attachment"
-  /attachment/{id}/delete:
+  /attachments/{id}/delete:
     post:
       tags:
         - Attachment
@@ -2864,7 +2864,7 @@ paths:
           required: true
           type: integer
 
-  /attachment/bulk:
+  /attachments/bulk:
     post:
       tags:
         - Attachment
