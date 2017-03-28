@@ -52,7 +52,9 @@ namespace HETSAPI.Services.Impl
             {
                 if (item.Equipment != null)
                 {
-                    item.Equipment = _context.Equipments.FirstOrDefault(a => a.Id == item.Equipment.Id);
+                    item.Equipment = _context.Equipments
+                        .Include (x => x.LocalArea)
+                        .FirstOrDefault(a => a.Id == item.Equipment.Id);
                 }
 
                 if (item.Project != null)
@@ -305,6 +307,43 @@ namespace HETSAPI.Services.Impl
             }
         }
 
+        private string GetRentalAgreementNumber (RentalAgreement item)
+        {
+            string result = "";
+
+            // validate item.
+
+            if (item.Equipment != null && item.Equipment.LocalArea != null)
+            {
+                DateTime currentTime = DateTime.UtcNow;
+
+                int fiscalYear = currentTime.Year;
+
+                // fiscal year always ends in March.
+                if (currentTime.Month > 3)
+                {
+                    fiscalYear++;
+                }                              
+
+                int localAreaNumber = item.Equipment.LocalArea.LocalAreaNumber;
+                int localAreaId = item.Equipment.LocalArea.Id;
+
+                DateTime fiscalYearStart = new DateTime(fiscalYear - 1, 1, 1);
+
+                // count the number of rental agreements in the system.
+                int currentCount = _context.RentalAgreements
+                                        .Include(x => x.Equipment.LocalArea)
+                                        .Where(x => x.Equipment.LocalArea.Id == localAreaId && x.CreateTimestamp >= fiscalYearStart)
+                                        .Count();
+                currentCount++;
+
+                // format of the Rental Agreement number is YYYY-#-####
+                result = fiscalYear.ToString() + "-" + localAreaNumber.ToString() + "-" + currentCount.ToString ("D4");               
+            }
+            return result;
+
+        }
+
         /// <summary>
         /// 
         /// </summary>
@@ -323,6 +362,8 @@ namespace HETSAPI.Services.Impl
                 }
                 else
                 {
+                    item.Number = GetRentalAgreementNumber(item);
+
                     // record not found
                     _context.RentalAgreements.Add(item);
                 }
