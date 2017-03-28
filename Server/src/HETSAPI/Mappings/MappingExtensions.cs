@@ -82,6 +82,8 @@ namespace HETSAPI.Mappings
                 dto.FileName = model.FileName;
                 dto.Id = model.Id;
                 dto.Type = model.Type;
+                dto.LastUpdateTimestamp = model.LastUpdateTimestamp;
+                dto.LastUpdateUserid = model.LastUpdateUserid;
             }
             return dto;
         }

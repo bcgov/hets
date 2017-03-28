@@ -38,9 +38,10 @@ TODO:
 
 var Equipment = React.createClass({
   propTypes: {
+    currentUser: React.PropTypes.object,
     equipmentList: React.PropTypes.object,
     localAreas: React.PropTypes.object,
-    equipmentTypes: React.PropTypes.object,
+    districtEquipmentTypes: React.PropTypes.object,
     owners: React.PropTypes.object,
     favourites: React.PropTypes.object,
     search: React.PropTypes.object,
@@ -97,7 +98,7 @@ var Equipment = React.createClass({
   componentDidMount() {
     this.setState({ loading: true });
 
-    var equipmentTypesPromise = Api.getEquipmentTypes();
+    var equipmentTypesPromise = Api.getDistrictEquipmentTypes(this.props.currentUser.district.id);
     var ownersPromise = Api.getOwners();
     var favouritesPromise = Api.getFavourites('equipment');
 
@@ -150,7 +151,7 @@ var Equipment = React.createClass({
   render() {
     var localAreas = _.sortBy(this.props.localAreas, 'name');
     var owners = _.sortBy(this.props.owners, 'organizationName');
-    var equipmentTypes = _.sortBy(this.props.equipmentTypes, 'name');
+    var districtEquipmentTypes = _.sortBy(this.props.districtEquipmentTypes, 'districtEquipmentName');
 
     var numResults = this.state.loading ? '...' : Object.keys(this.props.equipmentList).length;
 
@@ -175,8 +176,8 @@ var Equipment = React.createClass({
                 <DropdownControl id="statusCode" title={ this.state.search.statusCode } updateState={ this.updateSearchState }
                   items={[ Constant.EQUIPMENT_STATUS_CODE_APPROVED, Constant.EQUIPMENT_STATUS_CODE_PENDING, Constant.EQUIPMENT_STATUS_CODE_ARCHIVED ]}
                 />
-                <MultiDropdown id="selectedEquipmentTypesIds" placeholder="Equipment Types" fieldName="name"
-                  items={ equipmentTypes } selectedIds={ this.state.search.selectedEquipmentTypesIds } updateState={ this.updateSearchState } showMaxItems={ 2 } />
+                <MultiDropdown id="selectedEquipmentTypesIds" placeholder="Equipment Types" fieldName="districtEquipmentName"
+                  items={ districtEquipmentTypes } selectedIds={ this.state.search.selectedEquipmentTypesIds } updateState={ this.updateSearchState } showMaxItems={ 2 } />
                 <FilterDropdown id="ownerId" placeholder="Owner" fieldName="organizationName" blankLine
                   items={ owners } selectedId={ this.state.search.ownerId } updateState={ this.updateSearchState } />
                 <CheckboxControl inline id="hired" checked={ this.state.search.hired } updateState={ this.updateSearchState }>Hired</CheckboxControl>
@@ -255,9 +256,10 @@ var Equipment = React.createClass({
 
 function mapStateToProps(state) {
   return {
+    currentUser: state.user,
     equipmentList: state.models.equipmentList,
     localAreas: state.lookups.localAreas,
-    equipmentTypes: state.lookups.equipmentTypes,
+    districtEquipmentTypes: state.lookups.districtEquipmentTypes,
     owners: state.lookups.owners,
     favourites: state.models.favourites,
     search: state.search.equipmentList,

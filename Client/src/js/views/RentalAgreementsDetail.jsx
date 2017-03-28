@@ -192,12 +192,7 @@ var RentalAgreementsDetail = React.createClass({
   },
 
   closeConditionDialog() {
-    this.setState({ showConditionDialog: false }, () => {
-      // Reset location
-      // this.props.router.push({
-      //   pathname: this.props.rentalAgreement.path,
-      // });
-    });
+    this.setState({ showConditionDialog: false });
   },
 
   addCondition() {

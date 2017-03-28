@@ -32,6 +32,7 @@ namespace HETSAPI
         {
             services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
             services.AddTransient<IAttachmentService, AttachmentService>();
+            services.AddTransient<IAttachmentUploadService, AttachmentUploadService>();
             services.AddTransient<ICityService, CityService>();
             services.AddTransient<IContactService, ContactService>();            
             services.AddTransient<ICurrentUserService, CurrentUserService>();

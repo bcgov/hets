@@ -17,8 +17,9 @@ import Spinner from '../../components/Spinner.jsx';
 
 var RentalRequestsAddDialog = React.createClass({
   propTypes: {
+    currentUser: React.PropTypes.object,
     localAreas: React.PropTypes.object,
-    equipmentTypes: React.PropTypes.object,
+    districtEquipmentTypes: React.PropTypes.object,
     projects: React.PropTypes.object,
     onSave: React.PropTypes.func.isRequired,
     onClose: React.PropTypes.func.isRequired,
@@ -41,7 +42,7 @@ var RentalRequestsAddDialog = React.createClass({
 
   componentDidMount() {
     this.setState({ loading: true });
-    var equipmentTypesPromise = Api.getEquipmentTypes();
+    var equipmentTypesPromise = Api.getDistrictEquipmentTypes(this.props.currentUser.district.id);
     var projectsPromise = Api.getProjects();  // TODO This API call returns unnecessary data for this popup. It should be replaced with a lightweight version of projects (name, Id)
     Promise.all([equipmentTypesPromise, projectsPromise]).then(() => {
       this.setState({ loading: false });
@@ -100,9 +101,9 @@ var RentalRequestsAddDialog = React.createClass({
     this.props.onSave({
       project: { id: this.state.projectId },
       localArea: { id: this.state.localAreaId },
-      equipmentType: { id: this.state.equipmentTypeId },
+      districtEquipmentType: { id: this.state.equipmentTypeId },
       equipmentCount: this.state.count,
-      status: Constant.RENTAL_REQUEST_STATUS_CODE_IN_PROGRESS,
+      status: Constant.RENTAL_REQUEST_STATUS_CODE_IN_PROGRESS,  // TODO Use lookup table
     });
   },
 
@@ -110,7 +111,7 @@ var RentalRequestsAddDialog = React.createClass({
     if (this.state.loading) { return <div style={{ textAlign: 'center' }}><Spinner/></div>; }
 
     var localAreas = _.sortBy(this.props.localAreas, 'name');
-    var equipmentTypes = _.sortBy(this.props.equipmentTypes, 'name');
+    var districtEquipmentTypes = _.sortBy(this.props.districtEquipmentTypes, 'districtEquipmentName');
     var projects = _.sortBy(this.props.projects, 'name');
 
     return <EditDialog id="add-rental-request" show={ this.props.show } bsSize="small"
@@ -136,7 +137,7 @@ var RentalRequestsAddDialog = React.createClass({
         <FormGroup controlId="equipmentTypeId" validationState={ this.state.equipmentTypeError ? 'error' : null }>
           <ControlLabel>Equipment Type <sup>*</sup></ControlLabel>
           <FilterDropdown id="equipmentTypeId" fieldName="name" selectedId={ this.state.equipmentTypeId } updateState={ this.updateState }
-            items={ equipmentTypes }
+            items={ districtEquipmentTypes }
           />
           <HelpBlock>{ this.state.equipmentTypeError }</HelpBlock>
         </FormGroup>
@@ -152,8 +153,9 @@ var RentalRequestsAddDialog = React.createClass({
 
 function mapStateToProps(state) {
   return {
+    currentUser: state.user,
     localAreas: state.lookups.localAreas,
-    equipmentTypes: state.lookups.equipmentTypes,
+    districtEquipmentTypes: state.lookups.districtEquipmentTypes,
     projects: state.lookups.projects,
   };
 }

@@ -170,7 +170,7 @@ var ProjectsDetail = React.createClass({
               <Unimplemented>
                 <Button onClick={ this.print }><Glyphicon glyph="print" title="Print" /></Button>
               </Unimplemented>
-              <LinkContainer to={{ pathname: 'projects' }}>
+              <LinkContainer to={{ pathname: Constant.PROJECTS_PATHNAME }}>
                 <Button title="Return to List"><Glyphicon glyph="arrow-left" /> Return to List</Button>
               </LinkContainer>
             </div>
@@ -214,7 +214,7 @@ var ProjectsDetail = React.createClass({
                     </ColDisplay>
                   </Row>
                   <Row>
-                    <ColDisplay md={12} labelProps={{ md: 4 }} label="Local Area">{ project.localAreaName }</ColDisplay>
+                    <ColDisplay md={12} labelProps={{ md: 4 }} label="District">{ project.districtName }</ColDisplay>
                   </Row>
                   <Row>
                     <ColDisplay md={12} labelProps={{ md: 4 }} label="Provincial Project Number">{ project.provincialProjectNumber }</ColDisplay>

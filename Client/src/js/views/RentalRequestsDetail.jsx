@@ -156,7 +156,7 @@ var RentalRequestsDetail = React.createClass({
           </Col>
           <Col md={2}>
             <div className="pull-right">
-              <LinkContainer to={{ pathname: 'rentalrequests' }}>
+              <LinkContainer to={{ pathname: Constant.RENTAL_REQUESTS_PATHNAME }}>
                 <Button title="Return to List"><Glyphicon glyph="arrow-left" /> Return to List</Button>
               </LinkContainer>
             </div>

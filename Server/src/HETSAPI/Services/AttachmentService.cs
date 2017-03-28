@@ -34,13 +34,13 @@ namespace HETSAPI.Services
         /// </summary>
         /// <param name="items"></param>
         /// <response code="201">Attachment created</response>
-        IActionResult AttachmentBulkPostAsync(Attachment[] items);
+        IActionResult AttachmentsBulkPostAsync(Attachment[] items);
 
         /// <summary>
         /// 
         /// </summary>
         /// <response code="200">OK</response>
-        IActionResult AttachmentGetAsync();
+        IActionResult AttachmentsGetAsync();
 
         /// <summary>
         /// 
@@ -48,31 +48,7 @@ namespace HETSAPI.Services
         /// <param name="id">id of Attachment to delete</param>
         /// <response code="200">OK</response>
         /// <response code="404">Attachment not found</response>
-        IActionResult AttachmentIdDeletePostAsync(int id);
-
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="id">id of Attachment to fetch</param>
-        /// <response code="200">OK</response>
-        /// <response code="404">Attachment not found</response>
-        IActionResult AttachmentIdGetAsync(int id);
-
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="id">id of Attachment to fetch</param>
-        /// <param name="item"></param>
-        /// <response code="200">OK</response>
-        /// <response code="404">Attachment not found</response>
-        IActionResult AttachmentIdPutAsync(int id, Attachment item);
-
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="item"></param>
-        /// <response code="201">Attachment created</response>
-        IActionResult AttachmentPostAsync(Attachment item);
+        IActionResult AttachmentsIdDeletePostAsync(int id);
 
         /// <summary>
         /// Returns the binary file component of an attachment
@@ -81,5 +57,29 @@ namespace HETSAPI.Services
         /// <response code="200">OK</response>
         /// <response code="404">Attachment not found in system</response>
         IActionResult AttachmentsIdDownloadGetAsync(int id);
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="id">id of Attachment to fetch</param>
+        /// <response code="200">OK</response>
+        /// <response code="404">Attachment not found</response>
+        IActionResult AttachmentsIdGetAsync(int id);
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="id">id of Attachment to fetch</param>
+        /// <param name="item"></param>
+        /// <response code="200">OK</response>
+        /// <response code="404">Attachment not found</response>
+        IActionResult AttachmentsIdPutAsync(int id, Attachment item);
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="item"></param>
+        /// <response code="201">Attachment created</response>
+        IActionResult AttachmentsPostAsync(Attachment item);
     }
 }
