@@ -149,9 +149,21 @@ var Equipment = React.createClass({
   },
 
   render() {
-    var localAreas = _.sortBy(this.props.localAreas, 'name');
-    var owners = _.sortBy(this.props.owners, 'organizationName');
-    var districtEquipmentTypes = _.sortBy(this.props.districtEquipmentTypes, 'districtEquipmentName');
+    // Constrain the local area drop downs to those in the District of the current logged in user
+    var localAreas = _.chain(this.props.localAreas)
+      .filter(localArea => localArea.serviceArea.district.id == this.props.currentUser.district.id)
+      .sortBy('name')
+      .value();
+
+    var owners = _.chain(this.props.owners)
+      .filter(owner => owner.localArea.serviceArea.district.id == this.props.currentUser.district.id)
+      .sortBy('organizationName')
+      .value();
+
+    var districtEquipmentTypes = _.chain(this.props.districtEquipmentTypes)
+      .filter(type => type.district.id == this.props.currentUser.district.id)
+      .sortBy('districtEquipmentName')
+      .value();
 
     var numResults = this.state.loading ? '...' : Object.keys(this.props.equipmentList).length;
 

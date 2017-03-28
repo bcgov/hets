@@ -48,6 +48,7 @@ const ALL = 'All';
 
 var RentalRequests = React.createClass({
   propTypes: {
+    currentUser: React.PropTypes.object,
     rentalRequests: React.PropTypes.object,
     rentalRequest: React.PropTypes.object,
     localAreas: React.PropTypes.object,
@@ -209,7 +210,12 @@ var RentalRequests = React.createClass({
 
 
   render() {
-    var localAreas = _.sortBy(this.props.localAreas, 'name');
+    // Constrain the local area drop downs to those in the District of the current logged in user
+    var localAreas = _.chain(this.props.localAreas)
+      .filter(localArea => localArea.serviceArea.district.id == this.props.currentUser.district.id)
+      .sortBy('name')
+      .value();
+
     var numRentalRequests = this.state.loading ? '...' : Object.keys(this.props.rentalRequests).length;
 
     return <div id="rental-requests-list">
@@ -319,6 +325,7 @@ var RentalRequests = React.createClass({
 
 function mapStateToProps(state) {
   return {
+    currentUser: state.user,
     rentalRequests: state.models.rentalRequests,
     rentalRequest: state.models.rentalRequest,
     localAreas: state.lookups.localAreas,
