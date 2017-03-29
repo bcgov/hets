@@ -97,7 +97,7 @@ export function getUsers() {
     // Add display fields
     _.map(users, user => { parseUser(user); });
 
-    store.dispatch({ type: Action.UPDATE_USERS, users: users });
+    store.dispatch({ type: Action.UPDATE_USERS_LOOKUP, users: users });
   });
 }
 
@@ -499,6 +499,7 @@ function parseOwner(owner) {
   if (!owner.localArea.serviceArea.district) { owner.localArea.serviceArea.district = { id: 0, name: '' }; }
   if (!owner.localArea.serviceArea.district.region) { owner.localArea.serviceArea.district.region = { id: 0, name: '' }; }
   if (!owner.contacts) { owner.contacts = []; }
+  if (!owner.documents) { owner.documents = []; }
   if (!owner.equipmentList) { owner.equipmentList = []; }
 
   owner.organizationName = owner.organizationName || '';
@@ -519,6 +520,7 @@ function parseOwner(owner) {
   owner.contacts = normalize(owner.contacts);
   _.map(owner.contacts, contact => { parseContact(contact, owner); });
 
+  _.map(owner.documents, document => { parseDocument(document); });
   _.map(owner.equipmentList, equipment => { parseEquipment(equipment); });
 
   // TODO Owner status needs to be populated in sample data. Setting to Approved for the time being...
@@ -532,6 +534,9 @@ function parseOwner(owner) {
   owner.districtName = owner.localArea.serviceArea.district.name;
   owner.numberOfEquipment = Object.keys(owner.equipmentList).length;
   owner.numberOfPolicyDocuments = owner.numberOfPolicyDocuments || 0;  // TODO
+
+  owner.getDocumentsPromise = getOwnerDocuments;
+  owner.uploadDocumentPath = `/owners/${ owner.id }/attachments`;
 
   owner.canView = true;
   owner.canEdit = true;
@@ -630,6 +635,21 @@ export function getOwnerHistory(ownerId, params) {
   });
 }
 
+export function getOwnerDocuments(ownerId) {
+  return new ApiRequest(`/owners/${ ownerId }/attachments`).get().then(response => {
+    var documents = normalize(response);
+
+    // Add display fields
+    _.map(documents, document => { parseDocument(document); });
+
+    store.dispatch({ type: Action.UPDATE_DOCUMENTS, documents: documents });
+  });
+}
+
+export function addOwnerDocument(ownerId, files) {
+  return new ApiRequest(`/owners/${ ownerId }/attachments`).post(files);
+}
+
 export function updateOwnerEquipment(owner, equipmentArray) {
   return new ApiRequest(`/owners/${ owner.id }/equipment`).put(equipmentArray).then(() => {
     // After updating the owner's equipment, refresh the owner state.
@@ -717,6 +737,43 @@ export function deleteContact(contact) {
 
     store.dispatch({ type: Action.DELETE_CONTACT, contact: contact });
   });
+}
+
+////////////////////
+// Documents
+////////////////////
+
+function getFileSizeString(fileSizeInBytes) {
+  var bytes  = parseInt(fileSizeInBytes, 10) || 0;
+  var kbytes = bytes  >= 1024 ? bytes  / 1024 : 0;
+  var mbytes = kbytes >= 1024 ? kbytes / 1024 : 0;
+  var gbytes = mbytes >= 1024 ? mbytes / 1024 : 0;
+
+  var ceiling10 = function(num) {
+    var adjusted = Math.ceil(num * 10) / 10;
+    return adjusted.toFixed(1);
+  };
+
+  return gbytes ? `${ ceiling10(gbytes) } GB` : (
+         mbytes ? `${ ceiling10(mbytes) } MB` : (
+         kbytes ? `${ Math.ceil(kbytes) } KB` :
+                  `${ bytes } bytes`));
+}
+
+function parseDocument(document) {
+  document.fileSizeDisplay = getFileSizeString(document.fileSize);
+  document.timestampSort = sortableDateTime(document.lastUpdateTimestamp);
+
+  document.canDelete = true;
+}
+
+export function deleteDocument(document) {
+  return new ApiRequest(`/attachments/${ document.id }/delete`).post();
+}
+
+export function getDownloadDocumentURL(document) {
+  // Not an API call, per se, as it must be called from the browser window.
+  return `${ location.origin }${ location.pathname}api/attachments/${ document.id }/download`;
 }
 
 ////////////////////

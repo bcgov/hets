@@ -15,6 +15,7 @@ const DEFAULT_LOOKUPS = {
   owners: {},
   roles: {},
   projects: {},
+  users: {},
 };
 
 export default function lookupsReducer(state = DEFAULT_LOOKUPS, action) {
@@ -61,6 +62,9 @@ export default function lookupsReducer(state = DEFAULT_LOOKUPS, action) {
 
     case Action.UPDATE_PROJECTS_LOOKUP:
       return { ...state, projects: action.projects };
+
+    case Action.UPDATE_USERS_LOOKUP:
+      return { ...state, users: action.users };
   }
 
   return state;

@@ -21,14 +21,14 @@ var FilePicker = React.createClass({
       classNames.push(this.props.className);
     }
 
-    return <span id={this.props.id} className={classNames.join(' ')}>
-        <label>
-          <span className="btn btn-default" title="Pick files to upload">
-            <Glyphicon glyph="folder-open" />{this.props.label}
-          </span>
-          <input type="file" multiple onChange={this.filesPicked}/>
-        </label>
-      </span>;
+    return <span id={ this.props.id } className={ classNames.join(' ') }>
+      <label>
+        <span className="btn btn-default" title="Pick files to upload">
+          <Glyphicon glyph="folder-open" />{ this.props.label ? ` ${ this.props.label }` : null }
+        </span>
+        <input type="file" multiple onChange={ this.filesPicked }/>
+      </label>
+    </span>;
   },
 });
 

@@ -47,6 +47,9 @@ const DEFAULT_MODELS = {
   contacts: {},
   contact: {},
 
+  documents: {},
+  document: {},
+
   history: {},
 };
 
@@ -90,6 +93,19 @@ export default function modelsReducer(state = DEFAULT_MODELS, action) {
 
     case Action.DELETE_CONTACT:
       return { ...state, contact: action.contact };
+
+    // Documents
+    case Action.UPDATE_DOCUMENTS:
+      return { ...state, documents: action.documents };
+
+    case Action.ADD_DOCUMENT:
+      return { ...state, document: action.document };
+
+    case Action.UPDATE_DOCUMENT:
+      return { ...state, document: action.document };
+
+    case Action.DELETE_DOCUMENT:
+      return { ...state, document: action.document };
 
     // Equipment
     case Action.UPDATE_EQUIPMENT_LIST:
