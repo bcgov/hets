@@ -314,8 +314,8 @@ namespace HETSAPI.Services.Impl
             // validate input parameters
             if (item != null && item.LocalArea != null && item.DistrictEquipmentType != null && item.DistrictEquipmentType.EquipmentType != null)
             {
-                int currentSortOrder = 0;
-
+                int currentSortOrder = 1;
+                
                 item.RentalRequestRotationList = new List<RentalRequestRotationList>();
 
                 // first get the localAreaRotationList.askNextBlock1 for the given local area.
@@ -330,10 +330,11 @@ namespace HETSAPI.Services.Impl
 
                 for (int currentBlock = 1; currentBlock <= numberOfBlocks; currentBlock++)
                 {
+                    int currentBlockSortOrder = 0;
                     // start by getting the current set of equipment for the given equipment type.
 
                     List<Equipment> blockEquipment = _context.Equipments
-                        .Where(x => x.DistrictEquipmentType == item.DistrictEquipmentType && x.BlockNumber == currentBlock)
+                        .Where(x => x.DistrictEquipmentType == item.DistrictEquipmentType && x.BlockNumber == currentBlock  && x.LocalArea.Id == item.LocalArea.Id)
                         .OrderByDescending(x => x.Seniority)
                         .ToList();
 
@@ -381,6 +382,7 @@ namespace HETSAPI.Services.Impl
                         item.RentalRequestRotationList.Add(rentalRequestRotationList);
 
                         currentPosition++;
+                        currentBlockSortOrder++;
                         currentSortOrder++;
                         if (currentPosition >= listSize)
                         {
