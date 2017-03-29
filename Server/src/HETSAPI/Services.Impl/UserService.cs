@@ -661,7 +661,7 @@ namespace HETSAPI.Services.Impl
             user.Email = item.Email;
             user.GivenName = item.GivenName;
             user.Surname = item.Surname;
-            user.SmUserId = item.SmUserId;
+            user.SmUserId = item.SmUserId;            
 
             if (item.District != null)
             {
@@ -832,7 +832,8 @@ namespace HETSAPI.Services.Impl
                         UserRole userRole = new UserRole();
                         Role role = _context.Roles.First(x => x.Id == item.RoleId);
                         userRole.Role = role;
-                        userRole.EffectiveDate = DateTime.Now.ToUniversalTime();
+                        userRole.EffectiveDate = item.EffectiveDate;
+                        userRole.ExpiryDate = item.ExpiryDate;                       
 
                         _context.Add(userRole);
 
