@@ -30,6 +30,12 @@
         - text/plain
         - application/json
         - text/json
+      parameters:        
+        - name: region
+          in: query
+          description: Region to recalculate
+          type: integer
+          required: true          
       responses:
         200:
           description: OK          
@@ -587,9 +593,9 @@
         - application/json
         - text/json
       parameters:        
-        - name: localareas
+        - name: districts
           in: query
-          description: Local Areas (array of id numbers)
+          description: Districts (array of id numbers)
           collectionFormat: multi
           required: false
           type: array
