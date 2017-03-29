@@ -713,26 +713,14 @@ namespace HETSAPI.Services.Impl
                     .Include(x => x.History)
                     .Select(x => x);
 
-            if (localareas != null)
+            if (localareas != null && localareas.Length > 0 )
             {
-                foreach (int? localarea in localareas)
-                {
-                    if (localarea != null)
-                    {
-                        data = data.Where(x => x.LocalArea.Id == localarea);
-                    }
-                }                
+                data = data.Where(x => localareas.Contains(x.LocalArea.Id));                
             }
 
-            if (types != null)
+            if (types != null && types.Length > 0)
             {
-                foreach (int? equipmenttype in types)
-                {
-                    if (equipmenttype != null)
-                    {
-                        data = data.Where(x => x.DistrictEquipmentType.Id == equipmenttype);
-                    }
-                }
+                data = data.Where(x => types.Contains(x.DistrictEquipmentType.Id));                
             }
             
             if (equipmentAttachment != null)
