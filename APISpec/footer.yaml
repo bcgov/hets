@@ -15,10 +15,9 @@
         type: string
         maxLength: 2048
         description: Filename as passed by the user uploading the file
-      fileContents:
-        type: string
-        format: binary
-        description: Binary contents of the file
+      fileSize:
+        type: integer
+        format: int32        
       description:
         type: string
         maxLength: 2048
@@ -33,7 +32,7 @@
       lastUpdateTimestamp:
         type: string
         format: date-time
-        description: Audit information - Timestamp for record modification     
+        description: Audit information - Timestamp for record modification        
   HistoryViewModel:
     type: object
     x-codegen-viewmodel: true
