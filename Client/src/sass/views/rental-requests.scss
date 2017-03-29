@@ -82,4 +82,9 @@
     padding-left: 7px;
     padding-right: 7px;
   }
+
+  input[type='number'] {
+    width: auto;
+    min-width: 175px;
+  }
 }
