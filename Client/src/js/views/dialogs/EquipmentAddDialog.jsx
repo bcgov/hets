@@ -109,8 +109,16 @@ var EquipmentAddDialog = React.createClass({
     if (this.state.loading) { return <div style={{ textAlign: 'center' }}><Spinner/></div>; }
 
     var owner = this.props.owner;
-    var localAreas = _.sortBy(this.props.localAreas, 'name');
-    var districtEquipmentTypes = _.sortBy(this.props.districtEquipmentTypes, 'districtEquipmentName');
+    // Constrain the local area drop downs to those in the District of the current logged in user
+    var localAreas = _.chain(this.props.localAreas)
+      .filter(localArea => localArea.serviceArea.district.id == this.props.currentUser.district.id)
+      .sortBy('name')
+      .value();
+
+    var districtEquipmentTypes = _.chain(this.props.districtEquipmentTypes)
+      .filter(type => type.district.id == this.props.currentUser.district.id)
+      .sortBy('districtEquipmentName')
+      .value();
 
     return <EditDialog id="equipment-add" show={ this.props.show }
       onClose={ this.props.onClose } onSave={ this.onSave } didChange={ this.didChange } isValid={ this.isValid }
@@ -124,7 +132,7 @@ var EquipmentAddDialog = React.createClass({
         </FormGroup>
         <FormGroup controlId="equipmentTypeId" validationState={ this.state.equipmentTypeError ? 'error' : null }>
           <ControlLabel>Equipment Type <sup>*</sup></ControlLabel>
-          <FilterDropdown id="equipmentTypeId" fieldName="name" selectedId={ this.state.equipmentTypeId } updateState={ this.updateState }
+          <FilterDropdown id="equipmentTypeId" fieldName="districtEquipmentName" selectedId={ this.state.equipmentTypeId } updateState={ this.updateState }
             items={ districtEquipmentTypes }
           />
           <HelpBlock>{ this.state.equipmentTypeError }</HelpBlock>

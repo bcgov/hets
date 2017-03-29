@@ -35,7 +35,7 @@ var OwnersAddDialog = React.createClass({
     var currentUser = this.props.currentUser;
     var localAreas = this.props.localAreas;
     var defaultLocalAreaId = _.find(localAreas, (x) => x.serviceArea.district.id === currentUser.district.id);
-    
+
     return {
       name: '',
       equipmentPrefix: '',
@@ -130,14 +130,18 @@ var OwnersAddDialog = React.createClass({
     this.props.onSave({
       organizationName: this.state.name,
       ownerEquipmentCodePrefix: this.state.equipmentPrefix,
-      localArea: { id: this.state.localAreaId }, 
+      localArea: { id: this.state.localAreaId },
       meetsResidency: this.state.meetsResidency,
       status: Constant.OWNER_STATUS_CODE_APPROVED,
     });
   },
 
   render() {
-    var localAreas = _.sortBy(this.props.localAreas, 'name');
+    // Constrain the local area drop downs to those in the District of the current logged in user
+    var localAreas = _.chain(this.props.localAreas)
+      .filter(localArea => localArea.serviceArea.district.id == this.props.currentUser.district.id)
+      .sortBy('name')
+      .value();
 
     return <EditDialog id="add-owner" show={ this.props.show } bsSize="small"
       onClose={ this.props.onClose } onSave={ this.onSave } didChange={ this.didChange } isValid={ this.isValid }
