@@ -793,7 +793,7 @@ function parseProject(project) {
   if (!project.district.region) { project.district.region = { id: 0, name: '' }; }
   if (!project.contacts) { project.contacts = []; }
   if (!project.rentalRequests) { project.rentalRequests = []; }
-  if (!project.rentalAgreements) { project.rentalAgreements = []; }  // TODO Server needs to send this (HETS-153)
+  if (!project.rentalAgreements) { project.rentalAgreements = []; }
 
   project.name = project.name || '';
   project.provincialProjectNumber = project.provincialProjectNumber || '';
@@ -910,7 +910,7 @@ function parseRentalRequest(request) {
   if (!request.project) { request.project = { id: 0, name: '' }; }
   if (!request.districtEquipmentType) { request.districtEquipmentType = { id: 0, districtEquipmentName: '' }; }
   if (!request.primaryContact) { request.primaryContact = { id: 0, givenName: '', surname: '' }; }
-  if (!request.attachments) { request.attachments = []; }
+  if (!request.rentalRequestAttachments) { request.rentalRequestAttachments = []; }
   if (!request.rentalRequestRotationList) { request.rentalRequestRotationList = []; }
 
   // Add display fields for primary contact
@@ -922,13 +922,12 @@ function parseRentalRequest(request) {
   request.status = request.status || Constant.RENTAL_REQUEST_STATUS_CODE_IN_PROGRESS;
   request.equipmentCount = request.equipmentCount || 0;
   request.expectedHours = request.expectedHours || 0;
+  request.expectedStartDate = request.expectedStartDate || '';
+  request.expectedEndDate = request.expectedEndDate || '';
 
   request.projectId = request.projectId || request.project.id;
   request.projectName = request.projectName || request.project.name;
   request.projectPath = request.projectId ? `projects/${ request.projectId }`: '';
-
-  request.expectedStartDate = request.expectedStartDate || '';
-  request.expectedEndDate = request.expectedEndDate || '';
 
   // UI display fields
   request.isActive = request.status === Constant.RENTAL_REQUEST_STATUS_CODE_IN_PROGRESS;
