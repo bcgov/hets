@@ -6172,7 +6172,7 @@ definitions:
         type: array
         items:
           $ref: '#/definitions/History'
-      rentalRequestAttachment:
+      rentalRequestAttachments:
         type: array
         items:
           $ref: '#/definitions/RentalRequestAttachment'
@@ -7530,6 +7530,33 @@ definitions:
         type: string
         maxLength: 2048
         description: A description of the group that is presented to the user when they are setting a user into a group.
+  ImportMap:
+    type: object
+    required:
+      - id
+      - oldTable
+      - newTable
+      - oldKey
+      - newKey
+    properties:
+      id:
+        format: int32
+        type: integer
+        description: A system generated unique identifier for the ImportMap
+      oldTable:
+        type: string
+        description: Table name in old system
+      newTable:
+        type: string
+        description: Table name in new system.
+      oldKey:
+        format: int32
+        type: integer
+        description: Old primary key for record
+      newKey:
+        format: int32
+        type: integer
+        description: New primary key for record
   AttachmentViewModel:
     type: object
     x-codegen-viewmodel: true
