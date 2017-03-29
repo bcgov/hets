@@ -80,10 +80,11 @@ namespace HETSAPI.Mappings
             {
                 dto.Description = model.Description;
                 dto.FileName = model.FileName;
+                dto.FileSize = model.FileContents.Length;
                 dto.Id = model.Id;
                 dto.Type = model.Type;
                 dto.LastUpdateTimestamp = model.LastUpdateTimestamp;
-                dto.LastUpdateUserid = model.LastUpdateUserid;
+                dto.LastUpdateUserid = model.LastUpdateUserid;                
             }
             return dto;
         }

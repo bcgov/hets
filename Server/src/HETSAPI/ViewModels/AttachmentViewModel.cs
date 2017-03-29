@@ -42,18 +42,17 @@ namespace HETSAPI.ViewModels
         /// </summary>
         /// <param name="Id">A system-generated unique identifier for an Attachment (required).</param>
         /// <param name="FileName">Filename as passed by the user uploading the file (required).</param>
-        /// <param name="FileContents">Binary contents of the file (required).</param>
+        /// <param name="FileSize">FileSize.</param>
         /// <param name="Description">A note about the attachment,  optionally maintained by the user..</param>
         /// <param name="Type">Type of attachment.</param>
         /// <param name="LastUpdateUserid">Audit information - SM User Id for the User who most recently updated the record..</param>
         /// <param name="LastUpdateTimestamp">Audit information - Timestamp for record modification.</param>
-        public AttachmentViewModel(int Id, string FileName, byte[] FileContents, string Description = null, string Type = null, string LastUpdateUserid = null, DateTime? LastUpdateTimestamp = null)
+        public AttachmentViewModel(int Id, string FileName, int? FileSize = null, string Description = null, string Type = null, string LastUpdateUserid = null, DateTime? LastUpdateTimestamp = null)
         {   
             this.Id = Id;
             this.FileName = FileName;
-            this.FileContents = FileContents;
 
-
+            this.FileSize = FileSize;
             this.Description = Description;
             this.Type = Type;
             this.LastUpdateUserid = LastUpdateUserid;
@@ -77,12 +76,10 @@ namespace HETSAPI.ViewModels
         public string FileName { get; set; }
 
         /// <summary>
-        /// Binary contents of the file
+        /// Gets or Sets FileSize
         /// </summary>
-        /// <value>Binary contents of the file</value>
-        [DataMember(Name="fileContents")]
-        [MetaDataExtension (Description = "Binary contents of the file")]
-        public byte[] FileContents { get; set; }
+        [DataMember(Name="fileSize")]
+        public int? FileSize { get; set; }
 
         /// <summary>
         /// A note about the attachment,  optionally maintained by the user.
@@ -126,7 +123,7 @@ namespace HETSAPI.ViewModels
             sb.Append("class AttachmentViewModel {\n");
             sb.Append("  Id: ").Append(Id).Append("\n");
             sb.Append("  FileName: ").Append(FileName).Append("\n");
-            sb.Append("  FileContents: ").Append(FileContents).Append("\n");
+            sb.Append("  FileSize: ").Append(FileSize).Append("\n");
             sb.Append("  Description: ").Append(Description).Append("\n");
             sb.Append("  Type: ").Append(Type).Append("\n");
             sb.Append("  LastUpdateUserid: ").Append(LastUpdateUserid).Append("\n");
@@ -179,9 +176,9 @@ namespace HETSAPI.ViewModels
                     this.FileName.Equals(other.FileName)
                 ) &&                 
                 (
-                    this.FileContents == other.FileContents ||
-                    this.FileContents != null &&
-                    this.FileContents.Equals(other.FileContents)
+                    this.FileSize == other.FileSize ||
+                    this.FileSize != null &&
+                    this.FileSize.Equals(other.FileSize)
                 ) &&                 
                 (
                     this.Description == other.Description ||
@@ -221,9 +218,9 @@ namespace HETSAPI.ViewModels
                 {
                     hash = hash * 59 + this.FileName.GetHashCode();
                 }                
-                                if (this.FileContents != null)
+                                if (this.FileSize != null)
                 {
-                    hash = hash * 59 + this.FileContents.GetHashCode();
+                    hash = hash * 59 + this.FileSize.GetHashCode();
                 }                
                                 if (this.Description != null)
                 {
