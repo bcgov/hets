@@ -100,7 +100,7 @@ namespace HETSAPI.Services.Impl
         public virtual IActionResult RentalrequestsGetAsync()
         {
             var result = _context.RentalRequests
-                .Include(x => x.Attachments)
+                .Include(x => x.RentalRequestAttachments)
                 .Include(x => x.DistrictEquipmentType)
                 .Include(x => x.FirstOnRotationList)
                 .Include(x => x.LocalArea.ServiceArea.District.Region)
@@ -266,7 +266,7 @@ namespace HETSAPI.Services.Impl
             if (exists)
             {
                 var result = _context.RentalRequests
-                    .Include(x => x.Attachments)
+                    .Include(x => x.RentalRequestAttachments)
                     .Include(x => x.DistrictEquipmentType)
                     .Include(x => x.FirstOnRotationList)
                     .Include(x => x.LocalArea.ServiceArea.District.Region)
@@ -437,7 +437,7 @@ namespace HETSAPI.Services.Impl
             var data = _context.RentalRequests
                     .Include(x => x.LocalArea.ServiceArea.District.Region)
                     .Include(x => x.DistrictEquipmentType.EquipmentType)
-                    .Include(x => x.Project.PrimaryContact)
+                    .Include(x => x.Project.PrimaryContact)                    
                     .Select(x => x);
 
             if (localareas != null && localareas.Length > 0)
