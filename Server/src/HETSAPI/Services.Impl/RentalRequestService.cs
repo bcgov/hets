@@ -271,7 +271,7 @@ namespace HETSAPI.Services.Impl
                     .Include(x => x.FirstOnRotationList)
                     .Include(x => x.LocalArea.ServiceArea.District.Region)
                     .Include(x => x.Notes)
-                    .Include(x => x.Project)
+                    .Include(x => x.Project.PrimaryContact)
                     .Include(x => x.RentalRequestRotationList).ThenInclude(y => y.Equipment)
                     .First(a => a.Id == id);
                 return new ObjectResult(result);
