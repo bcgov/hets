@@ -9,6 +9,8 @@ import { LinkContainer } from 'react-router-bootstrap';
 
 import _ from 'lodash';
 
+import ProjectsEditDialog from './dialogs/ProjectsEditDialog.jsx';
+
 import * as Action from '../actionTypes';
 import * as Api from '../api';
 import * as Constant from '../constants';
@@ -198,9 +200,7 @@ var ProjectsDetail = React.createClass({
           <Col md={6}>
             <Well>
               <h3>Project Information <span className="pull-right">
-                <Unimplemented>
                   <Button title="Edit Project" bsSize="small" onClick={ this.openEditDialog }><Glyphicon glyph="pencil" /></Button>
-                </Unimplemented>
               </span></h3>
               {(() => {
                 if (this.state.loading) { return <div style={{ textAlign: 'center' }}><Spinner/></div>; }
@@ -222,7 +222,7 @@ var ProjectsDetail = React.createClass({
                     <ColDisplay md={12} labelProps={{ md: 4 }} label="Provincial Project Number">{ project.provincialProjectNumber }</ColDisplay>
                   </Row>
                   <Row>
-                    <ColDisplay md={12} labelProps={{ md: 4 }} label="Information">{ project.information }</ColDisplay>
+                    <ColDisplay md={12} labelProps={{ md: 4 }} fieldProps={{ md: 7 }} label="Information">{ project.information }</ColDisplay>
                   </Row>
                 </div>;
               })()}
@@ -374,7 +374,9 @@ var ProjectsDetail = React.createClass({
           </Col>
         </Row>
       </div>
-      { /* TODO this.state.showEditDialog && <ProjectEditDialog /> */}
+      { this.state.showEditDialog &&
+        <ProjectsEditDialog show={ this.state.showEditDialog } onSave={ this.saveEdit } onClose={ this.closeEditDialog } />  
+      }
       { /* TODO this.state.showContactDialog && <ContactEditDialog /> */}
     </div>;
   },
