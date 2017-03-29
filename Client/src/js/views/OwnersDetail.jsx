@@ -8,6 +8,7 @@ import { Link } from 'react-router';
 import { LinkContainer } from 'react-router-bootstrap';
 
 import _ from 'lodash';
+import Promise from 'bluebird';
 
 import ContactsEditDialog from './dialogs/ContactsEditDialog.jsx';
 import DocumentsListDialog from './dialogs/DocumentsListDialog.jsx';
@@ -45,6 +46,7 @@ var OwnersDetail = React.createClass({
     owner: React.PropTypes.object,
     equipment: React.PropTypes.object,
     contact: React.PropTypes.object,
+    documents: React.PropTypes.object,
     params: React.PropTypes.object,
     uiContacts: React.PropTypes.object,
     uiEquipment: React.PropTypes.object,
@@ -120,7 +122,11 @@ var OwnersDetail = React.createClass({
 
   fetch() {
     this.setState({ loading: true });
-    return Api.getOwner(this.props.params.ownerId).finally(() => {
+
+    var ownerPromise = Api.getOwner(this.props.params.ownerId);
+    var documentsPromise = Api.getOwnerDocuments(this.props.params.ownerId);
+
+    return Promise.all([ownerPromise, documentsPromise]).finally(() => {
       this.setState({ loading: false });
     });
   },
@@ -321,7 +327,7 @@ var OwnersDetail = React.createClass({
               <Unimplemented>
                 <Button title="Notes" onClick={ this.showNotes }>Notes ({ owner.notes.length })</Button>
               </Unimplemented>
-              <Button title="Documents" onClick={ this.showDocuments }>Documents ({ owner.attachments.length })</Button>
+              <Button title="Documents" onClick={ this.showDocuments }>Documents ({ Object.keys(this.props.documents).length })</Button>
             </Col>
             <Col md={2}>
               <div className="pull-right">
@@ -539,6 +545,7 @@ function mapStateToProps(state) {
     owner: state.models.owner,
     equipment: state.models.equipment,
     contact: state.models.contact,
+    documents: state.models.documents,
     uiContacts: state.ui.ownerContacts,
     uiEquipment: state.ui.ownerEquipment,
   };
