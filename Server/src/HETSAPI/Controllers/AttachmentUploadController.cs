@@ -45,7 +45,7 @@ namespace HETSAPI.Controllers
         [Route("/api/projects/{id}/attachments")]
         public virtual IActionResult ProjectIdAttachmentsPost([FromRoute] int Id, [FromForm] IList<IFormFile> files)
         {
-            return _service.EquipmentIdAttachmentsPostAsync(Id, files);
+            return _service.ProjectIdAttachmentsPostAsync(Id, files);
         }
 
         [HttpGet]
@@ -60,7 +60,7 @@ namespace HETSAPI.Controllers
         [Route("/api/owners/{id}/attachments")]
         public virtual IActionResult OwnerIdAttachmentsPost([FromRoute] int Id, [FromForm] IList<IFormFile> files)
         {
-            return _service.EquipmentIdAttachmentsPostAsync(Id, files);
+            return _service.OwnerIdAttachmentsPostAsync(Id, files);
         }
 
         [HttpGet]
@@ -70,14 +70,29 @@ namespace HETSAPI.Controllers
         {
             return new ObjectResult("<html><body><form method=\"post\" action=\"/api/owners/" + Id + "/attachments\" enctype=\"multipart/form-data\"><input type=\"file\" name = \"files\" multiple /><input type = \"submit\" value = \"Upload\" /></body></html>");
         }
+
+        [HttpPost]
+        [Route("/api/rentalrequests/{id}/attachments")]
+        public virtual IActionResult RentalRequestIdAttachmentsPost([FromRoute] int Id, [FromForm] IList<IFormFile> files)
+        {
+            return _service.RentalRequestIdAttachmentsPostAsync(Id, files);
+        }
+
+        [HttpGet]
+        [Route("/api/rentalrequests/{id}/attachmentsForm")]
+        [Produces("text/html")]
+        public virtual IActionResult RentalRequestIdAttachmentsFormGet([FromRoute] int Id)
+        {
+            return new ObjectResult("<html><body><form method=\"post\" action=\"/api/rentalrequests/" + Id + "/attachments\" enctype=\"multipart/form-data\"><input type=\"file\" name = \"files\" multiple /><input type = \"submit\" value = \"Upload\" /></body></html>");
+        }
     }
 
     public interface IAttachmentUploadService
     {
         IActionResult EquipmentIdAttachmentsPostAsync(int Id, IList<IFormFile> files);
         IActionResult ProjectIdAttachmentsPostAsync(int Id, IList<IFormFile> files);
+        IActionResult OwnerIdAttachmentsPostAsync(int Id, IList<IFormFile> files);
         IActionResult RentalRequestIdAttachmentsPostAsync(int Id, IList<IFormFile> files);
-
     }
 
     public class AttachmentUploadService : ServiceBase, IAttachmentUploadService
@@ -236,7 +251,7 @@ namespace HETSAPI.Controllers
         /// <param name="id">Owner Id</param>
         /// <param name="files">Files to add to attachments</param>
         /// <returns></returns>
-        public IActionResult OwnerRequestIdAttachmentsPostAsync(int id, IList<IFormFile> files)
+        public IActionResult OwnerIdAttachmentsPostAsync(int id, IList<IFormFile> files)
         {
             // validate the bus id            
             bool exists = _context.Owners.Any(a => a.Id == id);
