@@ -34,7 +34,6 @@ var ProjectsEditDialog = React.createClass({
       statusError: '',
       projectNameError: '',
       projectStatusCodeError: '',
-      provincialProjectNumberError: '',
     };
   },
 
@@ -80,17 +79,11 @@ var ProjectsEditDialog = React.createClass({
       }
     }
 
-    if (isBlank(this.state.provincialProjectNumber)) {
-      this.setState({ provincialProjectNumberError: 'Provincial project number is required' });
-      valid = false;
-    }
-
-    if (isBlank(this.state.provincialProjectNumber)) {
-      this.setState({ provincialProjectNumberError: 'Project status is required' });
-      valid = false;
-    }
-
     // TODO: Project status validation
+    // if (isBlank(this.state.status)) {
+    //   this.setState({ projectStatusCodeError: 'Project status is required' });
+    //   valid = false;
+    // }
 
     return valid;
   },
@@ -119,13 +112,13 @@ var ProjectsEditDialog = React.createClass({
           <FormInputControl type="text" value={ this.state.projectName } updateState={ this.updateState} inputRef={ ref => { this.input = ref; }}/>
           <HelpBlock>{ this.state.projectNameError }</HelpBlock>
         </FormGroup>
-        <FormGroup controlId="provincialProjectNumber" validationState={ this.state.provincialProjectNumberError ? 'error' : null}>
-          <ControlLabel>Provincial Project Number <sup>*</sup></ControlLabel>
+        <FormGroup controlId="provincialProjectNumber">
+          <ControlLabel>Provincial Project Number</ControlLabel>
           <FormInputControl type="text" value={ this.state.provincialProjectNumber } updateState={ this.updateState } />
         </FormGroup>
         <Unimplemented>
         <FormGroup controlId="projectStatusCode" validationState={ this.state.projectStatusCodeError ? 'error' : null }>
-          <ControlLabel>Project Status <sup>*</sup></ControlLabel>
+          <ControlLabel>Project Status</ControlLabel>
           <DropdownControl id="projectStatusCode" title={ this.state.projectStatus } updateState={ this.updateState } disabled={ true } 
             placeholder="None" blankLine 
             items={[ Constant.PROJECT_STATUS_CODE_ACTIVE, Constant.PROJECT_STATUS_CODE_COMPLETED ]}
@@ -135,7 +128,7 @@ var ProjectsEditDialog = React.createClass({
         </Unimplemented>
         <FormGroup controlId="projectInformation">
           <ControlLabel>Project Information</ControlLabel>
-          <FormInputControl componentClass="textarea" value={ this.state.projectInformation } updateState={ this.updateState } />
+          <FormInputControl type="text" componentClass="textarea" rows="5" value={ this.state.projectInformation } updateState={ this.updateState } />
         </FormGroup>
       </Form>
       </EditDialog>;
