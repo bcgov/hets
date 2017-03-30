@@ -4675,17 +4675,12 @@ paths:
       parameters:        
         - name: localareas
           in: query
-          description: Local Areas (array of id numbers)
-          collectionFormat: multi
-          type: array
-          items:
-            type: integer
+          description: Local Areas (comma seperated list of id numbers)          
+          type: string          
         - name: types
           in: query
-          description: Equipment Types (array of id numbers)
-          type: array
-          items:
-            type: integer
+          description: Equipment Types (comma seperated list of id numbers)
+          type: string          
         - name: equipmentAttachment
           in: query
           description: Searches equipmentAttachment type
@@ -4858,19 +4853,14 @@ paths:
       parameters:        
         - name: localareas
           in: query
-          description: Local Areas (array of id numbers)
-          collectionFormat: multi
+          description: Local Areas (comma seperated list of id numbers)
           required: false
-          type: array
-          items:
-            type: integer
+          type: string
         - name: equipmenttypes
           in: query
-          description: Equipment Types (array of id numbers)
+          description: Equipment Types (comma seperated list of id numbers)
           required: false
-          type: array
-          items:
-            type: integer
+          type: string
         - name: owner
           in: query
           description: Id for a specific Owner
@@ -5215,12 +5205,8 @@ paths:
       parameters:        
         - name: districts
           in: query
-          description: Districts (array of id numbers)
-          collectionFormat: multi
-          required: false
-          type: array
-          items:
-            type: integer       
+          description: Districts (comma seperated list of id numbers)          
+          type: string
         - name: project
           in: query
           description: name or partial name for a Project
@@ -5527,11 +5513,8 @@ paths:
       parameters:        
         - name: localareas
           in: query
-          description: Local Areas (array of id numbers)
-          collectionFormat: multi
-          type: array
-          items:
-            type: integer       
+          description: Local Areas (comma seperated list of id numbers)          
+          type: string
         - name: project
           in: query
           description: Searches equipmentAttachment type
@@ -6021,7 +6004,7 @@ paths:
     get:
       summary: Searches Users
       description:
-        Used for the search users.
+        Used to search users.
       tags:
         - User
       consumes:
@@ -6033,11 +6016,8 @@ paths:
       parameters:        
         - name: districts
           in: query
-          description: Districts (array of id numbers)
-          collectionFormat: multi
-          type: array
-          items:
-            type: integer       
+          description: Districts (comma seperated list of id numbers)
+          type: string
         - name: surname
           in: query
           type: string

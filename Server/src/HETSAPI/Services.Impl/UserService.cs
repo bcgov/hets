@@ -23,20 +23,21 @@ using HETSAPI.Models;
 using HETSAPI.ViewModels;
 using HETSAPI.Mappings;
 using HETSAPI.Services;
+using Microsoft.AspNetCore.Http;
 
 namespace HETSAPI.Services.Impl
 {
     /// <summary>
     /// 
     /// </summary>
-    public class UserService : IUserService
+    public class UserService : ServiceBase, IUserService
     {
         private readonly DbAppContext _context;
 
         /// <summary>
         /// Create a service and set the database context
         /// </summary>
-        public UserService(DbAppContext context)
+        public UserService(IHttpContextAccessor httpContextAccessor, DbAppContext context) : base(httpContextAccessor, context)
         {
             _context = context;
         }
@@ -893,8 +894,10 @@ namespace HETSAPI.Services.Impl
         /// <param name="surname"></param>
         /// <param name="includeInactive">True if Inactive users will be returned</param>
         /// <response code="200">OK</response>
-        public virtual IActionResult UsersSearchGetAsync(int?[] districts, string surname, bool? includeInactive)
+        public virtual IActionResult UsersSearchGetAsync(string districtsString, string surname, bool? includeInactive)
         {
+            int?[] districts = ParseIntArray (districtsString);
+
             // Eager loading of related data
             var data = _context.Users
                 .Include(x => x.District)

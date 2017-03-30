@@ -23,6 +23,7 @@ using HETSAPI.Models;
 using Newtonsoft.Json;
 using System.Net;
 using HETSAPI.ViewModels;
+using Microsoft.AspNetCore.WebUtilities;
 
 namespace HETSAPI.Test
 {
@@ -249,7 +250,7 @@ namespace HETSAPI.Test
         }
 
         private Equipment createEquipment(Owner owner, string model)
-        {            
+        {
             var request = new HttpRequestMessage(HttpMethod.Post, "/api/equipment");
 
             // create a new object.
@@ -272,7 +273,7 @@ namespace HETSAPI.Test
             // parse as JSON.
             jsonString = stringTask.Result;
             equipment = JsonConvert.DeserializeObject<Equipment>(jsonString);
-            
+
             return equipment;
         }
 
@@ -281,7 +282,7 @@ namespace HETSAPI.Test
             // do a delete.
             var request = new HttpRequestMessage(HttpMethod.Post, "/api/equipments/" + id + "/delete");
             Task<HttpResponseMessage> responseTask = _client.SendAsync(request);
-            responseTask.Wait();            
+            responseTask.Wait();
         }
 
         [Fact]
@@ -321,7 +322,7 @@ namespace HETSAPI.Test
             // create equipment.
             Equipment e1 = createEquipment(owner, "test1");
             Equipment e2 = createEquipment(owner, "test2");
-            Equipment e3 = createEquipment(owner, "test3");            
+            Equipment e3 = createEquipment(owner, "test3");
 
             Equipment[] equipmentList = new Equipment[3];
 
@@ -340,10 +341,10 @@ namespace HETSAPI.Test
 
             jsonString = await response.Content.ReadAsStringAsync();
             Equipment[] putReceived = JsonConvert.DeserializeObject<Equipment[]>(jsonString);
-            Assert.Equal(putReceived[0].Owner.Id, owner_id);            
-            
+            Assert.Equal(putReceived[0].Owner.Id, owner_id);
+
             // now get the equipment list.
-            request = new HttpRequestMessage(HttpMethod.Get, "/api/owners/" + owner_id + "/equipment");            
+            request = new HttpRequestMessage(HttpMethod.Get, "/api/owners/" + owner_id + "/equipment");
             response = await _client.SendAsync(request);
             response.EnsureSuccessStatusCode();
 
@@ -351,7 +352,7 @@ namespace HETSAPI.Test
             Equipment[] getReceived = JsonConvert.DeserializeObject<Equipment[]>(jsonString);
 
             Assert.Equal(getReceived.Length, 3);
-            Assert.Equal(getReceived[0].Owner.Id , owner_id);
+            Assert.Equal(getReceived[0].Owner.Id, owner_id);
 
             // clean up equipment
 
@@ -412,7 +413,7 @@ namespace HETSAPI.Test
 
             owner = JsonConvert.DeserializeObject<Owner>(jsonString);
             // get the id
-            var owner_id = owner.Id;        
+            var owner_id = owner.Id;
 
             // create equipment.
             Equipment e1 = createEquipment(owner, "test1");
@@ -452,7 +453,7 @@ namespace HETSAPI.Test
             jsonString = await response.Content.ReadAsStringAsync();
             Equipment[] getReceived = JsonConvert.DeserializeObject<Equipment[]>(jsonString);
 
-            Assert.Equal(getReceived[0].LastVerifiedDate.ToString ("MM/dd/yyyy HH:mm"), dateVerified.ToString("MM/dd/yyyy HH:mm"));
+            Assert.Equal(getReceived[0].LastVerifiedDate.ToString("MM/dd/yyyy HH:mm"), dateVerified.ToString("MM/dd/yyyy HH:mm"));
 
             // clean up equipment
 
@@ -516,11 +517,11 @@ namespace HETSAPI.Test
             owner = JsonConvert.DeserializeObject<Owner>(jsonString);
             // get the id
             var owner_id = owner.Id;
-            
+
 
             // This test will be enabled when the new workflow for equipment code is implemented
             // Assert.Equal(equipmentCode.EquipmentCode, "TST-0001");
-            
+
             // delete owner
             request = new HttpRequestMessage(HttpMethod.Post, "/api/owners/" + owner_id + "/delete");
             response = await _client.SendAsync(request);
@@ -532,6 +533,215 @@ namespace HETSAPI.Test
             Assert.Equal(response.StatusCode, HttpStatusCode.NotFound);
         }
 
+        private ServiceArea CreateServiceArea( string name )
+        {
+            ServiceArea result = new ServiceArea();
 
+            var request = new HttpRequestMessage(HttpMethod.Post, "/api/serviceareas");
+
+            result.Name = name;
+            string jsonString = result.ToJson();
+
+            request.Content = new StringContent(jsonString, Encoding.UTF8, "application/json");
+
+            Task<HttpResponseMessage> responseTask = _client.SendAsync(request);
+            responseTask.Wait();
+
+            HttpResponseMessage response = responseTask.Result;
+            response.EnsureSuccessStatusCode();
+
+            Task<string> stringTask = response.Content.ReadAsStringAsync();
+            stringTask.Wait();
+
+            // parse as JSON.
+            jsonString = stringTask.Result;
+            result = JsonConvert.DeserializeObject<ServiceArea>(jsonString);
+
+            return result;
+
+        }
+
+        private LocalArea CreateLocalArea(ServiceArea serviceArea, string name)
+        {
+            LocalArea result = new LocalArea();
+            
+            var request = new HttpRequestMessage(HttpMethod.Post, "/api/localareas");
+
+            result.Name = name;
+            result.ServiceArea = serviceArea;
+            string jsonString = result.ToJson();
+
+            request.Content = new StringContent(jsonString, Encoding.UTF8, "application/json");
+
+            Task<HttpResponseMessage> responseTask = _client.SendAsync(request);
+            responseTask.Wait();
+
+            HttpResponseMessage response = responseTask.Result;
+            response.EnsureSuccessStatusCode();
+
+            Task<string> stringTask = response.Content.ReadAsStringAsync();
+            stringTask.Wait();
+
+            // parse as JSON.
+            jsonString = stringTask.Result;
+            result = JsonConvert.DeserializeObject<LocalArea>(jsonString);
+
+            return result;
+        }
+
+
+
+        private Owner CreateOwner(LocalArea localArea, string name)
+        {
+            Owner result = new Owner();
+
+            var request = new HttpRequestMessage(HttpMethod.Post, "/api/owners");
+
+            result.OrganizationName = name;
+            result.LocalArea = localArea;
+
+            string jsonString = result.ToJson();
+
+            request.Content = new StringContent(jsonString, Encoding.UTF8, "application/json");
+
+            Task<HttpResponseMessage> responseTask = _client.SendAsync(request);
+            responseTask.Wait();
+
+            HttpResponseMessage response = responseTask.Result;
+            response.EnsureSuccessStatusCode();
+
+            Task<string> stringTask = response.Content.ReadAsStringAsync();
+            stringTask.Wait();
+
+            // parse as JSON.
+            jsonString = stringTask.Result;
+            result = JsonConvert.DeserializeObject<Owner>(jsonString);
+
+            return result;
+        }
+
+        private void DeleteOwner(Owner owner)
+        {
+            var request = new HttpRequestMessage(HttpMethod.Post, "/api/owners/" + owner.Id + "/delete");
+            
+            Task<HttpResponseMessage> responseTask = _client.SendAsync(request);
+            responseTask.Wait();
+
+            HttpResponseMessage response = responseTask.Result;
+            response.EnsureSuccessStatusCode();
+        }
+
+        private void DeleteLocalArea(LocalArea localArea)
+        {
+            var request = new HttpRequestMessage(HttpMethod.Post, "/api/localareas/" + localArea.Id + "/delete");
+
+            Task<HttpResponseMessage> responseTask = _client.SendAsync(request);
+            responseTask.Wait();
+
+            HttpResponseMessage response = responseTask.Result;
+            response.EnsureSuccessStatusCode();
+        }
+
+        private void DeleteServiceArea(ServiceArea serviceArea)
+        {
+            var request = new HttpRequestMessage(HttpMethod.Post, "/api/serviceareas/" + serviceArea.Id + "/delete");
+
+            Task<HttpResponseMessage> responseTask = _client.SendAsync(request);
+            responseTask.Wait();
+
+            HttpResponseMessage response = responseTask.Result;
+            response.EnsureSuccessStatusCode();
+        }
+
+
+
+        // automates the search
+        private async Task<Owner[]> OwnerSearchHelper(string parameters)
+        {
+            var targetUrl = "/api/owners/search";
+            
+
+            var request = new HttpRequestMessage(HttpMethod.Get, targetUrl + parameters);
+
+            var response = await _client.SendAsync(request);
+
+
+            // parse as JSON.
+            var jsonString = await response.Content.ReadAsStringAsync();
+            // should be an array of schoolbus records.
+            Owner[] searchresults = JsonConvert.DeserializeObject<Owner[]>(jsonString);
+            return searchresults;
+        }
+
+        [Fact]
+        /// <summary>
+        /// Test the owner search.  Specifically test that searches for two items on a multi-select show the expected number of results.
+        /// </summary>
+        /// 
+        public async void TestOwnerSearch()
+        {
+
+            /* Test plan:
+             * 1. create 3 local areas.
+             * 2. put 2 owners in each area.        
+             * 3. search for owners in local area 1 - should get 2 results.
+             * 4. search for owners in local area 2 - should get 2 results.
+             * 5. search for owners in local areas 1,2 - should get 4 results.
+             * remove the owners
+             * remove the local areas.
+             */
+
+            string initialName = "InitialName";
+            
+            // create 3 local areas.
+
+            ServiceArea serviceArea = CreateServiceArea(initialName);
+            LocalArea localArea1 = CreateLocalArea(serviceArea, "Local Area 1");
+            LocalArea localArea2 = CreateLocalArea(serviceArea, "Local Area 2");
+            LocalArea localArea3 = CreateLocalArea(serviceArea, "Local Area 3");
+
+            // create 2 owners in each.
+
+            Owner owner1 = CreateOwner(localArea1, "Owner 1");
+            Owner owner2 = CreateOwner(localArea1, "Owner 2");
+            Owner owner3 = CreateOwner(localArea2, "Owner 3");
+            Owner owner4 = CreateOwner(localArea2, "Owner 4");
+            Owner owner5 = CreateOwner(localArea3, "Owner 5");
+            Owner owner6 = CreateOwner(localArea3, "Owner 6");
+           
+            Owner[] searchresults = await OwnerSearchHelper("?localareas=" + localArea2.Id);
+            
+            Assert.Equal(searchresults.Length, 2);
+
+            searchresults = await OwnerSearchHelper("?localareas=" + localArea2.Id );
+
+            Assert.Equal(searchresults.Length, 2);
+           
+            searchresults = await OwnerSearchHelper("?localareas=" + localArea1.Id + "%2C" + localArea2.Id);
+
+            Assert.Equal(searchresults.Length, 4);
+
+            searchresults = await OwnerSearchHelper("?owner=" + owner1.Id);
+
+            Assert.Equal(searchresults.Length, 1);
+
+
+
+            // cleanup
+
+            DeleteOwner(owner1);
+            DeleteOwner(owner2);
+            DeleteOwner(owner3);
+            DeleteOwner(owner4);
+            DeleteOwner(owner5);
+            DeleteOwner(owner6);
+
+            DeleteLocalArea(localArea1);
+            DeleteLocalArea(localArea2);
+            DeleteLocalArea(localArea3);
+
+            DeleteServiceArea(serviceArea);
+
+        }
     }
 }

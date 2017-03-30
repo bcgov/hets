@@ -56,7 +56,7 @@ namespace HETSAPI.Test
 
                     */
 
-                    OwnerService _service = new OwnerService(dbAppContext.Object);
+                    OwnerService _service = new OwnerService(null, dbAppContext.Object);
 			
                     _Owner = new OwnerController (_service);
 

@@ -56,7 +56,7 @@ namespace HETSAPI.Test
 
                     */
 
-                    ProjectService _service = new ProjectService(dbAppContext.Object);
+                    ProjectService _service = new ProjectService(null, dbAppContext.Object);
 			
                     _Project = new ProjectController (_service);
 

@@ -22,20 +22,21 @@ using Newtonsoft.Json;
 using HETSAPI.Models;
 using HETSAPI.ViewModels;
 using HETSAPI.Mappings;
+using Microsoft.AspNetCore.Http;
 
 namespace HETSAPI.Services.Impl
 {
     /// <summary>
     /// 
     /// </summary>
-    public class EquipmentService : IEquipmentService
+    public class EquipmentService : ServiceBase, IEquipmentService
     {
         private readonly DbAppContext _context;
 
         /// <summary>
         /// Create a service and set the database context
         /// </summary>
-        public EquipmentService(DbAppContext context)
+        public EquipmentService(IHttpContextAccessor httpContextAccessor, DbAppContext context) : base(httpContextAccessor, context)
         {
             _context = context;
         }
@@ -688,8 +689,11 @@ namespace HETSAPI.Services.Impl
         /// <param name="hired">Hired</param>
         /// <param name="notverifiedsincedate">Not Verified Since Date</param>
         /// <response code="200">OK</response>
-        public virtual IActionResult EquipmentSearchGetAsync(int?[] localareas, int?[] types, string equipmentAttachment, int? owner, string status, bool? hired, DateTime? notverifiedsincedate)
+        public virtual IActionResult EquipmentSearchGetAsync(string localareasString, string typesString, string equipmentAttachment, int? owner, string status, bool? hired, DateTime? notverifiedsincedate)
         {
+            int?[] localareas = ParseIntArray(localareasString);
+            int?[] types = ParseIntArray(typesString);
+
             var data = _context.Equipments
                     .Include(x => x.LocalArea.ServiceArea.District.Region)
                     .Include(x => x.DistrictEquipmentType)

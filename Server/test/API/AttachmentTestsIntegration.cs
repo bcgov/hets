@@ -34,7 +34,7 @@ namespace HETSAPI.Test
         /// </summary>
 		public async void TestAttachmentBulkPost()
 		{
-            var request = new HttpRequestMessage(HttpMethod.Post, "/api/attachment/bulk");
+            var request = new HttpRequestMessage(HttpMethod.Post, "/api/attachments/bulk");
             request.Content = new StringContent("[]", Encoding.UTF8, "application/json");
 
             var response = await _client.SendAsync(request);
@@ -50,7 +50,7 @@ namespace HETSAPI.Test
             string initialName = "InitialName";
             string changedName = "ChangedName";
             // first test the POST.
-            var request = new HttpRequestMessage(HttpMethod.Post, "/api/attachment");
+            var request = new HttpRequestMessage(HttpMethod.Post, "/api/attachments");
 
             // create a new object.
             Attachment attachment = new Attachment();
@@ -72,13 +72,13 @@ namespace HETSAPI.Test
             attachment.Description = changedName;
 
             // now do an update.
-            request = new HttpRequestMessage(HttpMethod.Put, "/api/attachment/" + id);
+            request = new HttpRequestMessage(HttpMethod.Put, "/api/attachments/" + id);
             request.Content = new StringContent(attachment.ToJson(), Encoding.UTF8, "application/json");
             response = await _client.SendAsync(request);
             response.EnsureSuccessStatusCode();
 
             // do a get.
-            request = new HttpRequestMessage(HttpMethod.Get, "/api/attachment/" + id);
+            request = new HttpRequestMessage(HttpMethod.Get, "/api/attachments/" + id);
             response = await _client.SendAsync(request);
             response.EnsureSuccessStatusCode();
 
@@ -90,12 +90,12 @@ namespace HETSAPI.Test
             Assert.Equal(attachment.Description, changedName);
 
             // do a delete.
-            request = new HttpRequestMessage(HttpMethod.Post, "/api/attachment/" + id + "/delete");
+            request = new HttpRequestMessage(HttpMethod.Post, "/api/attachments/" + id + "/delete");
             response = await _client.SendAsync(request);
             response.EnsureSuccessStatusCode();
 
             // should get a 404 if we try a get now.
-            request = new HttpRequestMessage(HttpMethod.Get, "/api/attachment/" + id);
+            request = new HttpRequestMessage(HttpMethod.Get, "/api/attachments/" + id);
             response = await _client.SendAsync(request);
             Assert.Equal(response.StatusCode, HttpStatusCode.NotFound);
         }

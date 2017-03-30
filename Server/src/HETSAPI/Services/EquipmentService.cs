@@ -128,14 +128,14 @@ namespace HETSAPI.Services
         /// Searches Equipment
         /// </summary>
         /// <remarks>Used for the equipment search page.</remarks>
-        /// <param name="localareas">Local Areas (array of id numbers)</param>
-        /// <param name="types">Equipment Types (array of id numbers)</param>
+        /// <param name="localareas">Local Areas (comma seperated list of id numbers)</param>
+        /// <param name="types">Equipment Types (comma seperated list of id numbers)</param>
         /// <param name="equipmentAttachment">Searches equipmentAttachment type</param>
         /// <param name="owner"></param>
         /// <param name="status">Status</param>
         /// <param name="hired">Hired</param>
         /// <param name="notverifiedsincedate">Not Verified Since Date</param>
         /// <response code="200">OK</response>
-        IActionResult EquipmentSearchGetAsync(int?[] localareas, int?[] types, string equipmentAttachment, int? owner, string status, bool? hired, DateTime? notverifiedsincedate);
+        IActionResult EquipmentSearchGetAsync(string localareas, string types, string equipmentAttachment, int? owner, string status, bool? hired, DateTime? notverifiedsincedate);
     }
 }

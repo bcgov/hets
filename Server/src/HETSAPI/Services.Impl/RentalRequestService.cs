@@ -22,20 +22,21 @@ using Newtonsoft.Json;
 using HETSAPI.Models;
 using HETSAPI.ViewModels;
 using HETSAPI.Mappings;
+using Microsoft.AspNetCore.Http;
 
 namespace HETSAPI.Services.Impl
 {
     /// <summary>
     /// 
     /// </summary>
-    public class RentalRequestService : IRentalRequestService
+    public class RentalRequestService : ServiceBase, IRentalRequestService
     {
         private readonly DbAppContext _context;        
 
         /// <summary>
         /// Create a service and set the database context
         /// </summary>
-        public RentalRequestService(DbAppContext context)
+        public RentalRequestService(IHttpContextAccessor httpContextAccessor, DbAppContext context) : base(httpContextAccessor, context)
         {
             _context = context;
         }
@@ -434,8 +435,10 @@ namespace HETSAPI.Services.Impl
         /// <param name="hasRequests">if true then only include Projects with active Requests</param>
         /// <param name="hasHires">if true then only include Projects with active Rental Agreements</param>
         /// <response code="200">OK</response>
-        public virtual IActionResult RentalrequestsSearchGetAsync(int?[] localareas, string project, string status, DateTime? startDate, DateTime? endDate)
+        public virtual IActionResult RentalrequestsSearchGetAsync(string localAreasString, string project, string status, DateTime? startDate, DateTime? endDate)
         {
+            int?[] localareas = ParseIntArray(localAreasString);
+
             var data = _context.RentalRequests
                     .Include(x => x.LocalArea.ServiceArea.District.Region)
                     .Include(x => x.DistrictEquipmentType.EquipmentType)
