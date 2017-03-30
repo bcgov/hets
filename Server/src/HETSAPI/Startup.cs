@@ -29,6 +29,9 @@ using HETSAPI.Authorization;
 using HETSAPI.Authentication;
 using Microsoft.AspNetCore.Http.Features;
 using Microsoft.AspNetCore.Http;
+using Hangfire.PostgreSql;
+using Hangfire;
+using Hangfire.Console;
 
 namespace HETSAPI
 {
@@ -57,6 +60,8 @@ namespace HETSAPI
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+            string connectionString = GetConnectionString();
+
             services.AddAuthorization();
             services.RegisterPermissionHandler();
             services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
@@ -64,8 +69,7 @@ namespace HETSAPI
             services.AddSingleton<IConfiguration>(Configuration);
 
             // Add database context
-            // - Pattern should be using Configuration.GetConnectionString("Schoolbus") directly; see GetConnectionString for more details.
-            services.AddDbContext<DbAppContext>(options => options.UseNpgsql(GetConnectionString()));
+            services.AddDbContext<DbAppContext>(options => options.UseNpgsql(connectionString));
 
             // allow for large files to be uploaded
             services.Configure<FormOptions>(options =>
@@ -86,6 +90,17 @@ namespace HETSAPI
                         // ReferenceLoopHandling is set to Ignore to prevent JSON parser issues with the user / roles model.
                         opts.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore;
                     });
+
+            // enable Hangfire
+            PostgreSqlStorageOptions postgreSqlStorageOptions = new PostgreSqlStorageOptions {
+                SchemaName = "public"
+            }; 
+            PostgreSqlStorage storage = new PostgreSqlStorage(connectionString, postgreSqlStorageOptions);
+            services.AddHangfire(config => 
+            {
+                config.UseStorage(storage);
+                config.UseConsole();
+            });
 
             // Configure Swagger
             services.AddSwaggerGen();            
@@ -123,12 +138,32 @@ namespace HETSAPI
                 app.UseDeveloperExceptionPage();
             }
 
+            // enable Hangfire
+            app.UseHangfireServer();
+
+            // disable the back to site link
+            DashboardOptions dashboardOptions = new DashboardOptions();
+            dashboardOptions.AppPath = null;            
+
+            app.UseHangfireDashboard( "/hangfire", dashboardOptions ); // this enables the /hangfire action
+            
+
             app.UseResponseCompression();
             app.UseMvc();
             app.UseDefaultFiles();
             app.UseStaticFiles();
             app.UseSwagger();
             app.UseSwaggerUi();
+
+            HangfireTools.ClearHangfire();
+
+            // this should be set as an environment variable.  
+            // Only enable when doing a new PROD deploy to populate CCW data and link it to the bus data.
+            if (!string.IsNullOrEmpty(Configuration["ENABLE_ANNUAL_ROLLOVER"]))
+            {
+                CreateHangfireAnnualRolloverJob(loggerFactory);
+            }            
+            
         }
 
         // TODO:
@@ -209,5 +244,39 @@ namespace HETSAPI
             DbAppContextFactory dbAppContextFactory = new DbAppContextFactory(null, options.Options);
             return dbAppContextFactory;
         }
+
+        
+
+        private void CreateHangfireAnnualRolloverJob(ILoggerFactory loggerFactory)
+        {
+            // HETS has one job that runs at the end of each year.            
+            ILogger log = loggerFactory.CreateLogger(typeof(Startup));
+
+            // first check to see if Hangfire already has the job.
+
+
+
+            log.LogInformation("Attempting setup of Hangfire Annual rollover job ...");
+            
+            try
+            {
+                string connectionString = GetConnectionString();
+
+                log.LogInformation("Creating Hangfire job for Annual rollover ...");
+                // every 5 minutes we see if a CCW record needs to be updated.  We only update one CCW record at a time.
+                // since the server is on UTC, we want UTC-7 for PDT midnight.                
+                RecurringJob.AddOrUpdate(() => SeniorityListExtensions.AnnualRolloverJob(null, connectionString), Cron.Yearly(3, 31, 17));                            
+            }
+            catch (Exception e)
+            {
+                StringBuilder msg = new StringBuilder();
+                msg.AppendLine("Failed to setup Hangfire job.");
+
+                log.LogCritical(new EventId(-1, "Hangfire job setup failed"), e, msg.ToString());
+            }
+            
+        }
     }
+
+    
 }
