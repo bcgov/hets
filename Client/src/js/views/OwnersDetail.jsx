@@ -438,12 +438,6 @@ var OwnersDetail = React.createClass({
           <Col md={6}>
             <Well>
               <h3>Policy <span className="pull-right">
-                <Unimplemented>
-                  <Button title="Show Proof Documents" bsSize="small" onClick={ this.openPolicyDocumentsDialog }>Proof Documents ({ owner.numberOfPolicyDocuments })</Button>
-                </Unimplemented>
-                <Unimplemented>
-                  <Button title="Add Policy Document" onClick={ this.addPolicyDocument } bsSize="small"><Glyphicon glyph="plus" /> Attach Proof</Button>
-                </Unimplemented>
                 <Button title="Edit Policy Information" bsSize="small" onClick={ this.openPolicyDialog }><Glyphicon glyph="pencil" /></Button>
               </span></h3>
               {(() => {
