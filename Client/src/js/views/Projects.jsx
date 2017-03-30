@@ -35,7 +35,7 @@ var Projects = React.createClass({
   propTypes: {
     projects: React.PropTypes.object,
     project: React.PropTypes.object,
-    localAreas: React.PropTypes.object,
+    districts: React.PropTypes.object,
     favourites: React.PropTypes.object,
     search: React.PropTypes.object,
     ui: React.PropTypes.object,
@@ -49,7 +49,7 @@ var Projects = React.createClass({
       showAddDialog: false,
 
       search: {
-        selectedLocalAreasIds: this.props.search.selectedLocalAreasIds || [],
+        selectedDistrictsIds: this.props.search.selectedDistrictsIds || [],
         statusCode: this.props.search.statusCode || Constant.PROJECT_STATUS_CODE_ACTIVE,
         hires: this.props.search.hires === true,
         requests: this.props.search.requests === true,
@@ -71,8 +71,8 @@ var Projects = React.createClass({
       project: this.state.search.projectName || '',
     };
 
-    if (this.state.search.selectedLocalAreasIds.length > 0) {
-      searchParams.localAreas = this.state.search.selectedLocalAreasIds;
+    if (this.state.search.selectedDistrictsIds.length > 0) {
+      searchParams.districts = this.state.search.selectedDistrictsIds;
     }
 
     return searchParams;
@@ -145,7 +145,7 @@ var Projects = React.createClass({
   },
 
   render() {
-    var localAreas = _.sortBy(this.props.localAreas, 'name');
+    var districts = _.sortBy(this.props.districts, 'name');
     var numProjects = this.state.loading ? '...' : Object.keys(this.props.projects).length;
 
     return <div id="projects-list">
@@ -163,8 +163,8 @@ var Projects = React.createClass({
         <Row>
           <Col md={11}>
             <ButtonToolbar id="projects-filters">
-              <MultiDropdown id="selectedLocalAreasIds" placeholder="Local Areas"
-                items={ localAreas } selectedIds={ this.state.search.selectedLocalAreasIds } updateState={ this.updateSearchState } showMaxItems={ 2 } />
+              <MultiDropdown id="selectedDistrictsIds" placeholder="Districts"
+                items={ districts } selectedIds={ this.state.search.selectedDistrictsIds } updateState={ this.updateSearchState } showMaxItems={ 2 } />
               <DropdownControl id="statusCode" title={ this.state.search.statusCode } updateState={ this.updateSearchState }
                   items={[ Constant.PROJECT_STATUS_CODE_ACTIVE, Constant.PROJECT_STATUS_CODE_COMPLETED ]} />
               <FormInputControl id="projectName" type="text" placeholder="Project name" value={ this.state.search.projectName } updateState={ this.updateSearchState }></FormInputControl>
@@ -195,7 +195,7 @@ var Projects = React.createClass({
         }
 
         return <SortTable sortField={ this.state.ui.sortField } sortDesc={ this.state.ui.sortDesc } onSort={ this.updateUIState } headers={[
-          { field: 'localAreaName',          title: 'Local Area'                                     },
+          { field: 'districtName',           title: 'District'                                       },
           { field: 'name',                   title: 'Project'                                        },
           { field: 'primaryContactName',     title: 'Primary Contact'                                },
           { field: 'primaryContactPhone',    title: 'Contact #'                                      },
@@ -209,7 +209,7 @@ var Projects = React.createClass({
           {
             _.map(projects, (project) => {
               return <tr key={ project.id } className={ project.isActive ? null : 'info' }>
-                <td>{ project.localAreaName }</td>
+                <td>{ project.districtName }</td>
                 <td>{ project.name }</td>
                 <td>{ project.primaryContactName }</td>
                 <td>{ project.primaryContactPhone }</td>
@@ -238,7 +238,7 @@ function mapStateToProps(state) {
   return {
     projects: state.models.projects,
     project: state.models.project,
-    localAreas: state.lookups.localAreas,
+    districts: state.lookups.districts,
     favourites: state.models.favourites,
     search: state.search.projects,
     ui: state.ui.projects,

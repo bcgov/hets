@@ -8,8 +8,10 @@ import { Link } from 'react-router';
 import { LinkContainer } from 'react-router-bootstrap';
 
 import _ from 'lodash';
+import Promise from 'bluebird';
 
 import ContactsEditDialog from './dialogs/ContactsEditDialog.jsx';
+import DocumentsListDialog from './dialogs/DocumentsListDialog.jsx';
 import EquipmentAddDialog from './dialogs/EquipmentAddDialog.jsx';
 import OwnersEditDialog from './dialogs/OwnersEditDialog.jsx';
 import OwnersPolicyEditDialog from './dialogs/OwnersPolicyEditDialog.jsx';
@@ -35,7 +37,7 @@ import { concat } from '../utils/string';
 /*
 
 TODO:
-* Print / Notes / Attachments / Policy Proof Documents (attachments)
+* Print / Notes / Policy Proof Documents (attachments)
 
 */
 
@@ -44,9 +46,7 @@ var OwnersDetail = React.createClass({
     owner: React.PropTypes.object,
     equipment: React.PropTypes.object,
     contact: React.PropTypes.object,
-    notes: React.PropTypes.object,
-    attachments: React.PropTypes.object,
-    history: React.PropTypes.object,
+    documents: React.PropTypes.object,
     params: React.PropTypes.object,
     uiContacts: React.PropTypes.object,
     uiEquipment: React.PropTypes.object,
@@ -56,13 +56,13 @@ var OwnersDetail = React.createClass({
   getInitialState() {
     return {
       loading: true,
-      loadingOwnerHistory: false,
 
       showEditDialog: false,
       showContactDialog: false,
       showPolicyDialog: false,
       showPolicyDocumentsDialog: false,
       showEquipmentDialog: false,
+      showDocumentsDialog: false,
 
       contact: {},
 
@@ -122,7 +122,11 @@ var OwnersDetail = React.createClass({
 
   fetch() {
     this.setState({ loading: true });
-    return Api.getOwner(this.props.params.ownerId).finally(() => {
+
+    var ownerPromise = Api.getOwner(this.props.params.ownerId);
+    var documentsPromise = Api.getOwnerDocuments(this.props.params.ownerId);
+
+    return Promise.all([ownerPromise, documentsPromise]).finally(() => {
       this.setState({ loading: false });
     });
   },
@@ -146,7 +150,11 @@ var OwnersDetail = React.createClass({
   },
 
   showDocuments() {
+    this.setState({ showDocumentsDialog: true });
+  },
 
+  closeDocumentsDialog() {
+    this.setState({ showDocumentsDialog: false });
   },
 
   addNote() {
@@ -166,7 +174,8 @@ var OwnersDetail = React.createClass({
   },
 
   saveEdit(owner) {
-    Api.updateOwner(owner).finally(() => {
+    // This just ensures that the normalized data doesn't mess up the PUT call
+    Api.updateOwner({ ...owner, contacts: null }).finally(() => {
       this.closeEditDialog();
     });
   },
@@ -280,7 +289,8 @@ var OwnersDetail = React.createClass({
   },
 
   savePolicyEdit(owner) {
-    Api.updateOwner(owner).finally(() => {
+    // This just ensures that the normalized data doesn't mess up the PUT call
+    Api.updateOwner({ ...owner, contacts: null }).finally(() => {
       this.closePolicyDialog();
     });
   },
@@ -307,28 +317,30 @@ var OwnersDetail = React.createClass({
 
     return <div id="owners-detail">
       <div>
-        <Row id="owners-top">
-          <Col md={10}>
-            <Label bsStyle={ owner.isApproved ? 'success' : 'danger'}>{ owner.status }</Label>
-            <Label className={ owner.isMaintenanceContractor ? '' : 'hide' }>Maintenance Contractor</Label>
-            <Unimplemented>
-              <Button title="Notes" onClick={ this.showNotes }>Notes ({ Object.keys(this.props.notes).length })</Button>
-            </Unimplemented>
-            <Unimplemented>
-              <Button title="Documents" onClick={ this.showDocuments }>Docs ({ Object.keys(this.props.attachments).length })</Button>
-            </Unimplemented>
-          </Col>
-          <Col md={2}>
-            <div className="pull-right">
+        {(() => {
+          if (this.state.loading) { return <div style={{ textAlign: 'center' }}><Spinner/></div>; }
+
+          return <Row id="owners-top">
+            <Col md={10}>
+              <Label bsStyle={ owner.isApproved ? 'success' : 'danger'}>{ owner.status }</Label>
+              <Label className={ owner.isMaintenanceContractor ? '' : 'hide' }>Maintenance Contractor</Label>
               <Unimplemented>
-                <Button onClick={ this.print }><Glyphicon glyph="print" title="Print" /></Button>
+                <Button title="Notes" onClick={ this.showNotes }>Notes ({ owner.notes.length })</Button>
               </Unimplemented>
-              <LinkContainer to={{ pathname: 'owners' }}>
-                <Button title="Return to List"><Glyphicon glyph="arrow-left" /> Return to List</Button>
-              </LinkContainer>
-            </div>
-          </Col>
-        </Row>
+              <Button title="Documents" onClick={ this.showDocuments }>Documents ({ Object.keys(this.props.documents).length })</Button>
+            </Col>
+            <Col md={2}>
+              <div className="pull-right">
+                <Unimplemented>
+                  <Button onClick={ this.print }><Glyphicon glyph="print" title="Print" /></Button>
+                </Unimplemented>
+                <LinkContainer to={{ pathname: 'owners' }}>
+                  <Button title="Return to List"><Glyphicon glyph="arrow-left" /> Return to List</Button>
+                </LinkContainer>
+              </div>
+            </Col>
+          </Row>;
+        })()}
 
         {(() => {
           if (this.state.loading) { return <div style={{ textAlign: 'center' }}><Spinner/></div>; }
@@ -499,14 +511,7 @@ var OwnersDetail = React.createClass({
               })()}
             </Well>
             <Well>
-              <h3>History <span className="pull-right">
-                <Unimplemented>
-                  <Button title="Add note" bsSize="xsmall" onClick={ this.addNote }><Glyphicon glyph="plus" /> Add Note</Button>
-                </Unimplemented>
-                <Unimplemented>
-                  <Button title="Add document" bsSize="xsmall" onClick={ this.addDocument }><Glyphicon glyph="paperclip" /></Button>
-                </Unimplemented>
-              </span></h3>
+              <h3>History</h3>
               { owner.historyEntity && <History historyEntity={ owner.historyEntity } refresh={ this.state.loading } /> }
             </Well>
           </Col>
@@ -524,6 +529,11 @@ var OwnersDetail = React.createClass({
       { this.state.showContactDialog &&
         <ContactsEditDialog show={ this.state.showContactDialog } contact={ this.state.contact } onSave={ this.saveContact } onClose={ this.closeContactDialog } />
       }
+      { this.state.showDocumentsDialog &&
+        <DocumentsListDialog show={ this.state.showDocumentsDialog } parent={ owner } onClose={ this.closeDocumentsDialog } />
+      }
+
+
       { /* TODO this.state.showPolicyDocumentsDialog && <OwnerPolicyDocumentsDialog /> */}
     </div>;
   },
@@ -535,9 +545,7 @@ function mapStateToProps(state) {
     owner: state.models.owner,
     equipment: state.models.equipment,
     contact: state.models.contact,
-    notes: state.models.ownerNotes,
-    attachments: state.models.ownerAttachments,
-    history: state.models.ownerHistory,
+    documents: state.models.documents,
     uiContacts: state.ui.ownerContacts,
     uiEquipment: state.ui.ownerEquipment,
   };

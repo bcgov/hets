@@ -10,14 +10,14 @@ var numRequestsInFlight = 0;
 
 function incrementRequests() {
   numRequestsInFlight += 1;
-  if(numRequestsInFlight === 1) {
+  if (numRequestsInFlight === 1) {
     store.dispatch({ type: Action.REQUESTS_BEGIN });
   }
 }
 
 function decrementRequests() {
   numRequestsInFlight -= 1;
-  if(numRequestsInFlight <= 0) {
+  if (numRequestsInFlight <= 0) {
     numRequestsInFlight = 0; // sanity check;
     store.dispatch({ type: Action.REQUESTS_END });
   }
@@ -67,15 +67,19 @@ export function request(path, options) {
   options = options || {};
 
   var xhr = new XMLHttpRequest();
-  var contentTypeHeader = options.files ? 'multipart/form-data' : 'application/x-www-form-urlencoded';
-  options.headers = Object.assign({
-    'Content-Type': contentTypeHeader,
-  }, options.headers || {});
+
+  if (!options.headers) { options.headers = {}; }
+  if (!options.files) {
+    options.headers = Object.assign({
+      'Content-Type': 'application/x-www-form-urlencoded',
+    }, options.headers);
+  }
+
   var method = (options.method || 'GET').toUpperCase();
 
-  if(options.onUploadProgress) {
+  if (options.onUploadProgress) {
     xhr.upload.addEventListener('progress', function(e) {
-      if(e.lengthComputable) {
+      if (e.lengthComputable) {
         options.onUploadProgress(e.loaded / e.total * 100);
       } else {
         options.onUploadProgress(null);
@@ -89,11 +93,11 @@ export function request(path, options) {
 
   return new Promise((resolve, reject, onCancel) => {
     onCancel(function() {
-      if(!options.silent) { decrementRequests(); }
+      if (!options.silent) { decrementRequests(); }
       xhr.abort();
     });
     xhr.addEventListener('load', function() {
-      if(xhr.status >= 400) {
+      if (xhr.status >= 400) {
         var err = new HttpError(`API ${method} ${path} failed (${xhr.status}) "${xhr.responseText}"`, method, path, xhr.status, xhr.responseText);
         reject(err);
       } else {
@@ -112,27 +116,27 @@ export function request(path, options) {
       xhr.setRequestHeader(key, options.headers[key]);
     });
 
-    if(!options.silent) {
+    if (!options.silent) {
       incrementRequests();
     }
 
     var payload = options.body || null;
 
-    if(options.files) {
+    if (options.files) {
       payload = new FormData();
-      if(typeof options.body === 'object') {
+      if (typeof options.body === 'object') {
         Object.keys(options.body).forEach(key => {
           payload.append(key, options.body[key]);
         });
       }
-      options.files.forEach((file, i) => {
-        payload.append(`file-${i}`, file, file.name);
+      options.files.forEach(file => {
+        payload.append('files', file, file.name);
       });
     }
 
     xhr.send(payload);
   }).finally(() => {
-    if(!options.silent) { decrementRequests(); }
+    if (!options.silent) { decrementRequests(); }
   });
 }
 
@@ -142,7 +146,7 @@ export function jsonRequest(path, options) {
     'Accept': 'application/json',
   };
 
-  if(options.body) {
+  if (options.body) {
     options.body = JSON.stringify(options.body);
     jsonHeaders['Content-Type'] = 'application/json';
   }

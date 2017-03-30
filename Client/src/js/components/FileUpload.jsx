@@ -2,6 +2,8 @@ import React from 'react';
 import { Button, Glyphicon, OverlayTrigger, Tooltip, ProgressBar } from 'react-bootstrap';
 
 import { request, buildApiPath } from '../utils/http';
+import { plural } from '../utils/string';
+
 
 const FILE_UPLOAD_PATH = '/test-file-upload';
 
@@ -11,7 +13,7 @@ var FileUpload = React.createClass({
     className: React.PropTypes.string,
     label: React.PropTypes.string,
     files: React.PropTypes.array,
-    url: React.PropTypes.string,
+    path: React.PropTypes.string,
     onUploadProgress: React.PropTypes.func,
     onUploadFinished: React.PropTypes.func,
   },
@@ -31,19 +33,20 @@ var FileUpload = React.createClass({
       method: 'POST',
       files: this.props.files,
       onUploadProgress: (percentComplete) => {
-        this.setState({ percentUploaded: percentComplete });
-        if(this.props.onUploadProgress) {
-          this.props.onUploadProgress(percentComplete);
+        var percent = Math.round(percentComplete);
+        this.setState({ percentUploaded: percent });
+        if (this.props.onUploadProgress) {
+          this.props.onUploadProgress(percent);
         }
       },
     };
 
-    this.uploadPromise = request(buildApiPath(this.props.url || FILE_UPLOAD_PATH), options).then(() => {
+    this.uploadPromise = request(buildApiPath(this.props.path || FILE_UPLOAD_PATH), options).then(() => {
       this.setState({ uploadInProgress: false, percentUploaded: null });
-      if(this.props.onUploadFinished) { this.props.onUploadFinished(true); }
+      if (this.props.onUploadFinished) { this.props.onUploadFinished(true); }
     }, (err) => {
       this.setState({ uploadInProgress: false, fileUploadError: err });
-      if(this.props.onUploadFinished) { this.props.onUploadFinished(err); }
+      if (this.props.onUploadFinished) { this.props.onUploadFinished(err); }
     });
   },
 
@@ -65,31 +68,30 @@ var FileUpload = React.createClass({
     var files = this.props.files || [];
     var fileUploadButton, uploadProgressBar;
     var error;
-    if(!this.state.fileUploadError) {
-      if(!this.state.uploadInProgress) {
-        var uploadTooltip = <Tooltip id="files-to-upload-tooltip">
-          Upload {files.length} files
-        </Tooltip>;
+    if (!this.state.fileUploadError) {
+      var uploadText = `Upload ${ files.length } ${ plural(files.length, 'File', 'Files') }`;
+      if (!this.state.uploadInProgress) {
+        var uploadTooltip = <Tooltip id="files-to-upload-tooltip">{ uploadText }</Tooltip>;
+        var notReady = files.length === 0;
 
         fileUploadButton = <OverlayTrigger placement="top" overlay={uploadTooltip}>
-          <Button className="file-upload-button" onClick={this.uploadFiles} disabled={files.length === 0}>
-            <Glyphicon glyph="upload" />
-            Upload {files.length} Files
+          <Button className="file-upload-button" onClick={ this.uploadFiles } disabled={ notReady } bsStyle={ notReady ? 'default' : 'success'}>
+            <Glyphicon glyph="upload" />{ ` ${ uploadText }` }
           </Button>
         </OverlayTrigger>;
       } else {
-        uploadProgressBar = <ProgressBar now={this.state.percentUploaded} label={`${this.state.percentUploaded}%`} />;
+        uploadProgressBar = <ProgressBar active now={ this.state.percentUploaded } label={ `${ this.state.percentUploaded }%` } min={ 5 }/>;
       }
     } else {
-      error = <OverlayTrigger placement="top" overlay={<Tooltip id="file-upload-error-tooltip">{String(this.state.fileUploadError)}</Tooltip>}>
-        <p className="file-upload-error-message" onClick={this.reset}>Upload Error<Glyphicon glyph="remove"/></p>
+      error = <OverlayTrigger placement="top" overlay={ <Tooltip id="file-upload-error-tooltip">{ String(this.state.fileUploadError) }</Tooltip> }>
+        <p className="file-upload-error-message" onClick={ this.reset }>Upload Error<Glyphicon glyph="remove"/></p>
       </OverlayTrigger>;
     }
 
-    return <div id={this.props.id} className={classNames.join(' ')}>
-        {fileUploadButton}
-        {uploadProgressBar}
-        {error}
+    return <div id={ this.props.id } className={ classNames.join(' ') }>
+        { fileUploadButton }
+        { uploadProgressBar }
+        { error }
       </div>;
   },
 });

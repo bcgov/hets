@@ -18,9 +18,10 @@ import { isBlank } from '../../utils/string';
 
 var EquipmentAddDialog = React.createClass({
   propTypes: {
+    currentUser: React.PropTypes.object,
     owner: React.PropTypes.object.isRequired,
     localAreas: React.PropTypes.object,
-    equipmentTypes: React.PropTypes.object,
+    districtEquipmentTypes: React.PropTypes.object,
     onSave: React.PropTypes.func.isRequired,
     onClose: React.PropTypes.func.isRequired,
     show: React.PropTypes.bool,
@@ -43,7 +44,7 @@ var EquipmentAddDialog = React.createClass({
 
   componentDidMount() {
     this.setState({ loading: true });
-    Api.getEquipmentTypes().then(() => {
+    Api.getDistrictEquipmentTypes(this.props.currentUser.district.id).then(() => {
       this.setState({ loading: false });
       this.input.focus();
     });
@@ -95,7 +96,7 @@ var EquipmentAddDialog = React.createClass({
     this.props.onSave({
       owner: { id: this.props.owner.id },
       localArea: { id: this.state.localAreaId },
-      equipmentType: { id: this.state.equipmentTypeId },
+      districtEquipmentType: { id: this.state.equipmentTypeId },
       serialNumber: this.state.serialNumber,
       make: this.state.make,
       model: this.state.model,
@@ -108,8 +109,16 @@ var EquipmentAddDialog = React.createClass({
     if (this.state.loading) { return <div style={{ textAlign: 'center' }}><Spinner/></div>; }
 
     var owner = this.props.owner;
-    var localAreas = _.sortBy(this.props.localAreas, 'name');
-    var equipmentTypes = _.sortBy(this.props.equipmentTypes, 'description');
+    // Constrain the local area drop downs to those in the District of the current logged in user
+    var localAreas = _.chain(this.props.localAreas)
+      .filter(localArea => localArea.serviceArea.district.id == this.props.currentUser.district.id)
+      .sortBy('name')
+      .value();
+
+    var districtEquipmentTypes = _.chain(this.props.districtEquipmentTypes)
+      .filter(type => type.district.id == this.props.currentUser.district.id)
+      .sortBy('districtEquipmentName')
+      .value();
 
     return <EditDialog id="equipment-add" show={ this.props.show }
       onClose={ this.props.onClose } onSave={ this.onSave } didChange={ this.didChange } isValid={ this.isValid }
@@ -123,8 +132,8 @@ var EquipmentAddDialog = React.createClass({
         </FormGroup>
         <FormGroup controlId="equipmentTypeId" validationState={ this.state.equipmentTypeError ? 'error' : null }>
           <ControlLabel>Equipment Type <sup>*</sup></ControlLabel>
-          <FilterDropdown id="equipmentTypeId" fieldName="name" selectedId={ this.state.equipmentTypeId } updateState={ this.updateState }
-            items={ equipmentTypes }
+          <FilterDropdown id="equipmentTypeId" fieldName="districtEquipmentName" selectedId={ this.state.equipmentTypeId } updateState={ this.updateState }
+            items={ districtEquipmentTypes }
           />
           <HelpBlock>{ this.state.equipmentTypeError }</HelpBlock>
         </FormGroup>
@@ -159,9 +168,10 @@ var EquipmentAddDialog = React.createClass({
 
 function mapStateToProps(state) {
   return {
+    currentUser: state.user,
     owner: state.models.owner,
     localAreas: state.lookups.localAreas,
-    equipmentTypes: state.lookups.equipmentTypes,
+    districtEquipmentTypes: state.lookups.districtEquipmentTypes,
   };
 }
 

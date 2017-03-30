@@ -97,7 +97,7 @@ export function getUsers() {
     // Add display fields
     _.map(users, user => { parseUser(user); });
 
-    store.dispatch({ type: Action.UPDATE_USERS, users: users });
+    store.dispatch({ type: Action.UPDATE_USERS_LOOKUP, users: users });
   });
 }
 
@@ -297,7 +297,7 @@ function getBlockDisplayName(blockNumber) {
 
 function parseEquipment(equipment) {
   if (!equipment.owner) { equipment.owner = { id: 0, organizationName: '' }; }
-  if (!equipment.equipmentType) { equipment.equipmentType = { id: 0, name: '', description: '' }; }
+  if (!equipment.districtEquipmentType) { equipment.districtEquipmentType = { id: 0, districtEquipmentName: '' }; }
   if (!equipment.localArea) { equipment.localArea = { id: 0, name: '' }; }
   if (!equipment.localArea.serviceArea) { equipment.localArea.serviceArea = { id: 0, name: '' }; }
   if (!equipment.localArea.serviceArea.district) { equipment.localArea.serviceArea.district = { id: 0, name: '' }; }
@@ -317,7 +317,7 @@ function parseEquipment(equipment) {
   equipment.operator = equipment.operator || ''; // TODO Needs review from business
   equipment.organizationName = equipment.owner.organizationName;
   equipment.ownerPath = equipment.owner.id ? `#/owners/${ equipment.owner.id }` : '';
-  equipment.typeName = equipment.equipmentType ? equipment.equipmentType.name : '';
+  equipment.typeName = equipment.districtEquipmentType ? equipment.districtEquipmentType.districtEquipmentName : '';
   equipment.localAreaName = equipment.localArea.name;
   equipment.districtName = equipment.localArea.serviceArea.district.name;
   equipment.lastVerifiedDate = equipment.lastVerifiedDate || '';
@@ -499,6 +499,7 @@ function parseOwner(owner) {
   if (!owner.localArea.serviceArea.district) { owner.localArea.serviceArea.district = { id: 0, name: '' }; }
   if (!owner.localArea.serviceArea.district.region) { owner.localArea.serviceArea.district.region = { id: 0, name: '' }; }
   if (!owner.contacts) { owner.contacts = []; }
+  if (!owner.documents) { owner.documents = []; }
   if (!owner.equipmentList) { owner.equipmentList = []; }
 
   owner.organizationName = owner.organizationName || '';
@@ -519,6 +520,7 @@ function parseOwner(owner) {
   owner.contacts = normalize(owner.contacts);
   _.map(owner.contacts, contact => { parseContact(contact, owner); });
 
+  _.map(owner.documents, document => { parseDocument(document); });
   _.map(owner.equipmentList, equipment => { parseEquipment(equipment); });
 
   // TODO Owner status needs to be populated in sample data. Setting to Approved for the time being...
@@ -532,6 +534,9 @@ function parseOwner(owner) {
   owner.districtName = owner.localArea.serviceArea.district.name;
   owner.numberOfEquipment = Object.keys(owner.equipmentList).length;
   owner.numberOfPolicyDocuments = owner.numberOfPolicyDocuments || 0;  // TODO
+
+  owner.getDocumentsPromise = getOwnerDocuments;
+  owner.uploadDocumentPath = `/owners/${ owner.id }/attachments`;
 
   owner.canView = true;
   owner.canEdit = true;
@@ -630,6 +635,21 @@ export function getOwnerHistory(ownerId, params) {
   });
 }
 
+export function getOwnerDocuments(ownerId) {
+  return new ApiRequest(`/owners/${ ownerId }/attachments`).get().then(response => {
+    var documents = normalize(response);
+
+    // Add display fields
+    _.map(documents, document => { parseDocument(document); });
+
+    store.dispatch({ type: Action.UPDATE_DOCUMENTS, documents: documents });
+  });
+}
+
+export function addOwnerDocument(ownerId, files) {
+  return new ApiRequest(`/owners/${ ownerId }/attachments`).post(files);
+}
+
 export function updateOwnerEquipment(owner, equipmentArray) {
   return new ApiRequest(`/owners/${ owner.id }/equipment`).put(equipmentArray).then(() => {
     // After updating the owner's equipment, refresh the owner state.
@@ -720,6 +740,43 @@ export function deleteContact(contact) {
 }
 
 ////////////////////
+// Documents
+////////////////////
+
+function getFileSizeString(fileSizeInBytes) {
+  var bytes  = parseInt(fileSizeInBytes, 10) || 0;
+  var kbytes = bytes  >= 1024 ? bytes  / 1024 : 0;
+  var mbytes = kbytes >= 1024 ? kbytes / 1024 : 0;
+  var gbytes = mbytes >= 1024 ? mbytes / 1024 : 0;
+
+  var ceiling10 = function(num) {
+    var adjusted = Math.ceil(num * 10) / 10;
+    return adjusted.toFixed(1);
+  };
+
+  return gbytes ? `${ ceiling10(gbytes) } GB` : (
+         mbytes ? `${ ceiling10(mbytes) } MB` : (
+         kbytes ? `${ Math.ceil(kbytes) } KB` :
+                  `${ bytes } bytes`));
+}
+
+function parseDocument(document) {
+  document.fileSizeDisplay = getFileSizeString(document.fileSize);
+  document.timestampSort = sortableDateTime(document.lastUpdateTimestamp);
+
+  document.canDelete = true;
+}
+
+export function deleteDocument(document) {
+  return new ApiRequest(`/attachments/${ document.id }/delete`).post();
+}
+
+export function getDownloadDocumentURL(document) {
+  // Not an API call, per se, as it must be called from the browser window.
+  return `${ location.origin }${ location.pathname}api/attachments/${ document.id }/download`;
+}
+
+////////////////////
 // History
 ////////////////////
 
@@ -732,13 +789,11 @@ function parseHistory(history) {
 ////////////////////
 
 function parseProject(project) {
-  if (!project.localArea) { project.localArea = { id: 0, name: '' }; }
-  if (!project.localArea.serviceArea) { project.localArea.serviceArea = { id: 0, name: '' }; }
-  if (!project.localArea.serviceArea.district) { project.localArea.serviceArea.district = { id: 0, name: '' }; }
-  if (!project.localArea.serviceArea.district.region) { project.localArea.serviceArea.district.region = { id: 0, name: '' }; }
+  if (!project.district) { project.district = { id: 0, name: '' }; }
+  if (!project.district.region) { project.district.region = { id: 0, name: '' }; }
   if (!project.contacts) { project.contacts = []; }
   if (!project.rentalRequests) { project.rentalRequests = []; }
-  if (!project.rentalAgreements) { project.rentalAgreements = []; }  // TODO Server needs to send this (HETS-153)
+  if (!project.rentalAgreements) { project.rentalAgreements = []; }
 
   project.name = project.name || '';
   project.provincialProjectNumber = project.provincialProjectNumber || '';
@@ -761,7 +816,7 @@ function parseProject(project) {
   // UI display fields
   project.status = project.status || Constant.PROJECT_STATUS_CODE_ACTIVE;
   project.isActive = project.status === Constant.PROJECT_STATUS_CODE_ACTIVE;
-  project.localAreaName = project.localArea.name;
+  project.districtName = project.district.name;
 
   project.primaryContactName = project.primaryContact ? firstLastName(project.primaryContact.givenName, project.primaryContact.surname) : '';
   project.primaryContactRole = project.primaryContact ? project.primaryContact.role : '';
@@ -853,9 +908,9 @@ function parseRentalRequest(request) {
   if (!request.localArea.serviceArea.district) { request.localArea.serviceArea.district = { id: 0, name: '' }; }
   if (!request.localArea.serviceArea.district.region) { request.localArea.serviceArea.district.region = { id: 0, name: '' }; }
   if (!request.project) { request.project = { id: 0, name: '' }; }
-  if (!request.equipmentType) { request.equipmentType = { id: 0, name: '' }; }
+  if (!request.districtEquipmentType) { request.districtEquipmentType = { id: 0, districtEquipmentName: '' }; }
   if (!request.primaryContact) { request.primaryContact = { id: 0, givenName: '', surname: '' }; }
-  if (!request.attachments) { request.attachments = []; }
+  if (!request.rentalRequestAttachments) { request.rentalRequestAttachments = []; }
   if (!request.rentalRequestRotationList) { request.rentalRequestRotationList = []; }
 
   // Add display fields for primary contact
@@ -867,20 +922,19 @@ function parseRentalRequest(request) {
   request.status = request.status || Constant.RENTAL_REQUEST_STATUS_CODE_IN_PROGRESS;
   request.equipmentCount = request.equipmentCount || 0;
   request.expectedHours = request.expectedHours || 0;
+  request.expectedStartDate = request.expectedStartDate || '';
+  request.expectedEndDate = request.expectedEndDate || '';
 
   request.projectId = request.projectId || request.project.id;
   request.projectName = request.projectName || request.project.name;
   request.projectPath = request.projectId ? `projects/${ request.projectId }`: '';
-
-  request.expectedStartDate = request.expectedStartDate || '';
-  request.expectedEndDate = request.expectedEndDate || '';
 
   // UI display fields
   request.isActive = request.status === Constant.RENTAL_REQUEST_STATUS_CODE_IN_PROGRESS;
   request.isCompleted = request.status === Constant.RENTAL_REQUEST_STATUS_CODE_COMPLETED;
   request.isCancelled = request.status === Constant.RENTAL_REQUEST_STATUS_CODE_CANCELLED;
   request.localAreaName = request.localArea.name;
-  request.equipmentTypeName = request.equipmentTypeName || request.equipmentType.name;
+  request.equipmentTypeName = request.equipmentTypeName || request.districtEquipmentType.districtEquipmentName;
 
   // Primary contact for the rental request/project
   request.primaryContactName = request.primaryContact ? firstLastName(request.primaryContact.givenName, request.primaryContact.surname) : '';
@@ -968,7 +1022,7 @@ export function getRentalRequestHistory(requestId, params) {
 function parseRentalRequestRotationList(rotationListItem) {
   if (!rotationListItem.rentalRequest) { rotationListItem.rentalRequest = { id: 0, isRentalRequest: true }; }
   if (!rotationListItem.equipment) { rotationListItem.equipment = { id: 0, equipmentCode: '' }; }
-  if (!rotationListItem.equipment.equipmentType) { rotationListItem.equipment.equipmentType = { id: 0, name: '' }; }
+  if (!rotationListItem.equipment.districtEquipmentType) { rotationListItem.equipment.districtEquipmentType = { id: 0, districtEquipmentName: '' }; }
   if (!rotationListItem.equipment.owner) { rotationListItem.equipment.owner = { id: 0, organizationName: '' }; }
 
   // The rental agreement (if any) created for an accepted hire offer.
@@ -1016,7 +1070,7 @@ function parseRentalRequestRotationList(rotationListItem) {
 function parseRentalAgreement(agreement) {
   if (!agreement.equipment) { agreement.equipment = { id: 0, equipmentCode: '' }; }
   if (!agreement.equipment.owner) { agreement.equipment.owner = { id: 0, organizationName: '' }; }
-  if (!agreement.equipment.equipmentType) { agreement.equipment.equipmentType = { id: 0, name: '' }; }
+  if (!agreement.equipment.districtEquipmentType) { agreement.equipment.districtEquipmentType = { id: 0, districtEquipmentName: '' }; }
   if (!agreement.equipment.equipmentAttachments) { agreement.equipment.equipmentAttachments = []; }
   if (!agreement.equipment.localArea) { agreement.equipment.localArea = { id: 0, name: '' }; }
   if (!agreement.equipment.localArea.serviceArea) { agreement.equipment.localArea.serviceArea = { id: 0, name: '' }; }
@@ -1054,7 +1108,7 @@ function parseRentalAgreement(agreement) {
   agreement.equipmentMake = agreement.equipment.make;
   agreement.equipmentModel = agreement.equipment.model;
   agreement.equipmentSize = agreement.equipment.size;
-  agreement.equipmentTypeName = agreement.equipment.equipmentType.name;
+  agreement.equipmentTypeName = agreement.equipment.districtEquipmentType.districtEquipmentName;
   agreement.ownerId = agreement.equipment.owner.id || 0;
   agreement.ownerName = agreement.equipment.owner.organizationName || '';
   agreement.workSafeBCPolicyNumber = agreement.equipment.owner.workSafeBCPolicyNumber || '';
@@ -1302,6 +1356,15 @@ export function getEquipmentTypes() {
     var equipmentTypes = normalize(response);
 
     store.dispatch({ type: Action.UPDATE_EQUIPMENT_TYPES_LOOKUP, equipmentTypes: equipmentTypes });
+  });
+}
+
+export function getDistrictEquipmentTypes(districtId) {
+  return new ApiRequest('/districtequipmenttypes').get().then(response => {
+    var filteredResponse = _.filter(response, (x) => x.district.id == districtId );
+    var districtEquipmentTypes = normalize(filteredResponse);
+
+    store.dispatch({ type: Action.UPDATE_DISTRICT_EQUIPMENT_TYPES_LOOKUP, districtEquipmentTypes: districtEquipmentTypes });
   });
 }
 

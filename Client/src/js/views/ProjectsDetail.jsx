@@ -9,6 +9,8 @@ import { LinkContainer } from 'react-router-bootstrap';
 
 import _ from 'lodash';
 
+import ProjectsEditDialog from './dialogs/ProjectsEditDialog.jsx';
+
 import * as Action from '../actionTypes';
 import * as Api from '../api';
 import * as Constant from '../constants';
@@ -170,7 +172,7 @@ var ProjectsDetail = React.createClass({
               <Unimplemented>
                 <Button onClick={ this.print }><Glyphicon glyph="print" title="Print" /></Button>
               </Unimplemented>
-              <LinkContainer to={{ pathname: 'projects' }}>
+              <LinkContainer to={{ pathname: Constant.PROJECTS_PATHNAME }}>
                 <Button title="Return to List"><Glyphicon glyph="arrow-left" /> Return to List</Button>
               </LinkContainer>
             </div>
@@ -186,6 +188,11 @@ var ProjectsDetail = React.createClass({
                 <h1>Project: <small>{ project.name }</small></h1>
               </Col>
             </Row>
+            <Row>
+              <Col md={12}>
+                <h1>District: <small>{ project.districtName }</small></h1>
+              </Col>
+            </Row>
           </div>;
         })()}
 
@@ -193,9 +200,7 @@ var ProjectsDetail = React.createClass({
           <Col md={6}>
             <Well>
               <h3>Project Information <span className="pull-right">
-                <Unimplemented>
                   <Button title="Edit Project" bsSize="small" onClick={ this.openEditDialog }><Glyphicon glyph="pencil" /></Button>
-                </Unimplemented>
               </span></h3>
               {(() => {
                 if (this.state.loading) { return <div style={{ textAlign: 'center' }}><Spinner/></div>; }
@@ -214,13 +219,10 @@ var ProjectsDetail = React.createClass({
                     </ColDisplay>
                   </Row>
                   <Row>
-                    <ColDisplay md={12} labelProps={{ md: 4 }} label="Local Area">{ project.localAreaName }</ColDisplay>
-                  </Row>
-                  <Row>
                     <ColDisplay md={12} labelProps={{ md: 4 }} label="Provincial Project Number">{ project.provincialProjectNumber }</ColDisplay>
                   </Row>
                   <Row>
-                    <ColDisplay md={12} labelProps={{ md: 4 }} label="Information">{ project.information }</ColDisplay>
+                    <ColDisplay md={12} labelProps={{ md: 4 }} fieldProps={{ md: 7 }} label="Information">{ project.information }</ColDisplay>
                   </Row>
                 </div>;
               })()}
@@ -347,14 +349,7 @@ var ProjectsDetail = React.createClass({
               })()}
             </Well>
             <Well>
-              <h3>History <span className="pull-right">
-                <Unimplemented>
-                  <Button title="Add note" bsSize="small" onClick={ this.addNote }><Glyphicon glyph="plus" /> Add Note</Button>
-                </Unimplemented>
-                <Unimplemented>
-                  <Button title="Add document" bsSize="small" onClick={ this.addDocument }><Glyphicon glyph="paperclip" /></Button>
-                </Unimplemented>
-              </span></h3>
+              <h3>History</h3>
               {(() => {
                 if (this.state.loadingHistory) { return <div style={{ textAlign: 'center' }}><Spinner/></div>; }
                 if (Object.keys(this.props.history).length === 0) { return <Alert bsStyle="success" style={{ marginTop: 10 }}>No history</Alert>; }
@@ -379,7 +374,9 @@ var ProjectsDetail = React.createClass({
           </Col>
         </Row>
       </div>
-      { /* TODO this.state.showEditDialog && <ProjectEditDialog /> */}
+      { this.state.showEditDialog &&
+        <ProjectsEditDialog show={ this.state.showEditDialog } onSave={ this.saveEdit } onClose={ this.closeEditDialog } />  
+      }
       { /* TODO this.state.showContactDialog && <ContactEditDialog /> */}
     </div>;
   },

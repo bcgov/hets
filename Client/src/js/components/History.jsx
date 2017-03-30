@@ -38,6 +38,7 @@ var HistoryComponent = React.createClass({
     return {
       loading: false,
 
+      history: [],
       canShowMore: false,
 
       ui : {
@@ -78,7 +79,17 @@ var HistoryComponent = React.createClass({
     // Easy mode: show 10 the first time and let the user load all of them with the
     // "Show More" button. Can adapt for paginated / offset&limit calls if necessary.
     this.setState({ loading: true });
-    return History.get(this.props.historyEntity, 0, first ? API_LIMIT : null).finally(() => {
+    return History.get(this.props.historyEntity, 0, first ? API_LIMIT : null).then(() => {
+      var history = _.map(this.props.history, history => {
+        history.userName = this.getUserName(history.lastUpdateUserid);
+        history.formattedTimestamp = formatDateTime(history.lastUpdateTimestamp, Constant.DATE_TIME_LOG);
+        history.event = History.renderEvent(history.historyText, this.props.onClose);
+        return history;
+      });
+      this.setState({
+        history: history,
+      });
+    }).finally(() => {
       this.setState({
         loading: false,
         canShowMore: first && Object.keys(this.props.history).length >= API_LIMIT,
@@ -95,16 +106,16 @@ var HistoryComponent = React.createClass({
       {(() => {
         if (this.state.loading) { return <div style={{ textAlign: 'center' }}><Spinner/></div>; }
 
-        if (Object.keys(this.props.history).length === 0) { return <Alert bsStyle="success">No history</Alert>; }
+        if (Object.keys(this.state.history).length === 0) { return <Alert bsStyle="success">No history</Alert>; }
 
-        var history = _.sortBy(this.props.history, this.state.ui.sortField);
+        var history = _.sortBy(this.state.history, this.state.ui.sortField);
         if (this.state.ui.sortDesc) {
           _.reverse(history);
         }
 
         var headers = [
           { field: 'timestampSort',       title: 'Timestamp' },
-          { field: 'lastUpdateUserid',    title: 'User'      },
+          { field: 'userName',            title: 'User'      },
           { field: 'event', noSort: true, title: 'Event'     },
           { field: 'showMore',            title: 'Show More', style: { textAlign: 'right'  },
             node: <Button bsSize="xsmall" onClick={ this.showMore } className={ this.state.canShowMore ? '' : 'hidden' }>
@@ -117,9 +128,9 @@ var HistoryComponent = React.createClass({
           {
             _.map(history, (history) => {
               return <tr key={ history.id }>
-                <td>{ formatDateTime(history.lastUpdateTimestamp, Constant.DATE_TIME_LOG) }</td>
-                <td>{ this.getUserName(history.lastUpdateUserid) }</td>
-                <td className="history-event" colSpan="2">{ History.renderEvent(history.historyText, this.props.onClose) }</td>
+                <td>{ history.formattedTimestamp }</td>
+                <td>{ history.userName }</td>
+                <td className="history-event" colSpan="2">{ history.event }</td>
               </tr>;
             })
           }
@@ -132,7 +143,7 @@ var HistoryComponent = React.createClass({
 function mapStateToProps(state) {
   return {
     history: state.models.history,
-    users: state.models.users,
+    users: state.lookups.users,
     ui: state.ui.history,
   };
 }

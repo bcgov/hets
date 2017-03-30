@@ -34,10 +34,11 @@ TODO:
 
 var Owners = React.createClass({
   propTypes: {
+    currentUser: React.PropTypes.object,
     ownerList: React.PropTypes.object,
     owner: React.PropTypes.object,
     localAreas: React.PropTypes.object,
-    equipmentTypes: React.PropTypes.object,
+    districtEquipmentTypes: React.PropTypes.object,
     owners: React.PropTypes.object,
     favourites: React.PropTypes.object,
     search: React.PropTypes.object,
@@ -87,10 +88,11 @@ var Owners = React.createClass({
   componentDidMount() {
     this.setState({ loading: true });
 
+    var equipmentTypesPromise = Api.getDistrictEquipmentTypes(this.props.currentUser.district.id);
     var ownersPromise = Api.getOwners();
     var favouritesPromise = Api.getFavourites('owner');
 
-    Promise.all([ownersPromise, favouritesPromise]).then(() => {
+    Promise.all([equipmentTypesPromise, ownersPromise, favouritesPromise]).then(() => {
       // If this is the first load, then look for a default favourite
       if (!this.props.search.loaded) {
         var favourite = _.find(this.props.favourites, (favourite) => { return favourite.isDefault; });
@@ -158,9 +160,21 @@ var Owners = React.createClass({
   },
 
   render() {
-    var localAreas = _.sortBy(this.props.localAreas, 'name');
-    var owners = _.sortBy(this.props.owners, 'organizationName');
-    var equipmentTypes = _.sortBy(this.props.equipmentTypes, 'name');
+    // Constrain the local area drop downs to those in the District of the current logged in user
+    var localAreas = _.chain(this.props.localAreas)
+      .filter(localArea => localArea.serviceArea.district.id == this.props.currentUser.district.id)
+      .sortBy('name')
+      .value();
+
+    var owners = _.chain(this.props.owners)
+      .filter(owner => owner.localArea.serviceArea.district.id == this.props.currentUser.district.id)
+      .sortBy('organizationName')
+      .value();
+
+    var districtEquipmentTypes = _.chain(this.props.districtEquipmentTypes)
+      .filter(type => type.district.id == this.props.currentUser.district.id)
+      .sortBy('districtEquipmentName')
+      .value();
 
     var numOwners = this.state.loading ? '...' : Object.keys(this.props.ownerList).length;
 
@@ -183,8 +197,8 @@ var Owners = React.createClass({
                 items={ localAreas } selectedIds={ this.state.search.selectedLocalAreasIds } updateState={ this.updateSearchState } showMaxItems={ 2 } />
               <DropdownControl id="statusCode" title={ this.state.search.statusCode } updateState={ this.updateSearchState }
                   items={[ Constant.OWNER_STATUS_CODE_APPROVED, Constant.OWNER_STATUS_CODE_PENDING, Constant.OWNER_STATUS_CODE_ARCHIVED ]} />
-              <MultiDropdown id="selectedEquipmentTypesIds" placeholder="Equipment Types" fieldName="name"
-                items={ equipmentTypes } selectedIds={ this.state.search.selectedEquipmentTypesIds } updateState={ this.updateSearchState } showMaxItems={ 2 } />
+              <MultiDropdown id="selectedEquipmentTypesIds" placeholder="Equipment Types" fieldName="districtEquipmentName"
+                items={ districtEquipmentTypes } selectedIds={ this.state.search.selectedEquipmentTypesIds } updateState={ this.updateSearchState } showMaxItems={ 2 } />
               <FilterDropdown id="ownerId" placeholder="Owner" fieldName="organizationName" blankLine
                 items={ owners } selectedId={ this.state.search.ownerId } updateState={ this.updateSearchState } />
               <CheckboxControl inline id="hired" checked={ this.state.search.hired } updateState={ this.updateSearchState }>Hired</CheckboxControl>
@@ -253,10 +267,11 @@ var Owners = React.createClass({
 
 function mapStateToProps(state) {
   return {
+    currentUser: state.user,
     ownerList: state.models.owners,
     owner: state.models.owner,
     localAreas: state.lookups.localAreas,
-    equipmentTypes: state.lookups.equipmentTypes,
+    districtEquipmentTypes: state.lookups.districtEquipmentTypes,
     owners: state.lookups.owners,
     favourites: state.models.favourites,
     search: state.search.owners,

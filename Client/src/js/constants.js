@@ -9,6 +9,7 @@ export const USERS_PATHNAME = 'users';
 export const ROLES_PATHNAME = 'roles';
 export const VERSION_PATHNAME = 'version';
 export const CONTACTS_PATHNAME = 'contacts';
+export const DOCUMENTS_PATHNAME = 'documents';
 
 // Permissions
 export const PERMISSION_LOGIN = 'LOGIN';
