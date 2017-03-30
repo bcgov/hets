@@ -896,11 +896,11 @@ export function addProjectContact(project, contact) {
 }
 
 export function addProjectHistory(projectId, history) {
-  return new ApiRequest(`/project/${ projectId }/history`).post(history);
+  return new ApiRequest(`/projects/${ projectId }/history`).post(history);
 }
 
 export function getProjectHistory(projectId, params) {
-  return new ApiRequest(`/project/${ projectId }/history`).get(params).then(response => {
+  return new ApiRequest(`/projects/${ projectId }/history`).get(params).then(response => {
     var history = normalize(response);
 
     // Add display fields

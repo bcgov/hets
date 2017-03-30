@@ -23,6 +23,16 @@ export const OWNER_CONTACT_ADDED = 'Owner %e added contact %e.';
 export const OWNER_CONTACT_UPDATED = 'Owner %e modified contact %e.';
 export const OWNER_CONTACT_DELETED = 'Owner %e removed contact %e.';
 
+export const PROJECT_ADDED = 'Project %e was added.';
+export const PROJECT_MODIFIED = 'Project %e was modified.';
+export const PROJECT_MODIFIED_STATUS = 'Project %e status is %e.';
+export const PROJECT_MODIFIED_NAME = 'Project %e is now %e';
+export const PROJECT_EQUIPMENT_ADDED = 'Project %e added equipment %e.';
+
+export const PROJECT_CONTACT_ADDED = 'Project %e added contact %e.';
+export const PROJECT_CONTACT_UPDATED = 'Project %e modified contact %e.';
+export const PROJECT_CONTACT_DELETED = 'Project %e removed contact %e.';
+
 export const USER_ADDED = 'User %e was added.';
 export const USER_MODIFIED = 'User %e was modified.';
 export const USER_DELETED = 'User %e was deleted.';
@@ -156,4 +166,20 @@ export function ownerContactUpdated(owner, contact) {
 
 export function ownerContactDeleted(owner, contact) {
   return log(owner.historyEntity, OWNER_CONTACT_DELETED, contact.historyEntity);
+}
+
+export function projectAdded(project) {
+  return log(project.historyEntity, PROJECT_ADDED);
+}
+
+export function projectContactAdded(project, contact) {
+  return log(project.historyEntity, PROJECT_CONTACT_ADDED, contact.historyEntity);
+}
+
+export function projectContactUpdated(project, contact) {
+  return log(project.historyEntity, PROJECT_CONTACT_UPDATED, contact.historyEntity);
+}
+
+export function projectContactDeleted(project, contact) {
+  return log(project.historyEntity, PROJECT_CONTACT_DELETED, contact.historyEntity);
 }
