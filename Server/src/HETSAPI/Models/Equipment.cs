@@ -80,8 +80,7 @@ namespace HETSAPI.Models
         /// <param name="Notes">Notes.</param>
         /// <param name="Attachments">Attachments.</param>
         /// <param name="History">History.</param>
-        /// <param name="SeniorityAudit">SeniorityAudit.</param>
-        public Equipment(int Id, LocalArea LocalArea, DistrictEquipmentType DistrictEquipmentType, Owner Owner, string EquipmentCode, string Status, DateTime ReceivedDate, DateTime LastVerifiedDate, DateTime? ApprovedDate = null, bool? IsInformationUpdateNeeded = null, string InformationUpdateNeededReason = null, string LicencePlate = null, string Make = null, string Model = null, string Year = null, string Operator = null, float? PayRate = null, string RefuseRate = null, string SerialNumber = null, string Size = null, DateTime? ToDate = null, int? BlockNumber = null, float? Seniority = null, int? NumberInBlock = null, bool? IsSeniorityOverridden = null, string SeniorityOverrideReason = null, DateTime? SeniorityEffectiveDate = null, float? YearsOfService = null, float? ServiceHoursLastYear = null, float? ServiceHoursTwoYearsAgo = null, float? ServiceHoursThreeYearsAgo = null, string ArchiveCode = null, string ArchiveReason = null, DateTime? ArchiveDate = null, DumpTruck DumpTruck = null, List<EquipmentAttachment> EquipmentAttachments = null, List<Note> Notes = null, List<Attachment> Attachments = null, List<History> History = null, List<SeniorityAudit> SeniorityAudit = null)
+        public Equipment(int Id, LocalArea LocalArea, DistrictEquipmentType DistrictEquipmentType, Owner Owner, string EquipmentCode, string Status, DateTime ReceivedDate, DateTime LastVerifiedDate, DateTime? ApprovedDate = null, bool? IsInformationUpdateNeeded = null, string InformationUpdateNeededReason = null, string LicencePlate = null, string Make = null, string Model = null, string Year = null, string Operator = null, float? PayRate = null, string RefuseRate = null, string SerialNumber = null, string Size = null, DateTime? ToDate = null, int? BlockNumber = null, float? Seniority = null, int? NumberInBlock = null, bool? IsSeniorityOverridden = null, string SeniorityOverrideReason = null, DateTime? SeniorityEffectiveDate = null, float? YearsOfService = null, float? ServiceHoursLastYear = null, float? ServiceHoursTwoYearsAgo = null, float? ServiceHoursThreeYearsAgo = null, string ArchiveCode = null, string ArchiveReason = null, DateTime? ArchiveDate = null, DumpTruck DumpTruck = null, List<EquipmentAttachment> EquipmentAttachments = null, List<Note> Notes = null, List<Attachment> Attachments = null, List<History> History = null)
         {   
             this.Id = Id;
             this.LocalArea = LocalArea;
@@ -129,7 +128,6 @@ namespace HETSAPI.Models
             this.Notes = Notes;
             this.Attachments = Attachments;
             this.History = History;
-            this.SeniorityAudit = SeniorityAudit;
         }
 
         /// <summary>
@@ -458,11 +456,6 @@ namespace HETSAPI.Models
         public List<History> History { get; set; }
         
         /// <summary>
-        /// Gets or Sets SeniorityAudit
-        /// </summary>
-        public List<SeniorityAudit> SeniorityAudit { get; set; }
-        
-        /// <summary>
         /// Returns the string presentation of the object
         /// </summary>
         /// <returns>String presentation of the object</returns>
@@ -509,7 +502,6 @@ namespace HETSAPI.Models
             sb.Append("  Notes: ").Append(Notes).Append("\n");
             sb.Append("  Attachments: ").Append(Attachments).Append("\n");
             sb.Append("  History: ").Append(History).Append("\n");
-            sb.Append("  SeniorityAudit: ").Append(SeniorityAudit).Append("\n");
             sb.Append("}\n");
             return sb.ToString();
         }
@@ -741,11 +733,6 @@ namespace HETSAPI.Models
                     this.History == other.History ||
                     this.History != null &&
                     this.History.SequenceEqual(other.History)
-                ) && 
-                (
-                    this.SeniorityAudit == other.SeniorityAudit ||
-                    this.SeniorityAudit != null &&
-                    this.SeniorityAudit.SequenceEqual(other.SeniorityAudit)
                 );
         }
 
@@ -913,10 +900,6 @@ namespace HETSAPI.Models
                 if (this.History != null)
                 {
                     hash = hash * 59 + this.History.GetHashCode();
-                }                   
-                if (this.SeniorityAudit != null)
-                {
-                    hash = hash * 59 + this.SeniorityAudit.GetHashCode();
                 }
                 return hash;
             }

@@ -116,18 +116,7 @@ namespace HETSAPI.Services.Impl
                         }
                     }
                 }
-
-                // SeniorityAudit is a list     
-                if (item.SeniorityAudit != null)
-                {
-                    for (int i = 0; i < item.SeniorityAudit.Count; i++)
-                    {
-                        if (item.SeniorityAudit[i] != null)
-                        {
-                            item.SeniorityAudit[i] = _context.SeniorityAudits.FirstOrDefault(a => a.Id == item.SeniorityAudit[i].Id);
-                        }
-                    }
-                }
+                
             }
 
         }
@@ -439,8 +428,7 @@ namespace HETSAPI.Services.Impl
                             && originalSeniorityEffectiveDate < item.SeniorityEffectiveDate ))
                     {
                         _context.UpdateBlocksFromEquipment(item);
-                    }
-                    _context.SaveChanges();
+                    }                    
 
                     var result = _context.Equipments
                     .Include(x => x.LocalArea.ServiceArea.District.Region)

@@ -8,6 +8,7 @@
  * 
  */
 
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -125,7 +126,30 @@ namespace HETSAPI.Models
             }
             return result;
         }
-               
-        
+
+        /// <summary>
+        /// Returns the YTD hours for a given year.
+        /// </summary>
+        /// <param name="context"></param>
+        /// <param name="year"></param>
+        /// <returns></returns>
+        public float GetYTDServiceHours(DbAppContext context, int year)
+        {
+            float result = 0.0F;
+
+            DateTime startingDate = new DateTime(year, 3, 31);
+            // get all the time data since then.
+            float? summation = context.TimeRecords
+                   .Include(x => x.RentalAgreement.Equipment)
+                   .Where(x => x.RentalAgreement.Equipment.Id == Id && x.WorkedDate >= startingDate)
+                   .Sum(x => x.Hours);
+
+            if (summation != null)
+            {
+                result = (float)summation;
+            }
+
+            return result;
+        }
     }
 }
