@@ -22,20 +22,21 @@ using Newtonsoft.Json;
 using HETSAPI.Models;
 using HETSAPI.ViewModels;
 using HETSAPI.Mappings;
+using Microsoft.AspNetCore.Http;
 
 namespace HETSAPI.Services.Impl
 {
     /// <summary>
     /// 
     /// </summary>
-    public class OwnerService : IOwnerService
+    public class OwnerService : ServiceBase, IOwnerService
     {
         private readonly DbAppContext _context;
 
         /// <summary>
         /// Create a service and set the database context
         /// </summary>
-        public OwnerService(DbAppContext context)
+        public OwnerService(IHttpContextAccessor httpContextAccessor, DbAppContext context) : base(httpContextAccessor, context)
         {
             _context = context;
         }
@@ -648,8 +649,11 @@ namespace HETSAPI.Services.Impl
         /// <param name="status">Status</param>
         /// <param name="hired">Hired</param>
         /// <response code="200">OK</response>
-        public virtual IActionResult OwnersSearchGetAsync(int?[] localareas, int?[] equipmenttypes, int? owner, string status, bool? hired)
+        public virtual IActionResult OwnersSearchGetAsync(string localAreasString, string equipmentTypesString, int? owner, string status, bool? hired)
         {
+            int?[] localAreas = ParseIntArray(localAreasString);
+            int?[] equipmentTypes = ParseIntArray(equipmentTypesString);
+
             var data = _context.Owners
                     .Include(x => x.LocalArea.ServiceArea.District.Region)
                     .Include(x => x.EquipmentList)
@@ -660,14 +664,14 @@ namespace HETSAPI.Services.Impl
                     .Include(x => x.Contacts)
                     .Select(x => x);
 
-            if (localareas != null && localareas.Length > 0)
+            if (localAreas != null && localAreas.Length > 0)
             {
-                data = data.Where(x => localareas.Contains (x.LocalArea.Id));                
+                data = data.Where(x => localAreas.Contains (x.LocalArea.Id));                
             }
 
-            if (equipmenttypes != null)
+            if (equipmentTypes != null)
             {
-                foreach (int? item in equipmenttypes)
+                foreach (int? item in equipmentTypes)
                 {
                     if (item != null)
                     {
@@ -679,7 +683,7 @@ namespace HETSAPI.Services.Impl
                         
             if (status != null)
             {
-                data = data.Where(x => x.Status == status);
+                data = data.Where(x => x.Status.Contains(status));
             }
 
             if (hired != null)

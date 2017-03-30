@@ -56,7 +56,7 @@ namespace HETSAPI.Test
 
             */
 
-            UserService _service = new UserService(dbAppContext.Object);
+            UserService _service = new UserService(null, dbAppContext.Object);
 			
                     _UserApi = new UserController (_service);
 

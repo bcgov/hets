@@ -32,6 +32,7 @@ using Microsoft.AspNetCore.Http;
 using Hangfire.PostgreSql;
 using Hangfire;
 using Hangfire.Console;
+using System.Reflection;
 
 namespace HETSAPI
 {
@@ -137,16 +138,29 @@ namespace HETSAPI
             {
                 app.UseDeveloperExceptionPage();
             }
+            bool startHangfire = true;
+#if DEBUG
+            // do not start Hangfire if we are running tests.
+            if (Assembly.GetEntryAssembly() != null)
+            {
+                startHangfire = false;    
+            }
+#endif
 
-            // enable Hangfire
-            app.UseHangfireServer();
 
-            // disable the back to site link
-            DashboardOptions dashboardOptions = new DashboardOptions();
-            dashboardOptions.AppPath = null;            
+            if (startHangfire)
+            {
+                // enable Hangfire
+                app.UseHangfireServer();
 
-            app.UseHangfireDashboard( "/hangfire", dashboardOptions ); // this enables the /hangfire action
-            
+                // disable the back to site link
+                DashboardOptions dashboardOptions = new DashboardOptions();
+                dashboardOptions.AppPath = null;
+
+                app.UseHangfireDashboard("/hangfire", dashboardOptions); // this enables the /hangfire action
+
+            }
+
 
             app.UseResponseCompression();
             app.UseMvc();
@@ -155,15 +169,17 @@ namespace HETSAPI
             app.UseSwagger();
             app.UseSwaggerUi();
 
-            HangfireTools.ClearHangfire();
-
-            // this should be set as an environment variable.  
-            // Only enable when doing a new PROD deploy to populate CCW data and link it to the bus data.
-            if (!string.IsNullOrEmpty(Configuration["ENABLE_ANNUAL_ROLLOVER"]))
+            if (startHangfire)
             {
-                CreateHangfireAnnualRolloverJob(loggerFactory);
-            }            
-            
+                HangfireTools.ClearHangfire();
+
+                // this should be set as an environment variable.  
+                // Only enable when doing a new PROD deploy to populate CCW data and link it to the bus data.
+                if (!string.IsNullOrEmpty(Configuration["ENABLE_ANNUAL_ROLLOVER"]))
+                {
+                    CreateHangfireAnnualRolloverJob(loggerFactory);
+                }
+            }                       
         }
 
         // TODO:

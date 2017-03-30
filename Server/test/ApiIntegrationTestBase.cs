@@ -19,7 +19,7 @@ namespace HETSAPI.Test
             _server = new TestServer(new WebHostBuilder()
             .UseEnvironment("Development")
             .UseContentRoot(Directory.GetCurrentDirectory())
-            .UseStartup<Startup>());
+            .UseStartup<Startup>());          
 
             DevAuthenticationOptions devAuthOptions = new DevAuthenticationOptions();
             string testUserName = "TMcTesterson";

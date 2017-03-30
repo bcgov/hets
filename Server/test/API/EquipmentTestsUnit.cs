@@ -56,7 +56,7 @@ namespace HETSAPI.Test
 
                     */
 
-                    EquipmentService _service = new EquipmentService(dbAppContext.Object);
+                    EquipmentService _service = new EquipmentService(null, dbAppContext.Object);
 			
                     _Equipment = new EquipmentController (_service);
 

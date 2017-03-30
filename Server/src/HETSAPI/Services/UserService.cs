@@ -159,11 +159,11 @@ namespace HETSAPI.Services
         /// <summary>
         /// Searches Users
         /// </summary>
-        /// <remarks>Used for the search users.</remarks>
-        /// <param name="districts">Districts (array of id numbers)</param>
+        /// <remarks>Used to search users.</remarks>
+        /// <param name="districts">Districts (comma seperated list of id numbers)</param>
         /// <param name="surname"></param>
         /// <param name="includeInactive">True if Inactive users will be returned</param>
         /// <response code="200">OK</response>
-        IActionResult UsersSearchGetAsync(int?[] districts, string surname, bool? includeInactive);
+        IActionResult UsersSearchGetAsync(string districts, string surname, bool? includeInactive);
     }
 }

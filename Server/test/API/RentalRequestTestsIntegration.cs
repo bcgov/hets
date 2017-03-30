@@ -307,8 +307,6 @@ namespace HETSAPI.Test
             // should be the same number of equipment.
             Assert.Equal(rentalRequest.RentalRequestRotationList.Count, numberEquipment);
             
-            Assert.Equal(rentalRequest.RentalRequestRotationList[rentalRequest.RentalRequestRotationList.Count -1 ].Equipment.Id, testEquipment[0].Id );
-
             // do a delete.
             request = new HttpRequestMessage(HttpMethod.Post, "/api/rentalrequests/" + id + "/delete");
             response = await _client.SendAsync(request);

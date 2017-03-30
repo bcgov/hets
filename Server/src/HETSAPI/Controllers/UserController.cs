@@ -283,8 +283,8 @@ namespace HETSAPI.Controllers
         /// <summary>
         /// Searches Users
         /// </summary>
-        /// <remarks>Used for the search users.</remarks>
-        /// <param name="districts">Districts (array of id numbers)</param>
+        /// <remarks>Used to search users.</remarks>
+        /// <param name="districts">Districts (comma seperated list of id numbers)</param>
         /// <param name="surname"></param>
         /// <param name="includeInactive">True if Inactive users will be returned</param>
         /// <response code="200">OK</response>
@@ -292,7 +292,7 @@ namespace HETSAPI.Controllers
         [Route("/api/users/search")]
         [SwaggerOperation("UsersSearchGet")]
         [SwaggerResponse(200, type: typeof(List<UserViewModel>))]
-        public virtual IActionResult UsersSearchGet([FromQuery]int?[] districts, [FromQuery]string surname, [FromQuery]bool? includeInactive)
+        public virtual IActionResult UsersSearchGet([FromQuery]string districts, [FromQuery]string surname, [FromQuery]bool? includeInactive)
         {
             return this._service.UsersSearchGetAsync(districts, surname, includeInactive);
         }

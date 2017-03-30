@@ -62,5 +62,25 @@ namespace HETSAPI.Services.Impl
         {
             return new OkObjectResult(value);
         }
+
+        // parse a string of ints into an array.
+        public int?[] ParseIntArray (string source)
+        {
+            int?[] result = null;
+            try
+            {
+                string[] tokens = source.Split(',');
+                result = new int?[tokens.Length];
+                for (int i = 0; i < tokens.Length; i++)
+                {
+                    result[i] = int.Parse(tokens[i]);
+                }
+            }
+            catch (Exception e)
+            {
+                result = null;
+            }
+            return result;
+        }
     }
 }

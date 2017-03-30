@@ -22,21 +22,21 @@ using Newtonsoft.Json;
 using HETSAPI.Models;
 using HETSAPI.ViewModels;
 using HETSAPI.Mappings;
+using Microsoft.AspNetCore.Http;
 
 namespace HETSAPI.Services.Impl
 {
     /// <summary>
     /// 
     /// </summary>
-    public class ProjectService : IProjectService
+    public class ProjectService : ServiceBase, IProjectService
     {
         private readonly DbAppContext _context;
         
-
         /// <summary>
         /// Create a service and set the database context
         /// </summary>
-        public ProjectService(DbAppContext context)
+        public ProjectService(IHttpContextAccessor httpContextAccessor, DbAppContext context) : base(httpContextAccessor, context)
         {
             _context = context;
         }
@@ -532,8 +532,9 @@ namespace HETSAPI.Services.Impl
         /// <param name="hasRequests">if true then only include Projects with active Requests</param>
         /// <param name="hasHires">if true then only include Projects with active Rental Agreements</param>
         /// <response code="200">OK</response>
-        public virtual IActionResult ProjectsSearchGetAsync(int?[] districts, string project, bool? hasRequests, bool? hasHires)
+        public virtual IActionResult ProjectsSearchGetAsync(string districtsString, string project, bool? hasRequests, bool? hasHires)
         {
+            int?[] districts = ParseIntArray(districtsString);
             var data = _context.Projects
                     .Include(x => x.District.Region)
                     .Include(x => x.PrimaryContact)
