@@ -32,7 +32,6 @@ var ProjectsAddDialog = React.createClass({
       information: '',
 
       nameError: '',
-      provincialProjectNumberError: '',
       districtError: '',
     };
   },
@@ -58,17 +57,11 @@ var ProjectsAddDialog = React.createClass({
 
     this.setState({
       nameError: '',
-      provincialProjectNumberError: '',
       districtError: '',
     });
 
     if (isBlank(this.state.name)) {
       this.setState({ nameError: 'Name is required' });
-      valid = false;
-    }
-
-    if (isBlank(this.state.provincialProjectNumber)) {
-      this.setState({ provincialProjectNumberError: 'Provincial project number is required' });
       valid = false;
     }
 
@@ -104,10 +97,9 @@ var ProjectsAddDialog = React.createClass({
           <FormInputControl type="text" value={ this.state.name } updateState={ this.updateState } inputRef={ ref => { this.input = ref; }} />
           <HelpBlock>{ this.state.nameError }</HelpBlock>
         </FormGroup>
-        <FormGroup controlId="provincialProjectNumber" validationState={ this.state.provincialProjectNumberError ? 'error' : null }>
-          <ControlLabel>Provincial Project Number <sup>*</sup></ControlLabel>
+        <FormGroup controlId="provincialProjectNumber">
+          <ControlLabel>Provincial Project Number</ControlLabel>
           <FormInputControl type="text" value={ this.state.provincialProjectNumber } updateState={ this.updateState } />
-          <HelpBlock>{ this.state.provincialProjectNumberError }</HelpBlock>
         </FormGroup>
         <FormGroup controlId="districtId" validationState={ this.state.districtError ? 'error' : null }>
           <ControlLabel>District <sup>*</sup></ControlLabel>
@@ -115,8 +107,8 @@ var ProjectsAddDialog = React.createClass({
           <HelpBlock>{ this.state.districtError }</HelpBlock>
         </FormGroup>
         <FormGroup controlId="information">
-          <ControlLabel>Information</ControlLabel>
-          <FormInputControl type="text" value={ this.state.information } updateState={ this.updateState } />
+          <ControlLabel>Project Information</ControlLabel>
+          <FormInputControl type="text" componentClass="textarea" rows="5" value={ this.state.information } updateState={ this.updateState } />
         </FormGroup>
       </Form>
     </EditDialog>;
