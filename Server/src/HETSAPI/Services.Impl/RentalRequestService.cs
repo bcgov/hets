@@ -336,7 +336,7 @@ namespace HETSAPI.Services.Impl
 
                     List<Equipment> blockEquipment = _context.Equipments
                         .Where(x => x.DistrictEquipmentType == item.DistrictEquipmentType && x.BlockNumber == currentBlock  && x.LocalArea.Id == item.LocalArea.Id)
-                        .OrderByDescending(x => x.Seniority)
+                        .OrderByDescending(x => x.Seniority)                        
                         .ToList();
 
                     int listSize = blockEquipment.Count;
