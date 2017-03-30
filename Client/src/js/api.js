@@ -804,7 +804,8 @@ function parseProject(project) {
   project.historyEntity = History.makeHistoryEntity(History.PROJECT, project);
 
   // Add display fields for contacts
-  _.map(project.contacts, contact => { parseContact(contact, parent); });
+  project.contacts = normalize(project.contacts);
+  _.map(project.contacts, contact => { parseContact(contact, project); });
 
   // Add display fields for rental requests and rental agreements
   _.map(project.rentalRequests, obj => { parseRentalRequest(obj); });
@@ -880,6 +881,17 @@ export function updateProject(project) {
     parseProject(project);
 
     store.dispatch({ type: Action.UPDATE_PROJECT, project: project });
+  });
+}
+
+export function addProjectContact(project, contact) {
+  return new ApiRequest(`/projects/${ project.id }/contacts`).post(contact).then(response => {
+    var contact = response;
+
+    // Add display fields
+    parseContact(contact, project);
+
+    store.dispatch({ type: Action.ADD_CONTACT, contact: contact });
   });
 }
 

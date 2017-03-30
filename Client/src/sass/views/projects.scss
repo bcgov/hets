@@ -77,6 +77,29 @@
   }
 }
 
+#contact-list {
+  max-height: 150px;
+  width: 100%;
+  overflow-y: auto;
+  margin-bottom: 10px;
+
+  table {
+    margin: 0px;
+  }
+
+  th, td {
+    max-width: 125px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .btn {
+    margin-left: 0px;
+  }
+
+}
+
 #projects-edit {
   [class*='col-'] {
     padding-left: 7px;
