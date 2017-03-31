@@ -331,6 +331,8 @@ namespace HETSAPI.Services.Impl
 
                 for (int currentBlock = 1; currentBlock <= numberOfBlocks; currentBlock++)
                 {
+                    
+
                     int currentBlockSortOrder = 0;
                     // start by getting the current set of equipment for the given equipment type.
 
@@ -395,6 +397,61 @@ namespace HETSAPI.Services.Impl
         }
 
         /// <summary>
+        /// Adjust the RentalRequestRotationList record
+        /// </summary>
+        /// <param name="item"></param>
+        private void AdjustRRRLRecord(RentalRequestRotationList item)
+        {
+            if (item != null)
+            {
+                if (item.Equipment != null)
+                {
+                    item.Equipment = _context.Equipments.First(a => a.Id == item.Equipment.Id);
+                }
+
+                if (item.RentalAgreement != null)
+                {
+                    item.RentalAgreement = _context.RentalAgreements.First(a => a.Id == item.RentalAgreement.Id);
+                }
+            }
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <remarks>Updates a rental request rotation list entry.  Side effect is the LocalAreaRotationList is also updated</remarks>
+        /// <param name="id">id of RentalRequest to update</param>
+        /// <param name="rentalRequestRotationListId">id of RentalRequestRotationList to update</param>
+        /// <param name="item"></param>
+        /// <response code="200">OK</response>
+        /// <response code="404">RentalRequestRotationList not found</response>
+        public virtual IActionResult RentalrequestsIdRentalrequestrotationlistRentalRequestRotationListIdPutAsync(int id, int rentalRequestRotationListId, RentalRequestRotationList item)
+        {
+            // update the rental request rotation list item.
+            AdjustRRRLRecord(item);
+            var exists = _context.RentalRequestRotationLists.Any(a => a.Id == id);
+            if (exists && id == item.Id)
+            {
+                _context.RentalRequestRotationLists.Update(item);
+                // Save the changes
+                _context.SaveChanges();
+                _context.Entry(item).State = EntityState.Detached;
+
+                // now update the corresponding entry in the LocalAreaRotationList.
+                _context.UpdateLocalAreaRotationList(item.Id);
+
+                return new ObjectResult(item);
+            }
+            else
+            {
+                // record not found
+                return new StatusCodeResult(404);
+            }
+
+        }
+
+
+        /// <summary>
         /// 
         /// </summary>
         /// <param name="item"></param>
@@ -413,7 +470,7 @@ namespace HETSAPI.Services.Impl
                 else
                 {
                     // record not found
-                    BuildRentalRequestRotationList(item);                    
+                    BuildRentalRequestRotationList(item);                                       
                     _context.RentalRequests.Add(item);
                 }
                 // Save the changes

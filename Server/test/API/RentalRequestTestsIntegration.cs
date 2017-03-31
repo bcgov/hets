@@ -166,7 +166,6 @@ namespace HETSAPI.Test
             region = JsonConvert.DeserializeObject<Region>(jsonString);
             // get the id
             var region_id = region.Id;
-
             
             request = new HttpRequestMessage(HttpMethod.Post, "/api/districts");
 
@@ -381,6 +380,5 @@ namespace HETSAPI.Test
             response = await _client.SendAsync(request);
             Assert.Equal(response.StatusCode, HttpStatusCode.NotFound);
         }
-
     }
 }

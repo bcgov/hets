@@ -165,6 +165,24 @@ namespace HETSAPI.Controllers
         /// <summary>
         /// 
         /// </summary>
+        /// <remarks>Updates a rental request rotation list entry.  Side effect is the LocalAreaRotationList is also updated</remarks>
+        /// <param name="id">id of RentalRequest to update</param>
+        /// <param name="rentalRequestRotationListId">id of RentalRequestRotationList to update</param>
+        /// <param name="item"></param>
+        /// <response code="200">OK</response>
+        /// <response code="404">RentalRequestRotationList not found</response>
+        [HttpPut]
+        [Route("/api/rentalrequests/{id}/rentalrequestrotationlist/{rentalRequestRotationListId}")]
+        [SwaggerOperation("RentalrequestsIdRentalrequestrotationlistRentalRequestRotationListIdPut")]
+        [SwaggerResponse(200, type: typeof(RentalRequestRotationList))]
+        public virtual IActionResult RentalrequestsIdRentalrequestrotationlistRentalRequestRotationListIdPut([FromRoute]int id, [FromRoute]int rentalRequestRotationListId, [FromBody]RentalRequestRotationList item)
+        {
+            return this._service.RentalrequestsIdRentalrequestrotationlistRentalRequestRotationListIdPutAsync(id, rentalRequestRotationListId, item);
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
         /// <param name="item"></param>
         /// <response code="201">RentalRequest created</response>
         [HttpPost]

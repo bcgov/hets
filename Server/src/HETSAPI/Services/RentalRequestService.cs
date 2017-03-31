@@ -98,6 +98,17 @@ namespace HETSAPI.Services
         /// <summary>
         /// 
         /// </summary>
+        /// <remarks>Updates a rental request rotation list entry.  Side effect is the LocalAreaRotationList is also updated</remarks>
+        /// <param name="id">id of RentalRequest to update</param>
+        /// <param name="rentalRequestRotationListId">id of RentalRequestRotationList to update</param>
+        /// <param name="item"></param>
+        /// <response code="200">OK</response>
+        /// <response code="404">RentalRequestRotationList not found</response>
+        IActionResult RentalrequestsIdRentalrequestrotationlistRentalRequestRotationListIdPutAsync(int id, int rentalRequestRotationListId, RentalRequestRotationList item);
+
+        /// <summary>
+        /// 
+        /// </summary>
         /// <param name="item"></param>
         /// <response code="201">RentalRequest created</response>
         IActionResult RentalrequestsPostAsync(RentalRequest item);
