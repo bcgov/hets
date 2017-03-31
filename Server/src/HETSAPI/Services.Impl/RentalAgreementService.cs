@@ -210,18 +210,22 @@ namespace HETSAPI.Services.Impl
         public virtual IActionResult RentalagreementsIdPdfGetAsync(int id)
         {
             FileContentResult result = null;
-            RentalAgreement rentalAgreement = _context.RentalAgreements.FirstOrDefault(a => a.Id == id);
+            RentalAgreement rentalAgreement = _context.RentalAgreements
+                .Include(x => x.Equipment).ThenInclude(y => y.Owner)
+                .Include(x => x.Equipment).ThenInclude(y => y.EquipmentAttachments)
+                .Include(x => x.Equipment).ThenInclude(y => y.LocalArea.ServiceArea.District.Region)
+                .Include(x => x.Project).ThenInclude(p => p.District.Region)
+                .Include(x => x.RentalAgreementConditions)
+                .Include(x => x.RentalAgreementRates)
+                .Include(x => x.TimeRecords)
+                .FirstOrDefault(a => a.Id == id);
             if (rentalAgreement != null)
             {
 
                 // construct the view model.
 
-                RentalAgreementPdfViewModel rentalAgreementPdfViewModel = new RentalAgreementPdfViewModel();
-
-                rentalAgreementPdfViewModel.Id = rentalAgreement.Id;
-                rentalAgreementPdfViewModel.Number = rentalAgreement.Number;
+                RentalAgreementPdfViewModel rentalAgreementPdfViewModel = rentalAgreement.ToViewModel();
                 
-
                 string payload = JsonConvert.SerializeObject(rentalAgreementPdfViewModel);
 
                 // pass the request on to the PDF Micro Service

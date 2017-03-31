@@ -36,6 +36,31 @@ namespace HETSAPI.Mappings
             return dto;
         }
 
+        // view model for a printed rental agreement.  At this time the fields match a Rental Agreement.
+        public static RentalAgreementPdfViewModel ToViewModel (this RentalAgreement model)
+        {
+            var dto = new RentalAgreementPdfViewModel();
+            if (model != null)
+            {
+                dto.DatedOn = model.DatedOn;
+                dto.Equipment = model.Equipment;
+                dto.EquipmentRate = model.EquipmentRate;
+                dto.EstimateHours = model.EstimateHours;
+                dto.EstimateStartWork = model.EstimateStartWork;
+                dto.Id = model.Id;
+                dto.Note = model.Note;
+                dto.Number = model.Number;
+                dto.Project = model.Project;
+                dto.RateComment = model.RateComment;
+                dto.RatePeriod = model.RatePeriod;
+                dto.RentalAgreementConditions = model.RentalAgreementConditions;
+                dto.RentalAgreementRates = model.RentalAgreementRates;
+                dto.Status = model.Status;
+                dto.TimeRecords = model.TimeRecords;                
+            }
+            return dto;
+        }
+
         /// <summary>
         /// 
         /// </summary>
