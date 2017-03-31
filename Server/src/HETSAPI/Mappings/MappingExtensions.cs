@@ -46,7 +46,46 @@ namespace HETSAPI.Mappings
                 dto.Equipment = model.Equipment;
                 dto.EquipmentRate = model.EquipmentRate;
                 dto.EstimateHours = model.EstimateHours;
-                dto.EstimateStartWork = model.EstimateStartWork;
+
+                if (model.EstimateStartWork != null)
+                {
+                    // Since the PDF template is raw HTML and won't convert a date object, we must adjust the time zone here.                    
+                    TimeZoneInfo tzi = null;
+                    try
+                    {
+                        // try the IANA timzeone first.
+                        tzi = TimeZoneInfo.FindSystemTimeZoneById("America / Vancouver");
+                    }
+                    catch (Exception e)
+                    {
+                        tzi = null;
+                    }
+
+                    if (tzi == null)
+                    {
+                        try
+                        {
+                            tzi = TimeZoneInfo.FindSystemTimeZoneById("Pacific Standard Time");
+                        }
+                        catch (Exception e)
+                        {
+                            tzi = null;
+                        }
+                    }
+                    DateTime dt = DateTime.UtcNow;
+                    if (tzi != null)
+                    {
+                        dt = TimeZoneInfo.ConvertTime((DateTime)model.EstimateStartWork, tzi);
+
+                    }
+                    else
+                    {
+                        dt = (DateTime)model.EstimateStartWork;
+
+                    }
+                    dto.EstimateStartWork = dt.ToString("yyyy-MM-dd");
+                }
+                   
                 dto.Id = model.Id;
                 dto.Note = model.Note;
                 dto.Number = model.Number;

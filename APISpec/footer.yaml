@@ -313,8 +313,7 @@
         maxLength: 2048
         description: An optional note to be placed onto the Rental Agreement.
       estimateStartWork:
-        type: string
-        format: date-time
+        type: string        
         description: The estimated start date of the work to be placed on the rental agreement.
       datedOn:
         type: string
