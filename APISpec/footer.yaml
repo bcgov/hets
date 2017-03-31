@@ -317,7 +317,6 @@
         description: The estimated start date of the work to be placed on the rental agreement.
       datedOn:
         type: string
-        format: date-time
         description: The dated on date to put on the Rental Agreement.
       estimateHours:
         format: int32
