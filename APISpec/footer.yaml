@@ -285,7 +285,57 @@
       number:
         type: string
         maxLength: 30
-        description: A system-generated unique rental agreement number in a format defined by the business as suitable for the business and client to see and use.   
+        description: A system-generated unique rental agreement number in a format defined by the business as suitable for the business and client to see and use.
+      status:
+        type: string
+        maxLength: 50
+        description: The current status of the Rental Agreement, such as Active or Complete
+      equipment:
+        $ref: '#/definitions/Equipment'
+        description: A foreign key reference to the system-generated unique identifier for an Equipment
+      project:
+        $ref: '#/definitions/Project'
+        description: A foreign key reference to the system-generated unique identifier for a Project
+      rentalAgreementRates:
+        type: array
+        items:
+          $ref: '#/definitions/RentalAgreementRate'
+      rentalAgreementConditions:
+        type: array
+        items:
+          $ref: '#/definitions/RentalAgreementCondition'
+      timeRecords:
+        type: array
+        items:
+          $ref: '#/definitions/TimeRecord'
+      note:
+        type: string
+        maxLength: 2048
+        description: An optional note to be placed onto the Rental Agreement.
+      estimateStartWork:
+        type: string
+        format: date-time
+        description: The estimated start date of the work to be placed on the rental agreement.
+      datedOn:
+        type: string
+        format: date-time
+        description: The dated on date to put on the Rental Agreement.
+      estimateHours:
+        format: int32
+        type: integer
+        description: The estimated number of hours of work to be put onto the Rental Agreement.
+      equipmentRate:
+        type: number
+        format: float
+        description: The dollar rate for the piece of equipment itself for this Rental Agreement. Other rates associated with the Rental Agreement are in the Rental Agreement Rate table.
+      ratePeriod:
+        type: string
+        maxLength: 50
+        description: The period of the rental rate. The vast majority will be hourly, but the rate could apply across a different period, e.g. daily.
+      rateComment:
+        type: string
+        maxLength: 2048
+        description: A comment about the rate for the piece of equipment.        
   RentalRequestSearchResultViewModel:
     type: object
     x-codegen-viewmodel: true
