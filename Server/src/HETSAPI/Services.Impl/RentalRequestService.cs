@@ -406,12 +406,12 @@ namespace HETSAPI.Services.Impl
             {
                 if (item.Equipment != null)
                 {
-                    item.Equipment = _context.Equipments.First(a => a.Id == item.Equipment.Id);
+                    item.Equipment = _context.Equipments.FirstOrDefault(a => a.Id == item.Equipment.Id);
                 }
 
                 if (item.RentalAgreement != null)
                 {
-                    item.RentalAgreement = _context.RentalAgreements.First(a => a.Id == item.RentalAgreement.Id);
+                    item.RentalAgreement = _context.RentalAgreements.FirstOrDefault(a => a.Id == item.RentalAgreement.Id);
                 }
             }
         }
@@ -429,8 +429,8 @@ namespace HETSAPI.Services.Impl
         {
             // update the rental request rotation list item.
             AdjustRRRLRecord(item);
-            var exists = _context.RentalRequestRotationLists.Any(a => a.Id == id);
-            if (exists && id == item.Id)
+            var exists = _context.RentalRequestRotationLists.Any(a => a.Id == rentalRequestRotationListId);
+            if (exists && rentalRequestRotationListId == item.Id)
             {
                 _context.RentalRequestRotationLists.Update(item);
                 // Save the changes
