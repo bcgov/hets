@@ -4,39 +4,39 @@ using System.Linq;
 using System.Threading.Tasks;
 using System.Xml.Serialization;
 
-namespace SchoolBusAPI.Import
+namespace HETSAPI.Import
 {
     public class EquipUsage
     {
-        [XmlAttribute]
+        [XmlElement]
         public string Equip_Id { get; set; }
 
-        [XmlAttribute]
+        [XmlElement]
         public string Project_Id { get; set; }
 
-        [XmlAttribute]
+        [XmlElement]
         public string Service_Area_Id { get; set; }
 
-        [XmlAttribute]
+        [XmlElement]
         public string Worked_Dt { get; set; }
 
-        [XmlAttribute]
+        [XmlElement]
         public string Entered_Dt { get; set; }
-        [XmlAttribute]
+        [XmlElement]
         public string Hours { get; set; }
-        [XmlAttribute]
+        [XmlElement]
         public string Rate { get; set; }
-        [XmlAttribute]
+        [XmlElement]
         public string Hours2 { get; set; }
-        [XmlAttribute]
+        [XmlElement]
         public string Rate2 { get; set; }
-        [XmlAttribute]
+        [XmlElement]
         public string Hours3 { get; set; }
-        [XmlAttribute]
+        [XmlElement]
         public string Rate3 { get; set; }
-        [XmlAttribute]
+        [XmlElement]
         public string Created_Dt { get; set; }
-        [XmlAttribute]
+        [XmlElement]
         public string Created_By { get; set; }
     }
 }

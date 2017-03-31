@@ -33,6 +33,8 @@ using Hangfire.PostgreSql;
 using Hangfire;
 using Hangfire.Console;
 using System.Reflection;
+using System.Runtime.Loader;
+using HETSAPI.Import;
 
 namespace HETSAPI
 {
@@ -140,13 +142,16 @@ namespace HETSAPI
             }
             bool startHangfire = true;
 #if DEBUG
-            // do not start Hangfire if we are running tests.
-            if (Assembly.GetEntryAssembly() != null)
+            // do not start Hangfire if we are running tests.        
+            foreach (var assem in Assembly.GetEntryAssembly().GetReferencedAssemblies())
             {
-                startHangfire = false;    
-            }
+                if (assem.FullName.ToLowerInvariant().StartsWith("xunit"))
+                {
+                    startHangfire = false;
+                    break;
+                }                
+            }        
 #endif
-
 
             if (startHangfire)
             {
@@ -178,6 +183,7 @@ namespace HETSAPI
                 if (!string.IsNullOrEmpty(Configuration["ENABLE_ANNUAL_ROLLOVER"]))
                 {
                     CreateHangfireAnnualRolloverJob(loggerFactory);
+
                 }
             }                       
         }

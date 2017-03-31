@@ -4,20 +4,20 @@ using System.Linq;
 using System.Threading.Tasks;
 using System.Xml.Serialization;
 
-namespace SchoolBusAPI.Import
+namespace HETSAPI.Import
 {
     public class HETS_AUDIT
     {
-        [XmlAttribute]
+        [XmlElement]
         public string Created_By { get; set; }
 
-        [XmlAttribute]
+        [XmlElement]
         public string Created_Dt { get; set; }
 
-        [XmlAttribute]
+        [XmlElement]
         public string Action { get; set; }
 
-        [XmlAttribute]
+        [XmlElement]
         public string Reason { get; set; }
         
     }

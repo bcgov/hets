@@ -4,17 +4,17 @@ using System.Linq;
 using System.Threading.Tasks;
 using System.Xml.Serialization;
 
-namespace SchoolBusAPI.Import
+namespace HETSAPI.Import
 {
     public class HETS_City
     {
-        [XmlAttribute]
+        [XmlElement]
         public string Service_Area_Id { get; set; }
 
-        [XmlAttribute]
+        [XmlElement]
         public string Seq_Num { get; set; }
 
-        [XmlAttribute]
+        [XmlElement]
         public string City { get; set; }               
     }
 }

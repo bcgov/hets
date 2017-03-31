@@ -4,41 +4,41 @@ using System.Linq;
 using System.Threading.Tasks;
 using System.Xml.Serialization;
 
-namespace SchoolBusAPI.Import
+namespace HETSAPI.Import
 {
     public class Block
     {
-        [XmlAttribute]
+        [XmlElement]
         public string Area_Id { get; set; }
 
-        [XmlAttribute]
+        [XmlElement]
         public string Equip_Type_Id { get; set; }
 
-        [XmlAttribute]
+        [XmlElement]
         public string Block_Num { get; set; }
 
-        [XmlAttribute]
+        [XmlElement]
         public string Cycle_Num { get; set; }
 
-        [XmlAttribute]
+        [XmlElement]
         public string Max_Cycle { get; set; }
 
-        [XmlAttribute]
+        [XmlElement]
         public string Last_Hired_Equip_Id { get; set; }
 
-        [XmlAttribute]
+        [XmlElement]
         public string Block_Name { get; set; }
 
-        [XmlAttribute]
+        [XmlElement]
         public string Closed { get; set; }
 
-        [XmlAttribute]
+        [XmlElement]
         public string Closed_Comments { get; set; }
 
-        [XmlAttribute]
+        [XmlElement]
         public string Created_Dt { get; set; }
 
-        [XmlAttribute]
+        [XmlElement]
         public string Created_By { get; set; }
     
     }

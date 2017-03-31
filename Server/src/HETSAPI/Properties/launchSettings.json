@@ -12,6 +12,7 @@
       "commandName": "IISExpress",
       "launchBrowser": true,
       "environmentVariables": {
+        "UploadPath": "\\uploads\\",
         "POSTGRESQL_DATABASE": "hets",
         "ASPNETCORE_ENVIRONMENT": "Development",
         "POSTGRESQL_USER": "user6DA",

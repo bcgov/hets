@@ -4,27 +4,27 @@ using System.Linq;
 using System.Threading.Tasks;
 using System.Xml.Serialization;
 
-namespace SchoolBusAPI.Import
+namespace HETSAPI.Import
 {
     public class User_HETS
     {
-        [XmlAttribute]
+        [XmlElement]
         public string Popt_ID { get; set; }
-        [XmlAttribute]
+        [XmlElement]
         public string Service_Area_Id { get; set; }
-        [XmlAttribute]
+        [XmlElement]
         public string User_Cd { get; set; }
-        [XmlAttribute]
+        [XmlElement]
         public string Authority { get; set; }
-        [XmlAttribute]
+        [XmlElement]
         public string Default_Service_Area { get; set; }
-        [XmlAttribute]
+        [XmlElement]
         public string Created_Dt { get; set; }
-        [XmlAttribute]
+        [XmlElement]
         public string Created_By { get; set; }
-        [XmlAttribute]
+        [XmlElement]
         public string Modified_Dt { get; set; }
-        [XmlAttribute]
+        [XmlElement]
         public string Modified_By { get; set; }
     }
 }

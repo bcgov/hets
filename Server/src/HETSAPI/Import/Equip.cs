@@ -4,146 +4,146 @@ using System.Linq;
 using System.Threading.Tasks;
 using System.Xml.Serialization;
 
-namespace SchoolBusAPI.Import
+namespace HETSAPI.Import
 {
     public class Equip
     {        
-        [XmlAttribute]
+        [XmlElement]
         public string Equip_Id { get; set; }
 
-        [XmlAttribute]
+        [XmlElement]
         public string Area_Id { get; set; }
 
-        [XmlAttribute]
+        [XmlElement]
         public string Equip_Type_Id { get; set; }
 
-        [XmlAttribute]
+        [XmlElement]
         public string Owner_Popt_Id { get; set; }
 
-        [XmlAttribute]
+        [XmlElement]
         public string Equip_Cd { get; set; }
 
-        [XmlAttribute]
+        [XmlElement]
         public string Approved_Dt { get; set; }
 
-        [XmlAttribute]
+        [XmlElement]
         public string Received_Dt { get; set; }
 
-        [XmlAttribute]
+        [XmlElement]
         public string Addr1 { get; set; }
 
-        [XmlAttribute]
+        [XmlElement]
         public string Addr2 { get; set; }
 
-        [XmlAttribute]
+        [XmlElement]
         public string Addr3 { get; set; }
 
-        [XmlAttribute]
+        [XmlElement]
         public string Addr4 { get; set; }
 
-        [XmlAttribute]
+        [XmlElement]
         public string City { get; set; }
 
-        [XmlAttribute]
+        [XmlElement]
         public string Postal { get; set; }
 
-        [XmlAttribute]
+        [XmlElement]
         public string Block_Num { get; set; }
 
-        [XmlAttribute]
+        [XmlElement]
         public string Comment { get; set; }
 
-        [XmlAttribute]
+        [XmlElement]
         public string Cycle_Hrs_Wrk { get; set; }
 
-        [XmlAttribute]
+        [XmlElement]
         public string Frozen_Out { get; set; }
 
-        [XmlAttribute]
+        [XmlElement]
         public string Last_Dt { get; set; }
 
-        [XmlAttribute]
+        [XmlElement]
         public string Licence { get; set; }
 
-        [XmlAttribute]
+        [XmlElement]
         public string Make { get; set; }
 
-        [XmlAttribute]
+        [XmlElement]
         public string Model { get; set; }
 
-        [XmlAttribute]
+        [XmlElement]
         public string Year { get; set; }
 
-        [XmlAttribute]
+        [XmlElement]
         public string Type { get; set; }
 
-        [XmlAttribute]
+        [XmlElement]
         public string Num_Years { get; set; }
 
-        [XmlAttribute]
+        [XmlElement]
         public string Operator { get; set; }
 
-        [XmlAttribute]
+        [XmlElement]
         public string Pay_Rate { get; set; }
 
-        [XmlAttribute]
+        [XmlElement]
         public string Project_Id { get; set; }
 
-        [XmlAttribute]
+        [XmlElement]
         public string Refuse_Rate { get; set; }
 
-        [XmlAttribute]
+        [XmlElement]
         public string Seniority { get; set; }
 
-        [XmlAttribute]
+        [XmlElement]
         public string Serial_Num { get; set; }
 
-        [XmlAttribute]
+        [XmlElement]
         public string Size { get; set; }
 
-        [XmlAttribute]
+        [XmlElement]
         public string Working { get; set; }
 
-        [XmlAttribute]
+        [XmlElement]
         public string Year_End_Reg { get; set; }
 
-        [XmlAttribute]
+        [XmlElement]
         public string Prev_Reg_Area { get; set; }
 
-        [XmlAttribute]
+        [XmlElement]
         public string YTD { get; set; }
 
-        [XmlAttribute]
+        [XmlElement]
         public string YTD1 { get; set; }
 
-        [XmlAttribute]
+        [XmlElement]
         public string YTD2 { get; set; }
 
-        [XmlAttribute]
+        [XmlElement]
         public string YTD3 { get; set; }
 
-        [XmlAttribute]
+        [XmlElement]
         public string Status_Cd { get; set; }
 
-        [XmlAttribute]
+        [XmlElement]
         public string Archive_Cd { get; set; }
 
-        [XmlAttribute]
+        [XmlElement]
         public string Archive_Reason { get; set; }
 
-        [XmlAttribute]
+        [XmlElement]
         public string Reg_Dump_Trk { get; set; }
 
-        [XmlAttribute]
+        [XmlElement]
         public string Created_Dt { get; set; }
 
-        [XmlAttribute]        
+        [XmlElement]        
         public string Created_By { get; set; }
 
-        [XmlAttribute]
+        [XmlElement]
         public string Modified_Dt { get; set; }
 
-        [XmlAttribute]
+        [XmlElement]
         public string Modified_By { get; set; }
     }
 }

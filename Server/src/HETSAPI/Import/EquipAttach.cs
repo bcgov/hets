@@ -4,23 +4,23 @@ using System.Linq;
 using System.Threading.Tasks;
 using System.Xml.Serialization;
 
-namespace SchoolBusAPI.Import
+namespace HETSAPI.Import
 {
     public class EquipAttach
     {
-        [XmlAttribute]
+        [XmlElement]
         public string Equip_Id { get; set; }
 
-        [XmlAttribute]
+        [XmlElement]
         public string Attach_Seq_Num { get; set; }
 
-        [XmlAttribute]
+        [XmlElement]
         public string Attach_Desc { get; set; }
 
-        [XmlAttribute]
+        [XmlElement]
         public string Created_Dt { get; set; }
 
-        [XmlAttribute]
+        [XmlElement]
         public string Created_By { get; set; }
 
     }
