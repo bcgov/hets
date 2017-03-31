@@ -66,7 +66,9 @@ namespace HETSAPI.Services.Impl
                 // owner
                 if (item.Owner != null)
                 {
-                    item.Owner = _context.Owners.FirstOrDefault(a => a.Id == item.Owner.Id);
+                    item.Owner = _context.Owners
+                        .Include (x => x.EquipmentList)
+                        .FirstOrDefault(a => a.Id == item.Owner.Id);
                 }
 
 
