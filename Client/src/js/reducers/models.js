@@ -33,6 +33,7 @@ const DEFAULT_MODELS = {
   rentalRequestNotes: {},
   rentalRequestAttachments: {},
   rentalRequestHistory: {},
+  rentalRequestRotationList: {},
 
   rentalAgreement: {},
   rentalAgreementNotes: {},
@@ -149,6 +150,10 @@ export default function modelsReducer(state = DEFAULT_MODELS, action) {
 
     case Action.UPDATE_RENTAL_REQUEST:
       return { ...state, rentalRequest: action.rentalRequest };
+
+    // Rotation List
+    case Action.UPDATE_RENTAL_REQUEST_ROTATION_LIST:
+      return { ...state, rentalRequestRotationList: action.rentalRequestRotationList };
 
     // Rental Agreements
     case Action.ADD_RENTAL_AGREEMENT:

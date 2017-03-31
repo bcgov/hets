@@ -144,7 +144,7 @@ var RentalRequestsEditDialog = React.createClass({
               <Col md={6}>
                 <FormGroup controlId="equipmentCount" validationState={ this.state.equipmentCountError ? 'error' : null }>
                   <ControlLabel>Count <sup>*</sup></ControlLabel>
-                  <FormInputControl type="number" min={0} defaultValue={ this.state.equipmentCount } readOnly={ isReadOnly } updateState={ this.updateState }/>
+                  <FormInputControl type="number" min={0} defaultValue={ this.state.equipmentCount } readOnly={ isReadOnly } updateState={ this.updateState } inputRef={ ref => { this.input = ref; }}/>
                   <HelpBlock>{ this.state.equipmentCountError }</HelpBlock>
                 </FormGroup>
               </Col>

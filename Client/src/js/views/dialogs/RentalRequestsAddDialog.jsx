@@ -32,7 +32,7 @@ var RentalRequestsAddDialog = React.createClass({
       projectId: 0,
       localAreaId: 0,
       equipmentTypeId: 0,
-      count: 0,
+      count: 1,
       projectError: '',
       localAreaError: '',
       equipmentTypeError: '',

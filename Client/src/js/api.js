@@ -914,58 +914,58 @@ export function getProjectHistory(projectId, params) {
 // Rental Requests
 ////////////////////
 
-function parseRentalRequest(request) {
-  if (!request.localArea) { request.localArea = { id: 0, name: '' }; }
-  if (!request.localArea.serviceArea) { request.localArea.serviceArea = { id: 0, name: '' }; }
-  if (!request.localArea.serviceArea.district) { request.localArea.serviceArea.district = { id: 0, name: '' }; }
-  if (!request.localArea.serviceArea.district.region) { request.localArea.serviceArea.district.region = { id: 0, name: '' }; }
-  if (!request.project) { request.project = { id: 0, name: '' }; }
-  if (!request.districtEquipmentType) { request.districtEquipmentType = { id: 0, districtEquipmentName: '' }; }
-  if (!request.primaryContact) { request.primaryContact = { id: 0, givenName: '', surname: '' }; }
-  if (!request.rentalRequestAttachments) { request.rentalRequestAttachments = []; }
-  if (!request.rentalRequestRotationList) { request.rentalRequestRotationList = []; }
+function parseRentalRequest(rentalRequest) {
+  if (!rentalRequest.localArea) { rentalRequest.localArea = { id: 0, name: '' }; }
+  if (!rentalRequest.localArea.serviceArea) { rentalRequest.localArea.serviceArea = { id: 0, name: '' }; }
+  if (!rentalRequest.localArea.serviceArea.district) { rentalRequest.localArea.serviceArea.district = { id: 0, name: '' }; }
+  if (!rentalRequest.localArea.serviceArea.district.region) { rentalRequest.localArea.serviceArea.district.region = { id: 0, name: '' }; }
+  if (!rentalRequest.project) { rentalRequest.project = { id: 0, name: '' }; }
+  if (!rentalRequest.districtEquipmentType) { rentalRequest.districtEquipmentType = { id: 0, districtEquipmentName: '' }; }
+  if (!rentalRequest.primaryContact) { rentalRequest.primaryContact = { id: 0, givenName: '', surname: '' }; }
+  if (!rentalRequest.rentalRequestAttachments) { rentalRequest.rentalRequestAttachments = []; }
+  if (!rentalRequest.rentalRequestRotationList) { rentalRequest.rentalRequestRotationList = []; }
 
   // Add display fields for primary contact
-  parseContact(request.primaryContact);
+  parseContact(rentalRequest.primaryContact);
 
   // Add display fields for rotation list items
-  _.map(request.rentalRequestRotationList, listItem => { parseRentalRequestRotationList(listItem); });
+  _.map(rentalRequest.rentalRequestRotationList, listItem => { parseRentalRequestRotationList(listItem, rentalRequest); });
 
-  request.status = request.status || Constant.RENTAL_REQUEST_STATUS_CODE_IN_PROGRESS;
-  request.equipmentCount = request.equipmentCount || 0;
-  request.expectedHours = request.expectedHours || 0;
-  request.expectedStartDate = request.expectedStartDate || '';
-  request.expectedEndDate = request.expectedEndDate || '';
+  rentalRequest.status = rentalRequest.status || Constant.RENTAL_REQUEST_STATUS_CODE_IN_PROGRESS;
+  rentalRequest.equipmentCount = rentalRequest.equipmentCount || 0;
+  rentalRequest.expectedHours = rentalRequest.expectedHours || 0;
+  rentalRequest.expectedStartDate = rentalRequest.expectedStartDate || '';
+  rentalRequest.expectedEndDate = rentalRequest.expectedEndDate || '';
 
-  request.projectId = request.projectId || request.project.id;
-  request.projectName = request.projectName || request.project.name;
-  request.projectPath = request.projectId ? `projects/${ request.projectId }`: '';
+  rentalRequest.projectId = rentalRequest.projectId || rentalRequest.project.id;
+  rentalRequest.projectName = rentalRequest.projectName || rentalRequest.project.name;
+  rentalRequest.projectPath = rentalRequest.projectId ? `projects/${ rentalRequest.projectId }`: '';
 
   // UI display fields
-  request.isActive = request.status === Constant.RENTAL_REQUEST_STATUS_CODE_IN_PROGRESS;
-  request.isCompleted = request.status === Constant.RENTAL_REQUEST_STATUS_CODE_COMPLETED;
-  request.isCancelled = request.status === Constant.RENTAL_REQUEST_STATUS_CODE_CANCELLED;
-  request.localAreaName = request.localArea.name;
-  request.equipmentTypeName = request.equipmentTypeName || request.districtEquipmentType.districtEquipmentName;
+  rentalRequest.isActive = rentalRequest.status === Constant.RENTAL_REQUEST_STATUS_CODE_IN_PROGRESS;
+  rentalRequest.isCompleted = rentalRequest.status === Constant.RENTAL_REQUEST_STATUS_CODE_COMPLETED;
+  rentalRequest.isCancelled = rentalRequest.status === Constant.RENTAL_REQUEST_STATUS_CODE_CANCELLED;
+  rentalRequest.localAreaName = rentalRequest.localArea.name;
+  rentalRequest.equipmentTypeName = rentalRequest.equipmentTypeName || rentalRequest.districtEquipmentType.districtEquipmentName;
 
   // Primary contact for the rental request/project
-  request.primaryContactName = request.primaryContact ? firstLastName(request.primaryContact.givenName, request.primaryContact.surname) : '';
-  request.primaryContactEmail = request.primaryContact ? request.primaryContact.emailAddress : '';
-  request.primaryContactRole = request.primaryContact ? request.primaryContact.role : '';
-  request.primaryContactPhone = request.primaryContact ? request.primaryContact.workPhoneNumber || request.primaryContact.mobilePhoneNumber || '' : '';
+  rentalRequest.primaryContactName = rentalRequest.primaryContact ? firstLastName(rentalRequest.primaryContact.givenName, rentalRequest.primaryContact.surname) : '';
+  rentalRequest.primaryContactEmail = rentalRequest.primaryContact ? rentalRequest.primaryContact.emailAddress : '';
+  rentalRequest.primaryContactRole = rentalRequest.primaryContact ? rentalRequest.primaryContact.role : '';
+  rentalRequest.primaryContactPhone = rentalRequest.primaryContact ? rentalRequest.primaryContact.workPhoneNumber || rentalRequest.primaryContact.mobilePhoneNumber || '' : '';
 
   // Flag element as a rental request.
   // Rental requests and rentals are merged and shown in a single list on Project Details screen
-  request.isRentalRequest = true;
+  rentalRequest.isRentalRequest = true;
 
-  request.path = `${ Constant.RENTAL_REQUESTS_PATHNAME }/${ request.id }`;
-  request.url = `#/${ request.path }`;
-  request.name = 'TBD';
-  request.historyEntity = History.makeHistoryEntity(History.REQUEST, request);
+  rentalRequest.path = `${ Constant.RENTAL_REQUESTS_PATHNAME }/${ rentalRequest.id }`;
+  rentalRequest.url = `#/${ rentalRequest.path }`;
+  rentalRequest.name = 'TBD';
+  rentalRequest.historyEntity = History.makeHistoryEntity(History.REQUEST, rentalRequest);
 
-  request.canView = true;
-  request.canEdit = true;
-  request.canDelete = false; // TODO Needs input from Business whether this is needed.
+  rentalRequest.canView = true;
+  rentalRequest.canEdit = true;
+  rentalRequest.canDelete = false; // TODO Needs input from Business whether this is needed.
 }
 
 export function searchRentalRequests(params) {
@@ -1031,8 +1031,8 @@ export function getRentalRequestHistory(requestId, params) {
 // Rental Request Rotation List
 ////////////////////
 
-function parseRentalRequestRotationList(rotationListItem) {
-  if (!rotationListItem.rentalRequest) { rotationListItem.rentalRequest = { id: 0, isRentalRequest: true }; }
+function parseRentalRequestRotationList(rotationListItem, rentalRequest = {}) {
+  if (!rotationListItem.rentalRequest) { rotationListItem.rentalRequest = _.extend({ id: 0 }, _.pick(rentalRequest, 'id')); }
   if (!rotationListItem.equipment) { rotationListItem.equipment = { id: 0, equipmentCode: '' }; }
   if (!rotationListItem.equipment.districtEquipmentType) { rotationListItem.equipment.districtEquipmentType = { id: 0, districtEquipmentName: '' }; }
   if (!rotationListItem.equipment.owner) { rotationListItem.equipment.owner = { id: 0, organizationName: '' }; }
@@ -1057,7 +1057,7 @@ function parseRentalRequestRotationList(rotationListItem) {
 
   // UI display fields
   rotationListItem.isHired = rotationListItem.isHired || false;
-  rotationListItem.seniority = `${getBlockDisplayName(equipment.blockNumber)}-${equipment.seniority} (${equipment.numberInBlock})`;
+  rotationListItem.seniority = `${getBlockDisplayName(equipment.blockNumber)}-${equipment.seniority.toFixed(3)} (${equipment.numberInBlock})`;
   rotationListItem.serviceHoursThisYear = rotationListItem.serviceHoursThisYear || equipment.serviceHoursThisYear || 0; // TODO calculated field from the server
   rotationListItem.equipmentId = equipment.id;
   rotationListItem.equipmentCode = equipment.equipmentCode;
@@ -1073,6 +1073,17 @@ function parseRentalRequestRotationList(rotationListItem) {
 
   // TODO Status TBD
   rotationListItem.status = 'N/A';
+}
+
+export function updateRentalRequestRotationList(rentalRequestRotationList, rentalRequest) {
+  return new ApiRequest(`/rentalrequests/${ rentalRequest.id }/rentalrequestrotationlist/${ rentalRequestRotationList.id }`).put({ ...rentalRequestRotationList, rentalAgreement: null }).then(response => {
+    var rentalRequestRotationList = response;
+
+    // Add display fields
+    parseRentalRequestRotationList(rentalRequestRotationList, rentalRequest);
+
+    store.dispatch({ type: Action.UPDATE_RENTAL_REQUEST_ROTATION_LIST, rentalRequestRotationList: rentalRequestRotationList });
+  });
 }
 
 ////////////////////
