@@ -420,6 +420,9 @@ namespace HETSAPI.Test
             Equipment e2 = createEquipment(owner, "test2");
             Equipment e3 = createEquipment(owner, "test3");
 
+            // validate equipment number.
+            Assert.Equal("TST-0003", e3.EquipmentCode);
+
             Equipment[] equipmentList = new Equipment[3];
 
             DateTime dateVerified = DateTime.UtcNow;
