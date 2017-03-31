@@ -43,8 +43,12 @@ namespace HETSAPI.Services.Impl
         private void AdjustRecord(RentalRequestRotationList item)
         {
             if (item != null)
-            {
-                
+            {                
+                if (item.Equipment != null)
+                {
+                    item.Equipment = _context.Equipments.First(a => a.Id == item.Equipment.Id);
+                }
+
                 if (item.RentalAgreement != null)
                 {
                     item.RentalAgreement = _context.RentalAgreements.First(a => a.Id == item.RentalAgreement.Id);
