@@ -9,6 +9,7 @@ import { LinkContainer } from 'react-router-bootstrap';
 
 import _ from 'lodash';
 
+import HireOfferEditDialog from './dialogs/HireOfferEditDialog.jsx';
 import RentalRequestsEditDialog from './dialogs/RentalRequestsEditDialog.jsx';
 
 import * as Action from '../actionTypes';
@@ -48,11 +49,13 @@ var RentalRequestsDetail = React.createClass({
       loadingHistory: false,
 
       showEditDialog: false,
+      showHireOfferDialog: false,
       showContactDialog: false,
 
       showHiredEquipment: false,
 
       contact: {},
+      rotationListHireOffer: {},
 
       isNew: this.props.params.rentalRequestId == 0,
     };
@@ -107,6 +110,24 @@ var RentalRequestsDetail = React.createClass({
   saveEdit(rentalRequest) {
     Api.updateRentalRequest(rentalRequest).finally(() => {
       this.closeEditDialog();
+    });
+  },
+
+  openHireOfferDialog(hireOffer) {
+    this.setState({
+      rotationListHireOffer: hireOffer,
+      showHireOfferDialog: true,
+    });
+  },
+
+  closeHireOfferDialog() {
+    this.setState({ showHireOfferDialog: false });
+  },
+
+  saveHireOffer(hireOffer) {
+    Api.updateRentalRequestRotationList(hireOffer, this.props.rentalRequest).finally(() => {
+      this.fetch();
+      this.closeHireOfferDialog();
     });
   },
 
@@ -228,6 +249,9 @@ var RentalRequestsDetail = React.createClass({
 
           if (Object.keys(rotationList || []).length === 0) { return <Alert bsStyle="success" style={{ marginTop: 10 }}>No equipment</Alert>; }
 
+          // Sort in rotation list order
+          rotationList = _.sortBy(rotationList, 'rotationListSortOrder');
+
           var headers = [
             { field: 'seniority',            title: 'Seniority'         },
             { field: 'serviceHoursThisYear', title: 'YTD Hours'         },
@@ -237,13 +261,13 @@ var RentalRequestsDetail = React.createClass({
             { field: 'status',               title: 'Status'            },
           ];
 
-          return <TableControl id="equipment-list" headers={ headers }>
+          return <TableControl id="rotation-list" headers={ headers }>
             {
               _.map(rotationList, (listItem) => {
                 return <tr key={ listItem.id }>
                   <td>{ listItem.seniority }</td>
                   <td>{ listItem.serviceHoursThisYear }</td>
-                  <td><Link to={ `equipment/${listItem.equipmentId}` }>{ listItem.equipmentCode }</Link></td>
+                  <td><Link to={ `${Constant.EQUIPMENT_PATHNAME}/${listItem.equipmentId}` }>{ listItem.equipmentCode }</Link></td>
                   <td>{ listItem.equipmentDetails }</td>
                   <td>
                     <Unimplemented>
@@ -253,9 +277,9 @@ var RentalRequestsDetail = React.createClass({
                     </Unimplemented>
                   </td>
                   <td>
-                    <Unimplemented>
-                      <Link to={'#'}>{ listItem.status }</Link>
-                    </Unimplemented>
+                    <Button bsStyle="link" title="Show Offer" onClick={ this.openHireOfferDialog.bind(this, listItem) }>
+                      Offer
+                    </Button>
                   </td>
                 </tr>;
               })
@@ -296,6 +320,9 @@ var RentalRequestsDetail = React.createClass({
       </Well>
       { this.state.showEditDialog &&
         <RentalRequestsEditDialog show={ this.state.showEditDialog } onSave={ this.saveEdit } onClose={ this.closeEditDialog } />
+      }
+      { this.state.showHireOfferDialog &&
+        <HireOfferEditDialog show={ this.state.showHireOfferDialog } hireOffer={ this.state.rotationListHireOffer } onSave={ this.saveHireOffer } onClose={ this.closeHireOfferDialog } />
       }
       { /* TODO this.state.showContactDialog && <ContactEditDialog /> */}
     </div>;
