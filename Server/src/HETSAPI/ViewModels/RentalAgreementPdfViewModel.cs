@@ -54,7 +54,7 @@ namespace HETSAPI.ViewModels
         /// <param name="EquipmentRate">The dollar rate for the piece of equipment itself for this Rental Agreement. Other rates associated with the Rental Agreement are in the Rental Agreement Rate table..</param>
         /// <param name="RatePeriod">The period of the rental rate. The vast majority will be hourly, but the rate could apply across a different period, e.g. daily..</param>
         /// <param name="RateComment">A comment about the rate for the piece of equipment..</param>
-        public RentalAgreementPdfViewModel(int Id, string Number = null, string Status = null, Equipment Equipment = null, Project Project = null, List<RentalAgreementRate> RentalAgreementRates = null, List<RentalAgreementCondition> RentalAgreementConditions = null, List<TimeRecord> TimeRecords = null, string Note = null, DateTime? EstimateStartWork = null, DateTime? DatedOn = null, int? EstimateHours = null, float? EquipmentRate = null, string RatePeriod = null, string RateComment = null)
+        public RentalAgreementPdfViewModel(int Id, string Number = null, string Status = null, Equipment Equipment = null, Project Project = null, List<RentalAgreementRate> RentalAgreementRates = null, List<RentalAgreementCondition> RentalAgreementConditions = null, List<TimeRecord> TimeRecords = null, string Note = null, string EstimateStartWork = null, string DatedOn = null, int? EstimateHours = null, float? EquipmentRate = null, string RatePeriod = null, string RateComment = null)
         {   
             this.Id = Id;
             this.Number = Number;
@@ -143,7 +143,7 @@ namespace HETSAPI.ViewModels
         /// <value>The estimated start date of the work to be placed on the rental agreement.</value>
         [DataMember(Name="estimateStartWork")]
         [MetaDataExtension (Description = "The estimated start date of the work to be placed on the rental agreement.")]
-        public DateTime? EstimateStartWork { get; set; }
+        public string EstimateStartWork { get; set; }
 
         /// <summary>
         /// The dated on date to put on the Rental Agreement.
@@ -151,7 +151,7 @@ namespace HETSAPI.ViewModels
         /// <value>The dated on date to put on the Rental Agreement.</value>
         [DataMember(Name="datedOn")]
         [MetaDataExtension (Description = "The dated on date to put on the Rental Agreement.")]
-        public DateTime? DatedOn { get; set; }
+        public string DatedOn { get; set; }
 
         /// <summary>
         /// The estimated number of hours of work to be put onto the Rental Agreement.

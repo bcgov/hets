@@ -36,17 +36,62 @@ namespace HETSAPI.Mappings
             return dto;
         }
 
+        static private string convertDate (DateTime? dateObject)
+        {
+            string result = "";
+            if (dateObject != null)
+            {
+                // Since the PDF template is raw HTML and won't convert a date object, we must adjust the time zone here.                    
+                TimeZoneInfo tzi = null;
+                try
+                {
+                    // try the IANA timzeone first.
+                    tzi = TimeZoneInfo.FindSystemTimeZoneById("America / Vancouver");
+                }
+                catch (Exception e)
+                {
+                    tzi = null;
+                }
+
+                if (tzi == null)
+                {
+                    try
+                    {
+                        tzi = TimeZoneInfo.FindSystemTimeZoneById("Pacific Standard Time");
+                    }
+                    catch (Exception e)
+                    {
+                        tzi = null;
+                    }
+                }
+                DateTime dt = DateTime.UtcNow;
+                if (tzi != null)
+                {
+                    dt = TimeZoneInfo.ConvertTime((DateTime)dateObject, tzi);
+
+                }
+                else
+                {
+                    dt = (DateTime)dateObject;
+
+                }
+                result = dt.ToString("yyyy-MM-dd");
+            }
+            return result;
+        }
+
+
         // view model for a printed rental agreement.  At this time the fields match a Rental Agreement.
         public static RentalAgreementPdfViewModel ToViewModel (this RentalAgreement model)
         {
             var dto = new RentalAgreementPdfViewModel();
             if (model != null)
             {
-                dto.DatedOn = model.DatedOn;
+                dto.DatedOn = convertDate(model.DatedOn);                
                 dto.Equipment = model.Equipment;
                 dto.EquipmentRate = model.EquipmentRate;
                 dto.EstimateHours = model.EstimateHours;
-                dto.EstimateStartWork = model.EstimateStartWork;
+                dto.EstimateStartWork = convertDate(model.EstimateStartWork);                                  
                 dto.Id = model.Id;
                 dto.Note = model.Note;
                 dto.Number = model.Number;
