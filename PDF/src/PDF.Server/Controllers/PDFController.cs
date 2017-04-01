@@ -35,7 +35,7 @@ namespace PDF.Controllers
         public PDFController(IHttpContextAccessor httpContextAccessor, IConfigurationRoot configuration, DbAppContext context, ILoggerFactory loggerFactory)
         {
             Configuration = configuration;
-           
+
             _httpContextAccessor = httpContextAccessor;
             _context = context;
 
@@ -56,21 +56,18 @@ namespace PDF.Controllers
             return result;
         }
 
-
-        [HttpGet]
+        [HttpPost]
         [Route("GetPDF")]
 
-        public async Task<IActionResult> GetPDF([FromServices] INodeServices nodeServices)
+        public async Task<IActionResult> GetPDF([FromServices] INodeServices nodeServices, [FromBody]  Object rawdata )
         {
-            var result = await nodeServices.InvokeAsync<JSONResponse>("./pdf");
+            JSONResponse result = null;
+            var options = new { format="letter", orientation= "landscape" };
 
-            HttpContext.Response.ContentType = "application/pdf";
+            // execute the Node.js component
+            result = await nodeServices.InvokeAsync<JSONResponse>("./pdf", "rental_agreement", rawdata, options);
 
-            string filename = @"report.pdf";
-            HttpContext.Response.Headers.Add("x-filename", filename);
-            HttpContext.Response.Headers.Add("Access-Control-Expose-Headers", "x-filename");
-            HttpContext.Response.Body.Write(result.data, 0, result.data.Length);
-            return new ContentResult();
+            return new FileContentResult(result.data, "application/pdf");
         }
 
         protected HttpRequest Request
