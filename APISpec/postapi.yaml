@@ -1,3 +1,25 @@
+  /admin/import:
+    get:
+      summary: Starts the import process
+      tags:
+        - Admin
+      consumes: []
+      produces:      
+        - application/octet-stream        
+      parameters:                
+        - name: path
+          in: query
+          description: location of the extracted files to parse.  Relative to the folder where files are stored
+          type: string
+        - name: districts
+          in: query
+          description: comma seperated list of district IDs to process. 
+          type: string
+      responses:
+        200:
+          description: OK
+        404:
+          description: Attachment not found in system        
   /attachments/{id}/download:
     get:
       summary: Returns the binary file component of an attachment

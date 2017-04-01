@@ -4,67 +4,67 @@ using System.Linq;
 using System.Threading.Tasks;
 using System.Xml.Serialization;
 
-namespace SchoolBusAPI.Import
+namespace HETSAPI.Import
 {
     public class Owner
     {
-        [XmlAttribute]
-        public string Popt_Id { get; set; }
+        [XmlElement]
+        public int Popt_Id { get; set; }
 
-        [XmlAttribute]
-        public string Area_Id { get; set; }
+        [XmlElement]
+        public int Area_Id { get; set; }
 
-        [XmlAttribute]
+        [XmlElement]
         public string Owner_Cd { get; set; }
 
-        [XmlAttribute]
+        [XmlElement]
         public string Owner_First_Name { get; set; }
 
-        [XmlAttribute]
+        [XmlElement]
         public string Owner_Last_Name { get; set; }
 
-        [XmlAttribute]
+        [XmlElement]
         public string Contact_Person { get; set; }
 
-        [XmlAttribute]
+        [XmlElement]
         public string Local_To_Area { get; set; }
 
-        [XmlAttribute]
+        [XmlElement]
         public string Maintenance_Contractor { get; set; }
 
-        [XmlAttribute]
+        [XmlElement]
         public string Comment { get; set; }
 
-        [XmlAttribute]
+        [XmlElement]
         public string WCB_Num { get; set; }
 
-        [XmlAttribute]
+        [XmlElement]
         public string WCB_Expiry_Dt { get; set; }
-        [XmlAttribute]
+        [XmlElement]
         public string CGL_company { get; set; }
-        [XmlAttribute]
+        [XmlElement]
         public string Second_Blk { get; set; }
-        [XmlAttribute]
+        [XmlElement]
         public string CGL_Policy { get; set; }
-        [XmlAttribute]
+        [XmlElement]
         public string CGL_Start_Dt { get; set; }
-        [XmlAttribute]
+        [XmlElement]
         public string CGL_End_Dt { get; set; }
-        [XmlAttribute]
+        [XmlElement]
         public string Status_Cd { get; set; }
-        [XmlAttribute]
+        [XmlElement]
         public string Archive_Cd { get; set; }
-        [XmlAttribute]
-        public string Service_Area_Id { get; set; }
-        [XmlAttribute]
-        public string Selected_Service_Area_Id { get; set; }
-        [XmlAttribute]
+        [XmlElement]
+        public int Service_Area_Id { get; set; }
+        [XmlElement]
+        public int Selected_Service_Area_Id { get; set; }
+        [XmlElement]
         public string Created_By { get; set; }
-        [XmlAttribute]
+        [XmlElement]
         public string Created_Dt { get; set; }
-        [XmlAttribute]
+        [XmlElement]
         public string Modified_By { get; set; }
-        [XmlAttribute]
+        [XmlElement]
         public string Modified_Dt { get; set; }
     }
 }

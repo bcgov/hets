@@ -31,6 +31,7 @@ namespace HETSAPI
         public static IServiceCollection RegisterApplicationServices(this IServiceCollection services)
         {
             services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
+            services.AddTransient<IAdminService, AdminService>();
             services.AddTransient<IAttachmentService, AttachmentService>();
             services.AddTransient<IAttachmentUploadService, AttachmentUploadService>();
             services.AddTransient<ICityService, CityService>();

@@ -8,25 +8,25 @@ namespace SchoolBusAPI.Import
 {
     public class Rotation_Doc
     {        
-        [XmlAttribute]
+        [XmlElement]
         public string Equip_Id { get; set; }
 
-        [XmlAttribute]
+        [XmlElement]
         public string Note_Dt { get; set; }
-        [XmlAttribute]
+        [XmlElement]
         public string Created_Dt { get; set; }
 
-        [XmlAttribute]
+        [XmlElement]
         public string Service_Area_Id { get; set; }
-        [XmlAttribute]
+        [XmlElement]
         public string Project_Id { get; set; }
-        [XmlAttribute]
+        [XmlElement]
         public string Note_Type { get; set; }
-        [XmlAttribute]
+        [XmlElement]
         public string Reason { get; set; }
-        [XmlAttribute]
+        [XmlElement]
         public string Note_Id { get; set; }
-        [XmlAttribute]
+        [XmlElement]
         public string Created_By { get; set; }       
     }
 }

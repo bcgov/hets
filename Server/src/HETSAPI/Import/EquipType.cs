@@ -4,43 +4,43 @@ using System.Linq;
 using System.Threading.Tasks;
 using System.Xml.Serialization;
 
-namespace SchoolBusAPI.Import
+namespace HETSAPI.Import
 {
     public class EquipType
     {
-        [XmlAttribute]
+        [XmlElement]
         public string Equip_Type_Id { get; set; }
 
-        [XmlAttribute]
+        [XmlElement]
         public string SubSystem_Id { get; set; }
 
-        [XmlAttribute]
+        [XmlElement]
         public string Service_Area_Id { get; set; }
 
-        [XmlAttribute]
+        [XmlElement]
         public string Equip_Type_Cd { get; set; }
 
-        [XmlAttribute]
+        [XmlElement]
         public string Equip_Type_Desc { get; set; }
 
-        [XmlAttribute]
+        [XmlElement]
         public string Equip_Rental_Rate_No { get; set; }
 
-        [XmlAttribute]
+        [XmlElement]
         public string Equip_Rental_Rate_Page { get; set; }
 
-        [XmlAttribute]
+        [XmlElement]
         public string Max_Hours { get; set; }
 
-        [XmlAttribute]
+        [XmlElement]
         public string Extend_Hours { get; set; }
 
-        [XmlAttribute]
+        [XmlElement]
         public string Max_Hours_Sub { get; set; }
 
-        [XmlAttribute]
+        [XmlElement]
         public string Second_Blk { get; set; }
-        [XmlAttribute]
+        [XmlElement]
         public string Created_Dt { get; set; }
       
 
