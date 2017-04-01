@@ -179,7 +179,7 @@ var HireOfferEditDialog = React.createClass({
               <Col md={11}>
                 <FormGroup>
                   {/*TODO - use lookup list*/}
-                  <DropdownControl inline id="offerRefusalReason" disabled={ isReadOnly } title={ this.state.offerRefusalReason } updateState={ this.updateState }
+                  <DropdownControl id="offerRefusalReason" disabled={ isReadOnly } title={ this.state.offerRefusalReason } updateState={ this.updateState }
                     items={ refusalReasons } />
                 </FormGroup>
               </Col>

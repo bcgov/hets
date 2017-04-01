@@ -3,7 +3,7 @@ import React from 'react';
 import { connect } from 'react-redux';
 
 import { Grid, Well, Row, Col } from 'react-bootstrap';
-import { Alert, Button, Glyphicon, Label } from 'react-bootstrap';
+import { Alert, Button, ButtonGroup, Glyphicon, Label } from 'react-bootstrap';
 import { Link } from 'react-router';
 import { LinkContainer } from 'react-router-bootstrap';
 
@@ -36,11 +36,13 @@ TODO:
 var RentalRequestsDetail = React.createClass({
   propTypes: {
     rentalRequest: React.PropTypes.object,
+    rentalAgreement: React.PropTypes.object,
     notes: React.PropTypes.object,
     attachments: React.PropTypes.object,
     history: React.PropTypes.object,
     params: React.PropTypes.object,
     ui: React.PropTypes.object,
+    router: React.PropTypes.object,
   },
 
   getInitialState() {
@@ -128,6 +130,25 @@ var RentalRequestsDetail = React.createClass({
     Api.updateRentalRequestRotationList(hireOffer, this.props.rentalRequest).finally(() => {
       this.fetch();
       this.closeHireOfferDialog();
+    });
+  },
+
+  saveNewRentalAgreement(rentalRequestRotationList) {
+    var rentalRequest = this.props.rentalRequest;
+
+    var newAgreement = {
+      equipment: { id: rentalRequestRotationList.equipment.id },
+      project: { id: rentalRequest.project.id },
+      estimateHours: rentalRequest.expectedHours,
+      estimateStartWork: rentalRequest.expectedStartDate,
+    };
+
+    Api.addRentalAgreement(newAgreement).then(() => {
+      // Update rotation list entry to reference the newly created agreement
+      return Api.updateRentalRequestRotationList({...rentalRequestRotationList, rentalAgreement: { id: this.props.rentalAgreement.id }}, rentalRequest);
+    }).finally(() => {
+      // Open it up
+      this.props.router.push({ pathname: `${Constant.RENTAL_AGREEMENTS_PATHNAME}/${this.props.rentalAgreement.id}` });
     });
   },
 
@@ -261,6 +282,8 @@ var RentalRequestsDetail = React.createClass({
             { field: 'status',               title: 'Status'            },
           ];
 
+          var separator = <span style={{ float: 'left'}}>{ '|' }</span>;
+
           return <TableControl id="rotation-list" headers={ headers }>
             {
               _.map(rotationList, (listItem) => {
@@ -277,9 +300,18 @@ var RentalRequestsDetail = React.createClass({
                     </Unimplemented>
                   </td>
                   <td>
-                    <Button bsStyle="link" title="Show Offer" onClick={ this.openHireOfferDialog.bind(this, listItem) }>
-                      Offer
-                    </Button>
+                    <ButtonGroup>
+                      <Button bsStyle="link" title="Show Offer" onClick={ this.openHireOfferDialog.bind(this, listItem) }>Offer</Button>
+                      { separator }
+                      {(() => {
+                        // If RentalRequestRotationList.rentalAgreement is non-null - go to that Rental Agreement.
+                        if (listItem.rentalAgreement && listItem.rentalAgreement.id) {
+                          return <Link title="Open Rental Agreement" to={ `${Constant.RENTAL_AGREEMENTS_PATHNAME}/${listItem.rentalAgreement.id}` }>Agreement</Link>;
+                        }
+                        // If RentalRequestRotationList.rentalAgreement is null - go to the Create New Rental Agreement with needed information about the new agreement
+                        return <Button bsStyle="link" title="Create Rental Agreement" onClick={ this.saveNewRentalAgreement.bind(this, listItem) }>Agreement</Button>;
+                      })()}
+                    </ButtonGroup>
                   </td>
                 </tr>;
               })
@@ -333,6 +365,7 @@ var RentalRequestsDetail = React.createClass({
 function mapStateToProps(state) {
   return {
     rentalRequest: state.models.rentalRequest,
+    rentalAgreement: state.models.rentalAgreement,
     notes: state.models.rentalRequestNotes,
     attachments: state.models.rentalRequestAttachments,
     history: state.models.rentalRequestHistory,
