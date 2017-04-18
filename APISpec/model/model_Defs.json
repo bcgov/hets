@@ -3997,6 +3997,49 @@
             "table": null
         },
         {
+            "Description": "A link to a dump truck set if this piece of equipment is an equipment type flagged as a dump truck.",
+            "Length": null,
+            "Name": "dumpTruck",
+            "RefDef": "DumpTruck",
+            "Required": [
+                {
+                    "req": "id"
+                },
+                {
+                    "req": "localArea"
+                },
+                {
+                    "req": "districtEquipmentType"
+                },
+                {
+                    "req": "owner"
+                },
+                {
+                    "req": "equipmentCode"
+                },
+                {
+                    "req": "status"
+                },
+                {
+                    "req": "receivedDate"
+                },
+                {
+                    "req": "lastVerifiedDate"
+                }
+            ],
+            "Unique": null,
+            "binary": null,
+            "boolean": null,
+            "datetime": null,
+            "float": null,
+            "id": null,
+            "integer": null,
+            "links": null,
+            "ref": "ref",
+            "string": null,
+            "table": null
+        },
+        {
             "Description": null,
             "Length": null,
             "Name": "notes",
@@ -4133,9 +4176,6 @@
             "Required": [
                 {
                     "req": "id"
-                },
-                {
-                    "req": "equipment"
                 }
             ],
             "Unique": null,
@@ -4158,9 +4198,6 @@
             "Required": [
                 {
                     "req": "id"
-                },
-                {
-                    "req": "equipment"
                 }
             ],
             "Unique": null,
@@ -4176,31 +4213,6 @@
             "table": null
         },
         {
-            "Description": null,
-            "Length": null,
-            "Name": "equipment",
-            "RefDef": "Equipment",
-            "Required": [
-                {
-                    "req": "id"
-                },
-                {
-                    "req": "equipment"
-                }
-            ],
-            "Unique": null,
-            "binary": null,
-            "boolean": null,
-            "datetime": null,
-            "float": null,
-            "id": null,
-            "integer": null,
-            "links": null,
-            "ref": "ref",
-            "string": null,
-            "table": null
-        },
-        {
             "Description": "True if the vehicle has a single axle. Can be false or null.",
             "Length": null,
             "Name": "isSingleAxle",
@@ -4208,9 +4220,6 @@
             "Required": [
                 {
                     "req": "id"
-                },
-                {
-                    "req": "equipment"
                 }
             ],
             "Unique": null,
@@ -4233,9 +4242,6 @@
             "Required": [
                 {
                     "req": "id"
-                },
-                {
-                    "req": "equipment"
                 }
             ],
             "Unique": null,
@@ -4258,9 +4264,6 @@
             "Required": [
                 {
                     "req": "id"
-                },
-                {
-                    "req": "equipment"
                 }
             ],
             "Unique": null,
@@ -4283,9 +4286,6 @@
             "Required": [
                 {
                     "req": "id"
-                },
-                {
-                    "req": "equipment"
                 }
             ],
             "Unique": null,
@@ -4308,9 +4308,6 @@
             "Required": [
                 {
                     "req": "id"
-                },
-                {
-                    "req": "equipment"
                 }
             ],
             "Unique": null,
@@ -4333,9 +4330,6 @@
             "Required": [
                 {
                     "req": "id"
-                },
-                {
-                    "req": "equipment"
                 }
             ],
             "Unique": null,
@@ -4358,9 +4352,6 @@
             "Required": [
                 {
                     "req": "id"
-                },
-                {
-                    "req": "equipment"
                 }
             ],
             "Unique": null,
@@ -4383,9 +4374,6 @@
             "Required": [
                 {
                     "req": "id"
-                },
-                {
-                    "req": "equipment"
                 }
             ],
             "Unique": null,
@@ -4408,9 +4396,6 @@
             "Required": [
                 {
                     "req": "id"
-                },
-                {
-                    "req": "equipment"
                 }
             ],
             "Unique": null,
@@ -4433,9 +4418,6 @@
             "Required": [
                 {
                     "req": "id"
-                },
-                {
-                    "req": "equipment"
                 }
             ],
             "Unique": null,
@@ -4458,9 +4440,6 @@
             "Required": [
                 {
                     "req": "id"
-                },
-                {
-                    "req": "equipment"
                 }
             ],
             "Unique": null,
@@ -4483,9 +4462,6 @@
             "Required": [
                 {
                     "req": "id"
-                },
-                {
-                    "req": "equipment"
                 }
             ],
             "Unique": null,
@@ -4508,9 +4484,6 @@
             "Required": [
                 {
                     "req": "id"
-                },
-                {
-                    "req": "equipment"
                 }
             ],
             "Unique": null,
@@ -4533,9 +4506,6 @@
             "Required": [
                 {
                     "req": "id"
-                },
-                {
-                    "req": "equipment"
                 }
             ],
             "Unique": null,
@@ -4558,9 +4528,6 @@
             "Required": [
                 {
                     "req": "id"
-                },
-                {
-                    "req": "equipment"
                 }
             ],
             "Unique": null,
@@ -4583,9 +4550,6 @@
             "Required": [
                 {
                     "req": "id"
-                },
-                {
-                    "req": "equipment"
                 }
             ],
             "Unique": null,
@@ -4608,9 +4572,6 @@
             "Required": [
                 {
                     "req": "id"
-                },
-                {
-                    "req": "equipment"
                 }
             ],
             "Unique": null,
@@ -4633,9 +4594,6 @@
             "Required": [
                 {
                     "req": "id"
-                },
-                {
-                    "req": "equipment"
                 }
             ],
             "Unique": null,
@@ -4658,9 +4616,6 @@
             "Required": [
                 {
                     "req": "id"
-                },
-                {
-                    "req": "equipment"
                 }
             ],
             "Unique": null,
@@ -4683,9 +4638,6 @@
             "Required": [
                 {
                     "req": "id"
-                },
-                {
-                    "req": "equipment"
                 }
             ],
             "Unique": null,
@@ -4708,9 +4660,6 @@
             "Required": [
                 {
                     "req": "id"
-                },
-                {
-                    "req": "equipment"
                 }
             ],
             "Unique": null,
@@ -4733,9 +4682,6 @@
             "Required": [
                 {
                     "req": "id"
-                },
-                {
-                    "req": "equipment"
                 }
             ],
             "Unique": null,
@@ -4758,9 +4704,6 @@
             "Required": [
                 {
                     "req": "id"
-                },
-                {
-                    "req": "equipment"
                 }
             ],
             "Unique": null,
@@ -4783,9 +4726,6 @@
             "Required": [
                 {
                     "req": "id"
-                },
-                {
-                    "req": "equipment"
                 }
             ],
             "Unique": null,
@@ -4808,9 +4748,6 @@
             "Required": [
                 {
                     "req": "id"
-                },
-                {
-                    "req": "equipment"
                 }
             ],
             "Unique": null,
@@ -4833,9 +4770,6 @@
             "Required": [
                 {
                     "req": "id"
-                },
-                {
-                    "req": "equipment"
                 }
             ],
             "Unique": null,
@@ -4858,9 +4792,6 @@
             "Required": [
                 {
                     "req": "id"
-                },
-                {
-                    "req": "equipment"
                 }
             ],
             "Unique": null,
@@ -4883,9 +4814,6 @@
             "Required": [
                 {
                     "req": "id"
-                },
-                {
-                    "req": "equipment"
                 }
             ],
             "Unique": null,
@@ -4908,9 +4836,6 @@
             "Required": [
                 {
                     "req": "id"
-                },
-                {
-                    "req": "equipment"
                 }
             ],
             "Unique": null,
@@ -4933,9 +4858,6 @@
             "Required": [
                 {
                     "req": "id"
-                },
-                {
-                    "req": "equipment"
                 }
             ],
             "Unique": null,
@@ -4958,9 +4880,6 @@
             "Required": [
                 {
                     "req": "id"
-                },
-                {
-                    "req": "equipment"
                 }
             ],
             "Unique": null,

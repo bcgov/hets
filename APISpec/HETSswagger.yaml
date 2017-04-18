@@ -6520,6 +6520,9 @@ definitions:
         type: string
         format: date-time
         description: The date on which a user most recenly marked this piece of equipment as archived.
+      dumpTruck:
+        $ref: '#/definitions/DumpTruck'
+        description: A link to a dump truck set if this piece of equipment is an equipment type flagged as a dump truck.
       notes:
         type: array
         items:
@@ -6537,14 +6540,11 @@ definitions:
     description: Additional attributes about a piece of equipment designated as a Dump Truck. Historically, there was a perceived need to track a lot of informatiion about a dump truck, but in practice, few fields are being completed by users. Places for the attributes are being maintained, but the UI is prompting only for a couple of the fields, and only those fields are likely to be populated. Additional basic information about the attributes can be found on Wikipedia, BC-specific details on MOTI&#39;s CVSE website and www.bclaws.ca&#x2F;EPLibraries&#x2F;bclaws_new&#x2F;document&#x2F;ID&#x2F;freeside&#x2F;30_78#AppendicesAtoK, Appendix A and  B. Any metrics information provided here is from the Equipment Owner.
     required:
       - id
-      - equipment
     properties:
       id:
         format: int32
         type: integer
         description: A system-generated unique identifier for a DumpTruck
-      equipment:
-        $ref: '#/definitions/Equipment'
       isSingleAxle:
         type: boolean
         description: True if the vehicle has a single axle. Can be false or null.
