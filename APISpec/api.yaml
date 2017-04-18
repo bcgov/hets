@@ -113,6 +113,7 @@
     post:
       tags:
         - Equipment
+      x-codegen-permission: ADMIN
       consumes:
         - application/json
       produces:
@@ -245,6 +246,7 @@
     post:
       tags:
         - EquipmentType
+      x-codegen-permission: ADMIN
       consumes:
         - application/json
       produces:
@@ -377,6 +379,7 @@
     post:
       tags:
         - DistrictEquipmentType
+      x-codegen-permission: ADMIN
       consumes:
         - application/json
       produces:
@@ -509,6 +512,7 @@
     post:
       tags:
         - EquipmentAttachment
+      x-codegen-permission: ADMIN
       consumes:
         - application/json
       produces:
@@ -641,6 +645,7 @@
     post:
       tags:
         - LocalAreaRotationList
+      x-codegen-permission: ADMIN
       consumes:
         - application/json
       produces:
@@ -773,6 +778,7 @@
     post:
       tags:
         - Owner
+      x-codegen-permission: ADMIN
       consumes:
         - application/json
       produces:
@@ -905,6 +911,7 @@
     post:
       tags:
         - Project
+      x-codegen-permission: ADMIN
       consumes:
         - application/json
       produces:
@@ -1037,6 +1044,7 @@
     post:
       tags:
         - LookupList
+      x-codegen-permission: ADMIN
       consumes:
         - application/json
       produces:
@@ -1073,6 +1081,7 @@
     post:
       tags:
         - Group
+      x-codegen-permission: ADMIN
       consumes:
         - application/json
       produces:
@@ -1120,6 +1129,7 @@
     put:
       tags:
         - Group
+      x-codegen-permission: ADMIN
       consumes:
         - application/json
       produces:
@@ -1148,6 +1158,7 @@
     post:
       tags:
         - Group
+      x-codegen-permission: ADMIN
       consumes: []
       produces:
         - text/plain
@@ -1169,6 +1180,7 @@
     post:
       tags:
         - Group
+      x-codegen-permission: ADMIN
       consumes:
         - application/json
       produces:
@@ -1205,6 +1217,7 @@
     post:
       tags:
         - Permission
+      x-codegen-permission: ADMIN
       consumes:
         - application/json
       produces:
@@ -1252,6 +1265,7 @@
     put:
       tags:
         - Permission
+      x-codegen-permission: ADMIN
       consumes:
         - application/json
       produces:
@@ -1280,6 +1294,7 @@
     post:
       tags:
         - Permission
+      x-codegen-permission: ADMIN
       consumes: []
       produces:
         - text/plain
@@ -1301,6 +1316,7 @@
     post:
       tags:
         - Permission
+      x-codegen-permission: ADMIN
       consumes:
         - application/json
       produces:
@@ -1337,6 +1353,7 @@
     post:
       tags:
         - Role
+      x-codegen-permission: ADMIN
       consumes:
         - application/json
       produces:
@@ -1384,6 +1401,7 @@
     put:
       tags:
         - Role
+      x-codegen-permission: ADMIN
       consumes:
         - application/json
       produces:
@@ -1412,6 +1430,7 @@
     post:
       tags:
         - Role
+      x-codegen-permission: ADMIN
       consumes: []
       produces:
         - text/plain
@@ -1433,6 +1452,7 @@
     post:
       tags:
         - Role
+      x-codegen-permission: ADMIN
       consumes:
         - application/json
       produces:
@@ -1447,28 +1467,6 @@
             type: array
             items:
               $ref: "#/definitions/Role"
-      responses:
-        201:
-          description: Role created
-
-  /rolepermissions/bulk:
-    post:
-      tags:
-        - Role
-      consumes:
-        - application/json
-      produces:
-        - text/plain
-        - application/json
-        - text/json
-      parameters:
-        - name: items
-          in: body
-          required: true
-          schema:
-            type: array
-            items:
-              $ref: "#/definitions/RolePermission"
       responses:
         201:
           description: Role created
@@ -1491,6 +1489,7 @@
     post:
       tags:
         - User
+      x-codegen-permission: ADMIN
       consumes:
         - application/json
       produces:
@@ -1538,6 +1537,7 @@
     put:
       tags:
         - User
+      x-codegen-permission: ADMIN
       consumes:
         - application/json
       produces:
@@ -1566,6 +1566,7 @@
     post:
       tags:
         - User
+      x-codegen-permission: ADMIN
       consumes: []
       produces:
         - text/plain
@@ -1587,6 +1588,7 @@
     post:
       tags:
         - User
+      x-codegen-permission: ADMIN
       consumes:
         - application/json
       produces:
@@ -1609,6 +1611,7 @@
     post:
       tags:
         - User
+      x-codegen-permission: ADMIN
       consumes:
         - application/json
       produces:
@@ -1623,28 +1626,6 @@
             type: array
             items:
               $ref: "#/definitions/GroupMembership"
-      responses:
-        201:
-          description: User created
-
-  /userroles/bulk:
-    post:
-      tags:
-        - User
-      consumes:
-        - application/json
-      produces:
-        - text/plain
-        - application/json
-        - text/json
-      parameters:
-        - name: items
-          in: body
-          required: true
-          schema:
-            type: array
-            items:
-              $ref: "#/definitions/UserRole"
       responses:
         201:
           description: User created
@@ -1763,6 +1744,7 @@
     post:
       tags:
         - Region
+      x-codegen-permission: ADMIN
       consumes:
         - application/json
       produces:
@@ -1895,6 +1877,7 @@
     post:
       tags:
         - District
+      x-codegen-permission: ADMIN
       consumes:
         - application/json
       produces:
@@ -2027,6 +2010,7 @@
     post:
       tags:
         - ServiceArea
+      x-codegen-permission: ADMIN
       consumes:
         - application/json
       produces:
@@ -2159,6 +2143,7 @@
     post:
       tags:
         - City
+      x-codegen-permission: ADMIN
       consumes:
         - application/json
       produces:
@@ -2291,6 +2276,7 @@
     post:
       tags:
         - LocalArea
+      x-codegen-permission: ADMIN
       consumes:
         - application/json
       produces:
@@ -2423,6 +2409,7 @@
     post:
       tags:
         - Contact
+      x-codegen-permission: ADMIN
       consumes:
         - application/json
       produces:
@@ -2555,6 +2542,7 @@
     post:
       tags:
         - DumpTruck
+      x-codegen-permission: ADMIN
       consumes:
         - application/json
       produces:
@@ -2687,6 +2675,7 @@
     post:
       tags:
         - Note
+      x-codegen-permission: ADMIN
       consumes:
         - application/json
       produces:
@@ -2704,7 +2693,7 @@
       responses:
         201:
           description: Note created
-  /attachment:
+  /attachments:
     get:
       tags:
         - Attachment
@@ -2745,7 +2734,7 @@
               format: url
           schema:
             $ref: "#/definitions/Attachment"  
-  /attachment/{id}:
+  /attachments/{id}:
     get:
       tags:
         - Attachment
@@ -2794,7 +2783,7 @@
           required: true
           schema:
             $ref: "#/definitions/Attachment"
-  /attachment/{id}/delete:
+  /attachments/{id}/delete:
     post:
       tags:
         - Attachment
@@ -2815,10 +2804,11 @@
           required: true
           type: integer
 
-  /attachment/bulk:
+  /attachments/bulk:
     post:
       tags:
         - Attachment
+      x-codegen-permission: ADMIN
       consumes:
         - application/json
       produces:
@@ -2951,6 +2941,7 @@
     post:
       tags:
         - GroupMembership
+      x-codegen-permission: ADMIN
       consumes:
         - application/json
       produces:
@@ -3083,6 +3074,7 @@
     post:
       tags:
         - History
+      x-codegen-permission: ADMIN
       consumes:
         - application/json
       produces:
@@ -3215,6 +3207,7 @@
     post:
       tags:
         - RentalAgreement
+      x-codegen-permission: ADMIN
       consumes:
         - application/json
       produces:
@@ -3347,6 +3340,7 @@
     post:
       tags:
         - RentalAgreementCondition
+      x-codegen-permission: ADMIN
       consumes:
         - application/json
       produces:
@@ -3479,6 +3473,7 @@
     post:
       tags:
         - RentalAgreementRate
+      x-codegen-permission: ADMIN
       consumes:
         - application/json
       produces:
@@ -3611,6 +3606,7 @@
     post:
       tags:
         - RentalRequest
+      x-codegen-permission: ADMIN
       consumes:
         - application/json
       produces:
@@ -3743,6 +3739,7 @@
     post:
       tags:
         - RentalRequestAttachment
+      x-codegen-permission: ADMIN
       consumes:
         - application/json
       produces:
@@ -3875,6 +3872,7 @@
     post:
       tags:
         - RentalRequestRotationList
+      x-codegen-permission: ADMIN
       consumes:
         - application/json
       produces:
@@ -4007,6 +4005,7 @@
     post:
       tags:
         - RolePermission
+      x-codegen-permission: ADMIN
       consumes:
         - application/json
       produces:
@@ -4139,6 +4138,7 @@
     post:
       tags:
         - SeniorityAudit
+      x-codegen-permission: ADMIN
       consumes:
         - application/json
       produces:
@@ -4271,6 +4271,7 @@
     post:
       tags:
         - TimeRecord
+      x-codegen-permission: ADMIN
       consumes:
         - application/json
       produces:
@@ -4403,6 +4404,7 @@
     post:
       tags:
         - UserFavourite
+      x-codegen-permission: ADMIN
       consumes:
         - application/json
       produces:
@@ -4439,6 +4441,7 @@
     post:
       tags:
         - UserRole
+      x-codegen-permission: ADMIN
       consumes:
         - application/json
       produces:
@@ -4486,6 +4489,7 @@
     put:
       tags:
         - UserRole
+      x-codegen-permission: ADMIN
       consumes:
         - application/json
       produces:
@@ -4514,6 +4518,7 @@
     post:
       tags:
         - UserRole
+      x-codegen-permission: ADMIN
       consumes: []
       produces:
         - text/plain
@@ -4535,6 +4540,7 @@
     post:
       tags:
         - UserRole
+      x-codegen-permission: ADMIN
       consumes:
         - application/json
       produces:

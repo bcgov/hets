@@ -5,7 +5,6 @@
     required:
       - id
       - fileName
-      - fileContents
     properties:
       id:
         format: int32
