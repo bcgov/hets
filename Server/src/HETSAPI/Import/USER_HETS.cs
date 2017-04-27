@@ -8,23 +8,31 @@ namespace HETSAPI.Import
 {
     public class User_HETS
     {
-        [XmlElement]
-        public string Popt_ID { get; set; }
-        [XmlElement]
-        public string Service_Area_Id { get; set; }
-        [XmlElement]
+        [XmlElement("Popt_ID")]
+        public int Popt_Id { get; set; }
+
+        [XmlElement("Service_Area_Id")]
+        public int Service_Area_Id { get; set; }
+
+        [XmlElement("User_Cd")]
         public string User_Cd { get; set; }
-        [XmlElement]
+
+        [XmlElement("Authority")]
         public string Authority { get; set; }
-        [XmlElement]
+
+        [XmlElement("Default_Service_Area")]
         public string Default_Service_Area { get; set; }
-        [XmlElement]
+
+        [XmlElement("Created_Dt")]
         public string Created_Dt { get; set; }
-        [XmlElement]
+
+        [XmlElement("Created_By")]
         public string Created_By { get; set; }
-        [XmlElement]
+
+        [XmlElement("Modified_Dt")]
         public string Modified_Dt { get; set; }
-        [XmlElement]
+
+        [XmlElement("Modified_By")]
         public string Modified_By { get; set; }
     }
 }

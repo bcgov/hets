@@ -6,8 +6,8 @@ using System.Xml.Serialization;
 
 namespace HETSAPI.Import
 {
-   // [XmlRoot("ArrayOfArea"), XmlType("ArrayOfArea")]
-    public class Area
+    // [XmlRoot("ArrayOfArea"), XmlType("ArrayOfArea")]
+    public class Dump_Truck 
     {
         [XmlElement("Area_Id")]
         public int Area_Id { get; set; }
@@ -25,6 +25,7 @@ namespace HETSAPI.Import
         public string Created_Dt { get; set; }
 
         [XmlElement("Created_By")]
-        public string Created_By { get; set; }        
+        public string Created_By { get; set; }
     }
 }
+

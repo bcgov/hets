@@ -6,33 +6,43 @@ using System.Xml.Serialization;
 
 namespace HETSAPI.Import
 {
+   // [XmlRoot("ArrayOfService_Area")]
     public class Service_Area
     {
-        [XmlElement]
+        [XmlElement("Service_Area_Id")]
         public int Service_Area_Id { get; set; }
 
-        [XmlElement]
+        [XmlElement("Service_Area_Cd")]
         public int Service_Area_Cd { get; set; }
 
-        [XmlElement]
+        [XmlElement("Service_Area_Desc")]
         public string Service_Area_Desc { get; set; }
-        [XmlElement]
+
+        [XmlElement("District_Area_Id")]
         public int District_Area_Id { get; set; }
-        [XmlElement]
+
+        [XmlElement("Last_Year_End_Shift")]
         public string Last_Year_End_Shift { get; set; }
-        [XmlElement]
+
+        [XmlElement("Address")]
         public string Address { get; set; }
-        [XmlElement]
+
+        [XmlElement("Phone")]
         public string Phone { get; set; }
-        [XmlElement]
+
+        [XmlElement("Fax ")]
         public string Fax { get; set; }
-        [XmlElement]
+
+        [XmlElement("FiscalStart")]
         public string FiscalStart { get; set; }
-        [XmlElement]
+
+        [XmlElement("FiscalEnd")]
         public string FiscalEnd { get; set; }
-        [XmlElement]
+
+        [XmlElement("Created_Dt")]
         public string Created_Dt { get; set; }
-        [XmlElement]
+
+        [XmlElement("Created_By")]
         public string Created_By { get; set; }     
     }
 }

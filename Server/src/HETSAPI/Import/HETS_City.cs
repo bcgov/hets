@@ -6,15 +6,16 @@ using System.Xml.Serialization;
 
 namespace HETSAPI.Import
 {
+   // [XmlRoot("HETS_City")]
     public class HETS_City
     {
-        [XmlElement]
-        public string Service_Area_Id { get; set; }
+        [XmlElement("Service_Area_Id")]
+        public int Service_Area_Id { get; set; }
 
-        [XmlElement]
-        public string Seq_Num { get; set; }
+        [XmlElement("Seq_Num")]
+        public int Seq_Num { get; set; }
 
-        [XmlElement]
-        public string City { get; set; }               
+        [XmlElement("City")]
+        public string Name { get; set; }               
     }
 }
