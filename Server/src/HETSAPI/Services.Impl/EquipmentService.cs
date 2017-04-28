@@ -732,7 +732,7 @@ namespace HETSAPI.Services.Impl
             if (hired != null)
             {
                 // hired is not currently implemented.
-                throw new NotImplementedException();
+                // throw new NotImplementedException();
             }
 
             if (notverifiedsincedate != null)
