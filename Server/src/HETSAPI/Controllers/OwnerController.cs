@@ -23,6 +23,7 @@ using HETSAPI.Models;
 using HETSAPI.ViewModels;
 using HETSAPI.Services;
 using HETSAPI.Authorization;
+using HETSAPI.Helpers;
 
 namespace HETSAPI.Controllers
 {
@@ -268,7 +269,7 @@ namespace HETSAPI.Controllers
         [Route("/api/owners/search")]
         [SwaggerOperation("OwnersSearchGet")]
         [SwaggerResponse(200, type: typeof(List<Owner>))]
-        public virtual IActionResult OwnersSearchGet([FromQuery]string localareas, [FromQuery]string equipmenttypes, [FromQuery]int? owner, [FromQuery]string status, [FromQuery]bool? hired)
+        public virtual IActionResult OwnersSearchGet([ModelBinder(BinderType = typeof(CsvArrayBinder))]int?[] localareas, [ModelBinder(BinderType = typeof(CsvArrayBinder))]int?[] equipmenttypes, [FromQuery]int? owner, [FromQuery]string status, [FromQuery]bool? hired)
         {
             return this._service.OwnersSearchGetAsync(localareas, equipmenttypes, owner, status, hired);
         }

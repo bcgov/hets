@@ -492,10 +492,8 @@ namespace HETSAPI.Services.Impl
         /// <param name="hasRequests">if true then only include Projects with active Requests</param>
         /// <param name="hasHires">if true then only include Projects with active Rental Agreements</param>
         /// <response code="200">OK</response>
-        public virtual IActionResult RentalrequestsSearchGetAsync(string localAreasString, string project, string status, DateTime? startDate, DateTime? endDate)
-        {
-            int?[] localareas = ParseIntArray(localAreasString);
-
+        public virtual IActionResult RentalrequestsSearchGetAsync(int?[] localareas, string project, string status, DateTime? startDate, DateTime? endDate)
+        { 
             var data = _context.RentalRequests
                     .Include(x => x.LocalArea.ServiceArea.District.Region)
                     .Include(x => x.DistrictEquipmentType.EquipmentType)
@@ -504,12 +502,12 @@ namespace HETSAPI.Services.Impl
 
             if (localareas != null && localareas.Length > 0)
             {
-                data = data.Where(x => localareas.Contains (x.LocalArea.Id));
+                data = data.Where(x => localareas.Contains(x.LocalArea.Id));
             }
                         
             if (project != null)
             {
-                data = data.Where(x => x.Project.Name.ToLower().Contains (project.ToLower()));
+                data = data.Where(x => x.Project.Name.ToLowerInvariant().Contains(project.ToLowerInvariant()));
             }
 
             if (startDate != null)

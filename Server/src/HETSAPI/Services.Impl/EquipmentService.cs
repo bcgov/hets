@@ -691,11 +691,8 @@ namespace HETSAPI.Services.Impl
         /// <param name="hired">Hired</param>
         /// <param name="notverifiedsincedate">Not Verified Since Date</param>
         /// <response code="200">OK</response>
-        public virtual IActionResult EquipmentSearchGetAsync(string localareasString, string typesString, string equipmentAttachment, int? owner, string status, bool? hired, DateTime? notverifiedsincedate)
+        public virtual IActionResult EquipmentSearchGetAsync(int?[] localareas, int?[] types, string equipmentAttachment, int? owner, string status, bool? hired, DateTime? notverifiedsincedate)
         {
-            int?[] localareas = ParseIntArray(localareasString);
-            int?[] types = ParseIntArray(typesString);
-
             var data = _context.Equipments
                     .Include(x => x.LocalArea.ServiceArea.District.Region)
                     .Include(x => x.DistrictEquipmentType)
@@ -734,7 +731,8 @@ namespace HETSAPI.Services.Impl
 
             if (hired != null)
             {
-                // hired is not currently implemented. 
+                // hired is not currently implemented.
+                throw new NotImplementedException();
             }
 
             if (notverifiedsincedate != null)

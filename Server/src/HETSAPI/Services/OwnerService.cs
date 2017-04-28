@@ -155,6 +155,6 @@ namespace HETSAPI.Services
         /// <param name="status">Status</param>
         /// <param name="hired">Hired</param>
         /// <response code="200">OK</response>
-        IActionResult OwnersSearchGetAsync(string localareas, string equipmenttypes, int? owner, string status, bool? hired);
+        IActionResult OwnersSearchGetAsync(int?[] localareas, int?[] equipmenttypes, int? owner, string status, bool? hired);
     }
 }

@@ -23,6 +23,7 @@ using HETSAPI.Models;
 using HETSAPI.ViewModels;
 using HETSAPI.Services;
 using HETSAPI.Authorization;
+using HETSAPI.Helpers;
 
 namespace HETSAPI.Controllers
 {
@@ -208,7 +209,7 @@ namespace HETSAPI.Controllers
         [Route("/api/rentalrequests/search")]
         [SwaggerOperation("RentalrequestsSearchGet")]
         [SwaggerResponse(200, type: typeof(List<RentalRequestSearchResultViewModel>))]
-        public virtual IActionResult RentalrequestsSearchGet([FromQuery]string localareas, [FromQuery]string project, [FromQuery]string status, [FromQuery]DateTime? startDate, [FromQuery]DateTime? endDate)
+        public virtual IActionResult RentalrequestsSearchGet([ModelBinder(BinderType = typeof(CsvArrayBinder))]int?[] localareas, [FromQuery]string project, [FromQuery]string status, [FromQuery]DateTime? startDate, [FromQuery]DateTime? endDate)
         {
             return this._service.RentalrequestsSearchGetAsync(localareas, project, status, startDate, endDate);
         }
