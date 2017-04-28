@@ -649,11 +649,8 @@ namespace HETSAPI.Services.Impl
         /// <param name="status">Status</param>
         /// <param name="hired">Hired</param>
         /// <response code="200">OK</response>
-        public virtual IActionResult OwnersSearchGetAsync(string localAreasString, string equipmentTypesString, int? owner, string status, bool? hired)
+        public virtual IActionResult OwnersSearchGetAsync(int?[] localareas, int?[] equipmenttypes, int? owner, string status, bool? hired)
         {
-            int?[] localAreas = ParseIntArray(localAreasString);
-            int?[] equipmentTypes = ParseIntArray(equipmentTypesString);
-
             var data = _context.Owners
                     .Include(x => x.LocalArea.ServiceArea.District.Region)
                     .Include(x => x.EquipmentList)
@@ -664,19 +661,20 @@ namespace HETSAPI.Services.Impl
                     .Include(x => x.Contacts)
                     .Select(x => x);
 
-            if (localAreas != null && localAreas.Length > 0)
+            if (localareas != null && localareas.Length > 0)
             {
-                data = data.Where(x => localAreas.Contains (x.LocalArea.Id));                
+                data = data.Where(x => localareas.Contains(x.LocalArea.Id));                
             }
 
-            if (equipmentTypes != null)
+            if (equipmenttypes != null)
             {
-                foreach (int? item in equipmentTypes)
+                
+                foreach (int? item in equipmenttypes)
                 {
                     if (item != null)
                     {
                         int equipmentType = (int) item;
-                        data = data.Where(x => x.EquipmentList.Select (y => y.DistrictEquipmentType.Id).ToList().Contains (equipmentType));
+                        data = data.Where(x => x.EquipmentList.Select(y => y.DistrictEquipmentType.Id).Contains(equipmentType));
                     }
                 }
             }
@@ -688,7 +686,8 @@ namespace HETSAPI.Services.Impl
 
             if (hired != null)
             {
-                // hired is not currently implemented.                 
+                // hired is not currently implemented.
+                throw new NotImplementedException();
             }
 
             if (owner != null)
