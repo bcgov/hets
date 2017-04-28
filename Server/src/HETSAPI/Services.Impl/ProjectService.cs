@@ -546,12 +546,12 @@ namespace HETSAPI.Services.Impl
 
             if (hasRequests != null)
             {
-                throw new NotImplementedException();
+                // throw new NotImplementedException();
             }
 
             if (hasHires != null)
             {
-                throw new NotImplementedException();          
+                // throw new NotImplementedException();          
             }
 
             if (project != null)
