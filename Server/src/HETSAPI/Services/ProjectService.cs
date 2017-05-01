@@ -137,6 +137,6 @@ namespace HETSAPI.Services
         /// <param name="hasRequests">if true then only include Projects with active Requests</param>
         /// <param name="hasHires">if true then only include Projects with active Rental Agreements</param>
         /// <response code="200">OK</response>
-        IActionResult ProjectsSearchGetAsync(string districts, string project, bool? hasRequests, bool? hasHires);
+        IActionResult ProjectsSearchGetAsync(int?[] districts, string project, bool? hasRequests, bool? hasHires);
     }
 }

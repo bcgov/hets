@@ -123,6 +123,6 @@ namespace HETSAPI.Services
         /// <param name="startDate">Inspection start date</param>
         /// <param name="endDate">Inspection end date</param>
         /// <response code="200">OK</response>
-        IActionResult RentalrequestsSearchGetAsync(string localareas, string project, string status, DateTime? startDate, DateTime? endDate);
+        IActionResult RentalrequestsSearchGetAsync(int?[] localareas, string project, string status, DateTime? startDate, DateTime? endDate);
     }
 }

@@ -23,6 +23,7 @@ using HETSAPI.Models;
 using HETSAPI.ViewModels;
 using HETSAPI.Services;
 using HETSAPI.Authorization;
+using HETSAPI.Helpers;
 
 namespace HETSAPI.Controllers
 {
@@ -235,7 +236,7 @@ namespace HETSAPI.Controllers
         [Route("/api/equipment/search")]
         [SwaggerOperation("EquipmentSearchGet")]
         [SwaggerResponse(200, type: typeof(List<EquipmentViewModel>))]
-        public virtual IActionResult EquipmentSearchGet([FromQuery]string localareas, [FromQuery]string types, [FromQuery]string equipmentAttachment, [FromQuery]int? owner, [FromQuery]string status, [FromQuery]bool? hired, [FromQuery]DateTime? notverifiedsincedate)
+        public virtual IActionResult EquipmentSearchGet([ModelBinder(BinderType = typeof(CsvArrayBinder))]int?[] localareas, [ModelBinder(BinderType = typeof(CsvArrayBinder))]int?[] types, [FromQuery]string equipmentAttachment, [FromQuery]int? owner, [FromQuery]string status, [FromQuery]bool? hired, [FromQuery]DateTime? notverifiedsincedate)
         {
             return this._service.EquipmentSearchGetAsync(localareas, types, equipmentAttachment, owner, status, hired, notverifiedsincedate);
         }

@@ -532,9 +532,8 @@ namespace HETSAPI.Services.Impl
         /// <param name="hasRequests">if true then only include Projects with active Requests</param>
         /// <param name="hasHires">if true then only include Projects with active Rental Agreements</param>
         /// <response code="200">OK</response>
-        public virtual IActionResult ProjectsSearchGetAsync(string districtsString, string project, bool? hasRequests, bool? hasHires)
+        public virtual IActionResult ProjectsSearchGetAsync(int?[] districts, string project, bool? hasRequests, bool? hasHires)
         {
-            int?[] districts = ParseIntArray(districtsString);
             var data = _context.Projects
                     .Include(x => x.District.Region)
                     .Include(x => x.PrimaryContact)
@@ -542,22 +541,23 @@ namespace HETSAPI.Services.Impl
 
             if (districts != null && districts.Length > 0)
             {
-                data = data.Where(x => districts.Contains (x.District.Id));                
+                data = data.Where(x => districts.Contains(x.District.Id));                
             }
 
             if (hasRequests != null)
             {
-                
+                // throw new NotImplementedException();
             }
 
             if (hasHires != null)
             {
-                // hired is not currently implemented.                 
+                // throw new NotImplementedException();          
             }
 
             if (project != null)
             {
-                data = data.Where(x => x.Name.Contains (project));
+                // Allow for case insensitive search of project name
+                data = data.Where(x => x.Name.ToLowerInvariant().Contains(project.ToLowerInvariant()));
             }
 
             var result = new List<ProjectSearchResultViewModel>();

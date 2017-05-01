@@ -23,6 +23,7 @@ using HETSAPI.Models;
 using HETSAPI.ViewModels;
 using HETSAPI.Services;
 using HETSAPI.Authorization;
+using HETSAPI.Helpers;
 
 namespace HETSAPI.Controllers
 {
@@ -236,7 +237,7 @@ namespace HETSAPI.Controllers
         [Route("/api/projects/search")]
         [SwaggerOperation("ProjectsSearchGet")]
         [SwaggerResponse(200, type: typeof(List<ProjectSearchResultViewModel>))]
-        public virtual IActionResult ProjectsSearchGet([FromQuery]string districts, [FromQuery]string project, [FromQuery]bool? hasRequests, [FromQuery]bool? hasHires)
+        public virtual IActionResult ProjectsSearchGet([ModelBinder(BinderType = typeof(CsvArrayBinder))]int?[] districts, [FromQuery]string project, [FromQuery]bool? hasRequests, [FromQuery]bool? hasHires)
         {
             return this._service.ProjectsSearchGetAsync(districts, project, hasRequests, hasHires);
         }
