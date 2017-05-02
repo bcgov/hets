@@ -21,7 +21,11 @@
   #owners-buttons {
     float: right;
 
-    .btn {
+    > button {
+      margin-right: 5px;
+    }
+
+    .btn-group > button {
       width: 40px;
     }
   }
