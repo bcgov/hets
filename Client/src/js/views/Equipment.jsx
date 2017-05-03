@@ -190,7 +190,7 @@ var Equipment = React.createClass({
                 />
                 <MultiDropdown id="selectedEquipmentTypesIds" placeholder="Equipment Types" fieldName="districtEquipmentName"
                   items={ districtEquipmentTypes } selectedIds={ this.state.search.selectedEquipmentTypesIds } updateState={ this.updateSearchState } showMaxItems={ 2 } />
-                <FilterDropdown id="ownerId" placeholder="Owner" fieldName="organizationName" blankLine
+                <FilterDropdown id="ownerId" placeholder="Owner" fieldName="organizationName" blankLine="(All)"
                   items={ owners } selectedId={ this.state.search.ownerId } updateState={ this.updateSearchState } />
                 <CheckboxControl inline id="hired" checked={ this.state.search.hired } updateState={ this.updateSearchState }>Hired</CheckboxControl>
               </ButtonToolbar>

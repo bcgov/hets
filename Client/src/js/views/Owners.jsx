@@ -180,14 +180,19 @@ var Owners = React.createClass({
 
     return <div id="owners-list">
       <PageHeader>Owners ({ numOwners })
-        <ButtonGroup id="owners-buttons">
+        <div id="owners-buttons">
           <Unimplemented>
-            <Button onClick={ this.email }><Glyphicon glyph="envelope" title="E-mail" /></Button>
+            <Button onClick={ this.verifyOwners }>Verify</Button>
           </Unimplemented>
-          <Unimplemented>
-            <Button onClick={ this.print }><Glyphicon glyph="print" title="Print" /></Button>
-          </Unimplemented>
-        </ButtonGroup>
+          <ButtonGroup>
+            <Unimplemented>
+              <Button onClick={ this.email }><Glyphicon glyph="envelope" title="E-mail" /></Button>
+            </Unimplemented>
+            <Unimplemented>
+              <Button onClick={ this.print }><Glyphicon glyph="print" title="Print" /></Button>
+            </Unimplemented>
+          </ButtonGroup>
+        </div>
       </PageHeader>
       <Well id="owners-bar" bsSize="small" className="clearfix">
         <Row>
@@ -199,13 +204,10 @@ var Owners = React.createClass({
                   items={[ Constant.OWNER_STATUS_CODE_APPROVED, Constant.OWNER_STATUS_CODE_PENDING, Constant.OWNER_STATUS_CODE_ARCHIVED ]} />
               <MultiDropdown id="selectedEquipmentTypesIds" placeholder="Equipment Types" fieldName="districtEquipmentName"
                 items={ districtEquipmentTypes } selectedIds={ this.state.search.selectedEquipmentTypesIds } updateState={ this.updateSearchState } showMaxItems={ 2 } />
-              <FilterDropdown id="ownerId" placeholder="Owner" fieldName="organizationName" blankLine
+              <FilterDropdown id="ownerId" placeholder="Owner" fieldName="organizationName" blankLine="(All)"
                 items={ owners } selectedId={ this.state.search.ownerId } updateState={ this.updateSearchState } />
               <CheckboxControl inline id="hired" checked={ this.state.search.hired } updateState={ this.updateSearchState }>Hired</CheckboxControl>
               <Button id="search-button" bsStyle="primary" onClick={ this.fetch }>Search</Button>
-              <Unimplemented>
-                <Button onClick={ this.verifyOwners }>Verify</Button>
-              </Unimplemented>
             </ButtonToolbar>
           </Col>
           <Col md={1}>

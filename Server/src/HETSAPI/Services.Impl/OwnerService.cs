@@ -681,7 +681,8 @@ namespace HETSAPI.Services.Impl
                         
             if (status != null)
             {
-                data = data.Where(x => x.Status.Contains(status));
+                // TODO: Change to enumerated type
+                data = data.Where(x => status.Equals(x.Status));
             }
 
             if (hired != null)
