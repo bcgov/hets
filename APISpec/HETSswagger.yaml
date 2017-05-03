@@ -1484,29 +1484,6 @@ paths:
       responses:
         201:
           description: Role created
-
-  /rolepermissions/bulk:
-    post:
-      tags:
-        - Role
-      x-codegen-permission: ADMIN
-      consumes:
-        - application/json
-      produces:
-        - text/plain
-        - application/json
-        - text/json
-      parameters:
-        - name: items
-          in: body
-          required: true
-          schema:
-            type: array
-            items:
-              $ref: "#/definitions/RolePermission"
-      responses:
-        201:
-          description: Role created
   /users:
     get:
       tags:
@@ -1663,29 +1640,6 @@ paths:
             type: array
             items:
               $ref: "#/definitions/GroupMembership"
-      responses:
-        201:
-          description: User created
-
-  /userroles/bulk:
-    post:
-      tags:
-        - User
-      x-codegen-permission: ADMIN
-      consumes:
-        - application/json
-      produces:
-        - text/plain
-        - application/json
-        - text/json
-      parameters:
-        - name: items
-          in: body
-          required: true
-          schema:
-            type: array
-            items:
-              $ref: "#/definitions/UserRole"
       responses:
         201:
           description: User created
@@ -4652,6 +4606,7 @@ paths:
         - name: id
           in: path
           description: Attachment Id
+          required: true
           type: integer
       responses:
         200:
@@ -4816,8 +4771,6 @@ paths:
         - text/plain
         - application/json
         - text/json
-      responses:
-        '200': OK
       parameters:
         - name: id
           in: path
@@ -4830,6 +4783,8 @@ paths:
           schema:
             $ref: "#/definitions/History"
       responses:
+        200:
+          description: OK
         201:
           description: History created
           headers:
@@ -5101,8 +5056,6 @@ paths:
         - text/plain
         - application/json
         - text/json
-      responses:
-        '200': OK
       parameters:
         - name: id
           in: path
@@ -5115,6 +5068,8 @@ paths:
           schema:
             $ref: "#/definitions/History"
       responses:
+        200:
+          description: OK
         201:
           description: History created
           headers:
@@ -5188,8 +5143,6 @@ paths:
         - text/plain
         - application/json
         - text/json
-      responses:
-        '200': OK
       parameters:
         - name: id
           in: path
@@ -5202,6 +5155,8 @@ paths:
           schema:
             $ref: "#/definitions/History"
       responses:
+        200:
+          description: OK
         201:
           description: History created
           headers:
@@ -5496,8 +5451,6 @@ paths:
         - text/plain
         - application/json
         - text/json
-      responses:
-        '200': OK
       parameters:
         - name: id
           in: path
@@ -5510,6 +5463,8 @@ paths:
           schema:
             $ref: "#/definitions/History"
       responses:
+        200:
+          description: OK
         201:
           description: History created
           headers:
@@ -6121,16 +6076,6 @@ definitions:
         type: string
         maxLength: 2048
         description: Information about the Project needed by the HETS Clerks. Used for capturing varying (project by project) metadata needed to process requests related to the project.
-      rentalRequests:
-        type: array
-        items:
-          $ref: '#/definitions/RentalRequest'
-        description: The Rental Requests associated with this Project
-      rentalAgreements:
-        type: array
-        items:
-          $ref: '#/definitions/RentalAgreement'
-        description: The Rental Agreements associated with this Project
       primaryContact:
         $ref: '#/definitions/Contact'
         description: Link to the designated Primary Contact for the Project - usually the Project Manager requesting to hire equipment.
@@ -6208,14 +6153,6 @@ definitions:
         type: array
         items:
           $ref: '#/definitions/History'
-      rentalRequestAttachments:
-        type: array
-        items:
-          $ref: '#/definitions/RentalRequestAttachment'
-      rentalRequestRotationList:
-        type: array
-        items:
-          $ref: '#/definitions/RentalRequestRotationList'
   RentalRequestAttachment:
     type: object
     description: Attachments that are required as part of the Rental Requests
@@ -6240,6 +6177,7 @@ definitions:
     description: An eligible piece of equipment for a request and a tracking of the hire offer and response process related to a request for that piece of equipment. Includes a link from the equipment to a Rental Agreement if the equipment was hired to satisfy a part of the request.
     required:
       - id
+      - RentalRequest
       - rotationListSortOrder
       - equipment
     properties:
@@ -6247,6 +6185,8 @@ definitions:
         format: int32
         type: integer
         description: A system-generated unique identifier for a RequestRotationList
+      RentalRequest:
+        $ref: '#/definitions/RentalRequest'
       rotationListSortOrder:
         format: int32
         type: integer
@@ -6313,18 +6253,6 @@ definitions:
       project:
         $ref: '#/definitions/Project'
         description: A foreign key reference to the system-generated unique identifier for a Project
-      rentalAgreementRates:
-        type: array
-        items:
-          $ref: '#/definitions/RentalAgreementRate'
-      rentalAgreementConditions:
-        type: array
-        items:
-          $ref: '#/definitions/RentalAgreementCondition'
-      timeRecords:
-        type: array
-        items:
-          $ref: '#/definitions/TimeRecord'
       note:
         type: string
         maxLength: 2048
@@ -6390,10 +6318,6 @@ definitions:
         type: string
         maxLength: 2048
         description: A comment about the rental of this component of the Rental Agreement.
-      timeRecords:
-        type: array
-        items:
-          $ref: '#/definitions/TimeRecord'
   RentalAgreementCondition:
     type: object
     description: A condition about the rental agreement to be displayed on the Rental Agreement.
@@ -6599,10 +6523,6 @@ definitions:
       dumpTruck:
         $ref: '#/definitions/DumpTruck'
         description: A link to a dump truck set if this piece of equipment is an equipment type flagged as a dump truck.
-      equipmentAttachments:
-        type: array
-        items:
-          $ref: '#/definitions/EquipmentAttachment'
       notes:
         type: array
         items:
@@ -6835,14 +6755,14 @@ definitions:
       askNextBlock2Seniority:
         type: number
         format: float
-        description: The seniority score of the piece of equipment that is the next to be asked in Block 1.
+        description: The seniority score of the piece of equipment that is the next to be asked in Block 2.
       askNextBlockOpen:
         $ref: '#/definitions/Equipment'
         description: The id of the next piece of Block Open Equipment to be asked for a Rental Request. If null, start from the first piece of equipment in Block Open.
-      askNextBlock2Seniority:
+      askNextBlockOpenSeniority:
         type: number
         format: float
-        description: The seniority score of the piece of equipment that is the next to be asked in Block 1.
+        description: The seniority score of the piece of equipment that is the next to be asked in Block Open.
   EquipmentAttachment:
     type: object
     description: An Equipment Attachment associated with a piece of Equipment.
@@ -7014,10 +6934,6 @@ definitions:
         type: array
         items:
           $ref: '#/definitions/History'
-      equipmentList:
-        type: array
-        items:
-          $ref: '#/definitions/Equipment'
   LookupList:
     type: object
     description: Lookup values for various enumerated types in the systems - entity status values, rate types, conditions and others. Used to pull the values out of the code and into the database but without having to have a table for each lookup instance.
@@ -7415,14 +7331,6 @@ definitions:
         type: string
         maxLength: 255
         description: The user directory service used by Siteminder to authenticate the user - usually IDIR or BCeID.
-      userRoles:
-        type: array
-        items:
-          $ref: '#/definitions/UserRole'
-      groupMemberships:
-        type: array
-        items:
-          $ref: '#/definitions/GroupMembership'
       District:
         $ref: '#/definitions/District'
         description: The District that the User belongs to
@@ -7432,6 +7340,8 @@ definitions:
     required:
       - id
       - effectiveDate
+      - user
+      - role
     properties:
       id:
         format: int32
@@ -7445,6 +7355,9 @@ definitions:
         type: string
         format: date-time
         description: The date on which a role previously assigned to a user was removed from that user.
+      user:
+        $ref: '#/definitions/User'
+        description: A foreign key reference to the system-generated unique identifier for a User
       role:
         $ref: '#/definitions/Role'
         description: A foreign key reference to the system-generated unique identifier for a Role
@@ -7468,14 +7381,6 @@ definitions:
         type: string
         maxLength: 2048
         description: A description of the role as set by the user creating&#x2F;updating the role.
-      rolePermissions:
-        type: array
-        items:
-          $ref: '#/definitions/RolePermission'
-      userRoles:
-        type: array
-        items:
-          $ref: '#/definitions/UserRole'
   RolePermission:
     type: object
     description: A permission that is part of a Role - a component of the authorization provided by the Role to the user to which the Role is assigned.
@@ -7596,7 +7501,6 @@ definitions:
     required:
       - id
       - fileName
-      - fileContents
     properties:
       id:
         format: int32

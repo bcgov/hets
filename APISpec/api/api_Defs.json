@@ -270,7 +270,7 @@
             "putById": null,
             "respDef": null,
             "tag": "Group",
-            "x-codegen-permission": null
+            "x-codegen-permission": "ADMIN"
         },
         {
             "Description": null,
@@ -302,7 +302,7 @@
             "putById": null,
             "respDef": null,
             "tag": "Permission",
-            "x-codegen-permission": null
+            "x-codegen-permission": "ADMIN"
         },
         {
             "Description": null,
@@ -334,7 +334,7 @@
             "putById": null,
             "respDef": null,
             "tag": "Role",
-            "x-codegen-permission": null
+            "x-codegen-permission": "ADMIN"
         },
         {
             "Description": null,
@@ -354,22 +354,6 @@
         },
         {
             "Description": null,
-            "bulk": "1",
-            "crud": null,
-            "deleteById": null,
-            "fullpath": null,
-            "getById": null,
-            "idpath": null,
-            "paramDef": "RolePermission",
-            "path": "rolepermissions",
-            "post": null,
-            "putById": null,
-            "respDef": null,
-            "tag": "Role",
-            "x-codegen-permission": null
-        },
-        {
-            "Description": null,
             "bulk": null,
             "crud": "1",
             "deleteById": null,
@@ -382,7 +366,7 @@
             "putById": null,
             "respDef": null,
             "tag": "User",
-            "x-codegen-permission": null
+            "x-codegen-permission": "ADMIN"
         },
         {
             "Description": null,
@@ -410,22 +394,6 @@
             "idpath": null,
             "paramDef": "GroupMembership",
             "path": "usergroups",
-            "post": null,
-            "putById": null,
-            "respDef": null,
-            "tag": "User",
-            "x-codegen-permission": "ADMIN"
-        },
-        {
-            "Description": null,
-            "bulk": "1",
-            "crud": null,
-            "deleteById": null,
-            "fullpath": null,
-            "getById": null,
-            "idpath": null,
-            "paramDef": "UserRole",
-            "path": "userroles",
             "post": null,
             "putById": null,
             "respDef": null,
@@ -697,7 +665,7 @@
             "getById": null,
             "idpath": null,
             "paramDef": null,
-            "path": "attachment",
+            "path": "attachments",
             "post": null,
             "putById": null,
             "respDef": null,
@@ -713,7 +681,7 @@
             "getById": null,
             "idpath": null,
             "paramDef": "Attachment",
-            "path": "attachment",
+            "path": "attachments",
             "post": null,
             "putById": null,
             "respDef": null,
@@ -1118,7 +1086,7 @@
             "putById": null,
             "respDef": null,
             "tag": "UserRole",
-            "x-codegen-permission": null
+            "x-codegen-permission": "ADMIN"
         },
         {
             "Description": null,

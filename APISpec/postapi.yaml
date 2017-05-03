@@ -32,6 +32,7 @@
         - name: id
           in: path
           description: Attachment Id
+          required: true
           type: integer
       responses:
         200:
@@ -196,8 +197,6 @@
         - text/plain
         - application/json
         - text/json
-      responses:
-        '200': OK
       parameters:
         - name: id
           in: path
@@ -210,6 +209,8 @@
           schema:
             $ref: "#/definitions/History"
       responses:
+        200:
+          description: OK
         201:
           description: History created
           headers:
@@ -481,8 +482,6 @@
         - text/plain
         - application/json
         - text/json
-      responses:
-        '200': OK
       parameters:
         - name: id
           in: path
@@ -495,6 +494,8 @@
           schema:
             $ref: "#/definitions/History"
       responses:
+        200:
+          description: OK
         201:
           description: History created
           headers:
@@ -568,8 +569,6 @@
         - text/plain
         - application/json
         - text/json
-      responses:
-        '200': OK
       parameters:
         - name: id
           in: path
@@ -582,6 +581,8 @@
           schema:
             $ref: "#/definitions/History"
       responses:
+        200:
+          description: OK
         201:
           description: History created
           headers:
@@ -876,8 +877,6 @@
         - text/plain
         - application/json
         - text/json
-      responses:
-        '200': OK
       parameters:
         - name: id
           in: path
@@ -890,6 +889,8 @@
           schema:
             $ref: "#/definitions/History"
       responses:
+        200:
+          description: OK
         201:
           description: History created
           headers:

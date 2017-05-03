@@ -218,68 +218,6 @@
             "table": null
         },
         {
-            "Description": "The Rental Requests associated with this Project",
-            "Length": null,
-            "Name": "rentalRequests",
-            "RefDef": "RentalRequest",
-            "Required": [
-                {
-                    "req": "id"
-                },
-                {
-                    "req": "district"
-                },
-                {
-                    "req": "name"
-                },
-                {
-                    "req": "status"
-                }
-            ],
-            "Unique": null,
-            "binary": null,
-            "boolean": null,
-            "datetime": null,
-            "float": null,
-            "id": null,
-            "integer": null,
-            "links": "links",
-            "ref": null,
-            "string": null,
-            "table": null
-        },
-        {
-            "Description": "The Rental Agreements associated with this Project",
-            "Length": null,
-            "Name": "rentalAgreements",
-            "RefDef": "RentalAgreement",
-            "Required": [
-                {
-                    "req": "id"
-                },
-                {
-                    "req": "district"
-                },
-                {
-                    "req": "name"
-                },
-                {
-                    "req": "status"
-                }
-            ],
-            "Unique": null,
-            "binary": null,
-            "boolean": null,
-            "datetime": null,
-            "float": null,
-            "id": null,
-            "integer": null,
-            "links": "links",
-            "ref": null,
-            "string": null,
-            "table": null
-        },
-        {
             "Description": "Link to the designated Primary Contact for the Project - usually the Project Manager requesting to hire equipment.",
             "Length": null,
             "Name": "primaryContact",
@@ -694,9 +632,9 @@
             "table": null
         },
         {
-            "Description": "The estimated number of rental hours for each piece equipment hired against this request, as provided by the Project Manager making the request. ",
+            "Description": "The expected number of rental hours for each piece equipment hired against this request, as provided by the Project Manager making the request. ",
             "Length": null,
-            "Name": "estimatedHours",
+            "Name": "expectedHours",
             "RefDef": null,
             "Required": [
                 {
@@ -731,9 +669,9 @@
             "table": null
         },
         {
-            "Description": "The estimated start date of each piece of equipment hired against this request, as provided by the Project Manager making the request.",
+            "Description": "The expected start date of each piece of equipment hired against this request, as provided by the Project Manager making the request.",
             "Length": null,
-            "Name": "estimatedStartDate",
+            "Name": "expectedStartDate",
             "RefDef": null,
             "Required": [
                 {
@@ -768,9 +706,9 @@
             "table": null
         },
         {
-            "Description": "The estimated end date of each piece of equipment hired against this request, as provided by the Project Manager making the request.",
+            "Description": "The expected end date of each piece of equipment hired against this request, as provided by the Project Manager making the request.",
             "Length": null,
-            "Name": "estimatedEndDate",
+            "Name": "expectedEndDate",
             "RefDef": null,
             "Required": [
                 {
@@ -882,7 +820,7 @@
             "Description": null,
             "Length": null,
             "Name": "attachments",
-            "RefDef": "RentalRequestAttachment",
+            "RefDef": "Attachment",
             "Required": [
                 {
                     "req": "id"
@@ -920,43 +858,6 @@
             "Length": null,
             "Name": "history",
             "RefDef": "History",
-            "Required": [
-                {
-                    "req": "id"
-                },
-                {
-                    "req": "project"
-                },
-                {
-                    "req": "localArea"
-                },
-                {
-                    "req": "status"
-                },
-                {
-                    "req": "districtEquipmentType"
-                },
-                {
-                    "req": "equipmentCount"
-                }
-            ],
-            "Unique": null,
-            "binary": null,
-            "boolean": null,
-            "datetime": null,
-            "float": null,
-            "id": null,
-            "integer": null,
-            "links": "links",
-            "ref": null,
-            "string": null,
-            "table": null
-        },
-        {
-            "Description": null,
-            "Length": null,
-            "Name": "rentalRequestRotationList",
-            "RefDef": "RentalRequestRotationList",
             "Required": [
                 {
                     "req": "id"
@@ -1111,7 +1012,7 @@
                     "req": "id"
                 },
                 {
-                    "req": "rentalRequest"
+                    "req": "RentalRequest"
                 },
                 {
                     "req": "rotationListSortOrder"
@@ -1142,7 +1043,7 @@
                     "req": "id"
                 },
                 {
-                    "req": "rentalRequest"
+                    "req": "RentalRequest"
                 },
                 {
                     "req": "rotationListSortOrder"
@@ -1166,14 +1067,14 @@
         {
             "Description": null,
             "Length": null,
-            "Name": "rentalRequest",
+            "Name": "RentalRequest",
             "RefDef": "RentalRequest",
             "Required": [
                 {
                     "req": "id"
                 },
                 {
-                    "req": "rentalRequest"
+                    "req": "RentalRequest"
                 },
                 {
                     "req": "rotationListSortOrder"
@@ -1204,7 +1105,7 @@
                     "req": "id"
                 },
                 {
-                    "req": "rentalRequest"
+                    "req": "RentalRequest"
                 },
                 {
                     "req": "rotationListSortOrder"
@@ -1235,7 +1136,7 @@
                     "req": "id"
                 },
                 {
-                    "req": "rentalRequest"
+                    "req": "RentalRequest"
                 },
                 {
                     "req": "rotationListSortOrder"
@@ -1266,7 +1167,7 @@
                     "req": "id"
                 },
                 {
-                    "req": "rentalRequest"
+                    "req": "RentalRequest"
                 },
                 {
                     "req": "rotationListSortOrder"
@@ -1297,7 +1198,7 @@
                     "req": "id"
                 },
                 {
-                    "req": "rentalRequest"
+                    "req": "RentalRequest"
                 },
                 {
                     "req": "rotationListSortOrder"
@@ -1328,7 +1229,7 @@
                     "req": "id"
                 },
                 {
-                    "req": "rentalRequest"
+                    "req": "RentalRequest"
                 },
                 {
                     "req": "rotationListSortOrder"
@@ -1359,7 +1260,7 @@
                     "req": "id"
                 },
                 {
-                    "req": "rentalRequest"
+                    "req": "RentalRequest"
                 },
                 {
                     "req": "rotationListSortOrder"
@@ -1390,7 +1291,7 @@
                     "req": "id"
                 },
                 {
-                    "req": "rentalRequest"
+                    "req": "RentalRequest"
                 },
                 {
                     "req": "rotationListSortOrder"
@@ -1421,7 +1322,7 @@
                     "req": "id"
                 },
                 {
-                    "req": "rentalRequest"
+                    "req": "RentalRequest"
                 },
                 {
                     "req": "rotationListSortOrder"
@@ -1452,7 +1353,7 @@
                     "req": "id"
                 },
                 {
-                    "req": "rentalRequest"
+                    "req": "RentalRequest"
                 },
                 {
                     "req": "rotationListSortOrder"
@@ -1483,7 +1384,7 @@
                     "req": "id"
                 },
                 {
-                    "req": "rentalRequest"
+                    "req": "RentalRequest"
                 },
                 {
                     "req": "rotationListSortOrder"
@@ -1514,7 +1415,7 @@
                     "req": "id"
                 },
                 {
-                    "req": "rentalRequest"
+                    "req": "RentalRequest"
                 },
                 {
                     "req": "rotationListSortOrder"
@@ -1740,108 +1641,6 @@
             "table": null
         },
         {
-            "Description": null,
-            "Length": null,
-            "Name": "rentalAgreementRates",
-            "RefDef": "RentalAgreementRate",
-            "Required": [
-                {
-                    "req": "id"
-                },
-                {
-                    "req": "number"
-                },
-                {
-                    "req": "status"
-                },
-                {
-                    "req": "equipment"
-                },
-                {
-                    "req": "project"
-                }
-            ],
-            "Unique": null,
-            "binary": null,
-            "boolean": null,
-            "datetime": null,
-            "float": null,
-            "id": null,
-            "integer": null,
-            "links": "links",
-            "ref": null,
-            "string": null,
-            "table": null
-        },
-        {
-            "Description": null,
-            "Length": null,
-            "Name": "rentalAgreementConditions",
-            "RefDef": "RentalAgreementCondition",
-            "Required": [
-                {
-                    "req": "id"
-                },
-                {
-                    "req": "number"
-                },
-                {
-                    "req": "status"
-                },
-                {
-                    "req": "equipment"
-                },
-                {
-                    "req": "project"
-                }
-            ],
-            "Unique": null,
-            "binary": null,
-            "boolean": null,
-            "datetime": null,
-            "float": null,
-            "id": null,
-            "integer": null,
-            "links": "links",
-            "ref": null,
-            "string": null,
-            "table": null
-        },
-        {
-            "Description": null,
-            "Length": null,
-            "Name": "timeRecords",
-            "RefDef": "TimeRecord",
-            "Required": [
-                {
-                    "req": "id"
-                },
-                {
-                    "req": "number"
-                },
-                {
-                    "req": "status"
-                },
-                {
-                    "req": "equipment"
-                },
-                {
-                    "req": "project"
-                }
-            ],
-            "Unique": null,
-            "binary": null,
-            "boolean": null,
-            "datetime": null,
-            "float": null,
-            "id": null,
-            "integer": null,
-            "links": "links",
-            "ref": null,
-            "string": null,
-            "table": null
-        },
-        {
             "Description": "An optional note to be placed onto the Rental Agreement.",
             "Length": "2048",
             "Name": "note",
@@ -1878,7 +1677,7 @@
         {
             "Description": "The estimated start date of the work to be placed on the rental agreement.",
             "Length": null,
-            "Name": "estimatedStartDate",
+            "Name": "estimateStartWork",
             "RefDef": null,
             "Required": [
                 {
@@ -1946,7 +1745,7 @@
         {
             "Description": "The estimated number of hours of work to be put onto the Rental Agreement.",
             "Length": null,
-            "Name": "estimatedHours",
+            "Name": "estimateHours",
             "RefDef": null,
             "Required": [
                 {
@@ -2302,31 +2101,6 @@
             "links": null,
             "ref": null,
             "string": "string",
-            "table": null
-        },
-        {
-            "Description": null,
-            "Length": null,
-            "Name": "timeRecords",
-            "RefDef": "TimeRecord",
-            "Required": [
-                {
-                    "req": "id"
-                },
-                {
-                    "req": "rentalAgreement"
-                }
-            ],
-            "Unique": null,
-            "binary": null,
-            "boolean": null,
-            "datetime": null,
-            "float": null,
-            "id": null,
-            "integer": null,
-            "links": "links",
-            "ref": null,
-            "string": null,
             "table": null
         },
         {
@@ -3698,9 +3472,9 @@
             "binary": null,
             "boolean": null,
             "datetime": null,
-            "float": "float",
+            "float": null,
             "id": null,
-            "integer": null,
+            "integer": "integer",
             "links": null,
             "ref": null,
             "string": null,
@@ -4268,49 +4042,6 @@
         {
             "Description": null,
             "Length": null,
-            "Name": "equipmentAttachments",
-            "RefDef": "EquipmentAttachment",
-            "Required": [
-                {
-                    "req": "id"
-                },
-                {
-                    "req": "localArea"
-                },
-                {
-                    "req": "districtEquipmentType"
-                },
-                {
-                    "req": "owner"
-                },
-                {
-                    "req": "equipmentCode"
-                },
-                {
-                    "req": "status"
-                },
-                {
-                    "req": "receivedDate"
-                },
-                {
-                    "req": "lastVerifiedDate"
-                }
-            ],
-            "Unique": null,
-            "binary": null,
-            "boolean": null,
-            "datetime": null,
-            "float": null,
-            "id": null,
-            "integer": null,
-            "links": "links",
-            "ref": null,
-            "string": null,
-            "table": null
-        },
-        {
-            "Description": null,
-            "Length": null,
             "Name": "notes",
             "RefDef": "Note",
             "Required": [
@@ -4399,49 +4130,6 @@
             "Length": null,
             "Name": "history",
             "RefDef": "History",
-            "Required": [
-                {
-                    "req": "id"
-                },
-                {
-                    "req": "localArea"
-                },
-                {
-                    "req": "districtEquipmentType"
-                },
-                {
-                    "req": "owner"
-                },
-                {
-                    "req": "equipmentCode"
-                },
-                {
-                    "req": "status"
-                },
-                {
-                    "req": "receivedDate"
-                },
-                {
-                    "req": "lastVerifiedDate"
-                }
-            ],
-            "Unique": null,
-            "binary": null,
-            "boolean": null,
-            "datetime": null,
-            "float": null,
-            "id": null,
-            "integer": null,
-            "links": "links",
-            "ref": null,
-            "string": null,
-            "table": null
-        },
-        {
-            "Description": null,
-            "Length": null,
-            "Name": "seniorityAudit",
-            "RefDef": "SeniorityAudit",
             "Required": [
                 {
                     "req": "id"
@@ -5898,7 +5586,7 @@
             "table": null
         },
         {
-            "Description": "The seniority score of the piece of equipment that is the next to be asked in Block 1.",
+            "Description": "The seniority score of the piece of equipment that is the next to be asked in Block 2.",
             "Length": null,
             "Name": "askNextBlock2Seniority",
             "RefDef": null,
@@ -5954,9 +5642,9 @@
             "table": null
         },
         {
-            "Description": "The seniority score of the piece of equipment that is the next to be asked in Block 1.",
+            "Description": "The seniority score of the piece of equipment that is the next to be asked in Block Open.",
             "Length": null,
-            "Name": "askNextBlock2Seniority",
+            "Name": "askNextBlockOpenSeniority",
             "RefDef": null,
             "Required": [
                 {
@@ -6351,9 +6039,9 @@
             "binary": null,
             "boolean": null,
             "datetime": null,
-            "float": "float",
+            "float": null,
             "id": null,
-            "integer": null,
+            "integer": "integer",
             "links": null,
             "ref": null,
             "string": null,
@@ -7376,43 +7064,6 @@
             "Length": null,
             "Name": "history",
             "RefDef": "History",
-            "Required": [
-                {
-                    "req": "id"
-                },
-                {
-                    "req": "ownerEquipmentCodePrefix"
-                },
-                {
-                    "req": "organizationName"
-                },
-                {
-                    "req": "meetsResidency"
-                },
-                {
-                    "req": "localArea"
-                },
-                {
-                    "req": "status"
-                }
-            ],
-            "Unique": null,
-            "binary": null,
-            "boolean": null,
-            "datetime": null,
-            "float": null,
-            "id": null,
-            "integer": null,
-            "links": "links",
-            "ref": null,
-            "string": null,
-            "table": null
-        },
-        {
-            "Description": null,
-            "Length": null,
-            "Name": "equipmentList",
-            "RefDef": "Equipment",
             "Required": [
                 {
                     "req": "id"
@@ -10026,68 +9677,6 @@
             "table": null
         },
         {
-            "Description": null,
-            "Length": null,
-            "Name": "userRoles",
-            "RefDef": "UserRole",
-            "Required": [
-                {
-                    "req": "id"
-                },
-                {
-                    "req": "givenName"
-                },
-                {
-                    "req": "surname"
-                },
-                {
-                    "req": "active"
-                }
-            ],
-            "Unique": null,
-            "binary": null,
-            "boolean": null,
-            "datetime": null,
-            "float": null,
-            "id": null,
-            "integer": null,
-            "links": "links",
-            "ref": null,
-            "string": null,
-            "table": null
-        },
-        {
-            "Description": null,
-            "Length": null,
-            "Name": "groupMemberships",
-            "RefDef": "GroupMembership",
-            "Required": [
-                {
-                    "req": "id"
-                },
-                {
-                    "req": "givenName"
-                },
-                {
-                    "req": "surname"
-                },
-                {
-                    "req": "active"
-                }
-            ],
-            "Unique": null,
-            "binary": null,
-            "boolean": null,
-            "datetime": null,
-            "float": null,
-            "id": null,
-            "integer": null,
-            "links": "links",
-            "ref": null,
-            "string": null,
-            "table": null
-        },
-        {
             "Description": "The District that the User belongs to",
             "Length": null,
             "Name": "District",
@@ -10129,6 +9718,12 @@
                 },
                 {
                     "req": "effectiveDate"
+                },
+                {
+                    "req": "user"
+                },
+                {
+                    "req": "role"
                 }
             ],
             "Unique": null,
@@ -10154,6 +9749,12 @@
                 },
                 {
                     "req": "effectiveDate"
+                },
+                {
+                    "req": "user"
+                },
+                {
+                    "req": "role"
                 }
             ],
             "Unique": null,
@@ -10179,6 +9780,12 @@
                 },
                 {
                     "req": "effectiveDate"
+                },
+                {
+                    "req": "user"
+                },
+                {
+                    "req": "role"
                 }
             ],
             "Unique": null,
@@ -10204,6 +9811,12 @@
                 },
                 {
                     "req": "effectiveDate"
+                },
+                {
+                    "req": "user"
+                },
+                {
+                    "req": "role"
                 }
             ],
             "Unique": null,
@@ -10219,6 +9832,37 @@
             "table": null
         },
         {
+            "Description": "A foreign key reference to the system-generated unique identifier for a User",
+            "Length": null,
+            "Name": "user",
+            "RefDef": "User",
+            "Required": [
+                {
+                    "req": "id"
+                },
+                {
+                    "req": "effectiveDate"
+                },
+                {
+                    "req": "user"
+                },
+                {
+                    "req": "role"
+                }
+            ],
+            "Unique": null,
+            "binary": null,
+            "boolean": null,
+            "datetime": null,
+            "float": null,
+            "id": null,
+            "integer": null,
+            "links": null,
+            "ref": "ref",
+            "string": null,
+            "table": null
+        },
+        {
             "Description": "A foreign key reference to the system-generated unique identifier for a Role",
             "Length": null,
             "Name": "role",
@@ -10229,6 +9873,12 @@
                 },
                 {
                     "req": "effectiveDate"
+                },
+                {
+                    "req": "user"
+                },
+                {
+                    "req": "role"
                 }
             ],
             "Unique": null,
@@ -10353,62 +10003,6 @@
             "links": null,
             "ref": null,
             "string": "string",
-            "table": null
-        },
-        {
-            "Description": null,
-            "Length": null,
-            "Name": "rolePermissions",
-            "RefDef": "RolePermission",
-            "Required": [
-                {
-                    "req": "id"
-                },
-                {
-                    "req": "name"
-                },
-                {
-                    "req": "description"
-                }
-            ],
-            "Unique": null,
-            "binary": null,
-            "boolean": null,
-            "datetime": null,
-            "float": null,
-            "id": null,
-            "integer": null,
-            "links": "links",
-            "ref": null,
-            "string": null,
-            "table": null
-        },
-        {
-            "Description": null,
-            "Length": null,
-            "Name": "userRoles",
-            "RefDef": "UserRole",
-            "Required": [
-                {
-                    "req": "id"
-                },
-                {
-                    "req": "name"
-                },
-                {
-                    "req": "description"
-                }
-            ],
-            "Unique": null,
-            "binary": null,
-            "boolean": null,
-            "datetime": null,
-            "float": null,
-            "id": null,
-            "integer": null,
-            "links": "links",
-            "ref": null,
-            "string": null,
             "table": null
         },
         {
@@ -10928,6 +10522,210 @@
             "links": null,
             "ref": null,
             "string": "string",
+            "table": null
+        },
+        {
+            "Description": null,
+            "Length": null,
+            "Name": "ImportMap",
+            "RefDef": null,
+            "Required": [
+                {
+                    "req": "id"
+                },
+                {
+                    "req": "oldTable"
+                },
+                {
+                    "req": "newTable"
+                },
+                {
+                    "req": "oldKey"
+                },
+                {
+                    "req": "newKey"
+                }
+            ],
+            "Unique": null,
+            "binary": null,
+            "boolean": null,
+            "datetime": null,
+            "float": null,
+            "id": null,
+            "integer": null,
+            "links": null,
+            "ref": null,
+            "string": null,
+            "table": "table"
+        },
+        {
+            "Description": "A system generated unique identifier for the ImportMap",
+            "Length": null,
+            "Name": "id",
+            "RefDef": null,
+            "Required": [
+                {
+                    "req": "id"
+                },
+                {
+                    "req": "oldTable"
+                },
+                {
+                    "req": "newTable"
+                },
+                {
+                    "req": "oldKey"
+                },
+                {
+                    "req": "newKey"
+                }
+            ],
+            "Unique": null,
+            "binary": null,
+            "boolean": null,
+            "datetime": null,
+            "float": null,
+            "id": "id",
+            "integer": null,
+            "links": null,
+            "ref": null,
+            "string": null,
+            "table": null
+        },
+        {
+            "Description": "Table name in old system",
+            "Length": null,
+            "Name": "oldTable",
+            "RefDef": null,
+            "Required": [
+                {
+                    "req": "id"
+                },
+                {
+                    "req": "oldTable"
+                },
+                {
+                    "req": "newTable"
+                },
+                {
+                    "req": "oldKey"
+                },
+                {
+                    "req": "newKey"
+                }
+            ],
+            "Unique": null,
+            "binary": null,
+            "boolean": null,
+            "datetime": null,
+            "float": null,
+            "id": null,
+            "integer": null,
+            "links": null,
+            "ref": null,
+            "string": "string",
+            "table": null
+        },
+        {
+            "Description": "Table name in new system.",
+            "Length": null,
+            "Name": "newTable",
+            "RefDef": null,
+            "Required": [
+                {
+                    "req": "id"
+                },
+                {
+                    "req": "oldTable"
+                },
+                {
+                    "req": "newTable"
+                },
+                {
+                    "req": "oldKey"
+                },
+                {
+                    "req": "newKey"
+                }
+            ],
+            "Unique": null,
+            "binary": null,
+            "boolean": null,
+            "datetime": null,
+            "float": null,
+            "id": null,
+            "integer": null,
+            "links": null,
+            "ref": null,
+            "string": "string",
+            "table": null
+        },
+        {
+            "Description": "Old primary key for record",
+            "Length": null,
+            "Name": "oldKey",
+            "RefDef": null,
+            "Required": [
+                {
+                    "req": "id"
+                },
+                {
+                    "req": "oldTable"
+                },
+                {
+                    "req": "newTable"
+                },
+                {
+                    "req": "oldKey"
+                },
+                {
+                    "req": "newKey"
+                }
+            ],
+            "Unique": null,
+            "binary": null,
+            "boolean": null,
+            "datetime": null,
+            "float": null,
+            "id": null,
+            "integer": "integer",
+            "links": null,
+            "ref": null,
+            "string": null,
+            "table": null
+        },
+        {
+            "Description": "New primary key for record",
+            "Length": null,
+            "Name": "newKey",
+            "RefDef": null,
+            "Required": [
+                {
+                    "req": "id"
+                },
+                {
+                    "req": "oldTable"
+                },
+                {
+                    "req": "newTable"
+                },
+                {
+                    "req": "oldKey"
+                },
+                {
+                    "req": "newKey"
+                }
+            ],
+            "Unique": null,
+            "binary": null,
+            "boolean": null,
+            "datetime": null,
+            "float": null,
+            "id": null,
+            "integer": "integer",
+            "links": null,
+            "ref": null,
+            "string": null,
             "table": null
         }
     ]
