@@ -729,7 +729,7 @@ namespace HETSAPI.Services.Impl
 
             if (status != null)
             {
-                data = data.Where(x => x.Status == status);
+                data = data.Where(x => status.Equals(x.Status));
             }
 
             if (hired != null)
