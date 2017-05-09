@@ -39,6 +39,18 @@ namespace HETSAPI.Models
         }
 
         /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="Text"></param>
+        /// <param name="IsNoLongerRelevant"></param>
+        public Note(string Text, bool? IsNoLongerRelevant = null)
+        {
+            this.Text = Text;
+
+            this.IsNoLongerRelevant = IsNoLongerRelevant;
+        }
+
+        /// <summary>
         /// Initializes a new instance of the <see cref="Note" /> class.
         /// </summary>
         /// <param name="Id">A system-generated unique identifier for a Note (required).</param>

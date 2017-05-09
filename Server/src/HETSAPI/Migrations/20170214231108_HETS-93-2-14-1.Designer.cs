@@ -87,7 +87,7 @@ namespace HETSAPI.Migrations
 
                     b.Property<string>("Notes")
                         .HasColumnName("NOTES")
-                        .HasMaxLength(150);
+                        .HasMaxLength(512);
 
                     b.Property<int?>("OwnerId")
                         .HasColumnName("OWNER_ID");

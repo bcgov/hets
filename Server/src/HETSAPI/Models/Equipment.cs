@@ -80,7 +80,7 @@ namespace HETSAPI.Models
         /// <param name="Notes">Notes.</param>
         /// <param name="Attachments">Attachments.</param>
         /// <param name="History">History.</param>
-        public Equipment(int Id, LocalArea LocalArea, DistrictEquipmentType DistrictEquipmentType, Owner Owner, string EquipmentCode, string Status, DateTime ReceivedDate, DateTime LastVerifiedDate, DateTime? ApprovedDate = null, bool? IsInformationUpdateNeeded = null, string InformationUpdateNeededReason = null, string LicencePlate = null, string Make = null, string Model = null, string Year = null, string Operator = null, float? PayRate = null, string RefuseRate = null, string SerialNumber = null, string Size = null, DateTime? ToDate = null, int? BlockNumber = null, float? Seniority = null, int? NumberInBlock = null, bool? IsSeniorityOverridden = null, string SeniorityOverrideReason = null, DateTime? SeniorityEffectiveDate = null, float? YearsOfService = null, float? ServiceHoursLastYear = null, float? ServiceHoursTwoYearsAgo = null, float? ServiceHoursThreeYearsAgo = null, string ArchiveCode = null, string ArchiveReason = null, DateTime? ArchiveDate = null, DumpTruck DumpTruck = null, List<EquipmentAttachment> EquipmentAttachments = null, List<Note> Notes = null, List<Attachment> Attachments = null, List<History> History = null)
+        public Equipment(int Id, LocalArea LocalArea, DistrictEquipmentType DistrictEquipmentType, Owner Owner, string EquipmentCode, string Status, DateTime ReceivedDate, DateTime LastVerifiedDate, DateTime? ApprovedDate = null, bool? IsInformationUpdateNeeded = null, string InformationUpdateNeededReason = null, string LicencePlate = null, string Make = null, string Model = null, string Year = null, string Operator = null, float? PayRate = null, float? RefuseRate = null, string SerialNumber = null, string Size = null, DateTime? ToDate = null, int? BlockNumber = null, float? Seniority = null, int? NumberInBlock = null, bool? IsSeniorityOverridden = null, string SeniorityOverrideReason = null, DateTime? SeniorityEffectiveDate = null, float? YearsOfService = null, float? ServiceHoursLastYear = null, float? ServiceHoursTwoYearsAgo = null, float? ServiceHoursThreeYearsAgo = null, string ArchiveCode = null, string ArchiveReason = null, DateTime? ArchiveDate = null, DumpTruck DumpTruck = null, List<EquipmentAttachment> EquipmentAttachments = null, List<Note> Notes = null, List<Attachment> Attachments = null, List<History> History = null)
         {   
             this.Id = Id;
             this.LocalArea = LocalArea;
@@ -90,13 +90,6 @@ namespace HETSAPI.Models
             this.Status = Status;
             this.ReceivedDate = ReceivedDate;
             this.LastVerifiedDate = LastVerifiedDate;
-
-
-
-
-
-
-
             this.ApprovedDate = ApprovedDate;
             this.IsInformationUpdateNeeded = IsInformationUpdateNeeded;
             this.InformationUpdateNeededReason = InformationUpdateNeededReason;
@@ -106,7 +99,7 @@ namespace HETSAPI.Models
             this.Year = Year;
             this.Operator = Operator;
             this.PayRate = PayRate;
-            this.RefuseRate = RefuseRate;
+            this.RefuseRate = RefuseRate ?? 0;
             this.SerialNumber = SerialNumber;
             this.Size = Size;
             this.ToDate = ToDate;
@@ -296,7 +289,8 @@ namespace HETSAPI.Models
         [MetaDataExtension (Description = "TO BE REVIEWED WITH THE BUSINESS - WHAT IS THIS?")]
         [MaxLength(255)]
         
-        public string RefuseRate { get; set; }
+        // Changed from string to float by Simon Di for the consistancy of rate related variables.
+        public float RefuseRate { get; set; }
         
         /// <summary>
         /// The serial number of the piece of equipment as provided by the Equipment Owner. Used to detect and reconcile pieces of equipment moved between Local Areas. Duplicate serial numbers are flagged in the system but permitted. The duplicates are flagged in the UI until the HETS Clerks reconcile the differences - either correcting the serial number or archiving a piece of equipment moved to a new local area.
