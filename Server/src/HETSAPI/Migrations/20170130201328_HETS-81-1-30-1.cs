@@ -1012,7 +1012,7 @@ namespace HETSAPI.Migrations
             migrationBuilder.AlterColumn<string>(
                 name: "NOTES",
                 table: "HET_CONTACT",
-                maxLength: 255,
+                maxLength: 512,
                 nullable: true,
                 oldClrType: typeof(string),
                 oldNullable: true);

@@ -37,6 +37,11 @@ namespace HETSAPI.Models
         {
             this.Id = 0;
         }
+        public Owner(int id)
+        {
+            this.Id = id;
+        }
+
 
         /// <summary>
         /// Initializes a new instance of the <see cref="Owner" /> class.

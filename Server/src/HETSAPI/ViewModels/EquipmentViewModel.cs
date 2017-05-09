@@ -85,7 +85,7 @@ namespace HETSAPI.ViewModels
         /// <param name="DuplicateEquipment">DuplicateEquipment.</param>
         /// <param name="IsWorking">true if the equipment is working.</param>
         /// <param name="LastTimeRecordDateThisYear">LastTimeRecordDateThisYear.</param>
-        public EquipmentViewModel(int Id, LocalArea LocalArea = null, DistrictEquipmentType DistrictEquipmentType = null, Owner Owner = null, string EquipmentCode = null, string Status = null, DateTime? ReceivedDate = null, DateTime? ApprovedDate = null, DateTime? LastVerifiedDate = null, bool? IsInformationUpdateNeeded = null, string InformationUpdateNeededReason = null, string LicencePlate = null, string Make = null, string Model = null, string Year = null, string Type = null, string Operator = null, float? PayRate = null, string RefuseRate = null, string SerialNumber = null, string Size = null, DateTime? ToDate = null, float? BlockNumber = null, float? Seniority = null, bool? IsSeniorityOverridden = null, string SeniorityOverrideReason = null, DateTime? SeniorityEffectiveDate = null, float? YearsOfService = null, float? ServiceHoursLastYear = null, float? ServiceHoursTwoYearsAgo = null, float? ServiceHoursThreeYearsAgo = null, string ArchiveCode = null, string ArchiveReason = null, DateTime? ArchiveDate = null, DumpTruck DumpTruck = null, List<EquipmentAttachment> EquipmentAttachments = null, List<Note> Notes = null, List<Attachment> Attachments = null, List<History> History = null, List<SeniorityAudit> SeniorityAudit = null, int? ServiceHoursThisYear = null, bool? HasDuplicates = null, List<Equipment> DuplicateEquipment = null, bool? IsWorking = null, DateTime? LastTimeRecordDateThisYear = null)
+        public EquipmentViewModel(int Id, LocalArea LocalArea = null, DistrictEquipmentType DistrictEquipmentType = null, Owner Owner = null, string EquipmentCode = null, string Status = null, DateTime? ReceivedDate = null, DateTime? ApprovedDate = null, DateTime? LastVerifiedDate = null, bool? IsInformationUpdateNeeded = null, string InformationUpdateNeededReason = null, string LicencePlate = null, string Make = null, string Model = null, string Year = null, string Type = null, string Operator = null, float? PayRate = null, float? RefuseRate = null, string SerialNumber = null, string Size = null, DateTime? ToDate = null, float? BlockNumber = null, float? Seniority = null, bool? IsSeniorityOverridden = null, string SeniorityOverrideReason = null, DateTime? SeniorityEffectiveDate = null, float? YearsOfService = null, float? ServiceHoursLastYear = null, float? ServiceHoursTwoYearsAgo = null, float? ServiceHoursThreeYearsAgo = null, string ArchiveCode = null, string ArchiveReason = null, DateTime? ArchiveDate = null, DumpTruck DumpTruck = null, List<EquipmentAttachment> EquipmentAttachments = null, List<Note> Notes = null, List<Attachment> Attachments = null, List<History> History = null, List<SeniorityAudit> SeniorityAudit = null, int? ServiceHoursThisYear = null, bool? HasDuplicates = null, List<Equipment> DuplicateEquipment = null, bool? IsWorking = null, DateTime? LastTimeRecordDateThisYear = null)
         {   
             this.Id = Id;
             this.LocalArea = LocalArea;
@@ -105,7 +105,7 @@ namespace HETSAPI.ViewModels
             this.Type = Type;
             this.Operator = Operator;
             this.PayRate = PayRate;
-            this.RefuseRate = RefuseRate;
+            this.RefuseRate = RefuseRate ?? 0;
             this.SerialNumber = SerialNumber;
             this.Size = Size;
             this.ToDate = ToDate;
@@ -280,7 +280,7 @@ namespace HETSAPI.ViewModels
         /// <value>TO BE REVIEWED WITH THE BUSINESS - WHAT IS THIS?</value>
         [DataMember(Name="refuseRate")]
         [MetaDataExtension (Description = "TO BE REVIEWED WITH THE BUSINESS - WHAT IS THIS?")]
-        public string RefuseRate { get; set; }
+        public float RefuseRate { get; set; }
 
         /// <summary>
         /// The serial number of the piece of equipment as provided by the Equipment Owner. Used to detect and reconcile pieces of equipment moved between Local Areas. Duplicate serial numbers are flagged in the system but permitted. The duplicates are flagged in the UI until the HETS Clerks reconcile the differences - either correcting the serial number or archiving a piece of equipment moved to a new local area.

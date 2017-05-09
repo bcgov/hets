@@ -9,16 +9,16 @@ namespace HETSAPI.Import
     public class Equip
     {
         [XmlElement("Equip_Id")]
-        public string Equip_Id { get; set; }
+        public int Equip_Id { get; set; }
 
         [XmlElement("Area_Id")]
-        public string Area_Id { get; set; }
+        public int Area_Id { get; set; }
 
         [XmlElement("Equip_Type_Id")]
-        public string Equip_Type_Id { get; set; }
+        public int Equip_Type_Id { get; set; }
 
         [XmlElement("Owner_Popt_Id")]
-        public string Owner_Popt_Id { get; set; }
+        public int Owner_Popt_Id { get; set; }
 
         [XmlElement("Equip_Cd")]
         public string Equip_Cd { get; set; }

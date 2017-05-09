@@ -9,6 +9,9 @@ namespace HETSAPI.Import
    // [XmlRoot("HETS_City")]
     public class HETS_City
     {
+        [XmlElement("City_Id")]
+        public int City_Id { get; set; }
+
         [XmlElement("Service_Area_Id")]
         public int Service_Area_Id { get; set; }
 

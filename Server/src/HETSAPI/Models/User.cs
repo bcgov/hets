@@ -39,6 +39,17 @@ namespace HETSAPI.Models
         }
 
         /// <summary>
+        /// Constructor
+        /// </summary>
+        /// <param name="SmUserId"></param>
+        /// <param name="District"></param>
+        public User(string SmUserId = null, District District = null)
+        {
+            this.SmUserId = SmUserId;
+            this.District = District;
+        }
+
+        /// <summary>
         /// Initializes a new instance of the <see cref="User" /> class.
         /// </summary>
         /// <param name="Id">A system-generated unique identifier for a User (required).</param>

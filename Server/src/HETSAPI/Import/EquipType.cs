@@ -9,10 +9,10 @@ namespace HETSAPI.Import
     public class EquipType
     {
         [XmlElement("Equip_Type_Id")]
-        public string Equip_Type_Id { get; set; }
+        public int Equip_Type_Id { get; set; }
 
         [XmlElement("SubSystem_Id")]
-        public string SubSystem_Id { get; set; }
+        public int SubSystem_Id { get; set; }
 
         [XmlElement("Service_Area_Id")]
         public string Service_Area_Id { get; set; }
@@ -46,5 +46,11 @@ namespace HETSAPI.Import
 
         [XmlElement("Created_By")]
         public string Created_By { get; set; }
+
+        [XmlElement("Modified_Dt")]
+        public string Modified_Dt { get; set; }
+
+        [XmlElement("Modified_By")]
+        public string Modified_By { get; set; }
     }
 }

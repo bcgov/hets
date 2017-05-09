@@ -19,7 +19,44 @@ namespace HETSAPI.Import
 
     public class BCBidImport
     {
-        static private void CopyToRegion(DbAppContext dbContext, HETSAPI.Import.HETS_Region oldObject, ref Models.Region reg, string systemId)
+        const string oldRegionTable = "HETS_Region";
+        const string newRegionTable = "HETS_Region";
+        const string regionXMLFile = "Region.xml";
+
+        const string oldDistrictTable = "HETS_District";
+        const string newDistrictTable = "HETS_District";
+        const string districtXMLFile = "District.xml";
+
+        const string oldCityTable = "HETS_City";
+        const string newCityTable = "HET_City";
+        const string cityXMLFile = "HETS_City.xml";
+
+        const string oldServiceAreaTable = "Service_Area";
+        const string newServiceAreaTable = "ServiceArea";
+        const string serviceAreaXMLFile = "Service_Area.xml";
+
+        const string oldLocalAreaTable = "Area";
+        const string newLocalAreaTable = "LocalArea";
+        const string localAreaXMLFile = "Area.xml";
+
+        const string oldOwnerTable = "Owner";
+        const string newOwnerTable = "HET_OWNER";
+        const string ownerXMLFile = "Owner.xml";
+
+        const string oldUserTable = "User_HETS";
+        const string newUserTable = "HET_USER";
+        const string userXMLFile = "User_HETS.xml";
+
+        const string oldEquipTypeTable = "EquipType";
+        const string newEquipTypeTable = "HET_EQUIPMMENT_TYPE";
+        const string equipTypeXMLFile = "Equip_Type.xml";
+
+        const string oldEquipTable = "Equip";
+        const string newEquipTable = "HET_EQUIPMMENT";
+        const string equipXMLFile = "Equip.xml";
+
+
+        static private void CopyToRegion(PerformContext performContext, DbAppContext dbContext, HETSAPI.Import.HETS_Region oldObject, ref Models.Region reg, string systemId)
         {
             bool isNew = false;
             if (reg == null)
@@ -28,10 +65,10 @@ namespace HETSAPI.Import
                 reg = new Models.Region();
             }
 
-            if (dbContext.Cities.Where(x => x.Name.ToUpper() == oldObject.Name.ToUpper()).Count() == 0)
+            if (dbContext.Regions.Where(x => x.Name.ToUpper() == oldObject.Name.ToUpper()).Count() == 0)
             {
                 isNew = true;
-                reg.Name = oldObject.Name;
+                reg.Name = oldObject.Name.Trim();
                 reg.Id = oldObject.Region_Id; // dbContext.Regions.Max(x => x.Id) + 1;   
                 reg.MinistryRegionID = oldObject.Ministry_Region_Id;
                 reg.RegionNumber = oldObject.Region_Number;
@@ -43,11 +80,18 @@ namespace HETSAPI.Import
             {
                 dbContext.Regions.Add(reg);   //Adding the city to the database table of HET_CITY
             }
-
-            dbContext.SaveChanges();
+            try
+            {
+                dbContext.SaveChanges();
+            }
+            catch (Exception e)
+            {
+                performContext.WriteLine("*** ERROR With add or update Region ***");
+                performContext.WriteLine(e.ToString());
+            }
         }
 
-        static private void CopyToDistrict(DbAppContext dbContext, HETSAPI.Import.HETS_District oldObject, ref Models.District dis, string systemId)
+        static private void CopyToDistrict(PerformContext performContext, DbAppContext dbContext, HETSAPI.Import.HETS_District oldObject, ref Models.District dis, string systemId)
         {
             bool isNew = false;
             if (dis == null)
@@ -56,10 +100,10 @@ namespace HETSAPI.Import
                 dis = new Models.District();
             }
 
-            if (dbContext.Cities.Where(x => x.Name.ToUpper() == oldObject.Name.ToUpper()).Count() == 0)
+            if (dbContext.Districts.Where(x => x.Name.ToUpper() == oldObject.Name.Trim().ToUpper()).Count() == 0)
             {
                 isNew = true;
-                dis.Name = oldObject.Name;
+                dis.Name = oldObject.Name.Trim();
                 dis.Id = oldObject.District_Id; //dbContext.Districts.Max(x => x.Id) + 1;   //oldObject.Seq_Num;  
                 dis.MinistryDistrictID = oldObject.Ministry_District_Id;
                 dis.RegionId = oldObject.Region_ID;
@@ -71,8 +115,15 @@ namespace HETSAPI.Import
             {
                 dbContext.Districts.Add(dis);   //Adding the city to the database table of HET_CITY
             }
-
-            dbContext.SaveChanges();
+            try
+            {
+                dbContext.SaveChanges();
+            }
+            catch (Exception e)
+            {
+                performContext.WriteLine("*** ERROR With add or update District ***");
+                performContext.WriteLine(e.ToString());
+            }
         }
 
         /// <summary>
@@ -81,7 +132,7 @@ namespace HETSAPI.Import
         /// <param name="dbContext"></param>
         /// <param name="oldObject"></param>
         /// <param name="city"></param>
-        static private void CopyToCity(DbAppContext dbContext, HETSAPI.Import.HETS_City oldObject, ref Models.City city, string systemId)
+        static private void CopyToCity(PerformContext performContext, DbAppContext dbContext, HETSAPI.Import.HETS_City oldObject, ref Models.City city, string systemId)
         {
             bool isNew = false;
             if (city == null)
@@ -93,7 +144,7 @@ namespace HETSAPI.Import
             if( dbContext.Cities.Where(x => x.Name.ToUpper() == oldObject.Name.ToUpper()).Count() == 0 )
             {
                 isNew = true;
-                city.Name = oldObject.Name;
+                city.Name = oldObject.Name.Trim();
                 city.Id = dbContext.Cities.Max(x => x.Id) + 1;   //oldObject.Seq_Num;  
                 city.CreateTimestamp = DateTime.UtcNow;
                 city.CreateUserid = systemId;
@@ -104,7 +155,15 @@ namespace HETSAPI.Import
                 dbContext.Cities.Add(city);   //Adding the city to the database table of HET_CITY
             }
 
-            dbContext.SaveChanges();
+            try
+            {
+                dbContext.SaveChanges();
+            }
+            catch (Exception e)
+            {
+                performContext.WriteLine("*** ERROR With add or update City ***");
+                performContext.WriteLine(e.ToString());
+            }
         }
 
 
@@ -114,7 +173,7 @@ namespace HETSAPI.Import
         /// <param name="dbContext"></param>
         /// <param name="oldObject"></param>
         /// <param name="serviceArea"></param>
-        static private void CopyToServiceArea(DbAppContext dbContext, HETSAPI.Import.Service_Area oldObject, ref ServiceArea serviceArea, string systemId)
+        static private void CopyToServiceArea(PerformContext performContext, DbAppContext dbContext, HETSAPI.Import.Service_Area oldObject, ref ServiceArea serviceArea, string systemId)
         {
             bool isNew = false;
             if (serviceArea == null)
@@ -128,11 +187,20 @@ namespace HETSAPI.Import
             serviceArea.Id = oldObject.Service_Area_Id;
             serviceArea.MinistryServiceAreaID = oldObject.Service_Area_Id;
             serviceArea.DistrictId = oldObject.District_Area_Id;
-            serviceArea.Name = oldObject.Service_Area_Desc;
+            serviceArea.Name = oldObject.Service_Area_Desc.Trim();
             serviceArea.AreaNumber = oldObject.Service_Area_Cd;
 
             District district = dbContext.Districts.FirstOrDefault(x => x.MinistryDistrictID == oldObject.District_Area_Id);
             serviceArea.District = district;
+
+            try
+            {
+                serviceArea.StartDate = DateTime.Parse(oldObject.FiscalStart.Trim().Substring(0, 10));
+            }
+            catch
+            {
+ 
+            }
 
             if (isNew)
             {
@@ -146,7 +214,15 @@ namespace HETSAPI.Import
                 serviceArea.LastUpdateTimestamp = DateTime.UtcNow;
                 dbContext.ServiceAreas.Update(serviceArea);
             }
-            dbContext.SaveChanges();
+            try
+            {
+                dbContext.SaveChanges();
+            }
+            catch (Exception e)
+            {
+                performContext.WriteLine("*** ERROR With add or update Service Area ***");
+                performContext.WriteLine(e.ToString());
+            }
         }
 
         /// <summary>
@@ -155,21 +231,28 @@ namespace HETSAPI.Import
         /// <param name="dbContext"></param>
         /// <param name="oldObject"></param>
         /// <param name="localArea"></param>
-        static private void CopyToLocalArea(DbAppContext dbContext, HETSAPI.Import.Area oldObject, ref LocalArea localArea, string systemId)
+        static private void CopyToLocalArea(PerformContext performContext, DbAppContext dbContext, HETSAPI.Import.Area oldObject, ref LocalArea localArea, string systemId)
         {
             bool isNew = false;
             if (localArea == null)
             {
                 isNew = true;
-                localArea = new LocalArea();
+                localArea = new LocalArea(oldObject.Area_Id);
+                localArea.Id = oldObject.Area_Id;
             }
             if (oldObject.Area_Id <= 0)
                 return;
-            localArea.Id = oldObject.Area_Id;
-            localArea.Name = oldObject.Area_Desc;            
-            
-            ServiceArea serviceArea = dbContext.ServiceAreas.FirstOrDefault(x => x.MinistryServiceAreaID == oldObject.Service_Area_Id);
-            localArea.ServiceArea = serviceArea;
+            localArea.Name = oldObject.Area_Desc.Trim();
+
+            try
+            {
+                ServiceArea serviceArea = dbContext.ServiceAreas.FirstOrDefault(x => x.MinistryServiceAreaID == oldObject.Service_Area_Id);
+                localArea.ServiceArea = serviceArea;
+            }
+            catch
+            {
+            }
+
 
             if (isNew)
             {
@@ -183,62 +266,148 @@ namespace HETSAPI.Import
                 localArea.LastUpdateTimestamp = DateTime.UtcNow;
                 dbContext.LocalAreas.Update(localArea);
             }
-            dbContext.SaveChanges();
         }
 
 
-        static private void CopyToOwner(DbAppContext dbContext, HETSAPI.Import.Owner oldObject, ref Models.Owner owner, string systemId)
+        static private void CopyToOwner(PerformContext performContext, DbAppContext dbContext, HETSAPI.Import.Owner oldObject, ref Models.Owner owner, 
+            string systemId, ref int maxOwnerIndex, ref int maxContactIndex)
         {
             bool isNew = false;
             if (owner == null)
             {
                 isNew = true;
-                owner = new Models.Owner();
+                owner = new Models.Owner(++maxOwnerIndex);
             }
+
+            //Add the user specified in oldObject.Modified_By and oldObject.Created_By if not there in the database
+            Models.User modifiedBy = AddUserFromString(dbContext, oldObject.Modified_By, systemId);
+            Models.User createdBy = AddUserFromString(dbContext, oldObject.Created_By, systemId);
 
             // The followings are the data mapping
-            owner.LocalAreaId = oldObject.Area_Id;
-            owner.CreateUserid = systemId;
-            owner.IsMaintenanceContractor = (oldObject.Maintenance_Contractor == "Y") ? true : false;
-            owner.WorkSafeBCExpiryDate = DateTime.Parse(oldObject.WCB_Expiry_Dt.Trim().Substring(0, 10));
-            owner.WorkSafeBCPolicyNumber = oldObject.WCB_Num;
-            owner.OrganizationName = oldObject.CGL_Company;
-            owner.ArchiveCode = oldObject.Archive_Cd;
+            //  owner.LocalAreaId = oldObject.Area_Id;
+            try
+            {
+                owner.IsMaintenanceContractor = (oldObject.Maintenance_Contractor.Trim() == "Y") ? true : false;
+            }
+            catch
+            {
 
-            Contact con = dbContext.Contacts.FirstOrDefault(x => x.GivenName.ToUpper() == oldObject.Owner_First_Name.ToUpper() && x.Surname.ToUpper() == oldObject.Owner_Last_Name);
+            }
+            try
+            {
+               // owner.LocalAreaId = oldObject.Area_Id;
+                owner.LocalArea = dbContext.LocalAreas.FirstOrDefault(x => x.Id == oldObject.Area_Id);
+            }
+            catch
+            {
+
+            }
+            try
+            {
+                owner.CGLEndDate = DateTime.Parse(oldObject.CGL_End_Dt.Trim().Substring(0, 10));
+            }
+            catch
+            {
+ 
+            }
+            try
+            {
+                owner.WorkSafeBCExpiryDate = DateTime.Parse(oldObject.WCB_Expiry_Dt.Trim().Substring(0, 10));
+            }
+            catch
+            {
+            }
+            try
+            {
+                owner.WorkSafeBCPolicyNumber = oldObject.WCB_Num.Trim();
+            }
+            catch
+            {
+            }
+            try
+            {
+                owner.OrganizationName = oldObject.CGL_Company.Trim();
+            }
+            catch
+            {
+            }
+            try
+            {
+                owner.ArchiveCode = oldObject.Archive_Cd;
+            }
+            catch
+            {
+            }
+
+            try
+            {
+                owner.Status = oldObject.Status_Cd.Trim();
+            }
+            catch
+            {
+            }
+
+
+            Contact con = dbContext.Contacts.FirstOrDefault(x => x.GivenName.ToUpper() == oldObject.Owner_First_Name.Trim().ToUpper() && x.Surname.ToUpper() == oldObject.Owner_Last_Name.Trim().ToUpper());
             if (con == null)
             {
-                owner.PrimaryContact = new Contact();
-                owner.PrimaryContact.Surname = oldObject.Owner_Last_Name;
-                owner.PrimaryContact.GivenName = oldObject.Owner_First_Name;
-                owner.PrimaryContact.FaxPhoneNumber = "";
-                owner.PrimaryContact.Province = "BC";
+                con = new Contact(++maxContactIndex);
+                try
+                {
+                    con.Surname = oldObject.Owner_Last_Name.Trim();
+                    con.GivenName = oldObject.Owner_First_Name.Trim();
+                }
+                catch
+                {
+                }
+
+
+                con.FaxPhoneNumber = "";
+                con.Province = "BC";
                 //    owner.PrimaryContact.PostalCode = oldObject.
-                owner.PrimaryContact.Notes = oldObject.Comment;
+                try
+                {
+                    con.Notes = new string(oldObject.Comment.Take(511).ToArray());
+                }
+                catch
+                {
+                }
+                dbContext.Contacts.Add(con);
             }
-            else
-            {
-                owner.PrimaryContact = con;
-            }
+
 
             // TODO finish mapping here 
             if (isNew)
             {
-                owner.CreateUserid = systemId;
-                owner.CreateTimestamp = DateTime.Parse(oldObject.Created_Dt.Trim().Substring(0, 10)); // DateTime.UtcNow;
-                owner.PrimaryContact.CreateTimestamp = DateTime.UtcNow;
-                owner.PrimaryContact.CreateUserid = systemId;
+                owner.CreateUserid = createdBy.SmUserId;
+                try
+                {
+                    owner.CreateTimestamp = DateTime.Parse(oldObject.Created_Dt.Trim().Substring(0, 10)); // DateTime.UtcNow;
+                }
+                catch
+                {
+                }
+                con.CreateTimestamp = DateTime.UtcNow;
+                con.CreateUserid = createdBy.SmUserId;
+                owner.PrimaryContact = con;
                 dbContext.Owners.Add(owner);
             }
-            else
+            else  // The owner existed in the database
             {
-                owner.LastUpdateUserid = systemId;
-                owner.LastUpdateTimestamp = DateTime.UtcNow;
-                owner.PrimaryContact.LastUpdateTimestamp = DateTime.UtcNow;
-                owner.PrimaryContact.LastUpdateUserid = systemId;
+                try
+                {
+                    owner.LastUpdateUserid = systemId;
+                    owner.LastUpdateTimestamp = DateTime.UtcNow;
+                    con.LastUpdateTimestamp = DateTime.UtcNow;
+                    con.LastUpdateUserid = modifiedBy.SmUserId;
+                    owner.PrimaryContact = con;
+                }
+                catch
+                {
+
+                }
                 dbContext.Owners.Update(owner);
             }
-            dbContext.SaveChanges();
         }
 
         /// <summary>
@@ -248,31 +417,118 @@ namespace HETSAPI.Import
         /// <param name="oldObject"></param>
         /// <param name="user"></param>
         /// <param name="systemId"></param>
-        static private void CopyToUser(DbAppContext dbContext, HETSAPI.Import.User_HETS oldObject, ref Models.User user, string systemId)
+        static private void CopyToUser(PerformContext performContext, DbAppContext dbContext, HETSAPI.Import.User_HETS oldObject, ref Models.User user, string systemId)
         {
             bool isNew = false;
 
-            int startPos = oldObject.User_Cd.IndexOf(@"\") + 1;
-            string smUserId = oldObject.User_Cd.Substring(startPos);
-            user = dbContext.Users.FirstOrDefault(x => x.SmUserId == smUserId);
+            string smUserId;
+            int service_Area_Id;
 
-            if (user == null)
+            int startPos = oldObject.User_Cd.IndexOf(@"\") + 1;
+            try
             {
-                isNew = true;
-                user = new Models.User();
+                service_Area_Id = oldObject.Service_Area_Id;
+                smUserId = oldObject.User_Cd.Substring(startPos).Trim();
+            }
+            catch
+            {
+                return;
             }
 
-            // The followings are the data mapping
-            ServiceArea serArea = dbContext.ServiceAreas.FirstOrDefault(x => x.Id == oldObject.Service_Area_Id);
-            user.DistrictId =  serArea.DistrictId;
-            user.SmUserId = oldObject.User_Cd.Substring(startPos);
-            // user.Email
-            // user.GivenName
-            // user.Surname
-
-            int roleId =1;  //Default as regular user
+            //Add the user specified in oldObject.Modified_By and oldObject.Created_By if not there in the database
+            Models.User modifiedBy = AddUserFromString(dbContext, oldObject.Modified_By, systemId);
+            Models.User createdBy = AddUserFromString(dbContext, oldObject.Created_By, systemId);
             Models.UserRole userRole = new UserRole();
-            switch (oldObject.Authority.Trim())
+
+            string authority;
+            try
+            {
+                authority = oldObject.Authority.Trim();
+            }
+            catch
+            {
+                authority = ""; // Regular User
+            }
+
+
+            int roleId = GetRoleIdFromAuthority(authority);
+
+            Models.User user1 = dbContext.Users.FirstOrDefault(x => x.SmUserId == smUserId);
+
+            if (user == null && user1 != null)
+                user = user1;
+
+                ServiceArea serArea = dbContext.ServiceAreas.FirstOrDefault(x => x.Id == service_Area_Id);
+            if (user == null  )
+            {
+                isNew = true;
+                user = new Models.User(smUserId, serArea.District);
+                user.CreateTimestamp = DateTime.UtcNow;
+                user.CreateUserid = createdBy.SmUserId;
+
+                // The followings are the data mapping
+                // user.Email
+                // user.GivenName
+                // user.Surname
+
+                //Add user Role
+                userRole.Role = dbContext.Roles.First(x => x.Id == roleId);
+                userRole.CreateTimestamp = DateTime.UtcNow;
+                userRole.ExpiryDate = DateTime.UtcNow.AddMonths(12);
+                userRole.CreateUserid = createdBy.SmUserId;
+                userRole.EffectiveDate = DateTime.UtcNow.AddDays(-1);
+
+                user.UserRoles = new List<UserRole>();
+                user.UserRoles.Add(userRole);
+                dbContext.Users.Add(user);
+            }
+            else
+            {
+                user = dbContext.Users
+                    .Include(x => x.UserRoles)
+                    .Include(x => x.GroupMemberships)
+                    .First(x => x.SmUserId == smUserId);
+
+                // if the user does not have the user role, add the user role
+                if (user.UserRoles == null)
+                {
+                    user.UserRoles = new List<UserRole>();
+                }
+                // If the role does not exist for the user, add the user role for the user
+                if (user.UserRoles.FirstOrDefault(x => x.RoleId == roleId) == null)
+                {
+                    userRole.Role = dbContext.Roles.First(x => x.Id == roleId);
+                    userRole.CreateTimestamp = DateTime.UtcNow;
+                    userRole.ExpiryDate = DateTime.UtcNow.AddMonths(12);
+                    userRole.CreateUserid = createdBy.SmUserId;
+                    userRole.EffectiveDate = DateTime.UtcNow.AddDays(-1);
+                    user.UserRoles.Add(userRole);
+                }
+                user.LastUpdateUserid = createdBy.SmUserId;
+                user.CreateTimestamp = DateTime.UtcNow;
+                user.Active = true;
+                dbContext.Users.Update(user);
+            }
+            try
+            {
+               //DI dbContext.SaveChanges();
+            }
+            catch (Exception e)
+            {
+                performContext.WriteLine("*** ERROR With add or update user ***");
+                performContext.WriteLine(e.ToString());
+            }
+        }
+
+        /// <summary>
+        /// Convert Authority to userRole id
+        /// </summary>
+        /// <param name="authority"></param>
+        /// <returns></returns>
+        static private int GetRoleIdFromAuthority(string authority)
+        {
+            int roleId;
+            switch (authority)
             {
                 case "A":
                     roleId = 2; // Adminsitrator
@@ -287,35 +543,292 @@ namespace HETSAPI.Import
                     roleId = 4; // User Management
                     break;
                 default:
-                    roleId = 5; // Unknown
+                    roleId = 1; // Unknown as regular user
                     break;
             }
-            userRole.RoleId = roleId; // Unknown
-            userRole.CreateTimestamp = DateTime.UtcNow;
-            userRole.ExpiryDate = DateTime.UtcNow.AddMonths(12);
-            userRole.CreateUserid = systemId;
-            userRole.EffectiveDate = DateTime.UtcNow.AddDays(-1);
+            return roleId;
+        }
 
-            if (isNew)
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="performContext"></param>
+        /// <param name="dbContext"></param>
+        /// <param name="oldObject"></param>
+        /// <param name="etype"></param>
+        /// <param name="systemId"></param>
+        static private void CopyToEquipType(PerformContext performContext, DbAppContext dbContext, HETSAPI.Import.EquipType oldObject, ref Models.EquipmentType etype, string systemId)
+        {
+            bool isNew = false;
+
+            if (oldObject.Equip_Type_Id <= 0)
+                return;
+
+            //Add the user specified in oldObject.Modified_By and oldObject.Created_By if not there in the database
+            Models.User modifiedBy = AddUserFromString(dbContext, oldObject.Modified_By, systemId);
+            Models.User createdBy = AddUserFromString(dbContext, oldObject.Created_By, systemId);
+
+            if (etype == null)
             {
-                user.UserRoles.Add(userRole);
-                user.CreateUserid = systemId;
-                user.CreateTimestamp = DateTime.UtcNow;              
-                user.Active = true;
-                dbContext.Users.Add(user);
+                isNew = true;
+                etype = new Models.EquipmentType();
+                etype.Id = oldObject.Equip_Type_Id;
+                etype.IsDumpTruck = false;   // Where this is coming from?   !!!!!!
+                try
+                {
+                    etype.ExtendHours = float.Parse(oldObject.Extend_Hours.Trim());
+                    etype.MaximumHours = float.Parse(oldObject.Max_Hours.Trim());
+                    etype.MaxHoursSub = float.Parse(oldObject.Max_Hours_Sub.Trim());
+                }
+                catch
+                {
+
+                }
+                try
+                {
+                    etype.Name = oldObject.Equip_Type_Cd.Trim();
+                }
+                catch
+                {
+
+                }
+               
+                etype.CreateTimestamp = DateTime.UtcNow;
+                etype.CreateUserid = createdBy.SmUserId;
+                dbContext.EquipmentTypes.Add(etype);
             }
             else
             {
-                // if the user does not have the user role, add the user role
-                int id = user.Id;
-                UserRole uRole = user.UserRoles.FirstOrDefault(y => y.RoleId == roleId);
-                if (uRole == null)
+                etype = dbContext.EquipmentTypes
+                    .First(x => x.Id == oldObject.Equip_Type_Id);
+                etype.LastUpdateUserid = modifiedBy.SmUserId;
+                try
                 {
-                    user.UserRoles.Add(userRole);
+                    etype.LastUpdateTimestamp = DateTime.Parse(oldObject.Modified_Dt.Trim().Substring(0, 10));
                 }
-                dbContext.Users.Update(user);
+                catch
+                {
+
+                }
+                dbContext.EquipmentTypes.Update(etype);
             }
-            dbContext.SaveChanges();
+            try
+            {
+                // Di dbContext.SaveChanges();
+            }
+            catch (Exception e)
+            {
+                performContext.WriteLine("*** ERROR With add or update Equipment type ***");
+                performContext.WriteLine(e.ToString());
+            }
+        }
+
+
+        static private void CopyToEquip(PerformContext performContext, DbAppContext dbContext, HETSAPI.Import.Equip oldObject, ref Models.Equipment instance, string systemId)
+        {
+            bool isNew = false;
+
+            if (oldObject.Equip_Type_Id <= 0)
+                return;
+
+            //Add the user specified in oldObject.Modified_By and oldObject.Created_By if not there in the database
+            Models.User modifiedBy = AddUserFromString(dbContext, oldObject.Modified_By, systemId);
+            Models.User createdBy = AddUserFromString(dbContext, oldObject.Created_By, systemId);
+
+            if (instance == null)
+            {
+                isNew = true;
+                instance = new Models.Equipment();
+                instance.Id = oldObject.Equip_Id;
+                try
+                {
+                    // instance.DumpTruckId = oldObject.Reg_Dump_Trk;
+                    try
+                    {
+                        instance.ArchiveCode = oldObject.Archive_Cd;
+                    }
+                    catch (Exception e)
+                    {
+                        string i = e.ToString();
+                    }
+                    try
+                    {
+                        instance.ArchiveReason = new string(oldObject.Archive_Reason.Take(2048).ToArray());  
+                        instance.Notes = new List<Note>();
+                        instance.Notes.Add(new Note(oldObject.Comment, true));
+                    }
+                    catch (Exception e)
+                    {
+                        string i = e.ToString();
+                    }
+                    // instance.ArchiveDate = oldObject. 
+                    try
+                    {
+                        instance.LicencePlate = oldObject.Licence;
+                    }
+                    catch (Exception e)
+                    {
+                        string i = e.ToString();
+                    }
+                    try
+                    {
+                        LocalArea area = dbContext.LocalAreas.FirstOrDefault(x => x.Id == oldObject.Area_Id);
+                        DistrictEquipmentType equipType = dbContext.DistrictEquipmentTypes.FirstOrDefault(x => x.EquipmentTypeId == oldObject.Equip_Type_Id);
+                        instance.DistrictEquipmentType = equipType;
+                        instance.LocalArea = area;
+                    }
+                    catch (Exception e)
+                    {
+                        string i = e.ToString();
+                    }
+
+                    try
+                    {
+                        instance.EquipmentCode = oldObject.Equip_Cd;
+                        instance.Model = oldObject.Model;
+                        instance.Make = oldObject.Make;
+                        instance.Year = oldObject.Year;
+                        instance.Operator = oldObject.Operator;
+                    }
+                    catch (Exception e)
+                    {
+                        string i = e.ToString();
+                    }
+
+                    // instance.RefuseRate = float.Parse(oldObject.Refuse_Rate.Trim());
+                    try
+                    {
+                        instance.PayRate = float.Parse(oldObject.Pay_Rate.Trim());
+                    }
+                    catch (Exception e)
+                    {
+                        string i = e.ToString();
+                    }
+                    try
+                    {
+                        instance.Seniority = float.Parse(oldObject.Seniority.Trim());
+                    }
+                    catch (Exception e)
+                    {
+                        string i = e.ToString();
+                    }
+                    try
+                    {
+                        // Find the owner which is referenced in the equipment of the xml file entry
+                        int newkey = dbContext.ImportMaps.FirstOrDefault(x => x.OldTable == oldOwnerTable && x.OldKey == oldObject.Owner_Popt_Id).Id;
+                        Models.Owner owner = dbContext.Owners.FirstOrDefault(x => x.Id == newkey);
+                       // instance.OwnerId = owner.Id;
+                        instance.Owner = owner;
+                    }
+                    catch (Exception e)
+                    {
+                        string i = e.ToString();
+                    }
+                    try
+                    {
+                        instance.SerialNumber = oldObject.Serial_Num;
+                    }
+                    catch (Exception e)
+                    {
+                        string i = e.ToString();
+                    }
+                    try
+                    {
+                        instance.Seniority = float.Parse(oldObject.Seniority.Trim());
+                    }
+                    catch (Exception e)
+                    {
+                        string i = e.ToString();
+                    }
+                    try
+                    {
+                        instance.Status = oldObject.Status_Cd;
+                    }
+                    catch (Exception e)
+                    {
+                        string i = e.ToString();
+                    }
+                    try
+                    {
+                        instance.YearsOfService = float.Parse(oldObject.Num_Years.Trim());
+                    }
+                    catch (Exception e)
+                    {
+                        string i = e.ToString();
+                    }
+
+                    try
+                    {
+                        instance.ServiceHoursLastYear = oldObject.YTD1 != null ? float.Parse(oldObject.YTD1.Trim()) : 0;
+                        instance.ServiceHoursTwoYearsAgo = oldObject.YTD2 != null ? float.Parse(oldObject.YTD2.Trim()) : 0;
+                        instance.ServiceHoursThreeYearsAgo = oldObject.YTD3 != null ? float.Parse(oldObject.YTD3.Trim()) : 0;
+                    }
+                    catch (Exception e)
+                    {
+                        string i = e.ToString();
+                    }
+                    
+                }
+                catch (Exception e)
+                {
+                    string i = e.ToString();
+                }
+                try
+                {
+                    instance.ReceivedDate= DateTime.Parse(oldObject.Received_Dt.Trim().Substring(0, 10));
+                }
+                catch
+                {
+
+                }
+
+                instance.CreateTimestamp = DateTime.UtcNow;
+                instance.CreateUserid = createdBy.SmUserId;
+                dbContext.Equipments.Add(instance);
+            }
+            else
+            {
+                instance = dbContext.Equipments
+                    .First(x => x.Id == oldObject.Equip_Id);
+                instance.LastUpdateUserid = modifiedBy.SmUserId;
+                try
+                {
+                    instance.LastUpdateUserid = modifiedBy.SmUserId;
+                    instance.LastUpdateTimestamp = DateTime.Parse(oldObject.Modified_Dt.Trim().Substring(0, 10));
+                }
+                catch
+                {
+
+                }
+                dbContext.Equipments.Update(instance);
+            }
+            try
+            {
+                //Di dbContext.SaveChanges();
+            }
+            catch (Exception e)
+            {
+                performContext.WriteLine("*** ERROR With add or update Equipment ***");
+                performContext.WriteLine(e.ToString());
+            }
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="performContext"></param>
+        /// <param name="dbContext"></param>
+        static private void SaveChangesToDatabase(PerformContext performContext, DbAppContext dbContext)
+        {
+            try
+            {
+                dbContext.SaveChanges();
+            }
+            catch (Exception e)
+            {
+                performContext.WriteLine("*** ERROR ***");
+                performContext.WriteLine(e.ToString());
+            }
         }
 
         /// <summary>
@@ -391,7 +904,7 @@ namespace HETSAPI.Import
                     if (importMap == null) // new entry
                     {
                         Models.Region reg = null;
-                        CopyToRegion(dbContext, item, ref reg, systemId);
+                        CopyToRegion(performContext, dbContext, item, ref reg, systemId);
                         AddImportMap(dbContext, oldTable, item.Region_Id, newTable, reg.Id);
                     }
                     else // update
@@ -399,7 +912,7 @@ namespace HETSAPI.Import
                         Models.Region reg = dbContext.Regions.FirstOrDefault(x => x.Id == importMap.NewKey);
                         if (reg == null) // record was deleted
                         {
-                            CopyToRegion(dbContext, item, ref reg, systemId);
+                            CopyToRegion(performContext, dbContext, item, ref reg, systemId);
                             // update the import map.
                             importMap.NewKey = reg.Id;
                             dbContext.ImportMaps.Update(importMap);
@@ -407,7 +920,7 @@ namespace HETSAPI.Import
                         }
                         else // ordinary update.
                         {
-                            CopyToRegion(dbContext, item, ref reg, systemId);
+                            CopyToRegion(performContext, dbContext, item, ref reg, systemId);
                             // touch the import map.
                             importMap.LastUpdateTimestamp = DateTime.UtcNow;
                             dbContext.ImportMaps.Update(importMap);
@@ -455,7 +968,7 @@ namespace HETSAPI.Import
                     if (importMap == null) // new entry
                     {
                         Models.District dis = null;
-                        CopyToDistrict(dbContext, item, ref dis, systemId);
+                        CopyToDistrict(performContext, dbContext, item, ref dis, systemId);
                         AddImportMap(dbContext, oldTable, item.District_Id, newTable, dis.Id);
                     }
                     else // update
@@ -463,7 +976,7 @@ namespace HETSAPI.Import
                         Models.District dis = dbContext.Districts.FirstOrDefault(x => x.Id == importMap.NewKey);
                         if (dis == null) // record was deleted
                         {
-                            CopyToDistrict(dbContext, item, ref dis, systemId);
+                            CopyToDistrict(performContext, dbContext, item, ref dis, systemId);
                             // update the import map.
                             importMap.NewKey = dis.Id;
                             dbContext.ImportMaps.Update(importMap);
@@ -471,7 +984,7 @@ namespace HETSAPI.Import
                         }
                         else // ordinary update.
                         {
-                            CopyToDistrict(dbContext, item, ref dis, systemId);
+                            CopyToDistrict(performContext, dbContext, item, ref dis, systemId);
                             // touch the import map.
                             importMap.LastUpdateTimestamp = DateTime.UtcNow;
                             dbContext.ImportMaps.Update(importMap);
@@ -514,20 +1027,20 @@ namespace HETSAPI.Import
                 foreach (var item in legacyItems.WithProgress(progress))
                 {
                     // see if we have this one already.
-                    ImportMap importMap = dbContext.ImportMaps.FirstOrDefault(x => x.OldTable == oldTable && x.OldKey == item.Seq_Num);
+                    ImportMap importMap = dbContext.ImportMaps.FirstOrDefault(x => x.OldTable == oldTable && x.OldKey == item.City_Id);
 
                     if (importMap == null) // new entry
                     {
                         Models.City city = null;
-                        CopyToCity(dbContext, item, ref city, systemId);
-                        AddImportMap(dbContext, oldTable, item.Seq_Num, newTable, city.Id);
+                        CopyToCity(performContext, dbContext, item, ref city, systemId);
+                        AddImportMap(dbContext, oldTable, item.City_Id, newTable, city.Id);
                     }
                     else // update
                     {
                         Models.City city = dbContext.Cities.FirstOrDefault(x => x.Id == importMap.NewKey);
                         if (city == null) // record was deleted
                         {
-                            CopyToCity(dbContext, item, ref city, systemId);
+                            CopyToCity(performContext, dbContext, item, ref city, systemId);
                             // update the import map.
                             importMap.NewKey = city.Id;
                             dbContext.ImportMaps.Update(importMap);
@@ -535,7 +1048,7 @@ namespace HETSAPI.Import
                         }
                         else // ordinary update.
                         {
-                            CopyToCity(dbContext, item, ref city, systemId);
+                            CopyToCity(performContext, dbContext, item, ref city, systemId);
                             // touch the import map.
                             importMap.LastUpdateTimestamp = DateTime.UtcNow;
                             dbContext.ImportMaps.Update(importMap);
@@ -583,16 +1096,19 @@ namespace HETSAPI.Import
 
                     if (importMap == null) // new entry
                     {
-                        ServiceArea serviceArea = null;
-                        CopyToServiceArea(dbContext, item, ref serviceArea, systemId);
-                        AddImportMap(dbContext, oldTable, item.Service_Area_Id, newTable, serviceArea.Id);
+                        if (item.Service_Area_Cd > 0)
+                        {
+                            ServiceArea serviceArea = null;
+                            CopyToServiceArea(performContext, dbContext, item, ref serviceArea, systemId);
+                            AddImportMap(dbContext, oldTable, item.Service_Area_Id, newTable, serviceArea.Id);
+                        }
                     }
                     else // update
                     {
                         ServiceArea serviceArea = dbContext.ServiceAreas.FirstOrDefault(x => x.Id == importMap.NewKey);
                         if (serviceArea == null) // record was deleted
                         {
-                            CopyToServiceArea(dbContext, item, ref serviceArea, systemId);
+                            CopyToServiceArea(performContext, dbContext, item, ref serviceArea, systemId);
                             // update the import map.
                             importMap.NewKey = serviceArea.Id;
                             dbContext.ImportMaps.Update(importMap);
@@ -600,7 +1116,7 @@ namespace HETSAPI.Import
                         }
                         else // ordinary update.
                         {
-                            CopyToServiceArea(dbContext, item, ref serviceArea, systemId);
+                            CopyToServiceArea(performContext, dbContext, item, ref serviceArea, systemId);
                             // touch the import map.
                             importMap.LastUpdateTimestamp = DateTime.UtcNow;
                             dbContext.ImportMaps.Update(importMap);
@@ -647,28 +1163,29 @@ namespace HETSAPI.Import
 
                     if (importMap == null) // new entry
                     {
-                        LocalArea localArea = null;
-                        CopyToLocalArea(dbContext, item, ref localArea, systemId);
-                        AddImportMap(dbContext, oldTable, item.Service_Area_Id, newTable, localArea.Id);
+                        if (item.Area_Id > 0)
+                        {
+                            LocalArea localArea = null;
+                            CopyToLocalArea(performContext, dbContext, item, ref localArea, systemId);
+                            AddImportMap(dbContext, oldTable, item.Area_Id, newTable, localArea.Id);
+                        }
                     }
                     else // update
                     {
                         LocalArea localArea = dbContext.LocalAreas.FirstOrDefault(x => x.Id == importMap.NewKey);
                         if (localArea == null) // record was deleted
                         {
-                            CopyToLocalArea(dbContext, item, ref localArea, systemId);
+                            CopyToLocalArea(performContext, dbContext, item, ref localArea, systemId);
                             // update the import map.
                             importMap.NewKey = localArea.Id;
                             dbContext.ImportMaps.Update(importMap);
-                            dbContext.SaveChanges();
                         }
                         else // ordinary update.
                         {
-                            CopyToLocalArea(dbContext, item, ref localArea, systemId);
+                            CopyToLocalArea(performContext, dbContext, item, ref localArea, systemId);
                             // touch the import map.
                             importMap.LastUpdateTimestamp = DateTime.UtcNow;
                             dbContext.ImportMaps.Update(importMap);
-                            dbContext.SaveChanges();
                         }
                     }
                 }
@@ -678,6 +1195,16 @@ namespace HETSAPI.Import
             catch (Exception e)
             {
                 performContext.WriteLine("*** ERROR ***");
+                performContext.WriteLine(e.ToString());
+            }
+
+            try
+            {
+                dbContext.SaveChanges();
+            }
+            catch (Exception e)
+            {
+                performContext.WriteLine("*** ERROR With add or update Local Area ***");
                 performContext.WriteLine(e.ToString());
             }
         }
@@ -694,7 +1221,7 @@ namespace HETSAPI.Import
         /// <param name="xmlFileName"></param>
         /// <param name="systemId"></param>
         static private void ImportOwners(PerformContext performContext, DbAppContext dbContext, string fileLocation,
-            string oldTable, string newTable, string xmlFileName, string systemId)
+            string oldTable, string newTable, string xmlFileName, string systemId, ref int maxOwnerIndex, ref int maxContactIndex)
         {
             try
             {
@@ -709,7 +1236,7 @@ namespace HETSAPI.Import
                 XmlSerializer ser = new XmlSerializer(typeof(Owner[]), new XmlRootAttribute(rootAttr));
                 MemoryStream memoryStream = memoryStreamGenerator(xmlFileName, oldTable, fileLocation, rootAttr);
                 HETSAPI.Import.Owner[] legacyItems = (HETSAPI.Import.Owner[])ser.Deserialize(memoryStream);
-
+                int ii = 1;
                 foreach (var item in legacyItems.WithProgress(progress))
                 {
                     // see if we have this one already.
@@ -718,7 +1245,7 @@ namespace HETSAPI.Import
                     if (importMap == null) // new entry
                     {
                         Models.Owner owner = null;
-                        CopyToOwner(dbContext, item, ref owner, systemId);
+                        CopyToOwner(performContext, dbContext, item, ref owner, systemId, ref maxOwnerIndex, ref maxContactIndex);
                         AddImportMap(dbContext, oldTable, item.Popt_Id, newTable, owner.Id);
                     }
                     else // update
@@ -726,19 +1253,29 @@ namespace HETSAPI.Import
                         Models.Owner owner = dbContext.Owners.FirstOrDefault(x => x.Id == importMap.NewKey);
                         if (owner == null) // record was deleted
                         {
-                            CopyToOwner(dbContext, item, ref owner, systemId);
+                            CopyToOwner(performContext, dbContext, item, ref owner, systemId, ref maxOwnerIndex, ref maxContactIndex);
                             // update the import map.
                             importMap.NewKey = owner.Id;
                             dbContext.ImportMaps.Update(importMap);
-                            dbContext.SaveChanges();
+                           // dbContext.SaveChanges();
                         }
                         else // ordinary update.
                         {
-                            CopyToOwner(dbContext, item, ref owner, systemId);
+                            CopyToOwner(performContext, dbContext, item, ref owner, systemId, ref  maxOwnerIndex, ref maxContactIndex);
                             // touch the import map.
                             importMap.LastUpdateTimestamp = DateTime.UtcNow;
                             dbContext.ImportMaps.Update(importMap);
+                           // dbContext.SaveChanges();
+                        }
+                    }
+                    if (ii % 500 == 0)
+                    {
+                        try
+                        {
                             dbContext.SaveChanges();
+                        }
+                        catch
+                        {
                         }
                     }
                 }
@@ -749,6 +1286,13 @@ namespace HETSAPI.Import
             {
                 performContext.WriteLine("*** ERROR ***");
                 performContext.WriteLine(e.ToString());
+            }
+            try
+            {
+                dbContext.SaveChanges();
+            }
+            catch
+            {
             }
         }
 
@@ -768,7 +1312,7 @@ namespace HETSAPI.Import
                 XmlSerializer ser = new XmlSerializer(typeof(User_HETS[]), new XmlRootAttribute(rootAttr));
                 MemoryStream memoryStream = memoryStreamGenerator(xmlFileName, oldTable, fileLocation, rootAttr);
                 HETSAPI.Import.User_HETS[] legacyItems = (HETSAPI.Import.User_HETS[])ser.Deserialize(memoryStream);
-
+                int ii = 0;
                 foreach (var item in legacyItems.WithProgress(progress))
                 {
                     // see if we have this one already.
@@ -777,29 +1321,49 @@ namespace HETSAPI.Import
                     if (importMap == null) // new entry
                     {
                         Models.User instance = null;
-                        CopyToUser(dbContext, item, ref instance, systemId);
+                        CopyToUser(performContext, dbContext, item, ref instance, systemId);
                         AddImportMap(dbContext, oldTable, item.Popt_Id, newTable, instance.Id);
                     }
-                    else // update
+                    //else // update
+                    //{
+                    //    Models.User instance = dbContext.Users.FirstOrDefault(x => x.Id == importMap.NewKey);
+                    //    if (instance == null) // record was deleted
+                    //    {
+                    //        CopyToUser(performContext, dbContext, item, ref instance, systemId);
+                    //        // update the import map.
+                    //        importMap.NewKey = instance.Id;
+                    //        dbContext.ImportMaps.Update(importMap);
+                    //      //DI  dbContext.SaveChanges();
+                    //    }
+                    //    else // ordinary update.
+                    //    {
+                    //        CopyToUser(performContext, dbContext, item, ref instance, systemId);
+                    //        // touch the import map.
+                    //        importMap.LastUpdateTimestamp = DateTime.UtcNow;
+                    //        dbContext.ImportMaps.Update(importMap);
+                    //        //DI   dbContext.SaveChanges();
+                    //    }
+                    //}
+
+                    if (ii++ % 500 == 0)
                     {
-                        Models.User instance = dbContext.Users.FirstOrDefault(x => x.Id == importMap.NewKey);
-                        if (instance == null) // record was deleted
+                        try
                         {
-                            CopyToUser(dbContext, item, ref instance, systemId);
-                            // update the import map.
-                            importMap.NewKey = instance.Id;
-                            dbContext.ImportMaps.Update(importMap);
                             dbContext.SaveChanges();
                         }
-                        else // ordinary update.
+                        catch
                         {
-                            CopyToUser(dbContext, item, ref instance, systemId);
-                            // touch the import map.
-                            importMap.LastUpdateTimestamp = DateTime.UtcNow;
-                            dbContext.ImportMaps.Update(importMap);
-                            dbContext.SaveChanges();
+
                         }
                     }
+                }
+                try
+                {
+                    dbContext.SaveChanges();
+                }
+                catch
+                {
+
                 }
                 performContext.WriteLine("*** Done ***");
             }
@@ -811,6 +1375,235 @@ namespace HETSAPI.Import
             }
         }
 
+        /// <summary>
+        /// Import Qquipment Type
+        /// </summary>
+        /// <param name="performContext"></param>
+        /// <param name="dbContext"></param>
+        /// <param name="fileLocation"></param>
+        /// <param name="oldTable"></param>
+        /// <param name="newTable"></param>
+        /// <param name="xmlFileName"></param>
+        /// <param name="systemId"></param>
+        static private void ImportEquipType(PerformContext performContext, DbAppContext dbContext, string fileLocation,
+   string oldTable, string newTable, string xmlFileName, string systemId)
+        {
+            try
+            {
+                string rootAttr = "ArrayOf" + oldTable;
+
+                //Create Processer progress indicator
+                performContext.WriteLine("Processing " + oldTable);
+                var progress = performContext.WriteProgressBar();
+                progress.SetValue(0);
+
+                // create serializer and serialize xml file
+                XmlSerializer ser = new XmlSerializer(typeof(EquipType[]), new XmlRootAttribute(rootAttr));
+                MemoryStream memoryStream = memoryStreamGenerator(xmlFileName, oldTable, fileLocation, rootAttr);
+                HETSAPI.Import.EquipType[] legacyItems = (HETSAPI.Import.EquipType[])ser.Deserialize(memoryStream);
+                int ii = 0;
+                foreach (var item in legacyItems.WithProgress(progress))
+                {
+                    // see if we have this one already.
+                    ImportMap importMap = dbContext.ImportMaps.FirstOrDefault(x => x.OldTable == oldTable && x.OldKey == item.Equip_Type_Id);
+
+                    if (importMap == null) // new entry
+                    {
+                        if (item.Equip_Type_Id > 0)
+                        {
+                            Models.EquipmentType instance = null;
+                            CopyToEquipType(performContext, dbContext, item, ref instance, systemId);
+                            AddImportMap(dbContext, oldTable, item.Equip_Type_Id, newTable, instance.Id);
+                        }
+                    }
+                    else // update
+                    {
+                        Models.EquipmentType instance = dbContext.EquipmentTypes.FirstOrDefault(x => x.Id == importMap.NewKey);
+                        if (instance == null) // record was deleted
+                        {
+                            CopyToEquipType(performContext, dbContext, item, ref instance, systemId);
+                            // update the import map.
+                            importMap.NewKey = instance.Id;
+                            dbContext.ImportMaps.Update(importMap);
+                            //Di  dbContext.SaveChanges();
+                        }
+                        else // ordinary update.
+                        {
+                            CopyToEquipType(performContext, dbContext, item, ref instance, systemId);
+                            // touch the import map.
+                            importMap.LastUpdateTimestamp = DateTime.UtcNow;
+                            dbContext.ImportMaps.Update(importMap);
+                           //Di dbContext.SaveChanges();
+                        }
+                    }
+                    if (ii++ % 500 == 0)
+                    {
+                        try
+                        {
+                            dbContext.SaveChanges();
+                        }
+                        catch
+                        {
+
+                        }
+                    }
+                }
+                performContext.WriteLine("*** Done ***");
+            }
+
+            catch (Exception e)
+            {
+                performContext.WriteLine("*** ERROR ***");
+                performContext.WriteLine(e.ToString());
+            }
+            try
+            {
+                dbContext.SaveChanges();
+            }
+            catch
+            {
+
+            }
+        }
+
+
+        static private void ImportEquip(PerformContext performContext, DbAppContext dbContext, string fileLocation,
+   string oldTable, string newTable, string xmlFileName, string systemId)
+        {
+            try
+            {
+                string rootAttr = "ArrayOf" + oldTable;
+
+                //Create Processer progress indicator
+                performContext.WriteLine("Processing " + oldTable);
+                var progress = performContext.WriteProgressBar();
+                progress.SetValue(0);
+
+                // create serializer and serialize xml file
+                XmlSerializer ser = new XmlSerializer(typeof(Equip[]), new XmlRootAttribute(rootAttr));
+                MemoryStream memoryStream = memoryStreamGenerator(xmlFileName, oldTable, fileLocation, rootAttr);
+                HETSAPI.Import.Equip[] legacyItems = (HETSAPI.Import.Equip[])ser.Deserialize(memoryStream);
+                int ii = 0;
+                foreach (var item in legacyItems.WithProgress(progress))
+                {
+                    // see if we have this one already.
+                    ImportMap importMap = dbContext.ImportMaps.FirstOrDefault(x => x.OldTable == oldTable && x.OldKey == item.Equip_Id);
+
+                    if (importMap == null) // new entry
+                    {
+                        if (item.Equip_Id > 0)
+                        {
+                            Models.Equipment instance = null;
+                            CopyToEquip(performContext, dbContext, item, ref instance, systemId);
+                            AddImportMap(dbContext, oldTable, item.Equip_Id, newTable, instance.Id);
+                        }
+                    }
+                    else // update
+                    {
+                        Models.Equipment instance = dbContext.Equipments.FirstOrDefault(x => x.Id == importMap.NewKey);
+                        if (instance == null) // record was deleted
+                        {
+                            CopyToEquip(performContext, dbContext, item, ref instance, systemId);
+                            // update the import map.
+                            importMap.NewKey = instance.Id;
+                            dbContext.ImportMaps.Update(importMap);
+                          //  dbContext.SaveChanges();
+                        }
+                        else // ordinary update.
+                        {
+                            CopyToEquip(performContext, dbContext, item, ref instance, systemId);
+                            // touch the import map.
+                            importMap.LastUpdateTimestamp = DateTime.UtcNow;
+                            dbContext.ImportMaps.Update(importMap);
+                           // dbContext.SaveChanges();
+                        }
+                    }
+
+                    if (ii++ % 500 == 0)
+                    {
+                        try
+                        {
+                            dbContext.SaveChanges();
+                        }
+                        catch
+                        {
+
+                        }
+                    }
+                }
+                performContext.WriteLine("*** Done ***");
+                try
+                {
+                    dbContext.SaveChanges();
+                }
+                catch
+                {
+
+                }
+            }
+
+            catch (Exception e)
+            {
+                performContext.WriteLine("*** ERROR ***");
+                performContext.WriteLine(e.ToString());
+            }
+        }
+
+        /// <summary>
+        /// /// <summary>
+        /// Given a userString like: "Espey, Carol  (IDIR\cespey)"  Format the user and Add the user if no in the database
+        /// Return the user or a default system user called "SYSTEM_HETS" as smSystemId
+        /// </summary>
+        /// </summary>
+        /// <param name="dbContext"></param>
+        /// <param name="userString"></param>
+        /// <param name="smSystemId"></param>
+        /// <returns></returns>
+        static public Models.User AddUserFromString(DbAppContext dbContext, string userString, string smSystemId)
+        {
+            // Find out the smUserId for the <Modified_By>
+            int index = -1;
+            try
+            {
+                index = userString.IndexOf(@"(IDIR\");
+            }
+            catch
+            {
+                return dbContext.Users.FirstOrDefault(x => x.SmUserId == smSystemId);
+            }
+            if (index > 0)
+            { 
+                try
+                {
+                    int commaPos = userString.IndexOf(@",");
+                    int leftBreakPos = userString.IndexOf(@"(");
+                    int startPos = userString.IndexOf(@"\");
+                    int rightBreakPos = userString.IndexOf(@")");
+                    string surName = userString.Substring(0, commaPos);
+                    string givenName = userString.Substring(commaPos + 2, leftBreakPos - commaPos - 2);
+                    string smUserId = userString.Substring(startPos + 1, rightBreakPos - startPos - 1);
+                    Models.User user = dbContext.Users.FirstOrDefault(x => x.SmUserId == smUserId);
+                    if (user == null)
+                    {
+                        user = new User();
+                        user.Surname = surName.Trim();
+                        user.GivenName = givenName.Trim();
+                        user.SmUserId = smUserId.Trim();
+                        dbContext.Users.Add(user);
+                        dbContext.SaveChanges();
+                    }
+                    return  user;
+                }
+                catch (Exception e)
+                {
+                    return dbContext.Users.FirstOrDefault(x => x.SmUserId == smSystemId);
+                }
+            }
+            else
+            {
+                return dbContext.Users.FirstOrDefault(x => x.SmUserId == smSystemId);
+            }      
+        }
         /// <summary>
         /// Hangfire job to do the Annual Rollover tasks.
         /// </summary>
@@ -824,23 +1617,44 @@ namespace HETSAPI.Import
             DbAppContext dbContext = new DbAppContext(null, options.Options);
             context.WriteLine("Starting Data Import Job");
 
-            string systemId = dbContext.Users.FirstOrDefault(x => x.SmUserId.ToUpper() == "SYSTEM_HETS").Id.ToString();
+            string systemId = "SYSTEM_HETS"; // dbContext.Users.FirstOrDefault(x => x.SmUserId.ToUpper() == "SYSTEM_HETS").Id.ToString();
 
             // start by importing Region from Region.xml. THis goes to table HETS_REGION
-            ImportRegions(context, dbContext, fileLocation, "HETS_Region", "HETS_Region", "Region.xml", systemId);
+            ImportRegions(context, dbContext, fileLocation, oldRegionTable, newRegionTable, regionXMLFile, systemId);
+            
             // start by importing districts from District.xml. THis goes to table HETS_DISTRICT
-            ImportDistricts(context, dbContext, fileLocation, "HETS_District", "HETS_District", "District.xml", systemId);
+            dbContext = new DbAppContext(null, options.Options);
+            ImportDistricts(context, dbContext, fileLocation, oldDistrictTable, newDistrictTable, districtXMLFile, systemId);
+            
             // start by importing Cities from HETS_City.xml to HET_CITY
-            ImportCities(context, dbContext, fileLocation, "HETS_City", "HETS_City", "HETS_City.xml", systemId);
+            dbContext = new DbAppContext(null, options.Options);
+            ImportCities(context, dbContext, fileLocation, oldCityTable, newCityTable, cityXMLFile, systemId);
+            
             // Service Areas: from the file of Service_Area.xml to the table of HET_SERVICE_AREA
-            ImportServiceAreas(context, dbContext, fileLocation, "Service_Area", "ServiceArea", "Service_Area.xml", systemId);
+            dbContext = new DbAppContext(null, options.Options);
+            ImportServiceAreas(context, dbContext, fileLocation, oldServiceAreaTable, newServiceAreaTable, serviceAreaXMLFile, systemId);
+            
             // Importing the Local Areas from the file of Area.xml to the table of HET_LOCAL_AREA
-            ImportLocalAreas(context, dbContext, fileLocation, "Area", "LocalArea", "Area.xml", systemId);
-            // Owners: This has effects on Table HETS_OWNER and HETS_Contact
-            ImportOwners(context, dbContext, fileLocation,  "Owner", "Owner", "Owner.xml", systemId);
-            // Users from User_HETS.xml. This has effects on Table HET_USER and HET_USER_ROLE  
-            ImportUsers(context, dbContext, fileLocation, "User_HETS", "User_HETS", "User_HETS.xml", systemId);
-        }
+            dbContext = new DbAppContext(null, options.Options);
+            ImportLocalAreas(context, dbContext, fileLocation, oldLocalAreaTable, newLocalAreaTable, localAreaXMLFile, systemId);
 
+            // Owners: This has effects on Table HETS_OWNER and HETS_Contact
+            dbContext = new DbAppContext(null, options.Options);
+            int maxOwnerIndex  = dbContext.Owners.Max(x => x.Id);
+            int maxContactIndex = dbContext.Contacts.Max(x => x.Id);
+            ImportOwners(context, dbContext, fileLocation, oldOwnerTable, newOwnerTable, ownerXMLFile, systemId, ref maxOwnerIndex, ref maxContactIndex);
+
+            // Users from User_HETS.xml. This has effects on Table HET_USER and HET_USER_ROLE  
+            dbContext = new DbAppContext(null, options.Options);
+            ImportUsers(context, dbContext, fileLocation, oldUserTable, newUserTable, userXMLFile, systemId);
+
+            //Import Equiptment type from EquipType.xml This has effects on Table HET_USER and HET_EQUIPMENT_TYPE  
+           //  dbContext = new DbAppContext(null, options.Options);
+           //  ImportEquipType(context, dbContext, fileLocation, oldEquipTypeTable, newEquipTypeTable, equipTypeXMLFile, systemId);
+
+            //Import Equiptment  from Equip.xml  This has effects on Table HET_USER and HET_EQUIP
+          //  dbContext = new DbAppContext(null, options.Options);
+           // ImportEquip(context, dbContext, fileLocation, oldEquipTable, newEquipTable, equipXMLFile, systemId);
+        }
     }
 }
