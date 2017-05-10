@@ -1484,6 +1484,29 @@ paths:
       responses:
         201:
           description: Role created
+
+  /rolepermissions/bulk:
+    post:
+      tags:
+        - Role
+      x-codegen-permission: ADMIN
+      consumes:
+        - application/json
+      produces:
+        - text/plain
+        - application/json
+        - text/json
+      parameters:
+        - name: items
+          in: body
+          required: true
+          schema:
+            type: array
+            items:
+              $ref: "#/definitions/RolePermission"
+      responses:
+        201:
+          description: Role created
   /users:
     get:
       tags:
@@ -1640,6 +1663,29 @@ paths:
             type: array
             items:
               $ref: "#/definitions/GroupMembership"
+      responses:
+        201:
+          description: User created
+
+  /userroles/bulk:
+    post:
+      tags:
+        - User
+      x-codegen-permission: ADMIN
+      consumes:
+        - application/json
+      produces:
+        - text/plain
+        - application/json
+        - text/json
+      parameters:
+        - name: items
+          in: body
+          required: true
+          schema:
+            type: array
+            items:
+              $ref: "#/definitions/UserRole"
       responses:
         201:
           description: User created
@@ -6153,6 +6199,10 @@ definitions:
         type: array
         items:
           $ref: '#/definitions/History'
+      rentalRequestRotationList:
+        type: array
+        items:
+          $ref: '#/definitions/RentalRequestRotationList'
   RentalRequestAttachment:
     type: object
     description: Attachments that are required as part of the Rental Requests
@@ -6177,7 +6227,6 @@ definitions:
     description: An eligible piece of equipment for a request and a tracking of the hire offer and response process related to a request for that piece of equipment. Includes a link from the equipment to a Rental Agreement if the equipment was hired to satisfy a part of the request.
     required:
       - id
-      - RentalRequest
       - rotationListSortOrder
       - equipment
     properties:
@@ -6185,8 +6234,6 @@ definitions:
         format: int32
         type: integer
         description: A system-generated unique identifier for a RequestRotationList
-      RentalRequest:
-        $ref: '#/definitions/RentalRequest'
       rotationListSortOrder:
         format: int32
         type: integer
@@ -7331,6 +7378,14 @@ definitions:
         type: string
         maxLength: 255
         description: The user directory service used by Siteminder to authenticate the user - usually IDIR or BCeID.
+      userRoles:
+        type: array
+        items:
+          $ref: '#/definitions/UserRole'
+      groupMemberships:
+        type: array
+        items:
+          $ref: '#/definitions/GroupMembership'
       District:
         $ref: '#/definitions/District'
         description: The District that the User belongs to
@@ -7340,8 +7395,6 @@ definitions:
     required:
       - id
       - effectiveDate
-      - user
-      - role
     properties:
       id:
         format: int32
@@ -7355,9 +7408,6 @@ definitions:
         type: string
         format: date-time
         description: The date on which a role previously assigned to a user was removed from that user.
-      user:
-        $ref: '#/definitions/User'
-        description: A foreign key reference to the system-generated unique identifier for a User
       role:
         $ref: '#/definitions/Role'
         description: A foreign key reference to the system-generated unique identifier for a Role
@@ -7431,7 +7481,6 @@ definitions:
       - id
       - active
       - group
-      - user
     properties:
       id:
         format: int32
@@ -7443,9 +7492,6 @@ definitions:
       group:
         $ref: '#/definitions/Group'
         description: A foreign key reference to the system-generated unique identifier for a Group
-      user:
-        $ref: '#/definitions/User'
-        description: A foreign key reference to the system-generated unique identifier for a User
   Group:
     type: object
     description: A named entity that is used to create a arbitrary collection of users into a group. For example, the HETS Clerks are in the group Clerks. Groups, like permissions are defined by and referenced in code.

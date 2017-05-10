@@ -891,6 +891,43 @@
             "table": null
         },
         {
+            "Description": null,
+            "Length": null,
+            "Name": "rentalRequestRotationList",
+            "RefDef": "RentalRequestRotationList",
+            "Required": [
+                {
+                    "req": "id"
+                },
+                {
+                    "req": "project"
+                },
+                {
+                    "req": "localArea"
+                },
+                {
+                    "req": "status"
+                },
+                {
+                    "req": "districtEquipmentType"
+                },
+                {
+                    "req": "equipmentCount"
+                }
+            ],
+            "Unique": null,
+            "binary": null,
+            "boolean": null,
+            "datetime": null,
+            "float": null,
+            "id": null,
+            "integer": null,
+            "links": "links",
+            "ref": null,
+            "string": null,
+            "table": null
+        },
+        {
             "Description": "Attachments that are required as part of the Rental Requests",
             "Length": null,
             "Name": "RentalRequestAttachment",
@@ -1012,9 +1049,6 @@
                     "req": "id"
                 },
                 {
-                    "req": "RentalRequest"
-                },
-                {
                     "req": "rotationListSortOrder"
                 },
                 {
@@ -1043,9 +1077,6 @@
                     "req": "id"
                 },
                 {
-                    "req": "RentalRequest"
-                },
-                {
                     "req": "rotationListSortOrder"
                 },
                 {
@@ -1065,37 +1096,6 @@
             "table": null
         },
         {
-            "Description": null,
-            "Length": null,
-            "Name": "RentalRequest",
-            "RefDef": "RentalRequest",
-            "Required": [
-                {
-                    "req": "id"
-                },
-                {
-                    "req": "RentalRequest"
-                },
-                {
-                    "req": "rotationListSortOrder"
-                },
-                {
-                    "req": "equipment"
-                }
-            ],
-            "Unique": null,
-            "binary": null,
-            "boolean": null,
-            "datetime": null,
-            "float": null,
-            "id": null,
-            "integer": null,
-            "links": null,
-            "ref": "ref",
-            "string": null,
-            "table": null
-        },
-        {
             "Description": "The sort order of the piece of equipment on the rotation list at the time the request was created. This is the order the equipment will be offered the available work.",
             "Length": null,
             "Name": "rotationListSortOrder",
@@ -1103,9 +1103,6 @@
             "Required": [
                 {
                     "req": "id"
-                },
-                {
-                    "req": "RentalRequest"
                 },
                 {
                     "req": "rotationListSortOrder"
@@ -1136,9 +1133,6 @@
                     "req": "id"
                 },
                 {
-                    "req": "RentalRequest"
-                },
-                {
                     "req": "rotationListSortOrder"
                 },
                 {
@@ -1165,9 +1159,6 @@
             "Required": [
                 {
                     "req": "id"
-                },
-                {
-                    "req": "RentalRequest"
                 },
                 {
                     "req": "rotationListSortOrder"
@@ -1198,9 +1189,6 @@
                     "req": "id"
                 },
                 {
-                    "req": "RentalRequest"
-                },
-                {
                     "req": "rotationListSortOrder"
                 },
                 {
@@ -1227,9 +1215,6 @@
             "Required": [
                 {
                     "req": "id"
-                },
-                {
-                    "req": "RentalRequest"
                 },
                 {
                     "req": "rotationListSortOrder"
@@ -1260,9 +1245,6 @@
                     "req": "id"
                 },
                 {
-                    "req": "RentalRequest"
-                },
-                {
                     "req": "rotationListSortOrder"
                 },
                 {
@@ -1289,9 +1271,6 @@
             "Required": [
                 {
                     "req": "id"
-                },
-                {
-                    "req": "RentalRequest"
                 },
                 {
                     "req": "rotationListSortOrder"
@@ -1322,9 +1301,6 @@
                     "req": "id"
                 },
                 {
-                    "req": "RentalRequest"
-                },
-                {
                     "req": "rotationListSortOrder"
                 },
                 {
@@ -1351,9 +1327,6 @@
             "Required": [
                 {
                     "req": "id"
-                },
-                {
-                    "req": "RentalRequest"
                 },
                 {
                     "req": "rotationListSortOrder"
@@ -1384,9 +1357,6 @@
                     "req": "id"
                 },
                 {
-                    "req": "RentalRequest"
-                },
-                {
                     "req": "rotationListSortOrder"
                 },
                 {
@@ -1413,9 +1383,6 @@
             "Required": [
                 {
                     "req": "id"
-                },
-                {
-                    "req": "RentalRequest"
                 },
                 {
                     "req": "rotationListSortOrder"
@@ -9677,6 +9644,68 @@
             "table": null
         },
         {
+            "Description": null,
+            "Length": null,
+            "Name": "userRoles",
+            "RefDef": "UserRole",
+            "Required": [
+                {
+                    "req": "id"
+                },
+                {
+                    "req": "givenName"
+                },
+                {
+                    "req": "surname"
+                },
+                {
+                    "req": "active"
+                }
+            ],
+            "Unique": null,
+            "binary": null,
+            "boolean": null,
+            "datetime": null,
+            "float": null,
+            "id": null,
+            "integer": null,
+            "links": "links",
+            "ref": null,
+            "string": null,
+            "table": null
+        },
+        {
+            "Description": null,
+            "Length": null,
+            "Name": "groupMemberships",
+            "RefDef": "GroupMembership",
+            "Required": [
+                {
+                    "req": "id"
+                },
+                {
+                    "req": "givenName"
+                },
+                {
+                    "req": "surname"
+                },
+                {
+                    "req": "active"
+                }
+            ],
+            "Unique": null,
+            "binary": null,
+            "boolean": null,
+            "datetime": null,
+            "float": null,
+            "id": null,
+            "integer": null,
+            "links": "links",
+            "ref": null,
+            "string": null,
+            "table": null
+        },
+        {
             "Description": "The District that the User belongs to",
             "Length": null,
             "Name": "District",
@@ -9718,12 +9747,6 @@
                 },
                 {
                     "req": "effectiveDate"
-                },
-                {
-                    "req": "user"
-                },
-                {
-                    "req": "role"
                 }
             ],
             "Unique": null,
@@ -9749,12 +9772,6 @@
                 },
                 {
                     "req": "effectiveDate"
-                },
-                {
-                    "req": "user"
-                },
-                {
-                    "req": "role"
                 }
             ],
             "Unique": null,
@@ -9780,12 +9797,6 @@
                 },
                 {
                     "req": "effectiveDate"
-                },
-                {
-                    "req": "user"
-                },
-                {
-                    "req": "role"
                 }
             ],
             "Unique": null,
@@ -9811,12 +9822,6 @@
                 },
                 {
                     "req": "effectiveDate"
-                },
-                {
-                    "req": "user"
-                },
-                {
-                    "req": "role"
                 }
             ],
             "Unique": null,
@@ -9832,37 +9837,6 @@
             "table": null
         },
         {
-            "Description": "A foreign key reference to the system-generated unique identifier for a User",
-            "Length": null,
-            "Name": "user",
-            "RefDef": "User",
-            "Required": [
-                {
-                    "req": "id"
-                },
-                {
-                    "req": "effectiveDate"
-                },
-                {
-                    "req": "user"
-                },
-                {
-                    "req": "role"
-                }
-            ],
-            "Unique": null,
-            "binary": null,
-            "boolean": null,
-            "datetime": null,
-            "float": null,
-            "id": null,
-            "integer": null,
-            "links": null,
-            "ref": "ref",
-            "string": null,
-            "table": null
-        },
-        {
             "Description": "A foreign key reference to the system-generated unique identifier for a Role",
             "Length": null,
             "Name": "role",
@@ -9873,12 +9847,6 @@
                 },
                 {
                     "req": "effectiveDate"
-                },
-                {
-                    "req": "user"
-                },
-                {
-                    "req": "role"
                 }
             ],
             "Unique": null,
@@ -10271,9 +10239,6 @@
                 },
                 {
                     "req": "group"
-                },
-                {
-                    "req": "user"
                 }
             ],
             "Unique": null,
@@ -10302,9 +10267,6 @@
                 },
                 {
                     "req": "group"
-                },
-                {
-                    "req": "user"
                 }
             ],
             "Unique": null,
@@ -10333,9 +10295,6 @@
                 },
                 {
                     "req": "group"
-                },
-                {
-                    "req": "user"
                 }
             ],
             "Unique": null,
@@ -10364,40 +10323,6 @@
                 },
                 {
                     "req": "group"
-                },
-                {
-                    "req": "user"
-                }
-            ],
-            "Unique": null,
-            "binary": null,
-            "boolean": null,
-            "datetime": null,
-            "float": null,
-            "id": null,
-            "integer": null,
-            "links": null,
-            "ref": "ref",
-            "string": null,
-            "table": null
-        },
-        {
-            "Description": "A foreign key reference to the system-generated unique identifier for a User",
-            "Length": null,
-            "Name": "user",
-            "RefDef": "User",
-            "Required": [
-                {
-                    "req": "id"
-                },
-                {
-                    "req": "active"
-                },
-                {
-                    "req": "group"
-                },
-                {
-                    "req": "user"
                 }
             ],
             "Unique": null,
