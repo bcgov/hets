@@ -1470,6 +1470,29 @@
       responses:
         201:
           description: Role created
+
+  /rolepermissions/bulk:
+    post:
+      tags:
+        - Role
+      x-codegen-permission: ADMIN
+      consumes:
+        - application/json
+      produces:
+        - text/plain
+        - application/json
+        - text/json
+      parameters:
+        - name: items
+          in: body
+          required: true
+          schema:
+            type: array
+            items:
+              $ref: "#/definitions/RolePermission"
+      responses:
+        201:
+          description: Role created
   /users:
     get:
       tags:
@@ -1626,6 +1649,29 @@
             type: array
             items:
               $ref: "#/definitions/GroupMembership"
+      responses:
+        201:
+          description: User created
+
+  /userroles/bulk:
+    post:
+      tags:
+        - User
+      x-codegen-permission: ADMIN
+      consumes:
+        - application/json
+      produces:
+        - text/plain
+        - application/json
+        - text/json
+      parameters:
+        - name: items
+          in: body
+          required: true
+          schema:
+            type: array
+            items:
+              $ref: "#/definitions/UserRole"
       responses:
         201:
           description: User created
