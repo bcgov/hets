@@ -12,10 +12,10 @@ namespace HETSAPI.Import
         public int Equip_Id { get; set; }
 
         [XmlElement("Area_Id")]
-        public int Area_Id { get; set; }
+        public int? Area_Id { get; set; }
 
         [XmlElement("Equip_Type_Id")]
-        public int Equip_Type_Id { get; set; }
+        public int? Equip_Type_Id { get; set; }
 
         [XmlElement("Owner_Popt_Id")]
         public int Owner_Popt_Id { get; set; }

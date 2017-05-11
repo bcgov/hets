@@ -8,23 +8,25 @@ namespace HETSAPI.Import
 {
     public class Project
     {
-        [XmlElement]
-        public string Project_Id { get; set; }
+        [XmlElement("Project_Id")]
+        public int Project_Id { get; set; }
 
-        [XmlElement]
-        public string Service_Area_Id { get; set; }
+        [XmlElement("Service_Area_Id")]
+        public int Service_Area_Id { get; set; }
 
-        [XmlElement]
+        [XmlElement("Project_Num")]
         public string Project_Num { get; set; }
 
-        [XmlElement]
+        [XmlElement("Job_Desc1")]
         public string Job_Desc1 { get; set; }
 
-        [XmlElement]
+        [XmlElement("Job_Desc2")]
         public string Job_Desc2 { get; set; }
-        [XmlElement]
+
+        [XmlElement("Created_Dt")]
         public string Created_Dt { get; set; }
-        [XmlElement]
+
+        [XmlElement("Created_By")]
         public string Created_By { get; set; }
  
     }
