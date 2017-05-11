@@ -704,6 +704,10 @@ namespace HETSAPI.Services.Impl
                     .Include(x => x.History)
                     .Select(x => x);
 
+            // Default search results must be limited to user
+            int? districtId = _context.GetDistrictIdByUserId(GetCurrentUserId());
+            data = data.Where(x => x.LocalArea.ServiceArea.DistrictId.Equals(districtId));
+
             if (localareas != null && localareas.Length > 0 )
             {
                 data = data.Where(x => localareas.Contains(x.LocalArea.Id));                
