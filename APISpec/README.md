@@ -18,6 +18,8 @@ Before you can make changes to the API Spec you will need the following installe
 - python 2.7: required to convert .CSV to .JSON
 - mustache: required to convert .JSON to .YAML.  The Node.js implementation of mustache is recommended; other variants may not support the specific syntax used in the mustache files for this project.
 
+This project uses a code generator from the projects [Swagger-Codegen](https://github.com/swagger-api/swagger-codegen) [Swagger-Codegen-Extension](https://github.com/bcgov/Swagger-Codegen-Extension). The jars in this folder are from those projects. Unlikely, however, it may be useful to grab updated versions of those files for the project, if they have been updated with features useful to this project.
+
 Excel Input
 -----------
 The Excel master file is located at the repository location APISpec/in/HETSSwagger.xlsm
@@ -34,7 +36,7 @@ In order to provide an easy interface to editing the data, an Excel spreadsheet 
 
 Export From Excel
 -----------------
-Once all changes to the Excel spreadsheet have been completed, the contents of the excel spreadsheet will need to be exported.  The keyboard sequence CTRL-V can be used to run a macro which will rapidly save each sheet tagged for export as a CSV file.
+Once all changes to the Excel spreadsheet have been completed, the contents of the excel spreadsheet will need to be exported.  The keyboard sequence CTRL-SHIFT-V can be used to run a macro which will rapidly save each sheet tagged for export as a CSV file.
 
 The specific macro that key combination calls is Save2CSV; it simply loops through the sheets in the workbook and saves each sheet with a name ending in .csv to a .csv file.
 
@@ -45,7 +47,7 @@ A provision is available for custom sections in Swagger.  This allows for uncomm
 Special files are:
 - header.yaml: Text that appears at the top of the swagger file.  Typically includes the license, project name and other details.
 - postapi.yaml:  Custom paths that will go below the generated API paths.  Often used for special services that are not common patterns.
-- footer.yaml: Text that appears at the bottom of the swagger file.  May include view models, security definitions and other text that goes below the model definition. 
+- footer.yaml: Text that appears at the bottom of the swagger file.  May include view models, security definitions and other text that goes below the model definition.
 
 Swagger File Assembly
 --------------------------
@@ -83,7 +85,7 @@ Migrations that do not involve any changes to an object containing constraints o
 
 The best practice with any migration is to test before deployment, and only deploy if the migration is successful in the test environment.
 
-Troubleshooting
+Troubleshooting the generated Swagger File
 ---------------
 Common problems are:
 - Invalid characters in the CSV/JSON/YAML files cause the file assembly or code generation to fail.
@@ -91,4 +93,47 @@ Common problems are:
 
 The fastest way to troubleshoot these sort of issues is to load the output file into a Swagger Editor and make note of issues the Swagger Editor reports.  Problems should always be addressed by editing the excel file, unless if the problems are occurring in the static include files.
 
-In the event that the input data is unparsable, and no output file is created, review the output from the update command and correct problems by editing data in the Excel spreadsheet or static input files. 
+In the event that the input data is unparsable, and no output file is created, review the output from the update command and correct problems by editing data in the Excel spreadsheet or static input files.
+
+Developer Workflow: API Evolution
+----------------
+
+Please review the Developer Workflow sections of the [Swagger-Codegen-Extension](https://github.com/bcgov/Swagger-Codegen-Extension):
+
+- [Iterative Generation](https://github.com/bcgov/Swagger-Codegen-Extension#iterative-generation)
+- [ASP .NET Core](https://github.com/bcgov/Swagger-Codegen-Extension#iterative-generation)
+
+For this project, run the extcodegen.bat command with no arguments to see the defaults for the code generator.  The set up:
+
+- generate ASP .NET Core
+- use the swagger-codegen-config.json config file
+- generate all
+- output the code to the gen/ directory
+
+## Tips ##
+
+### Before Starting ###
+
+- Verify the application builds cleanly and the tests execute before beginning.
+- Review the HETSSwagger.yaml file changes (git diff with previous version) to see what changes have been made. Review the related JIRA ticket for why the changes have been made.
+
+### Generate and Apply Automatic Changes ###
+
+- Generate the code use the extcodegen.bat script
+- Copy the "as is" code to the appropriate place in the project
+- Diff the "manually maintained" code to see what new files have been created, or files have been removed.
+- Make the corresponding changes to the application code  - add/remove application files.
+
+### Compile, Test and Fix ###
+
+- Attempt to compile the app, and find/correct the errors.
+  - For each error, trace back from the code to the point in the API that was changed to trigger the error. For example, eaach Services.Impl file corresponds to a path in the Swagger definition, and each path contains references to specific Models/ViewModels in the definition. If a Services.Impl file has an error, chances are it is related to changes in those areas of the API.
+  - Use the information in JIRA to understand why the API changed in that area.
+  - Fix the error.
+- Run the test suite and find/correct and test failures.
+
+### Review the Test Data and correct ##
+
+The testdata/ directory contains the test data for the app. IF any changes were made to the app that might afffect the test data (data table, column names changed), adjust the corresponding test data in the Excel file and regenerate and load the data.
+
+Once correct, attempt to load the data per the instructions in that folder. If the API scripts load the data, consider dropping and recreating the databsae, and loading fresh test data.
