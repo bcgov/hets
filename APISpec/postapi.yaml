@@ -625,6 +625,10 @@
           description: if true then only include Projects with active Rental Agreements
           required: false
           type: boolean
+        - name: status
+          in: query
+          description: if included, filter the results to those with a status matching this string
+          type: string
       responses:
         200:
           description: OK
