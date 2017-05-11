@@ -56,14 +56,11 @@ namespace HETSAPI.Models
         /// <param name="context"></param>
         /// <param name="userId">A user id</param>
         /// <returns>Region</returns>
-        public static int? GetDistrictIdByUserId(this IDbAppContext context, int? userId)
+        public static IQueryable<int?> GetDistrictIdByUserId(this IDbAppContext context, int? userId)
         {
             // TODO: Change user model types to match DB schema
             // TODO: Change to return IQueryable
-            int? districtId = context.Users
-                .Where(x => x.Id.Equals(userId))
-                .Select(x => x.DistrictId).Single();
-            return districtId;
+            return context.Users.Where(x => x.Id.Equals(userId)).Select(x => x.DistrictId);
         }
 
         public static Role GetRole(this IDbAppContext context, string name)

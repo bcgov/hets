@@ -501,7 +501,7 @@ namespace HETSAPI.Services.Impl
                     .Select(x => x);
 
             // Default search results must be limited to user
-            int? districtId = _context.GetDistrictIdByUserId(GetCurrentUserId());
+            int? districtId = _context.GetDistrictIdByUserId(GetCurrentUserId()).Single();
             data = data.Where(x => x.LocalArea.ServiceArea.DistrictId.Equals(districtId));
 
             if (localareas != null && localareas.Length > 0)
@@ -522,6 +522,12 @@ namespace HETSAPI.Services.Impl
             if (endDate != null)
             {
                 data = data.Where(x => x.ExpectedStartDate <= endDate);
+            }
+
+            if (status != null)
+            {
+                // TODO: Change to enumerated type
+                data = data.Where(x => x.Status.ToLower() == status.ToLower());
             }
 
             var result = new List<RentalRequestSearchResultViewModel>();
