@@ -185,7 +185,7 @@ var Equipment = React.createClass({
               <ButtonToolbar id="equipment-filters-first-row">
                 <MultiDropdown id="selectedLocalAreasIds" placeholder="Local Areas"
                   items={ localAreas } selectedIds={ this.state.search.selectedLocalAreasIds } updateState={ this.updateSearchState } showMaxItems={ 2 } />
-                <DropdownControl id="statusCode" title={ this.state.search.statusCode } updateState={ this.updateSearchState }
+                <DropdownControl id="statusCode" title={ this.state.search.statusCode } updateState={ this.updateSearchState } blankLine="(All)"
                   items={[ Constant.EQUIPMENT_STATUS_CODE_APPROVED, Constant.EQUIPMENT_STATUS_CODE_PENDING, Constant.EQUIPMENT_STATUS_CODE_ARCHIVED ]}
                 />
                 <MultiDropdown id="selectedEquipmentTypesIds" placeholder="Equipment Types" fieldName="districtEquipmentName"
