@@ -21,7 +21,7 @@ namespace HETSAPI.Migrations
                     LAST_UPDATE_USERID = table.Column<string>(maxLength: 50, nullable: true),
                     NEW_KEY = table.Column<int>(nullable: false),
                     NEW_TABLE = table.Column<string>(nullable: true),
-                    OLD_KEY = table.Column<int>(nullable: false),
+                    OLD_KEY = table.Column<string>(nullable: false),
                     OLD_TABLE = table.Column<string>(nullable: true)
                 },
                 constraints: table =>

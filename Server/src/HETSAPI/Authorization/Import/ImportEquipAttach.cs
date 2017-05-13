@@ -41,7 +41,7 @@ namespace HETSAPI.Import
                 foreach (var item in legacyItems.WithProgress(progress))
                 {
                     // see if we have this one already. We used old combine because item.Equip_Id is not unique.
-                    int oldKeyCombined = item.Equip_Id??0 * 100 + item.Attach_Seq_Num??0;
+                    string oldKeyCombined = (item.Equip_Id ?? 0 * 100 + item.Attach_Seq_Num ?? 0).ToString();
                     ImportMap importMap = dbContext.ImportMaps.FirstOrDefault(x => x.OldTable == oldTable && x.OldKey == oldKeyCombined);
 
                     if (importMap == null) // new entry

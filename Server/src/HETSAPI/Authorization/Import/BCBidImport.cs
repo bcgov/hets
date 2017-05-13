@@ -75,8 +75,8 @@ namespace HETSAPI.Import
             //ImportEquipmentType.Import(context, dbContext, fileLocation, systemId);
 
             //*** Import Equiptment  from Equip.xml  This has effects on Table HET_USER and HET_EQUIP
-            dbContext = new DbAppContext(null, options.Options);
-            ImportEquip.Import(context, dbContext, fileLocation, systemId);
+          //  dbContext = new DbAppContext(null, options.Options);
+          //  ImportEquip.Import(context, dbContext, fileLocation, systemId);
 
             //*** Import Dump_Truck  from Dump_Truck.xml   
             //   dbContext = new DbAppContext(null, options.Options);
@@ -91,10 +91,14 @@ namespace HETSAPI.Import
 
             //*** Import the table of "HET_DISTRICT_EQUIPMENT_TYPE"  from Block.xml   
             dbContext = new DbAppContext(null, options.Options);
-            ImportBlock.Import(context, dbContext, fileLocation,  systemId);
+         //   ImportBlock.Import(context, dbContext, fileLocation,  systemId);
             watch.Stop();
             var elapsedMs = watch.ElapsedMilliseconds;
             Console.WriteLine(elapsedMs.ToString());
+
+            //*** Import the table of  "HET_RENTAL_AGREEMENT" and "HET_TIME_RECORD";  from Equip_Usage.xml   
+            dbContext = new DbAppContext(null, options.Options);
+            ImportEquipUsage.Import(context, dbContext, fileLocation, systemId);
         }
     }
 }

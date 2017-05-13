@@ -42,13 +42,13 @@ namespace HETSAPI.Import
                 foreach (var item in legacyItems.WithProgress(progress))
                 {
                     // see if we have this one already.
-                    ImportMap importMap = dbContext.ImportMaps.FirstOrDefault(x => x.OldTable == oldTable && x.OldKey == item.Popt_Id);
+                    ImportMap importMap = dbContext.ImportMaps.FirstOrDefault(x => x.OldTable == oldTable && x.OldKey == item.Popt_Id.ToString());
 
                     if (importMap == null) // new entry
                     {
                         Models.User instance = null;
                         CopyToInstance(performContext, dbContext, item, ref instance, systemId);
-                        ImportUtility.AddImportMap(dbContext, oldTable, item.Popt_Id, newTable, instance.Id);
+                        ImportUtility.AddImportMap(dbContext, oldTable, item.Popt_Id.ToString(), newTable, instance.Id);
                     }
                     //else // update
                     //{

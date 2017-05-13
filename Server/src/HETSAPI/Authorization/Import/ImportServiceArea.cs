@@ -47,7 +47,7 @@ namespace HETSAPI.Import
                 foreach (var item in legacyItems.WithProgress(progress))
                 {
                     // see if we have this one already.
-                    ImportMap importMap = dbContext.ImportMaps.FirstOrDefault(x => x.OldTable == oldTable && x.OldKey == item.Service_Area_Id);
+                    ImportMap importMap = dbContext.ImportMaps.FirstOrDefault(x => x.OldTable == oldTable && x.OldKey == item.Service_Area_Id.ToString());
 
                     if (importMap == null) // new entry
                     {
@@ -55,7 +55,7 @@ namespace HETSAPI.Import
                         {
                             ServiceArea serviceArea = null;
                             CopyToInstance(performContext, dbContext, item, ref serviceArea, systemId);
-                            ImportUtility.AddImportMap(dbContext, oldTable, item.Service_Area_Id, newTable, serviceArea.Id);
+                            ImportUtility.AddImportMap(dbContext, oldTable, item.Service_Area_Id.ToString(), newTable, serviceArea.Id);
                         }
                     }
                     else // update

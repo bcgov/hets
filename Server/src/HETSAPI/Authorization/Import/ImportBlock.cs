@@ -46,7 +46,7 @@ namespace HETSAPI.Import
                     int blockNum = Convert.ToInt32(float.Parse(item.Block_Num==null?"0.0": item.Block_Num));
 
                     // This is for conversion record hope this is uquique:
-                    int oldUniqueId = (areaId * 10000 + equipmentTypeId) * 100 + blockNum;
+                    string oldUniqueId = ((areaId * 10000 + equipmentTypeId) * 100 + blockNum).ToString();
                     // see if we have this one already.
                     ImportMap importMap = dbContext.ImportMaps.FirstOrDefault(x => x.OldTable == oldTable && x.OldKey == oldUniqueId);
 
@@ -111,8 +111,17 @@ namespace HETSAPI.Import
         }
 
 
+        /// <summary>
+        /// Copy Block item of LocalAreaRotationList item
+        /// </summary>
+        /// <param name="performContext"></param>
+        /// <param name="dbContext"></param>
+        /// <param name="oldObject"></param>
+        /// <param name="instance"></param>
+        /// <param name="systemId"></param>
+        /// <param name="oldUniqueId"></param>
         static private void CopyToInstance(PerformContext performContext, DbAppContext dbContext, HETSAPI.Import.Block oldObject, 
-            ref Models.LocalAreaRotationList instance, string systemId, int oldUniqueId)
+            ref Models.LocalAreaRotationList instance, string systemId, string oldUniqueId)
         {
             bool isNew = false;
 

@@ -42,7 +42,7 @@ namespace HETSAPI.Import
                 foreach (var item in legacyItems.WithProgress(progress))
                 {
                     // see if we have this one already.
-                    ImportMap importMap = dbContext.ImportMaps.FirstOrDefault(x => x.OldTable == oldTable && x.OldKey == item.Equip_Type_Id);
+                    ImportMap importMap = dbContext.ImportMaps.FirstOrDefault(x => x.OldTable == oldTable && x.OldKey == item.Equip_Type_Id.ToString());
 
                     if (importMap == null) // new entry
                     {
@@ -50,7 +50,7 @@ namespace HETSAPI.Import
                         {
                             Models.EquipmentType instance = null;
                             CopyToInstance(performContext, dbContext, item, ref instance, systemId);
-                            ImportUtility.AddImportMap(dbContext, oldTable, item.Equip_Type_Id, newTable, instance.Id);
+                            ImportUtility.AddImportMap(dbContext, oldTable, item.Equip_Type_Id.ToString(), newTable, instance.Id);
                         }
                     }
                     else // update

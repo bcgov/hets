@@ -17,6 +17,18 @@ using System.Text.RegularExpressions;
 
 namespace HETSAPI.Import
 {
+    public class Pair
+    {
+        public float Hours { get; set; }
+        public float Rate  { get; set; }
+
+        public Pair (float hour, float rate)
+        {
+            this.Hours = hour;
+            this.Rate = rate;
+        }
+    }
+
     public class ImportUtility
     {
         /// <summary>
@@ -27,7 +39,7 @@ namespace HETSAPI.Import
         /// <param name="oldKey"></param>
         /// <param name="newTable"></param>
         /// <param name="newKey"></param>
-        static public void AddImportMap(DbAppContext dbContext, string oldTable, int oldKey, string newTable, int newKey)
+        static public void AddImportMap(DbAppContext dbContext, string oldTable, string oldKey, string newTable, int newKey)
         {
             ImportMap importMap = new Models.ImportMap();
             importMap.OldTable = oldTable;

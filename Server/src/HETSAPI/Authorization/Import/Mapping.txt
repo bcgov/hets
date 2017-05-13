@@ -1,5 +1,7 @@
 ﻿@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
-Note HET_CONTACT.NOTE SHOULD length limite is 150 should be changed to 512
+1. Note HET_CONTACT.NOTE SHOULD length limite is 150 should be changed to 512
+2. C:\Coding\HETS\HETS_Forked\hets\Server\src\HETSAPI\Migrations\20170330160401_HETS-162-3-30-1.cs(13): 
+	OLD key is changed to String from integer
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
@@ -587,6 +589,61 @@ Equip_Usage.xml
     <Created_Dt>2011-08-29T16:10:28.627</Created_Dt>
     <Created_By>Struthers, Kimberly  (IDIR\kstruthe)</Created_By>
 </BCBID_10JAN.dbo.Equip_Usage>
+
+public."HET_RENTAL_AGREEMENT";
+	"RENTAL_AGREEMENT_ID", 
+	"EQUIPMENT_ID", 
+	"PROJECT_ID", 
+	"STATUS", 
+	"CREATE_TIMESTAMP", 
+	"CREATE_USERID", 
+	"DATED_ON", 
+	"EQUIPMENT_RATE", 
+	"ESTIMATE_HOURS", 
+	"ESTIMATE_START_WORK", 
+	"LAST_UPDATE_TIMESTAMP", 
+	"LAST_UPDATE_USERID", 
+	"NOTE", 
+	"NUMBER", 
+	"RATE_COMMENT", 
+	"RATE_PERIOD"
+
+FROM public."HET_TIME_RECORD";
+	"TIME_RECORD_ID", 
+	"ENTERED_DATE", 
+	"HOURS", 
+	"RENTAL_AGREEMENT_RATE_ID", 
+	"WORKED_DATE", 
+	"TIME_PERIOD", 
+	"CREATE_TIMESTAMP", 
+	"CREATE_USERID", 
+	"LAST_UPDATE_TIMESTAMP", 
+	"LAST_UPDATE_USERID", 
+	"RENTAL_AGREEMENT_ID"
+
+public."HET_RENTAL_AGREEMENT_RATE";
+	"RENTAL_AGREEMENT_RATE_ID", 
+	"COMMENT", 
+	"COMPONENT_NAME", 
+	"CREATE_TIMESTAMP", 
+	"CREATE_USERID", 
+	"IS_ATTACHMENT", 
+	"LAST_UPDATE_TIMESTAMP", 
+	"LAST_UPDATE_USERID", 
+	"PERCENT_OF_EQUIPMENT_RATE", 
+	"RATE", 
+	"RATE_PERIOD", 
+	"RENTAL_AGREEMENT_ID"
+
+
+	First I will create "HET_RENTAL_AGREEMENT" table entry based on the following 3:    <Equip_Id>16701</Equip_Id> ,    <Project_Id>1563</Project_Id>,    <Service_Area_Id>24</Service_Area_Id>.
+Each such an entry has a list of RentalAgreementRate. So I will create 3 RentalAgreementRate entries in the table of 
+“HET_RENTAL_AGREEMENT_RATE",  corresponding to Rate, Rate2, and Rate 3. Those three rentalAgreementRate form a list as a property of 
+RentalAgreement.   
+
+Then xml entries of Hours, Hours2, and Hours3 will be three separate entries for the table of “HET_TIME_RECORD”, which is tied up with "HET_RENTAL_AGREEMENT" entry, and “HET_RENTAL_AGREEMENT_RATE".  What do you think the Column of TIME_PERIOD is? I will ignore this column for now.
+
+
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 Equip_Attach.xml

@@ -201,7 +201,8 @@ NOTE: The combination "Equip_ID" + "Attach_Seq_Num" must be used as the "OldKey"
 
 ## EquipUsage ##
 
-*Note*: In the new HETS design, we have the "RentalAgreement" record through which we can get the links to Equip_Id and Project_Id. If we use that, RentalAgreement records will be created from groups of EquipUsage records with common key of Equip_Id+Project_Id (+ possibly Year(Worked_Dt)).
+*Note*: In the new HETS design, we have the "RentalAgreement" record through which we can get the links to Equip_Id and Project_Id. 
+If we use that, RentalAgreement records will be created from groups of EquipUsage records with common key of Equip_Id+Project_Id (+ possibly Year(Worked_Dt)).
 
 Alternatively, we simply add "Equip_Id" and "Project_Id" fields to the 
 

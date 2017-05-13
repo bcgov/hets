@@ -51,13 +51,13 @@ namespace HETSAPI.Import
                 foreach (var item in legacyItems.WithProgress(progress))
                 {
                     // see if we have this one already.
-                    ImportMap importMap = dbContext.ImportMaps.FirstOrDefault(x => x.OldTable == oldTable && x.OldKey == item.Popt_Id);
+                    ImportMap importMap = dbContext.ImportMaps.FirstOrDefault(x => x.OldTable == oldTable && x.OldKey == item.Popt_Id.ToString());
 
                     if (importMap == null) // new entry
                     {
                         Models.Owner owner = null;
                         CopyToInstance(performContext, dbContext, item, ref owner, systemId, ref maxOwnerIndex, ref maxContactIndex);
-                        ImportUtility.AddImportMap(dbContext, oldTable, item.Popt_Id, newTable, owner.Id);
+                        ImportUtility.AddImportMap(dbContext, oldTable, item.Popt_Id.ToString(), newTable, owner.Id);
                     }
                     else // update
                     {
