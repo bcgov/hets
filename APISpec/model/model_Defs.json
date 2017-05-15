@@ -10587,7 +10587,7 @@
         },
         {
             "Description": "Old primary key for record",
-            "Length": null,
+            "Length": "150",
             "Name": "oldKey",
             "RefDef": null,
             "Required": [
@@ -10613,10 +10613,10 @@
             "datetime": null,
             "float": null,
             "id": null,
-            "integer": "integer",
+            "integer": null,
             "links": null,
             "ref": null,
-            "string": null,
+            "string": "string",
             "table": null
         },
         {

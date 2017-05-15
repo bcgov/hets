@@ -1442,8 +1442,8 @@ definitions:
         type: string
         description: Table name in new system.
       oldKey:
-        format: int32
-        type: integer
+        type: string
+        maxLength: 150
         description: Old primary key for record
       newKey:
         format: int32
