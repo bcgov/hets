@@ -54,10 +54,10 @@ namespace HETSAPI.Services.Impl
                 if (item.Contacts != null)
                 {
                     for (int i = 0; i < item.Contacts.Count; i++)
-                    {                        
+                    {
                         if (item.Contacts[i] != null)
                         {
-                            item.Contacts[i] = _context.Contacts.FirstOrDefault(a => a.Id == item.Contacts[i].Id);                            
+                            item.Contacts[i] = _context.Contacts.FirstOrDefault(a => a.Id == item.Contacts[i].Id);
                         }
                     }
                 }
@@ -128,7 +128,7 @@ namespace HETSAPI.Services.Impl
         public virtual IActionResult OwnersGetAsync()
         {
             var result = _context.Owners
-        .Include(x => x.LocalArea.ServiceArea.District.Region)        
+        .Include(x => x.LocalArea.ServiceArea.District.Region)
         .ToList();
             return new ObjectResult(result);
         }
@@ -169,8 +169,8 @@ namespace HETSAPI.Services.Impl
             var exists = _context.Owners.Any(a => a.Id == id);
             if (exists)
             {
-                List <Contact> contacts = GetOwnerContacts(id);
-                                                
+                List<Contact> contacts = GetOwnerContacts(id);
+
                 return new ObjectResult(contacts);
             }
             else
@@ -209,7 +209,7 @@ namespace HETSAPI.Services.Impl
                 _context.Contacts.Add(item);
                 owner.Contacts.Add(item);
                 _context.Owners.Update(owner);
-                _context.SaveChanges();                
+                _context.SaveChanges();
 
                 return new ObjectResult(item);
             }
@@ -261,7 +261,7 @@ namespace HETSAPI.Services.Impl
                             _context.Add(item);
                             items[i] = item;
                         }
-                    }                    
+                    }
                 }
 
                 // remove contacts that are no longer attached.
@@ -501,7 +501,7 @@ namespace HETSAPI.Services.Impl
                 {
                     if (equipment != null && !items.Any(x => x.Id == equipment.Id))
                     {
-                        equipmentToRemove.Add(equipment);                                             
+                        equipmentToRemove.Add(equipment);
                     }
                 }
 
@@ -511,7 +511,7 @@ namespace HETSAPI.Services.Impl
                     {
                         owner.EquipmentList.Remove(equipment);
                     }
-                }                
+                }
 
                 // replace Equipment List.
                 owner.EquipmentList = items.ToList();
@@ -540,7 +540,7 @@ namespace HETSAPI.Services.Impl
             if (exists)
             {
                 var result = _context.Owners
-                    .Include(x => x.LocalArea.ServiceArea.District.Region)                    
+                    .Include(x => x.LocalArea.ServiceArea.District.Region)
                     .Include(x => x.EquipmentList).ThenInclude(y => y.LocalArea.ServiceArea.District.Region)
                     .Include(x => x.EquipmentList).ThenInclude(y => y.DistrictEquipmentType)
                     .Include(x => x.EquipmentList).ThenInclude(y => y.DumpTruck)
@@ -564,7 +564,7 @@ namespace HETSAPI.Services.Impl
         }
 
         // Returns contacts for a specific owner.
-        private List<Contact> GetOwnerContacts (int id)
+        private List<Contact> GetOwnerContacts(int id)
         {
             List<Contact> result = null;
             Owner owner = _context.Owners
@@ -596,7 +596,7 @@ namespace HETSAPI.Services.Impl
 
                 var exists = _context.Owners.Any(a => a.Id == id);
                 if (exists && id == item.Id)
-                {                    
+                {
                     _context.Owners.Update(item);
                     // Save the changes
                     _context.SaveChanges();
@@ -667,22 +667,22 @@ namespace HETSAPI.Services.Impl
 
             if (localareas != null && localareas.Length > 0)
             {
-                data = data.Where(x => localareas.Contains(x.LocalArea.Id));                
+                data = data.Where(x => localareas.Contains(x.LocalArea.Id));
             }
 
             if (equipmenttypes != null)
             {
-                
+
                 foreach (int? item in equipmenttypes)
                 {
                     if (item != null)
                     {
-                        int equipmentType = (int) item;
+                        int equipmentType = (int)item;
                         data = data.Where(x => x.EquipmentList.Select(y => y.DistrictEquipmentType.Id).Contains(equipmentType));
                     }
                 }
             }
-                        
+
             if (status != null)
             {
                 // TODO: Change to enumerated type
@@ -691,15 +691,30 @@ namespace HETSAPI.Services.Impl
 
             if (hired != null)
             {
-                // hired is not currently implemented.
-                // throw new NotImplementedException();
+                IQueryable<int?> hiredOwnersQuery = _context.RentalAgreements
+                                    .Where(agreement => agreement.Status == "Active")
+                                    .Join(
+                                        _context.Equipments,
+                                        agreement => agreement.EquipmentId,
+                                        equipment => equipment.Id,
+                                        (agreement, equipment) => new
+                                        {
+                                            tempAgreement = agreement,
+                                            tempEqiupment = equipment
+                                        }
+                                    )
+                                    .Where(projection => projection.tempEqiupment.OwnerId != null)
+                                    .Select(projection => projection.tempEqiupment.OwnerId)
+                                    .Distinct();
+
+                data = data.Where(o => hiredOwnersQuery.Contains(o.Id));
             }
 
             if (owner != null)
             {
                 data = data.Where(x => x.Id == owner);
             }
-            
+
             var result = data.ToList();
             return new ObjectResult(result);
         }
