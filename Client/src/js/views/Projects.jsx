@@ -165,7 +165,7 @@ var Projects = React.createClass({
             <ButtonToolbar id="projects-filters">
               <MultiDropdown id="selectedDistrictsIds" placeholder="Districts"
                 items={ districts } selectedIds={ this.state.search.selectedDistrictsIds } updateState={ this.updateSearchState } showMaxItems={ 2 } />
-              <DropdownControl id="statusCode" title={ this.state.search.statusCode } updateState={ this.updateSearchState }
+              <DropdownControl id="statusCode" title={ this.state.search.statusCode } updateState={ this.updateSearchState } blankLine="(All)"
                   items={[ Constant.PROJECT_STATUS_CODE_ACTIVE, Constant.PROJECT_STATUS_CODE_COMPLETED ]} />
               <FormInputControl id="projectName" type="text" placeholder="Project name" value={ this.state.search.projectName } updateState={ this.updateSearchState }></FormInputControl>
               <CheckboxControl inline id="hires" checked={ this.state.search.hires } updateState={ this.updateSearchState }> Hires</CheckboxControl>

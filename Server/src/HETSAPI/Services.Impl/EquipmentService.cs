@@ -67,7 +67,7 @@ namespace HETSAPI.Services.Impl
                 if (item.Owner != null)
                 {
                     item.Owner = _context.Owners
-                        .Include (x => x.EquipmentList)
+                        .Include(x => x.EquipmentList)
                         .FirstOrDefault(a => a.Id == item.Owner.Id);
                 }
 
@@ -119,7 +119,7 @@ namespace HETSAPI.Services.Impl
                         }
                     }
                 }
-                
+
             }
 
         }
@@ -426,12 +426,12 @@ namespace HETSAPI.Services.Impl
                     _context.SaveChanges();
 
                     // if seniority has changed, update blocks.
-                    if ((originalSeniorityEffectiveDate == null && item.SeniorityEffectiveDate != null)  ||
-                        (originalSeniorityEffectiveDate != null && item.SeniorityEffectiveDate != null 
-                            && originalSeniorityEffectiveDate < item.SeniorityEffectiveDate ))
+                    if ((originalSeniorityEffectiveDate == null && item.SeniorityEffectiveDate != null) ||
+                        (originalSeniorityEffectiveDate != null && item.SeniorityEffectiveDate != null
+                            && originalSeniorityEffectiveDate < item.SeniorityEffectiveDate))
                     {
                         _context.UpdateBlocksFromEquipment(item);
-                    }                    
+                    }
 
                     var result = _context.Equipments
                     .Include(x => x.LocalArea.ServiceArea.District.Region)
@@ -663,13 +663,13 @@ namespace HETSAPI.Services.Impl
             // calculate all of the rotation lists.
 
             var localAreas = _context.LocalAreas
-                .Where(x => x.ServiceArea.District.Region.Id == region) 
-                .Select (x => x)
+                .Where(x => x.ServiceArea.District.Region.Id == region)
+                .Select(x => x)
                 .ToList();
-            var equipmentTypes = _context.EquipmentTypes.Select (x => x).ToList();
+            var equipmentTypes = _context.EquipmentTypes.Select(x => x).ToList();
 
             foreach (LocalArea localArea in localAreas)
-            {                
+            {
                 foreach (EquipmentType equipmentType in equipmentTypes)
                 {
                     _context.CalculateSeniorityList(localArea.Id, equipmentType.Id);
@@ -704,35 +704,44 @@ namespace HETSAPI.Services.Impl
                     .Include(x => x.History)
                     .Select(x => x);
 
-            if (localareas != null && localareas.Length > 0 )
+            // Default search results must be limited to user
+            int? districtId = _context.GetDistrictIdByUserId(GetCurrentUserId()).Single();
+            data = data.Where(x => x.LocalArea.ServiceArea.DistrictId.Equals(districtId));
+
+            if (localareas != null && localareas.Length > 0)
             {
-                data = data.Where(x => localareas.Contains(x.LocalArea.Id));                
+                data = data.Where(x => localareas.Contains(x.LocalArea.Id));
             }
 
             if (types != null && types.Length > 0)
             {
-                data = data.Where(x => types.Contains(x.DistrictEquipmentType.Id));                
+                data = data.Where(x => types.Contains(x.DistrictEquipmentType.Id));
             }
-            
+
             if (equipmentAttachment != null)
             {
-                data = data.Where(x => x.EquipmentAttachments.Any(y => y.TypeName.ToLower().Contains (equipmentAttachment.ToLower())));
+                data = data.Where(x => x.EquipmentAttachments.Any(y => y.TypeName.ToLower().Contains(equipmentAttachment.ToLower())));
             }
-            
+
             if (owner != null)
             {
-                data = data.Where(x => x.Owner.Id == owner);                
+                data = data.Where(x => x.Owner.Id == owner);
             }
 
             if (status != null)
             {
-                data = data.Where(x => status.Equals(x.Status));
+                // TODO: Change to enumerated type
+                data = data.Where(x => x.Status.ToLower() == status.ToLower());
             }
 
             if (hired != null)
             {
-                // hired is not currently implemented.
-                // throw new NotImplementedException();
+                IQueryable<int?> hiredEquipmentQuery = _context.RentalAgreements
+                                    .Where(agreement => agreement.Status == "Active")
+                                    .Select(agreement => agreement.EquipmentId)
+                                    .Distinct();
+
+                data = data.Where(e => hiredEquipmentQuery.Contains(e.Id));
             }
 
             if (notverifiedsincedate != null)
@@ -746,12 +755,12 @@ namespace HETSAPI.Services.Impl
                 EquipmentViewModel newItem = item.ToViewModel();
                 result.Add(newItem);
             }
-            
+
             // second pass to do calculated fields.            
             foreach (var equipmentViewModel in result)
             {
-                CalculateViewModel(equipmentViewModel);                
-            }            
+                CalculateViewModel(equipmentViewModel);
+            }
 
             return new ObjectResult(result);
 

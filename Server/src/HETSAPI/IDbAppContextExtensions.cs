@@ -49,6 +49,20 @@ namespace HETSAPI.Models
                     .FirstOrDefault();
             return serviceArea;
         }
+
+        /// <summary>
+        /// Returns a district id for a given user id
+        /// </summary>
+        /// <param name="context"></param>
+        /// <param name="userId">A user id</param>
+        /// <returns>Region</returns>
+        public static IQueryable<int?> GetDistrictIdByUserId(this IDbAppContext context, int? userId)
+        {
+            // TODO: Change user model types to match DB schema
+            // TODO: Change to return IQueryable
+            return context.Users.Where(x => x.Id.Equals(userId)).Select(x => x.DistrictId);
+        }
+
         public static Role GetRole(this IDbAppContext context, string name)
         {
             Role role = context.Roles.Where(x => x.Name.Equals(name, StringComparison.OrdinalIgnoreCase))
