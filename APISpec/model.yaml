@@ -410,8 +410,8 @@ definitions:
         format: float
         description: TO BE REVIEWED WITH THE BUSINESS - WHAT IS THIS?
       refuseRate:
-        type: string
-        maxLength: 255
+        type: number
+        format: float
         description: TO BE REVIEWED WITH THE BUSINESS - WHAT IS THIS?
       serialNumber:
         type: string

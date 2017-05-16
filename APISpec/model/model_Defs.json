@@ -3234,7 +3234,7 @@
         },
         {
             "Description": "TO BE REVIEWED WITH THE BUSINESS - WHAT IS THIS?",
-            "Length": "255",
+            "Length": null,
             "Name": "refuseRate",
             "RefDef": null,
             "Required": [
@@ -3267,12 +3267,12 @@
             "binary": null,
             "boolean": null,
             "datetime": null,
-            "float": null,
+            "float": "float",
             "id": null,
             "integer": null,
             "links": null,
             "ref": null,
-            "string": "string",
+            "string": null,
             "table": null
         },
         {
