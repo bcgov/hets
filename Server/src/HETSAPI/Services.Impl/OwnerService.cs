@@ -689,7 +689,7 @@ namespace HETSAPI.Services.Impl
                 data = data.Where(x => x.Status.ToLower() == status.ToLower());
             }
 
-            if (hired != null)
+            if (hired == true)
             {
                 IQueryable<int?> hiredOwnersQuery = _context.RentalAgreements
                                     .Where(agreement => agreement.Status == "Active")
