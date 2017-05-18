@@ -75,24 +75,23 @@ namespace HETSAPI.Import
                 {
                     try
                     {
-                        dbContext.SaveChanges();
+                        int iResult = dbContext.SaveChangesForImport();
                     }
-                    catch
+                    catch (Exception e)
                     {
-
+                        string iStr = e.ToString();
                     }
                 }
             }
-
             try
             {
-                dbContext.SaveChanges();
-                performContext.WriteLine("*** Done ***");
+                int iResult = dbContext.SaveChangesForImport();
             }
-            catch
+            catch (Exception e)
             {
-
+                string iStr = e.ToString();
             }
+            performContext.WriteLine("*** Done ***");
         }
 
 
@@ -114,9 +113,9 @@ namespace HETSAPI.Import
                 instance.Id = oldObject.Equip_Id;
                 
                 // instance.DumpTruckId = oldObject.Reg_Dump_Trk;
-                instance.ArchiveCode = oldObject.Archive_Cd==null ? "": oldObject.Archive_Cd;
+                instance.ArchiveCode = oldObject.Archive_Cd == null ? "" : new string(oldObject.Archive_Cd.Take(50).ToArray());
                 instance.ArchiveReason = oldObject.Archive_Reason == null ? "" : new string(oldObject.Archive_Reason.Take(2048).ToArray());
-                instance.LicencePlate = oldObject.Licence == null ? "" : oldObject.Licence;
+                instance.LicencePlate = oldObject.Licence == null ? "" : new string(oldObject.Licence.Take(20).ToArray());
 
                 if (oldObject.Comment != null)
                 {
@@ -135,20 +134,24 @@ namespace HETSAPI.Import
 
                 if (oldObject.Equip_Type_Id != null)
                 {
-                    DistrictEquipmentType equipType = dbContext.DistrictEquipmentTypes.FirstOrDefault(x => x.EquipmentTypeId == oldObject.Equip_Type_Id);
+                    //Equipment_TYPE_ID is copied to the table of HET_DISTRICT_DISTRICT_TYPE as key
+                    DistrictEquipmentType equipType = dbContext.DistrictEquipmentTypes.FirstOrDefault(x => x.Id == oldObject.Equip_Type_Id);
                     if (equipType != null)
+                    {
                         instance.DistrictEquipmentType = equipType;
+                        instance.DistrictEquipmentTypeId = oldObject.Equip_Type_Id;
+                    }
                 }
 
-                instance.EquipmentCode = oldObject.Equip_Cd == null ? "" : oldObject.Equip_Cd;
-                instance.Model = oldObject.Model == null ? "" : oldObject.Model;
-                instance.Make = oldObject.Make == null ? "" : oldObject.Make;
-                instance.Year = oldObject.Year == null ? "" : oldObject.Year;
-                instance.Operator = oldObject.Operator == null ? "" : oldObject.Operator;
+                instance.EquipmentCode = oldObject.Equip_Cd == null ? "" : new string(oldObject.Equip_Cd.Take(25).ToArray());
+                instance.Model = oldObject.Model == null ? "" : new string(oldObject.Model.Take(50).ToArray());
+                instance.Make = oldObject.Make == null ? "" : new string(oldObject.Make.Take(50).ToArray());
+                instance.Year = oldObject.Year == null ? "" : new string(oldObject.Year.Take(15).ToArray());
+                instance.Operator = oldObject.Operator == null ? "" : new string(oldObject.Operator.Take(255).ToArray());
 
-                // instance.RefuseRate = float.Parse(oldObject.Refuse_Rate.Trim());
-                instance.SerialNumber = oldObject.Serial_Num == null ? "" : oldObject.Serial_Num;
-                instance.Status = oldObject.Status_Cd == null ? "" : oldObject.Status_Cd;
+                // instance.RefuseRate = oldObject.Refuse_Rate == null ? "" : oldObject.Refuse_Rate;
+                instance.SerialNumber = oldObject.Serial_Num == null ? "" : new string(oldObject.Serial_Num.Take(100).ToArray());
+                instance.Status = oldObject.Status_Cd == null ? "" : new string(oldObject.Status_Cd.Take(50).ToArray());
 
                 if (oldObject.Pay_Rate != null)
                 {
@@ -175,7 +178,7 @@ namespace HETSAPI.Import
                     }
                 }
                 // Find the owner which is referenced in the equipment of the xml file entry
-                ImportMap map = dbContext.ImportMaps.FirstOrDefault(x => x.OldTable == oldTable && x.OldKey == oldObject.Owner_Popt_Id.ToString());
+                ImportMap map = dbContext.ImportMaps.FirstOrDefault(x => x.OldTable == ImportOwner.oldTable && x.OldKey == oldObject.Owner_Popt_Id.ToString());
                 if (map != null)
                 {
                     Models.Owner owner = dbContext.Owners.FirstOrDefault(x => x.Id == map.NewKey);

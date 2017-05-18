@@ -37,6 +37,13 @@ namespace HETSAPI.Import
                 XmlSerializer ser = new XmlSerializer(typeof(EquipAttach[]), new XmlRootAttribute(rootAttr));
                 MemoryStream memoryStream = ImportUtility.memoryStreamGenerator(xmlFileName, oldTable, fileLocation, rootAttr);
                 HETSAPI.Import.EquipAttach[] legacyItems = (HETSAPI.Import.EquipAttach[])ser.Deserialize(memoryStream);
+
+                //Use this list to save a trip to query database in each iteration
+                List<Models.Equipment> equips = dbContext.Equipments
+                        .Include(x => x.DumpTruck)
+                        .Include(x => x.DistrictEquipmentType)
+                        .ToList();
+
                 int ii = 0;
                 foreach (var item in legacyItems.WithProgress(progress))
                 {
@@ -49,7 +56,7 @@ namespace HETSAPI.Import
                         if (item.Equip_Id > 0)
                         {
                             Models.EquipmentAttachment instance = null;
-                            CopyToInstance(performContext, dbContext, item, ref instance, systemId);
+                            CopyToInstance(performContext, dbContext, item, ref instance, equips, systemId);
                             ImportUtility.AddImportMap(dbContext, oldTable, oldKeyCombined, newTable, instance.Id);
                         }
                     }
@@ -58,14 +65,14 @@ namespace HETSAPI.Import
                         Models.EquipmentAttachment instance = dbContext.EquipmentAttachments.FirstOrDefault(x => x.Id == importMap.NewKey);
                         if (instance == null) // record was deleted
                         {
-                            CopyToInstance(performContext, dbContext, item, ref instance, systemId);
+                            CopyToInstance(performContext, dbContext, item, ref instance, equips, systemId);
                             // update the import map.
                             importMap.NewKey = instance.Id;
                             dbContext.ImportMaps.Update(importMap);
                         }
                         else // ordinary update.
                         {
-                            CopyToInstance(performContext, dbContext, item, ref instance, systemId);
+                            CopyToInstance(performContext, dbContext, item, ref instance, equips, systemId);
                             // touch the import map.
                             importMap.LastUpdateTimestamp = DateTime.UtcNow;
                             dbContext.ImportMaps.Update(importMap);
@@ -76,11 +83,11 @@ namespace HETSAPI.Import
                     {
                         try
                         {
-                            dbContext.SaveChanges();
+                            int iResult = dbContext.SaveChangesForImport();
                         }
-                        catch
+                        catch (Exception e)
                         {
-
+                            string iStr = e.ToString();
                         }
                     }
                 }
@@ -95,16 +102,17 @@ namespace HETSAPI.Import
 
             try
             {
-                dbContext.SaveChanges();
+                int iResult = dbContext.SaveChangesForImport();
             }
-            catch
+            catch (Exception e)
             {
-
+                string iStr = e.ToString();
             }
         }
 
 
-        static private void CopyToInstance(PerformContext performContext, DbAppContext dbContext, HETSAPI.Import.EquipAttach oldObject, ref Models.EquipmentAttachment instance, string systemId)
+        static private void CopyToInstance(PerformContext performContext, DbAppContext dbContext, HETSAPI.Import.EquipAttach oldObject, ref Models.EquipmentAttachment instance,
+            List<Models.Equipment> equips, string systemId)
         {
             if (oldObject.Equip_Id <= 0)
                 return;
@@ -118,7 +126,7 @@ namespace HETSAPI.Import
                 instance = new Models.EquipmentAttachment();
                 int equipId = oldObject.Equip_Id ?? -1;
 
-                Models.Equipment equipment = dbContext.Equipments.FirstOrDefault(x => x.Id == equipId);
+                Models.Equipment equipment = equips.FirstOrDefault(x => x.Id == equipId);
                 if (equipment != null)
                 {
                     instance.Equipment = equipment;

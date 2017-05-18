@@ -4,29 +4,35 @@ using System.Linq;
 using System.Threading.Tasks;
 using System.Xml.Serialization;
 
-namespace SchoolBusAPI.Import
+namespace HETSAPI.Import
 {
     public class Rotation_Doc
-    {        
-        [XmlElement]
-        public string Equip_Id { get; set; }
+    {
+        [XmlElement("Equip_Id")]
+        public int Equip_Id { get; set; }
 
-        [XmlElement]
+        [XmlElement("Note_Dt")]
         public string Note_Dt { get; set; }
-        [XmlElement]
+
+        [XmlElement("Created_Dt")]
         public string Created_Dt { get; set; }
 
-        [XmlElement]
+        [XmlElement("Service_Area_Id")]
         public string Service_Area_Id { get; set; }
-        [XmlElement]
-        public string Project_Id { get; set; }
-        [XmlElement]
+
+        [XmlElement("Project_Id")]
+        public int Project_Id { get; set; }
+
+        [XmlElement("Note_Type")]
         public string Note_Type { get; set; }
-        [XmlElement]
+
+        [XmlElement("Reason")]
         public string Reason { get; set; }
-        [XmlElement]
+
+        [XmlElement("Note_Id")]
         public string Note_Id { get; set; }
-        [XmlElement]
-        public string Created_By { get; set; }       
+
+        [XmlElement("Created_By")]
+        public string Created_By { get; set; }
     }
 }

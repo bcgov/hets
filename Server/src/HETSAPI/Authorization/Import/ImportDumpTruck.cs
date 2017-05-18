@@ -62,7 +62,6 @@ namespace HETSAPI.Import
                             // update the import map.
                             importMap.NewKey = instance.Id;
                             dbContext.ImportMaps.Update(importMap);
-                            //  dbContext.SaveChanges();
                         }
                         else // ordinary update.
                         {
@@ -70,7 +69,6 @@ namespace HETSAPI.Import
                             // touch the import map.
                             importMap.LastUpdateTimestamp = DateTime.UtcNow;
                             dbContext.ImportMaps.Update(importMap);
-                            // dbContext.SaveChanges();
                         }
                     }
 
@@ -78,22 +76,13 @@ namespace HETSAPI.Import
                     {
                         try
                         {
-                            dbContext.SaveChanges();
+                            int iResult = dbContext.SaveChangesForImport();
                         }
-                        catch
+                        catch (Exception e)
                         {
-
+                            string iStr = e.ToString();
                         }
                     }
-                }
-                performContext.WriteLine("*** Done ***");
-                try
-                {
-                    dbContext.SaveChanges();
-                }
-                catch
-                {
-
                 }
             }
 
@@ -102,6 +91,15 @@ namespace HETSAPI.Import
                 performContext.WriteLine("*** ERROR ***");
                 performContext.WriteLine(e.ToString());
             }
+            try
+            {
+                int iResult = dbContext.SaveChangesForImport();
+            }
+            catch (Exception e)
+            {
+                string iStr = e.ToString();
+            }
+            performContext.WriteLine("*** Done ***");
         }
 
 

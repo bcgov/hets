@@ -15,13 +15,13 @@ using Microsoft.Extensions.Configuration;
 using System.Text.RegularExpressions;
 
 namespace HETSAPI.Import
-{
-    public class ImportEquipmentType
-    {
 
-        const string oldTable = "EquipType";
-        const string newTable = "HET_EQUIPMMENT_TYPE";
-        const string xmlFileName = "Equip_Type.xml";
+{
+    public class ImportRotation
+    {
+        const string oldTable = "Rotation_Doc";
+        const string newTable = "HET_NOTE";
+        const string xmlFileName = "Rotation_Doc.xml";
 
         static public void Import(PerformContext performContext, DbAppContext dbContext, string fileLocation, string systemId)
         {
@@ -35,43 +35,51 @@ namespace HETSAPI.Import
                 progress.SetValue(0);
 
                 // create serializer and serialize xml file
-                XmlSerializer ser = new XmlSerializer(typeof(EquipType[]), new XmlRootAttribute(rootAttr));
+                XmlSerializer ser = new XmlSerializer(typeof(Rotation_Doc[]), new XmlRootAttribute(rootAttr));
                 MemoryStream memoryStream = ImportUtility.memoryStreamGenerator(xmlFileName, oldTable, fileLocation, rootAttr);
-                HETSAPI.Import.EquipType[] legacyItems = (HETSAPI.Import.EquipType[])ser.Deserialize(memoryStream);
+                HETSAPI.Import.Rotation_Doc[] legacyItems = (HETSAPI.Import.Rotation_Doc[])ser.Deserialize(memoryStream);
+
+                //Use this list to save a trip to query database in each iteration
+                List<Models.Equipment> equips = dbContext.Equipments
+                        .Include(x => x.DumpTruck)
+                        .Include(x => x.DistrictEquipmentType)
+                        .ToList();
+                List<Models.Project> projs = dbContext.Projects
+                        .ToList();
+
                 int ii = 0;
                 foreach (var item in legacyItems.WithProgress(progress))
                 {
                     // see if we have this one already.
-                    ImportMap importMap = dbContext.ImportMaps.FirstOrDefault(x => x.OldTable == oldTable && x.OldKey == item.Equip_Type_Id.ToString());
+                    string oldKey = item.Equip_Id + item.Note_Dt + item.Created_Dt;
+                    ImportMap importMap = dbContext.ImportMaps.FirstOrDefault(x => x.OldTable == oldTable && x.OldKey == oldKey);
 
                     if (importMap == null) // new entry
                     {
-                        if (item.Equip_Type_Id > 0)
-                        {
-                            Models.EquipmentType instance = null;
-                            CopyToInstance(performContext, dbContext, item, ref instance, systemId);
-                            ImportUtility.AddImportMap(dbContext, oldTable, item.Equip_Type_Id.ToString(), newTable, instance.Id);
-                        }
+                        Models.Note instance = null;
+                        CopyToInstance(performContext, dbContext, item, ref instance, equips, projs, systemId);
+                        ImportUtility.AddImportMap(dbContext, oldTable, oldKey, newTable, instance.Id);
                     }
                     else // update
                     {
-                        Models.EquipmentType instance = dbContext.EquipmentTypes.FirstOrDefault(x => x.Id == importMap.NewKey);
+                        Models.Note instance = dbContext.Notes.FirstOrDefault(x => x.Id == importMap.NewKey);
                         if (instance == null) // record was deleted
                         {
-                            CopyToInstance(performContext, dbContext, item, ref instance, systemId);
+                            CopyToInstance(performContext, dbContext, item, ref instance, equips, projs, systemId);
                             // update the import map.
                             importMap.NewKey = instance.Id;
                             dbContext.ImportMaps.Update(importMap);
                         }
                         else // ordinary update.
                         {
-                            CopyToInstance(performContext, dbContext, item, ref instance, systemId);
+                            CopyToInstance(performContext, dbContext, item, ref instance, equips, projs, systemId);
                             // touch the import map.
                             importMap.LastUpdateTimestamp = DateTime.UtcNow;
                             dbContext.ImportMaps.Update(importMap);
                         }
                     }
-                    if (ii++ % 500 == 0)
+
+                    if (++ii % 1000 == 0)
                     {
                         try
                         {
@@ -83,6 +91,7 @@ namespace HETSAPI.Import
                         }
                     }
                 }
+                performContext.WriteLine("*** Done ***");
                 try
                 {
                     int iResult = dbContext.SaveChangesForImport();
@@ -91,7 +100,6 @@ namespace HETSAPI.Import
                 {
                     string iStr = e.ToString();
                 }
-                performContext.WriteLine("*** Done ***");
             }
 
             catch (Exception e)
@@ -101,61 +109,42 @@ namespace HETSAPI.Import
             }
         }
 
-
-        static private void CopyToInstance(PerformContext performContext, DbAppContext dbContext, HETSAPI.Import.EquipType oldObject, ref Models.EquipmentType instance, string systemId)
+        /// <summary>
+        /// Copy xml item to instance (table entries)
+        /// </summary>
+        /// <param name="performContext"></param>
+        /// <param name="dbContext"></param>
+        /// <param name="oldObject"></param>
+        /// <param name="instance"></param>
+        /// <param name="systemId"></param>
+        static private void CopyToInstance(PerformContext performContext, DbAppContext dbContext, HETSAPI.Import.Rotation_Doc oldObject, ref Models.Note instance,
+            List<Models.Equipment> equips, List<Models.Project> projs, string systemId)
         {
             bool isNew = false;
 
-            if (oldObject.Equip_Type_Id <= 0)
-                return;
-
             //Add the user specified in oldObject.Modified_By and oldObject.Created_By if not there in the database
-            Models.User modifiedBy = ImportUtility.AddUserFromString(dbContext, oldObject.Modified_By, systemId);
+            Models.User modifiedBy = ImportUtility.AddUserFromString(dbContext, "", systemId);
             Models.User createdBy = ImportUtility.AddUserFromString(dbContext, oldObject.Created_By, systemId);
 
             if (instance == null)
             {
                 isNew = true;
-                instance = new Models.EquipmentType();
-                instance.Id = oldObject.Equip_Type_Id;
-                instance.IsDumpTruck = false;   // Where this is coming from?   !!!!!!
-                try
-                {
-                    instance.ExtendHours = float.Parse(oldObject.Extend_Hours.Trim());
-                    instance.MaximumHours = float.Parse(oldObject.Max_Hours.Trim());
-                    instance.MaxHoursSub = float.Parse(oldObject.Max_Hours_Sub.Trim());
-                }
-                catch
-                {
+                instance = new Models.Note();
 
-                }
-                try
+                Models.Project proj = projs.FirstOrDefault(x => x.Id == oldObject.Project_Id);    
+                Models.Equipment equip = equips.FirstOrDefault(x => x.Id == oldObject.Equip_Id);
+                if (equip != null)
                 {
-                    instance.Name = oldObject.Equip_Type_Cd.Trim();
-                }
-                catch
-                {
-
-                }
-
-                instance.CreateTimestamp = DateTime.UtcNow;
-                instance.CreateUserid = createdBy.SmUserId;
-                dbContext.EquipmentTypes.Add(instance);
-            }
-            else
-            {
-                instance = dbContext.EquipmentTypes
-                    .First(x => x.Id == oldObject.Equip_Type_Id);
-                instance.LastUpdateUserid = modifiedBy.SmUserId;
-                try
-                {
-                    instance.LastUpdateTimestamp = DateTime.Parse(oldObject.Modified_Dt.Trim().Substring(0, 10));
-                }
-                catch
-                {
-
-                }
-                dbContext.EquipmentTypes.Update(instance);
+                    if (equip.Notes == null)
+                        equip.Notes = new List<Note>();
+                    Models.Note note = new Models.Note(oldObject.Reason, true);
+                    if (proj != null)
+                    { // The current model does not allow Project Id to be added to thge Note. while Note model should have Project ID
+                       // note. = oldObject.Project_Id;
+                    }
+                    equip.Notes.Add(note);
+                    dbContext.Equipments.Update(equip);
+                } 
             }
         }
     }

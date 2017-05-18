@@ -18,9 +18,9 @@ namespace HETSAPI.Import
 {
     public class ImportOwner
     {
-        const string oldTable = "Owner";
-        const string newTable = "HET_OWNER";
-        const string xmlFileName = "Owner.xml";
+        public static string oldTable = "Owner";
+        public static string newTable = "HET_OWNER";
+        public static string xmlFileName = "Owner.xml";
 
         /// <summary>
         /// 
@@ -68,7 +68,6 @@ namespace HETSAPI.Import
                             // update the import map.
                             importMap.NewKey = owner.Id;
                             dbContext.ImportMaps.Update(importMap);
-                            // dbContext.SaveChanges();
                         }
                         else // ordinary update.
                         {
@@ -76,17 +75,17 @@ namespace HETSAPI.Import
                             // touch the import map.
                             importMap.LastUpdateTimestamp = DateTime.UtcNow;
                             dbContext.ImportMaps.Update(importMap);
-                            // dbContext.SaveChanges();
                         }
                     }
                     if (ii % 500 == 0)
                     {
                         try
                         {
-                            dbContext.SaveChanges();
+                            int iResult =  dbContext.SaveChangesForImport();
                         }
-                        catch
+                        catch (Exception e)
                         {
+                            string iStr = e.ToString();
                         }
                     }
                 }
@@ -100,10 +99,11 @@ namespace HETSAPI.Import
             }
             try
             {
-                dbContext.SaveChanges();
+                int iResult = dbContext.SaveChangesForImport();
             }
-            catch
+            catch (Exception e)
             {
+                string iStr = e.ToString();
             }
         }
 

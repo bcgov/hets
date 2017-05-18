@@ -59,7 +59,6 @@ namespace HETSAPI.Import
                     //        // update the import map.
                     //        importMap.NewKey = instance.Id;
                     //        dbContext.ImportMaps.Update(importMap);
-                    //      //DI  dbContext.SaveChanges();
                     //    }
                     //    else // ordinary update.
                     //    {
@@ -67,38 +66,36 @@ namespace HETSAPI.Import
                     //        // touch the import map.
                     //        importMap.LastUpdateTimestamp = DateTime.UtcNow;
                     //        dbContext.ImportMaps.Update(importMap);
-                    //        //DI   dbContext.SaveChanges();
                     //    }
                     //}
 
-                    if (ii++ % 500 == 0)
+                    if (ii++ % 100 == 0)
                     {
                         try
                         {
-                            dbContext.SaveChanges();
+                            int iResult = dbContext.SaveChangesForImport();
                         }
-                        catch
+                        catch (Exception e)
                         {
-
+                            string iStr = e.ToString();
                         }
                     }
                 }
-                try
-                {
-                    dbContext.SaveChanges();
-                }
-                catch
-                {
-
-                }
-                performContext.WriteLine("*** Done ***");
             }
-
             catch (Exception e)
             {
                 performContext.WriteLine("*** ERROR ***");
                 performContext.WriteLine(e.ToString());
             }
+            try
+            {
+                int iResult = dbContext.SaveChangesForImport();
+            }
+            catch (Exception e)
+            {
+                string iStr = e.ToString();
+            }
+            performContext.WriteLine("*** Done ***");
         }
 
         /// <summary>
@@ -199,15 +196,6 @@ namespace HETSAPI.Import
                 user.CreateTimestamp = DateTime.UtcNow;
                 user.Active = true;
                 dbContext.Users.Update(user);
-            }
-            try
-            {
-                //DI dbContext.SaveChanges();
-            }
-            catch (Exception e)
-            {
-                performContext.WriteLine("*** ERROR With add or update user ***");
-                performContext.WriteLine(e.ToString());
             }
         }
 

@@ -67,7 +67,7 @@ namespace HETSAPI.Import
                             // update the import map.
                             importMap.NewKey = serviceArea.Id;
                             dbContext.ImportMaps.Update(importMap);
-                            dbContext.SaveChanges();
+                            dbContext.SaveChangesForImport();
                         }
                         else // ordinary update.
                         {
@@ -75,7 +75,7 @@ namespace HETSAPI.Import
                             // touch the import map.
                             importMap.LastUpdateTimestamp = DateTime.UtcNow;
                             dbContext.ImportMaps.Update(importMap);
-                            dbContext.SaveChanges();
+                            dbContext.SaveChangesForImport();
                         }
                     }
                 }
@@ -138,7 +138,7 @@ namespace HETSAPI.Import
             }
             try
             {
-                dbContext.SaveChanges();
+                int iResult = dbContext.SaveChangesForImport();
             }
             catch (Exception e)
             {

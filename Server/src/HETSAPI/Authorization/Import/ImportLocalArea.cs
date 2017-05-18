@@ -88,7 +88,7 @@ namespace HETSAPI.Import
 
             try
             {
-                dbContext.SaveChanges();
+                int iResult = dbContext.SaveChangesForImport();
             }
             catch (Exception e)
             {
@@ -120,8 +120,9 @@ namespace HETSAPI.Import
                 ServiceArea serviceArea = dbContext.ServiceAreas.FirstOrDefault(x => x.MinistryServiceAreaID == oldObject.Service_Area_Id);
                 localArea.ServiceArea = serviceArea;
             }
-            catch
+            catch (Exception e)
             {
+                string iStr = e.ToString();
             }
 
 

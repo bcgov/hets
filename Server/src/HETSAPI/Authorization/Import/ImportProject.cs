@@ -62,7 +62,6 @@ namespace HETSAPI.Import
                             // update the import map.
                             importMap.NewKey = instance.Id;
                             dbContext.ImportMaps.Update(importMap);
-                            //  dbContext.SaveChanges();
                         }
                         else // ordinary update.
                         {
@@ -70,7 +69,6 @@ namespace HETSAPI.Import
                             // touch the import map.
                             importMap.LastUpdateTimestamp = DateTime.UtcNow;
                             dbContext.ImportMaps.Update(importMap);
-                            // dbContext.SaveChanges();
                         }
                     }
 
@@ -78,22 +76,22 @@ namespace HETSAPI.Import
                     {
                         try
                         {
-                            dbContext.SaveChanges();
+                            int iResult = dbContext.SaveChangesForImport();
                         }
-                        catch
+                        catch (Exception e)
                         {
-
+                            string iStr = e.ToString();
                         }
                     }
                 }
                 performContext.WriteLine("*** Done ***");
                 try
                 {
-                    dbContext.SaveChanges();
+                    int iResult = dbContext.SaveChangesForImport();
                 }
-                catch
+                catch (Exception e)
                 {
-
+                    string iStr = e.ToString();
                 }
             }
 
@@ -154,15 +152,8 @@ namespace HETSAPI.Import
                         string i = e.ToString();
                     }
 
-                    try
-                    {   
-                      //  instance.RentalAgreements
-                     // instance.RentalRequests = oldObject.
-                    }
-                    catch (Exception e)
-                    {
-                        string i = e.ToString();
-                    }
+                    //  instance.RentalAgreements
+                    // instance.RentalRequests = oldObject.
                     try
                     {   //9 properties
                         instance.CreateTimestamp = DateTime.Parse(oldObject.Created_Dt.Trim().Substring(0, 10));
@@ -172,16 +163,7 @@ namespace HETSAPI.Import
                         instance.CreateTimestamp = DateTime.UtcNow;
                     }
 
-                    try
-                    {   // 8 properties
-                        instance.CreateUserid = createdBy.SmUserId;
-                    }
-                    catch (Exception e)
-                    {
-                        instance.CreateUserid = systemId;
-                    }
-
-
+                    instance.CreateUserid = createdBy.SmUserId;
                 }
                 catch (Exception e)
                 {
@@ -195,25 +177,8 @@ namespace HETSAPI.Import
                 instance = dbContext.Projects
                     .First(x => x.Id == oldObject.Project_Id);
                 instance.LastUpdateUserid = modifiedBy.SmUserId;
-                try
-                {
-                    instance.LastUpdateUserid = modifiedBy.SmUserId;
-                    instance.LastUpdateTimestamp = DateTime.UtcNow;
-                }
-                catch
-                {
-
-                }
+                instance.LastUpdateTimestamp = DateTime.UtcNow;
                 dbContext.Projects.Update(instance);
-            }
-            try
-            {
-                //Di dbContext.SaveChanges();
-            }
-            catch (Exception e)
-            {
-                performContext.WriteLine("*** ERROR With add or update Project "+ newTable +" ***");
-                performContext.WriteLine(e.ToString());
             }
         }
 

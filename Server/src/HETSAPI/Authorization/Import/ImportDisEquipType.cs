@@ -16,7 +16,7 @@ using System.Text.RegularExpressions;
 
 namespace HETSAPI.Import
 {
-    public class ImportEquipmentType
+    public class ImportDisEquipType
     {
 
         const string oldTable = "EquipType";
@@ -48,14 +48,14 @@ namespace HETSAPI.Import
                     {
                         if (item.Equip_Type_Id > 0)
                         {
-                            Models.EquipmentType instance = null;
+                            Models.DistrictEquipmentType instance = null;
                             CopyToInstance(performContext, dbContext, item, ref instance, systemId);
                             ImportUtility.AddImportMap(dbContext, oldTable, item.Equip_Type_Id.ToString(), newTable, instance.Id);
                         }
                     }
                     else // update
                     {
-                        Models.EquipmentType instance = dbContext.EquipmentTypes.FirstOrDefault(x => x.Id == importMap.NewKey);
+                        Models.DistrictEquipmentType instance = dbContext.DistrictEquipmentTypes.FirstOrDefault(x => x.Id == importMap.NewKey);
                         if (instance == null) // record was deleted
                         {
                             CopyToInstance(performContext, dbContext, item, ref instance, systemId);
@@ -71,7 +71,7 @@ namespace HETSAPI.Import
                             dbContext.ImportMaps.Update(importMap);
                         }
                     }
-                    if (ii++ % 500 == 0)
+                    if (ii++ % 250 == 0)
                     {
                         try
                         {
@@ -101,8 +101,15 @@ namespace HETSAPI.Import
             }
         }
 
-
-        static private void CopyToInstance(PerformContext performContext, DbAppContext dbContext, HETSAPI.Import.EquipType oldObject, ref Models.EquipmentType instance, string systemId)
+        /// <summary>
+        /// Copy xml item to instance (table entries)
+        /// </summary>
+        /// <param name="performContext"></param>
+        /// <param name="dbContext"></param>
+        /// <param name="oldObject"></param>
+        /// <param name="instance"></param>
+        /// <param name="systemId"></param>
+        static private void CopyToInstance(PerformContext performContext, DbAppContext dbContext, HETSAPI.Import.EquipType oldObject, ref Models.DistrictEquipmentType instance, string systemId)
         {
             bool isNew = false;
 
@@ -116,48 +123,77 @@ namespace HETSAPI.Import
             if (instance == null)
             {
                 isNew = true;
-                instance = new Models.EquipmentType();
+                instance = new Models.DistrictEquipmentType();
                 instance.Id = oldObject.Equip_Type_Id;
-                instance.IsDumpTruck = false;   // Where this is coming from?   !!!!!!
-                try
-                {
-                    instance.ExtendHours = float.Parse(oldObject.Extend_Hours.Trim());
-                    instance.MaximumHours = float.Parse(oldObject.Max_Hours.Trim());
-                    instance.MaxHoursSub = float.Parse(oldObject.Max_Hours_Sub.Trim());
-                }
-                catch
-                {
 
-                }
                 try
                 {
-                    instance.Name = oldObject.Equip_Type_Cd.Trim();
+                    instance.DistrictEquipmentName = oldObject.Equip_Type_Desc.Length >= 50 ? oldObject.Equip_Type_Desc.Substring(0, 50) : oldObject.Equip_Type_Desc;
                 }
                 catch
                 {
 
                 }
 
+                ServiceArea serviceArea = dbContext.ServiceAreas.FirstOrDefault(x => x.Id == oldObject.Service_Area_Id);
+                if (serviceArea != null)
+                {
+                    int districtId = serviceArea.DistrictId ?? 0;
+                    District dis = dbContext.Districts.FirstOrDefault(x => x.RegionId == districtId);
+                    instance.DistrictId = districtId;
+                    instance.District = dis;
+                }
+
+                //    instance.EquipmentType = 
                 instance.CreateTimestamp = DateTime.UtcNow;
                 instance.CreateUserid = createdBy.SmUserId;
-                dbContext.EquipmentTypes.Add(instance);
-            }
-            else
-            {
-                instance = dbContext.EquipmentTypes
-                    .First(x => x.Id == oldObject.Equip_Type_Id);
-                instance.LastUpdateUserid = modifiedBy.SmUserId;
-                try
-                {
-                    instance.LastUpdateTimestamp = DateTime.Parse(oldObject.Modified_Dt.Trim().Substring(0, 10));
-                }
-                catch
-                {
 
+                if (oldObject.Equip_Type_Cd != null )
+                {
+                    EquipmentType eType = dbContext.EquipmentTypes.FirstOrDefault(x => x.Name == oldObject.Equip_Type_Cd);
+                    if (eType == null)
+                    {
+                        eType = new EquipmentType();
+                        eType.Name = oldObject.Equip_Type_Cd;
+                        try
+                        {
+                            eType.MaximumHours = (float)Decimal.Parse(oldObject.Max_Hours, System.Globalization.NumberStyles.Any);
+                        }
+                        catch (Exception e)
+                        {
+                            string ii = e.ToString();
+                        }
+                        try
+                        {
+                            eType.MaxHoursSub = (float)Decimal.Parse(oldObject.Max_Hours_Sub, System.Globalization.NumberStyles.Any);
+                        }
+                        catch (Exception e)
+                        {
+                            string ii = e.ToString();
+                        }
+                        try
+                        {
+                            eType.ExtendHours = (float)Decimal.Parse(oldObject.Extend_Hours, System.Globalization.NumberStyles.Any);
+                        }
+                        catch (Exception e)
+                        {
+                            string ii = e.ToString();
+                        }
+                        eType.CreateTimestamp = DateTime.Parse(oldObject.Created_Dt == null ? "1900-01-01" : oldObject.Created_Dt.Trim().Substring(0, 10));
+                        eType.CreateUserid = createdBy.SmUserId;
+
+                        eType.IsDumpTruck = false;
+                        //type.NumberOfBlocks = 
+                        dbContext.EquipmentTypes.Add(eType);
+                    }
+                    instance.EquipmentTypeId = eType.Id;
                 }
-                dbContext.EquipmentTypes.Update(instance);
+                dbContext.DistrictEquipmentTypes.Add(instance);
             }
+
         }
+
     }
 }
+
 

@@ -47,7 +47,6 @@ namespace HETSAPI.Import
             importMap.NewTable = newTable;
             importMap.NewKey = newKey;
             dbContext.ImportMaps.Add(importMap);
-            dbContext.SaveChanges();
         }
 
         /// <summary>
@@ -123,7 +122,6 @@ namespace HETSAPI.Import
                         user.GivenName = givenName.Trim();
                         user.SmUserId = smUserId.Trim();
                         dbContext.Users.Add(user);
-                        dbContext.SaveChanges();
                     }
                     return user;
                 }
@@ -166,24 +164,6 @@ namespace HETSAPI.Import
                     break;
             }
             return roleId;
-        }
-
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="performContext"></param>
-        /// <param name="dbContext"></param>
-        static private void SaveChangesToDatabase(PerformContext performContext, DbAppContext dbContext)
-        {
-            try
-            {
-                dbContext.SaveChanges();
-            }
-            catch (Exception e)
-            {
-                performContext.WriteLine("*** ERROR ***");
-                performContext.WriteLine(e.ToString());
-            }
         }
     }
 }

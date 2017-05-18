@@ -320,5 +320,18 @@ namespace HETSAPI.Models
             base.SaveChanges();
             return result;
         }
+
+        /// <summary>
+        /// This is for importing data only
+        /// </summary>
+        /// <returns></returns>
+        public int SaveChangesForImport()
+        {
+            // update the audit fields for this item.
+            var modifiedEntries = ChangeTracker.Entries()
+                    .Where(e => e.State == EntityState.Added || e.State == EntityState.Modified);
+            int result = base.SaveChanges();
+            return result;
+        }
     }
 }
