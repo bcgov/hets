@@ -15,7 +15,7 @@ namespace HETSAPI.Import
         public int SubSystem_Id { get; set; }
 
         [XmlElement("Service_Area_Id")]
-        public string Service_Area_Id { get; set; }
+        public int Service_Area_Id { get; set; }
 
         [XmlElement("Equip_Type_Cd")]
         public string Equip_Type_Cd { get; set; }

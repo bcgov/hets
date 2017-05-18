@@ -1,5 +1,17 @@
 ﻿@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
-Note HET_CONTACT.NOTE SHOULD length limite is 150 should be changed to 512
+1. Note HET_CONTACT.NOTE SHOULD length limit is 150 should be changed to 512
+2. C:\Coding\HETS\HETS_Forked\hets\Server\src\HETSAPI\Migrations\20170330160401_HETS-162-3-30-1.cs(13): 
+	OLD key is changed to String from integer
+3. Dump_Truck seems not related to Equipment.  the following query yields 
+	SELECT Count(*) FROM public."HET_DUMP_TRUCK" WHERE "DUMP_TRUCK_ID" not in (SELECT  "EQUIPMENT_ID" FROM public."HET_EQUIPMENT" )
+	yields 1262 items. Which mean EQUIP_ID ("DUMP_TRUCK_ID") in DUMP_TRUCK xml is not much to do with EQUIP_ID in EQUIPMENT TABLE.
+4. EQUIP_USAGE.PROJECT_ID not nothing to do with PROJECT.PROJECT_ID, whcih made the file of EQUIP_USAGE.xml not meaningful
+5. Rotation seems more like a note field: It record the reason of an equipment not hired. But thePproject_Id is out of range.
+6. In Equipment, YTD, YTD1, YTD2, YTD3  are used to calculate seniority. This field will be changed every year? Should these field
+	be replaced by a table?
+7   In HETS, we have both EQUIPMENT_TYPE and DISTRICT_EQUIPMENT_TYPE. Are we going to use DISTRICT_EQUIPMENT_TYPE only?
+8. EQUIPMENT.REFUSE_RATE has different data type from EQUIPMENT.PAY_RATE, Should they be consistant?
+9. "HET_DISTRICT_EQUIPMENT_TYPE"."DISTRICT_EQUIPMENT_NAME  should be limited to 250
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
@@ -498,39 +510,77 @@ Equip_Attach.xml
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 Dump_Truck.xml
 <BCBID_10JAN.dbo.Dump_Truck>
-    <Equip_Id>4</Equip_Id>
+1   <Equip_Id>4</Equip_Id>
     <Single_Axle>N</Single_Axle>
     <Tandem_Axle>Y</Tandem_Axle>
     <PUP>N</PUP>
     <Belly_Dump>N</Belly_Dump>
-    <Tridem>N</Tridem>
+6	<Tridem>N</Tridem>
     <Rock_Box>N</Rock_Box>
     <Hilift_Gate>Y</Hilift_Gate>
     <Water_Truck>N</Water_Truck>
     <Seal_Coat_Hitch>N</Seal_Coat_Hitch>
-    <Rear_Axle_Spacing></Rear_Axle_Spacing>
+11  <Rear_Axle_Spacing></Rear_Axle_Spacing>
     <Front_Tire_Size></Front_Tire_Size>
     <Front_Tire_UOM>Inches</Front_Tire_UOM>
     <Front_Axle_Capacity></Front_Axle_Capacity>
     <Rare_Axle_Capacity></Rare_Axle_Capacity>
-    <Legal_Load></Legal_Load>
+16  <Legal_Load></Legal_Load>
     <Legal_Capacity></Legal_Capacity>
     <Legal_PUP_Tare_Weight></Legal_PUP_Tare_Weight>
     <Licenced_GVW></Licenced_GVW>
     <Licenced_GVW_UOM>    &#x20;</Licenced_GVW_UOM>
-    <Licenced_Tare_Weight></Licenced_Tare_Weight>
+21  <Licenced_Tare_Weight></Licenced_Tare_Weight>
     <Licenced_PUP_Tare_Weight></Licenced_PUP_Tare_Weight>
     <Licenced_Load></Licenced_Load>
     <Licenced_Capacity></Licenced_Capacity>
     <Box_Length></Box_Length>
-    <Box_Width></Box_Width>
+26  <Box_Width></Box_Width>
     <Box_Height></Box_Height>
     <Box_Capacity></Box_Capacity>
     <Trailer_Box_Length></Trailer_Box_Length>
     <Trailer_Box_Width></Trailer_Box_Width>
-    <Trailer_Box_Height></Trailer_Box_Height>
+31  <Trailer_Box_Height></Trailer_Box_Height>
     <Trailer_Box_Capacity></Trailer_Box_Capacity>
 </BCBID_10JAN.dbo.Dump_Truck>
+
+The followings are the colimns of the Database table HET_DUMP_TRUCK
+	"DUMP_TRUCK_ID", 
+	"BOX_CAPACITY", 
+	"BOX_HEIGHT", 
+	"BOX_LENGTH",    
+	   "BOX_WIDTH", 
+	   "FRONT_AXLE_CAPACITY", 
+	   "FRONT_TIRE_SIZE", 
+	   "FRONT_TIRE_UOM", 
+       "LEGAL_CAPACITY", 
+	   "LEGAL_LOAD", 
+	   "LEGAL_PUPTARE_WEIGHT",
+	   "LICENCED_CAPACITY", 
+       "LICENCED_GVW", 
+	   "LICENCED_GVWUOM", 
+	   "LICENCED_LOAD", 
+	   "LICENCED_PUPTARE_WEIGHT", 
+       "LICENCED_TARE_WEIGHT", 
+	   "REAR_AXLE_CAPACITY", 
+	   "REAR_AXLE_SPACING", 
+       "TRAILER_BOX_CAPACITY", 
+	   "TRAILER_BOX_HEIGHT", 
+	   "TRAILER_BOX_LENGTH", 
+       "TRAILER_BOX_WIDTH", 
+	   "HAS_BELLY_DUMP", 
+	   "HAS_HILIFT_GATE", 
+	   "HAS_PUP", 
+       "HAS_ROCK_BOX", 
+	   "HAS_SEALCOAT_HITCH", 
+	   "IS_SINGLE_AXLE", 
+	   "IS_TANDEM_AXLE", 
+       "IS_TRIDEM", 
+	   "IS_WATER_TRUCK", 
+	   "CREATE_TIMESTAMP", 
+	   "CREATE_USERID", 
+       "LAST_UPDATE_TIMESTAMP", 
+	   "LAST_UPDATE_USERID"
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 Equip_Usage.xml
@@ -550,14 +600,81 @@ Equip_Usage.xml
     <Created_By>Struthers, Kimberly  (IDIR\kstruthe)</Created_By>
 </BCBID_10JAN.dbo.Equip_Usage>
 
+public."HET_RENTAL_AGREEMENT";
+	"RENTAL_AGREEMENT_ID", 
+	"EQUIPMENT_ID", 
+	"PROJECT_ID", 
+	"STATUS", 
+	"CREATE_TIMESTAMP", 
+	"CREATE_USERID", 
+	"DATED_ON", 
+	"EQUIPMENT_RATE", 
+	"ESTIMATE_HOURS", 
+	"ESTIMATE_START_WORK", 
+	"LAST_UPDATE_TIMESTAMP", 
+	"LAST_UPDATE_USERID", 
+	"NOTE", 
+	"NUMBER", 
+	"RATE_COMMENT", 
+	"RATE_PERIOD"
+
+FROM public."HET_TIME_RECORD";
+	"TIME_RECORD_ID", 
+	"ENTERED_DATE", 
+	"HOURS", 
+	"RENTAL_AGREEMENT_RATE_ID", 
+	"WORKED_DATE", 
+	"TIME_PERIOD", 
+	"CREATE_TIMESTAMP", 
+	"CREATE_USERID", 
+	"LAST_UPDATE_TIMESTAMP", 
+	"LAST_UPDATE_USERID", 
+	"RENTAL_AGREEMENT_ID"
+
+public."HET_RENTAL_AGREEMENT_RATE";
+	"RENTAL_AGREEMENT_RATE_ID", 
+	"COMMENT", 
+	"COMPONENT_NAME", 
+	"CREATE_TIMESTAMP", 
+	"CREATE_USERID", 
+	"IS_ATTACHMENT", 
+	"LAST_UPDATE_TIMESTAMP", 
+	"LAST_UPDATE_USERID", 
+	"PERCENT_OF_EQUIPMENT_RATE", 
+	"RATE", 
+	"RATE_PERIOD", 
+	"RENTAL_AGREEMENT_ID"
+
+
+	First I will create "HET_RENTAL_AGREEMENT" table entry based on the following 3:    <Equip_Id>16701</Equip_Id> ,    <Project_Id>1563</Project_Id>,    <Service_Area_Id>24</Service_Area_Id>.
+Each such an entry has a list of RentalAgreementRate. So I will create 3 RentalAgreementRate entries in the table of 
+“HET_RENTAL_AGREEMENT_RATE",  corresponding to Rate, Rate2, and Rate 3. Those three rentalAgreementRate form a list as a property of 
+RentalAgreement.   
+
+Then xml entries of Hours, Hours2, and Hours3 will be three separate entries for the table of “HET_TIME_RECORD”, which is tied up with "HET_RENTAL_AGREEMENT" entry, and “HET_RENTAL_AGREEMENT_RATE".  What do you think the Column of TIME_PERIOD is? I will ignore this column for now.
+
+
+
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
-HETS_Audit.xml
-<BCBID_10JAN.dbo.HETS_Audit>
-    <Created_By>Vavra, Angie  (IDIR\angvavra)</Created_By>
-    <Created_Dt>2011-05-11T08:29:40.347</Created_Dt>
-    <Action>Equip Update</Action>
-    <Reason>moved to different local.  reset to 0.  March 2010 DR.</Reason>
-</BCBID_10JAN.dbo.HETS_Audit>
+Equip_Attach.xml
+<BCBID_10JAN.dbo.Equip_Attach>
+    <Equip_Id>30208</Equip_Id>
+    <Attach_Seq_Num>1</Attach_Seq_Num>
+    <Attach_Desc>2 BUCKETS</Attach_Desc>
+    <Created_Dt>2011-08-10T15:45:08.687</Created_Dt>
+    <Created_By>Jones, Chrystal  (IDIR\chrjones)</Created_By>
+</BCBID_10JAN.dbo.Equip_Attach>
+
+The followings are the colimns of the Database table HET_EQUIPMENT_ATTACHMENT
+	"EQUIPMENT_ATTACHMENT_ID", 
+	"DESCRIPTION", 
+	"EQUIPMENT_ID", 
+	"CREATE_TIMESTAMP", 
+	"CREATE_USERID", 
+	"LAST_UPDATE_TIMESTAMP", 
+	"LAST_UPDATE_USERID", 
+	"TYPE_NAME"
+
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 Project.xml
@@ -571,6 +688,17 @@ Project.xml
     <Created_By>Rich, Deanna  (IDIR\DEARICH)</Created_By>
 </BCBID_10JAN.dbo.Project>
 
+The followings are the colimns of the Database table HET_PROJECT
+	"PROJECT_ID", 
+	"PRIMARY_CONTACT_ID", 
+	"PROVINCIAL_PROJECT_NUMBER", 
+	"DISTRICT_ID", 
+	"INFORMATION", 
+	"NAME", 
+	"CREATE_TIMESTAMP",
+	"CREATE_USERID", 
+	"LAST_UPDATE_TIMESTAMP", 
+	"LAST_UPDATE_USERID", "STATUS"
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 Block.xml
 <BCBID_10JAN.dbo.Block>
@@ -587,6 +715,20 @@ Block.xml
     <Created_By>Jones, Chrystal  (IDIR\chrjones)</Created_By>
 </BCBID_10JAN.dbo.Block>
 
+HET_LOCAL_AREA_ROTATION_LIST:
+	"LOCAL_AREA_ROTATION_LIST_ID", 
+	"ASK_NEXT_BLOCK1_ID", 
+	"ASK_NEXT_BLOCK1_SENIORITY", 
+	"ASK_NEXT_BLOCK2_ID", 
+	"ASK_NEXT_BLOCK2_SENIORITY", 
+	"ASK_NEXT_BLOCK_OPEN_ID", 
+	"CREATE_TIMESTAMP", 
+	"CREATE_USERID", 
+	"DISTRICT_EQUIPMENT_TYPE_ID", 
+	"LAST_UPDATE_TIMESTAMP", 
+	"LAST_UPDATE_USERID", 
+	"LOCAL_AREA_ID"
+
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 Rotation_Doc.xml
 <BCBID_10JAN.dbo.Rotation_Doc>
@@ -600,3 +742,66 @@ Rotation_Doc.xml
     <Note_Id>13422</Note_Id>
     <Created_By>Vavra, Angie  (IDIR\angvavra)</Created_By>
 </BCBID_10JAN.dbo.Rotation_Doc>
+
+@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+HETS_Audit.xml   - there is no meaningful information contained.
+
+<BCBID_10JAN.dbo.HETS_Audit>
+    <Created_By>Vavra, Angie  (IDIR\angvavra)</Created_By>
+    <Created_Dt>2011-05-11T08:29:40.347</Created_Dt>
+    <Action>Equip Update</Action>
+    <Reason>moved to different local.  reset to 0.  March 2010 DR.</Reason>
+</BCBID_10JAN.dbo.HETS_Audit>
+<BCBID_10JAN.dbo.HETS_Audit>
+    <Created_By>Vavra, Angie  (IDIR\angvavra)</Created_By>
+    <Created_Dt>2011-10-03T13:35:12.330</Created_Dt>
+    <Action>Equip Update</Action>
+    <Reason>resetting seniority to zero years - transferred equipment from Lower Mainlandt to Chase / Celista NOV 6 2009</Reason>
+</BCBID_10JAN.dbo.HETS_Audit>
+<BCBID_10JAN.dbo.HETS_Audit>
+    <Created_By>Vavra, Angie  (IDIR\angvavra)</Created_By>
+    <Created_Dt>2011-10-03T13:35:32.030</Created_Dt>
+    <Action>Equip Update</Action>
+    <Reason>resetting seniority to zero years - transferred equipment from Lower Mainlandt to Chase / Celista NOV 6 2009</Reason>
+</BCBID_10JAN.dbo.HETS_Audit>
+@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+
+Questions:
+1. In Equipment Attachment, is the combination of     <Equip_Id> and  <Attach_Seq_Num> unique?
+2. In Block.xml, why  Equip_Type_Cd   id corresponding to   DistrictEquipmentType  entries?  
+How the table of  DistrictEquipmentType is populated?
+3. In Block.xml, is the combination unique?  <Area_Id>, <Equip_Type_Id>, and <Block_Num>.
+4. Dump_Truck seems not related to Equipment. Is that true?
+5. How the existing files are related to districts? For different district, we get a different set of xml files.  How each set is realted to districts. Maybe we can put a set of xml files related to different district to different folders.
+ 
+ 1.	In Equipment Attachment, is the combination of     <Equip_Id> and  <Attach_Seq_Num> unique?
+	a.	I would assume so, but you will have to look at the data to confirm. There is no private data in the file, 
+	so you could download the file and review it to verify that.
+
+2.	In Block.xml, why  Equip_Type_Cd   is corresponding to   DistrictEquipmentType  entries?  
+	a.	Equip_Type in BCBid corresponds to DistrictEquipmentType in HETS. As such, 
+	I think that Equip_Type_Cd is the FK to BCBid Equip_Type, hence to DistrictEquipmentType in HETS. 
+	I’ve not looked at the data, but pretty sure that’s right.
+
+3.	How is the table of  DistrictEquipmentType populated?
+	a.	Primarily from BCBID Equip_Type. 
+	We’d like to find the unique (across the Province) Equipment Types and load those into HETS EquipmentType (manual process), 
+	but DistrictEquipmentType will come from BCBID Equip_Type. 
+	Note that BCBID Equip_Type links at the Service Area level, while HETS DistrictEquipmentType is at the District.
+
+4.	In Block.xml, is the combination unique?  <Area_Id>, <Equip_Type_Id>, and <Block_Num> unique?
+	a.	Almost certainly. Again, I’ve not reviewed the data, but extremely likely.
+
+5.	Dump_Truck seems not related to Equipment. Is that true?
+	a.	Pretty sure that it should be. Perhaps the REG_DUMP_TRK field in the Equipment table?
+
+6.	How the existing set of xml files are related to districts? For different district, I guess we get a different set of xml files.  
+How each set is related to districts. Maybe we can put a set of xml files related to different districts to different folders.
+	a.	The XML will always contain data from all Districts.  
+	Data in the XML is related to the District via LocalArea (BCBID.Area) -> ServiceArea -> District. 
+	When we run the conversion for less than all Districts, 
+	we’ll Update/insert only XML records with LocalArea/ServiceArea/Districts related to the Districts we are converting. 
+	Any records found for Districts we are NOT  converting will simply be ignored.  
+	Or rather than ignoring them – we’ll check if we already have the record (via ImportMap), 
+	and log any that we find that we have not already loaded.  IN theory, that should not happen, 
+	so the log will tell us if District changes were made in the old system that shouldn’t have been.

@@ -9,10 +9,10 @@ namespace HETSAPI.Import
     public class Block
     {
         [XmlElement("Area_Id")]
-        public string Area_Id { get; set; }
+        public int? Area_Id { get; set; }
 
         [XmlElement("Equip_Type_Id")]
-        public string Equip_Type_Id { get; set; }
+        public int? Equip_Type_Id { get; set; }
 
         [XmlElement("Block_Num")]
         public string Block_Num { get; set; }
@@ -24,7 +24,7 @@ namespace HETSAPI.Import
         public string Max_Cycle { get; set; }
 
         [XmlElement("Last_Hired_Equip_Id")]
-        public string Last_Hired_Equip_Id { get; set; }
+        public int? Last_Hired_Equip_Id { get; set; }
 
         [XmlElement("Block_Name")]
         public string Block_Name { get; set; }
