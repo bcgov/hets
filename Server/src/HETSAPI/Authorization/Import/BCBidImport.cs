@@ -19,10 +19,31 @@ namespace HETSAPI.Import
 
     public class BCBidImport
     {
-        const string oldDumpTruckTable = "Dump_Truck";
-        const string newDumpTruckTable = "Dump_Truck";
-        const string dumpTruckXMLFile  = "Dump_Truck.xml";
+        const string systemId = "SYSTEM_HETS";
 
+
+        static private void InsertSystemUser(DbAppContext dbContext)
+        {
+            Models.User sysUser = dbContext.Users.FirstOrDefault(x => x.SmUserId == systemId);
+            if (sysUser == null)
+                sysUser = new User();
+            sysUser.SmUserId = systemId;
+            sysUser.Surname = @"simon.di@gov.bc.ca";
+            sysUser.Surname = "System";
+            sysUser.GivenName = "HETS";
+            sysUser.Active = true;
+            sysUser.CreateTimestamp = DateTime.UtcNow;
+            dbContext.Users.Add(sysUser);
+            try
+            {
+                int iResult = dbContext.SaveChangesForImport();
+            }
+            catch (Exception e)
+            {
+                string iStr = e.ToString();
+            }
+            return;
+        }
  
         /// <summary>
         /// Hangfire job to do the Annual Rollover tasks.
@@ -30,6 +51,7 @@ namespace HETSAPI.Import
         /// <param name="connectionstring"></param>
         static public void ImportJob(PerformContext context, string connectionstring, string fileLocation)
         {
+
             // open a connection to the database.
             DbContextOptionsBuilder<DbAppContext> options = new DbContextOptionsBuilder<DbAppContext>();
             options.UseNpgsql(connectionstring);
@@ -37,30 +59,31 @@ namespace HETSAPI.Import
             DbAppContext dbContext = new DbAppContext(null, options.Options);
             context.WriteLine("Starting Data Import Job");
 
-            string systemId = "SYSTEM_HETS"; // dbContext.Users.FirstOrDefault(x => x.SmUserId.ToUpper() == "SYSTEM_HETS").Id.ToString();
+            //Adding system Account if not there in the database.
+            InsertSystemUser(dbContext);
 
             //*** start by importing Region from Region.xml. THis goes to table HETS_REGION
-            ImportRegion.Import(context, dbContext, fileLocation, systemId);
+           // ImportRegion.Import(context, dbContext, fileLocation, systemId);
 
             //*** start by importing districts from District.xml. THis goes to table HETS_DISTRICT
             dbContext = new DbAppContext(null, options.Options);
-            ImportDistrict.Import(context, dbContext, fileLocation, systemId);
+           // ImportDistrict.Import(context, dbContext, fileLocation, systemId);
 
             //*** start by importing Cities from HETS_City.xml to HET_CITY
             dbContext = new DbAppContext(null, options.Options);
-            ImportCity.Import(context, dbContext, fileLocation, systemId);
-
-            //*** Users from User_HETS.xml. This has effects on Table HET_USER and HET_USER_ROLE  
-            dbContext = new DbAppContext(null, options.Options);
-            ImportUser.Import(context, dbContext, fileLocation,  systemId);
+           // ImportCity.Import(context, dbContext, fileLocation, systemId);
 
             //*** Service Areas: from the file of Service_Area.xml to the table of HET_SERVICE_AREA
             dbContext = new DbAppContext(null, options.Options);
-            ImportServiceArea.Import(context, dbContext, fileLocation, systemId);
+           // ImportServiceArea.Import(context, dbContext, fileLocation, systemId);
 
             //*** Importing the Local Areas from the file of Area.xml to the table of HET_LOCAL_AREA
             dbContext = new DbAppContext(null, options.Options);
             ImportLocalArea.Import(context, dbContext, fileLocation, systemId);
+
+            //*** Users from User_HETS.xml. This has effects on Table HET_USER and HET_USER_ROLE  
+            dbContext = new DbAppContext(null, options.Options);
+            ImportUser.Import(context, dbContext, fileLocation, systemId);
 
             //*** Owners: This has effects on Table HETS_OWNER and HETS_Contact
             dbContext = new DbAppContext(null, options.Options);
@@ -81,7 +104,6 @@ namespace HETSAPI.Import
             //*** Import Dump_Truck  from Dump_Truck.xml   
             dbContext = new DbAppContext(null, options.Options);
             ImportDumpTruck.Import(context, dbContext, fileLocation,  systemId);
-
 
             var watch = System.Diagnostics.Stopwatch.StartNew();
             //*** Import Equipment_Attached  from Equip_Attach.xml   

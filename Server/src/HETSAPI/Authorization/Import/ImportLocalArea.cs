@@ -46,21 +46,25 @@ namespace HETSAPI.Import
                 HETSAPI.Import.Area[] legacyItems = (HETSAPI.Import.Area[])ser.Deserialize(memoryStream);
                 foreach (var item in legacyItems.WithProgress(progress))
                 {
+                    LocalArea localArea = null;
                     // see if we have this one already.
                     ImportMap importMap = dbContext.ImportMaps.FirstOrDefault(x => x.OldTable == oldTable && x.OldKey == item.Area_Id.ToString());
+                    if (dbContext.LocalAreas.Where(x => x.Name.ToUpper() == item.Area_Desc.Trim().ToUpper()).Count() > 0)
+                    {
+                        localArea = dbContext.LocalAreas.FirstOrDefault(x => x.Name.ToUpper() == item.Area_Desc.Trim().ToUpper());
+                    }
 
-                    if (importMap == null) // new entry
+                    if (importMap == null || dbContext.LocalAreas.Where(x => x.Name.ToUpper() == item.Area_Desc.Trim().ToUpper()).Count() == 0) // new entry
                     {
                         if (item.Area_Id > 0)
                         {
-                            LocalArea localArea = null;
                             CopyToInstance(performContext, dbContext, item, ref localArea, systemId);
                             ImportUtility.AddImportMap(dbContext, oldTable, item.Area_Id.ToString(), newTable, localArea.Id);
                         }
                     }
                     else // update
                     {
-                        LocalArea localArea = dbContext.LocalAreas.FirstOrDefault(x => x.Id == importMap.NewKey);
+                        localArea = dbContext.LocalAreas.FirstOrDefault(x => x.Id == importMap.NewKey);
                         if (localArea == null) // record was deleted
                         {
                             CopyToInstance(performContext, dbContext, item, ref localArea, systemId);
@@ -105,15 +109,23 @@ namespace HETSAPI.Import
         static private void CopyToInstance(PerformContext performContext, DbAppContext dbContext, HETSAPI.Import.Area oldObject, ref LocalArea localArea, string systemId)
         {
             bool isNew = false;
-            if (localArea == null)
+
+            if (oldObject.Area_Id <= 0)
+                return;
+            if (localArea == null )
             {
                 isNew = true;
                 localArea = new LocalArea(oldObject.Area_Id);
                 localArea.Id = oldObject.Area_Id;
             }
-            if (oldObject.Area_Id <= 0)
-                return;
-            localArea.Name = oldObject.Area_Desc.Trim();
+            try
+            {
+                localArea.Name = oldObject.Area_Desc.Trim();
+            }
+            catch (Exception e)
+            {
+                string istr = e.ToString();
+            }
 
             try
             {
