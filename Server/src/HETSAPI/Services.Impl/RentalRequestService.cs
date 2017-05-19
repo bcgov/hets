@@ -489,8 +489,9 @@ namespace HETSAPI.Services.Impl
         /// <remarks>Used for the project search page.</remarks>
         /// <param name="localareas">Local areas (array of id numbers)</param>
         /// <param name="project">name or partial name for a Project</param>
-        /// <param name="hasRequests">if true then only include Projects with active Requests</param>
-        /// <param name="hasHires">if true then only include Projects with active Rental Agreements</param>
+        /// <param name="status">Status</param>
+        /// <param name="startDate">Inspection start date</param>
+        /// <param name="endDate">Inspection end date</param>
         /// <response code="200">OK</response>
         public virtual IActionResult RentalrequestsSearchGetAsync(int?[] localareas, string project, string status, DateTime? startDate, DateTime? endDate)
         { 

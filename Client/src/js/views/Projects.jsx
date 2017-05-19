@@ -64,12 +64,24 @@ var Projects = React.createClass({
   },
 
   buildSearchParams() {
-    var searchParams = {
-      hires: this.state.search.hires,
-      requests: this.state.search.requests,
-      statusCode: this.state.search.statusCode,
-      project: this.state.search.projectName || '',
-    };
+    var searchParams = {};
+
+    if (this.state.search.projectName) {
+      searchParams.project = this.state.search.projectName;
+    }
+
+    if (this.state.search.hires) {
+      searchParams.hasHires = this.state.search.hires;
+    }
+
+    if (this.state.search.requests) {
+      searchParams.hasRequests = this.state.search.requests;
+    }
+
+    // Not yet implemented by API
+    // if (this.state.search.status) {
+    //   searchParams.status = this.state.search.statusCode;
+    // }
 
     if (this.state.search.selectedDistrictsIds.length > 0) {
       searchParams.districts = this.state.search.selectedDistrictsIds;
@@ -165,11 +177,17 @@ var Projects = React.createClass({
             <ButtonToolbar id="projects-filters">
               <MultiDropdown id="selectedDistrictsIds" placeholder="Districts"
                 items={ districts } selectedIds={ this.state.search.selectedDistrictsIds } updateState={ this.updateSearchState } showMaxItems={ 2 } />
-              <DropdownControl id="statusCode" title={ this.state.search.statusCode } updateState={ this.updateSearchState } blankLine="(All)"
+              <Unimplemented>
+                <DropdownControl id="statusCode" title={ this.state.search.statusCode } updateState={ this.updateSearchState } blankLine="(All)"
                   items={[ Constant.PROJECT_STATUS_CODE_ACTIVE, Constant.PROJECT_STATUS_CODE_COMPLETED ]} />
+              </Unimplemented>
               <FormInputControl id="projectName" type="text" placeholder="Project name" value={ this.state.search.projectName } updateState={ this.updateSearchState }></FormInputControl>
-              <CheckboxControl inline id="hires" checked={ this.state.search.hires } updateState={ this.updateSearchState }> Hires</CheckboxControl>
-              <CheckboxControl inline id="requests" checked={ this.state.search.requests } updateState={ this.updateSearchState }> Requests</CheckboxControl>
+              <Unimplemented>
+                <CheckboxControl inline id="hires" checked={ this.state.search.hires } updateState={ this.updateSearchState }> Hires</CheckboxControl>
+              </Unimplemented>
+              <Unimplemented>
+                <CheckboxControl inline id="requests" checked={ this.state.search.requests } updateState={ this.updateSearchState }> Requests</CheckboxControl>
+              </Unimplemented>
               <Button id="search-button" bsStyle="primary" onClick={ this.fetch }>Search</Button>
             </ButtonToolbar>
           </Col>
