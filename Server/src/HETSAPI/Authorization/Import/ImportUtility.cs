@@ -55,7 +55,7 @@ namespace HETSAPI.Import
         /// <returns></returns>
         static public MemoryStream memoryStreamGenerator(string xmlFileName, string oldTable, string fileLocation, string rootAttr)
         {
-            // fileLocation = @"H:\uploads\tmp";    //This is to test xml on network drive - network drive needs proper permission
+            // fileLocation = @"C:\uploads\tmp";    //This is to test xml on network drive - network drive needs proper permission
             string fullPath = fileLocation + Path.DirectorySeparatorChar + xmlFileName;
             string contents = Regex.Replace(File.ReadAllText(fullPath), @"\r\n?|\n|[\x00-\x08\x0B\x0C\x0E-\x1F\x26]", "");  //Getting rid of all the new lines as well
 

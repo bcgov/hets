@@ -12,6 +12,7 @@
 7   In HETS, we have both EQUIPMENT_TYPE and DISTRICT_EQUIPMENT_TYPE. Are we going to use DISTRICT_EQUIPMENT_TYPE only?
 8. EQUIPMENT.REFUSE_RATE has different data type from EQUIPMENT.PAY_RATE, Should they be consistant?
 9. "HET_DISTRICT_EQUIPMENT_TYPE"."DISTRICT_EQUIPMENT_NAME  should be limited to 250
+10. IMPORT_MAP.OLD_KEY should be charater varying (150)
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@

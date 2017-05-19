@@ -33,6 +33,7 @@ namespace HETSAPI.Import
         {
             try
             {
+
                 string rootAttr = "ArrayOf" + oldTable;
 
                 performContext.WriteLine("Processing Service Areas");
@@ -49,18 +50,21 @@ namespace HETSAPI.Import
                     // see if we have this one already.
                     ImportMap importMap = dbContext.ImportMaps.FirstOrDefault(x => x.OldTable == oldTable && x.OldKey == item.Service_Area_Id.ToString());
 
+                    ServiceArea serviceArea = dbContext.ServiceAreas.FirstOrDefault(x => x.Name == item.Service_Area_Desc.Trim());
+                    if (serviceArea == null)
+                    {
+                        serviceArea = new ServiceArea();
+                    }
                     if (importMap == null) // new entry
                     {
                         if (item.Service_Area_Cd > 0)
                         {
-                            ServiceArea serviceArea = null;
                             CopyToInstance(performContext, dbContext, item, ref serviceArea, systemId);
                             ImportUtility.AddImportMap(dbContext, oldTable, item.Service_Area_Id.ToString(), newTable, serviceArea.Id);
                         }
                     }
                     else // update
                     {
-                        ServiceArea serviceArea = dbContext.ServiceAreas.FirstOrDefault(x => x.Id == importMap.NewKey);
                         if (serviceArea == null) // record was deleted
                         {
                             CopyToInstance(performContext, dbContext, item, ref serviceArea, systemId);
