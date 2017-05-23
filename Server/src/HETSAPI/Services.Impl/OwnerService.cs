@@ -653,8 +653,6 @@ namespace HETSAPI.Services.Impl
         {
             var data = _context.Owners
                     .Include(x => x.LocalArea.ServiceArea.District.Region)
-                    .Include(x => x.EquipmentList)
-                    .ThenInclude(y => y.DistrictEquipmentType)
                     .Include(x => x.Notes)
                     .Include(x => x.Attachments)
                     .Include(x => x.History)
@@ -668,19 +666,6 @@ namespace HETSAPI.Services.Impl
             if (localareas != null && localareas.Length > 0)
             {
                 data = data.Where(x => localareas.Contains(x.LocalArea.Id));
-            }
-
-            if (equipmenttypes != null)
-            {
-
-                foreach (int? item in equipmenttypes)
-                {
-                    if (item != null)
-                    {
-                        int equipmentType = (int)item;
-                        data = data.Where(x => x.EquipmentList.Select(y => y.DistrictEquipmentType.Id).Contains(equipmentType));
-                    }
-                }
             }
 
             if (status != null)
@@ -708,6 +693,16 @@ namespace HETSAPI.Services.Impl
                                     .Distinct();
 
                 data = data.Where(o => hiredOwnersQuery.Contains(o.Id));
+            }
+
+            if (equipmenttypes != null)
+            {
+                var equipmentTypeQuery = _context.Equipments
+                    .Where(x => equipmenttypes.Contains(x.DistrictEquipmentTypeId))
+                    .Select(x => x.OwnerId)
+                    .Distinct();
+
+                data = data.Where(x => equipmentTypeQuery.Contains(x.Id));
             }
 
             if (owner != null)

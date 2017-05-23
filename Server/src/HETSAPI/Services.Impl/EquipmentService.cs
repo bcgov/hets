@@ -713,11 +713,6 @@ namespace HETSAPI.Services.Impl
                 data = data.Where(x => localareas.Contains(x.LocalArea.Id));
             }
 
-            if (types != null && types.Length > 0)
-            {
-                data = data.Where(x => types.Contains(x.DistrictEquipmentType.Id));
-            }
-
             if (equipmentAttachment != null)
             {
                 data = data.Where(x => x.EquipmentAttachments.Any(y => y.TypeName.ToLower().Contains(equipmentAttachment.ToLower())));
@@ -742,6 +737,11 @@ namespace HETSAPI.Services.Impl
                                     .Distinct();
 
                 data = data.Where(e => hiredEquipmentQuery.Contains(e.Id));
+            }
+
+            if (types != null && types.Length > 0)
+            {
+                data = data.Where(x => types.Contains(x.DistrictEquipmentType.Id));
             }
 
             if (notverifiedsincedate != null)

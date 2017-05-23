@@ -69,17 +69,25 @@ var Owners = React.createClass({
   },
 
   buildSearchParams() {
-    var searchParams = {
-      hired: this.state.search.hired,
-      owner: this.state.search.ownerId || '',
-      statusCode: this.state.search.statusCode,
-    };
+    var searchParams = {};
+
+    if (this.state.search.ownerId) {
+      searchParams.owner = this.state.search.ownerId;
+    }
+
+    if (this.state.search.hired) {
+      searchParams.hired = this.state.search.hired;
+    }
+
+    if (this.state.search.statusCode) {
+      searchParams.status = this.state.search.statusCode;
+    }
 
     if (this.state.search.selectedLocalAreasIds.length > 0) {
-      searchParams.localAreas = this.state.search.selectedLocalAreasIds;
+      searchParams.localareas = this.state.search.selectedLocalAreasIds;
     }
     if (this.state.search.selectedEquipmentTypesIds.length > 0) {
-      searchParams.types = this.state.search.selectedEquipmentTypesIds;
+      searchParams.equipmenttypes = this.state.search.selectedEquipmentTypesIds;
     }
 
     return searchParams;
