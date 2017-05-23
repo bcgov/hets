@@ -1,7 +1,7 @@
 [
     {
         "district": {
-            "id": "200009"
+            "id": "10"
         },
         "districtEquipmentName": "Small-Excavator-Bulkley-Stikine",
         "equipmentType": {
@@ -11,7 +11,7 @@
     },
     {
         "district": {
-            "id": "200009"
+            "id": "10"
         },
         "districtEquipmentName": "Small-Grader-Bulkley-Stikine",
         "equipmentType": {
@@ -21,7 +21,7 @@
     },
     {
         "district": {
-            "id": "200009"
+            "id": "10"
         },
         "districtEquipmentName": "Small-Bulldozer-Bulkley-Stikine",
         "equipmentType": {
@@ -31,7 +31,7 @@
     },
     {
         "district": {
-            "id": "200009"
+            "id": "10"
         },
         "districtEquipmentName": "Small-Cement Truck-Bulkley-Stikine",
         "equipmentType": {
@@ -41,7 +41,7 @@
     },
     {
         "district": {
-            "id": "200009"
+            "id": "10"
         },
         "districtEquipmentName": "Small-Flat Deck-Bulkley-Stikine",
         "equipmentType": {
@@ -51,7 +51,7 @@
     },
     {
         "district": {
-            "id": "200009"
+            "id": "10"
         },
         "districtEquipmentName": "Small-Logging Truck-Bulkley-Stikine",
         "equipmentType": {
@@ -61,7 +61,7 @@
     },
     {
         "district": {
-            "id": "200009"
+            "id": "10"
         },
         "districtEquipmentName": "Small-Dump Truck-Bulkley-Stikine",
         "equipmentType": {
@@ -71,9 +71,9 @@
     },
     {
         "district": {
-            "id": "200006"
+            "id": "10"
         },
-        "districtEquipmentName": "Small-Excavator-Cariboo",
+        "districtEquipmentName": "Large-Excavator-Bulkley-Stikine",
         "equipmentType": {
             "id": "200000"
         },
@@ -81,9 +81,9 @@
     },
     {
         "district": {
-            "id": "200006"
+            "id": "10"
         },
-        "districtEquipmentName": "Small-Grader-Cariboo",
+        "districtEquipmentName": "Large-Grader-Bulkley-Stikine",
         "equipmentType": {
             "id": "200001"
         },
@@ -91,9 +91,9 @@
     },
     {
         "district": {
-            "id": "200006"
+            "id": "10"
         },
-        "districtEquipmentName": "Small-Bulldozer-Cariboo",
+        "districtEquipmentName": "Large-Bulldozer-Bulkley-Stikine",
         "equipmentType": {
             "id": "200002"
         },
@@ -101,9 +101,9 @@
     },
     {
         "district": {
-            "id": "200006"
+            "id": "10"
         },
-        "districtEquipmentName": "Small-Cement Truck-Cariboo",
+        "districtEquipmentName": "Large-Cement Truck-Bulkley-Stikine",
         "equipmentType": {
             "id": "200003"
         },
@@ -111,9 +111,9 @@
     },
     {
         "district": {
-            "id": "200006"
+            "id": "10"
         },
-        "districtEquipmentName": "Small-Flat Deck-Cariboo",
+        "districtEquipmentName": "Large-Flat Deck-Bulkley-Stikine",
         "equipmentType": {
             "id": "200004"
         },
@@ -121,9 +121,9 @@
     },
     {
         "district": {
-            "id": "200006"
+            "id": "10"
         },
-        "districtEquipmentName": "Small-Logging Truck-Cariboo",
+        "districtEquipmentName": "Large-Logging Truck-Bulkley-Stikine",
         "equipmentType": {
             "id": "200005"
         },
@@ -131,9 +131,9 @@
     },
     {
         "district": {
-            "id": "200006"
+            "id": "10"
         },
-        "districtEquipmentName": "Small-Dump Truck-Cariboo",
+        "districtEquipmentName": "Large-Dump Truck-Bulkley-Stikine",
         "equipmentType": {
             "id": "200006"
         },
@@ -141,9 +141,9 @@
     },
     {
         "district": {
-            "id": "200006"
+            "id": "7"
         },
-        "districtEquipmentName": "Large-Excavator-Cariboo",
+        "districtEquipmentName": "Small-Excavator-Cariboo",
         "equipmentType": {
             "id": "200000"
         },
@@ -151,9 +151,9 @@
     },
     {
         "district": {
-            "id": "200006"
+            "id": "7"
         },
-        "districtEquipmentName": "Large-Grader-Cariboo",
+        "districtEquipmentName": "Small-Grader-Cariboo",
         "equipmentType": {
             "id": "200001"
         },
@@ -161,9 +161,9 @@
     },
     {
         "district": {
-            "id": "200006"
+            "id": "7"
         },
-        "districtEquipmentName": "Large-Bulldozer-Cariboo",
+        "districtEquipmentName": "Small-Bulldozer-Cariboo",
         "equipmentType": {
             "id": "200002"
         },
@@ -171,9 +171,9 @@
     },
     {
         "district": {
-            "id": "200006"
+            "id": "7"
         },
-        "districtEquipmentName": "Large-Cement Truck-Cariboo",
+        "districtEquipmentName": "Small-Cement Truck-Cariboo",
         "equipmentType": {
             "id": "200003"
         },
@@ -181,9 +181,9 @@
     },
     {
         "district": {
-            "id": "200006"
+            "id": "7"
         },
-        "districtEquipmentName": "Large-Flat Deck-Cariboo",
+        "districtEquipmentName": "Small-Flat Deck-Cariboo",
         "equipmentType": {
             "id": "200004"
         },
@@ -191,9 +191,9 @@
     },
     {
         "district": {
-            "id": "200006"
+            "id": "7"
         },
-        "districtEquipmentName": "Large-Logging Truck-Cariboo",
+        "districtEquipmentName": "Small-Logging Truck-Cariboo",
         "equipmentType": {
             "id": "200005"
         },
@@ -201,9 +201,9 @@
     },
     {
         "district": {
-            "id": "200006"
+            "id": "7"
         },
-        "districtEquipmentName": "Large-Dump Truck-Cariboo",
+        "districtEquipmentName": "Small-Dump Truck-Cariboo",
         "equipmentType": {
             "id": "200006"
         },
@@ -211,9 +211,9 @@
     },
     {
         "district": {
-            "id": "200001"
+            "id": "7"
         },
-        "districtEquipmentName": "Excavator-Vancouver Island",
+        "districtEquipmentName": "Large-Excavator-Cariboo",
         "equipmentType": {
             "id": "200000"
         },
@@ -221,9 +221,9 @@
     },
     {
         "district": {
-            "id": "200001"
+            "id": "7"
         },
-        "districtEquipmentName": "Grader-Vancouver Island",
+        "districtEquipmentName": "Large-Grader-Cariboo",
         "equipmentType": {
             "id": "200001"
         },
@@ -231,9 +231,9 @@
     },
     {
         "district": {
-            "id": "200001"
+            "id": "7"
         },
-        "districtEquipmentName": "Bulldozer-Vancouver Island",
+        "districtEquipmentName": "Large-Bulldozer-Cariboo",
         "equipmentType": {
             "id": "200002"
         },
@@ -241,9 +241,9 @@
     },
     {
         "district": {
-            "id": "200001"
+            "id": "7"
         },
-        "districtEquipmentName": "Cement Truck-Vancouver Island",
+        "districtEquipmentName": "Large-Cement Truck-Cariboo",
         "equipmentType": {
             "id": "200003"
         },
@@ -251,9 +251,9 @@
     },
     {
         "district": {
-            "id": "200001"
+            "id": "7"
         },
-        "districtEquipmentName": "Flat Deck-Vancouver Island",
+        "districtEquipmentName": "Large-Flat Deck-Cariboo",
         "equipmentType": {
             "id": "200004"
         },
@@ -261,9 +261,9 @@
     },
     {
         "district": {
-            "id": "200001"
+            "id": "7"
         },
-        "districtEquipmentName": "Logging Truck-Vancouver Island",
+        "districtEquipmentName": "Large-Logging Truck-Cariboo",
         "equipmentType": {
             "id": "200005"
         },
@@ -271,9 +271,9 @@
     },
     {
         "district": {
-            "id": "200001"
+            "id": "7"
         },
-        "districtEquipmentName": "Dump Truck-Vancouver Island",
+        "districtEquipmentName": "Large-Dump Truck-Cariboo",
         "equipmentType": {
             "id": "200006"
         },
@@ -281,9 +281,9 @@
     },
     {
         "district": {
-            "id": "200000"
+            "id": "2"
         },
-        "districtEquipmentName": "Excavator-Lower Mainland",
+        "districtEquipmentName": "Excavator-Vancouver Island",
         "equipmentType": {
             "id": "200000"
         },
@@ -291,9 +291,9 @@
     },
     {
         "district": {
-            "id": "200000"
+            "id": "2"
         },
-        "districtEquipmentName": "Grader-Lower Mainland",
+        "districtEquipmentName": "Grader-Vancouver Island",
         "equipmentType": {
             "id": "200001"
         },
@@ -301,9 +301,9 @@
     },
     {
         "district": {
-            "id": "200000"
+            "id": "2"
         },
-        "districtEquipmentName": "Bulldozer-Lower Mainland",
+        "districtEquipmentName": "Bulldozer-Vancouver Island",
         "equipmentType": {
             "id": "200002"
         },
@@ -311,9 +311,9 @@
     },
     {
         "district": {
-            "id": "200000"
+            "id": "2"
         },
-        "districtEquipmentName": "Cement Truck-Lower Mainland",
+        "districtEquipmentName": "Cement Truck-Vancouver Island",
         "equipmentType": {
             "id": "200003"
         },
@@ -321,9 +321,9 @@
     },
     {
         "district": {
-            "id": "200000"
+            "id": "2"
         },
-        "districtEquipmentName": "Flat Deck-Lower Mainland",
+        "districtEquipmentName": "Flat Deck-Vancouver Island",
         "equipmentType": {
             "id": "200004"
         },
@@ -331,9 +331,9 @@
     },
     {
         "district": {
-            "id": "200000"
+            "id": "2"
         },
-        "districtEquipmentName": "Logging Truck-Lower Mainland",
+        "districtEquipmentName": "Logging Truck-Vancouver Island",
         "equipmentType": {
             "id": "200005"
         },
@@ -341,9 +341,9 @@
     },
     {
         "district": {
-            "id": "200000"
+            "id": "2"
         },
-        "districtEquipmentName": "Dump Truck-Lower Mainland",
+        "districtEquipmentName": "Dump Truck-Vancouver Island",
         "equipmentType": {
             "id": "200006"
         },
@@ -351,9 +351,9 @@
     },
     {
         "district": {
-            "id": "200004"
+            "id": "1"
         },
-        "districtEquipmentName": "Excavator-Okanagan-Shuswap",
+        "districtEquipmentName": "Excavator-Lower Mainland",
         "equipmentType": {
             "id": "200000"
         },
@@ -361,9 +361,9 @@
     },
     {
         "district": {
-            "id": "200004"
+            "id": "1"
         },
-        "districtEquipmentName": "Grader-Okanagan-Shuswap",
+        "districtEquipmentName": "Grader-Lower Mainland",
         "equipmentType": {
             "id": "200001"
         },
@@ -371,9 +371,9 @@
     },
     {
         "district": {
-            "id": "200004"
+            "id": "1"
         },
-        "districtEquipmentName": "Bulldozer-Okanagan-Shuswap",
+        "districtEquipmentName": "Bulldozer-Lower Mainland",
         "equipmentType": {
             "id": "200002"
         },
@@ -381,9 +381,9 @@
     },
     {
         "district": {
-            "id": "200004"
+            "id": "1"
         },
-        "districtEquipmentName": "Cement Truck-Okanagan-Shuswap",
+        "districtEquipmentName": "Cement Truck-Lower Mainland",
         "equipmentType": {
             "id": "200003"
         },
@@ -391,9 +391,9 @@
     },
     {
         "district": {
-            "id": "200004"
+            "id": "1"
         },
-        "districtEquipmentName": "Flat Deck-Okanagan-Shuswap",
+        "districtEquipmentName": "Flat Deck-Lower Mainland",
         "equipmentType": {
             "id": "200004"
         },
@@ -401,9 +401,9 @@
     },
     {
         "district": {
-            "id": "200004"
+            "id": "1"
         },
-        "districtEquipmentName": "Logging Truck-Okanagan-Shuswap",
+        "districtEquipmentName": "Logging Truck-Lower Mainland",
         "equipmentType": {
             "id": "200005"
         },
@@ -411,9 +411,9 @@
     },
     {
         "district": {
-            "id": "200004"
+            "id": "1"
         },
-        "districtEquipmentName": "Dump Truck-Okanagan-Shuswap",
+        "districtEquipmentName": "Dump Truck-Lower Mainland",
         "equipmentType": {
             "id": "200006"
         },
@@ -421,9 +421,9 @@
     },
     {
         "district": {
-            "id": "200003"
+            "id": "5"
         },
-        "districtEquipmentName": "Excavator-West Kootenay",
+        "districtEquipmentName": "Excavator-Okanagan-Shuswap",
         "equipmentType": {
             "id": "200000"
         },
@@ -431,9 +431,9 @@
     },
     {
         "district": {
-            "id": "200003"
+            "id": "5"
         },
-        "districtEquipmentName": "Grader-West Kootenay",
+        "districtEquipmentName": "Grader-Okanagan-Shuswap",
         "equipmentType": {
             "id": "200001"
         },
@@ -441,9 +441,9 @@
     },
     {
         "district": {
-            "id": "200003"
+            "id": "5"
         },
-        "districtEquipmentName": "Bulldozer-West Kootenay",
+        "districtEquipmentName": "Bulldozer-Okanagan-Shuswap",
         "equipmentType": {
             "id": "200002"
         },
@@ -451,9 +451,9 @@
     },
     {
         "district": {
-            "id": "200003"
+            "id": "5"
         },
-        "districtEquipmentName": "Cement Truck-West Kootenay",
+        "districtEquipmentName": "Cement Truck-Okanagan-Shuswap",
         "equipmentType": {
             "id": "200003"
         },
@@ -461,9 +461,9 @@
     },
     {
         "district": {
-            "id": "200003"
+            "id": "5"
         },
-        "districtEquipmentName": "Flat Deck-West Kootenay",
+        "districtEquipmentName": "Flat Deck-Okanagan-Shuswap",
         "equipmentType": {
             "id": "200004"
         },
@@ -471,9 +471,9 @@
     },
     {
         "district": {
-            "id": "200003"
+            "id": "5"
         },
-        "districtEquipmentName": "Logging Truck-West Kootenay",
+        "districtEquipmentName": "Logging Truck-Okanagan-Shuswap",
         "equipmentType": {
             "id": "200005"
         },
@@ -481,9 +481,9 @@
     },
     {
         "district": {
-            "id": "200003"
+            "id": "5"
         },
-        "districtEquipmentName": "Dump Truck-West Kootenay",
+        "districtEquipmentName": "Dump Truck-Okanagan-Shuswap",
         "equipmentType": {
             "id": "200006"
         },
@@ -491,9 +491,9 @@
     },
     {
         "district": {
-            "id": "200002"
+            "id": "4"
         },
-        "districtEquipmentName": "Excavator-Rocky Mountain",
+        "districtEquipmentName": "Excavator-West Kootenay",
         "equipmentType": {
             "id": "200000"
         },
@@ -501,9 +501,9 @@
     },
     {
         "district": {
-            "id": "200002"
+            "id": "4"
         },
-        "districtEquipmentName": "Grader-Rocky Mountain",
+        "districtEquipmentName": "Grader-West Kootenay",
         "equipmentType": {
             "id": "200001"
         },
@@ -511,9 +511,9 @@
     },
     {
         "district": {
-            "id": "200002"
+            "id": "4"
         },
-        "districtEquipmentName": "Bulldozer-Rocky Mountain",
+        "districtEquipmentName": "Bulldozer-West Kootenay",
         "equipmentType": {
             "id": "200002"
         },
@@ -521,9 +521,9 @@
     },
     {
         "district": {
-            "id": "200002"
+            "id": "4"
         },
-        "districtEquipmentName": "Cement Truck-Rocky Mountain",
+        "districtEquipmentName": "Cement Truck-West Kootenay",
         "equipmentType": {
             "id": "200003"
         },
@@ -531,9 +531,9 @@
     },
     {
         "district": {
-            "id": "200002"
+            "id": "4"
         },
-        "districtEquipmentName": "Flat Deck-Rocky Mountain",
+        "districtEquipmentName": "Flat Deck-West Kootenay",
         "equipmentType": {
             "id": "200004"
         },
@@ -541,9 +541,9 @@
     },
     {
         "district": {
-            "id": "200002"
+            "id": "4"
         },
-        "districtEquipmentName": "Logging Truck-Rocky Mountain",
+        "districtEquipmentName": "Logging Truck-West Kootenay",
         "equipmentType": {
             "id": "200005"
         },
@@ -551,9 +551,9 @@
     },
     {
         "district": {
-            "id": "200002"
+            "id": "4"
         },
-        "districtEquipmentName": "Dump Truck-Rocky Mountain",
+        "districtEquipmentName": "Dump Truck-West Kootenay",
         "equipmentType": {
             "id": "200006"
         },
@@ -561,9 +561,9 @@
     },
     {
         "district": {
-            "id": "200007"
+            "id": "3"
         },
-        "districtEquipmentName": "Excavator-Peace",
+        "districtEquipmentName": "Excavator-Rocky Mountain",
         "equipmentType": {
             "id": "200000"
         },
@@ -571,9 +571,9 @@
     },
     {
         "district": {
-            "id": "200007"
+            "id": "3"
         },
-        "districtEquipmentName": "Grader-Peace",
+        "districtEquipmentName": "Grader-Rocky Mountain",
         "equipmentType": {
             "id": "200001"
         },
@@ -581,9 +581,9 @@
     },
     {
         "district": {
-            "id": "200007"
+            "id": "3"
         },
-        "districtEquipmentName": "Bulldozer-Peace",
+        "districtEquipmentName": "Bulldozer-Rocky Mountain",
         "equipmentType": {
             "id": "200002"
         },
@@ -591,9 +591,9 @@
     },
     {
         "district": {
-            "id": "200007"
+            "id": "3"
         },
-        "districtEquipmentName": "Cement Truck-Peace",
+        "districtEquipmentName": "Cement Truck-Rocky Mountain",
         "equipmentType": {
             "id": "200003"
         },
@@ -601,9 +601,9 @@
     },
     {
         "district": {
-            "id": "200007"
+            "id": "3"
         },
-        "districtEquipmentName": "Flat Deck-Peace",
+        "districtEquipmentName": "Flat Deck-Rocky Mountain",
         "equipmentType": {
             "id": "200004"
         },
@@ -611,9 +611,9 @@
     },
     {
         "district": {
-            "id": "200007"
+            "id": "3"
         },
-        "districtEquipmentName": "Logging Truck-Peace",
+        "districtEquipmentName": "Logging Truck-Rocky Mountain",
         "equipmentType": {
             "id": "200005"
         },
@@ -621,9 +621,9 @@
     },
     {
         "district": {
-            "id": "200007"
+            "id": "3"
         },
-        "districtEquipmentName": "Dump Truck-Peace",
+        "districtEquipmentName": "Dump Truck-Rocky Mountain",
         "equipmentType": {
             "id": "200006"
         },
@@ -631,9 +631,9 @@
     },
     {
         "district": {
-            "id": "200005"
+            "id": "8"
         },
-        "districtEquipmentName": "Excavator-Thompson-Nicola",
+        "districtEquipmentName": "Excavator-Peace",
         "equipmentType": {
             "id": "200000"
         },
@@ -641,9 +641,9 @@
     },
     {
         "district": {
-            "id": "200005"
+            "id": "8"
         },
-        "districtEquipmentName": "Grader-Thompson-Nicola",
+        "districtEquipmentName": "Grader-Peace",
         "equipmentType": {
             "id": "200001"
         },
@@ -651,9 +651,9 @@
     },
     {
         "district": {
-            "id": "200005"
+            "id": "8"
         },
-        "districtEquipmentName": "Bulldozer-Thompson-Nicola",
+        "districtEquipmentName": "Bulldozer-Peace",
         "equipmentType": {
             "id": "200002"
         },
@@ -661,9 +661,9 @@
     },
     {
         "district": {
-            "id": "200005"
+            "id": "8"
         },
-        "districtEquipmentName": "Cement Truck-Thompson-Nicola",
+        "districtEquipmentName": "Cement Truck-Peace",
         "equipmentType": {
             "id": "200003"
         },
@@ -671,9 +671,9 @@
     },
     {
         "district": {
-            "id": "200005"
+            "id": "8"
         },
-        "districtEquipmentName": "Flat Deck-Thompson-Nicola",
+        "districtEquipmentName": "Flat Deck-Peace",
         "equipmentType": {
             "id": "200004"
         },
@@ -681,9 +681,9 @@
     },
     {
         "district": {
-            "id": "200005"
+            "id": "8"
         },
-        "districtEquipmentName": "Logging Truck-Thompson-Nicola",
+        "districtEquipmentName": "Logging Truck-Peace",
         "equipmentType": {
             "id": "200005"
         },
@@ -691,9 +691,9 @@
     },
     {
         "district": {
-            "id": "200005"
+            "id": "8"
         },
-        "districtEquipmentName": "Dump Truck-Thompson-Nicola",
+        "districtEquipmentName": "Dump Truck-Peace",
         "equipmentType": {
             "id": "200006"
         },
@@ -701,9 +701,9 @@
     },
     {
         "district": {
-            "id": "200009"
+            "id": "6"
         },
-        "districtEquipmentName": "Large-Excavator-Bulkley-Stikine",
+        "districtEquipmentName": "Excavator-Thompson-Nicola",
         "equipmentType": {
             "id": "200000"
         },
@@ -711,9 +711,9 @@
     },
     {
         "district": {
-            "id": "200009"
+            "id": "6"
         },
-        "districtEquipmentName": "Large-Grader-Bulkley-Stikine",
+        "districtEquipmentName": "Grader-Thompson-Nicola",
         "equipmentType": {
             "id": "200001"
         },
@@ -721,9 +721,9 @@
     },
     {
         "district": {
-            "id": "200009"
+            "id": "6"
         },
-        "districtEquipmentName": "Large-Bulldozer-Bulkley-Stikine",
+        "districtEquipmentName": "Bulldozer-Thompson-Nicola",
         "equipmentType": {
             "id": "200002"
         },
@@ -731,9 +731,9 @@
     },
     {
         "district": {
-            "id": "200009"
+            "id": "6"
         },
-        "districtEquipmentName": "Large-Cement Truck-Bulkley-Stikine",
+        "districtEquipmentName": "Cement Truck-Thompson-Nicola",
         "equipmentType": {
             "id": "200003"
         },
@@ -741,9 +741,9 @@
     },
     {
         "district": {
-            "id": "200009"
+            "id": "6"
         },
-        "districtEquipmentName": "Large-Flat Deck-Bulkley-Stikine",
+        "districtEquipmentName": "Flat Deck-Thompson-Nicola",
         "equipmentType": {
             "id": "200004"
         },
@@ -751,9 +751,9 @@
     },
     {
         "district": {
-            "id": "200009"
+            "id": "6"
         },
-        "districtEquipmentName": "Large-Logging Truck-Bulkley-Stikine",
+        "districtEquipmentName": "Logging Truck-Thompson-Nicola",
         "equipmentType": {
             "id": "200005"
         },
@@ -761,9 +761,9 @@
     },
     {
         "district": {
-            "id": "200009"
+            "id": "6"
         },
-        "districtEquipmentName": "Large-Dump Truck-Bulkley-Stikine",
+        "districtEquipmentName": "Dump Truck-Thompson-Nicola",
         "equipmentType": {
             "id": "200006"
         },

@@ -10,7 +10,13 @@ IF %3==dev SET server=%dev%
 IF %3==test SET server=%test%
 
 curl -c cookie %server%/api/authentication/dev/token?userId=SCURRAN
+IF %1==recalc GOTO RECALC
 curl -b cookie -v -H "Content-Type: application/json" -X POST --data-binary "@%1" %server%/%2
+
+GOTO End1
+
+:RECALC
+curl -b cookie -v %server%/api/equipment/recalcSeniority?region=%2
 
 GOTO End1
 
