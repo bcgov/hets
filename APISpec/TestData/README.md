@@ -101,13 +101,13 @@ For the instance of the application to be reloaded with new test data:
 
 The following assumes you know OpenShift, have a command line open, have logged into OpenShift and are in the project in which you are resetting the data. *Be sure you are in the right project!!!*
 
-1. Get the ID of the active replication controller (RC, rc) for the active `server` pod.
+1. Get the ID of the active replication controller (RC, rc) for the active `server` and `pdf` pods.
   1. Run the command `oc get rc` to get a list of RCs.
-  2. Find the one "server" RC that has active containers (non-zero) - record that number (eg. server-141)
+  2. Find the "server" and "pdf" RCs that have active containers (non-zero) - record those rc names (eg. server-141, pdf-14)
 2. Get the name of the active postgres pod
   1. Run the command `oc get pods` and get the name of the postgres pod (e.g. postgresql-2-k0fql)
 3. Scale down the server pod to 0:
-   1. Run the command `oc scale --replicas=0 rc server-141`
+   1. Run the command `oc scale --replicas=0 rc server-141 pdf-14`
 4. Reset the database:
    1. Log into the postgres container: `oc rsh postgresql-2-k0fql`
    2. Run the command `psql -c "\du;"` to get a list of database users.
@@ -117,7 +117,7 @@ The following assumes you know OpenShift, have a command line open, have logged 
       2. Depending on the terminal you are using, the paste will not include a final "<CR>" and when you hit enter, the executions will occur.
       3. The feedback will be the results of the commands e.g. "Drop", "CREATE" and 1 or more "GRANT" lines.
 5. Scale up the server pod to 1:
-   1. Run the command `oc scale --replicas=1 rc server-141`
+   1. Run the command `oc scale --replicas=1 rc server-141 pdf-14`
    2. Monitor the log of the new container until initialization is complete. It takes a little while as the database model is created and the seeder data is loaded. Watch for the following in the log: `Application started. Press Ctrl+C to shut down.`
 6. As necessary, scale up the server pod further - likely to 2.
 
