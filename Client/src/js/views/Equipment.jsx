@@ -61,7 +61,7 @@ var Equipment = React.createClass({
         ownerId: this.props.search.ownerId || 0,
         ownerName: this.props.search.ownerName || 'Owner',
         lastVerifiedDate: this.props.search.lastVerifiedDate || '',
-        hired: this.props.search.hired !== false,
+        hired: this.props.search.hired === false,
         statusCode: this.props.search.statusCode || Constant.EQUIPMENT_STATUS_CODE_APPROVED,
       },
 
