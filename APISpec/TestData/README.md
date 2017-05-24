@@ -111,7 +111,7 @@ The following assumes you know OpenShift, have a command line open, have logged 
 4. Reset the database:
    1. Log into the postgres container: `oc rsh postgresql-2-k0fql`
    2. Run the command `psql -c "\du;"` to get a list of database users.
-   2. Prepare (in a text editor), copy and then paste the following into the shell `psql -c "drop database hets;"; psql -c "create database hets;"; psql -c 'GRANT ALL ON DATABASE hets TO "user6DA";'; psql -c 'GRANT SELECT ON ALL TABLES IN SCHEMA publi c TO "shvj2me2";'; psql -c 'GRANT SELECT ON ALL TABLES IN SCHEMA public TO "gknjssqk";'; psql -c 'GRANT SELECT ON ALL TABLES IN SCHEMA public TO "gaj2bell";'`
+   2. Prepare (in a text editor), copy and then paste the following into the shell `psql -c "drop database hets;"; psql -c "create database hets;"; psql -c 'GRANT ALL ON DATABASE hets TO "user6DA";'; psql -c 'GRANT SELECT ON ALL TABLES IN SCHEMA public TO "shvj2me2";'; psql -c 'GRANT SELECT ON ALL TABLES IN SCHEMA public TO "gknjssqk";'; psql -c 'GRANT SELECT ON ALL TABLES IN SCHEMA public TO "gaj2bell";'`
       1. Replace the references to database users with those listed from running the commands. "user6DA" is replaced with the name of the database user known to the server, while the rest are individuals (such as from the MOTI Data Architecture group) that have read-only access to the database.
       2. The pasted string is series of Linux commands that execute the necessary sequence of database actions.
       2. Depending on the terminal you are using, the paste will not include a final "<CR>" and when you hit enter, the executions will occur.
