@@ -101,6 +101,8 @@ For the instance of the application to be reloaded with new test data:
 
 The following assumes you know OpenShift, have a command line open, have logged into OpenShift and are in the project in which you are resetting the data. *Be sure you are in the right project!!!*
 
+NOTE: It's a little tricky to create a foolproof script for this. However, the data rarely changes (e.g. the rc names, database user names) so it's pretty easy to create a personal script to reduce the keystrokes for this.
+
 1. Get the ID of the active replication controller (RC, rc) for the active `server` and `pdf` pods.
   1. Run the command `oc get rc` to get a list of RCs.
   2. Find the "server" and "pdf" RCs that have active containers (non-zero) - record those rc names (eg. server-141, pdf-14)
