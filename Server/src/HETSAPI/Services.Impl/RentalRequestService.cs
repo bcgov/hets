@@ -1,11 +1,11 @@
 /*
  * REST API Documentation for the MOTI Hired Equipment Tracking System (HETS) Application
  *
- * The Hired Equipment Program is for owners/operators who have a dump truck, bulldozer, backhoe or  other piece of equipment they want to hire out to the transportation ministry for day labour and  emergency projects.  The Hired Equipment Program distributes available work to local equipment owners. The program is  based on seniority and is designed to deliver work to registered users fairly and efficiently  through the development of local area call-out lists. 
+ * The Hired Equipment Program is for owners/operators who have a dump truck, bulldozer, backhoe or  other piece of equipment they want to hire out to the transportation ministry for day labour and  emergency projects.  The Hired Equipment Program distributes available work to local equipment owners. The program is  based on seniority and is designed to deliver work to registered users fairly and efficiently  through the development of local area call-out lists.
  *
  * OpenAPI spec version: v1
- * 
- * 
+ *
+ *
  */
 
 using System;
@@ -27,11 +27,11 @@ using Microsoft.AspNetCore.Http;
 namespace HETSAPI.Services.Impl
 {
     /// <summary>
-    /// 
+    ///
     /// </summary>
     public class RentalRequestService : ServiceBase, IRentalRequestService
     {
-        private readonly DbAppContext _context;        
+        private readonly DbAppContext _context;
 
         /// <summary>
         /// Create a service and set the database context
@@ -66,7 +66,7 @@ namespace HETSAPI.Services.Impl
         }
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         /// <param name="items"></param>
         /// <response code="201">Project created</response>
@@ -95,7 +95,7 @@ namespace HETSAPI.Services.Impl
         }
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         /// <response code="200">OK</response>
         public virtual IActionResult RentalrequestsGetAsync()
@@ -113,7 +113,7 @@ namespace HETSAPI.Services.Impl
         }
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         /// <remarks>Returns attachments for a particular RentalRequest</remarks>
         /// <param name="id">id of RentalRequest to fetch attachments for</param>
@@ -140,7 +140,7 @@ namespace HETSAPI.Services.Impl
         }
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         /// <param name="id">id of Project to delete</param>
         /// <response code="200">OK</response>
@@ -148,7 +148,7 @@ namespace HETSAPI.Services.Impl
         public virtual IActionResult RentalrequestsIdDeletePostAsync(int id)
         {
             var item = _context.RentalRequests
-                .Include (x => x.RentalRequestRotationList)
+                .Include(x => x.RentalRequestRotationList)
                 .FirstOrDefault(a => a.Id == id);
             if (item != null)
             {
@@ -162,9 +162,9 @@ namespace HETSAPI.Services.Impl
                 }
 
                 _context.RentalRequests.Remove(item);
-                    // Save the changes
+                // Save the changes
                 _context.SaveChanges();
-                
+
                 return new ObjectResult(item);
             }
             else
@@ -176,7 +176,7 @@ namespace HETSAPI.Services.Impl
 
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         /// <remarks>Returns History for a particular RentalRequest</remarks>
         /// <param name="id">id of RentalRequest to fetch History for</param>
@@ -218,7 +218,7 @@ namespace HETSAPI.Services.Impl
         }
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         /// <remarks>Add a History record to the Rental Request</remarks>
         /// <param name="id">id of RentalRequest to add History for</param>
@@ -256,7 +256,7 @@ namespace HETSAPI.Services.Impl
 
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         /// <param name="id">id of Project to fetch</param>
         /// <response code="200">OK</response>
@@ -285,7 +285,7 @@ namespace HETSAPI.Services.Impl
         }
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         /// <param name="id">id of Project to fetch</param>
         /// <param name="item"></param>
@@ -310,13 +310,13 @@ namespace HETSAPI.Services.Impl
         }
 
 
-        private void BuildRentalRequestRotationList (RentalRequest item)
+        private void BuildRentalRequestRotationList(RentalRequest item)
         {
             // validate input parameters
             if (item != null && item.LocalArea != null && item.DistrictEquipmentType != null && item.DistrictEquipmentType.EquipmentType != null)
             {
                 int currentSortOrder = 1;
-                
+
                 item.RentalRequestRotationList = new List<RentalRequestRotationList>();
 
                 // first get the localAreaRotationList.askNextBlock1 for the given local area.
@@ -331,14 +331,14 @@ namespace HETSAPI.Services.Impl
 
                 for (int currentBlock = 1; currentBlock <= numberOfBlocks; currentBlock++)
                 {
-                    
+
 
                     int currentBlockSortOrder = 0;
                     // start by getting the current set of equipment for the given equipment type.
 
                     List<Equipment> blockEquipment = _context.Equipments
-                        .Where(x => x.DistrictEquipmentType == item.DistrictEquipmentType && x.BlockNumber == currentBlock  && x.LocalArea.Id == item.LocalArea.Id)
-                        .OrderByDescending(x => x.Seniority)                        
+                        .Where(x => x.DistrictEquipmentType == item.DistrictEquipmentType && x.BlockNumber == currentBlock && x.LocalArea.Id == item.LocalArea.Id)
+                        .OrderByDescending(x => x.Seniority)
                         .ToList();
 
                     int listSize = blockEquipment.Count;
@@ -361,7 +361,7 @@ namespace HETSAPI.Services.Impl
                                 seeking = localAreaRotationList.AskNextBlockOpen;
                                 break;
                         }
-                    }                    
+                    }
 
                     if (localAreaRotationList != null && seeking != null)
                     {
@@ -393,7 +393,7 @@ namespace HETSAPI.Services.Impl
                         }
                     }
                 }
-            }                       
+            }
         }
 
         /// <summary>
@@ -417,7 +417,7 @@ namespace HETSAPI.Services.Impl
         }
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         /// <remarks>Updates a rental request rotation list entry.  Side effect is the LocalAreaRotationList is also updated</remarks>
         /// <param name="id">id of RentalRequest to update</param>
@@ -452,7 +452,7 @@ namespace HETSAPI.Services.Impl
 
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         /// <param name="item"></param>
         /// <response code="201">Project created</response>
@@ -461,7 +461,7 @@ namespace HETSAPI.Services.Impl
             if (item != null)
             {
                 AdjustRecord(item);
-                
+
                 var exists = _context.RentalRequests.Any(a => a.Id == item.Id);
                 if (exists)
                 {
@@ -470,7 +470,7 @@ namespace HETSAPI.Services.Impl
                 else
                 {
                     // record not found
-                    BuildRentalRequestRotationList(item);                                       
+                    BuildRentalRequestRotationList(item);
                     _context.RentalRequests.Add(item);
                 }
                 // Save the changes
@@ -487,18 +487,20 @@ namespace HETSAPI.Services.Impl
         /// Searches Projects
         /// </summary>
         /// <remarks>Used for the project search page.</remarks>
-        /// <param name="localareas">Local areas (array of id numbers)</param>
+        /// <param name="localareasCSV">Local areas (comma seperated list of id numbers)</param>
         /// <param name="project">name or partial name for a Project</param>
         /// <param name="status">Status</param>
         /// <param name="startDate">Inspection start date</param>
         /// <param name="endDate">Inspection end date</param>
         /// <response code="200">OK</response>
-        public virtual IActionResult RentalrequestsSearchGetAsync(int?[] localareas, string project, string status, DateTime? startDate, DateTime? endDate)
-        { 
+        public virtual IActionResult RentalrequestsSearchGetAsync(string localareasCSV, string project, string status, DateTime? startDate, DateTime? endDate)
+        {
+            int?[] localareas = ParseIntArray(localareasCSV);
+
             var data = _context.RentalRequests
                     .Include(x => x.LocalArea.ServiceArea.District.Region)
                     .Include(x => x.DistrictEquipmentType.EquipmentType)
-                    .Include(x => x.Project.PrimaryContact)                    
+                    .Include(x => x.Project.PrimaryContact)
                     .Select(x => x);
 
             // Default search results must be limited to user
@@ -509,7 +511,7 @@ namespace HETSAPI.Services.Impl
             {
                 data = data.Where(x => localareas.Contains(x.LocalArea.Id));
             }
-                        
+
             if (project != null)
             {
                 data = data.Where(x => x.Project.Name.ToLowerInvariant().Contains(project.ToLowerInvariant()));
@@ -541,7 +543,7 @@ namespace HETSAPI.Services.Impl
                 }
             }
 
-            // no calculated fields in a RentalRequest search yet.                           
+            // no calculated fields in a RentalRequest search yet.
             return new ObjectResult(result);
         }
     }
