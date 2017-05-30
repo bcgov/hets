@@ -38,16 +38,6 @@ namespace HETSAPI.Models
             this.Id = 0;
         }
 
-        /// <summary>
-        /// Constructor
-        /// </summary>
-        /// <param name="SmUserId"></param>
-        /// <param name="District"></param>
-        public User(string SmUserId = null, District District = null)
-        {
-            this.SmUserId = SmUserId;
-            this.District = District;
-        }
 
         /// <summary>
         /// Initializes a new instance of the <see cref="User" /> class.
@@ -70,9 +60,6 @@ namespace HETSAPI.Models
             this.GivenName = GivenName;
             this.Surname = Surname;
             this.Active = Active;
-
-
-
             this.Initials = Initials;
             this.Email = Email;
             this.SmUserId = SmUserId;

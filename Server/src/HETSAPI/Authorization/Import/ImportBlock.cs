@@ -126,8 +126,8 @@ namespace HETSAPI.Import
                 return;
 
             //Add the user specified in oldObject.Modified_By and oldObject.Created_By if not there in the database
-            Models.User modifiedBy = ImportUtility.AddUserFromString(dbContext, "", systemId);
-            Models.User createdBy = ImportUtility.AddUserFromString(dbContext, oldObject.Created_By, systemId);
+            Models.User modifiedBy = ImportUtility.AddUserFromString(dbContext, "", systemId, true);
+            Models.User createdBy = ImportUtility.AddUserFromString(dbContext, oldObject.Created_By, systemId, true);
 
             int areaId = oldObject.Area_Id ?? 0;
             int equipmentTypeId = oldObject.Equip_Type_Id ?? 0;

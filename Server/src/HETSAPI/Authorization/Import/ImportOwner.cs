@@ -77,7 +77,7 @@ namespace HETSAPI.Import
                             dbContext.ImportMaps.Update(importMap);
                         }
                     }
-                    if (ii % 500 == 0)
+                    if (ii++ % 500 == 0)
                     {
                         try
                         {
@@ -124,12 +124,13 @@ namespace HETSAPI.Import
             if (owner == null)
             {
                 isNew = true;
-                owner = new Models.Owner(++maxOwnerIndex);
+                owner = new Models.Owner();
+                owner.Id =  ++maxOwnerIndex;
             }
 
             //Add the user specified in oldObject.Modified_By and oldObject.Created_By if not there in the database
-            Models.User modifiedBy = ImportUtility.AddUserFromString(dbContext, oldObject.Modified_By, systemId);
-            Models.User createdBy = ImportUtility.AddUserFromString(dbContext, oldObject.Created_By, systemId);
+            Models.User modifiedBy = ImportUtility.AddUserFromString(dbContext, oldObject.Modified_By, systemId, true);
+            Models.User createdBy = ImportUtility.AddUserFromString(dbContext, oldObject.Created_By, systemId, true);
 
             // The followings are the data mapping
             //  owner.LocalAreaId = oldObject.Area_Id;

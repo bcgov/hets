@@ -123,8 +123,8 @@ namespace HETSAPI.Import
             bool isNew = false;
 
             //Add the user specified in oldObject.Modified_By and oldObject.Created_By if not there in the database
-            Models.User modifiedBy = ImportUtility.AddUserFromString(dbContext, "", systemId);
-            Models.User createdBy = ImportUtility.AddUserFromString(dbContext, oldObject.Created_By, systemId);
+            Models.User modifiedBy = ImportUtility.AddUserFromString(dbContext, "", systemId, true);
+            Models.User createdBy = ImportUtility.AddUserFromString(dbContext, oldObject.Created_By, systemId, true);
 
             if (instance == null)
             {
@@ -137,7 +137,11 @@ namespace HETSAPI.Import
                 {
                     if (equip.Notes == null)
                         equip.Notes = new List<Note>();
-                    Models.Note note = new Models.Note(oldObject.Reason, true);
+
+
+                    Models.Note note = new Note();
+                    note.Text = new string(oldObject.Reason.Take(2048).ToArray());
+                    note.IsNoLongerRelevant = true;
                     if (proj != null)
                     { // The current model does not allow Project Id to be added to thge Note. while Note model should have Project ID
                        // note. = oldObject.Project_Id;

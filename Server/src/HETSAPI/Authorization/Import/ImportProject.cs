@@ -111,8 +111,8 @@ namespace HETSAPI.Import
                 return;
 
             //Add the user specified in oldObject.Modified_By and oldObject.Created_By if not there in the database
-            Models.User modifiedBy = ImportUtility.AddUserFromString(dbContext, "", systemId);
-            Models.User createdBy = ImportUtility.AddUserFromString(dbContext, oldObject.Created_By, systemId);
+            Models.User modifiedBy = ImportUtility.AddUserFromString(dbContext, "", systemId, true);
+            Models.User createdBy = ImportUtility.AddUserFromString(dbContext, oldObject.Created_By, systemId, true);
 
             if (instance == null)
             {
@@ -145,7 +145,10 @@ namespace HETSAPI.Import
                     try
                     {
                         instance.Notes = new List<Note>();
-                        instance.Notes.Add(new Note(oldObject.Job_Desc2, true));
+                        Models.Note note = new Note();
+                        note.Text = new string(oldObject.Job_Desc2.Take(2048).ToArray());
+                        note.IsNoLongerRelevant = true;
+                        instance.Notes.Add(note);
                     }
                     catch (Exception e)
                     {

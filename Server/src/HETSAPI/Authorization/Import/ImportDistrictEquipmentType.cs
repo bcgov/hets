@@ -16,7 +16,7 @@ using System.Text.RegularExpressions;
 
 namespace HETSAPI.Import
 {
-    public class ImportDisEquipType
+    public class ImportDistrictEquipmentType
     {
 
         const string oldTable = "EquipType";
@@ -126,16 +126,18 @@ namespace HETSAPI.Import
                 instance = new Models.DistrictEquipmentType();
                 instance.Id = oldObject.Equip_Type_Id;
 
-                try
+                try  //Combining <Equip_Type_Cd> and < Equip_Type_Desc> together
                 {
-                    instance.DistrictEquipmentName = oldObject.Equip_Type_Desc.Length >= 50 ? oldObject.Equip_Type_Desc.Substring(0, 50) : oldObject.Equip_Type_Desc;
+                    instance.DistrictEquipmentName = oldObject.Equip_Type_Cd.Length >= 10 ? oldObject.Equip_Type_Cd.Substring(0, 10) : oldObject.Equip_Type_Cd
+                       +"-" +  ( oldObject.Equip_Type_Desc.Length >= 210 ? oldObject.Equip_Type_Desc.Substring(0, 210) : oldObject.Equip_Type_Desc);
+                   // instance.DistrictEquipmentName = oldObject.ToDelimString(" | ");
                 }
                 catch
                 {
 
                 }
 
-                ServiceArea serviceArea = dbContext.ServiceAreas.FirstOrDefault(x => x.Id == oldObject.Service_Area_Id);
+                ServiceArea serviceArea = dbContext.ServiceAreas.FirstOrDefault(x => x.MinistryServiceAreaID == oldObject.Service_Area_Id);
                 if (serviceArea != null)
                 {
                     int districtId = serviceArea.DistrictId ?? 0;
@@ -146,48 +148,7 @@ namespace HETSAPI.Import
 
                 //    instance.EquipmentType = 
                 instance.CreateTimestamp = DateTime.UtcNow;
-                instance.CreateUserid = createdBy.SmUserId;
-
-                if (oldObject.Equip_Type_Cd != null )
-                {
-                    EquipmentType eType = dbContext.EquipmentTypes.FirstOrDefault(x => x.Name == oldObject.Equip_Type_Cd);
-                    if (eType == null)
-                    {
-                        eType = new EquipmentType();
-                        eType.Name = oldObject.Equip_Type_Cd;
-                        try
-                        {
-                            eType.MaximumHours = (float)Decimal.Parse(oldObject.Max_Hours, System.Globalization.NumberStyles.Any);
-                        }
-                        catch (Exception e)
-                        {
-                            string ii = e.ToString();
-                        }
-                        try
-                        {
-                            eType.MaxHoursSub = (float)Decimal.Parse(oldObject.Max_Hours_Sub, System.Globalization.NumberStyles.Any);
-                        }
-                        catch (Exception e)
-                        {
-                            string ii = e.ToString();
-                        }
-                        try
-                        {
-                            eType.ExtendHours = (float)Decimal.Parse(oldObject.Extend_Hours, System.Globalization.NumberStyles.Any);
-                        }
-                        catch (Exception e)
-                        {
-                            string ii = e.ToString();
-                        }
-                        eType.CreateTimestamp = DateTime.Parse(oldObject.Created_Dt == null ? "1900-01-01" : oldObject.Created_Dt.Trim().Substring(0, 10));
-                        eType.CreateUserid = createdBy.SmUserId;
-
-                        eType.IsDumpTruck = false;
-                        //type.NumberOfBlocks = 
-                        dbContext.EquipmentTypes.Add(eType);
-                    }
-                    instance.EquipmentTypeId = eType.Id;
-                }
+                instance.CreateUserid = createdBy.SmUserId;              
                 dbContext.DistrictEquipmentTypes.Add(instance);
             }
 

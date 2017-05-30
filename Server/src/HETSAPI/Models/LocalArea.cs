@@ -38,11 +38,6 @@ namespace HETSAPI.Models
             this.Id = 0;
         }
 
-        public LocalArea(int Id)
-        {
-            this.Id = Id;
-        }
-
         /// <summary>
         /// Initializes a new instance of the <see cref="LocalArea" /> class.
         /// </summary>
