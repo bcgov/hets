@@ -15,13 +15,13 @@ using Microsoft.Extensions.Configuration;
 using System.Text.RegularExpressions;
 
 namespace HETSAPI.Import
-
 {
-    public class ImportRotation
+    public class ImportDistrictEquipmentType
     {
-        const string oldTable = "Rotation_Doc";
-        const string newTable = "HET_NOTE";
-        const string xmlFileName = "Rotation_Doc.xml";
+
+        const string oldTable = "EquipType";
+        const string newTable = "HET_EQUIPMMENT_TYPE";
+        const string xmlFileName = "Equip_Type.xml";
 
         static public void Import(PerformContext performContext, DbAppContext dbContext, string fileLocation, string systemId)
         {
@@ -35,51 +35,43 @@ namespace HETSAPI.Import
                 progress.SetValue(0);
 
                 // create serializer and serialize xml file
-                XmlSerializer ser = new XmlSerializer(typeof(Rotation_Doc[]), new XmlRootAttribute(rootAttr));
+                XmlSerializer ser = new XmlSerializer(typeof(EquipType[]), new XmlRootAttribute(rootAttr));
                 MemoryStream memoryStream = ImportUtility.memoryStreamGenerator(xmlFileName, oldTable, fileLocation, rootAttr);
-                HETSAPI.Import.Rotation_Doc[] legacyItems = (HETSAPI.Import.Rotation_Doc[])ser.Deserialize(memoryStream);
-
-                //Use this list to save a trip to query database in each iteration
-                List<Models.Equipment> equips = dbContext.Equipments
-                        .Include(x => x.DumpTruck)
-                        .Include(x => x.DistrictEquipmentType)
-                        .ToList();
-                List<Models.Project> projs = dbContext.Projects
-                        .ToList();
-
+                HETSAPI.Import.EquipType[] legacyItems = (HETSAPI.Import.EquipType[])ser.Deserialize(memoryStream);
                 int ii = 0;
                 foreach (var item in legacyItems.WithProgress(progress))
                 {
                     // see if we have this one already.
-                    string oldKey = item.Equip_Id + item.Note_Dt + item.Created_Dt;
-                    ImportMap importMap = dbContext.ImportMaps.FirstOrDefault(x => x.OldTable == oldTable && x.OldKey == oldKey);
+                    ImportMap importMap = dbContext.ImportMaps.FirstOrDefault(x => x.OldTable == oldTable && x.OldKey == item.Equip_Type_Id.ToString());
 
                     if (importMap == null) // new entry
                     {
-                        Models.Note instance = null;
-                        CopyToInstance(performContext, dbContext, item, ref instance, equips, projs, systemId);
-                        ImportUtility.AddImportMap(dbContext, oldTable, oldKey, newTable, instance.Id);
+                        if (item.Equip_Type_Id > 0)
+                        {
+                            Models.DistrictEquipmentType instance = null;
+                            CopyToInstance(performContext, dbContext, item, ref instance, systemId);
+                            ImportUtility.AddImportMap(dbContext, oldTable, item.Equip_Type_Id.ToString(), newTable, instance.Id);
+                        }
                     }
                     else // update
                     {
-                        Models.Note instance = dbContext.Notes.FirstOrDefault(x => x.Id == importMap.NewKey);
+                        Models.DistrictEquipmentType instance = dbContext.DistrictEquipmentTypes.FirstOrDefault(x => x.Id == importMap.NewKey);
                         if (instance == null) // record was deleted
                         {
-                            CopyToInstance(performContext, dbContext, item, ref instance, equips, projs, systemId);
+                            CopyToInstance(performContext, dbContext, item, ref instance, systemId);
                             // update the import map.
                             importMap.NewKey = instance.Id;
                             dbContext.ImportMaps.Update(importMap);
                         }
                         else // ordinary update.
                         {
-                            CopyToInstance(performContext, dbContext, item, ref instance, equips, projs, systemId);
+                            CopyToInstance(performContext, dbContext, item, ref instance, systemId);
                             // touch the import map.
                             importMap.LastUpdateTimestamp = DateTime.UtcNow;
                             dbContext.ImportMaps.Update(importMap);
                         }
                     }
-
-                    if (++ii % 1000 == 0)
+                    if (ii++ % 250 == 0)
                     {
                         try
                         {
@@ -91,7 +83,6 @@ namespace HETSAPI.Import
                         }
                     }
                 }
-                performContext.WriteLine("*** Done ***");
                 try
                 {
                     int iResult = dbContext.SaveChangesForImport();
@@ -100,6 +91,7 @@ namespace HETSAPI.Import
                 {
                     string iStr = e.ToString();
                 }
+                performContext.WriteLine("*** Done ***");
             }
 
             catch (Exception e)
@@ -117,40 +109,52 @@ namespace HETSAPI.Import
         /// <param name="oldObject"></param>
         /// <param name="instance"></param>
         /// <param name="systemId"></param>
-        static private void CopyToInstance(PerformContext performContext, DbAppContext dbContext, HETSAPI.Import.Rotation_Doc oldObject, ref Models.Note instance,
-            List<Models.Equipment> equips, List<Models.Project> projs, string systemId)
+        static private void CopyToInstance(PerformContext performContext, DbAppContext dbContext, HETSAPI.Import.EquipType oldObject, ref Models.DistrictEquipmentType instance, string systemId)
         {
             bool isNew = false;
 
+            if (oldObject.Equip_Type_Id <= 0)
+                return;
+
             //Add the user specified in oldObject.Modified_By and oldObject.Created_By if not there in the database
-            Models.User modifiedBy = ImportUtility.AddUserFromString(dbContext, "", systemId);
+            Models.User modifiedBy = ImportUtility.AddUserFromString(dbContext, oldObject.Modified_By, systemId);
             Models.User createdBy = ImportUtility.AddUserFromString(dbContext, oldObject.Created_By, systemId);
 
             if (instance == null)
             {
                 isNew = true;
-                instance = new Models.Note();
+                instance = new Models.DistrictEquipmentType();
+                instance.Id = oldObject.Equip_Type_Id;
 
-                Models.Project proj = projs.FirstOrDefault(x => x.Id == oldObject.Project_Id);    
-                Models.Equipment equip = equips.FirstOrDefault(x => x.Id == oldObject.Equip_Id);
-                if (equip != null)
+                try  //Combining <Equip_Type_Cd> and < Equip_Type_Desc> together
                 {
-                    if (equip.Notes == null)
-                        equip.Notes = new List<Note>();
+                    instance.DistrictEquipmentName = oldObject.Equip_Type_Cd.Length >= 10 ? oldObject.Equip_Type_Cd.Substring(0, 10) : oldObject.Equip_Type_Cd
+                       +"-" +  ( oldObject.Equip_Type_Desc.Length >= 210 ? oldObject.Equip_Type_Desc.Substring(0, 210) : oldObject.Equip_Type_Desc);
+                   // instance.DistrictEquipmentName = oldObject.ToDelimString(" | ");
+                }
+                catch
+                {
 
+                }
 
-                    Models.Note note = new Note();
-                    note.Text = new string(oldObject.Reason.Take(2048).ToArray());
-                    note.IsNoLongerRelevant = true;
-                    if (proj != null)
-                    { // The current model does not allow Project Id to be added to thge Note. while Note model should have Project ID
-                       // note. = oldObject.Project_Id;
-                    }
-                    equip.Notes.Add(note);
-                    dbContext.Equipments.Update(equip);
-                } 
+                ServiceArea serviceArea = dbContext.ServiceAreas.FirstOrDefault(x => x.MinistryServiceAreaID == oldObject.Service_Area_Id);
+                if (serviceArea != null)
+                {
+                    int districtId = serviceArea.DistrictId ?? 0;
+                    District dis = dbContext.Districts.FirstOrDefault(x => x.RegionId == districtId);
+                    instance.DistrictId = districtId;
+                    instance.District = dis;
+                }
+
+                //    instance.EquipmentType = 
+                instance.CreateTimestamp = DateTime.UtcNow;
+                instance.CreateUserid = createdBy.SmUserId;              
+                dbContext.DistrictEquipmentTypes.Add(instance);
             }
+
         }
+
     }
 }
+
 

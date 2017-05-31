@@ -28,7 +28,7 @@ namespace HETSAPI.Controllers
         /// environment.
         /// </summary>
         [HttpGet]
-        [Route("dev/token")]
+        [Route("dev/token/{userid}")]
         [AllowAnonymous]
         public virtual IActionResult GetDevAuthenticationCookie(string userId)
         {

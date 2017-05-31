@@ -77,7 +77,7 @@ namespace HETSAPI.Import
                             dbContext.ImportMaps.Update(importMap);
                         }
                     }
-                    if (ii % 500 == 0)
+                    if (ii++ % 500 == 0)
                     {
                         try
                         {
@@ -124,7 +124,8 @@ namespace HETSAPI.Import
             if (owner == null)
             {
                 isNew = true;
-                owner = new Models.Owner(++maxOwnerIndex);
+                owner = new Models.Owner();
+                owner.Id =  ++maxOwnerIndex;
             }
 
             //Add the user specified in oldObject.Modified_By and oldObject.Created_By if not there in the database

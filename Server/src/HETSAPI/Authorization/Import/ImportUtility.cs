@@ -90,6 +90,7 @@ namespace HETSAPI.Import
         /// <param name="dbContext"></param>
         /// <param name="userString"></param>
         /// <param name="smSystemId"></param>
+        /// <param name="addUser"></param>  -- to add the corresponding user or not.
         /// <returns></returns>
         static public Models.User AddUserFromString(DbAppContext dbContext, string userString, string smSystemId)
         {
@@ -101,7 +102,7 @@ namespace HETSAPI.Import
             }
             catch
             {
-                return dbContext.Users.FirstOrDefault(x => x.SmUserId == smSystemId);
+                return dbContext.Users.FirstOrDefault(x => string.Equals(x.SmUserId, smSystemId, StringComparison.OrdinalIgnoreCase) );
             }
             if (index > 0)
             {
@@ -114,7 +115,7 @@ namespace HETSAPI.Import
                     string surName = userString.Substring(0, commaPos);
                     string givenName = userString.Substring(commaPos + 2, leftBreakPos - commaPos - 2);
                     string smUserId = userString.Substring(startPos + 1, rightBreakPos - startPos - 1);
-                    Models.User user = dbContext.Users.FirstOrDefault(x => x.SmUserId == smUserId);
+                    Models.User user = dbContext.Users.FirstOrDefault(x => string.Equals(x.SmUserId, smUserId, StringComparison.OrdinalIgnoreCase));
                     if (user == null)
                     {
                         user = new Models.User();
@@ -122,6 +123,7 @@ namespace HETSAPI.Import
                         user.GivenName = givenName.Trim();
                         user.SmUserId = smUserId.Trim();
                         dbContext.Users.Add(user);
+                        dbContext.SaveChangesForImport();
                     }
                     return user;
                 }

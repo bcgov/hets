@@ -55,7 +55,7 @@ namespace HETSAPI.Import
                 else // update
                 {
                     Models.Equipment instance = dbContext.Equipments.FirstOrDefault(x => x.Id == importMap.NewKey);
-                    if (instance == null) // record was deleted
+                    if (instance == null && item.Equip_Id > 0) // record was deleted
                     {
                         CopyToInstance(performContext, dbContext, item, ref instance, systemId);
                         // update the import map.
@@ -64,10 +64,13 @@ namespace HETSAPI.Import
                     }
                     else // ordinary update.
                     {
-                        CopyToInstance(performContext, dbContext, item, ref instance, systemId);
-                        // touch the import map.
-                        importMap.LastUpdateTimestamp = DateTime.UtcNow;
-                        dbContext.ImportMaps.Update(importMap);
+                        if (item.Equip_Id > 0)
+                        {
+                            CopyToInstance(performContext, dbContext, item, ref instance, systemId);
+                            // touch the import map.
+                            importMap.LastUpdateTimestamp = DateTime.UtcNow;
+                            dbContext.ImportMaps.Update(importMap);
+                        }
                     }
                 }
 
@@ -120,7 +123,10 @@ namespace HETSAPI.Import
                 if (oldObject.Comment != null)
                 {
                     instance.Notes = new List<Note>();
-                    instance.Notes.Add(new Note(oldObject.Comment, true));
+                    Models.Note note = new Note();
+                    note.Text = new string(oldObject.Comment.Take(2048).ToArray());
+                    note.IsNoLongerRelevant = true;
+                    instance.Notes.Add(note);
                 }
 
                 // instance.ArchiveDate = oldObject. 

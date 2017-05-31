@@ -43,18 +43,19 @@ namespace HETSAPI.Import
                 {
                     // see if we have this one already.
                     ImportMap importMap = dbContext.ImportMaps.FirstOrDefault(x => x.OldTable == oldTable && x.OldKey == item.Popt_Id.ToString());
-                    Models.User instance = dbContext.Users.FirstOrDefault(x => item.User_Cd.IndexOf(x.SmUserId) >= 0);
+                    Models.User instance = dbContext.Users.FirstOrDefault(x => item.User_Cd.ToUpper().IndexOf(x.SmUserId.ToUpper()) >= 0);
                     if (instance == null)
                     {
                         CopyToInstance(performContext, dbContext, item, ref instance, systemId);
-                        if (importMap == null) // new entry
+                        if (importMap == null && instance != null) // new entry
                         {
                             ImportUtility.AddImportMap(dbContext, oldTable, item.Popt_Id.ToString(), newTable, instance.Id);
                         }
+                        int iResult = dbContext.SaveChangesForImport();
                     }
                     //else // update
                     //{
-                    //    Models.User instance = dbContext.Users.FirstOrDefault(x => x.Id == importMap.NewKey);
+                    //    instance = dbContext.Users.FirstOrDefault(x => x.Id == importMap.NewKey);
                     //    if (instance == null) // record was deleted
                     //    {
                     //        CopyToInstance(performContext, dbContext, item, ref instance, systemId);
@@ -71,17 +72,6 @@ namespace HETSAPI.Import
                     //    }
                     //}
 
-                    if (ii++ % 100 == 0)
-                    {
-                        try
-                        {
-                            int iResult = dbContext.SaveChangesForImport();
-                        }
-                        catch (Exception e)
-                        {
-                            string iStr = e.ToString();
-                        }
-                    }
                 }
             }
             catch (Exception e)
@@ -89,14 +79,7 @@ namespace HETSAPI.Import
                 performContext.WriteLine("*** ERROR ***");
                 performContext.WriteLine(e.ToString());
             }
-            try
-            {
-                int iResult = dbContext.SaveChangesForImport();
-            }
-            catch (Exception e)
-            {
-                string iStr = e.ToString();
-            }
+
             performContext.WriteLine("*** Done ***");
         }
 
@@ -128,6 +111,17 @@ namespace HETSAPI.Import
             //Add the user specified in oldObject.Modified_By and oldObject.Created_By if not there in the database
             Models.User modifiedBy = ImportUtility.AddUserFromString(dbContext, oldObject.Modified_By, systemId);
             Models.User createdBy = ImportUtility.AddUserFromString(dbContext, oldObject.Created_By, systemId);
+            if (createdBy.SmUserId == smUserId  )
+            {
+                user = createdBy;
+                return;
+            }
+            if (  modifiedBy.SmUserId == smUserId)
+            {
+                user = modifiedBy;
+                return;
+            }
+
             Models.UserRole userRole = new UserRole();
 
             string authority;
@@ -145,23 +139,42 @@ namespace HETSAPI.Import
 
             Models.User user1 = dbContext.Users.FirstOrDefault(x => x.SmUserId == smUserId);
 
-            if (user == null && user1 != null)
-                user = user1;
-
-            ServiceArea serArea = dbContext.ServiceAreas.FirstOrDefault(x => x.Id == service_Area_Id);
-            if (user == null)
+            ServiceArea serArea = dbContext.ServiceAreas
+                .Include(x=>x.District)
+                .FirstOrDefault(x => x.MinistryServiceAreaID == service_Area_Id);
+            if (user1 == null )
             {
                 isNew = true;
-                user = new Models.User(smUserId, serArea.District);
+                if (user == null)
+                {
+                    user = new User();
+                }
+
+                try
+                {
+                    user.SmUserId = smUserId;
+                    user.District = serArea.District;
+                    user.DistrictId = serArea.DistrictId;
+                }
+                catch
+                {
+
+                }
+
                 user.CreateTimestamp = DateTime.UtcNow;
                 user.CreateUserid = createdBy.SmUserId;
 
+
                 // The followings are the data mapping
-                // user.Email
+                // user.Email = oldObject.
                 // user.GivenName
                 // user.Surname
 
-                //Add user Role
+                //Add user Role  -  Role Id is limited to 1, or 2
+                if (roleId>2)
+                {
+                    roleId = 1;
+                }
                 userRole.Role = dbContext.Roles.First(x => x.Id == roleId);
                 userRole.CreateTimestamp = DateTime.UtcNow;
                 userRole.ExpiryDate = DateTime.UtcNow.AddMonths(12);

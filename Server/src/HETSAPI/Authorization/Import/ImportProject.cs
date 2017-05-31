@@ -145,7 +145,10 @@ namespace HETSAPI.Import
                     try
                     {
                         instance.Notes = new List<Note>();
-                        instance.Notes.Add(new Note(oldObject.Job_Desc2, true));
+                        Models.Note note = new Note();
+                        note.Text = new string(oldObject.Job_Desc2.Take(2048).ToArray());
+                        note.IsNoLongerRelevant = true;
+                        instance.Notes.Add(note);
                     }
                     catch (Exception e)
                     {

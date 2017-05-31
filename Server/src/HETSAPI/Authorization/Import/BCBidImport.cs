@@ -77,6 +77,7 @@ namespace HETSAPI.Import
             dbContext = new DbAppContext(null, options.Options);
            // ImportServiceArea.Import(context, dbContext, fileLocation, systemId);
 
+            //############################ We start here #####################################  
             //*** Importing the Local Areas from the file of Area.xml to the table of HET_LOCAL_AREA
             dbContext = new DbAppContext(null, options.Options);
             ImportLocalArea.Import(context, dbContext, fileLocation, systemId);
@@ -95,7 +96,7 @@ namespace HETSAPI.Import
 
             //*** Import Equiptment type from EquipType.xml This has effects on Table HET_USER and HET_EQUIPMENT_TYPE  
             dbContext = new DbAppContext(null, options.Options);
-            ImportDisEquipType.Import(context, dbContext, fileLocation, systemId);
+            ImportDistrictEquipmentType.Import(context, dbContext, fileLocation, systemId);
 
             //*** Import Equiptment  from Equip.xml  This has effects on Table HET_USER and HET_EQUIP
             dbContext = new DbAppContext(null, options.Options);

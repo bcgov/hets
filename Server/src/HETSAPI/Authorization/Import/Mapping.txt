@@ -1,18 +1,19 @@
 ﻿@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 1. Note HET_CONTACT.NOTE SHOULD length limit is 150 should be changed to 512
-2. C:\Coding\HETS\HETS_Forked\hets\Server\src\HETSAPI\Migrations\20170330160401_HETS-162-3-30-1.cs(13): 
+2. "HET_DISTRICT_EQUIPMENT_TYPE"."DISTRICT_EQUIPMENT_NAME  should be limited to 250
+3. IMPORT_MAP.OLD_KEY should be charater varying (150)
+4. C:\Coding\HETS\HETS_Forked\hets\Server\src\HETSAPI\Migrations\20170330160401_HETS-162-3-30-1.cs(13): 
 	OLD key is changed to String from integer
-3. Dump_Truck seems not related to Equipment.  the following query yields 
+5. Dump_Truck seems not related to Equipment.  the following query yields 
 	SELECT Count(*) FROM public."HET_DUMP_TRUCK" WHERE "DUMP_TRUCK_ID" not in (SELECT  "EQUIPMENT_ID" FROM public."HET_EQUIPMENT" )
 	yields 1262 items. Which mean EQUIP_ID ("DUMP_TRUCK_ID") in DUMP_TRUCK xml is not much to do with EQUIP_ID in EQUIPMENT TABLE.
-4. EQUIP_USAGE.PROJECT_ID not nothing to do with PROJECT.PROJECT_ID, whcih made the file of EQUIP_USAGE.xml not meaningful
-5. Rotation seems more like a note field: It record the reason of an equipment not hired. But thePproject_Id is out of range.
-6. In Equipment, YTD, YTD1, YTD2, YTD3  are used to calculate seniority. This field will be changed every year? Should these field
+6. EQUIP_USAGE.PROJECT_ID not nothing to do with PROJECT.PROJECT_ID, whcih made the file of EQUIP_USAGE.xml not meaningful
+7. Rotation seems more like a note field: It record the reason of an equipment not hired. But thePproject_Id is out of range.
+8. In Equipment, YTD, YTD1, YTD2, YTD3  are used to calculate seniority. This field will be changed every year? Should these field
 	be replaced by a table?
-7   In HETS, we have both EQUIPMENT_TYPE and DISTRICT_EQUIPMENT_TYPE. Are we going to use DISTRICT_EQUIPMENT_TYPE only?
-8. EQUIPMENT.REFUSE_RATE has different data type from EQUIPMENT.PAY_RATE, Should they be consistant?
-9. "HET_DISTRICT_EQUIPMENT_TYPE"."DISTRICT_EQUIPMENT_NAME  should be limited to 250
-10. IMPORT_MAP.OLD_KEY should be charater varying (150)
+9   In HETS, we have both EQUIPMENT_TYPE and DISTRICT_EQUIPMENT_TYPE. Are we going to use DISTRICT_EQUIPMENT_TYPE only?
+10. EQUIPMENT.REFUSE_RATE has different data type from EQUIPMENT.PAY_RATE, Should they be consistant?
+
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
