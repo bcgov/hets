@@ -2,12 +2,14 @@
 
 SET dev=http://server-tran-hets-dev.pathfinder.gov.bc.ca
 SET test=http://server-tran-hets-test.pathfinder.gov.bc.ca
+SET test=http://server-tran-hets-prod.pathfinder.gov.bc.ca
 
 IF %3.==. GOTO USAGE
 
 SET server=%3
 IF %3==dev SET server=%dev%
 IF %3==test SET server=%test%
+IF %3==prod SET server=%prod%
 
 curl -c cookie %server%/api/authentication/dev/token?userId=SCURRAN
 IF %1==recalc GOTO RECALC

@@ -101,7 +101,7 @@ For the instance of the application to be reloaded with new test data:
 
 The following assumes you know OpenShift, have a command line open, have logged into OpenShift and are in the project in which you are resetting the data. *Be sure you are in the right project!!!*
 
-NOTE: It's a little tricky to create a foolproof script for this. However, the data rarely changes (e.g. the rc names, database user names) so it's pretty easy to create a personal script to reduce the keystrokes for this.
+NOTE: It's a little tricky to create a foolproof script for this. If you are lazy, you can create some shortcuts if you need to do this multiple times over a short period.
 
 1. Get the ID of the active replication controller (RC, rc) for the active `server` and `pdf` pods.
   1. Run the command `oc get rc` to get a list of RCs.
@@ -113,8 +113,10 @@ NOTE: It's a little tricky to create a foolproof script for this. However, the d
 4. Reset the database:
    1. Log into the postgres container: `oc rsh postgresql-2-k0fql`
    2. Run the command `psql -c "\du;"` to get a list of database users.
-   2. Prepare (in a text editor), copy and then paste the following into the shell `psql -c "drop database hets;"; psql -c "create database hets;"; psql -c 'GRANT ALL ON DATABASE hets TO "user6DA";'; psql -c 'GRANT SELECT ON ALL TABLES IN SCHEMA public TO "shvj2me2";'; psql -c 'GRANT SELECT ON ALL TABLES IN SCHEMA public TO "gknjssqk";'; psql -c 'GRANT SELECT ON ALL TABLES IN SCHEMA public TO "gaj2bell";'`
-      1. Replace the references to database users with those listed from running the commands. "user6DA" is replaced with the name of the database user known to the server, while the rest are individuals (such as from the MOTI Data Architecture group) that have read-only access to the database.
+   3. Prepare (in a text editor), copy and then paste the following into the shell
+     1. Dev:  `psql -c "drop database hets;"; psql -c "create database hets;"; psql -c 'GRANT ALL ON DATABASE hets TO "user6DA";'; psql -c 'GRANT SELECT ON ALL TABLES IN SCHEMA public TO "shvj2me2";'; psql -c 'GRANT SELECT ON ALL TABLES IN SCHEMA public TO "gknjssqk";'; psql -c 'GRANT SELECT ON ALL TABLES IN SCHEMA public TO "gaj2bell";'`
+     3. Test: `psql -c "drop database hets;"; psql -c "create database hets;"; psql -c 'GRANT ALL ON DATABASE hets TO "userGE5";';  psql -c 'GRANT SELECT ON ALL TABLES IN SCHEMA public TO "xgmpta9z";'; psql -c 'GRANT SELECT ON ALL TABLES IN SCHEMA public TO "uenhuk8v";'`
+      1. Replace the references to database users with those listed from running the commands. E.g. "user6DA" is replaced with the name of the database user known to the server, while the rest are individuals (such as from the MOTI Data Architecture group) that have read-only access to the database.
       2. The pasted string is series of Linux commands that execute the necessary sequence of database actions.
       2. Depending on the terminal you are using, the paste will not include a final "<CR>" and when you hit enter, the executions will occur.
       3. The feedback will be the results of the commands e.g. "Drop", "CREATE" and 1 or more "GRANT" lines.
@@ -127,15 +129,25 @@ NOTE: It's a little tricky to create a foolproof script for this. However, the d
 
 ### Detailed Steps: Reloading the Test Data
 
-From the APISpec/Testdata folder, run the command:
+#### Loads To Test or Prod
+
+Ideally, this process would only be run for Dev and all required data for Test and Prod would be loaded via the Seeder process. However, the Seeder process currently does not implement the loading of three tables, so this process is still needed. So, for Test and Prod, the following steps need to be done:
+
+*Before*: Via the OpenShift Console (or figure out the equivalent `oc command` line), go into the "server" Deployment Config, Environment and change the variable: `ASPNETCORE_ENVIRONMENT` from `Production` to `Development`. This will trigger a redeploy of the container(s). Monitor the log until the deploy completes.
+
+*After*: Reverse the process done before, changing the environment variable  `ASPNETCORE_ENVIRONMENT` from `Production` to `Development`.
+
+*NOTE*: Do not leave that variable at Development in Test and Prod, as that allows access to the server without Siteminder authentication.
+
+#### Load
+
+From your local APISpec/Testdata folder, run the command:
 
 * `load-all.bat <environment>`
 
 Where <environment> is one of "dev", "test", or "prod" or the ID of the server
 
 The `load-all.bat` script calls `load.bat`, which assumes a specific admin user is in the system. If not, change the user name in load.bat to one with admin access.
-
-To run this step on test or prod, you must edit the Deployment Config for the "server" pod to set the environment variable `ASPNETCORE_ENVIRONMENT` to `Development` - AND CHANGE IT BACK AFTERWARDS!!  This setting allows users to access the server WITHOUT Siteminder.
 
 *Aside: Accessing the database without Siteminder is OK in this case since what you are doing is loading the data with fresh data - there is no production data present. An intruder would still have to know the Siteminder ID of a registered user to gain access, and know about this temporary backdoor.*
 

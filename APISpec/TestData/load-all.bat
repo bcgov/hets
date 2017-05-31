@@ -40,7 +40,6 @@ echo Example: %0 http://localhost:55217
 goto End1
 
 :TestProd
-echo ^ 
 echo NOTE: Only reference tables are loaded into Test and Prod
 
 :End1
