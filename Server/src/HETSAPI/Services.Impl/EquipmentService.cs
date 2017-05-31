@@ -1,11 +1,11 @@
 /*
  * REST API Documentation for the MOTI Hired Equipment Tracking System (HETS) Application
  *
- * The Hired Equipment Program is for owners/operators who have a dump truck, bulldozer, backhoe or  other piece of equipment they want to hire out to the transportation ministry for day labour and  emergency projects.  The Hired Equipment Program distributes available work to local equipment owners. The program is  based on seniority and is designed to deliver work to registered users fairly and efficiently  through the development of local area call-out lists. 
+ * The Hired Equipment Program is for owners/operators who have a dump truck, bulldozer, backhoe or  other piece of equipment they want to hire out to the transportation ministry for day labour and  emergency projects.  The Hired Equipment Program distributes available work to local equipment owners. The program is  based on seniority and is designed to deliver work to registered users fairly and efficiently  through the development of local area call-out lists.
  *
  * OpenAPI spec version: v1
- * 
- * 
+ *
+ *
  */
 
 using System;
@@ -27,7 +27,7 @@ using Microsoft.AspNetCore.Http;
 namespace HETSAPI.Services.Impl
 {
     /// <summary>
-    /// 
+    ///
     /// </summary>
     public class EquipmentService : ServiceBase, IEquipmentService
     {
@@ -72,7 +72,7 @@ namespace HETSAPI.Services.Impl
                 }
 
 
-                // EquipmentAttachments is a list     
+                // EquipmentAttachments is a list
                 if (item.EquipmentAttachments != null)
                 {
                     for (int i = 0; i < item.EquipmentAttachments.Count; i++)
@@ -84,7 +84,7 @@ namespace HETSAPI.Services.Impl
                     }
                 }
 
-                // Attachments is a list     
+                // Attachments is a list
                 if (item.Attachments != null)
                 {
                     for (int i = 0; i < item.Attachments.Count; i++)
@@ -96,7 +96,7 @@ namespace HETSAPI.Services.Impl
                     }
                 }
 
-                // Notes is a list     
+                // Notes is a list
                 if (item.Notes != null)
                 {
                     for (int i = 0; i < item.Notes.Count; i++)
@@ -108,7 +108,7 @@ namespace HETSAPI.Services.Impl
                     }
                 }
 
-                // History is a list     
+                // History is a list
                 if (item.History != null)
                 {
                     for (int i = 0; i < item.History.Count; i++)
@@ -125,7 +125,7 @@ namespace HETSAPI.Services.Impl
         }
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         /// <param name="items"></param>
         /// <response code="201">Equipment created</response>
@@ -139,7 +139,7 @@ namespace HETSAPI.Services.Impl
             {
                 AdjustRecord(item);
 
-                // determine if this is an insert or an update            
+                // determine if this is an insert or an update
                 bool exists = _context.Equipments.Any(a => a.Id == item.Id);
                 if (exists)
                 {
@@ -156,7 +156,7 @@ namespace HETSAPI.Services.Impl
         }
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         /// <response code="200">OK</response>
         public virtual IActionResult EquipmentGetAsync()
@@ -196,7 +196,7 @@ namespace HETSAPI.Services.Impl
 
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         /// <remarks>Returns attachments for a particular Equipment</remarks>
         /// <param name="id">id of Equipment to fetch attachments for</param>
@@ -222,7 +222,7 @@ namespace HETSAPI.Services.Impl
         }
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         /// <param name="id">id of Equipment to delete</param>
         /// <response code="200">OK</response>
@@ -253,7 +253,7 @@ namespace HETSAPI.Services.Impl
                 // Save the changes
 
                 _context.SaveChanges();
-                // update the seniority list 
+                // update the seniority list
                 if (localAreaId != -1 && equipmentTypeId != -1)
                 {
                     _context.CalculateSeniorityList(localAreaId, equipmentTypeId);
@@ -270,7 +270,7 @@ namespace HETSAPI.Services.Impl
 
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         /// <remarks>Returns History for a particular Equipment</remarks>
         /// <param name="id">id of SchoolBus to fetch History for</param>
@@ -312,7 +312,7 @@ namespace HETSAPI.Services.Impl
         }
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         /// <remarks>Add a History record to Equipment</remarks>
         /// <param name="id">id of SchoolBus to add History for</param>
@@ -350,7 +350,7 @@ namespace HETSAPI.Services.Impl
 
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         /// <param name="id">id of Equipment to fetch EquipmentAttachments for</param>
         /// <response code="200">OK</response>
@@ -372,7 +372,7 @@ namespace HETSAPI.Services.Impl
         }
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         /// <param name="id">id of Equipment to fetch</param>
         /// <response code="200">OK</response>
@@ -402,7 +402,7 @@ namespace HETSAPI.Services.Impl
         }
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         /// <param name="id">id of Equipment to fetch</param>
         /// <param name="item"></param>
@@ -477,7 +477,7 @@ namespace HETSAPI.Services.Impl
 
             result.LastTimeRecordDateThisYear = null;
 
-            // isWorking is true if there is an active Rental Agreements for the equipment. 
+            // isWorking is true if there is an active Rental Agreements for the equipment.
 
             result.IsWorking = _context.RentalAgreements
                 .Include(x => x.Equipment)
@@ -506,7 +506,7 @@ namespace HETSAPI.Services.Impl
         }
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         /// <param name="id">id of Equipment to fetch EquipmentViewModel for</param>
         /// <response code="200">OK</response>
@@ -582,7 +582,7 @@ namespace HETSAPI.Services.Impl
         }
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         /// <param name="item"></param>
         /// <response code="201">Equipment created</response>
@@ -629,7 +629,7 @@ namespace HETSAPI.Services.Impl
 
 
                 }
-                // return the full object for the client side code.                    
+                // return the full object for the client side code.
 
                 int item_id = item.Id;
                 var result = _context.Equipments
@@ -683,16 +683,19 @@ namespace HETSAPI.Services.Impl
         /// Searches Equipment
         /// </summary>
         /// <remarks>Used for the equipment search page.</remarks>
-        /// <param name="localareas">Local Areas (array of id numbers)</param>
-        /// <param name="types">Equipment Types (array of id numbers)</param>
+        /// <param name="localareasCSV">Local Areas (array of id numbers)</param>
+        /// <param name="typesCSV">Equipment Types (array of id numbers)</param>
         /// <param name="equipmentAttachment">Equipment Attachments </param>
         /// <param name="owner"></param>
         /// <param name="status">Status</param>
         /// <param name="hired">Hired</param>
         /// <param name="notverifiedsincedate">Not Verified Since Date</param>
         /// <response code="200">OK</response>
-        public virtual IActionResult EquipmentSearchGetAsync(int?[] localareas, int?[] types, string equipmentAttachment, int? owner, string status, bool? hired, DateTime? notverifiedsincedate)
+        public virtual IActionResult EquipmentSearchGetAsync(string localareasCSV, string typesCSV, string equipmentAttachment, int? owner, string status, bool? hired, DateTime? notverifiedsincedate)
         {
+            int?[] localareas = ParseIntArray(localareasCSV);
+            int?[] types = ParseIntArray(typesCSV);
+
             var data = _context.Equipments
                     .Include(x => x.LocalArea.ServiceArea.District.Region)
                     .Include(x => x.DistrictEquipmentType)
@@ -756,7 +759,7 @@ namespace HETSAPI.Services.Impl
                 result.Add(newItem);
             }
 
-            // second pass to do calculated fields.            
+            // second pass to do calculated fields.
             foreach (var equipmentViewModel in result)
             {
                 CalculateViewModel(equipmentViewModel);

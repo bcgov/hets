@@ -1,11 +1,11 @@
 /*
  * REST API Documentation for the MOTI Hired Equipment Tracking System (HETS) Application
  *
- * The Hired Equipment Program is for owners/operators who have a dump truck, bulldozer, backhoe or  other piece of equipment they want to hire out to the transportation ministry for day labour and  emergency projects.  The Hired Equipment Program distributes available work to local equipment owners. The program is  based on seniority and is designed to deliver work to registered users fairly and efficiently  through the development of local area call-out lists. 
+ * The Hired Equipment Program is for owners/operators who have a dump truck, bulldozer, backhoe or  other piece of equipment they want to hire out to the transportation ministry for day labour and  emergency projects.  The Hired Equipment Program distributes available work to local equipment owners. The program is  based on seniority and is designed to deliver work to registered users fairly and efficiently  through the development of local area call-out lists.
  *
  * OpenAPI spec version: v1
- * 
- * 
+ *
+ *
  */
 
 using System;
@@ -28,7 +28,7 @@ using HETSAPI.Helpers;
 namespace HETSAPI.Controllers
 {
     /// <summary>
-    /// 
+    ///
     /// </summary>
     public partial class ProjectController : Controller
     {
@@ -43,7 +43,7 @@ namespace HETSAPI.Controllers
         }
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         /// <param name="items"></param>
         /// <response code="201">Project created</response>
@@ -57,7 +57,7 @@ namespace HETSAPI.Controllers
         }
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         /// <response code="200">OK</response>
         [HttpGet]
@@ -70,7 +70,7 @@ namespace HETSAPI.Controllers
         }
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         /// <remarks>Returns attachments for a particular Project</remarks>
         /// <param name="id">id of Project to fetch attachments for</param>
@@ -86,7 +86,7 @@ namespace HETSAPI.Controllers
         }
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         /// <remarks>Gets an Project&#39;s Contacts</remarks>
         /// <param name="id">id of Project to fetch Contacts for</param>
@@ -101,7 +101,7 @@ namespace HETSAPI.Controllers
         }
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         /// <remarks>Adds Project Contact</remarks>
         /// <param name="id">id of Project to add a contact for</param>
@@ -117,7 +117,7 @@ namespace HETSAPI.Controllers
         }
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         /// <remarks>Replaces an Project&#39;s Contacts</remarks>
         /// <param name="id">id of Project to replace Contacts for</param>
@@ -133,7 +133,7 @@ namespace HETSAPI.Controllers
         }
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         /// <param name="id">id of Project to delete</param>
         /// <response code="200">OK</response>
@@ -147,7 +147,7 @@ namespace HETSAPI.Controllers
         }
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         /// <param name="id">id of Project to fetch</param>
         /// <response code="200">OK</response>
@@ -162,7 +162,7 @@ namespace HETSAPI.Controllers
         }
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         /// <remarks>Returns History for a particular Project</remarks>
         /// <param name="id">id of Project to fetch History for</param>
@@ -179,7 +179,7 @@ namespace HETSAPI.Controllers
         }
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         /// <remarks>Add a History record to the Project</remarks>
         /// <param name="id">id of Project to fetch History for</param>
@@ -195,7 +195,7 @@ namespace HETSAPI.Controllers
         }
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         /// <param name="id">id of Project to fetch</param>
         /// <param name="item"></param>
@@ -211,7 +211,7 @@ namespace HETSAPI.Controllers
         }
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         /// <param name="item"></param>
         /// <response code="201">Project created</response>
@@ -237,7 +237,7 @@ namespace HETSAPI.Controllers
         [Route("/api/projects/search")]
         [SwaggerOperation("ProjectsSearchGet")]
         [SwaggerResponse(200, type: typeof(List<ProjectSearchResultViewModel>))]
-        public virtual IActionResult ProjectsSearchGet([ModelBinder(BinderType = typeof(CsvArrayBinder))]int?[] districts, [FromQuery]string project, [FromQuery]bool? hasRequests, [FromQuery]bool? hasHires)
+        public virtual IActionResult ProjectsSearchGet([FromQuery]string districts, [FromQuery]string project, [FromQuery]bool? hasRequests, [FromQuery]bool? hasHires)
         {
             return this._service.ProjectsSearchGetAsync(districts, project, hasRequests, hasHires);
         }

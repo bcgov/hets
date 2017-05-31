@@ -1,11 +1,11 @@
 /*
  * REST API Documentation for the MOTI Hired Equipment Tracking System (HETS) Application
  *
- * The Hired Equipment Program is for owners/operators who have a dump truck, bulldozer, backhoe or  other piece of equipment they want to hire out to the transportation ministry for day labour and  emergency projects.  The Hired Equipment Program distributes available work to local equipment owners. The program is  based on seniority and is designed to deliver work to registered users fairly and efficiently  through the development of local area call-out lists. 
+ * The Hired Equipment Program is for owners/operators who have a dump truck, bulldozer, backhoe or  other piece of equipment they want to hire out to the transportation ministry for day labour and  emergency projects.  The Hired Equipment Program distributes available work to local equipment owners. The program is  based on seniority and is designed to deliver work to registered users fairly and efficiently  through the development of local area call-out lists.
  *
  * OpenAPI spec version: v1
- * 
- * 
+ *
+ *
  */
 
 using System;
@@ -28,7 +28,7 @@ using HETSAPI.Helpers;
 namespace HETSAPI.Controllers
 {
     /// <summary>
-    /// 
+    ///
     /// </summary>
     public partial class RentalRequestController : Controller
     {
@@ -43,7 +43,7 @@ namespace HETSAPI.Controllers
         }
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         /// <param name="items"></param>
         /// <response code="201">RentalRequest created</response>
@@ -57,7 +57,7 @@ namespace HETSAPI.Controllers
         }
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         /// <response code="200">OK</response>
         [HttpGet]
@@ -70,7 +70,7 @@ namespace HETSAPI.Controllers
         }
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         /// <remarks>Returns attachments for a particular RentalRequest</remarks>
         /// <param name="id">id of RentalRequest to fetch attachments for</param>
@@ -86,7 +86,7 @@ namespace HETSAPI.Controllers
         }
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         /// <param name="id">id of RentalRequest to delete</param>
         /// <response code="200">OK</response>
@@ -100,7 +100,7 @@ namespace HETSAPI.Controllers
         }
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         /// <param name="id">id of RentalRequest to fetch</param>
         /// <response code="200">OK</response>
@@ -115,7 +115,7 @@ namespace HETSAPI.Controllers
         }
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         /// <remarks>Returns History for a particular RentalRequest</remarks>
         /// <param name="id">id of RentalRequest to fetch History for</param>
@@ -132,7 +132,7 @@ namespace HETSAPI.Controllers
         }
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         /// <remarks>Add a History record to the RentalRequest</remarks>
         /// <param name="id">id of RentalRequest to add History for</param>
@@ -148,7 +148,7 @@ namespace HETSAPI.Controllers
         }
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         /// <param name="id">id of RentalRequest to fetch</param>
         /// <param name="item"></param>
@@ -164,7 +164,7 @@ namespace HETSAPI.Controllers
         }
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         /// <remarks>Updates a rental request rotation list entry.  Side effect is the LocalAreaRotationList is also updated</remarks>
         /// <param name="id">id of RentalRequest to update</param>
@@ -182,7 +182,7 @@ namespace HETSAPI.Controllers
         }
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         /// <param name="item"></param>
         /// <response code="201">RentalRequest created</response>
@@ -209,7 +209,7 @@ namespace HETSAPI.Controllers
         [Route("/api/rentalrequests/search")]
         [SwaggerOperation("RentalrequestsSearchGet")]
         [SwaggerResponse(200, type: typeof(List<RentalRequestSearchResultViewModel>))]
-        public virtual IActionResult RentalrequestsSearchGet([ModelBinder(BinderType = typeof(CsvArrayBinder))]int?[] localareas, [FromQuery]string project, [FromQuery]string status, [FromQuery]DateTime? startDate, [FromQuery]DateTime? endDate)
+        public virtual IActionResult RentalrequestsSearchGet([FromQuery]string localareas, [FromQuery]string project, [FromQuery]string status, [FromQuery]DateTime? startDate, [FromQuery]DateTime? endDate)
         {
             return this._service.RentalrequestsSearchGetAsync(localareas, project, status, startDate, endDate);
         }
