@@ -44,17 +44,13 @@ namespace HETSAPI.Models
         /// <param name="Id">A system-generated unique identifier for a Role (required).</param>
         /// <param name="Name">The name of the Role, as established by the user creating the role. (required).</param>
         /// <param name="Description">A description of the role as set by the user creating&amp;#x2F;updating the role. (required).</param>
-        /// <param name="RolePermissions">RolePermissions.</param>
-        /// <param name="UserRoles">UserRoles.</param>
-        public Role(int Id, string Name, string Description, List<RolePermission> RolePermissions = null, List<UserRole> UserRoles = null)
+        public Role(int Id, string Name, string Description)
         {   
             this.Id = Id;
             this.Name = Name;
             this.Description = Description;
 
 
-            this.RolePermissions = RolePermissions;
-            this.UserRoles = UserRoles;
         }
 
         /// <summary>
@@ -83,16 +79,6 @@ namespace HETSAPI.Models
         public string Description { get; set; }
         
         /// <summary>
-        /// Gets or Sets RolePermissions
-        /// </summary>
-        public List<RolePermission> RolePermissions { get; set; }
-        
-        /// <summary>
-        /// Gets or Sets UserRoles
-        /// </summary>
-        public List<UserRole> UserRoles { get; set; }
-        
-        /// <summary>
         /// Returns the string presentation of the object
         /// </summary>
         /// <returns>String presentation of the object</returns>
@@ -103,8 +89,6 @@ namespace HETSAPI.Models
             sb.Append("  Id: ").Append(Id).Append("\n");
             sb.Append("  Name: ").Append(Name).Append("\n");
             sb.Append("  Description: ").Append(Description).Append("\n");
-            sb.Append("  RolePermissions: ").Append(RolePermissions).Append("\n");
-            sb.Append("  UserRoles: ").Append(UserRoles).Append("\n");
             sb.Append("}\n");
             return sb.ToString();
         }
@@ -156,16 +140,6 @@ namespace HETSAPI.Models
                     this.Description == other.Description ||
                     this.Description != null &&
                     this.Description.Equals(other.Description)
-                ) && 
-                (
-                    this.RolePermissions == other.RolePermissions ||
-                    this.RolePermissions != null &&
-                    this.RolePermissions.SequenceEqual(other.RolePermissions)
-                ) && 
-                (
-                    this.UserRoles == other.UserRoles ||
-                    this.UserRoles != null &&
-                    this.UserRoles.SequenceEqual(other.UserRoles)
                 );
         }
 
@@ -189,15 +163,7 @@ namespace HETSAPI.Models
                 {
                     hash = hash * 59 + this.Description.GetHashCode();
                 }                
-                                   
-                if (this.RolePermissions != null)
-                {
-                    hash = hash * 59 + this.RolePermissions.GetHashCode();
-                }                   
-                if (this.UserRoles != null)
-                {
-                    hash = hash * 59 + this.UserRoles.GetHashCode();
-                }
+                
                 return hash;
             }
         }

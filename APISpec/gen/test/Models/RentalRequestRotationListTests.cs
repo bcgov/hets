@@ -59,6 +59,15 @@ namespace HETSAPI.Test
 			Assert.True(true);
         }
         /// <summary>
+        /// Test the property 'RentalRequest'
+        /// </summary>
+        [Fact]
+        public void RentalRequestTest()
+        {
+            // TODO unit test for the property 'RentalRequest'
+			Assert.True(true);
+        }
+        /// <summary>
         /// Test the property 'RotationListSortOrder'
         /// </summary>
         [Fact]

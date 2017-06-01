@@ -45,7 +45,7 @@ namespace HETSAPI.Models
         /// <param name="NewTable">Table name in new system. (required).</param>
         /// <param name="OldKey">Old primary key for record (required).</param>
         /// <param name="NewKey">New primary key for record (required).</param>
-        public ImportMap(int Id, string OldTable, string NewTable, int OldKey, int NewKey)
+        public ImportMap(int Id, string OldTable, string NewTable, string OldKey, int NewKey)
         {   
             this.Id = Id;
             this.OldTable = OldTable;
@@ -84,7 +84,9 @@ namespace HETSAPI.Models
         /// </summary>
         /// <value>Old primary key for record</value>
         [MetaDataExtension (Description = "Old primary key for record")]
-        public int OldKey { get; set; }
+        [MaxLength(150)]
+        
+        public string OldKey { get; set; }
         
         /// <summary>
         /// New primary key for record
@@ -160,6 +162,7 @@ namespace HETSAPI.Models
                 ) &&                 
                 (
                     this.OldKey == other.OldKey ||
+                    this.OldKey != null &&
                     this.OldKey.Equals(other.OldKey)
                 ) &&                 
                 (
@@ -188,8 +191,11 @@ namespace HETSAPI.Models
                 {
                     hash = hash * 59 + this.NewTable.GetHashCode();
                 }                
+                                if (this.OldKey != null)
+                {
+                    hash = hash * 59 + this.OldKey.GetHashCode();
+                }                
                                                    
-                hash = hash * 59 + this.OldKey.GetHashCode();                                   
                 hash = hash * 59 + this.NewKey.GetHashCode();
                 return hash;
             }

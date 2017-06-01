@@ -47,14 +47,12 @@ namespace HETSAPI.Models
         /// <param name="Status">The status of the project to determine if it is listed when creating new requests (required).</param>
         /// <param name="ProvincialProjectNumber">TO BE REVIEWED WITH THE BUSINESS - The Provincial charge code for the equipment hiring related to this project. This will be the same across multiple service areas that provide equipment for the same Project..</param>
         /// <param name="Information">Information about the Project needed by the HETS Clerks. Used for capturing varying (project by project) metadata needed to process requests related to the project..</param>
-        /// <param name="RentalRequests">The Rental Requests associated with this Project.</param>
-        /// <param name="RentalAgreements">The Rental Agreements associated with this Project.</param>
         /// <param name="PrimaryContact">Link to the designated Primary Contact for the Project - usually the Project Manager requesting to hire equipment..</param>
         /// <param name="Contacts">Contacts.</param>
         /// <param name="Notes">Notes.</param>
         /// <param name="Attachments">Attachments.</param>
         /// <param name="History">History.</param>
-        public Project(int Id, District District, string Name, string Status, string ProvincialProjectNumber = null, string Information = null, List<RentalRequest> RentalRequests = null, List<RentalAgreement> RentalAgreements = null, Contact PrimaryContact = null, List<Contact> Contacts = null, List<Note> Notes = null, List<Attachment> Attachments = null, List<History> History = null)
+        public Project(int Id, District District, string Name, string Status, string ProvincialProjectNumber = null, string Information = null, Contact PrimaryContact = null, List<Contact> Contacts = null, List<Note> Notes = null, List<Attachment> Attachments = null, List<History> History = null)
         {   
             this.Id = Id;
             this.District = District;
@@ -65,8 +63,6 @@ namespace HETSAPI.Models
 
             this.ProvincialProjectNumber = ProvincialProjectNumber;
             this.Information = Information;
-            this.RentalRequests = RentalRequests;
-            this.RentalAgreements = RentalAgreements;
             this.PrimaryContact = PrimaryContact;
             this.Contacts = Contacts;
             this.Notes = Notes;
@@ -133,20 +129,6 @@ namespace HETSAPI.Models
         public string Information { get; set; }
         
         /// <summary>
-        /// The Rental Requests associated with this Project
-        /// </summary>
-        /// <value>The Rental Requests associated with this Project</value>
-        [MetaDataExtension (Description = "The Rental Requests associated with this Project")]
-        public List<RentalRequest> RentalRequests { get; set; }
-        
-        /// <summary>
-        /// The Rental Agreements associated with this Project
-        /// </summary>
-        /// <value>The Rental Agreements associated with this Project</value>
-        [MetaDataExtension (Description = "The Rental Agreements associated with this Project")]
-        public List<RentalAgreement> RentalAgreements { get; set; }
-        
-        /// <summary>
         /// Link to the designated Primary Contact for the Project - usually the Project Manager requesting to hire equipment.
         /// </summary>
         /// <value>Link to the designated Primary Contact for the Project - usually the Project Manager requesting to hire equipment.</value>
@@ -195,8 +177,6 @@ namespace HETSAPI.Models
             sb.Append("  Status: ").Append(Status).Append("\n");
             sb.Append("  ProvincialProjectNumber: ").Append(ProvincialProjectNumber).Append("\n");
             sb.Append("  Information: ").Append(Information).Append("\n");
-            sb.Append("  RentalRequests: ").Append(RentalRequests).Append("\n");
-            sb.Append("  RentalAgreements: ").Append(RentalAgreements).Append("\n");
             sb.Append("  PrimaryContact: ").Append(PrimaryContact).Append("\n");
             sb.Append("  Contacts: ").Append(Contacts).Append("\n");
             sb.Append("  Notes: ").Append(Notes).Append("\n");
@@ -268,16 +248,6 @@ namespace HETSAPI.Models
                     this.Information == other.Information ||
                     this.Information != null &&
                     this.Information.Equals(other.Information)
-                ) && 
-                (
-                    this.RentalRequests == other.RentalRequests ||
-                    this.RentalRequests != null &&
-                    this.RentalRequests.SequenceEqual(other.RentalRequests)
-                ) && 
-                (
-                    this.RentalAgreements == other.RentalAgreements ||
-                    this.RentalAgreements != null &&
-                    this.RentalAgreements.SequenceEqual(other.RentalAgreements)
                 ) &&                 
                 (
                     this.PrimaryContact == other.PrimaryContact ||
@@ -339,14 +309,6 @@ namespace HETSAPI.Models
                     hash = hash * 59 + this.Information.GetHashCode();
                 }                
                                    
-                if (this.RentalRequests != null)
-                {
-                    hash = hash * 59 + this.RentalRequests.GetHashCode();
-                }                   
-                if (this.RentalAgreements != null)
-                {
-                    hash = hash * 59 + this.RentalAgreements.GetHashCode();
-                }                   
                 if (this.PrimaryContact != null)
                 {
                     hash = hash * 59 + this.PrimaryContact.GetHashCode();

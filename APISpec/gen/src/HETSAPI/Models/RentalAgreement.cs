@@ -46,9 +46,6 @@ namespace HETSAPI.Models
         /// <param name="Status">The current status of the Rental Agreement, such as Active or Complete (required).</param>
         /// <param name="Equipment">A foreign key reference to the system-generated unique identifier for an Equipment (required).</param>
         /// <param name="Project">A foreign key reference to the system-generated unique identifier for a Project (required).</param>
-        /// <param name="RentalAgreementRates">RentalAgreementRates.</param>
-        /// <param name="RentalAgreementConditions">RentalAgreementConditions.</param>
-        /// <param name="TimeRecords">TimeRecords.</param>
         /// <param name="Note">An optional note to be placed onto the Rental Agreement..</param>
         /// <param name="EstimateStartWork">The estimated start date of the work to be placed on the rental agreement..</param>
         /// <param name="DatedOn">The dated on date to put on the Rental Agreement..</param>
@@ -56,7 +53,7 @@ namespace HETSAPI.Models
         /// <param name="EquipmentRate">The dollar rate for the piece of equipment itself for this Rental Agreement. Other rates associated with the Rental Agreement are in the Rental Agreement Rate table..</param>
         /// <param name="RatePeriod">The period of the rental rate. The vast majority will be hourly, but the rate could apply across a different period, e.g. daily..</param>
         /// <param name="RateComment">A comment about the rate for the piece of equipment..</param>
-        public RentalAgreement(int Id, string Number, string Status, Equipment Equipment, Project Project, List<RentalAgreementRate> RentalAgreementRates = null, List<RentalAgreementCondition> RentalAgreementConditions = null, List<TimeRecord> TimeRecords = null, string Note = null, DateTime? EstimateStartWork = null, DateTime? DatedOn = null, int? EstimateHours = null, float? EquipmentRate = null, string RatePeriod = null, string RateComment = null)
+        public RentalAgreement(int Id, string Number, string Status, Equipment Equipment, Project Project, string Note = null, DateTime? EstimateStartWork = null, DateTime? DatedOn = null, int? EstimateHours = null, float? EquipmentRate = null, string RatePeriod = null, string RateComment = null)
         {   
             this.Id = Id;
             this.Number = Number;
@@ -67,9 +64,6 @@ namespace HETSAPI.Models
 
 
 
-            this.RentalAgreementRates = RentalAgreementRates;
-            this.RentalAgreementConditions = RentalAgreementConditions;
-            this.TimeRecords = TimeRecords;
             this.Note = Note;
             this.EstimateStartWork = EstimateStartWork;
             this.DatedOn = DatedOn;
@@ -133,21 +127,6 @@ namespace HETSAPI.Models
 		[JsonIgnore]
 		[MetaDataExtension (Description = "A foreign key reference to the system-generated unique identifier for a Project")]
         public int? ProjectId { get; set; }
-        
-        /// <summary>
-        /// Gets or Sets RentalAgreementRates
-        /// </summary>
-        public List<RentalAgreementRate> RentalAgreementRates { get; set; }
-        
-        /// <summary>
-        /// Gets or Sets RentalAgreementConditions
-        /// </summary>
-        public List<RentalAgreementCondition> RentalAgreementConditions { get; set; }
-        
-        /// <summary>
-        /// Gets or Sets TimeRecords
-        /// </summary>
-        public List<TimeRecord> TimeRecords { get; set; }
         
         /// <summary>
         /// An optional note to be placed onto the Rental Agreement.
@@ -217,9 +196,6 @@ namespace HETSAPI.Models
             sb.Append("  Status: ").Append(Status).Append("\n");
             sb.Append("  Equipment: ").Append(Equipment).Append("\n");
             sb.Append("  Project: ").Append(Project).Append("\n");
-            sb.Append("  RentalAgreementRates: ").Append(RentalAgreementRates).Append("\n");
-            sb.Append("  RentalAgreementConditions: ").Append(RentalAgreementConditions).Append("\n");
-            sb.Append("  TimeRecords: ").Append(TimeRecords).Append("\n");
             sb.Append("  Note: ").Append(Note).Append("\n");
             sb.Append("  EstimateStartWork: ").Append(EstimateStartWork).Append("\n");
             sb.Append("  DatedOn: ").Append(DatedOn).Append("\n");
@@ -288,21 +264,6 @@ namespace HETSAPI.Models
                     this.Project == other.Project ||
                     this.Project != null &&
                     this.Project.Equals(other.Project)
-                ) && 
-                (
-                    this.RentalAgreementRates == other.RentalAgreementRates ||
-                    this.RentalAgreementRates != null &&
-                    this.RentalAgreementRates.SequenceEqual(other.RentalAgreementRates)
-                ) && 
-                (
-                    this.RentalAgreementConditions == other.RentalAgreementConditions ||
-                    this.RentalAgreementConditions != null &&
-                    this.RentalAgreementConditions.SequenceEqual(other.RentalAgreementConditions)
-                ) && 
-                (
-                    this.TimeRecords == other.TimeRecords ||
-                    this.TimeRecords != null &&
-                    this.TimeRecords.SequenceEqual(other.TimeRecords)
                 ) &&                 
                 (
                     this.Note == other.Note ||
@@ -369,18 +330,6 @@ namespace HETSAPI.Models
                 if (this.Project != null)
                 {
                     hash = hash * 59 + this.Project.GetHashCode();
-                }                   
-                if (this.RentalAgreementRates != null)
-                {
-                    hash = hash * 59 + this.RentalAgreementRates.GetHashCode();
-                }                   
-                if (this.RentalAgreementConditions != null)
-                {
-                    hash = hash * 59 + this.RentalAgreementConditions.GetHashCode();
-                }                   
-                if (this.TimeRecords != null)
-                {
-                    hash = hash * 59 + this.TimeRecords.GetHashCode();
                 }                if (this.Note != null)
                 {
                     hash = hash * 59 + this.Note.GetHashCode();

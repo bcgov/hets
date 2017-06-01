@@ -43,15 +43,19 @@ namespace HETSAPI.Models
         /// </summary>
         /// <param name="Id">A system-generated unique identifier for a UserRole (required).</param>
         /// <param name="EffectiveDate">The date on which the user was given the related role. (required).</param>
+        /// <param name="User">A foreign key reference to the system-generated unique identifier for a User (required).</param>
+        /// <param name="Role">A foreign key reference to the system-generated unique identifier for a Role (required).</param>
         /// <param name="ExpiryDate">The date on which a role previously assigned to a user was removed from that user..</param>
-        /// <param name="Role">A foreign key reference to the system-generated unique identifier for a Role.</param>
-        public UserRole(int Id, DateTime EffectiveDate, DateTime? ExpiryDate = null, Role Role = null)
+        public UserRole(int Id, DateTime EffectiveDate, User User, Role Role, DateTime? ExpiryDate = null)
         {   
             this.Id = Id;
             this.EffectiveDate = EffectiveDate;
+            this.User = User;
+            this.Role = Role;
+
+
 
             this.ExpiryDate = ExpiryDate;
-            this.Role = Role;
         }
 
         /// <summary>
@@ -69,11 +73,19 @@ namespace HETSAPI.Models
         public DateTime EffectiveDate { get; set; }
         
         /// <summary>
-        /// The date on which a role previously assigned to a user was removed from that user.
+        /// A foreign key reference to the system-generated unique identifier for a User
         /// </summary>
-        /// <value>The date on which a role previously assigned to a user was removed from that user.</value>
-        [MetaDataExtension (Description = "The date on which a role previously assigned to a user was removed from that user.")]
-        public DateTime? ExpiryDate { get; set; }
+        /// <value>A foreign key reference to the system-generated unique identifier for a User</value>
+        [MetaDataExtension (Description = "A foreign key reference to the system-generated unique identifier for a User")]
+        public User User { get; set; }
+        
+        /// <summary>
+        /// Foreign key for User 
+        /// </summary>   
+        [ForeignKey("User")]
+		[JsonIgnore]
+		[MetaDataExtension (Description = "A foreign key reference to the system-generated unique identifier for a User")]
+        public int? UserId { get; set; }
         
         /// <summary>
         /// A foreign key reference to the system-generated unique identifier for a Role
@@ -91,6 +103,13 @@ namespace HETSAPI.Models
         public int? RoleId { get; set; }
         
         /// <summary>
+        /// The date on which a role previously assigned to a user was removed from that user.
+        /// </summary>
+        /// <value>The date on which a role previously assigned to a user was removed from that user.</value>
+        [MetaDataExtension (Description = "The date on which a role previously assigned to a user was removed from that user.")]
+        public DateTime? ExpiryDate { get; set; }
+        
+        /// <summary>
         /// Returns the string presentation of the object
         /// </summary>
         /// <returns>String presentation of the object</returns>
@@ -100,8 +119,9 @@ namespace HETSAPI.Models
             sb.Append("class UserRole {\n");
             sb.Append("  Id: ").Append(Id).Append("\n");
             sb.Append("  EffectiveDate: ").Append(EffectiveDate).Append("\n");
-            sb.Append("  ExpiryDate: ").Append(ExpiryDate).Append("\n");
+            sb.Append("  User: ").Append(User).Append("\n");
             sb.Append("  Role: ").Append(Role).Append("\n");
+            sb.Append("  ExpiryDate: ").Append(ExpiryDate).Append("\n");
             sb.Append("}\n");
             return sb.ToString();
         }
@@ -150,14 +170,19 @@ namespace HETSAPI.Models
                     this.EffectiveDate.Equals(other.EffectiveDate)
                 ) &&                 
                 (
-                    this.ExpiryDate == other.ExpiryDate ||
-                    this.ExpiryDate != null &&
-                    this.ExpiryDate.Equals(other.ExpiryDate)
+                    this.User == other.User ||
+                    this.User != null &&
+                    this.User.Equals(other.User)
                 ) &&                 
                 (
                     this.Role == other.Role ||
                     this.Role != null &&
                     this.Role.Equals(other.Role)
+                ) &&                 
+                (
+                    this.ExpiryDate == other.ExpiryDate ||
+                    this.ExpiryDate != null &&
+                    this.ExpiryDate.Equals(other.ExpiryDate)
                 );
         }
 
@@ -177,15 +202,19 @@ namespace HETSAPI.Models
                 if (this.EffectiveDate != null)
                 {
                     hash = hash * 59 + this.EffectiveDate.GetHashCode();
+                }                   
+                if (this.User != null)
+                {
+                    hash = hash * 59 + this.User.GetHashCode();
+                }                   
+                if (this.Role != null)
+                {
+                    hash = hash * 59 + this.Role.GetHashCode();
                 }                if (this.ExpiryDate != null)
                 {
                     hash = hash * 59 + this.ExpiryDate.GetHashCode();
                 }                
-                                   
-                if (this.Role != null)
-                {
-                    hash = hash * 59 + this.Role.GetHashCode();
-                }
+                
                 return hash;
             }
         }

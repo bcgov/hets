@@ -46,9 +46,10 @@ namespace HETSAPI.Models
         /// <param name="AskNextBlock1">The id of the next piece of Block 1 Equipment to be asked for a Rental Request. If null, start from the first piece of equipment in Block 1..</param>
         /// <param name="AskNextBlock1Seniority">The seniority score of the piece of equipment that is the next to be asked in Block 1..</param>
         /// <param name="AskNextBlock2">The id of the next piece of Block 2 Equipment to be asked for a Rental Request. If null, start from the first piece of equipment in Block 2..</param>
-        /// <param name="AskNextBlock2Seniority">The seniority score of the piece of equipment that is the next to be asked in Block 1..</param>
+        /// <param name="AskNextBlock2Seniority">The seniority score of the piece of equipment that is the next to be asked in Block 2..</param>
         /// <param name="AskNextBlockOpen">The id of the next piece of Block Open Equipment to be asked for a Rental Request. If null, start from the first piece of equipment in Block Open..</param>
-        public LocalAreaRotationList(int Id, DistrictEquipmentType DistrictEquipmentType, LocalArea LocalArea, Equipment AskNextBlock1 = null, float? AskNextBlock1Seniority = null, Equipment AskNextBlock2 = null, float? AskNextBlock2Seniority = null, Equipment AskNextBlockOpen = null)
+        /// <param name="AskNextBlockOpenSeniority">The seniority score of the piece of equipment that is the next to be asked in Block Open..</param>
+        public LocalAreaRotationList(int Id, DistrictEquipmentType DistrictEquipmentType, LocalArea LocalArea, Equipment AskNextBlock1 = null, float? AskNextBlock1Seniority = null, Equipment AskNextBlock2 = null, float? AskNextBlock2Seniority = null, Equipment AskNextBlockOpen = null, float? AskNextBlockOpenSeniority = null)
         {   
             this.Id = Id;
             this.DistrictEquipmentType = DistrictEquipmentType;
@@ -60,6 +61,7 @@ namespace HETSAPI.Models
             this.AskNextBlock2 = AskNextBlock2;
             this.AskNextBlock2Seniority = AskNextBlock2Seniority;
             this.AskNextBlockOpen = AskNextBlockOpen;
+            this.AskNextBlockOpenSeniority = AskNextBlockOpenSeniority;
         }
 
         /// <summary>
@@ -133,10 +135,10 @@ namespace HETSAPI.Models
         public int? AskNextBlock2Id { get; set; }
         
         /// <summary>
-        /// The seniority score of the piece of equipment that is the next to be asked in Block 1.
+        /// The seniority score of the piece of equipment that is the next to be asked in Block 2.
         /// </summary>
-        /// <value>The seniority score of the piece of equipment that is the next to be asked in Block 1.</value>
-        [MetaDataExtension (Description = "The seniority score of the piece of equipment that is the next to be asked in Block 1.")]
+        /// <value>The seniority score of the piece of equipment that is the next to be asked in Block 2.</value>
+        [MetaDataExtension (Description = "The seniority score of the piece of equipment that is the next to be asked in Block 2.")]
         public float? AskNextBlock2Seniority { get; set; }
         
         /// <summary>
@@ -155,6 +157,13 @@ namespace HETSAPI.Models
         public int? AskNextBlockOpenId { get; set; }
         
         /// <summary>
+        /// The seniority score of the piece of equipment that is the next to be asked in Block Open.
+        /// </summary>
+        /// <value>The seniority score of the piece of equipment that is the next to be asked in Block Open.</value>
+        [MetaDataExtension (Description = "The seniority score of the piece of equipment that is the next to be asked in Block Open.")]
+        public float? AskNextBlockOpenSeniority { get; set; }
+        
+        /// <summary>
         /// Returns the string presentation of the object
         /// </summary>
         /// <returns>String presentation of the object</returns>
@@ -170,6 +179,7 @@ namespace HETSAPI.Models
             sb.Append("  AskNextBlock2: ").Append(AskNextBlock2).Append("\n");
             sb.Append("  AskNextBlock2Seniority: ").Append(AskNextBlock2Seniority).Append("\n");
             sb.Append("  AskNextBlockOpen: ").Append(AskNextBlockOpen).Append("\n");
+            sb.Append("  AskNextBlockOpenSeniority: ").Append(AskNextBlockOpenSeniority).Append("\n");
             sb.Append("}\n");
             return sb.ToString();
         }
@@ -246,6 +256,11 @@ namespace HETSAPI.Models
                     this.AskNextBlockOpen == other.AskNextBlockOpen ||
                     this.AskNextBlockOpen != null &&
                     this.AskNextBlockOpen.Equals(other.AskNextBlockOpen)
+                ) &&                 
+                (
+                    this.AskNextBlockOpenSeniority == other.AskNextBlockOpenSeniority ||
+                    this.AskNextBlockOpenSeniority != null &&
+                    this.AskNextBlockOpenSeniority.Equals(other.AskNextBlockOpenSeniority)
                 );
         }
 
@@ -289,7 +304,11 @@ namespace HETSAPI.Models
                 if (this.AskNextBlockOpen != null)
                 {
                     hash = hash * 59 + this.AskNextBlockOpen.GetHashCode();
-                }
+                }                if (this.AskNextBlockOpenSeniority != null)
+                {
+                    hash = hash * 59 + this.AskNextBlockOpenSeniority.GetHashCode();
+                }                
+                
                 return hash;
             }
         }

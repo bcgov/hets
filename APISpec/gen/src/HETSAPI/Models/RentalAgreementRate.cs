@@ -49,8 +49,7 @@ namespace HETSAPI.Models
         /// <param name="PercentOfEquipmentRate">For other than the actual piece of equipment, the percent of the equipment rate to use for this component of the rental agreement..</param>
         /// <param name="RatePeriod">The period of the rental rate. The vast majority will be hourly, but the rate could apply across a different period, e.g. daily..</param>
         /// <param name="Comment">A comment about the rental of this component of the Rental Agreement..</param>
-        /// <param name="TimeRecords">TimeRecords.</param>
-        public RentalAgreementRate(int Id, RentalAgreement RentalAgreement, string ComponentName = null, bool? IsAttachment = null, float? Rate = null, int? PercentOfEquipmentRate = null, string RatePeriod = null, string Comment = null, List<TimeRecord> TimeRecords = null)
+        public RentalAgreementRate(int Id, RentalAgreement RentalAgreement, string ComponentName = null, bool? IsAttachment = null, float? Rate = null, int? PercentOfEquipmentRate = null, string RatePeriod = null, string Comment = null)
         {   
             this.Id = Id;
             this.RentalAgreement = RentalAgreement;
@@ -61,7 +60,6 @@ namespace HETSAPI.Models
             this.PercentOfEquipmentRate = PercentOfEquipmentRate;
             this.RatePeriod = RatePeriod;
             this.Comment = Comment;
-            this.TimeRecords = TimeRecords;
         }
 
         /// <summary>
@@ -135,11 +133,6 @@ namespace HETSAPI.Models
         public string Comment { get; set; }
         
         /// <summary>
-        /// Gets or Sets TimeRecords
-        /// </summary>
-        public List<TimeRecord> TimeRecords { get; set; }
-        
-        /// <summary>
         /// Returns the string presentation of the object
         /// </summary>
         /// <returns>String presentation of the object</returns>
@@ -155,7 +148,6 @@ namespace HETSAPI.Models
             sb.Append("  PercentOfEquipmentRate: ").Append(PercentOfEquipmentRate).Append("\n");
             sb.Append("  RatePeriod: ").Append(RatePeriod).Append("\n");
             sb.Append("  Comment: ").Append(Comment).Append("\n");
-            sb.Append("  TimeRecords: ").Append(TimeRecords).Append("\n");
             sb.Append("}\n");
             return sb.ToString();
         }
@@ -232,11 +224,6 @@ namespace HETSAPI.Models
                     this.Comment == other.Comment ||
                     this.Comment != null &&
                     this.Comment.Equals(other.Comment)
-                ) && 
-                (
-                    this.TimeRecords == other.TimeRecords ||
-                    this.TimeRecords != null &&
-                    this.TimeRecords.SequenceEqual(other.TimeRecords)
                 );
         }
 
@@ -280,11 +267,7 @@ namespace HETSAPI.Models
                 {
                     hash = hash * 59 + this.Comment.GetHashCode();
                 }                
-                                   
-                if (this.TimeRecords != null)
-                {
-                    hash = hash * 59 + this.TimeRecords.GetHashCode();
-                }
+                
                 return hash;
             }
         }
