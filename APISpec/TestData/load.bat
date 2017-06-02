@@ -2,7 +2,7 @@
 
 SET dev=http://server-tran-hets-dev.pathfinder.gov.bc.ca
 SET test=http://server-tran-hets-test.pathfinder.gov.bc.ca
-SET test=http://server-tran-hets-prod.pathfinder.gov.bc.ca
+SET prod=http://server-tran-hets-prod.pathfinder.gov.bc.ca
 
 IF %3.==. GOTO USAGE
 
@@ -11,9 +11,13 @@ IF %3==dev SET server=%dev%
 IF %3==test SET server=%test%
 IF %3==prod SET server=%prod%
 
-curl -c cookie %server%/api/authentication/dev/token?userId=SCURRAN
+REM curl -c cookie %server%/api/authentication/dev/token?userId=SCURRAN
+REM curl -c cookie %server%/api/authentication/dev/token?userId=TMcTesterson
+echo on
+curl -c cookie %server%/api/authentication/dev/token/SCURRAN
 IF %1==recalc GOTO RECALC
 curl -b cookie -v -H "Content-Type: application/json" -X POST --data-binary "@%1" %server%/%2
+@echo off
 
 GOTO End1
 
