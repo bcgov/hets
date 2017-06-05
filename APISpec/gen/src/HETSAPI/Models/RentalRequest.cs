@@ -54,8 +54,9 @@ namespace HETSAPI.Models
         /// <param name="Notes">Notes.</param>
         /// <param name="Attachments">Attachments.</param>
         /// <param name="History">History.</param>
+        /// <param name="RentalRequestAttachments">RentalRequestAttachments.</param>
         /// <param name="RentalRequestRotationList">RentalRequestRotationList.</param>
-        public RentalRequest(int Id, Project Project, LocalArea LocalArea, string Status, DistrictEquipmentType DistrictEquipmentType, int EquipmentCount, int? ExpectedHours = null, DateTime? ExpectedStartDate = null, DateTime? ExpectedEndDate = null, Equipment FirstOnRotationList = null, List<Note> Notes = null, List<Attachment> Attachments = null, List<History> History = null, List<RentalRequestRotationList> RentalRequestRotationList = null)
+        public RentalRequest(int Id, Project Project, LocalArea LocalArea, string Status, DistrictEquipmentType DistrictEquipmentType, int EquipmentCount, int? ExpectedHours = null, DateTime? ExpectedStartDate = null, DateTime? ExpectedEndDate = null, Equipment FirstOnRotationList = null, List<Note> Notes = null, List<Attachment> Attachments = null, List<History> History = null, List<RentalRequestAttachment> RentalRequestAttachments = null, List<RentalRequestRotationList> RentalRequestRotationList = null)
         {   
             this.Id = Id;
             this.Project = Project;
@@ -75,6 +76,7 @@ namespace HETSAPI.Models
             this.Notes = Notes;
             this.Attachments = Attachments;
             this.History = History;
+            this.RentalRequestAttachments = RentalRequestAttachments;
             this.RentalRequestRotationList = RentalRequestRotationList;
         }
 
@@ -196,6 +198,11 @@ namespace HETSAPI.Models
         public List<History> History { get; set; }
         
         /// <summary>
+        /// Gets or Sets RentalRequestAttachments
+        /// </summary>
+        public List<RentalRequestAttachment> RentalRequestAttachments { get; set; }
+        
+        /// <summary>
         /// Gets or Sets RentalRequestRotationList
         /// </summary>
         public List<RentalRequestRotationList> RentalRequestRotationList { get; set; }
@@ -221,6 +228,7 @@ namespace HETSAPI.Models
             sb.Append("  Notes: ").Append(Notes).Append("\n");
             sb.Append("  Attachments: ").Append(Attachments).Append("\n");
             sb.Append("  History: ").Append(History).Append("\n");
+            sb.Append("  RentalRequestAttachments: ").Append(RentalRequestAttachments).Append("\n");
             sb.Append("  RentalRequestRotationList: ").Append(RentalRequestRotationList).Append("\n");
             sb.Append("}\n");
             return sb.ToString();
@@ -324,6 +332,11 @@ namespace HETSAPI.Models
                     this.History.SequenceEqual(other.History)
                 ) && 
                 (
+                    this.RentalRequestAttachments == other.RentalRequestAttachments ||
+                    this.RentalRequestAttachments != null &&
+                    this.RentalRequestAttachments.SequenceEqual(other.RentalRequestAttachments)
+                ) && 
+                (
                     this.RentalRequestRotationList == other.RentalRequestRotationList ||
                     this.RentalRequestRotationList != null &&
                     this.RentalRequestRotationList.SequenceEqual(other.RentalRequestRotationList)
@@ -387,6 +400,10 @@ namespace HETSAPI.Models
                 if (this.History != null)
                 {
                     hash = hash * 59 + this.History.GetHashCode();
+                }                   
+                if (this.RentalRequestAttachments != null)
+                {
+                    hash = hash * 59 + this.RentalRequestAttachments.GetHashCode();
                 }                   
                 if (this.RentalRequestRotationList != null)
                 {

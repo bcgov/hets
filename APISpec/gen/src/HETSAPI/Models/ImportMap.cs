@@ -84,7 +84,7 @@ namespace HETSAPI.Models
         /// </summary>
         /// <value>Old primary key for record</value>
         [MetaDataExtension (Description = "Old primary key for record")]
-        [MaxLength(150)]
+        [MaxLength(250)]
         
         public string OldKey { get; set; }
         

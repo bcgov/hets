@@ -94,7 +94,7 @@ namespace HETSAPI.Models
         /// </summary>
         /// <value>The name of this equipment type used at the District Level. This could be just the equipmentName if this is the only EquipmentType defined in this District, or could be a name that separates out multiple EquipmentTypes used within a District to, for instance, separate out the same EquipmentName by size.</value>
         [MetaDataExtension (Description = "The name of this equipment type used at the District Level. This could be just the equipmentName if this is the only EquipmentType defined in this District, or could be a name that separates out multiple EquipmentTypes used within a District to, for instance, separate out the same EquipmentName by size.")]
-        [MaxLength(250)]
+        [MaxLength(255)]
         
         public string DistrictEquipmentName { get; set; }
         

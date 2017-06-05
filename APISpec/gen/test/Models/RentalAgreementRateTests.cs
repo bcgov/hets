@@ -121,6 +121,15 @@ namespace HETSAPI.Test
             // TODO unit test for the property 'Comment'
 			Assert.True(true);
         }
+        /// <summary>
+        /// Test the property 'TimeRecords'
+        /// </summary>
+        [Fact]
+        public void TimeRecordsTest()
+        {
+            // TODO unit test for the property 'TimeRecords'
+			Assert.True(true);
+        }
 
 	}
 	

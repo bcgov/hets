@@ -68,12 +68,12 @@ namespace HETSAPI.Test
 			Assert.True(true);
         }
         /// <summary>
-        /// Test the property 'User'
+        /// Test the property 'ExpiryDate'
         /// </summary>
         [Fact]
-        public void UserTest()
+        public void ExpiryDateTest()
         {
-            // TODO unit test for the property 'User'
+            // TODO unit test for the property 'ExpiryDate'
 			Assert.True(true);
         }
         /// <summary>
@@ -83,15 +83,6 @@ namespace HETSAPI.Test
         public void RoleTest()
         {
             // TODO unit test for the property 'Role'
-			Assert.True(true);
-        }
-        /// <summary>
-        /// Test the property 'ExpiryDate'
-        /// </summary>
-        [Fact]
-        public void ExpiryDateTest()
-        {
-            // TODO unit test for the property 'ExpiryDate'
 			Assert.True(true);
         }
 

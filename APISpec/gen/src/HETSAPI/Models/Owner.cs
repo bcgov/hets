@@ -61,7 +61,8 @@ namespace HETSAPI.Models
         /// <param name="Notes">Notes.</param>
         /// <param name="Attachments">Attachments.</param>
         /// <param name="History">History.</param>
-        public Owner(int Id, string OwnerEquipmentCodePrefix, string OrganizationName, bool MeetsResidency, LocalArea LocalArea, string Status, string DoingBusinessAs = null, string RegisteredCompanyNumber = null, Contact PrimaryContact = null, bool? IsMaintenanceContractor = null, string WorkSafeBCPolicyNumber = null, DateTime? WorkSafeBCExpiryDate = null, DateTime? CGLEndDate = null, string ArchiveCode = null, string ArchiveReason = null, DateTime? ArchiveDate = null, List<Contact> Contacts = null, List<Note> Notes = null, List<Attachment> Attachments = null, List<History> History = null)
+        /// <param name="EquipmentList">EquipmentList.</param>
+        public Owner(int Id, string OwnerEquipmentCodePrefix, string OrganizationName, bool MeetsResidency, LocalArea LocalArea, string Status, string DoingBusinessAs = null, string RegisteredCompanyNumber = null, Contact PrimaryContact = null, bool? IsMaintenanceContractor = null, string WorkSafeBCPolicyNumber = null, DateTime? WorkSafeBCExpiryDate = null, DateTime? CGLEndDate = null, string ArchiveCode = null, string ArchiveReason = null, DateTime? ArchiveDate = null, List<Contact> Contacts = null, List<Note> Notes = null, List<Attachment> Attachments = null, List<History> History = null, List<Equipment> EquipmentList = null)
         {   
             this.Id = Id;
             this.OwnerEquipmentCodePrefix = OwnerEquipmentCodePrefix;
@@ -88,6 +89,7 @@ namespace HETSAPI.Models
             this.Notes = Notes;
             this.Attachments = Attachments;
             this.History = History;
+            this.EquipmentList = EquipmentList;
         }
 
         /// <summary>
@@ -253,6 +255,11 @@ namespace HETSAPI.Models
         public List<History> History { get; set; }
         
         /// <summary>
+        /// Gets or Sets EquipmentList
+        /// </summary>
+        public List<Equipment> EquipmentList { get; set; }
+        
+        /// <summary>
         /// Returns the string presentation of the object
         /// </summary>
         /// <returns>String presentation of the object</returns>
@@ -280,6 +287,7 @@ namespace HETSAPI.Models
             sb.Append("  Notes: ").Append(Notes).Append("\n");
             sb.Append("  Attachments: ").Append(Attachments).Append("\n");
             sb.Append("  History: ").Append(History).Append("\n");
+            sb.Append("  EquipmentList: ").Append(EquipmentList).Append("\n");
             sb.Append("}\n");
             return sb.ToString();
         }
@@ -415,6 +423,11 @@ namespace HETSAPI.Models
                     this.History == other.History ||
                     this.History != null &&
                     this.History.SequenceEqual(other.History)
+                ) && 
+                (
+                    this.EquipmentList == other.EquipmentList ||
+                    this.EquipmentList != null &&
+                    this.EquipmentList.SequenceEqual(other.EquipmentList)
                 );
         }
 
@@ -504,6 +517,10 @@ namespace HETSAPI.Models
                 if (this.History != null)
                 {
                     hash = hash * 59 + this.History.GetHashCode();
+                }                   
+                if (this.EquipmentList != null)
+                {
+                    hash = hash * 59 + this.EquipmentList.GetHashCode();
                 }
                 return hash;
             }

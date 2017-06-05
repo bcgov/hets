@@ -365,6 +365,15 @@ namespace HETSAPI.Test
 			Assert.True(true);
         }
         /// <summary>
+        /// Test the property 'EquipmentAttachments'
+        /// </summary>
+        [Fact]
+        public void EquipmentAttachmentsTest()
+        {
+            // TODO unit test for the property 'EquipmentAttachments'
+			Assert.True(true);
+        }
+        /// <summary>
         /// Test the property 'Notes'
         /// </summary>
         [Fact]

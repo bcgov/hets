@@ -229,6 +229,15 @@ namespace HETSAPI.Test
             // TODO unit test for the property 'History'
 			Assert.True(true);
         }
+        /// <summary>
+        /// Test the property 'EquipmentList'
+        /// </summary>
+        [Fact]
+        public void EquipmentListTest()
+        {
+            // TODO unit test for the property 'EquipmentList'
+			Assert.True(true);
+        }
 
 	}
 	

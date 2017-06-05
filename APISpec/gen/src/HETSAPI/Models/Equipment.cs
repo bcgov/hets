@@ -76,10 +76,11 @@ namespace HETSAPI.Models
         /// <param name="ArchiveReason">An optional comment about why this piece of equipment has been archived..</param>
         /// <param name="ArchiveDate">The date on which a user most recenly marked this piece of equipment as archived..</param>
         /// <param name="DumpTruck">A link to a dump truck set if this piece of equipment is an equipment type flagged as a dump truck..</param>
+        /// <param name="EquipmentAttachments">EquipmentAttachments.</param>
         /// <param name="Notes">Notes.</param>
         /// <param name="Attachments">Attachments.</param>
         /// <param name="History">History.</param>
-        public Equipment(int Id, LocalArea LocalArea, DistrictEquipmentType DistrictEquipmentType, Owner Owner, string EquipmentCode, string Status, DateTime ReceivedDate, DateTime LastVerifiedDate, DateTime? ApprovedDate = null, bool? IsInformationUpdateNeeded = null, string InformationUpdateNeededReason = null, string LicencePlate = null, string Make = null, string Model = null, string Year = null, string Operator = null, float? PayRate = null, string RefuseRate = null, string SerialNumber = null, string Size = null, DateTime? ToDate = null, int? BlockNumber = null, float? Seniority = null, int? NumberInBlock = null, bool? IsSeniorityOverridden = null, string SeniorityOverrideReason = null, DateTime? SeniorityEffectiveDate = null, float? YearsOfService = null, float? ServiceHoursLastYear = null, float? ServiceHoursTwoYearsAgo = null, float? ServiceHoursThreeYearsAgo = null, string ArchiveCode = null, string ArchiveReason = null, DateTime? ArchiveDate = null, DumpTruck DumpTruck = null, List<Note> Notes = null, List<Attachment> Attachments = null, List<History> History = null)
+        public Equipment(int Id, LocalArea LocalArea, DistrictEquipmentType DistrictEquipmentType, Owner Owner, string EquipmentCode, string Status, DateTime ReceivedDate, DateTime LastVerifiedDate, DateTime? ApprovedDate = null, bool? IsInformationUpdateNeeded = null, string InformationUpdateNeededReason = null, string LicencePlate = null, string Make = null, string Model = null, string Year = null, string Operator = null, float? PayRate = null, string RefuseRate = null, string SerialNumber = null, string Size = null, DateTime? ToDate = null, int? BlockNumber = null, float? Seniority = null, int? NumberInBlock = null, bool? IsSeniorityOverridden = null, string SeniorityOverrideReason = null, DateTime? SeniorityEffectiveDate = null, float? YearsOfService = null, float? ServiceHoursLastYear = null, float? ServiceHoursTwoYearsAgo = null, float? ServiceHoursThreeYearsAgo = null, string ArchiveCode = null, string ArchiveReason = null, DateTime? ArchiveDate = null, DumpTruck DumpTruck = null, List<EquipmentAttachment> EquipmentAttachments = null, List<Note> Notes = null, List<Attachment> Attachments = null, List<History> History = null)
         {   
             this.Id = Id;
             this.LocalArea = LocalArea;
@@ -123,6 +124,7 @@ namespace HETSAPI.Models
             this.ArchiveReason = ArchiveReason;
             this.ArchiveDate = ArchiveDate;
             this.DumpTruck = DumpTruck;
+            this.EquipmentAttachments = EquipmentAttachments;
             this.Notes = Notes;
             this.Attachments = Attachments;
             this.History = History;
@@ -434,6 +436,11 @@ namespace HETSAPI.Models
         public int? DumpTruckId { get; set; }
         
         /// <summary>
+        /// Gets or Sets EquipmentAttachments
+        /// </summary>
+        public List<EquipmentAttachment> EquipmentAttachments { get; set; }
+        
+        /// <summary>
         /// Gets or Sets Notes
         /// </summary>
         public List<Note> Notes { get; set; }
@@ -491,6 +498,7 @@ namespace HETSAPI.Models
             sb.Append("  ArchiveReason: ").Append(ArchiveReason).Append("\n");
             sb.Append("  ArchiveDate: ").Append(ArchiveDate).Append("\n");
             sb.Append("  DumpTruck: ").Append(DumpTruck).Append("\n");
+            sb.Append("  EquipmentAttachments: ").Append(EquipmentAttachments).Append("\n");
             sb.Append("  Notes: ").Append(Notes).Append("\n");
             sb.Append("  Attachments: ").Append(Attachments).Append("\n");
             sb.Append("  History: ").Append(History).Append("\n");
@@ -707,6 +715,11 @@ namespace HETSAPI.Models
                     this.DumpTruck.Equals(other.DumpTruck)
                 ) && 
                 (
+                    this.EquipmentAttachments == other.EquipmentAttachments ||
+                    this.EquipmentAttachments != null &&
+                    this.EquipmentAttachments.SequenceEqual(other.EquipmentAttachments)
+                ) && 
+                (
                     this.Notes == other.Notes ||
                     this.Notes != null &&
                     this.Notes.SequenceEqual(other.Notes)
@@ -871,6 +884,10 @@ namespace HETSAPI.Models
                 if (this.DumpTruck != null)
                 {
                     hash = hash * 59 + this.DumpTruck.GetHashCode();
+                }                   
+                if (this.EquipmentAttachments != null)
+                {
+                    hash = hash * 59 + this.EquipmentAttachments.GetHashCode();
                 }                   
                 if (this.Notes != null)
                 {
