@@ -314,9 +314,10 @@ namespace HETSAPI.Services.Impl
         /// <summary>
         ///
         /// </summary>
-        /// <remarks>Add a History record to Equipment</remarks>
-        /// <param name="id">id of SchoolBus to add History for</param>
+        /// <remarks>Add a History record to the Equipment</remarks>
+        /// <param name="id">id of Equipment to add History for</param>
         /// <param name="item"></param>
+        /// <response code="200">OK</response>
         /// <response code="201">History created</response>
         public virtual IActionResult EquipmentIdHistoryPostAsync(int id, History item)
         {

@@ -365,7 +365,8 @@ namespace HETSAPI.Services.Impl
         /// <remarks>Add a History record to the Owner</remarks>
         /// <param name="id">id of Owner to add History for</param>
         /// <param name="item"></param>
-        /// <response code="201">History added</response>
+        /// <response code="200">OK</response>
+        /// <response code="201">History created</response>
         public virtual IActionResult OwnersIdHistoryPostAsync(int id, History item)
         {
             HistoryViewModel result = new HistoryViewModel();

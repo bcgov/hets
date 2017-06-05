@@ -90,6 +90,7 @@ namespace HETSAPI.Services
         /// <remarks>Add a History record to the Equipment</remarks>
         /// <param name="id">id of Equipment to add History for</param>
         /// <param name="item"></param>
+        /// <response code="200">OK</response>
         /// <response code="201">History created</response>
         IActionResult EquipmentIdHistoryPostAsync(int id, History item);
 

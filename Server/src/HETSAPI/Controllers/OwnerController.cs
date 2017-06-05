@@ -23,7 +23,6 @@ using HETSAPI.Models;
 using HETSAPI.ViewModels;
 using HETSAPI.Services;
 using HETSAPI.Authorization;
-using HETSAPI.Helpers;
 
 namespace HETSAPI.Controllers
 {
@@ -215,11 +214,11 @@ namespace HETSAPI.Controllers
         /// <remarks>Add a History record to the Owner</remarks>
         /// <param name="id">id of Owner to add History for</param>
         /// <param name="item"></param>
+        /// <response code="200">OK</response>
         /// <response code="201">History created</response>
         [HttpPost]
         [Route("/api/owners/{id}/history")]
         [SwaggerOperation("OwnersIdHistoryPost")]
-        [SwaggerResponse(200, type: typeof(History))]
         public virtual IActionResult OwnersIdHistoryPost([FromRoute]int id, [FromBody]History item)
         {
             return this._service.OwnersIdHistoryPostAsync(id, item);

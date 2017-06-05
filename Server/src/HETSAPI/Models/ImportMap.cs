@@ -1,11 +1,11 @@
 /*
  * REST API Documentation for the MOTI Hired Equipment Tracking System (HETS) Application
  *
- * The Hired Equipment Program is for owners/operators who have a dump truck, bulldozer, backhoe or  other piece of equipment they want to hire out to the transportation ministry for day labour and  emergency projects.  The Hired Equipment Program distributes available work to local equipment owners. The program is  based on seniority and is designed to deliver work to registered users fairly and efficiently  through the development of local area call-out lists. 
+ * The Hired Equipment Program is for owners/operators who have a dump truck, bulldozer, backhoe or  other piece of equipment they want to hire out to the transportation ministry for day labour and  emergency projects.  The Hired Equipment Program distributes available work to local equipment owners. The program is  based on seniority and is designed to deliver work to registered users fairly and efficiently  through the development of local area call-out lists.
  *
  * OpenAPI spec version: v1
- * 
- * 
+ *
+ *
  */
 
 using System;
@@ -24,7 +24,7 @@ using HETSAPI.Models;
 namespace HETSAPI.Models
 {
     /// <summary>
-    /// 
+    ///
     /// </summary>
 
     public partial class ImportMap : AuditableEntity, IEquatable<ImportMap>
@@ -46,7 +46,7 @@ namespace HETSAPI.Models
         /// <param name="OldKey">Old primary key for record (required).</param>
         /// <param name="NewKey">New primary key for record (required).</param>
         public ImportMap(int Id, string OldTable, string NewTable, string OldKey, int NewKey)
-        {   
+        {
             this.Id = Id;
             this.OldTable = OldTable;
             this.NewTable = NewTable;
@@ -64,35 +64,37 @@ namespace HETSAPI.Models
         /// <value>A system generated unique identifier for the ImportMap</value>
         [MetaDataExtension (Description = "A system generated unique identifier for the ImportMap")]
         public int Id { get; set; }
-        
+
         /// <summary>
         /// Table name in old system
         /// </summary>
         /// <value>Table name in old system</value>
         [MetaDataExtension (Description = "Table name in old system")]
         public string OldTable { get; set; }
-        
+
         /// <summary>
         /// Table name in new system.
         /// </summary>
         /// <value>Table name in new system.</value>
         [MetaDataExtension (Description = "Table name in new system.")]
         public string NewTable { get; set; }
-        
+
         /// <summary>
         /// Old primary key for record
         /// </summary>
         /// <value>Old primary key for record</value>
         [MetaDataExtension (Description = "Old primary key for record")]
+        [MaxLength(250)]
+
         public string OldKey { get; set; }
-        
+
         /// <summary>
         /// New primary key for record
         /// </summary>
         /// <value>New primary key for record</value>
         [MetaDataExtension (Description = "New primary key for record")]
         public int NewKey { get; set; }
-        
+
         /// <summary>
         /// Returns the string presentation of the object
         /// </summary>
@@ -143,25 +145,26 @@ namespace HETSAPI.Models
             if (ReferenceEquals(null, other)) { return false; }
             if (ReferenceEquals(this, other)) { return true; }
 
-            return                 
+            return
                 (
                     this.Id == other.Id ||
                     this.Id.Equals(other.Id)
-                ) &&                 
+                ) &&
                 (
                     this.OldTable == other.OldTable ||
                     this.OldTable != null &&
                     this.OldTable.Equals(other.OldTable)
-                ) &&                 
+                ) &&
                 (
                     this.NewTable == other.NewTable ||
                     this.NewTable != null &&
                     this.NewTable.Equals(other.NewTable)
-                ) &&                 
+                ) &&
                 (
                     this.OldKey == other.OldKey ||
+                    this.OldKey != null &&
                     this.OldKey.Equals(other.OldKey)
-                ) &&                 
+                ) &&
                 (
                     this.NewKey == other.NewKey ||
                     this.NewKey.Equals(other.NewKey)
@@ -179,24 +182,27 @@ namespace HETSAPI.Models
             {
                 int hash = 41;
                 // Suitable nullity checks
-                                   
+
                 hash = hash * 59 + this.Id.GetHashCode();                if (this.OldTable != null)
                 {
                     hash = hash * 59 + this.OldTable.GetHashCode();
-                }                
+                }
                                 if (this.NewTable != null)
                 {
                     hash = hash * 59 + this.NewTable.GetHashCode();
-                }                
-                                                   
-                hash = hash * 59 + this.OldKey.GetHashCode();                                   
+                }
+                                if (this.OldKey != null)
+                {
+                    hash = hash * 59 + this.OldKey.GetHashCode();
+                }
+
                 hash = hash * 59 + this.NewKey.GetHashCode();
                 return hash;
             }
         }
 
         #region Operators
-        
+
         /// <summary>
         /// Equals
         /// </summary>

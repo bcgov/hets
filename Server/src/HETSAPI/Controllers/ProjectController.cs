@@ -23,7 +23,6 @@ using HETSAPI.Models;
 using HETSAPI.ViewModels;
 using HETSAPI.Services;
 using HETSAPI.Authorization;
-using HETSAPI.Helpers;
 
 namespace HETSAPI.Controllers
 {
@@ -184,11 +183,11 @@ namespace HETSAPI.Controllers
         /// <remarks>Add a History record to the Project</remarks>
         /// <param name="id">id of Project to fetch History for</param>
         /// <param name="item"></param>
+        /// <response code="200">OK</response>
         /// <response code="201">History created</response>
         [HttpPost]
         [Route("/api/projects/{id}/history")]
         [SwaggerOperation("ProjectsIdHistoryPost")]
-        [SwaggerResponse(200, type: typeof(History))]
         public virtual IActionResult ProjectsIdHistoryPost([FromRoute]int id, [FromBody]History item)
         {
             return this._service.ProjectsIdHistoryPostAsync(id, item);
@@ -232,14 +231,15 @@ namespace HETSAPI.Controllers
         /// <param name="project">name or partial name for a Project</param>
         /// <param name="hasRequests">if true then only include Projects with active Requests</param>
         /// <param name="hasHires">if true then only include Projects with active Rental Agreements</param>
+        /// <param name="status">if included, filter the results to those with a status matching this string</param>
         /// <response code="200">OK</response>
         [HttpGet]
         [Route("/api/projects/search")]
         [SwaggerOperation("ProjectsSearchGet")]
         [SwaggerResponse(200, type: typeof(List<ProjectSearchResultViewModel>))]
-        public virtual IActionResult ProjectsSearchGet([FromQuery]string districts, [FromQuery]string project, [FromQuery]bool? hasRequests, [FromQuery]bool? hasHires)
+        public virtual IActionResult ProjectsSearchGet([FromQuery]string districts, [FromQuery]string project, [FromQuery]bool? hasRequests, [FromQuery]bool? hasHires, [FromQuery]string status)
         {
-            return this._service.ProjectsSearchGetAsync(districts, project, hasRequests, hasHires);
+            return this._service.ProjectsSearchGetAsync(districts, project, hasRequests, hasHires, status);
         }
     }
 }
