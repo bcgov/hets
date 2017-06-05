@@ -109,6 +109,7 @@ namespace HETSAPI.Services
         /// <remarks>Add a History record to the Project</remarks>
         /// <param name="id">id of Project to fetch History for</param>
         /// <param name="item"></param>
+        /// <response code="200">OK</response>
         /// <response code="201">History created</response>
         IActionResult ProjectsIdHistoryPostAsync(int id, History item);
 
@@ -136,7 +137,8 @@ namespace HETSAPI.Services
         /// <param name="project">name or partial name for a Project</param>
         /// <param name="hasRequests">if true then only include Projects with active Requests</param>
         /// <param name="hasHires">if true then only include Projects with active Rental Agreements</param>
+        /// <param name="status">if included, filter the results to those with a status matching this string</param>
         /// <response code="200">OK</response>
-        IActionResult ProjectsSearchGetAsync(string districts, string project, bool? hasRequests, bool? hasHires);
+        IActionResult ProjectsSearchGetAsync(string districts, string project, bool? hasRequests, bool? hasHires, string status);
     }
 }

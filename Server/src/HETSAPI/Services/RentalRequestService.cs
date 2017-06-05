@@ -83,6 +83,7 @@ namespace HETSAPI.Services
         /// <remarks>Add a History record to the RentalRequest</remarks>
         /// <param name="id">id of RentalRequest to add History for</param>
         /// <param name="item"></param>
+        /// <response code="200">OK</response>
         /// <response code="201">History created</response>
         IActionResult RentalrequestsIdHistoryPostAsync(int id, History item);
 

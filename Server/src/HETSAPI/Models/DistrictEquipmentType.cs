@@ -1,11 +1,11 @@
 /*
  * REST API Documentation for the MOTI Hired Equipment Tracking System (HETS) Application
  *
- * The Hired Equipment Program is for owners/operators who have a dump truck, bulldozer, backhoe or  other piece of equipment they want to hire out to the transportation ministry for day labour and  emergency projects.  The Hired Equipment Program distributes available work to local equipment owners. The program is  based on seniority and is designed to deliver work to registered users fairly and efficiently  through the development of local area call-out lists. 
+ * The Hired Equipment Program is for owners/operators who have a dump truck, bulldozer, backhoe or  other piece of equipment they want to hire out to the transportation ministry for day labour and  emergency projects.  The Hired Equipment Program distributes available work to local equipment owners. The program is  based on seniority and is designed to deliver work to registered users fairly and efficiently  through the development of local area call-out lists.
  *
  * OpenAPI spec version: v1
- * 
- * 
+ *
+ *
  */
 
 using System;
@@ -46,7 +46,7 @@ namespace HETSAPI.Models
         /// <param name="District">District (required).</param>
         /// <param name="DistrictEquipmentName">The name of this equipment type used at the District Level. This could be just the equipmentName if this is the only EquipmentType defined in this District, or could be a name that separates out multiple EquipmentTypes used within a District to, for instance, separate out the same EquipmentName by size. (required).</param>
         public DistrictEquipmentType(int Id, EquipmentType EquipmentType, District District, string DistrictEquipmentName)
-        {   
+        {
             this.Id = Id;
             this.EquipmentType = EquipmentType;
             this.District = District;
@@ -62,42 +62,42 @@ namespace HETSAPI.Models
         /// <value>A system-generated unique identifier for an EquipmentType</value>
         [MetaDataExtension (Description = "A system-generated unique identifier for an EquipmentType")]
         public int Id { get; set; }
-        
+
         /// <summary>
         /// Gets or Sets EquipmentType
         /// </summary>
         public EquipmentType EquipmentType { get; set; }
-        
+
         /// <summary>
-        /// Foreign key for EquipmentType 
-        /// </summary>   
+        /// Foreign key for EquipmentType
+        /// </summary>
         [ForeignKey("EquipmentType")]
 		[JsonIgnore]
-		
+
         public int? EquipmentTypeId { get; set; }
-        
+
         /// <summary>
         /// Gets or Sets District
         /// </summary>
         public District District { get; set; }
-        
+
         /// <summary>
-        /// Foreign key for District 
-        /// </summary>   
+        /// Foreign key for District
+        /// </summary>
         [ForeignKey("District")]
 		[JsonIgnore]
-		
+
         public int? DistrictId { get; set; }
-        
+
         /// <summary>
         /// The name of this equipment type used at the District Level. This could be just the equipmentName if this is the only EquipmentType defined in this District, or could be a name that separates out multiple EquipmentTypes used within a District to, for instance, separate out the same EquipmentName by size.
         /// </summary>
         /// <value>The name of this equipment type used at the District Level. This could be just the equipmentName if this is the only EquipmentType defined in this District, or could be a name that separates out multiple EquipmentTypes used within a District to, for instance, separate out the same EquipmentName by size.</value>
         [MetaDataExtension (Description = "The name of this equipment type used at the District Level. This could be just the equipmentName if this is the only EquipmentType defined in this District, or could be a name that separates out multiple EquipmentTypes used within a District to, for instance, separate out the same EquipmentName by size.")]
-        [MaxLength(50)]
-        
+        [MaxLength(255)]
+
         public string DistrictEquipmentName { get; set; }
-        
+
         /// <summary>
         /// Returns the string presentation of the object
         /// </summary>
@@ -147,21 +147,21 @@ namespace HETSAPI.Models
             if (ReferenceEquals(null, other)) { return false; }
             if (ReferenceEquals(this, other)) { return true; }
 
-            return                 
+            return
                 (
                     this.Id == other.Id ||
                     this.Id.Equals(other.Id)
-                ) &&                 
+                ) &&
                 (
                     this.EquipmentType == other.EquipmentType ||
                     this.EquipmentType != null &&
                     this.EquipmentType.Equals(other.EquipmentType)
-                ) &&                 
+                ) &&
                 (
                     this.District == other.District ||
                     this.District != null &&
                     this.District.Equals(other.District)
-                ) &&                 
+                ) &&
                 (
                     this.DistrictEquipmentName == other.DistrictEquipmentName ||
                     this.DistrictEquipmentName != null &&
@@ -180,26 +180,26 @@ namespace HETSAPI.Models
             {
                 int hash = 41;
                 // Suitable nullity checks
-                                   
-                hash = hash * 59 + this.Id.GetHashCode();                   
+
+                hash = hash * 59 + this.Id.GetHashCode();
                 if (this.EquipmentType != null)
                 {
                     hash = hash * 59 + this.EquipmentType.GetHashCode();
-                }                   
+                }
                 if (this.District != null)
                 {
                     hash = hash * 59 + this.District.GetHashCode();
                 }                if (this.DistrictEquipmentName != null)
                 {
                     hash = hash * 59 + this.DistrictEquipmentName.GetHashCode();
-                }                
-                
+                }
+
                 return hash;
             }
         }
 
         #region Operators
-        
+
         /// <summary>
         /// Equals
         /// </summary>

@@ -195,8 +195,9 @@ namespace HETSAPI.Services.Impl
         /// <param name="project">name or partial name for a Project</param>
         /// <param name="hasRequests">if true then only include Projects with active Requests</param>
         /// <param name="hasHires">if true then only include Projects with active Rental Agreements</param>
+        /// <param name="status">if included, filter the results to those with a status matching this string</param>
         /// <response code="200">OK</response>
-        public virtual IActionResult ProjectsSearchGetAsync(string districts, string project, bool? hasRequests, bool? hasHires)
+        public virtual IActionResult ProjectsSearchGetAsync(string districts, string project, bool? hasRequests, bool? hasHires, string status)
         {
             var result = "";
             return new ObjectResult(result);

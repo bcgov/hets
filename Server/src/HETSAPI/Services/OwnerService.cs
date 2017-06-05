@@ -126,6 +126,7 @@ namespace HETSAPI.Services
         /// <remarks>Add a History record to the Owner</remarks>
         /// <param name="id">id of Owner to add History for</param>
         /// <param name="item"></param>
+        /// <response code="200">OK</response>
         /// <response code="201">History created</response>
         IActionResult OwnersIdHistoryPostAsync(int id, History item);
 

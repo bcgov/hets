@@ -121,15 +121,6 @@ namespace HETSAPI.Test
             // TODO unit test for the property 'AskNextBlockOpen'
 			Assert.True(true);
         }
-        /// <summary>
-        /// Test the property 'AskNextBlockOpenSeniority'
-        /// </summary>
-        [Fact]
-        public void AskNextBlockOpenSeniorityTest()
-        {
-            // TODO unit test for the property 'AskNextBlockOpenSeniority'
-			Assert.True(true);
-        }
 
 	}
 	

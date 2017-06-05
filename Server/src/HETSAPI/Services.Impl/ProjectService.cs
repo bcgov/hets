@@ -405,6 +405,7 @@ namespace HETSAPI.Services.Impl
         /// <remarks>Add a History record to the Project</remarks>
         /// <param name="id">id of Project to fetch History for</param>
         /// <param name="item"></param>
+        /// <response code="200">OK</response>
         /// <response code="201">History created</response>
         public virtual IActionResult ProjectsIdHistoryPostAsync(int id, History item)
         {
@@ -527,23 +528,24 @@ namespace HETSAPI.Services.Impl
         /// Searches Projects
         /// </summary>
         /// <remarks>Used for the project search page.</remarks>
-        /// <param name="districtsCSV">Local areas (comma seperated list of id numbers)</param>
+        /// <param name="districts">Districts (comma seperated list of id numbers)</param>
         /// <param name="project">name or partial name for a Project</param>
         /// <param name="hasRequests">if true then only include Projects with active Requests</param>
         /// <param name="hasHires">if true then only include Projects with active Rental Agreements</param>
+        /// <param name="status">if included, filter the results to those with a status matching this string</param>
         /// <response code="200">OK</response>
-        public virtual IActionResult ProjectsSearchGetAsync(string districtsCSV, string project, bool? hasRequests, bool? hasHires)
+        public virtual IActionResult ProjectsSearchGetAsync(string districts, string project, bool? hasRequests, bool? hasHires, string status)
         {
-            int?[] districts = ParseIntArray(districtsCSV);
+            int?[] districtTokens = ParseIntArray(districts);
 
             var data = _context.Projects
                     .Include(x => x.District.Region)
                     .Include(x => x.PrimaryContact)
                     .Select(x => x);
 
-            if (districts != null && districts.Length > 0)
+            if (districtTokens != null && districts.Length > 0)
             {
-                data = data.Where(x => districts.Contains(x.District.Id));
+                data = data.Where(x => districtTokens.Contains(x.District.Id));
             }
 
             if (hasRequests != null)
