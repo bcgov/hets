@@ -76,6 +76,15 @@ namespace HETSAPI.Test
             // TODO unit test for the property 'Group'
 			Assert.True(true);
         }
+        /// <summary>
+        /// Test the property 'User'
+        /// </summary>
+        [Fact]
+        public void UserTest()
+        {
+            // TODO unit test for the property 'User'
+			Assert.True(true);
+        }
 
 	}
 	

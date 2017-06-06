@@ -1,46 +1,45 @@
-SET TARGET_SERVER=http://localhost:55217
-rem SET TARGET_SERVER=http://server-tran-hets-dev.pathfinder.gov.bc.ca
-SET TARGET_SERVER=http://server-tran-hets-dev.pathfinder.gov.bc.ca
+echo off
 
-curl -c cookie %TARGET_SERVER%/api/authentication/dev/token?userId=
+IF %1.==. GOTO USAGE
 
-call load.bat "cities\cities_city.json" api/cities/bulk "%TARGET_SERVER%"
-call load.bat "Regions\Regions_Region.json" api/regions/bulk "%TARGET_SERVER%"
-call load.bat "Districts\Districts_District.json" api/districts/bulk "%TARGET_SERVER%"
-call load.bat "ServiceAreas\ServiceAreas_ServiceArea.json" api/serviceareas/bulk "%TARGET_SERVER%"
-call load.bat "LocalAreas\LocalAreas_LocalArea.json" api/localareas/bulk "%TARGET_SERVER%"
+REM Note - order matters in the loading of the data
 
-call load.bat "ContactAddress\ContactAddress_ContactAddress.json" api/contactaddresses/bulk "%TARGET_SERVER%"
-call load.bat "ContactPhones\ContactPhones_ContactPhones.json" api/contactphones/bulk "%TARGET_SERVER%"
-call load.bat "Contacts\Contacts_Contact.json" api/contacts/bulk "%TARGET_SERVER%"
+REM The following data will be loaded on all systems - Dev/Test/Prod
+call load.bat "cities\cities_city.json" api/cities/bulk %1
+call load.bat "ServiceAreas\ServiceAreas_ServiceArea.json" api/serviceareas/bulk %1
+call load.bat "EquipmentTypes\EquipmentTypes_EquipmentType.json" api/equipmenttypes/bulk %1
 
-call load.bat "Owners\Owners_Owner.json" api/owners/bulk "%TARGET_SERVER%"
+IF %1.==test. GOTO TestProd
+IF %1.==prod. GOTO TestProd
 
-call load.bat "EquipmentTypes\EquipmentTypes_EquipmentType.json" api/equipmenttypes/bulk "%TARGET_SERVER%"
-call load.bat "DistrictEquipmentTypes\DistrictEquipmentTypes_DistrictEquipmentType.json" api/districtEquipmentTypes/bulk "%TARGET_SERVER%"
-call load.bat "Equipment\Equipment_Equipment.json" api/equipment/bulk "%TARGET_SERVER%"
+REM The rest of the tables are only loaded into Dev and other servers
+call load.bat "LocalAreas\LocalAreas_LocalArea.json" api/localareas/bulk %1
+call load.bat "Contacts\Contacts_Contact.json" api/contacts/bulk %1
+call load.bat "Owners\Owners_Owner.json" api/owners/bulk %1
+call load.bat "DistrictEquipmentTypes\DistrictEquipmentTypes_DistrictEquipmentType.json" api/districtEquipmentTypes/bulk %1
+call load.bat "Equipment\Equipment_Equipment.json" api/equipment/bulk %1
+call load.bat "Project\Project_Project.json" api/projects/bulk %1
+call load.bat "RentalRequest\RentalRequest_RentalRequest.json" api/rentalrequests/bulk %1
 
-call load.bat "Project\Project_Project.json" api/projects/bulk "%TARGET_SERVER%"
-call load.bat "RentalRequest\RentalRequest_RentalRequest.json" api/rentalrequests/bulk "%TARGET_SERVER%"
+REM 
+REM // update the seniority scores.
 
-// update the seniority scores.
+call load.bat recalc 1 %1
+call load.bat recalc 2 %1
+call load.bat recalc 3 %1
 
-curl -b cookie -v %TARGET_SERVER%/api/equipment/recalcSeniority?region=200000
-curl -b cookie -v %TARGET_SERVER%/api/equipment/recalcSeniority?region=200001
-curl -b cookie -v %TARGET_SERVER%/api/equipment/recalcSeniority?region=200002
-curl -b cookie -v %TARGET_SERVER%/api/equipment/recalcSeniority?region=200003
-curl -b cookie -v %TARGET_SERVER%/api/equipment/recalcSeniority?region=200004
+GOTO End1
 
+:USAGE
 
+echo Incorrect syntax
+echo USAGE: %0 ^<dev^|test^|prod^|server^>
+echo Example: %0 dev
+echo Example: %0 http://localhost:55217
 
+goto End1
 
+:TestProd
+echo NOTE: Only reference tables are loaded into Test and Prod
 
-
-
-
-
-
-
-
-
-
+:End1

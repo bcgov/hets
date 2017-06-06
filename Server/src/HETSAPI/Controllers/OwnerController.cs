@@ -1,11 +1,11 @@
 /*
  * REST API Documentation for the MOTI Hired Equipment Tracking System (HETS) Application
  *
- * The Hired Equipment Program is for owners/operators who have a dump truck, bulldozer, backhoe or  other piece of equipment they want to hire out to the transportation ministry for day labour and  emergency projects.  The Hired Equipment Program distributes available work to local equipment owners. The program is  based on seniority and is designed to deliver work to registered users fairly and efficiently  through the development of local area call-out lists. 
+ * The Hired Equipment Program is for owners/operators who have a dump truck, bulldozer, backhoe or  other piece of equipment they want to hire out to the transportation ministry for day labour and  emergency projects.  The Hired Equipment Program distributes available work to local equipment owners. The program is  based on seniority and is designed to deliver work to registered users fairly and efficiently  through the development of local area call-out lists.
  *
  * OpenAPI spec version: v1
- * 
- * 
+ *
+ *
  */
 
 using System;
@@ -23,12 +23,11 @@ using HETSAPI.Models;
 using HETSAPI.ViewModels;
 using HETSAPI.Services;
 using HETSAPI.Authorization;
-using HETSAPI.Helpers;
 
 namespace HETSAPI.Controllers
 {
     /// <summary>
-    /// 
+    ///
     /// </summary>
     public partial class OwnerController : Controller
     {
@@ -43,7 +42,7 @@ namespace HETSAPI.Controllers
         }
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         /// <param name="items"></param>
         /// <response code="201">Owner created</response>
@@ -57,7 +56,7 @@ namespace HETSAPI.Controllers
         }
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         /// <response code="200">OK</response>
         [HttpGet]
@@ -70,7 +69,7 @@ namespace HETSAPI.Controllers
         }
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         /// <remarks>Returns attachments for a particular Owner</remarks>
         /// <param name="id">id of Owner to fetch attachments for</param>
@@ -86,7 +85,7 @@ namespace HETSAPI.Controllers
         }
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         /// <remarks>Gets an Owner&#39;s Contacts</remarks>
         /// <param name="id">id of Owner to fetch Contacts for</param>
@@ -101,7 +100,7 @@ namespace HETSAPI.Controllers
         }
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         /// <remarks>Adds Owner Contact</remarks>
         /// <param name="id">id of Owner to add a contact for</param>
@@ -117,7 +116,7 @@ namespace HETSAPI.Controllers
         }
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         /// <remarks>Replaces an Owner&#39;s Contacts</remarks>
         /// <param name="id">id of Owner to replace Contacts for</param>
@@ -133,7 +132,7 @@ namespace HETSAPI.Controllers
         }
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         /// <param name="id">id of Owner to delete</param>
         /// <response code="200">OK</response>
@@ -147,7 +146,7 @@ namespace HETSAPI.Controllers
         }
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         /// <remarks>Gets an Owner&#39;s Equipment</remarks>
         /// <param name="id">id of Owner to fetch Equipment for</param>
@@ -162,7 +161,7 @@ namespace HETSAPI.Controllers
         }
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         /// <remarks>Replaces an Owner&#39;s Equipment</remarks>
         /// <param name="id">id of Owner to replace Equipment for</param>
@@ -178,7 +177,7 @@ namespace HETSAPI.Controllers
         }
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         /// <param name="id">id of Owner to fetch</param>
         /// <response code="200">OK</response>
@@ -193,7 +192,7 @@ namespace HETSAPI.Controllers
         }
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         /// <remarks>Returns History for a particular Owner</remarks>
         /// <param name="id">id of Owner to fetch History for</param>
@@ -210,23 +209,23 @@ namespace HETSAPI.Controllers
         }
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         /// <remarks>Add a History record to the Owner</remarks>
         /// <param name="id">id of Owner to add History for</param>
         /// <param name="item"></param>
+        /// <response code="200">OK</response>
         /// <response code="201">History created</response>
         [HttpPost]
         [Route("/api/owners/{id}/history")]
         [SwaggerOperation("OwnersIdHistoryPost")]
-        [SwaggerResponse(200, type: typeof(History))]
         public virtual IActionResult OwnersIdHistoryPost([FromRoute]int id, [FromBody]History item)
         {
             return this._service.OwnersIdHistoryPostAsync(id, item);
         }
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         /// <param name="id">id of Owner to fetch</param>
         /// <param name="item"></param>
@@ -242,7 +241,7 @@ namespace HETSAPI.Controllers
         }
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         /// <param name="item"></param>
         /// <response code="201">Owner created</response>
@@ -269,7 +268,7 @@ namespace HETSAPI.Controllers
         [Route("/api/owners/search")]
         [SwaggerOperation("OwnersSearchGet")]
         [SwaggerResponse(200, type: typeof(List<Owner>))]
-        public virtual IActionResult OwnersSearchGet([ModelBinder(BinderType = typeof(CsvArrayBinder))]int?[] localareas, [ModelBinder(BinderType = typeof(CsvArrayBinder))]int?[] equipmenttypes, [FromQuery]int? owner, [FromQuery]string status, [FromQuery]bool? hired)
+        public virtual IActionResult OwnersSearchGet([FromQuery]string localareas, [FromQuery]string equipmenttypes, [FromQuery]int? owner, [FromQuery]string status, [FromQuery]bool? hired)
         {
             return this._service.OwnersSearchGetAsync(localareas, equipmenttypes, owner, status, hired);
         }

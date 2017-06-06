@@ -1,11 +1,11 @@
 /*
  * REST API Documentation for the MOTI Hired Equipment Tracking System (HETS) Application
  *
- * The Hired Equipment Program is for owners/operators who have a dump truck, bulldozer, backhoe or  other piece of equipment they want to hire out to the transportation ministry for day labour and  emergency projects.  The Hired Equipment Program distributes available work to local equipment owners. The program is  based on seniority and is designed to deliver work to registered users fairly and efficiently  through the development of local area call-out lists. 
+ * The Hired Equipment Program is for owners/operators who have a dump truck, bulldozer, backhoe or  other piece of equipment they want to hire out to the transportation ministry for day labour and  emergency projects.  The Hired Equipment Program distributes available work to local equipment owners. The program is  based on seniority and is designed to deliver work to registered users fairly and efficiently  through the development of local area call-out lists.
  *
  * OpenAPI spec version: v1
- * 
- * 
+ *
+ *
  */
 
 using System;
@@ -24,26 +24,26 @@ using HETSAPI.ViewModels;
 namespace HETSAPI.Services
 {
     /// <summary>
-    /// 
+    ///
     /// </summary>
     public interface IProjectService
     {
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         /// <param name="items"></param>
         /// <response code="201">Project created</response>
         IActionResult ProjectsBulkPostAsync(Project[] items);
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         /// <response code="200">OK</response>
         IActionResult ProjectsGetAsync();
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         /// <remarks>Returns attachments for a particular Project</remarks>
         /// <param name="id">id of Project to fetch attachments for</param>
@@ -52,7 +52,7 @@ namespace HETSAPI.Services
         IActionResult ProjectsIdAttachmentsGetAsync(int id);
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         /// <remarks>Gets an Project&#39;s Contacts</remarks>
         /// <param name="id">id of Project to fetch Contacts for</param>
@@ -60,7 +60,7 @@ namespace HETSAPI.Services
         IActionResult ProjectsIdContactsGetAsync(int id);
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         /// <remarks>Adds Project Contact</remarks>
         /// <param name="id">id of Project to add a contact for</param>
@@ -69,7 +69,7 @@ namespace HETSAPI.Services
         IActionResult ProjectsIdContactsPostAsync(int id, Contact item);
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         /// <remarks>Replaces an Project&#39;s Contacts</remarks>
         /// <param name="id">id of Project to replace Contacts for</param>
@@ -78,7 +78,7 @@ namespace HETSAPI.Services
         IActionResult ProjectsIdContactsPutAsync(int id, Contact[] item);
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         /// <param name="id">id of Project to delete</param>
         /// <response code="200">OK</response>
@@ -86,7 +86,7 @@ namespace HETSAPI.Services
         IActionResult ProjectsIdDeletePostAsync(int id);
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         /// <param name="id">id of Project to fetch</param>
         /// <response code="200">OK</response>
@@ -94,7 +94,7 @@ namespace HETSAPI.Services
         IActionResult ProjectsIdGetAsync(int id);
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         /// <remarks>Returns History for a particular Project</remarks>
         /// <param name="id">id of Project to fetch History for</param>
@@ -104,16 +104,17 @@ namespace HETSAPI.Services
         IActionResult ProjectsIdHistoryGetAsync(int id, int? offset, int? limit);
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         /// <remarks>Add a History record to the Project</remarks>
         /// <param name="id">id of Project to fetch History for</param>
         /// <param name="item"></param>
+        /// <response code="200">OK</response>
         /// <response code="201">History created</response>
         IActionResult ProjectsIdHistoryPostAsync(int id, History item);
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         /// <param name="id">id of Project to fetch</param>
         /// <param name="item"></param>
@@ -122,7 +123,7 @@ namespace HETSAPI.Services
         IActionResult ProjectsIdPutAsync(int id, Project item);
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         /// <param name="item"></param>
         /// <response code="201">Project created</response>
@@ -136,7 +137,8 @@ namespace HETSAPI.Services
         /// <param name="project">name or partial name for a Project</param>
         /// <param name="hasRequests">if true then only include Projects with active Requests</param>
         /// <param name="hasHires">if true then only include Projects with active Rental Agreements</param>
+        /// <param name="status">if included, filter the results to those with a status matching this string</param>
         /// <response code="200">OK</response>
-        IActionResult ProjectsSearchGetAsync(int?[] districts, string project, bool? hasRequests, bool? hasHires);
+        IActionResult ProjectsSearchGetAsync(string districts, string project, bool? hasRequests, bool? hasHires, string status);
     }
 }

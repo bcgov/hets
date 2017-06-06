@@ -1,13 +1,15 @@
 [
     {
-        "ID": "40000",
+        "ID": "200000",
         "attachments": [],
         "contacts": [
             {
                 "id": "200105"
             }
         ],
-        "districtID": "rg{'id': '200009'}'",
+        "district": {
+            "id": "10"
+        },
         "history": [],
         "information": "Some more info",
         "name": "Burdett Avenue Building",
@@ -16,17 +18,20 @@
             "id": "200105"
         },
         "provincialProjectNumber": "500000",
-        "rentalRequests": []
+        "rentalRequests": [],
+        "status": "Active"
     },
     {
-        "ID": "40001",
+        "ID": "200001",
         "attachments": [],
         "contacts": [
             {
                 "id": "200106"
             }
         ],
-        "districtID": "rg{'id': '200009'}'",
+        "district": {
+            "id": "10"
+        },
         "history": [],
         "information": "Some more info",
         "name": "Brew Creek Rd Bridge",
@@ -35,17 +40,20 @@
             "id": "200106"
         },
         "provincialProjectNumber": "500001",
-        "rentalRequests": []
+        "rentalRequests": [],
+        "status": "Active"
     },
     {
-        "ID": "40002",
+        "ID": "200002",
         "attachments": [],
         "contacts": [
             {
                 "id": "200107"
             }
         ],
-        "districtID": "rg{'id': '200009'}'",
+        "district": {
+            "id": "10"
+        },
         "history": [],
         "information": "Some more info",
         "name": "Mesa Vista Drive HOV Lane",
@@ -54,17 +62,20 @@
             "id": "200107"
         },
         "provincialProjectNumber": "500002",
-        "rentalRequests": []
+        "rentalRequests": [],
+        "status": "Active"
     },
     {
-        "ID": "40003",
+        "ID": "200003",
         "attachments": [],
         "contacts": [
             {
                 "id": "200108"
             }
         ],
-        "districtID": "rg{'id': '200009'}'",
+        "district": {
+            "id": "10"
+        },
         "history": [],
         "information": "Some more info",
         "name": "Burdett Avenue HOV Lane",
@@ -73,17 +84,20 @@
             "id": "200108"
         },
         "provincialProjectNumber": "500003",
-        "rentalRequests": []
+        "rentalRequests": [],
+        "status": "Active"
     },
     {
-        "ID": "40004",
+        "ID": "200004",
         "attachments": [],
         "contacts": [
             {
                 "id": "200109"
             }
         ],
-        "districtID": "rg{'id': '200009'}'",
+        "district": {
+            "id": "10"
+        },
         "history": [],
         "information": "Some more info",
         "name": "Noble Rd Upgrade",
@@ -92,17 +106,20 @@
             "id": "200109"
         },
         "provincialProjectNumber": "500004",
-        "rentalRequests": []
+        "rentalRequests": [],
+        "status": "Active"
     },
     {
-        "ID": "40005",
+        "ID": "200005",
         "attachments": [],
         "contacts": [
             {
                 "id": "200110"
             }
         ],
-        "districtID": "rg{'id': '200009'}'",
+        "district": {
+            "id": "10"
+        },
         "history": [],
         "information": "Some more info",
         "name": "Essendene Avenue Bridge",
@@ -111,17 +128,20 @@
             "id": "200110"
         },
         "provincialProjectNumber": "500005",
-        "rentalRequests": []
+        "rentalRequests": [],
+        "status": "Active"
     },
     {
-        "ID": "40006",
+        "ID": "200006",
         "attachments": [],
         "contacts": [
             {
                 "id": "200111"
             }
         ],
-        "districtID": "rg{'id': '200009'}'",
+        "district": {
+            "id": "10"
+        },
         "history": [],
         "information": "Some more info",
         "name": "Cordova Street Overpass",
@@ -130,17 +150,20 @@
             "id": "200111"
         },
         "provincialProjectNumber": "500006",
-        "rentalRequests": []
+        "rentalRequests": [],
+        "status": "Active"
     },
     {
-        "ID": "40007",
+        "ID": "200007",
         "attachments": [],
         "contacts": [
             {
                 "id": "200112"
             }
         ],
-        "districtID": "rg{'id': '200006'}'",
+        "district": {
+            "id": "10"
+        },
         "history": [],
         "information": "Some more info",
         "name": "Hardy Street HOV Lane",
@@ -149,17 +172,20 @@
             "id": "200112"
         },
         "provincialProjectNumber": "500007",
-        "rentalRequests": []
+        "rentalRequests": [],
+        "status": "Active"
     },
     {
-        "ID": "40008",
+        "ID": "200008",
         "attachments": [],
         "contacts": [
             {
                 "id": "200113"
             }
         ],
-        "districtID": "rg{'id': '200006'}'",
+        "district": {
+            "id": "10"
+        },
         "history": [],
         "information": "Some more info",
         "name": "Robson St Expressway",
@@ -168,17 +194,20 @@
             "id": "200113"
         },
         "provincialProjectNumber": "500008",
-        "rentalRequests": []
+        "rentalRequests": [],
+        "status": "Active"
     },
     {
-        "ID": "40009",
+        "ID": "200009",
         "attachments": [],
         "contacts": [
             {
                 "id": "200114"
             }
         ],
-        "districtID": "rg{'id': '200006'}'",
+        "district": {
+            "id": "10"
+        },
         "history": [],
         "information": "Some more info",
         "name": "Wellington Ave Express Lane",
@@ -187,17 +216,20 @@
             "id": "200114"
         },
         "provincialProjectNumber": "500009",
-        "rentalRequests": []
+        "rentalRequests": [],
+        "status": "Active"
     },
     {
-        "ID": "40010",
+        "ID": "200010",
         "attachments": [],
         "contacts": [
             {
                 "id": "200115"
             }
         ],
-        "districtID": "rg{'id': '200006'}'",
+        "district": {
+            "id": "10"
+        },
         "history": [],
         "information": "Some more info",
         "name": "Old Spallumcheen Rd Expressway",
@@ -206,17 +238,20 @@
             "id": "200115"
         },
         "provincialProjectNumber": "500010",
-        "rentalRequests": []
+        "rentalRequests": [],
+        "status": "Active"
     },
     {
-        "ID": "40011",
+        "ID": "200011",
         "attachments": [],
         "contacts": [
             {
                 "id": "200116"
             }
         ],
-        "districtID": "rg{'id': '200006'}'",
+        "district": {
+            "id": "10"
+        },
         "history": [],
         "information": "Some more info",
         "name": "Noble Rd Overpass",
@@ -225,17 +260,20 @@
             "id": "200116"
         },
         "provincialProjectNumber": "500011",
-        "rentalRequests": []
+        "rentalRequests": [],
+        "status": "Active"
     },
     {
-        "ID": "40012",
+        "ID": "200012",
         "attachments": [],
         "contacts": [
             {
                 "id": "200117"
             }
         ],
-        "districtID": "rg{'id': '200006'}'",
+        "district": {
+            "id": "10"
+        },
         "history": [],
         "information": "Some more info",
         "name": "Jade St Building",
@@ -244,17 +282,20 @@
             "id": "200117"
         },
         "provincialProjectNumber": "500012",
-        "rentalRequests": []
+        "rentalRequests": [],
+        "status": "Active"
     },
     {
-        "ID": "40013",
+        "ID": "200013",
         "attachments": [],
         "contacts": [
             {
                 "id": "200118"
             }
         ],
-        "districtID": "rg{'id': '200006'}'",
+        "district": {
+            "id": "10"
+        },
         "history": [],
         "information": "Some more info",
         "name": "Wallace Street Express Lane",
@@ -263,17 +304,20 @@
             "id": "200118"
         },
         "provincialProjectNumber": "500013",
-        "rentalRequests": []
+        "rentalRequests": [],
+        "status": "Active"
     },
     {
-        "ID": "40014",
+        "ID": "200014",
         "attachments": [],
         "contacts": [
             {
                 "id": "200119"
             }
         ],
-        "districtID": "rg{'id': '200006'}'",
+        "district": {
+            "id": "10"
+        },
         "history": [],
         "information": "Some more info",
         "name": "James Street HOV Lane",
@@ -282,17 +326,20 @@
             "id": "200119"
         },
         "provincialProjectNumber": "500014",
-        "rentalRequests": []
+        "rentalRequests": [],
+        "status": "Active"
     },
     {
-        "ID": "40015",
+        "ID": "200015",
         "attachments": [],
         "contacts": [
             {
                 "id": "200120"
             }
         ],
-        "districtID": "rg{'id': '200006'}'",
+        "district": {
+            "id": "10"
+        },
         "history": [],
         "information": "Some more info",
         "name": "Holdom Avenue Cloverleaf",
@@ -301,17 +348,20 @@
             "id": "200120"
         },
         "provincialProjectNumber": "500015",
-        "rentalRequests": []
+        "rentalRequests": [],
+        "status": "Active"
     },
     {
-        "ID": "40016",
+        "ID": "200016",
         "attachments": [],
         "contacts": [
             {
                 "id": "200121"
             }
         ],
-        "districtID": "rg{'id': '200006'}'",
+        "district": {
+            "id": "10"
+        },
         "history": [],
         "information": "Some more info",
         "name": "Roger Street Expressway",
@@ -320,17 +370,20 @@
             "id": "200121"
         },
         "provincialProjectNumber": "500016",
-        "rentalRequests": []
+        "rentalRequests": [],
+        "status": "Active"
     },
     {
-        "ID": "40017",
+        "ID": "200017",
         "attachments": [],
         "contacts": [
             {
                 "id": "200122"
             }
         ],
-        "districtID": "rg{'id': '200006'}'",
+        "district": {
+            "id": "10"
+        },
         "history": [],
         "information": "Some more info",
         "name": "Scotts Lane Bypass",
@@ -339,17 +392,20 @@
             "id": "200122"
         },
         "provincialProjectNumber": "500017",
-        "rentalRequests": []
+        "rentalRequests": [],
+        "status": "Active"
     },
     {
-        "ID": "40018",
+        "ID": "200018",
         "attachments": [],
         "contacts": [
             {
                 "id": "200123"
             }
         ],
-        "districtID": "rg{'id': '200006'}'",
+        "district": {
+            "id": "10"
+        },
         "history": [],
         "information": "Some more info",
         "name": "Findlay Creek Road HOV Lane",
@@ -358,17 +414,20 @@
             "id": "200123"
         },
         "provincialProjectNumber": "500018",
-        "rentalRequests": []
+        "rentalRequests": [],
+        "status": "Active"
     },
     {
-        "ID": "40019",
+        "ID": "200019",
         "attachments": [],
         "contacts": [
             {
                 "id": "200124"
             }
         ],
-        "districtID": "rg{'id': '200006'}'",
+        "district": {
+            "id": "10"
+        },
         "history": [],
         "information": "Some more info",
         "name": "Sixth Street Bypass",
@@ -377,17 +436,20 @@
             "id": "200124"
         },
         "provincialProjectNumber": "500019",
-        "rentalRequests": []
+        "rentalRequests": [],
+        "status": "Active"
     },
     {
-        "ID": "40020",
+        "ID": "200020",
         "attachments": [],
         "contacts": [
             {
                 "id": "200125"
             }
         ],
-        "districtID": "rg{'id': '200006'}'",
+        "district": {
+            "id": "10"
+        },
         "history": [],
         "information": "Some more info",
         "name": "Blanshard Bypass",
@@ -396,17 +458,20 @@
             "id": "200125"
         },
         "provincialProjectNumber": "500020",
-        "rentalRequests": []
+        "rentalRequests": [],
+        "status": "Active"
     },
     {
-        "ID": "40021",
+        "ID": "200021",
         "attachments": [],
         "contacts": [
             {
                 "id": "200126"
             }
         ],
-        "districtID": "rg{'id': '200001'}'",
+        "district": {
+            "id": "10"
+        },
         "history": [],
         "information": "Some more info",
         "name": "King George Hwy HOV Lane",
@@ -415,17 +480,20 @@
             "id": "200126"
         },
         "provincialProjectNumber": "500021",
-        "rentalRequests": []
+        "rentalRequests": [],
+        "status": "Active"
     },
     {
-        "ID": "40022",
+        "ID": "200022",
         "attachments": [],
         "contacts": [
             {
                 "id": "200127"
             }
         ],
-        "districtID": "rg{'id': '200001'}'",
+        "district": {
+            "id": "10"
+        },
         "history": [],
         "information": "Some more info",
         "name": "Glover Road Cloverleaf",
@@ -434,17 +502,20 @@
             "id": "200127"
         },
         "provincialProjectNumber": "500022",
-        "rentalRequests": []
+        "rentalRequests": [],
+        "status": "Active"
     },
     {
-        "ID": "40023",
+        "ID": "200023",
         "attachments": [],
         "contacts": [
             {
                 "id": "200128"
             }
         ],
-        "districtID": "rg{'id': '200001'}'",
+        "district": {
+            "id": "10"
+        },
         "history": [],
         "information": "Some more info",
         "name": "Wallace Street Bridge",
@@ -453,17 +524,20 @@
             "id": "200128"
         },
         "provincialProjectNumber": "500023",
-        "rentalRequests": []
+        "rentalRequests": [],
+        "status": "Active"
     },
     {
-        "ID": "40024",
+        "ID": "200024",
         "attachments": [],
         "contacts": [
             {
                 "id": "200129"
             }
         ],
-        "districtID": "rg{'id': '200001'}'",
+        "district": {
+            "id": "10"
+        },
         "history": [],
         "information": "Some more info",
         "name": "Yoho Valley Road Bypass",
@@ -472,17 +546,20 @@
             "id": "200129"
         },
         "provincialProjectNumber": "500024",
-        "rentalRequests": []
+        "rentalRequests": [],
+        "status": "Active"
     },
     {
-        "ID": "40025",
+        "ID": "200025",
         "attachments": [],
         "contacts": [
             {
                 "id": "200130"
             }
         ],
-        "districtID": "rg{'id': '200001'}'",
+        "district": {
+            "id": "10"
+        },
         "history": [],
         "information": "Some more info",
         "name": "Burdett Avenue Expressway",
@@ -491,17 +568,20 @@
             "id": "200130"
         },
         "provincialProjectNumber": "500025",
-        "rentalRequests": []
+        "rentalRequests": [],
+        "status": "Active"
     },
     {
-        "ID": "40026",
+        "ID": "200026",
         "attachments": [],
         "contacts": [
             {
                 "id": "200131"
             }
         ],
-        "districtID": "rg{'id': '200001'}'",
+        "district": {
+            "id": "10"
+        },
         "history": [],
         "information": "Some more info",
         "name": "Cordova Street Building",
@@ -510,17 +590,20 @@
             "id": "200131"
         },
         "provincialProjectNumber": "500026",
-        "rentalRequests": []
+        "rentalRequests": [],
+        "status": "Active"
     },
     {
-        "ID": "40027",
+        "ID": "200027",
         "attachments": [],
         "contacts": [
             {
                 "id": "200132"
             }
         ],
-        "districtID": "rg{'id': '200001'}'",
+        "district": {
+            "id": "10"
+        },
         "history": [],
         "information": "Some more info",
         "name": "Glover Road Expressway",
@@ -529,17 +612,20 @@
             "id": "200132"
         },
         "provincialProjectNumber": "500027",
-        "rentalRequests": []
+        "rentalRequests": [],
+        "status": "Active"
     },
     {
-        "ID": "40028",
+        "ID": "200028",
         "attachments": [],
         "contacts": [
             {
                 "id": "200133"
             }
         ],
-        "districtID": "rg{'id': '200000'}'",
+        "district": {
+            "id": "10"
+        },
         "history": [],
         "information": "Some more info",
         "name": "Scotts Lane Upgrade",
@@ -548,17 +634,20 @@
             "id": "200133"
         },
         "provincialProjectNumber": "500028",
-        "rentalRequests": []
+        "rentalRequests": [],
+        "status": "Active"
     },
     {
-        "ID": "40029",
+        "ID": "200029",
         "attachments": [],
         "contacts": [
             {
                 "id": "200134"
             }
         ],
-        "districtID": "rg{'id': '200000'}'",
+        "district": {
+            "id": "10"
+        },
         "history": [],
         "information": "Some more info",
         "name": "Nootka Street Upgrade",
@@ -567,17 +656,20 @@
             "id": "200134"
         },
         "provincialProjectNumber": "500029",
-        "rentalRequests": []
+        "rentalRequests": [],
+        "status": "Active"
     },
     {
-        "ID": "40030",
+        "ID": "200030",
         "attachments": [],
         "contacts": [
             {
                 "id": "200135"
             }
         ],
-        "districtID": "rg{'id': '200000'}'",
+        "district": {
+            "id": "10"
+        },
         "history": [],
         "information": "Some more info",
         "name": "Nootka Street Cloverleaf",
@@ -586,17 +678,20 @@
             "id": "200135"
         },
         "provincialProjectNumber": "500030",
-        "rentalRequests": []
+        "rentalRequests": [],
+        "status": "Active"
     },
     {
-        "ID": "40031",
+        "ID": "200031",
         "attachments": [],
         "contacts": [
             {
                 "id": "200136"
             }
         ],
-        "districtID": "rg{'id': '200000'}'",
+        "district": {
+            "id": "10"
+        },
         "history": [],
         "information": "Some more info",
         "name": "Kinchant St Cloverleaf",
@@ -605,17 +700,20 @@
             "id": "200136"
         },
         "provincialProjectNumber": "500031",
-        "rentalRequests": []
+        "rentalRequests": [],
+        "status": "Active"
     },
     {
-        "ID": "40032",
+        "ID": "200032",
         "attachments": [],
         "contacts": [
             {
                 "id": "200137"
             }
         ],
-        "districtID": "rg{'id': '200000'}'",
+        "district": {
+            "id": "10"
+        },
         "history": [],
         "information": "Some more info",
         "name": "Queens Bay Bypass",
@@ -624,1579 +722,1943 @@
             "id": "200137"
         },
         "provincialProjectNumber": "500032",
-        "rentalRequests": []
+        "rentalRequests": [],
+        "status": "Active"
     },
     {
-        "ID": "40033",
+        "ID": "200033",
         "attachments": [],
         "contacts": [],
-        "districtID": "rg{'id': '200000'}'",
+        "district": {
+            "id": "10"
+        },
         "history": [],
         "information": "Some more info",
         "name": "102nd Avenue Overpass",
         "notes": [],
         "primaryContact": null,
         "provincialProjectNumber": "500033",
-        "rentalRequests": []
+        "rentalRequests": [],
+        "status": "Active"
     },
     {
-        "ID": "40034",
+        "ID": "200034",
         "attachments": [],
         "contacts": [],
-        "districtID": "rg{'id': '200000'}'",
+        "district": {
+            "id": "10"
+        },
         "history": [],
         "information": "Some more info",
         "name": "Blanshard Bridge",
         "notes": [],
         "primaryContact": null,
-        "provincialProjectNumber": "500000",
-        "rentalRequests": []
+        "provincialProjectNumber": "500034",
+        "rentalRequests": [],
+        "status": "Active"
     },
     {
-        "ID": "40035",
+        "ID": "200035",
         "attachments": [],
         "contacts": [],
-        "districtID": "rg{'id': '200004'}'",
+        "district": {
+            "id": "10"
+        },
         "history": [],
         "information": "Some more info",
         "name": "Cardero St Express Lane",
         "notes": [],
         "primaryContact": null,
-        "provincialProjectNumber": "500000",
-        "rentalRequests": []
+        "provincialProjectNumber": "500035",
+        "rentalRequests": [],
+        "status": "Active"
     },
     {
-        "ID": "40036",
+        "ID": "200036",
         "attachments": [],
         "contacts": [],
-        "districtID": "rg{'id': '200004'}'",
+        "district": {
+            "id": "10"
+        },
         "history": [],
         "information": "Some more info",
         "name": "Old Spallumcheen Rd Bypass",
         "notes": [],
         "primaryContact": null,
-        "provincialProjectNumber": "500000",
-        "rentalRequests": []
+        "provincialProjectNumber": "500036",
+        "rentalRequests": [],
+        "status": "Active"
     },
     {
-        "ID": "40037",
+        "ID": "200037",
         "attachments": [],
         "contacts": [],
-        "districtID": "rg{'id': '200004'}'",
+        "district": {
+            "id": "10"
+        },
         "history": [],
         "information": "Some more info",
         "name": "Keith Road Upgrade",
         "notes": [],
         "primaryContact": null,
-        "provincialProjectNumber": "500000",
-        "rentalRequests": []
+        "provincialProjectNumber": "500037",
+        "rentalRequests": [],
+        "status": "Active"
     },
     {
-        "ID": "40038",
+        "ID": "200038",
         "attachments": [],
         "contacts": [],
-        "districtID": "rg{'id': '200004'}'",
+        "district": {
+            "id": "10"
+        },
         "history": [],
         "information": "Some more info",
         "name": "Burdett Avenue Bridge Replacement",
         "notes": [],
         "primaryContact": null,
-        "provincialProjectNumber": "500001",
-        "rentalRequests": []
+        "provincialProjectNumber": "500038",
+        "rentalRequests": [],
+        "status": "Active"
     },
     {
-        "ID": "40039",
+        "ID": "200039",
         "attachments": [],
         "contacts": [],
-        "districtID": "rg{'id': '200004'}'",
+        "district": {
+            "id": "10"
+        },
         "history": [],
         "information": "Some more info",
         "name": "Coldstream Avenue Expressway",
         "notes": [],
         "primaryContact": null,
-        "provincialProjectNumber": "500000",
-        "rentalRequests": []
+        "provincialProjectNumber": "500039",
+        "rentalRequests": [],
+        "status": "Active"
     },
     {
-        "ID": "40040",
+        "ID": "200040",
         "attachments": [],
         "contacts": [],
-        "districtID": "rg{'id': '200004'}'",
+        "district": {
+            "id": "10"
+        },
         "history": [],
         "information": "Some more info",
         "name": "Hardy Street Building",
         "notes": [],
         "primaryContact": null,
-        "provincialProjectNumber": "500000",
-        "rentalRequests": []
+        "provincialProjectNumber": "500040",
+        "rentalRequests": [],
+        "status": "Active"
     },
     {
-        "ID": "40041",
+        "ID": "200041",
         "attachments": [],
         "contacts": [],
-        "districtID": "rg{'id': '200004'}'",
+        "district": {
+            "id": "10"
+        },
         "history": [],
         "information": "Some more info",
         "name": "Hastings Street Upgrade",
         "notes": [],
         "primaryContact": null,
-        "provincialProjectNumber": "500000",
-        "rentalRequests": []
+        "provincialProjectNumber": "500041",
+        "rentalRequests": [],
+        "status": "Active"
     },
     {
-        "ID": "40042",
+        "ID": "200042",
         "attachments": [],
         "contacts": [],
-        "districtID": "rg{'id': '200003'}'",
+        "district": {
+            "id": "10"
+        },
         "history": [],
         "information": "Some more info",
         "name": "Alaska Hwy Cloverleaf",
         "notes": [],
         "primaryContact": null,
-        "provincialProjectNumber": "500000",
-        "rentalRequests": []
+        "provincialProjectNumber": "500042",
+        "rentalRequests": [],
+        "status": "Active"
     },
     {
-        "ID": "40043",
+        "ID": "200043",
         "attachments": [],
         "contacts": [],
-        "districtID": "rg{'id': '200003'}'",
+        "district": {
+            "id": "10"
+        },
         "history": [],
         "information": "Some more info",
         "name": "Burdett Avenue Upgrade",
         "notes": [],
         "primaryContact": null,
-        "provincialProjectNumber": "500001",
-        "rentalRequests": []
+        "provincialProjectNumber": "500043",
+        "rentalRequests": [],
+        "status": "Active"
     },
     {
-        "ID": "40044",
+        "ID": "200044",
         "attachments": [],
         "contacts": [],
-        "districtID": "rg{'id': '200003'}'",
+        "district": {
+            "id": "10"
+        },
         "history": [],
         "information": "Some more info",
         "name": "James Street Expressway",
         "notes": [],
         "primaryContact": null,
-        "provincialProjectNumber": "500002",
-        "rentalRequests": []
+        "provincialProjectNumber": "500044",
+        "rentalRequests": [],
+        "status": "Active"
     },
     {
-        "ID": "40045",
+        "ID": "200045",
         "attachments": [],
         "contacts": [],
-        "districtID": "rg{'id': '200003'}'",
+        "district": {
+            "id": "10"
+        },
         "history": [],
         "information": "Some more info",
         "name": "Tolmie St Cloverleaf",
         "notes": [],
         "primaryContact": null,
-        "provincialProjectNumber": "500003",
-        "rentalRequests": []
+        "provincialProjectNumber": "500045",
+        "rentalRequests": [],
+        "status": "Active"
     },
     {
-        "ID": "40046",
+        "ID": "200046",
         "attachments": [],
         "contacts": [],
-        "districtID": "rg{'id': '200003'}'",
+        "district": {
+            "id": "10"
+        },
         "history": [],
         "information": "Some more info",
         "name": "Sixth Street HOV Lane",
         "notes": [],
         "primaryContact": null,
-        "provincialProjectNumber": "500000",
-        "rentalRequests": []
+        "provincialProjectNumber": "500046",
+        "rentalRequests": [],
+        "status": "Active"
     },
     {
-        "ID": "40047",
+        "ID": "200047",
         "attachments": [],
         "contacts": [],
-        "districtID": "rg{'id': '200003'}'",
+        "district": {
+            "id": "10"
+        },
         "history": [],
         "information": "Some more info",
         "name": "King George Hwy Upgrade",
         "notes": [],
         "primaryContact": null,
-        "provincialProjectNumber": "500001",
-        "rentalRequests": []
+        "provincialProjectNumber": "500047",
+        "rentalRequests": [],
+        "status": "Active"
     },
     {
-        "ID": "40048",
+        "ID": "200048",
         "attachments": [],
         "contacts": [],
-        "districtID": "rg{'id': '200003'}'",
+        "district": {
+            "id": "10"
+        },
         "history": [],
         "information": "Some more info",
         "name": "Stum Lake Road Extension",
         "notes": [],
         "primaryContact": null,
-        "provincialProjectNumber": "500000",
-        "rentalRequests": []
+        "provincialProjectNumber": "500048",
+        "rentalRequests": [],
+        "status": "Active"
     },
     {
-        "ID": "40049",
+        "ID": "200049",
         "attachments": [],
         "contacts": [],
-        "districtID": "rg{'id': '200002'}'",
+        "district": {
+            "id": "10"
+        },
         "history": [],
         "information": "Some more info",
         "name": "Tolmie St Extension",
         "notes": [],
         "primaryContact": null,
-        "provincialProjectNumber": "500000",
-        "rentalRequests": []
+        "provincialProjectNumber": "500049",
+        "rentalRequests": [],
+        "status": "Active"
     },
     {
-        "ID": "40050",
+        "ID": "200050",
         "attachments": [],
         "contacts": [],
-        "districtID": "rg{'id': '200002'}'",
+        "district": {
+            "id": "10"
+        },
         "history": [],
         "information": "Some more info",
         "name": "Coldstream Avenue Cloverleaf",
         "notes": [],
         "primaryContact": null,
-        "provincialProjectNumber": "500000",
-        "rentalRequests": []
+        "provincialProjectNumber": "500050",
+        "rentalRequests": [],
+        "status": "Active"
     },
     {
-        "ID": "40051",
+        "ID": "200051",
         "attachments": [],
         "contacts": [],
-        "districtID": "rg{'id': '200002'}'",
+        "district": {
+            "id": "10"
+        },
         "history": [],
         "information": "Some more info",
         "name": "Lake City Way Cloverleaf",
         "notes": [],
         "primaryContact": null,
-        "provincialProjectNumber": "500001",
-        "rentalRequests": []
+        "provincialProjectNumber": "500051",
+        "rentalRequests": [],
+        "status": "Active"
     },
     {
-        "ID": "40052",
+        "ID": "200052",
         "attachments": [],
         "contacts": [],
-        "districtID": "rg{'id': '200002'}'",
+        "district": {
+            "id": "10"
+        },
         "history": [],
         "information": "Some more info",
         "name": "Essendene Avenue Bypass",
         "notes": [],
         "primaryContact": null,
-        "provincialProjectNumber": "500000",
-        "rentalRequests": []
+        "provincialProjectNumber": "500052",
+        "rentalRequests": [],
+        "status": "Active"
     },
     {
-        "ID": "40053",
+        "ID": "200053",
         "attachments": [],
         "contacts": [],
-        "districtID": "rg{'id': '200002'}'",
+        "district": {
+            "id": "10"
+        },
         "history": [],
         "information": "Some more info",
         "name": "Wallace Street Upgrade",
         "notes": [],
         "primaryContact": null,
-        "provincialProjectNumber": "500000",
-        "rentalRequests": []
+        "provincialProjectNumber": "500053",
+        "rentalRequests": [],
+        "status": "Active"
     },
     {
-        "ID": "40054",
+        "ID": "200054",
         "attachments": [],
         "contacts": [],
-        "districtID": "rg{'id': '200002'}'",
+        "district": {
+            "id": "10"
+        },
         "history": [],
         "information": "Some more info",
         "name": "Shaughnessy St Expressway",
         "notes": [],
         "primaryContact": null,
-        "provincialProjectNumber": "500000",
-        "rentalRequests": []
+        "provincialProjectNumber": "500054",
+        "rentalRequests": [],
+        "status": "Active"
     },
     {
-        "ID": "40055",
+        "ID": "200055",
         "attachments": [],
         "contacts": [],
-        "districtID": "rg{'id': '200002'}'",
+        "district": {
+            "id": "10"
+        },
         "history": [],
         "information": "Some more info",
         "name": "Tchesinkut Lake Rd Overpass",
         "notes": [],
         "primaryContact": null,
-        "provincialProjectNumber": "500001",
-        "rentalRequests": []
+        "provincialProjectNumber": "500055",
+        "rentalRequests": [],
+        "status": "Active"
     },
     {
-        "ID": "40056",
+        "ID": "200056",
         "attachments": [],
         "contacts": [],
-        "districtID": "rg{'id': '200007'}'",
+        "district": {
+            "id": "10"
+        },
         "history": [],
         "information": "Some more info",
         "name": "Blind Bay Road Bypass",
         "notes": [],
         "primaryContact": null,
-        "provincialProjectNumber": "500002",
-        "rentalRequests": []
+        "provincialProjectNumber": "500056",
+        "rentalRequests": [],
+        "status": "Active"
     },
     {
-        "ID": "40057",
+        "ID": "200057",
         "attachments": [],
         "contacts": [],
-        "districtID": "rg{'id': '200007'}'",
+        "district": {
+            "id": "10"
+        },
         "history": [],
         "information": "Some more info",
         "name": "Glover Road Building",
         "notes": [],
         "primaryContact": null,
-        "provincialProjectNumber": "500000",
-        "rentalRequests": []
+        "provincialProjectNumber": "500057",
+        "rentalRequests": [],
+        "status": "Active"
     },
     {
-        "ID": "40058",
+        "ID": "200058",
         "attachments": [],
         "contacts": [],
-        "districtID": "rg{'id': '200007'}'",
+        "district": {
+            "id": "10"
+        },
         "history": [],
         "information": "Some more info",
         "name": "Wellington Ave Bypass",
         "notes": [],
         "primaryContact": null,
-        "provincialProjectNumber": "500001",
-        "rentalRequests": []
+        "provincialProjectNumber": "500058",
+        "rentalRequests": [],
+        "status": "Active"
     },
     {
-        "ID": "40059",
+        "ID": "200059",
         "attachments": [],
         "contacts": [],
-        "districtID": "rg{'id': '200007'}'",
+        "district": {
+            "id": "10"
+        },
         "history": [],
         "information": "Some more info",
         "name": "Hastings Street Express Lane",
         "notes": [],
         "primaryContact": null,
-        "provincialProjectNumber": "500000",
-        "rentalRequests": []
+        "provincialProjectNumber": "500059",
+        "rentalRequests": [],
+        "status": "Active"
     },
     {
-        "ID": "40060",
+        "ID": "200060",
         "attachments": [],
         "contacts": [],
-        "districtID": "rg{'id': '200007'}'",
+        "district": {
+            "id": "10"
+        },
         "history": [],
         "information": "Some more info",
         "name": "Tchesinkut Lake Rd Bridge Replacement",
         "notes": [],
         "primaryContact": null,
-        "provincialProjectNumber": "500001",
-        "rentalRequests": []
+        "provincialProjectNumber": "500060",
+        "rentalRequests": [],
+        "status": "Active"
     },
     {
-        "ID": "40061",
+        "ID": "200061",
         "attachments": [],
         "contacts": [],
-        "districtID": "rg{'id': '200007'}'",
+        "district": {
+            "id": "10"
+        },
         "history": [],
         "information": "Some more info",
         "name": "Yoho Valley Road Extension",
         "notes": [],
         "primaryContact": null,
-        "provincialProjectNumber": "500000",
-        "rentalRequests": []
+        "provincialProjectNumber": "500061",
+        "rentalRequests": [],
+        "status": "Active"
     },
     {
-        "ID": "40062",
+        "ID": "200062",
         "attachments": [],
         "contacts": [],
-        "districtID": "rg{'id': '200007'}'",
+        "district": {
+            "id": "10"
+        },
         "history": [],
         "information": "Some more info",
         "name": "Keith Road HOV Lane",
         "notes": [],
         "primaryContact": null,
-        "provincialProjectNumber": "500001",
-        "rentalRequests": []
+        "provincialProjectNumber": "500062",
+        "rentalRequests": [],
+        "status": "Active"
     },
     {
-        "ID": "40063",
+        "ID": "200063",
         "attachments": [],
         "contacts": [],
-        "districtID": "rg{'id': '200005'}'",
+        "district": {
+            "id": "10"
+        },
         "history": [],
         "information": "Some more info",
         "name": "Quayside Dr Overpass",
         "notes": [],
         "primaryContact": null,
-        "provincialProjectNumber": "500000",
-        "rentalRequests": []
+        "provincialProjectNumber": "500063",
+        "rentalRequests": [],
+        "status": "Active"
     },
     {
-        "ID": "40064",
+        "ID": "200064",
         "attachments": [],
         "contacts": [],
-        "districtID": "rg{'id': '200005'}'",
+        "district": {
+            "id": "10"
+        },
         "history": [],
         "information": "Some more info",
         "name": "Jade St Express Lane",
         "notes": [],
         "primaryContact": null,
-        "provincialProjectNumber": "500001",
-        "rentalRequests": []
+        "provincialProjectNumber": "500064",
+        "rentalRequests": [],
+        "status": "Active"
     },
     {
-        "ID": "40065",
+        "ID": "200065",
         "attachments": [],
         "contacts": [],
-        "districtID": "rg{'id': '200005'}'",
+        "district": {
+            "id": "10"
+        },
         "history": [],
         "information": "Some more info",
         "name": "Robson St Bypass",
         "notes": [],
         "primaryContact": null,
-        "provincialProjectNumber": "500000",
-        "rentalRequests": []
+        "provincialProjectNumber": "500065",
+        "rentalRequests": [],
+        "status": "Active"
     },
     {
-        "ID": "40066",
+        "ID": "200066",
         "attachments": [],
         "contacts": [],
-        "districtID": "rg{'id': '200005'}'",
+        "district": {
+            "id": "10"
+        },
         "history": [],
         "information": "Some more info",
         "name": "Carlson Road Building",
         "notes": [],
         "primaryContact": null,
-        "provincialProjectNumber": "500000",
-        "rentalRequests": []
+        "provincialProjectNumber": "500066",
+        "rentalRequests": [],
+        "status": "Active"
     },
     {
-        "ID": "40067",
+        "ID": "200067",
         "attachments": [],
         "contacts": [],
-        "districtID": "rg{'id': '200005'}'",
+        "district": {
+            "id": "10"
+        },
         "history": [],
         "information": "Some more info",
         "name": "McGill Road Bridge Replacement",
         "notes": [],
         "primaryContact": null,
-        "provincialProjectNumber": "500000",
-        "rentalRequests": []
+        "provincialProjectNumber": "500067",
+        "rentalRequests": [],
+        "status": "Active"
     },
     {
-        "ID": "40068",
+        "ID": "200068",
         "attachments": [],
         "contacts": [],
-        "districtID": "rg{'id': '200005'}'",
+        "district": {
+            "id": "10"
+        },
         "history": [],
         "information": "Some more info",
         "name": "Russell Avenue Upgrade",
         "notes": [],
         "primaryContact": null,
-        "provincialProjectNumber": "500001",
-        "rentalRequests": []
+        "provincialProjectNumber": "500068",
+        "rentalRequests": [],
+        "status": "Active"
     },
     {
-        "ID": "40069",
+        "ID": "200069",
         "attachments": [],
         "contacts": [],
-        "districtID": "rg{'id': '200005'}'",
+        "district": {
+            "id": "10"
+        },
         "history": [],
         "information": "Some more info",
         "name": "Robson St Cloverleaf",
         "notes": [],
         "primaryContact": null,
-        "provincialProjectNumber": "500000",
-        "rentalRequests": []
+        "provincialProjectNumber": "500069",
+        "rentalRequests": [],
+        "status": "Active"
     },
     {
-        "ID": "40070",
+        "ID": "200070",
         "attachments": [],
         "contacts": [],
-        "districtID": "rg{'id': '200009'}'",
+        "district": {
+            "id": "10"
+        },
         "history": [],
         "information": "Some more info",
         "name": "Haaglund Rd Overpass",
         "notes": [],
         "primaryContact": null,
-        "provincialProjectNumber": "500000",
-        "rentalRequests": []
+        "provincialProjectNumber": "500070",
+        "rentalRequests": [],
+        "status": "Active"
     },
     {
-        "ID": "40071",
+        "ID": "200071",
         "attachments": [],
         "contacts": [],
-        "districtID": "rg{'id': '200009'}'",
+        "district": {
+            "id": "10"
+        },
         "history": [],
         "information": "Some more info",
         "name": "Tchesinkut Lake Rd Upgrade",
         "notes": [],
         "primaryContact": null,
-        "provincialProjectNumber": "500001",
-        "rentalRequests": []
+        "provincialProjectNumber": "500071",
+        "rentalRequests": [],
+        "status": "Active"
     },
     {
-        "ID": "40072",
+        "ID": "200072",
         "attachments": [],
         "contacts": [],
-        "districtID": "rg{'id': '200009'}'",
+        "district": {
+            "id": "10"
+        },
         "history": [],
         "information": "Some more info",
         "name": "Glover Road Express Lane",
         "notes": [],
         "primaryContact": null,
-        "provincialProjectNumber": "500000",
-        "rentalRequests": []
+        "provincialProjectNumber": "500072",
+        "rentalRequests": [],
+        "status": "Active"
     },
     {
-        "ID": "40073",
+        "ID": "200073",
         "attachments": [],
         "contacts": [],
-        "districtID": "rg{'id': '200009'}'",
+        "district": {
+            "id": "10"
+        },
         "history": [],
         "information": "Some more info",
         "name": "Stum Lake Road Building",
         "notes": [],
         "primaryContact": null,
-        "provincialProjectNumber": "500001",
-        "rentalRequests": []
+        "provincialProjectNumber": "500073",
+        "rentalRequests": [],
+        "status": "Active"
     },
     {
-        "ID": "40074",
+        "ID": "200074",
         "attachments": [],
         "contacts": [],
-        "districtID": "rg{'id': '200009'}'",
+        "district": {
+            "id": "10"
+        },
         "history": [],
         "information": "Some more info",
         "name": "Shaughnessy St Upgrade",
         "notes": [],
         "primaryContact": null,
-        "provincialProjectNumber": "500000",
-        "rentalRequests": []
+        "provincialProjectNumber": "500074",
+        "rentalRequests": [],
+        "status": "Active"
     },
     {
-        "ID": "40075",
+        "ID": "200075",
         "attachments": [],
         "contacts": [],
-        "districtID": "rg{'id': '200009'}'",
+        "district": {
+            "id": "10"
+        },
         "history": [],
         "information": "Some more info",
         "name": "Shaughnessy St Building",
         "notes": [],
         "primaryContact": null,
-        "provincialProjectNumber": "500000",
-        "rentalRequests": []
+        "provincialProjectNumber": "500075",
+        "rentalRequests": [],
+        "status": "Active"
     },
     {
-        "ID": "40076",
+        "ID": "200076",
         "attachments": [],
         "contacts": [],
-        "districtID": "rg{'id': '200009'}'",
+        "district": {
+            "id": "10"
+        },
         "history": [],
         "information": "Some more info",
         "name": "Mesa Vista Drive Bridge Replacement",
         "notes": [],
         "primaryContact": null,
-        "provincialProjectNumber": "500000",
-        "rentalRequests": []
+        "provincialProjectNumber": "500076",
+        "rentalRequests": [],
+        "status": "Active"
     },
     {
-        "ID": "40077",
+        "ID": "200077",
         "attachments": [],
         "contacts": [],
-        "districtID": "rg{'id': '200009'}'",
+        "district": {
+            "id": "10"
+        },
         "history": [],
         "information": "Some more info",
         "name": "Roger Street Upgrade",
         "notes": [],
         "primaryContact": null,
-        "provincialProjectNumber": "500000",
-        "rentalRequests": []
+        "provincialProjectNumber": "500077",
+        "rentalRequests": [],
+        "status": "Active"
     },
     {
-        "ID": "40078",
+        "ID": "200078",
         "attachments": [],
         "contacts": [],
-        "districtID": "rg{'id': '200009'}'",
+        "district": {
+            "id": "10"
+        },
         "history": [],
         "information": "Some more info",
         "name": "Stum Lake Road Upgrade",
         "notes": [],
         "primaryContact": null,
-        "provincialProjectNumber": "500000",
-        "rentalRequests": []
+        "provincialProjectNumber": "500078",
+        "rentalRequests": [],
+        "status": "Active"
     },
     {
-        "ID": "40079",
+        "ID": "200079",
         "attachments": [],
         "contacts": [],
-        "districtID": "rg{'id': '200009'}'",
+        "district": {
+            "id": "10"
+        },
         "history": [],
         "information": "Some more info",
         "name": "Blind Bay Road Bridge Replacement",
         "notes": [],
         "primaryContact": null,
-        "provincialProjectNumber": "500001",
-        "rentalRequests": []
+        "provincialProjectNumber": "500079",
+        "rentalRequests": [],
+        "status": "Active"
     },
     {
-        "ID": "40080",
+        "ID": "200080",
         "attachments": [],
         "contacts": [],
-        "districtID": "rg{'id': '200009'}'",
+        "district": {
+            "id": "10"
+        },
         "history": [],
         "information": "Some more info",
         "name": "Shaughnessy St Bridge Replacement",
         "notes": [],
         "primaryContact": null,
-        "provincialProjectNumber": "500002",
-        "rentalRequests": []
+        "provincialProjectNumber": "500080",
+        "rentalRequests": [],
+        "status": "Completed"
     },
     {
-        "ID": "40081",
+        "ID": "200081",
         "attachments": [],
         "contacts": [],
-        "districtID": "rg{'id': '200009'}'",
+        "district": {
+            "id": "10"
+        },
         "history": [],
         "information": "Some more info",
         "name": "Yoho Valley Road Upgrade",
         "notes": [],
         "primaryContact": null,
-        "provincialProjectNumber": "500000",
-        "rentalRequests": []
+        "provincialProjectNumber": "500081",
+        "rentalRequests": [],
+        "status": "Active"
     },
     {
-        "ID": "40082",
+        "ID": "200082",
         "attachments": [],
         "contacts": [],
-        "districtID": "rg{'id': '200009'}'",
+        "district": {
+            "id": "10"
+        },
         "history": [],
         "information": "Some more info",
         "name": "Old Spallumcheen Rd HOV Lane",
         "notes": [],
         "primaryContact": null,
-        "provincialProjectNumber": "500000",
-        "rentalRequests": []
+        "provincialProjectNumber": "500082",
+        "rentalRequests": [],
+        "status": "Active"
     },
     {
-        "ID": "40083",
+        "ID": "200083",
         "attachments": [],
         "contacts": [],
-        "districtID": "rg{'id': '200009'}'",
+        "district": {
+            "id": "10"
+        },
         "history": [],
         "information": "Some more info",
         "name": "Glover Road Bridge Replacement",
         "notes": [],
         "primaryContact": null,
-        "provincialProjectNumber": "500001",
-        "rentalRequests": []
+        "provincialProjectNumber": "500083",
+        "rentalRequests": [],
+        "status": "Active"
     },
     {
-        "ID": "40084",
+        "ID": "200084",
         "attachments": [],
         "contacts": [],
-        "districtID": "rg{'id': '200006'}'",
+        "district": {
+            "id": "10"
+        },
         "history": [],
         "information": "Some more info",
         "name": "Coldstream Avenue Building",
         "notes": [],
         "primaryContact": null,
-        "provincialProjectNumber": "500002",
-        "rentalRequests": []
+        "provincialProjectNumber": "500084",
+        "rentalRequests": [],
+        "status": "Active"
     },
     {
-        "ID": "40085",
+        "ID": "200085",
         "attachments": [],
         "contacts": [],
-        "districtID": "rg{'id': '200006'}'",
+        "district": {
+            "id": "10"
+        },
         "history": [],
         "information": "Some more info",
         "name": "Holdom Avenue Bridge",
         "notes": [],
         "primaryContact": null,
-        "provincialProjectNumber": "500000",
-        "rentalRequests": []
+        "provincialProjectNumber": "500085",
+        "rentalRequests": [],
+        "status": "Active"
     },
     {
-        "ID": "40086",
+        "ID": "200086",
         "attachments": [],
         "contacts": [],
-        "districtID": "rg{'id': '200006'}'",
+        "district": {
+            "id": "10"
+        },
         "history": [],
         "information": "Some more info",
         "name": "Scotts Lane Overpass",
         "notes": [],
         "primaryContact": null,
-        "provincialProjectNumber": "500000",
-        "rentalRequests": []
+        "provincialProjectNumber": "500086",
+        "rentalRequests": [],
+        "status": "Active"
     },
     {
-        "ID": "40087",
+        "ID": "200087",
         "attachments": [],
         "contacts": [],
-        "districtID": "rg{'id': '200006'}'",
+        "district": {
+            "id": "10"
+        },
         "history": [],
         "information": "Some more info",
         "name": "Findlay Creek Road Bypass",
         "notes": [],
         "primaryContact": null,
-        "provincialProjectNumber": "500001",
-        "rentalRequests": []
+        "provincialProjectNumber": "500087",
+        "rentalRequests": [],
+        "status": "Active"
     },
     {
-        "ID": "40088",
+        "ID": "200088",
         "attachments": [],
         "contacts": [],
-        "districtID": "rg{'id': '200006'}'",
+        "district": {
+            "id": "10"
+        },
         "history": [],
         "information": "Some more info",
         "name": "Sixth Street Bridge Replacement",
         "notes": [],
         "primaryContact": null,
-        "provincialProjectNumber": "500002",
-        "rentalRequests": []
+        "provincialProjectNumber": "500088",
+        "rentalRequests": [],
+        "status": "Active"
     },
     {
-        "ID": "40089",
+        "ID": "200089",
         "attachments": [],
         "contacts": [],
-        "districtID": "rg{'id': '200006'}'",
+        "district": {
+            "id": "10"
+        },
         "history": [],
         "information": "Some more info",
         "name": "King George Hwy Bridge",
         "notes": [],
         "primaryContact": null,
-        "provincialProjectNumber": "500000",
-        "rentalRequests": []
+        "provincialProjectNumber": "500089",
+        "rentalRequests": [],
+        "status": "Active"
     },
     {
-        "ID": "40090",
+        "ID": "200090",
         "attachments": [],
         "contacts": [],
-        "districtID": "rg{'id': '200006'}'",
+        "district": {
+            "id": "10"
+        },
         "history": [],
         "information": "Some more info",
         "name": "Wallace Street HOV Lane",
         "notes": [],
         "primaryContact": null,
-        "provincialProjectNumber": "500000",
-        "rentalRequests": []
+        "provincialProjectNumber": "500090",
+        "rentalRequests": [],
+        "status": "Active"
     },
     {
-        "ID": "40091",
+        "ID": "200091",
         "attachments": [],
         "contacts": [],
-        "districtID": "rg{'id': '200006'}'",
+        "district": {
+            "id": "10"
+        },
         "history": [],
         "information": "Some more info",
         "name": "Scotts Lane Building",
         "notes": [],
         "primaryContact": null,
-        "provincialProjectNumber": "500000",
-        "rentalRequests": []
+        "provincialProjectNumber": "500091",
+        "rentalRequests": [],
+        "status": "Active"
     },
     {
-        "ID": "40092",
+        "ID": "200092",
         "attachments": [],
         "contacts": [],
-        "districtID": "rg{'id': '200006'}'",
+        "district": {
+            "id": "10"
+        },
         "history": [],
         "information": "Some more info",
         "name": "Nootka Street HOV Lane",
         "notes": [],
         "primaryContact": null,
-        "provincialProjectNumber": "500001",
-        "rentalRequests": []
+        "provincialProjectNumber": "500092",
+        "rentalRequests": [],
+        "status": "Completed"
     },
     {
-        "ID": "40093",
+        "ID": "200093",
         "attachments": [],
         "contacts": [],
-        "districtID": "rg{'id': '200006'}'",
+        "district": {
+            "id": "10"
+        },
         "history": [],
         "information": "Some more info",
         "name": "Nootka Street Extension",
         "notes": [],
         "primaryContact": null,
-        "provincialProjectNumber": "500002",
-        "rentalRequests": []
+        "provincialProjectNumber": "500093",
+        "rentalRequests": [],
+        "status": "Active"
     },
     {
-        "ID": "40094",
+        "ID": "200094",
         "attachments": [],
         "contacts": [],
-        "districtID": "rg{'id': '200006'}'",
+        "district": {
+            "id": "10"
+        },
         "history": [],
         "information": "Some more info",
         "name": "102nd Avenue HOV Lane",
         "notes": [],
         "primaryContact": null,
-        "provincialProjectNumber": "500000",
-        "rentalRequests": []
+        "provincialProjectNumber": "500094",
+        "rentalRequests": [],
+        "status": "Active"
     },
     {
-        "ID": "40095",
+        "ID": "200095",
         "attachments": [],
         "contacts": [],
-        "districtID": "rg{'id': '200006'}'",
+        "district": {
+            "id": "10"
+        },
         "history": [],
         "information": "Some more info",
         "name": "Cardero St Cloverleaf",
         "notes": [],
         "primaryContact": null,
-        "provincialProjectNumber": "500000",
-        "rentalRequests": []
+        "provincialProjectNumber": "500095",
+        "rentalRequests": [],
+        "status": "Active"
     },
     {
-        "ID": "40096",
+        "ID": "200096",
         "attachments": [],
         "contacts": [],
-        "districtID": "rg{'id': '200006'}'",
+        "district": {
+            "id": "10"
+        },
         "history": [],
         "information": "Some more info",
         "name": "Blind Bay Road Upgrade",
         "notes": [],
         "primaryContact": null,
-        "provincialProjectNumber": "500001",
-        "rentalRequests": []
+        "provincialProjectNumber": "500096",
+        "rentalRequests": [],
+        "status": "Active"
     },
     {
-        "ID": "40097",
+        "ID": "200097",
         "attachments": [],
         "contacts": [],
-        "districtID": "rg{'id': '200006'}'",
+        "district": {
+            "id": "10"
+        },
         "history": [],
         "information": "Some more info",
         "name": "Old Spallumcheen Rd Cloverleaf",
         "notes": [],
         "primaryContact": null,
-        "provincialProjectNumber": "500002",
-        "rentalRequests": []
+        "provincialProjectNumber": "500097",
+        "rentalRequests": [],
+        "status": "Active"
     },
     {
-        "ID": "40098",
+        "ID": "200098",
         "attachments": [],
         "contacts": [],
-        "districtID": "rg{'id': '200001'}'",
+        "district": {
+            "id": "10"
+        },
         "history": [],
         "information": "Some more info",
         "name": "Keith Road Bridge Replacement",
         "notes": [],
         "primaryContact": null,
-        "provincialProjectNumber": "500000",
-        "rentalRequests": []
+        "provincialProjectNumber": "500098",
+        "rentalRequests": [],
+        "status": "Active"
     },
     {
-        "ID": "40099",
+        "ID": "200099",
         "attachments": [],
         "contacts": [],
-        "districtID": "rg{'id': '200001'}'",
+        "district": {
+            "id": "10"
+        },
         "history": [],
         "information": "Some more info",
         "name": "Brew Creek Rd Extension",
         "notes": [],
         "primaryContact": null,
-        "provincialProjectNumber": "500000",
-        "rentalRequests": []
+        "provincialProjectNumber": "500099",
+        "rentalRequests": [],
+        "status": "Active"
     },
     {
-        "ID": "40100",
+        "ID": "200100",
         "attachments": [],
         "contacts": [],
-        "districtID": "rg{'id': '200001'}'",
+        "district": {
+            "id": "10"
+        },
         "history": [],
         "information": "Some more info",
         "name": "Coldstream Avenue HOV Lane",
         "notes": [],
         "primaryContact": null,
-        "provincialProjectNumber": "500001",
-        "rentalRequests": []
+        "provincialProjectNumber": "500100",
+        "rentalRequests": [],
+        "status": "Active"
     },
     {
-        "ID": "40101",
+        "ID": "200101",
         "attachments": [],
         "contacts": [],
-        "districtID": "rg{'id': '200001'}'",
+        "district": {
+            "id": "10"
+        },
         "history": [],
         "information": "Some more info",
         "name": "Wellington Ave Overpass",
         "notes": [],
         "primaryContact": null,
-        "provincialProjectNumber": "500000",
-        "rentalRequests": []
+        "provincialProjectNumber": "500101",
+        "rentalRequests": [],
+        "status": "Active"
     },
     {
-        "ID": "40102",
+        "ID": "200102",
         "attachments": [],
         "contacts": [],
-        "districtID": "rg{'id': '200001'}'",
+        "district": {
+            "id": "10"
+        },
         "history": [],
         "information": "Some more info",
         "name": "Hardy Street Overpass",
         "notes": [],
         "primaryContact": null,
-        "provincialProjectNumber": "500001",
-        "rentalRequests": []
+        "provincialProjectNumber": "500102",
+        "rentalRequests": [],
+        "status": "Active"
     },
     {
-        "ID": "40103",
+        "ID": "200103",
         "attachments": [],
         "contacts": [],
-        "districtID": "rg{'id': '200001'}'",
+        "district": {
+            "id": "10"
+        },
         "history": [],
         "information": "Some more info",
         "name": "Hastings Street Bypass",
         "notes": [],
         "primaryContact": null,
-        "provincialProjectNumber": "500002",
-        "rentalRequests": []
+        "provincialProjectNumber": "500103",
+        "rentalRequests": [],
+        "status": "Active"
     },
     {
-        "ID": "40104",
+        "ID": "200104",
         "attachments": [],
         "contacts": [],
-        "districtID": "rg{'id': '200001'}'",
+        "district": {
+            "id": "10"
+        },
         "history": [],
         "information": "Some more info",
         "name": "Findlay Creek Road Overpass",
         "notes": [],
         "primaryContact": null,
-        "provincialProjectNumber": "500000",
-        "rentalRequests": []
+        "provincialProjectNumber": "500104",
+        "rentalRequests": [],
+        "status": "Active"
     },
     {
-        "ID": "40105",
+        "ID": "200105",
         "attachments": [],
         "contacts": [],
-        "districtID": "rg{'id': '200000'}'",
+        "district": {
+            "id": "10"
+        },
         "history": [],
         "information": "Some more info",
         "name": "Burdett Avenue Cloverleaf",
         "notes": [],
         "primaryContact": null,
-        "provincialProjectNumber": "500001",
-        "rentalRequests": []
+        "provincialProjectNumber": "500105",
+        "rentalRequests": [],
+        "status": "Active"
     },
     {
-        "ID": "40106",
+        "ID": "200106",
         "attachments": [],
         "contacts": [],
-        "districtID": "rg{'id': '200000'}'",
+        "district": {
+            "id": "10"
+        },
         "history": [],
         "information": "Some more info",
         "name": "Tolmie St Upgrade",
         "notes": [],
         "primaryContact": null,
-        "provincialProjectNumber": "500000",
-        "rentalRequests": []
+        "provincialProjectNumber": "500106",
+        "rentalRequests": [],
+        "status": "Active"
     },
     {
-        "ID": "40107",
+        "ID": "200107",
         "attachments": [],
         "contacts": [],
-        "districtID": "rg{'id': '200000'}'",
+        "district": {
+            "id": "10"
+        },
         "history": [],
         "information": "Some more info",
         "name": "Quayside Dr Building",
         "notes": [],
         "primaryContact": null,
-        "provincialProjectNumber": "500001",
-        "rentalRequests": []
+        "provincialProjectNumber": "500107",
+        "rentalRequests": [],
+        "status": "Active"
     },
     {
-        "ID": "40108",
+        "ID": "200108",
         "attachments": [],
         "contacts": [],
-        "districtID": "rg{'id': '200000'}'",
+        "district": {
+            "id": "10"
+        },
         "history": [],
         "information": "Some more info",
         "name": "Sixth Street Building",
         "notes": [],
         "primaryContact": null,
-        "provincialProjectNumber": "500000",
-        "rentalRequests": []
+        "provincialProjectNumber": "500108",
+        "rentalRequests": [],
+        "status": "Active"
     },
     {
-        "ID": "40109",
+        "ID": "200109",
         "attachments": [],
         "contacts": [],
-        "districtID": "rg{'id': '200000'}'",
+        "district": {
+            "id": "10"
+        },
         "history": [],
         "information": "Some more info",
         "name": "James Street Overpass",
         "notes": [],
         "primaryContact": null,
-        "provincialProjectNumber": "500000",
-        "rentalRequests": []
+        "provincialProjectNumber": "500109",
+        "rentalRequests": [],
+        "status": "Active"
     },
     {
-        "ID": "40110",
+        "ID": "200110",
         "attachments": [],
         "contacts": [],
-        "districtID": "rg{'id': '200000'}'",
+        "district": {
+            "id": "10"
+        },
         "history": [],
         "information": "Some more info",
         "name": "Tolmie St Bypass",
         "notes": [],
         "primaryContact": null,
-        "provincialProjectNumber": "500001",
-        "rentalRequests": []
+        "provincialProjectNumber": "500110",
+        "rentalRequests": [],
+        "status": "Active"
     },
     {
-        "ID": "40111",
+        "ID": "200111",
         "attachments": [],
         "contacts": [],
-        "districtID": "rg{'id': '200000'}'",
+        "district": {
+            "id": "10"
+        },
         "history": [],
         "information": "Some more info",
         "name": "Coldstream Avenue Bypass",
         "notes": [],
         "primaryContact": null,
-        "provincialProjectNumber": "500000",
-        "rentalRequests": []
+        "provincialProjectNumber": "500111",
+        "rentalRequests": [],
+        "status": "Active"
     },
     {
-        "ID": "40112",
+        "ID": "200112",
         "attachments": [],
         "contacts": [],
-        "districtID": "rg{'id': '200004'}'",
+        "district": {
+            "id": "10"
+        },
         "history": [],
         "information": "Some more info",
         "name": "Lake City Way Upgrade",
         "notes": [],
         "primaryContact": null,
-        "provincialProjectNumber": "500001",
-        "rentalRequests": []
+        "provincialProjectNumber": "500112",
+        "rentalRequests": [],
+        "status": "Active"
     },
     {
-        "ID": "40113",
+        "ID": "200113",
         "attachments": [],
         "contacts": [],
-        "districtID": "rg{'id': '200004'}'",
+        "district": {
+            "id": "10"
+        },
         "history": [],
         "information": "Some more info",
         "name": "Roger Street Building",
         "notes": [],
         "primaryContact": null,
-        "provincialProjectNumber": "500002",
-        "rentalRequests": []
+        "provincialProjectNumber": "500113",
+        "rentalRequests": [],
+        "status": "Active"
     },
     {
-        "ID": "40114",
+        "ID": "200114",
         "attachments": [],
         "contacts": [],
-        "districtID": "rg{'id': '200004'}'",
+        "district": {
+            "id": "10"
+        },
         "history": [],
         "information": "Some more info",
         "name": "Essendene Avenue Bridge Replacement",
         "notes": [],
         "primaryContact": null,
-        "provincialProjectNumber": "500003",
-        "rentalRequests": []
+        "provincialProjectNumber": "500114",
+        "rentalRequests": [],
+        "status": "Active"
     },
     {
-        "ID": "40115",
+        "ID": "200115",
         "attachments": [],
         "contacts": [],
-        "districtID": "rg{'id': '200004'}'",
+        "district": {
+            "id": "10"
+        },
         "history": [],
         "information": "Some more info",
         "name": "Blanshard Bridge Replacement",
         "notes": [],
         "primaryContact": null,
-        "provincialProjectNumber": "500004",
-        "rentalRequests": []
+        "provincialProjectNumber": "500115",
+        "rentalRequests": [],
+        "status": "Active"
     },
     {
-        "ID": "40116",
+        "ID": "200116",
         "attachments": [],
         "contacts": [],
-        "districtID": "rg{'id': '200004'}'",
+        "district": {
+            "id": "10"
+        },
         "history": [],
         "information": "Some more info",
         "name": "Wallace Street Expressway",
         "notes": [],
         "primaryContact": null,
-        "provincialProjectNumber": "500005",
-        "rentalRequests": []
+        "provincialProjectNumber": "500116",
+        "rentalRequests": [],
+        "status": "Active"
     },
     {
-        "ID": "40117",
+        "ID": "200117",
         "attachments": [],
         "contacts": [],
-        "districtID": "rg{'id': '200004'}'",
+        "district": {
+            "id": "10"
+        },
         "history": [],
         "information": "Some more info",
         "name": "Burdett Avenue Extension",
         "notes": [],
         "primaryContact": null,
-        "provincialProjectNumber": "500000",
-        "rentalRequests": []
+        "provincialProjectNumber": "500117",
+        "rentalRequests": [],
+        "status": "Active"
     },
     {
-        "ID": "40118",
+        "ID": "200118",
         "attachments": [],
         "contacts": [],
-        "districtID": "rg{'id': '200004'}'",
+        "district": {
+            "id": "10"
+        },
         "history": [],
         "information": "Some more info",
         "name": "Tchesinkut Lake Rd Extension",
         "notes": [],
         "primaryContact": null,
-        "provincialProjectNumber": "500000",
-        "rentalRequests": []
+        "provincialProjectNumber": "500118",
+        "rentalRequests": [],
+        "status": "Active"
     },
     {
-        "ID": "40119",
+        "ID": "200119",
         "attachments": [],
         "contacts": [],
-        "districtID": "rg{'id': '200003'}'",
+        "district": {
+            "id": "10"
+        },
         "history": [],
         "information": "Some more info",
         "name": "Blind Bay Road Overpass",
         "notes": [],
         "primaryContact": null,
-        "provincialProjectNumber": "500001",
-        "rentalRequests": []
+        "provincialProjectNumber": "500119",
+        "rentalRequests": [],
+        "status": "Active"
     },
     {
-        "ID": "40120",
+        "ID": "200120",
         "attachments": [],
         "contacts": [],
-        "districtID": "rg{'id': '200003'}'",
+        "district": {
+            "id": "10"
+        },
         "history": [],
         "information": "Some more info",
         "name": "Tchesinkut Lake Rd Expressway",
         "notes": [],
         "primaryContact": null,
-        "provincialProjectNumber": "500000",
-        "rentalRequests": []
+        "provincialProjectNumber": "500120",
+        "rentalRequests": [],
+        "status": "Active"
     },
     {
-        "ID": "40121",
+        "ID": "200121",
         "attachments": [],
         "contacts": [],
-        "districtID": "rg{'id': '200003'}'",
+        "district": {
+            "id": "10"
+        },
         "history": [],
         "information": "Some more info",
         "name": "Stum Lake Road HOV Lane",
         "notes": [],
         "primaryContact": null,
-        "provincialProjectNumber": "500000",
-        "rentalRequests": []
+        "provincialProjectNumber": "500121",
+        "rentalRequests": [],
+        "status": "Active"
     },
     {
-        "ID": "40122",
+        "ID": "200122",
         "attachments": [],
         "contacts": [],
-        "districtID": "rg{'id': '200003'}'",
+        "district": {
+            "id": "10"
+        },
         "history": [],
         "information": "Some more info",
         "name": "Yoho Valley Road Building",
         "notes": [],
         "primaryContact": null,
-        "provincialProjectNumber": "500001",
-        "rentalRequests": []
+        "provincialProjectNumber": "500122",
+        "rentalRequests": [],
+        "status": "Active"
     },
     {
-        "ID": "40123",
+        "ID": "200123",
         "attachments": [],
         "contacts": [],
-        "districtID": "rg{'id': '200003'}'",
+        "district": {
+            "id": "10"
+        },
         "history": [],
         "information": "Some more info",
         "name": "Keith Road Expressway",
         "notes": [],
         "primaryContact": null,
-        "provincialProjectNumber": "500002",
-        "rentalRequests": []
+        "provincialProjectNumber": "500123",
+        "rentalRequests": [],
+        "status": "Active"
     },
     {
-        "ID": "40124",
+        "ID": "200124",
         "attachments": [],
         "contacts": [],
-        "districtID": "rg{'id': '200003'}'",
+        "district": {
+            "id": "10"
+        },
         "history": [],
         "information": "Some more info",
         "name": "Burdett Avenue Express Lane",
         "notes": [],
         "primaryContact": null,
-        "provincialProjectNumber": "500003",
-        "rentalRequests": []
+        "provincialProjectNumber": "500124",
+        "rentalRequests": [],
+        "status": "Active"
     },
     {
-        "ID": "40125",
+        "ID": "200125",
         "attachments": [],
         "contacts": [],
-        "districtID": "rg{'id': '200003'}'",
+        "district": {
+            "id": "10"
+        },
         "history": [],
         "information": "Some more info",
         "name": "Quayside Dr Bridge",
         "notes": [],
         "primaryContact": null,
-        "provincialProjectNumber": "500000",
-        "rentalRequests": []
+        "provincialProjectNumber": "500125",
+        "rentalRequests": [],
+        "status": "Active"
     },
     {
-        "ID": "40126",
+        "ID": "200126",
         "attachments": [],
         "contacts": [],
-        "districtID": "rg{'id': '200002'}'",
+        "district": {
+            "id": "10"
+        },
         "history": [],
         "information": "Some more info",
         "name": "Jade St Expressway",
         "notes": [],
         "primaryContact": null,
-        "provincialProjectNumber": "500001",
-        "rentalRequests": []
+        "provincialProjectNumber": "500126",
+        "rentalRequests": [],
+        "status": "Active"
     },
     {
-        "ID": "40127",
+        "ID": "200127",
         "attachments": [],
         "contacts": [],
-        "districtID": "rg{'id': '200002'}'",
+        "district": {
+            "id": "10"
+        },
         "history": [],
         "information": "Some more info",
         "name": "Robson St Express Lane",
         "notes": [],
         "primaryContact": null,
-        "provincialProjectNumber": "500002",
-        "rentalRequests": []
+        "provincialProjectNumber": "500127",
+        "rentalRequests": [],
+        "status": "Active"
     },
     {
-        "ID": "40128",
+        "ID": "200128",
         "attachments": [],
         "contacts": [],
-        "districtID": "rg{'id': '200002'}'",
+        "district": {
+            "id": "10"
+        },
         "history": [],
         "information": "Some more info",
         "name": "Robson St Bridge Replacement",
         "notes": [],
         "primaryContact": null,
-        "provincialProjectNumber": "500003",
-        "rentalRequests": []
+        "provincialProjectNumber": "500128",
+        "rentalRequests": [],
+        "status": "Active"
     },
     {
-        "ID": "40129",
+        "ID": "200129",
         "attachments": [],
         "contacts": [],
-        "districtID": "rg{'id': '200002'}'",
+        "district": {
+            "id": "10"
+        },
         "history": [],
         "information": "Some more info",
         "name": "Carlson Road Express Lane",
         "notes": [],
         "primaryContact": null,
-        "provincialProjectNumber": "500000",
-        "rentalRequests": []
+        "provincialProjectNumber": "500129",
+        "rentalRequests": [],
+        "status": "Active"
     },
     {
-        "ID": "40130",
+        "ID": "200130",
         "attachments": [],
         "contacts": [],
-        "districtID": "rg{'id': '200002'}'",
+        "district": {
+            "id": "10"
+        },
         "history": [],
         "information": "Some more info",
         "name": "McGill Road Express Lane",
         "notes": [],
         "primaryContact": null,
-        "provincialProjectNumber": "500000",
-        "rentalRequests": []
+        "provincialProjectNumber": "500130",
+        "rentalRequests": [],
+        "status": "Active"
     },
     {
-        "ID": "40131",
+        "ID": "200131",
         "attachments": [],
         "contacts": [],
-        "districtID": "rg{'id': '200002'}'",
+        "district": {
+            "id": "10"
+        },
         "history": [],
         "information": "Some more info",
         "name": "Russell Avenue HOV Lane",
         "notes": [],
         "primaryContact": null,
-        "provincialProjectNumber": "500001",
-        "rentalRequests": []
+        "provincialProjectNumber": "500131",
+        "rentalRequests": [],
+        "status": "Active"
     },
     {
-        "ID": "40132",
+        "ID": "200132",
         "attachments": [],
         "contacts": [],
-        "districtID": "rg{'id': '200002'}'",
+        "district": {
+            "id": "7"
+        },
         "history": [],
         "information": "Some more info",
         "name": "Findlay Creek Road Upgrade",
         "notes": [],
         "primaryContact": null,
-        "provincialProjectNumber": "500000",
-        "rentalRequests": []
+        "provincialProjectNumber": "500132",
+        "rentalRequests": [],
+        "status": "Active"
     },
     {
-        "ID": "40133",
+        "ID": "200133",
         "attachments": [],
         "contacts": [],
-        "districtID": "rg{'id': '200007'}'",
+        "district": {
+            "id": "7"
+        },
         "history": [],
         "information": "Some more info",
         "name": "Brew Creek Rd HOV Lane",
         "notes": [],
         "primaryContact": null,
-        "provincialProjectNumber": "500000",
-        "rentalRequests": []
+        "provincialProjectNumber": "500133",
+        "rentalRequests": [],
+        "status": "Active"
     },
     {
-        "ID": "40134",
+        "ID": "200134",
         "attachments": [],
         "contacts": [],
-        "districtID": "rg{'id': '200007'}'",
+        "district": {
+            "id": "7"
+        },
         "history": [],
         "information": "Some more info",
         "name": "Roger Street Overpass",
         "notes": [],
         "primaryContact": null,
-        "provincialProjectNumber": "500001",
-        "rentalRequests": []
+        "provincialProjectNumber": "500134",
+        "rentalRequests": [],
+        "status": "Active"
     },
     {
-        "ID": "40135",
+        "ID": "200135",
         "attachments": [],
         "contacts": [],
-        "districtID": "rg{'id': '200007'}'",
+        "district": {
+            "id": "7"
+        },
         "history": [],
         "information": "Some more info",
         "name": "Quayside Dr Expressway",
         "notes": [],
         "primaryContact": null,
-        "provincialProjectNumber": "500002",
-        "rentalRequests": []
+        "provincialProjectNumber": "500135",
+        "rentalRequests": [],
+        "status": "Active"
     },
     {
-        "ID": "40136",
+        "ID": "200136",
         "attachments": [],
         "contacts": [],
-        "districtID": "rg{'id': '200007'}'",
+        "district": {
+            "id": "7"
+        },
         "history": [],
         "information": "Some more info",
         "name": "Haaglund Rd HOV Lane",
         "notes": [],
         "primaryContact": null,
-        "provincialProjectNumber": "500003",
-        "rentalRequests": []
+        "provincialProjectNumber": "500136",
+        "rentalRequests": [],
+        "status": "Active"
     },
     {
-        "ID": "40137",
+        "ID": "200137",
         "attachments": [],
         "contacts": [],
-        "districtID": "rg{'id': '200007'}'",
+        "district": {
+            "id": "7"
+        },
         "history": [],
         "information": "Some more info",
         "name": "Tchesinkut Lake Rd Cloverleaf",
         "notes": [],
         "primaryContact": null,
-        "provincialProjectNumber": "500004",
-        "rentalRequests": []
+        "provincialProjectNumber": "500137",
+        "rentalRequests": [],
+        "status": "Active"
     },
     {
-        "ID": "40138",
+        "ID": "200138",
         "attachments": [],
         "contacts": [],
-        "districtID": "rg{'id': '200007'}'",
+        "district": {
+            "id": "7"
+        },
         "history": [],
         "information": "Some more info",
         "name": "Stum Lake Road Bridge Replacement",
         "notes": [],
         "primaryContact": null,
-        "provincialProjectNumber": "500000",
-        "rentalRequests": []
+        "provincialProjectNumber": "500138",
+        "rentalRequests": [],
+        "status": "Active"
     },
     {
-        "ID": "40139",
+        "ID": "200139",
         "attachments": [],
         "contacts": [],
-        "districtID": "rg{'id': '200007'}'",
+        "district": {
+            "id": "7"
+        },
         "history": [],
         "information": "Some more info",
         "name": "Shaughnessy St Bypass",
         "notes": [],
         "primaryContact": null,
-        "provincialProjectNumber": "500000",
-        "rentalRequests": []
+        "provincialProjectNumber": "500139",
+        "rentalRequests": [],
+        "status": "Active"
     },
     {
-        "ID": "40140",
+        "ID": "200140",
         "attachments": [],
         "contacts": [],
-        "districtID": "rg{'id': '200005'}'",
+        "district": {
+            "id": "7"
+        },
         "history": [],
         "information": "Some more info",
         "name": "Shaughnessy St Bridge",
         "notes": [],
         "primaryContact": null,
-        "provincialProjectNumber": "500000",
-        "rentalRequests": []
+        "provincialProjectNumber": "500140",
+        "rentalRequests": [],
+        "status": "Active"
     },
     {
-        "ID": "40141",
+        "ID": "200141",
         "attachments": [],
         "contacts": [],
-        "districtID": "rg{'id': '200005'}'",
+        "district": {
+            "id": "7"
+        },
         "history": [],
         "information": "Some more info",
         "name": "Cordova Street HOV Lane",
         "notes": [],
         "primaryContact": null,
-        "provincialProjectNumber": "500001",
-        "rentalRequests": []
+        "provincialProjectNumber": "500141",
+        "rentalRequests": [],
+        "status": "Active"
     },
     {
-        "ID": "40142",
+        "ID": "200142",
         "attachments": [],
         "contacts": [],
-        "districtID": "rg{'id': '200005'}'",
+        "district": {
+            "id": "7"
+        },
         "history": [],
         "information": "Some more info",
         "name": "Mesa Vista Drive Upgrade",
         "notes": [],
         "primaryContact": null,
-        "provincialProjectNumber": "500002",
-        "rentalRequests": []
+        "provincialProjectNumber": "500142",
+        "rentalRequests": [],
+        "status": "Active"
     },
     {
-        "ID": "40143",
+        "ID": "200143",
         "attachments": [],
         "contacts": [],
-        "districtID": "rg{'id': '200005'}'",
+        "district": {
+            "id": "7"
+        },
         "history": [],
         "information": "Some more info",
         "name": "Blanshard Express Lane",
         "notes": [],
         "primaryContact": null,
-        "provincialProjectNumber": "500003",
-        "rentalRequests": []
+        "provincialProjectNumber": "500143",
+        "rentalRequests": [],
+        "status": "Active"
     },
     {
-        "ID": "40144",
+        "ID": "200144",
         "attachments": [],
         "contacts": [],
-        "districtID": "rg{'id': '200005'}'",
+        "district": {
+            "id": "7"
+        },
         "history": [],
         "information": "Some more info",
         "name": "Cordova Street Cloverleaf",
         "notes": [],
         "primaryContact": null,
-        "provincialProjectNumber": "500000",
-        "rentalRequests": []
+        "provincialProjectNumber": "500144",
+        "rentalRequests": [],
+        "status": "Active"
     },
     {
-        "ID": "40145",
+        "ID": "200145",
         "attachments": [],
         "contacts": [],
-        "districtID": "rg{'id': '200005'}'",
+        "district": {
+            "id": "7"
+        },
         "history": [],
         "information": "Some more info",
         "name": "Kinchant St Bypass",
         "notes": [],
         "primaryContact": null,
-        "provincialProjectNumber": "500001",
-        "rentalRequests": []
+        "provincialProjectNumber": "500145",
+        "rentalRequests": [],
+        "status": "Active"
     },
     {
-        "ID": "40146",
+        "ID": "200146",
         "attachments": [],
         "contacts": [],
-        "districtID": "rg{'id': '200005'}'",
+        "district": {
+            "id": "2"
+        },
         "history": [],
         "information": "Some more info",
         "name": "Alaska Hwy Bridge",
         "notes": [],
         "primaryContact": null,
-        "provincialProjectNumber": "500000",
-        "rentalRequests": []
+        "provincialProjectNumber": "500146",
+        "rentalRequests": [],
+        "status": "Active"
     },
     {
-        "ID": "40147",
+        "ID": "200147",
         "attachments": [],
         "contacts": [],
-        "districtID": "rg{'id': '200009'}'",
+        "district": {
+            "id": "2"
+        },
         "history": [],
         "information": "Some more info",
         "name": "Stum Lake Road Expressway",
         "notes": [],
         "primaryContact": null,
-        "provincialProjectNumber": "500001",
-        "rentalRequests": []
+        "provincialProjectNumber": "500147",
+        "rentalRequests": [],
+        "status": "Active"
     },
     {
-        "ID": "40148",
+        "ID": "200148",
         "attachments": [],
         "contacts": [],
-        "districtID": "rg{'id': '200009'}'",
+        "district": {
+            "id": "2"
+        },
         "history": [],
         "information": "Some more info",
         "name": "King George Hwy Building",
         "notes": [],
         "primaryContact": null,
-        "provincialProjectNumber": "500000",
-        "rentalRequests": []
+        "provincialProjectNumber": "500148",
+        "rentalRequests": [],
+        "status": "Active"
     },
     {
-        "ID": "40149",
+        "ID": "200149",
         "attachments": [],
         "contacts": [],
-        "districtID": "rg{'id': '200009'}'",
+        "district": {
+            "id": "2"
+        },
         "history": [],
         "information": "Some more info",
         "name": "Burdett Avenue Bypass",
         "notes": [],
         "primaryContact": null,
-        "provincialProjectNumber": "500000",
-        "rentalRequests": []
+        "provincialProjectNumber": "500149",
+        "rentalRequests": [],
+        "status": "Active"
     },
     {
-        "ID": "40150",
+        "ID": "200150",
         "attachments": [],
         "contacts": [],
-        "districtID": "rg{'id': '200009'}'",
+        "district": {
+            "id": "2"
+        },
         "history": [],
         "information": "Some more info",
         "name": "Hastings Street Extension",
         "notes": [],
         "primaryContact": null,
-        "provincialProjectNumber": "500000",
-        "rentalRequests": []
+        "provincialProjectNumber": "500150",
+        "rentalRequests": [],
+        "status": "Active"
     },
     {
-        "ID": "40151",
+        "ID": "200151",
         "attachments": [],
         "contacts": [],
-        "districtID": "rg{'id': '200009'}'",
+        "district": {
+            "id": "2"
+        },
         "history": [],
         "information": "Some more info",
         "name": "Old Spallumcheen Rd Building",
         "notes": [],
         "primaryContact": null,
-        "provincialProjectNumber": "500001",
-        "rentalRequests": []
+        "provincialProjectNumber": "500151",
+        "rentalRequests": [],
+        "status": "Active"
     },
     {
-        "ID": "40152",
+        "ID": "200152",
         "attachments": [],
         "contacts": [],
-        "districtID": "rg{'id': '200009'}'",
+        "district": {
+            "id": "2"
+        },
         "history": [],
         "information": "Some more info",
         "name": "Coldstream Avenue Extension",
         "notes": [],
         "primaryContact": null,
-        "provincialProjectNumber": "500000",
-        "rentalRequests": []
+        "provincialProjectNumber": "500152",
+        "rentalRequests": [],
+        "status": "Active"
     },
     {
-        "ID": "40153",
+        "ID": "200153",
         "attachments": [],
         "contacts": [],
-        "districtID": "rg{'id': '200009'}'",
+        "district": {
+            "id": "2"
+        },
         "history": [],
         "information": "Some more info",
         "name": "Robson St Overpass",
         "notes": [],
         "primaryContact": null,
-        "provincialProjectNumber": "500000",
-        "rentalRequests": []
+        "provincialProjectNumber": "500153",
+        "rentalRequests": [],
+        "status": "Active"
     }
 ]

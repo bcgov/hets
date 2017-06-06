@@ -104,6 +104,24 @@ namespace HETSAPI.Test
 			Assert.True(true);
         }
         /// <summary>
+        /// Test the property 'RentalRequests'
+        /// </summary>
+        [Fact]
+        public void RentalRequestsTest()
+        {
+            // TODO unit test for the property 'RentalRequests'
+			Assert.True(true);
+        }
+        /// <summary>
+        /// Test the property 'RentalAgreements'
+        /// </summary>
+        [Fact]
+        public void RentalAgreementsTest()
+        {
+            // TODO unit test for the property 'RentalAgreements'
+			Assert.True(true);
+        }
+        /// <summary>
         /// Test the property 'PrimaryContact'
         /// </summary>
         [Fact]

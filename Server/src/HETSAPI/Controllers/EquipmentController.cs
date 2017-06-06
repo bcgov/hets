@@ -1,11 +1,11 @@
 /*
  * REST API Documentation for the MOTI Hired Equipment Tracking System (HETS) Application
  *
- * The Hired Equipment Program is for owners/operators who have a dump truck, bulldozer, backhoe or  other piece of equipment they want to hire out to the transportation ministry for day labour and  emergency projects.  The Hired Equipment Program distributes available work to local equipment owners. The program is  based on seniority and is designed to deliver work to registered users fairly and efficiently  through the development of local area call-out lists. 
+ * The Hired Equipment Program is for owners/operators who have a dump truck, bulldozer, backhoe or  other piece of equipment they want to hire out to the transportation ministry for day labour and  emergency projects.  The Hired Equipment Program distributes available work to local equipment owners. The program is  based on seniority and is designed to deliver work to registered users fairly and efficiently  through the development of local area call-out lists.
  *
  * OpenAPI spec version: v1
- * 
- * 
+ *
+ *
  */
 
 using System;
@@ -23,12 +23,11 @@ using HETSAPI.Models;
 using HETSAPI.ViewModels;
 using HETSAPI.Services;
 using HETSAPI.Authorization;
-using HETSAPI.Helpers;
 
 namespace HETSAPI.Controllers
 {
     /// <summary>
-    /// 
+    ///
     /// </summary>
     public partial class EquipmentController : Controller
     {
@@ -43,7 +42,7 @@ namespace HETSAPI.Controllers
         }
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         /// <param name="items"></param>
         /// <response code="201">Equipment created</response>
@@ -57,7 +56,7 @@ namespace HETSAPI.Controllers
         }
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         /// <response code="200">OK</response>
         [HttpGet]
@@ -70,7 +69,7 @@ namespace HETSAPI.Controllers
         }
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         /// <remarks>Returns attachments for a particular Equipment</remarks>
         /// <param name="id">id of Equipment to fetch attachments for</param>
@@ -86,7 +85,7 @@ namespace HETSAPI.Controllers
         }
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         /// <param name="id">id of Equipment to delete</param>
         /// <response code="200">OK</response>
@@ -100,7 +99,7 @@ namespace HETSAPI.Controllers
         }
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         /// <param name="id">id of Equipment to fetch EquipmentAttachments for</param>
         /// <response code="200">OK</response>
@@ -114,7 +113,7 @@ namespace HETSAPI.Controllers
         }
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         /// <param name="id">id of Equipment to fetch</param>
         /// <response code="200">OK</response>
@@ -129,7 +128,7 @@ namespace HETSAPI.Controllers
         }
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         /// <remarks>Returns History for a particular Equipment</remarks>
         /// <param name="id">id of Equipment to fetch History for</param>
@@ -146,23 +145,23 @@ namespace HETSAPI.Controllers
         }
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         /// <remarks>Add a History record to the Equipment</remarks>
         /// <param name="id">id of Equipment to add History for</param>
         /// <param name="item"></param>
+        /// <response code="200">OK</response>
         /// <response code="201">History created</response>
         [HttpPost]
         [Route("/api/equipment/{id}/history")]
         [SwaggerOperation("EquipmentIdHistoryPost")]
-        [SwaggerResponse(200, type: typeof(History))]
         public virtual IActionResult EquipmentIdHistoryPost([FromRoute]int id, [FromBody]History item)
         {
             return this._service.EquipmentIdHistoryPostAsync(id, item);
         }
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         /// <param name="id">id of Equipment to fetch</param>
         /// <param name="item"></param>
@@ -178,7 +177,7 @@ namespace HETSAPI.Controllers
         }
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         /// <param name="id">id of Equipment to fetch EquipmentViewModel for</param>
         /// <response code="200">OK</response>
@@ -192,7 +191,7 @@ namespace HETSAPI.Controllers
         }
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         /// <param name="item"></param>
         /// <response code="201">Equipment created</response>
@@ -236,7 +235,7 @@ namespace HETSAPI.Controllers
         [Route("/api/equipment/search")]
         [SwaggerOperation("EquipmentSearchGet")]
         [SwaggerResponse(200, type: typeof(List<EquipmentViewModel>))]
-        public virtual IActionResult EquipmentSearchGet([ModelBinder(BinderType = typeof(CsvArrayBinder))]int?[] localareas, [ModelBinder(BinderType = typeof(CsvArrayBinder))]int?[] types, [FromQuery]string equipmentAttachment, [FromQuery]int? owner, [FromQuery]string status, [FromQuery]bool? hired, [FromQuery]DateTime? notverifiedsincedate)
+        public virtual IActionResult EquipmentSearchGet([FromQuery]string localareas, [FromQuery]string types, [FromQuery]string equipmentAttachment, [FromQuery]int? owner, [FromQuery]string status, [FromQuery]bool? hired, [FromQuery]DateTime? notverifiedsincedate)
         {
             return this._service.EquipmentSearchGetAsync(localareas, types, equipmentAttachment, owner, status, hired, notverifiedsincedate);
         }

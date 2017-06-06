@@ -1,11 +1,11 @@
 /*
  * REST API Documentation for the MOTI Hired Equipment Tracking System (HETS) Application
  *
- * The Hired Equipment Program is for owners/operators who have a dump truck, bulldozer, backhoe or  other piece of equipment they want to hire out to the transportation ministry for day labour and  emergency projects.  The Hired Equipment Program distributes available work to local equipment owners. The program is  based on seniority and is designed to deliver work to registered users fairly and efficiently  through the development of local area call-out lists. 
+ * The Hired Equipment Program is for owners/operators who have a dump truck, bulldozer, backhoe or  other piece of equipment they want to hire out to the transportation ministry for day labour and  emergency projects.  The Hired Equipment Program distributes available work to local equipment owners. The program is  based on seniority and is designed to deliver work to registered users fairly and efficiently  through the development of local area call-out lists.
  *
  * OpenAPI spec version: v1
- * 
- * 
+ *
+ *
  */
 
 using System;
@@ -27,7 +27,7 @@ using Microsoft.AspNetCore.Http;
 namespace HETSAPI.Services.Impl
 {
     /// <summary>
-    /// 
+    ///
     /// </summary>
     public class OwnerService : ServiceBase, IOwnerService
     {
@@ -50,7 +50,7 @@ namespace HETSAPI.Services.Impl
                     item.LocalArea = _context.LocalAreas.FirstOrDefault(a => a.Id == item.LocalArea.Id);
                 }
 
-                // Adjust the owner contacts.            
+                // Adjust the owner contacts.
                 if (item.Contacts != null)
                 {
                     for (int i = 0; i < item.Contacts.Count; i++)
@@ -67,7 +67,7 @@ namespace HETSAPI.Services.Impl
                     item.PrimaryContact = _context.Contacts.FirstOrDefault(a => a.Id == item.PrimaryContact.Id);
                 }
 
-                // Adjust the equipment list.            
+                // Adjust the equipment list.
                 if (item.EquipmentList != null)
                 {
                     for (int i = 0; i < item.EquipmentList.Count; i++)
@@ -91,7 +91,7 @@ namespace HETSAPI.Services.Impl
         }
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         /// <param name="items"></param>
         /// <response code="201">Owner created</response>
@@ -105,7 +105,7 @@ namespace HETSAPI.Services.Impl
             {
                 AdjustRecord(item);
 
-                // determine if this is an insert or an update            
+                // determine if this is an insert or an update
                 bool exists = _context.Owners.Any(a => a.Id == item.Id);
                 if (exists)
                 {
@@ -122,7 +122,7 @@ namespace HETSAPI.Services.Impl
         }
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         /// <response code="200">OK</response>
         public virtual IActionResult OwnersGetAsync()
@@ -134,7 +134,7 @@ namespace HETSAPI.Services.Impl
         }
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         /// <remarks>Returns attachments for a particular Owner</remarks>
         /// <param name="id">id of Owner to fetch attachments for</param>
@@ -160,7 +160,7 @@ namespace HETSAPI.Services.Impl
         }
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         /// <param name="id">id of Owner to fetch Contacts for</param>
         /// <response code="200">OK</response>
@@ -182,7 +182,7 @@ namespace HETSAPI.Services.Impl
 
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         /// <remarks>Replaces an Owner&#39;s Contacts</remarks>
         /// <param name="id">id of Owner to replace Contacts for</param>
@@ -222,7 +222,7 @@ namespace HETSAPI.Services.Impl
 
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         /// <remarks>Replaces an Owner&#39;s Contacts</remarks>
         /// <param name="id">id of Owner to replace Contacts for</param>
@@ -290,7 +290,7 @@ namespace HETSAPI.Services.Impl
 
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         /// <param name="id">id of Owner to delete</param>
         /// <response code="200">OK</response>
@@ -318,7 +318,7 @@ namespace HETSAPI.Services.Impl
 
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         /// <remarks>Returns History for a particular Owner</remarks>
         /// <param name="id">id of Owner to fetch History for</param>
@@ -360,12 +360,13 @@ namespace HETSAPI.Services.Impl
         }
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         /// <remarks>Add a History record to the Owner</remarks>
         /// <param name="id">id of Owner to add History for</param>
         /// <param name="item"></param>
-        /// <response code="201">History added</response>
+        /// <response code="200">OK</response>
+        /// <response code="201">History created</response>
         public virtual IActionResult OwnersIdHistoryPostAsync(int id, History item)
         {
             HistoryViewModel result = new HistoryViewModel();
@@ -398,7 +399,7 @@ namespace HETSAPI.Services.Impl
 
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         /// <remarks>Gets an Owner&#39;s Equipment</remarks>
         /// <param name="id">id of Owner to fetch Equipment for</param>
@@ -436,7 +437,7 @@ namespace HETSAPI.Services.Impl
         }
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         /// <remarks>Replaces an Owner&#39;s Equipment</remarks>
         /// <param name="id">id of Owner to replace Equipment for</param>
@@ -529,7 +530,7 @@ namespace HETSAPI.Services.Impl
 
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         /// <param name="id">id of Owner to fetch</param>
         /// <response code="200">OK</response>
@@ -580,7 +581,7 @@ namespace HETSAPI.Services.Impl
         }
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         /// <param name="id">id of Owner to update</param>
         /// <param name="item"></param>
@@ -616,7 +617,7 @@ namespace HETSAPI.Services.Impl
         }
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         /// <param name="item"></param>
         /// <response code="201">Owner created</response>
@@ -643,18 +644,19 @@ namespace HETSAPI.Services.Impl
         /// Searches Owners
         /// </summary>
         /// <remarks>Used for the owner search page.</remarks>
-        /// <param name="localareas">Local Areas (array of id numbers)</param>
-        /// <param name="equipmenttypes">Equipment Types (array of id numbers)</param>
+        /// <param name="localAreasCSV">Local Areas (array of id numbers)</param>
+        /// <param name="equipmentTypesCSV">Equipment Types (array of id numbers)</param>
         /// <param name="owner"></param>
         /// <param name="status">Status</param>
         /// <param name="hired">Hired</param>
         /// <response code="200">OK</response>
-        public virtual IActionResult OwnersSearchGetAsync(int?[] localareas, int?[] equipmenttypes, int? owner, string status, bool? hired)
+        public virtual IActionResult OwnersSearchGetAsync(string localAreasCSV, string equipmentTypesCSV, int? owner, string status, bool? hired)
         {
+            int?[] localAreas = ParseIntArray(localAreasCSV);
+            int?[] equipmentTypes = ParseIntArray(equipmentTypesCSV);
+
             var data = _context.Owners
                     .Include(x => x.LocalArea.ServiceArea.District.Region)
-                    .Include(x => x.EquipmentList)
-                    .ThenInclude(y => y.DistrictEquipmentType)
                     .Include(x => x.Notes)
                     .Include(x => x.Attachments)
                     .Include(x => x.History)
@@ -665,22 +667,9 @@ namespace HETSAPI.Services.Impl
             int? districtId = _context.GetDistrictIdByUserId(GetCurrentUserId()).Single();
             data = data.Where(x => x.LocalArea.ServiceArea.DistrictId.Equals(districtId));
 
-            if (localareas != null && localareas.Length > 0)
+            if (localAreas != null && localAreas.Length > 0)
             {
-                data = data.Where(x => localareas.Contains(x.LocalArea.Id));
-            }
-
-            if (equipmenttypes != null)
-            {
-
-                foreach (int? item in equipmenttypes)
-                {
-                    if (item != null)
-                    {
-                        int equipmentType = (int)item;
-                        data = data.Where(x => x.EquipmentList.Select(y => y.DistrictEquipmentType.Id).Contains(equipmentType));
-                    }
-                }
+                data = data.Where(x => localAreas.Contains(x.LocalArea.Id));
             }
 
             if (status != null)
@@ -689,7 +678,7 @@ namespace HETSAPI.Services.Impl
                 data = data.Where(x => x.Status.ToLower() == status.ToLower());
             }
 
-            if (hired != null)
+            if (hired == true)
             {
                 IQueryable<int?> hiredOwnersQuery = _context.RentalAgreements
                                     .Where(agreement => agreement.Status == "Active")
@@ -708,6 +697,16 @@ namespace HETSAPI.Services.Impl
                                     .Distinct();
 
                 data = data.Where(o => hiredOwnersQuery.Contains(o.Id));
+            }
+
+            if (equipmentTypes != null)
+            {
+                var equipmentTypeQuery = _context.Equipments
+                    .Where(x => equipmentTypes.Contains(x.DistrictEquipmentTypeId))
+                    .Select(x => x.OwnerId)
+                    .Distinct();
+
+                data = data.Where(x => equipmentTypeQuery.Contains(x.Id));
             }
 
             if (owner != null)

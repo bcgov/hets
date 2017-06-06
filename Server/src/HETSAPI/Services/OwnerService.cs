@@ -1,11 +1,11 @@
 /*
  * REST API Documentation for the MOTI Hired Equipment Tracking System (HETS) Application
  *
- * The Hired Equipment Program is for owners/operators who have a dump truck, bulldozer, backhoe or  other piece of equipment they want to hire out to the transportation ministry for day labour and  emergency projects.  The Hired Equipment Program distributes available work to local equipment owners. The program is  based on seniority and is designed to deliver work to registered users fairly and efficiently  through the development of local area call-out lists. 
+ * The Hired Equipment Program is for owners/operators who have a dump truck, bulldozer, backhoe or  other piece of equipment they want to hire out to the transportation ministry for day labour and  emergency projects.  The Hired Equipment Program distributes available work to local equipment owners. The program is  based on seniority and is designed to deliver work to registered users fairly and efficiently  through the development of local area call-out lists.
  *
  * OpenAPI spec version: v1
- * 
- * 
+ *
+ *
  */
 
 using System;
@@ -24,26 +24,26 @@ using HETSAPI.ViewModels;
 namespace HETSAPI.Services
 {
     /// <summary>
-    /// 
+    ///
     /// </summary>
     public interface IOwnerService
     {
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         /// <param name="items"></param>
         /// <response code="201">Owner created</response>
         IActionResult OwnersBulkPostAsync(Owner[] items);
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         /// <response code="200">OK</response>
         IActionResult OwnersGetAsync();
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         /// <remarks>Returns attachments for a particular Owner</remarks>
         /// <param name="id">id of Owner to fetch attachments for</param>
@@ -52,7 +52,7 @@ namespace HETSAPI.Services
         IActionResult OwnersIdAttachmentsGetAsync(int id);
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         /// <remarks>Gets an Owner&#39;s Contacts</remarks>
         /// <param name="id">id of Owner to fetch Contacts for</param>
@@ -60,7 +60,7 @@ namespace HETSAPI.Services
         IActionResult OwnersIdContactsGetAsync(int id);
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         /// <remarks>Adds Owner Contact</remarks>
         /// <param name="id">id of Owner to add a contact for</param>
@@ -69,7 +69,7 @@ namespace HETSAPI.Services
         IActionResult OwnersIdContactsPostAsync(int id, Contact item);
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         /// <remarks>Replaces an Owner&#39;s Contacts</remarks>
         /// <param name="id">id of Owner to replace Contacts for</param>
@@ -78,7 +78,7 @@ namespace HETSAPI.Services
         IActionResult OwnersIdContactsPutAsync(int id, Contact[] item);
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         /// <param name="id">id of Owner to delete</param>
         /// <response code="200">OK</response>
@@ -86,7 +86,7 @@ namespace HETSAPI.Services
         IActionResult OwnersIdDeletePostAsync(int id);
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         /// <remarks>Gets an Owner&#39;s Equipment</remarks>
         /// <param name="id">id of Owner to fetch Equipment for</param>
@@ -94,7 +94,7 @@ namespace HETSAPI.Services
         IActionResult OwnersIdEquipmentGetAsync(int id);
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         /// <remarks>Replaces an Owner&#39;s Equipment</remarks>
         /// <param name="id">id of Owner to replace Equipment for</param>
@@ -103,7 +103,7 @@ namespace HETSAPI.Services
         IActionResult OwnersIdEquipmentPutAsync(int id, Equipment[] item);
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         /// <param name="id">id of Owner to fetch</param>
         /// <response code="200">OK</response>
@@ -111,7 +111,7 @@ namespace HETSAPI.Services
         IActionResult OwnersIdGetAsync(int id);
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         /// <remarks>Returns History for a particular Owner</remarks>
         /// <param name="id">id of Owner to fetch History for</param>
@@ -121,16 +121,17 @@ namespace HETSAPI.Services
         IActionResult OwnersIdHistoryGetAsync(int id, int? offset, int? limit);
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         /// <remarks>Add a History record to the Owner</remarks>
         /// <param name="id">id of Owner to add History for</param>
         /// <param name="item"></param>
+        /// <response code="200">OK</response>
         /// <response code="201">History created</response>
         IActionResult OwnersIdHistoryPostAsync(int id, History item);
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         /// <param name="id">id of Owner to fetch</param>
         /// <param name="item"></param>
@@ -139,7 +140,7 @@ namespace HETSAPI.Services
         IActionResult OwnersIdPutAsync(int id, Owner item);
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         /// <param name="item"></param>
         /// <response code="201">Owner created</response>
@@ -155,6 +156,6 @@ namespace HETSAPI.Services
         /// <param name="status">Status</param>
         /// <param name="hired">Hired</param>
         /// <response code="200">OK</response>
-        IActionResult OwnersSearchGetAsync(int?[] localareas, int?[] equipmenttypes, int? owner, string status, bool? hired);
+        IActionResult OwnersSearchGetAsync(string localareas, string equipmenttypes, int? owner, string status, bool? hired);
     }
 }

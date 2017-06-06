@@ -1,11 +1,11 @@
 /*
  * REST API Documentation for the MOTI Hired Equipment Tracking System (HETS) Application
  *
- * The Hired Equipment Program is for owners/operators who have a dump truck, bulldozer, backhoe or  other piece of equipment they want to hire out to the transportation ministry for day labour and  emergency projects.  The Hired Equipment Program distributes available work to local equipment owners. The program is  based on seniority and is designed to deliver work to registered users fairly and efficiently  through the development of local area call-out lists. 
+ * The Hired Equipment Program is for owners/operators who have a dump truck, bulldozer, backhoe or  other piece of equipment they want to hire out to the transportation ministry for day labour and  emergency projects.  The Hired Equipment Program distributes available work to local equipment owners. The program is  based on seniority and is designed to deliver work to registered users fairly and efficiently  through the development of local area call-out lists.
  *
  * OpenAPI spec version: v1
- * 
- * 
+ *
+ *
  */
 
 using System;
@@ -27,12 +27,12 @@ using Microsoft.AspNetCore.Http;
 namespace HETSAPI.Services.Impl
 {
     /// <summary>
-    /// 
+    ///
     /// </summary>
     public class ProjectService : ServiceBase, IProjectService
     {
         private readonly DbAppContext _context;
-        
+
         /// <summary>
         /// Create a service and set the database context
         /// </summary>
@@ -51,7 +51,7 @@ namespace HETSAPI.Services.Impl
                     item.District = _context.Districts.FirstOrDefault(a => a.Id == item.District.Id);
                 }
 
-                // Notes is a list     
+                // Notes is a list
                 if (item.Notes != null)
                 {
                     for (int i = 0; i < item.Notes.Count; i++)
@@ -63,7 +63,7 @@ namespace HETSAPI.Services.Impl
                     }
                 }
 
-                // History is a list     
+                // History is a list
                 if (item.History != null)
                 {
                     for (int i = 0; i < item.History.Count; i++)
@@ -102,7 +102,7 @@ namespace HETSAPI.Services.Impl
                     }
                 }
 
-                // RentalAgreements is a list     
+                // RentalAgreements is a list
                 if (item.RentalAgreements != null)
                 {
                     for (int i = 0; i < item.RentalAgreements.Count; i++)
@@ -113,14 +113,14 @@ namespace HETSAPI.Services.Impl
                         }
                     }
                 }
-            }   
+            }
         }
 
 
 
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         /// <param name="items"></param>
         /// <response code="201">Project created</response>
@@ -134,25 +134,25 @@ namespace HETSAPI.Services.Impl
             {
                 AdjustRecord(item);
 
-                // determine if this is an insert or an update            
+                // determine if this is an insert or an update
                 bool exists = _context.Projects.Any(a => a.Id == item.Id);
                 if (exists)
                 {
                     _context.Projects.Update(item);
                 }
                 else
-                {                   
+                {
                     _context.Projects.Add(item);
                 }
                 // Save the changes
                 _context.SaveChanges();
             }
-            
+
             return new NoContentResult();
         }
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         /// <response code="200">OK</response>
         public virtual IActionResult ProjectsGetAsync()
@@ -172,7 +172,7 @@ namespace HETSAPI.Services.Impl
 
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         /// <param name="id">id of Owner to fetch Contacts for</param>
         /// <response code="200">OK</response>
@@ -200,7 +200,7 @@ namespace HETSAPI.Services.Impl
 
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         /// <remarks>Replaces an Owner&#39;s Contacts</remarks>
         /// <param name="id">id of Owner to replace Contacts for</param>
@@ -238,7 +238,7 @@ namespace HETSAPI.Services.Impl
 
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         /// <remarks>Replaces an Project&#39;s Contacts</remarks>
         /// <param name="id">id of Project to replace Contacts for</param>
@@ -303,7 +303,7 @@ namespace HETSAPI.Services.Impl
         }
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         /// <remarks>Returns attachments for a particular Project</remarks>
         /// <param name="id">id of Project to fetch attachments for</param>
@@ -330,7 +330,7 @@ namespace HETSAPI.Services.Impl
         }
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         /// <param name="id">id of Project to delete</param>
         /// <response code="200">OK</response>
@@ -358,7 +358,7 @@ namespace HETSAPI.Services.Impl
 
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         /// <remarks>Returns History for a particular Project</remarks>
         /// <param name="id">id of Project to fetch History for</param>
@@ -400,11 +400,12 @@ namespace HETSAPI.Services.Impl
         }
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         /// <remarks>Add a History record to the Project</remarks>
         /// <param name="id">id of Project to fetch History for</param>
         /// <param name="item"></param>
+        /// <response code="200">OK</response>
         /// <response code="201">History created</response>
         public virtual IActionResult ProjectsIdHistoryPostAsync(int id, History item)
         {
@@ -438,7 +439,7 @@ namespace HETSAPI.Services.Impl
 
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         /// <param name="id">id of Project to fetch</param>
         /// <response code="200">OK</response>
@@ -468,7 +469,7 @@ namespace HETSAPI.Services.Impl
         }
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         /// <param name="id">id of Project to fetch</param>
         /// <param name="item"></param>
@@ -493,7 +494,7 @@ namespace HETSAPI.Services.Impl
         }
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         /// <param name="item"></param>
         /// <response code="201">Project created</response>
@@ -527,21 +528,24 @@ namespace HETSAPI.Services.Impl
         /// Searches Projects
         /// </summary>
         /// <remarks>Used for the project search page.</remarks>
-        /// <param name="districts">Local areas (array of id numbers)</param>
+        /// <param name="districts">Districts (comma seperated list of id numbers)</param>
         /// <param name="project">name or partial name for a Project</param>
         /// <param name="hasRequests">if true then only include Projects with active Requests</param>
         /// <param name="hasHires">if true then only include Projects with active Rental Agreements</param>
+        /// <param name="status">if included, filter the results to those with a status matching this string</param>
         /// <response code="200">OK</response>
-        public virtual IActionResult ProjectsSearchGetAsync(int?[] districts, string project, bool? hasRequests, bool? hasHires)
+        public virtual IActionResult ProjectsSearchGetAsync(string districts, string project, bool? hasRequests, bool? hasHires, string status)
         {
+            int?[] districtTokens = ParseIntArray(districts);
+
             var data = _context.Projects
                     .Include(x => x.District.Region)
                     .Include(x => x.PrimaryContact)
                     .Select(x => x);
 
-            if (districts != null && districts.Length > 0)
+            if (districtTokens != null && districts.Length > 0)
             {
-                data = data.Where(x => districts.Contains(x.District.Id));                
+                data = data.Where(x => districtTokens.Contains(x.District.Id));
             }
 
             if (hasRequests != null)
@@ -551,7 +555,7 @@ namespace HETSAPI.Services.Impl
 
             if (hasHires != null)
             {
-                // throw new NotImplementedException();          
+                // throw new NotImplementedException();
             }
 
             if (project != null)
@@ -567,7 +571,7 @@ namespace HETSAPI.Services.Impl
                 result.Add(item.ToViewModel());
             }
 
-            // second pass to do calculated fields.            
+            // second pass to do calculated fields.
             foreach (ProjectSearchResultViewModel projectSearchResultViewModel in result)
             {
                 // calculated fields.
@@ -582,7 +586,7 @@ namespace HETSAPI.Services.Impl
                     .Where(x => x.Project.Id == projectSearchResultViewModel.Id)
                     .Count();
             }
-                           
+
             return new ObjectResult(result);
         }
     }

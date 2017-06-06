@@ -1,4862 +1,2620 @@
 [
     {
+        "districtEquipmentType": {
+            "id": "200011"
+        },
         "equipmentCount": "1",
-        "equipmentType": {
-            "id": "200003"
-        },
-        "expectedEndDate": "4/27/2017",
-        "expectedHours": "26",
-        "expectedStartDate": "4/24/2017",
-        "id": "600000",
+        "expectedEndDate": "6/9/2017",
+        "expectedHours": "28",
+        "expectedStartDate": "6/6/2017",
+        "id": "200000",
         "localArea": {
-            "id": "rg:None"
+            "id": "200075"
         },
-        "project": "Burdett Avenue Building",
-        "status": "In progress"
-    },
-    {
-        "equipmentCount": "1",
-        "equipmentType": {
-            "id": "200006"
-        },
-        "expectedEndDate": "4/30/2017",
-        "expectedHours": "13",
-        "expectedStartDate": "4/29/2017",
-        "id": "600001",
-        "localArea": {
-            "id": "rg:None"
-        },
-        "project": "Brew Creek Rd Bridge",
-        "status": "Completed"
-    },
-    {
-        "equipmentCount": "3",
-        "equipmentType": {
-            "id": "200009"
-        },
-        "expectedEndDate": "5/31/2017",
-        "expectedHours": "23",
-        "expectedStartDate": "5/23/2017",
-        "id": "600002",
-        "localArea": {
-            "id": "rg:None"
-        },
-        "project": "Mesa Vista Drive HOV Lane",
-        "status": "In progress"
-    },
-    {
-        "equipmentCount": "1",
-        "equipmentType": {
-            "id": "200009"
-        },
-        "expectedEndDate": "5/21/2017",
-        "expectedHours": "45",
-        "expectedStartDate": "5/16/2017",
-        "id": "600003",
-        "localArea": {
-            "id": "rg:None"
-        },
-        "project": "Burdett Avenue HOV Lane",
-        "status": "In progress"
-    },
-    {
-        "equipmentCount": "1",
-        "equipmentType": {
-            "id": "200006"
-        },
-        "expectedEndDate": "4/23/2017",
-        "expectedHours": "92",
-        "expectedStartDate": "4/12/2017",
-        "id": "600004",
-        "localArea": {
-            "id": "rg:None"
-        },
-        "project": "Noble Rd Upgrade",
-        "status": "In progress"
-    },
-    {
-        "equipmentCount": "1",
-        "equipmentType": {
-            "id": "200003"
-        },
-        "expectedEndDate": "4/18/2017",
-        "expectedHours": "58",
-        "expectedStartDate": "4/11/2017",
-        "id": "600005",
-        "localArea": {
-            "id": "rg:None"
-        },
-        "project": "Essendene Avenue Bridge",
-        "status": "Completed"
-    },
-    {
-        "equipmentCount": "1",
-        "equipmentType": {
-            "id": "200007"
-        },
-        "expectedEndDate": "5/3/2017",
-        "expectedHours": "49",
-        "expectedStartDate": "4/27/2017",
-        "id": "600006",
-        "localArea": {
-            "id": "rg:None"
-        },
-        "project": "Cordova Street Overpass",
-        "status": "Completed"
-    },
-    {
-        "equipmentCount": "1",
-        "equipmentType": {
-            "id": "200005"
-        },
-        "expectedEndDate": "5/20/2017",
-        "expectedHours": "15",
-        "expectedStartDate": "5/19/2017",
-        "id": "600007",
-        "localArea": {
-            "id": "rg:None"
-        },
-        "project": "Hardy Street HOV Lane",
-        "status": "Completed"
-    },
-    {
-        "equipmentCount": "4",
-        "equipmentType": {
-            "id": "200006"
-        },
-        "expectedEndDate": "4/18/2017",
-        "expectedHours": "8",
-        "expectedStartDate": "4/14/2017",
-        "id": "600008",
-        "localArea": {
-            "id": "rg:None"
-        },
-        "project": "Robson St Expressway",
-        "status": "Completed"
-    },
-    {
-        "equipmentCount": "4",
-        "equipmentType": {
+        "project": {
             "id": "200000"
         },
-        "expectedEndDate": "6/4/2017",
-        "expectedHours": "75",
-        "expectedStartDate": "4/28/2017",
-        "id": "600009",
-        "localArea": {
-            "id": "rg:None"
-        },
-        "project": "Wellington Ave Express Lane",
         "status": "In progress"
     },
     {
-        "equipmentCount": "3",
-        "equipmentType": {
-            "id": "200006"
-        },
-        "expectedEndDate": "5/8/2017",
-        "expectedHours": "60",
-        "expectedStartDate": "4/16/2017",
-        "id": "600010",
-        "localArea": {
-            "id": "rg:None"
-        },
-        "project": "Old Spallumcheen Rd Expressway",
-        "status": "In progress"
-    },
-    {
-        "equipmentCount": "1",
-        "equipmentType": {
-            "id": "200006"
-        },
-        "expectedEndDate": "5/6/2017",
-        "expectedHours": "88",
-        "expectedStartDate": "4/25/2017",
-        "id": "600011",
-        "localArea": {
-            "id": "rg:None"
-        },
-        "project": "Noble Rd Overpass",
-        "status": "In progress"
-    },
-    {
-        "equipmentCount": "3",
-        "equipmentType": {
-            "id": "200009"
-        },
-        "expectedEndDate": "5/18/2017",
-        "expectedHours": "65",
-        "expectedStartDate": "4/24/2017",
-        "id": "600012",
-        "localArea": {
-            "id": "rg:None"
-        },
-        "project": "Jade St Building",
-        "status": "In progress"
-    },
-    {
-        "equipmentCount": "4",
-        "equipmentType": {
-            "id": "200007"
-        },
-        "expectedEndDate": "6/11/2017",
-        "expectedHours": "81",
-        "expectedStartDate": "5/2/2017",
-        "id": "600013",
-        "localArea": {
-            "id": "rg:None"
-        },
-        "project": "Wallace Street Express Lane",
-        "status": "In progress"
-    },
-    {
-        "equipmentCount": "1",
-        "equipmentType": {
-            "id": "200006"
-        },
-        "expectedEndDate": "4/17/2017",
-        "expectedHours": "89",
-        "expectedStartDate": "4/6/2017",
-        "id": "600014",
-        "localArea": {
-            "id": "rg:None"
-        },
-        "project": "James Street HOV Lane",
-        "status": "In progress"
-    },
-    {
-        "equipmentCount": "5",
-        "equipmentType": {
-            "id": "200007"
-        },
-        "expectedEndDate": "5/3/2017",
-        "expectedHours": "41",
-        "expectedStartDate": "4/8/2017",
-        "id": "600015",
-        "localArea": {
-            "id": "rg:None"
-        },
-        "project": "Holdom Avenue Cloverleaf",
-        "status": "In progress"
-    },
-    {
-        "equipmentCount": "1",
-        "equipmentType": {
-            "id": "200003"
-        },
-        "expectedEndDate": "4/26/2017",
-        "expectedHours": "40",
-        "expectedStartDate": "4/21/2017",
-        "id": "600016",
-        "localArea": {
-            "id": "rg:None"
-        },
-        "project": "Roger Street Expressway",
-        "status": "In progress"
-    },
-    {
-        "equipmentCount": "1",
-        "equipmentType": {
-            "id": "200006"
-        },
-        "expectedEndDate": "5/6/2017",
-        "expectedHours": "30",
-        "expectedStartDate": "5/3/2017",
-        "id": "600017",
-        "localArea": {
-            "id": "rg:None"
-        },
-        "project": "Scotts Lane Bypass",
-        "status": "In progress"
-    },
-    {
-        "equipmentCount": "1",
-        "equipmentType": {
-            "id": "200007"
-        },
-        "expectedEndDate": "5/8/2017",
-        "expectedHours": "8",
-        "expectedStartDate": "5/7/2017",
-        "id": "600018",
-        "localArea": {
-            "id": "rg:None"
-        },
-        "project": "Findlay Creek Road HOV Lane",
-        "status": "In progress"
-    },
-    {
-        "equipmentCount": "1",
-        "equipmentType": {
-            "id": "200009"
-        },
-        "expectedEndDate": "4/13/2017",
-        "expectedHours": "52",
-        "expectedStartDate": "4/7/2017",
-        "id": "600019",
-        "localArea": {
-            "id": "rg:None"
-        },
-        "project": "Sixth Street Bypass",
-        "status": "In progress"
-    },
-    {
-        "equipmentCount": "2",
-        "equipmentType": {
-            "id": "200009"
-        },
-        "expectedEndDate": "6/8/2017",
-        "expectedHours": "92",
-        "expectedStartDate": "5/16/2017",
-        "id": "600020",
-        "localArea": {
-            "id": "rg:None"
-        },
-        "project": "Blanshard Bypass",
-        "status": "In progress"
-    },
-    {
-        "equipmentCount": "1",
-        "equipmentType": {
-            "id": "200009"
-        },
-        "expectedEndDate": "4/28/2017",
-        "expectedHours": "73",
-        "expectedStartDate": "4/19/2017",
-        "id": "600021",
-        "localArea": {
-            "id": "rg:None"
-        },
-        "project": "King George Hwy HOV Lane",
-        "status": "In progress"
-    },
-    {
-        "equipmentCount": "1",
-        "equipmentType": {
-            "id": "200004"
-        },
-        "expectedEndDate": "4/28/2017",
-        "expectedHours": "42",
-        "expectedStartDate": "4/23/2017",
-        "id": "600022",
-        "localArea": {
-            "id": "rg:None"
-        },
-        "project": "Glover Road Cloverleaf",
-        "status": "In progress"
-    },
-    {
-        "equipmentCount": "1",
-        "equipmentType": {
-            "id": "200006"
-        },
-        "expectedEndDate": "4/24/2017",
-        "expectedHours": "19",
-        "expectedStartDate": "4/22/2017",
-        "id": "600023",
-        "localArea": {
-            "id": "rg:None"
-        },
-        "project": "Wallace Street Bridge",
-        "status": "In progress"
-    },
-    {
-        "equipmentCount": "1",
-        "equipmentType": {
+        "districtEquipmentType": {
             "id": "200005"
         },
-        "expectedEndDate": "5/3/2017",
-        "expectedHours": "57",
-        "expectedStartDate": "4/26/2017",
-        "id": "600024",
-        "localArea": {
-            "id": "rg:None"
-        },
-        "project": "Yoho Valley Road Bypass",
-        "status": "In progress"
-    },
-    {
         "equipmentCount": "1",
-        "equipmentType": {
-            "id": "200009"
-        },
-        "expectedEndDate": "5/10/2017",
-        "expectedHours": "51",
-        "expectedStartDate": "5/4/2017",
-        "id": "600025",
+        "expectedEndDate": "6/15/2017",
+        "expectedHours": "86",
+        "expectedStartDate": "6/5/2017",
+        "id": "200001",
         "localArea": {
-            "id": "rg:None"
+            "id": "200076"
         },
-        "project": "Burdett Avenue Expressway",
-        "status": "In progress"
-    },
-    {
-        "equipmentCount": "3",
-        "equipmentType": {
-            "id": "200002"
-        },
-        "expectedEndDate": "5/14/2017",
-        "expectedHours": "15",
-        "expectedStartDate": "5/9/2017",
-        "id": "600026",
-        "localArea": {
-            "id": "rg:None"
-        },
-        "project": "Cordova Street Building",
-        "status": "In progress"
-    },
-    {
-        "equipmentCount": "1",
-        "equipmentType": {
+        "project": {
             "id": "200001"
         },
-        "expectedEndDate": "5/4/2017",
-        "expectedHours": "29",
-        "expectedStartDate": "5/1/2017",
-        "id": "600027",
-        "localArea": {
-            "id": "rg:None"
-        },
-        "project": "Glover Road Expressway",
-        "status": "In progress"
-    },
-    {
-        "equipmentCount": "1",
-        "equipmentType": {
-            "id": "200006"
-        },
-        "expectedEndDate": "4/30/2017",
-        "expectedHours": "99",
-        "expectedStartDate": "4/18/2017",
-        "id": "600028",
-        "localArea": {
-            "id": "200029"
-        },
-        "project": "Scotts Lane Upgrade",
-        "status": "In progress"
-    },
-    {
-        "equipmentCount": "1",
-        "equipmentType": {
-            "id": "200006"
-        },
-        "expectedEndDate": "5/8/2017",
-        "expectedHours": "81",
-        "expectedStartDate": "4/28/2017",
-        "id": "600029",
-        "localArea": {
-            "id": "200029"
-        },
-        "project": "Nootka Street Upgrade",
-        "status": "In progress"
-    },
-    {
-        "equipmentCount": "1",
-        "equipmentType": {
-            "id": "200001"
-        },
-        "expectedEndDate": "5/12/2017",
-        "expectedHours": "47",
-        "expectedStartDate": "5/7/2017",
-        "id": "600030",
-        "localArea": {
-            "id": "200029"
-        },
-        "project": "Nootka Street Cloverleaf",
-        "status": "In progress"
-    },
-    {
-        "equipmentCount": "1",
-        "equipmentType": {
-            "id": "200002"
-        },
-        "expectedEndDate": "5/19/2017",
-        "expectedHours": "21",
-        "expectedStartDate": "5/17/2017",
-        "id": "600031",
-        "localArea": {
-            "id": "200029"
-        },
-        "project": "Kinchant St Cloverleaf",
-        "status": "In progress"
-    },
-    {
-        "equipmentCount": "1",
-        "equipmentType": {
-            "id": "200007"
-        },
-        "expectedEndDate": "5/10/2017",
-        "expectedHours": "47",
-        "expectedStartDate": "5/5/2017",
-        "id": "600032",
-        "localArea": {
-            "id": "200029"
-        },
-        "project": "Queens Bay Bypass",
-        "status": "In progress"
-    },
-    {
-        "equipmentCount": "1",
-        "equipmentType": {
-            "id": "200006"
-        },
-        "expectedEndDate": "5/27/2017",
-        "expectedHours": "84",
-        "expectedStartDate": "5/17/2017",
-        "id": "600033",
-        "localArea": {
-            "id": "200029"
-        },
-        "project": "102nd Avenue Overpass",
-        "status": "In progress"
-    },
-    {
-        "equipmentCount": "5",
-        "equipmentType": {
-            "id": "200006"
-        },
-        "expectedEndDate": "6/2/2017",
-        "expectedHours": "16",
-        "expectedStartDate": "5/23/2017",
-        "id": "600034",
-        "localArea": {
-            "id": "200029"
-        },
-        "project": "Blanshard Bridge",
         "status": "Completed"
     },
     {
+        "districtEquipmentType": {
+            "id": "200013"
+        },
         "equipmentCount": "1",
-        "equipmentType": {
-            "id": "200007"
-        },
-        "expectedEndDate": "5/28/2017",
-        "expectedHours": "97",
-        "expectedStartDate": "5/16/2017",
-        "id": "600035",
-        "localArea": {
-            "id": "rg:None"
-        },
-        "project": "Cardero St Express Lane",
-        "status": "Completed"
-    },
-    {
-        "equipmentCount": "4",
-        "equipmentType": {
-            "id": "200004"
-        },
-        "expectedEndDate": "6/21/2017",
-        "expectedHours": "92",
-        "expectedStartDate": "5/6/2017",
-        "id": "600036",
-        "localArea": {
-            "id": "rg:None"
-        },
-        "project": "Old Spallumcheen Rd Bypass",
-        "status": "In progress"
-    },
-    {
-        "equipmentCount": "1",
-        "equipmentType": {
-            "id": "200006"
-        },
-        "expectedEndDate": "5/7/2017",
-        "expectedHours": "27",
-        "expectedStartDate": "5/4/2017",
-        "id": "600037",
-        "localArea": {
-            "id": "rg:None"
-        },
-        "project": "Keith Road Upgrade",
-        "status": "In progress"
-    },
-    {
-        "equipmentCount": "1",
-        "equipmentType": {
-            "id": "200007"
-        },
-        "expectedEndDate": "4/12/2017",
-        "expectedHours": "54",
-        "expectedStartDate": "4/6/2017",
-        "id": "600038",
-        "localArea": {
-            "id": "rg:None"
-        },
-        "project": "Burdett Avenue Bridge Replacement",
-        "status": "In progress"
-    },
-    {
-        "equipmentCount": "1",
-        "equipmentType": {
-            "id": "200000"
-        },
-        "expectedEndDate": "5/26/2017",
-        "expectedHours": "43",
-        "expectedStartDate": "5/21/2017",
-        "id": "600039",
-        "localArea": {
-            "id": "rg:None"
-        },
-        "project": "Coldstream Avenue Expressway",
-        "status": "In progress"
-    },
-    {
-        "equipmentCount": "1",
-        "equipmentType": {
-            "id": "200006"
-        },
-        "expectedEndDate": "4/26/2017",
-        "expectedHours": "51",
-        "expectedStartDate": "4/20/2017",
-        "id": "600040",
-        "localArea": {
-            "id": "rg:None"
-        },
-        "project": "Hardy Street Building",
-        "status": "In progress"
-    },
-    {
-        "equipmentCount": "1",
-        "equipmentType": {
-            "id": "200004"
-        },
-        "expectedEndDate": "5/30/2017",
-        "expectedHours": "59",
-        "expectedStartDate": "5/23/2017",
-        "id": "600041",
-        "localArea": {
-            "id": "rg:None"
-        },
-        "project": "Hastings Street Upgrade",
-        "status": "In progress"
-    },
-    {
-        "equipmentCount": "1",
-        "equipmentType": {
-            "id": "200003"
-        },
-        "expectedEndDate": "4/25/2017",
-        "expectedHours": "89",
-        "expectedStartDate": "4/14/2017",
-        "id": "600042",
-        "localArea": {
-            "id": "rg:None"
-        },
-        "project": "Alaska Hwy Cloverleaf",
-        "status": "Completed"
-    },
-    {
-        "equipmentCount": "1",
-        "equipmentType": {
-            "id": "200002"
-        },
-        "expectedEndDate": "4/30/2017",
-        "expectedHours": "97",
-        "expectedStartDate": "4/18/2017",
-        "id": "600043",
-        "localArea": {
-            "id": "rg:None"
-        },
-        "project": "Burdett Avenue Upgrade",
-        "status": "In progress"
-    },
-    {
-        "equipmentCount": "2",
-        "equipmentType": {
-            "id": "200001"
-        },
-        "expectedEndDate": "4/21/2017",
-        "expectedHours": "36",
-        "expectedStartDate": "4/12/2017",
-        "id": "600044",
-        "localArea": {
-            "id": "rg:None"
-        },
-        "project": "James Street Expressway",
-        "status": "In progress"
-    },
-    {
-        "equipmentCount": "1",
-        "equipmentType": {
-            "id": "200001"
-        },
-        "expectedEndDate": "4/8/2017",
-        "expectedHours": "41",
-        "expectedStartDate": "4/3/2017",
-        "id": "600045",
-        "localArea": {
-            "id": "rg:None"
-        },
-        "project": "Tolmie St Cloverleaf",
-        "status": "In progress"
-    },
-    {
-        "equipmentCount": "1",
-        "equipmentType": {
-            "id": "200002"
-        },
-        "expectedEndDate": "5/25/2017",
-        "expectedHours": "43",
-        "expectedStartDate": "5/20/2017",
-        "id": "600046",
-        "localArea": {
-            "id": "rg:None"
-        },
-        "project": "Sixth Street HOV Lane",
-        "status": "In progress"
-    },
-    {
-        "equipmentCount": "1",
-        "equipmentType": {
-            "id": "200005"
-        },
-        "expectedEndDate": "4/9/2017",
-        "expectedHours": "19",
-        "expectedStartDate": "4/7/2017",
-        "id": "600047",
-        "localArea": {
-            "id": "rg:None"
-        },
-        "project": "King George Hwy Upgrade",
-        "status": "In progress"
-    },
-    {
-        "equipmentCount": "1",
-        "equipmentType": {
-            "id": "200003"
-        },
-        "expectedEndDate": "5/10/2017",
-        "expectedHours": "81",
-        "expectedStartDate": "4/30/2017",
-        "id": "600048",
-        "localArea": {
-            "id": "rg:None"
-        },
-        "project": "Stum Lake Road Extension",
-        "status": "In progress"
-    },
-    {
-        "equipmentCount": "1",
-        "equipmentType": {
-            "id": "200007"
-        },
-        "expectedEndDate": "4/6/2017",
-        "expectedHours": "56",
-        "expectedStartDate": "3/30/2017",
-        "id": "600049",
-        "localArea": {
-            "id": "rg:None"
-        },
-        "project": "Tolmie St Extension",
-        "status": "Completed"
-    },
-    {
-        "equipmentCount": "1",
-        "equipmentType": {
-            "id": "200006"
-        },
-        "expectedEndDate": "5/30/2017",
-        "expectedHours": "87",
-        "expectedStartDate": "5/20/2017",
-        "id": "600050",
-        "localArea": {
-            "id": "rg:None"
-        },
-        "project": "Coldstream Avenue Cloverleaf",
-        "status": "In progress"
-    },
-    {
-        "equipmentCount": "1",
-        "equipmentType": {
-            "id": "200006"
-        },
-        "expectedEndDate": "5/15/2017",
-        "expectedHours": "51",
-        "expectedStartDate": "5/9/2017",
-        "id": "600051",
-        "localArea": {
-            "id": "rg:None"
-        },
-        "project": "Lake City Way Cloverleaf",
-        "status": "In progress"
-    },
-    {
-        "equipmentCount": "4",
-        "equipmentType": {
-            "id": "200003"
-        },
-        "expectedEndDate": "4/30/2017",
-        "expectedHours": "44",
-        "expectedStartDate": "4/8/2017",
-        "id": "600052",
-        "localArea": {
-            "id": "rg:None"
-        },
-        "project": "Essendene Avenue Bypass",
-        "status": "In progress"
-    },
-    {
-        "equipmentCount": "1",
-        "equipmentType": {
-            "id": "200001"
-        },
-        "expectedEndDate": "4/23/2017",
-        "expectedHours": "66",
-        "expectedStartDate": "4/15/2017",
-        "id": "600053",
-        "localArea": {
-            "id": "rg:None"
-        },
-        "project": "Wallace Street Upgrade",
-        "status": "In progress"
-    },
-    {
-        "equipmentCount": "3",
-        "equipmentType": {
-            "id": "200006"
-        },
-        "expectedEndDate": "5/16/2017",
-        "expectedHours": "89",
-        "expectedStartDate": "4/13/2017",
-        "id": "600054",
-        "localArea": {
-            "id": "rg:None"
-        },
-        "project": "Shaughnessy St Expressway",
-        "status": "Cancelled"
-    },
-    {
-        "equipmentCount": "4",
-        "equipmentType": {
-            "id": "200005"
-        },
-        "expectedEndDate": "6/22/2017",
-        "expectedHours": "84",
-        "expectedStartDate": "5/11/2017",
-        "id": "600055",
-        "localArea": {
-            "id": "rg:None"
-        },
-        "project": "Tchesinkut Lake Rd Overpass",
-        "status": "Cancelled"
-    },
-    {
-        "equipmentCount": "1",
-        "equipmentType": {
-            "id": "200006"
-        },
-        "expectedEndDate": "4/10/2017",
-        "expectedHours": "62",
-        "expectedStartDate": "4/3/2017",
-        "id": "600056",
-        "localArea": {
-            "id": "rg:None"
-        },
-        "project": "Blind Bay Road Bypass",
-        "status": "In progress"
-    },
-    {
-        "equipmentCount": "1",
-        "equipmentType": {
-            "id": "200002"
-        },
-        "expectedEndDate": "4/7/2017",
-        "expectedHours": "22",
-        "expectedStartDate": "4/5/2017",
-        "id": "600057",
-        "localArea": {
-            "id": "rg:None"
-        },
-        "project": "Glover Road Building",
-        "status": "In progress"
-    },
-    {
-        "equipmentCount": "1",
-        "equipmentType": {
-            "id": "200000"
-        },
-        "expectedEndDate": "6/2/2017",
-        "expectedHours": "94",
-        "expectedStartDate": "5/22/2017",
-        "id": "600058",
-        "localArea": {
-            "id": "rg:None"
-        },
-        "project": "Wellington Ave Bypass",
-        "status": "In progress"
-    },
-    {
-        "equipmentCount": "4",
-        "equipmentType": {
-            "id": "200006"
-        },
-        "expectedEndDate": "6/30/2017",
-        "expectedHours": "81",
-        "expectedStartDate": "5/21/2017",
-        "id": "600059",
-        "localArea": {
-            "id": "rg:None"
-        },
-        "project": "Hastings Street Express Lane",
-        "status": "Cancelled"
-    },
-    {
-        "equipmentCount": "1",
-        "equipmentType": {
-            "id": "200007"
-        },
-        "expectedEndDate": "4/12/2017",
-        "expectedHours": "22",
-        "expectedStartDate": "4/10/2017",
-        "id": "600060",
-        "localArea": {
-            "id": "rg:None"
-        },
-        "project": "Tchesinkut Lake Rd Bridge Replacement",
-        "status": "In progress"
-    },
-    {
-        "equipmentCount": "1",
-        "equipmentType": {
-            "id": "200003"
-        },
-        "expectedEndDate": "4/15/2017",
-        "expectedHours": "34",
-        "expectedStartDate": "4/11/2017",
-        "id": "600061",
-        "localArea": {
-            "id": "rg:None"
-        },
-        "project": "Yoho Valley Road Extension",
-        "status": "In progress"
-    },
-    {
-        "equipmentCount": "1",
-        "equipmentType": {
-            "id": "200001"
-        },
-        "expectedEndDate": "4/17/2017",
-        "expectedHours": "96",
-        "expectedStartDate": "4/5/2017",
-        "id": "600062",
-        "localArea": {
-            "id": "rg:None"
-        },
-        "project": "Keith Road HOV Lane",
-        "status": "Cancelled"
-    },
-    {
-        "equipmentCount": "3",
-        "equipmentType": {
-            "id": "200001"
-        },
-        "expectedEndDate": "5/11/2017",
-        "expectedHours": "63",
-        "expectedStartDate": "4/18/2017",
-        "id": "600063",
-        "localArea": {
-            "id": "rg:None"
-        },
-        "project": "Quayside Dr Overpass",
-        "status": "In progress"
-    },
-    {
-        "equipmentCount": "1",
-        "equipmentType": {
-            "id": "200005"
-        },
-        "expectedEndDate": "5/23/2017",
-        "expectedHours": "8",
-        "expectedStartDate": "5/22/2017",
-        "id": "600064",
-        "localArea": {
-            "id": "rg:None"
-        },
-        "project": "Jade St Express Lane",
-        "status": "In progress"
-    },
-    {
-        "equipmentCount": "1",
-        "equipmentType": {
-            "id": "200006"
-        },
-        "expectedEndDate": "5/16/2017",
-        "expectedHours": "95",
-        "expectedStartDate": "5/5/2017",
-        "id": "600065",
-        "localArea": {
-            "id": "rg:None"
-        },
-        "project": "Robson St Bypass",
-        "status": "In progress"
-    },
-    {
-        "equipmentCount": "1",
-        "equipmentType": {
-            "id": "200003"
-        },
-        "expectedEndDate": "5/22/2017",
+        "expectedEndDate": "6/28/2017",
         "expectedHours": "77",
-        "expectedStartDate": "5/13/2017",
-        "id": "600066",
+        "expectedStartDate": "6/19/2017",
+        "id": "200002",
         "localArea": {
-            "id": "rg:None"
+            "id": "200077"
         },
-        "project": "Carlson Road Building",
-        "status": "In progress"
-    },
-    {
-        "equipmentCount": "1",
-        "equipmentType": {
-            "id": "200001"
-        },
-        "expectedEndDate": "4/21/2017",
-        "expectedHours": "98",
-        "expectedStartDate": "4/9/2017",
-        "id": "600067",
-        "localArea": {
-            "id": "rg:None"
-        },
-        "project": "McGill Road Bridge Replacement",
-        "status": "Cancelled"
-    },
-    {
-        "equipmentCount": "5",
-        "equipmentType": {
-            "id": "200003"
-        },
-        "expectedEndDate": "7/4/2017",
-        "expectedHours": "85",
-        "expectedStartDate": "5/12/2017",
-        "id": "600068",
-        "localArea": {
-            "id": "rg:None"
-        },
-        "project": "Russell Avenue Upgrade",
-        "status": "In progress"
-    },
-    {
-        "equipmentCount": "1",
-        "equipmentType": {
+        "project": {
             "id": "200002"
         },
-        "expectedEndDate": "4/17/2017",
-        "expectedHours": "30",
-        "expectedStartDate": "4/14/2017",
-        "id": "600069",
-        "localArea": {
-            "id": "rg:None"
-        },
-        "project": "Robson St Cloverleaf",
         "status": "In progress"
     },
     {
+        "districtEquipmentType": {
+            "id": "200010"
+        },
         "equipmentCount": "1",
-        "equipmentType": {
-            "id": "200009"
-        },
-        "expectedEndDate": "5/29/2017",
-        "expectedHours": "73",
-        "expectedStartDate": "5/20/2017",
-        "id": "600070",
-        "localArea": {
-            "id": "rg:None"
-        },
-        "project": "Haaglund Rd Overpass",
-        "status": "In progress"
-    },
-    {
-        "equipmentCount": "1",
-        "equipmentType": {
-            "id": "200002"
-        },
-        "expectedEndDate": "4/24/2017",
-        "expectedHours": "95",
-        "expectedStartDate": "4/13/2017",
-        "id": "600071",
-        "localArea": {
-            "id": "rg:None"
-        },
-        "project": "Tchesinkut Lake Rd Upgrade",
-        "status": "Cancelled"
-    },
-    {
-        "equipmentCount": "1",
-        "equipmentType": {
-            "id": "200004"
-        },
-        "expectedEndDate": "5/23/2017",
-        "expectedHours": "67",
-        "expectedStartDate": "5/15/2017",
-        "id": "600072",
-        "localArea": {
-            "id": "rg:None"
-        },
-        "project": "Glover Road Express Lane",
-        "status": "In progress"
-    },
-    {
-        "equipmentCount": "1",
-        "equipmentType": {
-            "id": "200005"
-        },
-        "expectedEndDate": "5/8/2017",
-        "expectedHours": "49",
-        "expectedStartDate": "5/2/2017",
-        "id": "600073",
-        "localArea": {
-            "id": "rg:None"
-        },
-        "project": "Stum Lake Road Building",
-        "status": "In progress"
-    },
-    {
-        "equipmentCount": "5",
-        "equipmentType": {
-            "id": "200005"
-        },
-        "expectedEndDate": "5/11/2017",
-        "expectedHours": "38",
-        "expectedStartDate": "4/18/2017",
-        "id": "600074",
-        "localArea": {
-            "id": "rg:None"
-        },
-        "project": "Shaughnessy St Upgrade",
-        "status": "In progress"
-    },
-    {
-        "equipmentCount": "1",
-        "equipmentType": {
-            "id": "200004"
-        },
-        "expectedEndDate": "4/25/2017",
-        "expectedHours": "31",
-        "expectedStartDate": "4/22/2017",
-        "id": "600075",
-        "localArea": {
-            "id": "rg:None"
-        },
-        "project": "Shaughnessy St Building",
-        "status": "In progress"
-    },
-    {
-        "equipmentCount": "1",
-        "equipmentType": {
-            "id": "200006"
-        },
-        "expectedEndDate": "5/6/2017",
-        "expectedHours": "32",
-        "expectedStartDate": "5/2/2017",
-        "id": "600076",
-        "localArea": {
-            "id": "rg:None"
-        },
-        "project": "Mesa Vista Drive Bridge Replacement",
-        "status": "In progress"
-    },
-    {
-        "equipmentCount": "2",
-        "equipmentType": {
-            "id": "200001"
-        },
-        "expectedEndDate": "6/13/2017",
-        "expectedHours": "82",
-        "expectedStartDate": "5/24/2017",
-        "id": "600077",
-        "localArea": {
-            "id": "rg:None"
-        },
-        "project": "Roger Street Upgrade",
-        "status": "Cancelled"
-    },
-    {
-        "equipmentCount": "1",
-        "equipmentType": {
-            "id": "200003"
-        },
-        "expectedEndDate": "4/7/2017",
-        "expectedHours": "71",
-        "expectedStartDate": "3/30/2017",
-        "id": "600078",
-        "localArea": {
-            "id": "rg:None"
-        },
-        "project": "Stum Lake Road Upgrade",
-        "status": "In progress"
-    },
-    {
-        "equipmentCount": "1",
-        "equipmentType": {
-            "id": "200007"
-        },
-        "expectedEndDate": "5/26/2017",
-        "expectedHours": "79",
-        "expectedStartDate": "5/17/2017",
-        "id": "600079",
-        "localArea": {
-            "id": "rg:None"
-        },
-        "project": "Blind Bay Road Bridge Replacement",
-        "status": "In progress"
-    },
-    {
-        "equipmentCount": "1",
-        "equipmentType": {
-            "id": "200004"
-        },
-        "expectedEndDate": "4/16/2017",
-        "expectedHours": "17",
-        "expectedStartDate": "4/14/2017",
-        "id": "600080",
-        "localArea": {
-            "id": "rg:None"
-        },
-        "project": "Shaughnessy St Bridge Replacement",
-        "status": "In progress"
-    },
-    {
-        "equipmentCount": "5",
-        "equipmentType": {
-            "id": "200007"
-        },
-        "expectedEndDate": "5/2/2017",
-        "expectedHours": "44",
-        "expectedStartDate": "4/5/2017",
-        "id": "600081",
-        "localArea": {
-            "id": "rg:None"
-        },
-        "project": "Yoho Valley Road Upgrade",
-        "status": "Cancelled"
-    },
-    {
-        "equipmentCount": "1",
-        "equipmentType": {
-            "id": "200002"
-        },
-        "expectedEndDate": "5/7/2017",
-        "expectedHours": "63",
-        "expectedStartDate": "4/30/2017",
-        "id": "600082",
-        "localArea": {
-            "id": "rg:None"
-        },
-        "project": "Old Spallumcheen Rd HOV Lane",
-        "status": "Completed"
-    },
-    {
-        "equipmentCount": "1",
-        "equipmentType": {
-            "id": "200000"
-        },
-        "expectedEndDate": "5/17/2017",
-        "expectedHours": "9",
-        "expectedStartDate": "5/16/2017",
-        "id": "600083",
-        "localArea": {
-            "id": "rg:None"
-        },
-        "project": "Glover Road Bridge Replacement",
-        "status": "Completed"
-    },
-    {
-        "equipmentCount": "1",
-        "equipmentType": {
-            "id": "200005"
-        },
-        "expectedEndDate": "4/14/2017",
-        "expectedHours": "84",
-        "expectedStartDate": "4/4/2017",
-        "id": "600084",
-        "localArea": {
-            "id": "rg:None"
-        },
-        "project": "Coldstream Avenue Building",
-        "status": "In progress"
-    },
-    {
-        "equipmentCount": "3",
-        "equipmentType": {
-            "id": "200007"
-        },
-        "expectedEndDate": "4/25/2017",
-        "expectedHours": "32",
-        "expectedStartDate": "4/13/2017",
-        "id": "600085",
-        "localArea": {
-            "id": "rg:None"
-        },
-        "project": "Holdom Avenue Bridge",
-        "status": "Cancelled"
-    },
-    {
-        "equipmentCount": "1",
-        "equipmentType": {
-            "id": "200004"
-        },
-        "expectedEndDate": "5/12/2017",
-        "expectedHours": "42",
-        "expectedStartDate": "5/7/2017",
-        "id": "600086",
-        "localArea": {
-            "id": "rg:None"
-        },
-        "project": "Scotts Lane Overpass",
-        "status": "Cancelled"
-    },
-    {
-        "equipmentCount": "1",
-        "equipmentType": {
-            "id": "200002"
-        },
-        "expectedEndDate": "4/20/2017",
-        "expectedHours": "16",
-        "expectedStartDate": "4/18/2017",
-        "id": "600087",
-        "localArea": {
-            "id": "rg:None"
-        },
-        "project": "Findlay Creek Road Bypass",
-        "status": "In progress"
-    },
-    {
-        "equipmentCount": "3",
-        "equipmentType": {
-            "id": "200009"
-        },
-        "expectedEndDate": "4/26/2017",
-        "expectedHours": "71",
-        "expectedStartDate": "3/31/2017",
-        "id": "600088",
-        "localArea": {
-            "id": "rg:None"
-        },
-        "project": "Sixth Street Bridge Replacement",
-        "status": "In progress"
-    },
-    {
-        "equipmentCount": "1",
-        "equipmentType": {
-            "id": "200004"
-        },
-        "expectedEndDate": "4/5/2017",
-        "expectedHours": "13",
-        "expectedStartDate": "4/4/2017",
-        "id": "600089",
-        "localArea": {
-            "id": "rg:None"
-        },
-        "project": "King George Hwy Bridge",
-        "status": "In progress"
-    },
-    {
-        "equipmentCount": "3",
-        "equipmentType": {
-            "id": "200006"
-        },
-        "expectedEndDate": "5/9/2017",
-        "expectedHours": "49",
-        "expectedStartDate": "4/21/2017",
-        "id": "600090",
-        "localArea": {
-            "id": "rg:None"
-        },
-        "project": "Wallace Street HOV Lane",
-        "status": "Completed"
-    },
-    {
-        "equipmentCount": "1",
-        "equipmentType": {
-            "id": "200009"
-        },
-        "expectedEndDate": "4/13/2017",
-        "expectedHours": "14",
-        "expectedStartDate": "4/12/2017",
-        "id": "600091",
-        "localArea": {
-            "id": "rg:None"
-        },
-        "project": "Scotts Lane Building",
-        "status": "In progress"
-    },
-    {
-        "equipmentCount": "1",
-        "equipmentType": {
-            "id": "200000"
-        },
-        "expectedEndDate": "5/3/2017",
-        "expectedHours": "5",
-        "expectedStartDate": "5/3/2017",
-        "id": "600092",
-        "localArea": {
-            "id": "rg:None"
-        },
-        "project": "Nootka Street HOV Lane",
-        "status": "Completed"
-    },
-    {
-        "equipmentCount": "5",
-        "equipmentType": {
-            "id": "200004"
-        },
-        "expectedEndDate": "7/19/2017",
-        "expectedHours": "92",
-        "expectedStartDate": "5/23/2017",
-        "id": "600093",
-        "localArea": {
-            "id": "rg:None"
-        },
-        "project": "Nootka Street Extension",
-        "status": "In progress"
-    },
-    {
-        "equipmentCount": "1",
-        "equipmentType": {
-            "id": "200005"
-        },
-        "expectedEndDate": "5/1/2017",
-        "expectedHours": "94",
-        "expectedStartDate": "4/20/2017",
-        "id": "600094",
-        "localArea": {
-            "id": "rg:None"
-        },
-        "project": "102nd Avenue HOV Lane",
-        "status": "Cancelled"
-    },
-    {
-        "equipmentCount": "1",
-        "equipmentType": {
-            "id": "200009"
-        },
-        "expectedEndDate": "5/9/2017",
-        "expectedHours": "73",
-        "expectedStartDate": "4/30/2017",
-        "id": "600095",
-        "localArea": {
-            "id": "rg:None"
-        },
-        "project": "Cardero St Cloverleaf",
-        "status": "In progress"
-    },
-    {
-        "equipmentCount": "1",
-        "equipmentType": {
-            "id": "200003"
-        },
-        "expectedEndDate": "5/24/2017",
-        "expectedHours": "42",
-        "expectedStartDate": "5/19/2017",
-        "id": "600096",
-        "localArea": {
-            "id": "rg:None"
-        },
-        "project": "Blind Bay Road Upgrade",
-        "status": "Cancelled"
-    },
-    {
-        "equipmentCount": "1",
-        "equipmentType": {
-            "id": "200007"
-        },
-        "expectedEndDate": "4/17/2017",
-        "expectedHours": "21",
-        "expectedStartDate": "4/15/2017",
-        "id": "600097",
-        "localArea": {
-            "id": "rg:None"
-        },
-        "project": "Old Spallumcheen Rd Cloverleaf",
-        "status": "In progress"
-    },
-    {
-        "equipmentCount": "1",
-        "equipmentType": {
-            "id": "200009"
-        },
-        "expectedEndDate": "4/9/2017",
-        "expectedHours": "8",
-        "expectedStartDate": "4/8/2017",
-        "id": "600098",
-        "localArea": {
-            "id": "rg:None"
-        },
-        "project": "Keith Road Bridge Replacement",
-        "status": "In progress"
-    },
-    {
-        "equipmentCount": "1",
-        "equipmentType": {
-            "id": "200009"
-        },
-        "expectedEndDate": "5/12/2017",
-        "expectedHours": "72",
-        "expectedStartDate": "5/3/2017",
-        "id": "600099",
-        "localArea": {
-            "id": "rg:None"
-        },
-        "project": "Brew Creek Rd Extension",
-        "status": "In progress"
-    },
-    {
-        "equipmentCount": "1",
-        "equipmentType": {
-            "id": "200006"
-        },
-        "expectedEndDate": "4/11/2017",
-        "expectedHours": "23",
-        "expectedStartDate": "4/9/2017",
-        "id": "600100",
-        "localArea": {
-            "id": "rg:None"
-        },
-        "project": "Coldstream Avenue HOV Lane",
-        "status": "In progress"
-    },
-    {
-        "equipmentCount": "5",
-        "equipmentType": {
-            "id": "200002"
-        },
-        "expectedEndDate": "5/23/2017",
-        "expectedHours": "8",
-        "expectedStartDate": "5/18/2017",
-        "id": "600101",
-        "localArea": {
-            "id": "rg:None"
-        },
-        "project": "Wellington Ave Overpass",
-        "status": "In progress"
-    },
-    {
-        "equipmentCount": "1",
-        "equipmentType": {
-            "id": "200003"
-        },
-        "expectedEndDate": "4/24/2017",
-        "expectedHours": "41",
-        "expectedStartDate": "4/19/2017",
-        "id": "600102",
-        "localArea": {
-            "id": "rg:None"
-        },
-        "project": "Hardy Street Overpass",
-        "status": "In progress"
-    },
-    {
-        "equipmentCount": "1",
-        "equipmentType": {
-            "id": "200009"
-        },
-        "expectedEndDate": "5/8/2017",
-        "expectedHours": "38",
-        "expectedStartDate": "5/4/2017",
-        "id": "600103",
-        "localArea": {
-            "id": "rg:None"
-        },
-        "project": "Hastings Street Bypass",
-        "status": "In progress"
-    },
-    {
-        "equipmentCount": "1",
-        "equipmentType": {
-            "id": "200004"
-        },
-        "expectedEndDate": "5/29/2017",
-        "expectedHours": "97",
-        "expectedStartDate": "5/17/2017",
-        "id": "600104",
-        "localArea": {
-            "id": "rg:None"
-        },
-        "project": "Findlay Creek Road Overpass",
-        "status": "In progress"
-    },
-    {
-        "equipmentCount": "1",
-        "equipmentType": {
-            "id": "200009"
-        },
-        "expectedEndDate": "5/3/2017",
-        "expectedHours": "94",
-        "expectedStartDate": "4/22/2017",
-        "id": "600105",
-        "localArea": {
-            "id": "200029"
-        },
-        "project": "Burdett Avenue Cloverleaf",
-        "status": "In progress"
-    },
-    {
-        "equipmentCount": "1",
-        "equipmentType": {
-            "id": "200009"
-        },
-        "expectedEndDate": "5/20/2017",
-        "expectedHours": "79",
-        "expectedStartDate": "5/11/2017",
-        "id": "600106",
-        "localArea": {
-            "id": "200029"
-        },
-        "project": "Tolmie St Upgrade",
-        "status": "In progress"
-    },
-    {
-        "equipmentCount": "1",
-        "equipmentType": {
-            "id": "200009"
-        },
-        "expectedEndDate": "4/29/2017",
-        "expectedHours": "55",
-        "expectedStartDate": "4/23/2017",
-        "id": "600107",
-        "localArea": {
-            "id": "200029"
-        },
-        "project": "Quayside Dr Building",
-        "status": "In progress"
-    },
-    {
-        "equipmentCount": "1",
-        "equipmentType": {
-            "id": "200006"
-        },
-        "expectedEndDate": "5/13/2017",
-        "expectedHours": "6",
-        "expectedStartDate": "5/13/2017",
-        "id": "600108",
-        "localArea": {
-            "id": "200029"
-        },
-        "project": "Sixth Street Building",
-        "status": "In progress"
-    },
-    {
-        "equipmentCount": "1",
-        "equipmentType": {
-            "id": "200000"
-        },
-        "expectedEndDate": "4/27/2017",
-        "expectedHours": "35",
-        "expectedStartDate": "4/23/2017",
-        "id": "600109",
-        "localArea": {
-            "id": "200029"
-        },
-        "project": "James Street Overpass",
-        "status": "In progress"
-    },
-    {
-        "equipmentCount": "1",
-        "equipmentType": {
-            "id": "200009"
-        },
-        "expectedEndDate": "5/17/2017",
-        "expectedHours": "5",
-        "expectedStartDate": "5/17/2017",
-        "id": "600110",
-        "localArea": {
-            "id": "200029"
-        },
-        "project": "Tolmie St Bypass",
-        "status": "In progress"
-    },
-    {
-        "equipmentCount": "4",
-        "equipmentType": {
-            "id": "200000"
-        },
-        "expectedEndDate": "4/6/2017",
-        "expectedHours": "14",
-        "expectedStartDate": "3/30/2017",
-        "id": "600111",
-        "localArea": {
-            "id": "200029"
-        },
-        "project": "Coldstream Avenue Bypass",
-        "status": "In progress"
-    },
-    {
-        "equipmentCount": "1",
-        "equipmentType": {
-            "id": "200004"
-        },
-        "expectedEndDate": "5/9/2017",
-        "expectedHours": "59",
-        "expectedStartDate": "5/2/2017",
-        "id": "600112",
-        "localArea": {
-            "id": "rg:None"
-        },
-        "project": "Lake City Way Upgrade",
-        "status": "In progress"
-    },
-    {
-        "equipmentCount": "1",
-        "equipmentType": {
-            "id": "200006"
-        },
-        "expectedEndDate": "4/5/2017",
-        "expectedHours": "36",
-        "expectedStartDate": "4/1/2017",
-        "id": "600113",
-        "localArea": {
-            "id": "rg:None"
-        },
-        "project": "Roger Street Building",
-        "status": "In progress"
-    },
-    {
-        "equipmentCount": "1",
-        "equipmentType": {
-            "id": "200009"
-        },
-        "expectedEndDate": "4/17/2017",
-        "expectedHours": "81",
-        "expectedStartDate": "4/7/2017",
-        "id": "600114",
-        "localArea": {
-            "id": "rg:None"
-        },
-        "project": "Essendene Avenue Bridge Replacement",
-        "status": "In progress"
-    },
-    {
-        "equipmentCount": "1",
-        "equipmentType": {
-            "id": "200005"
-        },
-        "expectedEndDate": "5/9/2017",
-        "expectedHours": "28",
-        "expectedStartDate": "5/6/2017",
-        "id": "600115",
-        "localArea": {
-            "id": "rg:None"
-        },
-        "project": "Blanshard Bridge Replacement",
-        "status": "In progress"
-    },
-    {
-        "equipmentCount": "5",
-        "equipmentType": {
-            "id": "200009"
-        },
-        "expectedEndDate": "6/11/2017",
-        "expectedHours": "52",
-        "expectedStartDate": "5/10/2017",
-        "id": "600116",
-        "localArea": {
-            "id": "rg:None"
-        },
-        "project": "Wallace Street Expressway",
-        "status": "In progress"
-    },
-    {
-        "equipmentCount": "1",
-        "equipmentType": {
-            "id": "200007"
-        },
-        "expectedEndDate": "5/6/2017",
-        "expectedHours": "33",
-        "expectedStartDate": "5/2/2017",
-        "id": "600117",
-        "localArea": {
-            "id": "rg:None"
-        },
-        "project": "Burdett Avenue Extension",
-        "status": "In progress"
-    },
-    {
-        "equipmentCount": "1",
-        "equipmentType": {
-            "id": "200002"
-        },
-        "expectedEndDate": "5/1/2017",
-        "expectedHours": "14",
-        "expectedStartDate": "4/30/2017",
-        "id": "600118",
-        "localArea": {
-            "id": "rg:None"
-        },
-        "project": "Tchesinkut Lake Rd Extension",
-        "status": "In progress"
-    },
-    {
-        "equipmentCount": "2",
-        "equipmentType": {
-            "id": "200000"
-        },
-        "expectedEndDate": "5/6/2017",
-        "expectedHours": "93",
-        "expectedStartDate": "4/13/2017",
-        "id": "600119",
-        "localArea": {
-            "id": "rg:None"
-        },
-        "project": "Blind Bay Road Overpass",
-        "status": "In progress"
-    },
-    {
-        "equipmentCount": "1",
-        "equipmentType": {
-            "id": "200005"
-        },
-        "expectedEndDate": "4/4/2017",
-        "expectedHours": "28",
-        "expectedStartDate": "4/1/2017",
-        "id": "600120",
-        "localArea": {
-            "id": "rg:None"
-        },
-        "project": "Tchesinkut Lake Rd Expressway",
-        "status": "In progress"
-    },
-    {
-        "equipmentCount": "1",
-        "equipmentType": {
-            "id": "200006"
-        },
-        "expectedEndDate": "5/4/2017",
-        "expectedHours": "65",
-        "expectedStartDate": "4/26/2017",
-        "id": "600121",
-        "localArea": {
-            "id": "rg:None"
-        },
-        "project": "Stum Lake Road HOV Lane",
-        "status": "In progress"
-    },
-    {
-        "equipmentCount": "1",
-        "equipmentType": {
-            "id": "200005"
-        },
-        "expectedEndDate": "4/19/2017",
-        "expectedHours": "7",
-        "expectedStartDate": "4/19/2017",
-        "id": "600122",
-        "localArea": {
-            "id": "rg:None"
-        },
-        "project": "Yoho Valley Road Building",
-        "status": "In progress"
-    },
-    {
-        "equipmentCount": "1",
-        "equipmentType": {
-            "id": "200000"
-        },
-        "expectedEndDate": "4/3/2017",
-        "expectedHours": "5",
-        "expectedStartDate": "4/3/2017",
-        "id": "600123",
-        "localArea": {
-            "id": "rg:None"
-        },
-        "project": "Keith Road Expressway",
-        "status": "In progress"
-    },
-    {
-        "equipmentCount": "2",
-        "equipmentType": {
-            "id": "200000"
-        },
-        "expectedEndDate": "5/23/2017",
-        "expectedHours": "32",
-        "expectedStartDate": "5/15/2017",
-        "id": "600124",
-        "localArea": {
-            "id": "rg:None"
-        },
-        "project": "Burdett Avenue Express Lane",
-        "status": "Completed"
-    },
-    {
-        "equipmentCount": "1",
-        "equipmentType": {
-            "id": "200005"
-        },
-        "expectedEndDate": "4/23/2017",
-        "expectedHours": "71",
-        "expectedStartDate": "4/15/2017",
-        "id": "600125",
-        "localArea": {
-            "id": "rg:None"
-        },
-        "project": "Quayside Dr Bridge",
-        "status": "Completed"
-    },
-    {
-        "equipmentCount": "1",
-        "equipmentType": {
-            "id": "200009"
-        },
-        "expectedEndDate": "5/22/2017",
-        "expectedHours": "43",
-        "expectedStartDate": "5/17/2017",
-        "id": "600126",
-        "localArea": {
-            "id": "rg:None"
-        },
-        "project": "Jade St Expressway",
-        "status": "Completed"
-    },
-    {
-        "equipmentCount": "4",
-        "equipmentType": {
-            "id": "200005"
-        },
-        "expectedEndDate": "5/27/2017",
-        "expectedHours": "52",
-        "expectedStartDate": "5/1/2017",
-        "id": "600127",
-        "localArea": {
-            "id": "rg:None"
-        },
-        "project": "Robson St Express Lane",
-        "status": "In progress"
-    },
-    {
-        "equipmentCount": "1",
-        "equipmentType": {
-            "id": "200006"
-        },
-        "expectedEndDate": "4/29/2017",
-        "expectedHours": "45",
-        "expectedStartDate": "4/24/2017",
-        "id": "600128",
-        "localArea": {
-            "id": "rg:None"
-        },
-        "project": "Robson St Bridge Replacement",
-        "status": "In progress"
-    },
-    {
-        "equipmentCount": "1",
-        "equipmentType": {
-            "id": "200009"
-        },
-        "expectedEndDate": "4/26/2017",
-        "expectedHours": "53",
-        "expectedStartDate": "4/20/2017",
-        "id": "600129",
-        "localArea": {
-            "id": "rg:None"
-        },
-        "project": "Carlson Road Express Lane",
-        "status": "In progress"
-    },
-    {
-        "equipmentCount": "1",
-        "equipmentType": {
-            "id": "200002"
-        },
-        "expectedEndDate": "5/26/2017",
-        "expectedHours": "69",
-        "expectedStartDate": "5/18/2017",
-        "id": "600130",
-        "localArea": {
-            "id": "rg:None"
-        },
-        "project": "McGill Road Express Lane",
-        "status": "In progress"
-    },
-    {
-        "equipmentCount": "1",
-        "equipmentType": {
-            "id": "200004"
-        },
-        "expectedEndDate": "5/23/2017",
-        "expectedHours": "32",
-        "expectedStartDate": "5/19/2017",
-        "id": "600131",
-        "localArea": {
-            "id": "rg:None"
-        },
-        "project": "Russell Avenue HOV Lane",
-        "status": "In progress"
-    },
-    {
-        "equipmentCount": "1",
-        "equipmentType": {
-            "id": "200007"
-        },
-        "expectedEndDate": "4/11/2017",
-        "expectedHours": "41",
-        "expectedStartDate": "4/6/2017",
-        "id": "600132",
-        "localArea": {
-            "id": "rg:None"
-        },
-        "project": "Findlay Creek Road Upgrade",
-        "status": "In progress"
-    },
-    {
-        "equipmentCount": "1",
-        "equipmentType": {
-            "id": "200001"
-        },
-        "expectedEndDate": "4/26/2017",
-        "expectedHours": "23",
-        "expectedStartDate": "4/24/2017",
-        "id": "600133",
-        "localArea": {
-            "id": "rg:None"
-        },
-        "project": "Brew Creek Rd HOV Lane",
-        "status": "In progress"
-    },
-    {
-        "equipmentCount": "1",
-        "equipmentType": {
-            "id": "200007"
-        },
-        "expectedEndDate": "5/14/2017",
-        "expectedHours": "44",
-        "expectedStartDate": "5/9/2017",
-        "id": "600134",
-        "localArea": {
-            "id": "rg:None"
-        },
-        "project": "Roger Street Overpass",
-        "status": "In progress"
-    },
-    {
-        "equipmentCount": "1",
-        "equipmentType": {
-            "id": "200000"
-        },
-        "expectedEndDate": "5/23/2017",
-        "expectedHours": "69",
-        "expectedStartDate": "5/15/2017",
-        "id": "600135",
-        "localArea": {
-            "id": "rg:None"
-        },
-        "project": "Quayside Dr Expressway",
-        "status": "In progress"
-    },
-    {
-        "equipmentCount": "1",
-        "equipmentType": {
-            "id": "200003"
-        },
-        "expectedEndDate": "5/21/2017",
-        "expectedHours": "58",
-        "expectedStartDate": "5/14/2017",
-        "id": "600136",
-        "localArea": {
-            "id": "rg:None"
-        },
-        "project": "Haaglund Rd HOV Lane",
-        "status": "In progress"
-    },
-    {
-        "equipmentCount": "1",
-        "equipmentType": {
-            "id": "200005"
-        },
-        "expectedEndDate": "5/3/2017",
-        "expectedHours": "87",
-        "expectedStartDate": "4/23/2017",
-        "id": "600137",
-        "localArea": {
-            "id": "rg:None"
-        },
-        "project": "Tchesinkut Lake Rd Cloverleaf",
-        "status": "In progress"
-    },
-    {
-        "equipmentCount": "1",
-        "equipmentType": {
-            "id": "200005"
-        },
-        "expectedEndDate": "5/3/2017",
-        "expectedHours": "30",
-        "expectedStartDate": "4/30/2017",
-        "id": "600138",
-        "localArea": {
-            "id": "rg:None"
-        },
-        "project": "Stum Lake Road Bridge Replacement",
-        "status": "In progress"
-    },
-    {
-        "equipmentCount": "1",
-        "equipmentType": {
-            "id": "200000"
-        },
-        "expectedEndDate": "5/16/2017",
-        "expectedHours": "93",
-        "expectedStartDate": "5/5/2017",
-        "id": "600139",
-        "localArea": {
-            "id": "rg:None"
-        },
-        "project": "Shaughnessy St Bypass",
-        "status": "In progress"
-    },
-    {
-        "equipmentCount": "1",
-        "equipmentType": {
-            "id": "200009"
-        },
-        "expectedEndDate": "4/10/2017",
-        "expectedHours": "93",
-        "expectedStartDate": "3/30/2017",
-        "id": "600140",
-        "localArea": {
-            "id": "rg:None"
-        },
-        "project": "Shaughnessy St Bridge",
-        "status": "In progress"
-    },
-    {
-        "equipmentCount": "1",
-        "equipmentType": {
-            "id": "200005"
-        },
-        "expectedEndDate": "5/11/2017",
-        "expectedHours": "96",
-        "expectedStartDate": "4/29/2017",
-        "id": "600141",
-        "localArea": {
-            "id": "rg:None"
-        },
-        "project": "Cordova Street HOV Lane",
-        "status": "In progress"
-    },
-    {
-        "equipmentCount": "1",
-        "equipmentType": {
-            "id": "200002"
-        },
-        "expectedEndDate": "4/13/2017",
-        "expectedHours": "46",
-        "expectedStartDate": "4/8/2017",
-        "id": "600142",
-        "localArea": {
-            "id": "rg:None"
-        },
-        "project": "Mesa Vista Drive Upgrade",
-        "status": "Completed"
-    },
-    {
-        "equipmentCount": "1",
-        "equipmentType": {
-            "id": "200005"
-        },
-        "expectedEndDate": "5/13/2017",
+        "expectedEndDate": "7/17/2017",
         "expectedHours": "11",
-        "expectedStartDate": "5/12/2017",
-        "id": "600143",
+        "expectedStartDate": "7/16/2017",
+        "id": "200003",
         "localArea": {
-            "id": "rg:None"
+            "id": "200075"
         },
-        "project": "Blanshard Express Lane",
-        "status": "Completed"
-    },
-    {
-        "equipmentCount": "1",
-        "equipmentType": {
-            "id": "200005"
-        },
-        "expectedEndDate": "5/31/2017",
-        "expectedHours": "63",
-        "expectedStartDate": "5/24/2017",
-        "id": "600144",
-        "localArea": {
-            "id": "rg:None"
-        },
-        "project": "Cordova Street Cloverleaf",
-        "status": "Completed"
-    },
-    {
-        "equipmentCount": "1",
-        "equipmentType": {
-            "id": "200004"
-        },
-        "expectedEndDate": "4/14/2017",
-        "expectedHours": "18",
-        "expectedStartDate": "4/12/2017",
-        "id": "600145",
-        "localArea": {
-            "id": "rg:None"
-        },
-        "project": "Kinchant St Bypass",
-        "status": "Completed"
-    },
-    {
-        "equipmentCount": "1",
-        "equipmentType": {
-            "id": "200009"
-        },
-        "expectedEndDate": "4/2/2017",
-        "expectedHours": "25",
-        "expectedStartDate": "3/30/2017",
-        "id": "600146",
-        "localArea": {
-            "id": "rg:None"
-        },
-        "project": "Alaska Hwy Bridge",
-        "status": "In progress"
-    },
-    {
-        "equipmentCount": "1",
-        "equipmentType": {
-            "id": "200007"
-        },
-        "expectedEndDate": "4/16/2017",
-        "expectedHours": "46",
-        "expectedStartDate": "4/11/2017",
-        "id": "600147",
-        "localArea": {
-            "id": "rg:None"
-        },
-        "project": "Stum Lake Road Expressway",
-        "status": "Completed"
-    },
-    {
-        "equipmentCount": "1",
-        "equipmentType": {
-            "id": "200007"
-        },
-        "expectedEndDate": "5/21/2017",
-        "expectedHours": "90",
-        "expectedStartDate": "5/10/2017",
-        "id": "600148",
-        "localArea": {
-            "id": "rg:None"
-        },
-        "project": "King George Hwy Building",
-        "status": "Completed"
-    },
-    {
-        "equipmentCount": "1",
-        "equipmentType": {
-            "id": "200006"
-        },
-        "expectedEndDate": "5/11/2017",
-        "expectedHours": "81",
-        "expectedStartDate": "5/1/2017",
-        "id": "600149",
-        "localArea": {
-            "id": "rg:None"
-        },
-        "project": "Burdett Avenue Bypass",
-        "status": "In progress"
-    },
-    {
-        "equipmentCount": "1",
-        "equipmentType": {
-            "id": "200009"
-        },
-        "expectedEndDate": "4/18/2017",
-        "expectedHours": "80",
-        "expectedStartDate": "4/8/2017",
-        "id": "600150",
-        "localArea": {
-            "id": "rg:None"
-        },
-        "project": "Hastings Street Extension",
-        "status": "In progress"
-    },
-    {
-        "equipmentCount": "1",
-        "equipmentType": {
+        "project": {
             "id": "200003"
         },
-        "expectedEndDate": "4/29/2017",
+        "status": "In progress"
+    },
+    {
+        "districtEquipmentType": {
+            "id": "200004"
+        },
+        "equipmentCount": "1",
+        "expectedEndDate": "6/16/2017",
         "expectedHours": "30",
-        "expectedStartDate": "4/26/2017",
-        "id": "600151",
+        "expectedStartDate": "6/13/2017",
+        "id": "200004",
         "localArea": {
-            "id": "rg:None"
+            "id": "200075"
         },
-        "project": "Old Spallumcheen Rd Building",
-        "status": "In progress"
-    },
-    {
-        "equipmentCount": "1",
-        "equipmentType": {
-            "id": "200003"
-        },
-        "expectedEndDate": "5/2/2017",
-        "expectedHours": "32",
-        "expectedStartDate": "4/28/2017",
-        "id": "600152",
-        "localArea": {
-            "id": "rg:None"
-        },
-        "project": "Coldstream Avenue Extension",
-        "status": "In progress"
-    },
-    {
-        "equipmentCount": "1",
-        "equipmentType": {
-            "id": "200006"
-        },
-        "expectedEndDate": "6/1/2017",
-        "expectedHours": "72",
-        "expectedStartDate": "5/23/2017",
-        "id": "600153",
-        "localArea": {
-            "id": "rg:None"
-        },
-        "project": "Robson St Overpass",
-        "status": "In progress"
-    },
-    {
-        "equipmentCount": "3",
-        "equipmentType": {
-            "id": "200005"
-        },
-        "expectedEndDate": "5/17/2017",
-        "expectedHours": "17",
-        "expectedStartDate": "5/11/2017",
-        "id": "600154",
-        "localArea": {
-            "id": "200029"
-        },
-        "project": "Carlson Road Cloverleaf",
-        "status": "In progress"
-    },
-    {
-        "equipmentCount": "3",
-        "equipmentType": {
-            "id": "200003"
-        },
-        "expectedEndDate": "5/18/2017",
-        "expectedHours": "91",
-        "expectedStartDate": "4/14/2017",
-        "id": "600155",
-        "localArea": {
-            "id": "200029"
-        },
-        "project": "102nd Avenue Cloverleaf",
-        "status": "In progress"
-    },
-    {
-        "equipmentCount": "2",
-        "equipmentType": {
-            "id": "200009"
-        },
-        "expectedEndDate": "5/21/2017",
-        "expectedHours": "18",
-        "expectedStartDate": "5/17/2017",
-        "id": "600156",
-        "localArea": {
-            "id": "200029"
-        },
-        "project": "McGill Road HOV Lane",
-        "status": "In progress"
-    },
-    {
-        "equipmentCount": "1",
-        "equipmentType": {
-            "id": "200002"
-        },
-        "expectedEndDate": "4/28/2017",
-        "expectedHours": "44",
-        "expectedStartDate": "4/23/2017",
-        "id": "600157",
-        "localArea": {
-            "id": "200029"
-        },
-        "project": "Russell Avenue Extension",
-        "status": "Completed"
-    },
-    {
-        "equipmentCount": "1",
-        "equipmentType": {
-            "id": "200009"
-        },
-        "expectedEndDate": "5/18/2017",
-        "expectedHours": "25",
-        "expectedStartDate": "5/15/2017",
-        "id": "600158",
-        "localArea": {
-            "id": "200029"
-        },
-        "project": "Cardero St Upgrade",
-        "status": "In progress"
-    },
-    {
-        "equipmentCount": "1",
-        "equipmentType": {
-            "id": "200000"
-        },
-        "expectedEndDate": "4/21/2017",
-        "expectedHours": "58",
-        "expectedStartDate": "4/14/2017",
-        "id": "600159",
-        "localArea": {
-            "id": "200029"
-        },
-        "project": "Findlay Creek Road Building",
-        "status": "In progress"
-    },
-    {
-        "equipmentCount": "1",
-        "equipmentType": {
-            "id": "200003"
-        },
-        "expectedEndDate": "4/9/2017",
-        "expectedHours": "4",
-        "expectedStartDate": "4/9/2017",
-        "id": "600160",
-        "localArea": {
-            "id": "200029"
-        },
-        "project": "Queens Bay Expressway",
-        "status": "In progress"
-    },
-    {
-        "equipmentCount": "1",
-        "equipmentType": {
-            "id": "200000"
-        },
-        "expectedEndDate": "4/23/2017",
-        "expectedHours": "33",
-        "expectedStartDate": "4/19/2017",
-        "id": "600161",
-        "localArea": {
-            "id": "200029"
-        },
-        "project": "Jade St Upgrade",
-        "status": "Completed"
-    },
-    {
-        "equipmentCount": "1",
-        "equipmentType": {
-            "id": "200009"
-        },
-        "expectedEndDate": "5/12/2017",
-        "expectedHours": "77",
-        "expectedStartDate": "5/3/2017",
-        "id": "600162",
-        "localArea": {
-            "id": "rg:None"
-        },
-        "project": "Burdett Avenue Building",
-        "status": "In progress"
-    },
-    {
-        "equipmentCount": "1",
-        "equipmentType": {
-            "id": "200000"
-        },
-        "expectedEndDate": "4/25/2017",
-        "expectedHours": "22",
-        "expectedStartDate": "4/23/2017",
-        "id": "600163",
-        "localArea": {
-            "id": "rg:None"
-        },
-        "project": "Brew Creek Rd Bridge",
-        "status": "In progress"
-    },
-    {
-        "equipmentCount": "1",
-        "equipmentType": {
-            "id": "200002"
-        },
-        "expectedEndDate": "5/29/2017",
-        "expectedHours": "85",
-        "expectedStartDate": "5/19/2017",
-        "id": "600164",
-        "localArea": {
-            "id": "rg:None"
-        },
-        "project": "Mesa Vista Drive HOV Lane",
-        "status": "Completed"
-    },
-    {
-        "equipmentCount": "1",
-        "equipmentType": {
+        "project": {
             "id": "200004"
         },
-        "expectedEndDate": "5/8/2017",
-        "expectedHours": "94",
-        "expectedStartDate": "4/27/2017",
-        "id": "600165",
-        "localArea": {
-            "id": "rg:None"
-        },
-        "project": "Burdett Avenue HOV Lane",
         "status": "In progress"
     },
     {
+        "districtEquipmentType": {
+            "id": "200010"
+        },
         "equipmentCount": "1",
-        "equipmentType": {
-            "id": "200009"
-        },
-        "expectedEndDate": "5/16/2017",
-        "expectedHours": "21",
-        "expectedStartDate": "5/14/2017",
-        "id": "600166",
-        "localArea": {
-            "id": "rg:None"
-        },
-        "project": "Noble Rd Upgrade",
-        "status": "In progress"
-    },
-    {
-        "equipmentCount": "1",
-        "equipmentType": {
-            "id": "200003"
-        },
-        "expectedEndDate": "5/13/2017",
-        "expectedHours": "17",
-        "expectedStartDate": "5/11/2017",
-        "id": "600167",
-        "localArea": {
-            "id": "rg:None"
-        },
-        "project": "Essendene Avenue Bridge",
-        "status": "In progress"
-    },
-    {
-        "equipmentCount": "1",
-        "equipmentType": {
-            "id": "200001"
-        },
-        "expectedEndDate": "4/30/2017",
-        "expectedHours": "97",
-        "expectedStartDate": "4/18/2017",
-        "id": "600168",
-        "localArea": {
-            "id": "rg:None"
-        },
-        "project": "Cordova Street Overpass",
-        "status": "Completed"
-    },
-    {
-        "equipmentCount": "1",
-        "equipmentType": {
-            "id": "200009"
-        },
-        "expectedEndDate": "4/8/2017",
-        "expectedHours": "38",
-        "expectedStartDate": "4/4/2017",
-        "id": "600169",
-        "localArea": {
-            "id": "rg:None"
-        },
-        "project": "Hardy Street HOV Lane",
-        "status": "In progress"
-    },
-    {
-        "equipmentCount": "1",
-        "equipmentType": {
-            "id": "200001"
-        },
-        "expectedEndDate": "5/4/2017",
-        "expectedHours": "9",
-        "expectedStartDate": "5/3/2017",
-        "id": "600170",
-        "localArea": {
-            "id": "rg:None"
-        },
-        "project": "Robson St Expressway",
-        "status": "In progress"
-    },
-    {
-        "equipmentCount": "1",
-        "equipmentType": {
-            "id": "200006"
-        },
-        "expectedEndDate": "5/5/2017",
-        "expectedHours": "91",
-        "expectedStartDate": "4/24/2017",
-        "id": "600171",
-        "localArea": {
-            "id": "rg:None"
-        },
-        "project": "Wellington Ave Express Lane",
-        "status": "In progress"
-    },
-    {
-        "equipmentCount": "1",
-        "equipmentType": {
-            "id": "200007"
-        },
-        "expectedEndDate": "5/17/2017",
-        "expectedHours": "27",
-        "expectedStartDate": "5/14/2017",
-        "id": "600172",
-        "localArea": {
-            "id": "rg:None"
-        },
-        "project": "Old Spallumcheen Rd Expressway",
-        "status": "In progress"
-    },
-    {
-        "equipmentCount": "5",
-        "equipmentType": {
-            "id": "200000"
-        },
-        "expectedEndDate": "4/30/2017",
-        "expectedHours": "19",
-        "expectedStartDate": "4/19/2017",
-        "id": "600173",
-        "localArea": {
-            "id": "rg:None"
-        },
-        "project": "Noble Rd Overpass",
-        "status": "In progress"
-    },
-    {
-        "equipmentCount": "2",
-        "equipmentType": {
-            "id": "200007"
-        },
-        "expectedEndDate": "4/23/2017",
-        "expectedHours": "32",
-        "expectedStartDate": "4/15/2017",
-        "id": "600174",
-        "localArea": {
-            "id": "rg:None"
-        },
-        "project": "Jade St Building",
-        "status": "In progress"
-    },
-    {
-        "equipmentCount": "3",
-        "equipmentType": {
-            "id": "200000"
-        },
-        "expectedEndDate": "4/12/2017",
-        "expectedHours": "22",
-        "expectedStartDate": "4/4/2017",
-        "id": "600175",
-        "localArea": {
-            "id": "rg:None"
-        },
-        "project": "Wallace Street Express Lane",
-        "status": "In progress"
-    },
-    {
-        "equipmentCount": "1",
-        "equipmentType": {
-            "id": "200007"
-        },
-        "expectedEndDate": "5/1/2017",
-        "expectedHours": "91",
-        "expectedStartDate": "4/20/2017",
-        "id": "600176",
-        "localArea": {
-            "id": "rg:None"
-        },
-        "project": "James Street HOV Lane",
-        "status": "In progress"
-    },
-    {
-        "equipmentCount": "1",
-        "equipmentType": {
-            "id": "200005"
-        },
-        "expectedEndDate": "4/24/2017",
-        "expectedHours": "17",
-        "expectedStartDate": "4/22/2017",
-        "id": "600177",
-        "localArea": {
-            "id": "rg:None"
-        },
-        "project": "Holdom Avenue Cloverleaf",
-        "status": "In progress"
-    },
-    {
-        "equipmentCount": "1",
-        "equipmentType": {
-            "id": "200000"
-        },
-        "expectedEndDate": "4/26/2017",
-        "expectedHours": "54",
-        "expectedStartDate": "4/20/2017",
-        "id": "600178",
-        "localArea": {
-            "id": "rg:None"
-        },
-        "project": "Roger Street Expressway",
-        "status": "In progress"
-    },
-    {
-        "equipmentCount": "1",
-        "equipmentType": {
-            "id": "200004"
-        },
-        "expectedEndDate": "5/22/2017",
-        "expectedHours": "44",
-        "expectedStartDate": "5/17/2017",
-        "id": "600179",
-        "localArea": {
-            "id": "rg:None"
-        },
-        "project": "Scotts Lane Bypass",
-        "status": "In progress"
-    },
-    {
-        "equipmentCount": "1",
-        "equipmentType": {
-            "id": "200006"
-        },
-        "expectedEndDate": "5/19/2017",
-        "expectedHours": "83",
-        "expectedStartDate": "5/9/2017",
-        "id": "600180",
-        "localArea": {
-            "id": "rg:None"
-        },
-        "project": "Findlay Creek Road HOV Lane",
-        "status": "In progress"
-    },
-    {
-        "equipmentCount": "1",
-        "equipmentType": {
-            "id": "200004"
-        },
-        "expectedEndDate": "4/22/2017",
-        "expectedHours": "43",
-        "expectedStartDate": "4/17/2017",
-        "id": "600181",
-        "localArea": {
-            "id": "rg:None"
-        },
-        "project": "Sixth Street Bypass",
-        "status": "In progress"
-    },
-    {
-        "equipmentCount": "1",
-        "equipmentType": {
-            "id": "200006"
-        },
-        "expectedEndDate": "4/27/2017",
-        "expectedHours": "18",
-        "expectedStartDate": "4/25/2017",
-        "id": "600182",
-        "localArea": {
-            "id": "rg:None"
-        },
-        "project": "Blanshard Bypass",
-        "status": "In progress"
-    },
-    {
-        "equipmentCount": "3",
-        "equipmentType": {
-            "id": "200003"
-        },
-        "expectedEndDate": "5/11/2017",
-        "expectedHours": "16",
-        "expectedStartDate": "5/5/2017",
-        "id": "600183",
-        "localArea": {
-            "id": "rg:None"
-        },
-        "project": "King George Hwy HOV Lane",
-        "status": "In progress"
-    },
-    {
-        "equipmentCount": "1",
-        "equipmentType": {
-            "id": "200006"
-        },
-        "expectedEndDate": "4/9/2017",
-        "expectedHours": "54",
-        "expectedStartDate": "4/3/2017",
-        "id": "600184",
-        "localArea": {
-            "id": "rg:None"
-        },
-        "project": "Glover Road Cloverleaf",
-        "status": "In progress"
-    },
-    {
-        "equipmentCount": "1",
-        "equipmentType": {
-            "id": "200004"
-        },
-        "expectedEndDate": "5/7/2017",
-        "expectedHours": "71",
-        "expectedStartDate": "4/29/2017",
-        "id": "600185",
-        "localArea": {
-            "id": "rg:None"
-        },
-        "project": "Wallace Street Bridge",
-        "status": "In progress"
-    },
-    {
-        "equipmentCount": "1",
-        "equipmentType": {
-            "id": "200006"
-        },
-        "expectedEndDate": "4/28/2017",
-        "expectedHours": "72",
-        "expectedStartDate": "4/19/2017",
-        "id": "600186",
-        "localArea": {
-            "id": "rg:None"
-        },
-        "project": "Yoho Valley Road Bypass",
-        "status": "In progress"
-    },
-    {
-        "equipmentCount": "1",
-        "equipmentType": {
-            "id": "200009"
-        },
-        "expectedEndDate": "5/10/2017",
-        "expectedHours": "13",
-        "expectedStartDate": "5/9/2017",
-        "id": "600187",
-        "localArea": {
-            "id": "rg:None"
-        },
-        "project": "Burdett Avenue Expressway",
-        "status": "In progress"
-    },
-    {
-        "equipmentCount": "1",
-        "equipmentType": {
-            "id": "200006"
-        },
-        "expectedEndDate": "5/21/2017",
-        "expectedHours": "32",
-        "expectedStartDate": "5/17/2017",
-        "id": "600188",
-        "localArea": {
-            "id": "rg:None"
-        },
-        "project": "Cordova Street Building",
-        "status": "In progress"
-    },
-    {
-        "equipmentCount": "1",
-        "equipmentType": {
-            "id": "200009"
-        },
-        "expectedEndDate": "5/16/2017",
-        "expectedHours": "16",
-        "expectedStartDate": "5/14/2017",
-        "id": "600189",
-        "localArea": {
-            "id": "rg:None"
-        },
-        "project": "Glover Road Expressway",
-        "status": "In progress"
-    },
-    {
-        "equipmentCount": "1",
-        "equipmentType": {
-            "id": "200005"
-        },
-        "expectedEndDate": "5/4/2017",
-        "expectedHours": "15",
-        "expectedStartDate": "5/3/2017",
-        "id": "600190",
-        "localArea": {
-            "id": "200029"
-        },
-        "project": "Scotts Lane Upgrade",
-        "status": "In progress"
-    },
-    {
-        "equipmentCount": "1",
-        "equipmentType": {
-            "id": "200006"
-        },
-        "expectedEndDate": "5/27/2017",
-        "expectedHours": "69",
-        "expectedStartDate": "5/19/2017",
-        "id": "600191",
-        "localArea": {
-            "id": "200029"
-        },
-        "project": "Nootka Street Upgrade",
-        "status": "In progress"
-    },
-    {
-        "equipmentCount": "5",
-        "equipmentType": {
-            "id": "200006"
-        },
-        "expectedEndDate": "5/8/2017",
-        "expectedHours": "39",
-        "expectedStartDate": "4/14/2017",
-        "id": "600192",
-        "localArea": {
-            "id": "200029"
-        },
-        "project": "Nootka Street Cloverleaf",
-        "status": "In progress"
-    },
-    {
-        "equipmentCount": "1",
-        "equipmentType": {
-            "id": "200005"
-        },
-        "expectedEndDate": "4/17/2017",
-        "expectedHours": "55",
-        "expectedStartDate": "4/11/2017",
-        "id": "600193",
-        "localArea": {
-            "id": "200029"
-        },
-        "project": "Kinchant St Cloverleaf",
-        "status": "In progress"
-    },
-    {
-        "equipmentCount": "1",
-        "equipmentType": {
-            "id": "200009"
-        },
-        "expectedEndDate": "4/13/2017",
-        "expectedHours": "63",
-        "expectedStartDate": "4/6/2017",
-        "id": "600194",
-        "localArea": {
-            "id": "200029"
-        },
-        "project": "Queens Bay Bypass",
-        "status": "In progress"
-    },
-    {
-        "equipmentCount": "1",
-        "equipmentType": {
-            "id": "200009"
-        },
-        "expectedEndDate": "5/3/2017",
-        "expectedHours": "95",
-        "expectedStartDate": "4/22/2017",
-        "id": "600195",
-        "localArea": {
-            "id": "200029"
-        },
-        "project": "102nd Avenue Overpass",
-        "status": "In progress"
-    },
-    {
-        "equipmentCount": "1",
-        "equipmentType": {
-            "id": "200000"
-        },
-        "expectedEndDate": "4/11/2017",
-        "expectedHours": "65",
-        "expectedStartDate": "4/3/2017",
-        "id": "600196",
-        "localArea": {
-            "id": "200029"
-        },
-        "project": "Blanshard Bridge",
-        "status": "In progress"
-    },
-    {
-        "equipmentCount": "1",
-        "equipmentType": {
-            "id": "200005"
-        },
-        "expectedEndDate": "4/19/2017",
-        "expectedHours": "33",
-        "expectedStartDate": "4/15/2017",
-        "id": "600197",
-        "localArea": {
-            "id": "rg:None"
-        },
-        "project": "Cardero St Express Lane",
-        "status": "In progress"
-    },
-    {
-        "equipmentCount": "1",
-        "equipmentType": {
-            "id": "200003"
-        },
-        "expectedEndDate": "4/10/2017",
-        "expectedHours": "33",
-        "expectedStartDate": "4/6/2017",
-        "id": "600198",
-        "localArea": {
-            "id": "rg:None"
-        },
-        "project": "Old Spallumcheen Rd Bypass",
-        "status": "In progress"
-    },
-    {
-        "equipmentCount": "1",
-        "equipmentType": {
-            "id": "200003"
-        },
-        "expectedEndDate": "4/14/2017",
-        "expectedHours": "21",
-        "expectedStartDate": "4/12/2017",
-        "id": "600199",
-        "localArea": {
-            "id": "rg:None"
-        },
-        "project": "Keith Road Upgrade",
-        "status": "In progress"
-    },
-    {
-        "equipmentCount": "1",
-        "equipmentType": {
-            "id": "200002"
-        },
-        "expectedEndDate": "4/11/2017",
-        "expectedHours": "16",
-        "expectedStartDate": "4/9/2017",
-        "id": "600200",
-        "localArea": {
-            "id": "rg:None"
-        },
-        "project": "Burdett Avenue Bridge Replacement",
-        "status": "In progress"
-    },
-    {
-        "equipmentCount": "1",
-        "equipmentType": {
-            "id": "200006"
-        },
-        "expectedEndDate": "5/18/2017",
-        "expectedHours": "10",
-        "expectedStartDate": "5/17/2017",
-        "id": "600201",
-        "localArea": {
-            "id": "rg:None"
-        },
-        "project": "Coldstream Avenue Expressway",
-        "status": "In progress"
-    },
-    {
-        "equipmentCount": "3",
-        "equipmentType": {
-            "id": "200006"
-        },
-        "expectedEndDate": "5/20/2017",
-        "expectedHours": "70",
-        "expectedStartDate": "4/24/2017",
-        "id": "600202",
-        "localArea": {
-            "id": "rg:None"
-        },
-        "project": "Hardy Street Building",
-        "status": "In progress"
-    },
-    {
-        "equipmentCount": "1",
-        "equipmentType": {
-            "id": "200009"
-        },
-        "expectedEndDate": "5/2/2017",
-        "expectedHours": "73",
-        "expectedStartDate": "4/23/2017",
-        "id": "600203",
-        "localArea": {
-            "id": "rg:None"
-        },
-        "project": "Hastings Street Upgrade",
-        "status": "In progress"
-    },
-    {
-        "equipmentCount": "1",
-        "equipmentType": {
-            "id": "200004"
-        },
-        "expectedEndDate": "4/8/2017",
-        "expectedHours": "54",
-        "expectedStartDate": "4/2/2017",
-        "id": "600204",
-        "localArea": {
-            "id": "rg:None"
-        },
-        "project": "Alaska Hwy Cloverleaf",
-        "status": "In progress"
-    },
-    {
-        "equipmentCount": "2",
-        "equipmentType": {
-            "id": "200009"
-        },
-        "expectedEndDate": "4/10/2017",
-        "expectedHours": "9",
-        "expectedStartDate": "4/8/2017",
-        "id": "600205",
-        "localArea": {
-            "id": "rg:None"
-        },
-        "project": "Burdett Avenue Upgrade",
-        "status": "In progress"
-    },
-    {
-        "equipmentCount": "1",
-        "equipmentType": {
-            "id": "200009"
-        },
-        "expectedEndDate": "5/24/2017",
-        "expectedHours": "53",
-        "expectedStartDate": "5/18/2017",
-        "id": "600206",
-        "localArea": {
-            "id": "rg:None"
-        },
-        "project": "James Street Expressway",
-        "status": "In progress"
-    },
-    {
-        "equipmentCount": "1",
-        "equipmentType": {
-            "id": "200006"
-        },
-        "expectedEndDate": "4/19/2017",
-        "expectedHours": "4",
-        "expectedStartDate": "4/19/2017",
-        "id": "600207",
-        "localArea": {
-            "id": "rg:None"
-        },
-        "project": "Tolmie St Cloverleaf",
-        "status": "In progress"
-    },
-    {
-        "equipmentCount": "3",
-        "equipmentType": {
-            "id": "200009"
-        },
-        "expectedEndDate": "5/26/2017",
-        "expectedHours": "8",
-        "expectedStartDate": "5/23/2017",
-        "id": "600208",
-        "localArea": {
-            "id": "rg:None"
-        },
-        "project": "Sixth Street HOV Lane",
-        "status": "In progress"
-    },
-    {
-        "equipmentCount": "1",
-        "equipmentType": {
-            "id": "200004"
-        },
-        "expectedEndDate": "4/21/2017",
-        "expectedHours": "35",
-        "expectedStartDate": "4/17/2017",
-        "id": "600209",
-        "localArea": {
-            "id": "rg:None"
-        },
-        "project": "King George Hwy Upgrade",
-        "status": "In progress"
-    },
-    {
-        "equipmentCount": "1",
-        "equipmentType": {
-            "id": "200000"
-        },
-        "expectedEndDate": "4/10/2017",
-        "expectedHours": "53",
-        "expectedStartDate": "4/4/2017",
-        "id": "600210",
-        "localArea": {
-            "id": "rg:None"
-        },
-        "project": "Stum Lake Road Extension",
-        "status": "In progress"
-    },
-    {
-        "equipmentCount": "1",
-        "equipmentType": {
-            "id": "200003"
-        },
-        "expectedEndDate": "5/25/2017",
-        "expectedHours": "28",
-        "expectedStartDate": "5/22/2017",
-        "id": "600211",
-        "localArea": {
-            "id": "rg:None"
-        },
-        "project": "Tolmie St Extension",
-        "status": "In progress"
-    },
-    {
-        "equipmentCount": "1",
-        "equipmentType": {
-            "id": "200005"
-        },
-        "expectedEndDate": "5/7/2017",
-        "expectedHours": "51",
-        "expectedStartDate": "5/1/2017",
-        "id": "600212",
-        "localArea": {
-            "id": "rg:None"
-        },
-        "project": "Coldstream Avenue Cloverleaf",
-        "status": "In progress"
-    },
-    {
-        "equipmentCount": "1",
-        "equipmentType": {
-            "id": "200009"
-        },
-        "expectedEndDate": "5/15/2017",
-        "expectedHours": "75",
-        "expectedStartDate": "5/6/2017",
-        "id": "600213",
-        "localArea": {
-            "id": "rg:None"
-        },
-        "project": "Lake City Way Cloverleaf",
-        "status": "In progress"
-    },
-    {
-        "equipmentCount": "1",
-        "equipmentType": {
-            "id": "200002"
-        },
-        "expectedEndDate": "5/2/2017",
-        "expectedHours": "89",
-        "expectedStartDate": "4/21/2017",
-        "id": "600214",
-        "localArea": {
-            "id": "rg:None"
-        },
-        "project": "Essendene Avenue Bypass",
-        "status": "In progress"
-    },
-    {
-        "equipmentCount": "1",
-        "equipmentType": {
-            "id": "200003"
-        },
-        "expectedEndDate": "5/19/2017",
-        "expectedHours": "55",
-        "expectedStartDate": "5/13/2017",
-        "id": "600215",
-        "localArea": {
-            "id": "rg:None"
-        },
-        "project": "Wallace Street Upgrade",
-        "status": "In progress"
-    },
-    {
-        "equipmentCount": "1",
-        "equipmentType": {
-            "id": "200009"
-        },
-        "expectedEndDate": "5/17/2017",
-        "expectedHours": "80",
-        "expectedStartDate": "5/7/2017",
-        "id": "600216",
-        "localArea": {
-            "id": "rg:None"
-        },
-        "project": "Shaughnessy St Expressway",
-        "status": "In progress"
-    },
-    {
-        "equipmentCount": "1",
-        "equipmentType": {
-            "id": "200006"
-        },
-        "expectedEndDate": "4/22/2017",
-        "expectedHours": "4",
-        "expectedStartDate": "4/22/2017",
-        "id": "600217",
-        "localArea": {
-            "id": "rg:None"
-        },
-        "project": "Tchesinkut Lake Rd Overpass",
-        "status": "In progress"
-    },
-    {
-        "equipmentCount": "1",
-        "equipmentType": {
-            "id": "200002"
-        },
-        "expectedEndDate": "4/3/2017",
-        "expectedHours": "22",
-        "expectedStartDate": "4/1/2017",
-        "id": "600218",
-        "localArea": {
-            "id": "rg:None"
-        },
-        "project": "Blind Bay Road Bypass",
-        "status": "In progress"
-    },
-    {
-        "equipmentCount": "1",
-        "equipmentType": {
-            "id": "200003"
-        },
-        "expectedEndDate": "4/6/2017",
-        "expectedHours": "56",
-        "expectedStartDate": "3/30/2017",
-        "id": "600219",
-        "localArea": {
-            "id": "rg:None"
-        },
-        "project": "Glover Road Building",
-        "status": "In progress"
-    },
-    {
-        "equipmentCount": "1",
-        "equipmentType": {
-            "id": "200000"
-        },
-        "expectedEndDate": "5/10/2017",
-        "expectedHours": "60",
-        "expectedStartDate": "5/3/2017",
-        "id": "600220",
-        "localArea": {
-            "id": "rg:None"
-        },
-        "project": "Wellington Ave Bypass",
-        "status": "In progress"
-    },
-    {
-        "equipmentCount": "1",
-        "equipmentType": {
-            "id": "200004"
-        },
-        "expectedEndDate": "5/4/2017",
-        "expectedHours": "70",
-        "expectedStartDate": "4/26/2017",
-        "id": "600221",
-        "localArea": {
-            "id": "rg:None"
-        },
-        "project": "Hastings Street Express Lane",
-        "status": "In progress"
-    },
-    {
-        "equipmentCount": "2",
-        "equipmentType": {
-            "id": "200000"
-        },
-        "expectedEndDate": "4/27/2017",
-        "expectedHours": "33",
-        "expectedStartDate": "4/19/2017",
-        "id": "600222",
-        "localArea": {
-            "id": "rg:None"
-        },
-        "project": "Tchesinkut Lake Rd Bridge Replacement",
-        "status": "In progress"
-    },
-    {
-        "equipmentCount": "1",
-        "equipmentType": {
-            "id": "200009"
-        },
-        "expectedEndDate": "4/2/2017",
-        "expectedHours": "30",
-        "expectedStartDate": "3/30/2017",
-        "id": "600223",
-        "localArea": {
-            "id": "rg:None"
-        },
-        "project": "Yoho Valley Road Extension",
-        "status": "In progress"
-    },
-    {
-        "equipmentCount": "1",
-        "equipmentType": {
-            "id": "200007"
-        },
-        "expectedEndDate": "5/10/2017",
-        "expectedHours": "84",
-        "expectedStartDate": "4/30/2017",
-        "id": "600224",
-        "localArea": {
-            "id": "rg:None"
-        },
-        "project": "Keith Road HOV Lane",
-        "status": "In progress"
-    },
-    {
-        "equipmentCount": "2",
-        "equipmentType": {
-            "id": "200005"
-        },
-        "expectedEndDate": "4/28/2017",
-        "expectedHours": "52",
-        "expectedStartDate": "4/15/2017",
-        "id": "600225",
-        "localArea": {
-            "id": "rg:None"
-        },
-        "project": "Quayside Dr Overpass",
-        "status": "In progress"
-    },
-    {
-        "equipmentCount": "1",
-        "equipmentType": {
-            "id": "200000"
-        },
-        "expectedEndDate": "5/24/2017",
-        "expectedHours": "83",
-        "expectedStartDate": "5/14/2017",
-        "id": "600226",
-        "localArea": {
-            "id": "rg:None"
-        },
-        "project": "Jade St Express Lane",
-        "status": "In progress"
-    },
-    {
-        "equipmentCount": "1",
-        "equipmentType": {
-            "id": "200006"
-        },
-        "expectedEndDate": "4/15/2017",
-        "expectedHours": "76",
-        "expectedStartDate": "4/6/2017",
-        "id": "600227",
-        "localArea": {
-            "id": "rg:None"
-        },
-        "project": "Robson St Bypass",
-        "status": "In progress"
-    },
-    {
-        "equipmentCount": "1",
-        "equipmentType": {
-            "id": "200006"
-        },
-        "expectedEndDate": "4/19/2017",
+        "expectedEndDate": "6/22/2017",
         "expectedHours": "96",
-        "expectedStartDate": "4/7/2017",
-        "id": "600228",
+        "expectedStartDate": "6/10/2017",
+        "id": "200005",
         "localArea": {
-            "id": "rg:None"
+            "id": "200075"
         },
-        "project": "Carlson Road Building",
-        "status": "In progress"
-    },
-    {
-        "equipmentCount": "1",
-        "equipmentType": {
-            "id": "200004"
-        },
-        "expectedEndDate": "4/5/2017",
-        "expectedHours": "24",
-        "expectedStartDate": "4/2/2017",
-        "id": "600229",
-        "localArea": {
-            "id": "rg:None"
-        },
-        "project": "McGill Road Bridge Replacement",
-        "status": "In progress"
-    },
-    {
-        "equipmentCount": "1",
-        "equipmentType": {
-            "id": "200004"
-        },
-        "expectedEndDate": "4/11/2017",
-        "expectedHours": "33",
-        "expectedStartDate": "4/7/2017",
-        "id": "600230",
-        "localArea": {
-            "id": "rg:None"
-        },
-        "project": "Russell Avenue Upgrade",
-        "status": "In progress"
-    },
-    {
-        "equipmentCount": "1",
-        "equipmentType": {
-            "id": "200004"
-        },
-        "expectedEndDate": "5/11/2017",
-        "expectedHours": "45",
-        "expectedStartDate": "5/6/2017",
-        "id": "600231",
-        "localArea": {
-            "id": "rg:None"
-        },
-        "project": "Robson St Cloverleaf",
-        "status": "In progress"
-    },
-    {
-        "equipmentCount": "1",
-        "equipmentType": {
-            "id": "200001"
-        },
-        "expectedEndDate": "4/23/2017",
-        "expectedHours": "67",
-        "expectedStartDate": "4/15/2017",
-        "id": "600232",
-        "localArea": {
-            "id": "rg:None"
-        },
-        "project": "Haaglund Rd Overpass",
-        "status": "In progress"
-    },
-    {
-        "equipmentCount": "1",
-        "equipmentType": {
-            "id": "200007"
-        },
-        "expectedEndDate": "5/19/2017",
-        "expectedHours": "54",
-        "expectedStartDate": "5/13/2017",
-        "id": "600233",
-        "localArea": {
-            "id": "rg:None"
-        },
-        "project": "Tchesinkut Lake Rd Upgrade",
-        "status": "In progress"
-    },
-    {
-        "equipmentCount": "1",
-        "equipmentType": {
-            "id": "200003"
-        },
-        "expectedEndDate": "4/11/2017",
-        "expectedHours": "93",
-        "expectedStartDate": "3/31/2017",
-        "id": "600234",
-        "localArea": {
-            "id": "rg:None"
-        },
-        "project": "Glover Road Express Lane",
-        "status": "In progress"
-    },
-    {
-        "equipmentCount": "1",
-        "equipmentType": {
-            "id": "200000"
-        },
-        "expectedEndDate": "4/29/2017",
-        "expectedHours": "83",
-        "expectedStartDate": "4/19/2017",
-        "id": "600235",
-        "localArea": {
-            "id": "rg:None"
-        },
-        "project": "Stum Lake Road Building",
-        "status": "In progress"
-    },
-    {
-        "equipmentCount": "1",
-        "equipmentType": {
-            "id": "200002"
-        },
-        "expectedEndDate": "4/14/2017",
-        "expectedHours": "56",
-        "expectedStartDate": "4/7/2017",
-        "id": "600236",
-        "localArea": {
-            "id": "rg:None"
-        },
-        "project": "Shaughnessy St Upgrade",
-        "status": "In progress"
-    },
-    {
-        "equipmentCount": "1",
-        "equipmentType": {
-            "id": "200004"
-        },
-        "expectedEndDate": "4/12/2017",
-        "expectedHours": "21",
-        "expectedStartDate": "4/10/2017",
-        "id": "600237",
-        "localArea": {
-            "id": "rg:None"
-        },
-        "project": "Shaughnessy St Building",
-        "status": "In progress"
-    },
-    {
-        "equipmentCount": "1",
-        "equipmentType": {
-            "id": "200006"
-        },
-        "expectedEndDate": "5/8/2017",
-        "expectedHours": "37",
-        "expectedStartDate": "5/4/2017",
-        "id": "600238",
-        "localArea": {
-            "id": "rg:None"
-        },
-        "project": "Mesa Vista Drive Bridge Replacement",
-        "status": "In progress"
-    },
-    {
-        "equipmentCount": "1",
-        "equipmentType": {
-            "id": "200009"
-        },
-        "expectedEndDate": "4/23/2017",
-        "expectedHours": "61",
-        "expectedStartDate": "4/16/2017",
-        "id": "600239",
-        "localArea": {
-            "id": "rg:None"
-        },
-        "project": "Roger Street Upgrade",
-        "status": "In progress"
-    },
-    {
-        "equipmentCount": "1",
-        "equipmentType": {
-            "id": "200000"
-        },
-        "expectedEndDate": "5/29/2017",
-        "expectedHours": "46",
-        "expectedStartDate": "5/24/2017",
-        "id": "600240",
-        "localArea": {
-            "id": "rg:None"
-        },
-        "project": "Stum Lake Road Upgrade",
-        "status": "In progress"
-    },
-    {
-        "equipmentCount": "1",
-        "equipmentType": {
-            "id": "200004"
-        },
-        "expectedEndDate": "4/18/2017",
-        "expectedHours": "85",
-        "expectedStartDate": "4/8/2017",
-        "id": "600241",
-        "localArea": {
-            "id": "rg:None"
-        },
-        "project": "Blind Bay Road Bridge Replacement",
-        "status": "In progress"
-    },
-    {
-        "equipmentCount": "3",
-        "equipmentType": {
-            "id": "200009"
-        },
-        "expectedEndDate": "4/26/2017",
-        "expectedHours": "30",
-        "expectedStartDate": "4/15/2017",
-        "id": "600242",
-        "localArea": {
-            "id": "rg:None"
-        },
-        "project": "Shaughnessy St Bridge Replacement",
-        "status": "In progress"
-    },
-    {
-        "equipmentCount": "1",
-        "equipmentType": {
-            "id": "200009"
-        },
-        "expectedEndDate": "4/24/2017",
-        "expectedHours": "96",
-        "expectedStartDate": "4/12/2017",
-        "id": "600243",
-        "localArea": {
-            "id": "rg:None"
-        },
-        "project": "Yoho Valley Road Upgrade",
-        "status": "In progress"
-    },
-    {
-        "equipmentCount": "1",
-        "equipmentType": {
-            "id": "200009"
-        },
-        "expectedEndDate": "5/10/2017",
-        "expectedHours": "88",
-        "expectedStartDate": "4/29/2017",
-        "id": "600244",
-        "localArea": {
-            "id": "rg:None"
-        },
-        "project": "Old Spallumcheen Rd HOV Lane",
-        "status": "In progress"
-    },
-    {
-        "equipmentCount": "3",
-        "equipmentType": {
-            "id": "200000"
-        },
-        "expectedEndDate": "5/25/2017",
-        "expectedHours": "28",
-        "expectedStartDate": "5/15/2017",
-        "id": "600245",
-        "localArea": {
-            "id": "rg:None"
-        },
-        "project": "Glover Road Bridge Replacement",
-        "status": "In progress"
-    },
-    {
-        "equipmentCount": "1",
-        "equipmentType": {
+        "project": {
             "id": "200005"
         },
-        "expectedEndDate": "5/3/2017",
-        "expectedHours": "84",
-        "expectedStartDate": "4/23/2017",
-        "id": "600246",
-        "localArea": {
-            "id": "rg:None"
-        },
-        "project": "Coldstream Avenue Building",
-        "status": "In progress"
+        "status": "Completed"
     },
     {
-        "equipmentCount": "1",
-        "equipmentType": {
-            "id": "200006"
-        },
-        "expectedEndDate": "5/12/2017",
-        "expectedHours": "99",
-        "expectedStartDate": "4/30/2017",
-        "id": "600247",
-        "localArea": {
-            "id": "rg:None"
-        },
-        "project": "Holdom Avenue Bridge",
-        "status": "In progress"
-    },
-    {
-        "equipmentCount": "1",
-        "equipmentType": {
-            "id": "200002"
-        },
-        "expectedEndDate": "5/12/2017",
-        "expectedHours": "98",
-        "expectedStartDate": "4/30/2017",
-        "id": "600248",
-        "localArea": {
-            "id": "rg:None"
-        },
-        "project": "Scotts Lane Overpass",
-        "status": "In progress"
-    },
-    {
-        "equipmentCount": "1",
-        "equipmentType": {
-            "id": "200006"
-        },
-        "expectedEndDate": "5/15/2017",
-        "expectedHours": "32",
-        "expectedStartDate": "5/11/2017",
-        "id": "600249",
-        "localArea": {
-            "id": "rg:None"
-        },
-        "project": "Findlay Creek Road Bypass",
-        "status": "In progress"
-    },
-    {
-        "equipmentCount": "5",
-        "equipmentType": {
+        "districtEquipmentType": {
             "id": "200004"
         },
-        "expectedEndDate": "6/4/2017",
-        "expectedHours": "29",
-        "expectedStartDate": "5/17/2017",
-        "id": "600250",
-        "localArea": {
-            "id": "rg:None"
-        },
-        "project": "Sixth Street Bridge Replacement",
-        "status": "In progress"
-    },
-    {
         "equipmentCount": "1",
-        "equipmentType": {
-            "id": "200005"
-        },
-        "expectedEndDate": "4/12/2017",
-        "expectedHours": "45",
-        "expectedStartDate": "4/7/2017",
-        "id": "600251",
+        "expectedEndDate": "6/18/2017",
+        "expectedHours": "82",
+        "expectedStartDate": "6/8/2017",
+        "id": "200006",
         "localArea": {
-            "id": "rg:None"
+            "id": "200075"
         },
-        "project": "King George Hwy Bridge",
-        "status": "In progress"
-    },
-    {
-        "equipmentCount": "1",
-        "equipmentType": {
+        "project": {
             "id": "200006"
         },
-        "expectedEndDate": "5/23/2017",
-        "expectedHours": "26",
-        "expectedStartDate": "5/20/2017",
-        "id": "600252",
-        "localArea": {
-            "id": "rg:None"
-        },
-        "project": "Wallace Street HOV Lane",
-        "status": "In progress"
+        "status": "Completed"
     },
     {
-        "equipmentCount": "1",
-        "equipmentType": {
-            "id": "200002"
-        },
-        "expectedEndDate": "4/17/2017",
-        "expectedHours": "29",
-        "expectedStartDate": "4/14/2017",
-        "id": "600253",
-        "localArea": {
-            "id": "rg:None"
-        },
-        "project": "Scotts Lane Building",
-        "status": "In progress"
-    },
-    {
-        "equipmentCount": "1",
-        "equipmentType": {
-            "id": "200002"
-        },
-        "expectedEndDate": "4/11/2017",
-        "expectedHours": "96",
-        "expectedStartDate": "3/30/2017",
-        "id": "600254",
-        "localArea": {
-            "id": "rg:None"
-        },
-        "project": "Nootka Street HOV Lane",
-        "status": "In progress"
-    },
-    {
-        "equipmentCount": "1",
-        "equipmentType": {
-            "id": "200000"
-        },
-        "expectedEndDate": "4/16/2017",
-        "expectedHours": "38",
-        "expectedStartDate": "4/12/2017",
-        "id": "600255",
-        "localArea": {
-            "id": "rg:None"
-        },
-        "project": "Nootka Street Extension",
-        "status": "In progress"
-    },
-    {
-        "equipmentCount": "1",
-        "equipmentType": {
-            "id": "200002"
-        },
-        "expectedEndDate": "4/14/2017",
-        "expectedHours": "55",
-        "expectedStartDate": "4/8/2017",
-        "id": "600256",
-        "localArea": {
-            "id": "rg:None"
-        },
-        "project": "102nd Avenue HOV Lane",
-        "status": "In progress"
-    },
-    {
-        "equipmentCount": "1",
-        "equipmentType": {
+        "districtEquipmentType": {
             "id": "200009"
         },
-        "expectedEndDate": "5/24/2017",
-        "expectedHours": "13",
-        "expectedStartDate": "5/23/2017",
-        "id": "600257",
-        "localArea": {
-            "id": "rg:None"
-        },
-        "project": "Cardero St Cloverleaf",
-        "status": "In progress"
-    },
-    {
         "equipmentCount": "1",
-        "equipmentType": {
-            "id": "200000"
-        },
-        "expectedEndDate": "4/25/2017",
-        "expectedHours": "63",
-        "expectedStartDate": "4/18/2017",
-        "id": "600258",
-        "localArea": {
-            "id": "rg:None"
-        },
-        "project": "Blind Bay Road Upgrade",
-        "status": "In progress"
-    },
-    {
-        "equipmentCount": "4",
-        "equipmentType": {
-            "id": "200000"
-        },
-        "expectedEndDate": "5/24/2017",
+        "expectedEndDate": "6/28/2017",
         "expectedHours": "23",
-        "expectedStartDate": "5/13/2017",
-        "id": "600259",
+        "expectedStartDate": "6/26/2017",
+        "id": "200007",
         "localArea": {
-            "id": "rg:None"
+            "id": "200075"
         },
-        "project": "Old Spallumcheen Rd Cloverleaf",
-        "status": "In progress"
-    },
-    {
-        "equipmentCount": "1",
-        "equipmentType": {
-            "id": "200000"
-        },
-        "expectedEndDate": "5/23/2017",
-        "expectedHours": "20",
-        "expectedStartDate": "5/21/2017",
-        "id": "600260",
-        "localArea": {
-            "id": "rg:None"
-        },
-        "project": "Keith Road Bridge Replacement",
-        "status": "In progress"
-    },
-    {
-        "equipmentCount": "1",
-        "equipmentType": {
-            "id": "200004"
-        },
-        "expectedEndDate": "5/24/2017",
-        "expectedHours": "28",
-        "expectedStartDate": "5/21/2017",
-        "id": "600261",
-        "localArea": {
-            "id": "rg:None"
-        },
-        "project": "Brew Creek Rd Extension",
-        "status": "In progress"
-    },
-    {
-        "equipmentCount": "1",
-        "equipmentType": {
-            "id": "200009"
-        },
-        "expectedEndDate": "4/5/2017",
-        "expectedHours": "48",
-        "expectedStartDate": "3/30/2017",
-        "id": "600262",
-        "localArea": {
-            "id": "rg:None"
-        },
-        "project": "Coldstream Avenue HOV Lane",
-        "status": "In progress"
-    },
-    {
-        "equipmentCount": "1",
-        "equipmentType": {
-            "id": "200005"
-        },
-        "expectedEndDate": "5/4/2017",
-        "expectedHours": "44",
-        "expectedStartDate": "4/29/2017",
-        "id": "600263",
-        "localArea": {
-            "id": "rg:None"
-        },
-        "project": "Wellington Ave Overpass",
-        "status": "In progress"
-    },
-    {
-        "equipmentCount": "1",
-        "equipmentType": {
-            "id": "200006"
-        },
-        "expectedEndDate": "4/9/2017",
-        "expectedHours": "87",
-        "expectedStartDate": "3/30/2017",
-        "id": "600264",
-        "localArea": {
-            "id": "rg:None"
-        },
-        "project": "Hardy Street Overpass",
-        "status": "In progress"
-    },
-    {
-        "equipmentCount": "5",
-        "equipmentType": {
-            "id": "200003"
-        },
-        "expectedEndDate": "5/22/2017",
-        "expectedHours": "50",
-        "expectedStartDate": "4/21/2017",
-        "id": "600265",
-        "localArea": {
-            "id": "rg:None"
-        },
-        "project": "Hastings Street Bypass",
-        "status": "In progress"
-    },
-    {
-        "equipmentCount": "1",
-        "equipmentType": {
-            "id": "200003"
-        },
-        "expectedEndDate": "4/7/2017",
-        "expectedHours": "20",
-        "expectedStartDate": "4/5/2017",
-        "id": "600266",
-        "localArea": {
-            "id": "rg:None"
-        },
-        "project": "Findlay Creek Road Overpass",
-        "status": "In progress"
-    },
-    {
-        "equipmentCount": "1",
-        "equipmentType": {
-            "id": "200003"
-        },
-        "expectedEndDate": "5/29/2017",
-        "expectedHours": "92",
-        "expectedStartDate": "5/18/2017",
-        "id": "600267",
-        "localArea": {
-            "id": "200029"
-        },
-        "project": "Burdett Avenue Cloverleaf",
-        "status": "In progress"
-    },
-    {
-        "equipmentCount": "1",
-        "equipmentType": {
-            "id": "200004"
-        },
-        "expectedEndDate": "5/13/2017",
-        "expectedHours": "58",
-        "expectedStartDate": "5/6/2017",
-        "id": "600268",
-        "localArea": {
-            "id": "200029"
-        },
-        "project": "Tolmie St Upgrade",
-        "status": "In progress"
-    },
-    {
-        "equipmentCount": "1",
-        "equipmentType": {
-            "id": "200003"
-        },
-        "expectedEndDate": "5/25/2017",
-        "expectedHours": "86",
-        "expectedStartDate": "5/15/2017",
-        "id": "600269",
-        "localArea": {
-            "id": "200029"
-        },
-        "project": "Quayside Dr Building",
-        "status": "In progress"
-    },
-    {
-        "equipmentCount": "1",
-        "equipmentType": {
-            "id": "200000"
-        },
-        "expectedEndDate": "6/4/2017",
-        "expectedHours": "95",
-        "expectedStartDate": "5/24/2017",
-        "id": "600270",
-        "localArea": {
-            "id": "200029"
-        },
-        "project": "Sixth Street Building",
-        "status": "In progress"
-    },
-    {
-        "equipmentCount": "1",
-        "equipmentType": {
-            "id": "200001"
-        },
-        "expectedEndDate": "5/21/2017",
-        "expectedHours": "22",
-        "expectedStartDate": "5/19/2017",
-        "id": "600271",
-        "localArea": {
-            "id": "200029"
-        },
-        "project": "James Street Overpass",
-        "status": "In progress"
-    },
-    {
-        "equipmentCount": "1",
-        "equipmentType": {
-            "id": "200002"
-        },
-        "expectedEndDate": "4/22/2017",
-        "expectedHours": "59",
-        "expectedStartDate": "4/15/2017",
-        "id": "600272",
-        "localArea": {
-            "id": "200029"
-        },
-        "project": "Tolmie St Bypass",
-        "status": "In progress"
-    },
-    {
-        "equipmentCount": "1",
-        "equipmentType": {
-            "id": "200000"
-        },
-        "expectedEndDate": "4/13/2017",
-        "expectedHours": "80",
-        "expectedStartDate": "4/3/2017",
-        "id": "600273",
-        "localArea": {
-            "id": "200029"
-        },
-        "project": "Coldstream Avenue Bypass",
-        "status": "In progress"
-    },
-    {
-        "equipmentCount": "5",
-        "equipmentType": {
-            "id": "200009"
-        },
-        "expectedEndDate": "6/14/2017",
-        "expectedHours": "93",
-        "expectedStartDate": "4/17/2017",
-        "id": "600274",
-        "localArea": {
-            "id": "rg:None"
-        },
-        "project": "Lake City Way Upgrade",
-        "status": "In progress"
-    },
-    {
-        "equipmentCount": "1",
-        "equipmentType": {
-            "id": "200006"
-        },
-        "expectedEndDate": "5/12/2017",
-        "expectedHours": "59",
-        "expectedStartDate": "5/5/2017",
-        "id": "600275",
-        "localArea": {
-            "id": "rg:None"
-        },
-        "project": "Roger Street Building",
-        "status": "In progress"
-    },
-    {
-        "equipmentCount": "5",
-        "equipmentType": {
+        "project": {
             "id": "200007"
         },
-        "expectedEndDate": "5/5/2017",
-        "expectedHours": "57",
-        "expectedStartDate": "3/31/2017",
-        "id": "600276",
-        "localArea": {
-            "id": "rg:None"
-        },
-        "project": "Essendene Avenue Bridge Replacement",
-        "status": "In progress"
+        "status": "Completed"
     },
     {
-        "equipmentCount": "4",
-        "equipmentType": {
+        "districtEquipmentType": {
+            "id": "200010"
+        },
+        "equipmentCount": "1",
+        "expectedEndDate": "6/18/2017",
+        "expectedHours": "45",
+        "expectedStartDate": "6/13/2017",
+        "id": "200008",
+        "localArea": {
+            "id": "200075"
+        },
+        "project": {
+            "id": "200008"
+        },
+        "status": "Completed"
+    },
+    {
+        "districtEquipmentType": {
             "id": "200009"
         },
-        "expectedEndDate": "5/21/2017",
-        "expectedHours": "94",
-        "expectedStartDate": "4/4/2017",
-        "id": "600277",
-        "localArea": {
-            "id": "rg:None"
-        },
-        "project": "Blanshard Bridge Replacement",
-        "status": "In progress"
-    },
-    {
         "equipmentCount": "1",
-        "equipmentType": {
-            "id": "200003"
-        },
-        "expectedEndDate": "4/5/2017",
-        "expectedHours": "8",
-        "expectedStartDate": "4/4/2017",
-        "id": "600278",
-        "localArea": {
-            "id": "rg:None"
-        },
-        "project": "Wallace Street Expressway",
-        "status": "In progress"
-    },
-    {
-        "equipmentCount": "5",
-        "equipmentType": {
-            "id": "200003"
-        },
-        "expectedEndDate": "5/7/2017",
-        "expectedHours": "40",
-        "expectedStartDate": "4/12/2017",
-        "id": "600279",
-        "localArea": {
-            "id": "rg:None"
-        },
-        "project": "Burdett Avenue Extension",
-        "status": "In progress"
-    },
-    {
-        "equipmentCount": "1",
-        "equipmentType": {
-            "id": "200006"
-        },
-        "expectedEndDate": "5/27/2017",
-        "expectedHours": "38",
-        "expectedStartDate": "5/23/2017",
-        "id": "600280",
-        "localArea": {
-            "id": "rg:None"
-        },
-        "project": "Tchesinkut Lake Rd Extension",
-        "status": "In progress"
-    },
-    {
-        "equipmentCount": "1",
-        "equipmentType": {
-            "id": "200007"
-        },
-        "expectedEndDate": "4/27/2017",
-        "expectedHours": "77",
-        "expectedStartDate": "4/18/2017",
-        "id": "600281",
-        "localArea": {
-            "id": "rg:None"
-        },
-        "project": "Blind Bay Road Overpass",
-        "status": "In progress"
-    },
-    {
-        "equipmentCount": "1",
-        "equipmentType": {
-            "id": "200009"
-        },
-        "expectedEndDate": "4/20/2017",
-        "expectedHours": "37",
-        "expectedStartDate": "4/16/2017",
-        "id": "600282",
-        "localArea": {
-            "id": "rg:None"
-        },
-        "project": "Tchesinkut Lake Rd Expressway",
-        "status": "In progress"
-    },
-    {
-        "equipmentCount": "4",
-        "equipmentType": {
-            "id": "200007"
-        },
-        "expectedEndDate": "6/1/2017",
-        "expectedHours": "79",
-        "expectedStartDate": "4/23/2017",
-        "id": "600283",
-        "localArea": {
-            "id": "rg:None"
-        },
-        "project": "Stum Lake Road HOV Lane",
-        "status": "In progress"
-    },
-    {
-        "equipmentCount": "4",
-        "equipmentType": {
-            "id": "200003"
-        },
-        "expectedEndDate": "4/25/2017",
-        "expectedHours": "36",
-        "expectedStartDate": "4/7/2017",
-        "id": "600284",
-        "localArea": {
-            "id": "rg:None"
-        },
-        "project": "Yoho Valley Road Building",
-        "status": "In progress"
-    },
-    {
-        "equipmentCount": "1",
-        "equipmentType": {
-            "id": "200002"
-        },
-        "expectedEndDate": "5/15/2017",
-        "expectedHours": "29",
-        "expectedStartDate": "5/12/2017",
-        "id": "600285",
-        "localArea": {
-            "id": "rg:None"
-        },
-        "project": "Keith Road Expressway",
-        "status": "In progress"
-    },
-    {
-        "equipmentCount": "1",
-        "equipmentType": {
-            "id": "200005"
-        },
-        "expectedEndDate": "4/10/2017",
-        "expectedHours": "5",
-        "expectedStartDate": "4/10/2017",
-        "id": "600286",
-        "localArea": {
-            "id": "rg:None"
-        },
-        "project": "Burdett Avenue Express Lane",
-        "status": "In progress"
-    },
-    {
-        "equipmentCount": "1",
-        "equipmentType": {
-            "id": "200002"
-        },
-        "expectedEndDate": "5/18/2017",
-        "expectedHours": "83",
-        "expectedStartDate": "5/8/2017",
-        "id": "600287",
-        "localArea": {
-            "id": "rg:None"
-        },
-        "project": "Quayside Dr Bridge",
-        "status": "In progress"
-    },
-    {
-        "equipmentCount": "1",
-        "equipmentType": {
-            "id": "200002"
-        },
-        "expectedEndDate": "5/25/2017",
-        "expectedHours": "87",
-        "expectedStartDate": "5/15/2017",
-        "id": "600288",
-        "localArea": {
-            "id": "rg:None"
-        },
-        "project": "Jade St Expressway",
-        "status": "In progress"
-    },
-    {
-        "equipmentCount": "1",
-        "equipmentType": {
-            "id": "200007"
-        },
-        "expectedEndDate": "4/11/2017",
-        "expectedHours": "37",
-        "expectedStartDate": "4/7/2017",
-        "id": "600289",
-        "localArea": {
-            "id": "rg:None"
-        },
-        "project": "Robson St Express Lane",
-        "status": "In progress"
-    },
-    {
-        "equipmentCount": "1",
-        "equipmentType": {
-            "id": "200009"
-        },
-        "expectedEndDate": "4/26/2017",
-        "expectedHours": "89",
-        "expectedStartDate": "4/15/2017",
-        "id": "600290",
-        "localArea": {
-            "id": "rg:None"
-        },
-        "project": "Robson St Bridge Replacement",
-        "status": "In progress"
-    },
-    {
-        "equipmentCount": "1",
-        "equipmentType": {
-            "id": "200001"
-        },
-        "expectedEndDate": "5/14/2017",
-        "expectedHours": "57",
-        "expectedStartDate": "5/7/2017",
-        "id": "600291",
-        "localArea": {
-            "id": "rg:None"
-        },
-        "project": "Carlson Road Express Lane",
-        "status": "In progress"
-    },
-    {
-        "equipmentCount": "1",
-        "equipmentType": {
-            "id": "200001"
-        },
-        "expectedEndDate": "5/1/2017",
-        "expectedHours": "72",
-        "expectedStartDate": "4/22/2017",
-        "id": "600292",
-        "localArea": {
-            "id": "rg:None"
-        },
-        "project": "McGill Road Express Lane",
-        "status": "In progress"
-    },
-    {
-        "equipmentCount": "1",
-        "equipmentType": {
-            "id": "200009"
-        },
-        "expectedEndDate": "5/21/2017",
-        "expectedHours": "51",
-        "expectedStartDate": "5/15/2017",
-        "id": "600293",
-        "localArea": {
-            "id": "rg:None"
-        },
-        "project": "Russell Avenue HOV Lane",
-        "status": "In progress"
-    },
-    {
-        "equipmentCount": "1",
-        "equipmentType": {
-            "id": "200001"
-        },
-        "expectedEndDate": "4/6/2017",
+        "expectedEndDate": "7/6/2017",
         "expectedHours": "61",
-        "expectedStartDate": "3/30/2017",
-        "id": "600294",
+        "expectedStartDate": "6/29/2017",
+        "id": "200009",
         "localArea": {
-            "id": "rg:None"
+            "id": "200075"
         },
-        "project": "Findlay Creek Road Upgrade",
+        "project": {
+            "id": "200009"
+        },
         "status": "In progress"
     },
     {
+        "districtEquipmentType": {
+            "id": "200008"
+        },
         "equipmentCount": "1",
-        "equipmentType": {
-            "id": "200003"
-        },
-        "expectedEndDate": "5/20/2017",
-        "expectedHours": "55",
-        "expectedStartDate": "5/14/2017",
-        "id": "600295",
+        "expectedEndDate": "7/16/2017",
+        "expectedHours": "89",
+        "expectedStartDate": "7/5/2017",
+        "id": "200010",
         "localArea": {
-            "id": "rg:None"
+            "id": "200075"
         },
-        "project": "Brew Creek Rd HOV Lane",
+        "project": {
+            "id": "200010"
+        },
         "status": "In progress"
     },
     {
+        "districtEquipmentType": {
+            "id": "200007"
+        },
         "equipmentCount": "1",
-        "equipmentType": {
-            "id": "200006"
-        },
-        "expectedEndDate": "4/21/2017",
-        "expectedHours": "77",
-        "expectedStartDate": "4/12/2017",
-        "id": "600296",
+        "expectedEndDate": "7/6/2017",
+        "expectedHours": "50",
+        "expectedStartDate": "6/30/2017",
+        "id": "200011",
         "localArea": {
-            "id": "rg:None"
+            "id": "200075"
         },
-        "project": "Roger Street Overpass",
+        "project": {
+            "id": "200011"
+        },
         "status": "In progress"
     },
     {
-        "equipmentCount": "1",
-        "equipmentType": {
-            "id": "200000"
-        },
-        "expectedEndDate": "5/29/2017",
-        "expectedHours": "88",
-        "expectedStartDate": "5/18/2017",
-        "id": "600297",
-        "localArea": {
-            "id": "rg:None"
-        },
-        "project": "Quayside Dr Expressway",
-        "status": "In progress"
-    },
-    {
-        "equipmentCount": "1",
-        "equipmentType": {
+        "districtEquipmentType": {
             "id": "200002"
         },
-        "expectedEndDate": "5/6/2017",
-        "expectedHours": "98",
-        "expectedStartDate": "4/24/2017",
-        "id": "600298",
+        "equipmentCount": "1",
+        "expectedEndDate": "8/7/2017",
+        "expectedHours": "93",
+        "expectedStartDate": "7/27/2017",
+        "id": "200012",
         "localArea": {
-            "id": "rg:None"
+            "id": "200075"
         },
-        "project": "Haaglund Rd HOV Lane",
+        "project": {
+            "id": "200012"
+        },
         "status": "In progress"
     },
     {
+        "districtEquipmentType": {
+            "id": "200010"
+        },
         "equipmentCount": "1",
-        "equipmentType": {
+        "expectedEndDate": "7/2/2017",
+        "expectedHours": "36",
+        "expectedStartDate": "6/28/2017",
+        "id": "200013",
+        "localArea": {
+            "id": "200075"
+        },
+        "project": {
+            "id": "200013"
+        },
+        "status": "In progress"
+    },
+    {
+        "districtEquipmentType": {
             "id": "200000"
         },
-        "expectedEndDate": "5/1/2017",
-        "expectedHours": "10",
-        "expectedStartDate": "4/30/2017",
-        "id": "600299",
-        "localArea": {
-            "id": "rg:None"
-        },
-        "project": "Tchesinkut Lake Rd Cloverleaf",
-        "status": "In progress"
-    },
-    {
         "equipmentCount": "1",
-        "equipmentType": {
-            "id": "200006"
-        },
-        "expectedEndDate": "5/21/2017",
-        "expectedHours": "33",
-        "expectedStartDate": "5/17/2017",
-        "id": "600300",
+        "expectedEndDate": "7/17/2017",
+        "expectedHours": "77",
+        "expectedStartDate": "7/8/2017",
+        "id": "200014",
         "localArea": {
-            "id": "rg:None"
+            "id": "200075"
         },
-        "project": "Stum Lake Road Bridge Replacement",
+        "project": {
+            "id": "200014"
+        },
         "status": "In progress"
     },
     {
-        "equipmentCount": "3",
-        "equipmentType": {
-            "id": "200005"
+        "districtEquipmentType": {
+            "id": "200013"
         },
-        "expectedEndDate": "6/1/2017",
-        "expectedHours": "31",
-        "expectedStartDate": "5/21/2017",
-        "id": "600301",
-        "localArea": {
-            "id": "rg:None"
-        },
-        "project": "Shaughnessy St Bypass",
-        "status": "In progress"
-    },
-    {
         "equipmentCount": "1",
-        "equipmentType": {
-            "id": "200001"
-        },
-        "expectedEndDate": "6/2/2017",
-        "expectedHours": "91",
-        "expectedStartDate": "5/22/2017",
-        "id": "600302",
-        "localArea": {
-            "id": "rg:None"
-        },
-        "project": "Shaughnessy St Bridge",
-        "status": "In progress"
-    },
-    {
-        "equipmentCount": "1",
-        "equipmentType": {
-            "id": "200003"
-        },
-        "expectedEndDate": "5/19/2017",
-        "expectedHours": "39",
-        "expectedStartDate": "5/15/2017",
-        "id": "600303",
-        "localArea": {
-            "id": "rg:None"
-        },
-        "project": "Cordova Street HOV Lane",
-        "status": "In progress"
-    },
-    {
-        "equipmentCount": "4",
-        "equipmentType": {
-            "id": "200001"
-        },
-        "expectedEndDate": "6/20/2017",
-        "expectedHours": "93",
-        "expectedStartDate": "5/5/2017",
-        "id": "600304",
-        "localArea": {
-            "id": "rg:None"
-        },
-        "project": "Mesa Vista Drive Upgrade",
-        "status": "In progress"
-    },
-    {
-        "equipmentCount": "1",
-        "equipmentType": {
-            "id": "200006"
-        },
-        "expectedEndDate": "4/20/2017",
-        "expectedHours": "99",
-        "expectedStartDate": "4/8/2017",
-        "id": "600305",
-        "localArea": {
-            "id": "rg:None"
-        },
-        "project": "Blanshard Express Lane",
-        "status": "In progress"
-    },
-    {
-        "equipmentCount": "2",
-        "equipmentType": {
-            "id": "200005"
-        },
-        "expectedEndDate": "6/4/2017",
-        "expectedHours": "89",
-        "expectedStartDate": "5/13/2017",
-        "id": "600306",
-        "localArea": {
-            "id": "rg:None"
-        },
-        "project": "Cordova Street Cloverleaf",
-        "status": "In progress"
-    },
-    {
-        "equipmentCount": "1",
-        "equipmentType": {
-            "id": "200005"
-        },
-        "expectedEndDate": "4/13/2017",
-        "expectedHours": "65",
-        "expectedStartDate": "4/5/2017",
-        "id": "600307",
-        "localArea": {
-            "id": "rg:None"
-        },
-        "project": "Kinchant St Bypass",
-        "status": "In progress"
-    },
-    {
-        "equipmentCount": "3",
-        "equipmentType": {
-            "id": "200004"
-        },
-        "expectedEndDate": "5/24/2017",
-        "expectedHours": "74",
-        "expectedStartDate": "4/27/2017",
-        "id": "600308",
-        "localArea": {
-            "id": "rg:None"
-        },
-        "project": "Alaska Hwy Bridge",
-        "status": "In progress"
-    },
-    {
-        "equipmentCount": "4",
-        "equipmentType": {
-            "id": "200004"
-        },
-        "expectedEndDate": "7/9/2017",
-        "expectedHours": "93",
-        "expectedStartDate": "5/24/2017",
-        "id": "600309",
-        "localArea": {
-            "id": "rg:None"
-        },
-        "project": "Stum Lake Road Expressway",
-        "status": "In progress"
-    },
-    {
-        "equipmentCount": "1",
-        "equipmentType": {
-            "id": "200005"
-        },
-        "expectedEndDate": "5/10/2017",
-        "expectedHours": "33",
-        "expectedStartDate": "5/6/2017",
-        "id": "600310",
-        "localArea": {
-            "id": "rg:None"
-        },
-        "project": "King George Hwy Building",
-        "status": "In progress"
-    },
-    {
-        "equipmentCount": "1",
-        "equipmentType": {
-            "id": "200006"
-        },
-        "expectedEndDate": "4/18/2017",
-        "expectedHours": "18",
-        "expectedStartDate": "4/16/2017",
-        "id": "600311",
-        "localArea": {
-            "id": "rg:None"
-        },
-        "project": "Burdett Avenue Bypass",
-        "status": "In progress"
-    },
-    {
-        "equipmentCount": "1",
-        "equipmentType": {
-            "id": "200000"
-        },
-        "expectedEndDate": "5/18/2017",
-        "expectedHours": "34",
-        "expectedStartDate": "5/14/2017",
-        "id": "600312",
-        "localArea": {
-            "id": "rg:None"
-        },
-        "project": "Hastings Street Extension",
-        "status": "In progress"
-    },
-    {
-        "equipmentCount": "1",
-        "equipmentType": {
-            "id": "200005"
-        },
-        "expectedEndDate": "5/7/2017",
-        "expectedHours": "5",
-        "expectedStartDate": "5/7/2017",
-        "id": "600313",
-        "localArea": {
-            "id": "rg:None"
-        },
-        "project": "Old Spallumcheen Rd Building",
-        "status": "In progress"
-    },
-    {
-        "equipmentCount": "1",
-        "equipmentType": {
-            "id": "200005"
-        },
-        "expectedEndDate": "4/22/2017",
+        "expectedEndDate": "6/26/2017",
         "expectedHours": "76",
-        "expectedStartDate": "4/13/2017",
-        "id": "600314",
+        "expectedStartDate": "6/17/2017",
+        "id": "200015",
         "localArea": {
-            "id": "rg:None"
+            "id": "200075"
         },
-        "project": "Coldstream Avenue Extension",
+        "project": {
+            "id": "200015"
+        },
         "status": "In progress"
     },
     {
-        "equipmentCount": "3",
-        "equipmentType": {
+        "districtEquipmentType": {
             "id": "200004"
         },
-        "expectedEndDate": "4/18/2017",
-        "expectedHours": "40",
-        "expectedStartDate": "4/3/2017",
-        "id": "600315",
-        "localArea": {
-            "id": "rg:None"
-        },
-        "project": "Robson St Overpass",
-        "status": "In progress"
-    },
-    {
-        "equipmentCount": "5",
-        "equipmentType": {
-            "id": "200009"
-        },
-        "expectedEndDate": "5/19/2017",
-        "expectedHours": "6",
-        "expectedStartDate": "5/16/2017",
-        "id": "600316",
-        "localArea": {
-            "id": "200029"
-        },
-        "project": "Carlson Road Cloverleaf",
-        "status": "In progress"
-    },
-    {
-        "equipmentCount": "1",
-        "equipmentType": {
-            "id": "200009"
-        },
-        "expectedEndDate": "4/16/2017",
-        "expectedHours": "30",
-        "expectedStartDate": "4/13/2017",
-        "id": "600317",
-        "localArea": {
-            "id": "200029"
-        },
-        "project": "102nd Avenue Cloverleaf",
-        "status": "In progress"
-    },
-    {
-        "equipmentCount": "1",
-        "equipmentType": {
-            "id": "200002"
-        },
-        "expectedEndDate": "5/18/2017",
-        "expectedHours": "77",
-        "expectedStartDate": "5/9/2017",
-        "id": "600318",
-        "localArea": {
-            "id": "200029"
-        },
-        "project": "McGill Road HOV Lane",
-        "status": "In progress"
-    },
-    {
-        "equipmentCount": "1",
-        "equipmentType": {
-            "id": "200003"
-        },
-        "expectedEndDate": "4/28/2017",
-        "expectedHours": "89",
-        "expectedStartDate": "4/17/2017",
-        "id": "600319",
-        "localArea": {
-            "id": "200029"
-        },
-        "project": "Russell Avenue Extension",
-        "status": "In progress"
-    },
-    {
         "equipmentCount": "2",
-        "equipmentType": {
-            "id": "200001"
-        },
-        "expectedEndDate": "5/25/2017",
-        "expectedHours": "8",
-        "expectedStartDate": "5/23/2017",
-        "id": "600320",
+        "expectedEndDate": "8/17/2017",
+        "expectedHours": "82",
+        "expectedStartDate": "7/28/2017",
+        "id": "200016",
         "localArea": {
-            "id": "200029"
+            "id": "200075"
         },
-        "project": "Cardero St Upgrade",
+        "project": {
+            "id": "200016"
+        },
         "status": "In progress"
     },
     {
+        "districtEquipmentType": {
+            "id": "200013"
+        },
         "equipmentCount": "1",
-        "equipmentType": {
-            "id": "200009"
-        },
-        "expectedEndDate": "4/20/2017",
-        "expectedHours": "6",
-        "expectedStartDate": "4/20/2017",
-        "id": "600321",
+        "expectedEndDate": "6/16/2017",
+        "expectedHours": "85",
+        "expectedStartDate": "6/6/2017",
+        "id": "200017",
         "localArea": {
-            "id": "200029"
+            "id": "200075"
         },
-        "project": "Findlay Creek Road Building",
+        "project": {
+            "id": "200017"
+        },
         "status": "In progress"
     },
     {
-        "equipmentCount": "5",
-        "equipmentType": {
-            "id": "200005"
+        "districtEquipmentType": {
+            "id": "200004"
         },
-        "expectedEndDate": "6/21/2017",
-        "expectedHours": "86",
-        "expectedStartDate": "4/29/2017",
-        "id": "600322",
-        "localArea": {
-            "id": "200029"
-        },
-        "project": "Queens Bay Expressway",
-        "status": "In progress"
-    },
-    {
         "equipmentCount": "1",
-        "equipmentType": {
+        "expectedEndDate": "8/7/2017",
+        "expectedHours": "70",
+        "expectedStartDate": "7/30/2017",
+        "id": "200018",
+        "localArea": {
+            "id": "200075"
+        },
+        "project": {
+            "id": "200018"
+        },
+        "status": "In progress"
+    },
+    {
+        "districtEquipmentType": {
             "id": "200006"
         },
-        "expectedEndDate": "5/15/2017",
-        "expectedHours": "99",
-        "expectedStartDate": "5/3/2017",
-        "id": "600323",
+        "equipmentCount": "4",
+        "expectedEndDate": "8/25/2017",
+        "expectedHours": "81",
+        "expectedStartDate": "7/16/2017",
+        "id": "200019",
         "localArea": {
+            "id": "200075"
+        },
+        "project": {
+            "id": "200019"
+        },
+        "status": "In progress"
+    },
+    {
+        "districtEquipmentType": {
+            "id": "200000"
+        },
+        "equipmentCount": "3",
+        "expectedEndDate": "7/10/2017",
+        "expectedHours": "51",
+        "expectedStartDate": "6/21/2017",
+        "id": "200020",
+        "localArea": {
+            "id": "200075"
+        },
+        "project": {
+            "id": "200020"
+        },
+        "status": "In progress"
+    },
+    {
+        "districtEquipmentType": {
+            "id": "200007"
+        },
+        "equipmentCount": "3",
+        "expectedEndDate": "7/29/2017",
+        "expectedHours": "54",
+        "expectedStartDate": "7/9/2017",
+        "id": "200021",
+        "localArea": {
+            "id": "200075"
+        },
+        "project": {
+            "id": "200021"
+        },
+        "status": "In progress"
+    },
+    {
+        "districtEquipmentType": {
+            "id": "200011"
+        },
+        "equipmentCount": "1",
+        "expectedEndDate": "7/15/2017",
+        "expectedHours": "100",
+        "expectedStartDate": "7/3/2017",
+        "id": "200022",
+        "localArea": {
+            "id": "200075"
+        },
+        "project": {
+            "id": "200022"
+        },
+        "status": "In progress"
+    },
+    {
+        "districtEquipmentType": {
+            "id": "200001"
+        },
+        "equipmentCount": "1",
+        "expectedEndDate": "7/26/2017",
+        "expectedHours": "90",
+        "expectedStartDate": "7/15/2017",
+        "id": "200023",
+        "localArea": {
+            "id": "200075"
+        },
+        "project": {
+            "id": "200023"
+        },
+        "status": "In progress"
+    },
+    {
+        "districtEquipmentType": {
+            "id": "200003"
+        },
+        "equipmentCount": "1",
+        "expectedEndDate": "7/31/2017",
+        "expectedHours": "41",
+        "expectedStartDate": "7/26/2017",
+        "id": "200024",
+        "localArea": {
+            "id": "200075"
+        },
+        "project": {
+            "id": "200024"
+        },
+        "status": "In progress"
+    },
+    {
+        "districtEquipmentType": {
+            "id": "200005"
+        },
+        "equipmentCount": "4",
+        "expectedEndDate": "7/12/2017",
+        "expectedHours": "24",
+        "expectedStartDate": "6/30/2017",
+        "id": "200025",
+        "localArea": {
+            "id": "200075"
+        },
+        "project": {
+            "id": "200025"
+        },
+        "status": "In progress"
+    },
+    {
+        "districtEquipmentType": {
+            "id": "200004"
+        },
+        "equipmentCount": "1",
+        "expectedEndDate": "7/23/2017",
+        "expectedHours": "47",
+        "expectedStartDate": "7/18/2017",
+        "id": "200026",
+        "localArea": {
+            "id": "200075"
+        },
+        "project": {
+            "id": "200026"
+        },
+        "status": "In progress"
+    },
+    {
+        "districtEquipmentType": {
+            "id": "200000"
+        },
+        "equipmentCount": "1",
+        "expectedEndDate": "7/12/2017",
+        "expectedHours": "90",
+        "expectedStartDate": "7/1/2017",
+        "id": "200027",
+        "localArea": {
+            "id": "200075"
+        },
+        "project": {
+            "id": "200027"
+        },
+        "status": "In progress"
+    },
+    {
+        "districtEquipmentType": {
+            "id": "200002"
+        },
+        "equipmentCount": "1",
+        "expectedEndDate": "7/17/2017",
+        "expectedHours": "84",
+        "expectedStartDate": "7/7/2017",
+        "id": "200028",
+        "localArea": {
+            "id": "200075"
+        },
+        "project": {
+            "id": "200028"
+        },
+        "status": "In progress"
+    },
+    {
+        "districtEquipmentType": {
+            "id": "200009"
+        },
+        "equipmentCount": "5",
+        "expectedEndDate": "8/8/2017",
+        "expectedHours": "40",
+        "expectedStartDate": "7/14/2017",
+        "id": "200029",
+        "localArea": {
+            "id": "200075"
+        },
+        "project": {
             "id": "200029"
         },
-        "project": "Jade St Upgrade",
+        "status": "In progress"
+    },
+    {
+        "districtEquipmentType": {
+            "id": "200013"
+        },
+        "equipmentCount": "1",
+        "expectedEndDate": "8/1/2017",
+        "expectedHours": "22",
+        "expectedStartDate": "7/30/2017",
+        "id": "200030",
+        "localArea": {
+            "id": "200075"
+        },
+        "project": {
+            "id": "200030"
+        },
+        "status": "In progress"
+    },
+    {
+        "districtEquipmentType": {
+            "id": "200003"
+        },
+        "equipmentCount": "1",
+        "expectedEndDate": "7/4/2017",
+        "expectedHours": "59",
+        "expectedStartDate": "6/27/2017",
+        "id": "200031",
+        "localArea": {
+            "id": "200076"
+        },
+        "project": {
+            "id": "200031"
+        },
+        "status": "In progress"
+    },
+    {
+        "districtEquipmentType": {
+            "id": "200006"
+        },
+        "equipmentCount": "1",
+        "expectedEndDate": "7/23/2017",
+        "expectedHours": "43",
+        "expectedStartDate": "7/18/2017",
+        "id": "200032",
+        "localArea": {
+            "id": "200076"
+        },
+        "project": {
+            "id": "200032"
+        },
+        "status": "In progress"
+    },
+    {
+        "districtEquipmentType": {
+            "id": "200007"
+        },
+        "equipmentCount": "1",
+        "expectedEndDate": "6/20/2017",
+        "expectedHours": "35",
+        "expectedStartDate": "6/16/2017",
+        "id": "200033",
+        "localArea": {
+            "id": "200076"
+        },
+        "project": {
+            "id": "200033"
+        },
+        "status": "In progress"
+    },
+    {
+        "districtEquipmentType": {
+            "id": "200011"
+        },
+        "equipmentCount": "1",
+        "expectedEndDate": "7/8/2017",
+        "expectedHours": "85",
+        "expectedStartDate": "6/28/2017",
+        "id": "200034",
+        "localArea": {
+            "id": "200076"
+        },
+        "project": {
+            "id": "200034"
+        },
+        "status": "Completed"
+    },
+    {
+        "districtEquipmentType": {
+            "id": "200007"
+        },
+        "equipmentCount": "1",
+        "expectedEndDate": "7/7/2017",
+        "expectedHours": "66",
+        "expectedStartDate": "6/29/2017",
+        "id": "200035",
+        "localArea": {
+            "id": "200076"
+        },
+        "project": {
+            "id": "200035"
+        },
+        "status": "Completed"
+    },
+    {
+        "districtEquipmentType": {
+            "id": "200007"
+        },
+        "equipmentCount": "1",
+        "expectedEndDate": "7/14/2017",
+        "expectedHours": "81",
+        "expectedStartDate": "7/4/2017",
+        "id": "200036",
+        "localArea": {
+            "id": "200076"
+        },
+        "project": {
+            "id": "200036"
+        },
+        "status": "In progress"
+    },
+    {
+        "districtEquipmentType": {
+            "id": "200006"
+        },
+        "equipmentCount": "1",
+        "expectedEndDate": "7/13/2017",
+        "expectedHours": "75",
+        "expectedStartDate": "7/4/2017",
+        "id": "200037",
+        "localArea": {
+            "id": "200076"
+        },
+        "project": {
+            "id": "200037"
+        },
+        "status": "In progress"
+    },
+    {
+        "districtEquipmentType": {
+            "id": "200000"
+        },
+        "equipmentCount": "1",
+        "expectedEndDate": "7/20/2017",
+        "expectedHours": "52",
+        "expectedStartDate": "7/14/2017",
+        "id": "200038",
+        "localArea": {
+            "id": "200076"
+        },
+        "project": {
+            "id": "200000"
+        },
+        "status": "In progress"
+    },
+    {
+        "districtEquipmentType": {
+            "id": "200001"
+        },
+        "equipmentCount": "1",
+        "expectedEndDate": "7/25/2017",
+        "expectedHours": "47",
+        "expectedStartDate": "7/20/2017",
+        "id": "200039",
+        "localArea": {
+            "id": "200076"
+        },
+        "project": {
+            "id": "200001"
+        },
+        "status": "In progress"
+    },
+    {
+        "districtEquipmentType": {
+            "id": "200008"
+        },
+        "equipmentCount": "1",
+        "expectedEndDate": "8/8/2017",
+        "expectedHours": "80",
+        "expectedStartDate": "7/29/2017",
+        "id": "200040",
+        "localArea": {
+            "id": "200076"
+        },
+        "project": {
+            "id": "200002"
+        },
+        "status": "In progress"
+    },
+    {
+        "districtEquipmentType": {
+            "id": "200011"
+        },
+        "equipmentCount": "2",
+        "expectedEndDate": "7/11/2017",
+        "expectedHours": "15",
+        "expectedStartDate": "7/8/2017",
+        "id": "200041",
+        "localArea": {
+            "id": "200076"
+        },
+        "project": {
+            "id": "200003"
+        },
+        "status": "In progress"
+    },
+    {
+        "districtEquipmentType": {
+            "id": "200011"
+        },
+        "equipmentCount": "1",
+        "expectedEndDate": "6/14/2017",
+        "expectedHours": "31",
+        "expectedStartDate": "6/11/2017",
+        "id": "200042",
+        "localArea": {
+            "id": "200076"
+        },
+        "project": {
+            "id": "200004"
+        },
+        "status": "Completed"
+    },
+    {
+        "districtEquipmentType": {
+            "id": "200006"
+        },
+        "equipmentCount": "1",
+        "expectedEndDate": "7/25/2017",
+        "expectedHours": "46",
+        "expectedStartDate": "7/20/2017",
+        "id": "200043",
+        "localArea": {
+            "id": "200076"
+        },
+        "project": {
+            "id": "200005"
+        },
+        "status": "In progress"
+    },
+    {
+        "districtEquipmentType": {
+            "id": "200007"
+        },
+        "equipmentCount": "5",
+        "expectedEndDate": "8/19/2017",
+        "expectedHours": "91",
+        "expectedStartDate": "6/24/2017",
+        "id": "200044",
+        "localArea": {
+            "id": "200076"
+        },
+        "project": {
+            "id": "200006"
+        },
+        "status": "In progress"
+    },
+    {
+        "districtEquipmentType": {
+            "id": "200011"
+        },
+        "equipmentCount": "1",
+        "expectedEndDate": "7/29/2017",
+        "expectedHours": "33",
+        "expectedStartDate": "7/25/2017",
+        "id": "200045",
+        "localArea": {
+            "id": "200076"
+        },
+        "project": {
+            "id": "200007"
+        },
+        "status": "In progress"
+    },
+    {
+        "districtEquipmentType": {
+            "id": "200000"
+        },
+        "equipmentCount": "1",
+        "expectedEndDate": "6/10/2017",
+        "expectedHours": "33",
+        "expectedStartDate": "6/6/2017",
+        "id": "200046",
+        "localArea": {
+            "id": "200076"
+        },
+        "project": {
+            "id": "200008"
+        },
+        "status": "In progress"
+    },
+    {
+        "districtEquipmentType": {
+            "id": "200003"
+        },
+        "equipmentCount": "1",
+        "expectedEndDate": "7/4/2017",
+        "expectedHours": "17",
+        "expectedStartDate": "7/2/2017",
+        "id": "200047",
+        "localArea": {
+            "id": "200076"
+        },
+        "project": {
+            "id": "200009"
+        },
+        "status": "In progress"
+    },
+    {
+        "districtEquipmentType": {
+            "id": "200001"
+        },
+        "equipmentCount": "1",
+        "expectedEndDate": "7/16/2017",
+        "expectedHours": "91",
+        "expectedStartDate": "7/5/2017",
+        "id": "200048",
+        "localArea": {
+            "id": "200076"
+        },
+        "project": {
+            "id": "200010"
+        },
+        "status": "In progress"
+    },
+    {
+        "districtEquipmentType": {
+            "id": "200010"
+        },
+        "equipmentCount": "1",
+        "expectedEndDate": "7/10/2017",
+        "expectedHours": "92",
+        "expectedStartDate": "6/29/2017",
+        "id": "200049",
+        "localArea": {
+            "id": "200076"
+        },
+        "project": {
+            "id": "200011"
+        },
+        "status": "Completed"
+    },
+    {
+        "districtEquipmentType": {
+            "id": "200006"
+        },
+        "equipmentCount": "5",
+        "expectedEndDate": "6/30/2017",
+        "expectedHours": "41",
+        "expectedStartDate": "6/5/2017",
+        "id": "200050",
+        "localArea": {
+            "id": "200076"
+        },
+        "project": {
+            "id": "200012"
+        },
+        "status": "In progress"
+    },
+    {
+        "districtEquipmentType": {
+            "id": "200004"
+        },
+        "equipmentCount": "1",
+        "expectedEndDate": "7/10/2017",
+        "expectedHours": "56",
+        "expectedStartDate": "7/3/2017",
+        "id": "200051",
+        "localArea": {
+            "id": "200076"
+        },
+        "project": {
+            "id": "200013"
+        },
+        "status": "In progress"
+    },
+    {
+        "districtEquipmentType": {
+            "id": "200000"
+        },
+        "equipmentCount": "1",
+        "expectedEndDate": "6/26/2017",
+        "expectedHours": "58",
+        "expectedStartDate": "6/19/2017",
+        "id": "200052",
+        "localArea": {
+            "id": "200076"
+        },
+        "project": {
+            "id": "200014"
+        },
+        "status": "In progress"
+    },
+    {
+        "districtEquipmentType": {
+            "id": "200009"
+        },
+        "equipmentCount": "2",
+        "expectedEndDate": "7/8/2017",
+        "expectedHours": "36",
+        "expectedStartDate": "6/29/2017",
+        "id": "200053",
+        "localArea": {
+            "id": "200076"
+        },
+        "project": {
+            "id": "200015"
+        },
+        "status": "In progress"
+    },
+    {
+        "districtEquipmentType": {
+            "id": "200009"
+        },
+        "equipmentCount": "1",
+        "expectedEndDate": "6/20/2017",
+        "expectedHours": "55",
+        "expectedStartDate": "6/14/2017",
+        "id": "200054",
+        "localArea": {
+            "id": "200076"
+        },
+        "project": {
+            "id": "200016"
+        },
+        "status": "Cancelled"
+    },
+    {
+        "districtEquipmentType": {
+            "id": "200010"
+        },
+        "equipmentCount": "1",
+        "expectedEndDate": "7/30/2017",
+        "expectedHours": "33",
+        "expectedStartDate": "7/26/2017",
+        "id": "200055",
+        "localArea": {
+            "id": "200076"
+        },
+        "project": {
+            "id": "200017"
+        },
+        "status": "Cancelled"
+    },
+    {
+        "districtEquipmentType": {
+            "id": "200012"
+        },
+        "equipmentCount": "1",
+        "expectedEndDate": "8/2/2017",
+        "expectedHours": "97",
+        "expectedStartDate": "7/21/2017",
+        "id": "200056",
+        "localArea": {
+            "id": "200076"
+        },
+        "project": {
+            "id": "200018"
+        },
+        "status": "In progress"
+    },
+    {
+        "districtEquipmentType": {
+            "id": "200005"
+        },
+        "equipmentCount": "1",
+        "expectedEndDate": "6/18/2017",
+        "expectedHours": "79",
+        "expectedStartDate": "6/9/2017",
+        "id": "200057",
+        "localArea": {
+            "id": "200076"
+        },
+        "project": {
+            "id": "200019"
+        },
+        "status": "In progress"
+    },
+    {
+        "districtEquipmentType": {
+            "id": "200008"
+        },
+        "equipmentCount": "1",
+        "expectedEndDate": "6/19/2017",
+        "expectedHours": "29",
+        "expectedStartDate": "6/16/2017",
+        "id": "200058",
+        "localArea": {
+            "id": "200076"
+        },
+        "project": {
+            "id": "200020"
+        },
+        "status": "In progress"
+    },
+    {
+        "districtEquipmentType": {
+            "id": "200011"
+        },
+        "equipmentCount": "1",
+        "expectedEndDate": "7/29/2017",
+        "expectedHours": "60",
+        "expectedStartDate": "7/22/2017",
+        "id": "200059",
+        "localArea": {
+            "id": "200076"
+        },
+        "project": {
+            "id": "200021"
+        },
+        "status": "Cancelled"
+    },
+    {
+        "districtEquipmentType": {
+            "id": "200003"
+        },
+        "equipmentCount": "4",
+        "expectedEndDate": "7/22/2017",
+        "expectedHours": "68",
+        "expectedStartDate": "6/18/2017",
+        "id": "200060",
+        "localArea": {
+            "id": "200076"
+        },
+        "project": {
+            "id": "200022"
+        },
+        "status": "In progress"
+    },
+    {
+        "districtEquipmentType": {
+            "id": "200008"
+        },
+        "equipmentCount": "1",
+        "expectedEndDate": "6/23/2017",
+        "expectedHours": "60",
+        "expectedStartDate": "6/16/2017",
+        "id": "200061",
+        "localArea": {
+            "id": "200076"
+        },
+        "project": {
+            "id": "200023"
+        },
+        "status": "In progress"
+    },
+    {
+        "districtEquipmentType": {
+            "id": "200005"
+        },
+        "equipmentCount": "1",
+        "expectedEndDate": "6/18/2017",
+        "expectedHours": "64",
+        "expectedStartDate": "6/10/2017",
+        "id": "200062",
+        "localArea": {
+            "id": "200076"
+        },
+        "project": {
+            "id": "200024"
+        },
+        "status": "Cancelled"
+    },
+    {
+        "districtEquipmentType": {
+            "id": "200005"
+        },
+        "equipmentCount": "1",
+        "expectedEndDate": "7/29/2017",
+        "expectedHours": "62",
+        "expectedStartDate": "7/22/2017",
+        "id": "200063",
+        "localArea": {
+            "id": "200076"
+        },
+        "project": {
+            "id": "200025"
+        },
+        "status": "In progress"
+    },
+    {
+        "districtEquipmentType": {
+            "id": "200005"
+        },
+        "equipmentCount": "1",
+        "expectedEndDate": "7/26/2017",
+        "expectedHours": "57",
+        "expectedStartDate": "7/19/2017",
+        "id": "200064",
+        "localArea": {
+            "id": "200076"
+        },
+        "project": {
+            "id": "200026"
+        },
+        "status": "In progress"
+    },
+    {
+        "districtEquipmentType": {
+            "id": "200009"
+        },
+        "equipmentCount": "1",
+        "expectedEndDate": "7/17/2017",
+        "expectedHours": "18",
+        "expectedStartDate": "7/15/2017",
+        "id": "200065",
+        "localArea": {
+            "id": "200076"
+        },
+        "project": {
+            "id": "200027"
+        },
+        "status": "In progress"
+    },
+    {
+        "districtEquipmentType": {
+            "id": "200012"
+        },
+        "equipmentCount": "5",
+        "expectedEndDate": "6/24/2017",
+        "expectedHours": "22",
+        "expectedStartDate": "6/11/2017",
+        "id": "200066",
+        "localArea": {
+            "id": "200076"
+        },
+        "project": {
+            "id": "200028"
+        },
+        "status": "In progress"
+    },
+    {
+        "districtEquipmentType": {
+            "id": "200003"
+        },
+        "equipmentCount": "1",
+        "expectedEndDate": "6/18/2017",
+        "expectedHours": "13",
+        "expectedStartDate": "6/17/2017",
+        "id": "200067",
+        "localArea": {
+            "id": "200076"
+        },
+        "project": {
+            "id": "200029"
+        },
+        "status": "Cancelled"
+    },
+    {
+        "districtEquipmentType": {
+            "id": "200005"
+        },
+        "equipmentCount": "5",
+        "expectedEndDate": "8/16/2017",
+        "expectedHours": "78",
+        "expectedStartDate": "6/29/2017",
+        "id": "200068",
+        "localArea": {
+            "id": "200076"
+        },
+        "project": {
+            "id": "200030"
+        },
+        "status": "In progress"
+    },
+    {
+        "districtEquipmentType": {
+            "id": "200000"
+        },
+        "equipmentCount": "1",
+        "expectedEndDate": "7/18/2017",
+        "expectedHours": "32",
+        "expectedStartDate": "7/14/2017",
+        "id": "200069",
+        "localArea": {
+            "id": "200077"
+        },
+        "project": {
+            "id": "200031"
+        },
+        "status": "In progress"
+    },
+    {
+        "districtEquipmentType": {
+            "id": "200000"
+        },
+        "equipmentCount": "2",
+        "expectedEndDate": "7/22/2017",
+        "expectedHours": "36",
+        "expectedStartDate": "7/13/2017",
+        "id": "200070",
+        "localArea": {
+            "id": "200077"
+        },
+        "project": {
+            "id": "200032"
+        },
+        "status": "In progress"
+    },
+    {
+        "districtEquipmentType": {
+            "id": "200002"
+        },
+        "equipmentCount": "2",
+        "expectedEndDate": "6/30/2017",
+        "expectedHours": "54",
+        "expectedStartDate": "6/17/2017",
+        "id": "200071",
+        "localArea": {
+            "id": "200077"
+        },
+        "project": {
+            "id": "200033"
+        },
+        "status": "Cancelled"
+    },
+    {
+        "districtEquipmentType": {
+            "id": "200000"
+        },
+        "equipmentCount": "1",
+        "expectedEndDate": "7/26/2017",
+        "expectedHours": "72",
+        "expectedStartDate": "7/17/2017",
+        "id": "200072",
+        "localArea": {
+            "id": "200077"
+        },
+        "project": {
+            "id": "200034"
+        },
+        "status": "In progress"
+    },
+    {
+        "districtEquipmentType": {
+            "id": "200003"
+        },
+        "equipmentCount": "3",
+        "expectedEndDate": "7/6/2017",
+        "expectedHours": "78",
+        "expectedStartDate": "6/7/2017",
+        "id": "200073",
+        "localArea": {
+            "id": "200077"
+        },
+        "project": {
+            "id": "200035"
+        },
+        "status": "In progress"
+    },
+    {
+        "districtEquipmentType": {
+            "id": "200011"
+        },
+        "equipmentCount": "1",
+        "expectedEndDate": "7/21/2017",
+        "expectedHours": "40",
+        "expectedStartDate": "7/16/2017",
+        "id": "200074",
+        "localArea": {
+            "id": "200077"
+        },
+        "project": {
+            "id": "200036"
+        },
+        "status": "In progress"
+    },
+    {
+        "districtEquipmentType": {
+            "id": "200008"
+        },
+        "equipmentCount": "1",
+        "expectedEndDate": "7/9/2017",
+        "expectedHours": "49",
+        "expectedStartDate": "7/3/2017",
+        "id": "200075",
+        "localArea": {
+            "id": "200077"
+        },
+        "project": {
+            "id": "200037"
+        },
+        "status": "In progress"
+    },
+    {
+        "districtEquipmentType": {
+            "id": "200001"
+        },
+        "equipmentCount": "1",
+        "expectedEndDate": "6/20/2017",
+        "expectedHours": "81",
+        "expectedStartDate": "6/10/2017",
+        "id": "200076",
+        "localArea": {
+            "id": "200077"
+        },
+        "project": {
+            "id": "200000"
+        },
+        "status": "In progress"
+    },
+    {
+        "districtEquipmentType": {
+            "id": "200000"
+        },
+        "equipmentCount": "3",
+        "expectedEndDate": "7/6/2017",
+        "expectedHours": "84",
+        "expectedStartDate": "6/5/2017",
+        "id": "200077",
+        "localArea": {
+            "id": "200077"
+        },
+        "project": {
+            "id": "200001"
+        },
+        "status": "Cancelled"
+    },
+    {
+        "districtEquipmentType": {
+            "id": "200009"
+        },
+        "equipmentCount": "1",
+        "expectedEndDate": "7/30/2017",
+        "expectedHours": "97",
+        "expectedStartDate": "7/18/2017",
+        "id": "200078",
+        "localArea": {
+            "id": "200077"
+        },
+        "project": {
+            "id": "200002"
+        },
+        "status": "In progress"
+    },
+    {
+        "districtEquipmentType": {
+            "id": "200000"
+        },
+        "equipmentCount": "1",
+        "expectedEndDate": "7/24/2017",
+        "expectedHours": "25",
+        "expectedStartDate": "7/21/2017",
+        "id": "200079",
+        "localArea": {
+            "id": "200077"
+        },
+        "project": {
+            "id": "200003"
+        },
+        "status": "In progress"
+    },
+    {
+        "districtEquipmentType": {
+            "id": "200011"
+        },
+        "equipmentCount": "1",
+        "expectedEndDate": "6/21/2017",
+        "expectedHours": "34",
+        "expectedStartDate": "6/17/2017",
+        "id": "200080",
+        "localArea": {
+            "id": "200077"
+        },
+        "project": {
+            "id": "200004"
+        },
+        "status": "In progress"
+    },
+    {
+        "districtEquipmentType": {
+            "id": "200003"
+        },
+        "equipmentCount": "1",
+        "expectedEndDate": "7/15/2017",
+        "expectedHours": "52",
+        "expectedStartDate": "7/9/2017",
+        "id": "200081",
+        "localArea": {
+            "id": "200077"
+        },
+        "project": {
+            "id": "200005"
+        },
+        "status": "Cancelled"
+    },
+    {
+        "districtEquipmentType": {
+            "id": "200013"
+        },
+        "equipmentCount": "4",
+        "expectedEndDate": "9/4/2017",
+        "expectedHours": "86",
+        "expectedStartDate": "7/23/2017",
+        "id": "200082",
+        "localArea": {
+            "id": "200077"
+        },
+        "project": {
+            "id": "200006"
+        },
+        "status": "Completed"
+    },
+    {
+        "districtEquipmentType": {
+            "id": "200001"
+        },
+        "equipmentCount": "1",
+        "expectedEndDate": "6/18/2017",
+        "expectedHours": "16",
+        "expectedStartDate": "6/16/2017",
+        "id": "200083",
+        "localArea": {
+            "id": "200077"
+        },
+        "project": {
+            "id": "200007"
+        },
+        "status": "Completed"
+    },
+    {
+        "districtEquipmentType": {
+            "id": "200011"
+        },
+        "equipmentCount": "1",
+        "expectedEndDate": "6/11/2017",
+        "expectedHours": "26",
+        "expectedStartDate": "6/8/2017",
+        "id": "200084",
+        "localArea": {
+            "id": "200077"
+        },
+        "project": {
+            "id": "200008"
+        },
+        "status": "In progress"
+    },
+    {
+        "districtEquipmentType": {
+            "id": "200010"
+        },
+        "equipmentCount": "2",
+        "expectedEndDate": "7/2/2017",
+        "expectedHours": "86",
+        "expectedStartDate": "6/11/2017",
+        "id": "200085",
+        "localArea": {
+            "id": "200077"
+        },
+        "project": {
+            "id": "200009"
+        },
+        "status": "Cancelled"
+    },
+    {
+        "districtEquipmentType": {
+            "id": "200003"
+        },
+        "equipmentCount": "1",
+        "expectedEndDate": "6/6/2017",
+        "expectedHours": "6",
+        "expectedStartDate": "6/6/2017",
+        "id": "200086",
+        "localArea": {
+            "id": "200077"
+        },
+        "project": {
+            "id": "200010"
+        },
+        "status": "Cancelled"
+    },
+    {
+        "districtEquipmentType": {
+            "id": "200000"
+        },
+        "equipmentCount": "1",
+        "expectedEndDate": "7/17/2017",
+        "expectedHours": "15",
+        "expectedStartDate": "7/16/2017",
+        "id": "200087",
+        "localArea": {
+            "id": "200077"
+        },
+        "project": {
+            "id": "200011"
+        },
+        "status": "In progress"
+    },
+    {
+        "districtEquipmentType": {
+            "id": "200012"
+        },
+        "equipmentCount": "1",
+        "expectedEndDate": "7/12/2017",
+        "expectedHours": "31",
+        "expectedStartDate": "7/9/2017",
+        "id": "200088",
+        "localArea": {
+            "id": "200077"
+        },
+        "project": {
+            "id": "200012"
+        },
+        "status": "In progress"
+    },
+    {
+        "districtEquipmentType": {
+            "id": "200009"
+        },
+        "equipmentCount": "1",
+        "expectedEndDate": "7/7/2017",
+        "expectedHours": "53",
+        "expectedStartDate": "7/1/2017",
+        "id": "200089",
+        "localArea": {
+            "id": "200077"
+        },
+        "project": {
+            "id": "200013"
+        },
+        "status": "In progress"
+    },
+    {
+        "districtEquipmentType": {
+            "id": "200009"
+        },
+        "equipmentCount": "1",
+        "expectedEndDate": "7/28/2017",
+        "expectedHours": "8",
+        "expectedStartDate": "7/27/2017",
+        "id": "200090",
+        "localArea": {
+            "id": "200077"
+        },
+        "project": {
+            "id": "200014"
+        },
+        "status": "Completed"
+    },
+    {
+        "districtEquipmentType": {
+            "id": "200004"
+        },
+        "equipmentCount": "1",
+        "expectedEndDate": "6/28/2017",
+        "expectedHours": "86",
+        "expectedStartDate": "6/18/2017",
+        "id": "200091",
+        "localArea": {
+            "id": "200077"
+        },
+        "project": {
+            "id": "200015"
+        },
+        "status": "In progress"
+    },
+    {
+        "districtEquipmentType": {
+            "id": "200010"
+        },
+        "equipmentCount": "3",
+        "expectedEndDate": "7/1/2017",
+        "expectedHours": "33",
+        "expectedStartDate": "6/19/2017",
+        "id": "200092",
+        "localArea": {
+            "id": "200077"
+        },
+        "project": {
+            "id": "200016"
+        },
+        "status": "Completed"
+    },
+    {
+        "districtEquipmentType": {
+            "id": "200010"
+        },
+        "equipmentCount": "2",
+        "expectedEndDate": "7/15/2017",
+        "expectedHours": "49",
+        "expectedStartDate": "7/3/2017",
+        "id": "200093",
+        "localArea": {
+            "id": "200077"
+        },
+        "project": {
+            "id": "200017"
+        },
+        "status": "In progress"
+    },
+    {
+        "districtEquipmentType": {
+            "id": "200010"
+        },
+        "equipmentCount": "5",
+        "expectedEndDate": "7/28/2017",
+        "expectedHours": "69",
+        "expectedStartDate": "6/15/2017",
+        "id": "200094",
+        "localArea": {
+            "id": "200077"
+        },
+        "project": {
+            "id": "200018"
+        },
+        "status": "Cancelled"
+    },
+    {
+        "districtEquipmentType": {
+            "id": "200012"
+        },
+        "equipmentCount": "1",
+        "expectedEndDate": "7/10/2017",
+        "expectedHours": "48",
+        "expectedStartDate": "7/4/2017",
+        "id": "200095",
+        "localArea": {
+            "id": "200077"
+        },
+        "project": {
+            "id": "200019"
+        },
+        "status": "In progress"
+    },
+    {
+        "districtEquipmentType": {
+            "id": "200010"
+        },
+        "equipmentCount": "1",
+        "expectedEndDate": "8/3/2017",
+        "expectedHours": "53",
+        "expectedStartDate": "7/28/2017",
+        "id": "200096",
+        "localArea": {
+            "id": "200077"
+        },
+        "project": {
+            "id": "200020"
+        },
+        "status": "Cancelled"
+    },
+    {
+        "districtEquipmentType": {
+            "id": "200008"
+        },
+        "equipmentCount": "1",
+        "expectedEndDate": "6/29/2017",
+        "expectedHours": "6",
+        "expectedStartDate": "6/29/2017",
+        "id": "200097",
+        "localArea": {
+            "id": "200077"
+        },
+        "project": {
+            "id": "200021"
+        },
+        "status": "In progress"
+    },
+    {
+        "districtEquipmentType": {
+            "id": "200013"
+        },
+        "equipmentCount": "1",
+        "expectedEndDate": "7/8/2017",
+        "expectedHours": "53",
+        "expectedStartDate": "7/2/2017",
+        "id": "200098",
+        "localArea": {
+            "id": "200077"
+        },
+        "project": {
+            "id": "200022"
+        },
+        "status": "In progress"
+    },
+    {
+        "districtEquipmentType": {
+            "id": "200012"
+        },
+        "equipmentCount": "1",
+        "expectedEndDate": "7/4/2017",
+        "expectedHours": "56",
+        "expectedStartDate": "6/27/2017",
+        "id": "200099",
+        "localArea": {
+            "id": "200077"
+        },
+        "project": {
+            "id": "200023"
+        },
+        "status": "In progress"
+    },
+    {
+        "districtEquipmentType": {
+            "id": "200011"
+        },
+        "equipmentCount": "1",
+        "expectedEndDate": "7/17/2017",
+        "expectedHours": "45",
+        "expectedStartDate": "7/12/2017",
+        "id": "200100",
+        "localArea": {
+            "id": "200077"
+        },
+        "project": {
+            "id": "200024"
+        },
+        "status": "In progress"
+    },
+    {
+        "districtEquipmentType": {
+            "id": "200004"
+        },
+        "equipmentCount": "1",
+        "expectedEndDate": "8/2/2017",
+        "expectedHours": "31",
+        "expectedStartDate": "7/30/2017",
+        "id": "200101",
+        "localArea": {
+            "id": "200077"
+        },
+        "project": {
+            "id": "200025"
+        },
+        "status": "In progress"
+    },
+    {
+        "districtEquipmentType": {
+            "id": "200005"
+        },
+        "equipmentCount": "1",
+        "expectedEndDate": "6/17/2017",
+        "expectedHours": "98",
+        "expectedStartDate": "6/5/2017",
+        "id": "200102",
+        "localArea": {
+            "id": "200077"
+        },
+        "project": {
+            "id": "200026"
+        },
+        "status": "In progress"
+    },
+    {
+        "districtEquipmentType": {
+            "id": "200007"
+        },
+        "equipmentCount": "5",
+        "expectedEndDate": "6/27/2017",
+        "expectedHours": "24",
+        "expectedStartDate": "6/12/2017",
+        "id": "200103",
+        "localArea": {
+            "id": "200077"
+        },
+        "project": {
+            "id": "200027"
+        },
+        "status": "In progress"
+    },
+    {
+        "districtEquipmentType": {
+            "id": "200006"
+        },
+        "equipmentCount": "1",
+        "expectedEndDate": "7/25/2017",
+        "expectedHours": "73",
+        "expectedStartDate": "7/16/2017",
+        "id": "200104",
+        "localArea": {
+            "id": "200077"
+        },
+        "project": {
+            "id": "200028"
+        },
+        "status": "In progress"
+    },
+    {
+        "districtEquipmentType": {
+            "id": "200005"
+        },
+        "equipmentCount": "1",
+        "expectedEndDate": "7/12/2017",
+        "expectedHours": "98",
+        "expectedStartDate": "6/30/2017",
+        "id": "200105",
+        "localArea": {
+            "id": "200077"
+        },
+        "project": {
+            "id": "200029"
+        },
+        "status": "In progress"
+    },
+    {
+        "districtEquipmentType": {
+            "id": "200011"
+        },
+        "equipmentCount": "1",
+        "expectedEndDate": "7/15/2017",
+        "expectedHours": "52",
+        "expectedStartDate": "7/9/2017",
+        "id": "200106",
+        "localArea": {
+            "id": "200077"
+        },
+        "project": {
+            "id": "200030"
+        },
+        "status": "In progress"
+    },
+    {
+        "districtEquipmentType": {
+            "id": "200009"
+        },
+        "equipmentCount": "2",
+        "expectedEndDate": "7/21/2017",
+        "expectedHours": "97",
+        "expectedStartDate": "6/27/2017",
+        "id": "200107",
+        "localArea": {
+            "id": "200077"
+        },
+        "project": {
+            "id": "200031"
+        },
+        "status": "In progress"
+    },
+    {
+        "districtEquipmentType": {
+            "id": "200002"
+        },
+        "equipmentCount": "1",
+        "expectedEndDate": "6/21/2017",
+        "expectedHours": "7",
+        "expectedStartDate": "6/21/2017",
+        "id": "200108",
+        "localArea": {
+            "id": "200077"
+        },
+        "project": {
+            "id": "200032"
+        },
+        "status": "In progress"
+    },
+    {
+        "districtEquipmentType": {
+            "id": "200002"
+        },
+        "equipmentCount": "1",
+        "expectedEndDate": "7/10/2017",
+        "expectedHours": "13",
+        "expectedStartDate": "7/9/2017",
+        "id": "200109",
+        "localArea": {
+            "id": "200077"
+        },
+        "project": {
+            "id": "200033"
+        },
+        "status": "In progress"
+    },
+    {
+        "districtEquipmentType": {
+            "id": "200000"
+        },
+        "equipmentCount": "1",
+        "expectedEndDate": "7/4/2017",
+        "expectedHours": "5",
+        "expectedStartDate": "7/4/2017",
+        "id": "200110",
+        "localArea": {
+            "id": "200077"
+        },
+        "project": {
+            "id": "200034"
+        },
+        "status": "In progress"
+    },
+    {
+        "districtEquipmentType": {
+            "id": "200009"
+        },
+        "equipmentCount": "1",
+        "expectedEndDate": "7/10/2017",
+        "expectedHours": "85",
+        "expectedStartDate": "6/30/2017",
+        "id": "200111",
+        "localArea": {
+            "id": "200077"
+        },
+        "project": {
+            "id": "200035"
+        },
+        "status": "In progress"
+    },
+    {
+        "districtEquipmentType": {
+            "id": "200001"
+        },
+        "equipmentCount": "4",
+        "expectedEndDate": "9/5/2017",
+        "expectedHours": "85",
+        "expectedStartDate": "7/25/2017",
+        "id": "200112",
+        "localArea": {
+            "id": "200077"
+        },
+        "project": {
+            "id": "200036"
+        },
+        "status": "In progress"
+    },
+    {
+        "districtEquipmentType": {
+            "id": "200013"
+        },
+        "equipmentCount": "1",
+        "expectedEndDate": "6/16/2017",
+        "expectedHours": "43",
+        "expectedStartDate": "6/11/2017",
+        "id": "200113",
+        "localArea": {
+            "id": "200077"
+        },
+        "project": {
+            "id": "200037"
+        },
+        "status": "In progress"
+    },
+    {
+        "districtEquipmentType": {
+            "id": "200005"
+        },
+        "equipmentCount": "1",
+        "expectedEndDate": "7/2/2017",
+        "expectedHours": "63",
+        "expectedStartDate": "6/25/2017",
+        "id": "200114",
+        "localArea": {
+            "id": "200077"
+        },
+        "project": {
+            "id": "200000"
+        },
+        "status": "In progress"
+    },
+    {
+        "districtEquipmentType": {
+            "id": "200001"
+        },
+        "equipmentCount": "1",
+        "expectedEndDate": "7/20/2017",
+        "expectedHours": "77",
+        "expectedStartDate": "7/11/2017",
+        "id": "200115",
+        "localArea": {
+            "id": "200077"
+        },
+        "project": {
+            "id": "200001"
+        },
+        "status": "In progress"
+    },
+    {
+        "districtEquipmentType": {
+            "id": "200008"
+        },
+        "equipmentCount": "1",
+        "expectedEndDate": "7/8/2017",
+        "expectedHours": "49",
+        "expectedStartDate": "7/2/2017",
+        "id": "200116",
+        "localArea": {
+            "id": "200077"
+        },
+        "project": {
+            "id": "200002"
+        },
+        "status": "In progress"
+    },
+    {
+        "districtEquipmentType": {
+            "id": "200009"
+        },
+        "equipmentCount": "1",
+        "expectedEndDate": "7/31/2017",
+        "expectedHours": "77",
+        "expectedStartDate": "7/22/2017",
+        "id": "200117",
+        "localArea": {
+            "id": "200077"
+        },
+        "project": {
+            "id": "200003"
+        },
+        "status": "In progress"
+    },
+    {
+        "districtEquipmentType": {
+            "id": "200009"
+        },
+        "equipmentCount": "4",
+        "expectedEndDate": "7/26/2017",
+        "expectedHours": "31",
+        "expectedStartDate": "7/11/2017",
+        "id": "200118",
+        "localArea": {
+            "id": "200077"
+        },
+        "project": {
+            "id": "200004"
+        },
+        "status": "In progress"
+    },
+    {
+        "districtEquipmentType": {
+            "id": "200006"
+        },
+        "equipmentCount": "1",
+        "expectedEndDate": "7/30/2017",
+        "expectedHours": "48",
+        "expectedStartDate": "7/24/2017",
+        "id": "200119",
+        "localArea": {
+            "id": "200077"
+        },
+        "project": {
+            "id": "200005"
+        },
+        "status": "In progress"
+    },
+    {
+        "districtEquipmentType": {
+            "id": "200012"
+        },
+        "equipmentCount": "1",
+        "expectedEndDate": "6/21/2017",
+        "expectedHours": "53",
+        "expectedStartDate": "6/15/2017",
+        "id": "200120",
+        "localArea": {
+            "id": "200077"
+        },
+        "project": {
+            "id": "200006"
+        },
+        "status": "In progress"
+    },
+    {
+        "districtEquipmentType": {
+            "id": "200012"
+        },
+        "equipmentCount": "1",
+        "expectedEndDate": "7/17/2017",
+        "expectedHours": "40",
+        "expectedStartDate": "7/12/2017",
+        "id": "200121",
+        "localArea": {
+            "id": "200077"
+        },
+        "project": {
+            "id": "200007"
+        },
+        "status": "In progress"
+    },
+    {
+        "districtEquipmentType": {
+            "id": "200003"
+        },
+        "equipmentCount": "1",
+        "expectedEndDate": "7/20/2017",
+        "expectedHours": "26",
+        "expectedStartDate": "7/17/2017",
+        "id": "200122",
+        "localArea": {
+            "id": "200077"
+        },
+        "project": {
+            "id": "200008"
+        },
+        "status": "In progress"
+    },
+    {
+        "districtEquipmentType": {
+            "id": "200013"
+        },
+        "equipmentCount": "2",
+        "expectedEndDate": "8/9/2017",
+        "expectedHours": "40",
+        "expectedStartDate": "7/30/2017",
+        "id": "200123",
+        "localArea": {
+            "id": "200077"
+        },
+        "project": {
+            "id": "200009"
+        },
+        "status": "In progress"
+    },
+    {
+        "districtEquipmentType": {
+            "id": "200008"
+        },
+        "equipmentCount": "4",
+        "expectedEndDate": "8/20/2017",
+        "expectedHours": "90",
+        "expectedStartDate": "7/6/2017",
+        "id": "200124",
+        "localArea": {
+            "id": "200077"
+        },
+        "project": {
+            "id": "200010"
+        },
+        "status": "Completed"
+    },
+    {
+        "districtEquipmentType": {
+            "id": "200007"
+        },
+        "equipmentCount": "1",
+        "expectedEndDate": "6/22/2017",
+        "expectedHours": "23",
+        "expectedStartDate": "6/20/2017",
+        "id": "200125",
+        "localArea": {
+            "id": "200077"
+        },
+        "project": {
+            "id": "200011"
+        },
+        "status": "Completed"
+    },
+    {
+        "districtEquipmentType": {
+            "id": "200007"
+        },
+        "equipmentCount": "1",
+        "expectedEndDate": "6/28/2017",
+        "expectedHours": "64",
+        "expectedStartDate": "6/20/2017",
+        "id": "200126",
+        "localArea": {
+            "id": "200077"
+        },
+        "project": {
+            "id": "200012"
+        },
+        "status": "Completed"
+    },
+    {
+        "districtEquipmentType": {
+            "id": "200004"
+        },
+        "equipmentCount": "5",
+        "expectedEndDate": "8/16/2017",
+        "expectedHours": "51",
+        "expectedStartDate": "7/16/2017",
+        "id": "200127",
+        "localArea": {
+            "id": "200077"
+        },
+        "project": {
+            "id": "200013"
+        },
+        "status": "In progress"
+    },
+    {
+        "districtEquipmentType": {
+            "id": "200003"
+        },
+        "equipmentCount": "1",
+        "expectedEndDate": "7/20/2017",
+        "expectedHours": "57",
+        "expectedStartDate": "7/13/2017",
+        "id": "200128",
+        "localArea": {
+            "id": "200077"
+        },
+        "project": {
+            "id": "200014"
+        },
+        "status": "In progress"
+    },
+    {
+        "districtEquipmentType": {
+            "id": "200007"
+        },
+        "equipmentCount": "4",
+        "expectedEndDate": "8/8/2017",
+        "expectedHours": "63",
+        "expectedStartDate": "7/8/2017",
+        "id": "200129",
+        "localArea": {
+            "id": "200077"
+        },
+        "project": {
+            "id": "200015"
+        },
+        "status": "In progress"
+    },
+    {
+        "districtEquipmentType": {
+            "id": "200012"
+        },
+        "equipmentCount": "1",
+        "expectedEndDate": "8/7/2017",
+        "expectedHours": "99",
+        "expectedStartDate": "7/26/2017",
+        "id": "200130",
+        "localArea": {
+            "id": "200077"
+        },
+        "project": {
+            "id": "200016"
+        },
+        "status": "In progress"
+    },
+    {
+        "districtEquipmentType": {
+            "id": "200007"
+        },
+        "equipmentCount": "1",
+        "expectedEndDate": "6/21/2017",
+        "expectedHours": "12",
+        "expectedStartDate": "6/20/2017",
+        "id": "200131",
+        "localArea": {
+            "id": "200077"
+        },
+        "project": {
+            "id": "200017"
+        },
+        "status": "In progress"
+    },
+    {
+        "districtEquipmentType": {
+            "id": "200000"
+        },
+        "equipmentCount": "1",
+        "expectedEndDate": "6/24/2017",
+        "expectedHours": "61",
+        "expectedStartDate": "6/17/2017",
+        "id": "200132",
+        "localArea": {
+            "id": "200077"
+        },
+        "project": {
+            "id": "200018"
+        },
+        "status": "In progress"
+    },
+    {
+        "districtEquipmentType": {
+            "id": "200010"
+        },
+        "equipmentCount": "5",
+        "expectedEndDate": "8/6/2017",
+        "expectedHours": "12",
+        "expectedStartDate": "7/30/2017",
+        "id": "200133",
+        "localArea": {
+            "id": "200077"
+        },
+        "project": {
+            "id": "200019"
+        },
+        "status": "In progress"
+    },
+    {
+        "districtEquipmentType": {
+            "id": "200004"
+        },
+        "equipmentCount": "1",
+        "expectedEndDate": "8/11/2017",
+        "expectedHours": "96",
+        "expectedStartDate": "7/30/2017",
+        "id": "200134",
+        "localArea": {
+            "id": "200077"
+        },
+        "project": {
+            "id": "200020"
+        },
+        "status": "In progress"
+    },
+    {
+        "districtEquipmentType": {
+            "id": "200012"
+        },
+        "equipmentCount": "3",
+        "expectedEndDate": "7/22/2017",
+        "expectedHours": "14",
+        "expectedStartDate": "7/17/2017",
+        "id": "200135",
+        "localArea": {
+            "id": "200077"
+        },
+        "project": {
+            "id": "200021"
+        },
+        "status": "In progress"
+    },
+    {
+        "districtEquipmentType": {
+            "id": "200013"
+        },
+        "equipmentCount": "2",
+        "expectedEndDate": "7/6/2017",
+        "expectedHours": "94",
+        "expectedStartDate": "6/13/2017",
+        "id": "200136",
+        "localArea": {
+            "id": "200077"
+        },
+        "project": {
+            "id": "200022"
+        },
+        "status": "In progress"
+    },
+    {
+        "districtEquipmentType": {
+            "id": "200013"
+        },
+        "equipmentCount": "1",
+        "expectedEndDate": "7/6/2017",
+        "expectedHours": "23",
+        "expectedStartDate": "7/4/2017",
+        "id": "200137",
+        "localArea": {
+            "id": "200077"
+        },
+        "project": {
+            "id": "200023"
+        },
+        "status": "In progress"
+    },
+    {
+        "districtEquipmentType": {
+            "id": "200004"
+        },
+        "equipmentCount": "3",
+        "expectedEndDate": "7/12/2017",
+        "expectedHours": "48",
+        "expectedStartDate": "6/24/2017",
+        "id": "200138",
+        "localArea": {
+            "id": "200077"
+        },
+        "project": {
+            "id": "200024"
+        },
+        "status": "In progress"
+    },
+    {
+        "districtEquipmentType": {
+            "id": "200004"
+        },
+        "equipmentCount": "1",
+        "expectedEndDate": "6/20/2017",
+        "expectedHours": "13",
+        "expectedStartDate": "6/19/2017",
+        "id": "200139",
+        "localArea": {
+            "id": "200077"
+        },
+        "project": {
+            "id": "200025"
+        },
+        "status": "In progress"
+    },
+    {
+        "districtEquipmentType": {
+            "id": "200012"
+        },
+        "equipmentCount": "2",
+        "expectedEndDate": "6/24/2017",
+        "expectedHours": "77",
+        "expectedStartDate": "6/5/2017",
+        "id": "200140",
+        "localArea": {
+            "id": "200077"
+        },
+        "project": {
+            "id": "200026"
+        },
+        "status": "In progress"
+    },
+    {
+        "districtEquipmentType": {
+            "id": "200006"
+        },
+        "equipmentCount": "5",
+        "expectedEndDate": "7/19/2017",
+        "expectedHours": "42",
+        "expectedStartDate": "6/23/2017",
+        "id": "200141",
+        "localArea": {
+            "id": "200077"
+        },
+        "project": {
+            "id": "200027"
+        },
+        "status": "In progress"
+    },
+    {
+        "districtEquipmentType": {
+            "id": "200012"
+        },
+        "equipmentCount": "1",
+        "expectedEndDate": "6/9/2017",
+        "expectedHours": "28",
+        "expectedStartDate": "6/6/2017",
+        "id": "200142",
+        "localArea": {
+            "id": "200077"
+        },
+        "project": {
+            "id": "200028"
+        },
+        "status": "Completed"
+    },
+    {
+        "districtEquipmentType": {
+            "id": "200005"
+        },
+        "equipmentCount": "1",
+        "expectedEndDate": "7/14/2017",
+        "expectedHours": "87",
+        "expectedStartDate": "7/4/2017",
+        "id": "200143",
+        "localArea": {
+            "id": "200077"
+        },
+        "project": {
+            "id": "200029"
+        },
+        "status": "Completed"
+    },
+    {
+        "districtEquipmentType": {
+            "id": "200008"
+        },
+        "equipmentCount": "4",
+        "expectedEndDate": "8/4/2017",
+        "expectedHours": "25",
+        "expectedStartDate": "7/23/2017",
+        "id": "200144",
+        "localArea": {
+            "id": "200077"
+        },
+        "project": {
+            "id": "200030"
+        },
+        "status": "Completed"
+    },
+    {
+        "districtEquipmentType": {
+            "id": "200009"
+        },
+        "equipmentCount": "1",
+        "expectedEndDate": "7/18/2017",
+        "expectedHours": "71",
+        "expectedStartDate": "7/10/2017",
+        "id": "200145",
+        "localArea": {
+            "id": "200077"
+        },
+        "project": {
+            "id": "200031"
+        },
+        "status": "Completed"
+    },
+    {
+        "districtEquipmentType": {
+            "id": "200004"
+        },
+        "equipmentCount": "1",
+        "expectedEndDate": "6/25/2017",
+        "expectedHours": "80",
+        "expectedStartDate": "6/15/2017",
+        "id": "200146",
+        "localArea": {
+            "id": "200077"
+        },
+        "project": {
+            "id": "200032"
+        },
+        "status": "In progress"
+    },
+    {
+        "districtEquipmentType": {
+            "id": "200004"
+        },
+        "equipmentCount": "5",
+        "expectedEndDate": "8/15/2017",
+        "expectedHours": "52",
+        "expectedStartDate": "7/14/2017",
+        "id": "200147",
+        "localArea": {
+            "id": "200077"
+        },
+        "project": {
+            "id": "200033"
+        },
+        "status": "Completed"
+    },
+    {
+        "districtEquipmentType": {
+            "id": "200011"
+        },
+        "equipmentCount": "1",
+        "expectedEndDate": "7/23/2017",
+        "expectedHours": "45",
+        "expectedStartDate": "7/18/2017",
+        "id": "200148",
+        "localArea": {
+            "id": "200077"
+        },
+        "project": {
+            "id": "200034"
+        },
+        "status": "Completed"
+    },
+    {
+        "districtEquipmentType": {
+            "id": "200006"
+        },
+        "equipmentCount": "1",
+        "expectedEndDate": "7/21/2017",
+        "expectedHours": "21",
+        "expectedStartDate": "7/19/2017",
+        "id": "200149",
+        "localArea": {
+            "id": "200077"
+        },
+        "project": {
+            "id": "200035"
+        },
+        "status": "In progress"
+    },
+    {
+        "districtEquipmentType": {
+            "id": "200007"
+        },
+        "equipmentCount": "3",
+        "expectedEndDate": "6/26/2017",
+        "expectedHours": "34",
+        "expectedStartDate": "6/14/2017",
+        "id": "200150",
+        "localArea": {
+            "id": "200077"
+        },
+        "project": {
+            "id": "200036"
+        },
+        "status": "In progress"
+    },
+    {
+        "districtEquipmentType": {
+            "id": "200005"
+        },
+        "equipmentCount": "1",
+        "expectedEndDate": "7/14/2017",
+        "expectedHours": "97",
+        "expectedStartDate": "7/2/2017",
+        "id": "200151",
+        "localArea": {
+            "id": "200077"
+        },
+        "project": {
+            "id": "200037"
+        },
+        "status": "In progress"
+    },
+    {
+        "districtEquipmentType": {
+            "id": "200008"
+        },
+        "equipmentCount": "1",
+        "expectedEndDate": "6/13/2017",
+        "expectedHours": "31",
+        "expectedStartDate": "6/10/2017",
+        "id": "200152",
+        "localArea": {
+            "id": "200077"
+        },
+        "project": {
+            "id": "200075"
+        },
+        "status": "In progress"
+    },
+    {
+        "districtEquipmentType": {
+            "id": "200003"
+        },
+        "equipmentCount": "1",
+        "expectedEndDate": "6/13/2017",
+        "expectedHours": "20",
+        "expectedStartDate": "6/11/2017",
+        "id": "200153",
+        "localArea": {
+            "id": "200077"
+        },
+        "project": {
+            "id": "200076"
+        },
         "status": "In progress"
     }
 ]

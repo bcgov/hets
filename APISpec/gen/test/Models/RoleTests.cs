@@ -76,6 +76,24 @@ namespace HETSAPI.Test
             // TODO unit test for the property 'Description'
 			Assert.True(true);
         }
+        /// <summary>
+        /// Test the property 'RolePermissions'
+        /// </summary>
+        [Fact]
+        public void RolePermissionsTest()
+        {
+            // TODO unit test for the property 'RolePermissions'
+			Assert.True(true);
+        }
+        /// <summary>
+        /// Test the property 'UserRoles'
+        /// </summary>
+        [Fact]
+        public void UserRolesTest()
+        {
+            // TODO unit test for the property 'UserRoles'
+			Assert.True(true);
+        }
 
 	}
 	

@@ -123,7 +123,7 @@ namespace HETSAPI.Models
         /// </summary>
         /// <value>A note about the contact maintained by the users.</value>
         [MetaDataExtension (Description = "A note about the contact maintained by the users.")]
-        [MaxLength(150)]
+        [MaxLength(512)]
         
         public string Notes { get; set; }
         

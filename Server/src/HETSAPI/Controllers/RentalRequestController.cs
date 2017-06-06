@@ -23,7 +23,6 @@ using HETSAPI.Models;
 using HETSAPI.ViewModels;
 using HETSAPI.Services;
 using HETSAPI.Authorization;
-using HETSAPI.Helpers;
 
 namespace HETSAPI.Controllers
 {
@@ -137,11 +136,11 @@ namespace HETSAPI.Controllers
         /// <remarks>Add a History record to the RentalRequest</remarks>
         /// <param name="id">id of RentalRequest to add History for</param>
         /// <param name="item"></param>
+        /// <response code="200">OK</response>
         /// <response code="201">History created</response>
         [HttpPost]
         [Route("/api/rentalrequests/{id}/history")]
         [SwaggerOperation("RentalrequestsIdHistoryPost")]
-        [SwaggerResponse(200, type: typeof(History))]
         public virtual IActionResult RentalrequestsIdHistoryPost([FromRoute]int id, [FromBody]History item)
         {
             return this._service.RentalrequestsIdHistoryPostAsync(id, item);
@@ -209,7 +208,7 @@ namespace HETSAPI.Controllers
         [Route("/api/rentalrequests/search")]
         [SwaggerOperation("RentalrequestsSearchGet")]
         [SwaggerResponse(200, type: typeof(List<RentalRequestSearchResultViewModel>))]
-        public virtual IActionResult RentalrequestsSearchGet([ModelBinder(BinderType = typeof(CsvArrayBinder))]int?[] localareas, [FromQuery]string project, [FromQuery]string status, [FromQuery]DateTime? startDate, [FromQuery]DateTime? endDate)
+        public virtual IActionResult RentalrequestsSearchGet([FromQuery]string localareas, [FromQuery]string project, [FromQuery]string status, [FromQuery]DateTime? startDate, [FromQuery]DateTime? endDate)
         {
             return this._service.RentalrequestsSearchGetAsync(localareas, project, status, startDate, endDate);
         }
