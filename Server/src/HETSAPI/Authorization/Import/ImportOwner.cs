@@ -21,6 +21,8 @@ namespace HETSAPI.Import
         public static string oldTable = "Owner";
         public static string newTable = "HET_OWNER";
         public static string xmlFileName = "Owner.xml";
+       // public static string jsonOwnerFileName = @"C:\temp\Import\Owners\Owner.json";
+       // public static string jsonContactFileName = @"C:\temp\Import\Owners\Contact.json";
 
         /// <summary>
         /// 
@@ -31,6 +33,7 @@ namespace HETSAPI.Import
         /// <param name="systemId"></param>
         static public void Import(PerformContext performContext, DbAppContext dbContext, string fileLocation, string systemId)
         {
+            List<Models.Owner> _data = new List<Models.Owner>();
             int maxOwnerIndex = dbContext.Owners.Max(x => x.Id);
             int maxContactIndex = dbContext.Contacts.Max(x => x.Id);
 
@@ -57,6 +60,7 @@ namespace HETSAPI.Import
                     {
                         Models.Owner owner = null;
                         CopyToInstance(performContext, dbContext, item, ref owner, systemId, ref maxOwnerIndex, ref maxContactIndex);
+                        _data.Add(owner);
                         ImportUtility.AddImportMap(dbContext, oldTable, item.Popt_Id.ToString(), newTable, owner.Id);
                     }
                     else // update
@@ -97,6 +101,10 @@ namespace HETSAPI.Import
                 performContext.WriteLine("*** ERROR ***");
                 performContext.WriteLine(e.ToString());
             }
+
+            // Write to Json file
+            //WriteToOwnerJsonFile(jsonOwnerFileName, _data);
+
             try
             {
                 int iResult = dbContext.SaveChangesForImport();
@@ -205,11 +213,11 @@ namespace HETSAPI.Import
                 {
                     con.Surname = oldObject.Owner_Last_Name.Trim();
                     con.GivenName = oldObject.Owner_First_Name.Trim();
+                    owner.OwnerEquipmentCodePrefix = con.GivenName.Substring(0, 1) + con.Surname.Substring(0, 1);
                 }
                 catch
                 {
                 }
-
 
                 con.FaxPhoneNumber = "";
                 con.Province = "BC";
@@ -259,7 +267,12 @@ namespace HETSAPI.Import
             }
         }
 
-
+        static private void WriteToOwnerJsonFile(string fileName, List<Models.Owner> _data)
+        {
+            string newJson = JsonConvert.SerializeObject(_data, Formatting.Indented);
+            File.WriteAllText(fileName, newJson);
+             
+        }
     }
 }
 

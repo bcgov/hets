@@ -9,7 +9,8 @@ SET server=%3
 IF %3==dev SET server=%dev%
 IF %3==test SET server=%test%
 
-curl -c cookie %server%/api/authentication/dev/token?userId=SCURRAN
+REM curl -c cookie %server%/api/authentication/dev/token?userId=SCURRAN
+curl -c cookie %server%/api/authentication/dev/token/SCURRAN
 curl -b cookie -v -H "Content-Type: application/json" -X POST --data-binary "@%1" %server%/%2
 
 GOTO End1

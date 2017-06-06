@@ -63,7 +63,7 @@ namespace HETSAPI.Import
             InsertSystemUser(dbContext);
 
             //*** start by importing Region from Region.xml. THis goes to table HETS_REGION
-           // ImportRegion.Import(context, dbContext, fileLocation, systemId);
+            // ImportRegion.Import(context, dbContext, fileLocation, systemId);
 
             //*** start by importing districts from District.xml. THis goes to table HETS_DISTRICT
             dbContext = new DbAppContext(null, options.Options);
@@ -71,11 +71,11 @@ namespace HETSAPI.Import
 
             //*** start by importing Cities from HETS_City.xml to HET_CITY
             dbContext = new DbAppContext(null, options.Options);
-           // ImportCity.Import(context, dbContext, fileLocation, systemId);
+            // ImportCity.Import(context, dbContext, fileLocation, systemId);
 
             //*** Service Areas: from the file of Service_Area.xml to the table of HET_SERVICE_AREA
             dbContext = new DbAppContext(null, options.Options);
-           // ImportServiceArea.Import(context, dbContext, fileLocation, systemId);
+            // ImportServiceArea.Import(context, dbContext, fileLocation, systemId);
 
             //############################ We start here #####################################  
             //*** Importing the Local Areas from the file of Area.xml to the table of HET_LOCAL_AREA

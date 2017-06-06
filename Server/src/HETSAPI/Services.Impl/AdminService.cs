@@ -50,12 +50,11 @@ namespace HETSAPI.Services.Impl
             string uploadPath = Configuration["UploadPath"];
             string connectionString = _context.Database.GetDbConnection().ConnectionString;
 
-            BCBidImport.ImportJob(null, connectionString, uploadPath + path);
-            //  var jobId = BackgroundJob.Enqueue(() => BCBidImport.ImportJob(null, connectionString, uploadPath + path));            
-            //  var result = "Created Job: " + jobId;
-            var result = "Created Job: ";
+           // BCBidImport.ImportJob(null, connectionString, uploadPath + path);
+            var jobId = BackgroundJob.Enqueue(() => BCBidImport.ImportJob(null, connectionString, uploadPath + path));            
+            var result = "Created Job: " + jobId;
+           // var result = "Created Job: ";
             return new ObjectResult(result);
         }        
-
     }
 }

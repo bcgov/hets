@@ -57,8 +57,8 @@ namespace HETSAPI.Import
         {
             // fileLocation = @"C:\uploads\tmp";    //This is to test xml on network drive - network drive needs proper permission
             string fullPath = fileLocation + Path.DirectorySeparatorChar + xmlFileName;
-            string contents = Regex.Replace(File.ReadAllText(fullPath), @"\r\n?|\n|[\x00-\x08\x0B\x0C\x0E-\x1F\x26]", "");  //Getting rid of all the new lines as well
-
+            string contents = Regex.Replace(File.ReadAllText(fullPath), @"\r\n?|\n|s/\x00//g|[\x00-\x08\x0B\x0C\x0E-\x1F\x26]", "");  //Getting rid of all the new lines as well
+            //added s/\x00//g  in replaceAll("s/\x00//g","")
             //string r = "[\x00-\x08\x0B\x0C\x0E-\x1F\x26]";
             //return Regex.Replace(txt, r, "", RegexOptions.Compiled);
 
