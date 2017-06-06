@@ -16,6 +16,7 @@ REM curl -c cookie %server%/api/authentication/dev/token?userId=TMcTesterson
 echo on
 curl -c cookie %server%/api/authentication/dev/token/SCURRAN
 IF %1==recalc GOTO RECALC
+
 curl -b cookie -v -H "Content-Type: application/json" -X POST --data-binary "@%1" %server%/%2
 @echo off
 
