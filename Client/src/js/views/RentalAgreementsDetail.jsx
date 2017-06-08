@@ -48,6 +48,7 @@ var RentalAgreementsDetail = React.createClass({
   getInitialState() {
     return {
       loading: true,
+      rentalAgreementDocumentLoading: false,
 
       showEditDialog: false,
       showEquipmentRateDialog: false,
@@ -235,6 +236,14 @@ var RentalAgreementsDetail = React.createClass({
 
   showHistory() {
 
+  },
+
+  generateRentalAgreementDocument() {
+    // Temporary approach to download PDFs
+    // TODO: Research proper download technique
+    this.setState({ rentalAgreementDocumentLoading: true });
+    window.open(`/api/rentalagreements/${ this.props.params.rentalAgreementId }/pdf`);
+    this.setState({ rentalAgreementDocumentLoading: false });
   },
 
   render() {
@@ -529,9 +538,7 @@ var RentalAgreementsDetail = React.createClass({
       </Well>
       <Row id="rental-agreements-footer">
         <div className="pull-right">
-          <Unimplemented>
-            <Button title="Generate Rental Agreement PDF" bsStyle="primary">Generate</Button>
-          </Unimplemented>
+          <Button title="Generate Rental Agreement PDF" onClick={ this.generateRentalAgreementDocument } bsStyle="primary">Generate</Button>
           <Unimplemented>
             <Button title="Cancel">Cancel</Button>
           </Unimplemented>
