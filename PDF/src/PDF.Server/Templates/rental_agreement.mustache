@@ -209,7 +209,9 @@
       <div id="address-block">
         <div class="label">Address:</div>
         <div class="value">
-          {{equipment.owner.primaryContact.address1}} {{equipment.owner.primaryContact.address1}} {{equipment.owner.primaryContact.city}} {{equipment.owner.primaryContact.province}} {{equipment.owner.primaryContact.postalCode}}
+          {{equipment.owner.primaryContact.address1}} {{equipment.owner.primaryContact.address1}} 
+          {{equipment.owner.primaryContact.city}} {{equipment.owner.primaryContact.province}} 
+          {{equipment.owner.primaryContact.postalCode}}
         </div>
       </div>
       <div id="phone-block">
@@ -224,8 +226,7 @@
       </div>
     </div>
 
-    <p>I hereby agree to rent to the Ministry of Transportation and Infrastructure of the Province of British Columbia the following equipment at the rental rates as
-    shown:</p>
+    <p>I hereby agree to rent to the Ministry of Transportation and Infrastructure of the Province of British Columbia the following equipment at the rental rates as shown:</p>
 
     <table>
       <tr>
@@ -247,38 +248,40 @@
       {{/rentalAgreementRates}}
     </table>
 
+    {{#equipment.equipmentAttachments}}
     <table>
       <tr>
         <th>Attachments</th>
         <th class="rate">Rate</th>
         <th>Comments</th>
       </tr>
-      {{#equipment.equipmentAttachments}}
       <tr>
         <td>{{description}}</td>
         <td class="rate">$</td>
         <td></td>
       </tr>
-      {{/equipment.equipmentAttachments}}
     </table>
+    {{/equipment.equipmentAttachments}}
 
+    {{#equipment.rentalAgreementConditions}}
     <table>
       <tr>
         <th>Condition</th>
         <th>Comment</th>
       </tr>
-      {{#equipment.rentalAgreementConditions}}
       <tr>
         <td>{{conditionName}}</td>
         <td>{{comment}}</td>
       </tr>
-      {{/equipment.rentalAgreementConditions}}
     </table>
+    {{/equipment.rentalAgreementConditions}}
 
+    {{#note}}
     <div class="clearfix">
       <div id="note">Note: </div>
       <div id="note-box">{{note}}</div>
     </div>
+    {{/note}}
 
     <p>The above listed equipment will be used for Project #<span class="uppercase">{{project.provincialProjectNumber}} {{project.name}}</span> within the <span class="uppercase">{{project.district.name}}</span> District for an estimated period of {{estimateHours}} hours commencing {{estimateStartWork}}. Point of hire is <span class="uppercase underline">{{equipment.localArea.name}}</span></p>
 
