@@ -25,6 +25,15 @@
       margin-left: 10px;
     }
   }
+  
+  #rental-requests-date-filters {
+    margin-top: 10px;
+
+    label {
+      margin-top: 7px;
+      margin-left: 7px;
+    }
+  }
 
   #rental-requests-buttons {
     float: right;
@@ -36,6 +45,12 @@
 
   #rental-requests-faves {
     float: right;
+  }
+
+  #search-button {
+    float: right;
+    width: 105px;
+    margin-top: 10px;
   }
 }
 
