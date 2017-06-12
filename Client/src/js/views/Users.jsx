@@ -142,7 +142,7 @@ var Users = React.createClass({
       <div>
         <Well id="users-bar" bsSize="small" className="clearfix">
           <Row>
-            <Col md={11}>
+            <Col md={10}>
               <ButtonToolbar id="users-search">
                 <MultiDropdown id="selectedDistrictsIds" placeholder="Districts"
                   items={ districts } selectedIds={ this.state.search.selectedDistrictsIds } updateState={ this.updateSearchState } showMaxItems={ 2 } />
@@ -154,7 +154,7 @@ var Users = React.createClass({
                 <Button id="search-button" bsStyle="primary" onClick={ this.fetch }>Search</Button>
               </ButtonToolbar>
             </Col>
-            <Col md={1}>
+            <Col md={2}>
               <Row id="users-faves">
                 <Favourites id="users-faves-dropdown" type="user" favourites={ this.props.favourites } data={ this.state.search } onSelect={ this.loadFavourite } />
               </Row>

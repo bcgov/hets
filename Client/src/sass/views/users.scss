@@ -12,6 +12,10 @@
       float: left;
     }
 
+    .form-control {
+      margin: 0;
+    }
+
     .input-group {
       width: 250px;
       margin-top: 10px;
@@ -33,10 +37,6 @@
 
   #users-faves {
     float: right;
-  }
-
-  #users-faves-dropdown {
-    width: 79px;
   }
 
   .alert .btn {

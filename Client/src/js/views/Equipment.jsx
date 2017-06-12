@@ -62,7 +62,7 @@ var Equipment = React.createClass({
         ownerName: this.props.search.ownerName || 'Owner',
         lastVerifiedDate: this.props.search.lastVerifiedDate || '',
         hired: this.props.search.hired === false,
-        statusCode: this.props.search.statusCode || Constant.EQUIPMENT_STATUS_CODE_APPROVED,
+        statusCode: this.props.search.statusCode || '',
       },
 
       ui : {
@@ -191,12 +191,12 @@ var Equipment = React.createClass({
       </PageHeader>
       <Well id="equipment-bar" bsSize="small" className="clearfix">
         <Row>
-          <Col md={11}>
+          <Col md={10}>
             <Row>
               <ButtonToolbar id="equipment-filters-first-row">
                 <MultiDropdown id="selectedLocalAreasIds" placeholder="Local Areas"
                   items={ localAreas } selectedIds={ this.state.search.selectedLocalAreasIds } updateState={ this.updateSearchState } showMaxItems={ 2 } />
-                <DropdownControl id="statusCode" title={ this.state.search.statusCode } updateState={ this.updateSearchState } blankLine="(All)"
+                <DropdownControl id="statusCode" title={ this.state.search.statusCode } updateState={ this.updateSearchState } blankLine="(All)" placeholder="Status"
                   items={[ Constant.EQUIPMENT_STATUS_CODE_APPROVED, Constant.EQUIPMENT_STATUS_CODE_PENDING, Constant.EQUIPMENT_STATUS_CODE_ARCHIVED ]}
                 />
                 <MultiDropdown id="selectedEquipmentTypesIds" placeholder="Equipment Types" fieldName="districtEquipmentName"
@@ -216,7 +216,7 @@ var Equipment = React.createClass({
               </ButtonToolbar>
             </Row>
           </Col>
-          <Col md={1}>
+          <Col md={2}>
             <Row id="equipment-faves">
               <Favourites id="equipment-faves-dropdown" type="equipment" favourites={ this.props.favourites } data={ this.state.search } onSelect={ this.loadFavourite } pullRight />
             </Row>
