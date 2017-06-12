@@ -66,7 +66,7 @@ var RentalRequests = React.createClass({
       search: {
         selectedLocalAreasIds: this.props.search.selectedLocalAreasIds || [],
         projectName: this.props.search.projectName || '',
-        status: this.props.search.status || Constant.RENTAL_REQUEST_STATUS_CODE_IN_PROGRESS,
+        status: this.props.search.status || '',
         dateRange: this.props.search.dateRange || '',
       },
 
@@ -79,7 +79,7 @@ var RentalRequests = React.createClass({
 
   buildSearchParams() {
     var searchParams = {
-      status: this.state.search.status || Constant.RENTAL_REQUEST_STATUS_CODE_IN_PROGRESS,
+      status: this.state.search.status || '',
       project: this.state.search.projectName || '',
     };
 
@@ -234,9 +234,9 @@ var RentalRequests = React.createClass({
               <ButtonToolbar id="rental-requests-filters">
                 <MultiDropdown id="selectedLocalAreasIds" placeholder="Local Areas"
                   items={ localAreas } selectedIds={ this.state.search.selectedLocalAreasIds } updateState={ this.updateSearchState } showMaxItems={ 2 } />
-                <FormInputControl id="projectName" type="text" placeholder="Project name" value={ this.state.search.projectName } updateState={ this.updateSearchState }></FormInputControl>
-                <DropdownControl id="status" title={ this.state.search.status } updateState={ this.updateSearchState } blankLine="(All)"
+                <DropdownControl id="status" title={ this.state.search.status } updateState={ this.updateSearchState } blankLine="(All)" placeholder="Status"
                     items={[ Constant.RENTAL_REQUEST_STATUS_CODE_IN_PROGRESS, Constant.RENTAL_REQUEST_STATUS_CODE_COMPLETED, Constant.RENTAL_REQUEST_STATUS_CODE_CANCELLED ]} />
+                <FormInputControl id="projectName" type="text" placeholder="Project name" value={ this.state.search.projectName } updateState={ this.updateSearchState }></FormInputControl>
               </ButtonToolbar>
             </Row>
             <Row>

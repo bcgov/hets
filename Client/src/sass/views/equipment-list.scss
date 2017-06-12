@@ -28,6 +28,10 @@
       margin-left: 7px;
     }
 
+    .form-control {
+      margin: 0;
+    }
+
     #equipment-attachments {
       label {
         float: left;
@@ -56,8 +60,8 @@
   }
 
   #search-button {
-    float:right;
-    width: 79px;
+    float: right;
+    width: 105px;
     margin-top: 10px;
   }
 }

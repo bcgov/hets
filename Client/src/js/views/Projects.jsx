@@ -50,7 +50,7 @@ var Projects = React.createClass({
 
       search: {
         selectedDistrictsIds: this.props.search.selectedDistrictsIds || [],
-        statusCode: this.props.search.statusCode || Constant.PROJECT_STATUS_CODE_ACTIVE,
+        statusCode: this.props.search.statusCode || '',
         hires: this.props.search.hires === true,
         requests: this.props.search.requests === true,
         projectName: this.props.search.projecName,
@@ -88,6 +88,7 @@ var Projects = React.createClass({
     }
 
     return searchParams;
+
   },
 
   componentDidMount() {
@@ -178,7 +179,7 @@ var Projects = React.createClass({
               <MultiDropdown id="selectedDistrictsIds" placeholder="Districts"
                 items={ districts } selectedIds={ this.state.search.selectedDistrictsIds } updateState={ this.updateSearchState } showMaxItems={ 2 } />
               <Unimplemented>
-                <DropdownControl id="statusCode" title={ this.state.search.statusCode } updateState={ this.updateSearchState } blankLine="(All)"
+                <DropdownControl id="statusCode" title={ this.state.search.statusCode } updateState={ this.updateSearchState } blankLine="(All)" placeholder="Status"
                   items={[ Constant.PROJECT_STATUS_CODE_ACTIVE, Constant.PROJECT_STATUS_CODE_COMPLETED ]} />
               </Unimplemented>
               <FormInputControl id="projectName" type="text" placeholder="Project name" value={ this.state.search.projectName } updateState={ this.updateSearchState }></FormInputControl>
