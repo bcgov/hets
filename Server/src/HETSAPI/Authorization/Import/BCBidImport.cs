@@ -105,7 +105,7 @@ namespace HETSAPI.Import
 
             //*** Import Dump_Truck  from Dump_Truck.xml   
             dbContext = new DbAppContext(null, options.Options);
-            ertaintyImportDumpTruck.Import(context, dbContext, fileLocation,  systemId);
+            ImportDumpTruck.Import(context, dbContext, fileLocation,  systemId);
 
             var watch = System.Diagnostics.Stopwatch.StartNew();
             //*** Import Equipment_Attached  from Equip_Attach.xml   
