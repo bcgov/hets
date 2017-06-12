@@ -22,9 +22,16 @@ namespace HETSAPI.Import
         const string oldTable = "Block";
         const string newTable = "HET_LOCAL_AREA_ROTATION_LIST";
         const string xmlFileName = "Block.xml";
+        public static string oldTable_Progress = oldTable + "_Progress";
 
         static public void Import(PerformContext performContext, DbAppContext dbContext, string fileLocation, string systemId)
         {
+            // Check the start point. If startPoint ==  sigId then it is already completed
+            int startPoint = ImportUtility.CheckInterMapForStartPoint(dbContext, oldTable_Progress, BCBidImport.sigId);
+            if (startPoint == BCBidImport.sigId)    // This means the import job it has done today is complete for all the records in the xml file.
+            {
+                return;
+            }
             try
             {
                 string rootAttr = "ArrayOf" + oldTable;
@@ -38,7 +45,13 @@ namespace HETSAPI.Import
                 XmlSerializer ser = new XmlSerializer(typeof(Block[]), new XmlRootAttribute(rootAttr));
                 MemoryStream memoryStream = ImportUtility.memoryStreamGenerator(xmlFileName, oldTable, fileLocation, rootAttr);
                 HETSAPI.Import.Block[] legacyItems = (HETSAPI.Import.Block[])ser.Deserialize(memoryStream);
-                int ii = 0;
+
+                int ii = startPoint;
+                if (startPoint > 0)    // Skip the portion already processed
+                {
+                    legacyItems = legacyItems.Skip(ii).ToArray();
+                }
+
                 foreach (var item in legacyItems.WithProgress(progress))
                 {
                     int areaId = item.Area_Id ?? 0;
@@ -78,10 +91,11 @@ namespace HETSAPI.Import
                         }
                     }
 
-                    if (++ii % 500 == 0)
+                    if (++ii % 500 == 0)  // Save change to database once a while to avoid frequent writing to the database.
                     {
                         try
                         {
+                            ImportUtility.AddImportMap_For_Progress(dbContext, oldTable_Progress, ii.ToString(), BCBidImport.sigId);
                             int iResult = dbContext.SaveChangesForImport();
                         }
                         catch (Exception e)
@@ -90,6 +104,7 @@ namespace HETSAPI.Import
                         }
                     }
                 }
+                performContext.WriteLine("*** Done ***");
             }
             catch (Exception e)
             {
@@ -99,6 +114,7 @@ namespace HETSAPI.Import
             performContext.WriteLine("*** Done ***");
             try
             {
+                ImportUtility.AddImportMap_For_Progress(dbContext, oldTable_Progress, BCBidImport.sigId.ToString(), BCBidImport.sigId);
                 int iResult = dbContext.SaveChangesForImport();
             }
             catch (Exception e)
@@ -169,7 +185,10 @@ namespace HETSAPI.Import
                 }
 
                 instance.CreateUserid = createdBy.SmUserId;
-                instance.CreateTimestamp = DateTime.Parse((oldObject.Created_Dt==null? "1900-01-01": oldObject.Created_Dt).Trim().Substring(0,10));
+                if (oldObject.Created_Dt != null)
+                {
+                    instance.CreateTimestamp = DateTime.ParseExact(oldObject.Created_Dt.Trim().Substring(0, 10), "yyyy-MM-dd", System.Globalization.CultureInfo.InvariantCulture);
+                }
 
                 dbContext.LocalAreaRotationLists.Add(instance);
             }

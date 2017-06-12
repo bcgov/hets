@@ -22,9 +22,16 @@ namespace HETSAPI.Import
         const string oldTable = "EquipType";
         const string newTable = "HET_EQUIPMMENT_TYPE";
         const string xmlFileName = "Equip_Type.xml";
+        const int sigId = 150000;
 
         static public void Import(PerformContext performContext, DbAppContext dbContext, string fileLocation, string systemId)
         {
+            string completed = DateTime.Now.ToString("d") + "-" + "Completed";
+            ImportMap importMap = dbContext.ImportMaps.FirstOrDefault(x => x.OldTable == oldTable && x.OldKey == completed && x.NewKey == sigId);
+            if (importMap != null)
+            {
+                return;
+            }
             try
             {
                 string rootAttr = "ArrayOf" + oldTable;
@@ -42,7 +49,7 @@ namespace HETSAPI.Import
                 foreach (var item in legacyItems.WithProgress(progress))
                 {
                     // see if we have this one already.
-                    ImportMap importMap = dbContext.ImportMaps.FirstOrDefault(x => x.OldTable == oldTable && x.OldKey == item.Equip_Type_Id.ToString());
+                    importMap = dbContext.ImportMaps.FirstOrDefault(x => x.OldTable == oldTable && x.OldKey == item.Equip_Type_Id.ToString());
 
                     if (importMap == null) // new entry
                     {
@@ -92,6 +99,7 @@ namespace HETSAPI.Import
                     string iStr = e.ToString();
                 }
                 performContext.WriteLine("*** Done ***");
+                ImportUtility.AddImportMap(dbContext, oldTable, completed, newTable, sigId);
             }
 
             catch (Exception e)
@@ -125,6 +133,8 @@ namespace HETSAPI.Import
                 isNew = true;
                 instance = new Models.DistrictEquipmentType();
                 instance.Id = oldObject.Equip_Type_Id;
+
+
 
                 try  //Combining <Equip_Type_Cd> and < Equip_Type_Desc> together
                 {

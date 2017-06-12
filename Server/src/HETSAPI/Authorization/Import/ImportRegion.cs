@@ -22,6 +22,7 @@ namespace HETSAPI.Import
         const string oldTable = "HETS_Region";
         const string newTable = "HETS_Region";
         const string xmlFileName = "Region.xml";
+        const int sigId = 150000;
 
         /// <summary>
         /// Import Regions
@@ -32,6 +33,12 @@ namespace HETSAPI.Import
         /// <param name="systemId"></param>
         static public void Import(PerformContext performContext, DbAppContext dbContext, string fileLocation, string systemId)
         {
+            string completed = DateTime.Now.ToString("d") + "-" + "Completed";
+            ImportMap importMap = dbContext.ImportMaps.FirstOrDefault(x => x.OldTable == oldTable && x.OldKey == completed && x.NewKey == sigId);
+            if (importMap != null)
+            {
+                return;
+            }
             try
             {
                 string rootAttr = "ArrayOf" + oldTable;
@@ -48,7 +55,7 @@ namespace HETSAPI.Import
                 {
                     // see if we have this one already.
                     Models.Region reg = null;
-                    ImportMap importMap = dbContext.ImportMaps.FirstOrDefault(x => x.OldTable == oldTable && x.OldKey == item.Region_Id.ToString());
+                    importMap = dbContext.ImportMaps.FirstOrDefault(x => x.OldTable == oldTable && x.OldKey == item.Region_Id.ToString());
 
                     if (dbContext.LocalAreas.Where(x => x.Name.ToUpper() == item.Name.Trim().ToUpper()).Count() > 0)
                     {
@@ -81,6 +88,7 @@ namespace HETSAPI.Import
                     }
                 }
                 performContext.WriteLine("*** Done ***");
+                ImportUtility.AddImportMap(dbContext, oldTable, completed, newTable, sigId);
             }
 
             catch (Exception e)

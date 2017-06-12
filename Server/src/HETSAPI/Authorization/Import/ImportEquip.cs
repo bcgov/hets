@@ -1,4 +1,7 @@
-﻿using Hangfire.Console;
+﻿///  Import Equipment.xml into HET_EQUIPMENT TABLE.
+///  1. Using Import_MAP to find out the Owner_ID through Owner_Prop_ID
+///  2. Using the address information here to update the Equipment Owner's main contact address
+using Hangfire.Console;
 using Hangfire.Server;
 using HETSAPI.Models;
 using Microsoft.EntityFrameworkCore;
@@ -22,10 +25,17 @@ namespace HETSAPI.Import
         const string oldTable = "Equip";
         const string newTable = "HET_EQUIPMMENT";
         const string xmlFileName = "Equip.xml";
+        public static string oldTable_Progress = oldTable + "_Progress";
 
         static public void Import(PerformContext performContext, DbAppContext dbContext, string fileLocation, string systemId)
         {
-            
+            // Check the start point. If startPoint ==  sigId then it is already completed
+            int startPoint = ImportUtility.CheckInterMapForStartPoint(dbContext, oldTable_Progress, BCBidImport.sigId);
+            if (startPoint == BCBidImport.sigId)    // This means the import job it has done today is complete for all the records in the xml file.
+            {
+                return;
+            }
+
             string rootAttr = "ArrayOf" + oldTable;
 
             //Create Processer progress indicator
@@ -37,7 +47,13 @@ namespace HETSAPI.Import
             XmlSerializer ser = new XmlSerializer(typeof(Equip[]), new XmlRootAttribute(rootAttr));
             MemoryStream memoryStream = ImportUtility.memoryStreamGenerator(xmlFileName, oldTable, fileLocation, rootAttr);
             HETSAPI.Import.Equip[] legacyItems = (HETSAPI.Import.Equip[])ser.Deserialize(memoryStream);
-            int ii = 0;
+
+            int ii = startPoint;
+            if (startPoint > 0)    // Skip the portion already processed
+            {
+                legacyItems = legacyItems.Skip(ii).ToArray();
+            }
+
             foreach (var item in legacyItems.WithProgress(progress))
             {
                 // see if we have this one already.
@@ -74,10 +90,11 @@ namespace HETSAPI.Import
                     }
                 }
 
-                if (ii++ % 1000 == 0)
+                if (ii++ % 1000 == 0)   // Save change to database once a while to avoid frequent writing to the database.
                 {
                     try
                     {
+                        ImportUtility.AddImportMap_For_Progress(dbContext, oldTable_Progress, ii.ToString(), BCBidImport.sigId);
                         int iResult = dbContext.SaveChangesForImport();
                     }
                     catch (Exception e)
@@ -86,15 +103,17 @@ namespace HETSAPI.Import
                     }
                 }
             }
+
+            performContext.WriteLine("*** Done ***");
             try
             {
+                ImportUtility.AddImportMap_For_Progress(dbContext, oldTable_Progress, BCBidImport.sigId.ToString(), BCBidImport.sigId);
                 int iResult = dbContext.SaveChangesForImport();
             }
             catch (Exception e)
             {
                 string iStr = e.ToString();
             }
-            performContext.WriteLine("*** Done ***");
         }
 
 
@@ -119,6 +138,15 @@ namespace HETSAPI.Import
                 instance.ArchiveCode = oldObject.Archive_Cd == null ? "" : new string(oldObject.Archive_Cd.Take(50).ToArray());
                 instance.ArchiveReason = oldObject.Archive_Reason == null ? "" : new string(oldObject.Archive_Reason.Take(2048).ToArray());
                 instance.LicencePlate = oldObject.Licence == null ? "" : new string(oldObject.Licence.Take(20).ToArray());
+
+                if (oldObject.Approved_Dt != null)
+                {
+                    instance.ApprovedDate = DateTime.ParseExact(oldObject.Approved_Dt.Trim().Substring(0, 10), "yyyy-MM-dd", System.Globalization.CultureInfo.InvariantCulture);
+                }
+                if (oldObject.Received_Dt != null)
+                {
+                    instance.ReceivedDate = DateTime.ParseExact(oldObject.Received_Dt.Trim().Substring(0, 10), "yyyy-MM-dd", System.Globalization.CultureInfo.InvariantCulture);
+                }
 
                 if (oldObject.Comment != null)
                 {
@@ -167,9 +195,8 @@ namespace HETSAPI.Import
                     }
                     catch (Exception e)
                     {
-                        instance.PayRate = 0;
+                        instance.PayRate = (float)0.0;
                     }
-
                 }
 
                 if (instance.Seniority != null)
@@ -180,10 +207,10 @@ namespace HETSAPI.Import
                     }
                     catch (Exception e)
                     {
-                        instance.Seniority = 0;
+                        instance.Seniority = (float)0.0;
                     }
                 }
-                // Find the owner which is referenced in the equipment of the xml file entry
+                // Find the owner which is referenced in the equipment of the xml file entry Through ImportMaps because owner_ID is not prop_ID
                 ImportMap map = dbContext.ImportMaps.FirstOrDefault(x => x.OldTable == ImportOwner.oldTable && x.OldKey == oldObject.Owner_Popt_Id.ToString());
                 if (map != null)
                 {
@@ -191,9 +218,25 @@ namespace HETSAPI.Import
                     if (owner != null)
                     {
                         instance.Owner = owner;
+                        Models.Contact con = dbContext.Contacts.FirstOrDefault(x => x.Id == owner.PrimaryContactId);
+                        if (con != null)            //This is used to update owner contact address
+                        {
+                            try
+                            {
+                                con.Address1 = oldObject.Addr1;
+                                con.Address2 = oldObject.Addr2;
+                                con.City = oldObject.City;
+                                con.PostalCode = oldObject.Postal;
+                                con.Province = "BC";
+                                dbContext.Contacts.Update(con);
+                            }
+                            catch (Exception e)
+                            {
+                                string str = e.ToString();
+                            }
+                        }
                     }
                 }
-                // instance.OwnerId = owner.Id;
                 
                 if (oldObject.Seniority != null)
                 {
@@ -203,7 +246,7 @@ namespace HETSAPI.Import
                     }
                     catch (Exception e)
                     {
-                        instance.Seniority = 0;
+                        instance.Seniority = (float)0.0;
                     }
                 }
                 if (oldObject.Num_Years != null)
@@ -214,7 +257,29 @@ namespace HETSAPI.Import
                     }
                     catch (Exception e)
                     {
-                        instance.YearsOfService = 0;
+                        instance.YearsOfService = (float)0.0;
+                    }
+                }
+                if (oldObject.Block_Num != null)
+                {
+                    try
+                    {
+                        instance.BlockNumber = decimal.ToInt32(Decimal.Parse(oldObject.Block_Num, System.Globalization.NumberStyles.Float));
+                    }
+                    catch (Exception e)
+                    {
+ 
+                    }
+                }
+                if (oldObject.Size != null)
+                {
+                    try
+                    {
+                        instance.Size = oldObject.Size;
+                    }
+                    catch (Exception e)
+                    {
+
                     }
                 }
 
@@ -226,7 +291,7 @@ namespace HETSAPI.Import
                     }
                     catch (Exception e)
                     {
-                        instance.ServiceHoursLastYear = (float)0;
+                        instance.ServiceHoursLastYear = (float)0.0;
                     }
                     try
                     {
@@ -235,12 +300,10 @@ namespace HETSAPI.Import
                     }
                     catch (Exception e)
                     {
-                        instance.ServiceHoursTwoYearsAgo = (float)0;
-                        instance.ServiceHoursThreeYearsAgo = (float)0;
+                        instance.ServiceHoursTwoYearsAgo = (float)0.0;
+                        instance.ServiceHoursThreeYearsAgo = (float)0.0;
                     }
                 }
-
-                instance.ReceivedDate = DateTime.Parse(oldObject.Received_Dt == null ? "1900-01-01" : oldObject.Received_Dt.Trim().Substring(0, 10));
 
                 instance.CreateTimestamp = DateTime.UtcNow;
                 instance.CreateUserid = createdBy.SmUserId;
@@ -254,11 +317,11 @@ namespace HETSAPI.Import
                 try
                 {
                     instance.LastUpdateUserid = modifiedBy.SmUserId;
-                    instance.LastUpdateTimestamp = DateTime.Parse(oldObject.Modified_Dt.Trim().Substring(0, 10));
+                    instance.LastUpdateTimestamp = DateTime.ParseExact(oldObject.Modified_Dt.Trim().Substring(0, 10), "yyyy-MM-dd", System.Globalization.CultureInfo.InvariantCulture);
                 }
-                catch
+                catch (Exception e)
                 {
-
+                    string str = e.ToString();
                 }
                 dbContext.Equipments.Update(instance);
             }

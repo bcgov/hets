@@ -21,9 +21,16 @@ namespace HETSAPI.Import
         const string oldTable = "EquipAttach";
         const string newTable = "HET_EQUIPMENT_ATTACHMENT";
         const string xmlFileName = "Equip_Attach.xml";
+        public static string oldTable_Progress = oldTable + "_Progress";
 
         static public void Import(PerformContext performContext, DbAppContext dbContext, string fileLocation, string systemId)
         {
+            // Check the start point. If startPoint ==  sigId then it is already completed
+            int startPoint = ImportUtility.CheckInterMapForStartPoint(dbContext, oldTable_Progress, BCBidImport.sigId);
+            if (startPoint == BCBidImport.sigId)    // This means the import job it has done today is complete for all the records in the xml file.
+            {
+                return;
+            }
             try
             {
                 string rootAttr = "ArrayOf" + oldTable;
@@ -44,7 +51,12 @@ namespace HETSAPI.Import
                         .Include(x => x.DistrictEquipmentType)
                         .ToList();
 
-                int ii = 0;
+                int ii = startPoint;
+                if (startPoint > 0)    // Skip the portion already processed
+                {
+                    legacyItems = legacyItems.Skip(ii).ToArray();
+                }
+
                 foreach (var item in legacyItems.WithProgress(progress))
                 {
                     // see if we have this one already. We used old combine because item.Equip_Id is not unique.
@@ -79,10 +91,11 @@ namespace HETSAPI.Import
                         }
                     }
 
-                    if (++ii % 1000 == 0)
+                    if (++ii % 1000 == 0)       // Save change to database once a while to avoid frequent writing to the database.
                     {
                         try
                         {
+                            ImportUtility.AddImportMap_For_Progress(dbContext, oldTable_Progress, ii.ToString(), BCBidImport.sigId);
                             int iResult = dbContext.SaveChangesForImport();
                         }
                         catch (Exception e)
@@ -102,6 +115,7 @@ namespace HETSAPI.Import
 
             try
             {
+                ImportUtility.AddImportMap_For_Progress(dbContext, oldTable_Progress, BCBidImport.sigId.ToString(), BCBidImport.sigId);
                 int iResult = dbContext.SaveChangesForImport();
             }
             catch (Exception e)
@@ -135,7 +149,12 @@ namespace HETSAPI.Import
 
                 instance.Description = oldObject.Attach_Desc == null ? "" : oldObject.Attach_Desc;
                 instance.TypeName = (oldObject.Attach_Seq_Num ?? -1).ToString();
-                instance.CreateTimestamp = DateTime.Parse((oldObject.Created_Dt == null ? "1900-01-01" : oldObject.Created_Dt).Trim().Substring(0, 10));
+                if (oldObject.Created_Dt != null && oldObject.Created_Dt.Trim().Length>=10)
+                {
+                    instance.CreateTimestamp =
+                        DateTime.ParseExact(oldObject.Created_Dt.Trim().Substring(0, 10), "yyyy-MM-dd", System.Globalization.CultureInfo.InvariantCulture);
+                }
+
                 instance.CreateUserid = createdBy.SmUserId;
 
                 dbContext.EquipmentAttachments.Add(instance);

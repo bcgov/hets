@@ -17,6 +17,7 @@ using System.Text.RegularExpressions;
 
 namespace HETSAPI.Import
 {
+
     public class Pair
     {
         public float Hours { get; set; }
@@ -49,6 +50,63 @@ namespace HETSAPI.Import
             dbContext.ImportMaps.Add(importMap);
         }
 
+        /// <summary>
+        /// This is recording where the last import was stopped for specific table
+        /// Use BCBidImport.todayDate as newTable entry
+        /// Please note that NewTable enrty of the Import_Map table is aleats today's dat: BCBidImport.todayDate for identifying purpose. This means the restarting point inly carew
+        /// what has done for today, not in the past.
+        /// </summary>
+        /// <param name="dbContext"></param>
+        /// <param name="oldTable"></param>   This is lile "Owner_Progress" for th eimport progress entry (row) of Import_Map table
+        /// <param name="oldKey"></param>  This is where stopped last time in string If this is "300000", then complete
+        /// <param name="newKey"></param>  This is always a constant; for identification of progress entry of the table only. This is extraneous.
+        static public void AddImportMap_For_Progress(DbAppContext dbContext, string oldTable, string oldKey, int newKey)
+        {
+            Models.ImportMap  importMap = dbContext.ImportMaps.FirstOrDefault(x => x.OldTable == oldTable && x.NewKey == newKey);
+            if (importMap == null)
+            {
+                ImportUtility.AddImportMap(dbContext, oldTable, oldKey, BCBidImport.todayDate, newKey);
+            }
+            else
+            {
+                importMap.OldKey = oldKey;
+                dbContext.ImportMaps.Update(importMap);
+            }
+        }
+
+        /// <summary>
+        /// 
+        /// Return startPoint:  0       - if ImportMap entry with oldTable == "%%%%%_Progress" does not exist
+        ///                     sigId   - if ImportMap entry with oldTable == "%%%%%_Progress" exist, and oldKey = signId.toString()
+        ///                     Other int   - if ImportMap entry with oldTable == "%%%%%_Progress" exist, and oldKey != signId.toString()
+        /// The Import_Table entry for this kind of record has NewTable as  BCBidImport.todayDate.           
+        /// </summary>
+        /// <param name="dbContext"></param>
+        /// <param name="oldTable_Progress"></param>
+        /// <param name="sigId"></param>
+        /// <returns></returns>
+        static public int CheckInterMapForStartPoint(DbAppContext dbContext, string oldTable_Progress,  int sigId)
+        {
+            int startPoint;
+            ImportMap importMap = dbContext.ImportMaps.FirstOrDefault(x => x.OldTable == oldTable_Progress && x.NewTable == BCBidImport.todayDate && x.NewKey == sigId);
+            if (importMap != null)
+            {
+                if (importMap.OldKey == sigId.ToString())
+                {
+                    startPoint = sigId;                         // When import progress is completed, the OldKey stores this constant.
+                }
+                else
+                {
+                    startPoint = int.Parse(importMap.OldKey);   // OlkdKey is recorded where the import progress stopped last time.
+                }
+            }
+            else
+            {
+                startPoint = 0;             //If the table of Import_MAP does not have any entry (row), it means the importing process has not started yet.
+            }
+            return startPoint;
+        }
+        
         /// <summary>
         /// Generates Memory stream from the input xml file
         /// </summary>
@@ -114,7 +172,7 @@ namespace HETSAPI.Import
                     int rightBreakPos = userString.IndexOf(@")");
                     string surName = userString.Substring(0, commaPos);
                     string givenName = userString.Substring(commaPos + 2, leftBreakPos - commaPos - 2);
-                    string smUserId = userString.Substring(startPos + 1, rightBreakPos - startPos - 1);
+                    string smUserId = userString.Substring(startPos + 1, rightBreakPos - startPos - 1).Trim();
                     Models.User user = dbContext.Users.FirstOrDefault(x => string.Equals(x.SmUserId, smUserId, StringComparison.OrdinalIgnoreCase));
                     if (user == null)
                     {
@@ -124,6 +182,14 @@ namespace HETSAPI.Import
                         user.SmUserId = smUserId.Trim();
                         dbContext.Users.Add(user);
                         dbContext.SaveChangesForImport();
+                    }
+                    else if (user.Surname==null && surName.Trim().Length >=1)
+                    {
+
+                        user.Surname = surName.Trim();
+                        user.GivenName = givenName.Trim();
+                        dbContext.Users.Update(user);
+                     //   dbContext.SaveChangesForImport();  to save database query time.
                     }
                     return user;
                 }

@@ -22,9 +22,17 @@ namespace HETSAPI.Import
         const string oldTable = "Project";
         const string newTable = "HET_PROJECT";
         const string xmlFileName = "Project.xml";
+        public static string oldTable_Progress = oldTable + "_Progress";
 
         static public void Import(PerformContext performContext, DbAppContext dbContext, string fileLocation, string systemId)
         {
+            // Check the start point. If startPoint ==  
+            int startPoint = ImportUtility.CheckInterMapForStartPoint(dbContext, oldTable_Progress, BCBidImport.sigId);
+            if (startPoint == BCBidImport.sigId)    // This means the import job it has done today is complete for all the records in the xml file.
+            {
+                return;
+            }
+
             try
             {
                 string rootAttr = "ArrayOf" + oldTable;
@@ -38,7 +46,13 @@ namespace HETSAPI.Import
                 XmlSerializer ser = new XmlSerializer(typeof(Project[]), new XmlRootAttribute(rootAttr));
                 MemoryStream memoryStream = ImportUtility.memoryStreamGenerator(xmlFileName, oldTable, fileLocation, rootAttr);
                 HETSAPI.Import.Project[] legacyItems = (HETSAPI.Import.Project[])ser.Deserialize(memoryStream);
-                int ii = 0;
+
+                int ii = startPoint;
+                if (startPoint > 0)    // Skip the portion already processed
+                {
+                    legacyItems = legacyItems.Skip(ii).ToArray();
+                }
+
                 foreach (var item in legacyItems.WithProgress(progress))
                 {
                     // see if we have this one already.
@@ -76,6 +90,7 @@ namespace HETSAPI.Import
                     {
                         try
                         {
+                            ImportUtility.AddImportMap_For_Progress(dbContext, oldTable_Progress, ii.ToString(), BCBidImport.sigId);
                             int iResult = dbContext.SaveChangesForImport();
                         }
                         catch (Exception e)
@@ -87,6 +102,7 @@ namespace HETSAPI.Import
                 performContext.WriteLine("*** Done ***");
                 try
                 {
+                    ImportUtility.AddImportMap_For_Progress(dbContext, oldTable_Progress, BCBidImport.sigId.ToString(), BCBidImport.sigId);
                     int iResult = dbContext.SaveChangesForImport();
                 }
                 catch (Exception e)
@@ -125,7 +141,8 @@ namespace HETSAPI.Import
                     try
                     {   //4 properties
                         instance.ProvincialProjectNumber = oldObject.Project_Num;
-                        District dis = dbContext.Districts.FirstOrDefault(x => x.Id == oldObject.Service_Area_Id);
+                        ServiceArea serviceArea = dbContext.ServiceAreas.FirstOrDefault(x => x.Id == oldObject.Service_Area_Id);
+                        District dis = dbContext.Districts.FirstOrDefault(x => x.Id == serviceArea.DistrictId);
                         instance.District = dis;
                         instance.DistrictId = dis.Id;
                     }
@@ -144,6 +161,15 @@ namespace HETSAPI.Import
                     }
                     try
                     {
+                        instance.Information = oldObject.Job_Desc2;
+                    }
+                    catch (Exception e)
+                    {
+                        string i = e.ToString();
+                    }
+
+                    try
+                    {
                         instance.Notes = new List<Note>();
                         Models.Note note = new Note();
                         note.Text = new string(oldObject.Job_Desc2.Take(2048).ToArray());
@@ -159,7 +185,7 @@ namespace HETSAPI.Import
                     // instance.RentalRequests = oldObject.
                     try
                     {   //9 properties
-                        instance.CreateTimestamp = DateTime.Parse(oldObject.Created_Dt.Trim().Substring(0, 10));
+                        instance.CreateTimestamp = DateTime.ParseExact(oldObject.Created_Dt.Trim().Substring(0, 10), "yyyy-MM-dd", System.Globalization.CultureInfo.InvariantCulture);
                     }
                     catch (Exception e)
                     {

@@ -22,9 +22,16 @@ namespace HETSAPI.Import
         const string oldTable = "User_HETS";
         const string newTable = "HET_USER";
         const string xmlFileName = "User_HETS.xml";
+        const int sigId = 150000;
 
         static public void Import(PerformContext performContext, DbAppContext dbContext, string fileLocation, string systemId)
         {
+            string completed = DateTime.Now.ToString("d") + "-" + "Completed";
+            ImportMap importMap = dbContext.ImportMaps.FirstOrDefault(x => x.OldTable == oldTable && x.OldKey == completed && x.NewKey == sigId);
+            if (importMap != null)
+            {
+                return;
+            }
             try
             {
                 string rootAttr = "ArrayOf" + oldTable;
@@ -42,7 +49,7 @@ namespace HETSAPI.Import
                 foreach (var item in legacyItems.WithProgress(progress))
                 {
                     // see if we have this one already.
-                    ImportMap importMap = dbContext.ImportMaps.FirstOrDefault(x => x.OldTable == oldTable && x.OldKey == item.Popt_Id.ToString());
+                    importMap = dbContext.ImportMaps.FirstOrDefault(x => x.OldTable == oldTable && x.OldKey == item.Popt_Id.ToString());
                     Models.User instance = dbContext.Users.FirstOrDefault(x => item.User_Cd.ToUpper().IndexOf(x.SmUserId.ToUpper()) >= 0);
                     if (instance == null)
                     {
@@ -73,6 +80,8 @@ namespace HETSAPI.Import
                     //}
 
                 }
+                performContext.WriteLine("*** Done ***");
+                ImportUtility.AddImportMap(dbContext, oldTable, completed, newTable, sigId);
             }
             catch (Exception e)
             {

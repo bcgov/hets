@@ -21,8 +21,9 @@ namespace HETSAPI.Import
         public static string oldTable = "Owner";
         public static string newTable = "HET_OWNER";
         public static string xmlFileName = "Owner.xml";
-       // public static string jsonOwnerFileName = @"C:\temp\Import\Owners\Owner.json";
-       // public static string jsonContactFileName = @"C:\temp\Import\Owners\Contact.json";
+        // public static string jsonOwnerFileName = @"C:\temp\Import\Owners\Owner.json";
+        // public static string jsonContactFileName = @"C:\temp\Import\Owners\Contact.json";
+        public static string oldTable_Progress = oldTable + "_Progress";
 
         /// <summary>
         /// 
@@ -33,6 +34,13 @@ namespace HETSAPI.Import
         /// <param name="systemId"></param>
         static public void Import(PerformContext performContext, DbAppContext dbContext, string fileLocation, string systemId)
         {
+            // Check the start point. If startPoint ==  sigId then it is already completed
+            int startPoint = ImportUtility.CheckInterMapForStartPoint(dbContext, oldTable_Progress, BCBidImport.sigId);
+            if (startPoint == BCBidImport.sigId)    // This means the import job it has done today is complete for all the records in the xml file.    // This means the import job it has done today is complete for all the records in the xml file.
+            {
+                return;
+            }
+
             List<Models.Owner> _data = new List<Models.Owner>();
             int maxOwnerIndex = dbContext.Owners.Max(x => x.Id);
             int maxContactIndex = dbContext.Contacts.Max(x => x.Id);
@@ -50,7 +58,13 @@ namespace HETSAPI.Import
                 XmlSerializer ser = new XmlSerializer(typeof(Owner[]), new XmlRootAttribute(rootAttr));
                 MemoryStream memoryStream = ImportUtility.memoryStreamGenerator(xmlFileName, oldTable, fileLocation, rootAttr);
                 HETSAPI.Import.Owner[] legacyItems = (HETSAPI.Import.Owner[])ser.Deserialize(memoryStream);
-                int ii = 1;
+
+                int ii = startPoint;
+                if (startPoint > 0)    // Skip the portion already processed
+                {
+                    legacyItems = legacyItems.Skip(ii).ToArray();
+                }
+
                 foreach (var item in legacyItems.WithProgress(progress))
                 {
                     // see if we have this one already.
@@ -81,10 +95,11 @@ namespace HETSAPI.Import
                             dbContext.ImportMaps.Update(importMap);
                         }
                     }
-                    if (ii++ % 500 == 0)
+                    if (++ii % 500 == 0)   // Save change to database once a while to avoid frequent writing to the database.
                     {
                         try
                         {
+                            ImportUtility.AddImportMap_For_Progress(dbContext, oldTable_Progress, ii.ToString(), BCBidImport.sigId);
                             int iResult =  dbContext.SaveChangesForImport();
                         }
                         catch (Exception e)
@@ -107,6 +122,7 @@ namespace HETSAPI.Import
 
             try
             {
+                ImportUtility.AddImportMap_For_Progress(dbContext, oldTable_Progress, BCBidImport.sigId.ToString(), BCBidImport.sigId);
                 int iResult = dbContext.SaveChangesForImport();
             }
             catch (Exception e)
@@ -161,7 +177,8 @@ namespace HETSAPI.Import
             }
             try
             {
-                owner.CGLEndDate = DateTime.Parse(oldObject.CGL_End_Dt.Trim().Substring(0, 10));
+                owner.CGLEndDate =  
+                    DateTime.ParseExact(oldObject.CGL_End_Dt.Trim().Substring(0, 10), "yyyy-MM-dd", System.Globalization.CultureInfo.InvariantCulture);
             }
             catch
             {
@@ -169,7 +186,8 @@ namespace HETSAPI.Import
             }
             try
             {
-                owner.WorkSafeBCExpiryDate = DateTime.Parse(oldObject.WCB_Expiry_Dt.Trim().Substring(0, 10));
+                owner.WorkSafeBCExpiryDate =  
+                    DateTime.ParseExact(oldObject.WCB_Expiry_Dt.Trim().Substring(0, 10), "yyyy-MM-dd", System.Globalization.CultureInfo.InvariantCulture);
             }
             catch
             {
@@ -239,12 +257,13 @@ namespace HETSAPI.Import
                 owner.CreateUserid = createdBy.SmUserId;
                 try
                 {
-                    owner.CreateTimestamp = DateTime.Parse(oldObject.Created_Dt.Trim().Substring(0, 10)); // DateTime.UtcNow;
+                    owner.CreateTimestamp = 
+                        DateTime.ParseExact(oldObject.Created_Dt.Trim().Substring(0, 10), "yyyy-MM-dd", System.Globalization.CultureInfo.InvariantCulture);
                 }
                 catch
                 {
+                    owner.CreateTimestamp = DateTime.UtcNow;
                 }
-                con.CreateTimestamp = DateTime.UtcNow;
                 con.CreateUserid = createdBy.SmUserId;
                 owner.PrimaryContact = con;
                 dbContext.Owners.Add(owner);

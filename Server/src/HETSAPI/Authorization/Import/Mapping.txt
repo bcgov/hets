@@ -365,6 +365,15 @@ HET_EQUIPMENT_TYPE Table columns:
     "LAST_UPDATE_USERID",					<Modified_By>
 	"IS_DUMP_TRUCK"							?
 
+HET_DISTRICT_EQUIPMENT_TYPE Table columns: 
+--------------------------------------------------------------------------------------------------------
+	"DISTRICT_EQUIPMENT_TYPE_ID", 
+	"CREATE_TIMESTAMP", 
+	"CREATE_USERID", 
+	"DISTRICT_EQUIPMENT_NAME", 
+	"DISTRICT_ID", 
+	"EQUIPMENT_TYPE_ID", 
+	"LAST_UPDATE_TIMESTAMP", "LAST_UPDATE_USERID"
 
 	@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 	!!!!!
@@ -422,7 +431,7 @@ Question:  Do we add "SERVICE_HOURS_THIS_YEAR" in table of HET_EQUIPMENT corresp
     <Addr4></Addr4>							?
     <City>Osoyoos</City>										
     <Postal>V0H 1V2   </Postal>				?
-    <Block_Num>0.000000000000000e+000		?
+    <Block_Num>0.000000000000000e+000	"BLOCK_NUMBER",
     <Comment></Comment>						?
     <Cycle_Hrs_Wrk>0.000000000000000e+000	?
     <Frozen_Out>N</Frozen_Out>				?
@@ -648,7 +657,8 @@ public."HET_RENTAL_AGREEMENT_RATE";
 	"RENTAL_AGREEMENT_ID"
 
 
-	First I will create "HET_RENTAL_AGREEMENT" table entry based on the following 3:    <Equip_Id>16701</Equip_Id> ,    <Project_Id>1563</Project_Id>,    <Service_Area_Id>24</Service_Area_Id>.
+	First I will create "HET_RENTAL_AGREEMENT" table entry based on the following 3:    <Equip_Id>16701</Equip_Id> ,    
+	<Project_Id>1563</Project_Id>,    <Service_Area_Id>24</Service_Area_Id>.
 Each such an entry has a list of RentalAgreementRate. So I will create 3 RentalAgreementRate entries in the table of 
 “HET_RENTAL_AGREEMENT_RATE",  corresponding to Rate, Rate2, and Rate 3. Those three rentalAgreementRate form a list as a property of 
 RentalAgreement.   
@@ -681,7 +691,7 @@ The followings are the colimns of the Database table HET_EQUIPMENT_ATTACHMENT
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 Project.xml
 <BCBID_10JAN.dbo.Project>
-    <Project_Id>2438</Project_Id>
+    <Project_Id>2438</Project_Id>							"PROJECT_ID", 
     <Service_Area_Id>17</Service_Area_Id>
     <Project_Num>86004-R2</Project_Num>
     <Job_Desc1>Gravel Work - Nimpo Lake</Job_Desc1>

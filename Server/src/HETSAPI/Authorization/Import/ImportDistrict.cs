@@ -22,6 +22,7 @@ namespace HETSAPI.Import
         const string oldTable = "HETS_District";
         const string newTable = "HETS_District";
         const string xmlFileName = "District.xml";
+        const int sigId = 150000;
 
         /// <summary>
         /// Import Districts
@@ -32,6 +33,12 @@ namespace HETSAPI.Import
         /// <param name="systemId"></param>
         static public void Import(PerformContext performContext, DbAppContext dbContext, string fileLocation, string systemId)
         {
+            string completed = DateTime.Now.ToString("d") + "-" + "Completed";
+            ImportMap importMap = dbContext.ImportMaps.FirstOrDefault(x => x.OldTable == oldTable && x.OldKey == completed && x.NewKey == sigId);
+            if (importMap != null)
+            {
+                return;
+            }
             try
             {
                 string rootAttr = "ArrayOf" + oldTable;
@@ -47,7 +54,7 @@ namespace HETSAPI.Import
                 foreach (var item in legacyItems.WithProgress(progress))
                 {
                     // see if we have this one already.
-                    ImportMap importMap = dbContext.ImportMaps.FirstOrDefault(x => x.OldTable == oldTable && x.OldKey == item.District_Id.ToString());
+                    importMap = dbContext.ImportMaps.FirstOrDefault(x => x.OldTable == oldTable && x.OldKey == item.District_Id.ToString());
 
                     if (importMap == null) // new entry
                     {
@@ -77,6 +84,7 @@ namespace HETSAPI.Import
                     }
                 }
                 performContext.WriteLine("*** Done ***");
+                ImportUtility.AddImportMap(dbContext, oldTable, completed, newTable, sigId);
             }
 
             catch (Exception e)
