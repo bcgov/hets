@@ -229,7 +229,7 @@ var RentalRequests = React.createClass({
       </PageHeader>
       <Well id="rental-requests-bar" bsSize="small" className="clearfix">
         <Row>
-          <Col md={11}>
+          <Col md={10}>
             <Row>
               <ButtonToolbar id="rental-requests-filters">
                 <MultiDropdown id="selectedLocalAreasIds" placeholder="Local Areas"
@@ -255,7 +255,7 @@ var RentalRequests = React.createClass({
               </ButtonToolbar>
             </Row>
           </Col>
-          <Col md={1}>
+          <Col md={2}>
             <Row id="rental-requests-faves">
               <Favourites id="rental-requests-faves-dropdown" type="rentalRequests" favourites={ this.props.favourites } data={ this.state.search } onSelect={ this.loadFavourite } />
             </Row>

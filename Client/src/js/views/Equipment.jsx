@@ -191,7 +191,7 @@ var Equipment = React.createClass({
       </PageHeader>
       <Well id="equipment-bar" bsSize="small" className="clearfix">
         <Row>
-          <Col md={11}>
+          <Col md={10}>
             <Row>
               <ButtonToolbar id="equipment-filters-first-row">
                 <MultiDropdown id="selectedLocalAreasIds" placeholder="Local Areas"
@@ -216,7 +216,7 @@ var Equipment = React.createClass({
               </ButtonToolbar>
             </Row>
           </Col>
-          <Col md={1}>
+          <Col md={2}>
             <Row id="equipment-faves">
               <Favourites id="equipment-faves-dropdown" type="equipment" favourites={ this.props.favourites } data={ this.state.search } onSelect={ this.loadFavourite } pullRight />
             </Row>

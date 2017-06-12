@@ -174,7 +174,7 @@ var Projects = React.createClass({
       </PageHeader>
       <Well id="projects-bar" bsSize="small" className="clearfix">
         <Row>
-          <Col md={11}>
+          <Col md={10}>
             <ButtonToolbar id="projects-filters">
               <MultiDropdown id="selectedDistrictsIds" placeholder="Districts"
                 items={ districts } selectedIds={ this.state.search.selectedDistrictsIds } updateState={ this.updateSearchState } showMaxItems={ 2 } />
@@ -192,7 +192,7 @@ var Projects = React.createClass({
               <Button id="search-button" bsStyle="primary" onClick={ this.fetch }>Search</Button>
             </ButtonToolbar>
           </Col>
-          <Col md={1}>
+          <Col md={2}>
             <Row id="projects-faves">
               <Favourites id="projects-faves-dropdown" type="project" favourites={ this.props.favourites } data={ this.state.search } onSelect={ this.loadFavourite } />
             </Row>
