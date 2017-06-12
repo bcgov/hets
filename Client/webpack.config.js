@@ -74,6 +74,6 @@ module.exports = {
   },
   eslint: {
     failOnWarning: IS_PRODUCTION,
-    failOnError: true,
+    failOnError: false,
   },
 };
