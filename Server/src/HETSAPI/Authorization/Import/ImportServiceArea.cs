@@ -22,6 +22,7 @@ namespace HETSAPI.Import
         const string oldTable = "Service_Area";
         const string newTable = "ServiceArea";
         const string xmlFileName = "Service_Area.xml";
+        const int sigId = 150000;
 
         /// <summary>
         /// Import existing service areas
@@ -31,6 +32,12 @@ namespace HETSAPI.Import
         /// <param name="fileLocation"></param>
         static public void Import(PerformContext performContext, DbAppContext dbContext, string fileLocation, string systemId)
         {
+            string completed = DateTime.Now.ToString("d") + "-" + "Completed";
+            ImportMap importMap = dbContext.ImportMaps.FirstOrDefault(x => x.OldTable == oldTable && x.OldKey == completed && x.NewKey == sigId);
+            if (importMap != null)
+            {
+                return;
+            }
             try
             {
 
@@ -48,7 +55,7 @@ namespace HETSAPI.Import
                 foreach (var item in legacyItems.WithProgress(progress))
                 {
                     // see if we have this one already.
-                    ImportMap importMap = dbContext.ImportMaps.FirstOrDefault(x => x.OldTable == oldTable && x.OldKey == item.Service_Area_Id.ToString());
+                    importMap = dbContext.ImportMaps.FirstOrDefault(x => x.OldTable == oldTable && x.OldKey == item.Service_Area_Id.ToString());
 
                     ServiceArea serviceArea = dbContext.ServiceAreas.FirstOrDefault(x => x.Name == item.Service_Area_Desc.Trim());
                     if (serviceArea == null)
@@ -84,6 +91,7 @@ namespace HETSAPI.Import
                     }
                 }
                 performContext.WriteLine("*** Done ***");
+                ImportUtility.AddImportMap(dbContext, oldTable, completed, newTable, sigId);
             }
 
             catch (Exception e)
@@ -121,11 +129,11 @@ namespace HETSAPI.Import
 
             try
             {
-                serviceArea.StartDate = DateTime.Parse(oldObject.FiscalStart.Trim().Substring(0, 10));
+                serviceArea.StartDate = DateTime.ParseExact(oldObject.FiscalStart.Trim().Substring(0, 10), "yyyy-MM-dd", System.Globalization.CultureInfo.InvariantCulture);
             }
-            catch
+            catch (Exception e)
             {
-
+                string str = e.ToString();
             }
 
             if (isNew)

@@ -92,7 +92,7 @@ namespace HETSAPI.Import
         [XmlElement("Refuse_Rate")]
         public string Refuse_Rate { get; set; }
 
-        [XmlElement("Seniorityd")]
+        [XmlElement("Seniority")]
         public string Seniority { get; set; }
 
         [XmlElement("Serial_Num")]

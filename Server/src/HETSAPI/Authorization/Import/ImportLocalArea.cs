@@ -22,6 +22,7 @@ namespace HETSAPI.Import
         const string oldTable = "Area";
         const string newTable = "LocalArea";
         const string xmlFileName = "Area.xml";
+        const int sigId = 150000;
 
         /// <summary>
         /// Import local areas
@@ -31,6 +32,12 @@ namespace HETSAPI.Import
         /// <param name="fileLocation"></param>
         static public void Import(PerformContext performContext, DbAppContext dbContext, string fileLocation, string systemId)
         {
+            string completed = DateTime.Now.ToString("d") + "-"+"Completed";
+            ImportMap importMap = dbContext.ImportMaps.FirstOrDefault(x => x.OldTable == oldTable && x.OldKey == completed && x.NewKey==sigId);
+            if (importMap != null)
+            {
+                return;
+            }
             try
             {
                 string rootAttr = "ArrayOf" + oldTable;
@@ -48,7 +55,7 @@ namespace HETSAPI.Import
                 {
                     LocalArea localArea = null;
                     // see if we have this one already.
-                    ImportMap importMap = dbContext.ImportMaps.FirstOrDefault(x => x.OldTable == oldTable && x.OldKey == item.Area_Id.ToString());
+                    importMap = dbContext.ImportMaps.FirstOrDefault(x => x.OldTable == oldTable && x.OldKey == item.Area_Id.ToString());
                     if (dbContext.LocalAreas.Where(x => x.Name.ToUpper() == item.Area_Desc.Trim().ToUpper()).Count() > 0)
                     {
                         localArea = dbContext.LocalAreas.FirstOrDefault(x => x.Name.ToUpper() == item.Area_Desc.Trim().ToUpper());
@@ -82,6 +89,7 @@ namespace HETSAPI.Import
                     }
                 }
                 performContext.WriteLine("*** Done ***");
+                ImportUtility.AddImportMap(dbContext, oldTable, completed, newTable, sigId);
             }
 
             catch (Exception e)

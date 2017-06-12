@@ -21,6 +21,7 @@ namespace HETSAPI.Import
         const string oldTable = "EquipUsage";
         const string newTable = "HET_RENTAL_AGREEMENT";
         const string xmlFileName = "Equip_Usage.xml";
+        public static string oldTable_Progress = oldTable + "_Progress";
 
         /// <summary>
         /// Import from Equip_Usage.xml file to Three tables:
@@ -31,6 +32,12 @@ namespace HETSAPI.Import
         /// <param name="systemId"></param>
         static public void Import(PerformContext performContext, DbContextOptionsBuilder<DbAppContext> options, DbAppContext dbContext, string fileLocation, string systemId)
         {
+            // Check the start point. If startPoint ==  sigId then it is already completed
+            int startPoint = ImportUtility.CheckInterMapForStartPoint(dbContext, oldTable_Progress, BCBidImport.sigId);
+            if (startPoint == BCBidImport.sigId)    // This means the import job it has done today is complete for all the records in the xml file.
+            {
+                return;
+            }
             string rootAttr = "ArrayOf" + oldTable;
 
             //Create Processer progress indicator
@@ -49,7 +56,12 @@ namespace HETSAPI.Import
                     .Include(x => x.DistrictEquipmentType)
                     .ToList();
 
-            int ii = 0;
+            int ii = startPoint;
+            if (startPoint > 0)    // Skip the portion already processed
+            {
+                legacyItems = legacyItems.Skip(ii).ToArray();
+            }
+
             foreach (var item in legacyItems.WithProgress(progress))
             {
                 // see if we have this one already.
@@ -87,10 +99,11 @@ namespace HETSAPI.Import
                     }
                 }
 
-                if (++ii % 1000 == 0)
+                if (++ii % 1000 == 0)   // Save change to database once a while to avoid frequent writing to the database.
                 {                   
                     try
                     {
+                        ImportUtility.AddImportMap_For_Progress(dbContext, oldTable_Progress, ii.ToString(), BCBidImport.sigId);
                         int iResult = dbContext.SaveChangesForImport();
                         options = new DbContextOptionsBuilder<DbAppContext>();
 
@@ -104,6 +117,7 @@ namespace HETSAPI.Import
             }
             try
             {
+                ImportUtility.AddImportMap_For_Progress(dbContext, oldTable_Progress, BCBidImport.sigId.ToString(), BCBidImport.sigId);
                 int iResult = dbContext.SaveChangesForImport();
             }
             catch (Exception e)
@@ -161,14 +175,14 @@ namespace HETSAPI.Import
                 rentalAgreement.EquipmentRate = (float)Decimal.Parse(oldObject.Rate == null ? "0" : oldObject.Rate, System.Globalization.NumberStyles.Any);
                 if (oldObject.Entered_Dt != null)
                 {
-                    rentalAgreement.DatedOn = DateTime.Parse(oldObject.Entered_Dt.Trim().Substring(0, 10));
+                    rentalAgreement.DatedOn =  DateTime.ParseExact(oldObject.Entered_Dt.Trim().Substring(0, 10), "yyyy-MM-dd", System.Globalization.CultureInfo.InvariantCulture);
                 }
 
                 if (oldObject.Created_Dt != null)
                 {
                     try
                     {
-                        rentalAgreement.CreateTimestamp = DateTime.Parse(oldObject.Created_Dt.Trim().Substring(0, 10));
+                        rentalAgreement.CreateTimestamp = DateTime.ParseExact(oldObject.Created_Dt.Trim().Substring(0, 10), "yyyy-MM-dd", System.Globalization.CultureInfo.InvariantCulture);
                     }
                     catch (Exception e)
                     {
@@ -210,7 +224,7 @@ namespace HETSAPI.Import
             DateTime lastUpdateTimestamp = DateTime.UtcNow;
             if (oldObject.Entered_Dt != null)
             {
-                lastUpdateTimestamp = DateTime.Parse(oldObject.Entered_Dt.Trim().Substring(0, 10));
+                lastUpdateTimestamp = DateTime.ParseExact(oldObject.Entered_Dt.Trim().Substring(0, 10), "yyyy-MM-dd", System.Globalization.CultureInfo.InvariantCulture);
             }
             string lastUpdateUserid = oldObject.Created_By == null ? systemId : ImportUtility.AddUserFromString(dbContext, oldObject.Created_By, systemId).SmUserId;
 
@@ -218,7 +232,7 @@ namespace HETSAPI.Import
             DateTime workedDateTime;
             if (oldObject.Worked_Dt != null)
             {
-                workedDateTime = DateTime.Parse(workedDate);
+                workedDateTime = DateTime.ParseExact(workedDate, "yyyy-MM-dd", System.Globalization.CultureInfo.InvariantCulture);
             }
             else
             {
@@ -228,7 +242,7 @@ namespace HETSAPI.Import
             DateTime createdDate;
             if (oldObject.Created_Dt != null)
             {
-                createdDate = DateTime.Parse(oldObject.Created_Dt.Trim().Substring(0, 10));
+                createdDate = DateTime.ParseExact(oldObject.Created_Dt.Trim().Substring(0, 10), "yyyy-MM-dd", System.Globalization.CultureInfo.InvariantCulture);
             }
             else
             {
@@ -283,7 +297,7 @@ namespace HETSAPI.Import
                 }
                 else   
                 {   //the rate already existed which is exitingRate, no need to add rate, just add Time Record
-                    Models.TimeRecord existingTimeRec= rentalAgreement.TimeRecords.FirstOrDefault(x => x.WorkedDate == DateTime.Parse(workedDate) );
+                    Models.TimeRecord existingTimeRec= rentalAgreement.TimeRecords.FirstOrDefault(x => x.WorkedDate == workedDateTime);
                     if (existingTimeRec == null)
                     {   //The new Time Record  is added if it does not existm, otherwise, it's already existed.
                         tRec_a[ii] = new TimeRecord();

@@ -20,7 +20,8 @@ namespace HETSAPI.Import
     public class BCBidImport
     {
         const string systemId = "SYSTEM_HETS";
-
+        public static string todayDate = DateTime.Now.ToString("d");
+        public static int sigId =  388888;
 
         static private void InsertSystemUser(DbAppContext dbContext)
         {
@@ -66,15 +67,15 @@ namespace HETSAPI.Import
             // ImportRegion.Import(context, dbContext, fileLocation, systemId);
 
             //*** start by importing districts from District.xml. THis goes to table HETS_DISTRICT
-            dbContext = new DbAppContext(null, options.Options);
+           // dbContext = new DbAppContext(null, options.Options);
            // ImportDistrict.Import(context, dbContext, fileLocation, systemId);
 
             //*** start by importing Cities from HETS_City.xml to HET_CITY
-            dbContext = new DbAppContext(null, options.Options);
+            //dbContext = new DbAppContext(null, options.Options);
             // ImportCity.Import(context, dbContext, fileLocation, systemId);
 
             //*** Service Areas: from the file of Service_Area.xml to the table of HET_SERVICE_AREA
-            dbContext = new DbAppContext(null, options.Options);
+            //dbContext = new DbAppContext(null, options.Options);
             // ImportServiceArea.Import(context, dbContext, fileLocation, systemId);
 
             //############################ We start here #####################################  
@@ -96,7 +97,7 @@ namespace HETSAPI.Import
 
             //*** Import Equiptment type from EquipType.xml This has effects on Table HET_USER and HET_EQUIPMENT_TYPE  
             dbContext = new DbAppContext(null, options.Options);
-            ImportDistrictEquipmentType.Import(context, dbContext, fileLocation, systemId);
+            ImportDisEquipType.Import(context, dbContext, fileLocation, systemId);
 
             //*** Import Equiptment  from Equip.xml  This has effects on Table HET_USER and HET_EQUIP
             dbContext = new DbAppContext(null, options.Options);
@@ -104,7 +105,7 @@ namespace HETSAPI.Import
 
             //*** Import Dump_Truck  from Dump_Truck.xml   
             dbContext = new DbAppContext(null, options.Options);
-            ImportDumpTruck.Import(context, dbContext, fileLocation,  systemId);
+            ertaintyImportDumpTruck.Import(context, dbContext, fileLocation,  systemId);
 
             var watch = System.Diagnostics.Stopwatch.StartNew();
             //*** Import Equipment_Attached  from Equip_Attach.xml   
