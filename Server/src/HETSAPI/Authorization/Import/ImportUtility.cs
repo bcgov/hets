@@ -47,6 +47,8 @@ namespace HETSAPI.Import
             importMap.OldKey = oldKey;
             importMap.NewTable = newTable;
             importMap.NewKey = newKey;
+            importMap.CreateTimestamp = DateTime.Now;
+            importMap.LastUpdateTimestamp = DateTime.Now;
             dbContext.ImportMaps.Add(importMap);
         }
 
@@ -70,6 +72,7 @@ namespace HETSAPI.Import
             else
             {
                 importMap.OldKey = oldKey;
+                importMap.LastUpdateTimestamp = DateTime.Now;
                 dbContext.ImportMaps.Update(importMap);
             }
         }
@@ -90,19 +93,14 @@ namespace HETSAPI.Import
             int startPoint;
             ImportMap importMap = dbContext.ImportMaps.FirstOrDefault(x => x.OldTable == oldTable_Progress && x.NewTable == BCBidImport.todayDate && x.NewKey == sigId);
             if (importMap != null)
-            {
-                if (importMap.OldKey == sigId.ToString())
-                {
-                    startPoint = sigId;                         // When import progress is completed, the OldKey stores this constant.
-                }
-                else
-                {
-                    startPoint = int.Parse(importMap.OldKey);   // OlkdKey is recorded where the import progress stopped last time.
-                }
+            {    
+                // OlkdKey is recorded where the import progress stopped last time.
+                // When it store the value of sigId, it signal the completion of the import of the corresponding xml file.
+                startPoint = int.Parse(importMap.OldKey);
             }
-            else
+            else    //If the table of Import_MAP does not have any entry (row), it means the importing process has not started yet.
             {
-                startPoint = 0;             //If the table of Import_MAP does not have any entry (row), it means the importing process has not started yet.
+                startPoint = 0;         
             }
             return startPoint;
         }

@@ -43,17 +43,19 @@ namespace HETSAPI.Services.Impl
         {
             _context = context;
             Configuration = configuration;
-        }        
+        }
 
         public IActionResult AdminImportGetAsync(string path, string districts)
         {
             string uploadPath = Configuration["UploadPath"];
             string connectionString = _context.Database.GetDbConnection().ConnectionString;
 
-           // BCBidImport.ImportJob(null, connectionString, uploadPath + path);
-            var jobId = BackgroundJob.Enqueue(() => BCBidImport.ImportJob(null, connectionString, uploadPath + path));            
-            var result = "Created Job: " + jobId;
-           // var result = "Created Job: ";
+            //Not using Hangfire
+            BCBidImport.ImportJob(null, connectionString, uploadPath + path);
+            var result = "Created Job: ";
+            //Use Hangfire
+            //var jobId = BackgroundJob.Enqueue(() => BCBidImport.ImportJob(null, connectionString, uploadPath + path));            
+            //var result = "Created Job: " + jobId;
             return new ObjectResult(result);
         }        
     }

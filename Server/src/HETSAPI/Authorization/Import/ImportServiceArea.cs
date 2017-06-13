@@ -90,7 +90,7 @@ namespace HETSAPI.Import
                         }
                     }
                 }
-                performContext.WriteLine("*** Done ***");
+                performContext.WriteLine("*** Importing " + xmlFileName + " is Done ***");
                 ImportUtility.AddImportMap(dbContext, oldTable, completed, newTable, sigId);
             }
 

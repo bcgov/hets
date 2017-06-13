@@ -29,6 +29,7 @@ namespace HETSAPI.Import
             int startPoint = ImportUtility.CheckInterMapForStartPoint(dbContext, oldTable_Progress, BCBidImport.sigId);
             if (startPoint == BCBidImport.sigId)    // This means the import job it has done today is complete for all the records in the xml file.
             {
+                performContext.WriteLine("*** Importing " + xmlFileName + " is complete from the former process ***");
                 return;
             }
             try
@@ -104,7 +105,6 @@ namespace HETSAPI.Import
                         }
                     }
                 }
-                performContext.WriteLine("*** Done ***");
             }
 
             catch (Exception e)
@@ -115,6 +115,7 @@ namespace HETSAPI.Import
 
             try
             {
+                performContext.WriteLine("*** Importing " + xmlFileName + " is Done ***");
                 ImportUtility.AddImportMap_For_Progress(dbContext, oldTable_Progress, BCBidImport.sigId.ToString(), BCBidImport.sigId);
                 int iResult = dbContext.SaveChangesForImport();
             }

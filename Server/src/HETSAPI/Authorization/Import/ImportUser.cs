@@ -22,14 +22,15 @@ namespace HETSAPI.Import
         const string oldTable = "User_HETS";
         const string newTable = "HET_USER";
         const string xmlFileName = "User_HETS.xml";
-        const int sigId = 150000;
+        public static string oldTable_Progress = oldTable + "_Progress";
 
         static public void Import(PerformContext performContext, DbAppContext dbContext, string fileLocation, string systemId)
         {
-            string completed = DateTime.Now.ToString("d") + "-" + "Completed";
-            ImportMap importMap = dbContext.ImportMaps.FirstOrDefault(x => x.OldTable == oldTable && x.OldKey == completed && x.NewKey == sigId);
-            if (importMap != null)
+            // Check the start point. If startPoint ==  sigId then it is already completed
+            int startPoint = ImportUtility.CheckInterMapForStartPoint(dbContext, oldTable_Progress, BCBidImport.sigId);
+            if (startPoint == BCBidImport.sigId)    // This means the import job it has done today is complete for all the records in the xml file.
             {
+                performContext.WriteLine("*** Importing " + xmlFileName + " is complete from the former process ***");
                 return;
             }
             try
@@ -45,11 +46,17 @@ namespace HETSAPI.Import
                 XmlSerializer ser = new XmlSerializer(typeof(User_HETS[]), new XmlRootAttribute(rootAttr));
                 MemoryStream memoryStream = ImportUtility.memoryStreamGenerator(xmlFileName, oldTable, fileLocation, rootAttr);
                 HETSAPI.Import.User_HETS[] legacyItems = (HETSAPI.Import.User_HETS[])ser.Deserialize(memoryStream);
-                int ii = 0;
+
+                int ii = startPoint;
+                if (startPoint > 0)    // Skip the portion already processed
+                {
+                    legacyItems = legacyItems.Skip(ii).ToArray();
+                }
+
                 foreach (var item in legacyItems.WithProgress(progress))
                 {
                     // see if we have this one already.
-                    importMap = dbContext.ImportMaps.FirstOrDefault(x => x.OldTable == oldTable && x.OldKey == item.Popt_Id.ToString());
+                    ImportMap importMap = dbContext.ImportMaps.FirstOrDefault(x => x.OldTable == oldTable && x.OldKey == item.Popt_Id.ToString());
                     Models.User instance = dbContext.Users.FirstOrDefault(x => item.User_Cd.ToUpper().IndexOf(x.SmUserId.ToUpper()) >= 0);
                     if (instance == null)
                     {
@@ -58,6 +65,8 @@ namespace HETSAPI.Import
                         {
                             ImportUtility.AddImportMap(dbContext, oldTable, item.Popt_Id.ToString(), newTable, instance.Id);
                         }
+
+                        ImportUtility.AddImportMap_For_Progress(dbContext, oldTable_Progress, (++ii).ToString(), BCBidImport.sigId);
                         int iResult = dbContext.SaveChangesForImport();
                     }
                     //else // update
@@ -80,16 +89,22 @@ namespace HETSAPI.Import
                     //}
 
                 }
-                performContext.WriteLine("*** Done ***");
-                ImportUtility.AddImportMap(dbContext, oldTable, completed, newTable, sigId);
             }
             catch (Exception e)
             {
                 performContext.WriteLine("*** ERROR ***");
                 performContext.WriteLine(e.ToString());
             }
-
-            performContext.WriteLine("*** Done ***");
+            try
+            {
+                performContext.WriteLine("*** Importing " + xmlFileName + " is Done ***");
+                ImportUtility.AddImportMap_For_Progress(dbContext, oldTable_Progress, BCBidImport.sigId.ToString(), BCBidImport.sigId);
+                int iResult = dbContext.SaveChangesForImport();
+            }
+            catch (Exception e)
+            {
+                string iStr = e.ToString();
+            }
         }
 
         /// <summary>

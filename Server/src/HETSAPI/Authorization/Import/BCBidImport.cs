@@ -13,6 +13,7 @@ using System.Xml;
 using System.Xml.Serialization;
 using Microsoft.Extensions.Configuration;
 using System.Text.RegularExpressions;
+using Hangfire;
 
 namespace HETSAPI.Import
 {
@@ -45,7 +46,7 @@ namespace HETSAPI.Import
             }
             return;
         }
- 
+
         /// <summary>
         /// Hangfire job to do the Annual Rollover tasks.
         /// </summary>
@@ -105,7 +106,7 @@ namespace HETSAPI.Import
 
             //*** Import Dump_Truck  from Dump_Truck.xml   
             dbContext = new DbAppContext(null, options.Options);
-            ertaintyImportDumpTruck.Import(context, dbContext, fileLocation,  systemId);
+            ImportDumpTruck.Import(context, dbContext, fileLocation,  systemId);
 
             var watch = System.Diagnostics.Stopwatch.StartNew();
             //*** Import Equipment_Attached  from Equip_Attach.xml   
