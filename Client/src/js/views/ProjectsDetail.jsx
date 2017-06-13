@@ -316,7 +316,7 @@ var ProjectsDetail = React.createClass({
 
                 if (Object.keys(combinedList).length === 0) { return <Alert bsStyle="success" style={{ marginTop: 10 }}>No equipment</Alert>; }
 
-                const RentalRequestListItem = ({ item, project }) => (
+                const RentalRequestListItem = ({ item }) => (
                   <tr key={ item.id }>
                     <td><Link to={ `rental-requests/${item.id}` }>Request</Link></td>
                     <td>{ item.equipmentTypeName }</td>
