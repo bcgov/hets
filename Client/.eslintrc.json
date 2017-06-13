@@ -53,6 +53,12 @@
             "1tbs", {
                 "allowSingleLine": true
             }
+        ],
+        "no-unused-vars": [
+            "warn", {
+                "vars": "all",
+                "args": "after-used"
+            }
         ]
     }
 }
