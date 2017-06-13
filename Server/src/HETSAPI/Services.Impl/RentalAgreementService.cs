@@ -1,11 +1,11 @@
 ﻿/*
  * REST API Documentation for the MOTI Hired Equipment Tracking System (HETS) Application
  *
- * The Hired Equipment Program is for owners/operators who have a dump truck, bulldozer, backhoe or  other piece of equipment they want to hire out to the transportation ministry for day labour and  emergency projects.  The Hired Equipment Program distributes available work to local equipment owners. The program is  based on seniority and is designed to deliver work to registered users fairly and efficiently  through the development of local area call-out lists. 
+ * The Hired Equipment Program is for owners/operators who have a dump truck, bulldozer, backhoe or  other piece of equipment they want to hire out to the transportation ministry for day labour and  emergency projects.  The Hired Equipment Program distributes available work to local equipment owners. The program is  based on seniority and is designed to deliver work to registered users fairly and efficiently  through the development of local area call-out lists.
  *
  * OpenAPI spec version: v1
- * 
- * 
+ *
+ *
  */
 
 
@@ -29,6 +29,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Configuration;
 using System.Net.Http;
 using System.Text;
+using Newtonsoft.Json.Serialization;
 
 namespace HETSAPI.Services.Impl
 {
@@ -61,12 +62,12 @@ namespace HETSAPI.Services.Impl
                 {
                     item.Project = _context.Projects.FirstOrDefault(a => a.Id == item.Project.Id);
                 }
-                
+
 
                 if (item.RentalAgreementConditions != null)
                 {
                     for (int i = 0; i < item.RentalAgreementConditions.Count; i++)
-                    {                        
+                    {
                         if (item.RentalAgreementConditions[i] != null)
                         {
                             item.RentalAgreementConditions[i] = _context.RentalAgreementConditions.FirstOrDefault(a => a.Id == item.RentalAgreementConditions[i].Id);
@@ -99,7 +100,7 @@ namespace HETSAPI.Services.Impl
         }
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         /// <param name="items"></param>
         /// <response code="201">Project created</response>
@@ -128,16 +129,20 @@ namespace HETSAPI.Services.Impl
         }
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         /// <response code="200">OK</response>
         public virtual IActionResult RentalagreementsGetAsync()
         {
-            var result = _context.RentalAgreements                                
-                .Include(x => x.Equipment).ThenInclude(y => y.Owner)
-                .Include(x => x.Equipment).ThenInclude(y => y.EquipmentAttachments)
-                .Include(x => x.Equipment).ThenInclude(y => y.LocalArea.ServiceArea.District.Region)
-                .Include(x => x.Project).ThenInclude (p => p.District.Region)
+            var result = _context.RentalAgreements
+                .Include(x => x.Equipment)
+                    .ThenInclude(y => y.Owner)
+                .Include(x => x.Equipment)
+                    .ThenInclude(y => y.EquipmentAttachments)
+                .Include(x => x.Equipment)
+                    .ThenInclude(y => y.LocalArea.ServiceArea.District.Region)
+                .Include(x => x.Project)
+                    .ThenInclude (p => p.District.Region)
                 .Include(x => x.RentalAgreementConditions)
                 .Include(x => x.RentalAgreementRates)
                 .Include(x => x.TimeRecords)
@@ -146,7 +151,7 @@ namespace HETSAPI.Services.Impl
         }
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         /// <param name="id">id of Project to delete</param>
         /// <response code="200">OK</response>
@@ -173,7 +178,7 @@ namespace HETSAPI.Services.Impl
         }
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         /// <param name="id">id of Project to fetch</param>
         /// <response code="200">OK</response>
@@ -202,7 +207,7 @@ namespace HETSAPI.Services.Impl
         }
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         /// <remarks>Returns a PDF version of the specified rental agreement</remarks>
         /// <param name="id">id of RentalAgreement to obtain the PDF for</param>
@@ -211,7 +216,8 @@ namespace HETSAPI.Services.Impl
         {
             FileContentResult result = null;
             RentalAgreement rentalAgreement = _context.RentalAgreements
-                .Include(x => x.Equipment).ThenInclude(y => y.Owner)
+                .Include(x => x.Equipment).ThenInclude(y => y.Owner).ThenInclude(z => z.PrimaryContact)
+                .Include(x => x.Equipment).ThenInclude(y => y.DistrictEquipmentType)
                 .Include(x => x.Equipment).ThenInclude(y => y.EquipmentAttachments)
                 .Include(x => x.Equipment).ThenInclude(y => y.LocalArea.ServiceArea.District.Region)
                 .Include(x => x.Project).ThenInclude(p => p.District.Region)
@@ -225,8 +231,15 @@ namespace HETSAPI.Services.Impl
                 // construct the view model.
 
                 RentalAgreementPdfViewModel rentalAgreementPdfViewModel = rentalAgreement.ToViewModel();
-                
-                string payload = JsonConvert.SerializeObject(rentalAgreementPdfViewModel);
+
+                // TODO: Review Global JSON Serialization Options
+                string payload = JsonConvert.SerializeObject(rentalAgreementPdfViewModel, new JsonSerializerSettings {
+                    ReferenceLoopHandling = ReferenceLoopHandling.Ignore,
+                    ContractResolver = new CamelCasePropertyNamesContractResolver(),
+                    Formatting = Formatting.Indented,
+                    DateFormatHandling = DateFormatHandling.IsoDateFormat,
+                    DateTimeZoneHandling = DateTimeZoneHandling.Utc
+                });
 
                 // pass the request on to the PDF Micro Service
                 string pdfHost = Configuration["PDF_SERVICE_NAME"];
@@ -287,7 +300,7 @@ namespace HETSAPI.Services.Impl
         }
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         /// <param name="id">id of Project to fetch</param>
         /// <param name="item"></param>
@@ -327,7 +340,7 @@ namespace HETSAPI.Services.Impl
                 if (currentTime.Month > 3)
                 {
                     fiscalYear++;
-                }                              
+                }
 
                 int localAreaNumber = item.Equipment.LocalArea.LocalAreaNumber;
                 int localAreaId = item.Equipment.LocalArea.Id;
@@ -342,14 +355,14 @@ namespace HETSAPI.Services.Impl
                 currentCount++;
 
                 // format of the Rental Agreement number is YYYY-#-####
-                result = fiscalYear.ToString() + "-" + localAreaNumber.ToString() + "-" + currentCount.ToString ("D4");               
+                result = fiscalYear.ToString() + "-" + localAreaNumber.ToString() + "-" + currentCount.ToString ("D4");
             }
             return result;
 
         }
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         /// <param name="item"></param>
         /// <response code="201">Project created</response>

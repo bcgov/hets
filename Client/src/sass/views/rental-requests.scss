@@ -21,8 +21,15 @@
       float: left;
       min-width: 175px;
       width: auto;
-      margin-top: 10px;
-      margin-left: 10px;
+    }
+  }
+  
+  #rental-requests-date-filters {
+    margin-top: 10px;
+
+    label {
+      margin-top: 7px;
+      margin-left: 7px;
     }
   }
 
@@ -38,8 +45,10 @@
     float: right;
   }
 
-  #rental-requests-faves-dropdown {
-    width: 79px;
+  #search-button {
+    float: right;
+    width: 105px;
+    margin-top: 10px;
   }
 }
 

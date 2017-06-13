@@ -28,6 +28,10 @@
       margin-left: 7px;
     }
 
+    .form-control {
+      margin: 0;
+    }
+
     #equipment-attachments {
       label {
         float: left;
@@ -55,13 +59,9 @@
     float: right;
   }
 
-  #equipment-faves-dropdown {
-    width: 79px;
-  }
-
   #search-button {
-    float:right;
-    width: 79px;
+    float: right;
+    width: 105px;
     margin-top: 10px;
   }
 }

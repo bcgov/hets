@@ -44,7 +44,6 @@ const LAST_MONTH = 'Last Month';
 const LAST_QUARTER = 'Last Quarter';
 const LAST_FISCAL = 'Last Fiscal';
 const CUSTOM = 'Custom';
-const ALL = 'All';
 
 var RentalRequests = React.createClass({
   propTypes: {
@@ -66,9 +65,9 @@ var RentalRequests = React.createClass({
 
       search: {
         selectedLocalAreasIds: this.props.search.selectedLocalAreasIds || [],
-        projectName: this.props.search.projecName || '',
-        status: this.props.search.status || Constant.RENTAL_REQUEST_STATUS_CODE_IN_PROGRESS,
-        dateRange: this.props.search.dateRange || WITHIN_30_DAYS,
+        projectName: this.props.search.projectName || '',
+        status: this.props.search.status || '',
+        dateRange: this.props.search.dateRange || '',
       },
 
       ui : {
@@ -80,7 +79,7 @@ var RentalRequests = React.createClass({
 
   buildSearchParams() {
     var searchParams = {
-      status: this.state.search.status || Constant.RENTAL_REQUEST_STATUS_CODE_IN_PROGRESS,
+      status: this.state.search.status || '',
       project: this.state.search.projectName || '',
     };
 
@@ -127,7 +126,6 @@ var RentalRequests = React.createClass({
         startDate = Moment(this.state.search.startDate);
         endDate = Moment(this.state.search.endDate);
         break;
-      case ALL:
       default:
         break;
     }
@@ -145,7 +143,7 @@ var RentalRequests = React.createClass({
   componentDidMount() {
     this.setState({ loading: true });
 
-    Api.getFavourites('rentalrequest').then(() => {
+    Api.getFavourites('rentalRequests').then(() => {
       // If this is the first load, then look for a default favourite
       if (!this.props.search.loaded) {
         var favourite = _.find(this.props.favourites, (favourite) => { return favourite.isDefault; });
@@ -231,30 +229,38 @@ var RentalRequests = React.createClass({
       </PageHeader>
       <Well id="rental-requests-bar" bsSize="small" className="clearfix">
         <Row>
-          <Col md={11}>
-            <ButtonToolbar id="rental-requests-filters">
-              <MultiDropdown id="selectedLocalAreasIds" placeholder="Local Areas"
-                items={ localAreas } selectedIds={ this.state.search.selectedLocalAreasIds } updateState={ this.updateSearchState } showMaxItems={ 2 } />
-              <FormInputControl id="projectName" type="text" placeholder="Project name" value={ this.state.search.projectName } updateState={ this.updateSearchState }></FormInputControl>
-              <DropdownControl id="status" title={ this.state.search.status } updateState={ this.updateSearchState } blankLine="(All)"
-                  items={[ Constant.RENTAL_REQUEST_STATUS_CODE_IN_PROGRESS, Constant.RENTAL_REQUEST_STATUS_CODE_COMPLETED, Constant.RENTAL_REQUEST_STATUS_CODE_CANCELLED ]} />
-              <DropdownControl id="dateRange" title={ this.state.search.dateRange } updateState={ this.updateSearchState }
-                  items={[ ALL, WITHIN_30_DAYS, THIS_MONTH, THIS_QUARTER, THIS_FISCAL, LAST_MONTH, LAST_QUARTER, LAST_FISCAL, CUSTOM ]}
-              />
-              {(() => {
-                if (this.state.search.dateRange === CUSTOM) {
-                  return <span>
-                    <DateControl id="startDate" date={ this.state.search.startDate } updateState={ this.updateSearchState } placeholder="mm/dd/yyyy" label="From:" title="start date"/>
-                    <DateControl id="endDate" date={ this.state.search.endDate } updateState={ this.updateSearchState } placeholder="mm/dd/yyyy" label="To:" title="end date"/>
-                  </span>;
-                }
-              })()}
-              <Button id="search-button" bsStyle="primary" onClick={ this.fetch }>Search</Button>
-            </ButtonToolbar>
+          <Col md={10}>
+            <Row>
+              <ButtonToolbar id="rental-requests-filters">
+                <MultiDropdown id="selectedLocalAreasIds" placeholder="Local Areas"
+                  items={ localAreas } selectedIds={ this.state.search.selectedLocalAreasIds } updateState={ this.updateSearchState } showMaxItems={ 2 } />
+                <DropdownControl id="status" title={ this.state.search.status } updateState={ this.updateSearchState } blankLine="(All)" placeholder="Status"
+                    items={[ Constant.RENTAL_REQUEST_STATUS_CODE_IN_PROGRESS, Constant.RENTAL_REQUEST_STATUS_CODE_COMPLETED, Constant.RENTAL_REQUEST_STATUS_CODE_CANCELLED ]} />
+                <FormInputControl id="projectName" type="text" placeholder="Project name" value={ this.state.search.projectName } updateState={ this.updateSearchState }></FormInputControl>
+              </ButtonToolbar>
+            </Row>
+            <Row>
+              <ButtonToolbar id="rental-requests-date-filters">
+                <DropdownControl id="dateRange" title={ this.state.search.dateRange } updateState={ this.updateSearchState } blankLine="(All)" placeholder="Expected Start Date"
+                    items={[ WITHIN_30_DAYS, THIS_MONTH, THIS_QUARTER, THIS_FISCAL, LAST_MONTH, LAST_QUARTER, LAST_FISCAL, CUSTOM ]}
+                />
+                {(() => {
+                  if (this.state.search.dateRange === CUSTOM) {
+                    return <span>
+                      <DateControl id="startDate" date={ this.state.search.startDate } updateState={ this.updateSearchState } placeholder="mm/dd/yyyy" label="From:" title="start date"/>
+                      <DateControl id="endDate" date={ this.state.search.endDate } updateState={ this.updateSearchState } placeholder="mm/dd/yyyy" label="To:" title="end date"/>
+                    </span>;
+                  }
+                })()}
+              </ButtonToolbar>
+            </Row>
           </Col>
-          <Col md={1}>
+          <Col md={2}>
             <Row id="rental-requests-faves">
               <Favourites id="rental-requests-faves-dropdown" type="rentalRequests" favourites={ this.props.favourites } data={ this.state.search } onSelect={ this.loadFavourite } />
+            </Row>
+            <Row id="rental-requests-search">
+              <Button id="search-button" bsStyle="primary" onClick={ this.fetch }>Search</Button>
             </Row>
           </Col>
         </Row>
