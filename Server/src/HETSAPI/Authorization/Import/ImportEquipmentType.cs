@@ -22,14 +22,15 @@ namespace HETSAPI.Import
         const string oldTable = "EquipType";
         const string newTable = "HET_EQUIPMMENT_TYPE";
         const string xmlFileName = "Equip_Type.xml";
-        const int sigId = 150000;
+        public static string oldTable_Progress = oldTable + "_Progress";
 
         static public void Import(PerformContext performContext, DbAppContext dbContext, string fileLocation, string systemId)
         {
-            string completed = DateTime.Now.ToString("d") + "-" + "Completed";
-            ImportMap importMap = dbContext.ImportMaps.FirstOrDefault(x => x.OldTable == oldTable && x.OldKey == completed && x.NewKey == sigId);
-            if (importMap != null)
+            // Check the start point. If startPoint ==  sigId then it is already completed
+            int startPoint = ImportUtility.CheckInterMapForStartPoint(dbContext, oldTable_Progress, BCBidImport.sigId);
+            if (startPoint == BCBidImport.sigId)    // This means the import job it has done today is complete for all the records in the xml file.
             {
+                performContext.WriteLine("*** Importing " + xmlFileName + " is complete from the former process ***");
                 return;
             }
             try
@@ -49,7 +50,7 @@ namespace HETSAPI.Import
                 foreach (var item in legacyItems.WithProgress(progress))
                 {
                     // see if we have this one already.
-                    importMap = dbContext.ImportMaps.FirstOrDefault(x => x.OldTable == oldTable && x.OldKey == item.Equip_Type_Id.ToString());
+                    ImportMap importMap = dbContext.ImportMaps.FirstOrDefault(x => x.OldTable == oldTable && x.OldKey == item.Equip_Type_Id.ToString());
 
                     if (importMap == null) // new entry
                     {
@@ -82,6 +83,7 @@ namespace HETSAPI.Import
                     {
                         try
                         {
+                            ImportUtility.AddImportMap_For_Progress(dbContext, oldTable_Progress, ii.ToString(), BCBidImport.sigId);
                             int iResult = dbContext.SaveChangesForImport();
                         }
                         catch (Exception e)
@@ -92,14 +94,14 @@ namespace HETSAPI.Import
                 }
                 try
                 {
+                    performContext.WriteLine("*** Importing " + xmlFileName + " is Done ***");
+                    ImportUtility.AddImportMap_For_Progress(dbContext, oldTable_Progress, BCBidImport.sigId.ToString(), BCBidImport.sigId);
                     int iResult = dbContext.SaveChangesForImport();
                 }
                 catch (Exception e)
                 {
                     string iStr = e.ToString();
                 }
-                performContext.WriteLine("*** Done ***");
-                ImportUtility.AddImportMap(dbContext, oldTable, completed, newTable, sigId);
             }
 
             catch (Exception e)

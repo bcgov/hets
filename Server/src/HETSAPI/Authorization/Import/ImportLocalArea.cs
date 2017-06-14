@@ -22,7 +22,7 @@ namespace HETSAPI.Import
         const string oldTable = "Area";
         const string newTable = "LocalArea";
         const string xmlFileName = "Area.xml";
-        const int sigId = 150000;
+        public static string oldTable_Progress = oldTable + "_Progress";
 
         /// <summary>
         /// Import local areas
@@ -32,74 +32,85 @@ namespace HETSAPI.Import
         /// <param name="fileLocation"></param>
         static public void Import(PerformContext performContext, DbAppContext dbContext, string fileLocation, string systemId)
         {
-            string completed = DateTime.Now.ToString("d") + "-"+"Completed";
-            ImportMap importMap = dbContext.ImportMaps.FirstOrDefault(x => x.OldTable == oldTable && x.OldKey == completed && x.NewKey==sigId);
-            if (importMap != null)
+            // Check the start point. If startPoint ==  sigId then it is already completed
+            int startPoint = ImportUtility.CheckInterMapForStartPoint(dbContext, oldTable_Progress, BCBidImport.sigId);
+            if (startPoint == BCBidImport.sigId)    // This means the import job it has done today is complete for all the records in the xml file.
             {
+                performContext.WriteLine("*** Importing " + xmlFileName + " is complete from the former process ***");
                 return;
             }
-            try
+             string rootAttr = "ArrayOf" + oldTable;
+
+            //Create Processer progress indicator
+            performContext.WriteLine("Processing " + oldTable);
+            var progress = performContext.WriteProgressBar();
+            progress.SetValue(0);
+
+            // create serializer and serialize xml file
+            XmlSerializer ser = new XmlSerializer(typeof(HETSAPI.Import.Area[]), new XmlRootAttribute(rootAttr));
+            MemoryStream memoryStream = ImportUtility.memoryStreamGenerator(xmlFileName, oldTable, fileLocation, rootAttr);
+            HETSAPI.Import.Area[] legacyItems = (HETSAPI.Import.Area[])ser.Deserialize(memoryStream);
+
+            int ii = startPoint;
+            if (startPoint > 0)    // Skip the portion already processed
             {
-                string rootAttr = "ArrayOf" + oldTable;
+                legacyItems = legacyItems.Skip(ii).ToArray();
+            }
 
-                performContext.WriteLine("Processing Local Areas");
-
-                var progress = performContext.WriteProgressBar();
-                progress.SetValue(0);
-
-                // create serializer and serialize xml file
-                XmlSerializer ser = new XmlSerializer(typeof(HETSAPI.Import.Area[]), new XmlRootAttribute(rootAttr));
-                MemoryStream memoryStream = ImportUtility.memoryStreamGenerator(xmlFileName, oldTable, fileLocation, rootAttr);
-                HETSAPI.Import.Area[] legacyItems = (HETSAPI.Import.Area[])ser.Deserialize(memoryStream);
-                foreach (var item in legacyItems.WithProgress(progress))
+            foreach (var item in legacyItems.WithProgress(progress))
+            {
+                LocalArea localArea = null;
+                // see if we have this one already.
+                ImportMap importMap = dbContext.ImportMaps.FirstOrDefault(x => x.OldTable == oldTable && x.OldKey == item.Area_Id.ToString());
+                if (dbContext.LocalAreas.Where(x => x.Name.ToUpper() == item.Area_Desc.Trim().ToUpper()).Count() > 0)
                 {
-                    LocalArea localArea = null;
-                    // see if we have this one already.
-                    importMap = dbContext.ImportMaps.FirstOrDefault(x => x.OldTable == oldTable && x.OldKey == item.Area_Id.ToString());
-                    if (dbContext.LocalAreas.Where(x => x.Name.ToUpper() == item.Area_Desc.Trim().ToUpper()).Count() > 0)
-                    {
-                        localArea = dbContext.LocalAreas.FirstOrDefault(x => x.Name.ToUpper() == item.Area_Desc.Trim().ToUpper());
-                    }
+                    localArea = dbContext.LocalAreas.FirstOrDefault(x => x.Name.ToUpper() == item.Area_Desc.Trim().ToUpper());
+                }
 
-                    if (importMap == null || dbContext.LocalAreas.Where(x => x.Name.ToUpper() == item.Area_Desc.Trim().ToUpper()).Count() == 0) // new entry
+                if (importMap == null || dbContext.LocalAreas.Where(x => x.Name.ToUpper() == item.Area_Desc.Trim().ToUpper()).Count() == 0) // new entry
+                {
+                    if (item.Area_Id > 0)
                     {
-                        if (item.Area_Id > 0)
-                        {
-                            CopyToInstance(performContext, dbContext, item, ref localArea, systemId);
-                            ImportUtility.AddImportMap(dbContext, oldTable, item.Area_Id.ToString(), newTable, localArea.Id);
-                        }
-                    }
-                    else // update
-                    {
-                        localArea = dbContext.LocalAreas.FirstOrDefault(x => x.Id == importMap.NewKey);
-                        if (localArea == null) // record was deleted
-                        {
-                            CopyToInstance(performContext, dbContext, item, ref localArea, systemId);
-                            // update the import map.
-                            importMap.NewKey = localArea.Id;
-                            dbContext.ImportMaps.Update(importMap);
-                        }
-                        else // ordinary update.
-                        {
-                            CopyToInstance(performContext, dbContext, item, ref localArea, systemId);
-                            // touch the import map.
-                            importMap.LastUpdateTimestamp = DateTime.UtcNow;
-                            dbContext.ImportMaps.Update(importMap);
-                        }
+                        CopyToInstance(performContext, dbContext, item, ref localArea, systemId);
+                        ImportUtility.AddImportMap(dbContext, oldTable, item.Area_Id.ToString(), newTable, localArea.Id);
                     }
                 }
-                performContext.WriteLine("*** Done ***");
-                ImportUtility.AddImportMap(dbContext, oldTable, completed, newTable, sigId);
-            }
-
-            catch (Exception e)
-            {
-                performContext.WriteLine("*** ERROR ***");
-                performContext.WriteLine(e.ToString());
+                else // update
+                {
+                    localArea = dbContext.LocalAreas.FirstOrDefault(x => x.Id == importMap.NewKey);
+                    if (localArea == null) // record was deleted
+                    {
+                        CopyToInstance(performContext, dbContext, item, ref localArea, systemId);
+                        // update the import map.
+                        importMap.NewKey = localArea.Id;
+                        dbContext.ImportMaps.Update(importMap);
+                    }
+                    else // ordinary update.
+                    {
+                        CopyToInstance(performContext, dbContext, item, ref localArea, systemId);
+                        // touch the import map.
+                        importMap.LastUpdateTimestamp = DateTime.UtcNow;
+                        dbContext.ImportMaps.Update(importMap);
+                    }
+                }
+                if (++ii % 250 == 0)        // Save change to database once a while to avoid frequent writing to the database.
+                {
+                    try
+                    {
+                        ImportUtility.AddImportMap_For_Progress(dbContext, oldTable_Progress, ii.ToString(), BCBidImport.sigId);
+                        int iResult = dbContext.SaveChangesForImport();
+                    }
+                    catch (Exception e)
+                    {
+                        string iStr = e.ToString();
+                    }
+                }
             }
 
             try
             {
+                performContext.WriteLine("*** Importing " + xmlFileName + " is Done ***");
+                ImportUtility.AddImportMap_For_Progress(dbContext, oldTable_Progress, BCBidImport.sigId.ToString(), BCBidImport.sigId);
                 int iResult = dbContext.SaveChangesForImport();
             }
             catch (Exception e)

@@ -37,6 +37,7 @@ namespace HETSAPI.Import
             ImportMap importMap = dbContext.ImportMaps.FirstOrDefault(x => x.OldTable == oldTable && x.OldKey == completed && x.NewKey == sigId);
             if (importMap != null)
             {
+                performContext.WriteLine("*** Importing " + xmlFileName + " is complete from the former process ***");
                 return;
             }
             try
