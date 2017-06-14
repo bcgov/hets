@@ -120,7 +120,7 @@ namespace PDF
             if (string.IsNullOrEmpty(host) || string.IsNullOrEmpty(username) || string.IsNullOrEmpty(password) || string.IsNullOrEmpty(database))
             {
                 // When things get cleaned up properly, this is the only call we'll have to make.
-                connectionString = Configuration.GetConnectionString("Schoolbus");
+                connectionString = Configuration.GetConnectionString("HETS");
             }
             else
             {
