@@ -60,20 +60,37 @@ namespace HETSAPI.Import
         /// </summary>
         /// <param name="dbContext"></param>
         /// <param name="oldTable"></param>   This is lile "Owner_Progress" for th eimport progress entry (row) of Import_Map table
-        /// <param name="oldKey"></param>  This is where stopped last time in string If this is "300000", then complete
+        /// <param name="oldKey"></param>  This is where stopped last time in string If this is "388888", then complete
         /// <param name="newKey"></param>  This is always a constant; for identification of progress entry of the table only. This is extraneous.
         static public void AddImportMap_For_Progress(DbAppContext dbContext, string oldTable, string oldKey, int newKey)
         {
-            Models.ImportMap  importMap = dbContext.ImportMaps.FirstOrDefault(x => x.OldTable == oldTable && x.NewKey == newKey);
-            if (importMap == null)
+            List < Models.ImportMap>  importMapList = dbContext.ImportMaps
+                .Where(x => x.OldTable == oldTable && x.NewKey == newKey)
+                .ToList();
+
+            if (importMapList.Count == 0)
             {
                 ImportUtility.AddImportMap(dbContext, oldTable, oldKey, BCBidImport.todayDate, newKey);
             }
             else
             {
-                importMap.OldKey = oldKey;
-                importMap.LastUpdateTimestamp = DateTime.Now;
-                dbContext.ImportMaps.Update(importMap);
+                //Sometimes there are multiple progress entries exists for the same xml file import. 
+                // In that case, the extra one should be deleted and the correct one should be updated. 
+                int maxProgressCount = importMapList.Max(t => int.Parse(t.OldKey));
+                foreach (ImportMap importMap in importMapList)
+                {
+                    if (importMap.OldKey == maxProgressCount.ToString())
+                    {
+                        importMap.NewTable = BCBidImport.todayDate;
+                        importMap.OldKey = Math.Max(int.Parse(oldKey), maxProgressCount).ToString();
+                        importMap.LastUpdateTimestamp = DateTime.Now;
+                        dbContext.ImportMaps.Update(importMap);
+                    }
+                    else
+                    {
+                        dbContext.ImportMaps.Remove(importMap);
+                    }
+                }
             }
         }
 
@@ -83,6 +100,7 @@ namespace HETSAPI.Import
         ///                     sigId   - if ImportMap entry with oldTable == "%%%%%_Progress" exist, and oldKey = signId.toString()
         ///                     Other int   - if ImportMap entry with oldTable == "%%%%%_Progress" exist, and oldKey != signId.toString()
         /// The Import_Table entry for this kind of record has NewTable as  BCBidImport.todayDate.           
+        /// 
         /// </summary>
         /// <param name="dbContext"></param>
         /// <param name="oldTable_Progress"></param>
@@ -91,7 +109,10 @@ namespace HETSAPI.Import
         static public int CheckInterMapForStartPoint(DbAppContext dbContext, string oldTable_Progress,  int sigId)
         {
             int startPoint;
-            ImportMap importMap = dbContext.ImportMaps.FirstOrDefault(x => x.OldTable == oldTable_Progress && x.NewTable == BCBidImport.todayDate && x.NewKey == sigId);
+          //  ImportMap importMap = dbContext.ImportMaps.FirstOrDefault(x => x.OldTable == oldTable_Progress && x.NewTable == BCBidImport.todayDate && x.NewKey == sigId);
+            ImportMap importMap = (from u in dbContext.ImportMaps
+                                   where u.OldTable == oldTable_Progress && u.NewKey == sigId
+                                   orderby int.Parse(u.OldKey) descending select u ).FirstOrDefault();
             if (importMap != null)
             {    
                 // OlkdKey is recorded where the import progress stopped last time.
@@ -220,13 +241,13 @@ namespace HETSAPI.Import
                     roleId = 1; // Regular User
                     break;
                 case "R":
-                    roleId = 3; // Special Admin
+                    roleId = 1; // Special Admin?
                     break;
                 case "U":
-                    roleId = 4; // User Management
+                    roleId = 1; // User Management?
                     break;
                 default:
-                    roleId = 1; // Unknown as regular user
+                    roleId = 1; // Unknown as regular user?
                     break;
             }
             return roleId;

@@ -21,7 +21,7 @@ namespace HETSAPI.Import
     public class BCBidImport
     {
         const string systemId = "SYSTEM_HETS";
-        public static string todayDate = DateTime.Now.ToString("d");
+        public static string todayDate = DateTime.Now.ToString("yyyy-MM-dd");
         public static int sigId =  388888;
 
         static private void InsertSystemUser(DbAppContext dbContext)
