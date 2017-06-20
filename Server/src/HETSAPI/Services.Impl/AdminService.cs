@@ -35,6 +35,7 @@ namespace HETSAPI.Services.Impl
     {
         private readonly DbAppContext _context;
         private readonly IConfiguration Configuration;
+        private Object thisLock = new Object();
 
         /// <summary>
         /// Create a service and set the database context
@@ -49,13 +50,21 @@ namespace HETSAPI.Services.Impl
         {
             string uploadPath = Configuration["UploadPath"];
             string connectionString = _context.Database.GetDbConnection().ConnectionString;
-
-            //Not using Hangfire
-            BCBidImport.ImportJob(null, connectionString, uploadPath + path);
             var result = "Created Job: ";
-            //Use Hangfire
-            //var jobId = BackgroundJob.Enqueue(() => BCBidImport.ImportJob(null, connectionString, uploadPath + path));            
-            //var result = "Created Job: " + jobId;
+            lock (thisLock)
+            {
+                if (districts != null && districts == "388888")
+                {
+                    //Not using Hangfire
+                    BCBidImport.ImportJob(null, connectionString, uploadPath + path);
+                }
+                else
+                {
+                    //Use Hangfire
+                    var jobId = BackgroundJob.Enqueue(() => BCBidImport.ImportJob(null, connectionString, uploadPath + path));
+                    result += jobId;
+                }
+            }
             return new ObjectResult(result);
         }        
     }
