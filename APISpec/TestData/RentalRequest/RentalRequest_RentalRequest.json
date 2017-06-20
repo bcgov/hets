@@ -1,12 +1,12 @@
 [
     {
         "districtEquipmentType": {
-            "id": "200011"
+            "id": "200013"
         },
         "equipmentCount": "1",
-        "expectedEndDate": "6/9/2017",
-        "expectedHours": "28",
-        "expectedStartDate": "6/6/2017",
+        "expectedEndDate": "7/18/2017",
+        "expectedHours": "92",
+        "expectedStartDate": "7/7/2017",
         "id": "200000",
         "localArea": {
             "id": "200075"
@@ -18,12 +18,12 @@
     },
     {
         "districtEquipmentType": {
-            "id": "200005"
+            "id": "200012"
         },
         "equipmentCount": "1",
-        "expectedEndDate": "6/15/2017",
-        "expectedHours": "86",
-        "expectedStartDate": "6/5/2017",
+        "expectedEndDate": "7/8/2017",
+        "expectedHours": "57",
+        "expectedStartDate": "7/1/2017",
         "id": "200001",
         "localArea": {
             "id": "200076"
@@ -35,12 +35,12 @@
     },
     {
         "districtEquipmentType": {
-            "id": "200013"
+            "id": "200004"
         },
-        "equipmentCount": "1",
-        "expectedEndDate": "6/28/2017",
-        "expectedHours": "77",
-        "expectedStartDate": "6/19/2017",
+        "equipmentCount": "2",
+        "expectedEndDate": "7/18/2017",
+        "expectedHours": "22",
+        "expectedStartDate": "7/13/2017",
         "id": "200002",
         "localArea": {
             "id": "200077"
@@ -52,12 +52,12 @@
     },
     {
         "districtEquipmentType": {
-            "id": "200010"
+            "id": "200001"
         },
         "equipmentCount": "1",
-        "expectedEndDate": "7/17/2017",
-        "expectedHours": "11",
-        "expectedStartDate": "7/16/2017",
+        "expectedEndDate": "7/27/2017",
+        "expectedHours": "5",
+        "expectedStartDate": "7/27/2017",
         "id": "200003",
         "localArea": {
             "id": "200075"
@@ -69,12 +69,12 @@
     },
     {
         "districtEquipmentType": {
-            "id": "200004"
+            "id": "200013"
         },
         "equipmentCount": "1",
-        "expectedEndDate": "6/16/2017",
-        "expectedHours": "30",
-        "expectedStartDate": "6/13/2017",
+        "expectedEndDate": "6/19/2017",
+        "expectedHours": "95",
+        "expectedStartDate": "6/8/2017",
         "id": "200004",
         "localArea": {
             "id": "200075"
@@ -89,9 +89,9 @@
             "id": "200010"
         },
         "equipmentCount": "1",
-        "expectedEndDate": "6/22/2017",
-        "expectedHours": "96",
-        "expectedStartDate": "6/10/2017",
+        "expectedEndDate": "7/4/2017",
+        "expectedHours": "98",
+        "expectedStartDate": "6/22/2017",
         "id": "200005",
         "localArea": {
             "id": "200075"
@@ -103,12 +103,12 @@
     },
     {
         "districtEquipmentType": {
-            "id": "200004"
+            "id": "200001"
         },
         "equipmentCount": "1",
-        "expectedEndDate": "6/18/2017",
-        "expectedHours": "82",
-        "expectedStartDate": "6/8/2017",
+        "expectedEndDate": "7/4/2017",
+        "expectedHours": "50",
+        "expectedStartDate": "6/28/2017",
         "id": "200006",
         "localArea": {
             "id": "200075"
@@ -120,12 +120,12 @@
     },
     {
         "districtEquipmentType": {
-            "id": "200009"
+            "id": "200010"
         },
-        "equipmentCount": "1",
-        "expectedEndDate": "6/28/2017",
-        "expectedHours": "23",
-        "expectedStartDate": "6/26/2017",
+        "equipmentCount": "5",
+        "expectedEndDate": "7/31/2017",
+        "expectedHours": "61",
+        "expectedStartDate": "6/23/2017",
         "id": "200007",
         "localArea": {
             "id": "200075"
@@ -137,12 +137,12 @@
     },
     {
         "districtEquipmentType": {
-            "id": "200010"
+            "id": "200008"
         },
         "equipmentCount": "1",
-        "expectedEndDate": "6/18/2017",
-        "expectedHours": "45",
-        "expectedStartDate": "6/13/2017",
+        "expectedEndDate": "7/13/2017",
+        "expectedHours": "11",
+        "expectedStartDate": "7/12/2017",
         "id": "200008",
         "localArea": {
             "id": "200075"
@@ -154,12 +154,12 @@
     },
     {
         "districtEquipmentType": {
-            "id": "200009"
+            "id": "200000"
         },
         "equipmentCount": "1",
-        "expectedEndDate": "7/6/2017",
-        "expectedHours": "61",
-        "expectedStartDate": "6/29/2017",
+        "expectedEndDate": "7/11/2017",
+        "expectedHours": "92",
+        "expectedStartDate": "6/30/2017",
         "id": "200009",
         "localArea": {
             "id": "200075"
@@ -171,12 +171,12 @@
     },
     {
         "districtEquipmentType": {
-            "id": "200008"
+            "id": "200012"
         },
         "equipmentCount": "1",
-        "expectedEndDate": "7/16/2017",
-        "expectedHours": "89",
-        "expectedStartDate": "7/5/2017",
+        "expectedEndDate": "7/29/2017",
+        "expectedHours": "72",
+        "expectedStartDate": "7/20/2017",
         "id": "200010",
         "localArea": {
             "id": "200075"
@@ -188,12 +188,12 @@
     },
     {
         "districtEquipmentType": {
-            "id": "200007"
+            "id": "200008"
         },
-        "equipmentCount": "1",
-        "expectedEndDate": "7/6/2017",
-        "expectedHours": "50",
-        "expectedStartDate": "6/30/2017",
+        "equipmentCount": "4",
+        "expectedEndDate": "7/10/2017",
+        "expectedHours": "60",
+        "expectedStartDate": "6/10/2017",
         "id": "200011",
         "localArea": {
             "id": "200075"
@@ -205,12 +205,12 @@
     },
     {
         "districtEquipmentType": {
-            "id": "200002"
+            "id": "200009"
         },
         "equipmentCount": "1",
-        "expectedEndDate": "8/7/2017",
-        "expectedHours": "93",
-        "expectedStartDate": "7/27/2017",
+        "expectedEndDate": "6/26/2017",
+        "expectedHours": "90",
+        "expectedStartDate": "6/15/2017",
         "id": "200012",
         "localArea": {
             "id": "200075"
@@ -222,12 +222,12 @@
     },
     {
         "districtEquipmentType": {
-            "id": "200010"
+            "id": "200013"
         },
         "equipmentCount": "1",
-        "expectedEndDate": "7/2/2017",
-        "expectedHours": "36",
-        "expectedStartDate": "6/28/2017",
+        "expectedEndDate": "6/16/2017",
+        "expectedHours": "40",
+        "expectedStartDate": "6/11/2017",
         "id": "200013",
         "localArea": {
             "id": "200075"
@@ -242,9 +242,9 @@
             "id": "200000"
         },
         "equipmentCount": "1",
-        "expectedEndDate": "7/17/2017",
-        "expectedHours": "77",
-        "expectedStartDate": "7/8/2017",
+        "expectedEndDate": "6/20/2017",
+        "expectedHours": "29",
+        "expectedStartDate": "6/17/2017",
         "id": "200014",
         "localArea": {
             "id": "200075"
@@ -259,9 +259,9 @@
             "id": "200013"
         },
         "equipmentCount": "1",
-        "expectedEndDate": "6/26/2017",
-        "expectedHours": "76",
-        "expectedStartDate": "6/17/2017",
+        "expectedEndDate": "6/30/2017",
+        "expectedHours": "96",
+        "expectedStartDate": "6/18/2017",
         "id": "200015",
         "localArea": {
             "id": "200075"
@@ -273,12 +273,12 @@
     },
     {
         "districtEquipmentType": {
-            "id": "200004"
+            "id": "200009"
         },
         "equipmentCount": "2",
-        "expectedEndDate": "8/17/2017",
-        "expectedHours": "82",
-        "expectedStartDate": "7/28/2017",
+        "expectedEndDate": "8/4/2017",
+        "expectedHours": "33",
+        "expectedStartDate": "7/27/2017",
         "id": "200016",
         "localArea": {
             "id": "200075"
@@ -290,12 +290,12 @@
     },
     {
         "districtEquipmentType": {
-            "id": "200013"
+            "id": "200003"
         },
         "equipmentCount": "1",
-        "expectedEndDate": "6/16/2017",
-        "expectedHours": "85",
-        "expectedStartDate": "6/6/2017",
+        "expectedEndDate": "6/18/2017",
+        "expectedHours": "79",
+        "expectedStartDate": "6/9/2017",
         "id": "200017",
         "localArea": {
             "id": "200075"
@@ -307,11 +307,11 @@
     },
     {
         "districtEquipmentType": {
-            "id": "200004"
+            "id": "200009"
         },
         "equipmentCount": "1",
-        "expectedEndDate": "8/7/2017",
-        "expectedHours": "70",
+        "expectedEndDate": "8/2/2017",
+        "expectedHours": "31",
         "expectedStartDate": "7/30/2017",
         "id": "200018",
         "localArea": {
@@ -324,12 +324,12 @@
     },
     {
         "districtEquipmentType": {
-            "id": "200006"
+            "id": "200004"
         },
-        "equipmentCount": "4",
-        "expectedEndDate": "8/25/2017",
-        "expectedHours": "81",
-        "expectedStartDate": "7/16/2017",
+        "equipmentCount": "1",
+        "expectedEndDate": "7/4/2017",
+        "expectedHours": "45",
+        "expectedStartDate": "6/29/2017",
         "id": "200019",
         "localArea": {
             "id": "200075"
@@ -341,12 +341,12 @@
     },
     {
         "districtEquipmentType": {
-            "id": "200000"
+            "id": "200006"
         },
-        "equipmentCount": "3",
-        "expectedEndDate": "7/10/2017",
-        "expectedHours": "51",
-        "expectedStartDate": "6/21/2017",
+        "equipmentCount": "1",
+        "expectedEndDate": "7/6/2017",
+        "expectedHours": "21",
+        "expectedStartDate": "7/4/2017",
         "id": "200020",
         "localArea": {
             "id": "200075"
@@ -358,12 +358,12 @@
     },
     {
         "districtEquipmentType": {
-            "id": "200007"
+            "id": "200009"
         },
-        "equipmentCount": "3",
-        "expectedEndDate": "7/29/2017",
-        "expectedHours": "54",
-        "expectedStartDate": "7/9/2017",
+        "equipmentCount": "5",
+        "expectedEndDate": "7/26/2017",
+        "expectedHours": "26",
+        "expectedStartDate": "7/10/2017",
         "id": "200021",
         "localArea": {
             "id": "200075"
@@ -375,12 +375,12 @@
     },
     {
         "districtEquipmentType": {
-            "id": "200011"
+            "id": "200007"
         },
         "equipmentCount": "1",
-        "expectedEndDate": "7/15/2017",
-        "expectedHours": "100",
-        "expectedStartDate": "7/3/2017",
+        "expectedEndDate": "6/26/2017",
+        "expectedHours": "23",
+        "expectedStartDate": "6/24/2017",
         "id": "200022",
         "localArea": {
             "id": "200075"
@@ -392,12 +392,12 @@
     },
     {
         "districtEquipmentType": {
-            "id": "200001"
+            "id": "200012"
         },
         "equipmentCount": "1",
-        "expectedEndDate": "7/26/2017",
-        "expectedHours": "90",
-        "expectedStartDate": "7/15/2017",
+        "expectedEndDate": "7/22/2017",
+        "expectedHours": "72",
+        "expectedStartDate": "7/13/2017",
         "id": "200023",
         "localArea": {
             "id": "200075"
@@ -409,12 +409,12 @@
     },
     {
         "districtEquipmentType": {
-            "id": "200003"
+            "id": "200006"
         },
         "equipmentCount": "1",
-        "expectedEndDate": "7/31/2017",
-        "expectedHours": "41",
-        "expectedStartDate": "7/26/2017",
+        "expectedEndDate": "6/26/2017",
+        "expectedHours": "33",
+        "expectedStartDate": "6/22/2017",
         "id": "200024",
         "localArea": {
             "id": "200075"
@@ -426,12 +426,12 @@
     },
     {
         "districtEquipmentType": {
-            "id": "200005"
+            "id": "200002"
         },
-        "equipmentCount": "4",
-        "expectedEndDate": "7/12/2017",
-        "expectedHours": "24",
-        "expectedStartDate": "6/30/2017",
+        "equipmentCount": "1",
+        "expectedEndDate": "8/11/2017",
+        "expectedHours": "82",
+        "expectedStartDate": "8/1/2017",
         "id": "200025",
         "localArea": {
             "id": "200075"
@@ -443,12 +443,12 @@
     },
     {
         "districtEquipmentType": {
-            "id": "200004"
+            "id": "200008"
         },
-        "equipmentCount": "1",
-        "expectedEndDate": "7/23/2017",
-        "expectedHours": "47",
-        "expectedStartDate": "7/18/2017",
+        "equipmentCount": "2",
+        "expectedEndDate": "8/1/2017",
+        "expectedHours": "7",
+        "expectedStartDate": "7/31/2017",
         "id": "200026",
         "localArea": {
             "id": "200075"
@@ -463,9 +463,9 @@
             "id": "200000"
         },
         "equipmentCount": "1",
-        "expectedEndDate": "7/12/2017",
-        "expectedHours": "90",
-        "expectedStartDate": "7/1/2017",
+        "expectedEndDate": "8/4/2017",
+        "expectedHours": "59",
+        "expectedStartDate": "7/28/2017",
         "id": "200027",
         "localArea": {
             "id": "200075"
@@ -477,12 +477,12 @@
     },
     {
         "districtEquipmentType": {
-            "id": "200002"
+            "id": "200005"
         },
         "equipmentCount": "1",
-        "expectedEndDate": "7/17/2017",
-        "expectedHours": "84",
-        "expectedStartDate": "7/7/2017",
+        "expectedEndDate": "6/14/2017",
+        "expectedHours": "45",
+        "expectedStartDate": "6/9/2017",
         "id": "200028",
         "localArea": {
             "id": "200075"
@@ -494,12 +494,12 @@
     },
     {
         "districtEquipmentType": {
-            "id": "200009"
+            "id": "200000"
         },
-        "equipmentCount": "5",
-        "expectedEndDate": "8/8/2017",
-        "expectedHours": "40",
-        "expectedStartDate": "7/14/2017",
+        "equipmentCount": "1",
+        "expectedEndDate": "8/6/2017",
+        "expectedHours": "65",
+        "expectedStartDate": "7/29/2017",
         "id": "200029",
         "localArea": {
             "id": "200075"
@@ -511,12 +511,12 @@
     },
     {
         "districtEquipmentType": {
-            "id": "200013"
+            "id": "200001"
         },
         "equipmentCount": "1",
-        "expectedEndDate": "8/1/2017",
-        "expectedHours": "22",
-        "expectedStartDate": "7/30/2017",
+        "expectedEndDate": "7/28/2017",
+        "expectedHours": "67",
+        "expectedStartDate": "7/20/2017",
         "id": "200030",
         "localArea": {
             "id": "200075"
@@ -528,12 +528,12 @@
     },
     {
         "districtEquipmentType": {
-            "id": "200003"
+            "id": "200013"
         },
         "equipmentCount": "1",
-        "expectedEndDate": "7/4/2017",
-        "expectedHours": "59",
-        "expectedStartDate": "6/27/2017",
+        "expectedEndDate": "6/24/2017",
+        "expectedHours": "92",
+        "expectedStartDate": "6/13/2017",
         "id": "200031",
         "localArea": {
             "id": "200076"
@@ -545,12 +545,12 @@
     },
     {
         "districtEquipmentType": {
-            "id": "200006"
+            "id": "200000"
         },
-        "equipmentCount": "1",
-        "expectedEndDate": "7/23/2017",
-        "expectedHours": "43",
-        "expectedStartDate": "7/18/2017",
+        "equipmentCount": "4",
+        "expectedEndDate": "8/11/2017",
+        "expectedHours": "74",
+        "expectedStartDate": "7/5/2017",
         "id": "200032",
         "localArea": {
             "id": "200076"
@@ -562,12 +562,12 @@
     },
     {
         "districtEquipmentType": {
-            "id": "200007"
+            "id": "200012"
         },
         "equipmentCount": "1",
-        "expectedEndDate": "6/20/2017",
-        "expectedHours": "35",
-        "expectedStartDate": "6/16/2017",
+        "expectedEndDate": "7/7/2017",
+        "expectedHours": "31",
+        "expectedStartDate": "7/4/2017",
         "id": "200033",
         "localArea": {
             "id": "200076"
@@ -579,12 +579,12 @@
     },
     {
         "districtEquipmentType": {
-            "id": "200011"
+            "id": "200007"
         },
         "equipmentCount": "1",
-        "expectedEndDate": "7/8/2017",
-        "expectedHours": "85",
-        "expectedStartDate": "6/28/2017",
+        "expectedEndDate": "6/22/2017",
+        "expectedHours": "12",
+        "expectedStartDate": "6/21/2017",
         "id": "200034",
         "localArea": {
             "id": "200076"
@@ -596,12 +596,12 @@
     },
     {
         "districtEquipmentType": {
-            "id": "200007"
+            "id": "200001"
         },
         "equipmentCount": "1",
-        "expectedEndDate": "7/7/2017",
-        "expectedHours": "66",
-        "expectedStartDate": "6/29/2017",
+        "expectedEndDate": "6/19/2017",
+        "expectedHours": "62",
+        "expectedStartDate": "6/12/2017",
         "id": "200035",
         "localArea": {
             "id": "200076"
@@ -613,12 +613,12 @@
     },
     {
         "districtEquipmentType": {
-            "id": "200007"
+            "id": "200013"
         },
         "equipmentCount": "1",
-        "expectedEndDate": "7/14/2017",
-        "expectedHours": "81",
-        "expectedStartDate": "7/4/2017",
+        "expectedEndDate": "7/7/2017",
+        "expectedHours": "37",
+        "expectedStartDate": "7/3/2017",
         "id": "200036",
         "localArea": {
             "id": "200076"
@@ -630,12 +630,12 @@
     },
     {
         "districtEquipmentType": {
-            "id": "200006"
+            "id": "200012"
         },
         "equipmentCount": "1",
-        "expectedEndDate": "7/13/2017",
-        "expectedHours": "75",
-        "expectedStartDate": "7/4/2017",
+        "expectedEndDate": "8/1/2017",
+        "expectedHours": "24",
+        "expectedStartDate": "7/29/2017",
         "id": "200037",
         "localArea": {
             "id": "200076"
@@ -649,10 +649,10 @@
         "districtEquipmentType": {
             "id": "200000"
         },
-        "equipmentCount": "1",
-        "expectedEndDate": "7/20/2017",
-        "expectedHours": "52",
-        "expectedStartDate": "7/14/2017",
+        "equipmentCount": "3",
+        "expectedEndDate": "8/10/2017",
+        "expectedHours": "69",
+        "expectedStartDate": "7/16/2017",
         "id": "200038",
         "localArea": {
             "id": "200076"
@@ -664,12 +664,12 @@
     },
     {
         "districtEquipmentType": {
-            "id": "200001"
+            "id": "200012"
         },
-        "equipmentCount": "1",
-        "expectedEndDate": "7/25/2017",
-        "expectedHours": "47",
-        "expectedStartDate": "7/20/2017",
+        "equipmentCount": "4",
+        "expectedEndDate": "8/8/2017",
+        "expectedHours": "92",
+        "expectedStartDate": "6/23/2017",
         "id": "200039",
         "localArea": {
             "id": "200076"
@@ -681,12 +681,12 @@
     },
     {
         "districtEquipmentType": {
-            "id": "200008"
+            "id": "200013"
         },
         "equipmentCount": "1",
-        "expectedEndDate": "8/8/2017",
-        "expectedHours": "80",
-        "expectedStartDate": "7/29/2017",
+        "expectedEndDate": "7/23/2017",
+        "expectedHours": "62",
+        "expectedStartDate": "7/16/2017",
         "id": "200040",
         "localArea": {
             "id": "200076"
@@ -698,12 +698,12 @@
     },
     {
         "districtEquipmentType": {
-            "id": "200011"
+            "id": "200012"
         },
-        "equipmentCount": "2",
-        "expectedEndDate": "7/11/2017",
-        "expectedHours": "15",
-        "expectedStartDate": "7/8/2017",
+        "equipmentCount": "1",
+        "expectedEndDate": "7/5/2017",
+        "expectedHours": "46",
+        "expectedStartDate": "6/30/2017",
         "id": "200041",
         "localArea": {
             "id": "200076"
@@ -715,12 +715,12 @@
     },
     {
         "districtEquipmentType": {
-            "id": "200011"
+            "id": "200013"
         },
         "equipmentCount": "1",
-        "expectedEndDate": "6/14/2017",
-        "expectedHours": "31",
-        "expectedStartDate": "6/11/2017",
+        "expectedEndDate": "6/19/2017",
+        "expectedHours": "62",
+        "expectedStartDate": "6/12/2017",
         "id": "200042",
         "localArea": {
             "id": "200076"
@@ -732,12 +732,12 @@
     },
     {
         "districtEquipmentType": {
-            "id": "200006"
+            "id": "200005"
         },
         "equipmentCount": "1",
-        "expectedEndDate": "7/25/2017",
-        "expectedHours": "46",
-        "expectedStartDate": "7/20/2017",
+        "expectedEndDate": "7/15/2017",
+        "expectedHours": "90",
+        "expectedStartDate": "7/4/2017",
         "id": "200043",
         "localArea": {
             "id": "200076"
@@ -749,12 +749,12 @@
     },
     {
         "districtEquipmentType": {
-            "id": "200007"
+            "id": "200004"
         },
-        "equipmentCount": "5",
-        "expectedEndDate": "8/19/2017",
-        "expectedHours": "91",
-        "expectedStartDate": "6/24/2017",
+        "equipmentCount": "1",
+        "expectedEndDate": "7/17/2017",
+        "expectedHours": "93",
+        "expectedStartDate": "7/6/2017",
         "id": "200044",
         "localArea": {
             "id": "200076"
@@ -766,12 +766,12 @@
     },
     {
         "districtEquipmentType": {
-            "id": "200011"
+            "id": "200002"
         },
         "equipmentCount": "1",
-        "expectedEndDate": "7/29/2017",
-        "expectedHours": "33",
-        "expectedStartDate": "7/25/2017",
+        "expectedEndDate": "7/11/2017",
+        "expectedHours": "87",
+        "expectedStartDate": "7/1/2017",
         "id": "200045",
         "localArea": {
             "id": "200076"
@@ -783,12 +783,12 @@
     },
     {
         "districtEquipmentType": {
-            "id": "200000"
+            "id": "200010"
         },
-        "equipmentCount": "1",
-        "expectedEndDate": "6/10/2017",
-        "expectedHours": "33",
-        "expectedStartDate": "6/6/2017",
+        "equipmentCount": "3",
+        "expectedEndDate": "7/12/2017",
+        "expectedHours": "51",
+        "expectedStartDate": "6/23/2017",
         "id": "200046",
         "localArea": {
             "id": "200076"
@@ -800,12 +800,12 @@
     },
     {
         "districtEquipmentType": {
-            "id": "200003"
+            "id": "200000"
         },
         "equipmentCount": "1",
-        "expectedEndDate": "7/4/2017",
-        "expectedHours": "17",
-        "expectedStartDate": "7/2/2017",
+        "expectedEndDate": "6/27/2017",
+        "expectedHours": "38",
+        "expectedStartDate": "6/23/2017",
         "id": "200047",
         "localArea": {
             "id": "200076"
@@ -817,12 +817,12 @@
     },
     {
         "districtEquipmentType": {
-            "id": "200001"
+            "id": "200005"
         },
         "equipmentCount": "1",
-        "expectedEndDate": "7/16/2017",
-        "expectedHours": "91",
-        "expectedStartDate": "7/5/2017",
+        "expectedEndDate": "7/23/2017",
+        "expectedHours": "63",
+        "expectedStartDate": "7/16/2017",
         "id": "200048",
         "localArea": {
             "id": "200076"
@@ -834,12 +834,12 @@
     },
     {
         "districtEquipmentType": {
-            "id": "200010"
+            "id": "200012"
         },
         "equipmentCount": "1",
-        "expectedEndDate": "7/10/2017",
-        "expectedHours": "92",
-        "expectedStartDate": "6/29/2017",
+        "expectedEndDate": "6/24/2017",
+        "expectedHours": "21",
+        "expectedStartDate": "6/22/2017",
         "id": "200049",
         "localArea": {
             "id": "200076"
@@ -851,12 +851,12 @@
     },
     {
         "districtEquipmentType": {
-            "id": "200006"
+            "id": "200009"
         },
-        "equipmentCount": "5",
-        "expectedEndDate": "6/30/2017",
-        "expectedHours": "41",
-        "expectedStartDate": "6/5/2017",
+        "equipmentCount": "1",
+        "expectedEndDate": "7/23/2017",
+        "expectedHours": "68",
+        "expectedStartDate": "7/15/2017",
         "id": "200050",
         "localArea": {
             "id": "200076"
@@ -868,12 +868,12 @@
     },
     {
         "districtEquipmentType": {
-            "id": "200004"
+            "id": "200011"
         },
-        "equipmentCount": "1",
-        "expectedEndDate": "7/10/2017",
-        "expectedHours": "56",
-        "expectedStartDate": "7/3/2017",
+        "equipmentCount": "4",
+        "expectedEndDate": "7/4/2017",
+        "expectedHours": "10",
+        "expectedStartDate": "6/29/2017",
         "id": "200051",
         "localArea": {
             "id": "200076"
@@ -888,9 +888,9 @@
             "id": "200000"
         },
         "equipmentCount": "1",
-        "expectedEndDate": "6/26/2017",
-        "expectedHours": "58",
-        "expectedStartDate": "6/19/2017",
+        "expectedEndDate": "7/30/2017",
+        "expectedHours": "42",
+        "expectedStartDate": "7/25/2017",
         "id": "200052",
         "localArea": {
             "id": "200076"
@@ -902,12 +902,12 @@
     },
     {
         "districtEquipmentType": {
-            "id": "200009"
+            "id": "200004"
         },
-        "equipmentCount": "2",
-        "expectedEndDate": "7/8/2017",
-        "expectedHours": "36",
-        "expectedStartDate": "6/29/2017",
+        "equipmentCount": "5",
+        "expectedEndDate": "7/11/2017",
+        "expectedHours": "33",
+        "expectedStartDate": "6/21/2017",
         "id": "200053",
         "localArea": {
             "id": "200076"
@@ -922,9 +922,9 @@
             "id": "200009"
         },
         "equipmentCount": "1",
-        "expectedEndDate": "6/20/2017",
-        "expectedHours": "55",
-        "expectedStartDate": "6/14/2017",
+        "expectedEndDate": "6/10/2017",
+        "expectedHours": "15",
+        "expectedStartDate": "6/9/2017",
         "id": "200054",
         "localArea": {
             "id": "200076"
@@ -939,9 +939,9 @@
             "id": "200010"
         },
         "equipmentCount": "1",
-        "expectedEndDate": "7/30/2017",
-        "expectedHours": "33",
-        "expectedStartDate": "7/26/2017",
+        "expectedEndDate": "6/14/2017",
+        "expectedHours": "40",
+        "expectedStartDate": "6/9/2017",
         "id": "200055",
         "localArea": {
             "id": "200076"
@@ -953,12 +953,12 @@
     },
     {
         "districtEquipmentType": {
-            "id": "200012"
+            "id": "200006"
         },
         "equipmentCount": "1",
-        "expectedEndDate": "8/2/2017",
+        "expectedEndDate": "8/10/2017",
         "expectedHours": "97",
-        "expectedStartDate": "7/21/2017",
+        "expectedStartDate": "7/29/2017",
         "id": "200056",
         "localArea": {
             "id": "200076"
@@ -970,12 +970,12 @@
     },
     {
         "districtEquipmentType": {
-            "id": "200005"
+            "id": "200013"
         },
-        "equipmentCount": "1",
-        "expectedEndDate": "6/18/2017",
+        "equipmentCount": "5",
+        "expectedEndDate": "8/6/2017",
         "expectedHours": "79",
-        "expectedStartDate": "6/9/2017",
+        "expectedStartDate": "6/18/2017",
         "id": "200057",
         "localArea": {
             "id": "200076"
@@ -987,12 +987,12 @@
     },
     {
         "districtEquipmentType": {
-            "id": "200008"
+            "id": "200005"
         },
-        "equipmentCount": "1",
-        "expectedEndDate": "6/19/2017",
-        "expectedHours": "29",
-        "expectedStartDate": "6/16/2017",
+        "equipmentCount": "4",
+        "expectedEndDate": "7/25/2017",
+        "expectedHours": "42",
+        "expectedStartDate": "7/4/2017",
         "id": "200058",
         "localArea": {
             "id": "200076"
@@ -1004,12 +1004,12 @@
     },
     {
         "districtEquipmentType": {
-            "id": "200011"
+            "id": "200012"
         },
         "equipmentCount": "1",
-        "expectedEndDate": "7/29/2017",
-        "expectedHours": "60",
-        "expectedStartDate": "7/22/2017",
+        "expectedEndDate": "7/3/2017",
+        "expectedHours": "12",
+        "expectedStartDate": "7/2/2017",
         "id": "200059",
         "localArea": {
             "id": "200076"
@@ -1021,12 +1021,12 @@
     },
     {
         "districtEquipmentType": {
-            "id": "200003"
+            "id": "200000"
         },
         "equipmentCount": "4",
-        "expectedEndDate": "7/22/2017",
-        "expectedHours": "68",
-        "expectedStartDate": "6/18/2017",
+        "expectedEndDate": "8/3/2017",
+        "expectedHours": "34",
+        "expectedStartDate": "7/17/2017",
         "id": "200060",
         "localArea": {
             "id": "200076"
@@ -1038,12 +1038,12 @@
     },
     {
         "districtEquipmentType": {
-            "id": "200008"
+            "id": "200000"
         },
-        "equipmentCount": "1",
-        "expectedEndDate": "6/23/2017",
-        "expectedHours": "60",
-        "expectedStartDate": "6/16/2017",
+        "equipmentCount": "2",
+        "expectedEndDate": "8/18/2017",
+        "expectedHours": "93",
+        "expectedStartDate": "7/26/2017",
         "id": "200061",
         "localArea": {
             "id": "200076"
@@ -1055,12 +1055,12 @@
     },
     {
         "districtEquipmentType": {
-            "id": "200005"
+            "id": "200012"
         },
         "equipmentCount": "1",
-        "expectedEndDate": "6/18/2017",
-        "expectedHours": "64",
-        "expectedStartDate": "6/10/2017",
+        "expectedEndDate": "7/21/2017",
+        "expectedHours": "65",
+        "expectedStartDate": "7/13/2017",
         "id": "200062",
         "localArea": {
             "id": "200076"
@@ -1072,12 +1072,12 @@
     },
     {
         "districtEquipmentType": {
-            "id": "200005"
+            "id": "200000"
         },
-        "equipmentCount": "1",
-        "expectedEndDate": "7/29/2017",
-        "expectedHours": "62",
-        "expectedStartDate": "7/22/2017",
+        "equipmentCount": "4",
+        "expectedEndDate": "7/19/2017",
+        "expectedHours": "59",
+        "expectedStartDate": "6/20/2017",
         "id": "200063",
         "localArea": {
             "id": "200076"
@@ -1089,12 +1089,12 @@
     },
     {
         "districtEquipmentType": {
-            "id": "200005"
+            "id": "200013"
         },
         "equipmentCount": "1",
-        "expectedEndDate": "7/26/2017",
-        "expectedHours": "57",
-        "expectedStartDate": "7/19/2017",
+        "expectedEndDate": "7/3/2017",
+        "expectedHours": "77",
+        "expectedStartDate": "6/24/2017",
         "id": "200064",
         "localArea": {
             "id": "200076"
@@ -1106,12 +1106,12 @@
     },
     {
         "districtEquipmentType": {
-            "id": "200009"
+            "id": "200012"
         },
         "equipmentCount": "1",
-        "expectedEndDate": "7/17/2017",
-        "expectedHours": "18",
-        "expectedStartDate": "7/15/2017",
+        "expectedEndDate": "8/6/2017",
+        "expectedHours": "87",
+        "expectedStartDate": "7/27/2017",
         "id": "200065",
         "localArea": {
             "id": "200076"
@@ -1123,12 +1123,12 @@
     },
     {
         "districtEquipmentType": {
-            "id": "200012"
+            "id": "200004"
         },
-        "equipmentCount": "5",
-        "expectedEndDate": "6/24/2017",
-        "expectedHours": "22",
-        "expectedStartDate": "6/11/2017",
+        "equipmentCount": "1",
+        "expectedEndDate": "7/18/2017",
+        "expectedHours": "7",
+        "expectedStartDate": "7/18/2017",
         "id": "200066",
         "localArea": {
             "id": "200076"
@@ -1140,12 +1140,12 @@
     },
     {
         "districtEquipmentType": {
-            "id": "200003"
+            "id": "200006"
         },
         "equipmentCount": "1",
-        "expectedEndDate": "6/18/2017",
-        "expectedHours": "13",
-        "expectedStartDate": "6/17/2017",
+        "expectedEndDate": "6/22/2017",
+        "expectedHours": "35",
+        "expectedStartDate": "6/18/2017",
         "id": "200067",
         "localArea": {
             "id": "200076"
@@ -1157,12 +1157,12 @@
     },
     {
         "districtEquipmentType": {
-            "id": "200005"
+            "id": "200007"
         },
-        "equipmentCount": "5",
-        "expectedEndDate": "8/16/2017",
-        "expectedHours": "78",
-        "expectedStartDate": "6/29/2017",
+        "equipmentCount": "1",
+        "expectedEndDate": "7/24/2017",
+        "expectedHours": "26",
+        "expectedStartDate": "7/21/2017",
         "id": "200068",
         "localArea": {
             "id": "200076"
@@ -1174,12 +1174,12 @@
     },
     {
         "districtEquipmentType": {
-            "id": "200000"
+            "id": "200010"
         },
         "equipmentCount": "1",
-        "expectedEndDate": "7/18/2017",
-        "expectedHours": "32",
-        "expectedStartDate": "7/14/2017",
+        "expectedEndDate": "6/24/2017",
+        "expectedHours": "85",
+        "expectedStartDate": "6/14/2017",
         "id": "200069",
         "localArea": {
             "id": "200077"
@@ -1191,12 +1191,12 @@
     },
     {
         "districtEquipmentType": {
-            "id": "200000"
+            "id": "200010"
         },
-        "equipmentCount": "2",
-        "expectedEndDate": "7/22/2017",
-        "expectedHours": "36",
-        "expectedStartDate": "7/13/2017",
+        "equipmentCount": "1",
+        "expectedEndDate": "8/6/2017",
+        "expectedHours": "84",
+        "expectedStartDate": "7/27/2017",
         "id": "200070",
         "localArea": {
             "id": "200077"
@@ -1208,12 +1208,12 @@
     },
     {
         "districtEquipmentType": {
-            "id": "200002"
+            "id": "200011"
         },
-        "equipmentCount": "2",
-        "expectedEndDate": "6/30/2017",
-        "expectedHours": "54",
-        "expectedStartDate": "6/17/2017",
+        "equipmentCount": "1",
+        "expectedEndDate": "7/27/2017",
+        "expectedHours": "46",
+        "expectedStartDate": "7/22/2017",
         "id": "200071",
         "localArea": {
             "id": "200077"
@@ -1225,12 +1225,12 @@
     },
     {
         "districtEquipmentType": {
-            "id": "200000"
+            "id": "200008"
         },
         "equipmentCount": "1",
-        "expectedEndDate": "7/26/2017",
-        "expectedHours": "72",
-        "expectedStartDate": "7/17/2017",
+        "expectedEndDate": "7/22/2017",
+        "expectedHours": "28",
+        "expectedStartDate": "7/19/2017",
         "id": "200072",
         "localArea": {
             "id": "200077"
@@ -1244,10 +1244,10 @@
         "districtEquipmentType": {
             "id": "200003"
         },
-        "equipmentCount": "3",
-        "expectedEndDate": "7/6/2017",
-        "expectedHours": "78",
-        "expectedStartDate": "6/7/2017",
+        "equipmentCount": "1",
+        "expectedEndDate": "7/15/2017",
+        "expectedHours": "67",
+        "expectedStartDate": "7/7/2017",
         "id": "200073",
         "localArea": {
             "id": "200077"
@@ -1259,11 +1259,11 @@
     },
     {
         "districtEquipmentType": {
-            "id": "200011"
+            "id": "200005"
         },
         "equipmentCount": "1",
-        "expectedEndDate": "7/21/2017",
-        "expectedHours": "40",
+        "expectedEndDate": "7/19/2017",
+        "expectedHours": "25",
         "expectedStartDate": "7/16/2017",
         "id": "200074",
         "localArea": {
@@ -1276,12 +1276,12 @@
     },
     {
         "districtEquipmentType": {
-            "id": "200008"
+            "id": "200007"
         },
-        "equipmentCount": "1",
-        "expectedEndDate": "7/9/2017",
-        "expectedHours": "49",
-        "expectedStartDate": "7/3/2017",
+        "equipmentCount": "4",
+        "expectedEndDate": "8/2/2017",
+        "expectedHours": "15",
+        "expectedStartDate": "7/26/2017",
         "id": "200075",
         "localArea": {
             "id": "200077"
@@ -1293,12 +1293,12 @@
     },
     {
         "districtEquipmentType": {
-            "id": "200001"
+            "id": "200013"
         },
-        "equipmentCount": "1",
-        "expectedEndDate": "6/20/2017",
-        "expectedHours": "81",
-        "expectedStartDate": "6/10/2017",
+        "equipmentCount": "4",
+        "expectedEndDate": "8/8/2017",
+        "expectedHours": "26",
+        "expectedStartDate": "7/26/2017",
         "id": "200076",
         "localArea": {
             "id": "200077"
@@ -1310,12 +1310,12 @@
     },
     {
         "districtEquipmentType": {
-            "id": "200000"
+            "id": "200010"
         },
-        "equipmentCount": "3",
-        "expectedEndDate": "7/6/2017",
-        "expectedHours": "84",
-        "expectedStartDate": "6/5/2017",
+        "equipmentCount": "1",
+        "expectedEndDate": "7/4/2017",
+        "expectedHours": "17",
+        "expectedStartDate": "7/2/2017",
         "id": "200077",
         "localArea": {
             "id": "200077"
@@ -1327,12 +1327,12 @@
     },
     {
         "districtEquipmentType": {
-            "id": "200009"
+            "id": "200005"
         },
         "equipmentCount": "1",
-        "expectedEndDate": "7/30/2017",
-        "expectedHours": "97",
-        "expectedStartDate": "7/18/2017",
+        "expectedEndDate": "6/19/2017",
+        "expectedHours": "10",
+        "expectedStartDate": "6/18/2017",
         "id": "200078",
         "localArea": {
             "id": "200077"
@@ -1344,12 +1344,12 @@
     },
     {
         "districtEquipmentType": {
-            "id": "200000"
+            "id": "200010"
         },
         "equipmentCount": "1",
-        "expectedEndDate": "7/24/2017",
-        "expectedHours": "25",
-        "expectedStartDate": "7/21/2017",
+        "expectedEndDate": "6/30/2017",
+        "expectedHours": "80",
+        "expectedStartDate": "6/20/2017",
         "id": "200079",
         "localArea": {
             "id": "200077"
@@ -1364,9 +1364,9 @@
             "id": "200011"
         },
         "equipmentCount": "1",
-        "expectedEndDate": "6/21/2017",
-        "expectedHours": "34",
-        "expectedStartDate": "6/17/2017",
+        "expectedEndDate": "7/24/2017",
+        "expectedHours": "83",
+        "expectedStartDate": "7/14/2017",
         "id": "200080",
         "localArea": {
             "id": "200077"
@@ -1378,12 +1378,12 @@
     },
     {
         "districtEquipmentType": {
-            "id": "200003"
+            "id": "200004"
         },
         "equipmentCount": "1",
-        "expectedEndDate": "7/15/2017",
-        "expectedHours": "52",
-        "expectedStartDate": "7/9/2017",
+        "expectedEndDate": "6/14/2017",
+        "expectedHours": "63",
+        "expectedStartDate": "6/7/2017",
         "id": "200081",
         "localArea": {
             "id": "200077"
@@ -1395,12 +1395,12 @@
     },
     {
         "districtEquipmentType": {
-            "id": "200013"
+            "id": "200009"
         },
-        "equipmentCount": "4",
-        "expectedEndDate": "9/4/2017",
-        "expectedHours": "86",
-        "expectedStartDate": "7/23/2017",
+        "equipmentCount": "1",
+        "expectedEndDate": "6/17/2017",
+        "expectedHours": "61",
+        "expectedStartDate": "6/10/2017",
         "id": "200082",
         "localArea": {
             "id": "200077"
@@ -1412,12 +1412,12 @@
     },
     {
         "districtEquipmentType": {
-            "id": "200001"
+            "id": "200003"
         },
         "equipmentCount": "1",
-        "expectedEndDate": "6/18/2017",
-        "expectedHours": "16",
-        "expectedStartDate": "6/16/2017",
+        "expectedEndDate": "7/30/2017",
+        "expectedHours": "98",
+        "expectedStartDate": "7/18/2017",
         "id": "200083",
         "localArea": {
             "id": "200077"
@@ -1429,12 +1429,12 @@
     },
     {
         "districtEquipmentType": {
-            "id": "200011"
+            "id": "200007"
         },
-        "equipmentCount": "1",
-        "expectedEndDate": "6/11/2017",
-        "expectedHours": "26",
-        "expectedStartDate": "6/8/2017",
+        "equipmentCount": "4",
+        "expectedEndDate": "9/1/2017",
+        "expectedHours": "63",
+        "expectedStartDate": "8/1/2017",
         "id": "200084",
         "localArea": {
             "id": "200077"
@@ -1446,12 +1446,12 @@
     },
     {
         "districtEquipmentType": {
-            "id": "200010"
+            "id": "200003"
         },
-        "equipmentCount": "2",
-        "expectedEndDate": "7/2/2017",
-        "expectedHours": "86",
-        "expectedStartDate": "6/11/2017",
+        "equipmentCount": "1",
+        "expectedEndDate": "6/27/2017",
+        "expectedHours": "19",
+        "expectedStartDate": "6/25/2017",
         "id": "200085",
         "localArea": {
             "id": "200077"
@@ -1463,12 +1463,12 @@
     },
     {
         "districtEquipmentType": {
-            "id": "200003"
+            "id": "200011"
         },
         "equipmentCount": "1",
-        "expectedEndDate": "6/6/2017",
-        "expectedHours": "6",
-        "expectedStartDate": "6/6/2017",
+        "expectedEndDate": "7/20/2017",
+        "expectedHours": "62",
+        "expectedStartDate": "7/13/2017",
         "id": "200086",
         "localArea": {
             "id": "200077"
@@ -1480,12 +1480,12 @@
     },
     {
         "districtEquipmentType": {
-            "id": "200000"
+            "id": "200006"
         },
-        "equipmentCount": "1",
-        "expectedEndDate": "7/17/2017",
-        "expectedHours": "15",
-        "expectedStartDate": "7/16/2017",
+        "equipmentCount": "2",
+        "expectedEndDate": "7/19/2017",
+        "expectedHours": "68",
+        "expectedStartDate": "7/2/2017",
         "id": "200087",
         "localArea": {
             "id": "200077"
@@ -1497,12 +1497,12 @@
     },
     {
         "districtEquipmentType": {
-            "id": "200012"
+            "id": "200011"
         },
         "equipmentCount": "1",
-        "expectedEndDate": "7/12/2017",
-        "expectedHours": "31",
-        "expectedStartDate": "7/9/2017",
+        "expectedEndDate": "6/25/2017",
+        "expectedHours": "98",
+        "expectedStartDate": "6/13/2017",
         "id": "200088",
         "localArea": {
             "id": "200077"
@@ -1514,12 +1514,12 @@
     },
     {
         "districtEquipmentType": {
-            "id": "200009"
+            "id": "200007"
         },
         "equipmentCount": "1",
-        "expectedEndDate": "7/7/2017",
-        "expectedHours": "53",
-        "expectedStartDate": "7/1/2017",
+        "expectedEndDate": "7/18/2017",
+        "expectedHours": "8",
+        "expectedStartDate": "7/17/2017",
         "id": "200089",
         "localArea": {
             "id": "200077"
@@ -1531,12 +1531,12 @@
     },
     {
         "districtEquipmentType": {
-            "id": "200009"
+            "id": "200011"
         },
         "equipmentCount": "1",
-        "expectedEndDate": "7/28/2017",
-        "expectedHours": "8",
-        "expectedStartDate": "7/27/2017",
+        "expectedEndDate": "6/15/2017",
+        "expectedHours": "69",
+        "expectedStartDate": "6/7/2017",
         "id": "200090",
         "localArea": {
             "id": "200077"
@@ -1551,9 +1551,9 @@
             "id": "200004"
         },
         "equipmentCount": "1",
-        "expectedEndDate": "6/28/2017",
-        "expectedHours": "86",
-        "expectedStartDate": "6/18/2017",
+        "expectedEndDate": "8/4/2017",
+        "expectedHours": "93",
+        "expectedStartDate": "7/24/2017",
         "id": "200091",
         "localArea": {
             "id": "200077"
@@ -1565,12 +1565,12 @@
     },
     {
         "districtEquipmentType": {
-            "id": "200010"
+            "id": "200002"
         },
-        "equipmentCount": "3",
-        "expectedEndDate": "7/1/2017",
-        "expectedHours": "33",
-        "expectedStartDate": "6/19/2017",
+        "equipmentCount": "1",
+        "expectedEndDate": "7/10/2017",
+        "expectedHours": "50",
+        "expectedStartDate": "7/4/2017",
         "id": "200092",
         "localArea": {
             "id": "200077"
@@ -1582,12 +1582,12 @@
     },
     {
         "districtEquipmentType": {
-            "id": "200010"
+            "id": "200004"
         },
-        "equipmentCount": "2",
-        "expectedEndDate": "7/15/2017",
-        "expectedHours": "49",
-        "expectedStartDate": "7/3/2017",
+        "equipmentCount": "1",
+        "expectedEndDate": "7/29/2017",
+        "expectedHours": "56",
+        "expectedStartDate": "7/22/2017",
         "id": "200093",
         "localArea": {
             "id": "200077"
@@ -1599,12 +1599,12 @@
     },
     {
         "districtEquipmentType": {
-            "id": "200010"
+            "id": "200012"
         },
-        "equipmentCount": "5",
-        "expectedEndDate": "7/28/2017",
-        "expectedHours": "69",
-        "expectedStartDate": "6/15/2017",
+        "equipmentCount": "3",
+        "expectedEndDate": "7/10/2017",
+        "expectedHours": "56",
+        "expectedStartDate": "6/19/2017",
         "id": "200094",
         "localArea": {
             "id": "200077"
@@ -1616,12 +1616,12 @@
     },
     {
         "districtEquipmentType": {
-            "id": "200012"
+            "id": "200000"
         },
-        "equipmentCount": "1",
-        "expectedEndDate": "7/10/2017",
-        "expectedHours": "48",
-        "expectedStartDate": "7/4/2017",
+        "equipmentCount": "5",
+        "expectedEndDate": "7/26/2017",
+        "expectedHours": "5",
+        "expectedStartDate": "7/23/2017",
         "id": "200095",
         "localArea": {
             "id": "200077"
@@ -1633,12 +1633,12 @@
     },
     {
         "districtEquipmentType": {
-            "id": "200010"
+            "id": "200009"
         },
-        "equipmentCount": "1",
-        "expectedEndDate": "8/3/2017",
-        "expectedHours": "53",
-        "expectedStartDate": "7/28/2017",
+        "equipmentCount": "4",
+        "expectedEndDate": "8/16/2017",
+        "expectedHours": "65",
+        "expectedStartDate": "7/15/2017",
         "id": "200096",
         "localArea": {
             "id": "200077"
@@ -1650,12 +1650,12 @@
     },
     {
         "districtEquipmentType": {
-            "id": "200008"
+            "id": "200002"
         },
         "equipmentCount": "1",
-        "expectedEndDate": "6/29/2017",
-        "expectedHours": "6",
-        "expectedStartDate": "6/29/2017",
+        "expectedEndDate": "6/18/2017",
+        "expectedHours": "25",
+        "expectedStartDate": "6/15/2017",
         "id": "200097",
         "localArea": {
             "id": "200077"
@@ -1667,11 +1667,11 @@
     },
     {
         "districtEquipmentType": {
-            "id": "200013"
+            "id": "200007"
         },
         "equipmentCount": "1",
-        "expectedEndDate": "7/8/2017",
-        "expectedHours": "53",
+        "expectedEndDate": "7/14/2017",
+        "expectedHours": "97",
         "expectedStartDate": "7/2/2017",
         "id": "200098",
         "localArea": {
@@ -1684,11 +1684,11 @@
     },
     {
         "districtEquipmentType": {
-            "id": "200012"
+            "id": "200007"
         },
         "equipmentCount": "1",
-        "expectedEndDate": "7/4/2017",
-        "expectedHours": "56",
+        "expectedEndDate": "7/6/2017",
+        "expectedHours": "76",
         "expectedStartDate": "6/27/2017",
         "id": "200099",
         "localArea": {
@@ -1701,12 +1701,12 @@
     },
     {
         "districtEquipmentType": {
-            "id": "200011"
+            "id": "200010"
         },
         "equipmentCount": "1",
-        "expectedEndDate": "7/17/2017",
-        "expectedHours": "45",
-        "expectedStartDate": "7/12/2017",
+        "expectedEndDate": "7/28/2017",
+        "expectedHours": "14",
+        "expectedStartDate": "7/27/2017",
         "id": "200100",
         "localArea": {
             "id": "200077"
@@ -1718,12 +1718,12 @@
     },
     {
         "districtEquipmentType": {
-            "id": "200004"
+            "id": "200001"
         },
         "equipmentCount": "1",
-        "expectedEndDate": "8/2/2017",
-        "expectedHours": "31",
-        "expectedStartDate": "7/30/2017",
+        "expectedEndDate": "7/21/2017",
+        "expectedHours": "64",
+        "expectedStartDate": "7/13/2017",
         "id": "200101",
         "localArea": {
             "id": "200077"
@@ -1735,12 +1735,12 @@
     },
     {
         "districtEquipmentType": {
-            "id": "200005"
+            "id": "200002"
         },
         "equipmentCount": "1",
-        "expectedEndDate": "6/17/2017",
-        "expectedHours": "98",
-        "expectedStartDate": "6/5/2017",
+        "expectedEndDate": "7/15/2017",
+        "expectedHours": "26",
+        "expectedStartDate": "7/12/2017",
         "id": "200102",
         "localArea": {
             "id": "200077"
@@ -1752,12 +1752,12 @@
     },
     {
         "districtEquipmentType": {
-            "id": "200007"
+            "id": "200009"
         },
-        "equipmentCount": "5",
-        "expectedEndDate": "6/27/2017",
-        "expectedHours": "24",
-        "expectedStartDate": "6/12/2017",
+        "equipmentCount": "1",
+        "expectedEndDate": "7/3/2017",
+        "expectedHours": "46",
+        "expectedStartDate": "6/28/2017",
         "id": "200103",
         "localArea": {
             "id": "200077"
@@ -1769,12 +1769,12 @@
     },
     {
         "districtEquipmentType": {
-            "id": "200006"
+            "id": "200010"
         },
         "equipmentCount": "1",
-        "expectedEndDate": "7/25/2017",
-        "expectedHours": "73",
-        "expectedStartDate": "7/16/2017",
+        "expectedEndDate": "6/27/2017",
+        "expectedHours": "91",
+        "expectedStartDate": "6/16/2017",
         "id": "200104",
         "localArea": {
             "id": "200077"
@@ -1786,12 +1786,12 @@
     },
     {
         "districtEquipmentType": {
-            "id": "200005"
+            "id": "200012"
         },
         "equipmentCount": "1",
-        "expectedEndDate": "7/12/2017",
-        "expectedHours": "98",
-        "expectedStartDate": "6/30/2017",
+        "expectedEndDate": "6/21/2017",
+        "expectedHours": "83",
+        "expectedStartDate": "6/11/2017",
         "id": "200105",
         "localArea": {
             "id": "200077"
@@ -1803,12 +1803,12 @@
     },
     {
         "districtEquipmentType": {
-            "id": "200011"
+            "id": "200001"
         },
         "equipmentCount": "1",
-        "expectedEndDate": "7/15/2017",
-        "expectedHours": "52",
-        "expectedStartDate": "7/9/2017",
+        "expectedEndDate": "6/20/2017",
+        "expectedHours": "76",
+        "expectedStartDate": "6/11/2017",
         "id": "200106",
         "localArea": {
             "id": "200077"
@@ -1820,12 +1820,12 @@
     },
     {
         "districtEquipmentType": {
-            "id": "200009"
+            "id": "200003"
         },
-        "equipmentCount": "2",
-        "expectedEndDate": "7/21/2017",
-        "expectedHours": "97",
-        "expectedStartDate": "6/27/2017",
+        "equipmentCount": "1",
+        "expectedEndDate": "8/3/2017",
+        "expectedHours": "93",
+        "expectedStartDate": "7/23/2017",
         "id": "200107",
         "localArea": {
             "id": "200077"
@@ -1837,12 +1837,12 @@
     },
     {
         "districtEquipmentType": {
-            "id": "200002"
+            "id": "200003"
         },
         "equipmentCount": "1",
-        "expectedEndDate": "6/21/2017",
-        "expectedHours": "7",
-        "expectedStartDate": "6/21/2017",
+        "expectedEndDate": "7/29/2017",
+        "expectedHours": "92",
+        "expectedStartDate": "7/18/2017",
         "id": "200108",
         "localArea": {
             "id": "200077"
@@ -1854,12 +1854,12 @@
     },
     {
         "districtEquipmentType": {
-            "id": "200002"
+            "id": "200010"
         },
         "equipmentCount": "1",
-        "expectedEndDate": "7/10/2017",
-        "expectedHours": "13",
-        "expectedStartDate": "7/9/2017",
+        "expectedEndDate": "6/25/2017",
+        "expectedHours": "34",
+        "expectedStartDate": "6/21/2017",
         "id": "200109",
         "localArea": {
             "id": "200077"
@@ -1871,12 +1871,12 @@
     },
     {
         "districtEquipmentType": {
-            "id": "200000"
+            "id": "200013"
         },
         "equipmentCount": "1",
-        "expectedEndDate": "7/4/2017",
-        "expectedHours": "5",
-        "expectedStartDate": "7/4/2017",
+        "expectedEndDate": "7/26/2017",
+        "expectedHours": "42",
+        "expectedStartDate": "7/21/2017",
         "id": "200110",
         "localArea": {
             "id": "200077"
@@ -1888,12 +1888,12 @@
     },
     {
         "districtEquipmentType": {
-            "id": "200009"
+            "id": "200013"
         },
-        "equipmentCount": "1",
-        "expectedEndDate": "7/10/2017",
-        "expectedHours": "85",
-        "expectedStartDate": "6/30/2017",
+        "equipmentCount": "2",
+        "expectedEndDate": "6/20/2017",
+        "expectedHours": "32",
+        "expectedStartDate": "6/12/2017",
         "id": "200111",
         "localArea": {
             "id": "200077"
@@ -1907,10 +1907,10 @@
         "districtEquipmentType": {
             "id": "200001"
         },
-        "equipmentCount": "4",
-        "expectedEndDate": "9/5/2017",
-        "expectedHours": "85",
-        "expectedStartDate": "7/25/2017",
+        "equipmentCount": "1",
+        "expectedEndDate": "7/14/2017",
+        "expectedHours": "33",
+        "expectedStartDate": "7/10/2017",
         "id": "200112",
         "localArea": {
             "id": "200077"
@@ -1922,12 +1922,12 @@
     },
     {
         "districtEquipmentType": {
-            "id": "200013"
+            "id": "200000"
         },
         "equipmentCount": "1",
-        "expectedEndDate": "6/16/2017",
-        "expectedHours": "43",
-        "expectedStartDate": "6/11/2017",
+        "expectedEndDate": "6/25/2017",
+        "expectedHours": "68",
+        "expectedStartDate": "6/17/2017",
         "id": "200113",
         "localArea": {
             "id": "200077"
@@ -1939,12 +1939,12 @@
     },
     {
         "districtEquipmentType": {
-            "id": "200005"
+            "id": "200010"
         },
         "equipmentCount": "1",
-        "expectedEndDate": "7/2/2017",
-        "expectedHours": "63",
-        "expectedStartDate": "6/25/2017",
+        "expectedEndDate": "7/21/2017",
+        "expectedHours": "77",
+        "expectedStartDate": "7/12/2017",
         "id": "200114",
         "localArea": {
             "id": "200077"
@@ -1956,12 +1956,12 @@
     },
     {
         "districtEquipmentType": {
-            "id": "200001"
+            "id": "200012"
         },
         "equipmentCount": "1",
-        "expectedEndDate": "7/20/2017",
-        "expectedHours": "77",
-        "expectedStartDate": "7/11/2017",
+        "expectedEndDate": "6/18/2017",
+        "expectedHours": "52",
+        "expectedStartDate": "6/12/2017",
         "id": "200115",
         "localArea": {
             "id": "200077"
@@ -1973,12 +1973,12 @@
     },
     {
         "districtEquipmentType": {
-            "id": "200008"
+            "id": "200010"
         },
         "equipmentCount": "1",
-        "expectedEndDate": "7/8/2017",
-        "expectedHours": "49",
-        "expectedStartDate": "7/2/2017",
+        "expectedEndDate": "7/18/2017",
+        "expectedHours": "57",
+        "expectedStartDate": "7/11/2017",
         "id": "200116",
         "localArea": {
             "id": "200077"
@@ -1990,12 +1990,12 @@
     },
     {
         "districtEquipmentType": {
-            "id": "200009"
+            "id": "200000"
         },
         "equipmentCount": "1",
-        "expectedEndDate": "7/31/2017",
-        "expectedHours": "77",
-        "expectedStartDate": "7/22/2017",
+        "expectedEndDate": "7/30/2017",
+        "expectedHours": "44",
+        "expectedStartDate": "7/25/2017",
         "id": "200117",
         "localArea": {
             "id": "200077"
@@ -2007,12 +2007,12 @@
     },
     {
         "districtEquipmentType": {
-            "id": "200009"
+            "id": "200013"
         },
-        "equipmentCount": "4",
-        "expectedEndDate": "7/26/2017",
-        "expectedHours": "31",
-        "expectedStartDate": "7/11/2017",
+        "equipmentCount": "1",
+        "expectedEndDate": "7/2/2017",
+        "expectedHours": "37",
+        "expectedStartDate": "6/28/2017",
         "id": "200118",
         "localArea": {
             "id": "200077"
@@ -2024,12 +2024,12 @@
     },
     {
         "districtEquipmentType": {
-            "id": "200006"
+            "id": "200002"
         },
         "equipmentCount": "1",
-        "expectedEndDate": "7/30/2017",
-        "expectedHours": "48",
-        "expectedStartDate": "7/24/2017",
+        "expectedEndDate": "7/23/2017",
+        "expectedHours": "47",
+        "expectedStartDate": "7/18/2017",
         "id": "200119",
         "localArea": {
             "id": "200077"
@@ -2041,12 +2041,12 @@
     },
     {
         "districtEquipmentType": {
-            "id": "200012"
+            "id": "200005"
         },
         "equipmentCount": "1",
-        "expectedEndDate": "6/21/2017",
-        "expectedHours": "53",
-        "expectedStartDate": "6/15/2017",
+        "expectedEndDate": "7/10/2017",
+        "expectedHours": "79",
+        "expectedStartDate": "7/1/2017",
         "id": "200120",
         "localArea": {
             "id": "200077"
@@ -2058,12 +2058,12 @@
     },
     {
         "districtEquipmentType": {
-            "id": "200012"
+            "id": "200006"
         },
         "equipmentCount": "1",
-        "expectedEndDate": "7/17/2017",
-        "expectedHours": "40",
-        "expectedStartDate": "7/12/2017",
+        "expectedEndDate": "7/26/2017",
+        "expectedHours": "30",
+        "expectedStartDate": "7/23/2017",
         "id": "200121",
         "localArea": {
             "id": "200077"
@@ -2075,12 +2075,12 @@
     },
     {
         "districtEquipmentType": {
-            "id": "200003"
+            "id": "200008"
         },
         "equipmentCount": "1",
-        "expectedEndDate": "7/20/2017",
-        "expectedHours": "26",
-        "expectedStartDate": "7/17/2017",
+        "expectedEndDate": "6/14/2017",
+        "expectedHours": "38",
+        "expectedStartDate": "6/10/2017",
         "id": "200122",
         "localArea": {
             "id": "200077"
@@ -2092,12 +2092,12 @@
     },
     {
         "districtEquipmentType": {
-            "id": "200013"
+            "id": "200000"
         },
-        "equipmentCount": "2",
-        "expectedEndDate": "8/9/2017",
-        "expectedHours": "40",
-        "expectedStartDate": "7/30/2017",
+        "equipmentCount": "1",
+        "expectedEndDate": "6/22/2017",
+        "expectedHours": "37",
+        "expectedStartDate": "6/18/2017",
         "id": "200123",
         "localArea": {
             "id": "200077"
@@ -2109,12 +2109,12 @@
     },
     {
         "districtEquipmentType": {
-            "id": "200008"
+            "id": "200002"
         },
-        "equipmentCount": "4",
-        "expectedEndDate": "8/20/2017",
-        "expectedHours": "90",
-        "expectedStartDate": "7/6/2017",
+        "equipmentCount": "1",
+        "expectedEndDate": "6/28/2017",
+        "expectedHours": "79",
+        "expectedStartDate": "6/19/2017",
         "id": "200124",
         "localArea": {
             "id": "200077"
@@ -2126,12 +2126,12 @@
     },
     {
         "districtEquipmentType": {
-            "id": "200007"
+            "id": "200012"
         },
         "equipmentCount": "1",
-        "expectedEndDate": "6/22/2017",
-        "expectedHours": "23",
-        "expectedStartDate": "6/20/2017",
+        "expectedEndDate": "7/6/2017",
+        "expectedHours": "81",
+        "expectedStartDate": "6/26/2017",
         "id": "200125",
         "localArea": {
             "id": "200077"
@@ -2143,12 +2143,12 @@
     },
     {
         "districtEquipmentType": {
-            "id": "200007"
+            "id": "200003"
         },
         "equipmentCount": "1",
-        "expectedEndDate": "6/28/2017",
-        "expectedHours": "64",
-        "expectedStartDate": "6/20/2017",
+        "expectedEndDate": "6/17/2017",
+        "expectedHours": "7",
+        "expectedStartDate": "6/17/2017",
         "id": "200126",
         "localArea": {
             "id": "200077"
@@ -2160,12 +2160,12 @@
     },
     {
         "districtEquipmentType": {
-            "id": "200004"
+            "id": "200001"
         },
-        "equipmentCount": "5",
-        "expectedEndDate": "8/16/2017",
-        "expectedHours": "51",
-        "expectedStartDate": "7/16/2017",
+        "equipmentCount": "1",
+        "expectedEndDate": "6/11/2017",
+        "expectedHours": "7",
+        "expectedStartDate": "6/11/2017",
         "id": "200127",
         "localArea": {
             "id": "200077"
@@ -2177,12 +2177,12 @@
     },
     {
         "districtEquipmentType": {
-            "id": "200003"
+            "id": "200011"
         },
-        "equipmentCount": "1",
-        "expectedEndDate": "7/20/2017",
+        "equipmentCount": "3",
+        "expectedEndDate": "6/29/2017",
         "expectedHours": "57",
-        "expectedStartDate": "7/13/2017",
+        "expectedStartDate": "6/8/2017",
         "id": "200128",
         "localArea": {
             "id": "200077"
@@ -2194,12 +2194,12 @@
     },
     {
         "districtEquipmentType": {
-            "id": "200007"
+            "id": "200006"
         },
-        "equipmentCount": "4",
-        "expectedEndDate": "8/8/2017",
-        "expectedHours": "63",
-        "expectedStartDate": "7/8/2017",
+        "equipmentCount": "1",
+        "expectedEndDate": "7/16/2017",
+        "expectedHours": "76",
+        "expectedStartDate": "7/7/2017",
         "id": "200129",
         "localArea": {
             "id": "200077"
@@ -2211,12 +2211,12 @@
     },
     {
         "districtEquipmentType": {
-            "id": "200012"
+            "id": "200006"
         },
         "equipmentCount": "1",
-        "expectedEndDate": "8/7/2017",
-        "expectedHours": "99",
-        "expectedStartDate": "7/26/2017",
+        "expectedEndDate": "7/17/2017",
+        "expectedHours": "13",
+        "expectedStartDate": "7/16/2017",
         "id": "200130",
         "localArea": {
             "id": "200077"
@@ -2228,12 +2228,12 @@
     },
     {
         "districtEquipmentType": {
-            "id": "200007"
+            "id": "200004"
         },
         "equipmentCount": "1",
-        "expectedEndDate": "6/21/2017",
-        "expectedHours": "12",
-        "expectedStartDate": "6/20/2017",
+        "expectedEndDate": "7/8/2017",
+        "expectedHours": "72",
+        "expectedStartDate": "6/29/2017",
         "id": "200131",
         "localArea": {
             "id": "200077"
@@ -2245,12 +2245,12 @@
     },
     {
         "districtEquipmentType": {
-            "id": "200000"
+            "id": "200007"
         },
-        "equipmentCount": "1",
-        "expectedEndDate": "6/24/2017",
-        "expectedHours": "61",
-        "expectedStartDate": "6/17/2017",
+        "equipmentCount": "5",
+        "expectedEndDate": "8/18/2017",
+        "expectedHours": "28",
+        "expectedStartDate": "8/1/2017",
         "id": "200132",
         "localArea": {
             "id": "200077"
@@ -2262,12 +2262,12 @@
     },
     {
         "districtEquipmentType": {
-            "id": "200010"
+            "id": "200003"
         },
-        "equipmentCount": "5",
-        "expectedEndDate": "8/6/2017",
-        "expectedHours": "12",
-        "expectedStartDate": "7/30/2017",
+        "equipmentCount": "1",
+        "expectedEndDate": "7/26/2017",
+        "expectedHours": "98",
+        "expectedStartDate": "7/14/2017",
         "id": "200133",
         "localArea": {
             "id": "200077"
@@ -2279,12 +2279,12 @@
     },
     {
         "districtEquipmentType": {
-            "id": "200004"
+            "id": "200011"
         },
         "equipmentCount": "1",
-        "expectedEndDate": "8/11/2017",
-        "expectedHours": "96",
-        "expectedStartDate": "7/30/2017",
+        "expectedEndDate": "7/11/2017",
+        "expectedHours": "26",
+        "expectedStartDate": "7/8/2017",
         "id": "200134",
         "localArea": {
             "id": "200077"
@@ -2296,12 +2296,12 @@
     },
     {
         "districtEquipmentType": {
-            "id": "200012"
+            "id": "200008"
         },
-        "equipmentCount": "3",
-        "expectedEndDate": "7/22/2017",
-        "expectedHours": "14",
-        "expectedStartDate": "7/17/2017",
+        "equipmentCount": "1",
+        "expectedEndDate": "6/13/2017",
+        "expectedHours": "45",
+        "expectedStartDate": "6/8/2017",
         "id": "200135",
         "localArea": {
             "id": "200077"
@@ -2313,12 +2313,12 @@
     },
     {
         "districtEquipmentType": {
-            "id": "200013"
+            "id": "200002"
         },
-        "equipmentCount": "2",
-        "expectedEndDate": "7/6/2017",
-        "expectedHours": "94",
-        "expectedStartDate": "6/13/2017",
+        "equipmentCount": "1",
+        "expectedEndDate": "6/26/2017",
+        "expectedHours": "11",
+        "expectedStartDate": "6/25/2017",
         "id": "200136",
         "localArea": {
             "id": "200077"
@@ -2330,12 +2330,12 @@
     },
     {
         "districtEquipmentType": {
-            "id": "200013"
+            "id": "200000"
         },
-        "equipmentCount": "1",
-        "expectedEndDate": "7/6/2017",
-        "expectedHours": "23",
-        "expectedStartDate": "7/4/2017",
+        "equipmentCount": "4",
+        "expectedEndDate": "8/14/2017",
+        "expectedHours": "88",
+        "expectedStartDate": "7/1/2017",
         "id": "200137",
         "localArea": {
             "id": "200077"
@@ -2347,12 +2347,12 @@
     },
     {
         "districtEquipmentType": {
-            "id": "200004"
+            "id": "200008"
         },
-        "equipmentCount": "3",
-        "expectedEndDate": "7/12/2017",
-        "expectedHours": "48",
-        "expectedStartDate": "6/24/2017",
+        "equipmentCount": "1",
+        "expectedEndDate": "7/24/2017",
+        "expectedHours": "44",
+        "expectedStartDate": "7/19/2017",
         "id": "200138",
         "localArea": {
             "id": "200077"
@@ -2364,12 +2364,12 @@
     },
     {
         "districtEquipmentType": {
-            "id": "200004"
+            "id": "200012"
         },
         "equipmentCount": "1",
-        "expectedEndDate": "6/20/2017",
-        "expectedHours": "13",
-        "expectedStartDate": "6/19/2017",
+        "expectedEndDate": "6/12/2017",
+        "expectedHours": "19",
+        "expectedStartDate": "6/10/2017",
         "id": "200139",
         "localArea": {
             "id": "200077"
@@ -2381,12 +2381,12 @@
     },
     {
         "districtEquipmentType": {
-            "id": "200012"
+            "id": "200001"
         },
-        "equipmentCount": "2",
-        "expectedEndDate": "6/24/2017",
-        "expectedHours": "77",
-        "expectedStartDate": "6/5/2017",
+        "equipmentCount": "1",
+        "expectedEndDate": "7/3/2017",
+        "expectedHours": "59",
+        "expectedStartDate": "6/26/2017",
         "id": "200140",
         "localArea": {
             "id": "200077"
@@ -2398,12 +2398,12 @@
     },
     {
         "districtEquipmentType": {
-            "id": "200006"
+            "id": "200007"
         },
-        "equipmentCount": "5",
-        "expectedEndDate": "7/19/2017",
-        "expectedHours": "42",
-        "expectedStartDate": "6/23/2017",
+        "equipmentCount": "1",
+        "expectedEndDate": "6/19/2017",
+        "expectedHours": "73",
+        "expectedStartDate": "6/10/2017",
         "id": "200141",
         "localArea": {
             "id": "200077"
@@ -2415,12 +2415,12 @@
     },
     {
         "districtEquipmentType": {
-            "id": "200012"
+            "id": "200011"
         },
         "equipmentCount": "1",
-        "expectedEndDate": "6/9/2017",
-        "expectedHours": "28",
-        "expectedStartDate": "6/6/2017",
+        "expectedEndDate": "7/16/2017",
+        "expectedHours": "8",
+        "expectedStartDate": "7/15/2017",
         "id": "200142",
         "localArea": {
             "id": "200077"
@@ -2432,12 +2432,12 @@
     },
     {
         "districtEquipmentType": {
-            "id": "200005"
+            "id": "200006"
         },
         "equipmentCount": "1",
-        "expectedEndDate": "7/14/2017",
-        "expectedHours": "87",
-        "expectedStartDate": "7/4/2017",
+        "expectedEndDate": "6/8/2017",
+        "expectedHours": "5",
+        "expectedStartDate": "6/8/2017",
         "id": "200143",
         "localArea": {
             "id": "200077"
@@ -2449,12 +2449,12 @@
     },
     {
         "districtEquipmentType": {
-            "id": "200008"
+            "id": "200006"
         },
         "equipmentCount": "4",
-        "expectedEndDate": "8/4/2017",
-        "expectedHours": "25",
-        "expectedStartDate": "7/23/2017",
+        "expectedEndDate": "8/13/2017",
+        "expectedHours": "100",
+        "expectedStartDate": "6/24/2017",
         "id": "200144",
         "localArea": {
             "id": "200077"
@@ -2466,12 +2466,12 @@
     },
     {
         "districtEquipmentType": {
-            "id": "200009"
+            "id": "200012"
         },
-        "equipmentCount": "1",
-        "expectedEndDate": "7/18/2017",
-        "expectedHours": "71",
-        "expectedStartDate": "7/10/2017",
+        "equipmentCount": "3",
+        "expectedEndDate": "8/3/2017",
+        "expectedHours": "42",
+        "expectedStartDate": "7/19/2017",
         "id": "200145",
         "localArea": {
             "id": "200077"
@@ -2483,12 +2483,12 @@
     },
     {
         "districtEquipmentType": {
-            "id": "200004"
+            "id": "200012"
         },
         "equipmentCount": "1",
-        "expectedEndDate": "6/25/2017",
-        "expectedHours": "80",
-        "expectedStartDate": "6/15/2017",
+        "expectedEndDate": "6/30/2017",
+        "expectedHours": "88",
+        "expectedStartDate": "6/19/2017",
         "id": "200146",
         "localArea": {
             "id": "200077"
@@ -2502,10 +2502,10 @@
         "districtEquipmentType": {
             "id": "200004"
         },
-        "equipmentCount": "5",
-        "expectedEndDate": "8/15/2017",
-        "expectedHours": "52",
-        "expectedStartDate": "7/14/2017",
+        "equipmentCount": "1",
+        "expectedEndDate": "8/3/2017",
+        "expectedHours": "53",
+        "expectedStartDate": "7/28/2017",
         "id": "200147",
         "localArea": {
             "id": "200077"
@@ -2517,12 +2517,12 @@
     },
     {
         "districtEquipmentType": {
-            "id": "200011"
+            "id": "200012"
         },
         "equipmentCount": "1",
-        "expectedEndDate": "7/23/2017",
-        "expectedHours": "45",
-        "expectedStartDate": "7/18/2017",
+        "expectedEndDate": "8/4/2017",
+        "expectedHours": "58",
+        "expectedStartDate": "7/28/2017",
         "id": "200148",
         "localArea": {
             "id": "200077"
@@ -2534,12 +2534,12 @@
     },
     {
         "districtEquipmentType": {
-            "id": "200006"
+            "id": "200011"
         },
         "equipmentCount": "1",
-        "expectedEndDate": "7/21/2017",
-        "expectedHours": "21",
-        "expectedStartDate": "7/19/2017",
+        "expectedEndDate": "8/10/2017",
+        "expectedHours": "81",
+        "expectedStartDate": "7/31/2017",
         "id": "200149",
         "localArea": {
             "id": "200077"
@@ -2551,12 +2551,12 @@
     },
     {
         "districtEquipmentType": {
-            "id": "200007"
+            "id": "200002"
         },
-        "equipmentCount": "3",
-        "expectedEndDate": "6/26/2017",
-        "expectedHours": "34",
-        "expectedStartDate": "6/14/2017",
+        "equipmentCount": "1",
+        "expectedEndDate": "7/26/2017",
+        "expectedHours": "88",
+        "expectedStartDate": "7/15/2017",
         "id": "200150",
         "localArea": {
             "id": "200077"
@@ -2568,12 +2568,12 @@
     },
     {
         "districtEquipmentType": {
-            "id": "200005"
+            "id": "200008"
         },
-        "equipmentCount": "1",
-        "expectedEndDate": "7/14/2017",
-        "expectedHours": "97",
-        "expectedStartDate": "7/2/2017",
+        "equipmentCount": "4",
+        "expectedEndDate": "8/10/2017",
+        "expectedHours": "91",
+        "expectedStartDate": "6/26/2017",
         "id": "200151",
         "localArea": {
             "id": "200077"
@@ -2585,12 +2585,12 @@
     },
     {
         "districtEquipmentType": {
-            "id": "200008"
+            "id": "200002"
         },
         "equipmentCount": "1",
-        "expectedEndDate": "6/13/2017",
-        "expectedHours": "31",
-        "expectedStartDate": "6/10/2017",
+        "expectedEndDate": "6/11/2017",
+        "expectedHours": "5",
+        "expectedStartDate": "6/11/2017",
         "id": "200152",
         "localArea": {
             "id": "200077"
@@ -2602,12 +2602,12 @@
     },
     {
         "districtEquipmentType": {
-            "id": "200003"
+            "id": "200009"
         },
-        "equipmentCount": "1",
-        "expectedEndDate": "6/13/2017",
-        "expectedHours": "20",
-        "expectedStartDate": "6/11/2017",
+        "equipmentCount": "5",
+        "expectedEndDate": "8/20/2017",
+        "expectedHours": "38",
+        "expectedStartDate": "7/28/2017",
         "id": "200153",
         "localArea": {
             "id": "200077"
