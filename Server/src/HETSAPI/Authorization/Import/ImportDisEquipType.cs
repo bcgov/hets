@@ -92,7 +92,10 @@ namespace HETSAPI.Import
                         {
                             Models.DistrictEquipmentType instance = null;
                             serviceAreaName = CopyToInstance(performContext, dbContext, item, ref instance, systemId, equip_Rental_rate_No, description);
-                            AddingDistrictEquipmentTypeInstance(dbContext, item, instance, equip_Rental_rate_No, description, serviceAreaName, true);
+                            if (serviceAreaName != "ERROR")
+                            {
+                                AddingDistrictEquipmentTypeInstance(dbContext, item, instance, equip_Rental_rate_No, description, serviceAreaName, true);
+                            }
                         }
                     }
                     else // update
@@ -101,18 +104,24 @@ namespace HETSAPI.Import
                         if (instance == null) // record was deleted
                         {
                             serviceAreaName = CopyToInstance(performContext, dbContext, item, ref instance, systemId, equip_Rental_rate_No, description);
-                            AddingDistrictEquipmentTypeInstance(dbContext, item, instance, equip_Rental_rate_No, description, serviceAreaName, false);
-                            // update the import map.
-                            importMap.NewKey = instance.Id;
-                            dbContext.ImportMaps.Update(importMap);
+                            if (serviceAreaName != "ERROR")
+                            {
+                                AddingDistrictEquipmentTypeInstance(dbContext, item, instance, equip_Rental_rate_No, description, serviceAreaName, false);
+                                // update the import map.
+                                importMap.NewKey = instance.Id;
+                                dbContext.ImportMaps.Update(importMap);
+                            }
                         }
                         else // ordinary update.
                         {
                             serviceAreaName = CopyToInstance(performContext, dbContext, item, ref instance, systemId, equip_Rental_rate_No, description);
-                            AddingDistrictEquipmentTypeInstance(dbContext, item, instance, equip_Rental_rate_No, description, serviceAreaName, false);
-                            // touch the import map.
-                            importMap.LastUpdateTimestamp = DateTime.UtcNow;
-                            dbContext.ImportMaps.Update(importMap);
+                            if (serviceAreaName != "ERROR")
+                            {
+                                AddingDistrictEquipmentTypeInstance(dbContext, item, instance, equip_Rental_rate_No, description, serviceAreaName, false);
+                                // touch the import map.
+                                importMap.LastUpdateTimestamp = DateTime.UtcNow;
+                                dbContext.ImportMaps.Update(importMap);
+                            }
                         }
                     }
                     if (++ii % 250 == 0)        // Save change to database once a while to avoid frequent writing to the database.
@@ -150,6 +159,7 @@ namespace HETSAPI.Import
         /// <summary>
         /// /// <summary>
         /// Copy xml item to instance (table entries)
+        /// Output is ServiceArea name
         /// </summary>
         /// <param name="performContext"></param>
         /// <param name="dbContext"></param>
@@ -195,8 +205,15 @@ namespace HETSAPI.Import
 
                     int districtId = serviceArea.DistrictId ?? 0;
                     District dis = dbContext.Districts.FirstOrDefault(x => x.RegionId == districtId);
-                    instance.DistrictId = districtId;
-                    instance.District = dis;
+                    if (dis != null)
+                    {
+                        instance.DistrictId = districtId;
+                        instance.District = dis;
+                    }
+                    else    // This means that the District Id is not in the database.  
+                    {       //This happens when the production data does not include district Other than "Lower Mainland" or all the districts                   
+                        return "ERROR";
+                    }
                 }
 
                 //    instance.EquipmentType = 

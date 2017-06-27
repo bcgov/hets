@@ -125,6 +125,10 @@ namespace HETSAPI.Import
             serviceArea.AreaNumber = oldObject.Service_Area_Cd;
 
             District district = dbContext.Districts.FirstOrDefault(x => x.MinistryDistrictID == oldObject.District_Area_Id);
+            if (district == null)   // This means that the District  is not in the database.  
+            {                       // This happens when the production data does not include district Other than "Lower Mainland" or all the districts
+                return;
+            }
             serviceArea.District = district;
 
             try

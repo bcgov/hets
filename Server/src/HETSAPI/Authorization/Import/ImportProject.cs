@@ -144,8 +144,15 @@ namespace HETSAPI.Import
                         instance.ProvincialProjectNumber = oldObject.Project_Num;
                         ServiceArea serviceArea = dbContext.ServiceAreas.FirstOrDefault(x => x.Id == oldObject.Service_Area_Id);
                         District dis = dbContext.Districts.FirstOrDefault(x => x.Id == serviceArea.DistrictId);
-                        instance.District = dis;
-                        instance.DistrictId = dis.Id;
+                        if (dis != null)   
+                        {
+                            instance.District = dis;
+                            instance.DistrictId = dis.Id;
+                        }
+                        else   // This means that the District Id is not in the database.  
+                        {      //This happens when the production data does not include district Other than "Lower Mainland" or all the districts                 
+                            return;
+                        }
                     }
                     catch (Exception e)
                     {
