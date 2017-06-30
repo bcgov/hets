@@ -223,6 +223,34 @@ namespace HETSAPI.Import
             }
         }
 
+        /// <summary>
+        ///  Add a special system user with smUserId as systemId if not in the database 
+        /// </summary>
+        /// <param name="dbContext"></param>
+        /// <param name="systemId"></param>
+        static public void InsertSystemUser(DbAppContext dbContext, string systemId)
+        {
+            try
+            {
+                Models.User sysUser = dbContext.Users.FirstOrDefault(x => x.SmUserId == systemId);
+                if (sysUser == null)
+                    sysUser = new User();
+                sysUser.SmUserId = systemId;
+                sysUser.Surname = @"simon.di@gov.bc.ca";
+                sysUser.Surname = "System";
+                sysUser.GivenName = "HETS";
+                sysUser.Active = true;
+                sysUser.CreateTimestamp = DateTime.UtcNow;
+                dbContext.Users.Add(sysUser);
+                int iResult = dbContext.SaveChangesForImport();
+            }          
+            catch (Exception e)
+            {
+                string iStr = e.ToString();
+            }
+            return;
+        }
+
 
         /// <summary>
         /// Convert Authority to userRole id

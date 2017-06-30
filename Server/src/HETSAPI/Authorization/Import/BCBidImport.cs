@@ -24,29 +24,6 @@ namespace HETSAPI.Import
         public static string todayDate = DateTime.Now.ToString("yyyy-MM-dd");
         public static int sigId =  388888;
 
-        static private void InsertSystemUser(DbAppContext dbContext)
-        {
-            Models.User sysUser = dbContext.Users.FirstOrDefault(x => x.SmUserId == systemId);
-            if (sysUser == null)
-                sysUser = new User();
-            sysUser.SmUserId = systemId;
-            sysUser.Surname = @"simon.di@gov.bc.ca";
-            sysUser.Surname = "System";
-            sysUser.GivenName = "HETS";
-            sysUser.Active = true;
-            sysUser.CreateTimestamp = DateTime.UtcNow;
-            dbContext.Users.Add(sysUser);
-            try
-            {
-                int iResult = dbContext.SaveChangesForImport();
-            }
-            catch (Exception e)
-            {
-                string iStr = e.ToString();
-            }
-            return;
-        }
-
         /// <summary>
         /// Hangfire job to do the Annual Rollover tasks.
         /// </summary>
@@ -62,7 +39,7 @@ namespace HETSAPI.Import
             context.WriteLine("Starting Data Import Job");
 
             //Adding system Account if not there in the database.
-            InsertSystemUser(dbContext);
+            ImportUtility.InsertSystemUser(dbContext, systemId);
 
             //*** start by importing Region from Region.xml. THis goes to table HETS_REGION
             // ImportRegion.Import(context, dbContext, fileLocation, systemId);
