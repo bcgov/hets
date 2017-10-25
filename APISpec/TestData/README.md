@@ -91,7 +91,7 @@ Note that the seeder files are ONLY loaded when the database is empty. Updating 
 
 For the instance of the application to be reloaded with new test data:
 
-1. Turn off the server - scale the replicas to 0
+1. Turn off the server - scale the deployment configuration replicas to 0
 2. Log in to the Postgres container, drop the database, recreate it and grant rights to the new database.
 3. Restart the server - scale the replicas to 1. This creates the database and then loads the seeder data needed to run the system.
 4. Load the test data by executing the script - load-all.bat
@@ -103,14 +103,11 @@ The following assumes you know OpenShift, have a command line open, have logged 
 
 NOTE: It's a little tricky to create a foolproof script for this. If you are lazy, you can create some shortcuts if you need to do this multiple times over a short period.
 
-1. Get the ID of the active replication controller (RC, rc) for the active `server` and `pdf` pods.
-  1. Run the command `oc get rc` to get a list of RCs.
-  2. Find the "server" and "pdf" RCs that have active containers (non-zero) - record those rc names (eg. server-141, pdf-14)
-2. Get the name of the active postgres pod
+1. Get the name of the active postgres pod
   1. Run the command `oc get pods` and get the name of the postgres pod (e.g. postgresql-2-k0fql)
-3. Scale down the server pod to 0:
-   1. Run the command `oc scale --replicas=0 rc server-141 pdf-14`
-4. Reset the database:
+2. Scale down the server and pdf pods to 0 to remove connection to the database:
+   1. Run the command `oc scale --replicas=0 dc server pdf`
+3. Reset the database:
    1. Log into the postgres container: `oc rsh postgresql-2-k0fql`
    2. Run the command `psql -c "\du;"` to get a list of database users.
    3. Prepare (in a text editor), copy and then paste the following into the shell
@@ -119,11 +116,11 @@ NOTE: It's a little tricky to create a foolproof script for this. If you are laz
       1. Replace the references to database users with those listed from running the commands. E.g. "user6DA" is replaced with the name of the database user known to the server, while the rest are individuals (such as from the MOTI Data Architecture group) that have read-only access to the database.
       2. The pasted string is series of Linux commands that execute the necessary sequence of database actions.
       2. Depending on the terminal you are using, the paste will not include a final "<CR>" and when you hit enter, the executions will occur.
-      3. The feedback will be the results of the commands e.g. "Drop", "CREATE" and 1 or more "GRANT" lines.
-5. Scale up the server pod to 1:
-   1. Run the command `oc scale --replicas=1 rc server-141 pdf-14`
+      3. The feedback will be the results of the commands e.g. "DROP", "CREATE" and 1 or more "GRANT" lines.
+4. Scale up the server pod to 1:
+   1. Run the command `oc scale --replicas=1 dc server pdf`
    2. Monitor the log of the new container until initialization is complete. It takes a little while as the database model is created and the seeder data is loaded. Watch for the following in the log: `Application started. Press Ctrl+C to shut down.`
-6. As necessary, scale up the server pod further - likely to 2.
+5. As necessary, scale up the server pod further - likely to 2.
 
 *NOTE*: You can perform all steps entirely within the OpenShift Console, including going into the Postgres container and clicking "Terminal" to execute the database commands.
 
