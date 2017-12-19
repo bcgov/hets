@@ -154,7 +154,7 @@ var Projects = React.createClass({
   },
 
   print() {
-
+    window.print();
   },
 
   render() {
@@ -167,9 +167,7 @@ var Projects = React.createClass({
           <Unimplemented>
             <Button onClick={ this.email }><Glyphicon glyph="envelope" title="E-mail" /></Button>
           </Unimplemented>
-          <Unimplemented>
-            <Button onClick={ this.print }><Glyphicon glyph="print" title="Print" /></Button>
-          </Unimplemented>
+          <Button onClick={ this.print }><Glyphicon glyph="print" title="Print" /></Button>
         </ButtonGroup>
       </PageHeader>
       <Well id="projects-bar" bsSize="small" className="clearfix">
