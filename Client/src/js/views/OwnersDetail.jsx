@@ -15,6 +15,7 @@ import DocumentsListDialog from './dialogs/DocumentsListDialog.jsx';
 import EquipmentAddDialog from './dialogs/EquipmentAddDialog.jsx';
 import OwnersEditDialog from './dialogs/OwnersEditDialog.jsx';
 import OwnersPolicyEditDialog from './dialogs/OwnersPolicyEditDialog.jsx';
+import NotesDialog from './dialogs/NotesDialog.jsx';
 
 import * as Action from '../actionTypes';
 import * as Api from '../api';
@@ -63,6 +64,7 @@ var OwnersDetail = React.createClass({
       showPolicyDocumentsDialog: false,
       showEquipmentDialog: false,
       showDocumentsDialog: false,
+      showNotesDialog: false,
 
       contact: {},
 
@@ -308,13 +310,25 @@ var OwnersDetail = React.createClass({
     // TODO Upload policy document (proof of policy coverage)
   },
 
+  openNotesDialog() {
+    this.setState({ showNotesDialog: true });
+  },
+
+  closeNotesDialog() {
+    this.setState({ showNotesDialog: false });
+  },
+
+  saveNote() {
+    console.log('save note');
+  },
+
   print() {
 
   },
 
   render() {
     var owner = this.props.owner;
-
+    
     return <div id="owners-detail">
       <div>
         {(() => {
@@ -325,7 +339,7 @@ var OwnersDetail = React.createClass({
               <Label bsStyle={ owner.isApproved ? 'success' : 'danger'}>{ owner.status }</Label>
               <Label className={ owner.isMaintenanceContractor ? '' : 'hide' }>Maintenance Contractor</Label>
               <Unimplemented>
-                <Button title="Notes" onClick={ this.showNotes }>Notes ({ owner.notes.length })</Button>
+                <Button title="Notes" onClick={ this.openNotesDialog }>Notes ({ owner.notes.length })</Button>
               </Unimplemented>
               <Button title="Documents" onClick={ this.showDocuments }>Documents ({ Object.keys(this.props.documents).length })</Button>
             </Col>
@@ -526,6 +540,7 @@ var OwnersDetail = React.createClass({
       { this.state.showDocumentsDialog &&
         <DocumentsListDialog show={ this.state.showDocumentsDialog } parent={ owner } onClose={ this.closeDocumentsDialog } />
       }
+      <NotesDialog show={ this.state.showNotesDialog } onSave={ this.saveNote } onClose={ this.closeNotesDialog } />
 
 
       { /* TODO this.state.showPolicyDocumentsDialog && <OwnerPolicyDocumentsDialog /> */}

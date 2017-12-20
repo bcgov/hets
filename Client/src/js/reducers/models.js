@@ -200,6 +200,10 @@ export default function modelsReducer(state = DEFAULT_MODELS, action) {
       // History
     case Action.UPDATE_HISTORY:
       return { ...state, history: action.history };
+
+    // Notes
+    case Action.UPDATE_NOTES:
+      return { ...state, notes: action.notes };
   }
 
   return state;

@@ -116,3 +116,7 @@ export const UPDATE_VERSION = 'UPDATE_VERSION';
 
 // History
 export const UPDATE_HISTORY = 'UPDATE_HISTORY';
+
+// Notes
+export const UPDATE_NOTES = 'UPDATE_NOTES';
+export const ADD_NOTE = 'ADD_NOTE';

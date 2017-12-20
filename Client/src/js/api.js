@@ -1424,3 +1424,17 @@ export function getVersion() {
     store.dispatch({ type: Action.UPDATE_VERSION, version: response });
   });
 }
+
+
+////////////////////
+// Notes
+////////////////////
+
+// Need to change getNotes to get notes by individual entity. Currently gets all notes in the system
+export function getNotes() {
+  return new ApiRequest('/notes').get().then(response => {
+    var notes = normalize(response);
+    
+    store.dispatch({ type: Action.UPDATE_NOTES, notes: notes });
+  });
+}
