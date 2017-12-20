@@ -1,0 +1,24 @@
+@media print {
+  #rental-requests-bar, 
+  #equipment-bar, 
+  #owners-bar, 
+  #projects-bar,
+  #users-bar,
+  #roles-bar, 
+  .history,
+  .request-information,
+  .btn-group, 
+  .btn,
+  .checkbox,
+  .checkbox-control {
+     display: none;
+   }
+  
+  .template {
+    margin: 0 50px;
+  }
+
+  .col-md-6 {
+    float: initial;
+  }  
+}

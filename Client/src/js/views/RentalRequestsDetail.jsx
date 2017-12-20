@@ -168,7 +168,7 @@ var RentalRequestsDetail = React.createClass({
   },
 
   print() {
-
+    window.print();
   },
 
   addRequest() {
@@ -215,7 +215,7 @@ var RentalRequestsDetail = React.createClass({
         </Grid>;
       })()}
 
-      <Well>
+      <Well className="request-information">
         <h3>Request Information <span className="pull-right">
           <Button title="Edit Rental Request" bsSize="small" onClick={ this.openEditDialog }><Glyphicon glyph="pencil" /></Button>
         </span></h3>
@@ -253,9 +253,7 @@ var RentalRequestsDetail = React.createClass({
 
       <Well>
         <h3>Request Status <span className="pull-right">
-          <Unimplemented>
-            <Button onClick={ this.print }><Glyphicon glyph="print" title="Print" /></Button>
-          </Unimplemented>
+          <Button onClick={ this.print }><Glyphicon glyph="print" title="Print" /></Button>
           <CheckboxControl id="showHiredEquipment" inline checked={ this.state.showHiredEquipment } updateState={ this.updateState }><small>Show Hired</small></CheckboxControl>
         </span></h3>
         {(() => {
@@ -320,7 +318,7 @@ var RentalRequestsDetail = React.createClass({
         })()}
       </Well>
 
-      <Well>
+      <Well className="history">
         <h3>History <span className="pull-right">
           <Unimplemented>
             <Button title="Add note" bsSize="small" onClick={ this.addNote }><Glyphicon glyph="plus" /> Add Note</Button>

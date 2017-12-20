@@ -99,7 +99,7 @@ var EquipmentDetail = React.createClass({
   },
 
   print() {
-    // TODO Implement
+    window.print();
   },
 
   addNote() {
@@ -210,9 +210,7 @@ var EquipmentDetail = React.createClass({
                   <MenuItem key={ EQUIPMENT_ACTION_FOR_HIRE } eventKey={ EQUIPMENT_ACTION_FOR_HIRE }>{ EQUIPMENT_ACTION_FOR_HIRE }</MenuItem>
                 </DropdownButton>
               </Unimplemented>
-              <Unimplemented>
-                <Button onClick={ this.print }><Glyphicon glyph="print" title="Print" /></Button>
-              </Unimplemented>
+              <Button onClick={ this.print }><Glyphicon glyph="print" title="Print" /></Button>
               <LinkContainer to={{ pathname: this.state.returnUrl }}>
                 <Button title="Return to List"><Glyphicon glyph="arrow-left" /> Return to List</Button>
               </LinkContainer>
