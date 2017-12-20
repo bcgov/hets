@@ -538,6 +538,7 @@ function mapStateToProps(state) {
   return {
     owner: state.models.owner,
     equipment: state.models.equipment,
+    equipmentAttachments: state.models.equipmentAttachments,
     contact: state.models.contact,
     documents: state.models.documents,
     uiContacts: state.ui.ownerContacts,

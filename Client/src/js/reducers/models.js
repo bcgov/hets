@@ -118,6 +118,19 @@ export default function modelsReducer(state = DEFAULT_MODELS, action) {
     case Action.UPDATE_EQUIPMENT:
       return { ...state, equipment: action.equipment };
 
+    // Equipment Attachments
+    case Action.UPDATE_EQUIPMENT_ATTACHMENTS:
+      return { ...state, equipmentPhysicalAttachments: action.physicalAttachments };
+
+    case Action.ADD_EQUIPMENT_ATTACHMENT:
+      return { ...state, equipmentPhysicalAttachment: action.physicalAttachment };
+
+    case Action.UPDATE_EQUIPMENT_ATTACHMENT:
+      return { ...state, equipmentPhysicalAttachment: action.physicalAttachment };
+
+    case Action.DELETE_EQUIPMENT_ATTACHMENT:
+      return { ...state, equipmentPhysicalAttachment: action.physicalAttachment };
+
     // Owners
     case Action.UPDATE_OWNERS:
       return { ...state, owners: action.owners };
