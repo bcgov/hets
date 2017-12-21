@@ -7,11 +7,8 @@
  * 
  * 
  */
-
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Storage;
-using Npgsql;
-using Npgsql.EntityFrameworkCore.PostgreSQL;
 using System.Collections.Generic;
 using System;
 using Microsoft.AspNetCore.Http;

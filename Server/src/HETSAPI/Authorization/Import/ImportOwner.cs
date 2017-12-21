@@ -1,18 +1,14 @@
-﻿using Hangfire.Console;
-using Hangfire.Server;
-using HETSAPI.Models;
-using Microsoft.EntityFrameworkCore;
-using Newtonsoft.Json;
+﻿using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Text;
-using System.Threading;
-using System.Xml;
 using System.Xml.Serialization;
-using Microsoft.Extensions.Configuration;
-using System.Text.RegularExpressions;
+
+using Hangfire.Console;
+using Hangfire.Server;
+
+using HETSAPI.Models;
 
 namespace HETSAPI.Import
 {
@@ -21,8 +17,6 @@ namespace HETSAPI.Import
         public static string oldTable = "Owner";
         public static string newTable = "HET_OWNER";
         public static string xmlFileName = "Owner.xml";
-        // public static string jsonOwnerFileName = @"C:\temp\Import\Owners\Owner.json";
-        // public static string jsonContactFileName = @"C:\temp\Import\Owners\Contact.json";
         public static string oldTable_Progress = oldTable + "_Progress";
 
         /// <summary>

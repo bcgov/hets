@@ -1,8 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore.Storage;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+﻿using System;
+using Microsoft.EntityFrameworkCore.Storage;
 
 namespace HETSAPI
 {
@@ -20,6 +17,8 @@ namespace HETSAPI
         }
 
         internal bool _existingTransaction { get; set; }
+
+        public Guid TransactionId { get; set; }
 
         /// <summary>
         /// Commits all changes made to the database in the current transaction.

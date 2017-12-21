@@ -7,12 +7,8 @@
  * 
  * 
  */
-
 using System;
-using System.Collections.Generic;
 using System.IO;
-using System.Linq;
-using System.Threading.Tasks;
 using System.Xml.XPath;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -23,18 +19,18 @@ using Newtonsoft.Json.Serialization;
 using Swashbuckle.Swagger.Model;
 using Swashbuckle.SwaggerGen.Annotations;
 using Microsoft.EntityFrameworkCore;
-using HETSAPI.Models;
-using System.Text;
-using HETSAPI.Authorization;
-using HETSAPI.Authentication;
 using Microsoft.AspNetCore.Http.Features;
 using Microsoft.AspNetCore.Http;
+using System.Text;
+using System.Reflection;
+
 using Hangfire.PostgreSql;
 using Hangfire;
 using Hangfire.Console;
-using System.Reflection;
-using System.Runtime.Loader;
-using HETSAPI.Import;
+
+using HETSAPI.Models;
+using HETSAPI.Authorization;
+using HETSAPI.Authentication;
 
 namespace HETSAPI
 {
@@ -43,13 +39,22 @@ namespace HETSAPI
     /// </summary>
     public class Startup
     {
+        private const string HANGFIRE_URL = @"/hangfire";
+
         private readonly IHostingEnvironment _hostingEnv;
 
+        /// <summary>
+        /// HETS Configuration
+        /// </summary>
         public IConfigurationRoot Configuration { get; }
 
+        /// <summary>
+        /// Startup HETS Backend Services
+        /// </summary>
+        /// <param name="env"></param>
         public Startup(IHostingEnvironment env)
         {
-            _hostingEnv = env;
+            _hostingEnv = env;            
 
             var builder = new ConfigurationBuilder()
                 .SetBasePath(env.ContentRootPath)
@@ -60,19 +65,35 @@ namespace HETSAPI
             Configuration = builder.Build();
         }
 
-        // This method gets called by the runtime. Use this method to add services to the container.
+        /// <summary>
+        /// Add services to the container
+        /// </summary>
+        /// <param name="services"></param>
         public void ConfigureServices(IServiceCollection services)
         {
             string connectionString = GetConnectionString();
 
+            // add database context
+            services.AddDbContext<DbAppContext>(options => options.UseNpgsql(connectionString));
+
+            // setup siteminder authentication (core 2.0)
+            services.AddAuthentication(options =>
+            {
+                options.DefaultAuthenticateScheme = SiteMinderAuthOptions.AuthenticationSchemeName;
+                options.DefaultChallengeScheme = SiteMinderAuthOptions.AuthenticationSchemeName;
+            }).AddSiteminderAuth(options =>
+            {
+                options.Env = _hostingEnv;
+                options.ConnectionString = connectionString;
+            });
+
+            // setup authorization
             services.AddAuthorization();
             services.RegisterPermissionHandler();
+
             services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
             services.AddSingleton<IDbAppContextFactory, DbAppContextFactory>(CreateDbAppContextFactory);
-            services.AddSingleton<IConfiguration>(Configuration);
-
-            // Add database context
-            services.AddDbContext<DbAppContext>(options => options.UseNpgsql(connectionString));
+            services.AddSingleton<IConfiguration>(Configuration);            
 
             // allow for large files to be uploaded
             services.Configure<FormOptions>(options =>
@@ -90,6 +111,7 @@ namespace HETSAPI
                         opts.SerializerSettings.Formatting = Newtonsoft.Json.Formatting.Indented;
                         opts.SerializerSettings.DateFormatHandling = Newtonsoft.Json.DateFormatHandling.IsoDateFormat;
                         opts.SerializerSettings.DateTimeZoneHandling = Newtonsoft.Json.DateTimeZoneHandling.Utc;
+                        
                         // ReferenceLoopHandling is set to Ignore to prevent JSON parser issues with the user / roles model.
                         opts.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore;
                     });
@@ -98,6 +120,7 @@ namespace HETSAPI
             PostgreSqlStorageOptions postgreSqlStorageOptions = new PostgreSqlStorageOptions {
                 SchemaName = "public"
             }; 
+
             PostgreSqlStorage storage = new PostgreSqlStorage(connectionString, postgreSqlStorageOptions);
             services.AddHangfire(config => 
             {
@@ -105,7 +128,7 @@ namespace HETSAPI
                 config.UseConsole();
             });
 
-            // Configure Swagger
+            // configure Swagger
             services.AddSwaggerGen();            
             services.ConfigureSwaggerGen(options =>
             {
@@ -124,23 +147,30 @@ namespace HETSAPI
             });
 
             // Add application services.
-            services.RegisterApplicationServices();
+            services.RegisterApplicationServices();            
         }
 
-        // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
+        /// <summary>
+        /// Configure the HTTP request pipeline
+        /// </summary>
+        /// <param name="app"></param>
+        /// <param name="env"></param>
+        /// <param name="loggerFactory"></param>
         public void Configure(IApplicationBuilder app, IHostingEnvironment env, ILoggerFactory loggerFactory)
         {
             loggerFactory.AddConsole(Configuration.GetSection("Logging"));
             loggerFactory.AddDebug();
 
             TryMigrateDatabase(app, loggerFactory);
-            app.UseAuthentication(env);
+            app.UseAuthentication();
 
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
             }
+
             bool startHangfire = true;
+
 #if DEBUG
             // do not start Hangfire if we are running tests.        
             foreach (var assem in Assembly.GetEntryAssembly().GetReferencedAssemblies())
@@ -159,18 +189,20 @@ namespace HETSAPI
                 app.UseHangfireServer();
 
                 // disable the back to site link
-                DashboardOptions dashboardOptions = new DashboardOptions();
-                dashboardOptions.AppPath = null;
+                DashboardOptions dashboardOptions = new DashboardOptions()
+                {
+                    AppPath = null
+                };
 
-                app.UseHangfireDashboard("/hangfire", dashboardOptions); // this enables the /hangfire action
-
+                // enable the /hangfire action
+                app.UseHangfireDashboard(HANGFIRE_URL, dashboardOptions);
             }
-
 
             app.UseResponseCompression();
             app.UseMvc();
             app.UseDefaultFiles();
             app.UseStaticFiles();
+
             app.UseSwagger();
             app.UseSwaggerUi();
 
@@ -183,7 +215,6 @@ namespace HETSAPI
                 if (!string.IsNullOrEmpty(Configuration["ENABLE_ANNUAL_ROLLOVER"]))
                 {
                     CreateHangfireAnnualRolloverJob(loggerFactory);
-
                 }
             }                       
         }
@@ -265,9 +296,7 @@ namespace HETSAPI
             options.UseNpgsql(GetConnectionString());
             DbAppContextFactory dbAppContextFactory = new DbAppContextFactory(null, options.Options);
             return dbAppContextFactory;
-        }
-
-        
+        }       
 
         private void CreateHangfireAnnualRolloverJob(ILoggerFactory loggerFactory)
         {
@@ -275,9 +304,6 @@ namespace HETSAPI
             ILogger log = loggerFactory.CreateLogger(typeof(Startup));
 
             // first check to see if Hangfire already has the job.
-
-
-
             log.LogInformation("Attempting setup of Hangfire Annual rollover job ...");
             
             try
@@ -295,10 +321,7 @@ namespace HETSAPI
                 msg.AppendLine("Failed to setup Hangfire job.");
 
                 log.LogCritical(new EventId(-1, "Hangfire job setup failed"), e, msg.ToString());
-            }
-            
+            }            
         }
-    }
-
-    
+    }    
 }
