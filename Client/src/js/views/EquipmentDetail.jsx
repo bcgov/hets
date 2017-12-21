@@ -7,11 +7,13 @@ import { Alert, Button, ButtonGroup, Glyphicon, Label, DropdownButton, MenuItem,
 import { LinkContainer } from 'react-router-bootstrap';
 
 import _ from 'lodash';
+import Promise from 'bluebird';
 
 import EquipmentEditDialog from './dialogs/EquipmentEditDialog.jsx';
 import SeniorityEditDialog from './dialogs/SeniorityEditDialog.jsx';
 import AttachmentAddDialog from './dialogs/AttachmentAddDialog.jsx';
 import AttachmentEditDialog from './dialogs/AttachmentEditDialog.jsx';
+import DocumentsListDialog from './dialogs/DocumentsListDialog.jsx';
 
 import * as Action from '../actionTypes';
 import * as Api from '../api';
@@ -47,6 +49,7 @@ var EquipmentDetail = React.createClass({
     equipmentSeniorityHistory: React.PropTypes.object,
     notes: React.PropTypes.object,
     attachments: React.PropTypes.object,
+    documents: React.PropTypes.object,
     history: React.PropTypes.object,
     params: React.PropTypes.object,
     ui: React.PropTypes.object,
@@ -62,6 +65,7 @@ var EquipmentDetail = React.createClass({
       loadingSeniorityData: false,
       loadingEquipmentHistory: false,
       showEditDialog: false,
+      showDocumentsDialog: false,
       showSeniorityDialog: false,
       showPhysicalAttachmentDialog: false,
       showPhysicalAttachmentEditDialog: false,
@@ -86,11 +90,13 @@ var EquipmentDetail = React.createClass({
 
   fetch() {
     this.setState({ loadingEquipment: true });
-    var equipId = this.props.params.equipmentId;
+    var getEquipmentPromise = Api.getEquipment(this.props.params.equipmentId);
+    var documentsPromise = Api.getEquipmentDocuments(this.props.params.equipmentId);
     // Make several calls here
     // TODO Load equipment history, notes and attachments (docs)
     // TODO Load equipment seniority history
-    Api.getEquipment(equipId).finally(() => {
+
+    return Promise.all([getEquipmentPromise, documentsPromise]).finally(() => {
       this.setState({ loadingEquipment: false });
     });
   },
@@ -99,6 +105,11 @@ var EquipmentDetail = React.createClass({
   },
 
   showDocuments() {
+    this.setState({ showDocumentsDialog: true });
+  },
+
+  closeDocumentsDialog() {
+    this.setState({ showDocumentsDialog: false });
   },
 
   showHistory() {
@@ -225,9 +236,7 @@ var EquipmentDetail = React.createClass({
             <Unimplemented>
               <Button title="Notes" onClick={ this.showNotes }>Notes ({ Object.keys(this.props.notes).length })</Button>
             </Unimplemented>
-            <Unimplemented>
-              <Button title="Documents" onClick={ this.showDocuments }>Docs ({ Object.keys(this.props.attachments).length })</Button>
-            </Unimplemented>
+            <Button title="Documents" onClick={ this.showDocuments }>Documents ({ Object.keys(this.props.documents).length })</Button>
           </Col>
           <Col md={4}>
             <div className="pull-right">
@@ -497,6 +506,13 @@ var EquipmentDetail = React.createClass({
         equipment={ equipment } 
         attachment={ this.state.equipmentPhysicalAttachment }
       />
+      { this.state.showDocumentsDialog &&
+        <DocumentsListDialog 
+          show={ this.props.equipment && this.state.showDocumentsDialog }  
+          parent={ this.props.equipment }
+          onClose={ this.closeDocumentsDialog } 
+        />
+      }
     </div>;
   },
 });
@@ -509,6 +525,7 @@ function mapStateToProps(state) {
     equipmentSeniorityHistory: state.models.equipmentSeniorityHistory,
     notes: state.models.equipmentNotes,
     attachments: state.models.equipmentAttachments,
+    documents: state.models.documents,
     history: state.models.equipmentHistory,
     ui: state.ui.equipmentPhysicalAttachments,
   };

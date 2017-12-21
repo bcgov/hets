@@ -8,9 +8,11 @@ import { Link } from 'react-router';
 import { LinkContainer } from 'react-router-bootstrap';
 
 import _ from 'lodash';
+import Promise from 'bluebird';
 
 import HireOfferEditDialog from './dialogs/HireOfferEditDialog.jsx';
 import RentalRequestsEditDialog from './dialogs/RentalRequestsEditDialog.jsx';
+import DocumentsListDialog from './dialogs/DocumentsListDialog.jsx';
 
 import * as Action from '../actionTypes';
 import * as Api from '../api';
@@ -39,6 +41,7 @@ var RentalRequestsDetail = React.createClass({
     rentalAgreement: React.PropTypes.object,
     notes: React.PropTypes.object,
     attachments: React.PropTypes.object,
+    documents: React.PropTypes.object,
     history: React.PropTypes.object,
     params: React.PropTypes.object,
     ui: React.PropTypes.object,
@@ -69,7 +72,11 @@ var RentalRequestsDetail = React.createClass({
 
   fetch() {
     this.setState({ loading: true });
-    Api.getRentalRequest(this.props.params.rentalRequestId).finally(() => {
+
+    var rentalRequestsPromise = Api.getRentalRequest(this.props.params.rentalRequestId);
+    var documentsPromise = Api.getRentalRequestDocuments(this.props.params.rentalRequestId);
+
+    return Promise.all([rentalRequestsPromise, documentsPromise]).finally(() => {
       this.setState({ loading: false });
     });
   },
@@ -90,7 +97,11 @@ var RentalRequestsDetail = React.createClass({
   },
 
   showDocuments() {
+    this.setState({ showDocumentsDialog: true });
+  },
 
+  closeDocumentsDialog() {
+    this.setState({ showDocumentsDialog: false });
   },
 
   addNote() {
@@ -192,9 +203,7 @@ var RentalRequestsDetail = React.createClass({
           <Unimplemented>
             <Button title="Notes" onClick={ this.showNotes }>Notes ({ Object.keys(this.props.notes).length })</Button>
           </Unimplemented>
-          <Unimplemented>
-            <Button title="Documents" onClick={ this.showDocuments }>Docs ({ Object.keys(this.props.attachments).length })</Button>
-          </Unimplemented>
+          <Button title="Documents" onClick={ this.showDocuments }>Documents ({ Object.keys(this.props.documents).length })</Button>
         </Col>
         <Col md={2}>
           <div className="pull-right">
@@ -357,6 +366,13 @@ var RentalRequestsDetail = React.createClass({
         <HireOfferEditDialog show={ this.state.showHireOfferDialog } hireOffer={ this.state.rotationListHireOffer } onSave={ this.saveHireOffer } onClose={ this.closeHireOfferDialog } />
       }
       { /* TODO this.state.showContactDialog && <ContactEditDialog /> */}
+      { this.state.showDocumentsDialog &&
+        <DocumentsListDialog 
+          show={ this.state.showDocumentsDialog } 
+          parent={ rentalRequest } 
+          onClose={ this.closeDocumentsDialog } 
+        />
+      }
     </div>;
   },
 });
@@ -368,6 +384,7 @@ function mapStateToProps(state) {
     rentalAgreement: state.models.rentalAgreement,
     notes: state.models.rentalRequestNotes,
     attachments: state.models.rentalRequestAttachments,
+    documents: state.models.documents,
     history: state.models.rentalRequestHistory,
   };
 }

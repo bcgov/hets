@@ -8,9 +8,11 @@ import { Link } from 'react-router';
 import { LinkContainer } from 'react-router-bootstrap';
 
 import _ from 'lodash';
+import Promise from 'bluebird';
 
 import ProjectsEditDialog from './dialogs/ProjectsEditDialog.jsx';
 import ContactsEditDialog from './dialogs/ContactsEditDialog.jsx';
+import DocumentsListDialog from './dialogs/DocumentsListDialog.jsx';
 
 import * as Action from '../actionTypes';
 import * as Api from '../api';
@@ -44,6 +46,7 @@ var ProjectsDetail = React.createClass({
     contact: React.PropTypes.object,
     notes: React.PropTypes.object,
     attachments: React.PropTypes.object,
+    documents: React.PropTypes.object,
     params: React.PropTypes.object,
     uiContacts: React.PropTypes.object,
     router: React.PropTypes.object,
@@ -87,7 +90,11 @@ var ProjectsDetail = React.createClass({
 
   fetch() {
     this.setState({ loading: true });
-    return Api.getProject(this.props.params.projectId).finally(() => {
+
+    var getProjectPromise = Api.getProject(this.props.params.projectId);
+    var documentsPromise = Api.getProjectDocuments(this.props.params.projectId);
+
+    return Promise.all([getProjectPromise, documentsPromise]).finally(() => {
       this.setState({ loading: false });
     });
   },
@@ -108,7 +115,11 @@ var ProjectsDetail = React.createClass({
   },
 
   showDocuments() {
+    this.setState({ showDocumentsDialog: true });
+  },
 
+  closeDocumentsDialog() {
+    this.setState({ showDocumentsDialog: false });
   },
 
   addNote() {
@@ -227,9 +238,7 @@ var ProjectsDetail = React.createClass({
             <Unimplemented>
               <Button title="Notes" onClick={ this.showNotes }>Notes ({ Object.keys(this.props.notes).length })</Button>
             </Unimplemented>
-            <Unimplemented>
-              <Button title="Documents" onClick={ this.showDocuments }>Docs ({ Object.keys(this.props.attachments).length })</Button>
-            </Unimplemented>
+            <Button title="Documents" onClick={ this.showDocuments }>Documents ({ Object.keys(this.props.documents).length })</Button>
           </Col>
           <Col md={2}>
             <div className="pull-right">
@@ -420,6 +429,13 @@ var ProjectsDetail = React.createClass({
       { this.state.showContactDialog &&
         <ContactsEditDialog show={ this.state.showContactDialog } contact={ this.state.contact } onSave={ this.saveContact } onClose={ this.closeContactDialog } />
       }
+      { this.state.showDocumentsDialog &&
+        <DocumentsListDialog 
+          show={ this.state.showDocumentsDialog } 
+          parent={ project } 
+          onClose={ this.closeDocumentsDialog } 
+        />
+      }
     </div>;
   },
 });
@@ -431,6 +447,7 @@ function mapStateToProps(state) {
     contact: state.models.contact,
     notes: state.models.projectNotes,
     attachments: state.models.projectAttachments,
+    documents: state.models.documents,
     uiContacts: state.ui.projectContacts,
   };
 }
