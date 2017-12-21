@@ -160,7 +160,7 @@ var Owners = React.createClass({
   },
 
   print() {
-
+    window.print();
   },
 
   verifyOwners() {
@@ -196,9 +196,7 @@ var Owners = React.createClass({
             <Unimplemented>
               <Button onClick={ this.email }><Glyphicon glyph="envelope" title="E-mail" /></Button>
             </Unimplemented>
-            <Unimplemented>
-              <Button onClick={ this.print }><Glyphicon glyph="print" title="Print" /></Button>
-            </Unimplemented>
+            <Button onClick={ this.print }><Glyphicon glyph="print" title="Print" /></Button>
           </ButtonGroup>
         </div>
       </PageHeader>
