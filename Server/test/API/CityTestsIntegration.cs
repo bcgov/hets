@@ -32,10 +32,12 @@ namespace HETSAPI.Test
         /// <summary>
         /// Integration test for Cities
         /// </summary>
-        public async void TestCitiesBulk()
+        public async Task TestCitiesBulk()
         {
-            var request = new HttpRequestMessage(HttpMethod.Post, "/api/cities/bulk");
-            request.Content = new StringContent("[]", Encoding.UTF8, "application/json");
+            var request = new HttpRequestMessage(HttpMethod.Post, "/api/cities/bulk")
+            {
+                Content = new StringContent("[]", Encoding.UTF8, "application/json")
+            };
 
             var response = await _client.SendAsync(request);
             response.EnsureSuccessStatusCode();
@@ -46,7 +48,7 @@ namespace HETSAPI.Test
 		/// <summary>
         /// Integration test for Cities
         /// </summary>
-		public async void TestCities()
+		public async Task TestCities()
 		{
             // first test the POST.
             var request = new HttpRequestMessage(HttpMethod.Post, "/api/cities");
@@ -68,8 +70,11 @@ namespace HETSAPI.Test
             var id = city.Id;
 
             // now do an update.
-            request = new HttpRequestMessage(HttpMethod.Put, "/api/cities/" + id);
-            request.Content = new StringContent(city.ToJson(), Encoding.UTF8, "application/json");
+            request = new HttpRequestMessage(HttpMethod.Put, "/api/cities/" + id)
+            {
+                Content = new StringContent(city.ToJson(), Encoding.UTF8, "application/json")
+            };
+
             response = await _client.SendAsync(request);
             response.EnsureSuccessStatusCode();
 
@@ -90,7 +95,7 @@ namespace HETSAPI.Test
             // should get a 404 if we try a get now.
             request = new HttpRequestMessage(HttpMethod.Get, "/api/cities/" + id);
             response = await _client.SendAsync(request);
-            Assert.Equal(response.StatusCode, HttpStatusCode.NotFound);
+            Assert.Equal(HttpStatusCode.NotFound, response.StatusCode);
         }		
         
         

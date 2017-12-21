@@ -14,11 +14,11 @@ namespace HETSAPI.Controllers
         private string _devAuthenticationTokenKey;
         private IHostingEnvironment _env;
 
-        public AuthenticationController(IOptions<DevAuthenticationOptions> options, IHostingEnvironment env)
+        /*public AuthenticationController(IOptions<DevAuthenticationOptions> options, IHostingEnvironment env)
         {
             _env = env;
             _devAuthenticationTokenKey = options.Value.AuthenticationTokenKey;
-        }
+        }*/
 
         /// <summary>
         /// Injects an authentication token cookie into the response for use with the 

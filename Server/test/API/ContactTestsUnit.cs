@@ -41,27 +41,12 @@ namespace HETSAPI.Test
         /// </summary>        
 		public ContactUnitTest()
 		{			
-                    DbContextOptions<DbAppContext> options = new DbContextOptions<DbAppContext>();
-                    Mock<DbAppContext> dbAppContext = new Mock<DbAppContext>(null, options);
-			
-                    /*
-			
-                    Here you will need to mock up the context.
-			
-            ItemType fakeItem = new ItemType(...);
+            DbContextOptions<DbAppContext> options = new DbContextOptions<DbAppContext>();
+            Mock<DbAppContext> dbAppContext = new Mock<DbAppContext>(null, options);			                   
 
-            Mock<DbSet<ItemType>> mockList = MockDbSet.Create(fakeItem);
-
-            dbAppContext.Setup(x => x.ModelEndpoint).Returns(mockItem.Object);
-
-                    */
-
-                    ContactService _service = new ContactService(dbAppContext.Object);
-			
-                    _Contact = new ContactController (_service);
-
-		}
-	
+            ContactService _service = new ContactService(dbAppContext.Object);			
+            _Contact = new ContactController (_service);
+		}	
 		
 		[Fact]
 		/// <summary>

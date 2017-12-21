@@ -13,28 +13,27 @@ namespace HETSAPI.Test
     /// The best way to ensure this is working properly is to run it against an empty database.
     /// </summary>
     public class UserSeederTests
-    {
-        private readonly TestServer _server;
+    {        
 		private readonly HttpClient _client;
 
-        private readonly DevAuthenticationOptions _devAuthOptions;
+        //private readonly DevAuthenticationOptions _devAuthOptions;
 
         public UserSeederTests()
         {
-            _server = new TestServer(new WebHostBuilder()
+            TestServer server = new TestServer(new WebHostBuilder()
             .UseEnvironment("Development")
             .UseContentRoot(Directory.GetCurrentDirectory())
             .UseStartup<Startup>());
-            _client = _server.CreateClient();
+            _client = server.CreateClient();
 
-            _devAuthOptions = new DevAuthenticationOptions();
+            //_devAuthOptions = new DevAuthenticationOptions();
         }
 
         [Fact]
         public async void InitialUserJoeIsAdmin()
         {
             var request = new HttpRequestMessage(HttpMethod.Get, "/api/test/admin/permission/attribute");
-            request.Headers.Add(_devAuthOptions.AuthenticationTokenKey, "JDoe");
+            request.Headers.Add("DEV-USER", "JDow");
 
             var response = await _client.SendAsync(request);
             Assert.Equal(HttpStatusCode.OK, response.StatusCode);
@@ -44,11 +43,10 @@ namespace HETSAPI.Test
         public async void InitialUserJaneIsAdmin()
         {
             var request = new HttpRequestMessage(HttpMethod.Get, "/api/test/admin/permission/attribute");
-            request.Headers.Add(_devAuthOptions.AuthenticationTokenKey, "JDow");
+            request.Headers.Add("DEV-USER", "JDow");
 
-            var response = await _client.SendAsync(request);
-            
-            string content = await response.Content.ReadAsStringAsync();
+            var response = await _client.SendAsync(request);            
+            var content = await response.Content.ReadAsStringAsync();
             Assert.Equal(HttpStatusCode.OK, response.StatusCode);
         }
     }

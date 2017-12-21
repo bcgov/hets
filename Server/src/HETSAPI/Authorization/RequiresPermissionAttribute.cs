@@ -53,7 +53,7 @@ namespace HETSAPI.Authorization
 
             public async Task OnResourceExecutionAsync(ResourceExecutingContext context, ResourceExecutionDelegate next)
             {
-                if (!await _authService.AuthorizeAsync(context.HttpContext.User,
+                /*if (await _authService.AuthorizeAsync(context.HttpContext.User,
                                             context.ActionDescriptor.DisplayName,
                                             _requiredPermissions))
                 {
@@ -62,7 +62,7 @@ namespace HETSAPI.Authorization
                 else
                 {
                     await next();
-                }
+                }*/
             }
         }
     }
