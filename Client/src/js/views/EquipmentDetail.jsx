@@ -10,6 +10,8 @@ import _ from 'lodash';
 
 import EquipmentEditDialog from './dialogs/EquipmentEditDialog.jsx';
 import SeniorityEditDialog from './dialogs/SeniorityEditDialog.jsx';
+import AttachmentAddDialog from './dialogs/AttachmentAddDialog.jsx';
+import AttachmentEditDialog from './dialogs/AttachmentEditDialog.jsx';
 
 import * as Action from '../actionTypes';
 import * as Api from '../api';
@@ -62,6 +64,7 @@ var EquipmentDetail = React.createClass({
       showEditDialog: false,
       showSeniorityDialog: false,
       showPhysicalAttachmentDialog: false,
+      showPhysicalAttachmentEditDialog: false,
       equipmentPhysicalAttachment: {},
       ui : {
         // Physical Attachments
@@ -73,6 +76,12 @@ var EquipmentDetail = React.createClass({
 
   componentDidMount() {
     this.fetch();
+  },
+
+  componentDidUpdate(prevProps) {
+    if (prevProps.params.equipmentId !== this.props.params.equipmentId) {
+      this.fetch();
+    }
   },
 
   fetch() {
@@ -150,9 +159,8 @@ var EquipmentDetail = React.createClass({
     });
   },
 
-  openPhysicalAttachmentDialog(attachment) {
+  openPhysicalAttachmentDialog() {
     this.setState({
-      equipmentPhysicalAttachment: attachment,
       showPhysicalAttachmentDialog: true,
     });
   },
@@ -161,17 +169,37 @@ var EquipmentDetail = React.createClass({
     this.setState({ showPhysicalAttachmentDialog: false });
   },
 
-  addPhysicalAttachment() {
-    var newAttachment = {
-      id: 0,
-      equipment: this.props.equipment,
-    };
-    this.openPhysicalAttachmentDialog(newAttachment);
+  addPhysicalAttachment(attachment) {
+    Api.addPhysicalAttachment(attachment).then(() => {
+      var equipId = this.props.params.equipmentId;
+      Api.getEquipment(equipId);
+      this.closePhysicalAttachmentDialog();
+    });
   },
 
-  deletePhysicalAttachment(attachment) {
-    Api.deletePhysicalAttachment(attachment).then(() => {
-      // TODO Refresh attachment list
+  openPhysicalAttachmentEditDialog(attachment) {
+    this.setState({
+      equipmentPhysicalAttachment: attachment,
+      showPhysicalAttachmentEditDialog: true,
+    });
+  },
+
+  closePhysicalAttachmentEditDialog() {
+    this.setState({ showPhysicalAttachmentEditDialog: false });
+  },
+
+  updatePhysicalAttachment(attachment) {
+    Api.updatePhysicalAttachment(attachment).then(() => {
+      var equipId = this.props.params.equipmentId;
+      Api.getEquipment(equipId);
+      this.closePhysicalAttachmentEditDialog();
+    });
+  },
+
+  deletePhysicalAttachment(attachmentId) {
+    Api.deletePhysicalAttachment(attachmentId).then(() => {
+      var equipId = this.props.params.equipmentId;
+      Api.getEquipment(equipId);
     });
   },
 
@@ -296,40 +324,53 @@ var EquipmentDetail = React.createClass({
             <Well>
               <h3>Attachments <span className="pull-right">
                 <Unimplemented>
-                  <Button title="Add Attachment" bsSize="small" onClick={this.addPhysicalAttachment}><Glyphicon glyph="plus" /></Button>
+                  <Button title="Add Attachment" bsSize="small" onClick={this.openPhysicalAttachmentDialog}><Glyphicon glyph="plus" /></Button>
                 </Unimplemented>
               </span></h3>
               {(() => {
-                if (this.state.loadingPhysicalAttachments ) { return <div style={{ textAlign: 'center' }}><Spinner/></div>; }
-                if (Object.keys(this.props.equipmentPhysicalAttachments).length === 0) { return <Alert bsStyle="success" style={{ marginTop: 10 }}>No Attachments</Alert>; }
+                {/* if (this.state.loadingPhysicalAttachments ) { return <div style={{ textAlign: 'center' }}><Spinner/></div>; } */}
+                {/* if (Object.keys(this.props.equipmentPhysicalAttachments).length === 0) { return <Alert bsStyle="success" style={{ marginTop: 10 }}>No Attachments</Alert>; } */}
 
-                var physicalAttachments = _.sortBy(this.props.equipmentPhysicalAttachments, this.state.ui.sortField);
+                var physicalAttachments = _.sortBy(this.props.equipment.equipmentAttachments, this.state.ui.sortField);
                 if (this.state.ui.sortDesc) {
                   _.reverse(physicalAttachments);
-                }
+                } 
 
                 var headers = [
                   { field: 'attachmentTypeName', title: 'Type' },
-                  { field: 'attachmentDescription', title: 'Description' },
                   { field: 'blank' },
                 ];
 
-                return <SortTable id="physical-attachment-list" sortField={ this.state.ui.sortField } sortDesc={ this.state.ui.sortDesc } onSort={ this.updateUIState } headers={ headers }>
+                return <SortTable 
+                          id="physical-attachment-list" 
+                          sortField={ this.state.ui.sortField } 
+                          sortDesc={ this.state.ui.sortDesc } 
+                          onSort={ this.updateUIState } 
+                          headers={ headers }
+                        >
                   {
                     _.map(physicalAttachments, (attachment) => {
                       return <tr key={ attachment.id }>
                         <td>{ attachment.typeName }</td>
-                        <td>{ attachment.description }</td>
                         <td style={{ textAlign: 'right' }}>
                           <ButtonGroup>
                             <Unimplemented>
-                              <Button className={ attachment.canEdit ? '' : 'hidden' } title="Edit Attachment" bsSize="xsmall" onClick={ this.openPhysicalAttachmentDialog.bind(this, attachment) }><Glyphicon glyph="pencil" /></Button>
+                              <Button 
+                                title="Edit Attachment" 
+                                bsSize="xsmall" 
+                                onClick={ this.openPhysicalAttachmentEditDialog.bind(this, attachment) }
+                              >
+                                <Glyphicon glyph="pencil" />
+                              </Button>
                             </Unimplemented>
-                            <Unimplemented>
-                              <OverlayTrigger trigger="click" placement="top" rootClose overlay={ <Confirm onConfirm={ this.deletePhysicalAttachment.bind(this, attachment) }/> }>
-                                <Button className={ attachment.canDelete ? '' : 'hidden' } title="Delete Attachment" bsSize="xsmall"><Glyphicon glyph="trash" /></Button>
-                              </OverlayTrigger>
-                            </Unimplemented>
+                            <OverlayTrigger 
+                              trigger="click" 
+                              placement="top" 
+                              rootClose 
+                              overlay={ <Confirm onConfirm={ this.deletePhysicalAttachment.bind(this, attachment.id) }/> }
+                            >
+                              <Button title="Delete Attachment" bsSize="xsmall"><Glyphicon glyph="trash" /></Button>
+                            </OverlayTrigger>
                           </ButtonGroup>
                         </td>
                       </tr>;
@@ -431,12 +472,29 @@ var EquipmentDetail = React.createClass({
           </Col>
         </Row>
       </div>
-      { this.state.showEditDialog &&
-        <EquipmentEditDialog show={ this.state.showEditDialog } onSave={ this.saveEdit } onClose= { this.closeEditDialog } />
-      }
-      { this.state.showSeniorityDialog &&
-        <SeniorityEditDialog show={ this.state.showSeniorityDialog } onSave={ this.saveSeniorityEdit } onClose= { this.closeSeniorityDialog } />
-      }
+      <EquipmentEditDialog 
+        show={ this.state.showEditDialog } 
+        onSave={ this.saveEdit } 
+        onClose= { this.closeEditDialog } 
+      />
+      <SeniorityEditDialog 
+        show={ this.state.showSeniorityDialog } 
+        onSave={ this.saveSeniorityEdit } 
+        onClose={ this.closeSeniorityDialog } 
+      />
+      <AttachmentAddDialog 
+        show={ this.state.showPhysicalAttachmentDialog } 
+        onSave={ this.addPhysicalAttachment } 
+        onClose={ this.closePhysicalAttachmentDialog }
+        equipment={ equipment } 
+      />
+      <AttachmentEditDialog 
+        show={ this.state.showPhysicalAttachmentEditDialog } 
+        onSave={ this.updatePhysicalAttachment } 
+        onClose={ this.closePhysicalAttachmentEditDialog }
+        equipment={ equipment } 
+        attachment={ this.state.equipmentPhysicalAttachment }
+      />
     </div>;
   },
 });

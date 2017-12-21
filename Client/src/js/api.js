@@ -450,42 +450,26 @@ function parsePhysicalAttachment(attachment) {
 }
 
 export function getPhysicalAttachment(id) {
-  // TODO Implement back-end endpoints
-  return Promise.resolve({ id: id }).then(response => {
-    var attachment = response;
-
-    // Add display fields
-    parsePhysicalAttachment(attachment);
+  return new ApiRequest(`/equipment/${id}/equipmentAttachments`).get().then(response => {
+    store.dispatch({ type: Action.UPDATE_EQUIPMENT_ATTACHMENTS, physicalAttachments: response });
   });
 }
 
 export function addPhysicalAttachment(attachment) {
-  // TODO Implement back-end endpoints
-  return Promise.resolve(attachment).then(response => {
-    var attachment = response;
-
-    // Add display fields
-    parsePhysicalAttachment(attachment);
+  return new ApiRequest('/equipmentAttachments').post(attachment).then(response => {
+    store.dispatch({ type: Action.ADD_EQUIPMENT_ATTACHMENT, physicalAttachment: response });
   });
 }
 
 export function updatePhysicalAttachment(attachment) {
-  // TODO Implement back-end endpoints
-  return Promise.resolve(attachment).then(response => {
-    var attachment = response;
-
-    // Add display fields
-    parsePhysicalAttachment(attachment);
+  return new ApiRequest(`/equipmentAttachments/${attachment.id}`).put(attachment).then(response => {
+    store.dispatch({ type: Action.UPDATE_EQUIPMENT_ATTACHMENT, physicalAttachment: response });
   });
 }
 
-export function deletePhysicalAttachment(attachment) {
-  // TODO Implement back-end endpoints
-  return Promise.resolve(attachment).then(response => {
-    var attachment = response;
-
-    // Add display fields
-    parsePhysicalAttachment(attachment);
+export function deletePhysicalAttachment(attachmentId) {
+  return new ApiRequest(`/equipmentAttachments/${attachmentId}/delete`).post().then(response => {
+    store.dispatch({ type: Action.DELETE_EQUIPMENT_ATTACHMENT, physicalAttachment: response });
   });
 }
 
