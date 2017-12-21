@@ -220,7 +220,7 @@ var ProjectsDetail = React.createClass({
   },
 
   print() {
-
+    window.print();
   },
 
   addRequest() {
@@ -242,9 +242,7 @@ var ProjectsDetail = React.createClass({
           </Col>
           <Col md={2}>
             <div className="pull-right">
-              <Unimplemented>
-                <Button onClick={ this.print }><Glyphicon glyph="print" title="Print" /></Button>
-              </Unimplemented>
+              <Button onClick={ this.print }><Glyphicon glyph="print" title="Print" /></Button>
               <LinkContainer to={{ pathname: Constant.PROJECTS_PATHNAME }}>
                 <Button title="Return to List"><Glyphicon glyph="arrow-left" /> Return to List</Button>
               </LinkContainer>
