@@ -70,14 +70,7 @@ var DocumentsListDialog = React.createClass({
   fetch() {
     this.setState({ loading: true });
     return this.props.parent.getDocumentsPromise(this.props.parent.id).then(() => {
-      var documents = _.map(this.props.documents, document => {
-        document.userName = this.getUserName(document.lastUpdateUserid);
-        document.formattedTimestamp = formatDateTime(document.lastUpdateTimestamp, Constant.DATE_TIME_LOG);
-        return document;
-      });
-      this.setState({
-        documents: documents,
-      });
+      this.formatDocuments();
     }).finally(() => {
       this.setState({ loading: false });
     });
