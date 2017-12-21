@@ -32,36 +32,17 @@ using HETSAPI.Services.Impl;
 namespace HETSAPI.Test
 {
 	public class CityApiUnitTest 
-    { 
-		
-		private readonly CityController _CityApi;
-		
+    { 						
 		/// <summary>
         /// Setup the test
         /// </summary>        
 		public CityApiUnitTest()
 		{			
-                    DbContextOptions<DbAppContext> options = new DbContextOptions<DbAppContext>();
-                    Mock<DbAppContext> dbAppContext = new Mock<DbAppContext>(null, options);
-			
-                    /*
-			
-                    Here you will need to mock up the context.
-			
-            ItemType fakeItem = new ItemType(...);
-
-            Mock<DbSet<ItemType>> mockList = MockDbSet.Create(fakeItem);
-
-            dbAppContext.Setup(x => x.ModelEndpoint).Returns(mockItem.Object);
-
-                    */
-
-                    CityService _service = new CityService(dbAppContext.Object);
-			
-                    _CityApi = new CityController (_service);
-
-		}
-	
+            DbContextOptions<DbAppContext> options = new DbContextOptions<DbAppContext>();
+            Mock<DbAppContext> dbAppContext = new Mock<DbAppContext>(null, options);			                   
+            CityService _service = new CityService(dbAppContext.Object);
+            CityController cityApi = new CityController (_service);
+		}	
 		
 		[Fact]
 		/// <summary>
@@ -69,29 +50,17 @@ namespace HETSAPI.Test
         /// </summary>
 		public void TestCitiesBulkPost()
 		{
-			// Add test code here
-			// it may look like: 
-			//  var result = _CityController.CitiesBulkPost();
-			//  Assert.True (result == expected-result);
-
-            Assert.True(true);
-		}		
-        
+			Assert.True(true);
+		}		        
 		
 		[Fact]
 		/// <summary>
         /// Unit test for CitiesGet
         /// </summary>
 		public void TestCitiesGet()
-		{
-			// Add test code here
-			// it may look like: 
-			//  var result = _CityController.CitiesGet();
-			//  Assert.True (result == expected-result);
-
+		{			
             Assert.True(true);
-		}		
-        
+		}		        
 		
 		[Fact]
 		/// <summary>
@@ -99,14 +68,8 @@ namespace HETSAPI.Test
         /// </summary>
 		public void TestCitiesIdDeletePost()
 		{
-			// Add test code here
-			// it may look like: 
-			//  var result = _CityController.CitiesIdDeletePost();
-			//  Assert.True (result == expected-result);
-
-            Assert.True(true);
-		}		
-        
+			Assert.True(true);
+		}		        
 		
 		[Fact]
 		/// <summary>
@@ -114,14 +77,8 @@ namespace HETSAPI.Test
         /// </summary>
 		public void TestCitiesIdGet()
 		{
-			// Add test code here
-			// it may look like: 
-			//  var result = _CityController.CitiesIdGet();
-			//  Assert.True (result == expected-result);
-
-            Assert.True(true);
-		}		
-        
+			Assert.True(true);
+		}		        
 		
 		[Fact]
 		/// <summary>
@@ -129,14 +86,8 @@ namespace HETSAPI.Test
         /// </summary>
 		public void TestCitiesIdPut()
 		{
-			// Add test code here
-			// it may look like: 
-			//  var result = _CityController.CitiesIdPut();
-			//  Assert.True (result == expected-result);
-
-            Assert.True(true);
-		}		
-        
+			Assert.True(true);
+		}		        
 		
 		[Fact]
 		/// <summary>
@@ -144,13 +95,7 @@ namespace HETSAPI.Test
         /// </summary>
 		public void TestCitiesPost()
 		{
-			// Add test code here
-			// it may look like: 
-			//  var result = _CityController.CitiesPost();
-			//  Assert.True (result == expected-result);
-
-            Assert.True(true);
-		}		
-        
+			Assert.True(true);
+		}		        
     }
 }

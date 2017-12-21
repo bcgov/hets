@@ -1,17 +1,15 @@
-﻿using HETSAPI.Models;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
-using System.Threading.Tasks;
 using System.IO;
 using Newtonsoft.Json;
+using HETSAPI.Models;
 
 namespace JsonValidator
 {
     public class Program
     {        
-
         public static void Main(string[] args)
         {
             AssemblyName name = new AssemblyName("HETSAPI");
@@ -22,8 +20,7 @@ namespace JsonValidator
             {
                 Console.WriteLine("JsonValidator.exe <Type> <File Name to validate>");
                 Console.WriteLine("Where Type is one of:");
-
-                // Where(t => t.GetTypeInfo().IsSubclassOf(typeof(AuditableEntity)))
+               
                 List<Type> Types = assembly.GetTypes().Where(t => t.GetTypeInfo().IsSubclassOf(typeof(AuditableEntity))).ToList();
                 foreach (Type type in Types)
                 {
@@ -71,14 +68,8 @@ namespace JsonValidator
                 else
                 {
                     Console.WriteLine("Filename specified does not exist.");
-                }
-
-                    
-
-                
-
+                }                                    
             }
-
         }
     }
 }

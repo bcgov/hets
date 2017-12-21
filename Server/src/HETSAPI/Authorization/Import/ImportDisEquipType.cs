@@ -157,7 +157,6 @@ namespace HETSAPI.Import
         }
 
         /// <summary>
-        /// /// <summary>
         /// Copy xml item to instance (table entries)
         /// Output is ServiceArea name
         /// </summary>

@@ -21,10 +21,10 @@ namespace HETSAPI.Test
             .UseContentRoot(Directory.GetCurrentDirectory())
             .UseStartup<Startup>());          
 
-            DevAuthenticationOptions devAuthOptions = new DevAuthenticationOptions();
+            //DevAuthenticationOptions devAuthOptions = new DevAuthenticationOptions();
             string testUserName = "TMcTesterson";
             _client = _server.CreateClient();
-            _client.DefaultRequestHeaders.Add(devAuthOptions.AuthenticationTokenKey, testUserName);
+            _client.DefaultRequestHeaders.Add("DEV-USER", testUserName);
         }
     }
 }

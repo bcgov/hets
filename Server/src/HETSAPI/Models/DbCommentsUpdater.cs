@@ -1,19 +1,12 @@
 using System;
-using System.Collections.Generic;
 using System.Data.Common;
 using System.Linq;
-using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
-
-using Npgsql;
-using Npgsql.EntityFrameworkCore.PostgreSQL;
 using System.Reflection;
 using Microsoft.EntityFrameworkCore.Storage;
 using System.Text.RegularExpressions;
 using System.ComponentModel.DataAnnotations.Schema;
-using System.ComponentModel.DataAnnotations;
 using Microsoft.EntityFrameworkCore.Metadata;
-using Microsoft.EntityFrameworkCore.Metadata.Internal;
 
 /// <summary>
 /// 
@@ -85,7 +78,7 @@ namespace HETSAPI.Models
         /// <param name="tableType"></param>
         private void SetTableDescriptions(Type tableType)
         {
-            var entityType = context.Model.FindEntityType(tableType);
+            IEntityType entityType = context.Model.FindEntityType(tableType);
 
             string fullTableName = entityType.Relational().TableName;
             Regex regex = new Regex(@"(\[\w+\]\.)?\[(?<table>.*)\]");
@@ -96,38 +89,33 @@ namespace HETSAPI.Models
             else
                 tableName = fullTableName;
 
-            var tableAttrs = tableType.GetTypeInfo().GetCustomAttributes(typeof(TableAttribute), false);
-            var tableAttrsArray = tableAttrs.ToArray<Attribute>();
-            if (tableAttrsArray.Length > 0)
+            object[] tableAttrs = tableType.GetTypeInfo().GetCustomAttributes(typeof(TableAttribute), false);
+            if (tableAttrs.Length > 0)
             {
-                tableName = ((TableAttribute)tableAttrsArray[0]).Name;
+                tableName = ((TableAttribute)tableAttrs[0]).Name;
             }
 
             //  get the table description
-            var tableExtAttrs = tableType.GetTypeInfo().GetCustomAttributes(typeof(MetaDataExtension), false);
-            var tableExtAttrssArray = tableExtAttrs.ToArray<Attribute>();
-            if (tableExtAttrssArray.Length > 0)
+            object[] tableExtAttrs = tableType.GetTypeInfo().GetCustomAttributes(typeof(MetaDataExtension), false);
+            if (tableExtAttrs.Length > 0)
             {
-                SetTableDescription(tableName, ((MetaDataExtension)tableExtAttrssArray[0]).Description);
+                SetTableDescription(tableName, ((MetaDataExtension)tableExtAttrs[0]).Description);
 
             }
 
-            foreach (Property entityProperty in entityType.GetProperties().OfType<Property>())
+            foreach (IProperty entityProperty in entityType.GetProperties())
             {
                 // Not all properties have MemberInfo, so a null check is required.
-                if (entityProperty.MemberInfo != null)
+                if (entityProperty.PropertyInfo != null)
                 {
                     // get the custom attributes for this field.                
-                    var attrs = entityProperty.MemberInfo.GetCustomAttributes(typeof(MetaDataExtension), false);
-                    var attrsArray = attrs.ToArray<Attribute>();
-                    if (attrsArray.Length > 0)
+                    object[] attrs = entityProperty.PropertyInfo.GetCustomAttributes(typeof(MetaDataExtension), false);
+                    if (attrs.Length > 0)
                     {
-                        SetColumnDescription(tableName, entityProperty.Relational().ColumnName, ((MetaDataExtension)attrsArray[0]).Description);
+                        SetColumnDescription(tableName, entityProperty.Relational().ColumnName, ((MetaDataExtension)attrs[0]).Description);
                     }
                 }
-
             }
-
         }
 
         /// <summary>
@@ -155,12 +143,10 @@ namespace HETSAPI.Models
             string query = "COMMENT ON TABLE \"" + tableName + "\" IS '" + description.Replace("'", "\'") + "'";
             context.Database.ExecuteSqlCommand(query);
         }
-
-
     }
+
     public static class ReflectionUtil
     {
-
         public static bool InheritsOrImplements(this Type child, Type parent)
         {
             parent = ResolveGenericTypeDefinition(parent);

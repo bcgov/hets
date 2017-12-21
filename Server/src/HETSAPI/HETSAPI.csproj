@@ -1,21 +1,21 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk.Web">
 
   <PropertyGroup>
-    <Description>The Frontend server for the application.</Description>
-    <Copyright>Copyright� 2017, Province of British Columbia.</Copyright>
-    <AssemblyTitle>Frontend Server</AssemblyTitle>
+    <Description>The API server for the Hired Equipment Tracking System</Description>
+    <Copyright>Copyright© 2017, Province of British Columbia.</Copyright>
+    <AssemblyTitle>HETS API Server</AssemblyTitle>
     <TargetFramework>netcoreapp2.0</TargetFramework>
     <DebugType>portable</DebugType>
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
     <PreserveCompilationContext>true</PreserveCompilationContext>
-    <AssemblyName>FrontEnd</AssemblyName>
+    <AssemblyName>HETSAPI</AssemblyName>
     <OutputType>Exe</OutputType>
-    <PackageId>FrontEnd</PackageId>
+    <PackageId>HETSAPI</PackageId>
   </PropertyGroup>
 
   <ItemGroup>
-    <Compile Remove="wwwroot;node_modules;bower_components" />
-    <None Update="Views;Areas\**\Views">
+    <Compile Remove="wwwroot\**\*;node_modules;bower_components" />
+    <None Update="wwwroot\**\*;Views;Areas\**\Views">
       <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
     </None>
     <None Update="**.user;**.vspscc">
@@ -24,13 +24,11 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\..\..\Common\src\HETSCommon\HETSCommon.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="Microsoft.AspNetCore.All" Version="2.0.3" />
-    <PackageReference Include="Microsoft.AspNetCore.Proxy" Version="0.2.0" />
-    <PackageReference Include="Microsoft.EntityFrameworkCore" Version="2.0.1" />
-    <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="2.0.1">
-      <PrivateAssets>All</PrivateAssets>
-    </PackageReference>
-    <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="2.0.1" />
     <PackageReference Include="Microsoft.Extensions.Configuration.EnvironmentVariables" Version="2.0.0" />
     <PackageReference Include="Microsoft.Extensions.Configuration.FileExtensions" Version="2.0.0" />
     <PackageReference Include="Microsoft.Extensions.Configuration.Json" Version="2.0.0" />
@@ -45,15 +43,16 @@
     <PackageReference Include="Swashbuckle.SwaggerUi" Version="6.0.0-beta901" />
     <PackageReference Include="System.Xml.XmlDocument" Version="4.3.0" />
     <PackageReference Include="System.Xml.XPath.XmlDocument" Version="4.3.0" />
+    <PackageReference Include="Hangfire.AspNetCore" Version="1.6.17" />
+    <PackageReference Include="Hangfire.Core" Version="1.6.17" />
+    <PackageReference Include="Dapper" Version="1.50.4" />
+    <PackageReference Include="Hangfire.PostgreSql" Version="1.4.8.1" />
+    <PackageReference Include="Hangfire.Console" Version="1.3.10" />
   </ItemGroup>
 
   <ItemGroup>
     <DotNetCliToolReference Include="Microsoft.EntityFrameworkCore.Tools.DotNet" Version="1.0.0" />
     <DotNetCliToolReference Include="Microsoft.Extensions.SecretManager.Tools" Version="1.0.0" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <ProjectReference Include="..\..\..\Common\src\HETSCommon\HETSCommon.csproj" />
   </ItemGroup>
 
 </Project>
