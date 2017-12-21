@@ -11,7 +11,6 @@
     <AssemblyName>HETSAPI</AssemblyName>
     <OutputType>Exe</OutputType>
     <PackageId>HETSAPI</PackageId>
-    <PackageTargetFallback>$(PackageTargetFallback);dotnet5.6;dnxcore50;netstandard1.6;portable-net452+win81</PackageTargetFallback>
   </PropertyGroup>
 
   <ItemGroup>
