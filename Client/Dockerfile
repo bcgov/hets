@@ -39,8 +39,6 @@ WORKDIR /opt/app-root/
 
 ENV NODE_ENV production
 
-RUN npm install
-
 # compile will happen at the next build stage (frontend)
 # otherwise there is no git commit in the environment.
 
