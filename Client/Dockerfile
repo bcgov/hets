@@ -3,9 +3,11 @@ FROM dotnet-20-rhel7:latest
 # Dockerfile for HETS Client
 
 # install rlwrap
- 
-RUN  yum install -y readline-devel bzip2 
-
+USER 0
+RUN yum install -y readline-devel bzip2  && \
+    yum clean all -y
+	
+USER 1001
 # copy Node.js packages
 
 COPY /package.json /app/out/src/
