@@ -1,7 +1,9 @@
 FROM tran-schoolbus-tools/client
 # Dockerfile for the application front end
 
-
+USER 0
+RUN ldd -r /opt/rh/rh-dotnet20/root/usr/lib64/dotnet/shared/Microsoft.NETCore.App/2.0.0/System.Net.Http.Native.so
+USER 1001
 ENV DOTNET_CLI_TELEMETRY_OPTOUT 1
 
 # This setting is a workaround for issues with dotnet and certain docker versions
