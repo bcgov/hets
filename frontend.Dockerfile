@@ -8,8 +8,8 @@ ENV LTTNG_UST_REGISTER_TIMEOUT 0
 
 COPY Common /app/Common
 WORKDIR /app/Common/src/HETSCommon
-RUN dotnet restore
-RUN dotnet build -c Release
+RUN /opt/rh/rh-dotnet20/root/usr/bin/dotnet restore
+RUN /opt/rh/rh-dotnet20/root/usr/bin/dotnet build -c Release
 
 WORKDIR /
 
@@ -19,7 +19,7 @@ COPY FrontEnd/src/FrontEnd/project.json /app/FrontEnd/src/FrontEnd/
 
 WORKDIR /app/FrontEnd/src/FrontEnd/
 
-RUN dotnet restore
+RUN /opt/rh/rh-dotnet20/root/usr/bin/dotnet restore
 
 # compile the client
 WORKDIR /app/out/src
@@ -34,6 +34,6 @@ ENV ASPNETCORE_ENVIRONMENT Staging
 ENV ASPNETCORE_URLS http://*:8080
 EXPOSE 8080
 
-RUN dotnet publish -c Release -o /app/out
+RUN /opt/rh/rh-dotnet20/root/usr/bin/dotnet publish -c Release -o /app/out
 WORKDIR /app/out
 ENTRYPOINT ["dotnet", "/app/out/FrontEnd.dll"]
