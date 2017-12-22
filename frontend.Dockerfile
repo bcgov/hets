@@ -9,9 +9,9 @@ ENV LTTNG_UST_REGISTER_TIMEOUT 0
 
 COPY Common /app/Common
 WORKDIR /app/Common/src/HETSCommon
-User 0 
-RUN /opt/rh/rh-dotnet20/root/usr/bin/dotnet restore
-User 1001
+
+# RUN /opt/rh/rh-dotnet20/root/usr/bin/dotnet restore
+
 RUN /opt/rh/rh-dotnet20/root/usr/bin/dotnet build -c Release
 
 WORKDIR /
@@ -22,9 +22,7 @@ COPY FrontEnd/src/FrontEnd/project.json /app/FrontEnd/src/FrontEnd/
 
 WORKDIR /app/FrontEnd/src/FrontEnd/
 
-User 0
-RUN /opt/rh/rh-dotnet20/root/usr/bin/dotnet restore
-User 1001
+# RUN /opt/rh/rh-dotnet20/root/usr/bin/dotnet restore
 
 # compile the client
 WORKDIR /app/out/src
