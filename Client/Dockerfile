@@ -25,9 +25,9 @@ RUN  rm -R /opt/rh/rh-nodejs6 \
     && chmod -R a+rwx /usr/local/nvm \
     && yum install -y curl \
     && yum clean all -y \
-    && mkdir -p /opt/app-root \
-    && chmod -R a+rwx /opt/app-root \
-    && chown -R 1001:0 /opt/app-root && fix-permissions /opt/app-root
+    && mkdir -p /app/out/src/ \
+    && chmod -R a+rwx /app/out/src/ \
+    && chown -R 1001:0 /app/out/src/ && fix-permissions /app/out/src/
 
 # Run container by default as user with id 1001 (default)
 USER 1001
