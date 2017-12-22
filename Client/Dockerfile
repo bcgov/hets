@@ -9,7 +9,7 @@ RUN yum install -y readline-devel bzip2 git && \
 
 # install Node.js
 ENV NVM_DIR /usr/local/nvm
-ENV NODE_VERSION  v6.7.0
+ENV NODE_VERSION  v8.9.1
 	
 RUN  rm -R /opt/rh/rh-nodejs6 \
     && mkdir /opt/rh/rh-nodejs6 \
@@ -30,7 +30,7 @@ RUN  rm -R /opt/rh/rh-nodejs6 \
 # Run container by default as user with id 1001 (default)
 USER 1001
 
-env PATH "$PATH:/usr/local/nvm/versions/node/v6.7.0/bin/" 	
+env PATH "$PATH:/usr/local/nvm/versions/node/v8.9.1/bin/" 	
 
 # copy Node.js packages
 
@@ -38,8 +38,6 @@ COPY /package.json /opt/app-root/
 WORKDIR /opt/app-root/
 
 ENV NODE_ENV production
-
-RUN npm install
 
 # compile will happen at the next build stage (frontend)
 # otherwise there is no git commit in the environment.
