@@ -9,7 +9,7 @@ RUN yum install -y readline-devel bzip2 git && \
 
 # install Node.js
 ENV NVM_DIR /usr/local/nvm
-ENV NODE_VERSION  v6.11.3
+ENV NODE_VERSION  v6.7.0
 	
 RUN  rm -R /opt/rh/rh-nodejs6 \
     && mkdir /opt/rh/rh-nodejs6 \
@@ -30,7 +30,7 @@ RUN  rm -R /opt/rh/rh-nodejs6 \
 # Run container by default as user with id 1001 (default)
 USER 1001
 
-env PATH "$PATH:/usr/local/nvm/versions/node/v6.11.3/bin/" 	
+env PATH "$PATH:/usr/local/nvm/versions/node/v6.7.0/bin/" 	
 
 # copy Node.js packages
 
