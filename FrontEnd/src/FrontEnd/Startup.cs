@@ -97,7 +97,7 @@ namespace FrontEnd
             app.UseMvc();
             app.UseDefaultFiles();
 
-            string webFileFolder = "/opt/app-root/src/dist";
+            string webFileFolder = "/opt/app-root/dist";
 
             Console.WriteLine("Web root is " +  webFileFolder);
 
