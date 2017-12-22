@@ -22,9 +22,7 @@ RUN  rm -R /opt/rh/rh-nodejs6 \
     && nvm install $NODE_VERSION \
     && nvm alias default $NODE_VERSION \
     && nvm use default \
-    && chmod -R a+rwx /usr/local/nvm \
-    && yum install -y curl \
-    && yum clean all -y \
+    && chmod -R a+rwx /usr/local/nvm \    
     && mkdir -p /app/out/src/ \
     && chmod -R a+rwx /app/out/src/ \
     && chown -R 1001:0 /app/out/src/ && fix-permissions /app/out/src/
