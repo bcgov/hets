@@ -522,10 +522,12 @@ var OwnersDetail = React.createClass({
         <ContactsEditDialog show={ this.state.showContactDialog } contact={ this.state.contact } onSave={ this.saveContact } onClose={ this.closeContactDialog } />
       }
       { this.state.showDocumentsDialog &&
-        <DocumentsListDialog show={ this.state.showDocumentsDialog } parent={ owner } onClose={ this.closeDocumentsDialog } />
+        <DocumentsListDialog 
+          show={ owner && this.state.showDocumentsDialog } 
+          parent={ owner } 
+          onClose={ this.closeDocumentsDialog } 
+        />
       }
-
-
       { /* TODO this.state.showPolicyDocumentsDialog && <OwnerPolicyDocumentsDialog /> */}
     </div>;
   },
