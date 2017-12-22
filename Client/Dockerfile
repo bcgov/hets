@@ -1,22 +1,10 @@
-FROM microsoft/dotnet:1.1.0-sdk-projectjson
+FROM dotnet-20-rhel7:latest
+
 # Dockerfile for HETS Client
 
 # install rlwrap
  
-RUN apt-get update \
- && apt-get upgrade -y --force-yes \
- && apt-get install rlwrap bzip2 \
- && rm -rf /var/lib/apt/lists/*;
-
-# install Node.js
-
-RUN curl https://deb.nodesource.com/node_6.x/pool/main/n/nodejs/nodejs_6.7.0-1nodesource1~jessie1_amd64.deb > node.deb \
- && dpkg -i node.deb \
- && rm node.deb
-
-RUN apt-get update \
- && apt-get upgrade -y --force-yes \
- && rm -rf /var/lib/apt/lists/*;
+RUN  yum install -y readline-devel bzip2 
 
 # copy Node.js packages
 
