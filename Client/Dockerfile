@@ -4,7 +4,7 @@ FROM dotnet-20-rhel7:latest
 
 # install rlwrap
 USER 0
-RUN yum install -y readline-devel bzip2  && \
+RUN yum install -y readline-devel bzip2 git && \
     yum clean all -y
 
 # install Node.js
