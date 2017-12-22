@@ -1,7 +1,13 @@
 FROM tran-schoolbus-tools/client
 # Dockerfile for the application front end
 
+RUN set
+
 USER 0
+
+RUN set
+
+
 RUN ldd -r /opt/rh/rh-dotnet20/root/usr/lib64/dotnet/shared/Microsoft.NETCore.App/2.0.3/System.Net.Http.Native.so
 USER 1001
 ENV DOTNET_CLI_TELEMETRY_OPTOUT 1
