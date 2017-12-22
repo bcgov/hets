@@ -440,14 +440,15 @@ export function getEquipmentHistory(equipmentId, params) {
 // Physical Attachments
 ////////////////////
 
-function parsePhysicalAttachment(attachment) {
-  if (!attachment.type) { attachment.type = { id: 0, code: '', description: ''}; }
+// Introduce later 
+// function parsePhysicalAttachment(attachment) {
+//   if (!attachment.type) { attachment.type = { id: 0, code: '', description: ''}; }
 
-  attachment.typeName = attachment.type.description;
-  // TODO Add grace period logic to editing/deleting attachments
-  attachment.canEdit = true;
-  attachment.canDelete = true;
-}
+//   attachment.typeName = attachment.type.description;
+//   // TODO Add grace period logic to editing/deleting attachments
+//   attachment.canEdit = true;
+//   attachment.canDelete = true;
+// }
 
 export function getPhysicalAttachment(id) {
   return new ApiRequest(`/equipment/${id}/equipmentAttachments`).get().then(response => {
