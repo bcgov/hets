@@ -1,6 +1,7 @@
 FROM tran-schoolbus-tools/client
 # Dockerfile for the application front end
 
+
 ENV DOTNET_CLI_TELEMETRY_OPTOUT 1
 
 # This setting is a workaround for issues with dotnet and certain docker versions
@@ -8,7 +9,9 @@ ENV LTTNG_UST_REGISTER_TIMEOUT 0
 
 COPY Common /app/Common
 WORKDIR /app/Common/src/HETSCommon
+User 0 
 RUN /opt/rh/rh-dotnet20/root/usr/bin/dotnet restore
+User 1001
 RUN /opt/rh/rh-dotnet20/root/usr/bin/dotnet build -c Release
 
 WORKDIR /
@@ -19,7 +22,9 @@ COPY FrontEnd/src/FrontEnd/project.json /app/FrontEnd/src/FrontEnd/
 
 WORKDIR /app/FrontEnd/src/FrontEnd/
 
+User 0
 RUN /opt/rh/rh-dotnet20/root/usr/bin/dotnet restore
+User 1001
 
 # compile the client
 WORKDIR /app/out/src
