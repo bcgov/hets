@@ -361,6 +361,9 @@ function parseEquipment(equipment) {
   equipment.name = `code ${ equipment.equipmentCode }`;
   equipment.historyEntity = History.makeHistoryEntity(History.EQUIPMENT, equipment);
 
+  equipment.getDocumentsPromise = getEquipmentDocuments;
+  equipment.uploadDocumentPath = `/equipment/${ equipment.id }/attachments`;
+
   equipment.canView = true;
   equipment.canEdit = true;
   equipment.canDelete = false; // TODO Needs input from Business whether this is needed.
@@ -434,6 +437,21 @@ export function getEquipmentHistory(equipmentId, params) {
 
     store.dispatch({ type: Action.UPDATE_HISTORY, history: history });
   });
+}
+
+export function getEquipmentDocuments(equipmentId) {
+  return new ApiRequest(`/equipment/${ equipmentId }/attachments`).get().then(response => {
+    var documents = normalize(response);
+
+    // Add display fields
+    _.map(documents, document => { parseDocument(document); });
+
+    store.dispatch({ type: Action.UPDATE_DOCUMENTS, documents: documents });
+  });
+}
+
+export function addEquipmentDocument(equipmentId, files) {
+  return new ApiRequest(`/equipment/${ equipmentId }/attachments`).post(files);
 }
 
 ////////////////////
@@ -808,6 +826,9 @@ function parseProject(project) {
   project.primaryContactEmail = project.primaryContact ? project.primaryContact.emailAddress : '';
   project.primaryContactPhone = project.primaryContact ? project.primaryContact.workPhoneNumber || project.primaryContact.mobilePhoneNumber || '' : '';
 
+  project.getDocumentsPromise = getProjectDocuments;
+  project.uploadDocumentPath = `/projects/${ project.id }/attachments`;
+
   project.canView = true;
   project.canEdit = true;
   project.canDelete = false; // TODO Needs input from Business whether this is needed.
@@ -894,6 +915,21 @@ export function getProjectHistory(projectId, params) {
   });
 }
 
+export function getProjectDocuments(projectId) {
+  return new ApiRequest(`/projects/${ projectId }/attachments`).get().then(response => {
+    var documents = normalize(response);
+
+    // Add display fields
+    _.map(documents, document => { parseDocument(document); });
+
+    store.dispatch({ type: Action.UPDATE_DOCUMENTS, documents: documents });
+  });
+}
+
+export function addProjectDocument(projectId, files) {
+  return new ApiRequest(`/projects/${ projectId }/attachments`).post(files);
+}
+
 ////////////////////
 // Rental Requests
 ////////////////////
@@ -946,6 +982,9 @@ function parseRentalRequest(rentalRequest) {
   rentalRequest.url = `#/${ rentalRequest.path }`;
   rentalRequest.name = 'TBD';
   rentalRequest.historyEntity = History.makeHistoryEntity(History.REQUEST, rentalRequest);
+
+  rentalRequest.getDocumentsPromise = getRentalRequestDocuments;
+  rentalRequest.uploadDocumentPath = `/rentalrequests/${ rentalRequest.id }/attachments`;
 
   rentalRequest.canView = true;
   rentalRequest.canEdit = true;
@@ -1009,6 +1048,21 @@ export function getRentalRequestHistory(requestId, params) {
 
     store.dispatch({ type: Action.UPDATE_HISTORY, history: history });
   });
+}
+
+export function getRentalRequestDocuments(rentalRequestId) {
+  return new ApiRequest(`/rentalrequests/${ rentalRequestId }/attachments`).get().then(response => {
+    var documents = normalize(response);
+
+    // Add display fields
+    _.map(documents, document => { parseDocument(document); });
+
+    store.dispatch({ type: Action.UPDATE_DOCUMENTS, documents: documents });
+  });
+}
+
+export function addRentalRequestDocument(rentalRequestId, files) {
+  return new ApiRequest(`/rentalrequests/${ rentalRequestId }/attachments`).post(files);
 }
 
 ////////////////////
