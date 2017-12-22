@@ -34,8 +34,8 @@ env PATH "$PATH:/usr/local/nvm/versions/node/v8.9.1/bin/"
 
 # copy Node.js packages
 
-COPY /package.json /app/out/src/
-WORKDIR /app/out/src
+COPY /package.json /opt/app-root/
+WORKDIR /opt/app-root/
 
 ENV NODE_ENV production
 
