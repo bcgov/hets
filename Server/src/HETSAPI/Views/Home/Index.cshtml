@@ -1,0 +1,70 @@
+﻿@{
+    ViewBag.Title = "HETSAPI - Api Home";
+}
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"]</title>    
+    
+    <style>
+        body {
+            background-color: #fff;
+            padding: 10px;
+            font-family: Verdana, Geneva, sans-serif;
+            font-size: 12pt;
+        }        
+    </style>
+    
+    <script language="javascript">
+        function updateUserId(userId) {
+            userId = userId.trim();
+
+            if (userId.length > 0) {
+                window.location.href = "/api/authentication/dev/token/" + userId;
+            }            
+        }
+    </script>
+</head>
+<body>
+    <h2>@ViewData["Title"]</h2>
+    <hr />
+    <div>
+        <h3>Current User Id</h3>
+        <label>UserId:</label> &nbsp; @Model.UserId
+    </div>
+
+    @if (Model.DevelopmentEnvironment)
+    {
+        <hr />
+        <div>
+            <h3>Reset User Id</h3>
+            <label>UserId:</label> <input text="" id="newUserId" />
+            <button onclick="updateUserId(newUserId.value);">Override User Context</button>
+
+        </div>
+    }
+
+    @if (Model.DevelopmentEnvironment)
+    {
+        <hr />
+        <div>
+            <h3>View HETS API</h3>
+            <a href="~/swagger/ui/index.html">Swagger</a>
+        </div>
+
+        <hr />
+        <div>
+            <h3>Get Current User</h3>
+            <a href="~/api/users/current">Get current user</a>
+        </div>
+
+        <hr />
+        <div>
+            <h3>Get Cities</h3>
+            <a href="~/api/cities">List all cities</a>
+        </div>
+    }
+</body>
+</html>

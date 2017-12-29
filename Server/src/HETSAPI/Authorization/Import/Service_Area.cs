@@ -1,12 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using System.Xml.Serialization;
+﻿using System.Xml.Serialization;
 
 namespace HETSAPI.Import
 {
-   // [XmlRoot("ArrayOfService_Area")]
+    // [XmlRoot("ArrayOfService_Area")]
     public class Service_Area
     {
         [XmlElement("Service_Area_Id")]

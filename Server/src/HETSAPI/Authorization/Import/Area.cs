@@ -1,12 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using System.Xml.Serialization;
+﻿using System.Xml.Serialization;
 
 namespace HETSAPI.Import
 {
-   // [XmlRoot("ArrayOfArea"), XmlType("ArrayOfArea")]
+    // [XmlRoot("ArrayOfArea"), XmlType("ArrayOfArea")]
     public class Area
     {
         [XmlElement("Area_Id")]

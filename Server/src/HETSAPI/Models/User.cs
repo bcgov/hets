@@ -1,33 +1,17 @@
-/*
- * REST API Documentation for the MOTI Hired Equipment Tracking System (HETS) Application
- *
- * The Hired Equipment Program is for owners/operators who have a dump truck, bulldozer, backhoe or  other piece of equipment they want to hire out to the transportation ministry for day labour and  emergency projects.  The Hired Equipment Program distributes available work to local equipment owners. The program is  based on seniority and is designed to deliver work to registered users fairly and efficiently  through the development of local area call-out lists.
- *
- * OpenAPI spec version: v1
- *
- *
- */
-
 using System;
 using System.Linq;
-using System.IO;
 using System.Text;
-using System.Collections;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using System.Runtime.Serialization;
 using Newtonsoft.Json;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.ComponentModel.DataAnnotations;
-using HETSAPI.Models;
 
 namespace HETSAPI.Models
 {
 	/// <summary>
 	/// An identified user in the HETS Application that has a defined authorization level.
 	/// </summary>
-		[MetaDataExtension (Description = "An identified user in the HETS Application that has a defined authorization level.")]
-
+	[MetaDataExtension (Description = "An identified user in the HETS Application that has a defined authorization level.")]
 	public partial class User : AuditableEntity, IEquatable<User>
 	{
 		/// <summary>
@@ -59,9 +43,6 @@ namespace HETSAPI.Models
 			this.GivenName = GivenName;
 			this.Surname = Surname;
 			this.Active = Active;
-
-
-
 			this.Initials = Initials;
 			this.Email = Email;
 			this.SmUserId = SmUserId;
@@ -110,7 +91,6 @@ namespace HETSAPI.Models
 		/// <value>Initials of the user, to be presented where screen space is at a premium.</value>
 		[MetaDataExtension (Description = "Initials of the user, to be presented where screen space is at a premium.")]
 		[MaxLength(10)]
-
 		public string Initials { get; set; }
 
 		/// <summary>
@@ -119,7 +99,6 @@ namespace HETSAPI.Models
 		/// <value>The email address of the user in the system.</value>
 		[MetaDataExtension (Description = "The email address of the user in the system.")]
 		[MaxLength(255)]
-
 		public string Email { get; set; }
 
 		/// <summary>
@@ -128,7 +107,6 @@ namespace HETSAPI.Models
 		/// <value>Security Manager User ID</value>
 		[MetaDataExtension (Description = "Security Manager User ID")]
 		[MaxLength(255)]
-
 		public string SmUserId { get; set; }
 
 		/// <summary>
@@ -137,7 +115,6 @@ namespace HETSAPI.Models
 		/// <value>The GUID unique to the user as provided by the authentication system. In this case, authentication is done by Siteminder and the GUID uniquely identifies the user within the user directories managed by Siteminder - e.g. IDIR and BCeID. The GUID is equivalent to the IDIR Id, but is guaranteed unique to a person, while the IDIR ID is not - IDIR IDs can be recycled.</value>
 		[MetaDataExtension (Description = "The GUID unique to the user as provided by the authentication system. In this case, authentication is done by Siteminder and the GUID uniquely identifies the user within the user directories managed by Siteminder - e.g. IDIR and BCeID. The GUID is equivalent to the IDIR Id, but is guaranteed unique to a person, while the IDIR ID is not - IDIR IDs can be recycled.")]
 		[MaxLength(255)]
-
 		public string Guid { get; set; }
 
 		/// <summary>
@@ -146,7 +123,6 @@ namespace HETSAPI.Models
 		/// <value>The user directory service used by Siteminder to authenticate the user - usually IDIR or BCeID.</value>
 		[MetaDataExtension (Description = "The user directory service used by Siteminder to authenticate the user - usually IDIR or BCeID.")]
 		[MaxLength(255)]
-
 		public string SmAuthorizationDirectory { get; set; }
 
 		/// <summary>
@@ -195,6 +171,7 @@ namespace HETSAPI.Models
 			sb.Append("  GroupMemberships: ").Append(GroupMemberships).Append("\n");
 			sb.Append("  District: ").Append(District).Append("\n");
 			sb.Append("}\n");
+
 			return sb.ToString();
 		}
 
@@ -227,7 +204,6 @@ namespace HETSAPI.Models
 		/// <returns>Boolean</returns>
 		public bool Equals(User other)
 		{
-
 			if (ReferenceEquals(null, other)) { return false; }
 			if (ReferenceEquals(this, other)) { return true; }
 
