@@ -103,14 +103,7 @@ namespace HETSAPI
             });          
 
             // add compresssion
-            services.AddResponseCompression();
-
-            // Add framework services
-            /*
-            services.AddMvc(options =>
-            {
-                options.Filters.Add(new AllowAnonymousFilter());
-            });*/
+            services.AddResponseCompression();            
 
             services.AddMvc(options => options.AddDefaultAuthorizationPolicyFilter())                
                 .AddJsonOptions(
@@ -276,7 +269,7 @@ namespace HETSAPI
 
                     log.LogInformation("Adding/Updating seed data ...");
                     Seeders.SeedFactory<DbAppContext> seederFactory = new Seeders.SeedFactory<DbAppContext>(Configuration, _hostingEnv, loggerFactory);
-                    seederFactory.Seed(context as DbAppContext);
+                    seederFactory.Seed((DbAppContext) context);
                     log.LogInformation("Seeding operations are complete.");
                 }
 

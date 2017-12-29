@@ -5,7 +5,6 @@ using Microsoft.AspNetCore.Diagnostics;
 using Microsoft.AspNetCore.Hosting;
 using HETSAPI.Models.Impl;
 
-
 namespace HETSAPI.Controllers
 {
     /// <summary>

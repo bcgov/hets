@@ -1,12 +1,9 @@
 ﻿using Microsoft.AspNetCore.Hosting;
-using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
-using Newtonsoft.Json;
-using HETSAPI.Models;
 using System;
 using System.Collections.Generic;
-using System.IO;
+using HETSAPI.Models;
 
 namespace HETSAPI.Seeders
 {
@@ -45,8 +42,8 @@ namespace HETSAPI.Seeders
                 context.UpdateSeedDistrictInfo(district);
                 context.SaveChanges();
             }
-            AddInitialDistricts(context);
-            
+
+            AddInitialDistricts(context);            
         }
 
         private void AddInitialDistricts(DbAppContext context)
@@ -57,6 +54,7 @@ namespace HETSAPI.Seeders
         private List<District> GetSeedDistricts(DbAppContext context)
         {
             List<District> districts = new List<District>(GetDefaultDistricts(context));
+
             if (IsDevelopmentEnvironment)
                 districts.AddRange(GetDevDistricts(context));
             if (IsTestEnvironment || IsStagingEnvironment)
@@ -98,6 +96,5 @@ namespace HETSAPI.Seeders
         {
             return new List<District>();
         }
-
     }
 }

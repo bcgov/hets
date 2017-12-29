@@ -1,18 +1,12 @@
-﻿
-using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using HETSAPI.Authorization;
-using HETSAPI.Models;
-using HETSAPI.Services.Impl;
-using HETSCommon;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
 using System.Collections.Generic;
 using System.IO;
-using System;
-using Microsoft.Extensions.Configuration;
-using Newtonsoft.Json;
 using System.Linq;
-using Microsoft.EntityFrameworkCore;
+using HETSAPI.Models;
+using HETSAPI.Services.Impl;
 using HETSAPI.ViewModels;
 using HETSAPI.Mappings;
 

@@ -1,20 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using System.ComponentModel;
-using System.IO;
-using System.Linq;
-using System.Net;
-using System.Threading.Tasks;
+﻿using System.Linq;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using Newtonsoft.Json;
 using HETSAPI.Models;
-using HETSAPI.ViewModels;
-using HETSAPI.Mappings;
-using HETSAPI.Services;
 
-namespace SchoolBusAPI.Services.Impl
+namespace HETSAPI.Services.Impl
 {
     public class RentalAgreementConditionService : IRentalAgreementConditionService
     {

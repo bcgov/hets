@@ -1,12 +1,8 @@
 ﻿using Microsoft.AspNetCore.Hosting;
-using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
-using Newtonsoft.Json;
-using HETSAPI.Models;
-using System;
 using System.Collections.Generic;
-using System.IO;
+using HETSAPI.Models;
 
 namespace HETSAPI.Seeders
 {
@@ -31,12 +27,14 @@ namespace HETSAPI.Seeders
 
         private void UpdateRegions(DbAppContext context)
         {
-            List<Region> seedUsers = GetSeedRegions(context);
-            foreach (Region Region in seedUsers)
+            List<Region> seedRegions = GetSeedRegions();
+
+            foreach (Region region in seedRegions)
             {
-                context.UpdateSeedRegionInfo(Region);
+                context.UpdateSeedRegionInfo(region);
                 context.SaveChanges();
             }
+
             AddInitialRegions(context);            
         }
 
@@ -45,50 +43,52 @@ namespace HETSAPI.Seeders
             context.AddInitialRegionsFromFile(Configuration["RegionInitializationFile"]);
         }
 
-        private List<Region> GetSeedRegions(DbAppContext context)
+        private List<Region> GetSeedRegions()
         {
-            List<Region> Regions = new List<Region>(GetDefaultRegions(context));
-            if (IsDevelopmentEnvironment)
-                Regions.AddRange(GetDevRegions(context));
-            if (IsTestEnvironment || IsStagingEnvironment)
-                Regions.AddRange(GetTestRegions(context));
-            if (IsProductionEnvironment)
-                Regions.AddRange(GetProdRegions(context));
+            List<Region> regions = new List<Region>(GetDefaultRegions());
 
-            return Regions;
+            if (IsDevelopmentEnvironment)
+                regions.AddRange(GetDevRegions());
+
+            if (IsTestEnvironment || IsStagingEnvironment)
+                regions.AddRange(GetTestRegions());
+
+            if (IsProductionEnvironment)
+                regions.AddRange(GetProdRegions());
+
+            return regions;
         }
 
         /// <summary>
         /// Returns a list of users to be populated in all environments.
         /// </summary>
-        private List<Region> GetDefaultRegions(DbAppContext context)
+        private List<Region> GetDefaultRegions()
         {
             return new List<Region>();
         }
 
         /// <summary>
-        /// Returns a list of users to be populated in the Development environment.
+        /// Returns a list of regions to be populated in the Development environment.
         /// </summary>
-        private List<Region> GetDevRegions(DbAppContext context)
+        private List<Region> GetDevRegions()
         {
             return new List<Region>();            
         }
 
         /// <summary>
-        /// Returns a list of users to be populated in the Test environment.
+        /// Returns a list of regions to be populated in the Test environment.
         /// </summary>
-        private List<Region> GetTestRegions(DbAppContext context)
+        private List<Region> GetTestRegions()
         {
             return new List<Region>();
         }
 
         /// <summary>
-        /// Returns a list of users to be populated in the Production environment.
+        /// Returns a list of regions to be populated in the Production environment.
         /// </summary>
-        private List<Region> GetProdRegions(DbAppContext context)
+        private List<Region> GetProdRegions()
         {
             return new List<Region>();
         }
-
     }
 }
