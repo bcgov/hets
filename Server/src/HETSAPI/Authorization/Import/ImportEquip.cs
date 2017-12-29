@@ -1,21 +1,11 @@
-﻿///  Import Equipment.xml into HET_EQUIPMENT TABLE.
-///  1. Using Import_MAP to find out the Owner_ID through Owner_Prop_ID
-///  2. Using the address information here to update the Equipment Owner's main contact address
-using Hangfire.Console;
+﻿using Hangfire.Console;
 using Hangfire.Server;
 using HETSAPI.Models;
-using Microsoft.EntityFrameworkCore;
-using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Text;
-using System.Threading;
-using System.Xml;
 using System.Xml.Serialization;
-using Microsoft.Extensions.Configuration;
-using System.Text.RegularExpressions;
 
 namespace HETSAPI.Import
 {

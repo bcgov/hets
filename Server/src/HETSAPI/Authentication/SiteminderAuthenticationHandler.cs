@@ -1,48 +1,58 @@
 ﻿using System;
+using System.Security.Authentication;
 using System.Security.Claims;
 using System.Text.Encodings.Web;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Http.Extensions;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
-using Microsoft.EntityFrameworkCore;
 using HETSAPI.Models;
 
 namespace HETSAPI.Authentication
-{
+{    
     #region SiteMinder Authentication Options
     /// <summary>
     /// Options required for setting up SiteMidner Authentication
     /// </summary>
     public class SiteMinderAuthOptions : AuthenticationSchemeOptions
     {
-        private const string Dev_UserId = "TMcTesterson";
-        private const string Dev_Guid = "2cbf7cb8d6b445f087fb82ad75566a9c";
+        private const string ConstDevAuthenticationTokenKey = "DEV-USER";
+        private const string ConstDevDefaultUserId = "TMcTesterson";       
+        private const string ConstSiteMinderUserGuidKey = "smgov_userguid";
+        private const string ConstSiteMinderUniversalIdKey = "sm_universalid";
+        private const string ConstSiteMinderUserNameKey = "sm_user";
+        private const string ConstSiteMinderUserDisplayNameKey = "smgov_userdisplayname";
 
-        private const string SiteMinder_User_Guid_Key = "smgov_userguid";
-        private const string SiteMinder_Universal_Id_Key = "sm_universalid";
-        private const string SiteMinder_User_Name_Key = "sm_user";
-        private const string SiteMinder_User_Display_Name_Key = "smgov_userdisplayname";
+        private const string ConstMissingSiteMinderUserIdError = "Missing SiteMinder UserId";
+        private const string ConstMissingSiteMinderGuidError = "Missing SiteMinder Guid";
+        private const string ConstMissingDbUserIdError = "Could not find UserId in the HETS database";
+        private const string ConstInactivegDbUserIdError = "HETS database UserId is inactive";
 
         /// <summary>
         /// DEfault Constructor
         /// </summary>
         public SiteMinderAuthOptions()
         {
-            SiteMinderUserGuidKey = SiteMinder_User_Guid_Key;
-            SiteMinderUniversalIdKey = SiteMinder_Universal_Id_Key;
-            SiteMinderUserNameKey = SiteMinder_User_Name_Key;
-            SiteMinderUserDisplayNameKey = SiteMinder_User_Display_Name_Key;
+            SiteMinderUserGuidKey = ConstSiteMinderUserGuidKey;
+            SiteMinderUniversalIdKey = ConstSiteMinderUniversalIdKey;
+            SiteMinderUserNameKey = ConstSiteMinderUserNameKey;
+            SiteMinderUserDisplayNameKey = ConstSiteMinderUserDisplayNameKey;
+            MissingSiteMinderUserIdError = ConstMissingSiteMinderUserIdError;
+            MissingSiteMinderGuidError = ConstMissingSiteMinderGuidError;
+            MissingDbUserIdError = ConstMissingDbUserIdError;
+            InactivegDbUserIdError = ConstInactivegDbUserIdError;
+            DevAuthenticationTokenKey = ConstDevAuthenticationTokenKey;
+            DevDefaultUserId = ConstDevDefaultUserId;
         }
+        
 
         /// <summary>
         /// Default Scheme Name
         /// </summary>
-        public static string AuthenticationSchemeName
-        {
-            get { return "site-minder-auth"; }
-        }
+        public static string AuthenticationSchemeName => "site-minder-auth";
 
         /// <summary>
         /// SiteMinder Authentication Scheme Name
@@ -70,38 +80,42 @@ namespace HETSAPI.Authentication
         public string SiteMinderUserDisplayNameKey { get; private set; }
 
         /// <summary>
-        /// Environment
+        /// Missing SiteMinder UserId Error
         /// </summary>
-        public IHostingEnvironment Env { get; set; }
+        public string MissingSiteMinderUserIdError { get; private set; }
 
         /// <summary>
-        /// Database connection string
+        /// Missing SiteMinder Guid Error
         /// </summary>
-        public string ConnectionString { get; set; }
+        public string MissingSiteMinderGuidError { get; private set; }
 
         /// <summary>
-        /// HETS Test/Dev User Name
+        /// Missing Database UserId Error
         /// </summary>
-        public string DeveloperUserId
-        {
-            get { return Dev_UserId;  }
-        }
+        public string MissingDbUserIdError { get; private set; }
 
         /// <summary>
-        /// HETS Test/Dev User Guid
+        /// Inactive Database UserId Error
         /// </summary>
-        public string DeveloperGuid
-        {
-            get { return Dev_Guid; }
-        }
+        public string InactivegDbUserIdError { get; private set; }
+
+        /// <summary>
+        /// Development Environment Authentication Key
+        /// </summary>
+        public string DevAuthenticationTokenKey { get; private set; }
+
+        /// <summary>
+        /// Development Environment efault UserId
+        /// </summary>
+        public string DevDefaultUserId { get; private set; }
     }
-    #endregion
+    #endregion    
 
     /// <summary>
     /// Setup Siteminder Authentication Handler
     /// </summary>
     public static class SiteminderAuthenticationExtensions
-    {        
+    {
         /// <summary>
         /// Add Authentication Handler
         /// </summary>
@@ -113,13 +127,13 @@ namespace HETSAPI.Authentication
             return builder.AddScheme<SiteMinderAuthOptions, SiteminderAuthenticationHandler>(SiteMinderAuthOptions.AuthenticationSchemeName, configureOptions);
         }
     }
-    
+
     /// <summary>
     /// Siteminder Authentication Handler
     /// </summary>
     public class SiteminderAuthenticationHandler : AuthenticationHandler<SiteMinderAuthOptions>
-    {               
-        private readonly ILogger _logger;     
+    {
+        private readonly ILogger _logger;        
 
         /// <summary>
         /// Siteminder Authentication Constructir
@@ -131,7 +145,7 @@ namespace HETSAPI.Authentication
         public SiteminderAuthenticationHandler(IOptionsMonitor<SiteMinderAuthOptions> configureOptions, ILoggerFactory loggerFactory, UrlEncoder encoder, ISystemClock clock)
             : base(configureOptions, loggerFactory, encoder, clock)
         {
-            _logger = loggerFactory.CreateLogger(typeof(SiteminderAuthenticationHandler));         
+            _logger = loggerFactory.CreateLogger(typeof(SiteminderAuthenticationHandler));                    
         }
 
         /// <summary>
@@ -139,73 +153,141 @@ namespace HETSAPI.Authentication
         /// </summary>
         /// <returns></returns>
         protected override Task<AuthenticateResult> HandleAuthenticateAsync()
-        {                       
+        {
             // get siteminder headers
             _logger.LogDebug("Parsing the HTTP headers for SiteMinder authentication credential");
+                  
+            SiteMinderAuthOptions options = new SiteMinderAuthOptions();
 
-            string userId = "";
-            string siteMinderGuid = "";
-
-            if (Options.Env.IsDevelopment())
+            try
             {
-                userId = Options.DeveloperUserId;
-                siteMinderGuid = Options.DeveloperGuid;
+                ClaimsPrincipal principal;
 
-            }
-            else
-            {
-                userId = Request.Headers[Options.SiteMinderUserNameKey];
-                if (string.IsNullOrEmpty(userId))
+                HttpContext context = Request.HttpContext;
+                IDbAppContext dbAppContext = (DbAppContext)context.RequestServices.GetService(typeof(DbAppContext));
+                IHostingEnvironment hostingEnv = (IHostingEnvironment)context.RequestServices.GetService(typeof(IHostingEnvironment));
+                
+                UserSettings userSettings = new UserSettings();
+                string userId = "";
+                string siteMinderGuid = "";
+
+                // **************************************************
+                // If this is a Dev Environment Call - Ignore
+                // **************************************************
+                string url = context.Request.GetDisplayUrl().ToLower();
+
+                if (url.Contains("/authentication/dev") ||
+                    url.Contains("/error"))
                 {
-                    userId = Request.Headers[Options.SiteMinderUniversalIdKey];
+                    return Task.FromResult(AuthenticateResult.NoResult());
                 }
 
-                siteMinderGuid = Request.Headers[Options.SiteMinderUserGuidKey];
-            }
+                // **************************************************
+                // Check if we have a Dev Environment Cookie
+                // **************************************************
+                if (hostingEnv.IsDevelopment())
+                {
+                    userId = context.Request.Cookies[options.DevAuthenticationTokenKey];
 
-            // validate credentials
-            if (string.IsNullOrEmpty(userId))
-            {
-                _logger.LogWarning($"Missing SiteMinder UserId");
-                return Task.FromResult(AuthenticateResult.Fail("Missing SiteMinder UserId"));
-            }
+                    if (string.IsNullOrEmpty(userId))
+                        userId = options.DevDefaultUserId;
+                }
 
-            if (string.IsNullOrEmpty(siteMinderGuid))
-            {
-                _logger.LogWarning($"Missing SiteMinder Guid");
-                return Task.FromResult(AuthenticateResult.Fail("Missing SiteMinder Guid"));
-            }
+                // **************************************************
+                // Check if the user session is already created
+                // **************************************************
+                try
+                {
+                    _logger.LogInformation("Read User Settings");
+                    userSettings = UserSettings.ReadUserSettings(context);
+                }
+                catch
+                {
+                    //do nothing
+                }
 
-            // validate credential against database        
-            IDbAppContext context = CreateDbAppContextFactory(Options.ConnectionString);
-            var user = context.LoadUser(userId, siteMinderGuid);
-            if (user == null)
-            {
-                _logger.LogWarning($"Could not find user {userId} in the HETS database");
-                return Task.FromResult(AuthenticateResult.Fail("Invalid HETS Credential"));
-            }
+                // is user authenticated - if so we're done
+                if ((userSettings.UserAuthenticated && string.IsNullOrEmpty(userId)) ||
+                    (userSettings.UserAuthenticated && !string.IsNullOrEmpty(userId) &&
+                     !string.IsNullOrEmpty(userSettings.UserId) && userSettings.UserId == userId))
+                {
+                    principal = userSettings.HetsUser.ToClaimsPrincipal(options.Scheme);
+                    return Task.FromResult(AuthenticateResult.Success(new AuthenticationTicket(principal, null, Options.Scheme)));
+                }
 
-            if (user.Active == false)
-            {
-                _logger.LogWarning($"Inactive HETS Credential attempting to login: {userId}");
-                return Task.FromResult(AuthenticateResult.Fail("Inactive HETS Credential"));
-            }
+                // **************************************************
+                // Authenticate based on SiteMinder Headers
+                // **************************************************
+                _logger.LogDebug("Parsing the HTTP headers for SiteMinder authentication credential");
+
+                if (!hostingEnv.IsDevelopment())
+                {
+                    userId = context.Request.Headers[options.SiteMinderUserNameKey];
+                    if (string.IsNullOrEmpty(userId))
+                    {
+                        userId = context.Request.Headers[options.SiteMinderUniversalIdKey];
+                    }
+
+                    siteMinderGuid = context.Request.Headers[options.SiteMinderUserGuidKey];
+
+                    // **************************************************
+                    // Validate credentials
+                    // **************************************************
+                    if (string.IsNullOrEmpty(userId))
+                    {
+                        _logger.LogError(options.MissingSiteMinderUserIdError);
+                        throw new AuthenticationException(options.MissingSiteMinderUserIdError);
+                    }
+
+                    if (string.IsNullOrEmpty(siteMinderGuid))
+                    {
+                        _logger.LogError(options.MissingSiteMinderGuidError);
+                        throw new AuthenticationException(options.MissingSiteMinderGuidError);
+                    }
+                }
+
+                // **************************************************
+                // Validate credential against database              
+                // **************************************************
+                userSettings.HetsUser = hostingEnv.IsDevelopment()
+                    ? dbAppContext.LoadUser(userId)
+                    : dbAppContext.LoadUser(userId, siteMinderGuid);
+
+                if (userSettings.HetsUser == null)
+                {
+                    _logger.LogWarning(options.MissingDbUserIdError + " (" + userId + ")");
+                    throw new AuthenticationException(options.MissingDbUserIdError + " (" + userId + ")");
+                }
+
+                if (!userSettings.HetsUser.Active)
+                {
+                    _logger.LogWarning(options.InactivegDbUserIdError + " (" + userId + ")");
+                    throw new AuthenticationException(options.InactivegDbUserIdError + " (" + userId + ")");
+                }
+
+                // **************************************************
+                // Create authenticated user
+                // **************************************************
+                _logger.LogInformation($"Setting identity");
                 
-            // create authenticated user
-            _logger.LogInformation($"Setting identity");
-            ClaimsPrincipal principal = user.ToClaimsPrincipal(Options.Scheme);
-            AuthenticationTicket ticket = new AuthenticationTicket(principal, null, Options.Scheme);
+                // create session info
+                userSettings.UserId = userId;
+                userSettings.UserAuthenticated = true;
 
-            // done!
-            return Task.FromResult(AuthenticateResult.Success(ticket));         
-        }
+                // update user settings
+                _logger.LogInformation("Write User Settings");
+                UserSettings.SaveUserSettings(userSettings, context);
 
-        private IDbAppContext CreateDbAppContextFactory(string connectionString)
-        {
-            DbContextOptionsBuilder<DbAppContext> options = new DbContextOptionsBuilder<DbAppContext>();
-            options.UseNpgsql(connectionString);
-            DbAppContextFactory dbAppContextFactory = new DbAppContextFactory(null, options.Options);
-            return dbAppContextFactory.Create();
-        }
+                // done!
+                principal = userSettings.HetsUser.ToClaimsPrincipal(options.Scheme);
+                return Task.FromResult(AuthenticateResult.Success(new AuthenticationTicket(principal, null, Options.Scheme)));
+            }
+            catch (Exception e)
+            {
+                _logger.LogError(e.Message);
+                Console.WriteLine(e);
+                throw;
+            }
+        }        
     }
 }
