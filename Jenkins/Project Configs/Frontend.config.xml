@@ -1,9 +1,24 @@
 <?xml version='1.0' encoding='UTF-8'?>
 <project>
   <actions/>
-  <description>Builds and deploys the frontend (client) server.</description>
+  <description></description>
   <keepDependencies>false</keepDependencies>
   <properties>
+    <io.fabric8.jenkins.openshiftsync.BuildConfigProjectProperty plugin="openshift-sync@0.0.12">
+      <uid></uid>
+      <namespace></namespace>
+      <name></name>
+      <resourceVersion></resourceVersion>
+      <contextDir></contextDir>
+    </io.fabric8.jenkins.openshiftsync.BuildConfigProjectProperty>
+    <jenkins.model.BuildDiscarderProperty>
+      <strategy class="hudson.tasks.LogRotator">
+        <daysToKeep>5</daysToKeep>
+        <numToKeep>5</numToKeep>
+        <artifactDaysToKeep>-1</artifactDaysToKeep>
+        <artifactNumToKeep>-1</artifactNumToKeep>
+      </strategy>
+    </jenkins.model.BuildDiscarderProperty>
     <hudson.plugins.promoted__builds.JobPropertyImpl plugin="promoted-builds@2.28">
       <activeProcessNames>
         <string>prod</string>
@@ -12,27 +27,7 @@
       </activeProcessNames>
     </hudson.plugins.promoted__builds.JobPropertyImpl>
   </properties>
-  <scm class="hudson.plugins.git.GitSCM" plugin="git@3.0.1">
-    <configVersion>2</configVersion>
-    <userRemoteConfigs>
-      <hudson.plugins.git.UserRemoteConfig>
-        <url>https://github.com/bcgov/hets.git</url>
-      </hudson.plugins.git.UserRemoteConfig>
-    </userRemoteConfigs>
-    <branches>
-      <hudson.plugins.git.BranchSpec>
-        <name>*/master</name>
-      </hudson.plugins.git.BranchSpec>
-    </branches>
-    <doGenerateSubmoduleConfigurations>false</doGenerateSubmoduleConfigurations>
-    <submoduleCfg class="list"/>
-    <extensions>
-      <hudson.plugins.git.extensions.impl.PathRestriction>
-        <includedRegions>FrontEnd/.*</includedRegions>
-        <excludedRegions></excludedRegions>
-      </hudson.plugins.git.extensions.impl.PathRestriction>
-    </extensions>
-  </scm>
+  <scm class="hudson.scm.NullSCM"/>
   <canRoam>true</canRoam>
   <disabled>false</disabled>
   <blockBuildWhenDownstreamBuilding>false</blockBuildWhenDownstreamBuilding>
@@ -48,36 +43,41 @@
         <completeBuild>true</completeBuild>
       </threshold>
     </jenkins.triggers.ReverseBuildTrigger>
-    <com.cloudbees.jenkins.GitHubPushTrigger plugin="github@1.25.0">
-      <spec></spec>
-    </com.cloudbees.jenkins.GitHubPushTrigger>
-    <hudson.triggers.SCMTrigger>
-      <spec>H/15 * * * *</spec>
-      <ignorePostCommitHooks>false</ignorePostCommitHooks>
-    </hudson.triggers.SCMTrigger>
   </triggers>
   <concurrentBuild>false</concurrentBuild>
   <builders>
-    <com.openshift.jenkins.plugins.pipeline.OpenShiftBuilder plugin="openshift-pipeline@1.0.39">
+    <com.openshift.jenkins.plugins.pipeline.OpenShiftBuilder plugin="openshift-pipeline@1.0.22">
       <apiURL></apiURL>
       <namespace>tran-hets-tools</namespace>
       <authToken></authToken>
-      <verbose>true</verbose>
-      <waitTime></waitTime>
-      <waitUnit>milli</waitUnit>
+      <verbose>false</verbose>
       <bldCfg>frontend</bldCfg>
       <commitID></commitID>
       <buildName></buildName>
       <showBuildLogs>true</showBuildLogs>
       <checkForTriggeredDeployments>false</checkForTriggeredDeployments>
+      <waitTime></waitTime>
     </com.openshift.jenkins.plugins.pipeline.OpenShiftBuilder>
-    <com.openshift.jenkins.plugins.pipeline.OpenShiftImageTagger plugin="openshift-pipeline@1.0.39">
+    <com.openshift.jenkins.plugins.pipeline.OpenShiftImageTagger plugin="openshift-pipeline@1.0.22">
       <apiURL></apiURL>
       <namespace>tran-hets-tools</namespace>
       <authToken></authToken>
       <verbose>false</verbose>
       <testTag>latest</testTag>
       <prodTag>${BUILD_TAG}</prodTag>
+      <testStream>frontend</testStream>
+      <prodStream>frontend</prodStream>
+      <destinationNamespace>tran-hets-tools</destinationNamespace>
+      <destinationAuthToken></destinationAuthToken>
+      <alias>false</alias>
+    </com.openshift.jenkins.plugins.pipeline.OpenShiftImageTagger>
+    <com.openshift.jenkins.plugins.pipeline.OpenShiftImageTagger plugin="openshift-pipeline@1.0.22">
+      <apiURL></apiURL>
+      <namespace>tran-hets-tools</namespace>
+      <authToken></authToken>
+      <verbose>false</verbose>
+      <testTag>latest</testTag>
+      <prodTag>dev</prodTag>
       <testStream>frontend</testStream>
       <prodStream>frontend</prodStream>
       <destinationNamespace>tran-hets-tools</destinationNamespace>
