@@ -1,12 +1,9 @@
 ﻿using Microsoft.AspNetCore.Hosting;
-using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
-using Newtonsoft.Json;
 using HETSAPI.Models;
 using System;
 using System.Collections.Generic;
-using System.IO;
 
 namespace HETSAPI.Seeders
 {

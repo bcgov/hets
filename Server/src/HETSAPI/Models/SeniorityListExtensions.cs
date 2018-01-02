@@ -1,18 +1,14 @@
 ﻿using Hangfire.Console;
 using Hangfire.Server;
 using Microsoft.EntityFrameworkCore;
-using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
-using System.Threading;
 
 namespace HETSAPI.Models
 {
     public static class SeniorityListExtensions
     {
-
         static public DateTime? GetEquipmentSeniorityEffectiveDate(this DbAppContext context, int equipmentId)
         {
             DateTime? result = null;

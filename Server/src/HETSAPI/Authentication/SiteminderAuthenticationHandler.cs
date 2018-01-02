@@ -10,6 +10,7 @@ using Microsoft.AspNetCore.Http.Extensions;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using HETSAPI.Models;
+using Microsoft.AspNetCore.Mvc.ViewFeatures.Internal;
 
 namespace HETSAPI.Authentication
 {    
@@ -172,12 +173,14 @@ namespace HETSAPI.Authentication
                 string siteMinderGuid = "";
 
                 // **************************************************
-                // If this is a Dev Environment Call - Ignore
+                // If this is an Error or Authentiation API - Ignore
                 // **************************************************
                 string url = context.Request.GetDisplayUrl().ToLower();
 
                 if (url.Contains("/authentication/dev") ||
-                    url.Contains("/error"))
+                    url.Contains("/error") ||
+                    url.Contains(".map") ||
+                    url.Contains(".js"))
                 {
                     return Task.FromResult(AuthenticateResult.NoResult());
                 }
@@ -187,10 +190,10 @@ namespace HETSAPI.Authentication
                 // **************************************************
                 if (hostingEnv.IsDevelopment())
                 {
-                    userId = context.Request.Cookies[options.DevAuthenticationTokenKey];
+                    string temp = context.Request.Cookies[options.DevAuthenticationTokenKey];
 
-                    if (string.IsNullOrEmpty(userId))
-                        userId = options.DevDefaultUserId;
+                    if (!string.IsNullOrEmpty(temp))
+                        userId = temp;
                 }
 
                 // **************************************************
@@ -220,7 +223,7 @@ namespace HETSAPI.Authentication
                 // **************************************************
                 _logger.LogDebug("Parsing the HTTP headers for SiteMinder authentication credential");
 
-                if (!hostingEnv.IsDevelopment())
+                if (string.IsNullOrEmpty(userId))
                 {
                     userId = context.Request.Headers[options.SiteMinderUserNameKey];
                     if (string.IsNullOrEmpty(userId))

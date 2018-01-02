@@ -13,6 +13,10 @@
     <PackageId>HETSAPI</PackageId>
   </PropertyGroup>
 
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
+    <DocumentationFile></DocumentationFile>
+  </PropertyGroup>
+
   <ItemGroup>
     <Compile Remove="wwwroot\**\*;node_modules;bower_components" />
     <None Update="wwwroot\**\*;Views;Areas\**\Views">
