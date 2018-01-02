@@ -1,6 +1,17 @@
 Schoolbus Inspection Tracking System
 ======================
 
+## Running in OpenShift
+
+This project uses the scripts found in [openshift-project-tools](https://github.com/BCDevOps/openshift-project-tools) to setup and maintain OpenShift environments (both local and hosted).  Refer to the [OpenShift Scripts](https://github.com/BCDevOps/openshift-project-tools/blob/master/bin/README.md) documentation for details.
+
+----
+ToDo:
+* Update the following documentation after migrating to the new managment scripts.
+
+---
+
+
 OpenShift Configuration and Deployment
 ----------------
 
