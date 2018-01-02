@@ -1,7 +1,4 @@
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace HETSAPI.Models
 {
@@ -10,7 +7,6 @@ namespace HETSAPI.Models
     /// </summary>
     public class MetaDataExtension : Attribute
     {
-
         /// <summary>
         /// The PostgreSQL Comment.  Used for columns with entity framework. 
         /// </summary>

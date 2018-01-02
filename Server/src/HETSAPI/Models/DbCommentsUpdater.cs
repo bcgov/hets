@@ -8,9 +8,6 @@ using System.Text.RegularExpressions;
 using System.ComponentModel.DataAnnotations.Schema;
 using Microsoft.EntityFrameworkCore.Metadata;
 
-/// <summary>
-/// 
-/// </summary>
 namespace HETSAPI.Models
 {
     /// <summary>

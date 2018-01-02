@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-
-namespace HETSAPI.Models
+﻿namespace HETSAPI.Models
 {
     public partial class DistrictEquipmentType
     {

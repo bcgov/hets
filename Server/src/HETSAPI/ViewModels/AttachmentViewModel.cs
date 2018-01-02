@@ -1,24 +1,7 @@
-/*
- * REST API Documentation for the MOTI Hired Equipment Tracking System (HETS) Application
- *
- * The Hired Equipment Program is for owners/operators who have a dump truck, bulldozer, backhoe or  other piece of equipment they want to hire out to the transportation ministry for day labour and  emergency projects.  The Hired Equipment Program distributes available work to local equipment owners. The program is  based on seniority and is designed to deliver work to registered users fairly and efficiently  through the development of local area call-out lists. 
- *
- * OpenAPI spec version: v1
- * 
- * 
- */
-
 using System;
-using System.Linq;
-using System.IO;
 using System.Text;
-using System.Collections;
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
 using System.Runtime.Serialization;
 using Newtonsoft.Json;
-using System.ComponentModel.DataAnnotations.Schema;
-using System.ComponentModel.DataAnnotations;
 using HETSAPI.Models;
 
 namespace HETSAPI.ViewModels
@@ -26,7 +9,7 @@ namespace HETSAPI.ViewModels
     /// <summary>
     /// Uploaded documents related to entity in the application - e.g. piece of Equipment, an Owner, a Project and so on.
     /// </summary>
-        [MetaDataExtension (Description = "Uploaded documents related to entity in the application - e.g. piece of Equipment, an Owner, a Project and so on.")]
+    [MetaDataExtension (Description = "Uploaded documents related to entity in the application - e.g. piece of Equipment, an Owner, a Project and so on.")]
     [DataContract]
     public partial class AttachmentViewModel : IEquatable<AttachmentViewModel>
     {
@@ -51,7 +34,6 @@ namespace HETSAPI.ViewModels
         {   
             this.Id = Id;
             this.FileName = FileName;
-
             this.FileSize = FileSize;
             this.Description = Description;
             this.Type = Type;
