@@ -37,7 +37,7 @@ namespace HETSAPI.Import
             // create serializer and serialize xml file
             XmlSerializer ser = new XmlSerializer(typeof(Equip[]), new XmlRootAttribute(rootAttr));
             MemoryStream memoryStream = ImportUtility.memoryStreamGenerator(xmlFileName, oldTable, fileLocation, rootAttr);
-            HETSAPI.Import.Equip[] legacyItems = (HETSAPI.Import.Equip[])ser.Deserialize(memoryStream);
+            Equip[] legacyItems = (Equip[])ser.Deserialize(memoryStream);
 
             int ii = startPoint;
             if (startPoint > 0)    // Skip the portion already processed
@@ -54,14 +54,14 @@ namespace HETSAPI.Import
                 {
                     if (item.Equip_Id > 0)
                     {
-                        Models.Equipment instance = null;
+                        Equipment instance = null;
                         CopyToInstance(performContext, dbContext, item, ref instance, systemId);
                         ImportUtility.AddImportMap(dbContext, oldTable, item.Equip_Id.ToString(), newTable, instance.Id);
                     }
                 }
                 else // update
                 {
-                    Models.Equipment instance = dbContext.Equipments.FirstOrDefault(x => x.Id == importMap.NewKey);
+                    Equipment instance = dbContext.Equipments.FirstOrDefault(x => x.Id == importMap.NewKey);
                     if (instance == null && item.Equip_Id > 0) // record was deleted
                     {
                         CopyToInstance(performContext, dbContext, item, ref instance, systemId);
@@ -108,18 +108,18 @@ namespace HETSAPI.Import
         }
 
 
-        static private void CopyToInstance(PerformContext performContext, DbAppContext dbContext, HETSAPI.Import.Equip oldObject, ref Models.Equipment instance, string systemId)
+        static private void CopyToInstance(PerformContext performContext, DbAppContext dbContext, Equip oldObject, ref Equipment instance, string systemId)
         {
             if (oldObject.Equip_Id <= 0)
                 return;
 
             //Add the user specified in oldObject.Modified_By and oldObject.Created_By if not there in the database
-            Models.User modifiedBy = ImportUtility.AddUserFromString(dbContext, oldObject.Modified_By, systemId);
-            Models.User createdBy = ImportUtility.AddUserFromString(dbContext, oldObject.Created_By, systemId);
+            User modifiedBy = ImportUtility.AddUserFromString(dbContext, oldObject.Modified_By, systemId);
+            User createdBy = ImportUtility.AddUserFromString(dbContext, oldObject.Created_By, systemId);
 
             if (instance == null)
             {
-                instance = new Models.Equipment();
+                instance = new Equipment();
                 instance.Id = oldObject.Equip_Id;
                 
                 // instance.DumpTruckId = oldObject.Reg_Dump_Trk;
@@ -139,7 +139,7 @@ namespace HETSAPI.Import
                 if (oldObject.Comment != null)
                 {
                     instance.Notes = new List<Note>();
-                    Models.Note note = new Note();
+                    Note note = new Note();
                     note.Text = new string(oldObject.Comment.Take(2048).ToArray());
                     note.IsNoLongerRelevant = true;
                     instance.Notes.Add(note);
@@ -206,7 +206,7 @@ namespace HETSAPI.Import
                     if (owner != null)
                     {
                         instance.Owner = owner;
-                        Models.Contact con = dbContext.Contacts.FirstOrDefault(x => x.Id == owner.PrimaryContactId);
+                        Contact con = dbContext.Contacts.FirstOrDefault(x => x.Id == owner.PrimaryContactId);
                         if (con != null)            //This is used to update owner contact address
                         {
                             try

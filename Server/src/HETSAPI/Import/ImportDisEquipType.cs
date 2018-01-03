@@ -46,7 +46,7 @@ namespace HETSAPI.Import
                 // create serializer and serialize xml file
                 XmlSerializer ser = new XmlSerializer(typeof(EquipType[]), new XmlRootAttribute(rootAttr));
                 MemoryStream memoryStream = ImportUtility.memoryStreamGenerator(xmlFileName, oldTable, fileLocation, rootAttr);
-                HETSAPI.Import.EquipType[] legacyItems = (HETSAPI.Import.EquipType[])ser.Deserialize(memoryStream);
+                EquipType[] legacyItems = (EquipType[])ser.Deserialize(memoryStream);
 
                 int ii = startPoint;
                 if (startPoint > 0)    // Skip the portion already processed
@@ -56,11 +56,13 @@ namespace HETSAPI.Import
 
                 foreach (var item in legacyItems.WithProgress(progress))
                 {
-                    string serviceAreaName = "";
+                    string serviceAreaName;
+
                     // see if we have this one already.
                     ImportMap importMap = dbContext.ImportMaps.FirstOrDefault(x => x.OldTable == oldTable && x.OldKey == item.Equip_Type_Id.ToString());
 
                     float equip_Rental_rate_No;
+
                     try
                     {
                         equip_Rental_rate_No = (float)Decimal.Parse(item.Equip_Rental_Rate_No, System.Globalization.NumberStyles.Any);
@@ -83,8 +85,10 @@ namespace HETSAPI.Import
                     {
                         if (item.Equip_Type_Id > 0)
                         {
-                            Models.DistrictEquipmentType instance = null;
+                            DistrictEquipmentType instance = null;
+
                             serviceAreaName = CopyToInstance(performContext, dbContext, item, ref instance, systemId, equip_Rental_rate_No, description);
+
                             if (serviceAreaName != "ERROR")
                             {
                                 AddingDistrictEquipmentTypeInstance(dbContext, item, instance, equip_Rental_rate_No, description, serviceAreaName, true);
@@ -93,7 +97,8 @@ namespace HETSAPI.Import
                     }
                     else // update
                     {
-                        Models.DistrictEquipmentType instance = dbContext.DistrictEquipmentTypes.FirstOrDefault(x => x.Id == importMap.NewKey);
+                        DistrictEquipmentType instance = dbContext.DistrictEquipmentTypes.FirstOrDefault(x => x.Id == importMap.NewKey);
+
                         if (instance == null) // record was deleted
                         {
                             serviceAreaName = CopyToInstance(performContext, dbContext, item, ref instance, systemId, equip_Rental_rate_No, description);
@@ -161,8 +166,8 @@ namespace HETSAPI.Import
         /// <param name="equip_Rental_rate_No"></param>
         /// <param name="description"></param>
         /// <returns></returns>
-        static private string CopyToInstance(PerformContext performContext, DbAppContext dbContext, HETSAPI.Import.EquipType oldObject, 
-            ref Models.DistrictEquipmentType instance, string systemId, float equip_Rental_rate_No, string description)
+        static private string CopyToInstance(PerformContext performContext, DbAppContext dbContext, EquipType oldObject, 
+            ref DistrictEquipmentType instance, string systemId, float equip_Rental_rate_No, string description)
         {
             string serviceAreaName = "";
 
@@ -170,12 +175,12 @@ namespace HETSAPI.Import
                 return serviceAreaName;
 
             //Add the user specified in oldObject.Modified_By and oldObject.Created_By if not there in the database
-            Models.User modifiedBy = ImportUtility.AddUserFromString(dbContext, oldObject.Modified_By, systemId);
-            Models.User createdBy = ImportUtility.AddUserFromString(dbContext, oldObject.Created_By, systemId);
+            User modifiedBy = ImportUtility.AddUserFromString(dbContext, oldObject.Modified_By, systemId);
+            User createdBy = ImportUtility.AddUserFromString(dbContext, oldObject.Created_By, systemId);
 
             if (instance == null)
             {
-                instance = new Models.DistrictEquipmentType();
+                instance = new DistrictEquipmentType();
                 instance.Id = oldObject.Equip_Type_Id;
                 string typeCode = "";
                 try
@@ -209,7 +214,7 @@ namespace HETSAPI.Import
                 //    instance.EquipmentType = 
                 instance.CreateTimestamp = DateTime.UtcNow;
                 instance.CreateUserid = createdBy.SmUserId;
-                Models.DistrictEquipmentType dt = new DistrictEquipmentType();
+                DistrictEquipmentType dt = new DistrictEquipmentType();
                 if (oldObject.Equip_Type_Cd != null)
                 {
                     EquipmentType eType = dbContext.EquipmentTypes.FirstOrDefault(x => (Math.Abs((x.BlueBookSection??0.1) - equip_Rental_rate_No))<=errowAllowed);
@@ -267,8 +272,8 @@ namespace HETSAPI.Import
         /// <param name="description"></param>
         /// <param name="serviceAreaName"></param>
         /// <param name="addImportMaps"></param>
-        static private void AddingDistrictEquipmentTypeInstance(DbAppContext dbContext, HETSAPI.Import.EquipType oldObject,
-             Models.DistrictEquipmentType instance, float equip_Rental_rate_No, string description, string serviceAreaName, bool addImportMaps)
+        static private void AddingDistrictEquipmentTypeInstance(DbAppContext dbContext, EquipType oldObject,
+             DistrictEquipmentType instance, float equip_Rental_rate_No, string description, string serviceAreaName, bool addImportMaps)
         {
             // Add the instance according to the rule of HETS-365
             var disEquipTypelist = dbContext.DistrictEquipmentTypes

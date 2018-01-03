@@ -37,7 +37,7 @@ namespace HETSAPI.Import
                 // create serializer and serialize xml file
                 XmlSerializer ser = new XmlSerializer(typeof(Dump_Truck[]), new XmlRootAttribute(rootAttr));
                 MemoryStream memoryStream = ImportUtility.memoryStreamGenerator(xmlFileName, oldTable, fileLocation, rootAttr);
-                HETSAPI.Import.Dump_Truck[] legacyItems = (HETSAPI.Import.Dump_Truck[])ser.Deserialize(memoryStream);
+                Dump_Truck[] legacyItems = (Dump_Truck[])ser.Deserialize(memoryStream);
 
                 int ii = startPoint;
                 if (startPoint > 0)    // Skip the portion already processed
@@ -54,14 +54,14 @@ namespace HETSAPI.Import
                     {
                         if (item.Equip_Id > 0)
                         {
-                            Models.DumpTruck instance = null;
+                            DumpTruck instance = null;
                             CopyToInstance(performContext, dbContext, item, ref instance, systemId);
                             ImportUtility.AddImportMap(dbContext, oldTable, item.Equip_Id.ToString(), newTable, instance.Id);
                         }
                     }
                     else // update
                     {
-                        Models.DumpTruck instance = dbContext.DumpTrucks.FirstOrDefault(x => x.Id == importMap.NewKey);
+                        DumpTruck instance = dbContext.DumpTrucks.FirstOrDefault(x => x.Id == importMap.NewKey);
                         if (instance == null) // record was deleted
                         {
                             CopyToInstance(performContext, dbContext, item, ref instance, systemId);
@@ -111,58 +111,58 @@ namespace HETSAPI.Import
         }
 
 
-        static private void CopyToInstance(PerformContext performContext, DbAppContext dbContext, HETSAPI.Import.Dump_Truck oldObject, ref Models.DumpTruck instance, string systemId)
+        static private void CopyToInstance(PerformContext performContext, DbAppContext dbContext, Dump_Truck oldObject, ref DumpTruck instance, string systemId)
         {
             if (oldObject.Equip_Id <= 0)
                 return;
 
             //Add the user specified in oldObject.Modified_By and oldObject.Created_By if not there in the database
-            Models.User modifiedBy = ImportUtility.AddUserFromString(dbContext, "", systemId);
-            Models.User createdBy = ImportUtility.AddUserFromString(dbContext, "", systemId);
+            User modifiedBy = ImportUtility.AddUserFromString(dbContext, "", systemId);
+            User createdBy = ImportUtility.AddUserFromString(dbContext, "", systemId);
 
             if (instance == null)
             {
-                instance = new Models.DumpTruck();
+                instance = new DumpTruck();
                 instance.Id = oldObject.Equip_Id;
                 // instance.DumpTruckId = oldObject.Reg_Dump_Trk;
                 if (oldObject.Single_Axle != null)
                 {
-                    instance.IsSingleAxle = (oldObject.Single_Axle.Trim() == "Y") ? true : false;
+                    instance.IsSingleAxle = (oldObject.Single_Axle.Trim() == "Y");
                 }
                 if (oldObject.Tandem_Axle != null)
                 {
-                    instance.IsTandemAxle = (oldObject.Tandem_Axle.Trim() == "Y") ? true : false;
+                    instance.IsTandemAxle = (oldObject.Tandem_Axle.Trim() == "Y");
                 }
                 if (oldObject.Tridem != null)
                 {
-                    instance.IsTridem = (oldObject.Tridem.Trim() == "Y") ? true : false;
+                    instance.IsTridem = (oldObject.Tridem.Trim() == "Y");
                 }
                 if (oldObject.PUP != null)
                 {
-                    instance.HasPUP = (oldObject.PUP.Trim() == "Y") ? true : false;
+                    instance.HasPUP = (oldObject.PUP.Trim() == "Y");
                 }
 
                 //5 properties
                 if (oldObject.Belly_Dump != null)
                 {
-                    instance.HasBellyDump = (oldObject.Belly_Dump.Trim() == "Y") ? true : false;
+                    instance.HasBellyDump = (oldObject.Belly_Dump.Trim() == "Y");
                 }
 
                 if (oldObject.Rock_Box != null)
                 {
-                    instance.HasRockBox = (oldObject.Rock_Box.Trim() == "Y") ? true : false;
+                    instance.HasRockBox = (oldObject.Rock_Box.Trim() == "Y");
                 }
                 if (oldObject.Hilift_Gate != null)
                 {
-                    instance.HasHiliftGate = (oldObject.Hilift_Gate.Trim() == "Y") ? true : false;
+                    instance.HasHiliftGate = (oldObject.Hilift_Gate.Trim() == "Y");
                 }
                 if (oldObject.Water_Truck != null)
                 {
-                    instance.IsWaterTruck = (oldObject.Water_Truck.Trim() == "Y") ? true : false;
+                    instance.IsWaterTruck = (oldObject.Water_Truck.Trim() == "Y");
                 }
                 if (oldObject.Seal_Coat_Hitch != null)
                 {
-                    instance.HasSealcoatHitch = (oldObject.Seal_Coat_Hitch.Trim() == "Y") ? true : false;
+                    instance.HasSealcoatHitch = (oldObject.Seal_Coat_Hitch.Trim() == "Y");
                 }
 
                 //5 properties

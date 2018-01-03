@@ -10,7 +10,6 @@ using Microsoft.AspNetCore.Http.Extensions;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using HETSAPI.Models;
-using Microsoft.AspNetCore.Mvc.ViewFeatures.Internal;
 
 namespace HETSAPI.Authentication
 {    
@@ -271,7 +270,7 @@ namespace HETSAPI.Authentication
                 // **************************************************
                 // Create authenticated user
                 // **************************************************
-                _logger.LogInformation($"Setting identity");
+                _logger.LogInformation("Setting identity");
                 
                 // create session info
                 userSettings.UserId = userId;

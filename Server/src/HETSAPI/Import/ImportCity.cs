@@ -47,7 +47,7 @@ namespace HETSAPI.Import
                 // create serializer and serialize xml file
                 XmlSerializer ser = new XmlSerializer(typeof(HETS_City[]), new XmlRootAttribute(rootAttr));
                 MemoryStream memoryStream = ImportUtility.memoryStreamGenerator(xmlFileName, oldTable, fileLocation, rootAttr);
-                HETSAPI.Import.HETS_City[] legacyItems = (HETSAPI.Import.HETS_City[])ser.Deserialize(memoryStream);
+                HETS_City[] legacyItems = (HETS_City[])ser.Deserialize(memoryStream);
                 foreach (var item in legacyItems.WithProgress(progress))
                 {
                     // see if we have this one already.
@@ -55,13 +55,13 @@ namespace HETSAPI.Import
 
                     if (importMap == null) // new entry
                     {
-                        Models.City city = null;
+                        City city = null;
                         CopyToInstance(performContext, dbContext, item, ref city, systemId);
                         ImportUtility.AddImportMap(dbContext, oldTable, item.City_Id.ToString(), newTable, city.Id);
                     }
                     else // update
                     {
-                        Models.City city = dbContext.Cities.FirstOrDefault(x => x.Id == importMap.NewKey);
+                        City city = dbContext.Cities.FirstOrDefault(x => x.Id == importMap.NewKey);
                         if (city == null) // record was deleted
                         {
                             CopyToInstance(performContext, dbContext, item, ref city, systemId);
@@ -100,13 +100,13 @@ namespace HETSAPI.Import
         /// <param name="oldObject"></param>
         /// <param name="city"></param>
         /// <param name="systemId"></param>
-        static private void CopyToInstance(PerformContext performContext, DbAppContext dbContext, HETSAPI.Import.HETS_City oldObject, ref Models.City city, string systemId)
+        static private void CopyToInstance(PerformContext performContext, DbAppContext dbContext, HETS_City oldObject, ref Models.City city, string systemId)
         {
             bool isNew = false;
             if (city == null)
             {
                 isNew = true;
-                city = new Models.City();
+                city = new City();
             }
 
             if (dbContext.Cities.Where(x => x.Name.ToUpper() == oldObject.Name.ToUpper()).Count() == 0)

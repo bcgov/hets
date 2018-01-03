@@ -6,8 +6,8 @@ namespace HETSCommon
     {
         public ProductVersionInfo()
         {
-            this.ApplicationVersions = new List<ApplicationVersionInfo>();
-            this.DatabaseVersions = new List<DatabaseVersionInfo>();
+            ApplicationVersions = new List<ApplicationVersionInfo>();
+            DatabaseVersions = new List<DatabaseVersionInfo>();
         }
 
         public List<ApplicationVersionInfo> ApplicationVersions { get; set; }

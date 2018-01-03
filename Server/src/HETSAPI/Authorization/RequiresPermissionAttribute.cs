@@ -26,18 +26,31 @@ namespace HETSAPI.Authorization
     /// <see href="http://benjamincollins.com/blog/practical-permission-based-authorization-in-asp-net-core/"/>
     public class RequiresPermissionAttribute : TypeFilterAttribute
     {
+        /// <summary>
+        /// Attribute Extension - Permissions Required
+        /// </summary>
+        /// <param name="permissions"></param>
         public RequiresPermissionAttribute(params string[] permissions)
            : base(typeof(RequiresPermissionAttributeImplementation))
         {
             Arguments = new[] { new PermissionRequirement(permissions) };
         }
 
+        /// <summary>
+        /// Permission verification
+        /// </summary>
         public class RequiresPermissionAttributeImplementation : Attribute, IAsyncResourceFilter
         {
             private readonly ILogger _logger;
             private readonly IAuthorizationService _authService;
             private readonly PermissionRequirement _requiredPermissions;
 
+            /// <summary>
+            /// Implements permission verification
+            /// </summary>
+            /// <param name="logger"></param>
+            /// <param name="authService"></param>
+            /// <param name="requiredPermissions"></param>
             public RequiresPermissionAttributeImplementation(ILogger<RequiresPermissionAttribute> logger,
                                             IAuthorizationService authService,
                                             PermissionRequirement requiredPermissions)

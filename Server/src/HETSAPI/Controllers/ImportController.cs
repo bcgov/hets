@@ -75,8 +75,10 @@ namespace HETSAPI.Controllers
         /// <returns></returns>
         public IActionResult UploadPostAsync(IList<IFormFile> files)
         {            
-            string result = "";
+            string result;
+
             string uploadPath = Configuration["UploadPath"];
+
             if (string.IsNullOrEmpty (uploadPath))
             {
                 result = "ERROR:  UploadPath environment variable is empty.  Set it to the path where files will be stored.";
