@@ -1,3 +1,4 @@
+
 {
   "kind": "Template",
   "apiVersion": "v1",
@@ -48,20 +49,15 @@
         },
         "strategy":
         {
-          "type": "Source",
-          "sourceStrategy":
+          "type": "Docker",
+          "dockerStrategy":
           {
             "from":
             {
               "kind": "${SOURCE_IMAGE_KIND}",
-              "name": "${SOURCE_IMAGE_NAME}:${SOURCE_IMAGE_TAG}"
+              "name": "${SOURCE_IMAGE_NAME}:${SOURCE_IMAGE_TAG}"              
             },
-            "env": [
-              {
-                "name": "DOTNET_STARTUP_PROJECT",
-                "value": "${DOTNET_STARTUP_PROJECT}"
-              }
-            ]
+            "dockerfilePath": "${DOCKER_FILE_PATH}"
           }
         },
         "output":
@@ -105,13 +101,6 @@
       "value": ""
     },
     {
-      "name": "DOTNET_STARTUP_PROJECT",
-      "displayName": "DotNet Startup Project",
-      "description": "The path to the startup project for the .Net application.",
-      "required": true,
-      "value": "FrontEnd/src/FrontEnd/FrontEnd.csproj"
-    },
-    {
       "name": "SOURCE_IMAGE_KIND",
       "displayName": "Source Image Kind",
       "description": "The 'kind' (type) of the  source image; typically ImageStreamTag, or DockerImage.",
@@ -123,7 +112,7 @@
       "displayName": "Source Image Name",
       "description": "The name of the source image.",
       "required": true,
-      "value": "client-app"
+      "value": "client"
     },
     {
       "name": "SOURCE_IMAGE_TAG",
@@ -131,6 +120,13 @@
       "description": "The tag of the source image.",
       "required": true,
       "value": "latest"
+    },
+    {
+      "name": "DOCKER_FILE_PATH",
+      "displayName": "Docker File Path",
+      "description": "The path to the docker file defining the build.",
+      "required": true,
+      "value": "frontend.Dockerfile"
     },
     {
       "name": "OUTPUT_IMAGE_TAG",
