@@ -2,9 +2,9 @@
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using HETSAPI.Authentication;
 using System;
 using System.Diagnostics;
+using HETSAPI.Authentication;
 
 namespace HETSAPI.Controllers
 {
@@ -54,8 +54,8 @@ namespace HETSAPI.Controllers
                 userId,
                 new CookieOptions
                 {
-                    Domain = "localhost",
                     Path = "/",
+                    SameSite = SameSiteMode.None,                    
                     Expires = DateTime.UtcNow.AddDays(7)
                 }
             );
@@ -87,9 +87,9 @@ namespace HETSAPI.Controllers
                 _options.DevAuthenticationTokenKey,
                 temp,
                 new CookieOptions
-                {
-                    Domain = "localhost",
+                {       
                     Path = "/",
+                    SameSite = SameSiteMode.None,
                     Expires = DateTime.UtcNow.AddDays(-1)
                 }
             );
