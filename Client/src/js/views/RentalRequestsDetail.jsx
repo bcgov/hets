@@ -329,12 +329,6 @@ var RentalRequestsDetail = React.createClass({
 
       <Well className="history">
         <h3>History <span className="pull-right">
-          <Unimplemented>
-            <Button title="Add note" bsSize="small" onClick={ this.addNote }><Glyphicon glyph="plus" /> Add Note</Button>
-          </Unimplemented>
-          <Unimplemented>
-            <Button title="Add document" bsSize="small" onClick={ this.addDocument }><Glyphicon glyph="paperclip" /></Button>
-          </Unimplemented>
         </span></h3>
         {(() => {
           if (this.state.loadingHistory) { return <div style={{ textAlign: 'center' }}><Spinner/></div>; }
