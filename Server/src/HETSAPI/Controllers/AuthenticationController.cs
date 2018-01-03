@@ -18,7 +18,7 @@ namespace HETSAPI.Controllers
         private readonly IHostingEnvironment _env;
 
         /// <summary>
-        /// AuthenticationController Constructir
+        /// AuthenticationController Constructor
         /// </summary>
         /// <param name="env"></param>
         public AuthenticationController(IHostingEnvironment env)
@@ -45,6 +45,10 @@ namespace HETSAPI.Controllers
             string temp = HttpContext.Request.Cookies[_options.DevAuthenticationTokenKey];
             Debug.WriteLine("Current Cookie User: " + temp);
 
+            // clear session
+            HttpContext.Session.Clear();
+
+            // crearte new "dev" user cookie
             Response.Cookies.Append(
                 _options.DevAuthenticationTokenKey,
                 userId,
@@ -70,11 +74,14 @@ namespace HETSAPI.Controllers
         public virtual IActionResult ClearDevAuthenticationCookie()
         {
             if (!_env.IsDevelopment()) return BadRequest("This API is not available outside a development environment.");
-            HttpContext.Session.Clear();
 
             string temp = HttpContext.Request.Cookies[_options.DevAuthenticationTokenKey];
             Debug.WriteLine("Current Cookie User: " + temp);
 
+            // clear session
+            HttpContext.Session.Clear();
+
+            // expire "dev" user cookie
             Response.Cookies.Append(
                 _options.DevAuthenticationTokenKey,
                 temp,
