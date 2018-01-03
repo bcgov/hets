@@ -36,7 +36,7 @@ namespace HETSAPI.Import
                 // create serializer and serialize xml file
                 XmlSerializer ser = new XmlSerializer(typeof(Block[]), new XmlRootAttribute(rootAttr));
                 MemoryStream memoryStream = ImportUtility.memoryStreamGenerator(xmlFileName, oldTable, fileLocation, rootAttr);
-                HETSAPI.Import.Block[] legacyItems = (HETSAPI.Import.Block[])ser.Deserialize(memoryStream);
+                Block[] legacyItems = (Block[])ser.Deserialize(memoryStream);
 
                 int ii = startPoint;
                 if (startPoint > 0)    // Skip the portion already processed
@@ -59,14 +59,14 @@ namespace HETSAPI.Import
                     {
                         if (areaId > 0)
                         {
-                            Models.LocalAreaRotationList instance = null;
+                            LocalAreaRotationList instance = null;
                             CopyToInstance(performContext, dbContext, item, ref instance, systemId, oldUniqueId);
                             ImportUtility.AddImportMap(dbContext, oldTable, oldUniqueId, newTable, instance.Id);
                         }
                     }
                     else // update
                     {
-                        Models.LocalAreaRotationList instance = dbContext.LocalAreaRotationLists.FirstOrDefault(x => x.Id == importMap.NewKey);
+                        LocalAreaRotationList instance = dbContext.LocalAreaRotationLists.FirstOrDefault(x => x.Id == importMap.NewKey);
                         if (instance == null) // record was deleted
                         {
                             CopyToInstance(performContext, dbContext, item, ref instance, systemId, oldUniqueId);
@@ -123,15 +123,15 @@ namespace HETSAPI.Import
         /// <param name="instance"></param>
         /// <param name="systemId"></param>
         /// <param name="oldUniqueId"></param>
-        static private void CopyToInstance(PerformContext performContext, DbAppContext dbContext, HETSAPI.Import.Block oldObject, 
-            ref Models.LocalAreaRotationList instance, string systemId, string oldUniqueId)
+        static private void CopyToInstance(PerformContext performContext, DbAppContext dbContext, Block oldObject, 
+            ref LocalAreaRotationList instance, string systemId, string oldUniqueId)
         {
             if (oldObject.Area_Id <= 0)
                 return;
 
             //Add the user specified in oldObject.Modified_By and oldObject.Created_By if not there in the database
-            Models.User modifiedBy = ImportUtility.AddUserFromString(dbContext, "", systemId);
-            Models.User createdBy = ImportUtility.AddUserFromString(dbContext, oldObject.Created_By, systemId);
+            User modifiedBy = ImportUtility.AddUserFromString(dbContext, "", systemId);
+            User createdBy = ImportUtility.AddUserFromString(dbContext, oldObject.Created_By, systemId);
 
             int areaId = oldObject.Area_Id ?? 0;
             int equipmentTypeId = oldObject.Equip_Type_Id ?? 0;
@@ -142,7 +142,7 @@ namespace HETSAPI.Import
 
             if (instance == null)
             {
-                instance = new Models.LocalAreaRotationList();
+                instance = new LocalAreaRotationList();
                 
                 DistrictEquipmentType disEquipType = dbContext.DistrictEquipmentTypes.FirstOrDefault(x => x.Id == equipmentTypeId);
                 if (disEquipType != null)

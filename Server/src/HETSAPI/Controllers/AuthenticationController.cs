@@ -88,6 +88,7 @@ namespace HETSAPI.Controllers
                 temp,
                 new CookieOptions
                 {
+                    Domain = "localhost",
                     Path = "/",
                     Expires = DateTime.UtcNow.AddDays(-1)
                 }

@@ -38,10 +38,10 @@ namespace HETSAPI.Import
                 // create serializer and serialize xml file
                 XmlSerializer ser = new XmlSerializer(typeof(EquipAttach[]), new XmlRootAttribute(rootAttr));
                 MemoryStream memoryStream = ImportUtility.memoryStreamGenerator(xmlFileName, oldTable, fileLocation, rootAttr);
-                HETSAPI.Import.EquipAttach[] legacyItems = (HETSAPI.Import.EquipAttach[])ser.Deserialize(memoryStream);
+                EquipAttach[] legacyItems = (EquipAttach[])ser.Deserialize(memoryStream);
 
                 //Use this list to save a trip to query database in each iteration
-                List<Models.Equipment> equips = dbContext.Equipments
+                List<Equipment> equips = dbContext.Equipments
                         .Include(x => x.DumpTruck)
                         .Include(x => x.DistrictEquipmentType)
                         .ToList();
@@ -62,14 +62,14 @@ namespace HETSAPI.Import
                     {
                         if (item.Equip_Id > 0)
                         {
-                            Models.EquipmentAttachment instance = null;
+                            EquipmentAttachment instance = null;
                             CopyToInstance(performContext, dbContext, item, ref instance, equips, systemId);
                             ImportUtility.AddImportMap(dbContext, oldTable, oldKeyCombined, newTable, instance.Id);
                         }
                     }
                     else // update
                     {
-                        Models.EquipmentAttachment instance = dbContext.EquipmentAttachments.FirstOrDefault(x => x.Id == importMap.NewKey);
+                        EquipmentAttachment instance = dbContext.EquipmentAttachments.FirstOrDefault(x => x.Id == importMap.NewKey);
                         if (instance == null) // record was deleted
                         {
                             CopyToInstance(performContext, dbContext, item, ref instance, equips, systemId);
@@ -120,22 +120,21 @@ namespace HETSAPI.Import
         }
 
 
-        static private void CopyToInstance(PerformContext performContext, DbAppContext dbContext, HETSAPI.Import.EquipAttach oldObject, ref Models.EquipmentAttachment instance,
-            List<Models.Equipment> equips, string systemId)
+        private static void CopyToInstance(PerformContext performContext, DbAppContext dbContext, EquipAttach oldObject, ref EquipmentAttachment instance,
+            List<Equipment> equips, string systemId)
         {
             if (oldObject.Equip_Id <= 0)
                 return;
 
-            //Add the user specified in oldObject.Modified_By and oldObject.Created_By if not there in the database
-            //  Models.User modifiedBy = ImportUtility.AddUserFromString(dbContext, "", systemId, true);
-            Models.User createdBy = ImportUtility.AddUserFromString(dbContext, oldObject.Created_By, systemId);
+            // Add the user specified in oldObject.Modified_By and oldObject.Created_By if not there in the database
+            User createdBy = ImportUtility.AddUserFromString(dbContext, oldObject.Created_By, systemId);
 
             if (instance == null)
             {
-                instance = new Models.EquipmentAttachment();
+                instance = new EquipmentAttachment();
                 int equipId = oldObject.Equip_Id ?? -1;
 
-                Models.Equipment equipment = equips.FirstOrDefault(x => x.Id == equipId);
+                Equipment equipment = equips.FirstOrDefault(x => x.Id == equipId);
                 if (equipment != null)
                 {
                     instance.Equipment = equipment;

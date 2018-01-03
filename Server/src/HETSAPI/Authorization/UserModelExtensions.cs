@@ -61,7 +61,7 @@ namespace HETSAPI.Models
                         .Where (x => x != null && x.RolePermissions != null)
                         .SelectMany(x => x.RolePermissions);
 
-                if (rolePermissions != null)
+                if (rolePermissions.Any())
                 {
                     result = rolePermissions.Select(x => x.Permission).Distinct().ToList();
                 }

@@ -24,7 +24,7 @@ namespace HETSAPI.Import
         /// <param name="dbContext"></param>
         /// <param name="fileLocation"></param>
         /// <param name="systemId"></param>
-        static public void Import(PerformContext performContext, DbContextOptionsBuilder<DbAppContext> options, DbAppContext dbContext, string fileLocation, string systemId)
+        public static void Import(PerformContext performContext, DbContextOptionsBuilder<DbAppContext> options, DbAppContext dbContext, string fileLocation, string systemId)
         {
             // Check the start point. If startPoint ==  sigId then it is already completed
             int startPoint = ImportUtility.CheckInterMapForStartPoint(dbContext, oldTable_Progress, BCBidImport.sigId);
@@ -43,10 +43,10 @@ namespace HETSAPI.Import
             // create serializer and serialize xml file
             XmlSerializer ser = new XmlSerializer(typeof(EquipUsage[]), new XmlRootAttribute(rootAttr));
             MemoryStream memoryStream = ImportUtility.memoryStreamGenerator(xmlFileName, oldTable, fileLocation, rootAttr);
-            HETSAPI.Import.EquipUsage[] legacyItems = (HETSAPI.Import.EquipUsage[])ser.Deserialize(memoryStream);
+            EquipUsage[] legacyItems = (EquipUsage[])ser.Deserialize(memoryStream);
 
             //Use this list to save a trip to query database in each iteration
-            List<Models.Equipment> equips = dbContext.Equipments
+            List<Equipment> equips = dbContext.Equipments
                     .Include(x => x.DumpTruck)
                     .Include(x => x.DistrictEquipmentType)
                     .ToList();
@@ -70,7 +70,7 @@ namespace HETSAPI.Import
                 {
                     if (item.Equip_Id > 0)
                     {
-                        Models.RentalAgreement rentalAgreement = dbContext.RentalAgreements.FirstOrDefault(x => x.Note == note);
+                        RentalAgreement rentalAgreement = dbContext.RentalAgreements.FirstOrDefault(x => x.Note == note);
                         CopyToTimeRecorded(performContext, dbContext, item, ref rentalAgreement, note, workedDate, equips, systemId);
                         ImportUtility.AddImportMap(dbContext, oldTable, oldKeyAll, newTable, rentalAgreement.Id);
                     }
@@ -133,16 +133,16 @@ namespace HETSAPI.Import
         /// <param name="workedDate"></param>
         /// <param name="equips"></param>
         /// <param name="systemId"></param>
-        static private void CopyToTimeRecorded(PerformContext performContext, DbAppContext dbContext, HETSAPI.Import.EquipUsage oldObject, 
-            ref Models.RentalAgreement rentalAgreement, string note, string workedDate, List<Models.Equipment> equips, string systemId)
+        private static void CopyToTimeRecorded(PerformContext performContext, DbAppContext dbContext, EquipUsage oldObject, 
+            ref RentalAgreement rentalAgreement, string note, string workedDate, List<Equipment> equips, string systemId)
         {            
-            //Add the user specified in oldObject.Modified_By and oldObject.Created_By if not there in the database
-            Models.User modifiedBy = ImportUtility.AddUserFromString(dbContext, "", systemId);
-            Models.User createdBy = ImportUtility.AddUserFromString(dbContext, oldObject.Created_By, systemId);
+            // Add the user specified in oldObject.Modified_By and oldObject.Created_By if not there in the database
+            User modifiedBy = ImportUtility.AddUserFromString(dbContext, "", systemId);
+            User createdBy = ImportUtility.AddUserFromString(dbContext, oldObject.Created_By, systemId);
 
             if (rentalAgreement == null)
             {
-                rentalAgreement = new Models.RentalAgreement();
+                rentalAgreement = new RentalAgreement();
                 rentalAgreement.RentalAgreementRates = new List<RentalAgreementRate>();
                 rentalAgreement.TimeRecords = new List<TimeRecord>();
                 Models.Equipment equip = equips.FirstOrDefault(x => x.Id == oldObject.Equip_Id); //dbContext.Equipments.FirstOrDefault(x => x.Id == oldObject.Equip_Id);
@@ -206,12 +206,12 @@ namespace HETSAPI.Import
         /// <param name="rentalAgreement"></param>
         /// <param name="workedDate"></param>
         /// <param name="systemId"></param>
-        static private void addingRate_Time_For_RentaAgreement(DbAppContext dbContext, HETSAPI.Import.EquipUsage oldObject,
-            ref Models.RentalAgreement rentalAgreement, string workedDate, string systemId)
+        private static void addingRate_Time_For_RentaAgreement(DbAppContext dbContext, EquipUsage oldObject,
+            ref RentalAgreement rentalAgreement, string workedDate, string systemId)
         {
             // Adding rental agreement rates and Time_Records: The two are added together becase Time Record reference rental agreement rate.
-            Models.RentalAgreementRate rate = new RentalAgreementRate();
-            Models.TimeRecord tRec = new TimeRecord();
+            RentalAgreementRate rate = new RentalAgreementRate();
+            TimeRecord tRec = new TimeRecord();
 
             //Adding general properties for RentalAgreement Rate
             DateTime lastUpdateTimestamp = DateTime.UtcNow;
@@ -261,11 +261,11 @@ namespace HETSAPI.Import
 
             // Use var in foreach loop.
             int ii = 0;
-            Models.RentalAgreementRate [] rate_a= new RentalAgreementRate[3];
-            Models.TimeRecord [] tRec_a = new TimeRecord[3];
+            RentalAgreementRate [] rate_a= new RentalAgreementRate[3];
+            TimeRecord [] tRec_a = new TimeRecord[3];
             foreach (var pair in _f)
             {
-                Models.RentalAgreementRate exitingRate = rentalAgreement.RentalAgreementRates.FirstOrDefault(x => x.Rate == pair.Value.Rate);
+                RentalAgreementRate exitingRate = rentalAgreement.RentalAgreementRates.FirstOrDefault(x => x.Rate == pair.Value.Rate);
                 if (exitingRate == null)  //rate does not exist
                 {  //  Adding the new rate  
                     rate_a[ii] = new RentalAgreementRate();
@@ -290,7 +290,7 @@ namespace HETSAPI.Import
                 }
                 else   
                 {   //the rate already existed which is exitingRate, no need to add rate, just add Time Record
-                    Models.TimeRecord existingTimeRec= rentalAgreement.TimeRecords.FirstOrDefault(x => x.WorkedDate == workedDateTime);
+                    TimeRecord existingTimeRec= rentalAgreement.TimeRecords.FirstOrDefault(x => x.WorkedDate == workedDateTime);
                     if (existingTimeRec == null)
                     {   //The new Time Record  is added if it does not existm, otherwise, it's already existed.
                         tRec_a[ii] = new TimeRecord();

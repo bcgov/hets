@@ -43,7 +43,7 @@ namespace HETSAPI.Import
                 // create serializer and serialize xml file
                 XmlSerializer ser = new XmlSerializer(typeof(HETS_District[]), new XmlRootAttribute(rootAttr));
                 MemoryStream memoryStream = ImportUtility.memoryStreamGenerator(xmlFileName, oldTable, fileLocation, rootAttr);
-                HETSAPI.Import.HETS_District[] legacyItems = (HETSAPI.Import.HETS_District[])ser.Deserialize(memoryStream);
+                HETS_District[] legacyItems = (HETS_District[])ser.Deserialize(memoryStream);
                 foreach (var item in legacyItems.WithProgress(progress))
                 {
                     // see if we have this one already.
@@ -51,13 +51,13 @@ namespace HETSAPI.Import
 
                     if (importMap == null) // new entry
                     {
-                        Models.District dis = null;
+                        District dis = null;
                         CopyToInstance(performContext, dbContext, item, ref dis, systemId);
                         ImportUtility.AddImportMap(dbContext, oldTable, item.District_Id.ToString(), newTable, dis.Id);
                     }
                     else // update
                     {
-                        Models.District dis = dbContext.Districts.FirstOrDefault(x => x.Id == importMap.NewKey);
+                        District dis = dbContext.Districts.FirstOrDefault(x => x.Id == importMap.NewKey);
                         if (dis == null) // record was deleted
                         {
                             CopyToInstance(performContext, dbContext, item, ref dis, systemId);
@@ -87,13 +87,13 @@ namespace HETSAPI.Import
             }
         }
 
-        static private void CopyToInstance(PerformContext performContext, DbAppContext dbContext, HETSAPI.Import.HETS_District oldObject, ref Models.District dis, string systemId)
+        private static void CopyToInstance(PerformContext performContext, DbAppContext dbContext, HETS_District oldObject, ref District dis, string systemId)
         {
             bool isNew = false;
             if (dis == null)
             {
                 isNew = true;
-                dis = new Models.District();
+                dis = new District();
             }
 
             if (dbContext.Districts.Where(x => x.Name.ToUpper() == oldObject.Name.Trim().ToUpper()).Count() == 0)
