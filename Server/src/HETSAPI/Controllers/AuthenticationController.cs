@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using HETSAPI.Authentication;
 using System;
+using System.Diagnostics;
 
 namespace HETSAPI.Controllers
 {
@@ -17,7 +18,7 @@ namespace HETSAPI.Controllers
         private readonly IHostingEnvironment _env;
 
         /// <summary>
-        /// AuthenticationController Constructir
+        /// AuthenticationController Constructor
         /// </summary>
         /// <param name="env"></param>
         public AuthenticationController(IHostingEnvironment env)
@@ -41,29 +42,58 @@ namespace HETSAPI.Controllers
             if (userId.ToLower() == "default")
                 userId = _options.DevDefaultUserId;
 
-            CookieOptions options = new CookieOptions
-            {
-                Path = "/",
-                Expires = DateTime.UtcNow.AddDays(7)
-            };
+            string temp = HttpContext.Request.Cookies[_options.DevAuthenticationTokenKey];
+            Debug.WriteLine("Current Cookie User: " + temp);
 
-            Response.Cookies.Delete(_options.DevAuthenticationTokenKey);
-            Response.Cookies.Append(_options.DevAuthenticationTokenKey, userId, options);
+            // clear session
+            HttpContext.Session.Clear();
+
+            // crearte new "dev" user cookie
+            Response.Cookies.Append(
+                _options.DevAuthenticationTokenKey,
+                userId,
+                new CookieOptions
+                {
+                    Path = "/",
+                    Expires = DateTime.UtcNow.AddDays(7)
+                }
+            );
+
+            Debug.WriteLine("New Cookie User: " + userId);
+
             return Ok();
         }
 
         /// <summary>
         /// Clear out any existing dev authentication tokens
         /// </summary>
-        /// <param name="userId"></param>
         /// <returns></returns>
         [HttpGet]
         [Route("dev/cleartoken")]
         [AllowAnonymous]
-        public virtual IActionResult ClearDevAuthenticationCookie(string userId)
+        public virtual IActionResult ClearDevAuthenticationCookie()
         {
-            if (!_env.IsDevelopment()) return BadRequest("This API is not available outside a development environment.");                        
-            Response.Cookies.Delete(_options.DevAuthenticationTokenKey);
+            if (!_env.IsDevelopment()) return BadRequest("This API is not available outside a development environment.");
+
+            string temp = HttpContext.Request.Cookies[_options.DevAuthenticationTokenKey];
+            Debug.WriteLine("Current Cookie User: " + temp);
+
+            // clear session
+            HttpContext.Session.Clear();
+
+            // expire "dev" user cookie
+            Response.Cookies.Append(
+                _options.DevAuthenticationTokenKey,
+                temp,
+                new CookieOptions
+                {
+                    Path = "/",
+                    Expires = DateTime.UtcNow.AddDays(-1)
+                }
+            );
+
+            Debug.WriteLine("Cookie Expired!");
+
             return Ok();
         }
     }
