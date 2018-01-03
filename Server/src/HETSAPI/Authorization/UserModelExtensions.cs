@@ -5,8 +5,17 @@ using System.Security.Claims;
 
 namespace HETSAPI.Models
 {
+    /// <summary>
+    /// User Model Extension
+    /// </summary>
     public static class UserModelExtensions
     {
+        /// <summary>
+        /// Convert User to ClaimsPrincipal
+        /// </summary>
+        /// <param name="user"></param>
+        /// <param name="authenticationType"></param>
+        /// <returns></returns>
         public static ClaimsPrincipal ToClaimsPrincipal(this User user, string authenticationType)
         {
             return new ClaimsPrincipal(user.ToClaimsIdentity(authenticationType));
@@ -19,8 +28,7 @@ namespace HETSAPI.Models
 
         private static List<Claim> GetClaims(this User user)
         {
-            List<Claim> claims = new List<Claim>();
-            claims.Add(new Claim(ClaimTypes.Name, user.SmUserId));
+            List<Claim> claims = new List<Claim> {new Claim(ClaimTypes.Name, user.SmUserId)};
 
             if (!string.IsNullOrEmpty(user.Surname))
                 claims.Add(new Claim(ClaimTypes.Surname, user.Surname));

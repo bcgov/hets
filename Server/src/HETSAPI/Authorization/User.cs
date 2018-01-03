@@ -1,5 +1,8 @@
 ﻿namespace HETSAPI.Models
 {
+    /// <summary>
+    /// User Extension
+    /// </summary>
     public partial class User
     {
         public const string PERMISSION_CLAIM = "permission_claim";

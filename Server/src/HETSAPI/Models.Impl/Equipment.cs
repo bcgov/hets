@@ -4,6 +4,9 @@ using System.Linq;
 
 namespace HETSAPI.Models
 {
+    /// <summary>
+    /// Equipment
+    /// </summary>
     public partial class Equipment
     {
         private const float DUMP_TRUCK_CONSTANT = 60.0F;
@@ -48,6 +51,10 @@ namespace HETSAPI.Models
             this.Seniority = (this.YearsOfService * seniorityConstant) + averageHoursWorked;
         }
 
+        /// <summary>
+        /// Calculate Years of Service for Equipment
+        /// </summary>
+        /// <param name="year"></param>
         public void CalculateYearsOfService(int year)
         {
             /*  

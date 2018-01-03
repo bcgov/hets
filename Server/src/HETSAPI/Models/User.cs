@@ -12,7 +12,6 @@ namespace HETSAPI.Models
 	/// An identified user in the HETS Application that has a defined authorization level.
 	/// </summary>
 	[MetaDataExtension (Description = "An identified user in the HETS Application that has a defined authorization level.")]
-
 	public partial class User : AuditableEntity, IEquatable<User>
 	{
 		/// <summary>
