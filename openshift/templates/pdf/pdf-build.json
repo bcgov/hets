@@ -101,7 +101,7 @@
       "displayName": "Git Reference",
       "description": "The git reference or branch.",
       "required": true,
-      "value": "pdf-improvements"
+      "value": "master"
     },
     {
       "name": "SOURCE_CONTEXT_DIR",
