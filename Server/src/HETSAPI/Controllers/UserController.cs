@@ -24,7 +24,7 @@ namespace HETSAPI.Controllers
         }
 
         /// <summary>
-        /// 
+        /// Create bulk user group records
         /// </summary>
         /// <param name="items"></param>
         /// <response code="201">User created</response>
@@ -34,11 +34,11 @@ namespace HETSAPI.Controllers
         [RequiresPermission(Permission.ADMIN)]
         public virtual IActionResult UsergroupsBulkPost([FromBody]GroupMembership[] items)
         {
-            return this._service.UsergroupsBulkPostAsync(items);
+            return _service.UsergroupsBulkPostAsync(items);
         }
 
         /// <summary>
-        /// 
+        /// Create bulk users
         /// </summary>
         /// <param name="items"></param>
         /// <response code="201">User created</response>
@@ -48,11 +48,11 @@ namespace HETSAPI.Controllers
         [RequiresPermission(Permission.ADMIN)]
         public virtual IActionResult UsersBulkPost([FromBody]User[] items)
         {
-            return this._service.UsersBulkPostAsync(items);
+            return _service.UsersBulkPostAsync(items);
         }
 
         /// <summary>
-        /// 
+        /// Get all users
         /// </summary>
         /// <response code="200">OK</response>
         [HttpGet]
@@ -61,11 +61,11 @@ namespace HETSAPI.Controllers
         [SwaggerResponse(200, type: typeof(List<UserViewModel>))]
         public virtual IActionResult UsersGet()
         {
-            return this._service.UsersGetAsync();
+            return _service.UsersGetAsync();
         }
 
         /// <summary>
-        /// 
+        /// Delete user
         /// </summary>
         /// <param name="id">id of User to delete</param>
         /// <response code="200">OK</response>
@@ -76,11 +76,11 @@ namespace HETSAPI.Controllers
         [RequiresPermission(Permission.ADMIN)]
         public virtual IActionResult UsersIdDeletePost([FromRoute]int id)
         {
-            return this._service.UsersIdDeletePostAsync(id);
+            return _service.UsersIdDeletePostAsync(id);
         }
 
         /// <summary>
-        /// 
+        /// Get user favorites
         /// </summary>
         /// <remarks>Returns a user&#39;s favourites of a given context type</remarks>
         /// <param name="id">id of User to fetch favorites for</param>
@@ -92,11 +92,11 @@ namespace HETSAPI.Controllers
         [SwaggerResponse(200, type: typeof(List<UserFavouriteViewModel>))]
         public virtual IActionResult UsersIdFavouritesGet([FromRoute]int id)
         {
-            return this._service.UsersIdFavouritesGetAsync(id);
+            return _service.UsersIdFavouritesGetAsync(id);
         }
 
         /// <summary>
-        /// 
+        /// Get user by id
         /// </summary>
         /// <param name="id">id of User to fetch</param>
         /// <response code="200">OK</response>
@@ -107,11 +107,11 @@ namespace HETSAPI.Controllers
         [SwaggerResponse(200, type: typeof(UserViewModel))]
         public virtual IActionResult UsersIdGet([FromRoute]int id)
         {
-            return this._service.UsersIdGetAsync(id);
+            return _service.UsersIdGetAsync(id);
         }
 
         /// <summary>
-        /// 
+        /// Get all groups for a user
         /// </summary>
         /// <remarks>Returns all groups that a user is a member of</remarks>
         /// <param name="id">id of User to fetch</param>
@@ -123,11 +123,11 @@ namespace HETSAPI.Controllers
         [SwaggerResponse(200, type: typeof(List<GroupMembershipViewModel>))]
         public virtual IActionResult UsersIdGroupsGet([FromRoute]int id)
         {
-            return this._service.UsersIdGroupsGetAsync(id);
+            return _service.UsersIdGroupsGetAsync(id);
         }
 
         /// <summary>
-        /// 
+        /// Add a user to a group
         /// </summary>
         /// <remarks>Add to the active set of groups for a user</remarks>
         /// <param name="id">id of User to update</param>
@@ -141,7 +141,7 @@ namespace HETSAPI.Controllers
         [RequiresPermission(Permission.ADMIN)]
         public virtual IActionResult UsersIdGroupsPost([FromRoute]int id, [FromBody]GroupMembershipViewModel item)
         {
-            return this._service.UsersIdGroupsPostAsync(id, item);
+            return _service.UsersIdGroupsPostAsync(id, item);
         }
 
         /// <summary>
@@ -159,7 +159,7 @@ namespace HETSAPI.Controllers
         [RequiresPermission(Permission.ADMIN)]
         public virtual IActionResult UsersIdGroupsPut([FromRoute]int id, [FromBody]GroupMembershipViewModel[] items)
         {
-            return this._service.UsersIdGroupsPutAsync(id, items);
+            return _service.UsersIdGroupsPutAsync(id, items);
         }
 
         /// <summary>
@@ -176,7 +176,7 @@ namespace HETSAPI.Controllers
         [RequiresPermission(Permission.ADMIN)]
         public virtual IActionResult UsersIdPermissionsGet([FromRoute]int id)
         {
-            return this._service.UsersIdPermissionsGetAsync(id);
+            return _service.UsersIdPermissionsGetAsync(id);
         }
 
         /// <summary>
@@ -193,7 +193,7 @@ namespace HETSAPI.Controllers
         [RequiresPermission(Permission.ADMIN)]
         public virtual IActionResult UsersIdPut([FromRoute]int id, [FromBody]UserViewModel item)
         {
-            return this._service.UsersIdPutAsync(id, item);
+            return _service.UsersIdPutAsync(id, item);
         }
 
         /// <summary>
@@ -209,7 +209,7 @@ namespace HETSAPI.Controllers
         [SwaggerResponse(200, type: typeof(List<UserRoleViewModel>))]
         public virtual IActionResult UsersIdRolesGet([FromRoute]int id)
         {
-            return this._service.UsersIdRolesGetAsync(id);
+            return _service.UsersIdRolesGetAsync(id);
         }
 
         /// <summary>
@@ -226,7 +226,7 @@ namespace HETSAPI.Controllers
         [RequiresPermission(Permission.ADMIN)]
         public virtual IActionResult UsersIdRolesPost([FromRoute]int id, [FromBody]UserRoleViewModel item)
         {
-            return this._service.UsersIdRolesPostAsync(id, item);
+            return _service.UsersIdRolesPostAsync(id, item);
         }
 
         /// <summary>
@@ -244,7 +244,7 @@ namespace HETSAPI.Controllers
         [RequiresPermission(Permission.ADMIN)]
         public virtual IActionResult UsersIdRolesPut([FromRoute]int id, [FromBody]UserRoleViewModel[] items)
         {
-            return this._service.UsersIdRolesPutAsync(id, items);
+            return _service.UsersIdRolesPutAsync(id, items);
         }
 
         /// <summary>
@@ -259,7 +259,7 @@ namespace HETSAPI.Controllers
         [RequiresPermission(Permission.ADMIN)]
         public virtual IActionResult UsersPost([FromBody]UserViewModel item)
         {
-            return this._service.UsersPostAsync(item);
+            return _service.UsersPostAsync(item);
         }
 
         /// <summary>
@@ -276,7 +276,7 @@ namespace HETSAPI.Controllers
         [SwaggerResponse(200, type: typeof(List<UserViewModel>))]
         public virtual IActionResult UsersSearchGet([FromQuery]string districts, [FromQuery]string surname, [FromQuery]bool? includeInactive)
         {
-            return this._service.UsersSearchGetAsync(districts, surname, includeInactive);
+            return _service.UsersSearchGetAsync(districts, surname, includeInactive);
         }
     }
 }

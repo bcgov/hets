@@ -5,11 +5,12 @@ using Newtonsoft.Json;
 
 namespace HETSAPI.ViewModels
 {
+    /// <inheritdoc />
     /// <summary>
-    /// 
+    /// Group Membership
     /// </summary>
     [DataContract]
-    public partial class GroupMembershipViewModel : IEquatable<GroupMembershipViewModel>
+    public class GroupMembershipViewModel : IEquatable<GroupMembershipViewModel>
     {
         /// <summary>
         /// Default constructor, required by entity framework
@@ -21,18 +22,16 @@ namespace HETSAPI.ViewModels
         /// <summary>
         /// Initializes a new instance of the <see cref="GroupMembershipViewModel" /> class.
         /// </summary>
-        /// <param name="Active">Active (required).</param>
-        /// <param name="GroupId">GroupId (required).</param>
-        /// <param name="UserId">UserId (required).</param>
-        /// <param name="Id">Id.</param>
-        public GroupMembershipViewModel(bool Active, int GroupId, int UserId, int? Id = null)
+        /// <param name="active">Active (required).</param>
+        /// <param name="groupId">GroupId (required).</param>
+        /// <param name="userId">UserId (required).</param>
+        /// <param name="id">Id.</param>
+        public GroupMembershipViewModel(bool active, int groupId, int userId, int? id = null)
         {   
-            this.Active = Active;
-            this.GroupId = GroupId;
-            this.UserId = UserId;
-
-
-            this.Id = Id;
+            Active = active;
+            GroupId = groupId;
+            UserId = userId;
+            Id = id;
         }
 
         /// <summary>
@@ -110,21 +109,21 @@ namespace HETSAPI.ViewModels
 
             return                 
                 (
-                    this.Active == other.Active ||
-                    this.Active.Equals(other.Active)
+                    Active == other.Active ||
+                    Active.Equals(other.Active)
                 ) &&                 
                 (
-                    this.GroupId == other.GroupId ||
-                    this.GroupId.Equals(other.GroupId)
+                    GroupId == other.GroupId ||
+                    GroupId.Equals(other.GroupId)
                 ) &&                 
                 (
-                    this.UserId == other.UserId ||
-                    this.UserId.Equals(other.UserId)
+                    UserId == other.UserId ||
+                    UserId.Equals(other.UserId)
                 ) &&                 
                 (
-                    this.Id == other.Id ||
-                    this.Id != null &&
-                    this.Id.Equals(other.Id)
+                    Id == other.Id ||
+                    Id != null &&
+                    Id.Equals(other.Id)
                 );
         }
 
@@ -140,12 +139,14 @@ namespace HETSAPI.ViewModels
                 int hash = 41;
                 // Suitable nullity checks
                    
-                hash = hash * 59 + this.Active.GetHashCode();
+                hash = hash * 59 + Active.GetHashCode();
                                                    
-                hash = hash * 59 + this.GroupId.GetHashCode();                                   
-                hash = hash * 59 + this.UserId.GetHashCode();                if (this.Id != null)
+                hash = hash * 59 + GroupId.GetHashCode();                                   
+                hash = hash * 59 + UserId.GetHashCode();
+
+                if (Id != null)
                 {
-                    hash = hash * 59 + this.Id.GetHashCode();
+                    hash = hash * 59 + Id.GetHashCode();
                 }                
                 
                 return hash;

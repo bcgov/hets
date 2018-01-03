@@ -60,18 +60,25 @@ namespace HETSAPI.Authorization
                 _requiredPermissions = requiredPermissions;
             }
 
+            /// <summary>
+            /// Validate authorization
+            /// </summary>
+            /// <param name="context"></param>
+            /// <param name="next"></param>
+            /// <returns></returns>
             public async Task OnResourceExecutionAsync(ResourceExecutingContext context, ResourceExecutionDelegate next)
             {
-                /*if (await _authService.AuthorizeAsync(context.HttpContext.User,
-                                            context.ActionDescriptor.DisplayName,
-                                            _requiredPermissions))
+                AuthorizationResult result = await _authService.AuthorizeAsync(context.HttpContext.User,
+                    context.ActionDescriptor.DisplayName,
+                    _requiredPermissions);
+
+                if (!result.Succeeded)
                 {
-                    context.Result = new ChallengeResult();
-                }
-                else
-                {
-                    await next();
-                }*/
+                    context.Result = new UnauthorizedResult();
+                    await context.Result.ExecuteResultAsync(context);
+                }           
+
+                await next();                
             }
         }
     }
