@@ -9,9 +9,9 @@ using HETSAPI.Authorization;
 namespace HETSAPI.Controllers
 {
     /// <summary>
-    /// 
+    /// Group Controller
     /// </summary>
-    public partial class GroupController : Controller
+    public class GroupController : Controller
     {
         private readonly IGroupService _service;
 

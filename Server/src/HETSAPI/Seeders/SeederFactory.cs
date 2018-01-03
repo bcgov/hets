@@ -19,9 +19,14 @@ namespace HETSAPI.Seeders
         private readonly ILoggerFactory _loggerFactory;
         private readonly ILogger _logger;
         private readonly IConfiguration _configuration;
+        private readonly List<Seeder<T>> _seederInstances = new List<Seeder<T>>();
 
-        private List<Seeder<T>> SeederInstances = new List<Seeder<T>>();
-
+        /// <summary>
+        /// SeedFactory Constructor
+        /// </summary>
+        /// <param name="configuration"></param>
+        /// <param name="env"></param>
+        /// <param name="loggerFactory"></param>
         public SeedFactory(IConfiguration configuration, IHostingEnvironment env, ILoggerFactory loggerFactory)
         {
             _env = env;
@@ -30,7 +35,7 @@ namespace HETSAPI.Seeders
             _configuration = configuration;
 
             this.LoadSeeders();
-            SeederInstances.Sort(new SeederComparer<T>());
+            _seederInstances.Sort(new SeederComparer<T>());
         }
 
         private void LoadSeeders()
@@ -38,54 +43,58 @@ namespace HETSAPI.Seeders
             _logger.LogDebug("Loading seeders...");
 
             Assembly assembly = typeof(SeedFactory<T>).GetTypeInfo().Assembly;
-            List<Type> Types = assembly.GetTypes().Where(t => t.GetTypeInfo().IsSubclassOf(typeof(Seeder<T>))).ToList();
-            foreach (Type type in Types)
+            List<Type> types = assembly.GetTypes().Where(t => t.GetTypeInfo().IsSubclassOf(typeof(Seeder<T>))).ToList();
+            foreach (Type type in types)
             {
                 _logger.LogDebug($"\tCreating instance of {type.Name}...");
-                SeederInstances.Add((Seeder<T>)Activator.CreateInstance(type, _configuration, _env, _loggerFactory));
+                _seederInstances.Add((Seeder<T>)Activator.CreateInstance(type, _configuration, _env, _loggerFactory));
             }
 
-            _logger.LogDebug($"\tA total of {Types.Count} seeders loaded.");
+            _logger.LogDebug($"\tA total of {types.Count} seeders loaded.");
         }
 
+        /// <summary>
+        /// Seed data instance
+        /// </summary>
+        /// <param name="context"></param>
         public void Seed(T context)
         {
-            SeederInstances.ForEach(seeder =>
+            _seederInstances.ForEach(seeder =>
             {
                 seeder.Seed(context);
             });
         }
 
         private class SeederComparer<T> : Comparer<Seeder<T>> where T : DbContext
-        {
+        {            
             public override int Compare(Seeder<T> x, Seeder<T> y)
             {
                 // < 0 x is less than y
                 // = 0 same
                 // > 0 x greater than y
                 int rtnValue = 0;
-                if (x.InvokeAfter == y.InvokeAfter)
+                if (y != null && x != null && (x.InvokeAfter == y.InvokeAfter))
                 {
                     rtnValue = 0;
                 }
 
-                if (x.InvokeAfter == null && y.InvokeAfter != null)
+                if (x != null &&  y != null && (x.InvokeAfter == null && y.InvokeAfter != null))
                 {
                     rtnValue = -1;
                 }
 
-                if (x.GetType() == y.InvokeAfter)
+                if (y != null && x != null && (x.GetType() == y.InvokeAfter))
                 {
                     rtnValue = -1;
                 }
 
-                if (x.InvokeAfter == y.GetType())
+                if (y != null && x != null && (x.InvokeAfter == y.GetType()))
                 {
                     rtnValue = 1;
                 }
 
                 return rtnValue;
-            }
+            }            
         }
     }
 }

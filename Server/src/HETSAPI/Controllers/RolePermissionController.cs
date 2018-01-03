@@ -8,9 +8,9 @@ using HETSAPI.Authorization;
 namespace HETSAPI.Controllers
 {
     /// <summary>
-    /// 
+    /// Role Permission Controller
     /// </summary>
-    public partial class RolePermissionController : Controller
+    public class RolePermissionController : Controller
     {
         private readonly IRolePermissionService _service;
 

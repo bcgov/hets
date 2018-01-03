@@ -340,13 +340,14 @@ namespace HETSAPI.Services.Impl
         }
 
 
-        /// <summary>
-        ///
-        /// </summary>
-        /// <remarks>Returns History for a particular Project</remarks>
-        /// <param name="id">id of Project to fetch History for</param>
+        ///  <summary>
+        /// 
+        ///  </summary>
+        ///  <remarks>Returns History for a particular Project</remarks>
+        ///  <param name="id">id of Project to fetch History for</param>
+        /// <param name="offset"></param>
+        /// <param name="limit"></param>
         /// <response code="200">OK</response>
-
         public virtual IActionResult ProjectsIdHistoryGetAsync(int id, int? offset, int? limit)
         {
             bool exists = _context.Projects.Any(a => a.Id == id);

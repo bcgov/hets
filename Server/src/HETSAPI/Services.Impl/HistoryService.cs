@@ -97,14 +97,14 @@ namespace HETSAPI.Services.Impl
                 return new StatusCodeResult(404);
             }
         }
+
         /// <summary>
         /// 
         /// </summary>
-        
         /// <param name="id">id of History to fetch</param>
+        /// <param name="body"></param>
         /// <response code="200">OK</response>
         /// <response code="404">History not found</response>
-
         public virtual IActionResult HistoriesIdPutAsync(int id, History body )        
         {
             var exists = _context.Historys.Any(a => a.Id == id);

@@ -5,9 +5,9 @@ using HETSAPI.Services;
 namespace HETSAPI.Controllers
 {
     /// <summary>
-    /// 
+    /// Administration Controller
     /// </summary>
-    public partial class AdminController : Controller
+    public class AdminController : Controller
     {
         private readonly IAdminService _service;
 

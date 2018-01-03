@@ -8,9 +8,9 @@ using HETSAPI.Authorization;
 namespace HETSAPI.Controllers
 {
     /// <summary>
-    /// 
+    /// Lookup List Controller
     /// </summary>
-    public partial class LookupListController : Controller
+    public class LookupListController : Controller
     {
         private readonly ILookupListService _service;
 

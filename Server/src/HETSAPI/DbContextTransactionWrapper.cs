@@ -4,11 +4,11 @@ using Microsoft.EntityFrameworkCore.Storage;
 namespace HETSAPI
 {
     /// <summary>
-    /// 
+    /// Db Context Transaction Wrapper
     /// </summary>
     public class DbContextTransactionWrapper : IDbContextTransaction
     {
-        private readonly IDbContextTransaction _transaction = null;
+        private readonly IDbContextTransaction _transaction;
 
         internal DbContextTransactionWrapper(IDbContextTransaction transaction, bool existingTransaction)
         {

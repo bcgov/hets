@@ -8,9 +8,9 @@ using HETSAPI.Services;
 namespace HETSAPI.Controllers
 {
     /// <summary>
-    /// 
+    /// Current User Controller
     /// </summary>
-    public partial class CurrentUserController : Controller
+    public class CurrentUserController : Controller
     {
         private readonly ICurrentUserService _service;
 

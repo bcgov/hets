@@ -12,7 +12,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "HETSCommon", "..\Common\src
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "JsonValidator", "src\JsonValidator\JsonValidator.csproj", "{A7B2202C-280E-44FA-BF07-6F70D8C4F083}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "test", "test\test.csproj", "{455BD162-6746-46BA-9F69-2E3AAC4F8E9C}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "test", "test\test.csproj", "{72E85E03-9B7E-4840-957C-184ED3BA9A4F}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -32,10 +32,10 @@ Global
 		{A7B2202C-280E-44FA-BF07-6F70D8C4F083}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{A7B2202C-280E-44FA-BF07-6F70D8C4F083}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{A7B2202C-280E-44FA-BF07-6F70D8C4F083}.Release|Any CPU.Build.0 = Release|Any CPU
-		{455BD162-6746-46BA-9F69-2E3AAC4F8E9C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{455BD162-6746-46BA-9F69-2E3AAC4F8E9C}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{455BD162-6746-46BA-9F69-2E3AAC4F8E9C}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{455BD162-6746-46BA-9F69-2E3AAC4F8E9C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{72E85E03-9B7E-4840-957C-184ED3BA9A4F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{72E85E03-9B7E-4840-957C-184ED3BA9A4F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{72E85E03-9B7E-4840-957C-184ED3BA9A4F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{72E85E03-9B7E-4840-957C-184ED3BA9A4F}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

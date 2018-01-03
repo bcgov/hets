@@ -8,9 +8,9 @@ using HETSAPI.Authorization;
 namespace HETSAPI.Controllers
 {
     /// <summary>
-    /// 
+    /// Note Controller
     /// </summary>
-    public partial class NoteController : Controller
+    public class NoteController : Controller
     {
         private readonly INoteService _service;
 

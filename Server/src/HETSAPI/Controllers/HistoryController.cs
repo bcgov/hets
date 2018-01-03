@@ -8,9 +8,9 @@ using HETSAPI.Authorization;
 namespace HETSAPI.Controllers
 {
     /// <summary>
-    /// 
+    /// History Controller
     /// </summary>
-    public partial class HistoryController : Controller
+    public class HistoryController : Controller
     {
         private readonly IHistoryService _service;
 

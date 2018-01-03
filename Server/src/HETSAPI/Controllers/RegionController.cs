@@ -8,9 +8,9 @@ using HETSAPI.Authorization;
 namespace HETSAPI.Controllers
 {
     /// <summary>
-    /// 
+    /// Region Controller
     /// </summary>
-    public partial class RegionController : Controller
+    public class RegionController : Controller
     {
         private readonly IRegionService _service;
 

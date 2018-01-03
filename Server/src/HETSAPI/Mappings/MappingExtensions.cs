@@ -46,7 +46,7 @@ namespace HETSAPI.Mappings
                     // try the IANA timzeone first.
                     tzi = TimeZoneInfo.FindSystemTimeZoneById("America / Vancouver");
                 }
-                catch (Exception e)
+                catch
                 {
                     tzi = null;
                 }
@@ -57,7 +57,7 @@ namespace HETSAPI.Mappings
                     {
                         tzi = TimeZoneInfo.FindSystemTimeZoneById("Pacific Standard Time");
                     }
-                    catch (Exception e)
+                    catch 
                     {
                         tzi = null;
                     }

@@ -41,7 +41,7 @@ namespace HETSAPI.Services.Impl
                 string rawuid = User.FindFirst(HETSAPI.Models.User.USERID_CLAIM).Value;
                 result = int.Parse(rawuid);
             }
-            catch (Exception e)
+            catch
             {
                 result = null;
             }
@@ -67,7 +67,7 @@ namespace HETSAPI.Services.Impl
                     result[i] = int.Parse(tokens[i]);
                 }
             }
-            catch (Exception e)
+            catch
             {
                 result = null;
             }
