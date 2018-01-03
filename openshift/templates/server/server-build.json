@@ -24,7 +24,7 @@
         "name": "${NAME}",
         "labels":
         {
-          "app": "${NAME}",
+          "app": "${NAME}"
         }
       },
       "spec":
