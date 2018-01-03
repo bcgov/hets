@@ -33,7 +33,6 @@ if(IS_PRODUCTION) {
   webpackPlugins.push(new webpack.HotModuleReplacementPlugin());
   webpackPlugins.push(new webpack.DefinePlugin({
     'process.env':{
-      'NODE_ENV': JSON.stringify('production'),
       'DEV_USER': JSON.stringify(DEV_USER),
     },
   }));
