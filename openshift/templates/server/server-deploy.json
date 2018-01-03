@@ -330,6 +330,13 @@
       "value": "hets"
     },
     {
+      "name": "DATABASE_DEPLOYMENT_NAME",
+      "displayName": "Database Deployment Name",
+      "description": "The name associated to the database deployment resources.  In particular, this is used to wrie up the credentials associated to the database.",
+      "required": true,
+      "value": "postgresql"
+    },    
+    {
       "name": "ADMIN_PASSWORD",
       "displayName": "Admin Password",
       "description": "Initital Admin Password.",
