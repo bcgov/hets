@@ -6,6 +6,8 @@ const _ = require('lodash');
 
 const IS_PRODUCTION = process.env.NODE_ENV === 'production';
 
+// Include your SmUserId on the command line.
+const DEV_USER = process.env.HETS_DEV_USER || '';
 
 var webpackPlugins = [
   new webpack.optimize.CommonsChunkPlugin('vendor', 'vendor.js'),
@@ -29,6 +31,12 @@ if(IS_PRODUCTION) {
 } else {
   webpackPlugins.push(new webpack.optimize.OccurenceOrderPlugin());
   webpackPlugins.push(new webpack.HotModuleReplacementPlugin());
+  webpackPlugins.push(new webpack.DefinePlugin({
+    'process.env':{
+      'NODE_ENV': JSON.stringify('production'),
+      'DEV_USER': JSON.stringify(DEV_USER),
+    },
+  }));
 }
 
 module.exports = {
