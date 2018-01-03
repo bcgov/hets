@@ -9,9 +9,9 @@ using HETSAPI.Authorization;
 namespace HETSAPI.Controllers
 {
     /// <summary>
-    ///
+    /// Project Controller
     /// </summary>
-    public partial class ProjectController : Controller
+    public class ProjectController : Controller
     {
         private readonly IProjectService _service;
 

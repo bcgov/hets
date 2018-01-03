@@ -10,7 +10,7 @@ namespace HETSAPI.Controllers
     /// <summary>
     /// City Controller
     /// </summary>
-    public partial class CityController : Controller
+    public class CityController : Controller
     {
         private readonly ICityService _service;
 

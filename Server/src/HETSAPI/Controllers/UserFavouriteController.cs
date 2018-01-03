@@ -8,9 +8,9 @@ using HETSAPI.Authorization;
 namespace HETSAPI.Controllers
 {
     /// <summary>
-    /// 
+    /// User Favourite Controller
     /// </summary>
-    public partial class UserFavouriteController : Controller
+    public class UserFavouriteController : Controller
     {
         private readonly IUserFavouriteService _service;
 

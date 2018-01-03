@@ -8,9 +8,9 @@ using HETSAPI.Authorization;
 namespace HETSAPI.Controllers
 {
     /// <summary>
-    /// 
+    /// Time Record Controller
     /// </summary>
-    public partial class TimeRecordController : Controller
+    public class TimeRecordController : Controller
     {
         private readonly ITimeRecordService _service;
 

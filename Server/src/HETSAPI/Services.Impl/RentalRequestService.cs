@@ -159,13 +159,14 @@ namespace HETSAPI.Services.Impl
         }
 
 
-        /// <summary>
-        ///
-        /// </summary>
-        /// <remarks>Returns History for a particular RentalRequest</remarks>
-        /// <param name="id">id of RentalRequest to fetch History for</param>
+        ///  <summary>
+        /// 
+        ///  </summary>
+        ///  <remarks>Returns History for a particular RentalRequest</remarks>
+        ///  <param name="id">id of RentalRequest to fetch History for</param>
+        /// <param name="offset"></param>
+        /// <param name="limit"></param>
         /// <response code="200">OK</response>
-
         public virtual IActionResult RentalrequestsIdHistoryGetAsync(int id, int? offset, int? limit)
         {
             bool exists = _context.RentalRequests.Any(a => a.Id == id);

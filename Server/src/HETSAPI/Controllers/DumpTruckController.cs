@@ -8,9 +8,9 @@ using HETSAPI.Authorization;
 namespace HETSAPI.Controllers
 {
     /// <summary>
-    /// 
+    /// Dump Truck Controller
     /// </summary>
-    public partial class DumpTruckController : Controller
+    public class DumpTruckController : Controller
     {
         private readonly IDumpTruckService _service;
 

@@ -8,9 +8,9 @@ using HETSAPI.Authorization;
 namespace HETSAPI.Controllers
 {
     /// <summary>
-    /// 
+    /// Local Area Rotation List Controller
     /// </summary>
-    public partial class LocalAreaRotationListController : Controller
+    public class LocalAreaRotationListController : Controller
     {
         private readonly ILocalAreaRotationListService _service;
 

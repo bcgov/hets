@@ -8,9 +8,9 @@ using HETSAPI.Authorization;
 namespace HETSAPI.Controllers
 {
     /// <summary>
-    /// Contacts Controller
+    /// Contact Controller
     /// </summary>
-    public partial class ContactController : Controller
+    public class ContactController : Controller
     {
         private readonly IContactService _service;
 

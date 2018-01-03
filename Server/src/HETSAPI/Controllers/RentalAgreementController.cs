@@ -8,9 +8,9 @@ using HETSAPI.Authorization;
 namespace HETSAPI.Controllers
 {
     /// <summary>
-    /// 
+    /// Rental Agreement Controller
     /// </summary>
-    public partial class RentalAgreementController : Controller
+    public class RentalAgreementController : Controller
     {
         private readonly IRentalAgreementService _service;
 

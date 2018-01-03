@@ -253,13 +253,14 @@ namespace HETSAPI.Services.Impl
         }
 
 
-        /// <summary>
-        ///
-        /// </summary>
-        /// <remarks>Returns History for a particular Equipment</remarks>
-        /// <param name="id">id of SchoolBus to fetch History for</param>
+        ///  <summary>
+        /// 
+        ///  </summary>
+        ///  <remarks>Returns History for a particular Equipment</remarks>
+        ///  <param name="id">id of SchoolBus to fetch History for</param>
+        /// <param name="offset"></param>
+        /// <param name="limit"></param>
         /// <response code="200">OK</response>
-
         public virtual IActionResult EquipmentIdHistoryGetAsync(int id, int? offset, int? limit)
         {
             bool exists = _context.Equipments.Any(a => a.Id == id);
