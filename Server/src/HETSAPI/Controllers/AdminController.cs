@@ -7,6 +7,7 @@ namespace HETSAPI.Controllers
     /// <summary>
     /// Administration Controller
     /// </summary>
+    [ResponseCache(Location = ResponseCacheLocation.None, NoStore = true)]
     public class AdminController : Controller
     {
         private readonly IAdminService _service;
@@ -31,7 +32,7 @@ namespace HETSAPI.Controllers
         [SwaggerOperation("AdminImportGet")]
         public virtual IActionResult AdminImportGet([FromQuery]string path, [FromQuery]string districts)
         {
-            return this._service.AdminImportGetAsync(path, districts);
+            return _service.AdminImportGetAsync(path, districts);
         }
     }
 }

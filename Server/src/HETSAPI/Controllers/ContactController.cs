@@ -10,12 +10,13 @@ namespace HETSAPI.Controllers
     /// <summary>
     /// Contact Controller
     /// </summary>
+    [ResponseCache(Location = ResponseCacheLocation.None, NoStore = true)]
     public class ContactController : Controller
     {
         private readonly IContactService _service;
 
         /// <summary>
-        /// Create a controller and set the service
+        /// Contract Controller Constructor
         /// </summary>
         public ContactController(IContactService service)
         {
@@ -23,7 +24,7 @@ namespace HETSAPI.Controllers
         }
 
         /// <summary>
-        /// 
+        /// Create bulk contact records
         /// </summary>
         /// <param name="items"></param>
         /// <response code="201">Contact created</response>
@@ -33,11 +34,11 @@ namespace HETSAPI.Controllers
         [RequiresPermission(Permission.ADMIN)]
         public virtual IActionResult ContactsBulkPost([FromBody]Contact[] items)
         {
-            return this._service.ContactsBulkPostAsync(items);
+            return _service.ContactsBulkPostAsync(items);
         }
 
         /// <summary>
-        /// 
+        /// Get all contacts
         /// </summary>
         /// <response code="200">OK</response>
         [HttpGet]
@@ -46,11 +47,11 @@ namespace HETSAPI.Controllers
         [SwaggerResponse(200, type: typeof(List<Contact>))]
         public virtual IActionResult ContactsGet()
         {
-            return this._service.ContactsGetAsync();
+            return _service.ContactsGetAsync();
         }
 
         /// <summary>
-        /// 
+        /// Delete contact
         /// </summary>
         /// <param name="id">id of Contact to delete</param>
         /// <response code="200">OK</response>
@@ -60,11 +61,11 @@ namespace HETSAPI.Controllers
         [SwaggerOperation("ContactsIdDeletePost")]
         public virtual IActionResult ContactsIdDeletePost([FromRoute]int id)
         {
-            return this._service.ContactsIdDeletePostAsync(id);
+            return _service.ContactsIdDeletePostAsync(id);
         }
 
         /// <summary>
-        /// 
+        /// Get contact
         /// </summary>
         /// <param name="id">id of Contact to fetch</param>
         /// <response code="200">OK</response>
@@ -75,13 +76,13 @@ namespace HETSAPI.Controllers
         [SwaggerResponse(200, type: typeof(Contact))]
         public virtual IActionResult ContactsIdGet([FromRoute]int id)
         {
-            return this._service.ContactsIdGetAsync(id);
+            return _service.ContactsIdGetAsync(id);
         }
 
         /// <summary>
-        /// 
+        /// Update contact
         /// </summary>
-        /// <param name="id">id of Contact to fetch</param>
+        /// <param name="id">id of Contact to update</param>
         /// <param name="item"></param>
         /// <response code="200">OK</response>
         /// <response code="404">Contact not found</response>
@@ -91,11 +92,11 @@ namespace HETSAPI.Controllers
         [SwaggerResponse(200, type: typeof(Contact))]
         public virtual IActionResult ContactsIdPut([FromRoute]int id, [FromBody]Contact item)
         {
-            return this._service.ContactsIdPutAsync(id, item);
+            return _service.ContactsIdPutAsync(id, item);
         }
 
         /// <summary>
-        /// 
+        /// Create contact
         /// </summary>
         /// <param name="item"></param>
         /// <response code="201">Contact created</response>
@@ -105,7 +106,7 @@ namespace HETSAPI.Controllers
         [SwaggerResponse(200, type: typeof(Contact))]
         public virtual IActionResult ContactsPost([FromBody]Contact item)
         {
-            return this._service.ContactsPostAsync(item);
+            return _service.ContactsPostAsync(item);
         }
     }
 }

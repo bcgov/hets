@@ -10,12 +10,13 @@ namespace HETSAPI.Controllers
     /// <summary>
     /// Local Area Rotation List Controller
     /// </summary>
+    [ResponseCache(Location = ResponseCacheLocation.None, NoStore = true)]
     public class LocalAreaRotationListController : Controller
     {
         private readonly ILocalAreaRotationListService _service;
 
         /// <summary>
-        /// Create a controller and set the service
+        /// Local Area Rotation List Controller Constructor
         /// </summary>
         public LocalAreaRotationListController(ILocalAreaRotationListService service)
         {
@@ -23,7 +24,7 @@ namespace HETSAPI.Controllers
         }
 
         /// <summary>
-        /// 
+        /// Create bulk local area rotation lists
         /// </summary>
         /// <param name="items"></param>
         /// <response code="201">LocalAreaRotationList created</response>
@@ -33,11 +34,11 @@ namespace HETSAPI.Controllers
         [RequiresPermission(Permission.ADMIN)]
         public virtual IActionResult LocalarearotationlistsBulkPost([FromBody]LocalAreaRotationList[] items)
         {
-            return this._service.LocalarearotationlistsBulkPostAsync(items);
+            return _service.LocalarearotationlistsBulkPostAsync(items);
         }
 
         /// <summary>
-        /// 
+        /// Get all local area rotation lists
         /// </summary>
         /// <response code="200">OK</response>
         [HttpGet]
@@ -46,11 +47,11 @@ namespace HETSAPI.Controllers
         [SwaggerResponse(200, type: typeof(List<LocalAreaRotationList>))]
         public virtual IActionResult LocalarearotationlistsGet()
         {
-            return this._service.LocalarearotationlistsGetAsync();
+            return _service.LocalarearotationlistsGetAsync();
         }
 
         /// <summary>
-        /// 
+        /// Delete local area rotation list
         /// </summary>
         /// <param name="id">id of LocalAreaRotationList to delete</param>
         /// <response code="200">OK</response>
@@ -60,11 +61,11 @@ namespace HETSAPI.Controllers
         [SwaggerOperation("LocalarearotationlistsIdDeletePost")]
         public virtual IActionResult LocalarearotationlistsIdDeletePost([FromRoute]int id)
         {
-            return this._service.LocalarearotationlistsIdDeletePostAsync(id);
+            return _service.LocalarearotationlistsIdDeletePostAsync(id);
         }
 
         /// <summary>
-        /// 
+        /// Get local area rotation list by id
         /// </summary>
         /// <param name="id">id of LocalAreaRotationList to fetch</param>
         /// <response code="200">OK</response>
@@ -75,13 +76,13 @@ namespace HETSAPI.Controllers
         [SwaggerResponse(200, type: typeof(LocalAreaRotationList))]
         public virtual IActionResult LocalarearotationlistsIdGet([FromRoute]int id)
         {
-            return this._service.LocalarearotationlistsIdGetAsync(id);
+            return _service.LocalarearotationlistsIdGetAsync(id);
         }
 
         /// <summary>
-        /// 
+        /// Update local area rotation list
         /// </summary>
-        /// <param name="id">id of LocalAreaRotationList to fetch</param>
+        /// <param name="id">id of LocalAreaRotationList to update</param>
         /// <param name="item"></param>
         /// <response code="200">OK</response>
         /// <response code="404">LocalAreaRotationList not found</response>
@@ -91,11 +92,11 @@ namespace HETSAPI.Controllers
         [SwaggerResponse(200, type: typeof(LocalAreaRotationList))]
         public virtual IActionResult LocalarearotationlistsIdPut([FromRoute]int id, [FromBody]LocalAreaRotationList item)
         {
-            return this._service.LocalarearotationlistsIdPutAsync(id, item);
+            return _service.LocalarearotationlistsIdPutAsync(id, item);
         }
 
         /// <summary>
-        /// 
+        /// Create local area rotation list
         /// </summary>
         /// <param name="item"></param>
         /// <response code="201">LocalAreaRotationList created</response>
@@ -105,7 +106,7 @@ namespace HETSAPI.Controllers
         [SwaggerResponse(200, type: typeof(LocalAreaRotationList))]
         public virtual IActionResult LocalarearotationlistsPost([FromBody]LocalAreaRotationList item)
         {
-            return this._service.LocalarearotationlistsPostAsync(item);
+            return _service.LocalarearotationlistsPostAsync(item);
         }
     }
 }

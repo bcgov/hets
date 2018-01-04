@@ -14,14 +14,15 @@ namespace HETSAPI.Controllers
     /// </summary>
     /// <remarks>
     /// Provides examples of how to apply permission checks.
-    /// </remarks>
+    /// </remarks>    
     [Route("api/test")]
+    [ResponseCache(Location = ResponseCacheLocation.None, NoStore = true)]
     public class TestController : Controller
     {
         private readonly ITestService _service;
 
         /// <summary>
-        /// A set of Test Services
+        /// Test Controller Constructor
         /// </summary>
         /// <param name="service"></param>
         public TestController(ITestService service)
@@ -242,7 +243,7 @@ namespace HETSAPI.Controllers
             }
             else
             {
-                return new ChallengeResult();
+                return new ForbidResult();
             }
         }
 
