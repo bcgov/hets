@@ -11,12 +11,13 @@ namespace HETSAPI.Controllers
     /// <summary>
     /// User Controller
     /// </summary>
+    [ResponseCache(Location = ResponseCacheLocation.None, NoStore = true)]
     public class UserController : Controller
     {
         private readonly IUserService _service;
 
         /// <summary>
-        /// Create a controller and set the service
+        /// User Controller Constructor
         /// </summary>
         public UserController(IUserService service)
         {
@@ -145,7 +146,7 @@ namespace HETSAPI.Controllers
         }
 
         /// <summary>
-        /// 
+        /// Update groups associated with a user
         /// </summary>
         /// <remarks>Updates the active set of groups for a user</remarks>
         /// <param name="id">id of User to update</param>
@@ -163,7 +164,7 @@ namespace HETSAPI.Controllers
         }
 
         /// <summary>
-        /// 
+        /// Get permissions for a user
         /// </summary>
         /// <remarks>Returns the set of permissions for a user</remarks>
         /// <param name="id">id of User to fetch</param>
@@ -180,9 +181,9 @@ namespace HETSAPI.Controllers
         }
 
         /// <summary>
-        /// 
+        /// Update user
         /// </summary>
-        /// <param name="id">id of User to fetch</param>
+        /// <param name="id">id of User to update</param>
         /// <param name="item"></param>
         /// <response code="200">OK</response>
         /// <response code="404">User not found</response>
@@ -197,7 +198,7 @@ namespace HETSAPI.Controllers
         }
 
         /// <summary>
-        /// 
+        /// Get all roles for a user
         /// </summary>
         /// <remarks>Returns the roles for a user</remarks>
         /// <param name="id">id of User to fetch</param>
@@ -213,7 +214,7 @@ namespace HETSAPI.Controllers
         }
 
         /// <summary>
-        /// 
+        /// Adds a role to a user
         /// </summary>
         /// <remarks>Adds a role to a user</remarks>
         /// <param name="id">id of User to update</param>
@@ -230,7 +231,7 @@ namespace HETSAPI.Controllers
         }
 
         /// <summary>
-        /// 
+        /// Add user to roles
         /// </summary>
         /// <remarks>Updates the roles for a user</remarks>
         /// <param name="id">id of User to update</param>
@@ -248,7 +249,7 @@ namespace HETSAPI.Controllers
         }
 
         /// <summary>
-        /// 
+        /// Create user
         /// </summary>
         /// <param name="item"></param>
         /// <response code="201">User created</response>
@@ -263,7 +264,7 @@ namespace HETSAPI.Controllers
         }
 
         /// <summary>
-        /// Searches Users
+        /// Search for users
         /// </summary>
         /// <remarks>Used to search users.</remarks>
         /// <param name="districts">Districts (comma seperated list of id numbers)</param>
@@ -271,7 +272,7 @@ namespace HETSAPI.Controllers
         /// <param name="includeInactive">True if Inactive users will be returned</param>
         /// <response code="200">OK</response>
         [HttpGet]
-        [Route("/api/users/search")]
+        [Route("/api/users/search")]        
         [SwaggerOperation("UsersSearchGet")]
         [SwaggerResponse(200, type: typeof(List<UserViewModel>))]
         public virtual IActionResult UsersSearchGet([FromQuery]string districts, [FromQuery]string surname, [FromQuery]bool? includeInactive)

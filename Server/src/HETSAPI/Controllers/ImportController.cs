@@ -14,9 +14,15 @@ namespace HETSAPI.Controllers
     /// This controller is used to handle importing data from the previous system.
     /// </summary>
     [Route("api/import")]
+    [ResponseCache(Location = ResponseCacheLocation.None, NoStore = true)]
     public class ImportController
     {
         private readonly IImportService _service;
+
+        /// <summary>
+        /// Import Controller Constructor
+        /// </summary>
+        /// <param name="service"></param>
         public ImportController(IImportService service)
         {
             _service = service;
@@ -48,28 +54,40 @@ namespace HETSAPI.Controllers
         }        
     }
 
-
+    /// <summary>
+    /// Import Service Interface
+    /// </summary>
     public interface IImportService
-    {        
+    {      
+        /// <summary>
+        /// Upload file
+        /// </summary>
+        /// <param name="files"></param>
+        /// <returns></returns>
         IActionResult UploadPostAsync(IList<IFormFile> files);
     }
 
+    /// <summary>
+    /// Import Service
+    /// </summary>
+    [ResponseCache(Location = ResponseCacheLocation.None, NoStore = true)]
     public class ImportService : ServiceBase, IImportService
     {
-        private readonly IConfiguration Configuration;
+        private readonly IConfiguration _configuration;
+
         /// <summary>
-        /// Constructor
+        /// Import Service Constructor
         /// </summary>
         /// <param name="httpContextAccessor"></param>
         /// <param name="configuration"></param>
         /// <param name="context"></param>
         public ImportService(IHttpContextAccessor httpContextAccessor, IConfiguration configuration, DbAppContext context) : base(httpContextAccessor, context)
         {
-            Configuration = configuration;
+            _configuration = configuration;
         }
 
         /// <summary>
-        ///  Basic file receiver for .NET Core
+        /// Basic file receiver for .NET Core
         /// </summary>
         /// <param name="files"></param>
         /// <returns></returns>
@@ -77,7 +95,7 @@ namespace HETSAPI.Controllers
         {            
             string result;
 
-            string uploadPath = Configuration["UploadPath"];
+            string uploadPath = _configuration["UploadPath"];
 
             if (string.IsNullOrEmpty (uploadPath))
             {
@@ -102,6 +120,7 @@ namespace HETSAPI.Controllers
                             }
                         }
                     }
+
                     result = result + "<body></html>";
                 }
                 catch (Exception e)
@@ -109,11 +128,10 @@ namespace HETSAPI.Controllers
                     result = "<html><body><h1>Error:</h1><p><pre>";
                     result = result + JsonConvert.SerializeObject(e) + "</pre></body></html>";
                 }
-            }            
+            }         
+            
             return new ObjectResult(result);
         }
-
     }
-
 }
 

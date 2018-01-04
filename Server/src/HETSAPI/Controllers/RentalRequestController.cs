@@ -12,12 +12,13 @@ namespace HETSAPI.Controllers
     /// <summary>
     /// Rental Request Controller
     /// </summary>
+    [ResponseCache(Location = ResponseCacheLocation.None, NoStore = true)]
     public class RentalRequestController : Controller
     {
         private readonly IRentalRequestService _service;
 
         /// <summary>
-        /// Create a controller and set the service
+        /// Rental Request Controller Constructor
         /// </summary>
         public RentalRequestController(IRentalRequestService service)
         {
@@ -25,7 +26,7 @@ namespace HETSAPI.Controllers
         }
 
         /// <summary>
-        /// 
+        /// Create bulk rental request records
         /// </summary>
         /// <param name="items"></param>
         /// <response code="201">RentalRequest created</response>
@@ -35,11 +36,11 @@ namespace HETSAPI.Controllers
         [RequiresPermission(Permission.ADMIN)]
         public virtual IActionResult RentalrequestsBulkPost([FromBody]RentalRequest[] items)
         {
-            return this._service.RentalrequestsBulkPostAsync(items);
+            return _service.RentalrequestsBulkPostAsync(items);
         }
 
         /// <summary>
-        /// 
+        /// Get all rental requests
         /// </summary>
         /// <response code="200">OK</response>
         [HttpGet]
@@ -48,11 +49,11 @@ namespace HETSAPI.Controllers
         [SwaggerResponse(200, type: typeof(List<RentalRequest>))]
         public virtual IActionResult RentalrequestsGet()
         {
-            return this._service.RentalrequestsGetAsync();
+            return _service.RentalrequestsGetAsync();
         }
 
         /// <summary>
-        /// 
+        /// Get attachments associated with a rental request
         /// </summary>
         /// <remarks>Returns attachments for a particular RentalRequest</remarks>
         /// <param name="id">id of RentalRequest to fetch attachments for</param>
@@ -64,11 +65,11 @@ namespace HETSAPI.Controllers
         [SwaggerResponse(200, type: typeof(List<AttachmentViewModel>))]
         public virtual IActionResult RentalrequestsIdAttachmentsGet([FromRoute]int id)
         {
-            return this._service.RentalrequestsIdAttachmentsGetAsync(id);
+            return _service.RentalrequestsIdAttachmentsGetAsync(id);
         }
 
         /// <summary>
-        /// 
+        /// Delete rental request
         /// </summary>
         /// <param name="id">id of RentalRequest to delete</param>
         /// <response code="200">OK</response>
@@ -78,11 +79,11 @@ namespace HETSAPI.Controllers
         [SwaggerOperation("RentalrequestsIdDeletePost")]
         public virtual IActionResult RentalrequestsIdDeletePost([FromRoute]int id)
         {
-            return this._service.RentalrequestsIdDeletePostAsync(id);
+            return _service.RentalrequestsIdDeletePostAsync(id);
         }
 
         /// <summary>
-        /// 
+        /// Get rental request by id
         /// </summary>
         /// <param name="id">id of RentalRequest to fetch</param>
         /// <response code="200">OK</response>
@@ -93,11 +94,11 @@ namespace HETSAPI.Controllers
         [SwaggerResponse(200, type: typeof(RentalRequest))]
         public virtual IActionResult RentalrequestsIdGet([FromRoute]int id)
         {
-            return this._service.RentalrequestsIdGetAsync(id);
+            return _service.RentalrequestsIdGetAsync(id);
         }
 
         /// <summary>
-        /// 
+        /// Get history associated with a rental request
         /// </summary>
         /// <remarks>Returns History for a particular RentalRequest</remarks>
         /// <param name="id">id of RentalRequest to fetch History for</param>
@@ -110,11 +111,11 @@ namespace HETSAPI.Controllers
         [SwaggerResponse(200, type: typeof(List<HistoryViewModel>))]
         public virtual IActionResult RentalrequestsIdHistoryGet([FromRoute]int id, [FromQuery]int? offset, [FromQuery]int? limit)
         {
-            return this._service.RentalrequestsIdHistoryGetAsync(id, offset, limit);
+            return _service.RentalrequestsIdHistoryGetAsync(id, offset, limit);
         }
 
         /// <summary>
-        /// 
+        /// Create history for a rental request
         /// </summary>
         /// <remarks>Add a History record to the RentalRequest</remarks>
         /// <param name="id">id of RentalRequest to add History for</param>
@@ -126,13 +127,13 @@ namespace HETSAPI.Controllers
         [SwaggerOperation("RentalrequestsIdHistoryPost")]
         public virtual IActionResult RentalrequestsIdHistoryPost([FromRoute]int id, [FromBody]History item)
         {
-            return this._service.RentalrequestsIdHistoryPostAsync(id, item);
+            return _service.RentalrequestsIdHistoryPostAsync(id, item);
         }
 
         /// <summary>
-        /// 
+        /// Update rental request
         /// </summary>
-        /// <param name="id">id of RentalRequest to fetch</param>
+        /// <param name="id">id of RentalRequest to update</param>
         /// <param name="item"></param>
         /// <response code="200">OK</response>
         /// <response code="404">RentalRequest not found</response>
@@ -142,11 +143,11 @@ namespace HETSAPI.Controllers
         [SwaggerResponse(200, type: typeof(RentalRequest))]
         public virtual IActionResult RentalrequestsIdPut([FromRoute]int id, [FromBody]RentalRequest item)
         {
-            return this._service.RentalrequestsIdPutAsync(id, item);
+            return _service.RentalrequestsIdPutAsync(id, item);
         }
 
         /// <summary>
-        /// 
+        /// Update a rental request rotation list record
         /// </summary>
         /// <remarks>Updates a rental request rotation list entry.  Side effect is the LocalAreaRotationList is also updated</remarks>
         /// <param name="id">id of RentalRequest to update</param>
@@ -160,11 +161,11 @@ namespace HETSAPI.Controllers
         [SwaggerResponse(200, type: typeof(RentalRequestRotationList))]
         public virtual IActionResult RentalrequestsIdRentalrequestrotationlistRentalRequestRotationListIdPut([FromRoute]int id, [FromRoute]int rentalRequestRotationListId, [FromBody]RentalRequestRotationList item)
         {
-            return this._service.RentalrequestsIdRentalrequestrotationlistRentalRequestRotationListIdPutAsync(id, rentalRequestRotationListId, item);
+            return _service.RentalrequestsIdRentalrequestrotationlistRentalRequestRotationListIdPutAsync(id, rentalRequestRotationListId, item);
         }
 
         /// <summary>
-        /// 
+        /// Create rental request
         /// </summary>
         /// <param name="item"></param>
         /// <response code="201">RentalRequest created</response>
@@ -174,7 +175,7 @@ namespace HETSAPI.Controllers
         [SwaggerResponse(200, type: typeof(RentalRequest))]
         public virtual IActionResult RentalrequestsPost([FromBody]RentalRequest item)
         {
-            return this._service.RentalrequestsPostAsync(item);
+            return _service.RentalrequestsPostAsync(item);
         }
 
         /// <summary>
@@ -193,7 +194,7 @@ namespace HETSAPI.Controllers
         [SwaggerResponse(200, type: typeof(List<RentalRequestSearchResultViewModel>))]
         public virtual IActionResult RentalrequestsSearchGet([FromQuery]string localareas, [FromQuery]string project, [FromQuery]string status, [FromQuery]DateTime? startDate, [FromQuery]DateTime? endDate)
         {
-            return this._service.RentalrequestsSearchGetAsync(localareas, project, status, startDate, endDate);
+            return _service.RentalrequestsSearchGetAsync(localareas, project, status, startDate, endDate);
         }
     }
 }

@@ -10,12 +10,13 @@ namespace HETSAPI.Controllers
     /// <summary>
     /// Error Controller for HETS API Application
     /// </summary>
+    [ResponseCache(Location = ResponseCacheLocation.None, NoStore = true)]
     public class ErrorController : Controller
     {
         private readonly IHostingEnvironment _env;
 
         /// <summary>
-        /// AuthenticationController Constructor
+        /// Error Controller Constructor
         /// </summary>
         /// <param name="env"></param>
         public ErrorController(IHostingEnvironment env)

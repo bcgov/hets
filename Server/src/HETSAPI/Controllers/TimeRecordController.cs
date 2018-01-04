@@ -10,12 +10,13 @@ namespace HETSAPI.Controllers
     /// <summary>
     /// Time Record Controller
     /// </summary>
+    [ResponseCache(Location = ResponseCacheLocation.None, NoStore = true)]
     public class TimeRecordController : Controller
     {
         private readonly ITimeRecordService _service;
 
         /// <summary>
-        /// Create a controller and set the service
+        /// Time Record Controller Constructor
         /// </summary>
         public TimeRecordController(ITimeRecordService service)
         {
@@ -23,7 +24,7 @@ namespace HETSAPI.Controllers
         }
 
         /// <summary>
-        /// 
+        /// Create bulk time records
         /// </summary>
         /// <param name="items"></param>
         /// <response code="201">TimeRecord created</response>
@@ -33,11 +34,11 @@ namespace HETSAPI.Controllers
         [RequiresPermission(Permission.ADMIN)]
         public virtual IActionResult TimerecordsBulkPost([FromBody]TimeRecord[] items)
         {
-            return this._service.TimerecordsBulkPostAsync(items);
+            return _service.TimerecordsBulkPostAsync(items);
         }
 
         /// <summary>
-        /// 
+        /// Get all time records
         /// </summary>
         /// <response code="200">OK</response>
         [HttpGet]
@@ -46,11 +47,11 @@ namespace HETSAPI.Controllers
         [SwaggerResponse(200, type: typeof(List<TimeRecord>))]
         public virtual IActionResult TimerecordsGet()
         {
-            return this._service.TimerecordsGetAsync();
+            return _service.TimerecordsGetAsync();
         }
 
         /// <summary>
-        /// 
+        /// Delete time record
         /// </summary>
         /// <param name="id">id of TimeRecord to delete</param>
         /// <response code="200">OK</response>
@@ -60,11 +61,11 @@ namespace HETSAPI.Controllers
         [SwaggerOperation("TimerecordsIdDeletePost")]
         public virtual IActionResult TimerecordsIdDeletePost([FromRoute]int id)
         {
-            return this._service.TimerecordsIdDeletePostAsync(id);
+            return _service.TimerecordsIdDeletePostAsync(id);
         }
 
         /// <summary>
-        /// 
+        /// Get time record by id
         /// </summary>
         /// <param name="id">id of TimeRecord to fetch</param>
         /// <response code="200">OK</response>
@@ -75,13 +76,13 @@ namespace HETSAPI.Controllers
         [SwaggerResponse(200, type: typeof(TimeRecord))]
         public virtual IActionResult TimerecordsIdGet([FromRoute]int id)
         {
-            return this._service.TimerecordsIdGetAsync(id);
+            return _service.TimerecordsIdGetAsync(id);
         }
 
         /// <summary>
-        /// 
+        /// Update time record
         /// </summary>
-        /// <param name="id">id of TimeRecord to fetch</param>
+        /// <param name="id">id of TimeRecord to update</param>
         /// <param name="item"></param>
         /// <response code="200">OK</response>
         /// <response code="404">TimeRecord not found</response>
@@ -91,11 +92,11 @@ namespace HETSAPI.Controllers
         [SwaggerResponse(200, type: typeof(TimeRecord))]
         public virtual IActionResult TimerecordsIdPut([FromRoute]int id, [FromBody]TimeRecord item)
         {
-            return this._service.TimerecordsIdPutAsync(id, item);
+            return _service.TimerecordsIdPutAsync(id, item);
         }
 
         /// <summary>
-        /// 
+        /// Create time record
         /// </summary>
         /// <param name="item"></param>
         /// <response code="201">TimeRecord created</response>
@@ -105,7 +106,7 @@ namespace HETSAPI.Controllers
         [SwaggerResponse(200, type: typeof(TimeRecord))]
         public virtual IActionResult TimerecordsPost([FromBody]TimeRecord item)
         {
-            return this._service.TimerecordsPostAsync(item);
+            return _service.TimerecordsPostAsync(item);
         }
     }
 }

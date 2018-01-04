@@ -12,13 +12,14 @@ namespace HETSAPI.Controllers
     /// Development Environment Authentication Service
     /// </summary>
     [Route("api/authentication")]
+    [ResponseCache(Location = ResponseCacheLocation.None, NoStore = true)]
     public class AuthenticationController : Controller
     {
         private readonly SiteMinderAuthOptions _options = new SiteMinderAuthOptions();
         private readonly IHostingEnvironment _env;
 
         /// <summary>
-        /// AuthenticationController Constructor
+        /// Authentication Controller Constructor
         /// </summary>
         /// <param name="env"></param>
         public AuthenticationController(IHostingEnvironment env)

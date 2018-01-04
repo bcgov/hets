@@ -7,12 +7,13 @@ namespace HETSAPI.Controllers
     /// <summary>
     /// Default home controller for the HETSAPI
     /// </summary>
+    [ResponseCache(Location = ResponseCacheLocation.None, NoStore = true)]
     public class HomeController : Controller
     {
         private readonly IHostingEnvironment _env;
 
         /// <summary>
-        /// AuthenticationController Constructir
+        /// Authentication Controller Constructor
         /// </summary>
         /// <param name="env"></param>
         public HomeController(IHostingEnvironment env)

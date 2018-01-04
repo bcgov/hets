@@ -10,12 +10,13 @@ namespace HETSAPI.Controllers
     /// <summary>
     /// Dump Truck Controller
     /// </summary>
+    [ResponseCache(Location = ResponseCacheLocation.None, NoStore = true)]
     public class DumpTruckController : Controller
     {
         private readonly IDumpTruckService _service;
 
         /// <summary>
-        /// Create a controller and set the service
+        /// Dump Truck Controller Constructor
         /// </summary>
         public DumpTruckController(IDumpTruckService service)
         {
@@ -23,7 +24,7 @@ namespace HETSAPI.Controllers
         }
 
         /// <summary>
-        /// 
+        /// Create bulk dump truck records
         /// </summary>
         /// <param name="items"></param>
         /// <response code="201">DumpTruck created</response>
@@ -33,11 +34,11 @@ namespace HETSAPI.Controllers
         [RequiresPermission(Permission.ADMIN)]
         public virtual IActionResult DumptrucksBulkPost([FromBody]DumpTruck[] items)
         {
-            return this._service.DumptrucksBulkPostAsync(items);
+            return _service.DumptrucksBulkPostAsync(items);
         }
 
         /// <summary>
-        /// 
+        /// Get all dump trucks
         /// </summary>
         /// <response code="200">OK</response>
         [HttpGet]
@@ -46,11 +47,11 @@ namespace HETSAPI.Controllers
         [SwaggerResponse(200, type: typeof(List<DumpTruck>))]
         public virtual IActionResult DumptrucksGet()
         {
-            return this._service.DumptrucksGetAsync();
+            return _service.DumptrucksGetAsync();
         }
 
         /// <summary>
-        /// 
+        /// Delete dump truck
         /// </summary>
         /// <param name="id">id of DumpTruck to delete</param>
         /// <response code="200">OK</response>
@@ -60,11 +61,11 @@ namespace HETSAPI.Controllers
         [SwaggerOperation("DumptrucksIdDeletePost")]
         public virtual IActionResult DumptrucksIdDeletePost([FromRoute]int id)
         {
-            return this._service.DumptrucksIdDeletePostAsync(id);
+            return _service.DumptrucksIdDeletePostAsync(id);
         }
 
         /// <summary>
-        /// 
+        /// Get dump truck by id
         /// </summary>
         /// <param name="id">id of DumpTruck to fetch</param>
         /// <response code="200">OK</response>
@@ -75,13 +76,13 @@ namespace HETSAPI.Controllers
         [SwaggerResponse(200, type: typeof(DumpTruck))]
         public virtual IActionResult DumptrucksIdGet([FromRoute]int id)
         {
-            return this._service.DumptrucksIdGetAsync(id);
+            return _service.DumptrucksIdGetAsync(id);
         }
 
         /// <summary>
-        /// 
+        /// Update dump truck
         /// </summary>
-        /// <param name="id">id of DumpTruck to fetch</param>
+        /// <param name="id">id of DumpTruck to update</param>
         /// <param name="item"></param>
         /// <response code="200">OK</response>
         /// <response code="404">DumpTruck not found</response>
@@ -91,11 +92,11 @@ namespace HETSAPI.Controllers
         [SwaggerResponse(200, type: typeof(DumpTruck))]
         public virtual IActionResult DumptrucksIdPut([FromRoute]int id, [FromBody]DumpTruck item)
         {
-            return this._service.DumptrucksIdPutAsync(id, item);
+            return _service.DumptrucksIdPutAsync(id, item);
         }
 
         /// <summary>
-        /// 
+        /// Create dump truck
         /// </summary>
         /// <param name="item"></param>
         /// <response code="201">DumpTruck created</response>
@@ -105,7 +106,7 @@ namespace HETSAPI.Controllers
         [SwaggerResponse(200, type: typeof(DumpTruck))]
         public virtual IActionResult DumptrucksPost([FromBody]DumpTruck item)
         {
-            return this._service.DumptrucksPostAsync(item);
+            return _service.DumptrucksPostAsync(item);
         }
     }
 }
