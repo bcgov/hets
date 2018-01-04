@@ -132,7 +132,6 @@ namespace HETSAPI.Models
         /// Set a column comment
         /// </summary>
         /// <param name="tableName"></param>
-        /// <param name="columnName"></param>
         /// <param name="description"></param>
         private void SetTableDescription(string tableName, string description)
         {

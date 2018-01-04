@@ -9,13 +9,14 @@ namespace HETSAPI.Controllers
 {
     /// <summary>
     /// City Controller
-    /// </summary>
-    public partial class CityController : Controller
+    /// </summary>    
+    [ResponseCache(Location = ResponseCacheLocation.None, NoStore = true)]
+    public class CityController : Controller
     {
         private readonly ICityService _service;
 
         /// <summary>
-        /// Create a controller and set the service
+        /// City Controller Constructor
         /// </summary>
         public CityController(ICityService service)
         {
@@ -23,7 +24,7 @@ namespace HETSAPI.Controllers
         }
 
         /// <summary>
-        /// 
+        /// Create bulk city records
         /// </summary>
         /// <param name="items"></param>
         /// <response code="201">City created</response>
@@ -33,11 +34,11 @@ namespace HETSAPI.Controllers
         [RequiresPermission(Permission.ADMIN)]
         public virtual IActionResult CitiesBulkPost([FromBody]City[] items)
         {
-            return this._service.CitiesBulkPostAsync(items);
+            return _service.CitiesBulkPostAsync(items);
         }
 
         /// <summary>
-        /// 
+        /// Get all cities
         /// </summary>
         /// <response code="200">OK</response>
         [HttpGet]
@@ -46,11 +47,11 @@ namespace HETSAPI.Controllers
         [SwaggerResponse(200, type: typeof(List<City>))]
         public virtual IActionResult CitiesGet()
         {
-            return this._service.CitiesGetAsync();
+            return _service.CitiesGetAsync();
         }
 
         /// <summary>
-        /// 
+        /// Delete city
         /// </summary>
         /// <param name="id">id of City to delete</param>
         /// <response code="200">OK</response>
@@ -60,11 +61,11 @@ namespace HETSAPI.Controllers
         [SwaggerOperation("CitiesIdDeletePost")]
         public virtual IActionResult CitiesIdDeletePost([FromRoute]int id)
         {
-            return this._service.CitiesIdDeletePostAsync(id);
+            return _service.CitiesIdDeletePostAsync(id);
         }
 
         /// <summary>
-        /// 
+        /// Get city by id
         /// </summary>
         /// <param name="id">id of City to fetch</param>
         /// <response code="200">OK</response>
@@ -75,13 +76,13 @@ namespace HETSAPI.Controllers
         [SwaggerResponse(200, type: typeof(City))]
         public virtual IActionResult CitiesIdGet([FromRoute]int id)
         {
-            return this._service.CitiesIdGetAsync(id);
+            return _service.CitiesIdGetAsync(id);
         }
 
         /// <summary>
-        /// 
+        /// Update city
         /// </summary>
-        /// <param name="id">id of City to fetch</param>
+        /// <param name="id">id of City to update</param>
         /// <param name="item"></param>
         /// <response code="200">OK</response>
         /// <response code="404">City not found</response>
@@ -91,11 +92,11 @@ namespace HETSAPI.Controllers
         [SwaggerResponse(200, type: typeof(City))]
         public virtual IActionResult CitiesIdPut([FromRoute]int id, [FromBody]City item)
         {
-            return this._service.CitiesIdPutAsync(id, item);
+            return _service.CitiesIdPutAsync(id, item);
         }
 
         /// <summary>
-        /// 
+        /// Create city
         /// </summary>
         /// <param name="item"></param>
         /// <response code="201">City created</response>
@@ -105,7 +106,7 @@ namespace HETSAPI.Controllers
         [SwaggerResponse(200, type: typeof(City))]
         public virtual IActionResult CitiesPost([FromBody]City item)
         {
-            return this._service.CitiesPostAsync(item);
+            return _service.CitiesPostAsync(item);
         }
     }
 }

@@ -10,14 +10,15 @@ using HETSAPI.Authorization;
 namespace HETSAPI.Controllers
 {
     /// <summary>
-    ///
+    /// Equipment Controller
     /// </summary>
-    public partial class EquipmentController : Controller
+    [ResponseCache(Location = ResponseCacheLocation.None, NoStore = true)]
+    public class EquipmentController : Controller
     {
         private readonly IEquipmentService _service;
 
         /// <summary>
-        /// Create a controller and set the service
+        /// Equipment Controller Constructor
         /// </summary>
         public EquipmentController(IEquipmentService service)
         {
@@ -25,7 +26,7 @@ namespace HETSAPI.Controllers
         }
 
         /// <summary>
-        ///
+        /// Create bulk equipment records
         /// </summary>
         /// <param name="items"></param>
         /// <response code="201">Equipment created</response>
@@ -35,11 +36,11 @@ namespace HETSAPI.Controllers
         [RequiresPermission(Permission.ADMIN)]
         public virtual IActionResult EquipmentBulkPost([FromBody]Equipment[] items)
         {
-            return this._service.EquipmentBulkPostAsync(items);
+            return _service.EquipmentBulkPostAsync(items);
         }
 
         /// <summary>
-        ///
+        /// Get all equipment records
         /// </summary>
         /// <response code="200">OK</response>
         [HttpGet]
@@ -48,11 +49,11 @@ namespace HETSAPI.Controllers
         [SwaggerResponse(200, type: typeof(List<Equipment>))]
         public virtual IActionResult EquipmentGet()
         {
-            return this._service.EquipmentGetAsync();
+            return _service.EquipmentGetAsync();
         }
 
         /// <summary>
-        ///
+        /// Get all attachments associated with an equipment record
         /// </summary>
         /// <remarks>Returns attachments for a particular Equipment</remarks>
         /// <param name="id">id of Equipment to fetch attachments for</param>
@@ -64,11 +65,11 @@ namespace HETSAPI.Controllers
         [SwaggerResponse(200, type: typeof(List<AttachmentViewModel>))]
         public virtual IActionResult EquipmentIdAttachmentsGet([FromRoute]int id)
         {
-            return this._service.EquipmentIdAttachmentsGetAsync(id);
+            return _service.EquipmentIdAttachmentsGetAsync(id);
         }
 
         /// <summary>
-        ///
+        /// Delete equipment
         /// </summary>
         /// <param name="id">id of Equipment to delete</param>
         /// <response code="200">OK</response>
@@ -78,11 +79,11 @@ namespace HETSAPI.Controllers
         [SwaggerOperation("EquipmentIdDeletePost")]
         public virtual IActionResult EquipmentIdDeletePost([FromRoute]int id)
         {
-            return this._service.EquipmentIdDeletePostAsync(id);
+            return _service.EquipmentIdDeletePostAsync(id);
         }
 
         /// <summary>
-        ///
+        /// Get all equipment attachments for an equipment record
         /// </summary>
         /// <param name="id">id of Equipment to fetch EquipmentAttachments for</param>
         /// <response code="200">OK</response>
@@ -92,11 +93,11 @@ namespace HETSAPI.Controllers
         [SwaggerResponse(200, type: typeof(List<EquipmentAttachment>))]
         public virtual IActionResult EquipmentIdEquipmentattachmentsGet([FromRoute]int id)
         {
-            return this._service.EquipmentIdEquipmentattachmentsGetAsync(id);
+            return _service.EquipmentIdEquipmentattachmentsGetAsync(id);
         }
 
         /// <summary>
-        ///
+        /// Get equipment by id
         /// </summary>
         /// <param name="id">id of Equipment to fetch</param>
         /// <response code="200">OK</response>
@@ -107,11 +108,11 @@ namespace HETSAPI.Controllers
         [SwaggerResponse(200, type: typeof(Equipment))]
         public virtual IActionResult EquipmentIdGet([FromRoute]int id)
         {
-            return this._service.EquipmentIdGetAsync(id);
+            return _service.EquipmentIdGetAsync(id);
         }
 
         /// <summary>
-        ///
+        /// Get equipment history
         /// </summary>
         /// <remarks>Returns History for a particular Equipment</remarks>
         /// <param name="id">id of Equipment to fetch History for</param>
@@ -124,11 +125,11 @@ namespace HETSAPI.Controllers
         [SwaggerResponse(200, type: typeof(List<HistoryViewModel>))]
         public virtual IActionResult EquipmentIdHistoryGet([FromRoute]int id, [FromQuery]int? offset, [FromQuery]int? limit)
         {
-            return this._service.EquipmentIdHistoryGetAsync(id, offset, limit);
+            return _service.EquipmentIdHistoryGetAsync(id, offset, limit);
         }
 
         /// <summary>
-        ///
+        /// Create equipment history
         /// </summary>
         /// <remarks>Add a History record to the Equipment</remarks>
         /// <param name="id">id of Equipment to add History for</param>
@@ -140,13 +141,13 @@ namespace HETSAPI.Controllers
         [SwaggerOperation("EquipmentIdHistoryPost")]
         public virtual IActionResult EquipmentIdHistoryPost([FromRoute]int id, [FromBody]History item)
         {
-            return this._service.EquipmentIdHistoryPostAsync(id, item);
+            return _service.EquipmentIdHistoryPostAsync(id, item);
         }
 
         /// <summary>
-        ///
+        /// Update equipment
         /// </summary>
-        /// <param name="id">id of Equipment to fetch</param>
+        /// <param name="id">id of Equipment to update</param>
         /// <param name="item"></param>
         /// <response code="200">OK</response>
         /// <response code="404">Equipment not found</response>
@@ -156,11 +157,11 @@ namespace HETSAPI.Controllers
         [SwaggerResponse(200, type: typeof(Equipment))]
         public virtual IActionResult EquipmentIdPut([FromRoute]int id, [FromBody]Equipment item)
         {
-            return this._service.EquipmentIdPutAsync(id, item);
+            return _service.EquipmentIdPutAsync(id, item);
         }
 
         /// <summary>
-        ///
+        /// Get equipment view model by id
         /// </summary>
         /// <param name="id">id of Equipment to fetch EquipmentViewModel for</param>
         /// <response code="200">OK</response>
@@ -170,11 +171,11 @@ namespace HETSAPI.Controllers
         [SwaggerResponse(200, type: typeof(EquipmentViewModel))]
         public virtual IActionResult EquipmentIdViewGet([FromRoute]int id)
         {
-            return this._service.EquipmentIdViewGetAsync(id);
+            return _service.EquipmentIdViewGetAsync(id);
         }
 
         /// <summary>
-        ///
+        /// Create equipment
         /// </summary>
         /// <param name="item"></param>
         /// <response code="201">Equipment created</response>
@@ -184,11 +185,11 @@ namespace HETSAPI.Controllers
         [SwaggerResponse(200, type: typeof(Equipment))]
         public virtual IActionResult EquipmentPost([FromBody]Equipment item)
         {
-            return this._service.EquipmentPostAsync(item);
+            return _service.EquipmentPostAsync(item);
         }
 
         /// <summary>
-        /// Recalculates seniority for the database
+        /// Recalculates seniority
         /// </summary>
         /// <remarks>Used to calculate seniority for all database records.</remarks>
         /// <param name="region">Region to recalculate</param>
@@ -199,7 +200,7 @@ namespace HETSAPI.Controllers
         [RequiresPermission(Permission.ADMIN)]
         public virtual IActionResult EquipmentRecalcSeniorityGet([FromQuery]int region)
         {
-            return this._service.EquipmentRecalcSeniorityGetAsync(region);
+            return _service.EquipmentRecalcSeniorityGetAsync(region);
         }
 
         /// <summary>
@@ -220,7 +221,7 @@ namespace HETSAPI.Controllers
         [SwaggerResponse(200, type: typeof(List<EquipmentViewModel>))]
         public virtual IActionResult EquipmentSearchGet([FromQuery]string localareas, [FromQuery]string types, [FromQuery]string equipmentAttachment, [FromQuery]int? owner, [FromQuery]string status, [FromQuery]bool? hired, [FromQuery]DateTime? notverifiedsincedate)
         {
-            return this._service.EquipmentSearchGetAsync(localareas, types, equipmentAttachment, owner, status, hired, notverifiedsincedate);
+            return _service.EquipmentSearchGetAsync(localareas, types, equipmentAttachment, owner, status, hired, notverifiedsincedate);
         }
     }
 }

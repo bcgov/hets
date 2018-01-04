@@ -144,10 +144,12 @@ namespace HETSAPI
 
                     options.DescribeAllEnumsAsStrings();
 
-                    XPathDocument comments = new XPathDocument($"{AppContext.BaseDirectory}{Path.DirectorySeparatorChar}{_hostingEnv.ApplicationName}.xml");
-
-                    options.OperationFilter<XmlCommentsOperationFilter>(comments);
-                    options.ModelFilter<XmlCommentsModelFilter>(comments);
+                    // disabling documentation - takes a long time to load
+                    // to work - need to include XML document generation in the build settings
+                    // (bin\Debug\netcoreapp2.0\HETSAPI.xml)
+                    //XPathDocument comments = new XPathDocument($"{AppContext.BaseDirectory}{Path.DirectorySeparatorChar}{_hostingEnv.ApplicationName}.xml");
+                    //options.OperationFilter<XmlCommentsOperationFilter>(comments);
+                    //options.ModelFilter<XmlCommentsModelFilter>(comments);
                 });
             }
 

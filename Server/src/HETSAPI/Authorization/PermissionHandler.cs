@@ -5,6 +5,9 @@ using System.Threading.Tasks;
 
 namespace HETSAPI.Authorization
 {
+    /// <summary>
+    /// Permission Handler Extension
+    /// </summary>
     public static class PermissionHandlerExtensions
     {
         /// <summary>
@@ -26,6 +29,12 @@ namespace HETSAPI.Authorization
     /// </remarks>
     public class PermissionHandler : AuthorizationHandler<PermissionRequirement>
     {
+        /// <summary>
+        /// Permission Handler
+        /// </summary>
+        /// <param name="context"></param>
+        /// <param name="requirement"></param>
+        /// <returns></returns>
         protected override async Task HandleRequirementAsync(AuthorizationHandlerContext context, PermissionRequirement requirement)
         {
             if (context.User.HasPermissions(requirement.RequiredPermissions.ToArray()))

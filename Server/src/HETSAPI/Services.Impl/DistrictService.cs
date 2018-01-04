@@ -134,7 +134,7 @@ namespace HETSAPI.Services.Impl
         /// </summary>
         /// <remarks>Updates a district</remarks>
         /// <param name="id">id of District to update</param>
-        /// <param name="item"></param>
+        /// <param name="body"></param>
         /// <response code="200">OK</response>
         /// <response code="404">District not found</response>
         public virtual IActionResult DistrictsIdPutAsync(int id, District body)

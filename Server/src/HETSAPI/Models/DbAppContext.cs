@@ -191,7 +191,7 @@ namespace HETSAPI.Models
             {
                 result = HttpContextUser.FindFirst(ClaimTypes.Name).Value;
             }
-            catch (Exception e)
+            catch
             {
                 result = null;
             }
