@@ -170,7 +170,7 @@ namespace HETSAPI.Services.Impl
         /// </summary>
         /// <remarks>Replaces an Owner&#39;s Contacts</remarks>
         /// <param name="id">id of Owner to replace Contacts for</param>
-        /// <param name="items">Replacement Owner contacts.</param>
+        /// <param name="item">Replacement Owner contacts.</param>
         /// <response code="200">OK</response>
         public virtual IActionResult OwnersIdContactsPostAsync(int id, Contact item)
         {
@@ -301,13 +301,14 @@ namespace HETSAPI.Services.Impl
         }
 
 
-        /// <summary>
-        ///
-        /// </summary>
-        /// <remarks>Returns History for a particular Owner</remarks>
-        /// <param name="id">id of Owner to fetch History for</param>
+        ///  <summary>
+        /// 
+        ///  </summary>
+        ///  <remarks>Returns History for a particular Owner</remarks>
+        ///  <param name="id">id of Owner to fetch History for</param>
+        /// <param name="offset"></param>
+        /// <param name="limit"></param>
         /// <response code="200">OK</response>
-
         public virtual IActionResult OwnersIdHistoryGetAsync(int id, int? offset, int? limit)
         {
             bool exists = _context.Owners.Any(a => a.Id == id);

@@ -8,14 +8,15 @@ using HETSAPI.Authorization;
 namespace HETSAPI.Controllers
 {
     /// <summary>
-    /// 
+    /// Seniority Audit Controller
     /// </summary>
-    public partial class SeniorityAuditController : Controller
+    [ResponseCache(Location = ResponseCacheLocation.None, NoStore = true)]
+    public class SeniorityAuditController : Controller
     {
         private readonly ISeniorityAuditService _service;
 
         /// <summary>
-        /// Create a controller and set the service
+        /// Seniority Audit Controller Constructor
         /// </summary>
         public SeniorityAuditController(ISeniorityAuditService service)
         {
@@ -23,7 +24,7 @@ namespace HETSAPI.Controllers
         }
 
         /// <summary>
-        /// 
+        /// Create bulk seniority audit records
         /// </summary>
         /// <param name="items"></param>
         /// <response code="201">SeniorityAudit created</response>
@@ -33,11 +34,11 @@ namespace HETSAPI.Controllers
         [RequiresPermission(Permission.ADMIN)]
         public virtual IActionResult SeniorityauditsBulkPost([FromBody]SeniorityAudit[] items)
         {
-            return this._service.SeniorityauditsBulkPostAsync(items);
+            return _service.SeniorityauditsBulkPostAsync(items);
         }
 
         /// <summary>
-        /// 
+        /// Get all seniority audit records
         /// </summary>
         /// <response code="200">OK</response>
         [HttpGet]
@@ -46,11 +47,11 @@ namespace HETSAPI.Controllers
         [SwaggerResponse(200, type: typeof(List<SeniorityAudit>))]
         public virtual IActionResult SeniorityauditsGet()
         {
-            return this._service.SeniorityauditsGetAsync();
+            return _service.SeniorityauditsGetAsync();
         }
 
         /// <summary>
-        /// 
+        /// Delete seniority audit
         /// </summary>
         /// <param name="id">id of SeniorityAudit to delete</param>
         /// <response code="200">OK</response>
@@ -60,11 +61,11 @@ namespace HETSAPI.Controllers
         [SwaggerOperation("SeniorityauditsIdDeletePost")]
         public virtual IActionResult SeniorityauditsIdDeletePost([FromRoute]int id)
         {
-            return this._service.SeniorityauditsIdDeletePostAsync(id);
+            return _service.SeniorityauditsIdDeletePostAsync(id);
         }
 
         /// <summary>
-        /// 
+        /// Get seniority audit by id
         /// </summary>
         /// <param name="id">id of SeniorityAudit to fetch</param>
         /// <response code="200">OK</response>
@@ -75,13 +76,13 @@ namespace HETSAPI.Controllers
         [SwaggerResponse(200, type: typeof(SeniorityAudit))]
         public virtual IActionResult SeniorityauditsIdGet([FromRoute]int id)
         {
-            return this._service.SeniorityauditsIdGetAsync(id);
+            return _service.SeniorityauditsIdGetAsync(id);
         }
 
         /// <summary>
-        /// 
+        /// Update seniority audit
         /// </summary>
-        /// <param name="id">id of SeniorityAudit to fetch</param>
+        /// <param name="id">id of SeniorityAudit to update</param>
         /// <param name="item"></param>
         /// <response code="200">OK</response>
         /// <response code="404">SeniorityAudit not found</response>
@@ -91,11 +92,11 @@ namespace HETSAPI.Controllers
         [SwaggerResponse(200, type: typeof(SeniorityAudit))]
         public virtual IActionResult SeniorityauditsIdPut([FromRoute]int id, [FromBody]SeniorityAudit item)
         {
-            return this._service.SeniorityauditsIdPutAsync(id, item);
+            return _service.SeniorityauditsIdPutAsync(id, item);
         }
 
         /// <summary>
-        /// 
+        /// Create seniority audit
         /// </summary>
         /// <param name="item"></param>
         /// <response code="201">SeniorityAudit created</response>
@@ -105,7 +106,7 @@ namespace HETSAPI.Controllers
         [SwaggerResponse(200, type: typeof(SeniorityAudit))]
         public virtual IActionResult SeniorityauditsPost([FromBody]SeniorityAudit item)
         {
-            return this._service.SeniorityauditsPostAsync(item);
+            return _service.SeniorityauditsPostAsync(item);
         }
     }
 }

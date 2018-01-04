@@ -513,7 +513,7 @@ namespace HETSAPI.Services.Impl
         /// </summary>
         /// <remarks>Adds a user to groups</remarks>
         /// <param name="id">id of User to update</param>
-        /// <param name="items"></param>
+        /// <param name="item"></param>
         /// <response code="200">OK</response>
         /// <response code="404">User not found</response>
         public virtual IActionResult UsersIdGroupsPostAsync(int id, GroupMembershipViewModel item)
@@ -774,7 +774,7 @@ namespace HETSAPI.Services.Impl
         public virtual IActionResult UsersIdRolesPutAsync(int id, UserRoleViewModel[] items)
         {
             bool exists = _context.Users.Any(x => x.Id == id);
-            bool success = false;
+
             if (exists  && items != null)
             {
                 User user = _context.Users
@@ -826,6 +826,7 @@ namespace HETSAPI.Services.Impl
                         }
                     }
                 }
+
                 _context.Update(user);
                 _context.SaveChanges();
                 return new StatusCodeResult(201);
@@ -839,8 +840,8 @@ namespace HETSAPI.Services.Impl
         /// <summary>
         /// 
         /// </summary>
+        /// <param name="model"></param>
         /// <remarks>Create new user</remarks>
-        /// <param name="item"></param>
         /// <response code="201">User created</response>
         public virtual IActionResult UsersPostAsync(UserViewModel model)
         {
@@ -872,7 +873,7 @@ namespace HETSAPI.Services.Impl
         /// Searches Users
         /// </summary>
         /// <remarks>Used for the search users.</remarks>
-        /// <param name="districts">Districts (array of id numbers)</param>
+        /// <param name="districtsString">Districts (array of id numbers)</param>
         /// <param name="surname"></param>
         /// <param name="includeInactive">True if Inactive users will be returned</param>
         /// <response code="200">OK</response>

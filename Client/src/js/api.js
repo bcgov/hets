@@ -1463,3 +1463,13 @@ export function getVersion() {
     store.dispatch({ type: Action.UPDATE_VERSION, version: response });
   });
 }
+
+////////////////////
+// Set User
+////////////////////
+
+export function setDevUser(user) {
+  return new ApiRequest(`/authentication/dev/token/${user}`).get().then(response => {    
+    return normalize(response);
+  });
+}

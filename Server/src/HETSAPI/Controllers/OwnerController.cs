@@ -9,14 +9,15 @@ using HETSAPI.Authorization;
 namespace HETSAPI.Controllers
 {
     /// <summary>
-    ///
+    /// Owner Controller
     /// </summary>
-    public partial class OwnerController : Controller
+    [ResponseCache(Location = ResponseCacheLocation.None, NoStore = true)]
+    public class OwnerController : Controller
     {
         private readonly IOwnerService _service;
 
         /// <summary>
-        /// Create a controller and set the service
+        /// Owner Controller Constructor
         /// </summary>
         public OwnerController(IOwnerService service)
         {
@@ -24,7 +25,7 @@ namespace HETSAPI.Controllers
         }
 
         /// <summary>
-        ///
+        /// Create bulk owner records
         /// </summary>
         /// <param name="items"></param>
         /// <response code="201">Owner created</response>
@@ -34,11 +35,11 @@ namespace HETSAPI.Controllers
         [RequiresPermission(Permission.ADMIN)]
         public virtual IActionResult OwnersBulkPost([FromBody]Owner[] items)
         {
-            return this._service.OwnersBulkPostAsync(items);
+            return _service.OwnersBulkPostAsync(items);
         }
 
         /// <summary>
-        ///
+        /// Get all owners
         /// </summary>
         /// <response code="200">OK</response>
         [HttpGet]
@@ -47,11 +48,11 @@ namespace HETSAPI.Controllers
         [SwaggerResponse(200, type: typeof(List<Owner>))]
         public virtual IActionResult OwnersGet()
         {
-            return this._service.OwnersGetAsync();
+            return _service.OwnersGetAsync();
         }
 
         /// <summary>
-        ///
+        /// Get attachments associated with an owner
         /// </summary>
         /// <remarks>Returns attachments for a particular Owner</remarks>
         /// <param name="id">id of Owner to fetch attachments for</param>
@@ -63,11 +64,11 @@ namespace HETSAPI.Controllers
         [SwaggerResponse(200, type: typeof(List<AttachmentViewModel>))]
         public virtual IActionResult OwnersIdAttachmentsGet([FromRoute]int id)
         {
-            return this._service.OwnersIdAttachmentsGetAsync(id);
+            return _service.OwnersIdAttachmentsGetAsync(id);
         }
 
         /// <summary>
-        ///
+        /// Get contacts associated with an owner
         /// </summary>
         /// <remarks>Gets an Owner&#39;s Contacts</remarks>
         /// <param name="id">id of Owner to fetch Contacts for</param>
@@ -78,11 +79,11 @@ namespace HETSAPI.Controllers
         [SwaggerResponse(200, type: typeof(List<Contact>))]
         public virtual IActionResult OwnersIdContactsGet([FromRoute]int id)
         {
-            return this._service.OwnersIdContactsGetAsync(id);
+            return _service.OwnersIdContactsGetAsync(id);
         }
 
         /// <summary>
-        ///
+        /// Create owner contact
         /// </summary>
         /// <remarks>Adds Owner Contact</remarks>
         /// <param name="id">id of Owner to add a contact for</param>
@@ -94,11 +95,11 @@ namespace HETSAPI.Controllers
         [SwaggerResponse(200, type: typeof(Contact))]
         public virtual IActionResult OwnersIdContactsPost([FromRoute]int id, [FromBody]Contact item)
         {
-            return this._service.OwnersIdContactsPostAsync(id, item);
+            return _service.OwnersIdContactsPostAsync(id, item);
         }
 
         /// <summary>
-        ///
+        /// Update owner contacts
         /// </summary>
         /// <remarks>Replaces an Owner&#39;s Contacts</remarks>
         /// <param name="id">id of Owner to replace Contacts for</param>
@@ -110,11 +111,11 @@ namespace HETSAPI.Controllers
         [SwaggerResponse(200, type: typeof(List<Contact>))]
         public virtual IActionResult OwnersIdContactsPut([FromRoute]int id, [FromBody]Contact[] item)
         {
-            return this._service.OwnersIdContactsPutAsync(id, item);
+            return _service.OwnersIdContactsPutAsync(id, item);
         }
 
         /// <summary>
-        ///
+        /// Delete owner
         /// </summary>
         /// <param name="id">id of Owner to delete</param>
         /// <response code="200">OK</response>
@@ -124,11 +125,11 @@ namespace HETSAPI.Controllers
         [SwaggerOperation("OwnersIdDeletePost")]
         public virtual IActionResult OwnersIdDeletePost([FromRoute]int id)
         {
-            return this._service.OwnersIdDeletePostAsync(id);
+            return _service.OwnersIdDeletePostAsync(id);
         }
 
         /// <summary>
-        ///
+        /// Get equipment associated with an owner
         /// </summary>
         /// <remarks>Gets an Owner&#39;s Equipment</remarks>
         /// <param name="id">id of Owner to fetch Equipment for</param>
@@ -139,11 +140,11 @@ namespace HETSAPI.Controllers
         [SwaggerResponse(200, type: typeof(List<Equipment>))]
         public virtual IActionResult OwnersIdEquipmentGet([FromRoute]int id)
         {
-            return this._service.OwnersIdEquipmentGetAsync(id);
+            return _service.OwnersIdEquipmentGetAsync(id);
         }
 
         /// <summary>
-        ///
+        /// Create owner equipment
         /// </summary>
         /// <remarks>Replaces an Owner&#39;s Equipment</remarks>
         /// <param name="id">id of Owner to replace Equipment for</param>
@@ -155,11 +156,11 @@ namespace HETSAPI.Controllers
         [SwaggerResponse(200, type: typeof(List<Equipment>))]
         public virtual IActionResult OwnersIdEquipmentPut([FromRoute]int id, [FromBody]Equipment[] item)
         {
-            return this._service.OwnersIdEquipmentPutAsync(id, item);
+            return _service.OwnersIdEquipmentPutAsync(id, item);
         }
 
         /// <summary>
-        ///
+        /// Get owner by id
         /// </summary>
         /// <param name="id">id of Owner to fetch</param>
         /// <response code="200">OK</response>
@@ -170,11 +171,11 @@ namespace HETSAPI.Controllers
         [SwaggerResponse(200, type: typeof(Owner))]
         public virtual IActionResult OwnersIdGet([FromRoute]int id)
         {
-            return this._service.OwnersIdGetAsync(id);
+            return _service.OwnersIdGetAsync(id);
         }
 
         /// <summary>
-        ///
+        /// Get history associated with owner
         /// </summary>
         /// <remarks>Returns History for a particular Owner</remarks>
         /// <param name="id">id of Owner to fetch History for</param>
@@ -187,11 +188,11 @@ namespace HETSAPI.Controllers
         [SwaggerResponse(200, type: typeof(List<HistoryViewModel>))]
         public virtual IActionResult OwnersIdHistoryGet([FromRoute]int id, [FromQuery]int? offset, [FromQuery]int? limit)
         {
-            return this._service.OwnersIdHistoryGetAsync(id, offset, limit);
+            return _service.OwnersIdHistoryGetAsync(id, offset, limit);
         }
 
         /// <summary>
-        ///
+        /// Create owner history
         /// </summary>
         /// <remarks>Add a History record to the Owner</remarks>
         /// <param name="id">id of Owner to add History for</param>
@@ -203,13 +204,13 @@ namespace HETSAPI.Controllers
         [SwaggerOperation("OwnersIdHistoryPost")]
         public virtual IActionResult OwnersIdHistoryPost([FromRoute]int id, [FromBody]History item)
         {
-            return this._service.OwnersIdHistoryPostAsync(id, item);
+            return _service.OwnersIdHistoryPostAsync(id, item);
         }
 
         /// <summary>
-        ///
+        /// Update owner
         /// </summary>
-        /// <param name="id">id of Owner to fetch</param>
+        /// <param name="id">id of Owner to update</param>
         /// <param name="item"></param>
         /// <response code="200">OK</response>
         /// <response code="404">Owner not found</response>
@@ -219,11 +220,11 @@ namespace HETSAPI.Controllers
         [SwaggerResponse(200, type: typeof(Owner))]
         public virtual IActionResult OwnersIdPut([FromRoute]int id, [FromBody]Owner item)
         {
-            return this._service.OwnersIdPutAsync(id, item);
+            return _service.OwnersIdPutAsync(id, item);
         }
 
         /// <summary>
-        ///
+        /// Create owner
         /// </summary>
         /// <param name="item"></param>
         /// <response code="201">Owner created</response>
@@ -233,7 +234,7 @@ namespace HETSAPI.Controllers
         [SwaggerResponse(200, type: typeof(Owner))]
         public virtual IActionResult OwnersPost([FromBody]Owner item)
         {
-            return this._service.OwnersPostAsync(item);
+            return _service.OwnersPostAsync(item);
         }
 
         /// <summary>
@@ -252,7 +253,7 @@ namespace HETSAPI.Controllers
         [SwaggerResponse(200, type: typeof(List<Owner>))]
         public virtual IActionResult OwnersSearchGet([FromQuery]string localareas, [FromQuery]string equipmenttypes, [FromQuery]int? owner, [FromQuery]string status, [FromQuery]bool? hired)
         {
-            return this._service.OwnersSearchGetAsync(localareas, equipmenttypes, owner, status, hired);
+            return _service.OwnersSearchGetAsync(localareas, equipmenttypes, owner, status, hired);
         }
     }
 }

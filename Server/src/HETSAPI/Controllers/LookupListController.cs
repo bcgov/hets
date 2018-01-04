@@ -8,14 +8,15 @@ using HETSAPI.Authorization;
 namespace HETSAPI.Controllers
 {
     /// <summary>
-    /// 
+    /// Lookup List Controller
     /// </summary>
-    public partial class LookupListController : Controller
+    [ResponseCache(Location = ResponseCacheLocation.None, NoStore = true)]
+    public class LookupListController : Controller
     {
         private readonly ILookupListService _service;
 
         /// <summary>
-        /// Create a controller and set the service
+        /// Lookup List Controller Constructor
         /// </summary>
         public LookupListController(ILookupListService service)
         {
@@ -23,7 +24,7 @@ namespace HETSAPI.Controllers
         }
 
         /// <summary>
-        /// 
+        /// Create bulk lookup list records
         /// </summary>
         /// <param name="items"></param>
         /// <response code="201">LookupList created</response>
@@ -33,11 +34,11 @@ namespace HETSAPI.Controllers
         [RequiresPermission(Permission.ADMIN)]
         public virtual IActionResult LookuplistsBulkPost([FromBody]LookupList[] items)
         {
-            return this._service.LookuplistsBulkPostAsync(items);
+            return _service.LookuplistsBulkPostAsync(items);
         }
 
         /// <summary>
-        /// 
+        /// Get all lookup lists
         /// </summary>
         /// <response code="200">OK</response>
         [HttpGet]
@@ -46,11 +47,11 @@ namespace HETSAPI.Controllers
         [SwaggerResponse(200, type: typeof(List<LookupList>))]
         public virtual IActionResult LookuplistsGet()
         {
-            return this._service.LookuplistsGetAsync();
+            return _service.LookuplistsGetAsync();
         }
 
         /// <summary>
-        /// 
+        /// Delete lookup list
         /// </summary>
         /// <param name="id">id of LookupList to delete</param>
         /// <response code="200">OK</response>
@@ -60,11 +61,11 @@ namespace HETSAPI.Controllers
         [SwaggerOperation("LookuplistsIdDeletePost")]
         public virtual IActionResult LookuplistsIdDeletePost([FromRoute]int id)
         {
-            return this._service.LookuplistsIdDeletePostAsync(id);
+            return _service.LookuplistsIdDeletePostAsync(id);
         }
 
         /// <summary>
-        /// 
+        /// Get lookup list by id
         /// </summary>
         /// <param name="id">id of LookupList to fetch</param>
         /// <response code="200">OK</response>
@@ -75,13 +76,13 @@ namespace HETSAPI.Controllers
         [SwaggerResponse(200, type: typeof(LookupList))]
         public virtual IActionResult LookuplistsIdGet([FromRoute]int id)
         {
-            return this._service.LookuplistsIdGetAsync(id);
+            return _service.LookuplistsIdGetAsync(id);
         }
 
         /// <summary>
-        /// 
+        /// Update lookup list
         /// </summary>
-        /// <param name="id">id of LookupList to fetch</param>
+        /// <param name="id">id of LookupList to update</param>
         /// <param name="item"></param>
         /// <response code="200">OK</response>
         /// <response code="404">LookupList not found</response>
@@ -91,11 +92,11 @@ namespace HETSAPI.Controllers
         [SwaggerResponse(200, type: typeof(LookupList))]
         public virtual IActionResult LookuplistsIdPut([FromRoute]int id, [FromBody]LookupList item)
         {
-            return this._service.LookuplistsIdPutAsync(id, item);
+            return _service.LookuplistsIdPutAsync(id, item);
         }
 
         /// <summary>
-        /// 
+        /// Create lookup list
         /// </summary>
         /// <param name="item"></param>
         /// <response code="201">LookupList created</response>
@@ -105,7 +106,7 @@ namespace HETSAPI.Controllers
         [SwaggerResponse(200, type: typeof(LookupList))]
         public virtual IActionResult LookuplistsPost([FromBody]LookupList item)
         {
-            return this._service.LookuplistsPostAsync(item);
+            return _service.LookuplistsPostAsync(item);
         }
     }
 }

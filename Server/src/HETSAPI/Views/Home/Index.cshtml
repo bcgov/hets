@@ -25,6 +25,10 @@
                 window.location.href = "/api/authentication/dev/token/" + userId;
             }            
         }
+
+        function expireUserId() {
+            window.location.href = "/api/authentication/dev/cleartoken";
+        }
     </script>
 </head>
 <body>
@@ -41,8 +45,8 @@
         <div>
             <h3>Reset User Id</h3>
             <label>UserId:</label> <input text="" id="newUserId" />
-            <button onclick="updateUserId(newUserId.value);">Override User Context</button>
-
+            <button onclick="updateUserId(newUserId.value);">Override User Context</button>&nbsp;&nbsp;
+            <button onclick="expireUserId();">Clear User Context</button>
         </div>
     }
 

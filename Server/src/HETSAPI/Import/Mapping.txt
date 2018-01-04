@@ -1,0 +1,819 @@
+﻿@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+1. Note HET_CONTACT.NOTE SHOULD length limit is 150 should be changed to 512
+2. "HET_DISTRICT_EQUIPMENT_TYPE"."DISTRICT_EQUIPMENT_NAME  should be limited to 250
+3. IMPORT_MAP.OLD_KEY should be charater varying (150)
+4. C:\Coding\HETS\HETS_Forked\hets\Server\src\HETSAPI\Migrations\20170330160401_HETS-162-3-30-1.cs(13): 
+	OLD key is changed to String from integer
+5. Dump_Truck seems not related to Equipment.  the following query yields 
+	SELECT Count(*) FROM public."HET_DUMP_TRUCK" WHERE "DUMP_TRUCK_ID" not in (SELECT  "EQUIPMENT_ID" FROM public."HET_EQUIPMENT" )
+	yields 1262 items. Which mean EQUIP_ID ("DUMP_TRUCK_ID") in DUMP_TRUCK xml is not much to do with EQUIP_ID in EQUIPMENT TABLE.
+6. EQUIP_USAGE.PROJECT_ID not nothing to do with PROJECT.PROJECT_ID, whcih made the file of EQUIP_USAGE.xml not meaningful
+7. Rotation seems more like a note field: It record the reason of an equipment not hired. But thePproject_Id is out of range.
+8. In Equipment, YTD, YTD1, YTD2, YTD3  are used to calculate seniority. This field will be changed every year? Should these field
+	be replaced by a table?
+9   In HETS, we have both EQUIPMENT_TYPE and DISTRICT_EQUIPMENT_TYPE. Are we going to use DISTRICT_EQUIPMENT_TYPE only?
+10. EQUIPMENT.REFUSE_RATE has different data type from EQUIPMENT.PAY_RATE, Should they be consistant?
+
+@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+
+@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+Owner.xml data are not consistant missing 5 keys after the following:
+<Comment>TERESA G ROBILLIARD</Comment>
+
+@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+We are missing Region and District.
+The following Region XML was extracted from School Bus Database. It can be easily modified for HETS
+@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+<BCBID_10JAN.dbo.HETS_REGION>
+	<Region_Id>1</Region_Id>
+	<Ministry_Region_Id>1</Ministry_Region_Id>
+	<Region_Name>South Coast</Region_Name>
+	<Ministry_Number>1</Ministry_Number>
+</BCBID_10JAN.dbo.HETS_REGION>
+<BCBID_10JAN.dbo.HETS_REGION>
+	<Region_Id>2</Region_Id>
+	<Ministry_Region_Id>2</Ministry_Region_Id>
+	<Region_Name>Southern Interior</Region_Name>
+	<Ministry_Number>2</Ministry_Number>
+</BCBID_10JAN.dbo.HETS_REGION>
+<BCBID_10JAN.dbo.HETS_REGION>
+	<Region_Id>3</Region_Id>
+	<Ministry_Region_Id>3</Ministry_Region_Id>
+	<Region_Name>Northern</Region_Name>
+	<Ministry_Number>3</Ministry_Number>
+</BCBID_10JAN.dbo.HETS_REGION>
+<BCBID_10JAN.dbo.HETS_REGION>
+	<Region_Id>4</Region_Id>
+	<Ministry_Region_Id>99</Ministry_Region_Id>
+	<Region_Name>NON-BC</Region_Name>
+	<Ministry_Number>99</Ministry_Number>
+</BCBID_10JAN.dbo.HETS_REGION>
+<BCBID_10JAN.dbo.HETS_REGION>
+	<Region_Id>5</Region_Id>
+	<Ministry_Region_Id>999</Ministry_Region_Id>
+	<Region_Name>Unknown</Region_Name>
+	<Ministry_Number>999</Ministry_Number>
+</BCBID_10JAN.dbo.HETS_REGION>
+
+DISTRICT XML was extracted from School Bus Database. It can be easily modified for HETS
+<BCBID_10JAN.dbo.HETS_DISTRICT>
+	<District_Id> 1 </District_Id>
+	<Ministry_District_Id>1</Ministry_District_Id>
+	<District_Name>Lower Mainland</District_Name>
+	<Region_ID>1</Region_ID>
+	<District_Number>1</District_Number>
+</BCBID_10JAN.dbo.HETS_DISTRICT>
+<BCBID_10JAN.dbo.HETS_DISTRICT>
+	<District_Id> 2 </District_Id>
+	<Ministry_District_Id> 2 </Ministry_District_Id>
+	<District_Name>Vancouver Island </District_Name>
+	<Region_ID>1</Region_ID>
+	<District_Number>2</District_Number>
+</BCBID_10JAN.dbo.HETS_DISTRICT>
+<BCBID_10JAN.dbo.HETS_DISTRICT>
+	<District_Id> 3 </District_Id>
+	<Ministry_District_Id> 3 </Ministry_District_Id>
+	<District_Name> Rocky Mountain </District_Name>
+	<Region_ID>2</Region_ID>
+	<District_Number>3</District_Number>
+</BCBID_10JAN.dbo.HETS_DISTRICT>
+<BCBID_10JAN.dbo.HETS_DISTRICT>
+	<District_Id> 4 </District_Id>
+	<Ministry_District_Id> 4 </Ministry_District_Id>
+	<District_Name>West Kootenay </District_Name>
+	<Region_ID>2</Region_ID>
+	<District_Number>4</District_Number>
+</BCBID_10JAN.dbo.HETS_DISTRICT>
+<BCBID_10JAN.dbo.HETS_DISTRICT>
+	<District_Id> 5 </District_Id>
+	<Ministry_District_Id> 5 </Ministry_District_Id>
+	<District_Name>Okanagan-Shuswap </District_Name>
+	<Region_ID>2</Region_ID>
+	<District_Number>5</District_Number>
+</BCBID_10JAN.dbo.HETS_DISTRICT>
+<BCBID_10JAN.dbo.HETS_DISTRICT>
+	<District_Id> 6 </District_Id>
+	<Ministry_District_Id> 6 </Ministry_District_Id>
+	<District_Name>Thompson-Nicola </District_Name>
+	<Region_ID>2</Region_ID>
+	<District_Number>6</District_Number>
+</BCBID_10JAN.dbo.HETS_DISTRICT>
+<BCBID_10JAN.dbo.HETS_DISTRICT>
+	<District_Id> 7 </District_Id>
+	<Ministry_District_Id> 7 </Ministry_District_Id>
+	<District_Name>Cariboo </District_Name>
+	<Region_ID>2</Region_ID>
+	<District_Number>7</District_Number>
+</BCBID_10JAN.dbo.HETS_DISTRICT>
+<BCBID_10JAN.dbo.HETS_DISTRICT>
+	<District_Id> 8 </District_Id>
+	<Ministry_District_Id> 8 </Ministry_District_Id>
+	<District_Name>Peace </District_Name>
+	<Region_ID>3</Region_ID>
+	<District_Number>8</District_Number>
+</BCBID_10JAN.dbo.HETS_DISTRICT>
+<BCBID_10JAN.dbo.HETS_DISTRICT>
+	<District_Id> 9 </District_Id>
+	<Ministry_District_Id> 9 </Ministry_District_Id>
+	<District_Name>Fort George</District_Name>
+	<Region_ID>2</Region_ID>
+	<District_Number>9</District_Number>
+</BCBID_10JAN.dbo.HETS_DISTRICT>
+<BCBID_10JAN.dbo.HETS_DISTRICT>
+	<District_Id> 10 </District_Id>
+	<Ministry_District_Id> 10 </Ministry_District_Id>
+	<District_Name>Bulkley-Stikine </District_Name>
+	<Region_ID>3</Region_ID>
+	<District_Number>10</District_Number>
+</BCBID_10JAN.dbo.HETS_DISTRICT>
+<BCBID_10JAN.dbo.HETS_DISTRICT>
+	<District_Id> 11 </District_Id>
+	<Ministry_District_Id> 11 </Ministry_District_Id>
+	<District_Name>Skeena </District_Name>
+	<Region_ID>3</Region_ID>
+	<District_Number>11</District_Number>
+</BCBID_10JAN.dbo.HETS_DISTRICT>
+<BCBID_10JAN.dbo.HETS_DISTRICT>
+	<District_Id> 12 </District_Id>
+	<Ministry_District_Id> 99 </Ministry_District_Id>
+	<District_Name>NON_BC </District_Name>
+	<Region_ID>4</Region_ID>
+	<District_Number>12</District_Number>
+</BCBID_10JAN.dbo.HETS_DISTRICT>
+<BCBID_10JAN.dbo.HETS_DISTRICT>
+	<District_Id> 13 </District_Id>
+	<Ministry_District_Id> 999 </Ministry_District_Id>
+	<District_Name>Unknown </District_Name>
+	<Region_ID>5</Region_ID>
+	<District_Number>13</District_Number>
+</BCBID_10JAN.dbo.HETS_DISTRICT>
+
+Mapping from XML files to the HETS_Database in PostGreSQL:
+
+@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+## Service_Area ##
+@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+<BCBID_10JAN.dbo.Service_Area>
+    <Service_Area_Id>1</Service_Area_Id>
+    <Service_Area_Cd>401</Service_Area_Cd>
+    <Service_Area_Desc>South Island CA</Service_Area_Desc>
+    <District_Area_Id>1</District_Area_Id>
+    <Last_Year_End_Shift>2016      </Last_Year_End_Shift>
+    <Address>Ministry of Transportation and Infrastructure|Saanich Area Office|Suite 240 4460 Chatterton Way|Victoria, B.C.|V8X 5J2</Address>
+    <Phone>(250) 952-4515</Phone>
+    <Fax>(250) 952-4508</Fax>
+    <Sup_Docs>Proof of Ownership (e.g., Copy of current Vehicle Registration, Lease to Purchase Agreement, Bill of Sale, Insurance Documents)|WCB Registration Number</Sup_Docs>
+    <FiscalStart>2016-04-01T00:00:00</FiscalStart>
+    <FiscalEnd>2017-03-31T00:00:00</FiscalEnd>
+    <Created_Dt>2005-02-20T08:35:32.870</Created_Dt>
+    <Created_By>HETSCONV</Created_By>
+</BCBID_10JAN.dbo.Service_Area>
+
+| Legacy Field           | New Table           | New Field       | Notes |
+| ------------           | ---------           | ---------       | ----- |
+| Service_Area_Id        | 
+| Service_Area_Cd        | ServiceArea         | MinistryServiceAreaID
+| Service_Area_Desc      | ServiceArea         | Name
+| District_Area_Id       | ServiceArea         | District
+| Last_Year_End_Shift    |                     |  
+| Address                |                     |
+| Phone                  |                     |
+| Fax                    |                     | 
+| FiscalStart            | ServiceArea         | StartDate
+| FiscalEnd              |                     |
+| Created_Dt             | ServiceArea         |       
+| Created_By             | ServiceArea         | 
+
+
+
+@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+XML File: Owner.xml is related to tables: HET_OWNER and HET_Contact:
+Question:  do we use Popt_Id as owner_Id in the table of HET_OWNER OR do we use as erference?  
+	Popt_Id is used as a reference by Equip.xml
+@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+Owner.xml
+	<Popt_Id>		20521204					?						
+    <Area_Id>		35							HET_OWNER.LOCAL_Area_ID (LOCAL_Area.LOCAL_Area_ID)  ?
+    <Owner_Cd>AGS								?
+    <Owner_First_Name>	Allen					HET_OWNER.Contact.SurName  (Primary COntact)
+    <Owner_Last_Name>Gradisek					HET_OWNER.Contact.GivenName  (Primary COntact)
+    <Contact_Person>     &#x20;					HET_OWNER.Contact
+    <Local_To_Area>	Y							?
+    <Maintenance_Contractor>Y					HET_OWNER.Maintenance_Contractor  
+    <Comment>Equipment is located in Langley	HETS_OWNER.Contact.NOTE   (Primary COntact)
+    <WCB_Num>703081</WCB_Num>					HETS_OWNER.WORK_SAFE_BCPOLICY_NUMBER   
+    <WCB_Expiry_Dt>1900-01-01T00:00:00			HETS_OWNER.WorkSafeBCExpiryDate
+    <CGL_company></CGL_company>					HETS_OWNER. 
+    <CGL_Policy></CGL_Policy>					?
+    <CGL_Start_Dt>1900-01-01T00:00:00			?
+    <CGL_End_Dt>1900-01-01T00:00:00				?
+    <Status_Cd>A								? 
+    <Archive_Cd>N								HETS_OWNER.ArchiveCode
+    <Service_Area_Id>6</Service_Area_Id>		HET_OWNER.SERVICE_AREA_ID 
+    <Selected_Service_Area_Id>0					?
+	<Created_By>Carlson, Loretta (IDIR\ldcarlso)	HETS_OWNER.CREATE_USERID
+    <Created_Dt>2011-09-13T09:29:53.423				HETS_OWNER.CreateTimestamp
+    <Modified_By>Carlson, Loretta  (IDIR\ldcarlso)	HETS_OWNER.LAST_UPDATE_USERID
+    <Modified_Dt>2013-01-28T13:23:56.340			HETS_OWNER.LAST_UPDATE_TIMESTAMP
+
+	HETS_OWNER  columns:
+		"OWNER_ID",						OK
+		"ARCHIVE_REASON",				?
+		"CGLEND_DATE",					CGL_END_DATE
+		"ARCHIVE_DATE",					NONE
+       "LOCAL_AREA_ID",					OK
+	   "ARCHIVE_CODE",					OK
+	   "PRIMARY_CONTACT_ID",			OK
+	   "STATUS",						?
+       "WORK_SAFE_BCEXPIRY_DATE",		?
+	   "IS_MAINTENANCE_CONTRACTOR",		OK
+	   "ORGANIZATION_NAME",				?
+       "OWNER_EQUIPMENT_CODE_PREFIX",	Owner_CD
+	   "DOING_BUSINESS_AS",				?
+	   "MEETS_RESIDENCY",				Local_to Area
+       "REGISTERED_COMPANY_NUMBER",		?
+	   "WORK_SAFE_BCPOLICY_NUMBER";		OK
+
+	HETS_CONTACT	columns:
+		"CONTACT_ID",					OK
+		"GIVEN_NAME",					Mapped
+		"NOTES",						
+		"OWNER_ID", 
+		"PROJECT_ID", 
+        "ROLE",						
+	    "SURNAME",						Mapped
+	    "ADDRESS1", 
+	    "ADDRESS2", 
+	    "CITY", 
+	    "CREATE_TIMESTAMP", 
+        "CREATE_USERID", 
+	    "EMAIL_ADDRESS", 
+	    "FAX_PHONE_NUMBER", 
+	    "LAST_UPDATE_TIMESTAMP", 
+        "LAST_UPDATE_USERID", 
+	    "MOBILE_PHONE_NUMBER", 
+	    "ORGANIZATION_NAME", 
+        "POSTAL_CODE", 
+	    "PROVINCE", 
+	    "WORK_PHONE_NUMBER"
+		
+@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+XML File: User.xml is related to tables: HET_USER
+In User.xml, notice that <Authority> is related to roles. There are 4 choice in the xml file: A, N, R, U. It seems that A is administrator. Not sure what other three means. In our existing HETS_ROLE, we have two: Admin and regular users.
+@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+    <Popt_ID>2927873 
+    <Service_Area_Id>1							"DISTRICT_ID",  (related to )
+    <User_Cd>idir\srichdal						"SM_USER_ID"		
+    <Authority>N</Authority>					"HET_USER_ROLE"
+    <Default_Service_Area>N						"DISTRICT_ID",  (related to )
+    <Created_Dt>2005-02-27T09:39:31.257			"CREATE_TIMESTAMP", 
+    <Created_By>HETSCONV</Created_By>			"CREATE_USERID" (related to)
+    <Modified_Dt>2010-02-11T00:00:00			"LAST_UPDATE_TIMESTAMP",
+    <Modified_By>Harwood, Ann  (IDIR\aharwood)	"LAST_UPDATE_USERID" (related to)
+
+	HET_USER Table Columns
+		"USER_ID", 
+		"ACTIVE",						?
+		"EMAIL",						?
+		"GIVEN_NAME",					?
+		"GUID",							From First Time login (But then is it a problem without First and last name?)
+		"INITIALS",						?
+		"SM_AUTHORIZATION_DIRECTORY",	is this from first time login as well?
+		"SM_USER_ID",					OK
+		"SURNAME",						?
+		"DISTRICT_ID",					From <Service_Area_Id>?
+       "CREATE_TIMESTAMP",				OK
+	   "CREATE_USERID",					OK
+	   "LAST_UPDATE_TIMESTAMP",			OK
+       "LAST_UPDATE_USERID"				OK
+
+Notice that <Authority> is related to roles. There are 4 choice in the xml file: A, N, R, U. It seems that A is administrator. Not sure what other three means. In our existing HETS_ROLE, we have two: Admin and regular users.
+Also in the user.xml file, I noticed that user idir\dadrab has two entries, each in a different service area with different <Authority> properties. One as an A (Administrator?), the other as “N”, not sure what this mean – “Not Active”, or Regular User. If N means a different role instead of “Not Active”, then the existing HETS database is not designed for accommodating two different roles in different service areas. This problem can be solved by adding a new column of Service_Area_Id to the table HET_USER_ROLE.
+	<BCBID_10JAN.dbo.User_HETS>
+    <Popt_ID>4324730</Popt_ID>
+    <Service_Area_Id>1</Service_Area_Id>
+    <User_Cd>idir\dadrab    </User_Cd>
+    <Authority>A</Authority>
+    <Default_Service_Area>Y</Default_Service_Area>
+    <Created_Dt>2005-02-27T09:35:49.580</Created_Dt>
+    <Created_By>HETSCONV</Created_By>
+    <Modified_Dt>2010-07-07T00:00:00</Modified_Dt>
+    <Modified_By>Harwood, Ann  (IDIR\aharwood)</Modified_By>
+</BCBID_10JAN.dbo.User_HETS>
+<BCBID_10JAN.dbo.User_HETS>
+    <Popt_ID>4324730</Popt_ID>
+    <Service_Area_Id>2</Service_Area_Id>
+    <User_Cd>idir\dadrab    </User_Cd>
+    <Authority>N</Authority>
+    <Default_Service_Area>N</Default_Service_Area>
+    <Created_Dt>2006-04-05T00:00:00</Created_Dt>
+    <Created_By>Drab, Darrel  (IDIR\dadrab)</Created_By>
+    <Modified_Dt>2009-05-21T00:00:00</Modified_Dt>
+    <Modified_By>Wong, Mark  (IDIR\mrwong)</Modified_By>
+</BCBID_10JAN.dbo.User_HETS>
+
+
+
+| Legacy Field           | New Table           | New Field       | Notes |
+| ------------           | ---------           | ---------       | ----- | 
+| Popt_ID                | 
+| Service_Area_Id        | User                | District
+| User_Cd                | User                | SmUserId
+| User_Cd                | User                | SmAuthorizationDirectory     
+| Authority              | User                | UserRoles
+| Default_Service_Area   | 
+| Created_Dt             | User                |    
+| Created_By             | User                |    
+| Modified_Dt            | User                |
+| Modified_By            | User                | 
+
+
+@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+Equip_Type.xml  TO HET_EQUIPMENT_TYPE   ----  I got 1893 kinds of quipment Type.  Is that crazy?
+@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+<BCBID_10JAN.dbo.Equip_Type>
+    <Equip_Type_Id>4								"EQUIPMENT_TYPE_ID",			
+    <SubSystem_Id>1									?
+    <Service_Area_Id>1</Service_Area_Id>			?
+    <Equip_Type_Cd>CTL    							"NAME" ?
+    <Equip_Type_Desc>CRAWL 360 + FWHP				?
+    <Equip_Rental_Rate_No>1.510000000000000e+001	"BLUE_BOOK_RATE_NUMBER"?
+    <Equip_Rental_Rate_Page>6.100000000000000e+001	?
+    <Max_Hours>3.000000000000000e+002				"MAXIMUM_HOURS"
+    <Extend_Hours>1.000000000000000e+002			"EXTEND_HOURS"
+    <Max_Hours_Sub>2.000000000000000e+002			"MAX_HOURS_SUB"
+    <Second_Blk>N</Second_Blk>						?
+    <Created_Dt>2005-02-20T08:44:02.243				"CREATE_TIMESTAMP"
+    <Created_By>HETSCONV</Created_By>				"CREATE_USERID", 
+    <Modified_Dt>2007-04-25T00:00:00 				"LAST_UPDATE_TIMESTAMP", 
+    <Modified_By>Espey, Carol  (IDIR\cespey)		"LAST_UPDATE_USERID",
+</BCBID_10JAN.dbo.Equip_Type>
+
+HET_EQUIPMENT_TYPE Table columns: 
+--------------------------------------------------------------------------------------------------------
+	"EQUIPMENT_TYPE_ID",					<Equip_Type_Id>
+	"NAME",									<Equip_Type_Cd>  ?
+	"BLUE_BOOK_RATE_NUMBER",				<Equip_Rental_Rate_No>?
+	"BLUE_BOOK_SECTION",					?
+    "EXTEND_HOURS",							<Extend_Hours>
+	"NUMBER_OF_BLOCKS",						?
+	"MAXIMUM_HOURS",						<Max_Hours>
+	"MAX_HOURS_SUB",						<Max_Hours_Sub>
+    "CREATE_TIMESTAMP",						<Created_Dt>
+	"CREATE_USERID",						<Created_By>
+	"LAST_UPDATE_TIMESTAMP",				<Modified_Dt>
+    "LAST_UPDATE_USERID",					<Modified_By>
+	"IS_DUMP_TRUCK"							?
+
+HET_DISTRICT_EQUIPMENT_TYPE Table columns: 
+--------------------------------------------------------------------------------------------------------
+	"DISTRICT_EQUIPMENT_TYPE_ID", 
+	"CREATE_TIMESTAMP", 
+	"CREATE_USERID", 
+	"DISTRICT_EQUIPMENT_NAME", 
+	"DISTRICT_ID", 
+	"EQUIPMENT_TYPE_ID", 
+	"LAST_UPDATE_TIMESTAMP", "LAST_UPDATE_USERID"
+
+	@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+	!!!!!
+	Problem:  Missing fields: Compare the following two entries, we know that the second one is missing fields of Modifued_Dt and Modified_By 
+	@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+	_______________________________________________________________________________________________________________________________________________
+	<BCBID_10JAN.dbo.Equip_Type>
+    <Equip_Type_Id>13</Equip_Type_Id>
+    <SubSystem_Id>1</SubSystem_Id>
+    <Service_Area_Id>1</Service_Area_Id>
+    <Equip_Type_Cd>LCS    </Equip_Type_Cd>
+    <Equip_Type_Desc>CRANE 0-19 tons</Equip_Type_Desc>
+    <Equip_Rental_Rate_No>9.199999999999999e+000</Equip_Rental_Rate_No>
+    <Equip_Rental_Rate_Page>2.600000000000000e+001</Equip_Rental_Rate_Page>
+    <Max_Hours>3.000000000000000e+002</Max_Hours>
+    <Extend_Hours>1.000000000000000e+002</Extend_Hours>
+    <Max_Hours_Sub>2.000000000000000e+002</Max_Hours_Sub>
+    <Second_Blk>N</Second_Blk>
+    <Created_Dt>2005-02-20T08:44:02.243</Created_Dt>
+    <Created_By>HETSCONV</Created_By>
+    <Modified_Dt>2007-04-25T00:00:00</Modified_Dt>
+    <Modified_By>Espey, Carol  (IDIR\cespey)</Modified_By>
+</BCBID_10JAN.dbo.Equip_Type>
+<BCBID_10JAN.dbo.Equip_Type>
+    <Equip_Type_Id>14</Equip_Type_Id>
+    <SubSystem_Id>1</SubSystem_Id>
+    <Service_Area_Id>1</Service_Area_Id>
+    <Equip_Type_Cd>LFL    </Equip_Type_Cd>
+    <Equip_Type_Desc>FORK LIFTS</Equip_Type_Desc>
+    <Equip_Rental_Rate_No>9.100000000000000e+000</Equip_Rental_Rate_No>
+    <Equip_Rental_Rate_Page>2.500000000000000e+001</Equip_Rental_Rate_Page>
+    <Max_Hours>3.000000000000000e+002</Max_Hours>
+    <Extend_Hours>1.000000000000000e+002</Extend_Hours>
+    <Max_Hours_Sub>2.000000000000000e+002</Max_Hours_Sub>
+    <Second_Blk>N</Second_Blk>
+    <Created_Dt>2005-02-20T08:44:02.243</Created_Dt>
+    <Created_By>HETSCONV</Created_By>
+</BCBID_10JAN.dbo.Equip_Type>
+
+@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+Equip.xml
+Question:  Do we add "SERVICE_HOURS_THIS_YEAR" in table of HET_EQUIPMENT corresponding to <YTD> ?
+@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+<BCBID_10JAN.dbo.Equip>
+    <Equip_Id>28466 						"EQUIPMENT_ID", 
+    <Area_Id>51								"LOCAL_AREA_ID", 
+    <Equip_Type_Id>574						"DISTRICT_EQUIPMENT_TYPE_ID",
+    <Owner_Popt_Id>16787218					"OWNER_ID", 
+    <Equip_Cd>KNIG418						"EQUIPMENT_CODE",     
+	<Approved_Dt>2010-04-20T00:00:00		"APPROVED_DATE",
+    <Received_Dt>2010-04-20T00:00:00		"RECEIVED_DATE",
+    <Addr1>10327 160TH AVE</Addr1>			?
+    <Addr2></Addr2>							?
+    <Addr3></Addr3>							?
+    <Addr4></Addr4>							?
+    <City>Osoyoos</City>										
+    <Postal>V0H 1V2   </Postal>				?
+    <Block_Num>0.000000000000000e+000	"BLOCK_NUMBER",
+    <Comment></Comment>						?
+    <Cycle_Hrs_Wrk>0.000000000000000e+000	?
+    <Frozen_Out>N</Frozen_Out>				?
+    <Last_Dt>   &#x20;</Last_Dt>			?
+    <Licence>     &#x20;				"HET_EQUIP.LICENCE_PLATE",
+    <Make>CAT							"HET_EQUIP.MAKE",
+    <Model>D8K							"HET_EQUIP.MODEL", 
+    <Year>1980</Year>					"HET_EQUIP.YEAR
+    <Type>    &#x20;						?
+    <Num_Years>3.945000000000000e+000	"HET_EQUIP.HET_EQUIP.YEARS_OF_SERVICE", 
+    <Operator></Operator>				"HET_EQUIP..OPERATOR",
+    <Pay_Rate>0.000000000000000e+000		?
+    <Project_Id>0</Project_Id>				?
+    <Refuse_Rate>N							?
+    <Seniority>1.183500000000000e+002	"HET_EQUIP.SENIORITY",
+    <Serial_Num>77V13778				"HET_EQUIP.SERIAL_NUMBER", 
+    <Size>                   &#x20;		"HET_EQUIP.SIZE",	
+    <Working>N</Working>					?
+    <Year_End_Reg>U</Year_End_Reg>			?
+    <Prev_Reg_Area>N</Prev_Reg_Area>		?
+    <YTD>0.000000000000000e+000 		?
+    <YTD1>0.000000000000000e+000 		"HET_EQUIP.SERVICE_HOURS_LAST_YEAR",  ??
+    <YTD2>0.000000000000000e+000 		"HET_EQUIP.SERVICE_HOURS_TWO_YEARS_AGO", 	
+    <YTD3>0.000000000000000e+000		"HET_EQUIP.SERVICE_HOURS_THREE_YEARS_AGO", 
+    <Status_Cd>U						"HET_EQUIP.STATUS", 
+    <Archive_Cd>Y 						"ARCHIVE_DATE", 
+    <Archive_Reason>No re-reg 2014,2015,2016 - CN		"HET_EQUIP.ARCHIVE_REASON", 
+    <Reg_Dump_Trk>N</Reg_Dump_Trk>						"HET_EQUIP.DUMP_TRUCK_ID",
+    <Created_Dt>2010-04-20T13:42:40.717					"HET_EQUIP.CREATE_TIMESTAMP", 
+    <Created_By>Kuffner, Tammy  (IDIR\Tkuffner)			"HET_EQUIP.CREATE_USERID", 
+    <Modified_Dt>2016-03-29T13:04:47.030				"HET_EQUIP.LAST_UPDATE_TIMESTAMP", 
+    <Modified_By>Newton, Cheryl  (IDIR\cnewton)			"HET_EQUIP.LAST_UPDATE_USERID"
+</BCBID_10JAN.dbo.Equip>
+
+The followings are the colimns of the Database table HET_EQUIPMENT
+	"EQUIPMENT_ID",						<Equip_Id>
+	"APPROVED_DATE",					<Approved_Dt>
+	"ARCHIVE_DATE", 
+	"ARCHIVE_REASON",					<Archive_Reason>
+	"BLOCK_NUMBER", 
+	"ARCHIVE_CODE",						<Archive_Cd>
+	"DISTRICT_EQUIPMENT_TYPE_ID",		<Equip_Type_Id>
+	"EQUIPMENT_CODE",					<Equip_Cd>
+	"LOCAL_AREA_ID",					<Area_Id>
+	"MAKE",								<Make>
+	"MODEL",							<Model>
+	"OPERATOR", 						<Operator>	
+	"OWNER_ID", 
+	"PAY_RATE",
+	"RECEIVED_DATE", 
+	"REFUSE_RATE", 
+	"LICENCE_PLATE",					<Licence> 
+	"SENIORITY",						<Seniority>
+	"SERIAL_NUMBER",					<Serial_Num>
+	"SIZE",								<Size> 
+	"STATUS",							<Status_Cd>
+	"TO_DATE",							?
+	"YEARS_OF_SERVICE",					<Num_Years>
+	"SERVICE_HOURS_LAST_YEAR",			<YTD1>
+	"SERVICE_HOURS_THREE_YEARS_AGO",	<YTD3>
+	"SERVICE_HOURS_TWO_YEARS_AGO",		<YTD2>
+	"YEAR", 
+	"LAST_VERIFIED_DATE", 
+	"DUMP_TRUCK_ID",					 <Reg_Dump_Trk>
+	"INFORMATION_UPDATE_NEEDED_REASON", 
+	"IS_INFORMATION_UPDATE_NEEDED", 
+	"SENIORITY_EFFECTIVE_DATE", 
+	"IS_SENIORITY_OVERRIDDEN", 
+	"SENIORITY_OVERRIDE_REASON",		
+	"NUMBER_IN_BLOCK", 
+	"CREATE_TIMESTAMP",					<Created_Dt>
+	"CREATE_USERID",					<Created_By>
+	"LAST_UPDATE_TIMESTAMP",			<Modified_Dt>
+	"LAST_UPDATE_USERID"				<Modified_By>
+
+
+@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+Equip_Attach.xml
+<BCBID_10JAN.dbo.Equip_Attach>
+    <Equip_Id>30202</Equip_Id>
+    <Attach_Seq_Num>4</Attach_Seq_Num>
+    <Attach_Desc>MULCHER HEAD</Attach_Desc>
+    <Created_Dt>2015-02-23T15:20:59.610</Created_Dt>
+    <Created_By>Jones, Chrystal  (IDIR\chrjones)</Created_By>
+</BCBID_10JAN.dbo.Equip_Attach>
+
+@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+Dump_Truck.xml
+<BCBID_10JAN.dbo.Dump_Truck>
+1   <Equip_Id>4</Equip_Id>
+    <Single_Axle>N</Single_Axle>
+    <Tandem_Axle>Y</Tandem_Axle>
+    <PUP>N</PUP>
+    <Belly_Dump>N</Belly_Dump>
+6	<Tridem>N</Tridem>
+    <Rock_Box>N</Rock_Box>
+    <Hilift_Gate>Y</Hilift_Gate>
+    <Water_Truck>N</Water_Truck>
+    <Seal_Coat_Hitch>N</Seal_Coat_Hitch>
+11  <Rear_Axle_Spacing></Rear_Axle_Spacing>
+    <Front_Tire_Size></Front_Tire_Size>
+    <Front_Tire_UOM>Inches</Front_Tire_UOM>
+    <Front_Axle_Capacity></Front_Axle_Capacity>
+    <Rare_Axle_Capacity></Rare_Axle_Capacity>
+16  <Legal_Load></Legal_Load>
+    <Legal_Capacity></Legal_Capacity>
+    <Legal_PUP_Tare_Weight></Legal_PUP_Tare_Weight>
+    <Licenced_GVW></Licenced_GVW>
+    <Licenced_GVW_UOM>    &#x20;</Licenced_GVW_UOM>
+21  <Licenced_Tare_Weight></Licenced_Tare_Weight>
+    <Licenced_PUP_Tare_Weight></Licenced_PUP_Tare_Weight>
+    <Licenced_Load></Licenced_Load>
+    <Licenced_Capacity></Licenced_Capacity>
+    <Box_Length></Box_Length>
+26  <Box_Width></Box_Width>
+    <Box_Height></Box_Height>
+    <Box_Capacity></Box_Capacity>
+    <Trailer_Box_Length></Trailer_Box_Length>
+    <Trailer_Box_Width></Trailer_Box_Width>
+31  <Trailer_Box_Height></Trailer_Box_Height>
+    <Trailer_Box_Capacity></Trailer_Box_Capacity>
+</BCBID_10JAN.dbo.Dump_Truck>
+
+The followings are the colimns of the Database table HET_DUMP_TRUCK
+	"DUMP_TRUCK_ID", 
+	"BOX_CAPACITY", 
+	"BOX_HEIGHT", 
+	"BOX_LENGTH",    
+	   "BOX_WIDTH", 
+	   "FRONT_AXLE_CAPACITY", 
+	   "FRONT_TIRE_SIZE", 
+	   "FRONT_TIRE_UOM", 
+       "LEGAL_CAPACITY", 
+	   "LEGAL_LOAD", 
+	   "LEGAL_PUPTARE_WEIGHT",
+	   "LICENCED_CAPACITY", 
+       "LICENCED_GVW", 
+	   "LICENCED_GVWUOM", 
+	   "LICENCED_LOAD", 
+	   "LICENCED_PUPTARE_WEIGHT", 
+       "LICENCED_TARE_WEIGHT", 
+	   "REAR_AXLE_CAPACITY", 
+	   "REAR_AXLE_SPACING", 
+       "TRAILER_BOX_CAPACITY", 
+	   "TRAILER_BOX_HEIGHT", 
+	   "TRAILER_BOX_LENGTH", 
+       "TRAILER_BOX_WIDTH", 
+	   "HAS_BELLY_DUMP", 
+	   "HAS_HILIFT_GATE", 
+	   "HAS_PUP", 
+       "HAS_ROCK_BOX", 
+	   "HAS_SEALCOAT_HITCH", 
+	   "IS_SINGLE_AXLE", 
+	   "IS_TANDEM_AXLE", 
+       "IS_TRIDEM", 
+	   "IS_WATER_TRUCK", 
+	   "CREATE_TIMESTAMP", 
+	   "CREATE_USERID", 
+       "LAST_UPDATE_TIMESTAMP", 
+	   "LAST_UPDATE_USERID"
+
+@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+Equip_Usage.xml
+<BCBID_10JAN.dbo.Equip_Usage>
+    <Equip_Id>16701</Equip_Id>
+    <Project_Id>1563</Project_Id>
+    <Service_Area_Id>24</Service_Area_Id>
+    <Worked_Dt>2011-08-18T00:00:00</Worked_Dt>
+    <Entered_Dt>2011-08-29T16:10:00</Entered_Dt>
+    <Hours>1.000000000000000e+001</Hours>
+    <Rate>0.000000000000000e+000</Rate>
+    <Hours2>0.000000000000000e+000</Hours2>
+    <Rate2>0.000000000000000e+000</Rate2>
+    <Hours3>0.000000000000000e+000</Hours3>
+    <Rate3>0.000000000000000e+000</Rate3>
+    <Created_Dt>2011-08-29T16:10:28.627</Created_Dt>
+    <Created_By>Struthers, Kimberly  (IDIR\kstruthe)</Created_By>
+</BCBID_10JAN.dbo.Equip_Usage>
+
+public."HET_RENTAL_AGREEMENT";
+	"RENTAL_AGREEMENT_ID", 
+	"EQUIPMENT_ID", 
+	"PROJECT_ID", 
+	"STATUS", 
+	"CREATE_TIMESTAMP", 
+	"CREATE_USERID", 
+	"DATED_ON", 
+	"EQUIPMENT_RATE", 
+	"ESTIMATE_HOURS", 
+	"ESTIMATE_START_WORK", 
+	"LAST_UPDATE_TIMESTAMP", 
+	"LAST_UPDATE_USERID", 
+	"NOTE", 
+	"NUMBER", 
+	"RATE_COMMENT", 
+	"RATE_PERIOD"
+
+FROM public."HET_TIME_RECORD";
+	"TIME_RECORD_ID", 
+	"ENTERED_DATE", 
+	"HOURS", 
+	"RENTAL_AGREEMENT_RATE_ID", 
+	"WORKED_DATE", 
+	"TIME_PERIOD", 
+	"CREATE_TIMESTAMP", 
+	"CREATE_USERID", 
+	"LAST_UPDATE_TIMESTAMP", 
+	"LAST_UPDATE_USERID", 
+	"RENTAL_AGREEMENT_ID"
+
+public."HET_RENTAL_AGREEMENT_RATE";
+	"RENTAL_AGREEMENT_RATE_ID", 
+	"COMMENT", 
+	"COMPONENT_NAME", 
+	"CREATE_TIMESTAMP", 
+	"CREATE_USERID", 
+	"IS_ATTACHMENT", 
+	"LAST_UPDATE_TIMESTAMP", 
+	"LAST_UPDATE_USERID", 
+	"PERCENT_OF_EQUIPMENT_RATE", 
+	"RATE", 
+	"RATE_PERIOD", 
+	"RENTAL_AGREEMENT_ID"
+
+
+	First I will create "HET_RENTAL_AGREEMENT" table entry based on the following 3:    <Equip_Id>16701</Equip_Id> ,    
+	<Project_Id>1563</Project_Id>,    <Service_Area_Id>24</Service_Area_Id>.
+Each such an entry has a list of RentalAgreementRate. So I will create 3 RentalAgreementRate entries in the table of 
+“HET_RENTAL_AGREEMENT_RATE",  corresponding to Rate, Rate2, and Rate 3. Those three rentalAgreementRate form a list as a property of 
+RentalAgreement.   
+
+Then xml entries of Hours, Hours2, and Hours3 will be three separate entries for the table of “HET_TIME_RECORD”, which is tied up with "HET_RENTAL_AGREEMENT" entry, and “HET_RENTAL_AGREEMENT_RATE".  What do you think the Column of TIME_PERIOD is? I will ignore this column for now.
+
+
+
+@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+Equip_Attach.xml
+<BCBID_10JAN.dbo.Equip_Attach>
+    <Equip_Id>30208</Equip_Id>
+    <Attach_Seq_Num>1</Attach_Seq_Num>
+    <Attach_Desc>2 BUCKETS</Attach_Desc>
+    <Created_Dt>2011-08-10T15:45:08.687</Created_Dt>
+    <Created_By>Jones, Chrystal  (IDIR\chrjones)</Created_By>
+</BCBID_10JAN.dbo.Equip_Attach>
+
+The followings are the colimns of the Database table HET_EQUIPMENT_ATTACHMENT
+	"EQUIPMENT_ATTACHMENT_ID", 
+	"DESCRIPTION", 
+	"EQUIPMENT_ID", 
+	"CREATE_TIMESTAMP", 
+	"CREATE_USERID", 
+	"LAST_UPDATE_TIMESTAMP", 
+	"LAST_UPDATE_USERID", 
+	"TYPE_NAME"
+
+
+@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+Project.xml
+<BCBID_10JAN.dbo.Project>
+    <Project_Id>2438</Project_Id>							"PROJECT_ID", 
+    <Service_Area_Id>17</Service_Area_Id>
+    <Project_Num>86004-R2</Project_Num>
+    <Job_Desc1>Gravel Work - Nimpo Lake</Job_Desc1>
+    <Job_Desc2>Towdystan Development</Job_Desc2>
+    <Created_Dt>2016-04-25T00:00:00</Created_Dt>
+    <Created_By>Rich, Deanna  (IDIR\DEARICH)</Created_By>
+</BCBID_10JAN.dbo.Project>
+
+The followings are the colimns of the Database table HET_PROJECT
+	"PROJECT_ID", 
+	"PRIMARY_CONTACT_ID", 
+	"PROVINCIAL_PROJECT_NUMBER", 
+	"DISTRICT_ID", 
+	"INFORMATION", 
+	"NAME", 
+	"CREATE_TIMESTAMP",
+	"CREATE_USERID", 
+	"LAST_UPDATE_TIMESTAMP", 
+	"LAST_UPDATE_USERID", "STATUS"
+@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+Block.xml
+<BCBID_10JAN.dbo.Block>
+    <Area_Id>126</Area_Id>
+    <Equip_Type_Id>1849</Equip_Type_Id>
+    <Block_Num>1.000000000000000e+000</Block_Num>
+    <Cycle_Num>0.000000000000000e+000</Cycle_Num>
+    <Max_Cycle>3.000000000000000e+002</Max_Cycle>
+    <Last_Hired_Equip_Id>0</Last_Hired_Equip_Id>
+    <Block_Name>Primary</Block_Name>
+    <Closed>N</Closed>
+    <Closed_Comments></Closed_Comments>
+    <Created_Dt>2013-03-01T15:08:56.483</Created_Dt>
+    <Created_By>Jones, Chrystal  (IDIR\chrjones)</Created_By>
+</BCBID_10JAN.dbo.Block>
+
+HET_LOCAL_AREA_ROTATION_LIST:
+	"LOCAL_AREA_ROTATION_LIST_ID", 
+	"ASK_NEXT_BLOCK1_ID", 
+	"ASK_NEXT_BLOCK1_SENIORITY", 
+	"ASK_NEXT_BLOCK2_ID", 
+	"ASK_NEXT_BLOCK2_SENIORITY", 
+	"ASK_NEXT_BLOCK_OPEN_ID", 
+	"CREATE_TIMESTAMP", 
+	"CREATE_USERID", 
+	"DISTRICT_EQUIPMENT_TYPE_ID", 
+	"LAST_UPDATE_TIMESTAMP", 
+	"LAST_UPDATE_USERID", 
+	"LOCAL_AREA_ID"
+
+@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+Rotation_Doc.xml
+<BCBID_10JAN.dbo.Rotation_Doc>
+    <Equip_Id>5516</Equip_Id>
+    <Note_Dt>2011-01-24T00:00:00</Note_Dt>
+    <Created_Dt>2011-01-24T12:03:32.967</Created_Dt>
+    <Service_Area_Id>8</Service_Area_Id>
+    <Project_Id>1522</Project_Id>
+    <Note_Type>10</Note_Type>
+    <Reason>5th on S/L</Reason>
+    <Note_Id>13422</Note_Id>
+    <Created_By>Vavra, Angie  (IDIR\angvavra)</Created_By>
+</BCBID_10JAN.dbo.Rotation_Doc>
+
+@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+HETS_Audit.xml   - there is no meaningful information contained.
+
+<BCBID_10JAN.dbo.HETS_Audit>
+    <Created_By>Vavra, Angie  (IDIR\angvavra)</Created_By>
+    <Created_Dt>2011-05-11T08:29:40.347</Created_Dt>
+    <Action>Equip Update</Action>
+    <Reason>moved to different local.  reset to 0.  March 2010 DR.</Reason>
+</BCBID_10JAN.dbo.HETS_Audit>
+<BCBID_10JAN.dbo.HETS_Audit>
+    <Created_By>Vavra, Angie  (IDIR\angvavra)</Created_By>
+    <Created_Dt>2011-10-03T13:35:12.330</Created_Dt>
+    <Action>Equip Update</Action>
+    <Reason>resetting seniority to zero years - transferred equipment from Lower Mainlandt to Chase / Celista NOV 6 2009</Reason>
+</BCBID_10JAN.dbo.HETS_Audit>
+<BCBID_10JAN.dbo.HETS_Audit>
+    <Created_By>Vavra, Angie  (IDIR\angvavra)</Created_By>
+    <Created_Dt>2011-10-03T13:35:32.030</Created_Dt>
+    <Action>Equip Update</Action>
+    <Reason>resetting seniority to zero years - transferred equipment from Lower Mainlandt to Chase / Celista NOV 6 2009</Reason>
+</BCBID_10JAN.dbo.HETS_Audit>
+@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+
+Questions:
+1. In Equipment Attachment, is the combination of     <Equip_Id> and  <Attach_Seq_Num> unique?
+2. In Block.xml, why  Equip_Type_Cd   id corresponding to   DistrictEquipmentType  entries?  
+How the table of  DistrictEquipmentType is populated?
+3. In Block.xml, is the combination unique?  <Area_Id>, <Equip_Type_Id>, and <Block_Num>.
+4. Dump_Truck seems not related to Equipment. Is that true?
+5. How the existing files are related to districts? For different district, we get a different set of xml files.  How each set is realted to districts. Maybe we can put a set of xml files related to different district to different folders.
+ 
+ 1.	In Equipment Attachment, is the combination of     <Equip_Id> and  <Attach_Seq_Num> unique?
+	a.	I would assume so, but you will have to look at the data to confirm. There is no private data in the file, 
+	so you could download the file and review it to verify that.
+
+2.	In Block.xml, why  Equip_Type_Cd   is corresponding to   DistrictEquipmentType  entries?  
+	a.	Equip_Type in BCBid corresponds to DistrictEquipmentType in HETS. As such, 
+	I think that Equip_Type_Cd is the FK to BCBid Equip_Type, hence to DistrictEquipmentType in HETS. 
+	I’ve not looked at the data, but pretty sure that’s right.
+
+3.	How is the table of  DistrictEquipmentType populated?
+	a.	Primarily from BCBID Equip_Type. 
+	We’d like to find the unique (across the Province) Equipment Types and load those into HETS EquipmentType (manual process), 
+	but DistrictEquipmentType will come from BCBID Equip_Type. 
+	Note that BCBID Equip_Type links at the Service Area level, while HETS DistrictEquipmentType is at the District.
+
+4.	In Block.xml, is the combination unique?  <Area_Id>, <Equip_Type_Id>, and <Block_Num> unique?
+	a.	Almost certainly. Again, I’ve not reviewed the data, but extremely likely.
+
+5.	Dump_Truck seems not related to Equipment. Is that true?
+	a.	Pretty sure that it should be. Perhaps the REG_DUMP_TRK field in the Equipment table?
+
+6.	How the existing set of xml files are related to districts? For different district, I guess we get a different set of xml files.  
+How each set is related to districts. Maybe we can put a set of xml files related to different districts to different folders.
+	a.	The XML will always contain data from all Districts.  
+	Data in the XML is related to the District via LocalArea (BCBID.Area) -> ServiceArea -> District. 
+	When we run the conversion for less than all Districts, 
+	we’ll Update/insert only XML records with LocalArea/ServiceArea/Districts related to the Districts we are converting. 
+	Any records found for Districts we are NOT  converting will simply be ignored.  
+	Or rather than ignoring them – we’ll check if we already have the record (via ImportMap), 
+	and log any that we find that we have not already loaded.  IN theory, that should not happen, 
+	so the log will tell us if District changes were made in the old system that shouldn’t have been.

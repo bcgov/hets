@@ -14,7 +14,7 @@ namespace HETSCommon
     {
         public static DatabaseVersionInfo GetDatabaseVersionInfo(this DatabaseFacade database)
         {
-            DatabaseVersionInfo info = null;
+            DatabaseVersionInfo info;
             DbConnection connection = database.GetDbConnection();
 
             try
@@ -69,7 +69,7 @@ namespace HETSCommon
 
         private static DateTime GetCreationTime(this Assembly assembly)
         {
-            return System.IO.File.GetCreationTime(assembly.Location);
+            return File.GetCreationTime(assembly.Location);
         }
     }
 }

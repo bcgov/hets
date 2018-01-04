@@ -259,7 +259,7 @@ namespace HETSAPI.Services.Impl
                         result.FileDownloadName = "RentalAgreement-" + rentalAgreement.Number + ".pdf";
                     }
                 }
-                catch (Exception e)
+                catch 
                 {
                     result = null;
                 }

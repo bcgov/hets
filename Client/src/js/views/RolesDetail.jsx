@@ -169,6 +169,10 @@ var RolesDetail = React.createClass({
     }
   },
 
+  print() {
+    window.print();
+  },
+
   render: function() {
     var role = this.props.role;
 
@@ -177,9 +181,7 @@ var RolesDetail = React.createClass({
         <Col md={10}></Col>
         <Col md={2}>
           <div className="pull-right">
-            <Unimplemented>
-              <Button><Glyphicon glyph="print" title="Print" /></Button>
-            </Unimplemented>
+            <Button onClick={ this.print }><Glyphicon glyph="print" title="Print" /></Button>
             <LinkContainer to={{ pathname: Constant.ROLES_PATHNAME }}>
               <Button title="Return to List"><Glyphicon glyph="arrow-left" /> Return to List</Button>
             </LinkContainer>

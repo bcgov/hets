@@ -5,16 +5,13 @@ import Promise from 'bluebird';
 
 import './utils/shims';
 
-
 Promise.config({
   cancellation: true,
 });
 
-
 import App from './app.jsx';
 import * as Api from './api';
 import { ApiError } from './utils/http';
-
 
 var initializationEl = document.querySelector('#initialization');
 var progressBarEl = initializationEl.querySelector('.progress-bar');
@@ -40,6 +37,9 @@ function renderApp() {
 }
 
 export default function startApp() {
+  if (location.hostname === 'localhost' && process.env.DEV_USER) { //eslint-disable-line
+    Api.setDevUser(process.env.DEV_USER); //eslint-disable-line
+  }
   incrementProgressBar(5);
   // Load groups so we can check for membership
   Api.getGroups().then(() => {

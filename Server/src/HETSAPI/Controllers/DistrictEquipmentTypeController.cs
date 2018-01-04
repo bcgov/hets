@@ -8,14 +8,15 @@ using HETSAPI.Authorization;
 namespace HETSAPI.Controllers
 {
     /// <summary>
-    /// 
+    /// District Equipment Controller
     /// </summary>
-    public partial class DistrictEquipmentTypeController : Controller
+    [ResponseCache(Location = ResponseCacheLocation.None, NoStore = true)]
+    public class DistrictEquipmentTypeController : Controller
     {
         private readonly IDistrictEquipmentTypeService _service;
 
         /// <summary>
-        /// Create a controller and set the service
+        /// District Equipment Type Controller Constructor
         /// </summary>
         public DistrictEquipmentTypeController(IDistrictEquipmentTypeService service)
         {
@@ -23,7 +24,7 @@ namespace HETSAPI.Controllers
         }
 
         /// <summary>
-        /// 
+        /// Create bulk district equipment type records
         /// </summary>
         /// <param name="items"></param>
         /// <response code="201">DistrictEquipmentType created</response>
@@ -33,11 +34,11 @@ namespace HETSAPI.Controllers
         [RequiresPermission(Permission.ADMIN)]
         public virtual IActionResult DistrictEquipmentTypesBulkPost([FromBody]DistrictEquipmentType[] items)
         {
-            return this._service.DistrictEquipmentTypesBulkPostAsync(items);
+            return _service.DistrictEquipmentTypesBulkPostAsync(items);
         }
 
         /// <summary>
-        /// 
+        /// Get all district equipment types
         /// </summary>
         /// <response code="200">OK</response>
         [HttpGet]
@@ -46,11 +47,11 @@ namespace HETSAPI.Controllers
         [SwaggerResponse(200, type: typeof(List<DistrictEquipmentType>))]
         public virtual IActionResult DistrictEquipmentTypesGet()
         {
-            return this._service.DistrictEquipmentTypesGetAsync();
+            return _service.DistrictEquipmentTypesGetAsync();
         }
 
         /// <summary>
-        /// 
+        /// Delete district equipment type
         /// </summary>
         /// <param name="id">id of DistrictEquipmentType to delete</param>
         /// <response code="200">OK</response>
@@ -60,11 +61,11 @@ namespace HETSAPI.Controllers
         [SwaggerOperation("DistrictEquipmentTypesIdDeletePost")]
         public virtual IActionResult DistrictEquipmentTypesIdDeletePost([FromRoute]int id)
         {
-            return this._service.DistrictEquipmentTypesIdDeletePostAsync(id);
+            return _service.DistrictEquipmentTypesIdDeletePostAsync(id);
         }
 
         /// <summary>
-        /// 
+        /// Get district equipment type by id
         /// </summary>
         /// <param name="id">id of DistrictEquipmentType to fetch</param>
         /// <response code="200">OK</response>
@@ -75,11 +76,11 @@ namespace HETSAPI.Controllers
         [SwaggerResponse(200, type: typeof(DistrictEquipmentType))]
         public virtual IActionResult DistrictEquipmentTypesIdGet([FromRoute]int id)
         {
-            return this._service.DistrictEquipmentTypesIdGetAsync(id);
+            return _service.DistrictEquipmentTypesIdGetAsync(id);
         }
 
         /// <summary>
-        /// 
+        /// Update district equipment type
         /// </summary>
         /// <param name="id">id of DistrictEquipmentType to fetch</param>
         /// <param name="item"></param>
@@ -91,11 +92,11 @@ namespace HETSAPI.Controllers
         [SwaggerResponse(200, type: typeof(DistrictEquipmentType))]
         public virtual IActionResult DistrictEquipmentTypesIdPut([FromRoute]int id, [FromBody]DistrictEquipmentType item)
         {
-            return this._service.DistrictEquipmentTypesIdPutAsync(id, item);
+            return _service.DistrictEquipmentTypesIdPutAsync(id, item);
         }
 
         /// <summary>
-        /// 
+        /// Create district equipment type
         /// </summary>
         /// <param name="item"></param>
         /// <response code="201">DistrictEquipmentType created</response>
@@ -105,7 +106,7 @@ namespace HETSAPI.Controllers
         [SwaggerResponse(200, type: typeof(DistrictEquipmentType))]
         public virtual IActionResult DistrictEquipmentTypesPost([FromBody]DistrictEquipmentType item)
         {
-            return this._service.DistrictEquipmentTypesPostAsync(item);
+            return _service.DistrictEquipmentTypesPostAsync(item);
         }
     }
 }

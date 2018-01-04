@@ -51,8 +51,8 @@ var Projects = React.createClass({
       search: {
         selectedDistrictsIds: this.props.search.selectedDistrictsIds || [],
         statusCode: this.props.search.statusCode || '',
-        hires: this.props.search.hires === true,
-        requests: this.props.search.requests === true,
+        hires: this.props.search.hires,
+        requests: this.props.search.requests,
         projectName: this.props.search.projecName,
       },
 
@@ -105,6 +105,10 @@ var Projects = React.createClass({
       }
       this.fetch();
     });
+  },
+
+  componentWillUnmount() {
+    store.dispatch({ type: Action.UPDATE_PROJECTS_SEARCH, projects: {} });
   },
 
   fetch() {
@@ -182,10 +186,10 @@ var Projects = React.createClass({
               </Unimplemented>
               <FormInputControl id="projectName" type="text" placeholder="Project name" value={ this.state.search.projectName } updateState={ this.updateSearchState }></FormInputControl>
               <Unimplemented>
-                <CheckboxControl inline id="hires" checked={ this.state.search.hires } updateState={ this.updateSearchState }> Hires</CheckboxControl>
+                <CheckboxControl inline id="hires" value={ this.state.search.hires } updateState={ this.updateSearchState }> Hires</CheckboxControl>
               </Unimplemented>
               <Unimplemented>
-                <CheckboxControl inline id="requests" checked={ this.state.search.requests } updateState={ this.updateSearchState }> Requests</CheckboxControl>
+                <CheckboxControl inline id="requests" value={ this.state.search.requests } updateState={ this.updateSearchState }> Requests</CheckboxControl>
               </Unimplemented>
               <Button id="search-button" bsStyle="primary" onClick={ this.fetch }>Search</Button>
             </ButtonToolbar>

@@ -8,30 +8,40 @@ using HETSCommon;
 
 namespace HETSAPI.Controllers
 {
+    /// <summary>
+    /// Version Controller
+    /// </summary>
     [Authorize]
     [Route("api")]
+    [ResponseCache(Location = ResponseCacheLocation.None, NoStore = true)]
     public class VersionController : Controller
     {
         // Hack in the git commit id.
-        private const string _commitKey = "OPENSHIFT_BUILD_COMMIT";
+        private const string CommitKey = "OPENSHIFT_BUILD_COMMIT";
 
         private readonly DbContext _context;
         private readonly IConfiguration _configuration;
 
+        /// <summary>
+        /// Version Constoller Constructor
+        /// </summary>
+        /// <param name="configuration"></param>
+        /// <param name="context"></param>
         public VersionController(IConfiguration configuration, DbAppContext context)
         {
             _configuration = configuration;
             _context = context;
         }
 
-        private string CommitId
-        {
-            get
-            {
-                return _configuration[_commitKey];
-            }
-        }
+        /// <summary>
+        /// Commit id
+        /// </summary>
+        private string CommitId => _configuration[CommitKey];
 
+        /// <summary>
+        /// Get server version information
+        /// </summary>
+        /// <returns></returns>
         [AllowAnonymous]
         [HttpGet]
         [Route("version")]
@@ -43,6 +53,10 @@ namespace HETSAPI.Controllers
             return Ok(info);
         }
 
+        /// <summary>
+        /// Get server version
+        /// </summary>
+        /// <returns></returns>
         [AllowAnonymous]
         [HttpGet]
         [Route("server/version")]
@@ -51,6 +65,10 @@ namespace HETSAPI.Controllers
             return Ok(GetApplicationVersionInfo());
         }
 
+        /// <summary>
+        /// Get database version
+        /// </summary>
+        /// <returns></returns>
         [AllowAnonymous]
         [HttpGet]
         [Route("database/version")]
@@ -61,8 +79,8 @@ namespace HETSAPI.Controllers
 
         private ApplicationVersionInfo GetApplicationVersionInfo()
         {
-            Assembly assembly = this.GetType().GetTypeInfo().Assembly;
-            return assembly.GetApplicationVersionInfo(this.CommitId);
+            Assembly assembly = GetType().GetTypeInfo().Assembly;
+            return assembly.GetApplicationVersionInfo(CommitId);
         }
 
         private DatabaseVersionInfo GetDatabaseVersionInfo()
