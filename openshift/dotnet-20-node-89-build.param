@@ -1,0 +1,14 @@
+#=========================================================
+# OpenShift template parameters for:
+# Component: .
+# JSON Template File: templates/pdf/dotnet-20-node-89-build.json
+#=========================================================
+NAME=dotnet-20-node-89
+GIT_REPO_URL=https://github.com/bcgov/hets.git
+GIT_REF=master
+SOURCE_CONTEXT_DIR=/hets/openshift/templates/pdf
+SOURCE_IMAGE_KIND=DockerImage
+SOURCE_IMAGE_NAME=registry.access.redhat.com/dotnet/dotnet-20-rhel7
+SOURCE_IMAGE_TAG=latest
+DOCKER_FILE_PATH=dotnet-20-node-89.Dockerfile
+OUTPUT_IMAGE_TAG=latest
