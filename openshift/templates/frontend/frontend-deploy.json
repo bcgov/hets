@@ -232,7 +232,7 @@
       "displayName": "Middleware Name",
       "description": "The name assigned to all of the middleware resources defined in this template.",
       "required": true,
-      "value": "api-proxy"
+      "value": "server"
     },
     {
       "name": "MIDDLEWARE_PORT",
@@ -240,6 +240,13 @@
       "description": "The port used by the middleware resources defined in this template.",
       "required": true,
       "value": "8080"
+    },
+    {
+      "name": "DATABASE_NAME",
+      "displayName": "Database Name",
+      "required": true,
+      "description": "Name of the deployed database (see environment variables in deployed database).",
+      "value": "hets"
     },
     {
       "name": "ADMIN_PASSWORD",
