@@ -4,17 +4,43 @@ using System.Collections.Generic;
 namespace HETSAPI.Models
 {
     /// <summary>
-    /// 
+    /// Permission Database Model Extension
     /// </summary>
     public partial class Permission : IEquatable<Permission>
     {
+        /// <summary>
+        /// Login Permission
+        /// </summary>
         public const string LOGIN = "LOGIN";
+
+        /// <summary>
+        /// User Management Permission
+        /// </summary>
         public const string USER_MANAGEMENT = "USER_MANAGEMENT";
+
+        /// <summary>
+        /// Roles and Permissions Permission
+        /// </summary>
         public const string ROLES_AND_PERMISSIONS = "ROLES_AND_PERMISSIONS";
+
+        /// <summary>
+        /// Admin Perission
+        /// </summary>
         public const string ADMIN = "ADMIN";
+
+        /// <summary>
+        /// Recieve Notification Permission
+        /// </summary>
         public const string RECEIVE_NOTIFICATIONS = "RECEIVE_NOTIFICATIONS";
+
+        /// <summary>
+        /// Assign Inspections Permission
+        /// </summary>
         public const string ASSIGN_INSPECTORS = "ASSIGN_INSPECTORS";
 
+        /// <summary>
+        /// All Permissions List
+        /// </summary>
         public static readonly IEnumerable<Permission> ALL_PERMISSIONS = new List<Permission>
         {
             new Permission
@@ -52,7 +78,7 @@ namespace HETSAPI.Models
                 Code = ASSIGN_INSPECTORS,
                 Name = "Assign Inspectors",
                 Description = "A user granted this permission will be able to assign inspectors."
-            },
+            }
         };
     }
 }

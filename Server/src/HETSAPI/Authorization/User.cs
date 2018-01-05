@@ -1,7 +1,7 @@
 ﻿namespace HETSAPI.Models
 {
     /// <summary>
-    /// User Extension
+    /// User Extension (to support authorization)
     /// </summary>
     public partial class User
     {

@@ -6,32 +6,30 @@ using System.ComponentModel.DataAnnotations;
 namespace HETSAPI.Models
 {
     /// <summary>
-    /// Text entered about an entity in the application - e.g. piece of Equipment, an Owner, a Project and so on.
+    /// Note Database Model
     /// </summary>
-        [MetaDataExtension (Description = "Text entered about an entity in the application - e.g. piece of Equipment, an Owner, a Project and so on.")]
-
-    public partial class Note : AuditableEntity, IEquatable<Note>
+    [MetaDataExtension (Description = "Text entered about an entity in the application - e.g. piece of Equipment, an Owner, a Project and so on.")]
+    public class Note : AuditableEntity, IEquatable<Note>
     {
         /// <summary>
         /// Default constructor, required by entity framework
         /// </summary>
         public Note()
         {
-            this.Id = 0;
+            Id = 0;
         }
 
         /// <summary>
         /// Initializes a new instance of the <see cref="Note" /> class.
         /// </summary>
-        /// <param name="Id">A system-generated unique identifier for a Note (required).</param>
-        /// <param name="Text">Notes entered by users about instance of entities - e.g. School Buses and School Bus Owners (required).</param>
-        /// <param name="IsNoLongerRelevant">A user set flag that the note is no longer relevant. Allows the note to be retained for historical reasons,  but identified to other users as no longer applicable..</param>
-        public Note(int Id, string Text, bool? IsNoLongerRelevant = null)
+        /// <param name="id">A system-generated unique identifier for a Note (required).</param>
+        /// <param name="text">Notes entered by users about instance of entities - e.g. School Buses and School Bus Owners (required).</param>
+        /// <param name="isNoLongerRelevant">A user set flag that the note is no longer relevant. Allows the note to be retained for historical reasons,  but identified to other users as no longer applicable..</param>
+        public Note(int id, string text, bool? isNoLongerRelevant = null)
         {   
-            this.Id = Id;
-            this.Text = Text;
-
-            this.IsNoLongerRelevant = IsNoLongerRelevant;
+            Id = id;
+            Text = text;
+            IsNoLongerRelevant = isNoLongerRelevant;
         }
 
         /// <summary>
@@ -46,8 +44,7 @@ namespace HETSAPI.Models
         /// </summary>
         /// <value>Notes entered by users about instance of entities - e.g. School Buses and School Bus Owners</value>
         [MetaDataExtension (Description = "Notes entered by users about instance of entities - e.g. School Buses and School Bus Owners")]
-        [MaxLength(2048)]
-        
+        [MaxLength(2048)]        
         public string Text { get; set; }
         
         /// <summary>
@@ -64,11 +61,13 @@ namespace HETSAPI.Models
         public override string ToString()
         {
             var sb = new StringBuilder();
+
             sb.Append("class Note {\n");
             sb.Append("  Id: ").Append(Id).Append("\n");
             sb.Append("  Text: ").Append(Text).Append("\n");
             sb.Append("  IsNoLongerRelevant: ").Append(IsNoLongerRelevant).Append("\n");
             sb.Append("}\n");
+
             return sb.ToString();
         }
 
@@ -91,6 +90,7 @@ namespace HETSAPI.Models
             if (ReferenceEquals(null, obj)) { return false; }
             if (ReferenceEquals(this, obj)) { return true; }
             if (obj.GetType() != GetType()) { return false; }
+
             return Equals((Note)obj);
         }
 
@@ -101,24 +101,23 @@ namespace HETSAPI.Models
         /// <returns>Boolean</returns>
         public bool Equals(Note other)
         {
-
             if (ReferenceEquals(null, other)) { return false; }
             if (ReferenceEquals(this, other)) { return true; }
 
             return                 
                 (
-                    this.Id == other.Id ||
-                    this.Id.Equals(other.Id)
+                    Id == other.Id ||
+                    Id.Equals(other.Id)
                 ) &&                 
                 (
-                    this.Text == other.Text ||
-                    this.Text != null &&
-                    this.Text.Equals(other.Text)
+                    Text == other.Text ||
+                    Text != null &&
+                    Text.Equals(other.Text)
                 ) &&                 
                 (
-                    this.IsNoLongerRelevant == other.IsNoLongerRelevant ||
-                    this.IsNoLongerRelevant != null &&
-                    this.IsNoLongerRelevant.Equals(other.IsNoLongerRelevant)
+                    IsNoLongerRelevant == other.IsNoLongerRelevant ||
+                    IsNoLongerRelevant != null &&
+                    IsNoLongerRelevant.Equals(other.IsNoLongerRelevant)
                 );
         }
 
@@ -132,15 +131,18 @@ namespace HETSAPI.Models
             unchecked // Overflow is fine, just wrap
             {
                 int hash = 41;
-                // Suitable nullity checks
-                                   
-                hash = hash * 59 + this.Id.GetHashCode();                if (this.Text != null)
+
+                // Suitable nullity checks                                   
+                hash = hash * 59 + Id.GetHashCode();
+
+                if (Text != null)
                 {
-                    hash = hash * 59 + this.Text.GetHashCode();
-                }                
-                                if (this.IsNoLongerRelevant != null)
+                    hash = hash * 59 + Text.GetHashCode();
+                }
+
+                if (IsNoLongerRelevant != null)
                 {
-                    hash = hash * 59 + this.IsNoLongerRelevant.GetHashCode();
+                    hash = hash * 59 + IsNoLongerRelevant.GetHashCode();
                 }                
                 
                 return hash;

@@ -1,23 +1,33 @@
 ﻿using Hangfire.Console;
 using Hangfire.Server;
-using HETSAPI.Models;
 using System;
 using System.IO;
 using System.Linq;
 using System.Xml.Serialization;
+using HETSAPI.Models;
 
 namespace HETSAPI.Import
-
 {
+    /// <summary>
+    /// Import City Records
+    /// </summary>
     public class ImportCity
     {
-        const string oldTable = "HETS_City";
-        const string newTable = "HET_City";
-        const string xmlFileName = "City.xml";
-        const int sigId = 150000;
+        private const string OldTable = "HETS_City";
+        private const string NewTable = "HET_City";
+        private const string XmlFileName = "City.xml";
+        private const int SigId = 150000;
 
-        static public void Import(PerformContext performContext, DbAppContext dbContext, string fileLocation, string systemId)
+        /// <summary>
+        /// IMport City Constructor
+        /// </summary>
+        /// <param name="performContext"></param>
+        /// <param name="dbContext"></param>
+        /// <param name="fileLocation"></param>
+        /// <param name="systemId"></param>
+        public static void Import(PerformContext performContext, DbAppContext dbContext, string fileLocation, string systemId)
         {
+            ImportCities(performContext, dbContext, fileLocation, systemId);
         }
 
         /// <summary>
@@ -27,37 +37,38 @@ namespace HETSAPI.Import
         /// <param name="dbContext"></param>
         /// <param name="fileLocation"></param>
         /// <param name="systemId"></param>
-        static private void ImportCities(PerformContext performContext, DbAppContext dbContext, string fileLocation, string systemId)
+        private static void ImportCities(PerformContext performContext, DbAppContext dbContext, string fileLocation, string systemId)
         {
             string completed = DateTime.Now.ToString("d") + "-" + "Completed";
-            ImportMap importMap = dbContext.ImportMaps.FirstOrDefault(x => x.OldTable == oldTable && x.OldKey == completed && x.NewKey == sigId);
+            ImportMap importMap = dbContext.ImportMaps.FirstOrDefault(x => x.OldTable == OldTable && x.OldKey == completed && x.NewKey == SigId);
             if (importMap != null)
             {
-                performContext.WriteLine("*** Importing " + xmlFileName + " is complete from the former process ***");
+                performContext.WriteLine("*** Importing " + XmlFileName + " is complete from the former process ***");
                 return;
             }
             try
             {
-                string rootAttr = "ArrayOf" + oldTable;
+                string rootAttr = "ArrayOf" + OldTable;
 
-                performContext.WriteLine("Processing " + oldTable);
+                performContext.WriteLine("Processing " + OldTable);
                 var progress = performContext.WriteProgressBar();
                 progress.SetValue(0);
 
                 // create serializer and serialize xml file
                 XmlSerializer ser = new XmlSerializer(typeof(HETS_City[]), new XmlRootAttribute(rootAttr));
-                MemoryStream memoryStream = ImportUtility.memoryStreamGenerator(xmlFileName, oldTable, fileLocation, rootAttr);
+                MemoryStream memoryStream = ImportUtility.memoryStreamGenerator(XmlFileName, OldTable, fileLocation, rootAttr);
                 HETS_City[] legacyItems = (HETS_City[])ser.Deserialize(memoryStream);
+
                 foreach (var item in legacyItems.WithProgress(progress))
                 {
                     // see if we have this one already.
-                    importMap = dbContext.ImportMaps.FirstOrDefault(x => x.OldTable == oldTable && x.OldKey == item.City_Id.ToString());
+                    importMap = dbContext.ImportMaps.FirstOrDefault(x => x.OldTable == OldTable && x.OldKey == item.City_Id.ToString());
 
                     if (importMap == null) // new entry
                     {
                         City city = null;
                         CopyToInstance(performContext, dbContext, item, ref city, systemId);
-                        ImportUtility.AddImportMap(dbContext, oldTable, item.City_Id.ToString(), newTable, city.Id);
+                        ImportUtility.AddImportMap(dbContext, OldTable, item.City_Id.ToString(), NewTable, city.Id);
                     }
                     else // update
                     {
@@ -65,6 +76,7 @@ namespace HETSAPI.Import
                         if (city == null) // record was deleted
                         {
                             CopyToInstance(performContext, dbContext, item, ref city, systemId);
+
                             // update the import map.
                             importMap.NewKey = city.Id;
                             dbContext.ImportMaps.Update(importMap);
@@ -80,8 +92,9 @@ namespace HETSAPI.Import
                         }
                     }
                 }
+
                 performContext.WriteLine("*** Done ***");
-                ImportUtility.AddImportMap(dbContext, oldTable, completed, newTable, sigId);
+                ImportUtility.AddImportMap(dbContext, OldTable, completed, NewTable, SigId);
             }
 
             catch (Exception e)
@@ -100,7 +113,7 @@ namespace HETSAPI.Import
         /// <param name="oldObject"></param>
         /// <param name="city"></param>
         /// <param name="systemId"></param>
-        static private void CopyToInstance(PerformContext performContext, DbAppContext dbContext, HETS_City oldObject, ref Models.City city, string systemId)
+        private static void CopyToInstance(PerformContext performContext, DbAppContext dbContext, HETS_City oldObject, ref City city, string systemId)
         {
             bool isNew = false;
             if (city == null)
@@ -109,11 +122,11 @@ namespace HETSAPI.Import
                 city = new City();
             }
 
-            if (dbContext.Cities.Where(x => x.Name.ToUpper() == oldObject.Name.ToUpper()).Count() == 0)
+            if (!dbContext.Cities.Any(x => string.Equals(x.Name, oldObject.Name, StringComparison.CurrentCultureIgnoreCase)))
             {
                 isNew = true;
                 city.Name = oldObject.Name.Trim();
-                city.Id = dbContext.Cities.Max(x => x.Id) + 1;   //oldObject.Seq_Num;  
+                city.Id = dbContext.Cities.Max(x => x.Id) + 1;
                 city.CreateTimestamp = DateTime.UtcNow;
                 city.CreateUserid = systemId;
             }
@@ -133,6 +146,5 @@ namespace HETSAPI.Import
                 performContext.WriteLine(e.ToString());
             }
         }
-
     }
 }

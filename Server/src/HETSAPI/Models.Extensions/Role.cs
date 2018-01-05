@@ -3,7 +3,7 @@
 namespace HETSAPI.Models
 {
     /// <summary>
-    /// 
+    /// Role Database Model Extension
     /// </summary>
     public partial class Role
     {

@@ -9,60 +9,58 @@ using System.ComponentModel.DataAnnotations;
 namespace HETSAPI.Models
 {
     /// <summary>
-    /// A request from a Project for one or more of a type of equipment from a specific Local Area.
+    /// REntal Request Database Model
     /// </summary>
     [MetaDataExtension (Description = "A request from a Project for one or more of a type of equipment from a specific Local Area.")]
-
-    public partial class RentalRequest : AuditableEntity, IEquatable<RentalRequest>
+    public class RentalRequest : AuditableEntity, IEquatable<RentalRequest>
     {
         /// <summary>
-        /// Default constructor, required by entity framework
+        /// Rental Request Database Model Constructor (required by entity framework)
         /// </summary>
         public RentalRequest()
         {
-            this.Id = 0;
+            Id = 0;
         }
 
         /// <summary>
         /// Initializes a new instance of the <see cref="RentalRequest" /> class.
         /// </summary>
-        /// <param name="Id">A system-generated unique identifier for a Request (required).</param>
-        /// <param name="Project">Project (required).</param>
-        /// <param name="LocalArea">A foreign key reference to the system-generated unique identifier for a Local Area (required).</param>
-        /// <param name="Status">The status of the Rental Request - whether it in progress, completed or was cancelled. (required).</param>
-        /// <param name="DistrictEquipmentType">A foreign key reference to the system-generated unique identifier for an Equipment Type (required).</param>
-        /// <param name="EquipmentCount">The number of pieces of the equipment type wanted for hire as part of this request. (required).</param>
-        /// <param name="ExpectedHours">The expected number of rental hours for each piece equipment hired against this request, as provided by the Project Manager making the request..</param>
-        /// <param name="ExpectedStartDate">The expected start date of each piece of equipment hired against this request, as provided by the Project Manager making the request..</param>
-        /// <param name="ExpectedEndDate">The expected end date of each piece of equipment hired against this request, as provided by the Project Manager making the request..</param>
-        /// <param name="FirstOnRotationList">The first piece of equipment on the rotation list at the time of the creation of the request..</param>
-        /// <param name="Notes">Notes.</param>
-        /// <param name="Attachments">Attachments.</param>
-        /// <param name="History">History.</param>
-        /// <param name="RentalRequestAttachments">RentalRequestAttachments.</param>
-        /// <param name="RentalRequestRotationList">RentalRequestRotationList.</param>
-        public RentalRequest(int Id, Project Project, LocalArea LocalArea, string Status, DistrictEquipmentType DistrictEquipmentType, int EquipmentCount, int? ExpectedHours = null, DateTime? ExpectedStartDate = null, DateTime? ExpectedEndDate = null, Equipment FirstOnRotationList = null, List<Note> Notes = null, List<Attachment> Attachments = null, List<History> History = null, List<RentalRequestAttachment> RentalRequestAttachments = null, List<RentalRequestRotationList> RentalRequestRotationList = null)
+        /// <param name="id">A system-generated unique identifier for a Request (required).</param>
+        /// <param name="project">Project (required).</param>
+        /// <param name="localArea">A foreign key reference to the system-generated unique identifier for a Local Area (required).</param>
+        /// <param name="status">The status of the Rental Request - whether it in progress, completed or was cancelled. (required).</param>
+        /// <param name="districtEquipmentType">A foreign key reference to the system-generated unique identifier for an Equipment Type (required).</param>
+        /// <param name="equipmentCount">The number of pieces of the equipment type wanted for hire as part of this request. (required).</param>
+        /// <param name="expectedHours">The expected number of rental hours for each piece equipment hired against this request, as provided by the Project Manager making the request..</param>
+        /// <param name="expectedStartDate">The expected start date of each piece of equipment hired against this request, as provided by the Project Manager making the request..</param>
+        /// <param name="expectedEndDate">The expected end date of each piece of equipment hired against this request, as provided by the Project Manager making the request..</param>
+        /// <param name="firstOnRotationList">The first piece of equipment on the rotation list at the time of the creation of the request..</param>
+        /// <param name="notes">Notes.</param>
+        /// <param name="attachments">Attachments.</param>
+        /// <param name="history">History.</param>
+        /// <param name="rentalRequestAttachments">RentalRequestAttachments.</param>
+        /// <param name="rentalRequestRotationList">RentalRequestRotationList.</param>
+        public RentalRequest(int id, Project project, LocalArea localArea, string status, DistrictEquipmentType districtEquipmentType, 
+            int equipmentCount, int? expectedHours = null, DateTime? expectedStartDate = null, DateTime? expectedEndDate = null, 
+            Equipment firstOnRotationList = null, List<Note> notes = null, List<Attachment> attachments = null, 
+            List<History> history = null, List<RentalRequestAttachment> rentalRequestAttachments = null, 
+            List<RentalRequestRotationList> rentalRequestRotationList = null)
         {   
-            this.Id = Id;
-            this.Project = Project;
-            this.LocalArea = LocalArea;
-            this.Status = Status;
-            this.DistrictEquipmentType = DistrictEquipmentType;
-            this.EquipmentCount = EquipmentCount;
-
-
-
-
-
-            this.ExpectedHours = ExpectedHours;
-            this.ExpectedStartDate = ExpectedStartDate;
-            this.ExpectedEndDate = ExpectedEndDate;
-            this.FirstOnRotationList = FirstOnRotationList;
-            this.Notes = Notes;
-            this.Attachments = Attachments;
-            this.History = History;
-            this.RentalRequestAttachments = RentalRequestAttachments;
-            this.RentalRequestRotationList = RentalRequestRotationList;
+            Id = id;
+            Project = project;
+            LocalArea = localArea;
+            Status = status;
+            DistrictEquipmentType = districtEquipmentType;
+            EquipmentCount = equipmentCount;
+            ExpectedHours = expectedHours;
+            ExpectedStartDate = expectedStartDate;
+            ExpectedEndDate = expectedEndDate;
+            FirstOnRotationList = firstOnRotationList;
+            Notes = notes;
+            Attachments = attachments;
+            History = history;
+            RentalRequestAttachments = rentalRequestAttachments;
+            RentalRequestRotationList = rentalRequestRotationList;
         }
 
         /// <summary>
@@ -81,8 +79,7 @@ namespace HETSAPI.Models
         /// Foreign key for Project 
         /// </summary>   
         [ForeignKey("Project")]
-		[JsonIgnore]
-		
+		[JsonIgnore]		
         public int? ProjectId { get; set; }
         
         /// <summary>
@@ -105,8 +102,7 @@ namespace HETSAPI.Models
         /// </summary>
         /// <value>The status of the Rental Request - whether it in progress, completed or was cancelled.</value>
         [MetaDataExtension (Description = "The status of the Rental Request - whether it in progress, completed or was cancelled.")]
-        [MaxLength(50)]
-        
+        [MaxLength(50)]        
         public string Status { get; set; }
         
         /// <summary>
@@ -199,6 +195,7 @@ namespace HETSAPI.Models
         public override string ToString()
         {
             var sb = new StringBuilder();
+
             sb.Append("class RentalRequest {\n");
             sb.Append("  Id: ").Append(Id).Append("\n");
             sb.Append("  Project: ").Append(Project).Append("\n");
@@ -216,6 +213,7 @@ namespace HETSAPI.Models
             sb.Append("  RentalRequestAttachments: ").Append(RentalRequestAttachments).Append("\n");
             sb.Append("  RentalRequestRotationList: ").Append(RentalRequestRotationList).Append("\n");
             sb.Append("}\n");
+
             return sb.ToString();
         }
 
@@ -238,6 +236,7 @@ namespace HETSAPI.Models
             if (ReferenceEquals(null, obj)) { return false; }
             if (ReferenceEquals(this, obj)) { return true; }
             if (obj.GetType() != GetType()) { return false; }
+
             return Equals((RentalRequest)obj);
         }
 
@@ -248,83 +247,82 @@ namespace HETSAPI.Models
         /// <returns>Boolean</returns>
         public bool Equals(RentalRequest other)
         {
-
             if (ReferenceEquals(null, other)) { return false; }
             if (ReferenceEquals(this, other)) { return true; }
 
             return                 
                 (
-                    this.Id == other.Id ||
-                    this.Id.Equals(other.Id)
+                    Id == other.Id ||
+                    Id.Equals(other.Id)
                 ) &&                 
                 (
-                    this.Project == other.Project ||
-                    this.Project != null &&
-                    this.Project.Equals(other.Project)
+                    Project == other.Project ||
+                    Project != null &&
+                    Project.Equals(other.Project)
                 ) &&                 
                 (
-                    this.LocalArea == other.LocalArea ||
-                    this.LocalArea != null &&
-                    this.LocalArea.Equals(other.LocalArea)
+                    LocalArea == other.LocalArea ||
+                    LocalArea != null &&
+                    LocalArea.Equals(other.LocalArea)
                 ) &&                 
                 (
-                    this.Status == other.Status ||
-                    this.Status != null &&
-                    this.Status.Equals(other.Status)
+                    Status == other.Status ||
+                    Status != null &&
+                    Status.Equals(other.Status)
                 ) &&                 
                 (
-                    this.DistrictEquipmentType == other.DistrictEquipmentType ||
-                    this.DistrictEquipmentType != null &&
-                    this.DistrictEquipmentType.Equals(other.DistrictEquipmentType)
+                    DistrictEquipmentType == other.DistrictEquipmentType ||
+                    DistrictEquipmentType != null &&
+                    DistrictEquipmentType.Equals(other.DistrictEquipmentType)
                 ) &&                 
                 (
-                    this.EquipmentCount == other.EquipmentCount ||
-                    this.EquipmentCount.Equals(other.EquipmentCount)
+                    EquipmentCount == other.EquipmentCount ||
+                    EquipmentCount.Equals(other.EquipmentCount)
                 ) &&                 
                 (
-                    this.ExpectedHours == other.ExpectedHours ||
-                    this.ExpectedHours != null &&
-                    this.ExpectedHours.Equals(other.ExpectedHours)
+                    ExpectedHours == other.ExpectedHours ||
+                    ExpectedHours != null &&
+                    ExpectedHours.Equals(other.ExpectedHours)
                 ) &&                 
                 (
-                    this.ExpectedStartDate == other.ExpectedStartDate ||
-                    this.ExpectedStartDate != null &&
-                    this.ExpectedStartDate.Equals(other.ExpectedStartDate)
+                    ExpectedStartDate == other.ExpectedStartDate ||
+                    ExpectedStartDate != null &&
+                    ExpectedStartDate.Equals(other.ExpectedStartDate)
                 ) &&                 
                 (
-                    this.ExpectedEndDate == other.ExpectedEndDate ||
-                    this.ExpectedEndDate != null &&
-                    this.ExpectedEndDate.Equals(other.ExpectedEndDate)
+                    ExpectedEndDate == other.ExpectedEndDate ||
+                    ExpectedEndDate != null &&
+                    ExpectedEndDate.Equals(other.ExpectedEndDate)
                 ) &&                 
                 (
-                    this.FirstOnRotationList == other.FirstOnRotationList ||
-                    this.FirstOnRotationList != null &&
-                    this.FirstOnRotationList.Equals(other.FirstOnRotationList)
+                    FirstOnRotationList == other.FirstOnRotationList ||
+                    FirstOnRotationList != null &&
+                    FirstOnRotationList.Equals(other.FirstOnRotationList)
                 ) && 
                 (
-                    this.Notes == other.Notes ||
-                    this.Notes != null &&
-                    this.Notes.SequenceEqual(other.Notes)
+                    Notes == other.Notes ||
+                    Notes != null &&
+                    Notes.SequenceEqual(other.Notes)
                 ) && 
                 (
-                    this.Attachments == other.Attachments ||
-                    this.Attachments != null &&
-                    this.Attachments.SequenceEqual(other.Attachments)
+                    Attachments == other.Attachments ||
+                    Attachments != null &&
+                    Attachments.SequenceEqual(other.Attachments)
                 ) && 
                 (
-                    this.History == other.History ||
-                    this.History != null &&
-                    this.History.SequenceEqual(other.History)
+                    History == other.History ||
+                    History != null &&
+                    History.SequenceEqual(other.History)
                 ) && 
                 (
-                    this.RentalRequestAttachments == other.RentalRequestAttachments ||
-                    this.RentalRequestAttachments != null &&
-                    this.RentalRequestAttachments.SequenceEqual(other.RentalRequestAttachments)
+                    RentalRequestAttachments == other.RentalRequestAttachments ||
+                    RentalRequestAttachments != null &&
+                    RentalRequestAttachments.SequenceEqual(other.RentalRequestAttachments)
                 ) && 
                 (
-                    this.RentalRequestRotationList == other.RentalRequestRotationList ||
-                    this.RentalRequestRotationList != null &&
-                    this.RentalRequestRotationList.SequenceEqual(other.RentalRequestRotationList)
+                    RentalRequestRotationList == other.RentalRequestRotationList ||
+                    RentalRequestRotationList != null &&
+                    RentalRequestRotationList.SequenceEqual(other.RentalRequestRotationList)
                 );
         }
 
@@ -338,62 +336,77 @@ namespace HETSAPI.Models
             unchecked // Overflow is fine, just wrap
             {
                 int hash = 41;
-                // Suitable nullity checks
-                                   
-                hash = hash * 59 + this.Id.GetHashCode();                   
-                if (this.Project != null)
+
+                // Suitable nullity checks                                   
+                hash = hash * 59 + Id.GetHashCode();          
+                
+                if (Project != null)
                 {
-                    hash = hash * 59 + this.Project.GetHashCode();
-                }                   
-                if (this.LocalArea != null)
-                {
-                    hash = hash * 59 + this.LocalArea.GetHashCode();
-                }                if (this.Status != null)
-                {
-                    hash = hash * 59 + this.Status.GetHashCode();
-                }                
-                                   
-                if (this.DistrictEquipmentType != null)
-                {
-                    hash = hash * 59 + this.DistrictEquipmentType.GetHashCode();
-                }                                   
-                hash = hash * 59 + this.EquipmentCount.GetHashCode();                if (this.ExpectedHours != null)
-                {
-                    hash = hash * 59 + this.ExpectedHours.GetHashCode();
-                }                
-                                if (this.ExpectedStartDate != null)
-                {
-                    hash = hash * 59 + this.ExpectedStartDate.GetHashCode();
-                }                
-                                if (this.ExpectedEndDate != null)
-                {
-                    hash = hash * 59 + this.ExpectedEndDate.GetHashCode();
-                }                
-                                   
-                if (this.FirstOnRotationList != null)
-                {
-                    hash = hash * 59 + this.FirstOnRotationList.GetHashCode();
-                }                   
-                if (this.Notes != null)
-                {
-                    hash = hash * 59 + this.Notes.GetHashCode();
-                }                   
-                if (this.Attachments != null)
-                {
-                    hash = hash * 59 + this.Attachments.GetHashCode();
-                }                   
-                if (this.History != null)
-                {
-                    hash = hash * 59 + this.History.GetHashCode();
-                }                   
-                if (this.RentalRequestAttachments != null)
-                {
-                    hash = hash * 59 + this.RentalRequestAttachments.GetHashCode();
-                }                   
-                if (this.RentalRequestRotationList != null)
-                {
-                    hash = hash * 59 + this.RentalRequestRotationList.GetHashCode();
+                    hash = hash * 59 + Project.GetHashCode();
                 }
+
+                if (LocalArea != null)
+                {
+                    hash = hash * 59 + LocalArea.GetHashCode();
+                }
+
+                if (Status != null)
+                {
+                    hash = hash * 59 + Status.GetHashCode();
+                }                
+                                   
+                if (DistrictEquipmentType != null)
+                {
+                    hash = hash * 59 + DistrictEquipmentType.GetHashCode();
+                }
+
+                hash = hash * 59 + EquipmentCount.GetHashCode();
+
+                if (ExpectedHours != null)
+                {
+                    hash = hash * 59 + ExpectedHours.GetHashCode();
+                }
+
+                if (ExpectedStartDate != null)
+                {
+                    hash = hash * 59 + ExpectedStartDate.GetHashCode();
+                }
+
+                if (ExpectedEndDate != null)
+                {
+                    hash = hash * 59 + ExpectedEndDate.GetHashCode();
+                }                
+                                   
+                if (FirstOnRotationList != null)
+                {
+                    hash = hash * 59 + FirstOnRotationList.GetHashCode();
+                }
+
+                if (Notes != null)
+                {
+                    hash = hash * 59 + Notes.GetHashCode();
+                }
+
+                if (Attachments != null)
+                {
+                    hash = hash * 59 + Attachments.GetHashCode();
+                }
+
+                if (History != null)
+                {
+                    hash = hash * 59 + History.GetHashCode();
+                }
+
+                if (RentalRequestAttachments != null)
+                {
+                    hash = hash * 59 + RentalRequestAttachments.GetHashCode();
+                }
+
+                if (RentalRequestRotationList != null)
+                {
+                    hash = hash * 59 + RentalRequestRotationList.GetHashCode();
+                }
+
                 return hash;
             }
         }

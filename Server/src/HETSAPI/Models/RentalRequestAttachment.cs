@@ -7,33 +7,30 @@ using System.ComponentModel.DataAnnotations;
 namespace HETSAPI.Models
 {
     /// <summary>
-    /// Attachments that are required as part of the Rental Requests
+    /// Renatal Request Attachment Database Model
     /// </summary>
     [MetaDataExtension (Description = "Attachments that are required as part of the Rental Requests")]
-
-    public partial class RentalRequestAttachment : AuditableEntity, IEquatable<RentalRequestAttachment>
+    public class RentalRequestAttachment : AuditableEntity, IEquatable<RentalRequestAttachment>
     {
         /// <summary>
-        /// Default constructor, required by entity framework
+        /// REntal Request Attachment Database Model Constructor (required by entity framework)
         /// </summary>
         public RentalRequestAttachment()
         {
-            this.Id = 0;
+            Id = 0;
         }
 
         /// <summary>
         /// Initializes a new instance of the <see cref="RentalRequestAttachment" /> class.
         /// </summary>
-        /// <param name="Id">A system-generated unique identifier for a RentalRequestAttachment (required).</param>
-        /// <param name="RentalRequest">A foreign key reference to the system-generated unique identifier for a Rental Request (required).</param>
-        /// <param name="Attachment">The name&amp;#x2F;type attachment needed as part of the fulfillment of the request (required).</param>
-        public RentalRequestAttachment(int Id, RentalRequest RentalRequest, string Attachment)
+        /// <param name="id">A system-generated unique identifier for a RentalRequestAttachment (required).</param>
+        /// <param name="rentalRequest">A foreign key reference to the system-generated unique identifier for a Rental Request (required).</param>
+        /// <param name="attachment">The name&amp;#x2F;type attachment needed as part of the fulfillment of the request (required).</param>
+        public RentalRequestAttachment(int id, RentalRequest rentalRequest, string attachment)
         {   
-            this.Id = Id;
-            this.RentalRequest = RentalRequest;
-            this.Attachment = Attachment;
-
-
+            Id = id;
+            RentalRequest = rentalRequest;
+            Attachment = attachment;
         }
 
         /// <summary>
@@ -63,8 +60,7 @@ namespace HETSAPI.Models
         /// </summary>
         /// <value>The name&#x2F;type attachment needed as part of the fulfillment of the request</value>
         [MetaDataExtension (Description = "The name&#x2F;type attachment needed as part of the fulfillment of the request")]
-        [MaxLength(150)]
-        
+        [MaxLength(150)]        
         public string Attachment { get; set; }
         
         /// <summary>
@@ -74,11 +70,13 @@ namespace HETSAPI.Models
         public override string ToString()
         {
             var sb = new StringBuilder();
+
             sb.Append("class RentalRequestAttachment {\n");
             sb.Append("  Id: ").Append(Id).Append("\n");
             sb.Append("  RentalRequest: ").Append(RentalRequest).Append("\n");
             sb.Append("  Attachment: ").Append(Attachment).Append("\n");
             sb.Append("}\n");
+
             return sb.ToString();
         }
 
@@ -101,6 +99,7 @@ namespace HETSAPI.Models
             if (ReferenceEquals(null, obj)) { return false; }
             if (ReferenceEquals(this, obj)) { return true; }
             if (obj.GetType() != GetType()) { return false; }
+
             return Equals((RentalRequestAttachment)obj);
         }
 
@@ -111,24 +110,23 @@ namespace HETSAPI.Models
         /// <returns>Boolean</returns>
         public bool Equals(RentalRequestAttachment other)
         {
-
             if (ReferenceEquals(null, other)) { return false; }
             if (ReferenceEquals(this, other)) { return true; }
 
             return                 
                 (
-                    this.Id == other.Id ||
-                    this.Id.Equals(other.Id)
+                    Id == other.Id ||
+                    Id.Equals(other.Id)
                 ) &&                 
                 (
-                    this.RentalRequest == other.RentalRequest ||
-                    this.RentalRequest != null &&
-                    this.RentalRequest.Equals(other.RentalRequest)
+                    RentalRequest == other.RentalRequest ||
+                    RentalRequest != null &&
+                    RentalRequest.Equals(other.RentalRequest)
                 ) &&                 
                 (
-                    this.Attachment == other.Attachment ||
-                    this.Attachment != null &&
-                    this.Attachment.Equals(other.Attachment)
+                    Attachment == other.Attachment ||
+                    Attachment != null &&
+                    Attachment.Equals(other.Attachment)
                 );
         }
 
@@ -142,15 +140,18 @@ namespace HETSAPI.Models
             unchecked // Overflow is fine, just wrap
             {
                 int hash = 41;
-                // Suitable nullity checks
-                                   
-                hash = hash * 59 + this.Id.GetHashCode();                   
-                if (this.RentalRequest != null)
+
+                // Suitable nullity checks                                   
+                hash = hash * 59 + Id.GetHashCode();      
+                
+                if (RentalRequest != null)
                 {
-                    hash = hash * 59 + this.RentalRequest.GetHashCode();
-                }                if (this.Attachment != null)
+                    hash = hash * 59 + RentalRequest.GetHashCode();
+                }
+
+                if (Attachment != null)
                 {
-                    hash = hash * 59 + this.Attachment.GetHashCode();
+                    hash = hash * 59 + Attachment.GetHashCode();
                 }                
                 
                 return hash;

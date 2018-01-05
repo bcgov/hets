@@ -7,41 +7,36 @@ using System.ComponentModel.DataAnnotations;
 namespace HETSAPI.Models
 {
     /// <summary>
-    /// A HETS-application defined area that is within a Service Area.
+    /// Local Area Database Model
     /// </summary>
-        [MetaDataExtension (Description = "A HETS-application defined area that is within a Service Area.")]
-
-    public partial class LocalArea : AuditableEntity, IEquatable<LocalArea>
+    [MetaDataExtension (Description = "A HETS-application defined area that is within a Service Area.")]
+    public class LocalArea : AuditableEntity, IEquatable<LocalArea>
     {
         /// <summary>
-        /// Default constructor, required by entity framework
+        /// Local Area Database Model Constructor (required by entity framework)
         /// </summary>
         public LocalArea()
         {
-            this.Id = 0;
+            Id = 0;
         }
 
         /// <summary>
         /// Initializes a new instance of the <see cref="LocalArea" /> class.
         /// </summary>
-        /// <param name="Id">A system-generated unique identifier for a LocalArea (required).</param>
-        /// <param name="LocalAreaNumber">A system-generated, visible to the user number for the Local Area (required).</param>
-        /// <param name="Name">The full name of the Local Area (required).</param>
-        /// <param name="ServiceArea">The Service Area in which the Local Area is found. (required).</param>
-        /// <param name="StartDate">The DATE the business information came into effect. - NOT CURRENTLY ENFORCED IN THIS SYSTEM (required).</param>
-        /// <param name="EndDate">The DATE the business information ceased to be in effect. - NOT CURRENTLY ENFORCED IN THIS SYSTEM.</param>
-        public LocalArea(int Id, int LocalAreaNumber, string Name, ServiceArea ServiceArea, DateTime StartDate, DateTime? EndDate = null)
+        /// <param name="id">A system-generated unique identifier for a LocalArea (required).</param>
+        /// <param name="localAreaNumber">A system-generated, visible to the user number for the Local Area (required).</param>
+        /// <param name="name">The full name of the Local Area (required).</param>
+        /// <param name="serviceArea">The Service Area in which the Local Area is found. (required).</param>
+        /// <param name="startDate">The DATE the business information came into effect. - NOT CURRENTLY ENFORCED IN THIS SYSTEM (required).</param>
+        /// <param name="endDate">The DATE the business information ceased to be in effect. - NOT CURRENTLY ENFORCED IN THIS SYSTEM.</param>
+        public LocalArea(int id, int localAreaNumber, string name, ServiceArea serviceArea, DateTime startDate, DateTime? endDate = null)
         {   
-            this.Id = Id;
-            this.LocalAreaNumber = LocalAreaNumber;
-            this.Name = Name;
-            this.ServiceArea = ServiceArea;
-            this.StartDate = StartDate;
-
-
-
-
-            this.EndDate = EndDate;
+            Id = id;
+            LocalAreaNumber = localAreaNumber;
+            Name = name;
+            ServiceArea = serviceArea;
+            StartDate = startDate;
+            EndDate = endDate;
         }
 
         /// <summary>
@@ -63,8 +58,7 @@ namespace HETSAPI.Models
         /// </summary>
         /// <value>The full name of the Local Area</value>
         [MetaDataExtension (Description = "The full name of the Local Area")]
-        [MaxLength(150)]
-        
+        [MaxLength(150)]        
         public string Name { get; set; }
         
         /// <summary>
@@ -103,6 +97,7 @@ namespace HETSAPI.Models
         public override string ToString()
         {
             var sb = new StringBuilder();
+
             sb.Append("class LocalArea {\n");
             sb.Append("  Id: ").Append(Id).Append("\n");
             sb.Append("  LocalAreaNumber: ").Append(LocalAreaNumber).Append("\n");
@@ -111,6 +106,7 @@ namespace HETSAPI.Models
             sb.Append("  StartDate: ").Append(StartDate).Append("\n");
             sb.Append("  EndDate: ").Append(EndDate).Append("\n");
             sb.Append("}\n");
+
             return sb.ToString();
         }
 
@@ -133,6 +129,7 @@ namespace HETSAPI.Models
             if (ReferenceEquals(null, obj)) { return false; }
             if (ReferenceEquals(this, obj)) { return true; }
             if (obj.GetType() != GetType()) { return false; }
+
             return Equals((LocalArea)obj);
         }
 
@@ -143,38 +140,36 @@ namespace HETSAPI.Models
         /// <returns>Boolean</returns>
         public bool Equals(LocalArea other)
         {
-
             if (ReferenceEquals(null, other)) { return false; }
             if (ReferenceEquals(this, other)) { return true; }
 
             return                 
                 (
-                    this.Id == other.Id ||
-                    this.Id.Equals(other.Id)
+                    Id == other.Id ||
+                    Id.Equals(other.Id)
                 ) &&                 
                 (
-                    this.LocalAreaNumber == other.LocalAreaNumber ||
-                    this.LocalAreaNumber.Equals(other.LocalAreaNumber)
+                    LocalAreaNumber == other.LocalAreaNumber ||
+                    LocalAreaNumber.Equals(other.LocalAreaNumber)
                 ) &&                 
                 (
-                    this.Name == other.Name ||
-                    this.Name != null &&
-                    this.Name.Equals(other.Name)
+                    Name == other.Name ||
+                    Name != null &&
+                    Name.Equals(other.Name)
                 ) &&                 
                 (
-                    this.ServiceArea == other.ServiceArea ||
-                    this.ServiceArea != null &&
-                    this.ServiceArea.Equals(other.ServiceArea)
+                    ServiceArea == other.ServiceArea ||
+                    ServiceArea != null &&
+                    ServiceArea.Equals(other.ServiceArea)
                 ) &&                 
                 (
-                    this.StartDate == other.StartDate ||
-                    this.StartDate != null &&
-                    this.StartDate.Equals(other.StartDate)
+                    StartDate == other.StartDate ||
+                    StartDate.Equals(other.StartDate)
                 ) &&                 
                 (
-                    this.EndDate == other.EndDate ||
-                    this.EndDate != null &&
-                    this.EndDate.Equals(other.EndDate)
+                    EndDate == other.EndDate ||
+                    EndDate != null &&
+                    EndDate.Equals(other.EndDate)
                 );
         }
 
@@ -188,24 +183,26 @@ namespace HETSAPI.Models
             unchecked // Overflow is fine, just wrap
             {
                 int hash = 41;
-                // Suitable nullity checks
-                                   
-                hash = hash * 59 + this.Id.GetHashCode();                                   
-                hash = hash * 59 + this.LocalAreaNumber.GetHashCode();                if (this.Name != null)
+
+                // Suitable nullity checks                                   
+                hash = hash * 59 + Id.GetHashCode();                                   
+                hash = hash * 59 + LocalAreaNumber.GetHashCode();
+
+                if (Name != null)
                 {
-                    hash = hash * 59 + this.Name.GetHashCode();
+                    hash = hash * 59 + Name.GetHashCode();
                 }                
                                    
-                if (this.ServiceArea != null)
+                if (ServiceArea != null)
                 {
-                    hash = hash * 59 + this.ServiceArea.GetHashCode();
-                }                   
-                if (this.StartDate != null)
+                    hash = hash * 59 + ServiceArea.GetHashCode();
+                }         
+                                
+                hash = hash * 59 + StartDate.GetHashCode();               
+
+                if (EndDate != null)
                 {
-                    hash = hash * 59 + this.StartDate.GetHashCode();
-                }                if (this.EndDate != null)
-                {
-                    hash = hash * 59 + this.EndDate.GetHashCode();
+                    hash = hash * 59 + EndDate.GetHashCode();
                 }                
                 
                 return hash;

@@ -6,34 +6,32 @@ using System.ComponentModel.DataAnnotations.Schema;
 namespace HETSAPI.Models
 {
     /// <summary>
-    /// A join table that provides allows each user to have any number of Roles in the system.  At login time the user is given the sum of the permissions of the roles assigned to that user.
+    /// User Role Database Model
     /// </summary>
     [MetaDataExtension (Description = "A join table that provides allows each user to have any number of Roles in the system.  At login time the user is given the sum of the permissions of the roles assigned to that user.")]
-
-    public partial class UserRole : AuditableEntity, IEquatable<UserRole>
+    public class UserRole : AuditableEntity, IEquatable<UserRole>
     {
         /// <summary>
-        /// Default constructor, required by entity framework
+        /// User Role Database Model Constructor (required by entity framework)
         /// </summary>
         public UserRole()
         {
-            this.Id = 0;
+            Id = 0;
         }
 
         /// <summary>
         /// Initializes a new instance of the <see cref="UserRole" /> class.
         /// </summary>
-        /// <param name="Id">A system-generated unique identifier for a UserRole (required).</param>
-        /// <param name="EffectiveDate">The date on which the user was given the related role. (required).</param>
-        /// <param name="ExpiryDate">The date on which a role previously assigned to a user was removed from that user..</param>
-        /// <param name="Role">A foreign key reference to the system-generated unique identifier for a Role.</param>
-        public UserRole(int Id, DateTime EffectiveDate, DateTime? ExpiryDate = null, Role Role = null)
+        /// <param name="id">A system-generated unique identifier for a UserRole (required).</param>
+        /// <param name="effectiveDate">The date on which the user was given the related role. (required).</param>
+        /// <param name="expiryDate">The date on which a role previously assigned to a user was removed from that user..</param>
+        /// <param name="role">A foreign key reference to the system-generated unique identifier for a Role.</param>
+        public UserRole(int id, DateTime effectiveDate, DateTime? expiryDate = null, Role role = null)
         {   
-            this.Id = Id;
-            this.EffectiveDate = EffectiveDate;
-
-            this.ExpiryDate = ExpiryDate;
-            this.Role = Role;
+            Id = id;
+            EffectiveDate = effectiveDate;
+            ExpiryDate = expiryDate;
+            Role = role;
         }
 
         /// <summary>
@@ -79,12 +77,14 @@ namespace HETSAPI.Models
         public override string ToString()
         {
             var sb = new StringBuilder();
+
             sb.Append("class UserRole {\n");
             sb.Append("  Id: ").Append(Id).Append("\n");
             sb.Append("  EffectiveDate: ").Append(EffectiveDate).Append("\n");
             sb.Append("  ExpiryDate: ").Append(ExpiryDate).Append("\n");
             sb.Append("  Role: ").Append(Role).Append("\n");
             sb.Append("}\n");
+
             return sb.ToString();
         }
 
@@ -107,6 +107,7 @@ namespace HETSAPI.Models
             if (ReferenceEquals(null, obj)) { return false; }
             if (ReferenceEquals(this, obj)) { return true; }
             if (obj.GetType() != GetType()) { return false; }
+
             return Equals((UserRole)obj);
         }
 
@@ -117,29 +118,27 @@ namespace HETSAPI.Models
         /// <returns>Boolean</returns>
         public bool Equals(UserRole other)
         {
-
             if (ReferenceEquals(null, other)) { return false; }
             if (ReferenceEquals(this, other)) { return true; }
 
             return                 
                 (
-                    this.Id == other.Id ||
-                    this.Id.Equals(other.Id)
+                    Id == other.Id ||
+                    Id.Equals(other.Id)
                 ) &&                 
                 (
-                    this.EffectiveDate == other.EffectiveDate ||
-                    this.EffectiveDate != null &&
-                    this.EffectiveDate.Equals(other.EffectiveDate)
+                    EffectiveDate == other.EffectiveDate ||
+                    EffectiveDate.Equals(other.EffectiveDate)
                 ) &&                 
                 (
-                    this.ExpiryDate == other.ExpiryDate ||
-                    this.ExpiryDate != null &&
-                    this.ExpiryDate.Equals(other.ExpiryDate)
+                    ExpiryDate == other.ExpiryDate ||
+                    ExpiryDate != null &&
+                    ExpiryDate.Equals(other.ExpiryDate)
                 ) &&                 
                 (
-                    this.Role == other.Role ||
-                    this.Role != null &&
-                    this.Role.Equals(other.Role)
+                    Role == other.Role ||
+                    Role != null &&
+                    Role.Equals(other.Role)
                 );
         }
 
@@ -153,21 +152,21 @@ namespace HETSAPI.Models
             unchecked // Overflow is fine, just wrap
             {
                 int hash = 41;
-                // Suitable nullity checks
-                                   
-                hash = hash * 59 + this.Id.GetHashCode();                   
-                if (this.EffectiveDate != null)
+
+                // Suitable nullity checks                                   
+                hash = hash * 59 + Id.GetHashCode();    
+                hash = hash * 59 + EffectiveDate.GetHashCode();
+
+                if (ExpiryDate != null)
                 {
-                    hash = hash * 59 + this.EffectiveDate.GetHashCode();
-                }                if (this.ExpiryDate != null)
-                {
-                    hash = hash * 59 + this.ExpiryDate.GetHashCode();
+                    hash = hash * 59 + ExpiryDate.GetHashCode();
                 }                
                                    
-                if (this.Role != null)
+                if (Role != null)
                 {
-                    hash = hash * 59 + this.Role.GetHashCode();
+                    hash = hash * 59 + Role.GetHashCode();
                 }
+
                 return hash;
             }
         }

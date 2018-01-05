@@ -6,7 +6,7 @@ namespace HETSAPI.Authentication
     /// <summary>
     /// Db Extension - Validates User Credential against the HETS Database
     /// </summary>
-    public static class IDbAppContextExtensions
+    public static class DbAppContextExtensions
     {
         /// <summary>
         /// Load User from HETS database using their userId and guid

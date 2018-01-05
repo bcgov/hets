@@ -6,30 +6,28 @@ using System.ComponentModel.DataAnnotations;
 namespace HETSAPI.Models
 {
     /// <summary>
-    /// A list of cities in BC. Authoritative source to be determined.
+    /// City Database Model
     /// </summary>
-        [MetaDataExtension (Description = "A list of cities in BC. Authoritative source to be determined.")]
-
-    public partial class City : AuditableEntity, IEquatable<City>
+    [MetaDataExtension (Description = "A list of cities in BC. Authoritative source to be determined.")]
+    public class City : AuditableEntity, IEquatable<City>
     {
         /// <summary>
-        /// Default constructor, required by entity framework
+        /// City Constructor (required by entity framework)
         /// </summary>
         public City()
         {
-            this.Id = 0;
+            Id = 0;
         }
 
         /// <summary>
         /// Initializes a new instance of the <see cref="City" /> class.
         /// </summary>
-        /// <param name="Id">A system-generated unique identifier for a City (required).</param>
-        /// <param name="Name">The name of the City (required).</param>
-        public City(int Id, string Name)
+        /// <param name="id">A system-generated unique identifier for a City (required).</param>
+        /// <param name="name">The name of the City (required).</param>
+        public City(int id, string name)
         {   
-            this.Id = Id;
-            this.Name = Name;
-
+            Id = id;
+            Name = name;
         }
 
         /// <summary>
@@ -44,8 +42,7 @@ namespace HETSAPI.Models
         /// </summary>
         /// <value>The name of the City</value>
         [MetaDataExtension (Description = "The name of the City")]
-        [MaxLength(150)]
-        
+        [MaxLength(150)]        
         public string Name { get; set; }
         
         /// <summary>
@@ -55,10 +52,12 @@ namespace HETSAPI.Models
         public override string ToString()
         {
             var sb = new StringBuilder();
+
             sb.Append("class City {\n");
             sb.Append("  Id: ").Append(Id).Append("\n");
             sb.Append("  Name: ").Append(Name).Append("\n");
             sb.Append("}\n");
+
             return sb.ToString();
         }
 
@@ -81,6 +80,7 @@ namespace HETSAPI.Models
             if (ReferenceEquals(null, obj)) { return false; }
             if (ReferenceEquals(this, obj)) { return true; }
             if (obj.GetType() != GetType()) { return false; }
+
             return Equals((City)obj);
         }
 
@@ -91,19 +91,18 @@ namespace HETSAPI.Models
         /// <returns>Boolean</returns>
         public bool Equals(City other)
         {
-
             if (ReferenceEquals(null, other)) { return false; }
             if (ReferenceEquals(this, other)) { return true; }
 
             return                 
                 (
-                    this.Id == other.Id ||
-                    this.Id.Equals(other.Id)
+                    Id == other.Id ||
+                    Id.Equals(other.Id)
                 ) &&                 
                 (
-                    this.Name == other.Name ||
-                    this.Name != null &&
-                    this.Name.Equals(other.Name)
+                    Name == other.Name ||
+                    Name != null &&
+                    Name.Equals(other.Name)
                 );
         }
 
@@ -119,9 +118,11 @@ namespace HETSAPI.Models
                 int hash = 41;
                 // Suitable nullity checks
                                    
-                hash = hash * 59 + this.Id.GetHashCode();                if (this.Name != null)
+                hash = hash * 59 + Id.GetHashCode();
+
+                if (Name != null)
                 {
-                    hash = hash * 59 + this.Name.GetHashCode();
+                    hash = hash * 59 + Name.GetHashCode();
                 }                
                 
                 return hash;

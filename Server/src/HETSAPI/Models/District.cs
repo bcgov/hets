@@ -7,14 +7,13 @@ using System.ComponentModel.DataAnnotations;
 namespace HETSAPI.Models
 {
     /// <summary>
-    /// The Ministry of Transportion and Infrastructure DISTRICT
+    /// District Database Model
     /// </summary>
-        [MetaDataExtension (Description = "The Ministry of Transportion and Infrastructure DISTRICT")]
-
-    public partial class District : AuditableEntity, IEquatable<District>
+    [MetaDataExtension (Description = "The Ministry of Transportion and Infrastructure DISTRICT")]
+    public class District : AuditableEntity, IEquatable<District>
     {
         /// <summary>
-        /// Default constructor, required by entity framework
+        /// District Database Model Constructor (required by entity framework)
         /// </summary>
         public District()
         {

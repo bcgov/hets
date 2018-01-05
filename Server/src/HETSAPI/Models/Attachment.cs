@@ -6,37 +6,34 @@ using System.ComponentModel.DataAnnotations;
 namespace HETSAPI.Models
 {
     /// <summary>
-    /// Uploaded documents related to entity in the application - e.g. piece of Equipment, an Owner, a Project and so on.
+    /// Attachment Database Model
     /// </summary>
-        [MetaDataExtension (Description = "Uploaded documents related to entity in the application - e.g. piece of Equipment, an Owner, a Project and so on.")]
-
-    public partial class Attachment : AuditableEntity, IEquatable<Attachment>
+    [MetaDataExtension (Description = "Uploaded documents related to entity in the application - e.g. piece of Equipment, an Owner, a Project and so on.")]
+    public class Attachment : AuditableEntity, IEquatable<Attachment>
     {
         /// <summary>
-        /// Default constructor, required by entity framework
+        /// Attachment Database Model Constructor (required by entity framework)
         /// </summary>
         public Attachment()
         {
-            this.Id = 0;
+            Id = 0;
         }
 
         /// <summary>
         /// Initializes a new instance of the <see cref="Attachment" /> class.
         /// </summary>
-        /// <param name="Id">A system-generated unique identifier for an Attachment (required).</param>
-        /// <param name="FileName">Filename as passed by the user uploading the file (required).</param>
-        /// <param name="FileContents">Binary contents of the file (required).</param>
-        /// <param name="Description">A note about the attachment,  optionally maintained by the user..</param>
-        /// <param name="Type">Type of attachment.</param>
-        public Attachment(int Id, string FileName, byte[] FileContents, string Description = null, string Type = null)
+        /// <param name="id">A system-generated unique identifier for an Attachment (required).</param>
+        /// <param name="fileName">Filename as passed by the user uploading the file (required).</param>
+        /// <param name="fileContents">Binary contents of the file (required).</param>
+        /// <param name="description">A note about the attachment,  optionally maintained by the user..</param>
+        /// <param name="type">Type of attachment.</param>
+        public Attachment(int id, string fileName, byte[] fileContents, string description = null, string type = null)
         {   
-            this.Id = Id;
-            this.FileName = FileName;
-            this.FileContents = FileContents;
-
-
-            this.Description = Description;
-            this.Type = Type;
+            Id = id;
+            FileName = fileName;
+            FileContents = fileContents;
+            Description = description;
+            Type = type;
         }
 
         /// <summary>
@@ -51,8 +48,7 @@ namespace HETSAPI.Models
         /// </summary>
         /// <value>Filename as passed by the user uploading the file</value>
         [MetaDataExtension (Description = "Filename as passed by the user uploading the file")]
-        [MaxLength(2048)]
-        
+        [MaxLength(2048)]        
         public string FileName { get; set; }
         
         /// <summary>
@@ -67,8 +63,7 @@ namespace HETSAPI.Models
         /// </summary>
         /// <value>A note about the attachment,  optionally maintained by the user.</value>
         [MetaDataExtension (Description = "A note about the attachment,  optionally maintained by the user.")]
-        [MaxLength(2048)]
-        
+        [MaxLength(2048)]        
         public string Description { get; set; }
         
         /// <summary>
@@ -76,8 +71,7 @@ namespace HETSAPI.Models
         /// </summary>
         /// <value>Type of attachment</value>
         [MetaDataExtension (Description = "Type of attachment")]
-        [MaxLength(255)]
-        
+        [MaxLength(255)]        
         public string Type { get; set; }
         
         /// <summary>
@@ -87,6 +81,7 @@ namespace HETSAPI.Models
         public override string ToString()
         {
             var sb = new StringBuilder();
+
             sb.Append("class Attachment {\n");
             sb.Append("  Id: ").Append(Id).Append("\n");
             sb.Append("  FileName: ").Append(FileName).Append("\n");
@@ -94,6 +89,7 @@ namespace HETSAPI.Models
             sb.Append("  Description: ").Append(Description).Append("\n");
             sb.Append("  Type: ").Append(Type).Append("\n");
             sb.Append("}\n");
+
             return sb.ToString();
         }
 
@@ -116,6 +112,7 @@ namespace HETSAPI.Models
             if (ReferenceEquals(null, obj)) { return false; }
             if (ReferenceEquals(this, obj)) { return true; }
             if (obj.GetType() != GetType()) { return false; }
+
             return Equals((Attachment)obj);
         }
 
@@ -126,34 +123,33 @@ namespace HETSAPI.Models
         /// <returns>Boolean</returns>
         public bool Equals(Attachment other)
         {
-
             if (ReferenceEquals(null, other)) { return false; }
             if (ReferenceEquals(this, other)) { return true; }
 
             return                 
                 (
-                    this.Id == other.Id ||
-                    this.Id.Equals(other.Id)
+                    Id == other.Id ||
+                    Id.Equals(other.Id)
                 ) &&                 
                 (
-                    this.FileName == other.FileName ||
-                    this.FileName != null &&
-                    this.FileName.Equals(other.FileName)
+                    FileName == other.FileName ||
+                    FileName != null &&
+                    FileName.Equals(other.FileName)
                 ) &&                 
                 (
-                    this.FileContents == other.FileContents ||
-                    this.FileContents != null &&
-                    this.FileContents.Equals(other.FileContents)
+                    FileContents == other.FileContents ||
+                    FileContents != null &&
+                    FileContents.Equals(other.FileContents)
                 ) &&                 
                 (
-                    this.Description == other.Description ||
-                    this.Description != null &&
-                    this.Description.Equals(other.Description)
+                    Description == other.Description ||
+                    Description != null &&
+                    Description.Equals(other.Description)
                 ) &&                 
                 (
-                    this.Type == other.Type ||
-                    this.Type != null &&
-                    this.Type.Equals(other.Type)
+                    Type == other.Type ||
+                    Type != null &&
+                    Type.Equals(other.Type)
                 );
         }
 
@@ -169,21 +165,26 @@ namespace HETSAPI.Models
                 int hash = 41;
                 // Suitable nullity checks
                                    
-                hash = hash * 59 + this.Id.GetHashCode();                if (this.FileName != null)
+                hash = hash * 59 + Id.GetHashCode();
+
+                if (FileName != null)
                 {
-                    hash = hash * 59 + this.FileName.GetHashCode();
-                }                
-                                if (this.FileContents != null)
+                    hash = hash * 59 + FileName.GetHashCode();
+                }
+
+                if (FileContents != null)
                 {
-                    hash = hash * 59 + this.FileContents.GetHashCode();
-                }                
-                                if (this.Description != null)
+                    hash = hash * 59 + FileContents.GetHashCode();
+                }
+
+                if (Description != null)
                 {
-                    hash = hash * 59 + this.Description.GetHashCode();
-                }                
-                                if (this.Type != null)
+                    hash = hash * 59 + Description.GetHashCode();
+                }
+
+                if (Type != null)
                 {
-                    hash = hash * 59 + this.Type.GetHashCode();
+                    hash = hash * 59 + Type.GetHashCode();
                 }                
                 
                 return hash;

@@ -23,25 +23,29 @@ namespace HETSAPI.Models
         /// <param name="context"></param>
         public DbCommentsUpdater(TContext context)
         {
-            this.context = context;
+            _context = context;
         }
 
-        readonly TContext context;
-        IDbContextTransaction transaction;
+        private readonly TContext _context;
+        private IDbContextTransaction _transaction;
 
         /// <summary>
         /// Update the database descriptions
         /// </summary>
         public void UpdateDatabaseDescriptions()
         {
-            Type contextType;
-            contextType = typeof(TContext);
-            var props = contextType.GetProperties(System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.Public);
-            DbConnection con = context.Database.GetDbConnection();
+            Type contextType = typeof(TContext);
+
+            var props = contextType.GetProperties(BindingFlags.Instance | BindingFlags.Public);
+
+            DbConnection con = _context.Database.GetDbConnection();
+
             try
             {
                 con.Open();
-                transaction = context.Database.BeginTransaction();
+
+                _transaction = _context.Database.BeginTransaction();
+
                 foreach (var prop in props)
                 {
                     if (prop.PropertyType.InheritsOrImplements((typeof(DbSet<>))))
@@ -50,22 +54,20 @@ namespace HETSAPI.Models
                         SetTableDescriptions(tableType);
                     }
                 }
-                transaction.Commit();
+
+                _transaction.Commit();
             }
             catch
             {
-                if (transaction != null)
-                    transaction.Rollback();
+                _transaction?.Rollback();
                 throw;
             }
             finally
             {
-
                 if (con.State == System.Data.ConnectionState.Open)
                 {
                     con.Close();
                 }
-
             }
         }
 
@@ -75,18 +77,16 @@ namespace HETSAPI.Models
         /// <param name="tableType"></param>
         private void SetTableDescriptions(Type tableType)
         {
-            IEntityType entityType = context.Model.FindEntityType(tableType);
+            IEntityType entityType = _context.Model.FindEntityType(tableType);
 
             string fullTableName = entityType.Relational().TableName;
             Regex regex = new Regex(@"(\[\w+\]\.)?\[(?<table>.*)\]");
             Match match = regex.Match(fullTableName);
-            string tableName;
-            if (match.Success)
-                tableName = match.Groups["table"].Value;
-            else
-                tableName = fullTableName;
+
+            string tableName = match.Success ? match.Groups["table"].Value : fullTableName;
 
             object[] tableAttrs = tableType.GetTypeInfo().GetCustomAttributes(typeof(TableAttribute), false);
+
             if (tableAttrs.Length > 0)
             {
                 tableName = ((TableAttribute)tableAttrs[0]).Name;
@@ -125,7 +125,8 @@ namespace HETSAPI.Models
         {
             // Postgres has the COMMENT command to update a description.
             string query = "COMMENT ON COLUMN \"" + tableName + "\".\"" + columnName + "\" IS '" + description.Replace("'", "\'") + "'";
-            context.Database.ExecuteSqlCommand(query);
+
+            _context.Database.ExecuteSqlCommand(query);
         }
 
         /// <summary>
@@ -137,12 +138,21 @@ namespace HETSAPI.Models
         {
             // Postgres has the COMMENT command to update a description.
             string query = "COMMENT ON TABLE \"" + tableName + "\" IS '" + description.Replace("'", "\'") + "'";
-            context.Database.ExecuteSqlCommand(query);
+            _context.Database.ExecuteSqlCommand(query);
         }
     }
 
+    /// <summary>
+    /// Reflection Utility
+    /// </summary>
     public static class ReflectionUtil
     {
+        /// <summary>
+        /// Check for Inherits or Implements
+        /// </summary>
+        /// <param name="child"></param>
+        /// <param name="parent"></param>
+        /// <returns></returns>
         public static bool InheritsOrImplements(this Type child, Type parent)
         {
             parent = ResolveGenericTypeDefinition(parent);
@@ -182,12 +192,11 @@ namespace HETSAPI.Models
 
         private static Type ResolveGenericTypeDefinition(Type parent)
         {
-            var shouldUseGenericType = true;
-            if (parent.GetTypeInfo().IsGenericType && parent.GetGenericTypeDefinition() != parent)
-                shouldUseGenericType = false;
+            bool shouldUseGenericType = !(parent.GetTypeInfo().IsGenericType && parent.GetGenericTypeDefinition() != parent);
 
             if (parent.GetTypeInfo().IsGenericType && shouldUseGenericType)
                 parent = parent.GetGenericTypeDefinition();
+
             return parent;
         }
     }

@@ -1,7 +1,7 @@
 ﻿namespace HETSAPI.Models
 {
     /// <summary>
-    /// District Equipment Types
+    /// District Equipment Type Database Model Extension
     /// </summary>
     public partial class DistrictEquipmentType
     {

@@ -13,7 +13,7 @@ namespace HETSAPI.Controllers
         private readonly IAdminService _service;
 
         /// <summary>
-        /// Create a controller and set the service
+        /// Administration Controller Constructor
         /// </summary>
         public AdminController(IAdminService service)
         {
@@ -21,7 +21,7 @@ namespace HETSAPI.Controllers
         }
 
         /// <summary>
-        /// Starts the import process
+        /// Start the import process
         /// </summary>
         /// <param name="path">location of the extracted files to parse.  Relative to the folder where files are stored</param>
         /// <param name="districts">comma seperated list of district IDs to process.</param>
