@@ -37,7 +37,6 @@ var DocumentsListDialog = React.createClass({
     return {
       loading: false,
       documents: [],
-      files: [],
       uploadInProgress: false,
       percentUploaded: 0,
       showAttachmentDialog: false,
@@ -100,25 +99,12 @@ var DocumentsListDialog = React.createClass({
     window.open(Api.getDownloadDocumentURL(document));
   },
 
-  filesPicked(files) {
-    var existingFiles = this.state.files.slice();
-    existingFiles.push.apply(existingFiles, files);
-    this.setState({ files: existingFiles }, () => {
-      this.uploadFiles();
-    });
-  },
-
-  filesUploaded() {
-    this.setState({ files: [] });
-    this.fetch();
-  },
-
-  uploadFiles() {
+  uploadFiles(files) {
     this.setState({ uploadInProgress: true, percentUploaded: 0 });
 
     var options = {
       method: 'POST',
-      files: this.state.files,
+      files: [...files],
       onUploadProgress: (percentComplete) => {
         var percent = Math.round(percentComplete);
         this.setState({ percentUploaded: percent });
@@ -127,7 +113,7 @@ var DocumentsListDialog = React.createClass({
 
     this.uploadPromise = request(buildApiPath(this.props.parent.uploadDocumentPath), options).then(() => {
       this.setState({ uploadInProgress: false, percentUploaded: null });
-      this.filesUploaded();
+      this.fetch();
     }, (err) => {
       this.setState({ uploadInProgress: false, fileUploadError: err });
     });
@@ -146,7 +132,7 @@ var DocumentsListDialog = React.createClass({
             <ProgressBar active now={ this.state.percentUploaded } min={ 5 }/>
             :
             <div className="file-picker-container">
-              <FilePicker onFilesSelected={ this.filesPicked }/>
+              <FilePicker onFilesSelected={ this.uploadFiles }/>
               <div>Select one or more files{ parent.name ? ` to attach to ${ parent.name }` : null }</div>
             </div>
           }
@@ -155,12 +141,6 @@ var DocumentsListDialog = React.createClass({
               if (this.state.loading) { return <div style={{ textAlign: 'center' }}><Spinner/></div>; }
 
               var numDocuments = Object.keys(this.state.documents).length;
-
-              {/* var attachButton = <FilePicker onFilesSelected={ this.filesPicked }/>; */}
-              
-              {/* <Button title="Attach Document" onClick={ this.attachDocument } bsStyle={ numDocuments ? 'primary' : 'default' }>
-                <Glyphicon glyph="paperclip" />&nbsp;<strong>Attach</strong>
-              </Button>; */}
 
               if (numDocuments === 0) { return <Alert bsStyle="success">No documents</Alert>; }
 
