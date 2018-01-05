@@ -370,6 +370,7 @@ function parseEquipment(equipment) {
 }
 
 export function searchEquipmentList(params) {
+  store.dispatch({ type: Action.EQUIPMENT_LIST_REQUEST });
   return new ApiRequest('/equipment/search').get(params).then(response => {
     var equipmentList = normalize(response);
 
@@ -547,12 +548,12 @@ function parseOwner(owner) {
 }
 
 export function searchOwners(params) {
+  store.dispatch({ type: Action.OWNERS_REQUEST });
   return new ApiRequest('/owners/search').get(params).then(response => {
     var owners = normalize(response);
 
     // Add display fields
     _.map(owners, owner => { parseOwner(owner); });
-
     store.dispatch({ type: Action.UPDATE_OWNERS, owners: owners });
   });
 }
@@ -569,6 +570,7 @@ export function getOwner(ownerId) {
 }
 
 export function getOwners() {
+  store.dispatch({ type: Action.OWNERS_LOOKUP_REQUEST });
   return new ApiRequest('/owners').get().then(response => {
     var owners = normalize(response);
 
@@ -1422,6 +1424,7 @@ export function getEquipmentTypes() {
 }
 
 export function getDistrictEquipmentTypes(districtId) {
+  store.dispatch({ type: Action.DISTRICT_EQUIPMENT_TYPES_LOOKUP_REQUEST });
   return new ApiRequest('/districtequipmenttypes').get().then(response => {
     var filteredResponse = _.filter(response, (x) => x.district.id == districtId );
     var districtEquipmentTypes = normalize(filteredResponse);

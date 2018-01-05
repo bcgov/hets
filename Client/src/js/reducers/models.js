@@ -8,7 +8,11 @@ const DEFAULT_MODELS = {
 
   favourites: {},
 
-  equipmentList: {},
+  equipmentList: {
+    data: [], 
+    loading: false,
+    success: false,
+  },
   equipment: {},
   equipmentPhysicalAttachments: {},
   equipmentSeniorityHistory: {},
@@ -16,7 +20,10 @@ const DEFAULT_MODELS = {
   equipmentAttachments: {},
   equipmentHistory: {},
 
-  owners: {},
+  owners: {
+    data: [],
+    loading: false,
+  },
   owner: {},
   ownerNotes: {},
   ownerAttachments: {},
@@ -109,13 +116,13 @@ export default function modelsReducer(state = DEFAULT_MODELS, action) {
       return { ...state, document: action.document };
 
     // Equipment
+    case Action.EQUIPMENT_LIST_REQUEST:
+      return { ...state, equipmentList: { ...state.equipmentList, loading: true } };
+
     case Action.UPDATE_EQUIPMENT_LIST:
-      return { ...state, equipmentList: action.equipmentList };
+      return { ...state, equipmentList: { data: action.equipmentList, loading: false, success: true } };
 
-    case Action.ADD_EQUIPMENT:
-      return { ...state, equipment: action.equipment };
-
-    case Action.UPDATE_EQUIPMENT:
+    case Action.ADD_EQUIPMENT: case Action.UPDATE_EQUIPMENT:
       return { ...state, equipment: action.equipment };
 
     // Equipment Attachments
@@ -132,16 +139,13 @@ export default function modelsReducer(state = DEFAULT_MODELS, action) {
       return { ...state, equipmentPhysicalAttachment: action.physicalAttachment };
 
     // Owners
+    case Action.OWNERS_REQUEST:
+      return { ...state, owners: { ...state.owners, loading: true } };
+
     case Action.UPDATE_OWNERS:
-      return { ...state, owners: action.owners };
+      return { ...state, owners: { data: action.owners, loading: false } };
 
-    case Action.ADD_OWNER:
-      return { ...state, owner: action.owner };
-
-    case Action.UPDATE_OWNER:
-      return { ...state, owner: action.owner };
-
-    case Action.DELETE_OWNER:
+    case Action.ADD_OWNER: case Action.UPDATE_OWNER: case Action.DELETE_OWNER:
       return { ...state, owner: action.owner };
 
     // Projects

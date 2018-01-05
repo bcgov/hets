@@ -48,8 +48,6 @@ var Owners = React.createClass({
 
   getInitialState() {
     return {
-      loading: true,
-
       showAddDialog: false,
 
       search: {
@@ -94,8 +92,6 @@ var Owners = React.createClass({
   },
 
   componentDidMount() {
-    this.setState({ loading: true });
-
     var equipmentTypesPromise = Api.getDistrictEquipmentTypes(this.props.currentUser.district.id);
     var ownersPromise = Api.getOwners();
     var favouritesPromise = Api.getFavourites('owner');
@@ -114,10 +110,7 @@ var Owners = React.createClass({
   },
 
   fetch() {
-    this.setState({ loading: true });
-    Api.searchOwners(this.buildSearchParams()).finally(() => {
-      this.setState({ loading: false });
-    });
+    Api.searchOwners(this.buildSearchParams());
   },
 
   updateSearchState(state, callback) {
@@ -174,12 +167,12 @@ var Owners = React.createClass({
       .sortBy('name')
       .value();
 
-    var owners = _.chain(this.props.owners)
+    var owners = _.chain(this.props.owners.data)
       .filter(owner => owner.localArea.serviceArea.district.id == this.props.currentUser.district.id)
       .sortBy('organizationName')
       .value();
 
-    var districtEquipmentTypes = _.chain(this.props.districtEquipmentTypes)
+    var districtEquipmentTypes = _.chain(this.props.districtEquipmentTypes.data)
       .filter(type => type.district.id == this.props.currentUser.district.id)
       .sortBy('districtEquipmentName')
       .value();
@@ -228,11 +221,10 @@ var Owners = React.createClass({
         var addOwnerButton = <Button title="Add Owner" bsSize="xsmall" onClick={ this.openAddDialog }>
           <Glyphicon glyph="plus" />&nbsp;<strong>Add Owner</strong>
         </Button>;
+        if (this.props.owners.loading || this.props.ownerList.loading) { return <div style={{ textAlign: 'center' }}><Spinner/></div>; }
+        if (Object.keys(this.props.ownerList.data).length === 0) { return <Alert bsStyle="success">No owners { addOwnerButton }</Alert>; }
 
-        if (this.state.loading) { return <div style={{ textAlign: 'center' }}><Spinner/></div>; }
-        if (Object.keys(this.props.ownerList).length === 0) { return <Alert bsStyle="success">No owners { addOwnerButton }</Alert>; }
-
-        var ownerList = _.sortBy(this.props.ownerList, this.state.ui.sortField);
+        var ownerList = _.sortBy(this.props.ownerList.data, this.state.ui.sortField);
         if (this.state.ui.sortDesc) {
           _.reverse(ownerList);
         }

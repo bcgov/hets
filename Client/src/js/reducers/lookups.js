@@ -7,12 +7,18 @@ const DEFAULT_LOOKUPS = {
   serviceAreas: {},
   localAreas: {},
   equipmentTypes: {},
-  districtEquipmentTypes: {},
+  districtEquipmentTypes: {
+    data: [],
+    loading: false,
+  },
   groups: {},
   permissions: {},
   rentalConditions: {},
 
-  owners: {},
+  owners: { 
+    data: [],
+    loading: false,
+  },
   roles: {},
   projects: {},
   users: {},
@@ -42,8 +48,11 @@ export default function lookupsReducer(state = DEFAULT_LOOKUPS, action) {
     case Action.UPDATE_EQUIPMENT_TYPES_LOOKUP:
       return { ...state, equipmentTypes: action.equipmentTypes };
 
+    case Action.DISTRICT_EQUIPMENT_TYPES_LOOKUP_REQUEST: 
+      return { ...state, districtEquipmentTypes: { ...state.districtEquipmentTypes, loading: true } };
+
     case Action.UPDATE_DISTRICT_EQUIPMENT_TYPES_LOOKUP:
-      return { ...state, districtEquipmentTypes: action.districtEquipmentTypes };
+      return { ...state, districtEquipmentTypes: { data: action.districtEquipmentTypes, loading: false } };
 
     case Action.UPDATE_GROUPS_LOOKUP:
       return { ...state, groups: action.groups };
@@ -53,9 +62,11 @@ export default function lookupsReducer(state = DEFAULT_LOOKUPS, action) {
 
     // Not typical lookups, because they can change within the app, so
     // ensure they're loaded/updated as needed.
+    case Action.OWNERS_LOOKUP_REQUEST:
+      return { ...state, owners: { ...state.owners, loading: true } };
 
     case Action.UPDATE_OWNERS_LOOKUP:
-      return { ...state, owners: action.owners };
+      return { ...state, owners: { data: action.owners, loading: false } };
 
     case Action.UPDATE_ROLES_LOOKUP:
       return { ...state, roles: action.roles };
