@@ -2,9 +2,11 @@ import React from 'react';
 
 import { connect } from 'react-redux';
 
-import { Alert, Button, ButtonGroup, Glyphicon } from 'react-bootstrap';
+import { Alert, Button, ButtonGroup, Glyphicon, ProgressBar } from 'react-bootstrap';
 
 import _ from 'lodash';
+
+import { request, buildApiPath } from '../../utils/http';
 
 import * as Action from '../../actionTypes';
 import * as Api from '../../api';
@@ -12,10 +14,10 @@ import * as Constant from '../../constants';
 import store from '../../store';
 
 import DeleteButton from '../../components/DeleteButton.jsx';
-import FileAttachDialog from '../../components/FileAttachDialog.jsx';
 import ModalDialog from '../../components/ModalDialog.jsx';
 import SortTable from '../../components/SortTable.jsx';
 import Spinner from '../../components/Spinner.jsx';
+import FilePicker from '../../components/FilePicker.jsx';
 
 import { formatDateTime } from '../../utils/date';
 
@@ -34,11 +36,11 @@ var DocumentsListDialog = React.createClass({
   getInitialState() {
     return {
       loading: false,
-
       documents: [],
-
+      files: [],
+      uploadInProgress: false,
+      percentUploaded: 0,
       showAttachmentDialog: false,
-
       ui : {
         sortField: this.props.ui.sortField || 'timestampSort',
         sortDesc: this.props.ui.sortDesc !== false,
@@ -86,20 +88,7 @@ var DocumentsListDialog = React.createClass({
       documents: documents,
     });
   },
-
-  attachDocument() {
-    this.setState({ showAttachmentDialog: true });
-  },
-
-  onDocumentAttached() {
-    this.setState({ showAttachmentDialog: false });
-    this.fetch();
-  },
-
-  closeAttachmentDialog() {
-    this.setState({ showAttachmentDialog: false });
-  },
-
+  
   deleteDocument(document) {
     Api.deleteDocument(document).then(() => {
       return this.fetch();
@@ -111,26 +100,69 @@ var DocumentsListDialog = React.createClass({
     window.open(Api.getDownloadDocumentURL(document));
   },
 
+  filesPicked(files) {
+    var existingFiles = this.state.files.slice();
+    existingFiles.push.apply(existingFiles, files);
+    this.setState({ files: existingFiles }, () => {
+      this.uploadFiles();
+    });
+  },
+
+  filesUploaded() {
+    this.setState({ files: [] });
+    this.fetch();
+  },
+
+  uploadFiles() {
+    this.setState({ uploadInProgress: true, percentUploaded: 0 });
+
+    var options = {
+      method: 'POST',
+      files: this.state.files,
+      onUploadProgress: (percentComplete) => {
+        var percent = Math.round(percentComplete);
+        this.setState({ percentUploaded: percent });
+      },
+    };
+
+    this.uploadPromise = request(buildApiPath(this.props.parent.uploadDocumentPath), options).then(() => {
+      this.setState({ uploadInProgress: false, percentUploaded: null });
+      this.filesUploaded();
+    }, (err) => {
+      this.setState({ uploadInProgress: false, fileUploadError: err });
+    });
+  },
+
   render() {
     var parent = this.props.parent;
 
-    return <ModalDialog id="documents-dialog" backdrop="static" bsSize="lg" show={ this.props.show } onClose={ this.props.onClose }
-      title={ <strong>Documents for { parent.name }</strong> }
-      footer={ <Button title="Close" onClick={ this.props.onClose }>Close</Button> }
-    >
-      {(() => {
-        return <div>
+    return (
+      <ModalDialog id="documents-dialog" backdrop="static" bsSize="lg" show={ this.props.show } onClose={ this.props.onClose }
+        title={ <strong>Documents for { parent.name }</strong> }
+        footer={ <Button title="Close" onClick={ this.props.onClose }>Close</Button> }
+      >
+        <div>
+          {this.state.uploadInProgress ?
+            <ProgressBar active now={ this.state.percentUploaded } min={ 5 }/>
+            :
+            <div className="file-picker-container">
+              <FilePicker onFilesSelected={ this.filesPicked }/>
+              <div>Select one or more files{ parent.name ? ` to attach to ${ parent.name }` : null }</div>
+            </div>
+          }
           <div>
             {(() => {
               if (this.state.loading) { return <div style={{ textAlign: 'center' }}><Spinner/></div>; }
 
               var numDocuments = Object.keys(this.state.documents).length;
 
-              var attachButton = <Button title="Attach Document" onClick={ this.attachDocument } bsStyle={ numDocuments ? 'primary' : 'default' }>
+              {/* var attachButton = <FilePicker onFilesSelected={ this.filesPicked }/>; */}
+              
+              {/* <Button title="Attach Document" onClick={ this.attachDocument } bsStyle={ numDocuments ? 'primary' : 'default' }>
                 <Glyphicon glyph="paperclip" />&nbsp;<strong>Attach</strong>
-              </Button>;
+              </Button>; */}
 
-              if (numDocuments === 0) { return <Alert bsStyle="success">No documents { attachButton }</Alert>; }
+              if (numDocuments === 0) { return <Alert bsStyle="success">No documents</Alert>; }
 
               var documents = _.sortBy(this.state.documents, this.state.ui.sortField);
               if (this.state.ui.sortDesc) {
@@ -142,9 +174,7 @@ var DocumentsListDialog = React.createClass({
                 { field: 'userName',       title: 'Uploaded By' },
                 { field: 'fileName',       title: 'File Name'   },
                 { field: 'fileSize',       title: 'File Size'   },
-                { field: 'attachDocument', title: 'Attach Document', style: { textAlign: 'right'  },
-                  node: attachButton,
-                },
+                { field: 'attachDocument', title: 'Attach Document', style: { textAlign: 'right'  } },
               ];
 
               return <SortTable id="documents-list" sortField={ this.state.ui.sortField } sortDesc={ this.state.ui.sortDesc } onSort={ this.updateUIState } headers={ headers }>
@@ -167,14 +197,9 @@ var DocumentsListDialog = React.createClass({
               </SortTable>;
             })()}
           </div>
-          { this.state.showAttachmentDialog &&
-            <FileAttachDialog show={ this.state.showAttachmentDialog } onClose={ this.closeAttachmentDialog }
-              uploadPath={ parent.uploadDocumentPath } onUpload={ this.onDocumentAttached } parentName={ parent.name }
-            />
-          }
-        </div>;
-      })()}
-    </ModalDialog>;
+        </div>
+      </ModalDialog>
+    );
   },
 });
 
