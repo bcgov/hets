@@ -44,10 +44,7 @@ var Projects = React.createClass({
 
   getInitialState() {
     return {
-      loading: true,
-
       showAddDialog: false,
-
       search: {
         selectedDistrictsIds: this.props.search.selectedDistrictsIds || [],
         statusCode: this.props.search.statusCode || '',
@@ -55,7 +52,6 @@ var Projects = React.createClass({
         requests: this.props.search.requests || false,
         projectName: this.props.search.projecName,
       },
-
       ui : {
         sortField: this.props.ui.sortField || 'name',
         sortDesc: this.props.ui.sortDesc === true,
@@ -92,8 +88,6 @@ var Projects = React.createClass({
   },
 
   componentDidMount() {
-    this.setState({ loading: true });
-
     Api.getFavourites('project').then(() => {
       // If this is the first load, then look for a default favourite
       if (!this.props.search.loaded) {
@@ -108,10 +102,7 @@ var Projects = React.createClass({
   },
 
   fetch() {
-    this.setState({ loading: true });
-    Api.searchProjects(this.buildSearchParams()).finally(() => {
-      this.setState({ loading: false });
-    });
+    Api.searchProjects(this.buildSearchParams());
   },
 
   updateSearchState(state, callback) {
@@ -203,10 +194,12 @@ var Projects = React.createClass({
           <Glyphicon glyph="plus" />&nbsp;<strong>Add Project</strong>
         </Button>;
 
-        if (this.state.loading) { return <div style={{ textAlign: 'center' }}><Spinner/></div>; }
-        if (Object.keys(this.props.projects).length === 0) { return <Alert bsStyle="success">No Projects { addProjectButton }</Alert>; }
+        if (this.props.projects.loading) { return <div style={{ textAlign: 'center' }}><Spinner/></div>; }
+        if (Object.keys(this.props.projects.data).length === 0 && this.props.projects.success) { 
+          return <Alert bsStyle="success">No Projects { addProjectButton }</Alert>; 
+        }
 
-        var projects = _.sortBy(this.props.projects, this.state.ui.sortField);
+        var projects = _.sortBy(this.props.projects.data, this.state.ui.sortField);
         if (this.state.ui.sortDesc) {
           _.reverse(projects);
         }

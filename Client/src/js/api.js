@@ -254,6 +254,7 @@ export function updateRolePermissions(roleId, permissionsArray) {
 ////////////////////
 
 export function getFavourites(type) {
+  store.dispatch({ type: Action.FAVOURITES_REQUEST });
   return new ApiRequest(`/users/current/favourites/${ type }`).get().then(response => {
     var favourites = normalize(response);
 
@@ -838,6 +839,7 @@ function parseProject(project) {
 }
 
 export function searchProjects(params) {
+  store.dispatch({ type: Action.PROJECTS_REQUEST });
   return new ApiRequest('/projects/search').get(params).then(response => {
     var projects = normalize(response);
 
@@ -995,6 +997,7 @@ function parseRentalRequest(rentalRequest) {
 }
 
 export function searchRentalRequests(params) {
+  store.dispatch({ type: Action.RENTAL_REQUESTS_REQUEST });
   return new ApiRequest('/rentalrequests/search').get(params).then(response => {
     var rentalRequests = normalize(response);
 
