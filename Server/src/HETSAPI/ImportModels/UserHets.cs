@@ -5,7 +5,7 @@ namespace HETSAPI.ImportModels
     /// <summary>
     /// HETS User Import Model
     /// </summary>
-    public class User_HETS
+    public class UserHets
     {
         /// <summary>
         /// Popt Id

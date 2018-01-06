@@ -5,7 +5,7 @@ namespace HETSAPI.ImportModels
     /// <summary>
     /// Rotation Document Import Model
     /// </summary>
-    public class Rotation_Doc
+    public class RotationDoc
     {
         /// <summary>
         /// Equipoment Id

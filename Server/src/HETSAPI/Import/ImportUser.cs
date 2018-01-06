@@ -9,6 +9,7 @@ using System.Xml.Serialization;
 using Hangfire.Console.Progress;
 using HETSAPI.ImportModels;
 using HETSAPI.Models;
+using ServiceArea = HETSAPI.Models.ServiceArea;
 
 namespace HETSAPI.Import
 {
@@ -54,9 +55,9 @@ namespace HETSAPI.Import
                 progress.SetValue(0);
 
                 // create serializer and serialize xml file
-                XmlSerializer ser = new XmlSerializer(typeof(User_HETS[]), new XmlRootAttribute(rootAttr));
+                XmlSerializer ser = new XmlSerializer(typeof(UserHets[]), new XmlRootAttribute(rootAttr));
                 MemoryStream memoryStream = ImportUtility.MemoryStreamGenerator(XmlFileName, OldTable, fileLocation, rootAttr);
-                User_HETS[] legacyItems = (User_HETS[])ser.Deserialize(memoryStream);
+                UserHets[] legacyItems = (UserHets[])ser.Deserialize(memoryStream);
 
                 int ii = startPoint;
 
@@ -66,7 +67,7 @@ namespace HETSAPI.Import
                     legacyItems = legacyItems.Skip(ii).ToArray();
                 }
 
-                foreach (User_HETS item in legacyItems.WithProgress(progress))
+                foreach (UserHets item in legacyItems.WithProgress(progress))
                 {
                     // see if we have this one already
                     ImportMap importMap = dbContext.ImportMaps.FirstOrDefault(x => x.OldTable == OldTable && x.OldKey == item.Popt_Id.ToString());
@@ -112,7 +113,7 @@ namespace HETSAPI.Import
         /// <param name="oldObject"></param>
         /// <param name="user"></param>
         /// <param name="systemId"></param>
-        private static void CopyToInstance(DbAppContext dbContext, User_HETS oldObject, ref User user, string systemId)
+        private static void CopyToInstance(DbAppContext dbContext, UserHets oldObject, ref User user, string systemId)
         {
             string smUserId;
             int serviceAreaId;

@@ -48,11 +48,11 @@ namespace HETSAPI.Import
                 progress.SetValue(0);
 
                 // create serializer and serialize xml file
-                XmlSerializer ser = new XmlSerializer(typeof(HETS_District[]), new XmlRootAttribute(rootAttr));
+                XmlSerializer ser = new XmlSerializer(typeof(HetsDistrict[]), new XmlRootAttribute(rootAttr));
                 MemoryStream memoryStream = ImportUtility.MemoryStreamGenerator(XmlFileName, OldTable, fileLocation, rootAttr);
-                HETS_District[] legacyItems = (HETS_District[])ser.Deserialize(memoryStream);
+                HetsDistrict[] legacyItems = (HetsDistrict[])ser.Deserialize(memoryStream);
 
-                foreach (HETS_District item in legacyItems.WithProgress(progress))
+                foreach (HetsDistrict item in legacyItems.WithProgress(progress))
                 {
                     // see if we have this one already
                     importMap = dbContext.ImportMaps.FirstOrDefault(x => x.OldTable == OldTable && x.OldKey == item.District_Id.ToString());
@@ -108,7 +108,7 @@ namespace HETSAPI.Import
         /// <param name="oldObject"></param>
         /// <param name="dis"></param>
         /// <param name="systemId"></param>
-        private static void CopyToInstance(PerformContext performContext, DbAppContext dbContext, HETS_District oldObject, ref District dis, string systemId)
+        private static void CopyToInstance(PerformContext performContext, DbAppContext dbContext, HetsDistrict oldObject, ref District dis, string systemId)
         {
             bool isNew = false;
 

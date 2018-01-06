@@ -32,10 +32,11 @@ namespace HETSAPI.Services.Impl
         public virtual IActionResult UsersCurrentFavouritesIdDeletePostAsync(int id)
         {
             // get the current user id
-            int? user_id = GetCurrentUserId();
-            if (user_id != null)
+            int? userId = GetCurrentUserId();
+
+            if (userId != null)
             {
-                bool exists = _context.UserFavourites.Where(x => x.User.Id == user_id)
+                bool exists = _context.UserFavourites.Where(x => x.User.Id == userId)
                     .Any(a => a.Id == id);
                 if (exists)
                 {
@@ -73,8 +74,9 @@ namespace HETSAPI.Services.Impl
             int? id = GetCurrentUserId();
             if (id != null)
             {
-                bool user_exists = _context.Users.Any(a => a.Id == id);
-                if (user_exists)
+                bool userExists = _context.Users.Any(a => a.Id == id);
+
+                if (userExists)
                 {
                     User user = _context.Users.First(a => a.Id == id);
                     item.User = user;
@@ -85,18 +87,18 @@ namespace HETSAPI.Services.Impl
             if (exists)
             {
                 _context.UserFavourites.Update(item);
+
                 // Save the changes
                 _context.SaveChanges();
                 return new ObjectResult(item);
             }
-            else
-            {
-                // record not found. add the record.
-                _context.UserFavourites.Add(item);
-                // Save the changes
-                _context.SaveChanges();
-                return new ObjectResult(item);
-            }
+
+            // record not found. add the record.
+            _context.UserFavourites.Add(item);
+
+            // Save the changes
+            _context.SaveChanges();
+            return new ObjectResult(item);
 
         }
 
@@ -113,8 +115,9 @@ namespace HETSAPI.Services.Impl
             int? id = GetCurrentUserId();
             if (id != null)
             {
-                bool user_exists = _context.Users.Any(a => a.Id == id);
-                if (user_exists)
+                bool userExists = _context.Users.Any(a => a.Id == id);
+
+                if (userExists)
                 {
                     User user = _context.Users.First(a => a.Id == id);
                     item.User = user;
@@ -122,18 +125,18 @@ namespace HETSAPI.Services.Impl
             }
 
             bool exists = _context.UserFavourites.Any(a => a.Id == item.Id);
+
             if (exists)
             {
                 _context.UserFavourites.Update(item);
+
                 // Save the changes
                 _context.SaveChanges();
                 return new ObjectResult(item);
             }
-            else
-            {
-                // record not found
-                return new StatusCodeResult(404);
-            }
+
+            // record not found
+            return new StatusCodeResult(404);
         }
 
         /// <summary>

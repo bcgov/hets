@@ -7,6 +7,7 @@ using System.Xml.Serialization;
 using Hangfire.Console.Progress;
 using HETSAPI.ImportModels;
 using HETSAPI.Models;
+using ServiceArea = HETSAPI.Models.ServiceArea;
 
 namespace HETSAPI.Import
 {

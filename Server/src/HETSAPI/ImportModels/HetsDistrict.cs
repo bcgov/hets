@@ -5,7 +5,7 @@ namespace HETSAPI.ImportModels
     /// <summary>
     /// HETS District Import Model
     /// </summary>
-    public class HETS_District
+    public class HetsDistrict
     {
         /// <summary>
         /// District Id

@@ -4,8 +4,9 @@ using System;
 using System.IO;
 using System.Linq;
 using System.Xml.Serialization;
-using HETSAPI.ImportModels;
+using Hangfire.Console.Progress;
 using HETSAPI.Models;
+using ServiceArea = HETSAPI.ImportModels.ServiceArea;
 
 namespace HETSAPI.Import
 {
@@ -41,24 +42,24 @@ namespace HETSAPI.Import
                 string rootAttr = "ArrayOf" + OldTable;
 
                 performContext.WriteLine("Processing Service Areas");
-                var progress = performContext.WriteProgressBar();
+                IProgressBar progress = performContext.WriteProgressBar();
                 progress.SetValue(0);
 
                 // create serializer and serialize xml file
-                XmlSerializer ser = new XmlSerializer(typeof(Service_Area[]), new XmlRootAttribute(rootAttr));
+                XmlSerializer ser = new XmlSerializer(typeof(ServiceArea[]), new XmlRootAttribute(rootAttr));
                 MemoryStream memoryStream = ImportUtility.MemoryStreamGenerator(XmlFileName, OldTable, fileLocation, rootAttr);
-                Service_Area[] legacyItems = (Service_Area[])ser.Deserialize(memoryStream);
+                ServiceArea[] legacyItems = (ServiceArea[])ser.Deserialize(memoryStream);
 
-                foreach (Service_Area item in legacyItems.WithProgress(progress))
+                foreach (ServiceArea item in legacyItems.WithProgress(progress))
                 {
                     // see if we have this one already
                     importMap = dbContext.ImportMaps.FirstOrDefault(x => x.OldTable == OldTable && x.OldKey == item.Service_Area_Id.ToString());
 
-                    ServiceArea serviceArea = dbContext.ServiceAreas.FirstOrDefault(x => x.Name == item.Service_Area_Desc.Trim());
+                    Models.ServiceArea serviceArea = dbContext.ServiceAreas.FirstOrDefault(x => x.Name == item.Service_Area_Desc.Trim());
 
                     if (serviceArea == null)
                     {
-                        serviceArea = new ServiceArea();
+                        serviceArea = new Models.ServiceArea();
                     }
 
                     // new entry
@@ -112,14 +113,14 @@ namespace HETSAPI.Import
         /// <param name="oldObject"></param>
         /// <param name="serviceArea"></param>
         /// <param name="systemId"></param>
-        private static void CopyToInstance(PerformContext performContext, DbAppContext dbContext, Service_Area oldObject, ref ServiceArea serviceArea, string systemId)
+        private static void CopyToInstance(PerformContext performContext, DbAppContext dbContext, ServiceArea oldObject, ref Models.ServiceArea serviceArea, string systemId)
         {
             bool isNew = false;
 
             if (serviceArea == null)
             {
                 isNew = true;
-                serviceArea = new ServiceArea();
+                serviceArea = new Models.ServiceArea();
             }
 
             if (oldObject.Service_Area_Id <= 0)

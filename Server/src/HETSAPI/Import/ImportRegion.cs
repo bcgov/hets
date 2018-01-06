@@ -49,9 +49,9 @@ namespace HETSAPI.Import
                 progress.SetValue(0);
 
                 // create serializer and serialize xml file
-                XmlSerializer ser = new XmlSerializer(typeof(HETS_Region[]), new XmlRootAttribute(rootAttr));
+                XmlSerializer ser = new XmlSerializer(typeof(HetsRegion[]), new XmlRootAttribute(rootAttr));
                 MemoryStream memoryStream = ImportUtility.MemoryStreamGenerator(XmlFileName, OldTable, fileLocation, rootAttr);
-                HETS_Region[] legacyItems = (HETS_Region[])ser.Deserialize(memoryStream);
+                HetsRegion[] legacyItems = (HetsRegion[])ser.Deserialize(memoryStream);
 
                 foreach (var item in legacyItems.WithProgress(progress))
                 {
@@ -116,7 +116,7 @@ namespace HETSAPI.Import
         /// <param name="oldObject"></param>
         /// <param name="reg"></param>
         /// <param name="systemId"></param>
-        private static void CopyToInstance(PerformContext performContext, DbAppContext dbContext, HETS_Region oldObject, ref Region reg, string systemId)
+        private static void CopyToInstance(PerformContext performContext, DbAppContext dbContext, HetsRegion oldObject, ref Region reg, string systemId)
         {
             bool isNew = false;
 
