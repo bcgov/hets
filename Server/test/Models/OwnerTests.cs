@@ -24,12 +24,10 @@ namespace HETSAPI.Test
 {
     /// <summary>
     ///  Class for testing the model Owner
-    /// </summary>
-    
+    /// </summary>    
     public class OwnerModelTests
     {
-        // TODO uncomment below to declare an instance variable for Owner
-        private Owner instance;
+        private readonly Owner instance;
 
         /// <summary>
         /// Setup the test.

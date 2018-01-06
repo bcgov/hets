@@ -24,12 +24,10 @@ namespace HETSAPI.Test
 {
     /// <summary>
     ///  Class for testing the model Role
-    /// </summary>
-    
+    /// </summary>    
     public class RoleModelTests
     {
-        // TODO uncomment below to declare an instance variable for Role
-        private Role instance;
+        private readonly Role instance;
 
         /// <summary>
         /// Setup the test.

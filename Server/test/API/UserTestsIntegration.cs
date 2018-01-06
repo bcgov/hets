@@ -32,10 +32,12 @@ namespace HETSAPI.Test
         /// <summary>
         /// Integration test for Users Bulk
         /// </summary>
-        public async void TestUsersBulk()
+        public async Task TestUsersBulk()
         {
-            var request = new HttpRequestMessage(HttpMethod.Post, "/api/users/bulk");
-            request.Content = new StringContent("[]", Encoding.UTF8, "application/json");
+            var request = new HttpRequestMessage(HttpMethod.Post, "/api/users/bulk")
+            {
+                Content = new StringContent("[]", Encoding.UTF8, "application/json")
+            };
 
             var response = await _client.SendAsync(request);
             response.EnsureSuccessStatusCode();
@@ -45,10 +47,11 @@ namespace HETSAPI.Test
 		/// <summary>
         /// Basic Integration test for Users
         /// </summary>
-		public async void TestUsersBasic()
+		public async Task TestUsersBasic()
 		{
             string initialName = "InitialName";
             string changedName = "ChangedName";
+
             // first test the POST.
             var request = new HttpRequestMessage(HttpMethod.Post, "/api/users");
 
@@ -66,8 +69,10 @@ namespace HETSAPI.Test
             jsonString = await response.Content.ReadAsStringAsync();
 
             user = JsonConvert.DeserializeObject<UserViewModel>(jsonString);
+
             // get the id
             var id = user.Id;
+
             // change the name
             user.GivenName = changedName;
 
@@ -97,16 +102,17 @@ namespace HETSAPI.Test
             // should get a 404 if we try a get now.
             request = new HttpRequestMessage(HttpMethod.Get, "/api/users/" + id);
             response = await _client.SendAsync(request);
-            Assert.Equal(response.StatusCode, HttpStatusCode.NotFound);
+            Assert.Equal(HttpStatusCode.NotFound, response.StatusCode);
         }
 
         [Fact]
         /// <summary>
         /// Integration test for User Favourites.
         /// </summary>
-        public async void TestUserFavorites()
+        public async Task TestUserFavorites()
         {
             string initialName = "InitialName";
+
             // create a user.
             var request = new HttpRequestMessage(HttpMethod.Post, "/api/users");
             UserViewModel user = new UserViewModel();
@@ -122,12 +128,10 @@ namespace HETSAPI.Test
             jsonString = await response.Content.ReadAsStringAsync();
 
             user = JsonConvert.DeserializeObject<UserViewModel>(jsonString);
+
             // get the id
             var id = user.Id;
             
-            // add and associate the favourite
-            
-
             // verify the user has a favourite.
             request = new HttpRequestMessage(HttpMethod.Get, "/api/users/" + id + "/favourites");
             response = await _client.SendAsync(request);
@@ -135,7 +139,7 @@ namespace HETSAPI.Test
             
             // parse as JSON.
             jsonString = await response.Content.ReadAsStringAsync();
-            UserFavouriteViewModel[] items = JsonConvert.DeserializeObject<UserFavouriteViewModel[]>(jsonString);
+            JsonConvert.DeserializeObject<UserFavouriteViewModel[]>(jsonString);
 
             // cleanup the user            
             response.EnsureSuccessStatusCode();
@@ -145,10 +149,11 @@ namespace HETSAPI.Test
 		/// <summary>
         /// Integration test for Users
         /// </summary>
-		public async void TestUsers()
+		public async Task TestUsers()
 		{
             string initialName = "InitialName";
             string changedName = "ChangedName";
+
             // first test the POST.
             var request = new HttpRequestMessage(HttpMethod.Post, "/api/users");
 
@@ -166,14 +171,19 @@ namespace HETSAPI.Test
             jsonString = await response.Content.ReadAsStringAsync();
 
             user = JsonConvert.DeserializeObject<UserViewModel>(jsonString);
+            
             // get the id
             var id = user.Id;
+            
             // change the name
             user.GivenName = changedName;
 
             // now do an update.
-            request = new HttpRequestMessage(HttpMethod.Put, "/api/users/" + id);
-            request.Content = new StringContent(user.ToJson(), Encoding.UTF8, "application/json");
+            request = new HttpRequestMessage(HttpMethod.Put, "/api/users/" + id)
+            {
+                Content = new StringContent(user.ToJson(), Encoding.UTF8, "application/json")
+            };
+
             response = await _client.SendAsync(request);
             response.EnsureSuccessStatusCode();
 
@@ -197,8 +207,7 @@ namespace HETSAPI.Test
             // should get a 404 if we try a get now.
             request = new HttpRequestMessage(HttpMethod.Get, "/api/users/" + id);
             response = await _client.SendAsync(request);
-            Assert.Equal(response.StatusCode, HttpStatusCode.NotFound);
-
+            Assert.Equal(HttpStatusCode.NotFound, response.StatusCode);
         }        
     }
 }

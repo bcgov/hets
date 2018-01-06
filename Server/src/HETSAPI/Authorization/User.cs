@@ -3,7 +3,7 @@
     /// <summary>
     /// User Extension (to support authorization)
     /// </summary>
-    public partial class User
+    public sealed partial class User
     {
         /// <summary>
         /// User Permission Claim Property

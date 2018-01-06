@@ -9,8 +9,8 @@ namespace HETSAPI.Models
     /// <summary>
     /// User Favourites Database Model
     /// </summary>
-    [MetaDataExtension (Description = "User specific settings for a specific location in the UI. The location and saved settings are internally defined by the UI.")]
-    public class UserFavourite : AuditableEntity, IEquatable<UserFavourite>
+    [MetaData (Description = "User specific settings for a specific location in the UI. The location and saved settings are internally defined by the UI.")]
+    public sealed class UserFavourite : AuditableEntity, IEquatable<UserFavourite>
     {
         /// <summary>
         /// Default constructor, required by entity framework
@@ -43,14 +43,14 @@ namespace HETSAPI.Models
         /// A system-generated unique identifier for a UserFavourite
         /// </summary>
         /// <value>A system-generated unique identifier for a UserFavourite</value>
-        [MetaDataExtension (Description = "A system-generated unique identifier for a UserFavourite")]
+        [MetaData (Description = "A system-generated unique identifier for a UserFavourite")]
         public int Id { get; set; }
         
         /// <summary>
         /// The user-defined name for the recorded settings. Allows the user to save different groups of settings and access each one easily when needed.
         /// </summary>
         /// <value>The user-defined name for the recorded settings. Allows the user to save different groups of settings and access each one easily when needed.</value>
-        [MetaDataExtension (Description = "The user-defined name for the recorded settings. Allows the user to save different groups of settings and access each one easily when needed.")]
+        [MetaData (Description = "The user-defined name for the recorded settings. Allows the user to save different groups of settings and access each one easily when needed.")]
         [MaxLength(150)]        
         public string Name { get; set; }
         
@@ -58,7 +58,7 @@ namespace HETSAPI.Models
         /// The settings saved by the user. In general,  a UI defined chunk of json that stores the settings in place when the user created the favourite.
         /// </summary>
         /// <value>The settings saved by the user. In general,  a UI defined chunk of json that stores the settings in place when the user created the favourite.</value>
-        [MetaDataExtension (Description = "The settings saved by the user. In general,  a UI defined chunk of json that stores the settings in place when the user created the favourite.")]
+        [MetaData (Description = "The settings saved by the user. In general,  a UI defined chunk of json that stores the settings in place when the user created the favourite.")]
         [MaxLength(2048)]        
         public string Value { get; set; }
         
@@ -66,7 +66,7 @@ namespace HETSAPI.Models
         /// The type of Favourite
         /// </summary>
         /// <value>The type of Favourite</value>
-        [MetaDataExtension (Description = "The type of Favourite")]
+        [MetaData (Description = "The type of Favourite")]
         [MaxLength(150)]        
         public string Type { get; set; }
         
@@ -74,7 +74,7 @@ namespace HETSAPI.Models
         /// The User who has this Favourite
         /// </summary>
         /// <value>The User who has this Favourite</value>
-        [MetaDataExtension (Description = "The User who has this Favourite")]
+        [MetaData (Description = "The User who has this Favourite")]
         public User User { get; set; }
         
         /// <summary>
@@ -82,14 +82,14 @@ namespace HETSAPI.Models
         /// </summary>   
         [ForeignKey("User")]
 		[JsonIgnore]
-		[MetaDataExtension (Description = "The User who has this Favourite")]
+		[MetaData (Description = "The User who has this Favourite")]
         public int? UserId { get; set; }
         
         /// <summary>
         /// True if this Favourite is the default for this Context Type. On first access to a context in a session the default favourite for the context it is invoked. If there is no default favourite,  a system-wide default is invoked. On return to the context within a session,  the last parameters used are reapplied.
         /// </summary>
         /// <value>True if this Favourite is the default for this Context Type. On first access to a context in a session the default favourite for the context it is invoked. If there is no default favourite,  a system-wide default is invoked. On return to the context within a session,  the last parameters used are reapplied.</value>
-        [MetaDataExtension (Description = "True if this Favourite is the default for this Context Type. On first access to a context in a session the default favourite for the context it is invoked. If there is no default favourite,  a system-wide default is invoked. On return to the context within a session,  the last parameters used are reapplied.")]
+        [MetaData (Description = "True if this Favourite is the default for this Context Type. On first access to a context in a session the default favourite for the context it is invoked. If there is no default favourite,  a system-wide default is invoked. On return to the context within a session,  the last parameters used are reapplied.")]
         public bool? IsDefault { get; set; }
         
         /// <summary>
@@ -128,11 +128,9 @@ namespace HETSAPI.Models
         /// <returns>Boolean</returns>
         public override bool Equals(object obj)
         {
-            if (ReferenceEquals(null, obj)) { return false; }
+            if (obj is null) { return false; }
             if (ReferenceEquals(this, obj)) { return true; }
-            if (obj.GetType() != GetType()) { return false; }
-
-            return Equals((UserFavourite)obj);
+            return obj.GetType() == GetType() && Equals((UserFavourite)obj);
         }
 
         /// <summary>
@@ -142,7 +140,7 @@ namespace HETSAPI.Models
         /// <returns>Boolean</returns>
         public bool Equals(UserFavourite other)
         {
-            if (ReferenceEquals(null, other)) { return false; }
+            if (other is null) { return false; }
             if (ReferenceEquals(this, other)) { return true; }
 
             return                 

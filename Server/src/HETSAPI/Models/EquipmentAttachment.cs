@@ -9,8 +9,8 @@ namespace HETSAPI.Models
     /// <summary>
     /// Equipment Attachment Database Model
     /// </summary>
-    [MetaDataExtension (Description = "An Equipment Attachment associated with a piece of Equipment.")]
-    public class EquipmentAttachment : AuditableEntity, IEquatable<EquipmentAttachment>
+    [MetaData (Description = "An Equipment Attachment associated with a piece of Equipment.")]
+    public sealed class EquipmentAttachment : AuditableEntity, IEquatable<EquipmentAttachment>
     {
         /// <summary>
         /// Equipment Attachment Database Model Constructor (required by entity framework)
@@ -39,7 +39,7 @@ namespace HETSAPI.Models
         /// A system-generated unique identifier for an EquipmentAttachment
         /// </summary>
         /// <value>A system-generated unique identifier for an EquipmentAttachment</value>
-        [MetaDataExtension (Description = "A system-generated unique identifier for an EquipmentAttachment")]
+        [MetaData (Description = "A system-generated unique identifier for an EquipmentAttachment")]
         public int Id { get; set; }
         
         /// <summary>
@@ -58,7 +58,7 @@ namespace HETSAPI.Models
         /// The name of the attachment type
         /// </summary>
         /// <value>The name of the attachment type</value>
-        [MetaDataExtension (Description = "The name of the attachment type")]
+        [MetaData (Description = "The name of the attachment type")]
         [MaxLength(100)]        
         public string TypeName { get; set; }
         
@@ -66,7 +66,7 @@ namespace HETSAPI.Models
         /// A description of the equipment attachment if the Equipment Attachment Type Name is insufficient.
         /// </summary>
         /// <value>A description of the equipment attachment if the Equipment Attachment Type Name is insufficient.</value>
-        [MetaDataExtension (Description = "A description of the equipment attachment if the Equipment Attachment Type Name is insufficient.")]
+        [MetaData (Description = "A description of the equipment attachment if the Equipment Attachment Type Name is insufficient.")]
         [MaxLength(2048)]        
         public string Description { get; set; }
         
@@ -104,11 +104,9 @@ namespace HETSAPI.Models
         /// <returns>Boolean</returns>
         public override bool Equals(object obj)
         {
-            if (ReferenceEquals(null, obj)) { return false; }
+            if (obj is null) { return false; }
             if (ReferenceEquals(this, obj)) { return true; }
-            if (obj.GetType() != GetType()) { return false; }
-
-            return Equals((EquipmentAttachment)obj);
+            return obj.GetType() == GetType() && Equals((EquipmentAttachment)obj);
         }
 
         /// <summary>
@@ -118,7 +116,7 @@ namespace HETSAPI.Models
         /// <returns>Boolean</returns>
         public bool Equals(EquipmentAttachment other)
         {
-            if (ReferenceEquals(null, other)) { return false; }
+            if (other is null) { return false; }
             if (ReferenceEquals(this, other)) { return true; }
 
             return                 

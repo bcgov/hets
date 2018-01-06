@@ -11,8 +11,8 @@ namespace HETSAPI.Models
     /// <summary>
     /// Owner Database Model
     /// </summary>
-    [MetaDataExtension (Description = "The person or company to which a piece of construction equipment belongs.")]
-    public class Owner : AuditableEntity, IEquatable<Owner>
+    [MetaData (Description = "The person or company to which a piece of construction equipment belongs.")]
+    public sealed class Owner : AuditableEntity, IEquatable<Owner>
     {
         /// <summary>
         /// Owner Database Model Constructor (required by entity framework)
@@ -80,14 +80,14 @@ namespace HETSAPI.Models
         /// A system-generated unique identifier for a Owner
         /// </summary>
         /// <value>A system-generated unique identifier for a Owner</value>
-        [MetaDataExtension (Description = "A system-generated unique identifier for a Owner")]
+        [MetaData (Description = "A system-generated unique identifier for a Owner")]
         public int Id { get; set; }
         
         /// <summary>
         /// A unique prefix in the system that is used to generate the human-friendly IDs of the equipment. E.g. An owner Edwards might have a prefix &quot;EDW&quot; and their equipment numbered sequentially with that prefix - e.g. EDW-0082.
         /// </summary>
         /// <value>A unique prefix in the system that is used to generate the human-friendly IDs of the equipment. E.g. An owner Edwards might have a prefix &quot;EDW&quot; and their equipment numbered sequentially with that prefix - e.g. EDW-0082.</value>
-        [MetaDataExtension (Description = "A unique prefix in the system that is used to generate the human-friendly IDs of the equipment. E.g. An owner Edwards might have a prefix &quot;EDW&quot; and their equipment numbered sequentially with that prefix - e.g. EDW-0082.")]
+        [MetaData (Description = "A unique prefix in the system that is used to generate the human-friendly IDs of the equipment. E.g. An owner Edwards might have a prefix &quot;EDW&quot; and their equipment numbered sequentially with that prefix - e.g. EDW-0082.")]
         [MaxLength(20)]        
         public string OwnerEquipmentCodePrefix { get; set; }
         
@@ -95,7 +95,7 @@ namespace HETSAPI.Models
         /// The name of the organization of the Owner. May simply be the First Name, Last Name of the Owner if the Owner is a sole proprietorship, or the name of a company.
         /// </summary>
         /// <value>The name of the organization of the Owner. May simply be the First Name, Last Name of the Owner if the Owner is a sole proprietorship, or the name of a company.</value>
-        [MetaDataExtension (Description = "The name of the organization of the Owner. May simply be the First Name, Last Name of the Owner if the Owner is a sole proprietorship, or the name of a company.")]
+        [MetaData (Description = "The name of the organization of the Owner. May simply be the First Name, Last Name of the Owner if the Owner is a sole proprietorship, or the name of a company.")]
         [MaxLength(150)]        
         public string OrganizationName { get; set; }
         
@@ -103,7 +103,7 @@ namespace HETSAPI.Models
         /// True to indicate that the owner of the business has confirmed to the HETS Clerk that they meet the residency requirements of the HETS programme. See the published information about the MOTI HETS programme for information on the owner residency requirements.
         /// </summary>
         /// <value>True to indicate that the owner of the business has confirmed to the HETS Clerk that they meet the residency requirements of the HETS programme. See the published information about the MOTI HETS programme for information on the owner residency requirements.</value>
-        [MetaDataExtension (Description = "True to indicate that the owner of the business has confirmed to the HETS Clerk that they meet the residency requirements of the HETS programme. See the published information about the MOTI HETS programme for information on the owner residency requirements.")]
+        [MetaData (Description = "True to indicate that the owner of the business has confirmed to the HETS Clerk that they meet the residency requirements of the HETS programme. See the published information about the MOTI HETS programme for information on the owner residency requirements.")]
         public bool MeetsResidency { get; set; }
         
         /// <summary>
@@ -122,7 +122,7 @@ namespace HETSAPI.Models
         /// The status of the owner record in the system. Current set of values are &quot;Pending&quot;, &quot;Approved&quot; and &quot;Archived&quot;. Pending is used when an owner self-registers and a HETS Clerk has not reviewed and Approved the record. Archived is when the owner is no longer part of the HETS programme. &quot;Approved&quot; is used in all other cases.
         /// </summary>
         /// <value>The status of the owner record in the system. Current set of values are &quot;Pending&quot;, &quot;Approved&quot; and &quot;Archived&quot;. Pending is used when an owner self-registers and a HETS Clerk has not reviewed and Approved the record. Archived is when the owner is no longer part of the HETS programme. &quot;Approved&quot; is used in all other cases.</value>
-        [MetaDataExtension (Description = "The status of the owner record in the system. Current set of values are &quot;Pending&quot;, &quot;Approved&quot; and &quot;Archived&quot;. Pending is used when an owner self-registers and a HETS Clerk has not reviewed and Approved the record. Archived is when the owner is no longer part of the HETS programme. &quot;Approved&quot; is used in all other cases.")]
+        [MetaData (Description = "The status of the owner record in the system. Current set of values are &quot;Pending&quot;, &quot;Approved&quot; and &quot;Archived&quot;. Pending is used when an owner self-registers and a HETS Clerk has not reviewed and Approved the record. Archived is when the owner is no longer part of the HETS programme. &quot;Approved&quot; is used in all other cases.")]
         [MaxLength(50)]        
         public string Status { get; set; }
         
@@ -130,7 +130,7 @@ namespace HETSAPI.Models
         /// An official (per BC Registries) alternate name for an Owner organization under which it does business. The application does not verify the name against any registry&#x2F;lookup.
         /// </summary>
         /// <value>An official (per BC Registries) alternate name for an Owner organization under which it does business. The application does not verify the name against any registry&#x2F;lookup.</value>
-        [MetaDataExtension (Description = "An official (per BC Registries) alternate name for an Owner organization under which it does business. The application does not verify the name against any registry&#x2F;lookup.")]
+        [MetaData (Description = "An official (per BC Registries) alternate name for an Owner organization under which it does business. The application does not verify the name against any registry&#x2F;lookup.")]
         [MaxLength(150)]        
         public string DoingBusinessAs { get; set; }
         
@@ -138,7 +138,7 @@ namespace HETSAPI.Models
         /// The BC Registries number under which the business is registered.  The application does not verify the number against any registry&#x2F;lookup.
         /// </summary>
         /// <value>The BC Registries number under which the business is registered.  The application does not verify the number against any registry&#x2F;lookup.</value>
-        [MetaDataExtension (Description = "The BC Registries number under which the business is registered.  The application does not verify the number against any registry&#x2F;lookup.")]
+        [MetaData (Description = "The BC Registries number under which the business is registered.  The application does not verify the number against any registry&#x2F;lookup.")]
         [MaxLength(150)]        
         public string RegisteredCompanyNumber { get; set; }
         
@@ -146,7 +146,7 @@ namespace HETSAPI.Models
         /// Link to the designated Primary Contact.
         /// </summary>
         /// <value>Link to the designated Primary Contact.</value>
-        [MetaDataExtension (Description = "Link to the designated Primary Contact.")]
+        [MetaData (Description = "Link to the designated Primary Contact.")]
         public Contact PrimaryContact { get; set; }
         
         /// <summary>
@@ -154,21 +154,21 @@ namespace HETSAPI.Models
         /// </summary>   
         [ForeignKey("PrimaryContact")]
 		[JsonIgnore]
-		[MetaDataExtension (Description = "Link to the designated Primary Contact.")]
+		[MetaData (Description = "Link to the designated Primary Contact.")]
         public int? PrimaryContactId { get; set; }
         
         /// <summary>
         /// True if the owner is contracted by MOTI to handle Maintenance activities in the area - e.g. provided services in address unscheduled issues on the roads in the area.
         /// </summary>
         /// <value>True if the owner is contracted by MOTI to handle Maintenance activities in the area - e.g. provided services in address unscheduled issues on the roads in the area.</value>
-        [MetaDataExtension (Description = "True if the owner is contracted by MOTI to handle Maintenance activities in the area - e.g. provided services in address unscheduled issues on the roads in the area.")]
+        [MetaData (Description = "True if the owner is contracted by MOTI to handle Maintenance activities in the area - e.g. provided services in address unscheduled issues on the roads in the area.")]
         public bool? IsMaintenanceContractor { get; set; }
         
         /// <summary>
         /// The Owner&#39;s WorkSafeBC (aka WCB) Insurance Policy Number.
         /// </summary>
         /// <value>The Owner&#39;s WorkSafeBC (aka WCB) Insurance Policy Number.</value>
-        [MetaDataExtension (Description = "The Owner&#39;s WorkSafeBC (aka WCB) Insurance Policy Number.")]
+        [MetaData (Description = "The Owner&#39;s WorkSafeBC (aka WCB) Insurance Policy Number.")]
         [MaxLength(50)]        
         public string WorkSafeBCPolicyNumber { get; set; }
         
@@ -176,21 +176,21 @@ namespace HETSAPI.Models
         /// The expiration of the owner&#39;s current WorkSafeBC (aka WCB) permit.
         /// </summary>
         /// <value>The expiration of the owner&#39;s current WorkSafeBC (aka WCB) permit.</value>
-        [MetaDataExtension (Description = "The expiration of the owner&#39;s current WorkSafeBC (aka WCB) permit.")]
+        [MetaData (Description = "The expiration of the owner&#39;s current WorkSafeBC (aka WCB) permit.")]
         public DateTime? WorkSafeBCExpiryDate { get; set; }
         
         /// <summary>
         /// The end date of the owner&#39;s Commercial General Liability insurance coverage. Coverage is only needed prior to an owner&#39;s piece of equipment starting a rental period (not when in the HETS program but not hired). The details of the coverage can be entered into a Note, or more often - attached as a scanned&#x2F;faxed document.
         /// </summary>
         /// <value>The end date of the owner&#39;s Commercial General Liability insurance coverage. Coverage is only needed prior to an owner&#39;s piece of equipment starting a rental period (not when in the HETS program but not hired). The details of the coverage can be entered into a Note, or more often - attached as a scanned&#x2F;faxed document.</value>
-        [MetaDataExtension (Description = "The end date of the owner&#39;s Commercial General Liability insurance coverage. Coverage is only needed prior to an owner&#39;s piece of equipment starting a rental period (not when in the HETS program but not hired). The details of the coverage can be entered into a Note, or more often - attached as a scanned&#x2F;faxed document.")]
+        [MetaData (Description = "The end date of the owner&#39;s Commercial General Liability insurance coverage. Coverage is only needed prior to an owner&#39;s piece of equipment starting a rental period (not when in the HETS program but not hired). The details of the coverage can be entered into a Note, or more often - attached as a scanned&#x2F;faxed document.")]
         public DateTime? CGLEndDate { get; set; }
         
         /// <summary>
         /// TO BE REVIEWED WITH THE BUSINESS - IS THIS NEEDED -A coded reason for why an owner record has been moved to Archived.
         /// </summary>
         /// <value>TO BE REVIEWED WITH THE BUSINESS - IS THIS NEEDED -A coded reason for why an owner record has been moved to Archived.</value>
-        [MetaDataExtension (Description = "TO BE REVIEWED WITH THE BUSINESS - IS THIS NEEDED -A coded reason for why an owner record has been moved to Archived.")]
+        [MetaData (Description = "TO BE REVIEWED WITH THE BUSINESS - IS THIS NEEDED -A coded reason for why an owner record has been moved to Archived.")]
         [MaxLength(50)]        
         public string ArchiveCode { get; set; }
         
@@ -198,7 +198,7 @@ namespace HETSAPI.Models
         /// A text note about why the owner record has been changed to Archived.
         /// </summary>
         /// <value>A text note about why the owner record has been changed to Archived.</value>
-        [MetaDataExtension (Description = "A text note about why the owner record has been changed to Archived.")]
+        [MetaData (Description = "A text note about why the owner record has been changed to Archived.")]
         [MaxLength(2048)]        
         public string ArchiveReason { get; set; }
         
@@ -206,7 +206,7 @@ namespace HETSAPI.Models
         /// The date the Owner record was changed to Archived and removed from active use in the system.
         /// </summary>
         /// <value>The date the Owner record was changed to Archived and removed from active use in the system.</value>
-        [MetaDataExtension (Description = "The date the Owner record was changed to Archived and removed from active use in the system.")]
+        [MetaData (Description = "The date the Owner record was changed to Archived and removed from active use in the system.")]
         public DateTime? ArchiveDate { get; set; }
         
         /// <summary>
@@ -285,11 +285,9 @@ namespace HETSAPI.Models
         /// <returns>Boolean</returns>
         public override bool Equals(object obj)
         {
-            if (ReferenceEquals(null, obj)) { return false; }
+            if (obj is null) { return false; }
             if (ReferenceEquals(this, obj)) { return true; }
-            if (obj.GetType() != GetType()) { return false; }
-
-            return Equals((Owner)obj);
+            return obj.GetType() == GetType() && Equals((Owner)obj);
         }
 
         /// <summary>
@@ -299,7 +297,7 @@ namespace HETSAPI.Models
         /// <returns>Boolean</returns>
         public bool Equals(Owner other)
         {
-            if (ReferenceEquals(null, other)) { return false; }
+            if (other is null) { return false; }
             if (ReferenceEquals(this, other)) { return true; }
 
             return                 

@@ -7,10 +7,10 @@ using System.ComponentModel.DataAnnotations;
 namespace HETSAPI.Models
 {
     /// <summary>
-    /// REntal Agreement Condition Database Model
+    /// Rental Agreement Condition Database Model
     /// </summary>
-    [MetaDataExtension (Description = "A condition about the rental agreement to be displayed on the Rental Agreement.")]
-    public class RentalAgreementCondition : AuditableEntity, IEquatable<RentalAgreementCondition>
+    [MetaData (Description = "A condition about the rental agreement to be displayed on the Rental Agreement.")]
+    public sealed class RentalAgreementCondition : AuditableEntity, IEquatable<RentalAgreementCondition>
     {
         /// <summary>
         /// Default constructor, required by entity framework
@@ -39,14 +39,14 @@ namespace HETSAPI.Models
         /// A system-generated unique identifier for a RentalAgreementCondition
         /// </summary>
         /// <value>A system-generated unique identifier for a RentalAgreementCondition</value>
-        [MetaDataExtension (Description = "A system-generated unique identifier for a RentalAgreementCondition")]
+        [MetaData (Description = "A system-generated unique identifier for a RentalAgreementCondition")]
         public int Id { get; set; }
         
         /// <summary>
         /// A foreign key reference to the system-generated unique identifier for a Rental Agreement
         /// </summary>
         /// <value>A foreign key reference to the system-generated unique identifier for a Rental Agreement</value>
-        [MetaDataExtension (Description = "A foreign key reference to the system-generated unique identifier for a Rental Agreement")]
+        [MetaData (Description = "A foreign key reference to the system-generated unique identifier for a Rental Agreement")]
         public RentalAgreement RentalAgreement { get; set; }
         
         /// <summary>
@@ -54,14 +54,14 @@ namespace HETSAPI.Models
         /// </summary>   
         [ForeignKey("RentalAgreement")]
 		[JsonIgnore]
-		[MetaDataExtension (Description = "A foreign key reference to the system-generated unique identifier for a Rental Agreement")]
+		[MetaData (Description = "A foreign key reference to the system-generated unique identifier for a Rental Agreement")]
         public int? RentalAgreementId { get; set; }
         
         /// <summary>
         /// The name of the condition to be placed onto the Rental Agreement.
         /// </summary>
         /// <value>The name of the condition to be placed onto the Rental Agreement.</value>
-        [MetaDataExtension (Description = "The name of the condition to be placed onto the Rental Agreement.")]
+        [MetaData (Description = "The name of the condition to be placed onto the Rental Agreement.")]
         [MaxLength(150)]        
         public string ConditionName { get; set; }
         
@@ -69,7 +69,7 @@ namespace HETSAPI.Models
         /// A comment about the condition to be applied to the Rental Agreement.
         /// </summary>
         /// <value>A comment about the condition to be applied to the Rental Agreement.</value>
-        [MetaDataExtension (Description = "A comment about the condition to be applied to the Rental Agreement.")]
+        [MetaData (Description = "A comment about the condition to be applied to the Rental Agreement.")]
         [MaxLength(2048)]        
         public string Comment { get; set; }
         
@@ -107,11 +107,9 @@ namespace HETSAPI.Models
         /// <returns>Boolean</returns>
         public override bool Equals(object obj)
         {
-            if (ReferenceEquals(null, obj)) { return false; }
+            if (obj is null) { return false; }
             if (ReferenceEquals(this, obj)) { return true; }
-            if (obj.GetType() != GetType()) { return false; }
-
-            return Equals((RentalAgreementCondition)obj);
+            return obj.GetType() == GetType() && Equals((RentalAgreementCondition)obj);
         }
 
         /// <summary>
@@ -121,7 +119,7 @@ namespace HETSAPI.Models
         /// <returns>Boolean</returns>
         public bool Equals(RentalAgreementCondition other)
         {
-            if (ReferenceEquals(null, other)) { return false; }
+            if (other is null) { return false; }
             if (ReferenceEquals(this, other)) { return true; }
 
             return                 

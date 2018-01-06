@@ -13,7 +13,7 @@ namespace HETSAPI.Import
     /// <summary>
     /// Import Block Records
     /// </summary>
-    public class ImportBlock
+    public static class ImportBlock
     {
         const string OldTable = "Block";
         const string NewTable = "HET_LOCAL_AREA_ROTATION_LIST";

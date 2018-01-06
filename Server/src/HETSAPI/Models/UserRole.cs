@@ -8,8 +8,8 @@ namespace HETSAPI.Models
     /// <summary>
     /// User Role Database Model
     /// </summary>
-    [MetaDataExtension (Description = "A join table that provides allows each user to have any number of Roles in the system.  At login time the user is given the sum of the permissions of the roles assigned to that user.")]
-    public class UserRole : AuditableEntity, IEquatable<UserRole>
+    [MetaData (Description = "A join table that provides allows each user to have any number of Roles in the system.  At login time the user is given the sum of the permissions of the roles assigned to that user.")]
+    public sealed class UserRole : AuditableEntity, IEquatable<UserRole>
     {
         /// <summary>
         /// User Role Database Model Constructor (required by entity framework)
@@ -38,28 +38,28 @@ namespace HETSAPI.Models
         /// A system-generated unique identifier for a UserRole
         /// </summary>
         /// <value>A system-generated unique identifier for a UserRole</value>
-        [MetaDataExtension (Description = "A system-generated unique identifier for a UserRole")]
+        [MetaData (Description = "A system-generated unique identifier for a UserRole")]
         public int Id { get; set; }
         
         /// <summary>
         /// The date on which the user was given the related role.
         /// </summary>
         /// <value>The date on which the user was given the related role.</value>
-        [MetaDataExtension (Description = "The date on which the user was given the related role.")]
+        [MetaData (Description = "The date on which the user was given the related role.")]
         public DateTime EffectiveDate { get; set; }
         
         /// <summary>
         /// The date on which a role previously assigned to a user was removed from that user.
         /// </summary>
         /// <value>The date on which a role previously assigned to a user was removed from that user.</value>
-        [MetaDataExtension (Description = "The date on which a role previously assigned to a user was removed from that user.")]
+        [MetaData (Description = "The date on which a role previously assigned to a user was removed from that user.")]
         public DateTime? ExpiryDate { get; set; }
         
         /// <summary>
         /// A foreign key reference to the system-generated unique identifier for a Role
         /// </summary>
         /// <value>A foreign key reference to the system-generated unique identifier for a Role</value>
-        [MetaDataExtension (Description = "A foreign key reference to the system-generated unique identifier for a Role")]
+        [MetaData (Description = "A foreign key reference to the system-generated unique identifier for a Role")]
         public Role Role { get; set; }
         
         /// <summary>
@@ -67,7 +67,7 @@ namespace HETSAPI.Models
         /// </summary>   
         [ForeignKey("Role")]
 		[JsonIgnore]
-		[MetaDataExtension (Description = "A foreign key reference to the system-generated unique identifier for a Role")]
+		[MetaData (Description = "A foreign key reference to the system-generated unique identifier for a Role")]
         public int? RoleId { get; set; }
         
         /// <summary>
@@ -104,11 +104,9 @@ namespace HETSAPI.Models
         /// <returns>Boolean</returns>
         public override bool Equals(object obj)
         {
-            if (ReferenceEquals(null, obj)) { return false; }
+            if (obj is null) { return false; }
             if (ReferenceEquals(this, obj)) { return true; }
-            if (obj.GetType() != GetType()) { return false; }
-
-            return Equals((UserRole)obj);
+            return obj.GetType() == GetType() && Equals((UserRole)obj);
         }
 
         /// <summary>
@@ -118,7 +116,7 @@ namespace HETSAPI.Models
         /// <returns>Boolean</returns>
         public bool Equals(UserRole other)
         {
-            if (ReferenceEquals(null, other)) { return false; }
+            if (other is null) { return false; }
             if (ReferenceEquals(this, other)) { return true; }
 
             return                 

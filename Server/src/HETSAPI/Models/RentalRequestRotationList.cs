@@ -9,8 +9,8 @@ namespace HETSAPI.Models
     /// <summary>
     /// REntal Request Rotation List Database Model
     /// </summary>
-    [MetaDataExtension (Description = "An eligible piece of equipment for a request and a tracking of the hire offer and response process related to a request for that piece of equipment. Includes a link from the equipment to a Rental Agreement if the equipment was hired to satisfy a part of the request.")]
-    public class RentalRequestRotationList : AuditableEntity, IEquatable<RentalRequestRotationList>
+    [MetaData (Description = "An eligible piece of equipment for a request and a tracking of the hire offer and response process related to a request for that piece of equipment. Includes a link from the equipment to a Rental Agreement if the equipment was hired to satisfy a part of the request.")]
+    public sealed class RentalRequestRotationList : AuditableEntity, IEquatable<RentalRequestRotationList>
     {
         /// <summary>
         /// Rental REquest Rotation List Database Model Constructor (required by entity framework)
@@ -57,14 +57,14 @@ namespace HETSAPI.Models
         /// A system-generated unique identifier for a RequestRotationList
         /// </summary>
         /// <value>A system-generated unique identifier for a RequestRotationList</value>
-        [MetaDataExtension (Description = "A system-generated unique identifier for a RequestRotationList")]
+        [MetaData (Description = "A system-generated unique identifier for a RequestRotationList")]
         public int Id { get; set; }
         
         /// <summary>
         /// The sort order of the piece of equipment on the rotation list at the time the request was created. This is the order the equipment will be offered the available work.
         /// </summary>
         /// <value>The sort order of the piece of equipment on the rotation list at the time the request was created. This is the order the equipment will be offered the available work.</value>
-        [MetaDataExtension (Description = "The sort order of the piece of equipment on the rotation list at the time the request was created. This is the order the equipment will be offered the available work.")]
+        [MetaData (Description = "The sort order of the piece of equipment on the rotation list at the time the request was created. This is the order the equipment will be offered the available work.")]
         public int RotationListSortOrder { get; set; }
         
         /// <summary>
@@ -83,7 +83,7 @@ namespace HETSAPI.Models
         /// The rental agreement (if any) created for an accepted hire offer.
         /// </summary>
         /// <value>The rental agreement (if any) created for an accepted hire offer.</value>
-        [MetaDataExtension (Description = "The rental agreement (if any) created for an accepted hire offer.")]
+        [MetaData (Description = "The rental agreement (if any) created for an accepted hire offer.")]
         public RentalAgreement RentalAgreement { get; set; }
         
         /// <summary>
@@ -91,42 +91,42 @@ namespace HETSAPI.Models
         /// </summary>   
         [ForeignKey("RentalAgreement")]
 		[JsonIgnore]
-		[MetaDataExtension (Description = "The rental agreement (if any) created for an accepted hire offer.")]
+		[MetaData (Description = "The rental agreement (if any) created for an accepted hire offer.")]
         public int? RentalAgreementId { get; set; }
         
         /// <summary>
         /// True if the HETS Clerk designated the hire of this equipment as being a Forced Hire. A Force Hire implies that the usual seniority rules for hiring are bypassed because of special circumstances related to the hire - e.g. a the hire requires an attachment only one piece of equipment has.
         /// </summary>
         /// <value>True if the HETS Clerk designated the hire of this equipment as being a Forced Hire. A Force Hire implies that the usual seniority rules for hiring are bypassed because of special circumstances related to the hire - e.g. a the hire requires an attachment only one piece of equipment has.</value>
-        [MetaDataExtension (Description = "True if the HETS Clerk designated the hire of this equipment as being a Forced Hire. A Force Hire implies that the usual seniority rules for hiring are bypassed because of special circumstances related to the hire - e.g. a the hire requires an attachment only one piece of equipment has.")]
+        [MetaData (Description = "True if the HETS Clerk designated the hire of this equipment as being a Forced Hire. A Force Hire implies that the usual seniority rules for hiring are bypassed because of special circumstances related to the hire - e.g. a the hire requires an attachment only one piece of equipment has.")]
         public bool? IsForceHire { get; set; }
         
         /// <summary>
         /// True if the HETS Clerk contacted the equipment owner and asked to hire the piece of equipment.
         /// </summary>
         /// <value>True if the HETS Clerk contacted the equipment owner and asked to hire the piece of equipment.</value>
-        [MetaDataExtension (Description = "True if the HETS Clerk contacted the equipment owner and asked to hire the piece of equipment.")]
+        [MetaData (Description = "True if the HETS Clerk contacted the equipment owner and asked to hire the piece of equipment.")]
         public bool? WasAsked { get; set; }
         
         /// <summary>
         /// The Date-Time the HETS clerk contacted the equipment owner and asked to hire the piece of equipment.
         /// </summary>
         /// <value>The Date-Time the HETS clerk contacted the equipment owner and asked to hire the piece of equipment.</value>
-        [MetaDataExtension (Description = "The Date-Time the HETS clerk contacted the equipment owner and asked to hire the piece of equipment.")]
+        [MetaData (Description = "The Date-Time the HETS clerk contacted the equipment owner and asked to hire the piece of equipment.")]
         public DateTime? AskedDateTime { get; set; }
         
         /// <summary>
         /// The response to the offer to hire. Null prior to receiving a response; a string after with the response - likely just Yes or No
         /// </summary>
         /// <value>The response to the offer to hire. Null prior to receiving a response; a string after with the response - likely just Yes or No</value>
-        [MetaDataExtension (Description = "The response to the offer to hire. Null prior to receiving a response; a string after with the response - likely just Yes or No")]
+        [MetaData (Description = "The response to the offer to hire. Null prior to receiving a response; a string after with the response - likely just Yes or No")]
         public string OfferResponse { get; set; }
         
         /// <summary>
         /// The reason why the user refused the offer based on a selection of values from the UI.
         /// </summary>
         /// <value>The reason why the user refused the offer based on a selection of values from the UI.</value>
-        [MetaDataExtension (Description = "The reason why the user refused the offer based on a selection of values from the UI.")]
+        [MetaData (Description = "The reason why the user refused the offer based on a selection of values from the UI.")]
         [MaxLength(50)]        
         public string OfferRefusalReason { get; set; }
         
@@ -134,14 +134,14 @@ namespace HETSAPI.Models
         /// The date and time the final response to the offer was established.
         /// </summary>
         /// <value>The date and time the final response to the offer was established.</value>
-        [MetaDataExtension (Description = "The date and time the final response to the offer was established.")]
+        [MetaData (Description = "The date and time the final response to the offer was established.")]
         public DateTime? OfferResponseDatetime { get; set; }
         
         /// <summary>
         /// A note entered about the response to the offer from the equipment owner about the offer. Usually used when the offer is a &quot;No&quot; or &quot;Force Hire&quot;.
         /// </summary>
         /// <value>A note entered about the response to the offer from the equipment owner about the offer. Usually used when the offer is a &quot;No&quot; or &quot;Force Hire&quot;.</value>
-        [MetaDataExtension (Description = "A note entered about the response to the offer from the equipment owner about the offer. Usually used when the offer is a &quot;No&quot; or &quot;Force Hire&quot;.")]
+        [MetaData (Description = "A note entered about the response to the offer from the equipment owner about the offer. Usually used when the offer is a &quot;No&quot; or &quot;Force Hire&quot;.")]
         [MaxLength(2048)]        
         public string OfferResponseNote { get; set; }
         
@@ -149,7 +149,7 @@ namespace HETSAPI.Models
         /// An optional general note about the offer.
         /// </summary>
         /// <value>An optional general note about the offer.</value>
-        [MetaDataExtension (Description = "An optional general note about the offer.")]
+        [MetaData (Description = "An optional general note about the offer.")]
         [MaxLength(2048)]        
         public string Note { get; set; }
         
@@ -195,11 +195,9 @@ namespace HETSAPI.Models
         /// <returns>Boolean</returns>
         public override bool Equals(object obj)
         {
-            if (ReferenceEquals(null, obj)) { return false; }
+            if (obj is null) { return false; }
             if (ReferenceEquals(this, obj)) { return true; }
-            if (obj.GetType() != GetType()) { return false; }
-
-            return Equals((RentalRequestRotationList)obj);
+            return obj.GetType() == GetType() && Equals((RentalRequestRotationList)obj);
         }
 
         /// <summary>
@@ -209,7 +207,7 @@ namespace HETSAPI.Models
         /// <returns>Boolean</returns>
         public bool Equals(RentalRequestRotationList other)
         {
-            if (ReferenceEquals(null, other)) { return false; }
+            if (other is null) { return false; }
             if (ReferenceEquals(this, other)) { return true; }
 
             return                 

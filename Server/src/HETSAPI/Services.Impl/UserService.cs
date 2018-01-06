@@ -866,48 +866,50 @@ namespace HETSAPI.Services.Impl
         /// <summary>
         /// Create user
         /// </summary>
-        /// <param name="model"></param>
+        /// <param name="item"></param>
         /// <remarks>Create new user</remarks>
         /// <response code="201">User created</response>
-        public virtual IActionResult UsersPostAsync(UserViewModel model)
+        public virtual IActionResult UsersPostAsync(UserViewModel item)
         {
-            User item = new User
+            User user = new User
             {
-                Active = model.Active,
-                Email = model.Email,
-                GivenName = model.GivenName,
-                Surname = model.Surname,
-                District = model.District,
-                SmUserId = model.SmUserId
+                Active = item.Active,
+                Email = item.Email,
+                GivenName = item.GivenName,
+                Surname = item.Surname,
+                District = item.District,
+                SmUserId = item.SmUserId
             };
 
-            AdjustUser(item);
-            bool exists = _context.Users.Any(x => x.Id == item.Id);
+            AdjustUser(user);
+            bool exists = _context.Users.Any(x => x.Id == user.Id);
+
             if (exists)
             {
-                _context.Users.Update(item);
+                _context.Users.Update(user);
             }
             else
             {
-                _context.Users.Add(item);
+                _context.Users.Add(user);
             }
 
             _context.SaveChanges();
-            return new ObjectResult(item);
+            return new ObjectResult(user);
         }
 
         /// <summary>
         /// Searches Users
         /// </summary>
         /// <remarks>Used for the search users.</remarks>
-        /// <param name="districtsString">Districts (array of id numbers)</param>
+        /// <param name="districts">Districts (array of id numbers)</param>
         /// <param name="surname"></param>
         /// <param name="includeInactive">True if Inactive users will be returned</param>
         /// <response code="200">OK</response>
-        public virtual IActionResult UsersSearchGetAsync(string districtsString, string surname, bool? includeInactive)
+        public virtual IActionResult UsersSearchGetAsync(string districts, string surname, bool? includeInactive)
         {
-            if (districtsString == null) throw new ArgumentNullException(nameof(districtsString));
-            int?[] districts = ParseIntArray(districtsString);
+            if (districts == null) throw new ArgumentNullException(nameof(districts));
+
+            int?[] districtArray = ParseIntArray(districts);
 
             // Loading of related data
             IQueryable<User> data = _context.Users
@@ -921,9 +923,9 @@ namespace HETSAPI.Services.Impl
                 .Select(x => x);
 
             // Note that Districts searches SchoolBus Districts, not SchoolBusOwner Districts
-            if (districts != null && districts.Length > 0)
+            if (districtArray != null && districtArray.Length > 0)
             {
-                data = data.Where(x => districts.Contains (x.District.Id));
+                data = data.Where(x => districtArray.Contains (x.District.Id));
             }
 
             if (surname != null)

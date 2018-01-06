@@ -41,27 +41,11 @@ namespace HETSAPI.Test
         /// </summary>        
 		public LocalAreaUnitTest()
 		{			
-                    DbContextOptions<DbAppContext> options = new DbContextOptions<DbAppContext>();
-                    Mock<DbAppContext> dbAppContext = new Mock<DbAppContext>(null, options);
-			
-                    /*
-			
-                    Here you will need to mock up the context.
-			
-            ItemType fakeItem = new ItemType(...);
-
-            Mock<DbSet<ItemType>> mockList = MockDbSet.Create(fakeItem);
-
-            dbAppContext.Setup(x => x.ModelEndpoint).Returns(mockItem.Object);
-
-                    */
-
-                    LocalAreaService _service = new LocalAreaService(dbAppContext.Object);
-			
-                    _LocalArea = new LocalAreaController (_service);
-
-		}
-	
+            DbContextOptions<DbAppContext> options = new DbContextOptions<DbAppContext>();
+            Mock<DbAppContext> dbAppContext = new Mock<DbAppContext>(null, options);
+            LocalAreaService _service = new LocalAreaService(dbAppContext.Object);
+            _LocalArea = new LocalAreaController (_service);
+		}	
 		
 		[Fact]
 		/// <summary>
@@ -69,14 +53,8 @@ namespace HETSAPI.Test
         /// </summary>
 		public void TestLocalAreasBulkPost()
 		{
-			// Add test code here
-			// it may look like: 
-			//  var result = _LocalAreaController.LocalAreasBulkPost();
-			//  Assert.True (result == expected-result);
-
-            Assert.True(true);
-		}		
-        
+			Assert.True(true);
+		}		        
 		
 		[Fact]
 		/// <summary>
@@ -84,14 +62,8 @@ namespace HETSAPI.Test
         /// </summary>
 		public void TestLocalAreasGet()
 		{
-			// Add test code here
-			// it may look like: 
-			//  var result = _LocalAreaController.LocalAreasGet();
-			//  Assert.True (result == expected-result);
-
-            Assert.True(true);
-		}		
-        
+			Assert.True(true);
+		}		        
 		
 		[Fact]
 		/// <summary>
@@ -99,14 +71,8 @@ namespace HETSAPI.Test
         /// </summary>
 		public void TestLocalAreasIdDeletePost()
 		{
-			// Add test code here
-			// it may look like: 
-			//  var result = _LocalAreaController.LocalAreasIdDeletePost();
-			//  Assert.True (result == expected-result);
-
-            Assert.True(true);
-		}		
-        
+			Assert.True(true);
+		}		        
 		
 		[Fact]
 		/// <summary>
@@ -114,14 +80,8 @@ namespace HETSAPI.Test
         /// </summary>
 		public void TestLocalAreasIdGet()
 		{
-			// Add test code here
-			// it may look like: 
-			//  var result = _LocalAreaController.LocalAreasIdGet();
-			//  Assert.True (result == expected-result);
-
-            Assert.True(true);
-		}		
-        
+			Assert.True(true);
+		}		        
 		
 		[Fact]
 		/// <summary>
@@ -129,14 +89,8 @@ namespace HETSAPI.Test
         /// </summary>
 		public void TestLocalAreasIdPut()
 		{
-			// Add test code here
-			// it may look like: 
-			//  var result = _LocalAreaController.LocalAreasIdPut();
-			//  Assert.True (result == expected-result);
-
-            Assert.True(true);
-		}		
-        
+			Assert.True(true);
+		}		        
 		
 		[Fact]
 		/// <summary>
@@ -144,13 +98,7 @@ namespace HETSAPI.Test
         /// </summary>
 		public void TestLocalAreasPost()
 		{
-			// Add test code here
-			// it may look like: 
-			//  var result = _LocalAreaController.LocalAreasPost();
-			//  Assert.True (result == expected-result);
-
-            Assert.True(true);
-		}		
-        
+			Assert.True(true);
+		}		        
     }
 }

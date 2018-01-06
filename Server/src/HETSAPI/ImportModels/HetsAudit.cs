@@ -5,7 +5,7 @@ namespace HETSAPI.ImportModels
     /// <summary>
     /// HETS Audit Import Mapping
     /// </summary>
-    public class HETS_AUDIT
+    public class HetsAudit
     {
         /// <summary>
         /// Created By

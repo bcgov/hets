@@ -8,8 +8,8 @@ namespace HETSAPI.Models
     /// <summary>
     /// Dump Truck Database Model
     /// </summary>
-    [MetaDataExtension (Description = "Additional attributes about a piece of equipment designated as a Dump Truck. Historically, there was a perceived need to track a lot of informatiion about a dump truck, but in practice, few fields are being completed by users. Places for the attributes are being maintained, but the UI is prompting only for a couple of the fields, and only those fields are likely to be populated. Additional basic information about the attributes can be found on Wikipedia, BC-specific details on MOTI&amp;#39;s CVSE website and www.bclaws.ca&amp;#x2F;EPLibraries&amp;#x2F;bclaws_new&amp;#x2F;document&amp;#x2F;ID&amp;#x2F;freeside&amp;#x2F;30_78#AppendicesAtoK, Appendix A and  B. Any metrics information provided here is from the Equipment Owner.")]
-    public class DumpTruck : AuditableEntity, IEquatable<DumpTruck>
+    [MetaData (Description = "Additional attributes about a piece of equipment designated as a Dump Truck. Historically, there was a perceived need to track a lot of informatiion about a dump truck, but in practice, few fields are being completed by users. Places for the attributes are being maintained, but the UI is prompting only for a couple of the fields, and only those fields are likely to be populated. Additional basic information about the attributes can be found on Wikipedia, BC-specific details on MOTI&amp;#39;s CVSE website and www.bclaws.ca&amp;#x2F;EPLibraries&amp;#x2F;bclaws_new&amp;#x2F;document&amp;#x2F;ID&amp;#x2F;freeside&amp;#x2F;30_78#AppendicesAtoK, Appendix A and  B. Any metrics information provided here is from the Equipment Owner.")]
+    public sealed class DumpTruck : AuditableEntity, IEquatable<DumpTruck>
     {
         /// <summary>
         /// Dump Truck Database Model Constructor (required by entity framework)
@@ -101,77 +101,77 @@ namespace HETSAPI.Models
         /// A system-generated unique identifier for a DumpTruck
         /// </summary>
         /// <value>A system-generated unique identifier for a DumpTruck</value>
-        [MetaDataExtension (Description = "A system-generated unique identifier for a DumpTruck")]
+        [MetaData (Description = "A system-generated unique identifier for a DumpTruck")]
         public int Id { get; set; }
         
         /// <summary>
         /// True if the vehicle has a single axle. Can be false or null.
         /// </summary>
         /// <value>True if the vehicle has a single axle. Can be false or null.</value>
-        [MetaDataExtension (Description = "True if the vehicle has a single axle. Can be false or null.")]
+        [MetaData (Description = "True if the vehicle has a single axle. Can be false or null.")]
         public bool? IsSingleAxle { get; set; }
         
         /// <summary>
         /// True if the vehicle has a tandem axle. Can be false or null.
         /// </summary>
         /// <value>True if the vehicle has a tandem axle. Can be false or null.</value>
-        [MetaDataExtension (Description = "True if the vehicle has a tandem axle. Can be false or null.")]
+        [MetaData (Description = "True if the vehicle has a tandem axle. Can be false or null.")]
         public bool? IsTandemAxle { get; set; }
         
         /// <summary>
         /// True if the Dump Truck is a tridem - a three axle dump truck. Can be false or null.
         /// </summary>
         /// <value>True if the Dump Truck is a tridem - a three axle dump truck. Can be false or null.</value>
-        [MetaDataExtension (Description = "True if the Dump Truck is a tridem - a three axle dump truck. Can be false or null.")]
+        [MetaData (Description = "True if the Dump Truck is a tridem - a three axle dump truck. Can be false or null.")]
         public bool? IsTridem { get; set; }
         
         /// <summary>
         /// True if the Dump Truck has a PUP trailer - a trailer with it&#39;s own hydraulic unloading system. Can be false or null.
         /// </summary>
         /// <value>True if the Dump Truck has a PUP trailer - a trailer with it&#39;s own hydraulic unloading system. Can be false or null.</value>
-        [MetaDataExtension (Description = "True if the Dump Truck has a PUP trailer - a trailer with it&#39;s own hydraulic unloading system. Can be false or null.")]
+        [MetaData (Description = "True if the Dump Truck has a PUP trailer - a trailer with it&#39;s own hydraulic unloading system. Can be false or null.")]
         public bool? HasPUP { get; set; }
         
         /// <summary>
         /// True if the Dump Truck has a belly dump capability. Can be false or null.
         /// </summary>
         /// <value>True if the Dump Truck has a belly dump capability. Can be false or null.</value>
-        [MetaDataExtension (Description = "True if the Dump Truck has a belly dump capability. Can be false or null.")]
+        [MetaData (Description = "True if the Dump Truck has a belly dump capability. Can be false or null.")]
         public bool? HasBellyDump { get; set; }
         
         /// <summary>
         /// True if the Dump Truck has a rock box. Can be false or null.
         /// </summary>
         /// <value>True if the Dump Truck has a rock box. Can be false or null.</value>
-        [MetaDataExtension (Description = "True if the Dump Truck has a rock box. Can be false or null.")]
+        [MetaData (Description = "True if the Dump Truck has a rock box. Can be false or null.")]
         public bool? HasRockBox { get; set; }
         
         /// <summary>
         /// True if the Dump Truck has a high lift gate vs. a traditional gate. Can be false or null.
         /// </summary>
         /// <value>True if the Dump Truck has a high lift gate vs. a traditional gate. Can be false or null.</value>
-        [MetaDataExtension (Description = "True if the Dump Truck has a high lift gate vs. a traditional gate. Can be false or null.")]
+        [MetaData (Description = "True if the Dump Truck has a high lift gate vs. a traditional gate. Can be false or null.")]
         public bool? HasHiliftGate { get; set; }
         
         /// <summary>
         /// True if the Dump Truck is a Water Truck. Can be false or null.
         /// </summary>
         /// <value>True if the Dump Truck is a Water Truck. Can be false or null.</value>
-        [MetaDataExtension (Description = "True if the Dump Truck is a Water Truck. Can be false or null.")]
+        [MetaData (Description = "True if the Dump Truck is a Water Truck. Can be false or null.")]
         public bool? IsWaterTruck { get; set; }
         
         /// <summary>
         /// True if the Dump Truck has a hitch for using sealcoat trailers. Can be false or null.
         /// </summary>
         /// <value>True if the Dump Truck has a hitch for using sealcoat trailers. Can be false or null.</value>
-        [MetaDataExtension (Description = "True if the Dump Truck has a hitch for using sealcoat trailers. Can be false or null.")]
+        [MetaData (Description = "True if the Dump Truck has a hitch for using sealcoat trailers. Can be false or null.")]
         public bool? HasSealcoatHitch { get; set; }
         
         /// <summary>
         /// The spacing of the rear axles, if applicable. Usually in metres.
         /// </summary>
         /// <value>The spacing of the rear axles, if applicable. Usually in metres.</value>
-        [MetaDataExtension (Description = "The spacing of the rear axles, if applicable. Usually in metres.")]
+        [MetaData (Description = "The spacing of the rear axles, if applicable. Usually in metres.")]
         [MaxLength(150)]        
         public string RearAxleSpacing { get; set; }
         
@@ -179,7 +179,7 @@ namespace HETSAPI.Models
         /// The size of of the Front Tires of the Dump Truck.
         /// </summary>
         /// <value>The size of of the Front Tires of the Dump Truck.</value>
-        [MetaDataExtension (Description = "The size of of the Front Tires of the Dump Truck.")]
+        [MetaData (Description = "The size of of the Front Tires of the Dump Truck.")]
         [MaxLength(150)]        
         public string FrontTireSize { get; set; }
         
@@ -187,7 +187,7 @@ namespace HETSAPI.Models
         /// The Unit of Measure of the Front Tire Size.
         /// </summary>
         /// <value>The Unit of Measure of the Front Tire Size.</value>
-        [MetaDataExtension (Description = "The Unit of Measure of the Front Tire Size.")]
+        [MetaData (Description = "The Unit of Measure of the Front Tire Size.")]
         [MaxLength(150)]        
         public string FrontTireUOM { get; set; }
         
@@ -195,7 +195,7 @@ namespace HETSAPI.Models
         /// The rated capacity of the Front Axle.
         /// </summary>
         /// <value>The rated capacity of the Front Axle.</value>
-        [MetaDataExtension (Description = "The rated capacity of the Front Axle.")]
+        [MetaData (Description = "The rated capacity of the Front Axle.")]
         [MaxLength(150)]        
         public string FrontAxleCapacity { get; set; }
         
@@ -203,7 +203,7 @@ namespace HETSAPI.Models
         /// The rated capacity of the Rear Axle.
         /// </summary>
         /// <value>The rated capacity of the Rear Axle.</value>
-        [MetaDataExtension (Description = "The rated capacity of the Rear Axle.")]
+        [MetaData (Description = "The rated capacity of the Rear Axle.")]
         [MaxLength(150)]        
         public string RearAxleCapacity { get; set; }
         
@@ -211,7 +211,7 @@ namespace HETSAPI.Models
         /// The legal load of the vehicle in kg.
         /// </summary>
         /// <value>The legal load of the vehicle in kg.</value>
-        [MetaDataExtension (Description = "The legal load of the vehicle in kg.")]
+        [MetaData (Description = "The legal load of the vehicle in kg.")]
         [MaxLength(150)]        
         public string LegalLoad { get; set; }
         
@@ -219,7 +219,7 @@ namespace HETSAPI.Models
         /// The legal capacity of the dump truck.
         /// </summary>
         /// <value>The legal capacity of the dump truck.</value>
-        [MetaDataExtension (Description = "The legal capacity of the dump truck.")]
+        [MetaData (Description = "The legal capacity of the dump truck.")]
         [MaxLength(150)]        
         public string LegalCapacity { get; set; }
         
@@ -227,7 +227,7 @@ namespace HETSAPI.Models
         /// The legal Tare Weight (weight when unloaded) of the PUP trailer.
         /// </summary>
         /// <value>The legal Tare Weight (weight when unloaded) of the PUP trailer.</value>
-        [MetaDataExtension (Description = "The legal Tare Weight (weight when unloaded) of the PUP trailer.")]
+        [MetaData (Description = "The legal Tare Weight (weight when unloaded) of the PUP trailer.")]
         [MaxLength(150)]        
         public string LegalPUPTareWeight { get; set; }
         
@@ -235,7 +235,7 @@ namespace HETSAPI.Models
         /// The Gross Vehicle Weight for which the vehicle is licensed. GVW includes the vehicle&#39;s chassis, body, engine, engine fluids, fuel, accessories, driver, passengers and cargo but excluding that of any trailers.
         /// </summary>
         /// <value>The Gross Vehicle Weight for which the vehicle is licensed. GVW includes the vehicle&#39;s chassis, body, engine, engine fluids, fuel, accessories, driver, passengers and cargo but excluding that of any trailers.</value>
-        [MetaDataExtension (Description = "The Gross Vehicle Weight for which the vehicle is licensed. GVW includes the vehicle&#39;s chassis, body, engine, engine fluids, fuel, accessories, driver, passengers and cargo but excluding that of any trailers.")]
+        [MetaData (Description = "The Gross Vehicle Weight for which the vehicle is licensed. GVW includes the vehicle&#39;s chassis, body, engine, engine fluids, fuel, accessories, driver, passengers and cargo but excluding that of any trailers.")]
         [MaxLength(150)]        
         public string LicencedGVW { get; set; }
         
@@ -243,7 +243,7 @@ namespace HETSAPI.Models
         /// The Unit of Measure (UOM) of the licenced GVW.
         /// </summary>
         /// <value>The Unit of Measure (UOM) of the licenced GVW.</value>
-        [MetaDataExtension (Description = "The Unit of Measure (UOM) of the licenced GVW.")]
+        [MetaData (Description = "The Unit of Measure (UOM) of the licenced GVW.")]
         [MaxLength(150)]        
         public string LicencedGVWUOM { get; set; }
         
@@ -251,7 +251,7 @@ namespace HETSAPI.Models
         /// The licenced Tare Weight (weight when unloaded) of the vehicle.
         /// </summary>
         /// <value>The licenced Tare Weight (weight when unloaded) of the vehicle.</value>
-        [MetaDataExtension (Description = "The licenced Tare Weight (weight when unloaded) of the vehicle.")]
+        [MetaData (Description = "The licenced Tare Weight (weight when unloaded) of the vehicle.")]
         [MaxLength(150)]        
         public string LicencedTareWeight { get; set; }
         
@@ -259,14 +259,14 @@ namespace HETSAPI.Models
         /// The licenced Tare Weight (weight when unloaded) of the PUP trailer.
         /// </summary>
         /// <value>The licenced Tare Weight (weight when unloaded) of the PUP trailer.</value>
-        [MetaDataExtension (Description = "The licenced Tare Weight (weight when unloaded) of the PUP trailer.")]
+        [MetaData (Description = "The licenced Tare Weight (weight when unloaded) of the PUP trailer.")]
         [MaxLength(150)]        
         public string LicencedPUPTareWeight { get; set; }        
         /// <summary>
         /// The licenced maximum load of the vehicle in kg.
         /// </summary>
         /// <value>The licenced maximum load of the vehicle in kg.</value>
-        [MetaDataExtension (Description = "The licenced maximum load of the vehicle in kg.")]
+        [MetaData (Description = "The licenced maximum load of the vehicle in kg.")]
         [MaxLength(150)]        
         public string LicencedLoad { get; set; }
         
@@ -274,7 +274,7 @@ namespace HETSAPI.Models
         /// The licenced maximum capacity of the vehicle.
         /// </summary>
         /// <value>The licenced maximum capacity of the vehicle.</value>
-        [MetaDataExtension (Description = "The licenced maximum capacity of the vehicle.")]
+        [MetaData (Description = "The licenced maximum capacity of the vehicle.")]
         [MaxLength(150)]        
         public string LicencedCapacity { get; set; }
         
@@ -282,7 +282,7 @@ namespace HETSAPI.Models
         /// The length of the box, in metres. See - http-&#x2F;&#x2F;www.bclaws.ca&#x2F;EPLibraries&#x2F;bclaws_new&#x2F;document&#x2F;ID&#x2F;freeside&#x2F;30_7, appendix B
         /// </summary>
         /// <value>The length of the box, in metres. See - http-&#x2F;&#x2F;www.bclaws.ca&#x2F;EPLibraries&#x2F;bclaws_new&#x2F;document&#x2F;ID&#x2F;freeside&#x2F;30_7, appendix B</value>
-        [MetaDataExtension (Description = "The length of the box, in metres. See - http-&#x2F;&#x2F;www.bclaws.ca&#x2F;EPLibraries&#x2F;bclaws_new&#x2F;document&#x2F;ID&#x2F;freeside&#x2F;30_7, appendix B")]
+        [MetaData (Description = "The length of the box, in metres. See - http-&#x2F;&#x2F;www.bclaws.ca&#x2F;EPLibraries&#x2F;bclaws_new&#x2F;document&#x2F;ID&#x2F;freeside&#x2F;30_7, appendix B")]
         [MaxLength(150)]        
         public string BoxLength { get; set; }
         
@@ -290,7 +290,7 @@ namespace HETSAPI.Models
         /// The width of the box, in metres. See - http-&#x2F;&#x2F;www.bclaws.ca&#x2F;EPLibraries&#x2F;bclaws_new&#x2F;document&#x2F;ID&#x2F;freeside&#x2F;30_7, appendix B
         /// </summary>
         /// <value>The width of the box, in metres. See - http-&#x2F;&#x2F;www.bclaws.ca&#x2F;EPLibraries&#x2F;bclaws_new&#x2F;document&#x2F;ID&#x2F;freeside&#x2F;30_7, appendix B</value>
-        [MetaDataExtension (Description = "The width of the box, in metres. See - http-&#x2F;&#x2F;www.bclaws.ca&#x2F;EPLibraries&#x2F;bclaws_new&#x2F;document&#x2F;ID&#x2F;freeside&#x2F;30_7, appendix B")]
+        [MetaData (Description = "The width of the box, in metres. See - http-&#x2F;&#x2F;www.bclaws.ca&#x2F;EPLibraries&#x2F;bclaws_new&#x2F;document&#x2F;ID&#x2F;freeside&#x2F;30_7, appendix B")]
         [MaxLength(150)]        
         public string BoxWidth { get; set; }
         
@@ -298,7 +298,7 @@ namespace HETSAPI.Models
         /// The height of the box, in metres. See- http-&#x2F;&#x2F;www.bclaws.ca&#x2F;EPLibraries&#x2F;bclaws_new&#x2F;document&#x2F;ID&#x2F;freeside&#x2F;30_7, appendix B
         /// </summary>
         /// <value>The height of the box, in metres. See- http-&#x2F;&#x2F;www.bclaws.ca&#x2F;EPLibraries&#x2F;bclaws_new&#x2F;document&#x2F;ID&#x2F;freeside&#x2F;30_7, appendix B</value>
-        [MetaDataExtension (Description = "The height of the box, in metres. See- http-&#x2F;&#x2F;www.bclaws.ca&#x2F;EPLibraries&#x2F;bclaws_new&#x2F;document&#x2F;ID&#x2F;freeside&#x2F;30_7, appendix B")]
+        [MetaData (Description = "The height of the box, in metres. See- http-&#x2F;&#x2F;www.bclaws.ca&#x2F;EPLibraries&#x2F;bclaws_new&#x2F;document&#x2F;ID&#x2F;freeside&#x2F;30_7, appendix B")]
         [MaxLength(150)]        
         public string BoxHeight { get; set; }
         
@@ -306,7 +306,7 @@ namespace HETSAPI.Models
         /// The capacity of the box.
         /// </summary>
         /// <value>The capacity of the box.</value>
-        [MetaDataExtension (Description = "The capacity of the box.")]
+        [MetaData (Description = "The capacity of the box.")]
         [MaxLength(150)]        
         public string BoxCapacity { get; set; }
         
@@ -314,7 +314,7 @@ namespace HETSAPI.Models
         /// The length of the trailer box, in metres. See www.bclaws.ca&#x2F;EPLibraries&#x2F;bclaws_new&#x2F;document&#x2F;ID&#x2F;freeside&#x2F;30_7, appendix B
         /// </summary>
         /// <value>The length of the trailer box, in metres. See www.bclaws.ca&#x2F;EPLibraries&#x2F;bclaws_new&#x2F;document&#x2F;ID&#x2F;freeside&#x2F;30_7, appendix B</value>
-        [MetaDataExtension (Description = "The length of the trailer box, in metres. See www.bclaws.ca&#x2F;EPLibraries&#x2F;bclaws_new&#x2F;document&#x2F;ID&#x2F;freeside&#x2F;30_7, appendix B")]
+        [MetaData (Description = "The length of the trailer box, in metres. See www.bclaws.ca&#x2F;EPLibraries&#x2F;bclaws_new&#x2F;document&#x2F;ID&#x2F;freeside&#x2F;30_7, appendix B")]
         [MaxLength(150)]        
         public string TrailerBoxLength { get; set; }
         
@@ -322,7 +322,7 @@ namespace HETSAPI.Models
         /// The width of the trailer box, in metres. See www.bclaws.ca&#x2F;EPLibraries&#x2F;bclaws_new&#x2F;document&#x2F;ID&#x2F;freeside&#x2F;30_7, appendix B
         /// </summary>
         /// <value>The width of the trailer box, in metres. See www.bclaws.ca&#x2F;EPLibraries&#x2F;bclaws_new&#x2F;document&#x2F;ID&#x2F;freeside&#x2F;30_7, appendix B</value>
-        [MetaDataExtension (Description = "The width of the trailer box, in metres. See www.bclaws.ca&#x2F;EPLibraries&#x2F;bclaws_new&#x2F;document&#x2F;ID&#x2F;freeside&#x2F;30_7, appendix B")]
+        [MetaData (Description = "The width of the trailer box, in metres. See www.bclaws.ca&#x2F;EPLibraries&#x2F;bclaws_new&#x2F;document&#x2F;ID&#x2F;freeside&#x2F;30_7, appendix B")]
         [MaxLength(150)]        
         public string TrailerBoxWidth { get; set; }
         
@@ -330,7 +330,7 @@ namespace HETSAPI.Models
         /// The height of the trailer box, in metres. See www.bclaws.ca&#x2F;EPLibraries&#x2F;bclaws_new&#x2F;document&#x2F;ID&#x2F;freeside&#x2F;30_7, appendix B
         /// </summary>
         /// <value>The height of the trailer box, in metres. See www.bclaws.ca&#x2F;EPLibraries&#x2F;bclaws_new&#x2F;document&#x2F;ID&#x2F;freeside&#x2F;30_7, appendix B</value>
-        [MetaDataExtension (Description = "The height of the trailer box, in metres. See www.bclaws.ca&#x2F;EPLibraries&#x2F;bclaws_new&#x2F;document&#x2F;ID&#x2F;freeside&#x2F;30_7, appendix B")]
+        [MetaData (Description = "The height of the trailer box, in metres. See www.bclaws.ca&#x2F;EPLibraries&#x2F;bclaws_new&#x2F;document&#x2F;ID&#x2F;freeside&#x2F;30_7, appendix B")]
         [MaxLength(150)]        
         public string TrailerBoxHeight { get; set; }
         
@@ -338,7 +338,7 @@ namespace HETSAPI.Models
         /// The capacity of the trailer box.
         /// </summary>
         /// <value>The capacity of the trailer box.</value>
-        [MetaDataExtension (Description = "The capacity of the trailer box.")]
+        [MetaData (Description = "The capacity of the trailer box.")]
         [MaxLength(150)]        
         public string TrailerBoxCapacity { get; set; }
         
@@ -404,11 +404,9 @@ namespace HETSAPI.Models
         /// <returns>Boolean</returns>
         public override bool Equals(object obj)
         {
-            if (ReferenceEquals(null, obj)) { return false; }
+            if (obj is null) { return false; }
             if (ReferenceEquals(this, obj)) { return true; }
-            if (obj.GetType() != GetType()) { return false; }
-
-            return Equals((DumpTruck)obj);
+            return obj.GetType() == GetType() && Equals((DumpTruck)obj);
         }
 
         /// <summary>
@@ -418,7 +416,7 @@ namespace HETSAPI.Models
         /// <returns>Boolean</returns>
         public bool Equals(DumpTruck other)
         {
-            if (ReferenceEquals(null, other)) { return false; }
+            if (other is null) { return false; }
             if (ReferenceEquals(this, other)) { return true; }
 
             return                 

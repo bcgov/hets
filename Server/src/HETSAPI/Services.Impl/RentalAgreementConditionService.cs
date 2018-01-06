@@ -19,13 +19,8 @@ namespace HETSAPI.Services.Impl
 
         private void AdjustRecord(RentalAgreementCondition item)
         {
-            if (item != null)
-            {
-                if (item.RentalAgreement != null)
-                {
-                    item.RentalAgreement = _context.RentalAgreements.FirstOrDefault(a => a.Id == item.RentalAgreement.Id);                       
-                }
-            }
+            if (item != null && item.RentalAgreement != null)
+                item.RentalAgreement = _context.RentalAgreements.FirstOrDefault(a => a.Id == item.RentalAgreement.Id);
         }
 
         /// <summary>

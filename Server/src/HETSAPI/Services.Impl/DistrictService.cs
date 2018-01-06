@@ -22,13 +22,8 @@ namespace HETSAPI.Services.Impl
 
         public void AdjustRecord (District item)
         {
-            if (item != null)
-            {
-                if (item.Region != null)
-                {
-                    item.Region = _context.Regions.FirstOrDefault(x => x.Id == item.Region.Id);
-                }
-            }
+            if (item != null && item.Region != null)
+                item.Region = _context.Regions.FirstOrDefault(x => x.Id == item.Region.Id);
         }
 
         /// <summary>
@@ -134,25 +129,25 @@ namespace HETSAPI.Services.Impl
         /// </summary>
         /// <remarks>Updates a district</remarks>
         /// <param name="id">id of District to update</param>
-        /// <param name="body"></param>
+        /// <param name="item"></param>
         /// <response code="200">OK</response>
         /// <response code="404">District not found</response>
-        public virtual IActionResult DistrictsIdPutAsync(int id, District body)
+        public virtual IActionResult DistrictsIdPutAsync(int id, District item)
         {
-            var exists = _context.Districts.Any(a => a.Id == id);
-            if (exists && id == body.Id)
+            bool exists = _context.Districts.Any(a => a.Id == id);
+
+            if (exists && id == item.Id)
             {
-                AdjustRecord(body);
-                _context.Districts.Update(body);
+                AdjustRecord(item);
+                _context.Districts.Update(item);
+
                 // Save the changes
                 _context.SaveChanges();
-                return new ObjectResult(body);
+                return new ObjectResult(item);
             }
-            else
-            {
-                // record not found
-                return new StatusCodeResult(404);
-            }
+
+            // record not found
+            return new StatusCodeResult(404);
         }
 
         /// <summary>
@@ -171,26 +166,27 @@ namespace HETSAPI.Services.Impl
         /// 
         /// </summary>
         /// <remarks>Adds a district</remarks>
-        /// <param name="body"></param>
+        /// <param name="item"></param>
         /// <response code="200">OK</response>
-        public virtual IActionResult DistrictsPostAsync(District body)
+        public virtual IActionResult DistrictsPostAsync(District item)
         {            
-            AdjustRecord(body);
+            AdjustRecord(item);
 
-            var exists = _context.Districts.Any(a => a.Id == body.Id);
+            bool exists = _context.Districts.Any(a => a.Id == item.Id);
+
             if (exists )
             {
-                _context.Districts.Update(body);
+                _context.Districts.Update(item);
                 // Save the changes             
             }
             else
             {
                 // record not found
-                _context.Districts.Add(body);                
+                _context.Districts.Add(item);                
             }
 
             _context.SaveChanges();
-            return new ObjectResult(body);                        
+            return new ObjectResult(item);                        
         }
     }
 }

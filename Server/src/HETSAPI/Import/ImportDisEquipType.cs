@@ -9,13 +9,14 @@ using System.Xml.Serialization;
 using Hangfire.Console.Progress;
 using HETSAPI.ImportModels;
 using HETSAPI.Models;
+using ServiceArea = HETSAPI.Models.ServiceArea;
 
 namespace HETSAPI.Import
 {
     /// <summary>
     /// Import Dis(trict) Equip(ment) Type Records
     /// </summary>
-    public class ImportDisEquipType
+    public static class ImportDisEquipType
     {        
         const string OldTable = "EquipType";
         const string NewTable = "HET_EQUIPMMENT_TYPE";

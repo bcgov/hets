@@ -8,8 +8,8 @@ namespace HETSAPI.Models
     /// <summary>
     /// Equipment Type Database Model
     /// </summary>
-    [MetaDataExtension (Description = "A provincial-wide Equipment Type, the related Blue Book Chapter Section and related usage attributes.")]
-    public class EquipmentType : AuditableEntity, IEquatable<EquipmentType>
+    [MetaData (Description = "A provincial-wide Equipment Type, the related Blue Book Chapter Section and related usage attributes.")]
+    public sealed class EquipmentType : AuditableEntity, IEquatable<EquipmentType>
     {
         /// <summary>
         /// Equipment Type Database Model Constructor (required by entity framework)
@@ -49,14 +49,14 @@ namespace HETSAPI.Models
         /// A system-generated unique identifier for an EquipmentName
         /// </summary>
         /// <value>A system-generated unique identifier for an EquipmentName</value>
-        [MetaDataExtension (Description = "A system-generated unique identifier for an EquipmentName")]
+        [MetaData (Description = "A system-generated unique identifier for an EquipmentName")]
         public int Id { get; set; }
         
         /// <summary>
         /// The generic name of an equipment type - e.g. Dump Truck, Excavator and so on.
         /// </summary>
         /// <value>The generic name of an equipment type - e.g. Dump Truck, Excavator and so on.</value>
-        [MetaDataExtension (Description = "The generic name of an equipment type - e.g. Dump Truck, Excavator and so on.")]
+        [MetaData (Description = "The generic name of an equipment type - e.g. Dump Truck, Excavator and so on.")]
         [MaxLength(50)]        
         public string Name { get; set; }
         
@@ -64,49 +64,49 @@ namespace HETSAPI.Models
         /// True if the Equipment Type is a Dump Truck. Equipment of this type will have a related Dump Truck record containing dump truck-related attributes.
         /// </summary>
         /// <value>True if the Equipment Type is a Dump Truck. Equipment of this type will have a related Dump Truck record containing dump truck-related attributes.</value>
-        [MetaDataExtension (Description = "True if the Equipment Type is a Dump Truck. Equipment of this type will have a related Dump Truck record containing dump truck-related attributes.")]
+        [MetaData (Description = "True if the Equipment Type is a Dump Truck. Equipment of this type will have a related Dump Truck record containing dump truck-related attributes.")]
         public bool IsDumpTruck { get; set; }
         
         /// <summary>
         /// The section of the Blue Book that is related to equipment types of this name.
         /// </summary>
         /// <value>The section of the Blue Book that is related to equipment types of this name.</value>
-        [MetaDataExtension (Description = "The section of the Blue Book that is related to equipment types of this name.")]
+        [MetaData (Description = "The section of the Blue Book that is related to equipment types of this name.")]
         public float? BlueBookSection { get; set; }
         
         /// <summary>
         /// The number of blocks defined for the equipment of this name and Blue Book section. In general Dump Truck-class equipment types have 3 blocks, while non-Dump Truck equipment types have 2 blocks.
         /// </summary>
         /// <value>The number of blocks defined for the equipment of this name and Blue Book section. In general Dump Truck-class equipment types have 3 blocks, while non-Dump Truck equipment types have 2 blocks.</value>
-        [MetaDataExtension (Description = "The number of blocks defined for the equipment of this name and Blue Book section. In general Dump Truck-class equipment types have 3 blocks, while non-Dump Truck equipment types have 2 blocks.")]
+        [MetaData (Description = "The number of blocks defined for the equipment of this name and Blue Book section. In general Dump Truck-class equipment types have 3 blocks, while non-Dump Truck equipment types have 2 blocks.")]
         public int NumberOfBlocks { get; set; }
         
         /// <summary>
         /// The rate number in the Blue Book that is related to equipment types of this name.
         /// </summary>
         /// <value>The rate number in the Blue Book that is related to equipment types of this name.</value>
-        [MetaDataExtension (Description = "The rate number in the Blue Book that is related to equipment types of this name.")]
+        [MetaData (Description = "The rate number in the Blue Book that is related to equipment types of this name.")]
         public float? BlueBookRateNumber { get; set; }
         
         /// <summary>
         /// The maximum number of hours per year that equipment types of this name&#x2F;Blue Book section can work in a year
         /// </summary>
         /// <value>The maximum number of hours per year that equipment types of this name&#x2F;Blue Book section can work in a year</value>
-        [MetaDataExtension (Description = "The maximum number of hours per year that equipment types of this name&#x2F;Blue Book section can work in a year")]
+        [MetaData (Description = "The maximum number of hours per year that equipment types of this name&#x2F;Blue Book section can work in a year")]
         public float? MaximumHours { get; set; }
         
         /// <summary>
         /// The number of extended hours per year that equipment types of this name&#x2F;Blue Book section can work.
         /// </summary>
         /// <value>The number of extended hours per year that equipment types of this name&#x2F;Blue Book section can work.</value>
-        [MetaDataExtension (Description = "The number of extended hours per year that equipment types of this name&#x2F;Blue Book section can work.")]
+        [MetaData (Description = "The number of extended hours per year that equipment types of this name&#x2F;Blue Book section can work.")]
         public float? ExtendHours { get; set; }
         
         /// <summary>
         /// The number of substitute hours per year that equipment types of this name&#x2F;Blue Book section can work.
         /// </summary>
         /// <value>The number of substitute hours per year that equipment types of this name&#x2F;Blue Book section can work.</value>
-        [MetaDataExtension (Description = "The number of substitute hours per year that equipment types of this name&#x2F;Blue Book section can work.")]
+        [MetaData (Description = "The number of substitute hours per year that equipment types of this name&#x2F;Blue Book section can work.")]
         public float? MaxHoursSub { get; set; }
         
         /// <summary>
@@ -148,11 +148,9 @@ namespace HETSAPI.Models
         /// <returns>Boolean</returns>
         public override bool Equals(object obj)
         {
-            if (ReferenceEquals(null, obj)) { return false; }
+            if (obj is null) { return false; }
             if (ReferenceEquals(this, obj)) { return true; }
-            if (obj.GetType() != GetType()) { return false; }
-
-            return Equals((EquipmentType)obj);
+            return obj.GetType() == GetType() && Equals((EquipmentType)obj);
         }
 
         /// <summary>
@@ -162,7 +160,7 @@ namespace HETSAPI.Models
         /// <returns>Boolean</returns>
         public bool Equals(EquipmentType other)
         {
-            if (ReferenceEquals(null, other)) { return false; }
+            if (other is null) { return false; }
             if (ReferenceEquals(this, other)) { return true; }
 
             return                 

@@ -93,10 +93,10 @@ namespace HETSAPI.Models
             }
 
             //  get the table description
-            object[] tableExtAttrs = tableType.GetTypeInfo().GetCustomAttributes(typeof(MetaDataExtension), false);
+            object[] tableExtAttrs = tableType.GetTypeInfo().GetCustomAttributes(typeof(MetaDataAttribute), false);
             if (tableExtAttrs.Length > 0)
             {
-                SetTableDescription(tableName, ((MetaDataExtension)tableExtAttrs[0]).Description);
+                SetTableDescription(tableName, ((MetaDataAttribute)tableExtAttrs[0]).Description);
 
             }
 
@@ -106,10 +106,10 @@ namespace HETSAPI.Models
                 if (entityProperty.PropertyInfo != null)
                 {
                     // get the custom attributes for this field.                
-                    object[] attrs = entityProperty.PropertyInfo.GetCustomAttributes(typeof(MetaDataExtension), false);
+                    object[] attrs = entityProperty.PropertyInfo.GetCustomAttributes(typeof(MetaDataAttribute), false);
                     if (attrs.Length > 0)
                     {
-                        SetColumnDescription(tableName, entityProperty.Relational().ColumnName, ((MetaDataExtension)attrs[0]).Description);
+                        SetColumnDescription(tableName, entityProperty.Relational().ColumnName, ((MetaDataAttribute)attrs[0]).Description);
                     }
                 }
             }

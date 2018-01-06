@@ -6,7 +6,7 @@ namespace HETSAPI.Models
     /// <summary>
     /// Permission Database Model Extension
     /// </summary>
-    public partial class Permission : IEquatable<Permission>
+    public sealed partial class Permission : IEquatable<Permission>
     {
         /// <summary>
         /// Login Permission

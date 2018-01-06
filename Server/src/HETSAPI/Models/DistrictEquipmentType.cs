@@ -9,8 +9,8 @@ namespace HETSAPI.Models
     /// <summary>
     /// District Equipment Type Database Model
     /// </summary>
-    [MetaDataExtension (Description = "An Equipment Type defined at the District level. Links to a provincial Equipment Type for the name of the equipment but supports the District HETS Clerk setting a local name for the Equipment Type. Within a given District, the same provincial Equipment Type might be reused multiple times in, for example, separate sizes (small, medium, large). This enables local areas with large number of the same Equipment Type to have multiple lists.")]
-    public partial class DistrictEquipmentType : AuditableEntity, IEquatable<DistrictEquipmentType>
+    [MetaData (Description = "An Equipment Type defined at the District level. Links to a provincial Equipment Type for the name of the equipment but supports the District HETS Clerk setting a local name for the Equipment Type. Within a given District, the same provincial Equipment Type might be reused multiple times in, for example, separate sizes (small, medium, large). This enables local areas with large number of the same Equipment Type to have multiple lists.")]
+    public sealed partial class DistrictEquipmentType : AuditableEntity, IEquatable<DistrictEquipmentType>
     {
         /// <summary>
         /// District Equipment Type Database Model Constructor (required by entity framework)
@@ -39,7 +39,7 @@ namespace HETSAPI.Models
         /// A system-generated unique identifier for an EquipmentType
         /// </summary>
         /// <value>A system-generated unique identifier for an EquipmentType</value>
-        [MetaDataExtension (Description = "A system-generated unique identifier for an EquipmentType")]
+        [MetaData (Description = "A system-generated unique identifier for an EquipmentType")]
         public int Id { get; set; }
 
         /// <summary>
@@ -70,7 +70,7 @@ namespace HETSAPI.Models
         /// The name of this equipment type used at the District Level. This could be just the equipmentName if this is the only EquipmentType defined in this District, or could be a name that separates out multiple EquipmentTypes used within a District to, for instance, separate out the same EquipmentName by size.
         /// </summary>
         /// <value>The name of this equipment type used at the District Level. This could be just the equipmentName if this is the only EquipmentType defined in this District, or could be a name that separates out multiple EquipmentTypes used within a District to, for instance, separate out the same EquipmentName by size.</value>
-        [MetaDataExtension (Description = "The name of this equipment type used at the District Level. This could be just the equipmentName if this is the only EquipmentType defined in this District, or could be a name that separates out multiple EquipmentTypes used within a District to, for instance, separate out the same EquipmentName by size.")]
+        [MetaData (Description = "The name of this equipment type used at the District Level. This could be just the equipmentName if this is the only EquipmentType defined in this District, or could be a name that separates out multiple EquipmentTypes used within a District to, for instance, separate out the same EquipmentName by size.")]
         [MaxLength(255)]
         public string DistrictEquipmentName { get; set; }
 
@@ -108,11 +108,9 @@ namespace HETSAPI.Models
         /// <returns>Boolean</returns>
         public override bool Equals(object obj)
         {
-            if (ReferenceEquals(null, obj)) { return false; }
+            if (obj is null) { return false; }
             if (ReferenceEquals(this, obj)) { return true; }
-            if (obj.GetType() != GetType()) { return false; }
-
-            return Equals((DistrictEquipmentType)obj);
+            return obj.GetType() == GetType() && Equals((DistrictEquipmentType)obj);
         }
 
         /// <summary>
@@ -122,7 +120,7 @@ namespace HETSAPI.Models
         /// <returns>Boolean</returns>
         public bool Equals(DistrictEquipmentType other)
         {
-            if (ReferenceEquals(null, other)) { return false; }
+            if (other is null) { return false; }
             if (ReferenceEquals(this, other)) { return true; }
 
             return

@@ -7,13 +7,14 @@ using System.Linq;
 using System.Xml.Serialization;
 using Hangfire.Console.Progress;
 using HETSAPI.ImportModels;
+using DumpTruck = HETSAPI.ImportModels.DumpTruck;
 
 namespace HETSAPI.Import
 {
     /// <summary>
     /// Import Dump Truck Records
     /// </summary>
-    public class ImportDumpTruck
+    public static class ImportDumpTruck
     {
         const string OldTable = "Dump_Truck";
         const string NewTable = "Dump_Truck";
@@ -52,9 +53,9 @@ namespace HETSAPI.Import
                 progress.SetValue(0);
 
                 // create serializer and serialize xml file
-                XmlSerializer ser = new XmlSerializer(typeof(Dump_Truck[]), new XmlRootAttribute(rootAttr));
+                XmlSerializer ser = new XmlSerializer(typeof(DumpTruck[]), new XmlRootAttribute(rootAttr));
                 MemoryStream memoryStream = ImportUtility.MemoryStreamGenerator(XmlFileName, OldTable, fileLocation, rootAttr);
-                Dump_Truck[] legacyItems = (Dump_Truck[])ser.Deserialize(memoryStream);
+                DumpTruck[] legacyItems = (DumpTruck[])ser.Deserialize(memoryStream);
 
                 int ii = startPoint;
 
@@ -64,7 +65,7 @@ namespace HETSAPI.Import
                     legacyItems = legacyItems.Skip(ii).ToArray();
                 }
 
-                foreach (Dump_Truck item in legacyItems.WithProgress(progress))
+                foreach (DumpTruck item in legacyItems.WithProgress(progress))
                 {
                     // see if we have this one already
                     ImportMap importMap = dbContext.ImportMaps.FirstOrDefault(x => x.OldTable == OldTable && x.OldKey == item.Equip_Id.ToString());
@@ -74,14 +75,14 @@ namespace HETSAPI.Import
                     {
                         if (item.Equip_Id > 0)
                         {
-                            DumpTruck instance = null;
+                            Models.DumpTruck instance = null;
                             CopyToInstance(dbContext, item, ref instance, systemId);
                             ImportUtility.AddImportMap(dbContext, OldTable, item.Equip_Id.ToString(), NewTable, instance.Id);
                         }
                     }
                     else // update
                     {
-                        DumpTruck instance = dbContext.DumpTrucks.FirstOrDefault(x => x.Id == importMap.NewKey);
+                        Models.DumpTruck instance = dbContext.DumpTrucks.FirstOrDefault(x => x.Id == importMap.NewKey);
 
                         // record was deleted
                         if (instance == null) 
@@ -142,7 +143,7 @@ namespace HETSAPI.Import
         /// <param name="oldObject"></param>
         /// <param name="instance"></param>
         /// <param name="systemId"></param>
-        private static void CopyToInstance(DbAppContext dbContext, Dump_Truck oldObject, ref DumpTruck instance, string systemId)
+        private static void CopyToInstance(DbAppContext dbContext, DumpTruck oldObject, ref Models.DumpTruck instance, string systemId)
         {
             if (oldObject.Equip_Id <= 0)
                 return;
@@ -153,7 +154,7 @@ namespace HETSAPI.Import
 
             if (instance == null)
             {
-                instance = new DumpTruck {Id = oldObject.Equip_Id};
+                instance = new Models.DumpTruck {Id = oldObject.Equip_Id};
 
                 if (oldObject.Single_Axle != null)
                 {

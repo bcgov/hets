@@ -13,7 +13,7 @@ namespace HETSAPI.Import
     /// <summary>
     /// Import Ptoject Records
     /// </summary>
-    public class ImportProject
+    public static class ImportProject
     {
         const string OldTable = "Project";
         const string NewTable = "HET_PROJECT";

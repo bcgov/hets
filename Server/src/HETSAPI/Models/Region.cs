@@ -8,8 +8,8 @@ namespace HETSAPI.Models
     /// <summary>
     /// Region Database Model
     /// </summary>
-    [MetaDataExtension (Description = "The Ministry of Transportion and Infrastructure REGION.")]
-    public class Region : AuditableEntity, IEquatable<Region>
+    [MetaData (Description = "The Ministry of Transportion and Infrastructure REGION.")]
+    public sealed class Region : AuditableEntity, IEquatable<Region>
     {
         /// <summary>
         /// REgion Database Model Constructor (required by entity framework)
@@ -42,21 +42,21 @@ namespace HETSAPI.Models
         /// A system-generated unique identifier for a Region
         /// </summary>
         /// <value>A system-generated unique identifier for a Region</value>
-        [MetaDataExtension (Description = "A system-generated unique identifier for a Region")]
+        [MetaData (Description = "A system-generated unique identifier for a Region")]
         public int Id { get; set; }
         
         /// <summary>
         /// A system generated unique identifier. NOT GENERATED IN THIS SYSTEM.
         /// </summary>
         /// <value>A system generated unique identifier. NOT GENERATED IN THIS SYSTEM.</value>
-        [MetaDataExtension (Description = "A system generated unique identifier. NOT GENERATED IN THIS SYSTEM.")]
+        [MetaData (Description = "A system generated unique identifier. NOT GENERATED IN THIS SYSTEM.")]
         public int MinistryRegionID { get; set; }
         
         /// <summary>
         /// The name of a Minsitry Region.
         /// </summary>
         /// <value>The name of a Minsitry Region.</value>
-        [MetaDataExtension (Description = "The name of a Minsitry Region.")]
+        [MetaData (Description = "The name of a Minsitry Region.")]
         [MaxLength(150)]        
         public string Name { get; set; }
         
@@ -64,21 +64,21 @@ namespace HETSAPI.Models
         /// The DATE the business information came into effect. - NOT CURRENTLY ENFORCED IN THIS SYSTEM
         /// </summary>
         /// <value>The DATE the business information came into effect. - NOT CURRENTLY ENFORCED IN THIS SYSTEM</value>
-        [MetaDataExtension (Description = "The DATE the business information came into effect. - NOT CURRENTLY ENFORCED IN THIS SYSTEM")]
+        [MetaData (Description = "The DATE the business information came into effect. - NOT CURRENTLY ENFORCED IN THIS SYSTEM")]
         public DateTime StartDate { get; set; }
         
         /// <summary>
         /// A code that uniquely defines a Region.
         /// </summary>
         /// <value>A code that uniquely defines a Region.</value>
-        [MetaDataExtension (Description = "A code that uniquely defines a Region.")]
+        [MetaData (Description = "A code that uniquely defines a Region.")]
         public int? RegionNumber { get; set; }
         
         /// <summary>
         /// The DATE the business information ceased to be in effect. - NOT CURRENTLY ENFORCED IN THIS SYSTEM
         /// </summary>
         /// <value>The DATE the business information ceased to be in effect. - NOT CURRENTLY ENFORCED IN THIS SYSTEM</value>
-        [MetaDataExtension (Description = "The DATE the business information ceased to be in effect. - NOT CURRENTLY ENFORCED IN THIS SYSTEM")]
+        [MetaData (Description = "The DATE the business information ceased to be in effect. - NOT CURRENTLY ENFORCED IN THIS SYSTEM")]
         public DateTime? EndDate { get; set; }
         
         /// <summary>
@@ -117,11 +117,9 @@ namespace HETSAPI.Models
         /// <returns>Boolean</returns>
         public override bool Equals(object obj)
         {
-            if (ReferenceEquals(null, obj)) { return false; }
+            if (obj is null) { return false; }
             if (ReferenceEquals(this, obj)) { return true; }
-            if (obj.GetType() != GetType()) { return false; }
-
-            return Equals((Region)obj);
+            return obj.GetType() == GetType() && Equals((Region)obj);
         }
 
         /// <summary>
@@ -131,7 +129,7 @@ namespace HETSAPI.Models
         /// <returns>Boolean</returns>
         public bool Equals(Region other)
         {
-            if (ReferenceEquals(null, other)) { return false; }
+            if (other is null) { return false; }
             if (ReferenceEquals(this, other)) { return true; }
 
             return                 

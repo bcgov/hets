@@ -9,70 +9,66 @@ namespace HETSAPI.Models
     /// <summary>
     /// District Database Model
     /// </summary>
-    [MetaDataExtension (Description = "The Ministry of Transportion and Infrastructure DISTRICT")]
-    public class District : AuditableEntity, IEquatable<District>
+    [MetaData (Description = "The Ministry of Transportion and Infrastructure DISTRICT")]
+    public sealed class District : AuditableEntity, IEquatable<District>
     {
         /// <summary>
         /// District Database Model Constructor (required by entity framework)
         /// </summary>
         public District()
         {
-            this.Id = 0;
+            Id = 0;
         }
 
         /// <summary>
         /// Initializes a new instance of the <see cref="District" /> class.
         /// </summary>
-        /// <param name="Id">A system-generated unique identifier for a District (required).</param>
-        /// <param name="MinistryDistrictID">A system generated unique identifier. NOT GENERATED IN THIS SYSTEM. (required).</param>
-        /// <param name="Name">The Name of a Ministry District. (required).</param>
-        /// <param name="Region">The region in which the District is found. (required).</param>
-        /// <param name="StartDate">The DATE the business information came into effect. - NOT CURRENTLY ENFORCED IN THIS SYSTEM (required).</param>
-        /// <param name="DistrictNumber">A number that uniquely defines a Ministry District..</param>
-        /// <param name="EndDate">The DATE the business information ceased to be in effect. - NOT CURRENTLY ENFORCED IN THIS SYSTEM.</param>
-        public District(int Id, int MinistryDistrictID, string Name, Region Region, DateTime StartDate, int? DistrictNumber = null, DateTime? EndDate = null)
+        /// <param name="id">A system-generated unique identifier for a District (required).</param>
+        /// <param name="ministryDistrictId">A system generated unique identifier. NOT GENERATED IN THIS SYSTEM. (required).</param>
+        /// <param name="name">The Name of a Ministry District. (required).</param>
+        /// <param name="region">The region in which the District is found. (required).</param>
+        /// <param name="startDate">The DATE the business information came into effect. - NOT CURRENTLY ENFORCED IN THIS SYSTEM (required).</param>
+        /// <param name="districtNumber">A number that uniquely defines a Ministry District..</param>
+        /// <param name="endDate">The DATE the business information ceased to be in effect. - NOT CURRENTLY ENFORCED IN THIS SYSTEM.</param>
+        public District(int id, int ministryDistrictId, string name, Region region, DateTime startDate, 
+            int? districtNumber = null, DateTime? endDate = null)
         {   
-            this.Id = Id;
-            this.MinistryDistrictID = MinistryDistrictID;
-            this.Name = Name;
-            this.Region = Region;
-            this.StartDate = StartDate;
-
-
-
-
-            this.DistrictNumber = DistrictNumber;
-            this.EndDate = EndDate;
+            Id = id;
+            MinistryDistrictID = ministryDistrictId;
+            Name = name;
+            Region = region;
+            StartDate = startDate;
+            DistrictNumber = districtNumber;
+            EndDate = endDate;
         }
 
         /// <summary>
         /// A system-generated unique identifier for a District
         /// </summary>
         /// <value>A system-generated unique identifier for a District</value>
-        [MetaDataExtension (Description = "A system-generated unique identifier for a District")]
+        [MetaData (Description = "A system-generated unique identifier for a District")]
         public int Id { get; set; }
         
         /// <summary>
         /// A system generated unique identifier. NOT GENERATED IN THIS SYSTEM.
         /// </summary>
         /// <value>A system generated unique identifier. NOT GENERATED IN THIS SYSTEM.</value>
-        [MetaDataExtension (Description = "A system generated unique identifier. NOT GENERATED IN THIS SYSTEM.")]
+        [MetaData (Description = "A system generated unique identifier. NOT GENERATED IN THIS SYSTEM.")]
         public int MinistryDistrictID { get; set; }
         
         /// <summary>
         /// The Name of a Ministry District.
         /// </summary>
         /// <value>The Name of a Ministry District.</value>
-        [MetaDataExtension (Description = "The Name of a Ministry District.")]
-        [MaxLength(150)]
-        
+        [MetaData (Description = "The Name of a Ministry District.")]
+        [MaxLength(150)]        
         public string Name { get; set; }
         
         /// <summary>
         /// The region in which the District is found.
         /// </summary>
         /// <value>The region in which the District is found.</value>
-        [MetaDataExtension (Description = "The region in which the District is found.")]
+        [MetaData (Description = "The region in which the District is found.")]
         public Region Region { get; set; }
         
         /// <summary>
@@ -80,28 +76,28 @@ namespace HETSAPI.Models
         /// </summary>   
         [ForeignKey("Region")]
 		[JsonIgnore]
-		[MetaDataExtension (Description = "The region in which the District is found.")]
+		[MetaData (Description = "The region in which the District is found.")]
         public int? RegionId { get; set; }
         
         /// <summary>
         /// The DATE the business information came into effect. - NOT CURRENTLY ENFORCED IN THIS SYSTEM
         /// </summary>
         /// <value>The DATE the business information came into effect. - NOT CURRENTLY ENFORCED IN THIS SYSTEM</value>
-        [MetaDataExtension (Description = "The DATE the business information came into effect. - NOT CURRENTLY ENFORCED IN THIS SYSTEM")]
+        [MetaData (Description = "The DATE the business information came into effect. - NOT CURRENTLY ENFORCED IN THIS SYSTEM")]
         public DateTime StartDate { get; set; }
         
         /// <summary>
         /// A number that uniquely defines a Ministry District.
         /// </summary>
         /// <value>A number that uniquely defines a Ministry District.</value>
-        [MetaDataExtension (Description = "A number that uniquely defines a Ministry District.")]
+        [MetaData (Description = "A number that uniquely defines a Ministry District.")]
         public int? DistrictNumber { get; set; }
         
         /// <summary>
         /// The DATE the business information ceased to be in effect. - NOT CURRENTLY ENFORCED IN THIS SYSTEM
         /// </summary>
         /// <value>The DATE the business information ceased to be in effect. - NOT CURRENTLY ENFORCED IN THIS SYSTEM</value>
-        [MetaDataExtension (Description = "The DATE the business information ceased to be in effect. - NOT CURRENTLY ENFORCED IN THIS SYSTEM")]
+        [MetaData (Description = "The DATE the business information ceased to be in effect. - NOT CURRENTLY ENFORCED IN THIS SYSTEM")]
         public DateTime? EndDate { get; set; }
         
         /// <summary>
@@ -111,6 +107,7 @@ namespace HETSAPI.Models
         public override string ToString()
         {
             var sb = new StringBuilder();
+
             sb.Append("class District {\n");
             sb.Append("  Id: ").Append(Id).Append("\n");
             sb.Append("  MinistryDistrictID: ").Append(MinistryDistrictID).Append("\n");
@@ -120,6 +117,7 @@ namespace HETSAPI.Models
             sb.Append("  DistrictNumber: ").Append(DistrictNumber).Append("\n");
             sb.Append("  EndDate: ").Append(EndDate).Append("\n");
             sb.Append("}\n");
+
             return sb.ToString();
         }
 
@@ -139,10 +137,9 @@ namespace HETSAPI.Models
         /// <returns>Boolean</returns>
         public override bool Equals(object obj)
         {
-            if (ReferenceEquals(null, obj)) { return false; }
+            if (obj is null) { return false; }
             if (ReferenceEquals(this, obj)) { return true; }
-            if (obj.GetType() != GetType()) { return false; }
-            return Equals((District)obj);
+            return obj.GetType() == GetType() && Equals((District)obj);
         }
 
         /// <summary>
@@ -152,43 +149,41 @@ namespace HETSAPI.Models
         /// <returns>Boolean</returns>
         public bool Equals(District other)
         {
-
-            if (ReferenceEquals(null, other)) { return false; }
+            if (other is null) { return false; }
             if (ReferenceEquals(this, other)) { return true; }
 
             return                 
                 (
-                    this.Id == other.Id ||
-                    this.Id.Equals(other.Id)
+                    Id == other.Id ||
+                    Id.Equals(other.Id)
                 ) &&                 
                 (
-                    this.MinistryDistrictID == other.MinistryDistrictID ||
-                    this.MinistryDistrictID.Equals(other.MinistryDistrictID)
+                    MinistryDistrictID == other.MinistryDistrictID ||
+                    MinistryDistrictID.Equals(other.MinistryDistrictID)
                 ) &&                 
                 (
-                    this.Name == other.Name ||
-                    this.Name != null &&
-                    this.Name.Equals(other.Name)
+                    Name == other.Name ||
+                    Name != null &&
+                    Name.Equals(other.Name)
                 ) &&                 
                 (
-                    this.Region == other.Region ||
-                    this.Region != null &&
-                    this.Region.Equals(other.Region)
+                    Region == other.Region ||
+                    Region != null &&
+                    Region.Equals(other.Region)
                 ) &&                 
                 (
-                    this.StartDate == other.StartDate ||
-                    this.StartDate != null &&
-                    this.StartDate.Equals(other.StartDate)
+                    StartDate == other.StartDate ||
+                    StartDate.Equals(other.StartDate)
                 ) &&                 
                 (
-                    this.DistrictNumber == other.DistrictNumber ||
-                    this.DistrictNumber != null &&
-                    this.DistrictNumber.Equals(other.DistrictNumber)
+                    DistrictNumber == other.DistrictNumber ||
+                    DistrictNumber != null &&
+                    DistrictNumber.Equals(other.DistrictNumber)
                 ) &&                 
                 (
-                    this.EndDate == other.EndDate ||
-                    this.EndDate != null &&
-                    this.EndDate.Equals(other.EndDate)
+                    EndDate == other.EndDate ||
+                    EndDate != null &&
+                    EndDate.Equals(other.EndDate)
                 );
         }
 
@@ -202,28 +197,31 @@ namespace HETSAPI.Models
             unchecked // Overflow is fine, just wrap
             {
                 int hash = 41;
-                // Suitable nullity checks
-                                   
-                hash = hash * 59 + this.Id.GetHashCode();                                   
-                hash = hash * 59 + this.MinistryDistrictID.GetHashCode();                if (this.Name != null)
+
+                // Suitable nullity checks                                   
+                hash = hash * 59 + Id.GetHashCode();                                   
+                hash = hash * 59 + MinistryDistrictID.GetHashCode();
+
+                if (Name != null)
                 {
-                    hash = hash * 59 + this.Name.GetHashCode();
+                    hash = hash * 59 + Name.GetHashCode();
                 }                
                                    
-                if (this.Region != null)
+                if (Region != null)
                 {
-                    hash = hash * 59 + this.Region.GetHashCode();
-                }                   
-                if (this.StartDate != null)
+                    hash = hash * 59 + Region.GetHashCode();
+                }          
+                
+                hash = hash * 59 + StartDate.GetHashCode();
+                
+                if (DistrictNumber != null)
                 {
-                    hash = hash * 59 + this.StartDate.GetHashCode();
-                }                if (this.DistrictNumber != null)
+                    hash = hash * 59 + DistrictNumber.GetHashCode();
+                }
+
+                if (EndDate != null)
                 {
-                    hash = hash * 59 + this.DistrictNumber.GetHashCode();
-                }                
-                                if (this.EndDate != null)
-                {
-                    hash = hash * 59 + this.EndDate.GetHashCode();
+                    hash = hash * 59 + EndDate.GetHashCode();
                 }                
                 
                 return hash;

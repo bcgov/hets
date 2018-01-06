@@ -5,7 +5,7 @@ namespace HETSAPI.ImportModels
     /// <summary>
     /// HETS City Import Mapping
     /// </summary>
-    public class HETS_City
+    public class HetsCity
     {
         /// <summary>
         /// City Id

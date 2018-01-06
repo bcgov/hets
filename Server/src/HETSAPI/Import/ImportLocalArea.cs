@@ -7,13 +7,14 @@ using System.Xml.Serialization;
 using Hangfire.Console.Progress;
 using HETSAPI.ImportModels;
 using HETSAPI.Models;
+using ServiceArea = HETSAPI.Models.ServiceArea;
 
 namespace HETSAPI.Import
 {
     /// <summary>
     /// Import Local Area Records
     /// </summary>
-    public class ImportLocalArea
+    public static class ImportLocalArea
     {
         const string OldTable = "Area";
         const string NewTable = "LocalArea";

@@ -15,7 +15,7 @@ namespace HETSAPI.Import
     /// <summary>
     /// Import Rotation Records
     /// </summary>
-    public class ImportRotation
+    public static class ImportRotation
     {
         const string OldTable = "Rotation_Doc";
         const string NewTable = "HET_NOTE";
@@ -54,9 +54,9 @@ namespace HETSAPI.Import
                 progress.SetValue(0);
 
                 // create serializer and serialize xml file
-                XmlSerializer ser = new XmlSerializer(typeof(Rotation_Doc[]), new XmlRootAttribute(rootAttr));
+                XmlSerializer ser = new XmlSerializer(typeof(RotationDoc[]), new XmlRootAttribute(rootAttr));
                 MemoryStream memoryStream = ImportUtility.MemoryStreamGenerator(XmlFileName, OldTable, fileLocation, rootAttr);
-                Rotation_Doc[] legacyItems = (Rotation_Doc[])ser.Deserialize(memoryStream);
+                RotationDoc[] legacyItems = (RotationDoc[])ser.Deserialize(memoryStream);
 
                 //Use this list to save a trip to query database in each iteration
                 List<Equipment> equips = dbContext.Equipments
@@ -72,7 +72,7 @@ namespace HETSAPI.Import
                     legacyItems = legacyItems.Skip(ii).ToArray();
                 }
 
-                foreach (Rotation_Doc item in legacyItems.WithProgress(progress))
+                foreach (RotationDoc item in legacyItems.WithProgress(progress))
                 {
                     // see if we have this one already
                     string oldKey = item.Equip_Id + item.Note_Dt + item.Created_Dt;
@@ -148,7 +148,7 @@ namespace HETSAPI.Import
         /// <param name="oldObject"></param>
         /// <param name="instance"></param>
         /// <param name="equips"></param>
-        private static void CopyToInstance(DbAppContext dbContext, Rotation_Doc oldObject, ref Note instance, List<Equipment> equips)
+        private static void CopyToInstance(DbAppContext dbContext, RotationDoc oldObject, ref Note instance, List<Equipment> equips)
         {
             if (instance == null)
             {

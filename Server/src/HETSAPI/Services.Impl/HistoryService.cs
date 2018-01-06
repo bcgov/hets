@@ -102,36 +102,34 @@ namespace HETSAPI.Services.Impl
         /// 
         /// </summary>
         /// <param name="id">id of History to fetch</param>
-        /// <param name="body"></param>
+        /// <param name="item"></param>
         /// <response code="200">OK</response>
         /// <response code="404">History not found</response>
-        public virtual IActionResult HistoriesIdPutAsync(int id, History body )        
+        public virtual IActionResult HistoriesIdPutAsync(int id, History item)        
         {
             var exists = _context.Historys.Any(a => a.Id == id);
-            if (exists && id == body.Id)
+            if (exists && id == item.Id)
             {
-                _context.Historys.Update(body);               
+                _context.Historys.Update(item);    
+                
                 // Save the changes
                 _context.SaveChanges();            
-                return new ObjectResult(body);
+                return new ObjectResult(item);
             }
-            else
-            {
-                return new StatusCodeResult(404);
-            }
+
+            return new StatusCodeResult(404);
         }
+
         /// <summary>
         /// 
-        /// </summary>
-        
-        /// <param name="body"></param>
+        /// </summary>        
+        /// <param name="item"></param>
         /// <response code="201">History created</response>
-
-        public virtual IActionResult HistoriesPostAsync(History body)        
+        public virtual IActionResult HistoriesPostAsync(History item)        
         {
-            _context.Historys.Add(body);
+            _context.Historys.Add(item);
             _context.SaveChanges();
-            return new ObjectResult(body);
+            return new ObjectResult(item);
         }
     }
 }

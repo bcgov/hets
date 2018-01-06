@@ -6,13 +6,13 @@ using Newtonsoft.Json;
 namespace HETSAPI.ViewModels
 {
     /// <summary>
-    /// 
+    /// Role Permission View Model
     /// </summary>
     [DataContract]
-    public partial class RolePermissionViewModel : IEquatable<RolePermissionViewModel>
+    public sealed class RolePermissionViewModel : IEquatable<RolePermissionViewModel>
     {
         /// <summary>
-        /// Default constructor, required by entity framework
+        /// Role Permission View Model Constructor
         /// </summary>
         public RolePermissionViewModel()
         {
@@ -21,15 +21,14 @@ namespace HETSAPI.ViewModels
         /// <summary>
         /// Initializes a new instance of the <see cref="RolePermissionViewModel" /> class.
         /// </summary>
-        /// <param name="RoleId">RoleId (required).</param>
-        /// <param name="PermissionId">PermissionId (required).</param>
-        /// <param name="Id">Id.</param>
-        public RolePermissionViewModel(int RoleId, int PermissionId, int? Id = null)
+        /// <param name="roleId">RoleId (required).</param>
+        /// <param name="permissionId">PermissionId (required).</param>
+        /// <param name="id">Id.</param>
+        public RolePermissionViewModel(int roleId, int permissionId, int? id = null)
         {   
-            this.RoleId = RoleId;
-            this.PermissionId = PermissionId;
-
-            this.Id = Id;
+            RoleId = roleId;
+            PermissionId = permissionId;
+            Id = id;
         }
 
         /// <summary>
@@ -57,11 +56,13 @@ namespace HETSAPI.ViewModels
         public override string ToString()
         {
             var sb = new StringBuilder();
+
             sb.Append("class RolePermissionViewModel {\n");
             sb.Append("  RoleId: ").Append(RoleId).Append("\n");
             sb.Append("  PermissionId: ").Append(PermissionId).Append("\n");
             sb.Append("  Id: ").Append(Id).Append("\n");
             sb.Append("}\n");
+
             return sb.ToString();
         }
 
@@ -84,6 +85,7 @@ namespace HETSAPI.ViewModels
             if (ReferenceEquals(null, obj)) { return false; }
             if (ReferenceEquals(this, obj)) { return true; }
             if (obj.GetType() != GetType()) { return false; }
+
             return Equals((RolePermissionViewModel)obj);
         }
 
@@ -94,23 +96,22 @@ namespace HETSAPI.ViewModels
         /// <returns>Boolean</returns>
         public bool Equals(RolePermissionViewModel other)
         {
-
             if (ReferenceEquals(null, other)) { return false; }
             if (ReferenceEquals(this, other)) { return true; }
 
             return                 
                 (
-                    this.RoleId == other.RoleId ||
-                    this.RoleId.Equals(other.RoleId)
+                    RoleId == other.RoleId ||
+                    RoleId.Equals(other.RoleId)
                 ) &&                 
                 (
-                    this.PermissionId == other.PermissionId ||
-                    this.PermissionId.Equals(other.PermissionId)
+                    PermissionId == other.PermissionId ||
+                    PermissionId.Equals(other.PermissionId)
                 ) &&                 
                 (
-                    this.Id == other.Id ||
-                    this.Id != null &&
-                    this.Id.Equals(other.Id)
+                    Id == other.Id ||
+                    Id != null &&
+                    Id.Equals(other.Id)
                 );
         }
 
@@ -124,12 +125,14 @@ namespace HETSAPI.ViewModels
             unchecked // Overflow is fine, just wrap
             {
                 int hash = 41;
-                // Suitable nullity checks
-                                   
-                hash = hash * 59 + this.RoleId.GetHashCode();                                   
-                hash = hash * 59 + this.PermissionId.GetHashCode();                if (this.Id != null)
+
+                // Suitable nullity checks                                   
+                hash = hash * 59 + RoleId.GetHashCode();                                   
+                hash = hash * 59 + PermissionId.GetHashCode();
+
+                if (Id != null)
                 {
-                    hash = hash * 59 + this.Id.GetHashCode();
+                    hash = hash * 59 + Id.GetHashCode();
                 }                
                 
                 return hash;

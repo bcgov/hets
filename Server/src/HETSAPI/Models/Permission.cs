@@ -8,8 +8,8 @@ namespace HETSAPI.Models
     /// <summary>
     /// Permission Database Model
     /// </summary>
-    [MetaDataExtension (Description = "A named element of authorization defined in the code that triggers some behavior in the application. For example, a permission might allow users to see data or to have access to functionality not accessible to users without that permission. Permissions are created as needed to the application code and are added to the permissions table by data migrations executed at the time the software that uses the permission is deployed.")]
-    public partial class Permission : AuditableEntity, IEquatable<Permission>
+    [MetaData (Description = "A named element of authorization defined in the code that triggers some behavior in the application. For example, a permission might allow users to see data or to have access to functionality not accessible to users without that permission. Permissions are created as needed to the application code and are added to the permissions table by data migrations executed at the time the software that uses the permission is deployed.")]
+    public sealed partial class Permission : AuditableEntity, IEquatable<Permission>
     {
         /// <summary>
         /// Permission Database Model Constructor (required by entity framework)
@@ -38,14 +38,14 @@ namespace HETSAPI.Models
         /// A system-generated unique identifier for a Permission
         /// </summary>
         /// <value>A system-generated unique identifier for a Permission</value>
-        [MetaDataExtension (Description = "A system-generated unique identifier for a Permission")]
+        [MetaData (Description = "A system-generated unique identifier for a Permission")]
         public int Id { get; set; }
         
         /// <summary>
         /// The name of the permission referenced in the software of the application.
         /// </summary>
         /// <value>The name of the permission referenced in the software of the application.</value>
-        [MetaDataExtension (Description = "The name of the permission referenced in the software of the application.")]
+        [MetaData (Description = "The name of the permission referenced in the software of the application.")]
         [MaxLength(50)]        
         public string Code { get; set; }
         
@@ -53,7 +53,7 @@ namespace HETSAPI.Models
         /// The &#39;user friendly&#39; name of the permission exposed to the user selecting the permissions to be included in a Role.
         /// </summary>
         /// <value>The &#39;user friendly&#39; name of the permission exposed to the user selecting the permissions to be included in a Role.</value>
-        [MetaDataExtension (Description = "The &#39;user friendly&#39; name of the permission exposed to the user selecting the permissions to be included in a Role.")]
+        [MetaData (Description = "The &#39;user friendly&#39; name of the permission exposed to the user selecting the permissions to be included in a Role.")]
         [MaxLength(150)]        
         public string Name { get; set; }
         
@@ -61,7 +61,7 @@ namespace HETSAPI.Models
         /// A description of the purpose of the permission and exposed to the user selecting the permissions to be included in a Role.
         /// </summary>
         /// <value>A description of the purpose of the permission and exposed to the user selecting the permissions to be included in a Role.</value>
-        [MetaDataExtension (Description = "A description of the purpose of the permission and exposed to the user selecting the permissions to be included in a Role.")]
+        [MetaData (Description = "A description of the purpose of the permission and exposed to the user selecting the permissions to be included in a Role.")]
         [MaxLength(2048)]        
         public string Description { get; set; }
         
@@ -99,11 +99,9 @@ namespace HETSAPI.Models
         /// <returns>Boolean</returns>
         public override bool Equals(object obj)
         {
-            if (ReferenceEquals(null, obj)) { return false; }
+            if (obj is null) { return false; }
             if (ReferenceEquals(this, obj)) { return true; }
-            if (obj.GetType() != GetType()) { return false; }
-
-            return Equals((Permission)obj);
+            return obj.GetType() == GetType() && Equals((Permission)obj);
         }
 
         /// <summary>
@@ -113,7 +111,7 @@ namespace HETSAPI.Models
         /// <returns>Boolean</returns>
         public bool Equals(Permission other)
         {
-            if (ReferenceEquals(null, other)) { return false; }
+            if (other is null) { return false; }
             if (ReferenceEquals(this, other)) { return true; }
 
             return                 

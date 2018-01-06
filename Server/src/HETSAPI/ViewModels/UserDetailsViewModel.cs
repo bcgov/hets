@@ -8,13 +8,13 @@ using Newtonsoft.Json;
 namespace HETSAPI.ViewModels
 {
     /// <summary>
-    /// 
+    /// User Detail View Model
     /// </summary>
     [DataContract]
-    public partial class UserDetailsViewModel : IEquatable<UserDetailsViewModel>
+    public sealed class UserDetailsViewModel : IEquatable<UserDetailsViewModel>
     {
         /// <summary>
-        /// Default constructor, required by entity framework
+        /// User Detail View Model Constructor
         /// </summary>
         public UserDetailsViewModel()
         {
@@ -23,23 +23,22 @@ namespace HETSAPI.ViewModels
         /// <summary>
         /// Initializes a new instance of the <see cref="UserDetailsViewModel" /> class.
         /// </summary>
-        /// <param name="Id">Id (required).</param>
-        /// <param name="Active">Active (required).</param>
-        /// <param name="GivenName">GivenName.</param>
-        /// <param name="Surname">Surname.</param>
-        /// <param name="Initials">Initials.</param>
-        /// <param name="Email">Email.</param>
-        /// <param name="Permissions">Permissions.</param>
-        public UserDetailsViewModel(int Id, bool Active, string GivenName = null, string Surname = null, string Initials = null, string Email = null, List<PermissionViewModel> Permissions = null)
+        /// <param name="id">Id (required).</param>
+        /// <param name="active">Active (required).</param>
+        /// <param name="givenName">GivenName.</param>
+        /// <param name="surname">Surname.</param>
+        /// <param name="initials">Initials.</param>
+        /// <param name="email">Email.</param>
+        /// <param name="permissions">Permissions.</param>
+        public UserDetailsViewModel(int id, bool active, string givenName = null, string surname = null, string initials = null, string email = null, List<PermissionViewModel> permissions = null)
         {   
-            this.Id = Id;
-            this.Active = Active;
-
-            this.GivenName = GivenName;
-            this.Surname = Surname;
-            this.Initials = Initials;
-            this.Email = Email;
-            this.Permissions = Permissions;
+            Id = id;
+            Active = active;
+            GivenName = givenName;
+            Surname = surname;
+            Initials = initials;
+            Email = email;
+            Permissions = permissions;
         }
 
         /// <summary>
@@ -91,6 +90,7 @@ namespace HETSAPI.ViewModels
         public override string ToString()
         {
             var sb = new StringBuilder();
+
             sb.Append("class UserDetailsViewModel {\n");
             sb.Append("  Id: ").Append(Id).Append("\n");
             sb.Append("  Active: ").Append(Active).Append("\n");
@@ -100,6 +100,7 @@ namespace HETSAPI.ViewModels
             sb.Append("  Email: ").Append(Email).Append("\n");
             sb.Append("  Permissions: ").Append(Permissions).Append("\n");
             sb.Append("}\n");
+
             return sb.ToString();
         }
 
@@ -122,6 +123,7 @@ namespace HETSAPI.ViewModels
             if (ReferenceEquals(null, obj)) { return false; }
             if (ReferenceEquals(this, obj)) { return true; }
             if (obj.GetType() != GetType()) { return false; }
+
             return Equals((UserDetailsViewModel)obj);
         }
 
@@ -132,43 +134,42 @@ namespace HETSAPI.ViewModels
         /// <returns>Boolean</returns>
         public bool Equals(UserDetailsViewModel other)
         {
-
             if (ReferenceEquals(null, other)) { return false; }
             if (ReferenceEquals(this, other)) { return true; }
 
             return                 
                 (
-                    this.Id == other.Id ||
-                    this.Id.Equals(other.Id)
+                    Id == other.Id ||
+                    Id.Equals(other.Id)
                 ) &&                 
                 (
-                    this.Active == other.Active ||
-                    this.Active.Equals(other.Active)
+                    Active == other.Active ||
+                    Active.Equals(other.Active)
                 ) &&                 
                 (
-                    this.GivenName == other.GivenName ||
-                    this.GivenName != null &&
-                    this.GivenName.Equals(other.GivenName)
+                    GivenName == other.GivenName ||
+                    GivenName != null &&
+                    GivenName.Equals(other.GivenName)
                 ) &&                 
                 (
-                    this.Surname == other.Surname ||
-                    this.Surname != null &&
-                    this.Surname.Equals(other.Surname)
+                    Surname == other.Surname ||
+                    Surname != null &&
+                    Surname.Equals(other.Surname)
                 ) &&                 
                 (
-                    this.Initials == other.Initials ||
-                    this.Initials != null &&
-                    this.Initials.Equals(other.Initials)
+                    Initials == other.Initials ||
+                    Initials != null &&
+                    Initials.Equals(other.Initials)
                 ) &&                 
                 (
-                    this.Email == other.Email ||
-                    this.Email != null &&
-                    this.Email.Equals(other.Email)
+                    Email == other.Email ||
+                    Email != null &&
+                    Email.Equals(other.Email)
                 ) && 
                 (
-                    this.Permissions == other.Permissions ||
-                    this.Permissions != null &&
-                    this.Permissions.SequenceEqual(other.Permissions)
+                    Permissions == other.Permissions ||
+                    Permissions != null &&
+                    Permissions.SequenceEqual(other.Permissions)
                 );
         }
 
@@ -182,31 +183,36 @@ namespace HETSAPI.ViewModels
             unchecked // Overflow is fine, just wrap
             {
                 int hash = 41;
-                // Suitable nullity checks
-                                   
-                hash = hash * 59 + this.Id.GetHashCode();                   
-                hash = hash * 59 + this.Active.GetHashCode();
-                                if (this.GivenName != null)
+
+                // Suitable nullity checks                                   
+                hash = hash * 59 + Id.GetHashCode();                   
+                hash = hash * 59 + Active.GetHashCode();
+
+                if (GivenName != null)
                 {
-                    hash = hash * 59 + this.GivenName.GetHashCode();
-                }                
-                                if (this.Surname != null)
-                {
-                    hash = hash * 59 + this.Surname.GetHashCode();
-                }                
-                                if (this.Initials != null)
-                {
-                    hash = hash * 59 + this.Initials.GetHashCode();
-                }                
-                                if (this.Email != null)
-                {
-                    hash = hash * 59 + this.Email.GetHashCode();
-                }                
-                                   
-                if (this.Permissions != null)
-                {
-                    hash = hash * 59 + this.Permissions.GetHashCode();
+                    hash = hash * 59 + GivenName.GetHashCode();
                 }
+
+                if (Surname != null)
+                {
+                    hash = hash * 59 + Surname.GetHashCode();
+                }
+
+                if (Initials != null)
+                {
+                    hash = hash * 59 + Initials.GetHashCode();
+                }
+
+                if (Email != null)
+                {
+                    hash = hash * 59 + Email.GetHashCode();
+                }                
+                                   
+                if (Permissions != null)
+                {
+                    hash = hash * 59 + Permissions.GetHashCode();
+                }
+
                 return hash;
             }
         }

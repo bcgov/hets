@@ -11,8 +11,8 @@ namespace HETSAPI.Models
     /// <summary>
     /// REntal Agreement Rate Database Model
     /// </summary>
-    [MetaDataExtension (Description = "The rate associated with an element of a rental agreement.")]
-    public class RentalAgreementRate : AuditableEntity, IEquatable<RentalAgreementRate>
+    [MetaData (Description = "The rate associated with an element of a rental agreement.")]
+    public sealed class RentalAgreementRate : AuditableEntity, IEquatable<RentalAgreementRate>
     {
         /// <summary>
         /// Default constructor, required by entity framework
@@ -53,14 +53,14 @@ namespace HETSAPI.Models
         /// A system-generated unique identifier for a RentalAgreementRate
         /// </summary>
         /// <value>A system-generated unique identifier for a RentalAgreementRate</value>
-        [MetaDataExtension (Description = "A system-generated unique identifier for a RentalAgreementRate")]
+        [MetaData (Description = "A system-generated unique identifier for a RentalAgreementRate")]
         public int Id { get; set; }
         
         /// <summary>
         /// A foreign key reference to the system-generated unique identifier for a Rental Agreement
         /// </summary>
         /// <value>A foreign key reference to the system-generated unique identifier for a Rental Agreement</value>
-        [MetaDataExtension (Description = "A foreign key reference to the system-generated unique identifier for a Rental Agreement")]
+        [MetaData (Description = "A foreign key reference to the system-generated unique identifier for a Rental Agreement")]
         public RentalAgreement RentalAgreement { get; set; }
         
         /// <summary>
@@ -68,14 +68,14 @@ namespace HETSAPI.Models
         /// </summary>   
         [ForeignKey("RentalAgreement")]
 		[JsonIgnore]
-		[MetaDataExtension (Description = "A foreign key reference to the system-generated unique identifier for a Rental Agreement")]
+		[MetaData (Description = "A foreign key reference to the system-generated unique identifier for a Rental Agreement")]
         public int? RentalAgreementId { get; set; }
         
         /// <summary>
         /// Name of the component for the Rental Agreement for which the attached rates apply.
         /// </summary>
         /// <value>Name of the component for the Rental Agreement for which the attached rates apply.</value>
-        [MetaDataExtension (Description = "Name of the component for the Rental Agreement for which the attached rates apply.")]
+        [MetaData (Description = "Name of the component for the Rental Agreement for which the attached rates apply.")]
         [MaxLength(150)]        
         public string ComponentName { get; set; }
         
@@ -83,28 +83,28 @@ namespace HETSAPI.Models
         /// True if this rate is for an attachment to the piece of equipment.
         /// </summary>
         /// <value>True if this rate is for an attachment to the piece of equipment.</value>
-        [MetaDataExtension (Description = "True if this rate is for an attachment to the piece of equipment.")]
+        [MetaData (Description = "True if this rate is for an attachment to the piece of equipment.")]
         public bool? IsAttachment { get; set; }
         
         /// <summary>
         /// The dollar rate associated with this component of the rental agreement.
         /// </summary>
         /// <value>The dollar rate associated with this component of the rental agreement.</value>
-        [MetaDataExtension (Description = "The dollar rate associated with this component of the rental agreement.")]
+        [MetaData (Description = "The dollar rate associated with this component of the rental agreement.")]
         public float? Rate { get; set; }
         
         /// <summary>
         /// For other than the actual piece of equipment, the percent of the equipment rate to use for this component of the rental agreement.
         /// </summary>
         /// <value>For other than the actual piece of equipment, the percent of the equipment rate to use for this component of the rental agreement.</value>
-        [MetaDataExtension (Description = "For other than the actual piece of equipment, the percent of the equipment rate to use for this component of the rental agreement.")]
+        [MetaData (Description = "For other than the actual piece of equipment, the percent of the equipment rate to use for this component of the rental agreement.")]
         public int? PercentOfEquipmentRate { get; set; }
         
         /// <summary>
         /// The period of the rental rate. The vast majority will be hourly, but the rate could apply across a different period, e.g. daily.
         /// </summary>
         /// <value>The period of the rental rate. The vast majority will be hourly, but the rate could apply across a different period, e.g. daily.</value>
-        [MetaDataExtension (Description = "The period of the rental rate. The vast majority will be hourly, but the rate could apply across a different period, e.g. daily.")]
+        [MetaData (Description = "The period of the rental rate. The vast majority will be hourly, but the rate could apply across a different period, e.g. daily.")]
         [MaxLength(50)]        
         public string RatePeriod { get; set; }
         
@@ -112,7 +112,7 @@ namespace HETSAPI.Models
         /// A comment about the rental of this component of the Rental Agreement.
         /// </summary>
         /// <value>A comment about the rental of this component of the Rental Agreement.</value>
-        [MetaDataExtension (Description = "A comment about the rental of this component of the Rental Agreement.")]
+        [MetaData (Description = "A comment about the rental of this component of the Rental Agreement.")]
         [MaxLength(2048)]        
         public string Comment { get; set; }
         
@@ -160,11 +160,9 @@ namespace HETSAPI.Models
         /// <returns>Boolean</returns>
         public override bool Equals(object obj)
         {
-            if (ReferenceEquals(null, obj)) { return false; }
+            if (obj is null) { return false; }
             if (ReferenceEquals(this, obj)) { return true; }
-            if (obj.GetType() != GetType()) { return false; }
-
-            return Equals((RentalAgreementRate)obj);
+            return obj.GetType() == GetType() && Equals((RentalAgreementRate)obj);
         }
 
         /// <summary>
@@ -174,7 +172,7 @@ namespace HETSAPI.Models
         /// <returns>Boolean</returns>
         public bool Equals(RentalAgreementRate other)
         {
-            if (ReferenceEquals(null, other)) { return false; }
+            if (other is null) { return false; }
             if (ReferenceEquals(this, other)) { return true; }
 
             return                 

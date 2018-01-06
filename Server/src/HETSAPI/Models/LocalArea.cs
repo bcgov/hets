@@ -9,8 +9,8 @@ namespace HETSAPI.Models
     /// <summary>
     /// Local Area Database Model
     /// </summary>
-    [MetaDataExtension (Description = "A HETS-application defined area that is within a Service Area.")]
-    public class LocalArea : AuditableEntity, IEquatable<LocalArea>
+    [MetaData (Description = "A HETS-application defined area that is within a Service Area.")]
+    public sealed class LocalArea : AuditableEntity, IEquatable<LocalArea>
     {
         /// <summary>
         /// Local Area Database Model Constructor (required by entity framework)
@@ -43,21 +43,21 @@ namespace HETSAPI.Models
         /// A system-generated unique identifier for a LocalArea
         /// </summary>
         /// <value>A system-generated unique identifier for a LocalArea</value>
-        [MetaDataExtension (Description = "A system-generated unique identifier for a LocalArea")]
+        [MetaData (Description = "A system-generated unique identifier for a LocalArea")]
         public int Id { get; set; }
         
         /// <summary>
         /// A system-generated, visible to the user number for the Local Area
         /// </summary>
         /// <value>A system-generated, visible to the user number for the Local Area</value>
-        [MetaDataExtension (Description = "A system-generated, visible to the user number for the Local Area")]
+        [MetaData (Description = "A system-generated, visible to the user number for the Local Area")]
         public int LocalAreaNumber { get; set; }
         
         /// <summary>
         /// The full name of the Local Area
         /// </summary>
         /// <value>The full name of the Local Area</value>
-        [MetaDataExtension (Description = "The full name of the Local Area")]
+        [MetaData (Description = "The full name of the Local Area")]
         [MaxLength(150)]        
         public string Name { get; set; }
         
@@ -65,7 +65,7 @@ namespace HETSAPI.Models
         /// The Service Area in which the Local Area is found.
         /// </summary>
         /// <value>The Service Area in which the Local Area is found.</value>
-        [MetaDataExtension (Description = "The Service Area in which the Local Area is found.")]
+        [MetaData (Description = "The Service Area in which the Local Area is found.")]
         public ServiceArea ServiceArea { get; set; }
         
         /// <summary>
@@ -73,21 +73,21 @@ namespace HETSAPI.Models
         /// </summary>   
         [ForeignKey("ServiceArea")]
 		[JsonIgnore]
-		[MetaDataExtension (Description = "The Service Area in which the Local Area is found.")]
+		[MetaData (Description = "The Service Area in which the Local Area is found.")]
         public int? ServiceAreaId { get; set; }
         
         /// <summary>
         /// The DATE the business information came into effect. - NOT CURRENTLY ENFORCED IN THIS SYSTEM
         /// </summary>
         /// <value>The DATE the business information came into effect. - NOT CURRENTLY ENFORCED IN THIS SYSTEM</value>
-        [MetaDataExtension (Description = "The DATE the business information came into effect. - NOT CURRENTLY ENFORCED IN THIS SYSTEM")]
+        [MetaData (Description = "The DATE the business information came into effect. - NOT CURRENTLY ENFORCED IN THIS SYSTEM")]
         public DateTime StartDate { get; set; }
         
         /// <summary>
         /// The DATE the business information ceased to be in effect. - NOT CURRENTLY ENFORCED IN THIS SYSTEM
         /// </summary>
         /// <value>The DATE the business information ceased to be in effect. - NOT CURRENTLY ENFORCED IN THIS SYSTEM</value>
-        [MetaDataExtension (Description = "The DATE the business information ceased to be in effect. - NOT CURRENTLY ENFORCED IN THIS SYSTEM")]
+        [MetaData (Description = "The DATE the business information ceased to be in effect. - NOT CURRENTLY ENFORCED IN THIS SYSTEM")]
         public DateTime? EndDate { get; set; }
         
         /// <summary>
@@ -126,11 +126,9 @@ namespace HETSAPI.Models
         /// <returns>Boolean</returns>
         public override bool Equals(object obj)
         {
-            if (ReferenceEquals(null, obj)) { return false; }
+            if (obj is null) { return false; }
             if (ReferenceEquals(this, obj)) { return true; }
-            if (obj.GetType() != GetType()) { return false; }
-
-            return Equals((LocalArea)obj);
+            return obj.GetType() == GetType() && Equals((LocalArea)obj);
         }
 
         /// <summary>
@@ -140,7 +138,7 @@ namespace HETSAPI.Models
         /// <returns>Boolean</returns>
         public bool Equals(LocalArea other)
         {
-            if (ReferenceEquals(null, other)) { return false; }
+            if (other is null) { return false; }
             if (ReferenceEquals(this, other)) { return true; }
 
             return                 

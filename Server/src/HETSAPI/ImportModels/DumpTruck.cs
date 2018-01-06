@@ -5,7 +5,7 @@ namespace HETSAPI.ImportModels
     /// <summary>
     /// Dump Track Import Model
     /// </summary>
-    public class Dump_Truck 
+    public class DumpTruck 
     {
         /// <summary>
         /// Equipment Id

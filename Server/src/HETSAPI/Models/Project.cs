@@ -11,9 +11,9 @@ namespace HETSAPI.Models
     /// <summary>
     /// Project Database Model
     /// </summary>
-    [MetaDataExtension (Description = "A Provincial Project that my from time to time request equipment under the HETS programme from a Service Area.")]
+    [MetaData (Description = "A Provincial Project that my from time to time request equipment under the HETS programme from a Service Area.")]
 
-    public partial class Project : AuditableEntity, IEquatable<Project>
+    public sealed class Project : AuditableEntity, IEquatable<Project>
     {
         /// <summary>
         /// Project Database Model Constructor (required by entity framework)
@@ -63,14 +63,14 @@ namespace HETSAPI.Models
         /// A system-generated unique identifier for a Project
         /// </summary>
         /// <value>A system-generated unique identifier for a Project</value>
-        [MetaDataExtension (Description = "A system-generated unique identifier for a Project")]
+        [MetaData (Description = "A system-generated unique identifier for a Project")]
         public int Id { get; set; }
         
         /// <summary>
         /// The District associated with this Project record.
         /// </summary>
         /// <value>The District associated with this Project record.</value>
-        [MetaDataExtension (Description = "The District associated with this Project record.")]
+        [MetaData (Description = "The District associated with this Project record.")]
         public District District { get; set; }
         
         /// <summary>
@@ -78,14 +78,14 @@ namespace HETSAPI.Models
         /// </summary>   
         [ForeignKey("District")]
 		[JsonIgnore]
-		[MetaDataExtension (Description = "The District associated with this Project record.")]
+		[MetaData (Description = "The District associated with this Project record.")]
         public int? DistrictId { get; set; }
         
         /// <summary>
         /// A descriptive name for the Project, useful to the HETS Clerk and Project Manager.
         /// </summary>
         /// <value>A descriptive name for the Project, useful to the HETS Clerk and Project Manager.</value>
-        [MetaDataExtension (Description = "A descriptive name for the Project, useful to the HETS Clerk and Project Manager.")]
+        [MetaData (Description = "A descriptive name for the Project, useful to the HETS Clerk and Project Manager.")]
         [MaxLength(100)]        
         public string Name { get; set; }
         
@@ -93,7 +93,7 @@ namespace HETSAPI.Models
         /// The status of the project to determine if it is listed when creating new requests
         /// </summary>
         /// <value>The status of the project to determine if it is listed when creating new requests</value>
-        [MetaDataExtension (Description = "The status of the project to determine if it is listed when creating new requests")]
+        [MetaData (Description = "The status of the project to determine if it is listed when creating new requests")]
         [MaxLength(50)]        
         public string Status { get; set; }
         
@@ -101,7 +101,7 @@ namespace HETSAPI.Models
         /// TO BE REVIEWED WITH THE BUSINESS - The Provincial charge code for the equipment hiring related to this project. This will be the same across multiple service areas that provide equipment for the same Project.
         /// </summary>
         /// <value>TO BE REVIEWED WITH THE BUSINESS - The Provincial charge code for the equipment hiring related to this project. This will be the same across multiple service areas that provide equipment for the same Project.</value>
-        [MetaDataExtension (Description = "TO BE REVIEWED WITH THE BUSINESS - The Provincial charge code for the equipment hiring related to this project. This will be the same across multiple service areas that provide equipment for the same Project.")]
+        [MetaData (Description = "TO BE REVIEWED WITH THE BUSINESS - The Provincial charge code for the equipment hiring related to this project. This will be the same across multiple service areas that provide equipment for the same Project.")]
         [MaxLength(150)]        
         public string ProvincialProjectNumber { get; set; }
         
@@ -109,7 +109,7 @@ namespace HETSAPI.Models
         /// Information about the Project needed by the HETS Clerks. Used for capturing varying (project by project) metadata needed to process requests related to the project.
         /// </summary>
         /// <value>Information about the Project needed by the HETS Clerks. Used for capturing varying (project by project) metadata needed to process requests related to the project.</value>
-        [MetaDataExtension (Description = "Information about the Project needed by the HETS Clerks. Used for capturing varying (project by project) metadata needed to process requests related to the project.")]
+        [MetaData (Description = "Information about the Project needed by the HETS Clerks. Used for capturing varying (project by project) metadata needed to process requests related to the project.")]
         [MaxLength(2048)]        
         public string Information { get; set; }
         
@@ -117,21 +117,21 @@ namespace HETSAPI.Models
         /// The Rental Requests associated with this Project
         /// </summary>
         /// <value>The Rental Requests associated with this Project</value>
-        [MetaDataExtension (Description = "The Rental Requests associated with this Project")]
+        [MetaData (Description = "The Rental Requests associated with this Project")]
         public List<RentalRequest> RentalRequests { get; set; }
         
         /// <summary>
         /// The Rental Agreements associated with this Project
         /// </summary>
         /// <value>The Rental Agreements associated with this Project</value>
-        [MetaDataExtension (Description = "The Rental Agreements associated with this Project")]
+        [MetaData (Description = "The Rental Agreements associated with this Project")]
         public List<RentalAgreement> RentalAgreements { get; set; }
         
         /// <summary>
         /// Link to the designated Primary Contact for the Project - usually the Project Manager requesting to hire equipment.
         /// </summary>
         /// <value>Link to the designated Primary Contact for the Project - usually the Project Manager requesting to hire equipment.</value>
-        [MetaDataExtension (Description = "Link to the designated Primary Contact for the Project - usually the Project Manager requesting to hire equipment.")]
+        [MetaData (Description = "Link to the designated Primary Contact for the Project - usually the Project Manager requesting to hire equipment.")]
         public Contact PrimaryContact { get; set; }
         
         /// <summary>
@@ -139,7 +139,7 @@ namespace HETSAPI.Models
         /// </summary>   
         [ForeignKey("PrimaryContact")]
 		[JsonIgnore]
-		[MetaDataExtension (Description = "Link to the designated Primary Contact for the Project - usually the Project Manager requesting to hire equipment.")]
+		[MetaData (Description = "Link to the designated Primary Contact for the Project - usually the Project Manager requesting to hire equipment.")]
         public int? PrimaryContactId { get; set; }
         
         /// <summary>
@@ -205,11 +205,9 @@ namespace HETSAPI.Models
         /// <returns>Boolean</returns>
         public override bool Equals(object obj)
         {
-            if (ReferenceEquals(null, obj)) { return false; }
+            if (obj is null) { return false; }
             if (ReferenceEquals(this, obj)) { return true; }
-            if (obj.GetType() != GetType()) { return false; }
-
-            return Equals((Project)obj);
+            return obj.GetType() == GetType() && Equals((Project)obj);
         }
 
         /// <summary>
@@ -219,7 +217,7 @@ namespace HETSAPI.Models
         /// <returns>Boolean</returns>
         public bool Equals(Project other)
         {
-            if (ReferenceEquals(null, other)) { return false; }
+            if (other is null) { return false; }
             if (ReferenceEquals(this, other)) { return true; }
 
             return                 

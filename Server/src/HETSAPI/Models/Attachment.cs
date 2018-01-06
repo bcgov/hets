@@ -8,8 +8,8 @@ namespace HETSAPI.Models
     /// <summary>
     /// Attachment Database Model
     /// </summary>
-    [MetaDataExtension (Description = "Uploaded documents related to entity in the application - e.g. piece of Equipment, an Owner, a Project and so on.")]
-    public class Attachment : AuditableEntity, IEquatable<Attachment>
+    [MetaData (Description = "Uploaded documents related to entity in the application - e.g. piece of Equipment, an Owner, a Project and so on.")]
+    public sealed class Attachment : AuditableEntity, IEquatable<Attachment>
     {
         /// <summary>
         /// Attachment Database Model Constructor (required by entity framework)
@@ -40,14 +40,14 @@ namespace HETSAPI.Models
         /// A system-generated unique identifier for an Attachment
         /// </summary>
         /// <value>A system-generated unique identifier for an Attachment</value>
-        [MetaDataExtension (Description = "A system-generated unique identifier for an Attachment")]
+        [MetaData (Description = "A system-generated unique identifier for an Attachment")]
         public int Id { get; set; }
         
         /// <summary>
         /// Filename as passed by the user uploading the file
         /// </summary>
         /// <value>Filename as passed by the user uploading the file</value>
-        [MetaDataExtension (Description = "Filename as passed by the user uploading the file")]
+        [MetaData (Description = "Filename as passed by the user uploading the file")]
         [MaxLength(2048)]        
         public string FileName { get; set; }
         
@@ -55,14 +55,14 @@ namespace HETSAPI.Models
         /// Binary contents of the file
         /// </summary>
         /// <value>Binary contents of the file</value>
-        [MetaDataExtension (Description = "Binary contents of the file")]
+        [MetaData (Description = "Binary contents of the file")]
         public byte[] FileContents { get; set; }
         
         /// <summary>
         /// A note about the attachment,  optionally maintained by the user.
         /// </summary>
         /// <value>A note about the attachment,  optionally maintained by the user.</value>
-        [MetaDataExtension (Description = "A note about the attachment,  optionally maintained by the user.")]
+        [MetaData (Description = "A note about the attachment,  optionally maintained by the user.")]
         [MaxLength(2048)]        
         public string Description { get; set; }
         
@@ -70,7 +70,7 @@ namespace HETSAPI.Models
         /// Type of attachment
         /// </summary>
         /// <value>Type of attachment</value>
-        [MetaDataExtension (Description = "Type of attachment")]
+        [MetaData (Description = "Type of attachment")]
         [MaxLength(255)]        
         public string Type { get; set; }
         
@@ -109,11 +109,9 @@ namespace HETSAPI.Models
         /// <returns>Boolean</returns>
         public override bool Equals(object obj)
         {
-            if (ReferenceEquals(null, obj)) { return false; }
+            if (obj is null) { return false; }
             if (ReferenceEquals(this, obj)) { return true; }
-            if (obj.GetType() != GetType()) { return false; }
-
-            return Equals((Attachment)obj);
+            return obj.GetType() == GetType() && Equals((Attachment)obj);
         }
 
         /// <summary>
@@ -123,7 +121,7 @@ namespace HETSAPI.Models
         /// <returns>Boolean</returns>
         public bool Equals(Attachment other)
         {
-            if (ReferenceEquals(null, other)) { return false; }
+            if (other is null) { return false; }
             if (ReferenceEquals(this, other)) { return true; }
 
             return                 

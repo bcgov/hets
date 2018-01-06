@@ -8,8 +8,8 @@ namespace HETSAPI.Models
     /// <summary>
     /// Contact Database Model
     /// </summary>
-    [MetaDataExtension (Description = "A person and their related contact information linked to one or more entities in the system. For examples, there are contacts for Owners, Projects.")]
-    public class Contact : AuditableEntity, IEquatable<Contact>
+    [MetaData (Description = "A person and their related contact information linked to one or more entities in the system. For examples, there are contacts for Owners, Projects.")]
+    public sealed class Contact : AuditableEntity, IEquatable<Contact>
     {
         /// <summary>
         /// Contact Database Model Constructor (required by entity framework)
@@ -63,14 +63,14 @@ namespace HETSAPI.Models
         /// A system-generated unique identifier for a Contact
         /// </summary>
         /// <value>A system-generated unique identifier for a Contact</value>
-        [MetaDataExtension (Description = "A system-generated unique identifier for a Contact")]
+        [MetaData (Description = "A system-generated unique identifier for a Contact")]
         public int Id { get; set; }
 
         /// <summary>
         /// The given name of the contact.
         /// </summary>
         /// <value>The given name of the contact.</value>
-        [MetaDataExtension (Description = "The given name of the contact.")]
+        [MetaData (Description = "The given name of the contact.")]
         [MaxLength(50)]
         public string GivenName { get; set; }
 
@@ -78,7 +78,7 @@ namespace HETSAPI.Models
         /// The surname of the contact.
         /// </summary>
         /// <value>The surname of the contact.</value>
-        [MetaDataExtension (Description = "The surname of the contact.")]
+        [MetaData (Description = "The surname of the contact.")]
         [MaxLength(50)]
         public string Surname { get; set; }
 
@@ -86,7 +86,7 @@ namespace HETSAPI.Models
         /// The organization name of the contact.
         /// </summary>
         /// <value>The organization name of the contact.</value>
-        [MetaDataExtension (Description = "The organization name of the contact.")]
+        [MetaData (Description = "The organization name of the contact.")]
         [MaxLength(150)]
         public string OrganizationName { get; set; }
 
@@ -94,7 +94,7 @@ namespace HETSAPI.Models
         /// The role of the contact. UI controlled as to whether it is free form or selected from an enumerated list - for initial implementation, the field is freeform.
         /// </summary>
         /// <value>The role of the contact. UI controlled as to whether it is free form or selected from an enumerated list - for initial implementation, the field is freeform.</value>
-        [MetaDataExtension (Description = "The role of the contact. UI controlled as to whether it is free form or selected from an enumerated list - for initial implementation, the field is freeform.")]
+        [MetaData (Description = "The role of the contact. UI controlled as to whether it is free form or selected from an enumerated list - for initial implementation, the field is freeform.")]
         [MaxLength(100)]
         public string Role { get; set; }
 
@@ -102,7 +102,7 @@ namespace HETSAPI.Models
         /// A note about the contact maintained by the users.
         /// </summary>
         /// <value>A note about the contact maintained by the users.</value>
-        [MetaDataExtension (Description = "A note about the contact maintained by the users.")]
+        [MetaData (Description = "A note about the contact maintained by the users.")]
         [MaxLength(512)]
         public string Notes { get; set; }
 
@@ -110,7 +110,7 @@ namespace HETSAPI.Models
         /// The email address for the contact.
         /// </summary>
         /// <value>The email address for the contact.</value>
-        [MetaDataExtension (Description = "The email address for the contact.")]
+        [MetaData (Description = "The email address for the contact.")]
         [MaxLength(255)]
         public string EmailAddress { get; set; }
 
@@ -118,7 +118,7 @@ namespace HETSAPI.Models
         /// The work phone number for the contact.
         /// </summary>
         /// <value>The work phone number for the contact.</value>
-        [MetaDataExtension (Description = "The work phone number for the contact.")]
+        [MetaData (Description = "The work phone number for the contact.")]
         [MaxLength(20)]
         public string WorkPhoneNumber { get; set; }
 
@@ -126,7 +126,7 @@ namespace HETSAPI.Models
         /// The mobile phone number for the contact.
         /// </summary>
         /// <value>The mobile phone number for the contact.</value>
-        [MetaDataExtension (Description = "The mobile phone number for the contact.")]
+        [MetaData (Description = "The mobile phone number for the contact.")]
         [MaxLength(20)]
         public string MobilePhoneNumber { get; set; }
 
@@ -134,7 +134,7 @@ namespace HETSAPI.Models
         /// The fax phone number for the contact.
         /// </summary>
         /// <value>The fax phone number for the contact.</value>
-        [MetaDataExtension (Description = "The fax phone number for the contact.")]
+        [MetaData (Description = "The fax phone number for the contact.")]
         [MaxLength(20)]
         public string FaxPhoneNumber { get; set; }
 
@@ -142,7 +142,7 @@ namespace HETSAPI.Models
         /// Address 1 line of the address.
         /// </summary>
         /// <value>Address 1 line of the address.</value>
-        [MetaDataExtension (Description = "Address 1 line of the address.")]
+        [MetaData (Description = "Address 1 line of the address.")]
         [MaxLength(80)]
         public string Address1 { get; set; }
 
@@ -150,7 +150,7 @@ namespace HETSAPI.Models
         /// Address 2 line of the address.
         /// </summary>
         /// <value>Address 2 line of the address.</value>
-        [MetaDataExtension (Description = "Address 2 line of the address.")]
+        [MetaData (Description = "Address 2 line of the address.")]
         [MaxLength(80)]
         public string Address2 { get; set; }
 
@@ -158,7 +158,7 @@ namespace HETSAPI.Models
         /// The City of the address.
         /// </summary>
         /// <value>The City of the address.</value>
-        [MetaDataExtension (Description = "The City of the address.")]
+        [MetaData (Description = "The City of the address.")]
         [MaxLength(100)]
         public string City { get; set; }
 
@@ -166,7 +166,7 @@ namespace HETSAPI.Models
         /// The Province of the address.
         /// </summary>
         /// <value>The Province of the address.</value>
-        [MetaDataExtension (Description = "The Province of the address.")]
+        [MetaData (Description = "The Province of the address.")]
         [MaxLength(50)]
         public string Province { get; set; }
 
@@ -174,7 +174,7 @@ namespace HETSAPI.Models
         /// The postal code of the address.
         /// </summary>
         /// <value>The postal code of the address.</value>
-        [MetaDataExtension (Description = "The postal code of the address.")]
+        [MetaData (Description = "The postal code of the address.")]
         [MaxLength(15)]
         public string PostalCode { get; set; }
 
@@ -223,11 +223,9 @@ namespace HETSAPI.Models
         /// <returns>Boolean</returns>
         public override bool Equals(object obj)
         {
-            if (ReferenceEquals(null, obj)) { return false; }
+            if (obj is null) { return false; }
             if (ReferenceEquals(this, obj)) { return true; }
-            if (obj.GetType() != GetType()) { return false; }
-
-            return Equals((Contact)obj);
+            return obj.GetType() == GetType() && Equals((Contact)obj);
         }
 
         /// <summary>
@@ -237,7 +235,7 @@ namespace HETSAPI.Models
         /// <returns>Boolean</returns>
         public bool Equals(Contact other)
         {
-            if (ReferenceEquals(null, other)) { return false; }
+            if (other is null) { return false; }
             if (ReferenceEquals(this, other)) { return true; }
 
             return

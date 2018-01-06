@@ -13,7 +13,7 @@ namespace HETSAPI.Import
     /// <summary>
     /// Import City Records
     /// </summary>
-    public class ImportCity
+    public static class ImportCity
     {
         private const string OldTable = "HETS_City";
         private const string NewTable = "HET_City";
@@ -59,9 +59,9 @@ namespace HETSAPI.Import
                 progress.SetValue(0);
 
                 // create serializer and serialize xml file
-                XmlSerializer ser = new XmlSerializer(typeof(HETS_City[]), new XmlRootAttribute(rootAttr));
+                XmlSerializer ser = new XmlSerializer(typeof(HetsCity[]), new XmlRootAttribute(rootAttr));
                 MemoryStream memoryStream = ImportUtility.MemoryStreamGenerator(XmlFileName, OldTable, fileLocation, rootAttr);
-                HETS_City[] legacyItems = (HETS_City[])ser.Deserialize(memoryStream);
+                HetsCity[] legacyItems = (HetsCity[])ser.Deserialize(memoryStream);
 
                 foreach (var item in legacyItems.WithProgress(progress))
                 {
@@ -119,7 +119,7 @@ namespace HETSAPI.Import
         /// <param name="oldObject"></param>
         /// <param name="city"></param>
         /// <param name="systemId"></param>
-        private static void CopyToInstance(PerformContext performContext, DbAppContext dbContext, HETS_City oldObject, ref City city, string systemId)
+        private static void CopyToInstance(PerformContext performContext, DbAppContext dbContext, HetsCity oldObject, ref City city, string systemId)
         {
             bool isNew = false;
 

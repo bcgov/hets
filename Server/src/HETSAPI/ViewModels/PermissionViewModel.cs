@@ -6,13 +6,13 @@ using Newtonsoft.Json;
 namespace HETSAPI.ViewModels
 {
     /// <summary>
-    /// 
+    /// Permission View Model
     /// </summary>
     [DataContract]
-    public partial class PermissionViewModel : IEquatable<PermissionViewModel>
+    public sealed class PermissionViewModel : IEquatable<PermissionViewModel>
     {
         /// <summary>
-        /// Default constructor, required by entity framework
+        /// Permission View Model Constructor
         /// </summary>
         public PermissionViewModel()
         {
@@ -21,18 +21,16 @@ namespace HETSAPI.ViewModels
         /// <summary>
         /// Initializes a new instance of the <see cref="PermissionViewModel" /> class.
         /// </summary>
-        /// <param name="Code">Code (required).</param>
-        /// <param name="Name">Name (required).</param>
-        /// <param name="Description">Description (required).</param>
-        /// <param name="Id">Id.</param>
-        public PermissionViewModel(string Code, string Name, string Description, int? Id = null)
+        /// <param name="code">Code (required).</param>
+        /// <param name="name">Name (required).</param>
+        /// <param name="description">Description (required).</param>
+        /// <param name="id">Id.</param>
+        public PermissionViewModel(string code, string name, string description, int? id = null)
         {   
-            this.Code = Code;
-            this.Name = Name;
-            this.Description = Description;
-
-
-            this.Id = Id;
+            Code = code;
+            Name = name;
+            Description = description;
+            Id = id;
         }
 
         /// <summary>
@@ -66,12 +64,14 @@ namespace HETSAPI.ViewModels
         public override string ToString()
         {
             var sb = new StringBuilder();
+
             sb.Append("class PermissionViewModel {\n");
             sb.Append("  Code: ").Append(Code).Append("\n");
             sb.Append("  Name: ").Append(Name).Append("\n");
             sb.Append("  Description: ").Append(Description).Append("\n");
             sb.Append("  Id: ").Append(Id).Append("\n");
             sb.Append("}\n");
+
             return sb.ToString();
         }
 
@@ -94,6 +94,7 @@ namespace HETSAPI.ViewModels
             if (ReferenceEquals(null, obj)) { return false; }
             if (ReferenceEquals(this, obj)) { return true; }
             if (obj.GetType() != GetType()) { return false; }
+
             return Equals((PermissionViewModel)obj);
         }
 
@@ -104,30 +105,29 @@ namespace HETSAPI.ViewModels
         /// <returns>Boolean</returns>
         public bool Equals(PermissionViewModel other)
         {
-
             if (ReferenceEquals(null, other)) { return false; }
             if (ReferenceEquals(this, other)) { return true; }
 
             return                 
                 (
-                    this.Code == other.Code ||
-                    this.Code != null &&
-                    this.Code.Equals(other.Code)
+                    Code == other.Code ||
+                    Code != null &&
+                    Code.Equals(other.Code)
                 ) &&                 
                 (
-                    this.Name == other.Name ||
-                    this.Name != null &&
-                    this.Name.Equals(other.Name)
+                    Name == other.Name ||
+                    Name != null &&
+                    Name.Equals(other.Name)
                 ) &&                 
                 (
-                    this.Description == other.Description ||
-                    this.Description != null &&
-                    this.Description.Equals(other.Description)
+                    Description == other.Description ||
+                    Description != null &&
+                    Description.Equals(other.Description)
                 ) &&                 
                 (
-                    this.Id == other.Id ||
-                    this.Id != null &&
-                    this.Id.Equals(other.Id)
+                    Id == other.Id ||
+                    Id != null &&
+                    Id.Equals(other.Id)
                 );
         }
 
@@ -141,22 +141,26 @@ namespace HETSAPI.ViewModels
             unchecked // Overflow is fine, just wrap
             {
                 int hash = 41;
+
                 // Suitable nullity checks
-                if (this.Code != null)
+                if (Code != null)
                 {
-                    hash = hash * 59 + this.Code.GetHashCode();
-                }                
-                                if (this.Name != null)
+                    hash = hash * 59 + Code.GetHashCode();
+                }
+
+                if (Name != null)
                 {
-                    hash = hash * 59 + this.Name.GetHashCode();
-                }                
-                                if (this.Description != null)
+                    hash = hash * 59 + Name.GetHashCode();
+                }
+
+                if (Description != null)
                 {
-                    hash = hash * 59 + this.Description.GetHashCode();
-                }                
-                                if (this.Id != null)
+                    hash = hash * 59 + Description.GetHashCode();
+                }
+
+                if (Id != null)
                 {
-                    hash = hash * 59 + this.Id.GetHashCode();
+                    hash = hash * 59 + Id.GetHashCode();
                 }                
                 
                 return hash;

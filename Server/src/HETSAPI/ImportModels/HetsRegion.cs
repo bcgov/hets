@@ -5,7 +5,7 @@ namespace HETSAPI.ImportModels
     /// <summary>
     /// HETS Region Import Model
     /// </summary>
-    public class HETS_Region
+    public class HetsRegion
     {
         /// <summary>
         /// Region Id

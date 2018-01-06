@@ -15,9 +15,9 @@ namespace HETSAPI.Import
     /// </summary>
     public static class ImportOwner
     {
-        public static string OldTable = "Owner";
-        public static string NewTable = "HET_OWNER";
-        public static string XmlFileName = "Owner.xml";
+        public static string OldTable => "Owner";
+        public static string NewTable => "HET_OWNER";
+        public static string XmlFileName => "Owner.xml";
 
         /// <summary>
         /// Progress Property
