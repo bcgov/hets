@@ -42,7 +42,7 @@ namespace HETSAPI.ViewModels
         /// </summary>
         /// <value>A system-generated unique identifier for a History</value>
         [DataMember(Name="id")]
-        [MetaDataExtension (Description = "A system-generated unique identifier for a History")]
+        [MetaData (Description = "A system-generated unique identifier for a History")]
         public int Id { get; set; }
 
         /// <summary>
@@ -50,7 +50,7 @@ namespace HETSAPI.ViewModels
         /// </summary>
         /// <value>The text of the history entry tracked against the related entity.</value>
         [DataMember(Name="historyText")]
-        [MetaDataExtension (Description = "The text of the history entry tracked against the related entity.")]
+        [MetaData (Description = "The text of the history entry tracked against the related entity.")]
         public string HistoryText { get; set; }
 
         /// <summary>
@@ -58,7 +58,7 @@ namespace HETSAPI.ViewModels
         /// </summary>
         /// <value>Audit information - SM User Id for the User who most recently updated the record.</value>
         [DataMember(Name="lastUpdateUserid")]
-        [MetaDataExtension (Description = "Audit information - SM User Id for the User who most recently updated the record.")]
+        [MetaData (Description = "Audit information - SM User Id for the User who most recently updated the record.")]
         public string LastUpdateUserid { get; set; }
 
         /// <summary>
@@ -66,7 +66,7 @@ namespace HETSAPI.ViewModels
         /// </summary>
         /// <value>Audit information - Timestamp for record modification</value>
         [DataMember(Name="lastUpdateTimestamp")]
-        [MetaDataExtension (Description = "Audit information - Timestamp for record modification")]
+        [MetaData (Description = "Audit information - Timestamp for record modification")]
         public DateTime? LastUpdateTimestamp { get; set; }
 
         /// <summary>
@@ -74,7 +74,7 @@ namespace HETSAPI.ViewModels
         /// </summary>
         /// <value>The primary key of the affected record</value>
         [DataMember(Name="affectedEntityId")]
-        [MetaDataExtension (Description = "The primary key of the affected record")]
+        [MetaData (Description = "The primary key of the affected record")]
         public int? AffectedEntityId { get; set; }
 
         /// <summary>
@@ -112,11 +112,9 @@ namespace HETSAPI.ViewModels
         /// <returns>Boolean</returns>
         public override bool Equals(object obj)
         {
-            if (ReferenceEquals(null, obj)) { return false; }
+            if (obj is null) { return false; }
             if (ReferenceEquals(this, obj)) { return true; }
-            if (obj.GetType() != GetType()) { return false; }
-
-            return Equals((HistoryViewModel)obj);
+            return obj.GetType() == GetType() && Equals((HistoryViewModel)obj);
         }
 
         /// <summary>
@@ -126,7 +124,7 @@ namespace HETSAPI.ViewModels
         /// <returns>Boolean</returns>
         public bool Equals(HistoryViewModel other)
         {
-            if (ReferenceEquals(null, other)) { return false; }
+            if (other is null) { return false; }
             if (ReferenceEquals(this, other)) { return true; }
 
             return                 

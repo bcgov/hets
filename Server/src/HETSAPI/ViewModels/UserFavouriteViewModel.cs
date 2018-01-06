@@ -47,7 +47,7 @@ namespace HETSAPI.ViewModels
         /// </summary>
         /// <value>Context Name</value>
         [DataMember(Name="name")]
-        [MetaDataExtension (Description = "Context Name")]
+        [MetaData (Description = "Context Name")]
         public string Name { get; set; }
 
         /// <summary>
@@ -55,7 +55,7 @@ namespace HETSAPI.ViewModels
         /// </summary>
         /// <value>Saved search</value>
         [DataMember(Name="value")]
-        [MetaDataExtension (Description = "Saved search")]
+        [MetaData (Description = "Saved search")]
         public string Value { get; set; }
 
         /// <summary>
@@ -69,7 +69,7 @@ namespace HETSAPI.ViewModels
         /// </summary>
         /// <value>Type of favourite</value>
         [DataMember(Name="type")]
-        [MetaDataExtension (Description = "Type of favourite")]
+        [MetaData (Description = "Type of favourite")]
         public string Type { get; set; }
 
         /// <summary>
@@ -107,11 +107,9 @@ namespace HETSAPI.ViewModels
         /// <returns>Boolean</returns>
         public override bool Equals(object obj)
         {
-            if (ReferenceEquals(null, obj)) { return false; }
+            if (obj is null) { return false; }
             if (ReferenceEquals(this, obj)) { return true; }
-            if (obj.GetType() != GetType()) { return false; }
-
-            return Equals((UserFavouriteViewModel)obj);
+            return obj.GetType() == GetType() && Equals((UserFavouriteViewModel)obj);
         }
 
         /// <summary>
@@ -121,7 +119,7 @@ namespace HETSAPI.ViewModels
         /// <returns>Boolean</returns>
         public bool Equals(UserFavouriteViewModel other)
         {
-            if (ReferenceEquals(null, other)) { return false; }
+            if (other is null) { return false; }
             if (ReferenceEquals(this, other)) { return true; }
 
             return                 

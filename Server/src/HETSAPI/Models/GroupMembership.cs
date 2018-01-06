@@ -8,7 +8,7 @@ namespace HETSAPI.Models
     /// <summary>
     /// Group Membership Database Model
     /// </summary>
-    [MetaDataExtension (Description = "The users associated with a given group that has been defined in the application.")]
+    [MetaData (Description = "The users associated with a given group that has been defined in the application.")]
     public sealed class GroupMembership : AuditableEntity, IEquatable<GroupMembership>
     {
         /// <summary>
@@ -38,21 +38,21 @@ namespace HETSAPI.Models
         /// A system-generated unique identifier for a GroupMembership
         /// </summary>
         /// <value>A system-generated unique identifier for a GroupMembership</value>
-        [MetaDataExtension (Description = "A system-generated unique identifier for a GroupMembership")]
+        [MetaData (Description = "A system-generated unique identifier for a GroupMembership")]
         public int Id { get; set; }
         
         /// <summary>
         /// A flag indicating the User is active in the group. Set false to remove the user from the designated group.
         /// </summary>
         /// <value>A flag indicating the User is active in the group. Set false to remove the user from the designated group.</value>
-        [MetaDataExtension (Description = "A flag indicating the User is active in the group. Set false to remove the user from the designated group.")]
+        [MetaData (Description = "A flag indicating the User is active in the group. Set false to remove the user from the designated group.")]
         public bool Active { get; set; }
         
         /// <summary>
         /// A foreign key reference to the system-generated unique identifier for a Group
         /// </summary>
         /// <value>A foreign key reference to the system-generated unique identifier for a Group</value>
-        [MetaDataExtension (Description = "A foreign key reference to the system-generated unique identifier for a Group")]
+        [MetaData (Description = "A foreign key reference to the system-generated unique identifier for a Group")]
         public Group Group { get; set; }
         
         /// <summary>
@@ -60,14 +60,14 @@ namespace HETSAPI.Models
         /// </summary>   
         [ForeignKey("Group")]
 		[JsonIgnore]
-		[MetaDataExtension (Description = "A foreign key reference to the system-generated unique identifier for a Group")]
+		[MetaData (Description = "A foreign key reference to the system-generated unique identifier for a Group")]
         public int? GroupId { get; set; }
         
         /// <summary>
         /// A foreign key reference to the system-generated unique identifier for a User
         /// </summary>
         /// <value>A foreign key reference to the system-generated unique identifier for a User</value>
-        [MetaDataExtension (Description = "A foreign key reference to the system-generated unique identifier for a User")]
+        [MetaData (Description = "A foreign key reference to the system-generated unique identifier for a User")]
         public User User { get; set; }
         
         /// <summary>
@@ -75,7 +75,7 @@ namespace HETSAPI.Models
         /// </summary>   
         [ForeignKey("User")]
 		[JsonIgnore]
-		[MetaDataExtension (Description = "A foreign key reference to the system-generated unique identifier for a User")]
+		[MetaData (Description = "A foreign key reference to the system-generated unique identifier for a User")]
         public int? UserId { get; set; }
         
         /// <summary>
@@ -112,11 +112,9 @@ namespace HETSAPI.Models
         /// <returns>Boolean</returns>
         public override bool Equals(object obj)
         {
-            if (ReferenceEquals(null, obj)) { return false; }
+            if (obj is null) { return false; }
             if (ReferenceEquals(this, obj)) { return true; }
-            if (obj.GetType() != GetType()) { return false; }
-
-            return Equals((GroupMembership)obj);
+            return obj.GetType() == GetType() && Equals((GroupMembership)obj);
         }
 
         /// <summary>
@@ -126,7 +124,7 @@ namespace HETSAPI.Models
         /// <returns>Boolean</returns>
         public bool Equals(GroupMembership other)
         {
-            if (ReferenceEquals(null, other)) { return false; }
+            if (other is null) { return false; }
             if (ReferenceEquals(this, other)) { return true; }
 
             return                 

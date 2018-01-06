@@ -5,13 +5,13 @@ namespace HETSAPI.Models
     /// <summary>
     /// Role Database Model Extension
     /// </summary>
-    public partial class Role
+    public sealed partial class Role
     {
         /// <summary>
         /// Adds a permission to this role instance.
         /// </summary>
         /// <param name="permission">The permission to add.</param>
-        public virtual void AddPermission(Permission permission)
+        public void AddPermission(Permission permission)
         {
             var rolePermission = new RolePermission
             {
@@ -25,7 +25,7 @@ namespace HETSAPI.Models
         /// Removes a permission from this role instance.
         /// </summary>
         /// <param name="permission">The permission to remove.</param>
-        public virtual void RemovePermission(Permission permission)
+        public void RemovePermission(Permission permission)
         {
             var permissionToRemove = RolePermissions.FirstOrDefault(x => x.Permission.Code == permission.Code);
             if (permissionToRemove != null)

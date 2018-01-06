@@ -23,7 +23,6 @@ namespace HETSAPI.Services.Impl
     /// </summary>
     public class RentalAgreementService : ServiceBase, IRentalAgreementService
     {
-        private const string PdfUrl = "/api/PDF/GetPDF";
         private readonly DbAppContext _context;
         private readonly IConfiguration _configuration;
 
@@ -143,7 +142,7 @@ namespace HETSAPI.Services.Impl
         }
 
         /// <summary>
-        /// DElete rental agreement
+        /// Delete rental agreement
         /// </summary>
         /// <param name="id">id of Project to delete</param>
         /// <response code="200">OK</response>
@@ -236,7 +235,8 @@ namespace HETSAPI.Services.Impl
 
                 // pass the request on to the PDF Micro Service
                 string pdfHost = _configuration["PDF_SERVICE_NAME"];
-                string targetUrl = pdfHost + PdfUrl;
+                string pdfUrl = _configuration.GetSection("Constants").GetSection("PdfUrl").Value;
+                string targetUrl = pdfHost + pdfUrl;
 
                 // call the microservice
                 try

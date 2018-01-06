@@ -2,6 +2,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Storage;
 using System.Collections.Generic;
 using System;
+using System.Diagnostics;
 using Microsoft.AspNetCore.Http;
 using System.Linq;
 using System.Security.Claims;
@@ -277,177 +278,177 @@ namespace HETSAPI.Models
         /// <summary>
         /// Attachment
         /// </summary>
-        public virtual DbSet<Attachment> Attachments { get; set; }
+        public DbSet<Attachment> Attachments { get; set; }
 
         /// <summary>
         /// City
         /// </summary>
-        public virtual DbSet<City> Cities { get; set; }
+        public DbSet<City> Cities { get; set; }
 
         /// <summary>
         /// Contact
         /// </summary>
-        public virtual DbSet<Contact> Contacts { get; set; }        
+        public DbSet<Contact> Contacts { get; set; }        
 
         /// <summary>
         /// District
         /// </summary>
-        public virtual DbSet<District> Districts { get; set; }
+        public DbSet<District> Districts { get; set; }
 
         /// <summary>
         /// Dump Truck (subtype of Equipment)
         /// </summary>
-        public virtual DbSet<DumpTruck> DumpTrucks { get; set; }
+        public DbSet<DumpTruck> DumpTrucks { get; set; }
 
         /// <summary>
         /// Equipment
         /// </summary>
-        public virtual DbSet<Equipment> Equipments { get; set; }
+        public DbSet<Equipment> Equipments { get; set; }
 
         /// <summary>
         /// Equipment Attachment (hardware attached to the Equipment)
         /// </summary>
-        public virtual DbSet<EquipmentAttachment> EquipmentAttachments { get; set; }
+        public DbSet<EquipmentAttachment> EquipmentAttachments { get; set; }
 
         /// <summary>
         /// District Equipment Type (subtype of Equipment by District)
         /// </summary>
-        public virtual DbSet<DistrictEquipmentType> DistrictEquipmentTypes { get; set; }
+        public DbSet<DistrictEquipmentType> DistrictEquipmentTypes { get; set; }
 
         /// <summary>
         /// Equipment Type
         /// </summary>
-        public virtual DbSet<EquipmentType> EquipmentTypes { get; set; }
+        public DbSet<EquipmentType> EquipmentTypes { get; set; }
 
         /// <summary>
         /// Group
         /// </summary>
-        public virtual DbSet<Group> Groups { get; set; }
+        public DbSet<Group> Groups { get; set; }
 
         /// <summary>
         /// Group Membership
         /// </summary>
-        public virtual DbSet<GroupMembership> GroupMemberships { get; set; }
+        public DbSet<GroupMembership> GroupMemberships { get; set; }
 
         /// <summary>
         /// History (activity log)
         /// </summary>
-        public virtual DbSet<History> Historys { get; set; }
+        public DbSet<History> Historys { get; set; }
 
         /// <summary>
         /// IMport Map
         /// </summary>
-        public virtual DbSet<ImportMap> ImportMaps { get; set; }
+        public DbSet<ImportMap> ImportMaps { get; set; }
 
         /// <summary>
         /// Local Area
         /// </summary>
-        public virtual DbSet<LocalArea> LocalAreas { get; set; }
+        public DbSet<LocalArea> LocalAreas { get; set; }
 
         /// <summary>
         /// Local Area Rotation List
         /// </summary>
-        public virtual DbSet<LocalAreaRotationList> LocalAreaRotationLists { get; set; }
+        public DbSet<LocalAreaRotationList> LocalAreaRotationLists { get; set; }
 
         /// <summary>
         /// Lookup List
         /// </summary>
-        public virtual DbSet<LookupList> LookupLists { get; set; }
+        public DbSet<LookupList> LookupLists { get; set; }
 
         /// <summary>
         /// Note
         /// </summary>
-        public virtual DbSet<Note> Notes { get; set; }
+        public DbSet<Note> Notes { get; set; }
 
         /// <summary>
         /// Owner
         /// </summary>
-        public virtual DbSet<Owner> Owners { get; set; }
+        public DbSet<Owner> Owners { get; set; }
 
         /// <summary>
         /// Permission
         /// </summary>
-        public virtual DbSet<Permission> Permissions { get; set; }
+        public DbSet<Permission> Permissions { get; set; }
 
         /// <summary>
         /// Project
         /// </summary>
-        public virtual DbSet<Project> Projects { get; set; }
+        public DbSet<Project> Projects { get; set; }
 
         /// <summary>
         /// Region
         /// </summary>
-        public virtual DbSet<Region> Regions { get; set; }
+        public DbSet<Region> Regions { get; set; }
 
         /// <summary>
         /// Rental Agreement
         /// </summary>
-        public virtual DbSet<RentalAgreement> RentalAgreements { get; set; }
+        public DbSet<RentalAgreement> RentalAgreements { get; set; }
 
         /// <summary>
         /// Rental Agreement Condition
         /// </summary>
-        public virtual DbSet<RentalAgreementCondition> RentalAgreementConditions { get; set; }
+        public DbSet<RentalAgreementCondition> RentalAgreementConditions { get; set; }
 
         /// <summary>
         /// Rental Agreement Rate
         /// </summary>
-        public virtual DbSet<RentalAgreementRate> RentalAgreementRates { get; set; }
+        public DbSet<RentalAgreementRate> RentalAgreementRates { get; set; }
 
         /// <summary>
         /// Rental Request
         /// </summary>
-        public virtual DbSet<RentalRequest> RentalRequests { get; set; }
+        public DbSet<RentalRequest> RentalRequests { get; set; }
 
         /// <summary>
         /// Rental Request Attachment (document)
         /// </summary>
-        public virtual DbSet<RentalRequestAttachment> RentalRequestAttachments { get; set; }
+        public DbSet<RentalRequestAttachment> RentalRequestAttachments { get; set; }
 
         /// <summary>
         /// Rental Request Rotation List
         /// </summary>
-        public virtual DbSet<RentalRequestRotationList> RentalRequestRotationLists { get; set; }       
+        public DbSet<RentalRequestRotationList> RentalRequestRotationLists { get; set; }       
         
         /// <summary>
         /// Role
         /// </summary>
-        public virtual DbSet<Role> Roles { get; set; }
+        public DbSet<Role> Roles { get; set; }
 
         /// <summary>
         /// Role Permission
         /// </summary>
-        public virtual DbSet<RolePermission> RolePermissions { get; set; }   
+        public DbSet<RolePermission> RolePermissions { get; set; }   
         
         /// <summary>
         /// Seniority Audit
         /// </summary>
-        public virtual DbSet<SeniorityAudit> SeniorityAudits { get; set; }
+        public DbSet<SeniorityAudit> SeniorityAudits { get; set; }
 
         /// <summary>
         /// Service Area
         /// </summary>
-        public virtual DbSet<ServiceArea> ServiceAreas { get; set; }
+        public DbSet<ServiceArea> ServiceAreas { get; set; }
 
         /// <summary>
         /// Time Record
         /// </summary>
-        public virtual DbSet<TimeRecord> TimeRecords { get; set; }
+        public DbSet<TimeRecord> TimeRecords { get; set; }
 
         /// <summary>
         /// User
         /// </summary>
-        public virtual DbSet<User> Users { get; set; }
+        public DbSet<User> Users { get; set; }
 
         /// <summary>
         /// User Favourite
         /// </summary>
-        public virtual DbSet<UserFavourite> UserFavourites { get; set; }
+        public DbSet<UserFavourite> UserFavourites { get; set; }
 
         /// <summary>
         /// User Role
         /// </summary>
-        public virtual DbSet<UserRole> UserRoles { get; set; }
+        public DbSet<UserRole> UserRoles { get; set; }
 
         /// <summary>
         /// Starts a new transaction.
@@ -456,7 +457,7 @@ namespace HETSAPI.Models
         /// A Microsoft.EntityFrameworkCore.Storage.IDbContextTransaction that represents
         /// the started transaction.
         /// </returns>
-        public virtual IDbContextTransaction BeginTransaction()
+        public IDbContextTransaction BeginTransaction()
         {
             bool existingTransaction = true;
 
@@ -474,13 +475,13 @@ namespace HETSAPI.Models
         /// <summary>
         /// Returns the current web user
         /// </summary>
-        protected ClaimsPrincipal HttpContextUser => _httpContextAccessor.HttpContext.User;
+        private ClaimsPrincipal HttpContextUser => _httpContextAccessor.HttpContext.User;
 
         /// <summary>
         /// Returns the current user ID 
         /// </summary>
         /// <returns></returns>
-        protected string GetCurrentUserId()
+        private string GetCurrentUserId()
         {
             string result;
 
@@ -496,7 +497,7 @@ namespace HETSAPI.Models
             return result;
         }
 
-        Object getOriginalValue (EntityEntry entry, string fieldName)
+        Object GetOriginalValue (EntityEntry entry, string fieldName)
         {
             Object result = null;
             var property = entry.Metadata.FindProperty(fieldName);
@@ -513,14 +514,14 @@ namespace HETSAPI.Models
 
             Equipment original = new Equipment
             {
-                SeniorityEffectiveDate = (DateTime?) getOriginalValue(entry, "SeniorityEffectiveDate"),
-                Seniority = (float?) getOriginalValue(entry, "Seniority"),
-                LocalArea = (LocalArea) getOriginalValue(entry, "LocalArea"),
-                BlockNumber = (int?) getOriginalValue(entry, "BlockNumber"),
-                Owner = (Owner) getOriginalValue(entry, "Owner"),
-                ServiceHoursLastYear = (float?) getOriginalValue(entry, "ServiceHoursLastYear"),
-                ServiceHoursTwoYearsAgo = (float?) getOriginalValue(entry, "ServiceHoursTwoYearsAgo"),
-                ServiceHoursThreeYearsAgo = (float?) getOriginalValue(entry, "ServiceHoursThreeYearsAgo")
+                SeniorityEffectiveDate = (DateTime?) GetOriginalValue(entry, "SeniorityEffectiveDate"),
+                Seniority = (float?) GetOriginalValue(entry, "Seniority"),
+                LocalArea = (LocalArea) GetOriginalValue(entry, "LocalArea"),
+                BlockNumber = (int?) GetOriginalValue(entry, "BlockNumber"),
+                Owner = (Owner) GetOriginalValue(entry, "Owner"),
+                ServiceHoursLastYear = (float?) GetOriginalValue(entry, "ServiceHoursLastYear"),
+                ServiceHoursTwoYearsAgo = (float?) GetOriginalValue(entry, "ServiceHoursTwoYearsAgo"),
+                ServiceHoursThreeYearsAgo = (float?) GetOriginalValue(entry, "ServiceHoursThreeYearsAgo")
             };
 
             // Calculate Seniority.  In the current UI design it is expected that this occurs after each change to the service hours.
@@ -628,8 +629,10 @@ namespace HETSAPI.Models
         public int SaveChangesForImport()
         {
             // update the audit fields for this item.
-            var modifiedEntries = ChangeTracker.Entries()
+            IEnumerable<EntityEntry> modifiedEntries = ChangeTracker.Entries()
                     .Where(e => e.State == EntityState.Added || e.State == EntityState.Modified);
+
+            Debug.WriteLine("Saving Import Data. Total Entries: " + modifiedEntries.Count());
 
             int result = base.SaveChanges();
 

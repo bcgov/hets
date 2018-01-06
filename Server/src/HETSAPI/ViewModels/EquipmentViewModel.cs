@@ -11,7 +11,7 @@ namespace HETSAPI.ViewModels
     /// <summary>
     /// Equipment View Model
     /// </summary>
-    [MetaDataExtension (Description = "A piece of equipment in the HETS system. Each piece of equipment is of a specific equipment type, owned by an Owner, and is within a Local Area.")]
+    [MetaData (Description = "A piece of equipment in the HETS system. Each piece of equipment is of a specific equipment type, owned by an Owner, and is within a Local Area.")]
     [DataContract]
     public sealed class EquipmentViewModel : IEquatable<EquipmentViewModel>
     {
@@ -137,7 +137,7 @@ namespace HETSAPI.ViewModels
         /// </summary>
         /// <value>A system-generated unique identifier for a Equipment</value>
         [DataMember(Name="id")]
-        [MetaDataExtension (Description = "A system-generated unique identifier for a Equipment")]
+        [MetaData (Description = "A system-generated unique identifier for a Equipment")]
         public int Id { get; set; }
 
         /// <summary>
@@ -151,7 +151,7 @@ namespace HETSAPI.ViewModels
         /// </summary>
         /// <value>A foreign key reference to the system-generated unique identifier for a Equipment Type</value>
         [DataMember(Name="districtEquipmentType")]
-        [MetaDataExtension (Description = "A foreign key reference to the system-generated unique identifier for a Equipment Type")]
+        [MetaData (Description = "A foreign key reference to the system-generated unique identifier for a Equipment Type")]
         public DistrictEquipmentType DistrictEquipmentType { get; set; }
 
         /// <summary>
@@ -165,7 +165,7 @@ namespace HETSAPI.ViewModels
         /// </summary>
         /// <value>A human-visible unique code for the piece of equipment, referenced for convenience by the system users - HETS Clerks and Equipment Owners. Generated at record creation time based on the unique Owner prefix (e.g. EDW) and a zero-filled unique number - resulting in a code like EDW-0083.</value>
         [DataMember(Name="equipmentCode")]
-        [MetaDataExtension (Description = "A human-visible unique code for the piece of equipment, referenced for convenience by the system users - HETS Clerks and Equipment Owners. Generated at record creation time based on the unique Owner prefix (e.g. EDW) and a zero-filled unique number - resulting in a code like EDW-0083.")]
+        [MetaData (Description = "A human-visible unique code for the piece of equipment, referenced for convenience by the system users - HETS Clerks and Equipment Owners. Generated at record creation time based on the unique Owner prefix (e.g. EDW) and a zero-filled unique number - resulting in a code like EDW-0083.")]
         public string EquipmentCode { get; set; }
 
         /// <summary>
@@ -173,7 +173,7 @@ namespace HETSAPI.ViewModels
         /// </summary>
         /// <value>The current status of the equipment in a UI-controlled string. Initial values are Pending, Approved and Archived, but other values may be added.</value>
         [DataMember(Name="status")]
-        [MetaDataExtension (Description = "The current status of the equipment in a UI-controlled string. Initial values are Pending, Approved and Archived, but other values may be added.")]
+        [MetaData (Description = "The current status of the equipment in a UI-controlled string. Initial values are Pending, Approved and Archived, but other values may be added.")]
         public string Status { get; set; }
 
         /// <summary>
@@ -181,7 +181,7 @@ namespace HETSAPI.ViewModels
         /// </summary>
         /// <value>The date the piece of equipment was first received and recorded in HETS.</value>
         [DataMember(Name="receivedDate")]
-        [MetaDataExtension (Description = "The date the piece of equipment was first received and recorded in HETS.")]
+        [MetaData (Description = "The date the piece of equipment was first received and recorded in HETS.")]
         public DateTime? ReceivedDate { get; set; }
 
         /// <summary>
@@ -189,7 +189,7 @@ namespace HETSAPI.ViewModels
         /// </summary>
         /// <value>The date the piece of equipment was first approved in HETS. Part of the seniority calculation for a piece of equipment is based on this date.</value>
         [DataMember(Name="approvedDate")]
-        [MetaDataExtension (Description = "The date the piece of equipment was first approved in HETS. Part of the seniority calculation for a piece of equipment is based on this date.")]
+        [MetaData (Description = "The date the piece of equipment was first approved in HETS. Part of the seniority calculation for a piece of equipment is based on this date.")]
         public DateTime? ApprovedDate { get; set; }
 
         /// <summary>
@@ -197,7 +197,7 @@ namespace HETSAPI.ViewModels
         /// </summary>
         /// <value>The date the equipment was last verified by the HETS Clerk as being still in service in the Local Area and available for the HETS Programme.</value>
         [DataMember(Name="lastVerifiedDate")]
-        [MetaDataExtension (Description = "The date the equipment was last verified by the HETS Clerk as being still in service in the Local Area and available for the HETS Programme.")]
+        [MetaData (Description = "The date the equipment was last verified by the HETS Clerk as being still in service in the Local Area and available for the HETS Programme.")]
         public DateTime? LastVerifiedDate { get; set; }
 
         /// <summary>
@@ -205,7 +205,7 @@ namespace HETSAPI.ViewModels
         /// </summary>
         /// <value>Set true if a need to update the information&#x2F;status of the equipment is needed. Used during the processing of a request when an update is noted, but the Clerk does not have time to make the update.</value>
         [DataMember(Name="isInformationUpdateNeeded")]
-        [MetaDataExtension (Description = "Set true if a need to update the information&amp;#x2F;status of the equipment is needed. Used during the processing of a request when an update is noted, but the Clerk does not have time to make the update.")]
+        [MetaData (Description = "Set true if a need to update the information&amp;#x2F;status of the equipment is needed. Used during the processing of a request when an update is noted, but the Clerk does not have time to make the update.")]
         public bool? IsInformationUpdateNeeded { get; set; }
 
         /// <summary>
@@ -213,7 +213,7 @@ namespace HETSAPI.ViewModels
         /// </summary>
         /// <value>A note about why the needed information&#x2F;status update that is needed about the equipment.</value>
         [DataMember(Name="informationUpdateNeededReason")]
-        [MetaDataExtension (Description = "A note about why the needed information&amp;#x2F;status update that is needed about the equipment.")]
+        [MetaData (Description = "A note about why the needed information&amp;#x2F;status update that is needed about the equipment.")]
         public string InformationUpdateNeededReason { get; set; }
 
         /// <summary>
@@ -221,7 +221,7 @@ namespace HETSAPI.ViewModels
         /// </summary>
         /// <value>The licence plate (if any) of the piece of equipment, as entered by the HETS Clerk.</value>
         [DataMember(Name="licencePlate")]
-        [MetaDataExtension (Description = "The licence plate (if any) of the piece of equipment, as entered by the HETS Clerk.")]
+        [MetaData (Description = "The licence plate (if any) of the piece of equipment, as entered by the HETS Clerk.")]
         public string LicencePlate { get; set; }
 
         /// <summary>
@@ -229,7 +229,7 @@ namespace HETSAPI.ViewModels
         /// </summary>
         /// <value>The make of the piece of equipment, as provided by the Equipment Owner.</value>
         [DataMember(Name="make")]
-        [MetaDataExtension (Description = "The make of the piece of equipment, as provided by the Equipment Owner.")]
+        [MetaData (Description = "The make of the piece of equipment, as provided by the Equipment Owner.")]
         public string Make { get; set; }
 
         /// <summary>
@@ -237,7 +237,7 @@ namespace HETSAPI.ViewModels
         /// </summary>
         /// <value>The model of the piece of equipment, as provided by the Equipment Owner.</value>
         [DataMember(Name="model")]
-        [MetaDataExtension (Description = "The model of the piece of equipment, as provided by the Equipment Owner.")]
+        [MetaData (Description = "The model of the piece of equipment, as provided by the Equipment Owner.")]
         public string Model { get; set; }
 
         /// <summary>
@@ -245,7 +245,7 @@ namespace HETSAPI.ViewModels
         /// </summary>
         /// <value>The model year of the piece of equipment, as provided by the Equipment Owner.</value>
         [DataMember(Name="year")]
-        [MetaDataExtension (Description = "The model year of the piece of equipment, as provided by the Equipment Owner.")]
+        [MetaData (Description = "The model year of the piece of equipment, as provided by the Equipment Owner.")]
         public string Year { get; set; }
 
         /// <summary>
@@ -253,7 +253,7 @@ namespace HETSAPI.ViewModels
         /// </summary>
         /// <value>TO BE REVIEWED WITH THE BUSINESS - WHAT IS THIS?</value>
         [DataMember(Name="type")]
-        [MetaDataExtension (Description = "TO BE REVIEWED WITH THE BUSINESS - WHAT IS THIS?")]
+        [MetaData (Description = "TO BE REVIEWED WITH THE BUSINESS - WHAT IS THIS?")]
         public string Type { get; set; }
 
         /// <summary>
@@ -261,7 +261,7 @@ namespace HETSAPI.ViewModels
         /// </summary>
         /// <value>TO BE REVIEWED WITH THE BUSINESS - WHAT IS THIS?</value>
         [DataMember(Name="operator")]
-        [MetaDataExtension (Description = "TO BE REVIEWED WITH THE BUSINESS - WHAT IS THIS?")]
+        [MetaData (Description = "TO BE REVIEWED WITH THE BUSINESS - WHAT IS THIS?")]
         public string Operator { get; set; }
 
         /// <summary>
@@ -269,7 +269,7 @@ namespace HETSAPI.ViewModels
         /// </summary>
         /// <value>TO BE REVIEWED WITH THE BUSINESS - WHAT IS THIS?</value>
         [DataMember(Name="payRate")]
-        [MetaDataExtension (Description = "TO BE REVIEWED WITH THE BUSINESS - WHAT IS THIS?")]
+        [MetaData (Description = "TO BE REVIEWED WITH THE BUSINESS - WHAT IS THIS?")]
         public float? PayRate { get; set; }
 
         /// <summary>
@@ -277,7 +277,7 @@ namespace HETSAPI.ViewModels
         /// </summary>
         /// <value>TO BE REVIEWED WITH THE BUSINESS - WHAT IS THIS?</value>
         [DataMember(Name="refuseRate")]
-        [MetaDataExtension (Description = "TO BE REVIEWED WITH THE BUSINESS - WHAT IS THIS?")]
+        [MetaData (Description = "TO BE REVIEWED WITH THE BUSINESS - WHAT IS THIS?")]
         public string RefuseRate { get; set; }
 
         /// <summary>
@@ -285,7 +285,7 @@ namespace HETSAPI.ViewModels
         /// </summary>
         /// <value>The serial number of the piece of equipment as provided by the Equipment Owner. Used to detect and reconcile pieces of equipment moved between Local Areas. Duplicate serial numbers are flagged in the system but permitted. The duplicates are flagged in the UI until the HETS Clerks reconcile the differences - either correcting the serial number or archiving a piece of equipment moved to a new local area.</value>
         [DataMember(Name="serialNumber")]
-        [MetaDataExtension (Description = "The serial number of the piece of equipment as provided by the Equipment Owner. Used to detect and reconcile pieces of equipment moved between Local Areas. Duplicate serial numbers are flagged in the system but permitted. The duplicates are flagged in the UI until the HETS Clerks reconcile the differences - either correcting the serial number or archiving a piece of equipment moved to a new local area.")]
+        [MetaData (Description = "The serial number of the piece of equipment as provided by the Equipment Owner. Used to detect and reconcile pieces of equipment moved between Local Areas. Duplicate serial numbers are flagged in the system but permitted. The duplicates are flagged in the UI until the HETS Clerks reconcile the differences - either correcting the serial number or archiving a piece of equipment moved to a new local area.")]
         public string SerialNumber { get; set; }
 
         /// <summary>
@@ -293,7 +293,7 @@ namespace HETSAPI.ViewModels
         /// </summary>
         /// <value>The size of the piece of equipment, as provided by the Equipment Owner.</value>
         [DataMember(Name="size")]
-        [MetaDataExtension (Description = "The size of the piece of equipment, as provided by the Equipment Owner.")]
+        [MetaData (Description = "The size of the piece of equipment, as provided by the Equipment Owner.")]
         public string Size { get; set; }
 
         /// <summary>
@@ -301,7 +301,7 @@ namespace HETSAPI.ViewModels
         /// </summary>
         /// <value>TO BE REVIEWED WITH THE BUSINESS - WHAT IS THIS?</value>
         [DataMember(Name="toDate")]
-        [MetaDataExtension (Description = "TO BE REVIEWED WITH THE BUSINESS - WHAT IS THIS?")]
+        [MetaData (Description = "TO BE REVIEWED WITH THE BUSINESS - WHAT IS THIS?")]
         public DateTime? ToDate { get; set; }
 
         /// <summary>
@@ -309,7 +309,7 @@ namespace HETSAPI.ViewModels
         /// </summary>
         /// <value>The current block number for the piece of equipment as calculated by the Seniority Algorthm for this equipment type in the local area. As currently defined y the business  - 1, 2 or Open</value>
         [DataMember(Name="blockNumber")]
-        [MetaDataExtension (Description = "The current block number for the piece of equipment as calculated by the Seniority Algorthm for this equipment type in the local area. As currently defined y the business  - 1, 2 or Open")]
+        [MetaData (Description = "The current block number for the piece of equipment as calculated by the Seniority Algorthm for this equipment type in the local area. As currently defined y the business  - 1, 2 or Open")]
         public float? BlockNumber { get; set; }
 
         /// <summary>
@@ -317,7 +317,7 @@ namespace HETSAPI.ViewModels
         /// </summary>
         /// <value>The current seniority calculation result for this piece of equipment. The calculation is based on the &quot;numYears&quot; of service + average hours of service over the last three fiscal years - as stored in the related fields (serviceHoursLastYear, serviceHoursTwoYearsAgo serviceHoursThreeYearsAgo).</value>
         [DataMember(Name="seniority")]
-        [MetaDataExtension (Description = "The current seniority calculation result for this piece of equipment. The calculation is based on the &amp;quot;numYears&amp;quot; of service + average hours of service over the last three fiscal years - as stored in the related fields (serviceHoursLastYear, serviceHoursTwoYearsAgo serviceHoursThreeYearsAgo).")]
+        [MetaData (Description = "The current seniority calculation result for this piece of equipment. The calculation is based on the &amp;quot;numYears&amp;quot; of service + average hours of service over the last three fiscal years - as stored in the related fields (serviceHoursLastYear, serviceHoursTwoYearsAgo serviceHoursThreeYearsAgo).")]
         public float? Seniority { get; set; }
 
         /// <summary>
@@ -325,7 +325,7 @@ namespace HETSAPI.ViewModels
         /// </summary>
         /// <value>True if the Seniority for the piece of equipment was manually overridden. Set if a user has gone in and explicitly updated the seniority base information. Indicates that underlying numbers were manually overridden.</value>
         [DataMember(Name="isSeniorityOverridden")]
-        [MetaDataExtension (Description = "True if the Seniority for the piece of equipment was manually overridden. Set if a user has gone in and explicitly updated the seniority base information. Indicates that underlying numbers were manually overridden.")]
+        [MetaData (Description = "True if the Seniority for the piece of equipment was manually overridden. Set if a user has gone in and explicitly updated the seniority base information. Indicates that underlying numbers were manually overridden.")]
         public bool? IsSeniorityOverridden { get; set; }
 
         /// <summary>
@@ -333,7 +333,7 @@ namespace HETSAPI.ViewModels
         /// </summary>
         /// <value>A text reason for why the piece of equipments underlying data was overridden to change their seniority number.</value>
         [DataMember(Name="seniorityOverrideReason")]
-        [MetaDataExtension (Description = "A text reason for why the piece of equipments underlying data was overridden to change their seniority number.")]
+        [MetaData (Description = "A text reason for why the piece of equipments underlying data was overridden to change their seniority number.")]
         public string SeniorityOverrideReason { get; set; }
 
         /// <summary>
@@ -341,7 +341,7 @@ namespace HETSAPI.ViewModels
         /// </summary>
         /// <value>The time the seniority data in the record went into effect. Used to populate the SeniorityAudit table when the seniority data is next updated.</value>
         [DataMember(Name="seniorityEffectiveDate")]
-        [MetaDataExtension (Description = "The time the seniority data in the record went into effect. Used to populate the SeniorityAudit table when the seniority data is next updated.")]
+        [MetaData (Description = "The time the seniority data in the record went into effect. Used to populate the SeniorityAudit table when the seniority data is next updated.")]
         public DateTime? SeniorityEffectiveDate { get; set; }
 
         /// <summary>
@@ -349,7 +349,7 @@ namespace HETSAPI.ViewModels
         /// </summary>
         /// <value>The number of years of active service of this piece of equipment at the time seniority is calculated - April 1 of the current FY.</value>
         [DataMember(Name="yearsOfService")]
-        [MetaDataExtension (Description = "The number of years of active service of this piece of equipment at the time seniority is calculated - April 1 of the current FY.")]
+        [MetaData (Description = "The number of years of active service of this piece of equipment at the time seniority is calculated - April 1 of the current FY.")]
         public float? YearsOfService { get; set; }
 
         /// <summary>
@@ -357,7 +357,7 @@ namespace HETSAPI.ViewModels
         /// </summary>
         /// <value>Number of hours of service by this piece of equipment in the previous fiscal year</value>
         [DataMember(Name="serviceHoursLastYear")]
-        [MetaDataExtension (Description = "Number of hours of service by this piece of equipment in the previous fiscal year")]
+        [MetaData (Description = "Number of hours of service by this piece of equipment in the previous fiscal year")]
         public float? ServiceHoursLastYear { get; set; }
 
         /// <summary>
@@ -365,7 +365,7 @@ namespace HETSAPI.ViewModels
         /// </summary>
         /// <value>Number of hours of service by this piece of equipment in the fiscal year before the last one - e.g. if current year is FY2018 then hours in FY2016</value>
         [DataMember(Name="serviceHoursTwoYearsAgo")]
-        [MetaDataExtension (Description = "Number of hours of service by this piece of equipment in the fiscal year before the last one - e.g. if current year is FY2018 then hours in FY2016")]
+        [MetaData (Description = "Number of hours of service by this piece of equipment in the fiscal year before the last one - e.g. if current year is FY2018 then hours in FY2016")]
         public float? ServiceHoursTwoYearsAgo { get; set; }
 
         /// <summary>
@@ -373,7 +373,7 @@ namespace HETSAPI.ViewModels
         /// </summary>
         /// <value>Number of hours of service by this piece of equipment in the fiscal year three years ago - e.g. if current year is FY2018 then hours in FY2015</value>
         [DataMember(Name="serviceHoursThreeYearsAgo")]
-        [MetaDataExtension (Description = "Number of hours of service by this piece of equipment in the fiscal year three years ago - e.g. if current year is FY2018 then hours in FY2015")]
+        [MetaData (Description = "Number of hours of service by this piece of equipment in the fiscal year three years ago - e.g. if current year is FY2018 then hours in FY2015")]
         public float? ServiceHoursThreeYearsAgo { get; set; }
 
         /// <summary>
@@ -381,7 +381,7 @@ namespace HETSAPI.ViewModels
         /// </summary>
         /// <value>TO BE REVIEWED - A reason code indicating why a piece of equipment has been archived.</value>
         [DataMember(Name="archiveCode")]
-        [MetaDataExtension (Description = "TO BE REVIEWED - A reason code indicating why a piece of equipment has been archived.")]
+        [MetaData (Description = "TO BE REVIEWED - A reason code indicating why a piece of equipment has been archived.")]
         public string ArchiveCode { get; set; }
 
         /// <summary>
@@ -389,7 +389,7 @@ namespace HETSAPI.ViewModels
         /// </summary>
         /// <value>An optional comment about why this piece of equipment has been archived.</value>
         [DataMember(Name="archiveReason")]
-        [MetaDataExtension (Description = "An optional comment about why this piece of equipment has been archived.")]
+        [MetaData (Description = "An optional comment about why this piece of equipment has been archived.")]
         public string ArchiveReason { get; set; }
 
         /// <summary>
@@ -397,7 +397,7 @@ namespace HETSAPI.ViewModels
         /// </summary>
         /// <value>The date on which a user most recenly marked this piece of equipment as archived.</value>
         [DataMember(Name="archiveDate")]
-        [MetaDataExtension (Description = "The date on which a user most recenly marked this piece of equipment as archived.")]
+        [MetaData (Description = "The date on which a user most recenly marked this piece of equipment as archived.")]
         public DateTime? ArchiveDate { get; set; }
 
         /// <summary>
@@ -405,7 +405,7 @@ namespace HETSAPI.ViewModels
         /// </summary>
         /// <value>A link to a dump truck set if this piece of equipment is an equipment type flagged as a dump truck.</value>
         [DataMember(Name="dumpTruck")]
-        [MetaDataExtension (Description = "A link to a dump truck set if this piece of equipment is an equipment type flagged as a dump truck.")]
+        [MetaData (Description = "A link to a dump truck set if this piece of equipment is an equipment type flagged as a dump truck.")]
         public DumpTruck DumpTruck { get; set; }
 
         /// <summary>
@@ -443,7 +443,7 @@ namespace HETSAPI.ViewModels
         /// </summary>
         /// <value>number of hours worked on current fiscal year</value>
         [DataMember(Name="serviceHoursThisYear")]
-        [MetaDataExtension (Description = "number of hours worked on current fiscal year")]
+        [MetaData (Description = "number of hours worked on current fiscal year")]
         public int? ServiceHoursThisYear { get; set; }
 
         /// <summary>
@@ -463,7 +463,7 @@ namespace HETSAPI.ViewModels
         /// </summary>
         /// <value>true if the equipment is working</value>
         [DataMember(Name="isWorking")]
-        [MetaDataExtension (Description = "true if the equipment is working")]
+        [MetaData (Description = "true if the equipment is working")]
         public bool? IsWorking { get; set; }
 
         /// <summary>
@@ -547,11 +547,9 @@ namespace HETSAPI.ViewModels
         /// <returns>Boolean</returns>
         public override bool Equals(object obj)
         {
-            if (ReferenceEquals(null, obj)) { return false; }
+            if (obj is null) { return false; }
             if (ReferenceEquals(this, obj)) { return true; }
-            if (obj.GetType() != GetType()) { return false; }
-
-            return Equals((EquipmentViewModel)obj);
+            return obj.GetType() == GetType() && Equals((EquipmentViewModel)obj);
         }
 
         /// <summary>
@@ -561,7 +559,7 @@ namespace HETSAPI.ViewModels
         /// <returns>Boolean</returns>
         public bool Equals(EquipmentViewModel other)
         {
-            if (ReferenceEquals(null, other)) { return false; }
+            if (other is null) { return false; }
             if (ReferenceEquals(this, other)) { return true; }
 
             return                 

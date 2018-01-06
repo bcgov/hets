@@ -89,7 +89,7 @@ namespace HETSAPI.ViewModels
         /// </summary>
         /// <value>Project status</value>
         [DataMember(Name="status")]
-        [MetaDataExtension (Description = "Project status")]
+        [MetaData (Description = "Project status")]
         public string Status { get; set; }
 
         /// <summary>
@@ -150,11 +150,9 @@ namespace HETSAPI.ViewModels
         /// <returns>Boolean</returns>
         public override bool Equals(object obj)
         {
-            if (ReferenceEquals(null, obj)) { return false; }
+            if (obj is null) { return false; }
             if (ReferenceEquals(this, obj)) { return true; }
-            if (obj.GetType() != GetType()) { return false; }
-
-            return Equals((RentalRequestSearchResultViewModel)obj);
+            return obj.GetType() == GetType() && Equals((RentalRequestSearchResultViewModel)obj);
         }
 
         /// <summary>
@@ -164,7 +162,7 @@ namespace HETSAPI.ViewModels
         /// <returns>Boolean</returns>
         public bool Equals(RentalRequestSearchResultViewModel other)
         {
-            if (ReferenceEquals(null, other)) { return false; }
+            if (other is null) { return false; }
             if (ReferenceEquals(this, other)) { return true; }
 
             return                 

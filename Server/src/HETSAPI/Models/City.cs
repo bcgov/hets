@@ -8,7 +8,7 @@ namespace HETSAPI.Models
     /// <summary>
     /// City Database Model
     /// </summary>
-    [MetaDataExtension (Description = "A list of cities in BC. Authoritative source to be determined.")]
+    [MetaData (Description = "A list of cities in BC. Authoritative source to be determined.")]
     public sealed class City : AuditableEntity, IEquatable<City>
     {
         /// <summary>
@@ -34,14 +34,14 @@ namespace HETSAPI.Models
         /// A system-generated unique identifier for a City
         /// </summary>
         /// <value>A system-generated unique identifier for a City</value>
-        [MetaDataExtension (Description = "A system-generated unique identifier for a City")]
+        [MetaData (Description = "A system-generated unique identifier for a City")]
         public int Id { get; set; }
         
         /// <summary>
         /// The name of the City
         /// </summary>
         /// <value>The name of the City</value>
-        [MetaDataExtension (Description = "The name of the City")]
+        [MetaData (Description = "The name of the City")]
         [MaxLength(150)]        
         public string Name { get; set; }
         
@@ -77,11 +77,9 @@ namespace HETSAPI.Models
         /// <returns>Boolean</returns>
         public override bool Equals(object obj)
         {
-            if (ReferenceEquals(null, obj)) { return false; }
+            if (obj is null) { return false; }
             if (ReferenceEquals(this, obj)) { return true; }
-            if (obj.GetType() != GetType()) { return false; }
-
-            return Equals((City)obj);
+            return obj.GetType() == GetType() && Equals((City)obj);
         }
 
         /// <summary>
@@ -91,7 +89,7 @@ namespace HETSAPI.Models
         /// <returns>Boolean</returns>
         public bool Equals(City other)
         {
-            if (ReferenceEquals(null, other)) { return false; }
+            if (other is null) { return false; }
             if (ReferenceEquals(this, other)) { return true; }
 
             return                 

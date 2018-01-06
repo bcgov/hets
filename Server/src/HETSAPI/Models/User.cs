@@ -11,7 +11,7 @@ namespace HETSAPI.Models
     /// <summary>
     /// User Database Model
     /// </summary>
-    [MetaDataExtension (Description = "An identified user in the HETS Application that has a defined authorization level.")]
+    [MetaData (Description = "An identified user in the HETS Application that has a defined authorization level.")]
 	public partial class User : AuditableEntity, IEquatable<User>
 	{
         /// <summary>
@@ -59,14 +59,14 @@ namespace HETSAPI.Models
 		/// A system-generated unique identifier for a User
 		/// </summary>
 		/// <value>A system-generated unique identifier for a User</value>
-		[MetaDataExtension (Description = "A system-generated unique identifier for a User")]
+		[MetaData (Description = "A system-generated unique identifier for a User")]
 		public int Id { get; set; }
 
 		/// <summary>
 		/// Given name of the user.
 		/// </summary>
 		/// <value>Given name of the user.</value>
-		[MetaDataExtension (Description = "Given name of the user.")]
+		[MetaData (Description = "Given name of the user.")]
 		[MaxLength(50)]
 		public string GivenName { get; set; }
 
@@ -74,7 +74,7 @@ namespace HETSAPI.Models
 		/// Surname of the user.
 		/// </summary>
 		/// <value>Surname of the user.</value>
-		[MetaDataExtension (Description = "Surname of the user.")]
+		[MetaData (Description = "Surname of the user.")]
 		[MaxLength(50)]
 		public string Surname { get; set; }
 
@@ -82,14 +82,14 @@ namespace HETSAPI.Models
 		/// A flag indicating the User is active in the system. Set false to remove access to the system for the user.
 		/// </summary>
 		/// <value>A flag indicating the User is active in the system. Set false to remove access to the system for the user.</value>
-		[MetaDataExtension (Description = "A flag indicating the User is active in the system. Set false to remove access to the system for the user.")]
+		[MetaData (Description = "A flag indicating the User is active in the system. Set false to remove access to the system for the user.")]
 		public bool Active { get; set; }
 
 		/// <summary>
 		/// Initials of the user, to be presented where screen space is at a premium.
 		/// </summary>
 		/// <value>Initials of the user, to be presented where screen space is at a premium.</value>
-		[MetaDataExtension (Description = "Initials of the user, to be presented where screen space is at a premium.")]
+		[MetaData (Description = "Initials of the user, to be presented where screen space is at a premium.")]
 		[MaxLength(10)]
 		public string Initials { get; set; }
 
@@ -97,7 +97,7 @@ namespace HETSAPI.Models
 		/// The email address of the user in the system.
 		/// </summary>
 		/// <value>The email address of the user in the system.</value>
-		[MetaDataExtension (Description = "The email address of the user in the system.")]
+		[MetaData (Description = "The email address of the user in the system.")]
 		[MaxLength(255)]
 		public string Email { get; set; }
 
@@ -105,7 +105,7 @@ namespace HETSAPI.Models
 		/// Security Manager User ID
 		/// </summary>
 		/// <value>Security Manager User ID</value>
-		[MetaDataExtension (Description = "Security Manager User ID")]
+		[MetaData (Description = "Security Manager User ID")]
 		[MaxLength(255)]
 		public string SmUserId { get; set; }
 
@@ -113,7 +113,7 @@ namespace HETSAPI.Models
 		/// The GUID unique to the user as provided by the authentication system. In this case, authentication is done by Siteminder and the GUID uniquely identifies the user within the user directories managed by Siteminder - e.g. IDIR and BCeID. The GUID is equivalent to the IDIR Id, but is guaranteed unique to a person, while the IDIR ID is not - IDIR IDs can be recycled.
 		/// </summary>
 		/// <value>The GUID unique to the user as provided by the authentication system. In this case, authentication is done by Siteminder and the GUID uniquely identifies the user within the user directories managed by Siteminder - e.g. IDIR and BCeID. The GUID is equivalent to the IDIR Id, but is guaranteed unique to a person, while the IDIR ID is not - IDIR IDs can be recycled.</value>
-		[MetaDataExtension (Description = "The GUID unique to the user as provided by the authentication system. In this case, authentication is done by Siteminder and the GUID uniquely identifies the user within the user directories managed by Siteminder - e.g. IDIR and BCeID. The GUID is equivalent to the IDIR Id, but is guaranteed unique to a person, while the IDIR ID is not - IDIR IDs can be recycled.")]
+		[MetaData (Description = "The GUID unique to the user as provided by the authentication system. In this case, authentication is done by Siteminder and the GUID uniquely identifies the user within the user directories managed by Siteminder - e.g. IDIR and BCeID. The GUID is equivalent to the IDIR Id, but is guaranteed unique to a person, while the IDIR ID is not - IDIR IDs can be recycled.")]
 		[MaxLength(255)]
 		public string Guid { get; set; }
 
@@ -121,7 +121,7 @@ namespace HETSAPI.Models
 		/// The user directory service used by Siteminder to authenticate the user - usually IDIR or BCeID.
 		/// </summary>
 		/// <value>The user directory service used by Siteminder to authenticate the user - usually IDIR or BCeID.</value>
-		[MetaDataExtension (Description = "The user directory service used by Siteminder to authenticate the user - usually IDIR or BCeID.")]
+		[MetaData (Description = "The user directory service used by Siteminder to authenticate the user - usually IDIR or BCeID.")]
 		[MaxLength(255)]
 		public string SmAuthorizationDirectory { get; set; }
 
@@ -139,7 +139,7 @@ namespace HETSAPI.Models
 		/// The District that the User belongs to
 		/// </summary>
 		/// <value>The District that the User belongs to</value>
-		[MetaDataExtension (Description = "The District that the User belongs to")]
+		[MetaData (Description = "The District that the User belongs to")]
 		public District District { get; set; }
 
 		/// <summary>
@@ -147,7 +147,7 @@ namespace HETSAPI.Models
 		/// </summary>
 		[ForeignKey("District")]
 		[JsonIgnore]
-		[MetaDataExtension (Description = "The District that the User belongs to")]
+		[MetaData (Description = "The District that the User belongs to")]
 		public int? DistrictId { get; set; }
 
 		/// <summary>
@@ -192,11 +192,9 @@ namespace HETSAPI.Models
 		/// <returns>Boolean</returns>
 		public override bool Equals(object obj)
 		{
-			if (ReferenceEquals(null, obj)) { return false; }
+			if (obj is null) { return false; }
 			if (ReferenceEquals(this, obj)) { return true; }
-			if (obj.GetType() != GetType()) { return false; }
-
-			return Equals((User)obj);
+			return obj.GetType() == GetType() && Equals((User)obj);
 		}
 
 		/// <summary>
@@ -206,7 +204,7 @@ namespace HETSAPI.Models
 		/// <returns>Boolean</returns>
 		public bool Equals(User other)
 		{
-			if (ReferenceEquals(null, other)) { return false; }
+			if (other is null) { return false; }
 			if (ReferenceEquals(this, other)) { return true; }
 
 			return

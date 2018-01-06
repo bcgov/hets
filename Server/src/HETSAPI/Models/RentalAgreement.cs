@@ -11,7 +11,7 @@ namespace HETSAPI.Models
     /// <summary>
     /// Rental Agreement Database Model
     /// </summary>
-    [MetaDataExtension (Description = "Information about the hiring of a specific piece of equipment to satisfy part or all of a request from a project. TABLE DEFINITION IN PROGRESS - MORE COLUMNS TO BE ADDED")]
+    [MetaData (Description = "Information about the hiring of a specific piece of equipment to satisfy part or all of a request from a project. TABLE DEFINITION IN PROGRESS - MORE COLUMNS TO BE ADDED")]
 
     public sealed class RentalAgreement : AuditableEntity, IEquatable<RentalAgreement>
     {
@@ -67,14 +67,14 @@ namespace HETSAPI.Models
         /// A system-generated unique identifier for a RentalAgreement
         /// </summary>
         /// <value>A system-generated unique identifier for a RentalAgreement</value>
-        [MetaDataExtension (Description = "A system-generated unique identifier for a RentalAgreement")]
+        [MetaData (Description = "A system-generated unique identifier for a RentalAgreement")]
         public int Id { get; set; }
         
         /// <summary>
         /// A system-generated unique rental agreement number in a format defined by the business as suitable for the business and client to see and use.
         /// </summary>
         /// <value>A system-generated unique rental agreement number in a format defined by the business as suitable for the business and client to see and use.</value>
-        [MetaDataExtension (Description = "A system-generated unique rental agreement number in a format defined by the business as suitable for the business and client to see and use.")]
+        [MetaData (Description = "A system-generated unique rental agreement number in a format defined by the business as suitable for the business and client to see and use.")]
         [MaxLength(30)]        
         public string Number { get; set; }
         
@@ -82,7 +82,7 @@ namespace HETSAPI.Models
         /// The current status of the Rental Agreement, such as Active or Complete
         /// </summary>
         /// <value>The current status of the Rental Agreement, such as Active or Complete</value>
-        [MetaDataExtension (Description = "The current status of the Rental Agreement, such as Active or Complete")]
+        [MetaData (Description = "The current status of the Rental Agreement, such as Active or Complete")]
         [MaxLength(50)]        
         public string Status { get; set; }
         
@@ -90,7 +90,7 @@ namespace HETSAPI.Models
         /// A foreign key reference to the system-generated unique identifier for an Equipment
         /// </summary>
         /// <value>A foreign key reference to the system-generated unique identifier for an Equipment</value>
-        [MetaDataExtension (Description = "A foreign key reference to the system-generated unique identifier for an Equipment")]
+        [MetaData (Description = "A foreign key reference to the system-generated unique identifier for an Equipment")]
         public Equipment Equipment { get; set; }
         
         /// <summary>
@@ -98,14 +98,14 @@ namespace HETSAPI.Models
         /// </summary>   
         [ForeignKey("Equipment")]
 		[JsonIgnore]
-		[MetaDataExtension (Description = "A foreign key reference to the system-generated unique identifier for an Equipment")]
+		[MetaData (Description = "A foreign key reference to the system-generated unique identifier for an Equipment")]
         public int? EquipmentId { get; set; }
         
         /// <summary>
         /// A foreign key reference to the system-generated unique identifier for a Project
         /// </summary>
         /// <value>A foreign key reference to the system-generated unique identifier for a Project</value>
-        [MetaDataExtension (Description = "A foreign key reference to the system-generated unique identifier for a Project")]
+        [MetaData (Description = "A foreign key reference to the system-generated unique identifier for a Project")]
         public Project Project { get; set; }
         
         /// <summary>
@@ -113,7 +113,7 @@ namespace HETSAPI.Models
         /// </summary>   
         [ForeignKey("Project")]
 		[JsonIgnore]
-		[MetaDataExtension (Description = "A foreign key reference to the system-generated unique identifier for a Project")]
+		[MetaData (Description = "A foreign key reference to the system-generated unique identifier for a Project")]
         public int? ProjectId { get; set; }
         
         /// <summary>
@@ -135,7 +135,7 @@ namespace HETSAPI.Models
         /// An optional note to be placed onto the Rental Agreement.
         /// </summary>
         /// <value>An optional note to be placed onto the Rental Agreement.</value>
-        [MetaDataExtension (Description = "An optional note to be placed onto the Rental Agreement.")]
+        [MetaData (Description = "An optional note to be placed onto the Rental Agreement.")]
         [MaxLength(2048)]        
         public string Note { get; set; }
         
@@ -143,35 +143,35 @@ namespace HETSAPI.Models
         /// The estimated start date of the work to be placed on the rental agreement.
         /// </summary>
         /// <value>The estimated start date of the work to be placed on the rental agreement.</value>
-        [MetaDataExtension (Description = "The estimated start date of the work to be placed on the rental agreement.")]
+        [MetaData (Description = "The estimated start date of the work to be placed on the rental agreement.")]
         public DateTime? EstimateStartWork { get; set; }
         
         /// <summary>
         /// The dated on date to put on the Rental Agreement.
         /// </summary>
         /// <value>The dated on date to put on the Rental Agreement.</value>
-        [MetaDataExtension (Description = "The dated on date to put on the Rental Agreement.")]
+        [MetaData (Description = "The dated on date to put on the Rental Agreement.")]
         public DateTime? DatedOn { get; set; }
         
         /// <summary>
         /// The estimated number of hours of work to be put onto the Rental Agreement.
         /// </summary>
         /// <value>The estimated number of hours of work to be put onto the Rental Agreement.</value>
-        [MetaDataExtension (Description = "The estimated number of hours of work to be put onto the Rental Agreement.")]
+        [MetaData (Description = "The estimated number of hours of work to be put onto the Rental Agreement.")]
         public int? EstimateHours { get; set; }
         
         /// <summary>
         /// The dollar rate for the piece of equipment itself for this Rental Agreement. Other rates associated with the Rental Agreement are in the Rental Agreement Rate table.
         /// </summary>
         /// <value>The dollar rate for the piece of equipment itself for this Rental Agreement. Other rates associated with the Rental Agreement are in the Rental Agreement Rate table.</value>
-        [MetaDataExtension (Description = "The dollar rate for the piece of equipment itself for this Rental Agreement. Other rates associated with the Rental Agreement are in the Rental Agreement Rate table.")]
+        [MetaData (Description = "The dollar rate for the piece of equipment itself for this Rental Agreement. Other rates associated with the Rental Agreement are in the Rental Agreement Rate table.")]
         public float? EquipmentRate { get; set; }
         
         /// <summary>
         /// The period of the rental rate. The vast majority will be hourly, but the rate could apply across a different period, e.g. daily.
         /// </summary>
         /// <value>The period of the rental rate. The vast majority will be hourly, but the rate could apply across a different period, e.g. daily.</value>
-        [MetaDataExtension (Description = "The period of the rental rate. The vast majority will be hourly, but the rate could apply across a different period, e.g. daily.")]
+        [MetaData (Description = "The period of the rental rate. The vast majority will be hourly, but the rate could apply across a different period, e.g. daily.")]
         [MaxLength(50)]        
         public string RatePeriod { get; set; }
         
@@ -179,7 +179,7 @@ namespace HETSAPI.Models
         /// A comment about the rate for the piece of equipment.
         /// </summary>
         /// <value>A comment about the rate for the piece of equipment.</value>
-        [MetaDataExtension (Description = "A comment about the rate for the piece of equipment.")]
+        [MetaData (Description = "A comment about the rate for the piece of equipment.")]
         [MaxLength(2048)]        
         public string RateComment { get; set; }
         
@@ -228,11 +228,9 @@ namespace HETSAPI.Models
         /// <returns>Boolean</returns>
         public override bool Equals(object obj)
         {
-            if (ReferenceEquals(null, obj)) { return false; }
+            if (obj is null) { return false; }
             if (ReferenceEquals(this, obj)) { return true; }
-            if (obj.GetType() != GetType()) { return false; }
-
-            return Equals((RentalAgreement)obj);
+            return obj.GetType() == GetType() && Equals((RentalAgreement)obj);
         }
 
         /// <summary>
@@ -242,7 +240,7 @@ namespace HETSAPI.Models
         /// <returns>Boolean</returns>
         public bool Equals(RentalAgreement other)
         {
-            if (ReferenceEquals(null, other)) { return false; }
+            if (other is null) { return false; }
             if (ReferenceEquals(this, other)) { return true; }
 
             return                 

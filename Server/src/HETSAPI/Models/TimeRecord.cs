@@ -9,7 +9,7 @@ namespace HETSAPI.Models
     /// <summary>
     /// Time Record Database Model
     /// </summary>
-    [MetaDataExtension (Description = "A record of time worked for a piece of equipment hired for a specific project within a Local Area.")]
+    [MetaData (Description = "A record of time worked for a piece of equipment hired for a specific project within a Local Area.")]
     public sealed class TimeRecord : AuditableEntity, IEquatable<TimeRecord>
     {
         /// <summary>
@@ -46,14 +46,14 @@ namespace HETSAPI.Models
         /// A system-generated unique identifier for a TimeRecord
         /// </summary>
         /// <value>A system-generated unique identifier for a TimeRecord</value>
-        [MetaDataExtension (Description = "A system-generated unique identifier for a TimeRecord")]
+        [MetaData (Description = "A system-generated unique identifier for a TimeRecord")]
         public int Id { get; set; }
         
         /// <summary>
         /// A foreign key reference to the system-generated unique identifier for a Rental Agreement
         /// </summary>
         /// <value>A foreign key reference to the system-generated unique identifier for a Rental Agreement</value>
-        [MetaDataExtension (Description = "A foreign key reference to the system-generated unique identifier for a Rental Agreement")]
+        [MetaData (Description = "A foreign key reference to the system-generated unique identifier for a Rental Agreement")]
         public RentalAgreement RentalAgreement { get; set; }
         
         /// <summary>
@@ -61,28 +61,28 @@ namespace HETSAPI.Models
         /// </summary>   
         [ForeignKey("RentalAgreement")]
 		[JsonIgnore]
-		[MetaDataExtension (Description = "A foreign key reference to the system-generated unique identifier for a Rental Agreement")]
+		[MetaData (Description = "A foreign key reference to the system-generated unique identifier for a Rental Agreement")]
         public int? RentalAgreementId { get; set; }
         
         /// <summary>
         /// The date of the time record entry - the day of the entry if it is a daily entry, or a date in the week in which the work occurred if tracked weekly.
         /// </summary>
         /// <value>The date of the time record entry - the day of the entry if it is a daily entry, or a date in the week in which the work occurred if tracked weekly.</value>
-        [MetaDataExtension (Description = "The date of the time record entry - the day of the entry if it is a daily entry, or a date in the week in which the work occurred if tracked weekly.")]
+        [MetaData (Description = "The date of the time record entry - the day of the entry if it is a daily entry, or a date in the week in which the work occurred if tracked weekly.")]
         public DateTime WorkedDate { get; set; }
         
         /// <summary>
         /// The number of hours worked by the equipment.
         /// </summary>
         /// <value>The number of hours worked by the equipment.</value>
-        [MetaDataExtension (Description = "The number of hours worked by the equipment.")]
+        [MetaData (Description = "The number of hours worked by the equipment.")]
         public float? Hours { get; set; }
         
         /// <summary>
         /// The Rental Agreement Rate component to which this Rental Agreement applies. If null, this time applies to the equipment itself.
         /// </summary>
         /// <value>The Rental Agreement Rate component to which this Rental Agreement applies. If null, this time applies to the equipment itself.</value>
-        [MetaDataExtension (Description = "The Rental Agreement Rate component to which this Rental Agreement applies. If null, this time applies to the equipment itself.")]
+        [MetaData (Description = "The Rental Agreement Rate component to which this Rental Agreement applies. If null, this time applies to the equipment itself.")]
         public RentalAgreementRate RentalAgreementRate { get; set; }
         
         /// <summary>
@@ -90,21 +90,21 @@ namespace HETSAPI.Models
         /// </summary>   
         [ForeignKey("RentalAgreementRate")]
 		[JsonIgnore]
-		[MetaDataExtension (Description = "The Rental Agreement Rate component to which this Rental Agreement applies. If null, this time applies to the equipment itself.")]
+		[MetaData (Description = "The Rental Agreement Rate component to which this Rental Agreement applies. If null, this time applies to the equipment itself.")]
         public int? RentalAgreementRateId { get; set; }
         
         /// <summary>
         /// The date-time the time record information was entered.
         /// </summary>
         /// <value>The date-time the time record information was entered.</value>
-        [MetaDataExtension (Description = "The date-time the time record information was entered.")]
+        [MetaData (Description = "The date-time the time record information was entered.")]
         public DateTime? EnteredDate { get; set; }
         
         /// <summary>
         /// The time period of the entry - either day or week. HETS Clerk have the option of entering time records on a day-by-day or week-by-week basis.
         /// </summary>
         /// <value>The time period of the entry - either day or week. HETS Clerk have the option of entering time records on a day-by-day or week-by-week basis.</value>
-        [MetaDataExtension (Description = "The time period of the entry - either day or week. HETS Clerk have the option of entering time records on a day-by-day or week-by-week basis.")]
+        [MetaData (Description = "The time period of the entry - either day or week. HETS Clerk have the option of entering time records on a day-by-day or week-by-week basis.")]
         [MaxLength(20)]        
         public string TimePeriod { get; set; }
         
@@ -145,11 +145,9 @@ namespace HETSAPI.Models
         /// <returns>Boolean</returns>
         public override bool Equals(object obj)
         {
-            if (ReferenceEquals(null, obj)) { return false; }
+            if (obj is null) { return false; }
             if (ReferenceEquals(this, obj)) { return true; }
-            if (obj.GetType() != GetType()) { return false; }
-
-            return Equals((TimeRecord)obj);
+            return obj.GetType() == GetType() && Equals((TimeRecord)obj);
         }
 
         /// <summary>
@@ -159,7 +157,7 @@ namespace HETSAPI.Models
         /// <returns>Boolean</returns>
         public bool Equals(TimeRecord other)
         {
-            if (ReferenceEquals(null, other)) { return false; }
+            if (other is null) { return false; }
             if (ReferenceEquals(this, other)) { return true; }
 
             return                 

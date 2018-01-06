@@ -11,7 +11,7 @@ namespace HETSAPI.Models
     /// <summary>
     /// REntal Request Database Model
     /// </summary>
-    [MetaDataExtension (Description = "A request from a Project for one or more of a type of equipment from a specific Local Area.")]
+    [MetaData (Description = "A request from a Project for one or more of a type of equipment from a specific Local Area.")]
     public sealed class RentalRequest : AuditableEntity, IEquatable<RentalRequest>
     {
         /// <summary>
@@ -67,7 +67,7 @@ namespace HETSAPI.Models
         /// A system-generated unique identifier for a Request
         /// </summary>
         /// <value>A system-generated unique identifier for a Request</value>
-        [MetaDataExtension (Description = "A system-generated unique identifier for a Request")]
+        [MetaData (Description = "A system-generated unique identifier for a Request")]
         public int Id { get; set; }
         
         /// <summary>
@@ -86,7 +86,7 @@ namespace HETSAPI.Models
         /// A foreign key reference to the system-generated unique identifier for a Local Area
         /// </summary>
         /// <value>A foreign key reference to the system-generated unique identifier for a Local Area</value>
-        [MetaDataExtension (Description = "A foreign key reference to the system-generated unique identifier for a Local Area")]
+        [MetaData (Description = "A foreign key reference to the system-generated unique identifier for a Local Area")]
         public LocalArea LocalArea { get; set; }
         
         /// <summary>
@@ -94,14 +94,14 @@ namespace HETSAPI.Models
         /// </summary>   
         [ForeignKey("LocalArea")]
 		[JsonIgnore]
-		[MetaDataExtension (Description = "A foreign key reference to the system-generated unique identifier for a Local Area")]
+		[MetaData (Description = "A foreign key reference to the system-generated unique identifier for a Local Area")]
         public int? LocalAreaId { get; set; }
         
         /// <summary>
         /// The status of the Rental Request - whether it in progress, completed or was cancelled.
         /// </summary>
         /// <value>The status of the Rental Request - whether it in progress, completed or was cancelled.</value>
-        [MetaDataExtension (Description = "The status of the Rental Request - whether it in progress, completed or was cancelled.")]
+        [MetaData (Description = "The status of the Rental Request - whether it in progress, completed or was cancelled.")]
         [MaxLength(50)]        
         public string Status { get; set; }
         
@@ -109,7 +109,7 @@ namespace HETSAPI.Models
         /// A foreign key reference to the system-generated unique identifier for an Equipment Type
         /// </summary>
         /// <value>A foreign key reference to the system-generated unique identifier for an Equipment Type</value>
-        [MetaDataExtension (Description = "A foreign key reference to the system-generated unique identifier for an Equipment Type")]
+        [MetaData (Description = "A foreign key reference to the system-generated unique identifier for an Equipment Type")]
         public DistrictEquipmentType DistrictEquipmentType { get; set; }
         
         /// <summary>
@@ -117,42 +117,42 @@ namespace HETSAPI.Models
         /// </summary>   
         [ForeignKey("DistrictEquipmentType")]
 		[JsonIgnore]
-		[MetaDataExtension (Description = "A foreign key reference to the system-generated unique identifier for an Equipment Type")]
+		[MetaData (Description = "A foreign key reference to the system-generated unique identifier for an Equipment Type")]
         public int? DistrictEquipmentTypeId { get; set; }
         
         /// <summary>
         /// The number of pieces of the equipment type wanted for hire as part of this request.
         /// </summary>
         /// <value>The number of pieces of the equipment type wanted for hire as part of this request.</value>
-        [MetaDataExtension (Description = "The number of pieces of the equipment type wanted for hire as part of this request.")]
+        [MetaData (Description = "The number of pieces of the equipment type wanted for hire as part of this request.")]
         public int EquipmentCount { get; set; }
         
         /// <summary>
         /// The expected number of rental hours for each piece equipment hired against this request, as provided by the Project Manager making the request.
         /// </summary>
         /// <value>The expected number of rental hours for each piece equipment hired against this request, as provided by the Project Manager making the request.</value>
-        [MetaDataExtension (Description = "The expected number of rental hours for each piece equipment hired against this request, as provided by the Project Manager making the request.")]
+        [MetaData (Description = "The expected number of rental hours for each piece equipment hired against this request, as provided by the Project Manager making the request.")]
         public int? ExpectedHours { get; set; }
         
         /// <summary>
         /// The expected start date of each piece of equipment hired against this request, as provided by the Project Manager making the request.
         /// </summary>
         /// <value>The expected start date of each piece of equipment hired against this request, as provided by the Project Manager making the request.</value>
-        [MetaDataExtension (Description = "The expected start date of each piece of equipment hired against this request, as provided by the Project Manager making the request.")]
+        [MetaData (Description = "The expected start date of each piece of equipment hired against this request, as provided by the Project Manager making the request.")]
         public DateTime? ExpectedStartDate { get; set; }
         
         /// <summary>
         /// The expected end date of each piece of equipment hired against this request, as provided by the Project Manager making the request.
         /// </summary>
         /// <value>The expected end date of each piece of equipment hired against this request, as provided by the Project Manager making the request.</value>
-        [MetaDataExtension (Description = "The expected end date of each piece of equipment hired against this request, as provided by the Project Manager making the request.")]
+        [MetaData (Description = "The expected end date of each piece of equipment hired against this request, as provided by the Project Manager making the request.")]
         public DateTime? ExpectedEndDate { get; set; }
         
         /// <summary>
         /// The first piece of equipment on the rotation list at the time of the creation of the request.
         /// </summary>
         /// <value>The first piece of equipment on the rotation list at the time of the creation of the request.</value>
-        [MetaDataExtension (Description = "The first piece of equipment on the rotation list at the time of the creation of the request.")]
+        [MetaData (Description = "The first piece of equipment on the rotation list at the time of the creation of the request.")]
         public Equipment FirstOnRotationList { get; set; }
         
         /// <summary>
@@ -160,7 +160,7 @@ namespace HETSAPI.Models
         /// </summary>   
         [ForeignKey("FirstOnRotationList")]
 		[JsonIgnore]
-		[MetaDataExtension (Description = "The first piece of equipment on the rotation list at the time of the creation of the request.")]
+		[MetaData (Description = "The first piece of equipment on the rotation list at the time of the creation of the request.")]
         public int? FirstOnRotationListId { get; set; }
         
         /// <summary>
@@ -233,11 +233,9 @@ namespace HETSAPI.Models
         /// <returns>Boolean</returns>
         public override bool Equals(object obj)
         {
-            if (ReferenceEquals(null, obj)) { return false; }
+            if (obj is null) { return false; }
             if (ReferenceEquals(this, obj)) { return true; }
-            if (obj.GetType() != GetType()) { return false; }
-
-            return Equals((RentalRequest)obj);
+            return obj.GetType() == GetType() && Equals((RentalRequest)obj);
         }
 
         /// <summary>
@@ -247,7 +245,7 @@ namespace HETSAPI.Models
         /// <returns>Boolean</returns>
         public bool Equals(RentalRequest other)
         {
-            if (ReferenceEquals(null, other)) { return false; }
+            if (other is null) { return false; }
             if (ReferenceEquals(this, other)) { return true; }
 
             return                 

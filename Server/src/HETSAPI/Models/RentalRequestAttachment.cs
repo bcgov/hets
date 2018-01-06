@@ -9,7 +9,7 @@ namespace HETSAPI.Models
     /// <summary>
     /// Renatal Request Attachment Database Model
     /// </summary>
-    [MetaDataExtension (Description = "Attachments that are required as part of the Rental Requests")]
+    [MetaData (Description = "Attachments that are required as part of the Rental Requests")]
     public sealed class RentalRequestAttachment : AuditableEntity, IEquatable<RentalRequestAttachment>
     {
         /// <summary>
@@ -37,14 +37,14 @@ namespace HETSAPI.Models
         /// A system-generated unique identifier for a RentalRequestAttachment
         /// </summary>
         /// <value>A system-generated unique identifier for a RentalRequestAttachment</value>
-        [MetaDataExtension (Description = "A system-generated unique identifier for a RentalRequestAttachment")]
+        [MetaData (Description = "A system-generated unique identifier for a RentalRequestAttachment")]
         public int Id { get; set; }
         
         /// <summary>
         /// A foreign key reference to the system-generated unique identifier for a Rental Request
         /// </summary>
         /// <value>A foreign key reference to the system-generated unique identifier for a Rental Request</value>
-        [MetaDataExtension (Description = "A foreign key reference to the system-generated unique identifier for a Rental Request")]
+        [MetaData (Description = "A foreign key reference to the system-generated unique identifier for a Rental Request")]
         public RentalRequest RentalRequest { get; set; }
         
         /// <summary>
@@ -52,14 +52,14 @@ namespace HETSAPI.Models
         /// </summary>   
         [ForeignKey("RentalRequest")]
 		[JsonIgnore]
-		[MetaDataExtension (Description = "A foreign key reference to the system-generated unique identifier for a Rental Request")]
+		[MetaData (Description = "A foreign key reference to the system-generated unique identifier for a Rental Request")]
         public int? RentalRequestId { get; set; }
         
         /// <summary>
         /// The name&#x2F;type attachment needed as part of the fulfillment of the request
         /// </summary>
         /// <value>The name&#x2F;type attachment needed as part of the fulfillment of the request</value>
-        [MetaDataExtension (Description = "The name&#x2F;type attachment needed as part of the fulfillment of the request")]
+        [MetaData (Description = "The name&#x2F;type attachment needed as part of the fulfillment of the request")]
         [MaxLength(150)]        
         public string Attachment { get; set; }
         
@@ -96,11 +96,9 @@ namespace HETSAPI.Models
         /// <returns>Boolean</returns>
         public override bool Equals(object obj)
         {
-            if (ReferenceEquals(null, obj)) { return false; }
+            if (obj is null) { return false; }
             if (ReferenceEquals(this, obj)) { return true; }
-            if (obj.GetType() != GetType()) { return false; }
-
-            return Equals((RentalRequestAttachment)obj);
+            return obj.GetType() == GetType() && Equals((RentalRequestAttachment)obj);
         }
 
         /// <summary>
@@ -110,7 +108,7 @@ namespace HETSAPI.Models
         /// <returns>Boolean</returns>
         public bool Equals(RentalRequestAttachment other)
         {
-            if (ReferenceEquals(null, other)) { return false; }
+            if (other is null) { return false; }
             if (ReferenceEquals(this, other)) { return true; }
 
             return                 

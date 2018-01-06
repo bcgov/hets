@@ -8,7 +8,7 @@ namespace HETSAPI.Models
     /// <summary>
     /// Group Database Model
     /// </summary>
-    [MetaDataExtension (Description = "A named entity that is used to create a arbitrary collection of users into a group. For example, the HETS Clerks are in the group Clerks. Groups, like permissions are defined by and referenced in code.")]
+    [MetaData (Description = "A named entity that is used to create a arbitrary collection of users into a group. For example, the HETS Clerks are in the group Clerks. Groups, like permissions are defined by and referenced in code.")]
     public sealed class Group : AuditableEntity, IEquatable<Group>
     {
         /// <summary>
@@ -36,14 +36,14 @@ namespace HETSAPI.Models
         /// A system-generated unique identifier for a Group
         /// </summary>
         /// <value>A system-generated unique identifier for a Group</value>
-        [MetaDataExtension (Description = "A system-generated unique identifier for a Group")]
+        [MetaData (Description = "A system-generated unique identifier for a Group")]
         public int Id { get; set; }
         
         /// <summary>
         /// The name of the group, as refenced in the code.
         /// </summary>
         /// <value>The name of the group, as refenced in the code.</value>
-        [MetaDataExtension (Description = "The name of the group, as refenced in the code.")]
+        [MetaData (Description = "The name of the group, as refenced in the code.")]
         [MaxLength(150)]        
         public string Name { get; set; }
         
@@ -51,7 +51,7 @@ namespace HETSAPI.Models
         /// A description of the group that is presented to the user when they are setting a user into a group.
         /// </summary>
         /// <value>A description of the group that is presented to the user when they are setting a user into a group.</value>
-        [MetaDataExtension (Description = "A description of the group that is presented to the user when they are setting a user into a group.")]
+        [MetaData (Description = "A description of the group that is presented to the user when they are setting a user into a group.")]
         [MaxLength(2048)]        
         public string Description { get; set; }
         
@@ -88,11 +88,9 @@ namespace HETSAPI.Models
         /// <returns>Boolean</returns>
         public override bool Equals(object obj)
         {
-            if (ReferenceEquals(null, obj)) { return false; }
+            if (obj is null) { return false; }
             if (ReferenceEquals(this, obj)) { return true; }
-            if (obj.GetType() != GetType()) { return false; }
-
-            return Equals((Group)obj);
+            return obj.GetType() == GetType() && Equals((Group)obj);
         }
 
         /// <summary>
@@ -102,7 +100,7 @@ namespace HETSAPI.Models
         /// <returns>Boolean</returns>
         public bool Equals(Group other)
         {
-            if (ReferenceEquals(null, other)) { return false; }
+            if (other is null) { return false; }
             if (ReferenceEquals(this, other)) { return true; }
 
             return                 

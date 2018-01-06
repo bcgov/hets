@@ -9,7 +9,7 @@ namespace HETSAPI.ViewModels
     /// <summary>
     /// Equipment Code View Model
     /// </summary>
-    [MetaDataExtension (Description = "Equipment Code is a combination of the Owner Equipment Prefix and the numeric identifier for the next piece of equipment.")]
+    [MetaData (Description = "Equipment Code is a combination of the Owner Equipment Prefix and the numeric identifier for the next piece of equipment.")]
     [DataContract]
     public sealed class EquipmentCodeViewModel : IEquatable<EquipmentCodeViewModel>
     {
@@ -34,7 +34,7 @@ namespace HETSAPI.ViewModels
         /// </summary>
         /// <value>The Equipment Code</value>
         [DataMember(Name="equipmentCode")]
-        [MetaDataExtension (Description = "The Equipment Code")]
+        [MetaData (Description = "The Equipment Code")]
         public string EquipmentCode { get; set; }
 
         /// <summary>
@@ -68,11 +68,9 @@ namespace HETSAPI.ViewModels
         /// <returns>Boolean</returns>
         public override bool Equals(object obj)
         {
-            if (ReferenceEquals(null, obj)) { return false; }
+            if (obj is null) { return false; }
             if (ReferenceEquals(this, obj)) { return true; }
-            if (obj.GetType() != GetType()) { return false; }
-
-            return Equals((EquipmentCodeViewModel)obj);
+            return obj.GetType() == GetType() && Equals((EquipmentCodeViewModel)obj);
         }
 
         /// <summary>
@@ -82,7 +80,7 @@ namespace HETSAPI.ViewModels
         /// <returns>Boolean</returns>
         public bool Equals(EquipmentCodeViewModel other)
         {
-            if (ReferenceEquals(null, other)) { return false; }
+            if (other is null) { return false; }
             if (ReferenceEquals(this, other)) { return true; }
 
             return                 

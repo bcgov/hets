@@ -244,7 +244,7 @@ namespace HETSAPI.Services.Impl
 
                     if (permToAdd == null)
                     {
-                        // TODO throw new BusinessLayerException(string.Format("Invalid Permission Code {0}", code));
+                        throw new ArgumentException(string.Format("Invalid Permission Code {0}", permissionId));
                     }
 
                     role.AddPermission(permToAdd);
@@ -307,7 +307,7 @@ namespace HETSAPI.Services.Impl
 
                     if (permToAdd == null)
                     {
-                        // TODO throw new BusinessLayerException(string.Format("Invalid Permission Code {0}", code));
+                        throw new ArgumentException(string.Format("Invalid Permission Code {0}", permissionId));
                     }
 
                     role.AddPermission(permToAdd);
@@ -358,7 +358,7 @@ namespace HETSAPI.Services.Impl
 
                     if (permToAdd == null)
                     {
-                        // TODO throw new BusinessLayerException(string.Format("Invalid Permission Code {0}", code));
+                        throw new ArgumentException(string.Format("Invalid Permission Code {0}", item.Code));
                     }
 
                     role.AddPermission(permToAdd);

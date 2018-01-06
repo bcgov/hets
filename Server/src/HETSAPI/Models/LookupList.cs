@@ -8,7 +8,7 @@ namespace HETSAPI.Models
     /// <summary>
     /// Lookup List Database Model
     /// </summary>
-    [MetaDataExtension (Description = "Lookup values for various enumerated types in the systems - entity status values, rate types, conditions and others. Used to pull the values out of the code and into the database but without having to have a table for each lookup instance.")]
+    [MetaData (Description = "Lookup values for various enumerated types in the systems - entity status values, rate types, conditions and others. Used to pull the values out of the code and into the database but without having to have a table for each lookup instance.")]
     public sealed class LookupList : AuditableEntity, IEquatable<LookupList>
     {
         /// <summary>
@@ -42,14 +42,14 @@ namespace HETSAPI.Models
         /// A system-generated unique identifier for a LookupList
         /// </summary>
         /// <value>A system-generated unique identifier for a LookupList</value>
-        [MetaDataExtension (Description = "A system-generated unique identifier for a LookupList")]
+        [MetaData (Description = "A system-generated unique identifier for a LookupList")]
         public int Id { get; set; }
         
         /// <summary>
         /// The context within the app in which this lookup list if used. Defined and referenced in the code of the application.
         /// </summary>
         /// <value>The context within the app in which this lookup list if used. Defined and referenced in the code of the application.</value>
-        [MetaDataExtension (Description = "The context within the app in which this lookup list if used. Defined and referenced in the code of the application.")]
+        [MetaData (Description = "The context within the app in which this lookup list if used. Defined and referenced in the code of the application.")]
         [MaxLength(100)]        
         public string ContextName { get; set; }
         
@@ -57,14 +57,14 @@ namespace HETSAPI.Models
         /// True of the value within the lookup list context should be the default for the lookup instance.
         /// </summary>
         /// <value>True of the value within the lookup list context should be the default for the lookup instance.</value>
-        [MetaDataExtension (Description = "True of the value within the lookup list context should be the default for the lookup instance.")]
+        [MetaData (Description = "True of the value within the lookup list context should be the default for the lookup instance.")]
         public bool IsDefault { get; set; }
         
         /// <summary>
         /// The a shorter lookup name to find the value. Can be used at the option of the application to present on the screen a short version of the lookup list value.
         /// </summary>
         /// <value>The a shorter lookup name to find the value. Can be used at the option of the application to present on the screen a short version of the lookup list value.</value>
-        [MetaDataExtension (Description = "The a shorter lookup name to find the value. Can be used at the option of the application to present on the screen a short version of the lookup list value.")]
+        [MetaData (Description = "The a shorter lookup name to find the value. Can be used at the option of the application to present on the screen a short version of the lookup list value.")]
         [MaxLength(30)]        
         public string CodeName { get; set; }
         
@@ -72,7 +72,7 @@ namespace HETSAPI.Models
         /// The fully spelled out value of the lookup entry.
         /// </summary>
         /// <value>The fully spelled out value of the lookup entry.</value>
-        [MetaDataExtension (Description = "The fully spelled out value of the lookup entry.")]
+        [MetaData (Description = "The fully spelled out value of the lookup entry.")]
         [MaxLength(100)]        
         public string Value { get; set; }
         
@@ -80,7 +80,7 @@ namespace HETSAPI.Models
         /// The sort order for list of values within a list context.
         /// </summary>
         /// <value>The sort order for list of values within a list context.</value>
-        [MetaDataExtension (Description = "The sort order for list of values within a list context.")]
+        [MetaData (Description = "The sort order for list of values within a list context.")]
         public int? DisplaySortOrder { get; set; }
         
         /// <summary>
@@ -119,11 +119,9 @@ namespace HETSAPI.Models
         /// <returns>Boolean</returns>
         public override bool Equals(object obj)
         {
-            if (ReferenceEquals(null, obj)) { return false; }
+            if (obj is null) { return false; }
             if (ReferenceEquals(this, obj)) { return true; }
-            if (obj.GetType() != GetType()) { return false; }
-
-            return Equals((LookupList)obj);
+            return obj.GetType() == GetType() && Equals((LookupList)obj);
         }
 
         /// <summary>
@@ -133,7 +131,7 @@ namespace HETSAPI.Models
         /// <returns>Boolean</returns>
         public bool Equals(LookupList other)
         {
-            if (ReferenceEquals(null, other)) { return false; }
+            if (other is null) { return false; }
             if (ReferenceEquals(this, other)) { return true; }
 
             return                 

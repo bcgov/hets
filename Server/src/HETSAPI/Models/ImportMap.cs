@@ -39,28 +39,28 @@ namespace HETSAPI.Models
         /// A system generated unique identifier for the ImportMap
         /// </summary>
         /// <value>A system generated unique identifier for the ImportMap</value>
-        [MetaDataExtension (Description = "A system generated unique identifier for the ImportMap")]
+        [MetaData (Description = "A system generated unique identifier for the ImportMap")]
         public int Id { get; set; }
 
         /// <summary>
         /// Table name in old system
         /// </summary>
         /// <value>Table name in old system</value>
-        [MetaDataExtension (Description = "Table name in old system")]
+        [MetaData (Description = "Table name in old system")]
         public string OldTable { get; set; }
 
         /// <summary>
         /// Table name in new system.
         /// </summary>
         /// <value>Table name in new system.</value>
-        [MetaDataExtension (Description = "Table name in new system.")]
+        [MetaData (Description = "Table name in new system.")]
         public string NewTable { get; set; }
 
         /// <summary>
         /// Old primary key for record
         /// </summary>
         /// <value>Old primary key for record</value>
-        [MetaDataExtension (Description = "Old primary key for record")]
+        [MetaData (Description = "Old primary key for record")]
         [MaxLength(250)]
         public string OldKey { get; set; }
 
@@ -68,7 +68,7 @@ namespace HETSAPI.Models
         /// New primary key for record
         /// </summary>
         /// <value>New primary key for record</value>
-        [MetaDataExtension (Description = "New primary key for record")]
+        [MetaData (Description = "New primary key for record")]
         public int NewKey { get; set; }
 
         /// <summary>
@@ -106,11 +106,9 @@ namespace HETSAPI.Models
         /// <returns>Boolean</returns>
         public override bool Equals(object obj)
         {
-            if (ReferenceEquals(null, obj)) { return false; }
+            if (obj is null) { return false; }
             if (ReferenceEquals(this, obj)) { return true; }
-            if (obj.GetType() != GetType()) { return false; }
-
-            return Equals((ImportMap)obj);
+            return obj.GetType() == GetType() && Equals((ImportMap)obj);
         }
 
         /// <summary>
@@ -120,7 +118,7 @@ namespace HETSAPI.Models
         /// <returns>Boolean</returns>
         public bool Equals(ImportMap other)
         {
-            if (ReferenceEquals(null, other)) { return false; }
+            if (other is null) { return false; }
             if (ReferenceEquals(this, other)) { return true; }
 
             return

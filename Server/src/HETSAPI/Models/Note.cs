@@ -8,7 +8,7 @@ namespace HETSAPI.Models
     /// <summary>
     /// Note Database Model
     /// </summary>
-    [MetaDataExtension (Description = "Text entered about an entity in the application - e.g. piece of Equipment, an Owner, a Project and so on.")]
+    [MetaData (Description = "Text entered about an entity in the application - e.g. piece of Equipment, an Owner, a Project and so on.")]
     public sealed class Note : AuditableEntity, IEquatable<Note>
     {
         /// <summary>
@@ -36,14 +36,14 @@ namespace HETSAPI.Models
         /// A system-generated unique identifier for a Note
         /// </summary>
         /// <value>A system-generated unique identifier for a Note</value>
-        [MetaDataExtension (Description = "A system-generated unique identifier for a Note")]
+        [MetaData (Description = "A system-generated unique identifier for a Note")]
         public int Id { get; set; }
         
         /// <summary>
         /// Notes entered by users about instance of entities - e.g. School Buses and School Bus Owners
         /// </summary>
         /// <value>Notes entered by users about instance of entities - e.g. School Buses and School Bus Owners</value>
-        [MetaDataExtension (Description = "Notes entered by users about instance of entities - e.g. School Buses and School Bus Owners")]
+        [MetaData (Description = "Notes entered by users about instance of entities - e.g. School Buses and School Bus Owners")]
         [MaxLength(2048)]        
         public string Text { get; set; }
         
@@ -51,7 +51,7 @@ namespace HETSAPI.Models
         /// A user set flag that the note is no longer relevant. Allows the note to be retained for historical reasons,  but identified to other users as no longer applicable.
         /// </summary>
         /// <value>A user set flag that the note is no longer relevant. Allows the note to be retained for historical reasons,  but identified to other users as no longer applicable.</value>
-        [MetaDataExtension (Description = "A user set flag that the note is no longer relevant. Allows the note to be retained for historical reasons,  but identified to other users as no longer applicable.")]
+        [MetaData (Description = "A user set flag that the note is no longer relevant. Allows the note to be retained for historical reasons,  but identified to other users as no longer applicable.")]
         public bool? IsNoLongerRelevant { get; set; }
         
         /// <summary>
@@ -87,11 +87,9 @@ namespace HETSAPI.Models
         /// <returns>Boolean</returns>
         public override bool Equals(object obj)
         {
-            if (ReferenceEquals(null, obj)) { return false; }
+            if (obj is null) { return false; }
             if (ReferenceEquals(this, obj)) { return true; }
-            if (obj.GetType() != GetType()) { return false; }
-
-            return Equals((Note)obj);
+            return obj.GetType() == GetType() && Equals((Note)obj);
         }
 
         /// <summary>
@@ -101,7 +99,7 @@ namespace HETSAPI.Models
         /// <returns>Boolean</returns>
         public bool Equals(Note other)
         {
-            if (ReferenceEquals(null, other)) { return false; }
+            if (other is null) { return false; }
             if (ReferenceEquals(this, other)) { return true; }
 
             return                 

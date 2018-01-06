@@ -10,8 +10,8 @@ namespace HETSAPI.Models
     /// <summary>
     /// Role Database Model
     /// </summary>
-    [MetaDataExtension (Description = "A HETS application-managed Role that has a selected list of permissions and can be assigned to Users. A role coresponds to the authorization level provided a user based on the work for which they are responsible.")]
-    public partial class Role : AuditableEntity, IEquatable<Role>
+    [MetaData (Description = "A HETS application-managed Role that has a selected list of permissions and can be assigned to Users. A role coresponds to the authorization level provided a user based on the work for which they are responsible.")]
+    public sealed partial class Role : AuditableEntity, IEquatable<Role>
     {
         /// <summary>
         /// Default constructor, required by entity framework
@@ -42,14 +42,14 @@ namespace HETSAPI.Models
         /// A system-generated unique identifier for a Role
         /// </summary>
         /// <value>A system-generated unique identifier for a Role</value>
-        [MetaDataExtension (Description = "A system-generated unique identifier for a Role")]
+        [MetaData (Description = "A system-generated unique identifier for a Role")]
         public int Id { get; set; }
         
         /// <summary>
         /// The name of the Role, as established by the user creating the role.
         /// </summary>
         /// <value>The name of the Role, as established by the user creating the role.</value>
-        [MetaDataExtension (Description = "The name of the Role, as established by the user creating the role.")]
+        [MetaData (Description = "The name of the Role, as established by the user creating the role.")]
         [MaxLength(255)]        
         public string Name { get; set; }
         
@@ -57,7 +57,7 @@ namespace HETSAPI.Models
         /// A description of the role as set by the user creating&#x2F;updating the role.
         /// </summary>
         /// <value>A description of the role as set by the user creating&#x2F;updating the role.</value>
-        [MetaDataExtension (Description = "A description of the role as set by the user creating&#x2F;updating the role.")]
+        [MetaData (Description = "A description of the role as set by the user creating&#x2F;updating the role.")]
         [MaxLength(2048)]        
         public string Description { get; set; }
         
@@ -106,11 +106,9 @@ namespace HETSAPI.Models
         /// <returns>Boolean</returns>
         public override bool Equals(object obj)
         {
-            if (ReferenceEquals(null, obj)) { return false; }
+            if (obj is null) { return false; }
             if (ReferenceEquals(this, obj)) { return true; }
-            if (obj.GetType() != GetType()) { return false; }
-
-            return Equals((Role)obj);
+            return obj.GetType() == GetType() && Equals((Role)obj);
         }
 
         /// <summary>
@@ -120,7 +118,7 @@ namespace HETSAPI.Models
         /// <returns>Boolean</returns>
         public bool Equals(Role other)
         {
-            if (ReferenceEquals(null, other)) { return false; }
+            if (other is null) { return false; }
             if (ReferenceEquals(this, other)) { return true; }
 
             return                 

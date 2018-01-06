@@ -73,7 +73,7 @@ namespace HETSAPI.ViewModels
         /// </summary>
         /// <value>A system-generated unique rental agreement number in a format defined by the business as suitable for the business and client to see and use.</value>
         [DataMember(Name="number")]
-        [MetaDataExtension (Description = "A system-generated unique rental agreement number in a format defined by the business as suitable for the business and client to see and use.")]
+        [MetaData (Description = "A system-generated unique rental agreement number in a format defined by the business as suitable for the business and client to see and use.")]
         public string Number { get; set; }
 
         /// <summary>
@@ -81,7 +81,7 @@ namespace HETSAPI.ViewModels
         /// </summary>
         /// <value>The current status of the Rental Agreement, such as Active or Complete</value>
         [DataMember(Name="status")]
-        [MetaDataExtension (Description = "The current status of the Rental Agreement, such as Active or Complete")]
+        [MetaData (Description = "The current status of the Rental Agreement, such as Active or Complete")]
         public string Status { get; set; }
 
         /// <summary>
@@ -89,7 +89,7 @@ namespace HETSAPI.ViewModels
         /// </summary>
         /// <value>A foreign key reference to the system-generated unique identifier for an Equipment</value>
         [DataMember(Name="equipment")]
-        [MetaDataExtension (Description = "A foreign key reference to the system-generated unique identifier for an Equipment")]
+        [MetaData (Description = "A foreign key reference to the system-generated unique identifier for an Equipment")]
         public Equipment Equipment { get; set; }
 
         /// <summary>
@@ -97,7 +97,7 @@ namespace HETSAPI.ViewModels
         /// </summary>
         /// <value>A foreign key reference to the system-generated unique identifier for a Project</value>
         [DataMember(Name="project")]
-        [MetaDataExtension (Description = "A foreign key reference to the system-generated unique identifier for a Project")]
+        [MetaData (Description = "A foreign key reference to the system-generated unique identifier for a Project")]
         public Project Project { get; set; }
 
         /// <summary>
@@ -123,7 +123,7 @@ namespace HETSAPI.ViewModels
         /// </summary>
         /// <value>An optional note to be placed onto the Rental Agreement.</value>
         [DataMember(Name="note")]
-        [MetaDataExtension (Description = "An optional note to be placed onto the Rental Agreement.")]
+        [MetaData (Description = "An optional note to be placed onto the Rental Agreement.")]
         public string Note { get; set; }
 
         /// <summary>
@@ -131,7 +131,7 @@ namespace HETSAPI.ViewModels
         /// </summary>
         /// <value>The estimated start date of the work to be placed on the rental agreement.</value>
         [DataMember(Name="estimateStartWork")]
-        [MetaDataExtension (Description = "The estimated start date of the work to be placed on the rental agreement.")]
+        [MetaData (Description = "The estimated start date of the work to be placed on the rental agreement.")]
         public string EstimateStartWork { get; set; }
 
         /// <summary>
@@ -139,7 +139,7 @@ namespace HETSAPI.ViewModels
         /// </summary>
         /// <value>The dated on date to put on the Rental Agreement.</value>
         [DataMember(Name="datedOn")]
-        [MetaDataExtension (Description = "The dated on date to put on the Rental Agreement.")]
+        [MetaData (Description = "The dated on date to put on the Rental Agreement.")]
         public string DatedOn { get; set; }
 
         /// <summary>
@@ -147,7 +147,7 @@ namespace HETSAPI.ViewModels
         /// </summary>
         /// <value>The estimated number of hours of work to be put onto the Rental Agreement.</value>
         [DataMember(Name="estimateHours")]
-        [MetaDataExtension (Description = "The estimated number of hours of work to be put onto the Rental Agreement.")]
+        [MetaData (Description = "The estimated number of hours of work to be put onto the Rental Agreement.")]
         public int? EstimateHours { get; set; }
 
         /// <summary>
@@ -155,7 +155,7 @@ namespace HETSAPI.ViewModels
         /// </summary>
         /// <value>The dollar rate for the piece of equipment itself for this Rental Agreement. Other rates associated with the Rental Agreement are in the Rental Agreement Rate table.</value>
         [DataMember(Name="equipmentRate")]
-        [MetaDataExtension (Description = "The dollar rate for the piece of equipment itself for this Rental Agreement. Other rates associated with the Rental Agreement are in the Rental Agreement Rate table.")]
+        [MetaData (Description = "The dollar rate for the piece of equipment itself for this Rental Agreement. Other rates associated with the Rental Agreement are in the Rental Agreement Rate table.")]
         public float? EquipmentRate { get; set; }
 
         /// <summary>
@@ -163,7 +163,7 @@ namespace HETSAPI.ViewModels
         /// </summary>
         /// <value>The period of the rental rate. The vast majority will be hourly, but the rate could apply across a different period, e.g. daily.</value>
         [DataMember(Name="ratePeriod")]
-        [MetaDataExtension (Description = "The period of the rental rate. The vast majority will be hourly, but the rate could apply across a different period, e.g. daily.")]
+        [MetaData (Description = "The period of the rental rate. The vast majority will be hourly, but the rate could apply across a different period, e.g. daily.")]
         public string RatePeriod { get; set; }
 
         /// <summary>
@@ -171,7 +171,7 @@ namespace HETSAPI.ViewModels
         /// </summary>
         /// <value>A comment about the rate for the piece of equipment.</value>
         [DataMember(Name="rateComment")]
-        [MetaDataExtension (Description = "A comment about the rate for the piece of equipment.")]
+        [MetaData (Description = "A comment about the rate for the piece of equipment.")]
         public string RateComment { get; set; }
 
         /// <summary>
@@ -219,11 +219,9 @@ namespace HETSAPI.ViewModels
         /// <returns>Boolean</returns>
         public override bool Equals(object obj)
         {
-            if (ReferenceEquals(null, obj)) { return false; }
+            if (obj is null) { return false; }
             if (ReferenceEquals(this, obj)) { return true; }
-            if (obj.GetType() != GetType()) { return false; }
-
-            return Equals((RentalAgreementPdfViewModel)obj);
+            return obj.GetType() == GetType() && Equals((RentalAgreementPdfViewModel)obj);
         }
 
         /// <summary>
@@ -233,7 +231,7 @@ namespace HETSAPI.ViewModels
         /// <returns>Boolean</returns>
         public bool Equals(RentalAgreementPdfViewModel other)
         {
-            if (ReferenceEquals(null, other)) { return false; }
+            if (other is null) { return false; }
             if (ReferenceEquals(this, other)) { return true; }
 
             return                 

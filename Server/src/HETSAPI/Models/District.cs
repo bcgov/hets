@@ -9,7 +9,7 @@ namespace HETSAPI.Models
     /// <summary>
     /// District Database Model
     /// </summary>
-    [MetaDataExtension (Description = "The Ministry of Transportion and Infrastructure DISTRICT")]
+    [MetaData (Description = "The Ministry of Transportion and Infrastructure DISTRICT")]
     public sealed class District : AuditableEntity, IEquatable<District>
     {
         /// <summary>
@@ -46,21 +46,21 @@ namespace HETSAPI.Models
         /// A system-generated unique identifier for a District
         /// </summary>
         /// <value>A system-generated unique identifier for a District</value>
-        [MetaDataExtension (Description = "A system-generated unique identifier for a District")]
+        [MetaData (Description = "A system-generated unique identifier for a District")]
         public int Id { get; set; }
         
         /// <summary>
         /// A system generated unique identifier. NOT GENERATED IN THIS SYSTEM.
         /// </summary>
         /// <value>A system generated unique identifier. NOT GENERATED IN THIS SYSTEM.</value>
-        [MetaDataExtension (Description = "A system generated unique identifier. NOT GENERATED IN THIS SYSTEM.")]
+        [MetaData (Description = "A system generated unique identifier. NOT GENERATED IN THIS SYSTEM.")]
         public int MinistryDistrictID { get; set; }
         
         /// <summary>
         /// The Name of a Ministry District.
         /// </summary>
         /// <value>The Name of a Ministry District.</value>
-        [MetaDataExtension (Description = "The Name of a Ministry District.")]
+        [MetaData (Description = "The Name of a Ministry District.")]
         [MaxLength(150)]        
         public string Name { get; set; }
         
@@ -68,7 +68,7 @@ namespace HETSAPI.Models
         /// The region in which the District is found.
         /// </summary>
         /// <value>The region in which the District is found.</value>
-        [MetaDataExtension (Description = "The region in which the District is found.")]
+        [MetaData (Description = "The region in which the District is found.")]
         public Region Region { get; set; }
         
         /// <summary>
@@ -76,28 +76,28 @@ namespace HETSAPI.Models
         /// </summary>   
         [ForeignKey("Region")]
 		[JsonIgnore]
-		[MetaDataExtension (Description = "The region in which the District is found.")]
+		[MetaData (Description = "The region in which the District is found.")]
         public int? RegionId { get; set; }
         
         /// <summary>
         /// The DATE the business information came into effect. - NOT CURRENTLY ENFORCED IN THIS SYSTEM
         /// </summary>
         /// <value>The DATE the business information came into effect. - NOT CURRENTLY ENFORCED IN THIS SYSTEM</value>
-        [MetaDataExtension (Description = "The DATE the business information came into effect. - NOT CURRENTLY ENFORCED IN THIS SYSTEM")]
+        [MetaData (Description = "The DATE the business information came into effect. - NOT CURRENTLY ENFORCED IN THIS SYSTEM")]
         public DateTime StartDate { get; set; }
         
         /// <summary>
         /// A number that uniquely defines a Ministry District.
         /// </summary>
         /// <value>A number that uniquely defines a Ministry District.</value>
-        [MetaDataExtension (Description = "A number that uniquely defines a Ministry District.")]
+        [MetaData (Description = "A number that uniquely defines a Ministry District.")]
         public int? DistrictNumber { get; set; }
         
         /// <summary>
         /// The DATE the business information ceased to be in effect. - NOT CURRENTLY ENFORCED IN THIS SYSTEM
         /// </summary>
         /// <value>The DATE the business information ceased to be in effect. - NOT CURRENTLY ENFORCED IN THIS SYSTEM</value>
-        [MetaDataExtension (Description = "The DATE the business information ceased to be in effect. - NOT CURRENTLY ENFORCED IN THIS SYSTEM")]
+        [MetaData (Description = "The DATE the business information ceased to be in effect. - NOT CURRENTLY ENFORCED IN THIS SYSTEM")]
         public DateTime? EndDate { get; set; }
         
         /// <summary>
@@ -137,11 +137,9 @@ namespace HETSAPI.Models
         /// <returns>Boolean</returns>
         public override bool Equals(object obj)
         {
-            if (ReferenceEquals(null, obj)) { return false; }
+            if (obj is null) { return false; }
             if (ReferenceEquals(this, obj)) { return true; }
-            if (obj.GetType() != GetType()) { return false; }
-
-            return Equals((District)obj);
+            return obj.GetType() == GetType() && Equals((District)obj);
         }
 
         /// <summary>
@@ -151,7 +149,7 @@ namespace HETSAPI.Models
         /// <returns>Boolean</returns>
         public bool Equals(District other)
         {
-            if (ReferenceEquals(null, other)) { return false; }
+            if (other is null) { return false; }
             if (ReferenceEquals(this, other)) { return true; }
 
             return                 

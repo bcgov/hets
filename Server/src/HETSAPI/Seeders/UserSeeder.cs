@@ -53,13 +53,16 @@ namespace HETSAPI.Seeders
 
         private List<User> GetSeedUsers(DbAppContext context)
         {
-            List<User> users = new List<User>(GetDefaultUsers(context));
+            List<User> users = new List<User>(GetDefaultUsers());
+
             if (IsDevelopmentEnvironment)
                 users.AddRange(GetDevUsers(context));
+
             if (IsTestEnvironment || IsStagingEnvironment)
-                users.AddRange(GetTestUsers(context));
+                users.AddRange(GetTestUsers());
+
             if (IsProductionEnvironment)
-                users.AddRange(GetProdUsers(context));
+                users.AddRange(GetProdUsers());
 
             return users;
         }
@@ -67,7 +70,7 @@ namespace HETSAPI.Seeders
         /// <summary>
         /// Returns a list of users to be populated in all environments.
         /// </summary>
-        private List<User> GetDefaultUsers(DbAppContext context)
+        private List<User> GetDefaultUsers()
         {
             return new List<User>();
         }
@@ -112,7 +115,7 @@ namespace HETSAPI.Seeders
         /// <summary>
         /// Returns a list of users to be populated in the Test environment.
         /// </summary>
-        private List<User> GetTestUsers(DbAppContext context)
+        private List<User> GetTestUsers()
         {
             return new List<User>();
         }
@@ -120,7 +123,7 @@ namespace HETSAPI.Seeders
         /// <summary>
         /// Returns a list of users to be populated in the Production environment.
         /// </summary>
-        private List<User> GetProdUsers(DbAppContext context)
+        private List<User> GetProdUsers()
         {
             return new List<User>();
         }

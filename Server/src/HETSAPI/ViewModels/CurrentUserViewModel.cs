@@ -109,7 +109,7 @@ namespace HETSAPI.ViewModels
         /// </summary>
         /// <value>The District to which this User is affliated.</value>
         [DataMember(Name="district")]
-        [MetaDataExtension (Description = "The District to which this User is affliated.")]
+        [MetaData (Description = "The District to which this User is affliated.")]
         public District District { get; set; }
 
         /// <summary>
@@ -152,11 +152,9 @@ namespace HETSAPI.ViewModels
         /// <returns>Boolean</returns>
         public override bool Equals(object obj)
         {
-            if (ReferenceEquals(null, obj)) { return false; }
+            if (obj is null) { return false; }
             if (ReferenceEquals(this, obj)) { return true; }
-            if (obj.GetType() != GetType()) { return false; }
-
-            return Equals((CurrentUserViewModel)obj);
+            return obj.GetType() == GetType() && Equals((CurrentUserViewModel)obj);
         }
 
         /// <summary>
@@ -166,7 +164,7 @@ namespace HETSAPI.ViewModels
         /// <returns>Boolean</returns>
         public bool Equals(CurrentUserViewModel other)
         {
-            if (ReferenceEquals(null, other)) { return false; }
+            if (other is null) { return false; }
             if (ReferenceEquals(this, other)) { return true; }
 
             return                 
