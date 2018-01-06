@@ -9,14 +9,14 @@ using HETSAPI.Mappings;
 namespace HETSAPI.Services.Impl
 {
     /// <summary>
-    /// 
+    /// Group Service
     /// </summary>
     public class GroupService : IGroupService
     {
         private readonly DbAppContext _context;
 
         /// <summary>
-        /// Create a service and set the database context
+        /// Group Service Constructor
         /// </summary>
         public GroupService(DbAppContext context)
         {
@@ -24,7 +24,7 @@ namespace HETSAPI.Services.Impl
         }
 
         /// <summary>
-        /// returns users in a given Group
+        /// Get users associated with a group
         /// </summary>
         /// <remarks>Used to get users in a given Group</remarks>
         /// <param name="id">id of Group to fetch Users for</param>
@@ -32,9 +32,11 @@ namespace HETSAPI.Services.Impl
         public IActionResult GroupsIdUsersGetAsync(int id)
         {
             bool exists = _context.Groups.Any(a => a.Id == id);
+
             if (exists)
             {
                 var result = new List<UserViewModel>();
+
                 var data = _context.GroupMemberships
                     .Include("User")
                     .Include("Group")
@@ -45,17 +47,16 @@ namespace HETSAPI.Services.Impl
                 {
                     result.Add(item.User.ToViewModel());
                 }
+
                 return new ObjectResult(result);
             }
-            else
-            {
-                // record not found
-                return new StatusCodeResult(404);
-            }
+            
+            // record not found
+            return new StatusCodeResult(404);           
         }
 
         /// <summary>
-        /// 
+        /// Create bulk group records
         /// </summary>
         /// <param name="items"></param>
         /// <response code="201">Groups created</response>
@@ -65,6 +66,7 @@ namespace HETSAPI.Services.Impl
             {
                 return new BadRequestResult();
             }
+
             foreach (Group item in items)
             {
 
@@ -78,12 +80,14 @@ namespace HETSAPI.Services.Impl
                     _context.Groups.Add(item);
                 }
             }
+
             // Save the changes
             _context.SaveChanges();
             return new NoContentResult();
         }
+
         /// <summary>
-        /// 
+        /// Get all groups
         /// </summary>
         /// <remarks>Returns a collection of groups</remarks>
         /// <response code="200">OK</response>
@@ -94,7 +98,7 @@ namespace HETSAPI.Services.Impl
         }
 
         /// <summary>
-        /// 
+        /// Delete group
         /// </summary>
         /// <param name="id">id of Group to delete</param>
         /// <response code="200">OK</response>
@@ -102,26 +106,28 @@ namespace HETSAPI.Services.Impl
         public IActionResult GroupsIdDeletePostAsync(int id)
         {
             var exists = _context.Groups.Any(a => a.Id == id);
+
             if (exists)
             {
                 var item = _context.Groups.First(a => a.Id == id);
+
                 if (item != null)
                 {
                     _context.Groups.Remove(item);
+                    
                     // Save the changes
                     _context.SaveChanges();
                 }
+
                 return new ObjectResult(item);
             }
-            else
-            {
-                // record not found
-                return new StatusCodeResult(404);
-            }
+            
+            // record not found
+            return new StatusCodeResult(404);            
         }
 
         /// <summary>
-        /// 
+        /// Get group by id
         /// </summary>
         /// <remarks>Returns a Group</remarks>
         /// <param name="id">id of Group to fetch</param>
@@ -130,20 +136,19 @@ namespace HETSAPI.Services.Impl
         public IActionResult GroupsIdGetAsync(int id)
         {
             var exists = _context.Groups.Any(a => a.Id == id);
+
             if (exists)
             {
                 var result = _context.Groups.First(a => a.Id == id);
                 return new ObjectResult(result);
             }
-            else
-            {
-                // record not found
-                return new StatusCodeResult(404);
-            }
+            
+            // record not found
+            return new StatusCodeResult(404);
         }
 
         /// <summary>
-        /// 
+        /// Update group
         /// </summary>
         /// <param name="id">id of Group to update</param>
         /// <param name="item"></param>
@@ -152,28 +157,29 @@ namespace HETSAPI.Services.Impl
         public IActionResult GroupsIdPutAsync(int id, Group item)
         {
             var exists = _context.Groups.Any(a => a.Id == id);
+
             if (exists && id == item.Id)
             {
                 _context.Groups.Update(item);
+
                 // Save the changes
                 _context.SaveChanges();
                 return new ObjectResult(item);
             }
-            else
-            {
-                // record not found
-                return new StatusCodeResult(404);
-            }
+           
+            // record not found
+            return new StatusCodeResult(404);
         }
 
         /// <summary>
-        /// 
+        /// Create group
         /// </summary>
         /// <param name="item"></param>
         /// <response code="201">Group created</response>
         public IActionResult GroupsPostAsync(Group item)
         {
             var exists = _context.Groups.Any(a => a.Id == item.Id);
+
             if (exists)
             {
                 _context.Groups.Update(item);
@@ -187,7 +193,5 @@ namespace HETSAPI.Services.Impl
             _context.SaveChanges();
             return new ObjectResult(item);
         }
-
-
     }
 }

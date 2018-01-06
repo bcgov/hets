@@ -1,11 +1,18 @@
 ﻿namespace HETSAPI.Models
 {
     /// <summary>
-    /// User Extension
+    /// User Extension (to support authorization)
     /// </summary>
     public partial class User
     {
+        /// <summary>
+        /// User Permission Claim Property
+        /// </summary>
         public const string PERMISSION_CLAIM = "permission_claim";
+
+        /// <summary>
+        /// UserId Claim Property
+        /// </summary>
         public const string USERID_CLAIM = "userid_claim";
     }
 }

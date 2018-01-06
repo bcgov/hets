@@ -6,55 +6,57 @@ using System.ComponentModel.DataAnnotations;
 namespace HETSAPI.Models
 {
     /// <summary>
-    /// A person and their related contact information linked to one or more entities in the system. For examples, there are contacts for Owners, Projects.
+    /// Contact Database Model
     /// </summary>
-        [MetaDataExtension (Description = "A person and their related contact information linked to one or more entities in the system. For examples, there are contacts for Owners, Projects.")]
-
-    public partial class Contact : AuditableEntity, IEquatable<Contact>
+    [MetaDataExtension (Description = "A person and their related contact information linked to one or more entities in the system. For examples, there are contacts for Owners, Projects.")]
+    public class Contact : AuditableEntity, IEquatable<Contact>
     {
         /// <summary>
-        /// Default constructor, required by entity framework
+        /// Contact Database Model Constructor (required by entity framework)
         /// </summary>
         public Contact()
         {
-            this.Id = 0;
+            Id = 0;
         }
 
         /// <summary>
         /// Initializes a new instance of the <see cref="Contact" /> class.
         /// </summary>
-        /// <param name="Id">A system-generated unique identifier for a Contact (required).</param>
-        /// <param name="GivenName">The given name of the contact..</param>
-        /// <param name="Surname">The surname of the contact..</param>
-        /// <param name="OrganizationName">The organization name of the contact..</param>
-        /// <param name="Role">The role of the contact. UI controlled as to whether it is free form or selected from an enumerated list - for initial implementation, the field is freeform..</param>
-        /// <param name="Notes">A note about the contact maintained by the users..</param>
-        /// <param name="EmailAddress">The email address for the contact..</param>
-        /// <param name="WorkPhoneNumber">The work phone number for the contact..</param>
-        /// <param name="MobilePhoneNumber">The mobile phone number for the contact..</param>
-        /// <param name="FaxPhoneNumber">The fax phone number for the contact..</param>
-        /// <param name="Address1">Address 1 line of the address..</param>
-        /// <param name="Address2">Address 2 line of the address..</param>
-        /// <param name="City">The City of the address..</param>
-        /// <param name="Province">The Province of the address..</param>
-        /// <param name="PostalCode">The postal code of the address..</param>
-        public Contact(int Id, string GivenName = null, string Surname = null, string OrganizationName = null, string Role = null, string Notes = null, string EmailAddress = null, string WorkPhoneNumber = null, string MobilePhoneNumber = null, string FaxPhoneNumber = null, string Address1 = null, string Address2 = null, string City = null, string Province = null, string PostalCode = null)
+        /// <param name="id">A system-generated unique identifier for a Contact (required).</param>
+        /// <param name="givenName">The given name of the contact..</param>
+        /// <param name="surname">The surname of the contact..</param>
+        /// <param name="organizationName">The organization name of the contact..</param>
+        /// <param name="role">The role of the contact. UI controlled as to whether it is free form or selected from an enumerated list - for initial implementation, the field is freeform..</param>
+        /// <param name="notes">A note about the contact maintained by the users..</param>
+        /// <param name="emailAddress">The email address for the contact..</param>
+        /// <param name="workPhoneNumber">The work phone number for the contact..</param>
+        /// <param name="mobilePhoneNumber">The mobile phone number for the contact..</param>
+        /// <param name="faxPhoneNumber">The fax phone number for the contact..</param>
+        /// <param name="address1">Address 1 line of the address..</param>
+        /// <param name="address2">Address 2 line of the address..</param>
+        /// <param name="city">The City of the address..</param>
+        /// <param name="province">The Province of the address..</param>
+        /// <param name="postalCode">The postal code of the address..</param>
+        public Contact(int id, string givenName = null, string surname = null, string organizationName = null, string role = null, 
+            string notes = null, string emailAddress = null, string workPhoneNumber = null, string mobilePhoneNumber = null, 
+            string faxPhoneNumber = null, string address1 = null, string address2 = null, string city = null, string province = null, 
+            string postalCode = null)
         {
-            this.Id = Id;
-            this.GivenName = GivenName;
-            this.Surname = Surname;
-            this.OrganizationName = OrganizationName;
-            this.Role = Role;
-            this.Notes = Notes;
-            this.EmailAddress = EmailAddress;
-            this.WorkPhoneNumber = WorkPhoneNumber;
-            this.MobilePhoneNumber = MobilePhoneNumber;
-            this.FaxPhoneNumber = FaxPhoneNumber;
-            this.Address1 = Address1;
-            this.Address2 = Address2;
-            this.City = City;
-            this.Province = Province;
-            this.PostalCode = PostalCode;
+            Id = id;
+            GivenName = givenName;
+            Surname = surname;
+            OrganizationName = organizationName;
+            Role = role;
+            Notes = notes;
+            EmailAddress = emailAddress;
+            WorkPhoneNumber = workPhoneNumber;
+            MobilePhoneNumber = mobilePhoneNumber;
+            FaxPhoneNumber = faxPhoneNumber;
+            Address1 = address1;
+            Address2 = address2;
+            City = city;
+            Province = province;
+            PostalCode = postalCode;
         }
 
         /// <summary>
@@ -70,7 +72,6 @@ namespace HETSAPI.Models
         /// <value>The given name of the contact.</value>
         [MetaDataExtension (Description = "The given name of the contact.")]
         [MaxLength(50)]
-
         public string GivenName { get; set; }
 
         /// <summary>
@@ -79,7 +80,6 @@ namespace HETSAPI.Models
         /// <value>The surname of the contact.</value>
         [MetaDataExtension (Description = "The surname of the contact.")]
         [MaxLength(50)]
-
         public string Surname { get; set; }
 
         /// <summary>
@@ -88,7 +88,6 @@ namespace HETSAPI.Models
         /// <value>The organization name of the contact.</value>
         [MetaDataExtension (Description = "The organization name of the contact.")]
         [MaxLength(150)]
-
         public string OrganizationName { get; set; }
 
         /// <summary>
@@ -97,7 +96,6 @@ namespace HETSAPI.Models
         /// <value>The role of the contact. UI controlled as to whether it is free form or selected from an enumerated list - for initial implementation, the field is freeform.</value>
         [MetaDataExtension (Description = "The role of the contact. UI controlled as to whether it is free form or selected from an enumerated list - for initial implementation, the field is freeform.")]
         [MaxLength(100)]
-
         public string Role { get; set; }
 
         /// <summary>
@@ -106,7 +104,6 @@ namespace HETSAPI.Models
         /// <value>A note about the contact maintained by the users.</value>
         [MetaDataExtension (Description = "A note about the contact maintained by the users.")]
         [MaxLength(512)]
-
         public string Notes { get; set; }
 
         /// <summary>
@@ -115,7 +112,6 @@ namespace HETSAPI.Models
         /// <value>The email address for the contact.</value>
         [MetaDataExtension (Description = "The email address for the contact.")]
         [MaxLength(255)]
-
         public string EmailAddress { get; set; }
 
         /// <summary>
@@ -124,7 +120,6 @@ namespace HETSAPI.Models
         /// <value>The work phone number for the contact.</value>
         [MetaDataExtension (Description = "The work phone number for the contact.")]
         [MaxLength(20)]
-
         public string WorkPhoneNumber { get; set; }
 
         /// <summary>
@@ -133,7 +128,6 @@ namespace HETSAPI.Models
         /// <value>The mobile phone number for the contact.</value>
         [MetaDataExtension (Description = "The mobile phone number for the contact.")]
         [MaxLength(20)]
-
         public string MobilePhoneNumber { get; set; }
 
         /// <summary>
@@ -142,7 +136,6 @@ namespace HETSAPI.Models
         /// <value>The fax phone number for the contact.</value>
         [MetaDataExtension (Description = "The fax phone number for the contact.")]
         [MaxLength(20)]
-
         public string FaxPhoneNumber { get; set; }
 
         /// <summary>
@@ -151,7 +144,6 @@ namespace HETSAPI.Models
         /// <value>Address 1 line of the address.</value>
         [MetaDataExtension (Description = "Address 1 line of the address.")]
         [MaxLength(80)]
-
         public string Address1 { get; set; }
 
         /// <summary>
@@ -160,7 +152,6 @@ namespace HETSAPI.Models
         /// <value>Address 2 line of the address.</value>
         [MetaDataExtension (Description = "Address 2 line of the address.")]
         [MaxLength(80)]
-
         public string Address2 { get; set; }
 
         /// <summary>
@@ -169,7 +160,6 @@ namespace HETSAPI.Models
         /// <value>The City of the address.</value>
         [MetaDataExtension (Description = "The City of the address.")]
         [MaxLength(100)]
-
         public string City { get; set; }
 
         /// <summary>
@@ -178,7 +168,6 @@ namespace HETSAPI.Models
         /// <value>The Province of the address.</value>
         [MetaDataExtension (Description = "The Province of the address.")]
         [MaxLength(50)]
-
         public string Province { get; set; }
 
         /// <summary>
@@ -187,7 +176,6 @@ namespace HETSAPI.Models
         /// <value>The postal code of the address.</value>
         [MetaDataExtension (Description = "The postal code of the address.")]
         [MaxLength(15)]
-
         public string PostalCode { get; set; }
 
         /// <summary>
@@ -197,6 +185,7 @@ namespace HETSAPI.Models
         public override string ToString()
         {
             var sb = new StringBuilder();
+
             sb.Append("class Contact {\n");
             sb.Append("  Id: ").Append(Id).Append("\n");
             sb.Append("  GivenName: ").Append(GivenName).Append("\n");
@@ -214,6 +203,7 @@ namespace HETSAPI.Models
             sb.Append("  Province: ").Append(Province).Append("\n");
             sb.Append("  PostalCode: ").Append(PostalCode).Append("\n");
             sb.Append("}\n");
+
             return sb.ToString();
         }
 
@@ -236,6 +226,7 @@ namespace HETSAPI.Models
             if (ReferenceEquals(null, obj)) { return false; }
             if (ReferenceEquals(this, obj)) { return true; }
             if (obj.GetType() != GetType()) { return false; }
+
             return Equals((Contact)obj);
         }
 
@@ -246,84 +237,83 @@ namespace HETSAPI.Models
         /// <returns>Boolean</returns>
         public bool Equals(Contact other)
         {
-
             if (ReferenceEquals(null, other)) { return false; }
             if (ReferenceEquals(this, other)) { return true; }
 
             return
                 (
-                    this.Id == other.Id ||
-                    this.Id.Equals(other.Id)
+                    Id == other.Id ||
+                    Id.Equals(other.Id)
                 ) &&
                 (
-                    this.GivenName == other.GivenName ||
-                    this.GivenName != null &&
-                    this.GivenName.Equals(other.GivenName)
+                    GivenName == other.GivenName ||
+                    GivenName != null &&
+                    GivenName.Equals(other.GivenName)
                 ) &&
                 (
-                    this.Surname == other.Surname ||
-                    this.Surname != null &&
-                    this.Surname.Equals(other.Surname)
+                    Surname == other.Surname ||
+                    Surname != null &&
+                    Surname.Equals(other.Surname)
                 ) &&
                 (
-                    this.OrganizationName == other.OrganizationName ||
-                    this.OrganizationName != null &&
-                    this.OrganizationName.Equals(other.OrganizationName)
+                    OrganizationName == other.OrganizationName ||
+                    OrganizationName != null &&
+                    OrganizationName.Equals(other.OrganizationName)
                 ) &&
                 (
-                    this.Role == other.Role ||
-                    this.Role != null &&
-                    this.Role.Equals(other.Role)
+                    Role == other.Role ||
+                    Role != null &&
+                    Role.Equals(other.Role)
                 ) &&
                 (
-                    this.Notes == other.Notes ||
-                    this.Notes != null &&
-                    this.Notes.Equals(other.Notes)
+                    Notes == other.Notes ||
+                    Notes != null &&
+                    Notes.Equals(other.Notes)
                 ) &&
                 (
-                    this.EmailAddress == other.EmailAddress ||
-                    this.EmailAddress != null &&
-                    this.EmailAddress.Equals(other.EmailAddress)
+                    EmailAddress == other.EmailAddress ||
+                    EmailAddress != null &&
+                    EmailAddress.Equals(other.EmailAddress)
                 ) &&
                 (
-                    this.WorkPhoneNumber == other.WorkPhoneNumber ||
-                    this.WorkPhoneNumber != null &&
-                    this.WorkPhoneNumber.Equals(other.WorkPhoneNumber)
+                    WorkPhoneNumber == other.WorkPhoneNumber ||
+                    WorkPhoneNumber != null &&
+                    WorkPhoneNumber.Equals(other.WorkPhoneNumber)
                 ) &&
                 (
-                    this.MobilePhoneNumber == other.MobilePhoneNumber ||
-                    this.MobilePhoneNumber != null &&
-                    this.MobilePhoneNumber.Equals(other.MobilePhoneNumber)
+                    MobilePhoneNumber == other.MobilePhoneNumber ||
+                    MobilePhoneNumber != null &&
+                    MobilePhoneNumber.Equals(other.MobilePhoneNumber)
                 ) &&
                 (
-                    this.FaxPhoneNumber == other.FaxPhoneNumber ||
-                    this.FaxPhoneNumber != null &&
-                    this.FaxPhoneNumber.Equals(other.FaxPhoneNumber)
+                    FaxPhoneNumber == other.FaxPhoneNumber ||
+                    FaxPhoneNumber != null &&
+                    FaxPhoneNumber.Equals(other.FaxPhoneNumber)
                 ) &&
                 (
-                    this.Address1 == other.Address1 ||
-                    this.Address1 != null &&
-                    this.Address1.Equals(other.Address1)
+                    Address1 == other.Address1 ||
+                    Address1 != null &&
+                    Address1.Equals(other.Address1)
                 ) &&
                 (
-                    this.Address2 == other.Address2 ||
-                    this.Address2 != null &&
-                    this.Address2.Equals(other.Address2)
+                    Address2 == other.Address2 ||
+                    Address2 != null &&
+                    Address2.Equals(other.Address2)
                 ) &&
                 (
-                    this.City == other.City ||
-                    this.City != null &&
-                    this.City.Equals(other.City)
+                    City == other.City ||
+                    City != null &&
+                    City.Equals(other.City)
                 ) &&
                 (
-                    this.Province == other.Province ||
-                    this.Province != null &&
-                    this.Province.Equals(other.Province)
+                    Province == other.Province ||
+                    Province != null &&
+                    Province.Equals(other.Province)
                 ) &&
                 (
-                    this.PostalCode == other.PostalCode ||
-                    this.PostalCode != null &&
-                    this.PostalCode.Equals(other.PostalCode)
+                    PostalCode == other.PostalCode ||
+                    PostalCode != null &&
+                    PostalCode.Equals(other.PostalCode)
                 );
         }
 
@@ -339,61 +329,76 @@ namespace HETSAPI.Models
                 int hash = 41;
                 // Suitable nullity checks
 
-                hash = hash * 59 + this.Id.GetHashCode();                if (this.GivenName != null)
+                hash = hash * 59 + Id.GetHashCode();
+
+                if (GivenName != null)
                 {
-                    hash = hash * 59 + this.GivenName.GetHashCode();
+                    hash = hash * 59 + GivenName.GetHashCode();
                 }
-                                if (this.Surname != null)
+
+                if (Surname != null)
                 {
-                    hash = hash * 59 + this.Surname.GetHashCode();
+                    hash = hash * 59 + Surname.GetHashCode();
                 }
-                                if (this.OrganizationName != null)
+
+                if (OrganizationName != null)
                 {
-                    hash = hash * 59 + this.OrganizationName.GetHashCode();
+                    hash = hash * 59 + OrganizationName.GetHashCode();
                 }
-                                if (this.Role != null)
+
+                if (Role != null)
                 {
-                    hash = hash * 59 + this.Role.GetHashCode();
+                    hash = hash * 59 + Role.GetHashCode();
                 }
-                                if (this.Notes != null)
+
+                if (Notes != null)
                 {
-                    hash = hash * 59 + this.Notes.GetHashCode();
+                    hash = hash * 59 + Notes.GetHashCode();
                 }
-                                if (this.EmailAddress != null)
+
+                if (EmailAddress != null)
                 {
-                    hash = hash * 59 + this.EmailAddress.GetHashCode();
+                    hash = hash * 59 + EmailAddress.GetHashCode();
                 }
-                                if (this.WorkPhoneNumber != null)
+
+                if (WorkPhoneNumber != null)
                 {
-                    hash = hash * 59 + this.WorkPhoneNumber.GetHashCode();
+                    hash = hash * 59 + WorkPhoneNumber.GetHashCode();
                 }
-                                if (this.MobilePhoneNumber != null)
+
+                if (MobilePhoneNumber != null)
                 {
-                    hash = hash * 59 + this.MobilePhoneNumber.GetHashCode();
+                    hash = hash * 59 + MobilePhoneNumber.GetHashCode();
                 }
-                                if (this.FaxPhoneNumber != null)
+
+                if (FaxPhoneNumber != null)
                 {
-                    hash = hash * 59 + this.FaxPhoneNumber.GetHashCode();
+                    hash = hash * 59 + FaxPhoneNumber.GetHashCode();
                 }
-                                if (this.Address1 != null)
+
+                if (Address1 != null)
                 {
-                    hash = hash * 59 + this.Address1.GetHashCode();
+                    hash = hash * 59 + Address1.GetHashCode();
                 }
-                                if (this.Address2 != null)
+
+                if (Address2 != null)
                 {
-                    hash = hash * 59 + this.Address2.GetHashCode();
+                    hash = hash * 59 + Address2.GetHashCode();
                 }
-                                if (this.City != null)
+
+                if (City != null)
                 {
-                    hash = hash * 59 + this.City.GetHashCode();
+                    hash = hash * 59 + City.GetHashCode();
                 }
-                                if (this.Province != null)
+
+                if (Province != null)
                 {
-                    hash = hash * 59 + this.Province.GetHashCode();
+                    hash = hash * 59 + Province.GetHashCode();
                 }
-                                if (this.PostalCode != null)
+
+                if (PostalCode != null)
                 {
-                    hash = hash * 59 + this.PostalCode.GetHashCode();
+                    hash = hash * 59 + PostalCode.GetHashCode();
                 }
 
                 return hash;

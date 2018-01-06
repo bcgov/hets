@@ -7,35 +7,32 @@ using System.ComponentModel.DataAnnotations;
 namespace HETSAPI.Models
 {
     /// <summary>
-    /// An Equipment Attachment associated with a piece of Equipment.
+    /// Equipment Attachment Database Model
     /// </summary>
-        [MetaDataExtension (Description = "An Equipment Attachment associated with a piece of Equipment.")]
-
-    public partial class EquipmentAttachment : AuditableEntity, IEquatable<EquipmentAttachment>
+    [MetaDataExtension (Description = "An Equipment Attachment associated with a piece of Equipment.")]
+    public class EquipmentAttachment : AuditableEntity, IEquatable<EquipmentAttachment>
     {
         /// <summary>
-        /// Default constructor, required by entity framework
+        /// Equipment Attachment Database Model Constructor (required by entity framework)
         /// </summary>
         public EquipmentAttachment()
         {
-            this.Id = 0;
+            Id = 0;
         }
 
         /// <summary>
         /// Initializes a new instance of the <see cref="EquipmentAttachment" /> class.
         /// </summary>
-        /// <param name="Id">A system-generated unique identifier for an EquipmentAttachment (required).</param>
-        /// <param name="Equipment">Equipment (required).</param>
-        /// <param name="TypeName">The name of the attachment type (required).</param>
-        /// <param name="Description">A description of the equipment attachment if the Equipment Attachment Type Name is insufficient..</param>
-        public EquipmentAttachment(int Id, Equipment Equipment, string TypeName, string Description = null)
+        /// <param name="id">A system-generated unique identifier for an EquipmentAttachment (required).</param>
+        /// <param name="equipment">Equipment (required).</param>
+        /// <param name="typeName">The name of the attachment type (required).</param>
+        /// <param name="description">A description of the equipment attachment if the Equipment Attachment Type Name is insufficient..</param>
+        public EquipmentAttachment(int id, Equipment equipment, string typeName, string description = null)
         {   
-            this.Id = Id;
-            this.Equipment = Equipment;
-            this.TypeName = TypeName;
-
-
-            this.Description = Description;
+            Id = id;
+            Equipment = equipment;
+            TypeName = typeName;
+            Description = description;
         }
 
         /// <summary>
@@ -54,8 +51,7 @@ namespace HETSAPI.Models
         /// Foreign key for Equipment 
         /// </summary>   
         [ForeignKey("Equipment")]
-		[JsonIgnore]
-		
+		[JsonIgnore]		
         public int? EquipmentId { get; set; }
         
         /// <summary>
@@ -63,8 +59,7 @@ namespace HETSAPI.Models
         /// </summary>
         /// <value>The name of the attachment type</value>
         [MetaDataExtension (Description = "The name of the attachment type")]
-        [MaxLength(100)]
-        
+        [MaxLength(100)]        
         public string TypeName { get; set; }
         
         /// <summary>
@@ -72,8 +67,7 @@ namespace HETSAPI.Models
         /// </summary>
         /// <value>A description of the equipment attachment if the Equipment Attachment Type Name is insufficient.</value>
         [MetaDataExtension (Description = "A description of the equipment attachment if the Equipment Attachment Type Name is insufficient.")]
-        [MaxLength(2048)]
-        
+        [MaxLength(2048)]        
         public string Description { get; set; }
         
         /// <summary>
@@ -83,12 +77,14 @@ namespace HETSAPI.Models
         public override string ToString()
         {
             var sb = new StringBuilder();
+
             sb.Append("class EquipmentAttachment {\n");
             sb.Append("  Id: ").Append(Id).Append("\n");
             sb.Append("  Equipment: ").Append(Equipment).Append("\n");
             sb.Append("  TypeName: ").Append(TypeName).Append("\n");
             sb.Append("  Description: ").Append(Description).Append("\n");
             sb.Append("}\n");
+
             return sb.ToString();
         }
 
@@ -111,6 +107,7 @@ namespace HETSAPI.Models
             if (ReferenceEquals(null, obj)) { return false; }
             if (ReferenceEquals(this, obj)) { return true; }
             if (obj.GetType() != GetType()) { return false; }
+
             return Equals((EquipmentAttachment)obj);
         }
 
@@ -121,29 +118,28 @@ namespace HETSAPI.Models
         /// <returns>Boolean</returns>
         public bool Equals(EquipmentAttachment other)
         {
-
             if (ReferenceEquals(null, other)) { return false; }
             if (ReferenceEquals(this, other)) { return true; }
 
             return                 
                 (
-                    this.Id == other.Id ||
-                    this.Id.Equals(other.Id)
+                    Id == other.Id ||
+                    Id.Equals(other.Id)
                 ) &&                 
                 (
-                    this.Equipment == other.Equipment ||
-                    this.Equipment != null &&
-                    this.Equipment.Equals(other.Equipment)
+                    Equipment == other.Equipment ||
+                    Equipment != null &&
+                    Equipment.Equals(other.Equipment)
                 ) &&                 
                 (
-                    this.TypeName == other.TypeName ||
-                    this.TypeName != null &&
-                    this.TypeName.Equals(other.TypeName)
+                    TypeName == other.TypeName ||
+                    TypeName != null &&
+                    TypeName.Equals(other.TypeName)
                 ) &&                 
                 (
-                    this.Description == other.Description ||
-                    this.Description != null &&
-                    this.Description.Equals(other.Description)
+                    Description == other.Description ||
+                    Description != null &&
+                    Description.Equals(other.Description)
                 );
         }
 
@@ -157,19 +153,23 @@ namespace HETSAPI.Models
             unchecked // Overflow is fine, just wrap
             {
                 int hash = 41;
-                // Suitable nullity checks
-                                   
-                hash = hash * 59 + this.Id.GetHashCode();                   
-                if (this.Equipment != null)
+
+                // Suitable nullity checks                                   
+                hash = hash * 59 + Id.GetHashCode();                   
+
+                if (Equipment != null)
                 {
-                    hash = hash * 59 + this.Equipment.GetHashCode();
-                }                if (this.TypeName != null)
+                    hash = hash * 59 + Equipment.GetHashCode();
+                }
+
+                if (TypeName != null)
                 {
-                    hash = hash * 59 + this.TypeName.GetHashCode();
-                }                
-                                if (this.Description != null)
+                    hash = hash * 59 + TypeName.GetHashCode();
+                }
+
+                if (Description != null)
                 {
-                    hash = hash * 59 + this.Description.GetHashCode();
+                    hash = hash * 59 + Description.GetHashCode();
                 }                
                 
                 return hash;

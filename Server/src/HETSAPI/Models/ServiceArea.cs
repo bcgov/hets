@@ -7,43 +7,39 @@ using System.ComponentModel.DataAnnotations;
 namespace HETSAPI.Models
 {
     /// <summary>
-    /// The Ministry of Transportation and Infrastructure SERVICE AREA.
+    /// Service Area Database Model
     /// </summary>
     [MetaDataExtension (Description = "The Ministry of Transportation and Infrastructure SERVICE AREA.")]
-
-    public partial class ServiceArea : AuditableEntity, IEquatable<ServiceArea>
+    public class ServiceArea : AuditableEntity, IEquatable<ServiceArea>
     {
         /// <summary>
-        /// Default constructor, required by entity framework
+        /// Service Area Database Model Constructor (required by entity framework)
         /// </summary>
         public ServiceArea()
         {
-            this.Id = 0;
+            Id = 0;
         }
 
         /// <summary>
         /// Initializes a new instance of the <see cref="ServiceArea" /> class.
         /// </summary>
-        /// <param name="Id">A system-generated unique identifier for a ServiceArea (required).</param>
-        /// <param name="MinistryServiceAreaID">A system generated unique identifier. NOT GENERATED IN THIS SYSTEM. (required).</param>
-        /// <param name="Name">The Name of a Ministry Service Area. (required).</param>
-        /// <param name="District">The district in which the Service Area is found. (required).</param>
-        /// <param name="StartDate">The DATE the business information came into effect. - NOT CURRENTLY ENFORCED IN THIS SYSTEM (required).</param>
-        /// <param name="AreaNumber">A number that uniquely defines a Ministry Service Area..</param>
-        /// <param name="EndDate">The DATE the business information ceased to be in effect. - NOT CURRENTLY ENFORCED IN THIS SYSTEM.</param>
-        public ServiceArea(int Id, int MinistryServiceAreaID, string Name, District District, DateTime StartDate, int? AreaNumber = null, DateTime? EndDate = null)
+        /// <param name="id">A system-generated unique identifier for a ServiceArea (required).</param>
+        /// <param name="ministryServiceAreaId">A system generated unique identifier. NOT GENERATED IN THIS SYSTEM. (required).</param>
+        /// <param name="name">The Name of a Ministry Service Area. (required).</param>
+        /// <param name="district">The district in which the Service Area is found. (required).</param>
+        /// <param name="startDate">The DATE the business information came into effect. - NOT CURRENTLY ENFORCED IN THIS SYSTEM (required).</param>
+        /// <param name="areaNumber">A number that uniquely defines a Ministry Service Area..</param>
+        /// <param name="endDate">The DATE the business information ceased to be in effect. - NOT CURRENTLY ENFORCED IN THIS SYSTEM.</param>
+        public ServiceArea(int id, int ministryServiceAreaId, string name, District district, DateTime startDate, 
+            int? areaNumber = null, DateTime? endDate = null)
         {   
-            this.Id = Id;
-            this.MinistryServiceAreaID = MinistryServiceAreaID;
-            this.Name = Name;
-            this.District = District;
-            this.StartDate = StartDate;
-
-
-
-
-            this.AreaNumber = AreaNumber;
-            this.EndDate = EndDate;
+            Id = id;
+            MinistryServiceAreaID = ministryServiceAreaId;
+            Name = name;
+            District = district;
+            StartDate = startDate;
+            AreaNumber = areaNumber;
+            EndDate = endDate;
         }
 
         /// <summary>
@@ -65,8 +61,7 @@ namespace HETSAPI.Models
         /// </summary>
         /// <value>The Name of a Ministry Service Area.</value>
         [MetaDataExtension (Description = "The Name of a Ministry Service Area.")]
-        [MaxLength(150)]
-        
+        [MaxLength(150)]        
         public string Name { get; set; }
         
         /// <summary>
@@ -112,6 +107,7 @@ namespace HETSAPI.Models
         public override string ToString()
         {
             var sb = new StringBuilder();
+
             sb.Append("class ServiceArea {\n");
             sb.Append("  Id: ").Append(Id).Append("\n");
             sb.Append("  MinistryServiceAreaID: ").Append(MinistryServiceAreaID).Append("\n");
@@ -121,6 +117,7 @@ namespace HETSAPI.Models
             sb.Append("  AreaNumber: ").Append(AreaNumber).Append("\n");
             sb.Append("  EndDate: ").Append(EndDate).Append("\n");
             sb.Append("}\n");
+
             return sb.ToString();
         }
 
@@ -143,6 +140,7 @@ namespace HETSAPI.Models
             if (ReferenceEquals(null, obj)) { return false; }
             if (ReferenceEquals(this, obj)) { return true; }
             if (obj.GetType() != GetType()) { return false; }
+
             return Equals((ServiceArea)obj);
         }
 
@@ -153,43 +151,41 @@ namespace HETSAPI.Models
         /// <returns>Boolean</returns>
         public bool Equals(ServiceArea other)
         {
-
             if (ReferenceEquals(null, other)) { return false; }
             if (ReferenceEquals(this, other)) { return true; }
 
             return                 
                 (
-                    this.Id == other.Id ||
-                    this.Id.Equals(other.Id)
+                    Id == other.Id ||
+                    Id.Equals(other.Id)
                 ) &&                 
                 (
-                    this.MinistryServiceAreaID == other.MinistryServiceAreaID ||
-                    this.MinistryServiceAreaID.Equals(other.MinistryServiceAreaID)
+                    MinistryServiceAreaID == other.MinistryServiceAreaID ||
+                    MinistryServiceAreaID.Equals(other.MinistryServiceAreaID)
                 ) &&                 
                 (
-                    this.Name == other.Name ||
-                    this.Name != null &&
-                    this.Name.Equals(other.Name)
+                    Name == other.Name ||
+                    Name != null &&
+                    Name.Equals(other.Name)
                 ) &&                 
                 (
-                    this.District == other.District ||
-                    this.District != null &&
-                    this.District.Equals(other.District)
+                    District == other.District ||
+                    District != null &&
+                    District.Equals(other.District)
                 ) &&                 
                 (
-                    this.StartDate == other.StartDate ||
-                    this.StartDate != null &&
-                    this.StartDate.Equals(other.StartDate)
+                    StartDate == other.StartDate ||
+                    StartDate.Equals(other.StartDate)
                 ) &&                 
                 (
-                    this.AreaNumber == other.AreaNumber ||
-                    this.AreaNumber != null &&
-                    this.AreaNumber.Equals(other.AreaNumber)
+                    AreaNumber == other.AreaNumber ||
+                    AreaNumber != null &&
+                    AreaNumber.Equals(other.AreaNumber)
                 ) &&                 
                 (
-                    this.EndDate == other.EndDate ||
-                    this.EndDate != null &&
-                    this.EndDate.Equals(other.EndDate)
+                    EndDate == other.EndDate ||
+                    EndDate != null &&
+                    EndDate.Equals(other.EndDate)
                 );
         }
 
@@ -203,28 +199,31 @@ namespace HETSAPI.Models
             unchecked // Overflow is fine, just wrap
             {
                 int hash = 41;
-                // Suitable nullity checks
-                                   
-                hash = hash * 59 + this.Id.GetHashCode();                                   
-                hash = hash * 59 + this.MinistryServiceAreaID.GetHashCode();                if (this.Name != null)
+
+                // Suitable nullity checks                                   
+                hash = hash * 59 + Id.GetHashCode();                                   
+                hash = hash * 59 + MinistryServiceAreaID.GetHashCode();
+
+                if (Name != null)
                 {
-                    hash = hash * 59 + this.Name.GetHashCode();
+                    hash = hash * 59 + Name.GetHashCode();
                 }                
                                    
-                if (this.District != null)
+                if (District != null)
                 {
-                    hash = hash * 59 + this.District.GetHashCode();
-                }                   
-                if (this.StartDate != null)
+                    hash = hash * 59 + District.GetHashCode();
+                }
+
+                hash = hash * 59 + StartDate.GetHashCode();
+
+                if (AreaNumber != null)
                 {
-                    hash = hash * 59 + this.StartDate.GetHashCode();
-                }                if (this.AreaNumber != null)
+                    hash = hash * 59 + AreaNumber.GetHashCode();
+                }
+
+                if (EndDate != null)
                 {
-                    hash = hash * 59 + this.AreaNumber.GetHashCode();
-                }                
-                                if (this.EndDate != null)
-                {
-                    hash = hash * 59 + this.EndDate.GetHashCode();
+                    hash = hash * 59 + EndDate.GetHashCode();
                 }                
                 
                 return hash;

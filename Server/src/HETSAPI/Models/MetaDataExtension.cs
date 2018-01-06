@@ -11,6 +11,5 @@ namespace HETSAPI.Models
         /// The PostgreSQL Comment.  Used for columns with entity framework. 
         /// </summary>
         public virtual string Description { get; set; }
-
     }
 }

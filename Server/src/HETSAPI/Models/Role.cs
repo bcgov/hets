@@ -8,10 +8,9 @@ using System.ComponentModel.DataAnnotations;
 namespace HETSAPI.Models
 {
     /// <summary>
-    /// A HETS application-managed Role that has a selected list of permissions and can be assigned to Users. A role coresponds to the authorization level provided a user based on the work for which they are responsible.
+    /// Role Database Model
     /// </summary>
     [MetaDataExtension (Description = "A HETS application-managed Role that has a selected list of permissions and can be assigned to Users. A role coresponds to the authorization level provided a user based on the work for which they are responsible.")]
-
     public partial class Role : AuditableEntity, IEquatable<Role>
     {
         /// <summary>
@@ -19,26 +18,24 @@ namespace HETSAPI.Models
         /// </summary>
         public Role()
         {
-            this.Id = 0;
+            Id = 0;
         }
 
         /// <summary>
         /// Initializes a new instance of the <see cref="Role" /> class.
         /// </summary>
-        /// <param name="Id">A system-generated unique identifier for a Role (required).</param>
-        /// <param name="Name">The name of the Role, as established by the user creating the role. (required).</param>
-        /// <param name="Description">A description of the role as set by the user creating&amp;#x2F;updating the role. (required).</param>
-        /// <param name="RolePermissions">RolePermissions.</param>
-        /// <param name="UserRoles">UserRoles.</param>
-        public Role(int Id, string Name, string Description, List<RolePermission> RolePermissions = null, List<UserRole> UserRoles = null)
+        /// <param name="id">A system-generated unique identifier for a Role (required).</param>
+        /// <param name="name">The name of the Role, as established by the user creating the role. (required).</param>
+        /// <param name="description">A description of the role as set by the user creating&amp;#x2F;updating the role. (required).</param>
+        /// <param name="rolePermissions">RolePermissions.</param>
+        /// <param name="userRoles">UserRoles.</param>
+        public Role(int id, string name, string description, List<RolePermission> rolePermissions = null, List<UserRole> userRoles = null)
         {   
-            this.Id = Id;
-            this.Name = Name;
-            this.Description = Description;
-
-
-            this.RolePermissions = RolePermissions;
-            this.UserRoles = UserRoles;
+            Id = id;
+            Name = name;
+            Description = description;
+            RolePermissions = rolePermissions;
+            UserRoles = userRoles;
         }
 
         /// <summary>
@@ -53,8 +50,7 @@ namespace HETSAPI.Models
         /// </summary>
         /// <value>The name of the Role, as established by the user creating the role.</value>
         [MetaDataExtension (Description = "The name of the Role, as established by the user creating the role.")]
-        [MaxLength(255)]
-        
+        [MaxLength(255)]        
         public string Name { get; set; }
         
         /// <summary>
@@ -62,8 +58,7 @@ namespace HETSAPI.Models
         /// </summary>
         /// <value>A description of the role as set by the user creating&#x2F;updating the role.</value>
         [MetaDataExtension (Description = "A description of the role as set by the user creating&#x2F;updating the role.")]
-        [MaxLength(2048)]
-        
+        [MaxLength(2048)]        
         public string Description { get; set; }
         
         /// <summary>
@@ -83,6 +78,7 @@ namespace HETSAPI.Models
         public override string ToString()
         {
             var sb = new StringBuilder();
+
             sb.Append("class Role {\n");
             sb.Append("  Id: ").Append(Id).Append("\n");
             sb.Append("  Name: ").Append(Name).Append("\n");
@@ -90,6 +86,7 @@ namespace HETSAPI.Models
             sb.Append("  RolePermissions: ").Append(RolePermissions).Append("\n");
             sb.Append("  UserRoles: ").Append(UserRoles).Append("\n");
             sb.Append("}\n");
+
             return sb.ToString();
         }
 
@@ -112,6 +109,7 @@ namespace HETSAPI.Models
             if (ReferenceEquals(null, obj)) { return false; }
             if (ReferenceEquals(this, obj)) { return true; }
             if (obj.GetType() != GetType()) { return false; }
+
             return Equals((Role)obj);
         }
 
@@ -122,34 +120,33 @@ namespace HETSAPI.Models
         /// <returns>Boolean</returns>
         public bool Equals(Role other)
         {
-
             if (ReferenceEquals(null, other)) { return false; }
             if (ReferenceEquals(this, other)) { return true; }
 
             return                 
                 (
-                    this.Id == other.Id ||
-                    this.Id.Equals(other.Id)
+                    Id == other.Id ||
+                    Id.Equals(other.Id)
                 ) &&                 
                 (
-                    this.Name == other.Name ||
-                    this.Name != null &&
-                    this.Name.Equals(other.Name)
+                    Name == other.Name ||
+                    Name != null &&
+                    Name.Equals(other.Name)
                 ) &&                 
                 (
-                    this.Description == other.Description ||
-                    this.Description != null &&
-                    this.Description.Equals(other.Description)
+                    Description == other.Description ||
+                    Description != null &&
+                    Description.Equals(other.Description)
                 ) && 
                 (
-                    this.RolePermissions == other.RolePermissions ||
-                    this.RolePermissions != null &&
-                    this.RolePermissions.SequenceEqual(other.RolePermissions)
+                    RolePermissions == other.RolePermissions ||
+                    RolePermissions != null &&
+                    RolePermissions.SequenceEqual(other.RolePermissions)
                 ) && 
                 (
-                    this.UserRoles == other.UserRoles ||
-                    this.UserRoles != null &&
-                    this.UserRoles.SequenceEqual(other.UserRoles)
+                    UserRoles == other.UserRoles ||
+                    UserRoles != null &&
+                    UserRoles.SequenceEqual(other.UserRoles)
                 );
         }
 
@@ -163,25 +160,30 @@ namespace HETSAPI.Models
             unchecked // Overflow is fine, just wrap
             {
                 int hash = 41;
-                // Suitable nullity checks
-                                   
-                hash = hash * 59 + this.Id.GetHashCode();                if (this.Name != null)
+
+                // Suitable nullity checks                                   
+                hash = hash * 59 + Id.GetHashCode();
+
+                if (Name != null)
                 {
-                    hash = hash * 59 + this.Name.GetHashCode();
-                }                
-                                if (this.Description != null)
-                {
-                    hash = hash * 59 + this.Description.GetHashCode();
-                }                
-                                   
-                if (this.RolePermissions != null)
-                {
-                    hash = hash * 59 + this.RolePermissions.GetHashCode();
-                }                   
-                if (this.UserRoles != null)
-                {
-                    hash = hash * 59 + this.UserRoles.GetHashCode();
+                    hash = hash * 59 + Name.GetHashCode();
                 }
+
+                if (Description != null)
+                {
+                    hash = hash * 59 + Description.GetHashCode();
+                }                
+                                   
+                if (RolePermissions != null)
+                {
+                    hash = hash * 59 + RolePermissions.GetHashCode();
+                }
+
+                if (UserRoles != null)
+                {
+                    hash = hash * 59 + UserRoles.GetHashCode();
+                }
+
                 return hash;
             }
         }

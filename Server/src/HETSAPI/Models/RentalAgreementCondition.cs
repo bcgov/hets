@@ -7,35 +7,32 @@ using System.ComponentModel.DataAnnotations;
 namespace HETSAPI.Models
 {
     /// <summary>
-    /// A condition about the rental agreement to be displayed on the Rental Agreement.
+    /// REntal Agreement Condition Database Model
     /// </summary>
     [MetaDataExtension (Description = "A condition about the rental agreement to be displayed on the Rental Agreement.")]
-
-    public partial class RentalAgreementCondition : AuditableEntity, IEquatable<RentalAgreementCondition>
+    public class RentalAgreementCondition : AuditableEntity, IEquatable<RentalAgreementCondition>
     {
         /// <summary>
         /// Default constructor, required by entity framework
         /// </summary>
         public RentalAgreementCondition()
         {
-            this.Id = 0;
+            Id = 0;
         }
 
         /// <summary>
         /// Initializes a new instance of the <see cref="RentalAgreementCondition" /> class.
         /// </summary>
-        /// <param name="Id">A system-generated unique identifier for a RentalAgreementCondition (required).</param>
-        /// <param name="RentalAgreement">A foreign key reference to the system-generated unique identifier for a Rental Agreement (required).</param>
-        /// <param name="ConditionName">The name of the condition to be placed onto the Rental Agreement. (required).</param>
-        /// <param name="Comment">A comment about the condition to be applied to the Rental Agreement..</param>
-        public RentalAgreementCondition(int Id, RentalAgreement RentalAgreement, string ConditionName, string Comment = null)
+        /// <param name="id">A system-generated unique identifier for a RentalAgreementCondition (required).</param>
+        /// <param name="rentalAgreement">A foreign key reference to the system-generated unique identifier for a Rental Agreement (required).</param>
+        /// <param name="conditionName">The name of the condition to be placed onto the Rental Agreement. (required).</param>
+        /// <param name="comment">A comment about the condition to be applied to the Rental Agreement..</param>
+        public RentalAgreementCondition(int id, RentalAgreement rentalAgreement, string conditionName, string comment = null)
         {   
-            this.Id = Id;
-            this.RentalAgreement = RentalAgreement;
-            this.ConditionName = ConditionName;
-
-
-            this.Comment = Comment;
+            Id = id;
+            RentalAgreement = rentalAgreement;
+            ConditionName = conditionName;
+            Comment = comment;
         }
 
         /// <summary>
@@ -65,8 +62,7 @@ namespace HETSAPI.Models
         /// </summary>
         /// <value>The name of the condition to be placed onto the Rental Agreement.</value>
         [MetaDataExtension (Description = "The name of the condition to be placed onto the Rental Agreement.")]
-        [MaxLength(150)]
-        
+        [MaxLength(150)]        
         public string ConditionName { get; set; }
         
         /// <summary>
@@ -74,8 +70,7 @@ namespace HETSAPI.Models
         /// </summary>
         /// <value>A comment about the condition to be applied to the Rental Agreement.</value>
         [MetaDataExtension (Description = "A comment about the condition to be applied to the Rental Agreement.")]
-        [MaxLength(2048)]
-        
+        [MaxLength(2048)]        
         public string Comment { get; set; }
         
         /// <summary>
@@ -85,12 +80,14 @@ namespace HETSAPI.Models
         public override string ToString()
         {
             var sb = new StringBuilder();
+
             sb.Append("class RentalAgreementCondition {\n");
             sb.Append("  Id: ").Append(Id).Append("\n");
             sb.Append("  RentalAgreement: ").Append(RentalAgreement).Append("\n");
             sb.Append("  ConditionName: ").Append(ConditionName).Append("\n");
             sb.Append("  Comment: ").Append(Comment).Append("\n");
             sb.Append("}\n");
+
             return sb.ToString();
         }
 
@@ -113,6 +110,7 @@ namespace HETSAPI.Models
             if (ReferenceEquals(null, obj)) { return false; }
             if (ReferenceEquals(this, obj)) { return true; }
             if (obj.GetType() != GetType()) { return false; }
+
             return Equals((RentalAgreementCondition)obj);
         }
 
@@ -123,29 +121,28 @@ namespace HETSAPI.Models
         /// <returns>Boolean</returns>
         public bool Equals(RentalAgreementCondition other)
         {
-
             if (ReferenceEquals(null, other)) { return false; }
             if (ReferenceEquals(this, other)) { return true; }
 
             return                 
                 (
-                    this.Id == other.Id ||
-                    this.Id.Equals(other.Id)
+                    Id == other.Id ||
+                    Id.Equals(other.Id)
                 ) &&                 
                 (
-                    this.RentalAgreement == other.RentalAgreement ||
-                    this.RentalAgreement != null &&
-                    this.RentalAgreement.Equals(other.RentalAgreement)
+                    RentalAgreement == other.RentalAgreement ||
+                    RentalAgreement != null &&
+                    RentalAgreement.Equals(other.RentalAgreement)
                 ) &&                 
                 (
-                    this.ConditionName == other.ConditionName ||
-                    this.ConditionName != null &&
-                    this.ConditionName.Equals(other.ConditionName)
+                    ConditionName == other.ConditionName ||
+                    ConditionName != null &&
+                    ConditionName.Equals(other.ConditionName)
                 ) &&                 
                 (
-                    this.Comment == other.Comment ||
-                    this.Comment != null &&
-                    this.Comment.Equals(other.Comment)
+                    Comment == other.Comment ||
+                    Comment != null &&
+                    Comment.Equals(other.Comment)
                 );
         }
 
@@ -159,19 +156,23 @@ namespace HETSAPI.Models
             unchecked // Overflow is fine, just wrap
             {
                 int hash = 41;
-                // Suitable nullity checks
-                                   
-                hash = hash * 59 + this.Id.GetHashCode();                   
-                if (this.RentalAgreement != null)
+
+                // Suitable nullity checks                                   
+                hash = hash * 59 + Id.GetHashCode();        
+                
+                if (RentalAgreement != null)
                 {
-                    hash = hash * 59 + this.RentalAgreement.GetHashCode();
-                }                if (this.ConditionName != null)
+                    hash = hash * 59 + RentalAgreement.GetHashCode();
+                }
+
+                if (ConditionName != null)
                 {
-                    hash = hash * 59 + this.ConditionName.GetHashCode();
-                }                
-                                if (this.Comment != null)
+                    hash = hash * 59 + ConditionName.GetHashCode();
+                }
+
+                if (Comment != null)
                 {
-                    hash = hash * 59 + this.Comment.GetHashCode();
+                    hash = hash * 59 + Comment.GetHashCode();
                 }                
                 
                 return hash;

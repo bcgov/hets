@@ -3,7 +3,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Diagnostics;
 using Microsoft.AspNetCore.Hosting;
-using HETSAPI.Models.Impl;
+using HETSAPI.ViewModels;
 
 namespace HETSAPI.Controllers
 {
@@ -31,7 +31,7 @@ namespace HETSAPI.Controllers
         [AllowAnonymous]
         public IActionResult Index()
         {
-            HomeModel home = new HomeModel
+            HomeViewModel home = new HomeViewModel
             {
                 DevelopmentEnvironment = _env.IsDevelopment()
             };

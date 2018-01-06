@@ -6,33 +6,30 @@ using System.ComponentModel.DataAnnotations;
 namespace HETSAPI.Models
 {
     /// <summary>
-    /// A named entity that is used to create a arbitrary collection of users into a group. For example, the HETS Clerks are in the group Clerks. Groups, like permissions are defined by and referenced in code.
+    /// Group Database Model
     /// </summary>
-        [MetaDataExtension (Description = "A named entity that is used to create a arbitrary collection of users into a group. For example, the HETS Clerks are in the group Clerks. Groups, like permissions are defined by and referenced in code.")]
-
-    public partial class Group : AuditableEntity, IEquatable<Group>
+    [MetaDataExtension (Description = "A named entity that is used to create a arbitrary collection of users into a group. For example, the HETS Clerks are in the group Clerks. Groups, like permissions are defined by and referenced in code.")]
+    public class Group : AuditableEntity, IEquatable<Group>
     {
         /// <summary>
-        /// Default constructor, required by entity framework
+        /// Group Database Model Constructor (required by entity framework)
         /// </summary>
         public Group()
         {
-            this.Id = 0;
+            Id = 0;
         }
 
         /// <summary>
         /// Initializes a new instance of the <see cref="Group" /> class.
         /// </summary>
-        /// <param name="Id">A system-generated unique identifier for a Group (required).</param>
-        /// <param name="Name">The name of the group, as refenced in the code. (required).</param>
-        /// <param name="Description">A description of the group that is presented to the user when they are setting a user into a group. (required).</param>
-        public Group(int Id, string Name, string Description)
+        /// <param name="id">A system-generated unique identifier for a Group (required).</param>
+        /// <param name="name">The name of the group, as refenced in the code. (required).</param>
+        /// <param name="description">A description of the group that is presented to the user when they are setting a user into a group. (required).</param>
+        public Group(int id, string name, string description)
         {   
-            this.Id = Id;
-            this.Name = Name;
-            this.Description = Description;
-
-
+            Id = id;
+            Name = name;
+            Description = description;
         }
 
         /// <summary>
@@ -47,8 +44,7 @@ namespace HETSAPI.Models
         /// </summary>
         /// <value>The name of the group, as refenced in the code.</value>
         [MetaDataExtension (Description = "The name of the group, as refenced in the code.")]
-        [MaxLength(150)]
-        
+        [MaxLength(150)]        
         public string Name { get; set; }
         
         /// <summary>
@@ -56,8 +52,7 @@ namespace HETSAPI.Models
         /// </summary>
         /// <value>A description of the group that is presented to the user when they are setting a user into a group.</value>
         [MetaDataExtension (Description = "A description of the group that is presented to the user when they are setting a user into a group.")]
-        [MaxLength(2048)]
-        
+        [MaxLength(2048)]        
         public string Description { get; set; }
         
         /// <summary>
@@ -67,11 +62,13 @@ namespace HETSAPI.Models
         public override string ToString()
         {
             var sb = new StringBuilder();
+
             sb.Append("class Group {\n");
             sb.Append("  Id: ").Append(Id).Append("\n");
             sb.Append("  Name: ").Append(Name).Append("\n");
             sb.Append("  Description: ").Append(Description).Append("\n");
             sb.Append("}\n");
+
             return sb.ToString();
         }
 
@@ -94,6 +91,7 @@ namespace HETSAPI.Models
             if (ReferenceEquals(null, obj)) { return false; }
             if (ReferenceEquals(this, obj)) { return true; }
             if (obj.GetType() != GetType()) { return false; }
+
             return Equals((Group)obj);
         }
 
@@ -104,24 +102,23 @@ namespace HETSAPI.Models
         /// <returns>Boolean</returns>
         public bool Equals(Group other)
         {
-
             if (ReferenceEquals(null, other)) { return false; }
             if (ReferenceEquals(this, other)) { return true; }
 
             return                 
                 (
-                    this.Id == other.Id ||
-                    this.Id.Equals(other.Id)
+                    Id == other.Id ||
+                    Id.Equals(other.Id)
                 ) &&                 
                 (
-                    this.Name == other.Name ||
-                    this.Name != null &&
-                    this.Name.Equals(other.Name)
+                    Name == other.Name ||
+                    Name != null &&
+                    Name.Equals(other.Name)
                 ) &&                 
                 (
-                    this.Description == other.Description ||
-                    this.Description != null &&
-                    this.Description.Equals(other.Description)
+                    Description == other.Description ||
+                    Description != null &&
+                    Description.Equals(other.Description)
                 );
         }
 
@@ -135,15 +132,18 @@ namespace HETSAPI.Models
             unchecked // Overflow is fine, just wrap
             {
                 int hash = 41;
-                // Suitable nullity checks
-                                   
-                hash = hash * 59 + this.Id.GetHashCode();                if (this.Name != null)
+
+                // Suitable nullity checks                                   
+                hash = hash * 59 + Id.GetHashCode();
+
+                if (Name != null)
                 {
-                    hash = hash * 59 + this.Name.GetHashCode();
-                }                
-                                if (this.Description != null)
+                    hash = hash * 59 + Name.GetHashCode();
+                }
+
+                if (Description != null)
                 {
-                    hash = hash * 59 + this.Description.GetHashCode();
+                    hash = hash * 59 + Description.GetHashCode();
                 }                
                 
                 return hash;
