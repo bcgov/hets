@@ -22,14 +22,8 @@ namespace HETSAPI.Services.Impl
 
         private void AdjustRecord (EquipmentAttachment item)
         {
-            if (item != null)
-            {
-                // Adjust the record to allow it to be updated / inserted
-                if (item.Equipment != null)
-                {
-                    item.Equipment = _context.Equipments.FirstOrDefault(a => a.Id == item.Equipment.Id);                    
-                }
-            }           
+            if (item != null && item.Equipment != null)
+                item.Equipment = _context.Equipments.FirstOrDefault(a => a.Id == item.Equipment.Id);
         }
 
         /// <summary>

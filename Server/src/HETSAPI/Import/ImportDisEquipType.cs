@@ -15,7 +15,7 @@ namespace HETSAPI.Import
     /// <summary>
     /// Import Dis(trict) Equip(ment) Type Records
     /// </summary>
-    public class ImportDisEquipType
+    public static class ImportDisEquipType
     {        
         const string OldTable = "EquipType";
         const string NewTable = "HET_EQUIPMMENT_TYPE";

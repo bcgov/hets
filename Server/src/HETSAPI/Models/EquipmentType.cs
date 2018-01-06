@@ -9,7 +9,7 @@ namespace HETSAPI.Models
     /// Equipment Type Database Model
     /// </summary>
     [MetaDataExtension (Description = "A provincial-wide Equipment Type, the related Blue Book Chapter Section and related usage attributes.")]
-    public class EquipmentType : AuditableEntity, IEquatable<EquipmentType>
+    public sealed class EquipmentType : AuditableEntity, IEquatable<EquipmentType>
     {
         /// <summary>
         /// Equipment Type Database Model Constructor (required by entity framework)

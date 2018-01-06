@@ -13,7 +13,7 @@ namespace HETSAPI.Import
     /// <summary>
     /// Import City Records
     /// </summary>
-    public class ImportCity
+    public static class ImportCity
     {
         private const string OldTable = "HETS_City";
         private const string NewTable = "HET_City";

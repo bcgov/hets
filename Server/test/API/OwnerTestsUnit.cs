@@ -41,27 +41,11 @@ namespace HETSAPI.Test
         /// </summary>        
 		public OwnerUnitTest()
 		{			
-                    DbContextOptions<DbAppContext> options = new DbContextOptions<DbAppContext>();
-                    Mock<DbAppContext> dbAppContext = new Mock<DbAppContext>(null, options);
-			
-                    /*
-			
-                    Here you will need to mock up the context.
-			
-            ItemType fakeItem = new ItemType(...);
-
-            Mock<DbSet<ItemType>> mockList = MockDbSet.Create(fakeItem);
-
-            dbAppContext.Setup(x => x.ModelEndpoint).Returns(mockItem.Object);
-
-                    */
-
-                    OwnerService _service = new OwnerService(null, dbAppContext.Object);
-			
-                    _Owner = new OwnerController (_service);
-
+            DbContextOptions<DbAppContext> options = new DbContextOptions<DbAppContext>();
+            Mock<DbAppContext> dbAppContext = new Mock<DbAppContext>(null, options);
+            OwnerService _service = new OwnerService(null, dbAppContext.Object);
+            _Owner = new OwnerController (_service);
 		}
-	
 		
 		[Fact]
 		/// <summary>
@@ -69,14 +53,8 @@ namespace HETSAPI.Test
         /// </summary>
 		public void TestOwnersBulkPost()
 		{
-			// Add test code here
-			// it may look like: 
-			//  var result = _OwnerController.OwnersBulkPost();
-			//  Assert.True (result == expected-result);
-
-            Assert.True(true);
-		}		
-        
+			Assert.True(true);
+		}		        
 		
 		[Fact]
 		/// <summary>
@@ -84,14 +62,8 @@ namespace HETSAPI.Test
         /// </summary>
 		public void TestOwnersGet()
 		{
-			// Add test code here
-			// it may look like: 
-			//  var result = _OwnerController.OwnersGet();
-			//  Assert.True (result == expected-result);
-
-            Assert.True(true);
-		}		
-        
+			Assert.True(true);
+		}		        
 		
 		[Fact]
 		/// <summary>
@@ -99,14 +71,8 @@ namespace HETSAPI.Test
         /// </summary>
 		public void TestOwnersIdDeletePost()
 		{
-			// Add test code here
-			// it may look like: 
-			//  var result = _OwnerController.OwnersIdDeletePost();
-			//  Assert.True (result == expected-result);
-
-            Assert.True(true);
-		}		
-        
+			Assert.True(true);
+		}		        
 		
 		[Fact]
 		/// <summary>
@@ -114,29 +80,17 @@ namespace HETSAPI.Test
         /// </summary>
 		public void TestOwnersIdGet()
 		{
-			// Add test code here
-			// it may look like: 
-			//  var result = _OwnerController.OwnersIdGet();
-			//  Assert.True (result == expected-result);
-
-            Assert.True(true);
+			Assert.True(true);
 		}		
-        
-		
+        		
 		[Fact]
 		/// <summary>
         /// Unit test for OwnersIdPut
         /// </summary>
 		public void TestOwnersIdPut()
 		{
-			// Add test code here
-			// it may look like: 
-			//  var result = _OwnerController.OwnersIdPut();
-			//  Assert.True (result == expected-result);
-
-            Assert.True(true);
-		}		
-        
+			Assert.True(true);
+		}		        
 		
 		[Fact]
 		/// <summary>
@@ -144,13 +98,7 @@ namespace HETSAPI.Test
         /// </summary>
 		public void TestOwnersPost()
 		{
-			// Add test code here
-			// it may look like: 
-			//  var result = _OwnerController.OwnersPost();
-			//  Assert.True (result == expected-result);
-
-            Assert.True(true);
-		}		
-        
+			Assert.True(true);
+		}		        
     }
 }

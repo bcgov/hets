@@ -15,7 +15,7 @@ namespace HETSAPI.Import
     /// <summary>
     /// Import Rotation Records
     /// </summary>
-    public class ImportRotation
+    public static class ImportRotation
     {
         const string OldTable = "Rotation_Doc";
         const string NewTable = "HET_NOTE";

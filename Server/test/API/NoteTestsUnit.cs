@@ -41,57 +41,29 @@ namespace HETSAPI.Test
         /// </summary>        
 		public NoteUnitTest()
 		{			
-                    DbContextOptions<DbAppContext> options = new DbContextOptions<DbAppContext>();
-                    Mock<DbAppContext> dbAppContext = new Mock<DbAppContext>(null, options);
-			
-                    /*
-			
-                    Here you will need to mock up the context.
-			
-            ItemType fakeItem = new ItemType(...);
-
-            Mock<DbSet<ItemType>> mockList = MockDbSet.Create(fakeItem);
-
-            dbAppContext.Setup(x => x.ModelEndpoint).Returns(mockItem.Object);
-
-                    */
-
-                    NoteService _service = new NoteService(dbAppContext.Object);
-			
-                    _Note = new NoteController (_service);
-
+            DbContextOptions<DbAppContext> options = new DbContextOptions<DbAppContext>();
+            Mock<DbAppContext> dbAppContext = new Mock<DbAppContext>(null, options);
+            NoteService _service = new NoteService(dbAppContext.Object);
+            _Note = new NoteController (_service);
 		}
-	
-		
+			
 		[Fact]
 		/// <summary>
         /// Unit test for NotesBulkPost
         /// </summary>
 		public void TestNotesBulkPost()
 		{
-			// Add test code here
-			// it may look like: 
-			//  var result = _NoteController.NotesBulkPost();
-			//  Assert.True (result == expected-result);
-
-            Assert.True(true);
+			Assert.True(true);
 		}		
-        
-		
+        		
 		[Fact]
 		/// <summary>
         /// Unit test for NotesGet
         /// </summary>
 		public void TestNotesGet()
 		{
-			// Add test code here
-			// it may look like: 
-			//  var result = _NoteController.NotesGet();
-			//  Assert.True (result == expected-result);
-
-            Assert.True(true);
-		}		
-        
+			Assert.True(true);
+		}		        
 		
 		[Fact]
 		/// <summary>
@@ -99,14 +71,8 @@ namespace HETSAPI.Test
         /// </summary>
 		public void TestNotesIdDeletePost()
 		{
-			// Add test code here
-			// it may look like: 
-			//  var result = _NoteController.NotesIdDeletePost();
-			//  Assert.True (result == expected-result);
-
-            Assert.True(true);
-		}		
-        
+			Assert.True(true);
+		}		        
 		
 		[Fact]
 		/// <summary>
@@ -114,14 +80,8 @@ namespace HETSAPI.Test
         /// </summary>
 		public void TestNotesIdGet()
 		{
-			// Add test code here
-			// it may look like: 
-			//  var result = _NoteController.NotesIdGet();
-			//  Assert.True (result == expected-result);
-
-            Assert.True(true);
-		}		
-        
+			Assert.True(true);
+		}		        
 		
 		[Fact]
 		/// <summary>
@@ -129,14 +89,8 @@ namespace HETSAPI.Test
         /// </summary>
 		public void TestNotesIdPut()
 		{
-			// Add test code here
-			// it may look like: 
-			//  var result = _NoteController.NotesIdPut();
-			//  Assert.True (result == expected-result);
-
-            Assert.True(true);
-		}		
-        
+			Assert.True(true);
+		}		        
 		
 		[Fact]
 		/// <summary>
@@ -144,13 +98,7 @@ namespace HETSAPI.Test
         /// </summary>
 		public void TestNotesPost()
 		{
-			// Add test code here
-			// it may look like: 
-			//  var result = _NoteController.NotesPost();
-			//  Assert.True (result == expected-result);
-
-            Assert.True(true);
-		}		
-        
+			Assert.True(true);
+		}		        
     }
 }

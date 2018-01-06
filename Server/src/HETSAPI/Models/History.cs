@@ -9,7 +9,7 @@ namespace HETSAPI.Models
     /// History Database Model
     /// </summary>
     [MetaDataExtension (Description = "A log entry created by the system based on a triggering event and related to an entity in the application - e.g. piece of Equipment, an Owner, a Project and so on.")]
-    public class History : AuditableEntity, IEquatable<History>
+    public sealed class History : AuditableEntity, IEquatable<History>
     {
         /// <summary>
         /// Default constructor, required by entity framework

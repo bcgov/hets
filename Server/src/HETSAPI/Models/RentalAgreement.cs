@@ -13,7 +13,7 @@ namespace HETSAPI.Models
     /// </summary>
     [MetaDataExtension (Description = "Information about the hiring of a specific piece of equipment to satisfy part or all of a request from a project. TABLE DEFINITION IN PROGRESS - MORE COLUMNS TO BE ADDED")]
 
-    public partial class RentalAgreement : AuditableEntity, IEquatable<RentalAgreement>
+    public sealed class RentalAgreement : AuditableEntity, IEquatable<RentalAgreement>
     {
         /// <summary>
         /// Rental Agreement Database Model Constructor (required by entity framework)

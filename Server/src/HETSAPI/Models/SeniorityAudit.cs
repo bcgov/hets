@@ -10,7 +10,7 @@ namespace HETSAPI.Models
     /// Seniority Audit Database Model
     /// </summary>
     [MetaDataExtension (Description = "The history of all changes to the seniority of a piece of equipment. The current seniority information (underlying data elements and the calculation result) is in the equipment record. Every time that information changes, the old values are copied to here, with a start date, end date range. In the normal case, an annual update triggers the old values being copied here and the new values put into the equipment record. If a user manually changes the values, the existing values are copied into a record added here.")]
-    public class SeniorityAudit : AuditableEntity, IEquatable<SeniorityAudit>
+    public sealed class SeniorityAudit : AuditableEntity, IEquatable<SeniorityAudit>
     {
         /// <summary>
         /// Seniority Audit Database Model Constructor (required by entity framework)

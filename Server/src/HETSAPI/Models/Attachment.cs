@@ -9,7 +9,7 @@ namespace HETSAPI.Models
     /// Attachment Database Model
     /// </summary>
     [MetaDataExtension (Description = "Uploaded documents related to entity in the application - e.g. piece of Equipment, an Owner, a Project and so on.")]
-    public class Attachment : AuditableEntity, IEquatable<Attachment>
+    public sealed class Attachment : AuditableEntity, IEquatable<Attachment>
     {
         /// <summary>
         /// Attachment Database Model Constructor (required by entity framework)

@@ -6,13 +6,13 @@ using Newtonsoft.Json;
 namespace HETSAPI.ViewModels
 {
     /// <summary>
-    /// 
+    /// Notification View Model
     /// </summary>
     [DataContract]
-    public partial class NotificationViewModel : IEquatable<NotificationViewModel>
+    public sealed class NotificationViewModel : IEquatable<NotificationViewModel>
     {
         /// <summary>
-        /// Default constructor, required by entity framework
+        /// Notification View Model Constructor
         /// </summary>
         public NotificationViewModel()
         {
@@ -21,25 +21,27 @@ namespace HETSAPI.ViewModels
         /// <summary>
         /// Initializes a new instance of the <see cref="NotificationViewModel" /> class.
         /// </summary>
-        /// <param name="Id">Id.</param>
-        /// <param name="EventId">EventId.</param>
-        /// <param name="Event2Id">Event2Id.</param>
-        /// <param name="HasBeenViewed">HasBeenViewed.</param>
-        /// <param name="IsWatchNotification">IsWatchNotification.</param>
-        /// <param name="IsExpired">IsExpired.</param>
-        /// <param name="IsAllDay">IsAllDay.</param>
-        /// <param name="PriorityCode">PriorityCode.</param>
-        /// <param name="UserId">UserId.</param>
-        public NotificationViewModel(int? Id = null, int? EventId = null, int? Event2Id = null, bool? HasBeenViewed = null, bool? IsWatchNotification = null, bool? IsExpired = null, bool? IsAllDay = null, string PriorityCode = null, int? UserId = null)
-        {               this.Id = Id;
-            this.EventId = EventId;
-            this.Event2Id = Event2Id;
-            this.HasBeenViewed = HasBeenViewed;
-            this.IsWatchNotification = IsWatchNotification;
-            this.IsExpired = IsExpired;
-            this.IsAllDay = IsAllDay;
-            this.PriorityCode = PriorityCode;
-            this.UserId = UserId;
+        /// <param name="id">Id.</param>
+        /// <param name="eventId">EventId.</param>
+        /// <param name="event2Id">Event2Id.</param>
+        /// <param name="hasBeenViewed">HasBeenViewed.</param>
+        /// <param name="isWatchNotification">IsWatchNotification.</param>
+        /// <param name="isExpired">IsExpired.</param>
+        /// <param name="isAllDay">IsAllDay.</param>
+        /// <param name="priorityCode">PriorityCode.</param>
+        /// <param name="userId">UserId.</param>
+        public NotificationViewModel(int id, int? eventId = null, int? event2Id = null, bool? hasBeenViewed = null, 
+            bool? isWatchNotification = null, bool? isExpired = null, bool? isAllDay = null, string priorityCode = null, int? userId = null)
+        {
+            Id = id;
+            EventId = eventId;
+            Event2Id = event2Id;
+            HasBeenViewed = hasBeenViewed;
+            IsWatchNotification = isWatchNotification;
+            IsExpired = isExpired;
+            IsAllDay = isAllDay;
+            PriorityCode = priorityCode;
+            UserId = userId;
         }
 
         /// <summary>
@@ -103,6 +105,7 @@ namespace HETSAPI.ViewModels
         public override string ToString()
         {
             var sb = new StringBuilder();
+
             sb.Append("class NotificationViewModel {\n");
             sb.Append("  Id: ").Append(Id).Append("\n");
             sb.Append("  EventId: ").Append(EventId).Append("\n");
@@ -114,6 +117,7 @@ namespace HETSAPI.ViewModels
             sb.Append("  PriorityCode: ").Append(PriorityCode).Append("\n");
             sb.Append("  UserId: ").Append(UserId).Append("\n");
             sb.Append("}\n");
+
             return sb.ToString();
         }
 
@@ -136,6 +140,7 @@ namespace HETSAPI.ViewModels
             if (ReferenceEquals(null, obj)) { return false; }
             if (ReferenceEquals(this, obj)) { return true; }
             if (obj.GetType() != GetType()) { return false; }
+
             return Equals((NotificationViewModel)obj);
         }
 
@@ -146,55 +151,54 @@ namespace HETSAPI.ViewModels
         /// <returns>Boolean</returns>
         public bool Equals(NotificationViewModel other)
         {
-
             if (ReferenceEquals(null, other)) { return false; }
             if (ReferenceEquals(this, other)) { return true; }
 
             return                 
                 (
-                    this.Id == other.Id ||
-                    this.Id != null &&
-                    this.Id.Equals(other.Id)
+                    Id == other.Id ||
+                    Id != null &&
+                    Id.Equals(other.Id)
                 ) &&                 
                 (
-                    this.EventId == other.EventId ||
-                    this.EventId != null &&
-                    this.EventId.Equals(other.EventId)
+                    EventId == other.EventId ||
+                    EventId != null &&
+                    EventId.Equals(other.EventId)
                 ) &&                 
                 (
-                    this.Event2Id == other.Event2Id ||
-                    this.Event2Id != null &&
-                    this.Event2Id.Equals(other.Event2Id)
+                    Event2Id == other.Event2Id ||
+                    Event2Id != null &&
+                    Event2Id.Equals(other.Event2Id)
                 ) &&                 
                 (
-                    this.HasBeenViewed == other.HasBeenViewed ||
-                    this.HasBeenViewed != null &&
-                    this.HasBeenViewed.Equals(other.HasBeenViewed)
+                    HasBeenViewed == other.HasBeenViewed ||
+                    HasBeenViewed != null &&
+                    HasBeenViewed.Equals(other.HasBeenViewed)
                 ) &&                 
                 (
-                    this.IsWatchNotification == other.IsWatchNotification ||
-                    this.IsWatchNotification != null &&
-                    this.IsWatchNotification.Equals(other.IsWatchNotification)
+                    IsWatchNotification == other.IsWatchNotification ||
+                    IsWatchNotification != null &&
+                    IsWatchNotification.Equals(other.IsWatchNotification)
                 ) &&                 
                 (
-                    this.IsExpired == other.IsExpired ||
-                    this.IsExpired != null &&
-                    this.IsExpired.Equals(other.IsExpired)
+                    IsExpired == other.IsExpired ||
+                    IsExpired != null &&
+                    IsExpired.Equals(other.IsExpired)
                 ) &&                 
                 (
-                    this.IsAllDay == other.IsAllDay ||
-                    this.IsAllDay != null &&
-                    this.IsAllDay.Equals(other.IsAllDay)
+                    IsAllDay == other.IsAllDay ||
+                    IsAllDay != null &&
+                    IsAllDay.Equals(other.IsAllDay)
                 ) &&                 
                 (
-                    this.PriorityCode == other.PriorityCode ||
-                    this.PriorityCode != null &&
-                    this.PriorityCode.Equals(other.PriorityCode)
+                    PriorityCode == other.PriorityCode ||
+                    PriorityCode != null &&
+                    PriorityCode.Equals(other.PriorityCode)
                 ) &&                 
                 (
-                    this.UserId == other.UserId ||
-                    this.UserId != null &&
-                    this.UserId.Equals(other.UserId)
+                    UserId == other.UserId ||
+                    UserId != null &&
+                    UserId.Equals(other.UserId)
                 );
         }
 
@@ -208,42 +212,51 @@ namespace HETSAPI.ViewModels
             unchecked // Overflow is fine, just wrap
             {
                 int hash = 41;
+
                 // Suitable nullity checks
-                if (this.Id != null)
+                if (Id != null)
                 {
-                    hash = hash * 59 + this.Id.GetHashCode();
-                }                
-                                if (this.EventId != null)
+                    hash = hash * 59 + Id.GetHashCode();
+                }
+
+                if (EventId != null)
                 {
-                    hash = hash * 59 + this.EventId.GetHashCode();
-                }                
-                                if (this.Event2Id != null)
+                    hash = hash * 59 + EventId.GetHashCode();
+                }
+
+                if (Event2Id != null)
                 {
-                    hash = hash * 59 + this.Event2Id.GetHashCode();
-                }                
-                                if (this.HasBeenViewed != null)
+                    hash = hash * 59 + Event2Id.GetHashCode();
+                }
+
+                if (HasBeenViewed != null)
                 {
-                    hash = hash * 59 + this.HasBeenViewed.GetHashCode();
-                }                
-                                if (this.IsWatchNotification != null)
+                    hash = hash * 59 + HasBeenViewed.GetHashCode();
+                }
+
+                if (IsWatchNotification != null)
                 {
-                    hash = hash * 59 + this.IsWatchNotification.GetHashCode();
-                }                
-                                if (this.IsExpired != null)
+                    hash = hash * 59 + IsWatchNotification.GetHashCode();
+                }
+
+                if (IsExpired != null)
                 {
-                    hash = hash * 59 + this.IsExpired.GetHashCode();
-                }                
-                                if (this.IsAllDay != null)
+                    hash = hash * 59 + IsExpired.GetHashCode();
+                }
+
+                if (IsAllDay != null)
                 {
-                    hash = hash * 59 + this.IsAllDay.GetHashCode();
-                }                
-                                if (this.PriorityCode != null)
+                    hash = hash * 59 + IsAllDay.GetHashCode();
+                }
+
+                if (PriorityCode != null)
                 {
-                    hash = hash * 59 + this.PriorityCode.GetHashCode();
-                }                
-                                if (this.UserId != null)
+                    hash = hash * 59 + PriorityCode.GetHashCode();
+                }
+
+                if (UserId != null)
                 {
-                    hash = hash * 59 + this.UserId.GetHashCode();
+                    hash = hash * 59 + UserId.GetHashCode();
                 }                
                 
                 return hash;

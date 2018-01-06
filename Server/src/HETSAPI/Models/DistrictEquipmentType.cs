@@ -10,7 +10,7 @@ namespace HETSAPI.Models
     /// District Equipment Type Database Model
     /// </summary>
     [MetaDataExtension (Description = "An Equipment Type defined at the District level. Links to a provincial Equipment Type for the name of the equipment but supports the District HETS Clerk setting a local name for the Equipment Type. Within a given District, the same provincial Equipment Type might be reused multiple times in, for example, separate sizes (small, medium, large). This enables local areas with large number of the same Equipment Type to have multiple lists.")]
-    public partial class DistrictEquipmentType : AuditableEntity, IEquatable<DistrictEquipmentType>
+    public sealed partial class DistrictEquipmentType : AuditableEntity, IEquatable<DistrictEquipmentType>
     {
         /// <summary>
         /// District Equipment Type Database Model Constructor (required by entity framework)

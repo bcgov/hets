@@ -7,10 +7,10 @@ using System.ComponentModel.DataAnnotations;
 namespace HETSAPI.Models
 {
     /// <summary>
-    /// REntal Agreement Condition Database Model
+    /// Rental Agreement Condition Database Model
     /// </summary>
     [MetaDataExtension (Description = "A condition about the rental agreement to be displayed on the Rental Agreement.")]
-    public class RentalAgreementCondition : AuditableEntity, IEquatable<RentalAgreementCondition>
+    public sealed class RentalAgreementCondition : AuditableEntity, IEquatable<RentalAgreementCondition>
     {
         /// <summary>
         /// Default constructor, required by entity framework

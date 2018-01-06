@@ -7,13 +7,13 @@ using HETSAPI.Models;
 namespace HETSAPI.ViewModels
 {
     /// <summary>
-    /// 
+    /// History View Model
     /// </summary>
     [DataContract]
-    public partial class HistoryViewModel : IEquatable<HistoryViewModel>
+    public sealed class HistoryViewModel : IEquatable<HistoryViewModel>
     {
         /// <summary>
-        /// Default constructor, required by entity framework
+        /// History View Model Constructor
         /// </summary>
         public HistoryViewModel()
         {
@@ -22,18 +22,19 @@ namespace HETSAPI.ViewModels
         /// <summary>
         /// Initializes a new instance of the <see cref="HistoryViewModel" /> class.
         /// </summary>
-        /// <param name="Id">A system-generated unique identifier for a History (required).</param>
-        /// <param name="HistoryText">The text of the history entry tracked against the related entity..</param>
-        /// <param name="LastUpdateUserid">Audit information - SM User Id for the User who most recently updated the record..</param>
-        /// <param name="LastUpdateTimestamp">Audit information - Timestamp for record modification.</param>
-        /// <param name="AffectedEntityId">The primary key of the affected record.</param>
-        public HistoryViewModel(int Id, string HistoryText = null, string LastUpdateUserid = null, DateTime? LastUpdateTimestamp = null, int? AffectedEntityId = null)
+        /// <param name="id">A system-generated unique identifier for a History (required).</param>
+        /// <param name="historyText">The text of the history entry tracked against the related entity..</param>
+        /// <param name="lastUpdateUserid">Audit information - SM User Id for the User who most recently updated the record..</param>
+        /// <param name="lastUpdateTimestamp">Audit information - Timestamp for record modification.</param>
+        /// <param name="affectedEntityId">The primary key of the affected record.</param>
+        public HistoryViewModel(int id, string historyText = null, string lastUpdateUserid = null, DateTime? lastUpdateTimestamp = null, 
+            int? affectedEntityId = null)
         {   
-            this.Id = Id;
-            this.HistoryText = HistoryText;
-            this.LastUpdateUserid = LastUpdateUserid;
-            this.LastUpdateTimestamp = LastUpdateTimestamp;
-            this.AffectedEntityId = AffectedEntityId;
+            Id = id;
+            HistoryText = historyText;
+            LastUpdateUserid = lastUpdateUserid;
+            LastUpdateTimestamp = lastUpdateTimestamp;
+            AffectedEntityId = affectedEntityId;
         }
 
         /// <summary>
@@ -83,6 +84,7 @@ namespace HETSAPI.ViewModels
         public override string ToString()
         {
             var sb = new StringBuilder();
+
             sb.Append("class HistoryViewModel {\n");
             sb.Append("  Id: ").Append(Id).Append("\n");
             sb.Append("  HistoryText: ").Append(HistoryText).Append("\n");
@@ -90,6 +92,7 @@ namespace HETSAPI.ViewModels
             sb.Append("  LastUpdateTimestamp: ").Append(LastUpdateTimestamp).Append("\n");
             sb.Append("  AffectedEntityId: ").Append(AffectedEntityId).Append("\n");
             sb.Append("}\n");
+
             return sb.ToString();
         }
 
@@ -112,6 +115,7 @@ namespace HETSAPI.ViewModels
             if (ReferenceEquals(null, obj)) { return false; }
             if (ReferenceEquals(this, obj)) { return true; }
             if (obj.GetType() != GetType()) { return false; }
+
             return Equals((HistoryViewModel)obj);
         }
 
@@ -122,34 +126,33 @@ namespace HETSAPI.ViewModels
         /// <returns>Boolean</returns>
         public bool Equals(HistoryViewModel other)
         {
-
             if (ReferenceEquals(null, other)) { return false; }
             if (ReferenceEquals(this, other)) { return true; }
 
             return                 
                 (
-                    this.Id == other.Id ||
-                    this.Id.Equals(other.Id)
+                    Id == other.Id ||
+                    Id.Equals(other.Id)
                 ) &&                 
                 (
-                    this.HistoryText == other.HistoryText ||
-                    this.HistoryText != null &&
-                    this.HistoryText.Equals(other.HistoryText)
+                    HistoryText == other.HistoryText ||
+                    HistoryText != null &&
+                    HistoryText.Equals(other.HistoryText)
                 ) &&                 
                 (
-                    this.LastUpdateUserid == other.LastUpdateUserid ||
-                    this.LastUpdateUserid != null &&
-                    this.LastUpdateUserid.Equals(other.LastUpdateUserid)
+                    LastUpdateUserid == other.LastUpdateUserid ||
+                    LastUpdateUserid != null &&
+                    LastUpdateUserid.Equals(other.LastUpdateUserid)
                 ) &&                 
                 (
-                    this.LastUpdateTimestamp == other.LastUpdateTimestamp ||
-                    this.LastUpdateTimestamp != null &&
-                    this.LastUpdateTimestamp.Equals(other.LastUpdateTimestamp)
+                    LastUpdateTimestamp == other.LastUpdateTimestamp ||
+                    LastUpdateTimestamp != null &&
+                    LastUpdateTimestamp.Equals(other.LastUpdateTimestamp)
                 ) &&                 
                 (
-                    this.AffectedEntityId == other.AffectedEntityId ||
-                    this.AffectedEntityId != null &&
-                    this.AffectedEntityId.Equals(other.AffectedEntityId)
+                    AffectedEntityId == other.AffectedEntityId ||
+                    AffectedEntityId != null &&
+                    AffectedEntityId.Equals(other.AffectedEntityId)
                 );
         }
 
@@ -163,23 +166,28 @@ namespace HETSAPI.ViewModels
             unchecked // Overflow is fine, just wrap
             {
                 int hash = 41;
-                // Suitable nullity checks
-                                   
-                hash = hash * 59 + this.Id.GetHashCode();                if (this.HistoryText != null)
+
+                // Suitable nullity checks                                   
+                hash = hash * 59 + Id.GetHashCode();
+
+                if (HistoryText != null)
                 {
-                    hash = hash * 59 + this.HistoryText.GetHashCode();
-                }                
-                                if (this.LastUpdateUserid != null)
+                    hash = hash * 59 + HistoryText.GetHashCode();
+                }
+
+                if (LastUpdateUserid != null)
                 {
-                    hash = hash * 59 + this.LastUpdateUserid.GetHashCode();
-                }                
-                                if (this.LastUpdateTimestamp != null)
+                    hash = hash * 59 + LastUpdateUserid.GetHashCode();
+                }
+
+                if (LastUpdateTimestamp != null)
                 {
-                    hash = hash * 59 + this.LastUpdateTimestamp.GetHashCode();
-                }                
-                                if (this.AffectedEntityId != null)
+                    hash = hash * 59 + LastUpdateTimestamp.GetHashCode();
+                }
+
+                if (AffectedEntityId != null)
                 {
-                    hash = hash * 59 + this.AffectedEntityId.GetHashCode();
+                    hash = hash * 59 + AffectedEntityId.GetHashCode();
                 }                
                 
                 return hash;

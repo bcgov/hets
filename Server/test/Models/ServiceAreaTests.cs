@@ -28,8 +28,7 @@ namespace HETSAPI.Test
     
     public class ServiceAreaModelTests
     {
-        // TODO uncomment below to declare an instance variable for ServiceArea
-        private ServiceArea instance;
+        private readonly ServiceArea instance;
 
         /// <summary>
         /// Setup the test.

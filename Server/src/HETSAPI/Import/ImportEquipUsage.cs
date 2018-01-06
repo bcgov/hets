@@ -15,7 +15,7 @@ namespace HETSAPI.Import
     /// <summary>
     /// Import Equip(ment) Usage Records
     /// </summary>
-    public class ImportEquipUsage
+    public static class ImportEquipUsage
     {
         const string OldTable = "EquipUsage";
         const string NewTable = "HET_RENTAL_AGREEMENT";

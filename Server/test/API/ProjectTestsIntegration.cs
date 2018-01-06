@@ -31,7 +31,7 @@ namespace HETSAPI.Test
 		/// <summary>
         /// Integration test for ProjectsBulkPost
         /// </summary>
-		public async void TestProjectsBulkPost()
+		public async Task TestProjectsBulkPost()
 		{
             var request = new HttpRequestMessage(HttpMethod.Post, "/api/projects/bulk");
             request.Content = new StringContent("[]", Encoding.UTF8, "application/json");
@@ -40,15 +40,15 @@ namespace HETSAPI.Test
             response.EnsureSuccessStatusCode();
         }
 
-
         [Fact]
         /// <summary>
         /// Basic Integration test for Roles
         /// </summary>
-        public async void TestProjectsBasic()
+        public async Task TestProjectsBasic()
         {
             string initialName = "InitialName";
             string changedName = "ChangedName";
+
             // first test the POST.
             var request = new HttpRequestMessage(HttpMethod.Post, "/api/projects");
 
@@ -64,10 +64,11 @@ namespace HETSAPI.Test
 
             // parse as JSON.
             jsonString = await response.Content.ReadAsStringAsync();
-
             project = JsonConvert.DeserializeObject<Project>(jsonString);
+
             // get the id
             var id = project.Id;
+
             // change the name
             project.Name = changedName;
 
@@ -97,17 +98,18 @@ namespace HETSAPI.Test
             // should get a 404 if we try a get now.
             request = new HttpRequestMessage(HttpMethod.Get, "/api/projects/" + id);
             response = await _client.SendAsync(request);
-            Assert.Equal(response.StatusCode, HttpStatusCode.NotFound);
+            Assert.Equal(HttpStatusCode.NotFound, response.StatusCode);
         }
 
         [Fact]
         /// <summary>
         /// Test project contacts
         /// </summary>
-        public async void TestProjectContacts()
+        public async Task TestProjectContacts()
         {
             string initialName = "InitialName";
             string changedName = "ChangedName";
+
             // first test the POST.
             var request = new HttpRequestMessage(HttpMethod.Post, "/api/projects");
 
@@ -123,10 +125,11 @@ namespace HETSAPI.Test
 
             // parse as JSON.
             jsonString = await response.Content.ReadAsStringAsync();
-
             owner = JsonConvert.DeserializeObject<Owner>(jsonString);
+
             // get the id
             var id = owner.Id;
+
             // change the name
             owner.OrganizationName = changedName;
 
@@ -140,15 +143,13 @@ namespace HETSAPI.Test
             List<Contact> contacts = JsonConvert.DeserializeObject<List<Contact>>(jsonString);
 
             // verify the list is empty.
-            Assert.Equal(contacts.Count(), 0);
-
+            Assert.Empty(contacts);
 
             // add a contact.
             Contact contact = new Contact();
             contact.GivenName = initialName;
 
             contacts.Add(contact);
-
 
             request = new HttpRequestMessage(HttpMethod.Put, "/api/projects/" + id + "/contacts");
             request.Content = new StringContent(JsonConvert.SerializeObject(contacts), Encoding.UTF8, "application/json");
@@ -161,7 +162,7 @@ namespace HETSAPI.Test
             contacts = JsonConvert.DeserializeObject<List<Contact>>(jsonString);
 
             // verify the list has one element.
-            Assert.Equal(contacts.Count, 1);
+            Assert.Single(contacts);
             Assert.Equal(contacts[0].GivenName, initialName);
 
             // get contacts should be 1
@@ -174,7 +175,7 @@ namespace HETSAPI.Test
             contacts = JsonConvert.DeserializeObject<List<Contact>>(jsonString);
 
             // verify the list has a record.
-            Assert.Equal(contacts.Count, 1);
+            Assert.Single(contacts);
             Assert.Equal(contacts[0].GivenName, initialName);
 
             // test removing the contact.
@@ -191,7 +192,7 @@ namespace HETSAPI.Test
             contacts = JsonConvert.DeserializeObject<List<Contact>>(jsonString);
 
             // should be 0
-            Assert.Equal(contacts.Count, 0);
+            Assert.Empty(contacts);
 
             // test the get
             request = new HttpRequestMessage(HttpMethod.Get, "/api/projects/" + id + "/contacts");
@@ -203,10 +204,9 @@ namespace HETSAPI.Test
             contacts = JsonConvert.DeserializeObject<List<Contact>>(jsonString);
 
             // verify the list has no records.
-            Assert.Equal(contacts.Count, 0);
+            Assert.Empty(contacts);
 
             // test the post.
-
             Contact newContact = new Contact();
             newContact.OrganizationName = "asdf";
 
@@ -221,7 +221,7 @@ namespace HETSAPI.Test
             newContact = JsonConvert.DeserializeObject<Contact>(jsonString);
 
             // should be 0
-            Assert.NotEqual(newContact.Id, 0);
+            Assert.NotEqual(0, newContact.Id);
 
             request = new HttpRequestMessage(HttpMethod.Put, "/api/projects/" + id + "/contacts");
             request.Content = new StringContent(JsonConvert.SerializeObject(contacts), Encoding.UTF8, "application/json");
@@ -234,7 +234,7 @@ namespace HETSAPI.Test
             contacts = JsonConvert.DeserializeObject<List<Contact>>(jsonString);
 
             // should be 0
-            Assert.Equal(contacts.Count, 0);
+            Assert.Empty(contacts);
 
             // delete the owner.            
             request = new HttpRequestMessage(HttpMethod.Post, "/api/projects/" + id + "/delete");
@@ -244,7 +244,7 @@ namespace HETSAPI.Test
             // should get a 404 if we try a get now.
             request = new HttpRequestMessage(HttpMethod.Get, "/api/projects/" + id);
             response = await _client.SendAsync(request);
-            Assert.Equal(response.StatusCode, HttpStatusCode.NotFound);
+            Assert.Equal(HttpStatusCode.NotFound, response.StatusCode);
         }
     }
 }

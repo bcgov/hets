@@ -7,14 +7,14 @@ using HETSAPI.Models;
 namespace HETSAPI.ViewModels
 {
     /// <summary>
-    /// Equipment Code is a combination of the Owner Equipment Prefix and the numeric identifier for the next piece of equipment.
+    /// Equipment Code View Model
     /// </summary>
     [MetaDataExtension (Description = "Equipment Code is a combination of the Owner Equipment Prefix and the numeric identifier for the next piece of equipment.")]
     [DataContract]
-    public partial class EquipmentCodeViewModel : IEquatable<EquipmentCodeViewModel>
+    public sealed class EquipmentCodeViewModel : IEquatable<EquipmentCodeViewModel>
     {
         /// <summary>
-        /// Default constructor, required by entity framework
+        /// Equipment Code View Model Constructor
         /// </summary>
         public EquipmentCodeViewModel()
         {
@@ -23,9 +23,10 @@ namespace HETSAPI.ViewModels
         /// <summary>
         /// Initializes a new instance of the <see cref="EquipmentCodeViewModel" /> class.
         /// </summary>
-        /// <param name="EquipmentCode">The Equipment Code.</param>
-        public EquipmentCodeViewModel(string EquipmentCode = null)
-        {               this.EquipmentCode = EquipmentCode;
+        /// <param name="equipmentCode">The Equipment Code.</param>
+        public EquipmentCodeViewModel(string equipmentCode)
+        {
+            EquipmentCode = equipmentCode;
         }
 
         /// <summary>
@@ -43,9 +44,11 @@ namespace HETSAPI.ViewModels
         public override string ToString()
         {
             var sb = new StringBuilder();
+
             sb.Append("class EquipmentCodeViewModel {\n");
             sb.Append("  EquipmentCode: ").Append(EquipmentCode).Append("\n");
             sb.Append("}\n");
+
             return sb.ToString();
         }
 
@@ -68,6 +71,7 @@ namespace HETSAPI.ViewModels
             if (ReferenceEquals(null, obj)) { return false; }
             if (ReferenceEquals(this, obj)) { return true; }
             if (obj.GetType() != GetType()) { return false; }
+
             return Equals((EquipmentCodeViewModel)obj);
         }
 
@@ -78,15 +82,14 @@ namespace HETSAPI.ViewModels
         /// <returns>Boolean</returns>
         public bool Equals(EquipmentCodeViewModel other)
         {
-
             if (ReferenceEquals(null, other)) { return false; }
             if (ReferenceEquals(this, other)) { return true; }
 
             return                 
                 (
-                    this.EquipmentCode == other.EquipmentCode ||
-                    this.EquipmentCode != null &&
-                    this.EquipmentCode.Equals(other.EquipmentCode)
+                    EquipmentCode == other.EquipmentCode ||
+                    EquipmentCode != null &&
+                    EquipmentCode.Equals(other.EquipmentCode)
                 );
         }
 
@@ -100,10 +103,11 @@ namespace HETSAPI.ViewModels
             unchecked // Overflow is fine, just wrap
             {
                 int hash = 41;
+
                 // Suitable nullity checks
-                if (this.EquipmentCode != null)
+                if (EquipmentCode != null)
                 {
-                    hash = hash * 59 + this.EquipmentCode.GetHashCode();
+                    hash = hash * 59 + EquipmentCode.GetHashCode();
                 }                
                 
                 return hash;

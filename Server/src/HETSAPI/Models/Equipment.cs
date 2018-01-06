@@ -12,7 +12,7 @@ namespace HETSAPI.Models
     /// Equipment Database Model
     /// </summary>
     [MetaDataExtension (Description = "A piece of equipment in the HETS system. Each piece of equipment is of a specific equipment type, owned by an Owner, and is within a Local Area.")]
-    public partial class Equipment : AuditableEntity, IEquatable<Equipment>
+    public sealed partial class Equipment : AuditableEntity, IEquatable<Equipment>
     {
         /// <summary>
         /// Equipment Database Model Constructor (required by entity framework)

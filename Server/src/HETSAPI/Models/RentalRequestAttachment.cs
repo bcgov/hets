@@ -10,7 +10,7 @@ namespace HETSAPI.Models
     /// Renatal Request Attachment Database Model
     /// </summary>
     [MetaDataExtension (Description = "Attachments that are required as part of the Rental Requests")]
-    public class RentalRequestAttachment : AuditableEntity, IEquatable<RentalRequestAttachment>
+    public sealed class RentalRequestAttachment : AuditableEntity, IEquatable<RentalRequestAttachment>
     {
         /// <summary>
         /// REntal Request Attachment Database Model Constructor (required by entity framework)

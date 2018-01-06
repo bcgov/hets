@@ -10,7 +10,7 @@ namespace HETSAPI.Models
     /// Equipment Attachment Database Model
     /// </summary>
     [MetaDataExtension (Description = "An Equipment Attachment associated with a piece of Equipment.")]
-    public class EquipmentAttachment : AuditableEntity, IEquatable<EquipmentAttachment>
+    public sealed class EquipmentAttachment : AuditableEntity, IEquatable<EquipmentAttachment>
     {
         /// <summary>
         /// Equipment Attachment Database Model Constructor (required by entity framework)

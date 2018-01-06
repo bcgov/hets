@@ -9,7 +9,7 @@ namespace HETSAPI.Models
     /// Region Database Model
     /// </summary>
     [MetaDataExtension (Description = "The Ministry of Transportion and Infrastructure REGION.")]
-    public class Region : AuditableEntity, IEquatable<Region>
+    public sealed class Region : AuditableEntity, IEquatable<Region>
     {
         /// <summary>
         /// REgion Database Model Constructor (required by entity framework)

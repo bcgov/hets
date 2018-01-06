@@ -8,7 +8,7 @@ namespace HETSAPI.Models
     /// <summary>
     /// Local Area Rotation List Database Model
     /// </summary>
-    public class LocalAreaRotationList : AuditableEntity, IEquatable<LocalAreaRotationList>
+    public sealed class LocalAreaRotationList : AuditableEntity, IEquatable<LocalAreaRotationList>
     {
         /// <summary>
         /// Local Area Rotation List Database Model Constructor (required by entity framework)

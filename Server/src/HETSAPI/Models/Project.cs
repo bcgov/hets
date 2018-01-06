@@ -13,7 +13,7 @@ namespace HETSAPI.Models
     /// </summary>
     [MetaDataExtension (Description = "A Provincial Project that my from time to time request equipment under the HETS programme from a Service Area.")]
 
-    public partial class Project : AuditableEntity, IEquatable<Project>
+    public sealed class Project : AuditableEntity, IEquatable<Project>
     {
         /// <summary>
         /// Project Database Model Constructor (required by entity framework)

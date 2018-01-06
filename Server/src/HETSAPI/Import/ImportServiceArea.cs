@@ -12,7 +12,7 @@ namespace HETSAPI.Import
     /// <summary>
     /// Import Service Area Records
     /// </summary>
-    public class ImportServiceArea
+    public static class ImportServiceArea
     {
         const string OldTable = "Service_Area";
         const string NewTable = "ServiceArea";

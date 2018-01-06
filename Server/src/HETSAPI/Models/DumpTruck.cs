@@ -9,7 +9,7 @@ namespace HETSAPI.Models
     /// Dump Truck Database Model
     /// </summary>
     [MetaDataExtension (Description = "Additional attributes about a piece of equipment designated as a Dump Truck. Historically, there was a perceived need to track a lot of informatiion about a dump truck, but in practice, few fields are being completed by users. Places for the attributes are being maintained, but the UI is prompting only for a couple of the fields, and only those fields are likely to be populated. Additional basic information about the attributes can be found on Wikipedia, BC-specific details on MOTI&amp;#39;s CVSE website and www.bclaws.ca&amp;#x2F;EPLibraries&amp;#x2F;bclaws_new&amp;#x2F;document&amp;#x2F;ID&amp;#x2F;freeside&amp;#x2F;30_78#AppendicesAtoK, Appendix A and  B. Any metrics information provided here is from the Equipment Owner.")]
-    public class DumpTruck : AuditableEntity, IEquatable<DumpTruck>
+    public sealed class DumpTruck : AuditableEntity, IEquatable<DumpTruck>
     {
         /// <summary>
         /// Dump Truck Database Model Constructor (required by entity framework)

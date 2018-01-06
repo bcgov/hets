@@ -9,7 +9,7 @@ namespace HETSAPI.Seeders
 {
     public class UserSeeder : Seeder<DbAppContext>
     {
-        private string[] ProfileTriggers = { AllProfiles };
+        private readonly string[] ProfileTriggers = { AllProfiles };
 
         public UserSeeder(IConfiguration configuration, IHostingEnvironment env, ILoggerFactory loggerFactory) 
             : base(configuration, env, loggerFactory)

@@ -10,7 +10,7 @@ namespace HETSAPI.Models
     /// Service Area Database Model
     /// </summary>
     [MetaDataExtension (Description = "The Ministry of Transportation and Infrastructure SERVICE AREA.")]
-    public class ServiceArea : AuditableEntity, IEquatable<ServiceArea>
+    public sealed class ServiceArea : AuditableEntity, IEquatable<ServiceArea>
     {
         /// <summary>
         /// Service Area Database Model Constructor (required by entity framework)

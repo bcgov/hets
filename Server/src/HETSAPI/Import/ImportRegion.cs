@@ -13,7 +13,7 @@ namespace HETSAPI.Import
     /// <summary>
     /// Import Region Records
     /// </summary>
-    public class ImportRegion
+    public static class ImportRegion
     {
         const string OldTable = "HETS_Region";
         const string NewTable = "HETS_Region";

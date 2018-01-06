@@ -9,7 +9,7 @@ namespace HETSAPI.Models
     /// City Database Model
     /// </summary>
     [MetaDataExtension (Description = "A list of cities in BC. Authoritative source to be determined.")]
-    public class City : AuditableEntity, IEquatable<City>
+    public sealed class City : AuditableEntity, IEquatable<City>
     {
         /// <summary>
         /// City Constructor (required by entity framework)

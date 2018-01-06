@@ -10,7 +10,7 @@ namespace HETSAPI.Models
     /// Time Record Database Model
     /// </summary>
     [MetaDataExtension (Description = "A record of time worked for a piece of equipment hired for a specific project within a Local Area.")]
-    public class TimeRecord : AuditableEntity, IEquatable<TimeRecord>
+    public sealed class TimeRecord : AuditableEntity, IEquatable<TimeRecord>
     {
         /// <summary>
         /// Default constructor, required by entity framework

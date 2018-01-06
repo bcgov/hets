@@ -12,7 +12,7 @@ namespace HETSAPI.Models
     /// Owner Database Model
     /// </summary>
     [MetaDataExtension (Description = "The person or company to which a piece of construction equipment belongs.")]
-    public class Owner : AuditableEntity, IEquatable<Owner>
+    public sealed class Owner : AuditableEntity, IEquatable<Owner>
     {
         /// <summary>
         /// Owner Database Model Constructor (required by entity framework)

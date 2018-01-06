@@ -11,7 +11,7 @@ namespace HETSAPI.ViewModels
     /// </summary>
     [MetaDataExtension (Description = "Uploaded documents related to entity in the application - e.g. piece of Equipment, an Owner, a Project and so on.")]
     [DataContract]
-    public partial class AttachmentViewModel : IEquatable<AttachmentViewModel>
+    public sealed class AttachmentViewModel : IEquatable<AttachmentViewModel>
     {
         /// <summary>
         /// Default constructor, required by entity framework

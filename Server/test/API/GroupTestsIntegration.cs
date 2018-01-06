@@ -27,14 +27,13 @@ namespace HETSAPI.Test
 		/// <summary>
         /// Integration test for GroupsGet
         /// </summary>
-		public async void TestGroupsGet()
+		public async Task TestGroupsGet()
 		{
 			var response = await _client.GetAsync("/api/groups");
             response.EnsureSuccessStatusCode();
 			
 			// update this to test the API.
 			Assert.True(true);
-		}		
-        
+		}		        
     }
 }

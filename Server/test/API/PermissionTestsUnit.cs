@@ -43,25 +43,9 @@ namespace HETSAPI.Test
 		{
             DbContextOptions<DbAppContext> options = new DbContextOptions<DbAppContext>();
             Mock<DbAppContext> dbAppContext = new Mock<DbAppContext>(null, options);
-
-            /*
-
-            Here you will need to mock up the context.
-
-    ItemType fakeItem = new ItemType(...);
-
-    Mock<DbSet<ItemType>> mockList = MockDbSet.Create(fakeItem);
-
-    dbAppContext.Setup(x => x.ModelEndpoint).Returns(mockItem.Object);
-
-            */
-
             PermissionService _service = new PermissionService(dbAppContext.Object);
-			
-                    _PermissionApi = new PermissionController (_service);
-
-		}
-	
+            _PermissionApi = new PermissionController (_service);
+		}	
 		
 		[Fact]
 		/// <summary>
@@ -69,13 +53,7 @@ namespace HETSAPI.Test
         /// </summary>
 		public void TestPermissionsGet()
 		{
-			// Add test code here
-			// it may look like: 
-			//  var result = _PermissionController.PermissionsGet();
-			//  Assert.True (result == expected-result);
-
-            Assert.True(true);
-		}		
-        
+			Assert.True(true);
+		}		        
     }
 }

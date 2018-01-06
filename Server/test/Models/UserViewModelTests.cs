@@ -25,12 +25,10 @@ namespace HETSAPI.Test
 {
     /// <summary>
     ///  Class for testing the model UserViewModel
-    /// </summary>
-    
+    /// </summary>    
     public class UserViewModelModelTests
     {
-        // TODO uncomment below to declare an instance variable for UserViewModel
-        private UserViewModel instance;
+        private readonly UserViewModel instance;
 
         /// <summary>
         /// Setup the test.

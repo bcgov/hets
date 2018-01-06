@@ -12,7 +12,7 @@ namespace HETSAPI.Models
     /// REntal Agreement Rate Database Model
     /// </summary>
     [MetaDataExtension (Description = "The rate associated with an element of a rental agreement.")]
-    public class RentalAgreementRate : AuditableEntity, IEquatable<RentalAgreementRate>
+    public sealed class RentalAgreementRate : AuditableEntity, IEquatable<RentalAgreementRate>
     {
         /// <summary>
         /// Default constructor, required by entity framework

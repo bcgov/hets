@@ -28,8 +28,7 @@ namespace HETSAPI.Test
     
     public class SeniorityAuditModelTests
     {
-        // TODO uncomment below to declare an instance variable for SeniorityAudit
-        private SeniorityAudit instance;
+        private readonly SeniorityAudit instance;
 
         /// <summary>
         /// Setup the test.

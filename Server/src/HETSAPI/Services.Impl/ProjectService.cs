@@ -10,14 +10,14 @@ using Microsoft.AspNetCore.Http;
 namespace HETSAPI.Services.Impl
 {
     /// <summary>
-    ///
+    /// Project Service
     /// </summary>
     public class ProjectService : ServiceBase, IProjectService
     {
         private readonly DbAppContext _context;
 
         /// <summary>
-        /// Create a service and set the database context
+        /// Project Service Constructir
         /// </summary>
         public ProjectService(IHttpContextAccessor httpContextAccessor, DbAppContext context) : base(httpContextAccessor, context)
         {
@@ -26,84 +26,80 @@ namespace HETSAPI.Services.Impl
 
         private void AdjustRecord(Project item)
         {
-            if (item != null)
+            if (item == null) return;
+
+            // adjust district
+            if (item.District != null)
             {
-                // Adjust district
-                if (item.District != null)
-                {
-                    item.District = _context.Districts.FirstOrDefault(a => a.Id == item.District.Id);
-                }
+                item.District = _context.Districts.FirstOrDefault(a => a.Id == item.District.Id);
+            }
 
-                // Notes is a list
-                if (item.Notes != null)
+            // notes list
+            if (item.Notes != null)
+            {
+                for (int i = 0; i < item.Notes.Count; i++)
                 {
-                    for (int i = 0; i < item.Notes.Count; i++)
+                    if (item.Notes[i] != null)
                     {
-                        if (item.Notes[i] != null)
-                        {
-                            item.Notes[i] = _context.Notes.FirstOrDefault(a => a.Id == item.Notes[i].Id);
-                        }
+                        item.Notes[i] = _context.Notes.FirstOrDefault(a => a.Id == item.Notes[i].Id);
                     }
                 }
+            }
 
-                // History is a list
-                if (item.History != null)
+            // history list
+            if (item.History != null)
+            {
+                for (int i = 0; i < item.History.Count; i++)
                 {
-                    for (int i = 0; i < item.History.Count; i++)
+                    if (item.History[i] != null)
                     {
-                        if (item.History[i] != null)
-                        {
-                            item.History[i] = _context.Historys.FirstOrDefault(a => a.Id == item.History[i].Id);
-                        }
+                        item.History[i] = _context.Historys.FirstOrDefault(a => a.Id == item.History[i].Id);
                     }
                 }
+            }
 
-                if (item.PrimaryContact != null)
-                {
-                    item.PrimaryContact = _context.Contacts.FirstOrDefault(a => a.Id == item.PrimaryContact.Id);
-                }
+            if (item.PrimaryContact != null)
+            {
+                item.PrimaryContact = _context.Contacts.FirstOrDefault(a => a.Id == item.PrimaryContact.Id);
+            }
 
-                if (item.Contacts != null)
+            if (item.Contacts != null)
+            {
+                for (int i = 0; i < item.Contacts.Count; i++)
                 {
-                    for (int i = 0; i < item.Contacts.Count; i++)
+                    if (item.Contacts[i] != null)
                     {
-                        if (item.Contacts[i] != null)
-                        {
-                            item.Contacts[i] = _context.Contacts.FirstOrDefault(a => a.Id == item.Contacts[i].Id);
-                        }
+                        item.Contacts[i] = _context.Contacts.FirstOrDefault(a => a.Id == item.Contacts[i].Id);
                     }
                 }
+            }
 
-                if (item.RentalRequests != null)
+            if (item.RentalRequests != null)
+            {
+                for (int i = 0; i < item.RentalRequests.Count; i++)
                 {
-                    for (int i = 0; i < item.RentalRequests.Count; i++)
+                    if (item.RentalRequests[i] != null)
                     {
-                        if (item.RentalRequests[i] != null)
-                        {
-                            item.RentalRequests[i] = _context.RentalRequests.FirstOrDefault(a => a.Id == item.RentalRequests[i].Id);
-                        }
+                        item.RentalRequests[i] = _context.RentalRequests.FirstOrDefault(a => a.Id == item.RentalRequests[i].Id);
                     }
                 }
+            }
 
-                // RentalAgreements is a list
-                if (item.RentalAgreements != null)
+            // rental agreements list
+            if (item.RentalAgreements != null)
+            {
+                for (int i = 0; i < item.RentalAgreements.Count; i++)
                 {
-                    for (int i = 0; i < item.RentalAgreements.Count; i++)
+                    if (item.RentalAgreements[i] != null)
                     {
-                        if (item.RentalAgreements[i] != null)
-                        {
-                            item.RentalAgreements[i] = _context.RentalAgreements.FirstOrDefault(a => a.Id == item.RentalAgreements[i].Id);
-                        }
+                        item.RentalAgreements[i] = _context.RentalAgreements.FirstOrDefault(a => a.Id == item.RentalAgreements[i].Id);
                     }
                 }
             }
         }
 
-
-
-
         /// <summary>
-        ///
+        /// Create bulk project records
         /// </summary>
         /// <param name="items"></param>
         /// <response code="201">Project created</response>
@@ -113,12 +109,14 @@ namespace HETSAPI.Services.Impl
             {
                 return new BadRequestResult();
             }
+
             foreach (Project item in items)
             {
                 AdjustRecord(item);
 
                 // determine if this is an insert or an update
                 bool exists = _context.Projects.Any(a => a.Id == item.Id);
+
                 if (exists)
                 {
                     _context.Projects.Update(item);
@@ -127,7 +125,8 @@ namespace HETSAPI.Services.Impl
                 {
                     _context.Projects.Add(item);
                 }
-                // Save the changes
+
+                // save the changes
                 _context.SaveChanges();
             }
 
@@ -135,7 +134,7 @@ namespace HETSAPI.Services.Impl
         }
 
         /// <summary>
-        ///
+        /// Get all projects
         /// </summary>
         /// <response code="200">OK</response>
         public virtual IActionResult ProjectsGetAsync()
@@ -150,18 +149,19 @@ namespace HETSAPI.Services.Impl
                 .Include(x => x.RentalRequests)
                 .Include(x => x.RentalAgreements)
                 .ToList();
+
             return new ObjectResult(result);
         }
 
-
         /// <summary>
-        ///
+        /// Get contacts associated with project
         /// </summary>
         /// <param name="id">id of Owner to fetch Contacts for</param>
         /// <response code="200">OK</response>
         public virtual IActionResult ProjectsIdContactsGetAsync(int id)
         {
-            var exists = _context.Projects.Any(a => a.Id == id);
+            bool exists = _context.Projects.Any(a => a.Id == id);
+
             if (exists)
             {
                 Project project = _context.Projects
@@ -174,16 +174,13 @@ namespace HETSAPI.Services.Impl
 
                 return new ObjectResult(project.Contacts);
             }
-            else
-            {
-                // record not found
-                return new StatusCodeResult(404);
-            }
+
+            // record not found
+            return new StatusCodeResult(404);
         }
 
-
         /// <summary>
-        ///
+        /// Update a contact associated with a project
         /// </summary>
         /// <remarks>Replaces an Owner&#39;s Contacts</remarks>
         /// <param name="id">id of Owner to replace Contacts for</param>
@@ -191,7 +188,8 @@ namespace HETSAPI.Services.Impl
         /// <response code="200">OK</response>
         public virtual IActionResult ProjectsIdContactsPostAsync(int id, Contact item)
         {
-            var exists = _context.Projects.Any(a => a.Id == id);
+            bool exists = _context.Projects.Any(a => a.Id == id);
+
             if (exists && item != null)
             {
                 Project project = _context.Projects
@@ -202,7 +200,7 @@ namespace HETSAPI.Services.Impl
                     .Include(x => x.Contacts)
                     .First(x => x.Id == id);
 
-                // adjust the incoming list.
+                // adjust the incoming list
                 item.Id = 0;
 
                 _context.Contacts.Add(item);
@@ -212,16 +210,13 @@ namespace HETSAPI.Services.Impl
 
                 return new ObjectResult(item);
             }
-            else
-            {
-                // record not found
-                return new StatusCodeResult(404);
-            }
+
+            // record not found
+            return new StatusCodeResult(404);
         }
 
-
         /// <summary>
-        ///
+        /// Update contacts associated with a project
         /// </summary>
         /// <remarks>Replaces an Project&#39;s Contacts</remarks>
         /// <param name="id">id of Project to replace Contacts for</param>
@@ -229,7 +224,8 @@ namespace HETSAPI.Services.Impl
         /// <response code="200">OK</response>
         public virtual IActionResult ProjectsIdContactsPutAsync(int id, Contact[] items)
         {
-            var exists = _context.Projects.Any(a => a.Id == id);
+            bool exists = _context.Projects.Any(a => a.Id == id);
+
             if (exists && items != null)
             {
                 Project project = _context.Projects
@@ -240,15 +236,16 @@ namespace HETSAPI.Services.Impl
                     .Include(x => x.Contacts)
                     .First(x => x.Id == id);
 
-                // adjust the incoming list.
-
+                // adjust the incoming list
                 for (int i = 0; i < items.Count(); i++)
                 {
                     Contact item = items[i];
+
                     if (item != null)
                     {
-                        bool contact_exists = _context.Contacts.Any(x => x.Id == item.Id);
-                        if (contact_exists)
+                        bool contactExists = _context.Contacts.Any(x => x.Id == item.Id);
+
+                        if (contactExists)
                         {
                             items[i] = _context.Contacts
                                 .First(x => x.Id == item.Id);
@@ -262,31 +259,28 @@ namespace HETSAPI.Services.Impl
                 }
 
                 // remove contacts that are no longer attached.
-
                 foreach (Contact contact in project.Contacts)
                 {
-                    if (contact != null && !items.Any(x => x.Id == contact.Id))
+                    if (contact != null && items.All(x => x.Id != contact.Id))
                     {
                         _context.Remove(contact);
                     }
                 }
 
-                // replace Contacts.
+                // replace Contacts
                 project.Contacts = items.ToList();
                 _context.Update(project);
                 _context.SaveChanges();
 
                 return new ObjectResult(items);
             }
-            else
-            {
-                // record not found
-                return new StatusCodeResult(404);
-            }
+
+            // record not found
+            return new StatusCodeResult(404);
         }
 
         /// <summary>
-        ///
+        /// Get attachments associated with a project
         /// </summary>
         /// <remarks>Returns attachments for a particular Project</remarks>
         /// <param name="id">id of Project to fetch attachments for</param>
@@ -296,6 +290,7 @@ namespace HETSAPI.Services.Impl
         public virtual IActionResult ProjectsIdAttachmentsGetAsync(int id)
         {
             bool exists = _context.Projects.Any(a => a.Id == id);
+
             if (exists)
             {
                 Project project = _context.Projects
@@ -304,44 +299,41 @@ namespace HETSAPI.Services.Impl
                 var result = MappingExtensions.GetAttachmentListAsViewModel(project.Attachments);
                 return new ObjectResult(result);
             }
-            else
-            {
-                // record not found
-                return new StatusCodeResult(404);
-            }
 
+            // record not found
+            return new StatusCodeResult(404);
         }
 
         /// <summary>
-        ///
+        /// Delete project
         /// </summary>
         /// <param name="id">id of Project to delete</param>
         /// <response code="200">OK</response>
         /// <response code="404">Project not found</response>
         public virtual IActionResult ProjectsIdDeletePostAsync(int id)
         {
-            var exists = _context.Projects.Any(a => a.Id == id);
+            bool exists = _context.Projects.Any(a => a.Id == id);
+
             if (exists)
             {
-                var item = _context.Projects.First(a => a.Id == id);
+                Project item = _context.Projects.First(a => a.Id == id);
+
                 if (item != null)
                 {
                     _context.Projects.Remove(item);
-                    // Save the changes
+
+                    // save the changes
                     _context.SaveChanges();
                 }
                 return new ObjectResult(item);
             }
-            else
-            {
-                // record not found
-                return new StatusCodeResult(404);
-            }
+
+            // record not found
+            return new StatusCodeResult(404);
         }
 
-
         ///  <summary>
-        /// 
+        ///  Get project history
         ///  </summary>
         ///  <remarks>Returns History for a particular Project</remarks>
         ///  <param name="id">id of Project to fetch History for</param>
@@ -351,6 +343,7 @@ namespace HETSAPI.Services.Impl
         public virtual IActionResult ProjectsIdHistoryGetAsync(int id, int? offset, int? limit)
         {
             bool exists = _context.Projects.Any(a => a.Id == id);
+
             if (exists)
             {
                 Project project = _context.Projects
@@ -363,28 +356,28 @@ namespace HETSAPI.Services.Impl
                 {
                     offset = 0;
                 }
+
                 if (limit == null)
                 {
-                    limit = data.Count() - offset;
+                    limit = data.Count - offset;
                 }
+
                 List<HistoryViewModel> result = new List<HistoryViewModel>();
 
-                for (int i = (int)offset; i < data.Count() && i < offset + limit; i++)
+                for (int i = (int)offset; i < data.Count && i < offset + limit; i++)
                 {
                     result.Add(data[i].ToViewModel(id));
                 }
 
                 return new ObjectResult(result);
             }
-            else
-            {
-                // record not found
-                return new StatusCodeResult(404);
-            }
+
+            // record not found
+            return new StatusCodeResult(404);
         }
 
         /// <summary>
-        ///
+        /// Create a history record associated with a project
         /// </summary>
         /// <remarks>Add a History record to the Project</remarks>
         /// <param name="id">id of Project to fetch History for</param>
@@ -396,15 +389,18 @@ namespace HETSAPI.Services.Impl
             HistoryViewModel result = new HistoryViewModel();
 
             bool exists = _context.Projects.Any(a => a.Id == id);
+
             if (exists)
             {
                 Project project = _context.Projects
                     .Include(x => x.History)
                     .First(a => a.Id == id);
+
                 if (project.History == null)
                 {
                     project.History = new List<History>();
                 }
+
                 // force add
                 item.Id = 0;
                 project.History.Add(item);
@@ -421,9 +417,8 @@ namespace HETSAPI.Services.Impl
             return new ObjectResult(result);
         }
 
-
         /// <summary>
-        ///
+        /// Get project by id
         /// </summary>
         /// <param name="id">id of Project to fetch</param>
         /// <response code="200">OK</response>
@@ -431,9 +426,10 @@ namespace HETSAPI.Services.Impl
         public virtual IActionResult ProjectsIdGetAsync(int id)
         {
             var exists = _context.Projects.Any(a => a.Id == id);
+
             if (exists)
             {
-                var result = _context.Projects
+                Project result = _context.Projects
                     .Include(x => x.Attachments)
                     .Include(x => x.Contacts)
                     .Include(x => x.History)
@@ -443,17 +439,16 @@ namespace HETSAPI.Services.Impl
                     .Include(x => x.RentalRequests)
                     .Include(x => x.RentalAgreements)
                     .First(a => a.Id == id);
+
                 return new ObjectResult(result);
             }
-            else
-            {
-                // record not found
-                return new StatusCodeResult(404);
-            }
+
+            // record not found
+            return new StatusCodeResult(404);
         }
 
         /// <summary>
-        ///
+        /// Update project
         /// </summary>
         /// <param name="id">id of Project to fetch</param>
         /// <param name="item"></param>
@@ -462,23 +457,24 @@ namespace HETSAPI.Services.Impl
         public virtual IActionResult ProjectsIdPutAsync(int id, Project item)
         {
             AdjustRecord(item);
-            var exists = _context.Projects.Any(a => a.Id == id);
+
+            bool exists = _context.Projects.Any(a => a.Id == id);
+
             if (exists && id == item.Id)
             {
                 _context.Projects.Update(item);
-                // Save the changes
+
+                // save the changes
                 _context.SaveChanges();
                 return new ObjectResult(item);
             }
-            else
-            {
-                // record not found
-                return new StatusCodeResult(404);
-            }
+
+            // record not found
+            return new StatusCodeResult(404);
         }
 
         /// <summary>
-        ///
+        /// Create project
         /// </summary>
         /// <param name="item"></param>
         /// <response code="201">Project created</response>
@@ -488,7 +484,8 @@ namespace HETSAPI.Services.Impl
             {
                 AdjustRecord(item);
 
-                var exists = _context.Projects.Any(a => a.Id == item.Id);
+                bool exists = _context.Projects.Any(a => a.Id == item.Id);
+
                 if (exists)
                 {
                     _context.Projects.Update(item);
@@ -498,14 +495,13 @@ namespace HETSAPI.Services.Impl
                     // record not found
                     _context.Projects.Add(item);
                 }
-                // Save the changes
+
+                // save the changes
                 _context.SaveChanges();
                 return new ObjectResult(item);
             }
-            else
-            {
-                return new StatusCodeResult(400);
-            }
+
+            return new StatusCodeResult(400);
         }
 
         /// <summary>
@@ -531,27 +527,18 @@ namespace HETSAPI.Services.Impl
             {
                 data = data.Where(x => districtTokens.Contains(x.District.Id));
             }
-
-            if (hasRequests != null)
-            {
-                // throw new NotImplementedException();
-            }
-
-            if (hasHires != null)
-            {
-                // throw new NotImplementedException();
-            }
-
+            
             if (project != null)
             {
-                // Allow for case insensitive search of project name
+                // allow for case insensitive search of project name
                 data = data.Where(x => x.Name.ToLowerInvariant().Contains(project.ToLowerInvariant()));
             }
 
             var result = new List<ProjectSearchResultViewModel>();
-            foreach (var item in data)
+
+            foreach (Project item in data)
             {
-                ProjectSearchResultViewModel newItem = item.ToViewModel();
+                item.ToViewModel();
                 result.Add(item.ToViewModel());
             }
 
@@ -561,14 +548,11 @@ namespace HETSAPI.Services.Impl
                 // calculated fields.
                 projectSearchResultViewModel.Requests = _context.RentalRequests
                     .Include(x => x.Project)
-                    .Where(x => x.Project.Id == projectSearchResultViewModel.Id)
-                    .Count();
+                    .Count(x => x.Project.Id == projectSearchResultViewModel.Id);
 
-                // TODO filter on status once RentalAgreements has a status field.
                 projectSearchResultViewModel.Hires = _context.RentalAgreements
                     .Include(x => x.Project)
-                    .Where(x => x.Project.Id == projectSearchResultViewModel.Id)
-                    .Count();
+                    .Count(x => x.Project.Id == projectSearchResultViewModel.Id);
             }
 
             return new ObjectResult(result);

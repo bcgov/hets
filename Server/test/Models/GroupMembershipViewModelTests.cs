@@ -25,12 +25,10 @@ namespace HETSAPI.Test
 {
     /// <summary>
     ///  Class for testing the model GroupMembershipViewModel
-    /// </summary>
-    
+    /// </summary>    
     public class GroupMembershipViewModelModelTests
     {
-        // TODO uncomment below to declare an instance variable for GroupMembershipViewModel
-        private GroupMembershipViewModel instance;
+        private readonly GroupMembershipViewModel instance;
 
         /// <summary>
         /// Setup the test.

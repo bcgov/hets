@@ -24,12 +24,10 @@ namespace HETSAPI.Test
 {
     /// <summary>
     ///  Class for testing the model History
-    /// </summary>
-    
+    /// </summary>    
     public class HistoryModelTests
     {
-        // TODO uncomment below to declare an instance variable for History
-        private History instance;
+        private readonly History instance;
 
         /// <summary>
         /// Setup the test.

@@ -7,7 +7,7 @@ namespace HETSAPI.Models
     /// <summary>
     /// Equipment Database Model Extension
     /// </summary>
-    public partial class Equipment
+    public sealed partial class Equipment
     {
         /// <summary>
         /// Dump TRuck Constant

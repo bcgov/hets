@@ -9,7 +9,7 @@ namespace HETSAPI.Models
     /// Note Database Model
     /// </summary>
     [MetaDataExtension (Description = "Text entered about an entity in the application - e.g. piece of Equipment, an Owner, a Project and so on.")]
-    public class Note : AuditableEntity, IEquatable<Note>
+    public sealed class Note : AuditableEntity, IEquatable<Note>
     {
         /// <summary>
         /// Default constructor, required by entity framework

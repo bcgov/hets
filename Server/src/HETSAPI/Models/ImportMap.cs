@@ -8,7 +8,7 @@ namespace HETSAPI.Models
     /// <summary>
     /// Import Map Database Model
     /// </summary>
-    public class ImportMap : AuditableEntity, IEquatable<ImportMap>
+    public sealed class ImportMap : AuditableEntity, IEquatable<ImportMap>
     {
         /// <summary>
         /// IMport Map Database Model Constructor (required by entity framework)

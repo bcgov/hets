@@ -9,7 +9,7 @@ namespace HETSAPI.Models
     /// Group Database Model
     /// </summary>
     [MetaDataExtension (Description = "A named entity that is used to create a arbitrary collection of users into a group. For example, the HETS Clerks are in the group Clerks. Groups, like permissions are defined by and referenced in code.")]
-    public class Group : AuditableEntity, IEquatable<Group>
+    public sealed class Group : AuditableEntity, IEquatable<Group>
     {
         /// <summary>
         /// Group Database Model Constructor (required by entity framework)

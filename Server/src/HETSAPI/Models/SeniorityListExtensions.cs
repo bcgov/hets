@@ -44,20 +44,12 @@ namespace HETSAPI.Models
             if (context != null && context.LocalAreas.Any(x => x.Id == localAreaId) && context.EquipmentTypes.Any(x => x.Id == equipmentType))
             {
                 // get the associated equipment type
-
                 EquipmentType equipmentTypeRecord = context.EquipmentTypes.FirstOrDefault(x => x.Id == equipmentType);
+
                 if (equipmentTypeRecord != null)
-                {
-                    /*
-                    int blocks = DistrictEquipmentType.OTHER_BLOCKS;
-                    blocks = equipmentTypeRecord.NumberOfBlocks;
-                    */
-
-                    // get the list of equipment in this seniority list.
-
+                {                    
                     // first pass will update the seniority score.
-
-                    var data = context.Equipments
+                    IQueryable<Equipment> data = context.Equipments
                          .Where(x => x.Status == Equipment.STATUS_APPROVED && 
                                      x.LocalArea.Id == localAreaId && 
                                      x.DistrictEquipmentType.Id == equipmentType)

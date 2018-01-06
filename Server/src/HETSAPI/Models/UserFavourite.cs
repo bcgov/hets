@@ -10,7 +10,7 @@ namespace HETSAPI.Models
     /// User Favourites Database Model
     /// </summary>
     [MetaDataExtension (Description = "User specific settings for a specific location in the UI. The location and saved settings are internally defined by the UI.")]
-    public class UserFavourite : AuditableEntity, IEquatable<UserFavourite>
+    public sealed class UserFavourite : AuditableEntity, IEquatable<UserFavourite>
     {
         /// <summary>
         /// Default constructor, required by entity framework

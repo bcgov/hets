@@ -9,7 +9,7 @@ namespace HETSAPI.Models
     /// Lookup List Database Model
     /// </summary>
     [MetaDataExtension (Description = "Lookup values for various enumerated types in the systems - entity status values, rate types, conditions and others. Used to pull the values out of the code and into the database but without having to have a table for each lookup instance.")]
-    public class LookupList : AuditableEntity, IEquatable<LookupList>
+    public sealed class LookupList : AuditableEntity, IEquatable<LookupList>
     {
         /// <summary>
         /// Lookup List Database Model Constructor (required by entity framework)

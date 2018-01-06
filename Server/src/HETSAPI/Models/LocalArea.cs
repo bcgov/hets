@@ -10,7 +10,7 @@ namespace HETSAPI.Models
     /// Local Area Database Model
     /// </summary>
     [MetaDataExtension (Description = "A HETS-application defined area that is within a Service Area.")]
-    public class LocalArea : AuditableEntity, IEquatable<LocalArea>
+    public sealed class LocalArea : AuditableEntity, IEquatable<LocalArea>
     {
         /// <summary>
         /// Local Area Database Model Constructor (required by entity framework)

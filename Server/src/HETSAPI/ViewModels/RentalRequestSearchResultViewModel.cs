@@ -7,13 +7,13 @@ using HETSAPI.Models;
 namespace HETSAPI.ViewModels
 {
     /// <summary>
-    /// 
+    /// Rental Request Search Result View Model
     /// </summary>
     [DataContract]
-    public partial class RentalRequestSearchResultViewModel : IEquatable<RentalRequestSearchResultViewModel>
+    public sealed class RentalRequestSearchResultViewModel : IEquatable<RentalRequestSearchResultViewModel>
     {
         /// <summary>
-        /// Default constructor, required by entity framework
+        /// Rental Request Search Result View Model Constructor
         /// </summary>
         public RentalRequestSearchResultViewModel()
         {
@@ -22,28 +22,30 @@ namespace HETSAPI.ViewModels
         /// <summary>
         /// Initializes a new instance of the <see cref="RentalRequestSearchResultViewModel" /> class.
         /// </summary>
-        /// <param name="Id">Id (required).</param>
-        /// <param name="LocalArea">LocalArea.</param>
-        /// <param name="EquipmentCount">EquipmentCount.</param>
-        /// <param name="EquipmentTypeName">EquipmentTypeName.</param>
-        /// <param name="ProjectName">ProjectName.</param>
-        /// <param name="PrimaryContact">PrimaryContact.</param>
-        /// <param name="Status">Project status.</param>
-        /// <param name="ProjectId">ProjectId.</param>
-        /// <param name="ExpectedStartDate">ExpectedStartDate.</param>
-        /// <param name="ExpectedEndDate">ExpectedEndDate.</param>
-        public RentalRequestSearchResultViewModel(int Id, LocalArea LocalArea = null, int? EquipmentCount = null, string EquipmentTypeName = null, string ProjectName = null, Contact PrimaryContact = null, string Status = null, int? ProjectId = null, DateTime? ExpectedStartDate = null, DateTime? ExpectedEndDate = null)
+        /// <param name="id">Id (required).</param>
+        /// <param name="localArea">LocalArea.</param>
+        /// <param name="equipmentCount">EquipmentCount.</param>
+        /// <param name="equipmentTypeName">EquipmentTypeName.</param>
+        /// <param name="projectName">ProjectName.</param>
+        /// <param name="primaryContact">PrimaryContact.</param>
+        /// <param name="status">Project status.</param>
+        /// <param name="projectId">ProjectId.</param>
+        /// <param name="expectedStartDate">ExpectedStartDate.</param>
+        /// <param name="expectedEndDate">ExpectedEndDate.</param>
+        public RentalRequestSearchResultViewModel(int id, LocalArea localArea = null, int? equipmentCount = null, 
+            string equipmentTypeName = null, string projectName = null, Contact primaryContact = null, string status = null, 
+            int? projectId = null, DateTime? expectedStartDate = null, DateTime? expectedEndDate = null)
         {   
-            this.Id = Id;
-            this.LocalArea = LocalArea;
-            this.EquipmentCount = EquipmentCount;
-            this.EquipmentTypeName = EquipmentTypeName;
-            this.ProjectName = ProjectName;
-            this.PrimaryContact = PrimaryContact;
-            this.Status = Status;
-            this.ProjectId = ProjectId;
-            this.ExpectedStartDate = ExpectedStartDate;
-            this.ExpectedEndDate = ExpectedEndDate;
+            Id = id;
+            LocalArea = localArea;
+            EquipmentCount = equipmentCount;
+            EquipmentTypeName = equipmentTypeName;
+            ProjectName = projectName;
+            PrimaryContact = primaryContact;
+            Status = status;
+            ProjectId = projectId;
+            ExpectedStartDate = expectedStartDate;
+            ExpectedEndDate = expectedEndDate;
         }
 
         /// <summary>
@@ -115,6 +117,7 @@ namespace HETSAPI.ViewModels
         public override string ToString()
         {
             var sb = new StringBuilder();
+
             sb.Append("class RentalRequestSearchResultViewModel {\n");
             sb.Append("  Id: ").Append(Id).Append("\n");
             sb.Append("  LocalArea: ").Append(LocalArea).Append("\n");
@@ -127,6 +130,7 @@ namespace HETSAPI.ViewModels
             sb.Append("  ExpectedStartDate: ").Append(ExpectedStartDate).Append("\n");
             sb.Append("  ExpectedEndDate: ").Append(ExpectedEndDate).Append("\n");
             sb.Append("}\n");
+
             return sb.ToString();
         }
 
@@ -149,6 +153,7 @@ namespace HETSAPI.ViewModels
             if (ReferenceEquals(null, obj)) { return false; }
             if (ReferenceEquals(this, obj)) { return true; }
             if (obj.GetType() != GetType()) { return false; }
+
             return Equals((RentalRequestSearchResultViewModel)obj);
         }
 
@@ -159,59 +164,58 @@ namespace HETSAPI.ViewModels
         /// <returns>Boolean</returns>
         public bool Equals(RentalRequestSearchResultViewModel other)
         {
-
             if (ReferenceEquals(null, other)) { return false; }
             if (ReferenceEquals(this, other)) { return true; }
 
             return                 
                 (
-                    this.Id == other.Id ||
-                    this.Id.Equals(other.Id)
+                    Id == other.Id ||
+                    Id.Equals(other.Id)
                 ) &&                 
                 (
-                    this.LocalArea == other.LocalArea ||
-                    this.LocalArea != null &&
-                    this.LocalArea.Equals(other.LocalArea)
+                    LocalArea == other.LocalArea ||
+                    LocalArea != null &&
+                    LocalArea.Equals(other.LocalArea)
                 ) &&                 
                 (
-                    this.EquipmentCount == other.EquipmentCount ||
-                    this.EquipmentCount != null &&
-                    this.EquipmentCount.Equals(other.EquipmentCount)
+                    EquipmentCount == other.EquipmentCount ||
+                    EquipmentCount != null &&
+                    EquipmentCount.Equals(other.EquipmentCount)
                 ) &&                 
                 (
-                    this.EquipmentTypeName == other.EquipmentTypeName ||
-                    this.EquipmentTypeName != null &&
-                    this.EquipmentTypeName.Equals(other.EquipmentTypeName)
+                    EquipmentTypeName == other.EquipmentTypeName ||
+                    EquipmentTypeName != null &&
+                    EquipmentTypeName.Equals(other.EquipmentTypeName)
                 ) &&                 
                 (
-                    this.ProjectName == other.ProjectName ||
-                    this.ProjectName != null &&
-                    this.ProjectName.Equals(other.ProjectName)
+                    ProjectName == other.ProjectName ||
+                    ProjectName != null &&
+                    ProjectName.Equals(other.ProjectName)
                 ) &&                 
                 (
-                    this.PrimaryContact == other.PrimaryContact ||
-                    this.PrimaryContact != null &&
-                    this.PrimaryContact.Equals(other.PrimaryContact)
+                    PrimaryContact == other.PrimaryContact ||
+                    PrimaryContact != null &&
+                    PrimaryContact.Equals(other.PrimaryContact)
                 ) &&                 
                 (
-                    this.Status == other.Status ||
-                    this.Status != null &&
-                    this.Status.Equals(other.Status)
+                    Status == other.Status ||
+                    Status != null &&
+                    Status.Equals(other.Status)
                 ) &&                 
                 (
-                    this.ProjectId == other.ProjectId ||
-                    this.ProjectId != null &&
-                    this.ProjectId.Equals(other.ProjectId)
+                    ProjectId == other.ProjectId ||
+                    ProjectId != null &&
+                    ProjectId.Equals(other.ProjectId)
                 ) &&                 
                 (
-                    this.ExpectedStartDate == other.ExpectedStartDate ||
-                    this.ExpectedStartDate != null &&
-                    this.ExpectedStartDate.Equals(other.ExpectedStartDate)
+                    ExpectedStartDate == other.ExpectedStartDate ||
+                    ExpectedStartDate != null &&
+                    ExpectedStartDate.Equals(other.ExpectedStartDate)
                 ) &&                 
                 (
-                    this.ExpectedEndDate == other.ExpectedEndDate ||
-                    this.ExpectedEndDate != null &&
-                    this.ExpectedEndDate.Equals(other.ExpectedEndDate)
+                    ExpectedEndDate == other.ExpectedEndDate ||
+                    ExpectedEndDate != null &&
+                    ExpectedEndDate.Equals(other.ExpectedEndDate)
                 );
         }
 
@@ -225,43 +229,53 @@ namespace HETSAPI.ViewModels
             unchecked // Overflow is fine, just wrap
             {
                 int hash = 41;
-                // Suitable nullity checks
+                
+                // Suitable nullity checks                                   
+                hash = hash * 59 + Id.GetHashCode();
+
+                if (LocalArea != null)
+                {
+                    hash = hash * 59 + LocalArea.GetHashCode();
+                }
+
+                if (EquipmentCount != null)
+                {
+                    hash = hash * 59 + EquipmentCount.GetHashCode();
+                }
+
+                if (EquipmentTypeName != null)
+                {
+                    hash = hash * 59 + EquipmentTypeName.GetHashCode();
+                }
+
+                if (ProjectName != null)
+                {
+                    hash = hash * 59 + ProjectName.GetHashCode();
+                }                
                                    
-                hash = hash * 59 + this.Id.GetHashCode();                   
-                if (this.LocalArea != null)
+                if (PrimaryContact != null)
                 {
-                    hash = hash * 59 + this.LocalArea.GetHashCode();
-                }                if (this.EquipmentCount != null)
+                    hash = hash * 59 + PrimaryContact.GetHashCode();
+                }
+
+                if (Status != null)
                 {
-                    hash = hash * 59 + this.EquipmentCount.GetHashCode();
-                }                
-                                if (this.EquipmentTypeName != null)
+                    hash = hash * 59 + Status.GetHashCode();
+                }
+
+                if (ProjectId != null)
                 {
-                    hash = hash * 59 + this.EquipmentTypeName.GetHashCode();
-                }                
-                                if (this.ProjectName != null)
+                    hash = hash * 59 + ProjectId.GetHashCode();
+                }
+
+                if (ExpectedStartDate != null)
                 {
-                    hash = hash * 59 + this.ProjectName.GetHashCode();
-                }                
-                                   
-                if (this.PrimaryContact != null)
+                    hash = hash * 59 + ExpectedStartDate.GetHashCode();
+                }
+
+                if (ExpectedEndDate != null)
                 {
-                    hash = hash * 59 + this.PrimaryContact.GetHashCode();
-                }                if (this.Status != null)
-                {
-                    hash = hash * 59 + this.Status.GetHashCode();
-                }                
-                                if (this.ProjectId != null)
-                {
-                    hash = hash * 59 + this.ProjectId.GetHashCode();
-                }                
-                                if (this.ExpectedStartDate != null)
-                {
-                    hash = hash * 59 + this.ExpectedStartDate.GetHashCode();
-                }                
-                                if (this.ExpectedEndDate != null)
-                {
-                    hash = hash * 59 + this.ExpectedEndDate.GetHashCode();
+                    hash = hash * 59 + ExpectedEndDate.GetHashCode();
                 }                
                 
                 return hash;

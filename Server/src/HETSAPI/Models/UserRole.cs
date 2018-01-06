@@ -9,7 +9,7 @@ namespace HETSAPI.Models
     /// User Role Database Model
     /// </summary>
     [MetaDataExtension (Description = "A join table that provides allows each user to have any number of Roles in the system.  At login time the user is given the sum of the permissions of the roles assigned to that user.")]
-    public class UserRole : AuditableEntity, IEquatable<UserRole>
+    public sealed class UserRole : AuditableEntity, IEquatable<UserRole>
     {
         /// <summary>
         /// User Role Database Model Constructor (required by entity framework)

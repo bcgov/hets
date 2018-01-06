@@ -9,7 +9,7 @@ namespace HETSAPI.Models
     /// Contact Database Model
     /// </summary>
     [MetaDataExtension (Description = "A person and their related contact information linked to one or more entities in the system. For examples, there are contacts for Owners, Projects.")]
-    public class Contact : AuditableEntity, IEquatable<Contact>
+    public sealed class Contact : AuditableEntity, IEquatable<Contact>
     {
         /// <summary>
         /// Contact Database Model Constructor (required by entity framework)

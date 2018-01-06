@@ -7,7 +7,7 @@ namespace HETSAPI
     /// <summary>
     /// The main Program for the application.
     /// </summary>
-    public class Program
+    public static class Program
     {
         public static void Main(string[] args)
         {

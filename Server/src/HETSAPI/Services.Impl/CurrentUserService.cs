@@ -140,31 +140,30 @@ namespace HETSAPI.Services.Impl
         /// 
         /// </summary>
         /// <remarks>Returns a user&#39;s favourites of a given type.  If type is empty, returns all.</remarks>
-        /// <param name="type">type of favourite to return</param>
+        /// <param name="favouritetype">type of favourite to return</param>
         /// <response code="200">OK</response>
         /// <response code="404">User not found</response>
-        public virtual IActionResult UsersCurrentFavouritesFavouritetypeGetAsync(string type)
+        public virtual IActionResult UsersCurrentFavouritesFavouritetypeGetAsync(string favouritetype)
         {
             // get the current user id
             int? id = GetCurrentUserId();
 
             if (id != null)
             {
-                var data = _context.UserFavourites
+                IQueryable<UserFavourite> data = _context.UserFavourites
                     .Where(x => x.User.Id == id)
                     .Select(x => x);
-                if (type != null)
+
+                if (favouritetype != null)
                 {
-                    data = data.Where(x => x.Type == type);
+                    data = data.Where(x => x.Type == favouritetype);
                 }
 
                 return new ObjectResult(data.ToList());
             }
-            else
-            {
-                // no user context.
-                return new StatusCodeResult(403);
-            }
+
+            // no user context.
+            return new StatusCodeResult(403);
         }
 
         /// <summary>
@@ -172,7 +171,6 @@ namespace HETSAPI.Services.Impl
         /// </summary>
         /// <remarks>Get the currently logged in user</remarks>
         /// <response code="200">OK</response>
-
         public virtual IActionResult UsersCurrentGetAsync ()        
         {
             // get the current user id

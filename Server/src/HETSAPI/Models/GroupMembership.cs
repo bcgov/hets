@@ -9,7 +9,7 @@ namespace HETSAPI.Models
     /// Group Membership Database Model
     /// </summary>
     [MetaDataExtension (Description = "The users associated with a given group that has been defined in the application.")]
-    public class GroupMembership : AuditableEntity, IEquatable<GroupMembership>
+    public sealed class GroupMembership : AuditableEntity, IEquatable<GroupMembership>
     {
         /// <summary>
         /// Default constructor, required by entity framework

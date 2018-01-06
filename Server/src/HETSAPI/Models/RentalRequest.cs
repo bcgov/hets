@@ -12,7 +12,7 @@ namespace HETSAPI.Models
     /// REntal Request Database Model
     /// </summary>
     [MetaDataExtension (Description = "A request from a Project for one or more of a type of equipment from a specific Local Area.")]
-    public class RentalRequest : AuditableEntity, IEquatable<RentalRequest>
+    public sealed class RentalRequest : AuditableEntity, IEquatable<RentalRequest>
     {
         /// <summary>
         /// Rental Request Database Model Constructor (required by entity framework)

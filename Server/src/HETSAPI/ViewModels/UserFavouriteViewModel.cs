@@ -7,13 +7,13 @@ using HETSAPI.Models;
 namespace HETSAPI.ViewModels
 {
     /// <summary>
-    /// 
+    /// User Favourite View Model
     /// </summary>
     [DataContract]
-    public partial class UserFavouriteViewModel : IEquatable<UserFavouriteViewModel>
+    public sealed class UserFavouriteViewModel : IEquatable<UserFavouriteViewModel>
     {
         /// <summary>
-        /// Default constructor, required by entity framework
+        /// User Favourite View Model Constructor
         /// </summary>
         public UserFavouriteViewModel()
         {
@@ -22,17 +22,18 @@ namespace HETSAPI.ViewModels
         /// <summary>
         /// Initializes a new instance of the <see cref="UserFavouriteViewModel" /> class.
         /// </summary>
-        /// <param name="Id">Id.</param>
-        /// <param name="Name">Context Name.</param>
-        /// <param name="Value">Saved search.</param>
-        /// <param name="IsDefault">IsDefault.</param>
-        /// <param name="Type">Type of favourite.</param>
-        public UserFavouriteViewModel(int? Id = null, string Name = null, string Value = null, bool? IsDefault = null, string Type = null)
-        {               this.Id = Id;
-            this.Name = Name;
-            this.Value = Value;
-            this.IsDefault = IsDefault;
-            this.Type = Type;
+        /// <param name="id">Id.</param>
+        /// <param name="name">Context Name.</param>
+        /// <param name="value">Saved search.</param>
+        /// <param name="isDefault">IsDefault.</param>
+        /// <param name="type">Type of favourite.</param>
+        public UserFavouriteViewModel(int id, string name = null, string value = null, bool? isDefault = null, string type = null)
+        {
+            Id = id;
+            Name = name;
+            Value = value;
+            IsDefault = isDefault;
+            Type = type;
         }
 
         /// <summary>
@@ -78,6 +79,7 @@ namespace HETSAPI.ViewModels
         public override string ToString()
         {
             var sb = new StringBuilder();
+
             sb.Append("class UserFavouriteViewModel {\n");
             sb.Append("  Id: ").Append(Id).Append("\n");
             sb.Append("  Name: ").Append(Name).Append("\n");
@@ -85,6 +87,7 @@ namespace HETSAPI.ViewModels
             sb.Append("  IsDefault: ").Append(IsDefault).Append("\n");
             sb.Append("  Type: ").Append(Type).Append("\n");
             sb.Append("}\n");
+
             return sb.ToString();
         }
 
@@ -107,6 +110,7 @@ namespace HETSAPI.ViewModels
             if (ReferenceEquals(null, obj)) { return false; }
             if (ReferenceEquals(this, obj)) { return true; }
             if (obj.GetType() != GetType()) { return false; }
+
             return Equals((UserFavouriteViewModel)obj);
         }
 
@@ -117,35 +121,34 @@ namespace HETSAPI.ViewModels
         /// <returns>Boolean</returns>
         public bool Equals(UserFavouriteViewModel other)
         {
-
             if (ReferenceEquals(null, other)) { return false; }
             if (ReferenceEquals(this, other)) { return true; }
 
             return                 
                 (
-                    this.Id == other.Id ||
-                    this.Id != null &&
-                    this.Id.Equals(other.Id)
+                    Id == other.Id ||
+                    Id != null &&
+                    Id.Equals(other.Id)
                 ) &&                 
                 (
-                    this.Name == other.Name ||
-                    this.Name != null &&
-                    this.Name.Equals(other.Name)
+                    Name == other.Name ||
+                    Name != null &&
+                    Name.Equals(other.Name)
                 ) &&                 
                 (
-                    this.Value == other.Value ||
-                    this.Value != null &&
-                    this.Value.Equals(other.Value)
+                    Value == other.Value ||
+                    Value != null &&
+                    Value.Equals(other.Value)
                 ) &&                 
                 (
-                    this.IsDefault == other.IsDefault ||
-                    this.IsDefault != null &&
-                    this.IsDefault.Equals(other.IsDefault)
+                    IsDefault == other.IsDefault ||
+                    IsDefault != null &&
+                    IsDefault.Equals(other.IsDefault)
                 ) &&                 
                 (
-                    this.Type == other.Type ||
-                    this.Type != null &&
-                    this.Type.Equals(other.Type)
+                    Type == other.Type ||
+                    Type != null &&
+                    Type.Equals(other.Type)
                 );
         }
 
@@ -159,26 +162,31 @@ namespace HETSAPI.ViewModels
             unchecked // Overflow is fine, just wrap
             {
                 int hash = 41;
+
                 // Suitable nullity checks
-                if (this.Id != null)
+                if (Id != null)
                 {
-                    hash = hash * 59 + this.Id.GetHashCode();
-                }                
-                                if (this.Name != null)
+                    hash = hash * 59 + Id.GetHashCode();
+                }
+
+                if (Name != null)
                 {
-                    hash = hash * 59 + this.Name.GetHashCode();
-                }                
-                                if (this.Value != null)
+                    hash = hash * 59 + Name.GetHashCode();
+                }
+
+                if (Value != null)
                 {
-                    hash = hash * 59 + this.Value.GetHashCode();
-                }                
-                                if (this.IsDefault != null)
+                    hash = hash * 59 + Value.GetHashCode();
+                }
+
+                if (IsDefault != null)
                 {
-                    hash = hash * 59 + this.IsDefault.GetHashCode();
-                }                
-                                if (this.Type != null)
+                    hash = hash * 59 + IsDefault.GetHashCode();
+                }
+
+                if (Type != null)
                 {
-                    hash = hash * 59 + this.Type.GetHashCode();
+                    hash = hash * 59 + Type.GetHashCode();
                 }                
                 
                 return hash;

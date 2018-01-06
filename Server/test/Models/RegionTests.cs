@@ -24,12 +24,10 @@ namespace HETSAPI.Test
 {
     /// <summary>
     ///  Class for testing the model Region
-    /// </summary>
-    
+    /// </summary>    
     public class RegionModelTests
     {
-        // TODO uncomment below to declare an instance variable for Region
-        private Region instance;
+        private readonly Region instance;
 
         /// <summary>
         /// Setup the test.

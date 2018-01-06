@@ -15,7 +15,7 @@ namespace HETSAPI.Import
     /// <summary>
     /// Import User Records
     /// </summary>
-    public class ImportUser
+    public static class ImportUser
     {
         const string OldTable = "User_HETS";
         const string NewTable = "HET_USER";

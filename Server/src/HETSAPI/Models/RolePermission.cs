@@ -9,7 +9,7 @@ namespace HETSAPI.Models
     /// Role Permission Database Model
     /// </summary>
     [MetaDataExtension (Description = "A permission that is part of a Role - a component of the authorization provided by the Role to the user to which the Role is assigned.")]
-    public class RolePermission : AuditableEntity, IEquatable<RolePermission>
+    public sealed class RolePermission : AuditableEntity, IEquatable<RolePermission>
     {
         /// <summary>
         /// Default constructor, required by entity framework
