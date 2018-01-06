@@ -9,8 +9,19 @@ namespace HETSAPI.Models
     /// </summary>
     public partial class Equipment
     {
+        /// <summary>
+        /// Dump TRuck Constant
+        /// </summary>
         private const float DUMP_TRUCK_CONSTANT = 60.0F;
+
+        /// <summary>
+        /// Non-Dump Truck Constant
+        /// </summary>
         private const float OTHER_CONSTANT = 50.0F;
+
+        /// <summary>
+        /// Approved Status Code
+        /// </summary>
         public const string STATUS_APPROVED = "Approved";
 
         /// <summary>
@@ -106,7 +117,7 @@ namespace HETSAPI.Models
         /// </summary>
         /// <param name="changed"></param>
         /// <returns>True if the changed record differes from this one</returns>
-        public bool IsSeniorityAuditRequired( Equipment changed)            
+        public bool IsSeniorityAuditRequired(Equipment changed)            
         {
             bool result = (Seniority != changed.Seniority) || 
                           (LocalArea != changed.LocalArea) || 

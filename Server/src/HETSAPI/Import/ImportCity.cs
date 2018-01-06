@@ -4,6 +4,8 @@ using System;
 using System.IO;
 using System.Linq;
 using System.Xml.Serialization;
+using Hangfire.Console.Progress;
+using HETSAPI.ImportModels;
 using HETSAPI.Models;
 
 namespace HETSAPI.Import
@@ -15,7 +17,7 @@ namespace HETSAPI.Import
     {
         private const string OldTable = "HETS_City";
         private const string NewTable = "HET_City";
-        private const string XmlFileName = "City.xml";
+        private const string XmlFileName = "City.xml";        
         private const int SigId = 150000;
 
         /// <summary>
@@ -41,30 +43,33 @@ namespace HETSAPI.Import
         {
             string completed = DateTime.Now.ToString("d") + "-" + "Completed";
             ImportMap importMap = dbContext.ImportMaps.FirstOrDefault(x => x.OldTable == OldTable && x.OldKey == completed && x.NewKey == SigId);
+            
             if (importMap != null)
             {
                 performContext.WriteLine("*** Importing " + XmlFileName + " is complete from the former process ***");
                 return;
             }
+
             try
             {
                 string rootAttr = "ArrayOf" + OldTable;
 
                 performContext.WriteLine("Processing " + OldTable);
-                var progress = performContext.WriteProgressBar();
+                IProgressBar progress = performContext.WriteProgressBar();
                 progress.SetValue(0);
 
                 // create serializer and serialize xml file
                 XmlSerializer ser = new XmlSerializer(typeof(HETS_City[]), new XmlRootAttribute(rootAttr));
-                MemoryStream memoryStream = ImportUtility.memoryStreamGenerator(XmlFileName, OldTable, fileLocation, rootAttr);
+                MemoryStream memoryStream = ImportUtility.MemoryStreamGenerator(XmlFileName, OldTable, fileLocation, rootAttr);
                 HETS_City[] legacyItems = (HETS_City[])ser.Deserialize(memoryStream);
 
                 foreach (var item in legacyItems.WithProgress(progress))
                 {
-                    // see if we have this one already.
+                    // see if we have this one already
                     importMap = dbContext.ImportMaps.FirstOrDefault(x => x.OldTable == OldTable && x.OldKey == item.City_Id.ToString());
 
-                    if (importMap == null) // new entry
+                    // new entry
+                    if (importMap == null)
                     {
                         City city = null;
                         CopyToInstance(performContext, dbContext, item, ref city, systemId);
@@ -73,19 +78,22 @@ namespace HETSAPI.Import
                     else // update
                     {
                         City city = dbContext.Cities.FirstOrDefault(x => x.Id == importMap.NewKey);
-                        if (city == null) // record was deleted
+
+                        // record was deleted
+                        if (city == null) 
                         {
                             CopyToInstance(performContext, dbContext, item, ref city, systemId);
 
-                            // update the import map.
+                            // update the import map
                             importMap.NewKey = city.Id;
                             dbContext.ImportMaps.Update(importMap);
                             dbContext.SaveChangesForImport();
                         }
-                        else // ordinary update.
+                        else // ordinary update
                         {
                             CopyToInstance(performContext, dbContext, item, ref city, systemId);
-                            // touch the import map.
+
+                            // touch the import map
                             importMap.LastUpdateTimestamp = DateTime.UtcNow;
                             dbContext.ImportMaps.Update(importMap);
                             dbContext.SaveChangesForImport();
@@ -96,14 +104,12 @@ namespace HETSAPI.Import
                 performContext.WriteLine("*** Done ***");
                 ImportUtility.AddImportMap(dbContext, OldTable, completed, NewTable, SigId);
             }
-
             catch (Exception e)
             {
                 performContext.WriteLine("*** ERROR ***");
                 performContext.WriteLine(e.ToString());
             }
         }
-
 
         /// <summary>
         /// Copy from legacy to new record For the table of HET_City
@@ -116,6 +122,7 @@ namespace HETSAPI.Import
         private static void CopyToInstance(PerformContext performContext, DbAppContext dbContext, HETS_City oldObject, ref City city, string systemId)
         {
             bool isNew = false;
+
             if (city == null)
             {
                 isNew = true;
