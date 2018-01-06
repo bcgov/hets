@@ -166,6 +166,12 @@ export function updateUserRoles(userId, userRoleArray) {
   });
 }
 
+export function setDevUser() {
+ return new ApiRequest('/authentication/dev/token/SCURRAN').get().then(response => {    
+   var auth = normalize(response);
+ });
+}
+
 ////////////////////
 // Roles,  Permissions
 ////////////////////
