@@ -41,22 +41,11 @@ function renderApp() {
 
 export default function startApp() {
   incrementProgressBar(5);
-  
-  Api.setDevUser();
-  alert('DEV User has been set to SCURRAN');
-  
   // Load groups so we can check for membership
   Api.getGroups().then(() => {
-    
-	alert('groups loaded');
-	
-	incrementProgressBar(25);
-	
+    incrementProgressBar(25);
     // Load current user next.
     return Api.getCurrentUser().then(() => {
-		
-		alert('current user loaded');
-		
       incrementProgressBar(50);
       // Check permissions?
 
