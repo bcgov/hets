@@ -94,7 +94,7 @@ namespace HETSAPI.Services.Impl
         /// </summary>
         /// <remarks>Returns a collection of groups</remarks>
         /// <response code="200">OK</response>
-        public virtual JsonResult GroupsGetAsync()
+        public virtual IActionResult GroupsGetAsync()
         {
             _logger.LogInformation("[GroupsGetAsync] Get all groups");
             List<GroupViewModel> result = _context.Groups.Select(x => x.ToViewModel()).ToList();
@@ -103,7 +103,7 @@ namespace HETSAPI.Services.Impl
             if (result.Count > 0)
                 _logger.LogInformation("[GroupsGetAsync] Group json: " + result[0].ToJson());
 
-            return new JsonResult(result);
+            return new ObjectResult(result);
         }
 
         /// <summary>
