@@ -4,8 +4,8 @@ FROM dotnet-20-rhel7:latest
 
 # install rlwrap
 USER 0
-# RUN yum install -y readline-devel bzip2 git && \
-#     yum clean all -y
+RUN yum install -y readline-devel bzip2 git && \
+    yum clean all -y
 
 # install Node.js
 ENV NVM_DIR /usr/local/nvm

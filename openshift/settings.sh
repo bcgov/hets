@@ -5,7 +5,7 @@ export GIT_REF=${GIT_REF:-"master"}
 # The templates that should not have their GIT referances(uri and ref) over-ridden
 # Templates NOT in this list will have they GIT referances over-ridden
 # with the values of GIT_URI and GIT_REF
-export skip_git_overrides=${skip_git_overrides:-"schema-spy-build.json"}
+export skip_git_overrides=${skip_git_overrides:-"schema-spy-build.json dotnet-20-runtime-centos7-build.json dotnet-20-centos7-build.json"}
 
 # The project components
 # - They are all contained under the main OpenShift folder.
