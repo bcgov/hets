@@ -404,13 +404,15 @@ namespace HETSAPI.Mappings
         /// <returns></returns>
         public static GroupViewModel ToViewModel(this Group model)
         {
-            var dto = new GroupViewModel();
+            GroupViewModel dto = new GroupViewModel();
+
             if (model != null)
             {
                 dto.Description = model.Description;
                 dto.Name = model.Name;
                 dto.Id = model.Id;
             }
+
             return dto;
         }
 
