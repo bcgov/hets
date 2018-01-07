@@ -107,7 +107,7 @@ namespace FrontEnd
             };
 
             app.UseFileServer(options);
-            app.UseApiProxyServer(Configuration);
+            app.UseApiProxyServer();
         }
 
         private void ConfigureApiProxyServerOptions(ApiProxyServerOptions options)

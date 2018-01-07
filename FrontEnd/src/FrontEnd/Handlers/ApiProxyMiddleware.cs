@@ -5,7 +5,6 @@ using Microsoft.Extensions.Options;
 using Microsoft.Net.Http.Headers;
 using System;
 using System.Threading.Tasks;
-using Microsoft.Extensions.Configuration;
 
 namespace FrontEnd.Handlers
 {
@@ -25,13 +24,12 @@ namespace FrontEnd.Handlers
         /// <param name="next"></param>
         /// <param name="apiServerOptions"></param>
         /// <param name="loggerFactory"></param>
-        /// <param name="configuration"></param>
-        public ApiProxyMiddleware(RequestDelegate next, IOptions<ApiProxyServerOptions> apiServerOptions, ILoggerFactory loggerFactory, IConfigurationRoot configuration)
+        public ApiProxyMiddleware(RequestDelegate next, IOptions<ApiProxyServerOptions> apiServerOptions, ILoggerFactory loggerFactory)
         {
             _apiUri = apiServerOptions.Value.ToUri().AbsoluteUri;
             _proxy = new ProxyMiddleware(next, apiServerOptions.Value.ToProxyOptions());
             _logger = loggerFactory.CreateLogger<ApiProxyMiddleware>();
-            _apiPathKey = configuration.GetSection("Constants").GetSection("ApiPath").Value;
+            _apiPathKey = "/api";            
         }
 
         /// <summary>
