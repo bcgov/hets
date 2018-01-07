@@ -1,5 +1,4 @@
 ﻿using Microsoft.AspNetCore.Builder;
-using Microsoft.Extensions.Configuration;
 
 namespace FrontEnd.Handlers
 {
@@ -12,11 +11,10 @@ namespace FrontEnd.Handlers
         /// Use Proxy Server
         /// </summary>
         /// <param name="app"></param>
-        /// <param name="configuration"></param>
         /// <returns></returns>
-        public static IApplicationBuilder UseApiProxyServer(this IApplicationBuilder app, IConfigurationRoot configuration)
+        public static IApplicationBuilder UseApiProxyServer(this IApplicationBuilder app)
         {
-            string apiPathKey = configuration.GetSection("Constants").GetSection("ApiPath").Value;
+            string apiPathKey = "/api";
             return app.Map(apiPathKey, ProxyRequest);
         }
        
