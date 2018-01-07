@@ -5,6 +5,47 @@ Schoolbus Inspection Tracking System
 
 This project uses the scripts found in [openshift-project-tools](https://github.com/BCDevOps/openshift-project-tools) to setup and maintain OpenShift environments (both local and hosted).  Refer to the [OpenShift Scripts](https://github.com/BCDevOps/openshift-project-tools/blob/master/bin/README.md) documentation for details.
 
+## Running in a Local OpenShift Cluster
+
+At times running in a local cluster is a little different than running in the production cluster.
+
+Differences can include:
+* Resource settings.
+* Available image runtimes.
+* Source repositories (such as your development repo).
+* Etc.
+
+To target a different repo and branch, create a `setting.local.sh` file in your project's local `openshift` directory and override the GIT parameters, for example;
+```
+export GIT_URI="https://github.com/WadeBarnes/hets.git"
+export GIT_REF="openshift-updates"
+```
+
+To prepare for this run the following command from the project's local `openshift` directory:
+`genParams.sh -l`
+
+This will generate local settings files for all of the builds, deployments, and Jenkins pipelines.  Now when you run the `genBuilds.sh` or `genDepls.sh` scripts with the `-l` switch your local settings will get applied.
+
+### Important Local Configuration for the HETS project
+
+Before you deploy your local build configurations ...
+
+The client, server, and pdf components of the project use .Net 2.0 s2i images for their builds.  In the pathfinder environment these components utilize the `dotnet-20-rhel7` image which is available at registry.access.redhat.com/dotnet/dotnet-20-rhel7.  For local builds this image can still be downloaded, however you will receive errors during any builds that try to use `yum` to install any additional packages.
+
+To resolve this issue the project defined builds for `dotnet-20-runtime-centos7` and `dotnet-20-centos7`; which at the time of writing were not avilable in image form.  The `dotnet-20-centos7` s2i image is the CentOS equivalent of the `dotnet-20-rhel7` s2i image that can be used for local development.  These two images are not used in the Pathfinder environment and exist only to be used in a local environment.
+
+To use it open your `client-build.local.param` file an update the following 2 lines;
+
+```
+# SOURCE_IMAGE_KIND=DockerImage
+# SOURCE_IMAGE_NAME=registry.access.redhat.com/dotnet/dotnet-20-rhel7
+```
+with
+```
+SOURCE_IMAGE_KIND=ImageStreamTag
+SOURCE_IMAGE_NAME=dotnet-20-centos7
+```
+
 ----
 ToDo:
 * Update the following documentation after migrating to the new managment scripts.

@@ -11,11 +11,11 @@ export skip_git_overrides=${skip_git_overrides:-"schema-spy-build.json dotnet-20
 # - They are all contained under the main OpenShift folder.
 export components=${components:-"."}
 
-# The builds to be triggered after buildconfigs created (not auto-triggered)
+# The builds to be triggered after buildconfigs created (ones that are not auto-triggered)
 export builds=${builds:-""}
 
 # The images to be tagged after build
 export images=${images:-"server pdf frontend schema-spy"}
 
 # The routes for the project
-export routes=${routes:-""}
+export routes=${routes:-"server schema-spy pdf frontend"}
