@@ -55,12 +55,9 @@ namespace FrontEnd.Handlers
 
                 await _proxy.Invoke(context);
 
-                // debugging only
-                if (requestPath.IndexOf("/groups/", StringComparison.Ordinal) >= 0)
-                {
-                    _logger.LogInformation("Path: " + requestPath);
-                    _logger.LogInformation("Response Body: " + context.Response.Body);
-                }
+                // debugging only                
+                _logger.LogInformation("Path: " + requestPath);
+                _logger.LogInformation("Response Body: " + context.Response.Body);                
             }
             catch (Exception e)
             {
