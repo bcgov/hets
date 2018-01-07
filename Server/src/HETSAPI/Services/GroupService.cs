@@ -19,7 +19,7 @@ namespace HETSAPI.Services
         /// Get all groups
         /// </summary>
         /// <response code="200">OK</response>
-        JsonResult GroupsGetAsync();
+        IActionResult GroupsGetAsync();
 
         /// <summary>
         /// Delete group
