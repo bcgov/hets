@@ -25,8 +25,8 @@ RUN touch ~/.bash_profile \
     && nvm use default \
     && npm install -g autorest
 
-RUN yum install -y curl && \
-    yum clean all -y
+# RUN yum install -y curl && \
+#     yum clean all -y
 
 RUN chmod -R a+rwx /usr/local/nvm
 RUN mkdir -p /opt/app-root
