@@ -136,7 +136,7 @@
       "displayName": "Build Log Level",
       "description": "The logging level for the build.",
       "required": false,
-      "value": ""
+      "value": "1"
     },
     {
       "name": "DOTNET_STARTUP_PROJECT",

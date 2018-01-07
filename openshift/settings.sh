@@ -15,7 +15,7 @@ export components=${components:-"."}
 export builds=${builds:-""}
 
 # The images to be tagged after build
-export images=${images:-""}
+export images=${images:-"server pdf frontend schema-spy"}
 
 # The routes for the project
 export routes=${routes:-""}
