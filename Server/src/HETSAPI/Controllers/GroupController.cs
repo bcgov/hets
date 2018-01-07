@@ -46,7 +46,7 @@ namespace HETSAPI.Controllers
         [Route("/api/groups")]
         [SwaggerOperation("GroupsGet")]
         [SwaggerResponse(200, type: typeof(List<Group>))]
-        public virtual IActionResult GroupsGet()
+        public virtual JsonResult GroupsGet()
         {
             return _service.GroupsGetAsync();
         }

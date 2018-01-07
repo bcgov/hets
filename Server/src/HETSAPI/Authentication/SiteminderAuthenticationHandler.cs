@@ -213,7 +213,7 @@ namespace HETSAPI.Authentication
                     (userSettings.UserAuthenticated && !string.IsNullOrEmpty(userId) &&
                      !string.IsNullOrEmpty(userSettings.UserId) && userSettings.UserId == userId))
                 {
-                    _logger.LogInformation("User already authenticated with active session: " + userId);
+                    _logger.LogInformation("User already authenticated with active session: " + userSettings.UserId);
                     principal = userSettings.HetsUser.ToClaimsPrincipal(options.Scheme);
                     return Task.FromResult(AuthenticateResult.Success(new AuthenticationTicket(principal, null, Options.Scheme)));
                 }
