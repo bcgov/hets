@@ -12,6 +12,17 @@
     }
   }
 
+  &.full-width {
+    .dropdown-toggle {
+      width: 100%;
+      max-width: 100%;
+    }
+
+    .dropdown-menu {
+      width: 100%;
+    }
+  }
+
   .dropdown-menu {
     padding: 0px;
 

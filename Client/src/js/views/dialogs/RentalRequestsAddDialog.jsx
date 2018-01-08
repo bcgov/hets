@@ -132,21 +132,21 @@ var RentalRequestsAddDialog = React.createClass({
         <FormGroup controlId="projectId" validationState={ this.state.projectError ? 'error' : null }>
           <ControlLabel>Project <sup>*</sup></ControlLabel>
           <FilterDropdown id="projectId" selectedId={ this.state.projectId } onSelect={ this.onProjectSelected } updateState={ this.updateState }
-            items={ projects }
+            items={ projects } className="full-width"
           />
           <HelpBlock>{ this.state.projectError }</HelpBlock>
         </FormGroup>
         <FormGroup controlId="localAreaId" validationState={ this.state.localAreaError ? 'error' : null }>
           <ControlLabel>Local Area <sup>*</sup></ControlLabel>
           <FilterDropdown id="localAreaId" selectedId={ this.state.localAreaId } updateState={ this.updateState }
-            items={ localAreas }
+            items={ localAreas } className="full-width"
           />
           <HelpBlock>{ this.state.localAreaError }</HelpBlock>
         </FormGroup>
         <FormGroup controlId="equipmentTypeId" validationState={ this.state.equipmentTypeError ? 'error' : null }>
           <ControlLabel>Equipment Type <sup>*</sup></ControlLabel>
           <FilterDropdown id="equipmentTypeId" fieldName="districtEquipmentName" selectedId={ this.state.equipmentTypeId } updateState={ this.updateState }
-            items={ districtEquipmentTypes }
+            items={ districtEquipmentTypes } className="full-width"
           />
           <HelpBlock>{ this.state.equipmentTypeError }</HelpBlock>
         </FormGroup>

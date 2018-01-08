@@ -321,7 +321,7 @@ var OwnersDetail = React.createClass({
           if (this.state.loading) { return <div style={{ textAlign: 'center' }}><Spinner/></div>; }
 
           return <Row id="owners-top">
-            <Col md={10}>
+            <Col md={9}>
               <Label bsStyle={ owner.isApproved ? 'success' : 'danger'}>{ owner.status }</Label>
               <Label className={ owner.isMaintenanceContractor ? '' : 'hide' }>Maintenance Contractor</Label>
               <Unimplemented>
@@ -329,7 +329,7 @@ var OwnersDetail = React.createClass({
               </Unimplemented>
               <Button title="Documents" onClick={ this.showDocuments }>Documents ({ Object.keys(this.props.documents).length })</Button>
             </Col>
-            <Col md={2}>
+            <Col md={3}>
               <div className="pull-right">
                 <Button onClick={ this.print }><Glyphicon glyph="print" title="Print" /></Button>
                 <LinkContainer to={{ pathname: 'owners' }}>

@@ -217,11 +217,11 @@ var RentalRequestsDetail = React.createClass({
       {(() => {
         if (this.state.loading) { return <div style={{ textAlign: 'center' }}><Spinner/></div>; }
 
-        return <Grid fluid id="rental-requests-header">
-          <Row>
-            <ColDisplay md={12} labelProps={{ md: 1 }} label={ <h1>Project:</h1> }><h1><small>{ rentalRequest.projectName }</small></h1></ColDisplay>
+        return (
+          <Row id="rental-requests-header">
+            <ColDisplay md={12} label={ <h1>Project:</h1> }><h1><small>{ rentalRequest.projectName }</small></h1></ColDisplay>
           </Row>
-        </Grid>;
+        );
       })()}
 
       <Well className="request-information">

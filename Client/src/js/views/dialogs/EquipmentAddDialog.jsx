@@ -133,6 +133,7 @@ var EquipmentAddDialog = React.createClass({
           <ControlLabel>Equipment Type <sup>*</sup></ControlLabel>
           <FilterDropdown id="equipmentTypeId" fieldName="districtEquipmentName" selectedId={ this.state.equipmentTypeId } updateState={ this.updateState }
             items={ districtEquipmentTypes }
+            className="full-width"
           />
           <HelpBlock>{ this.state.equipmentTypeError }</HelpBlock>
         </FormGroup>
@@ -140,6 +141,7 @@ var EquipmentAddDialog = React.createClass({
           <ControlLabel>Local Area <sup>*</sup></ControlLabel>
           <FilterDropdown id="localAreaId" selectedId={ this.state.localAreaId } updateState={ this.updateState }
             items={ localAreas }
+            className="full-width"
           />
           <HelpBlock>{ this.state.localAreaError }</HelpBlock>
         </FormGroup>
