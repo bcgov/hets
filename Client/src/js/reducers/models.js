@@ -7,13 +7,13 @@ const DEFAULT_MODELS = {
   user: {},
 
   favourites: {
-    data: [],
+    data: {},
     loading: false,
     success: false,
   },
 
   equipmentList: {
-    data: [], 
+    data: {}, 
     loading: false,
     success: false,
   },
@@ -25,7 +25,7 @@ const DEFAULT_MODELS = {
   equipmentHistory: {},
 
   owners: {
-    data: [],
+    data: {},
     loading: false,
   },
   owner: {},
@@ -34,7 +34,7 @@ const DEFAULT_MODELS = {
   ownerHistory: {},
 
   projects: {
-    data: [],
+    data: {},
     loading: false, 
     success: false,
   },
@@ -44,7 +44,7 @@ const DEFAULT_MODELS = {
   projectHistory: {},
 
   rentalRequests: {
-    data: [],
+    data: {},
     loading: false,
     success: false,
   },

@@ -246,7 +246,7 @@ var RentalRequests = React.createClass({
           </Col>
           <Col md={2}>
             <Row id="rental-requests-faves">
-              <Favourites id="rental-requests-faves-dropdown" type="rentalRequests" favourites={ this.props.favourites } data={ this.state.search } onSelect={ this.loadFavourite } />
+              <Favourites id="rental-requests-faves-dropdown" type="rentalRequests" favourites={ this.props.favourites.data } data={ this.state.search } onSelect={ this.loadFavourite } />
             </Row>
             <Row id="rental-requests-search">
               <Button id="search-button" bsStyle="primary" onClick={ this.fetch }>Search</Button>
@@ -260,8 +260,10 @@ var RentalRequests = React.createClass({
           <Glyphicon glyph="plus" />&nbsp;<strong>Add Rental Request</strong>
         </Button>;
 
-        if (this.props.rentalRequests.loading) { return <div style={{ textAlign: 'center' }}><Spinner/></div>; }
-        if (Object.keys(this.props.rentalRequests.data).length === 0) { return <Alert bsStyle="success">No Rental Requests { addRentalRequestButton }</Alert>; }
+        if (this.props.rentalRequests.loading || this.props.favourites.loading) { 
+          return <div style={{ textAlign: 'center' }}><Spinner/></div>; 
+        }
+        if (Object.keys(this.props.rentalRequests).length === 0) { return <Alert bsStyle="success">No Rental Requests { addRentalRequestButton }</Alert>; }
 
         var rentalRequests = _.sortBy(this.props.rentalRequests.data, this.state.ui.sortField);
         if (this.state.ui.sortDesc) {

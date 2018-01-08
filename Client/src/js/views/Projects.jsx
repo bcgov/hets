@@ -183,7 +183,7 @@ var Projects = React.createClass({
           </Col>
           <Col md={2}>
             <Row id="projects-faves">
-              <Favourites id="projects-faves-dropdown" type="project" favourites={ this.props.favourites } data={ this.state.search } onSelect={ this.loadFavourite } />
+              <Favourites id="projects-faves-dropdown" type="project" favourites={ this.props.favourites.data } data={ this.state.search } onSelect={ this.loadFavourite } />
             </Row>
           </Col>
         </Row>
@@ -194,7 +194,9 @@ var Projects = React.createClass({
           <Glyphicon glyph="plus" />&nbsp;<strong>Add Project</strong>
         </Button>;
 
-        if (this.props.projects.loading) { return <div style={{ textAlign: 'center' }}><Spinner/></div>; }
+        if (this.props.projects.loading || this.props.favourites.loading) { 
+          return <div style={{ textAlign: 'center' }}><Spinner/></div>; 
+        }
         if (Object.keys(this.props.projects.data).length === 0 && this.props.projects.success) { 
           return <Alert bsStyle="success">No Projects { addProjectButton }</Alert>; 
         }

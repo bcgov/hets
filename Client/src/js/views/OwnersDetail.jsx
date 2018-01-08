@@ -315,44 +315,53 @@ var OwnersDetail = React.createClass({
   render() {
     var owner = this.props.owner;
 
-    return (
-      <div id="owners-detail">
-        <div>
-          {(() => {
-            if (this.state.loading) { return <div style={{ textAlign: 'center' }}><Spinner/></div>; }
+    return <div id="owners-detail">
+      <div>
+        {(() => {
+          if (this.state.loading) { return <div style={{ textAlign: 'center' }}><Spinner/></div>; }
 
-            return <Row id="owners-top">
-              <Col md={10}>
-                <Label bsStyle={ owner.isApproved ? 'success' : 'danger'}>{ owner.status }</Label>
-                <Label className={ owner.isMaintenanceContractor ? '' : 'hide' }>Maintenance Contractor</Label>
-                <Unimplemented>
-                  <Button title="Notes" onClick={ this.showNotes }>Notes ({ owner.notes.length })</Button>
-                </Unimplemented>
-                <Button title="Documents" onClick={ this.showDocuments }>Documents ({ Object.keys(this.props.documents).length })</Button>
-              </Col>
-              <Col md={2}>
-                <div className="pull-right">
-                  <Button onClick={ this.print }><Glyphicon glyph="print" title="Print" /></Button>
-                  <LinkContainer to={{ pathname: 'owners' }}>
-                    <Button title="Return to List"><Glyphicon glyph="arrow-left" /> Return to List</Button>
-                  </LinkContainer>
-                </div>
+          return <Row id="owners-top">
+            <Col md={10}>
+              <Label bsStyle={ owner.isApproved ? 'success' : 'danger'}>{ owner.status }</Label>
+              <Label className={ owner.isMaintenanceContractor ? '' : 'hide' }>Maintenance Contractor</Label>
+              <Unimplemented>
+                <Button title="Notes" onClick={ this.showNotes }>Notes ({ owner.notes.length })</Button>
+              </Unimplemented>
+              <Button title="Documents" onClick={ this.showDocuments }>Documents ({ Object.keys(this.props.documents).length })</Button>
+            </Col>
+            <Col md={2}>
+              <div className="pull-right">
+                <Button onClick={ this.print }><Glyphicon glyph="print" title="Print" /></Button>
+                <LinkContainer to={{ pathname: 'owners' }}>
+                  <Button title="Return to List"><Glyphicon glyph="arrow-left" /> Return to List</Button>
+                </LinkContainer>
+              </div>
+            </Col>
+          </Row>;
+        })()}
+
+        {(() => {
+          if (this.state.loading) { return <div style={{ textAlign: 'center' }}><Spinner/></div>; }
+
+          return <div id="owners-header">
+            <Row>
+              <Col md={12}>
+                <h1>Company: <small>{ owner.organizationName }</small></h1>
               </Col>
             </Row>
-            <div id="owners-header">
-              <Row>
-                <Col md={12}>
-                  <h1>Company: <small>{ owner.organizationName }</small></h1>
-                </Col>
-              </Row>
-            </div>
-          <Row>
-            <Col md={6}>
-              <Well>
-                <h3>Owner Information <span className="pull-right">
-                  <Button title="Edit Owner" bsSize="small" onClick={ this.openEditDialog }><Glyphicon glyph="pencil" /></Button>
-                </span></h3>
-                <div id="owners-data">
+          </div>;
+        })()}
+
+        <Row>
+          <Col md={6}>
+            <Well>
+              <h3>Owner Information <span className="pull-right">
+                <Button title="Edit Owner" bsSize="small" onClick={ this.openEditDialog }><Glyphicon glyph="pencil" /></Button>
+              </span></h3>
+              {(() => {
+                if (this.state.loading) { return <div style={{ textAlign: 'center' }}><Spinner/></div>; }
+
+                return <div id="owners-data">
                   <Row>
                     <ColDisplay md={12} labelProps={{ md: 4 }} label="Company">{ owner.organizationName }</ColDisplay>
                   </Row>
@@ -377,59 +386,62 @@ var OwnersDetail = React.createClass({
                   <Row>
                     <ColDisplay md={12} labelProps={{ md: 4 }} label="Meets Residency?"><CheckboxControl checked={ owner.meetsResidency } disabled /></ColDisplay>
                   </Row>
-                </div>
-              </Well>
-              <Well>
-                <h3>Equipment ({ owner.numberOfEquipment }) <span className="pull-right">
-                  <Button title="Verify All Equipment" bsSize="small" onClick={ this.equipmentVerifyAll }>Verify All</Button>
-                  <Button title="Add Equipment" bsSize="small" onClick={ this.openEquipmentDialog }><Glyphicon glyph="plus" /></Button>
-                </span></h3>
-                {(() => {
-                  if (this.state.loading) { return <div style={{ textAlign: 'center' }}><Spinner/></div>; }
-                  if (!owner.equipmentList || owner.equipmentList.length === 0) { return <Alert bsStyle="success" style={{ marginTop: 10 }}>No equipment</Alert>; }
+                </div>;
+              })()}
+            </Well>
+            <Well>
+              <h3>Equipment ({ owner.numberOfEquipment }) <span className="pull-right">
+                <Button title="Verify All Equipment" bsSize="small" onClick={ this.equipmentVerifyAll }>Verify All</Button>
+                <Button title="Add Equipment" bsSize="small" onClick={ this.openEquipmentDialog }><Glyphicon glyph="plus" /></Button>
+              </span></h3>
+              {(() => {
+                if (this.state.loading) { return <div style={{ textAlign: 'center' }}><Spinner/></div>; }
+                if (!owner.equipmentList || owner.equipmentList.length === 0) { return <Alert bsStyle="success" style={{ marginTop: 10 }}>No equipment</Alert>; }
 
-                  var equipmentList = _.sortBy(owner.equipmentList, this.state.uiEquipment.sortField);
-                  if (this.state.uiEquipment.sortDesc) {
-                    _.reverse(equipmentList);
+                var equipmentList = _.sortBy(owner.equipmentList, this.state.uiEquipment.sortField);
+                if (this.state.uiEquipment.sortDesc) {
+                  _.reverse(equipmentList);
+                }
+
+                var headers = [
+                  { field: 'equipmentCode',    title: 'ID'                  },
+                  { field: 'typeName',         title: 'Type'                },
+                  { field: 'make',             title: 'Make/Model/Size' },
+                  { field: 'lastVerifiedDate', title: 'Last Verified'       },
+                  { field: 'blank' },
+                ];
+
+                return <SortTable id="equipment-list" sortField={ this.state.uiEquipment.sortField } sortDesc={ this.state.uiEquipment.sortDesc } onSort={ this.updateEquipmentUIState } headers={ headers }>
+                  {
+                    _.map(equipmentList, (equipment) => {
+                      const location = {
+                        pathname: `${Constant.EQUIPMENT_PATHNAME}/${equipment.id}`,
+                        state: { returnUrl: `${Constant.OWNERS_PATHNAME}/${owner.id}` },
+                      };
+                      return <tr key={ equipment.id }>
+                        <td><Link to={ location }>{ equipment.equipmentCode }</Link></td>
+                        <td>{ equipment.typeName }</td>
+                        <td>{ concat(equipment.make, concat(equipment.model, equipment.size, '/'), '/') }</td>
+                        <td>{ equipment.isApproved ? formatDateTime(equipment.lastVerifiedDate, Constant.DATE_YEAR_SHORT_MONTH_DAY) : 'Not Approved' }</td>
+                        <td style={{ textAlign: 'right' }}>
+                          <Button title="Verify Equipment" bsSize="xsmall" onClick={ this.equipmentVerify.bind(this, equipment) }><Glyphicon glyph="ok" /> OK</Button>
+                        </td>
+                      </tr>;
+                    })
                   }
+                </SortTable>;
+              })()}
+            </Well>
+          </Col>
+          <Col md={6}>
+            <Well>
+              <h3>Policy <span className="pull-right">
+                <Button title="Edit Policy Information" bsSize="small" onClick={ this.openPolicyDialog }><Glyphicon glyph="pencil" /></Button>
+              </span></h3>
+              {(() => {
+                if (this.state.loading) { return <div style={{ textAlign: 'center' }}><Spinner/></div>; }
 
-                  var headers = [
-                    { field: 'equipmentCode',    title: 'ID'                  },
-                    { field: 'typeName',         title: 'Type'                },
-                    { field: 'make',             title: 'Make/Model/Size' },
-                    { field: 'lastVerifiedDate', title: 'Last Verified'       },
-                    { field: 'blank' },
-                  ];
-
-                  return <SortTable id="equipment-list" sortField={ this.state.uiEquipment.sortField } sortDesc={ this.state.uiEquipment.sortDesc } onSort={ this.updateEquipmentUIState } headers={ headers }>
-                    {
-                      _.map(equipmentList, (equipment) => {
-                        const location = {
-                          pathname: `${Constant.EQUIPMENT_PATHNAME}/${equipment.id}`,
-                          state: { returnUrl: `${Constant.OWNERS_PATHNAME}/${owner.id}` },
-                        };
-                        return <tr key={ equipment.id }>
-                          <td><Link to={ location }>{ equipment.equipmentCode }</Link></td>
-                          <td>{ equipment.typeName }</td>
-                          <td>{ concat(equipment.make, concat(equipment.model, equipment.size, '/'), '/') }</td>
-                          <td>{ equipment.isApproved ? formatDateTime(equipment.lastVerifiedDate, Constant.DATE_YEAR_SHORT_MONTH_DAY) : 'Not Approved' }</td>
-                          <td style={{ textAlign: 'right' }}>
-                            <Button title="Verify Equipment" bsSize="xsmall" onClick={ this.equipmentVerify.bind(this, equipment) }><Glyphicon glyph="ok" /> OK</Button>
-                          </td>
-                        </tr>;
-                      })
-                    }
-                  </SortTable>;
-                })()}
-              </Well>
-            </Col>
-            <Col md={6}>
-              <Well>
-                <h3>Policy <span className="pull-right">
-                  <Button title="Edit Policy Information" bsSize="small" onClick={ this.openPolicyDialog }><Glyphicon glyph="pencil" /></Button>
-                </span></h3>
-                  {/* if (this.state.loading) { return <div style={{ textAlign: 'center' }}><Spinner/></div>; } */}
-                <div id="owners-policy">
+                return <div id="owners-policy">
                   <Row>
                     <ColDisplay md={12} labelProps={{ md: 4 }} label="WorkSafeBC Policy">{ owner.workSafeBCPolicyNumber }</ColDisplay>
                   </Row>
@@ -443,81 +455,81 @@ var OwnersDetail = React.createClass({
                       { formatDateTime(owner.cglEndDate, Constant.DATE_YEAR_SHORT_MONTH_DAY) }
                     </ColDisplay>
                   </Row>
-                </div>
-              </Well>
-              <Well>
-                <h3>Contacts</h3>
-                {(() => {
-                  {/* if (this.state.loading ) { return <div style={{ textAlign: 'center' }}><Spinner/></div>; } */}
+                </div>;
+              })()}
+            </Well>
+            <Well>
+              <h3>Contacts</h3>
+              {(() => {
+                if (this.state.loading ) { return <div style={{ textAlign: 'center' }}><Spinner/></div>; }
 
-                  var addContactButton = <Button title="Add Contact" onClick={ this.addContact } bsSize="xsmall"><Glyphicon glyph="plus" />&nbsp;<strong>Add</strong></Button>;
+                var addContactButton = <Button title="Add Contact" onClick={ this.addContact } bsSize="xsmall"><Glyphicon glyph="plus" />&nbsp;<strong>Add</strong></Button>;
 
-                  if (!owner.contacts || Object.keys(owner.contacts).length === 0) { return <Alert bsStyle="success">No contacts { addContactButton }</Alert>; }
+                if (!owner.contacts || Object.keys(owner.contacts).length === 0) { return <Alert bsStyle="success">No contacts { addContactButton }</Alert>; }
 
-                  var contacts = _.sortBy(owner.contacts, this.state.uiContacts.sortField);
-                  if (this.state.uiContacts.sortDesc) {
-                    _.reverse(contacts);
+                var contacts = _.sortBy(owner.contacts, this.state.uiContacts.sortField);
+                if (this.state.uiContacts.sortDesc) {
+                  _.reverse(contacts);
+                }
+
+                var headers = [
+                  { field: 'name',         title: 'Name'  },
+                  { field: 'phone',        title: 'Phone' },
+                  { field: 'emailAddress', title: 'Email' },
+                  { field: 'role',         title: 'Role'  },
+                  { field: 'addContact',   title: 'Add Contact', style: { textAlign: 'right'  },
+                    node: addContactButton,
+                  },
+                ];
+
+                return <SortTable id="contact-list" sortField={ this.state.uiContacts.sortField } sortDesc={ this.state.uiContacts.sortDesc } onSort={ this.updateContactsUIState } headers={ headers }>
+                  {
+                    _.map(contacts, (contact) => {
+                      return <tr key={ contact.id }>
+                        <td>{ contact.isPrimary && <Glyphicon glyph="star" /> } { contact.name }</td>
+                        <td>{ contact.phone }</td>
+                        <td><a href={ `mailto:${ contact.emailAddress }` } target="_blank">{ contact.emailAddress }</a></td>
+                        <td>{ contact.role }</td>
+                        <td style={{ textAlign: 'right' }}>
+                          <ButtonGroup>
+                            <DeleteButton name="Contact" hide={ !contact.canDelete || contact.isPrimary } onConfirm={ this.deleteContact.bind(this, contact) }/>
+                            <EditButton name="Contact" view={ !contact.canEdit } pathname={ contact.path }/>
+                          </ButtonGroup>
+                        </td>
+                      </tr>;
+                    })
                   }
-
-                  var headers = [
-                    { field: 'name',         title: 'Name'  },
-                    { field: 'phone',        title: 'Phone' },
-                    { field: 'emailAddress', title: 'Email' },
-                    { field: 'role',         title: 'Role'  },
-                    { field: 'addContact',   title: 'Add Contact', style: { textAlign: 'right'  },
-                      node: addContactButton,
-                    },
-                  ];
-
-                  return <SortTable id="contact-list" sortField={ this.state.uiContacts.sortField } sortDesc={ this.state.uiContacts.sortDesc } onSort={ this.updateContactsUIState } headers={ headers }>
-                    {
-                      _.map(contacts, (contact) => {
-                        return <tr key={ contact.id }>
-                          <td>{ contact.isPrimary && <Glyphicon glyph="star" /> } { contact.name }</td>
-                          <td>{ contact.phone }</td>
-                          <td><a href={ `mailto:${ contact.emailAddress }` } target="_blank">{ contact.emailAddress }</a></td>
-                          <td>{ contact.role }</td>
-                          <td style={{ textAlign: 'right' }}>
-                            <ButtonGroup>
-                              <DeleteButton name="Contact" hide={ !contact.canDelete || contact.isPrimary } onConfirm={ this.deleteContact.bind(this, contact) }/>
-                              <EditButton name="Contact" view={ !contact.canEdit } pathname={ contact.path }/>
-                            </ButtonGroup>
-                          </td>
-                        </tr>;
-                      })
-                    }
-                  </SortTable>;
-                })()}
-              </Well>
-              <Well>
-                <h3>History</h3>
-                { owner.historyEntity && <History historyEntity={ owner.historyEntity } refresh={ this.state.loading } /> }
-              </Well>
-            </Col>
-          </Row>
-        </div>
-        { this.state.showEquipmentDialog &&
-          <EquipmentAddDialog show={ this.state.showEquipmentDialog } onSave={ this.saveNewEquipment } onClose={ this.closeEquipmentDialog } />
-        }
-        { this.state.showEditDialog &&
-          <OwnersEditDialog show={ this.state.showEditDialog } onSave={ this.saveEdit } onClose={ this.closeEditDialog } />
-        }
-        { this.state.showPolicyDialog &&
-          <OwnersPolicyEditDialog show={ this.state.showPolicyDialog } onSave={ this.savePolicyEdit } onClose={ this.closePolicyDialog } />
-        }
-        { this.state.showContactDialog &&
-          <ContactsEditDialog show={ this.state.showContactDialog } contact={ this.state.contact } onSave={ this.saveContact } onClose={ this.closeContactDialog } />
-        }
-        { this.state.showDocumentsDialog &&
-          <DocumentsListDialog 
-            show={ owner && this.state.showDocumentsDialog } 
-            parent={ owner } 
-            onClose={ this.closeDocumentsDialog } 
-          />
-        }
-        { /* TODO this.state.showPolicyDocumentsDialog && <OwnerPolicyDocumentsDialog /> */}
+                </SortTable>;
+              })()}
+            </Well>
+            <Well>
+              <h3>History</h3>
+              { owner.historyEntity && <History historyEntity={ owner.historyEntity } refresh={ this.state.loading } /> }
+            </Well>
+          </Col>
+        </Row>
       </div>
-    );
+      { this.state.showEquipmentDialog &&
+        <EquipmentAddDialog show={ this.state.showEquipmentDialog } onSave={ this.saveNewEquipment } onClose={ this.closeEquipmentDialog } />
+      }
+      { this.state.showEditDialog &&
+        <OwnersEditDialog show={ this.state.showEditDialog } onSave={ this.saveEdit } onClose={ this.closeEditDialog } />
+      }
+      { this.state.showPolicyDialog &&
+        <OwnersPolicyEditDialog show={ this.state.showPolicyDialog } onSave={ this.savePolicyEdit } onClose={ this.closePolicyDialog } />
+      }
+      { this.state.showContactDialog &&
+        <ContactsEditDialog show={ this.state.showContactDialog } contact={ this.state.contact } onSave={ this.saveContact } onClose={ this.closeContactDialog } />
+      }
+      { this.state.showDocumentsDialog &&
+        <DocumentsListDialog 
+          show={ owner && this.state.showDocumentsDialog } 
+          parent={ owner } 
+          onClose={ this.closeDocumentsDialog } 
+        />
+      }
+      { /* TODO this.state.showPolicyDocumentsDialog && <OwnerPolicyDocumentsDialog /> */}
+    </div>;
   },
 });
 

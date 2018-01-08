@@ -158,7 +158,7 @@ var Users = React.createClass({
             </Col>
             <Col md={2}>
               <Row id="users-faves">
-                <Favourites id="users-faves-dropdown" type="user" favourites={ this.props.favourites } data={ this.state.search } onSelect={ this.loadFavourite } />
+                <Favourites id="users-faves-dropdown" type="user" favourites={ this.props.favourites.data } data={ this.state.search } onSelect={ this.loadFavourite } />
               </Row>
             </Col>
           </Row>

@@ -257,7 +257,6 @@ export function getFavourites(type) {
   store.dispatch({ type: Action.FAVOURITES_REQUEST });
   return new ApiRequest(`/users/current/favourites/${ type }`).get().then(response => {
     var favourites = normalize(response);
-
     store.dispatch({ type: Action.UPDATE_FAVOURITES, favourites: favourites });
   });
 }

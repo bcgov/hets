@@ -207,7 +207,7 @@ var Equipment = React.createClass({
           </Col>
           <Col md={2}>
             <Row id="equipment-faves">
-              <Favourites id="equipment-faves-dropdown" type="equipment" favourites={ this.props.favourites } data={ this.state.search } onSelect={ this.loadFavourite } pullRight />
+              <Favourites id="equipment-faves-dropdown" type="equipment" favourites={ this.props.favourites.data } data={ this.state.search } onSelect={ this.loadFavourite } pullRight />
             </Row>
             <Row id="equipment-search">
               <Button id="search-button" bsStyle="primary" onClick={ this.fetch }>Search</Button>
@@ -218,7 +218,7 @@ var Equipment = React.createClass({
 
       {(() => {
 
-        if (this.props.equipmentList.loading) { 
+        if (this.props.equipmentList.loading || this.props.owners.loading) { 
           return <div style={{ textAlign: 'center' }}><Spinner/></div>; 
         }
 
