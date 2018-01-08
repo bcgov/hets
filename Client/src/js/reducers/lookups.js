@@ -8,7 +8,7 @@ const DEFAULT_LOOKUPS = {
   localAreas: {},
   equipmentTypes: {},
   districtEquipmentTypes: {
-    data: [],
+    data: {},
     loading: false,
   },
   groups: {},
@@ -16,7 +16,7 @@ const DEFAULT_LOOKUPS = {
   rentalConditions: {},
 
   owners: { 
-    data: [],
+    data: {},
     loading: false,
   },
   roles: {},
