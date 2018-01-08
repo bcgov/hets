@@ -246,7 +246,7 @@ var RentalRequests = React.createClass({
           </Col>
           <Col md={2}>
             <Row id="rental-requests-faves">
-              <Favourites id="rental-requests-faves-dropdown" type="rentalRequests" favourites={ this.props.favourites.data } data={ this.state.search } onSelect={ this.loadFavourite } />
+              <Favourites id="rental-requests-faves-dropdown" type="rentalRequests" favourites={ this.props.favourites.data } data={ this.state.search } onSelect={ this.loadFavourite } pullRight />
             </Row>
             <Row id="rental-requests-search">
               <Button id="search-button" bsStyle="primary" onClick={ this.fetch }>Search</Button>
@@ -312,9 +312,7 @@ var RentalRequests = React.createClass({
           }
         </SortTable>;
       })()}
-      { this.state.showAddDialog &&
-        <RentalRequestsAddDialog show={ this.state.showAddDialog } onSave={ this.saveNewRequest } onClose={ this.closeAddDialog } />
-      }
+      <RentalRequestsAddDialog show={ this.state.showAddDialog } onSave={ this.saveNewRequest } onClose={ this.closeAddDialog } />
     </div>;
   },
 });

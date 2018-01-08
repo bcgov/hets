@@ -177,8 +177,8 @@ var RolesDetail = React.createClass({
 
     return <div id="roles-detail">
       <Row id="roles-top">
-        <Col md={10}></Col>
-        <Col md={2}>
+        <Col md={9}></Col>
+        <Col md={3}>
           <div className="pull-right">
             <Button onClick={ this.print }><Glyphicon glyph="print" title="Print" /></Button>
             <LinkContainer to={{ pathname: Constant.ROLES_PATHNAME }}>

@@ -233,14 +233,14 @@ var ProjectsDetail = React.createClass({
     return <div id="projects-detail">
       <div>
         <Row id="projects-top">
-          <Col md={10}>
+          <Col md={9}>
             <Label bsStyle={ project.isActive ? 'success' : 'danger'}>{ project.status }</Label>
             <Unimplemented>
               <Button title="Notes" onClick={ this.showNotes }>Notes ({ Object.keys(this.props.notes).length })</Button>
             </Unimplemented>
             <Button title="Documents" onClick={ this.showDocuments }>Documents ({ Object.keys(this.props.documents).length })</Button>
           </Col>
-          <Col md={2}>
+          <Col md={3}>
             <div className="pull-right">
               <Button onClick={ this.print }><Glyphicon glyph="print" title="Print" /></Button>
               <LinkContainer to={{ pathname: Constant.PROJECTS_PATHNAME }}>

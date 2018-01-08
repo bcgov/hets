@@ -195,7 +195,7 @@ var Owners = React.createClass({
       </PageHeader>
       <Well id="owners-bar" bsSize="small" className="clearfix">
         <Row>
-          <Col md={10}>
+          <Col md={9}>
             <ButtonToolbar id="owners-filters">
               <MultiDropdown id="selectedLocalAreasIds" placeholder="Local Areas"
                 items={ localAreas } selectedIds={ this.state.search.selectedLocalAreasIds } updateState={ this.updateSearchState } showMaxItems={ 2 } />
@@ -209,9 +209,9 @@ var Owners = React.createClass({
               <Button id="search-button" bsStyle="primary" onClick={ this.fetch }>Search</Button>
             </ButtonToolbar>
           </Col>
-          <Col md={2}>
+          <Col md={3}>
             <Row id="owners-faves">
-              <Favourites id="owners-faves-dropdown" type="owner" favourites={ this.props.favourites.data } data={ this.state.search } onSelect={ this.loadFavourite } />
+              <Favourites id="owners-faves-dropdown" type="owner" favourites={ this.props.favourites.data } data={ this.state.search } onSelect={ this.loadFavourite } pullRight />
             </Row>
           </Col>
         </Row>
@@ -257,9 +257,7 @@ var Owners = React.createClass({
           }
         </SortTable>;
       })()}
-      { this.state.showAddDialog &&
-        <OwnersAddDialog show={ this.state.showAddDialog } onSave={ this.saveNewOwner } onClose={ this.closeAddDialog } />
-      }
+      <OwnersAddDialog show={ this.state.showAddDialog } onSave={ this.saveNewOwner } onClose={ this.closeAddDialog } />
     </div>;
   },
 });
