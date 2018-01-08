@@ -1,49 +1,81 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using System.Threading.Tasks;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.NodeServices;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json.Linq;
-using System.Threading.Tasks;
 
-namespace PDF.Controllers
+namespace PDF.Server.Controllers
 {
-    public class PDFRequest
+    /// <summary>
+    /// Pdf Request
+    /// </summary>
+    public class PdfRequest
     {
-        public string html { get; set; }
-        public string options { get; set; }
-    }
-    public class JSONResponse
-    {
-        public string type;
-        public byte[] data;
-    }
-    [Route("api/[controller]")] 
-    public class PDFController : Controller
-    {
-        protected ILogger _logger;
+        /// <summary>
+        /// Html Content
+        /// </summary>
+        public string Html { get; set; }
 
-        public PDFController(ILoggerFactory loggerFactory)
+        /// <summary>
+        /// Pdf Options
+        /// </summary>
+        public string Options { get; set; }
+    }
+
+    /// <summary>
+    /// Json Response
+    /// </summary>
+    public class JsonResponse
+    {
+        /// <summary>
+        /// Response Type
+        /// </summary>
+        public string Type;
+
+        /// <summary>
+        /// Response Data
+        /// </summary>
+        public byte[] Data;
+    }
+
+    /// <summary>
+    /// Pdf Controller
+    /// </summary>
+    [Route("api/[controller]")] 
+    public class PdfController : Controller
+    {
+        private readonly ILogger _logger;
+
+        /// <summary>
+        /// Pdf Controller Constructor
+        /// </summary>
+        /// <param name="loggerFactory"></param>
+        public PdfController(ILoggerFactory loggerFactory)
         {
-            _logger = loggerFactory.CreateLogger(typeof(PDFController));
+            _logger = loggerFactory.CreateLogger(typeof(PdfController));
         }
 
-
+        /// <summary>
+        /// Build PDF document
+        /// </summary>
+        /// <param name="nodeServices"></param>
+        /// <param name="rawdata"></param>
+        /// <returns></returns>
         [HttpPost]
         [Route("BuildPDF")]
-
-        public async Task<IActionResult> BuildPDF([FromServices] INodeServices nodeServices, [FromBody]  PDFRequest rawdata )
+        public async Task<IActionResult> BuildPdf([FromServices] INodeServices nodeServices, [FromBody]  PdfRequest rawdata)
         {
-            JObject options = JObject.Parse(rawdata.options);
-            JSONResponse result = null;
-            //var options = new { format="letter", orientation= "portrait" }; 
+            _logger.LogInformation("[BuildPdf] Starting pdf rendering");
+
+            // get rendering options (portrait, etc.)
+            JObject options = JObject.Parse(rawdata.Options);
 
             // execute the Node.js component to generate a PDF
-            result = await nodeServices.InvokeAsync<JSONResponse>("./pdf.js", rawdata.html, options);
-            options = null;
+            JsonResponse result = await nodeServices.InvokeAsync<JsonResponse>("./pdf.js", rawdata.Html, options);
 
-            return new FileContentResult(result.data, "application/pdf");
+            _logger.LogInformation("Rendered document");
 
-            _logger.LogInformation("Rendered document.");
+            return new FileContentResult(result.Data, "application/pdf");            
         }
-
     }
 }
