@@ -13,7 +13,6 @@ namespace FrontEnd.Handlers
     /// </summary>
     public class ApiProxyMiddleware
     {
-        private readonly string _apiPathKey;
         private readonly string _apiUri;
         private readonly ProxyMiddleware _proxy;
         private readonly ILogger _logger;
@@ -28,8 +27,7 @@ namespace FrontEnd.Handlers
         {
             _apiUri = apiServerOptions.Value.ToUri().AbsoluteUri;
             _proxy = new ProxyMiddleware(next, apiServerOptions.Value.ToProxyOptions());
-            _logger = loggerFactory.CreateLogger<ApiProxyMiddleware>();
-            _apiPathKey = "/api";            
+            _logger = loggerFactory.CreateLogger<ApiProxyMiddleware>();     
         }
 
         /// <summary>
@@ -42,8 +40,7 @@ namespace FrontEnd.Handlers
             try
             {
                 string requestPath = context.Request.Path.Value;
-                int indexOfApi = requestPath.IndexOf(_apiPathKey, StringComparison.Ordinal);
-                context.Request.Path = requestPath.Remove(0, indexOfApi);
+                _logger.LogInformation("Api Path: " + requestPath);
 
                 // set http security headers
                 context.Response.Headers[HeaderNames.CacheControl] = "no-cache";
@@ -53,11 +50,7 @@ namespace FrontEnd.Handlers
                 context.Response.Headers["X-XSS-Protection"] = "1; mode=block";
                 context.Response.Headers["X-Content-Type-Options"] = "nosniff";                
 
-                await _proxy.Invoke(context);
-
-                // debugging only                
-                _logger.LogInformation("Path: " + requestPath);
-                _logger.LogInformation("Response Body: " + context.Response.Body);                
+                await _proxy.Invoke(context);                                
             }
             catch (Exception e)
             {

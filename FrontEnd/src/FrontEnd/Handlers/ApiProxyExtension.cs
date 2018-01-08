@@ -11,11 +11,11 @@ namespace FrontEnd.Handlers
         /// Use Proxy Server
         /// </summary>
         /// <param name="app"></param>
+        /// <param name="apiUrl"></param>
         /// <returns></returns>
-        public static IApplicationBuilder UseApiProxyServer(this IApplicationBuilder app)
+        public static IApplicationBuilder UseApiProxyServer(this IApplicationBuilder app, string apiUrl)
         {
-            string apiPathKey = "/api";
-            return app.Map(apiPathKey, ProxyRequest);
+            return app.Map(apiUrl, ProxyRequest);
         }
        
         /// <summary>
