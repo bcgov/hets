@@ -107,12 +107,13 @@ namespace FrontEnd
             };
 
             app.UseFileServer(options);
-            app.UseApiProxyServer();
+            app.UseApiProxyServer(Configuration.GetSection("Constants").GetSection("ApiPathKey").Value);
         }
 
         private void ConfigureApiProxyServerOptions(ApiProxyServerOptions options)
         {
             ApiProxyServerOptions defaultConfig = Configuration.GetSection("ApiProxyServer").Get<ApiProxyServerOptions>();
+
             if (defaultConfig != null)
             {
                 options.Host = defaultConfig.Host;
