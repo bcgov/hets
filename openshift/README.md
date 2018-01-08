@@ -46,11 +46,15 @@ SOURCE_IMAGE_KIND=ImageStreamTag
 SOURCE_IMAGE_NAME=dotnet-20-centos7
 ```
 
+## Deploying Secrets
+
+The application relies on a number of secrets used during initialization that must be loaded into the environment before components such as the server will function properly.
+
+Refer to the Secrets section below for details on how to load the secrets using the `genSecrets.sh` management script.
+
 ----
 ToDo:
-* Automate the secret deployment process.  A template for that purpose has been started here; ./templates/server/hets-secret-deploy.json
 * Update the following documentation after migrating to the new managment scripts.
-
 ---
 
 
@@ -145,10 +149,11 @@ The Postgresql deployment does not automatically run - be sure to deploy it othe
 Secrets
 -------
 
-Secrets must be manually added to the environment, using an account that has the authority to add secrets.
+The application relies on a number of secrets that must be loaded into the environment, using an account that has the authority to add secrets.
+
 There are several secret files used by the application:
 
-**Users.json**
+**users.json**
 `[
 {
 "active": true,
@@ -194,23 +199,18 @@ There are several secret files used by the application:
 <other regions>
 ]`
 
-**CCW.json**
+Using `genSecrets.sh` the secrets can be loaded via a template and a set of files containing the content for the secrets.
 
-`{
-"CCW_userId":"Siteminder User ID for the user that will login to CCW",
-"CCW_guid":"Siteminder GUID for the user that will login to CCW",
-"CCW_directory":"Siteminder directory for the user that will login to CCW",
-"CCW_endpointURL":"Endpoint assigned to the application for CCW access",
-"CCW_applicationIdentifier":"Application Identifier assigned to the application",
-"CCW_basicAuth_username":"Basic auth username for CCW",
-"CCW_basicAuth_password":"Basic auth password for CCW"
-}`
+The requirements are documented in the `genSecrets.sh`, run `genSecrets.sh -h` for details.
 
-In order to provision these secrets, files will need to be created in a secure area of your PC.
-Then execute the following commands:
-`oc secrets new ccw-secret ccw.json`
-Put the remaining secrets inside a folder, which in this example is called secrets
-`oc secrets new hets-secret secrets`
+Qucik summary of the process:
+* The template is here; `./openshift/templates/server/server-secret.json`
+* Place the files, `districts.json`, `regions.json`, and `users.json`, in the expected directory `./openshift/secrets/server-secret/`
+  * The content of the files depends on the intended deployment environment.
+* Use `oc project` to switch to the OpenShift project where you want the secret.
+* Run `genSecrets.sh`; if you are updating an existing secret use `genSecrets.sh -u`
+
+Optionally you could have used `oc secrets new hets-secret ./openshift/secrets/server-secret`, but the `genSecrets.sh` approach allows you to update the secrets or configuration later without having to delete the secret.
 
 Jenkins Basic Configuration
 ---------------------------
