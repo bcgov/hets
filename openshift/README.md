@@ -48,6 +48,7 @@ SOURCE_IMAGE_NAME=dotnet-20-centos7
 
 ----
 ToDo:
+* Automate the secret deployment process.  A template for that purpose has been started here; ./templates/server/hets-secret-deploy.json
 * Update the following documentation after migrating to the new managment scripts.
 
 ---
