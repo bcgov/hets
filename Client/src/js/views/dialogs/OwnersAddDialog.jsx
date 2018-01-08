@@ -49,8 +49,10 @@ var OwnersAddDialog = React.createClass({
     };
   },
 
-  componentDidMount() {
-    this.input.focus();
+  componentDidUpdate() {
+    if (this.props.show) {
+      this.input.focus();
+    }
   },
 
   updateState(state, callback) {
@@ -142,8 +144,7 @@ var OwnersAddDialog = React.createClass({
       .filter(localArea => localArea.serviceArea.district.id == this.props.currentUser.district.id)
       .sortBy('name')
       .value();
-
-    return <EditDialog id="add-owner" show={ this.props.show } bsSize="small"
+    return <EditDialog id="add-owner" show={ this.props.show }
       onClose={ this.props.onClose } onSave={ this.onSave } didChange={ this.didChange } isValid={ this.isValid }
       title= {
         <strong>Add Owner</strong>
@@ -176,7 +177,7 @@ var OwnersAddDialog = React.createClass({
 function mapStateToProps(state) {
   return {
     currentUser: state.user,
-    owners: state.lookups.owners,
+    owners: state.lookups.owners.data,
     localAreas: state.lookups.localAreas,
   };
 }

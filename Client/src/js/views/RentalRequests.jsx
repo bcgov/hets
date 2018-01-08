@@ -312,9 +312,7 @@ var RentalRequests = React.createClass({
           }
         </SortTable>;
       })()}
-      { this.state.showAddDialog &&
-        <RentalRequestsAddDialog show={ this.state.showAddDialog } onSave={ this.saveNewRequest } onClose={ this.closeAddDialog } />
-      }
+      <RentalRequestsAddDialog show={ this.state.showAddDialog } onSave={ this.saveNewRequest } onClose={ this.closeAddDialog } />
     </div>;
   },
 });

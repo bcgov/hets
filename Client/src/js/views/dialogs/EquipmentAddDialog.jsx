@@ -46,7 +46,6 @@ var EquipmentAddDialog = React.createClass({
     this.setState({ loading: true });
     Api.getDistrictEquipmentTypes(this.props.currentUser.district.id).then(() => {
       this.setState({ loading: false });
-      this.input.focus();
     });
   },
 
@@ -171,7 +170,7 @@ function mapStateToProps(state) {
     currentUser: state.user,
     owner: state.models.owner,
     localAreas: state.lookups.localAreas,
-    districtEquipmentTypes: state.lookups.districtEquipmentTypes,
+    districtEquipmentTypes: state.lookups.districtEquipmentTypes.data,
   };
 }
 

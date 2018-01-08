@@ -164,7 +164,7 @@ function mapStateToProps(state) {
   return {
     currentUser: state.user,
     localAreas: state.lookups.localAreas,
-    districtEquipmentTypes: state.lookups.districtEquipmentTypes,
+    districtEquipmentTypes: state.lookups.districtEquipmentTypes.data,
     projects: state.lookups.projects,
   };
 }
