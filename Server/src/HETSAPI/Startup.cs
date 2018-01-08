@@ -89,10 +89,7 @@ namespace HETSAPI
             services.Configure<FormOptions>(options =>
             {
                 options.MultipartBodyLengthLimit = 1073741824; // 1 GB
-            });          
-
-            // add compresssion
-            services.AddResponseCompression();            
+            });                  
 
             services.AddMvc(options => options.AddDefaultAuthorizationPolicyFilter())                
                 .AddJsonOptions(
@@ -193,9 +190,6 @@ namespace HETSAPI
                 // enable the /hangfire action
                 app.UseHangfireDashboard((Configuration.GetSection("Constants").GetSection("HangfireUrl").Value), dashboardOptions);
             }
-
-            // enable response compression
-            app.UseResponseCompression();
             
             app.UseMvc(routes =>
             {

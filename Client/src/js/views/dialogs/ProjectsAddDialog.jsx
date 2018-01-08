@@ -103,7 +103,7 @@ var ProjectsAddDialog = React.createClass({
         </FormGroup>
         <FormGroup controlId="districtId" validationState={ this.state.districtError ? 'error' : null }>
           <ControlLabel>District <sup>*</sup></ControlLabel>
-          <FilterDropdown id="districtId" items={ districts } selectedId={ this.state.districtId } updateState={ this.updateState } />
+          <FilterDropdown id="districtId" items={ districts } selectedId={ this.state.districtId } updateState={ this.updateState } className="full-width" />
           <HelpBlock>{ this.state.districtError }</HelpBlock>
         </FormGroup>
         <FormGroup controlId="information">
