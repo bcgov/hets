@@ -9,7 +9,7 @@ namespace HETSAPI.Seeders
 {
     public class DistrictSeeder : Seeder<DbAppContext>
     {
-        private string[] ProfileTriggers = { AllProfiles };
+        private readonly string[] ProfileTriggers = { AllProfiles };
 
         public DistrictSeeder(IConfiguration configuration, IHostingEnvironment env, ILoggerFactory loggerFactory) 
             : base(configuration, env, loggerFactory)
@@ -36,7 +36,8 @@ namespace HETSAPI.Seeders
 
         private void UpdateDistricts(DbAppContext context)
         {
-            List<District> seedUsers = GetSeedDistricts(context);
+            List<District> seedUsers = GetSeedDistricts();
+
             foreach (District district in seedUsers)
             {
                 context.UpdateSeedDistrictInfo(district);
@@ -51,16 +52,18 @@ namespace HETSAPI.Seeders
             context.AddInitialDistrictsFromFile(Configuration["DistrictInitializationFile"]);
         }
 
-        private List<District> GetSeedDistricts(DbAppContext context)
+        private List<District> GetSeedDistricts()
         {
-            List<District> districts = new List<District>(GetDefaultDistricts(context));
+            List<District> districts = new List<District>(GetDefaultDistricts());
 
             if (IsDevelopmentEnvironment)
-                districts.AddRange(GetDevDistricts(context));
+                districts.AddRange(GetDevDistricts());
+
             if (IsTestEnvironment || IsStagingEnvironment)
-                districts.AddRange(GetTestDistricts(context));
+                districts.AddRange(GetTestDistricts());
+
             if (IsProductionEnvironment)
-                districts.AddRange(GetProdDistricts(context));
+                districts.AddRange(GetProdDistricts());
 
             return districts;
         }
@@ -68,7 +71,7 @@ namespace HETSAPI.Seeders
         /// <summary>
         /// Returns a list of users to be populated in all environments.
         /// </summary>
-        private List<District> GetDefaultDistricts(DbAppContext context)
+        private List<District> GetDefaultDistricts()
         {
             return new List<District>();
         }
@@ -76,7 +79,7 @@ namespace HETSAPI.Seeders
         /// <summary>
         /// Returns a list of users to be populated in the Development environment.
         /// </summary>
-        private List<District> GetDevDistricts(DbAppContext context)
+        private List<District> GetDevDistricts()
         {
             return new List<District>();            
         }
@@ -84,7 +87,7 @@ namespace HETSAPI.Seeders
         /// <summary>
         /// Returns a list of users to be populated in the Test environment.
         /// </summary>
-        private List<District> GetTestDistricts(DbAppContext context)
+        private List<District> GetTestDistricts()
         {
             return new List<District>();
         }
@@ -92,7 +95,7 @@ namespace HETSAPI.Seeders
         /// <summary>
         /// Returns a list of users to be populated in the Production environment.
         /// </summary>
-        private List<District> GetProdDistricts(DbAppContext context)
+        private List<District> GetProdDistricts()
         {
             return new List<District>();
         }

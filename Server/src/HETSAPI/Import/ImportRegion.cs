@@ -1,20 +1,24 @@
 ﻿using Hangfire.Console;
 using Hangfire.Server;
-using HETSAPI.Models;
 using System;
 using System.IO;
 using System.Linq;
 using System.Xml.Serialization;
+using Hangfire.Console.Progress;
+using HETSAPI.ImportModels;
+using HETSAPI.Models;
 
 namespace HETSAPI.Import
-
 {
-    public class ImportRegion
+    /// <summary>
+    /// Import Region Records
+    /// </summary>
+    public static class ImportRegion
     {
-        const string oldTable = "HETS_Region";
-        const string newTable = "HETS_Region";
-        const string xmlFileName = "Region.xml";
-        const int sigId = 150000;
+        const string OldTable = "HETS_Region";
+        const string NewTable = "HETS_Region";
+        const string XmlFileName = "Region.xml";
+        const int SigId = 150000;
 
         /// <summary>
         /// Import Regions
@@ -23,49 +27,57 @@ namespace HETSAPI.Import
         /// <param name="dbContext"></param>
         /// <param name="fileLocation"></param>
         /// <param name="systemId"></param>
-        static public void Import(PerformContext performContext, DbAppContext dbContext, string fileLocation, string systemId)
+        public static void Import(PerformContext performContext, DbAppContext dbContext, string fileLocation, string systemId)
         {
+            // check the start point. If startPoint == sigId then it is already completed
             string completed = DateTime.Now.ToString("d") + "-" + "Completed";
-            ImportMap importMap = dbContext.ImportMaps.FirstOrDefault(x => x.OldTable == oldTable && x.OldKey == completed && x.NewKey == sigId);
+
+            ImportMap importMap = dbContext.ImportMaps.FirstOrDefault(x => x.OldTable == OldTable && x.OldKey == completed && x.NewKey == SigId);
+
             if (importMap != null)
             {
-                performContext.WriteLine("*** Importing " + xmlFileName + " is complete from the former process ***");
+                performContext.WriteLine("*** Importing " + XmlFileName + " is complete from the former process ***");
                 return;
             }
+
             try
             {
-                string rootAttr = "ArrayOf" + oldTable;
+                string rootAttr = "ArrayOf" + OldTable;
 
-                performContext.WriteLine("Processing " + oldTable);
-                var progress = performContext.WriteProgressBar();
+                performContext.WriteLine("Processing " + OldTable);
+                IProgressBar progress = performContext.WriteProgressBar();
                 progress.SetValue(0);
 
                 // create serializer and serialize xml file
-                XmlSerializer ser = new XmlSerializer(typeof(HETS_Region[]), new XmlRootAttribute(rootAttr));
-                MemoryStream memoryStream = ImportUtility.memoryStreamGenerator(xmlFileName, oldTable, fileLocation, rootAttr);
-                HETSAPI.Import.HETS_Region[] legacyItems = (HETSAPI.Import.HETS_Region[])ser.Deserialize(memoryStream);
+                XmlSerializer ser = new XmlSerializer(typeof(HetsRegion[]), new XmlRootAttribute(rootAttr));
+                MemoryStream memoryStream = ImportUtility.MemoryStreamGenerator(XmlFileName, OldTable, fileLocation, rootAttr);
+                HetsRegion[] legacyItems = (HetsRegion[])ser.Deserialize(memoryStream);
+
                 foreach (var item in legacyItems.WithProgress(progress))
                 {
-                    // see if we have this one already.
-                    Models.Region reg = null;
-                    importMap = dbContext.ImportMaps.FirstOrDefault(x => x.OldTable == oldTable && x.OldKey == item.Region_Id.ToString());
+                    // see if we have this one already
+                    Region reg = null;
+                    importMap = dbContext.ImportMaps.FirstOrDefault(x => x.OldTable == OldTable && x.OldKey == item.Region_Id.ToString());
 
-                    if (dbContext.LocalAreas.Where(x => x.Name.ToUpper() == item.Name.Trim().ToUpper()).Count() > 0)
+                    if (dbContext.LocalAreas.Count(x => String.Equals(x.Name, item.Name.Trim(), StringComparison.CurrentCultureIgnoreCase)) > 0)
                     {
-                        reg = dbContext.Regions.FirstOrDefault(x => x.Name.ToUpper() == item.Name.Trim().ToUpper());
+                        reg = dbContext.Regions.FirstOrDefault(x => String.Equals(x.Name, item.Name.Trim(), StringComparison.CurrentCultureIgnoreCase));
                     }
 
-                    if (importMap == null && reg== null) // new entry
+                    // new entry
+                    if (importMap == null && reg == null) 
                     {
                         CopyToInstance(performContext, dbContext, item, ref reg, systemId);
-                        ImportUtility.AddImportMap(dbContext, oldTable, item.Region_Id.ToString(), newTable, reg.Id);
+                        ImportUtility.AddImportMap(dbContext, OldTable, item.Region_Id.ToString(), NewTable, reg.Id);
                     }
                     else // update
                     {
-                        if (reg == null) // record was deleted
+                        // record was deleted
+                        if (reg == null) 
                         {
                             CopyToInstance(performContext, dbContext, item, ref reg, systemId);
-                            // update the import map.
+
+                            // update the import map
                             importMap.NewKey = reg.Id;
                             dbContext.ImportMaps.Update(importMap);
                             dbContext.SaveChangesForImport();
@@ -73,17 +85,22 @@ namespace HETSAPI.Import
                         else // ordinary update.
                         {
                             CopyToInstance(performContext, dbContext, item, ref reg, systemId);
-                            // touch the import map.
-                            importMap.LastUpdateTimestamp = DateTime.UtcNow;
-                            dbContext.ImportMaps.Update(importMap);
-                            int iResult = dbContext.SaveChangesForImport();
+
+                            // touch the import map
+                            if (importMap != null)
+                            {
+                                importMap.LastUpdateTimestamp = DateTime.UtcNow;
+                                dbContext.ImportMaps.Update(importMap);
+                            }
+
+                            dbContext.SaveChangesForImport();
                         }
                     }
                 }
-                performContext.WriteLine("*** Importing " + xmlFileName + " is Done ***");
-                ImportUtility.AddImportMap(dbContext, oldTable, completed, newTable, sigId);
-            }
 
+                performContext.WriteLine("*** Importing " + XmlFileName + " is Done ***");
+                ImportUtility.AddImportMap(dbContext, OldTable, completed, NewTable, SigId);
+            }
             catch (Exception e)
             {
                 performContext.WriteLine("*** ERROR ***");
@@ -91,20 +108,29 @@ namespace HETSAPI.Import
             }
         }
 
-        static private void CopyToInstance(PerformContext performContext, DbAppContext dbContext, HETSAPI.Import.HETS_Region oldObject, ref Models.Region reg, string systemId)
+        /// <summary>
+        /// Map data
+        /// </summary>
+        /// <param name="performContext"></param>
+        /// <param name="dbContext"></param>
+        /// <param name="oldObject"></param>
+        /// <param name="reg"></param>
+        /// <param name="systemId"></param>
+        private static void CopyToInstance(PerformContext performContext, DbAppContext dbContext, HetsRegion oldObject, ref Region reg, string systemId)
         {
             bool isNew = false;
+
             if (reg == null)
             {
                 isNew = true;
-                reg = new Models.Region();
+                reg = new Region();
             }
 
-            if (dbContext.Regions.Where(x => x.Name.ToUpper() == oldObject.Name.ToUpper()).Count() == 0)
+            if (dbContext.Regions.Count(x => String.Equals(x.Name, oldObject.Name, StringComparison.CurrentCultureIgnoreCase)) == 0)
             {
                 isNew = true;
                 reg.Name = oldObject.Name.Trim();
-                reg.Id = oldObject.Region_Id; // dbContext.Regions.Max(x => x.Id) + 1;   
+                reg.Id = oldObject.Region_Id;
                 reg.MinistryRegionID = oldObject.Ministry_Region_Id;
                 reg.RegionNumber = oldObject.Region_Number;
                 reg.CreateTimestamp = DateTime.UtcNow;
@@ -113,8 +139,10 @@ namespace HETSAPI.Import
 
             if (isNew)
             {
-                dbContext.Regions.Add(reg);   //Adding the city to the database table of HET_CITY
+                // adding the city to the database table of HET_CITY
+                dbContext.Regions.Add(reg);
             }
+
             try
             {
                 dbContext.SaveChangesForImport();

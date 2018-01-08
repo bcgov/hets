@@ -8,7 +8,7 @@ namespace HETSAPI.Seeders
 {
     public class GroupSeeder : Seeder<DbAppContext>
     {
-        private string[] ProfileTriggers = { AllProfiles };
+        private readonly string[] ProfileTriggers = { AllProfiles };
 
         public GroupSeeder(IConfiguration configuration, IHostingEnvironment env, ILoggerFactory loggerFactory) 
             : base(configuration, env, loggerFactory)

@@ -1,131 +1,156 @@
 ﻿using Hangfire.Console;
 using Hangfire.Server;
-using HETSAPI.Models;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Xml.Serialization;
+using Hangfire.Console.Progress;
+using HETSAPI.ImportModels;
+using HETSAPI.Models;
 
 namespace HETSAPI.Import
 {
-    public class ImportEquipUsage
+    /// <summary>
+    /// Import Equip(ment) Usage Records
+    /// </summary>
+    public static class ImportEquipUsage
     {
-        const string oldTable = "EquipUsage";
-        const string newTable = "HET_RENTAL_AGREEMENT";
-        const string xmlFileName = "Equip_Usage.xml";
-        public static string oldTable_Progress = oldTable + "_Progress";
+        const string OldTable = "EquipUsage";
+        const string NewTable = "HET_RENTAL_AGREEMENT";
+        const string XmlFileName = "Equip_Usage.xml";
 
         /// <summary>
-        /// Import from Equip_Usage.xml file to Three tables:
+        /// Progress Property
+        /// </summary>
+        public static string OldTableProgress => OldTable + "_Progress";
+
+        /// <summary>
+        /// Import Equip(ment) Usage
         /// </summary>
         /// <param name="performContext"></param>
         /// <param name="dbContext"></param>
         /// <param name="fileLocation"></param>
         /// <param name="systemId"></param>
-        public static void Import(PerformContext performContext, DbContextOptionsBuilder<DbAppContext> options, DbAppContext dbContext, string fileLocation, string systemId)
+        public static void Import(PerformContext performContext, DbAppContext dbContext, string fileLocation, string systemId)
         {
-            // Check the start point. If startPoint ==  sigId then it is already completed
-            int startPoint = ImportUtility.CheckInterMapForStartPoint(dbContext, oldTable_Progress, BCBidImport.sigId);
-            if (startPoint == BCBidImport.sigId)    // This means the import job it has done today is complete for all the records in the xml file.
+            // check the start point. If startPoint ==  sigId then it is already completed
+            int startPoint = ImportUtility.CheckInterMapForStartPoint(dbContext, OldTableProgress, BCBidImport.SigId);
+
+            if (startPoint == BCBidImport.SigId)    // this means the import job it has done today is complete for all the records in the xml file.
             {
-                performContext.WriteLine("*** Importing " + xmlFileName + " is complete from the former process ***");
+                performContext.WriteLine("*** Importing " + XmlFileName + " is complete from the former process ***");
                 return;
             }
-            string rootAttr = "ArrayOf" + oldTable;
 
-            //Create Processer progress indicator
-            performContext.WriteLine("Processing " + oldTable);
-            var progress = performContext.WriteProgressBar();
-            progress.SetValue(0);
-
-            // create serializer and serialize xml file
-            XmlSerializer ser = new XmlSerializer(typeof(EquipUsage[]), new XmlRootAttribute(rootAttr));
-            MemoryStream memoryStream = ImportUtility.memoryStreamGenerator(xmlFileName, oldTable, fileLocation, rootAttr);
-            EquipUsage[] legacyItems = (EquipUsage[])ser.Deserialize(memoryStream);
-
-            //Use this list to save a trip to query database in each iteration
-            List<Equipment> equips = dbContext.Equipments
-                    .Include(x => x.DumpTruck)
-                    .Include(x => x.DistrictEquipmentType)
-                    .ToList();
-
-            int ii = startPoint;
-            if (startPoint > 0)    // Skip the portion already processed
-            {
-                legacyItems = legacyItems.Skip(ii).ToArray();
-            }
-
-            foreach (var item in legacyItems.WithProgress(progress))
-            {
-                // see if we have this one already.
-                string oldKey = (item.Equip_Id ?? 0).ToString() + (item.Project_Id ?? 0).ToString() + (item.Service_Area_Id ?? 0).ToString();
-                string workedDate =  item.Worked_Dt.Trim().Substring(0, 10);
-                string note = oldKey + "-" + workedDate.Substring(0, 4);
-                string oldKeyAll = oldKey + "-" + workedDate.Substring(0, 10);
-                ImportMap importMap = dbContext.ImportMaps.FirstOrDefault(x => x.OldTable == oldTable && x.OldKey == oldKeyAll);
-
-                if (importMap == null) // new entry
-                {
-                    if (item.Equip_Id > 0)
-                    {
-                        RentalAgreement rentalAgreement = dbContext.RentalAgreements.FirstOrDefault(x => x.Note == note);
-                        CopyToTimeRecorded(performContext, dbContext, item, ref rentalAgreement, note, workedDate, equips, systemId);
-                        ImportUtility.AddImportMap(dbContext, oldTable, oldKeyAll, newTable, rentalAgreement.Id);
-                    }
-                }
-                else // update
-                {
-                    Models.RentalAgreement rentalAgreement = dbContext.RentalAgreements.FirstOrDefault(x => x.Id == importMap.NewKey);
-                    if (rentalAgreement == null) // record was deleted
-                    {
-                        CopyToTimeRecorded(performContext, dbContext, item, ref rentalAgreement, note, workedDate, equips, systemId);
-                        // update the import map.
-                        importMap.NewKey = rentalAgreement.Id;
-                        dbContext.ImportMaps.Update(importMap);
-                    }
-                    else // ordinary update.
-                    {
-                        CopyToTimeRecorded(performContext, dbContext, item, ref rentalAgreement, note, workedDate, equips, systemId);
-                        // touch the import map.
-                        importMap.LastUpdateTimestamp = DateTime.UtcNow;
-                        dbContext.ImportMaps.Update(importMap);
-                    }
-                }
-
-                if (++ii % 1000 == 0)   // Save change to database once a while to avoid frequent writing to the database.
-                {                   
-                    try
-                    {
-                        ImportUtility.AddImportMap_For_Progress(dbContext, oldTable_Progress, ii.ToString(), BCBidImport.sigId);
-                        int iResult = dbContext.SaveChangesForImport();
-                        options = new DbContextOptionsBuilder<DbAppContext>();
-
-                        dbContext = new DbAppContext(null, options.Options);
-                    }
-                    catch (Exception e)
-                    {
-                        string iStr = e.ToString();
-                    }
-                }
-            }
             try
-            {
-                performContext.WriteLine("*** Importing " + xmlFileName + " is Done ***");
-                ImportUtility.AddImportMap_For_Progress(dbContext, oldTable_Progress, BCBidImport.sigId.ToString(), BCBidImport.sigId);
-                int iResult = dbContext.SaveChangesForImport();
+            {           
+                string rootAttr = "ArrayOf" + OldTable;
+
+                // create Processer progress indicator
+                performContext.WriteLine("Processing " + OldTable);
+                IProgressBar progress = performContext.WriteProgressBar();
+                progress.SetValue(0);
+
+                // create serializer and serialize xml file
+                XmlSerializer ser = new XmlSerializer(typeof(EquipUsage[]), new XmlRootAttribute(rootAttr));
+                MemoryStream memoryStream = ImportUtility.MemoryStreamGenerator(XmlFileName, OldTable, fileLocation, rootAttr);
+                EquipUsage[] legacyItems = (EquipUsage[])ser.Deserialize(memoryStream);
+
+                //Use this list to save a trip to query database in each iteration
+                List<Equipment> equips = dbContext.Equipments
+                        .Include(x => x.DumpTruck)
+                        .Include(x => x.DistrictEquipmentType)
+                        .ToList();
+
+                int ii = startPoint;
+
+                // skip the portion already processed
+                if (startPoint > 0)    
+                {
+                    legacyItems = legacyItems.Skip(ii).ToArray();
+                }
+
+                foreach (var item in legacyItems.WithProgress(progress))
+                {
+                    // see if we have this one already
+                    string oldKey = (item.Equip_Id ?? 0) + (item.Project_Id ?? 0).ToString() + (item.Service_Area_Id ?? 0);
+                    string workedDate =  item.Worked_Dt.Trim().Substring(0, 10);
+                    string note = oldKey + "-" + workedDate.Substring(0, 4);
+                    string oldKeyAll = oldKey + "-" + workedDate.Substring(0, 10);
+
+                    ImportMap importMap = dbContext.ImportMaps.FirstOrDefault(x => x.OldTable == OldTable && x.OldKey == oldKeyAll);
+
+                    // new entry
+                    if (importMap == null) 
+                    {
+                        if (item.Equip_Id > 0)
+                        {
+                            RentalAgreement rentalAgreement = dbContext.RentalAgreements.FirstOrDefault(x => x.Note == note);
+                            CopyToTimeRecorded(dbContext, item, ref rentalAgreement, note, workedDate, equips, systemId);
+                            ImportUtility.AddImportMap(dbContext, OldTable, oldKeyAll, NewTable, rentalAgreement.Id);
+                        }
+                    }
+                    else // update
+                    {
+                        RentalAgreement rentalAgreement = dbContext.RentalAgreements.FirstOrDefault(x => x.Id == importMap.NewKey);
+
+                        // record was deleted
+                        if (rentalAgreement == null) 
+                        {
+                            CopyToTimeRecorded(dbContext, item, ref rentalAgreement, note, workedDate, equips, systemId);
+
+                            // update the import map
+                            importMap.NewKey = rentalAgreement.Id;
+                            dbContext.ImportMaps.Update(importMap);
+                        }
+                        else // ordinary update
+                        {
+                            CopyToTimeRecorded(dbContext, item, ref rentalAgreement, note, workedDate, equips, systemId);
+
+                            // touch the import map
+                            importMap.LastUpdateTimestamp = DateTime.UtcNow;
+                            dbContext.ImportMaps.Update(importMap);
+                        }
+                    }
+
+                    // save change to database periodically to avoid frequent writing to the database
+                    if (++ii % 1000 == 0)
+                    {                   
+                        try
+                        {
+                            ImportUtility.AddImportMapForProgress(dbContext, OldTableProgress, ii.ToString(), BCBidImport.SigId);
+                            dbContext.SaveChangesForImport();                            
+                        }
+                        catch (Exception e)
+                        {
+                            performContext.WriteLine("Error saving data " + e.Message);
+                        }
+                    }
+                }
+
+                try
+                {
+                    performContext.WriteLine("*** Importing " + XmlFileName + " is Done ***");
+                    ImportUtility.AddImportMapForProgress(dbContext, OldTableProgress, BCBidImport.SigId.ToString(), BCBidImport.SigId);
+                    dbContext.SaveChangesForImport();
+                }
+                catch (Exception e)
+                {
+                    performContext.WriteLine("Error saving data " + e.Message);
+                }
             }
             catch (Exception e)
             {
-                string iStr = e.ToString();
+                performContext.WriteLine("*** ERROR ***");
+                performContext.WriteLine(e.ToString());
             }
         }
 
         /// <summary>
-        /// Copy xml item to instance (table entries)
+        /// Map data
         /// </summary>
-        /// <param name="performContext"></param>
         /// <param name="dbContext"></param>
         /// <param name="oldObject"></param>
         /// <param name="rentalAgreement"></param>
@@ -133,19 +158,23 @@ namespace HETSAPI.Import
         /// <param name="workedDate"></param>
         /// <param name="equips"></param>
         /// <param name="systemId"></param>
-        private static void CopyToTimeRecorded(PerformContext performContext, DbAppContext dbContext, EquipUsage oldObject, 
+        private static void CopyToTimeRecorded(DbAppContext dbContext, EquipUsage oldObject, 
             ref RentalAgreement rentalAgreement, string note, string workedDate, List<Equipment> equips, string systemId)
         {            
-            // Add the user specified in oldObject.Modified_By and oldObject.Created_By if not there in the database
+            // add the user specified in oldObject.Modified_By and oldObject.Created_By if not there in the database
             User modifiedBy = ImportUtility.AddUserFromString(dbContext, "", systemId);
             User createdBy = ImportUtility.AddUserFromString(dbContext, oldObject.Created_By, systemId);
 
             if (rentalAgreement == null)
             {
-                rentalAgreement = new RentalAgreement();
-                rentalAgreement.RentalAgreementRates = new List<RentalAgreementRate>();
-                rentalAgreement.TimeRecords = new List<TimeRecord>();
-                Models.Equipment equip = equips.FirstOrDefault(x => x.Id == oldObject.Equip_Id); //dbContext.Equipments.FirstOrDefault(x => x.Id == oldObject.Equip_Id);
+                rentalAgreement = new RentalAgreement
+                {
+                    RentalAgreementRates = new List<RentalAgreementRate>(),
+                    TimeRecords = new List<TimeRecord>()
+                };
+
+                Equipment equip = equips.FirstOrDefault(x => x.Id == oldObject.Equip_Id); 
+
                 if (equip != null)
                 {
                     rentalAgreement.Equipment = equip;
@@ -153,18 +182,20 @@ namespace HETSAPI.Import
                 }
 
                 Models.Project proj = dbContext.Projects.FirstOrDefault(x => x.Id == oldObject.Project_Id);
+
                 if (proj != null)
                 {
                     rentalAgreement.Project = proj;
                     rentalAgreement.ProjectId = proj.Id;
                 }
 
-                // Adding rental agreement rates and Time_Records: The two are added together becase Time Record reference rental agreement rate.
-                addingRate_Time_For_RentaAgreement(dbContext, oldObject, ref rentalAgreement,  workedDate, systemId);
+                // adding rental agreement rates and Time_Records: The two are added together becase Time Record reference rental agreement rate.
+                AddingRateTimeForRentaAgreement(dbContext, oldObject, ref rentalAgreement,  workedDate, systemId);
 
                 rentalAgreement.Status = "Imported from BCBid";
                 rentalAgreement.Note = note;
-                rentalAgreement.EquipmentRate = (float)Decimal.Parse(oldObject.Rate == null ? "0" : oldObject.Rate, System.Globalization.NumberStyles.Any);
+                rentalAgreement.EquipmentRate = (float)Decimal.Parse(oldObject.Rate ?? "0", System.Globalization.NumberStyles.Any);
+
                 if (oldObject.Entered_Dt != null)
                 {
                     rentalAgreement.DatedOn =  DateTime.ParseExact(oldObject.Entered_Dt.Trim().Substring(0, 10), "yyyy-MM-dd", System.Globalization.CultureInfo.InvariantCulture);
@@ -181,17 +212,21 @@ namespace HETSAPI.Import
                         rentalAgreement.CreateTimestamp = DateTime.UtcNow;
                     }
                 }
+
                 rentalAgreement.CreateUserid = createdBy.SmUserId;           
                 dbContext.RentalAgreements.Add(rentalAgreement);
             }
             else
             {
                 rentalAgreement = dbContext.RentalAgreements.First(x => x.Note == note);
-                if (rentalAgreement.RentalAgreementRates==null)
+
+                if (rentalAgreement.RentalAgreementRates == null)
                     rentalAgreement.RentalAgreementRates = new List<RentalAgreementRate>();
+
                 if (rentalAgreement.TimeRecords == null)
                     rentalAgreement.TimeRecords = new List<TimeRecord>();
-                addingRate_Time_For_RentaAgreement(dbContext, oldObject, ref rentalAgreement,  workedDate, systemId);
+
+                AddingRateTimeForRentaAgreement(dbContext, oldObject, ref rentalAgreement,  workedDate, systemId);
                 rentalAgreement.LastUpdateUserid = modifiedBy.SmUserId;
                 rentalAgreement.LastUpdateTimestamp = DateTime.UtcNow;
                 dbContext.RentalAgreements.Update(rentalAgreement);
@@ -199,29 +234,29 @@ namespace HETSAPI.Import
         }
 
         /// <summary>
-        /// Adding (3) Rental Agreement Rate and (3) Time Records to rental agreement
+        /// Adding Rental Agreement Rate and Time Records to rental agreement
         /// </summary>
         /// <param name="dbContext"></param>
         /// <param name="oldObject"></param>
         /// <param name="rentalAgreement"></param>
         /// <param name="workedDate"></param>
         /// <param name="systemId"></param>
-        private static void addingRate_Time_For_RentaAgreement(DbAppContext dbContext, EquipUsage oldObject,
+        private static void AddingRateTimeForRentaAgreement(DbAppContext dbContext, EquipUsage oldObject,
             ref RentalAgreement rentalAgreement, string workedDate, string systemId)
         {
-            // Adding rental agreement rates and Time_Records: The two are added together becase Time Record reference rental agreement rate.
-            RentalAgreementRate rate = new RentalAgreementRate();
-            TimeRecord tRec = new TimeRecord();
-
-            //Adding general properties for RentalAgreement Rate
+            // adding rental agreement rates and time records: 
+            // the two are added together because time record reference rental agreement rate           
+            
+            // adding general properties for Rental Agreement Rate
             DateTime lastUpdateTimestamp = DateTime.UtcNow;
             if (oldObject.Entered_Dt != null)
             {
                 lastUpdateTimestamp = DateTime.ParseExact(oldObject.Entered_Dt.Trim().Substring(0, 10), "yyyy-MM-dd", System.Globalization.CultureInfo.InvariantCulture);
             }
+
             string lastUpdateUserid = oldObject.Created_By == null ? systemId : ImportUtility.AddUserFromString(dbContext, oldObject.Created_By, systemId).SmUserId;
 
-            //Adding general properties for Time Records
+            // adding general properties for Time Record
             DateTime workedDateTime;
             if (oldObject.Worked_Dt != null)
             {
@@ -242,73 +277,92 @@ namespace HETSAPI.Import
                 createdDate = DateTime.UtcNow;
             }           
 
-            //Adding three rates and hours using a Dictionary
-            Dictionary<int, Pair> _f = new Dictionary<int, Pair>();
-            float Rate   = (float)Decimal.Parse(oldObject.Rate   == null ? "0" : oldObject.Rate, System.Globalization.NumberStyles.Any);
-            float Rate2  = (float)Decimal.Parse(oldObject.Rate2  == null ? "0" : oldObject.Rate2, System.Globalization.NumberStyles.Any);
-            float Rate3  = (float)Decimal.Parse(oldObject.Rate3  == null ? "0" : oldObject.Rate3, System.Globalization.NumberStyles.Any);
-            float Hours  = (float)Decimal.Parse(oldObject.Hours  == null ? "0" : oldObject.Hours, System.Globalization.NumberStyles.Any);
-            float Hours2 = (float)Decimal.Parse(oldObject.Hours2 == null ? "0" : oldObject.Hours2, System.Globalization.NumberStyles.Any);
-            float Hours3 = (float)Decimal.Parse(oldObject.Hours3 == null ? "0" : oldObject.Hours3, System.Globalization.NumberStyles.Any);
-            // Add items to dictionary.
+            // adding three rates and hours using a Dictionary
+            Dictionary<int, Pair> f = new Dictionary<int, Pair>();
 
-            if (Hours != 0.0 || Rate != 0.0)
-                _f.Add(1, new Pair(Hours, Rate));
-            if (Hours2!=0.0 || Rate2 !=0.0)
-                _f.Add(2, new Pair(Hours2, Rate2));
-            if (Hours3 != 0.0 || Rate3 != 0.0)
-                _f.Add(3, new Pair(Hours3, Rate3));
+            float rate = (float)Decimal.Parse(oldObject.Rate ?? "0", System.Globalization.NumberStyles.Any);
+            float rate2 = (float)Decimal.Parse(oldObject.Rate2 ?? "0", System.Globalization.NumberStyles.Any);
+            float rate3 = (float)Decimal.Parse(oldObject.Rate3 ?? "0", System.Globalization.NumberStyles.Any);
+            float hours = (float)Decimal.Parse(oldObject.Hours ?? "0", System.Globalization.NumberStyles.Any);
+            float hours2 = (float)Decimal.Parse(oldObject.Hours2 ?? "0", System.Globalization.NumberStyles.Any);
+            float hours3 = (float)Decimal.Parse(oldObject.Hours3 ?? "0", System.Globalization.NumberStyles.Any);
 
-            // Use var in foreach loop.
+            // add items to dictionary
+            if (hours != 0.0 || rate != 0.0)
+                f.Add(1, new Pair(hours, rate));
+
+            if (hours2!=0.0 || rate2 !=0.0)
+                f.Add(2, new Pair(hours2, rate2));
+
+            if (hours3 != 0.0 || rate3 != 0.0)
+                f.Add(3, new Pair(hours3, rate3));
+
+            // use var in foreach loop.
             int ii = 0;
-            RentalAgreementRate [] rate_a= new RentalAgreementRate[3];
-            TimeRecord [] tRec_a = new TimeRecord[3];
-            foreach (var pair in _f)
+            RentalAgreementRate [] rateA= new RentalAgreementRate[3];
+            TimeRecord [] tRecA = new TimeRecord[3];
+
+            foreach (var pair in f)
             {
                 RentalAgreementRate exitingRate = rentalAgreement.RentalAgreementRates.FirstOrDefault(x => x.Rate == pair.Value.Rate);
-                if (exitingRate == null)  //rate does not exist
-                {  //  Adding the new rate  
-                    rate_a[ii] = new RentalAgreementRate();
-                    rate_a[ii].Comment = "Import from BCBid";
-                    rate_a[ii].IsAttachment = false;
-                    rate_a[ii].LastUpdateTimestamp = lastUpdateTimestamp;
-                    rate_a[ii].LastUpdateUserid = lastUpdateUserid;
-                    rate_a[ii].CreateTimestamp = createdDate;
-                    rate_a[ii].CreateUserid  = lastUpdateUserid;
-                    rate_a[ii].Rate = pair.Value.Rate;
-                    rentalAgreement.RentalAgreementRates.Add(rate_a[ii]);
-                    //Also add time Record
-                    tRec_a[ii] = new TimeRecord();
-                    tRec_a[ii].EnteredDate = lastUpdateTimestamp;
-                    tRec_a[ii].LastUpdateUserid = lastUpdateUserid;
-                    tRec_a[ii].WorkedDate = workedDateTime;
-                    tRec_a[ii].Hours = pair.Value.Hours;
-                    tRec_a[ii].CreateTimestamp = createdDate;
-                    tRec_a[ii].CreateUserid= lastUpdateUserid;
-                    tRec_a[ii].RentalAgreementRate = rate_a[ii];
-                    rentalAgreement.TimeRecords.Add(tRec_a[ii]);
+
+                // rate does not exist
+                if (exitingRate == null)  
+                {  
+                    // adding the new rate  
+                    rateA[ii] = new RentalAgreementRate
+                    {
+                        Comment = "Import from BCBid",
+                        IsAttachment = false,
+                        LastUpdateTimestamp = lastUpdateTimestamp,
+                        LastUpdateUserid = lastUpdateUserid,
+                        CreateTimestamp = createdDate,
+                        CreateUserid = lastUpdateUserid,
+                        Rate = pair.Value.Rate
+                    };
+
+                    rentalAgreement.RentalAgreementRates.Add(rateA[ii]);
+                    
+                    // add time Record
+                    tRecA[ii] = new TimeRecord
+                    {
+                        EnteredDate = lastUpdateTimestamp,
+                        LastUpdateUserid = lastUpdateUserid,
+                        WorkedDate = workedDateTime,
+                        Hours = pair.Value.Hours,
+                        CreateTimestamp = createdDate,
+                        CreateUserid = lastUpdateUserid,
+                        RentalAgreementRate = rateA[ii]
+                    };
+
+                    rentalAgreement.TimeRecords.Add(tRecA[ii]);
                 }
                 else   
-                {   //the rate already existed which is exitingRate, no need to add rate, just add Time Record
+                {   
+                    //the rate already existed which is exitingRate, no need to add rate, just add Time Record
                     TimeRecord existingTimeRec= rentalAgreement.TimeRecords.FirstOrDefault(x => x.WorkedDate == workedDateTime);
+
                     if (existingTimeRec == null)
-                    {   //The new Time Record  is added if it does not existm, otherwise, it's already existed.
-                        tRec_a[ii] = new TimeRecord();
-                        tRec_a[ii].EnteredDate = lastUpdateTimestamp;
-                        tRec_a[ii].LastUpdateUserid = lastUpdateUserid;
-                        tRec_a[ii].WorkedDate = workedDateTime;
-                        tRec_a[ii].Hours = pair.Value.Hours;
-                        tRec_a[ii].CreateTimestamp = createdDate;
-                        tRec_a[ii].CreateUserid = lastUpdateUserid;
-                        tRec_a[ii].RentalAgreementRate = exitingRate;
-                        rentalAgreement.TimeRecords.Add(tRec_a[ii]);
+                    {   
+                        // the new Time Record is added if it does not exist, otherwise, it already existed
+                        tRecA[ii] = new TimeRecord
+                        {
+                            EnteredDate = lastUpdateTimestamp,
+                            LastUpdateUserid = lastUpdateUserid,
+                            WorkedDate = workedDateTime,
+                            Hours = pair.Value.Hours,
+                            CreateTimestamp = createdDate,
+                            CreateUserid = lastUpdateUserid,
+                            RentalAgreementRate = exitingRate
+                        };
+
+                        rentalAgreement.TimeRecords.Add(tRecA[ii]);
                     }
                 }
+
                 ii++;
             }
-            // Ended adding Rental Agreement rates and time records.
         }
-
     }
 }
 

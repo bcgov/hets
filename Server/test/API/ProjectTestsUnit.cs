@@ -41,42 +41,20 @@ namespace HETSAPI.Test
         /// </summary>        
 		public ProjectUnitTest()
 		{			
-                    DbContextOptions<DbAppContext> options = new DbContextOptions<DbAppContext>();
-                    Mock<DbAppContext> dbAppContext = new Mock<DbAppContext>(null, options);
-			
-                    /*
-			
-                    Here you will need to mock up the context.
-			
-            ItemType fakeItem = new ItemType(...);
-
-            Mock<DbSet<ItemType>> mockList = MockDbSet.Create(fakeItem);
-
-            dbAppContext.Setup(x => x.ModelEndpoint).Returns(mockItem.Object);
-
-                    */
-
-                    ProjectService _service = new ProjectService(null, dbAppContext.Object);
-			
-                    _Project = new ProjectController (_service);
-
+            DbContextOptions<DbAppContext> options = new DbContextOptions<DbAppContext>();
+            Mock<DbAppContext> dbAppContext = new Mock<DbAppContext>(null, options);
+            ProjectService _service = new ProjectService(null, dbAppContext.Object);
+            _Project = new ProjectController (_service);
 		}
-	
-		
+			
 		[Fact]
 		/// <summary>
         /// Unit test for ProjectsBulkPost
         /// </summary>
 		public void TestProjectsBulkPost()
 		{
-			// Add test code here
-			// it may look like: 
-			//  var result = _ProjectController.ProjectsBulkPost();
-			//  Assert.True (result == expected-result);
-
-            Assert.True(true);
-		}		
-        
+			Assert.True(true);
+		}		        
 		
 		[Fact]
 		/// <summary>
@@ -84,14 +62,8 @@ namespace HETSAPI.Test
         /// </summary>
 		public void TestProjectsGet()
 		{
-			// Add test code here
-			// it may look like: 
-			//  var result = _ProjectController.ProjectsGet();
-			//  Assert.True (result == expected-result);
-
-            Assert.True(true);
-		}		
-        
+			Assert.True(true);
+		}		        
 		
 		[Fact]
 		/// <summary>
@@ -99,14 +71,8 @@ namespace HETSAPI.Test
         /// </summary>
 		public void TestProjectsIdDeletePost()
 		{
-			// Add test code here
-			// it may look like: 
-			//  var result = _ProjectController.ProjectsIdDeletePost();
-			//  Assert.True (result == expected-result);
-
-            Assert.True(true);
-		}		
-        
+			Assert.True(true);
+		}		        
 		
 		[Fact]
 		/// <summary>
@@ -114,14 +80,8 @@ namespace HETSAPI.Test
         /// </summary>
 		public void TestProjectsIdGet()
 		{
-			// Add test code here
-			// it may look like: 
-			//  var result = _ProjectController.ProjectsIdGet();
-			//  Assert.True (result == expected-result);
-
-            Assert.True(true);
-		}		
-        
+			Assert.True(true);
+		}		        
 		
 		[Fact]
 		/// <summary>
@@ -129,14 +89,8 @@ namespace HETSAPI.Test
         /// </summary>
 		public void TestProjectsIdPut()
 		{
-			// Add test code here
-			// it may look like: 
-			//  var result = _ProjectController.ProjectsIdPut();
-			//  Assert.True (result == expected-result);
-
-            Assert.True(true);
-		}		
-        
+			Assert.True(true);
+		}		        
 		
 		[Fact]
 		/// <summary>
@@ -144,13 +98,7 @@ namespace HETSAPI.Test
         /// </summary>
 		public void TestProjectsPost()
 		{
-			// Add test code here
-			// it may look like: 
-			//  var result = _ProjectController.ProjectsPost();
-			//  Assert.True (result == expected-result);
-
-            Assert.True(true);
-		}		
-        
+			Assert.True(true);
+		}		        
     }
 }

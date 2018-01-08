@@ -5,15 +5,14 @@ using Newtonsoft.Json;
 
 namespace HETSAPI.ViewModels
 {
-    /// <inheritdoc />
     /// <summary>
-    /// Group Membership
+    /// Group Membership View Model
     /// </summary>
     [DataContract]
-    public class GroupMembershipViewModel : IEquatable<GroupMembershipViewModel>
+    public sealed class GroupMembershipViewModel : IEquatable<GroupMembershipViewModel>
     {
         /// <summary>
-        /// Default constructor, required by entity framework
+        /// Group Membership View Model Constructor
         /// </summary>
         public GroupMembershipViewModel()
         {
@@ -65,12 +64,14 @@ namespace HETSAPI.ViewModels
         public override string ToString()
         {
             var sb = new StringBuilder();
+
             sb.Append("class GroupMembershipViewModel {\n");
             sb.Append("  Active: ").Append(Active).Append("\n");
             sb.Append("  GroupId: ").Append(GroupId).Append("\n");
             sb.Append("  UserId: ").Append(UserId).Append("\n");
             sb.Append("  Id: ").Append(Id).Append("\n");
             sb.Append("}\n");
+
             return sb.ToString();
         }
 
@@ -93,6 +94,7 @@ namespace HETSAPI.ViewModels
             if (ReferenceEquals(null, obj)) { return false; }
             if (ReferenceEquals(this, obj)) { return true; }
             if (obj.GetType() != GetType()) { return false; }
+
             return Equals((GroupMembershipViewModel)obj);
         }
 
@@ -103,7 +105,6 @@ namespace HETSAPI.ViewModels
         /// <returns>Boolean</returns>
         public bool Equals(GroupMembershipViewModel other)
         {
-
             if (ReferenceEquals(null, other)) { return false; }
             if (ReferenceEquals(this, other)) { return true; }
 
@@ -137,10 +138,9 @@ namespace HETSAPI.ViewModels
             unchecked // Overflow is fine, just wrap
             {
                 int hash = 41;
-                // Suitable nullity checks
-                   
-                hash = hash * 59 + Active.GetHashCode();
-                                                   
+
+                // Suitable nullity checks                   
+                hash = hash * 59 + Active.GetHashCode();                                                   
                 hash = hash * 59 + GroupId.GetHashCode();                                   
                 hash = hash * 59 + UserId.GetHashCode();
 

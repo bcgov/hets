@@ -7,65 +7,64 @@ using System.ComponentModel.DataAnnotations;
 namespace HETSAPI.Models
 {
     /// <summary>
-    /// An eligible piece of equipment for a request and a tracking of the hire offer and response process related to a request for that piece of equipment. Includes a link from the equipment to a Rental Agreement if the equipment was hired to satisfy a part of the request.
+    /// REntal Request Rotation List Database Model
     /// </summary>
-    [MetaDataExtension (Description = "An eligible piece of equipment for a request and a tracking of the hire offer and response process related to a request for that piece of equipment. Includes a link from the equipment to a Rental Agreement if the equipment was hired to satisfy a part of the request.")]
-
-    public partial class RentalRequestRotationList : AuditableEntity, IEquatable<RentalRequestRotationList>
+    [MetaData (Description = "An eligible piece of equipment for a request and a tracking of the hire offer and response process related to a request for that piece of equipment. Includes a link from the equipment to a Rental Agreement if the equipment was hired to satisfy a part of the request.")]
+    public sealed class RentalRequestRotationList : AuditableEntity, IEquatable<RentalRequestRotationList>
     {
         /// <summary>
-        /// Default constructor, required by entity framework
+        /// Rental REquest Rotation List Database Model Constructor (required by entity framework)
         /// </summary>
         public RentalRequestRotationList()
         {
-            this.Id = 0;
+            Id = 0;
         }
 
         /// <summary>
         /// Initializes a new instance of the <see cref="RentalRequestRotationList" /> class.
         /// </summary>
-        /// <param name="Id">A system-generated unique identifier for a RequestRotationList (required).</param>
-        /// <param name="RotationListSortOrder">The sort order of the piece of equipment on the rotation list at the time the request was created. This is the order the equipment will be offered the available work. (required).</param>
-        /// <param name="Equipment">Equipment (required).</param>
-        /// <param name="RentalAgreement">The rental agreement (if any) created for an accepted hire offer..</param>
-        /// <param name="IsForceHire">True if the HETS Clerk designated the hire of this equipment as being a Forced Hire. A Force Hire implies that the usual seniority rules for hiring are bypassed because of special circumstances related to the hire - e.g. a the hire requires an attachment only one piece of equipment has..</param>
-        /// <param name="WasAsked">True if the HETS Clerk contacted the equipment owner and asked to hire the piece of equipment..</param>
-        /// <param name="AskedDateTime">The Date-Time the HETS clerk contacted the equipment owner and asked to hire the piece of equipment..</param>
-        /// <param name="OfferResponse">The response to the offer to hire. Null prior to receiving a response; a string after with the response - likely just Yes or No.</param>
-        /// <param name="OfferRefusalReason">The reason why the user refused the offer based on a selection of values from the UI..</param>
-        /// <param name="OfferResponseDatetime">The date and time the final response to the offer was established..</param>
-        /// <param name="OfferResponseNote">A note entered about the response to the offer from the equipment owner about the offer. Usually used when the offer is a &amp;quot;No&amp;quot; or &amp;quot;Force Hire&amp;quot;..</param>
-        /// <param name="Note">An optional general note about the offer..</param>
-        public RentalRequestRotationList(int Id, int RotationListSortOrder, Equipment Equipment, RentalAgreement RentalAgreement = null, bool? IsForceHire = null, bool? WasAsked = null, DateTime? AskedDateTime = null, string OfferResponse = null, string OfferRefusalReason = null, DateTime? OfferResponseDatetime = null, string OfferResponseNote = null, string Note = null)
+        /// <param name="id">A system-generated unique identifier for a RequestRotationList (required).</param>
+        /// <param name="rotationListSortOrder">The sort order of the piece of equipment on the rotation list at the time the request was created. This is the order the equipment will be offered the available work. (required).</param>
+        /// <param name="equipment">Equipment (required).</param>
+        /// <param name="rentalAgreement">The rental agreement (if any) created for an accepted hire offer..</param>
+        /// <param name="isForceHire">True if the HETS Clerk designated the hire of this equipment as being a Forced Hire. A Force Hire implies that the usual seniority rules for hiring are bypassed because of special circumstances related to the hire - e.g. a the hire requires an attachment only one piece of equipment has..</param>
+        /// <param name="wasAsked">True if the HETS Clerk contacted the equipment owner and asked to hire the piece of equipment..</param>
+        /// <param name="askedDateTime">The Date-Time the HETS clerk contacted the equipment owner and asked to hire the piece of equipment..</param>
+        /// <param name="offerResponse">The response to the offer to hire. Null prior to receiving a response; a string after with the response - likely just Yes or No.</param>
+        /// <param name="offerRefusalReason">The reason why the user refused the offer based on a selection of values from the UI..</param>
+        /// <param name="offerResponseDatetime">The date and time the final response to the offer was established..</param>
+        /// <param name="offerResponseNote">A note entered about the response to the offer from the equipment owner about the offer. Usually used when the offer is a &amp;quot;No&amp;quot; or &amp;quot;Force Hire&amp;quot;..</param>
+        /// <param name="note">An optional general note about the offer..</param>
+        public RentalRequestRotationList(int id, int rotationListSortOrder, Equipment equipment, RentalAgreement rentalAgreement = null, 
+            bool? isForceHire = null, bool? wasAsked = null, DateTime? askedDateTime = null, string offerResponse = null, 
+            string offerRefusalReason = null, DateTime? offerResponseDatetime = null, string offerResponseNote = null, string note = null)
         {   
-            this.Id = Id;
-            this.RotationListSortOrder = RotationListSortOrder;
-            this.Equipment = Equipment;
-
-
-            this.RentalAgreement = RentalAgreement;
-            this.IsForceHire = IsForceHire;
-            this.WasAsked = WasAsked;
-            this.AskedDateTime = AskedDateTime;
-            this.OfferResponse = OfferResponse;
-            this.OfferRefusalReason = OfferRefusalReason;
-            this.OfferResponseDatetime = OfferResponseDatetime;
-            this.OfferResponseNote = OfferResponseNote;
-            this.Note = Note;
+            Id = id;
+            RotationListSortOrder = rotationListSortOrder;
+            Equipment = equipment;
+            RentalAgreement = rentalAgreement;
+            IsForceHire = isForceHire;
+            WasAsked = wasAsked;
+            AskedDateTime = askedDateTime;
+            OfferResponse = offerResponse;
+            OfferRefusalReason = offerRefusalReason;
+            OfferResponseDatetime = offerResponseDatetime;
+            OfferResponseNote = offerResponseNote;
+            Note = note;
         }
 
         /// <summary>
         /// A system-generated unique identifier for a RequestRotationList
         /// </summary>
         /// <value>A system-generated unique identifier for a RequestRotationList</value>
-        [MetaDataExtension (Description = "A system-generated unique identifier for a RequestRotationList")]
+        [MetaData (Description = "A system-generated unique identifier for a RequestRotationList")]
         public int Id { get; set; }
         
         /// <summary>
         /// The sort order of the piece of equipment on the rotation list at the time the request was created. This is the order the equipment will be offered the available work.
         /// </summary>
         /// <value>The sort order of the piece of equipment on the rotation list at the time the request was created. This is the order the equipment will be offered the available work.</value>
-        [MetaDataExtension (Description = "The sort order of the piece of equipment on the rotation list at the time the request was created. This is the order the equipment will be offered the available work.")]
+        [MetaData (Description = "The sort order of the piece of equipment on the rotation list at the time the request was created. This is the order the equipment will be offered the available work.")]
         public int RotationListSortOrder { get; set; }
         
         /// <summary>
@@ -77,15 +76,14 @@ namespace HETSAPI.Models
         /// Foreign key for Equipment 
         /// </summary>   
         [ForeignKey("Equipment")]
-		[JsonIgnore]
-		
+		[JsonIgnore]		
         public int? EquipmentId { get; set; }
         
         /// <summary>
         /// The rental agreement (if any) created for an accepted hire offer.
         /// </summary>
         /// <value>The rental agreement (if any) created for an accepted hire offer.</value>
-        [MetaDataExtension (Description = "The rental agreement (if any) created for an accepted hire offer.")]
+        [MetaData (Description = "The rental agreement (if any) created for an accepted hire offer.")]
         public RentalAgreement RentalAgreement { get; set; }
         
         /// <summary>
@@ -93,69 +91,66 @@ namespace HETSAPI.Models
         /// </summary>   
         [ForeignKey("RentalAgreement")]
 		[JsonIgnore]
-		[MetaDataExtension (Description = "The rental agreement (if any) created for an accepted hire offer.")]
+		[MetaData (Description = "The rental agreement (if any) created for an accepted hire offer.")]
         public int? RentalAgreementId { get; set; }
         
         /// <summary>
         /// True if the HETS Clerk designated the hire of this equipment as being a Forced Hire. A Force Hire implies that the usual seniority rules for hiring are bypassed because of special circumstances related to the hire - e.g. a the hire requires an attachment only one piece of equipment has.
         /// </summary>
         /// <value>True if the HETS Clerk designated the hire of this equipment as being a Forced Hire. A Force Hire implies that the usual seniority rules for hiring are bypassed because of special circumstances related to the hire - e.g. a the hire requires an attachment only one piece of equipment has.</value>
-        [MetaDataExtension (Description = "True if the HETS Clerk designated the hire of this equipment as being a Forced Hire. A Force Hire implies that the usual seniority rules for hiring are bypassed because of special circumstances related to the hire - e.g. a the hire requires an attachment only one piece of equipment has.")]
+        [MetaData (Description = "True if the HETS Clerk designated the hire of this equipment as being a Forced Hire. A Force Hire implies that the usual seniority rules for hiring are bypassed because of special circumstances related to the hire - e.g. a the hire requires an attachment only one piece of equipment has.")]
         public bool? IsForceHire { get; set; }
         
         /// <summary>
         /// True if the HETS Clerk contacted the equipment owner and asked to hire the piece of equipment.
         /// </summary>
         /// <value>True if the HETS Clerk contacted the equipment owner and asked to hire the piece of equipment.</value>
-        [MetaDataExtension (Description = "True if the HETS Clerk contacted the equipment owner and asked to hire the piece of equipment.")]
+        [MetaData (Description = "True if the HETS Clerk contacted the equipment owner and asked to hire the piece of equipment.")]
         public bool? WasAsked { get; set; }
         
         /// <summary>
         /// The Date-Time the HETS clerk contacted the equipment owner and asked to hire the piece of equipment.
         /// </summary>
         /// <value>The Date-Time the HETS clerk contacted the equipment owner and asked to hire the piece of equipment.</value>
-        [MetaDataExtension (Description = "The Date-Time the HETS clerk contacted the equipment owner and asked to hire the piece of equipment.")]
+        [MetaData (Description = "The Date-Time the HETS clerk contacted the equipment owner and asked to hire the piece of equipment.")]
         public DateTime? AskedDateTime { get; set; }
         
         /// <summary>
         /// The response to the offer to hire. Null prior to receiving a response; a string after with the response - likely just Yes or No
         /// </summary>
         /// <value>The response to the offer to hire. Null prior to receiving a response; a string after with the response - likely just Yes or No</value>
-        [MetaDataExtension (Description = "The response to the offer to hire. Null prior to receiving a response; a string after with the response - likely just Yes or No")]
+        [MetaData (Description = "The response to the offer to hire. Null prior to receiving a response; a string after with the response - likely just Yes or No")]
         public string OfferResponse { get; set; }
         
         /// <summary>
         /// The reason why the user refused the offer based on a selection of values from the UI.
         /// </summary>
         /// <value>The reason why the user refused the offer based on a selection of values from the UI.</value>
-        [MetaDataExtension (Description = "The reason why the user refused the offer based on a selection of values from the UI.")]
-        [MaxLength(50)]
-        
+        [MetaData (Description = "The reason why the user refused the offer based on a selection of values from the UI.")]
+        [MaxLength(50)]        
         public string OfferRefusalReason { get; set; }
         
         /// <summary>
         /// The date and time the final response to the offer was established.
         /// </summary>
         /// <value>The date and time the final response to the offer was established.</value>
-        [MetaDataExtension (Description = "The date and time the final response to the offer was established.")]
+        [MetaData (Description = "The date and time the final response to the offer was established.")]
         public DateTime? OfferResponseDatetime { get; set; }
         
         /// <summary>
         /// A note entered about the response to the offer from the equipment owner about the offer. Usually used when the offer is a &quot;No&quot; or &quot;Force Hire&quot;.
         /// </summary>
         /// <value>A note entered about the response to the offer from the equipment owner about the offer. Usually used when the offer is a &quot;No&quot; or &quot;Force Hire&quot;.</value>
-        [MetaDataExtension (Description = "A note entered about the response to the offer from the equipment owner about the offer. Usually used when the offer is a &quot;No&quot; or &quot;Force Hire&quot;.")]
-        [MaxLength(2048)]
-        
+        [MetaData (Description = "A note entered about the response to the offer from the equipment owner about the offer. Usually used when the offer is a &quot;No&quot; or &quot;Force Hire&quot;.")]
+        [MaxLength(2048)]        
         public string OfferResponseNote { get; set; }
         
         /// <summary>
         /// An optional general note about the offer.
         /// </summary>
         /// <value>An optional general note about the offer.</value>
-        [MetaDataExtension (Description = "An optional general note about the offer.")]
-        [MaxLength(2048)]
-        
+        [MetaData (Description = "An optional general note about the offer.")]
+        [MaxLength(2048)]        
         public string Note { get; set; }
         
         /// <summary>
@@ -165,6 +160,7 @@ namespace HETSAPI.Models
         public override string ToString()
         {
             var sb = new StringBuilder();
+
             sb.Append("class RentalRequestRotationList {\n");
             sb.Append("  Id: ").Append(Id).Append("\n");
             sb.Append("  RotationListSortOrder: ").Append(RotationListSortOrder).Append("\n");
@@ -179,6 +175,7 @@ namespace HETSAPI.Models
             sb.Append("  OfferResponseNote: ").Append(OfferResponseNote).Append("\n");
             sb.Append("  Note: ").Append(Note).Append("\n");
             sb.Append("}\n");
+
             return sb.ToString();
         }
 
@@ -198,10 +195,9 @@ namespace HETSAPI.Models
         /// <returns>Boolean</returns>
         public override bool Equals(object obj)
         {
-            if (ReferenceEquals(null, obj)) { return false; }
+            if (obj is null) { return false; }
             if (ReferenceEquals(this, obj)) { return true; }
-            if (obj.GetType() != GetType()) { return false; }
-            return Equals((RentalRequestRotationList)obj);
+            return obj.GetType() == GetType() && Equals((RentalRequestRotationList)obj);
         }
 
         /// <summary>
@@ -211,68 +207,67 @@ namespace HETSAPI.Models
         /// <returns>Boolean</returns>
         public bool Equals(RentalRequestRotationList other)
         {
-
-            if (ReferenceEquals(null, other)) { return false; }
+            if (other is null) { return false; }
             if (ReferenceEquals(this, other)) { return true; }
 
             return                 
                 (
-                    this.Id == other.Id ||
-                    this.Id.Equals(other.Id)
+                    Id == other.Id ||
+                    Id.Equals(other.Id)
                 ) &&                 
                 (
-                    this.RotationListSortOrder == other.RotationListSortOrder ||
-                    this.RotationListSortOrder.Equals(other.RotationListSortOrder)
+                    RotationListSortOrder == other.RotationListSortOrder ||
+                    RotationListSortOrder.Equals(other.RotationListSortOrder)
                 ) &&                 
                 (
-                    this.Equipment == other.Equipment ||
-                    this.Equipment != null &&
-                    this.Equipment.Equals(other.Equipment)
+                    Equipment == other.Equipment ||
+                    Equipment != null &&
+                    Equipment.Equals(other.Equipment)
                 ) &&                 
                 (
-                    this.RentalAgreement == other.RentalAgreement ||
-                    this.RentalAgreement != null &&
-                    this.RentalAgreement.Equals(other.RentalAgreement)
+                    RentalAgreement == other.RentalAgreement ||
+                    RentalAgreement != null &&
+                    RentalAgreement.Equals(other.RentalAgreement)
                 ) &&                 
                 (
-                    this.IsForceHire == other.IsForceHire ||
-                    this.IsForceHire != null &&
-                    this.IsForceHire.Equals(other.IsForceHire)
+                    IsForceHire == other.IsForceHire ||
+                    IsForceHire != null &&
+                    IsForceHire.Equals(other.IsForceHire)
                 ) &&                 
                 (
-                    this.WasAsked == other.WasAsked ||
-                    this.WasAsked != null &&
-                    this.WasAsked.Equals(other.WasAsked)
+                    WasAsked == other.WasAsked ||
+                    WasAsked != null &&
+                    WasAsked.Equals(other.WasAsked)
                 ) &&                 
                 (
-                    this.AskedDateTime == other.AskedDateTime ||
-                    this.AskedDateTime != null &&
-                    this.AskedDateTime.Equals(other.AskedDateTime)
+                    AskedDateTime == other.AskedDateTime ||
+                    AskedDateTime != null &&
+                    AskedDateTime.Equals(other.AskedDateTime)
                 ) &&                 
                 (
-                    this.OfferResponse == other.OfferResponse ||
-                    this.OfferResponse != null &&
-                    this.OfferResponse.Equals(other.OfferResponse)
+                    OfferResponse == other.OfferResponse ||
+                    OfferResponse != null &&
+                    OfferResponse.Equals(other.OfferResponse)
                 ) &&                 
                 (
-                    this.OfferRefusalReason == other.OfferRefusalReason ||
-                    this.OfferRefusalReason != null &&
-                    this.OfferRefusalReason.Equals(other.OfferRefusalReason)
+                    OfferRefusalReason == other.OfferRefusalReason ||
+                    OfferRefusalReason != null &&
+                    OfferRefusalReason.Equals(other.OfferRefusalReason)
                 ) &&                 
                 (
-                    this.OfferResponseDatetime == other.OfferResponseDatetime ||
-                    this.OfferResponseDatetime != null &&
-                    this.OfferResponseDatetime.Equals(other.OfferResponseDatetime)
+                    OfferResponseDatetime == other.OfferResponseDatetime ||
+                    OfferResponseDatetime != null &&
+                    OfferResponseDatetime.Equals(other.OfferResponseDatetime)
                 ) &&                 
                 (
-                    this.OfferResponseNote == other.OfferResponseNote ||
-                    this.OfferResponseNote != null &&
-                    this.OfferResponseNote.Equals(other.OfferResponseNote)
+                    OfferResponseNote == other.OfferResponseNote ||
+                    OfferResponseNote != null &&
+                    OfferResponseNote.Equals(other.OfferResponseNote)
                 ) &&                 
                 (
-                    this.Note == other.Note ||
-                    this.Note != null &&
-                    this.Note.Equals(other.Note)
+                    Note == other.Note ||
+                    Note != null &&
+                    Note.Equals(other.Note)
                 );
         }
 
@@ -286,48 +281,58 @@ namespace HETSAPI.Models
             unchecked // Overflow is fine, just wrap
             {
                 int hash = 41;
-                // Suitable nullity checks
-                                   
-                hash = hash * 59 + this.Id.GetHashCode();                                   
-                hash = hash * 59 + this.RotationListSortOrder.GetHashCode();                   
-                if (this.Equipment != null)
+
+                // Suitable nullity checks                                   
+                hash = hash * 59 + Id.GetHashCode();                                   
+                hash = hash * 59 + RotationListSortOrder.GetHashCode();
+
+                if (Equipment != null)
                 {
-                    hash = hash * 59 + this.Equipment.GetHashCode();
+                    hash = hash * 59 + Equipment.GetHashCode();
                 }                   
-                if (this.RentalAgreement != null)
+                if (RentalAgreement != null)
                 {
-                    hash = hash * 59 + this.RentalAgreement.GetHashCode();
-                }                if (this.IsForceHire != null)
+                    hash = hash * 59 + RentalAgreement.GetHashCode();
+                }
+
+                if (IsForceHire != null)
                 {
-                    hash = hash * 59 + this.IsForceHire.GetHashCode();
-                }                
-                                if (this.WasAsked != null)
+                    hash = hash * 59 + IsForceHire.GetHashCode();
+                }
+
+                if (WasAsked != null)
                 {
-                    hash = hash * 59 + this.WasAsked.GetHashCode();
-                }                
-                                if (this.AskedDateTime != null)
+                    hash = hash * 59 + WasAsked.GetHashCode();
+                }
+
+                if (AskedDateTime != null)
                 {
-                    hash = hash * 59 + this.AskedDateTime.GetHashCode();
-                }                
-                                if (this.OfferResponse != null)
+                    hash = hash * 59 + AskedDateTime.GetHashCode();
+                }
+
+                if (OfferResponse != null)
                 {
-                    hash = hash * 59 + this.OfferResponse.GetHashCode();
-                }                
-                                if (this.OfferRefusalReason != null)
+                    hash = hash * 59 + OfferResponse.GetHashCode();
+                }
+
+                if (OfferRefusalReason != null)
                 {
-                    hash = hash * 59 + this.OfferRefusalReason.GetHashCode();
-                }                
-                                if (this.OfferResponseDatetime != null)
+                    hash = hash * 59 + OfferRefusalReason.GetHashCode();
+                }
+
+                if (OfferResponseDatetime != null)
                 {
-                    hash = hash * 59 + this.OfferResponseDatetime.GetHashCode();
-                }                
-                                if (this.OfferResponseNote != null)
+                    hash = hash * 59 + OfferResponseDatetime.GetHashCode();
+                }
+
+                if (OfferResponseNote != null)
                 {
-                    hash = hash * 59 + this.OfferResponseNote.GetHashCode();
-                }                
-                                if (this.Note != null)
+                    hash = hash * 59 + OfferResponseNote.GetHashCode();
+                }
+
+                if (Note != null)
                 {
-                    hash = hash * 59 + this.Note.GetHashCode();
+                    hash = hash * 59 + Note.GetHashCode();
                 }                
                 
                 return hash;

@@ -1,23 +1,7 @@
-/*
- * REST API Documentation for the MOTI Hired Equipment Tracking System (HETS) Application
- *
- * The Hired Equipment Program is for owners/operators who have a dump truck, bulldozer, backhoe or  other piece of equipment they want to hire out to the transportation ministry for day labour and  emergency projects.  The Hired Equipment Program distributes available work to local equipment owners. The program is  based on seniority and is designed to deliver work to registered users fairly and efficiently  through the development of local area call-out lists. 
- *
- * OpenAPI spec version: v1
- * 
- * 
- */
-
-using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.TestHost;
 using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
 using System.Net.Http;
 using System.Threading.Tasks;
 using Xunit;
-using HETSAPI;
 using System.Text;
 using System.Net;
 using Newtonsoft.Json;
@@ -32,10 +16,11 @@ namespace HETSAPI.Test
         /// <summary>
         /// Basic Integration test for Roles
         /// </summary>
-        public async void TestRolesBasic()
+        public async Task TestRolesBasic()
         {
             string initialName = "InitialName";
             string changedName = "ChangedName";
+
             // first test the POST.
             var request = new HttpRequestMessage(HttpMethod.Post, "/api/roles");
 
@@ -51,10 +36,11 @@ namespace HETSAPI.Test
 
             // parse as JSON.
             jsonString = await response.Content.ReadAsStringAsync();
-
             role = JsonConvert.DeserializeObject<RoleViewModel>(jsonString);
+
             // get the id
             var id = role.Id;
+
             // change the name
             role.Name = changedName;
 
@@ -84,17 +70,16 @@ namespace HETSAPI.Test
             // should get a 404 if we try a get now.
             request = new HttpRequestMessage(HttpMethod.Get, "/api/roles/" + id);
             response = await _client.SendAsync(request);
-            Assert.Equal(response.StatusCode, HttpStatusCode.NotFound);
+            Assert.Equal(HttpStatusCode.NotFound, response.StatusCode);
         }
 
         [Fact]
         /// <summary>
         /// Test Users and Roles
         /// </summary>
-        public async void TestUserRoles()
+        public async Task TestUserRoles()
         {
             // first create a role.
-
             string initialName = "InitialName";
             var request = new HttpRequestMessage(HttpMethod.Post, "/api/roles");
             RoleViewModel role = new RoleViewModel();
@@ -110,6 +95,7 @@ namespace HETSAPI.Test
             jsonString = await response.Content.ReadAsStringAsync();
 
             role = JsonConvert.DeserializeObject<RoleViewModel>(jsonString);
+
             // get the role id
             var role_id = role.Id;
 
@@ -125,6 +111,7 @@ namespace HETSAPI.Test
             // parse as JSON.
             jsonString = await response.Content.ReadAsStringAsync();
             user = JsonConvert.DeserializeObject<UserViewModel>(jsonString);
+
             // get the user id
             var user_id = user.Id;
 
@@ -145,7 +132,6 @@ namespace HETSAPI.Test
             response.EnsureSuccessStatusCode();
 
             // if we do a get we should get the same items.
-
             request = new HttpRequestMessage(HttpMethod.Get, "/api/roles/" + role_id + "/users");
             response = await _client.SendAsync(request);
             response.EnsureSuccessStatusCode();
@@ -156,8 +142,6 @@ namespace HETSAPI.Test
 
             Assert.Equal(items[0].UserId, userRolesResponse[0].Id);
 
-            // cleanup
-
             // Delete user
             request = new HttpRequestMessage(HttpMethod.Post, "/api/users/" + user_id + "/delete");
             response = await _client.SendAsync(request);
@@ -166,7 +150,7 @@ namespace HETSAPI.Test
             // should get a 404 if we try a get now.
             request = new HttpRequestMessage(HttpMethod.Get, "/api/users/" + user_id);
             response = await _client.SendAsync(request);
-            Assert.Equal(response.StatusCode, HttpStatusCode.NotFound);
+            Assert.Equal(HttpStatusCode.NotFound, response.StatusCode);
 
             // Delete role
             request = new HttpRequestMessage(HttpMethod.Post, "/api/roles/" + role_id + "/delete");
@@ -176,15 +160,14 @@ namespace HETSAPI.Test
             // should get a 404 if we try a get now.
             request = new HttpRequestMessage(HttpMethod.Get, "/api/roles/" + role_id);
             response = await _client.SendAsync(request);
-            Assert.Equal(response.StatusCode, HttpStatusCode.NotFound);
-
+            Assert.Equal(HttpStatusCode.NotFound, response.StatusCode);
         }
 
         [Fact]
         /// <summary>
         /// Test Users and Roles
         /// </summary>
-        public async void TestRolePermissions()
+        public async Task TestRolePermissions()
         {
             // first create a role.
             string initialName = "InitialName";
@@ -217,9 +200,9 @@ namespace HETSAPI.Test
             // parse as JSON.
             jsonString = await response.Content.ReadAsStringAsync();
             permission = JsonConvert.DeserializeObject<Permission>(jsonString);
+
             // get the permission id
             int permission_id = permission.Id;
-
 
             // now add the permission to the role.                                  
             request = new HttpRequestMessage(HttpMethod.Post, "/api/roles/" + role_id + "/permissions");
@@ -229,7 +212,6 @@ namespace HETSAPI.Test
             response.EnsureSuccessStatusCode();
 
             // if we do a get we should get the same items.
-
             request = new HttpRequestMessage(HttpMethod.Get, "/api/roles/" + role_id + "/permissions");
             response = await _client.SendAsync(request);
             response.EnsureSuccessStatusCode();
@@ -247,7 +229,7 @@ namespace HETSAPI.Test
                 }
             }
 
-            Assert.Equal(found, true);            
+            Assert.True(found);            
 
             // test the put.
             Permission[] items = new Permission[1];
@@ -272,10 +254,7 @@ namespace HETSAPI.Test
                 }
             }
 
-            Assert.Equal(found, true);
-
-
-            // cleanup
+            Assert.True(found);
 
             // Delete permission
             request = new HttpRequestMessage(HttpMethod.Post, "/api/permissions/" + permission_id + "/delete");
@@ -285,7 +264,7 @@ namespace HETSAPI.Test
             // should get a 404 if we try a get now.
             request = new HttpRequestMessage(HttpMethod.Get, "/api/permissions/" + permission_id);
             response = await _client.SendAsync(request);
-            Assert.Equal(response.StatusCode, HttpStatusCode.NotFound);
+            Assert.Equal(HttpStatusCode.NotFound, response.StatusCode);
 
             // Delete role
             request = new HttpRequestMessage(HttpMethod.Post, "/api/roles/" + role_id + "/delete");
@@ -295,7 +274,7 @@ namespace HETSAPI.Test
             // should get a 404 if we try a get now.
             request = new HttpRequestMessage(HttpMethod.Get, "/api/roles/" + role_id);
             response = await _client.SendAsync(request);
-            Assert.Equal(response.StatusCode, HttpStatusCode.NotFound);
+            Assert.Equal(HttpStatusCode.NotFound, response.StatusCode);
         }
     }
 }

@@ -38,10 +38,6 @@ namespace HETSAPI.Test
         /// </summary>        
 		public CityApiUnitTest()
 		{			
-            DbContextOptions<DbAppContext> options = new DbContextOptions<DbAppContext>();
-            Mock<DbAppContext> dbAppContext = new Mock<DbAppContext>(null, options);			                   
-            CityService _service = new CityService(dbAppContext.Object);
-            CityController cityApi = new CityController (_service);
 		}	
 		
 		[Fact]

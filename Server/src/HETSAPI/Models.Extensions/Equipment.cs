@@ -5,12 +5,23 @@ using System.Linq;
 namespace HETSAPI.Models
 {
     /// <summary>
-    /// Equipment
+    /// Equipment Database Model Extension
     /// </summary>
-    public partial class Equipment
+    public sealed partial class Equipment
     {
+        /// <summary>
+        /// Dump TRuck Constant
+        /// </summary>
         private const float DUMP_TRUCK_CONSTANT = 60.0F;
+
+        /// <summary>
+        /// Non-Dump Truck Constant
+        /// </summary>
         private const float OTHER_CONSTANT = 50.0F;
+
+        /// <summary>
+        /// Approved Status Code
+        /// </summary>
         public const string STATUS_APPROVED = "Approved";
 
         /// <summary>
@@ -28,19 +39,23 @@ namespace HETSAPI.Models
 
             float seniorityConstant = OTHER_CONSTANT;
 
-            if (this.DumpTruck != null) // Dump trucks have a special constant
+            if (DumpTruck != null) // Dump trucks have a special constant
             {
                 seniorityConstant = DUMP_TRUCK_CONSTANT;
             }
+
             float totalHoursWorked = 0.0F;
+
             if (ServiceHoursLastYear != null)
             {
                 totalHoursWorked += (float) ServiceHoursLastYear;
             }
+
             if (ServiceHoursTwoYearsAgo != null)
             {
                 totalHoursWorked += (float)ServiceHoursTwoYearsAgo;
             }
+
             if (ServiceHoursThreeYearsAgo != null)
             {
                 totalHoursWorked += (float)ServiceHoursThreeYearsAgo;
@@ -48,7 +63,7 @@ namespace HETSAPI.Models
 
             float averageHoursWorked = totalHoursWorked / 3.0F;
 
-            this.Seniority = (this.YearsOfService * seniorityConstant) + averageHoursWorked;
+            Seniority = (YearsOfService * seniorityConstant) + averageHoursWorked;
         }
 
         /// <summary>
@@ -63,7 +78,7 @@ namespace HETSAPI.Models
              *  The Excel - yearfrac() function can be used to verify years of service calculations              
              */
 
-            DateTime dateRegistered = (DateTime) this.ReceivedDate;
+            DateTime dateRegistered = ReceivedDate;
 
             // first calculate the year difference.
             DateTime april1 = new DateTime(year, 4, 1);
@@ -83,7 +98,6 @@ namespace HETSAPI.Models
             // now calculate the difference in the last fiscal year.
 
             // since the date is calculated from April 1, we are only concerned about sitations where the current year is a leap year.
-
             float daysInYear = 365.0F;
 
             if (DateTime.IsLeapYear(april1.Year))
@@ -91,12 +105,11 @@ namespace HETSAPI.Models
                 daysInYear = 366.0F;
             }                            
 
-            System.TimeSpan diff = april1.Subtract(dateRegistered);
+            TimeSpan diff = april1.Subtract(dateRegistered);
 
             float remainder = (float)(diff.TotalDays / daysInYear);
 
-            this.YearsOfService = (float)yearDifference + remainder;
-                       
+            YearsOfService = (float)yearDifference + remainder;                       
         }
 
         /// <summary>
@@ -104,20 +117,16 @@ namespace HETSAPI.Models
         /// </summary>
         /// <param name="changed"></param>
         /// <returns>True if the changed record differes from this one</returns>
-        public bool IsSeniorityAuditRequired( Equipment changed)            
+        public bool IsSeniorityAuditRequired(Equipment changed)            
         {
-            bool result = false;
-            if ( (this.Seniority != changed.Seniority)
-                || (this.LocalArea != changed.LocalArea)
-                || (this.BlockNumber != changed.BlockNumber)
-                || (this.Owner != changed.Owner)
-                || (this.ServiceHoursLastYear != changed.ServiceHoursLastYear)
-                || (this.ServiceHoursTwoYearsAgo != changed.ServiceHoursTwoYearsAgo)
-                || (this.ServiceHoursThreeYearsAgo != changed.ServiceHoursThreeYearsAgo)
-                )
-            {
-                result = true;
-            }
+            bool result = (Seniority != changed.Seniority) || 
+                          (LocalArea != changed.LocalArea) || 
+                          (BlockNumber != changed.BlockNumber) || 
+                          (Owner != changed.Owner) || 
+                          (ServiceHoursLastYear != changed.ServiceHoursLastYear) || 
+                          (ServiceHoursTwoYearsAgo != changed.ServiceHoursTwoYearsAgo) || 
+                          (ServiceHoursThreeYearsAgo != changed.ServiceHoursThreeYearsAgo);
+
             return result;
         }
 
@@ -132,10 +141,12 @@ namespace HETSAPI.Models
             float result = 0.0F;
 
             DateTime startingDate = new DateTime(year, 3, 31);
-            // get all the time data since then.
+
+            // get all the time data since then
             float? summation = context.TimeRecords
                    .Include(x => x.RentalAgreement.Equipment)
-                   .Where(x => x.RentalAgreement.Equipment.Id == Id && x.WorkedDate >= startingDate)
+                   .Where(x => x.RentalAgreement.Equipment.Id == Id && 
+                               x.WorkedDate >= startingDate)
                    .Sum(x => x.Hours);
 
             if (summation != null)

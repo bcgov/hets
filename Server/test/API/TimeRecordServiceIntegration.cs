@@ -33,7 +33,7 @@ namespace HETSAPI.Test
 		/// <summary>
         /// Integration test for BulkPost
         /// </summary>
-		public async void TestBulkPost()
+		public async Task TestBulkPost()
 		{
             var request = new HttpRequestMessage(HttpMethod.Post, "/api/timerecords/bulk");
             request.Content = new StringContent("[]", Encoding.UTF8, "application/json");
@@ -47,7 +47,7 @@ namespace HETSAPI.Test
         /// <summary>
         /// Integration test 
         /// </summary>
-        public async void TestBasic()
+        public async Task TestBasic()
         {
             string initialName = "InitialName";
             string changedName = "ChangedName";
@@ -99,8 +99,7 @@ namespace HETSAPI.Test
             // should get a 404 if we try a get now.
             request = new HttpRequestMessage(HttpMethod.Get, "/api/timerecords/" + id);
             response = await _client.SendAsync(request);
-            Assert.Equal(response.StatusCode, HttpStatusCode.NotFound);
+            Assert.Equal(HttpStatusCode.NotFound, response.StatusCode);
         }
-
     }
 }

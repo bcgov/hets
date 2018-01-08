@@ -42,71 +42,37 @@ namespace HETSAPI.Test
 		public UserUnitTest()
 		{
             DbContextOptions<DbAppContext> options = new DbContextOptions<DbAppContext>();
-            Mock<DbAppContext> dbAppContext = new Mock<DbAppContext>(null, options);
-
-            /*
-
-            Here you will need to mock up the context.
-
-    ItemType fakeItem = new ItemType(...);
-
-    Mock<DbSet<ItemType>> mockList = MockDbSet.Create(fakeItem);
-
-    dbAppContext.Setup(x => x.ModelEndpoint).Returns(mockItem.Object);
-
-            */
-
-            UserService _service = new UserService(null, dbAppContext.Object);
-			
-                    _UserApi = new UserController (_service);
-
+            Mock<DbAppContext> dbAppContext = new Mock<DbAppContext>(null, options);           
+            UserService _service = new UserService(null, dbAppContext.Object);			
+            _UserApi = new UserController (_service);
 		}
-	
 		
 		[Fact]
 		/// <summary>
         /// Unit test for UsersBulkPost
         /// </summary>
 		public void TestUsersBulkPost()
-		{
-			// Add test code here
-			// it may look like: 
-			//  var result = _UserController.UsersBulkPost();
-			//  Assert.True (result == expected-result);
-
+		{			
             Assert.True(true);
-		}		
-        
+		}		        
 		
 		[Fact]
 		/// <summary>
         /// Unit test for UsersCurrentGet
         /// </summary>
 		public void TestUsersCurrentGet()
-		{
-			// Add test code here
-			// it may look like: 
-			//  var result = _UserController.UsersCurrentGet();
-			//  Assert.True (result == expected-result);
-
+		{		
             Assert.True(true);
 		}		
-        
-		
+        		
 		[Fact]
 		/// <summary>
         /// Unit test for UsersGet
         /// </summary>
 		public void TestUsersGet()
 		{
-			// Add test code here
-			// it may look like: 
-			//  var result = _UserController.UsersGet();
-			//  Assert.True (result == expected-result);
-
-            Assert.True(true);
-		}		
-        
+			Assert.True(true);
+		}		        
 		
 		[Fact]
 		/// <summary>
@@ -114,14 +80,8 @@ namespace HETSAPI.Test
         /// </summary>
 		public void TestUsersIdDelete()
 		{
-			// Add test code here
-			// it may look like: 
-			//  var result = _UserController.UsersIdDelete();
-			//  Assert.True (result == expected-result);
-
-            Assert.True(true);
-		}		
-        
+			Assert.True(true);
+		}		        
 		
 		[Fact]
 		/// <summary>
@@ -129,14 +89,8 @@ namespace HETSAPI.Test
         /// </summary>
 		public void TestUsersIdFavouritesGet()
 		{
-			// Add test code here
-			// it may look like: 
-			//  var result = _UserController.UsersIdFavouritesGet();
-			//  Assert.True (result == expected-result);
-
-            Assert.True(true);
-		}		
-        
+			Assert.True(true);
+		}		        
 		
 		[Fact]
 		/// <summary>
@@ -144,14 +98,8 @@ namespace HETSAPI.Test
         /// </summary>
 		public void TestUsersIdGet()
 		{
-			// Add test code here
-			// it may look like: 
-			//  var result = _UserController.UsersIdGet();
-			//  Assert.True (result == expected-result);
-
-            Assert.True(true);
-		}		
-        
+			Assert.True(true);
+		}		        
 		
 		[Fact]
 		/// <summary>
@@ -159,14 +107,8 @@ namespace HETSAPI.Test
         /// </summary>
 		public void TestUsersIdGroupsGet()
 		{
-			// Add test code here
-			// it may look like: 
-			//  var result = _UserController.UsersIdGroupsGet();
-			//  Assert.True (result == expected-result);
-
-            Assert.True(true);
-		}		
-        
+			Assert.True(true);
+		}		        
 		
 		[Fact]
 		/// <summary>
@@ -174,14 +116,8 @@ namespace HETSAPI.Test
         /// </summary>
 		public void TestUsersIdGroupsPut()
 		{
-			// Add test code here
-			// it may look like: 
-			//  var result = _UserController.UsersIdGroupsPut();
-			//  Assert.True (result == expected-result);
-
-            Assert.True(true);
-		}		
-        
+			Assert.True(true);
+		}		        
 		
 		[Fact]
 		/// <summary>
@@ -189,14 +125,8 @@ namespace HETSAPI.Test
         /// </summary>
 		public void TestUsersIdNotificationGet()
 		{
-			// Add test code here
-			// it may look like: 
-			//  var result = _UserController.UsersIdNotificationGet();
-			//  Assert.True (result == expected-result);
-
-            Assert.True(true);
-		}		
-        
+			Assert.True(true);
+		}		        
 		
 		[Fact]
 		/// <summary>
@@ -204,14 +134,8 @@ namespace HETSAPI.Test
         /// </summary>
 		public void TestUsersIdPermissionsGet()
 		{
-			// Add test code here
-			// it may look like: 
-			//  var result = _UserController.UsersIdPermissionsGet();
-			//  Assert.True (result == expected-result);
-
-            Assert.True(true);
-		}		
-        
+			Assert.True(true);
+		}		        
 		
 		[Fact]
 		/// <summary>
@@ -219,14 +143,8 @@ namespace HETSAPI.Test
         /// </summary>
 		public void TestUsersIdPut()
 		{
-			// Add test code here
-			// it may look like: 
-			//  var result = _UserController.UsersIdPut();
-			//  Assert.True (result == expected-result);
-
-            Assert.True(true);
-		}		
-        
+			Assert.True(true);
+		}		        
 		
 		[Fact]
 		/// <summary>
@@ -234,14 +152,8 @@ namespace HETSAPI.Test
         /// </summary>
 		public void TestUsersIdRolesGet()
 		{
-			// Add test code here
-			// it may look like: 
-			//  var result = _UserController.UsersIdRolesGet();
-			//  Assert.True (result == expected-result);
-
-            Assert.True(true);
-		}		
-        
+			Assert.True(true);
+		}		        
 		
 		[Fact]
 		/// <summary>
@@ -249,29 +161,17 @@ namespace HETSAPI.Test
         /// </summary>
 		public void TestUsersIdRolesPost()
 		{
-			// Add test code here
-			// it may look like: 
-			//  var result = _UserController.UsersIdRolesPost();
-			//  Assert.True (result == expected-result);
-
-            Assert.True(true);
+			Assert.True(true);
 		}		
-        
-		
+        		
 		[Fact]
 		/// <summary>
         /// Unit test for UsersIdRolesPut
         /// </summary>
 		public void TestUsersIdRolesPut()
 		{
-			// Add test code here
-			// it may look like: 
-			//  var result = _UserController.UsersIdRolesPut();
-			//  Assert.True (result == expected-result);
-
-            Assert.True(true);
-		}		
-        
+			Assert.True(true);
+		}		        
 		
 		[Fact]
 		/// <summary>
@@ -279,13 +179,7 @@ namespace HETSAPI.Test
         /// </summary>
 		public void TestUsersPost()
 		{
-			// Add test code here
-			// it may look like: 
-			//  var result = _UserController.UsersPost();
-			//  Assert.True (result == expected-result);
-
-            Assert.True(true);
-		}		
-        
+			Assert.True(true);
+		}		        
     }
 }

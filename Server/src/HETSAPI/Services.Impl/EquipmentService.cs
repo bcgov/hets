@@ -278,11 +278,11 @@ namespace HETSAPI.Services.Impl
                 }
                 if (limit == null)
                 {
-                    limit = data.Count() - offset;
+                    limit = data.Count - offset;
                 }
                 List<HistoryViewModel> result = new List<HistoryViewModel>();
 
-                for (int i = (int)offset; i < data.Count() && i < offset + limit; i++)
+                for (int i = (int)offset; i < data.Count && i < offset + limit; i++)
                 {
                     result.Add(data[i].ToViewModel(id));
                 }
@@ -669,18 +669,18 @@ namespace HETSAPI.Services.Impl
         /// Searches Equipment
         /// </summary>
         /// <remarks>Used for the equipment search page.</remarks>
-        /// <param name="localareasCSV">Local Areas (array of id numbers)</param>
-        /// <param name="typesCSV">Equipment Types (array of id numbers)</param>
+        /// <param name="localareas">Local Areas (array of id numbers)</param>
+        /// <param name="types">Equipment Types (array of id numbers)</param>
         /// <param name="equipmentAttachment">Equipment Attachments </param>
         /// <param name="owner"></param>
         /// <param name="status">Status</param>
         /// <param name="hired">Hired</param>
         /// <param name="notverifiedsincedate">Not Verified Since Date</param>
         /// <response code="200">OK</response>
-        public virtual IActionResult EquipmentSearchGetAsync(string localareasCSV, string typesCSV, string equipmentAttachment, int? owner, string status, bool? hired, DateTime? notverifiedsincedate)
+        public virtual IActionResult EquipmentSearchGetAsync(string localareas, string types, string equipmentAttachment, int? owner, string status, bool? hired, DateTime? notverifiedsincedate)
         {
-            int?[] localareas = ParseIntArray(localareasCSV);
-            int?[] types = ParseIntArray(typesCSV);
+            int?[] localareasArray = ParseIntArray(localareas);
+            int?[] typesArray = ParseIntArray(types);
 
             var data = _context.Equipments
                     .Include(x => x.LocalArea.ServiceArea.District.Region)
@@ -697,9 +697,9 @@ namespace HETSAPI.Services.Impl
             int? districtId = _context.GetDistrictIdByUserId(GetCurrentUserId()).Single();
             data = data.Where(x => x.LocalArea.ServiceArea.DistrictId.Equals(districtId));
 
-            if (localareas != null && localareas.Length > 0)
+            if (localareasArray != null && localareasArray.Length > 0)
             {
-                data = data.Where(x => localareas.Contains(x.LocalArea.Id));
+                data = data.Where(x => localareasArray.Contains(x.LocalArea.Id));
             }
 
             if (equipmentAttachment != null)
@@ -728,9 +728,9 @@ namespace HETSAPI.Services.Impl
                 data = data.Where(e => hiredEquipmentQuery.Contains(e.Id));
             }
 
-            if (types != null && types.Length > 0)
+            if (typesArray != null && typesArray.Length > 0)
             {
-                data = data.Where(x => types.Contains(x.DistrictEquipmentType.Id));
+                data = data.Where(x => typesArray.Contains(x.DistrictEquipmentType.Id));
             }
 
             if (notverifiedsincedate != null)

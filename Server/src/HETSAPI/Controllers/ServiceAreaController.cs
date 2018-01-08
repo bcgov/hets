@@ -34,7 +34,7 @@ namespace HETSAPI.Controllers
         [RequiresPermission(Permission.ADMIN)]
         public virtual IActionResult ServiceareasBulkPost([FromBody]ServiceArea[] items)
         {
-            return _service.ServiceareasBulkPostAsync(items);
+            return _service.ServiceAreasBulkPostAsync(items);
         }
 
         /// <summary>
@@ -47,7 +47,7 @@ namespace HETSAPI.Controllers
         [SwaggerResponse(200, type: typeof(List<ServiceArea>))]
         public virtual IActionResult ServiceareasGet()
         {
-            return _service.ServiceareasGetAsync();
+            return _service.ServiceAreasGetAsync();
         }
 
         /// <summary>
@@ -61,7 +61,7 @@ namespace HETSAPI.Controllers
         [SwaggerOperation("ServiceareasIdDeletePost")]
         public virtual IActionResult ServiceareasIdDeletePost([FromRoute]int id)
         {
-            return _service.ServiceareasIdDeletePostAsync(id);
+            return _service.ServiceAreasIdDeletePostAsync(id);
         }
 
         /// <summary>
@@ -76,7 +76,7 @@ namespace HETSAPI.Controllers
         [SwaggerResponse(200, type: typeof(ServiceArea))]
         public virtual IActionResult ServiceareasIdGet([FromRoute]int id)
         {
-            return _service.ServiceareasIdGetAsync(id);
+            return _service.ServiceAreasIdGetAsync(id);
         }
 
         /// <summary>
@@ -92,7 +92,7 @@ namespace HETSAPI.Controllers
         [SwaggerResponse(200, type: typeof(ServiceArea))]
         public virtual IActionResult ServiceareasIdPut([FromRoute]int id, [FromBody]ServiceArea item)
         {
-            return _service.ServiceareasIdPutAsync(id, item);
+            return _service.ServiceAreasIdPutAsync(id, item);
         }
 
         /// <summary>
@@ -106,7 +106,7 @@ namespace HETSAPI.Controllers
         [SwaggerResponse(200, type: typeof(ServiceArea))]
         public virtual IActionResult ServiceareasPost([FromBody]ServiceArea item)
         {
-            return _service.ServiceareasPostAsync(item);
+            return _service.ServiceAreasPostAsync(item);
         }
     }
 }

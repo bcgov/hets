@@ -61,7 +61,7 @@ var Equipment = React.createClass({
         ownerId: this.props.search.ownerId || 0,
         ownerName: this.props.search.ownerName || 'Owner',
         lastVerifiedDate: this.props.search.lastVerifiedDate || '',
-        hired: this.props.search.hired,
+        hired: this.props.search.hired || false,
         statusCode: this.props.search.statusCode || '',
       },
 
@@ -124,10 +124,6 @@ var Equipment = React.createClass({
       }
       this.fetch();
     });
-  },
-
-  componentWillUnmount() {
-    store.dispatch({ type: Action.UPDATE_EQUIPMENT_LIST_SEARCH, equipmentList: {} });
   },
 
   fetch() {
@@ -205,7 +201,7 @@ var Equipment = React.createClass({
                   items={ districtEquipmentTypes } selectedIds={ this.state.search.selectedEquipmentTypesIds } updateState={ this.updateSearchState } showMaxItems={ 2 } />
                 <FilterDropdown id="ownerId" placeholder="Owner" fieldName="organizationName" blankLine="(All)"
                   items={ owners } selectedId={ this.state.search.ownerId } updateState={ this.updateSearchState } />
-                <CheckboxControl inline id="hired" value={ this.state.search.hired } updateState={ this.updateSearchState }>Hired</CheckboxControl>
+                <CheckboxControl inline id="hired" checked={ this.state.search.hired } updateState={ this.updateSearchState }>Hired</CheckboxControl>
               </ButtonToolbar>
             </Row>
             <Row>

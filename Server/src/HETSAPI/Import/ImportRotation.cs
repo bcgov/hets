@@ -1,116 +1,139 @@
 ﻿using Hangfire.Console;
 using Hangfire.Server;
-using HETSAPI.Models;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Xml.Serialization;
+using Hangfire.Console.Progress;
+using HETSAPI.ImportModels;
+using HETSAPI.Models;
 
 namespace HETSAPI.Import
-
 {
-    public class ImportRotation
+    /// <summary>
+    /// Import Rotation Records
+    /// </summary>
+    public static class ImportRotation
     {
-        const string oldTable = "Rotation_Doc";
-        const string newTable = "HET_NOTE";
-        const string xmlFileName = "Rotation_Doc.xml";
-        public static string oldTable_Progress = oldTable + "_Progress";
+        const string OldTable = "Rotation_Doc";
+        const string NewTable = "HET_NOTE";
+        const string XmlFileName = "Rotation_Doc.xml";
 
-        static public void Import(PerformContext performContext, DbAppContext dbContext, string fileLocation, string systemId)
+        /// <summary>
+        /// Progress Property
+        /// </summary>
+        public static string OldTableProgress => OldTable + "_Progress";
+
+        /// <summary>
+        /// Import Rotations
+        /// </summary>
+        /// <param name="performContext"></param>
+        /// <param name="dbContext"></param>
+        /// <param name="fileLocation"></param>
+        /// <param name="systemId"></param>
+        public static void Import(PerformContext performContext, DbAppContext dbContext, string fileLocation, string systemId)
         {
-            // Check the start point. If startPoint ==  sigId then it is already completed
-            int startPoint = ImportUtility.CheckInterMapForStartPoint(dbContext, oldTable_Progress, BCBidImport.sigId);
-            if (startPoint == BCBidImport.sigId)    // This means the import job it has done today is complete for all the records in the xml file.
+            // check the start point. If startPoint ==  sigId then it is already completed
+            int startPoint = ImportUtility.CheckInterMapForStartPoint(dbContext, OldTableProgress, BCBidImport.SigId);
+
+            if (startPoint == BCBidImport.SigId)    // this means the import job it has done today is complete for all the records in the xml file.
             {
-                performContext.WriteLine("*** Importing " + xmlFileName + " is complete from the former process ***");
+                performContext.WriteLine("*** Importing " + XmlFileName + " is complete from the former process ***");
                 return;
             }
+
             try
             {
-                string rootAttr = "ArrayOf" + oldTable;
+                string rootAttr = "ArrayOf" + OldTable;
 
                 //Create Processer progress indicator
-                performContext.WriteLine("Processing " + oldTable);
-                var progress = performContext.WriteProgressBar();
+                performContext.WriteLine("Processing " + OldTable);
+                IProgressBar progress = performContext.WriteProgressBar();
                 progress.SetValue(0);
 
                 // create serializer and serialize xml file
-                XmlSerializer ser = new XmlSerializer(typeof(Rotation_Doc[]), new XmlRootAttribute(rootAttr));
-                MemoryStream memoryStream = ImportUtility.memoryStreamGenerator(xmlFileName, oldTable, fileLocation, rootAttr);
-                HETSAPI.Import.Rotation_Doc[] legacyItems = (HETSAPI.Import.Rotation_Doc[])ser.Deserialize(memoryStream);
+                XmlSerializer ser = new XmlSerializer(typeof(RotationDoc[]), new XmlRootAttribute(rootAttr));
+                MemoryStream memoryStream = ImportUtility.MemoryStreamGenerator(XmlFileName, OldTable, fileLocation, rootAttr);
+                RotationDoc[] legacyItems = (RotationDoc[])ser.Deserialize(memoryStream);
 
                 //Use this list to save a trip to query database in each iteration
-                List<Models.Equipment> equips = dbContext.Equipments
+                List<Equipment> equips = dbContext.Equipments
                         .Include(x => x.DumpTruck)
                         .Include(x => x.DistrictEquipmentType)
                         .ToList();
-                List<Models.Project> projs = dbContext.Projects
-                        .ToList();
 
                 int ii = startPoint;
-                if (startPoint > 0)    // Skip the portion already processed
+
+                // skip the portion already processed
+                if (startPoint > 0)    
                 {
                     legacyItems = legacyItems.Skip(ii).ToArray();
                 }
 
-                foreach (var item in legacyItems.WithProgress(progress))
+                foreach (RotationDoc item in legacyItems.WithProgress(progress))
                 {
-                    // see if we have this one already.
+                    // see if we have this one already
                     string oldKey = item.Equip_Id + item.Note_Dt + item.Created_Dt;
-                    ImportMap importMap = dbContext.ImportMaps.FirstOrDefault(x => x.OldTable == oldTable && x.OldKey == oldKey);
+                    ImportMap importMap = dbContext.ImportMaps.FirstOrDefault(x => x.OldTable == OldTable && x.OldKey == oldKey);
 
-                    if (importMap == null) // new entry
+                    // new entry
+                    if (importMap == null) 
                     {
-                        Models.Note instance = null;
-                        CopyToInstance(performContext, dbContext, item, ref instance, equips, projs, systemId);
-                        ImportUtility.AddImportMap(dbContext, oldTable, oldKey, newTable, instance.Id);
+                        Note instance = null;
+                        CopyToInstance(dbContext, item, ref instance, equips);
+                        ImportUtility.AddImportMap(dbContext, OldTable, oldKey, NewTable, instance.Id);
                     }
                     else // update
                     {
-                        Models.Note instance = dbContext.Notes.FirstOrDefault(x => x.Id == importMap.NewKey);
-                        if (instance == null) // record was deleted
+                        Note instance = dbContext.Notes.FirstOrDefault(x => x.Id == importMap.NewKey);
+
+                        // record was deleted
+                        if (instance == null) 
                         {
-                            CopyToInstance(performContext, dbContext, item, ref instance, equips, projs, systemId);
-                            // update the import map.
+                            CopyToInstance(dbContext, item, ref instance, equips);
+
+                            // update the import map
                             importMap.NewKey = instance.Id;
                             dbContext.ImportMaps.Update(importMap);
                         }
                         else // ordinary update.
                         {
-                            CopyToInstance(performContext, dbContext, item, ref instance, equips, projs, systemId);
-                            // touch the import map.
+                            CopyToInstance(dbContext, item, ref instance, equips);
+
+                            // touch the import map
                             importMap.LastUpdateTimestamp = DateTime.UtcNow;
                             dbContext.ImportMaps.Update(importMap);
                         }
                     }
 
+                    // save change to database periodically to avoid frequent writing to the database
                     if (++ii % 1000 == 0)
                     {
                         try
                         {
-                            ImportUtility.AddImportMap_For_Progress(dbContext, oldTable_Progress, ii.ToString(), BCBidImport.sigId);
-                            int iResult = dbContext.SaveChangesForImport();
+                            ImportUtility.AddImportMapForProgress(dbContext, OldTableProgress, ii.ToString(), BCBidImport.SigId);
+                            dbContext.SaveChangesForImport();
                         }
                         catch (Exception e)
                         {
-                            string iStr = e.ToString();
+                            performContext.WriteLine("Error saving data " + e.Message);
                         }
                     }
                 }
+
                 try
                 {
-                    performContext.WriteLine("*** Importing " + xmlFileName + " is Done ***");
-                    ImportUtility.AddImportMap_For_Progress(dbContext, oldTable_Progress, BCBidImport.sigId.ToString(), BCBidImport.sigId);
-                    int iResult = dbContext.SaveChangesForImport();
+                    performContext.WriteLine("*** Importing " + XmlFileName + " is Done ***");
+                    ImportUtility.AddImportMapForProgress(dbContext, OldTableProgress, BCBidImport.SigId.ToString(), BCBidImport.SigId);
+                    dbContext.SaveChangesForImport();
                 }
                 catch (Exception e)
                 {
-                    string iStr = e.ToString();
+                    performContext.WriteLine("Error saving data " + e.Message);
                 }
             }
-
             catch (Exception e)
             {
                 performContext.WriteLine("*** ERROR ***");
@@ -119,41 +142,31 @@ namespace HETSAPI.Import
         }
 
         /// <summary>
-        /// Copy xml item to instance (table entries)
+        /// Map data
         /// </summary>
-        /// <param name="performContext"></param>
         /// <param name="dbContext"></param>
         /// <param name="oldObject"></param>
         /// <param name="instance"></param>
-        /// <param name="projs"></param>
-        /// <param name="systemId"></param>
         /// <param name="equips"></param>
-        static private void CopyToInstance(PerformContext performContext, DbAppContext dbContext, HETSAPI.Import.Rotation_Doc oldObject, ref Models.Note instance,
-            List<Models.Equipment> equips, List<Models.Project> projs, string systemId)
+        private static void CopyToInstance(DbAppContext dbContext, RotationDoc oldObject, ref Note instance, List<Equipment> equips)
         {
-            //Add the user specified in oldObject.Modified_By and oldObject.Created_By if not there in the database
-            Models.User modifiedBy = ImportUtility.AddUserFromString(dbContext, "", systemId);
-            Models.User createdBy = ImportUtility.AddUserFromString(dbContext, oldObject.Created_By, systemId);
-
             if (instance == null)
             {
-                instance = new Models.Note();
+                instance = new Note();
 
-                Models.Project proj = projs.FirstOrDefault(x => x.Id == oldObject.Project_Id);    
-                Models.Equipment equip = equips.FirstOrDefault(x => x.Id == oldObject.Equip_Id);
+                Equipment equip = equips.FirstOrDefault(x => x.Id == oldObject.Equip_Id);
+
                 if (equip != null)
                 {
                     if (equip.Notes == null)
                         equip.Notes = new List<Note>();
 
-
-                    Models.Note note = new Note();
-                    note.Text = new string(oldObject.Reason.Take(2048).ToArray());
-                    note.IsNoLongerRelevant = true;
-                    if (proj != null)
-                    { // The current model does not allow Project Id to be added to thge Note. while Note model should have Project ID
-                       // note. = oldObject.Project_Id;
-                    }
+                    Note note = new Note
+                    {
+                        Text = new string(oldObject.Reason.Take(2048).ToArray()),
+                        IsNoLongerRelevant = true
+                    };
+                    
                     equip.Notes.Add(note);
                     dbContext.Equipments.Update(equip);
                 } 

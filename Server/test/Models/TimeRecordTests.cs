@@ -28,8 +28,7 @@ namespace HETSAPI.Test
     
     public class TimeRecordModelTests
     {
-        // TODO uncomment below to declare an instance variable for TimeRecord
-        private TimeRecord instance;
+        private readonly TimeRecord instance;
 
         /// <summary>
         /// Setup the test.

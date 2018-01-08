@@ -7,7 +7,10 @@ using System.Linq;
 
 namespace HETSAPI.Models
 {
-    public static class IDbAppContextExtensions
+    /// <summary>
+    /// Database Content Extensions (i.e. non standard CRUD operations)
+    /// </summary>
+    public static class DbAppContextExtensions
     {
         /// <summary>
         /// Returns a district for a given Ministry Id
@@ -20,6 +23,7 @@ namespace HETSAPI.Models
             District district = context.Districts.Where(x => x.MinistryDistrictID == id)
                     .Include(x => x.Region)
                     .FirstOrDefault();
+
             return district;
         }
 
@@ -31,8 +35,8 @@ namespace HETSAPI.Models
         /// <returns>Region</returns>
         public static Region GetRegionByMinistryRegionId(this IDbAppContext context, int id)
         {
-            Region region = context.Regions.Where(x => x.MinistryRegionID == id)
-                    .FirstOrDefault();
+            Region region = context.Regions.FirstOrDefault(x => x.MinistryRegionID == id);
+
             return region;
         }
 
@@ -47,6 +51,7 @@ namespace HETSAPI.Models
             ServiceArea serviceArea = context.ServiceAreas.Where(x => x.MinistryServiceAreaID == id)
                     .Include(x => x.District.Region)
                     .FirstOrDefault();
+
             return serviceArea;
         }
 
@@ -57,43 +62,73 @@ namespace HETSAPI.Models
         /// <param name="userId">A user id</param>
         /// <returns>Region</returns>
         public static IQueryable<int?> GetDistrictIdByUserId(this IDbAppContext context, int? userId)
-        {
-            // TODO: Change user model types to match DB schema
-            // TODO: Change to return IQueryable
+        {            
             return context.Users.Where(x => x.Id.Equals(userId)).Select(x => x.DistrictId);
         }
 
+        /// <summary>
+        /// Returns a role based on the role name
+        /// </summary>
+        /// <param name="context"></param>
+        /// <param name="name"></param>
+        /// <returns></returns>
         public static Role GetRole(this IDbAppContext context, string name)
         {
             Role role = context.Roles.Where(x => x.Name.Equals(name, StringComparison.OrdinalIgnoreCase))
                     .Include(r => r.RolePermissions).ThenInclude(p => p.Permission)
                     .FirstOrDefault();
+
             return role;
         }
 
+        /// <summary>
+        /// Returns a group based on the group name
+        /// </summary>
+        /// <param name="context"></param>
+        /// <param name="name"></param>
+        /// <returns></returns>
         public static Group GetGroup(this IDbAppContext context, string name)
         {
             return context.Groups.FirstOrDefault(x => x.Name.Equals(name, StringComparison.OrdinalIgnoreCase));
         }
 
+        /// <summary>
+        /// Returns a user based on the guid
+        /// </summary>
+        /// <param name="context"></param>
+        /// <param name="guid"></param>
+        /// <returns></returns>
         public static User GetUserByGuid(this IDbAppContext context, string guid)
         {
             User user = context.Users.Where(x => x.Guid != null && x.Guid.Equals(guid, StringComparison.OrdinalIgnoreCase))
                     .Include(u => u.UserRoles).ThenInclude(r => r.Role).ThenInclude(rp => rp.RolePermissions).ThenInclude(p => p.Permission)
                     .Include(u => u.GroupMemberships).ThenInclude(gm => gm.Group)
                     .FirstOrDefault();
+
             return user;
         }
 
+        /// <summary>
+        /// Returns a user based on the account name
+        /// </summary>
+        /// <param name="context"></param>
+        /// <param name="smUserId"></param>
+        /// <returns></returns>
         public static User GetUserBySmUserId(this IDbAppContext context, string smUserId)
         {
             User user = context.Users.Where(x => x.SmUserId != null && x.SmUserId.Equals(smUserId, StringComparison.OrdinalIgnoreCase))
                     .Include(u => u.UserRoles).ThenInclude(r => r.Role).ThenInclude(rp => rp.RolePermissions).ThenInclude(p => p.Permission)
                     .Include(u => u.GroupMemberships).ThenInclude(gm => gm.Group)
                     .FirstOrDefault();
+
             return user;
         }
 
+        /// <summary>
+        /// Create users from a (json) file
+        /// </summary>
+        /// <param name="context"></param>
+        /// <param name="userJsonPath"></param>
         public static void AddInitialUsersFromFile(this IDbAppContext context, string userJsonPath)
         {
             if (!string.IsNullOrEmpty(userJsonPath) && File.Exists(userJsonPath))
@@ -106,6 +141,7 @@ namespace HETSAPI.Models
         private static void AddInitialUsers(this IDbAppContext context, string userJson)
         {
             List<User> users = JsonConvert.DeserializeObject<List<User>>(userJson);
+
             if(users != null)
             {
                 context.AddInitialUsers(users);
@@ -114,12 +150,9 @@ namespace HETSAPI.Models
 
         private static void AddInitialUsers(this IDbAppContext context, List<User> users)
         {
-            users.ForEach(u => context.AddInitialUser(u));
+            users.ForEach(context.AddInitialUser);
         }
-
-        /// <summary>
-        /// Adds a user to the system, only if they do not exist.
-        /// </summary>
+       
         private static void AddInitialUser(this IDbAppContext context, User initialUser)
         {
             User user = context.GetUserBySmUserId(initialUser.SmUserId);
@@ -128,15 +161,17 @@ namespace HETSAPI.Models
                 return;
             }
 
-            user = new User();
-            user.Active = true;
-            user.Email = initialUser.Email;
-            user.GivenName = initialUser.GivenName;
-            user.Initials = initialUser.Initials;
-            user.SmAuthorizationDirectory = initialUser.SmAuthorizationDirectory;
-            user.SmUserId = initialUser.SmUserId;
-            user.Surname = initialUser.Surname;
-            
+            user = new User
+            {
+                Active = true,
+                Email = initialUser.Email,
+                GivenName = initialUser.GivenName,
+                Initials = initialUser.Initials,
+                SmAuthorizationDirectory = initialUser.SmAuthorizationDirectory,
+                SmUserId = initialUser.SmUserId,
+                Surname = initialUser.Surname
+            };
+
 
             District district = null;
 
@@ -151,6 +186,7 @@ namespace HETSAPI.Models
             context.SaveChanges();
 
             string[] userRoles = initialUser.UserRoles.Select(x => x.Role.Name).ToArray();
+
             if (user.UserRoles == null)
                 user.UserRoles = new List<UserRole>();
 
@@ -190,7 +226,11 @@ namespace HETSAPI.Models
             context.SaveChanges();
         }
 
-
+        /// <summary>
+        /// Create regions from a (json) file
+        /// </summary>
+        /// <param name="context"></param>
+        /// <param name="regionJsonPath"></param>
         public static void AddInitialRegionsFromFile(this IDbAppContext context, string regionJsonPath)
         {
             if (!string.IsNullOrEmpty(regionJsonPath) && File.Exists(regionJsonPath))
@@ -203,6 +243,7 @@ namespace HETSAPI.Models
         private static void AddInitialRegions(this IDbAppContext context, string regionJson)
         {
             List<Region> regions = JsonConvert.DeserializeObject<List<Region>>(regionJson);
+
             if (regions != null)
             {
                 context.AddInitialRegions(regions);
@@ -211,7 +252,7 @@ namespace HETSAPI.Models
 
         private static void AddInitialRegions(this IDbAppContext context, List<Region> regions)
         {
-            regions.ForEach(u => context.AddInitialRegion(u));
+            regions.ForEach(context.AddInitialRegion);
         }
 
         /// <summary>
@@ -225,17 +266,19 @@ namespace HETSAPI.Models
                 return;
             }
 
-            region = new Region();
-            region.MinistryRegionID = initialRegion.MinistryRegionID;
-            region.Name = initialRegion.Name;
-            region.StartDate = initialRegion.StartDate;
+            region = new Region
+            {
+                MinistryRegionID = initialRegion.MinistryRegionID,
+                Name = initialRegion.Name,
+                StartDate = initialRegion.StartDate
+            };
 
             context.Regions.Add(region);
             context.SaveChanges();
         }
 
         /// <summary>
-        /// Adds initial districts from a file
+        /// Adds initial districts from a (json) file
         /// </summary>
         /// <param name="context"></param>
         /// <param name="districtJsonPath"></param>
@@ -259,7 +302,7 @@ namespace HETSAPI.Models
 
         private static void AddInitialDistricts(this IDbAppContext context, List<District> districts)
         {
-            districts.ForEach(u => context.AddInitialDistrict(u));
+            districts.ForEach(context.AddInitialDistrict);
         }
 
         /// <summary>
@@ -273,10 +316,13 @@ namespace HETSAPI.Models
                 return;
             }
 
-            district = new District();
-            district.MinistryDistrictID = initialDistrict.MinistryDistrictID;
-            district.Name = initialDistrict.Name;
-            district.StartDate = initialDistrict.StartDate;
+            district = new District
+            {
+                MinistryDistrictID = initialDistrict.MinistryDistrictID,
+                Name = initialDistrict.Name,
+                StartDate = initialDistrict.StartDate
+            };
+
             if (initialDistrict.Region != null)
             {
                 Region region = context.GetRegionByMinistryRegionId(initialDistrict.Region.MinistryRegionID);
@@ -291,7 +337,11 @@ namespace HETSAPI.Models
             context.SaveChanges();
         }
 
-
+        /// <summary>
+        /// Create servive areas from a (json) file
+        /// </summary>
+        /// <param name="context"></param>
+        /// <param name="districtJsonPath"></param>
         public static void AddInitialServiceAreasFromFile(this IDbAppContext context, string districtJsonPath)
         {
             if (!string.IsNullOrEmpty(districtJsonPath) && File.Exists(districtJsonPath))
@@ -304,6 +354,7 @@ namespace HETSAPI.Models
         private static void AddInitialServiceAreas(this IDbAppContext context, string serviceAreaJson)
         {
             List<ServiceArea> serviceAreas = JsonConvert.DeserializeObject<List<ServiceArea>>(serviceAreaJson);
+
             if (serviceAreas != null)
             {
                 context.AddInitialServiceAreas(serviceAreas);
@@ -312,24 +363,25 @@ namespace HETSAPI.Models
 
         private static void AddInitialServiceAreas(this IDbAppContext context, List<ServiceArea> serviceAreas)
         {
-            serviceAreas.ForEach(u => context.AddInitialServiceArea(u));
+            serviceAreas.ForEach(context.AddInitialServiceArea);
         }
-
-        /// <summary>
-        /// Adds a service area to the system, only if it does not exist.
-        /// </summary>
+     
         private static void AddInitialServiceArea(this IDbAppContext context, ServiceArea initialServiceArea)
         {
             ServiceArea serviceArea = context.GetServiceAreaByMinistryServiceAreaId(initialServiceArea.MinistryServiceAreaID);
+
             if (serviceArea != null)
             {
                 return;
             }
 
-            serviceArea = new ServiceArea();
-            serviceArea.MinistryServiceAreaID = initialServiceArea.MinistryServiceAreaID;
-            serviceArea.Name = initialServiceArea.Name;
-            serviceArea.StartDate = initialServiceArea.StartDate;
+            serviceArea = new ServiceArea
+            {
+                MinistryServiceAreaID = initialServiceArea.MinistryServiceAreaID,
+                Name = initialServiceArea.Name,
+                StartDate = initialServiceArea.StartDate
+            };
+
             if (initialServiceArea.District != null)
             {
                 District district = context.GetDistrictByMinistryDistrictId(initialServiceArea.District.MinistryDistrictID);
@@ -344,15 +396,20 @@ namespace HETSAPI.Models
             context.SaveChanges();
         }
 
+        /// <summary>
+        /// Update district
+        /// </summary>
+        /// <param name="context"></param>
+        /// <param name="districtInfo"></param>
         public static void UpdateSeedDistrictInfo(this DbAppContext context, District districtInfo)
         {
             // Adjust the region.
+            int ministryRegionId = districtInfo.Region.MinistryRegionID;
 
-            int ministry_region_id = districtInfo.Region.MinistryRegionID;
-            var exists = context.Regions.Any(a => a.MinistryRegionID == ministry_region_id);
+            var exists = context.Regions.Any(a => a.MinistryRegionID == ministryRegionId);
             if (exists)
             {
-                Region region = context.Regions.First(a => a.MinistryRegionID == ministry_region_id);
+                Region region = context.Regions.First(a => a.MinistryRegionID == ministryRegionId);
                 districtInfo.Region = region;
             }
             else
@@ -373,10 +430,13 @@ namespace HETSAPI.Models
             }
         }
 
-
+        /// <summary>
+        /// Update region
+        /// </summary>
+        /// <param name="context"></param>
+        /// <param name="regionInfo"></param>
         public static void UpdateSeedRegionInfo(this DbAppContext context, Region regionInfo)
         {
-
             Region region = context.GetRegionByMinistryRegionId(regionInfo.MinistryRegionID);
             if (region == null)
             {
@@ -389,16 +449,20 @@ namespace HETSAPI.Models
             }
         }
 
+        /// <summary>
+        /// Update service area
+        /// </summary>
+        /// <param name="context"></param>
+        /// <param name="serviceAreaInfo"></param>
         public static void UpdateSeedServiceAreaInfo(this DbAppContext context, ServiceArea serviceAreaInfo)
         {
-
             // Adjust the district.
+            int ministryDistrictId = serviceAreaInfo.District.MinistryDistrictID;
+            var exists = context.Districts.Any(a => a.MinistryDistrictID == ministryDistrictId);
 
-            int ministry_district_id = serviceAreaInfo.District.MinistryDistrictID;
-            var exists = context.Districts.Any(a => a.MinistryDistrictID == ministry_district_id);
             if (exists)
             {
-                District district = context.Districts.First(a => a.MinistryDistrictID == ministry_district_id);
+                District district = context.Districts.First(a => a.MinistryDistrictID == ministryDistrictId);
                 serviceAreaInfo.District = district;
             }
             else
@@ -419,9 +483,15 @@ namespace HETSAPI.Models
             }
         }
 
+        /// <summary>
+        /// Update user
+        /// </summary>
+        /// <param name="context"></param>
+        /// <param name="userInfo"></param>
         public static void UpdateSeedUserInfo(this DbAppContext context, User userInfo)
         {
             User user = context.GetUserByGuid(userInfo.Guid);
+
             if (user == null)
             {
                 context.Users.Add(userInfo);
@@ -431,7 +501,6 @@ namespace HETSAPI.Models
                 user.Active = userInfo.Active;
                 user.Email = userInfo.Email;
                 user.GivenName = userInfo.GivenName;
-                // user.Guid = userInfo.Guid;
                 user.Initials = userInfo.Initials;
                 user.SmAuthorizationDirectory = userInfo.SmAuthorizationDirectory;
                 user.SmUserId = userInfo.SmUserId;

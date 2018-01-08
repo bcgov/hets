@@ -113,37 +113,37 @@ namespace HETSAPI.Services.Impl
         /// </summary>
         /// <remarks>Updates a City</remarks>
         /// <param name="id">id of City to update</param>
-        /// <param name="body"></param>
+        /// <param name="item"></param>
         /// <response code="200">OK</response>
         /// <response code="404">City not found</response>
-        public virtual IActionResult CitiesIdPutAsync(int id, City body)
+        public virtual IActionResult CitiesIdPutAsync(int id, City item)
         {
-            var exists = _context.Cities.Any(a => a.Id == id);
-            if (exists && id == body.Id)
+            bool exists = _context.Cities.Any(a => a.Id == id);
+
+            if (exists && id == item.Id)
             {
-                _context.Cities.Update(body);
+                _context.Cities.Update(item);
+
                 // Save the changes
                 _context.SaveChanges();
-                return new ObjectResult(body);
+                return new ObjectResult(item);
             }
-            else
-            {
-                // record not found
-                return new StatusCodeResult(404);
-            }
+
+            // record not found
+            return new StatusCodeResult(404);
         }
 
         /// <summary>
         /// 
         /// </summary>
         /// <remarks>Adds a City</remarks>
-        /// <param name="body"></param>
+        /// <param name="item"></param>
         /// <response code="200">OK</response>
-        public virtual IActionResult CitiesPostAsync(City body)
+        public virtual IActionResult CitiesPostAsync(City item)
         {
-            _context.Cities.Add(body);
+            _context.Cities.Add(item);
             _context.SaveChanges();
-            return new ObjectResult(body);
+            return new ObjectResult(item);
         }
     }
 }

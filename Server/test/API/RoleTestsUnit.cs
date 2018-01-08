@@ -42,41 +42,19 @@ namespace HETSAPI.Test
 		public RoleApiUnitTest()
 		{
             DbContextOptions<DbAppContext> options = new DbContextOptions<DbAppContext>();
-            Mock<DbAppContext> dbAppContext = new Mock<DbAppContext>(null, options);
-
-            /*
-
-            Here you will need to mock up the context.
-
-    ItemType fakeItem = new ItemType(...);
-
-    Mock<DbSet<ItemType>> mockList = MockDbSet.Create(fakeItem);
-
-    dbAppContext.Setup(x => x.ModelEndpoint).Returns(mockItem.Object);
-
-            */
-
-            RoleService _service = new RoleService(dbAppContext.Object);
-			
-                    _RoleApi = new RoleController (_service);
-
+            Mock<DbAppContext> dbAppContext = new Mock<DbAppContext>(null, options);            
+            RoleService _service = new RoleService(dbAppContext.Object);			
+            _RoleApi = new RoleController (_service);
 		}
-	
-		
+			
 		[Fact]
 		/// <summary>
         /// Unit test for RolesGet
         /// </summary>
 		public void TestRolesGet()
 		{
-			// Add test code here
-			// it may look like: 
-			//  var result = _RoleController.RolesGet();
-			//  Assert.True (result == expected-result);
-
-            Assert.True(true);
-		}		
-        
+			Assert.True(true);
+		}		        
 		
 		[Fact]
 		/// <summary>
@@ -84,14 +62,8 @@ namespace HETSAPI.Test
         /// </summary>
 		public void TestRolesIdDelete()
 		{
-			// Add test code here
-			// it may look like: 
-			//  var result = _RoleController.RolesIdDelete();
-			//  Assert.True (result == expected-result);
-
-            Assert.True(true);
-		}		
-        
+			Assert.True(true);
+		}		        
 		
 		[Fact]
 		/// <summary>
@@ -99,14 +71,8 @@ namespace HETSAPI.Test
         /// </summary>
 		public void TestRolesIdGet()
 		{
-			// Add test code here
-			// it may look like: 
-			//  var result = _RoleController.RolesIdGet();
-			//  Assert.True (result == expected-result);
-
-            Assert.True(true);
-		}		
-        
+			Assert.True(true);
+		}		        
 		
 		[Fact]
 		/// <summary>
@@ -114,14 +80,8 @@ namespace HETSAPI.Test
         /// </summary>
 		public void TestRolesIdPermissionsGet()
 		{
-			// Add test code here
-			// it may look like: 
-			//  var result = _RoleController.RolesIdPermissionsGet();
-			//  Assert.True (result == expected-result);
-
-            Assert.True(true);
-		}		
-        
+			Assert.True(true);
+		}		        
 		
 		[Fact]
 		/// <summary>
@@ -129,14 +89,8 @@ namespace HETSAPI.Test
         /// </summary>
 		public void TestRolesIdPermissionsPut()
 		{
-			// Add test code here
-			// it may look like: 
-			//  var result = _RoleController.RolesIdPermissionsPut();
-			//  Assert.True (result == expected-result);
-
-            Assert.True(true);
-		}		
-        
+			Assert.True(true);
+		}		        
 		
 		[Fact]
 		/// <summary>
@@ -144,14 +98,8 @@ namespace HETSAPI.Test
         /// </summary>
 		public void TestRolesIdPut()
 		{
-			// Add test code here
-			// it may look like: 
-			//  var result = _RoleController.RolesIdPut();
-			//  Assert.True (result == expected-result);
-
-            Assert.True(true);
-		}		
-        
+			Assert.True(true);
+		}		        
 		
 		[Fact]
 		/// <summary>
@@ -159,14 +107,8 @@ namespace HETSAPI.Test
         /// </summary>
 		public void TestRolesIdUsersGet()
 		{
-			// Add test code here
-			// it may look like: 
-			//  var result = _RoleController.RolesIdUsersGet();
-			//  Assert.True (result == expected-result);
-
-            Assert.True(true);
-		}		
-        
+			Assert.True(true);
+		}		        
 		
 		[Fact]
 		/// <summary>
@@ -174,28 +116,16 @@ namespace HETSAPI.Test
         /// </summary>
 		public void TestRolesIdUsersPut()
 		{
-			// Add test code here
-			// it may look like: 
-			//  var result = _RoleController.RolesIdUsersPut();
-			//  Assert.True (result == expected-result);
-
-            Assert.True(true);
+			Assert.True(true);
 		}		
-        
-		
+        		
 		[Fact]
 		/// <summary>
         /// Unit test for RolesPost
         /// </summary>
 		public void TestRolesPost()
 		{
-			// Add test code here
-			// it may look like: 
-			//  var result = _RoleController.RolesPost();
-			//  Assert.True (result == expected-result);
-
-            Assert.True(true);
-		}		
-        
+			Assert.True(true);
+		}		        
     }
 }

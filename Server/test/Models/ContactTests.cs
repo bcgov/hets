@@ -24,12 +24,10 @@ namespace HETSAPI.Test
 {
     /// <summary>
     ///  Class for testing the model Contact
-    /// </summary>
-    
+    /// </summary>    
     public class ContactModelTests
     {
-        // TODO uncomment below to declare an instance variable for Contact
-        private Contact instance;
+        private readonly Contact instance;
 
         /// <summary>
         /// Setup the test.

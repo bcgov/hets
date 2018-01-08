@@ -21,9 +21,9 @@ namespace HETSAPI.Services.Impl
 
         private void AdjustRecord(Contact item)
         {
-            
-
+            // to do
         }
+
         /// <summary>
         /// 
         /// </summary>

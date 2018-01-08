@@ -25,12 +25,10 @@ namespace HETSAPI.Test
 {
     /// <summary>
     ///  Class for testing the model NotificationViewModel
-    /// </summary>
-    
+    /// </summary>    
     public class NotificationViewModelModelTests
     {
-        // TODO uncomment below to declare an instance variable for NotificationViewModel
-        private NotificationViewModel instance;
+        private readonly NotificationViewModel instance;
 
         /// <summary>
         /// Setup the test.
