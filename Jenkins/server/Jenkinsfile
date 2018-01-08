@@ -63,11 +63,11 @@ node {
       openshiftBuild bldCfg: TEST_CONFIG, showBuildLogs: 'true'
     }
     
-    // Run tests ...
-    stage('build ' + TEST_CONFIG) {
-      echo "Building: " + TEST_CONFIG
-      openshiftBuild bldCfg: TEST_CONFIG, showBuildLogs: 'true'
-    }
+    // // Run tests ...
+    // stage('build ' + TEST_CONFIG) {
+      // echo "Building: " + TEST_CONFIG
+      // openshiftBuild bldCfg: TEST_CONFIG, showBuildLogs: 'true'
+    // }
     
     // Deploy to DEV ...
     stage('deploy-' + TAG_NAMES[0]) {
