@@ -22,13 +22,8 @@ namespace HETSAPI.Services.Impl
 
         private void AdjustRecord(LocalArea item)
         {
-            if (item != null)
-            {
-                if (item.ServiceArea != null)
-                {
-                    item.ServiceArea = _context.ServiceAreas.FirstOrDefault(a => a.Id == item.ServiceArea.Id);
-                }
-            }
+            if (item != null && item.ServiceArea != null)
+                item.ServiceArea = _context.ServiceAreas.FirstOrDefault(a => a.Id == item.ServiceArea.Id);
         }
 
         /// <summary>

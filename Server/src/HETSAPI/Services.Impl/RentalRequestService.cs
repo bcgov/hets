@@ -11,7 +11,7 @@ using Microsoft.AspNetCore.Http;
 namespace HETSAPI.Services.Impl
 {
     /// <summary>
-    ///
+    /// Rental Request Service
     /// </summary>
     public class RentalRequestService : ServiceBase, IRentalRequestService
     {
@@ -184,11 +184,11 @@ namespace HETSAPI.Services.Impl
                 }
                 if (limit == null)
                 {
-                    limit = data.Count() - offset;
+                    limit = data.Count - offset;
                 }
                 List<HistoryViewModel> result = new List<HistoryViewModel>();
 
-                for (int i = (int)offset; i < data.Count() && i < offset + limit; i++)
+                for (int i = (int)offset; i < data.Count && i < offset + limit; i++)
                 {
                     result.Add(data[i].ToViewModel(id));
                 }
@@ -317,11 +317,7 @@ namespace HETSAPI.Services.Impl
 
                 for (int currentBlock = 1; currentBlock <= numberOfBlocks; currentBlock++)
                 {
-
-
-                    int currentBlockSortOrder = 0;
-                    // start by getting the current set of equipment for the given equipment type.
-
+                    // start by getting the current set of equipment for the given equipment type
                     List<Equipment> blockEquipment = _context.Equipments
                         .Where(x => x.DistrictEquipmentType == item.DistrictEquipmentType && x.BlockNumber == currentBlock && x.LocalArea.Id == item.LocalArea.Id)
                         .OrderByDescending(x => x.Seniority)
@@ -371,8 +367,8 @@ namespace HETSAPI.Services.Impl
                         item.RentalRequestRotationList.Add(rentalRequestRotationList);
 
                         currentPosition++;
-                        currentBlockSortOrder++;
                         currentSortOrder++;
+
                         if (currentPosition >= listSize)
                         {
                             currentPosition = 0;
@@ -473,15 +469,15 @@ namespace HETSAPI.Services.Impl
         /// Searches Projects
         /// </summary>
         /// <remarks>Used for the project search page.</remarks>
-        /// <param name="localareasCSV">Local areas (comma seperated list of id numbers)</param>
+        /// <param name="localareas">Local areas (comma seperated list of id numbers)</param>
         /// <param name="project">name or partial name for a Project</param>
         /// <param name="status">Status</param>
         /// <param name="startDate">Inspection start date</param>
         /// <param name="endDate">Inspection end date</param>
         /// <response code="200">OK</response>
-        public virtual IActionResult RentalrequestsSearchGetAsync(string localareasCSV, string project, string status, DateTime? startDate, DateTime? endDate)
+        public virtual IActionResult RentalrequestsSearchGetAsync(string localareas, string project, string status, DateTime? startDate, DateTime? endDate)
         {
-            int?[] localareas = ParseIntArray(localareasCSV);
+            int?[] localareasArray = ParseIntArray(localareas);
 
             var data = _context.RentalRequests
                     .Include(x => x.LocalArea.ServiceArea.District.Region)
@@ -493,9 +489,9 @@ namespace HETSAPI.Services.Impl
             int? districtId = _context.GetDistrictIdByUserId(GetCurrentUserId()).Single();
             data = data.Where(x => x.LocalArea.ServiceArea.DistrictId.Equals(districtId));
 
-            if (localareas != null && localareas.Length > 0)
+            if (localareasArray != null && localareasArray.Length > 0)
             {
-                data = data.Where(x => localareas.Contains(x.LocalArea.Id));
+                data = data.Where(x => localareasArray.Contains(x.LocalArea.Id));
             }
 
             if (project != null)
@@ -515,12 +511,12 @@ namespace HETSAPI.Services.Impl
 
             if (status != null)
             {
-                // TODO: Change to enumerated type
-                data = data.Where(x => x.Status.ToLower() == status.ToLower());
+                data = data.Where(x => String.Equals(x.Status, status, StringComparison.CurrentCultureIgnoreCase));
             }
 
             var result = new List<RentalRequestSearchResultViewModel>();
-            foreach (var item in data)
+
+            foreach (RentalRequest item in data)
             {
                 if (item != null)
                 {

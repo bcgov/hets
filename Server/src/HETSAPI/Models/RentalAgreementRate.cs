@@ -9,58 +9,58 @@ using System.ComponentModel.DataAnnotations;
 namespace HETSAPI.Models
 {
     /// <summary>
-    /// The rate associated with an element of a rental agreement.
+    /// REntal Agreement Rate Database Model
     /// </summary>
-    [MetaDataExtension (Description = "The rate associated with an element of a rental agreement.")]
-
-    public partial class RentalAgreementRate : AuditableEntity, IEquatable<RentalAgreementRate>
+    [MetaData (Description = "The rate associated with an element of a rental agreement.")]
+    public sealed class RentalAgreementRate : AuditableEntity, IEquatable<RentalAgreementRate>
     {
         /// <summary>
         /// Default constructor, required by entity framework
         /// </summary>
         public RentalAgreementRate()
         {
-            this.Id = 0;
+            Id = 0;
         }
 
         /// <summary>
         /// Initializes a new instance of the <see cref="RentalAgreementRate" /> class.
         /// </summary>
-        /// <param name="Id">A system-generated unique identifier for a RentalAgreementRate (required).</param>
-        /// <param name="RentalAgreement">A foreign key reference to the system-generated unique identifier for a Rental Agreement (required).</param>
-        /// <param name="ComponentName">Name of the component for the Rental Agreement for which the attached rates apply..</param>
-        /// <param name="IsAttachment">True if this rate is for an attachment to the piece of equipment..</param>
-        /// <param name="Rate">The dollar rate associated with this component of the rental agreement..</param>
-        /// <param name="PercentOfEquipmentRate">For other than the actual piece of equipment, the percent of the equipment rate to use for this component of the rental agreement..</param>
-        /// <param name="RatePeriod">The period of the rental rate. The vast majority will be hourly, but the rate could apply across a different period, e.g. daily..</param>
-        /// <param name="Comment">A comment about the rental of this component of the Rental Agreement..</param>
-        /// <param name="TimeRecords">TimeRecords.</param>
-        public RentalAgreementRate(int Id, RentalAgreement RentalAgreement, string ComponentName = null, bool? IsAttachment = null, float? Rate = null, int? PercentOfEquipmentRate = null, string RatePeriod = null, string Comment = null, List<TimeRecord> TimeRecords = null)
+        /// <param name="id">A system-generated unique identifier for a RentalAgreementRate (required).</param>
+        /// <param name="rentalAgreement">A foreign key reference to the system-generated unique identifier for a Rental Agreement (required).</param>
+        /// <param name="componentName">Name of the component for the Rental Agreement for which the attached rates apply..</param>
+        /// <param name="isAttachment">True if this rate is for an attachment to the piece of equipment..</param>
+        /// <param name="rate">The dollar rate associated with this component of the rental agreement..</param>
+        /// <param name="percentOfEquipmentRate">For other than the actual piece of equipment, the percent of the equipment rate to use for this component of the rental agreement..</param>
+        /// <param name="ratePeriod">The period of the rental rate. The vast majority will be hourly, but the rate could apply across a different period, e.g. daily..</param>
+        /// <param name="comment">A comment about the rental of this component of the Rental Agreement..</param>
+        /// <param name="timeRecords">TimeRecords.</param>
+        public RentalAgreementRate(int id, RentalAgreement rentalAgreement, string componentName = null, bool? isAttachment = null, 
+            float? rate = null, int? percentOfEquipmentRate = null, string ratePeriod = null, string comment = null, 
+            List<TimeRecord> timeRecords = null)
         {   
-            this.Id = Id;
-            this.RentalAgreement = RentalAgreement;
-
-            this.ComponentName = ComponentName;
-            this.IsAttachment = IsAttachment;
-            this.Rate = Rate;
-            this.PercentOfEquipmentRate = PercentOfEquipmentRate;
-            this.RatePeriod = RatePeriod;
-            this.Comment = Comment;
-            this.TimeRecords = TimeRecords;
+            Id = id;
+            RentalAgreement = rentalAgreement;
+            ComponentName = componentName;
+            IsAttachment = isAttachment;
+            Rate = rate;
+            PercentOfEquipmentRate = percentOfEquipmentRate;
+            RatePeriod = ratePeriod;
+            Comment = comment;
+            TimeRecords = timeRecords;
         }
 
         /// <summary>
         /// A system-generated unique identifier for a RentalAgreementRate
         /// </summary>
         /// <value>A system-generated unique identifier for a RentalAgreementRate</value>
-        [MetaDataExtension (Description = "A system-generated unique identifier for a RentalAgreementRate")]
+        [MetaData (Description = "A system-generated unique identifier for a RentalAgreementRate")]
         public int Id { get; set; }
         
         /// <summary>
         /// A foreign key reference to the system-generated unique identifier for a Rental Agreement
         /// </summary>
         /// <value>A foreign key reference to the system-generated unique identifier for a Rental Agreement</value>
-        [MetaDataExtension (Description = "A foreign key reference to the system-generated unique identifier for a Rental Agreement")]
+        [MetaData (Description = "A foreign key reference to the system-generated unique identifier for a Rental Agreement")]
         public RentalAgreement RentalAgreement { get; set; }
         
         /// <summary>
@@ -68,55 +68,52 @@ namespace HETSAPI.Models
         /// </summary>   
         [ForeignKey("RentalAgreement")]
 		[JsonIgnore]
-		[MetaDataExtension (Description = "A foreign key reference to the system-generated unique identifier for a Rental Agreement")]
+		[MetaData (Description = "A foreign key reference to the system-generated unique identifier for a Rental Agreement")]
         public int? RentalAgreementId { get; set; }
         
         /// <summary>
         /// Name of the component for the Rental Agreement for which the attached rates apply.
         /// </summary>
         /// <value>Name of the component for the Rental Agreement for which the attached rates apply.</value>
-        [MetaDataExtension (Description = "Name of the component for the Rental Agreement for which the attached rates apply.")]
-        [MaxLength(150)]
-        
+        [MetaData (Description = "Name of the component for the Rental Agreement for which the attached rates apply.")]
+        [MaxLength(150)]        
         public string ComponentName { get; set; }
         
         /// <summary>
         /// True if this rate is for an attachment to the piece of equipment.
         /// </summary>
         /// <value>True if this rate is for an attachment to the piece of equipment.</value>
-        [MetaDataExtension (Description = "True if this rate is for an attachment to the piece of equipment.")]
+        [MetaData (Description = "True if this rate is for an attachment to the piece of equipment.")]
         public bool? IsAttachment { get; set; }
         
         /// <summary>
         /// The dollar rate associated with this component of the rental agreement.
         /// </summary>
         /// <value>The dollar rate associated with this component of the rental agreement.</value>
-        [MetaDataExtension (Description = "The dollar rate associated with this component of the rental agreement.")]
+        [MetaData (Description = "The dollar rate associated with this component of the rental agreement.")]
         public float? Rate { get; set; }
         
         /// <summary>
         /// For other than the actual piece of equipment, the percent of the equipment rate to use for this component of the rental agreement.
         /// </summary>
         /// <value>For other than the actual piece of equipment, the percent of the equipment rate to use for this component of the rental agreement.</value>
-        [MetaDataExtension (Description = "For other than the actual piece of equipment, the percent of the equipment rate to use for this component of the rental agreement.")]
+        [MetaData (Description = "For other than the actual piece of equipment, the percent of the equipment rate to use for this component of the rental agreement.")]
         public int? PercentOfEquipmentRate { get; set; }
         
         /// <summary>
         /// The period of the rental rate. The vast majority will be hourly, but the rate could apply across a different period, e.g. daily.
         /// </summary>
         /// <value>The period of the rental rate. The vast majority will be hourly, but the rate could apply across a different period, e.g. daily.</value>
-        [MetaDataExtension (Description = "The period of the rental rate. The vast majority will be hourly, but the rate could apply across a different period, e.g. daily.")]
-        [MaxLength(50)]
-        
+        [MetaData (Description = "The period of the rental rate. The vast majority will be hourly, but the rate could apply across a different period, e.g. daily.")]
+        [MaxLength(50)]        
         public string RatePeriod { get; set; }
         
         /// <summary>
         /// A comment about the rental of this component of the Rental Agreement.
         /// </summary>
         /// <value>A comment about the rental of this component of the Rental Agreement.</value>
-        [MetaDataExtension (Description = "A comment about the rental of this component of the Rental Agreement.")]
-        [MaxLength(2048)]
-        
+        [MetaData (Description = "A comment about the rental of this component of the Rental Agreement.")]
+        [MaxLength(2048)]        
         public string Comment { get; set; }
         
         /// <summary>
@@ -131,6 +128,7 @@ namespace HETSAPI.Models
         public override string ToString()
         {
             var sb = new StringBuilder();
+
             sb.Append("class RentalAgreementRate {\n");
             sb.Append("  Id: ").Append(Id).Append("\n");
             sb.Append("  RentalAgreement: ").Append(RentalAgreement).Append("\n");
@@ -142,6 +140,7 @@ namespace HETSAPI.Models
             sb.Append("  Comment: ").Append(Comment).Append("\n");
             sb.Append("  TimeRecords: ").Append(TimeRecords).Append("\n");
             sb.Append("}\n");
+
             return sb.ToString();
         }
 
@@ -161,10 +160,9 @@ namespace HETSAPI.Models
         /// <returns>Boolean</returns>
         public override bool Equals(object obj)
         {
-            if (ReferenceEquals(null, obj)) { return false; }
+            if (obj is null) { return false; }
             if (ReferenceEquals(this, obj)) { return true; }
-            if (obj.GetType() != GetType()) { return false; }
-            return Equals((RentalAgreementRate)obj);
+            return obj.GetType() == GetType() && Equals((RentalAgreementRate)obj);
         }
 
         /// <summary>
@@ -174,54 +172,53 @@ namespace HETSAPI.Models
         /// <returns>Boolean</returns>
         public bool Equals(RentalAgreementRate other)
         {
-
-            if (ReferenceEquals(null, other)) { return false; }
+            if (other is null) { return false; }
             if (ReferenceEquals(this, other)) { return true; }
 
             return                 
                 (
-                    this.Id == other.Id ||
-                    this.Id.Equals(other.Id)
+                    Id == other.Id ||
+                    Id.Equals(other.Id)
                 ) &&                 
                 (
-                    this.RentalAgreement == other.RentalAgreement ||
-                    this.RentalAgreement != null &&
-                    this.RentalAgreement.Equals(other.RentalAgreement)
+                    RentalAgreement == other.RentalAgreement ||
+                    RentalAgreement != null &&
+                    RentalAgreement.Equals(other.RentalAgreement)
                 ) &&                 
                 (
-                    this.ComponentName == other.ComponentName ||
-                    this.ComponentName != null &&
-                    this.ComponentName.Equals(other.ComponentName)
+                    ComponentName == other.ComponentName ||
+                    ComponentName != null &&
+                    ComponentName.Equals(other.ComponentName)
                 ) &&                 
                 (
-                    this.IsAttachment == other.IsAttachment ||
-                    this.IsAttachment != null &&
-                    this.IsAttachment.Equals(other.IsAttachment)
+                    IsAttachment == other.IsAttachment ||
+                    IsAttachment != null &&
+                    IsAttachment.Equals(other.IsAttachment)
                 ) &&                 
                 (
-                    this.Rate == other.Rate ||
-                    this.Rate != null &&
-                    this.Rate.Equals(other.Rate)
+                    Rate == other.Rate ||
+                    Rate != null &&
+                    Rate.Equals(other.Rate)
                 ) &&                 
                 (
-                    this.PercentOfEquipmentRate == other.PercentOfEquipmentRate ||
-                    this.PercentOfEquipmentRate != null &&
-                    this.PercentOfEquipmentRate.Equals(other.PercentOfEquipmentRate)
+                    PercentOfEquipmentRate == other.PercentOfEquipmentRate ||
+                    PercentOfEquipmentRate != null &&
+                    PercentOfEquipmentRate.Equals(other.PercentOfEquipmentRate)
                 ) &&                 
                 (
-                    this.RatePeriod == other.RatePeriod ||
-                    this.RatePeriod != null &&
-                    this.RatePeriod.Equals(other.RatePeriod)
+                    RatePeriod == other.RatePeriod ||
+                    RatePeriod != null &&
+                    RatePeriod.Equals(other.RatePeriod)
                 ) &&                 
                 (
-                    this.Comment == other.Comment ||
-                    this.Comment != null &&
-                    this.Comment.Equals(other.Comment)
+                    Comment == other.Comment ||
+                    Comment != null &&
+                    Comment.Equals(other.Comment)
                 ) && 
                 (
-                    this.TimeRecords == other.TimeRecords ||
-                    this.TimeRecords != null &&
-                    this.TimeRecords.SequenceEqual(other.TimeRecords)
+                    TimeRecords == other.TimeRecords ||
+                    TimeRecords != null &&
+                    TimeRecords.SequenceEqual(other.TimeRecords)
                 );
         }
 
@@ -235,40 +232,48 @@ namespace HETSAPI.Models
             unchecked // Overflow is fine, just wrap
             {
                 int hash = 41;
-                // Suitable nullity checks
+
+                // Suitable nullity checks                                   
+                hash = hash * 59 + Id.GetHashCode();
+                
+                if (RentalAgreement != null)
+                {
+                    hash = hash * 59 + RentalAgreement.GetHashCode();
+                }
+
+                if (ComponentName != null)
+                {
+                    hash = hash * 59 + ComponentName.GetHashCode();
+                }
+
+                if (IsAttachment != null)
+                {
+                    hash = hash * 59 + IsAttachment.GetHashCode();
+                }
+
+                if (Rate != null)
+                {
+                    hash = hash * 59 + Rate.GetHashCode();
+                }
+
+                if (PercentOfEquipmentRate != null)
+                {
+                    hash = hash * 59 + PercentOfEquipmentRate.GetHashCode();
+                }
+
+                if (RatePeriod != null)
+                {
+                    hash = hash * 59 + RatePeriod.GetHashCode();
+                }
+
+                if (Comment != null)
+                {
+                    hash = hash * 59 + Comment.GetHashCode();
+                }                
                                    
-                hash = hash * 59 + this.Id.GetHashCode();                   
-                if (this.RentalAgreement != null)
+                if (TimeRecords != null)
                 {
-                    hash = hash * 59 + this.RentalAgreement.GetHashCode();
-                }                if (this.ComponentName != null)
-                {
-                    hash = hash * 59 + this.ComponentName.GetHashCode();
-                }                
-                                if (this.IsAttachment != null)
-                {
-                    hash = hash * 59 + this.IsAttachment.GetHashCode();
-                }                
-                                if (this.Rate != null)
-                {
-                    hash = hash * 59 + this.Rate.GetHashCode();
-                }                
-                                if (this.PercentOfEquipmentRate != null)
-                {
-                    hash = hash * 59 + this.PercentOfEquipmentRate.GetHashCode();
-                }                
-                                if (this.RatePeriod != null)
-                {
-                    hash = hash * 59 + this.RatePeriod.GetHashCode();
-                }                
-                                if (this.Comment != null)
-                {
-                    hash = hash * 59 + this.Comment.GetHashCode();
-                }                
-                                   
-                if (this.TimeRecords != null)
-                {
-                    hash = hash * 59 + this.TimeRecords.GetHashCode();
+                    hash = hash * 59 + TimeRecords.GetHashCode();
                 }
                 return hash;
             }

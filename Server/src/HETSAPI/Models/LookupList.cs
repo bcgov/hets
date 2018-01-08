@@ -6,89 +6,81 @@ using System.ComponentModel.DataAnnotations;
 namespace HETSAPI.Models
 {
     /// <summary>
-    /// Lookup values for various enumerated types in the systems - entity status values, rate types, conditions and others. Used to pull the values out of the code and into the database but without having to have a table for each lookup instance.
+    /// Lookup List Database Model
     /// </summary>
-        [MetaDataExtension (Description = "Lookup values for various enumerated types in the systems - entity status values, rate types, conditions and others. Used to pull the values out of the code and into the database but without having to have a table for each lookup instance.")]
-
-    public partial class LookupList : AuditableEntity, IEquatable<LookupList>
+    [MetaData (Description = "Lookup values for various enumerated types in the systems - entity status values, rate types, conditions and others. Used to pull the values out of the code and into the database but without having to have a table for each lookup instance.")]
+    public sealed class LookupList : AuditableEntity, IEquatable<LookupList>
     {
         /// <summary>
-        /// Default constructor, required by entity framework
+        /// Lookup List Database Model Constructor (required by entity framework)
         /// </summary>
         public LookupList()
         {
-            this.Id = 0;
+            Id = 0;
         }
 
         /// <summary>
         /// Initializes a new instance of the <see cref="LookupList" /> class.
         /// </summary>
-        /// <param name="Id">A system-generated unique identifier for a LookupList (required).</param>
-        /// <param name="ContextName">The context within the app in which this lookup list if used. Defined and referenced in the code of the application. (required).</param>
-        /// <param name="IsDefault">True of the value within the lookup list context should be the default for the lookup instance. (required).</param>
-        /// <param name="CodeName">The a shorter lookup name to find the value. Can be used at the option of the application to present on the screen a short version of the lookup list value. (required).</param>
-        /// <param name="Value">The fully spelled out value of the lookup entry. (required).</param>
-        /// <param name="DisplaySortOrder">The sort order for list of values within a list context..</param>
-        public LookupList(int Id, string ContextName, bool IsDefault, string CodeName, string Value, int? DisplaySortOrder = null)
+        /// <param name="id">A system-generated unique identifier for a LookupList (required).</param>
+        /// <param name="contextName">The context within the app in which this lookup list if used. Defined and referenced in the code of the application. (required).</param>
+        /// <param name="isDefault">True of the value within the lookup list context should be the default for the lookup instance. (required).</param>
+        /// <param name="codeName">The a shorter lookup name to find the value. Can be used at the option of the application to present on the screen a short version of the lookup list value. (required).</param>
+        /// <param name="value">The fully spelled out value of the lookup entry. (required).</param>
+        /// <param name="displaySortOrder">The sort order for list of values within a list context..</param>
+        public LookupList(int id, string contextName, bool isDefault, string codeName, string value, int? displaySortOrder = null)
         {   
-            this.Id = Id;
-            this.ContextName = ContextName;
-            this.IsDefault = IsDefault;
-            this.CodeName = CodeName;
-            this.Value = Value;
-
-
-
-
-            this.DisplaySortOrder = DisplaySortOrder;
+            Id = id;
+            ContextName = contextName;
+            IsDefault = isDefault;
+            CodeName = codeName;
+            Value = value;
+            DisplaySortOrder = displaySortOrder;
         }
 
         /// <summary>
         /// A system-generated unique identifier for a LookupList
         /// </summary>
         /// <value>A system-generated unique identifier for a LookupList</value>
-        [MetaDataExtension (Description = "A system-generated unique identifier for a LookupList")]
+        [MetaData (Description = "A system-generated unique identifier for a LookupList")]
         public int Id { get; set; }
         
         /// <summary>
         /// The context within the app in which this lookup list if used. Defined and referenced in the code of the application.
         /// </summary>
         /// <value>The context within the app in which this lookup list if used. Defined and referenced in the code of the application.</value>
-        [MetaDataExtension (Description = "The context within the app in which this lookup list if used. Defined and referenced in the code of the application.")]
-        [MaxLength(100)]
-        
+        [MetaData (Description = "The context within the app in which this lookup list if used. Defined and referenced in the code of the application.")]
+        [MaxLength(100)]        
         public string ContextName { get; set; }
         
         /// <summary>
         /// True of the value within the lookup list context should be the default for the lookup instance.
         /// </summary>
         /// <value>True of the value within the lookup list context should be the default for the lookup instance.</value>
-        [MetaDataExtension (Description = "True of the value within the lookup list context should be the default for the lookup instance.")]
+        [MetaData (Description = "True of the value within the lookup list context should be the default for the lookup instance.")]
         public bool IsDefault { get; set; }
         
         /// <summary>
         /// The a shorter lookup name to find the value. Can be used at the option of the application to present on the screen a short version of the lookup list value.
         /// </summary>
         /// <value>The a shorter lookup name to find the value. Can be used at the option of the application to present on the screen a short version of the lookup list value.</value>
-        [MetaDataExtension (Description = "The a shorter lookup name to find the value. Can be used at the option of the application to present on the screen a short version of the lookup list value.")]
-        [MaxLength(30)]
-        
+        [MetaData (Description = "The a shorter lookup name to find the value. Can be used at the option of the application to present on the screen a short version of the lookup list value.")]
+        [MaxLength(30)]        
         public string CodeName { get; set; }
         
         /// <summary>
         /// The fully spelled out value of the lookup entry.
         /// </summary>
         /// <value>The fully spelled out value of the lookup entry.</value>
-        [MetaDataExtension (Description = "The fully spelled out value of the lookup entry.")]
-        [MaxLength(100)]
-        
+        [MetaData (Description = "The fully spelled out value of the lookup entry.")]
+        [MaxLength(100)]        
         public string Value { get; set; }
         
         /// <summary>
         /// The sort order for list of values within a list context.
         /// </summary>
         /// <value>The sort order for list of values within a list context.</value>
-        [MetaDataExtension (Description = "The sort order for list of values within a list context.")]
+        [MetaData (Description = "The sort order for list of values within a list context.")]
         public int? DisplaySortOrder { get; set; }
         
         /// <summary>
@@ -98,6 +90,7 @@ namespace HETSAPI.Models
         public override string ToString()
         {
             var sb = new StringBuilder();
+
             sb.Append("class LookupList {\n");
             sb.Append("  Id: ").Append(Id).Append("\n");
             sb.Append("  ContextName: ").Append(ContextName).Append("\n");
@@ -106,6 +99,7 @@ namespace HETSAPI.Models
             sb.Append("  Value: ").Append(Value).Append("\n");
             sb.Append("  DisplaySortOrder: ").Append(DisplaySortOrder).Append("\n");
             sb.Append("}\n");
+
             return sb.ToString();
         }
 
@@ -125,10 +119,9 @@ namespace HETSAPI.Models
         /// <returns>Boolean</returns>
         public override bool Equals(object obj)
         {
-            if (ReferenceEquals(null, obj)) { return false; }
+            if (obj is null) { return false; }
             if (ReferenceEquals(this, obj)) { return true; }
-            if (obj.GetType() != GetType()) { return false; }
-            return Equals((LookupList)obj);
+            return obj.GetType() == GetType() && Equals((LookupList)obj);
         }
 
         /// <summary>
@@ -138,38 +131,37 @@ namespace HETSAPI.Models
         /// <returns>Boolean</returns>
         public bool Equals(LookupList other)
         {
-
-            if (ReferenceEquals(null, other)) { return false; }
+            if (other is null) { return false; }
             if (ReferenceEquals(this, other)) { return true; }
 
             return                 
                 (
-                    this.Id == other.Id ||
-                    this.Id.Equals(other.Id)
+                    Id == other.Id ||
+                    Id.Equals(other.Id)
                 ) &&                 
                 (
-                    this.ContextName == other.ContextName ||
-                    this.ContextName != null &&
-                    this.ContextName.Equals(other.ContextName)
+                    ContextName == other.ContextName ||
+                    ContextName != null &&
+                    ContextName.Equals(other.ContextName)
                 ) &&                 
                 (
-                    this.IsDefault == other.IsDefault ||
-                    this.IsDefault.Equals(other.IsDefault)
+                    IsDefault == other.IsDefault ||
+                    IsDefault.Equals(other.IsDefault)
                 ) &&                 
                 (
-                    this.CodeName == other.CodeName ||
-                    this.CodeName != null &&
-                    this.CodeName.Equals(other.CodeName)
+                    CodeName == other.CodeName ||
+                    CodeName != null &&
+                    CodeName.Equals(other.CodeName)
                 ) &&                 
                 (
-                    this.Value == other.Value ||
-                    this.Value != null &&
-                    this.Value.Equals(other.Value)
+                    Value == other.Value ||
+                    Value != null &&
+                    Value.Equals(other.Value)
                 ) &&                 
                 (
-                    this.DisplaySortOrder == other.DisplaySortOrder ||
-                    this.DisplaySortOrder != null &&
-                    this.DisplaySortOrder.Equals(other.DisplaySortOrder)
+                    DisplaySortOrder == other.DisplaySortOrder ||
+                    DisplaySortOrder != null &&
+                    DisplaySortOrder.Equals(other.DisplaySortOrder)
                 );
         }
 
@@ -183,25 +175,30 @@ namespace HETSAPI.Models
             unchecked // Overflow is fine, just wrap
             {
                 int hash = 41;
-                // Suitable nullity checks
-                                   
-                hash = hash * 59 + this.Id.GetHashCode();                if (this.ContextName != null)
+
+                // Suitable nullity checks                                   
+                hash = hash * 59 + Id.GetHashCode();
+
+                if (ContextName != null)
                 {
-                    hash = hash * 59 + this.ContextName.GetHashCode();
+                    hash = hash * 59 + ContextName.GetHashCode();
                 }                
                                    
-                hash = hash * 59 + this.IsDefault.GetHashCode();
-                                if (this.CodeName != null)
+                hash = hash * 59 + IsDefault.GetHashCode();
+
+                if (CodeName != null)
                 {
-                    hash = hash * 59 + this.CodeName.GetHashCode();
-                }                
-                                if (this.Value != null)
+                    hash = hash * 59 + CodeName.GetHashCode();
+                }
+
+                if (Value != null)
                 {
-                    hash = hash * 59 + this.Value.GetHashCode();
-                }                
-                                if (this.DisplaySortOrder != null)
+                    hash = hash * 59 + Value.GetHashCode();
+                }
+
+                if (DisplaySortOrder != null)
                 {
-                    hash = hash * 59 + this.DisplaySortOrder.GetHashCode();
+                    hash = hash * 59 + DisplaySortOrder.GetHashCode();
                 }                
                 
                 return hash;

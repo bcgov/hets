@@ -28,7 +28,7 @@ namespace HETSAPI.Test
 	public class RegionApiIntegrationTest : ApiIntegrationTestBase
     { 
 		[Fact]
-        public async void TestRegionBulkUpload()
+        public async Task TestRegionBulkUpload()
         {
             var request = new HttpRequestMessage(HttpMethod.Post, "/api/regions/bulk");
             request.Content = new StringContent("[]", Encoding.UTF8, "application/json");
@@ -41,7 +41,7 @@ namespace HETSAPI.Test
 		/// <summary>
         /// Integration test for RegionsGet
         /// </summary>
-		public async void TestRegions()
+		public async Task TestRegions()
 		{
             // first test the POST.
             var request = new HttpRequestMessage(HttpMethod.Post, "/api/regions");
@@ -92,9 +92,7 @@ namespace HETSAPI.Test
             // should get a 404 if we try a get now.
             request = new HttpRequestMessage(HttpMethod.Get, "/api/regions/" + id);
             response = await _client.SendAsync(request);
-            Assert.Equal (response.StatusCode, HttpStatusCode.NotFound);
-
+            Assert.Equal (HttpStatusCode.NotFound, response.StatusCode);
         }
-
     }
 }

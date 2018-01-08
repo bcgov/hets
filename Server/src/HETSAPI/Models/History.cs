@@ -6,55 +6,52 @@ using System.ComponentModel.DataAnnotations;
 namespace HETSAPI.Models
 {
     /// <summary>
-    /// A log entry created by the system based on a triggering event and related to an entity in the application - e.g. piece of Equipment, an Owner, a Project and so on.
+    /// History Database Model
     /// </summary>
-        [MetaDataExtension (Description = "A log entry created by the system based on a triggering event and related to an entity in the application - e.g. piece of Equipment, an Owner, a Project and so on.")]
-
-    public partial class History : AuditableEntity, IEquatable<History>
+    [MetaData (Description = "A log entry created by the system based on a triggering event and related to an entity in the application - e.g. piece of Equipment, an Owner, a Project and so on.")]
+    public sealed class History : AuditableEntity, IEquatable<History>
     {
         /// <summary>
         /// Default constructor, required by entity framework
         /// </summary>
         public History()
         {
-            this.Id = 0;
+            Id = 0;
         }
 
         /// <summary>
         /// Initializes a new instance of the <see cref="History" /> class.
         /// </summary>
-        /// <param name="Id">A system-generated unique identifier for a History (required).</param>
-        /// <param name="HistoryText">The text of the history entry tracked against the related entity. (required).</param>
-        /// <param name="CreatedDate">Date the record is created..</param>
-        public History(int Id, string HistoryText, DateTime? CreatedDate = null)
+        /// <param name="id">A system-generated unique identifier for a History (required).</param>
+        /// <param name="historyText">The text of the history entry tracked against the related entity. (required).</param>
+        /// <param name="createdDate">Date the record is created..</param>
+        public History(int id, string historyText, DateTime? createdDate = null)
         {   
-            this.Id = Id;
-            this.HistoryText = HistoryText;
-
-            this.CreatedDate = CreatedDate;
+            Id = id;
+            HistoryText = historyText;
+            CreatedDate = createdDate;
         }
 
         /// <summary>
         /// A system-generated unique identifier for a History
         /// </summary>
         /// <value>A system-generated unique identifier for a History</value>
-        [MetaDataExtension (Description = "A system-generated unique identifier for a History")]
+        [MetaData (Description = "A system-generated unique identifier for a History")]
         public int Id { get; set; }
         
         /// <summary>
         /// The text of the history entry tracked against the related entity.
         /// </summary>
         /// <value>The text of the history entry tracked against the related entity.</value>
-        [MetaDataExtension (Description = "The text of the history entry tracked against the related entity.")]
-        [MaxLength(2048)]
-        
+        [MetaData (Description = "The text of the history entry tracked against the related entity.")]
+        [MaxLength(2048)]        
         public string HistoryText { get; set; }
         
         /// <summary>
         /// Date the record is created.
         /// </summary>
         /// <value>Date the record is created.</value>
-        [MetaDataExtension (Description = "Date the record is created.")]
+        [MetaData (Description = "Date the record is created.")]
         public DateTime? CreatedDate { get; set; }
         
         /// <summary>
@@ -64,11 +61,13 @@ namespace HETSAPI.Models
         public override string ToString()
         {
             var sb = new StringBuilder();
+
             sb.Append("class History {\n");
             sb.Append("  Id: ").Append(Id).Append("\n");
             sb.Append("  HistoryText: ").Append(HistoryText).Append("\n");
             sb.Append("  CreatedDate: ").Append(CreatedDate).Append("\n");
             sb.Append("}\n");
+
             return sb.ToString();
         }
 
@@ -88,10 +87,9 @@ namespace HETSAPI.Models
         /// <returns>Boolean</returns>
         public override bool Equals(object obj)
         {
-            if (ReferenceEquals(null, obj)) { return false; }
+            if (obj is null) { return false; }
             if (ReferenceEquals(this, obj)) { return true; }
-            if (obj.GetType() != GetType()) { return false; }
-            return Equals((History)obj);
+            return obj.GetType() == GetType() && Equals((History)obj);
         }
 
         /// <summary>
@@ -101,24 +99,23 @@ namespace HETSAPI.Models
         /// <returns>Boolean</returns>
         public bool Equals(History other)
         {
-
-            if (ReferenceEquals(null, other)) { return false; }
+            if (other is null) { return false; }
             if (ReferenceEquals(this, other)) { return true; }
 
             return                 
                 (
-                    this.Id == other.Id ||
-                    this.Id.Equals(other.Id)
+                    Id == other.Id ||
+                    Id.Equals(other.Id)
                 ) &&                 
                 (
-                    this.HistoryText == other.HistoryText ||
-                    this.HistoryText != null &&
-                    this.HistoryText.Equals(other.HistoryText)
+                    HistoryText == other.HistoryText ||
+                    HistoryText != null &&
+                    HistoryText.Equals(other.HistoryText)
                 ) &&                 
                 (
-                    this.CreatedDate == other.CreatedDate ||
-                    this.CreatedDate != null &&
-                    this.CreatedDate.Equals(other.CreatedDate)
+                    CreatedDate == other.CreatedDate ||
+                    CreatedDate != null &&
+                    CreatedDate.Equals(other.CreatedDate)
                 );
         }
 
@@ -132,15 +129,18 @@ namespace HETSAPI.Models
             unchecked // Overflow is fine, just wrap
             {
                 int hash = 41;
-                // Suitable nullity checks
-                                   
-                hash = hash * 59 + this.Id.GetHashCode();                if (this.HistoryText != null)
+
+                // Suitable nullity checks                                   
+                hash = hash * 59 + Id.GetHashCode();
+
+                if (HistoryText != null)
                 {
-                    hash = hash * 59 + this.HistoryText.GetHashCode();
-                }                
-                                if (this.CreatedDate != null)
+                    hash = hash * 59 + HistoryText.GetHashCode();
+                }
+
+                if (CreatedDate != null)
                 {
-                    hash = hash * 59 + this.CreatedDate.GetHashCode();
+                    hash = hash * 59 + CreatedDate.GetHashCode();
                 }                
                 
                 return hash;

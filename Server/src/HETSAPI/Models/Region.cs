@@ -6,61 +6,57 @@ using System.ComponentModel.DataAnnotations;
 namespace HETSAPI.Models
 {
     /// <summary>
-    /// The Ministry of Transportion and Infrastructure REGION.
+    /// Region Database Model
     /// </summary>
-        [MetaDataExtension (Description = "The Ministry of Transportion and Infrastructure REGION.")]
-
-    public partial class Region : AuditableEntity, IEquatable<Region>
+    [MetaData (Description = "The Ministry of Transportion and Infrastructure REGION.")]
+    public sealed class Region : AuditableEntity, IEquatable<Region>
     {
         /// <summary>
-        /// Default constructor, required by entity framework
+        /// REgion Database Model Constructor (required by entity framework)
         /// </summary>
         public Region()
         {
-            this.Id = 0;
+            Id = 0;
         }
 
         /// <summary>
         /// Initializes a new instance of the <see cref="Region" /> class.
         /// </summary>
-        /// <param name="Id">A system-generated unique identifier for a Region (required).</param>
-        /// <param name="MinistryRegionID">A system generated unique identifier. NOT GENERATED IN THIS SYSTEM. (required).</param>
-        /// <param name="Name">The name of a Minsitry Region. (required).</param>
-        /// <param name="StartDate">The DATE the business information came into effect. - NOT CURRENTLY ENFORCED IN THIS SYSTEM (required).</param>
-        /// <param name="RegionNumber">A code that uniquely defines a Region..</param>
-        /// <param name="EndDate">The DATE the business information ceased to be in effect. - NOT CURRENTLY ENFORCED IN THIS SYSTEM.</param>
-        public Region(int Id, int MinistryRegionID, string Name, DateTime StartDate, int? RegionNumber = null, DateTime? EndDate = null)
+        /// <param name="id">A system-generated unique identifier for a Region (required).</param>
+        /// <param name="ministryRegionId">A system generated unique identifier. NOT GENERATED IN THIS SYSTEM. (required).</param>
+        /// <param name="name">The name of a Minsitry Region. (required).</param>
+        /// <param name="startDate">The DATE the business information came into effect. - NOT CURRENTLY ENFORCED IN THIS SYSTEM (required).</param>
+        /// <param name="regionNumber">A code that uniquely defines a Region..</param>
+        /// <param name="endDate">The DATE the business information ceased to be in effect. - NOT CURRENTLY ENFORCED IN THIS SYSTEM.</param>
+        public Region(int id, int ministryRegionId, string name, DateTime startDate, int? regionNumber = null, DateTime? endDate = null)
         {   
-            this.Id = Id;
-            this.MinistryRegionID = MinistryRegionID;
-            this.Name = Name;
-            this.StartDate = StartDate;
-
-
-
-            this.RegionNumber = RegionNumber;
-            this.EndDate = EndDate;
+            Id = id;
+            MinistryRegionID = ministryRegionId;
+            Name = name;
+            StartDate = startDate;
+            RegionNumber = regionNumber;
+            EndDate = endDate;
         }
 
         /// <summary>
         /// A system-generated unique identifier for a Region
         /// </summary>
         /// <value>A system-generated unique identifier for a Region</value>
-        [MetaDataExtension (Description = "A system-generated unique identifier for a Region")]
+        [MetaData (Description = "A system-generated unique identifier for a Region")]
         public int Id { get; set; }
         
         /// <summary>
         /// A system generated unique identifier. NOT GENERATED IN THIS SYSTEM.
         /// </summary>
         /// <value>A system generated unique identifier. NOT GENERATED IN THIS SYSTEM.</value>
-        [MetaDataExtension (Description = "A system generated unique identifier. NOT GENERATED IN THIS SYSTEM.")]
+        [MetaData (Description = "A system generated unique identifier. NOT GENERATED IN THIS SYSTEM.")]
         public int MinistryRegionID { get; set; }
         
         /// <summary>
         /// The name of a Minsitry Region.
         /// </summary>
         /// <value>The name of a Minsitry Region.</value>
-        [MetaDataExtension (Description = "The name of a Minsitry Region.")]
+        [MetaData (Description = "The name of a Minsitry Region.")]
         [MaxLength(150)]        
         public string Name { get; set; }
         
@@ -68,21 +64,21 @@ namespace HETSAPI.Models
         /// The DATE the business information came into effect. - NOT CURRENTLY ENFORCED IN THIS SYSTEM
         /// </summary>
         /// <value>The DATE the business information came into effect. - NOT CURRENTLY ENFORCED IN THIS SYSTEM</value>
-        [MetaDataExtension (Description = "The DATE the business information came into effect. - NOT CURRENTLY ENFORCED IN THIS SYSTEM")]
+        [MetaData (Description = "The DATE the business information came into effect. - NOT CURRENTLY ENFORCED IN THIS SYSTEM")]
         public DateTime StartDate { get; set; }
         
         /// <summary>
         /// A code that uniquely defines a Region.
         /// </summary>
         /// <value>A code that uniquely defines a Region.</value>
-        [MetaDataExtension (Description = "A code that uniquely defines a Region.")]
+        [MetaData (Description = "A code that uniquely defines a Region.")]
         public int? RegionNumber { get; set; }
         
         /// <summary>
         /// The DATE the business information ceased to be in effect. - NOT CURRENTLY ENFORCED IN THIS SYSTEM
         /// </summary>
         /// <value>The DATE the business information ceased to be in effect. - NOT CURRENTLY ENFORCED IN THIS SYSTEM</value>
-        [MetaDataExtension (Description = "The DATE the business information ceased to be in effect. - NOT CURRENTLY ENFORCED IN THIS SYSTEM")]
+        [MetaData (Description = "The DATE the business information ceased to be in effect. - NOT CURRENTLY ENFORCED IN THIS SYSTEM")]
         public DateTime? EndDate { get; set; }
         
         /// <summary>
@@ -92,6 +88,7 @@ namespace HETSAPI.Models
         public override string ToString()
         {
             var sb = new StringBuilder();
+
             sb.Append("class Region {\n");
             sb.Append("  Id: ").Append(Id).Append("\n");
             sb.Append("  MinistryRegionID: ").Append(MinistryRegionID).Append("\n");
@@ -100,6 +97,7 @@ namespace HETSAPI.Models
             sb.Append("  RegionNumber: ").Append(RegionNumber).Append("\n");
             sb.Append("  EndDate: ").Append(EndDate).Append("\n");
             sb.Append("}\n");
+
             return sb.ToString();
         }
 
@@ -119,10 +117,9 @@ namespace HETSAPI.Models
         /// <returns>Boolean</returns>
         public override bool Equals(object obj)
         {
-            if (ReferenceEquals(null, obj)) { return false; }
+            if (obj is null) { return false; }
             if (ReferenceEquals(this, obj)) { return true; }
-            if (obj.GetType() != GetType()) { return false; }
-            return Equals((Region)obj);
+            return obj.GetType() == GetType() && Equals((Region)obj);
         }
 
         /// <summary>
@@ -132,38 +129,36 @@ namespace HETSAPI.Models
         /// <returns>Boolean</returns>
         public bool Equals(Region other)
         {
-
-            if (ReferenceEquals(null, other)) { return false; }
+            if (other is null) { return false; }
             if (ReferenceEquals(this, other)) { return true; }
 
             return                 
                 (
-                    this.Id == other.Id ||
-                    this.Id.Equals(other.Id)
+                    Id == other.Id ||
+                    Id.Equals(other.Id)
                 ) &&                 
                 (
-                    this.MinistryRegionID == other.MinistryRegionID ||
-                    this.MinistryRegionID.Equals(other.MinistryRegionID)
+                    MinistryRegionID == other.MinistryRegionID ||
+                    MinistryRegionID.Equals(other.MinistryRegionID)
                 ) &&                 
                 (
-                    this.Name == other.Name ||
-                    this.Name != null &&
-                    this.Name.Equals(other.Name)
+                    Name == other.Name ||
+                    Name != null &&
+                    Name.Equals(other.Name)
                 ) &&                 
                 (
-                    this.StartDate == other.StartDate ||
-                    this.StartDate != null &&
-                    this.StartDate.Equals(other.StartDate)
+                    StartDate == other.StartDate ||
+                    StartDate.Equals(other.StartDate)
                 ) &&                 
                 (
-                    this.RegionNumber == other.RegionNumber ||
-                    this.RegionNumber != null &&
-                    this.RegionNumber.Equals(other.RegionNumber)
+                    RegionNumber == other.RegionNumber ||
+                    RegionNumber != null &&
+                    RegionNumber.Equals(other.RegionNumber)
                 ) &&                 
                 (
-                    this.EndDate == other.EndDate ||
-                    this.EndDate != null &&
-                    this.EndDate.Equals(other.EndDate)
+                    EndDate == other.EndDate ||
+                    EndDate != null &&
+                    EndDate.Equals(other.EndDate)
                 );
         }
 
@@ -177,24 +172,26 @@ namespace HETSAPI.Models
             unchecked // Overflow is fine, just wrap
             {
                 int hash = 41;
-                // Suitable nullity checks
-                                   
-                hash = hash * 59 + this.Id.GetHashCode();                                   
-                hash = hash * 59 + this.MinistryRegionID.GetHashCode();                if (this.Name != null)
+
+                // Suitable nullity checks                                   
+                hash = hash * 59 + Id.GetHashCode();                                   
+                hash = hash * 59 + MinistryRegionID.GetHashCode();
+
+                if (Name != null)
                 {
-                    hash = hash * 59 + this.Name.GetHashCode();
+                    hash = hash * 59 + Name.GetHashCode();
                 }                
                                    
-                if (this.StartDate != null)
+                hash = hash * 59 + StartDate.GetHashCode();
+                
+                if (RegionNumber != null)
                 {
-                    hash = hash * 59 + this.StartDate.GetHashCode();
-                }                if (this.RegionNumber != null)
+                    hash = hash * 59 + RegionNumber.GetHashCode();
+                }
+
+                if (EndDate != null)
                 {
-                    hash = hash * 59 + this.RegionNumber.GetHashCode();
-                }                
-                                if (this.EndDate != null)
-                {
-                    hash = hash * 59 + this.EndDate.GetHashCode();
+                    hash = hash * 59 + EndDate.GetHashCode();
                 }                
                 
                 return hash;

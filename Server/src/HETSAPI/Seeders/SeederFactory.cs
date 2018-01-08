@@ -65,9 +65,9 @@ namespace HETSAPI.Seeders
             });
         }
 
-        private class SeederComparer<T> : Comparer<Seeder<T>> where T : DbContext
+        private class SeederComparer<TY> : Comparer<Seeder<TY>> where TY : DbContext
         {            
-            public override int Compare(Seeder<T> x, Seeder<T> y)
+            public override int Compare(Seeder<TY> x, Seeder<TY> y)
             {
                 // < 0 x is less than y
                 // = 0 same

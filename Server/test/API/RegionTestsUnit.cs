@@ -32,8 +32,7 @@ using HETSAPI.Services.Impl;
 namespace HETSAPI.Test
 {
 	public class RegionApiUnitTest 
-    { 
-		
+    { 		
 		private readonly RegionController _RegionApi;
 		
 		/// <summary>
@@ -43,25 +42,9 @@ namespace HETSAPI.Test
 		{
             DbContextOptions<DbAppContext> options = new DbContextOptions<DbAppContext>();
             Mock<DbAppContext> dbAppContext = new Mock<DbAppContext>(null, options);
-
-            /*
-
-            Here you will need to mock up the context.
-
-    ItemType fakeItem = new ItemType(...);
-
-    Mock<DbSet<ItemType>> mockList = MockDbSet.Create(fakeItem);
-
-    dbAppContext.Setup(x => x.ModelEndpoint).Returns(mockItem.Object);
-
-            */
-
             RegionService _service = new RegionService(dbAppContext.Object);
-			
-                    _RegionApi = new RegionController (_service);
-
-		}
-	
+            _RegionApi = new RegionController(_service);
+		}	
 		
 		[Fact]
 		/// <summary>
@@ -69,14 +52,8 @@ namespace HETSAPI.Test
         /// </summary>
 		public void TestRegionsGet()
 		{
-			// Add test code here
-			// it may look like: 
-			//  var result = _RegionController.RegionsGet();
-			//  Assert.True (result == expected-result);
-
-            Assert.True(true);
-		}		
-        
+			Assert.True(true);
+		}		        
 		
 		[Fact]
 		/// <summary>
@@ -84,29 +61,17 @@ namespace HETSAPI.Test
         /// </summary>
 		public void TestRegionsIdCitiesGet()
 		{
-			// Add test code here
-			// it may look like: 
-			//  var result = _RegionController.RegionsIdCitiesGet();
-			//  Assert.True (result == expected-result);
-
-            Assert.True(true);
+			Assert.True(true);
 		}		
-        
-		
+        		
 		[Fact]
 		/// <summary>
         /// Unit test for RegionsIdGet
         /// </summary>
 		public void TestRegionsIdGet()
 		{
-			// Add test code here
-			// it may look like: 
-			//  var result = _RegionController.RegionsIdGet();
-			//  Assert.True (result == expected-result);
-
-            Assert.True(true);
-		}		
-        
+			Assert.True(true);
+		}		        
 		
 		[Fact]
 		/// <summary>
@@ -114,14 +79,8 @@ namespace HETSAPI.Test
         /// </summary>
 		public void TestRegionsIdLocalareasGet()
 		{
-			// Add test code here
-			// it may look like: 
-			//  var result = _RegionController.RegionsIdLocalareasGet();
-			//  Assert.True (result == expected-result);
-
-            Assert.True(true);
-		}		
-        
+			Assert.True(true);
+		}		        
 		
 		[Fact]
 		/// <summary>
@@ -129,13 +88,7 @@ namespace HETSAPI.Test
         /// </summary>
 		public void TestRegionsPost()
 		{
-			// Add test code here
-			// it may look like: 
-			//  var result = _RegionController.RegionsPost();
-			//  Assert.True (result == expected-result);
-
-            Assert.True(true);
-		}		
-        
+			Assert.True(true);
+		}		        
     }
 }

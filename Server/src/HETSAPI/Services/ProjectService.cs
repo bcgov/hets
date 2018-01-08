@@ -52,9 +52,9 @@ namespace HETSAPI.Services
         /// </summary>
         /// <remarks>Replaces an Project&#39;s Contacts</remarks>
         /// <param name="id">id of Project to replace Contacts for</param>
-        /// <param name="item">Replacement Project contacts.</param>
+        /// <param name="items">Replacement Project contacts.</param>
         /// <response code="200">OK</response>
-        IActionResult ProjectsIdContactsPutAsync(int id, Contact[] item);
+        IActionResult ProjectsIdContactsPutAsync(int id, Contact[] items);
 
         /// <summary>
         ///

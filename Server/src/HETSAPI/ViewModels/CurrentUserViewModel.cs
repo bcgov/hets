@@ -9,13 +9,13 @@ using HETSAPI.Models;
 namespace HETSAPI.ViewModels
 {
     /// <summary>
-    /// 
+    /// Current User View Model
     /// </summary>
     [DataContract]
-    public partial class CurrentUserViewModel : IEquatable<CurrentUserViewModel>
+    public sealed class CurrentUserViewModel : IEquatable<CurrentUserViewModel>
     {
         /// <summary>
-        /// Default constructor, required by entity framework
+        ///  Current User View Model Constructor
         /// </summary>
         public CurrentUserViewModel()
         {
@@ -24,27 +24,30 @@ namespace HETSAPI.ViewModels
         /// <summary>
         /// Initializes a new instance of the <see cref="CurrentUserViewModel" /> class.
         /// </summary>
-        /// <param name="Id">Id.</param>
-        /// <param name="GivenName">GivenName.</param>
-        /// <param name="Surname">Surname.</param>
-        /// <param name="Email">Email.</param>
-        /// <param name="Active">Active.</param>
-        /// <param name="SmUserId">SmUserId.</param>
-        /// <param name="SmAuthorizationDirectory">SmAuthorizationDirectory.</param>
-        /// <param name="UserRoles">UserRoles.</param>
-        /// <param name="GroupMemberships">GroupMemberships.</param>
-        /// <param name="District">The District to which this User is affliated..</param>
-        public CurrentUserViewModel(int? Id = null, string GivenName = null, string Surname = null, string Email = null, bool? Active = null, string SmUserId = null, string SmAuthorizationDirectory = null, List<UserRole> UserRoles = null, List<GroupMembership> GroupMemberships = null, District District = null)
-        {               this.Id = Id;
-            this.GivenName = GivenName;
-            this.Surname = Surname;
-            this.Email = Email;
-            this.Active = Active;
-            this.SmUserId = SmUserId;
-            this.SmAuthorizationDirectory = SmAuthorizationDirectory;
-            this.UserRoles = UserRoles;
-            this.GroupMemberships = GroupMemberships;
-            this.District = District;
+        /// <param name="id">Id.</param>
+        /// <param name="givenName">GivenName.</param>
+        /// <param name="surname">Surname.</param>
+        /// <param name="email">Email.</param>
+        /// <param name="active">Active.</param>
+        /// <param name="smUserId">SmUserId.</param>
+        /// <param name="smAuthorizationDirectory">SmAuthorizationDirectory.</param>
+        /// <param name="userRoles">UserRoles.</param>
+        /// <param name="groupMemberships">GroupMemberships.</param>
+        /// <param name="district">The District to which this User is affliated..</param>
+        public CurrentUserViewModel(int id, string givenName = null, string surname = null, string email = null, bool? active = null, 
+            string smUserId = null, string smAuthorizationDirectory = null, List<UserRole> userRoles = null, 
+            List<GroupMembership> groupMemberships = null, District district = null)
+        {
+            Id = id;
+            GivenName = givenName;
+            Surname = surname;
+            Email = email;
+            Active = active;
+            SmUserId = smUserId;
+            SmAuthorizationDirectory = smAuthorizationDirectory;
+            UserRoles = userRoles;
+            GroupMemberships = groupMemberships;
+            District = district;
         }
 
         /// <summary>
@@ -106,7 +109,7 @@ namespace HETSAPI.ViewModels
         /// </summary>
         /// <value>The District to which this User is affliated.</value>
         [DataMember(Name="district")]
-        [MetaDataExtension (Description = "The District to which this User is affliated.")]
+        [MetaData (Description = "The District to which this User is affliated.")]
         public District District { get; set; }
 
         /// <summary>
@@ -116,6 +119,7 @@ namespace HETSAPI.ViewModels
         public override string ToString()
         {
             var sb = new StringBuilder();
+
             sb.Append("class CurrentUserViewModel {\n");
             sb.Append("  Id: ").Append(Id).Append("\n");
             sb.Append("  GivenName: ").Append(GivenName).Append("\n");
@@ -128,6 +132,7 @@ namespace HETSAPI.ViewModels
             sb.Append("  GroupMemberships: ").Append(GroupMemberships).Append("\n");
             sb.Append("  District: ").Append(District).Append("\n");
             sb.Append("}\n");
+
             return sb.ToString();
         }
 
@@ -147,10 +152,9 @@ namespace HETSAPI.ViewModels
         /// <returns>Boolean</returns>
         public override bool Equals(object obj)
         {
-            if (ReferenceEquals(null, obj)) { return false; }
+            if (obj is null) { return false; }
             if (ReferenceEquals(this, obj)) { return true; }
-            if (obj.GetType() != GetType()) { return false; }
-            return Equals((CurrentUserViewModel)obj);
+            return obj.GetType() == GetType() && Equals((CurrentUserViewModel)obj);
         }
 
         /// <summary>
@@ -160,60 +164,59 @@ namespace HETSAPI.ViewModels
         /// <returns>Boolean</returns>
         public bool Equals(CurrentUserViewModel other)
         {
-
-            if (ReferenceEquals(null, other)) { return false; }
+            if (other is null) { return false; }
             if (ReferenceEquals(this, other)) { return true; }
 
             return                 
                 (
-                    this.Id == other.Id ||
-                    this.Id != null &&
-                    this.Id.Equals(other.Id)
+                    Id == other.Id ||
+                    Id != null &&
+                    Id.Equals(other.Id)
                 ) &&                 
                 (
-                    this.GivenName == other.GivenName ||
-                    this.GivenName != null &&
-                    this.GivenName.Equals(other.GivenName)
+                    GivenName == other.GivenName ||
+                    GivenName != null &&
+                    GivenName.Equals(other.GivenName)
                 ) &&                 
                 (
-                    this.Surname == other.Surname ||
-                    this.Surname != null &&
-                    this.Surname.Equals(other.Surname)
+                    Surname == other.Surname ||
+                    Surname != null &&
+                    Surname.Equals(other.Surname)
                 ) &&                 
                 (
-                    this.Email == other.Email ||
-                    this.Email != null &&
-                    this.Email.Equals(other.Email)
+                    Email == other.Email ||
+                    Email != null &&
+                    Email.Equals(other.Email)
                 ) &&                 
                 (
-                    this.Active == other.Active ||
-                    this.Active != null &&
-                    this.Active.Equals(other.Active)
+                    Active == other.Active ||
+                    Active != null &&
+                    Active.Equals(other.Active)
                 ) &&                 
                 (
-                    this.SmUserId == other.SmUserId ||
-                    this.SmUserId != null &&
-                    this.SmUserId.Equals(other.SmUserId)
+                    SmUserId == other.SmUserId ||
+                    SmUserId != null &&
+                    SmUserId.Equals(other.SmUserId)
                 ) &&                 
                 (
-                    this.SmAuthorizationDirectory == other.SmAuthorizationDirectory ||
-                    this.SmAuthorizationDirectory != null &&
-                    this.SmAuthorizationDirectory.Equals(other.SmAuthorizationDirectory)
+                    SmAuthorizationDirectory == other.SmAuthorizationDirectory ||
+                    SmAuthorizationDirectory != null &&
+                    SmAuthorizationDirectory.Equals(other.SmAuthorizationDirectory)
                 ) && 
                 (
-                    this.UserRoles == other.UserRoles ||
-                    this.UserRoles != null &&
-                    this.UserRoles.SequenceEqual(other.UserRoles)
+                    UserRoles == other.UserRoles ||
+                    UserRoles != null &&
+                    UserRoles.SequenceEqual(other.UserRoles)
                 ) && 
                 (
-                    this.GroupMemberships == other.GroupMemberships ||
-                    this.GroupMemberships != null &&
-                    this.GroupMemberships.SequenceEqual(other.GroupMemberships)
+                    GroupMemberships == other.GroupMemberships ||
+                    GroupMemberships != null &&
+                    GroupMemberships.SequenceEqual(other.GroupMemberships)
                 ) &&                 
                 (
-                    this.District == other.District ||
-                    this.District != null &&
-                    this.District.Equals(other.District)
+                    District == other.District ||
+                    District != null &&
+                    District.Equals(other.District)
                 );
         }
 
@@ -227,48 +230,58 @@ namespace HETSAPI.ViewModels
             unchecked // Overflow is fine, just wrap
             {
                 int hash = 41;
+
                 // Suitable nullity checks
-                if (this.Id != null)
+                if (Id != null)
                 {
-                    hash = hash * 59 + this.Id.GetHashCode();
-                }                
-                                if (this.GivenName != null)
+                    hash = hash * 59 + Id.GetHashCode();
+                }
+
+                if (GivenName != null)
                 {
-                    hash = hash * 59 + this.GivenName.GetHashCode();
-                }                
-                                if (this.Surname != null)
+                    hash = hash * 59 + GivenName.GetHashCode();
+                }
+
+                if (Surname != null)
                 {
-                    hash = hash * 59 + this.Surname.GetHashCode();
-                }                
-                                if (this.Email != null)
+                    hash = hash * 59 + Surname.GetHashCode();
+                }
+
+                if (Email != null)
                 {
-                    hash = hash * 59 + this.Email.GetHashCode();
-                }                
-                                if (this.Active != null)
+                    hash = hash * 59 + Email.GetHashCode();
+                }
+
+                if (Active != null)
                 {
-                    hash = hash * 59 + this.Active.GetHashCode();
-                }                
-                                if (this.SmUserId != null)
+                    hash = hash * 59 + Active.GetHashCode();
+                }
+
+                if (SmUserId != null)
                 {
-                    hash = hash * 59 + this.SmUserId.GetHashCode();
-                }                
-                                if (this.SmAuthorizationDirectory != null)
+                    hash = hash * 59 + SmUserId.GetHashCode();
+                }
+
+                if (SmAuthorizationDirectory != null)
                 {
-                    hash = hash * 59 + this.SmAuthorizationDirectory.GetHashCode();
+                    hash = hash * 59 + SmAuthorizationDirectory.GetHashCode();
                 }                
                                    
-                if (this.UserRoles != null)
+                if (UserRoles != null)
                 {
-                    hash = hash * 59 + this.UserRoles.GetHashCode();
-                }                   
-                if (this.GroupMemberships != null)
-                {
-                    hash = hash * 59 + this.GroupMemberships.GetHashCode();
-                }                   
-                if (this.District != null)
-                {
-                    hash = hash * 59 + this.District.GetHashCode();
+                    hash = hash * 59 + UserRoles.GetHashCode();
                 }
+
+                if (GroupMemberships != null)
+                {
+                    hash = hash * 59 + GroupMemberships.GetHashCode();
+                }
+
+                if (District != null)
+                {
+                    hash = hash * 59 + District.GetHashCode();
+                }
+
                 return hash;
             }
         }

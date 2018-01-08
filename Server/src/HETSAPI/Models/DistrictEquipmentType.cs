@@ -7,43 +7,39 @@ using System.ComponentModel.DataAnnotations;
 namespace HETSAPI.Models
 {
     /// <summary>
-    /// An Equipment Type defined at the District level. Links to a provincial Equipment Type for the name of the equipment but supports the District HETS Clerk setting a local name for the Equipment Type. Within a given District, the same provincial Equipment Type might be reused multiple times in, for example, separate sizes (small, medium, large). This enables local areas with large number of the same Equipment Type to have multiple lists.
+    /// District Equipment Type Database Model
     /// </summary>
-        [MetaDataExtension (Description = "An Equipment Type defined at the District level. Links to a provincial Equipment Type for the name of the equipment but supports the District HETS Clerk setting a local name for the Equipment Type. Within a given District, the same provincial Equipment Type might be reused multiple times in, for example, separate sizes (small, medium, large). This enables local areas with large number of the same Equipment Type to have multiple lists.")]
-
-    public partial class DistrictEquipmentType : AuditableEntity, IEquatable<DistrictEquipmentType>
+    [MetaData (Description = "An Equipment Type defined at the District level. Links to a provincial Equipment Type for the name of the equipment but supports the District HETS Clerk setting a local name for the Equipment Type. Within a given District, the same provincial Equipment Type might be reused multiple times in, for example, separate sizes (small, medium, large). This enables local areas with large number of the same Equipment Type to have multiple lists.")]
+    public sealed partial class DistrictEquipmentType : AuditableEntity, IEquatable<DistrictEquipmentType>
     {
         /// <summary>
-        /// Default constructor, required by entity framework
+        /// District Equipment Type Database Model Constructor (required by entity framework)
         /// </summary>
         public DistrictEquipmentType()
         {
-            this.Id = 0;
+            Id = 0;
         }
 
         /// <summary>
         /// Initializes a new instance of the <see cref="DistrictEquipmentType" /> class.
         /// </summary>
-        /// <param name="Id">A system-generated unique identifier for an EquipmentType (required).</param>
-        /// <param name="EquipmentType">EquipmentType (required).</param>
-        /// <param name="District">District (required).</param>
-        /// <param name="DistrictEquipmentName">The name of this equipment type used at the District Level. This could be just the equipmentName if this is the only EquipmentType defined in this District, or could be a name that separates out multiple EquipmentTypes used within a District to, for instance, separate out the same EquipmentName by size. (required).</param>
-        public DistrictEquipmentType(int Id, EquipmentType EquipmentType, District District, string DistrictEquipmentName)
+        /// <param name="id">A system-generated unique identifier for an EquipmentType (required).</param>
+        /// <param name="equipmentType">EquipmentType (required).</param>
+        /// <param name="district">District (required).</param>
+        /// <param name="districtEquipmentName">The name of this equipment type used at the District Level. This could be just the equipmentName if this is the only EquipmentType defined in this District, or could be a name that separates out multiple EquipmentTypes used within a District to, for instance, separate out the same EquipmentName by size. (required).</param>
+        public DistrictEquipmentType(int id, EquipmentType equipmentType, District district, string districtEquipmentName)
         {
-            this.Id = Id;
-            this.EquipmentType = EquipmentType;
-            this.District = District;
-            this.DistrictEquipmentName = DistrictEquipmentName;
-
-
-
+            Id = id;
+            EquipmentType = equipmentType;
+            District = district;
+            DistrictEquipmentName = districtEquipmentName;            
         }
 
         /// <summary>
         /// A system-generated unique identifier for an EquipmentType
         /// </summary>
         /// <value>A system-generated unique identifier for an EquipmentType</value>
-        [MetaDataExtension (Description = "A system-generated unique identifier for an EquipmentType")]
+        [MetaData (Description = "A system-generated unique identifier for an EquipmentType")]
         public int Id { get; set; }
 
         /// <summary>
@@ -56,7 +52,6 @@ namespace HETSAPI.Models
         /// </summary>
         [ForeignKey("EquipmentType")]
 		[JsonIgnore]
-
         public int? EquipmentTypeId { get; set; }
 
         /// <summary>
@@ -69,16 +64,14 @@ namespace HETSAPI.Models
         /// </summary>
         [ForeignKey("District")]
 		[JsonIgnore]
-
         public int? DistrictId { get; set; }
 
         /// <summary>
         /// The name of this equipment type used at the District Level. This could be just the equipmentName if this is the only EquipmentType defined in this District, or could be a name that separates out multiple EquipmentTypes used within a District to, for instance, separate out the same EquipmentName by size.
         /// </summary>
         /// <value>The name of this equipment type used at the District Level. This could be just the equipmentName if this is the only EquipmentType defined in this District, or could be a name that separates out multiple EquipmentTypes used within a District to, for instance, separate out the same EquipmentName by size.</value>
-        [MetaDataExtension (Description = "The name of this equipment type used at the District Level. This could be just the equipmentName if this is the only EquipmentType defined in this District, or could be a name that separates out multiple EquipmentTypes used within a District to, for instance, separate out the same EquipmentName by size.")]
+        [MetaData (Description = "The name of this equipment type used at the District Level. This could be just the equipmentName if this is the only EquipmentType defined in this District, or could be a name that separates out multiple EquipmentTypes used within a District to, for instance, separate out the same EquipmentName by size.")]
         [MaxLength(255)]
-
         public string DistrictEquipmentName { get; set; }
 
         /// <summary>
@@ -88,12 +81,14 @@ namespace HETSAPI.Models
         public override string ToString()
         {
             var sb = new StringBuilder();
+
             sb.Append("class DistrictEquipmentType {\n");
             sb.Append("  Id: ").Append(Id).Append("\n");
             sb.Append("  EquipmentType: ").Append(EquipmentType).Append("\n");
             sb.Append("  District: ").Append(District).Append("\n");
             sb.Append("  DistrictEquipmentName: ").Append(DistrictEquipmentName).Append("\n");
             sb.Append("}\n");
+
             return sb.ToString();
         }
 
@@ -113,10 +108,9 @@ namespace HETSAPI.Models
         /// <returns>Boolean</returns>
         public override bool Equals(object obj)
         {
-            if (ReferenceEquals(null, obj)) { return false; }
+            if (obj is null) { return false; }
             if (ReferenceEquals(this, obj)) { return true; }
-            if (obj.GetType() != GetType()) { return false; }
-            return Equals((DistrictEquipmentType)obj);
+            return obj.GetType() == GetType() && Equals((DistrictEquipmentType)obj);
         }
 
         /// <summary>
@@ -126,29 +120,28 @@ namespace HETSAPI.Models
         /// <returns>Boolean</returns>
         public bool Equals(DistrictEquipmentType other)
         {
-
-            if (ReferenceEquals(null, other)) { return false; }
+            if (other is null) { return false; }
             if (ReferenceEquals(this, other)) { return true; }
 
             return
                 (
-                    this.Id == other.Id ||
-                    this.Id.Equals(other.Id)
+                    Id == other.Id ||
+                    Id.Equals(other.Id)
                 ) &&
                 (
-                    this.EquipmentType == other.EquipmentType ||
-                    this.EquipmentType != null &&
-                    this.EquipmentType.Equals(other.EquipmentType)
+                    EquipmentType == other.EquipmentType ||
+                    EquipmentType != null &&
+                    EquipmentType.Equals(other.EquipmentType)
                 ) &&
                 (
-                    this.District == other.District ||
-                    this.District != null &&
-                    this.District.Equals(other.District)
+                    District == other.District ||
+                    District != null &&
+                    District.Equals(other.District)
                 ) &&
                 (
-                    this.DistrictEquipmentName == other.DistrictEquipmentName ||
-                    this.DistrictEquipmentName != null &&
-                    this.DistrictEquipmentName.Equals(other.DistrictEquipmentName)
+                    DistrictEquipmentName == other.DistrictEquipmentName ||
+                    DistrictEquipmentName != null &&
+                    DistrictEquipmentName.Equals(other.DistrictEquipmentName)
                 );
         }
 
@@ -164,17 +157,20 @@ namespace HETSAPI.Models
                 int hash = 41;
                 // Suitable nullity checks
 
-                hash = hash * 59 + this.Id.GetHashCode();
-                if (this.EquipmentType != null)
+                hash = hash * 59 + Id.GetHashCode();
+
+                if (EquipmentType != null)
                 {
-                    hash = hash * 59 + this.EquipmentType.GetHashCode();
+                    hash = hash * 59 + EquipmentType.GetHashCode();
                 }
-                if (this.District != null)
+
+                if (District != null)
                 {
-                    hash = hash * 59 + this.District.GetHashCode();
-                }                if (this.DistrictEquipmentName != null)
+                    hash = hash * 59 + District.GetHashCode();
+                }
+                if (DistrictEquipmentName != null)
                 {
-                    hash = hash * 59 + this.DistrictEquipmentName.GetHashCode();
+                    hash = hash * 59 + DistrictEquipmentName.GetHashCode();
                 }
 
                 return hash;

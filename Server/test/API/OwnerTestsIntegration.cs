@@ -33,7 +33,7 @@ namespace HETSAPI.Test
         /// <summary>
         /// Integration test for OwnersBulkPost
         /// </summary>
-        public async void TestOwnersBulkPost()
+        public async Task TestOwnersBulkPost()
         {
             var request = new HttpRequestMessage(HttpMethod.Post, "/api/owners/bulk");
             request.Content = new StringContent("[]", Encoding.UTF8, "application/json");
@@ -42,12 +42,11 @@ namespace HETSAPI.Test
             response.EnsureSuccessStatusCode();
         }
 
-
         [Fact]
         /// <summary>
         /// Basic Integration test for Owners
         /// </summary>
-        public async void TestOwnersBasic()
+        public async Task TestOwnersBasic()
         {
             string initialName = "InitialName";
             string changedName = "ChangedName";
@@ -99,14 +98,14 @@ namespace HETSAPI.Test
             // should get a 404 if we try a get now.
             request = new HttpRequestMessage(HttpMethod.Get, "/api/owners/" + id);
             response = await _client.SendAsync(request);
-            Assert.Equal(response.StatusCode, HttpStatusCode.NotFound);
+            Assert.Equal(HttpStatusCode.NotFound, response.StatusCode);
         }
 
         [Fact]
         /// <summary>
         /// Basic Integration test for Owners
         /// </summary>
-        public async void TestOwnerContacts()
+        public async Task TestOwnerContacts()
         {
             string initialName = "InitialName";
             string changedName = "ChangedName";
@@ -142,8 +141,7 @@ namespace HETSAPI.Test
             List<Contact> contacts = JsonConvert.DeserializeObject<List<Contact>>(jsonString);
 
             // verify the list is empty.
-            Assert.Equal(contacts.Count(), 0);
-
+            Assert.Empty(contacts);
 
             // add a contact.
             Contact contact = new Contact();
@@ -163,7 +161,7 @@ namespace HETSAPI.Test
             contacts = JsonConvert.DeserializeObject<List<Contact>>(jsonString);
 
             // verify the list has one element.
-            Assert.Equal(contacts.Count, 1);
+            Assert.Single(contacts);
             Assert.Equal(contacts[0].GivenName, initialName);
 
             // get contacts should be 1
@@ -176,7 +174,7 @@ namespace HETSAPI.Test
             contacts = JsonConvert.DeserializeObject<List<Contact>>(jsonString);
 
             // verify the list has a record.
-            Assert.Equal(contacts.Count, 1);
+            Assert.Single(contacts);
             Assert.Equal(contacts[0].GivenName, initialName);
 
             // test removing the contact.
@@ -193,7 +191,7 @@ namespace HETSAPI.Test
             contacts = JsonConvert.DeserializeObject<List<Contact>>(jsonString);
 
             // should be 0
-            Assert.Equal(contacts.Count, 0);
+            Assert.Empty(contacts);
 
             // test the get
             request = new HttpRequestMessage(HttpMethod.Get, "/api/owners/" + id + "/contacts");
@@ -205,10 +203,9 @@ namespace HETSAPI.Test
             contacts = JsonConvert.DeserializeObject<List<Contact>>(jsonString);
 
             // verify the list has no records.
-            Assert.Equal(contacts.Count, 0);
+            Assert.Empty(contacts);
 
             // test the post.
-
             Contact newContact = new Contact();
             newContact.OrganizationName = "asdf";
 
@@ -223,7 +220,7 @@ namespace HETSAPI.Test
             newContact = JsonConvert.DeserializeObject<Contact>(jsonString);
 
             // should be 0
-            Assert.NotEqual(newContact.Id, 0);
+            Assert.NotEqual(0, newContact.Id);
 
             request = new HttpRequestMessage(HttpMethod.Put, "/api/owners/" + id + "/contacts");
             request.Content = new StringContent(JsonConvert.SerializeObject(contacts), Encoding.UTF8, "application/json");
@@ -236,7 +233,7 @@ namespace HETSAPI.Test
             contacts = JsonConvert.DeserializeObject<List<Contact>>(jsonString);
 
             // should be 0
-            Assert.Equal(contacts.Count, 0);
+            Assert.Empty(contacts);
 
             // delete the owner.            
             request = new HttpRequestMessage(HttpMethod.Post, "/api/owners/" + id + "/delete");
@@ -246,7 +243,7 @@ namespace HETSAPI.Test
             // should get a 404 if we try a get now.
             request = new HttpRequestMessage(HttpMethod.Get, "/api/owners/" + id);
             response = await _client.SendAsync(request);
-            Assert.Equal(response.StatusCode, HttpStatusCode.NotFound);
+            Assert.Equal(HttpStatusCode.NotFound, response.StatusCode);
         }
 
         private Equipment createEquipment(Owner owner, string model)
@@ -290,7 +287,7 @@ namespace HETSAPI.Test
         /// TestOwnerEquipmentList
         /// </summary>
         /// 
-        public async void TestOwnerEquipmentList()
+        public async Task TestOwnerEquipmentList()
         {
             /*
              * Create Owner
@@ -351,7 +348,7 @@ namespace HETSAPI.Test
             jsonString = await response.Content.ReadAsStringAsync();
             Equipment[] getReceived = JsonConvert.DeserializeObject<Equipment[]>(jsonString);
 
-            Assert.Equal(getReceived.Length, 3);
+            Assert.Equal(3, getReceived.Length);
             Assert.Equal(getReceived[0].Owner.Id, owner_id);
 
             // clean up equipment
@@ -377,7 +374,7 @@ namespace HETSAPI.Test
             // should get a 404 if we try a get now.
             request = new HttpRequestMessage(HttpMethod.Get, "/api/owners/" + owner_id);
             response = await _client.SendAsync(request);
-            Assert.Equal(response.StatusCode, HttpStatusCode.NotFound);
+            Assert.Equal(HttpStatusCode.NotFound, response.StatusCode);
         }
 
         [Fact]
@@ -385,7 +382,7 @@ namespace HETSAPI.Test
         /// TestOwnerEquipmentList
         /// </summary>
         /// 
-        public async void TestOwnerEquipmentListDateVerified()
+        public async Task TestOwnerEquipmentListDateVerified()
         {
             /*
              * Create Owner
@@ -481,17 +478,15 @@ namespace HETSAPI.Test
             // should get a 404 if we try a get now.
             request = new HttpRequestMessage(HttpMethod.Get, "/api/owners/" + owner_id);
             response = await _client.SendAsync(request);
-            Assert.Equal(response.StatusCode, HttpStatusCode.NotFound);
+            Assert.Equal(HttpStatusCode.NotFound, response.StatusCode);
         }
-
-
 
         [Fact]
         /// <summary>
         /// TestOwnerEquipmentList
         /// </summary>
         /// 
-        public async void TestOwnerEquipmentCode()
+        public async Task TestOwnerEquipmentCode()
         {
             /*
              * Create Owner
@@ -521,10 +516,6 @@ namespace HETSAPI.Test
             // get the id
             var owner_id = owner.Id;
 
-
-            // This test will be enabled when the new workflow for equipment code is implemented
-            // Assert.Equal(equipmentCode.EquipmentCode, "TST-0001");
-
             // delete owner
             request = new HttpRequestMessage(HttpMethod.Post, "/api/owners/" + owner_id + "/delete");
             response = await _client.SendAsync(request);
@@ -533,7 +524,7 @@ namespace HETSAPI.Test
             // should get a 404 if we try a get now.
             request = new HttpRequestMessage(HttpMethod.Get, "/api/owners/" + owner_id);
             response = await _client.SendAsync(request);
-            Assert.Equal(response.StatusCode, HttpStatusCode.NotFound);
+            Assert.Equal(HttpStatusCode.NotFound, response.StatusCode);
         }
 
         private ServiceArea CreateServiceArea( string name )
@@ -681,7 +672,7 @@ namespace HETSAPI.Test
         /// Test the owner search.  Specifically test that searches for two items on a multi-select show the expected number of results.
         /// </summary>
         /// 
-        public async void TestOwnerSearch()
+        public async Task TestOwnerSearch()
         {
 
             /* Test plan:
@@ -714,24 +705,21 @@ namespace HETSAPI.Test
            
             Owner[] searchresults = await OwnerSearchHelper("?localareas=" + localArea2.Id);
             
-            Assert.Equal(searchresults.Length, 2);
+            Assert.Equal(2, searchresults.Length);
 
             searchresults = await OwnerSearchHelper("?localareas=" + localArea2.Id );
 
-            Assert.Equal(searchresults.Length, 2);
+            Assert.Equal(2, searchresults.Length);
            
             searchresults = await OwnerSearchHelper("?localareas=" + localArea1.Id + "%2C" + localArea2.Id);
 
-            Assert.Equal(searchresults.Length, 4);
+            Assert.Equal(4, searchresults.Length);
 
             searchresults = await OwnerSearchHelper("?owner=" + owner1.Id);
 
-            Assert.Equal(searchresults.Length, 1);
-
-
+            Assert.Single(searchresults);
 
             // cleanup
-
             DeleteOwner(owner1);
             DeleteOwner(owner2);
             DeleteOwner(owner3);

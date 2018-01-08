@@ -360,3 +360,21 @@ NOTE: The Owner XML file will generated a record in each of three tables during 
 - An authorized user initiates the next import process - via an API call passing in the location of the unzipped files and a list of all the Districts in the system EXCEPT for the District(s) already live
 - Time passes until it's time to go live with another district
 - LOOP until all Districts are live on HETS
+
+
+
+-- commented out sections from BCBidImport:
+//*** start by importing Region from Region.xml. THis goes to table HETS_REGION
+//***[ImportRegion.Import(context, dbContext, fileLocation, systemId);]
+
+//*** start by importing districts from District.xml. THis goes to table HETS_DISTRICT
+// dbContext = new DbAppContext(null, options.Options);
+// ImportDistrict.Import(context, dbContext, fileLocation, systemId);
+
+//*** start by importing Cities from HETS_City.xml to HET_CITY
+//dbContext = new DbAppContext(null, options.Options);
+// ImportCity.Import(context, dbContext, fileLocation, systemId);
+
+//*** Service Areas: from the file of Service_Area.xml to the table of HET_SERVICE_AREA
+//dbContext = new DbAppContext(null, options.Options);
+// ImportServiceArea.Import(context, dbContext, fileLocation, systemId);

@@ -1,6 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Hosting;
-using HETSAPI.Models.Impl;
+using HETSAPI.ViewModels;
 
 namespace HETSAPI.Controllers
 {
@@ -27,7 +27,7 @@ namespace HETSAPI.Controllers
         /// <returns></returns>
         public IActionResult Index()
         {
-            HomeModel home = new HomeModel
+            HomeViewModel home = new HomeViewModel
             {
                 UserId = HttpContext.User.Identity.Name,
                 DevelopmentEnvironment = _env.IsDevelopment()

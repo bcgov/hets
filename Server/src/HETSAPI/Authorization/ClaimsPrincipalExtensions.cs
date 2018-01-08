@@ -4,6 +4,9 @@ using System.Security.Claims;
 
 namespace HETSAPI.Authorization
 {
+    /// <summary>
+    /// Calaims Principal Extension
+    /// </summary>
     public static class ClaimsPrincipalExtensions
     {
         /// <summary>

@@ -52,9 +52,9 @@ namespace HETSAPI.Services
         /// </summary>
         /// <remarks>Replaces an Owner&#39;s Contacts</remarks>
         /// <param name="id">id of Owner to replace Contacts for</param>
-        /// <param name="item">Replacement Owner contacts.</param>
+        /// <param name="items">Replacement Owner contacts.</param>
         /// <response code="200">OK</response>
-        IActionResult OwnersIdContactsPutAsync(int id, Contact[] item);
+        IActionResult OwnersIdContactsPutAsync(int id, Contact[] items);
 
         /// <summary>
         ///
@@ -77,9 +77,9 @@ namespace HETSAPI.Services
         /// </summary>
         /// <remarks>Replaces an Owner&#39;s Equipment</remarks>
         /// <param name="id">id of Owner to replace Equipment for</param>
-        /// <param name="item">Replacement Owner Equipment.</param>
+        /// <param name="items">Replacement Owner Equipment.</param>
         /// <response code="200">OK</response>
-        IActionResult OwnersIdEquipmentPutAsync(int id, Equipment[] item);
+        IActionResult OwnersIdEquipmentPutAsync(int id, Equipment[] items);
 
         /// <summary>
         ///
@@ -129,12 +129,12 @@ namespace HETSAPI.Services
         /// Searches Owners
         /// </summary>
         /// <remarks>Used for the owner search page.</remarks>
-        /// <param name="localareas">Local Areas (comma seperated list of id numbers)</param>
-        /// <param name="equipmenttypes">Equipment Types (comma seperated list of id numbers)</param>
+        /// <param name="localAreas">Local Areas (comma seperated list of id numbers)</param>
+        /// <param name="equipmentTypes">Equipment Types (comma seperated list of id numbers)</param>
         /// <param name="owner">Id for a specific Owner</param>
         /// <param name="status">Status</param>
         /// <param name="hired">Hired</param>
         /// <response code="200">OK</response>
-        IActionResult OwnersSearchGetAsync(string localareas, string equipmenttypes, int? owner, string status, bool? hired);
+        IActionResult OwnersSearchGetAsync(string localAreas, string equipmentTypes, int? owner, string status, bool? hired);
     }
 }

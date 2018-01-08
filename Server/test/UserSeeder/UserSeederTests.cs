@@ -5,6 +5,7 @@ using System.IO;
 using System.Net;
 using System.Net.Http;
 using Xunit;
+using System.Threading.Tasks;
 
 namespace HETSAPI.Test
 {
@@ -14,9 +15,7 @@ namespace HETSAPI.Test
     /// </summary>
     public class UserSeederTests
     {        
-		private readonly HttpClient _client;
-
-        //private readonly DevAuthenticationOptions _devAuthOptions;
+		private readonly HttpClient _client;        
 
         public UserSeederTests()
         {
@@ -24,13 +23,11 @@ namespace HETSAPI.Test
             .UseEnvironment("Development")
             .UseContentRoot(Directory.GetCurrentDirectory())
             .UseStartup<Startup>());
-            _client = server.CreateClient();
-
-            //_devAuthOptions = new DevAuthenticationOptions();
+            _client = server.CreateClient();            
         }
 
         [Fact]
-        public async void InitialUserJoeIsAdmin()
+        public async Task InitialUserJoeIsAdmin()
         {
             var request = new HttpRequestMessage(HttpMethod.Get, "/api/test/admin/permission/attribute");
             request.Headers.Add("DEV-USER", "JDow");
@@ -40,13 +37,13 @@ namespace HETSAPI.Test
         }
 
         [Fact]
-        public async void InitialUserJaneIsAdmin()
+        public async Task InitialUserJaneIsAdmin()
         {
             var request = new HttpRequestMessage(HttpMethod.Get, "/api/test/admin/permission/attribute");
             request.Headers.Add("DEV-USER", "JDow");
 
             var response = await _client.SendAsync(request);            
-            var content = await response.Content.ReadAsStringAsync();
+            await response.Content.ReadAsStringAsync();
             Assert.Equal(HttpStatusCode.OK, response.StatusCode);
         }
     }

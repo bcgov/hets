@@ -24,12 +24,10 @@ namespace HETSAPI.Test
 {
     /// <summary>
     ///  Class for testing the model UserFavourite
-    /// </summary>
-    
+    /// </summary>    
     public class UserFavouriteModelTests
     {
-        // TODO uncomment below to declare an instance variable for UserFavourite
-        private UserFavourite instance;
+        private readonly UserFavourite instance;
 
         /// <summary>
         /// Setup the test.

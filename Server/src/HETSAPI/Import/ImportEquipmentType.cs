@@ -1,101 +1,127 @@
 ﻿using Hangfire.Console;
 using Hangfire.Server;
-using HETSAPI.Models;
 using System;
 using System.IO;
 using System.Linq;
 using System.Xml.Serialization;
+using Hangfire.Console.Progress;
+using HETSAPI.ImportModels;
+using HETSAPI.Models;
 
 namespace HETSAPI.Import
 {
-    public class ImportEquipmentType
+    /// <summary>
+    /// Import Equipment Type Records
+    /// </summary>
+    public static class ImportEquipmentType
     {
+        const string OldTable = "EquipType";
+        const string NewTable = "HET_EQUIPMMENT_TYPE";
+        const string XmlFileName = "Equip_Type.xml";
 
-        const string oldTable = "EquipType";
-        const string newTable = "HET_EQUIPMMENT_TYPE";
-        const string xmlFileName = "Equip_Type.xml";
-        public static string oldTable_Progress = oldTable + "_Progress";
+        /// <summary>
+        /// Progress Property
+        /// </summary>
+        public static string OldTableProgress => OldTable + "_Progress";
 
-        static public void Import(PerformContext performContext, DbAppContext dbContext, string fileLocation, string systemId)
+        /// <summary>
+        /// IMport Equipment Types
+        /// </summary>
+        /// <param name="performContext"></param>
+        /// <param name="dbContext"></param>
+        /// <param name="fileLocation"></param>
+        /// <param name="systemId"></param>
+        public static void Import(PerformContext performContext, DbAppContext dbContext, string fileLocation, string systemId)
         {
-            // Check the start point. If startPoint ==  sigId then it is already completed
-            int startPoint = ImportUtility.CheckInterMapForStartPoint(dbContext, oldTable_Progress, BCBidImport.sigId);
-            if (startPoint == BCBidImport.sigId)    // This means the import job it has done today is complete for all the records in the xml file.
+            // check the start point. If startPoint ==  sigId then it is already completed
+            int startPoint = ImportUtility.CheckInterMapForStartPoint(dbContext, OldTableProgress, BCBidImport.SigId);
+
+            if (startPoint == BCBidImport.SigId)    // this means the import job it has done today is complete for all the records in the xml file.
             {
-                performContext.WriteLine("*** Importing " + xmlFileName + " is complete from the former process ***");
+                performContext.WriteLine("*** Importing " + XmlFileName + " is complete from the former process ***");
                 return;
             }
+
             try
             {
-                string rootAttr = "ArrayOf" + oldTable;
+                string rootAttr = "ArrayOf" + OldTable;
 
-                //Create Processer progress indicator
-                performContext.WriteLine("Processing " + oldTable);
-                var progress = performContext.WriteProgressBar();
+                // create Processer progress indicator
+                performContext.WriteLine("Processing " + OldTable);
+                IProgressBar progress = performContext.WriteProgressBar();
                 progress.SetValue(0);
 
                 // create serializer and serialize xml file
                 XmlSerializer ser = new XmlSerializer(typeof(EquipType[]), new XmlRootAttribute(rootAttr));
-                MemoryStream memoryStream = ImportUtility.memoryStreamGenerator(xmlFileName, oldTable, fileLocation, rootAttr);
+                MemoryStream memoryStream = ImportUtility.MemoryStreamGenerator(XmlFileName, OldTable, fileLocation, rootAttr);
                 EquipType[] legacyItems = (EquipType[])ser.Deserialize(memoryStream);
-                int ii = 0;
-                foreach (var item in legacyItems.WithProgress(progress))
-                {
-                    // see if we have this one already.
-                    ImportMap importMap = dbContext.ImportMaps.FirstOrDefault(x => x.OldTable == oldTable && x.OldKey == item.Equip_Type_Id.ToString());
 
-                    if (importMap == null) // new entry
+                int ii = 0;
+
+                foreach (EquipType item in legacyItems.WithProgress(progress))
+                {
+                    // see if we have this one already
+                    ImportMap importMap = dbContext.ImportMaps.FirstOrDefault(x => x.OldTable == OldTable && x.OldKey == item.Equip_Type_Id.ToString());
+
+                    // new entry
+                    if (importMap == null) 
                     {
                         if (item.Equip_Type_Id > 0)
                         {
                             EquipmentType instance = null;
-                            CopyToInstance(performContext, dbContext, item, ref instance, systemId);
-                            ImportUtility.AddImportMap(dbContext, oldTable, item.Equip_Type_Id.ToString(), newTable, instance.Id);
+                            CopyToInstance(dbContext, item, ref instance, systemId);
+                            ImportUtility.AddImportMap(dbContext, OldTable, item.Equip_Type_Id.ToString(), NewTable, instance.Id);
                         }
                     }
                     else // update
                     {
                         EquipmentType instance = dbContext.EquipmentTypes.FirstOrDefault(x => x.Id == importMap.NewKey);
-                        if (instance == null) // record was deleted
+
+                        // record was deleted
+                        if (instance == null) 
                         {
-                            CopyToInstance(performContext, dbContext, item, ref instance, systemId);
-                            // update the import map.
+                            CopyToInstance(dbContext, item, ref instance, systemId);
+
+                            // update the import map
                             importMap.NewKey = instance.Id;
                             dbContext.ImportMaps.Update(importMap);
                         }
-                        else // ordinary update.
+                        else // ordinary update
                         {
-                            CopyToInstance(performContext, dbContext, item, ref instance, systemId);
-                            // touch the import map.
+                            CopyToInstance(dbContext, item, ref instance, systemId);
+
+                            // touch the import map
                             importMap.LastUpdateTimestamp = DateTime.UtcNow;
                             dbContext.ImportMaps.Update(importMap);
                         }
                     }
-                    if (ii++ % 500 == 0)  // Save change to database once a while to avoid frequent writing to the database.
+
+                    // save change to database periodically to avoid frequent writing to the database
+                    if (ii++ % 500 == 0)
                     {
                         try
                         {
-                            ImportUtility.AddImportMap_For_Progress(dbContext, oldTable_Progress, ii.ToString(), BCBidImport.sigId);
-                            int iResult = dbContext.SaveChangesForImport();
+                            ImportUtility.AddImportMapForProgress(dbContext, OldTableProgress, ii.ToString(), BCBidImport.SigId);
+                            dbContext.SaveChangesForImport();
                         }
                         catch (Exception e)
                         {
-                            string iStr = e.ToString();
+                            performContext.WriteLine("Error saving data " + e.Message);
                         }
                     }
                 }
+
                 try
                 {
-                    performContext.WriteLine("*** Importing " + xmlFileName + " is Done ***");
-                    ImportUtility.AddImportMap_For_Progress(dbContext, oldTable_Progress, BCBidImport.sigId.ToString(), BCBidImport.sigId);
-                    int iResult = dbContext.SaveChangesForImport();
+                    performContext.WriteLine("*** Importing " + XmlFileName + " is Done ***");
+                    ImportUtility.AddImportMapForProgress(dbContext, OldTableProgress, BCBidImport.SigId.ToString(), BCBidImport.SigId);
+                    dbContext.SaveChangesForImport();
                 }
                 catch (Exception e)
                 {
-                    string iStr = e.ToString();
+                    performContext.WriteLine("Error saving data " + e.Message);
                 }
             }
-
             catch (Exception e)
             {
                 performContext.WriteLine("*** ERROR ***");
@@ -103,21 +129,30 @@ namespace HETSAPI.Import
             }
         }
 
-
-        private static void CopyToInstance(PerformContext performContext, DbAppContext dbContext, EquipType oldObject, ref EquipmentType instance, string systemId)
+        /// <summary>
+        /// Map data
+        /// </summary>
+        /// <param name="dbContext"></param>
+        /// <param name="oldObject"></param>
+        /// <param name="instance"></param>
+        /// <param name="systemId"></param>
+        private static void CopyToInstance(DbAppContext dbContext, EquipType oldObject, ref EquipmentType instance, string systemId)
         {
             if (oldObject.Equip_Type_Id <= 0)
                 return;
 
-            // Add the user specified in oldObject.Modified_By and oldObject.Created_By if not there in the database
+            // add the user specified in oldObject.Modified_By and oldObject.Created_By if not there in the database
             User modifiedBy = ImportUtility.AddUserFromString(dbContext, oldObject.Modified_By, systemId);
             User createdBy = ImportUtility.AddUserFromString(dbContext, oldObject.Created_By, systemId);
 
             if (instance == null)
             {
-                instance = new EquipmentType();
-                instance.Id = oldObject.Equip_Type_Id;
-                instance.IsDumpTruck = false;   // Where this is coming from?   !!!!!!
+                instance = new EquipmentType
+                {
+                    Id = oldObject.Equip_Type_Id,
+                    IsDumpTruck = false
+                };
+
                 try
                 {
                     instance.ExtendHours = float.Parse(oldObject.Extend_Hours.Trim());
@@ -126,15 +161,16 @@ namespace HETSAPI.Import
                 }
                 catch
                 {
-
+                    // do nothing
                 }
+
                 try
                 {
                     instance.Name = oldObject.Equip_Type_Cd.Trim();
                 }
                 catch
                 {
-
+                    // do nothing
                 }
 
                 instance.CreateTimestamp = DateTime.UtcNow;
@@ -143,17 +179,18 @@ namespace HETSAPI.Import
             }
             else
             {
-                instance = dbContext.EquipmentTypes
-                    .First(x => x.Id == oldObject.Equip_Type_Id);
+                instance = dbContext.EquipmentTypes.First(x => x.Id == oldObject.Equip_Type_Id);
                 instance.LastUpdateUserid = modifiedBy.SmUserId;
+
                 try
                 {
                     instance.LastUpdateTimestamp =  DateTime.ParseExact(oldObject.Modified_Dt.Trim().Substring(0, 10), "yyyy-MM-dd", System.Globalization.CultureInfo.InvariantCulture);
                 }
                 catch
                 {
-
+                    // do nothing
                 }
+
                 dbContext.EquipmentTypes.Update(instance);
             }
         }

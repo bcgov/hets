@@ -3,6 +3,9 @@ using HETSCommon;
 
 namespace FrontEnd.Controllers
 {
+    /// <summary>
+    /// Test Controller
+    /// </summary>
     [Route("test")]
     [Route("hets/test")]
     public class TestController : Controller

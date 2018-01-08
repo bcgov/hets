@@ -6,7 +6,6 @@
     <AssemblyTitle>HETS API Server</AssemblyTitle>
     <TargetFramework>netcoreapp2.0</TargetFramework>
     <DebugType>portable</DebugType>
-    <GenerateDocumentationFile>true</GenerateDocumentationFile>
     <PreserveCompilationContext>true</PreserveCompilationContext>
     <AssemblyName>HETSAPI</AssemblyName>
     <OutputType>Exe</OutputType>
@@ -14,7 +13,6 @@
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
-    <DocumentationFile></DocumentationFile>
   </PropertyGroup>
 
   <ItemGroup>
@@ -33,6 +31,7 @@
 
   <ItemGroup>
     <PackageReference Include="Hangfire.AspNetCore" Version="1.6.17" />
+    <PackageReference Include="Microsoft.AspNetCore" Version="2.0.1" />
     <PackageReference Include="Microsoft.AspNetCore.Authentication" Version="2.0.1" />
     <PackageReference Include="Microsoft.AspNetCore.Authentication.Abstractions" Version="2.0.1" />
     <PackageReference Include="Microsoft.AspNetCore.Authentication.OAuth" Version="2.0.1" />
