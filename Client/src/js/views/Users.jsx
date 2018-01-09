@@ -43,7 +43,7 @@ var Users = React.createClass({
       search: {
         selectedDistrictsIds: this.props.search.selectedDistrictsIds || [],
         surname: this.props.search.surname || '',
-        hideInactive: this.props.search.hideInactive !== false,
+        hideInactive: this.props.search.hideInactive,
       },
 
       ui : {
@@ -82,6 +82,10 @@ var Users = React.createClass({
       }
       this.fetch();
     });
+  },
+
+  componentWillUnmount() {
+    store.dispatch({ type: Action.UPDATE_USERS_SEARCH, users: {} });
   },
 
   fetch() {
@@ -148,13 +152,13 @@ var Users = React.createClass({
                   <InputGroup.Addon>Surname</InputGroup.Addon>
                   <FormInputControl id="surname" type="text" value={ this.state.search.surname } updateState={ this.updateSearchState }/>
                 </InputGroup>
-                <CheckboxControl inline id="hideInactive" checked={ this.state.search.hideInactive } updateState={ this.updateSearchState }>Hide Inactive</CheckboxControl>
+                <CheckboxControl inline id="hideInactive" value={ this.state.search.hideInactive } updateState={ this.updateSearchState }>Hide Inactive</CheckboxControl>
                 <Button id="search-button" bsStyle="primary" onClick={ this.fetch }>Search</Button>
               </ButtonToolbar>
             </Col>
             <Col md={2}>
               <Row id="users-faves">
-                <Favourites id="users-faves-dropdown" type="user" favourites={ this.props.favourites } data={ this.state.search } onSelect={ this.loadFavourite } />
+                <Favourites id="users-faves-dropdown" type="user" favourites={ this.props.favourites.data } data={ this.state.search } onSelect={ this.loadFavourite } pullRight />
               </Row>
             </Col>
           </Row>

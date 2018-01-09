@@ -37,7 +37,7 @@ var EquipmentEditDialog = React.createClass({
   },
 
   componentDidMount() {
-    this.input.focus();
+    // this.input.focus();
   },
 
   updateState(state, callback) {

@@ -50,10 +50,7 @@ var Equipment = React.createClass({
 
   getInitialState() {
     return {
-      loading: false,
-
       showAddDialog: false,
-
       search: {
         selectedLocalAreasIds: this.props.search.selectedLocalAreasIds || [],
         selectedEquipmentTypesIds: this.props.search.selectedEquipmentTypesIds || [],
@@ -61,10 +58,9 @@ var Equipment = React.createClass({
         ownerId: this.props.search.ownerId || 0,
         ownerName: this.props.search.ownerName || 'Owner',
         lastVerifiedDate: this.props.search.lastVerifiedDate || '',
-        hired: this.props.search.hired === false,
+        hired: this.props.search.hired || false,
         statusCode: this.props.search.statusCode || '',
       },
-
       ui : {
         sortField: this.props.ui.sortField || 'organizationName',
         sortDesc: this.props.ui.sortDesc === true,
@@ -107,8 +103,6 @@ var Equipment = React.createClass({
   },
 
   componentDidMount() {
-    this.setState({ loading: true });
-
     var equipmentTypesPromise = Api.getDistrictEquipmentTypes(this.props.currentUser.district.id);
     var ownersPromise = Api.getOwners();
     var favouritesPromise = Api.getFavourites('equipment');
@@ -127,10 +121,7 @@ var Equipment = React.createClass({
   },
 
   fetch() {
-    this.setState({ loading: true });
-    Api.searchEquipmentList(this.buildSearchParams()).finally(() => {
-      this.setState({ loading: false });
-    });
+    Api.searchEquipmentList(this.buildSearchParams());
   },
 
   updateSearchState(state, callback) {
@@ -166,12 +157,12 @@ var Equipment = React.createClass({
       .sortBy('name')
       .value();
 
-    var owners = _.chain(this.props.owners)
+    var owners = _.chain(this.props.owners.data)
       .filter(owner => owner.localArea.serviceArea.district.id == this.props.currentUser.district.id)
       .sortBy('organizationName')
       .value();
 
-    var districtEquipmentTypes = _.chain(this.props.districtEquipmentTypes)
+    var districtEquipmentTypes = _.chain(this.props.districtEquipmentTypes.data)
       .filter(type => type.district.id == this.props.currentUser.district.id)
       .sortBy('districtEquipmentName')
       .value();
@@ -216,7 +207,7 @@ var Equipment = React.createClass({
           </Col>
           <Col md={2}>
             <Row id="equipment-faves">
-              <Favourites id="equipment-faves-dropdown" type="equipment" favourites={ this.props.favourites } data={ this.state.search } onSelect={ this.loadFavourite } pullRight />
+              <Favourites id="equipment-faves-dropdown" type="equipment" favourites={ this.props.favourites.data } data={ this.state.search } onSelect={ this.loadFavourite } pullRight />
             </Row>
             <Row id="equipment-search">
               <Button id="search-button" bsStyle="primary" onClick={ this.fetch }>Search</Button>
@@ -226,48 +217,59 @@ var Equipment = React.createClass({
       </Well>
 
       {(() => {
-        if (this.state.loading) { return <div style={{ textAlign: 'center' }}><Spinner/></div>; }
-        if (Object.keys(this.props.equipmentList).length === 0) { return <Alert bsStyle="success">No equipment</Alert>; }
 
-        var equipmentList = _.sortBy(this.props.equipmentList, this.state.ui.sortField);
+        if (this.props.equipmentList.loading || this.props.owners.loading) { 
+          return <div style={{ textAlign: 'center' }}><Spinner/></div>; 
+        }
+
+        if (Object.keys(this.props.equipmentList.data).length === 0 && this.props.equipmentList.success) { 
+          return <Alert bsStyle="success">No equipment</Alert>; 
+        }
+
+        var equipmentList = _.sortBy(this.props.equipmentList.data, this.state.ui.sortField);
         if (this.state.ui.sortDesc) {
           _.reverse(equipmentList);
         }
-        return <SortTable sortField={ this.state.ui.sortField } sortDesc={ this.state.ui.sortDesc } onSort={ this.updateUIState } headers={[
-          { field: 'equipmentCode',        title: 'ID'            },
-          { field: 'typeName',             title: 'Type'          },
-          { field: 'organizationName',     title: 'Owner'         },
-          { field: 'seniorityText',        title: 'Seniority'     },
-          { field: 'isWorking',            title: 'Hired'         },
-          { field: 'make',                 title: 'Make'          },
-          { field: 'model',                title: 'Model'         },
-          { field: 'size',                 title: 'Size'          },
-          { field: 'equipmentAttachments', title: 'Attachments'   },
-          { field: 'lastVerifiedDate',     title: 'Last Verified' },
-          { field: 'blank'                                        },
-        ]}>
-          {
-            _.map(equipmentList, (equip) => {
-              return <tr key={ equip.id }>
-                <td>{ equip.equipmentCode }</td>
-                <td>{ equip.typeName }</td>
-                <td><a href={ equip.ownerPath }>{ equip.organizationName }</a></td>
-                <td>{ equip.seniorityText }</td>
-                <td>{ equip.isWorking ? equip.currentWorkDescription : 'N' }</td>
-                <td>{ equip.make }</td>
-                <td>{ equip.model }</td>
-                <td>{ equip.size }</td>
-                <td>{ Object.keys(equip.equipmentAttachments).length }</td>
-                <td>{ equip.isApproved ? formatDateTime(equip.lastVerifiedDate, 'YYYY-MMM-DD') : 'Not Approved' }</td>
-                <td style={{ textAlign: 'right' }}>
-                  <LinkContainer to={{ pathname: 'equipment/' + equip.id }}>
-                    <Button title="View Equipment" bsSize="xsmall"><Glyphicon glyph="edit" /></Button>
-                  </LinkContainer>
-                </td>
-              </tr>;
-            })
-          }
-        </SortTable>;
+        
+        if (this.props.equipmentList.success) {
+          return (
+            <SortTable sortField={ this.state.ui.sortField } sortDesc={ this.state.ui.sortDesc } onSort={ this.updateUIState } headers={[
+              { field: 'equipmentCode',        title: 'ID'            },
+              { field: 'typeName',             title: 'Type'          },
+              { field: 'organizationName',     title: 'Owner'         },
+              { field: 'seniorityText',        title: 'Seniority'     },
+              { field: 'isWorking',            title: 'Hired'         },
+              { field: 'make',                 title: 'Make'          },
+              { field: 'model',                title: 'Model'         },
+              { field: 'size',                 title: 'Size'          },
+              { field: 'equipmentAttachments', title: 'Attachments'   },
+              { field: 'lastVerifiedDate',     title: 'Last Verified' },
+              { field: 'blank'                                        },
+            ]}>
+              {
+                _.map(equipmentList, (equip) => {
+                  return <tr key={ equip.id }>
+                    <td>{ equip.equipmentCode }</td>
+                    <td>{ equip.typeName }</td>
+                    <td><a href={ equip.ownerPath }>{ equip.organizationName }</a></td>
+                    <td>{ equip.seniorityText }</td>
+                    <td>{ equip.isWorking ? equip.currentWorkDescription : 'N' }</td>
+                    <td>{ equip.make }</td>
+                    <td>{ equip.model }</td>
+                    <td>{ equip.size }</td>
+                    <td>{ Object.keys(equip.equipmentAttachments).length }</td>
+                    <td>{ equip.isApproved ? formatDateTime(equip.lastVerifiedDate, 'YYYY-MMM-DD') : 'Not Approved' }</td>
+                    <td style={{ textAlign: 'right' }}>
+                      <LinkContainer to={{ pathname: 'equipment/' + equip.id }}>
+                        <Button title="View Equipment" bsSize="xsmall"><Glyphicon glyph="edit" /></Button>
+                      </LinkContainer>
+                    </td>
+                  </tr>;
+                })
+              }
+            </SortTable>
+          );
+        }
       })()}
 
     </div>;

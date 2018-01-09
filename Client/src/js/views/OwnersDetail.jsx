@@ -321,7 +321,7 @@ var OwnersDetail = React.createClass({
           if (this.state.loading) { return <div style={{ textAlign: 'center' }}><Spinner/></div>; }
 
           return <Row id="owners-top">
-            <Col md={10}>
+            <Col md={9}>
               <Label bsStyle={ owner.isApproved ? 'success' : 'danger'}>{ owner.status }</Label>
               <Label className={ owner.isMaintenanceContractor ? '' : 'hide' }>Maintenance Contractor</Label>
               <Unimplemented>
@@ -329,7 +329,7 @@ var OwnersDetail = React.createClass({
               </Unimplemented>
               <Button title="Documents" onClick={ this.showDocuments }>Documents ({ Object.keys(this.props.documents).length })</Button>
             </Col>
-            <Col md={2}>
+            <Col md={3}>
               <div className="pull-right">
                 <Button onClick={ this.print }><Glyphicon glyph="print" title="Print" /></Button>
                 <LinkContainer to={{ pathname: 'owners' }}>
@@ -509,9 +509,7 @@ var OwnersDetail = React.createClass({
           </Col>
         </Row>
       </div>
-      { this.state.showEquipmentDialog &&
-        <EquipmentAddDialog show={ this.state.showEquipmentDialog } onSave={ this.saveNewEquipment } onClose={ this.closeEquipmentDialog } />
-      }
+      <EquipmentAddDialog show={ this.state.showEquipmentDialog } onSave={ this.saveNewEquipment } onClose={ this.closeEquipmentDialog } />
       { this.state.showEditDialog &&
         <OwnersEditDialog show={ this.state.showEditDialog } onSave={ this.saveEdit } onClose={ this.closeEditDialog } />
       }
@@ -522,10 +520,12 @@ var OwnersDetail = React.createClass({
         <ContactsEditDialog show={ this.state.showContactDialog } contact={ this.state.contact } onSave={ this.saveContact } onClose={ this.closeContactDialog } />
       }
       { this.state.showDocumentsDialog &&
-        <DocumentsListDialog show={ this.state.showDocumentsDialog } parent={ owner } onClose={ this.closeDocumentsDialog } />
+        <DocumentsListDialog 
+          show={ owner && this.state.showDocumentsDialog } 
+          parent={ owner } 
+          onClose={ this.closeDocumentsDialog } 
+        />
       }
-
-
       { /* TODO this.state.showPolicyDocumentsDialog && <OwnerPolicyDocumentsDialog /> */}
     </div>;
   },
@@ -536,6 +536,7 @@ function mapStateToProps(state) {
   return {
     owner: state.models.owner,
     equipment: state.models.equipment,
+    equipmentAttachments: state.models.equipmentAttachments,
     contact: state.models.contact,
     documents: state.models.documents,
     uiContacts: state.ui.ownerContacts,

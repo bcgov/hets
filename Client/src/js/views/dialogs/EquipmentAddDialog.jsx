@@ -46,7 +46,6 @@ var EquipmentAddDialog = React.createClass({
     this.setState({ loading: true });
     Api.getDistrictEquipmentTypes(this.props.currentUser.district.id).then(() => {
       this.setState({ loading: false });
-      this.input.focus();
     });
   },
 
@@ -134,6 +133,7 @@ var EquipmentAddDialog = React.createClass({
           <ControlLabel>Equipment Type <sup>*</sup></ControlLabel>
           <FilterDropdown id="equipmentTypeId" fieldName="districtEquipmentName" selectedId={ this.state.equipmentTypeId } updateState={ this.updateState }
             items={ districtEquipmentTypes }
+            className="full-width"
           />
           <HelpBlock>{ this.state.equipmentTypeError }</HelpBlock>
         </FormGroup>
@@ -141,6 +141,7 @@ var EquipmentAddDialog = React.createClass({
           <ControlLabel>Local Area <sup>*</sup></ControlLabel>
           <FilterDropdown id="localAreaId" selectedId={ this.state.localAreaId } updateState={ this.updateState }
             items={ localAreas }
+            className="full-width"
           />
           <HelpBlock>{ this.state.localAreaError }</HelpBlock>
         </FormGroup>
@@ -171,7 +172,7 @@ function mapStateToProps(state) {
     currentUser: state.user,
     owner: state.models.owner,
     localAreas: state.lookups.localAreas,
-    districtEquipmentTypes: state.lookups.districtEquipmentTypes,
+    districtEquipmentTypes: state.lookups.districtEquipmentTypes.data,
   };
 }
 
