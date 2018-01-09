@@ -14,6 +14,7 @@ import ProjectsEditDialog from './dialogs/ProjectsEditDialog.jsx';
 import ContactsEditDialog from './dialogs/ContactsEditDialog.jsx';
 import DocumentsListDialog from './dialogs/DocumentsListDialog.jsx';
 import RentalRequestsAddDialog from './dialogs/RentalRequestsAddDialog.jsx';
+import ReleaseExtendHireDialog from './dialogs/ReleaseExtendHireDialog.jsx';
 
 import * as Action from '../actionTypes';
 import * as Api from '../api';
@@ -61,6 +62,8 @@ var ProjectsDetail = React.createClass({
       showEditDialog: false,
       showContactDialog: false,
       showAddRequestDialog: false,
+      showReleaseHireDialog: false,
+      showExtendHireDialog: false,
 
       includeCompletedRequests: false,
 
@@ -242,6 +245,32 @@ var ProjectsDetail = React.createClass({
     });
   },
 
+  openReleaseHireDialog() {
+    this.setState({ showReleaseHireDialog: true });
+  },
+
+  closeReleaseHireDialog() {
+    this.setState({ showReleaseHireDialog: false });
+  },
+
+  openExtendHireDialog() {
+    this.setState({ showExtendHireDialog: true });
+  },
+
+  closeExtendHireDialog() {
+    this.setState({ showExtendHireDialog: false });
+  },
+
+  confirmEndHire() {
+    // todo: make network call
+    this.closeReleaseHireDialog();
+  },
+
+  extendHire() {
+    // todo: make network call
+    this.closeExtendHireDialog();
+  },
+
   render() {
     var project = this.props.project;
 
@@ -342,6 +371,26 @@ var ProjectsDetail = React.createClass({
                     <td>{ item.equipmentTypeName }</td>
                     <td>TBD</td>
                     <td>N/A</td>
+                    <td>
+                      <Unimplemented>
+                        <Button 
+                          bsSize="xsmall"
+                          onClick={ this.openReleaseHireDialog }
+                        >
+                          <Glyphicon glyph="check" />
+                        </Button>
+                      </Unimplemented>
+                    </td>
+                    <td>
+                      <Unimplemented>
+                        <Button 
+                          bsSize="xsmall"
+                          onClick={ this.openExtendHireDialog }
+                        >
+                          <Glyphicon glyph="check" />
+                        </Button>
+                      </Unimplemented>
+                    </td>
                   </tr>
                 );
 
@@ -364,6 +413,8 @@ var ProjectsDetail = React.createClass({
                   { field: 'equipmentTypeName', title: 'Type'             },
                   { field: 'equipmentMake',     title: 'Make/Model/Size'  },
                   { field: 'lastTimeRecord',    title: 'Time Entry'       },
+                  { field: 'release',           title: 'Release'          },
+                  { field: 'extend',            title: 'Extend'           },
                 ];
 
                 return <TableControl id="equipment-list" headers={ headers }>
@@ -455,6 +506,19 @@ var ProjectsDetail = React.createClass({
           project={ project }
         />
       }
+      <ReleaseExtendHireDialog
+        show={ this.state.showReleaseHireDialog }
+        onClose={ this.closeReleaseHireDialog }
+        onSave={ this.confirmEndHire }
+        title="End Hire"
+        releaseHire
+      />
+      <ReleaseExtendHireDialog
+        show={ this.state.showExtendHireDialog }
+        onClose={ this.closeExtendHireDialog }
+        onSave={ this.extendHire }
+        title="Extend Hire"
+      />
     </div>;
   },
 });
