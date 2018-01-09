@@ -8,31 +8,41 @@ using PDF.Server.Helpers;
 namespace PDF.Server.Controllers
 {
     /// <summary>
-    /// Rental Agreement - used to submit data to generate a new rental document
-    /// </summary>
-    public class RentalAgreement
-    {
-        public string JsonString { get; set; }
-    }
-
-    /// <summary>
-    /// Pdf Controller - Main Pdf generation functionality
+    /// Test Controller - Used to test Pdf generation functionality
     /// </summary>
     [ResponseCache(Location = ResponseCacheLocation.None, NoStore = true)]
-    public class PdfController : Controller
+    public class TestController : Controller
     {
         private readonly INodeServices _nodeServices;
         private readonly IConfigurationRoot _configuration;
 
-        public PdfController(INodeServices nodeServices, IConfigurationRoot configuration)
+        public TestController(INodeServices nodeServices, IConfigurationRoot configuration)
         {
             _nodeServices = nodeServices;
             _configuration = configuration;
-        }       
+        }
 
-        [HttpPost]
-        [Route("pdf/rentalAgreement")]
-        public async Task<IActionResult> GetRentalAgreementPdf([FromBody]RentalAgreement rentalAgreement)
+        [HttpGet]
+        [Route("pdf/testPdf")]
+        public async Task<IActionResult> TestPdf()
+        {
+            string options = @"{""height"": ""10.5in"",""width"": ""8in"",""orientation"": ""portrait""}";
+
+            PdfRequest request = new PdfRequest()
+            {
+                Html = "<h1>Hello World<h1>",
+                Options = options,
+                PdfJsUrl = _configuration.GetSection("Constants").GetSection("PdfJsUrl").Value
+            };
+
+            JsonResponse result = await PdfDocument.BuildPdf(_nodeServices, request);
+
+            return File(result.Data, "application/pdf");
+        }
+
+        [HttpGet]
+        [Route("pdf/testTemplate")]
+        public async Task<IActionResult> TestTemplate()
         {
             try
             {
@@ -41,9 +51,9 @@ namespace PDF.Server.Controllers
                 // *************************************************************
                 RenderRequest request = new RenderRequest()
                 {
-                    JsonString = rentalAgreement.JsonString,
+                    JsonString = "{\"title\": \"Sample Template\", \"name\": \"McTesty\"}",
                     RenderJsUrl = _configuration.GetSection("Constants").GetSection("RenderJsUrl").Value,
-                    Template = _configuration.GetSection("Constants").GetSection("SampleTemplate").Value
+                    Template = _configuration.GetSection("Constants").GetSection("SampleTemplate").Value                    
                 };
 
                 string result = await TemplateHelper.RenderDocument(_nodeServices, request);
@@ -55,7 +65,7 @@ namespace PDF.Server.Controllers
 
                 PdfRequest pdfRequest = new PdfRequest()
                 {
-                    Html = result,
+                    Html = "<h1>" + result + "<h1>",
                     Options = options,
                     PdfJsUrl = _configuration.GetSection("Constants").GetSection("PdfJsUrl").Value
                 };
