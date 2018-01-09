@@ -7,6 +7,7 @@ namespace HETSAPI.Helpers
     /// <summary>
     /// Custom Hets Exception Class
     /// </summary>
+    [Serializable()]
     public class HetsException : Exception
     {
         private readonly string _method;
