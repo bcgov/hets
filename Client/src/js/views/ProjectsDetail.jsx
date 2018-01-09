@@ -13,6 +13,7 @@ import Promise from 'bluebird';
 import ProjectsEditDialog from './dialogs/ProjectsEditDialog.jsx';
 import ContactsEditDialog from './dialogs/ContactsEditDialog.jsx';
 import DocumentsListDialog from './dialogs/DocumentsListDialog.jsx';
+import RentalRequestsAddDialog from './dialogs/RentalRequestsAddDialog.jsx';
 
 import * as Action from '../actionTypes';
 import * as Api from '../api';
@@ -59,6 +60,7 @@ var ProjectsDetail = React.createClass({
 
       showEditDialog: false,
       showContactDialog: false,
+      showAddRequestDialog: false,
 
       includeCompletedRequests: false,
 
@@ -223,8 +225,21 @@ var ProjectsDetail = React.createClass({
     window.print();
   },
 
-  addRequest() {
+  openAddRequestDialog() {
+    this.setState({ showAddRequestDialog: true });
+  },
 
+  closeAddRequestDialog() {
+    this.setState({ showAddRequestDialog: false });
+  },
+
+  saveNewRequest(request) {
+    Api.addRentalRequest(request).then((response) => {
+      // Open it up
+      this.props.router.push({
+        pathname: `${ Constant.RENTAL_REQUESTS_PATHNAME }/${ response.id }`,
+      });
+    });
   },
 
   render() {
@@ -303,9 +318,7 @@ var ProjectsDetail = React.createClass({
                 <Unimplemented>
                   <CheckboxControl id="includeCompletedRequests" inline checked={ this.state.includeCompletedRequests } updateState={ this.updateState }><small>Show Completed</small></CheckboxControl>
                 </Unimplemented>
-                <Unimplemented>
-                  <Button title="Add Request" bsSize="small" onClick={ this.addRequest }><Glyphicon glyph="plus" /> Add</Button>
-                </Unimplemented>
+                <Button title="Add Request" bsSize="small" onClick={ this.openAddRequestDialog }><Glyphicon glyph="plus" /> Add</Button>
               </span></h3>
               {(() => {
                 if (this.state.loading) { return <div style={{ textAlign: 'center' }}><Spinner/></div>; }
@@ -432,6 +445,14 @@ var ProjectsDetail = React.createClass({
           show={ this.state.showDocumentsDialog } 
           parent={ project } 
           onClose={ this.closeDocumentsDialog } 
+        />
+      }
+      { this.state.showAddRequestDialog &&
+        <RentalRequestsAddDialog 
+          show={ this.state.showAddRequestDialog } 
+          onSave={ this.saveNewRequest } 
+          onClose={ this.closeAddRequestDialog } 
+          project={ project }
         />
       }
     </div>;

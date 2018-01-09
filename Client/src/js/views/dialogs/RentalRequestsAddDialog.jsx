@@ -21,15 +21,17 @@ var RentalRequestsAddDialog = React.createClass({
     localAreas: React.PropTypes.object,
     districtEquipmentTypes: React.PropTypes.object,
     projects: React.PropTypes.object,
+    project: React.PropTypes.object,
     onSave: React.PropTypes.func.isRequired,
     onClose: React.PropTypes.func.isRequired,
     show: React.PropTypes.bool,
   },
 
   getInitialState() {
+    const { project } = this.props;
     return {
       loading: false,
-      projectId: 0,
+      projectId: project ? project.id : 0,
       localAreaId: 0,
       equipmentTypeId: 0,
       count: 1,
@@ -123,6 +125,8 @@ var RentalRequestsAddDialog = React.createClass({
 
     var projects = _.sortBy(this.props.projects, 'name');
 
+    const { project } = this.props;
+
     return <EditDialog id="add-rental-request" show={ this.props.show } bsSize="small"
       onClose={ this.props.onClose } onSave={ this.onSave } didChange={ this.didChange } isValid={ this.isValid }
       title= {
@@ -131,9 +135,13 @@ var RentalRequestsAddDialog = React.createClass({
       <Form>
         <FormGroup controlId="projectId" validationState={ this.state.projectError ? 'error' : null }>
           <ControlLabel>Project <sup>*</sup></ControlLabel>
-          <FilterDropdown id="projectId" selectedId={ this.state.projectId } onSelect={ this.onProjectSelected } updateState={ this.updateState }
-            items={ projects } className="full-width"
-          />
+          { project ?
+            <div>{ project.name }</div>
+            :
+            <FilterDropdown id="projectId" selectedId={ this.state.projectId } onSelect={ this.onProjectSelected } updateState={ this.updateState }
+              items={ projects } className="full-width"
+            />
+          }
           <HelpBlock>{ this.state.projectError }</HelpBlock>
         </FormGroup>
         <FormGroup controlId="localAreaId" validationState={ this.state.localAreaError ? 'error' : null }>
