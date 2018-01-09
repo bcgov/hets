@@ -24,12 +24,10 @@ namespace HETSAPI.Test
 {
     /// <summary>
     ///  Class for testing the model RentalAgreement
-    /// </summary>
-    
+    /// </summary>    
     public class RentalAgreementModelTests
     {
-        // TODO uncomment below to declare an instance variable for RentalAgreement
-        private RentalAgreement instance;
+        private readonly RentalAgreement instance;
 
         /// <summary>
         /// Setup the test.

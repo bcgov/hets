@@ -1,7 +1,6 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
-using Microsoft.Extensions.Logging;
 using System;
 using System.Threading.Tasks;
 
@@ -31,31 +30,26 @@ namespace HETSAPI.Authorization
         /// </summary>
         /// <param name="permissions"></param>
         public RequiresPermissionAttribute(params string[] permissions)
-           : base(typeof(RequiresPermissionAttributeImplementation))
+           : base(typeof(ImplementationRequiresPermissionAttribute))
         {
-            Arguments = new[] { new PermissionRequirement(permissions) };
+            Arguments = new object[] { new PermissionRequirement(permissions) };
         }
 
         /// <summary>
         /// Permission verification
         /// </summary>
-        public class RequiresPermissionAttributeImplementation : Attribute, IAsyncResourceFilter
+        public class ImplementationRequiresPermissionAttribute : Attribute, IAsyncResourceFilter
         {
-            private readonly ILogger _logger;
             private readonly IAuthorizationService _authService;
             private readonly PermissionRequirement _requiredPermissions;
 
             /// <summary>
             /// Implements permission verification
             /// </summary>
-            /// <param name="logger"></param>
             /// <param name="authService"></param>
             /// <param name="requiredPermissions"></param>
-            public RequiresPermissionAttributeImplementation(ILogger<RequiresPermissionAttribute> logger,
-                                            IAuthorizationService authService,
-                                            PermissionRequirement requiredPermissions)
+            public ImplementationRequiresPermissionAttribute(IAuthorizationService authService, PermissionRequirement requiredPermissions)
             {
-                _logger = logger;
                 _authService = authService;
                 _requiredPermissions = requiredPermissions;
             }

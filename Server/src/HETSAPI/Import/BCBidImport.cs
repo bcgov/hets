@@ -1,16 +1,27 @@
 ﻿using Hangfire.Console;
 using Hangfire.Server;
-using HETSAPI.Models;
 using Microsoft.EntityFrameworkCore;
 using System;
+using HETSAPI.Models;
 
 namespace HETSAPI.Import
 {
-    public class BCBidImport
+    /// <summary>
+    /// BC Bid Data Import Functions
+    /// </summary>
+    public static class BCBidImport
     {
-        const string systemId = "SYSTEM_HETS";
-        public static string todayDate = DateTime.Now.ToString("yyyy-MM-dd");
-        public static int sigId =  388888;
+        private const string SystemId = "SYSTEM_HETS";
+
+        /// <summary>
+        /// Returns current date in a standard format for all conversion routines
+        /// </summary>
+        public static string TodayDate => DateTime.Now.ToString("yyyy-MM-dd");
+
+        /// <summary>
+        /// Returns the common "SigId" for all conversion routines
+        /// </summary>
+        public static int SigId => 388888;
 
         /// <summary>
         /// Hangfire job to do the Annual Rollover tasks.
@@ -18,7 +29,7 @@ namespace HETSAPI.Import
         /// <param name="context"></param>
         /// <param name="connectionstring"></param>
         /// <param name="fileLocation"></param>
-        static public void ImportJob(PerformContext context, string connectionstring, string fileLocation)
+        public static void ImportJob(PerformContext context, string connectionstring, string fileLocation)
         {
             // open a connection to the database.
             DbContextOptionsBuilder<DbAppContext> options = new DbContextOptionsBuilder<DbAppContext>();
@@ -27,73 +38,56 @@ namespace HETSAPI.Import
             DbAppContext dbContext = new DbAppContext(null, options.Options);
             context.WriteLine("Starting Data Import Job");
 
-            //Adding system Account if not there in the database.
-            ImportUtility.InsertSystemUser(dbContext, systemId);
-
-            //*** start by importing Region from Region.xml. THis goes to table HETS_REGION
-            // ImportRegion.Import(context, dbContext, fileLocation, systemId);
-
-            //*** start by importing districts from District.xml. THis goes to table HETS_DISTRICT
-           // dbContext = new DbAppContext(null, options.Options);
-           // ImportDistrict.Import(context, dbContext, fileLocation, systemId);
-
-            //*** start by importing Cities from HETS_City.xml to HET_CITY
-            //dbContext = new DbAppContext(null, options.Options);
-            // ImportCity.Import(context, dbContext, fileLocation, systemId);
-
-            //*** Service Areas: from the file of Service_Area.xml to the table of HET_SERVICE_AREA
-            //dbContext = new DbAppContext(null, options.Options);
-            // ImportServiceArea.Import(context, dbContext, fileLocation, systemId);
-
-            //############################ We start here #####################################  
+            // adding system Account if not there in the database
+            ImportUtility.InsertSystemUser(dbContext, SystemId);            
+  
             //*** Importing the Local Areas from the file of Area.xml to the table of HET_LOCAL_AREA
             dbContext = new DbAppContext(null, options.Options);
-            ImportLocalArea.Import(context, dbContext, fileLocation, systemId);
+            ImportLocalArea.Import(context, dbContext, fileLocation, SystemId);
 
             //*** Users from User_HETS.xml. This has effects on Table HET_USER and HET_USER_ROLE  
             dbContext = new DbAppContext(null, options.Options);
-            ImportUser.Import(context, dbContext, fileLocation, systemId);
+            ImportUser.Import(context, dbContext, fileLocation, SystemId);
 
             //*** Owners: This has effects on Table HETS_OWNER and HETS_Contact
             dbContext = new DbAppContext(null, options.Options);
-            ImportOwner.Import(context, dbContext, fileLocation, systemId);
+            ImportOwner.Import(context, dbContext, fileLocation, SystemId);
 
             //*** Import Dump_Truck  from Dump_Truck.xml   
             dbContext = new DbAppContext(null, options.Options);
-            ImportProject.Import(context, dbContext, fileLocation, systemId);
+            ImportProject.Import(context, dbContext, fileLocation, SystemId);
 
             //*** Import Equiptment type from EquipType.xml This has effects on Table HET_USER and HET_EQUIPMENT_TYPE  
             dbContext = new DbAppContext(null, options.Options);
-            ImportDisEquipType.Import(context, dbContext, fileLocation, systemId);
+            ImportDisEquipType.Import(context, dbContext, fileLocation, SystemId);
 
             //*** Import Equiptment  from Equip.xml  This has effects on Table HET_USER and HET_EQUIP
             dbContext = new DbAppContext(null, options.Options);
-            ImportEquip.Import(context, dbContext, fileLocation, systemId);
+            ImportEquip.Import(context, dbContext, fileLocation, SystemId);
 
             //*** Import Dump_Truck  from Dump_Truck.xml   
             dbContext = new DbAppContext(null, options.Options);
-            ImportDumpTruck.Import(context, dbContext, fileLocation,  systemId);
+            ImportDumpTruck.Import(context, dbContext, fileLocation,  SystemId);
 
             var watch = System.Diagnostics.Stopwatch.StartNew();
             //*** Import Equipment_Attached  from Equip_Attach.xml   
             dbContext = new DbAppContext(null, options.Options);
-            ImportEquipAttach.Import(context, dbContext, fileLocation,  systemId);
-
+            ImportEquipAttach.Import(context, dbContext, fileLocation,  SystemId);
 
             //*** Import the table of "HET_DISTRICT_EQUIPMENT_TYPE"  from Block.xml   
             dbContext = new DbAppContext(null, options.Options);
-            ImportBlock.Import(context, dbContext, fileLocation,  systemId);
+            ImportBlock.Import(context, dbContext, fileLocation,  SystemId);
             watch.Stop();
-            var elapsedMs = watch.ElapsedMilliseconds;
+            long elapsedMs = watch.ElapsedMilliseconds;
             Console.WriteLine(elapsedMs.ToString());
 
             //*** Import the table of  "HET_RENTAL_AGREEMENT" and "HET_TIME_RECORD";  from Equip_Usage.xml   
             dbContext = new DbAppContext(null, options.Options);
-            ImportEquipUsage.Import(context, options, dbContext, fileLocation, systemId);
+            ImportEquipUsage.Import(context, dbContext, fileLocation, SystemId);
 
             //*** Import the table of  "HET_RENTAL_AGREEMENT" and "HET_TIME_RECORD";  from Equip_Usage.xml   
             dbContext = new DbAppContext(null, options.Options);
-            ImportRotation.Import(context, dbContext, fileLocation, systemId);
+            ImportRotation.Import(context, dbContext, fileLocation, SystemId);
         }
     }
 }

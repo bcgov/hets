@@ -8,15 +8,14 @@ using HETSAPI.Models;
 
 namespace JsonValidator
 {
-    public class Program
+    public static class Program
     {        
         public static void Main(string[] args)
         {
-            AssemblyName name = new AssemblyName("HETSAPI");
-            
+            AssemblyName name = new AssemblyName("HETSAPI");            
             Assembly assembly = Assembly.Load(name);
             
-            // if no args, print help.
+            // if no args, print help
             if (args == null || args.Length == 0)
             {
                 Console.WriteLine("JsonValidator.exe <Type> <File Name to validate>");
@@ -39,8 +38,9 @@ namespace JsonValidator
                 {
                     Console.WriteLine("Validating file " + filename + " for type " + classname);
 
-                    var sampleObject = assembly.CreateInstance(classname);
-                    if (sampleObject != null )
+                    object sampleObject = assembly.CreateInstance(classname);
+
+                    if (sampleObject != null)
                     {
                         string json = File.ReadAllText(filename);
                         try

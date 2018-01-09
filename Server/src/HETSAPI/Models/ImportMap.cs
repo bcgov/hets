@@ -6,75 +6,69 @@ using System.ComponentModel.DataAnnotations;
 namespace HETSAPI.Models
 {
     /// <summary>
-    ///
+    /// Import Map Database Model
     /// </summary>
-
-    public partial class ImportMap : AuditableEntity, IEquatable<ImportMap>
+    public sealed class ImportMap : AuditableEntity, IEquatable<ImportMap>
     {
         /// <summary>
-        /// Default constructor, required by entity framework
+        /// IMport Map Database Model Constructor (required by entity framework)
         /// </summary>
         public ImportMap()
         {
-            this.Id = 0;
+            Id = 0;
         }
 
         /// <summary>
         /// Initializes a new instance of the <see cref="ImportMap" /> class.
         /// </summary>
-        /// <param name="Id">A system generated unique identifier for the ImportMap (required).</param>
-        /// <param name="OldTable">Table name in old system (required).</param>
-        /// <param name="NewTable">Table name in new system. (required).</param>
-        /// <param name="OldKey">Old primary key for record (required).</param>
-        /// <param name="NewKey">New primary key for record (required).</param>
-        public ImportMap(int Id, string OldTable, string NewTable, string OldKey, int NewKey)
+        /// <param name="id">A system generated unique identifier for the ImportMap (required).</param>
+        /// <param name="oldTable">Table name in old system (required).</param>
+        /// <param name="newTable">Table name in new system. (required).</param>
+        /// <param name="oldKey">Old primary key for record (required).</param>
+        /// <param name="newKey">New primary key for record (required).</param>
+        public ImportMap(int id, string oldTable, string newTable, string oldKey, int newKey)
         {
-            this.Id = Id;
-            this.OldTable = OldTable;
-            this.NewTable = NewTable;
-            this.OldKey = OldKey;
-            this.NewKey = NewKey;
-
-
-
-
+            Id = id;
+            OldTable = oldTable;
+            NewTable = newTable;
+            OldKey = oldKey;
+            NewKey = newKey;
         }
 
         /// <summary>
         /// A system generated unique identifier for the ImportMap
         /// </summary>
         /// <value>A system generated unique identifier for the ImportMap</value>
-        [MetaDataExtension (Description = "A system generated unique identifier for the ImportMap")]
+        [MetaData (Description = "A system generated unique identifier for the ImportMap")]
         public int Id { get; set; }
 
         /// <summary>
         /// Table name in old system
         /// </summary>
         /// <value>Table name in old system</value>
-        [MetaDataExtension (Description = "Table name in old system")]
+        [MetaData (Description = "Table name in old system")]
         public string OldTable { get; set; }
 
         /// <summary>
         /// Table name in new system.
         /// </summary>
         /// <value>Table name in new system.</value>
-        [MetaDataExtension (Description = "Table name in new system.")]
+        [MetaData (Description = "Table name in new system.")]
         public string NewTable { get; set; }
 
         /// <summary>
         /// Old primary key for record
         /// </summary>
         /// <value>Old primary key for record</value>
-        [MetaDataExtension (Description = "Old primary key for record")]
+        [MetaData (Description = "Old primary key for record")]
         [MaxLength(250)]
-
         public string OldKey { get; set; }
 
         /// <summary>
         /// New primary key for record
         /// </summary>
         /// <value>New primary key for record</value>
-        [MetaDataExtension (Description = "New primary key for record")]
+        [MetaData (Description = "New primary key for record")]
         public int NewKey { get; set; }
 
         /// <summary>
@@ -84,6 +78,7 @@ namespace HETSAPI.Models
         public override string ToString()
         {
             var sb = new StringBuilder();
+
             sb.Append("class ImportMap {\n");
             sb.Append("  Id: ").Append(Id).Append("\n");
             sb.Append("  OldTable: ").Append(OldTable).Append("\n");
@@ -91,6 +86,7 @@ namespace HETSAPI.Models
             sb.Append("  OldKey: ").Append(OldKey).Append("\n");
             sb.Append("  NewKey: ").Append(NewKey).Append("\n");
             sb.Append("}\n");
+
             return sb.ToString();
         }
 
@@ -110,10 +106,9 @@ namespace HETSAPI.Models
         /// <returns>Boolean</returns>
         public override bool Equals(object obj)
         {
-            if (ReferenceEquals(null, obj)) { return false; }
+            if (obj is null) { return false; }
             if (ReferenceEquals(this, obj)) { return true; }
-            if (obj.GetType() != GetType()) { return false; }
-            return Equals((ImportMap)obj);
+            return obj.GetType() == GetType() && Equals((ImportMap)obj);
         }
 
         /// <summary>
@@ -123,33 +118,32 @@ namespace HETSAPI.Models
         /// <returns>Boolean</returns>
         public bool Equals(ImportMap other)
         {
-
-            if (ReferenceEquals(null, other)) { return false; }
+            if (other is null) { return false; }
             if (ReferenceEquals(this, other)) { return true; }
 
             return
                 (
-                    this.Id == other.Id ||
-                    this.Id.Equals(other.Id)
+                    Id == other.Id ||
+                    Id.Equals(other.Id)
                 ) &&
                 (
-                    this.OldTable == other.OldTable ||
-                    this.OldTable != null &&
-                    this.OldTable.Equals(other.OldTable)
+                    OldTable == other.OldTable ||
+                    OldTable != null &&
+                    OldTable.Equals(other.OldTable)
                 ) &&
                 (
-                    this.NewTable == other.NewTable ||
-                    this.NewTable != null &&
-                    this.NewTable.Equals(other.NewTable)
+                    NewTable == other.NewTable ||
+                    NewTable != null &&
+                    NewTable.Equals(other.NewTable)
                 ) &&
                 (
-                    this.OldKey == other.OldKey ||
-                    this.OldKey != null &&
-                    this.OldKey.Equals(other.OldKey)
+                    OldKey == other.OldKey ||
+                    OldKey != null &&
+                    OldKey.Equals(other.OldKey)
                 ) &&
                 (
-                    this.NewKey == other.NewKey ||
-                    this.NewKey.Equals(other.NewKey)
+                    NewKey == other.NewKey ||
+                    NewKey.Equals(other.NewKey)
                 );
         }
 
@@ -163,22 +157,27 @@ namespace HETSAPI.Models
             unchecked // Overflow is fine, just wrap
             {
                 int hash = 41;
+
                 // Suitable nullity checks
+                hash = hash * 59 + Id.GetHashCode();
 
-                hash = hash * 59 + this.Id.GetHashCode();                if (this.OldTable != null)
+                if (OldTable != null)
                 {
-                    hash = hash * 59 + this.OldTable.GetHashCode();
-                }
-                                if (this.NewTable != null)
-                {
-                    hash = hash * 59 + this.NewTable.GetHashCode();
-                }
-                                if (this.OldKey != null)
-                {
-                    hash = hash * 59 + this.OldKey.GetHashCode();
+                    hash = hash * 59 + OldTable.GetHashCode();
                 }
 
-                hash = hash * 59 + this.NewKey.GetHashCode();
+                if (NewTable != null)
+                {
+                    hash = hash * 59 + NewTable.GetHashCode();
+                }
+
+                if (OldKey != null)
+                {
+                    hash = hash * 59 + OldKey.GetHashCode();
+                }
+
+                hash = hash * 59 + NewKey.GetHashCode();
+
                 return hash;
             }
         }

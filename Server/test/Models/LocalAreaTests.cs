@@ -24,12 +24,10 @@ namespace HETSAPI.Test
 {
     /// <summary>
     ///  Class for testing the model LocalArea
-    /// </summary>
-    
+    /// </summary>    
     public class LocalAreaModelTests
     {
-        // TODO uncomment below to declare an instance variable for LocalArea
-        private LocalArea instance;
+        private readonly LocalArea instance;
 
         /// <summary>
         /// Setup the test.

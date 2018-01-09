@@ -11,8 +11,6 @@
 // OpenAPI spec version: v1
 //***********************************************************************************************
 using System;
-using System.IO;
-using System.Xml.XPath;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
@@ -20,10 +18,8 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json.Serialization;
 using Swashbuckle.Swagger.Model;
-using Swashbuckle.SwaggerGen.Annotations;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Http.Features;
-using Microsoft.AspNetCore.Http;
 using System.Text;
 using System.Reflection;
 using Hangfire.PostgreSql;
@@ -40,9 +36,6 @@ namespace HETSAPI
     /// </summary>
     public class Startup
     {
-        private const string ConstHangfireUrl = "/hangfire";
-        private const string ConstErrorUrl = "/error";
-
         private readonly IHostingEnvironment _hostingEnv;
 
         /// <summary>
@@ -53,12 +46,12 @@ namespace HETSAPI
         /// <summary>
         /// Startup HETS Backend Services
         /// </summary>
-        /// <param name="env"></param>
+        /// <param name="env"></param>        
         public Startup(IHostingEnvironment env)
         {
             _hostingEnv = env;            
 
-            var builder = new ConfigurationBuilder()
+            IConfigurationBuilder builder = new ConfigurationBuilder()
                 .SetBasePath(env.ContentRootPath)
                 .AddJsonFile("appsettings.json", optional: true, reloadOnChange: true)
                 .AddJsonFile($"appsettings.{env.EnvironmentName}.json", optional: true)
@@ -74,14 +67,6 @@ namespace HETSAPI
         public void ConfigureServices(IServiceCollection services)
         {
             string connectionString = GetConnectionString();
-            
-            // setup authorization
-            services.AddAuthorization();
-            services.RegisterPermissionHandler();
-
-            services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
-            services.AddSingleton<IDbAppContextFactory, DbAppContextFactory>(CreateDbAppContextFactory);
-            services.AddSingleton<IConfiguration>(Configuration);
 
             // add database context
             services.AddDbContext<DbAppContext>(options => options.UseNpgsql(connectionString));
@@ -93,17 +78,18 @@ namespace HETSAPI
                 options.DefaultChallengeScheme = SiteMinderAuthOptions.AuthenticationSchemeName;
             }).AddSiteminderAuth(options =>
             {
-                
+
             });
 
+            // setup authorization
+            services.AddAuthorization();
+            services.RegisterPermissionHandler();                       
+            
             // allow for large files to be uploaded
             services.Configure<FormOptions>(options =>
             {
                 options.MultipartBodyLengthLimit = 1073741824; // 1 GB
-            });          
-
-            // add compresssion
-            services.AddResponseCompression();            
+            });                  
 
             services.AddMvc(options => options.AddDefaultAuthorizationPolicyFilter())                
                 .AddJsonOptions(
@@ -142,14 +128,7 @@ namespace HETSAPI
                         Description = "Hired Equipment Tracking System"
                     });
 
-                    options.DescribeAllEnumsAsStrings();
-
-                    // disabling documentation - takes a long time to load
-                    // to work - need to include XML document generation in the build settings
-                    // (bin\Debug\netcoreapp2.0\HETSAPI.xml)
-                    //XPathDocument comments = new XPathDocument($"{AppContext.BaseDirectory}{Path.DirectorySeparatorChar}{_hostingEnv.ApplicationName}.xml");
-                    //options.OperationFilter<XmlCommentsOperationFilter>(comments);
-                    //options.ModelFilter<XmlCommentsModelFilter>(comments);
+                    options.DescribeAllEnumsAsStrings();                    
                 });
             }
 
@@ -172,8 +151,8 @@ namespace HETSAPI
             loggerFactory.AddDebug();
 
             // web site error handler                             
-            app.UseExceptionHandler(ConstErrorUrl);
-
+            app.UseExceptionHandler(Configuration.GetSection("Constants").GetSection("ErrorUrl").Value);
+            
             // IMPORTANT: This session call MUST go before UseMvc()
             app.UseSession();
 
@@ -185,6 +164,7 @@ namespace HETSAPI
 
             // do not start Hangfire if we are running tests. 
             bool startHangfire = true;
+
 #if DEBUG                   
             foreach (var assem in Assembly.GetEntryAssembly().GetReferencedAssemblies())
             {
@@ -208,21 +188,15 @@ namespace HETSAPI
                 };
 
                 // enable the /hangfire action
-                app.UseHangfireDashboard(ConstHangfireUrl, dashboardOptions);
+                app.UseHangfireDashboard((Configuration.GetSection("Constants").GetSection("HangfireUrl").Value), dashboardOptions);
             }
-
-            // enable response compression
-            app.UseResponseCompression();
             
             app.UseMvc(routes =>
             {
                 routes.MapRoute(
                     name: "default",
                     template: "{controller=Home}/{action=Index}");
-            });
-
-            app.UseDefaultFiles();
-            app.UseStaticFiles();
+            });            
             
             if (_hostingEnv.IsDevelopment())
             {
@@ -235,7 +209,7 @@ namespace HETSAPI
                 HangfireTools.ClearHangfire();
 
                 // this should be set as an environment variable.  
-                // Only enable when doing a new PROD deploy to populate CCW data and link it to the bus data.
+                // only enable when doing a new PROD deploy to populate CCW data and link it to the bus data.
                 if (!string.IsNullOrEmpty(Configuration["ENABLE_ANNUAL_ROLLOVER"]))
                 {
                     CreateHangfireAnnualRolloverJob(loggerFactory);
@@ -314,20 +288,7 @@ namespace HETSAPI
             }
 
             return connectionString;
-        }
-
-        /// <summary>
-        /// Create Db Context Factory
-        /// </summary>
-        /// <param name="serviceProvider"></param>
-        /// <returns></returns>
-        private DbAppContextFactory CreateDbAppContextFactory(IServiceProvider serviceProvider)
-        {
-            DbContextOptionsBuilder<DbAppContext> options = new DbContextOptionsBuilder<DbAppContext>();
-            options.UseNpgsql(GetConnectionString());
-            DbAppContextFactory dbAppContextFactory = new DbAppContextFactory(null, options.Options);
-            return dbAppContextFactory;
-        }       
+        }            
 
         /// <summary>
         /// Create Hangfire Jobs

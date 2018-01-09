@@ -8,88 +8,88 @@ using System.ComponentModel.DataAnnotations;
 
 namespace HETSAPI.Models
 {
-	/// <summary>
-	/// An identified user in the HETS Application that has a defined authorization level.
-	/// </summary>
-	[MetaDataExtension (Description = "An identified user in the HETS Application that has a defined authorization level.")]
+    /// <summary>
+    /// User Database Model
+    /// </summary>
+    [MetaData (Description = "An identified user in the HETS Application that has a defined authorization level.")]
 	public partial class User : AuditableEntity, IEquatable<User>
 	{
-		/// <summary>
-		/// Default constructor, required by entity framework
-		/// </summary>
-		public User()
+        /// <summary>
+        /// User Database Model Constructor (required by entity framework)
+        /// </summary>
+        public User()
 		{
-			this.Id = 0;
+			Id = 0;
 		}
 
 		/// <summary>
 		/// Initializes a new instance of the <see cref="User" /> class.
 		/// </summary>
-		/// <param name="Id">A system-generated unique identifier for a User (required).</param>
-		/// <param name="GivenName">Given name of the user. (required).</param>
-		/// <param name="Surname">Surname of the user. (required).</param>
-		/// <param name="Active">A flag indicating the User is active in the system. Set false to remove access to the system for the user. (required).</param>
-		/// <param name="Initials">Initials of the user, to be presented where screen space is at a premium..</param>
-		/// <param name="Email">The email address of the user in the system..</param>
-		/// <param name="SmUserId">Security Manager User ID.</param>
-		/// <param name="Guid">The GUID unique to the user as provided by the authentication system. In this case, authentication is done by Siteminder and the GUID uniquely identifies the user within the user directories managed by Siteminder - e.g. IDIR and BCeID. The GUID is equivalent to the IDIR Id, but is guaranteed unique to a person, while the IDIR ID is not - IDIR IDs can be recycled..</param>
-		/// <param name="SmAuthorizationDirectory">The user directory service used by Siteminder to authenticate the user - usually IDIR or BCeID..</param>
-		/// <param name="UserRoles">UserRoles.</param>
-		/// <param name="GroupMemberships">GroupMemberships.</param>
-		/// <param name="District">The District that the User belongs to.</param>
-		public User(int Id, string GivenName, string Surname, bool Active, string Initials = null, string Email = null, string SmUserId = null, string Guid = null, string SmAuthorizationDirectory = null, List<UserRole> UserRoles = null, List<GroupMembership> GroupMemberships = null, District District = null)
+		/// <param name="id">A system-generated unique identifier for a User (required).</param>
+		/// <param name="givenName">Given name of the user. (required).</param>
+		/// <param name="surname">Surname of the user. (required).</param>
+		/// <param name="active">A flag indicating the User is active in the system. Set false to remove access to the system for the user. (required).</param>
+		/// <param name="initials">Initials of the user, to be presented where screen space is at a premium..</param>
+		/// <param name="email">The email address of the user in the system..</param>
+		/// <param name="smUserId">Security Manager User ID.</param>
+		/// <param name="guid">The GUID unique to the user as provided by the authentication system. In this case, authentication is done by Siteminder and the GUID uniquely identifies the user within the user directories managed by Siteminder - e.g. IDIR and BCeID. The GUID is equivalent to the IDIR Id, but is guaranteed unique to a person, while the IDIR ID is not - IDIR IDs can be recycled..</param>
+		/// <param name="smAuthorizationDirectory">The user directory service used by Siteminder to authenticate the user - usually IDIR or BCeID..</param>
+		/// <param name="userRoles">UserRoles.</param>
+		/// <param name="groupMemberships">GroupMemberships.</param>
+		/// <param name="district">The District that the User belongs to.</param>
+		public User(int id, string givenName, string surname, bool active, string initials = null, string email = null, 
+		    string smUserId = null, string guid = null, string smAuthorizationDirectory = null, List<UserRole> userRoles = null, 
+		    List<GroupMembership> groupMemberships = null, District district = null)
 		{
-			this.Id = Id;
-			this.GivenName = GivenName;
-			this.Surname = Surname;
-			this.Active = Active;
-			this.Initials = Initials;
-			this.Email = Email;
-			this.SmUserId = SmUserId;
-			this.Guid = Guid;
-			this.SmAuthorizationDirectory = SmAuthorizationDirectory;
-			this.UserRoles = UserRoles;
-			this.GroupMemberships = GroupMemberships;
-			this.District = District;
+			Id = id;
+			GivenName = givenName;
+			Surname = surname;
+			Active = active;
+			Initials = initials;
+			Email = email;
+			SmUserId = smUserId;
+			Guid = guid;
+			SmAuthorizationDirectory = smAuthorizationDirectory;
+			UserRoles = userRoles;
+			GroupMemberships = groupMemberships;
+			District = district;
 		}
 
 		/// <summary>
 		/// A system-generated unique identifier for a User
 		/// </summary>
 		/// <value>A system-generated unique identifier for a User</value>
-		[MetaDataExtension (Description = "A system-generated unique identifier for a User")]
+		[MetaData (Description = "A system-generated unique identifier for a User")]
 		public int Id { get; set; }
 
 		/// <summary>
 		/// Given name of the user.
 		/// </summary>
 		/// <value>Given name of the user.</value>
-		[MetaDataExtension (Description = "Given name of the user.")]
+		[MetaData (Description = "Given name of the user.")]
 		[MaxLength(50)]
-
 		public string GivenName { get; set; }
 
 		/// <summary>
 		/// Surname of the user.
 		/// </summary>
 		/// <value>Surname of the user.</value>
-		[MetaDataExtension (Description = "Surname of the user.")]
+		[MetaData (Description = "Surname of the user.")]
 		[MaxLength(50)]
-
 		public string Surname { get; set; }
 
 		/// <summary>
 		/// A flag indicating the User is active in the system. Set false to remove access to the system for the user.
 		/// </summary>
 		/// <value>A flag indicating the User is active in the system. Set false to remove access to the system for the user.</value>
-		[MetaDataExtension (Description = "A flag indicating the User is active in the system. Set false to remove access to the system for the user.")]
+		[MetaData (Description = "A flag indicating the User is active in the system. Set false to remove access to the system for the user.")]
 		public bool Active { get; set; }
 
 		/// <summary>
 		/// Initials of the user, to be presented where screen space is at a premium.
 		/// </summary>
 		/// <value>Initials of the user, to be presented where screen space is at a premium.</value>
-		[MetaDataExtension (Description = "Initials of the user, to be presented where screen space is at a premium.")]
+		[MetaData (Description = "Initials of the user, to be presented where screen space is at a premium.")]
 		[MaxLength(10)]
 		public string Initials { get; set; }
 
@@ -97,7 +97,7 @@ namespace HETSAPI.Models
 		/// The email address of the user in the system.
 		/// </summary>
 		/// <value>The email address of the user in the system.</value>
-		[MetaDataExtension (Description = "The email address of the user in the system.")]
+		[MetaData (Description = "The email address of the user in the system.")]
 		[MaxLength(255)]
 		public string Email { get; set; }
 
@@ -105,7 +105,7 @@ namespace HETSAPI.Models
 		/// Security Manager User ID
 		/// </summary>
 		/// <value>Security Manager User ID</value>
-		[MetaDataExtension (Description = "Security Manager User ID")]
+		[MetaData (Description = "Security Manager User ID")]
 		[MaxLength(255)]
 		public string SmUserId { get; set; }
 
@@ -113,7 +113,7 @@ namespace HETSAPI.Models
 		/// The GUID unique to the user as provided by the authentication system. In this case, authentication is done by Siteminder and the GUID uniquely identifies the user within the user directories managed by Siteminder - e.g. IDIR and BCeID. The GUID is equivalent to the IDIR Id, but is guaranteed unique to a person, while the IDIR ID is not - IDIR IDs can be recycled.
 		/// </summary>
 		/// <value>The GUID unique to the user as provided by the authentication system. In this case, authentication is done by Siteminder and the GUID uniquely identifies the user within the user directories managed by Siteminder - e.g. IDIR and BCeID. The GUID is equivalent to the IDIR Id, but is guaranteed unique to a person, while the IDIR ID is not - IDIR IDs can be recycled.</value>
-		[MetaDataExtension (Description = "The GUID unique to the user as provided by the authentication system. In this case, authentication is done by Siteminder and the GUID uniquely identifies the user within the user directories managed by Siteminder - e.g. IDIR and BCeID. The GUID is equivalent to the IDIR Id, but is guaranteed unique to a person, while the IDIR ID is not - IDIR IDs can be recycled.")]
+		[MetaData (Description = "The GUID unique to the user as provided by the authentication system. In this case, authentication is done by Siteminder and the GUID uniquely identifies the user within the user directories managed by Siteminder - e.g. IDIR and BCeID. The GUID is equivalent to the IDIR Id, but is guaranteed unique to a person, while the IDIR ID is not - IDIR IDs can be recycled.")]
 		[MaxLength(255)]
 		public string Guid { get; set; }
 
@@ -121,7 +121,7 @@ namespace HETSAPI.Models
 		/// The user directory service used by Siteminder to authenticate the user - usually IDIR or BCeID.
 		/// </summary>
 		/// <value>The user directory service used by Siteminder to authenticate the user - usually IDIR or BCeID.</value>
-		[MetaDataExtension (Description = "The user directory service used by Siteminder to authenticate the user - usually IDIR or BCeID.")]
+		[MetaData (Description = "The user directory service used by Siteminder to authenticate the user - usually IDIR or BCeID.")]
 		[MaxLength(255)]
 		public string SmAuthorizationDirectory { get; set; }
 
@@ -139,7 +139,7 @@ namespace HETSAPI.Models
 		/// The District that the User belongs to
 		/// </summary>
 		/// <value>The District that the User belongs to</value>
-		[MetaDataExtension (Description = "The District that the User belongs to")]
+		[MetaData (Description = "The District that the User belongs to")]
 		public District District { get; set; }
 
 		/// <summary>
@@ -147,7 +147,7 @@ namespace HETSAPI.Models
 		/// </summary>
 		[ForeignKey("District")]
 		[JsonIgnore]
-		[MetaDataExtension (Description = "The District that the User belongs to")]
+		[MetaData (Description = "The District that the User belongs to")]
 		public int? DistrictId { get; set; }
 
 		/// <summary>
@@ -157,6 +157,7 @@ namespace HETSAPI.Models
 		public override string ToString()
 		{
 			var sb = new StringBuilder();
+
 			sb.Append("class User {\n");
 			sb.Append("  Id: ").Append(Id).Append("\n");
 			sb.Append("  GivenName: ").Append(GivenName).Append("\n");
@@ -191,10 +192,9 @@ namespace HETSAPI.Models
 		/// <returns>Boolean</returns>
 		public override bool Equals(object obj)
 		{
-			if (ReferenceEquals(null, obj)) { return false; }
+			if (obj is null) { return false; }
 			if (ReferenceEquals(this, obj)) { return true; }
-			if (obj.GetType() != GetType()) { return false; }
-			return Equals((User)obj);
+			return obj.GetType() == GetType() && Equals((User)obj);
 		}
 
 		/// <summary>
@@ -204,67 +204,67 @@ namespace HETSAPI.Models
 		/// <returns>Boolean</returns>
 		public bool Equals(User other)
 		{
-			if (ReferenceEquals(null, other)) { return false; }
+			if (other is null) { return false; }
 			if (ReferenceEquals(this, other)) { return true; }
 
 			return
 				(
-					this.Id == other.Id ||
-					this.Id.Equals(other.Id)
+					Id == other.Id ||
+					Id.Equals(other.Id)
 				) &&
 				(
-					this.GivenName == other.GivenName ||
-					this.GivenName != null &&
-					this.GivenName.Equals(other.GivenName)
+					GivenName == other.GivenName ||
+					GivenName != null &&
+					GivenName.Equals(other.GivenName)
 				) &&
 				(
-					this.Surname == other.Surname ||
-					this.Surname != null &&
-					this.Surname.Equals(other.Surname)
+					Surname == other.Surname ||
+					Surname != null &&
+					Surname.Equals(other.Surname)
 				) &&
 				(
-					this.Active == other.Active ||
-					this.Active.Equals(other.Active)
+					Active == other.Active ||
+					Active.Equals(other.Active)
 				) &&
 				(
-					this.Initials == other.Initials ||
-					this.Initials != null &&
-					this.Initials.Equals(other.Initials)
+					Initials == other.Initials ||
+					Initials != null &&
+					Initials.Equals(other.Initials)
 				) &&
 				(
-					this.Email == other.Email ||
-					this.Email != null &&
-					this.Email.Equals(other.Email)
+					Email == other.Email ||
+					Email != null &&
+					Email.Equals(other.Email)
 				) &&
 				(
-					this.SmUserId == other.SmUserId ||
-					this.SmUserId != null &&
-					this.SmUserId.Equals(other.SmUserId)
+					SmUserId == other.SmUserId ||
+					SmUserId != null &&
+					SmUserId.Equals(other.SmUserId)
 				) &&
 				(
-					this.Guid == other.Guid ||
-					this.Guid != null &&
-					this.Guid.Equals(other.Guid)
+					Guid == other.Guid ||
+					Guid != null &&
+					Guid.Equals(other.Guid)
 				) &&
 				(
-					this.SmAuthorizationDirectory == other.SmAuthorizationDirectory ||
-					this.SmAuthorizationDirectory != null &&
-					this.SmAuthorizationDirectory.Equals(other.SmAuthorizationDirectory)
+					SmAuthorizationDirectory == other.SmAuthorizationDirectory ||
+					SmAuthorizationDirectory != null &&
+					SmAuthorizationDirectory.Equals(other.SmAuthorizationDirectory)
 				) &&
 				(
-					this.UserRoles == other.UserRoles ||
-					this.UserRoles != null &&
-					this.UserRoles.SequenceEqual(other.UserRoles)
+					UserRoles == other.UserRoles ||
+					UserRoles != null &&
+					UserRoles.SequenceEqual(other.UserRoles)
 				) &&
 				(
-					this.GroupMemberships == other.GroupMemberships ||
-					this.GroupMemberships != null &&
-					this.GroupMemberships.SequenceEqual(other.GroupMemberships)
+					GroupMemberships == other.GroupMemberships ||
+					GroupMemberships != null &&
+					GroupMemberships.SequenceEqual(other.GroupMemberships)
 				) &&
 				(
-					this.District == other.District ||
-					this.District != null &&
-					this.District.Equals(other.District)
+					District == other.District ||
+					District != null &&
+					District.Equals(other.District)
 				);
 		}
 
@@ -278,52 +278,63 @@ namespace HETSAPI.Models
 			unchecked // Overflow is fine, just wrap
 			{
 				int hash = 41;
+
 				// Suitable nullity checks
+				hash = hash * 59 + Id.GetHashCode();
 
-				hash = hash * 59 + this.Id.GetHashCode();                if (this.GivenName != null)
+			    if (GivenName != null)
 				{
-					hash = hash * 59 + this.GivenName.GetHashCode();
-				}
-								if (this.Surname != null)
-				{
-					hash = hash * 59 + this.Surname.GetHashCode();
+					hash = hash * 59 + GivenName.GetHashCode();
 				}
 
-				hash = hash * 59 + this.Active.GetHashCode();
-								if (this.Initials != null)
+			    if (Surname != null)
 				{
-					hash = hash * 59 + this.Initials.GetHashCode();
-				}
-								if (this.Email != null)
-				{
-					hash = hash * 59 + this.Email.GetHashCode();
-				}
-								if (this.SmUserId != null)
-				{
-					hash = hash * 59 + this.SmUserId.GetHashCode();
-				}
-								if (this.Guid != null)
-				{
-					hash = hash * 59 + this.Guid.GetHashCode();
-				}
-								if (this.SmAuthorizationDirectory != null)
-				{
-					hash = hash * 59 + this.SmAuthorizationDirectory.GetHashCode();
+					hash = hash * 59 + Surname.GetHashCode();
 				}
 
-				if (this.UserRoles != null)
+				hash = hash * 59 + Active.GetHashCode();
+
+			    if (Initials != null)
 				{
-					hash = hash * 59 + this.UserRoles.GetHashCode();
+					hash = hash * 59 + Initials.GetHashCode();
 				}
-				if (this.GroupMemberships != null)
+
+			    if (Email != null)
 				{
-					hash = hash * 59 + this.GroupMemberships.GetHashCode();
+					hash = hash * 59 + Email.GetHashCode();
 				}
-				if (this.District != null)
+
+			    if (SmUserId != null)
 				{
-					hash = hash * 59 + this.District.GetHashCode();
+					hash = hash * 59 + SmUserId.GetHashCode();
 				}
-				return hash;
+
+			    if (Guid != null)
+				{
+					hash = hash * 59 + Guid.GetHashCode();
+				}
+
+			    if (SmAuthorizationDirectory != null)
+				{
+					hash = hash * 59 + SmAuthorizationDirectory.GetHashCode();
+				}
+
+				if (UserRoles != null)
+				{
+					hash = hash * 59 + UserRoles.GetHashCode();
+				}
+
+			    if (GroupMemberships != null)
+				{
+					hash = hash * 59 + GroupMemberships.GetHashCode();
+				}
+
+			    if (District != null)
+				{
+					hash = hash * 59 + District.GetHashCode();
+				}
+
+			    return hash;
 			}
 		}
 

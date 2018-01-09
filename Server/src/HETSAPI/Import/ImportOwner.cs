@@ -1,174 +1,182 @@
-﻿using Newtonsoft.Json;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Xml.Serialization;
-
 using Hangfire.Console;
+using Hangfire.Console.Progress;
 using Hangfire.Server;
-
 using HETSAPI.Models;
 
 namespace HETSAPI.Import
 {
-    public class ImportOwner
+    /// <summary>
+    /// Import Owner Records
+    /// </summary>
+    public static class ImportOwner
     {
-        public static string oldTable = "Owner";
-        public static string newTable = "HET_OWNER";
-        public static string xmlFileName = "Owner.xml";
-        public static string oldTable_Progress = oldTable + "_Progress";
+        public static string OldTable => "Owner";
+        public static string NewTable => "HET_OWNER";
+        public static string XmlFileName => "Owner.xml";
 
         /// <summary>
-        /// 
+        /// Progress Property
+        /// </summary>
+        public static string OldTableProgress => OldTable + "_Progress";
+
+        /// <summary>
+        /// Import Owner Records
         /// </summary>
         /// <param name="performContext"></param>
         /// <param name="dbContext"></param>
         /// <param name="fileLocation"></param>
         /// <param name="systemId"></param>
-        static public void Import(PerformContext performContext, DbAppContext dbContext, string fileLocation, string systemId)
+        public static void Import(PerformContext performContext, DbAppContext dbContext, string fileLocation, string systemId)
         {
-            // Check the start point. If startPoint ==  sigId then it is already completed
-            int startPoint = ImportUtility.CheckInterMapForStartPoint(dbContext, oldTable_Progress, BCBidImport.sigId);
-            if (startPoint == BCBidImport.sigId)    // This means the import job it has done today is complete for all the records in the xml file.    // This means the import job it has done today is complete for all the records in the xml file.
+            // check the start point. If startPoint ==  sigId then it is already completed
+            int startPoint = ImportUtility.CheckInterMapForStartPoint(dbContext, OldTableProgress, BCBidImport.SigId);
+
+            if (startPoint == BCBidImport.SigId)    // this means the import job it has done today is complete for all the records in the xml file.    // This means the import job it has done today is complete for all the records in the xml file.
             {
-                performContext.WriteLine("*** Importing " + xmlFileName + " is complete from the former process ***");
+                performContext.WriteLine("*** Importing " + XmlFileName + " is complete from the former process ***");
                 return;
             }
 
-            List<Models.Owner> _data = new List<Models.Owner>();
+            List<Owner> data = new List<Owner>();
             int maxOwnerIndex = dbContext.Owners.Max(x => x.Id);
             int maxContactIndex = dbContext.Contacts.Max(x => x.Id);
 
             try
             {
-                string rootAttr = "ArrayOf" + oldTable;
+                string rootAttr = "ArrayOf" + OldTable;
 
-                //Create Processer progress indicator
-                performContext.WriteLine("Processing " + oldTable);
-                var progress = performContext.WriteProgressBar();
+                // create Processer progress indicator
+                performContext.WriteLine("Processing " + OldTable);
+                IProgressBar progress = performContext.WriteProgressBar();
                 progress.SetValue(0);
 
                 // create serializer and serialize xml file
-                XmlSerializer ser = new XmlSerializer(typeof(Owner[]), new XmlRootAttribute(rootAttr));
-                MemoryStream memoryStream = ImportUtility.memoryStreamGenerator(xmlFileName, oldTable, fileLocation, rootAttr);
-                HETSAPI.Import.Owner[] legacyItems = (HETSAPI.Import.Owner[])ser.Deserialize(memoryStream);
+                XmlSerializer ser = new XmlSerializer(typeof(ImportModels.Owner[]), new XmlRootAttribute(rootAttr));
+                MemoryStream memoryStream = ImportUtility.MemoryStreamGenerator(XmlFileName, OldTable, fileLocation, rootAttr);
+                ImportModels.Owner[] legacyItems = (ImportModels.Owner[])ser.Deserialize(memoryStream);
 
                 int ii = startPoint;
-                if (startPoint > 0)    // Skip the portion already processed
+
+                // skip the portion already processed
+                if (startPoint > 0)
                 {
                     legacyItems = legacyItems.Skip(ii).ToArray();
                 }
 
-                foreach (var item in legacyItems.WithProgress(progress))
+                foreach (ImportModels.Owner item in legacyItems.WithProgress(progress))
                 {
                     // see if we have this one already.
-                    ImportMap importMap = dbContext.ImportMaps.FirstOrDefault(x => x.OldTable == oldTable && x.OldKey == item.Popt_Id.ToString());
+                    ImportMap importMap = dbContext.ImportMaps.FirstOrDefault(x => x.OldTable == OldTable && x.OldKey == item.Popt_Id.ToString());
 
-                    if (importMap == null) // new entry
+                    // new entry
+                    if (importMap == null)
                     {
-                        Models.Owner owner = null;
-                        CopyToInstance(performContext, dbContext, item, ref owner, systemId, ref maxOwnerIndex, ref maxContactIndex);
-                        _data.Add(owner);
-                        ImportUtility.AddImportMap(dbContext, oldTable, item.Popt_Id.ToString(), newTable, owner.Id);
+                        Owner owner = null;
+                        CopyToInstance(dbContext, item, ref owner, systemId, ref maxOwnerIndex, ref maxContactIndex);
+                        data.Add(owner);
+                        ImportUtility.AddImportMap(dbContext, OldTable, item.Popt_Id.ToString(), NewTable, owner.Id);
                     }
                     else // update
                     {
-                        Models.Owner owner = dbContext.Owners.FirstOrDefault(x => x.Id == importMap.NewKey);
+                        Owner owner = dbContext.Owners.FirstOrDefault(x => x.Id == importMap.NewKey);
                         if (owner == null) // record was deleted
                         {
-                            CopyToInstance(performContext, dbContext, item, ref owner, systemId, ref maxOwnerIndex, ref maxContactIndex);
-                            // update the import map.
+                            CopyToInstance(dbContext, item, ref owner, systemId, ref maxOwnerIndex, ref maxContactIndex);
+
+                            // update the import map
                             importMap.NewKey = owner.Id;
                             dbContext.ImportMaps.Update(importMap);
                         }
                         else // ordinary update.
                         {
-                            CopyToInstance(performContext, dbContext, item, ref owner, systemId, ref maxOwnerIndex, ref maxContactIndex);
-                            // touch the import map.
+                            CopyToInstance(dbContext, item, ref owner, systemId, ref maxOwnerIndex, ref maxContactIndex);
+                            
+                            // touch the import map
                             importMap.LastUpdateTimestamp = DateTime.UtcNow;
                             dbContext.ImportMaps.Update(importMap);
                         }
                     }
-                    if (++ii % 500 == 0)   // Save change to database once a while to avoid frequent writing to the database.
+
+                    // save change to database periodically to avoid frequent writing to the database
+                    if (++ii % 500 == 0) 
                     {
                         try
                         {
-                            ImportUtility.AddImportMap_For_Progress(dbContext, oldTable_Progress, ii.ToString(), BCBidImport.sigId);
-                            int iResult =  dbContext.SaveChangesForImport();
+                            ImportUtility.AddImportMapForProgress(dbContext, OldTableProgress, ii.ToString(), BCBidImport.SigId);
+                            dbContext.SaveChangesForImport();
                         }
                         catch (Exception e)
                         {
-                            string iStr = e.ToString();
+                            performContext.WriteLine("Error saving data " + e.Message);
                         }
                     }
+                }
+
+                try
+                {
+                    performContext.WriteLine("*** Importing " + XmlFileName + " is Done ***");
+                    ImportUtility.AddImportMapForProgress(dbContext, OldTableProgress, BCBidImport.SigId.ToString(), BCBidImport.SigId);
+                    dbContext.SaveChangesForImport();
+                }
+                catch (Exception e)
+                {
+                    performContext.WriteLine("Error saving data " + e.Message);
                 }
             }
             catch (Exception e)
             {
                 performContext.WriteLine("*** ERROR ***");
                 performContext.WriteLine(e.ToString());
-            }
-
-            // Write to Json file
-            //WriteToOwnerJsonFile(jsonOwnerFileName, _data);
-
-            try
-            {
-                performContext.WriteLine("*** Importing " + xmlFileName + " is Done ***");
-                ImportUtility.AddImportMap_For_Progress(dbContext, oldTable_Progress, BCBidImport.sigId.ToString(), BCBidImport.sigId);
-                int iResult = dbContext.SaveChangesForImport();
-            }
-            catch (Exception e)
-            {
-                string iStr = e.ToString();
-            }
+            }                       
         }
 
         /// <summary>
-        /// 
+        /// Map data
         /// </summary>
-        /// <param name="performContext"></param>
         /// <param name="dbContext"></param>
         /// <param name="oldObject"></param>
         /// <param name="owner"></param>
         /// <param name="systemId"></param>
         /// <param name="maxOwnerIndex"></param>
         /// <param name="maxContactIndex"></param>
-        static private void CopyToInstance(PerformContext performContext, DbAppContext dbContext, HETSAPI.Import.Owner oldObject, ref Models.Owner owner,
+        private static void CopyToInstance(DbAppContext dbContext, ImportModels.Owner oldObject, ref Owner owner,
           string systemId, ref int maxOwnerIndex, ref int maxContactIndex)
         {
             bool isNew = false;
+
             if (owner == null)
             {
                 isNew = true;
-                owner = new Models.Owner();
-                owner.Id =  ++maxOwnerIndex;
+                owner = new Owner {Id = ++maxOwnerIndex};
             }
 
-            //Add the user specified in oldObject.Modified_By and oldObject.Created_By if not there in the database
-            Models.User modifiedBy = ImportUtility.AddUserFromString(dbContext, oldObject.Modified_By, systemId);
-            Models.User createdBy = ImportUtility.AddUserFromString(dbContext, oldObject.Created_By, systemId);
-
-            // The followings are the data mapping
-            //  owner.LocalAreaId = oldObject.Area_Id;
+            // add the user specified in oldObject.Modified_By and oldObject.Created_By if not there in the database
+            User modifiedBy = ImportUtility.AddUserFromString(dbContext, oldObject.Modified_By, systemId);
+            User createdBy = ImportUtility.AddUserFromString(dbContext, oldObject.Created_By, systemId);
+            
             try
             {
-                owner.IsMaintenanceContractor = (oldObject.Maintenance_Contractor.Trim() == "Y") ? true : false;
+                owner.IsMaintenanceContractor = (oldObject.Maintenance_Contractor.Trim() == "Y");
             }
             catch
             {
-
+                // do nothing
             }
+
             try
             {
-                // owner.LocalAreaId = oldObject.Area_Id;
                 owner.LocalArea = dbContext.LocalAreas.FirstOrDefault(x => x.Id == oldObject.Area_Id);
             }
             catch
             {
-
+                // do nothing
             }
+
             try
             {
                 owner.CGLEndDate =  
@@ -176,8 +184,9 @@ namespace HETSAPI.Import
             }
             catch
             {
-
+                // do nothing
             }
+
             try
             {
                 owner.WorkSafeBCExpiryDate =  
@@ -185,27 +194,34 @@ namespace HETSAPI.Import
             }
             catch
             {
+                // do nothing
             }
+
             try
             {
                 owner.WorkSafeBCPolicyNumber = oldObject.WCB_Num.Trim();
             }
             catch
             {
+                // do nothing
             }
+
             try
             {
                 owner.OrganizationName = oldObject.CGL_Company.Trim();
             }
             catch
             {
+                // do nothing
             }
+
             try
             {
                 owner.ArchiveCode = oldObject.Archive_Cd;
             }
             catch
             {
+                // do nothing
             }
 
             try
@@ -214,13 +230,15 @@ namespace HETSAPI.Import
             }
             catch
             {
+                // do nothing
             }
 
-
             Contact con = dbContext.Contacts.FirstOrDefault(x => x.GivenName.ToUpper() == oldObject.Owner_First_Name.Trim().ToUpper() && x.Surname.ToUpper() == oldObject.Owner_Last_Name.Trim().ToUpper());
+
             if (con == null)
             {
                 con = new Contact(++maxContactIndex);
+
                 try
                 {
                     con.Surname = oldObject.Owner_Last_Name.Trim();
@@ -229,26 +247,29 @@ namespace HETSAPI.Import
                 }
                 catch
                 {
+                    // do nothing
                 }
 
                 con.FaxPhoneNumber = "";
                 con.Province = "BC";
-                //    owner.PrimaryContact.PostalCode = oldObject.
+                
                 try
                 {
                     con.Notes = new string(oldObject.Comment.Take(511).ToArray());
                 }
                 catch
                 {
+                    // do nothing
                 }
+
                 dbContext.Contacts.Add(con);
             }
-
 
             // TODO finish mapping here 
             if (isNew)
             {
                 owner.CreateUserid = createdBy.SmUserId;
+
                 try
                 {
                     owner.CreateTimestamp = 
@@ -258,11 +279,12 @@ namespace HETSAPI.Import
                 {
                     owner.CreateTimestamp = DateTime.UtcNow;
                 }
+
                 con.CreateUserid = createdBy.SmUserId;
                 owner.PrimaryContact = con;
                 dbContext.Owners.Add(owner);
             }
-            else  // The owner existed in the database
+            else  // the owner existed in the database
             {
                 try
                 {
@@ -274,18 +296,12 @@ namespace HETSAPI.Import
                 }
                 catch
                 {
-
+                    // do nothing
                 }
+
                 dbContext.Owners.Update(owner);
             }
-        }
-
-        static private void WriteToOwnerJsonFile(string fileName, List<Models.Owner> _data)
-        {
-            string newJson = JsonConvert.SerializeObject(_data, Formatting.Indented);
-            File.WriteAllText(fileName, newJson);
-             
-        }
+        }       
     }
 }
 

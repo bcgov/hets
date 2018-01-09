@@ -31,33 +31,38 @@ namespace HETSAPI.Test
 		/// <summary>
         /// Integration test for LocalAreasBulkPost
         /// </summary>
-		public async void TestLocalAreasBulkPost()
+		public async Task TestLocalAreasBulkPost()
 		{
-            var request = new HttpRequestMessage(HttpMethod.Post, "/api/localAreas/bulk");
-            request.Content = new StringContent("[]", Encoding.UTF8, "application/json");
+            var request = new HttpRequestMessage(HttpMethod.Post, "/api/localAreas/bulk")
+            {
+                Content = new StringContent("[]", Encoding.UTF8, "application/json")
+            };
 
             var response = await _client.SendAsync(request);
             response.EnsureSuccessStatusCode();
         }
 
-
         [Fact]
         /// <summary>
         /// Basic Integration test for LocalAreas
         /// </summary>
-        public async void TestLocalAreasBasic()
+        public async Task TestLocalAreasBasic()
         {
             string initialName = "InitialName";
             string changedName = "ChangedName";
 
             // localAreas have service areas.
-            ServiceArea servicearea = new ServiceArea();
-            servicearea.Name = initialName;
+            ServiceArea servicearea = new ServiceArea
+            {
+                Name = initialName
+            };
+
             string jsonString = servicearea.ToJson();
 
-            var request = new HttpRequestMessage(HttpMethod.Post, "/api/serviceareas");
-            
-            request.Content = new StringContent(jsonString, Encoding.UTF8, "application/json");
+            var request = new HttpRequestMessage(HttpMethod.Post, "/api/serviceareas")
+            {
+                Content = new StringContent(jsonString, Encoding.UTF8, "application/json")
+            };
 
             var response = await _client.SendAsync(request);
             response.EnsureSuccessStatusCode();
@@ -66,15 +71,16 @@ namespace HETSAPI.Test
             jsonString = await response.Content.ReadAsStringAsync();
             servicearea = JsonConvert.DeserializeObject<ServiceArea>(jsonString);
 
-
-
             // test the POST.
             request = new HttpRequestMessage(HttpMethod.Post, "/api/localAreas");
 
             // create a new object.
-            LocalArea localarea = new LocalArea();
-            localarea.ServiceArea = servicearea; 
-            localarea.Name = initialName;
+            LocalArea localarea = new LocalArea
+            {
+                ServiceArea = servicearea,
+                Name = initialName
+            };
+
             jsonString = localarea.ToJson();
 
             request.Content = new StringContent(jsonString, Encoding.UTF8, "application/json");
@@ -92,8 +98,11 @@ namespace HETSAPI.Test
             localarea.Name = changedName;
 
             // now do an update.
-            request = new HttpRequestMessage(HttpMethod.Put, "/api/localAreas/" + id);
-            request.Content = new StringContent(localarea.ToJson(), Encoding.UTF8, "application/json");
+            request = new HttpRequestMessage(HttpMethod.Put, "/api/localAreas/" + id)
+            {
+                Content = new StringContent(localarea.ToJson(), Encoding.UTF8, "application/json")
+            };
+
             response = await _client.SendAsync(request);
             response.EnsureSuccessStatusCode();
 
@@ -117,7 +126,7 @@ namespace HETSAPI.Test
             // should get a 404 if we try a get now.
             request = new HttpRequestMessage(HttpMethod.Get, "/api/localAreas/" + id);
             response = await _client.SendAsync(request);
-            Assert.Equal(response.StatusCode, HttpStatusCode.NotFound);
+            Assert.Equal(HttpStatusCode.NotFound, response.StatusCode);
 
             // do a delete.
             request = new HttpRequestMessage(HttpMethod.Post, "/api/serviceareas/" + servicearea.Id + "/delete");
@@ -127,7 +136,7 @@ namespace HETSAPI.Test
             // should get a 404 if we try a get now.
             request = new HttpRequestMessage(HttpMethod.Get, "/api/serviceareas/" + servicearea.Id);
             response = await _client.SendAsync(request);
-            Assert.Equal(response.StatusCode, HttpStatusCode.NotFound);
+            Assert.Equal(HttpStatusCode.NotFound, response.StatusCode);
         }                
     }
 }

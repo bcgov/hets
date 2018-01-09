@@ -1,23 +1,7 @@
-/*
- * REST API Documentation for the MOTI Hired Equipment Tracking System (HETS) Application
- *
- * The Hired Equipment Program is for owners/operators who have a dump truck, bulldozer, backhoe or  other piece of equipment they want to hire out to the transportation ministry for day labour and  emergency projects.  The Hired Equipment Program distributes available work to local equipment owners. The program is  based on seniority and is designed to deliver work to registered users fairly and efficiently  through the development of local area call-out lists. 
- *
- * OpenAPI spec version: v1
- * 
- * 
- */
-
-using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.TestHost;
 using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
 using System.Net.Http;
 using System.Threading.Tasks;
 using Xunit;
-using HETSAPI;
 using System.Text;
 using HETSAPI.Models;
 using Newtonsoft.Json;
@@ -26,13 +10,12 @@ using System.Net;
 namespace HETSAPI.Test
 {
 	public class EquipmentIntegrationTest : ApiIntegrationTestBase
-    { 
-				
+    { 				
 		[Fact]
 		/// <summary>
         /// Integration test for EquipmentBulkPost
         /// </summary>
-		public async void TestEquipmentBulkPost()
+		public async Task TestEquipmentBulkPost()
 		{
             var request = new HttpRequestMessage(HttpMethod.Post, "/api/equipment/bulk");
             request.Content = new StringContent("[]", Encoding.UTF8, "application/json");
@@ -41,16 +24,15 @@ namespace HETSAPI.Test
             response.EnsureSuccessStatusCode();
         }
 
-
         [Fact]
         /// <summary>
         /// Basic Integration test for Equipment
         /// </summary>
-        public async void TestEquipmentBasic()
+        public async Task TestEquipmentBasic()
         {
-
             string initialName = "InitialName";
             string changedName = "ChangedName";
+
             // first test the POST.
             var request = new HttpRequestMessage(HttpMethod.Post, "/api/owners");
 
@@ -67,11 +49,8 @@ namespace HETSAPI.Test
 
             // parse as JSON.
             jsonString = await response.Content.ReadAsStringAsync();
-
             owner = JsonConvert.DeserializeObject<Owner>(jsonString);
-            // get the id
-            var ownerId = owner.Id;
-
+            
             // now create the equipment.
             request = new HttpRequestMessage(HttpMethod.Post, "/api/equipment");
 
@@ -89,11 +68,12 @@ namespace HETSAPI.Test
             jsonString = await response.Content.ReadAsStringAsync();
 
             equipment = JsonConvert.DeserializeObject<Equipment>(jsonString);
+
             // get the id
             var id = equipment.Id;
 
             // verify the fields that are created server side.
-            Assert.Equal(equipment.EquipmentCode, "TST-0001");
+            Assert.Equal("TST-0001", equipment.EquipmentCode);
 
             bool dateValid = true;
             DateTime twoDaysAgo = DateTime.UtcNow.AddDays(-2);
@@ -101,14 +81,14 @@ namespace HETSAPI.Test
             {
                 dateValid = false;
             }
-            Assert.Equal(dateValid, true);
+            Assert.True(dateValid);
 
             dateValid = true;
             if (equipment.LastVerifiedDate < twoDaysAgo)
             {
                 dateValid = false;
             }
-            Assert.Equal(dateValid, true);
+            Assert.True(dateValid);
 
             // change the name
             equipment.Model = changedName;
@@ -139,7 +119,7 @@ namespace HETSAPI.Test
             // should get a 404 if we try a get now.
             request = new HttpRequestMessage(HttpMethod.Get, "/api/equipment/" + id);
             response = await _client.SendAsync(request);
-            Assert.Equal(response.StatusCode, HttpStatusCode.NotFound);
+            Assert.Equal(HttpStatusCode.NotFound, response.StatusCode);
         }
     }
 }

@@ -200,7 +200,7 @@ namespace HETSAPI.Authentication
                 // **************************************************
                 try
                 {
-                    _logger.LogInformation("Read User Settings");
+                    _logger.LogInformation("Checking user session");
                     userSettings = UserSettings.ReadUserSettings(context);
                 }
                 catch
@@ -213,6 +213,7 @@ namespace HETSAPI.Authentication
                     (userSettings.UserAuthenticated && !string.IsNullOrEmpty(userId) &&
                      !string.IsNullOrEmpty(userSettings.UserId) && userSettings.UserId == userId))
                 {
+                    _logger.LogInformation("User already authenticated with active session: " + userSettings.UserId);
                     principal = userSettings.HetsUser.ToClaimsPrincipal(options.Scheme);
                     return Task.FromResult(AuthenticateResult.Success(new AuthenticationTicket(principal, null, Options.Scheme)));
                 }
@@ -270,14 +271,14 @@ namespace HETSAPI.Authentication
                 // **************************************************
                 // Create authenticated user
                 // **************************************************
-                _logger.LogInformation("Setting identity");
+                _logger.LogInformation("Authentication successful: " + userId);
+                _logger.LogInformation("Setting identity and creating session for: " + userId);
                 
                 // create session info
                 userSettings.UserId = userId;
                 userSettings.UserAuthenticated = true;
 
                 // update user settings
-                _logger.LogInformation("Write User Settings");
                 UserSettings.SaveUserSettings(userSettings, context);
 
                 // done!

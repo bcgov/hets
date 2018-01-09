@@ -1,20 +1,24 @@
 ﻿using Hangfire.Console;
 using Hangfire.Server;
-using HETSAPI.Models;
 using System;
 using System.IO;
 using System.Linq;
 using System.Xml.Serialization;
+using Hangfire.Console.Progress;
+using HETSAPI.ImportModels;
+using HETSAPI.Models;
 
 namespace HETSAPI.Import
-
 {
-    public class ImportDistrict
+    /// <summary>
+    /// Import District Records
+    /// </summary>
+    public static class ImportDistrict
     {
-        const string oldTable = "HETS_District";
-        const string newTable = "HETS_District";
-        const string xmlFileName = "District.xml";
-        const int sigId = 150000;
+        const string OldTable = "HETS_District";
+        const string NewTable = "HETS_District";
+        const string XmlFileName = "District.xml";
+        const int SigId = 150000;
 
         /// <summary>
         /// Import Districts
@@ -23,45 +27,53 @@ namespace HETSAPI.Import
         /// <param name="dbContext"></param>
         /// <param name="fileLocation"></param>
         /// <param name="systemId"></param>
-        static public void Import(PerformContext performContext, DbAppContext dbContext, string fileLocation, string systemId)
+        public static void Import(PerformContext performContext, DbAppContext dbContext, string fileLocation, string systemId)
         {
             string completed = DateTime.Now.ToString("d") + "-" + "Completed";
-            ImportMap importMap = dbContext.ImportMaps.FirstOrDefault(x => x.OldTable == oldTable && x.OldKey == completed && x.NewKey == sigId);
+
+            ImportMap importMap = dbContext.ImportMaps.FirstOrDefault(x => x.OldTable == OldTable && x.OldKey == completed && x.NewKey == SigId);
+
             if (importMap != null)
             {
-                performContext.WriteLine("*** Importing " + xmlFileName + " is complete from the former process ***");
+                performContext.WriteLine("*** Importing " + XmlFileName + " is complete from the former process ***");
                 return;
             }
+
             try
             {
-                string rootAttr = "ArrayOf" + oldTable;
+                string rootAttr = "ArrayOf" + OldTable;
 
-                performContext.WriteLine("Processing " + oldTable);
-                var progress = performContext.WriteProgressBar();
+                performContext.WriteLine("Processing " + OldTable);
+                IProgressBar progress = performContext.WriteProgressBar();
                 progress.SetValue(0);
 
                 // create serializer and serialize xml file
-                XmlSerializer ser = new XmlSerializer(typeof(HETS_District[]), new XmlRootAttribute(rootAttr));
-                MemoryStream memoryStream = ImportUtility.memoryStreamGenerator(xmlFileName, oldTable, fileLocation, rootAttr);
-                HETS_District[] legacyItems = (HETS_District[])ser.Deserialize(memoryStream);
-                foreach (var item in legacyItems.WithProgress(progress))
-                {
-                    // see if we have this one already.
-                    importMap = dbContext.ImportMaps.FirstOrDefault(x => x.OldTable == oldTable && x.OldKey == item.District_Id.ToString());
+                XmlSerializer ser = new XmlSerializer(typeof(HetsDistrict[]), new XmlRootAttribute(rootAttr));
+                MemoryStream memoryStream = ImportUtility.MemoryStreamGenerator(XmlFileName, OldTable, fileLocation, rootAttr);
+                HetsDistrict[] legacyItems = (HetsDistrict[])ser.Deserialize(memoryStream);
 
-                    if (importMap == null) // new entry
+                foreach (HetsDistrict item in legacyItems.WithProgress(progress))
+                {
+                    // see if we have this one already
+                    importMap = dbContext.ImportMaps.FirstOrDefault(x => x.OldTable == OldTable && x.OldKey == item.District_Id.ToString());
+
+                    // new entry
+                    if (importMap == null) 
                     {
                         District dis = null;
                         CopyToInstance(performContext, dbContext, item, ref dis, systemId);
-                        ImportUtility.AddImportMap(dbContext, oldTable, item.District_Id.ToString(), newTable, dis.Id);
+                        ImportUtility.AddImportMap(dbContext, OldTable, item.District_Id.ToString(), NewTable, dis.Id);
                     }
                     else // update
                     {
                         District dis = dbContext.Districts.FirstOrDefault(x => x.Id == importMap.NewKey);
-                        if (dis == null) // record was deleted
+
+                        // record was deleted
+                        if (dis == null) 
                         {
                             CopyToInstance(performContext, dbContext, item, ref dis, systemId);
-                            // update the import map.
+
+                            // update the import map
                             importMap.NewKey = dis.Id;
                             dbContext.ImportMaps.Update(importMap);
                             dbContext.SaveChangesForImport();
@@ -69,17 +81,18 @@ namespace HETSAPI.Import
                         else // ordinary update.
                         {
                             CopyToInstance(performContext, dbContext, item, ref dis, systemId);
-                            // touch the import map.
+
+                            // touch the import map
                             importMap.LastUpdateTimestamp = DateTime.UtcNow;
                             dbContext.ImportMaps.Update(importMap);
                             dbContext.SaveChangesForImport();
                         }
                     }
                 }
-                performContext.WriteLine("*** Done ***");
-                ImportUtility.AddImportMap(dbContext, oldTable, completed, newTable, sigId);
-            }
 
+                performContext.WriteLine("*** Done ***");
+                ImportUtility.AddImportMap(dbContext, OldTable, completed, NewTable, SigId);
+            }
             catch (Exception e)
             {
                 performContext.WriteLine("*** ERROR ***");
@@ -87,20 +100,29 @@ namespace HETSAPI.Import
             }
         }
 
-        private static void CopyToInstance(PerformContext performContext, DbAppContext dbContext, HETS_District oldObject, ref District dis, string systemId)
+        /// <summary>
+        /// Map data 
+        /// </summary>
+        /// <param name="performContext"></param>
+        /// <param name="dbContext"></param>
+        /// <param name="oldObject"></param>
+        /// <param name="dis"></param>
+        /// <param name="systemId"></param>
+        private static void CopyToInstance(PerformContext performContext, DbAppContext dbContext, HetsDistrict oldObject, ref District dis, string systemId)
         {
             bool isNew = false;
+
             if (dis == null)
             {
                 isNew = true;
                 dis = new District();
             }
 
-            if (dbContext.Districts.Where(x => x.Name.ToUpper() == oldObject.Name.Trim().ToUpper()).Count() == 0)
+            if (dbContext.Districts.Count(x => String.Equals(x.Name, oldObject.Name.Trim(), StringComparison.CurrentCultureIgnoreCase)) == 0)
             {
                 isNew = true;
                 dis.Name = oldObject.Name.Trim();
-                dis.Id = oldObject.District_Id; //dbContext.Districts.Max(x => x.Id) + 1;   //oldObject.Seq_Num;  
+                dis.Id = oldObject.District_Id;
                 dis.MinistryDistrictID = oldObject.Ministry_District_Id;
                 dis.RegionId = oldObject.Region_ID;
                 dis.CreateTimestamp = DateTime.UtcNow;
@@ -109,8 +131,10 @@ namespace HETSAPI.Import
 
             if (isNew)
             {
-                dbContext.Districts.Add(dis);   //Adding the city to the database table of HET_CITY
+                // adding the city to the database table of HET_CITY
+                dbContext.Districts.Add(dis);   
             }
+
             try
             {
                 dbContext.SaveChangesForImport();
@@ -121,8 +145,6 @@ namespace HETSAPI.Import
                 performContext.WriteLine(e.ToString());
             }
         }
-
-
     }
 }
 

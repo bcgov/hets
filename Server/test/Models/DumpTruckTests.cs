@@ -24,12 +24,10 @@ namespace HETSAPI.Test
 {
     /// <summary>
     ///  Class for testing the model DumpTruck
-    /// </summary>
-    
+    /// </summary>    
     public class DumpTruckModelTests
     {
-        // TODO uncomment below to declare an instance variable for DumpTruck
-        private DumpTruck instance;
+        private readonly DumpTruck instance;
 
         /// <summary>
         /// Setup the test.

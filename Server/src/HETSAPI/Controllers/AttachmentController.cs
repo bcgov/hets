@@ -16,7 +16,7 @@ namespace HETSAPI.Controllers
         private readonly IAttachmentService _service;
 
         /// <summary>
-        /// Create a controller and set the service
+        /// Attachment Controller Constructor
         /// </summary>
         public AttachmentController(IAttachmentService service)
         {

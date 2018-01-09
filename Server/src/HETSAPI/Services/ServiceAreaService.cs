@@ -13,13 +13,13 @@ namespace HETSAPI.Services
         /// </summary>
         /// <param name="items"></param>
         /// <response code="201">ServiceArea created</response>
-        IActionResult ServiceareasBulkPostAsync(ServiceArea[] items);
+        IActionResult ServiceAreasBulkPostAsync(ServiceArea[] items);
 
         /// <summary>
         /// 
         /// </summary>
         /// <response code="200">OK</response>
-        IActionResult ServiceareasGetAsync();
+        IActionResult ServiceAreasGetAsync();
 
         /// <summary>
         /// 
@@ -27,7 +27,7 @@ namespace HETSAPI.Services
         /// <param name="id">id of ServiceArea to delete</param>
         /// <response code="200">OK</response>
         /// <response code="404">ServiceArea not found</response>
-        IActionResult ServiceareasIdDeletePostAsync(int id);
+        IActionResult ServiceAreasIdDeletePostAsync(int id);
 
         /// <summary>
         /// 
@@ -35,7 +35,7 @@ namespace HETSAPI.Services
         /// <param name="id">id of ServiceArea to fetch</param>
         /// <response code="200">OK</response>
         /// <response code="404">ServiceArea not found</response>
-        IActionResult ServiceareasIdGetAsync(int id);
+        IActionResult ServiceAreasIdGetAsync(int id);
 
         /// <summary>
         /// 
@@ -44,13 +44,13 @@ namespace HETSAPI.Services
         /// <param name="item"></param>
         /// <response code="200">OK</response>
         /// <response code="404">ServiceArea not found</response>
-        IActionResult ServiceareasIdPutAsync(int id, ServiceArea item);
+        IActionResult ServiceAreasIdPutAsync(int id, ServiceArea item);
 
         /// <summary>
         /// 
         /// </summary>
         /// <param name="item"></param>
         /// <response code="201">ServiceArea created</response>
-        IActionResult ServiceareasPostAsync(ServiceArea item);
+        IActionResult ServiceAreasPostAsync(ServiceArea item);
     }
 }

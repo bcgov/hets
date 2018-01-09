@@ -44,18 +44,14 @@ var Projects = React.createClass({
 
   getInitialState() {
     return {
-      loading: true,
-
       showAddDialog: false,
-
       search: {
         selectedDistrictsIds: this.props.search.selectedDistrictsIds || [],
         statusCode: this.props.search.statusCode || '',
-        hires: this.props.search.hires,
-        requests: this.props.search.requests,
+        hires: this.props.search.hires || false,
+        requests: this.props.search.requests || false,
         projectName: this.props.search.projecName,
       },
-
       ui : {
         sortField: this.props.ui.sortField || 'name',
         sortDesc: this.props.ui.sortDesc === true,
@@ -92,8 +88,6 @@ var Projects = React.createClass({
   },
 
   componentDidMount() {
-    this.setState({ loading: true });
-
     Api.getFavourites('project').then(() => {
       // If this is the first load, then look for a default favourite
       if (!this.props.search.loaded) {
@@ -107,15 +101,8 @@ var Projects = React.createClass({
     });
   },
 
-  componentWillUnmount() {
-    store.dispatch({ type: Action.UPDATE_PROJECTS_SEARCH, projects: {} });
-  },
-
   fetch() {
-    this.setState({ loading: true });
-    Api.searchProjects(this.buildSearchParams()).finally(() => {
-      this.setState({ loading: false });
-    });
+    Api.searchProjects(this.buildSearchParams());
   },
 
   updateSearchState(state, callback) {
@@ -186,17 +173,17 @@ var Projects = React.createClass({
               </Unimplemented>
               <FormInputControl id="projectName" type="text" placeholder="Project name" value={ this.state.search.projectName } updateState={ this.updateSearchState }></FormInputControl>
               <Unimplemented>
-                <CheckboxControl inline id="hires" value={ this.state.search.hires } updateState={ this.updateSearchState }> Hires</CheckboxControl>
+                <CheckboxControl inline id="hires" checked={ this.state.search.hires } updateState={ this.updateSearchState }> Hires</CheckboxControl>
               </Unimplemented>
               <Unimplemented>
-                <CheckboxControl inline id="requests" value={ this.state.search.requests } updateState={ this.updateSearchState }> Requests</CheckboxControl>
+                <CheckboxControl inline id="requests" checked={ this.state.search.requests } updateState={ this.updateSearchState }> Requests</CheckboxControl>
               </Unimplemented>
               <Button id="search-button" bsStyle="primary" onClick={ this.fetch }>Search</Button>
             </ButtonToolbar>
           </Col>
           <Col md={2}>
             <Row id="projects-faves">
-              <Favourites id="projects-faves-dropdown" type="project" favourites={ this.props.favourites } data={ this.state.search } onSelect={ this.loadFavourite } />
+              <Favourites id="projects-faves-dropdown" type="project" favourites={ this.props.favourites.data } data={ this.state.search } onSelect={ this.loadFavourite } pullRight />
             </Row>
           </Col>
         </Row>
@@ -207,10 +194,14 @@ var Projects = React.createClass({
           <Glyphicon glyph="plus" />&nbsp;<strong>Add Project</strong>
         </Button>;
 
-        if (this.state.loading) { return <div style={{ textAlign: 'center' }}><Spinner/></div>; }
-        if (Object.keys(this.props.projects).length === 0) { return <Alert bsStyle="success">No Projects { addProjectButton }</Alert>; }
+        if (this.props.projects.loading || this.props.favourites.loading) { 
+          return <div style={{ textAlign: 'center' }}><Spinner/></div>; 
+        }
+        if (Object.keys(this.props.projects.data).length === 0 && this.props.projects.success) { 
+          return <Alert bsStyle="success">No Projects { addProjectButton }</Alert>; 
+        }
 
-        var projects = _.sortBy(this.props.projects, this.state.ui.sortField);
+        var projects = _.sortBy(this.props.projects.data, this.state.ui.sortField);
         if (this.state.ui.sortDesc) {
           _.reverse(projects);
         }

@@ -1,7 +1,6 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Configuration;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -36,7 +35,7 @@ namespace HETSAPI.Controllers
         /// <param name="files"></param>
         /// <returns></returns>
         [HttpPost]
-        [Route("/api/equipment/{id}/attachments")]
+        [Route("/api/equipment/{id}/attachmentsUpload")]
         public virtual IActionResult EquipmentIdAttachmentsPost([FromRoute] int id, [FromForm] IList<IFormFile> files)
         {
             return _service.EquipmentIdAttachmentsPostAsync(id, files);
@@ -52,7 +51,7 @@ namespace HETSAPI.Controllers
         [Produces("text/html")]
         public virtual IActionResult EquipmentIdAttachmentsFormGet([FromRoute] int id)
         {
-            return new ObjectResult("<html><body><form method=\"post\" action=\"/api/equipment/"+id+"/attachments\" enctype=\"multipart/form-data\"><input type=\"file\" name = \"files\" multiple /><input type = \"submit\" value = \"Upload\" /></body></html>");
+            return new ObjectResult("<html><body><form method=\"post\" action=\"/api/equipment/"+id+"/attachments/Upload\" enctype=\"multipart/form-data\"><input type=\"file\" name = \"files\" multiple /><input type = \"submit\" value = \"Upload\" /></body></html>");
         }
 
         /// <summary>

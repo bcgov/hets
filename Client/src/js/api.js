@@ -254,9 +254,9 @@ export function updateRolePermissions(roleId, permissionsArray) {
 ////////////////////
 
 export function getFavourites(type) {
+  store.dispatch({ type: Action.FAVOURITES_REQUEST });
   return new ApiRequest(`/users/current/favourites/${ type }`).get().then(response => {
     var favourites = normalize(response);
-
     store.dispatch({ type: Action.UPDATE_FAVOURITES, favourites: favourites });
   });
 }
@@ -370,6 +370,7 @@ function parseEquipment(equipment) {
 }
 
 export function searchEquipmentList(params) {
+  store.dispatch({ type: Action.EQUIPMENT_LIST_REQUEST });
   return new ApiRequest('/equipment/search').get(params).then(response => {
     var equipmentList = normalize(response);
 
@@ -547,12 +548,12 @@ function parseOwner(owner) {
 }
 
 export function searchOwners(params) {
+  store.dispatch({ type: Action.OWNERS_REQUEST });
   return new ApiRequest('/owners/search').get(params).then(response => {
     var owners = normalize(response);
 
     // Add display fields
     _.map(owners, owner => { parseOwner(owner); });
-
     store.dispatch({ type: Action.UPDATE_OWNERS, owners: owners });
   });
 }
@@ -569,6 +570,7 @@ export function getOwner(ownerId) {
 }
 
 export function getOwners() {
+  store.dispatch({ type: Action.OWNERS_LOOKUP_REQUEST });
   return new ApiRequest('/owners').get().then(response => {
     var owners = normalize(response);
 
@@ -836,6 +838,7 @@ function parseProject(project) {
 }
 
 export function searchProjects(params) {
+  store.dispatch({ type: Action.PROJECTS_REQUEST });
   return new ApiRequest('/projects/search').get(params).then(response => {
     var projects = normalize(response);
 
@@ -993,6 +996,7 @@ function parseRentalRequest(rentalRequest) {
 }
 
 export function searchRentalRequests(params) {
+  store.dispatch({ type: Action.RENTAL_REQUESTS_REQUEST });
   return new ApiRequest('/rentalrequests/search').get(params).then(response => {
     var rentalRequests = normalize(response);
 
@@ -1422,6 +1426,7 @@ export function getEquipmentTypes() {
 }
 
 export function getDistrictEquipmentTypes(districtId) {
+  store.dispatch({ type: Action.DISTRICT_EQUIPMENT_TYPES_LOOKUP_REQUEST });
   return new ApiRequest('/districtequipmenttypes').get().then(response => {
     var filteredResponse = _.filter(response, (x) => x.district.id == districtId );
     var districtEquipmentTypes = normalize(filteredResponse);

@@ -215,6 +215,7 @@ namespace HETSAPI.Services.Impl
         public virtual IActionResult OwnersIdContactsPutAsync(int id, Contact[] items)
         {
             var exists = _context.Owners.Any(a => a.Id == id);
+
             if (exists && items != null)
             {
                 Owner owner = _context.Owners
@@ -232,10 +233,12 @@ namespace HETSAPI.Services.Impl
                 for (int i = 0; i < items.Count(); i++)
                 {
                     Contact item = items[i];
+
                     if (item != null)
                     {
-                        bool contact_exists = _context.Contacts.Any(x => x.Id == item.Id);
-                        if (contact_exists)
+                        bool contactExists = _context.Contacts.Any(x => x.Id == item.Id);
+
+                        if (contactExists)
                         {
                             items[i] = _context.Contacts
                                 .First(x => x.Id == item.Id);
@@ -326,11 +329,11 @@ namespace HETSAPI.Services.Impl
                 }
                 if (limit == null)
                 {
-                    limit = data.Count() - offset;
+                    limit = data.Count - offset;
                 }
                 List<HistoryViewModel> result = new List<HistoryViewModel>();
 
-                for (int i = (int)offset; i < data.Count() && i < offset + limit; i++)
+                for (int i = (int)offset; i < data.Count && i < offset + limit; i++)
                 {
                     result.Add(data[i].ToViewModel(id));
                 }
@@ -450,12 +453,14 @@ namespace HETSAPI.Services.Impl
                 for (int i = 0; i < items.Count(); i++)
                 {
                     Equipment item = items[i];
+
                     if (item != null)
                     {
                         DateTime lastVerifiedDate = item.LastVerifiedDate;
 
-                        bool equipment_exists = _context.Equipments.Any(x => x.Id == item.Id);
-                        if (equipment_exists)
+                        bool equipmentExists = _context.Equipments.Any(x => x.Id == item.Id);
+
+                        if (equipmentExists)
                         {
                             items[i] = _context.Equipments
                                 .Include(x => x.LocalArea.ServiceArea.District.Region)
@@ -553,13 +558,16 @@ namespace HETSAPI.Services.Impl
         private List<Contact> GetOwnerContacts(int id)
         {
             List<Contact> result = null;
+
             Owner owner = _context.Owners
                         .Include(x => x.Contacts)
                         .FirstOrDefault(x => x.Id == id);
+
             if (owner != null)
             {
                 result = owner.Contacts;
             }
+
             _context.Entry(owner).State = EntityState.Detached;
 
             return result;
@@ -588,17 +596,13 @@ namespace HETSAPI.Services.Impl
                     _context.SaveChanges();
                     return new ObjectResult(item);
                 }
-                else
-                {
-                    // record not found
-                    return new StatusCodeResult(404);
-                }
-            }
-            else
-            {
+
                 // record not found
                 return new StatusCodeResult(404);
             }
+
+            // record not found
+            return new StatusCodeResult(404);
         }
 
         /// <summary>
@@ -620,6 +624,7 @@ namespace HETSAPI.Services.Impl
                 // record not found
                 _context.Owners.Add(item);
             }
+
             // Save the changes
             _context.SaveChanges();
             return new ObjectResult(item);
@@ -629,18 +634,18 @@ namespace HETSAPI.Services.Impl
         /// Searches Owners
         /// </summary>
         /// <remarks>Used for the owner search page.</remarks>
-        /// <param name="localAreasCSV">Local Areas (array of id numbers)</param>
-        /// <param name="equipmentTypesCSV">Equipment Types (array of id numbers)</param>
+        /// <param name="localAreas">Local Areas (array of id numbers)</param>
+        /// <param name="equipmentTypes">Equipment Types (array of id numbers)</param>
         /// <param name="owner"></param>
         /// <param name="status">Status</param>
         /// <param name="hired">Hired</param>
         /// <response code="200">OK</response>
-        public virtual IActionResult OwnersSearchGetAsync(string localAreasCSV, string equipmentTypesCSV, int? owner, string status, bool? hired)
+        public virtual IActionResult OwnersSearchGetAsync(string localAreas, string equipmentTypes, int? owner, string status, bool? hired)
         {
-            int?[] localAreas = ParseIntArray(localAreasCSV);
-            int?[] equipmentTypes = ParseIntArray(equipmentTypesCSV);
+            int?[] localAreasArray = ParseIntArray(localAreas);
+            int?[] equipmentTypesArray = ParseIntArray(equipmentTypes);
 
-            var data = _context.Owners
+            IQueryable<Owner> data = _context.Owners
                     .Include(x => x.LocalArea.ServiceArea.District.Region)
                     .Include(x => x.Notes)
                     .Include(x => x.Attachments)
@@ -652,15 +657,14 @@ namespace HETSAPI.Services.Impl
             int? districtId = _context.GetDistrictIdByUserId(GetCurrentUserId()).Single();
             data = data.Where(x => x.LocalArea.ServiceArea.DistrictId.Equals(districtId));
 
-            if (localAreas != null && localAreas.Length > 0)
+            if (localAreasArray != null && localAreasArray.Length > 0)
             {
-                data = data.Where(x => localAreas.Contains(x.LocalArea.Id));
+                data = data.Where(x => localAreasArray.Contains(x.LocalArea.Id));
             }
 
             if (status != null)
             {
-                // TODO: Change to enumerated type
-                data = data.Where(x => x.Status.ToLower() == status.ToLower());
+                data = data.Where(x => String.Equals(x.Status, status, StringComparison.CurrentCultureIgnoreCase));
             }
 
             if (hired == true)
@@ -684,10 +688,10 @@ namespace HETSAPI.Services.Impl
                 data = data.Where(o => hiredOwnersQuery.Contains(o.Id));
             }
 
-            if (equipmentTypes != null)
+            if (equipmentTypesArray != null)
             {
                 var equipmentTypeQuery = _context.Equipments
-                    .Where(x => equipmentTypes.Contains(x.DistrictEquipmentTypeId))
+                    .Where(x => equipmentTypesArray.Contains(x.DistrictEquipmentTypeId))
                     .Select(x => x.OwnerId)
                     .Distinct();
 

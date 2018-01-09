@@ -229,14 +229,12 @@ var EquipmentDetail = React.createClass({
       <div>
         <Row id="equipment-top">
           <Col md={8}>
-            <Label bsStyle={ equipment.isApproved ? 'success' : 'danger'}>{ equipment.status }</Label>
-            <Label className={ equipment.isMaintenanceContractor ? '' : 'hide' }>Maintenance Contractor</Label>
-            <Label bsStyle={ equipment.isWorking ? 'danger' : 'success' }>{ equipment.isWorking ? 'Working' : 'Not Working' }</Label>
-            <Label bsStyle={ lastVerifiedStyle }>Last Verified: { formatDateTime(equipment.lastVerifiedDate, Constant.DATE_YEAR_SHORT_MONTH_DAY) }</Label>
-            <Unimplemented>
-              <Button title="Notes" onClick={ this.showNotes }>Notes ({ Object.keys(this.props.notes).length })</Button>
-            </Unimplemented>
-            <Button title="Documents" onClick={ this.showDocuments }>Documents ({ Object.keys(this.props.documents).length })</Button>
+            <Row>
+              <Unimplemented>
+                <Button title="Notes" onClick={ this.showNotes }>Notes ({ Object.keys(this.props.notes).length })</Button>
+              </Unimplemented>
+              <Button title="Documents" onClick={ this.showDocuments }>Documents ({ Object.keys(this.props.documents).length })</Button>
+            </Row>
           </Col>
           <Col md={4}>
             <div className="pull-right">
@@ -254,16 +252,22 @@ var EquipmentDetail = React.createClass({
             </div>
           </Col>
         </Row>
+        <Row id="equipment-bottom">
+          <Label bsStyle={ equipment.isApproved ? 'success' : 'danger'}>{ equipment.status }</Label>
+          <Label className={ equipment.isMaintenanceContractor ? '' : 'hide' }>Maintenance Contractor</Label>
+          <Label bsStyle={ equipment.isWorking ? 'danger' : 'success' }>{ equipment.isWorking ? 'Working' : 'Not Working' }</Label>
+          <Label bsStyle={ lastVerifiedStyle }>Last Verified: { formatDateTime(equipment.lastVerifiedDate, Constant.DATE_YEAR_SHORT_MONTH_DAY) }</Label>
+        </Row>
 
         {(() => {
           if (this.state.loadingEquipment) { return <div style={{ textAlign: 'center' }}><Spinner/></div>; }
 
           return <div id="equipment-header">
             <Row>
-              <ColDisplay md={12} labelProps={{ md: 4 }} label={ <h1>Company:</h1> }><h1><small>{ equipment.organizationName }</small></h1></ColDisplay>
+              <ColDisplay md={12} label={ <h1>Company:</h1> }><h1><small>{ equipment.organizationName }</small></h1></ColDisplay>
             </Row>
             <Row>
-              <ColDisplay md={12} labelProps={{ md: 4 }} label={ <h1>EquipId:</h1> }><h1><small>{ equipment.equipmentCode } ({ equipment.typeName })</small></h1></ColDisplay>
+              <ColDisplay md={12} label={ <h1>EquipId:</h1> }><h1><small>{ equipment.equipmentCode } ({ equipment.typeName })</small></h1></ColDisplay>
             </Row>
             <Row>
               <Col md={6}>
@@ -332,9 +336,7 @@ var EquipmentDetail = React.createClass({
           <Col md={6}>
             <Well>
               <h3>Attachments <span className="pull-right">
-                <Unimplemented>
-                  <Button title="Add Attachment" bsSize="small" onClick={this.openPhysicalAttachmentDialog}><Glyphicon glyph="plus" /></Button>
-                </Unimplemented>
+                <Button title="Add Attachment" bsSize="small" onClick={this.openPhysicalAttachmentDialog}><Glyphicon glyph="plus" /></Button>
               </span></h3>
               {(() => {
                 {/* if (this.state.loadingPhysicalAttachments ) { return <div style={{ textAlign: 'center' }}><Spinner/></div>; } */}
@@ -363,15 +365,13 @@ var EquipmentDetail = React.createClass({
                         <td>{ attachment.typeName }</td>
                         <td style={{ textAlign: 'right' }}>
                           <ButtonGroup>
-                            <Unimplemented>
-                              <Button 
-                                title="Edit Attachment" 
-                                bsSize="xsmall" 
-                                onClick={ this.openPhysicalAttachmentEditDialog.bind(this, attachment) }
-                              >
-                                <Glyphicon glyph="pencil" />
-                              </Button>
-                            </Unimplemented>
+                            <Button 
+                              title="Edit Attachment" 
+                              bsSize="xsmall" 
+                              onClick={ this.openPhysicalAttachmentEditDialog.bind(this, attachment) }
+                            >
+                              <Glyphicon glyph="pencil" />
+                            </Button>
                             <OverlayTrigger 
                               trigger="click" 
                               placement="top" 

@@ -6,13 +6,13 @@ using Newtonsoft.Json;
 namespace HETSAPI.ViewModels
 {
     /// <summary>
-    /// 
+    /// User Role View Model
     /// </summary>
     [DataContract]
-    public partial class UserRoleViewModel : IEquatable<UserRoleViewModel>
+    public sealed class UserRoleViewModel : IEquatable<UserRoleViewModel>
     {
         /// <summary>
-        /// Default constructor, required by entity framework
+        /// User Role View Model Constructor
         /// </summary>
         public UserRoleViewModel()
         {
@@ -21,20 +21,18 @@ namespace HETSAPI.ViewModels
         /// <summary>
         /// Initializes a new instance of the <see cref="UserRoleViewModel" /> class.
         /// </summary>
-        /// <param name="EffectiveDate">EffectiveDate (required).</param>
-        /// <param name="UserId">UserId (required).</param>
-        /// <param name="RoleId">RoleId (required).</param>
-        /// <param name="Id">Id.</param>
-        /// <param name="ExpiryDate">ExpiryDate.</param>
-        public UserRoleViewModel(DateTime EffectiveDate, int UserId, int RoleId, int? Id = null, DateTime? ExpiryDate = null)
+        /// <param name="effectiveDate">EffectiveDate (required).</param>
+        /// <param name="userId">UserId (required).</param>
+        /// <param name="roleId">RoleId (required).</param>
+        /// <param name="id">Id.</param>
+        /// <param name="expiryDate">ExpiryDate.</param>
+        public UserRoleViewModel(DateTime effectiveDate, int userId, int roleId, int? id = null, DateTime? expiryDate = null)
         {   
-            this.EffectiveDate = EffectiveDate;
-            this.UserId = UserId;
-            this.RoleId = RoleId;
-
-
-            this.Id = Id;
-            this.ExpiryDate = ExpiryDate;
+            EffectiveDate = effectiveDate;
+            UserId = userId;
+            RoleId = roleId;
+            Id = id;
+            ExpiryDate = expiryDate;
         }
 
         /// <summary>
@@ -74,6 +72,7 @@ namespace HETSAPI.ViewModels
         public override string ToString()
         {
             var sb = new StringBuilder();
+
             sb.Append("class UserRoleViewModel {\n");
             sb.Append("  EffectiveDate: ").Append(EffectiveDate).Append("\n");
             sb.Append("  UserId: ").Append(UserId).Append("\n");
@@ -81,6 +80,7 @@ namespace HETSAPI.ViewModels
             sb.Append("  Id: ").Append(Id).Append("\n");
             sb.Append("  ExpiryDate: ").Append(ExpiryDate).Append("\n");
             sb.Append("}\n");
+
             return sb.ToString();
         }
 
@@ -103,6 +103,7 @@ namespace HETSAPI.ViewModels
             if (ReferenceEquals(null, obj)) { return false; }
             if (ReferenceEquals(this, obj)) { return true; }
             if (obj.GetType() != GetType()) { return false; }
+
             return Equals((UserRoleViewModel)obj);
         }
 
@@ -113,33 +114,31 @@ namespace HETSAPI.ViewModels
         /// <returns>Boolean</returns>
         public bool Equals(UserRoleViewModel other)
         {
-
             if (ReferenceEquals(null, other)) { return false; }
             if (ReferenceEquals(this, other)) { return true; }
 
             return                 
                 (
-                    this.EffectiveDate == other.EffectiveDate ||
-                    this.EffectiveDate != null &&
-                    this.EffectiveDate.Equals(other.EffectiveDate)
+                    EffectiveDate == other.EffectiveDate ||
+                    EffectiveDate.Equals(other.EffectiveDate)
                 ) &&                 
                 (
-                    this.UserId == other.UserId ||
-                    this.UserId.Equals(other.UserId)
+                    UserId == other.UserId ||
+                    UserId.Equals(other.UserId)
                 ) &&                 
                 (
-                    this.RoleId == other.RoleId ||
-                    this.RoleId.Equals(other.RoleId)
+                    RoleId == other.RoleId ||
+                    RoleId.Equals(other.RoleId)
                 ) &&                 
                 (
-                    this.Id == other.Id ||
-                    this.Id != null &&
-                    this.Id.Equals(other.Id)
+                    Id == other.Id ||
+                    Id != null &&
+                    Id.Equals(other.Id)
                 ) &&                 
                 (
-                    this.ExpiryDate == other.ExpiryDate ||
-                    this.ExpiryDate != null &&
-                    this.ExpiryDate.Equals(other.ExpiryDate)
+                    ExpiryDate == other.ExpiryDate ||
+                    ExpiryDate != null &&
+                    ExpiryDate.Equals(other.ExpiryDate)
                 );
         }
 
@@ -153,20 +152,20 @@ namespace HETSAPI.ViewModels
             unchecked // Overflow is fine, just wrap
             {
                 int hash = 41;
-                // Suitable nullity checks
-                   
-                if (this.EffectiveDate != null)
+
+                // Suitable nullity checks                   
+                hash = hash * 59 + EffectiveDate.GetHashCode();
+                hash = hash * 59 + UserId.GetHashCode();                                   
+                hash = hash * 59 + RoleId.GetHashCode();
+
+                if (Id != null)
                 {
-                    hash = hash * 59 + this.EffectiveDate.GetHashCode();
-                }                                   
-                hash = hash * 59 + this.UserId.GetHashCode();                                   
-                hash = hash * 59 + this.RoleId.GetHashCode();                if (this.Id != null)
+                    hash = hash * 59 + Id.GetHashCode();
+                }
+
+                if (ExpiryDate != null)
                 {
-                    hash = hash * 59 + this.Id.GetHashCode();
-                }                
-                                if (this.ExpiryDate != null)
-                {
-                    hash = hash * 59 + this.ExpiryDate.GetHashCode();
+                    hash = hash * 59 + ExpiryDate.GetHashCode();
                 }                
                 
                 return hash;

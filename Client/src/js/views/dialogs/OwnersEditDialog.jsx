@@ -111,7 +111,7 @@ var OwnersEditDialog = React.createClass({
     var owner = this.props.owner;
     var localAreas = _.sortBy(this.props.localAreas, 'name');
 
-    return <EditDialog id="owners-edit" show={ this.props.show } bsSize="small"
+    return <EditDialog id="owners-edit" show={ this.props.show } 
       onClose={ this.props.onClose } onSave={ this.onSave } didChange={ this.didChange } isValid={ this.isValid }
       title= {
         <strong>Owner</strong>
@@ -128,13 +128,13 @@ var OwnersEditDialog = React.createClass({
         </FormGroup>
         <FormGroup controlId="localAreaId" validationState={ this.state.localAreaError ? 'error' : null }>
           <ControlLabel>Local Area <sup>*</sup></ControlLabel>
-          <FilterDropdown id="localAreaId" items={ localAreas } selectedId={ this.state.localAreaId } updateState={ this.updateState } />
+          <FilterDropdown id="localAreaId" items={ localAreas } selectedId={ this.state.localAreaId } updateState={ this.updateState } className="full-width" />
           <HelpBlock>{ this.state.localAreaError }</HelpBlock>
         </FormGroup>
         <FormGroup controlId="status" validationState={ this.state.statusError ? 'error' : null }>
           <ControlLabel>Status <sup>*</sup></ControlLabel>
           <DropdownControl id="status" title={ this.state.status } updateState={ this.updateState }
-              items={[ Constant.OWNER_STATUS_CODE_APPROVED, Constant.OWNER_STATUS_CODE_PENDING, Constant.OWNER_STATUS_CODE_ARCHIVED ]} />
+              items={[ Constant.OWNER_STATUS_CODE_APPROVED, Constant.OWNER_STATUS_CODE_PENDING, Constant.OWNER_STATUS_CODE_ARCHIVED ]} className="full-width" />
           <HelpBlock>{ this.state.statusError }</HelpBlock>
         </FormGroup>
         <FormGroup controlId="doingBusinessAs">

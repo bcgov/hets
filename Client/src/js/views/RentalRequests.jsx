@@ -59,17 +59,13 @@ var RentalRequests = React.createClass({
 
   getInitialState() {
     return {
-      loading: true,
-
       showAddDialog: false,
-
       search: {
         selectedLocalAreasIds: this.props.search.selectedLocalAreasIds || [],
         projectName: this.props.search.projectName || '',
         status: this.props.search.status || '',
         dateRange: this.props.search.dateRange || '',
       },
-
       ui : {
         sortField: this.props.ui.sortField || 'localAreaName',
         sortDesc: this.props.ui.sortDesc === true,
@@ -141,8 +137,6 @@ var RentalRequests = React.createClass({
   },
 
   componentDidMount() {
-    this.setState({ loading: true });
-
     Api.getFavourites('rentalRequests').then(() => {
       // If this is the first load, then look for a default favourite
       if (!this.props.search.loaded) {
@@ -157,10 +151,7 @@ var RentalRequests = React.createClass({
   },
 
   fetch() {
-    this.setState({ loading: true });
-    Api.searchRentalRequests(this.buildSearchParams()).finally(() => {
-      this.setState({ loading: false });
-    });
+    Api.searchRentalRequests(this.buildSearchParams());
   },
 
   updateSearchState(state, callback) {
@@ -255,7 +246,7 @@ var RentalRequests = React.createClass({
           </Col>
           <Col md={2}>
             <Row id="rental-requests-faves">
-              <Favourites id="rental-requests-faves-dropdown" type="rentalRequests" favourites={ this.props.favourites } data={ this.state.search } onSelect={ this.loadFavourite } />
+              <Favourites id="rental-requests-faves-dropdown" type="rentalRequests" favourites={ this.props.favourites.data } data={ this.state.search } onSelect={ this.loadFavourite } pullRight />
             </Row>
             <Row id="rental-requests-search">
               <Button id="search-button" bsStyle="primary" onClick={ this.fetch }>Search</Button>
@@ -269,10 +260,12 @@ var RentalRequests = React.createClass({
           <Glyphicon glyph="plus" />&nbsp;<strong>Add Rental Request</strong>
         </Button>;
 
-        if (this.state.loading) { return <div style={{ textAlign: 'center' }}><Spinner/></div>; }
+        if (this.props.rentalRequests.loading || this.props.favourites.loading) { 
+          return <div style={{ textAlign: 'center' }}><Spinner/></div>; 
+        }
         if (Object.keys(this.props.rentalRequests).length === 0) { return <Alert bsStyle="success">No Rental Requests { addRentalRequestButton }</Alert>; }
 
-        var rentalRequests = _.sortBy(this.props.rentalRequests, this.state.ui.sortField);
+        var rentalRequests = _.sortBy(this.props.rentalRequests.data, this.state.ui.sortField);
         if (this.state.ui.sortDesc) {
           _.reverse(rentalRequests);
         }
@@ -319,9 +312,7 @@ var RentalRequests = React.createClass({
           }
         </SortTable>;
       })()}
-      { this.state.showAddDialog &&
-        <RentalRequestsAddDialog show={ this.state.showAddDialog } onSave={ this.saveNewRequest } onClose={ this.closeAddDialog } />
-      }
+      <RentalRequestsAddDialog show={ this.state.showAddDialog } onSave={ this.saveNewRequest } onClose={ this.closeAddDialog } />
     </div>;
   },
 });
