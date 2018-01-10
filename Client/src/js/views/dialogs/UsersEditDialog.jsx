@@ -189,7 +189,7 @@ var UsersEditDialog = React.createClass({
                 <FormGroup controlId="districtId" validationState={ this.state.districtIdError ? 'error' : null }>
                   <ControlLabel>District <sup>*</sup></ControlLabel>
                   <FilterDropdown id="districtId" placeholder="None" blankLine
-                    items={ districts } selectedId={ this.state.districtId } updateState={ this.updateState } />
+                    items={ districts } selectedId={ this.state.districtId } updateState={ this.updateState }  className="full-width" />
                   <HelpBlock>{ this.state.districtIdError }</HelpBlock>
                 </FormGroup>
               </Col>
@@ -197,7 +197,8 @@ var UsersEditDialog = React.createClass({
                 <FormGroup controlId="selectedGroupsIds" validationState={ this.state.selectedGroupsIdsError ? 'error' : null }>
                   <ControlLabel>Groups <sup>*</sup></ControlLabel>
                   <MultiDropdown id="selectedGroupsIds" placeholder="None"
-                    items={ groups } selectedIds={ this.state.selectedGroupsIds } updateState={ this.updateState } showMaxItems={ 2 } />
+                    items={ groups } selectedIds={ this.state.selectedGroupsIds } updateState={ this.updateState } showMaxItems={ 2 }
+                    className="full-width" />
                   <HelpBlock>{ this.state.selectedGroupsIdsError }</HelpBlock>
                 </FormGroup>
               </Col>

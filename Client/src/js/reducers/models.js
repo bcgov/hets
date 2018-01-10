@@ -6,9 +6,17 @@ const DEFAULT_MODELS = {
   users: {},
   user: {},
 
-  favourites: {},
+  favourites: {
+    data: {},
+    loading: false,
+    success: false,
+  },
 
-  equipmentList: {},
+  equipmentList: {
+    data: {}, 
+    loading: false,
+    success: false,
+  },
   equipment: {},
   equipmentPhysicalAttachments: {},
   equipmentSeniorityHistory: {},
@@ -16,19 +24,30 @@ const DEFAULT_MODELS = {
   equipmentAttachments: {},
   equipmentHistory: {},
 
-  owners: {},
+  owners: {
+    data: {},
+    loading: false,
+  },
   owner: {},
   ownerNotes: {},
   ownerAttachments: {},
   ownerHistory: {},
 
-  projects: {},
+  projects: {
+    data: {},
+    loading: false, 
+    success: false,
+  },
   project: {},
   projectNotes: {},
   projectAttachments: {},
   projectHistory: {},
 
-  rentalRequests: {},
+  rentalRequests: {
+    data: {},
+    loading: false,
+    success: false,
+  },
   rentalRequest: {},
   rentalRequestNotes: {},
   rentalRequestAttachments: {},
@@ -70,14 +89,14 @@ export default function modelsReducer(state = DEFAULT_MODELS, action) {
       return { ...state, user: action.user };
 
     // Favourites
+    case Action.FAVOURITES_REQUEST:
+      return { ...state, favourites: { ...state.favourites, loading: true } };
+
     case Action.UPDATE_FAVOURITES:
-      return { ...state, favourites: action.favourites };
+      return { ...state, favourites: { data: action.favourites, loading: false, success: true } };
 
-    case Action.ADD_FAVOURITE:
-      return { ...state, favourites: { ...state.favourites, ...action.favourite } };
-
-    case Action.UPDATE_FAVOURITE:
-      return { ...state, favourites: { ...state.favourites, ...action.favourite } };
+    case Action.ADD_FAVOURITE: case Action.UPDATE_FAVOURITE:
+      return { ...state, favourites: { data: { ...state.favourites.data, ...action.favourite } } };
 
     case Action.DELETE_FAVOURITE:
       return { ...state, favourites: _.omit(state.favourites, [ action.id ]) };
@@ -109,46 +128,56 @@ export default function modelsReducer(state = DEFAULT_MODELS, action) {
       return { ...state, document: action.document };
 
     // Equipment
+    case Action.EQUIPMENT_LIST_REQUEST:
+      return { ...state, equipmentList: { ...state.equipmentList, loading: true } };
+
     case Action.UPDATE_EQUIPMENT_LIST:
-      return { ...state, equipmentList: action.equipmentList };
+      return { ...state, equipmentList: { data: action.equipmentList, loading: false, success: true } };
 
-    case Action.ADD_EQUIPMENT:
+    case Action.ADD_EQUIPMENT: case Action.UPDATE_EQUIPMENT:
       return { ...state, equipment: action.equipment };
 
-    case Action.UPDATE_EQUIPMENT:
-      return { ...state, equipment: action.equipment };
+    // Equipment Attachments
+    case Action.UPDATE_EQUIPMENT_ATTACHMENTS:
+      return { ...state, equipmentPhysicalAttachments: action.physicalAttachments };
+
+    case Action.ADD_EQUIPMENT_ATTACHMENT:
+      return { ...state, equipmentPhysicalAttachment: action.physicalAttachment };
+
+    case Action.UPDATE_EQUIPMENT_ATTACHMENT:
+      return { ...state, equipmentPhysicalAttachment: action.physicalAttachment };
+
+    case Action.DELETE_EQUIPMENT_ATTACHMENT:
+      return { ...state, equipmentPhysicalAttachment: action.physicalAttachment };
 
     // Owners
+    case Action.OWNERS_REQUEST:
+      return { ...state, owners: { ...state.owners, loading: true } };
+
     case Action.UPDATE_OWNERS:
-      return { ...state, owners: action.owners };
+      return { ...state, owners: { data: action.owners, loading: false } };
 
-    case Action.ADD_OWNER:
-      return { ...state, owner: action.owner };
-
-    case Action.UPDATE_OWNER:
-      return { ...state, owner: action.owner };
-
-    case Action.DELETE_OWNER:
+    case Action.ADD_OWNER: case Action.UPDATE_OWNER: case Action.DELETE_OWNER:
       return { ...state, owner: action.owner };
 
     // Projects
+    case Action.PROJECTS_REQUEST: 
+      return { ...state, projects: { ...state.projects, loading: true } };
+
     case Action.UPDATE_PROJECTS:
-      return { ...state, projects: action.projects };
+      return { ...state, projects: { data: action.projects, loading: false, success: true } };
 
-    case Action.ADD_PROJECT:
-      return { ...state, project: action.project };
-
-    case Action.UPDATE_PROJECT:
+    case Action.ADD_PROJECT: case Action.UPDATE_PROJECT:
       return { ...state, project: action.project };
 
     // Rental Requests
+    case Action.RENTAL_REQUESTS_REQUEST: 
+      return { ...state, rentalRequests: { ...state.rentalRequests, loading: true } };
+
     case Action.UPDATE_RENTAL_REQUESTS:
-      return { ...state, rentalRequests: action.rentalRequests };
+      return { ...state, rentalRequests: { data: action.rentalRequests, loading: false, success: true } };
 
-    case Action.ADD_RENTAL_REQUEST:
-      return { ...state, rentalRequest: action.rentalRequest };
-
-    case Action.UPDATE_RENTAL_REQUEST:
+    case Action.ADD_RENTAL_REQUEST: case Action.UPDATE_RENTAL_REQUEST:
       return { ...state, rentalRequest: action.rentalRequest };
 
     // Rotation List

@@ -254,9 +254,9 @@ export function updateRolePermissions(roleId, permissionsArray) {
 ////////////////////
 
 export function getFavourites(type) {
+  store.dispatch({ type: Action.FAVOURITES_REQUEST });
   return new ApiRequest(`/users/current/favourites/${ type }`).get().then(response => {
     var favourites = normalize(response);
-
     store.dispatch({ type: Action.UPDATE_FAVOURITES, favourites: favourites });
   });
 }
@@ -361,12 +361,16 @@ function parseEquipment(equipment) {
   equipment.name = `code ${ equipment.equipmentCode }`;
   equipment.historyEntity = History.makeHistoryEntity(History.EQUIPMENT, equipment);
 
+  equipment.getDocumentsPromise = getEquipmentDocuments;
+  equipment.uploadDocumentPath = `/equipment/${ equipment.id }/attachments`;
+
   equipment.canView = true;
   equipment.canEdit = true;
   equipment.canDelete = false; // TODO Needs input from Business whether this is needed.
 }
 
 export function searchEquipmentList(params) {
+  store.dispatch({ type: Action.EQUIPMENT_LIST_REQUEST });
   return new ApiRequest('/equipment/search').get(params).then(response => {
     var equipmentList = normalize(response);
 
@@ -436,56 +440,56 @@ export function getEquipmentHistory(equipmentId, params) {
   });
 }
 
+export function getEquipmentDocuments(equipmentId) {
+  return new ApiRequest(`/equipment/${ equipmentId }/attachments`).get().then(response => {
+    var documents = normalize(response);
+
+    // Add display fields
+    _.map(documents, document => { parseDocument(document); });
+
+    store.dispatch({ type: Action.UPDATE_DOCUMENTS, documents: documents });
+  });
+}
+
+export function addEquipmentDocument(equipmentId, files) {
+  return new ApiRequest(`/equipment/${ equipmentId }/attachments`).post(files);
+}
+
 ////////////////////
 // Physical Attachments
 ////////////////////
 
-function parsePhysicalAttachment(attachment) {
-  if (!attachment.type) { attachment.type = { id: 0, code: '', description: ''}; }
+// Introduce later 
+// function parsePhysicalAttachment(attachment) {
+//   if (!attachment.type) { attachment.type = { id: 0, code: '', description: ''}; }
 
-  attachment.typeName = attachment.type.description;
-  // TODO Add grace period logic to editing/deleting attachments
-  attachment.canEdit = true;
-  attachment.canDelete = true;
-}
+//   attachment.typeName = attachment.type.description;
+//   // TODO Add grace period logic to editing/deleting attachments
+//   attachment.canEdit = true;
+//   attachment.canDelete = true;
+// }
 
 export function getPhysicalAttachment(id) {
-  // TODO Implement back-end endpoints
-  return Promise.resolve({ id: id }).then(response => {
-    var attachment = response;
-
-    // Add display fields
-    parsePhysicalAttachment(attachment);
+  return new ApiRequest(`/equipment/${id}/equipmentAttachments`).get().then(response => {
+    store.dispatch({ type: Action.UPDATE_EQUIPMENT_ATTACHMENTS, physicalAttachments: response });
   });
 }
 
 export function addPhysicalAttachment(attachment) {
-  // TODO Implement back-end endpoints
-  return Promise.resolve(attachment).then(response => {
-    var attachment = response;
-
-    // Add display fields
-    parsePhysicalAttachment(attachment);
+  return new ApiRequest('/equipmentAttachments').post(attachment).then(response => {
+    store.dispatch({ type: Action.ADD_EQUIPMENT_ATTACHMENT, physicalAttachment: response });
   });
 }
 
 export function updatePhysicalAttachment(attachment) {
-  // TODO Implement back-end endpoints
-  return Promise.resolve(attachment).then(response => {
-    var attachment = response;
-
-    // Add display fields
-    parsePhysicalAttachment(attachment);
+  return new ApiRequest(`/equipmentAttachments/${attachment.id}`).put(attachment).then(response => {
+    store.dispatch({ type: Action.UPDATE_EQUIPMENT_ATTACHMENT, physicalAttachment: response });
   });
 }
 
-export function deletePhysicalAttachment(attachment) {
-  // TODO Implement back-end endpoints
-  return Promise.resolve(attachment).then(response => {
-    var attachment = response;
-
-    // Add display fields
-    parsePhysicalAttachment(attachment);
+export function deletePhysicalAttachment(attachmentId) {
+  return new ApiRequest(`/equipmentAttachments/${attachmentId}/delete`).post().then(response => {
+    store.dispatch({ type: Action.DELETE_EQUIPMENT_ATTACHMENT, physicalAttachment: response });
   });
 }
 
@@ -544,12 +548,12 @@ function parseOwner(owner) {
 }
 
 export function searchOwners(params) {
+  store.dispatch({ type: Action.OWNERS_REQUEST });
   return new ApiRequest('/owners/search').get(params).then(response => {
     var owners = normalize(response);
 
     // Add display fields
     _.map(owners, owner => { parseOwner(owner); });
-
     store.dispatch({ type: Action.UPDATE_OWNERS, owners: owners });
   });
 }
@@ -566,6 +570,7 @@ export function getOwner(ownerId) {
 }
 
 export function getOwners() {
+  store.dispatch({ type: Action.OWNERS_LOOKUP_REQUEST });
   return new ApiRequest('/owners').get().then(response => {
     var owners = normalize(response);
 
@@ -824,12 +829,16 @@ function parseProject(project) {
   project.primaryContactEmail = project.primaryContact ? project.primaryContact.emailAddress : '';
   project.primaryContactPhone = project.primaryContact ? project.primaryContact.workPhoneNumber || project.primaryContact.mobilePhoneNumber || '' : '';
 
+  project.getDocumentsPromise = getProjectDocuments;
+  project.uploadDocumentPath = `/projects/${ project.id }/attachments`;
+
   project.canView = true;
   project.canEdit = true;
   project.canDelete = false; // TODO Needs input from Business whether this is needed.
 }
 
 export function searchProjects(params) {
+  store.dispatch({ type: Action.PROJECTS_REQUEST });
   return new ApiRequest('/projects/search').get(params).then(response => {
     var projects = normalize(response);
 
@@ -910,6 +919,21 @@ export function getProjectHistory(projectId, params) {
   });
 }
 
+export function getProjectDocuments(projectId) {
+  return new ApiRequest(`/projects/${ projectId }/attachments`).get().then(response => {
+    var documents = normalize(response);
+
+    // Add display fields
+    _.map(documents, document => { parseDocument(document); });
+
+    store.dispatch({ type: Action.UPDATE_DOCUMENTS, documents: documents });
+  });
+}
+
+export function addProjectDocument(projectId, files) {
+  return new ApiRequest(`/projects/${ projectId }/attachments`).post(files);
+}
+
 ////////////////////
 // Rental Requests
 ////////////////////
@@ -963,12 +987,16 @@ function parseRentalRequest(rentalRequest) {
   rentalRequest.name = 'TBD';
   rentalRequest.historyEntity = History.makeHistoryEntity(History.REQUEST, rentalRequest);
 
+  rentalRequest.getDocumentsPromise = getRentalRequestDocuments;
+  rentalRequest.uploadDocumentPath = `/rentalrequests/${ rentalRequest.id }/attachments`;
+
   rentalRequest.canView = true;
   rentalRequest.canEdit = true;
   rentalRequest.canDelete = false; // TODO Needs input from Business whether this is needed.
 }
 
 export function searchRentalRequests(params) {
+  store.dispatch({ type: Action.RENTAL_REQUESTS_REQUEST });
   return new ApiRequest('/rentalrequests/search').get(params).then(response => {
     var rentalRequests = normalize(response);
 
@@ -1025,6 +1053,21 @@ export function getRentalRequestHistory(requestId, params) {
 
     store.dispatch({ type: Action.UPDATE_HISTORY, history: history });
   });
+}
+
+export function getRentalRequestDocuments(rentalRequestId) {
+  return new ApiRequest(`/rentalrequests/${ rentalRequestId }/attachments`).get().then(response => {
+    var documents = normalize(response);
+
+    // Add display fields
+    _.map(documents, document => { parseDocument(document); });
+
+    store.dispatch({ type: Action.UPDATE_DOCUMENTS, documents: documents });
+  });
+}
+
+export function addRentalRequestDocument(rentalRequestId, files) {
+  return new ApiRequest(`/rentalrequests/${ rentalRequestId }/attachments`).post(files);
 }
 
 ////////////////////
@@ -1383,6 +1426,7 @@ export function getEquipmentTypes() {
 }
 
 export function getDistrictEquipmentTypes(districtId) {
+  store.dispatch({ type: Action.DISTRICT_EQUIPMENT_TYPES_LOOKUP_REQUEST });
   return new ApiRequest('/districtequipmenttypes').get().then(response => {
     var filteredResponse = _.filter(response, (x) => x.district.id == districtId );
     var districtEquipmentTypes = normalize(filteredResponse);
@@ -1422,5 +1466,15 @@ export function getPermissions() {
 export function getVersion() {
   return new ApiRequest('/version').get().then(response => {
     store.dispatch({ type: Action.UPDATE_VERSION, version: response });
+  });
+}
+
+////////////////////
+// Set User
+////////////////////
+
+export function setDevUser(user) {
+  return new ApiRequest(`/authentication/dev/token/${user}`).get().then(response => {    
+    return normalize(response);
   });
 }

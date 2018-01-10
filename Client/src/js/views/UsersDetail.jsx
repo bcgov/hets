@@ -23,7 +23,6 @@ import DateControl from '../components/DateControl.jsx';
 import OverlayTrigger from '../components/OverlayTrigger.jsx';
 import SortTable from '../components/SortTable.jsx';
 import Spinner from '../components/Spinner.jsx';
-import Unimplemented from '../components/Unimplemented.jsx';
 
 import { daysFromToday, formatDateTime, today, isValidDate, toZuluTime } from '../utils/date';
 import { isBlank, notBlank } from '../utils/string';
@@ -157,6 +156,10 @@ var UsersDetail = React.createClass({
     this.closeUserRoleDialog();
   },
 
+  print() {
+    window.print();
+  },
+
   render: function() {
     var user = this.props.user;
 
@@ -168,9 +171,7 @@ var UsersDetail = React.createClass({
           </Col>
           <Col md={2}>
             <div className="pull-right">
-              <Unimplemented>
-                <Button><Glyphicon glyph="print" title="Print" /></Button>
-              </Unimplemented>
+              <Button onClick={ this.print }><Glyphicon glyph="print" title="Print" /></Button>
               <LinkContainer to={{ pathname: Constant.USERS_PATHNAME }}>
                 <Button title="Return to List"><Glyphicon glyph="arrow-left" /> Return to List</Button>
               </LinkContainer>

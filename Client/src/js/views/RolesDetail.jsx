@@ -17,7 +17,6 @@ import store from '../store';
 
 import FormInputControl from '../components/FormInputControl.jsx';
 import Spinner from '../components/Spinner.jsx';
-import Unimplemented from '../components/Unimplemented.jsx';
 
 import { isBlank } from '../utils/string';
 
@@ -169,17 +168,19 @@ var RolesDetail = React.createClass({
     }
   },
 
+  print() {
+    window.print();
+  },
+
   render: function() {
     var role = this.props.role;
 
     return <div id="roles-detail">
       <Row id="roles-top">
-        <Col md={10}></Col>
-        <Col md={2}>
+        <Col md={9}></Col>
+        <Col md={3}>
           <div className="pull-right">
-            <Unimplemented>
-              <Button><Glyphicon glyph="print" title="Print" /></Button>
-            </Unimplemented>
+            <Button onClick={ this.print }><Glyphicon glyph="print" title="Print" /></Button>
             <LinkContainer to={{ pathname: Constant.ROLES_PATHNAME }}>
               <Button title="Return to List"><Glyphicon glyph="arrow-left" /> Return to List</Button>
             </LinkContainer>
