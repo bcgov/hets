@@ -310,6 +310,7 @@ namespace HETSAPI
                 string connectionString = GetConnectionString();
 
                 log.LogInformation("Creating Hangfire job for Annual rollover ...");
+
                 // every 5 minutes we see if a CCW record needs to be updated.  We only update one CCW record at a time.
                 // since the server is on UTC, we want UTC-7 for PDT midnight.                
                 RecurringJob.AddOrUpdate(() => SeniorityListExtensions.AnnualRolloverJob(null, connectionString), Cron.Yearly(3, 31, 17));                            
