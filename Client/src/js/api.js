@@ -1021,11 +1021,10 @@ export function getRentalRequest(id) {
 export function addRentalRequest(rentalRequest) {
   return new ApiRequest('/rentalrequests').post(rentalRequest).then(response => {
     var rentalRequest = response;
-
     // Add display fields
     parseRentalRequest(rentalRequest);
-
     store.dispatch({ type: Action.ADD_RENTAL_REQUEST, rentalRequest: rentalRequest });
+    return rentalRequest;
   });
 }
 

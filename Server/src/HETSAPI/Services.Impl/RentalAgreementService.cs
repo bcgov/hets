@@ -11,6 +11,7 @@ using System.Net;
 using System.Threading.Tasks;
 using System.Net.Http;
 using System.Text;
+using HETSAPI.Helpers;
 using HETSAPI.Models;
 using HETSAPI.ViewModels;
 using HETSAPI.Mappings;
@@ -204,6 +205,7 @@ namespace HETSAPI.Services.Impl
         /// </summary>
         /// <remarks>Returns a PDF version of the specified rental agreement</remarks>
         /// <param name="id">id of RentalAgreement to obtain the PDF for</param>
+        /// <exception cref="Exception"></exception>
         /// <response code="200">OK</response>
         public virtual IActionResult RentalagreementsIdPdfGetAsync(int id)
         {
@@ -222,7 +224,7 @@ namespace HETSAPI.Services.Impl
 
             if (rentalAgreement != null)
             {
-                // construct the view model.
+                // construct the view model
                 RentalAgreementPdfViewModel rentalAgreementPdfViewModel = rentalAgreement.ToViewModel();
 
                 string payload = JsonConvert.SerializeObject(rentalAgreementPdfViewModel, new JsonSerializerSettings {
@@ -233,7 +235,7 @@ namespace HETSAPI.Services.Impl
                     DateTimeZoneHandling = DateTimeZoneHandling.Utc
                 });
 
-                // pass the request on to the PDF Micro Service
+                // pass the request on to the Pdf Micro Service
                 string pdfHost = _configuration["PDF_SERVICE_NAME"];
                 string pdfUrl = _configuration.GetSection("Constants").GetSection("PdfUrl").Value;
                 string targetUrl = pdfHost + pdfUrl;
@@ -262,7 +264,9 @@ namespace HETSAPI.Services.Impl
                     responseTask.Wait();
 
                     HttpResponseMessage response = responseTask.Result;
-                    if (response.StatusCode == HttpStatusCode.OK) // success
+
+                    // success
+                    if (response.StatusCode == HttpStatusCode.OK)
                     {
                         var bytetask = response.Content.ReadAsByteArrayAsync();
                         bytetask.Wait();
@@ -273,9 +277,9 @@ namespace HETSAPI.Services.Impl
                         };
                     }
                 }
-                catch 
+                catch (Exception ex)
                 {
-                    result = null;
+                    throw new HetsException("Error generating pdf", ex, "RentalagreementsIdPdfGetAsync");
                 }
 
                 // check that the result has a value
@@ -284,7 +288,8 @@ namespace HETSAPI.Services.Impl
                     return result;
                 }
 
-                return new StatusCodeResult(400); // problem occured
+                // problem occured
+                return new StatusCodeResult(400);
             }
 
             // record not found

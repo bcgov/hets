@@ -14,7 +14,17 @@
             padding: 10px;
             font-family: Verdana, Geneva, sans-serif;
             font-size: 12pt;
-        }        
+        }
+
+        .error {
+            color: #e21212;
+        }
+
+        .error-label {
+            border-bottom: #e21212;
+            border-bottom-width: 2px;
+            border-bottom-style: solid;
+        }
     </style>
     
     <script language="javascript">
@@ -34,17 +44,30 @@
 <body>
     <h2>@ViewData["Title"]</h2>
     <hr />
-
-    <h2>An error occurred while processing your request.</h2>
+    <div>
+        <h3>Current User Id</h3>
+        <label>UserId:</label> &nbsp; @Model.UserId
+    </div>
+    
+    <hr />
+    <h2 class="error">An error occurred while processing your request.</h2>
 
     <p>
-        <strong>Request ID:</strong> <code>@Model.RequestId</code>
+        <strong class="error error-label">Request ID:</strong> <code>@Model.RequestId</code>
     </p>
 
     <p>
-        <strong>Error:</strong> <code>@Model.Message</code>
+        <strong class="error error-label">Target Url:</strong> <code>@Model.OriginalUrl</code>
     </p>
-
+    
+    <p>
+        <strong class="error error-label">Error:</strong> <code>@Model.Message</code>
+    </p>
+    
+    <p>
+        <strong class="error error-label">Inner Exception:</strong> <code>@Model.InnerMessage</code>
+    </p>
+    
     <hr />
 
     @if (Model.DevelopmentEnvironment)
