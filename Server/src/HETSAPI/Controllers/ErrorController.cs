@@ -1,5 +1,4 @@
-﻿using System;
-using System.Diagnostics;
+﻿using System.Diagnostics;
 using Microsoft.AspNetCore.Server.Kestrel.Core.Internal.Http;
 using System.Reflection;
 using Microsoft.AspNetCore.Authorization;
@@ -7,7 +6,6 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Diagnostics;
 using Microsoft.AspNetCore.Hosting;
 using HETSAPI.ViewModels;
-using Microsoft.AspNetCore.Http.Features;
 
 namespace HETSAPI.Controllers
 {
@@ -65,7 +63,7 @@ namespace HETSAPI.Controllers
             PropertyInfo pi = feature?.Error.GetType().GetProperty("SourceMethod");
             if (pi != null)
             {
-                string tempValue = (string)pi.GetValue(feature?.Error, null);
+                string tempValue = (string)pi.GetValue(feature.Error, null);
                 if (!string.IsNullOrEmpty(tempValue))
                 {
                     source+= "." + tempValue;
@@ -77,13 +75,16 @@ namespace HETSAPI.Controllers
             // *****************************************
             string innerException = "";
 
-            pi = feature?.Error.InnerException.GetType().GetProperty("Message");
-            if (pi != null)
+            if (feature?.Error.InnerException != null)
             {
-                string tempValue = (string)pi.GetValue(feature?.Error.InnerException, null);
-                if (!string.IsNullOrEmpty(tempValue))
+                pi = feature.Error.InnerException.GetType().GetProperty("Message");
+                if (pi != null)
                 {
-                    innerException = tempValue;
+                    string tempValue = (string) pi.GetValue(feature.Error.InnerException, null);
+                    if (!string.IsNullOrEmpty(tempValue))
+                    {
+                        innerException = tempValue;
+                    }
                 }
             }
 

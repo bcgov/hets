@@ -22,6 +22,7 @@ namespace HETSAPI.Authorization
             if (user.HasClaim(c => c.Type == User.PERMISSION_CLAIM))
             {
                 bool hasPermissions = true;
+
                 foreach (string permission in permissions)
                 {
                     if (!user.HasClaim(User.PERMISSION_CLAIM, permission))
@@ -33,6 +34,7 @@ namespace HETSAPI.Authorization
 
                 hasRequiredPermissions = hasPermissions;
             }
+
             return hasRequiredPermissions;
         }
 

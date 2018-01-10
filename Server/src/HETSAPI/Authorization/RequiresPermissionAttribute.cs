@@ -2,7 +2,9 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
 using System;
+using System.Text;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Http;
 
 namespace HETSAPI.Authorization
 {
@@ -69,8 +71,16 @@ namespace HETSAPI.Authorization
                 if (!result.Succeeded)
                 {
                     context.Result = new UnauthorizedResult();
-                    await context.Result.ExecuteResultAsync(context);
-                }           
+
+                    HttpResponse response = context.HttpContext.Response;                          
+
+                    string responseText = "<HTML><HEAD><META http-equiv=\"Content - Type\" content=\"text / html; charset = windows - 1252\"></HEAD><BODY></BODY></HTML>";
+                    byte[] data = Encoding.UTF8.GetBytes(responseText);
+
+                    response.StatusCode = 403; // forbidden
+                    response.Body.Write(data, 0, data.Length);
+                    await response.Body.FlushAsync();
+                }
 
                 await next();                
             }

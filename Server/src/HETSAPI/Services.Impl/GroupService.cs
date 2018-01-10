@@ -3,9 +3,11 @@ using System.Linq;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Configuration;
 using HETSAPI.Models;
 using HETSAPI.ViewModels;
 using HETSAPI.Mappings;
+
 
 namespace HETSAPI.Services.Impl
 {
@@ -16,14 +18,16 @@ namespace HETSAPI.Services.Impl
     {
         private readonly DbAppContext _context;
         private readonly ILogger _logger;
+        private readonly IConfiguration _configuration;
 
         /// <summary>
         /// Group Service Constructor
         /// </summary>
-        public GroupService(DbAppContext context, ILoggerFactory loggerFactory)
+        public GroupService(DbAppContext context, ILoggerFactory loggerFactory, IConfiguration configuration)
         {
             _context = context;
             _logger = loggerFactory.CreateLogger(typeof(GroupService));
+            _configuration = configuration;
         }
 
         /// <summary>
@@ -149,11 +153,11 @@ namespace HETSAPI.Services.Impl
             if (exists)
             {
                 Group result = _context.Groups.First(a => a.Id == id);
-                return new ObjectResult(result);
+                return new ObjectResult(new HetsResponse(result));
             }
-            
+
             // record not found
-            return new StatusCodeResult(404);
+            return new ObjectResult(new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-01", _configuration)));
         }
 
         /// <summary>

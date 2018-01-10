@@ -39,7 +39,13 @@ namespace HETSAPI.Authorization
         {
             if (context.User.HasPermissions(requirement.RequiredPermissions.ToArray()))
             {
+                // access granted
                 context.Succeed(requirement);
+            }
+            else
+            {
+                // access denied
+                context.Fail();
             }
 
             await Task.CompletedTask;

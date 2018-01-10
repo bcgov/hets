@@ -11,7 +11,6 @@ using System.Net;
 using System.Threading.Tasks;
 using System.Net.Http;
 using System.Text;
-using HETSAPI.Helpers;
 using HETSAPI.Models;
 using HETSAPI.ViewModels;
 using HETSAPI.Mappings;
@@ -237,7 +236,7 @@ namespace HETSAPI.Services.Impl
 
                 // pass the request on to the Pdf Micro Service
                 string pdfHost = _configuration["PDF_SERVICE_NAME"];
-                string pdfUrl = _configuration.GetSection("Constants").GetSection("PdfUrl").Value;
+                string pdfUrl = _configuration.GetSection("Constants:PdfUrl").Value;
                 string targetUrl = pdfHost + pdfUrl;
 
                 // call the microservice
@@ -279,7 +278,7 @@ namespace HETSAPI.Services.Impl
                 }
                 catch (Exception ex)
                 {
-                    throw new HetsException("Error generating pdf", ex, "RentalagreementsIdPdfGetAsync");
+                    throw new Exception("Error generating pdf", ex);
                 }
 
                 // check that the result has a value
