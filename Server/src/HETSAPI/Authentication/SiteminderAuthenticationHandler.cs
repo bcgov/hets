@@ -1,8 +1,8 @@
 ﻿using System;
-using System.Security.Authentication;
 using System.Security.Claims;
 using System.Text.Encodings.Web;
 using System.Threading.Tasks;
+using HETSAPI.Helpers;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
@@ -46,8 +46,7 @@ namespace HETSAPI.Authentication
             InactivegDbUserIdError = ConstInactivegDbUserIdError;
             DevAuthenticationTokenKey = ConstDevAuthenticationTokenKey;
             DevDefaultUserId = ConstDevDefaultUserId;
-        }
-        
+        }        
 
         /// <summary>
         /// Default Scheme Name
@@ -239,13 +238,13 @@ namespace HETSAPI.Authentication
                     if (string.IsNullOrEmpty(userId))
                     {
                         _logger.LogError(options.MissingSiteMinderUserIdError);
-                        throw new AuthenticationException(options.MissingSiteMinderUserIdError);
+                        return Task.FromResult(AuthenticateResult.Fail(options.MissingSiteMinderGuidError));
                     }
 
                     if (string.IsNullOrEmpty(siteMinderGuid))
                     {
                         _logger.LogError(options.MissingSiteMinderGuidError);
-                        throw new AuthenticationException(options.MissingSiteMinderGuidError);
+                        return Task.FromResult(AuthenticateResult.Fail(options.MissingSiteMinderGuidError));
                     }
                 }
 
@@ -259,13 +258,13 @@ namespace HETSAPI.Authentication
                 if (userSettings.HetsUser == null)
                 {
                     _logger.LogWarning(options.MissingDbUserIdError + " (" + userId + ")");
-                    throw new AuthenticationException(options.MissingDbUserIdError + " (" + userId + ")");
+                    return Task.FromResult(AuthenticateResult.Fail(options.MissingDbUserIdError));
                 }
 
                 if (!userSettings.HetsUser.Active)
                 {
                     _logger.LogWarning(options.InactivegDbUserIdError + " (" + userId + ")");
-                    throw new AuthenticationException(options.InactivegDbUserIdError + " (" + userId + ")");
+                    return Task.FromResult(AuthenticateResult.Fail(options.InactivegDbUserIdError));
                 }
 
                 // **************************************************
@@ -285,12 +284,12 @@ namespace HETSAPI.Authentication
                 principal = userSettings.HetsUser.ToClaimsPrincipal(options.Scheme);
                 return Task.FromResult(AuthenticateResult.Success(new AuthenticationTicket(principal, null, Options.Scheme)));
             }
-            catch (Exception e)
+            catch (Exception exception)
             {
-                _logger.LogError(e.Message);
-                Console.WriteLine(e);
+                _logger.LogError(exception.Message);
+                Console.WriteLine(exception);
                 throw;
             }
         }        
-    }
+    }    
 }

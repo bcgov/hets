@@ -83,8 +83,8 @@ namespace HETSAPI
 
             // setup authorization
             services.AddAuthorization();
-            services.RegisterPermissionHandler();                       
-            
+            services.RegisterPermissionHandler();            
+
             // allow for large files to be uploaded
             services.Configure<FormOptions>(options =>
             {
@@ -150,8 +150,11 @@ namespace HETSAPI
             loggerFactory.AddConsole(Configuration.GetSection("Logging"));
             loggerFactory.AddDebug();
 
-            // web site error handler                             
-            app.UseExceptionHandler(Configuration.GetSection("Constants").GetSection("ErrorUrl").Value);
+            // web site error handler             
+            app.UseWhen(x => !x.Request.Path.Value.StartsWith("/api"), builder =>
+            {
+                builder.UseExceptionHandler(Configuration.GetSection("Constants:ErrorUrl").Value);
+            });
             
             // IMPORTANT: This session call MUST go before UseMvc()
             app.UseSession();
@@ -188,7 +191,7 @@ namespace HETSAPI
                 };
 
                 // enable the /hangfire action
-                app.UseHangfireDashboard((Configuration.GetSection("Constants").GetSection("HangfireUrl").Value), dashboardOptions);
+                app.UseHangfireDashboard(Configuration.GetSection("Constants:HangfireUrl").Value, dashboardOptions);
             }
             
             app.UseMvc(routes =>
