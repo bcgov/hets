@@ -1,0 +1,15 @@
+#=========================================================
+# OpenShift template parameters for:
+# Component: .
+# JSON Template File: templates/pdf/pdf-deploy.json
+#=========================================================
+# NAME=pdf
+# SOURCE_IMAGE_NAME=pdf
+# APPLICATION_DOMAIN=pdf-tran-hets-dev.pathfinder.gov.bc.ca
+# IMAGE_NAMESPACE=tran-hets-tools
+# TAG_NAME=dev
+# DATABASE_SERVICE_NAME=postgresql
+# DATABASE_NAME=hets
+# DATABASE_DEPLOYMENT_NAME=postgresql
+# ASPNETCORE_ENVIRONMENT=Development
+# MEMORY_LIMIT=512Mi
