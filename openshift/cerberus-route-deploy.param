@@ -1,0 +1,8 @@
+#=========================================================
+# OpenShift template parameters for:
+# Component: .
+# JSON Template File: templates/cerberus/cerberus-route-deploy.json
+#=========================================================
+NAME=cerberus
+SERVICE_NAME=frontend
+APPLICATION_DOMAIN=cerberus-route-tran-hets-dev.pathfinder.gov.bc.ca
