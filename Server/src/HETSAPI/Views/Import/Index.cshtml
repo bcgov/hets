@@ -1,0 +1,73 @@
+﻿@{
+    ViewBag.Title = "HETSAPI - Data Import Page";
+}
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"]</title>    
+    
+    <style>
+        body {
+            background-color: #fff;
+            padding: 10px;
+            font-family: Verdana, Geneva, sans-serif;
+            font-size: 12pt;
+        }
+
+        .error {
+            color: #e21212;
+        }
+
+        .error-label {
+            border-bottom: #e21212;
+            border-bottom-width: 2px;
+            border-bottom-style: solid;
+        }
+    </style>
+    
+    <script language="javascript">
+        
+    </script>
+</head>
+<body>
+<h2>@ViewData["Title"]</h2>
+<hr />
+<div>
+    <h3>Current User Id</h3>
+    <label>UserId:</label> &nbsp; @Model.UserId
+</div>
+
+<hr />
+<div>
+    <h3>Import BC Bid Data</h3>
+
+    @if (Model.FileImportResult == "ERROR")
+    {
+        <hr />
+        <h4 class="error">An error occurred while processing your import request.</h4>
+
+        <p>
+            <strong class="error error-label">Error:</strong> <code>@Model.FileImportMessage</code>
+        </p>
+    }
+
+    @if (Model.FileImportResult == "OK")
+    {
+        <hr />
+        <h4 class="error">@Model.FileImportMessage</h4>
+
+        <p>
+            @Html.Raw(Model.FileNames)
+        </p>
+    }
+
+    <form method="post" enctype="multipart/form-data" action="@Url.Action("UploadPost", "Import")">
+        <input type="file" name="files" multiple style="width: 500px; height: 30px; font-size: 14px;" />
+        <input type="submit" value="Upload" style="width: 100px; height: 30px; font-size: 14px;" />
+    </form>
+</div>
+
+</body>
+</html>
