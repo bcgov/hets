@@ -7,9 +7,6 @@
     <StartupObject>PDF.Server.Program</StartupObject>
   </PropertyGroup>
   <ItemGroup>
-    <Content Remove="Views\Home\Index.cshtml" />
-  </ItemGroup>
-  <ItemGroup>
     <None Remove="Templates\rental_agreement.mustache" />
     <None Remove="Templates\sample.mustache" />
   </ItemGroup>
@@ -50,7 +47,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <None Include="Views\Home\Index.cshtml" />
     <None Include="wwwroot\js\pdf.js" />
   </ItemGroup>
 
