@@ -174,7 +174,7 @@
                 "livenessProbe":
                 {
                   "timeoutSeconds": 3000,
-                  "initialDelaySeconds": 30,
+                  "initialDelaySeconds": 300,
                   "httpGet":
                   {
                     "path": "/",
