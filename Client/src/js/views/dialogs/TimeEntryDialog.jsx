@@ -34,7 +34,12 @@ var TimeEntryDialog = React.createClass({
       projectId: this.props.project.id,
       equipment: {},
       numberOfInputs: 1,
-      timeEntry: {},
+      timeEntry: {
+        1: {
+          hours: '',
+          date: '',
+        },
+      },
 
       errors: {},
     };
@@ -68,15 +73,25 @@ var TimeEntryDialog = React.createClass({
 
   isValid() {
     // todo
-    this.setState({ errors: {} });
-    console.log(this.state);
+    let timeEntry = this.state.timeEntry;
+    let errors = this.state.errors;
+
+    Object.keys(errors).map((key) => {
+      // console.log(timeEntry, errors);
+      // let errorKey = { ...errors, [key]: { ...errors[key] } };
+      // errorKey[key].hours = '';
+      // this.setState({ errors: errorKey });
+      let state = { hours: '' };
+      let updatedState = { ...errors, [key]: { ...errors[key], ...state } };
+      this.setState({ errros: updatedState });
+    });
+    // this.setState({ errors: { ...{} } }, console.log(this.state));
 
     let valid = true;
-    let timeEntry = this.state.timeEntry;
 
-    // _.map(timeEntry, (item, index) => {
+    // _.map(timeEntry, (item, index) => {;
     Object.keys(timeEntry).map((key) => {
-      if (isBlank(timeEntry[key].hours)) {
+      if ((timeEntry[key] == undefined) || isBlank(timeEntry[key].hours)) {
         let state = { ...this.state.errors, [key]: { hours: 'Hours are required' } };
         this.setState({ errors: state });
         valid = false;
@@ -165,7 +180,7 @@ var TimeEntryDialog = React.createClass({
             { Array.from(Array(this.state.numberOfInputs), (_, i) => {
               const index = i + 1;
               return (
-                <Row>
+                <Row key={index}>
                   <Col md={4} className="nopadding">
                     <FormGroup validationState={ this.state.dateError ? 'error' : null }>
                       <ControlLabel>Week Ending</ControlLabel>
