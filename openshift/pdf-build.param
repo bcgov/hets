@@ -1,0 +1,15 @@
+#=========================================================
+# OpenShift template parameters for:
+# Component: .
+# JSON Template File: templates/pdf/pdf-build.json
+#=========================================================
+NAME=pdf
+GIT_REPO_URL=https://github.com/bcgov/hets.git
+GIT_REF=master
+SOURCE_CONTEXT_DIR=/PDF
+SOURCE_IMAGE_KIND=ImageStreamTag
+SOURCE_IMAGE_NAME=dotnet-20-node-89
+SOURCE_IMAGE_TAG=latest
+BUILD_LOGLEVEL=1
+DOTNET_STARTUP_PROJECT=src/PDF.Server/PDF.Server.csproj
+OUTPUT_IMAGE_TAG=latest

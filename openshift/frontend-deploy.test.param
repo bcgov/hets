@@ -1,0 +1,21 @@
+#=========================================================
+# OpenShift template parameters for:
+# Component: .
+# JSON Template File: templates/frontend/frontend-deploy.json
+#=========================================================
+# NAME=frontend
+# SOURCE_IMAGE_NAME=frontend
+APPLICATION_DOMAIN=frontend-tran-hets-test.pathfinder.gov.bc.ca
+# IMAGE_NAMESPACE=tran-hets-tools
+TAG_NAME=test
+# BACKEND_NAME=server
+# BACKEND_PORT=8080
+# MIDDLEWARE_NAME=server
+# MIDDLEWARE_PORT=8080
+# DATABASE_NAME=hets
+# ADMIN_PASSWORD=[a-zA-Z0-9]{16}
+ASPNETCORE_ENVIRONMENT=Staging
+# CPU_LIMIT=500m
+# MEMORY_LIMIT=512Mi
+# CPU_REQUEST=10m
+# MEMORY_REQUEST=256Mi

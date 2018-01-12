@@ -1,46 +1,74 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using System;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.NodeServices;
-using Microsoft.Extensions.Logging;
-using Newtonsoft.Json.Linq;
 using System.Threading.Tasks;
+using Microsoft.Extensions.Configuration;
+using PDF.Server.Helpers;
 
-namespace PDF.Controllers
+namespace PDF.Server.Controllers
 {
-    public class PDFRequest
+    /// <summary>
+    /// Rental Agreement - used to submit data to generate a new rental document
+    /// </summary>
+    public class RentalAgreement
     {
-        public string html { get; set; }
-        public string options { get; set; }
+        public string JsonString { get; set; }
     }
-    public class JSONResponse
-    {
-        public string type;
-        public byte[] data;
-    }
-    [Route("api/[controller]")] 
-    public class PDFController : Controller
-    {
-        protected ILogger _logger;
 
-        public PDFController(ILoggerFactory loggerFactory)
+    /// <summary>
+    /// Pdf Controller - Main Pdf generation functionality
+    /// </summary>
+    [ResponseCache(Location = ResponseCacheLocation.None, NoStore = true)]
+    public class PdfController : Controller
+    {
+        private readonly INodeServices _nodeServices;
+        private readonly IConfigurationRoot _configuration;
+
+        public PdfController(INodeServices nodeServices, IConfigurationRoot configuration)
         {
-            _logger = loggerFactory.CreateLogger(typeof(PDFController));
-        }
-
+            _nodeServices = nodeServices;
+            _configuration = configuration;
+        }       
 
         [HttpPost]
-        [Route("BuildPDF")]
-
-        public async Task<IActionResult> BuildPDF([FromServices] INodeServices nodeServices, [FromBody]  PDFRequest rawdata )
+        [Route("pdf/rentalAgreement")]
+        public async Task<IActionResult> GetRentalAgreementPdf([FromBody]RentalAgreement rentalAgreement)
         {
-            JObject options = JObject.Parse(rawdata.options);
-            JSONResponse result = null;
-            //var options = new { format="letter", orientation= "portrait" }; 
+            try
+            {
+                // *************************************************************
+                // Create output using json and mustache template
+                // *************************************************************
+                RenderRequest request = new RenderRequest()
+                {
+                    JsonString = rentalAgreement.JsonString,
+                    RenderJsUrl = _configuration.GetSection("Constants").GetSection("RenderJsUrl").Value,
+                    Template = _configuration.GetSection("Constants").GetSection("SampleTemplate").Value
+                };
 
-            // execute the Node.js component to generate a PDF
-            result = await nodeServices.InvokeAsync<JSONResponse>("./pdf.js", rawdata.html, options);
-            options = null;
-            _logger.LogInformation("Rendered document.");
-            return new FileContentResult(result.data, "application/pdf");
+                string result = await TemplateHelper.RenderDocument(_nodeServices, request);
+
+                // *************************************************************
+                // Convert results to Pdf
+                // *************************************************************
+                string options = @"{""height"": ""10.5in"",""width"": ""8in"",""orientation"": ""portrait""}";
+
+                PdfRequest pdfRequest = new PdfRequest()
+                {
+                    Html = result,
+                    Options = options,
+                    PdfJsUrl = _configuration.GetSection("Constants").GetSection("PdfJsUrl").Value
+                };
+
+                JsonResponse jsonResult = await PdfDocument.BuildPdf(_nodeServices, pdfRequest);
+
+                return File(jsonResult.Data, "application/pdf");
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+                throw;
+            }
         }
     }
 }

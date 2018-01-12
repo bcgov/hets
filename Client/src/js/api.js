@@ -1021,11 +1021,10 @@ export function getRentalRequest(id) {
 export function addRentalRequest(rentalRequest) {
   return new ApiRequest('/rentalrequests').post(rentalRequest).then(response => {
     var rentalRequest = response;
-
     // Add display fields
     parseRentalRequest(rentalRequest);
-
     store.dispatch({ type: Action.ADD_RENTAL_REQUEST, rentalRequest: rentalRequest });
+    return rentalRequest;
   });
 }
 
@@ -1437,7 +1436,7 @@ export function getDistrictEquipmentTypes(districtId) {
 
 export function getGroups() {
   return new ApiRequest('/groups').get().then(response => {
-    var groups = normalize(response);
+    var groups = normalize(response.data);
 
     store.dispatch({ type: Action.UPDATE_GROUPS_LOOKUP, groups: groups });
   });

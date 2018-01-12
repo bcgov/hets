@@ -2,7 +2,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Configuration;
 using HETSAPI.Models;
 using HETSAPI.ViewModels;
 using HETSAPI.Mappings;
@@ -15,15 +15,15 @@ namespace HETSAPI.Services.Impl
     public class GroupService : IGroupService
     {
         private readonly DbAppContext _context;
-        private readonly ILogger _logger;
+        private readonly IConfiguration _configuration;
 
         /// <summary>
         /// Group Service Constructor
         /// </summary>
-        public GroupService(DbAppContext context, ILoggerFactory loggerFactory)
+        public GroupService(DbAppContext context, IConfiguration configuration)
         {
             _context = context;
-            _logger = loggerFactory.CreateLogger(typeof(GroupService));
+            _configuration = configuration;
         }
 
         /// <summary>
@@ -51,11 +51,11 @@ namespace HETSAPI.Services.Impl
                     result.Add(item.User.ToViewModel());
                 }
 
-                return new ObjectResult(result);
+                return new ObjectResult(new HetsResponse(result));
             }
-            
+
             // record not found
-            return new StatusCodeResult(404);           
+            return new ObjectResult(new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-01", _configuration)));
         }
 
         /// <summary>
@@ -96,14 +96,8 @@ namespace HETSAPI.Services.Impl
         /// <response code="200">OK</response>
         public virtual IActionResult GroupsGetAsync()
         {
-            _logger.LogInformation("[GroupsGetAsync] Get all groups");
             List<GroupViewModel> result = _context.Groups.Select(x => x.ToViewModel()).ToList();
-            _logger.LogInformation("[GroupsGetAsync] Group count: " + result.Count);
-
-            if (result.Count > 0)
-                _logger.LogInformation("[GroupsGetAsync] Group json: " + result[0].ToJson());
-
-            return new ObjectResult(result);
+            return new ObjectResult(new HetsResponse(result));
         }
 
         /// <summary>
@@ -128,11 +122,11 @@ namespace HETSAPI.Services.Impl
                     _context.SaveChanges();
                 }
 
-                return new ObjectResult(item);
+                return new ObjectResult(new HetsResponse(item));
             }
-            
+
             // record not found
-            return new StatusCodeResult(404);            
+            return new ObjectResult(new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-01", _configuration)));
         }
 
         /// <summary>
@@ -149,11 +143,11 @@ namespace HETSAPI.Services.Impl
             if (exists)
             {
                 Group result = _context.Groups.First(a => a.Id == id);
-                return new ObjectResult(result);
+                return new ObjectResult(new HetsResponse(result));
             }
-            
+
             // record not found
-            return new StatusCodeResult(404);
+            return new ObjectResult(new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-01", _configuration)));
         }
 
         /// <summary>
@@ -173,11 +167,12 @@ namespace HETSAPI.Services.Impl
 
                 // Save the changes
                 _context.SaveChanges();
-                return new ObjectResult(item);
+
+                return new ObjectResult(new HetsResponse(item));
             }
-           
+
             // record not found
-            return new StatusCodeResult(404);
+            return new ObjectResult(new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-01", _configuration)));
         }
 
         /// <summary>
@@ -195,12 +190,12 @@ namespace HETSAPI.Services.Impl
             }
             else
             {
-                // record not found
+                // record not found - create
                 _context.Groups.Add(item);
             }
 
             _context.SaveChanges();
-            return new ObjectResult(item);
+            return new ObjectResult(new HetsResponse(item));
         }
     }
 }
