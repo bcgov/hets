@@ -382,6 +382,7 @@ export function searchEquipmentList(params) {
 }
 
 export function getEquipmentList() {
+  store.dispatch({ type: Action.EQUIPMENT_LIST_REQUEST });
   return new ApiRequest('/equipment').get().then(response => {
     var equipmentList = normalize(response);
 
@@ -1008,6 +1009,7 @@ export function searchRentalRequests(params) {
 }
 
 export function getRentalRequest(id) {
+  store.dispatch({ type: Action.RENTAL_REQUEST_REQUEST });
   return new ApiRequest(`/rentalrequests/${ id }`).get().then(response => {
     var rentalRequest = response;
 
@@ -1436,7 +1438,7 @@ export function getDistrictEquipmentTypes(districtId) {
 
 export function getGroups() {
   return new ApiRequest('/groups').get().then(response => {
-    var groups = normalize(response);
+    var groups = normalize(response.data);
 
     store.dispatch({ type: Action.UPDATE_GROUPS_LOOKUP, groups: groups });
   });

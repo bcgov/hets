@@ -48,7 +48,11 @@ const DEFAULT_MODELS = {
     loading: false,
     success: false,
   },
-  rentalRequest: {},
+  rentalRequest: {
+    data: {},
+    loading: false,
+    success: false,
+  },
   rentalRequestNotes: {},
   rentalRequestAttachments: {},
   rentalRequestHistory: {},
@@ -174,11 +178,15 @@ export default function modelsReducer(state = DEFAULT_MODELS, action) {
     case Action.RENTAL_REQUESTS_REQUEST: 
       return { ...state, rentalRequests: { ...state.rentalRequests, loading: true } };
 
+
     case Action.UPDATE_RENTAL_REQUESTS:
       return { ...state, rentalRequests: { data: action.rentalRequests, loading: false, success: true } };
 
+    case Action.RENTAL_REQUEST_REQUEST: 
+      return { ...state, rentalRequest: { ...state.rentalRequest, loading: true } };
+
     case Action.ADD_RENTAL_REQUEST: case Action.UPDATE_RENTAL_REQUEST:
-      return { ...state, rentalRequest: action.rentalRequest };
+      return { ...state, rentalRequest: { data: action.rentalRequest, loading: false, success: true } };
 
     // Rotation List
     case Action.UPDATE_RENTAL_REQUEST_ROTATION_LIST:
