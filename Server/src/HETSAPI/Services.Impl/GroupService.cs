@@ -118,7 +118,7 @@ namespace HETSAPI.Services.Impl
                 {
                     _context.Groups.Remove(item);
                     
-                    // Save the changes
+                    // save the changes
                     _context.SaveChanges();
                 }
 
@@ -165,7 +165,7 @@ namespace HETSAPI.Services.Impl
             {
                 _context.Groups.Update(item);
 
-                // Save the changes
+                // save the changes
                 _context.SaveChanges();
 
                 return new ObjectResult(new HetsResponse(item));

@@ -2,22 +2,26 @@ using System.Linq;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using HETSAPI.Models;
+using HETSAPI.ViewModels;
+using Microsoft.Extensions.Configuration;
 
 namespace HETSAPI.Services.Impl
 {
     /// <summary>
-    /// 
+    /// Equipment Attachment Service
     /// </summary>
     public class EquipmentAttachmentService : IEquipmentAttachmentService
     {
         private readonly DbAppContext _context;
+        private readonly IConfiguration _configuration;
 
         /// <summary>
-        /// Create a service and set the database context
+        /// Equipment Attachment Service Constructor
         /// </summary>
-        public EquipmentAttachmentService(DbAppContext context)
+        public EquipmentAttachmentService(DbAppContext context, IConfiguration configuration)
         {
             _context = context;
+            _configuration = configuration;
         }
 
         private void AdjustRecord (EquipmentAttachment item)
@@ -27,7 +31,7 @@ namespace HETSAPI.Services.Impl
         }
 
         /// <summary>
-        /// 
+        /// Create bulk equipment attachment records
         /// </summary>
         /// <param name="items"></param>
         /// <response code="201">Equipment created</response>
@@ -37,12 +41,14 @@ namespace HETSAPI.Services.Impl
             {
                 return new BadRequestResult();
             }
+
             foreach (EquipmentAttachment item in items)
             {
                 AdjustRecord(item);
 
                 // determine if this is an insert or an update            
                 bool exists = _context.EquipmentAttachments.Any(a => a.Id == item.Id);
+
                 if (exists)                
                 {
                     _context.Update(item);
@@ -52,13 +58,15 @@ namespace HETSAPI.Services.Impl
                     _context.Add(item);
                 }
             }
+
             // Save the changes
             _context.SaveChanges();
+
             return new NoContentResult();
         }
 
         /// <summary>
-        /// 
+        /// Get all equipment attachments records
         /// </summary>
         /// <response code="200">OK</response>
         public virtual IActionResult EquipmentAttachmentsGetAsync()
@@ -66,60 +74,63 @@ namespace HETSAPI.Services.Impl
             var result = _context.EquipmentAttachments
                     .Include(x => x.Equipment)                  
                     .ToList();
-            return new ObjectResult(result);
+
+            return new ObjectResult(new HetsResponse(result));
         }
 
         /// <summary>
-        /// 
+        /// Delete equipment attachment 
         /// </summary>
         /// <param name="id">id of Equipment to delete</param>
         /// <response code="200">OK</response>
         /// <response code="404">Equipment not found</response>
         public virtual IActionResult EquipmentAttachmentsIdDeletePostAsync(int id)
         {
-            var exists = _context.EquipmentAttachments.Any(a => a.Id == id);
+            bool exists = _context.EquipmentAttachments.Any(a => a.Id == id);
+
             if (exists)
             {
-                var item = _context.EquipmentAttachments.First(a => a.Id == id);
+                EquipmentAttachment item = _context.EquipmentAttachments.First(a => a.Id == id);
+
                 _context.EquipmentAttachments.Remove(item);
+                
                 // Save the changes
                 _context.SaveChanges();
-                return new ObjectResult(item);
+
+                return new ObjectResult(new HetsResponse(item));
             }
-            else
-            {
-                // record not found
-                return new StatusCodeResult(404);
-            }
+
+            // record not found
+            return new ObjectResult(new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-01", _configuration)));
         }
 
         /// <summary>
-        /// 
+        /// Get equipment attachment by id
         /// </summary>
         /// <param name="id">id of Equipment to fetch</param>
         /// <response code="200">OK</response>
         /// <response code="404">Equipment not found</response>
         public virtual IActionResult EquipmentAttachmentsIdGetAsync(int id)
         {
-            var exists = _context.EquipmentAttachments.Any(a => a.Id == id);
+            bool exists = _context.EquipmentAttachments.Any(a => a.Id == id);
+
             if (exists)
             {
-                var result = _context.EquipmentAttachments
+                EquipmentAttachment result = _context.EquipmentAttachments
                     .Include(x => x.Equipment)                  
                     .First(a => a.Id == id);
-                return new ObjectResult(result);
+
+                return new ObjectResult(new HetsResponse(result));
             }
-            else
-            {
-                // record not found
-                return new StatusCodeResult(404);
-            }
+
+            // record not found
+            return new ObjectResult(new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-01", _configuration)));
         }
 
         /// <summary>
-        /// 
+        /// Update equipment attachment
         /// </summary>
-        /// <param name="id">id of Equipment to fetch</param>
+        /// <param name="id">id of Equipment to update</param>
         /// <param name="item"></param>
         /// <response code="200">OK</response>
         /// <response code="404">Equipment not found</response>
@@ -129,35 +140,33 @@ namespace HETSAPI.Services.Impl
             {
                 AdjustRecord(item);
 
-                var exists = _context.EquipmentAttachments                    
+                bool exists = _context.EquipmentAttachments                    
                     .Any(a => a.Id == id);
+
                 if (exists && id == item.Id)
                 {
                     _context.EquipmentAttachments.Update(item);
+
                     // Save the changes
                     _context.SaveChanges();
 
-                    var result = _context.EquipmentAttachments
-                    .Include(x => x.Equipment)                   
-                    .First(a => a.Id == id);
-                    
-                    return new ObjectResult(result);
+                    EquipmentAttachment result = _context.EquipmentAttachments
+                        .Include(x => x.Equipment)                   
+                        .First(a => a.Id == id);
+
+                    return new ObjectResult(new HetsResponse(result));
                 }
-                else
-                {
-                    // record not found
-                    return new StatusCodeResult(404);
-                }
-            }
-            else
-            {
+
                 // record not found
-                return new StatusCodeResult(404);
+                return new ObjectResult(new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-01", _configuration)));
             }
+
+            // record not found
+            return new ObjectResult(new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-01", _configuration)));
         }
 
         /// <summary>
-        /// 
+        /// Create equipment attachments
         /// </summary>
         /// <param name="item"></param>
         /// <response code="201">Equipment Attachment created</response>
@@ -168,6 +177,7 @@ namespace HETSAPI.Services.Impl
                 AdjustRecord(item);
 
                 bool exists = _context.Equipments.Any(a => a.Id == item.Id);
+
                 if (exists)
                 {
                     _context.EquipmentAttachments.Update(item);                    
@@ -177,21 +187,21 @@ namespace HETSAPI.Services.Impl
                     // record not found
                     _context.EquipmentAttachments.Add(item);
                 }
+
                 // Save the changes                    
                 _context.SaveChanges();
-                int item_id = item.Id;
-                var result = _context.EquipmentAttachments
+
+                int itemId = item.Id;
+
+                EquipmentAttachment result = _context.EquipmentAttachments
                     .Include(x => x.Equipment)
-                    .First(a => a.Id == item_id);
+                    .First(a => a.Id == itemId);
 
-                return new ObjectResult(result);                
-            }
-            else
-            {
-                // record not found
-                return new StatusCodeResult(404);
+                return new ObjectResult(new HetsResponse(result));
             }
 
+            // record not found
+            return new ObjectResult(new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-01", _configuration)));
         }        
     }
 }

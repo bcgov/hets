@@ -59,6 +59,7 @@ namespace HETSAPI.Services.Impl
 
             // save the changes
             _context.SaveChanges();
+
             return new NoContentResult();
         }
 
@@ -68,7 +69,7 @@ namespace HETSAPI.Services.Impl
         /// <response code="200">OK</response>
         public virtual IActionResult EquipmentGetAsync()
         {
-            var result = _context.Equipments
+            List<Equipment> result = _context.Equipments
                     .Include(x => x.LocalArea.ServiceArea.District.Region)
                     .Include(x => x.DistrictEquipmentType)
                     .Include(x => x.DumpTruck)
@@ -79,11 +80,11 @@ namespace HETSAPI.Services.Impl
                     .Include(x => x.History)
                     .ToList();
 
-            return new ObjectResult(result);
+            return new ObjectResult(new HetsResponse(result));
         }
 
         /// <summary>
-        /// Get seniority audits associated with an equipment record
+        /// Delete seniority audit records
         /// </summary>
         /// <param name="equipmentId"></param>
         private void RemoveSeniorityAudits(int equipmentId)
@@ -123,11 +124,11 @@ namespace HETSAPI.Services.Impl
 
                 List<AttachmentViewModel> result = MappingExtensions.GetAttachmentListAsViewModel(equipment.Attachments);
 
-                return new ObjectResult(result);
+                return new ObjectResult(new HetsResponse(result));
             }
 
             // record not found
-            return new StatusCodeResult(404);
+            return new ObjectResult(new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-01", _configuration)));
         }
 
         /// <summary>
@@ -173,11 +174,11 @@ namespace HETSAPI.Services.Impl
                     _context.CalculateSeniorityList(localAreaId, districtEquipmentTypeId, equipmentTypeId, _configuration);
                 }
 
-                return new ObjectResult(item);
+                return new ObjectResult(new HetsResponse(item));
             }
 
             // record not found
-            return new StatusCodeResult(404);
+            return new ObjectResult(new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-01", _configuration)));
         }
 
         /// <summary>
@@ -217,11 +218,11 @@ namespace HETSAPI.Services.Impl
                     result.Add(data[i].ToViewModel(id));
                 }
 
-                return new ObjectResult(result);
+                return new ObjectResult(new HetsResponse(result));
             }
 
             // record not found
-            return new StatusCodeResult(404);
+            return new ObjectResult(new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-01", _configuration)));
         }
 
         /// <summary>
@@ -263,7 +264,7 @@ namespace HETSAPI.Services.Impl
             result.LastUpdateUserid = item.LastUpdateUserid;
             result.AffectedEntityId = id;
 
-            return new ObjectResult(result);
+            return new ObjectResult(new HetsResponse(result));
         }
 
 
@@ -282,11 +283,11 @@ namespace HETSAPI.Services.Impl
                     .Include(x => x.Equipment)
                     .Where(x => x.Equipment.Id == id);
 
-                return new ObjectResult(result);
+                return new ObjectResult(new HetsResponse(result));
             }
 
             // record not found
-            return new StatusCodeResult(404);
+            return new ObjectResult(new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-01", _configuration)));
         }
 
         /// <summary>
@@ -312,11 +313,11 @@ namespace HETSAPI.Services.Impl
                     .Include(x => x.History)
                     .First(a => a.Id == id);
 
-                return new ObjectResult(result);
+                return new ObjectResult(new HetsResponse(result));
             }
 
             // record not found
-            return new StatusCodeResult(404);
+            return new ObjectResult(new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-01", _configuration)));
         }
 
         /// <summary>
@@ -363,52 +364,17 @@ namespace HETSAPI.Services.Impl
                         .Include(x => x.History)
                         .First(a => a.Id == id);
 
-                    return new ObjectResult(result);
+                    return new ObjectResult(new HetsResponse(result));
                 }
 
                 // record not found
-                return new StatusCodeResult(404);
+                return new ObjectResult(new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-01", _configuration)));
             }
 
             // record not found
-            return new StatusCodeResult(404);
+            return new ObjectResult(new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-01", _configuration)));
         }
-
-        private void CalculateViewModel(EquipmentViewModel result)
-        {
-            // populate the calculated fields
-            // ServiceHoursThisYear is the sum of TimeCard hours for the current fiscal year (April 1 - March 31) for the equipment
-            // NOTE At this time the structure for timecard hours is not set, so it is set to a constant
-            result.ServiceHoursThisYear = 99;
-
-            // lastTimeRecordDateThisYear is the most recent time card date this year.  Can be null
-            result.LastTimeRecordDateThisYear = null;
-
-            // isWorking is true if there is an active Rental Agreements for the equipment
-            result.IsWorking = _context.RentalAgreements
-                .Include(x => x.Equipment)
-                .Any(x => x.Equipment.Id == result.Id);
-
-            // hasDuplicates is true if there is other equipment with the same serial number
-            result.HasDuplicates = _context.Equipments.Any(x => x.SerialNumber == result.SerialNumber && x.Status == "Active");
-
-            // duplicate Equipment uses the same criteria as hasDuplicates
-            if (result.HasDuplicates == true)
-            {
-                result.DuplicateEquipment = _context.Equipments
-                    .Include(x => x.LocalArea.ServiceArea.District.Region)
-                    .Include(x => x.DistrictEquipmentType)
-                    .Include(x => x.DumpTruck)
-                    .Include(x => x.Owner)
-                    .Include(x => x.EquipmentAttachments)
-                    .Include(x => x.Notes)
-                    .Include(x => x.Attachments)
-                    .Include(x => x.History)
-                    .Where(x => x.SerialNumber == result.SerialNumber && x.Status == "Active")
-                    .ToList();
-            }
-        }
-
+        
         /// <summary>
         /// Get equipment record by id
         /// </summary>
@@ -433,13 +399,11 @@ namespace HETSAPI.Services.Impl
 
                 EquipmentViewModel result = equipment.ToViewModel();
 
-                CalculateViewModel(result);
-
-                return new ObjectResult(result);
+                return new ObjectResult(new HetsResponse(result));
             }
 
             // record not found
-            return new StatusCodeResult(404);
+            return new ObjectResult(new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-01", _configuration)));
         }        
 
         /// <summary>
@@ -502,11 +466,11 @@ namespace HETSAPI.Services.Impl
                     .Include(x => x.History)
                     .First(a => a.Id == itemId);
 
-                return new ObjectResult(result);
+                return new ObjectResult(new HetsResponse(result));
             }
 
             // record not found
-            return new StatusCodeResult(404);
+            return new ObjectResult(new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-01", _configuration)));
         }
 
         /// <summary>
@@ -625,7 +589,7 @@ namespace HETSAPI.Services.Impl
                 result.Add(newItem);
             }
             
-            return new ObjectResult(result);
+            return new ObjectResult(new HetsResponse(result));
         }
 
         #region Functions to setup/fix the Equipment Record (cleanup record submitted by UI for update/insert)

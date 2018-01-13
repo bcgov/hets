@@ -8,6 +8,7 @@ using HETSAPI.ViewModels;
 using HETSAPI.Mappings;
 using Microsoft.EntityFrameworkCore.Query;
 using Microsoft.EntityFrameworkCore.Storage;
+using Microsoft.Extensions.Configuration;
 
 namespace HETSAPI.Services.Impl
 {
@@ -17,13 +18,15 @@ namespace HETSAPI.Services.Impl
     public class RoleService : IRoleService
     {
         private readonly DbAppContext _context;
+        private readonly IConfiguration _configuration;
 
         /// <summary>
         /// Create a service and set the database context
         /// </summary>
-        public RoleService(DbAppContext context)
+        public RoleService(DbAppContext context, IConfiguration configuration)
         {
             _context = context;
+            _configuration = configuration;
         }
 
         /// <summary>
@@ -79,7 +82,7 @@ namespace HETSAPI.Services.Impl
                 }
             }
 
-            // Save the changes
+            // save the changes
             _context.SaveChanges();
             return new NoContentResult();
         }
@@ -110,7 +113,7 @@ namespace HETSAPI.Services.Impl
                 }
             }
 
-            // Save the changes
+            // save the changes
             _context.SaveChanges();
             return new NoContentResult();
         }
@@ -130,7 +133,7 @@ namespace HETSAPI.Services.Impl
                 result.Add(item.ToViewModel());
             }
 
-            return new ObjectResult(result);
+            return new ObjectResult(new HetsResponse(result));
         }
 
         /// <summary>
@@ -145,8 +148,8 @@ namespace HETSAPI.Services.Impl
 
             if (role == null)
             {
-                // Not Found
-                return new StatusCodeResult(404);
+                // record not found
+                return new ObjectResult(new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-01", _configuration)));
             }
 
             // remove associated role permission records
@@ -159,7 +162,8 @@ namespace HETSAPI.Services.Impl
 
             _context.Roles.Remove(role);
             _context.SaveChanges();
-            return new ObjectResult(role.ToViewModel());
+
+            return new ObjectResult(new HetsResponse(role.ToViewModel()));
         }
 
         /// <summary>
@@ -174,11 +178,11 @@ namespace HETSAPI.Services.Impl
 
             if (role == null)
             {
-                // Not Found
-                return new StatusCodeResult(404);
+                // record not found
+                return new ObjectResult(new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-01", _configuration)));
             }
 
-            return new ObjectResult(role.ToViewModel());
+            return new ObjectResult(new HetsResponse(role.ToViewModel()));
         }
 
         /// <summary>
@@ -197,15 +201,16 @@ namespace HETSAPI.Services.Impl
 
             if (role == null)
             {
-                // Not Found
-                return new StatusCodeResult(404);
+                // record not found
+                return new ObjectResult(new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-01", _configuration)));
             }
 
-            var dbPermissions = role.RolePermissions.Select(x => x.Permission);
+            IEnumerable<Permission> dbPermissions = role.RolePermissions.Select(x => x.Permission);
 
             // create DTO with serializable response
             List<PermissionViewModel> result = dbPermissions.Select(x => x.ToViewModel()).ToList();
-            return new ObjectResult(result);
+
+            return new ObjectResult(new HetsResponse(result));
         }
 
         /// <summary>
@@ -228,14 +233,14 @@ namespace HETSAPI.Services.Impl
 
                 if (role == null)
                 {
-                    // Not Found
-                    return new StatusCodeResult(404);
+                    // record not found
+                    return new ObjectResult(new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-01", _configuration)));
                 }
 
-                var allPermissions = _context.Permissions.ToList();
-                var permissionIds = items.Select(x => x.Id).ToList();
-                var existingPermissionIds = role.RolePermissions.Select(x => x.Permission.Id).ToList();
-                var permissionIdsToAdd = permissionIds.Where(x => !existingPermissionIds.Contains((int)x)).ToList();
+                List<Permission> allPermissions = _context.Permissions.ToList();
+                List<int?> permissionIds = items.Select(x => x.Id).ToList();
+                List<int> existingPermissionIds = role.RolePermissions.Select(x => x.Permission.Id).ToList();
+                List<int?> permissionIdsToAdd = permissionIds.Where(x => !existingPermissionIds.Contains((int)x)).ToList();
 
                 // Permissions to add
                 foreach (int? permissionId in permissionIdsToAdd)
@@ -267,7 +272,8 @@ namespace HETSAPI.Services.Impl
 
                 // create DTO with serializable response
                 List<PermissionViewModel> result = dbPermissions.Select(x => x.ToViewModel()).ToList();
-                return new ObjectResult(result);
+
+                return new ObjectResult(new HetsResponse(result));
             }
         }
 
@@ -291,8 +297,8 @@ namespace HETSAPI.Services.Impl
 
                 if (role == null)
                 {
-                    // Not Found
-                    return new StatusCodeResult(404);
+                    // record not found
+                    return new ObjectResult(new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-01", _configuration)));
                 }
 
                 var allPermissions = _context.Permissions.ToList();
@@ -321,7 +327,8 @@ namespace HETSAPI.Services.Impl
 
                 // Create DTO with serializable response
                 List<PermissionViewModel> result = dbPermissions.Select(x => x.ToViewModel()).ToList();
-                return new ObjectResult(result);
+
+                return new ObjectResult(new HetsResponse(result));
             }            
         }
 
@@ -345,8 +352,8 @@ namespace HETSAPI.Services.Impl
 
                 if (role == null)
                 {
-                    // Not Found
-                    return new StatusCodeResult(404);
+                    // record not found
+                    return new ObjectResult(new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-01", _configuration)));
                 }
 
                 List<Permission> allPermissions = _context.Permissions.ToList();
@@ -372,7 +379,8 @@ namespace HETSAPI.Services.Impl
 
                 // Create DTO with serializable response
                 List<RolePermissionViewModel> result = dbPermissions.Select(x => x.ToViewModel()).ToList();
-                return new ObjectResult(result);
+
+                return new ObjectResult(new HetsResponse(result));
             }
         }
 
@@ -389,17 +397,18 @@ namespace HETSAPI.Services.Impl
 
             if (role == null)
             {
-                // Not Found
-                return new StatusCodeResult(404);
+                // record not found
+                return new ObjectResult(new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-01", _configuration)));
             }
 
             role.Name = item.Name;
             role.Description = item.Description;
             _context.Roles.Update(role);
 
-            // Save changes
+            // save changes
             _context.SaveChanges();
-            return new ObjectResult(role.ToViewModel());
+
+            return new ObjectResult(new HetsResponse(role.ToViewModel()));
         }
 
         /// <summary>
@@ -441,7 +450,7 @@ namespace HETSAPI.Services.Impl
                 }
             }
 
-            return new ObjectResult(result);
+            return new ObjectResult(new HetsResponse(result));
         }
 
         /// <summary>
@@ -480,7 +489,7 @@ namespace HETSAPI.Services.Impl
                         }
                     }
 
-                    if (foundItem == null) // delete the user role if it exists.
+                    if (foundItem == null) // delete the user role if it exists
                     {
                         foreach (UserRole userRole in user.UserRoles)
                         {
@@ -492,7 +501,7 @@ namespace HETSAPI.Services.Impl
                             }
                         }
                     }
-                    else // add the user role if it does not exist.
+                    else // add the user role if it does not exist
                     {
                         bool found = false;
 
@@ -526,7 +535,8 @@ namespace HETSAPI.Services.Impl
                 return new StatusCodeResult(200);
             }
 
-            return new StatusCodeResult(404);
+            // record not found
+            return new ObjectResult(new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-01", _configuration)));
         }
 
         /// <summary>
@@ -542,10 +552,11 @@ namespace HETSAPI.Services.Impl
                 Name = item.Name
             };
 
-            // Save changes
+            // save changes
             _context.Roles.Add(role);
             _context.SaveChanges();
-            return new ObjectResult(role.ToViewModel());
+
+            return new ObjectResult(new HetsResponse(role.ToViewModel()));
         }
     }
 }

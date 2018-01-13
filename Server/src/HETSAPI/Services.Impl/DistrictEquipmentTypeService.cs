@@ -2,24 +2,27 @@ using System.Linq;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using HETSAPI.Models;
+using HETSAPI.ViewModels;
+using Microsoft.Extensions.Configuration;
 
 namespace HETSAPI.Services.Impl
 {
     /// <summary>
-    /// 
+    /// District Equipment Type Service
     /// </summary>
     public class DistrictEquipmentTypeService : IDistrictEquipmentTypeService
     {
         private readonly DbAppContext _context;
+        private readonly IConfiguration _configuration;
 
         /// <summary>
-        /// Create a service and set the database context
+        /// District Equipment Type Service Constructor
         /// </summary>
-        public DistrictEquipmentTypeService(DbAppContext context)
+        public DistrictEquipmentTypeService(DbAppContext context, IConfiguration configuration)
         {
             _context = context;
+            _configuration = configuration;
         }
-
 
         private void AdjustRecord(DistrictEquipmentType item)
         {  
@@ -37,9 +40,8 @@ namespace HETSAPI.Services.Impl
             }                     
         }
 
-
         /// <summary>
-        /// 
+        /// Create bulk district equipment type records
         /// </summary>
         /// <param name="items"></param>
         /// <response code="201">DistrictEquipmentType created</response>
@@ -49,12 +51,14 @@ namespace HETSAPI.Services.Impl
             {
                 return new BadRequestResult();
             }
+
             foreach (DistrictEquipmentType item in items)
             {
                 AdjustRecord(item);
                 
                 // determine if this is an insert or an update            
                 bool exists = _context.DistrictEquipmentTypes.Any(a => a.Id == item.Id);
+
                 if (exists)
                 {
                     _context.Update(item);
@@ -64,13 +68,15 @@ namespace HETSAPI.Services.Impl
                     _context.Add(item);
                 }
             }
+            
             // Save the changes
             _context.SaveChanges();
+
             return new NoContentResult();
         }
 
         /// <summary>
-        /// 
+        /// Get district equipment types
         /// </summary>
         /// <response code="200">OK</response>
         public virtual IActionResult DistrictEquipmentTypesGetAsync()
@@ -79,94 +85,101 @@ namespace HETSAPI.Services.Impl
                 .Include(x => x.District.Region)
                 .Include(x => x.EquipmentType)
                 .ToList();
-            return new ObjectResult(result);
+
+            return new ObjectResult(new HetsResponse(result));
         }
 
         /// <summary>
-        /// 
+        /// Delete district equipment type
         /// </summary>
         /// <param name="id">id of DistrictEquipmentType to delete</param>
         /// <response code="200">OK</response>
         /// <response code="404">DistrictEquipmentType not found</response>
         public virtual IActionResult DistrictEquipmentTypesIdDeletePostAsync(int id)
         {
-            var exists = _context.DistrictEquipmentTypes.Any(a => a.Id == id);
+            bool exists = _context.DistrictEquipmentTypes.Any(a => a.Id == id);
+
             if (exists)
             {
-                var item = _context.DistrictEquipmentTypes.First(a => a.Id == id);
+                DistrictEquipmentType item = _context.DistrictEquipmentTypes.First(a => a.Id == id);
+
                 if (item != null)
                 {
                     _context.DistrictEquipmentTypes.Remove(item);
+
                     // Save the changes
                     _context.SaveChanges();
                 }
-                return new ObjectResult(item);
+
+                return new ObjectResult(new HetsResponse(item));
             }
-            else
-            {
-                // record not found
-                return new StatusCodeResult(404);
-            }
+
+            // record not found
+            return new ObjectResult(new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-01", _configuration)));
         }
 
         /// <summary>
-        /// 
+        /// Get district equipment type by id
         /// </summary>
         /// <param name="id">id of DistrictEquipmentType to fetch</param>
         /// <response code="200">OK</response>
         /// <response code="404">DistrictEquipmentType not found</response>
         public virtual IActionResult DistrictEquipmentTypesIdGetAsync(int id)
         {
-            var exists = _context.DistrictEquipmentTypes.Any(a => a.Id == id);
+            bool exists = _context.DistrictEquipmentTypes.Any(a => a.Id == id);
+
             if (exists)
             {
-                var result = _context.DistrictEquipmentTypes
+                DistrictEquipmentType result = _context.DistrictEquipmentTypes
                     .Include(x => x.District)
                     .Include(x => x.EquipmentType)
                     .First(a => a.Id == id);
-                return new ObjectResult(result);
+
+                return new ObjectResult(new HetsResponse(result));
             }
-            else
-            {
-                // record not found
-                return new StatusCodeResult(404);
-            }
+
+            // record not found
+            return new ObjectResult(new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-01", _configuration)));
         }
 
         /// <summary>
-        /// 
+        /// Update district equipment type
         /// </summary>
-        /// <param name="id">id of DistrictEquipmentType to fetch</param>
+        /// <param name="id">id of DistrictEquipmentType to update</param>
         /// <param name="item"></param>
         /// <response code="200">OK</response>
         /// <response code="404">DistrictEquipmentType not found</response>
         public virtual IActionResult DistrictEquipmentTypesIdPutAsync(int id, DistrictEquipmentType item)
         {
             AdjustRecord(item);
-            var exists = _context.DistrictEquipmentTypes.Any(a => a.Id == id);
+
+            bool exists = _context.DistrictEquipmentTypes.Any(a => a.Id == id);
+
             if (exists && id == item.Id)
             {
                 _context.DistrictEquipmentTypes.Update(item);
+
                 // Save the changes
                 _context.SaveChanges();
-                return new ObjectResult(item);
+
+                return new ObjectResult(new HetsResponse(item));
             }
-            else
-            {
-                // record not found
-                return new StatusCodeResult(404);
-            }
+
+            // record not found
+            return new ObjectResult(new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-01", _configuration)));
         }
 
         /// <summary>
-        /// 
+        /// Create district equipment type
         /// </summary>
         /// <param name="item"></param>
         /// <response code="201">DistrictEquipmentType created</response>
         public virtual IActionResult DistrictEquipmentTypesPostAsync(DistrictEquipmentType item)
         {
             AdjustRecord(item);
-            var exists = _context.DistrictEquipmentTypes.Any(a => a.Id == item.Id);
+
+            bool exists = _context.DistrictEquipmentTypes.Any(a => a.Id == item.Id);
+
             if (exists)
             {
                 _context.DistrictEquipmentTypes.Update(item);
@@ -176,9 +189,11 @@ namespace HETSAPI.Services.Impl
                 // record not found
                 _context.DistrictEquipmentTypes.Add(item);
             }
+            
             // Save the changes
             _context.SaveChanges();
-            return new ObjectResult(item);
+
+            return new ObjectResult(new HetsResponse(item));
         }
     }
 }

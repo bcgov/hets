@@ -85,7 +85,7 @@ namespace HETSAPI.Services
         /// <param name="item"></param>
         /// <response code="200">OK</response>
         /// <response code="404">RentalRequestRotationList not found</response>
-        IActionResult RentalrequestsIdRentalrequestrotationlistRentalRequestRotationListIdPutAsync(int id, int rentalRequestRotationListId, RentalRequestRotationList item);
+        IActionResult RentalrequestRotationListIdPutAsync(int id, int rentalRequestRotationListId, RentalRequestRotationList item);
 
         /// <summary>
         ///

@@ -10,7 +10,7 @@ using Microsoft.Extensions.Configuration;
 namespace HETSAPI.Services.Impl
 {
     /// <summary>
-    /// 
+    /// Admin Service
     /// </summary>
     public class AdminService : ServiceBase, IAdminService
     {
@@ -29,12 +29,13 @@ namespace HETSAPI.Services.Impl
 
         public IActionResult AdminImportGetAsync(string path, string districts)
         {
-            string uploadPath = _configuration["UploadPath"];
-            string connectionString = _context.Database.GetDbConnection().ConnectionString;
             string result = "Created Job: ";
 
             lock (_thisLock)
             {
+                string uploadPath = _configuration["UploadPath"];
+                string connectionString = _context.Database.GetDbConnection().ConnectionString;
+
                 if (districts != null && districts == "388888")
                 {
                     // not using Hangfire
