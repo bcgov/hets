@@ -29,6 +29,10 @@
         function expireUserId() {
             window.location.href = "/api/authentication/dev/cleartoken";
         }
+
+        function recalcSeniority() {
+            window.location.href = "/api/equipment/recalcSeniority?region=3";
+        }
     </script>
 </head>
 <body>
@@ -57,7 +61,24 @@
             <h3>View HETS API</h3>
             <a href="~/swagger/ui/index.html">Swagger</a>
         </div>
-    
+
+        <hr />
+        <div>
+            <h3>Import BC Bid Data</h3>
+            <a href="~/Import">Import</a>
+        </div>
+
+        <hr />
+        <div>
+            <h3>Hangfire Monitor</h3>
+            <a href="~/hangfire">Hangfire</a>
+        </div>
+
+        <hr />
+        <div>
+            <h3>Recalc Equipment Seniority</h3>
+            <button onclick="recalcSeniority();">Recalc (Region (3) "Northern")</button>
+        </div>        
     }
 </body>
 </html>
