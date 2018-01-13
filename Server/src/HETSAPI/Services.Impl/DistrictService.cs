@@ -1,23 +1,28 @@
+using System.Collections.Generic;
 using System.Linq;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using HETSAPI.Models;
+using HETSAPI.ViewModels;
+using Microsoft.Extensions.Configuration;
 
 namespace HETSAPI.Services.Impl
 {
     /// <summary>
-    /// 
+    /// District Service
     /// </summary>
     public class DistrictService : IDistrictService
     {
         private readonly DbAppContext _context;
+        private readonly IConfiguration _configuration;
 
         /// <summary>
-        /// Create a service and set the database context
+        /// District Service Constructor
         /// </summary>
-        public DistrictService(DbAppContext context)
+        public DistrictService(DbAppContext context, IConfiguration configuration)
         {
             _context = context;
+            _configuration = configuration;
         }
 
         public void AdjustRecord (District item)
@@ -27,7 +32,7 @@ namespace HETSAPI.Services.Impl
         }
 
         /// <summary>
-        /// 
+        /// Create bulk district records
         /// </summary>
         /// <remarks>Adds a number of districts.</remarks>
         /// <param name="items"></param>
@@ -38,11 +43,13 @@ namespace HETSAPI.Services.Impl
             {
                 return new BadRequestResult();
             }
+
             foreach (District item in items)
             {
                 AdjustRecord(item);
 
                 bool exists = _context.Districts.Any(a => a.Id == item.Id);
+
                 if (exists)
                 {
                     _context.Districts.Update(item);
@@ -52,27 +59,30 @@ namespace HETSAPI.Services.Impl
                     _context.Districts.Add(item);
                 }               
             }
+
             // Save the changes
             _context.SaveChanges();
+
             return new NoContentResult();
         }
 
         /// <summary>
-        /// 
+        /// Get all districts
         /// </summary>
         /// <remarks>Returns a list of available districts</remarks>
         /// <response code="200">OK</response>
         public virtual IActionResult DistrictsGetAsync()
         {
             // eager loading of regions
-            var result = _context.Districts
+            List<District> result = _context.Districts
                     .Include(x => x.Region)
                     .ToList();
-            return new ObjectResult(result);
+
+            return new ObjectResult(new HetsResponse(result));
         }
 
         /// <summary>
-        /// 
+        /// Delete district
         /// </summary>
         /// <remarks>Deletes a district</remarks>
         /// <param name="id">id of District to delete</param>
@@ -80,52 +90,53 @@ namespace HETSAPI.Services.Impl
         /// <response code="404">District not found</response>
         public virtual IActionResult DistrictsIdDeletePostAsync(int id)
         {
-            var exists = _context.Districts.Any(a => a.Id == id);
+            bool exists = _context.Districts.Any(a => a.Id == id);
+
             if (exists)
             {
-                var item = _context.Districts.First(a => a.Id == id);
+                District item = _context.Districts.First(a => a.Id == id);
+
                 if (item != null)
                 {
                     _context.Districts.Remove(item);
+
                     // Save the changes
                     _context.SaveChanges();
                 }
-                return new ObjectResult(item);
+
+                return new ObjectResult(new HetsResponse(item));
             }
-            else
-            {
-                // record not found
-                return new StatusCodeResult(404);
-            }
+
+            // record not found
+            return new ObjectResult(new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-01", _configuration)));
         }
 
         /// <summary>
-        /// 
+        /// Get district by id
         /// </summary>
         /// <remarks>Returns a specific district</remarks>
         /// <param name="id">id of Districts to fetch</param>
         /// <response code="200">OK</response>
         public virtual IActionResult DistrictsIdGetAsync(int id)
         {
-            var exists = _context.Districts.Any(a => a.Id == id);
+            bool exists = _context.Districts.Any(a => a.Id == id);
+
             if (exists)
             {
-                var result = _context.Districts
+                District result = _context.Districts
                     .Where(a => a.Id == id)
                     .Include(a => a.Region)
                     .FirstOrDefault();
                     
-                return new ObjectResult(result);
+                return new ObjectResult(new HetsResponse(result));
             }
-            else
-            {
-                // record not found
-                return new StatusCodeResult(404);
-            }
+
+            // record not found
+            return new ObjectResult(new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-01", _configuration)));
         }
 
         /// <summary>
-        /// 
+        /// Update district
         /// </summary>
         /// <remarks>Updates a district</remarks>
         /// <param name="id">id of District to update</param>
@@ -143,15 +154,16 @@ namespace HETSAPI.Services.Impl
 
                 // Save the changes
                 _context.SaveChanges();
-                return new ObjectResult(item);
+
+                return new ObjectResult(new HetsResponse(item));
             }
 
             // record not found
-            return new StatusCodeResult(404);
+            return new ObjectResult(new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-01", _configuration)));
         }
 
         /// <summary>
-        /// 
+        /// Get service areas associated with a district
         /// </summary>
         /// <remarks>Returns the Service Areas for a specific region</remarks>
         /// <param name="id">id of District for which to fetch the ServiceAreas</param>
@@ -159,11 +171,11 @@ namespace HETSAPI.Services.Impl
         public virtual IActionResult DistrictsIdServiceareasGetAsync(int id)
         {
             var result = "";
-            return new ObjectResult(result);
+            return new ObjectResult(new HetsResponse(result));
         }
 
         /// <summary>
-        /// 
+        /// Create district
         /// </summary>
         /// <remarks>Adds a district</remarks>
         /// <param name="item"></param>
@@ -176,8 +188,7 @@ namespace HETSAPI.Services.Impl
 
             if (exists )
             {
-                _context.Districts.Update(item);
-                // Save the changes             
+                _context.Districts.Update(item);            
             }
             else
             {
@@ -186,7 +197,8 @@ namespace HETSAPI.Services.Impl
             }
 
             _context.SaveChanges();
-            return new ObjectResult(item);                        
+
+            return new ObjectResult(new HetsResponse(item));      
         }
     }
 }
