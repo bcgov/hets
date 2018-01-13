@@ -6,6 +6,7 @@ using HETSAPI.Models;
 using HETSAPI.ViewModels;
 using HETSAPI.Mappings;
 using Microsoft.AspNetCore.Http;
+using Microsoft.Extensions.Configuration;
 
 namespace HETSAPI.Services.Impl
 {
@@ -15,13 +16,15 @@ namespace HETSAPI.Services.Impl
     public class ProjectService : ServiceBase, IProjectService
     {
         private readonly DbAppContext _context;
+        private readonly IConfiguration _configuration;
 
         /// <summary>
-        /// Project Service Constructir
+        /// Project Service Constructor
         /// </summary>
-        public ProjectService(IHttpContextAccessor httpContextAccessor, DbAppContext context) : base(httpContextAccessor, context)
+        public ProjectService(IHttpContextAccessor httpContextAccessor, DbAppContext context, IConfiguration configuration) : base(httpContextAccessor, context)
         {
             _context = context;
+            _configuration = configuration;
         }
 
         private void AdjustRecord(Project item)
@@ -139,7 +142,7 @@ namespace HETSAPI.Services.Impl
         /// <response code="200">OK</response>
         public virtual IActionResult ProjectsGetAsync()
         {
-            var result = _context.Projects
+            List<Project> result = _context.Projects
                 .Include(x => x.Attachments)
                 .Include(x => x.Contacts)
                 .Include(x => x.History)
@@ -150,7 +153,7 @@ namespace HETSAPI.Services.Impl
                 .Include(x => x.RentalAgreements)
                 .ToList();
 
-            return new ObjectResult(result);
+            return new ObjectResult(new HetsResponse(result));
         }
 
         /// <summary>
@@ -172,11 +175,11 @@ namespace HETSAPI.Services.Impl
                     .Include(x => x.Contacts)
                     .First(x => x.Id == id);
 
-                return new ObjectResult(project.Contacts);
+                return new ObjectResult(new HetsResponse(project.Contacts));
             }
 
             // record not found
-            return new StatusCodeResult(404);
+            return new ObjectResult(new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-01", _configuration)));
         }
 
         /// <summary>
@@ -208,11 +211,11 @@ namespace HETSAPI.Services.Impl
                 _context.Projects.Update(project);
                 _context.SaveChanges();
 
-                return new ObjectResult(item);
+                return new ObjectResult(new HetsResponse(item));
             }
 
             // record not found
-            return new StatusCodeResult(404);
+            return new ObjectResult(new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-01", _configuration)));
         }
 
         /// <summary>
@@ -258,7 +261,7 @@ namespace HETSAPI.Services.Impl
                     }
                 }
 
-                // remove contacts that are no longer attached.
+                // remove contacts that are no longer attached
                 foreach (Contact contact in project.Contacts)
                 {
                     if (contact != null && items.All(x => x.Id != contact.Id))
@@ -267,16 +270,16 @@ namespace HETSAPI.Services.Impl
                     }
                 }
 
-                // replace Contacts
+                // replace contacts
                 project.Contacts = items.ToList();
                 _context.Update(project);
                 _context.SaveChanges();
 
-                return new ObjectResult(items);
+                return new ObjectResult(new HetsResponse(items));
             }
 
             // record not found
-            return new StatusCodeResult(404);
+            return new ObjectResult(new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-01", _configuration)));
         }
 
         /// <summary>
@@ -286,7 +289,6 @@ namespace HETSAPI.Services.Impl
         /// <param name="id">id of Project to fetch attachments for</param>
         /// <response code="200">OK</response>
         /// <response code="404">Project not found</response>
-
         public virtual IActionResult ProjectsIdAttachmentsGetAsync(int id)
         {
             bool exists = _context.Projects.Any(a => a.Id == id);
@@ -296,12 +298,14 @@ namespace HETSAPI.Services.Impl
                 Project project = _context.Projects
                     .Include(x => x.Attachments)
                     .First(a => a.Id == id);
-                var result = MappingExtensions.GetAttachmentListAsViewModel(project.Attachments);
-                return new ObjectResult(result);
+
+                List<AttachmentViewModel> result = MappingExtensions.GetAttachmentListAsViewModel(project.Attachments);
+
+                return new ObjectResult(new HetsResponse(result));
             }
 
             // record not found
-            return new StatusCodeResult(404);
+            return new ObjectResult(new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-01", _configuration)));
         }
 
         /// <summary>
@@ -325,11 +329,12 @@ namespace HETSAPI.Services.Impl
                     // save the changes
                     _context.SaveChanges();
                 }
-                return new ObjectResult(item);
+
+                return new ObjectResult(new HetsResponse(item));
             }
 
             // record not found
-            return new StatusCodeResult(404);
+            return new ObjectResult(new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-01", _configuration)));
         }
 
         ///  <summary>
@@ -369,11 +374,11 @@ namespace HETSAPI.Services.Impl
                     result.Add(data[i].ToViewModel(id));
                 }
 
-                return new ObjectResult(result);
+                return new ObjectResult(new HetsResponse(result));
             }
 
             // record not found
-            return new StatusCodeResult(404);
+            return new ObjectResult(new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-01", _configuration)));
         }
 
         /// <summary>
@@ -414,7 +419,7 @@ namespace HETSAPI.Services.Impl
             result.LastUpdateUserid = item.LastUpdateUserid;
             result.AffectedEntityId = id;
 
-            return new ObjectResult(result);
+            return new ObjectResult(new HetsResponse(result));
         }
 
         /// <summary>
@@ -425,7 +430,7 @@ namespace HETSAPI.Services.Impl
         /// <response code="404">Project not found</response>
         public virtual IActionResult ProjectsIdGetAsync(int id)
         {
-            var exists = _context.Projects.Any(a => a.Id == id);
+            bool exists = _context.Projects.Any(a => a.Id == id);
 
             if (exists)
             {
@@ -440,11 +445,11 @@ namespace HETSAPI.Services.Impl
                     .Include(x => x.RentalAgreements)
                     .First(a => a.Id == id);
 
-                return new ObjectResult(result);
+                return new ObjectResult(new HetsResponse(result));
             }
 
             // record not found
-            return new StatusCodeResult(404);
+            return new ObjectResult(new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-01", _configuration)));
         }
 
         /// <summary>
@@ -466,11 +471,12 @@ namespace HETSAPI.Services.Impl
 
                 // save the changes
                 _context.SaveChanges();
-                return new ObjectResult(item);
+
+                return new ObjectResult(new HetsResponse(item));
             }
 
             // record not found
-            return new StatusCodeResult(404);
+            return new ObjectResult(new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-01", _configuration)));
         }
 
         /// <summary>
@@ -498,14 +504,16 @@ namespace HETSAPI.Services.Impl
 
                 // save the changes
                 _context.SaveChanges();
-                return new ObjectResult(item);
+
+                return new ObjectResult(new HetsResponse(item));
             }
 
-            return new StatusCodeResult(400);
+            // no record to insert
+            return new ObjectResult(new HetsResponse("HETS-04", ErrorViewModel.GetDescription("HETS-04", _configuration)));
         }
 
         /// <summary>
-        /// Searches Projects
+        /// Search Projects
         /// </summary>
         /// <remarks>Used for the project search page.</remarks>
         /// <param name="districts">Districts (comma seperated list of id numbers)</param>
@@ -518,7 +526,7 @@ namespace HETSAPI.Services.Impl
         {
             int?[] districtTokens = ParseIntArray(districts);
 
-            var data = _context.Projects
+            IQueryable<Project> data = _context.Projects
                     .Include(x => x.District.Region)
                     .Include(x => x.PrimaryContact)
                     .Select(x => x);
@@ -534,7 +542,7 @@ namespace HETSAPI.Services.Impl
                 data = data.Where(x => x.Name.ToLowerInvariant().Contains(project.ToLowerInvariant()));
             }
 
-            var result = new List<ProjectSearchResultViewModel>();
+            List<ProjectSearchResultViewModel> result = new List<ProjectSearchResultViewModel>();
 
             foreach (Project item in data)
             {
@@ -555,7 +563,7 @@ namespace HETSAPI.Services.Impl
                     .Count(x => x.Project.Id == projectSearchResultViewModel.Id);
             }
 
-            return new ObjectResult(result);
+            return new ObjectResult(new HetsResponse(result));
         }
     }
 }

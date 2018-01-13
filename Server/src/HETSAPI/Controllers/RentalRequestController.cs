@@ -157,11 +157,11 @@ namespace HETSAPI.Controllers
         /// <response code="404">RentalRequestRotationList not found</response>
         [HttpPut]
         [Route("/api/rentalrequests/{id}/rentalrequestrotationlist/{rentalRequestRotationListId}")]
-        [SwaggerOperation("RentalrequestsIdRentalrequestrotationlistRentalRequestRotationListIdPut")]
+        [SwaggerOperation("RentalRequestRotationListIdPut")]
         [SwaggerResponse(200, type: typeof(RentalRequestRotationList))]
         public virtual IActionResult RentalrequestsIdRentalrequestrotationlistRentalRequestRotationListIdPut([FromRoute]int id, [FromRoute]int rentalRequestRotationListId, [FromBody]RentalRequestRotationList item)
         {
-            return _service.RentalrequestsIdRentalrequestrotationlistRentalRequestRotationListIdPutAsync(id, rentalRequestRotationListId, item);
+            return _service.RentalrequestRotationListIdPutAsync(id, rentalRequestRotationListId, item);
         }
 
         /// <summary>

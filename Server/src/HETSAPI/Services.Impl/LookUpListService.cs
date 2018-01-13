@@ -1,26 +1,31 @@
+using System.Collections.Generic;
 using System.Linq;
 using Microsoft.AspNetCore.Mvc;
 using HETSAPI.Models;
+using HETSAPI.ViewModels;
+using Microsoft.Extensions.Configuration;
 
 namespace HETSAPI.Services.Impl
 {
     /// <summary>
-    /// 
+    /// Lookup List Service
     /// </summary>
     public class LookupListService : ILookupListService
     {
         private readonly DbAppContext _context;
+        private readonly IConfiguration _configuration;
 
         /// <summary>
-        /// Create a service and set the database context
+        /// Lookup List Service Constructor
         /// </summary>
-        public LookupListService(DbAppContext context)
+        public LookupListService(DbAppContext context, IConfiguration configuration)
         {
             _context = context;
+            _configuration = configuration;
         }
 
         /// <summary>
-        /// 
+        /// Create bulk lookup records
         /// </summary>
         /// <param name="items"></param>
         /// <response code="201">DumpTruck created</response>
@@ -30,10 +35,12 @@ namespace HETSAPI.Services.Impl
             {
                 return new BadRequestResult();
             }
+
             foreach (LookupList item in items)
             {
                 // determine if this is an insert or an update            
                 bool exists = _context.LookupLists.Any(a => a.Id == item.Id);
+
                 if (exists)
                 {
                     _context.Update(item);
@@ -43,101 +50,106 @@ namespace HETSAPI.Services.Impl
                     _context.Add(item);
                 }
             }
-            // Save the changes
+
+            // save the changes
             _context.SaveChanges();
             return new NoContentResult();
         }
 
         /// <summary>
-        /// 
+        /// Get all lookup lists
         /// </summary>
         /// <response code="200">OK</response>
         public virtual IActionResult LookuplistsGetAsync()
         {
-            var result = _context.LookupLists.ToList();
-            return new ObjectResult(result);
+            List<LookupList> result = _context.LookupLists.ToList();
+            return new ObjectResult(new HetsResponse(result));
         }
 
         /// <summary>
-        /// 
+        /// Delete lookup list
         /// </summary>
         /// <param name="id">id of DumpTruck to delete</param>
         /// <response code="200">OK</response>
         /// <response code="404">DumpTruck not found</response>
         public virtual IActionResult LookuplistsIdDeletePostAsync(int id)
         {
-            var exists = _context.LookupLists.Any(a => a.Id == id);
+            bool exists = _context.LookupLists.Any(a => a.Id == id);
+
             if (exists)
             {
-                var item = _context.LookupLists.First(a => a.Id == id);
+                LookupList item = _context.LookupLists.First(a => a.Id == id);
+
                 if (item != null)
                 {
                     _context.LookupLists.Remove(item);
-                    // Save the changes
+
+                    // save the changes
                     _context.SaveChanges();
                 }
-                return new ObjectResult(item);
+
+                return new ObjectResult(new HetsResponse(item));
             }
-            else
-            {
-                // record not found
-                return new StatusCodeResult(404);
-            }
+
+            // record not found
+            return new ObjectResult(new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-01", _configuration)));
         }
 
         /// <summary>
-        /// 
+        /// Get lookup list by id
         /// </summary>
         /// <param name="id">id of DumpTruck to fetch</param>
         /// <response code="200">OK</response>
         /// <response code="404">DumpTruck not found</response>
         public virtual IActionResult LookuplistsIdGetAsync(int id)
         {
-            var exists = _context.LookupLists.Any(a => a.Id == id);
+            bool exists = _context.LookupLists.Any(a => a.Id == id);
+
             if (exists)
             {
-                var result = _context.LookupLists.First(a => a.Id == id);
-                return new ObjectResult(result);
+                LookupList result = _context.LookupLists.First(a => a.Id == id);
+
+                return new ObjectResult(new HetsResponse(result));
             }
-            else
-            {
-                // record not found
-                return new StatusCodeResult(404);
-            }
+
+            // record not found
+            return new ObjectResult(new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-01", _configuration)));
         }
 
         /// <summary>
-        /// 
+        /// Update lookup list
         /// </summary>
-        /// <param name="id">id of DumpTruck to fetch</param>
+        /// <param name="id">id of DumpTruck to update</param>
         /// <param name="item"></param>
         /// <response code="200">OK</response>
         /// <response code="404">DumpTruck not found</response>
         public virtual IActionResult LookuplistsIdPutAsync(int id, LookupList item)
         {
-            var exists = _context.LookupLists.Any(a => a.Id == id);
+            bool exists = _context.LookupLists.Any(a => a.Id == id);
+
             if (exists && id == item.Id)
             {
                 _context.LookupLists.Update(item);
-                // Save the changes
+
+                // save the changes
                 _context.SaveChanges();
-                return new ObjectResult(item);
+
+                return new ObjectResult(new HetsResponse(item));
             }
-            else
-            {
-                // record not found
-                return new StatusCodeResult(404);
-            }
+
+            // record not found
+            return new ObjectResult(new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-01", _configuration)));
         }
 
         /// <summary>
-        /// 
+        /// Create lookup list
         /// </summary>
         /// <param name="item"></param>
         /// <response code="201">DumpTruck created</response>
         public virtual IActionResult LookuplistsPostAsync(LookupList item)
         {
-            var exists = _context.LookupLists.Any(a => a.Id == item.Id);
+            bool exists = _context.LookupLists.Any(a => a.Id == item.Id);
+
             if (exists)
             {
                 _context.LookupLists.Update(item);
@@ -147,9 +159,11 @@ namespace HETSAPI.Services.Impl
                 // record not found
                 _context.LookupLists.Add(item);
             }
-            // Save the changes
+
+            // save the changes
             _context.SaveChanges();
-            return new ObjectResult(item);
+
+            return new ObjectResult(new HetsResponse(item));
         }
     }
 }

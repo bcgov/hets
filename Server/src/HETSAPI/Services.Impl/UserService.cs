@@ -7,6 +7,7 @@ using HETSAPI.Models;
 using HETSAPI.ViewModels;
 using HETSAPI.Mappings;
 using Microsoft.AspNetCore.Http;
+using Microsoft.Extensions.Configuration;
 
 namespace HETSAPI.Services.Impl
 {
@@ -16,13 +17,15 @@ namespace HETSAPI.Services.Impl
     public class UserService : ServiceBase, IUserService
     {
         private readonly DbAppContext _context;
+        private readonly IConfiguration _configuration;
 
         /// <summary>
-        /// Create a service and set the database context
+        /// User Service Constructor
         /// </summary>
-        public UserService(IHttpContextAccessor httpContextAccessor, DbAppContext context) : base(httpContextAccessor, context)
+        public UserService(IHttpContextAccessor httpContextAccessor, DbAppContext context, IConfiguration configuration) : base(httpContextAccessor, context)
         {
             _context = context;
+            _configuration = configuration;
         }
 
         private void AdjustUser(User item)
@@ -199,7 +202,7 @@ namespace HETSAPI.Services.Impl
                 .ThenInclude(z => z.Permission)
                 .Select(x => x.ToViewModel()).ToList();
 
-            return new ObjectResult(result);
+            return new ObjectResult(new HetsResponse(result));
         }
 
         /// <summary>
@@ -218,8 +221,8 @@ namespace HETSAPI.Services.Impl
 
             if (user == null)
             {
-                // Not Found
-                return new StatusCodeResult(404);
+                // record not found
+                return new ObjectResult(new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-01", _configuration)));
             }
 
             if (user.UserRoles != null)
@@ -240,7 +243,8 @@ namespace HETSAPI.Services.Impl
 
             _context.Users.Remove(user);
             _context.SaveChanges();
-            return new ObjectResult(user.ToViewModel());
+
+            return new ObjectResult(new HetsResponse(user.ToViewModel()));
         }
 
         /// <summary>
@@ -256,15 +260,15 @@ namespace HETSAPI.Services.Impl
 
             if (user == null)
             {
-                // Not Found
-                return new StatusCodeResult(404);
+                // record not found
+                return new ObjectResult(new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-01", _configuration)));
             }
 
-            List<UserFavourite> data = _context.UserFavourites
+            List<UserFavourite> result = _context.UserFavourites
                 .Where(x => x.User.Id == user.Id)
                 .ToList();
 
-            return new ObjectResult(data);
+            return new ObjectResult(new HetsResponse(result));
         }
 
         /// <summary>
@@ -304,7 +308,7 @@ namespace HETSAPI.Services.Impl
                     }
                 }
 
-                // add new items.
+                // add new items
                 foreach (UserFavourite parameterItem in items)
                 {
                     bool found = false;
@@ -330,7 +334,7 @@ namespace HETSAPI.Services.Impl
             }
 
             // record not found
-            return new StatusCodeResult(404);
+            return new ObjectResult(new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-01", _configuration)));
         }
 
         /// <summary>
@@ -398,7 +402,7 @@ namespace HETSAPI.Services.Impl
             }
 
             // record not found
-            return new StatusCodeResult(404);
+            return new ObjectResult(new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-01", _configuration)));
         }
 
         /// <summary>
@@ -422,11 +426,11 @@ namespace HETSAPI.Services.Impl
 
             if (user == null)
             {
-                // Not Found
-                return new StatusCodeResult(404);
+                // record not found
+                return new ObjectResult(new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-01", _configuration)));
             }
 
-            return new ObjectResult(user.ToViewModel());
+            return new ObjectResult(new HetsResponse(user.ToViewModel()));
         }
 
         /// <summary>
@@ -445,8 +449,8 @@ namespace HETSAPI.Services.Impl
 
             if (user == null)
             {
-                // Not Found
-                return new StatusCodeResult(404);
+                // record not found
+                return new ObjectResult(new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-01", _configuration)));
             }
 
             List<GroupMembershipViewModel> result = new List<GroupMembershipViewModel>();
@@ -462,7 +466,7 @@ namespace HETSAPI.Services.Impl
                 }
             }
 
-            return new ObjectResult(result);
+            return new ObjectResult(new HetsResponse(result));
         }
 
         /// <summary>
@@ -538,6 +542,7 @@ namespace HETSAPI.Services.Impl
 
             _context.Update(user);
             _context.SaveChanges();
+
             return new StatusCodeResult(201);            
         }
 
@@ -554,7 +559,7 @@ namespace HETSAPI.Services.Impl
             bool exists = _context.Users.Any(a => a.Id == id);
 
             // record not found
-            if (!exists || item == null) return new StatusCodeResult(404);
+            if (!exists || item == null) return new ObjectResult(new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-01", _configuration)));
             
             // update the given user's group membership.
             User user = _context.Users
@@ -619,7 +624,7 @@ namespace HETSAPI.Services.Impl
                 .FirstOrDefault(x => x.Id == id);
 
             // not found
-            if (user == null) { return new StatusCodeResult(404); }
+            if (user == null) { return new ObjectResult(new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-01", _configuration))); }
 
             List<PermissionViewModel> permissions = new List<PermissionViewModel>();
 
@@ -637,7 +642,7 @@ namespace HETSAPI.Services.Impl
                 }
             }
 
-            return new ObjectResult(permissions);
+            return new ObjectResult(new HetsResponse(permissions));
         }
 
         /// <summary>
@@ -660,8 +665,11 @@ namespace HETSAPI.Services.Impl
                 .ThenInclude(z => z.Permission)
                 .FirstOrDefault(x => x.Id == id);
 
-            // not found
-            if (user == null) { return new StatusCodeResult(404); }
+            // record not found
+            if (user == null)
+            {
+                return new ObjectResult(new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-01", _configuration)));
+            }
 
             user.Active = item.Active;
             user.Email = item.Email;
@@ -683,10 +691,11 @@ namespace HETSAPI.Services.Impl
                 }
             }
 
-            // Save changes
+            // save changes
             _context.Users.Update(user);
             _context.SaveChanges();
-            return new ObjectResult(user.ToViewModel());
+
+            return new ObjectResult(new HetsResponse(user.ToViewModel()));
         }
 
         /// <summary>
@@ -703,8 +712,11 @@ namespace HETSAPI.Services.Impl
                 .ThenInclude(y => y.Role)
                 .First(x => x.Id == id);
 
-            // not found
-            if (user == null) { return new StatusCodeResult(404); }
+            // reord not found
+            if (user == null)
+            {
+                return new ObjectResult(new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-01", _configuration)));
+            }
 
             List<UserRoleViewModel> result = new List<UserRoleViewModel>();
 
@@ -725,13 +737,14 @@ namespace HETSAPI.Services.Impl
                             .First(x => x.Id == userRoleId);
 
                         UserRoleViewModel record = userRole.ToViewModel();
+
                         record.UserId = user.Id;
                         result.Add(record);
                     }
                 }
             }
 
-            return new ObjectResult(result);
+            return new ObjectResult(new HetsResponse(result));
         }
 
         /// <summary>
@@ -745,14 +758,20 @@ namespace HETSAPI.Services.Impl
         {
             bool exists = _context.Users.Any(x => x.Id == id);
 
-            // not found
-            if (!exists) { return new StatusCodeResult(404); }            
+            // record not found
+            if (!exists)
+            {
+                return new ObjectResult(new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-01", _configuration)));
+            }            
             
             // check the role id
             bool roleExists = _context.Roles.Any(x => x.Id == item.RoleId);
 
-            // not found
-            if (!roleExists) { return new StatusCodeResult(404); }
+            // record not found
+            if (!roleExists)
+            {
+                return new ObjectResult(new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-01", _configuration)));
+            }
             
             User user = _context.Users
                 .Include(x => x.District)
@@ -820,7 +839,7 @@ namespace HETSAPI.Services.Impl
             }
             else
             {
-                // existing data, clear it.
+                // existing data, clear it
                 foreach (UserRole userRole in user.UserRoles)
                 {
                     if (_context.UserRoles.Any(x => x.Id == userRole.Id))
@@ -860,6 +879,7 @@ namespace HETSAPI.Services.Impl
 
             _context.Update(user);
             _context.SaveChanges();
+
             return new StatusCodeResult(201);            
         }
 
@@ -894,11 +914,12 @@ namespace HETSAPI.Services.Impl
             }
 
             _context.SaveChanges();
-            return new ObjectResult(user);
+
+            return new ObjectResult(new HetsResponse(user));
         }
 
         /// <summary>
-        /// Searches Users
+        /// Search users
         /// </summary>
         /// <remarks>Used for the search users.</remarks>
         /// <param name="districts">Districts (array of id numbers)</param>
@@ -946,7 +967,7 @@ namespace HETSAPI.Services.Impl
                 result.Add(record);
             }
 
-            return new ObjectResult(result);
+            return new ObjectResult(new HetsResponse(result));
         }
     }
 }

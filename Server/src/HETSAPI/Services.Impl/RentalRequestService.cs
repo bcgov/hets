@@ -7,6 +7,7 @@ using HETSAPI.Models;
 using HETSAPI.ViewModels;
 using HETSAPI.Mappings;
 using Microsoft.AspNetCore.Http;
+using Microsoft.Extensions.Configuration;
 
 namespace HETSAPI.Services.Impl
 {
@@ -16,13 +17,15 @@ namespace HETSAPI.Services.Impl
     public class RentalRequestService : ServiceBase, IRentalRequestService
     {
         private readonly DbAppContext _context;
+        private readonly IConfiguration _configuration;
 
         /// <summary>
-        /// Create a service and set the database context
+        /// Rental Request Service Constructor
         /// </summary>
-        public RentalRequestService(IHttpContextAccessor httpContextAccessor, DbAppContext context) : base(httpContextAccessor, context)
+        public RentalRequestService(IHttpContextAccessor httpContextAccessor, DbAppContext context, IConfiguration configuration) : base(httpContextAccessor, context)
         {
             _context = context;
+            _configuration = configuration;
         }
 
         private void AdjustRecord(RentalRequest item)
@@ -50,7 +53,7 @@ namespace HETSAPI.Services.Impl
         }
 
         /// <summary>
-        ///
+        /// Create bulk rental request records
         /// </summary>
         /// <param name="items"></param>
         /// <response code="201">Project created</response>
@@ -60,10 +63,13 @@ namespace HETSAPI.Services.Impl
             {
                 return new BadRequestResult();
             }
+
             foreach (RentalRequest item in items)
             {
                 AdjustRecord(item);
+
                 bool exists = _context.RentalRequests.Any(a => a.Id == item.Id);
+
                 if (exists)
                 {
                     _context.RentalRequests.Update(item);
@@ -73,18 +79,20 @@ namespace HETSAPI.Services.Impl
                     _context.RentalRequests.Add(item);
                 }
             }
-            // Save the changes
+
+            // save the changes
             _context.SaveChanges();
+
             return new NoContentResult();
         }
 
         /// <summary>
-        ///
+        /// Get all rental requests
         /// </summary>
         /// <response code="200">OK</response>
         public virtual IActionResult RentalrequestsGetAsync()
         {
-            var result = _context.RentalRequests
+            List<RentalRequest> result = _context.RentalRequests
                 .Include(x => x.RentalRequestAttachments)
                 .Include(x => x.DistrictEquipmentType)
                 .Include(x => x.FirstOnRotationList)
@@ -93,11 +101,12 @@ namespace HETSAPI.Services.Impl
                 .Include(x => x.Project)
                 .Include(x => x.RentalRequestRotationList)
                 .ToList();
-            return new ObjectResult(result);
+
+            return new ObjectResult(new HetsResponse(result));
         }
 
         /// <summary>
-        ///
+        /// Get attachments associated with a rental request
         /// </summary>
         /// <remarks>Returns attachments for a particular RentalRequest</remarks>
         /// <param name="id">id of RentalRequest to fetch attachments for</param>
@@ -107,69 +116,69 @@ namespace HETSAPI.Services.Impl
         public virtual IActionResult RentalrequestsIdAttachmentsGetAsync(int id)
         {
             bool exists = _context.RentalRequests.Any(a => a.Id == id);
+
             if (exists)
             {
                 RentalRequest rentalRequest = _context.RentalRequests
                     .Include(x => x.Attachments)
                     .First(a => a.Id == id);
-                var result = MappingExtensions.GetAttachmentListAsViewModel(rentalRequest.Attachments);
-                return new ObjectResult(result);
-            }
-            else
-            {
-                // record not found
-                return new StatusCodeResult(404);
+
+                List<AttachmentViewModel> result = MappingExtensions.GetAttachmentListAsViewModel(rentalRequest.Attachments);
+
+                return new ObjectResult(new HetsResponse(result));
             }
 
+            // record not found
+            return new ObjectResult(new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-01", _configuration)));
         }
 
         /// <summary>
-        ///
+        /// Delete rental request
         /// </summary>
         /// <param name="id">id of Project to delete</param>
         /// <response code="200">OK</response>
         /// <response code="404">Project not found</response>
         public virtual IActionResult RentalrequestsIdDeletePostAsync(int id)
         {
-            var item = _context.RentalRequests
+            RentalRequest item = _context.RentalRequests
                 .Include(x => x.RentalRequestRotationList)
                 .FirstOrDefault(a => a.Id == id);
+
             if (item != null)
             {
                 // Remove the rotation list if it exists.
                 if (item.RentalRequestRotationList != null)
                 {
-                    foreach (var rentalRequestRotationList in item.RentalRequestRotationList)
+                    foreach (RentalRequestRotationList rentalRequestRotationList in item.RentalRequestRotationList)
                     {
                         _context.RentalRequestRotationLists.Remove(rentalRequestRotationList);
                     }
                 }
 
                 _context.RentalRequests.Remove(item);
-                // Save the changes
+
+                // save the changes
                 _context.SaveChanges();
 
-                return new ObjectResult(item);
+                return new ObjectResult(new HetsResponse(item));
             }
-            else
-            {
-                // record not found
-                return new StatusCodeResult(404);
-            }
+
+            // record not found
+            return new ObjectResult(new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-01", _configuration)));
         }
 
-
-        ///  <summary>
-        /// 
-        ///  </summary>
-        ///  <remarks>Returns History for a particular RentalRequest</remarks>
-        ///  <param name="id">id of RentalRequest to fetch History for</param>
+        /// <summary>
+        /// Get history associated with a rental request
+        /// </summary>
+        /// <remarks>Returns History for a particular RentalRequest</remarks>
+        /// <param name="id">id of RentalRequest to fetch History for</param>
         /// <param name="offset"></param>
         /// <param name="limit"></param>
         /// <response code="200">OK</response>
         public virtual IActionResult RentalrequestsIdHistoryGetAsync(int id, int? offset, int? limit)
         {
             bool exists = _context.RentalRequests.Any(a => a.Id == id);
+
             if (exists)
             {
                 RentalRequest rentalRequest = _context.RentalRequests
@@ -182,10 +191,12 @@ namespace HETSAPI.Services.Impl
                 {
                     offset = 0;
                 }
+
                 if (limit == null)
                 {
                     limit = data.Count - offset;
                 }
+
                 List<HistoryViewModel> result = new List<HistoryViewModel>();
 
                 for (int i = (int)offset; i < data.Count && i < offset + limit; i++)
@@ -193,17 +204,15 @@ namespace HETSAPI.Services.Impl
                     result.Add(data[i].ToViewModel(id));
                 }
 
-                return new ObjectResult(result);
+                return new ObjectResult(new HetsResponse(result));
             }
-            else
-            {
-                // record not found
-                return new StatusCodeResult(404);
-            }
+
+            // record not found
+            return new ObjectResult(new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-01", _configuration)));
         }
 
         /// <summary>
-        ///
+        /// Create history associated with a rental request
         /// </summary>
         /// <remarks>Add a History record to the RentalRequest</remarks>
         /// <param name="id">id of RentalRequest to add History for</param>
@@ -215,19 +224,23 @@ namespace HETSAPI.Services.Impl
             HistoryViewModel result = new HistoryViewModel();
 
             bool exists = _context.RentalRequests.Any(a => a.Id == id);
+
             if (exists)
             {
                 RentalRequest rentalRequest = _context.RentalRequests
                     .Include(x => x.History)
                     .First(a => a.Id == id);
+
                 if (rentalRequest.History == null)
                 {
                     rentalRequest.History = new List<History>();
                 }
+
                 // force add
                 item.Id = 0;
                 rentalRequest.History.Add(item);
                 _context.RentalRequests.Update(rentalRequest);
+
                 _context.SaveChanges();
             }
 
@@ -237,22 +250,22 @@ namespace HETSAPI.Services.Impl
             result.LastUpdateUserid = item.LastUpdateUserid;
             result.AffectedEntityId = id;
 
-            return new ObjectResult(result);
+            return new ObjectResult(new HetsResponse(result));
         }
 
-
         /// <summary>
-        ///
+        /// Get rental request by id
         /// </summary>
-        /// <param name="id">id of Project to fetch</param>
+        /// <param name="id">id of Rental Request to fetch</param>
         /// <response code="200">OK</response>
         /// <response code="404">Project not found</response>
         public virtual IActionResult RentalrequestsIdGetAsync(int id)
         {
-            var exists = _context.RentalRequests.Any(a => a.Id == id);
+            bool exists = _context.RentalRequests.Any(a => a.Id == id);
+
             if (exists)
             {
-                var result = _context.RentalRequests
+                RentalRequest result = _context.RentalRequests
                     .Include(x => x.RentalRequestAttachments)
                     .Include(x => x.DistrictEquipmentType)
                     .Include(x => x.FirstOnRotationList)
@@ -261,41 +274,45 @@ namespace HETSAPI.Services.Impl
                     .Include(x => x.Project.PrimaryContact)
                     .Include(x => x.RentalRequestRotationList).ThenInclude(y => y.Equipment)
                     .First(a => a.Id == id);
-                return new ObjectResult(result);
+
+                return new ObjectResult(new HetsResponse(result));
             }
-            else
-            {
-                // record not found
-                return new StatusCodeResult(404);
-            }
+
+            // record not found
+            return new ObjectResult(new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-01", _configuration)));
         }
 
         /// <summary>
-        ///
+        /// Update rental request
         /// </summary>
-        /// <param name="id">id of Project to fetch</param>
+        /// <param name="id">id of Rental Request to update</param>
         /// <param name="item"></param>
         /// <response code="200">OK</response>
         /// <response code="404">Project not found</response>
         public virtual IActionResult RentalrequestsIdPutAsync(int id, RentalRequest item)
         {
             AdjustRecord(item);
-            var exists = _context.RentalRequests.Any(a => a.Id == id);
+
+            bool exists = _context.RentalRequests.Any(a => a.Id == id);
+
             if (exists && id == item.Id)
             {
                 _context.RentalRequests.Update(item);
-                // Save the changes
+
+                // save the changes
                 _context.SaveChanges();
-                return new ObjectResult(item);
+
+                return new ObjectResult(new HetsResponse(item));
             }
-            else
-            {
-                // record not found
-                return new StatusCodeResult(404);
-            }
+
+            // record not found
+            return new ObjectResult(new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-01", _configuration)));
         }
 
-
+        /// <summary>
+        /// Create Rental Request Rotation List
+        /// </summary>
+        /// <param name="item"></param>
         private void BuildRentalRequestRotationList(RentalRequest item)
         {
             // validate input parameters
@@ -329,6 +346,7 @@ namespace HETSAPI.Services.Impl
                     int currentPosition = 0;
 
                     Equipment seeking = null;
+
                     if (localAreaRotationList != null)
                     {
                         switch (currentBlock)
@@ -359,10 +377,13 @@ namespace HETSAPI.Services.Impl
                     // next pass sets the rotation list sort order.
                     for (int i = 0; i < listSize; i++)
                     {
-                        RentalRequestRotationList rentalRequestRotationList = new RentalRequestRotationList();
-                        rentalRequestRotationList.Equipment = blockEquipment[currentPosition];
-                        rentalRequestRotationList.CreateTimestamp = DateTime.UtcNow;
-                        rentalRequestRotationList.RotationListSortOrder = currentSortOrder;
+                        RentalRequestRotationList rentalRequestRotationList =
+                            new RentalRequestRotationList
+                            {
+                                Equipment = blockEquipment[currentPosition],
+                                CreateTimestamp = DateTime.UtcNow,
+                                RotationListSortOrder = currentSortOrder
+                            };
 
                         item.RentalRequestRotationList.Add(rentalRequestRotationList);
 
@@ -379,10 +400,10 @@ namespace HETSAPI.Services.Impl
         }
 
         /// <summary>
-        /// Adjust the RentalRequestRotationList record
+        /// Adjust the Rental Request Rotation List record
         /// </summary>
         /// <param name="item"></param>
-        private void AdjustRRRLRecord(RentalRequestRotationList item)
+        private void AdjustRentalRequestRotationListRecord(RentalRequestRotationList item)
         {
             if (item != null)
             {
@@ -399,7 +420,7 @@ namespace HETSAPI.Services.Impl
         }
 
         /// <summary>
-        ///
+        /// Update rental request
         /// </summary>
         /// <remarks>Updates a rental request rotation list entry.  Side effect is the LocalAreaRotationList is also updated</remarks>
         /// <param name="id">id of RentalRequest to update</param>
@@ -407,34 +428,34 @@ namespace HETSAPI.Services.Impl
         /// <param name="item"></param>
         /// <response code="200">OK</response>
         /// <response code="404">RentalRequestRotationList not found</response>
-        public virtual IActionResult RentalrequestsIdRentalrequestrotationlistRentalRequestRotationListIdPutAsync(int id, int rentalRequestRotationListId, RentalRequestRotationList item)
+        public virtual IActionResult RentalrequestRotationListIdPutAsync(int id, int rentalRequestRotationListId, RentalRequestRotationList item)
         {
             // update the rental request rotation list item.
-            AdjustRRRLRecord(item);
-            var exists = _context.RentalRequestRotationLists.Any(a => a.Id == rentalRequestRotationListId);
+            AdjustRentalRequestRotationListRecord(item);
+
+            bool exists = _context.RentalRequestRotationLists.Any(a => a.Id == rentalRequestRotationListId);
+
             if (exists && rentalRequestRotationListId == item.Id)
             {
                 _context.RentalRequestRotationLists.Update(item);
-                // Save the changes
+
+                // save the changes
                 _context.SaveChanges();
+
                 _context.Entry(item).State = EntityState.Detached;
 
                 // now update the corresponding entry in the LocalAreaRotationList.
                 _context.UpdateLocalAreaRotationList(item.Id);
 
-                return new ObjectResult(item);
-            }
-            else
-            {
-                // record not found
-                return new StatusCodeResult(404);
+                return new ObjectResult(new HetsResponse(item));
             }
 
+            // record not found
+            return new ObjectResult(new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-01", _configuration)));
         }
 
-
         /// <summary>
-        ///
+        /// Create rental request
         /// </summary>
         /// <param name="item"></param>
         /// <response code="201">Project created</response>
@@ -444,7 +465,8 @@ namespace HETSAPI.Services.Impl
             {
                 AdjustRecord(item);
 
-                var exists = _context.RentalRequests.Any(a => a.Id == item.Id);
+                bool exists = _context.RentalRequests.Any(a => a.Id == item.Id);
+
                 if (exists)
                 {
                     _context.RentalRequests.Update(item);
@@ -455,20 +477,21 @@ namespace HETSAPI.Services.Impl
                     BuildRentalRequestRotationList(item);
                     _context.RentalRequests.Add(item);
                 }
-                // Save the changes
+
+                // save the changes
                 _context.SaveChanges();
-                return new ObjectResult(item);
+
+                return new ObjectResult(new HetsResponse(item));
             }
-            else
-            {
-                return new StatusCodeResult(400);
-            }
+
+            // no record to insert
+            return new ObjectResult(new HetsResponse("HETS-04", ErrorViewModel.GetDescription("HETS-04", _configuration)));
         }
 
         /// <summary>
-        /// Searches Projects
+        /// Searches rental requests
         /// </summary>
-        /// <remarks>Used for the project search page.</remarks>
+        /// <remarks>Used for the rental request search page.</remarks>
         /// <param name="localareas">Local areas (comma seperated list of id numbers)</param>
         /// <param name="project">name or partial name for a Project</param>
         /// <param name="status">Status</param>
@@ -479,7 +502,7 @@ namespace HETSAPI.Services.Impl
         {
             int?[] localareasArray = ParseIntArray(localareas);
 
-            var data = _context.RentalRequests
+            IQueryable<RentalRequest> data = _context.RentalRequests
                     .Include(x => x.LocalArea.ServiceArea.District.Region)
                     .Include(x => x.DistrictEquipmentType.EquipmentType)
                     .Include(x => x.Project.PrimaryContact)
@@ -514,7 +537,7 @@ namespace HETSAPI.Services.Impl
                 data = data.Where(x => String.Equals(x.Status, status, StringComparison.CurrentCultureIgnoreCase));
             }
 
-            var result = new List<RentalRequestSearchResultViewModel>();
+            List<RentalRequestSearchResultViewModel> result = new List<RentalRequestSearchResultViewModel>();
 
             foreach (RentalRequest item in data)
             {
@@ -526,7 +549,7 @@ namespace HETSAPI.Services.Impl
             }
 
             // no calculated fields in a RentalRequest search yet.
-            return new ObjectResult(result);
+            return new ObjectResult(new HetsResponse(result));
         }
     }
 }

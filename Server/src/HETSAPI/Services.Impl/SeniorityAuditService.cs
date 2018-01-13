@@ -3,6 +3,8 @@ using System.Linq;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using HETSAPI.Models;
+using HETSAPI.ViewModels;
+using Microsoft.Extensions.Configuration;
 
 namespace HETSAPI.Services.Impl
 {
@@ -12,13 +14,15 @@ namespace HETSAPI.Services.Impl
     public class SeniorityAuditService : ISeniorityAuditService
     {
         private readonly DbAppContext _context;
+        private readonly IConfiguration _configuration;
 
         /// <summary>
         /// Create a service and set the database context
         /// </summary>
-        public SeniorityAuditService(DbAppContext context)
+        public SeniorityAuditService(DbAppContext context, IConfiguration configuration)
         {
             _context = context;
+            _configuration = configuration;
         }
 
         /// <summary>
@@ -47,7 +51,7 @@ namespace HETSAPI.Services.Impl
                 .OrderByDescending(x => x.Id)
                 .ToList();
 
-            return new ObjectResult(result);
+            return new ObjectResult(new HetsResponse(result));
         }
 
         /// <summary>
@@ -81,11 +85,11 @@ namespace HETSAPI.Services.Impl
                     .Include(x => x.LocalArea.ServiceArea.District.Region)               
                     .FirstOrDefault(a => a.Id == id);
 
-                return new ObjectResult(result);
+                return new ObjectResult(new HetsResponse(result));
             }
 
             // record not found
-            return new StatusCodeResult(404);
+            return new ObjectResult(new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-01", _configuration)));
         }
 
         /// <summary>
