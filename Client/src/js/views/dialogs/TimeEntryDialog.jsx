@@ -38,6 +38,8 @@ var TimeEntryDialog = React.createClass({
         1: {
           hours: '',
           date: '',
+          errorHours: '',
+          errorDate: '',
         },
       },
 
@@ -73,30 +75,31 @@ var TimeEntryDialog = React.createClass({
 
   isValid() {
     // todo
-    let timeEntry = this.state.timeEntry;
-    let errors = this.state.errors;
+    let timeEntry = { ...this.state.timeEntry };
 
-    Object.keys(errors).map((key) => {
-      // console.log(timeEntry, errors);
-      // let errorKey = { ...errors, [key]: { ...errors[key] } };
-      // errorKey[key].hours = '';
-      // this.setState({ errors: errorKey });
-      let state = { hours: '' };
-      let updatedState = { ...errors, [key]: { ...errors[key], ...state } };
-      this.setState({ errros: updatedState });
+    let timeEntryResetObj = timeEntry;
+    Object.keys(timeEntry).map((key) => {
+      let state = { ...timeEntry[key], errorHours: '', errorDate: '' };
+      timeEntryResetObj[key] = state;
     });
-    // this.setState({ errors: { ...{} } }, console.log(this.state));
-
+    
+    this.setState({ timeEntry: timeEntryResetObj });
     let valid = true;
 
-    // _.map(timeEntry, (item, index) => {;
+    let timeEntryErrorsObj = timeEntry;
     Object.keys(timeEntry).map((key) => {
-      if ((timeEntry[key] == undefined) || isBlank(timeEntry[key].hours)) {
-        let state = { ...this.state.errors, [key]: { hours: 'Hours are required' } };
-        this.setState({ errors: state });
+      if (isBlank(timeEntry[key].hours)) {
+        let state = { ...timeEntry[key], errorHours: 'Hours are required' };
+        timeEntryErrorsObj[key] = state;
+        valid = false;
+      }
+      if (isBlank(timeEntry[key].date)) {
+        let state = { ...timeEntry[key], errorDate: 'Date is required' };
+        timeEntryErrorsObj[key] = state;
         valid = false;
       }
     });
+    this.setState({ timeEntry: timeEntryErrorsObj });
 
     return valid;
   },
@@ -112,13 +115,32 @@ var TimeEntryDialog = React.createClass({
 
   addTimeEntryInput() {
     if (this.state.numberOfInputs < 10) {
-      this.setState({ numberOfInputs: this.state.numberOfInputs + 1 });
+      let numberOfInputs = Object.keys(this.state.timeEntry).length;
+      this.setState({ 
+        numberOfInputs: this.state.numberOfInputs + 1,
+        timeEntry: { 
+          ...this.state.timeEntry, 
+          [numberOfInputs + 1]: { 
+            hours: '', 
+            date: '', 
+            errorHours: '', 
+            errorDate: '',
+          }, 
+        },
+      });
     }
+    console.log(this.state.timeEntry);
   },
 
   removeTimeEntryInput() {
     if (this.state.numberOfInputs > 1) {
-      this.setState({ numberOfInputs: this.state.numberOfInputs - 1 });
+      let numberOfInputs = Object.keys(this.state.timeEntry).length;
+      let timeEntry = { ...this.state.timeEntry };
+      delete timeEntry[numberOfInputs];
+      this.setState({ 
+        numberOfInputs: this.state.numberOfInputs - 1,
+        timeEntry: timeEntry, 
+      });
     }
   },
 
@@ -177,34 +199,34 @@ var TimeEntryDialog = React.createClass({
               </FormGroup>
             </Row>
             <hr />
-            { Array.from(Array(this.state.numberOfInputs), (_, i) => {
-              const index = i + 1;
+            { Object.keys(this.state.timeEntry).map(key => {
               return (
-                <Row key={index}>
+                <Row key={key}>
                   <Col md={4} className="nopadding">
-                    <FormGroup validationState={ this.state.dateError ? 'error' : null }>
+                    <FormGroup validationState={ this.state.timeEntry[key].errorDate ? 'error' : null }>
                       <ControlLabel>Week Ending</ControlLabel>
                       <DateControl
-                        id={`date${index}`}
+                        id={`date${key}`}
                         name='date'
                         isValidDate={ isValidDate } 
-                        date={ (this.state.timeEntry[index] && this.state.timeEntry[index].date) ? this.state.timeEntry[index].date : null }
+                        date={ this.state.timeEntry[key].date }
                         updateState={ this.updateTimeEntryState } 
                         placeholder="mm/dd/yyyy"   
                       />
+                      <HelpBlock>{ this.state.timeEntry[key].errorDate }</HelpBlock>
                     </FormGroup>
-                  </Col>
+                  </Col>  
                   <Col md={4} className="nopadding">
-                    <FormGroup validationState={ this.state.hoursError ? 'error' : null }>
+                    <FormGroup validationState={ this.state.timeEntry[key].errorHours ? 'error' : null }>
                       <ControlLabel>Hours</ControlLabel>
                       <FormInputControl 
-                        id={`hours${index}`} 
+                        id={`hours${key}`} 
                         name='hours'
                         type="number" 
-                        value={ this.state.timeEntry[index] ? this.state.timeEntry[index].hours : '' }
+                        value={ this.state.timeEntry[key].hours }
                         updateState={ this.updateTimeEntryState } 
                       />
-                      <HelpBlock>{ this.state.errors[index] ? this.state.errors[index].hours : '' }</HelpBlock>
+                      <HelpBlock>{ this.state.timeEntry[key].errorHours }</HelpBlock>
                     </FormGroup>
                   </Col>
                 </Row>
