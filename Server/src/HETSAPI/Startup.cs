@@ -214,8 +214,8 @@ namespace HETSAPI
                 // this should be set as an environment variable.  
                 // only enable when doing a new PROD deploy to populate CCW data and link it to the bus data.
                 if (!string.IsNullOrEmpty(Configuration["ENABLE_ANNUAL_ROLLOVER"]))
-                {
-                    CreateHangfireAnnualRolloverJob(loggerFactory);
+                {                    
+                    CreateHangfireAnnualRolloverJob(loggerFactory, Configuration);
                 }
             }           
         }
@@ -291,13 +291,14 @@ namespace HETSAPI
             }
 
             return connectionString;
-        }            
+        }
 
         /// <summary>
         /// Create Hangfire Jobs
         /// </summary>
         /// <param name="loggerFactory"></param>
-        private void CreateHangfireAnnualRolloverJob(ILoggerFactory loggerFactory)
+        /// <param name="jsonRules"></param>
+        private void CreateHangfireAnnualRolloverJob(ILoggerFactory loggerFactory, IConfiguration configuration)
         {
             // HETS has one job that runs at the end of each year.            
             ILogger log = loggerFactory.CreateLogger(typeof(Startup));
@@ -313,7 +314,7 @@ namespace HETSAPI
 
                 // every 5 minutes we see if a CCW record needs to be updated.  We only update one CCW record at a time.
                 // since the server is on UTC, we want UTC-7 for PDT midnight.                
-                RecurringJob.AddOrUpdate(() => SeniorityListExtensions.AnnualRolloverJob(null, connectionString), Cron.Yearly(3, 31, 17));                            
+                RecurringJob.AddOrUpdate(() => SeniorityListExtensions.AnnualRolloverJob(null, connectionString, configuration), Cron.Yearly(3, 31, 17));                            
             }
             catch (Exception e)
             {

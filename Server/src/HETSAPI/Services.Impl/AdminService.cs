@@ -38,12 +38,12 @@ namespace HETSAPI.Services.Impl
                 if (districts != null && districts == "388888")
                 {
                     // not using Hangfire
-                    BCBidImport.ImportJob(null, connectionString, uploadPath + path);
+                    BCBidImport.ImportJob(null, connectionString, uploadPath + path, _configuration);
                 }
                 else
                 {
                     // use Hangfire
-                    string jobId = BackgroundJob.Enqueue(() => BCBidImport.ImportJob(null, connectionString, uploadPath + path));
+                    string jobId = BackgroundJob.Enqueue(() => BCBidImport.ImportJob(null, connectionString, uploadPath + path, _configuration));
                     result += jobId;
                 }
             }
