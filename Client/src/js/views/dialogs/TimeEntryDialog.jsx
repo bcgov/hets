@@ -129,7 +129,6 @@ var TimeEntryDialog = React.createClass({
         },
       });
     }
-    console.log(this.state.timeEntry);
   },
 
   removeTimeEntryInput() {
