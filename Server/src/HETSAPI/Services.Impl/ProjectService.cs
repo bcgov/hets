@@ -526,10 +526,14 @@ namespace HETSAPI.Services.Impl
         {
             int?[] districtTokens = ParseIntArray(districts);
 
+            // default search results must be limited to user
+            int? districtId = _context.GetDistrictIdByUserId(GetCurrentUserId()).Single();
+
             IQueryable<Project> data = _context.Projects
-                    .Include(x => x.District.Region)
-                    .Include(x => x.PrimaryContact)
-                    .Select(x => x);
+                .Where(x => x.DistrictId.Equals(districtId))
+                .Include(x => x.District.Region)
+                .Include(x => x.PrimaryContact)
+                .Select(x => x);
 
             if (districtTokens != null && districts.Length > 0)
             {
