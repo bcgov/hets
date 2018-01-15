@@ -1,0 +1,14 @@
+#=========================================================
+# OpenShift template parameters for:
+# Component: .
+# JSON Template File: templates/frontend/frontend-build.json
+#=========================================================
+NAME=frontend
+GIT_REPO_URL=https://github.com/bcgov/hets.git
+GIT_REF=master
+SOURCE_CONTEXT_DIR=
+DOTNET_STARTUP_PROJECT=FrontEnd/src/FrontEnd/FrontEnd.csproj
+SOURCE_IMAGE_KIND=ImageStreamTag
+SOURCE_IMAGE_NAME=client-app
+SOURCE_IMAGE_TAG=latest
+OUTPUT_IMAGE_TAG=latest

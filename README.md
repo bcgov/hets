@@ -35,7 +35,7 @@ Developer Prerequisites
 - Text editor such as Sublime Text or VI
 
 **Server**
-- .Net Core SDK (.NET Core App 1.1 is used for all components)
+- .Net Core SDK (.NET Core App 2.0 is used for all components)
 - Node.js
 - .NET Core IDE such as Visual Studio
 - PostgreSQL 9.4 or newer

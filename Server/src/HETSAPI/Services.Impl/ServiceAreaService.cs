@@ -3,6 +3,8 @@ using System.Linq;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using HETSAPI.Models;
+using HETSAPI.ViewModels;
+using Microsoft.Extensions.Configuration;
 
 namespace HETSAPI.Services.Impl
 {
@@ -12,13 +14,15 @@ namespace HETSAPI.Services.Impl
     public class ServiceAreaService : IServiceAreaService
     {
         private readonly DbAppContext _context;
+        private readonly IConfiguration _configuration;
 
         /// <summary>
-        /// Create a service and set the database context
+        /// Service Area Service Constructor
         /// </summary>
-        public ServiceAreaService(DbAppContext context)
+        public ServiceAreaService(DbAppContext context, IConfiguration configuration)
         {
             _context = context;
+            _configuration = configuration;
         }
 
         private void AdjustRecord(ServiceArea item)
@@ -56,7 +60,7 @@ namespace HETSAPI.Services.Impl
                 }                
             }
 
-            // Save the changes
+            // save the changes
             _context.SaveChanges();
             return new NoContentResult();
         }
@@ -64,7 +68,7 @@ namespace HETSAPI.Services.Impl
         /// <summary>
         /// Get all service area
         /// </summary>
-        /// <remarks>Returns a list of available districts</remarks>
+        /// <remarks>Returns a list of available service areas</remarks>
         /// <response code="200">OK</response>
         public virtual IActionResult ServiceAreasGetAsync()
         {
@@ -72,7 +76,7 @@ namespace HETSAPI.Services.Impl
                 .Include(x => x.District.Region)
                 .ToList();
 
-            return new ObjectResult(result);
+            return new ObjectResult(new HetsResponse(result));
         }
 
         /// <summary>
@@ -94,15 +98,15 @@ namespace HETSAPI.Services.Impl
                 {
                     _context.ServiceAreas.Remove(item);
 
-                    // Save the changes
+                    // save the changes
                     _context.SaveChanges();
                 }
 
-                return new ObjectResult(item);
+                return new ObjectResult(new HetsResponse(item));
             }
 
             // record not found
-            return new StatusCodeResult(404);
+            return new ObjectResult(new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-01", _configuration)));
         }
 
         /// <summary>
@@ -122,11 +126,11 @@ namespace HETSAPI.Services.Impl
                     .Include(a => a.District.Region)
                     .FirstOrDefault();
 
-                return new ObjectResult(result);
+                return new ObjectResult(new HetsResponse(result));
             }
 
             // record not found
-            return new StatusCodeResult(404);
+            return new ObjectResult(new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-01", _configuration)));
         }
 
         /// <summary>
@@ -146,13 +150,13 @@ namespace HETSAPI.Services.Impl
                 AdjustRecord(item);
                 _context.ServiceAreas.Update(item);
 
-                // Save the changes
+                // save the changes
                 _context.SaveChanges();
-                return new ObjectResult(item);
+                return new ObjectResult(new HetsResponse(item));
             }
 
             // record not found
-            return new StatusCodeResult(404);
+            return new ObjectResult(new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-01", _configuration)));
         }
 
         /// <summary>
@@ -176,9 +180,9 @@ namespace HETSAPI.Services.Impl
                 _context.ServiceAreas.Add(item);
             }
 
-            // Save the changes
+            // save the changes
             _context.SaveChanges();
-            return new ObjectResult(item);
+            return new ObjectResult(new HetsResponse(item));
         }
     }
 }

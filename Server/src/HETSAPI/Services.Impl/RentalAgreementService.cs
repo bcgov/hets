@@ -6,12 +6,12 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
 using System.Net.Http;
 using System.Text;
-using HETSAPI.Helpers;
 using HETSAPI.Models;
 using HETSAPI.ViewModels;
 using HETSAPI.Mappings;
@@ -89,7 +89,7 @@ namespace HETSAPI.Services.Impl
         }
 
         /// <summary>
-        /// Creat ebulk rental agreement records
+        /// Create bulk rental agreement records
         /// </summary>
         /// <param name="items"></param>
         /// <response code="201">Project created</response>
@@ -103,7 +103,9 @@ namespace HETSAPI.Services.Impl
             foreach (RentalAgreement item in items)
             {
                 AdjustRecord(item);
+
                 bool exists = _context.RentalAgreements.Any(a => a.Id == item.Id);
+
                 if (exists)
                 {
                     _context.RentalAgreements.Update(item);
@@ -114,8 +116,9 @@ namespace HETSAPI.Services.Impl
                 }
             }
 
-            // Save the changes
+            // save the changes
             _context.SaveChanges();
+
             return new NoContentResult();
         }
 
@@ -125,7 +128,7 @@ namespace HETSAPI.Services.Impl
         /// <response code="200">OK</response>
         public virtual IActionResult RentalagreementsGetAsync()
         {
-            var result = _context.RentalAgreements
+            List<RentalAgreement> result = _context.RentalAgreements
                 .Include(x => x.Equipment)
                     .ThenInclude(y => y.Owner)
                 .Include(x => x.Equipment)
@@ -139,7 +142,7 @@ namespace HETSAPI.Services.Impl
                 .Include(x => x.TimeRecords)
                 .ToList();
 
-            return new ObjectResult(result);
+            return new ObjectResult(new HetsResponse(result));
         }
 
         /// <summary>
@@ -160,15 +163,15 @@ namespace HETSAPI.Services.Impl
                 {
                     _context.RentalAgreements.Remove(item);
 
-                    // Save the changes
+                    // save the changes
                     _context.SaveChanges();
                 }
 
-                return new ObjectResult(item);
+                return new ObjectResult(new HetsResponse(item));
             }
 
             // record not found
-            return new StatusCodeResult(404);
+            return new ObjectResult(new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-01", _configuration)));
         }
 
         /// <summary>
@@ -193,11 +196,11 @@ namespace HETSAPI.Services.Impl
                     .Include(x => x.TimeRecords)
                     .First(a => a.Id == id);
 
-                return new ObjectResult(result);
+                return new ObjectResult(new HetsResponse(result));
             }
 
             // record not found
-            return new StatusCodeResult(404);
+            return new ObjectResult(new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-01", _configuration)));
         }
 
         /// <summary>
@@ -237,7 +240,7 @@ namespace HETSAPI.Services.Impl
 
                 // pass the request on to the Pdf Micro Service
                 string pdfHost = _configuration["PDF_SERVICE_NAME"];
-                string pdfUrl = _configuration.GetSection("Constants").GetSection("PdfUrl").Value;
+                string pdfUrl = _configuration.GetSection("Constants:PdfUrl").Value;
                 string targetUrl = pdfHost + pdfUrl;
 
                 // call the microservice
@@ -279,7 +282,8 @@ namespace HETSAPI.Services.Impl
                 }
                 catch (Exception ex)
                 {
-                    throw new HetsException("Error generating pdf", ex, "RentalagreementsIdPdfGetAsync");
+                    Debug.Write("Error generating pdf: " + ex.Message);
+                    return new ObjectResult(new HetsResponse("HETS-05", ErrorViewModel.GetDescription("HETS-05", _configuration)));
                 }
 
                 // check that the result has a value
@@ -289,11 +293,11 @@ namespace HETSAPI.Services.Impl
                 }
 
                 // problem occured
-                return new StatusCodeResult(400);
+                return new ObjectResult(new HetsResponse("HETS-05", ErrorViewModel.GetDescription("HETS-05", _configuration)));
             }
 
             // record not found
-            return new StatusCodeResult(404);
+            return new ObjectResult(new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-01", _configuration)));
         }
 
         /// <summary>
@@ -313,15 +317,21 @@ namespace HETSAPI.Services.Impl
             {
                 _context.RentalAgreements.Update(item);
 
-                // Save the changes
+                // save the changes
                 _context.SaveChanges();
-                return new ObjectResult(item);
+
+                return new ObjectResult(new HetsResponse(item));
             }
 
             // record not found
-            return new StatusCodeResult(404);
+            return new ObjectResult(new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-01", _configuration)));
         }
 
+        /// <summary>
+        /// Get rental agreement
+        /// </summary>
+        /// <param name="item"></param>
+        /// <returns></returns>
         private string GetRentalAgreementNumber (RentalAgreement item)
         {
             string result = "";
@@ -382,12 +392,14 @@ namespace HETSAPI.Services.Impl
                     _context.RentalAgreements.Add(item);
                 }
 
-                // Save the changes
+                // save the changes
                 _context.SaveChanges();
-                return new ObjectResult(item);
+
+                return new ObjectResult(new HetsResponse(item));
             }
 
-            return new StatusCodeResult(400);
+            // no record to insert
+            return new ObjectResult(new HetsResponse("HETS-04", ErrorViewModel.GetDescription("HETS-04", _configuration)));
         }
     }
 }

@@ -57,7 +57,7 @@ function parseUser(user) {
 
 export function getCurrentUser() {
   return new ApiRequest('/users/current').get().then(response => {
-    var user = response;
+    var user = response.data;
 
     // Add display fields
     parseUser(user);
@@ -81,7 +81,7 @@ export function getCurrentUser() {
 
 export function searchUsers(params) {
   return new ApiRequest('/users/search').get(params).then(response => {
-    var users = normalize(response);
+    var users = normalize(response.data);
 
     // Add display fields
     _.map(users, user => { parseUser(user); });
@@ -92,7 +92,7 @@ export function searchUsers(params) {
 
 export function getUsers() {
   return new ApiRequest('/users').get().then(response => {
-    var users = normalize(response);
+    var users = normalize(response.data);
 
     // Add display fields
     _.map(users, user => { parseUser(user); });
@@ -103,7 +103,7 @@ export function getUsers() {
 
 export function getUser(userId) {
   return new ApiRequest(`/users/${ userId }`).get().then(response => {
-    var user = response;
+    var user = response.data;
 
     // Add display fields
     parseUser(user);
@@ -114,7 +114,7 @@ export function getUser(userId) {
 
 export function addUser(user) {
   return new ApiRequest('/users').post(user).then(response => {
-    var user = response;
+    var user = response.data;
 
     // Add display fields
     parseUser(user);
@@ -125,7 +125,7 @@ export function addUser(user) {
 
 export function updateUser(user) {
   return new ApiRequest(`/users/${ user.id }`).put(user).then(response => {
-    var user = response;
+    var user = response.data;
 
     // Add display fields
     parseUser(user);
@@ -136,7 +136,7 @@ export function updateUser(user) {
 
 export function deleteUser(user) {
   return new ApiRequest(`/users/${ user.id }/delete`).post().then(response => {
-    var user = response;
+    var user = response.data;
 
     // Add display fields
     parseUser(user);
@@ -181,7 +181,7 @@ function parseRole(role) {
 
 export function searchRoles(params) {
   return new ApiRequest('/roles').get(params).then(response => {
-    var roles = normalize(response);
+    var roles = normalize(response.data);
 
     // Add display fields
     _.map(roles, role => { parseRole(role); });
@@ -192,7 +192,7 @@ export function searchRoles(params) {
 
 export function getRole(roleId) {
   return new ApiRequest(`/roles/${ roleId }`).get().then(response => {
-    var role = response;
+    var role = response.data;
 
     // Add display fields
     parseRole(role);
@@ -203,7 +203,7 @@ export function getRole(roleId) {
 
 export function addRole(role) {
   return new ApiRequest('/roles').post(role).then(response => {
-    var role = response;
+    var role = response.data;
 
     // Add display fields
     parseRole(role);
@@ -214,7 +214,7 @@ export function addRole(role) {
 
 export function updateRole(role) {
   return new ApiRequest(`/roles/${ role.id }`).put(role).then(response => {
-    var role = response;
+    var role = response.data;
 
     // Add display fields
     parseRole(role);
@@ -225,7 +225,7 @@ export function updateRole(role) {
 
 export function deleteRole(role) {
   return new ApiRequest(`/roles/${ role.id }/delete`).post().then(response => {
-    var role = response;
+    var role = response.data;
 
     // Add display fields
     parseRole(role);
@@ -236,7 +236,7 @@ export function deleteRole(role) {
 
 export function getRolePermissions(roleId) {
   return new ApiRequest(`/roles/${ roleId }/permissions`).get().then(response => {
-    var permissions = normalize(response);
+    var permissions = normalize(response.data);
 
     store.dispatch({ type: Action.UPDATE_ROLE_PERMISSIONS, rolePermissions: permissions });
   });
@@ -256,7 +256,7 @@ export function updateRolePermissions(roleId, permissionsArray) {
 export function getFavourites(type) {
   store.dispatch({ type: Action.FAVOURITES_REQUEST });
   return new ApiRequest(`/users/current/favourites/${ type }`).get().then(response => {
-    var favourites = normalize(response);
+    var favourites = normalize(response.data);
     store.dispatch({ type: Action.UPDATE_FAVOURITES, favourites: favourites });
   });
 }
@@ -264,7 +264,7 @@ export function getFavourites(type) {
 export function addFavourite(favourite) {
   return new ApiRequest('/users/current/favourites').post(favourite).then(response => {
     // Normalize the response
-    var favourite = _.fromPairs([[ response.id, response ]]);
+    var favourite = _.fromPairs([[ response.data.id, response.data ]]);
 
     store.dispatch({ type: Action.ADD_FAVOURITE, favourite: favourite });
   });
@@ -273,7 +273,7 @@ export function addFavourite(favourite) {
 export function updateFavourite(favourite) {
   return new ApiRequest('/users/current/favourites').put(favourite).then(response => {
     // Normalize the response
-    var favourite = _.fromPairs([[ response.id, response ]]);
+    var favourite = _.fromPairs([[ response.data.id, response.data ]]);
 
     store.dispatch({ type: Action.UPDATE_FAVOURITE, favourite: favourite });
   });
@@ -282,7 +282,7 @@ export function updateFavourite(favourite) {
 export function deleteFavourite(favourite) {
   return new ApiRequest(`/users/current/favourites/${ favourite.id }/delete`).post().then(response => {
     // No needs to normalize, as we just want the id from the response.
-    store.dispatch({ type: Action.DELETE_FAVOURITE, id: response.id });
+    store.dispatch({ type: Action.DELETE_FAVOURITE, id: response.data.id });
   });
 }
 
@@ -372,7 +372,7 @@ function parseEquipment(equipment) {
 export function searchEquipmentList(params) {
   store.dispatch({ type: Action.EQUIPMENT_LIST_REQUEST });
   return new ApiRequest('/equipment/search').get(params).then(response => {
-    var equipmentList = normalize(response);
+    var equipmentList = normalize(response.data);
 
     // Add display fields
     _.map(equipmentList, equip => { parseEquipment(equip); });
@@ -384,7 +384,7 @@ export function searchEquipmentList(params) {
 export function getEquipmentList() {
   store.dispatch({ type: Action.EQUIPMENT_LIST_REQUEST });
   return new ApiRequest('/equipment').get().then(response => {
-    var equipmentList = normalize(response);
+    var equipmentList = normalize(response.data);
 
     // Add display fields
     _.map(equipmentList, equip => { parseEquipment(equip); });
@@ -395,7 +395,7 @@ export function getEquipmentList() {
 
 export function getEquipment(equipmentId) {
   return new ApiRequest(`/equipment/${ equipmentId }`).get().then(response => {
-    var equipment = response;
+    var equipment = response.data;
 
     // Add display fields
     parseEquipment(equipment);
@@ -406,7 +406,7 @@ export function getEquipment(equipmentId) {
 
 export function addEquipment(equipment) {
   return new ApiRequest('/equipment').post(equipment).then(response => {
-    var equipment = response;
+    var equipment = response.data;
 
     // Add display fields
     parseEquipment(equipment);
@@ -417,7 +417,7 @@ export function addEquipment(equipment) {
 
 export function updateEquipment(equipment) {
   return new ApiRequest(`/equipment/${ equipment.id }`).put(equipment).then(response => {
-    var equipment = response;
+    var equipment = response.data;
 
     // Add display fields
     parseEquipment(equipment);
@@ -432,7 +432,7 @@ export function addEquipmentHistory(equipmentId, history) {
 
 export function getEquipmentHistory(equipmentId, params) {
   return new ApiRequest(`/equipment/${ equipmentId }/history`).get(params).then(response => {
-    var history = normalize(response);
+    var history = normalize(response.data);
 
     // Add display fields
     _.map(history, history => { parseHistory(history); });
@@ -443,7 +443,7 @@ export function getEquipmentHistory(equipmentId, params) {
 
 export function getEquipmentDocuments(equipmentId) {
   return new ApiRequest(`/equipment/${ equipmentId }/attachments`).get().then(response => {
-    var documents = normalize(response);
+    var documents = normalize(response.data);
 
     // Add display fields
     _.map(documents, document => { parseDocument(document); });
@@ -472,25 +472,25 @@ export function addEquipmentDocument(equipmentId, files) {
 
 export function getPhysicalAttachment(id) {
   return new ApiRequest(`/equipment/${id}/equipmentAttachments`).get().then(response => {
-    store.dispatch({ type: Action.UPDATE_EQUIPMENT_ATTACHMENTS, physicalAttachments: response });
+    store.dispatch({ type: Action.UPDATE_EQUIPMENT_ATTACHMENTS, physicalAttachments: response.data });
   });
 }
 
 export function addPhysicalAttachment(attachment) {
   return new ApiRequest('/equipmentAttachments').post(attachment).then(response => {
-    store.dispatch({ type: Action.ADD_EQUIPMENT_ATTACHMENT, physicalAttachment: response });
+    store.dispatch({ type: Action.ADD_EQUIPMENT_ATTACHMENT, physicalAttachment: response.data });
   });
 }
 
 export function updatePhysicalAttachment(attachment) {
   return new ApiRequest(`/equipmentAttachments/${attachment.id}`).put(attachment).then(response => {
-    store.dispatch({ type: Action.UPDATE_EQUIPMENT_ATTACHMENT, physicalAttachment: response });
+    store.dispatch({ type: Action.UPDATE_EQUIPMENT_ATTACHMENT, physicalAttachment: response.data });
   });
 }
 
 export function deletePhysicalAttachment(attachmentId) {
   return new ApiRequest(`/equipmentAttachments/${attachmentId}/delete`).post().then(response => {
-    store.dispatch({ type: Action.DELETE_EQUIPMENT_ATTACHMENT, physicalAttachment: response });
+    store.dispatch({ type: Action.DELETE_EQUIPMENT_ATTACHMENT, physicalAttachment: response.data });
   });
 }
 
@@ -551,7 +551,7 @@ function parseOwner(owner) {
 export function searchOwners(params) {
   store.dispatch({ type: Action.OWNERS_REQUEST });
   return new ApiRequest('/owners/search').get(params).then(response => {
-    var owners = normalize(response);
+    var owners = normalize(response.data);
 
     // Add display fields
     _.map(owners, owner => { parseOwner(owner); });
@@ -561,7 +561,7 @@ export function searchOwners(params) {
 
 export function getOwner(ownerId) {
   return new ApiRequest(`/owners/${ ownerId }`).get().then(response => {
-    var owner = response;
+    var owner = response.data;
 
     // Add display fields
     parseOwner(owner);
@@ -573,7 +573,7 @@ export function getOwner(ownerId) {
 export function getOwners() {
   store.dispatch({ type: Action.OWNERS_LOOKUP_REQUEST });
   return new ApiRequest('/owners').get().then(response => {
-    var owners = normalize(response);
+    var owners = normalize(response.data);
 
     // Add display fields
     _.map(owners, owner => { parseOwner(owner); });
@@ -584,7 +584,7 @@ export function getOwners() {
 
 export function addOwner(owner) {
   return new ApiRequest('/owners').post(owner).then(response => {
-    var owner = response;
+    var owner = response.data;
 
     // Add display fields
     parseOwner(owner);
@@ -595,7 +595,7 @@ export function addOwner(owner) {
 
 export function updateOwner(owner) {
   return new ApiRequest(`/owners/${ owner.id }`).put(owner).then(response => {
-    var owner = response;
+    var owner = response.data;
 
     // Add display fields
     parseOwner(owner);
@@ -606,7 +606,7 @@ export function updateOwner(owner) {
 
 export function deleteOwner(owner) {
   return new ApiRequest(`/owners/${ owner.id }/delete`).post().then(response => {
-    var owner = response;
+    var owner = response.data;
 
     // Add display fields
     parseOwner(owner);
@@ -617,7 +617,7 @@ export function deleteOwner(owner) {
 
 export function addOwnerContact(owner, contact) {
   return new ApiRequest(`/owners/${ owner.id }/contacts`).post(contact).then(response => {
-    var contact = response;
+    var contact = response.data;
 
     // Add display fields
     parseContact(contact, owner);
@@ -632,7 +632,7 @@ export function addOwnerHistory(ownerId, history) {
 
 export function getOwnerHistory(ownerId, params) {
   return new ApiRequest(`/owners/${ ownerId }/history`).get(params).then(response => {
-    var history = normalize(response);
+    var history = normalize(response.data);
 
     // Add display fields
     _.map(history, history => { parseHistory(history); });
@@ -643,7 +643,7 @@ export function getOwnerHistory(ownerId, params) {
 
 export function getOwnerDocuments(ownerId) {
   return new ApiRequest(`/owners/${ ownerId }/attachments`).get().then(response => {
-    var documents = normalize(response);
+    var documents = normalize(response.data);
 
     // Add display fields
     _.map(documents, document => { parseDocument(document); });
@@ -692,7 +692,7 @@ function parseContact(contact, parent) {
 
 export function getContacts() {
   return new ApiRequest('/contacts').get().then(response => {
-    var contacts = normalize(response);
+    var contacts = normalize(response.data);
 
     // Add display fields
     _.map(contacts, contact => { parseContact(contact); });
@@ -703,7 +703,7 @@ export function getContacts() {
 
 export function getContact(contactId) {
   return new ApiRequest(`/contacts/${ contactId }`).get().then(response => {
-    var contact = response;
+    var contact = response.data;
 
     // Add display fields
     parseContact(contact);
@@ -714,7 +714,7 @@ export function getContact(contactId) {
 
 export function addContact(parent, contact) {
   return new ApiRequest('/contacts').post(contact).then(response => {
-    var contact = response;
+    var contact = response.data;
 
     // Add display fields
     parseContact(contact, parent);
@@ -725,7 +725,7 @@ export function addContact(parent, contact) {
 
 export function updateContact(parent, contact) {
   return new ApiRequest(`/contacts/${ contact.id }`).put(contact).then(response => {
-    var contact = response;
+    var contact = response.data;
 
     // Add display fields
     parseContact(contact, parent);
@@ -736,7 +736,7 @@ export function updateContact(parent, contact) {
 
 export function deleteContact(contact) {
   return new ApiRequest(`/contacts/${ contact.id }/delete`).post().then(response => {
-    var contact = response;
+    var contact = response.data;
 
     // Add display fields
     parseContact(contact);
@@ -841,7 +841,7 @@ function parseProject(project) {
 export function searchProjects(params) {
   store.dispatch({ type: Action.PROJECTS_REQUEST });
   return new ApiRequest('/projects/search').get(params).then(response => {
-    var projects = normalize(response);
+    var projects = normalize(response.data);
 
     // Add display fields
     _.map(projects, project => { parseProject(project); });
@@ -852,7 +852,7 @@ export function searchProjects(params) {
 
 export function getProjects() {
   return new ApiRequest('/projects').get().then(response => {
-    var projects = normalize(response);
+    var projects = normalize(response.data);
 
     // Add display fields
     _.map(projects, project => { parseProject(project); });
@@ -863,7 +863,7 @@ export function getProjects() {
 
 export function getProject(projectId) {
   return new ApiRequest(`/projects/${ projectId }`).get().then(response => {
-    var project = response;
+    var project = response.data;
 
     // Add display fields
     parseProject(project);
@@ -874,7 +874,7 @@ export function getProject(projectId) {
 
 export function addProject(project) {
   return new ApiRequest('/projects').post(project).then(response => {
-    var project = response;
+    var project = response.data;
 
     // Add display fields
     parseProject(project);
@@ -885,7 +885,7 @@ export function addProject(project) {
 
 export function updateProject(project) {
   return new ApiRequest(`/projects/${ project.id }`).put(project).then(response => {
-    var project = response;
+    var project = response.data;
 
     // Add display fields
     parseProject(project);
@@ -896,7 +896,7 @@ export function updateProject(project) {
 
 export function addProjectContact(project, contact) {
   return new ApiRequest(`/projects/${ project.id }/contacts`).post(contact).then(response => {
-    var contact = response;
+    var contact = response.data;
 
     // Add display fields
     parseContact(contact, project);
@@ -911,7 +911,7 @@ export function addProjectHistory(projectId, history) {
 
 export function getProjectHistory(projectId, params) {
   return new ApiRequest(`/projects/${ projectId }/history`).get(params).then(response => {
-    var history = normalize(response);
+    var history = normalize(response.data);
 
     // Add display fields
     _.map(history, history => { parseHistory(history); });
@@ -922,7 +922,7 @@ export function getProjectHistory(projectId, params) {
 
 export function getProjectDocuments(projectId) {
   return new ApiRequest(`/projects/${ projectId }/attachments`).get().then(response => {
-    var documents = normalize(response);
+    var documents = normalize(response.data);
 
     // Add display fields
     _.map(documents, document => { parseDocument(document); });
@@ -999,7 +999,7 @@ function parseRentalRequest(rentalRequest) {
 export function searchRentalRequests(params) {
   store.dispatch({ type: Action.RENTAL_REQUESTS_REQUEST });
   return new ApiRequest('/rentalrequests/search').get(params).then(response => {
-    var rentalRequests = normalize(response);
+    var rentalRequests = normalize(response.data);
 
     // Add display fields
     _.map(rentalRequests, req => { parseRentalRequest(req); });
@@ -1011,7 +1011,7 @@ export function searchRentalRequests(params) {
 export function getRentalRequest(id) {
   store.dispatch({ type: Action.RENTAL_REQUEST_REQUEST });
   return new ApiRequest(`/rentalrequests/${ id }`).get().then(response => {
-    var rentalRequest = response;
+    var rentalRequest = response.data;
 
     // Add display fields
     parseRentalRequest(rentalRequest);
@@ -1022,7 +1022,7 @@ export function getRentalRequest(id) {
 
 export function addRentalRequest(rentalRequest) {
   return new ApiRequest('/rentalrequests').post(rentalRequest).then(response => {
-    var rentalRequest = response;
+    var rentalRequest = response.data;
     // Add display fields
     parseRentalRequest(rentalRequest);
     store.dispatch({ type: Action.ADD_RENTAL_REQUEST, rentalRequest: rentalRequest });
@@ -1032,7 +1032,7 @@ export function addRentalRequest(rentalRequest) {
 
 export function updateRentalRequest(rentalRequest) {
   return new ApiRequest(`/rentalrequests/${ rentalRequest.id }`).put(rentalRequest).then(response => {
-    var rentalRequest = response;
+    var rentalRequest = response.data;
 
     // Add display fields
     parseRentalRequest(rentalRequest);
@@ -1047,7 +1047,7 @@ export function addRentalRequestHistory(requestId, history) {
 
 export function getRentalRequestHistory(requestId, params) {
   return new ApiRequest(`/rentalrequests/${ requestId }/history`).get(params).then(response => {
-    var history = normalize(response);
+    var history = normalize(response.data);
 
     // Add display fields
     _.map(history, history => { parseHistory(history); });
@@ -1058,7 +1058,7 @@ export function getRentalRequestHistory(requestId, params) {
 
 export function getRentalRequestDocuments(rentalRequestId) {
   return new ApiRequest(`/rentalrequests/${ rentalRequestId }/attachments`).get().then(response => {
-    var documents = normalize(response);
+    var documents = normalize(response.data);
 
     // Add display fields
     _.map(documents, document => { parseDocument(document); });
@@ -1121,7 +1121,7 @@ function parseRentalRequestRotationList(rotationListItem, rentalRequest = {}) {
 
 export function updateRentalRequestRotationList(rentalRequestRotationList, rentalRequest) {
   return new ApiRequest(`/rentalrequests/${ rentalRequest.id }/rentalrequestrotationlist/${ rentalRequestRotationList.id }`).put({ ...rentalRequestRotationList, rentalAgreement: null }).then(response => {
-    var rentalRequestRotationList = response;
+    var rentalRequestRotationList = response.data;
 
     // Add display fields
     parseRentalRequestRotationList(rentalRequestRotationList, rentalRequest);
@@ -1201,7 +1201,7 @@ function parseRentalAgreement(agreement) {
 
 export function getRentalAgreement(id) {
   return new ApiRequest(`/rentalagreements/${ id }`).get().then(response => {
-    var agreement = response;
+    var agreement = response.data;
 
     // Add display fields
     parseRentalAgreement(agreement);
@@ -1212,7 +1212,7 @@ export function getRentalAgreement(id) {
 
 export function addRentalAgreement(agreement) {
   return new ApiRequest('/rentalagreements').post(agreement).then(response => {
-    var agreement = response;
+    var agreement = response.data;
 
     // Add display fields
     parseRentalAgreement(agreement);
@@ -1223,7 +1223,7 @@ export function addRentalAgreement(agreement) {
 
 export function updateRentalAgreement(agreement) {
   return new ApiRequest(`/rentalagreements/${ agreement.id }`).put({...agreement, rentalAgreementConditions: null, rentalAgreementRates: null }).then(response => {
-    var agreement = response;
+    var agreement = response.data;
 
     // Add display fields
     parseRentalAgreement(agreement);
@@ -1267,7 +1267,7 @@ function parseRentalRate(rentalRate, parent = {}) {
 
 export function getRentalRate(id) {
   return new ApiRequest(`/rentalagreementrates/${ id }`).get().then(response => {
-    var rentalRate = response;
+    var rentalRate = response.data;
 
     // Add display fields
     parseRentalRate(rentalRate);
@@ -1278,7 +1278,7 @@ export function getRentalRate(id) {
 
 export function addRentalRate(rentalRate) {
   return new ApiRequest('/rentalagreementrates').post({ ...rentalRate, rentalAgreement: { id: rentalRate.rentalAgreement.id } }).then(response => {
-    var rentalRate = response;
+    var rentalRate = response.data;
 
     // Add display fields
     parseRentalRate(rentalRate);
@@ -1289,7 +1289,7 @@ export function addRentalRate(rentalRate) {
 
 export function updateRentalRate(rentalRate) {
   return new ApiRequest(`/rentalagreementrates/${ rentalRate.id }`).put(rentalRate).then(response => {
-    var rentalRate = response;
+    var rentalRate = response.data;
 
     // Add display fields
     parseRentalRate(rentalRate);
@@ -1300,7 +1300,7 @@ export function updateRentalRate(rentalRate) {
 
 export function deleteRentalRate(rentalRate) {
   return new ApiRequest(`/rentalagreementrates/${ rentalRate.id }/delete`).post().then(response => {
-    var rentalRate = response;
+    var rentalRate = response.data;
 
     // Add display fields
     parseRentalRate(rentalRate);
@@ -1332,7 +1332,7 @@ function parseRentalCondition(rentalCondition, parent = {}) {
 
 export function getRentalCondition(id) {
   return new ApiRequest(`/rentalagreementconditions/${ id }`).get().then(response => {
-    var rentalCondition = response;
+    var rentalCondition = response.data;
 
     // Add display fields
     parseRentalCondition(rentalCondition);
@@ -1343,7 +1343,7 @@ export function getRentalCondition(id) {
 
 export function addRentalCondition(rentalCondition) {
   return new ApiRequest('/rentalagreementconditions').post({ ...rentalCondition, rentalAgreement: { id: rentalCondition.rentalAgreement.id } }).then(response => {
-    var rentalCondition = response;
+    var rentalCondition = response.data;
 
     // Add display fields
     parseRentalCondition(rentalCondition);
@@ -1354,7 +1354,7 @@ export function addRentalCondition(rentalCondition) {
 
 export function updateRentalCondition(rentalCondition) {
   return new ApiRequest(`/rentalagreementconditions/${ rentalCondition.id }`).put(rentalCondition).then(response => {
-    var rentalCondition = response;
+    var rentalCondition = response.data;
 
     // Add display fields
     parseRentalCondition(rentalCondition);
@@ -1365,7 +1365,7 @@ export function updateRentalCondition(rentalCondition) {
 
 export function deleteRentalCondition(rentalCondition) {
   return new ApiRequest(`/rentalagreementconditions/${ rentalCondition.id }/delete`).post().then(response => {
-    var rentalCondition = response;
+    var rentalCondition = response.data;
 
     // Add display fields
     parseRentalCondition(rentalCondition);
@@ -1380,7 +1380,7 @@ export function deleteRentalCondition(rentalCondition) {
 
 export function getCities() {
   return new ApiRequest('/cities').get().then(response => {
-    var cities = normalize(response);
+    var cities = normalize(response.data);
 
     store.dispatch({ type: Action.UPDATE_CITIES_LOOKUP, cities: cities });
   });
@@ -1388,7 +1388,7 @@ export function getCities() {
 
 export function getDistricts() {
   return new ApiRequest('/districts').get().then(response => {
-    var districts = normalize(response);
+    var districts = normalize(response.data);
 
     store.dispatch({ type: Action.UPDATE_DISTRICTS_LOOKUP, districts: districts });
   });
@@ -1396,7 +1396,7 @@ export function getDistricts() {
 
 export function getRegions() {
   return new ApiRequest('/regions').get().then(response => {
-    var regions = normalize(response);
+    var regions = normalize(response.data);
 
     store.dispatch({ type: Action.UPDATE_REGIONS_LOOKUP, regions: regions });
   });
@@ -1404,7 +1404,7 @@ export function getRegions() {
 
 export function getLocalAreas() {
   return new ApiRequest('/localareas').get().then(response => {
-    var localAreas = normalize(response);
+    var localAreas = normalize(response.data);
 
     store.dispatch({ type: Action.UPDATE_LOCAL_AREAS_LOOKUP, localAreas: localAreas });
   });
@@ -1412,7 +1412,7 @@ export function getLocalAreas() {
 
 export function getServiceAreas() {
   return new ApiRequest('/serviceareas').get().then(response => {
-    var serviceAreas = normalize(response);
+    var serviceAreas = normalize(response.data);
 
     store.dispatch({ type: Action.UPDATE_SERVICE_AREAS_LOOKUP, serviceAreas: serviceAreas });
   });
@@ -1420,7 +1420,7 @@ export function getServiceAreas() {
 
 export function getEquipmentTypes() {
   return new ApiRequest('/equipmenttypes').get().then(response => {
-    var equipmentTypes = normalize(response);
+    var equipmentTypes = normalize(response.data);
 
     store.dispatch({ type: Action.UPDATE_EQUIPMENT_TYPES_LOOKUP, equipmentTypes: equipmentTypes });
   });
@@ -1429,7 +1429,7 @@ export function getEquipmentTypes() {
 export function getDistrictEquipmentTypes(districtId) {
   store.dispatch({ type: Action.DISTRICT_EQUIPMENT_TYPES_LOOKUP_REQUEST });
   return new ApiRequest('/districtequipmenttypes').get().then(response => {
-    var filteredResponse = _.filter(response, (x) => x.district.id == districtId );
+    var filteredResponse = _.filter(response.data, (x) => x.district.id == districtId );
     var districtEquipmentTypes = normalize(filteredResponse);
 
     store.dispatch({ type: Action.UPDATE_DISTRICT_EQUIPMENT_TYPES_LOOKUP, districtEquipmentTypes: districtEquipmentTypes });
@@ -1446,7 +1446,7 @@ export function getGroups() {
 
 export function getRoles() {
   return new ApiRequest('/roles').get().then(response => {
-    var roles = normalize(response);
+    var roles = normalize(response.data);
 
     store.dispatch({ type: Action.UPDATE_ROLES_LOOKUP, roles: roles });
   });
@@ -1454,7 +1454,7 @@ export function getRoles() {
 
 export function getPermissions() {
   return new ApiRequest('/permissions').get().then(response => {
-    var permissions = normalize(response);
+    var permissions = normalize(response.data);
 
     store.dispatch({ type: Action.UPDATE_PERMISSIONS_LOOKUP, permissions: permissions });
   });
@@ -1466,7 +1466,7 @@ export function getPermissions() {
 
 export function getVersion() {
   return new ApiRequest('/version').get().then(response => {
-    store.dispatch({ type: Action.UPDATE_VERSION, version: response });
+    store.dispatch({ type: Action.UPDATE_VERSION, version: response.data });
   });
 }
 
@@ -1476,6 +1476,6 @@ export function getVersion() {
 
 export function setDevUser(user) {
   return new ApiRequest(`/authentication/dev/token/${user}`).get().then(response => {    
-    return normalize(response);
+    return normalize(response.data);
   });
 }

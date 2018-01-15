@@ -8,47 +8,28 @@ namespace HETSAPI.Models
     /// Equipment Database Model Extension
     /// </summary>
     public sealed partial class Equipment
-    {
-        /// <summary>
-        /// Dump TRuck Constant
-        /// </summary>
-        private const float DUMP_TRUCK_CONSTANT = 60.0F;
-
-        /// <summary>
-        /// Non-Dump Truck Constant
-        /// </summary>
-        private const float OTHER_CONSTANT = 50.0F;
-
+    {        
         /// <summary>
         /// Approved Status Code
         /// </summary>
-        public const string STATUS_APPROVED = "Approved";
+        public const string StatusApproved = "Approved";
 
         /// <summary>
-        /// Calculate the Seniority for a piece of equipment.
+        /// Calculate the Seniority for a piece of equipment
+        /// Each piece of equipment has a Seniority Score that consists of:
+        /// 1. Years of Service* SeniorityScoreConstant + (Average number of hours worked per year for the last 3 Years)
+        ///    * Constant is 60 for Dump Trucks and
+        ///    * Constant is 50 for all other equipment types
+        /// (constants are stored in the appSettings file)    
         /// </summary>
-        public void CalculateSeniority()
-        {
-            /*
-                Each piece of equipment has a Seniority Score that consists of:
-                Years of Service* Constant +(Average number of hours worked per year for the last 3 Years)
-                Constant is 60 for Dump Trucks and 50 for all other equipment.
-                Example - 15 years of service Dump Truck with 456, 385 and 426 hours of service in the last 3 years, respectively
-                Seniority = (15 * 60) + ((456 + 385 + 426) / 3)) = 1322(rounded)
-            */
-
-            float seniorityConstant = OTHER_CONSTANT;
-
-            if (DumpTruck != null) // Dump trucks have a special constant
-            {
-                seniorityConstant = DUMP_TRUCK_CONSTANT;
-            }
-
+        public void CalculateSeniority(int seniorityScoringConstant)
+        {            
+            // get total hours worked over the last three years
             float totalHoursWorked = 0.0F;
 
             if (ServiceHoursLastYear != null)
             {
-                totalHoursWorked += (float) ServiceHoursLastYear;
+                totalHoursWorked += (float)ServiceHoursLastYear;
             }
 
             if (ServiceHoursTwoYearsAgo != null)
@@ -61,9 +42,11 @@ namespace HETSAPI.Models
                 totalHoursWorked += (float)ServiceHoursThreeYearsAgo;
             }
 
+            // average the hours over the last three years
             float averageHoursWorked = totalHoursWorked / 3.0F;
 
-            Seniority = (YearsOfService * seniorityConstant) + averageHoursWorked;
+            // calculate seniority
+            Seniority = (YearsOfService * seniorityScoringConstant) + averageHoursWorked;
         }
 
         /// <summary>
@@ -109,7 +92,7 @@ namespace HETSAPI.Models
 
             float remainder = (float)(diff.TotalDays / daysInYear);
 
-            YearsOfService = (float)yearDifference + remainder;                       
+            YearsOfService = yearDifference + remainder;                       
         }
 
         /// <summary>

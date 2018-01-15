@@ -1,0 +1,14 @@
+#=========================================================
+# OpenShift template parameters for:
+# Component: .
+# JSON Template File: templates/dotnet-20-centos7/dotnet-20-centos7-build.json
+#=========================================================
+NAME=dotnet-20-centos7
+GIT_REPO_URL=https://github.com/redhat-developer/s2i-dotnetcore.git
+GIT_REF=master
+SOURCE_CONTEXT_DIR=/2.0/build
+SOURCE_IMAGE_KIND=ImageStreamTag
+SOURCE_IMAGE_NAME=dotnet-20-runtime-centos7
+SOURCE_IMAGE_TAG=latest
+DOCKER_FILE_PATH=Dockerfile
+OUTPUT_IMAGE_TAG=latest

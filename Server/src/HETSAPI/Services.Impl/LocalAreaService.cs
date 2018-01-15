@@ -1,23 +1,28 @@
+using System.Collections.Generic;
 using System.Linq;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using HETSAPI.Models;
+using HETSAPI.ViewModels;
+using Microsoft.Extensions.Configuration;
 
 namespace HETSAPI.Services.Impl
 {
     /// <summary>
-    /// 
+    /// Local Area Service
     /// </summary>
     public class LocalAreaService : ILocalAreaService
     {
         private readonly DbAppContext _context;
+        private readonly IConfiguration _configuration;
 
         /// <summary>
-        /// Create a service and set the database context
+        /// Local Area Service Constructor
         /// </summary>
-        public LocalAreaService(DbAppContext context)
+        public LocalAreaService(DbAppContext context, IConfiguration configuration)
         {
             _context = context;
+            _configuration = configuration;
         }
 
         private void AdjustRecord(LocalArea item)
@@ -27,7 +32,7 @@ namespace HETSAPI.Services.Impl
         }
 
         /// <summary>
-        /// 
+        /// Create bulk local area service records
         /// </summary>
         /// <param name="items"></param>
         /// <response code="201">LocalArea created</response>
@@ -37,12 +42,14 @@ namespace HETSAPI.Services.Impl
             {
                 return new BadRequestResult();
             }
+
             foreach (LocalArea item in items)
             {
                 AdjustRecord(item);
 
                 // determine if this is an insert or an update            
                 bool exists = _context.LocalAreas.Any(a => a.Id == item.Id);
+
                 if (exists)
                 {
                     _context.Update(item);
@@ -52,107 +59,116 @@ namespace HETSAPI.Services.Impl
                     _context.Add(item);
                 }
             }
+
             // Save the changes
             _context.SaveChanges();
+
             return new NoContentResult();
         }
 
         /// <summary>
-        /// 
+        /// Get all local areas
         /// </summary>
         /// <response code="200">OK</response>
         public virtual IActionResult LocalAreasGetAsync()
         {
-            var result = _context.LocalAreas
-        .Include(x => x.ServiceArea.District.Region)
-        .ToList();
-            return new ObjectResult(result);
+            List<LocalArea> result = _context.LocalAreas
+                .Include(x => x.ServiceArea.District.Region)
+                .ToList();
+
+            return new ObjectResult(new HetsResponse(result));
         }
 
         /// <summary>
-        /// 
+        /// Delete local area 
         /// </summary>
         /// <param name="id">id of LocalArea to delete</param>
         /// <response code="200">OK</response>
         /// <response code="404">LocalArea not found</response>
         public virtual IActionResult LocalAreasIdDeletePostAsync(int id)
         {
-            var exists = _context.LocalAreas.Any(a => a.Id == id);
+            bool exists = _context.LocalAreas.Any(a => a.Id == id);
+
             if (exists)
             {
-                var item = _context.LocalAreas.First(a => a.Id == id);
+                LocalArea item = _context.LocalAreas.First(a => a.Id == id);
+
                 if (item != null)
                 {
                     _context.LocalAreas.Remove(item);
+
                     // Save the changes
                     _context.SaveChanges();
                 }
-                return new ObjectResult(item);
+
+                return new ObjectResult(new HetsResponse(item));
             }
-            else
-            {
-                // record not found
-                return new StatusCodeResult(404);
-            }
+
+            // record not found
+            return new ObjectResult(new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-01", _configuration)));
         }
 
         /// <summary>
-        /// 
+        /// Get local area by id
         /// </summary>
         /// <param name="id">id of LocalArea to fetch</param>
         /// <response code="200">OK</response>
         /// <response code="404">LocalArea not found</response>
         public virtual IActionResult LocalAreasIdGetAsync(int id)
         {
-            var exists = _context.LocalAreas.Any(a => a.Id == id);
+            bool exists = _context.LocalAreas.Any(a => a.Id == id);
+
             if (exists)
             {
-                var result = _context.LocalAreas
+                LocalArea result = _context.LocalAreas
                     .Include(x => x.ServiceArea.District.Region)
                     .First(a => a.Id == id);
-                return new ObjectResult(result);
+
+                return new ObjectResult(new HetsResponse(result));
             }
-            else
-            {
-                // record not found
-                return new StatusCodeResult(404);
-            }
+
+            // record not found
+            return new ObjectResult(new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-01", _configuration)));
         }
 
         /// <summary>
-        /// 
+        /// Update local area
         /// </summary>
-        /// <param name="id">id of LocalArea to fetch</param>
+        /// <param name="id">id of LocalArea to update</param>
         /// <param name="item"></param>
         /// <response code="200">OK</response>
         /// <response code="404">LocalArea not found</response>
         public virtual IActionResult LocalAreasIdPutAsync(int id, LocalArea item)
         {
             AdjustRecord(item);
-            var exists = _context.LocalAreas.Any(a => a.Id == id);
+
+            bool exists = _context.LocalAreas.Any(a => a.Id == id);
+
             if (exists && id == item.Id)
             {
                 _context.LocalAreas.Update(item);
+
                 // Save the changes
                 _context.SaveChanges();
-                return new ObjectResult(item);
+
+                return new ObjectResult(new HetsResponse(item));
             }
-            else
-            {
-                // record not found
-                return new StatusCodeResult(404);
-            }
+
+            // record not found
+            return new ObjectResult(new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-01", _configuration)));
         }
 
         /// <summary>
-        /// 
+        /// Create local area
         /// </summary>
         /// <param name="item"></param>
         /// <response code="201">LocalArea created</response>
         public virtual IActionResult LocalAreasPostAsync(LocalArea item)
         {
             AdjustRecord(item);
-            var exists = _context.LocalAreas.Any(a => a.Id == item.Id);
+
+            bool exists = _context.LocalAreas.Any(a => a.Id == item.Id);
+
             if (exists)
             {
                 _context.LocalAreas.Update(item);
@@ -162,9 +178,11 @@ namespace HETSAPI.Services.Impl
                 // record not found
                 _context.LocalAreas.Add(item);
             }
+
             // Save the changes
             _context.SaveChanges();
-            return new ObjectResult(item);
+
+            return new ObjectResult(new HetsResponse(item));
         }
     }
 }

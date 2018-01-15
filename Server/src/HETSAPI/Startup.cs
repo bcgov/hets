@@ -83,8 +83,8 @@ namespace HETSAPI
 
             // setup authorization
             services.AddAuthorization();
-            services.RegisterPermissionHandler();                       
-            
+            services.RegisterPermissionHandler();            
+
             // allow for large files to be uploaded
             services.Configure<FormOptions>(options =>
             {
@@ -150,8 +150,11 @@ namespace HETSAPI
             loggerFactory.AddConsole(Configuration.GetSection("Logging"));
             loggerFactory.AddDebug();
 
-            // web site error handler                             
-            app.UseExceptionHandler(Configuration.GetSection("Constants").GetSection("ErrorUrl").Value);
+            // web site error handler             
+            app.UseWhen(x => !x.Request.Path.Value.StartsWith("/api"), builder =>
+            {
+                builder.UseExceptionHandler(Configuration.GetSection("Constants:ErrorUrl").Value);
+            });
             
             // IMPORTANT: This session call MUST go before UseMvc()
             app.UseSession();
@@ -188,7 +191,7 @@ namespace HETSAPI
                 };
 
                 // enable the /hangfire action
-                app.UseHangfireDashboard((Configuration.GetSection("Constants").GetSection("HangfireUrl").Value), dashboardOptions);
+                app.UseHangfireDashboard(Configuration.GetSection("Constants:HangfireUrl").Value, dashboardOptions);
             }
             
             app.UseMvc(routes =>
@@ -211,8 +214,8 @@ namespace HETSAPI
                 // this should be set as an environment variable.  
                 // only enable when doing a new PROD deploy to populate CCW data and link it to the bus data.
                 if (!string.IsNullOrEmpty(Configuration["ENABLE_ANNUAL_ROLLOVER"]))
-                {
-                    CreateHangfireAnnualRolloverJob(loggerFactory);
+                {                    
+                    CreateHangfireAnnualRolloverJob(loggerFactory, Configuration);
                 }
             }           
         }
@@ -288,13 +291,14 @@ namespace HETSAPI
             }
 
             return connectionString;
-        }            
+        }
 
         /// <summary>
         /// Create Hangfire Jobs
         /// </summary>
         /// <param name="loggerFactory"></param>
-        private void CreateHangfireAnnualRolloverJob(ILoggerFactory loggerFactory)
+        /// <param name="jsonRules"></param>
+        private void CreateHangfireAnnualRolloverJob(ILoggerFactory loggerFactory, IConfiguration configuration)
         {
             // HETS has one job that runs at the end of each year.            
             ILogger log = loggerFactory.CreateLogger(typeof(Startup));
@@ -307,9 +311,10 @@ namespace HETSAPI
                 string connectionString = GetConnectionString();
 
                 log.LogInformation("Creating Hangfire job for Annual rollover ...");
+
                 // every 5 minutes we see if a CCW record needs to be updated.  We only update one CCW record at a time.
                 // since the server is on UTC, we want UTC-7 for PDT midnight.                
-                RecurringJob.AddOrUpdate(() => SeniorityListExtensions.AnnualRolloverJob(null, connectionString), Cron.Yearly(3, 31, 17));                            
+                RecurringJob.AddOrUpdate(() => SeniorityListExtensions.AnnualRolloverJob(null, connectionString, configuration), Cron.Yearly(3, 31, 17));                            
             }
             catch (Exception e)
             {

@@ -1,35 +1,41 @@
+using System.Collections.Generic;
 using System.Linq;
 using Microsoft.AspNetCore.Mvc;
 using HETSAPI.Models;
+using HETSAPI.ViewModels;
+using Microsoft.Extensions.Configuration;
 
 namespace HETSAPI.Services.Impl
 {
     /// <summary>
-    /// 
+    /// Rental Request Attachment Service
     /// </summary>
     public class RentalRequestAttachmentService : IRentalRequestAttachmentService
     {
         private readonly DbAppContext _context;
+        private readonly IConfiguration _configuration;
 
         /// <summary>
-        /// Create a service and set the database context
+        /// Rental Request Attachment Service Constructor
         /// </summary>
-        public RentalRequestAttachmentService(DbAppContext context)
+        public RentalRequestAttachmentService(DbAppContext context, IConfiguration configuration)
         {
             _context = context;
+            _configuration = configuration;
         }
 
         /// <summary>
-        /// 
+        /// Create bulk rental request attachment records
         /// </summary>
         /// <param name="items"></param>
-        /// <response code="201">DumpTruck created</response>
+        /// <response code="201">Rental Request Attachment created</response>
         public virtual IActionResult RentalrequestattachmentsBulkPostAsync(RentalRequestAttachment[] items)
         {
             if (items == null)
             {
                 return new BadRequestResult();
             }
+
             foreach (RentalRequestAttachment item in items)
             {
                 // determine if this is an insert or an update            
@@ -43,101 +49,107 @@ namespace HETSAPI.Services.Impl
                     _context.Add(item);
                 }
             }
-            // Save the changes
+
+            // save the changes
             _context.SaveChanges();
+
             return new NoContentResult();
         }
 
         /// <summary>
-        /// 
+        /// Get all rental request attachments
         /// </summary>
         /// <response code="200">OK</response>
         public virtual IActionResult RentalrequestattachmentsGetAsync()
         {
-            var result = _context.LookupLists.ToList();
-            return new ObjectResult(result);
+            List<LookupList> result = _context.LookupLists.ToList();
+            return new ObjectResult(new HetsResponse(result));
         }
 
         /// <summary>
-        /// 
+        /// Delete rental request attachment
         /// </summary>
-        /// <param name="id">id of DumpTruck to delete</param>
+        /// <param name="id">id of Rental Request Attachment to delete</param>
         /// <response code="200">OK</response>
-        /// <response code="404">DumpTruck not found</response>
+        /// <response code="404">Rental Request Attachment not found</response>
         public virtual IActionResult RentalrequestattachmentsIdDeletePostAsync(int id)
         {
-            var exists = _context.LookupLists.Any(a => a.Id == id);
+            bool exists = _context.LookupLists.Any(a => a.Id == id);
+
             if (exists)
             {
-                var item = _context.LookupLists.First(a => a.Id == id);
+                LookupList item = _context.LookupLists.First(a => a.Id == id);
+
                 if (item != null)
                 {
                     _context.LookupLists.Remove(item);
-                    // Save the changes
+
+                    // save the changes
                     _context.SaveChanges();
                 }
-                return new ObjectResult(item);
+
+                return new ObjectResult(new HetsResponse(item));
             }
-            else
-            {
-                // record not found
-                return new StatusCodeResult(404);
-            }
+
+            // record not found
+            return new ObjectResult(new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-01", _configuration)));
         }
 
         /// <summary>
-        /// 
+        /// Get rental request attachment by id
         /// </summary>
-        /// <param name="id">id of DumpTruck to fetch</param>
+        /// <param name="id">id of Rental Request Attachment to fetch</param>
         /// <response code="200">OK</response>
-        /// <response code="404">DumpTruck not found</response>
+        /// <response code="404">Rental Request Attachment not found</response>
         public virtual IActionResult RentalrequestattachmentsIdGetAsync(int id)
         {
-            var exists = _context.LookupLists.Any(a => a.Id == id);
+            bool exists = _context.LookupLists.Any(a => a.Id == id);
+
             if (exists)
             {
-                var result = _context.LookupLists.First(a => a.Id == id);
-                return new ObjectResult(result);
+                LookupList result = _context.LookupLists.First(a => a.Id == id);
+
+                return new ObjectResult(new HetsResponse(result));
             }
-            else
-            {
-                // record not found
-                return new StatusCodeResult(404);
-            }
+
+            // record not found
+            return new ObjectResult(new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-01", _configuration)));
         }
 
         /// <summary>
-        /// 
+        /// Update rental request attachment
         /// </summary>
-        /// <param name="id">id of DumpTruck to fetch</param>
+        /// <param name="id">id of Rental Request Attachment to fetch</param>
         /// <param name="item"></param>
         /// <response code="200">OK</response>
-        /// <response code="404">DumpTruck not found</response>
+        /// <response code="404">Rental Request Attachment not found</response>
         public virtual IActionResult RentalrequestattachmentsIdPutAsync(int id, RentalRequestAttachment item)
         {
-            var exists = _context.LookupLists.Any(a => a.Id == id);
+            bool exists = _context.LookupLists.Any(a => a.Id == id);
+
             if (exists && id == item.Id)
             {
                 _context.RentalRequestAttachments.Update(item);
-                // Save the changes
+
+                // save the changes
                 _context.SaveChanges();
-                return new ObjectResult(item);
+
+                return new ObjectResult(new HetsResponse(item));
             }
-            else
-            {
-                // record not found
-                return new StatusCodeResult(404);
-            }
+
+            // record not found
+            return new ObjectResult(new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-01", _configuration)));
         }
 
         /// <summary>
-        /// 
+        /// Create rental request attachment
         /// </summary>
         /// <param name="item"></param>
-        /// <response code="201">DumpTruck created</response>
+        /// <response code="201">Rental Request Attachment created</response>
         public virtual IActionResult RentalrequestattachmentsPostAsync(RentalRequestAttachment item)
         {
-            var exists = _context.RentalRequestAttachments.Any(a => a.Id == item.Id);
+            bool exists = _context.RentalRequestAttachments.Any(a => a.Id == item.Id);
+
             if (exists)
             {
                 _context.RentalRequestAttachments.Update(item);
@@ -147,9 +159,11 @@ namespace HETSAPI.Services.Impl
                 // record not found
                 _context.RentalRequestAttachments.Add(item);
             }
-            // Save the changes
+
+            // save the changes
             _context.SaveChanges();
-            return new ObjectResult(item);
+
+            return new ObjectResult(new HetsResponse(item));
         }
     }
 }

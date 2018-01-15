@@ -1,4 +1,6 @@
-﻿namespace HETSAPI.ViewModels
+﻿using System.Collections.Generic;
+
+namespace HETSAPI.ViewModels
 {
     /// <summary>
     /// Home Page Model
@@ -39,5 +41,20 @@
         /// OriginalUrl (error)
         /// </summary>
         public string OriginalUrl { get; set; }
-    }
+
+        /// <summary>
+        /// File Import Result
+        /// </summary>
+        public string FileImportResult { get; set; }
+
+        /// <summary>
+        /// File Import Result
+        /// </summary>
+        public string FileImportMessage { get; set; }
+
+        /// <summary>
+        /// File Names of Imported Files (Raw Html) Result
+        /// </summary>
+        public string FileNames { get; set; }
+    }    
 }
