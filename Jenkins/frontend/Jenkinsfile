@@ -8,7 +8,7 @@ def TAG_NAMES = ['dev', 'test', 'prod']
 def BUILD_CONFIG = APP_NAME
 def IMAGESTREAM_NAME = APP_NAME
 def PROJECT_NAMESPACE = 'tran-hets-'
-def CONTEXT_DIRECTORY = 'FrontEnd'
+def CONTEXT_DIRECTORY = 'Client'
 
 @NonCPS
 boolean triggerBuild(String contextDirectory) {
