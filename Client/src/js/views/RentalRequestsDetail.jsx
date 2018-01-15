@@ -57,7 +57,7 @@ var RentalRequestsDetail = React.createClass({
       showHireOfferDialog: false,
       showContactDialog: false,
 
-      showHiredEquipment: false,
+      showAttachmentss: false,
 
       contact: {},
       rotationListHireOffer: {},
@@ -263,17 +263,12 @@ var RentalRequestsDetail = React.createClass({
       <Well>
         <h3>Request Status <span className="pull-right">
           <Button onClick={ this.print }><Glyphicon glyph="print" title="Print" /></Button>
-          <CheckboxControl id="showHiredEquipment" inline checked={ this.state.showHiredEquipment } updateState={ this.updateState }><small>Show Hired</small></CheckboxControl>
+          <CheckboxControl id="showAttachments" inline checked={ this.state.showAttachments } updateState={ this.updateState }><small>Show Attachments</small></CheckboxControl>
         </span></h3>
         {(() => {
           if (this.state.loading) { return <div style={{ textAlign: 'center' }}><Spinner/></div>; }
 
           var rotationList = rentalRequest.rentalRequestRotationList;
-
-          if (!this.state.showHiredEquipment) {
-            // Exclude equipment already hired
-            rotationList = _.reject(rotationList, { isHired: true });
-          }
 
           if (Object.keys(rotationList || []).length === 0) { return <Alert bsStyle="success" style={{ marginTop: 10 }}>No equipment</Alert>; }
 
@@ -281,46 +276,57 @@ var RentalRequestsDetail = React.createClass({
           rotationList = _.sortBy(rotationList, 'rotationListSortOrder');
 
           var headers = [
-            { field: 'seniority',            title: 'Seniority'         },
-            { field: 'serviceHoursThisYear', title: 'YTD Hours'         },
-            { field: 'equipmentCode',        title: 'Equipment ID'      },
-            { field: 'equipmentDetails',     title: 'Equipment Details' },
-            { field: 'primaryContactName',   title: 'Contact'           },
-            { field: 'status',               title: 'Status'            },
+            { field: 'seniority',               title: 'Seniority'         },
+            { field: 'serviceHoursThisYear',    title: 'YTD Hours'         },
+            { field: 'equipmentCode',           title: 'Equipment ID'      },
+            { field: 'equipmentDetails',        title: 'Equipment Details' },
+            { field: 'primaryContactName',      title: 'Contact'           },
+            { field: 'primaryContactWorkPhone', title: 'Work Phone'        },
+            { field: 'primaryContactCellPhone', title: 'Cell Phone'        },
+            { field: 'status',                  title: 'Status'            },
           ];
 
           var separator = <span style={{ float: 'left'}}>{ '|' }</span>;
+          console.log(rotationList);
 
           return <TableControl id="rotation-list" headers={ headers }>
             {
               _.map(rotationList, (listItem) => {
-                return <tr key={ listItem.id }>
-                  <td>{ listItem.seniority }</td>
-                  <td>{ listItem.serviceHoursThisYear }</td>
-                  <td><Link to={ `${Constant.EQUIPMENT_PATHNAME}/${listItem.equipmentId}` }>{ listItem.equipmentCode }</Link></td>
-                  <td>{ listItem.equipmentDetails }</td>
-                  <td>
-                    <Unimplemented>
-                      <Button bsStyle="link" title="Show Contact" onClick={ this.openContactDialog.bind(this, listItem.contact) }>
-                        { concat(listItem.contactName, listItem.contactPhone, ': ') }
-                      </Button>
-                    </Unimplemented>
-                  </td>
-                  <td>
-                    <ButtonGroup>
-                      <Button bsStyle="link" title="Show Offer" onClick={ this.openHireOfferDialog.bind(this, listItem) }>Offer</Button>
-                      { separator }
-                      {(() => {
-                        // If RentalRequestRotationList.rentalAgreement is non-null - go to that Rental Agreement.
-                        if (listItem.rentalAgreement && listItem.rentalAgreement.id) {
-                          return <Link title="Open Rental Agreement" to={ `${Constant.RENTAL_AGREEMENTS_PATHNAME}/${listItem.rentalAgreement.id}` }>Agreement</Link>;
-                        }
-                        // If RentalRequestRotationList.rentalAgreement is null - go to the Create New Rental Agreement with needed information about the new agreement
-                        return <Button bsStyle="link" title="Create Rental Agreement" onClick={ this.saveNewRentalAgreement.bind(this, listItem) }>Agreement</Button>;
-                      })()}
-                    </ButtonGroup>
-                  </td>
-                </tr>;
+                return (
+                  <tr key={ listItem.id }>
+                    <td>{ listItem.seniority }</td>
+                    <td>{ listItem.serviceHoursThisYear }</td>
+                    <td><Link to={ `${Constant.EQUIPMENT_PATHNAME}/${listItem.equipmentId}` }>{ listItem.equipmentCode }</Link></td>
+                    <td>{ listItem.equipmentDetails }
+                      { this.state.showAttachments && 
+                        <div>{ listItem.equipmentAttachments }</div>
+                      }
+                    </td>
+                    <td></td>
+                    <td></td>
+                    <td>
+                      <Unimplemented>
+                        <Button bsStyle="link" title="Show Contact" onClick={ this.openContactDialog.bind(this, listItem.contact) }>
+                          { concat(listItem.contactName, listItem.contactPhone, ': ') }
+                        </Button>
+                      </Unimplemented>
+                    </td>
+                    <td>
+                      <ButtonGroup>
+                        <Button bsStyle="link" title="Show Offer" onClick={ this.openHireOfferDialog.bind(this, listItem) }>{ listItem.status }</Button>
+                        {/* { separator } */}
+                        {/* {(() => {
+                          // If RentalRequestRotationList.rentalAgreement is non-null - go to that Rental Agreement.
+                          if (listItem.rentalAgreement && listItem.rentalAgreement.id) {
+                            return <Link title="Open Rental Agreement" to={ `${Constant.RENTAL_AGREEMENTS_PATHNAME}/${listItem.rentalAgreement.id}` }>Agreement</Link>;
+                          }
+                          // If RentalRequestRotationList.rentalAgreement is null - go to the Create New Rental Agreement with needed information about the new agreement
+                          return <Button bsStyle="link" title="Create Rental Agreement" onClick={ this.saveNewRentalAgreement.bind(this, listItem) }>Agreement</Button>;
+                        })()} */}
+                      </ButtonGroup>
+                    </td>
+                  </tr>
+                );
               })
             }
           </TableControl>;
