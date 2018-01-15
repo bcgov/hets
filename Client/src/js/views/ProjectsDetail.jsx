@@ -15,6 +15,7 @@ import ContactsEditDialog from './dialogs/ContactsEditDialog.jsx';
 import DocumentsListDialog from './dialogs/DocumentsListDialog.jsx';
 import RentalRequestsAddDialog from './dialogs/RentalRequestsAddDialog.jsx';
 import ReleaseExtendHireDialog from './dialogs/ReleaseExtendHireDialog.jsx';
+import TimeEntryDialog from './dialogs/TimeEntryDialog.jsx';
 
 import * as Action from '../actionTypes';
 import * as Api from '../api';
@@ -64,10 +65,13 @@ var ProjectsDetail = React.createClass({
       showAddRequestDialog: false,
       showReleaseHireDialog: false,
       showExtendHireDialog: false,
+      showTimeEntryDialog: false,
 
       includeCompletedRequests: false,
 
       contact: {},
+      
+      equipment: {},
 
       // Contacts
       uiContacts : {
@@ -271,6 +275,20 @@ var ProjectsDetail = React.createClass({
     this.closeExtendHireDialog();
   },
 
+  openTimeEntryDialog(equipment) {
+    Api.getRentalRequest(equipment.id);
+    this.setState({ equipment: equipment }, () => {
+      this.setState({ showTimeEntryDialog: true });
+    });
+  },
+
+  closeTimeEntryDialog() {
+    this.setState({ showTimeEntryDialog: false });
+  },
+
+  saveTimeEntry() {
+  },
+
   render() {
     var project = this.props.project;
 
@@ -370,7 +388,17 @@ var ProjectsDetail = React.createClass({
                     <td><Link to={ `rental-requests/${item.id}` }>Request</Link></td>
                     <td>{ item.equipmentTypeName }</td>
                     <td>TBD</td>
-                    <td>N/A</td>
+                    <td>
+                      <Unimplemented>
+                        <Button 
+                          className="btn-link"
+                          bsSize="xsmall"
+                          onClick={ () => this.openTimeEntryDialog(item) }
+                        >
+                          N/A
+                        </Button>
+                      </Unimplemented>
+                    </td>
                     <td>
                       <Unimplemented>
                         <Button 
@@ -519,6 +547,14 @@ var ProjectsDetail = React.createClass({
         onSave={ this.extendHire }
         title="Extend Hire"
       />
+      { this.state.showTimeEntryDialog &&
+        <TimeEntryDialog
+          show={ this.state.showTimeEntryDialog }
+          onClose={ this.closeTimeEntryDialog }
+          onSave={ this.saveTimeEntry }
+          project={ project }
+        />
+      }
     </div>;
   },
 });

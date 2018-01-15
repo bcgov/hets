@@ -382,6 +382,7 @@ export function searchEquipmentList(params) {
 }
 
 export function getEquipmentList() {
+  store.dispatch({ type: Action.EQUIPMENT_LIST_REQUEST });
   return new ApiRequest('/equipment').get().then(response => {
     var equipmentList = normalize(response.data);
 
@@ -1008,6 +1009,7 @@ export function searchRentalRequests(params) {
 }
 
 export function getRentalRequest(id) {
+  store.dispatch({ type: Action.RENTAL_REQUEST_REQUEST });
   return new ApiRequest(`/rentalrequests/${ id }`).get().then(response => {
     var rentalRequest = response.data;
 
