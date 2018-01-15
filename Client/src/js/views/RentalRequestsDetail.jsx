@@ -191,7 +191,8 @@ var RentalRequestsDetail = React.createClass({
   },
 
   render() {
-    var rentalRequest = this.props.rentalRequest;
+    var rentalRequest = this.props.rentalRequest.data;
+
     return <div id="rental-requests-detail">
       <Row id="rental-requests-top">
         <Col md={10}>
@@ -219,6 +220,7 @@ var RentalRequestsDetail = React.createClass({
         return (
           <Row id="rental-requests-header">
             <ColDisplay md={12} label={ <h1>Project:</h1> }><h1><small>{ rentalRequest.projectName }</small></h1></ColDisplay>
+            <ColDisplay md={12} label="Provincial Project Number:">{ rentalRequest.projectId }</ColDisplay>            
           </Row>
         );
       })()}
@@ -233,10 +235,9 @@ var RentalRequestsDetail = React.createClass({
           var numRequestAttachments = Object.keys(rentalRequest.rentalRequestAttachment || []).length;
           var requestAttachments = (rentalRequest.rentalRequestAttachments || []).join(', ');
 
-          return <Grid fluid id="rental-requests-data">
+          return <Grid fluid id="rental-requests-data" className="nopadding">
             <Row>
               <Col md={6}>
-                <ColDisplay md={12} labelProps={{ md: 4 }} label="Project">{ rentalRequest.projectName }</ColDisplay>
                 <ColDisplay md={12} labelProps={{ md: 4 }} label={ rentalRequest.primaryContactRole || 'Primary Contact' }>
                   <Unimplemented>
                     <Button bsStyle="link" title="Show Contact" onClick={ this.openContactDialog.bind(this, rentalRequest.primaryContact) }>
@@ -245,14 +246,14 @@ var RentalRequestsDetail = React.createClass({
                   </Unimplemented>
                 </ColDisplay>
                 <ColDisplay md={12} labelProps={{ md: 4 }} label="Local Area">{ rentalRequest.localAreaName }</ColDisplay>
+                <ColDisplay md={12} labelProps={{ md: 4 }} label="Equipment Type">{ rentalRequest.equipmentTypeName }</ColDisplay>
+                <ColDisplay md={12} labelProps={{ md: 4 }} label="Count">{ rentalRequest.equipmentCount }</ColDisplay>
+              </Col>
+              <Col md={6}>
+                <ColDisplay md={12} labelProps={{ md: 4 }} label="Attachment(s)">{ numRequestAttachments > 0 ? requestAttachments : 'None' }</ColDisplay>
                 <ColDisplay md={12} labelProps={{ md: 4 }} label="Expected Hours">{ rentalRequest.expectedHours }</ColDisplay>
                 <ColDisplay md={12} labelProps={{ md: 4 }} label="Expected Start Date">{  formatDateTime(rentalRequest.expectedStartDate, Constant.DATE_YEAR_SHORT_MONTH_DAY) }</ColDisplay>
                 <ColDisplay md={12} labelProps={{ md: 4 }} label="Expected End Date">{ formatDateTime(rentalRequest.expectedEndDate, Constant.DATE_YEAR_SHORT_MONTH_DAY) }</ColDisplay>
-              </Col>
-              <Col md={6}>
-                <ColDisplay md={12} labelProps={{ md: 4 }} label="Equipment Type">{ rentalRequest.equipmentTypeName }</ColDisplay>
-                <ColDisplay md={12} labelProps={{ md: 4 }} label="Count">{ rentalRequest.equipmentCount }</ColDisplay>
-                <ColDisplay md={12} labelProps={{ md: 4 }} label="Attachment(s)">{ numRequestAttachments > 0 ? requestAttachments : 'None' }</ColDisplay>
               </Col>
             </Row>
           </Grid>;

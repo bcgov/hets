@@ -28,6 +28,7 @@ var RentalRequestsEditDialog = React.createClass({
       expectedHours: this.props.rentalRequest.expectedHours || 0,
       expectedStartDate: this.props.rentalRequest.expectedStartDate || '',
       expectedEndDate: this.props.rentalRequest.expectedEndDate || '',
+      rentalRequestAttachments: this.props.rentalRequest.rentalRequestAttachments || '',
 
       equipmentCountError: '',
       expectedHoursError: '',
@@ -49,6 +50,7 @@ var RentalRequestsEditDialog = React.createClass({
     if (this.state.expectedHours !== this.props.rentalRequest.expectedHours) { return true; }
     if (this.state.expectedStartDate !== this.props.rentalRequest.expectedStartDate) { return true; }
     if (this.state.expectedEndDate !== this.props.rentalRequest.expectedEndDate) { return true; }
+    if (this.state.rentalRequestAttachments !== this.props.rentalRequest.rentalRequestAttachments) { return true; }
 
     return false;
   },
@@ -109,14 +111,15 @@ var RentalRequestsEditDialog = React.createClass({
       expectedHours: this.state.expectedHours,
       expectedStartDate: this.state.expectedStartDate,
       expectedEndDate: this.state.expectedEndDate,
+      rentalRequestAttachments: this.state.rentalRequestAttachments,
     }});
   },
 
   render() {
     // Read-only if the user cannot edit the rental agreement
     var isReadOnly = !this.props.rentalRequest.canEdit && this.props.rentalRequest.id !== 0;
-    var numRequestAttachments = Object.keys(this.props.rentalRequest.rentalRequestAttachments || []).length;
-    var requestAttachments = (this.props.rentalRequest.rentalRequestAttachments || []).join(', ');
+    // var numRequestAttachments = Object.keys(this.props.rentalRequest.rentalRequestAttachments || []).length;
+    // var requestAttachments = (this.props.rentalRequest.rentalRequestAttachments || []).join(', ');
 
     return <EditDialog id="rental-requests-edit" show={ this.props.show }
       onClose={ this.props.onClose } onSave={ this.onSave } didChange={ this.didChange } isValid={ this.isValid }
@@ -136,7 +139,8 @@ var RentalRequestsEditDialog = React.createClass({
               <Col md={6}>
                 <FormGroup>
                   <ControlLabel>Attachment(s)</ControlLabel>
-                  <FormControl.Static>{ numRequestAttachments > 0 ? requestAttachments : 'None' }</FormControl.Static>
+                  {/* <FormControl.Static>{ numRequestAttachments > 0 ? requestAttachments : 'None' }</FormControl.Static> */}
+                  <FormInputControl id="rentalRequestAttachments" type="text" defaultValue={ this.state.rentalRequestAttachments } readOnly={ isReadOnly } updateState={ this.updateState } />
                 </FormGroup>
               </Col>
             </Row>
@@ -181,7 +185,7 @@ var RentalRequestsEditDialog = React.createClass({
 
 function mapStateToProps(state) {
   return {
-    rentalRequest: state.models.rentalRequest,
+    rentalRequest: state.models.rentalRequest.data,
   };
 }
 

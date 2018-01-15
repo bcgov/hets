@@ -223,7 +223,7 @@ var HireOfferEditDialog = React.createClass({
 
 function mapStateToProps(state) {
   return {
-    rentalRequest: state.models.rentalRequest,
+    rentalRequest: state.models.rentalRequest.data,
   };
 }
 
