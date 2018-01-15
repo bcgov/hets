@@ -16,6 +16,7 @@ var DateControl = React.createClass({
     placeholder: React.PropTypes.string,
     title: React.PropTypes.string,
     disabled: React.PropTypes.bool,
+    isValidDate: React.PropTypes.func,
   },
 
   clicked() {
@@ -57,7 +58,7 @@ var DateControl = React.createClass({
       })()}
       <InputGroup>
         <DateTime value={ date } dateFormat={ format } timeFormat={ false } closeOnSelect={ true } onChange={ this.dateChanged }
-          inputProps={{ placeholder: placeholder, disabled: disabled, ref: input => { this.input = input; } }}
+          inputProps={{ placeholder: placeholder, disabled: disabled, ref: input => { this.input = input; } }} isValidDate={ this.props.isValidDate }
         />
         <InputGroup.Button>
           <Button onClick={ this.clicked }><Glyphicon glyph="calendar" title={ this.props.title }/></Button>
