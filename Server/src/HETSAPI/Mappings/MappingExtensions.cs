@@ -369,6 +369,19 @@ namespace HETSAPI.Mappings
                 dto.ToDate = model.ToDate;                
                 dto.Year = model.Year;
                 dto.YearsOfService = model.YearsOfService;
+
+                // calculate "seniority sort order" & round the seniority value (3 decimal places)
+                if (dto.Seniority != null && dto.Seniority > 0)
+                {
+                    dto.Seniority = (float)Math.Round((Decimal)dto.Seniority, 3, MidpointRounding.AwayFromZero);
+
+                    if (dto.BlockNumber != null)
+                    {
+                        // sort cal: (10-A1)*10000+(10000+B1)
+                        dto.SenioritySortOrder =
+                            (10 - (float) dto.BlockNumber) * 10000 + (10000 + (float) dto.Seniority);
+                    }
+                }
             }
 
             return dto;
