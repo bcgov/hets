@@ -391,10 +391,11 @@ var ProjectsDetail = React.createClass({
                     <td>
                       <Unimplemented>
                         <Button 
+                          className="btn-link"
                           bsSize="xsmall"
                           onClick={ () => this.openTimeEntryDialog(item) }
                         >
-                          <Glyphicon glyph="check" />
+                          N/A
                         </Button>
                       </Unimplemented>
                     </td>
