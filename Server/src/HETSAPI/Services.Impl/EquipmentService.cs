@@ -540,21 +540,28 @@ namespace HETSAPI.Services.Impl
         /// <param name="hired">Hired</param>
         /// <param name="notverifiedsincedate">Not Verified Since Date</param>
         /// <response code="200">OK</response>
-        public virtual IActionResult EquipmentSearchGetAsync(string localareas, string types, string equipmentAttachment, int? owner, string status, bool? hired, DateTime? notverifiedsincedate)
+        public virtual IActionResult EquipmentSearchGetAsync(string localareas, string types, string equipmentAttachment, 
+            int? owner, string status, bool? hired, DateTime? notverifiedsincedate)
         {
             int?[] localareasArray = ParseIntArray(localareas);
             int?[] typesArray = ParseIntArray(types);
 
-            // default search results must be limited to user
+            // **********************************************************************
+            // get initial resultset - results must be limited to user's dsitrict
+            // **********************************************************************
             int? districtId = _context.GetDistrictIdByUserId(GetCurrentUserId()).Single();
 
             IQueryable<Equipment> data = _context.Equipments
-                .Where(x => x.LocalArea.ServiceArea.DistrictId.Equals(districtId))                
+                .Where(x => x.LocalArea.ServiceArea.DistrictId.Equals(districtId))
+                .Include(x => x.LocalArea)
                 .Include(x => x.DistrictEquipmentType)
                 .Include(x => x.Owner)
                 .Include(x => x.EquipmentAttachments)                
-                .Select(x => x);          
+                .Select(x => x);
 
+            // **********************************************************************
+            // filter results based on search critera
+            // **********************************************************************
             if (localareasArray != null && localareasArray.Length > 0)
             {
                 data = data.Where(x => localareasArray.Contains(x.LocalArea.Id));
@@ -575,6 +582,7 @@ namespace HETSAPI.Services.Impl
                 data = data.Where(x => String.Equals(x.Status, status, StringComparison.CurrentCultureIgnoreCase));
             }
 
+            // is the equipment is hired (search criteria)
             if (hired == true)
             {
                 IQueryable<int?> hiredEquipmentQuery = _context.RentalAgreements
@@ -595,7 +603,9 @@ namespace HETSAPI.Services.Impl
                 data = data.Where(x => x.LastVerifiedDate >= notverifiedsincedate);
             }
 
+            // **********************************************************************
             // convert Equipment Model to View Model
+            // **********************************************************************
             List<EquipmentViewModel> result = new List<EquipmentViewModel>();
 
             foreach (Equipment item in data)
@@ -603,7 +613,13 @@ namespace HETSAPI.Services.Impl
                 EquipmentViewModel newItem = item.ToViewModel();
                 result.Add(newItem);
             }
-            
+
+            // resort list using: LocalArea / District Equipment Type and SenioritySortOrder (desc)
+            result = result.OrderBy(e => e.LocalArea.Name)
+                .ThenBy(e => e.DistrictEquipmentType.DistrictEquipmentName)
+                .ThenByDescending(e => e.SenioritySortOrder).ToList();
+
+            // return to the client            
             return new ObjectResult(new HetsResponse(result));
         }
 

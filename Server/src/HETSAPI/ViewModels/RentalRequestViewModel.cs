@@ -5,19 +5,21 @@ using System.Collections.Generic;
 using Newtonsoft.Json;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.ComponentModel.DataAnnotations;
+using System.Runtime.Serialization;
+using HETSAPI.Models;
 
-namespace HETSAPI.Models
+namespace HETSAPI.ViewModels
 {
     /// <summary>
-    /// Rental Request Database Model
+    /// Rental Request View Model
     /// </summary>
-    [MetaData (Description = "A request from a Project for one or more of a type of equipment from a specific Local Area.")]
-    public sealed class RentalRequest : AuditableEntity, IEquatable<RentalRequest>
+    [DataContract]
+    public sealed class RentalRequestViewModel : IEquatable<RentalRequestViewModel>
     {
         /// <summary>
         /// Rental Request Database Model Constructor (required by entity framework)
         /// </summary>
-        public RentalRequest()
+        public RentalRequestViewModel()
         {
             Id = 0;
         }
@@ -40,7 +42,7 @@ namespace HETSAPI.Models
         /// <param name="history">History.</param>
         /// <param name="rentalRequestAttachments">RentalRequestAttachments.</param>
         /// <param name="rentalRequestRotationList">RentalRequestRotationList.</param>
-        public RentalRequest(int id, Project project, LocalArea localArea, string status, DistrictEquipmentType districtEquipmentType, 
+        public RentalRequestViewModel(int id, Project project, LocalArea localArea, string status, DistrictEquipmentType districtEquipmentType, 
             int equipmentCount, int? expectedHours = null, DateTime? expectedStartDate = null, DateTime? expectedEndDate = null, 
             Equipment firstOnRotationList = null, List<Note> notes = null, List<Attachment> attachments = null, 
             List<History> history = null, List<RentalRequestAttachment> rentalRequestAttachments = null, 
@@ -67,7 +69,6 @@ namespace HETSAPI.Models
         /// A system-generated unique identifier for a Request
         /// </summary>
         /// <value>A system-generated unique identifier for a Request</value>
-        [MetaData (Description = "A system-generated unique identifier for a Request")]
         public int Id { get; set; }
         
         /// <summary>
@@ -86,7 +87,6 @@ namespace HETSAPI.Models
         /// A foreign key reference to the system-generated unique identifier for a Local Area
         /// </summary>
         /// <value>A foreign key reference to the system-generated unique identifier for a Local Area</value>
-        [MetaData (Description = "A foreign key reference to the system-generated unique identifier for a Local Area")]
         public LocalArea LocalArea { get; set; }
         
         /// <summary>
@@ -94,14 +94,12 @@ namespace HETSAPI.Models
         /// </summary>   
         [ForeignKey("LocalArea")]
 		[JsonIgnore]
-		[MetaData (Description = "A foreign key reference to the system-generated unique identifier for a Local Area")]
         public int? LocalAreaId { get; set; }
         
         /// <summary>
         /// The status of the Rental Request - whether it in progress, completed or was cancelled.
         /// </summary>
         /// <value>The status of the Rental Request - whether it in progress, completed or was cancelled.</value>
-        [MetaData (Description = "The status of the Rental Request - whether it in progress, completed or was cancelled.")]
         [MaxLength(50)]        
         public string Status { get; set; }
         
@@ -109,7 +107,6 @@ namespace HETSAPI.Models
         /// A foreign key reference to the system-generated unique identifier for an Equipment Type
         /// </summary>
         /// <value>A foreign key reference to the system-generated unique identifier for an Equipment Type</value>
-        [MetaData (Description = "A foreign key reference to the system-generated unique identifier for an Equipment Type")]
         public DistrictEquipmentType DistrictEquipmentType { get; set; }
         
         /// <summary>
@@ -117,42 +114,36 @@ namespace HETSAPI.Models
         /// </summary>   
         [ForeignKey("DistrictEquipmentType")]
 		[JsonIgnore]
-		[MetaData (Description = "A foreign key reference to the system-generated unique identifier for an Equipment Type")]
         public int? DistrictEquipmentTypeId { get; set; }
         
         /// <summary>
         /// The number of pieces of the equipment type wanted for hire as part of this request.
         /// </summary>
         /// <value>The number of pieces of the equipment type wanted for hire as part of this request.</value>
-        [MetaData (Description = "The number of pieces of the equipment type wanted for hire as part of this request.")]
         public int EquipmentCount { get; set; }
         
         /// <summary>
         /// The expected number of rental hours for each piece equipment hired against this request, as provided by the Project Manager making the request.
         /// </summary>
         /// <value>The expected number of rental hours for each piece equipment hired against this request, as provided by the Project Manager making the request.</value>
-        [MetaData (Description = "The expected number of rental hours for each piece equipment hired against this request, as provided by the Project Manager making the request.")]
         public int? ExpectedHours { get; set; }
         
         /// <summary>
         /// The expected start date of each piece of equipment hired against this request, as provided by the Project Manager making the request.
         /// </summary>
         /// <value>The expected start date of each piece of equipment hired against this request, as provided by the Project Manager making the request.</value>
-        [MetaData (Description = "The expected start date of each piece of equipment hired against this request, as provided by the Project Manager making the request.")]
         public DateTime? ExpectedStartDate { get; set; }
         
         /// <summary>
         /// The expected end date of each piece of equipment hired against this request, as provided by the Project Manager making the request.
         /// </summary>
         /// <value>The expected end date of each piece of equipment hired against this request, as provided by the Project Manager making the request.</value>
-        [MetaData (Description = "The expected end date of each piece of equipment hired against this request, as provided by the Project Manager making the request.")]
         public DateTime? ExpectedEndDate { get; set; }
         
         /// <summary>
         /// The first piece of equipment on the rotation list at the time of the creation of the request.
         /// </summary>
         /// <value>The first piece of equipment on the rotation list at the time of the creation of the request.</value>
-        [MetaData (Description = "The first piece of equipment on the rotation list at the time of the creation of the request.")]
         public Equipment FirstOnRotationList { get; set; }
         
         /// <summary>
@@ -160,7 +151,6 @@ namespace HETSAPI.Models
         /// </summary>   
         [ForeignKey("FirstOnRotationList")]
 		[JsonIgnore]
-		[MetaData (Description = "The first piece of equipment on the rotation list at the time of the creation of the request.")]
         public int? FirstOnRotationListId { get; set; }
         
         /// <summary>
@@ -187,7 +177,8 @@ namespace HETSAPI.Models
         /// Gets or Sets RentalRequestRotationList
         /// </summary>
         public List<RentalRequestRotationList> RentalRequestRotationList { get; set; }
-        
+       
+
         /// <summary>
         /// Returns the string presentation of the object
         /// </summary>
@@ -243,7 +234,7 @@ namespace HETSAPI.Models
         /// </summary>
         /// <param name="other">Instance of RentalRequest to be compared</param>
         /// <returns>Boolean</returns>
-        public bool Equals(RentalRequest other)
+        public bool Equals(RentalRequestViewModel other)
         {
             if (other is null) { return false; }
             if (ReferenceEquals(this, other)) { return true; }
@@ -417,7 +408,7 @@ namespace HETSAPI.Models
         /// <param name="left"></param>
         /// <param name="right"></param>
         /// <returns></returns>
-        public static bool operator ==(RentalRequest left, RentalRequest right)
+        public static bool operator ==(RentalRequestViewModel left, RentalRequestViewModel right)
         {
             return Equals(left, right);
         }
@@ -428,7 +419,7 @@ namespace HETSAPI.Models
         /// <param name="left"></param>
         /// <param name="right"></param>
         /// <returns></returns>
-        public static bool operator !=(RentalRequest left, RentalRequest right)
+        public static bool operator !=(RentalRequestViewModel left, RentalRequestViewModel right)
         {
             return !Equals(left, right);
         }
