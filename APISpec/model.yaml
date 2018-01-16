@@ -979,10 +979,6 @@ definitions:
         type: string
         maxLength: 50
         description: The surname of the contact.
-      organizationName:
-        type: string
-        maxLength: 150
-        description: The organization name of the contact.
       role:
         type: string
         maxLength: 100
