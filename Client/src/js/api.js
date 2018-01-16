@@ -1120,12 +1120,11 @@ function parseRentalRequestRotationList(rotationListItem, rentalRequest = {}) {
 }
 
 export function getRentalRequestRotationList(id) {
-  // return new ApiRequest(`/api/rentalrequests/${id}/rotationList/`).get().then(response => {
-  //   var rotationList = response.data;
-  //   debugger; //eslint-disable-line
-
-  //   store.dispatch({ type: Action.UPDATE_RENTAL_REQUEST_ROTATION_LIST, rentalRequestRotationList: rotationList });
-  // });
+  return new ApiRequest(`/rentalrequests/${id}/rotationList`).get().then(response => {
+    var rotationList = response.data;
+    
+    store.dispatch({ type: Action.UPDATE_RENTAL_REQUEST_ROTATION_LIST, rentalRequestRotationList: rotationList });
+  });
 }
 
 export function updateRentalRequestRotationList(rentalRequestRotationList, rentalRequest) {

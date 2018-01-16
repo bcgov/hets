@@ -24,6 +24,8 @@ import ColDisplay from '../components/ColDisplay.jsx';
 import Spinner from '../components/Spinner.jsx';
 import TableControl from '../components/TableControl.jsx';
 import Unimplemented from '../components/Unimplemented.jsx';
+import Confirm from '../components/Confirm.jsx';
+import OverlayTrigger from '../components/OverlayTrigger.jsx';
 
 import { formatDateTime } from '../utils/date';
 import { concat } from '../utils/string';
@@ -195,6 +197,7 @@ var RentalRequestsDetail = React.createClass({
 
   render() {
     var rentalRequest = this.props.rentalRequest.data;
+    console.log(this.props.rentalRequestRotationList.data);
 
     return <div id="rental-requests-detail">
       <Row id="rental-requests-top">
@@ -234,10 +237,10 @@ var RentalRequestsDetail = React.createClass({
         </span></h3>
         {(() => {
           if (this.state.loading) { return <div style={{ textAlign: 'center' }}><Spinner/></div>; }
-
+          
           var numRequestAttachments = Object.keys(rentalRequest.rentalRequestAttachment || []).length;
           var requestAttachments = (rentalRequest.rentalRequestAttachments || []).join(', ');
-
+          
           return <Grid fluid id="rental-requests-data" className="nopadding">
             <Row>
               <Col md={6}>
@@ -270,14 +273,14 @@ var RentalRequestsDetail = React.createClass({
         </span></h3>
         {(() => {
           if (this.state.loading) { return <div style={{ textAlign: 'center' }}><Spinner/></div>; }
-
+          
           var rotationList = rentalRequest.rentalRequestRotationList;
-
+          
           if (Object.keys(rotationList || []).length === 0) { return <Alert bsStyle="success" style={{ marginTop: 10 }}>No equipment</Alert>; }
-
+          
           // Sort in rotation list order
           rotationList = _.sortBy(rotationList, 'rotationListSortOrder');
-
+          
           var headers = [
             { field: 'seniority',               title: 'Seniority'         },
             { field: 'serviceHoursThisYear',    title: 'YTD Hours'         },
@@ -288,7 +291,7 @@ var RentalRequestsDetail = React.createClass({
             { field: 'primaryContactCellPhone', title: 'Cell Phone'        },
             { field: 'status',                  title: 'Status'            },
           ];
-
+          
           return <TableControl id="rotation-list" headers={ headers }>
             {
               _.map(rotationList, (listItem) => {
@@ -313,8 +316,32 @@ var RentalRequestsDetail = React.createClass({
                     </td>
                     <td>
                       <ButtonGroup>
-                        <Button bsStyle="link" title="Show Offer" onClick={ this.openHireOfferDialog.bind(this, listItem) }>{ listItem.status }</Button>
-                        {/* {(() => {x
+                        {(() => {
+                          if (listItem.maximumHours) {
+                            return (
+                              <OverlayTrigger 
+                                trigger="click" 
+                                placement="top" 
+                                title="This piece of equipment is has met or exceeded its Maximum Allowed Hours for this year. Are you sure you want to edit the Offer on this equipment?"
+                                rootClose 
+                                overlay={ <Confirm onConfirm={ this.openHireOfferDialog.bind(this, listItem) }/> }
+                              >
+                                <Button 
+                                  bsStyle="link"
+                                  bsSize="xsmall"
+                                >
+                                  Max. hours reached
+                                </Button>
+                              </OverlayTrigger>
+                            );
+                          }
+
+                          return (
+                            <Button bsStyle="link" title="Show Offer" onClick={ this.openHireOfferDialog.bind(this, listItem) }>{ listItem.status }</Button>
+                          );
+                        })()}
+                        <span style={{ float: 'left'}}>{ '|' }</span>;
+                        {/* {(() => {
                           // If RentalRequestRotationList.rentalAgreement is non-null - go to that Rental Agreement.
                           if (listItem.rentalAgreement && listItem.rentalAgreement.id) {
                             return <Link title="Open Rental Agreement" to={ `${Constant.RENTAL_AGREEMENTS_PATHNAME}/${listItem.rentalAgreement.id}` }>Agreement</Link>;
