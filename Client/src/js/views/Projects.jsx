@@ -35,7 +35,6 @@ var Projects = React.createClass({
   propTypes: {
     projects: React.PropTypes.object,
     project: React.PropTypes.object,
-    districts: React.PropTypes.object,
     favourites: React.PropTypes.object,
     search: React.PropTypes.object,
     ui: React.PropTypes.object,
@@ -46,7 +45,6 @@ var Projects = React.createClass({
     return {
       showAddDialog: false,
       search: {
-        selectedDistrictsIds: this.props.search.selectedDistrictsIds || [],
         statusCode: this.props.search.statusCode || '',
         hires: this.props.search.hires || false,
         requests: this.props.search.requests || false,
@@ -78,10 +76,6 @@ var Projects = React.createClass({
     // if (this.state.search.status) {
     //   searchParams.status = this.state.search.statusCode;
     // }
-
-    if (this.state.search.selectedDistrictsIds.length > 0) {
-      searchParams.districts = this.state.search.selectedDistrictsIds;
-    }
 
     return searchParams;
 
@@ -149,7 +143,6 @@ var Projects = React.createClass({
   },
 
   render() {
-    var districts = _.sortBy(this.props.districts, 'name');
     var numProjects = this.state.loading ? '...' : Object.keys(this.props.projects).length;
 
     return <div id="projects-list">
@@ -165,8 +158,6 @@ var Projects = React.createClass({
         <Row>
           <Col md={10}>
             <ButtonToolbar id="projects-filters">
-              <MultiDropdown id="selectedDistrictsIds" placeholder="Districts"
-                items={ districts } selectedIds={ this.state.search.selectedDistrictsIds } updateState={ this.updateSearchState } showMaxItems={ 2 } />
               <Unimplemented>
                 <DropdownControl id="statusCode" title={ this.state.search.statusCode } updateState={ this.updateSearchState } blankLine="(All)" placeholder="Status"
                   items={[ Constant.PROJECT_STATUS_CODE_ACTIVE, Constant.PROJECT_STATUS_CODE_COMPLETED ]} />
@@ -207,7 +198,6 @@ var Projects = React.createClass({
         }
 
         return <SortTable sortField={ this.state.ui.sortField } sortDesc={ this.state.ui.sortDesc } onSort={ this.updateUIState } headers={[
-          { field: 'districtName',           title: 'District'                                       },
           { field: 'name',                   title: 'Project'                                        },
           { field: 'primaryContactName',     title: 'Primary Contact'                                },
           { field: 'primaryContactPhone',    title: 'Contact #'                                      },
@@ -221,7 +211,6 @@ var Projects = React.createClass({
           {
             _.map(projects, (project) => {
               return <tr key={ project.id } className={ project.isActive ? null : 'info' }>
-                <td>{ project.districtName }</td>
                 <td>{ project.name }</td>
                 <td>{ project.primaryContactName }</td>
                 <td>{ project.primaryContactPhone }</td>
@@ -250,7 +239,6 @@ function mapStateToProps(state) {
   return {
     projects: state.models.projects,
     project: state.models.project,
-    districts: state.lookups.districts,
     favourites: state.models.favourites,
     search: state.search.projects,
     ui: state.ui.projects,
