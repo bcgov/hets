@@ -1,4 +1,3 @@
-using System;
 using System.Collections.Generic;
 using System.Linq;
 using Microsoft.AspNetCore.Mvc;
@@ -928,8 +927,6 @@ namespace HETSAPI.Services.Impl
         /// <response code="200">OK</response>
         public virtual IActionResult UsersSearchGetAsync(string districts, string surname, bool? includeInactive)
         {
-            if (districts == null) throw new ArgumentNullException(nameof(districts));
-
             int?[] districtArray = ParseIntArray(districts);
 
             // Loading of related data

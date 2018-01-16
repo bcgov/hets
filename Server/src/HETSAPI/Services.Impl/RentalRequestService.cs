@@ -268,14 +268,43 @@ namespace HETSAPI.Services.Impl
                 RentalRequest result = _context.RentalRequests
                     .Include(x => x.RentalRequestAttachments)
                     .Include(x => x.DistrictEquipmentType)
-                    .Include(x => x.FirstOnRotationList)
                     .Include(x => x.LocalArea.ServiceArea.District.Region)
                     .Include(x => x.Notes)
                     .Include(x => x.Project.PrimaryContact)
-                    .Include(x => x.RentalRequestRotationList).ThenInclude(y => y.Equipment)
                     .First(a => a.Id == id);
 
                 return new ObjectResult(new HetsResponse(result));
+            }
+
+            // record not found
+            return new ObjectResult(new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-01", _configuration)));
+        }
+
+        /// <summary>
+        /// Get rental request rotation list by rental request id
+        /// </summary>
+        /// <param name="id">id of Rental Request to fetch</param>
+        /// <response code="200">OK</response>
+        /// <response code="404">Project not found</response>
+        public virtual IActionResult RentalrequestsIdRotationListGetAsync(int id)
+        {
+            bool exists = _context.RentalRequests.Any(a => a.Id == id);
+
+            if (exists)
+            {
+                RentalRequest result = _context.RentalRequests
+                    .Include(x => x.FirstOnRotationList)
+                    .Include(x => x.RentalRequestRotationList)
+                        .ThenInclude(eq => eq.Equipment)
+                        .ThenInclude(ow => ow.Owner)
+                        .ThenInclude(owc => owc.PrimaryContact)
+                    .First(a => a.Id == id);
+
+                // convert to view modol so we can manage the rotation list more easily
+                RentalRequestViewModel response = result.ToViewModel(true);
+
+                // return view model
+                return new ObjectResult(new HetsResponse(response));
             }
 
             // record not found
@@ -417,6 +446,52 @@ namespace HETSAPI.Services.Impl
                         }
                     }
                 }
+
+                // populate the "first on the list" table for the Local Area (HET_LOAL_AREA_ROTATION_LIST)
+                if (item.RentalRequestRotationList.Count > 0)
+                {
+                    LocalAreaRotationList areaRotationList = _context.LocalAreaRotationLists
+                        .FirstOrDefault(rl => rl.LocalAreaId == item.LocalAreaId &&
+                                              rl.DistrictEquipmentTypeId == item.DistrictEquipmentTypeId);
+
+                    // no record for this are - create the first record
+                    if (areaRotationList == null)
+                    {
+                        areaRotationList = new LocalAreaRotationList
+                        {
+                            LocalAreaId = item.LocalAreaId,
+                            DistrictEquipmentTypeId = item.DistrictEquipmentTypeId
+                        };
+
+                        // put into the correct field
+                        if (item.RentalRequestRotationList[0].Equipment.BlockNumber == 1 &&
+                            item.RentalRequestRotationList[0].Equipment.BlockNumber < numberOfBlocks)
+                        {
+                            areaRotationList.AskNextBlock1Id = item.RentalRequestRotationList[0].Equipment.Id;
+                            areaRotationList.AskNextBlock1Seniority =
+                                item.RentalRequestRotationList[0].Equipment.Seniority;
+                        }
+                        else if (item.RentalRequestRotationList[0].Equipment.BlockNumber == 2 &&
+                            item.RentalRequestRotationList[0].Equipment.BlockNumber < numberOfBlocks)
+                        {
+                            areaRotationList.AskNextBlock2Id = item.RentalRequestRotationList[0].Equipment.Id;
+                            areaRotationList.AskNextBlock2Seniority =
+                                item.RentalRequestRotationList[0].Equipment.Seniority;
+                        }
+                        else
+                        {
+                            areaRotationList.AskNextBlockOpenId = item.RentalRequestRotationList[0].Equipment.Id;
+                        }
+
+                        _context.LocalAreaRotationLists.Add(areaRotationList);
+                    }
+                }
+
+                // update the first on the list id for the Rental Request (HET_RENTAL_REQUEST.FIRST_ON_ROTATION_LIST_ID)
+                if (item.RentalRequestRotationList.Count > 0)
+                {
+                    item.FirstOnRotationListId = item.RentalRequestRotationList[0].Equipment.Id;
+                }
             }
         }
 
@@ -536,9 +611,9 @@ namespace HETSAPI.Services.Impl
 
                 // update
                 _context.SaveChanges();
-
+                
                 // generate rotation list
-                BuildRentalRequestRotationList(result);
+                BuildRentalRequestRotationList(result);                
 
                 // save the changes
                 _context.SaveChanges();
@@ -553,11 +628,9 @@ namespace HETSAPI.Services.Impl
 
                 return new ObjectResult(new HetsResponse(result));
             }
-            else
-            {
-                // record not found
-                return new ObjectResult(new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-01", _configuration)));
-            }                 
+
+            // record not found
+            return new ObjectResult(new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-01", _configuration)));
         }
 
         /// <summary>
@@ -620,7 +693,7 @@ namespace HETSAPI.Services.Impl
                 }
             }
 
-            // no calculated fields in a RentalRequest search yet.
+            // no calculated fields in a RentalRequest search yet
             return new ObjectResult(new HetsResponse(result));
         }
     }

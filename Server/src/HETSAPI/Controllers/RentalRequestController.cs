@@ -98,6 +98,21 @@ namespace HETSAPI.Controllers
         }
 
         /// <summary>
+        /// Get rental request rotation list for the rental request
+        /// </summary>
+        /// <param name="id">id of RentalRequest to fetch</param>
+        /// <response code="200">OK</response>
+        /// <response code="404">RentalRequest not found</response>
+        [HttpGet]
+        [Route("/api/rentalrequests/{id}/rotationList")]
+        [SwaggerOperation("RentalrequestsIdRotationListGet")]
+        [SwaggerResponse(200, type: typeof(RentalRequest))]
+        public virtual IActionResult RentalrequestsIdRotationListIdGet([FromRoute]int id)
+        {
+            return _service.RentalrequestsIdRotationListGetAsync(id);
+        }
+
+        /// <summary>
         /// Get history associated with a rental request
         /// </summary>
         /// <remarks>Returns History for a particular RentalRequest</remarks>

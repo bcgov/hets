@@ -388,6 +388,41 @@ namespace HETSAPI.Mappings
         }
 
         /// <summary>
+        /// Equipment view model
+        /// </summary>
+        /// <param name="model"></param>
+        /// <param name="identifyNextRotationList"></param>
+        /// <returns></returns>
+        public static RentalRequestViewModel ToViewModel(this RentalRequest model, bool identifyNextRotationList)
+        {
+            var dto = new RentalRequestViewModel();
+
+            if (model != null)
+            {
+                dto.Id = model.Id;
+                dto.Project = model.Project;
+                dto.LocalArea = model.LocalArea;
+                dto.Status = model.Status;
+                dto.DistrictEquipmentType = model.DistrictEquipmentType;
+                dto.EquipmentCount = model.EquipmentCount;
+                dto.ExpectedHours = model.ExpectedHours;
+                dto.ExpectedStartDate = model.ExpectedStartDate;
+                dto.ExpectedEndDate = model.ExpectedEndDate;
+                dto.FirstOnRotationList = model.FirstOnRotationList;
+                dto.Notes = model.Notes;
+                dto.Attachments = model.Attachments;
+                dto.History = model.History;
+                dto.RentalRequestAttachments = model.RentalRequestAttachments;
+                dto.RentalRequestRotationList = model.RentalRequestRotationList;
+
+                // identify which record is the next in line...
+               
+            }
+
+            return dto;
+        }
+
+        /// <summary>
         /// Group membership view model
         /// </summary>
         /// <param name="model"></param>
