@@ -58,15 +58,15 @@ rental_requests=RentalRequest/RentalRequest_RentalRequest.json
 # ==============================================================================================
 
 # Users, Roles, and Permissions ...
-./load.sh ./${service_areas} ${API_PREFIX}/serviceAreas/${BULK_PATH} "$@"
+./load.sh ./${service_areas} ${API_PREFIX}/serviceareas/${BULK_PATH} "$@"
 exitOnError
-./load.sh ./${local_areas} ${API_PREFIX}/localAreas/${BULK_PATH} "$@"
+./load.sh ./${local_areas} ${API_PREFIX}/localareas/${BULK_PATH} "$@"
 exitOnError
-./load.sh ./${lookup_lists} ${API_PREFIX}/lookupLists/${BULK_PATH} "$@"
+./load.sh ./${lookup_lists} ${API_PREFIX}/lookuplists/${BULK_PATH} "$@"
 exitOnError
-./load.sh ./${equipment_types} ${API_PREFIX}/equipmentTypes/${BULK_PATH} "$@"
+./load.sh ./${equipment_types} ${API_PREFIX}/equipmenttypes/${BULK_PATH} "$@"
 exitOnError
-./load.sh ./${district_equipment_types} ${API_PREFIX}/districtEquipmentTypes/${BULK_PATH} "$@"
+./load.sh ./${district_equipment_types} ${API_PREFIX}/districtequipmenttypes/${BULK_PATH} "$@"
 exitOnError
 ./load.sh ./${contacts} ${API_PREFIX}/contacts/${BULK_PATH} "$@"
 exitOnError
@@ -76,5 +76,5 @@ exitOnError
 exitOnError
 ./load.sh ./${equipment} ${API_PREFIX}/equipment/${BULK_PATH} "$@"
 exitOnError
-./load.sh ./${rental_requests} ${API_PREFIX}/rentalRequests/${BULK_PATH} "$@"
+./load.sh ./${rental_requests} ${API_PREFIX}/rentalrequests/${BULK_PATH} "$@"
 exitOnError
