@@ -43,7 +43,7 @@ var DateControl = React.createClass({
   },
 
   render() {
-    var date = Moment(this.props.date);
+    var date = Moment.utc(this.props.date);
     if (!date || !date.isValid()) { date = ''; }
 
     var format = this.props.format || 'YYYY-MM-DD';
