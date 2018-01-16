@@ -298,17 +298,14 @@ namespace HETSAPI.Services.Impl
                         .ThenInclude(y => y.Equipment)
                         .ThenInclude(e => e.Owner)
                         .ThenInclude(c => c.PrimaryContact)
-                    .First(a => a.Id == id);                
-
-                // convert to view modol so we can manage the rotation list more easily
-                RentalRequestViewModel response = result.ToViewModel(true);
+                    .First(a => a.Id == id);
 
                 // resort list using: LocalArea / District Equipment Type and SenioritySortOrder (desc)
-                response.RentalRequestRotationList =
-                    response.RentalRequestRotationList.OrderBy(e => e.RotationListSortOrder).ToList();
+                result.RentalRequestRotationList =
+                    result.RentalRequestRotationList.OrderBy(e => e.RotationListSortOrder).ToList();
 
                 // return view model
-                return new ObjectResult(new HetsResponse(response));
+                return new ObjectResult(new HetsResponse(result));
             }
 
             // record not found

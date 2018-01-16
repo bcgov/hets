@@ -65,7 +65,23 @@
                     alert(xhr.responseText);
                 }
             });
-        }        
+        }     
+
+        function getRotationList() {
+            var requestId = $("#requestId").val();
+
+            $.ajax({
+                url: "/api/rentalrequests/" + requestId + "/rotationList",
+                type: "GET",
+                timeout: 60000, // sets timeout to 1 min
+                success: function (response) {
+                    alert(JSON.stringify(response.data));
+                },
+                error: function (xhr, ajaxOptions, thrownError) {
+                    alert(xhr.responseText);
+                }
+            });
+        }    
     </script>
 </head>
 <body>
@@ -91,34 +107,35 @@
 {
     <hr/>
     <div>
-        <h3>View HETS API</h3>
+        <h4>View HETS API</h4>
         <a href="~/swagger/ui/index.html">Swagger</a>
     </div>
 
     <hr/>
     <div>
-        <h3>Import BC Bid Data</h3>
+        <h4>Import BC Bid Data</h4>
         <a href="~/Import">Import</a>
     </div>
 
     <hr/>
     <div>
-        <h3>Hangfire Monitor</h3>
+        <h4>Hangfire Monitor</h4>
         <a href="~/hangfire">Hangfire</a>
     </div>
 
     <hr/>
     <div>
-        <h3>Recalc Equipment Seniority</h3>
-        <input type="number" width="5" value="3" id="regionId" /> <button onclick="recalcSeniority();">Recalc (Region (3) "Northern")</button>
+        <h4>Recalc Equipment Seniority</h4>
+        <input type="number" width="5" value="3" id="regionId" /> 
+        <button onclick="recalcSeniority();">Recalc (Region (3) "Northern")</button>
     </div>
 
     <hr/>
     <div>
-        <h3>Recalc Rotation List (for a Rental Request)</h3>
-        <input type="number" width="5" value="18" id="requestId" /> <button onclick="recalcRotation();">Recalc (Request (18))</button>
-        
-        <button onclick="getRotationList();">Clear User Context</button>
+        <h4>Recalc Rotation List (for a Rental Request)</h4>
+        <input type="number" width="5" value="18" id="requestId" /> 
+        <button onclick="recalcRotation();">Recalc (Request (18))</button>        
+        <button onclick="getRotationList();">Get Rotation List</button>
     </div>
 }
 </body>
