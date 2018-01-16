@@ -138,7 +138,7 @@ var RentalRequestsDetail = React.createClass({
   },
 
   saveHireOffer(hireOffer) {
-    Api.updateRentalRequestRotationList(hireOffer, this.props.rentalRequest).finally(() => {
+    Api.updateRentalRequestRotationList(hireOffer, this.props.rentalRequest.data).finally(() => {
       this.fetch();
       this.closeHireOfferDialog();
     });
@@ -286,8 +286,7 @@ var RentalRequestsDetail = React.createClass({
             { field: 'status',                  title: 'Status'            },
           ];
 
-          var separator = <span style={{ float: 'left'}}>{ '|' }</span>;
-          console.log(rotationList);
+          // var separator = <span style={{ float: 'left'}}>{ '|' }</span>;
 
           return <TableControl id="rotation-list" headers={ headers }>
             {
@@ -315,7 +314,7 @@ var RentalRequestsDetail = React.createClass({
                       <ButtonGroup>
                         <Button bsStyle="link" title="Show Offer" onClick={ this.openHireOfferDialog.bind(this, listItem) }>{ listItem.status }</Button>
                         {/* { separator } */}
-                        {/* {(() => {
+                        {/* {(() => {x
                           // If RentalRequestRotationList.rentalAgreement is non-null - go to that Rental Agreement.
                           if (listItem.rentalAgreement && listItem.rentalAgreement.id) {
                             return <Link title="Open Rental Agreement" to={ `${Constant.RENTAL_AGREEMENTS_PATHNAME}/${listItem.rentalAgreement.id}` }>Agreement</Link>;

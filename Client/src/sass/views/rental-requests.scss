@@ -116,3 +116,9 @@
     min-width: 175px;
   }
 }
+
+#confirm-force-hire, #hire-offer-edit {
+  &.modal {
+    z-index: 1040;
+  }
+}

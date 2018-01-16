@@ -1122,7 +1122,6 @@ function parseRentalRequestRotationList(rotationListItem, rentalRequest = {}) {
 export function updateRentalRequestRotationList(rentalRequestRotationList, rentalRequest) {
   return new ApiRequest(`/rentalrequests/${ rentalRequest.id }/rentalrequestrotationlist/${ rentalRequestRotationList.id }`).put({ ...rentalRequestRotationList, rentalAgreement: null }).then(response => {
     var rentalRequestRotationList = response.data;
-
     // Add display fields
     parseRentalRequestRotationList(rentalRequestRotationList, rentalRequest);
 

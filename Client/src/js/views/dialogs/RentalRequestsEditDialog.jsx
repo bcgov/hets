@@ -155,7 +155,7 @@ var RentalRequestsEditDialog = React.createClass({
               <Col md={6}>
                 <FormGroup controlId="expectedHours" validationState={ this.state.expectedHoursError ? 'error' : null }>
                   <ControlLabel>Expected Hours <sup>*</sup></ControlLabel>
-                  <FormInputControl type="number" min={0} defaultValue={ this.state.expectedHours } readOnly={ isReadOnly } updateState={ this.updateState }/>
+                  <FormInputControl type="number" className="full-width" min={0} defaultValue={ this.state.expectedHours } readOnly={ isReadOnly } updateState={ this.updateState }/>
                   <HelpBlock>{ this.state.expectedHoursError }</HelpBlock>
                 </FormGroup>
               </Col>
