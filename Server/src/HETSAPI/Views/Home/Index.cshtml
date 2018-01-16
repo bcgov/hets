@@ -33,9 +33,12 @@
             window.location.href = "/api/authentication/dev/cleartoken";
         }
 
-        function recalcSeniority() {            
+        function recalcSeniority() {
+            var regionId = $("#regionId").value;
+            alert('Recalc Seniority for Region Id: ' + regionId);
+
             $.ajax({
-                url: "/api/equipment/recalcSeniority?region=3",
+                url: "/api/equipment/recalcSeniority?region=" + regionId,
                 type: "GET",
                 timeout: 60000, // sets timeout to 1 min
                 success: function (response) {
@@ -48,8 +51,11 @@
         }
 
         function recalcRotation() {
+            var requestId = $("#requestId").value;
+            alert('Recalc Rotation for Request Id: ' + requestId);
+
             $.ajax({
-                url: "/api/rentalrequests/recalcRotation?rentalRequest=18",
+                url: "/api/rentalrequests/recalcRotation?rentalRequest=" + requestId,
                 type: "GET",
                 timeout: 60000, // sets timeout to 1 min
                 success: function (response) {
@@ -104,13 +110,15 @@
     <hr/>
     <div>
         <h3>Recalc Equipment Seniority</h3>
-        <button onclick="recalcSeniority();">Recalc (Region (3) "Northern")</button>
+        <input type="number" width="5" value="3" id="regionId" /> <button onclick="recalcSeniority();">Recalc (Region (3) "Northern")</button>
     </div>
 
     <hr/>
     <div>
         <h3>Recalc Rotation List (for a Rental Request)</h3>
-        <button onclick="recalcRotation();">Recalc (Request (18))</button>
+        <input type="number" width="5" value="18" id="requestId" /> <button onclick="recalcRotation();">Recalc (Request (18))</button>
+        
+        <button onclick="getRotationList();">Clear User Context</button>
     </div>
 }
 </body>

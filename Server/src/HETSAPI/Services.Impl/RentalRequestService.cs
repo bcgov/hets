@@ -292,16 +292,20 @@ namespace HETSAPI.Services.Impl
 
             if (exists)
             {
-                RentalRequest result = _context.RentalRequests
-                    .Include(x => x.FirstOnRotationList)
+                // check that we have a rotation list
+                RentalRequest result = _context.RentalRequests           
                     .Include(x => x.RentalRequestRotationList)
-                        .ThenInclude(eq => eq.Equipment)
-                        .ThenInclude(ow => ow.Owner)
-                        .ThenInclude(owc => owc.PrimaryContact)
-                    .First(a => a.Id == id);
+                        .ThenInclude(y => y.Equipment)
+                        .ThenInclude(e => e.Owner)
+                        .ThenInclude(c => c.PrimaryContact)
+                    .First(a => a.Id == id);                
 
                 // convert to view modol so we can manage the rotation list more easily
                 RentalRequestViewModel response = result.ToViewModel(true);
+
+                // resort list using: LocalArea / District Equipment Type and SenioritySortOrder (desc)
+                response.RentalRequestRotationList =
+                    response.RentalRequestRotationList.OrderBy(e => e.RotationListSortOrder).ToList();
 
                 // return view model
                 return new ObjectResult(new HetsResponse(response));

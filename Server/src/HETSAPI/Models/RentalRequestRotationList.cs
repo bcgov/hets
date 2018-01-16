@@ -77,8 +77,8 @@ namespace HETSAPI.Models
         /// </summary>   
         [ForeignKey("Equipment")]
 		[JsonIgnore]		
-        public int? EquipmentId { get; set; }
-        
+        public int? EquipmentId { get; set; }       
+
         /// <summary>
         /// The rental agreement (if any) created for an accepted hire offer.
         /// </summary>
