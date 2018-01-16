@@ -409,6 +409,7 @@ namespace HETSAPI.Mappings
                 dto.ExpectedStartDate = model.ExpectedStartDate;
                 dto.ExpectedEndDate = model.ExpectedEndDate;
                 dto.FirstOnRotationList = model.FirstOnRotationList;
+                dto.FirstOnRotationListId = model.FirstOnRotationList.Id;
                 dto.Notes = model.Notes;
                 dto.Attachments = model.Attachments;
                 dto.History = model.History;
