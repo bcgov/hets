@@ -1119,6 +1119,15 @@ function parseRentalRequestRotationList(rotationListItem, rentalRequest = {}) {
   rotationListItem.status = 'N/A';
 }
 
+export function getRentalRequestRotationList(id) {
+  // return new ApiRequest(`/api/rentalrequests/${id}/rotationList/`).get().then(response => {
+  //   var rotationList = response.data;
+  //   debugger; //eslint-disable-line
+
+  //   store.dispatch({ type: Action.UPDATE_RENTAL_REQUEST_ROTATION_LIST, rentalRequestRotationList: rotationList });
+  // });
+}
+
 export function updateRentalRequestRotationList(rentalRequestRotationList, rentalRequest) {
   return new ApiRequest(`/rentalrequests/${ rentalRequest.id }/rentalrequestrotationlist/${ rentalRequestRotationList.id }`).put({ ...rentalRequestRotationList, rentalAgreement: null }).then(response => {
     var rentalRequestRotationList = response.data;

@@ -38,6 +38,7 @@ TODO:
 var RentalRequestsDetail = React.createClass({
   propTypes: {
     rentalRequest: React.PropTypes.object,
+    rentalRequestRotationList: React.PropTypes.object,
     rentalAgreement: React.PropTypes.object,
     notes: React.PropTypes.object,
     attachments: React.PropTypes.object,
@@ -72,11 +73,13 @@ var RentalRequestsDetail = React.createClass({
 
   fetch() {
     this.setState({ loading: true });
-
-    var rentalRequestsPromise = Api.getRentalRequest(this.props.params.rentalRequestId);
+    var rentalRequestId = this.props.params.rentalRequestId;
+    var rentalRequestsPromise = Api.getRentalRequest(rentalRequestId);
+    var rotationListPromise = Api.getRentalRequestRotationList(rentalRequestId);
     var documentsPromise = Api.getRentalRequestDocuments(this.props.params.rentalRequestId);
 
-    return Promise.all([rentalRequestsPromise, documentsPromise]).finally(() => {
+
+    return Promise.all([rentalRequestsPromise, rotationListPromise, documentsPromise]).finally(() => {
       this.setState({ loading: false });
     });
   },
@@ -263,7 +266,7 @@ var RentalRequestsDetail = React.createClass({
       <Well>
         <h3>Request Status <span className="pull-right">
           <Button onClick={ this.print }><Glyphicon glyph="print" title="Print" /></Button>
-          <CheckboxControl id="showAttachments" inline checked={ this.state.showAttachments } updateState={ this.updateState }><small>Show Attachments</small></CheckboxControl>
+          <CheckboxControl id="showAttachments" inline updateState={ this.updateState }><small>Show Attachments</small></CheckboxControl>
         </span></h3>
         {(() => {
           if (this.state.loading) { return <div style={{ textAlign: 'center' }}><Spinner/></div>; }
@@ -286,8 +289,6 @@ var RentalRequestsDetail = React.createClass({
             { field: 'status',                  title: 'Status'            },
           ];
 
-          // var separator = <span style={{ float: 'left'}}>{ '|' }</span>;
-
           return <TableControl id="rotation-list" headers={ headers }>
             {
               _.map(rotationList, (listItem) => {
@@ -298,7 +299,7 @@ var RentalRequestsDetail = React.createClass({
                     <td><Link to={ `${Constant.EQUIPMENT_PATHNAME}/${listItem.equipmentId}` }>{ listItem.equipmentCode }</Link></td>
                     <td>{ listItem.equipmentDetails }
                       { this.state.showAttachments && 
-                        <div>{ listItem.equipmentAttachments }</div>
+                        <div>Attachments: { listItem.equipmentAttachments ? listItem.equipmentAttachments : 'N/A' }</div>
                       }
                     </td>
                     <td></td>
@@ -313,7 +314,6 @@ var RentalRequestsDetail = React.createClass({
                     <td>
                       <ButtonGroup>
                         <Button bsStyle="link" title="Show Offer" onClick={ this.openHireOfferDialog.bind(this, listItem) }>{ listItem.status }</Button>
-                        {/* { separator } */}
                         {/* {(() => {x
                           // If RentalRequestRotationList.rentalAgreement is non-null - go to that Rental Agreement.
                           if (listItem.rentalAgreement && listItem.rentalAgreement.id) {
@@ -378,6 +378,7 @@ var RentalRequestsDetail = React.createClass({
 function mapStateToProps(state) {
   return {
     rentalRequest: state.models.rentalRequest,
+    rentalRequestRotationList: state.models.rentalRequestRotationList,
     rentalAgreement: state.models.rentalAgreement,
     notes: state.models.rentalRequestNotes,
     attachments: state.models.rentalRequestAttachments,
