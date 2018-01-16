@@ -267,7 +267,6 @@ namespace HETSAPI.Services.Impl
             return new ObjectResult(new HetsResponse(result));
         }
 
-
         /// <summary>
         /// Get attachments associated with an equipment record
         /// </summary>
@@ -447,9 +446,25 @@ namespace HETSAPI.Services.Impl
                             owner.EquipmentList.Add(item);
                             _context.Owners.Update(owner);
                         }
-                    }
+                    }                    
 
-                    _context.SaveChanges();                                       
+                    // save changes
+                    _context.SaveChanges();
+
+                    // update the seniority list to add this piece of equipment
+                    if (item.LocalAreaId != null && 
+                        item.DistrictEquipmentTypeId != null && 
+                        item.DistrictEquipmentType.EquipmentTypeId != null &&
+                        item.LocalAreaId != -1 && 
+                        item.DistrictEquipmentTypeId != -1 && 
+                        item.DistrictEquipmentType.EquipmentTypeId != -1)
+                    {
+                        int localAreaId = (int)item.LocalAreaId;
+                        int districtEquipmentTypeId = (int) item.DistrictEquipmentTypeId;
+                        int equipmentTypeId = (int) item.DistrictEquipmentType.EquipmentTypeId;
+
+                        _context.CalculateSeniorityList(localAreaId, districtEquipmentTypeId, equipmentTypeId, _configuration);
+                    }
                 }
 
                 // return the full object for the client side code
@@ -474,9 +489,9 @@ namespace HETSAPI.Services.Impl
         }
 
         /// <summary>
-        /// Recalculates seniority for the database
+        /// Recalculates seniority for an entire region
         /// </summary>
-        /// <remarks>Used to calculate seniority for all database records.</remarks>
+        /// <remarks>Used to calculate seniority for all database records</remarks>
         /// <response code="200">OK</response>
         public virtual IActionResult EquipmentRecalcSeniorityGetAsync(int region)
         {
@@ -699,6 +714,8 @@ namespace HETSAPI.Services.Impl
             item.ReceivedDate = DateTime.UtcNow;
             item.LastVerifiedDate = DateTime.UtcNow;
 
+            item.Seniority = 0.0f;
+
             // generate a new equipment code.
             if (item.Owner != null)
             {
@@ -730,9 +747,5 @@ namespace HETSAPI.Services.Impl
         }
 
         #endregion
-    }
-
-    public class AppSettingsSection
-    {
-    }
+    }    
 }

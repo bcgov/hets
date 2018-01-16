@@ -179,6 +179,19 @@ namespace HETSAPI.Controllers
         }
 
         /// <summary>
+        /// Recalc the Roation List for a Rental Request
+        /// </summary>
+        /// <param name="rentalRequest"></param>
+        [HttpGet]
+        [Route("/api/rentalrequests/recalcRotation")]
+        [SwaggerOperation("RentalRequestsRotationListRecalcGet")]
+        [RequiresPermission(Permission.ADMIN)]
+        public virtual IActionResult RentalRequestsRotationListRecalcGet([FromQuery]int rentalRequest)
+        {
+            return _service.RentalRequestsRotationListRecalcGetAsync(rentalRequest);
+        }        
+
+        /// <summary>
         /// Searches RentalRequests
         /// </summary>
         /// <remarks>Used for the rental request search page.</remarks>
