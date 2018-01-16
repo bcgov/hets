@@ -14,8 +14,11 @@
             padding: 10px;
             font-family: Verdana, Geneva, sans-serif;
             font-size: 12pt;
-        }        
+        }      
     </style>
+    
+    <script src="https://ajax.aspnetcdn.com/ajax/jQuery/jquery-3.2.1.min.js"></script>
+    
     
     <script language="javascript">
         function updateUserId(userId) {
@@ -30,55 +33,85 @@
             window.location.href = "/api/authentication/dev/cleartoken";
         }
 
-        function recalcSeniority() {
-            window.location.href = "/api/equipment/recalcSeniority?region=3";
+        function recalcSeniority() {            
+            $.ajax({
+                url: "/api/equipment/recalcSeniority?region=3",
+                type: "GET",
+                timeout: 60000, // sets timeout to 1 min
+                success: function (response) {
+                    alert('done');
+                },
+                error: function (xhr, ajaxOptions, thrownError) {
+                    alert(xhr.responseText);
+                }
+            });
         }
+
+        function recalcRotation() {
+            $.ajax({
+                url: "/api/rentalrequests/recalcRotation?rentalRequest=18",
+                type: "GET",
+                timeout: 60000, // sets timeout to 1 min
+                success: function (response) {
+                    alert('done');
+                },
+                error: function (xhr, ajaxOptions, thrownError) {
+                    alert(xhr.responseText);
+                }
+            });
+        }        
     </script>
 </head>
 <body>
-    <h2>@ViewData["Title"]</h2>
-    <hr />
+<h2>@ViewData["Title"]</h2>
+<hr/>
+<div>
+    <h3>Current User Id</h3>
+    <label>UserId:</label> &nbsp; @Model.UserId
+</div>
+
+@if (Model.DevelopmentEnvironment)
+{
+    <hr/>
     <div>
-        <h3>Current User Id</h3>
-        <label>UserId:</label> &nbsp; @Model.UserId
+        <h3>Reset User Id</h3>
+        <label>UserId:</label> <input text="" id="newUserId"/>
+        <button onclick="updateUserId(newUserId.value);">Override User Context</button>&nbsp;&nbsp;
+        <button onclick="expireUserId();">Clear User Context</button>
+    </div>
+}
+
+@if (Model.DevelopmentEnvironment)
+{
+    <hr/>
+    <div>
+        <h3>View HETS API</h3>
+        <a href="~/swagger/ui/index.html">Swagger</a>
     </div>
 
-    @if (Model.DevelopmentEnvironment)
-    {
-        <hr />
-        <div>
-            <h3>Reset User Id</h3>
-            <label>UserId:</label> <input text="" id="newUserId" />
-            <button onclick="updateUserId(newUserId.value);">Override User Context</button>&nbsp;&nbsp;
-            <button onclick="expireUserId();">Clear User Context</button>
-        </div>
-    }
+    <hr/>
+    <div>
+        <h3>Import BC Bid Data</h3>
+        <a href="~/Import">Import</a>
+    </div>
 
-    @if (Model.DevelopmentEnvironment)
-    {
-        <hr />
-        <div>
-            <h3>View HETS API</h3>
-            <a href="~/swagger/ui/index.html">Swagger</a>
-        </div>
+    <hr/>
+    <div>
+        <h3>Hangfire Monitor</h3>
+        <a href="~/hangfire">Hangfire</a>
+    </div>
 
-        <hr />
-        <div>
-            <h3>Import BC Bid Data</h3>
-            <a href="~/Import">Import</a>
-        </div>
+    <hr/>
+    <div>
+        <h3>Recalc Equipment Seniority</h3>
+        <button onclick="recalcSeniority();">Recalc (Region (3) "Northern")</button>
+    </div>
 
-        <hr />
-        <div>
-            <h3>Hangfire Monitor</h3>
-            <a href="~/hangfire">Hangfire</a>
-        </div>
-
-        <hr />
-        <div>
-            <h3>Recalc Equipment Seniority</h3>
-            <button onclick="recalcSeniority();">Recalc (Region (3) "Northern")</button>
-        </div>        
-    }
+    <hr/>
+    <div>
+        <h3>Recalc Rotation List (for a Rental Request)</h3>
+        <button onclick="recalcRotation();">Recalc (Request (18))</button>
+    </div>
+}
 </body>
 </html>

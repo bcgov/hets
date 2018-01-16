@@ -95,6 +95,12 @@ namespace HETSAPI.Services
         IActionResult RentalrequestsPostAsync(RentalRequest item);
 
         /// <summary>
+        /// Recalc the Rotation List for a Rental REquest
+        /// </summary>
+        /// <param name="rentalRequestId"></param>
+        IActionResult RentalRequestsRotationListRecalcGetAsync(int rentalRequestId);
+
+        /// <summary>
         /// Searches RentalRequests
         /// </summary>
         /// <remarks>Used for the rental request search page.</remarks>

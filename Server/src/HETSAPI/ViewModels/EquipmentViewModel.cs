@@ -137,9 +137,9 @@ namespace HETSAPI.ViewModels
                 Seniority = (float)Math.Round((Decimal)seniority, 3, MidpointRounding.AwayFromZero);
 
                 if (BlockNumber != null)
-                {
-                    float temp = (float)BlockNumber * 10;
-                    SenioritySortOrder = temp + Seniority;
+                {                    
+                    SenioritySortOrder =
+                        (10 - (float)BlockNumber) * 10000 + (10000 + (float)Seniority);
                 }
             }
         }
