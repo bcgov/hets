@@ -58,7 +58,7 @@ rental_requests=RentalRequest/RentalRequest_RentalRequest.json
 # ==============================================================================================
 
 # Users, Roles, and Permissions ...
-# ./load.sh ./${service_areas} ${API_PREFIX}/serviceareas/${BULK_PATH} "$@"
+./load.sh ./${service_areas} ${API_PREFIX}/serviceareas/${BULK_PATH} "$@"
 exitOnError
 ./load.sh ./${local_areas} ${API_PREFIX}/localareas/${BULK_PATH} "$@"
 exitOnError
