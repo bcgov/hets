@@ -1119,16 +1119,25 @@ function parseRentalRequestRotationList(rotationListItem, rentalRequest = {}) {
   rotationListItem.status = 'N/A';
 }
 
+function parseRotationListItem(item) {
+  item.equipment = item.equipment || {};
+  item.equipment.owner = item.equipment.owner || {};
+  item.equipmentDetails = concat(item.equipment.year, concat(item.equipment.make, concat(item.equipment.model, concat(item.equipment.serialNumber, item.equipment.size, '/'), '/'), '/'), ' ');
+  item.equipment.seniority = `${getBlockDisplayName(item.equipment.blockNumber)}-${item.equipment.seniority && item.equipment.seniority.toFixed(3)} (${item.equipment.numberInBlock})`;
+}
+
 export function getRentalRequestRotationList(id) {
   return new ApiRequest(`/rentalrequests/${id}/rotationList`).get().then(response => {
     var rotationList = response.data;
+
+    _.map(rotationList.rentalRequestRotationList, item => parseRotationListItem(item));
     
     store.dispatch({ type: Action.UPDATE_RENTAL_REQUEST_ROTATION_LIST, rentalRequestRotationList: rotationList });
   });
 }
 
 export function updateRentalRequestRotationList(rentalRequestRotationList, rentalRequest) {
-  return new ApiRequest(`/rentalrequests/${ rentalRequest.id }/rentalrequestrotationlist/${ rentalRequestRotationList.id }`).put({ ...rentalRequestRotationList, rentalAgreement: null }).then(response => {
+  return new ApiRequest(`/rentalrequestrotationlists/${ rentalRequestRotationList.id }`).put({ ...rentalRequestRotationList, rentalAgreement: null }).then(response => {
     var rentalRequestRotationList = response.data;
     // Add display fields
     parseRentalRequestRotationList(rentalRequestRotationList, rentalRequest);

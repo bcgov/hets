@@ -36,8 +36,9 @@ TODO:
 * Print / Notes / Docs / Contacts (TBD) / History / Request Status List / Clone / Request Attachments
 
 */
-const OFFER_RESPONSE_NO = 'No';
-const OFFER_RESPONSE_YES = 'Yes';
+const STATUS_YES = 'Yes';
+const STATUS_NO = 'No';
+const STATUS_FORCE_HIRE = 'Force Hire';
 
 var RentalRequestsDetail = React.createClass({
   propTypes: {
@@ -145,11 +146,13 @@ var RentalRequestsDetail = React.createClass({
   },
 
   saveHireOffer(hireOffer) {
-    Api.updateRentalRequestRotationList(hireOffer, this.props.rentalRequest.data).finally(() => {
+    let hireOfferUpdated = { ...hireOffer };
+    delete hireOfferUpdated.isFirstNullRecord;
+    Api.updateRentalRequestRotationList(hireOfferUpdated, this.props.rentalRequest.data).finally(() => {
       this.fetch();
-      if ((hireOffer.offerResponse === OFFER_RESPONSE_YES) && hireOffer.rentalAgreement && hireOffer.rentalAgreement.id) {
+      if ((hireOffer.offerResponse === STATUS_YES || hireOffer.offerResponse === STATUS_FORCE_HIRE) && hireOffer.rentalAgreement && hireOffer.rentalAgreement.id) {
         this.props.router.push({ pathname: `${Constant.RENTAL_AGREEMENTS_PATHNAME}/${this.props.rentalAgreement.id}` });
-      } else if (hireOffer.offerResponse === OFFER_RESPONSE_YES) {
+      } else if (hireOffer.offerResponse === STATUS_YES || hireOffer.offerResponse === STATUS_FORCE_HIRE) {
         this.saveNewRentalAgreement(hireOffer);
       }
       this.closeHireOfferDialog();
@@ -204,7 +207,7 @@ var RentalRequestsDetail = React.createClass({
 
   renderStatusText(listItem) {
     let text = 'Hire';
-    if (listItem.offerResponse === OFFER_RESPONSE_NO) {
+    if (listItem.offerResponse === STATUS_NO) {
       text = listItem.offerRefusalReason;
     }
     return text;
@@ -300,6 +303,7 @@ var RentalRequestsDetail = React.createClass({
             { field: 'serviceHoursThisYear',    title: 'YTD Hours'         },
             { field: 'equipmentCode',           title: 'Equipment ID'      },
             { field: 'equipmentDetails',        title: 'Equipment Details' },
+            { field: 'equipmentOwner',           title: 'Owner'             },
             { field: 'primaryContactName',      title: 'Contact'           },
             { field: 'primaryContactWorkPhone', title: 'Work Phone'        },
             { field: 'primaryContactCellPhone', title: 'Cell Phone'        },
@@ -311,7 +315,6 @@ var RentalRequestsDetail = React.createClass({
           return <TableControl id="rotation-list" headers={ headers }>
             {
               _.map(rotationList, (listItem) => {
-                const equipmentDetails = concat(listItem.equipment.year, concat(listItem.equipment.make, concat(listItem.equipment.model, concat(listItem.equipment.serialNumber, listItem.equipment.size, '/'), '/'), '/'), ' ');
                 const owner = listItem.equipment.owner;
                 var isFirstNullRecord = false;
                 // Set first null record to show correct response dialog link text
@@ -320,15 +323,16 @@ var RentalRequestsDetail = React.createClass({
                   <tr key={ listItem.id }>
                     <td>{ listItem.equipment.seniority }</td>
                     <td>{ listItem.equipment.serviceHoursLastYear }</td>
-                    <td><Link to={ `${Constant.EQUIPMENT_PATHNAME}/${listItem.equipment.id}` }>{ listItem.equipment.equipmentCode }</Link></td>
-                    <td>{ equipmentDetails }
+                <td><Link to={ `${Constant.EQUIPMENT_PATHNAME}/${listItem.equipment.id}` }>{ listItem.equipment.equipmentCode }</Link></td>
+                    <td>{ listItem.equipmentDetails }
                       { this.state.showAttachments && 
                         <div>Attachments: { listItem.equipment.equipmentAttachments ? listItem.equipment.equipmentAttachments : 'N/A' }</div>
                       }
                     </td>
-                    <td>{ owner && `${owner.primaryContact.givenName} ${owner.primaryContact.surname}` }</td>
-                    <td>{ owner && owner.primaryContact.workPhoneNumber }</td>
-                    <td>{ owner && owner.primaryContact.mobilePhoneNumber }</td>
+                    <td>{ owner.organizationName }</td>
+                    <td>{ owner.primaryContact && `${owner.primaryContact.givenName} ${owner.primaryContact.surname}` }</td>
+                    <td>{ owner.primaryContact && owner.primaryContact.workPhoneNumber }</td>
+                    <td>{ owner.primaryContact && owner.primaryContact.mobilePhoneNumber }</td>
                     <td>
                       <ButtonGroup>
                         {(() => {
@@ -362,15 +366,6 @@ var RentalRequestsDetail = React.createClass({
                             </Button>
                           );
                         })()}
-                        {/* <span style={{ float: 'left'}}>{ '|' }</span>
-                        {(() => {
-                          // If RentalRequestRotationList.rentalAgreement is non-null - go to that Rental Agreement.
-                          if (listItem.rentalAgreement && listItem.rentalAgreement.id) {
-                            return <Link title="Open Rental Agreement" to={ `${Constant.RENTAL_AGREEMENTS_PATHNAME}/${listItem.rentalAgreement.id}` }>Agreement</Link>;
-                          }
-                          // If RentalRequestRotationList.rentalAgreement is null - go to the Create New Rental Agreement with needed information about the new agreement
-                          return <Button bsStyle="link" title="Create Rental Agreement" onClick={ this.saveNewRentalAgreement.bind(this, listItem) }>Agreement</Button>;
-                        })()} */}
                       </ButtonGroup>
                     </td>
                   </tr>

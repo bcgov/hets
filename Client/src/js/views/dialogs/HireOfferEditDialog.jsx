@@ -159,13 +159,13 @@ var HireOfferEditDialog = React.createClass({
     promise({ ...this.props.hireOffer.equipment, ...props }).then(() => {
       this.props.onSave({ ...this.props.hireOffer, ...{
         isForceHire: this.state.isForceHire,
-        wasAsked: this.state.wasAsked,
+        wasAsked: this.state.wasAsked ? true : false,
         askedDateTime: toZuluTime(this.state.askedDateTime),
         offerResponse: this.state.offerResponse,
         offerResponseDatetime: toZuluTime(this.state.offerResponseDatetime),
         offerRefusalReason: this.state.offerRefusalReason,
         offerResponseNote: this.state.offerResponseNote,
-        note: this.state.note,
+        note: this.state.reasonForForceHire,
       }});
     });
   },
@@ -279,7 +279,8 @@ var HireOfferEditDialog = React.createClass({
                 </FormGroup>
               </Col>
             </Row>
-            <Row>
+            {/* Todo will be used in future */}
+            {/* <Row>
               <Col md={12}>
                 <FormGroup controlId="equipmentInformationUpdateNeeded">
                   <CheckboxControl id="equipmentInformationUpdateNeeded" checked={ this.state.equipmentInformationUpdateNeeded } updateState={ this.updateState }>Flag Equipment Updates</CheckboxControl>
@@ -293,7 +294,7 @@ var HireOfferEditDialog = React.createClass({
                   <FormInputControl componentClass="textarea" defaultValue={ this.state.equipmentInformationUpdateNeededReason } readOnly={ isReadOnly } updateState={ this.updateState } />
                 </FormGroup>
               </Col>
-            </Row>
+            </Row> */}
           </Grid>
         </Form>;
       })()}
