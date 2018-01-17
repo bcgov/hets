@@ -7160,6 +7160,10 @@ definitions:
         type: string
         maxLength: 2048
         description: A note about the attachment,  optionally maintained by the user.
+      mimeType:
+        type: string
+        maxLength: 255
+        description: Mime-Type for attachment.
       type:
         type: string
         maxLength: 255

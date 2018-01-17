@@ -8178,6 +8178,34 @@
             "table": null
         },
         {
+            "Description": "Mime-Type for attachment.",
+            "Length": "255",
+            "Name": "mimeType",
+            "RefDef": null,
+            "Required": [
+                {
+                    "req": "id"
+                },
+                {
+                    "req": "fileName"
+                },
+                {
+                    "req": "fileContents"
+                }
+            ],
+            "Unique": null,
+            "binary": null,
+            "boolean": null,
+            "datetime": null,
+            "float": null,
+            "id": null,
+            "integer": null,
+            "links": null,
+            "ref": null,
+            "string": "string",
+            "table": null
+        },
+        {
             "Description": "Type of attachment",
             "Length": "255",
             "Name": "type",

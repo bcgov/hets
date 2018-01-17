@@ -54,6 +54,10 @@ namespace HETSAPI.Migrations
                         .HasColumnName("LAST_UPDATE_USERID")
                         .HasMaxLength(50);
 
+                    b.Property<string>("MimeType")
+                        .HasColumnName("MIME_TYPE")
+                        .HasMaxLength(255);
+
                     b.Property<int?>("OwnerId")
                         .HasColumnName("OWNER_ID");
 

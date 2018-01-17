@@ -22,18 +22,20 @@ namespace HETSAPI.Models
         /// <summary>
         /// Initializes a new instance of the <see cref="Attachment" /> class.
         /// </summary>
-        /// <param name="id">A system-generated unique identifier for an Attachment (required).</param>
-        /// <param name="fileName">Filename as passed by the user uploading the file (required).</param>
-        /// <param name="fileContents">Binary contents of the file (required).</param>
-        /// <param name="description">A note about the attachment,  optionally maintained by the user..</param>
-        /// <param name="type">Type of attachment.</param>
-        public Attachment(int id, string fileName, byte[] fileContents, string description = null, string type = null)
-        {   
-            Id = id;
-            FileName = fileName;
-            FileContents = fileContents;
-            Description = description;
-            Type = type;
+        /// <param name="Id">A system-generated unique identifier for an Attachment (required).</param>
+        /// <param name="FileName">Filename as passed by the user uploading the file (required).</param>
+        /// <param name="FileContents">Binary contents of the file (required).</param>
+        /// <param name="Description">A note about the attachment,  optionally maintained by the user..</param>
+        /// <param name="MimeType">Mime-Type for attachment..</param>
+        /// <param name="Type">Type of attachment.</param>
+        public Attachment(int Id, string FileName, byte[] FileContents, string Description = null, string MimeType = null, string Type = null)
+        {
+            this.Id = Id;
+            this.FileName = FileName;
+            this.FileContents = FileContents;
+            this.Description = Description;
+            this.MimeType = MimeType;
+            this.Type = Type;
         }
 
         /// <summary>
@@ -65,7 +67,16 @@ namespace HETSAPI.Models
         [MetaData (Description = "A note about the attachment,  optionally maintained by the user.")]
         [MaxLength(2048)]        
         public string Description { get; set; }
-        
+
+        /// <summary>
+        /// Mime-Type for attachment.
+        /// </summary>
+        /// <value>Mime-Type for attachment.</value>
+        [MetaData (Description = "Mime-Type for attachment.")]
+        [MaxLength(255)]
+
+        public string MimeType { get; set; }
+
         /// <summary>
         /// Type of attachment
         /// </summary>
@@ -87,6 +98,7 @@ namespace HETSAPI.Models
             sb.Append("  FileName: ").Append(FileName).Append("\n");
             sb.Append("  FileContents: ").Append(FileContents).Append("\n");
             sb.Append("  Description: ").Append(Description).Append("\n");
+            sb.Append("  MimeType: ").Append(MimeType).Append("\n");
             sb.Append("  Type: ").Append(Type).Append("\n");
             sb.Append("}\n");
 
@@ -143,6 +155,11 @@ namespace HETSAPI.Models
                     Description == other.Description ||
                     Description != null &&
                     Description.Equals(other.Description)
+                ) &&
+                (
+                    this.MimeType == other.MimeType ||
+                    this.MimeType != null &&
+                    this.MimeType.Equals(other.MimeType)
                 ) &&                 
                 (
                     Type == other.Type ||
@@ -178,6 +195,11 @@ namespace HETSAPI.Models
                 if (Description != null)
                 {
                     hash = hash * 59 + Description.GetHashCode();
+                }
+
+                if (this.MimeType != null)
+                {
+                    hash = hash * 59 + this.MimeType.GetHashCode();
                 }
 
                 if (Type != null)
