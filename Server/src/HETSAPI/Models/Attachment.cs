@@ -74,7 +74,6 @@ namespace HETSAPI.Models
         /// <value>Mime-Type for attachment.</value>
         [MetaData (Description = "Mime-Type for attachment.")]
         [MaxLength(255)]
-
         public string MimeType { get; set; }
 
         /// <summary>

@@ -7,6 +7,7 @@ using HETSAPI.Models;
 using HETSAPI.ViewModels;
 using HETSAPI.Mappings;
 using Microsoft.AspNetCore.Http;
+using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Microsoft.Extensions.Configuration;
 
 namespace HETSAPI.Services.Impl
@@ -102,7 +103,14 @@ namespace HETSAPI.Services.Impl
                 .Include(x => x.RentalRequestRotationList)
                 .ToList();
 
-            return new ObjectResult(new HetsResponse(result));
+            List<RentalRequestViewModel> resultModel = new List<RentalRequestViewModel>();
+
+            foreach (RentalRequest rentalRequest in result)
+            {
+                resultModel.Add(rentalRequest.ToRentalRequestViewModel());
+            }
+
+            return new ObjectResult(new HetsResponse(resultModel));
         }
 
         /// <summary>
@@ -272,8 +280,8 @@ namespace HETSAPI.Services.Impl
                     .Include(x => x.Notes)
                     .Include(x => x.Project.PrimaryContact)
                     .First(a => a.Id == id);
-
-                return new ObjectResult(new HetsResponse(result));
+                
+                return new ObjectResult(new HetsResponse(result.ToRentalRequestViewModel()));
             }
 
             // record not found
@@ -297,6 +305,9 @@ namespace HETSAPI.Services.Impl
                     .Include(x => x.FirstOnRotationList)
                     .Include(x => x.RentalRequestRotationList)
                         .ThenInclude(y => y.Equipment)
+                        .ThenInclude(r => r.EquipmentAttachments)
+                    .Include(x => x.RentalRequestRotationList)
+                        .ThenInclude(y => y.Equipment)
                         .ThenInclude(e => e.Owner)
                         .ThenInclude(c => c.PrimaryContact)
                     .First(a => a.Id == id);
@@ -306,7 +317,7 @@ namespace HETSAPI.Services.Impl
                     result.RentalRequestRotationList.OrderBy(e => e.RotationListSortOrder).ToList();
 
                 // return view model
-                return new ObjectResult(new HetsResponse(result));
+                return new ObjectResult(new HetsResponse(result.ToRentalRequestViewModel()));
             }
 
             // record not found
@@ -333,7 +344,7 @@ namespace HETSAPI.Services.Impl
                 // save the changes
                 _context.SaveChanges();
 
-                return new ObjectResult(new HetsResponse(item));
+                return new ObjectResult(new HetsResponse(item.ToRentalRequestViewModel()));
             }
 
             // record not found
@@ -376,16 +387,31 @@ namespace HETSAPI.Services.Impl
 
                     int listSize = blockEquipment.Count;
 
-                    // find the starting position
-                    int currentPosition = 0;                                       
+                    // check if any items have "Active" contracts - and drop them from the list
+                    for (int i = listSize - 1; i >= 0; i--)
+                    {
+                        bool agreementExists = _context.RentalAgreements
+                            .Any(x => x.EquipmentId == blockEquipment[i].Id && 
+                                      x.Status == "Active");
 
-                    // next pass sets the rotation list sort order
+                        if (agreementExists)
+                        {
+                            blockEquipment.RemoveAt(i);
+                        }
+                    }
+
+                    // update list size for sorting
+                    listSize = blockEquipment.Count;
+
+                    // sets the rotation list sort order
+                    int currentPosition = 0;
+
                     for (int i = 0; i < listSize; i++)
                     {
                         RentalRequestRotationList rentalRequestRotationList =
                             new RentalRequestRotationList
                             {
-                                Equipment = blockEquipment[currentPosition],
+                                Equipment = blockEquipment[i],
                                 CreateTimestamp = DateTime.UtcNow,
                                 RotationListSortOrder = currentSortOrder
                             };
@@ -404,6 +430,7 @@ namespace HETSAPI.Services.Impl
 
                 // *******************************************************************************
                 // first get the localAreaRotationList.askNextBlock"N" for the given local area
+                // Identifies if an existing request is in progress
                 // *******************************************************************************
                 bool exists = _context.LocalAreaRotationLists.Any(a => a.LocalArea.Id == item.LocalArea.Id);
 
@@ -446,7 +473,7 @@ namespace HETSAPI.Services.Impl
                 // 2. the first on the list id for the Rental Request 
                 //   (HET_RENTAL_REQUEST.FIRST_ON_ROTATION_LIST_ID)
                 // *******************************************************************************
-                if (nextId == null && item.RentalRequestRotationList.Count > 0)
+                if (item.RentalRequestRotationList.Count > 0)
                 {
                     // no local area record exists - create!
                     item.FirstOnRotationListId = item.RentalRequestRotationList[0].Equipment.Id;
@@ -462,61 +489,24 @@ namespace HETSAPI.Services.Impl
                         item.RentalRequestRotationList[0].Equipment.BlockNumber <= numberOfBlocks)
                     {
                         areaRotationList.AskNextBlock1Id = item.RentalRequestRotationList[0].Equipment.Id;
-                        areaRotationList.AskNextBlock1Seniority =
-                            item.RentalRequestRotationList[0].Equipment.Seniority;
+                        areaRotationList.AskNextBlock1Seniority = item.RentalRequestRotationList[0].Equipment.Seniority;
                     }
                     else if (item.RentalRequestRotationList[0].Equipment.BlockNumber == 2 &&
                              item.RentalRequestRotationList[0].Equipment.BlockNumber <= numberOfBlocks)
                     {
                         areaRotationList.AskNextBlock2Id = item.RentalRequestRotationList[0].Equipment.Id;
-                        areaRotationList.AskNextBlock2Seniority =
-                            item.RentalRequestRotationList[0].Equipment.Seniority;
+                        areaRotationList.AskNextBlock2Seniority = item.RentalRequestRotationList[0].Equipment.Seniority;
                     }
                     else
                     {
                         areaRotationList.AskNextBlockOpenId = item.RentalRequestRotationList[0].Equipment.Id;
                     }
 
-                    _context.LocalAreaRotationLists.Add(areaRotationList);
-                }
-                else if (nextId != null && item.RentalRequestRotationList.Count > 0)
-                {
-                    // local area record exists - update the existing record
-                    item.FirstOnRotationListId = nextId;
-
-                    // get the block of this record
-                    RentalRequestRotationList nextRequest = 
-                        item.RentalRequestRotationList.Find(e => e.Equipment.Id == nextId);                    
-
-                    // put into the correct field
-                    if (nextRequest.Equipment.BlockNumber == 1 &&
-                        nextRequest.Equipment.BlockNumber <= numberOfBlocks)
+                    if (nextId == null)
                     {
-                        localAreaRotationList.AskNextBlock1Id = nextRequest.Equipment.Id;
-                        localAreaRotationList.AskNextBlock1Seniority = nextRequest.Equipment.Seniority;
-                        localAreaRotationList.AskNextBlock2Id = null;
-                        localAreaRotationList.AskNextBlock2Seniority = null;
-                        localAreaRotationList.AskNextBlockOpenId = null;
-
+                        _context.LocalAreaRotationLists.Add(areaRotationList);
                     }
-                    else if (nextRequest.Equipment.BlockNumber == 2 &&
-                             nextRequest.Equipment.BlockNumber <= numberOfBlocks)
-                    {
-                        localAreaRotationList.AskNextBlock2Id = nextRequest.Equipment.Id;
-                        localAreaRotationList.AskNextBlock2Seniority = nextRequest.Equipment.Seniority;
-                        localAreaRotationList.AskNextBlock1Id = null;
-                        localAreaRotationList.AskNextBlock1Seniority = null;
-                        localAreaRotationList.AskNextBlockOpenId = null;
-                    }
-                    else
-                    {
-                        localAreaRotationList.AskNextBlockOpenId = nextRequest.Equipment.Id;
-                        localAreaRotationList.AskNextBlock1Id = null;
-                        localAreaRotationList.AskNextBlock1Seniority = null;
-                        localAreaRotationList.AskNextBlock2Id = null;
-                        localAreaRotationList.AskNextBlock2Seniority = null;
-                    }
-                }      
+                }                   
             }
         }
 
@@ -651,7 +641,7 @@ namespace HETSAPI.Services.Impl
                     .Include(x => x.RentalRequestRotationList)
                     .First(a => a.Id == rentalRequestId);
 
-                return new ObjectResult(new HetsResponse(result));
+                return new ObjectResult(new HetsResponse(result.ToRentalRequestViewModel()));
             }
 
             // record not found
