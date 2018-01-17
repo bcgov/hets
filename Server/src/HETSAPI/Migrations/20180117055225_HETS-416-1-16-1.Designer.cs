@@ -11,8 +11,8 @@ using System;
 namespace HETSAPI.Migrations
 {
     [DbContext(typeof(DbAppContext))]
-    [Migration("20180116061153_HETS-417-1-15-1")]
-    partial class HETS4171151
+    [Migration("20180117055225_HETS-416-1-16-1")]
+    partial class HETS4161161
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -54,6 +54,10 @@ namespace HETSAPI.Migrations
                     b.Property<string>("LastUpdateUserid")
                         .HasColumnName("LAST_UPDATE_USERID")
                         .HasMaxLength(50);
+
+                    b.Property<string>("MimeType")
+                        .HasColumnName("MIME_TYPE")
+                        .HasMaxLength(255);
 
                     b.Property<int?>("OwnerId")
                         .HasColumnName("OWNER_ID");
@@ -161,10 +165,6 @@ namespace HETSAPI.Migrations
                     b.Property<string>("Notes")
                         .HasColumnName("NOTES")
                         .HasMaxLength(512);
-
-                    b.Property<string>("OrganizationName")
-                        .HasColumnName("ORGANIZATION_NAME")
-                        .HasMaxLength(150);
 
                     b.Property<int?>("OwnerId")
                         .HasColumnName("OWNER_ID");
