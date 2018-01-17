@@ -416,7 +416,8 @@ namespace HETSAPI.Services.Impl
                         .Include(x => x.AskNextBlock1)
                         .Include(x => x.AskNextBlock2)
                         .Include(x => x.AskNextBlockOpen)
-                        .FirstOrDefault(x => x.LocalArea.Id == item.LocalArea.Id);
+                        .FirstOrDefault(x => x.LocalArea.Id == item.LocalArea.Id &&
+                                             x.DistrictEquipmentTypeId == item.DistrictEquipmentTypeId);
                 }
 
                 // determine what the next id is
@@ -445,8 +446,9 @@ namespace HETSAPI.Services.Impl
                 // 2. the first on the list id for the Rental Request 
                 //   (HET_RENTAL_REQUEST.FIRST_ON_ROTATION_LIST_ID)
                 // *******************************************************************************
-                if (localAreaRotationList == null && item.RentalRequestRotationList.Count > 0)
+                if (nextId == null && item.RentalRequestRotationList.Count > 0)
                 {
+                    // no local area record exists - create!
                     item.FirstOnRotationListId = item.RentalRequestRotationList[0].Equipment.Id;
 
                     LocalAreaRotationList areaRotationList = new LocalAreaRotationList
@@ -477,9 +479,9 @@ namespace HETSAPI.Services.Impl
 
                     _context.LocalAreaRotationLists.Add(areaRotationList);
                 }
-                else if (localAreaRotationList != null && item.RentalRequestRotationList.Count > 0)
-                {                    
-                    // update the existing record
+                else if (nextId != null && item.RentalRequestRotationList.Count > 0)
+                {
+                    // local area record exists - update the existing record
                     item.FirstOnRotationListId = nextId;
 
                     // get the block of this record

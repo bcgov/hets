@@ -61,7 +61,7 @@
             $.ajax({
                 url: "/api/rentalrequests/recalcRotation?rentalRequest=" + requestId,
                 type: "GET",
-                timeout: 60000, // sets timeout to 1 min
+                timeout: 360000, // sets timeout to 1 min
                 success: function (response) {
                     alert('done');
                 },
