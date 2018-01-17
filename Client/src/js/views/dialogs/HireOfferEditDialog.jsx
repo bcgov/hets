@@ -146,6 +146,10 @@ var HireOfferEditDialog = React.createClass({
       return this.openConfirmForceHireDialog();
     }
 
+    this.saveHireOffer();
+  },
+
+  saveHireOffer() {
     var props = this.buildEquipmentProps();
 
     // Update Equipment props only if they changed
@@ -164,6 +168,10 @@ var HireOfferEditDialog = React.createClass({
         note: this.state.note,
       }});
     });
+  },
+
+  onConfirmForceHire(reasonForForceHire) {
+    this.setState({ reasonForForceHire: reasonForForceHire }, this.saveHireOffer());
   },
 
   openConfirmForceHireDialog() {
@@ -192,28 +200,51 @@ var HireOfferEditDialog = React.createClass({
                 <Row>
                   <Col md={12}>
                     <FormGroup>
-                      <Radio onChange={ this.offerStatusChanged.bind(this, STATUS_FORCE_HIRE) } checked={ this.state.offerStatus == STATUS_FORCE_HIRE }>Force Hire</Radio>
+                      <Radio 
+                        onChange={ this.offerStatusChanged.bind(this, STATUS_FORCE_HIRE) } 
+                        checked={ this.state.offerStatus == STATUS_FORCE_HIRE }
+                      >
+                        Force Hire
+                      </Radio>
                     </FormGroup>
                   </Col>
                 </Row>
                 <Row>
                   <Col md={12}>
                     <FormGroup>
-                      <Radio onChange={ this.offerStatusChanged.bind(this, STATUS_ASKED) } checked={ this.state.offerStatus == STATUS_ASKED }>Asked</Radio>
+                      <Radio 
+                        onChange={ this.offerStatusChanged.bind(this, STATUS_ASKED) } 
+                        checked={ this.state.offerStatus == STATUS_ASKED }
+                        disabled={ !this.props.hireOffer.isFirstNullRecord && !this.props.hireOffer.offerResponse }
+                      >
+                        Asked
+                      </Radio>
                     </FormGroup>
                   </Col>
                 </Row>
                 <Row>
                   <Col md={12}>
                     <FormGroup>
-                      <Radio onChange={ this.offerStatusChanged.bind(this, STATUS_YES) } checked={ this.state.offerStatus == STATUS_YES }>Yes</Radio>
+                      <Radio 
+                        onChange={ this.offerStatusChanged.bind(this, STATUS_YES) } 
+                        checked={ this.state.offerStatus == STATUS_YES }
+                        disabled={ !this.props.hireOffer.isFirstNullRecord && !this.props.hireOffer.offerResponse }
+                      >
+                        Yes
+                      </Radio>
                     </FormGroup>
                   </Col>
                 </Row>
                 <Row>
                   <Col md={12}>
                     <FormGroup>
-                      <Radio onChange={ this.offerStatusChanged.bind(this, STATUS_NO) } checked={ this.state.offerStatus == STATUS_NO }>No</Radio>
+                      <Radio 
+                        onChange={ this.offerStatusChanged.bind(this, STATUS_NO) } 
+                        checked={ this.state.offerStatus == STATUS_NO }
+                        disabled={ !this.props.hireOffer.isFirstNullRecord && !this.props.hireOffer.offerResponse }
+                      >
+                        No
+                      </Radio>
                     </FormGroup>
                   </Col>
                 </Row>
@@ -267,7 +298,7 @@ var HireOfferEditDialog = React.createClass({
         </Form>;
       })()}
       { this.state.showConfirmForceHireDialog &&
-        <ConfirmForceHireDialog show={ this.state.showConfirmForceHireDialog } onSave={ this.onSave } onClose={ this.closeConfirmForceHireDialog } />
+        <ConfirmForceHireDialog show={ this.state.showConfirmForceHireDialog } onSave={ this.onConfirmForceHire } onClose={ this.closeConfirmForceHireDialog } />
       }
     </EditDialog>;
   },

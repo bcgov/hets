@@ -50,7 +50,7 @@ var ConfirmForceHireDialog = React.createClass({
   },
 
   onSave() {
-    this.props.onSave({});
+    this.props.onSave(this.state.reasonForForceHire);
   },
 
   render() {
@@ -64,7 +64,7 @@ var ConfirmForceHireDialog = React.createClass({
       <Form>
         <Grid fluid>
           <Col md={12}>
-            <h3><strong>Are you sure you want to do a Force Hire?</strong></h3>
+            <p><strong>Are you sure you want to do a Force Hire?</strong></p>
           </Col>
           <Row>
             <Col md={12}>
