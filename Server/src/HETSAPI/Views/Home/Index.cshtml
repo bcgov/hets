@@ -15,6 +15,10 @@
             font-family: Verdana, Geneva, sans-serif;
             font-size: 12pt;
         }      
+
+        #requestId, #regionId {
+            width: 30px;
+        }
     </style>
     
     <script src="https://ajax.aspnetcdn.com/ajax/jQuery/jquery-3.2.1.min.js"></script>
@@ -34,7 +38,7 @@
         }
 
         function recalcSeniority() {
-            var regionId = $("#regionId").value;
+            var regionId = $("#regionId").val();
             alert('Recalc Seniority for Region Id: ' + regionId);
 
             $.ajax({
@@ -51,7 +55,7 @@
         }
 
         function recalcRotation() {
-            var requestId = $("#requestId").value;
+            var requestId = $("#requestId").val();
             alert('Recalc Rotation for Request Id: ' + requestId);
 
             $.ajax({
@@ -127,14 +131,14 @@
     <div>
         <h4>Recalc Equipment Seniority</h4>
         <input type="number" width="5" value="3" id="regionId" /> 
-        <button onclick="recalcSeniority();">Recalc (Region (3) "Northern")</button>
+        <button onclick="recalcSeniority();">Recalc Seniority List for Region</button>
     </div>
 
     <hr/>
     <div>
         <h4>Recalc Rotation List (for a Rental Request)</h4>
         <input type="number" width="5" value="18" id="requestId" /> 
-        <button onclick="recalcRotation();">Recalc (Request (18))</button>        
+        <button onclick="recalcRotation();">Recalc Rotation List for Request</button>        
         <button onclick="getRotationList();">Get Rotation List</button>
     </div>
 }
