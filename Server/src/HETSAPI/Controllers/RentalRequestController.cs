@@ -53,22 +53,6 @@ namespace HETSAPI.Controllers
         }
 
         /// <summary>
-        /// Get attachments associated with a rental request
-        /// </summary>
-        /// <remarks>Returns attachments for a particular RentalRequest</remarks>
-        /// <param name="id">id of RentalRequest to fetch attachments for</param>
-        /// <response code="200">OK</response>
-        /// <response code="404">RentalRequest not found</response>
-        [HttpGet]
-        [Route("/api/rentalrequests/{id}/attachments")]
-        [SwaggerOperation("RentalrequestsIdAttachmentsGet")]
-        [SwaggerResponse(200, type: typeof(List<AttachmentViewModel>))]
-        public virtual IActionResult RentalrequestsIdAttachmentsGet([FromRoute]int id)
-        {
-            return _service.RentalrequestsIdAttachmentsGetAsync(id);
-        }
-
-        /// <summary>
         /// Delete rental request
         /// </summary>
         /// <param name="id">id of RentalRequest to delete</param>
@@ -98,6 +82,71 @@ namespace HETSAPI.Controllers
         }
 
         /// <summary>
+        /// Update rental request
+        /// </summary>
+        /// <param name="id">id of RentalRequest to update</param>
+        /// <param name="item"></param>
+        /// <response code="200">OK</response>
+        /// <response code="404">RentalRequest not found</response>
+        [HttpPut]
+        [Route("/api/rentalrequests/{id}")]
+        [SwaggerOperation("RentalrequestsIdPut")]
+        [SwaggerResponse(200, type: typeof(RentalRequestViewModel))]
+        public virtual IActionResult RentalrequestsIdPut([FromRoute]int id, [FromBody]RentalRequest item)
+        {
+            return _service.RentalrequestsIdPutAsync(id, item);
+        }        
+
+        /// <summary>
+        /// Create rental request
+        /// </summary>
+        /// <param name="item"></param>
+        /// <response code="201">RentalRequest created</response>
+        [HttpPost]
+        [Route("/api/rentalrequests")]
+        [SwaggerOperation("RentalrequestsPost")]
+        [SwaggerResponse(200, type: typeof(RentalRequestViewModel))]
+        public virtual IActionResult RentalrequestsPost([FromBody]RentalRequest item)
+        {
+            return _service.RentalrequestsPostAsync(item);
+        }
+
+        /// <summary>
+        /// Move a Rental Request from New (inactive) to In Progress (Active)
+        /// </summary>
+        /// <param name="id"></param>
+        /// <response>RentalRequest</response>
+        [HttpGet]
+        [Route("/api/rentalrequests/{id}/inProgress")]
+        [SwaggerOperation("RentalrequestsPost")]
+        [SwaggerResponse(200, type: typeof(RentalRequestViewModel))]
+        public virtual IActionResult RentalrequestsInProgressPostAsync([FromRoute]int id)
+        {
+            return _service.RentalrequestsInProgressPostAsync(id);
+        }    
+
+        /// <summary>
+        /// Searches RentalRequests
+        /// </summary>
+        /// <remarks>Used for the rental request search page.</remarks>
+        /// <param name="localareas">Local Areas (comma seperated list of id numbers)</param>
+        /// <param name="project">Searches equipmentAttachment type</param>
+        /// <param name="status">Status</param>
+        /// <param name="startDate">Inspection start date</param>
+        /// <param name="endDate">Inspection end date</param>
+        /// <response code="200">OK</response>
+        [HttpGet]
+        [Route("/api/rentalrequests/search")]
+        [SwaggerOperation("RentalrequestsSearchGet")]
+        [SwaggerResponse(200, type: typeof(List<RentalRequestSearchResultViewModel>))]
+        public virtual IActionResult RentalrequestsSearchGet([FromQuery]string localareas, [FromQuery]string project, [FromQuery]string status, [FromQuery]DateTime? startDate, [FromQuery]DateTime? endDate)
+        {
+            return _service.RentalrequestsSearchGetAsync(localareas, project, status, startDate, endDate);
+        }
+
+        #region Rental Request Rotation List
+
+        /// <summary>
         /// Get rental request rotation list for the rental request
         /// </summary>
         /// <param name="id">id of RentalRequest to fetch</param>
@@ -111,6 +160,60 @@ namespace HETSAPI.Controllers
         {
             return _service.RentalrequestsIdRotationListGetAsync(id);
         }
+
+        /// <summary>
+        /// Update a rental request rotation list record
+        /// </summary>
+        /// <remarks>Updates a rental request rotation list entry.  Side effect is the LocalAreaRotationList is also updated</remarks>
+        /// <param name="id">id of RentalRequest to update</param>
+        /// <param name="item"></param>
+        /// <response code="200">OK</response>
+        /// <response code="404">RentalRequestRotationList not found</response>
+        [HttpPut]
+        [Route("/api/rentalrequests/{id}/rentalRequestRotationList")]
+        [SwaggerOperation("RentalRequestRotationListIdPut")]
+        [SwaggerResponse(200, type: typeof(RentalRequestRotationList))]
+        public virtual IActionResult RentalrequestsIdRentalrequestrotationlistRentalRequestRotationListIdPut([FromRoute]int id, [FromBody]RentalRequestRotationList item)
+        {
+            return _service.RentalrequestRotationListIdPutAsync(id, item);
+        }
+
+        /// <summary>
+        /// Recalc the Roation List for a Rental Request
+        /// </summary>
+        /// <param name="id"></param>
+        [HttpGet]
+        [Route("/api/rentalrequests/{id}/recalcRotation")]
+        [SwaggerOperation("RentalRequestsRotationListRecalcGet")]
+        [RequiresPermission(Permission.ADMIN)]
+        public virtual IActionResult RentalRequestsRotationListRecalcGet([FromRoute]int id)
+        {
+            return _service.RentalRequestsRotationListRecalcGetAsync(id);
+        }
+
+        #endregion
+
+        #region Rental Request Attachments
+
+        /// <summary>
+        /// Get attachments associated with a rental request
+        /// </summary>
+        /// <remarks>Returns attachments for a particular RentalRequest</remarks>
+        /// <param name="id">id of RentalRequest to fetch attachments for</param>
+        /// <response code="200">OK</response>
+        /// <response code="404">RentalRequest not found</response>
+        [HttpGet]
+        [Route("/api/rentalrequests/{id}/attachments")]
+        [SwaggerOperation("RentalrequestsIdAttachmentsGet")]
+        [SwaggerResponse(200, type: typeof(List<AttachmentViewModel>))]
+        public virtual IActionResult RentalrequestsIdAttachmentsGet([FromRoute]int id)
+        {
+            return _service.RentalrequestsIdAttachmentsGetAsync(id);
+        }
+
+        #endregion
+
+        #region Rental Request History
 
         /// <summary>
         /// Get history associated with a rental request
@@ -145,97 +248,6 @@ namespace HETSAPI.Controllers
             return _service.RentalrequestsIdHistoryPostAsync(id, item);
         }
 
-        /// <summary>
-        /// Update rental request
-        /// </summary>
-        /// <param name="id">id of RentalRequest to update</param>
-        /// <param name="item"></param>
-        /// <response code="200">OK</response>
-        /// <response code="404">RentalRequest not found</response>
-        [HttpPut]
-        [Route("/api/rentalrequests/{id}")]
-        [SwaggerOperation("RentalrequestsIdPut")]
-        [SwaggerResponse(200, type: typeof(RentalRequestViewModel))]
-        public virtual IActionResult RentalrequestsIdPut([FromRoute]int id, [FromBody]RentalRequest item)
-        {
-            return _service.RentalrequestsIdPutAsync(id, item);
-        }        
-
-        /// <summary>
-        /// Create rental request
-        /// </summary>
-        /// <param name="item"></param>
-        /// <response code="201">RentalRequest created</response>
-        [HttpPost]
-        [Route("/api/rentalrequests")]
-        [SwaggerOperation("RentalrequestsPost")]
-        [SwaggerResponse(200, type: typeof(RentalRequestViewModel))]
-        public virtual IActionResult RentalrequestsPost([FromBody]RentalRequest item)
-        {
-            return _service.RentalrequestsPostAsync(item);
-        }
-
-        /// <summary>
-        /// Update a rental request rotation list record
-        /// </summary>
-        /// <remarks>Updates a rental request rotation list entry.  Side effect is the LocalAreaRotationList is also updated</remarks>
-        /// <param name="id">id of RentalRequest to update</param>
-        /// <param name="item"></param>
-        /// <response code="200">OK</response>
-        /// <response code="404">RentalRequestRotationList not found</response>
-        [HttpPut]
-        [Route("/api/rentalrequests/{id}/rentalRequestRotationList")]
-        [SwaggerOperation("RentalRequestRotationListIdPut")]
-        [SwaggerResponse(200, type: typeof(RentalRequestRotationList))]
-        public virtual IActionResult RentalrequestsIdRentalrequestrotationlistRentalRequestRotationListIdPut([FromRoute]int id, [FromBody]RentalRequestRotationList item)
-        {
-            return _service.RentalrequestRotationListIdPutAsync(id, item);
-        }
-
-        /// <summary>
-        /// Move a Rental Request from New (inactive) to In Progress (Active)
-        /// </summary>
-        /// <param name="id"></param>
-        /// <response>RentalRequest</response>
-        [HttpGet]
-        [Route("/api/rentalrequests/{id}/inProgress")]
-        [SwaggerOperation("RentalrequestsPost")]
-        [SwaggerResponse(200, type: typeof(RentalRequestViewModel))]
-        public virtual IActionResult RentalrequestsInProgressPostAsync([FromRoute]int id)
-        {
-            return _service.RentalrequestsInProgressPostAsync(id);
-        }
-
-        /// <summary>
-        /// Recalc the Roation List for a Rental Request
-        /// </summary>
-        /// <param name="id"></param>
-        [HttpGet]
-        [Route("/api/rentalrequests/{id}/recalcRotation")]
-        [SwaggerOperation("RentalRequestsRotationListRecalcGet")]
-        [RequiresPermission(Permission.ADMIN)]
-        public virtual IActionResult RentalRequestsRotationListRecalcGet([FromRoute]int id)
-        {
-            return _service.RentalRequestsRotationListRecalcGetAsync(id);
-        }        
-
-        /// <summary>
-        /// Searches RentalRequests
-        /// </summary>
-        /// <remarks>Used for the rental request search page.</remarks>
-        /// <param name="localareas">Local Areas (comma seperated list of id numbers)</param>
-        /// <param name="project">Searches equipmentAttachment type</param>
-        /// <param name="status">Status</param>
-        /// <param name="startDate">Inspection start date</param>
-        /// <param name="endDate">Inspection end date</param>
-        /// <response code="200">OK</response>
-        [HttpGet]
-        [Route("/api/rentalrequests/search")]
-        [SwaggerOperation("RentalrequestsSearchGet")]
-        [SwaggerResponse(200, type: typeof(List<RentalRequestSearchResultViewModel>))]
-        public virtual IActionResult RentalrequestsSearchGet([FromQuery]string localareas, [FromQuery]string project, [FromQuery]string status, [FromQuery]DateTime? startDate, [FromQuery]DateTime? endDate)
-        {
-            return _service.RentalrequestsSearchGetAsync(localareas, project, status, startDate, endDate);
-        }
+        #endregion
     }
 }
