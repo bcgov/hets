@@ -1033,7 +1033,6 @@ export function addRentalRequest(rentalRequest) {
 export function updateRentalRequest(rentalRequest) {
   return new ApiRequest(`/rentalrequests/${ rentalRequest.id }`).put(rentalRequest).then(response => {
     var rentalRequest = response.data;
-
     // Add display fields
     parseRentalRequest(rentalRequest);
 

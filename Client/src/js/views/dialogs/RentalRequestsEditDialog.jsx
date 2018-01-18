@@ -23,12 +23,13 @@ var RentalRequestsEditDialog = React.createClass({
   },
 
   getInitialState() {
+    const rentalRequest = this.props.rentalRequest;
     return {
-      equipmentCount: this.props.rentalRequest.equipmentCount || 0,
-      expectedHours: this.props.rentalRequest.expectedHours || 0,
-      expectedStartDate: this.props.rentalRequest.expectedStartDate || '',
-      expectedEndDate: this.props.rentalRequest.expectedEndDate || '',
-      rentalRequestAttachments: this.props.rentalRequest.rentalRequestAttachments || '',
+      equipmentCount: rentalRequest.equipmentCount || 0,
+      expectedHours: rentalRequest.expectedHours || 0,
+      expectedStartDate: rentalRequest.expectedStartDate || '',
+      expectedEndDate: rentalRequest.expectedEndDate || '',
+      rentalRequestAttachments: rentalRequest.attachments && rentalRequest.attachments[0] ? rentalRequest.attachments[0].description : '',
 
       equipmentCountError: '',
       expectedHoursError: '',
@@ -111,7 +112,7 @@ var RentalRequestsEditDialog = React.createClass({
       expectedHours: this.state.expectedHours,
       expectedStartDate: this.state.expectedStartDate,
       expectedEndDate: this.state.expectedEndDate,
-      rentalRequestAttachments: this.state.rentalRequestAttachments,
+      attachments: [{ description: this.state.rentalRequestAttachments }],
     }});
   },
 
