@@ -1121,9 +1121,9 @@ function parseRentalRequestRotationList(rotationListItem, rentalRequest = {}) {
 
 function parseRotationListItem(item) {
   item.equipment = item.equipment || {};
-  item.equipment.owner = item.equipment.owner || {};
-  item.equipmentDetails = concat(item.equipment.year, concat(item.equipment.make, concat(item.equipment.model, concat(item.equipment.serialNumber, item.equipment.size, '/'), '/'), '/'), ' ');
-  item.equipment.seniority = `${getBlockDisplayName(item.equipment.blockNumber)}-${item.equipment.seniority && item.equipment.seniority.toFixed(3)} (${item.equipment.numberInBlock})`;
+  item.displayFields = {};
+  item.displayFields.equipmentDetails = concat(item.equipment.year, concat(item.equipment.make, concat(item.equipment.model, concat(item.equipment.serialNumber, item.equipment.size, '/'), '/'), '/'), ' ');
+  item.displayFields.seniority = `${getBlockDisplayName(item.equipment.blockNumber)}-${item.equipment.seniority && item.equipment.seniority.toFixed(3)} (${item.equipment.numberInBlock})`;
 }
 
 export function getRentalRequestRotationList(id) {

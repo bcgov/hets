@@ -148,6 +148,7 @@ var RentalRequestsDetail = React.createClass({
   saveHireOffer(hireOffer) {
     let hireOfferUpdated = { ...hireOffer };
     delete hireOfferUpdated.isFirstNullRecord;
+    delete hireOfferUpdated.displayFields;
     Api.updateRentalRequestRotationList(hireOfferUpdated, this.props.rentalRequest.data).finally(() => {
       this.fetch();
       if ((hireOffer.offerResponse === STATUS_YES || hireOffer.offerResponse === STATUS_FORCE_HIRE) && hireOffer.rentalAgreement && hireOffer.rentalAgreement.id) {
@@ -209,6 +210,8 @@ var RentalRequestsDetail = React.createClass({
     let text = 'Hire';
     if (listItem.offerResponse === STATUS_NO) {
       text = listItem.offerRefusalReason;
+    } else if (listItem.offerResponse !== null) {
+      text = listItem.offerResponse;
     }
     return text;
   },
@@ -321,18 +324,18 @@ var RentalRequestsDetail = React.createClass({
                 if (!previousNullRecord && !listItem.offerResponse) { isFirstNullRecord = true; previousNullRecord = true; }
                 return (
                   <tr key={ listItem.id }>
-                    <td>{ listItem.equipment.seniority }</td>
+                    <td>{ listItem.displayFields.seniority }</td>
                     <td>{ listItem.equipment.serviceHoursLastYear }</td>
-                <td><Link to={ `${Constant.EQUIPMENT_PATHNAME}/${listItem.equipment.id}` }>{ listItem.equipment.equipmentCode }</Link></td>
-                    <td>{ listItem.equipmentDetails }
+                    <td><Link to={ `${Constant.EQUIPMENT_PATHNAME}/${listItem.equipment.id}` }>{ listItem.equipment.equipmentCode }</Link></td>
+                    <td>{ listItem.displayFields.equipmentDetails }
                       { this.state.showAttachments && 
                         <div>Attachments: { listItem.equipment.equipmentAttachments ? listItem.equipment.equipmentAttachments : 'N/A' }</div>
                       }
                     </td>
-                    <td>{ owner.organizationName }</td>
-                    <td>{ owner.primaryContact && `${owner.primaryContact.givenName} ${owner.primaryContact.surname}` }</td>
-                    <td>{ owner.primaryContact && owner.primaryContact.workPhoneNumber }</td>
-                    <td>{ owner.primaryContact && owner.primaryContact.mobilePhoneNumber }</td>
+                    <td>{ owner && owner.organizationName }</td>
+                    <td>{ owner && owner.primaryContact && `${owner.primaryContact.givenName} ${owner.primaryContact.surname}` }</td>
+                    <td>{ owner && owner.primaryContact && owner.primaryContact.workPhoneNumber }</td>
+                    <td>{ owner && owner.primaryContact && owner.primaryContact.mobilePhoneNumber }</td>
                     <td>
                       <ButtonGroup>
                         {(() => {

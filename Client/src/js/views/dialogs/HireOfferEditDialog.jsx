@@ -51,6 +51,7 @@ var HireOfferEditDialog = React.createClass({
       wasAsked: this.props.hireOffer.wasAsked || false,
       askedDateTime: this.props.hireOffer.askedDateTime || '',
       offerResponse: this.props.hireOffer.offerResponse || '',
+      offerStatus: this.props.hireOffer.offerResponse || '',
       offerRefusalReason: this.props.hireOffer.offerRefusalReason || '',
       offerResponseDatetime: this.props.hireOffer.offerResponseDatetime || '',
       offerResponseNote: this.props.hireOffer.offerResponseNote || '',
