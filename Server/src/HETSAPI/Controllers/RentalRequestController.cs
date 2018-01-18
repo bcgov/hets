@@ -46,7 +46,7 @@ namespace HETSAPI.Controllers
         [HttpGet]
         [Route("/api/rentalrequests")]
         [SwaggerOperation("RentalrequestsGet")]
-        [SwaggerResponse(200, type: typeof(List<RentalRequest>))]
+        [SwaggerResponse(200, type: typeof(List<RentalRequestViewModel>))]
         public virtual IActionResult RentalrequestsGet()
         {
             return _service.RentalrequestsGetAsync();
@@ -91,7 +91,7 @@ namespace HETSAPI.Controllers
         [HttpGet]
         [Route("/api/rentalrequests/{id}")]
         [SwaggerOperation("RentalrequestsIdGet")]
-        [SwaggerResponse(200, type: typeof(RentalRequest))]
+        [SwaggerResponse(200, type: typeof(RentalRequestViewModel))]
         public virtual IActionResult RentalrequestsIdGet([FromRoute]int id)
         {
             return _service.RentalrequestsIdGetAsync(id);
@@ -106,7 +106,7 @@ namespace HETSAPI.Controllers
         [HttpGet]
         [Route("/api/rentalrequests/{id}/rotationList")]
         [SwaggerOperation("RentalrequestsIdRotationListGet")]
-        [SwaggerResponse(200, type: typeof(RentalRequest))]
+        [SwaggerResponse(200, type: typeof(RentalRequestViewModel))]
         public virtual IActionResult RentalrequestsIdRotationListIdGet([FromRoute]int id)
         {
             return _service.RentalrequestsIdRotationListGetAsync(id);
@@ -155,7 +155,7 @@ namespace HETSAPI.Controllers
         [HttpPut]
         [Route("/api/rentalrequests/{id}")]
         [SwaggerOperation("RentalrequestsIdPut")]
-        [SwaggerResponse(200, type: typeof(RentalRequest))]
+        [SwaggerResponse(200, type: typeof(RentalRequestViewModel))]
         public virtual IActionResult RentalrequestsIdPut([FromRoute]int id, [FromBody]RentalRequest item)
         {
             return _service.RentalrequestsIdPutAsync(id, item);
@@ -166,17 +166,16 @@ namespace HETSAPI.Controllers
         /// </summary>
         /// <remarks>Updates a rental request rotation list entry.  Side effect is the LocalAreaRotationList is also updated</remarks>
         /// <param name="id">id of RentalRequest to update</param>
-        /// <param name="rentalRequestRotationListId">id of RentalRequestRotationList to update</param>
         /// <param name="item"></param>
         /// <response code="200">OK</response>
         /// <response code="404">RentalRequestRotationList not found</response>
         [HttpPut]
-        [Route("/api/rentalrequests/{id}/rentalrequestrotationlist/{rentalRequestRotationListId}")]
+        [Route("/api/rentalrequests/{id}/rentalrequestrotationlist")]
         [SwaggerOperation("RentalRequestRotationListIdPut")]
         [SwaggerResponse(200, type: typeof(RentalRequestRotationList))]
-        public virtual IActionResult RentalrequestsIdRentalrequestrotationlistRentalRequestRotationListIdPut([FromRoute]int id, [FromRoute]int rentalRequestRotationListId, [FromBody]RentalRequestRotationList item)
+        public virtual IActionResult RentalrequestsIdRentalrequestrotationlistRentalRequestRotationListIdPut([FromRoute]int id, [FromBody]RentalRequestRotationList item)
         {
-            return _service.RentalrequestRotationListIdPutAsync(id, rentalRequestRotationListId, item);
+            return _service.RentalrequestRotationListIdPutAsync(id, item);
         }
 
         /// <summary>
@@ -187,10 +186,24 @@ namespace HETSAPI.Controllers
         [HttpPost]
         [Route("/api/rentalrequests")]
         [SwaggerOperation("RentalrequestsPost")]
-        [SwaggerResponse(200, type: typeof(RentalRequest))]
+        [SwaggerResponse(200, type: typeof(RentalRequestViewModel))]
         public virtual IActionResult RentalrequestsPost([FromBody]RentalRequest item)
         {
             return _service.RentalrequestsPostAsync(item);
+        }
+
+        /// <summary>
+        /// Move a Rental Request from New (inactive) to In Progress (Active)
+        /// </summary>
+        /// <param name="id"></param>
+        /// <response>RentalRequest</response>
+        [HttpPost]
+        [Route("/api/rentalrequests/{id}/inProgress")]
+        [SwaggerOperation("RentalrequestsPost")]
+        [SwaggerResponse(200, type: typeof(RentalRequestViewModel))]
+        public virtual IActionResult RentalrequestsInProgressPostAsync([FromRoute]int id)
+        {
+            return _service.RentalrequestsInProgressPostAsync(id);
         }
 
         /// <summary>
