@@ -177,7 +177,7 @@ var Owners = React.createClass({
       .sortBy('districtEquipmentName')
       .value();
 
-    var numOwners = this.state.loading ? '...' : Object.keys(this.props.ownerList).length;
+    var numOwners = this.props.ownerList.loading ? '...' : Object.keys(this.props.ownerList.data).length;
 
     return <div id="owners-list">
       <PageHeader>Owners ({ numOwners })
