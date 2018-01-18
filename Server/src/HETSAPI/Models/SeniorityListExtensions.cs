@@ -214,9 +214,6 @@ namespace HETSAPI.Models
 
                     // put equipment into the correct blocks
                     AssignBlocks(context, localAreaId, districtEquipmentTypeId, blockSize, totalBlocks);
-
-                    // create/update the local area rotation list
-
                 }
             }
         }
@@ -314,138 +311,7 @@ namespace HETSAPI.Models
             return true;
         }
 
-        #endregion
-
-        #region Manage the Local Area Rotation List (het_local_area_rotation_list)
-
-        /// <summary>
-        /// Returns the Equipment that is next on a Local Rotation List
-        /// </summary>
-        /// <param name="context">Database context</param>
-        /// <param name="localAreaId">Local Area</param>
-        /// <param name="equipmentTypeId">Type of equipment</param>
-        /// <param name="currentEquipmentId">ID of the equipment that will be replaced</param>
-        /// <param name="blockNumber">Block number within the list</param>
-        /// <returns></returns>
-        public static Equipment GetNextEquipmentOnLocalRotationList(this DbAppContext context, int localAreaId, int equipmentTypeId, int currentEquipmentId, int blockNumber)
-        {
-            Equipment result = null;
-
-            // first get the complete list
-            List<Equipment> fullList = context.Equipments
-                .Include(x => x.LocalArea)
-                .Include(x => x.DistrictEquipmentType.EquipmentType)
-                .Where(x => x.LocalArea.Id == localAreaId && 
-                            x.DistrictEquipmentType.EquipmentType != null && 
-                            x.DistrictEquipmentType.EquipmentType.Id == equipmentTypeId && 
-                            x.BlockNumber == blockNumber)
-                .OrderByDescending(x => x.Seniority)
-                .ToList();  
-                      
-            if (fullList.Count > 0)
-            {
-                // find the current equipment.  if none then we start at the top
-                int foundPosition = -1;
-
-                for (int i = 0; i < fullList.Count; i++)
-                {
-                    if (fullList[i].Id == currentEquipmentId)
-                    {
-                        foundPosition = i;
-                    }
-                }
-
-                int nextPosition = 0;
-
-                if (foundPosition != -1)
-                {
-                    nextPosition = foundPosition + 1;
-
-                    if (nextPosition >= fullList.Count)
-                    {
-                        nextPosition = 0;
-                    }
-                }
-
-                result = fullList[nextPosition];
-            } 
-            
-            return result;
-        }
-
-        /// <summary>
-        /// Update the local area rotation list
-        /// </summary>
-        /// <param name="context"></param>
-        /// <param name="rentalRequestRotationListId"></param>
-        public static void UpdateLocalAreaRotationList (this DbAppContext context, int rentalRequestRotationListId)
-        {
-            // start by getting the context.
-            RentalRequestRotationList rentalRequestRotationList = context.RentalRequestRotationLists
-                .Include (x => x.Equipment.LocalArea)
-                .Include(x => x.Equipment.DistrictEquipmentType.EquipmentType)
-                .FirstOrDefault(x => x.Id == rentalRequestRotationListId);
-
-            if (rentalRequestRotationList != null && 
-                rentalRequestRotationList.Equipment != null && 
-                rentalRequestRotationList.Equipment.LocalArea != null && 
-                rentalRequestRotationList.Equipment.DistrictEquipmentType != null)
-            {
-                LocalAreaRotationList localAreaRotationList = context.LocalAreaRotationLists
-                    .Include (x => x.AskNextBlock1)
-                    .Include(x => x.AskNextBlock2)
-                    .Include(x => x.AskNextBlockOpen)
-                    .FirstOrDefault(x => x.LocalArea.Id == rentalRequestRotationList.Equipment.LocalArea.Id && 
-                                         x.DistrictEquipmentType.Id == rentalRequestRotationList.Equipment.DistrictEquipmentType.Id);
-
-                if (localAreaRotationList == null ||
-                    rentalRequestRotationList.Equipment.BlockNumber == null) return;                
-
-                switch (rentalRequestRotationList.Equipment.BlockNumber)
-                {
-                    // primary block
-                    case 1:
-                        if (localAreaRotationList.AskNextBlock1.Id == rentalRequestRotationList.Equipment.Id)
-                        {
-                            localAreaRotationList.AskNextBlock1 = context.GetNextEquipmentOnLocalRotationList(rentalRequestRotationList.Equipment.LocalArea.Id, rentalRequestRotationList.Equipment.DistrictEquipmentType.EquipmentType.Id, rentalRequestRotationList.Equipment.Id, 1);
-                        }
-                        break;
-
-                    // secondary block for dump trucks, or open block for other types
-                    case 2:
-                        if (rentalRequestRotationList.Equipment.DistrictEquipmentType.EquipmentType.IsDumpTruck)
-                        {
-                            if (localAreaRotationList.AskNextBlock2.Id == rentalRequestRotationList.Equipment.Id)
-                            {
-                                localAreaRotationList.AskNextBlock1 = context.GetNextEquipmentOnLocalRotationList(rentalRequestRotationList.Equipment.LocalArea.Id, rentalRequestRotationList.Equipment.DistrictEquipmentType.EquipmentType.Id, rentalRequestRotationList.Equipment.Id , 2);
-                            }
-                        }
-                        else
-                        {
-                            if (localAreaRotationList.AskNextBlockOpen.Id == rentalRequestRotationList.Equipment.Id)
-                            {
-                                localAreaRotationList.AskNextBlockOpen = context.GetNextEquipmentOnLocalRotationList(rentalRequestRotationList.Equipment.LocalArea.Id, rentalRequestRotationList.Equipment.DistrictEquipmentType.EquipmentType.Id, rentalRequestRotationList.Equipment.Id, 2);
-                            }
-                        }
-                                
-                        break;
-
-                    // open block for dump trucks
-                    case 3:
-                        if (localAreaRotationList.AskNextBlockOpen.Id == rentalRequestRotationList.Equipment.Id)
-                        {
-                            localAreaRotationList.AskNextBlockOpen = context.GetNextEquipmentOnLocalRotationList(rentalRequestRotationList.Equipment.LocalArea.Id, rentalRequestRotationList.Equipment.DistrictEquipmentType.EquipmentType.Id, rentalRequestRotationList.Equipment.Id, 3);
-                        }
-                        break;
-                }
-
-                // update the local area rotation record
-                context.LocalAreaRotationLists.Update(localAreaRotationList);
-                context.SaveChanges();                
-            }
-        }
-        
-        #endregion
+        #endregion               
     }
 
     #region Seniority Scoring Rules

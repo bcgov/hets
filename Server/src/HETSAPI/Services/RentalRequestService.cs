@@ -10,20 +10,20 @@ namespace HETSAPI.Services
     public interface IRentalRequestService
     {
         /// <summary>
-        ///
+        /// Create bulk rental requests
         /// </summary>
         /// <param name="items"></param>
         /// <response code="201">RentalRequest created</response>
         IActionResult RentalrequestsBulkPostAsync(RentalRequest[] items);
 
         /// <summary>
-        ///
+        /// Get all rental requests
         /// </summary>
         /// <response code="200">OK</response>
         IActionResult RentalrequestsGetAsync();
 
         /// <summary>
-        ///
+        /// Get attachments associated with a rental request
         /// </summary>
         /// <remarks>Returns attachments for a particular RentalRequest</remarks>
         /// <param name="id">id of RentalRequest to fetch attachments for</param>
@@ -32,7 +32,7 @@ namespace HETSAPI.Services
         IActionResult RentalrequestsIdAttachmentsGetAsync(int id);
 
         /// <summary>
-        ///
+        /// Delete rental request
         /// </summary>
         /// <param name="id">id of RentalRequest to delete</param>
         /// <response code="200">OK</response>
@@ -56,7 +56,7 @@ namespace HETSAPI.Services
         IActionResult RentalrequestsIdRotationListGetAsync(int id);
 
         /// <summary>
-        ///
+        /// Get history for a rental request
         /// </summary>
         /// <remarks>Returns History for a particular RentalRequest</remarks>
         /// <param name="id">id of RentalRequest to fetch History for</param>
@@ -66,7 +66,7 @@ namespace HETSAPI.Services
         IActionResult RentalrequestsIdHistoryGetAsync(int id, int? offset, int? limit);
 
         /// <summary>
-        ///
+        /// Add a rental request history record
         /// </summary>
         /// <remarks>Add a History record to the RentalRequest</remarks>
         /// <param name="id">id of RentalRequest to add History for</param>
@@ -76,31 +76,37 @@ namespace HETSAPI.Services
         IActionResult RentalrequestsIdHistoryPostAsync(int id, History item);
 
         /// <summary>
-        ///
+        /// Update rental request
         /// </summary>
-        /// <param name="id">id of RentalRequest to fetch</param>
+        /// <param name="id">id of RentalRequest to update</param>
         /// <param name="item"></param>
         /// <response code="200">OK</response>
         /// <response code="404">RentalRequest not found</response>
         IActionResult RentalrequestsIdPutAsync(int id, RentalRequest item);
 
         /// <summary>
-        ///
+        /// Update rental request rotation list
         /// </summary>
         /// <remarks>Updates a rental request rotation list entry.  Side effect is the LocalAreaRotationList is also updated</remarks>
         /// <param name="id">id of RentalRequest to update</param>
-        /// <param name="rentalRequestRotationListId">id of RentalRequestRotationList to update</param>
         /// <param name="item"></param>
         /// <response code="200">OK</response>
         /// <response code="404">RentalRequestRotationList not found</response>
-        IActionResult RentalrequestRotationListIdPutAsync(int id, int rentalRequestRotationListId, RentalRequestRotationList item);
+        IActionResult RentalrequestRotationListIdPutAsync(int id, RentalRequestRotationList item);
 
         /// <summary>
-        ///
+        /// Create rental request
         /// </summary>
         /// <param name="item"></param>
         /// <response code="201">RentalRequest created</response>
         IActionResult RentalrequestsPostAsync(RentalRequest item);
+
+        /// <summary>
+        /// Move a Rental Request from New (inactive) to In Progress (Active)
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
+        IActionResult RentalrequestsInProgressPostAsync(int id);
 
         /// <summary>
         /// Recalc the Rotation List for a Rental REquest
