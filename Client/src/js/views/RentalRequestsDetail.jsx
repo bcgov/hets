@@ -258,7 +258,7 @@ var RentalRequestsDetail = React.createClass({
         {(() => {
           if (this.state.loading) { return <div style={{ textAlign: 'center' }}><Spinner/></div>; }
         
-          var requestAttachments = rentalRequest.attachments ? rentalRequest.attachments[0].description : 'None';
+          var requestAttachments = rentalRequest.rentalRequestAttachments && rentalRequest.rentalRequestAttachments[0] ? rentalRequest.rentalRequestAttachments[0].attachment : 'None';
           
           return <Grid fluid id="rental-requests-data" className="nopadding">
             <Row>
