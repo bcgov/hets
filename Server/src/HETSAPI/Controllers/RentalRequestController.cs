@@ -159,24 +159,7 @@ namespace HETSAPI.Controllers
         public virtual IActionResult RentalrequestsIdPut([FromRoute]int id, [FromBody]RentalRequest item)
         {
             return _service.RentalrequestsIdPutAsync(id, item);
-        }
-
-        /// <summary>
-        /// Update a rental request rotation list record
-        /// </summary>
-        /// <remarks>Updates a rental request rotation list entry.  Side effect is the LocalAreaRotationList is also updated</remarks>
-        /// <param name="id">id of RentalRequest to update</param>
-        /// <param name="item"></param>
-        /// <response code="200">OK</response>
-        /// <response code="404">RentalRequestRotationList not found</response>
-        [HttpPut]
-        [Route("/api/rentalrequests/{id}/rentalrequestrotationlist")]
-        [SwaggerOperation("RentalRequestRotationListIdPut")]
-        [SwaggerResponse(200, type: typeof(RentalRequestRotationList))]
-        public virtual IActionResult RentalrequestsIdRentalrequestrotationlistRentalRequestRotationListIdPut([FromRoute]int id, [FromBody]RentalRequestRotationList item)
-        {
-            return _service.RentalrequestRotationListIdPutAsync(id, item);
-        }
+        }        
 
         /// <summary>
         /// Create rental request
@@ -193,11 +176,28 @@ namespace HETSAPI.Controllers
         }
 
         /// <summary>
+        /// Update a rental request rotation list record
+        /// </summary>
+        /// <remarks>Updates a rental request rotation list entry.  Side effect is the LocalAreaRotationList is also updated</remarks>
+        /// <param name="id">id of RentalRequest to update</param>
+        /// <param name="item"></param>
+        /// <response code="200">OK</response>
+        /// <response code="404">RentalRequestRotationList not found</response>
+        [HttpPut]
+        [Route("/api/rentalrequests/{id}/rentalRequestRotationList")]
+        [SwaggerOperation("RentalRequestRotationListIdPut")]
+        [SwaggerResponse(200, type: typeof(RentalRequestRotationList))]
+        public virtual IActionResult RentalrequestsIdRentalrequestrotationlistRentalRequestRotationListIdPut([FromRoute]int id, [FromBody]RentalRequestRotationList item)
+        {
+            return _service.RentalrequestRotationListIdPutAsync(id, item);
+        }
+
+        /// <summary>
         /// Move a Rental Request from New (inactive) to In Progress (Active)
         /// </summary>
         /// <param name="id"></param>
         /// <response>RentalRequest</response>
-        [HttpPost]
+        [HttpGet]
         [Route("/api/rentalrequests/{id}/inProgress")]
         [SwaggerOperation("RentalrequestsPost")]
         [SwaggerResponse(200, type: typeof(RentalRequestViewModel))]
@@ -209,14 +209,14 @@ namespace HETSAPI.Controllers
         /// <summary>
         /// Recalc the Roation List for a Rental Request
         /// </summary>
-        /// <param name="rentalRequest"></param>
+        /// <param name="id"></param>
         [HttpGet]
-        [Route("/api/rentalrequests/recalcRotation")]
+        [Route("/api/rentalrequests/{id}/recalcRotation")]
         [SwaggerOperation("RentalRequestsRotationListRecalcGet")]
         [RequiresPermission(Permission.ADMIN)]
-        public virtual IActionResult RentalRequestsRotationListRecalcGet([FromQuery]int rentalRequest)
+        public virtual IActionResult RentalRequestsRotationListRecalcGet([FromRoute]int id)
         {
-            return _service.RentalRequestsRotationListRecalcGetAsync(rentalRequest);
+            return _service.RentalRequestsRotationListRecalcGetAsync(id);
         }        
 
         /// <summary>

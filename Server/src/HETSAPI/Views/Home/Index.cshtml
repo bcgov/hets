@@ -42,7 +42,7 @@
             alert('Recalc Seniority for Region Id: ' + regionId);
 
             $.ajax({
-                url: "/api/equipment/recalcSeniority?region=" + regionId,
+                url: "/api/equipment/" + regionId + "/recalcSeniority",
                 type: "GET",
                 timeout: 60000, // sets timeout to 1 min
                 success: function (response) {
@@ -59,7 +59,7 @@
             alert('Recalc Rotation for Request Id: ' + requestId);
 
             $.ajax({
-                url: "/api/rentalrequests/recalcRotation?rentalRequest=" + requestId,
+                url: "/api/rentalrequests/" + requestId + "/recalcRotation",
                 type: "GET",
                 timeout: 360000, // sets timeout to 1 min
                 success: function (response) {
@@ -69,7 +69,23 @@
                     alert(xhr.responseText);
                 }
             });
-        }     
+        }   
+
+        function rentalRequestToInProgress() {
+            var requestId = $("#requestId").val();
+
+            $.ajax({
+                url: "/api/rentalrequests/" + requestId + "/inProgress",
+                type: "GET",
+                timeout: 60000, // sets timeout to 1 min
+                success: function (response) {
+                    alert(JSON.stringify(response.data));
+                },
+                error: function (xhr, ajaxOptions, thrownError) {
+                    alert(xhr.responseText);
+                }
+            });
+        }    
 
         function getRotationList() {
             var requestId = $("#requestId").val();
@@ -137,9 +153,10 @@
     <hr/>
     <div>
         <h4>Recalc Rotation List (for a Rental Request)</h4>
-        <input type="number" width="5" value="18" id="requestId" /> 
-        <button onclick="recalcRotation();">Recalc Rotation List for Request</button>        
+        <input type="number" width="5" value="18" id="requestId" />
+        <button onclick="recalcRotation();">Recalc Rotation List for Request</button>
         <button onclick="getRotationList();">Get Rotation List</button>
+        <button onclick="rentalRequestToInProgress();">Move Rental Request to In Progress</button>
     </div>
 }
 </body>
