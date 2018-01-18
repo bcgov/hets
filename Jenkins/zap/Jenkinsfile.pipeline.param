@@ -1,9 +1,9 @@
 #=========================================================
 # OpenShift Jenkins pipeline template parameters for:
-# Jenkinsfile: ./Jenkins/pdf/Jenkinsfile
+# Jenkinsfile: ./Jenkins/zap/Jenkinsfile
 # JSON Template File: https://raw.githubusercontent.com/BCDevOps/openshift-tools/master/provisioning/pipeline/resources/pipeline-build.json
 #=========================================================
-NAME=pdf
+NAME=zap
 # GITHUB_WEBHOOK_SECRET=[a-zA-Z0-9]{40}
 SOURCE_REPOSITORY_URL=https://github.com/bcgov/hets.git
 SOURCE_REPOSITORY_REF=master
