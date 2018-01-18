@@ -192,15 +192,15 @@ namespace HETSAPI.Controllers
         /// Recalculates seniority
         /// </summary>
         /// <remarks>Used to calculate seniority for all database records.</remarks>
-        /// <param name="region">Region to recalculate</param>
+        /// <param name="id">Region to recalculate</param>
         /// <response code="200">OK</response>
         [HttpGet]
-        [Route("/api/equipment/recalcSeniority")]
+        [Route("/api/equipment/{id}/recalcSeniority")]
         [SwaggerOperation("EquipmentRecalcSeniorityGet")]
         [RequiresPermission(Permission.ADMIN)]
-        public virtual IActionResult EquipmentRecalcSeniorityGet([FromQuery]int region)
+        public virtual IActionResult EquipmentRecalcSeniorityGet([FromRoute]int id)
         {
-            return _service.EquipmentRecalcSeniorityGetAsync(region);
+            return _service.EquipmentRecalcSeniorityGetAsync(id);
         }
 
         /// <summary>

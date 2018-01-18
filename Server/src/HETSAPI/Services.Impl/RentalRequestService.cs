@@ -503,28 +503,32 @@ namespace HETSAPI.Services.Impl
                         .Include(x => x.RentalRequestRotationList)
                         .First(a => a.Id == rentalRequestId);
 
-                // delete any existing rotation list records
-                foreach (RentalRequestRotationList rentalRequestRotationList in result.RentalRequestRotationList)
+                if (result.Status.Equals("New", StringComparison.InvariantCultureIgnoreCase))
                 {
-                    _context.RentalRequestRotationLists.Remove(rentalRequestRotationList);
+                    // delete any existing rotation list records
+                    foreach (RentalRequestRotationList rentalRequestRotationList in result.RentalRequestRotationList)
+                    {
+                        _context.RentalRequestRotationLists.Remove(rentalRequestRotationList);
+                    }
+
+                    // update
+                    _context.SaveChanges();
+
+                    // generate rotation list
+                    BuildRentalRequestRotationList(result);
+
+                    // save the changes
+                    _context.SaveChanges();
+
+                    // repopulate the results with latest data
+                    result = _context.RentalRequests
+                        .Include(x => x.DistrictEquipmentType)
+                        .Include(x => x.DistrictEquipmentType.EquipmentType)
+                        .Include(x => x.LocalArea)
+                        .Include(x => x.LocalArea.ServiceArea.District.Region)
+                        .Include(x => x.RentalRequestRotationList)
+                        .First(a => a.Id == rentalRequestId);
                 }
-
-                // update
-                _context.SaveChanges();
-                
-                // generate rotation list
-                BuildRentalRequestRotationList(result);                
-
-                // save the changes
-                _context.SaveChanges();
-
-                result = _context.RentalRequests
-                    .Include(x => x.DistrictEquipmentType)
-                    .Include(x => x.DistrictEquipmentType.EquipmentType)
-                    .Include(x => x.LocalArea)
-                    .Include(x => x.LocalArea.ServiceArea.District.Region)
-                    .Include(x => x.RentalRequestRotationList)
-                    .First(a => a.Id == rentalRequestId);
 
                 return new ObjectResult(new HetsResponse(result.ToRentalRequestViewModel()));
             }
