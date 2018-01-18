@@ -58,12 +58,13 @@ var HireOfferEditDialog = React.createClass({
       askedDateTime: this.props.hireOffer.askedDateTime || '',
       offerResponse: this.props.hireOffer.offerResponse || '',
       offerStatus: this.props.hireOffer.offerResponse || '',
-      offerRefusalReason: this.props.hireOffer.offerRefusalReason || '',
+      offerRefusalReason: this.props.hireOffer.offerRefusalReason,
       offerResponseDatetime: this.props.hireOffer.offerResponseDatetime || '',
       offerResponseNote: this.props.hireOffer.offerResponseNote || '',
       note: this.props.hireOffer.note || '',
 
       offerResponseNoteError: '',
+      offerRefusalReasonError: '',
 
       showConfirmForceHireDialog: false,
 
@@ -118,6 +119,11 @@ var HireOfferEditDialog = React.createClass({
 
     if (isBlank(this.state.offerResponse)) {
       this.setState({ offerResponseError: 'A response is required' });
+      valid = false;
+    }
+
+    if (isBlank(this.state.offerRefusalReason)) {
+      this.setState({ offerRefusalReasonError: 'A refusal reason is required' });
       valid = false;
     }
 
@@ -261,11 +267,12 @@ var HireOfferEditDialog = React.createClass({
             { this.state.offerStatus == STATUS_NO &&
               <Row>
                 <Col md={12}>
-                  <FormGroup>
+                  <FormGroup validationState={ this.state.offerRefusalReasonError ? 'error' : null }>
                     {/*TODO - use lookup list*/}
                     <ControlLabel>Refusal Reason</ControlLabel>
                     <DropdownControl id="offerRefusalReason" className="full-width" disabled={ isReadOnly } title={ this.state.offerRefusalReason } updateState={ this.updateState }
                       items={ refusalReasons } />
+                      <HelpBlock>{ this.state.offerRefusalReasonError }</HelpBlock>
                   </FormGroup>
                 </Col>
               </Row>
