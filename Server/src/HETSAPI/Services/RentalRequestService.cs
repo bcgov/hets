@@ -40,12 +40,20 @@ namespace HETSAPI.Services
         IActionResult RentalrequestsIdDeletePostAsync(int id);
 
         /// <summary>
-        ///
+        /// Get the rental request by id
         /// </summary>
         /// <param name="id">id of RentalRequest to fetch</param>
         /// <response code="200">OK</response>
         /// <response code="404">RentalRequest not found</response>
         IActionResult RentalrequestsIdGetAsync(int id);
+
+        /// <summary>
+        /// Get the rental request rotation list for this rental request
+        /// </summary>
+        /// <param name="id">id of RentalRequest to fetch</param>
+        /// <response code="200">OK</response>
+        /// <response code="404">RentalRequest not found</response>
+        IActionResult RentalrequestsIdRotationListGetAsync(int id);
 
         /// <summary>
         ///
@@ -93,6 +101,12 @@ namespace HETSAPI.Services
         /// <param name="item"></param>
         /// <response code="201">RentalRequest created</response>
         IActionResult RentalrequestsPostAsync(RentalRequest item);
+
+        /// <summary>
+        /// Recalc the Rotation List for a Rental REquest
+        /// </summary>
+        /// <param name="rentalRequestId"></param>
+        IActionResult RentalRequestsRotationListRecalcGetAsync(int rentalRequestId);
 
         /// <summary>
         /// Searches RentalRequests

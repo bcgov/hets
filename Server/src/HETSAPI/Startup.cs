@@ -163,7 +163,11 @@ namespace HETSAPI
             app.UseAuthentication();
 
             // update database environment            
-            TryMigrateDatabase(app, loggerFactory);
+            string updateDb = Configuration.GetSection("UpdateLocalDb").Value;
+            if (env.IsDevelopment() && updateDb.ToLower() != "false")
+            {
+                TryMigrateDatabase(app, loggerFactory);
+            }
 
             // do not start Hangfire if we are running tests. 
             bool startHangfire = true;
@@ -297,7 +301,7 @@ namespace HETSAPI
         /// Create Hangfire Jobs
         /// </summary>
         /// <param name="loggerFactory"></param>
-        /// <param name="jsonRules"></param>
+        /// <param name="configuration"></param>
         private void CreateHangfireAnnualRolloverJob(ILoggerFactory loggerFactory, IConfiguration configuration)
         {
             // HETS has one job that runs at the end of each year.            

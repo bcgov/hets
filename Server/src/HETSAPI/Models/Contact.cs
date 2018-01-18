@@ -8,7 +8,7 @@ namespace HETSAPI.Models
     /// <summary>
     /// Contact Database Model
     /// </summary>
-    [MetaData (Description = "A person and their related contact information linked to one or more entities in the system. For examples, there are contacts for Owners, Projects.")]
+    [MetaData(Description = "A person and their related contact information linked to one or more entities in the system. For examples, there are contacts for Owners, Projects.")]
     public sealed class Contact : AuditableEntity, IEquatable<Contact>
     {
         /// <summary>
@@ -25,7 +25,6 @@ namespace HETSAPI.Models
         /// <param name="id">A system-generated unique identifier for a Contact (required).</param>
         /// <param name="givenName">The given name of the contact..</param>
         /// <param name="surname">The surname of the contact..</param>
-        /// <param name="organizationName">The organization name of the contact..</param>
         /// <param name="role">The role of the contact. UI controlled as to whether it is free form or selected from an enumerated list - for initial implementation, the field is freeform..</param>
         /// <param name="notes">A note about the contact maintained by the users..</param>
         /// <param name="emailAddress">The email address for the contact..</param>
@@ -37,15 +36,14 @@ namespace HETSAPI.Models
         /// <param name="city">The City of the address..</param>
         /// <param name="province">The Province of the address..</param>
         /// <param name="postalCode">The postal code of the address..</param>
-        public Contact(int id, string givenName = null, string surname = null, string organizationName = null, string role = null, 
-            string notes = null, string emailAddress = null, string workPhoneNumber = null, string mobilePhoneNumber = null, 
-            string faxPhoneNumber = null, string address1 = null, string address2 = null, string city = null, string province = null, 
+        public Contact(int id, string givenName = null, string surname = null, string role = null,
+            string notes = null, string emailAddress = null, string workPhoneNumber = null, string mobilePhoneNumber = null,
+            string faxPhoneNumber = null, string address1 = null, string address2 = null, string city = null, string province = null,
             string postalCode = null)
         {
             Id = id;
             GivenName = givenName;
             Surname = surname;
-            OrganizationName = organizationName;
             Role = role;
             Notes = notes;
             EmailAddress = emailAddress;
@@ -63,14 +61,14 @@ namespace HETSAPI.Models
         /// A system-generated unique identifier for a Contact
         /// </summary>
         /// <value>A system-generated unique identifier for a Contact</value>
-        [MetaData (Description = "A system-generated unique identifier for a Contact")]
+        [MetaData(Description = "A system-generated unique identifier for a Contact")]
         public int Id { get; set; }
 
         /// <summary>
         /// The given name of the contact.
         /// </summary>
         /// <value>The given name of the contact.</value>
-        [MetaData (Description = "The given name of the contact.")]
+        [MetaData(Description = "The given name of the contact.")]
         [MaxLength(50)]
         public string GivenName { get; set; }
 
@@ -78,23 +76,15 @@ namespace HETSAPI.Models
         /// The surname of the contact.
         /// </summary>
         /// <value>The surname of the contact.</value>
-        [MetaData (Description = "The surname of the contact.")]
+        [MetaData(Description = "The surname of the contact.")]
         [MaxLength(50)]
         public string Surname { get; set; }
-
-        /// <summary>
-        /// The organization name of the contact.
-        /// </summary>
-        /// <value>The organization name of the contact.</value>
-        [MetaData (Description = "The organization name of the contact.")]
-        [MaxLength(150)]
-        public string OrganizationName { get; set; }
 
         /// <summary>
         /// The role of the contact. UI controlled as to whether it is free form or selected from an enumerated list - for initial implementation, the field is freeform.
         /// </summary>
         /// <value>The role of the contact. UI controlled as to whether it is free form or selected from an enumerated list - for initial implementation, the field is freeform.</value>
-        [MetaData (Description = "The role of the contact. UI controlled as to whether it is free form or selected from an enumerated list - for initial implementation, the field is freeform.")]
+        [MetaData(Description = "The role of the contact. UI controlled as to whether it is free form or selected from an enumerated list - for initial implementation, the field is freeform.")]
         [MaxLength(100)]
         public string Role { get; set; }
 
@@ -102,7 +92,7 @@ namespace HETSAPI.Models
         /// A note about the contact maintained by the users.
         /// </summary>
         /// <value>A note about the contact maintained by the users.</value>
-        [MetaData (Description = "A note about the contact maintained by the users.")]
+        [MetaData(Description = "A note about the contact maintained by the users.")]
         [MaxLength(512)]
         public string Notes { get; set; }
 
@@ -110,7 +100,7 @@ namespace HETSAPI.Models
         /// The email address for the contact.
         /// </summary>
         /// <value>The email address for the contact.</value>
-        [MetaData (Description = "The email address for the contact.")]
+        [MetaData(Description = "The email address for the contact.")]
         [MaxLength(255)]
         public string EmailAddress { get; set; }
 
@@ -118,7 +108,7 @@ namespace HETSAPI.Models
         /// The work phone number for the contact.
         /// </summary>
         /// <value>The work phone number for the contact.</value>
-        [MetaData (Description = "The work phone number for the contact.")]
+        [MetaData(Description = "The work phone number for the contact.")]
         [MaxLength(20)]
         public string WorkPhoneNumber { get; set; }
 
@@ -126,7 +116,7 @@ namespace HETSAPI.Models
         /// The mobile phone number for the contact.
         /// </summary>
         /// <value>The mobile phone number for the contact.</value>
-        [MetaData (Description = "The mobile phone number for the contact.")]
+        [MetaData(Description = "The mobile phone number for the contact.")]
         [MaxLength(20)]
         public string MobilePhoneNumber { get; set; }
 
@@ -134,7 +124,7 @@ namespace HETSAPI.Models
         /// The fax phone number for the contact.
         /// </summary>
         /// <value>The fax phone number for the contact.</value>
-        [MetaData (Description = "The fax phone number for the contact.")]
+        [MetaData(Description = "The fax phone number for the contact.")]
         [MaxLength(20)]
         public string FaxPhoneNumber { get; set; }
 
@@ -142,7 +132,7 @@ namespace HETSAPI.Models
         /// Address 1 line of the address.
         /// </summary>
         /// <value>Address 1 line of the address.</value>
-        [MetaData (Description = "Address 1 line of the address.")]
+        [MetaData(Description = "Address 1 line of the address.")]
         [MaxLength(80)]
         public string Address1 { get; set; }
 
@@ -150,7 +140,7 @@ namespace HETSAPI.Models
         /// Address 2 line of the address.
         /// </summary>
         /// <value>Address 2 line of the address.</value>
-        [MetaData (Description = "Address 2 line of the address.")]
+        [MetaData(Description = "Address 2 line of the address.")]
         [MaxLength(80)]
         public string Address2 { get; set; }
 
@@ -158,7 +148,7 @@ namespace HETSAPI.Models
         /// The City of the address.
         /// </summary>
         /// <value>The City of the address.</value>
-        [MetaData (Description = "The City of the address.")]
+        [MetaData(Description = "The City of the address.")]
         [MaxLength(100)]
         public string City { get; set; }
 
@@ -166,7 +156,7 @@ namespace HETSAPI.Models
         /// The Province of the address.
         /// </summary>
         /// <value>The Province of the address.</value>
-        [MetaData (Description = "The Province of the address.")]
+        [MetaData(Description = "The Province of the address.")]
         [MaxLength(50)]
         public string Province { get; set; }
 
@@ -174,7 +164,7 @@ namespace HETSAPI.Models
         /// The postal code of the address.
         /// </summary>
         /// <value>The postal code of the address.</value>
-        [MetaData (Description = "The postal code of the address.")]
+        [MetaData(Description = "The postal code of the address.")]
         [MaxLength(15)]
         public string PostalCode { get; set; }
 
@@ -190,7 +180,6 @@ namespace HETSAPI.Models
             sb.Append("  Id: ").Append(Id).Append("\n");
             sb.Append("  GivenName: ").Append(GivenName).Append("\n");
             sb.Append("  Surname: ").Append(Surname).Append("\n");
-            sb.Append("  OrganizationName: ").Append(OrganizationName).Append("\n");
             sb.Append("  Role: ").Append(Role).Append("\n");
             sb.Append("  Notes: ").Append(Notes).Append("\n");
             sb.Append("  EmailAddress: ").Append(EmailAddress).Append("\n");
@@ -252,12 +241,7 @@ namespace HETSAPI.Models
                     Surname == other.Surname ||
                     Surname != null &&
                     Surname.Equals(other.Surname)
-                ) &&
-                (
-                    OrganizationName == other.OrganizationName ||
-                    OrganizationName != null &&
-                    OrganizationName.Equals(other.OrganizationName)
-                ) &&
+                ) &&                
                 (
                     Role == other.Role ||
                     Role != null &&
@@ -337,12 +321,7 @@ namespace HETSAPI.Models
                 if (Surname != null)
                 {
                     hash = hash * 59 + Surname.GetHashCode();
-                }
-
-                if (OrganizationName != null)
-                {
-                    hash = hash * 59 + OrganizationName.GetHashCode();
-                }
+                }                
 
                 if (Role != null)
                 {

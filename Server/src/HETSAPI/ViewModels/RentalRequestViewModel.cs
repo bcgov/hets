@@ -5,26 +5,26 @@ using System.Collections.Generic;
 using Newtonsoft.Json;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.ComponentModel.DataAnnotations;
-using HETSAPI.Mappings;
+using HETSAPI.Models;
 
-namespace HETSAPI.Models
+namespace HETSAPI.ViewModels
 {
     /// <summary>
     /// Rental Request Database Model
     /// </summary>
     [MetaData (Description = "A request from a Project for one or more of a type of equipment from a specific Local Area.")]
-    public sealed class RentalRequest : AuditableEntity, IEquatable<RentalRequest>
+    public sealed class RentalRequestViewModel : IEquatable<RentalRequestViewModel>
     {
         /// <summary>
         /// Rental Request Database Model Constructor (required by entity framework)
         /// </summary>
-        public RentalRequest()
+        public RentalRequestViewModel()
         {
             Id = 0;
         }
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="RentalRequest" /> class.
+        /// Initializes a new instance of the <see cref="RentalRequestViewModel" /> class.
         /// </summary>
         /// <param name="id">A system-generated unique identifier for a Request (required).</param>
         /// <param name="project">Project (required).</param>
@@ -41,7 +41,7 @@ namespace HETSAPI.Models
         /// <param name="history">History.</param>
         /// <param name="rentalRequestAttachments">RentalRequestAttachments.</param>
         /// <param name="rentalRequestRotationList">RentalRequestRotationList.</param>
-        public RentalRequest(int id, Project project, LocalArea localArea, string status, DistrictEquipmentType districtEquipmentType, 
+        public RentalRequestViewModel(int id, Project project, LocalArea localArea, string status, DistrictEquipmentType districtEquipmentType, 
             int equipmentCount, int? expectedHours = null, DateTime? expectedStartDate = null, DateTime? expectedEndDate = null, 
             Equipment firstOnRotationList = null, List<Note> notes = null, List<Attachment> attachments = null, 
             List<History> history = null, List<RentalRequestAttachment> rentalRequestAttachments = null, 
@@ -61,8 +61,40 @@ namespace HETSAPI.Models
             Attachments = attachments;
             History = history;
             RentalRequestAttachments = rentalRequestAttachments;
-            RentalRequestRotationList = rentalRequestRotationList;            
+            RentalRequestRotationList = rentalRequestRotationList;
+
+            // calculate the Yes Count based on the RentalRequestList
+            CalculateYesCount();
         }
+
+        /// <summary>
+        /// The count of yes responses from Equipment Owners (calculated field)
+        /// </summary>
+        /// <value>A system-generated unique identifier for a Request</value>
+        [MetaData(Description = "The count of yes responses from Equipment Owners")]
+        public int YesCount { get; set; }        
+
+        /// <summary>
+        /// Check how many Yes' we currently have from Owners
+        /// </summary>
+        /// <returns></returns>
+        public int CalculateYesCount()
+        {
+            int temp = 0;
+
+            foreach (RentalRequestRotationList equipment in RentalRequestRotationList)
+            {
+                if (equipment.OfferResponse != null &&
+                    equipment.OfferResponse.Equals("Yes", StringComparison.InvariantCultureIgnoreCase))
+                {
+                    temp++;
+                }
+            }
+
+            return temp;
+        }       
+
+        #region Standard Rental Request Model Properties
 
         /// <summary>
         /// A system-generated unique identifier for a Request
@@ -188,7 +220,9 @@ namespace HETSAPI.Models
         /// Gets or Sets RentalRequestRotationList
         /// </summary>
         public List<RentalRequestRotationList> RentalRequestRotationList { get; set; }
-        
+
+        #endregion
+
         /// <summary>
         /// Returns the string presentation of the object
         /// </summary>
@@ -197,7 +231,7 @@ namespace HETSAPI.Models
         {
             var sb = new StringBuilder();
 
-            sb.Append("class RentalRequest {\n");
+            sb.Append("class RentalRequestViewModel {\n");
             sb.Append("  Id: ").Append(Id).Append("\n");
             sb.Append("  Project: ").Append(Project).Append("\n");
             sb.Append("  LocalArea: ").Append(LocalArea).Append("\n");
@@ -236,7 +270,7 @@ namespace HETSAPI.Models
         {
             if (obj is null) { return false; }
             if (ReferenceEquals(this, obj)) { return true; }
-            return obj.GetType() == GetType() && Equals((RentalRequest)obj);
+            return obj.GetType() == GetType() && Equals((RentalRequestViewModel)obj);
         }
 
         /// <summary>
@@ -244,7 +278,7 @@ namespace HETSAPI.Models
         /// </summary>
         /// <param name="other">Instance of RentalRequest to be compared</param>
         /// <returns>Boolean</returns>
-        public bool Equals(RentalRequest other)
+        public bool Equals(RentalRequestViewModel other)
         {
             if (other is null) { return false; }
             if (ReferenceEquals(this, other)) { return true; }
@@ -418,7 +452,7 @@ namespace HETSAPI.Models
         /// <param name="left"></param>
         /// <param name="right"></param>
         /// <returns></returns>
-        public static bool operator ==(RentalRequest left, RentalRequest right)
+        public static bool operator ==(RentalRequestViewModel left, RentalRequestViewModel right)
         {
             return Equals(left, right);
         }
@@ -429,7 +463,7 @@ namespace HETSAPI.Models
         /// <param name="left"></param>
         /// <param name="right"></param>
         /// <returns></returns>
-        public static bool operator !=(RentalRequest left, RentalRequest right)
+        public static bool operator !=(RentalRequestViewModel left, RentalRequestViewModel right)
         {
             return !Equals(left, right);
         }

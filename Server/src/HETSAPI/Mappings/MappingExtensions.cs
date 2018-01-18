@@ -89,6 +89,40 @@ namespace HETSAPI.Mappings
         /// </summary>
         /// <param name="model"></param>
         /// <returns></returns>
+        public static RentalRequestViewModel ToRentalRequestViewModel(this RentalRequest model)
+        {
+            var dto = new RentalRequestViewModel();
+
+            if (model != null)
+            {
+                dto.Id = model.Id;
+                dto.Project = model.Project;
+                dto.LocalArea = model.LocalArea;
+                dto.Status = model.Status;
+                dto.DistrictEquipmentType = model.DistrictEquipmentType;
+                dto.EquipmentCount = model.EquipmentCount;
+                dto.ExpectedHours = model.ExpectedHours;
+                dto.ExpectedStartDate = model.ExpectedStartDate;
+                dto.ExpectedEndDate = model.ExpectedEndDate;
+                dto.FirstOnRotationList = model.FirstOnRotationList;
+                dto.Notes = model.Notes;
+                dto.Attachments = model.Attachments;
+                dto.History = model.History;
+                dto.RentalRequestAttachments = model.RentalRequestAttachments;
+                dto.RentalRequestRotationList = model.RentalRequestRotationList;
+
+                // calculate the Yes Count based on the RentalRequestList
+                dto.CalculateYesCount();                
+            }
+
+            return dto;
+        }        
+
+        /// <summary>
+        /// Printed rental agreement view model
+        /// </summary>
+        /// <param name="model"></param>
+        /// <returns></returns>
         public static RentalAgreementPdfViewModel ToViewModel (this RentalAgreement model)
         {
             var dto = new RentalAgreementPdfViewModel();
@@ -369,11 +403,24 @@ namespace HETSAPI.Mappings
                 dto.ToDate = model.ToDate;                
                 dto.Year = model.Year;
                 dto.YearsOfService = model.YearsOfService;
+
+                // calculate "seniority sort order" & round the seniority value (3 decimal places)
+                if (dto.Seniority != null && dto.Seniority > 0)
+                {
+                    dto.Seniority = (float)Math.Round((Decimal)dto.Seniority, 3, MidpointRounding.AwayFromZero);
+
+                    if (dto.BlockNumber != null)
+                    {
+                        // sort cal: (10-A1)*10000+(10000+B1)
+                        dto.SenioritySortOrder =
+                            (10 - (float) dto.BlockNumber) * 10000 + (10000 + (float) dto.Seniority);
+                    }
+                }
             }
 
             return dto;
         }
-
+        
         /// <summary>
         /// Group membership view model
         /// </summary>

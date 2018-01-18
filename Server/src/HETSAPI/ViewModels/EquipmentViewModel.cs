@@ -130,6 +130,18 @@ namespace HETSAPI.ViewModels
             DuplicateEquipment = duplicateEquipment;
             IsWorking = isWorking;
             LastTimeRecordDateThisYear = lastTimeRecordDateThisYear;
+
+            // calculate "seniority sort order" & round the seniority value (3 decimal places)
+            if (Seniority != null && Seniority > 0)
+            {
+                Seniority = (float)Math.Round((Decimal)seniority, 3, MidpointRounding.AwayFromZero);
+
+                if (BlockNumber != null)
+                {                    
+                    SenioritySortOrder =
+                        (10 - (float)BlockNumber) * 10000 + (10000 + (float)Seniority);
+                }
+            }
         }
 
         /// <summary>
@@ -471,6 +483,11 @@ namespace HETSAPI.ViewModels
         /// </summary>
         [DataMember(Name="lastTimeRecordDateThisYear")]
         public DateTime? LastTimeRecordDateThisYear { get; set; }
+
+        /// <summary>
+        /// Used to sort the Equipment by Seniority in the UI
+        /// </summary>
+        public float? SenioritySortOrder { get; set; }
 
         /// <summary>
         /// Returns the string presentation of the object

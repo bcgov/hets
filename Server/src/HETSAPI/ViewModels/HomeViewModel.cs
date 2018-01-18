@@ -1,6 +1,4 @@
-﻿using System.Collections.Generic;
-
-namespace HETSAPI.ViewModels
+﻿namespace HETSAPI.ViewModels
 {
     /// <summary>
     /// Home Page Model

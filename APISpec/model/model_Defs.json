@@ -7696,28 +7696,6 @@
             "table": null
         },
         {
-            "Description": "The organization name of the contact.",
-            "Length": "150",
-            "Name": "organizationName",
-            "RefDef": null,
-            "Required": [
-                {
-                    "req": "id"
-                }
-            ],
-            "Unique": null,
-            "binary": null,
-            "boolean": null,
-            "datetime": null,
-            "float": null,
-            "id": null,
-            "integer": null,
-            "links": null,
-            "ref": null,
-            "string": "string",
-            "table": null
-        },
-        {
             "Description": "The role of the contact. UI controlled as to whether it is free form or selected from an enumerated list - for initial implementation, the field is freeform.",
             "Length": "100",
             "Name": "role",
@@ -8175,6 +8153,34 @@
             "Description": "A note about the attachment,  optionally maintained by the user.",
             "Length": "2048",
             "Name": "description",
+            "RefDef": null,
+            "Required": [
+                {
+                    "req": "id"
+                },
+                {
+                    "req": "fileName"
+                },
+                {
+                    "req": "fileContents"
+                }
+            ],
+            "Unique": null,
+            "binary": null,
+            "boolean": null,
+            "datetime": null,
+            "float": null,
+            "id": null,
+            "integer": null,
+            "links": null,
+            "ref": null,
+            "string": "string",
+            "table": null
+        },
+        {
+            "Description": "Mime-Type for attachment.",
+            "Length": "255",
+            "Name": "mimeType",
             "RefDef": null,
             "Required": [
                 {

@@ -14,8 +14,15 @@
             padding: 10px;
             font-family: Verdana, Geneva, sans-serif;
             font-size: 12pt;
-        }        
+        }      
+
+        #requestId, #regionId {
+            width: 30px;
+        }
     </style>
+    
+    <script src="https://ajax.aspnetcdn.com/ajax/jQuery/jquery-3.2.1.min.js"></script>
+    
     
     <script language="javascript">
         function updateUserId(userId) {
@@ -31,54 +38,109 @@
         }
 
         function recalcSeniority() {
-            window.location.href = "/api/equipment/recalcSeniority?region=3";
+            var regionId = $("#regionId").val();
+            alert('Recalc Seniority for Region Id: ' + regionId);
+
+            $.ajax({
+                url: "/api/equipment/recalcSeniority?region=" + regionId,
+                type: "GET",
+                timeout: 60000, // sets timeout to 1 min
+                success: function (response) {
+                    alert('done');
+                },
+                error: function (xhr, ajaxOptions, thrownError) {
+                    alert(xhr.responseText);
+                }
+            });
         }
+
+        function recalcRotation() {
+            var requestId = $("#requestId").val();
+            alert('Recalc Rotation for Request Id: ' + requestId);
+
+            $.ajax({
+                url: "/api/rentalrequests/recalcRotation?rentalRequest=" + requestId,
+                type: "GET",
+                timeout: 360000, // sets timeout to 1 min
+                success: function (response) {
+                    alert('done');
+                },
+                error: function (xhr, ajaxOptions, thrownError) {
+                    alert(xhr.responseText);
+                }
+            });
+        }     
+
+        function getRotationList() {
+            var requestId = $("#requestId").val();
+
+            $.ajax({
+                url: "/api/rentalrequests/" + requestId + "/rotationList",
+                type: "GET",
+                timeout: 60000, // sets timeout to 1 min
+                success: function (response) {
+                    alert(JSON.stringify(response.data));
+                },
+                error: function (xhr, ajaxOptions, thrownError) {
+                    alert(xhr.responseText);
+                }
+            });
+        }    
     </script>
 </head>
 <body>
-    <h2>@ViewData["Title"]</h2>
-    <hr />
+<h2>@ViewData["Title"]</h2>
+<hr/>
+<div>
+    <h3>Current User Id</h3>
+    <label>UserId:</label> &nbsp; @Model.UserId
+</div>
+
+@if (Model.DevelopmentEnvironment)
+{
+    <hr/>
     <div>
-        <h3>Current User Id</h3>
-        <label>UserId:</label> &nbsp; @Model.UserId
+        <h3>Reset User Id</h3>
+        <label>UserId:</label> <input text="" id="newUserId"/>
+        <button onclick="updateUserId(newUserId.value);">Override User Context</button>&nbsp;&nbsp;
+        <button onclick="expireUserId();">Clear User Context</button>
+    </div>
+}
+
+@if (Model.DevelopmentEnvironment)
+{
+    <hr/>
+    <div>
+        <h4>View HETS API</h4>
+        <a href="~/swagger/ui/index.html">Swagger</a>
     </div>
 
-    @if (Model.DevelopmentEnvironment)
-    {
-        <hr />
-        <div>
-            <h3>Reset User Id</h3>
-            <label>UserId:</label> <input text="" id="newUserId" />
-            <button onclick="updateUserId(newUserId.value);">Override User Context</button>&nbsp;&nbsp;
-            <button onclick="expireUserId();">Clear User Context</button>
-        </div>
-    }
+    <hr/>
+    <div>
+        <h4>Import BC Bid Data</h4>
+        <a href="~/Import">Import</a>
+    </div>
 
-    @if (Model.DevelopmentEnvironment)
-    {
-        <hr />
-        <div>
-            <h3>View HETS API</h3>
-            <a href="~/swagger/ui/index.html">Swagger</a>
-        </div>
+    <hr/>
+    <div>
+        <h4>Hangfire Monitor</h4>
+        <a href="~/hangfire">Hangfire</a>
+    </div>
 
-        <hr />
-        <div>
-            <h3>Import BC Bid Data</h3>
-            <a href="~/Import">Import</a>
-        </div>
+    <hr/>
+    <div>
+        <h4>Recalc Equipment Seniority</h4>
+        <input type="number" width="5" value="3" id="regionId" /> 
+        <button onclick="recalcSeniority();">Recalc Seniority List for Region</button>
+    </div>
 
-        <hr />
-        <div>
-            <h3>Hangfire Monitor</h3>
-            <a href="~/hangfire">Hangfire</a>
-        </div>
-
-        <hr />
-        <div>
-            <h3>Recalc Equipment Seniority</h3>
-            <button onclick="recalcSeniority();">Recalc (Region (3) "Northern")</button>
-        </div>        
-    }
+    <hr/>
+    <div>
+        <h4>Recalc Rotation List (for a Rental Request)</h4>
+        <input type="number" width="5" value="18" id="requestId" /> 
+        <button onclick="recalcRotation();">Recalc Rotation List for Request</button>        
+        <button onclick="getRotationList();">Get Rotation List</button>
+    </div>
+}
 </body>
 </html>

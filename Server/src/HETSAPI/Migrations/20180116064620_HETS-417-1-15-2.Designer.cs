@@ -11,9 +11,10 @@ using System;
 namespace HETSAPI.Migrations
 {
     [DbContext(typeof(DbAppContext))]
-    partial class DbAppContextModelSnapshot : ModelSnapshot
+    [Migration("20180116064620_HETS-417-1-15-2")]
+    partial class HETS4171152
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -53,10 +54,6 @@ namespace HETSAPI.Migrations
                     b.Property<string>("LastUpdateUserid")
                         .HasColumnName("LAST_UPDATE_USERID")
                         .HasMaxLength(50);
-
-                    b.Property<string>("MimeType")
-                        .HasColumnName("MIME_TYPE")
-                        .HasMaxLength(255);
 
                     b.Property<int?>("OwnerId")
                         .HasColumnName("OWNER_ID");

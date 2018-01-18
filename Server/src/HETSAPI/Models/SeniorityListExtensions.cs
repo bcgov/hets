@@ -32,56 +32,7 @@ namespace HETSAPI.Models
 
             context.Entry(equipment ?? throw new InvalidOperationException()).State = EntityState.Detached;
             return result;
-        }
-
-        /// <summary>
-        /// Calculate the Seniority List
-        /// </summary>
-        /// <param name="context"></param>
-        /// <param name="localAreaId"></param>
-        /// <param name="districtEquipmentTypeId"></param>
-        /// <param name="equipmentTypeId"></param>
-        /// <param name="configuration"></param>
-        public static void CalculateSeniorityList(this DbAppContext context, int localAreaId, int districtEquipmentTypeId, int equipmentTypeId, IConfiguration configuration)
-        {
-            // validate data
-            if (context != null && 
-                context.LocalAreas.Any(x => x.Id == localAreaId) && 
-                context.DistrictEquipmentTypes.Any(x => x.Id == districtEquipmentTypeId))
-            {
-                // get processing rules
-                SeniorityScoringRules scoringRules = new SeniorityScoringRules(configuration);
-
-                // get the associated equipment type
-                EquipmentType equipmentTypeRecord = context.EquipmentTypes.FirstOrDefault(x => x.Id == equipmentTypeId);
-
-                if (equipmentTypeRecord != null)
-                {
-                    // get rules                  
-                    int seniorityScoring = equipmentTypeRecord.IsDumpTruck ? scoringRules.GetEquipmentScore("DumpTruck") : scoringRules.GetEquipmentScore();
-                    int blockSize = equipmentTypeRecord.IsDumpTruck ? scoringRules.GetBlockSize("DumpTruck") : scoringRules.GetBlockSize();
-                    int totalBlocks = equipmentTypeRecord.IsDumpTruck ? scoringRules.GetTotalBlocks("DumpTruck") : scoringRules.GetTotalBlocks();
-
-                    // get all equipment records
-                    IQueryable<Equipment> data = context.Equipments
-                         .Where(x => x.Status == Equipment.StatusApproved && 
-                                     x.LocalAreaId == localAreaId && 
-                                     x.DistrictEquipmentTypeId == districtEquipmentTypeId)
-                         .Select(x => x);
-
-                    // update the seniority score
-                    foreach (Equipment equipment in data)
-                    {                                                
-                        equipment.CalculateSeniority(seniorityScoring);
-                        context.Equipments.Update(equipment);
-                    }
-
-                    context.SaveChanges();
-
-                    AssignBlocks(context, localAreaId, districtEquipmentTypeId, blockSize, totalBlocks);
-                }
-            }
-        }
+        }        
 
         /// <summary>
         /// Update blocks for the seniority list of a given piece of equipment
@@ -113,7 +64,7 @@ namespace HETSAPI.Models
         }
 
         /// <summary>
-        /// Hangfire job to do the Annual Rollover tasks.
+        /// Hangfire job to do the Annual Rollover tasks
         /// </summary>
         /// <param name="context"></param>
         /// <param name="connectionstring"></param>
@@ -215,6 +166,61 @@ namespace HETSAPI.Models
             }
         }
 
+        #region Manage the Seniority List for a Specific Location
+
+        /// <summary>
+        /// Calculate the Seniority List
+        /// </summary>
+        /// <param name="context"></param>
+        /// <param name="localAreaId"></param>
+        /// <param name="districtEquipmentTypeId"></param>
+        /// <param name="equipmentTypeId"></param>
+        /// <param name="configuration"></param>
+        public static void CalculateSeniorityList(this DbAppContext context, int localAreaId, int districtEquipmentTypeId, int equipmentTypeId, IConfiguration configuration)
+        {
+            // validate data
+            if (context != null &&
+                context.LocalAreas.Any(x => x.Id == localAreaId) &&
+                context.DistrictEquipmentTypes.Any(x => x.Id == districtEquipmentTypeId))
+            {
+                // get processing rules
+                SeniorityScoringRules scoringRules = new SeniorityScoringRules(configuration);
+
+                // get the associated equipment type
+                EquipmentType equipmentTypeRecord = context.EquipmentTypes.FirstOrDefault(x => x.Id == equipmentTypeId);
+
+                if (equipmentTypeRecord != null)
+                {
+                    // get rules                  
+                    int seniorityScoring = equipmentTypeRecord.IsDumpTruck ? scoringRules.GetEquipmentScore("DumpTruck") : scoringRules.GetEquipmentScore();
+                    int blockSize = equipmentTypeRecord.IsDumpTruck ? scoringRules.GetBlockSize("DumpTruck") : scoringRules.GetBlockSize();
+                    int totalBlocks = equipmentTypeRecord.IsDumpTruck ? scoringRules.GetTotalBlocks("DumpTruck") : scoringRules.GetTotalBlocks();
+
+                    // get all equipment records
+                    IQueryable<Equipment> data = context.Equipments
+                         .Where(x => x.Status == Equipment.StatusApproved &&
+                                     x.LocalAreaId == localAreaId &&
+                                     x.DistrictEquipmentTypeId == districtEquipmentTypeId)
+                         .Select(x => x);
+
+                    // update the seniority score
+                    foreach (Equipment equipment in data)
+                    {
+                        equipment.CalculateSeniority(seniorityScoring);
+                        context.Equipments.Update(equipment);
+                    }
+
+                    context.SaveChanges();
+
+                    // put equipment into the correct blocks
+                    AssignBlocks(context, localAreaId, districtEquipmentTypeId, blockSize, totalBlocks);
+
+                    // create/update the local area rotation list
+
+                }
+            }
+        }
+
         /// <summary>
         /// Assign blocks for the given local area and equipment type
         /// </summary>
@@ -306,7 +312,11 @@ namespace HETSAPI.Models
 
             // record added to the block
             return true;
-        }        
+        }
+
+        #endregion
+
+        #region Manage the Local Area Rotation List (het_local_area_rotation_list)
 
         /// <summary>
         /// Returns the Equipment that is next on a Local Rotation List
@@ -434,6 +444,8 @@ namespace HETSAPI.Models
                 context.SaveChanges();                
             }
         }
+        
+        #endregion
     }
 
     #region Seniority Scoring Rules
