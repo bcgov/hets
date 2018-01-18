@@ -205,7 +205,7 @@ var RentalRequests = React.createClass({
       .sortBy('name')
       .value();
 
-    var numRentalRequests = this.state.loading ? '...' : Object.keys(this.props.rentalRequests).length;
+    var numRentalRequests = this.props.rentalRequests.loading ? '...' : Object.keys(this.props.rentalRequests.data).length;
 
     return <div id="rental-requests-list">
       <PageHeader>Rental Requests ({ numRentalRequests })

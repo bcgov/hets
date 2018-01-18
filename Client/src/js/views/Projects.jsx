@@ -142,7 +142,7 @@ var Projects = React.createClass({
   },
 
   render() {
-    var numProjects = this.state.loading ? '...' : Object.keys(this.props.projects).length;
+    var numProjects = this.props.projects.loading ? '...' : Object.keys(this.props.projects.data).length;
 
     return <div id="projects-list">
       <PageHeader>Projects ({ numProjects })

@@ -167,7 +167,7 @@ var Equipment = React.createClass({
       .sortBy('districtEquipmentName')
       .value();
 
-    var numResults = this.state.loading ? '...' : Object.keys(this.props.equipmentList).length;
+    var numResults = this.props.equipmentList.loading ? '...' : Object.keys(this.props.equipmentList.data).length;
 
     return <div id="equipment-list">
       <PageHeader>Equipment ({ numResults })
