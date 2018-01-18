@@ -1012,7 +1012,6 @@ export function getRentalRequest(id) {
   store.dispatch({ type: Action.RENTAL_REQUEST_REQUEST });
   return new ApiRequest(`/rentalrequests/${ id }`).get().then(response => {
     var rentalRequest = response.data;
-
     // Add display fields
     parseRentalRequest(rentalRequest);
 
@@ -1033,7 +1032,6 @@ export function addRentalRequest(rentalRequest) {
 export function updateRentalRequest(rentalRequest) {
   return new ApiRequest(`/rentalrequests/${ rentalRequest.id }`).put(rentalRequest).then(response => {
     var rentalRequest = response.data;
-
     // Add display fields
     parseRentalRequest(rentalRequest);
 

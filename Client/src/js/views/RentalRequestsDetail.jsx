@@ -241,7 +241,7 @@ var RentalRequestsDetail = React.createClass({
       </Row>
 
       {(() => {
-        if (this.state.loading) { return <div style={{ textAlign: 'center' }}><Spinner/></div>; }
+        if (this.state.loading) { return <div style={{ textAlign: 'center' }}><Spinner/></div>; } 
 
         return (
           <Row id="rental-requests-header">
@@ -257,9 +257,8 @@ var RentalRequestsDetail = React.createClass({
         </span></h3>
         {(() => {
           if (this.state.loading) { return <div style={{ textAlign: 'center' }}><Spinner/></div>; }
-          
-          var numRequestAttachments = Object.keys(rentalRequest.rentalRequestAttachment || []).length;
-          var requestAttachments = (rentalRequest.rentalRequestAttachments || []).join(', ');
+        
+          var requestAttachments = rentalRequest.rentalRequestAttachments && rentalRequest.rentalRequestAttachments[0] ? rentalRequest.rentalRequestAttachments[0].attachment : 'None';
           
           return <Grid fluid id="rental-requests-data" className="nopadding">
             <Row>
@@ -276,7 +275,7 @@ var RentalRequestsDetail = React.createClass({
                 <ColDisplay md={12} labelProps={{ md: 4 }} label="Count">{ rentalRequest.equipmentCount }</ColDisplay>
               </Col>
               <Col md={6}>
-                <ColDisplay md={12} labelProps={{ md: 4 }} label="Attachment(s)">{ numRequestAttachments > 0 ? requestAttachments : 'None' }</ColDisplay>
+                <ColDisplay md={12} labelProps={{ md: 4 }} label="Attachment(s)">{ requestAttachments }</ColDisplay>
                 <ColDisplay md={12} labelProps={{ md: 4 }} label="Expected Hours">{ rentalRequest.expectedHours }</ColDisplay>
                 <ColDisplay md={12} labelProps={{ md: 4 }} label="Expected Start Date">{  formatDateTime(rentalRequest.expectedStartDate, Constant.DATE_YEAR_SHORT_MONTH_DAY) }</ColDisplay>
                 <ColDisplay md={12} labelProps={{ md: 4 }} label="Expected End Date">{ formatDateTime(rentalRequest.expectedEndDate, Constant.DATE_YEAR_SHORT_MONTH_DAY) }</ColDisplay>
