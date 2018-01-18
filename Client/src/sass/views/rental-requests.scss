@@ -62,12 +62,16 @@
     }
   }
 
+  .request-information {
+    margin-top: 20px;
+  }
+
   .label {
     font-size: 100%;
     margin-right: 5px;
   }
 
-  .btn {
+  .btn, .checkbox-control {
     margin-left: 20px;
   }
 
@@ -110,5 +114,11 @@
   input[type='number'] {
     width: auto;
     min-width: 175px;
+  }
+}
+
+#confirm-force-hire, #hire-offer-edit {
+  &.modal {
+    z-index: 1040;
   }
 }

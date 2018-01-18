@@ -24,6 +24,8 @@ import ColDisplay from '../components/ColDisplay.jsx';
 import Spinner from '../components/Spinner.jsx';
 import TableControl from '../components/TableControl.jsx';
 import Unimplemented from '../components/Unimplemented.jsx';
+import Confirm from '../components/Confirm.jsx';
+import OverlayTrigger from '../components/OverlayTrigger.jsx';
 
 import { formatDateTime } from '../utils/date';
 import { concat } from '../utils/string';
@@ -34,10 +36,14 @@ TODO:
 * Print / Notes / Docs / Contacts (TBD) / History / Request Status List / Clone / Request Attachments
 
 */
+const STATUS_YES = 'Yes';
+const STATUS_NO = 'No';
+const STATUS_FORCE_HIRE = 'Force Hire';
 
 var RentalRequestsDetail = React.createClass({
   propTypes: {
     rentalRequest: React.PropTypes.object,
+    rentalRequestRotationList: React.PropTypes.object,
     rentalAgreement: React.PropTypes.object,
     notes: React.PropTypes.object,
     attachments: React.PropTypes.object,
@@ -57,7 +63,7 @@ var RentalRequestsDetail = React.createClass({
       showHireOfferDialog: false,
       showContactDialog: false,
 
-      showHiredEquipment: false,
+      showAttachmentss: false,
 
       contact: {},
       rotationListHireOffer: {},
@@ -72,11 +78,13 @@ var RentalRequestsDetail = React.createClass({
 
   fetch() {
     this.setState({ loading: true });
-
-    var rentalRequestsPromise = Api.getRentalRequest(this.props.params.rentalRequestId);
+    var rentalRequestId = this.props.params.rentalRequestId;
+    var rentalRequestsPromise = Api.getRentalRequest(rentalRequestId);
+    var rotationListPromise = Api.getRentalRequestRotationList(rentalRequestId);
     var documentsPromise = Api.getRentalRequestDocuments(this.props.params.rentalRequestId);
 
-    return Promise.all([rentalRequestsPromise, documentsPromise]).finally(() => {
+
+    return Promise.all([rentalRequestsPromise, rotationListPromise, documentsPromise]).finally(() => {
       this.setState({ loading: false });
     });
   },
@@ -138,14 +146,22 @@ var RentalRequestsDetail = React.createClass({
   },
 
   saveHireOffer(hireOffer) {
-    Api.updateRentalRequestRotationList(hireOffer, this.props.rentalRequest).finally(() => {
+    let hireOfferUpdated = { ...hireOffer };
+    delete hireOfferUpdated.isFirstNullRecord;
+    delete hireOfferUpdated.displayFields;
+    Api.updateRentalRequestRotationList(hireOfferUpdated, this.props.rentalRequest.data).finally(() => {
       this.fetch();
+      if ((hireOffer.offerResponse === STATUS_YES || hireOffer.offerResponse === STATUS_FORCE_HIRE) && hireOffer.rentalAgreement && hireOffer.rentalAgreement.id) {
+        this.props.router.push({ pathname: `${Constant.RENTAL_AGREEMENTS_PATHNAME}/${this.props.rentalAgreement.id}` });
+      } else if (hireOffer.offerResponse === STATUS_YES || hireOffer.offerResponse === STATUS_FORCE_HIRE) {
+        this.saveNewRentalAgreement(hireOffer);
+      }
       this.closeHireOfferDialog();
     });
   },
 
   saveNewRentalAgreement(rentalRequestRotationList) {
-    var rentalRequest = this.props.rentalRequest;
+    var rentalRequest = this.props.rentalRequest.data;
 
     var newAgreement = {
       equipment: { id: rentalRequestRotationList.equipment.id },
@@ -190,8 +206,19 @@ var RentalRequestsDetail = React.createClass({
     // TODO
   },
 
+  renderStatusText(listItem) {
+    let text = 'Hire';
+    if (listItem.offerResponse === STATUS_NO) {
+      text = listItem.offerRefusalReason;
+    } else if (listItem.offerResponse !== null) {
+      text = listItem.offerResponse;
+    }
+    return text;
+  },
+
   render() {
-    var rentalRequest = this.props.rentalRequest;
+    var rentalRequest = this.props.rentalRequest.data;
+
     return <div id="rental-requests-detail">
       <Row id="rental-requests-top">
         <Col md={10}>
@@ -219,6 +246,7 @@ var RentalRequestsDetail = React.createClass({
         return (
           <Row id="rental-requests-header">
             <ColDisplay md={12} label={ <h1>Project:</h1> }><h1><small>{ rentalRequest.projectName }</small></h1></ColDisplay>
+            <ColDisplay md={12} label="Provincial Project Number:">{ rentalRequest.projectId }</ColDisplay>            
           </Row>
         );
       })()}
@@ -229,14 +257,13 @@ var RentalRequestsDetail = React.createClass({
         </span></h3>
         {(() => {
           if (this.state.loading) { return <div style={{ textAlign: 'center' }}><Spinner/></div>; }
-
+          
           var numRequestAttachments = Object.keys(rentalRequest.rentalRequestAttachment || []).length;
           var requestAttachments = (rentalRequest.rentalRequestAttachments || []).join(', ');
-
-          return <Grid fluid id="rental-requests-data">
+          
+          return <Grid fluid id="rental-requests-data" className="nopadding">
             <Row>
               <Col md={6}>
-                <ColDisplay md={12} labelProps={{ md: 4 }} label="Project">{ rentalRequest.projectName }</ColDisplay>
                 <ColDisplay md={12} labelProps={{ md: 4 }} label={ rentalRequest.primaryContactRole || 'Primary Contact' }>
                   <Unimplemented>
                     <Button bsStyle="link" title="Show Contact" onClick={ this.openContactDialog.bind(this, rentalRequest.primaryContact) }>
@@ -245,14 +272,14 @@ var RentalRequestsDetail = React.createClass({
                   </Unimplemented>
                 </ColDisplay>
                 <ColDisplay md={12} labelProps={{ md: 4 }} label="Local Area">{ rentalRequest.localAreaName }</ColDisplay>
+                <ColDisplay md={12} labelProps={{ md: 4 }} label="Equipment Type">{ rentalRequest.equipmentTypeName }</ColDisplay>
+                <ColDisplay md={12} labelProps={{ md: 4 }} label="Count">{ rentalRequest.equipmentCount }</ColDisplay>
+              </Col>
+              <Col md={6}>
+                <ColDisplay md={12} labelProps={{ md: 4 }} label="Attachment(s)">{ numRequestAttachments > 0 ? requestAttachments : 'None' }</ColDisplay>
                 <ColDisplay md={12} labelProps={{ md: 4 }} label="Expected Hours">{ rentalRequest.expectedHours }</ColDisplay>
                 <ColDisplay md={12} labelProps={{ md: 4 }} label="Expected Start Date">{  formatDateTime(rentalRequest.expectedStartDate, Constant.DATE_YEAR_SHORT_MONTH_DAY) }</ColDisplay>
                 <ColDisplay md={12} labelProps={{ md: 4 }} label="Expected End Date">{ formatDateTime(rentalRequest.expectedEndDate, Constant.DATE_YEAR_SHORT_MONTH_DAY) }</ColDisplay>
-              </Col>
-              <Col md={6}>
-                <ColDisplay md={12} labelProps={{ md: 4 }} label="Equipment Type">{ rentalRequest.equipmentTypeName }</ColDisplay>
-                <ColDisplay md={12} labelProps={{ md: 4 }} label="Count">{ rentalRequest.equipmentCount }</ColDisplay>
-                <ColDisplay md={12} labelProps={{ md: 4 }} label="Attachment(s)">{ numRequestAttachments > 0 ? requestAttachments : 'None' }</ColDisplay>
               </Col>
             </Row>
           </Grid>;
@@ -262,64 +289,90 @@ var RentalRequestsDetail = React.createClass({
       <Well>
         <h3>Request Status <span className="pull-right">
           <Button onClick={ this.print }><Glyphicon glyph="print" title="Print" /></Button>
-          <CheckboxControl id="showHiredEquipment" inline checked={ this.state.showHiredEquipment } updateState={ this.updateState }><small>Show Hired</small></CheckboxControl>
+          <CheckboxControl id="showAttachments" inline updateState={ this.updateState }><small>Show Attachments</small></CheckboxControl>
         </span></h3>
         {(() => {
           if (this.state.loading) { return <div style={{ textAlign: 'center' }}><Spinner/></div>; }
-
-          var rotationList = rentalRequest.rentalRequestRotationList;
-
-          if (!this.state.showHiredEquipment) {
-            // Exclude equipment already hired
-            rotationList = _.reject(rotationList, { isHired: true });
-          }
-
+          
+          var rotationList = this.props.rentalRequestRotationList.data.rentalRequestRotationList;
+          
           if (Object.keys(rotationList || []).length === 0) { return <Alert bsStyle="success" style={{ marginTop: 10 }}>No equipment</Alert>; }
-
+          
           // Sort in rotation list order
           rotationList = _.sortBy(rotationList, 'rotationListSortOrder');
-
+          
           var headers = [
-            { field: 'seniority',            title: 'Seniority'         },
-            { field: 'serviceHoursThisYear', title: 'YTD Hours'         },
-            { field: 'equipmentCode',        title: 'Equipment ID'      },
-            { field: 'equipmentDetails',     title: 'Equipment Details' },
-            { field: 'primaryContactName',   title: 'Contact'           },
-            { field: 'status',               title: 'Status'            },
+            { field: 'seniority',               title: 'Seniority'         },
+            { field: 'serviceHoursThisYear',    title: 'YTD Hours'         },
+            { field: 'equipmentCode',           title: 'Equipment ID'      },
+            { field: 'equipmentDetails',        title: 'Equipment Details' },
+            { field: 'equipmentOwner',           title: 'Owner'             },
+            { field: 'primaryContactName',      title: 'Contact'           },
+            { field: 'primaryContactWorkPhone', title: 'Work Phone'        },
+            { field: 'primaryContactCellPhone', title: 'Cell Phone'        },
+            { field: 'status',                  title: 'Status'            },
           ];
-
-          var separator = <span style={{ float: 'left'}}>{ '|' }</span>;
+          
+          var previousNullRecord = false;
 
           return <TableControl id="rotation-list" headers={ headers }>
             {
               _.map(rotationList, (listItem) => {
-                return <tr key={ listItem.id }>
-                  <td>{ listItem.seniority }</td>
-                  <td>{ listItem.serviceHoursThisYear }</td>
-                  <td><Link to={ `${Constant.EQUIPMENT_PATHNAME}/${listItem.equipmentId}` }>{ listItem.equipmentCode }</Link></td>
-                  <td>{ listItem.equipmentDetails }</td>
-                  <td>
-                    <Unimplemented>
-                      <Button bsStyle="link" title="Show Contact" onClick={ this.openContactDialog.bind(this, listItem.contact) }>
-                        { concat(listItem.contactName, listItem.contactPhone, ': ') }
-                      </Button>
-                    </Unimplemented>
-                  </td>
-                  <td>
-                    <ButtonGroup>
-                      <Button bsStyle="link" title="Show Offer" onClick={ this.openHireOfferDialog.bind(this, listItem) }>Offer</Button>
-                      { separator }
-                      {(() => {
-                        // If RentalRequestRotationList.rentalAgreement is non-null - go to that Rental Agreement.
-                        if (listItem.rentalAgreement && listItem.rentalAgreement.id) {
-                          return <Link title="Open Rental Agreement" to={ `${Constant.RENTAL_AGREEMENTS_PATHNAME}/${listItem.rentalAgreement.id}` }>Agreement</Link>;
-                        }
-                        // If RentalRequestRotationList.rentalAgreement is null - go to the Create New Rental Agreement with needed information about the new agreement
-                        return <Button bsStyle="link" title="Create Rental Agreement" onClick={ this.saveNewRentalAgreement.bind(this, listItem) }>Agreement</Button>;
-                      })()}
-                    </ButtonGroup>
-                  </td>
-                </tr>;
+                const owner = listItem.equipment.owner;
+                var isFirstNullRecord = false;
+                // Set first null record to show correct response dialog link text
+                if (!previousNullRecord && !listItem.offerResponse) { isFirstNullRecord = true; previousNullRecord = true; }
+                return (
+                  <tr key={ listItem.id }>
+                    <td>{ listItem.displayFields.seniority }</td>
+                    <td>{ listItem.equipment.serviceHoursLastYear }</td>
+                    <td><Link to={ `${Constant.EQUIPMENT_PATHNAME}/${listItem.equipment.id}` }>{ listItem.equipment.equipmentCode }</Link></td>
+                    <td>{ listItem.displayFields.equipmentDetails }
+                      { this.state.showAttachments && 
+                        <div>Attachments: { listItem.equipment.equipmentAttachments ? listItem.equipment.equipmentAttachments : 'N/A' }</div>
+                      }
+                    </td>
+                    <td>{ owner && owner.organizationName }</td>
+                    <td>{ owner && owner.primaryContact && `${owner.primaryContact.givenName} ${owner.primaryContact.surname}` }</td>
+                    <td>{ owner && owner.primaryContact && owner.primaryContact.workPhoneNumber }</td>
+                    <td>{ owner && owner.primaryContact && owner.primaryContact.mobilePhoneNumber }</td>
+                    <td>
+                      <ButtonGroup>
+                        {(() => {
+                          listItem.isFirstNullRecord = isFirstNullRecord;
+                          if (listItem.maximumHours) {
+                            return (
+                              <OverlayTrigger 
+                                trigger="click" 
+                                placement="top" 
+                                title="This piece of equipment is has met or exceeded its Maximum Allowed Hours for this year. Are you sure you want to edit the Offer on this equipment?"
+                                rootClose 
+                                overlay={ <Confirm onConfirm={ this.openHireOfferDialog.bind(this, listItem) }/> }
+                              >
+                                <Button 
+                                  bsStyle="link"
+                                  bsSize="xsmall"
+                                >
+                                  Max. hours reached
+                                </Button>
+                              </OverlayTrigger>
+                            );
+                          }
+
+                          return (
+                            <Button 
+                              bsStyle="link" 
+                              title="Show Offer" 
+                              onClick={ this.openHireOfferDialog.bind(this, listItem) }
+                            >
+                              { this.renderStatusText(listItem, isFirstNullRecord) }
+                            </Button>
+                          );
+                        })()}
+                      </ButtonGroup>
+                    </td>
+                  </tr>
+                );
               })
             }
           </TableControl>;
@@ -372,6 +425,7 @@ var RentalRequestsDetail = React.createClass({
 function mapStateToProps(state) {
   return {
     rentalRequest: state.models.rentalRequest,
+    rentalRequestRotationList: state.models.rentalRequestRotationList,
     rentalAgreement: state.models.rentalAgreement,
     notes: state.models.rentalRequestNotes,
     attachments: state.models.rentalRequestAttachments,

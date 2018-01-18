@@ -16,7 +16,7 @@ var ColDisplay = React.createClass({
     var props = _.omit(this.props, 'label', 'labelProps', 'fieldProps');
 
     return <Col { ...props }>
-        <Col { ...this.props.labelProps } style={{ float: 'left', textAlign: 'right'}} className="col-display-label">
+        <Col { ...this.props.labelProps } style={{ float: 'left' }} className="col-display-label">
           <strong>{ this.props.label }</strong>
         </Col>
         <Col { ...this.props.fieldProps } style={{ float: 'left', paddingLeft: 10 }} className="col-display-field">
