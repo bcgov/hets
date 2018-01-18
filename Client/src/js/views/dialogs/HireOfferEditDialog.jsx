@@ -27,13 +27,19 @@ const STATUS_ASKED = 'Asked';
 const STATUS_FORCE_HIRE = 'Force Hire';
 
 // TODO Use lookup lists instead of hard-coded values (HETS-236)
+const EQUIPMENT_NOT_AVAILABLE = 'Equipment Not Available';
+const EQUIPMENT_NOT_SUITABLE = 'Equipment Not Suitable';
+const NO_RESPONSE = 'No Response';
+const MAXIMUM_HOURS_REACHED = 'Maximum Hours Reached';
+const MAINTENANCE_CONTRACTOR = 'Maintenance Contractor';
+const OTHER = 'Other (Reason to be mentioned in note)';
 const refusalReasons = [
-  'Equipment Not Available',
-  'Equipment Not Suitable',
-  'No Response',
-  'Maximum Hours Reached',
-  'Maintenance Contractor',
-  'Other (Reason to be mentioned in note)',
+  EQUIPMENT_NOT_AVAILABLE,
+  EQUIPMENT_NOT_SUITABLE,
+  NO_RESPONSE,
+  MAXIMUM_HOURS_REACHED,
+  MAINTENANCE_CONTRACTOR,
+  OTHER,
 ];
 
 var HireOfferEditDialog = React.createClass({
@@ -115,7 +121,7 @@ var HireOfferEditDialog = React.createClass({
       valid = false;
     }
 
-    if (this.state.offerStatus == STATUS_NO && isBlank(this.state.offerResponseNote)) {
+    if (this.state.offerStatus == STATUS_NO && this.state.offerRefusalReason === OTHER && isBlank(this.state.offerResponseNote)) {
       this.setState({ offerResponseNoteError: 'Note is required' });
       valid = false;
     } 
