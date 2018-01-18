@@ -5,7 +5,7 @@ Hired Equipment Tracking System
 
 This project uses the scripts found in [openshift-project-tools](https://github.com/BCDevOps/openshift-project-tools) to setup and maintain OpenShift environments (both local and hosted).  Refer to the [OpenShift Scripts](https://github.com/BCDevOps/openshift-project-tools/blob/master/bin/README.md) documentation for details.
 
-**These scripts are designed to be run on the command line in the root `openshift` directory of your project's source code.**
+**These scripts are designed to be run on the command line (using Git Bash for example) in the root `openshift` directory of your project's source code.**
 
 ## Running in a Local OpenShift Cluster
 
