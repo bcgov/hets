@@ -329,7 +329,19 @@ var RentalRequestsDetail = React.createClass({
                     <td><Link to={ `${Constant.EQUIPMENT_PATHNAME}/${listItem.equipment.id}` }>{ listItem.equipment.equipmentCode }</Link></td>
                     <td>{ listItem.displayFields.equipmentDetails }
                       { this.state.showAttachments && 
-                        <div>Attachments: { listItem.equipment.equipmentAttachments ? listItem.equipment.equipmentAttachments : 'N/A' }</div>
+                      <div>
+                        Attachments:
+                        { listItem.equipment.equipmentAttachments && listItem.equipment.equipmentAttachments.map((item, i) => (
+                          <span key={item.id}> { item.typeName }
+                          { ((i + 1) < listItem.equipment.equipmentAttachments.length) &&
+                            <span>,</span>
+                          }
+                          </span>
+                        ))}
+                        { (!listItem.equipment.equipmentAttachments || listItem.equipment.equipmentAttachments.length === 0)  &&
+                          <span> none</span>
+                        }
+                      </div>
                       }
                     </td>
                     <td>{ owner && owner.organizationName }</td>
