@@ -82,12 +82,15 @@ namespace HETSAPI.ViewModels
         {
             int temp = 0;
 
-            foreach (RentalRequestRotationList equipment in RentalRequestRotationList)
+            if (RentalRequestRotationList != null)
             {
-                if (equipment.OfferResponse != null &&
-                    equipment.OfferResponse.Equals("Yes", StringComparison.InvariantCultureIgnoreCase))
+                foreach (RentalRequestRotationList equipment in RentalRequestRotationList)
                 {
-                    temp++;
+                    if (equipment.OfferResponse != null &&
+                        equipment.OfferResponse.Equals("Yes", StringComparison.InvariantCultureIgnoreCase))
+                    {
+                        temp++;
+                    }
                 }
             }
 
