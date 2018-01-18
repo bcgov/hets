@@ -157,158 +157,6 @@ namespace HETSAPI.Services.Impl
         }
 
         /// <summary>
-        /// Get contacts associated with project
-        /// </summary>
-        /// <param name="id">id of Owner to fetch Contacts for</param>
-        /// <response code="200">OK</response>
-        public virtual IActionResult ProjectsIdContactsGetAsync(int id)
-        {
-            bool exists = _context.Projects.Any(a => a.Id == id);
-
-            if (exists)
-            {
-                Project project = _context.Projects
-                    .Include(x => x.District.Region)
-                    .Include(x => x.Notes)
-                    .Include(x => x.Attachments)
-                    .Include(x => x.History)
-                    .Include(x => x.Contacts)
-                    .First(x => x.Id == id);
-
-                return new ObjectResult(new HetsResponse(project.Contacts));
-            }
-
-            // record not found
-            return new ObjectResult(new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-01", _configuration)));
-        }
-
-        /// <summary>
-        /// Update a contact associated with a project
-        /// </summary>
-        /// <remarks>Replaces an Owner&#39;s Contacts</remarks>
-        /// <param name="id">id of Owner to replace Contacts for</param>
-        /// <param name="item">Replacement Owner contacts.</param>
-        /// <response code="200">OK</response>
-        public virtual IActionResult ProjectsIdContactsPostAsync(int id, Contact item)
-        {
-            bool exists = _context.Projects.Any(a => a.Id == id);
-
-            if (exists && item != null)
-            {
-                Project project = _context.Projects
-                    .Include(x => x.District.Region)
-                    .Include(x => x.Notes)
-                    .Include(x => x.Attachments)
-                    .Include(x => x.History)
-                    .Include(x => x.Contacts)
-                    .First(x => x.Id == id);
-
-                // adjust the incoming list
-                item.Id = 0;
-
-                _context.Contacts.Add(item);
-                project.Contacts.Add(item);
-                _context.Projects.Update(project);
-                _context.SaveChanges();
-
-                return new ObjectResult(new HetsResponse(item));
-            }
-
-            // record not found
-            return new ObjectResult(new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-01", _configuration)));
-        }
-
-        /// <summary>
-        /// Update contacts associated with a project
-        /// </summary>
-        /// <remarks>Replaces an Project&#39;s Contacts</remarks>
-        /// <param name="id">id of Project to replace Contacts for</param>
-        /// <param name="items">Replacement Project contacts.</param>
-        /// <response code="200">OK</response>
-        public virtual IActionResult ProjectsIdContactsPutAsync(int id, Contact[] items)
-        {
-            bool exists = _context.Projects.Any(a => a.Id == id);
-
-            if (exists && items != null)
-            {
-                Project project = _context.Projects
-                    .Include(x => x.District.Region)
-                    .Include(x => x.Notes)
-                    .Include(x => x.Attachments)
-                    .Include(x => x.History)
-                    .Include(x => x.Contacts)
-                    .First(x => x.Id == id);
-
-                // adjust the incoming list
-                for (int i = 0; i < items.Count(); i++)
-                {
-                    Contact item = items[i];
-
-                    if (item != null)
-                    {
-                        bool contactExists = _context.Contacts.Any(x => x.Id == item.Id);
-
-                        if (contactExists)
-                        {
-                            items[i] = _context.Contacts
-                                .First(x => x.Id == item.Id);
-                        }
-                        else
-                        {
-                            _context.Add(item);
-                            items[i] = item;
-                        }
-                    }
-                }
-
-                // remove contacts that are no longer attached
-                foreach (Contact contact in project.Contacts)
-                {
-                    if (contact != null && items.All(x => x.Id != contact.Id))
-                    {
-                        _context.Remove(contact);
-                    }
-                }
-
-                // replace contacts
-                project.Contacts = items.ToList();
-                _context.Update(project);
-                _context.SaveChanges();
-
-                return new ObjectResult(new HetsResponse(items));
-            }
-
-            // record not found
-            return new ObjectResult(new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-01", _configuration)));
-        }
-
-        /// <summary>
-        /// Get attachments associated with a project
-        /// </summary>
-        /// <remarks>Returns attachments for a particular Project</remarks>
-        /// <param name="id">id of Project to fetch attachments for</param>
-        /// <response code="200">OK</response>
-        /// <response code="404">Project not found</response>
-        public virtual IActionResult ProjectsIdAttachmentsGetAsync(int id)
-        {
-            bool exists = _context.Projects.Any(a => a.Id == id);
-
-            if (exists)
-            {
-                Project project = _context.Projects
-                    .Include(x => x.Attachments)
-                    .First(a => a.Id == id);
-
-                List<AttachmentViewModel> result = MappingExtensions.GetAttachmentListAsViewModel(project.Attachments);
-
-                return new ObjectResult(new HetsResponse(result));
-            }
-
-            // record not found
-            return new ObjectResult(new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-01", _configuration)));
-        }
-
-        /// <summary>
         /// Delete project
         /// </summary>
         /// <param name="id">id of Project to delete</param>
@@ -335,91 +183,6 @@ namespace HETSAPI.Services.Impl
 
             // record not found
             return new ObjectResult(new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-01", _configuration)));
-        }
-
-        ///  <summary>
-        ///  Get project history
-        ///  </summary>
-        ///  <remarks>Returns History for a particular Project</remarks>
-        ///  <param name="id">id of Project to fetch History for</param>
-        /// <param name="offset"></param>
-        /// <param name="limit"></param>
-        /// <response code="200">OK</response>
-        public virtual IActionResult ProjectsIdHistoryGetAsync(int id, int? offset, int? limit)
-        {
-            bool exists = _context.Projects.Any(a => a.Id == id);
-
-            if (exists)
-            {
-                Project project = _context.Projects
-                    .Include(x => x.History)
-                    .First(a => a.Id == id);
-
-                List<History> data = project.History.OrderByDescending(y => y.LastUpdateTimestamp).ToList();
-
-                if (offset == null)
-                {
-                    offset = 0;
-                }
-
-                if (limit == null)
-                {
-                    limit = data.Count - offset;
-                }
-
-                List<HistoryViewModel> result = new List<HistoryViewModel>();
-
-                for (int i = (int)offset; i < data.Count && i < offset + limit; i++)
-                {
-                    result.Add(data[i].ToViewModel(id));
-                }
-
-                return new ObjectResult(new HetsResponse(result));
-            }
-
-            // record not found
-            return new ObjectResult(new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-01", _configuration)));
-        }
-
-        /// <summary>
-        /// Create a history record associated with a project
-        /// </summary>
-        /// <remarks>Add a History record to the Project</remarks>
-        /// <param name="id">id of Project to fetch History for</param>
-        /// <param name="item"></param>
-        /// <response code="200">OK</response>
-        /// <response code="201">History created</response>
-        public virtual IActionResult ProjectsIdHistoryPostAsync(int id, History item)
-        {
-            HistoryViewModel result = new HistoryViewModel();
-
-            bool exists = _context.Projects.Any(a => a.Id == id);
-
-            if (exists)
-            {
-                Project project = _context.Projects
-                    .Include(x => x.History)
-                    .First(a => a.Id == id);
-
-                if (project.History == null)
-                {
-                    project.History = new List<History>();
-                }
-
-                // force add
-                item.Id = 0;
-                project.History.Add(item);
-                _context.Projects.Update(project);
-                _context.SaveChanges();
-            }
-
-            result.HistoryText = item.HistoryText;
-            result.Id = item.Id;
-            result.LastUpdateTimestamp = item.LastUpdateTimestamp;
-            result.LastUpdateUserid = item.LastUpdateUserid;
-            result.AffectedEntityId = id;
-
-            return new ObjectResult(new HetsResponse(result));
         }
 
         /// <summary>
@@ -569,5 +332,280 @@ namespace HETSAPI.Services.Impl
 
             return new ObjectResult(new HetsResponse(result));
         }
+
+        /// <summary>
+        /// Get equipment associated with a project
+        /// </summary>
+        /// <remarks>Gets a Project&#39;s Equipment</remarks>
+        /// <param name="id">id of Project to fetch Equipment for</param>
+        /// <response code="200">OK</response>
+        public virtual IActionResult ProjectsIdEquipmentGetAsync(int id)
+        {
+            bool exists = _context.Projects.Any(a => a.Id == id);
+
+            if (exists)
+            {
+                Project project = _context.Projects
+                    .Include(x => x.RentalAgreements)
+                        .ThenInclude(e => e.Equipment)
+                        .ThenInclude(o => o.Owner)
+                        .ThenInclude(c => c.PrimaryContact)
+                    .First(x => x.Id == id);
+
+                return new ObjectResult(new HetsResponse(project.RentalAgreements));
+            }
+
+            // record not found
+            return new ObjectResult(new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-01", _configuration)));
+        }
+
+        #region Project Contacts
+
+        /// <summary>
+        /// Get contacts associated with project
+        /// </summary>
+        /// <param name="id">id of Owner to fetch Contacts for</param>
+        /// <response code="200">OK</response>
+        public virtual IActionResult ProjectsIdContactsGetAsync(int id)
+        {
+            bool exists = _context.Projects.Any(a => a.Id == id);
+
+            if (exists)
+            {
+                Project project = _context.Projects
+                    .Include(x => x.District.Region)
+                    .Include(x => x.Notes)
+                    .Include(x => x.Attachments)
+                    .Include(x => x.History)
+                    .Include(x => x.Contacts)
+                    .First(x => x.Id == id);
+
+                return new ObjectResult(new HetsResponse(project.Contacts));
+            }
+
+            // record not found
+            return new ObjectResult(new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-01", _configuration)));
+        }
+
+        /// <summary>
+        /// Update a contact associated with a project
+        /// </summary>
+        /// <remarks>Replaces an Owner&#39;s Contacts</remarks>
+        /// <param name="id">id of Owner to replace Contacts for</param>
+        /// <param name="item">Replacement Owner contacts.</param>
+        /// <response code="200">OK</response>
+        public virtual IActionResult ProjectsIdContactsPostAsync(int id, Contact item)
+        {
+            bool exists = _context.Projects.Any(a => a.Id == id);
+
+            if (exists && item != null)
+            {
+                Project project = _context.Projects
+                    .Include(x => x.District.Region)
+                    .Include(x => x.Notes)
+                    .Include(x => x.Attachments)
+                    .Include(x => x.History)
+                    .Include(x => x.Contacts)
+                    .First(x => x.Id == id);
+
+                // adjust the incoming list
+                item.Id = 0;
+
+                _context.Contacts.Add(item);
+                project.Contacts.Add(item);
+                _context.Projects.Update(project);
+                _context.SaveChanges();
+
+                return new ObjectResult(new HetsResponse(item));
+            }
+
+            // record not found
+            return new ObjectResult(new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-01", _configuration)));
+        }
+
+        /// <summary>
+        /// Update contacts associated with a project
+        /// </summary>
+        /// <remarks>Replaces an Project&#39;s Contacts</remarks>
+        /// <param name="id">id of Project to replace Contacts for</param>
+        /// <param name="items">Replacement Project contacts.</param>
+        /// <response code="200">OK</response>
+        public virtual IActionResult ProjectsIdContactsPutAsync(int id, Contact[] items)
+        {
+            bool exists = _context.Projects.Any(a => a.Id == id);
+
+            if (exists && items != null)
+            {
+                Project project = _context.Projects
+                    .Include(x => x.District.Region)
+                    .Include(x => x.Notes)
+                    .Include(x => x.Attachments)
+                    .Include(x => x.History)
+                    .Include(x => x.Contacts)
+                    .First(x => x.Id == id);
+
+                // adjust the incoming list
+                for (int i = 0; i < items.Count(); i++)
+                {
+                    Contact item = items[i];
+
+                    if (item != null)
+                    {
+                        bool contactExists = _context.Contacts.Any(x => x.Id == item.Id);
+
+                        if (contactExists)
+                        {
+                            items[i] = _context.Contacts
+                                .First(x => x.Id == item.Id);
+                        }
+                        else
+                        {
+                            _context.Add(item);
+                            items[i] = item;
+                        }
+                    }
+                }
+
+                // remove contacts that are no longer attached
+                foreach (Contact contact in project.Contacts)
+                {
+                    if (contact != null && items.All(x => x.Id != contact.Id))
+                    {
+                        _context.Remove(contact);
+                    }
+                }
+
+                // replace contacts
+                project.Contacts = items.ToList();
+                _context.Update(project);
+                _context.SaveChanges();
+
+                return new ObjectResult(new HetsResponse(items));
+            }
+
+            // record not found
+            return new ObjectResult(new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-01", _configuration)));
+        }
+
+        #endregion
+
+        #region Project Attachments
+
+        /// <summary>
+        /// Get attachments associated with a project
+        /// </summary>
+        /// <remarks>Returns attachments for a particular Project</remarks>
+        /// <param name="id">id of Project to fetch attachments for</param>
+        /// <response code="200">OK</response>
+        /// <response code="404">Project not found</response>
+        public virtual IActionResult ProjectsIdAttachmentsGetAsync(int id)
+        {
+            bool exists = _context.Projects.Any(a => a.Id == id);
+
+            if (exists)
+            {
+                Project project = _context.Projects
+                    .Include(x => x.Attachments)
+                    .First(a => a.Id == id);
+
+                List<AttachmentViewModel> result = MappingExtensions.GetAttachmentListAsViewModel(project.Attachments);
+
+                return new ObjectResult(new HetsResponse(result));
+            }
+
+            // record not found
+            return new ObjectResult(new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-01", _configuration)));
+        }
+
+        #endregion
+
+        #region Project History
+
+        /// <summary>
+        /// Get project history
+        /// </summary>
+        /// <remarks>Returns History for a particular Project</remarks>
+        /// <param name="id">id of Project to fetch History for</param>
+        /// <param name="offset"></param>
+        /// <param name="limit"></param>
+        /// <response code="200">OK</response>
+        public virtual IActionResult ProjectsIdHistoryGetAsync(int id, int? offset, int? limit)
+        {
+            bool exists = _context.Projects.Any(a => a.Id == id);
+
+            if (exists)
+            {
+                Project project = _context.Projects
+                    .Include(x => x.History)
+                    .First(a => a.Id == id);
+
+                List<History> data = project.History.OrderByDescending(y => y.LastUpdateTimestamp).ToList();
+
+                if (offset == null)
+                {
+                    offset = 0;
+                }
+
+                if (limit == null)
+                {
+                    limit = data.Count - offset;
+                }
+
+                List<HistoryViewModel> result = new List<HistoryViewModel>();
+
+                for (int i = (int)offset; i < data.Count && i < offset + limit; i++)
+                {
+                    result.Add(data[i].ToViewModel(id));
+                }
+
+                return new ObjectResult(new HetsResponse(result));
+            }
+
+            // record not found
+            return new ObjectResult(new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-01", _configuration)));
+        }
+
+        /// <summary>
+        /// Create a history record associated with a project
+        /// </summary>
+        /// <remarks>Add a History record to the Project</remarks>
+        /// <param name="id">id of Project to fetch History for</param>
+        /// <param name="item"></param>
+        /// <response code="200">OK</response>
+        /// <response code="201">History created</response>
+        public virtual IActionResult ProjectsIdHistoryPostAsync(int id, History item)
+        {
+            HistoryViewModel result = new HistoryViewModel();
+
+            bool exists = _context.Projects.Any(a => a.Id == id);
+
+            if (exists)
+            {
+                Project project = _context.Projects
+                    .Include(x => x.History)
+                    .First(a => a.Id == id);
+
+                if (project.History == null)
+                {
+                    project.History = new List<History>();
+                }
+
+                // force add
+                item.Id = 0;
+                project.History.Add(item);
+                _context.Projects.Update(project);
+                _context.SaveChanges();
+            }
+
+            result.HistoryText = item.HistoryText;
+            result.Id = item.Id;
+            result.LastUpdateTimestamp = item.LastUpdateTimestamp;
+            result.LastUpdateUserid = item.LastUpdateUserid;
+            result.AffectedEntityId = id;
+
+            return new ObjectResult(new HetsResponse(result));
+        }
+
+        #endregion
     }
 }
