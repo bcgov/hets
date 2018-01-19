@@ -894,6 +894,31 @@ export function updateProject(project) {
   });
 }
 
+export function getProjectEquipment(projectId) {
+  return new ApiRequest(`/projects/${projectId}/equipment`).get().then(response => {
+    var projectEquipment = normalize(response.data);
+
+    store.dispatch({ type: Action.UPDATE_PROJECT_EQUIPMENT, projectEquipment: projectEquipment });
+  });
+}
+
+export function getProjectTimeRecords(projectId) {
+  return new ApiRequest(`projects/${projectId}/timeRecords`).get().then(response => {
+    var projectTimeRecords = normalize(response.data);
+
+    store.dispatch({ type: Action.UPDATE_PROJECT_TIME_RECORDS, projectTimeRecords: projectTimeRecords });
+  });
+}
+
+export function addProjectTimeRecord(projectId, timeRecord) {
+  let timeRecord2 = [{hours: 989, date: '2018-01-20', rentalAgreement: { id: 67 }}];
+  return new ApiRequest(`projects/${projectId}/timeRecord`).post(timeRecord2).then(response => {
+    var projectTimeRecords = normalize(response.data);
+
+    store.dispatch({ type: Action.UPDATE_PROJECT_TIME_RECORDS, projectTimeRecords: projectTimeRecords });
+  });
+}
+
 export function addProjectContact(project, contact) {
   return new ApiRequest(`/projects/${ project.id }/contacts`).post(contact).then(response => {
     var contact = response.data;

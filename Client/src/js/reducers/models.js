@@ -39,6 +39,16 @@ const DEFAULT_MODELS = {
     success: false,
   },
   project: {},
+  projectEquipment: {
+    data: {},
+    loading: false,
+    success: false,
+  },
+  projectTimeRecords: {
+    data: {},
+    loading: false,
+    success: false,
+  },
   projectNotes: {},
   projectAttachments: {},
   projectHistory: {},
@@ -177,6 +187,12 @@ export default function modelsReducer(state = DEFAULT_MODELS, action) {
 
     case Action.ADD_PROJECT: case Action.UPDATE_PROJECT:
       return { ...state, project: action.project };
+
+    case Action.UPDATE_PROJECT_EQUIPMENT:
+      return { ...state, projectEquipment: { data: action.projectEquipment, loading: false, success: true } };
+
+    case Action.UPDATE_PROJECT_TIME_RECORDS:
+      return { ...state, projectTimeRecords: { data: action.projectTimeRecords, loading: false, success: true } };
 
     // Rental Requests
     case Action.RENTAL_REQUESTS_REQUEST: 

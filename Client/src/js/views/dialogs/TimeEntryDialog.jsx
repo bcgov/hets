@@ -33,6 +33,7 @@ var TimeEntryDialog = React.createClass({
     return {
       projectId: this.props.project.id,
       equipment: {},
+      equipmentId: '',
       numberOfInputs: 1,
       timeEntry: {
         1: {
@@ -43,15 +44,14 @@ var TimeEntryDialog = React.createClass({
         },
       },
 
-      errors: {},
+      equipmentIdError: '',
     };
   },
 
   componentDidMount() {
-    let getProjectsPromise = Api.getProjects();
-    let getEquipmentListPromise = Api.getEquipmentList();
-
-    return Promise.all([getProjectsPromise, getEquipmentListPromise]);
+    let projectId = this.props.project.id;
+    Api.getProjectEquipment(projectId);
+    Api.getProjectTimeRecords(projectId);
   },
 
   updateState(state, callback) {
@@ -105,11 +105,11 @@ var TimeEntryDialog = React.createClass({
   },
 
   onSave() {
-    this.props.onSave({
-    });
+    this.props.onSave(this.state.projectId, this.state.timeEntry);
   },
 
   onEquipmentSelected(equipment) {
+    console.log(equipment);
     this.setState({ equipment: equipment });
   },
 
@@ -144,9 +144,7 @@ var TimeEntryDialog = React.createClass({
   },
 
   render() {
-    const projects = _.sortBy(this.props.projects, 'name');
     const equipmentList = _.sortBy(this.props.equipmentList.data);
-    const rentalRequest = this.props.rentalRequest.data;
     const isValidDate = function( current ){
       return current.day() === 6;
     };
@@ -168,33 +166,25 @@ var TimeEntryDialog = React.createClass({
         <Form>
           <Grid fluid>
             <Row>
-              <FormGroup controlId="projectId" validationState={ this.state.projectError ? 'error' : null }>
+              <FormGroup>
                 <ControlLabel>Project</ControlLabel>
-                <FilterDropdown 
-                  id="projectId" 
-                  selectedId={ this.state.projectId } 
-                  onSelect={ this.onProjectSelected } 
-                  updateState={ this.updateState }
-                  items={ projects } 
-                  className="full-width"
-                />
-                <HelpBlock>{ this.state.projectError }</HelpBlock>
+                <div>{this.props.project.name}</div>
               </FormGroup>
             </Row>
             <Row>
-              <FormGroup controlId="equipmentId" validationState={ this.state.equipmentIDError ? 'error' : null }>
+              <FormGroup controlId="equipmentId" validationState={ this.state.equipmentIdError ? 'error' : null }>
                 <ControlLabel>Equipment ID</ControlLabel>
                 <FilterDropdown 
                   id="selectedEquipmentTypesIds" 
                   fieldName="id"
-                  selectedId={ rentalRequest.districtEquipmentType.id }
                   onSelect={ this.onEquipmentSelected } 
                   updateState={ this.updateState } 
                   items={ equipmentList } 
                   className="full-width"
                 /> 
-                <div>({ this.state.equipment.typeName || rentalRequest.districtEquipmentType.districtEquipmentName })</div>
-                <div>Owner: { this.state.equipment.owner && this.state.equipment.owner.organizationName }</div>
+                {/* // todo: wait for endpoint to include equipment type data */}
+                {/* <div>{ this.state.equipment.equipment && `(${this.state.equipment.equipment.districtTypeName})` }</div> */}
+                <div>{ this.state.equipment.equipment && `Owner: ${this.state.equipment.equipment.owner.organizationName}` }</div>
               </FormGroup>
             </Row>
             <hr />
@@ -258,9 +248,8 @@ var TimeEntryDialog = React.createClass({
 
 function mapStateToProps(state) {
   return {
-    projects: state.lookups.projects,
-    equipment: state.models.equipment,
-    equipmentList: state.models.equipmentList,
+    // equipment: state.models.equipment,
+    equipmentList: state.models.projectEquipment,
     rentalRequest: state.models.rentalRequest,
   };
 }

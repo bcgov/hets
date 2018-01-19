@@ -253,7 +253,6 @@ var ProjectsDetail = React.createClass({
   },
 
   openTimeEntryDialog(equipment) {
-    Api.getRentalRequest(equipment.id);
     this.setState({ equipment: equipment }, () => {
       this.setState({ showTimeEntryDialog: true });
     });
@@ -263,7 +262,9 @@ var ProjectsDetail = React.createClass({
     this.setState({ showTimeEntryDialog: false });
   },
 
-  saveTimeEntry() {
+  saveTimeEntry(projectId, timeEntry) {
+    console.log('saving');
+    Api.addProjectTimeRecord(projectId, timeEntry);
   },
 
   render() {
@@ -351,6 +352,7 @@ var ProjectsDetail = React.createClass({
                 // "Lists the records - requests then rental agreements, within the groups, list in largest-to-smallest ID order (aka reverse chronological create)."
                 var rentalRequests = _.orderBy(project.rentalRequests, ['id'], ['desc']);
                 var rentalAgreements = _.orderBy(project.rentalAgreements, ['id'], ['desc']);
+                console.log(rentalAgreements);
                 var combinedList =_.concat(rentalRequests, rentalAgreements);
 
                 // Exclude completed items
@@ -365,16 +367,29 @@ var ProjectsDetail = React.createClass({
                     <td><Link to={ `rental-requests/${item.id}` }>Request</Link></td>
                     <td>{ item.equipmentTypeName }</td>
                     <td>TBD</td>
-                    <td>
+                    <td>N/A</td>
+                    <td>N/A</td>
+                  </tr>
+                );
+
+                const RentalAgreementListItem = ({ item }) => (
+                  <tr key={ item.id }>
+                    <td><Link to={ `equipment/${item.equipmentId}` }>{ item.equipmentCode }</Link></td>
+                    <td>{ item.equipmentTypeName }</td>
+                    <td>{ concat(item.equipmentMake, concat(item.equipmentModel, item.equipmentSize, '/'), '/') }</td>
+                    <td>{ item.isCompleted ? 
+                      'Completed' 
+                      : 
                       <Unimplemented>
                         <Button 
                           className="btn-link"
                           bsSize="xsmall"
                           onClick={ () => this.openTimeEntryDialog(item) }
                         >
-                          N/A
+                          { item.lastTimeRecord ? formatDateTime(item.lastTimeRecord, Constant.DATE_YEAR_SHORT_MONTH_DAY) : 'None' }
                         </Button>
                       </Unimplemented>
+                    }
                     </td>
                     <td>
                       <Unimplemented>
@@ -392,20 +407,6 @@ var ProjectsDetail = React.createClass({
                         </OverlayTrigger>
                       </Unimplemented>
                     </td>
-                  </tr>
-                );
-
-                // TODO Wire-up link to Time Records screen
-                const TimeEntryLink = ({ item }) => (
-                  <Link to={ '#' }>{ item.lastTimeRecord ? formatDateTime(item.lastTimeRecord, Constant.DATE_YEAR_SHORT_MONTH_DAY) : 'None' }</Link>
-                );
-
-                const RentalAgreementListItem = ({ item }) => (
-                  <tr key={ item.id }>
-                    <td><Link to={ `equipment/${item.equipmentId}` }>{ item.equipmentCode }</Link></td>
-                    <td>{ item.equipmentTypeName }</td>
-                    <td>{ concat(item.equipmentMake, concat(item.equipmentModel, item.equipmentSize, '/'), '/') }</td>
-                    <td>{ item.isCompleted ? 'Completed' : <TimeEntryLink item={ item } /> }</td>
                   </tr>
                 );
 
@@ -512,6 +513,7 @@ var ProjectsDetail = React.createClass({
           onClose={ this.closeTimeEntryDialog }
           onSave={ this.saveTimeEntry }
           project={ project }
+          equipment={ this.state.equipment }
         />
       }
     </div>;
