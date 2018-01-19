@@ -39,6 +39,7 @@ TODO:
 const STATUS_YES = 'Yes';
 const STATUS_NO = 'No';
 const STATUS_FORCE_HIRE = 'Force Hire';
+const STATUS_ASKED = 'Asked';
 
 var RentalRequestsDetail = React.createClass({
   propTypes: {
@@ -210,6 +211,8 @@ var RentalRequestsDetail = React.createClass({
     let text = 'Hire';
     if (listItem.offerResponse === STATUS_NO) {
       text = listItem.offerRefusalReason;
+    } else if (listItem.offerResponse === STATUS_ASKED) {
+      text = `${listItem.offerResponse} (${formatDateTime(listItem.askedDateTime, 'YYYY-MM-DD')})`;
     } else if (listItem.offerResponse !== null) {
       text = listItem.offerResponse;
     }
@@ -218,7 +221,7 @@ var RentalRequestsDetail = React.createClass({
 
   render() {
     var rentalRequest = this.props.rentalRequest.data;
-
+    
     return <div id="rental-requests-detail">
       <Row id="rental-requests-top">
         <Col md={10}>
@@ -241,8 +244,8 @@ var RentalRequestsDetail = React.createClass({
       </Row>
 
       {(() => {
-        if (this.state.loading) { return <div style={{ textAlign: 'center' }}><Spinner/></div>; } 
-
+        if (this.state.loading) { return <div style={{ textAlign: 'center' }}><Spinner/></div>; }
+        
         return (
           <Row id="rental-requests-header">
             <ColDisplay md={12} label={ <h1>Project:</h1> }><h1><small>{ rentalRequest.projectName }</small></h1></ColDisplay>
@@ -372,7 +375,7 @@ var RentalRequestsDetail = React.createClass({
 
                           return (
                             <Button 
-                              bsStyle="link" 
+                            bsStyle="link" 
                               title="Show Offer" 
                               onClick={ this.openHireOfferDialog.bind(this, listItem) }
                             >
