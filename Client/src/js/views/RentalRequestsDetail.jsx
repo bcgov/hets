@@ -215,7 +215,7 @@ var RentalRequestsDetail = React.createClass({
       text = listItem.offerRefusalReason;
     } else if (listItem.offerResponse === STATUS_ASKED) {
       text = `${listItem.offerResponse} (${Moment(listItem.askedDateTime).format('YYYY-MM-DD hh:mm A')})`;
-    } else if (listItem.offerResponse !== null) {
+    } else if (listItem.offerResponse === STATUS_FORCE_HIRE) {
       text = listItem.offerResponse;
     }
     return text;
@@ -251,7 +251,7 @@ var RentalRequestsDetail = React.createClass({
         </span></h3>
         {(() => {
           if (this.state.loading) { return <div style={{ textAlign: 'center' }}><Spinner/></div>; }
-        
+          
           var requestAttachments = rentalRequest.rentalRequestAttachments && rentalRequest.rentalRequestAttachments[0] ? rentalRequest.rentalRequestAttachments[0].attachment : 'None';
           
           return <Grid fluid id="rental-requests-data" className="nopadding">
@@ -292,7 +292,7 @@ var RentalRequestsDetail = React.createClass({
           var rotationList = this.props.rentalRequestRotationList.data.rentalRequestRotationList;
           
           if (Object.keys(rotationList || []).length === 0) { return <Alert bsStyle="success" style={{ marginTop: 10 }}>No equipment</Alert>; }
-      
+          
           // Sort in rotation list order
           rotationList = _.sortBy(rotationList, 'rotationListSortOrder');
           
@@ -316,7 +316,10 @@ var RentalRequestsDetail = React.createClass({
                 const owner = listItem.equipment.owner;
                 var isFirstNullRecord = false;
                 // Set first null record to show correct response dialog link text
-                if (!previousNullRecord && !listItem.offerResponse) { isFirstNullRecord = true; previousNullRecord = true; }
+                if (!previousNullRecord && !listItem.offerResponse && (rentalRequest.yesCount < rentalRequest.equipmentCount)) { 
+                  isFirstNullRecord = true; 
+                  previousNullRecord = true; 
+                }
                 return (
                   <tr key={ listItem.id }>
                     <td>{ listItem.displayFields.seniority }</td>
