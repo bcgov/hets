@@ -260,9 +260,6 @@ var RentalRequests = React.createClass({
           <Glyphicon glyph="plus" />&nbsp;<strong>Add Rental Request</strong>
         </Button>;
 
-        if (this.props.rentalRequests.loading || this.props.favourites.loading) { 
-          return <div style={{ textAlign: 'center' }}><Spinner/></div>; 
-        }
         if (Object.keys(this.props.rentalRequests).length === 0) { return <Alert bsStyle="success">No Rental Requests { addRentalRequestButton }</Alert>; }
 
         var rentalRequests = _.sortBy(this.props.rentalRequests.data, this.state.ui.sortField);
