@@ -102,7 +102,7 @@ tasks.withType(Test) {
     }
     systemProperty 'com.athaydes.spockframework.report.outputDir', 'build/reports/spock'
     systemProperty 'com.athaydes.spockframework.report.internal.HtmlReportCreator.inlineCss', false
-    systemProperty 'com.athaydes.spockframework.report.projectName',"<Your Project Name Here>"    
+    systemProperty 'com.athaydes.spockframework.report.projectName',"MOTI Hired Equipment Tracking System"    
 }
 
 tasks.withType(GroovyCompile) {
