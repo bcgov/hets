@@ -173,7 +173,7 @@ var HireOfferEditDialog = React.createClass({
       this.props.onSave({ ...this.props.hireOffer, ...{
         isForceHire: this.state.isForceHire,
         wasAsked: this.state.wasAsked ? true : false,
-        askedDateTime: toZuluTime(this.state.askedDateTime),
+        askedDateTime: this.state.offerResponse === STATUS_ASKED ? toZuluTime(new Date()) : toZuluTime(this.state.askedDateTime),
         offerResponse: this.state.offerResponse,
         offerResponseDatetime: toZuluTime(this.state.offerResponseDatetime),
         offerRefusalReason: this.state.offerRefusalReason,
