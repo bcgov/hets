@@ -122,7 +122,7 @@ var HireOfferEditDialog = React.createClass({
       valid = false;
     }
 
-    if (isBlank(this.state.offerRefusalReason)) {
+    if (this.state.offerResponse === STATUS_NO && isBlank(this.state.offerRefusalReason)) {
       this.setState({ offerRefusalReasonError: 'A refusal reason is required' });
       valid = false;
     }
