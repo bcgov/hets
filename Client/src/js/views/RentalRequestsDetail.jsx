@@ -10,6 +10,8 @@ import { LinkContainer } from 'react-router-bootstrap';
 import _ from 'lodash';
 import Promise from 'bluebird';
 
+import Moment from 'moment';
+
 import HireOfferEditDialog from './dialogs/HireOfferEditDialog.jsx';
 import RentalRequestsEditDialog from './dialogs/RentalRequestsEditDialog.jsx';
 import DocumentsListDialog from './dialogs/DocumentsListDialog.jsx';
@@ -212,7 +214,7 @@ var RentalRequestsDetail = React.createClass({
     if (listItem.offerResponse === STATUS_NO) {
       text = listItem.offerRefusalReason;
     } else if (listItem.offerResponse === STATUS_ASKED) {
-      text = `${listItem.offerResponse} (${formatDateTime(listItem.askedDateTime, 'YYYY-MM-DD')})`;
+      text = `${listItem.offerResponse} (${Moment(listItem.askedDateTime).format('YYYY-MM-DD hh:mm A')})`;
     } else if (listItem.offerResponse !== null) {
       text = listItem.offerResponse;
     }
@@ -243,17 +245,6 @@ var RentalRequestsDetail = React.createClass({
         </Col>
       </Row>
 
-      {(() => {
-        if (this.state.loading) { return <div style={{ textAlign: 'center' }}><Spinner/></div>; }
-        
-        return (
-          <Row id="rental-requests-header">
-            <ColDisplay md={12} label={ <h1>Project:</h1> }><h1><small>{ rentalRequest.projectName }</small></h1></ColDisplay>
-            <ColDisplay md={12} label="Provincial Project Number:">{ rentalRequest.projectId }</ColDisplay>            
-          </Row>
-        );
-      })()}
-
       <Well className="request-information">
         <h3>Request Information <span className="pull-right">
           <Button title="Edit Rental Request" bsSize="small" onClick={ this.openEditDialog }><Glyphicon glyph="pencil" /></Button>
@@ -266,6 +257,8 @@ var RentalRequestsDetail = React.createClass({
           return <Grid fluid id="rental-requests-data" className="nopadding">
             <Row>
               <Col md={6}>
+                <ColDisplay md={12} labelProps={{ md: 4 }} label="Project"><strong>{ rentalRequest.projectName }</strong></ColDisplay>
+                <ColDisplay md={12} labelProps={{ md: 4 }} label="Provincial Project Number"><strong>{ rentalRequest.projectId }</strong></ColDisplay>
                 <ColDisplay md={12} labelProps={{ md: 4 }} label={ rentalRequest.primaryContactRole || 'Primary Contact' }>
                   <Unimplemented>
                     <Button bsStyle="link" title="Show Contact" onClick={ this.openContactDialog.bind(this, rentalRequest.primaryContact) }>
@@ -299,7 +292,7 @@ var RentalRequestsDetail = React.createClass({
           var rotationList = this.props.rentalRequestRotationList.data.rentalRequestRotationList;
           
           if (Object.keys(rotationList || []).length === 0) { return <Alert bsStyle="success" style={{ marginTop: 10 }}>No equipment</Alert>; }
-          
+      
           // Sort in rotation list order
           rotationList = _.sortBy(rotationList, 'rotationListSortOrder');
           

@@ -16,7 +16,7 @@ import DropdownControl from '../../components/DropdownControl.jsx';
 import EditDialog from '../../components/EditDialog.jsx';
 import FormInputControl from '../../components/FormInputControl.jsx';
 
-import { today, toZuluTime } from '../../utils/date';
+import { today, toZuluTime, formatDateTime } from '../../utils/date';
 import { notBlank } from '../../utils/string';
 
 import { isBlank } from '../../utils/string';
@@ -173,7 +173,7 @@ var HireOfferEditDialog = React.createClass({
       this.props.onSave({ ...this.props.hireOffer, ...{
         isForceHire: this.state.isForceHire,
         wasAsked: this.state.wasAsked ? true : false,
-        askedDateTime: this.state.offerResponse === STATUS_ASKED ? toZuluTime(new Date()) : toZuluTime(this.state.askedDateTime),
+        askedDateTime: this.state.offerResponse === STATUS_ASKED ? formatDateTime(new Date()) : toZuluTime(this.state.askedDateTime),
         offerResponse: this.state.offerResponse,
         offerResponseDatetime: toZuluTime(this.state.offerResponseDatetime),
         offerRefusalReason: this.state.offerRefusalReason,
