@@ -24,7 +24,6 @@ import FormInputControl from '../components/FormInputControl.jsx';
 import Mailto from '../components/Mailto.jsx';
 import MultiDropdown from '../components/MultiDropdown.jsx';
 import SortTable from '../components/SortTable.jsx';
-import Spinner from '../components/Spinner.jsx';
 import Unimplemented from '../components/Unimplemented.jsx';
 
 import { formatDateTime, startOfCurrentFiscal, endOfCurrentFiscal, startOfPreviousFiscal, endOfPreviousFiscal, toZuluTime } from '../utils/date';
@@ -260,9 +259,6 @@ var RentalRequests = React.createClass({
           <Glyphicon glyph="plus" />&nbsp;<strong>Add Rental Request</strong>
         </Button>;
 
-        if (this.props.rentalRequests.loading || this.props.favourites.loading) { 
-          return <div style={{ textAlign: 'center' }}><Spinner/></div>; 
-        }
         if (Object.keys(this.props.rentalRequests).length === 0) { return <Alert bsStyle="success">No Rental Requests { addRentalRequestButton }</Alert>; }
 
         var rentalRequests = _.sortBy(this.props.rentalRequests.data, this.state.ui.sortField);

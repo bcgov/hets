@@ -129,6 +129,41 @@ namespace HETSAPI.Controllers
             return _service.ProjectsSearchGetAsync(districts, project, hasRequests, hasHires, status);
         }
 
+        #region Project Time Records
+
+        /// <summary>
+        /// Get time records associated with a project
+        /// </summary>
+        /// <remarks>Gets a Project&#39;s Time Records</remarks>
+        /// <param name="id">id of Project to fetch Time Records for</param>
+        /// <response code="200">OK</response>
+        [HttpGet]
+        [Route("/api/projects/{id}/timeRecords")]
+        [SwaggerOperation("ProjectsIdTimeRecordsGet")]
+        [SwaggerResponse(200, type: typeof(List<TimeRecord>))]
+        public virtual IActionResult ProjectsIdTimeRecordsGet([FromRoute]int id)
+        {
+            return _service.ProjectsIdTimeRecordsGetAsync(id);
+        }
+
+        /// <summary>
+        /// Add a project time record
+        /// </summary>
+        /// <remarks>Adds Project Time Records</remarks>
+        /// <param name="id">id of Project to add a time record for</param>
+        /// <param name="item">Adds to Project Time Records</param>
+        /// <response code="200">OK</response>
+        [HttpPost]
+        [Route("/api/projects/{id}/timeRecord")]
+        [SwaggerOperation("ProjectsIdTimeRecordsPost")]
+        [SwaggerResponse(200, type: typeof(TimeRecord))]
+        public virtual IActionResult ProjectsIdTimeRecordsPost([FromRoute]int id, [FromBody]TimeRecord item)
+        {
+            return _service.ProjectsIdTimeRecordsPostAsync(id, item);
+        }
+
+        #endregion
+
         #region Project Equipment
 
         /// <summary>
@@ -139,7 +174,7 @@ namespace HETSAPI.Controllers
         /// <response code="200">OK</response>
         [HttpGet]
         [Route("/api/projects/{id}/equipment")]
-        [SwaggerOperation("ProjectsIdContactsGet")]
+        [SwaggerOperation("ProjectsIdEquipmentGet")]
         [SwaggerResponse(200, type: typeof(List<RentalAgreement>))]
         public virtual IActionResult ProjectsIdEquipmentGet([FromRoute]int id)
         {

@@ -205,7 +205,11 @@ namespace HETSAPI.Services.Impl
                     .Include(x => x.Notes)
                     .Include(x => x.PrimaryContact)
                     .Include(x => x.RentalRequests)
+                        .ThenInclude(e => e.DistrictEquipmentType)
+                        .ThenInclude(d => d.EquipmentType)
                     .Include(x => x.RentalAgreements)
+                        .ThenInclude(e => e.Equipment)
+                        .ThenInclude(d => d.DistrictEquipmentType)
                     .First(a => a.Id == id);
 
                 return new ObjectResult(new HetsResponse(result));
@@ -333,6 +337,103 @@ namespace HETSAPI.Services.Impl
             return new ObjectResult(new HetsResponse(result));
         }
 
+        #region Project Time Records
+
+        /// <summary>
+        /// Get time records associated with project
+        /// </summary>
+        /// <param name="id">id of Owner to fetch Time Records for</param>
+        /// <response code="200">OK</response>
+        public virtual IActionResult ProjectsIdTimeRecordsGetAsync(int id)
+        {
+            bool exists = _context.Projects.Any(a => a.Id == id);
+
+            if (exists)
+            {
+                Project project = _context.Projects
+                    .Include(x => x.RentalAgreements)
+                        .ThenInclude(t => t.TimeRecords)
+                    .First(x => x.Id == id);
+
+                List<TimeRecord> timeRecords = new List<TimeRecord>();
+
+                foreach (RentalAgreement rentalAgreement in project.RentalAgreements)
+                {
+                    timeRecords.AddRange(rentalAgreement.TimeRecords);
+                }
+                
+                return new ObjectResult(new HetsResponse(timeRecords));
+            }
+
+            // record not found
+            return new ObjectResult(new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-01", _configuration)));
+        }
+
+        /// <summary>
+        /// Update or create a time record associated with a project
+        /// </summary>
+        /// <remarks>Update a Project&#39;s Time Record</remarks>
+        /// <param name="id">id of Project to update Time Records for</param>
+        /// <param name="item">Project Time Record</param>
+        /// <response code="200">OK</response>
+        public virtual IActionResult ProjectsIdTimeRecordsPostAsync(int id, TimeRecord item)
+        {
+            bool exists = _context.Projects.Any(a => a.Id == id);
+
+            if (exists && item != null)
+            {
+                Project project = _context.Projects
+                        .Include(x => x.RentalAgreements)
+                        .ThenInclude(t => t.TimeRecords)
+                    .First(x => x.Id == id);
+
+                // must have the rental agreement id
+                if (item.RentalAgreement.Id == 0)
+                {
+                    // (RENTAL AGREEMENT) record not found
+                    return new ObjectResult(new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-01", _configuration)));
+                }
+
+                int rentalAgreementId = item.RentalAgreement.Id;                
+
+                // add or update time record
+                if (item.Id > 0)
+                {
+                    project.RentalAgreements[rentalAgreementId].TimeRecords.Add(item);
+                }
+                else  // update time record
+                {
+                    project.RentalAgreements[rentalAgreementId].TimeRecords[item.Id] = item;
+                }
+                
+                _context.SaveChanges();
+
+                // *************************************************************
+                // return updated time records
+                // *************************************************************
+                project = _context.Projects
+                    .Include(x => x.RentalAgreements)
+                    .ThenInclude(t => t.TimeRecords)
+                    .First(x => x.Id == id);
+
+                List<TimeRecord> timeRecords = new List<TimeRecord>();
+
+                foreach (RentalAgreement rentalAgreement in project.RentalAgreements)
+                {
+                    timeRecords.AddRange(rentalAgreement.TimeRecords);
+                }
+
+                return new ObjectResult(new HetsResponse(timeRecords));
+            }
+
+            // record not found
+            return new ObjectResult(new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-01", _configuration)));
+        }
+
+        #endregion
+
+        #region Project Equipment
+
         /// <summary>
         /// Get equipment associated with a project
         /// </summary>
@@ -358,6 +459,8 @@ namespace HETSAPI.Services.Impl
             // record not found
             return new ObjectResult(new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-01", _configuration)));
         }
+
+        #endregion
 
         #region Project Contacts
 
@@ -390,9 +493,9 @@ namespace HETSAPI.Services.Impl
         /// <summary>
         /// Update a contact associated with a project
         /// </summary>
-        /// <remarks>Replaces an Owner&#39;s Contacts</remarks>
-        /// <param name="id">id of Owner to replace Contacts for</param>
-        /// <param name="item">Replacement Owner contacts.</param>
+        /// <remarks>Updates a Contact associated with a Project</remarks>
+        /// <param name="id">id of Project to add Contact to</param>
+        /// <param name="item">Project contact</param>
         /// <response code="200">OK</response>
         public virtual IActionResult ProjectsIdContactsPostAsync(int id, Contact item)
         {
@@ -413,6 +516,7 @@ namespace HETSAPI.Services.Impl
 
                 _context.Contacts.Add(item);
                 project.Contacts.Add(item);
+
                 _context.Projects.Update(project);
                 _context.SaveChanges();
 

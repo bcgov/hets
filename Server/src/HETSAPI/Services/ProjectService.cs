@@ -66,6 +66,23 @@ namespace HETSAPI.Services
         IActionResult ProjectsSearchGetAsync(string districts, string project, bool? hasRequests, bool? hasHires, string status);
 
         /// <summary>
+        /// Get time records for a project
+        /// </summary>
+        /// <remarks>Gets an Project&#39;s Time Records</remarks>
+        /// <param name="id">id of Project to fetch Time Records for</param>
+        /// <response code="200">OK</response>
+        IActionResult ProjectsIdTimeRecordsGetAsync([FromRoute] int id);
+
+        /// <summary>
+        /// Add a time record to a project
+        /// </summary>
+        /// <remarks>Adds Project Time Record</remarks>
+        /// <param name="id">id of Project to add a time record for</param>
+        /// <param name="item">Adds to Project Time Record</param>
+        /// <response code="200">OK</response>
+        IActionResult ProjectsIdTimeRecordsPostAsync([FromRoute] int id, [FromBody] TimeRecord item);
+
+        /// <summary>
         /// Get equipment associated with a project
         /// </summary>
         /// <remarks>Gets a Project&#39;s Equipment</remarks>
