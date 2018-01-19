@@ -52,69 +52,6 @@ namespace HETSAPI.Controllers
         }
 
         /// <summary>
-        /// Get attachments associated with a project
-        /// </summary>
-        /// <remarks>Returns attachments for a particular Project</remarks>
-        /// <param name="id">id of Project to fetch attachments for</param>
-        /// <response code="200">OK</response>
-        /// <response code="404">Project not found</response>
-        [HttpGet]
-        [Route("/api/projects/{id}/attachments")]
-        [SwaggerOperation("ProjectsIdAttachmentsGet")]
-        [SwaggerResponse(200, type: typeof(List<AttachmentViewModel>))]
-        public virtual IActionResult ProjectsIdAttachmentsGet([FromRoute]int id)
-        {
-            return _service.ProjectsIdAttachmentsGetAsync(id);
-        }
-
-        /// <summary>
-        /// Get contacts associated with a project
-        /// </summary>
-        /// <remarks>Gets an Project&#39;s Contacts</remarks>
-        /// <param name="id">id of Project to fetch Contacts for</param>
-        /// <response code="200">OK</response>
-        [HttpGet]
-        [Route("/api/projects/{id}/contacts")]
-        [SwaggerOperation("ProjectsIdContactsGet")]
-        [SwaggerResponse(200, type: typeof(List<Contact>))]
-        public virtual IActionResult ProjectsIdContactsGet([FromRoute]int id)
-        {
-            return _service.ProjectsIdContactsGetAsync(id);
-        }
-
-        /// <summary>
-        /// Add a project contact
-        /// </summary>
-        /// <remarks>Adds Project Contact</remarks>
-        /// <param name="id">id of Project to add a contact for</param>
-        /// <param name="item">Adds to Project Contact</param>
-        /// <response code="200">OK</response>
-        [HttpPost]
-        [Route("/api/projects/{id}/contacts")]
-        [SwaggerOperation("ProjectsIdContactsPost")]
-        [SwaggerResponse(200, type: typeof(Contact))]
-        public virtual IActionResult ProjectsIdContactsPost([FromRoute]int id, [FromBody]Contact item)
-        {
-            return _service.ProjectsIdContactsPostAsync(id, item);
-        }
-
-        /// <summary>
-        /// Update all project contacts
-        /// </summary>
-        /// <remarks>Replaces an Project&#39;s Contacts</remarks>
-        /// <param name="id">id of Project to replace Contacts for</param>
-        /// <param name="item">Replacement Project contacts.</param>
-        /// <response code="200">OK</response>
-        [HttpPut]
-        [Route("/api/projects/{id}/contacts")]
-        [SwaggerOperation("ProjectsIdContactsPut")]
-        [SwaggerResponse(200, type: typeof(List<Contact>))]
-        public virtual IActionResult ProjectsIdContactsPut([FromRoute]int id, [FromBody]Contact[] item)
-        {
-            return _service.ProjectsIdContactsPutAsync(id, item);
-        }
-
-        /// <summary>
         /// Delete project
         /// </summary>
         /// <param name="id">id of Project to delete</param>
@@ -141,39 +78,6 @@ namespace HETSAPI.Controllers
         public virtual IActionResult ProjectsIdGet([FromRoute]int id)
         {
             return _service.ProjectsIdGetAsync(id);
-        }
-
-        /// <summary>
-        /// Get history associated with a project
-        /// </summary>
-        /// <remarks>Returns History for a particular Project</remarks>
-        /// <param name="id">id of Project to fetch History for</param>
-        /// <param name="offset">offset for records that are returned</param>
-        /// <param name="limit">limits the number of records returned.</param>
-        /// <response code="200">OK</response>
-        [HttpGet]
-        [Route("/api/projects/{id}/history")]
-        [SwaggerOperation("ProjectsIdHistoryGet")]
-        [SwaggerResponse(200, type: typeof(List<HistoryViewModel>))]
-        public virtual IActionResult ProjectsIdHistoryGet([FromRoute]int id, [FromQuery]int? offset, [FromQuery]int? limit)
-        {
-            return _service.ProjectsIdHistoryGetAsync(id, offset, limit);
-        }
-
-        /// <summary>
-        /// Create project history
-        /// </summary>
-        /// <remarks>Add a History record to the Project</remarks>
-        /// <param name="id">id of Project to fetch History for</param>
-        /// <param name="item"></param>
-        /// <response code="200">OK</response>
-        /// <response code="201">History created</response>
-        [HttpPost]
-        [Route("/api/projects/{id}/history")]
-        [SwaggerOperation("ProjectsIdHistoryPost")]
-        public virtual IActionResult ProjectsIdHistoryPost([FromRoute]int id, [FromBody]History item)
-        {
-            return _service.ProjectsIdHistoryPostAsync(id, item);
         }
 
         /// <summary>
@@ -224,5 +128,133 @@ namespace HETSAPI.Controllers
         {
             return _service.ProjectsSearchGetAsync(districts, project, hasRequests, hasHires, status);
         }
+
+        #region Project Equipment
+
+        /// <summary>
+        /// Get equipment associated with a project
+        /// </summary>
+        /// <remarks>Gets a Project&#39;s Equipment</remarks>
+        /// <param name="id">id of Project to fetch Equipment for</param>
+        /// <response code="200">OK</response>
+        [HttpGet]
+        [Route("/api/projects/{id}/equipment")]
+        [SwaggerOperation("ProjectsIdContactsGet")]
+        [SwaggerResponse(200, type: typeof(List<RentalAgreement>))]
+        public virtual IActionResult ProjectsIdEquipmentGet([FromRoute]int id)
+        {
+            return _service.ProjectsIdEquipmentGetAsync(id);
+        }
+
+        #endregion
+
+        #region Project Attachments
+
+        /// <summary>
+        /// Get attachments associated with a project
+        /// </summary>
+        /// <remarks>Returns attachments for a particular Project</remarks>
+        /// <param name="id">id of Project to fetch attachments for</param>
+        /// <response code="200">OK</response>
+        /// <response code="404">Project not found</response>
+        [HttpGet]
+        [Route("/api/projects/{id}/attachments")]
+        [SwaggerOperation("ProjectsIdAttachmentsGet")]
+        [SwaggerResponse(200, type: typeof(List<AttachmentViewModel>))]
+        public virtual IActionResult ProjectsIdAttachmentsGet([FromRoute]int id)
+        {
+            return _service.ProjectsIdAttachmentsGetAsync(id);
+        }
+
+        #endregion
+
+        #region Project Contacts
+
+        /// <summary>
+        /// Get contacts associated with a project
+        /// </summary>
+        /// <remarks>Gets an Project&#39;s Contacts</remarks>
+        /// <param name="id">id of Project to fetch Contacts for</param>
+        /// <response code="200">OK</response>
+        [HttpGet]
+        [Route("/api/projects/{id}/contacts")]
+        [SwaggerOperation("ProjectsIdContactsGet")]
+        [SwaggerResponse(200, type: typeof(List<Contact>))]
+        public virtual IActionResult ProjectsIdContactsGet([FromRoute]int id)
+        {
+            return _service.ProjectsIdContactsGetAsync(id);
+        }
+
+        /// <summary>
+        /// Add a project contact
+        /// </summary>
+        /// <remarks>Adds Project Contact</remarks>
+        /// <param name="id">id of Project to add a contact for</param>
+        /// <param name="item">Adds to Project Contact</param>
+        /// <response code="200">OK</response>
+        [HttpPost]
+        [Route("/api/projects/{id}/contacts")]
+        [SwaggerOperation("ProjectsIdContactsPost")]
+        [SwaggerResponse(200, type: typeof(Contact))]
+        public virtual IActionResult ProjectsIdContactsPost([FromRoute]int id, [FromBody]Contact item)
+        {
+            return _service.ProjectsIdContactsPostAsync(id, item);
+        }
+
+        /// <summary>
+        /// Update all project contacts
+        /// </summary>
+        /// <remarks>Replaces an Project&#39;s Contacts</remarks>
+        /// <param name="id">id of Project to replace Contacts for</param>
+        /// <param name="item">Replacement Project contacts.</param>
+        /// <response code="200">OK</response>
+        [HttpPut]
+        [Route("/api/projects/{id}/contacts")]
+        [SwaggerOperation("ProjectsIdContactsPut")]
+        [SwaggerResponse(200, type: typeof(List<Contact>))]
+        public virtual IActionResult ProjectsIdContactsPut([FromRoute]int id, [FromBody]Contact[] item)
+        {
+            return _service.ProjectsIdContactsPutAsync(id, item);
+        }
+
+        #endregion
+
+        #region Project History
+
+        /// <summary>
+        /// Get history associated with a project
+        /// </summary>
+        /// <remarks>Returns History for a particular Project</remarks>
+        /// <param name="id">id of Project to fetch History for</param>
+        /// <param name="offset">offset for records that are returned</param>
+        /// <param name="limit">limits the number of records returned.</param>
+        /// <response code="200">OK</response>
+        [HttpGet]
+        [Route("/api/projects/{id}/history")]
+        [SwaggerOperation("ProjectsIdHistoryGet")]
+        [SwaggerResponse(200, type: typeof(List<HistoryViewModel>))]
+        public virtual IActionResult ProjectsIdHistoryGet([FromRoute]int id, [FromQuery]int? offset, [FromQuery]int? limit)
+        {
+            return _service.ProjectsIdHistoryGetAsync(id, offset, limit);
+        }
+
+        /// <summary>
+        /// Create project history
+        /// </summary>
+        /// <remarks>Add a History record to the Project</remarks>
+        /// <param name="id">id of Project to fetch History for</param>
+        /// <param name="item"></param>
+        /// <response code="200">OK</response>
+        /// <response code="201">History created</response>
+        [HttpPost]
+        [Route("/api/projects/{id}/history")]
+        [SwaggerOperation("ProjectsIdHistoryPost")]
+        public virtual IActionResult ProjectsIdHistoryPost([FromRoute]int id, [FromBody]History item)
+        {
+            return _service.ProjectsIdHistoryPostAsync(id, item);
+        }
+
+        #endregion
+
     }
 }

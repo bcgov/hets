@@ -34,7 +34,7 @@ namespace HETSAPI.Models
         /// <param name="equipmentCount">The number of pieces of the equipment type wanted for hire as part of this request. (required).</param>
         /// <param name="expectedHours">The expected number of rental hours for each piece equipment hired against this request, as provided by the Project Manager making the request..</param>
         /// <param name="expectedStartDate">The expected start date of each piece of equipment hired against this request, as provided by the Project Manager making the request..</param>
-        /// <param name="expectedEndDate">The expected end date of each piece of equipment hired against this request, as provided by the Project Manager making the request..</param>
+        /// <param name="expectedEndDate">The expected end date of each piece of equipment hired against this request, as provided by the Project Manager making the request..</param>        
         /// <param name="firstOnRotationList">The first piece of equipment on the rotation list at the time of the creation of the request..</param>
         /// <param name="notes">Notes.</param>
         /// <param name="attachments">Attachments.</param>
