@@ -51,7 +51,8 @@ namespace HETSAPI.Services
         /// Create rental request
         /// </summary>
         /// <param name="item"></param>
-        /// <response code="201">RentalRequest created</response>
+        /// <response code="200">Rental Request created</response>
+        /// <response code="405">In Progress Rental Request already exists</response>
         IActionResult RentalrequestsPostAsync(RentalRequest item);
 
         /// <summary>
@@ -60,6 +61,13 @@ namespace HETSAPI.Services
         /// <param name="id"></param>
         /// <returns></returns>
         IActionResult RentalrequestsInProgressPostAsync(int id);
+
+        /// <summary>
+        /// Move a Rental Request from In Progress (Active) to Complete
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
+        IActionResult RentalrequestsCompletePostAsync(int id);
 
         /// <summary>
         /// Searches RentalRequests

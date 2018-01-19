@@ -123,7 +123,21 @@ namespace HETSAPI.Controllers
         public virtual IActionResult RentalrequestsInProgressPostAsync([FromRoute]int id)
         {
             return _service.RentalrequestsInProgressPostAsync(id);
-        }    
+        }
+
+        /// <summary>
+        /// Move a Rental Request from In Progress (Active) to Complete
+        /// </summary>
+        /// <param name="id"></param>
+        /// <response>RentalRequest</response>
+        [HttpGet]
+        [Route("/api/rentalrequests/{id}/complete")]
+        [SwaggerOperation("RentalrequestsPost")]
+        [SwaggerResponse(200, type: typeof(RentalRequestViewModel))]
+        public virtual IActionResult RentalrequestsCompletePostAsync([FromRoute]int id)
+        {
+            return _service.RentalrequestsCompletePostAsync(id);
+        }
 
         /// <summary>
         /// Searches RentalRequests
