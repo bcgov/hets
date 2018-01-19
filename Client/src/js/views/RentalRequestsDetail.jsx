@@ -290,8 +290,6 @@ var RentalRequestsDetail = React.createClass({
           if (this.state.loading) { return <div style={{ textAlign: 'center' }}><Spinner/></div>; }
           
           var rotationList = this.props.rentalRequestRotationList.data.rentalRequestRotationList;
-          console.log(rotationList);
-          console.log(rentalRequest);
           
           if (Object.keys(rotationList || []).length === 0) { return <Alert bsStyle="success" style={{ marginTop: 10 }}>No equipment</Alert>; }
           
