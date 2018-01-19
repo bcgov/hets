@@ -85,7 +85,7 @@ var HireOfferEditDialog = React.createClass({
   updateState(state, callback) {
     this.setState(state, callback);
   },
-
+  
   offerStatusChanged(value) {
     this.setState({
       offerStatus: value,
@@ -94,6 +94,7 @@ var HireOfferEditDialog = React.createClass({
       isForceHire: value === STATUS_FORCE_HIRE,
       wasAsked: STATUS_ASKED,
       askedDateTime: value === STATUS_ASKED ? today() : null,
+      equipmentVerifiedActive: (value === STATUS_YES || value === STATUS_FORCE_HIRE) ? true : false,
     });
   },
 
@@ -289,7 +290,7 @@ var HireOfferEditDialog = React.createClass({
             <Row>
               <Col md={12}>
                 <FormGroup controlId="equipmentVerifiedActive">
-                  <CheckboxControl id="equipmentVerifiedActive" checked={ this.state.equipmentVerifiedActive } updateState={ this.updateState }>Equipment Verified Active</CheckboxControl>
+                  <CheckboxControl id="equipmentVerifiedActive" checked={ this.state.equipmentVerifiedActive } updateState={ this.updateState }>Verified Active</CheckboxControl>
                 </FormGroup>
               </Col>
             </Row>

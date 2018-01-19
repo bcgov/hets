@@ -42,6 +42,7 @@ const STATUS_YES = 'Yes';
 const STATUS_NO = 'No';
 const STATUS_FORCE_HIRE = 'Force Hire';
 const STATUS_ASKED = 'Asked';
+const STATUS_IN_PROGRESS = 'In Progress';
 
 var RentalRequestsDetail = React.createClass({
   propTypes: {
@@ -368,16 +369,19 @@ var RentalRequestsDetail = React.createClass({
                               </OverlayTrigger>
                             );
                           }
+                          if (rentalRequest.status === STATUS_IN_PROGRESS) {
+                            return (
+                              <Button 
+                              bsStyle="link" 
+                                title="Show Offer" 
+                                onClick={ this.openHireOfferDialog.bind(this, listItem) }
+                              >
+                                { this.renderStatusText(listItem, isFirstNullRecord) }
+                              </Button>
+                            );
+                          }
 
-                          return (
-                            <Button 
-                            bsStyle="link" 
-                              title="Show Offer" 
-                              onClick={ this.openHireOfferDialog.bind(this, listItem) }
-                            >
-                              { this.renderStatusText(listItem, isFirstNullRecord) }
-                            </Button>
-                          );
+                          return this.renderStatusText(listItem, isFirstNullRecord);
                         })()}
                       </ButtonGroup>
                     </td>
