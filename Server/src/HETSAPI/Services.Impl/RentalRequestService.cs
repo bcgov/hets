@@ -16,6 +16,7 @@ namespace HETSAPI.Services.Impl
     /// </summary>
     public class RentalRequestService : ServiceBase, IRentalRequestService
     {
+        private readonly HttpContext _httpContext;
         private readonly DbAppContext _context;
         private readonly IConfiguration _configuration;
 
@@ -24,6 +25,7 @@ namespace HETSAPI.Services.Impl
         /// </summary>
         public RentalRequestService(IHttpContextAccessor httpContextAccessor, DbAppContext context, IConfiguration configuration) : base(httpContextAccessor, context)
         {
+            _httpContext = httpContextAccessor.HttpContext;
             _context = context;
             _configuration = configuration;
         }
@@ -206,6 +208,8 @@ namespace HETSAPI.Services.Impl
         /// </summary>
         /// <param name="item"></param>
         /// <response>Rental Request</response>
+        /// <response code="200">Rental Request created</response>
+        /// <response code="405">In Progress Rental Request already exists</response>
         public virtual IActionResult RentalrequestsPostAsync(RentalRequest item)
         {
             if (item != null)
@@ -220,6 +224,25 @@ namespace HETSAPI.Services.Impl
                 }
                 else
                 {
+                    // check if we have an existing rental request for the same 
+                    // local area and equipment type - if so - throw an error
+                    // Per discussion with the business (19 Jan 2018):
+                    //    * Don't create a record as New if another Request exists
+                    //    * Simply give the user an error and not allow the new request
+                    // 
+                    // Note: leaving the "New" code in place in case this changes in the future
+                    List<RentalRequest> requests = _context.RentalRequests
+                        .Where(x => x.DistrictEquipmentType == item.DistrictEquipmentType &&
+                                    x.LocalArea.Id == item.LocalArea.Id &&
+                                    x.Status.Equals("In Progress", StringComparison.CurrentCultureIgnoreCase))
+                        .ToList();
+
+                    if (requests.Count > 0)
+                    {
+                        // In Progress Rental Request already exists
+                        return new StatusCodeResult(405);
+                    }
+
                     // record not found
                     BuildRentalRequestRotationList(item);
 
@@ -281,6 +304,52 @@ namespace HETSAPI.Services.Impl
                         .ThenInclude(e => e.Owner)
                         .ThenInclude(c => c.PrimaryContact)
                     .First(a => a.Id == id);                
+
+                return new ObjectResult(new HetsResponse(rentalRequest.ToRentalRequestViewModel()));
+            }
+
+            // no record to insert
+            return new ObjectResult(new HetsResponse("HETS-04", ErrorViewModel.GetDescription("HETS-04", _configuration)));
+        }
+
+        /// <summary>
+        /// Move rental request to "Complete"
+        /// </summary>
+        /// <param name="id"></param>
+        /// <response>Rental Request</response>
+        public virtual IActionResult RentalrequestsCompletePostAsync(int id)
+        {
+            bool exists = _context.RentalRequests.Any(a => a.Id == id);
+
+            if (exists)
+            {
+                // get rental request
+                RentalRequest rentalRequest = _context.RentalRequests
+                    .Include(x => x.LocalArea)
+                    .Include(x => x.DistrictEquipmentType)
+                    .First(a => a.Id == id);
+
+                // check if this record is in the correct state
+                if (rentalRequest.Status.Equals("In Progress", StringComparison.InvariantCultureIgnoreCase))
+                {
+                    // try to set the status
+                    rentalRequest.Status = "Complete";
+                }
+
+                // save the changes
+                _context.SaveChanges();
+
+                // get the complete and updated rental request
+                rentalRequest = _context.RentalRequests
+                    .Include(x => x.FirstOnRotationList)
+                    .Include(x => x.RentalRequestRotationList)
+                        .ThenInclude(y => y.Equipment)
+                        .ThenInclude(r => r.EquipmentAttachments)
+                    .Include(x => x.RentalRequestRotationList)
+                        .ThenInclude(y => y.Equipment)
+                        .ThenInclude(e => e.Owner)
+                        .ThenInclude(c => c.PrimaryContact)
+                    .First(a => a.Id == id);
 
                 return new ObjectResult(new HetsResponse(rentalRequest.ToRentalRequestViewModel()));
             }

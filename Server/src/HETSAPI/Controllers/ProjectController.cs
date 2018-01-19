@@ -140,7 +140,7 @@ namespace HETSAPI.Controllers
         [HttpGet]
         [Route("/api/projects/{id}/timeRecords")]
         [SwaggerOperation("ProjectsIdTimeRecordsGet")]
-        [SwaggerResponse(200, type: typeof(List<Contact>))]
+        [SwaggerResponse(200, type: typeof(List<TimeRecord>))]
         public virtual IActionResult ProjectsIdTimeRecordsGet([FromRoute]int id)
         {
             return _service.ProjectsIdTimeRecordsGetAsync(id);
