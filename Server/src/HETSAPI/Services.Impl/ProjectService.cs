@@ -384,14 +384,13 @@ namespace HETSAPI.Services.Impl
                     .First(x => x.Id == id);
 
                 // must have the rental agreement id
-                if (item.RentalAgreementId == null || item.RentalAgreementId == 0)
+                if (item.RentalAgreement.Id == 0)
                 {
                     // (RENTAL AGREEMENT) record not found
                     return new ObjectResult(new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-01", _configuration)));
                 }
 
-                int rentalAgreementId = (int)item.RentalAgreementId;
-                
+                int rentalAgreementId = item.RentalAgreement.Id;                
 
                 // add or update time record
                 if (item.Id > 0)
