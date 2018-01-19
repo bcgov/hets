@@ -205,7 +205,11 @@ namespace HETSAPI.Services.Impl
                     .Include(x => x.Notes)
                     .Include(x => x.PrimaryContact)
                     .Include(x => x.RentalRequests)
+                        .ThenInclude(e => e.DistrictEquipmentType)
+                        .ThenInclude(d => d.EquipmentType)
                     .Include(x => x.RentalAgreements)
+                        .ThenInclude(e => e.Equipment)
+                        .ThenInclude(d => d.DistrictEquipmentType)
                     .First(a => a.Id == id);
 
                 return new ObjectResult(new HetsResponse(result));
