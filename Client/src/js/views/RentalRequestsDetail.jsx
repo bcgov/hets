@@ -245,17 +245,6 @@ var RentalRequestsDetail = React.createClass({
         </Col>
       </Row>
 
-      {/* {(() => {
-        if (this.state.loading) { return <div style={{ textAlign: 'center' }}><Spinner/></div>; }
-        
-        return (
-          <Row id="rental-requests-header">
-            <ColDisplay md={12} label={ <h1>Project:</h1> }><h1><small>{ rentalRequest.projectName }</small></h1></ColDisplay>
-            <ColDisplay md={12} label="Provincial Project Number:">{ rentalRequest.projectId }</ColDisplay>            
-          </Row>
-        );
-      })()} */}
-
       <Well className="request-information">
         <h3>Request Information <span className="pull-right">
           <Button title="Edit Rental Request" bsSize="small" onClick={ this.openEditDialog }><Glyphicon glyph="pencil" /></Button>
