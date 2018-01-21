@@ -468,13 +468,14 @@ namespace HETSAPI.Services.Impl
                 // check that we have a rotation list
                 RentalRequest result = _context.RentalRequests
                     .Include(x => x.FirstOnRotationList)
+                    .Include(x => x.RentalRequestAttachments)
                     .Include(x => x.RentalRequestRotationList)
-                    .ThenInclude(y => y.Equipment)
-                    .ThenInclude(r => r.EquipmentAttachments)
+                        .ThenInclude(y => y.Equipment)
+                            .ThenInclude(r => r.EquipmentAttachments)
                     .Include(x => x.RentalRequestRotationList)
-                    .ThenInclude(y => y.Equipment)
-                    .ThenInclude(e => e.Owner)
-                    .ThenInclude(c => c.PrimaryContact)
+                        .ThenInclude(y => y.Equipment)
+                            .ThenInclude(e => e.Owner)
+                                .ThenInclude(c => c.PrimaryContact)
                     .First(a => a.Id == id);
 
                 // resort list using: LocalArea / District Equipment Type and SenioritySortOrder (desc)

@@ -413,7 +413,7 @@ namespace HETSAPI.Mappings
                     {
                         // sort cal: (10-A1)*10000+(10000+B1)
                         dto.SenioritySortOrder =
-                            (10 - (float) dto.BlockNumber) * 10000 + (10000 + (float) dto.Seniority);
+                            (10 - (float)dto.BlockNumber) * 10000 + (10000 + (float)dto.Seniority);
                     }
                 }
             }

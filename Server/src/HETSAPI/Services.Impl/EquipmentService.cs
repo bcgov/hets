@@ -7,6 +7,7 @@ using HETSAPI.Models;
 using HETSAPI.ViewModels;
 using HETSAPI.Mappings;
 using Microsoft.AspNetCore.Http;
+using Microsoft.EntityFrameworkCore.Internal;
 using Microsoft.Extensions.Configuration;
 
 namespace HETSAPI.Services.Impl
@@ -83,54 +84,7 @@ namespace HETSAPI.Services.Impl
             return new ObjectResult(new HetsResponse(result));
         }
 
-        /// <summary>
-        /// Delete seniority audit records
-        /// </summary>
-        /// <param name="equipmentId"></param>
-        private void RemoveSeniorityAudits(int equipmentId)
-        {
-            List<SeniorityAudit> seniorityAudits = _context.SeniorityAudits
-                    .Include(x => x.Equipment)
-                    .Where(x => x.Equipment.Id == equipmentId)
-                    .ToList();
-
-            if (seniorityAudits.Count > 0)
-            {
-                foreach (SeniorityAudit seniorityAudit in seniorityAudits)
-                {
-                    _context.SeniorityAudits.Remove(seniorityAudit);
-                }
-            }
-
-            _context.SaveChanges();
-        }
-
-        /// <summary>
-        /// Get attachments associated with an equipment record
-        /// </summary>
-        /// <remarks>Returns attachments for a particular Equipment</remarks>
-        /// <param name="id">id of Equipment to fetch attachments for</param>
-        /// <response code="200">OK</response>
-        /// <response code="404">Equipment not found</response>
-        public virtual IActionResult EquipmentIdAttachmentsGetAsync(int id)
-        {
-            bool exists = _context.Equipments.Any(a => a.Id == id);
-
-            if (exists)
-            {
-                Equipment equipment = _context.Equipments
-                    .Include(x => x.Attachments)
-                    .First(a => a.Id == id);
-
-                List<AttachmentViewModel> result = MappingExtensions.GetAttachmentListAsViewModel(equipment.Attachments);
-
-                return new ObjectResult(new HetsResponse(result));
-            }
-
-            // record not found
-            return new ObjectResult(new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-01", _configuration)));
-        }
-
+        
         /// <summary>
         /// Delete equipment record
         /// </summary>
@@ -182,114 +136,6 @@ namespace HETSAPI.Services.Impl
         }
 
         /// <summary>
-        /// Get history associated with an equipment record
-        /// </summary>
-        /// <remarks>Returns History for a particular Equipment</remarks>
-        /// <param name="id">id of SchoolBus to fetch History for</param>
-        /// <param name="offset"></param>
-        /// <param name="limit"></param>
-        /// <response code="200">OK</response>
-        public virtual IActionResult EquipmentIdHistoryGetAsync(int id, int? offset, int? limit)
-        {
-            bool exists = _context.Equipments.Any(a => a.Id == id);
-
-            if (exists)
-            {
-                Equipment schoolBus = _context.Equipments
-                    .Include(x => x.History)
-                    .First(a => a.Id == id);
-
-                List<History> data = schoolBus.History.OrderByDescending(y => y.LastUpdateTimestamp).ToList();
-
-                if (offset == null)
-                {
-                    offset = 0;
-                }
-
-                if (limit == null)
-                {
-                    limit = data.Count - offset;
-                }
-
-                List<HistoryViewModel> result = new List<HistoryViewModel>();
-
-                for (int i = (int)offset; i < data.Count && i < offset + limit; i++)
-                {
-                    result.Add(data[i].ToViewModel(id));
-                }
-
-                return new ObjectResult(new HetsResponse(result));
-            }
-
-            // record not found
-            return new ObjectResult(new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-01", _configuration)));
-        }
-
-        /// <summary>
-        /// Create history record associated with equipment
-        /// </summary>
-        /// <remarks>Add a History record to the Equipment</remarks>
-        /// <param name="id">id of Equipment to add History for</param>
-        /// <param name="item"></param>
-        /// <response code="200">OK</response>
-        /// <response code="201">History created</response>
-        public virtual IActionResult EquipmentIdHistoryPostAsync(int id, History item)
-        {
-            HistoryViewModel result = new HistoryViewModel();
-
-            bool exists = _context.Equipments.Any(a => a.Id == id);
-
-            if (exists)
-            {
-                Equipment equipment = _context.Equipments
-                    .Include(x => x.History)
-                    .First(a => a.Id == id);
-
-                if (equipment.History == null)
-                {
-                    equipment.History = new List<History>();
-                }
-
-                // force add
-                item.Id = 0;
-
-                equipment.History.Add(item);
-                _context.Equipments.Update(equipment);
-                _context.SaveChanges();
-            }
-
-            result.HistoryText = item.HistoryText;
-            result.Id = item.Id;
-            result.LastUpdateTimestamp = item.LastUpdateTimestamp;
-            result.LastUpdateUserid = item.LastUpdateUserid;
-            result.AffectedEntityId = id;
-
-            return new ObjectResult(new HetsResponse(result));
-        }
-
-        /// <summary>
-        /// Get attachments associated with an equipment record
-        /// </summary>
-        /// <param name="id">id of Equipment to fetch EquipmentAttachments for</param>
-        /// <response code="200">OK</response>
-        public virtual IActionResult EquipmentIdEquipmentattachmentsGetAsync(int id)
-        {
-            bool exists = _context.Equipments.Any(x => x.Id == id);
-
-            if (exists)
-            {
-                IQueryable<EquipmentAttachment> result = _context.EquipmentAttachments
-                    .Include(x => x.Equipment)
-                    .Where(x => x.Equipment.Id == id);
-
-                return new ObjectResult(new HetsResponse(result));
-            }
-
-            // record not found
-            return new ObjectResult(new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-01", _configuration)));
-        }
-
-        /// <summary>
         /// Get equipment record
         /// </summary>
         /// <param name="id">id of Equipment to fetch</param>
@@ -303,7 +149,8 @@ namespace HETSAPI.Services.Impl
             {
                 Equipment result = _context.Equipments
                     .Include(x => x.LocalArea.ServiceArea.District.Region)
-                    .Include(x => x.DistrictEquipmentType.EquipmentType)
+                    .Include(x => x.DistrictEquipmentType)
+                        .ThenInclude(d => d.EquipmentType)
                     .Include(x => x.DumpTruck)
                     .Include(x => x.Owner)
                     .Include(x => x.EquipmentAttachments)
@@ -311,6 +158,38 @@ namespace HETSAPI.Services.Impl
                     .Include(x => x.Attachments)
                     .Include(x => x.History)
                     .First(a => a.Id == id);
+
+                return new ObjectResult(new HetsResponse(result));
+            }
+
+            // record not found
+            return new ObjectResult(new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-01", _configuration)));
+        }
+
+        /// <summary>
+        /// Get equipment record by id
+        /// </summary>
+        /// <param name="id">id of Equipment to fetch EquipmentViewModel for</param>
+        /// <response code="200">OK</response>
+        public virtual IActionResult EquipmentIdViewGetAsync(int id)
+        {
+            bool exists = _context.Equipments.Any(a => a.Id == id);
+
+            if (exists)
+            {
+                Equipment equipment = _context.Equipments
+                    .Include(x => x.LocalArea.ServiceArea.District.Region)
+                    .Include(x => x.DistrictEquipmentType)
+                    .ThenInclude(d => d.EquipmentType)
+                    .Include(x => x.DumpTruck)
+                    .Include(x => x.Owner)
+                    .Include(x => x.EquipmentAttachments)
+                    .Include(x => x.Notes)
+                    .Include(x => x.Attachments)
+                    .Include(x => x.History)
+                    .First(a => a.Id == id);
+
+                EquipmentViewModel result = equipment.ToViewModel();
 
                 return new ObjectResult(new HetsResponse(result));
             }
@@ -372,38 +251,7 @@ namespace HETSAPI.Services.Impl
 
             // record not found
             return new ObjectResult(new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-01", _configuration)));
-        }
-        
-        /// <summary>
-        /// Get equipment record by id
-        /// </summary>
-        /// <param name="id">id of Equipment to fetch EquipmentViewModel for</param>
-        /// <response code="200">OK</response>
-        public virtual IActionResult EquipmentIdViewGetAsync(int id)
-        {
-            bool exists = _context.Equipments.Any(a => a.Id == id);
-
-            if (exists)
-            {
-                Equipment equipment = _context.Equipments
-                    .Include(x => x.LocalArea.ServiceArea.District.Region)
-                    .Include(x => x.DistrictEquipmentType)
-                    .Include(x => x.DumpTruck)
-                    .Include(x => x.Owner)
-                    .Include(x => x.EquipmentAttachments)
-                    .Include(x => x.Notes)
-                    .Include(x => x.Attachments)
-                    .Include(x => x.History)
-                    .First(a => a.Id == id);
-
-                EquipmentViewModel result = equipment.ToViewModel();
-
-                return new ObjectResult(new HetsResponse(result));
-            }
-
-            // record not found
-            return new ObjectResult(new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-01", _configuration)));
-        }        
+        }                   
 
         /// <summary>
         /// Create equipment record
@@ -486,46 +334,6 @@ namespace HETSAPI.Services.Impl
 
             // record not found
             return new ObjectResult(new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-01", _configuration)));
-        }
-
-        /// <summary>
-        /// Recalculates seniority for an entire region
-        /// </summary>
-        /// <remarks>Used to calculate seniority for all database records</remarks>
-        /// <response code="200">OK</response>
-        public virtual IActionResult EquipmentRecalcSeniorityGetAsync(int region)
-        {
-            // check if the region is valid
-            bool exists = _context.Regions.Any(a => a.Id == region);
-
-            // region not found
-            if (!exists)
-            {
-                return new ObjectResult(new HetsResponse("HETS-03", ErrorViewModel.GetDescription("HETS-03", _configuration)));
-            }
-
-            // get all local areas for this region
-            List<LocalArea> localAreas = _context.LocalAreas
-                .Where(x => x.ServiceArea.District.Region.Id == region)
-                .Select(x => x)
-                .ToList();
-
-            // get all district equipment types for this region
-            List<DistrictEquipmentType> equipmentTypes = _context.DistrictEquipmentTypes
-                .Where(x => x.District.Region.Id == region)
-                .Include(x => x.EquipmentType)
-                .Select(x => x)
-                .ToList();
-
-            foreach (LocalArea localArea in localAreas)
-            {
-                foreach (DistrictEquipmentType districtEquipmentType in equipmentTypes)
-                {                    
-                    _context.CalculateSeniorityList(localArea.Id, districtEquipmentType.Id, districtEquipmentType.EquipmentType.Id, _configuration);
-                }
-            }
-       
-            return new ObjectResult("Done Recalc");
         }
 
         /// <summary>
@@ -622,6 +430,58 @@ namespace HETSAPI.Services.Impl
             // return to the client            
             return new ObjectResult(new HetsResponse(result));
         }
+
+        #region Recalculate Seniority
+
+        /// <summary>
+        /// Recalculates seniority for an entire region
+        /// </summary>
+        /// <remarks>Used to calculate seniority for all database records</remarks>
+        /// <response code="200">OK</response>
+        public virtual IActionResult EquipmentRecalcSeniorityGetAsync(int region)
+        {
+            // check if the region is valid
+            bool exists = _context.Regions.Any(a => a.Id == region);
+
+            // region not found
+            if (!exists)
+            {
+                return new ObjectResult(new HetsResponse("HETS-03", ErrorViewModel.GetDescription("HETS-03", _configuration)));
+            }
+
+            // get all local areas for this region
+            List<LocalArea> localAreas = _context.Equipments
+                .Include(x => x.LocalArea)
+                .Where(x => x.LocalArea.ServiceArea.District.Region.Id == region)
+                .Select(x => x.LocalArea)
+                .Distinct()
+                .ToList();
+
+            // get all district equipment types for this region
+            List<DistrictEquipmentType> equipmentTypes = _context.Equipments                
+                .Include(x => x.DistrictEquipmentType)
+                .Where(x => x.LocalArea.ServiceArea.District.Region.Id == region)              
+                .Select(x => x.DistrictEquipmentType)
+                .Distinct()            
+                .ToList();
+
+            foreach (DistrictEquipmentType equipment in equipmentTypes)
+            {
+                _context.Entry(equipment).Reference(x => x.EquipmentType).Load();
+            }            
+
+            foreach (LocalArea localArea in localAreas)
+            {
+                foreach (DistrictEquipmentType districtEquipmentType in equipmentTypes)
+                {
+                    _context.CalculateSeniorityList(localArea.Id, districtEquipmentType.Id, districtEquipmentType.EquipmentType.Id, _configuration);
+                }
+            }
+
+            return new ObjectResult("Done Recalc");
+        }
+
+        #endregion
 
         #region Functions to setup/fix the Equipment Record (cleanup record submitted by UI for update/insert)
 
@@ -731,6 +591,12 @@ namespace HETSAPI.Services.Impl
             item.LastVerifiedDate = DateTime.UtcNow;
 
             item.Seniority = 0.0f;
+            item.YearsOfService = 0.0f;
+            item.ServiceHoursLastYear = 0.0f;
+            item.ServiceHoursTwoYearsAgo = 0.0f;
+            item.ServiceHoursThreeYearsAgo = 0.0f;
+            item.ArchiveCode = "N";
+            item.IsSeniorityOverridden = false;
 
             // generate a new equipment code.
             if (item.Owner != null)
@@ -763,5 +629,174 @@ namespace HETSAPI.Services.Impl
         }
 
         #endregion
-    }    
+
+        #region Equipment Audit
+
+        /// <summary>
+        /// Delete seniority audit records
+        /// </summary>
+        /// <param name="equipmentId"></param>
+        private void RemoveSeniorityAudits(int equipmentId)
+        {
+            List<SeniorityAudit> seniorityAudits = _context.SeniorityAudits
+                .Include(x => x.Equipment)
+                .Where(x => x.Equipment.Id == equipmentId)
+                .ToList();
+
+            if (seniorityAudits.Count > 0)
+            {
+                foreach (SeniorityAudit seniorityAudit in seniorityAudits)
+                {
+                    _context.SeniorityAudits.Remove(seniorityAudit);
+                }
+            }
+
+            _context.SaveChanges();
+        }
+
+        #endregion
+
+        #region Equipment History
+
+        /// <summary>
+        /// Get history associated with an equipment record
+        /// </summary>
+        /// <remarks>Returns History for a particular Equipment</remarks>
+        /// <param name="id">id of SchoolBus to fetch History for</param>
+        /// <param name="offset"></param>
+        /// <param name="limit"></param>
+        /// <response code="200">OK</response>
+        public virtual IActionResult EquipmentIdHistoryGetAsync(int id, int? offset, int? limit)
+        {
+            bool exists = _context.Equipments.Any(a => a.Id == id);
+
+            if (exists)
+            {
+                Equipment schoolBus = _context.Equipments
+                    .Include(x => x.History)
+                    .First(a => a.Id == id);
+
+                List<History> data = schoolBus.History.OrderByDescending(y => y.LastUpdateTimestamp).ToList();
+
+                if (offset == null)
+                {
+                    offset = 0;
+                }
+
+                if (limit == null)
+                {
+                    limit = data.Count - offset;
+                }
+
+                List<HistoryViewModel> result = new List<HistoryViewModel>();
+
+                for (int i = (int)offset; i < data.Count && i < offset + limit; i++)
+                {
+                    result.Add(data[i].ToViewModel(id));
+                }
+
+                return new ObjectResult(new HetsResponse(result));
+            }
+
+            // record not found
+            return new ObjectResult(new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-01", _configuration)));
+        }
+
+        /// <summary>
+        /// Create history record associated with equipment
+        /// </summary>
+        /// <remarks>Add a History record to the Equipment</remarks>
+        /// <param name="id">id of Equipment to add History for</param>
+        /// <param name="item"></param>
+        /// <response code="200">OK</response>
+        /// <response code="201">History created</response>
+        public virtual IActionResult EquipmentIdHistoryPostAsync(int id, History item)
+        {
+            HistoryViewModel result = new HistoryViewModel();
+
+            bool exists = _context.Equipments.Any(a => a.Id == id);
+
+            if (exists)
+            {
+                Equipment equipment = _context.Equipments
+                    .Include(x => x.History)
+                    .First(a => a.Id == id);
+
+                if (equipment.History == null)
+                {
+                    equipment.History = new List<History>();
+                }
+
+                // force add
+                item.Id = 0;
+
+                equipment.History.Add(item);
+                _context.Equipments.Update(equipment);
+                _context.SaveChanges();
+            }
+
+            result.HistoryText = item.HistoryText;
+            result.Id = item.Id;
+            result.LastUpdateTimestamp = item.LastUpdateTimestamp;
+            result.LastUpdateUserid = item.LastUpdateUserid;
+            result.AffectedEntityId = id;
+
+            return new ObjectResult(new HetsResponse(result));
+        }
+
+        #endregion
+
+        #region Equiment Attachments
+
+        /// <summary>
+        /// Get attachments associated with an equipment record
+        /// </summary>
+        /// <param name="id">id of Equipment to fetch EquipmentAttachments for</param>
+        /// <response code="200">OK</response>
+        public virtual IActionResult EquipmentIdEquipmentattachmentsGetAsync(int id)
+        {
+            bool exists = _context.Equipments.Any(x => x.Id == id);
+
+            if (exists)
+            {
+                IQueryable<EquipmentAttachment> result = _context.EquipmentAttachments
+                    .Include(x => x.Equipment)
+                    .Where(x => x.Equipment.Id == id);
+
+                return new ObjectResult(new HetsResponse(result));
+            }
+
+            // record not found
+            return new ObjectResult(new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-01", _configuration)));
+        }
+
+        /// <summary>
+        /// Get attachments associated with an equipment record
+        /// </summary>
+        /// <remarks>Returns attachments for a particular Equipment</remarks>
+        /// <param name="id">id of Equipment to fetch attachments for</param>
+        /// <response code="200">OK</response>
+        /// <response code="404">Equipment not found</response>
+        public virtual IActionResult EquipmentIdAttachmentsGetAsync(int id)
+        {
+            bool exists = _context.Equipments.Any(a => a.Id == id);
+
+            if (exists)
+            {
+                Equipment equipment = _context.Equipments
+                    .Include(x => x.Attachments)
+                    .First(a => a.Id == id);
+
+                List<AttachmentViewModel> result = MappingExtensions.GetAttachmentListAsViewModel(equipment.Attachments);
+
+                return new ObjectResult(new HetsResponse(result));
+            }
+
+            // record not found
+            return new ObjectResult(new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-01", _configuration)));
+        }
+
+
+        #endregion
+    }
 }

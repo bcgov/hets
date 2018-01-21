@@ -132,6 +132,11 @@ namespace HETSAPI.ViewModels
             LastTimeRecordDateThisYear = lastTimeRecordDateThisYear;
 
             // calculate "seniority sort order" & round the seniority value (3 decimal places)
+            if (BlockNumber != null)
+            {
+                BlockNumber = 0;
+            }
+            
             if (Seniority != null && Seniority > 0)
             {
                 Seniority = (float)Math.Round((Decimal)seniority, 3, MidpointRounding.AwayFromZero);
