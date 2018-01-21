@@ -50,7 +50,7 @@ node {
   if( triggerBuild(CONTEXT_DIRECTORY) ) {
     stage('build ' + BUILD_CONFIG) {
       echo "Building: " + BUILD_CONFIG
-      openshiftBuild bldCfg: BUILD_CONFIG, showBuildLogs: 'true', verbose: 'true'
+      openshiftBuild bldCfg: BUILD_CONFIG, showBuildLogs: 'true'
 
       // Don't tag with BUILD_ID so the pruner can do it's job; it won't delete tagged images.
       // Tag the images for deployment based on the image's hash
@@ -71,7 +71,7 @@ node {
     
     // Deploy to DEV ...
     stage('deploy-' + TAG_NAMES[0]) {
-      openshiftTag destStream: IMAGESTREAM_NAME, verbose: 'true', destTag: TAG_NAMES[0], srcStream: IMAGESTREAM_NAME, srcTag: "${IMAGE_HASH}"
+      openshiftTag destStream: IMAGESTREAM_NAME, destTag: TAG_NAMES[0], srcStream: IMAGESTREAM_NAME, srcTag: "${IMAGE_HASH}"
     }
 
     // Refresh the database documentation
