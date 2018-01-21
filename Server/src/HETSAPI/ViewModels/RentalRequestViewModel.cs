@@ -91,8 +91,17 @@ namespace HETSAPI.ViewModels
                     {
                         temp++;
                     }
+
+                    if (equipment.IsForceHire != null &&
+                        equipment.IsForceHire == true)
+                    {
+                        temp++;
+                    }
                 }
             }
+
+            // set the current Yes / Forced Hire Count
+            YesCount = temp;
 
             return temp;
         }       
