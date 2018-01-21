@@ -4,6 +4,7 @@ using Hangfire.Console.Progress;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using Microsoft.Extensions.Configuration;
 
@@ -178,43 +179,75 @@ namespace HETSAPI.Models
         /// <param name="configuration"></param>
         public static void CalculateSeniorityList(this DbAppContext context, int localAreaId, int districtEquipmentTypeId, int equipmentTypeId, IConfiguration configuration)
         {
-            // validate data
-            if (context != null &&
-                context.LocalAreas.Any(x => x.Id == localAreaId) &&
-                context.DistrictEquipmentTypes.Any(x => x.Id == districtEquipmentTypeId))
-            {
-                // get processing rules
-                SeniorityScoringRules scoringRules = new SeniorityScoringRules(configuration);
+            try
+            {          
+                Debug.WriteLine("CalculateSeniorityList [LocalAreaId: " + localAreaId + 
+                                " | EquipmentType: " + districtEquipmentTypeId + "]");
 
-                // get the associated equipment type
-                EquipmentType equipmentTypeRecord = context.EquipmentTypes.FirstOrDefault(x => x.Id == equipmentTypeId);
-
-                if (equipmentTypeRecord != null)
+                // validate data
+                if (context != null &&
+                    context.LocalAreas.Any(x => x.Id == localAreaId) &&
+                    context.DistrictEquipmentTypes.Any(x => x.Id == districtEquipmentTypeId))
                 {
-                    // get rules                  
-                    int seniorityScoring = equipmentTypeRecord.IsDumpTruck ? scoringRules.GetEquipmentScore("DumpTruck") : scoringRules.GetEquipmentScore();
-                    int blockSize = equipmentTypeRecord.IsDumpTruck ? scoringRules.GetBlockSize("DumpTruck") : scoringRules.GetBlockSize();
-                    int totalBlocks = equipmentTypeRecord.IsDumpTruck ? scoringRules.GetTotalBlocks("DumpTruck") : scoringRules.GetTotalBlocks();
+                    // get processing rules
+                    SeniorityScoringRules scoringRules = new SeniorityScoringRules(configuration);
 
-                    // get all equipment records
-                    IQueryable<Equipment> data = context.Equipments
-                         .Where(x => x.Status == Equipment.StatusApproved &&
-                                     x.LocalAreaId == localAreaId &&
-                                     x.DistrictEquipmentTypeId == districtEquipmentTypeId)
-                         .Select(x => x);
+                    // get the associated equipment type
+                    EquipmentType equipmentTypeRecord = context.EquipmentTypes.FirstOrDefault(x => x.Id == equipmentTypeId);
 
-                    // update the seniority score
-                    foreach (Equipment equipment in data)
+                    if (equipmentTypeRecord != null)
                     {
-                        equipment.CalculateSeniority(seniorityScoring);
-                        context.Equipments.Update(equipment);
+                        // get rules                  
+                        int seniorityScoring = equipmentTypeRecord.IsDumpTruck ? scoringRules.GetEquipmentScore("DumpTruck") : scoringRules.GetEquipmentScore();
+                        int blockSize = equipmentTypeRecord.IsDumpTruck ? scoringRules.GetBlockSize("DumpTruck") : scoringRules.GetBlockSize();
+                        int totalBlocks = equipmentTypeRecord.IsDumpTruck ? scoringRules.GetTotalBlocks("DumpTruck") : scoringRules.GetTotalBlocks();
+
+                        // get all equipment records
+                        IQueryable<Equipment> data = context.Equipments
+                             .Where(x => x.LocalAreaId == localAreaId &&
+                                         x.DistrictEquipmentTypeId == districtEquipmentTypeId)
+                             .Select(x => x);
+
+                        // update the seniority score
+                        foreach (Equipment equipment in data)
+                        {
+                            if (equipment.Status != Equipment.StatusApproved)
+                            {
+                                equipment.Seniority = null;
+                                equipment.SeniorityEffectiveDate = DateTime.Now;
+                                equipment.BlockNumber = null;
+                                equipment.ServiceHoursLastYear = null;
+                                equipment.ServiceHoursLastYear = null;
+                                equipment.ServiceHoursTwoYearsAgo = null;
+                                equipment.ServiceHoursThreeYearsAgo = null;
+
+                                if (equipment.Status == Equipment.StatusArchived)
+                                {
+                                    equipment.ArchiveCode = "Y";
+                                }
+                            }
+                            else
+                            {
+                                equipment.CalculateSeniority(seniorityScoring);
+                                equipment.SeniorityEffectiveDate = DateTime.Now;
+                                equipment.ArchiveCode = "N";
+                            }
+                        
+                            context.Equipments.Update(equipment);
+                        }
+
+                        context.SaveChanges();
+
+                        // put equipment into the correct blocks
+                        AssignBlocks(context, localAreaId, districtEquipmentTypeId, blockSize, totalBlocks);
                     }
-
-                    context.SaveChanges();
-
-                    // put equipment into the correct blocks
-                    AssignBlocks(context, localAreaId, districtEquipmentTypeId, blockSize, totalBlocks);
                 }
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine("ERROR: CalculateSeniorityList");
+                Console.WriteLine(e);
+                throw;
             }
         }
 
@@ -228,87 +261,105 @@ namespace HETSAPI.Models
         /// <param name="totalBlocks"></param>
         public static void AssignBlocks(DbAppContext context, int localAreaId, int districtEquipmentTypeId, int blockSize, int totalBlocks)
         {
-            // get all equipment records
-            List<Equipment> data = context.Equipments
-                .Include(x => x.Owner)
-                .Where(x => x.Status == Equipment.StatusApproved &&
-                            x.LocalArea.Id == localAreaId &&
-                            x.DistrictEquipmentTypeId == districtEquipmentTypeId)
-                .OrderByDescending(x => x.Seniority)
-                .Select(x => x)
-                .ToList();
+            try
+            {            
+                // get all equipment records
+                List<Equipment> data = context.Equipments
+                    .Include(x => x.Owner)
+                    .Where(x => x.Status == Equipment.StatusApproved &&
+                                x.LocalArea.Id == localAreaId &&
+                                x.DistrictEquipmentTypeId == districtEquipmentTypeId)
+                    .OrderByDescending(x => x.Seniority)
+                    .Select(x => x)
+                    .ToList();
 
-            // total blocks only counts the "main" blocks - we need to add 1 more for the remaining records
-            totalBlocks = totalBlocks + 1;
+                // total blocks only counts the "main" blocks - we need to add 1 more for the remaining records
+                totalBlocks = totalBlocks + 1;
 
-            // instantiate lists to hold equipment by block
-            List<int>[] blocks = new List<int>[totalBlocks];         
+                // instantiate lists to hold equipment by block
+                List<int>[] blocks = new List<int>[totalBlocks];         
 
-            foreach (Equipment equipment in data)
-            {
-                // iterate the blocks and add the record
-                for (int i = 0; i < totalBlocks; i++)
+                foreach (Equipment equipment in data)
                 {
-                    if (AddedToBlock(context, i, totalBlocks, blockSize, blocks, equipment))
-                    {                        
-                        break; // move to next record
+                    // iterate the blocks and add the record
+                    for (int i = 0; i < totalBlocks; i++)
+                    {
+                        if (AddedToBlock(context, i, totalBlocks, blockSize, blocks, equipment))
+                        {                        
+                            break; // move to next record
+                        }
                     }
                 }
-            }            
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine("ERROR: AssignBlocks");
+                Console.WriteLine(e);
+                throw;
+            }
         }
 
         private static bool AddedToBlock(DbAppContext context, int currentBlock, int totalBlocks, int blockSize, List<int>[] blocks, Equipment equipment)
         {
-            // check if this record's Owner is null
-            if (equipment.Owner == null)
-            {
-                return false; // not adding this record to the block
-            }
-
-            if (blocks[currentBlock] == null)
-            {
-                blocks[currentBlock] = new List<int>();
-            }
-
-            // check if the current block is full
-            if (currentBlock < totalBlocks - 1 && blocks[currentBlock].Count >= blockSize)
-            {
-                return false; // not adding this record to the block
-            }            
-
-            // check if this record's Owner already exists in the block   
-            if (currentBlock < totalBlocks - 1 && blocks[currentBlock].Contains(equipment.Owner.Id))
-            {
-                // add record to the next block         
-                if (blocks[currentBlock + 1] == null)
+            try
+            {            
+                // check if this record's Owner is null
+                if (equipment.Owner == null)
                 {
-                    blocks[currentBlock + 1] = new List<int>();
+                    return false; // not adding this record to the block
                 }
 
-                blocks[currentBlock + 1].Add(equipment.Owner.Id);
+                if (blocks[currentBlock] == null)
+                {
+                    blocks[currentBlock] = new List<int>();
+                }
+
+                // check if the current block is full
+                if (currentBlock < totalBlocks - 1 && blocks[currentBlock].Count >= blockSize)
+                {
+                    return false; // not adding this record to the block
+                }            
+
+                // check if this record's Owner already exists in the block   
+                if (currentBlock < totalBlocks - 1 && blocks[currentBlock].Contains(equipment.Owner.Id))
+                {
+                    // add record to the next block         
+                    if (blocks[currentBlock + 1] == null)
+                    {
+                        blocks[currentBlock + 1] = new List<int>();
+                    }
+
+                    blocks[currentBlock + 1].Add(equipment.Owner.Id);
+
+                    // update the equipment record
+                    equipment.BlockNumber = currentBlock + 2;
+                    equipment.NumberInBlock = blocks[currentBlock + 1].Count;
+
+                    context.Equipments.Update(equipment);
+                    context.SaveChanges();
+
+                    return true;
+                }
+
+                // add record to the block                        
+                blocks[currentBlock].Add(equipment.Owner.Id);
 
                 // update the equipment record
-                equipment.BlockNumber = currentBlock + 2;
-                equipment.NumberInBlock = blocks[currentBlock + 1].Count;
-
+                equipment.BlockNumber = currentBlock + 1;
+                equipment.NumberInBlock = blocks[currentBlock].Count;
+            
                 context.Equipments.Update(equipment);
                 context.SaveChanges();
 
+                // record added to the block
                 return true;
             }
-
-            // add record to the block                        
-            blocks[currentBlock].Add(equipment.Owner.Id);
-
-            // update the equipment record
-            equipment.BlockNumber = currentBlock + 1;
-            equipment.NumberInBlock = blocks[currentBlock].Count;
-            
-            context.Equipments.Update(equipment);
-            context.SaveChanges();
-
-            // record added to the block
-            return true;
+            catch (Exception e)
+            {
+                Console.WriteLine("ERROR: AddedToBlock");
+                Console.WriteLine(e);
+                throw;
+            }
         }
 
         #endregion               

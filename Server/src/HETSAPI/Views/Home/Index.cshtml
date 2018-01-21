@@ -44,7 +44,7 @@
             $.ajax({
                 url: "/api/equipment/" + regionId + "/recalcSeniority",
                 type: "GET",
-                timeout: 60000, // sets timeout to 1 min
+                timeout: 360000, // 1 min = 60000
                 success: function (response) {
                     alert('done');
                 },
@@ -61,7 +61,7 @@
             $.ajax({
                 url: "/api/rentalrequests/" + requestId + "/recalcRotation",
                 type: "GET",
-                timeout: 360000, // sets timeout to 1 min
+                timeout: 360000, // 1 min = 60000
                 success: function (response) {
                     alert('done');
                 },

@@ -13,6 +13,8 @@ namespace HETSAPI.Models
         /// Approved Status Code
         /// </summary>
         public const string StatusApproved = "Approved";
+        public const string StatusArchived = "Archived";
+        public const string StatusPending = "Pending";
 
         /// <summary>
         /// Calculate the Seniority for a piece of equipment
@@ -26,6 +28,9 @@ namespace HETSAPI.Models
         {            
             // get total hours worked over the last three years
             float totalHoursWorked = 0.0F;
+
+            // default to 0
+            Seniority = 0.0F;
 
             if (ServiceHoursLastYear != null)
             {
