@@ -77,7 +77,7 @@ namespace HETSAPI.Models
                 // open a connection to the database
                 DbContextOptionsBuilder<DbAppContext> options = new DbContextOptionsBuilder<DbAppContext>();
                 options.UseNpgsql(connectionstring);
-                DbAppContext dbContext = new DbAppContext(null, options.Options, configuration);
+                DbAppContext dbContext = new DbAppContext(null, options.Options);
 
                 // get processing rules
                 SeniorityScoringRules scoringRules = new SeniorityScoringRules(configuration);
@@ -118,7 +118,7 @@ namespace HETSAPI.Models
                         int blockSize = isDumpTruck ? scoringRules.GetBlockSize("DumpTruck") : scoringRules.GetBlockSize();
                         int totalBlocks = isDumpTruck ? scoringRules.GetTotalBlocks("DumpTruck") : scoringRules.GetTotalBlocks();
 
-                        using (DbAppContext etContext = new DbAppContext(null, options.Options, configuration))
+                        using (DbAppContext etContext = new DbAppContext(null, options.Options))
                         {
                             List<Equipment> data = etContext.Equipments
                                 .Include(x => x.LocalArea)
@@ -150,7 +150,7 @@ namespace HETSAPI.Models
                         }
 
                         // now update the rotation list
-                        using (DbAppContext abContext = new DbAppContext(null, options.Options, configuration))
+                        using (DbAppContext abContext = new DbAppContext(null, options.Options))
                         {
                             int localAreaId = localArea.Id;
                             int equipmentTypeId = equipmentType.Id;
@@ -212,14 +212,14 @@ namespace HETSAPI.Models
                         foreach (Equipment equipment in data)
                         {
                             if (equipment.Status != Equipment.StatusApproved)
-                            {
-                                equipment.Seniority = null;
+                            {                                
                                 equipment.SeniorityEffectiveDate = DateTime.Now;
                                 equipment.BlockNumber = null;
                                 equipment.ServiceHoursLastYear = null;
                                 equipment.ServiceHoursLastYear = null;
                                 equipment.ServiceHoursTwoYearsAgo = null;
                                 equipment.ServiceHoursThreeYearsAgo = null;
+                                equipment.Seniority = null;
 
                                 if (equipment.Status == Equipment.StatusArchived)
                                 {
@@ -227,7 +227,7 @@ namespace HETSAPI.Models
                                 }
                             }
                             else
-                            {
+                            {                                
                                 equipment.CalculateSeniority(seniorityScoring);
                                 equipment.SeniorityEffectiveDate = DateTime.Now;
                                 equipment.ArchiveCode = "N";
