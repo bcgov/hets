@@ -13,7 +13,7 @@ import DateControl from '../../components/DateControl.jsx';
 import EditDialog from '../../components/EditDialog.jsx';
 import Spinner from '../../components/Spinner.jsx';
 
-import FilterDropdown from '../../components/FilterDropdown.jsx';
+import DropdownControl from '../../components/DropdownControl.jsx';
 
 import { isBlank } from '../../utils/string';
 
@@ -33,7 +33,7 @@ var TimeEntryDialog = React.createClass({
     return {
       projectId: this.props.project.id,
       equipment: {},
-      equipmentId: '',
+      equipmentId: this.props.equipment.id || '',
       numberOfInputs: 1,
       timeEntry: {
         1: {
@@ -109,7 +109,6 @@ var TimeEntryDialog = React.createClass({
   },
 
   onEquipmentSelected(equipment) {
-    console.log(equipment);
     this.setState({ equipment: equipment });
   },
 
@@ -174,9 +173,10 @@ var TimeEntryDialog = React.createClass({
             <Row>
               <FormGroup controlId="equipmentId" validationState={ this.state.equipmentIdError ? 'error' : null }>
                 <ControlLabel>Equipment ID</ControlLabel>
-                <FilterDropdown 
+                <DropdownControl
                   id="selectedEquipmentTypesIds" 
                   fieldName="id"
+                  selectedId={ this.state.equipmentId }
                   onSelect={ this.onEquipmentSelected } 
                   updateState={ this.updateState } 
                   items={ equipmentList } 

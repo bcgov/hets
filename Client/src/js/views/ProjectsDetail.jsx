@@ -263,8 +263,7 @@ var ProjectsDetail = React.createClass({
   },
 
   saveTimeEntry(projectId, timeEntry) {
-    console.log('saving');
-    Api.addProjectTimeRecord(projectId, timeEntry);
+    Api.addProjectTimeRecord(this.state.equipment, projectId, timeEntry);
   },
 
   render() {
@@ -352,7 +351,7 @@ var ProjectsDetail = React.createClass({
                 // "Lists the records - requests then rental agreements, within the groups, list in largest-to-smallest ID order (aka reverse chronological create)."
                 var rentalRequests = _.orderBy(project.rentalRequests, ['id'], ['desc']);
                 var rentalAgreements = _.orderBy(project.rentalAgreements, ['id'], ['desc']);
-                console.log(rentalAgreements);
+                
                 var combinedList =_.concat(rentalRequests, rentalAgreements);
 
                 // Exclude completed items

@@ -910,8 +910,8 @@ export function getProjectTimeRecords(projectId) {
   });
 }
 
-export function addProjectTimeRecord(projectId, timeRecord) {
-  let timeRecord2 = [{hours: 989, date: '2018-01-20', rentalAgreement: { id: 67 }}];
+export function addProjectTimeRecord(equipment, projectId, timeRecord) {
+  let timeRecord2 = [{hours: 989, date: '2018-01-20', rentalAgreement: { id: 84 }}];
   return new ApiRequest(`projects/${projectId}/timeRecord`).post(timeRecord2).then(response => {
     var projectTimeRecords = normalize(response.data);
 
@@ -1045,12 +1045,18 @@ export function getRentalRequest(id) {
 }
 
 export function addRentalRequest(rentalRequest) {
+  store.dispatch({ type: Action.RENTAL_REQUEST_REQUEST });
   return new ApiRequest('/rentalrequests').post(rentalRequest).then(response => {
     var rentalRequest = response.data;
     // Add display fields
     parseRentalRequest(rentalRequest);
     store.dispatch({ type: Action.ADD_RENTAL_REQUEST, rentalRequest: rentalRequest });
     return rentalRequest;
+  }).catch((error) => {
+    if (error.status === 405) {
+      store.dispatch({ type: Action.ADD_RENTAL_REQUEST_ERROR, error: { description: 'A rental request already exists for this area and equipment type.' } });
+      return Promise.reject(error);
+    }
   });
 }
 

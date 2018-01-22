@@ -2,7 +2,7 @@ import React from 'react';
 
 import { connect } from 'react-redux';
 
-import { Form, FormGroup, HelpBlock, ControlLabel } from 'react-bootstrap';
+import { Form, FormGroup, HelpBlock, ControlLabel, Alert } from 'react-bootstrap';
 
 import _ from 'lodash';
 import Promise from 'bluebird';
@@ -17,6 +17,7 @@ import Spinner from '../../components/Spinner.jsx';
 
 var RentalRequestsAddDialog = React.createClass({
   propTypes: {
+    rentalRequest: React.PropTypes.object,
     currentUser: React.PropTypes.object,
     localAreas: React.PropTypes.object,
     districtEquipmentTypes: React.PropTypes.object,
@@ -163,6 +164,9 @@ var RentalRequestsAddDialog = React.createClass({
           <FormInputControl type="number" min="0" value={ this.state.count } updateState={ this.updateState } />
           <HelpBlock>{ this.state.countError }</HelpBlock>
         </FormGroup>
+        { this.props.rentalRequest.error.description &&
+          <Alert bsStyle="danger">{ this.props.rentalRequest.error.description }</Alert>
+        }
       </Form>
     </EditDialog>;
   },
@@ -170,6 +174,7 @@ var RentalRequestsAddDialog = React.createClass({
 
 function mapStateToProps(state) {
   return {
+    rentalRequest: state.models.rentalRequest,
     currentUser: state.user,
     localAreas: state.lookups.localAreas,
     districtEquipmentTypes: state.lookups.districtEquipmentTypes.data,
