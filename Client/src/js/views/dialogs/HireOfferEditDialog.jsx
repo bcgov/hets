@@ -2,7 +2,7 @@ import React from 'react';
 
 import { connect } from 'react-redux';
 
-import { Grid, Row, Col, Radio, Form, FormGroup, ControlLabel, HelpBlock } from 'react-bootstrap';
+import { Grid, Row, Col, Radio, Form, FormGroup, ControlLabel, HelpBlock, Alert } from 'react-bootstrap';
 
 import _ from 'lodash';
 import Promise from 'bluebird';
@@ -49,6 +49,7 @@ var HireOfferEditDialog = React.createClass({
     onSave: React.PropTypes.func.isRequired,
     onClose: React.PropTypes.func.isRequired,
     show: React.PropTypes.bool,
+    error: React.PropTypes.object,
   },
 
   getInitialState() {
@@ -294,6 +295,11 @@ var HireOfferEditDialog = React.createClass({
                 </FormGroup>
               </Col>
             </Row>
+            {/* { this.props.error &&
+              <Alert bsStyle="danger">
+                { this.props.error.description }
+              </Alert>  
+            } */}
             {/* Todo will be used in future */}
             {/* <Row>
               <Col md={12}>

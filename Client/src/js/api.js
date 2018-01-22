@@ -1135,10 +1135,16 @@ export function getRentalRequestRotationList(id) {
 }
 
 export function updateRentalRequestRotationList(rentalRequestRotationList, rentalRequest) {
-  return new ApiRequest(`/rentalrequestrotationlists/${ rentalRequestRotationList.id }`).put({ ...rentalRequestRotationList, rentalAgreement: null }).then(response => {
+  store.dispatch({ type: Action.RENTAL_REQUEST_ROTATION_LIST_REQUEST });
+  return new ApiRequest(`/rentalrequests/${ rentalRequest.id }/rentalRequestRotationList`).put({ ...rentalRequestRotationList, note: '', rentalAgreement: null }).then(response => {
+    
+    if (response.responseStatus === 'ERROR') {
+      store.dispatch({ type: Action.RENTAL_REQUEST_ROTATION_LIST_ERROR, error: response.error });
+      return response.error;
+    }
+
     var rentalRequestRotationList = response.data;
     // Add display fields
-    parseRentalRequestRotationList(rentalRequestRotationList, rentalRequest);
 
     store.dispatch({ type: Action.UPDATE_RENTAL_REQUEST_ROTATION_LIST, rentalRequestRotationList: rentalRequestRotationList });
   });

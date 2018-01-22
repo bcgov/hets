@@ -2,8 +2,7 @@ import React from 'react';
 
 import { connect } from 'react-redux';
 
-import { Grid, Well, Row, Col } from 'react-bootstrap';
-import { Alert, Button, ButtonGroup, Glyphicon, Label } from 'react-bootstrap';
+import { Grid, Well, Row, Col, Alert, Button, ButtonGroup, Glyphicon, Label } from 'react-bootstrap';
 import { Link } from 'react-router';
 import { LinkContainer } from 'react-router-bootstrap';
 
@@ -153,7 +152,10 @@ var RentalRequestsDetail = React.createClass({
     let hireOfferUpdated = { ...hireOffer };
     delete hireOfferUpdated.isFirstNullRecord;
     delete hireOfferUpdated.displayFields;
-    Api.updateRentalRequestRotationList(hireOfferUpdated, this.props.rentalRequest.data).finally(() => {
+    Api.updateRentalRequestRotationList(hireOfferUpdated, this.props.rentalRequest.data).then((response) => {
+      
+      if (response.error) { return; }
+
       this.fetch();
       if ((hireOffer.offerResponse === STATUS_YES || hireOffer.offerResponse === STATUS_FORCE_HIRE) && hireOffer.rentalAgreement && hireOffer.rentalAgreement.id) {
         this.props.router.push({ pathname: `${Constant.RENTAL_AGREEMENTS_PATHNAME}/${this.props.rentalAgreement.id}` });
@@ -216,7 +218,7 @@ var RentalRequestsDetail = React.createClass({
       text = listItem.offerRefusalReason;
     } else if (listItem.offerResponse === STATUS_ASKED) {
       text = `${listItem.offerResponse} (${Moment(listItem.askedDateTime).format('YYYY-MM-DD hh:mm A')})`;
-    } else if (listItem.offerResponse === STATUS_FORCE_HIRE) {
+    } else if (listItem.offerResponse === STATUS_FORCE_HIRE || listItem.offerResponse === STATUS_YES) {
       text = listItem.offerResponse;
     }
     return text;
@@ -254,28 +256,28 @@ var RentalRequestsDetail = React.createClass({
           if (this.state.loading) { return <div style={{ textAlign: 'center' }}><Spinner/></div>; }
           
           var requestAttachments = rentalRequest.rentalRequestAttachments && rentalRequest.rentalRequestAttachments[0] ? rentalRequest.rentalRequestAttachments[0].attachment : 'None';
-          
+
           return <Grid fluid id="rental-requests-data" className="nopadding">
             <Row>
-              <Col md={6}>
-                <ColDisplay md={12} labelProps={{ md: 4 }} label="Project"><strong>{ rentalRequest.projectName }</strong></ColDisplay>
-                <ColDisplay md={12} labelProps={{ md: 4 }} label="Provincial Project Number"><strong>{ rentalRequest.projectId }</strong></ColDisplay>
-                <ColDisplay md={12} labelProps={{ md: 4 }} label={ rentalRequest.primaryContactRole || 'Primary Contact' }>
+              <Col md={6} sm={6} xs={12}>
+                <ColDisplay md={12} xs={12} labelProps={{ md: 4 }} label="Project"><strong>{ rentalRequest.project && rentalRequest.project.name }</strong></ColDisplay>
+                <ColDisplay md={12} xs={12} labelProps={{ md: 4 }} label="Provincial Project Number"><strong>{ rentalRequest.project && rentalRequest.project.provincialProjectNumber }</strong></ColDisplay>
+                <ColDisplay md={12} xs={12} labelProps={{ md: 4 }} label={ rentalRequest.primaryContactRole || 'Primary Contact' }>
                   <Unimplemented>
                     <Button bsStyle="link" title="Show Contact" onClick={ this.openContactDialog.bind(this, rentalRequest.primaryContact) }>
                       { concat(rentalRequest.primaryContactName, rentalRequest.primaryContactPhone, ', ') }
                     </Button>
                   </Unimplemented>
                 </ColDisplay>
-                <ColDisplay md={12} labelProps={{ md: 4 }} label="Local Area">{ rentalRequest.localAreaName }</ColDisplay>
-                <ColDisplay md={12} labelProps={{ md: 4 }} label="Equipment Type">{ rentalRequest.equipmentTypeName }</ColDisplay>
-                <ColDisplay md={12} labelProps={{ md: 4 }} label="Count">{ rentalRequest.equipmentCount }</ColDisplay>
+                <ColDisplay md={12} xs={12} labelProps={{ md: 4 }} label="Local Area">{ rentalRequest.localAreaName }</ColDisplay>
+                <ColDisplay md={12} xs={12} labelProps={{ md: 4 }} label="Equipment Type">{ rentalRequest.equipmentTypeName }</ColDisplay>
+                <ColDisplay md={12} xs={12} labelProps={{ md: 4 }} label="Count">{ rentalRequest.equipmentCount }</ColDisplay>
               </Col>
-              <Col md={6}>
-                <ColDisplay md={12} labelProps={{ md: 4 }} label="Attachment(s)">{ requestAttachments }</ColDisplay>
-                <ColDisplay md={12} labelProps={{ md: 4 }} label="Expected Hours">{ rentalRequest.expectedHours }</ColDisplay>
-                <ColDisplay md={12} labelProps={{ md: 4 }} label="Expected Start Date">{  formatDateTime(rentalRequest.expectedStartDate, Constant.DATE_YEAR_SHORT_MONTH_DAY) }</ColDisplay>
-                <ColDisplay md={12} labelProps={{ md: 4 }} label="Expected End Date">{ formatDateTime(rentalRequest.expectedEndDate, Constant.DATE_YEAR_SHORT_MONTH_DAY) }</ColDisplay>
+              <Col md={6} sm={6} xs={12}>
+                <ColDisplay md={12} xs={12} labelProps={{ md: 4 }} label="Attachment(s)">{ requestAttachments }</ColDisplay>
+                <ColDisplay md={12} xs={12} labelProps={{ md: 4 }} label="Expected Hours">{ rentalRequest.expectedHours }</ColDisplay>
+                <ColDisplay md={12} xs={12} labelProps={{ md: 4 }} label="Expected Start Date">{  formatDateTime(rentalRequest.expectedStartDate, Constant.DATE_YEAR_SHORT_MONTH_DAY) }</ColDisplay>
+                <ColDisplay md={12} xs={12} labelProps={{ md: 4 }} label="Expected End Date">{ formatDateTime(rentalRequest.expectedEndDate, Constant.DATE_YEAR_SHORT_MONTH_DAY) }</ColDisplay>
               </Col>
             </Row>
           </Grid>;
@@ -291,7 +293,7 @@ var RentalRequestsDetail = React.createClass({
           if (this.state.loading) { return <div style={{ textAlign: 'center' }}><Spinner/></div>; }
           
           var rotationList = this.props.rentalRequestRotationList.data.rentalRequestRotationList;
-          
+
           if (Object.keys(rotationList || []).length === 0) { return <Alert bsStyle="success" style={{ marginTop: 10 }}>No equipment</Alert>; }
           
           // Sort in rotation list order
@@ -369,7 +371,7 @@ var RentalRequestsDetail = React.createClass({
                               </OverlayTrigger>
                             );
                           }
-                          if (rentalRequest.status === STATUS_IN_PROGRESS) {
+                          if (rentalRequest.status === STATUS_IN_PROGRESS && listItem.offerResponse !== STATUS_YES && listItem.offerResponse !== STATUS_FORCE_HIRE) {
                             return (
                               <Button 
                               bsStyle="link" 
@@ -421,7 +423,13 @@ var RentalRequestsDetail = React.createClass({
         <RentalRequestsEditDialog show={ this.state.showEditDialog } onSave={ this.saveEdit } onClose={ this.closeEditDialog } />
       }
       { this.state.showHireOfferDialog &&
-        <HireOfferEditDialog show={ this.state.showHireOfferDialog } hireOffer={ this.state.rotationListHireOffer } onSave={ this.saveHireOffer } onClose={ this.closeHireOfferDialog } />
+        <HireOfferEditDialog 
+          show={ this.state.showHireOfferDialog } 
+          hireOffer={ this.state.rotationListHireOffer } 
+          onSave={ this.saveHireOffer } 
+          onClose={ this.closeHireOfferDialog } 
+          error={ this.props.rentalRequestRotationList.error }
+        />
       }
       { /* TODO this.state.showContactDialog && <ContactEditDialog /> */}
       { this.state.showDocumentsDialog &&
