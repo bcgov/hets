@@ -187,7 +187,7 @@ namespace HETSAPI.Controllers
         [Route("/api/rentalrequests/{id}/rentalRequestRotationList")]
         [SwaggerOperation("RentalRequestRotationListIdPut")]
         [SwaggerResponse(200, type: typeof(RentalRequestRotationList))]
-        public virtual IActionResult RentalrequestsIdRentalrequestrotationlistRentalRequestRotationListIdPut([FromRoute]int id, [FromBody]RentalRequestRotationList item)
+        public virtual IActionResult RentalrequestIdRotationListIdPut([FromRoute]int id, [FromBody]RentalRequestRotationList item)
         {
             return _service.RentalrequestRotationListIdPutAsync(id, item);
         }

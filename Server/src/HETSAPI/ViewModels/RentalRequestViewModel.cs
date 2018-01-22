@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using Newtonsoft.Json;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.ComponentModel.DataAnnotations;
+using System.Runtime.Serialization;
 using HETSAPI.Models;
 
 namespace HETSAPI.ViewModels
@@ -72,6 +73,7 @@ namespace HETSAPI.ViewModels
         /// </summary>
         /// <value>A system-generated unique identifier for a Request</value>
         [MetaData(Description = "The count of yes responses from Equipment Owners")]
+        [DataMember(Name = "yesCount")]
         public int YesCount { get; set; }        
 
         /// <summary>
@@ -91,8 +93,17 @@ namespace HETSAPI.ViewModels
                     {
                         temp++;
                     }
+
+                    if (equipment.IsForceHire != null &&
+                        equipment.IsForceHire == true)
+                    {
+                        temp++;
+                    }
                 }
             }
+
+            // set the current Yes / Forced Hire Count
+            YesCount = temp;
 
             return temp;
         }       
@@ -250,6 +261,7 @@ namespace HETSAPI.ViewModels
             sb.Append("  History: ").Append(History).Append("\n");
             sb.Append("  RentalRequestAttachments: ").Append(RentalRequestAttachments).Append("\n");
             sb.Append("  RentalRequestRotationList: ").Append(RentalRequestRotationList).Append("\n");
+            sb.Append("  YesCount: ").Append(YesCount).Append("\n");
             sb.Append("}\n");
 
             return sb.ToString();

@@ -82,7 +82,7 @@ namespace HETSAPI.Services.Impl
         {
             List<RentalRequestRotationList> result = _context.RentalRequestRotationLists
                 .Include(x => x.RentalAgreement)                            
-                .Include(x => x.Equipment)
+                .Include(x => x.Equipment)   
                 .ToList();
 
             return new ObjectResult(new HetsResponse(result));
@@ -131,7 +131,11 @@ namespace HETSAPI.Services.Impl
             {
                 RentalRequestRotationList result = _context.RentalRequestRotationLists
                     .Include(x => x.RentalAgreement)                   
+                    .Include(x => x.Equipment)                        
+                        .ThenInclude(r => r.EquipmentAttachments)
                     .Include(x => x.Equipment)
+                        .ThenInclude(e => e.Owner)
+                            .ThenInclude(c => c.PrimaryContact)
                     .First(a => a.Id == id);
 
                 return new ObjectResult(new HetsResponse(result));

@@ -7,7 +7,6 @@ using Microsoft.AspNetCore.Http;
 using System.Linq;
 using System.Security.Claims;
 using Microsoft.EntityFrameworkCore.ChangeTracking;
-using Microsoft.Extensions.Configuration;
 
 namespace HETSAPI.Models
 {
@@ -30,19 +29,16 @@ namespace HETSAPI.Models
     {
         private readonly DbContextOptions<DbAppContext> _options;
         private readonly IHttpContextAccessor _httpContextAccessor;
-        private readonly IConfiguration _configuration;
 
         /// <summary>
         /// Database Context Factory Constructor
         /// </summary>
         /// <param name="httpContextAccessor"></param>
         /// <param name="options"></param>
-        /// <param name="configuration"></param>
-        public DbAppContextFactory(IHttpContextAccessor httpContextAccessor, DbContextOptions<DbAppContext> options, IConfiguration configuration)
+        public DbAppContextFactory(IHttpContextAccessor httpContextAccessor, DbContextOptions<DbAppContext> options)
         {
             _options = options;
             _httpContextAccessor = httpContextAccessor;
-            _configuration = configuration;
         }
 
         /// <summary>
@@ -51,7 +47,7 @@ namespace HETSAPI.Models
         /// <returns></returns>
         public IDbAppContext Create()
         {
-            return new DbAppContext(_httpContextAccessor, _options, _configuration);
+            return new DbAppContext(_httpContextAccessor, _options);
         }
     }
 
@@ -257,18 +253,15 @@ namespace HETSAPI.Models
     public class DbAppContext : DbContext, IDbAppContext
     {
         private readonly IHttpContextAccessor _httpContextAccessor;
-        private readonly IConfiguration _configuration;
 
         /// <summary>
         /// Constructor for Class used for Entity Framework access.
         /// </summary>
         /// <param name="httpContextAccessor"></param>
         /// <param name="options"></param>
-        /// <param name="configuration"></param>
-        public DbAppContext(IHttpContextAccessor httpContextAccessor, DbContextOptions<DbAppContext> options, IConfiguration configuration) : base(options)
+        public DbAppContext(IHttpContextAccessor httpContextAccessor, DbContextOptions<DbAppContext> options) : base(options)
         {
             _httpContextAccessor = httpContextAccessor;
-            _configuration = configuration;
 
             // override the default timeout as some operations are time intensive
             Database?.SetCommandTimeout(180);
@@ -530,21 +523,8 @@ namespace HETSAPI.Models
                 ServiceHoursLastYear = (float?) GetOriginalValue(entry, "ServiceHoursLastYear"),
                 ServiceHoursTwoYearsAgo = (float?) GetOriginalValue(entry, "ServiceHoursTwoYearsAgo"),
                 ServiceHoursThreeYearsAgo = (float?) GetOriginalValue(entry, "ServiceHoursThreeYearsAgo")
-            };
+            };            
             
-            // get processing rules
-            SeniorityScoringRules scoringRules = new SeniorityScoringRules(_configuration);
-
-            // get the associated equipment type
-            int? dumpTruckId = changed.DumpTruckId;
-
-            // it this a dumptruck?                    
-            int seniorityScoring = dumpTruckId != null ? scoringRules.GetEquipmentScore("DumpTruck") : scoringRules.GetEquipmentScore();
-
-            // re-calculate seniority score
-            // (this occurs after each change to the service hours)
-            changed.CalculateSeniority(seniorityScoring);                        
-
             // compare the old and new
             if (changed.IsSeniorityAuditRequired(original))
             {
