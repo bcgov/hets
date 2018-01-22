@@ -583,8 +583,9 @@ namespace HETSAPI.Services.Impl
         /// <remarks>Updates a Contact associated with a Project</remarks>
         /// <param name="id">id of Project to add Contact to</param>
         /// <param name="item">Project contact</param>
+        /// <param name="primary"></param>
         /// <response code="200">OK</response>
-        public virtual IActionResult ProjectsIdContactsPostAsync(int id, Contact item)
+        public virtual IActionResult ProjectsIdContactsPostAsync(int id, Contact item, bool primary)
         {
             bool exists = _context.Projects.Any(a => a.Id == id);
 
@@ -603,6 +604,11 @@ namespace HETSAPI.Services.Impl
 
                 _context.Contacts.Add(item);
                 project.Contacts.Add(item);
+
+                if (primary)
+                {
+                    project.PrimaryContact = item;
+                }
 
                 _context.Projects.Update(project);
                 _context.SaveChanges();
