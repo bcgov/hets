@@ -1,0 +1,37 @@
+// Uses DSL plugins resolution introduced in Gradle 2.1
+plugins {
+  id "java"
+  id "jacoco"
+  id "org.sonarqube" version "2.6.1"
+}
+
+sonarqube {
+    properties {
+        property "sonar.host.url", "http://sonarqube-agehlers-sandbox.pathfinder.gov.bc.ca"
+        property "sonar.projectName", "HETS"
+        property "sonar.projectKey", "org.sonarqube:bcgov-hets"
+        property "sonar.projectBaseDir", "../"
+        property "sonar.sources", "."
+        //property "sonar.language", "css"
+        property "sourceEncoding", "UTF-8"
+    }
+}
+
+allprojects {
+  ext.baseVersion = "0.1"
+  ext.snapshotVersion = false
+
+  group = "org.sonarqube"
+  version = "$baseVersion" + (snapshotVersion ? "-SNAPSHOT" : "")
+}
+
+repositories {
+  repositories {
+    maven {
+      url "http://repo1.maven.org/maven2/"
+    }
+    maven {
+      url "https://plugins.gradle.org/m2/"
+    }
+  }
+}
