@@ -9,6 +9,7 @@ def BUILD_CONFIG = APP_NAME
 def IMAGESTREAM_NAME = APP_NAME
 def PROJECT_NAMESPACE = 'tran-hets-'
 def CONTEXT_DIRECTORY = 'Client'
+def CONTEXT_DIRECTORY_2 = 'Frontend'
 
 @NonCPS
 boolean triggerBuild(String contextDirectory) {
@@ -33,19 +34,19 @@ boolean triggerBuild(String contextDirectory) {
       }
     }
   }
-  
+
   if ( filesChangeCnt < 1 ) {
-    echo('The changes do not require a build.')
+    echo('The changes in ${contextDirectory} not require a build.')
     return false
   }
   else {
-    echo('The changes require a build.')
+    echo('The changes in ${contextDirectory} require a build.')
     return true
-  } 
+  }
 }
 
 node {
-  if( triggerBuild(CONTEXT_DIRECTORY) ) {
+  if( triggerBuild(CONTEXT_DIRECTORY) || triggerBuild(CONTEXT_DIRECTORY_2) ) {
     stage('build ' + BUILD_CONFIG) {
       echo "Building: " + BUILD_CONFIG
       openshiftBuild bldCfg: BUILD_CONFIG, showBuildLogs: 'true'
