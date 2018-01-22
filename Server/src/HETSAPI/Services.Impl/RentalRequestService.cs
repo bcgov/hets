@@ -429,7 +429,6 @@ namespace HETSAPI.Services.Impl
         /// <param name="id">id of RentalRequest to fetch attachments for</param>
         /// <response code="200">OK</response>
         /// <response code="404">RentalRequest not found</response>
-
         public virtual IActionResult RentalrequestsIdAttachmentsGetAsync(int id)
         {
             bool exists = _context.RentalRequests.Any(a => a.Id == id);
