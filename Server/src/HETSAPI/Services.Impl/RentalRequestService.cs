@@ -633,7 +633,7 @@ namespace HETSAPI.Services.Impl
                         .Include(x => x.RentalRequestRotationList)
                         .First(a => a.Id == rentalRequestId);
 
-                if (result.Status.Equals("New", StringComparison.InvariantCultureIgnoreCase))
+                if (result.Status.Equals("In Progress", StringComparison.InvariantCultureIgnoreCase))
                 {
                     // delete any existing rotation list records
                     foreach (RentalRequestRotationList rentalRequestRotationList in result.RentalRequestRotationList)
