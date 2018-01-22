@@ -574,6 +574,8 @@ namespace HETSAPI.Services.Impl
             // ******************************************************************
             rentalRequest.RentalRequestRotationList[rotationListIndex] = item;
 
+            // to do: fix the CreateTimestamp and UserId - coming in as nulls
+
             // ******************************************************************
             // can we "Complete" this rental request
             // (if the Yes or Forced Hires = Request.EquipmentCount)
