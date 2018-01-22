@@ -838,6 +838,18 @@ function parseProject(project) {
   project.canDelete = false; // TODO Needs input from Business whether this is needed.
 }
 
+function formatTimeRecords(timeRecords, rentalRequestId) {
+  let formattedTimeRecords = Object.keys(timeRecords).map((key) => {
+    let timeRecord = {};
+    timeRecord.enteredDate = timeRecords[key].date;
+    timeRecord.hours = timeRecords[key].hours;
+    timeRecord.timePeriod = 'Week';
+    timeRecord.rentalAgreement = { id: rentalRequestId };
+    return timeRecord;
+  });
+  return formattedTimeRecords;
+}
+
 export function searchProjects(params) {
   store.dispatch({ type: Action.PROJECTS_REQUEST });
   return new ApiRequest('/projects/search').get(params).then(response => {
@@ -891,6 +903,32 @@ export function updateProject(project) {
     parseProject(project);
 
     store.dispatch({ type: Action.UPDATE_PROJECT, project: project });
+  });
+}
+
+export function getProjectEquipment(projectId) {
+  return new ApiRequest(`/projects/${projectId}/equipment`).get().then(response => {
+    var projectEquipment = normalize(response.data);
+
+    store.dispatch({ type: Action.UPDATE_PROJECT_EQUIPMENT, projectEquipment: projectEquipment });
+  });
+}
+
+export function getProjectTimeRecords(projectId) {
+  return new ApiRequest(`projects/${projectId}/timeRecords`).get().then(response => {
+    var projectTimeRecords = normalize(response.data);
+
+    store.dispatch({ type: Action.UPDATE_PROJECT_TIME_RECORDS, projectTimeRecords: projectTimeRecords });
+  });
+}
+
+export function addProjectTimeRecords(projectId, rentalRequestId, timeRecords) {
+  let formattedTimeRecords = formatTimeRecords(timeRecords, rentalRequestId);
+  return new ApiRequest(`projects/${projectId}/timeRecords`).post(formattedTimeRecords).then(response => {
+    var projectTimeRecords = normalize(response.data);
+
+    store.dispatch({ type: Action.UPDATE_PROJECT_TIME_RECORDS, projectTimeRecords: projectTimeRecords });
+    return projectTimeRecords;
   });
 }
 
@@ -1497,5 +1535,15 @@ export function getVersion() {
 export function setDevUser(user) {
   return new ApiRequest(`/authentication/dev/token/${user}`).get().then(response => {    
     return normalize(response.data);
+  });
+}
+
+////////////////////
+// Time Records
+////////////////////
+
+export function deleteTimeRecord(timeRecordId) {
+  return new ApiRequest(`/timerecords/${timeRecordId}/delete`).post().then((response) => {
+    store.dispatch({ type: Action.DELETE_TIME_RECORD, timeRecord: response.data });
   });
 }

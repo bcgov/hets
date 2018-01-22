@@ -12,27 +12,30 @@ import FormInputControl from '../../components/FormInputControl.jsx';
 import DateControl from '../../components/DateControl.jsx';
 import EditDialog from '../../components/EditDialog.jsx';
 import Spinner from '../../components/Spinner.jsx';
+import DeleteButton from '../../components/DeleteButton.jsx';
 
-import FilterDropdown from '../../components/FilterDropdown.jsx';
+import DropdownControl from '../../components/DropdownControl.jsx';
 
 import { isBlank } from '../../utils/string';
+import { formatDateTime } from '../../utils/date';
 
 var TimeEntryDialog = React.createClass({
   propTypes: {
-    onSave: React.PropTypes.func.isRequired,
     onClose: React.PropTypes.func.isRequired,
     show: React.PropTypes.bool.isRequired,
     projects: React.PropTypes.object,
     project: React.PropTypes.object,
     equipmentList: React.PropTypes.object,
-    equipment: React.PropTypes.object,
     rentalRequest: React.PropTypes.object,
+    activeRentalRequest: React.PropTypes.object,
+    projectTimeRecords: React.PropTypes.object,
   },
 
   getInitialState() {  
     return {
       projectId: this.props.project.id,
-      equipment: {},
+      equipment: this.props.activeRentalRequest || {},
+      equipmentId: this.props.activeRentalRequest.id || '',
       numberOfInputs: 1,
       timeEntry: {
         1: {
@@ -43,15 +46,14 @@ var TimeEntryDialog = React.createClass({
         },
       },
 
-      errors: {},
+      equipmentIdError: '',
     };
   },
 
   componentDidMount() {
-    let getProjectsPromise = Api.getProjects();
-    let getEquipmentListPromise = Api.getEquipmentList();
-
-    return Promise.all([getProjectsPromise, getEquipmentListPromise]);
+    let projectId = this.props.project.id;
+    Api.getProjectEquipment(projectId);
+    Api.getProjectTimeRecords(projectId);
   },
 
   updateState(state, callback) {
@@ -105,13 +107,15 @@ var TimeEntryDialog = React.createClass({
   },
 
   onSave() {
-    this.props.onSave({
+    Api.addProjectTimeRecords(this.state.projectId, this.state.equipmentId, this.state.timeEntry).then(() => {
+      Api.getProjectTimeRecords(this.state.projectId);
+      this.setState( this.getInitialState() );
     });
   },
 
   onEquipmentSelected(equipment) {
     this.setState({ equipment: equipment });
-  },
+  }, 
 
   addTimeEntryInput() {
     if (this.state.numberOfInputs < 10) {
@@ -143,13 +147,18 @@ var TimeEntryDialog = React.createClass({
     }
   },
 
+  deleteTimeRecord(timeRecord) {
+    Api.deleteTimeRecord(timeRecord.id).then(() => {
+      Api.getProjectTimeRecords(this.props.project.id);
+    });
+  },
+
   render() {
-    const projects = _.sortBy(this.props.projects, 'name');
     const equipmentList = _.sortBy(this.props.equipmentList.data);
-    const rentalRequest = this.props.rentalRequest.data;
     const isValidDate = function( current ){
       return current.day() === 6;
     };
+    const { projectTimeRecords } = this.props;
     return (
       <EditDialog 
         id="time-entry" 
@@ -168,40 +177,54 @@ var TimeEntryDialog = React.createClass({
         <Form>
           <Grid fluid>
             <Row>
-              <FormGroup controlId="projectId" validationState={ this.state.projectError ? 'error' : null }>
+              <FormGroup>
                 <ControlLabel>Project</ControlLabel>
-                <FilterDropdown 
-                  id="projectId" 
-                  selectedId={ this.state.projectId } 
-                  onSelect={ this.onProjectSelected } 
-                  updateState={ this.updateState }
-                  items={ projects } 
-                  className="full-width"
-                />
-                <HelpBlock>{ this.state.projectError }</HelpBlock>
+                <div>{this.props.project.name}</div>
               </FormGroup>
             </Row>
             <Row>
-              <FormGroup controlId="equipmentId" validationState={ this.state.equipmentIDError ? 'error' : null }>
+              <FormGroup controlId="equipmentId" validationState={ this.state.equipmentIdError ? 'error' : null }>
                 <ControlLabel>Equipment ID</ControlLabel>
-                <FilterDropdown 
-                  id="selectedEquipmentTypesIds" 
+                <DropdownControl
+                  id="equipmentId" 
                   fieldName="id"
-                  selectedId={ rentalRequest.districtEquipmentType.id }
                   onSelect={ this.onEquipmentSelected } 
                   updateState={ this.updateState } 
                   items={ equipmentList } 
+                  selectedId={ this.state.equipmentId }
                   className="full-width"
                 /> 
-                <div>({ this.state.equipment.typeName || rentalRequest.districtEquipmentType.districtEquipmentName })</div>
-                <div>Owner: { this.state.equipment.owner && this.state.equipment.owner.organizationName }</div>
+                {/* // todo: wait for endpoint to include equipment type data */}
+                {/* <div>{ this.state.equipment.equipment && `(${this.state.equipment.equipment.districtTypeName})` }</div> */}
+                <div>{ this.state.equipment.equipment && `Owner: ${this.state.equipment.equipment.owner.organizationName}` }</div>
               </FormGroup>
             </Row>
+            <Row>
+              <Col sm={4} className="nopadding"><div className="column-title">Week Ending</div></Col>
+              <Col sm={4} className="nopadding"><div className="column-title">Hours</div></Col>
+            </Row>
+            <ul className="time-records-list">
+            { _.map(projectTimeRecords.data, timeRecord => (
+              <li key={timeRecord.id} className="list-item">
+                <Row>
+                  <Col sm={4} className="nopadding">
+                    <div>{ formatDateTime(timeRecord.enteredDate, 'YYYY-MMM-DD') }</div>
+                  </Col>
+                  <Col sm={4} className="nopadding">
+                    <div>{ timeRecord.hours }</div>
+                  </Col>
+                  <Col sm={2}>
+                    <DeleteButton name="Document" onConfirm={ this.deleteTimeRecord.bind(this, timeRecord) }/>
+                  </Col>
+                </Row>
+              </li>
+            ))}
+            </ul>
             <hr />
             { Object.keys(this.state.timeEntry).map(key => {
               return (
                 <Row key={key}>
-                  <Col md={4} className="nopadding">
+                  <Col sm={4} className="nopadding">
                     <FormGroup validationState={ this.state.timeEntry[key].errorDate ? 'error' : null }>
                       <ControlLabel>Week Ending</ControlLabel>
                       <DateControl
@@ -215,7 +238,7 @@ var TimeEntryDialog = React.createClass({
                       <HelpBlock>{ this.state.timeEntry[key].errorDate }</HelpBlock>
                     </FormGroup>
                   </Col>  
-                  <Col md={4} className="nopadding">
+                  <Col sm={4} className="nopadding">
                     <FormGroup validationState={ this.state.timeEntry[key].errorHours ? 'error' : null }>
                       <ControlLabel>Hours</ControlLabel>
                       <FormInputControl 
@@ -258,9 +281,8 @@ var TimeEntryDialog = React.createClass({
 
 function mapStateToProps(state) {
   return {
-    projects: state.lookups.projects,
-    equipment: state.models.equipment,
-    equipmentList: state.models.equipmentList,
+    projectTimeRecords: state.models.projectTimeRecords,
+    equipmentList: state.models.projectEquipment,
     rentalRequest: state.models.rentalRequest,
   };
 }
