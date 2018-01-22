@@ -300,6 +300,8 @@ namespace HETSAPI.Services.Impl
                 .Where(x => x.DistrictId.Equals(districtId))
                 .Include(x => x.District.Region)
                 .Include(x => x.PrimaryContact)
+                .Include(x => x.RentalAgreements)
+                .Include(x => x.RentalRequests)
                 .Select(x => x);
 
             if (districtTokens != null && districts.Length > 0)
