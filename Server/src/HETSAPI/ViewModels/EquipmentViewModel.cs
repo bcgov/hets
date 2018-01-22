@@ -159,7 +159,21 @@ namespace HETSAPI.ViewModels
 
             SenioritySortOrder = temp;
             return temp;
-        }        
+        }
+
+        /// <summary>
+        /// Used to sort the Equipment by Seniority in the UI
+        /// </summary>
+        [DataMember(Name = "senioritySortOrder")]
+        public float SenioritySortOrder { get; set; }
+
+        /// <summary>
+        /// Returns the Number of Blocks for this Piece of Equipment
+        /// </summary>
+        [DataMember(Name = "numberOfBlocks")]
+        public int NumberOfBlocks { get; set; }
+
+        #region Equipment Model Properties
 
         /// <summary>
         /// A system-generated unique identifier for a Equipment
@@ -501,11 +515,7 @@ namespace HETSAPI.ViewModels
         [DataMember(Name="lastTimeRecordDateThisYear")]
         public DateTime? LastTimeRecordDateThisYear { get; set; }
 
-        /// <summary>
-        /// Used to sort the Equipment by Seniority in the UI
-        /// </summary>
-        [DataMember(Name="senioritySortOrder")]
-        public float SenioritySortOrder { get; set; }
+        #endregion        
 
         /// <summary>
         /// Returns the string presentation of the object
@@ -562,6 +572,7 @@ namespace HETSAPI.ViewModels
             sb.Append("  IsWorking: ").Append(IsWorking).Append("\n");
             sb.Append("  LastTimeRecordDateThisYear: ").Append(LastTimeRecordDateThisYear).Append("\n");
             sb.Append("  SenioritySortOrder: ").Append(SenioritySortOrder).Append("\n");
+            sb.Append("  NumberOfBlocks: ").Append(NumberOfBlocks).Append("\n");            
             sb.Append("}\n");
 
             return sb.ToString();

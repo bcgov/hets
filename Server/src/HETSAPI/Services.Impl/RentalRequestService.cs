@@ -592,6 +592,7 @@ namespace HETSAPI.Services.Impl
             if (countOfYeses >= equipmentRequestCount)
             {
                 rentalRequest.Status = "Complete";
+                rentalRequest.FirstOnRotationList = null;
             }                        
 
             // ******************************************************************
