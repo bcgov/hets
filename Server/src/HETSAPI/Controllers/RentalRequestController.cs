@@ -95,13 +95,14 @@ namespace HETSAPI.Controllers
         public virtual IActionResult RentalrequestsIdPut([FromRoute]int id, [FromBody]RentalRequest item)
         {
             return _service.RentalrequestsIdPutAsync(id, item);
-        }        
+        }
 
         /// <summary>
         /// Create rental request
         /// </summary>
         /// <param name="item"></param>
         /// <response code="201">RentalRequest created</response>
+        /// <response code="405">In Progress Rental Request already exists</response>
         [HttpPost]
         [Route("/api/rentalrequests")]
         [SwaggerOperation("RentalrequestsPost")]
