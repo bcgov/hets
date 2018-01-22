@@ -120,4 +120,18 @@
   .remove-btn {
     margin-left: 5px;
   }
+
+  .column-title {
+    margin-bottom: 5px;
+    font-weight: bold;
+  }
+
+  .time-records-list {
+    padding: 0;
+    list-style: none;
+
+    .list-item {
+      margin: 5px 0;
+    }
+  }
 }

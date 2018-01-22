@@ -132,3 +132,6 @@ export const UPDATE_VERSION = 'UPDATE_VERSION';
 
 // History
 export const UPDATE_HISTORY = 'UPDATE_HISTORY';
+
+// Time Records
+export const DELETE_TIME_RECORD = 'DELETE_TIME_RECORD';

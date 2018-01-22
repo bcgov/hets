@@ -70,7 +70,7 @@ var ProjectsDetail = React.createClass({
 
       contact: {},
       
-      equipment: {},
+      rentalRequest: {},
 
       // Contacts
       uiContacts : {
@@ -252,19 +252,14 @@ var ProjectsDetail = React.createClass({
     // todo: make network call
   },
 
-  openTimeEntryDialog(equipment) {
-    this.setState({ equipment: equipment }, () => {
+  openTimeEntryDialog(rentalRequest) {
+    this.setState({ rentalRequest: rentalRequest }, () => {
       this.setState({ showTimeEntryDialog: true });
     });
   },
 
   closeTimeEntryDialog() {
     this.setState({ showTimeEntryDialog: false });
-  },
-
-  saveTimeEntry(projectId, timeEntry) {
-    console.log('saving');
-    Api.addProjectTimeRecord(projectId, timeEntry);
   },
 
   render() {
@@ -352,7 +347,6 @@ var ProjectsDetail = React.createClass({
                 // "Lists the records - requests then rental agreements, within the groups, list in largest-to-smallest ID order (aka reverse chronological create)."
                 var rentalRequests = _.orderBy(project.rentalRequests, ['id'], ['desc']);
                 var rentalAgreements = _.orderBy(project.rentalAgreements, ['id'], ['desc']);
-                console.log(rentalAgreements);
                 var combinedList =_.concat(rentalRequests, rentalAgreements);
 
                 // Exclude completed items
@@ -511,9 +505,8 @@ var ProjectsDetail = React.createClass({
         <TimeEntryDialog
           show={ this.state.showTimeEntryDialog }
           onClose={ this.closeTimeEntryDialog }
-          onSave={ this.saveTimeEntry }
           project={ project }
-          equipment={ this.state.equipment }
+          activeRentalRequest={ this.state.rentalRequest }
         />
       }
     </div>;

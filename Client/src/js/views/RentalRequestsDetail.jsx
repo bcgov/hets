@@ -224,7 +224,6 @@ var RentalRequestsDetail = React.createClass({
 
   render() {
     var rentalRequest = this.props.rentalRequest.data;
-    console.log(rentalRequest);
     
     return <div id="rental-requests-detail">
       <Row id="rental-requests-top">

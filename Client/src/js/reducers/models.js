@@ -89,6 +89,10 @@ const DEFAULT_MODELS = {
   document: {},
 
   history: {},
+
+  timeRecord: {
+    data: {},
+  },
 };
 
 export default function modelsReducer(state = DEFAULT_MODELS, action) {
@@ -256,7 +260,13 @@ export default function modelsReducer(state = DEFAULT_MODELS, action) {
       // History
     case Action.UPDATE_HISTORY:
       return { ...state, history: action.history };
+    
+    // Time Record
+    case Action.DELETE_TIME_RECORD:
+      return { ...state, timeRecord: { data: action.timeRecord } };
   }
+
+  
 
   return state;
 }
