@@ -814,8 +814,10 @@ namespace HETSAPI.Services.Impl
 
                 // *******************************************************************************
                 // get the number of blocks for this piece of equipment
+                // (default blocks plus 1 (for the open block))
                 // *******************************************************************************
                 int numberOfBlocks = GetNumberOfBlocks(item);
+                numberOfBlocks = numberOfBlocks + 1;
 
                 // *******************************************************************************
                 // get the equipment based on the current seniority list for the area
@@ -871,8 +873,6 @@ namespace HETSAPI.Services.Impl
                         {
                             currentPosition = 0;
                         }
-
-
                     }
                 }
 
