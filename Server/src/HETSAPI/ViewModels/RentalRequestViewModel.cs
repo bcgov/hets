@@ -106,7 +106,13 @@ namespace HETSAPI.ViewModels
             YesCount = temp;
 
             return temp;
-        }       
+        }
+
+        /// <summary>
+        /// Returns the Number of Blocks for this Rotation List
+        /// </summary>
+        [DataMember(Name = "numberOfBlocks")]
+        public int NumberOfBlocks { get; set; }
 
         #region Standard Rental Request Model Properties
 
@@ -262,6 +268,7 @@ namespace HETSAPI.ViewModels
             sb.Append("  RentalRequestAttachments: ").Append(RentalRequestAttachments).Append("\n");
             sb.Append("  RentalRequestRotationList: ").Append(RentalRequestRotationList).Append("\n");
             sb.Append("  YesCount: ").Append(YesCount).Append("\n");
+            sb.Append("  NumberOfBlocks: ").Append(NumberOfBlocks).Append("\n");
             sb.Append("}\n");
 
             return sb.ToString();
