@@ -161,6 +161,22 @@ namespace HETSAPI.Controllers
         {
             return _service.ProjectsIdTimeRecordsPostAsync(id, item);
         }
+        
+        /// <summary>
+        /// pdate or create an array of time records associated with a project
+        /// </summary>
+        /// <remarks>Adds Project Time Records</remarks>
+        /// <param name="id">id of Project to add a time record for</param>
+        /// <param name="items">Array of Project Time Records</param>
+        /// <response code="200">OK</response>
+        [HttpPost]
+        [Route("/api/projects/{id}/timeRecords")]
+        [SwaggerOperation("ProjectsIdTimeRecordsBulkPostAsync")]
+        [SwaggerResponse(200, type: typeof(TimeRecord))]
+        public virtual IActionResult ProjectsIdTimeRecordsBulkPostAsync([FromRoute]int id, [FromBody]TimeRecord[] items)
+        {
+            return _service.ProjectsIdTimeRecordsBulkPostAsync(id, items);
+        }
 
         #endregion
 

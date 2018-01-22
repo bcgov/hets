@@ -197,7 +197,12 @@ namespace HETSAPI.Mappings
             {
                 dto.Description = model.Description;
                 dto.FileName = model.FileName;
-                dto.FileSize = model.FileContents.Length;
+
+                if (model.FileContents != null)
+                {
+                    dto.FileSize = model.FileContents.Length;
+                }
+
                 dto.Id = model.Id;
                 dto.Type = model.Type;
                 dto.LastUpdateTimestamp = model.LastUpdateTimestamp;
