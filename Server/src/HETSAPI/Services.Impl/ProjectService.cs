@@ -385,27 +385,36 @@ namespace HETSAPI.Services.Impl
             if (exists && item != null)
             {
                 Project project = _context.Projects
-                        .Include(x => x.RentalAgreements)
-                        .ThenInclude(t => t.TimeRecords)
+                    .Include(x => x.RentalAgreements)
                     .First(x => x.Id == id);
 
-                // must have the rental agreement id
+                // ******************************************************************
+                // must have the valid rental agreement id
+                // ******************************************************************
                 if (item.RentalAgreement.Id == 0)
                 {
                     // (RENTAL AGREEMENT) record not found
                     return new ObjectResult(new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-01", _configuration)));
                 }
 
-                int rentalAgreementId = item.RentalAgreement.Id;                
+                exists = project.RentalAgreements.Any(a => a.Id == item.RentalAgreement.Id);
 
+                if (!exists)
+                {
+                    // (RENTAL AGREEMENT) record not found
+                    return new ObjectResult(new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-01", _configuration)));
+                }
+
+                // ******************************************************************
                 // add or update time record
+                // ******************************************************************
                 if (item.Id > 0)
                 {
-                    project.RentalAgreements[rentalAgreementId].TimeRecords.Add(item);
+                    _context.TimeRecords.Add(item);
                 }
                 else  // update time record
                 {
-                    project.RentalAgreements[rentalAgreementId].TimeRecords[item.Id] = item;
+                    _context.TimeRecords.Update(item);
                 }
                 
                 _context.SaveChanges();

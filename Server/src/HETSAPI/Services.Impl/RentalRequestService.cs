@@ -467,6 +467,8 @@ namespace HETSAPI.Services.Impl
             {
                 // check that we have a rotation list
                 RentalRequest result = _context.RentalRequests
+                    .Include(x => x.DistrictEquipmentType)
+                        .ThenInclude(y => y.EquipmentType)
                     .Include(x => x.FirstOnRotationList)
                     .Include(x => x.RentalRequestAttachments)
                     .Include(x => x.RentalRequestRotationList)
@@ -482,8 +484,12 @@ namespace HETSAPI.Services.Impl
                 result.RentalRequestRotationList =
                     result.RentalRequestRotationList.OrderBy(e => e.RotationListSortOrder).ToList();
 
+                // return the number of blocks in this list
+                RentalRequestViewModel rentalRequest = result.ToRentalRequestViewModel();
+                rentalRequest.NumberOfBlocks = GetNumberOfBlocks(result) + 1;
+
                 // return view model
-                return new ObjectResult(new HetsResponse(result.ToRentalRequestViewModel()));
+                return new ObjectResult(new HetsResponse(rentalRequest));
             }
 
             // record not found
@@ -568,6 +574,8 @@ namespace HETSAPI.Services.Impl
             // ******************************************************************
             rentalRequest.RentalRequestRotationList[rotationListIndex] = item;
 
+            // to do: fix the CreateTimestamp and UserId - coming in as nulls
+
             // ******************************************************************
             // can we "Complete" this rental request
             // (if the Yes or Forced Hires = Request.EquipmentCount)
@@ -592,6 +600,7 @@ namespace HETSAPI.Services.Impl
             if (countOfYeses >= equipmentRequestCount)
             {
                 rentalRequest.Status = "Complete";
+                rentalRequest.FirstOnRotationList = null;
             }                        
 
             // ******************************************************************
@@ -791,10 +800,19 @@ namespace HETSAPI.Services.Impl
         /// <returns></returns>
         private int GetNumberOfBlocks(RentalRequest item)
         {
-            SeniorityScoringRules scoringRules = new SeniorityScoringRules(_configuration);
+            int numberOfBlocks = -1;
 
-            int numberOfBlocks = item.DistrictEquipmentType.EquipmentType.IsDumpTruck ?
-                scoringRules.GetTotalBlocks("DumpTruck") : scoringRules.GetTotalBlocks();
+            try
+            {            
+                SeniorityScoringRules scoringRules = new SeniorityScoringRules(_configuration);
+
+                numberOfBlocks = item.DistrictEquipmentType.EquipmentType.IsDumpTruck ?
+                    scoringRules.GetTotalBlocks("DumpTruck") : scoringRules.GetTotalBlocks();
+            }
+            catch
+            {
+                // do nothing
+            }
 
             return numberOfBlocks;
         }
