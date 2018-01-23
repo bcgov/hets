@@ -550,15 +550,17 @@ namespace HETSAPI.Services.Impl
                 .Include(x => x.DistrictEquipmentType)
                     .ThenInclude(d => d.EquipmentType)    
                 .Include(x => x.LocalArea)
+                .Include(x => x.Project)
+                    .ThenInclude(y => y.RentalAgreements)
                 .First(a => a.Id == id);
 
-            _context.Entry(rentalRequest).State = EntityState.Detached;
+            _context.Entry(rentalRequest).State = EntityState.Detached;            
 
             // ******************************************************************
             // find the rotation list record to update
             // ******************************************************************
             int rotationListIndex = -1;
-            
+
             for (int i = 0; i < rentalRequest.RentalRequestRotationList.Count; i++)
             {
                 if (rentalRequest.RentalRequestRotationList[i].Id == item.Id)
@@ -571,9 +573,33 @@ namespace HETSAPI.Services.Impl
             // ******************************************************************
             // update the rental request rotation list record
             // ******************************************************************
+            item.CreateTimestamp = rentalRequest.RentalRequestRotationList[rotationListIndex].CreateTimestamp;
+            item.CreateUserid = rentalRequest.RentalRequestRotationList[rotationListIndex].CreateUserid;
             rentalRequest.RentalRequestRotationList[rotationListIndex] = item;
 
-            // to do: fix the CreateTimestamp and UserId - coming in as nulls
+            // ******************************************************************
+            // do we need to create a Rental Agreement?
+            // ******************************************************************
+            if (item.IsForceHire == true ||
+                item.OfferResponse.Equals("Yes", StringComparison.InvariantCultureIgnoreCase))
+            {
+                RentalAgreement rentalAgreement = new RentalAgreement
+                {
+                    Equipment = item.Equipment,
+                    Project = rentalRequest.Project,
+                    Status = "Active",
+                    DatedOn = DateTime.Now
+                };
+
+                // add new rental agreement to the project
+                rentalRequest.Project.RentalAgreements.Add(rentalAgreement);
+
+                // relate the new rental agreement to the original rotation list record
+                rentalRequest.RentalRequestRotationList[rotationListIndex].RentalAgreement = rentalAgreement;
+                
+                // relate it to return to our client (not for the db)
+                item.RentalAgreement = rentalAgreement;
+            }
 
             // ******************************************************************
             // can we "Complete" this rental request
@@ -987,8 +1013,12 @@ namespace HETSAPI.Services.Impl
                         bool hired;
 
                         if (foundCurrentRecord &&
-                            item.RentalRequestRotationList[i].IsForceHire == null ||
+                            item.RentalRequestRotationList[i].IsForceHire != null &&
                             item.RentalRequestRotationList[i].IsForceHire == false)
+                        {
+                            forcedHire = false;
+                        }
+                        else if (foundCurrentRecord && item.RentalRequestRotationList[i].IsForceHire == null)
                         {
                             forcedHire = false;
                         }
@@ -998,8 +1028,12 @@ namespace HETSAPI.Services.Impl
                         }
 
                         if (foundCurrentRecord &&
-                            item.RentalRequestRotationList[i].OfferResponse == null ||
+                            item.RentalRequestRotationList[i].OfferResponse != null &&
                             !item.RentalRequestRotationList[i].OfferResponse.Equals("Yes", StringComparison.InvariantCultureIgnoreCase))
+                        {
+                            hired = false;
+                        }
+                        else if (foundCurrentRecord && item.RentalRequestRotationList[i].OfferResponse == null)
                         {
                             hired = false;
                         }
