@@ -382,7 +382,6 @@ var RentalRequestsDetail = React.createClass({
                               </Button>
                             );
                           }
-
                           return this.renderStatusText(listItem, isFirstNullRecord);
                         })()}
                       </ButtonGroup>
