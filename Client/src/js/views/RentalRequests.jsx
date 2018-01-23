@@ -62,7 +62,7 @@ var RentalRequests = React.createClass({
       search: {
         selectedLocalAreasIds: this.props.search.selectedLocalAreasIds || [],
         projectName: this.props.search.projectName || '',
-        status: this.props.search.status || '',
+        status: this.props.search.status || Constant.RENTAL_REQUEST_STATUS_CODE_IN_PROGRESS,
         dateRange: this.props.search.dateRange || '',
       },
       ui : {
