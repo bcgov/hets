@@ -1054,7 +1054,7 @@ export function addRentalRequest(rentalRequest) {
     return rentalRequest;
   }).catch((error) => {
     if (error.status === 405) {
-      store.dispatch({ type: Action.ADD_RENTAL_REQUEST_ERROR, error: { description: 'A rental request already exists for this area and equipment type.' } });
+      store.dispatch({ type: Action.ADD_RENTAL_REQUEST_ERROR, errorMessage: 'A rental request already exists for this area and equipment type.' });
       return Promise.reject(error);
     }
   });

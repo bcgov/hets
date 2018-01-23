@@ -164,8 +164,8 @@ var RentalRequestsAddDialog = React.createClass({
           <FormInputControl type="number" min="0" value={ this.state.count } updateState={ this.updateState } />
           <HelpBlock>{ this.state.countError }</HelpBlock>
         </FormGroup>
-        { this.props.rentalRequest.error.description &&
-          <Alert bsStyle="danger">{ this.props.rentalRequest.error.description }</Alert>
+        { this.props.rentalRequest.error &&
+          <Alert bsStyle="danger">{ this.props.rentalRequest.errorMessage }</Alert>
         }
       </Form>
     </EditDialog>;

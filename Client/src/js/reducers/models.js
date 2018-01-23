@@ -64,7 +64,8 @@ const DEFAULT_MODELS = {
     data: {},
     loading: false,
     success: false,
-    error: {},
+    error: false,
+    errorMessage: '',
   },
   rentalRequestNotes: {},
   rentalRequestAttachments: {},
@@ -94,226 +95,178 @@ const DEFAULT_MODELS = {
   history: {},
 };
 
-// const genericRequest = (state = {
-//   isFetching: false,
-//   data: [],
-//   length: -1,
-//   success: false,
-//   errorMessage: [],
-//   totalPages: 0,
-//   currentPage: 0,
-// }, action) => {
-//   switch (action.type) {
-//     case Action.REQUEST:
-//       return Object.assign({}, state, {
-//         isFetching: true,
-//         success: false,
-//       });
-//     case Action.SUCCESS:
-//       return Object.assign({}, state, {
-//         isFetching: false,
-//         success: true,
-//         data: (action.appendData) ? state.data.concat(action.data) : action.data,
-//         length: action.length,
-//         totalPages: action.totalPages,
-//         currentPage: action.currentPage,
-//       });
-//     case Action.ERROR:
-//       return Object.assign({}, state, {
-//         isFetching: false,
-//         success: false,
-//         errorMessage: action.errorMessage,
-//       });
-//     default: return state;
-//   };
-// };
-
-// const createReducer = (reducerFunction, reducerName) => {
-//   return (state, action) => {
-//     const { name } = action;
-//     const isInitializationCall = state === undefined;
-//     if (name !== reducerName && !isInitializationCall) {
-//       return state;
-//     }
-//     return reducerFunction(state, action);
-//   };
-// };
-
-
 export default function modelsReducer(state = DEFAULT_MODELS, action) {
   switch(action.type) {
     // Users
     case Action.UPDATE_USERS:
-    return { ...state, users: action.users };
+      return { ...state, users: action.users };
     
     case Action.UPDATE_USER:
-    return { ...state, user: action.user };
+      return { ...state, user: action.user };
     
     case Action.ADD_USER:
-    return { ...state, user: action.user };
+      return { ...state, user: action.user };
     
     case Action.DELETE_USER:
-    return { ...state, user: action.user };
+      return { ...state, user: action.user };
     
     // Favourites
     case Action.FAVOURITES_REQUEST:
-    return { ...state, favourites: { ...state.favourites, loading: true } };
+      return { ...state, favourites: { ...state.favourites, loading: true } };
     
     case Action.UPDATE_FAVOURITES:
-    return { ...state, favourites: { data: action.favourites, loading: false, success: true } };
+      return { ...state, favourites: { data: action.favourites, loading: false, success: true } };
     
     case Action.ADD_FAVOURITE: case Action.UPDATE_FAVOURITE:
-    return { ...state, favourites: { data: { ...state.favourites.data, ...action.favourite } } };
+      return { ...state, favourites: { data: { ...state.favourites.data, ...action.favourite } } };
     
     case Action.DELETE_FAVOURITE:
-    return { ...state, favourites: _.omit(state.favourites, [ action.id ]) };
+      return { ...state, favourites: _.omit(state.favourites, [ action.id ]) };
     
     // Contacts
     case Action.UPDATE_CONTACTS:
-    return { ...state, contacts: action.contacts };
+      return { ...state, contacts: action.contacts };
     
     case Action.ADD_CONTACT:
-    return { ...state, contact: action.contact };
+      return { ...state, contact: action.contact };
     
     case Action.UPDATE_CONTACT:
-    return { ...state, contact: action.contact };
+      return { ...state, contact: action.contact };
     
     case Action.DELETE_CONTACT:
-    return { ...state, contact: action.contact };
+      return { ...state, contact: action.contact };
     
     // Documents
     case Action.UPDATE_DOCUMENTS:
-    return { ...state, documents: action.documents };
+      return { ...state, documents: action.documents };
     
     case Action.ADD_DOCUMENT:
-    return { ...state, document: action.document };
+      return { ...state, document: action.document };
     
     case Action.UPDATE_DOCUMENT:
-    return { ...state, document: action.document };
+      return { ...state, document: action.document };
     
     case Action.DELETE_DOCUMENT:
-    return { ...state, document: action.document };
+      return { ...state, document: action.document };
     
     // Equipment
     case Action.EQUIPMENT_LIST_REQUEST:
-    return { ...state, equipmentList: { ...state.equipmentList, loading: true } };
+      return { ...state, equipmentList: { ...state.equipmentList, loading: true } };
     
     case Action.UPDATE_EQUIPMENT_LIST:
-    return { ...state, equipmentList: { data: action.equipmentList, loading: false, success: true } };
+      return { ...state, equipmentList: { data: action.equipmentList, loading: false, success: true } };
     
     case Action.ADD_EQUIPMENT: case Action.UPDATE_EQUIPMENT:
-    return { ...state, equipment: action.equipment };
+      return { ...state, equipment: action.equipment };
     
     // Equipment Attachments
     case Action.UPDATE_EQUIPMENT_ATTACHMENTS:
-    return { ...state, equipmentPhysicalAttachments: action.physicalAttachments };
+      return { ...state, equipmentPhysicalAttachments: action.physicalAttachments };
     
     case Action.ADD_EQUIPMENT_ATTACHMENT:
-    return { ...state, equipmentPhysicalAttachment: action.physicalAttachment };
+      return { ...state, equipmentPhysicalAttachment: action.physicalAttachment };
     
     case Action.UPDATE_EQUIPMENT_ATTACHMENT:
-    return { ...state, equipmentPhysicalAttachment: action.physicalAttachment };
+      return { ...state, equipmentPhysicalAttachment: action.physicalAttachment };
     
     case Action.DELETE_EQUIPMENT_ATTACHMENT:
-    return { ...state, equipmentPhysicalAttachment: action.physicalAttachment };
+      return { ...state, equipmentPhysicalAttachment: action.physicalAttachment };
     
     // Owners
     case Action.OWNERS_REQUEST:
-    return { ...state, owners: { ...state.owners, loading: true } };
+      return { ...state, owners: { ...state.owners, loading: true } };
     
     case Action.UPDATE_OWNERS:
-    return { ...state, owners: { data: action.owners, loading: false } };
+      return { ...state, owners: { data: action.owners, loading: false } };
     
     case Action.ADD_OWNER: case Action.UPDATE_OWNER: case Action.DELETE_OWNER:
-    return { ...state, owner: action.owner };
+      return { ...state, owner: action.owner };
     
     // Projects
     case Action.PROJECTS_REQUEST: 
-    return { ...state, projects: { ...state.projects, loading: true } };
+      return { ...state, projects: { ...state.projects, loading: true } };
     
     case Action.UPDATE_PROJECTS:
-    return { ...state, projects: { data: action.projects, loading: false, success: true } };
+      return { ...state, projects: { data: action.projects, loading: false, success: true } };
     
     case Action.ADD_PROJECT: case Action.UPDATE_PROJECT:
-    return { ...state, project: action.project };
+      return { ...state, project: action.project };
     
     case Action.UPDATE_PROJECT_EQUIPMENT:
-    return { ...state, projectEquipment: { data: action.projectEquipment, loading: false, success: true } };
+      return { ...state, projectEquipment: { data: action.projectEquipment, loading: false, success: true } };
     
     case Action.UPDATE_PROJECT_TIME_RECORDS:
-    return { ...state, projectTimeRecords: { data: action.projectTimeRecords, loading: false, success: true } };
+      return { ...state, projectTimeRecords: { data: action.projectTimeRecords, loading: false, success: true } };
     
     // Rental Requests
     case Action.RENTAL_REQUESTS_REQUEST: 
-    return { ...state, rentalRequests: { ...state.rentalRequests, loading: true } };
+      return { ...state, rentalRequests: { ...state.rentalRequests, loading: true, error: false, errorMessage: {} } };
     
     case Action.UPDATE_RENTAL_REQUESTS:
-    return { ...state, rentalRequests: { data: action.rentalRequests, loading: false, success: true } };
+      return { ...state, rentalRequests: { data: action.rentalRequests, loading: false, success: true } };
     
     case Action.RENTAL_REQUEST_REQUEST: 
-    return { ...state, rentalRequest: { ...state.rentalRequest, loading: true, success: false, error: {} } };
+      return { ...state, rentalRequest: { ...state.rentalRequest, loading: true, success: false, error: false, errorMessage: '' } };
     
     case Action.ADD_RENTAL_REQUEST: case Action.UPDATE_RENTAL_REQUEST:
-    return { ...state, rentalRequest: { data: action.rentalRequest, loading: false, success: true } };
+      return { ...state, rentalRequest: { data: action.rentalRequest, loading: false, success: true } };
     
     case Action.ADD_RENTAL_REQUEST_ERROR:
-    return { ...state, rentalRequest: { ...state.rentalRequest, error: action.error } };
+      return { ...state, rentalRequest: { ...state.rentalRequest, error: true, errorMessage: action.errorMessage } };
+
+    case Action.ADD_RENTAL_REQUEST_REFRESH: 
+      return { ...state, rentalRequest: { ...DEFAULT_MODELS.rentalRequest } };
     
     // Rotation List
     case Action.UPDATE_RENTAL_REQUEST_ROTATION_LIST:
-    return { ...state, rentalRequestRotationList: { data: action.rentalRequestRotationList, loading: false, success: true } };
+      return { ...state, rentalRequestRotationList: { data: action.rentalRequestRotationList, loading: false, success: true } };
     
     // Rental Agreements
     case Action.ADD_RENTAL_AGREEMENT:
-    return { ...state, rentalAgreement: action.rentalAgreement };
+      return { ...state, rentalAgreement: action.rentalAgreement };
     
     case Action.UPDATE_RENTAL_AGREEMENT:
-    return { ...state, rentalAgreement: action.rentalAgreement };
+      return { ...state, rentalAgreement: action.rentalAgreement };
     
     // Rental Rates, Conditions
     case Action.ADD_RENTAL_RATE:
-    return { ...state, rentalRate: action.rentalRate };
+      return { ...state, rentalRate: action.rentalRate };
     
     case Action.UPDATE_RENTAL_RATE:
-    return { ...state, rentalRate: action.rentalRate };
+      return { ...state, rentalRate: action.rentalRate };
     
     case Action.DELETE_RENTAL_RATE:
-    return { ...state, rentalRate: action.rentalRate };
+      return { ...state, rentalRate: action.rentalRate };
     
     case Action.ADD_RENTAL_CONDITION:
-    return { ...state, rentalCondition: action.rentalCondition };
+      return { ...state, rentalCondition: action.rentalCondition };
     
     case Action.UPDATE_RENTAL_CONDITION:
-    return { ...state, rentalCondition: action.rentalCondition };
+      return { ...state, rentalCondition: action.rentalCondition };
     
     case Action.DELETE_RENTAL_CONDITION:
-    return { ...state, rentalCondition: action.rentalCondition };
+      return { ...state, rentalCondition: action.rentalCondition };
     
     // Roles, Permissions
     case Action.UPDATE_ROLES:
-    return { ...state, roles: action.roles };
+      return { ...state, roles: action.roles };
     
     case Action.ADD_ROLE:
-    return { ...state, role: action.role };
+      return { ...state, role: action.role };
     
     case Action.UPDATE_ROLE:
-    return { ...state, role: action.role };
+      return { ...state, role: action.role };
     
     case Action.DELETE_ROLE:
-    return { ...state, role: action.role };
+      return { ...state, role: action.role };
     
     case Action.UPDATE_ROLE_PERMISSIONS:
-    return { ...state, rolePermissions: action.rolePermissions };
+      return { ...state, rolePermissions: action.rolePermissions };
     
     // History
     case Action.UPDATE_HISTORY:
-    return { ...state, history: action.history };
+      return { ...state, history: action.history };
   }
   
   return state;
 }
-
-// const rootReducer = combineReducers({
-//   : createReducer(genericRequest, .LOGIN),
-//   modelsReducer,
-// });

@@ -15,6 +15,7 @@ import * as Action from '../actionTypes';
 import * as Api from '../api';
 import * as Constant from '../constants';
 import store from '../store';
+import { refresh } from '../actions/actions';
 
 import DateControl from '../components/DateControl.jsx';
 import DropdownControl from '../components/DropdownControl.jsx';
@@ -177,10 +178,11 @@ var RentalRequests = React.createClass({
 
   closeAddDialog() {
     this.setState({ showAddDialog: false });
+    store.dispatch(refresh(Action.ADD_RENTAL_REQUEST_REFRESH));
   },
 
   saveNewRequest(request) {
-    Api.addRentalRequest(request).then((response) => {
+    Api.addRentalRequest(request).then(() => {
       // Open it up
       this.props.router.push({
         pathname: `${ Constant.RENTAL_REQUESTS_PATHNAME }/${ this.props.rentalRequest.id }`,
