@@ -1,5 +1,3 @@
-import { combineReducers } from 'redux';
-
 import * as Action from '../actionTypes';
 
 import _ from 'lodash';

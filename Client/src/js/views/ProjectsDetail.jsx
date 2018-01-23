@@ -255,10 +255,6 @@ var ProjectsDetail = React.createClass({
     this.setState({ showTimeEntryDialog: false });
   },
 
-  saveTimeEntry(projectId, timeEntry) {
-    Api.addProjectTimeRecord(this.state.equipment, projectId, timeEntry);
-  },
-
   render() {
     var project = this.props.project;
 
