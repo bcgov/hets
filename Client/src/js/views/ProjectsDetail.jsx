@@ -213,14 +213,7 @@ var ProjectsDetail = React.createClass({
     var log = isNew ? Log.projectContactAdded : Log.projectContactUpdated;
 
     contactPromise(this.props.project, contact).then(() => {
-      return log(this.props.project, this.props.contact).then(() => {
-        if (contact.isPrimary) {
-          return Api.updateProject({ ...this.props.project, ...{
-            contacts: null,
-            primaryContact: { id: this.state.contact.id },
-          }});
-        }
-      });
+      return log(this.props.project, this.props.contact);
     }).finally(() => {
       this.fetch();
       this.closeContactDialog();

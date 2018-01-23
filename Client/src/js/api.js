@@ -933,7 +933,7 @@ export function addProjectTimeRecords(projectId, rentalRequestId, timeRecords) {
 }
 
 export function addProjectContact(project, contact) {
-  return new ApiRequest(`/projects/${ project.id }/contacts`).post(contact).then(response => {
+  return new ApiRequest(`/projects/${ project.id }/contacts/${contact.isPrimary}`).post(contact).then(response => {
     var contact = response.data;
 
     // Add display fields
