@@ -1147,6 +1147,7 @@ export function updateRentalRequestRotationList(rentalRequestRotationList, renta
     // Add display fields
 
     store.dispatch({ type: Action.UPDATE_RENTAL_REQUEST_ROTATION_LIST, rentalRequestRotationList: rentalRequestRotationList });
+    return Promise.resolve(rentalRequestRotationList);
   });
 }
 
