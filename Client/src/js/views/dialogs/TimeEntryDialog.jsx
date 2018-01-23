@@ -188,10 +188,10 @@ var TimeEntryDialog = React.createClass({
                 <DropdownControl
                   id="equipmentId" 
                   fieldName="id"
+                  selectedId={ this.state.equipmentId }
                   onSelect={ this.onEquipmentSelected } 
                   updateState={ this.updateState } 
                   items={ equipmentList } 
-                  selectedId={ this.state.equipmentId }
                   className="full-width"
                 /> 
                 {/* // todo: wait for endpoint to include equipment type data */}
