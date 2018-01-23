@@ -70,7 +70,7 @@ var ProjectsDetail = React.createClass({
 
       contact: {},
       
-      equipment: {},
+      rentalRequest: {},
 
       // Contacts
       uiContacts : {
@@ -213,14 +213,7 @@ var ProjectsDetail = React.createClass({
     var log = isNew ? Log.projectContactAdded : Log.projectContactUpdated;
 
     contactPromise(this.props.project, contact).then(() => {
-      return log(this.props.project, this.props.contact).then(() => {
-        if (contact.isPrimary) {
-          return Api.updateProject({ ...this.props.project, ...{
-            contacts: null,
-            primaryContact: { id: this.state.contact.id },
-          }});
-        }
-      });
+      return log(this.props.project, this.props.contact);
     }).finally(() => {
       this.fetch();
       this.closeContactDialog();
@@ -252,8 +245,8 @@ var ProjectsDetail = React.createClass({
     // todo: make network call
   },
 
-  openTimeEntryDialog(equipment) {
-    this.setState({ equipment: equipment }, () => {
+  openTimeEntryDialog(rentalRequest) {
+    this.setState({ rentalRequest: rentalRequest }, () => {
       this.setState({ showTimeEntryDialog: true });
     });
   },
@@ -351,7 +344,6 @@ var ProjectsDetail = React.createClass({
                 // "Lists the records - requests then rental agreements, within the groups, list in largest-to-smallest ID order (aka reverse chronological create)."
                 var rentalRequests = _.orderBy(project.rentalRequests, ['id'], ['desc']);
                 var rentalAgreements = _.orderBy(project.rentalAgreements, ['id'], ['desc']);
-                
                 var combinedList =_.concat(rentalRequests, rentalAgreements);
 
                 // Exclude completed items
@@ -510,9 +502,8 @@ var ProjectsDetail = React.createClass({
         <TimeEntryDialog
           show={ this.state.showTimeEntryDialog }
           onClose={ this.closeTimeEntryDialog }
-          onSave={ this.saveTimeEntry }
           project={ project }
-          equipment={ this.state.equipment }
+          activeRentalRequest={ this.state.rentalRequest }
         />
       }
     </div>;

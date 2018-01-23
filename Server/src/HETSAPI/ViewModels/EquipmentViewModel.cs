@@ -107,7 +107,7 @@ namespace HETSAPI.ViewModels
             SerialNumber = serialNumber;
             Size = size;
             ToDate = toDate;
-            BlockNumber = blockNumber;
+            BlockNumber = (int)blockNumber;
             Seniority = seniority;
             IsSeniorityOverridden = isSeniorityOverridden;
             SeniorityOverrideReason = seniorityOverrideReason;
@@ -132,17 +132,48 @@ namespace HETSAPI.ViewModels
             LastTimeRecordDateThisYear = lastTimeRecordDateThisYear;
 
             // calculate "seniority sort order" & round the seniority value (3 decimal places)
+            CalculateSenioritySortOrder();
+        }
+
+        /// <summary>
+        /// Function to create a sortable value for the seniority column
+        /// Calculate "seniority sort order" & round the seniority value (3 decimal places)
+        /// </summary>
+        public float CalculateSenioritySortOrder()
+        {
+            float temp = 0;
+            
+            if (BlockNumber == null)
+            {
+                BlockNumber = 0;
+            }
+
             if (Seniority != null && Seniority > 0)
             {
-                Seniority = (float)Math.Round((Decimal)seniority, 3, MidpointRounding.AwayFromZero);
+                temp = (float)Math.Round((float)Seniority, 3, MidpointRounding.AwayFromZero);
+                Seniority = temp;
 
-                if (BlockNumber != null)
-                {                    
-                    SenioritySortOrder =
-                        (10 - (float)BlockNumber) * 10000 + (10000 + (float)Seniority);
-                }
+                // sort order function
+                temp = (10 - (float)BlockNumber) * 10000 + (10000 + temp);                
             }
+
+            SenioritySortOrder = temp;
+            return temp;
         }
+
+        /// <summary>
+        /// Used to sort the Equipment by Seniority in the UI
+        /// </summary>
+        [DataMember(Name = "senioritySortOrder")]
+        public float SenioritySortOrder { get; set; }
+
+        /// <summary>
+        /// Returns the Number of Blocks for this Piece of Equipment
+        /// </summary>
+        [DataMember(Name = "numberOfBlocks")]
+        public int NumberOfBlocks { get; set; }
+
+        #region Equipment Model Properties
 
         /// <summary>
         /// A system-generated unique identifier for a Equipment
@@ -322,7 +353,7 @@ namespace HETSAPI.ViewModels
         /// <value>The current block number for the piece of equipment as calculated by the Seniority Algorthm for this equipment type in the local area. As currently defined y the business  - 1, 2 or Open</value>
         [DataMember(Name="blockNumber")]
         [MetaData (Description = "The current block number for the piece of equipment as calculated by the Seniority Algorthm for this equipment type in the local area. As currently defined y the business  - 1, 2 or Open")]
-        public float? BlockNumber { get; set; }
+        public int? BlockNumber { get; set; }
 
         /// <summary>
         /// The current seniority calculation result for this piece of equipment. The calculation is based on the &quot;numYears&quot; of service + average hours of service over the last three fiscal years - as stored in the related fields (serviceHoursLastYear, serviceHoursTwoYearsAgo serviceHoursThreeYearsAgo).
@@ -484,10 +515,7 @@ namespace HETSAPI.ViewModels
         [DataMember(Name="lastTimeRecordDateThisYear")]
         public DateTime? LastTimeRecordDateThisYear { get; set; }
 
-        /// <summary>
-        /// Used to sort the Equipment by Seniority in the UI
-        /// </summary>
-        public float? SenioritySortOrder { get; set; }
+        #endregion        
 
         /// <summary>
         /// Returns the string presentation of the object
@@ -543,6 +571,8 @@ namespace HETSAPI.ViewModels
             sb.Append("  DuplicateEquipment: ").Append(DuplicateEquipment).Append("\n");
             sb.Append("  IsWorking: ").Append(IsWorking).Append("\n");
             sb.Append("  LastTimeRecordDateThisYear: ").Append(LastTimeRecordDateThisYear).Append("\n");
+            sb.Append("  SenioritySortOrder: ").Append(SenioritySortOrder).Append("\n");
+            sb.Append("  NumberOfBlocks: ").Append(NumberOfBlocks).Append("\n");            
             sb.Append("}\n");
 
             return sb.ToString();

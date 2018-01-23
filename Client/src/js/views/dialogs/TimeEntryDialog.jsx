@@ -12,28 +12,30 @@ import FormInputControl from '../../components/FormInputControl.jsx';
 import DateControl from '../../components/DateControl.jsx';
 import EditDialog from '../../components/EditDialog.jsx';
 import Spinner from '../../components/Spinner.jsx';
+import DeleteButton from '../../components/DeleteButton.jsx';
 
 import DropdownControl from '../../components/DropdownControl.jsx';
 
 import { isBlank } from '../../utils/string';
+import { formatDateTime } from '../../utils/date';
 
 var TimeEntryDialog = React.createClass({
   propTypes: {
-    onSave: React.PropTypes.func.isRequired,
     onClose: React.PropTypes.func.isRequired,
     show: React.PropTypes.bool.isRequired,
     projects: React.PropTypes.object,
     project: React.PropTypes.object,
     equipmentList: React.PropTypes.object,
-    equipment: React.PropTypes.object,
     rentalRequest: React.PropTypes.object,
+    activeRentalRequest: React.PropTypes.object,
+    projectTimeRecords: React.PropTypes.object,
   },
 
   getInitialState() {  
     return {
       projectId: this.props.project.id,
-      equipment: {},
-      equipmentId: this.props.equipment.id || '',
+      equipment: this.props.activeRentalRequest || {},
+      equipmentId: this.props.activeRentalRequest.id || '',
       numberOfInputs: 1,
       timeEntry: {
         1: {
@@ -105,12 +107,15 @@ var TimeEntryDialog = React.createClass({
   },
 
   onSave() {
-    this.props.onSave(this.state.projectId, this.state.timeEntry);
+    Api.addProjectTimeRecords(this.state.projectId, this.state.equipmentId, this.state.timeEntry).then(() => {
+      Api.getProjectTimeRecords(this.state.projectId);
+      this.setState( this.getInitialState() );
+    });
   },
 
   onEquipmentSelected(equipment) {
     this.setState({ equipment: equipment });
-  },
+  }, 
 
   addTimeEntryInput() {
     if (this.state.numberOfInputs < 10) {
@@ -142,11 +147,18 @@ var TimeEntryDialog = React.createClass({
     }
   },
 
+  deleteTimeRecord(timeRecord) {
+    Api.deleteTimeRecord(timeRecord.id).then(() => {
+      Api.getProjectTimeRecords(this.props.project.id);
+    });
+  },
+
   render() {
     const equipmentList = _.sortBy(this.props.equipmentList.data);
     const isValidDate = function( current ){
       return current.day() === 6;
     };
+    const { projectTimeRecords } = this.props;
     return (
       <EditDialog 
         id="time-entry" 
@@ -174,7 +186,7 @@ var TimeEntryDialog = React.createClass({
               <FormGroup controlId="equipmentId" validationState={ this.state.equipmentIdError ? 'error' : null }>
                 <ControlLabel>Equipment ID</ControlLabel>
                 <DropdownControl
-                  id="selectedEquipmentTypesIds" 
+                  id="equipmentId" 
                   fieldName="id"
                   selectedId={ this.state.equipmentId }
                   onSelect={ this.onEquipmentSelected } 
@@ -187,11 +199,32 @@ var TimeEntryDialog = React.createClass({
                 <div>{ this.state.equipment.equipment && `Owner: ${this.state.equipment.equipment.owner.organizationName}` }</div>
               </FormGroup>
             </Row>
+            <Row>
+              <Col sm={4} className="nopadding"><div className="column-title">Week Ending</div></Col>
+              <Col sm={4} className="nopadding"><div className="column-title">Hours</div></Col>
+            </Row>
+            <ul className="time-records-list">
+            { _.map(projectTimeRecords.data, timeRecord => (
+              <li key={timeRecord.id} className="list-item">
+                <Row>
+                  <Col sm={4} className="nopadding">
+                    <div>{ formatDateTime(timeRecord.enteredDate, 'YYYY-MMM-DD') }</div>
+                  </Col>
+                  <Col sm={4} className="nopadding">
+                    <div>{ timeRecord.hours }</div>
+                  </Col>
+                  <Col sm={2}>
+                    <DeleteButton name="Document" onConfirm={ this.deleteTimeRecord.bind(this, timeRecord) }/>
+                  </Col>
+                </Row>
+              </li>
+            ))}
+            </ul>
             <hr />
             { Object.keys(this.state.timeEntry).map(key => {
               return (
                 <Row key={key}>
-                  <Col md={4} className="nopadding">
+                  <Col sm={4} className="nopadding">
                     <FormGroup validationState={ this.state.timeEntry[key].errorDate ? 'error' : null }>
                       <ControlLabel>Week Ending</ControlLabel>
                       <DateControl
@@ -205,7 +238,7 @@ var TimeEntryDialog = React.createClass({
                       <HelpBlock>{ this.state.timeEntry[key].errorDate }</HelpBlock>
                     </FormGroup>
                   </Col>  
-                  <Col md={4} className="nopadding">
+                  <Col sm={4} className="nopadding">
                     <FormGroup validationState={ this.state.timeEntry[key].errorHours ? 'error' : null }>
                       <ControlLabel>Hours</ControlLabel>
                       <FormInputControl 
@@ -248,7 +281,7 @@ var TimeEntryDialog = React.createClass({
 
 function mapStateToProps(state) {
   return {
-    // equipment: state.models.equipment,
+    projectTimeRecords: state.models.projectTimeRecords,
     equipmentList: state.models.projectEquipment,
     rentalRequest: state.models.rentalRequest,
   };

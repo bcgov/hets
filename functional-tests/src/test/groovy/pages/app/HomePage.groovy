@@ -4,7 +4,7 @@ import geb.Page
 import extensions.ReactJSAware
 
 class HomePage extends Page implements ReactJSAware {
-    static at = { reactReady && title == "MOTI Hired Equipment Tracking System" && $("h1", text: startsWith("Roland Stens"))}
+    static at = { reactReady && title == "MOTI Hired Equipment Tracking System" && $("#navbar-current-user > li > a", text: startsWith("Hets Test"))}
     static url = "?#/home"
 
     static content = {

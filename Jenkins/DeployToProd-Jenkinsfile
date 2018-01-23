@@ -9,7 +9,7 @@ def DESTINATION_TAG = 'prod'
 node {
   APP_NAMES.each { appName ->
     stage('Deploying ' + appName + ' to ' + DESTINATION_TAG) {
-      openshiftTag destStream: appName, verbose: 'true', destTag: DESTINATION_TAG, srcStream: appName, srcTag: SOURCE_TAG
+      openshiftTag destStream: appName, destTag: DESTINATION_TAG, srcStream: appName, srcTag: SOURCE_TAG
     }
   }
 }

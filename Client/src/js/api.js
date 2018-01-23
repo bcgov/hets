@@ -838,6 +838,18 @@ function parseProject(project) {
   project.canDelete = false; // TODO Needs input from Business whether this is needed.
 }
 
+function formatTimeRecords(timeRecords, rentalRequestId) {
+  let formattedTimeRecords = Object.keys(timeRecords).map((key) => {
+    let timeRecord = {};
+    timeRecord.enteredDate = timeRecords[key].date;
+    timeRecord.hours = timeRecords[key].hours;
+    timeRecord.timePeriod = 'Week';
+    timeRecord.rentalAgreement = { id: rentalRequestId };
+    return timeRecord;
+  });
+  return formattedTimeRecords;
+}
+
 export function searchProjects(params) {
   store.dispatch({ type: Action.PROJECTS_REQUEST });
   return new ApiRequest('/projects/search').get(params).then(response => {
@@ -910,17 +922,18 @@ export function getProjectTimeRecords(projectId) {
   });
 }
 
-export function addProjectTimeRecord(equipment, projectId, timeRecord) {
-  let timeRecord2 = [{hours: 989, date: '2018-01-20', rentalAgreement: { id: 84 }}];
-  return new ApiRequest(`projects/${projectId}/timeRecord`).post(timeRecord2).then(response => {
+export function addProjectTimeRecords(projectId, rentalRequestId, timeRecords) {
+  let formattedTimeRecords = formatTimeRecords(timeRecords, rentalRequestId);
+  return new ApiRequest(`projects/${projectId}/timeRecords`).post(formattedTimeRecords).then(response => {
     var projectTimeRecords = normalize(response.data);
 
     store.dispatch({ type: Action.UPDATE_PROJECT_TIME_RECORDS, projectTimeRecords: projectTimeRecords });
+    return projectTimeRecords;
   });
 }
 
 export function addProjectContact(project, contact) {
-  return new ApiRequest(`/projects/${ project.id }/contacts`).post(contact).then(response => {
+  return new ApiRequest(`/projects/${ project.id }/contacts/${contact.isPrimary}`).post(contact).then(response => {
     var contact = response.data;
 
     // Add display fields
@@ -1166,12 +1179,19 @@ export function getRentalRequestRotationList(id) {
 }
 
 export function updateRentalRequestRotationList(rentalRequestRotationList, rentalRequest) {
-  return new ApiRequest(`/rentalrequestrotationlists/${ rentalRequestRotationList.id }`).put({ ...rentalRequestRotationList, rentalAgreement: null }).then(response => {
+  store.dispatch({ type: Action.RENTAL_REQUEST_ROTATION_LIST_REQUEST });
+  return new ApiRequest(`/rentalrequests/${ rentalRequest.id }/rentalRequestRotationList`).put({ ...rentalRequestRotationList, note: '', rentalAgreement: null }).then(response => {
+    
+    if (response.responseStatus === 'ERROR') {
+      store.dispatch({ type: Action.RENTAL_REQUEST_ROTATION_LIST_ERROR, error: response.error });
+      return response.error;
+    }
+
     var rentalRequestRotationList = response.data;
     // Add display fields
-    parseRentalRequestRotationList(rentalRequestRotationList, rentalRequest);
 
     store.dispatch({ type: Action.UPDATE_RENTAL_REQUEST_ROTATION_LIST, rentalRequestRotationList: rentalRequestRotationList });
+    return Promise.resolve(rentalRequestRotationList);
   });
 }
 
@@ -1522,5 +1542,15 @@ export function getVersion() {
 export function setDevUser(user) {
   return new ApiRequest(`/authentication/dev/token/${user}`).get().then(response => {    
     return normalize(response.data);
+  });
+}
+
+////////////////////
+// Time Records
+////////////////////
+
+export function deleteTimeRecord(timeRecordId) {
+  return new ApiRequest(`/timerecords/${timeRecordId}/delete`).post().then((response) => {
+    store.dispatch({ type: Action.DELETE_TIME_RECORD, timeRecord: response.data });
   });
 }

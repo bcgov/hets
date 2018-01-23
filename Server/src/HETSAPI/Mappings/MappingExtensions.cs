@@ -197,7 +197,12 @@ namespace HETSAPI.Mappings
             {
                 dto.Description = model.Description;
                 dto.FileName = model.FileName;
-                dto.FileSize = model.FileContents.Length;
+
+                if (model.FileContents != null)
+                {
+                    dto.FileSize = model.FileContents.Length;
+                }
+
                 dto.Id = model.Id;
                 dto.Type = model.Type;
                 dto.LastUpdateTimestamp = model.LastUpdateTimestamp;
@@ -405,17 +410,7 @@ namespace HETSAPI.Mappings
                 dto.YearsOfService = model.YearsOfService;
 
                 // calculate "seniority sort order" & round the seniority value (3 decimal places)
-                if (dto.Seniority != null && dto.Seniority > 0)
-                {
-                    dto.Seniority = (float)Math.Round((Decimal)dto.Seniority, 3, MidpointRounding.AwayFromZero);
-
-                    if (dto.BlockNumber != null)
-                    {
-                        // sort cal: (10-A1)*10000+(10000+B1)
-                        dto.SenioritySortOrder =
-                            (10 - (float) dto.BlockNumber) * 10000 + (10000 + (float) dto.Seniority);
-                    }
-                }
+                dto.CalculateSenioritySortOrder();
             }
 
             return dto;

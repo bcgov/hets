@@ -17,9 +17,7 @@ import EditDialog from '../../components/EditDialog.jsx';
 import FormInputControl from '../../components/FormInputControl.jsx';
 
 import { today, toZuluTime, formatDateTime } from '../../utils/date';
-import { notBlank } from '../../utils/string';
-
-import { isBlank } from '../../utils/string';
+import { notBlank, isBlank } from '../../utils/string';
 
 const STATUS_YES = 'Yes';
 const STATUS_NO = 'No';
@@ -49,6 +47,7 @@ var HireOfferEditDialog = React.createClass({
     onSave: React.PropTypes.func.isRequired,
     onClose: React.PropTypes.func.isRequired,
     show: React.PropTypes.bool,
+    error: React.PropTypes.object,
   },
 
   getInitialState() {
@@ -294,6 +293,11 @@ var HireOfferEditDialog = React.createClass({
                 </FormGroup>
               </Col>
             </Row>
+            {/* { this.props.error &&
+              <Alert bsStyle="danger">
+                { this.props.error.description }
+              </Alert>  
+            } */}
             {/* Todo will be used in future */}
             {/* <Row>
               <Col md={12}>

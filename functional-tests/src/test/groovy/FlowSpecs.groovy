@@ -25,8 +25,13 @@ class FlowSpecs extends GebReportingSpec {
             go baseUrl
         and: "I log in on the SiteMinder Login page"    
             at LoginPage
+            println env
+            println env['TEST_USERNAME']
+            println env['TEST_PASSWORD']
+            
             userName.value(env['TEST_USERNAME'])
             passWord.value(env['TEST_PASSWORD'])
+
             logIn.click()
         then: "I will arrive at the HETS Home page"    
             at HomePage

@@ -6,18 +6,6 @@ node('bddstack') {
         echo "Build: ${BUILD_ID}"
         checkout scm
         dir('functional-tests') {
-	    
-        TEST_USERNAME = sh (
-             script: 'oc get secret bddtest-secret -o yaml | grep TEST_USERNAME | awk -F ":" \'{print $2}\'',
-              returnStdout: true).trim()		  
-        TEST_PASSWORD = sh (
-             script: 'oc get secret bddtest-secret -o yaml | grep TEST_PASSWORD | awk -F ":" \'{print $2}\'',
-              returnStdout: true).trim()
-        withEnv(["TEST_PWD=${TEST_PASSWORD}","TEST_USER=${TEST_USERNAME}"]) {
-           sh 'env|grep TEST'
-           sh 'echo "$TEST_USER" | base64 -d'
-           sh 'echo "$TEST_PWD" | base64 -d'
-
             try {
                 sh 'export TEST_USERNAME=${TEST_USERNAME}\nexport TEST_PASSWORD=${TEST_PASSWORD}\n./gradlew --debug --stacktrace chromeHeadlessTest'
                 } finally {
@@ -41,7 +29,6 @@ node('bddstack') {
                                         reportName: "Full Test Report"
                                     ])        
                     }
-            }
         }
     }
 }
