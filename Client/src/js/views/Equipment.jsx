@@ -248,6 +248,7 @@ var Equipment = React.createClass({
             ]}>
               {
                 _.map(equipmentList, (equip) => {
+                  console.log(equip);
                   return <tr key={ equip.id }>
                     <td>{ equip.equipmentCode }</td>
                     <td>{ equip.typeName }</td>

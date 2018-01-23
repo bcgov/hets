@@ -289,9 +289,17 @@ export function deleteFavourite(favourite) {
 ////////////////////
 // Equipment
 ////////////////////
-function getBlockDisplayName(blockNumber) {
-  if (blockNumber == 1) { return '1'; }
-  if (blockNumber == 2) { return '2'; }
+function getBlockDisplayName(blockNumber, numberOfBlocks, seniority) {
+  if (blockNumber === numberOfBlocks) { return 'Open'; }
+  if (blockNumber == 1 && seniority != null) { 
+    return `1 - ${seniority}`; 
+  }
+  if (blockNumber == 2 && seniority != null) { 
+    return `2 - ${seniority}`; 
+  }
+  if (seniority != null) {
+    return `Open - ${seniority}`;
+  }
   return 'Open';
 }
 
@@ -339,8 +347,7 @@ function parseEquipment(equipment) {
   // The max date of a time card for this fiscal year - can be null if there are none.
   equipment.lastTimeRecordDateThisYear = equipment.lastTimeRecordDateThisYear || '';
   // e.g. "Open-500" or "1-744"
-  var block = getBlockDisplayName(equipment.blockNumber);
-  equipment.seniorityText = concat(block, equipment.seniority, ' - ');
+  equipment.seniorityText = getBlockDisplayName(equipment.blockNumber, equipment.numberOfBlocks, equipment.seniority);
 
   equipment.currentYear = Moment().year();
   equipment.lastYear = equipment.currentYear - 1;
@@ -1117,6 +1124,17 @@ export function addRentalRequestDocument(rentalRequestId, files) {
 // Rental Request Rotation List
 ////////////////////
 
+function getSeniorityDisplayName(blockNumber, numberOfBlocks, seniority, numberInBlock) {
+  if (blockNumber === numberOfBlocks) { return 'Open'; }
+  if (blockNumber == 1) { 
+    return `1-${seniority && seniority.toFixed(3)} (${numberInBlock})`;
+  }
+  if (blockNumber == 2) { 
+    return `2-${seniority && seniority.toFixed(3)} (${numberInBlock})`;
+  }
+  return 'Open';
+}
+
 function parseRentalRequestRotationList(rotationListItem, rentalRequest = {}) {
   if (!rotationListItem.rentalRequest) { rotationListItem.rentalRequest = _.extend({ id: 0 }, _.pick(rentalRequest, 'id')); }
   if (!rotationListItem.equipment) { rotationListItem.equipment = { id: 0, equipmentCode: '' }; }
@@ -1143,7 +1161,7 @@ function parseRentalRequestRotationList(rotationListItem, rentalRequest = {}) {
 
   // UI display fields
   rotationListItem.isHired = rotationListItem.isHired || false;
-  rotationListItem.seniority = `${getBlockDisplayName(equipment.blockNumber)}-${equipment.seniority.toFixed(3)} (${equipment.numberInBlock})`;
+  rotationListItem.seniority = getSeniorityDisplayName(equipment.blockNumber, equipment.numberOfBlocks, equipment.seniority, equipment.numberInBlock);
   rotationListItem.serviceHoursThisYear = rotationListItem.serviceHoursThisYear || equipment.serviceHoursThisYear || 0; // TODO calculated field from the server
   rotationListItem.equipmentId = equipment.id;
   rotationListItem.equipmentCode = equipment.equipmentCode;
@@ -1161,18 +1179,18 @@ function parseRentalRequestRotationList(rotationListItem, rentalRequest = {}) {
   rotationListItem.status = 'N/A';
 }
 
-function parseRotationListItem(item) {
+function parseRotationListItem(item, numberOfBlocks) {
   item.equipment = item.equipment || {};
   item.displayFields = {};
   item.displayFields.equipmentDetails = concat(item.equipment.year, concat(item.equipment.make, concat(item.equipment.model, concat(item.equipment.serialNumber, item.equipment.size, '/'), '/'), '/'), ' ');
-  item.displayFields.seniority = `${getBlockDisplayName(item.equipment.blockNumber)}-${item.equipment.seniority && item.equipment.seniority.toFixed(3)} (${item.equipment.numberInBlock})`;
+  item.displayFields.seniority = getSeniorityDisplayName(item.equipment.blockNumber, numberOfBlocks, item.equipment.seniority, item.equipment.numberInBlock);
 }
 
 export function getRentalRequestRotationList(id) {
   return new ApiRequest(`/rentalrequests/${id}/rotationList`).get().then(response => {
     var rotationList = response.data;
 
-    _.map(rotationList.rentalRequestRotationList, item => parseRotationListItem(item));
+    _.map(rotationList.rentalRequestRotationList, item => parseRotationListItem(item, rotationList.numberOfBlocks));
     
     store.dispatch({ type: Action.UPDATE_RENTAL_REQUEST_ROTATION_LIST, rentalRequestRotationList: rotationList });
   });
