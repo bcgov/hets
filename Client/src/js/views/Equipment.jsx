@@ -62,7 +62,7 @@ var Equipment = React.createClass({
         statusCode: this.props.search.statusCode || '',
       },
       ui : {
-        sortField: this.props.ui.sortField || 'organizationName',
+        sortField: this.props.ui.sortField || 'seniorityText',
         sortDesc: this.props.ui.sortDesc === true,
       },
     };
@@ -237,7 +237,7 @@ var Equipment = React.createClass({
               { field: 'equipmentCode',        title: 'ID'            },
               { field: 'typeName',             title: 'Type'          },
               { field: 'organizationName',     title: 'Owner'         },
-              { field: 'seniorityText',        title: 'Seniority'     },
+              { field: 'senioritySortOrder',   title: 'Seniority'     },
               { field: 'isWorking',            title: 'Hired'         },
               { field: 'make',                 title: 'Make'          },
               { field: 'model',                title: 'Model'         },
