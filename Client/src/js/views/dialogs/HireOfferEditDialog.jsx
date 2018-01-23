@@ -17,9 +17,7 @@ import EditDialog from '../../components/EditDialog.jsx';
 import FormInputControl from '../../components/FormInputControl.jsx';
 
 import { today, toZuluTime, formatDateTime } from '../../utils/date';
-import { notBlank } from '../../utils/string';
-
-import { isBlank } from '../../utils/string';
+import { notBlank, isBlank } from '../../utils/string';
 
 const STATUS_YES = 'Yes';
 const STATUS_NO = 'No';
