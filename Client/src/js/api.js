@@ -290,14 +290,13 @@ export function deleteFavourite(favourite) {
 // Equipment
 ////////////////////
 function getBlockDisplayName(blockNumber, numberOfBlocks, seniority) {
-  if (blockNumber === numberOfBlocks) { return 'Open'; }
-  if (blockNumber == 1 && seniority != null) { 
+  if (blockNumber === numberOfBlocks) { 
+    return `Open - ${seniority}`; 
+  } else if (blockNumber == 1) { 
     return `1 - ${seniority}`; 
-  }
-  if (blockNumber == 2 && seniority != null) { 
+  } else if (blockNumber == 2) { 
     return `2 - ${seniority}`; 
-  }
-  if (seniority != null) {
+  } else if (seniority != null) {
     return `Open - ${seniority}`;
   }
   return 'Open';
@@ -1125,14 +1124,14 @@ export function addRentalRequestDocument(rentalRequestId, files) {
 ////////////////////
 
 function getSeniorityDisplayName(blockNumber, numberOfBlocks, seniority, numberInBlock) {
-  if (blockNumber === numberOfBlocks) { return 'Open'; }
-  if (blockNumber == 1) { 
+  if (blockNumber === numberOfBlocks) { 
+    return `Open-${seniority && seniority.toFixed(3)} (${numberInBlock})`; 
+  } else if (blockNumber == 1) { 
     return `1-${seniority && seniority.toFixed(3)} (${numberInBlock})`;
-  }
-  if (blockNumber == 2) { 
+  } else if (blockNumber == 2) { 
     return `2-${seniority && seniority.toFixed(3)} (${numberInBlock})`;
   }
-  return 'Open';
+  return `Open-${seniority && seniority.toFixed(3)} (${numberInBlock})`;
 }
 
 function parseRentalRequestRotationList(rotationListItem, rentalRequest = {}) {
