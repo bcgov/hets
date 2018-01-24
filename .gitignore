@@ -3,3 +3,13 @@
 *_SecretConfig.json
 *.local.*
 secrets
+sonar-runner/.gradle
+sonar-runner/.settings
+sonar-runner/build
+functional-tests/.gradle
+functional-tests/build
+PDF/.sonarqube
+.sonarqube
+
+.vscode/launch.json
+.vscode/tasks.json
