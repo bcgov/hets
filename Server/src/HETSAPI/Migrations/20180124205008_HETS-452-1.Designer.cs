@@ -11,9 +11,10 @@ using System;
 namespace HETSAPI.Migrations
 {
     [DbContext(typeof(DbAppContext))]
-    partial class DbAppContextModelSnapshot : ModelSnapshot
+    [Migration("20180124205008_HETS-452-1")]
+    partial class HETS4521
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -1607,10 +1608,6 @@ namespace HETSAPI.Migrations
                         .HasColumnName("DOING_BUSINESS_AS")
                         .HasMaxLength(150);
 
-                    b.Property<string>("GivenName")
-                        .HasColumnName("GIVEN_NAME")
-                        .HasMaxLength(50);
-
                     b.Property<bool?>("IsMaintenanceContractor")
                         .HasColumnName("IS_MAINTENANCE_CONTRACTOR");
 
@@ -1624,8 +1621,8 @@ namespace HETSAPI.Migrations
                         .HasColumnName("ORGANIZATION_NAME")
                         .HasMaxLength(150);
 
-                    b.Property<string>("OwnerCode")
-                        .HasColumnName("OWNER_CODE")
+                    b.Property<string>("OwnerEquipmentCodePrefix")
+                        .HasColumnName("OWNER_EQUIPMENT_CODE_PREFIX")
                         .HasMaxLength(20);
 
                     b.Property<string>("PostalCode")
@@ -1645,10 +1642,6 @@ namespace HETSAPI.Migrations
 
                     b.Property<string>("Status")
                         .HasColumnName("STATUS")
-                        .HasMaxLength(50);
-
-                    b.Property<string>("Surname")
-                        .HasColumnName("SURNAME")
                         .HasMaxLength(50);
 
                     b.Property<DateTime?>("WorkSafeBCExpiryDate")

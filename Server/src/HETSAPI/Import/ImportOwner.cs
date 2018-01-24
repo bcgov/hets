@@ -243,7 +243,9 @@ namespace HETSAPI.Import
                 {
                     con.Surname = oldObject.Owner_Last_Name.Trim();
                     con.GivenName = oldObject.Owner_First_Name.Trim();
-                    owner.OwnerEquipmentCodePrefix = con.GivenName.Substring(0, 1) + con.Surname.Substring(0, 1);
+                    owner.Surname = oldObject.Owner_Last_Name.Trim();
+                    owner.GivenName = oldObject.Owner_First_Name.Trim();
+                    owner.OwnerCode = con.GivenName.Substring(0, 1) + con.Surname.Substring(0, 1);
                 }
                 catch
                 {

@@ -1066,6 +1066,7 @@ namespace HETSAPI.Services.Impl
                     newAreaRotationList.AskNextBlock1Seniority = item.RentalRequestRotationList[nextRecordToAskIndex].Equipment.Seniority;
                     newAreaRotationList.AskNextBlock2Id = null;
                     newAreaRotationList.AskNextBlock2Seniority = null;
+                    newAreaRotationList.AskNextBlockOpen = null;
                     newAreaRotationList.AskNextBlockOpenId = null;
                 }
                 else if (item.RentalRequestRotationList[nextRecordToAskIndex].Equipment.BlockNumber == 2 &&
@@ -1074,16 +1075,20 @@ namespace HETSAPI.Services.Impl
                     newAreaRotationList.AskNextBlock2 = item.RentalRequestRotationList[nextRecordToAskIndex].Equipment;
                     newAreaRotationList.AskNextBlock2Id = newAreaRotationList.AskNextBlock2.Id;
                     newAreaRotationList.AskNextBlock2Seniority = item.RentalRequestRotationList[nextRecordToAskIndex].Equipment.Seniority;
+                    newAreaRotationList.AskNextBlock1 = null;
                     newAreaRotationList.AskNextBlock1Id = null;
                     newAreaRotationList.AskNextBlock1Seniority = null;
+                    newAreaRotationList.AskNextBlockOpen = null;
                     newAreaRotationList.AskNextBlockOpenId = null;
                 }
                 else
                 {
                     newAreaRotationList.AskNextBlockOpen = item.RentalRequestRotationList[nextRecordToAskIndex].Equipment;
                     newAreaRotationList.AskNextBlockOpenId = newAreaRotationList.AskNextBlockOpen.Id;
+                    newAreaRotationList.AskNextBlock1 = null;
                     newAreaRotationList.AskNextBlock1Id = null;
                     newAreaRotationList.AskNextBlock1Seniority = null;
+                    newAreaRotationList.AskNextBlock2 = null;
                     newAreaRotationList.AskNextBlock2Id = null;
                     newAreaRotationList.AskNextBlock2Seniority = null;
                 }
