@@ -98,7 +98,7 @@ namespace HETSAPI.Import
                             CopyToInstance(dbContext, item, ref instance, systemId);
 
                             // touch the import map
-                            importMap.LastUpdateTimestamp = DateTime.UtcNow;
+                            importMap.AppLastUpdateTimestamp = DateTime.UtcNow;
                             dbContext.ImportMaps.Update(importMap);
                         }
                     }
@@ -311,15 +311,15 @@ namespace HETSAPI.Import
                     instance.TrailerBoxCapacity = oldObject.Trailer_Box_Capacity;
                 }
                      
-                instance.CreateTimestamp = DateTime.UtcNow;
-                instance.CreateUserid = createdBy.SmUserId;
+                instance.AppCreateTimestamp = DateTime.UtcNow;
+                instance.AppCreateUserid = createdBy.SmUserId;
                 dbContext.DumpTrucks.Add(instance);
             }
             else
             {
                 instance = dbContext.DumpTrucks.First(x => x.Id == oldObject.Equip_Id);
-                instance.LastUpdateUserid = modifiedBy.SmUserId;
-                instance.LastUpdateTimestamp = DateTime.UtcNow;
+                instance.AppLastUpdateUserid = modifiedBy.SmUserId;
+                instance.AppLastUpdateTimestamp = DateTime.UtcNow;
                 dbContext.DumpTrucks.Update(instance);
             }
         }

@@ -90,7 +90,7 @@ namespace HETSAPI.Import
                             CopyToInstance(dbContext, item, ref instance, systemId);
 
                             // touch the import map
-                            importMap.LastUpdateTimestamp = DateTime.UtcNow;
+                            importMap.AppLastUpdateTimestamp = DateTime.UtcNow;
                             dbContext.ImportMaps.Update(importMap);
                         }
                     }
@@ -171,8 +171,8 @@ namespace HETSAPI.Import
                     instance.District = dis;
                 }
 
-                instance.CreateTimestamp = DateTime.UtcNow;
-                instance.CreateUserid = createdBy.SmUserId;              
+                instance.AppCreateTimestamp = DateTime.UtcNow;
+                instance.AppCreateUserid = createdBy.SmUserId;              
                 dbContext.DistrictEquipmentTypes.Add(instance);
             }
         }

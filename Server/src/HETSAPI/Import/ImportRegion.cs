@@ -89,7 +89,7 @@ namespace HETSAPI.Import
                             // touch the import map
                             if (importMap != null)
                             {
-                                importMap.LastUpdateTimestamp = DateTime.UtcNow;
+                                importMap.AppLastUpdateTimestamp = DateTime.UtcNow;
                                 dbContext.ImportMaps.Update(importMap);
                             }
 
@@ -133,8 +133,8 @@ namespace HETSAPI.Import
                 reg.Id = oldObject.Region_Id;
                 reg.MinistryRegionID = oldObject.Ministry_Region_Id;
                 reg.RegionNumber = oldObject.Region_Number;
-                reg.CreateTimestamp = DateTime.UtcNow;
-                reg.CreateUserid = systemId;
+                reg.AppCreateTimestamp = DateTime.UtcNow;
+                reg.AppCreateUserid = systemId;
             }
 
             if (isNew)

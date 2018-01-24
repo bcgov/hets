@@ -103,7 +103,7 @@ namespace HETSAPI.Import
                             CopyToInstance(dbContext, item, ref instance, equips);
 
                             // touch the import map
-                            importMap.LastUpdateTimestamp = DateTime.UtcNow;
+                            importMap.AppLastUpdateTimestamp = DateTime.UtcNow;
                             dbContext.ImportMaps.Update(importMap);
                         }
                     }

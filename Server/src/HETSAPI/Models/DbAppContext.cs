@@ -539,10 +539,10 @@ namespace HETSAPI.Models
 
                 changed.SeniorityEffectiveDate = currentTime;
                 seniorityAudit.Equipment = changed;
-                seniorityAudit.CreateTimestamp = currentTime;
-                seniorityAudit.LastUpdateTimestamp = currentTime;
-                seniorityAudit.CreateUserid = smUserId;
-                seniorityAudit.LastUpdateUserid = smUserId;
+                seniorityAudit.AppCreateTimestamp = currentTime;
+                seniorityAudit.AppLastUpdateTimestamp = currentTime;
+                seniorityAudit.AppCreateUserid = smUserId;
+                seniorityAudit.AppLastUpdateUserid = smUserId;
                 seniorityAudit.LocalArea = original.LocalArea;
                 seniorityAudit.Owner = original.Owner;
 
@@ -589,13 +589,13 @@ namespace HETSAPI.Models
                 {
                     var theObject = (AuditableEntity)entry.Entity;
 
-                    theObject.LastUpdateUserid = smUserId;
-                    theObject.LastUpdateTimestamp = currentTime;
+                    theObject.AppLastUpdateUserid = smUserId;
+                    theObject.AppLastUpdateTimestamp = currentTime;
 
                     if (entry.State == EntityState.Added)
                     {
-                        theObject.CreateUserid = smUserId;
-                        theObject.CreateTimestamp = currentTime;
+                        theObject.AppCreateUserid = smUserId;
+                        theObject.AppCreateTimestamp = currentTime;
                     }
                 }
 

@@ -191,8 +191,8 @@ namespace HETSAPI.Import
                     // do nothing
                 }
 
-                user.CreateTimestamp = DateTime.UtcNow;
-                user.CreateUserid = createdBy.SmUserId;                
+                user.AppCreateTimestamp = DateTime.UtcNow;
+                user.AppCreateUserid = createdBy.SmUserId;                
 
                 //a dd user Role - Role Id is limited to 1, or 2
                 if (roleId > 2)
@@ -201,9 +201,9 @@ namespace HETSAPI.Import
                 }
 
                 userRole.Role = dbContext.Roles.First(x => x.Id == roleId);
-                userRole.CreateTimestamp = DateTime.UtcNow;
+                userRole.AppCreateTimestamp = DateTime.UtcNow;
                 userRole.ExpiryDate = DateTime.UtcNow.AddMonths(12);
-                userRole.CreateUserid = createdBy.SmUserId;
+                userRole.AppCreateUserid = createdBy.SmUserId;
                 userRole.EffectiveDate = DateTime.UtcNow.AddDays(-1);
 
                 user.UserRoles = new List<UserRole> {userRole};
@@ -226,15 +226,15 @@ namespace HETSAPI.Import
                 if (user.UserRoles.FirstOrDefault(x => x.RoleId == roleId) == null)
                 {
                     userRole.Role = dbContext.Roles.First(x => x.Id == roleId);
-                    userRole.CreateTimestamp = DateTime.UtcNow;
+                    userRole.AppCreateTimestamp = DateTime.UtcNow;
                     userRole.ExpiryDate = DateTime.UtcNow.AddMonths(12);
-                    userRole.CreateUserid = createdBy.SmUserId;
+                    userRole.AppCreateUserid = createdBy.SmUserId;
                     userRole.EffectiveDate = DateTime.UtcNow.AddDays(-1);
                     user.UserRoles.Add(userRole);
                 }
 
-                user.LastUpdateUserid = createdBy.SmUserId;
-                user.CreateTimestamp = DateTime.UtcNow;
+                user.AppLastUpdateUserid = createdBy.SmUserId;
+                user.AppCreateTimestamp = DateTime.UtcNow;
                 user.Active = true;
                 dbContext.Users.Update(user);
             }

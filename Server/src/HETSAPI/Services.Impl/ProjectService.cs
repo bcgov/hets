@@ -736,7 +736,7 @@ namespace HETSAPI.Services.Impl
                     .Include(x => x.History)
                     .First(a => a.Id == id);
 
-                List<History> data = project.History.OrderByDescending(y => y.LastUpdateTimestamp).ToList();
+                List<History> data = project.History.OrderByDescending(y => y.AppLastUpdateTimestamp).ToList();
 
                 if (offset == null)
                 {
@@ -796,8 +796,8 @@ namespace HETSAPI.Services.Impl
 
             result.HistoryText = item.HistoryText;
             result.Id = item.Id;
-            result.LastUpdateTimestamp = item.LastUpdateTimestamp;
-            result.LastUpdateUserid = item.LastUpdateUserid;
+            result.LastUpdateTimestamp = item.AppLastUpdateTimestamp;
+            result.LastUpdateUserid = item.AppLastUpdateUserid;
             result.AffectedEntityId = id;
 
             return new ObjectResult(new HetsResponse(result));

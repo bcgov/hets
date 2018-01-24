@@ -357,7 +357,7 @@ namespace HETSAPI.Services.Impl
                 // count the number of rental agreements in the system.
                 int currentCount = _context.RentalAgreements
                                         .Include(x => x.Equipment.LocalArea)
-                                        .Count(x => x.Equipment.LocalArea.Id == localAreaId && x.CreateTimestamp >= fiscalYearStart);
+                                        .Count(x => x.Equipment.LocalArea.Id == localAreaId && x.AppCreateTimestamp >= fiscalYearStart);
                 currentCount++;
 
                 // format of the Rental Agreement number is YYYY-#-####

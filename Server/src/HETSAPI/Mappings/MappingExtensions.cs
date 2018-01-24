@@ -205,8 +205,8 @@ namespace HETSAPI.Mappings
 
                 dto.Id = model.Id;
                 dto.Type = model.Type;
-                dto.LastUpdateTimestamp = model.LastUpdateTimestamp;
-                dto.LastUpdateUserid = model.LastUpdateUserid;                
+                dto.LastUpdateTimestamp = model.AppLastUpdateTimestamp;
+                dto.LastUpdateUserid = model.AppLastUpdateUserid;                
             }
 
             return dto;
@@ -472,8 +472,8 @@ namespace HETSAPI.Mappings
             {
                 dto.HistoryText = model.HistoryText;
                 dto.Id = model.Id;
-                dto.LastUpdateTimestamp = model.LastUpdateTimestamp;
-                dto.LastUpdateUserid = model.LastUpdateUserid;
+                dto.LastUpdateTimestamp = model.AppLastUpdateTimestamp;
+                dto.LastUpdateUserid = model.AppLastUpdateUserid;
             }
 
             return dto;
