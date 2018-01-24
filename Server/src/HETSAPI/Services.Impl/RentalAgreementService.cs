@@ -303,7 +303,7 @@ namespace HETSAPI.Services.Impl
         /// <summary>
         /// Update rental agreement
         /// </summary>
-        /// <param name="id">id of Project to update</param>
+        /// <param name="id">id of Rental Agreement to update</param>
         /// <param name="item"></param>
         /// <response code="200">OK</response>
         /// <response code="404">Project not found</response>
@@ -401,5 +401,192 @@ namespace HETSAPI.Services.Impl
             // no record to insert
             return new ObjectResult(new HetsResponse("HETS-04", ErrorViewModel.GetDescription("HETS-04", _configuration)));
         }
+
+        /// <summary>
+        /// Release (terminate) a rental agreement
+        /// </summary>
+        /// /// <param name="id">Id of Rental Agreement to release</param>
+        /// <response code="201">Rental Agreement released</response>
+        public virtual IActionResult RentalagreementsIdReleasePostAsync(int id)
+        {
+            bool exists = _context.RentalAgreements.Any(a => a.Id == id);
+
+            if (exists)
+            {
+                RentalAgreement rentalAgreement = _context.RentalAgreements.FirstOrDefault(a => a.Id == id);
+
+                if (rentalAgreement == null)
+                {
+                    // record not found
+                    return new ObjectResult(new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-01", _configuration)));
+                }
+
+                // release (terminate) rental agreement
+                rentalAgreement.Status = "Complete";
+
+                _context.RentalAgreements.Update(rentalAgreement);
+
+                // save the changes
+                _context.SaveChanges();
+
+                return new ObjectResult(new HetsResponse(rentalAgreement));
+            }
+
+            // record not found
+            return new ObjectResult(new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-01", _configuration)));
+        }
+
+        #region Rental Agreement Time Records
+
+        /// <summary>
+        /// Get time records associated with rental agreement
+        /// </summary>
+        /// <param name="id">id of Rental Agreement to fetch Time Records for</param>
+        /// <response code="200">OK</response>
+        public virtual IActionResult RentalAgreementsIdTimeRecordsGetAsync(int id)
+        {
+            bool exists = _context.RentalAgreements.Any(a => a.Id == id);
+
+            if (exists)
+            {
+                RentalAgreement agreement = _context.RentalAgreements
+                    .Include(x => x.TimeRecords)
+                    .First(x => x.Id == id);
+
+                List<TimeRecord> timeRecords = new List<TimeRecord>();
+
+                timeRecords.AddRange(agreement.TimeRecords);
+
+                return new ObjectResult(new HetsResponse(timeRecords));
+            }
+
+            // record not found
+            return new ObjectResult(new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-01", _configuration)));
+        }
+
+        /// <summary>
+        /// Update or create a time record associated with a rental agreement
+        /// </summary>
+        /// <remarks>Update a Project&#39;s Time Record</remarks>
+        /// <param name="id">id of Rental Agreement to update Time Records for</param>
+        /// <param name="item">Rental Agreement Time Record</param>
+        /// <response code="200">OK</response>
+        public virtual IActionResult RentalAgreementsIdTimeRecordsPostAsync(int id, TimeRecord item)
+        {
+            bool exists = _context.RentalAgreements.Any(a => a.Id == id);
+
+            if (exists && item != null)
+            {
+                RentalAgreement agreement = _context.RentalAgreements
+                    .Include(x => x.TimeRecords)
+                    .First(x => x.Id == id);                
+
+                // ******************************************************************
+                // add or update time record
+                // ******************************************************************
+                if (item.Id > 0)
+                {
+                    agreement.TimeRecords.Add(item);
+                }
+                else  // update time record
+                {
+                    int timeIndex = agreement.TimeRecords.FindIndex(x => x.Id == item.Id);
+
+                    if (timeIndex < 0)
+                    {
+                        agreement.TimeRecords[timeIndex] = item;
+                    }
+                    else
+                    {
+                        // record not found
+                        return new ObjectResult(new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-01", _configuration)));
+                    }
+                }
+
+                _context.SaveChanges();
+
+                // *************************************************************
+                // return updated time records
+                // *************************************************************
+                agreement = _context.RentalAgreements
+                    .Include(x => x.TimeRecords)
+                    .First(x => x.Id == id);
+
+                List<TimeRecord> timeRecords = new List<TimeRecord>();
+
+                timeRecords.AddRange(agreement.TimeRecords);
+
+                return new ObjectResult(new HetsResponse(timeRecords));
+            }
+
+            // record not found
+            return new ObjectResult(new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-01", _configuration)));
+        }
+
+        /// <summary>
+        /// Update or create an array of time records associated with a rental agreement
+        /// </summary>
+        /// <remarks>Update a Renta Agreement&#39;s Time Records</remarks>
+        /// <param name="id">id of Rental Agreement to update Time Records for</param>
+        /// <param name="items">Array of Rental Agreement Time Records</param>
+        /// <response code="200">OK</response>
+        public virtual IActionResult RentalAgreementsIdTimeRecordsBulkPostAsync(int id, TimeRecord[] items)
+        {
+            bool exists = _context.RentalAgreements.Any(a => a.Id == id);
+
+            if (exists && items != null)
+            {
+                RentalAgreement agreement = _context.RentalAgreements
+                    .Include(x => x.TimeRecords)
+                    .First(x => x.Id == id);
+
+                // process each time record
+                for (int i = 0; i < items.Length; i++)
+                {
+                    // ******************************************************************
+                    // add or update time record
+                    // ******************************************************************
+                    if (items[i].Id > 0)
+                    {
+                        agreement.TimeRecords.Add(items[i]);
+                    }
+                    else  // update time record
+                    {
+                        int timeRecordId = items[i].Id;
+                        int timeIndex = agreement.TimeRecords.FindIndex(x => x.Id == timeRecordId);
+
+                        if (timeIndex < 0)
+                        {
+                            agreement.TimeRecords[timeIndex] = items[i];
+                        }
+                        else
+                        {
+                            // record not found
+                            return new ObjectResult(new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-01", _configuration)));
+                        }
+                    }
+                }
+
+                _context.SaveChanges();
+
+                // *************************************************************
+                // return updated time records
+                // *************************************************************
+                agreement = _context.RentalAgreements
+                    .Include(x => x.TimeRecords)
+                    .First(x => x.Id == id);
+
+                List<TimeRecord> timeRecords = new List<TimeRecord>();
+
+                timeRecords.AddRange(agreement.TimeRecords);
+
+                return new ObjectResult(new HetsResponse(timeRecords));
+            }
+
+            // record not found
+            return new ObjectResult(new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-01", _configuration)));
+        }
+
+        #endregion
     }
 }

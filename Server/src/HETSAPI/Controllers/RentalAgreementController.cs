@@ -122,5 +122,71 @@ namespace HETSAPI.Controllers
         {
             return _service.RentalagreementsPostAsync(item);
         }
+
+        /// <summary>
+        /// Release (terminate) a rental agreement
+        /// </summary>
+        /// <param name="id">id of RentalAgreement to release</param>
+        /// <response code="200">OK</response>
+        /// <response code="404">RentalAgreement not found</response>
+        [HttpPost]
+        [Route("/api/rentalagreements/{id}/release")]
+        [SwaggerOperation("RentalagreementsIdReleasePost")]
+        [SwaggerResponse(200, type: typeof(RentalAgreement))]
+        public virtual IActionResult RentalagreementsIdReleasePost([FromRoute]int id)
+        {
+            return _service.RentalagreementsIdReleasePostAsync(id);
+        }
+
+        #region Rental Agreement Time Records
+
+        /// <summary>
+        /// Get time records associated with a rental agreement
+        /// </summary>
+        /// <remarks>Gets a Rental Agreement&#39;s Time Records</remarks>
+        /// <param name="id">id of Rental Agreement to fetch Time Records for</param>
+        /// <response code="200">OK</response>
+        [HttpGet]
+        [Route("/api/rentalagreements/{id}/timeRecords")]
+        [SwaggerOperation("RentalagreementsIdTimeRecordsGet")]
+        [SwaggerResponse(200, type: typeof(List<TimeRecord>))]
+        public virtual IActionResult RentalagreementsIdTimeRecordsGet([FromRoute]int id)
+        {
+            return _service.RentalAgreementsIdTimeRecordsGetAsync(id);
+        }
+
+        /// <summary>
+        /// Add a rental agreement time record
+        /// </summary>
+        /// <remarks>Adds Rental Agreement Time Records</remarks>
+        /// <param name="id">id of Rental Agreement to add a time record for</param>
+        /// <param name="item">Adds to Rental Agreement Time Records</param>
+        /// <response code="200">OK</response>
+        [HttpPost]
+        [Route("/api/rentalagreements/{id}/timeRecord")]
+        [SwaggerOperation("RentalagreementsIdTimeRecordsPost")]
+        [SwaggerResponse(200, type: typeof(TimeRecord))]
+        public virtual IActionResult RentalagreementsIdTimeRecordsPost([FromRoute]int id, [FromBody]TimeRecord item)
+        {
+            return _service.RentalAgreementsIdTimeRecordsPostAsync(id, item);
+        }
+
+        /// <summary>
+        /// Update or create an array of time records associated with a rental agreement
+        /// </summary>
+        /// <remarks>Adds Rental Agreement Time Records</remarks>
+        /// <param name="id">id of Rental Agreement to add a time record for</param>
+        /// <param name="items">Array of Rental Agreement Time Records</param>
+        /// <response code="200">OK</response>
+        [HttpPost]
+        [Route("/api/rentalagreements/{id}/timeRecords")]
+        [SwaggerOperation("RentalagreementsIdTimeRecordsBulkPostAsync")]
+        [SwaggerResponse(200, type: typeof(TimeRecord))]
+        public virtual IActionResult RentalagreementsIdTimeRecordsBulkPostAsync([FromRoute]int id, [FromBody]TimeRecord[] items)
+        {
+            return _service.RentalAgreementsIdTimeRecordsBulkPostAsync(id, items);
+        }
+
+        #endregion
     }
 }
