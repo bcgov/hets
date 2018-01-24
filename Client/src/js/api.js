@@ -580,7 +580,6 @@ export function getOwners() {
   store.dispatch({ type: Action.OWNERS_LOOKUP_REQUEST });
   return new ApiRequest('/owners').get().then(response => {
     var owners = normalize(response.data);
-
     // Add display fields
     _.map(owners, owner => { parseOwner(owner); });
 
