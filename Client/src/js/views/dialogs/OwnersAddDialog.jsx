@@ -49,10 +49,8 @@ var OwnersAddDialog = React.createClass({
     };
   },
 
-  componentDidUpdate() {
-    if (this.props.show) {
-      this.input.focus();
-    }
+  componentDidMount() {
+    this.input.focus();
   },
 
   updateState(state, callback) {

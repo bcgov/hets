@@ -257,7 +257,9 @@ var Owners = React.createClass({
           }
         </SortTable>;
       })()}
-      <OwnersAddDialog show={ this.state.showAddDialog } onSave={ this.saveNewOwner } onClose={ this.closeAddDialog } />
+      { this.state.showAddDialog &&
+        <OwnersAddDialog show={ this.state.showAddDialog } onSave={ this.saveNewOwner } onClose={ this.closeAddDialog } />
+      }
     </div>;
   },
 });
