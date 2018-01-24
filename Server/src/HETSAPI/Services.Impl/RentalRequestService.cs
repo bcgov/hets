@@ -588,8 +588,11 @@ namespace HETSAPI.Services.Impl
                     Equipment = item.Equipment,
                     Project = rentalRequest.Project,
                     Status = "Active",
-                    DatedOn = DateTime.Now
+                    DatedOn = DateTime.Now                    
                 };
+
+                // generate the rental agreeement number
+                rentalAgreement.Number = GetRentalAgreementNumber(rentalAgreement);
 
                 // add new rental agreement to the project
                 rentalRequest.Project.RentalAgreements.Add(rentalAgreement);
@@ -646,6 +649,47 @@ namespace HETSAPI.Services.Impl
             _context.SaveChanges();
 
             return new ObjectResult(new HetsResponse(item));            
+        }
+
+        /// <summary>
+        /// Create the rental agreement number
+        /// </summary>
+        /// <param name="item"></param>
+        /// <returns></returns>
+        private string GetRentalAgreementNumber(RentalAgreement item)
+        {
+            string result = "";
+
+            // validate item.
+            if (item.Equipment != null && item.Equipment.LocalArea != null)
+            {
+                DateTime currentTime = DateTime.UtcNow;
+
+                int fiscalYear = currentTime.Year;
+
+                // fiscal year always ends in March.
+                if (currentTime.Month > 3)
+                {
+                    fiscalYear++;
+                }
+
+                int localAreaNumber = item.Equipment.LocalArea.LocalAreaNumber;
+                int localAreaId = item.Equipment.LocalArea.Id;
+
+                DateTime fiscalYearStart = new DateTime(fiscalYear - 1, 1, 1);
+
+                // count the number of rental agreements in the system.
+                int currentCount = _context.RentalAgreements
+                    .Include(x => x.Equipment.LocalArea)
+                    .Count(x => x.Equipment.LocalArea.Id == localAreaId && x.AppCreateTimestamp >= fiscalYearStart);
+
+                currentCount++;
+
+                // format of the Rental Agreement number is YYYY-#-####
+                result = fiscalYear + "-" + localAreaNumber + "-" + currentCount.ToString("D4");
+            }
+
+            return result;
         }
 
         /// <summary>
