@@ -26,7 +26,7 @@ namespace HETSAPI.Models
         /// Initializes a new instance of the <see cref="Owner" /> class.
         /// </summary>
         /// <param name="id">A system-generated unique identifier for a Owner (required).</param>
-        /// <param name="ownerEquipmentCodePrefix">A unique prefix in the system that is used to generate the human-friendly IDs of the equipment. E.g. An owner Edwards might have a prefix &amp;quot;EDW&amp;quot; and their equipment numbered sequentially with that prefix - e.g. EDW-0082. (required).</param>
+        /// <param name="ownerCode">A unique prefix in the system that is used to generate the human-friendly IDs of the equipment. E.g. An owner Edwards might have a prefix &amp;quot;EDW&amp;quot; and their equipment numbered sequentially with that prefix - e.g. EDW-0082. (required).</param>
         /// <param name="organizationName">The name of the organization of the Owner. May simply be the First Name, Last Name of the Owner if the Owner is a sole proprietorship, or the name of a company. (required).</param>
         /// <param name="meetsResidency">True to indicate that the owner of the business has confirmed to the HETS Clerk that they meet the residency requirements of the HETS programme. See the published information about the MOTI HETS programme for information on the owner residency requirements. (required).</param>
         /// <param name="localArea">LocalArea (required).</param>
@@ -35,8 +35,15 @@ namespace HETSAPI.Models
         /// <param name="registeredCompanyNumber">The BC Registries number under which the business is registered.  The application does not verify the number against any registry&amp;#x2F;lookup..</param>
         /// <param name="primaryContact">Link to the designated Primary Contact..</param>
         /// <param name="isMaintenanceContractor">True if the owner is contracted by MOTI to handle Maintenance activities in the area - e.g. provided services in address unscheduled issues on the roads in the area..</param>
-        /// <param name="workSafeBcPolicyNumber">The Owner&amp;#39;s WorkSafeBC (aka WCB) Insurance Policy Number..</param>
+        /// <param name="workSafeBcPolicyNumber">The Owner&amp;#39;s WorkSafeBC (aka WCB) Insurance Policy Number..</param>        
         /// <param name="workSafeBcExpiryDate">The expiration of the owner&amp;#39;s current WorkSafeBC (aka WCB) permit..</param>
+        /// <param name="givenName">The given name of the contact..</param>
+        /// <param name="surname">The surname of the contact..</param>
+        /// <param name="address1">Address 1 line of the address..</param>
+        /// <param name="address2">Address 2 line of the address..</param>
+        /// <param name="city">The City of the address..</param>
+        /// <param name="province">The Province of the address..</param>
+        /// <param name="postalCode">The postal code of the address..</param>
         /// <param name="cglEndDate">The end date of the owner&amp;#39;s Commercial General Liability insurance coverage. Coverage is only needed prior to an owner&amp;#39;s piece of equipment starting a rental period (not when in the HETS program but not hired). The details of the coverage can be entered into a Note, or more often - attached as a scanned&amp;#x2F;faxed document..</param>
         /// <param name="archiveCode">TO BE REVIEWED WITH THE BUSINESS - IS THIS NEEDED -A coded reason for why an owner record has been moved to Archived..</param>
         /// <param name="archiveReason">A text note about why the owner record has been changed to Archived..</param>
@@ -46,15 +53,17 @@ namespace HETSAPI.Models
         /// <param name="attachments">Attachments.</param>
         /// <param name="history">History.</param>
         /// <param name="equipmentList">EquipmentList.</param>
-        public Owner(int id, string ownerEquipmentCodePrefix, string organizationName, bool meetsResidency, LocalArea localArea, 
+        public Owner(int id, string ownerCode, string organizationName, bool meetsResidency, LocalArea localArea, 
             string status, string doingBusinessAs = null, string registeredCompanyNumber = null, Contact primaryContact = null, 
-            bool? isMaintenanceContractor = null, string workSafeBcPolicyNumber = null, DateTime? workSafeBcExpiryDate = null, 
+            bool? isMaintenanceContractor = null, string workSafeBcPolicyNumber = null, DateTime? workSafeBcExpiryDate = null,
+            string givenName = null, string surname = null,
+            string address1 = null, string address2 = null, string city = null, string province = null, string postalCode = null,
             DateTime? cglEndDate = null, string archiveCode = null, string archiveReason = null, DateTime? archiveDate = null, 
             List<Contact> contacts = null, List<Note> notes = null, List<Attachment> attachments = null, List<History> history = null, 
             List<Equipment> equipmentList = null)
         {   
             Id = id;
-            OwnerEquipmentCodePrefix = ownerEquipmentCodePrefix;
+            OwnerCode = ownerCode;
             OrganizationName = organizationName;
             MeetsResidency = meetsResidency;
             LocalArea = localArea;
@@ -65,6 +74,13 @@ namespace HETSAPI.Models
             IsMaintenanceContractor = isMaintenanceContractor;
             WorkSafeBCPolicyNumber = workSafeBcPolicyNumber;
             WorkSafeBCExpiryDate = workSafeBcExpiryDate;
+            GivenName = givenName;
+            Surname = surname;
+            Address1 = address1;
+            Address2 = address2;
+            City = city;
+            Province = province;
+            PostalCode = postalCode;
             CGLEndDate = cglEndDate;
             ArchiveCode = archiveCode;
             ArchiveReason = archiveReason;
@@ -89,7 +105,7 @@ namespace HETSAPI.Models
         /// <value>A unique prefix in the system that is used to generate the human-friendly IDs of the equipment. E.g. An owner Edwards might have a prefix &quot;EDW&quot; and their equipment numbered sequentially with that prefix - e.g. EDW-0082.</value>
         [MetaData (Description = "A unique prefix in the system that is used to generate the human-friendly IDs of the equipment. E.g. An owner Edwards might have a prefix &quot;EDW&quot; and their equipment numbered sequentially with that prefix - e.g. EDW-0082.")]
         [MaxLength(20)]        
-        public string OwnerEquipmentCodePrefix { get; set; }
+        public string OwnerCode { get; set; }
         
         /// <summary>
         /// The name of the organization of the Owner. May simply be the First Name, Last Name of the Owner if the Owner is a sole proprietorship, or the name of a company.
@@ -178,7 +194,63 @@ namespace HETSAPI.Models
         /// <value>The expiration of the owner&#39;s current WorkSafeBC (aka WCB) permit.</value>
         [MetaData (Description = "The expiration of the owner&#39;s current WorkSafeBC (aka WCB) permit.")]
         public DateTime? WorkSafeBCExpiryDate { get; set; }
-        
+
+        /// <summary>
+        /// The given name of the contact.
+        /// </summary>
+        /// <value>The given name of the contact.</value>
+        [MetaData(Description = "The given name of the contact.")]
+        [MaxLength(50)]
+        public string GivenName { get; set; }
+
+        /// <summary>
+        /// The surname of the contact.
+        /// </summary>
+        /// <value>The surname of the contact.</value>
+        [MetaData(Description = "The surname of the contact.")]
+        [MaxLength(50)]
+        public string Surname { get; set; }
+
+        /// <summary>
+        /// Address 1 line of the address.
+        /// </summary>
+        /// <value>Address 1 line of the address.</value>
+        [MetaData(Description = "Address 1 line of the address.")]
+        [MaxLength(80)]
+        public string Address1 { get; set; }
+
+        /// <summary>
+        /// Address 2 line of the address.
+        /// </summary>
+        /// <value>Address 2 line of the address.</value>
+        [MetaData(Description = "Address 2 line of the address.")]
+        [MaxLength(80)]
+        public string Address2 { get; set; }
+
+        /// <summary>
+        /// The City of the address.
+        /// </summary>
+        /// <value>The City of the address.</value>
+        [MetaData(Description = "The City of the address.")]
+        [MaxLength(100)]
+        public string City { get; set; }
+
+        /// <summary>
+        /// The Province of the address.
+        /// </summary>
+        /// <value>The Province of the address.</value>
+        [MetaData(Description = "The Province of the address.")]
+        [MaxLength(50)]
+        public string Province { get; set; }
+
+        /// <summary>
+        /// The postal code of the address.
+        /// </summary>
+        /// <value>The postal code of the address.</value>
+        [MetaData(Description = "The postal code of the address.")]
+        [MaxLength(15)]
+        public string PostalCode { get; set; }
+
         /// <summary>
         /// The end date of the owner&#39;s Commercial General Liability insurance coverage. Coverage is only needed prior to an owner&#39;s piece of equipment starting a rental period (not when in the HETS program but not hired). The details of the coverage can be entered into a Note, or more often - attached as a scanned&#x2F;faxed document.
         /// </summary>
@@ -244,7 +316,7 @@ namespace HETSAPI.Models
 
             sb.Append("class Owner {\n");
             sb.Append("  Id: ").Append(Id).Append("\n");
-            sb.Append("  OwnerEquipmentCodePrefix: ").Append(OwnerEquipmentCodePrefix).Append("\n");
+            sb.Append("  OwnerCode: ").Append(OwnerCode).Append("\n");
             sb.Append("  OrganizationName: ").Append(OrganizationName).Append("\n");
             sb.Append("  MeetsResidency: ").Append(MeetsResidency).Append("\n");
             sb.Append("  LocalArea: ").Append(LocalArea).Append("\n");
@@ -255,6 +327,13 @@ namespace HETSAPI.Models
             sb.Append("  IsMaintenanceContractor: ").Append(IsMaintenanceContractor).Append("\n");
             sb.Append("  WorkSafeBCPolicyNumber: ").Append(WorkSafeBCPolicyNumber).Append("\n");
             sb.Append("  WorkSafeBCExpiryDate: ").Append(WorkSafeBCExpiryDate).Append("\n");
+            sb.Append("  GivenName: ").Append(GivenName).Append("\n");
+            sb.Append("  Surname: ").Append(Surname).Append("\n");
+            sb.Append("  Address1: ").Append(Address1).Append("\n");
+            sb.Append("  Address2: ").Append(Address2).Append("\n");
+            sb.Append("  City: ").Append(City).Append("\n");
+            sb.Append("  Province: ").Append(Province).Append("\n");
+            sb.Append("  PostalCode: ").Append(PostalCode).Append("\n");
             sb.Append("  CGLEndDate: ").Append(CGLEndDate).Append("\n");
             sb.Append("  ArchiveCode: ").Append(ArchiveCode).Append("\n");
             sb.Append("  ArchiveReason: ").Append(ArchiveReason).Append("\n");
@@ -306,9 +385,9 @@ namespace HETSAPI.Models
                     Id.Equals(other.Id)
                 ) &&                 
                 (
-                    OwnerEquipmentCodePrefix == other.OwnerEquipmentCodePrefix ||
-                    OwnerEquipmentCodePrefix != null &&
-                    OwnerEquipmentCodePrefix.Equals(other.OwnerEquipmentCodePrefix)
+                    OwnerCode == other.OwnerCode ||
+                    OwnerCode != null &&
+                    OwnerCode.Equals(other.OwnerCode)
                 ) &&                 
                 (
                     OrganizationName == other.OrganizationName ||
@@ -358,7 +437,42 @@ namespace HETSAPI.Models
                     WorkSafeBCExpiryDate == other.WorkSafeBCExpiryDate ||
                     WorkSafeBCExpiryDate != null &&
                     WorkSafeBCExpiryDate.Equals(other.WorkSafeBCExpiryDate)
-                ) &&                 
+                ) &&
+                (
+                    GivenName == other.GivenName ||
+                    GivenName != null &&
+                    GivenName.Equals(other.GivenName)
+                ) &&
+                (
+                    Surname == other.Surname ||
+                    Surname != null &&
+                    Surname.Equals(other.Surname)
+                ) &&
+                (
+                    Address1 == other.Address1 ||
+                    Address1 != null &&
+                    Address1.Equals(other.Address1)
+                ) &&
+                (
+                    Address2 == other.Address2 ||
+                    Address2 != null &&
+                    Address2.Equals(other.Address2)
+                ) &&
+                (
+                    City == other.City ||
+                    City != null &&
+                    City.Equals(other.City)
+                ) &&
+                (
+                    Province == other.Province ||
+                    Province != null &&
+                    Province.Equals(other.Province)
+                ) &&
+                (
+                    PostalCode == other.PostalCode ||
+                    PostalCode != null &&
+                    PostalCode.Equals(other.PostalCode)
+                ) &&
                 (
                     CGLEndDate == other.CGLEndDate ||
                     CGLEndDate != null &&
@@ -420,9 +534,9 @@ namespace HETSAPI.Models
                 // Suitable nullity checks                                   
                 hash = hash * 59 + Id.GetHashCode();
 
-                if (OwnerEquipmentCodePrefix != null)
+                if (OwnerCode != null)
                 {
-                    hash = hash * 59 + OwnerEquipmentCodePrefix.GetHashCode();
+                    hash = hash * 59 + OwnerCode.GetHashCode();
                 }
 
                 if (OrganizationName != null)
@@ -470,6 +584,41 @@ namespace HETSAPI.Models
                 if (WorkSafeBCExpiryDate != null)
                 {
                     hash = hash * 59 + WorkSafeBCExpiryDate.GetHashCode();
+                }
+
+                if (GivenName != null)
+                {
+                    hash = hash * 59 + GivenName.GetHashCode();
+                }
+
+                if (Surname != null)
+                {
+                    hash = hash * 59 + Surname.GetHashCode();
+                }
+
+                if (Address1 != null)
+                {
+                    hash = hash * 59 + Address1.GetHashCode();
+                }
+
+                if (Address2 != null)
+                {
+                    hash = hash * 59 + Address2.GetHashCode();
+                }
+
+                if (City != null)
+                {
+                    hash = hash * 59 + City.GetHashCode();
+                }
+
+                if (Province != null)
+                {
+                    hash = hash * 59 + Province.GetHashCode();
+                }
+
+                if (PostalCode != null)
+                {
+                    hash = hash * 59 + PostalCode.GetHashCode();
                 }
 
                 if (CGLEndDate != null)

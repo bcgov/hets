@@ -638,7 +638,7 @@ namespace HETSAPI.Services.Impl
                     // generate a unique equipment number
                     while (looking)
                     {
-                        string candidate = GenerateEquipmentCode(item.Owner.OwnerEquipmentCodePrefix, equipmentNumber);
+                        string candidate = GenerateEquipmentCode(item.Owner.OwnerCode, equipmentNumber);
                         if ((item.Owner.EquipmentList).Any(x => x.EquipmentCode == candidate))
                         {
                             equipmentNumber++;
@@ -651,7 +651,7 @@ namespace HETSAPI.Services.Impl
                 }
 
                 // set the equipment code
-                item.EquipmentCode = GenerateEquipmentCode(item.Owner.OwnerEquipmentCodePrefix, equipmentNumber);
+                item.EquipmentCode = GenerateEquipmentCode(item.Owner.OwnerCode, equipmentNumber);
             }
         }
 
