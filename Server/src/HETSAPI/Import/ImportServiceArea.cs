@@ -88,7 +88,7 @@ namespace HETSAPI.Import
                             CopyToInstance(performContext, dbContext, item, ref serviceArea, systemId);
 
                             // touch the import map
-                            importMap.LastUpdateTimestamp = DateTime.UtcNow;
+                            importMap.AppLastUpdateTimestamp = DateTime.UtcNow;
                             dbContext.ImportMaps.Update(importMap);
                             dbContext.SaveChangesForImport();
                         }
@@ -154,14 +154,14 @@ namespace HETSAPI.Import
 
             if (isNew)
             {
-                serviceArea.CreateUserid = systemId;
-                serviceArea.CreateTimestamp = DateTime.UtcNow;
+                serviceArea.AppCreateUserid = systemId;
+                serviceArea.AppCreateTimestamp = DateTime.UtcNow;
                 dbContext.ServiceAreas.Add(serviceArea);
             }
             else
             {
-                serviceArea.LastUpdateUserid = systemId;
-                serviceArea.LastUpdateTimestamp = DateTime.UtcNow;
+                serviceArea.AppLastUpdateUserid = systemId;
+                serviceArea.AppLastUpdateTimestamp = DateTime.UtcNow;
                 dbContext.ServiceAreas.Update(serviceArea);
             }
 

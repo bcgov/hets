@@ -138,7 +138,7 @@ namespace HETSAPI.Import
                                 AddingDistrictEquipmentTypeInstance(dbContext, item, instance, equipRentalRateNo, description, serviceAreaName, false);
 
                                 // touch the import map
-                                importMap.LastUpdateTimestamp = DateTime.UtcNow;
+                                importMap.AppLastUpdateTimestamp = DateTime.UtcNow;
                                 dbContext.ImportMaps.Update(importMap);
                             }
                         }
@@ -235,8 +235,8 @@ namespace HETSAPI.Import
                     }
                 }
 
-                instance.CreateTimestamp = DateTime.UtcNow;
-                instance.CreateUserid = createdBy.SmUserId;
+                instance.AppCreateTimestamp = DateTime.UtcNow;
+                instance.AppCreateUserid = createdBy.SmUserId;
 
                 if (oldObject.Equip_Type_Cd != null)
                 {

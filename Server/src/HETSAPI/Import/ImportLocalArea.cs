@@ -104,7 +104,7 @@ namespace HETSAPI.Import
                             CopyToInstance(dbContext, item, ref localArea, systemId);
 
                             // touch the import map
-                            importMap.LastUpdateTimestamp = DateTime.UtcNow;
+                            importMap.AppLastUpdateTimestamp = DateTime.UtcNow;
                             dbContext.ImportMaps.Update(importMap);
                         }
                     }
@@ -183,14 +183,14 @@ namespace HETSAPI.Import
 
             if (isNew)
             {
-                localArea.CreateUserid = systemId;
-                localArea.CreateTimestamp = DateTime.UtcNow;
+                localArea.AppCreateUserid = systemId;
+                localArea.AppCreateTimestamp = DateTime.UtcNow;
                 dbContext.LocalAreas.Add(localArea);
             }
             else
             {
-                localArea.LastUpdateUserid = systemId;
-                localArea.LastUpdateTimestamp = DateTime.UtcNow;
+                localArea.AppLastUpdateUserid = systemId;
+                localArea.AppLastUpdateTimestamp = DateTime.UtcNow;
                 dbContext.LocalAreas.Update(localArea);
             }
         }

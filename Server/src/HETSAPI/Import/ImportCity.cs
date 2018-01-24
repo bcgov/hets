@@ -94,7 +94,7 @@ namespace HETSAPI.Import
                             CopyToInstance(performContext, dbContext, item, ref city, systemId);
 
                             // touch the import map
-                            importMap.LastUpdateTimestamp = DateTime.UtcNow;
+                            importMap.AppLastUpdateTimestamp = DateTime.UtcNow;
                             dbContext.ImportMaps.Update(importMap);
                             dbContext.SaveChangesForImport();
                         }
@@ -134,8 +134,8 @@ namespace HETSAPI.Import
                 isNew = true;
                 city.Name = oldObject.Name.Trim();
                 city.Id = dbContext.Cities.Max(x => x.Id) + 1;
-                city.CreateTimestamp = DateTime.UtcNow;
-                city.CreateUserid = systemId;
+                city.AppCreateTimestamp = DateTime.UtcNow;
+                city.AppCreateUserid = systemId;
             }
 
             if (isNew)

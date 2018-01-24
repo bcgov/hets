@@ -97,7 +97,7 @@ namespace HETSAPI.Import
                             CopyToInstance(dbContext, item, ref instance, systemId);
 
                             // touch the import map
-                            importMap.LastUpdateTimestamp = DateTime.UtcNow;
+                            importMap.AppLastUpdateTimestamp = DateTime.UtcNow;
                             dbContext.ImportMaps.Update(importMap);
                         }
                     }
@@ -217,14 +217,14 @@ namespace HETSAPI.Import
                     
                     try
                     {   
-                        instance.CreateTimestamp = DateTime.ParseExact(oldObject.Created_Dt.Trim().Substring(0, 10), "yyyy-MM-dd", System.Globalization.CultureInfo.InvariantCulture);
+                        instance.AppCreateTimestamp = DateTime.ParseExact(oldObject.Created_Dt.Trim().Substring(0, 10), "yyyy-MM-dd", System.Globalization.CultureInfo.InvariantCulture);
                     }
                     catch
                     {
-                        instance.CreateTimestamp = DateTime.UtcNow;
+                        instance.AppCreateTimestamp = DateTime.UtcNow;
                     }
 
-                    instance.CreateUserid = createdBy.SmUserId;
+                    instance.AppCreateUserid = createdBy.SmUserId;
                 }
                 catch
                 {
@@ -236,8 +236,8 @@ namespace HETSAPI.Import
             else
             {
                 instance = dbContext.Projects.First(x => x.Id == oldObject.Project_Id);
-                instance.LastUpdateUserid = modifiedBy.SmUserId;
-                instance.LastUpdateTimestamp = DateTime.UtcNow;
+                instance.AppLastUpdateUserid = modifiedBy.SmUserId;
+                instance.AppLastUpdateTimestamp = DateTime.UtcNow;
                 dbContext.Projects.Update(instance);
             }
         }

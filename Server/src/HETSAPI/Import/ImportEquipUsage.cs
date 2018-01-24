@@ -110,7 +110,7 @@ namespace HETSAPI.Import
                             CopyToTimeRecorded(dbContext, item, ref rentalAgreement, note, workedDate, equips, systemId);
 
                             // touch the import map
-                            importMap.LastUpdateTimestamp = DateTime.UtcNow;
+                            importMap.AppLastUpdateTimestamp = DateTime.UtcNow;
                             dbContext.ImportMaps.Update(importMap);
                         }
                     }
@@ -205,15 +205,15 @@ namespace HETSAPI.Import
                 {
                     try
                     {
-                        rentalAgreement.CreateTimestamp = DateTime.ParseExact(oldObject.Created_Dt.Trim().Substring(0, 10), "yyyy-MM-dd", System.Globalization.CultureInfo.InvariantCulture);
+                        rentalAgreement.AppCreateTimestamp = DateTime.ParseExact(oldObject.Created_Dt.Trim().Substring(0, 10), "yyyy-MM-dd", System.Globalization.CultureInfo.InvariantCulture);
                     }
                     catch
                     {
-                        rentalAgreement.CreateTimestamp = DateTime.UtcNow;
+                        rentalAgreement.AppCreateTimestamp = DateTime.UtcNow;
                     }
                 }
 
-                rentalAgreement.CreateUserid = createdBy.SmUserId;           
+                rentalAgreement.AppCreateUserid = createdBy.SmUserId;           
                 dbContext.RentalAgreements.Add(rentalAgreement);
             }
             else
@@ -227,8 +227,8 @@ namespace HETSAPI.Import
                     rentalAgreement.TimeRecords = new List<TimeRecord>();
 
                 AddingRateTimeForRentaAgreement(dbContext, oldObject, ref rentalAgreement,  workedDate, systemId);
-                rentalAgreement.LastUpdateUserid = modifiedBy.SmUserId;
-                rentalAgreement.LastUpdateTimestamp = DateTime.UtcNow;
+                rentalAgreement.AppLastUpdateUserid = modifiedBy.SmUserId;
+                rentalAgreement.AppLastUpdateTimestamp = DateTime.UtcNow;
                 dbContext.RentalAgreements.Update(rentalAgreement);
             }
         }
@@ -314,10 +314,10 @@ namespace HETSAPI.Import
                     {
                         Comment = "Import from BCBid",
                         IsAttachment = false,
-                        LastUpdateTimestamp = lastUpdateTimestamp,
-                        LastUpdateUserid = lastUpdateUserid,
-                        CreateTimestamp = createdDate,
-                        CreateUserid = lastUpdateUserid,
+                        AppLastUpdateTimestamp = lastUpdateTimestamp,
+                        AppLastUpdateUserid = lastUpdateUserid,
+                        AppCreateTimestamp = createdDate,
+                        AppCreateUserid = lastUpdateUserid,
                         Rate = pair.Value.Rate
                     };
 
@@ -327,11 +327,11 @@ namespace HETSAPI.Import
                     tRecA[ii] = new TimeRecord
                     {
                         EnteredDate = lastUpdateTimestamp,
-                        LastUpdateUserid = lastUpdateUserid,
+                        AppLastUpdateUserid = lastUpdateUserid,
                         WorkedDate = workedDateTime,
                         Hours = pair.Value.Hours,
-                        CreateTimestamp = createdDate,
-                        CreateUserid = lastUpdateUserid,
+                        AppCreateTimestamp = createdDate,
+                        AppCreateUserid = lastUpdateUserid,
                         RentalAgreementRate = rateA[ii]
                     };
 
@@ -348,11 +348,11 @@ namespace HETSAPI.Import
                         tRecA[ii] = new TimeRecord
                         {
                             EnteredDate = lastUpdateTimestamp,
-                            LastUpdateUserid = lastUpdateUserid,
+                            AppLastUpdateUserid = lastUpdateUserid,
                             WorkedDate = workedDateTime,
                             Hours = pair.Value.Hours,
-                            CreateTimestamp = createdDate,
-                            CreateUserid = lastUpdateUserid,
+                            AppCreateTimestamp = createdDate,
+                            AppCreateUserid = lastUpdateUserid,
                             RentalAgreementRate = exitingRate
                         };
 
