@@ -296,7 +296,7 @@ var ProjectsDetail = React.createClass({
         })()}
 
         <Row>
-          <Col md={6}>
+          <Col md={12}>
             <Well>
               <h3>Project Information <span className="pull-right">
                   <Button title="Edit Project" bsSize="small" onClick={ this.openEditDialog }><Glyphicon glyph="pencil" /></Button>
@@ -356,6 +356,7 @@ var ProjectsDetail = React.createClass({
                     <td>TBD</td>
                     <td>N/A</td>
                     <td>N/A</td>
+                    <td>N/A</td>
                   </tr>
                 );
 
@@ -367,15 +368,13 @@ var ProjectsDetail = React.createClass({
                     <td>{ item.isCompleted ? 
                       'Completed' 
                       : 
-                      <Unimplemented>
-                        <Button 
-                          className="btn-link"
-                          bsSize="xsmall"
-                          onClick={ () => this.openTimeEntryDialog(item) }
-                        >
-                          { item.lastTimeRecord ? formatDateTime(item.lastTimeRecord, Constant.DATE_YEAR_SHORT_MONTH_DAY) : 'None' }
-                        </Button>
-                      </Unimplemented>
+                      <Button 
+                        className="btn-link"
+                        bsSize="xsmall"
+                        onClick={ () => this.openTimeEntryDialog(item) }
+                      >
+                        { item.lastTimeRecord ? formatDateTime(item.lastTimeRecord, Constant.DATE_YEAR_SHORT_MONTH_DAY) : 'None' }
+                      </Button>
                     }
                     </td>
                     <td>
@@ -394,6 +393,7 @@ var ProjectsDetail = React.createClass({
                         </OverlayTrigger>
                       </Unimplemented>
                     </td>
+                    <td><Link to={`${Constant.RENTAL_AGREEMENTS_PATHNAME}/${item.id}`}>Agreement</Link></td>
                   </tr>
                 );
 
@@ -403,6 +403,7 @@ var ProjectsDetail = React.createClass({
                   { field: 'equipmentMake',     title: 'Make/Model/Size'  },
                   { field: 'lastTimeRecord',    title: 'Time Entry'       },
                   { field: 'release',           title: 'Release'          },
+                  { field: 'agreement',         title: 'Agreement'        },
                 ];
 
                 return <TableControl id="equipment-list" headers={ headers }>
@@ -419,7 +420,7 @@ var ProjectsDetail = React.createClass({
               })()}
             </Well>
           </Col>
-          <Col md={6}>
+          <Col md={12}>
             <Well>
               <h3>Contacts</h3>
               {(() => {
@@ -454,8 +455,8 @@ var ProjectsDetail = React.createClass({
                         <td>{ contact.role }</td>
                         <td style={{ textAlign: 'right' }}>
                           <ButtonGroup>
-                              <DeleteButton name="Contact" hide={ !contact.canDelete || contact.isPrimary } onConfirm={ this.deleteContact.bind(this, contact) } />
-                              <EditButton name="Contact" view={ !contact.canEdit } pathname={ contact.path } />
+                            <DeleteButton name="Contact" hide={ !contact.canDelete || contact.isPrimary } onConfirm={ this.deleteContact.bind(this, contact) } />
+                            <EditButton name="Contact" view={ !contact.canEdit } pathname={ contact.path } />
                           </ButtonGroup>
                         </td>
                       </tr>;
