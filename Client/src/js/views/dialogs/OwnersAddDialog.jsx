@@ -12,6 +12,7 @@ import CheckboxControl from '../../components/CheckboxControl.jsx';
 import EditDialog from '../../components/EditDialog.jsx';
 import FilterDropdown from '../../components/FilterDropdown.jsx';
 import FormInputControl from '../../components/FormInputControl.jsx';
+import DropdownControl from '../../components/DropdownControl.jsx';
 
 import { isBlank, notBlank, onlyLetters } from '../../utils/string';
 
@@ -39,13 +40,17 @@ var OwnersAddDialog = React.createClass({
     return {
       name: '',
       equipmentPrefix: '',
-      localAreaId: defaultLocalAreaId || 0,
-      meetsResidency: false,
+      localAreaId: defaultLocalAreaId.id || 0,
+      meetsResidency: true,
+      doingBusinessAs: '',
+      registeredCompanyNumber: '',
+      status: Constant.OWNER_STATUS_CODE_PENDING,
 
       nameError: '',
       equipmentPrefixError: '',
       localAreaError: '',
       residencyError: '',
+      statusError: '',
     };
   },
 
@@ -112,7 +117,7 @@ var OwnersAddDialog = React.createClass({
         valid = false;
       }
     }
-
+    console.log(this.state.localAreaId);
     if (this.state.localAreaId === 0) {
       this.setState({ localAreaError: 'Local area is required' });
       valid = false;
@@ -133,6 +138,8 @@ var OwnersAddDialog = React.createClass({
       localArea: { id: this.state.localAreaId },
       meetsResidency: this.state.meetsResidency,
       status: Constant.OWNER_STATUS_CODE_APPROVED,
+      registeredCompanyNumber: this.state.registeredCompanyNumber,
+      doingBusinessAs: this.state.doingBusinessAs,
     });
   },
 
@@ -162,6 +169,20 @@ var OwnersAddDialog = React.createClass({
           <ControlLabel>Local Area <sup>*</sup></ControlLabel>
           <FilterDropdown id="localAreaId" items={ localAreas } selectedId={ this.state.localAreaId } updateState={ this.updateState } className="full-width" />
           <HelpBlock>{ this.state.localAreaError }</HelpBlock>
+        </FormGroup>
+        <FormGroup controlId="status" validationState={ this.state.statusError ? 'error' : null }>
+          <ControlLabel>Status</ControlLabel>
+          <DropdownControl id="status" title={ this.state.status } updateState={ this.updateState }
+              items={[ Constant.OWNER_STATUS_CODE_APPROVED, Constant.OWNER_STATUS_CODE_PENDING, Constant.OWNER_STATUS_CODE_ARCHIVED ]} className="full-width" disabled />
+          <HelpBlock>{ this.state.statusError }</HelpBlock>
+        </FormGroup>
+        <FormGroup controlId="doingBusinessAs">
+          <ControlLabel>Doing Business As</ControlLabel>
+          <FormInputControl type="text" value={ this.state.doingBusinessAs } updateState={ this.updateState } />
+        </FormGroup>
+        <FormGroup controlId="registeredCompanyNumber">
+          <ControlLabel>Registered BC Company Number</ControlLabel>
+          <FormInputControl type="text" value={ this.state.registeredCompanyNumber } updateState={ this.updateState } />
         </FormGroup>
         <FormGroup controlId="meetsResidency" validationState={ this.state.residencyError ? 'error' : null }>
           <CheckboxControl id="meetsResidency" checked={ this.state.meetsResidency } updateState={ this.updateState }>Meets Residency</CheckboxControl>
