@@ -573,8 +573,8 @@ namespace HETSAPI.Services.Impl
             // ******************************************************************
             // update the rental request rotation list record
             // ******************************************************************
-            item.CreateTimestamp = rentalRequest.RentalRequestRotationList[rotationListIndex].CreateTimestamp;
-            item.CreateUserid = rentalRequest.RentalRequestRotationList[rotationListIndex].CreateUserid;
+            item.AppCreateTimestamp = rentalRequest.RentalRequestRotationList[rotationListIndex].AppCreateTimestamp;
+            item.AppCreateUserid = rentalRequest.RentalRequestRotationList[rotationListIndex].AppCreateUserid;
             rentalRequest.RentalRequestRotationList[rotationListIndex] = item;
 
             // ******************************************************************

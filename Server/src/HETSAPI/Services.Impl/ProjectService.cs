@@ -599,12 +599,30 @@ namespace HETSAPI.Services.Impl
                     .Include(x => x.Contacts)
                     .First(x => x.Id == id);
 
-                // adjust the incoming list
-                item.Id = 0;
+                // check if this is an update to the contact
+                if (item.Id != 0)
+                {
+                    // make sure this contact is associated with the project
+                    bool contactExists = _context.Projects
+                        .Any(x => x.Id == id &&
+                                  x.Contacts.Any(y => y.Id == item.Id));
 
-                _context.Contacts.Add(item);
-                project.Contacts.Add(item);
+                    if (!contactExists)
+                    {
+                        // record not found
+                        return new ObjectResult(new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-01", _configuration)));
+                    }
 
+                    // update contact
+                    _context.Contacts.Update(item);
+                }
+                else //add the contact
+                {
+                    item.Id = 0;
+                    _context.Contacts.Add(item);
+                    project.Contacts.Add(item);
+                }
+               
                 if (primary)
                 {
                     project.PrimaryContact = item;
