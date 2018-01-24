@@ -289,9 +289,17 @@ export function deleteFavourite(favourite) {
 ////////////////////
 // Equipment
 ////////////////////
-function getBlockDisplayName(blockNumber) {
-  if (blockNumber == 1) { return '1'; }
-  if (blockNumber == 2) { return '2'; }
+function getBlockDisplayName(blockNumber, numberOfBlocks, seniority) {
+  if (blockNumber === numberOfBlocks) { return 'Open'; }
+  if (blockNumber == 1 && seniority != null) { 
+    return `1 - ${seniority}`; 
+  }
+  if (blockNumber == 2 && seniority != null) { 
+    return `2 - ${seniority}`; 
+  }
+  if (seniority != null) {
+    return `Open - ${seniority}`;
+  }
   return 'Open';
 }
 
@@ -339,8 +347,7 @@ function parseEquipment(equipment) {
   // The max date of a time card for this fiscal year - can be null if there are none.
   equipment.lastTimeRecordDateThisYear = equipment.lastTimeRecordDateThisYear || '';
   // e.g. "Open-500" or "1-744"
-  var block = getBlockDisplayName(equipment.blockNumber);
-  equipment.seniorityText = concat(block, equipment.seniority, ' - ');
+  equipment.seniorityText = getBlockDisplayName(equipment.blockNumber, equipment.numberOfBlocks, equipment.seniority);
 
   equipment.currentYear = Moment().year();
   equipment.lastYear = equipment.currentYear - 1;
@@ -838,6 +845,18 @@ function parseProject(project) {
   project.canDelete = false; // TODO Needs input from Business whether this is needed.
 }
 
+function formatTimeRecords(timeRecords, rentalRequestId) {
+  let formattedTimeRecords = Object.keys(timeRecords).map((key) => {
+    let timeRecord = {};
+    timeRecord.enteredDate = timeRecords[key].date;
+    timeRecord.hours = timeRecords[key].hours;
+    timeRecord.timePeriod = 'Week';
+    timeRecord.rentalAgreement = { id: rentalRequestId };
+    return timeRecord;
+  });
+  return formattedTimeRecords;
+}
+
 export function searchProjects(params) {
   store.dispatch({ type: Action.PROJECTS_REQUEST });
   return new ApiRequest('/projects/search').get(params).then(response => {
@@ -894,8 +913,34 @@ export function updateProject(project) {
   });
 }
 
+export function getProjectEquipment(projectId) {
+  return new ApiRequest(`/projects/${projectId}/equipment`).get().then(response => {
+    var projectEquipment = normalize(response.data);
+
+    store.dispatch({ type: Action.UPDATE_PROJECT_EQUIPMENT, projectEquipment: projectEquipment });
+  });
+}
+
+export function getProjectTimeRecords(projectId) {
+  return new ApiRequest(`projects/${projectId}/timeRecords`).get().then(response => {
+    var projectTimeRecords = normalize(response.data);
+
+    store.dispatch({ type: Action.UPDATE_PROJECT_TIME_RECORDS, projectTimeRecords: projectTimeRecords });
+  });
+}
+
+export function addProjectTimeRecords(projectId, rentalRequestId, timeRecords) {
+  let formattedTimeRecords = formatTimeRecords(timeRecords, rentalRequestId);
+  return new ApiRequest(`projects/${projectId}/timeRecords`).post(formattedTimeRecords).then(response => {
+    var projectTimeRecords = normalize(response.data);
+
+    store.dispatch({ type: Action.UPDATE_PROJECT_TIME_RECORDS, projectTimeRecords: projectTimeRecords });
+    return projectTimeRecords;
+  });
+}
+
 export function addProjectContact(project, contact) {
-  return new ApiRequest(`/projects/${ project.id }/contacts`).post(contact).then(response => {
+  return new ApiRequest(`/projects/${ project.id }/contacts/${contact.isPrimary}`).post(contact).then(response => {
     var contact = response.data;
 
     // Add display fields
@@ -1020,12 +1065,18 @@ export function getRentalRequest(id) {
 }
 
 export function addRentalRequest(rentalRequest) {
+  store.dispatch({ type: Action.RENTAL_REQUEST_REQUEST });
   return new ApiRequest('/rentalrequests').post(rentalRequest).then(response => {
     var rentalRequest = response.data;
     // Add display fields
     parseRentalRequest(rentalRequest);
     store.dispatch({ type: Action.ADD_RENTAL_REQUEST, rentalRequest: rentalRequest });
     return rentalRequest;
+  }).catch((error) => {
+    if (error.status === 405) {
+      store.dispatch({ type: Action.ADD_RENTAL_REQUEST_ERROR, errorMessage: 'A rental request already exists for this area and equipment type.' });
+      return Promise.reject(error);
+    }
   });
 }
 
@@ -1073,6 +1124,17 @@ export function addRentalRequestDocument(rentalRequestId, files) {
 // Rental Request Rotation List
 ////////////////////
 
+function getSeniorityDisplayName(blockNumber, numberOfBlocks, seniority, numberInBlock) {
+  if (blockNumber === numberOfBlocks) { return 'Open'; }
+  if (blockNumber == 1) { 
+    return `1-${seniority && seniority.toFixed(3)} (${numberInBlock})`;
+  }
+  if (blockNumber == 2) { 
+    return `2-${seniority && seniority.toFixed(3)} (${numberInBlock})`;
+  }
+  return 'Open';
+}
+
 function parseRentalRequestRotationList(rotationListItem, rentalRequest = {}) {
   if (!rotationListItem.rentalRequest) { rotationListItem.rentalRequest = _.extend({ id: 0 }, _.pick(rentalRequest, 'id')); }
   if (!rotationListItem.equipment) { rotationListItem.equipment = { id: 0, equipmentCode: '' }; }
@@ -1099,7 +1161,7 @@ function parseRentalRequestRotationList(rotationListItem, rentalRequest = {}) {
 
   // UI display fields
   rotationListItem.isHired = rotationListItem.isHired || false;
-  rotationListItem.seniority = `${getBlockDisplayName(equipment.blockNumber)}-${equipment.seniority.toFixed(3)} (${equipment.numberInBlock})`;
+  rotationListItem.seniority = getSeniorityDisplayName(equipment.blockNumber, equipment.numberOfBlocks, equipment.seniority, equipment.numberInBlock);
   rotationListItem.serviceHoursThisYear = rotationListItem.serviceHoursThisYear || equipment.serviceHoursThisYear || 0; // TODO calculated field from the server
   rotationListItem.equipmentId = equipment.id;
   rotationListItem.equipmentCode = equipment.equipmentCode;
@@ -1117,18 +1179,18 @@ function parseRentalRequestRotationList(rotationListItem, rentalRequest = {}) {
   rotationListItem.status = 'N/A';
 }
 
-function parseRotationListItem(item) {
+function parseRotationListItem(item, numberOfBlocks) {
   item.equipment = item.equipment || {};
   item.displayFields = {};
   item.displayFields.equipmentDetails = concat(item.equipment.year, concat(item.equipment.make, concat(item.equipment.model, concat(item.equipment.serialNumber, item.equipment.size, '/'), '/'), '/'), ' ');
-  item.displayFields.seniority = `${getBlockDisplayName(item.equipment.blockNumber)}-${item.equipment.seniority && item.equipment.seniority.toFixed(3)} (${item.equipment.numberInBlock})`;
+  item.displayFields.seniority = getSeniorityDisplayName(item.equipment.blockNumber, numberOfBlocks, item.equipment.seniority, item.equipment.numberInBlock);
 }
 
 export function getRentalRequestRotationList(id) {
   return new ApiRequest(`/rentalrequests/${id}/rotationList`).get().then(response => {
     var rotationList = response.data;
 
-    _.map(rotationList.rentalRequestRotationList, item => parseRotationListItem(item));
+    _.map(rotationList.rentalRequestRotationList, item => parseRotationListItem(item, rotationList.numberOfBlocks));
     
     store.dispatch({ type: Action.UPDATE_RENTAL_REQUEST_ROTATION_LIST, rentalRequestRotationList: rotationList });
   });
@@ -1147,6 +1209,7 @@ export function updateRentalRequestRotationList(rentalRequestRotationList, renta
     // Add display fields
 
     store.dispatch({ type: Action.UPDATE_RENTAL_REQUEST_ROTATION_LIST, rentalRequestRotationList: rentalRequestRotationList });
+    return Promise.resolve(rentalRequestRotationList);
   });
 }
 
@@ -1497,5 +1560,15 @@ export function getVersion() {
 export function setDevUser(user) {
   return new ApiRequest(`/authentication/dev/token/${user}`).get().then(response => {    
     return normalize(response.data);
+  });
+}
+
+////////////////////
+// Time Records
+////////////////////
+
+export function deleteTimeRecord(timeRecordId) {
+  return new ApiRequest(`/timerecords/${timeRecordId}/delete`).post().then((response) => {
+    store.dispatch({ type: Action.DELETE_TIME_RECORD, timeRecord: response.data });
   });
 }

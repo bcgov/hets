@@ -2,7 +2,7 @@ import React from 'react';
 
 import { connect } from 'react-redux';
 
-import { Grid, Row, Col, Radio, Form, FormGroup, ControlLabel, HelpBlock, Alert } from 'react-bootstrap';
+import { Grid, Row, Col, Radio, Form, FormGroup, ControlLabel, HelpBlock } from 'react-bootstrap';
 
 import _ from 'lodash';
 import Promise from 'bluebird';
@@ -17,9 +17,7 @@ import EditDialog from '../../components/EditDialog.jsx';
 import FormInputControl from '../../components/FormInputControl.jsx';
 
 import { today, toZuluTime, formatDateTime } from '../../utils/date';
-import { notBlank } from '../../utils/string';
-
-import { isBlank } from '../../utils/string';
+import { notBlank, isBlank } from '../../utils/string';
 
 const STATUS_YES = 'Yes';
 const STATUS_NO = 'No';

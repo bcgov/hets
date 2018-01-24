@@ -7,7 +7,7 @@ using HETSAPI.Models;
 using HETSAPI.ViewModels;
 using HETSAPI.Mappings;
 using Microsoft.AspNetCore.Http;
-using Microsoft.EntityFrameworkCore.Internal;
+using Microsoft.AspNetCore.Mvc.ViewFeatures;
 using Microsoft.Extensions.Configuration;
 
 namespace HETSAPI.Services.Impl
@@ -363,6 +363,7 @@ namespace HETSAPI.Services.Impl
                 .Where(x => x.LocalArea.ServiceArea.DistrictId.Equals(districtId))
                 .Include(x => x.LocalArea)
                 .Include(x => x.DistrictEquipmentType)
+                    .ThenInclude(y => y.EquipmentType)
                 .Include(x => x.Owner)
                 .Include(x => x.EquipmentAttachments)                
                 .Select(x => x);
@@ -410,7 +411,7 @@ namespace HETSAPI.Services.Impl
             {
                 data = data.Where(x => x.LastVerifiedDate >= notverifiedsincedate);
             }
-
+            
             // **********************************************************************
             // convert Equipment Model to View Model
             // **********************************************************************
@@ -419,6 +420,8 @@ namespace HETSAPI.Services.Impl
             foreach (Equipment item in data)
             {
                 EquipmentViewModel newItem = item.ToViewModel();
+
+                newItem.NumberOfBlocks = GetNumberOfBlocks(item) + 1;
                 result.Add(newItem);
             }
 
@@ -429,6 +432,30 @@ namespace HETSAPI.Services.Impl
 
             // return to the client            
             return new ObjectResult(new HetsResponse(result));
+        }
+
+        /// <summary>
+        /// Get the number of blocks for this type of equipment 
+        /// </summary>
+        /// <param name="item"></param>
+        /// <returns></returns>
+        private int GetNumberOfBlocks(Equipment item)
+        {
+            int numberOfBlocks = -1;
+
+            try
+            {            
+                SeniorityScoringRules scoringRules = new SeniorityScoringRules(_configuration);
+
+                numberOfBlocks = item.DistrictEquipmentType.EquipmentType.IsDumpTruck ?
+                    scoringRules.GetTotalBlocks("DumpTruck") : scoringRules.GetTotalBlocks();
+            }
+            catch
+            {
+                // do nothing
+            }
+
+            return numberOfBlocks;
         }
 
         #region Recalculate Seniority

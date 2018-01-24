@@ -429,7 +429,6 @@ namespace HETSAPI.Services.Impl
         /// <param name="id">id of RentalRequest to fetch attachments for</param>
         /// <response code="200">OK</response>
         /// <response code="404">RentalRequest not found</response>
-
         public virtual IActionResult RentalrequestsIdAttachmentsGetAsync(int id)
         {
             bool exists = _context.RentalRequests.Any(a => a.Id == id);
@@ -467,6 +466,8 @@ namespace HETSAPI.Services.Impl
             {
                 // check that we have a rotation list
                 RentalRequest result = _context.RentalRequests
+                    .Include(x => x.DistrictEquipmentType)
+                        .ThenInclude(y => y.EquipmentType)
                     .Include(x => x.FirstOnRotationList)
                     .Include(x => x.RentalRequestAttachments)
                     .Include(x => x.RentalRequestRotationList)
@@ -482,8 +483,12 @@ namespace HETSAPI.Services.Impl
                 result.RentalRequestRotationList =
                     result.RentalRequestRotationList.OrderBy(e => e.RotationListSortOrder).ToList();
 
+                // return the number of blocks in this list
+                RentalRequestViewModel rentalRequest = result.ToRentalRequestViewModel();
+                rentalRequest.NumberOfBlocks = GetNumberOfBlocks(result) + 1;
+
                 // return view model
-                return new ObjectResult(new HetsResponse(result.ToRentalRequestViewModel()));
+                return new ObjectResult(new HetsResponse(rentalRequest));
             }
 
             // record not found
@@ -545,15 +550,17 @@ namespace HETSAPI.Services.Impl
                 .Include(x => x.DistrictEquipmentType)
                     .ThenInclude(d => d.EquipmentType)    
                 .Include(x => x.LocalArea)
+                .Include(x => x.Project)
+                    .ThenInclude(y => y.RentalAgreements)
                 .First(a => a.Id == id);
 
-            _context.Entry(rentalRequest).State = EntityState.Detached;
+            _context.Entry(rentalRequest).State = EntityState.Detached;            
 
             // ******************************************************************
             // find the rotation list record to update
             // ******************************************************************
             int rotationListIndex = -1;
-            
+
             for (int i = 0; i < rentalRequest.RentalRequestRotationList.Count; i++)
             {
                 if (rentalRequest.RentalRequestRotationList[i].Id == item.Id)
@@ -566,7 +573,33 @@ namespace HETSAPI.Services.Impl
             // ******************************************************************
             // update the rental request rotation list record
             // ******************************************************************
+            item.CreateTimestamp = rentalRequest.RentalRequestRotationList[rotationListIndex].CreateTimestamp;
+            item.CreateUserid = rentalRequest.RentalRequestRotationList[rotationListIndex].CreateUserid;
             rentalRequest.RentalRequestRotationList[rotationListIndex] = item;
+
+            // ******************************************************************
+            // do we need to create a Rental Agreement?
+            // ******************************************************************
+            if (item.IsForceHire == true ||
+                item.OfferResponse.Equals("Yes", StringComparison.InvariantCultureIgnoreCase))
+            {
+                RentalAgreement rentalAgreement = new RentalAgreement
+                {
+                    Equipment = item.Equipment,
+                    Project = rentalRequest.Project,
+                    Status = "Active",
+                    DatedOn = DateTime.Now
+                };
+
+                // add new rental agreement to the project
+                rentalRequest.Project.RentalAgreements.Add(rentalAgreement);
+
+                // relate the new rental agreement to the original rotation list record
+                rentalRequest.RentalRequestRotationList[rotationListIndex].RentalAgreement = rentalAgreement;
+                
+                // relate it to return to our client (not for the db)
+                item.RentalAgreement = rentalAgreement;
+            }
 
             // ******************************************************************
             // can we "Complete" this rental request
@@ -592,6 +625,7 @@ namespace HETSAPI.Services.Impl
             if (countOfYeses >= equipmentRequestCount)
             {
                 rentalRequest.Status = "Complete";
+                rentalRequest.FirstOnRotationList = null;
             }                        
 
             // ******************************************************************
@@ -791,10 +825,19 @@ namespace HETSAPI.Services.Impl
         /// <returns></returns>
         private int GetNumberOfBlocks(RentalRequest item)
         {
-            SeniorityScoringRules scoringRules = new SeniorityScoringRules(_configuration);
+            int numberOfBlocks = -1;
 
-            int numberOfBlocks = item.DistrictEquipmentType.EquipmentType.IsDumpTruck ?
-                scoringRules.GetTotalBlocks("DumpTruck") : scoringRules.GetTotalBlocks();
+            try
+            {            
+                SeniorityScoringRules scoringRules = new SeniorityScoringRules(_configuration);
+
+                numberOfBlocks = item.DistrictEquipmentType.EquipmentType.IsDumpTruck ?
+                    scoringRules.GetTotalBlocks("DumpTruck") : scoringRules.GetTotalBlocks();
+            }
+            catch
+            {
+                // do nothing
+            }
 
             return numberOfBlocks;
         }
@@ -970,8 +1013,12 @@ namespace HETSAPI.Services.Impl
                         bool hired;
 
                         if (foundCurrentRecord &&
-                            item.RentalRequestRotationList[i].IsForceHire == null ||
+                            item.RentalRequestRotationList[i].IsForceHire != null &&
                             item.RentalRequestRotationList[i].IsForceHire == false)
+                        {
+                            forcedHire = false;
+                        }
+                        else if (foundCurrentRecord && item.RentalRequestRotationList[i].IsForceHire == null)
                         {
                             forcedHire = false;
                         }
@@ -981,8 +1028,12 @@ namespace HETSAPI.Services.Impl
                         }
 
                         if (foundCurrentRecord &&
-                            item.RentalRequestRotationList[i].OfferResponse == null ||
+                            item.RentalRequestRotationList[i].OfferResponse != null &&
                             !item.RentalRequestRotationList[i].OfferResponse.Equals("Yes", StringComparison.InvariantCultureIgnoreCase))
+                        {
+                            hired = false;
+                        }
+                        else if (foundCurrentRecord && item.RentalRequestRotationList[i].OfferResponse == null)
                         {
                             hired = false;
                         }

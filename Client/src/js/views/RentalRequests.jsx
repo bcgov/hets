@@ -15,6 +15,7 @@ import * as Action from '../actionTypes';
 import * as Api from '../api';
 import * as Constant from '../constants';
 import store from '../store';
+import { refresh } from '../actions/actions';
 
 import DateControl from '../components/DateControl.jsx';
 import DropdownControl from '../components/DropdownControl.jsx';
@@ -62,7 +63,7 @@ var RentalRequests = React.createClass({
       search: {
         selectedLocalAreasIds: this.props.search.selectedLocalAreasIds || [],
         projectName: this.props.search.projectName || '',
-        status: this.props.search.status || '',
+        status: this.props.search.status || Constant.RENTAL_REQUEST_STATUS_CODE_IN_PROGRESS,
         dateRange: this.props.search.dateRange || '',
       },
       ui : {
@@ -177,6 +178,7 @@ var RentalRequests = React.createClass({
 
   closeAddDialog() {
     this.setState({ showAddDialog: false });
+    store.dispatch(refresh(Action.ADD_RENTAL_REQUEST_REFRESH));
   },
 
   saveNewRequest(request) {

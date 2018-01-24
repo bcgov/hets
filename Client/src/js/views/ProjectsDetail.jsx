@@ -70,7 +70,7 @@ var ProjectsDetail = React.createClass({
 
       contact: {},
       
-      equipment: {},
+      rentalRequest: {},
 
       // Contacts
       uiContacts : {
@@ -213,14 +213,7 @@ var ProjectsDetail = React.createClass({
     var log = isNew ? Log.projectContactAdded : Log.projectContactUpdated;
 
     contactPromise(this.props.project, contact).then(() => {
-      return log(this.props.project, this.props.contact).then(() => {
-        if (contact.isPrimary) {
-          return Api.updateProject({ ...this.props.project, ...{
-            contacts: null,
-            primaryContact: { id: this.state.contact.id },
-          }});
-        }
-      });
+      return log(this.props.project, this.props.contact);
     }).finally(() => {
       this.fetch();
       this.closeContactDialog();
@@ -252,18 +245,14 @@ var ProjectsDetail = React.createClass({
     // todo: make network call
   },
 
-  openTimeEntryDialog(equipment) {
-    Api.getRentalRequest(equipment.id);
-    this.setState({ equipment: equipment }, () => {
+  openTimeEntryDialog(rentalRequest) {
+    this.setState({ rentalRequest: rentalRequest }, () => {
       this.setState({ showTimeEntryDialog: true });
     });
   },
 
   closeTimeEntryDialog() {
     this.setState({ showTimeEntryDialog: false });
-  },
-
-  saveTimeEntry() {
   },
 
   render() {
@@ -365,16 +354,29 @@ var ProjectsDetail = React.createClass({
                     <td><Link to={ `rental-requests/${item.id}` }>Request</Link></td>
                     <td>{ item.equipmentTypeName }</td>
                     <td>TBD</td>
-                    <td>
+                    <td>N/A</td>
+                    <td>N/A</td>
+                  </tr>
+                );
+
+                const RentalAgreementListItem = ({ item }) => (
+                  <tr key={ item.id }>
+                    <td><Link to={ `equipment/${item.equipmentId}` }>{ item.equipmentCode }</Link></td>
+                    <td>{ item.equipmentTypeName }</td>
+                    <td>{ concat(item.equipmentMake, concat(item.equipmentModel, item.equipmentSize, '/'), '/') }</td>
+                    <td>{ item.isCompleted ? 
+                      'Completed' 
+                      : 
                       <Unimplemented>
                         <Button 
                           className="btn-link"
                           bsSize="xsmall"
                           onClick={ () => this.openTimeEntryDialog(item) }
                         >
-                          N/A
+                          { item.lastTimeRecord ? formatDateTime(item.lastTimeRecord, Constant.DATE_YEAR_SHORT_MONTH_DAY) : 'None' }
                         </Button>
                       </Unimplemented>
+                    }
                     </td>
                     <td>
                       <Unimplemented>
@@ -392,20 +394,6 @@ var ProjectsDetail = React.createClass({
                         </OverlayTrigger>
                       </Unimplemented>
                     </td>
-                  </tr>
-                );
-
-                // TODO Wire-up link to Time Records screen
-                const TimeEntryLink = ({ item }) => (
-                  <Link to={ '#' }>{ item.lastTimeRecord ? formatDateTime(item.lastTimeRecord, Constant.DATE_YEAR_SHORT_MONTH_DAY) : 'None' }</Link>
-                );
-
-                const RentalAgreementListItem = ({ item }) => (
-                  <tr key={ item.id }>
-                    <td><Link to={ `equipment/${item.equipmentId}` }>{ item.equipmentCode }</Link></td>
-                    <td>{ item.equipmentTypeName }</td>
-                    <td>{ concat(item.equipmentMake, concat(item.equipmentModel, item.equipmentSize, '/'), '/') }</td>
-                    <td>{ item.isCompleted ? 'Completed' : <TimeEntryLink item={ item } /> }</td>
                   </tr>
                 );
 
@@ -510,8 +498,8 @@ var ProjectsDetail = React.createClass({
         <TimeEntryDialog
           show={ this.state.showTimeEntryDialog }
           onClose={ this.closeTimeEntryDialog }
-          onSave={ this.saveTimeEntry }
           project={ project }
+          activeRentalRequest={ this.state.rentalRequest }
         />
       }
     </div>;
