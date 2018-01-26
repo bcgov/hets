@@ -7,9 +7,9 @@ plugins {
 
 sonarqube {
     properties {
-        property "sonar.host.url", "http://localhost:9001"
+        //property "sonar.host.url", "http://localhost:9000"
         property "sonar.projectName", "HETS"
-        property "sonar.projectKey", "org.sonarqube:bcgov-hets-"
+        property "sonar.projectKey", "org.sonarqube:bcgov-hets"
         property "sonar.projectBaseDir", "../"
         property "sonar.sources", "./"
         property "sonar.exclusions","*/functional-tests/**"
