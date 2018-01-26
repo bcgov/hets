@@ -449,12 +449,11 @@ namespace HETSAPI.Services.Impl
 
             if (exists)
             {
-                RentalAgreement agreement = _context.RentalAgreements
+                RentalAgreement agreement = _context.RentalAgreements.AsNoTracking()
                     .Include(x => x.TimeRecords)
                     .First(x => x.Id == id);
 
                 List<TimeRecord> timeRecords = new List<TimeRecord>();
-
                 timeRecords.AddRange(agreement.TimeRecords);
 
                 return new ObjectResult(new HetsResponse(timeRecords));
@@ -479,28 +478,29 @@ namespace HETSAPI.Services.Impl
             {
                 RentalAgreement agreement = _context.RentalAgreements
                     .Include(x => x.TimeRecords)
-                    .First(x => x.Id == id);                
+                    .First(x => x.Id == id);
 
                 // ******************************************************************
                 // add or update time record
-                // ******************************************************************
+                // ******************************************************************                
                 if (item.Id > 0)
                 {
-                    agreement.TimeRecords.Add(item);
-                }
-                else  // update time record
-                {
-                    int timeIndex = agreement.TimeRecords.FindIndex(x => x.Id == item.Id);
+                    int timeIndex = agreement.TimeRecords.FindIndex(a => a.Id == item.Id);
 
                     if (timeIndex < 0)
-                    {
-                        agreement.TimeRecords[timeIndex] = item;
-                    }
-                    else
                     {
                         // record not found
                         return new ObjectResult(new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-01", _configuration)));
                     }
+
+                    agreement.TimeRecords[timeIndex].EnteredDate = item.EnteredDate;
+                    agreement.TimeRecords[timeIndex].Hours = item.Hours;
+                    agreement.TimeRecords[timeIndex].TimePeriod = item.TimePeriod;
+                    agreement.TimeRecords[timeIndex].WorkedDate = item.WorkedDate;
+                }
+                else // add time record
+                {
+                    agreement.TimeRecords.Add(item);
                 }
 
                 _context.SaveChanges();
@@ -508,10 +508,6 @@ namespace HETSAPI.Services.Impl
                 // *************************************************************
                 // return updated time records
                 // *************************************************************
-                agreement = _context.RentalAgreements
-                    .Include(x => x.TimeRecords)
-                    .First(x => x.Id == id);
-
                 List<TimeRecord> timeRecords = new List<TimeRecord>();
 
                 timeRecords.AddRange(agreement.TimeRecords);
@@ -541,33 +537,33 @@ namespace HETSAPI.Services.Impl
                     .First(x => x.Id == id);
 
                 // process each time record
-                for (int i = 0; i < items.Length; i++)
+                foreach (TimeRecord item in items)
                 {
                     // ******************************************************************
                     // add or update time record
-                    // ******************************************************************
-                    if (items[i].Id > 0)
+                    // ******************************************************************                
+                    if (item.Id > 0)
                     {
-                        agreement.TimeRecords.Add(items[i]);
-                    }
-                    else  // update time record
-                    {
-                        int timeRecordId = items[i].Id;
-                        int timeIndex = agreement.TimeRecords.FindIndex(x => x.Id == timeRecordId);
+                        int timeIndex = agreement.TimeRecords.FindIndex(a => a.Id == item.Id);
 
                         if (timeIndex < 0)
-                        {
-                            agreement.TimeRecords[timeIndex] = items[i];
-                        }
-                        else
                         {
                             // record not found
                             return new ObjectResult(new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-01", _configuration)));
                         }
-                    }
-                }
 
-                _context.SaveChanges();
+                        agreement.TimeRecords[timeIndex].EnteredDate = item.EnteredDate;
+                        agreement.TimeRecords[timeIndex].Hours = item.Hours;
+                        agreement.TimeRecords[timeIndex].TimePeriod = item.TimePeriod;
+                        agreement.TimeRecords[timeIndex].WorkedDate = item.WorkedDate;
+                    }
+                    else // add time record
+                    {
+                        agreement.TimeRecords.Add(item);
+                    }
+
+                    _context.SaveChanges();
+                }
 
                 // *************************************************************
                 // return updated time records

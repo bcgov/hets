@@ -2,6 +2,7 @@ using System;
 using System.Text;
 using Newtonsoft.Json;
 using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace HETSAPI.Models
 {
@@ -29,7 +30,7 @@ namespace HETSAPI.Models
         {   
             Id = id;
             Text = text;
-            IsNoLongerRelevant = isNoLongerRelevant;
+            IsNoLongerRelevant = isNoLongerRelevant;            
         }
 
         /// <summary>
@@ -37,8 +38,8 @@ namespace HETSAPI.Models
         /// </summary>
         /// <value>A system-generated unique identifier for a Note</value>
         [MetaData (Description = "A system-generated unique identifier for a Note")]
-        public int Id { get; set; }
-        
+        public int Id { get; set; }                        
+
         /// <summary>
         /// Notes entered by users about instance of entities - e.g. School Buses and School Bus Owners
         /// </summary>
@@ -106,7 +107,7 @@ namespace HETSAPI.Models
                 (
                     Id == other.Id ||
                     Id.Equals(other.Id)
-                ) &&                 
+                ) &&
                 (
                     Text == other.Text ||
                     Text != null &&

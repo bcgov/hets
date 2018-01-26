@@ -40,10 +40,10 @@
     <PackageReference Include="Microsoft.AspNetCore.Hosting" Version="2.0.1" />
     <PackageReference Include="Microsoft.AspNetCore.Http.Abstractions" Version="2.0.1" />
     <PackageReference Include="Microsoft.AspNetCore.Http.Features" Version="2.0.1" />
-    <PackageReference Include="Microsoft.AspNetCore.Mvc" Version="2.0.1" />
-    <PackageReference Include="Microsoft.AspNetCore.Mvc.Abstractions" Version="2.0.1" />
-    <PackageReference Include="Microsoft.AspNetCore.Mvc.Core" Version="2.0.1" />
-    <PackageReference Include="Microsoft.AspNetCore.Mvc.Razor" Version="2.0.1" />
+    <PackageReference Include="Microsoft.AspNetCore.Mvc" Version="2.0.2" />
+    <PackageReference Include="Microsoft.AspNetCore.Mvc.Abstractions" Version="2.0.2" />
+    <PackageReference Include="Microsoft.AspNetCore.Mvc.Core" Version="2.0.2" />
+    <PackageReference Include="Microsoft.AspNetCore.Mvc.Razor" Version="2.0.2" />
     <PackageReference Include="Microsoft.AspNetCore.ResponseCompression" Version="2.0.1" />
     <PackageReference Include="Microsoft.AspNetCore.Server.IISIntegration" Version="2.0.1" />
     <PackageReference Include="Microsoft.AspNetCore.Server.Kestrel" Version="2.0.1" />
@@ -56,9 +56,9 @@
     <PackageReference Include="Microsoft.Extensions.Logging.Console" Version="2.0.0" />
     <PackageReference Include="Microsoft.Extensions.Logging.Debug" Version="2.0.0" />
     <PackageReference Include="Microsoft.Extensions.Options.ConfigurationExtensions" Version="2.0.0" />
-    <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="2.0.1" />
+    <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="2.0.2" />
     <PackageReference Include="NETStandard.Library" Version="2.0.1" />
-    <PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="2.0.0" />
+    <PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="2.0.1" />
     <PackageReference Include="SonarAnalyzer.CSharp" Version="6.7.1.4347" />
     <PackageReference Include="Swashbuckle.SwaggerGen" Version="6.0.0-beta901" />
     <PackageReference Include="Swashbuckle.SwaggerUi" Version="6.0.0-beta901" />
