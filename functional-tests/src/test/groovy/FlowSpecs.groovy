@@ -22,7 +22,7 @@ class FlowSpecs extends GebReportingSpec {
     def "Login Once"(){
         when: "I go to the HETS URL "
             def env = System.getenv()
-            go baseUrl
+            to LoginPage
         and: "I log in on the SiteMinder Login page"    
             at LoginPage
             println env
@@ -33,6 +33,7 @@ class FlowSpecs extends GebReportingSpec {
             passWord.value(env['TEST_PASSWORD'])
 
             logIn.click()
+            to HomePage //force to Homepage
         then: "I will arrive at the HETS Home page"    
             at HomePage
     }
