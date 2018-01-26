@@ -7,7 +7,6 @@ using HETSAPI.Models;
 using HETSAPI.ViewModels;
 using HETSAPI.Mappings;
 using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc.ViewFeatures;
 using Microsoft.Extensions.Configuration;
 
 namespace HETSAPI.Services.Impl
@@ -70,7 +69,7 @@ namespace HETSAPI.Services.Impl
         /// <response code="200">OK</response>
         public virtual IActionResult EquipmentGetAsync()
         {
-            List<Equipment> result = _context.Equipments
+            List<Equipment> result = _context.Equipments.AsNoTracking()
                     .Include(x => x.LocalArea.ServiceArea.District.Region)
                     .Include(x => x.DistrictEquipmentType)
                     .Include(x => x.DumpTruck)
@@ -147,7 +146,7 @@ namespace HETSAPI.Services.Impl
 
             if (exists)
             {
-                Equipment result = _context.Equipments
+                Equipment result = _context.Equipments.AsNoTracking()
                     .Include(x => x.LocalArea.ServiceArea.District.Region)
                     .Include(x => x.DistrictEquipmentType)
                         .ThenInclude(d => d.EquipmentType)
@@ -177,7 +176,7 @@ namespace HETSAPI.Services.Impl
 
             if (exists)
             {
-                Equipment equipment = _context.Equipments
+                Equipment equipment = _context.Equipments.AsNoTracking()
                     .Include(x => x.LocalArea.ServiceArea.District.Region)
                     .Include(x => x.DistrictEquipmentType)
                     .ThenInclude(d => d.EquipmentType)
@@ -231,7 +230,7 @@ namespace HETSAPI.Services.Impl
                         _context.UpdateBlocksFromEquipment(item,  _configuration);
                     }
 
-                    Equipment result = _context.Equipments
+                    Equipment result = _context.Equipments.AsNoTracking()
                         .Include(x => x.LocalArea.ServiceArea.District.Region)
                         .Include(x => x.DistrictEquipmentType)
                         .Include(x => x.DumpTruck)
@@ -318,7 +317,7 @@ namespace HETSAPI.Services.Impl
                 // return the full object for the client side code
                 int itemId = item.Id;
 
-                Equipment result = _context.Equipments
+                Equipment result = _context.Equipments.AsNoTracking()
                     .Include(x => x.LocalArea.ServiceArea.District.Region)
                     .Include(x => x.DistrictEquipmentType)
                     .Include(x => x.DumpTruck)
@@ -359,7 +358,7 @@ namespace HETSAPI.Services.Impl
             // **********************************************************************
             int? districtId = _context.GetDistrictIdByUserId(GetCurrentUserId()).Single();
 
-            IQueryable<Equipment> data = _context.Equipments
+            IQueryable<Equipment> data = _context.Equipments.AsNoTracking()
                 .Where(x => x.LocalArea.ServiceArea.DistrictId.Equals(districtId))
                 .Include(x => x.LocalArea)
                 .Include(x => x.DistrictEquipmentType)
@@ -776,7 +775,7 @@ namespace HETSAPI.Services.Impl
         #region Equiment Attachments
 
         /// <summary>
-        /// Get attachments associated with an equipment record
+        /// Get "equipment attachments" associated with an equipment record
         /// </summary>
         /// <param name="id">id of Equipment to fetch EquipmentAttachments for</param>
         /// <response code="200">OK</response>
@@ -796,6 +795,10 @@ namespace HETSAPI.Services.Impl
             // record not found
             return new ObjectResult(new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-01", _configuration)));
         }
+
+        #endregion
+
+        #region Attachments
 
         /// <summary>
         /// Get attachments associated with an equipment record
@@ -823,6 +826,168 @@ namespace HETSAPI.Services.Impl
             return new ObjectResult(new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-01", _configuration)));
         }
 
+
+        #endregion
+
+        #region Equipment Note Records
+
+        /// <summary>
+        /// Get note records associated with equipment
+        /// </summary>
+        /// <param name="id">id of Equipment to fetch Notes for</param>
+        /// <response code="200">OK</response>
+        public virtual IActionResult EquipmentIdNotesGetAsync(int id)
+        {
+            bool exists = _context.Equipments.Any(a => a.Id == id);
+
+            if (exists)
+            {
+                Equipment equipment = _context.Equipments.AsNoTracking()
+                    .Include(x => x.Notes)
+                    .First(x => x.Id == id);
+
+                List<Note> notes = new List<Note>();
+
+                foreach (Note note in equipment.Notes)
+                {
+                    if (note.IsNoLongerRelevant == false)
+                    {
+                        notes.Add(note);
+                    }
+                }
+
+                return new ObjectResult(new HetsResponse(notes));
+            }
+
+            // record not found
+            return new ObjectResult(new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-01", _configuration)));
+        }
+
+        /// <summary>
+        /// Update or create a note associated with a equipment
+        /// </summary>
+        /// <remarks>Update a Equipment&#39;s Notes</remarks>
+        /// <param name="id">id of Equipment to update Notes for</param>
+        /// <param name="item">Equipment Note</param>
+        /// <response code="200">OK</response>
+        public virtual IActionResult EquipmentIdNotesPostAsync(int id, Note item)
+        {
+            bool exists = _context.Equipments.Any(a => a.Id == id);
+
+            if (exists && item != null)
+            {
+                Equipment equipment = _context.Equipments
+                    .Include(x => x.Notes)
+                    .First(x => x.Id == id);
+
+                // ******************************************************************
+                // add or update note
+                // ******************************************************************
+                if (item.Id > 0)
+                {
+                    int noteIndex = equipment.Notes.FindIndex(a => a.Id == item.Id);
+
+                    if (noteIndex < 0)
+                    {
+                        // record not found
+                        return new ObjectResult(new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-01", _configuration)));
+                    }
+
+                    equipment.Notes[noteIndex].Text = item.Text;
+                    equipment.Notes[noteIndex].IsNoLongerRelevant = item.IsNoLongerRelevant;
+                }
+                else  // add note
+                {
+                    equipment.Notes.Add(item);
+                }
+
+                _context.SaveChanges();
+
+                // *************************************************************
+                // return updated time records
+                // *************************************************************              
+                List<Note> notes = new List<Note>();
+
+                foreach (Note note in equipment.Notes)
+                {
+                    if (note.IsNoLongerRelevant == false)
+                    {
+                        notes.Add(note);
+                    }
+                }
+
+                return new ObjectResult(new HetsResponse(notes));
+            }
+
+            // record not found
+            return new ObjectResult(new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-01", _configuration)));
+        }
+
+        /// <summary>
+        /// Update or create an array of notes associated with a equipment
+        /// </summary>
+        /// <remarks>Update a Equipment&#39;s Notes</remarks>
+        /// <param name="id">id of Equipment to update Notes for</param>
+        /// <param name="items">Array of Equipment Notes</param>
+        /// <response code="200">OK</response>
+        public virtual IActionResult EquipmentIdNotesBulkPostAsync(int id, Note[] items)
+        {
+            bool exists = _context.Equipments.Any(a => a.Id == id);
+
+            if (exists && items != null)
+            {
+                Equipment equipment = _context.Equipments
+                    .Include(x => x.Notes)
+                    .First(x => x.Id == id);
+
+                // process each note
+                foreach (Note item in items)
+                {
+                    // ******************************************************************
+                    // add or update note
+                    // ******************************************************************
+                    if (item.Id > 0)
+                    {
+                        int noteIndex = equipment.Notes.FindIndex(a => a.Id == item.Id);
+
+                        if (noteIndex < 0)
+                        {
+                            // record not found
+                            return new ObjectResult(new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-01", _configuration)));
+                        }
+
+                        equipment.Notes[noteIndex].Text = item.Text;
+                        equipment.Notes[noteIndex].IsNoLongerRelevant = item.IsNoLongerRelevant;
+                    }
+                    else  // add note
+                    {
+                        equipment.Notes.Add(item);
+                    }
+
+                    _context.SaveChanges();
+                }
+
+                _context.SaveChanges();
+
+                // *************************************************************
+                // return updated notes                
+                // *************************************************************
+                List<Note> notes = new List<Note>();
+
+                foreach (Note note in equipment.Notes)
+                {
+                    if (note.IsNoLongerRelevant == false)
+                    {
+                        notes.Add(note);
+                    }
+                }
+
+                return new ObjectResult(new HetsResponse(notes));
+            }
+
+            // record not found
+            return new ObjectResult(new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-01", _configuration)));
+        }
 
         #endregion
     }

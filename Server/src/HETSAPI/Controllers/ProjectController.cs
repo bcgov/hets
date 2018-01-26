@@ -308,7 +308,6 @@ namespace HETSAPI.Controllers
 
         #endregion
 
-
         #region Project Note Records
 
         /// <summary>

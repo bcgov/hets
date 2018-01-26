@@ -53,22 +53,6 @@ namespace HETSAPI.Controllers
         }
 
         /// <summary>
-        /// Get all attachments associated with an equipment record
-        /// </summary>
-        /// <remarks>Returns attachments for a particular Equipment</remarks>
-        /// <param name="id">id of Equipment to fetch attachments for</param>
-        /// <response code="200">OK</response>
-        /// <response code="404">Equipment not found</response>
-        [HttpGet]
-        [Route("/api/equipment/{id}/attachments")]
-        [SwaggerOperation("EquipmentIdAttachmentsGet")]
-        [SwaggerResponse(200, type: typeof(List<AttachmentViewModel>))]
-        public virtual IActionResult EquipmentIdAttachmentsGet([FromRoute]int id)
-        {
-            return _service.EquipmentIdAttachmentsGetAsync(id);
-        }
-
-        /// <summary>
         /// Delete equipment
         /// </summary>
         /// <param name="id">id of Equipment to delete</param>
@@ -80,20 +64,6 @@ namespace HETSAPI.Controllers
         public virtual IActionResult EquipmentIdDeletePost([FromRoute]int id)
         {
             return _service.EquipmentIdDeletePostAsync(id);
-        }
-
-        /// <summary>
-        /// Get all equipment attachments for an equipment record
-        /// </summary>
-        /// <param name="id">id of Equipment to fetch EquipmentAttachments for</param>
-        /// <response code="200">OK</response>
-        [HttpGet]
-        [Route("/api/equipment/{id}/equipmentattachments")]
-        [SwaggerOperation("EquipmentIdEquipmentattachmentsGet")]
-        [SwaggerResponse(200, type: typeof(List<EquipmentAttachment>))]
-        public virtual IActionResult EquipmentIdEquipmentattachmentsGet([FromRoute]int id)
-        {
-            return _service.EquipmentIdEquipmentattachmentsGetAsync(id);
         }
 
         /// <summary>
@@ -110,6 +80,126 @@ namespace HETSAPI.Controllers
         {
             return _service.EquipmentIdGetAsync(id);
         }
+
+        /// <summary>
+        /// Get equipment view model by id
+        /// </summary>
+        /// <param name="id">id of Equipment to fetch EquipmentViewModel for</param>
+        /// <response code="200">OK</response>
+        [HttpGet]
+        [Route("/api/equipment/{id}/view")]
+        [SwaggerOperation("EquipmentIdViewGet")]
+        [SwaggerResponse(200, type: typeof(EquipmentViewModel))]
+        public virtual IActionResult EquipmentIdViewGet([FromRoute]int id)
+        {
+            return _service.EquipmentIdViewGetAsync(id);
+        }
+
+        /// <summary>
+        /// Update equipment
+        /// </summary>
+        /// <param name="id">id of Equipment to update</param>
+        /// <param name="item"></param>
+        /// <response code="200">OK</response>
+        /// <response code="404">Equipment not found</response>
+        [HttpPut]
+        [Route("/api/equipment/{id}")]
+        [SwaggerOperation("EquipmentIdPut")]
+        [SwaggerResponse(200, type: typeof(Equipment))]
+        public virtual IActionResult EquipmentIdPut([FromRoute]int id, [FromBody]Equipment item)
+        {
+            return _service.EquipmentIdPutAsync(id, item);
+        }
+        
+        /// <summary>
+        /// Create equipment
+        /// </summary>
+        /// <param name="item"></param>
+        /// <response code="201">Equipment created</response>
+        [HttpPost]
+        [Route("/api/equipment")]
+        [SwaggerOperation("EquipmentPost")]
+        [SwaggerResponse(200, type: typeof(Equipment))]
+        public virtual IActionResult EquipmentPost([FromBody]Equipment item)
+        {
+            return _service.EquipmentPostAsync(item);
+        }        
+
+        /// <summary>
+        /// Searches Equipment
+        /// </summary>
+        /// <remarks>Used for the equipment search page.</remarks>
+        /// <param name="localareas">Local Areas (comma seperated list of id numbers)</param>
+        /// <param name="types">Equipment Types (comma seperated list of id numbers)</param>
+        /// <param name="equipmentAttachment">Searches equipmentAttachment type</param>
+        /// <param name="owner"></param>
+        /// <param name="status">Status</param>
+        /// <param name="hired">Hired</param>
+        /// <param name="notverifiedsincedate">Not Verified Since Date</param>
+        /// <response code="200">OK</response>
+        [HttpGet]
+        [Route("/api/equipment/search")]
+        [SwaggerOperation("EquipmentSearchGet")]
+        [SwaggerResponse(200, type: typeof(List<EquipmentViewModel>))]
+        public virtual IActionResult EquipmentSearchGet([FromQuery]string localareas, [FromQuery]string types, [FromQuery]string equipmentAttachment, [FromQuery]int? owner, [FromQuery]string status, [FromQuery]bool? hired, [FromQuery]DateTime? notverifiedsincedate)
+        {
+            return _service.EquipmentSearchGetAsync(localareas, types, equipmentAttachment, owner, status, hired, notverifiedsincedate);
+        }
+
+        /// <summary>
+        /// Recalculates seniority
+        /// </summary>
+        /// <remarks>Used to calculate seniority for all database records.</remarks>
+        /// <param name="id">Region to recalculate</param>
+        /// <response code="200">OK</response>
+        [HttpGet]
+        [Route("/api/equipment/{id}/recalcSeniority")]
+        [SwaggerOperation("EquipmentRecalcSeniorityGet")]
+        [RequiresPermission(Permission.ADMIN)]
+        public virtual IActionResult EquipmentRecalcSeniorityGet([FromRoute]int id)
+        {
+            return _service.EquipmentRecalcSeniorityGetAsync(id);
+        }
+
+        #region Equipent Attachment Records
+
+        /// <summary>
+        /// Get all equipment attachments for an equipment record
+        /// </summary>
+        /// <param name="id">id of Equipment to fetch EquipmentAttachments for</param>
+        /// <response code="200">OK</response>
+        [HttpGet]
+        [Route("/api/equipment/{id}/equipmentattachments")]
+        [SwaggerOperation("EquipmentIdEquipmentattachmentsGet")]
+        [SwaggerResponse(200, type: typeof(List<EquipmentAttachment>))]
+        public virtual IActionResult EquipmentIdEquipmentattachmentsGet([FromRoute]int id)
+        {
+            return _service.EquipmentIdEquipmentattachmentsGetAsync(id);
+        }
+
+        #endregion
+
+        #region Attachments
+
+        /// <summary>
+        /// Get all attachments associated with an equipment record
+        /// </summary>
+        /// <remarks>Returns attachments for a particular Equipment</remarks>
+        /// <param name="id">id of Equipment to fetch attachments for</param>
+        /// <response code="200">OK</response>
+        /// <response code="404">Equipment not found</response>
+        [HttpGet]
+        [Route("/api/equipment/{id}/attachments")]
+        [SwaggerOperation("EquipmentIdAttachmentsGet")]
+        [SwaggerResponse(200, type: typeof(List<AttachmentViewModel>))]
+        public virtual IActionResult EquipmentIdAttachmentsGet([FromRoute]int id)
+        {
+            return _service.EquipmentIdAttachmentsGetAsync(id);
+        }
+
+        #endregion
+
+        #region Equipment History Records
 
         /// <summary>
         /// Get equipment history
@@ -144,84 +234,56 @@ namespace HETSAPI.Controllers
             return _service.EquipmentIdHistoryPostAsync(id, item);
         }
 
-        /// <summary>
-        /// Update equipment
-        /// </summary>
-        /// <param name="id">id of Equipment to update</param>
-        /// <param name="item"></param>
-        /// <response code="200">OK</response>
-        /// <response code="404">Equipment not found</response>
-        [HttpPut]
-        [Route("/api/equipment/{id}")]
-        [SwaggerOperation("EquipmentIdPut")]
-        [SwaggerResponse(200, type: typeof(Equipment))]
-        public virtual IActionResult EquipmentIdPut([FromRoute]int id, [FromBody]Equipment item)
-        {
-            return _service.EquipmentIdPutAsync(id, item);
-        }
+        #endregion
+
+        #region Equipment Note Records
 
         /// <summary>
-        /// Get equipment view model by id
+        /// Get note records associated with equipment
         /// </summary>
-        /// <param name="id">id of Equipment to fetch EquipmentViewModel for</param>
+        /// <param name="id">id of Equipment to fetch Notes for</param>
         /// <response code="200">OK</response>
         [HttpGet]
-        [Route("/api/equipment/{id}/view")]
-        [SwaggerOperation("EquipmentIdViewGet")]
-        [SwaggerResponse(200, type: typeof(EquipmentViewModel))]
-        public virtual IActionResult EquipmentIdViewGet([FromRoute]int id)
+        [Route("/api/equipment/{id}/notes")]
+        [SwaggerOperation("EquipmentsIdNotesGet")]
+        [SwaggerResponse(200, type: typeof(List<Note>))]
+        public virtual IActionResult EquipmentIdNotesGet([FromRoute]int id)
         {
-            return _service.EquipmentIdViewGetAsync(id);
+            return _service.EquipmentIdNotesGetAsync(id);
         }
 
         /// <summary>
-        /// Create equipment
+        /// Update or create a note associated with a equipment
         /// </summary>
-        /// <param name="item"></param>
-        /// <response code="201">Equipment created</response>
+        /// <remarks>Update a Equipment&#39;s Notes</remarks>
+        /// <param name="id">id of Equipment to update Notes for</param>
+        /// <param name="item">Equipment Note</param>
+        /// <response code="200">OK</response>
         [HttpPost]
-        [Route("/api/equipment")]
-        [SwaggerOperation("EquipmentPost")]
-        [SwaggerResponse(200, type: typeof(Equipment))]
-        public virtual IActionResult EquipmentPost([FromBody]Equipment item)
+        [Route("/api/equipment/{id}/note")]
+        [SwaggerOperation("EquipmentIdNotePost")]
+        [SwaggerResponse(200, type: typeof(Note))]
+        public virtual IActionResult EquipmentIdNotePost([FromRoute]int id, [FromBody]Note item)
         {
-            return _service.EquipmentPostAsync(item);
+            return _service.EquipmentIdNotesPostAsync(id, item);
         }
 
         /// <summary>
-        /// Recalculates seniority
+        /// pdate or create an array of notes associated with a equipment
         /// </summary>
-        /// <remarks>Used to calculate seniority for all database records.</remarks>
-        /// <param name="id">Region to recalculate</param>
+        /// <remarks>Adds Note Records</remarks>
+        /// <param name="id">id of Equipment to add notes for</param>
+        /// <param name="items">Array of Equipment Notes</param>
         /// <response code="200">OK</response>
-        [HttpGet]
-        [Route("/api/equipment/{id}/recalcSeniority")]
-        [SwaggerOperation("EquipmentRecalcSeniorityGet")]
-        [RequiresPermission(Permission.ADMIN)]
-        public virtual IActionResult EquipmentRecalcSeniorityGet([FromRoute]int id)
+        [HttpPost]
+        [Route("/api/equipment/{id}/notes")]
+        [SwaggerOperation("EquipmentIdNotesBulkPostAsync")]
+        [SwaggerResponse(200, type: typeof(TimeRecord))]
+        public virtual IActionResult EquipmentIdNotesBulkPostAsync([FromRoute]int id, [FromBody]Note[] items)
         {
-            return _service.EquipmentRecalcSeniorityGetAsync(id);
+            return _service.EquipmentIdNotesBulkPostAsync(id, items);
         }
 
-        /// <summary>
-        /// Searches Equipment
-        /// </summary>
-        /// <remarks>Used for the equipment search page.</remarks>
-        /// <param name="localareas">Local Areas (comma seperated list of id numbers)</param>
-        /// <param name="types">Equipment Types (comma seperated list of id numbers)</param>
-        /// <param name="equipmentAttachment">Searches equipmentAttachment type</param>
-        /// <param name="owner"></param>
-        /// <param name="status">Status</param>
-        /// <param name="hired">Hired</param>
-        /// <param name="notverifiedsincedate">Not Verified Since Date</param>
-        /// <response code="200">OK</response>
-        [HttpGet]
-        [Route("/api/equipment/search")]
-        [SwaggerOperation("EquipmentSearchGet")]
-        [SwaggerResponse(200, type: typeof(List<EquipmentViewModel>))]
-        public virtual IActionResult EquipmentSearchGet([FromQuery]string localareas, [FromQuery]string types, [FromQuery]string equipmentAttachment, [FromQuery]int? owner, [FromQuery]string status, [FromQuery]bool? hired, [FromQuery]DateTime? notverifiedsincedate)
-        {
-            return _service.EquipmentSearchGetAsync(localareas, types, equipmentAttachment, owner, status, hired, notverifiedsincedate);
-        }
+        #endregion        
     }
 }

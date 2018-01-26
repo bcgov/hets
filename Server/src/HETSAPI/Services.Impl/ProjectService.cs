@@ -142,7 +142,7 @@ namespace HETSAPI.Services.Impl
         /// <response code="200">OK</response>
         public virtual IActionResult ProjectsGetAsync()
         {
-            List<Project> result = _context.Projects
+            List<Project> result = _context.Projects.AsNoTracking()
                 .Include(x => x.Attachments)
                 .Include(x => x.Contacts)
                 .Include(x => x.History)
@@ -197,7 +197,7 @@ namespace HETSAPI.Services.Impl
 
             if (exists)
             {
-                Project result = _context.Projects
+                Project result = _context.Projects.AsNoTracking()
                     .Include(x => x.Attachments)
                     .Include(x => x.Contacts)
                     .Include(x => x.History)
@@ -559,7 +559,7 @@ namespace HETSAPI.Services.Impl
 
             if (exists)
             {
-                Project project = _context.Projects
+                Project project = _context.Projects.AsNoTracking()
                     .Include(x => x.RentalAgreements)
                         .ThenInclude(e => e.Equipment)
                         .ThenInclude(o => o.Owner)
@@ -588,7 +588,7 @@ namespace HETSAPI.Services.Impl
 
             if (exists)
             {
-                Project project = _context.Projects
+                Project project = _context.Projects.AsNoTracking()
                     .Include(x => x.District.Region)
                     .Include(x => x.Notes)
                     .Include(x => x.Attachments)
@@ -618,45 +618,47 @@ namespace HETSAPI.Services.Impl
             if (exists && item != null)
             {
                 Project project = _context.Projects
-                    .Include(x => x.District.Region)
-                    .Include(x => x.Notes)
-                    .Include(x => x.Attachments)
-                    .Include(x => x.History)
                     .Include(x => x.Contacts)
                     .First(x => x.Id == id);
 
-                // check if this is an update to the contact
-                if (item.Id != 0)
+                // ******************************************************************
+                // add or update contact
+                // ******************************************************************
+                if (item.Id > 0)
                 {
-                    // make sure this contact is associated with the project
-                    bool contactExists = _context.Projects
-                        .Any(x => x.Id == id &&
-                                  x.Contacts.Any(y => y.Id == item.Id));
+                    int contactIndex = project.Contacts.FindIndex(a => a.Id == item.Id);
 
-                    if (!contactExists)
+                    if (contactIndex < 0)
                     {
                         // record not found
                         return new ObjectResult(new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-01", _configuration)));
                     }
 
-                    // update contact
-                    _context.Contacts.Update(item);
+                    project.Contacts[contactIndex].Notes = item.Notes;
+                    project.Contacts[contactIndex].Address1 = item.Address1;
+                    project.Contacts[contactIndex].Address2 = item.Address2;
+                    project.Contacts[contactIndex].City = item.City;
+                    project.Contacts[contactIndex].EmailAddress = item.EmailAddress;
+                    project.Contacts[contactIndex].FaxPhoneNumber = item.FaxPhoneNumber;
+                    project.Contacts[contactIndex].GivenName = item.GivenName;
+                    project.Contacts[contactIndex].MobilePhoneNumber = item.MobilePhoneNumber;
+                    project.Contacts[contactIndex].PostalCode = item.PostalCode;
+                    project.Contacts[contactIndex].Province = item.Province;
+                    project.Contacts[contactIndex].Surname = item.Surname;
+                    project.Contacts[contactIndex].Role = item.Role;
+
+                    if (primary)
+                    {
+                        project.PrimaryContact = item;
+                    }
                 }
-                else //add the contact
+                else  // add note
                 {
-                    item.Id = 0;
-                    _context.Contacts.Add(item);
                     project.Contacts.Add(item);
                 }
-               
-                if (primary)
-                {
-                    project.PrimaryContact = item;
-                }
 
-                _context.Projects.Update(project);
                 _context.SaveChanges();
-
+                
                 return new ObjectResult(new HetsResponse(item));
             }
 
@@ -677,11 +679,7 @@ namespace HETSAPI.Services.Impl
 
             if (exists && items != null)
             {
-                Project project = _context.Projects
-                    .Include(x => x.District.Region)
-                    .Include(x => x.Notes)
-                    .Include(x => x.Attachments)
-                    .Include(x => x.History)
+                Project project = _context.Projects                    
                     .Include(x => x.Contacts)
                     .First(x => x.Id == id);
 
@@ -745,7 +743,7 @@ namespace HETSAPI.Services.Impl
 
             if (exists)
             {
-                Project project = _context.Projects
+                Project project = _context.Projects.AsNoTracking()
                     .Include(x => x.Attachments)
                     .First(a => a.Id == id);
 
@@ -776,7 +774,7 @@ namespace HETSAPI.Services.Impl
 
             if (exists)
             {
-                Project project = _context.Projects
+                Project project = _context.Projects.AsNoTracking()
                     .Include(x => x.History)
                     .First(a => a.Id == id);
 
@@ -1010,6 +1008,5 @@ namespace HETSAPI.Services.Impl
         }
 
         #endregion
-
     }
 }
