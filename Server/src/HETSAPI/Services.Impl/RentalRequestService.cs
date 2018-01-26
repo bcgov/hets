@@ -92,7 +92,7 @@ namespace HETSAPI.Services.Impl
         /// <response code="200">OK</response>
         public virtual IActionResult RentalrequestsGetAsync()
         {
-            List<RentalRequest> result = _context.RentalRequests
+            List<RentalRequest> result = _context.RentalRequests.AsNoTracking()
                 .Include(x => x.RentalRequestAttachments)
                 .Include(x => x.DistrictEquipmentType)
                 .Include(x => x.FirstOnRotationList)
@@ -159,7 +159,7 @@ namespace HETSAPI.Services.Impl
 
             if (exists)
             {
-                RentalRequest result = _context.RentalRequests
+                RentalRequest result = _context.RentalRequests.AsNoTracking()
                     .Include(x => x.RentalRequestAttachments)
                     .Include(x => x.DistrictEquipmentType)
                     .Include(x => x.LocalArea.ServiceArea.District.Region)
@@ -292,7 +292,7 @@ namespace HETSAPI.Services.Impl
                 _context.SaveChanges();
 
                 // get the complete and updated rental request
-                rentalRequest = _context.RentalRequests
+                rentalRequest = _context.RentalRequests.AsNoTracking()
                     .Include(x => x.FirstOnRotationList)
                     .Include(x => x.RentalRequestRotationList)
                         .ThenInclude(y => y.Equipment)
@@ -338,7 +338,7 @@ namespace HETSAPI.Services.Impl
                 _context.SaveChanges();
 
                 // get the complete and updated rental request
-                rentalRequest = _context.RentalRequests
+                rentalRequest = _context.RentalRequests.AsNoTracking()
                     .Include(x => x.FirstOnRotationList)
                     .Include(x => x.RentalRequestRotationList)
                         .ThenInclude(y => y.Equipment)
@@ -370,7 +370,7 @@ namespace HETSAPI.Services.Impl
         {
             int?[] localareasArray = ParseIntArray(localareas);
 
-            IQueryable<RentalRequest> data = _context.RentalRequests
+            IQueryable<RentalRequest> data = _context.RentalRequests.AsNoTracking()
                     .Include(x => x.LocalArea.ServiceArea.District.Region)
                     .Include(x => x.DistrictEquipmentType.EquipmentType)
                     .Include(x => x.Project.PrimaryContact)
@@ -1166,6 +1166,168 @@ namespace HETSAPI.Services.Impl
                     item.RentalAgreement = _context.RentalAgreements.FirstOrDefault(a => a.Id == item.RentalAgreement.Id);
                 }
             }
+        }
+
+        #endregion
+
+        #region Rental Request Note Records
+
+        /// <summary>
+        /// Get note records associated with rental request
+        /// </summary>
+        /// <param name="id">id of Rental Request to fetch Notes for</param>
+        /// <response code="200">OK</response>
+        public virtual IActionResult RentalrequestsIdNotesGetAsync(int id)
+        {
+            bool exists = _context.RentalRequests.Any(a => a.Id == id);
+
+            if (exists)
+            {
+                RentalRequest rentalRequest = _context.RentalRequests.AsNoTracking()
+                    .Include(x => x.Notes)
+                    .First(x => x.Id == id);
+
+                List<Note> notes = new List<Note>();
+
+                foreach (Note note in rentalRequest.Notes)
+                {
+                    if (note.IsNoLongerRelevant == false)
+                    {
+                        notes.Add(note);
+                    }
+                }
+
+                return new ObjectResult(new HetsResponse(notes));
+            }
+
+            // record not found
+            return new ObjectResult(new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-01", _configuration)));
+        }
+
+        /// <summary>
+        /// Update or create a note associated with a rental request
+        /// </summary>
+        /// <remarks>Update a Rental Request&#39;s Notes</remarks>
+        /// <param name="id">id of Rental Request to update Notes for</param>
+        /// <param name="item">Rental Request Note</param>
+        /// <response code="200">OK</response>
+        public virtual IActionResult RentalrequestsIdNotesPostAsync(int id, Note item)
+        {
+            bool exists = _context.RentalRequests.Any(a => a.Id == id);
+
+            if (exists && item != null)
+            {
+                RentalRequest rentalRequest = _context.RentalRequests
+                    .Include(x => x.Notes)
+                    .First(x => x.Id == id);
+
+                // ******************************************************************
+                // add or update note
+                // ******************************************************************
+                if (item.Id > 0)
+                {
+                    int noteIndex = rentalRequest.Notes.FindIndex(a => a.Id == item.Id);
+
+                    if (noteIndex < 0)
+                    {
+                        // record not found
+                        return new ObjectResult(new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-01", _configuration)));
+                    }
+
+                    rentalRequest.Notes[noteIndex].Text = item.Text;
+                    rentalRequest.Notes[noteIndex].IsNoLongerRelevant = item.IsNoLongerRelevant;
+                }
+                else  // add note
+                {
+                    rentalRequest.Notes.Add(item);
+                }
+
+                _context.SaveChanges();
+
+                // *************************************************************
+                // return updated time records
+                // *************************************************************              
+                List<Note> notes = new List<Note>();
+
+                foreach (Note note in rentalRequest.Notes)
+                {
+                    if (note.IsNoLongerRelevant == false)
+                    {
+                        notes.Add(note);
+                    }
+                }
+
+                return new ObjectResult(new HetsResponse(notes));
+            }
+
+            // record not found
+            return new ObjectResult(new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-01", _configuration)));
+        }
+
+        /// <summary>
+        /// Update or create an array of notes associated with a rental request
+        /// </summary>
+        /// <remarks>Update a Rental Request&#39;s Notes</remarks>
+        /// <param name="id">id of Rental Request to update Notes for</param>
+        /// <param name="items">Array of Rental Request Notes</param>
+        /// <response code="200">OK</response>
+        public virtual IActionResult RentalrequestsIdNotesBulkPostAsync(int id, Note[] items)
+        {
+            bool exists = _context.RentalRequests.Any(a => a.Id == id);
+
+            if (exists && items != null)
+            {
+                RentalRequest rentalRequest = _context.RentalRequests
+                    .Include(x => x.Notes)
+                    .First(x => x.Id == id);
+
+                // process each note
+                foreach (Note item in items)
+                {
+                    // ******************************************************************
+                    // add or update note
+                    // ******************************************************************
+                    if (item.Id > 0)
+                    {
+                        int noteIndex = rentalRequest.Notes.FindIndex(a => a.Id == item.Id);
+
+                        if (noteIndex < 0)
+                        {
+                            // record not found
+                            return new ObjectResult(new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-01", _configuration)));
+                        }
+
+                        rentalRequest.Notes[noteIndex].Text = item.Text;
+                        rentalRequest.Notes[noteIndex].IsNoLongerRelevant = item.IsNoLongerRelevant;
+                    }
+                    else  // add note
+                    {
+                        rentalRequest.Notes.Add(item);
+                    }
+
+                    _context.SaveChanges();
+                }
+
+                _context.SaveChanges();
+
+                // *************************************************************
+                // return updated notes                
+                // *************************************************************
+                List<Note> notes = new List<Note>();
+
+                foreach (Note note in rentalRequest.Notes)
+                {
+                    if (note.IsNoLongerRelevant == false)
+                    {
+                        notes.Add(note);
+                    }
+                }
+
+                return new ObjectResult(new HetsResponse(notes));
+            }
+
+            // record not found
+            return new ObjectResult(new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-01", _configuration)));
         }
 
         #endregion

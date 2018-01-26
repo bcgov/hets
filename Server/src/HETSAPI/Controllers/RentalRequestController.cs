@@ -264,5 +264,55 @@ namespace HETSAPI.Controllers
         }
 
         #endregion
+
+        #region Rentalrequest Note Records
+
+        /// <summary>
+        /// Get note records associated with rental request
+        /// </summary>
+        /// <param name="id">id of Rental Request to fetch Notes for</param>
+        /// <response code="200">OK</response>
+        [HttpGet]
+        [Route("/api/rentalrequests/{id}/notes")]
+        [SwaggerOperation("RentalrequestsIdNotesGet")]
+        [SwaggerResponse(200, type: typeof(List<Note>))]
+        public virtual IActionResult RentalrequestsIdNotesGet([FromRoute]int id)
+        {
+            return _service.RentalrequestsIdNotesGetAsync(id);
+        }
+
+        /// <summary>
+        /// Update or create a note associated with a rental request
+        /// </summary>
+        /// <remarks>Update a Rental Request&#39;s Notes</remarks>
+        /// <param name="id">id of Rental Request to update Notes for</param>
+        /// <param name="item">Rental Request Note</param>
+        /// <response code="200">OK</response>
+        [HttpPost]
+        [Route("/api/rentalrequests/{id}/note")]
+        [SwaggerOperation("RentalrequestsIdNotePost")]
+        [SwaggerResponse(200, type: typeof(Note))]
+        public virtual IActionResult RentalrequestsIdNotePost([FromRoute]int id, [FromBody]Note item)
+        {
+            return _service.RentalrequestsIdNotesPostAsync(id, item);
+        }
+
+        /// <summary>
+        /// Update or create an array of notes associated with a rental request
+        /// </summary>
+        /// <remarks>Adds Note Records</remarks>
+        /// <param name="id">id of Rental Request to add notes for</param>
+        /// <param name="items">Array of Rental Request Notes</param>
+        /// <response code="200">OK</response>
+        [HttpPost]
+        [Route("/api/rentalrequests/{id}/notes")]
+        [SwaggerOperation("RentalrequestsIdNotesBulkPostAsync")]
+        [SwaggerResponse(200, type: typeof(TimeRecord))]
+        public virtual IActionResult RentalrequestsIdNotesBulkPostAsync([FromRoute]int id, [FromBody]Note[] items)
+        {
+            return _service.RentalrequestsIdNotesBulkPostAsync(id, items);
+        }
+
+        #endregion        
     }
 }

@@ -117,7 +117,7 @@ namespace HETSAPI.Services.Impl
         /// <response code="200">OK</response>
         public virtual IActionResult OwnersGetAsync()
         {
-            List<Owner> result = _context.Owners
+            List<Owner> result = _context.Owners.AsNoTracking()
                 .Include(x => x.LocalArea.ServiceArea.District.Region)
                 .ToList();
 
@@ -125,23 +125,61 @@ namespace HETSAPI.Services.Impl
         }
 
         /// <summary>
-        /// Get all attachments associated with an owner
+        /// Delete owner
         /// </summary>
-        /// <remarks>Returns attachments for a particular Owner</remarks>
-        /// <param name="id">id of Owner to fetch attachments for</param>
+        /// <param name="id">id of Owner to delete</param>
         /// <response code="200">OK</response>
         /// <response code="404">Owner not found</response>
-        public virtual IActionResult OwnersIdAttachmentsGetAsync(int id)
+        public virtual IActionResult OwnersIdDeletePostAsync(int id)
         {
             bool exists = _context.Owners.Any(a => a.Id == id);
 
             if (exists)
             {
-                Owner owner = _context.Owners
-                    .Include(x => x.Attachments)
-                    .First(a => a.Id == id);
+                Owner item = _context.Owners.First(a => a.Id == id);
 
-                List<AttachmentViewModel> result = MappingExtensions.GetAttachmentListAsViewModel(owner.Attachments);
+                if (item != null)
+                {
+                    _context.Owners.Remove(item);
+
+                    // save the changes
+                    _context.SaveChanges();
+                }
+
+                return new ObjectResult(new HetsResponse(item));
+            }
+
+            // record not found
+            return new ObjectResult(new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-01", _configuration)));
+        }
+
+        /// <summary>
+        /// Get owner by id
+        /// </summary>
+        /// <param name="id">id of Owner to fetch</param>
+        /// <response code="200">OK</response>
+        /// <response code="404">Owner not found</response>
+        public virtual IActionResult OwnersIdGetAsync(int id)
+        {
+            bool exists = _context.Owners.Any(a => a.Id == id);
+
+            if (exists)
+            {
+                Owner result = _context.Owners.AsNoTracking()
+                    .Include(x => x.LocalArea.ServiceArea.District.Region)
+                    .Include(x => x.EquipmentList).ThenInclude(y => y.LocalArea.ServiceArea.District.Region)
+                    .Include(x => x.EquipmentList).ThenInclude(y => y.DistrictEquipmentType)
+                    .Include(x => x.EquipmentList).ThenInclude(y => y.DumpTruck)
+                    .Include(x => x.EquipmentList).ThenInclude(y => y.Owner)
+                    .Include(x => x.EquipmentList).ThenInclude(y => y.EquipmentAttachments)
+                    .Include(x => x.EquipmentList).ThenInclude(y => y.Notes)
+                    .Include(x => x.EquipmentList).ThenInclude(y => y.Attachments)
+                    .Include(x => x.EquipmentList).ThenInclude(y => y.History)
+                    .Include(x => x.Notes)
+                    .Include(x => x.Attachments)
+                    .Include(x => x.History)
+                    .Include(x => x.Contacts)
+                    .First(a => a.Id == id);
 
                 return new ObjectResult(new HetsResponse(result));
             }
@@ -149,6 +187,304 @@ namespace HETSAPI.Services.Impl
             // record not found
             return new ObjectResult(new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-01", _configuration)));
         }
+        
+        /// <summary>
+        /// Update owner
+        /// </summary>
+        /// <param name="id">id of Owner to update</param>
+        /// <param name="item"></param>
+        /// <response code="200">OK</response>
+        /// <response code="404">Owner not found</response>
+        public virtual IActionResult OwnersIdPutAsync(int id, Owner item)
+        {
+            if (item != null)
+            {
+                AdjustRecord(item);
+
+                // we specifically do not want to change contacts from this service
+                item.Contacts = GetOwnerContacts(id);
+
+                bool exists = _context.Owners.Any(a => a.Id == id);
+
+                if (exists && id == item.Id)
+                {
+                    _context.Owners.Update(item);
+
+                    // save the changes
+                    _context.SaveChanges();
+
+                    return new ObjectResult(new HetsResponse(item));
+                }
+
+                // record not found
+                return new ObjectResult(new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-01", _configuration)));
+            }
+
+            // record not found
+            return new ObjectResult(new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-01", _configuration)));
+        }
+
+        /// <summary>
+        /// Returns contacts for a specific owner
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
+        private List<Contact> GetOwnerContacts(int id)
+        {
+            List<Contact> result = null;
+
+            Owner owner = _context.Owners
+                .Include(x => x.Contacts)
+                .FirstOrDefault(x => x.Id == id);
+
+            if (owner != null)
+            {
+                result = owner.Contacts;
+                _context.Entry(owner).State = EntityState.Detached;
+            }
+
+            return result;
+        }
+
+        /// <summary>
+        /// Create owner
+        /// </summary>
+        /// <param name="item"></param>
+        /// <response code="201">Owner created</response>
+        public virtual IActionResult OwnersPostAsync(Owner item)
+        {
+            AdjustRecord(item);
+
+            bool exists = _context.Owners.Any(a => a.Id == item.Id);
+
+            if (exists)
+            {
+                _context.Owners.Update(item);
+            }
+            else
+            {
+                // record not found
+                _context.Owners.Add(item);
+            }
+
+            // save the changes
+            _context.SaveChanges();
+
+            return new ObjectResult(new HetsResponse(item));
+        }
+
+        /// <summary>
+        /// Search Owners
+        /// </summary>
+        /// <remarks>Used for the owner search page.</remarks>
+        /// <param name="localAreas">Local Areas (array of id numbers)</param>
+        /// <param name="equipmentTypes">Equipment Types (array of id numbers)</param>
+        /// <param name="owner"></param>
+        /// <param name="status">Status</param>
+        /// <param name="hired">Hired</param>
+        /// <response code="200">OK</response>
+        public virtual IActionResult OwnersSearchGetAsync(string localAreas, string equipmentTypes, int? owner, string status, bool? hired)
+        {
+            int?[] localAreasArray = ParseIntArray(localAreas);
+            int?[] equipmentTypesArray = ParseIntArray(equipmentTypes);
+
+            // default search results must be limited to user
+            int? districtId = _context.GetDistrictIdByUserId(GetCurrentUserId()).Single();
+
+            IQueryable<Owner> data = _context.Owners.AsNoTracking()
+                    .Where(x => x.LocalArea.ServiceArea.DistrictId.Equals(districtId))
+                    .Include(x => x.LocalArea.ServiceArea.District.Region)
+                    .Include(x => x.Attachments)
+                    .Include(x => x.Contacts)
+                    .Select(x => x);            
+
+            if (localAreasArray != null && localAreasArray.Length > 0)
+            {
+                data = data.Where(x => localAreasArray.Contains(x.LocalArea.Id));
+            }
+
+            if (status != null)
+            {
+                data = data.Where(x => String.Equals(x.Status, status, StringComparison.CurrentCultureIgnoreCase));
+            }
+
+            if (hired == true)
+            {
+                IQueryable<int?> hiredOwnersQuery = _context.RentalAgreements
+                                    .Where(agreement => agreement.Status == "Active")
+                                    .Join(
+                                        _context.Equipments,
+                                        agreement => agreement.EquipmentId,
+                                        equipment => equipment.Id,
+                                        (agreement, equipment) => new
+                                        {
+                                            tempAgreement = agreement,
+                                            tempEqiupment = equipment
+                                        }
+                                    )
+                                    .Where(projection => projection.tempEqiupment.OwnerId != null)
+                                    .Select(projection => projection.tempEqiupment.OwnerId)
+                                    .Distinct();
+
+                data = data.Where(o => hiredOwnersQuery.Contains(o.Id));
+            }
+
+            if (equipmentTypesArray != null)
+            {
+                var equipmentTypeQuery = _context.Equipments
+                    .Where(x => equipmentTypesArray.Contains(x.DistrictEquipmentTypeId))
+                    .Select(x => x.OwnerId)
+                    .Distinct();
+
+                data = data.Where(x => equipmentTypeQuery.Contains(x.Id));
+            }
+
+            if (owner != null)
+            {
+                data = data.Where(x => x.Id == owner);
+            }
+
+            List<Owner> result = data.ToList();
+            return new ObjectResult(new HetsResponse(result));
+        }
+
+        #region Owner Equipment Records
+
+        /// <summary>
+        /// Get equipment associated with an owner
+        /// </summary>
+        /// <remarks>Gets an Owner&#39;s Equipment</remarks>
+        /// <param name="id">id of Owner to fetch Equipment for</param>
+        /// <response code="200">OK</response>
+        public virtual IActionResult OwnersIdEquipmentGetAsync(int id)
+        {
+            bool exists = _context.Owners.Any(a => a.Id == id);
+
+            if (exists)
+            {
+                Owner owner = _context.Owners.AsNoTracking()
+                    .Include(x => x.EquipmentList)
+                        .ThenInclude(x => x.LocalArea.ServiceArea.District.Region)
+                    .Include(x => x.EquipmentList)
+                        .ThenInclude(x => x.DistrictEquipmentType)
+                    .Include(x => x.EquipmentList)
+                        .ThenInclude(x => x.DumpTruck)
+                    .Include(x => x.EquipmentList)
+                        .ThenInclude(x => x.Owner)
+                    .Include(x => x.EquipmentList)
+                        .ThenInclude(x => x.EquipmentAttachments)
+                    .Include(x => x.EquipmentList)
+                        .ThenInclude(x => x.Notes)
+                    .Include(x => x.EquipmentList)
+                        .ThenInclude(x => x.Attachments)
+                    .Include(x => x.EquipmentList)
+                        .ThenInclude(x => x.History)
+                    .First(a => a.Id == id);
+
+                return new ObjectResult(owner.EquipmentList);
+            }
+
+            // record not found
+            return new ObjectResult(new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-01", _configuration)));
+        }
+
+        /// <summary>
+        /// Update equipment associated with an owner
+        /// </summary>
+        /// <remarks>Replaces an Owner&#39;s Equipment</remarks>
+        /// <param name="id">id of Owner to replace Equipment for</param>
+        /// <param name="items">Replacement Owner Equipment.</param>
+        /// <response code="200">OK</response>
+        public virtual IActionResult OwnersIdEquipmentPutAsync(int id, Equipment[] items)
+        {
+            bool exists = _context.Owners.Any(a => a.Id == id);
+
+            if (exists && items != null)
+            {
+                Owner owner = _context.Owners
+                    .Include(x => x.LocalArea.ServiceArea.District.Region)
+                    .Include(x => x.EquipmentList)
+                    .ThenInclude(y => y.DistrictEquipmentType)
+                    .Include(x => x.EquipmentList)
+                    .ThenInclude(y => y.Owner)
+                    .Include(x => x.Notes)
+                    .Include(x => x.Attachments)
+                    .Include(x => x.History)
+                    .Include(x => x.Contacts)
+                    .First(x => x.Id == id);
+
+                // adjust the incoming list
+                for (int i = 0; i < items.Count(); i++)
+                {
+                    Equipment item = items[i];
+
+                    if (item != null)
+                    {
+                        DateTime lastVerifiedDate = item.LastVerifiedDate;
+
+                        bool equipmentExists = _context.Equipments.Any(x => x.Id == item.Id);
+
+                        if (equipmentExists)
+                        {
+                            items[i] = _context.Equipments
+                                .Include(x => x.LocalArea.ServiceArea.District.Region)
+                                .Include(x => x.DistrictEquipmentType)
+                                .Include(x => x.DumpTruck)
+                                .Include(x => x.Owner)
+                                .Include(x => x.EquipmentAttachments)
+                                .Include(x => x.Notes)
+                                .Include(x => x.Attachments)
+                                .Include(x => x.History)
+                                .First(x => x.Id == item.Id);
+
+                            if (items[i].LastVerifiedDate != lastVerifiedDate)
+                            {
+                                items[i].LastVerifiedDate = lastVerifiedDate;
+                                _context.Equipments.Update(items[i]);
+                            }
+                        }
+                        else
+                        {
+                            _context.Add(item);
+                            items[i] = item;
+                        }
+                    }
+                }
+
+                // remove equipment that are no longer attached
+                List<Equipment> equipmentToRemove = new List<Equipment>();
+
+                foreach (Equipment equipment in owner.EquipmentList)
+                {
+                    if (equipment != null && items.All(x => x.Id != equipment.Id))
+                    {
+                        equipmentToRemove.Add(equipment);
+                    }
+                }
+
+                if (equipmentToRemove.Count > 0)
+                {
+                    foreach (Equipment equipment in equipmentToRemove)
+                    {
+                        owner.EquipmentList.Remove(equipment);
+                    }
+                }
+
+                // replace Equipment List.
+                owner.EquipmentList = items.ToList();
+                _context.Owners.Update(owner);
+                _context.SaveChanges();
+
+                return new ObjectResult(new HetsResponse(items));
+            }
+
+            // record not found
+            return new ObjectResult(new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-01", _configuration)));
+        }
+
+        #endregion
+
+        #region Owner Contacts 
 
         /// <summary>
         /// Get all contacts associated with an owner
@@ -274,34 +610,39 @@ namespace HETSAPI.Services.Impl
             return new ObjectResult(new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-01", _configuration)));
         }
 
+        #endregion
+
+        #region Onwer Attachments
+
         /// <summary>
-        /// Delete owner
+        /// Get all attachments associated with an owner
         /// </summary>
-        /// <param name="id">id of Owner to delete</param>
+        /// <remarks>Returns attachments for a particular Owner</remarks>
+        /// <param name="id">id of Owner to fetch attachments for</param>
         /// <response code="200">OK</response>
         /// <response code="404">Owner not found</response>
-        public virtual IActionResult OwnersIdDeletePostAsync(int id)
+        public virtual IActionResult OwnersIdAttachmentsGetAsync(int id)
         {
             bool exists = _context.Owners.Any(a => a.Id == id);
 
             if (exists)
             {
-                Owner item = _context.Owners.First(a => a.Id == id);
+                Owner owner = _context.Owners.AsNoTracking()
+                    .Include(x => x.Attachments)
+                    .First(a => a.Id == id);
 
-                if (item != null)
-                {
-                    _context.Owners.Remove(item);
+                List<AttachmentViewModel> result = MappingExtensions.GetAttachmentListAsViewModel(owner.Attachments);
 
-                    // save the changes
-                    _context.SaveChanges();
-                }
-
-                return new ObjectResult(new HetsResponse(item));
+                return new ObjectResult(new HetsResponse(result));
             }
 
             // record not found
             return new ObjectResult(new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-01", _configuration)));
         }
+
+        #endregion
+
+        #region Owner History
 
         ///  <summary>
         ///  Get history associated with an owner
@@ -317,7 +658,7 @@ namespace HETSAPI.Services.Impl
 
             if (exists)
             {
-                Owner owner = _context.Owners
+                Owner owner = _context.Owners.AsNoTracking()
                     .Include(x => x.History)
                     .First(a => a.Id == id);
 
@@ -363,7 +704,7 @@ namespace HETSAPI.Services.Impl
 
             if (exists)
             {
-                Owner owner = _context.Owners
+                Owner owner = _context.Owners.AsNoTracking()
                     .Include(x => x.History)
                     .First(a => a.Id == id);
 
@@ -388,38 +729,36 @@ namespace HETSAPI.Services.Impl
             return new ObjectResult(new HetsResponse(result));
         }
 
+        #endregion
+
+        #region Owner Note Records
+
         /// <summary>
-        /// Get equipment associated with an owner
+        /// Get note records associated with owner
         /// </summary>
-        /// <remarks>Gets an Owner&#39;s Equipment</remarks>
-        /// <param name="id">id of Owner to fetch Equipment for</param>
+        /// <param name="id">id of Owner to fetch Notes for</param>
         /// <response code="200">OK</response>
-        public virtual IActionResult OwnersIdEquipmentGetAsync(int id)
+        public virtual IActionResult OwnersIdNotesGetAsync(int id)
         {
             bool exists = _context.Owners.Any(a => a.Id == id);
 
             if (exists)
             {
-                Owner owner = _context.Owners
-                    .Include(x => x.EquipmentList)
-                        .ThenInclude(x => x.LocalArea.ServiceArea.District.Region)
-                    .Include(x => x.EquipmentList)
-                        .ThenInclude(x => x.DistrictEquipmentType)
-                    .Include(x => x.EquipmentList)
-                        .ThenInclude(x => x.DumpTruck)
-                    .Include(x => x.EquipmentList)
-                        .ThenInclude(x => x.Owner)
-                    .Include(x => x.EquipmentList)
-                        .ThenInclude(x => x.EquipmentAttachments)
-                    .Include(x => x.EquipmentList)
-                        .ThenInclude(x => x.Notes)
-                    .Include(x => x.EquipmentList)
-                        .ThenInclude(x => x.Attachments)
-                    .Include(x => x.EquipmentList)
-                        .ThenInclude(x => x.History)
-                    .First(a => a.Id == id);
+                Owner owner = _context.Owners.AsNoTracking()
+                    .Include(x => x.Notes)
+                    .First(x => x.Id == id);
 
-                return new ObjectResult(owner.EquipmentList);
+                List<Note> notes = new List<Note>();
+
+                foreach (Note note in owner.Notes)
+                {
+                    if (note.IsNoLongerRelevant == false)
+                    {
+                        notes.Add(note);
+                    }
+                }
+
+                return new ObjectResult(new HetsResponse(notes));
             }
 
             // record not found
@@ -427,292 +766,131 @@ namespace HETSAPI.Services.Impl
         }
 
         /// <summary>
-        /// Update equipment associated with an owner
+        /// Update or create a note associated with a owner
         /// </summary>
-        /// <remarks>Replaces an Owner&#39;s Equipment</remarks>
-        /// <param name="id">id of Owner to replace Equipment for</param>
-        /// <param name="items">Replacement Owner Equipment.</param>
+        /// <remarks>Update a Owner&#39;s Notes</remarks>
+        /// <param name="id">id of Owner to update Notes for</param>
+        /// <param name="item">Owner Note</param>
         /// <response code="200">OK</response>
-        public virtual IActionResult OwnersIdEquipmentPutAsync(int id, Equipment[] items)
+        public virtual IActionResult OwnersIdNotesPostAsync(int id, Note item)
+        {
+            bool exists = _context.Owners.Any(a => a.Id == id);
+
+            if (exists && item != null)
+            {
+                Owner owner = _context.Owners
+                    .Include(x => x.Notes)
+                    .First(x => x.Id == id);
+
+                // ******************************************************************
+                // add or update note
+                // ******************************************************************
+                if (item.Id > 0)
+                {
+                    int noteIndex = owner.Notes.FindIndex(a => a.Id == item.Id);
+
+                    if (noteIndex < 0)
+                    {
+                        // record not found
+                        return new ObjectResult(new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-01", _configuration)));
+                    }
+
+                    owner.Notes[noteIndex].Text = item.Text;
+                    owner.Notes[noteIndex].IsNoLongerRelevant = item.IsNoLongerRelevant;
+                }
+                else  // add note
+                {
+                    owner.Notes.Add(item);
+                }
+
+                _context.SaveChanges();
+
+                // *************************************************************
+                // return updated time records
+                // *************************************************************              
+                List<Note> notes = new List<Note>();
+
+                foreach (Note note in owner.Notes)
+                {
+                    if (note.IsNoLongerRelevant == false)
+                    {
+                        notes.Add(note);
+                    }
+                }
+
+                return new ObjectResult(new HetsResponse(notes));
+            }
+
+            // record not found
+            return new ObjectResult(new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-01", _configuration)));
+        }
+
+        /// <summary>
+        /// Update or create an array of notes associated with a owner
+        /// </summary>
+        /// <remarks>Update a Owner&#39;s Notes</remarks>
+        /// <param name="id">id of Owner to update Notes for</param>
+        /// <param name="items">Array of Owner Notes</param>
+        /// <response code="200">OK</response>
+        public virtual IActionResult OwnersIdNotesBulkPostAsync(int id, Note[] items)
         {
             bool exists = _context.Owners.Any(a => a.Id == id);
 
             if (exists && items != null)
             {
                 Owner owner = _context.Owners
-                    .Include(x => x.LocalArea.ServiceArea.District.Region)
-                    .Include(x => x.EquipmentList)
-                    .ThenInclude(y => y.DistrictEquipmentType)
-                    .Include(x => x.EquipmentList)
-                    .ThenInclude(y => y.Owner)
                     .Include(x => x.Notes)
-                    .Include(x => x.Attachments)
-                    .Include(x => x.History)
-                    .Include(x => x.Contacts)
                     .First(x => x.Id == id);
 
-                // adjust the incoming list
-                for (int i = 0; i < items.Count(); i++)
+                // process each note
+                foreach (Note item in items)
                 {
-                    Equipment item = items[i];
-
-                    if (item != null)
+                    // ******************************************************************
+                    // add or update note
+                    // ******************************************************************
+                    if (item.Id > 0)
                     {
-                        DateTime lastVerifiedDate = item.LastVerifiedDate;
+                        int noteIndex = owner.Notes.FindIndex(a => a.Id == item.Id);
 
-                        bool equipmentExists = _context.Equipments.Any(x => x.Id == item.Id);
-
-                        if (equipmentExists)
+                        if (noteIndex < 0)
                         {
-                            items[i] = _context.Equipments
-                                .Include(x => x.LocalArea.ServiceArea.District.Region)
-                                .Include(x => x.DistrictEquipmentType)
-                                .Include(x => x.DumpTruck)
-                                .Include(x => x.Owner)
-                                .Include(x => x.EquipmentAttachments)
-                                .Include(x => x.Notes)
-                                .Include(x => x.Attachments)
-                                .Include(x => x.History)
-                                .First(x => x.Id == item.Id);
-
-                            if (items[i].LastVerifiedDate != lastVerifiedDate)
-                            {
-                                items[i].LastVerifiedDate = lastVerifiedDate;
-                                _context.Equipments.Update(items[i]);
-                            }
+                            // record not found
+                            return new ObjectResult(new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-01", _configuration)));
                         }
-                        else
-                        {
-                            _context.Add(item);
-                            items[i] = item;
-                        }
+
+                        owner.Notes[noteIndex].Text = item.Text;
+                        owner.Notes[noteIndex].IsNoLongerRelevant = item.IsNoLongerRelevant;
                     }
-                }
-
-                // remove equipment that are no longer attached
-                List<Equipment> equipmentToRemove = new List<Equipment>();
-
-                foreach (Equipment equipment in owner.EquipmentList)
-                {
-                    if (equipment != null && items.All(x => x.Id != equipment.Id))
+                    else  // add note
                     {
-                        equipmentToRemove.Add(equipment);
+                        owner.Notes.Add(item);
                     }
+
+                    _context.SaveChanges();
                 }
 
-                if (equipmentToRemove.Count > 0)
-                {
-                    foreach (Equipment equipment in equipmentToRemove)
-                    {
-                        owner.EquipmentList.Remove(equipment);
-                    }
-                }
-
-                // replace Equipment List.
-                owner.EquipmentList = items.ToList();
-                _context.Owners.Update(owner);
                 _context.SaveChanges();
 
-                return new ObjectResult(new HetsResponse(items));
-            }
+                // *************************************************************
+                // return updated notes                
+                // *************************************************************
+                List<Note> notes = new List<Note>();
 
-            // record not found
-            return new ObjectResult(new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-01", _configuration)));
-        }
-
-        /// <summary>
-        /// Get owner by id
-        /// </summary>
-        /// <param name="id">id of Owner to fetch</param>
-        /// <response code="200">OK</response>
-        /// <response code="404">Owner not found</response>
-        public virtual IActionResult OwnersIdGetAsync(int id)
-        {
-            bool exists = _context.Owners.Any(a => a.Id == id);
-
-            if (exists)
-            {
-                Owner result = _context.Owners
-                    .Include(x => x.LocalArea.ServiceArea.District.Region)
-                    .Include(x => x.EquipmentList).ThenInclude(y => y.LocalArea.ServiceArea.District.Region)
-                    .Include(x => x.EquipmentList).ThenInclude(y => y.DistrictEquipmentType)
-                    .Include(x => x.EquipmentList).ThenInclude(y => y.DumpTruck)
-                    .Include(x => x.EquipmentList).ThenInclude(y => y.Owner)
-                    .Include(x => x.EquipmentList).ThenInclude(y => y.EquipmentAttachments)
-                    .Include(x => x.EquipmentList).ThenInclude(y => y.Notes)
-                    .Include(x => x.EquipmentList).ThenInclude(y => y.Attachments)
-                    .Include(x => x.EquipmentList).ThenInclude(y => y.History)
-                    .Include(x => x.Notes)
-                    .Include(x => x.Attachments)
-                    .Include(x => x.History)
-                    .Include(x => x.Contacts)
-                    .First(a => a.Id == id);
-
-                return new ObjectResult(new HetsResponse(result));
-            }
-
-            // record not found
-            return new ObjectResult(new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-01", _configuration)));
-        }
-
-        /// <summary>
-        /// Returns contacts for a specific owner
-        /// </summary>
-        /// <param name="id"></param>
-        /// <returns></returns>
-        private List<Contact> GetOwnerContacts(int id)
-        {
-            List<Contact> result = null;
-
-            Owner owner = _context.Owners
-                        .Include(x => x.Contacts)
-                        .FirstOrDefault(x => x.Id == id);
-
-            if (owner != null)
-            {
-                result = owner.Contacts;
-                _context.Entry(owner).State = EntityState.Detached;
-            }            
-
-            return result;
-        }
-
-        /// <summary>
-        /// Update owner
-        /// </summary>
-        /// <param name="id">id of Owner to update</param>
-        /// <param name="item"></param>
-        /// <response code="200">OK</response>
-        /// <response code="404">Owner not found</response>
-        public virtual IActionResult OwnersIdPutAsync(int id, Owner item)
-        {
-            if (item != null)
-            {
-                AdjustRecord(item);
-
-                // we specifically do not want to change contacts from this service
-                item.Contacts = GetOwnerContacts(id);
-
-                bool exists = _context.Owners.Any(a => a.Id == id);
-
-                if (exists && id == item.Id)
+                foreach (Note note in owner.Notes)
                 {
-                    _context.Owners.Update(item);
-
-                    // save the changes
-                    _context.SaveChanges();
-
-                    return new ObjectResult(new HetsResponse(item));
+                    if (note.IsNoLongerRelevant == false)
+                    {
+                        notes.Add(note);
+                    }
                 }
 
-                // record not found
-                return new ObjectResult(new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-01", _configuration)));
+                return new ObjectResult(new HetsResponse(notes));
             }
 
             // record not found
             return new ObjectResult(new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-01", _configuration)));
         }
 
-        /// <summary>
-        ///Create owner
-        /// </summary>
-        /// <param name="item"></param>
-        /// <response code="201">Owner created</response>
-        public virtual IActionResult OwnersPostAsync(Owner item)
-        {
-            AdjustRecord(item);
-
-            bool exists = _context.Owners.Any(a => a.Id == item.Id);
-
-            if (exists)
-            {
-                _context.Owners.Update(item);
-            }
-            else
-            {
-                // record not found
-                _context.Owners.Add(item);
-            }
-
-            // save the changes
-            _context.SaveChanges();
-
-            return new ObjectResult(new HetsResponse(item));
-        }
-
-        /// <summary>
-        /// Search Owners
-        /// </summary>
-        /// <remarks>Used for the owner search page.</remarks>
-        /// <param name="localAreas">Local Areas (array of id numbers)</param>
-        /// <param name="equipmentTypes">Equipment Types (array of id numbers)</param>
-        /// <param name="owner"></param>
-        /// <param name="status">Status</param>
-        /// <param name="hired">Hired</param>
-        /// <response code="200">OK</response>
-        public virtual IActionResult OwnersSearchGetAsync(string localAreas, string equipmentTypes, int? owner, string status, bool? hired)
-        {
-            int?[] localAreasArray = ParseIntArray(localAreas);
-            int?[] equipmentTypesArray = ParseIntArray(equipmentTypes);
-
-            // default search results must be limited to user
-            int? districtId = _context.GetDistrictIdByUserId(GetCurrentUserId()).Single();
-
-            IQueryable<Owner> data = _context.Owners
-                    .Where(x => x.LocalArea.ServiceArea.DistrictId.Equals(districtId))
-                    .Include(x => x.LocalArea.ServiceArea.District.Region)
-                    .Include(x => x.Attachments)
-                    .Include(x => x.Contacts)
-                    .Select(x => x);            
-
-            if (localAreasArray != null && localAreasArray.Length > 0)
-            {
-                data = data.Where(x => localAreasArray.Contains(x.LocalArea.Id));
-            }
-
-            if (status != null)
-            {
-                data = data.Where(x => String.Equals(x.Status, status, StringComparison.CurrentCultureIgnoreCase));
-            }
-
-            if (hired == true)
-            {
-                IQueryable<int?> hiredOwnersQuery = _context.RentalAgreements
-                                    .Where(agreement => agreement.Status == "Active")
-                                    .Join(
-                                        _context.Equipments,
-                                        agreement => agreement.EquipmentId,
-                                        equipment => equipment.Id,
-                                        (agreement, equipment) => new
-                                        {
-                                            tempAgreement = agreement,
-                                            tempEqiupment = equipment
-                                        }
-                                    )
-                                    .Where(projection => projection.tempEqiupment.OwnerId != null)
-                                    .Select(projection => projection.tempEqiupment.OwnerId)
-                                    .Distinct();
-
-                data = data.Where(o => hiredOwnersQuery.Contains(o.Id));
-            }
-
-            if (equipmentTypesArray != null)
-            {
-                var equipmentTypeQuery = _context.Equipments
-                    .Where(x => equipmentTypesArray.Contains(x.DistrictEquipmentTypeId))
-                    .Select(x => x.OwnerId)
-                    .Distinct();
-
-                data = data.Where(x => equipmentTypeQuery.Contains(x.Id));
-            }
-
-            if (owner != null)
-            {
-                data = data.Where(x => x.Id == owner);
-            }
-
-            List<Owner> result = data.ToList();
-            return new ObjectResult(new HetsResponse(result));
-        }
+        #endregion
     }
 }
