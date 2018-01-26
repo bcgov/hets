@@ -104,7 +104,7 @@ namespace HETSAPI.Import
                             CopyToInstance(dbContext, item, ref instance, systemId);
 
                             // touch the import map
-                            importMap.LastUpdateTimestamp = DateTime.UtcNow;
+                            importMap.AppLastUpdateTimestamp = DateTime.UtcNow;
                             dbContext.ImportMaps.Update(importMap);
                         }
                     }
@@ -190,11 +190,11 @@ namespace HETSAPI.Import
                     }
                 }
 
-                instance.CreateUserid = createdBy.SmUserId;
+                instance.AppCreateUserid = createdBy.SmUserId;
 
                 if (oldObject.Created_Dt != null)
                 {
-                    instance.CreateTimestamp = DateTime.ParseExact(oldObject.Created_Dt.Trim().Substring(0, 10), "yyyy-MM-dd", System.Globalization.CultureInfo.InvariantCulture);
+                    instance.AppCreateTimestamp = DateTime.ParseExact(oldObject.Created_Dt.Trim().Substring(0, 10), "yyyy-MM-dd", System.Globalization.CultureInfo.InvariantCulture);
                 }
 
                 dbContext.LocalAreaRotationLists.Add(instance);

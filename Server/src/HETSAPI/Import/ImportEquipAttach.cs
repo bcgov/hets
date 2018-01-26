@@ -106,7 +106,7 @@ namespace HETSAPI.Import
                             CopyToInstance(dbContext, item, ref instance, equips, systemId);
 
                             // touch the import map
-                            importMap.LastUpdateTimestamp = DateTime.UtcNow;
+                            importMap.AppLastUpdateTimestamp = DateTime.UtcNow;
                             dbContext.ImportMaps.Update(importMap);
                         }
                     }
@@ -178,11 +178,11 @@ namespace HETSAPI.Import
 
                 if (oldObject.Created_Dt != null && oldObject.Created_Dt.Trim().Length>=10)
                 {
-                    instance.CreateTimestamp =
+                    instance.AppCreateTimestamp =
                         DateTime.ParseExact(oldObject.Created_Dt.Trim().Substring(0, 10), "yyyy-MM-dd", System.Globalization.CultureInfo.InvariantCulture);
                 }
 
-                instance.CreateUserid = createdBy.SmUserId;
+                instance.AppCreateUserid = createdBy.SmUserId;
 
                 dbContext.EquipmentAttachments.Add(instance);
             }
@@ -190,8 +190,8 @@ namespace HETSAPI.Import
             {
                 instance = dbContext.EquipmentAttachments
                     .First(x => x.EquipmentId == oldObject.Equip_Id && x.TypeName == (oldObject.Attach_Seq_Num?? -2).ToString());
-                instance.LastUpdateUserid = systemId;
-                instance.LastUpdateTimestamp = DateTime.UtcNow;
+                instance.AppLastUpdateUserid = systemId;
+                instance.AppLastUpdateTimestamp = DateTime.UtcNow;
                 dbContext.EquipmentAttachments.Update(instance);
             }
         }

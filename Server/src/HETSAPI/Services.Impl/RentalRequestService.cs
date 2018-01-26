@@ -573,8 +573,8 @@ namespace HETSAPI.Services.Impl
             // ******************************************************************
             // update the rental request rotation list record
             // ******************************************************************
-            item.CreateTimestamp = rentalRequest.RentalRequestRotationList[rotationListIndex].CreateTimestamp;
-            item.CreateUserid = rentalRequest.RentalRequestRotationList[rotationListIndex].CreateUserid;
+            item.AppCreateTimestamp = rentalRequest.RentalRequestRotationList[rotationListIndex].AppCreateTimestamp;
+            item.AppCreateUserid = rentalRequest.RentalRequestRotationList[rotationListIndex].AppCreateUserid;
             rentalRequest.RentalRequestRotationList[rotationListIndex] = item;
 
             // ******************************************************************
@@ -588,8 +588,11 @@ namespace HETSAPI.Services.Impl
                     Equipment = item.Equipment,
                     Project = rentalRequest.Project,
                     Status = "Active",
-                    DatedOn = DateTime.Now
+                    DatedOn = DateTime.Now                    
                 };
+
+                // generate the rental agreeement number
+                rentalAgreement.Number = GetRentalAgreementNumber(rentalAgreement);
 
                 // add new rental agreement to the project
                 rentalRequest.Project.RentalAgreements.Add(rentalAgreement);
@@ -646,6 +649,47 @@ namespace HETSAPI.Services.Impl
             _context.SaveChanges();
 
             return new ObjectResult(new HetsResponse(item));            
+        }
+
+        /// <summary>
+        /// Create the rental agreement number
+        /// </summary>
+        /// <param name="item"></param>
+        /// <returns></returns>
+        private string GetRentalAgreementNumber(RentalAgreement item)
+        {
+            string result = "";
+
+            // validate item.
+            if (item.Equipment != null && item.Equipment.LocalArea != null)
+            {
+                DateTime currentTime = DateTime.UtcNow;
+
+                int fiscalYear = currentTime.Year;
+
+                // fiscal year always ends in March.
+                if (currentTime.Month > 3)
+                {
+                    fiscalYear++;
+                }
+
+                int localAreaNumber = item.Equipment.LocalArea.LocalAreaNumber;
+                int localAreaId = item.Equipment.LocalArea.Id;
+
+                DateTime fiscalYearStart = new DateTime(fiscalYear - 1, 1, 1);
+
+                // count the number of rental agreements in the system.
+                int currentCount = _context.RentalAgreements
+                    .Include(x => x.Equipment.LocalArea)
+                    .Count(x => x.Equipment.LocalArea.Id == localAreaId && x.AppCreateTimestamp >= fiscalYearStart);
+
+                currentCount++;
+
+                // format of the Rental Agreement number is YYYY-#-####
+                result = fiscalYear + "-" + localAreaNumber + "-" + currentCount.ToString("D4");
+            }
+
+            return result;
         }
 
         /// <summary>
@@ -723,7 +767,7 @@ namespace HETSAPI.Services.Impl
                     .Include(x => x.History)
                     .First(a => a.Id == id);
 
-                List<History> data = rentalRequest.History.OrderByDescending(y => y.LastUpdateTimestamp).ToList();
+                List<History> data = rentalRequest.History.OrderByDescending(y => y.AppLastUpdateTimestamp).ToList();
 
                 if (offset == null)
                 {
@@ -784,8 +828,8 @@ namespace HETSAPI.Services.Impl
 
             result.HistoryText = item.HistoryText;
             result.Id = item.Id;
-            result.LastUpdateTimestamp = item.LastUpdateTimestamp;
-            result.LastUpdateUserid = item.LastUpdateUserid;
+            result.LastUpdateTimestamp = item.AppLastUpdateTimestamp;
+            result.LastUpdateUserid = item.AppLastUpdateUserid;
             result.AffectedEntityId = id;
 
             return new ObjectResult(new HetsResponse(result));
@@ -903,7 +947,7 @@ namespace HETSAPI.Services.Impl
                             new RentalRequestRotationList
                             {
                                 Equipment = blockEquipment[i],
-                                CreateTimestamp = DateTime.UtcNow,
+                                AppCreateTimestamp = DateTime.UtcNow,
                                 RotationListSortOrder = currentSortOrder
                             };
 
@@ -1066,6 +1110,7 @@ namespace HETSAPI.Services.Impl
                     newAreaRotationList.AskNextBlock1Seniority = item.RentalRequestRotationList[nextRecordToAskIndex].Equipment.Seniority;
                     newAreaRotationList.AskNextBlock2Id = null;
                     newAreaRotationList.AskNextBlock2Seniority = null;
+                    newAreaRotationList.AskNextBlockOpen = null;
                     newAreaRotationList.AskNextBlockOpenId = null;
                 }
                 else if (item.RentalRequestRotationList[nextRecordToAskIndex].Equipment.BlockNumber == 2 &&
@@ -1074,16 +1119,20 @@ namespace HETSAPI.Services.Impl
                     newAreaRotationList.AskNextBlock2 = item.RentalRequestRotationList[nextRecordToAskIndex].Equipment;
                     newAreaRotationList.AskNextBlock2Id = newAreaRotationList.AskNextBlock2.Id;
                     newAreaRotationList.AskNextBlock2Seniority = item.RentalRequestRotationList[nextRecordToAskIndex].Equipment.Seniority;
+                    newAreaRotationList.AskNextBlock1 = null;
                     newAreaRotationList.AskNextBlock1Id = null;
                     newAreaRotationList.AskNextBlock1Seniority = null;
+                    newAreaRotationList.AskNextBlockOpen = null;
                     newAreaRotationList.AskNextBlockOpenId = null;
                 }
                 else
                 {
                     newAreaRotationList.AskNextBlockOpen = item.RentalRequestRotationList[nextRecordToAskIndex].Equipment;
                     newAreaRotationList.AskNextBlockOpenId = newAreaRotationList.AskNextBlockOpen.Id;
+                    newAreaRotationList.AskNextBlock1 = null;
                     newAreaRotationList.AskNextBlock1Id = null;
                     newAreaRotationList.AskNextBlock1Seniority = null;
+                    newAreaRotationList.AskNextBlock2 = null;
                     newAreaRotationList.AskNextBlock2Id = null;
                     newAreaRotationList.AskNextBlock2Seniority = null;
                 }

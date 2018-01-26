@@ -366,7 +366,10 @@ var OwnersDetail = React.createClass({
                     <ColDisplay md={12} labelProps={{ md: 4 }} label="Company">{ owner.organizationName }</ColDisplay>
                   </Row>
                   <Row>
-                    <ColDisplay md={12} labelProps={{ md: 4 }} label="Equipment Prefix">{ owner.ownerEquipmentCodePrefix }</ColDisplay>
+                    <ColDisplay md={12} labelProps={{ md: 4 }} label="Company Address">{ owner.companyAddress }</ColDisplay>
+                  </Row>
+                  <Row>
+                    <ColDisplay md={12} labelProps={{ md: 4 }} label="Company Code">{ owner.ownerEquipmentCodePrefix }</ColDisplay>
                   </Row>
                   <Row>
                     <ColDisplay md={12} labelProps={{ md: 4 }} label="Primary Contact">{ owner.primaryContactName }</ColDisplay>

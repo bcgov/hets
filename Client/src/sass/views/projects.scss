@@ -129,6 +129,8 @@
   .time-records-list {
     padding: 0;
     list-style: none;
+    max-height: 100px;
+    overflow: auto;
 
     .list-item {
       margin: 5px 0;

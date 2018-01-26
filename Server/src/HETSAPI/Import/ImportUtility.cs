@@ -56,8 +56,8 @@ namespace HETSAPI.Import
                 OldKey = oldKey,
                 NewTable = newTable,
                 NewKey = newKey,
-                CreateTimestamp = DateTime.Now,
-                LastUpdateTimestamp = DateTime.Now
+                AppCreateTimestamp = DateTime.Now,
+                AppLastUpdateTimestamp = DateTime.Now
             };
 
             dbContext.ImportMaps.Add(importMap);
@@ -95,7 +95,7 @@ namespace HETSAPI.Import
                     {
                         importMap.NewTable = BCBidImport.TodayDate;
                         importMap.OldKey = Math.Max(int.Parse(oldKey), maxProgressCount).ToString();
-                        importMap.LastUpdateTimestamp = DateTime.Now;
+                        importMap.AppLastUpdateTimestamp = DateTime.Now;
                         dbContext.ImportMaps.Update(importMap);
                     }
                     else
@@ -252,7 +252,7 @@ namespace HETSAPI.Import
                 sysUser.Surname = "System";
                 sysUser.GivenName = "HETS";
                 sysUser.Active = true;
-                sysUser.CreateTimestamp = DateTime.UtcNow;
+                sysUser.AppCreateTimestamp = DateTime.UtcNow;
                 dbContext.Users.Add(sysUser);
 
                 dbContext.SaveChangesForImport();

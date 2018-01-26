@@ -5,4 +5,4 @@
 #=========================================================
 # NAME=cerberus
 # SERVICE_NAME=frontend
-APPLICATION_DOMAIN=cerberus-route-tran-hets-tst.pathfinder.gov.bc.ca
+APPLICATION_DOMAIN=cerberus-tran-hets-tst.pathfinder.gov.bc.ca

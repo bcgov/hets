@@ -38,21 +38,25 @@ var OwnersAddDialog = React.createClass({
 
     return {
       name: '',
-      equipmentPrefix: '',
-      localAreaId: defaultLocalAreaId || 0,
-      meetsResidency: false,
+      companyAdress: '',
+      companyCode: '',
+      localAreaId: defaultLocalAreaId.id || 0,
+      meetsResidency: true,
+      doingBusinessAs: '',
+      registeredCompanyNumber: '',
+      status: Constant.OWNER_STATUS_CODE_PENDING,
 
       nameError: '',
-      equipmentPrefixError: '',
+      companyAddressError: '',
+      companyCodeError: '',
       localAreaError: '',
       residencyError: '',
+      statusError: '',
     };
   },
 
-  componentDidUpdate() {
-    if (this.props.show) {
-      this.input.focus();
-    }
+  componentDidMount() {
+    this.input.focus();
   },
 
   updateState(state, callback) {
@@ -61,7 +65,7 @@ var OwnersAddDialog = React.createClass({
 
   didChange() {
     return notBlank(this.state.name) ||
-      notBlank(this.state.equipmentPrefix) ||
+      notBlank(this.state.companyCode) ||
       this.state.meetsResidency !== false ||
       this.state.localAreaId !== 0;
   },
@@ -73,9 +77,11 @@ var OwnersAddDialog = React.createClass({
 
     this.setState({
       nameError: '',
-      equipmentPrefixError: '',
+      companyAddressError: '',
+      companyCodeError: '',
       localAreaError: '',
       residencyError: '',
+      statusError: '',
     });
 
     if (isBlank(this.state.name)) {
@@ -93,15 +99,20 @@ var OwnersAddDialog = React.createClass({
       }
     }
 
-    if (isBlank(this.state.equipmentPrefix)) {
-      this.setState({ equipmentPrefixError: 'Equipment prefix is required' });
+    if (isBlank(this.state.companyAddress)) {
+      this.setState({ companyAddressError: 'Company address is required' });
+      valid = false;
+    }
+
+    if (isBlank(this.state.companyCode)) {
+      this.setState({ companyCodeError: 'Equipment prefix is required' });
       valid = false;
     } else {
-      var prefix = this.state.equipmentPrefix.toLowerCase().trim();
+      var prefix = this.state.companyCode.toLowerCase().trim();
 
       // Prefix must only include letters, up to 5 characters
       if (!onlyLetters(prefix) || prefix.length > 5) {
-        this.setState({ equipmentPrefixError: 'This equipment prefix must only include letters, up to 5 characters' });
+        this.setState({ companyCodeError: 'This equipment prefix must only include letters, up to 5 characters' });
         valid = false;
       }
 
@@ -110,7 +121,7 @@ var OwnersAddDialog = React.createClass({
         return owner.ownerEquipmentCodePrefix.toLowerCase().trim() === prefix;
       });
       if (owner) {
-        this.setState({ equipmentPrefixError: 'This equipment prefix already exists in the system' });
+        this.setState({ companyCodeError: 'This equipment prefix already exists in the system' });
         valid = false;
       }
     }
@@ -131,10 +142,13 @@ var OwnersAddDialog = React.createClass({
   onSave() {
     this.props.onSave({
       organizationName: this.state.name,
-      ownerEquipmentCodePrefix: this.state.equipmentPrefix,
+      companyAdress: this.state.companyAdress,
+      ownerEquipmentCodePrefix: this.state.companyCode,
       localArea: { id: this.state.localAreaId },
       meetsResidency: this.state.meetsResidency,
       status: Constant.OWNER_STATUS_CODE_APPROVED,
+      registeredCompanyNumber: this.state.registeredCompanyNumber,
+      doingBusinessAs: this.state.doingBusinessAs,
     });
   },
 
@@ -155,15 +169,28 @@ var OwnersAddDialog = React.createClass({
           <FormInputControl type="text" value={ this.state.name } updateState={ this.updateState } inputRef={ ref => { this.input = ref; }} />
           <HelpBlock>{ this.state.nameError }</HelpBlock>
         </FormGroup>
-        <FormGroup controlId="equipmentPrefix" validationState={ this.state.equipmentPrefixError ? 'error' : null }>
-          <ControlLabel>Equipment Prefix <sup>*</sup></ControlLabel>
-          <FormInputControl type="text" value={ this.state.equipmentPrefix } updateState={ this.updateState } />
-          <HelpBlock>{ this.state.equipmentPrefixError || HELP_TEXT.prefix }</HelpBlock>
+        <FormGroup controlId="companyAddress" validationState={ this.state.companyAddressError ? 'error' : null }>
+          <ControlLabel>Company Address <sup>*</sup></ControlLabel>
+          <FormInputControl type="text" value={ this.state.companyAddress } updateState={ this.updateState } inputRef={ ref => { this.input = ref; }} />
+          <HelpBlock>{ this.state.companyAddressError }</HelpBlock>
+        </FormGroup>
+        <FormGroup controlId="companyCode" validationState={ this.state.companyCodeError ? 'error' : null }>
+          <ControlLabel>Company Code <sup>*</sup></ControlLabel>
+          <FormInputControl type="text" value={ this.state.companyCode } updateState={ this.updateState } />
+          <HelpBlock>{ this.state.companyCodeError || HELP_TEXT.prefix }</HelpBlock>
         </FormGroup>
         <FormGroup controlId="localAreaId" validationState={ this.state.localAreaError ? 'error' : null }>
           <ControlLabel>Local Area <sup>*</sup></ControlLabel>
           <FilterDropdown id="localAreaId" items={ localAreas } selectedId={ this.state.localAreaId } updateState={ this.updateState } className="full-width" />
           <HelpBlock>{ this.state.localAreaError }</HelpBlock>
+        </FormGroup>
+        <FormGroup controlId="doingBusinessAs">
+          <ControlLabel>Doing Business As</ControlLabel>
+          <FormInputControl type="text" value={ this.state.doingBusinessAs } updateState={ this.updateState } />
+        </FormGroup>
+        <FormGroup controlId="registeredCompanyNumber">
+          <ControlLabel>Registered BC Company Number</ControlLabel>
+          <FormInputControl type="text" value={ this.state.registeredCompanyNumber } updateState={ this.updateState } />
         </FormGroup>
         <FormGroup controlId="meetsResidency" validationState={ this.state.residencyError ? 'error' : null }>
           <CheckboxControl id="meetsResidency" checked={ this.state.meetsResidency } updateState={ this.updateState }>Meets Residency</CheckboxControl>

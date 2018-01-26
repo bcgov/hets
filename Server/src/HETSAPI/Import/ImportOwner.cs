@@ -97,7 +97,7 @@ namespace HETSAPI.Import
                             CopyToInstance(dbContext, item, ref owner, systemId, ref maxOwnerIndex, ref maxContactIndex);
                             
                             // touch the import map
-                            importMap.LastUpdateTimestamp = DateTime.UtcNow;
+                            importMap.AppLastUpdateTimestamp = DateTime.UtcNow;
                             dbContext.ImportMaps.Update(importMap);
                         }
                     }
@@ -243,7 +243,9 @@ namespace HETSAPI.Import
                 {
                     con.Surname = oldObject.Owner_Last_Name.Trim();
                     con.GivenName = oldObject.Owner_First_Name.Trim();
-                    owner.OwnerEquipmentCodePrefix = con.GivenName.Substring(0, 1) + con.Surname.Substring(0, 1);
+                    owner.Surname = oldObject.Owner_Last_Name.Trim();
+                    owner.GivenName = oldObject.Owner_First_Name.Trim();
+                    owner.OwnerCode = con.GivenName.Substring(0, 1) + con.Surname.Substring(0, 1);
                 }
                 catch
                 {
@@ -268,19 +270,19 @@ namespace HETSAPI.Import
             // TODO finish mapping here 
             if (isNew)
             {
-                owner.CreateUserid = createdBy.SmUserId;
+                owner.AppCreateUserid = createdBy.SmUserId;
 
                 try
                 {
-                    owner.CreateTimestamp = 
+                    owner.AppCreateTimestamp = 
                         DateTime.ParseExact(oldObject.Created_Dt.Trim().Substring(0, 10), "yyyy-MM-dd", System.Globalization.CultureInfo.InvariantCulture);
                 }
                 catch
                 {
-                    owner.CreateTimestamp = DateTime.UtcNow;
+                    owner.AppCreateTimestamp = DateTime.UtcNow;
                 }
 
-                con.CreateUserid = createdBy.SmUserId;
+                con.AppCreateUserid = createdBy.SmUserId;
                 owner.PrimaryContact = con;
                 dbContext.Owners.Add(owner);
             }
@@ -288,10 +290,10 @@ namespace HETSAPI.Import
             {
                 try
                 {
-                    owner.LastUpdateUserid = systemId;
-                    owner.LastUpdateTimestamp = DateTime.UtcNow;
-                    con.LastUpdateTimestamp = DateTime.UtcNow;
-                    con.LastUpdateUserid = modifiedBy.SmUserId;
+                    owner.AppLastUpdateUserid = systemId;
+                    owner.AppLastUpdateTimestamp = DateTime.UtcNow;
+                    con.AppLastUpdateTimestamp = DateTime.UtcNow;
+                    con.AppLastUpdateUserid = modifiedBy.SmUserId;
                     owner.PrimaryContact = con;
                 }
                 catch

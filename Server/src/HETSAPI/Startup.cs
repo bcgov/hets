@@ -168,6 +168,10 @@ namespace HETSAPI
             {
                 TryMigrateDatabase(app, loggerFactory);
             }
+            else if (!env.IsDevelopment())
+            {
+                TryMigrateDatabase(app, loggerFactory);
+            }
 
             // do not start Hangfire if we are running tests. 
             bool startHangfire = true;

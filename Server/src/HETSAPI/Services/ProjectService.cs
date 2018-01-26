@@ -154,5 +154,30 @@ namespace HETSAPI.Services
         /// <response code="200">OK</response>
         /// <response code="201">History created</response>
         IActionResult ProjectsIdHistoryPostAsync(int id, History item);
+
+        /// <summary>
+        /// Get note records associated with project
+        /// </summary>
+        /// <param name="id">id of Project to fetch Notes for</param>
+        /// <response code="200">OK</response>
+        IActionResult ProjectsIdNotesGetAsync(int id);
+
+        /// <summary>
+        /// Update or create a note associated with a project
+        /// </summary>
+        /// <remarks>Update a Project&#39;s Notes</remarks>
+        /// <param name="id">id of Project to update Notes for</param>
+        /// <param name="item">Project Note</param>
+        /// <response code="200">OK</response>
+        IActionResult ProjectsIdNotesPostAsync(int id, Note item);
+
+        /// <summary>
+        /// Update or create an array of notes associated with a project
+        /// </summary>
+        /// <remarks>Update a Project&#39;s Notes</remarks>
+        /// <param name="id">id of Project to update Notes for</param>
+        /// <param name="items">Array of Project Notes</param>
+        /// <response code="200">OK</response>
+        IActionResult ProjectsIdNotesBulkPostAsync(int id, Note[] items);
     }
 }
