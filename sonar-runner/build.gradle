@@ -7,7 +7,7 @@ plugins {
 
 sonarqube {
     properties {
-        //property "sonar.host.url", "https://sonarqube-tran-hets-tools.pathfinder.gov.bc.ca"
+        property "sonar.host.url", "http://localhost:9001"
         property "sonar.projectName", "HETS"
         property "sonar.projectKey", "org.sonarqube:bcgov-hets-"
         property "sonar.projectBaseDir", "../"
@@ -26,7 +26,7 @@ allprojects {
   Date date= new Date()
   String newdate=date.format("YYYYMMDD")
   String newtime=date.format("HHmmssSSS")
-  ext.baseVersion = newdate + "." + ['BUILD_NUMBER']
+  ext.baseVersion = newdate + "." + env['BUILD_NUMBER']
   ext.snapshotVersion = false
 
   group = "org.sonarqube"
