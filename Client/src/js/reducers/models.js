@@ -77,6 +77,7 @@ const DEFAULT_MODELS = {
   rentalAgreement: {},
   rentalAgreementNotes: {},
   rentalAgreementHistory: {},
+  rentalAgreementTimeRecords: {},
   rentalRate: {},
   rentalCondition: {},
 
@@ -235,6 +236,9 @@ export default function modelsReducer(state = DEFAULT_MODELS, action) {
     
     case Action.UPDATE_RENTAL_AGREEMENT:
       return { ...state, rentalAgreement: action.rentalAgreement };
+
+    case Action.RENTAL_AGREEMENT_TIME_RECORDS:
+      return { ...state, rentalAgreementTimeRecords: action.rentalAgreementTimeRecords };
     
     // Rental Rates, Conditions
     case Action.ADD_RENTAL_RATE:

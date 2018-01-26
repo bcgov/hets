@@ -25,7 +25,7 @@ var TimeEntryDialog = React.createClass({
     equipmentList: React.PropTypes.object,
     rentalRequest: React.PropTypes.object,
     activeRentalRequest: React.PropTypes.object,
-    projectTimeRecords: React.PropTypes.object,
+    rentalAgreementTimeRecords: React.PropTypes.object,
   },
 
   getInitialState() {  
@@ -46,9 +46,7 @@ var TimeEntryDialog = React.createClass({
   },
 
   componentDidMount() {
-    let projectId = this.props.project.id;
-    Api.getProjectEquipment(projectId);
-    Api.getProjectTimeRecords(projectId);
+    Api.getRentalAgreementTimeRecords(this.props.activeRentalRequest.id);
   },
 
   updateState(state, callback) {
@@ -102,8 +100,8 @@ var TimeEntryDialog = React.createClass({
   },
 
   onSave() {
-    Api.addProjectTimeRecords(this.state.projectId, this.props.activeRentalRequest.id, this.state.timeEntry).then(() => {
-      Api.getProjectTimeRecords(this.state.projectId);
+    Api.addRentalAgreementTimeRecords(this.props.activeRentalRequest.id, this.state.timeEntry).then(() => {
+      Api.getRentalAgreementTimeRecords(this.props.activeRentalRequest.id);
       this.setState({ ...this.getInitialState(), showAllTimeRecords: this.state.showAllTimeRecords });
     });
   },
@@ -144,7 +142,7 @@ var TimeEntryDialog = React.createClass({
 
   deleteTimeRecord(timeRecord) {
     Api.deleteTimeRecord(timeRecord.id).then(() => {
-      Api.getProjectTimeRecords(this.props.project.id);
+      Api.getRentalAgreementTimeRecords(this.props.activeRentalRequest.id);
     });
   },
 
@@ -157,7 +155,7 @@ var TimeEntryDialog = React.createClass({
     const isValidDate = function( current ){
       return current.day() === 6 && current.isBefore(new Date());
     };
-    var sortedTimeRecords = _.sortBy(this.props.projectTimeRecords.data, 'enteredDate').reverse();
+    var sortedTimeRecords = _.sortBy(this.props.rentalAgreementTimeRecords, 'enteredDate').reverse();
 
     const TimeRecordItem = ({ timeRecord }) => {
       return (
@@ -208,6 +206,9 @@ var TimeEntryDialog = React.createClass({
               <Col sm={4} className="nopadding"><div className="column-title">Week Ending</div></Col>
               <Col sm={4} className="nopadding"><div className="column-title">Hours</div></Col>
             </Row>
+            { (sortedTimeRecords.length === 0) && 
+              <div>No time records have been added yet.</div>
+            }
             { (sortedTimeRecords.length > 0) && !this.state.showAllTimeRecords ?
               <TimeRecordItem timeRecord={sortedTimeRecords[0]} />
               :
@@ -219,7 +220,9 @@ var TimeEntryDialog = React.createClass({
               ))}
               </ul>
             }
-            <Button onClick={ this.showAllTimeRecords }>{ this.state.showAllTimeRecords ? 'Hide' : 'Show All' }</Button>
+            { (sortedTimeRecords.length > 1) && 
+              <Button onClick={ this.showAllTimeRecords }>{ this.state.showAllTimeRecords ? 'Hide' : 'Show All' }</Button>
+            }
             <hr />
             { Object.keys(this.state.timeEntry).map(key => {
               return (
@@ -281,7 +284,7 @@ var TimeEntryDialog = React.createClass({
 
 function mapStateToProps(state) {
   return {
-    projectTimeRecords: state.models.projectTimeRecords,
+    rentalAgreementTimeRecords: state.models.rentalAgreementTimeRecords,
     rentalRequest: state.models.rentalRequest,
   };
 }

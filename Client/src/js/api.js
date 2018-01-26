@@ -1313,6 +1313,25 @@ export function updateRentalAgreement(agreement) {
   });
 }
 
+export function getRentalAgreementTimeRecords(rentalAgreementId) {
+  return new ApiRequest(`rentalagreements/${rentalAgreementId}/timeRecords`).get().then(response => {
+    var rentalAgreementTimeRecords = normalize(response.data);
+
+    store.dispatch({ type: Action.RENTAL_AGREEMENT_TIME_RECORDS, rentalAgreementTimeRecords: rentalAgreementTimeRecords });
+  });
+}
+
+export function addRentalAgreementTimeRecords(rentalRequestId, timeRecords) {
+  let formattedTimeRecords = formatTimeRecords(timeRecords, rentalRequestId);
+  return new ApiRequest(`rentalagreements/${rentalRequestId}/timeRecords`).post(formattedTimeRecords).then(response => {
+    var rentalAgreementTimeRecords = normalize(response.data);
+
+    store.dispatch({ type: Action.RENTAL_AGREEMENT_TIME_RECORDS, rentalAgreementTimeRecords: rentalAgreementTimeRecords });
+    return rentalAgreementTimeRecords;
+  });
+}
+
+
 ////////////////////
 // Rental Rates
 ////////////////////
