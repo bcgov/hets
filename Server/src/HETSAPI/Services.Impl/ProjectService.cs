@@ -296,7 +296,7 @@ namespace HETSAPI.Services.Impl
             // default search results must be limited to user
             int? districtId = _context.GetDistrictIdByUserId(GetCurrentUserId()).Single();
 
-            IQueryable<Project> data = _context.Projects
+            IQueryable<Project> data = _context.Projects.AsNoTracking()
                 .Where(x => x.DistrictId.Equals(districtId))
                 .Include(x => x.District.Region)
                 .Include(x => x.PrimaryContact)
@@ -352,7 +352,7 @@ namespace HETSAPI.Services.Impl
 
             if (exists)
             {
-                Project project = _context.Projects
+                Project project = _context.Projects.AsNoTracking()
                     .Include(x => x.RentalAgreements)
                         .ThenInclude(t => t.TimeRecords)
                     .First(x => x.Id == id);
@@ -386,6 +386,7 @@ namespace HETSAPI.Services.Impl
             {
                 Project project = _context.Projects
                     .Include(x => x.RentalAgreements)
+                        .ThenInclude(y => y.TimeRecords)
                     .First(x => x.Id == id);
 
                 // ******************************************************************
@@ -408,13 +409,29 @@ namespace HETSAPI.Services.Impl
                 // ******************************************************************
                 // add or update time record
                 // ******************************************************************
+                int rentalAgreementId = item.RentalAgreement.Id;
+                int indexRental = project.RentalAgreements.FindIndex(a => a.Id == rentalAgreementId);
+
                 if (item.Id > 0)
                 {
-                    _context.TimeRecords.Add(item);
-                }
-                else  // update time record
-                {
                     _context.TimeRecords.Update(item);
+
+                    int timeIndex = project.RentalAgreements[indexRental].TimeRecords.FindIndex(a => a.Id == item.Id);
+
+                    if (timeIndex < 0)
+                    {
+                        // record not found
+                        return new ObjectResult(new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-01", _configuration)));
+                    }
+
+                    project.RentalAgreements[indexRental].TimeRecords[timeIndex].EnteredDate = item.EnteredDate;
+                    project.RentalAgreements[indexRental].TimeRecords[timeIndex].Hours = item.Hours;
+                    project.RentalAgreements[indexRental].TimeRecords[timeIndex].TimePeriod = item.TimePeriod;
+                    project.RentalAgreements[indexRental].TimeRecords[timeIndex].WorkedDate = item.WorkedDate;
+                }
+                else // add time record
+                {                    
+                    project.RentalAgreements[indexRental].TimeRecords.Add(item);
                 }
                 
                 _context.SaveChanges();
@@ -422,11 +439,6 @@ namespace HETSAPI.Services.Impl
                 // *************************************************************
                 // return updated time records
                 // *************************************************************
-                project = _context.Projects
-                    .Include(x => x.RentalAgreements)
-                    .ThenInclude(t => t.TimeRecords)
-                    .First(x => x.Id == id);
-
                 List<TimeRecord> timeRecords = new List<TimeRecord>();
 
                 foreach (RentalAgreement rentalAgreement in project.RentalAgreements)
@@ -456,22 +468,23 @@ namespace HETSAPI.Services.Impl
             {
                 Project project = _context.Projects
                     .Include(x => x.RentalAgreements)
+                    .ThenInclude(t => t.TimeRecords)
                     .First(x => x.Id == id);
 
                 // process each time record
-                for (int i = 0; i < items.Length; i++)
+                foreach (TimeRecord item in items)
                 {
                     // ******************************************************************
                     // must have the valid rental agreement id
                     // ******************************************************************
-                    if (items[i].RentalAgreement.Id == 0)
+                    if (item.RentalAgreement.Id == 0)
                     {
                         // (RENTAL AGREEMENT) record not found
                         return new ObjectResult(new HetsResponse("HETS-01",
                             ErrorViewModel.GetDescription("HETS-01", _configuration)));
                     }
 
-                    exists = project.RentalAgreements.Any(a => a.Id == items[i].RentalAgreement.Id);
+                    exists = project.RentalAgreements.Any(a => a.Id == item.RentalAgreement.Id);
 
                     if (!exists)
                     {
@@ -482,27 +495,40 @@ namespace HETSAPI.Services.Impl
 
                     // ******************************************************************
                     // add or update time record
-                    // ******************************************************************
-                    if (items[i].Id > 0)
-                    {
-                        _context.TimeRecords.Add(items[i]);
-                    }
-                    else // update time record
-                    {
-                        _context.TimeRecords.Update(items[i]);
-                    }
-                }
+                    // ******************************************************************   
+                    int rentalAgreementId = item.RentalAgreement.Id;
+                    int indexRental = project.RentalAgreements.FindIndex(a => a.Id == rentalAgreementId);
 
-                _context.SaveChanges();
+                    if (item.Id > 0)
+                    {
+                        _context.TimeRecords.Update(item);
+
+                        int timeIndex = project.RentalAgreements[indexRental].TimeRecords
+                            .FindIndex(a => a.Id == item.Id);
+
+                        if (timeIndex < 0)
+                        {
+                            // record not found
+                            return new ObjectResult(new HetsResponse("HETS-01",
+                                ErrorViewModel.GetDescription("HETS-01", _configuration)));
+                        }
+
+                        project.RentalAgreements[indexRental].TimeRecords[timeIndex].EnteredDate = item.EnteredDate;
+                        project.RentalAgreements[indexRental].TimeRecords[timeIndex].Hours = item.Hours;
+                        project.RentalAgreements[indexRental].TimeRecords[timeIndex].TimePeriod = item.TimePeriod;
+                        project.RentalAgreements[indexRental].TimeRecords[timeIndex].WorkedDate = item.WorkedDate;
+                    }
+                    else // add time record
+                    {
+                        project.RentalAgreements[indexRental].TimeRecords.Add(item);
+                    }
+
+                    _context.SaveChanges();
+                }
 
                 // *************************************************************
                 // return updated time records
-                // *************************************************************
-                project = _context.Projects
-                    .Include(x => x.RentalAgreements)
-                    .ThenInclude(t => t.TimeRecords)
-                    .First(x => x.Id == id);
-
+                // *************************************************************                
                 List<TimeRecord> timeRecords = new List<TimeRecord>();
 
                 foreach (RentalAgreement rentalAgreement in project.RentalAgreements)
@@ -822,5 +848,168 @@ namespace HETSAPI.Services.Impl
         }
 
         #endregion
+
+        #region Project Note Records
+
+        /// <summary>
+        /// Get note records associated with project
+        /// </summary>
+        /// <param name="id">id of Project to fetch Notes for</param>
+        /// <response code="200">OK</response>
+        public virtual IActionResult ProjectsIdNotesGetAsync(int id)
+        {
+            bool exists = _context.Projects.Any(a => a.Id == id);
+
+            if (exists)
+            {
+                Project project = _context.Projects.AsNoTracking()
+                    .Include(x => x.Notes)
+                    .First(x => x.Id == id);                
+
+                List<Note> notes = new List<Note>();
+
+                foreach (Note note in project.Notes)
+                {
+                    if (note.IsNoLongerRelevant == false)
+                    {
+                        notes.Add(note);
+                    }
+                }
+
+                return new ObjectResult(new HetsResponse(notes));
+            }
+
+            // record not found
+            return new ObjectResult(new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-01", _configuration)));
+        }
+
+        /// <summary>
+        /// Update or create a note associated with a project
+        /// </summary>
+        /// <remarks>Update a Project&#39;s Notes</remarks>
+        /// <param name="id">id of Project to update Notes for</param>
+        /// <param name="item">Project Note</param>
+        /// <response code="200">OK</response>
+        public virtual IActionResult ProjectsIdNotesPostAsync(int id, Note item)
+        {
+            bool exists = _context.Projects.Any(a => a.Id == id);
+
+            if (exists && item != null)
+            {                
+                Project project = _context.Projects
+                    .Include(x => x.Notes)
+                    .First(x => x.Id == id);
+                
+                // ******************************************************************
+                // add or update note
+                // ******************************************************************
+                if (item.Id > 0)
+                {
+                    int noteIndex = project.Notes.FindIndex(a => a.Id == item.Id);
+
+                    if (noteIndex < 0)
+                    {
+                        // record not found
+                        return new ObjectResult(new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-01", _configuration)));
+                    }
+
+                    project.Notes[noteIndex].Text = item.Text;
+                    project.Notes[noteIndex].IsNoLongerRelevant = item.IsNoLongerRelevant;
+                }
+                else  // add note
+                {
+                    project.Notes.Add(item);
+                }
+
+                _context.SaveChanges();
+
+                // *************************************************************
+                // return updated time records
+                // *************************************************************              
+                List < Note> notes = new List<Note>();
+
+                foreach (Note note in project.Notes)
+                {
+                    if (note.IsNoLongerRelevant == false)
+                    {
+                        notes.Add(note);
+                    }
+                }
+
+                return new ObjectResult(new HetsResponse(notes));
+            }
+
+            // record not found
+            return new ObjectResult(new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-01", _configuration)));
+        }
+
+        /// <summary>
+        /// Update or create an array of notes associated with a project
+        /// </summary>
+        /// <remarks>Update a Project&#39;s Notes</remarks>
+        /// <param name="id">id of Project to update Notes for</param>
+        /// <param name="items">Array of Project Notes</param>
+        /// <response code="200">OK</response>
+        public virtual IActionResult ProjectsIdNotesBulkPostAsync(int id, Note[] items)
+        {
+            bool exists = _context.Projects.Any(a => a.Id == id);
+
+            if (exists && items != null)
+            {
+                Project project = _context.Projects
+                    .Include(x => x.Notes)
+                    .First(x => x.Id == id);
+
+                // process each note
+                foreach (Note item in items)
+                {                   
+                    // ******************************************************************
+                    // add or update note
+                    // ******************************************************************
+                    if (item.Id > 0)
+                    {
+                        int noteIndex = project.Notes.FindIndex(a => a.Id == item.Id);
+
+                        if (noteIndex < 0)
+                        {
+                            // record not found
+                            return new ObjectResult(new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-01", _configuration)));
+                        }
+
+                        project.Notes[noteIndex].Text = item.Text;
+                        project.Notes[noteIndex].IsNoLongerRelevant = item.IsNoLongerRelevant;
+                    }
+                    else  // add note
+                    {
+                        project.Notes.Add(item);
+                    }
+
+                    _context.SaveChanges();
+                }
+
+                _context.SaveChanges();
+
+                // *************************************************************
+                // return updated notes                
+                // *************************************************************
+                List<Note> notes = new List<Note>();
+
+                foreach (Note note in project.Notes)
+                {
+                    if (note.IsNoLongerRelevant == false)
+                    {
+                        notes.Add(note);
+                    }
+                }
+
+                return new ObjectResult(new HetsResponse(notes));
+            }
+
+            // record not found
+            return new ObjectResult(new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-01", _configuration)));
+        }
+
+        #endregion
+
     }
 }

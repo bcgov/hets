@@ -308,5 +308,55 @@ namespace HETSAPI.Controllers
 
         #endregion
 
+
+        #region Project Note Records
+
+        /// <summary>
+        /// Get note records associated with project
+        /// </summary>
+        /// <param name="id">id of Project to fetch Notes for</param>
+        /// <response code="200">OK</response>
+        [HttpGet]
+        [Route("/api/projects/{id}/notes")]
+        [SwaggerOperation("ProjectsIdNotesGet")]
+        [SwaggerResponse(200, type: typeof(List<Note>))]
+        public virtual IActionResult ProjectsIdNotesGet([FromRoute]int id)
+        {
+            return _service.ProjectsIdNotesGetAsync(id);
+        }
+
+        /// <summary>
+        /// Update or create a note associated with a project
+        /// </summary>
+        /// <remarks>Update a Project&#39;s Notes</remarks>
+        /// <param name="id">id of Project to update Notes for</param>
+        /// <param name="item">Project Note</param>
+        /// <response code="200">OK</response>
+        [HttpPost]
+        [Route("/api/projects/{id}/note")]
+        [SwaggerOperation("ProjectsIdNotePost")]
+        [SwaggerResponse(200, type: typeof(Note))]
+        public virtual IActionResult ProjectsIdNotePost([FromRoute]int id, [FromBody]Note item)
+        {
+            return _service.ProjectsIdNotesPostAsync(id, item);
+        }
+
+        /// <summary>
+        /// pdate or create an array of notes associated with a project
+        /// </summary>
+        /// <remarks>Adds Note Records</remarks>
+        /// <param name="id">id of Project to add notes for</param>
+        /// <param name="items">Array of Project Notes</param>
+        /// <response code="200">OK</response>
+        [HttpPost]
+        [Route("/api/projects/{id}/notes")]
+        [SwaggerOperation("ProjectsIdNotesBulkPostAsync")]
+        [SwaggerResponse(200, type: typeof(TimeRecord))]
+        public virtual IActionResult ProjectsIdNotesBulkPostAsync([FromRoute]int id, [FromBody]Note[] items)
+        {
+            return _service.ProjectsIdNotesBulkPostAsync(id, items);
+        }
+
+        #endregion        
     }
 }
