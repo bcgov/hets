@@ -9,21 +9,20 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Net;
-using System.Threading.Tasks;
 using System.Net.Http;
 using System.Text;
 using HETSAPI.Models;
 using HETSAPI.ViewModels;
 using HETSAPI.Mappings;
-using Microsoft.Extensions.Primitives;
 
 namespace HETSAPI.Services.Impl
-{
+{   
     /// <summary>
     /// Rental Agreement Service
     /// </summary>
     public class RentalAgreementService : ServiceBase, IRentalAgreementService
     {
+        private readonly HttpContext _appContext;
         private readonly DbAppContext _context;
         private readonly IConfiguration _configuration;
 
@@ -33,6 +32,7 @@ namespace HETSAPI.Services.Impl
         public RentalAgreementService(IHttpContextAccessor httpContextAccessor, IConfiguration configuration, DbAppContext context) 
             : base(httpContextAccessor, context)
         {
+            _appContext = httpContextAccessor.HttpContext;
             _context = context;
             _configuration = configuration;
         }
@@ -214,7 +214,7 @@ namespace HETSAPI.Services.Impl
         {
             FileContentResult result = null;
 
-            RentalAgreement rentalAgreement = _context.RentalAgreements
+            RentalAgreement rentalAgreement = _context.RentalAgreements.AsNoTracking()
                 .Include(x => x.Equipment).ThenInclude(y => y.Owner).ThenInclude(z => z.PrimaryContact)
                 .Include(x => x.Equipment).ThenInclude(y => y.DistrictEquipmentType)
                 .Include(x => x.Equipment).ThenInclude(y => y.EquipmentAttachments)
@@ -222,13 +222,12 @@ namespace HETSAPI.Services.Impl
                 .Include(x => x.Project).ThenInclude(p => p.District.Region)
                 .Include(x => x.RentalAgreementConditions)
                 .Include(x => x.RentalAgreementRates)
-                .Include(x => x.TimeRecords)
                 .FirstOrDefault(a => a.Id == id);
 
             if (rentalAgreement != null)
             {
                 // construct the view model
-                RentalAgreementPdfViewModel rentalAgreementPdfViewModel = rentalAgreement.ToViewModel();
+                RentalAgreementPdfViewModel rentalAgreementPdfViewModel = rentalAgreement.ToViewModel();                
 
                 string payload = JsonConvert.SerializeObject(rentalAgreementPdfViewModel, new JsonSerializerSettings {
                     ReferenceLoopHandling = ReferenceLoopHandling.Ignore,
@@ -236,38 +235,27 @@ namespace HETSAPI.Services.Impl
                     Formatting = Formatting.Indented,
                     DateFormatHandling = DateFormatHandling.IsoDateFormat,
                     DateTimeZoneHandling = DateTimeZoneHandling.Utc
-                });
+                });                
 
                 // pass the request on to the Pdf Micro Service
                 string pdfHost = _configuration["PDF_SERVICE_NAME"];
                 string pdfUrl = _configuration.GetSection("Constants:PdfUrl").Value;
+                string pdfUrlLocal = _configuration.GetSection("Constants:PdfUrl-Local").Value;
+
                 string targetUrl = pdfHost + pdfUrl;
+
+                if (!string.IsNullOrEmpty(pdfUrlLocal) && _appContext.Request.Host.Host == "localhost")
+                {
+                    targetUrl = pdfHost + pdfUrlLocal;
+                }
 
                 // call the microservice
                 try
                 {
                     HttpClient client = new HttpClient();
-
-                    HttpRequestMessage request = new HttpRequestMessage(HttpMethod.Post, targetUrl)
-                    {
-                        Content = new StringContent(payload, Encoding.UTF8, "application/json")
-                    };
-
-                    request.Headers.Clear();
-
-                    // transfer over the request headers.
-                    foreach (KeyValuePair<string, StringValues> item in Request.Headers)
-                    {
-                        string key = item.Key;
-                        string value = item.Value;
-                        request.Headers.Add(key, value);
-                    }
-
-                    Task<HttpResponseMessage> responseTask = client.SendAsync(request);
-                    responseTask.Wait();
-
-                    HttpResponseMessage response = responseTask.Result;
-
+                    StringContent stringContent = new StringContent(JsonConvert.SerializeObject(payload), Encoding.UTF8, "application/json");                                 
+                    HttpResponseMessage response = client.PostAsync(targetUrl, stringContent).Result;
+                    
                     // success
                     if (response.StatusCode == HttpStatusCode.OK)
                     {

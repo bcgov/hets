@@ -6,17 +6,9 @@ using Microsoft.Extensions.Configuration;
 using PDF.Server.Helpers;
 
 namespace PDF.Server.Controllers
-{
+{    
     /// <summary>
-    /// Rental Agreement - used to submit data to generate a new rental document
-    /// </summary>
-    public class RentalAgreement
-    {
-        public string JsonString { get; set; }
-    }
-
-    /// <summary>
-    /// Pdf Controller - Main Pdf generation functionality
+    /// Pdf Controller - Main Pdf generation functionality for HETS
     /// </summary>
     [ResponseCache(Location = ResponseCacheLocation.None, NoStore = true)]
     public class PdfController : Controller
@@ -27,12 +19,17 @@ namespace PDF.Server.Controllers
         public PdfController(INodeServices nodeServices, IConfigurationRoot configuration)
         {
             _nodeServices = nodeServices;
-            _configuration = configuration;
-        }       
+            _configuration = configuration;            
+        }
 
+        /// <summary>
+        /// Get HETS Rental Agreement
+        /// </summary>
+        /// <param name="rentalAgreementJson"></param>
+        /// <returns></returns>
         [HttpPost]
         [Route("pdf/rentalAgreement")]
-        public async Task<IActionResult> GetRentalAgreementPdf([FromBody]RentalAgreement rentalAgreement)
+        public async Task<IActionResult> GetRentalAgreementPdf([FromBody]string rentalAgreementJson)
         {
             try
             {
@@ -41,9 +38,9 @@ namespace PDF.Server.Controllers
                 // *************************************************************
                 RenderRequest request = new RenderRequest()
                 {
-                    JsonString = rentalAgreement.JsonString,
+                    JsonString = rentalAgreementJson,
                     RenderJsUrl = _configuration.GetSection("Constants").GetSection("RenderJsUrl").Value,
-                    Template = _configuration.GetSection("Constants").GetSection("SampleTemplate").Value
+                    Template = _configuration.GetSection("Constants").GetSection("RentalTemplate").Value
                 };
 
                 string result = await TemplateHelper.RenderDocument(_nodeServices, request);

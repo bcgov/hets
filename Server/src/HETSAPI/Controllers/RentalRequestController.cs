@@ -265,7 +265,7 @@ namespace HETSAPI.Controllers
 
         #endregion
 
-        #region Rentalrequest Note Records
+        #region Rental Request Note Records
 
         /// <summary>
         /// Get note records associated with rental request
