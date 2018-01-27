@@ -3,6 +3,8 @@
   <Property Name="sonar.host.url">http://sonarqube:9000</Property>
   <Property Name="sonar.projectKey">org.sonarqube:bcgov-hets-pipeline-dotnet</Property>
   <Property Name="sonar.tests"></Property>
+  <Property Name="sonar.projectBaseDir">/tmp/workspace/tran-hets-tools-sonarqube-pipeline</Property>
+  <Property Name="sonar.sources">.</Property>
   <Property Name="sonar.language">cs</Property>
   <Property Name="sonar.sourceEncoding">UTF-8</Property>
   <Property Name="sonar.cpd.exclusions">**/Migrations/**</Property>
