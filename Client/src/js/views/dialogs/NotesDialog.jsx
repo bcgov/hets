@@ -2,16 +2,16 @@ import React from 'react';
 
 import { connect } from 'react-redux';
 
-import { Form, Row, Col, FormGroup, ControlLabel, HelpBlock } from 'react-bootstrap';
+import { Form, Row, Col, FormGroup, ControlLabel, HelpBlock, ButtonGroup } from 'react-bootstrap';
 
 import _ from 'lodash';
-// import Promise from 'bluebird';
-
-// import * as Constant from '../../constants';
 
 import EditDialog from '../../components/EditDialog.jsx';
 import Spinner from '../../components/Spinner.jsx';
 import FormInputControl from '../../components/FormInputControl.jsx';
+import TableControl from '../../components/TableControl.jsx';
+import DeleteButton from '../../components/DeleteButton.jsx';
+import Unimplemented from '../../components/Unimplemented.jsx';
 
 var NotesDialog = React.createClass({
   propTypes: {
@@ -26,6 +26,7 @@ var NotesDialog = React.createClass({
       loading: false,
       note: '',
       noteError: '',
+      isNoLongerRelevant: false,
     };
   },
 
@@ -58,7 +59,12 @@ var NotesDialog = React.createClass({
     this.props.onSave({
       id: 0,
       text: this.state.note,
+      isNoLongerRelevant: false,
     });
+  },
+
+  deleteNote(note) {
+
   },
 
   render() {
@@ -88,6 +94,35 @@ var NotesDialog = React.createClass({
             </FormGroup>
           </Form>
         </Col> 
+      </Row>
+      <Row>
+      {(()=> {
+        var headers = [
+          { field: 'date',             title: 'Date'    },
+          { field: 'user',             title: 'User'    },
+          { field: 'notes',            title: 'Notes'  },
+          { field: 'blank'                              },
+        ];
+
+        return <TableControl id="notes-list" headers={ headers }>
+          {
+            _.map(this.props.notes, (note) => {
+              return <tr key={ note.id }>
+                <td></td>
+                <td></td>
+                <td>{ note.text }</td>
+                <td style={{ textAlign: 'right' }}>
+                  <Unimplemented>
+                    <ButtonGroup>
+                      <DeleteButton name="note" onConfirm={ this.deleteNote.bind(this, note) }/>
+                    </ButtonGroup>
+                  </Unimplemented>
+                </td>
+              </tr>;
+            })
+          }
+        </TableControl>;
+      })()}
       </Row>
     </EditDialog>;
   },
