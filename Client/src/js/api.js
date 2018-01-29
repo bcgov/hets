@@ -1388,6 +1388,12 @@ export function addRentalAgreementTimeRecords(rentalRequestId, timeRecords) {
   });
 }
 
+export function releaseRentalAgreement(rentalAgreementId) {
+  return new ApiRequest(`rentalagreements/${rentalAgreementId}/release`).post().then(response => {
+    return response;
+  });
+}
+
 
 ////////////////////
 // Rental Rates

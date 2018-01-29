@@ -249,8 +249,10 @@ var ProjectsDetail = React.createClass({
     });
   },
 
-  confirmEndHire() {
-    // todo: make network call
+  confirmEndHire(item) {
+    Api.releaseRentalAgreement(item.id).then(() => {
+      Api.getProject(this.props.params.projectId);
+    });
   },
 
   openTimeEntryDialog(rentalRequest) {
@@ -384,20 +386,18 @@ var ProjectsDetail = React.createClass({
                     }
                     </td>
                     <td>
-                      <Unimplemented>
-                        <OverlayTrigger 
-                          trigger="click" 
-                          placement="top" 
-                          rootClose 
-                          overlay={ <Confirm onConfirm={ this.confirmEndHire }/> }
+                      <OverlayTrigger 
+                        trigger="click" 
+                        placement="top" 
+                        rootClose 
+                        overlay={ <Confirm onConfirm={ this.confirmEndHire.bind(this, item) }/> }
+                      >
+                        <Button 
+                          bsSize="xsmall"
                         >
-                          <Button 
-                            bsSize="xsmall"
-                          >
-                            <Glyphicon glyph="check" />
-                          </Button>
-                        </OverlayTrigger>
-                      </Unimplemented>
+                          <Glyphicon glyph="check" />
+                        </Button>
+                      </OverlayTrigger>
                     </td>
                     <td><Link to={`${Constant.RENTAL_AGREEMENTS_PATHNAME}/${item.id}`}>Agreement</Link></td>
                   </tr>
