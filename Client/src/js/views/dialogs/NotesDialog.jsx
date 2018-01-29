@@ -4,8 +4,6 @@ import { connect } from 'react-redux';
 
 import { Form, Row, Col, FormGroup, ControlLabel, HelpBlock, ButtonGroup } from 'react-bootstrap';
 
-import _ from 'lodash';
-
 import EditDialog from '../../components/EditDialog.jsx';
 import Spinner from '../../components/Spinner.jsx';
 import FormInputControl from '../../components/FormInputControl.jsx';
