@@ -462,6 +462,21 @@ export function addEquipmentDocument(equipmentId, files) {
   return new ApiRequest(`/equipment/${ equipmentId }/attachments`).post(files);
 }
 
+export function getEquipmentNotes(equipmentId) {
+  return new ApiRequest(`/equipment/${ equipmentId }/notes`).get().then(response => {
+    var notes = normalize(response.data);
+    store.dispatch({ type: Action.UPDATE_EQUIPMENT_NOTES, notes: notes });
+  });
+}
+
+export function addEquipmentNote(equipmentId, note) {
+  return new ApiRequest(`/equipment/${ equipmentId }/note`).post(note).then(response => {
+    var notes = normalize(response.data);
+    store.dispatch({ type: Action.UPDATE_EQUIPMENT_NOTES, notes: notes });
+  });
+}
+
+
 ////////////////////
 // Physical Attachments
 ////////////////////
@@ -665,6 +680,20 @@ export function updateOwnerEquipment(owner, equipmentArray) {
   return new ApiRequest(`/owners/${ owner.id }/equipment`).put(equipmentArray).then(() => {
     // After updating the owner's equipment, refresh the owner state.
     return getOwner(owner.id);
+  });
+}
+
+export function getOwnerNotes(ownerId) {
+  return new ApiRequest(`/owners/${ ownerId }/notes`).get().then(response => {
+    var notes = normalize(response.data);
+    store.dispatch({ type: Action.UPDATE_OWNER_NOTES, notes: notes });
+  });
+}
+
+export function addOwnerNote(ownerId, note) {
+  return new ApiRequest(`/owners/${ ownerId }/note`).post(note).then(response => {
+    var notes = normalize(response.data);
+    store.dispatch({ type: Action.UPDATE_OWNER_NOTES, notes: notes });
   });
 }
 
@@ -978,6 +1007,20 @@ export function addProjectDocument(projectId, files) {
   return new ApiRequest(`/projects/${ projectId }/attachments`).post(files);
 }
 
+export function getProjectNotes(projectId) {
+  return new ApiRequest(`/projects/${ projectId }/notes`).get().then(response => {
+    var notes = normalize(response.data);
+    store.dispatch({ type: Action.UPDATE_PROJECT_NOTES, notes: notes });
+  });
+}
+
+export function addProjectNote(projectId, note) {
+  return new ApiRequest(`/projects/${ projectId }/note`).post(note).then(response => {
+    var notes = normalize(response.data);
+    store.dispatch({ type: Action.UPDATE_PROJECT_NOTES, notes: notes });
+  });
+}
+
 ////////////////////
 // Rental Requests
 ////////////////////
@@ -1116,6 +1159,20 @@ export function getRentalRequestDocuments(rentalRequestId) {
 
 export function addRentalRequestDocument(rentalRequestId, files) {
   return new ApiRequest(`/rentalrequests/${ rentalRequestId }/attachments`).post(files);
+}
+
+export function getRentalRequestNotes(rentalRequestId) {
+  return new ApiRequest(`/rentalrequests/${ rentalRequestId }/notes`).get().then(response => {
+    var notes = normalize(response.data);
+    store.dispatch({ type: Action.UPDATE_RENTAL_REQUEST_NOTES, notes: notes });
+  });
+}
+
+export function addRentalRequestNote(rentalRequestId, note) {
+  return new ApiRequest(`/rentalRequests/${ rentalRequestId }/note`).post(note).then(response => {
+    var notes = normalize(response.data);
+    store.dispatch({ type: Action.UPDATE_RENTAL_REQUEST_NOTES, notes: notes });
+  });
 }
 
 ////////////////////
@@ -1570,6 +1627,18 @@ export function getVersion() {
   });
 }
 
+////////////////////
+// Notes
+////////////////////
+
+// Need to change getNotes to get notes by individual entity. Currently gets all notes in the system
+export function getNotes() {
+  return new ApiRequest('/notes').get().then(response => {
+    var notes = normalize(response);
+    
+    store.dispatch({ type: Action.UPDATE_NOTES, notes: notes });
+  });
+}
 ////////////////////
 // Set User
 ////////////////////

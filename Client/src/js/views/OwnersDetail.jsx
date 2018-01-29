@@ -15,6 +15,7 @@ import DocumentsListDialog from './dialogs/DocumentsListDialog.jsx';
 import EquipmentAddDialog from './dialogs/EquipmentAddDialog.jsx';
 import OwnersEditDialog from './dialogs/OwnersEditDialog.jsx';
 import OwnersPolicyEditDialog from './dialogs/OwnersPolicyEditDialog.jsx';
+import NotesDialog from './dialogs/NotesDialog.jsx';
 
 import * as Action from '../actionTypes';
 import * as Api from '../api';
@@ -29,7 +30,6 @@ import EditButton from '../components/EditButton.jsx';
 import History from '../components/History.jsx';
 import SortTable from '../components/SortTable.jsx';
 import Spinner from '../components/Spinner.jsx';
-import Unimplemented from '../components/Unimplemented.jsx';
 
 import { formatDateTime, today, toZuluTime } from '../utils/date';
 import { concat } from '../utils/string';
@@ -51,6 +51,7 @@ var OwnersDetail = React.createClass({
     uiContacts: React.PropTypes.object,
     uiEquipment: React.PropTypes.object,
     router: React.PropTypes.object,
+    notes: React.PropTypes.object,
   },
 
   getInitialState() {
@@ -63,6 +64,7 @@ var OwnersDetail = React.createClass({
       showPolicyDocumentsDialog: false,
       showEquipmentDialog: false,
       showDocumentsDialog: false,
+      showNotesDialog: false,
 
       contact: {},
 
@@ -123,10 +125,12 @@ var OwnersDetail = React.createClass({
   fetch() {
     this.setState({ loading: true });
 
-    var ownerPromise = Api.getOwner(this.props.params.ownerId);
-    var documentsPromise = Api.getOwnerDocuments(this.props.params.ownerId);
+    var ownerId = this.props.params.ownerId;
+    var ownerPromise = Api.getOwner(ownerId);
+    var documentsPromise = Api.getOwnerDocuments(ownerId);
+    var ownerNotesPromise = Api.getOwnerNotes(ownerId);
 
-    return Promise.all([ownerPromise, documentsPromise]).finally(() => {
+    return Promise.all([ownerPromise, documentsPromise, ownerNotesPromise]).finally(() => {
       this.setState({ loading: false });
     });
   },
@@ -308,13 +312,25 @@ var OwnersDetail = React.createClass({
     // TODO Upload policy document (proof of policy coverage)
   },
 
+  openNotesDialog() {
+    this.setState({ showNotesDialog: true });
+  },
+
+  closeNotesDialog() {
+    this.setState({ showNotesDialog: false });
+  },
+
+  saveNote(note) {
+    Api.addOwnerNote(this.props.params.ownerId, note);
+  },
+
   print() {
     window.print();
   },
 
   render() {
     var owner = this.props.owner;
-
+    
     return <div id="owners-detail">
       <div>
         {(() => {
@@ -324,9 +340,7 @@ var OwnersDetail = React.createClass({
             <Col md={9}>
               <Label bsStyle={ owner.isApproved ? 'success' : 'danger'}>{ owner.status }</Label>
               <Label className={ owner.isMaintenanceContractor ? '' : 'hide' }>Maintenance Contractor</Label>
-              <Unimplemented>
-                <Button title="Notes" onClick={ this.showNotes }>Notes ({ owner.notes.length })</Button>
-              </Unimplemented>
+              <Button title="Notes" onClick={ this.openNotesDialog }>Notes ({ Object.keys(this.props.notes).length })</Button>
               <Button title="Documents" onClick={ this.showDocuments }>Documents ({ Object.keys(this.props.documents).length })</Button>
             </Col>
             <Col md={3}>
@@ -529,6 +543,14 @@ var OwnersDetail = React.createClass({
           onClose={ this.closeDocumentsDialog } 
         />
       }
+      { this.state.showNotesDialog &&
+        <NotesDialog 
+          show={ this.state.showNotesDialog } 
+          onSave={ this.saveNote } 
+          onClose={ this.closeNotesDialog } 
+          notes={ this.props.notes }
+        />
+      }
       { /* TODO this.state.showPolicyDocumentsDialog && <OwnerPolicyDocumentsDialog /> */}
     </div>;
   },
@@ -538,6 +560,7 @@ var OwnersDetail = React.createClass({
 function mapStateToProps(state) {
   return {
     owner: state.models.owner,
+    notes: state.models.ownerNotes,
     equipment: state.models.equipment,
     equipmentAttachments: state.models.equipmentAttachments,
     contact: state.models.contact,

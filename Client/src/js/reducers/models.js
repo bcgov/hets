@@ -161,6 +161,9 @@ export default function modelsReducer(state = DEFAULT_MODELS, action) {
     
     case Action.ADD_EQUIPMENT: case Action.UPDATE_EQUIPMENT:
       return { ...state, equipment: action.equipment };
+
+    case Action.UPDATE_EQUIPMENT_NOTES:
+      return { ...state, equipmentNotes: action.notes };
     
     // Equipment Attachments
     case Action.UPDATE_EQUIPMENT_ATTACHMENTS:
@@ -184,6 +187,9 @@ export default function modelsReducer(state = DEFAULT_MODELS, action) {
     
     case Action.ADD_OWNER: case Action.UPDATE_OWNER: case Action.DELETE_OWNER:
       return { ...state, owner: action.owner };
+
+    case Action.UPDATE_OWNER_NOTES:
+      return { ...state, ownerNotes: action.notes };
     
     // Projects
     case Action.PROJECTS_REQUEST: 
@@ -200,6 +206,9 @@ export default function modelsReducer(state = DEFAULT_MODELS, action) {
     
     case Action.UPDATE_PROJECT_TIME_RECORDS:
       return { ...state, projectTimeRecords: { data: action.projectTimeRecords, loading: false, success: true } };
+    
+    case Action.UPDATE_PROJECT_NOTES: 
+      return { ...state, projectNotes: action.notes };
     
     // Rental Requests
     case Action.RENTAL_REQUESTS_REQUEST: 
@@ -219,6 +228,9 @@ export default function modelsReducer(state = DEFAULT_MODELS, action) {
 
     case Action.ADD_RENTAL_REQUEST_REFRESH: 
       return { ...state, rentalRequest: { ...DEFAULT_MODELS.rentalRequest } };
+
+    case Action.UPDATE_RENTAL_REQUEST_NOTES: 
+      return { ...state, rentalRequestNotes: action.notes };
     
     // Rotation List
     case Action.RENTAL_REQUEST_ROTATION_LIST_REQUEST:
@@ -278,6 +290,10 @@ export default function modelsReducer(state = DEFAULT_MODELS, action) {
     // History
     case Action.UPDATE_HISTORY:
       return { ...state, history: action.history };
+
+    // Notes
+    case Action.UPDATE_NOTES:
+      return { ...state, notes: action.notes };
     
     // Time Record
     case Action.DELETE_TIME_RECORD:

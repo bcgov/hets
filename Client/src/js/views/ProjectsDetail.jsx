@@ -15,6 +15,7 @@ import ContactsEditDialog from './dialogs/ContactsEditDialog.jsx';
 import DocumentsListDialog from './dialogs/DocumentsListDialog.jsx';
 import RentalRequestsAddDialog from './dialogs/RentalRequestsAddDialog.jsx';
 import TimeEntryDialog from './dialogs/TimeEntryDialog.jsx';
+import NotesDialog from './dialogs/NotesDialog.jsx';
 
 import * as Action from '../actionTypes';
 import * as Api from '../api';
@@ -65,6 +66,7 @@ var ProjectsDetail = React.createClass({
       showContactDialog: false,
       showAddRequestDialog: false,
       showTimeEntryDialog: false,
+      showNotesDialog: false,
 
       includeCompletedRequests: false,
 
@@ -99,10 +101,12 @@ var ProjectsDetail = React.createClass({
   fetch() {
     this.setState({ loading: true });
 
-    var getProjectPromise = Api.getProject(this.props.params.projectId);
-    var documentsPromise = Api.getProjectDocuments(this.props.params.projectId);
+    var projectId = this.props.params.projectId;
+    var getProjectPromise = Api.getProject(projectId);
+    var documentsPromise = Api.getProjectDocuments(projectId);
+    var getProjectNotesPromise = Api.getProjectNotes(projectId);
 
-    return Promise.all([getProjectPromise, documentsPromise]).finally(() => {
+    return Promise.all([getProjectPromise, documentsPromise, getProjectNotesPromise]).finally(() => {
       this.setState({ loading: false });
     });
   },
@@ -119,7 +123,11 @@ var ProjectsDetail = React.createClass({
   },
 
   showNotes() {
+    this.setState({ showNotesDialog: true });
+  },
 
+  closeNotesDialog() {
+    this.setState({ showNotesDialog: false });
   },
 
   showDocuments() {
@@ -130,8 +138,8 @@ var ProjectsDetail = React.createClass({
     this.setState({ showDocumentsDialog: false });
   },
 
-  addNote() {
-
+  saveNote(note) {
+    Api.addProjectNote(this.props.params.projectId, note);
   },
 
   addDocument() {
@@ -263,9 +271,7 @@ var ProjectsDetail = React.createClass({
         <Row id="projects-top">
           <Col md={9}>
             <Label bsStyle={ project.isActive ? 'success' : 'danger'}>{ project.status }</Label>
-            <Unimplemented>
-              <Button title="Notes" onClick={ this.showNotes }>Notes ({ Object.keys(this.props.notes).length })</Button>
-            </Unimplemented>
+            <Button title="Notes" onClick={ this.showNotes }>Notes ({ Object.keys(this.props.notes).length })</Button>
             <Button title="Documents" onClick={ this.showDocuments }>Documents ({ Object.keys(this.props.documents).length })</Button>
           </Col>
           <Col md={3}>
@@ -501,6 +507,14 @@ var ProjectsDetail = React.createClass({
           onClose={ this.closeTimeEntryDialog }
           project={ project }
           activeRentalRequest={ this.state.rentalRequest }
+        />
+      }
+      { this.state.showNotesDialog &&
+        <NotesDialog 
+          show={ this.state.showNotesDialog } 
+          onSave={ this.saveNote } 
+          onClose={ this.closeNotesDialog } 
+          notes={ this.props.notes }
         />
       }
     </div>;

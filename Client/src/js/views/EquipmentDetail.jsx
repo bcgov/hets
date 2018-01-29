@@ -14,6 +14,7 @@ import SeniorityEditDialog from './dialogs/SeniorityEditDialog.jsx';
 import AttachmentAddDialog from './dialogs/AttachmentAddDialog.jsx';
 import AttachmentEditDialog from './dialogs/AttachmentEditDialog.jsx';
 import DocumentsListDialog from './dialogs/DocumentsListDialog.jsx';
+import NotesDialog from './dialogs/NotesDialog.jsx';
 
 import * as Action from '../actionTypes';
 import * as Api from '../api';
@@ -69,6 +70,7 @@ var EquipmentDetail = React.createClass({
       showSeniorityDialog: false,
       showPhysicalAttachmentDialog: false,
       showPhysicalAttachmentEditDialog: false,
+      showNotesDialog: false,
       equipmentPhysicalAttachment: {},
       ui : {
         // Physical Attachments
@@ -90,18 +92,26 @@ var EquipmentDetail = React.createClass({
 
   fetch() {
     this.setState({ loadingEquipment: true });
-    var getEquipmentPromise = Api.getEquipment(this.props.params.equipmentId);
-    var documentsPromise = Api.getEquipmentDocuments(this.props.params.equipmentId);
+    
+    var equipmentId = this.props.params.equipmentId;
+    var getEquipmentPromise = Api.getEquipment(equipmentId);
+    var documentsPromise = Api.getEquipmentDocuments(equipmentId);
+    var getEquipmentNotesPromise = Api.getEquipmentNotes(equipmentId);
     // Make several calls here
     // TODO Load equipment history, notes and attachments (docs)
     // TODO Load equipment seniority history
 
-    return Promise.all([getEquipmentPromise, documentsPromise]).finally(() => {
+    return Promise.all([getEquipmentPromise, documentsPromise, getEquipmentNotesPromise]).finally(() => {
       this.setState({ loadingEquipment: false });
     });
   },
 
   showNotes() {
+    this.setState({ showNotesDialog: true });
+  },
+
+  closeNotesDialog() {
+    this.setState({ showNotesDialog: false });
   },
 
   showDocuments() {
@@ -122,7 +132,8 @@ var EquipmentDetail = React.createClass({
     window.print();
   },
 
-  addNote() {
+  saveNote(note) {
+    Api.addEquipmentNote(this.props.params.equipmentId, note);
   },
 
   addDocument() {
@@ -230,9 +241,7 @@ var EquipmentDetail = React.createClass({
         <Row id="equipment-top">
           <Col md={8}>
             <Row>
-              <Unimplemented>
-                <Button title="Notes" onClick={ this.showNotes }>Notes ({ Object.keys(this.props.notes).length })</Button>
-              </Unimplemented>
+              <Button title="Notes" onClick={ this.showNotes }>Notes ({ Object.keys(this.props.notes).length })</Button>
               <Button title="Documents" onClick={ this.showDocuments }>Documents ({ Object.keys(this.props.documents).length })</Button>
             </Row>
           </Col>
@@ -503,6 +512,14 @@ var EquipmentDetail = React.createClass({
           show={ this.props.equipment && this.state.showDocumentsDialog }  
           parent={ this.props.equipment }
           onClose={ this.closeDocumentsDialog } 
+        />
+      }
+      { this.state.showNotesDialog &&
+        <NotesDialog 
+          show={ this.state.showNotesDialog } 
+          onSave={ this.saveNote } 
+          onClose={ this.closeNotesDialog } 
+          notes={ this.props.notes }
         />
       }
     </div>;

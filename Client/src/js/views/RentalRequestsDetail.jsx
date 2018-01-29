@@ -14,6 +14,7 @@ import Moment from 'moment';
 import HireOfferEditDialog from './dialogs/HireOfferEditDialog.jsx';
 import RentalRequestsEditDialog from './dialogs/RentalRequestsEditDialog.jsx';
 import DocumentsListDialog from './dialogs/DocumentsListDialog.jsx';
+import NotesDialog from './dialogs/NotesDialog.jsx';
 
 import * as Action from '../actionTypes';
 import * as Api from '../api';
@@ -65,6 +66,7 @@ var RentalRequestsDetail = React.createClass({
       showEditDialog: false,
       showHireOfferDialog: false,
       showContactDialog: false,
+      showNotesDialog: false, 
 
       showAttachmentss: false,
 
@@ -84,10 +86,11 @@ var RentalRequestsDetail = React.createClass({
     var rentalRequestId = this.props.params.rentalRequestId;
     var rentalRequestsPromise = Api.getRentalRequest(rentalRequestId);
     var rotationListPromise = Api.getRentalRequestRotationList(rentalRequestId);
-    var documentsPromise = Api.getRentalRequestDocuments(this.props.params.rentalRequestId);
+    var documentsPromise = Api.getRentalRequestDocuments(rentalRequestId);
+    var rentalRequestNotesPromise = Api.getRentalRequestNotes(rentalRequestId);
 
 
-    return Promise.all([rentalRequestsPromise, rotationListPromise, documentsPromise]).finally(() => {
+    return Promise.all([rentalRequestsPromise, rotationListPromise, documentsPromise, rentalRequestNotesPromise]).finally(() => {
       this.setState({ loading: false });
     });
   },
@@ -104,7 +107,11 @@ var RentalRequestsDetail = React.createClass({
   },
 
   showNotes() {
+    this.setState({ showNotesDialog: true });
+  },
 
+  closeNotesDialog() {
+    this.setState({ showNotesDialog: false });
   },
 
   showDocuments() {
@@ -115,8 +122,8 @@ var RentalRequestsDetail = React.createClass({
     this.setState({ showDocumentsDialog: false });
   },
 
-  addNote() {
-
+  saveNote(note) {
+    Api.addRentalRequestNote(this.props.params.rentalRequestId, note);
   },
 
   addDocument() {
@@ -232,9 +239,7 @@ var RentalRequestsDetail = React.createClass({
           <Unimplemented>
             <Button title="Clone" onClick={ this.cloneRequest }>Clone</Button>
           </Unimplemented>
-          <Unimplemented>
-            <Button title="Notes" onClick={ this.showNotes }>Notes ({ Object.keys(this.props.notes).length })</Button>
-          </Unimplemented>
+          <Button title="Notes" onClick={ this.showNotes }>Notes ({ Object.keys(this.props.notes).length })</Button>
           <Button title="Documents" onClick={ this.showDocuments }>Documents ({ Object.keys(this.props.documents).length })</Button>
         </Col>
         <Col md={2}>
@@ -434,6 +439,14 @@ var RentalRequestsDetail = React.createClass({
           show={ this.state.showDocumentsDialog } 
           parent={ rentalRequest } 
           onClose={ this.closeDocumentsDialog } 
+        />
+      }
+      { this.state.showNotesDialog &&
+        <NotesDialog 
+          show={ this.state.showNotesDialog } 
+          onSave={ this.saveNote } 
+          onClose={ this.closeNotesDialog } 
+          notes={ this.props.notes }
         />
       }
     </div>;
