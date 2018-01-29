@@ -1394,6 +1394,12 @@ export function releaseRentalAgreement(rentalAgreementId) {
   });
 }
 
+export function generateRentalAgreementDocument(rentalAgreementId) {
+  return new ApiRequest(`rentalagreements/${rentalAgreementId}/pdf`).post().then((response) => {
+    return response;
+  });
+}
+
 
 ////////////////////
 // Rental Rates

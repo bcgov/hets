@@ -2,6 +2,7 @@ import React from 'react';
 
 import { connect } from 'react-redux';
 
+import { Link } from 'react-router';
 import { Grid, Well, Row, Col } from 'react-bootstrap';
 import { Table, Alert, Button, Glyphicon, Label, ButtonGroup } from 'react-bootstrap';
 import { LinkContainer } from 'react-router-bootstrap';
@@ -241,14 +242,16 @@ var RentalAgreementsDetail = React.createClass({
   generateRentalAgreementDocument() {
     // Temporary approach to download PDFs
     // TODO: Research proper download technique
-    this.setState({ rentalAgreementDocumentLoading: true });
-    window.open(`/api/rentalagreements/${ this.props.params.rentalAgreementId }/pdf`);
-    this.setState({ rentalAgreementDocumentLoading: false });
+    // this.setState({ rentalAgreementDocumentLoading: true });
+    // window.open(`/api/rentalagreements/${ this.props.params.rentalAgreementId }/pdf`);
+    // this.setState({ rentalAgreementDocumentLoading: false });
+    Api.generateRentalAgreementDocument(this.props.params.rentalAgreementId);
   },
 
   render() {
     var rentalAgreement = this.props.rentalAgreement;
     var rentalConditions = ['Condition 1', 'Condition 2', 'Non-Standard Conditions']; // TODO this.props.rentalConditions
+    console.log(rentalAgreement);
 
     return <div id="rental-agreements-detail">
       <Row id="rental-agreements-top">
@@ -279,37 +282,53 @@ var RentalAgreementsDetail = React.createClass({
       {(() => {
         if (this.state.loading) { return <div style={{ textAlign: 'center' }}><Spinner/></div>; }
 
-        return <Grid fluid id="rental-agreements-header">
-          <Row>
-            <ColDisplay md={12} labelProps={{ md: 4 }} label={ <h1>Project:</h1> }><h1><small>{ rentalAgreement.projectName }</small></h1></ColDisplay>
-          </Row>
-          <Row>
-            <ColDisplay md={12} labelProps={{ md: 4 }} label={ <h1>Equipment Type:</h1> }><h1><small>{ rentalAgreement.equipmentTypeName }</small></h1></ColDisplay>
-          </Row>
-          <Row>
-            <ColDisplay md={12} labelProps={{ md: 4 }} label={ <h1>Owner:</h1> }><h1><small>{ rentalAgreement.ownerName }</small></h1></ColDisplay>
-          </Row>
-          <Row>
-            <ColDisplay md={12} labelProps={{ md: 4 }} label={ <h1>Equipment ID:</h1> }><h1><small>{ rentalAgreement.equipmentCode }</small></h1></ColDisplay>
-          </Row>
-          <Row>
-            <ColDisplay md={12} labelProps={{ md: 4 }} label="Agreement Number:">{ rentalAgreement.number }</ColDisplay>
-          </Row>
-        </Grid>;
+        return (
+          <Well>
+            <Grid id="rental-agreements-header">
+              <Row>
+                <ColDisplay md={12} labelProps={{ md: 4 }} label={ <h3>Agreement Number:</h3>}>
+                  <small>{ rentalAgreement.number }</small>
+                </ColDisplay>
+              </Row>
+              <Row>
+                <ColDisplay md={12} labelProps={{ md: 4 }} label={ <h3>Owner:</h3> }>
+                  <small>{ rentalAgreement.ownerName }</small>
+                </ColDisplay>
+              </Row>
+              <Row>
+                <ColDisplay md={12} labelProps={{ md: 4 }} label={ <h3>Equipment ID:</h3> }>
+                  <Link to={{ pathname: 'equipment/' + rentalAgreement.equipment.id }}>
+                    <small>{ rentalAgreement.equipment.equipmentCode }</small>
+                  </Link>
+                </ColDisplay>
+              </Row>
+              <Row>
+                <ColDisplay md={12} labelProps={{ md: 4 }} label={ <h3>Equipment Serial Number:</h3> }>
+                  <small>{ rentalAgreement.equipment.serialNumber }</small>
+                </ColDisplay>
+              </Row>
+              <Row>
+                <ColDisplay md={12} labelProps={{ md: 4 }} label={ <h3>Equipment Yr Mk/Md/Sz:</h3> }>
+                  <small>{`${rentalAgreement.equipment.year} ${rentalAgreement.equipment.make}/${rentalAgreement.equipment.model}/${rentalAgreement.equipment.size}`}</small>
+                </ColDisplay>
+              </Row>
+              <Row>
+                <ColDisplay md={12} labelProps={{ md: 4 }} label={ <h3>Project:</h3> }>
+                  <small>{ rentalAgreement.project.name }</small>
+                </ColDisplay>
+              </Row>
+            </Grid>
+          </Well>
+        );
       })()}
 
       <Well>
         <h3>Rates</h3>
-        <div className="clearfix">
-          <span className="pull-right">
-            <Button title="Edit Pay Rate" bsSize="small" onClick={ this.openEquipmentRateDialog }><Glyphicon glyph="pencil" /></Button>
-          </span>
-        </div>
         {(() => {
           if (this.state.loading) { return <div style={{ textAlign: 'center' }}><Spinner/></div>; }
 
           return <div>
-            <Grid id="rental-rates" fluid>
+            <Grid id="rental-rates" fluid className="nopadding">
               <Row>
                 <Col md={3}>
                   <ColDisplay md={12} labelProps={{ md: 6 }} label="Pay Rate:">{ formatCurrency(rentalAgreement.equipmentRate) }</ColDisplay>
@@ -317,8 +336,11 @@ var RentalAgreementsDetail = React.createClass({
                 <Col md={3}>
                   <ColDisplay md={12} labelProps={{ md: 6 }} label="Period:">{ rentalAgreement.ratePeriod }</ColDisplay>
                 </Col>
-                <Col md={6}>
+                <Col md={5}>
                   <ColDisplay md={12} labelProps={{ md: 3 }} label="Comment:">{ rentalAgreement.rateComment }</ColDisplay>
+                </Col>
+                <Col md={1}>
+                  <EditButton title="Edit Pay Rate" className="pull-right" onClick={ this.openEquipmentRateDialog } />
                 </Col>
               </Row>
             </Grid>
@@ -539,9 +561,6 @@ var RentalAgreementsDetail = React.createClass({
       <Row id="rental-agreements-footer">
         <div className="pull-right">
           <Button title="Generate Rental Agreement PDF" onClick={ this.generateRentalAgreementDocument } bsStyle="primary">Generate</Button>
-          <Unimplemented>
-            <Button title="Cancel">Cancel</Button>
-          </Unimplemented>
         </div>
       </Row>
       { this.state.showEditDialog &&
