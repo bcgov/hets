@@ -1,40 +1,22 @@
-/*
- * REST API Documentation for the MOTI Hired Equipment Tracking System (HETS) Application
- *
- * The Hired Equipment Program is for owners/operators who have a dump truck, bulldozer, backhoe or  other piece of equipment they want to hire out to the transportation ministry for day labour and  emergency projects.  The Hired Equipment Program distributes available work to local equipment owners. The program is  based on seniority and is designed to deliver work to registered users fairly and efficiently  through the development of local area call-out lists. 
- *
- * OpenAPI spec version: v1
- * 
- * 
- */
-
-using System;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using System.ComponentModel;
-using System.IO;
-using System.Linq;
-using System.Net;
-using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
-using Newtonsoft.Json;
 using Swashbuckle.SwaggerGen.Annotations;
 using HETSAPI.Models;
-using HETSAPI.ViewModels;
 using HETSAPI.Services;
 using HETSAPI.Authorization;
 
 namespace HETSAPI.Controllers
 {
     /// <summary>
-    /// 
+    /// Rental Agreement Rate Controller
     /// </summary>
-    public partial class RentalAgreementRateController : Controller
+    [ResponseCache(Location = ResponseCacheLocation.None, NoStore = true)]
+    public class RentalAgreementRateController : Controller
     {
         private readonly IRentalAgreementRateService _service;
 
         /// <summary>
-        /// Create a controller and set the service
+        /// Rental Agreement Rate Controller Constructor
         /// </summary>
         public RentalAgreementRateController(IRentalAgreementRateService service)
         {
@@ -42,7 +24,7 @@ namespace HETSAPI.Controllers
         }
 
         /// <summary>
-        /// 
+        /// Create bulk rental agreement rate records 
         /// </summary>
         /// <param name="items"></param>
         /// <response code="201">RentalAgreementRate created</response>
@@ -52,11 +34,11 @@ namespace HETSAPI.Controllers
         [RequiresPermission(Permission.ADMIN)]
         public virtual IActionResult RentalagreementratesBulkPost([FromBody]RentalAgreementRate[] items)
         {
-            return this._service.RentalagreementratesBulkPostAsync(items);
+            return _service.RentalagreementratesBulkPostAsync(items);
         }
 
         /// <summary>
-        /// 
+        /// Get all rental agreement rates
         /// </summary>
         /// <response code="200">OK</response>
         [HttpGet]
@@ -65,11 +47,11 @@ namespace HETSAPI.Controllers
         [SwaggerResponse(200, type: typeof(List<RentalAgreementRate>))]
         public virtual IActionResult RentalagreementratesGet()
         {
-            return this._service.RentalagreementratesGetAsync();
+            return _service.RentalagreementratesGetAsync();
         }
 
         /// <summary>
-        /// 
+        /// Delete rental agreement rate
         /// </summary>
         /// <param name="id">id of RentalAgreementRate to delete</param>
         /// <response code="200">OK</response>
@@ -79,11 +61,11 @@ namespace HETSAPI.Controllers
         [SwaggerOperation("RentalagreementratesIdDeletePost")]
         public virtual IActionResult RentalagreementratesIdDeletePost([FromRoute]int id)
         {
-            return this._service.RentalagreementratesIdDeletePostAsync(id);
+            return _service.RentalagreementratesIdDeletePostAsync(id);
         }
 
         /// <summary>
-        /// 
+        /// Get rental agreement rate by id
         /// </summary>
         /// <param name="id">id of RentalAgreementRate to fetch</param>
         /// <response code="200">OK</response>
@@ -94,13 +76,13 @@ namespace HETSAPI.Controllers
         [SwaggerResponse(200, type: typeof(RentalAgreementRate))]
         public virtual IActionResult RentalagreementratesIdGet([FromRoute]int id)
         {
-            return this._service.RentalagreementratesIdGetAsync(id);
+            return _service.RentalagreementratesIdGetAsync(id);
         }
 
         /// <summary>
-        /// 
+        /// Update rental agreement rate
         /// </summary>
-        /// <param name="id">id of RentalAgreementRate to fetch</param>
+        /// <param name="id">id of RentalAgreementRate to update</param>
         /// <param name="item"></param>
         /// <response code="200">OK</response>
         /// <response code="404">RentalAgreementRate not found</response>
@@ -110,11 +92,11 @@ namespace HETSAPI.Controllers
         [SwaggerResponse(200, type: typeof(RentalAgreementRate))]
         public virtual IActionResult RentalagreementratesIdPut([FromRoute]int id, [FromBody]RentalAgreementRate item)
         {
-            return this._service.RentalagreementratesIdPutAsync(id, item);
+            return _service.RentalagreementratesIdPutAsync(id, item);
         }
 
         /// <summary>
-        /// 
+        /// Create rental agreement rate
         /// </summary>
         /// <param name="item"></param>
         /// <response code="201">RentalAgreementRate created</response>
@@ -124,7 +106,7 @@ namespace HETSAPI.Controllers
         [SwaggerResponse(200, type: typeof(RentalAgreementRate))]
         public virtual IActionResult RentalagreementratesPost([FromBody]RentalAgreementRate item)
         {
-            return this._service.RentalagreementratesPostAsync(item);
+            return _service.RentalagreementratesPostAsync(item);
         }
     }
 }

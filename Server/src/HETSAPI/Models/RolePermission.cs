@@ -1,63 +1,42 @@
-/*
- * REST API Documentation for the MOTI Hired Equipment Tracking System (HETS) Application
- *
- * The Hired Equipment Program is for owners/operators who have a dump truck, bulldozer, backhoe or  other piece of equipment they want to hire out to the transportation ministry for day labour and  emergency projects.  The Hired Equipment Program distributes available work to local equipment owners. The program is  based on seniority and is designed to deliver work to registered users fairly and efficiently  through the development of local area call-out lists. 
- *
- * OpenAPI spec version: v1
- * 
- * 
- */
-
 using System;
-using System.Linq;
-using System.IO;
 using System.Text;
-using System.Collections;
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using System.Runtime.Serialization;
 using Newtonsoft.Json;
 using System.ComponentModel.DataAnnotations.Schema;
-using System.ComponentModel.DataAnnotations;
-using HETSAPI.Models;
 
 namespace HETSAPI.Models
 {
     /// <summary>
-    /// A permission that is part of a Role - a component of the authorization provided by the Role to the user to which the Role is assigned.
+    /// Role Permission Database Model
     /// </summary>
-        [MetaDataExtension (Description = "A permission that is part of a Role - a component of the authorization provided by the Role to the user to which the Role is assigned.")]
-
-    public partial class RolePermission : AuditableEntity, IEquatable<RolePermission>
+    [MetaData (Description = "A permission that is part of a Role - a component of the authorization provided by the Role to the user to which the Role is assigned.")]
+    public sealed class RolePermission : AuditableEntity, IEquatable<RolePermission>
     {
         /// <summary>
         /// Default constructor, required by entity framework
         /// </summary>
         public RolePermission()
         {
-            this.Id = 0;
+            Id = 0;
         }
 
         /// <summary>
         /// Initializes a new instance of the <see cref="RolePermission" /> class.
         /// </summary>
-        /// <param name="Id">A system-generated unique identifier for a RolePermission (required).</param>
-        /// <param name="Role">Role (required).</param>
-        /// <param name="Permission">A foreign key reference to the system-generated unique identifier for a Permission (required).</param>
-        public RolePermission(int Id, Role Role, Permission Permission)
+        /// <param name="id">A system-generated unique identifier for a RolePermission (required).</param>
+        /// <param name="role">Role (required).</param>
+        /// <param name="permission">A foreign key reference to the system-generated unique identifier for a Permission (required).</param>
+        public RolePermission(int id, Role role, Permission permission)
         {   
-            this.Id = Id;
-            this.Role = Role;
-            this.Permission = Permission;
-
-
+            Id = id;
+            Role = role;
+            Permission = permission;
         }
 
         /// <summary>
         /// A system-generated unique identifier for a RolePermission
         /// </summary>
         /// <value>A system-generated unique identifier for a RolePermission</value>
-        [MetaDataExtension (Description = "A system-generated unique identifier for a RolePermission")]
+        [MetaData (Description = "A system-generated unique identifier for a RolePermission")]
         public int Id { get; set; }
         
         /// <summary>
@@ -69,15 +48,14 @@ namespace HETSAPI.Models
         /// Foreign key for Role 
         /// </summary>   
         [ForeignKey("Role")]
-		[JsonIgnore]
-		
+		[JsonIgnore]		
         public int? RoleId { get; set; }
         
         /// <summary>
         /// A foreign key reference to the system-generated unique identifier for a Permission
         /// </summary>
         /// <value>A foreign key reference to the system-generated unique identifier for a Permission</value>
-        [MetaDataExtension (Description = "A foreign key reference to the system-generated unique identifier for a Permission")]
+        [MetaData (Description = "A foreign key reference to the system-generated unique identifier for a Permission")]
         public Permission Permission { get; set; }
         
         /// <summary>
@@ -85,7 +63,7 @@ namespace HETSAPI.Models
         /// </summary>   
         [ForeignKey("Permission")]
 		[JsonIgnore]
-		[MetaDataExtension (Description = "A foreign key reference to the system-generated unique identifier for a Permission")]
+		[MetaData (Description = "A foreign key reference to the system-generated unique identifier for a Permission")]
         public int? PermissionId { get; set; }
         
         /// <summary>
@@ -95,11 +73,13 @@ namespace HETSAPI.Models
         public override string ToString()
         {
             var sb = new StringBuilder();
+
             sb.Append("class RolePermission {\n");
             sb.Append("  Id: ").Append(Id).Append("\n");
             sb.Append("  Role: ").Append(Role).Append("\n");
             sb.Append("  Permission: ").Append(Permission).Append("\n");
             sb.Append("}\n");
+
             return sb.ToString();
         }
 
@@ -119,10 +99,9 @@ namespace HETSAPI.Models
         /// <returns>Boolean</returns>
         public override bool Equals(object obj)
         {
-            if (ReferenceEquals(null, obj)) { return false; }
+            if (obj is null) { return false; }
             if (ReferenceEquals(this, obj)) { return true; }
-            if (obj.GetType() != GetType()) { return false; }
-            return Equals((RolePermission)obj);
+            return obj.GetType() == GetType() && Equals((RolePermission)obj);
         }
 
         /// <summary>
@@ -132,24 +111,23 @@ namespace HETSAPI.Models
         /// <returns>Boolean</returns>
         public bool Equals(RolePermission other)
         {
-
-            if (ReferenceEquals(null, other)) { return false; }
+            if (other is null) { return false; }
             if (ReferenceEquals(this, other)) { return true; }
 
             return                 
                 (
-                    this.Id == other.Id ||
-                    this.Id.Equals(other.Id)
+                    Id == other.Id ||
+                    Id.Equals(other.Id)
                 ) &&                 
                 (
-                    this.Role == other.Role ||
-                    this.Role != null &&
-                    this.Role.Equals(other.Role)
+                    Role == other.Role ||
+                    Role != null &&
+                    Role.Equals(other.Role)
                 ) &&                 
                 (
-                    this.Permission == other.Permission ||
-                    this.Permission != null &&
-                    this.Permission.Equals(other.Permission)
+                    Permission == other.Permission ||
+                    Permission != null &&
+                    Permission.Equals(other.Permission)
                 );
         }
 
@@ -163,17 +141,20 @@ namespace HETSAPI.Models
             unchecked // Overflow is fine, just wrap
             {
                 int hash = 41;
-                // Suitable nullity checks
-                                   
-                hash = hash * 59 + this.Id.GetHashCode();                   
-                if (this.Role != null)
+
+                // Suitable nullity checks                                   
+                hash = hash * 59 + Id.GetHashCode();        
+                
+                if (Role != null)
                 {
-                    hash = hash * 59 + this.Role.GetHashCode();
-                }                   
-                if (this.Permission != null)
-                {
-                    hash = hash * 59 + this.Permission.GetHashCode();
+                    hash = hash * 59 + Role.GetHashCode();
                 }
+
+                if (Permission != null)
+                {
+                    hash = hash * 59 + Permission.GetHashCode();
+                }
+
                 return hash;
             }
         }

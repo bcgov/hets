@@ -5,8 +5,16 @@ using HETSAPI.Models;
 
 namespace HETSAPI.Authorization
 {
+    /// <summary>
+    /// MVC Options Extension
+    /// </summary>
     public static class MvcOptionsExtensions
     {
+        /// <summary>
+        /// Add Authorization Policy
+        /// </summary>
+        /// <param name="options"></param>
+        /// <returns></returns>
         public static MvcOptions AddDefaultAuthorizationPolicyFilter(this MvcOptions options)
         {
             // Default authorization policy enforced via a global authorization filter

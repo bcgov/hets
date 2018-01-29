@@ -1,78 +1,74 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Configuration;
-
-using Microsoft.EntityFrameworkCore;
-using PDF.Models;
-using Microsoft.AspNetCore.Http;
-using Newtonsoft.Json;
-using Microsoft.Extensions.Logging;
 using Microsoft.AspNetCore.NodeServices;
+using System.Threading.Tasks;
+using Microsoft.Extensions.Configuration;
+using PDF.Server.Helpers;
 
-namespace PDF.Controllers
+namespace PDF.Server.Controllers
 {
-    public class JSONResponse
+    /// <summary>
+    /// Rental Agreement - used to submit data to generate a new rental document
+    /// </summary>
+    public class RentalAgreement
     {
-        public string type;
-        public byte[] data;
+        public string JsonString { get; set; }
     }
-    [Route("api/[controller]")]
-    public class PDFController : Controller
+
+    /// <summary>
+    /// Pdf Controller - Main Pdf generation functionality
+    /// </summary>
+    [ResponseCache(Location = ResponseCacheLocation.None, NoStore = true)]
+    public class PdfController : Controller
     {
-        private readonly IConfiguration Configuration;
-        private readonly DbAppContext _context;
-        private readonly IHttpContextAccessor _httpContextAccessor;
+        private readonly INodeServices _nodeServices;
+        private readonly IConfigurationRoot _configuration;
 
-        private string userId;
-        private string guid;
-        private string directory;
-
-        protected ILogger _logger;
-
-        public PDFController(IHttpContextAccessor httpContextAccessor, IConfigurationRoot configuration, DbAppContext context, ILoggerFactory loggerFactory)
+        public PdfController(INodeServices nodeServices, IConfigurationRoot configuration)
         {
-            Configuration = configuration;
-
-            _httpContextAccessor = httpContextAccessor;
-            _context = context;
-
-            userId = getFromHeaders("SM_UNIVERSALID");
-            guid = getFromHeaders("SMGOV_USERGUID");
-            directory = getFromHeaders("SM_AUTHDIRNAME");
-
-            _logger = loggerFactory.CreateLogger(typeof(PDFController));
-        }
-
-        private string getFromHeaders(string key)
-        {
-            string result = null;
-            if (Request.Headers.ContainsKey(key))
-            {
-                result = Request.Headers[key];
-            }
-            return result;
-        }
+            _nodeServices = nodeServices;
+            _configuration = configuration;
+        }       
 
         [HttpPost]
-        [Route("GetPDF")]
-
-        public async Task<IActionResult> GetPDF([FromServices] INodeServices nodeServices, [FromBody]  Object rawdata )
+        [Route("pdf/rentalAgreement")]
+        public async Task<IActionResult> GetRentalAgreementPdf([FromBody]RentalAgreement rentalAgreement)
         {
-            JSONResponse result = null;
-            var options = new { format="letter", orientation= "landscape" };
+            try
+            {
+                // *************************************************************
+                // Create output using json and mustache template
+                // *************************************************************
+                RenderRequest request = new RenderRequest()
+                {
+                    JsonString = rentalAgreement.JsonString,
+                    RenderJsUrl = _configuration.GetSection("Constants").GetSection("RenderJsUrl").Value,
+                    Template = _configuration.GetSection("Constants").GetSection("SampleTemplate").Value
+                };
 
-            // execute the Node.js component
-            result = await nodeServices.InvokeAsync<JSONResponse>("./pdf", "rental_agreement", rawdata, options);
+                string result = await TemplateHelper.RenderDocument(_nodeServices, request);
 
-            return new FileContentResult(result.data, "application/pdf");
-        }
+                // *************************************************************
+                // Convert results to Pdf
+                // *************************************************************
+                string options = @"{""height"": ""10.5in"",""width"": ""8in"",""orientation"": ""portrait""}";
 
-        protected HttpRequest Request
-        {
-            get { return _httpContextAccessor.HttpContext.Request; }
+                PdfRequest pdfRequest = new PdfRequest()
+                {
+                    Html = result,
+                    Options = options,
+                    PdfJsUrl = _configuration.GetSection("Constants").GetSection("PdfJsUrl").Value
+                };
+
+                JsonResponse jsonResult = await PdfDocument.BuildPdf(_nodeServices, pdfRequest);
+
+                return File(jsonResult.Data, "application/pdf");
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+                throw;
+            }
         }
     }
 }

@@ -1,50 +1,40 @@
-﻿/*
- * REST API Documentation for the MOTI Hired Equipment Tracking System (HETS) Application
- *
- * The Hired Equipment Program is for owners/operators who have a dump truck, bulldozer, backhoe or  other piece of equipment they want to hire out to the transportation ministry for day labour and  emergency projects.  The Hired Equipment Program distributes available work to local equipment owners. The program is  based on seniority and is designed to deliver work to registered users fairly and efficiently  through the development of local area call-out lists.
- *
- * OpenAPI spec version: v1
- *
- *
- */
-
-
+﻿using Newtonsoft.Json;
+using Newtonsoft.Json.Serialization;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Http;
+using Microsoft.Extensions.Configuration;
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using System.ComponentModel;
-using System.IO;
+using System.Diagnostics;
 using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
-using Newtonsoft.Json;
+using System.Net.Http;
+using System.Text;
 using HETSAPI.Models;
 using HETSAPI.ViewModels;
 using HETSAPI.Mappings;
-using HETSAPI.Services;
-using HETSAPI.Services.Impl;
-using Microsoft.AspNetCore.Http;
-using Microsoft.Extensions.Configuration;
-using System.Net.Http;
-using System.Text;
-using Newtonsoft.Json.Serialization;
+using Microsoft.Extensions.Primitives;
 
 namespace HETSAPI.Services.Impl
 {
+    /// <summary>
+    /// Rental Agreement Service
+    /// </summary>
     public class RentalAgreementService : ServiceBase, IRentalAgreementService
     {
         private readonly DbAppContext _context;
-        private readonly IConfiguration Configuration;
+        private readonly IConfiguration _configuration;
 
         /// <summary>
         /// Create a service and set the database context
         /// </summary>
-        public RentalAgreementService(IHttpContextAccessor httpContextAccessor, IConfiguration configuration, DbAppContext context) : base(httpContextAccessor, context)
+        public RentalAgreementService(IHttpContextAccessor httpContextAccessor, IConfiguration configuration, DbAppContext context) 
+            : base(httpContextAccessor, context)
         {
             _context = context;
-            Configuration = configuration;
+            _configuration = configuration;
         }
 
         private void AdjustRecord(RentalAgreement item)
@@ -62,7 +52,6 @@ namespace HETSAPI.Services.Impl
                 {
                     item.Project = _context.Projects.FirstOrDefault(a => a.Id == item.Project.Id);
                 }
-
 
                 if (item.RentalAgreementConditions != null)
                 {
@@ -100,7 +89,7 @@ namespace HETSAPI.Services.Impl
         }
 
         /// <summary>
-        ///
+        /// Create bulk rental agreement records
         /// </summary>
         /// <param name="items"></param>
         /// <response code="201">Project created</response>
@@ -110,10 +99,13 @@ namespace HETSAPI.Services.Impl
             {
                 return new BadRequestResult();
             }
+
             foreach (RentalAgreement item in items)
             {
                 AdjustRecord(item);
+
                 bool exists = _context.RentalAgreements.Any(a => a.Id == item.Id);
+
                 if (exists)
                 {
                     _context.RentalAgreements.Update(item);
@@ -123,18 +115,20 @@ namespace HETSAPI.Services.Impl
                     _context.RentalAgreements.Add(item);
                 }
             }
-            // Save the changes
+
+            // save the changes
             _context.SaveChanges();
+
             return new NoContentResult();
         }
 
         /// <summary>
-        ///
+        /// Get all rental agreements
         /// </summary>
         /// <response code="200">OK</response>
         public virtual IActionResult RentalagreementsGetAsync()
         {
-            var result = _context.RentalAgreements
+            List<RentalAgreement> result = _context.RentalAgreements
                 .Include(x => x.Equipment)
                     .ThenInclude(y => y.Owner)
                 .Include(x => x.Equipment)
@@ -147,48 +141,52 @@ namespace HETSAPI.Services.Impl
                 .Include(x => x.RentalAgreementRates)
                 .Include(x => x.TimeRecords)
                 .ToList();
-            return new ObjectResult(result);
+
+            return new ObjectResult(new HetsResponse(result));
         }
 
         /// <summary>
-        ///
+        /// Delete rental agreement
         /// </summary>
         /// <param name="id">id of Project to delete</param>
         /// <response code="200">OK</response>
         /// <response code="404">Project not found</response>
         public virtual IActionResult RentalagreementsIdDeletePostAsync(int id)
         {
-            var exists = _context.RentalAgreements.Any(a => a.Id == id);
+            bool exists = _context.RentalAgreements.Any(a => a.Id == id);
+
             if (exists)
             {
-                var item = _context.RentalAgreements.First(a => a.Id == id);
+                RentalAgreement item = _context.RentalAgreements.First(a => a.Id == id);
+
                 if (item != null)
                 {
                     _context.RentalAgreements.Remove(item);
-                    // Save the changes
+
+                    // save the changes
                     _context.SaveChanges();
                 }
-                return new ObjectResult(item);
+
+                return new ObjectResult(new HetsResponse(item));
             }
-            else
-            {
-                // record not found
-                return new StatusCodeResult(404);
-            }
+
+            // record not found
+            return new ObjectResult(new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-01", _configuration)));
         }
 
         /// <summary>
-        ///
+        /// Get rental agreement by id
         /// </summary>
         /// <param name="id">id of Project to fetch</param>
         /// <response code="200">OK</response>
         /// <response code="404">Project not found</response>
         public virtual IActionResult RentalagreementsIdGetAsync(int id)
         {
-            var exists = _context.RentalAgreements.Any(a => a.Id == id);
+            bool exists = _context.RentalAgreements.Any(a => a.Id == id);
+
             if (exists)
             {
-                var result = _context.RentalAgreements
+                RentalAgreement result = _context.RentalAgreements
                     .Include(x => x.Equipment).ThenInclude(y => y.Owner)
                     .Include(x => x.Equipment).ThenInclude(y => y.EquipmentAttachments)
                     .Include(x => x.Equipment).ThenInclude(y => y.LocalArea.ServiceArea.District.Region)
@@ -197,24 +195,25 @@ namespace HETSAPI.Services.Impl
                     .Include(x => x.RentalAgreementRates)
                     .Include(x => x.TimeRecords)
                     .First(a => a.Id == id);
-                return new ObjectResult(result);
+
+                return new ObjectResult(new HetsResponse(result));
             }
-            else
-            {
-                // record not found
-                return new StatusCodeResult(404);
-            }
+
+            // record not found
+            return new ObjectResult(new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-01", _configuration)));
         }
 
         /// <summary>
-        ///
+        /// Get rental agreement pdf
         /// </summary>
         /// <remarks>Returns a PDF version of the specified rental agreement</remarks>
         /// <param name="id">id of RentalAgreement to obtain the PDF for</param>
+        /// <exception cref="Exception"></exception>
         /// <response code="200">OK</response>
         public virtual IActionResult RentalagreementsIdPdfGetAsync(int id)
         {
             FileContentResult result = null;
+
             RentalAgreement rentalAgreement = _context.RentalAgreements
                 .Include(x => x.Equipment).ThenInclude(y => y.Owner).ThenInclude(z => z.PrimaryContact)
                 .Include(x => x.Equipment).ThenInclude(y => y.DistrictEquipmentType)
@@ -225,14 +224,12 @@ namespace HETSAPI.Services.Impl
                 .Include(x => x.RentalAgreementRates)
                 .Include(x => x.TimeRecords)
                 .FirstOrDefault(a => a.Id == id);
+
             if (rentalAgreement != null)
             {
-
-                // construct the view model.
-
+                // construct the view model
                 RentalAgreementPdfViewModel rentalAgreementPdfViewModel = rentalAgreement.ToViewModel();
 
-                // TODO: Review Global JSON Serialization Options
                 string payload = JsonConvert.SerializeObject(rentalAgreementPdfViewModel, new JsonSerializerSettings {
                     ReferenceLoopHandling = ReferenceLoopHandling.Ignore,
                     ContractResolver = new CamelCasePropertyNamesContractResolver(),
@@ -241,22 +238,25 @@ namespace HETSAPI.Services.Impl
                     DateTimeZoneHandling = DateTimeZoneHandling.Utc
                 });
 
-                // pass the request on to the PDF Micro Service
-                string pdfHost = Configuration["PDF_SERVICE_NAME"];
-
-                string targetUrl = pdfHost + "/api/PDF/GetPDF";
+                // pass the request on to the Pdf Micro Service
+                string pdfHost = _configuration["PDF_SERVICE_NAME"];
+                string pdfUrl = _configuration.GetSection("Constants:PdfUrl").Value;
+                string targetUrl = pdfHost + pdfUrl;
 
                 // call the microservice
                 try
                 {
                     HttpClient client = new HttpClient();
 
-                    var request = new HttpRequestMessage(HttpMethod.Post, targetUrl);
-                    request.Content = new StringContent(payload, Encoding.UTF8, "application/json");
+                    HttpRequestMessage request = new HttpRequestMessage(HttpMethod.Post, targetUrl)
+                    {
+                        Content = new StringContent(payload, Encoding.UTF8, "application/json")
+                    };
 
                     request.Headers.Clear();
+
                     // transfer over the request headers.
-                    foreach (var item in Request.Headers)
+                    foreach (KeyValuePair<string, StringValues> item in Request.Headers)
                     {
                         string key = item.Key;
                         string value = item.Value;
@@ -267,18 +267,23 @@ namespace HETSAPI.Services.Impl
                     responseTask.Wait();
 
                     HttpResponseMessage response = responseTask.Result;
-                    if (response.StatusCode == HttpStatusCode.OK) // success
+
+                    // success
+                    if (response.StatusCode == HttpStatusCode.OK)
                     {
                         var bytetask = response.Content.ReadAsByteArrayAsync();
                         bytetask.Wait();
 
-                        result = new FileContentResult(bytetask.Result, "application/pdf");
-                        result.FileDownloadName = "RentalAgreement-" + rentalAgreement.Number + ".pdf";
+                        result = new FileContentResult(bytetask.Result, "application/pdf")
+                        {
+                            FileDownloadName = "RentalAgreement-" + rentalAgreement.Number + ".pdf"
+                        };
                     }
                 }
-                catch (Exception e)
+                catch (Exception ex)
                 {
-                    result = null;
+                    Debug.Write("Error generating pdf: " + ex.Message);
+                    return new ObjectResult(new HetsResponse("HETS-05", ErrorViewModel.GetDescription("HETS-05", _configuration)));
                 }
 
                 // check that the result has a value
@@ -286,50 +291,52 @@ namespace HETSAPI.Services.Impl
                 {
                     return result;
                 }
-                else
-                {
-                    return new StatusCodeResult(400); // problem occured
-                }
 
+                // problem occured
+                return new ObjectResult(new HetsResponse("HETS-05", ErrorViewModel.GetDescription("HETS-05", _configuration)));
             }
-            else
-            {
-                // record not found
-                return new StatusCodeResult(404);
-            }
+
+            // record not found
+            return new ObjectResult(new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-01", _configuration)));
         }
 
         /// <summary>
-        ///
+        /// Update rental agreement
         /// </summary>
-        /// <param name="id">id of Project to fetch</param>
+        /// <param name="id">id of Rental Agreement to update</param>
         /// <param name="item"></param>
         /// <response code="200">OK</response>
         /// <response code="404">Project not found</response>
         public virtual IActionResult RentalagreementsIdPutAsync(int id, RentalAgreement item)
         {
             AdjustRecord(item);
-            var exists = _context.RentalAgreements.Any(a => a.Id == id);
+
+            bool exists = _context.RentalAgreements.Any(a => a.Id == id);
+
             if (exists && id == item.Id)
             {
                 _context.RentalAgreements.Update(item);
-                // Save the changes
+
+                // save the changes
                 _context.SaveChanges();
-                return new ObjectResult(item);
+
+                return new ObjectResult(new HetsResponse(item));
             }
-            else
-            {
-                // record not found
-                return new StatusCodeResult(404);
-            }
+
+            // record not found
+            return new ObjectResult(new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-01", _configuration)));
         }
 
+        /// <summary>
+        /// Get rental agreement
+        /// </summary>
+        /// <param name="item"></param>
+        /// <returns></returns>
         private string GetRentalAgreementNumber (RentalAgreement item)
         {
             string result = "";
 
             // validate item.
-
             if (item.Equipment != null && item.Equipment.LocalArea != null)
             {
                 DateTime currentTime = DateTime.UtcNow;
@@ -350,19 +357,18 @@ namespace HETSAPI.Services.Impl
                 // count the number of rental agreements in the system.
                 int currentCount = _context.RentalAgreements
                                         .Include(x => x.Equipment.LocalArea)
-                                        .Where(x => x.Equipment.LocalArea.Id == localAreaId && x.CreateTimestamp >= fiscalYearStart)
-                                        .Count();
+                                        .Count(x => x.Equipment.LocalArea.Id == localAreaId && x.AppCreateTimestamp >= fiscalYearStart);
                 currentCount++;
 
                 // format of the Rental Agreement number is YYYY-#-####
-                result = fiscalYear.ToString() + "-" + localAreaNumber.ToString() + "-" + currentCount.ToString ("D4");
+                result = fiscalYear + "-" + localAreaNumber + "-" + currentCount.ToString ("D4");
             }
-            return result;
 
+            return result;
         }
 
         /// <summary>
-        ///
+        /// Create rental agreement
         /// </summary>
         /// <param name="item"></param>
         /// <response code="201">Project created</response>
@@ -372,7 +378,8 @@ namespace HETSAPI.Services.Impl
             {
                 AdjustRecord(item);
 
-                var exists = _context.RentalAgreements.Any(a => a.Id == item.Id);
+                bool exists = _context.RentalAgreements.Any(a => a.Id == item.Id);
+
                 if (exists)
                 {
                     _context.RentalAgreements.Update(item);
@@ -384,15 +391,198 @@ namespace HETSAPI.Services.Impl
                     // record not found
                     _context.RentalAgreements.Add(item);
                 }
-                // Save the changes
+
+                // save the changes
                 _context.SaveChanges();
-                return new ObjectResult(item);
+
+                return new ObjectResult(new HetsResponse(item));
             }
-            else
-            {
-                return new StatusCodeResult(400);
-            }
+
+            // no record to insert
+            return new ObjectResult(new HetsResponse("HETS-04", ErrorViewModel.GetDescription("HETS-04", _configuration)));
         }
 
+        /// <summary>
+        /// Release (terminate) a rental agreement
+        /// </summary>
+        /// /// <param name="id">Id of Rental Agreement to release</param>
+        /// <response code="201">Rental Agreement released</response>
+        public virtual IActionResult RentalagreementsIdReleasePostAsync(int id)
+        {
+            bool exists = _context.RentalAgreements.Any(a => a.Id == id);
+
+            if (exists)
+            {
+                RentalAgreement rentalAgreement = _context.RentalAgreements.FirstOrDefault(a => a.Id == id);
+
+                if (rentalAgreement == null)
+                {
+                    // record not found
+                    return new ObjectResult(new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-01", _configuration)));
+                }
+
+                // release (terminate) rental agreement
+                rentalAgreement.Status = "Complete";
+
+                _context.RentalAgreements.Update(rentalAgreement);
+
+                // save the changes
+                _context.SaveChanges();
+
+                return new ObjectResult(new HetsResponse(rentalAgreement));
+            }
+
+            // record not found
+            return new ObjectResult(new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-01", _configuration)));
+        }
+
+        #region Rental Agreement Time Records
+
+        /// <summary>
+        /// Get time records associated with rental agreement
+        /// </summary>
+        /// <param name="id">id of Rental Agreement to fetch Time Records for</param>
+        /// <response code="200">OK</response>
+        public virtual IActionResult RentalAgreementsIdTimeRecordsGetAsync(int id)
+        {
+            bool exists = _context.RentalAgreements.Any(a => a.Id == id);
+
+            if (exists)
+            {
+                RentalAgreement agreement = _context.RentalAgreements.AsNoTracking()
+                    .Include(x => x.TimeRecords)
+                    .First(x => x.Id == id);
+
+                List<TimeRecord> timeRecords = new List<TimeRecord>();
+                timeRecords.AddRange(agreement.TimeRecords);
+
+                return new ObjectResult(new HetsResponse(timeRecords));
+            }
+
+            // record not found
+            return new ObjectResult(new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-01", _configuration)));
+        }
+
+        /// <summary>
+        /// Update or create a time record associated with a rental agreement
+        /// </summary>
+        /// <remarks>Update a Project&#39;s Time Record</remarks>
+        /// <param name="id">id of Rental Agreement to update Time Records for</param>
+        /// <param name="item">Rental Agreement Time Record</param>
+        /// <response code="200">OK</response>
+        public virtual IActionResult RentalAgreementsIdTimeRecordsPostAsync(int id, TimeRecord item)
+        {
+            bool exists = _context.RentalAgreements.Any(a => a.Id == id);
+
+            if (exists && item != null)
+            {
+                RentalAgreement agreement = _context.RentalAgreements
+                    .Include(x => x.TimeRecords)
+                    .First(x => x.Id == id);
+
+                // ******************************************************************
+                // add or update time record
+                // ******************************************************************                
+                if (item.Id > 0)
+                {
+                    int timeIndex = agreement.TimeRecords.FindIndex(a => a.Id == item.Id);
+
+                    if (timeIndex < 0)
+                    {
+                        // record not found
+                        return new ObjectResult(new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-01", _configuration)));
+                    }
+
+                    agreement.TimeRecords[timeIndex].EnteredDate = item.EnteredDate;
+                    agreement.TimeRecords[timeIndex].Hours = item.Hours;
+                    agreement.TimeRecords[timeIndex].TimePeriod = item.TimePeriod;
+                    agreement.TimeRecords[timeIndex].WorkedDate = item.WorkedDate;
+                }
+                else // add time record
+                {
+                    agreement.TimeRecords.Add(item);
+                }
+
+                _context.SaveChanges();
+
+                // *************************************************************
+                // return updated time records
+                // *************************************************************
+                List<TimeRecord> timeRecords = new List<TimeRecord>();
+
+                timeRecords.AddRange(agreement.TimeRecords);
+
+                return new ObjectResult(new HetsResponse(timeRecords));
+            }
+
+            // record not found
+            return new ObjectResult(new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-01", _configuration)));
+        }
+
+        /// <summary>
+        /// Update or create an array of time records associated with a rental agreement
+        /// </summary>
+        /// <remarks>Update a Renta Agreement&#39;s Time Records</remarks>
+        /// <param name="id">id of Rental Agreement to update Time Records for</param>
+        /// <param name="items">Array of Rental Agreement Time Records</param>
+        /// <response code="200">OK</response>
+        public virtual IActionResult RentalAgreementsIdTimeRecordsBulkPostAsync(int id, TimeRecord[] items)
+        {
+            bool exists = _context.RentalAgreements.Any(a => a.Id == id);
+
+            if (exists && items != null)
+            {
+                RentalAgreement agreement = _context.RentalAgreements
+                    .Include(x => x.TimeRecords)
+                    .First(x => x.Id == id);
+
+                // process each time record
+                foreach (TimeRecord item in items)
+                {
+                    // ******************************************************************
+                    // add or update time record
+                    // ******************************************************************                
+                    if (item.Id > 0)
+                    {
+                        int timeIndex = agreement.TimeRecords.FindIndex(a => a.Id == item.Id);
+
+                        if (timeIndex < 0)
+                        {
+                            // record not found
+                            return new ObjectResult(new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-01", _configuration)));
+                        }
+
+                        agreement.TimeRecords[timeIndex].EnteredDate = item.EnteredDate;
+                        agreement.TimeRecords[timeIndex].Hours = item.Hours;
+                        agreement.TimeRecords[timeIndex].TimePeriod = item.TimePeriod;
+                        agreement.TimeRecords[timeIndex].WorkedDate = item.WorkedDate;
+                    }
+                    else // add time record
+                    {
+                        agreement.TimeRecords.Add(item);
+                    }
+
+                    _context.SaveChanges();
+                }
+
+                // *************************************************************
+                // return updated time records
+                // *************************************************************
+                agreement = _context.RentalAgreements
+                    .Include(x => x.TimeRecords)
+                    .First(x => x.Id == id);
+
+                List<TimeRecord> timeRecords = new List<TimeRecord>();
+
+                timeRecords.AddRange(agreement.TimeRecords);
+
+                return new ObjectResult(new HetsResponse(timeRecords));
+            }
+
+            // record not found
+            return new ObjectResult(new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-01", _configuration)));
+        }
+
+        #endregion
     }
 }

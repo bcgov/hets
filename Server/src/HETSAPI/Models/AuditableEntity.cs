@@ -1,40 +1,105 @@
-﻿/*
- * REST API Documentation for the MOTI Hired Equipment Tracking System (HETS) Application
- *
- * The Hired Equipment Program is for owners/operators who have a dump truck, bulldozer, backhoe or  other piece of equipment they want to hire out to the transportation ministry for day labour and  emergency projects.  The Hired Equipment Program distributes available work to local equipment owners. The program is  based on seniority and is designed to deliver work to registered users fairly and efficiently  through the development of local area call-out lists. 
- *
- * OpenAPI spec version: v1
- * 
- * 
- */
-
-using Newtonsoft.Json;
+﻿using Newtonsoft.Json;
 using System;
-using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace HETSAPI.Models
 {
+    /// <summary>
+    /// Auditiable Entity Annotation Extension
+    /// </summary>
     public class AuditableEntity
     {
-        [MetaDataExtension(Description = "Audit information - SM User Id for the User who created the record.")]
+        /// <summary>
+        /// The user account name of the application user who performed the action that created the record (e.g. 'JSMITH'). This value is not preceded by the directory name. 
+        /// </summary>
+        [MetaData(Description = "The user account name of the application user who performed the action that created the record (e.g. JSMITH). This value is not preceded by the directory name. ")]
+        [MaxLength(255)]
+        [JsonIgnore]
+        public string AppCreateUserid { get; set; }
+
+        /// <summary>
+        /// Siteminder UserId of the user that created the record
+        /// </summary>
+        [MetaData(Description = "The Globally Unique Identifier of the application user who performed the action that created the record.")]
+        [MaxLength(255)]
+        [JsonIgnore]
+        public string AppCreateUserGuid { get; set; }
+
+        /// <summary>
+        /// Siteminder UserId of the user that created the record
+        /// </summary>
+        [MetaData(Description = "The directory in which APP_CREATE_USERID is defined.")]
         [MaxLength(50)]
         [JsonIgnore]
-        public string CreateUserid { get; set; }
+        public string AppCreateUserDirectory { get; set; }
+
+        /// <summary>
+        /// The date and time of the application action that created the record.
+        /// </summary>
+        [MetaData(Description = "The date and time of the application action that created the record.")]
+        [JsonIgnore]
+        public DateTime AppCreateTimestamp { get; set; }
+
+        /// <summary>
+        /// Siteminder UserId of the user that (last) updated the record
+        /// </summary>
+        [MetaData(Description = "The user account name of the application user who performed the action that created or last updated the record (e.g. JSMITH). This value is not preceded by the directory name.")]
+        [MaxLength(255)]
+        [JsonIgnore]
+        public string AppLastUpdateUserid { get; set; }
+
+        /// <summary>
+        /// Siteminder UserId of the user that created the record
+        /// </summary>
+        [MetaData(Description = "The Globally Unique Identifier of the application user who most recently updated the record.")]
+        [MaxLength(255)]
+        [JsonIgnore]
+        public string AppLastUpdateUserGuid { get; set; }
+
+        /// <summary>
+        /// Siteminder UserId of the user that created the record
+        /// </summary>
+        [MetaData(Description = "The directory in which APP_LAST_UPDATE_USERID is defined.")]
+        [MaxLength(50)]
+        [JsonIgnore]
+        public string AppLastUpdateUserDirectory { get; set; }
+
+        /// <summary>
+        /// Timestamp when the record was (last) updated
+        /// </summary>
+        [MetaData(Description = "The date and time of the application action that created or last updated the record.")]
+        [JsonIgnore]
+        public DateTime AppLastUpdateTimestamp { get; set; }
         
-        [MetaDataExtension(Description = "Audit information - Timestamp for record creation")]
+        /// <summary>
+        /// The date and time the record was created.
+        /// </summary>
+        [MetaData(Description = "The date and time the record was created.")]
         [JsonIgnore]
-        public DateTime CreateTimestamp { get; set; }
+        public DateTime DbCreateTimestamp { get; set; }
 
-        [MetaDataExtension(Description = "Audit information - SM User Id for the User who most recently updated the record")]
-        [MaxLength(50)]
+        /// <summary>
+        /// The user or proxy account that created the record.
+        /// </summary>
+        [MetaData(Description = "The user or proxy account that created the record.")]
+        [MaxLength(63)]
         [JsonIgnore]
-        public string LastUpdateUserid { get; set; }
+        public string DbCreateUserId { get; set; }
 
-        [MetaDataExtension(Description = "Audit information - Timestamp for record modification")]
+        /// <summary>
+        /// The date and time the record was created or last updated.
+        /// </summary>
+        [MetaData(Description = "The date and time the record was created or last updated.")]
         [JsonIgnore]
-        public DateTime LastUpdateTimestamp { get; set; }
+        public DateTime DbLastUpdateTimestamp { get; set; }
+
+        /// <summary>
+        /// The user or proxy account that created or last updated the record.
+        /// </summary>
+        [MetaData(Description = "The user or proxy account that created or last updated the record.")]
+        [MaxLength(63)]
+        [JsonIgnore]
+        public string DbLastUpdateUserId { get; set; }
+       
     }
 }

@@ -1,73 +1,55 @@
-/*
- * REST API Documentation for the MOTI Hired Equipment Tracking System (HETS) Application
- *
- * The Hired Equipment Program is for owners/operators who have a dump truck, bulldozer, backhoe or  other piece of equipment they want to hire out to the transportation ministry for day labour and  emergency projects.  The Hired Equipment Program distributes available work to local equipment owners. The program is  based on seniority and is designed to deliver work to registered users fairly and efficiently  through the development of local area call-out lists. 
- *
- * OpenAPI spec version: v1
- * 
- * 
- */
-
-using System;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using System.ComponentModel;
-using System.IO;
 using System.Linq;
-using System.Net;
-using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using Newtonsoft.Json;
 using HETSAPI.Models;
 using HETSAPI.ViewModels;
+using Microsoft.Extensions.Configuration;
 
 namespace HETSAPI.Services.Impl
 {
     /// <summary>
-    /// 
+    /// Service Area Service
     /// </summary>
     public class ServiceAreaService : IServiceAreaService
     {
         private readonly DbAppContext _context;
+        private readonly IConfiguration _configuration;
 
         /// <summary>
-        /// Create a service and set the database context
+        /// Service Area Service Constructor
         /// </summary>
-        public ServiceAreaService(DbAppContext context)
+        public ServiceAreaService(DbAppContext context, IConfiguration configuration)
         {
             _context = context;
+            _configuration = configuration;
         }
 
         private void AdjustRecord(ServiceArea item)
         {
-            if (item != null)
-            {
-                // Adjust district
-                if (item.District != null)
-                {
-                    item.District = _context.Districts.FirstOrDefault(a => a.Id == item.District.Id);
-                }
-            }            
+            if (item != null && item.District != null)
+                item.District = _context.Districts.FirstOrDefault(a => a.Id == item.District.Id);
         }
 
         /// <summary>
-        /// 
+        /// Create bulk service area records
         /// </summary>
         /// <remarks>Adds a number of districts.</remarks>
         /// <param name="items"></param>
         /// <response code="200">OK</response>
-        public virtual IActionResult ServiceareasBulkPostAsync(ServiceArea[] items)
+        public virtual IActionResult ServiceAreasBulkPostAsync(ServiceArea[] items)
         {
             if (items == null)
             {
                 return new BadRequestResult();
             }
+
             foreach (ServiceArea item in items)
             {
                 AdjustRecord(item);
 
                 bool exists = _context.ServiceAreas.Any(a => a.Id == item.Id);
+
                 if (exists)
                 {
                     _context.ServiceAreas.Update(item);
@@ -77,112 +59,117 @@ namespace HETSAPI.Services.Impl
                     _context.ServiceAreas.Add(item);
                 }                
             }
-            // Save the changes
+
+            // save the changes
             _context.SaveChanges();
             return new NoContentResult();
         }
 
         /// <summary>
-        /// 
+        /// Get all service area
         /// </summary>
-        /// <remarks>Returns a list of available districts</remarks>
+        /// <remarks>Returns a list of available service areas</remarks>
         /// <response code="200">OK</response>
-        public virtual IActionResult ServiceareasGetAsync()
+        public virtual IActionResult ServiceAreasGetAsync()
         {
-            var result = _context.ServiceAreas
+            List<ServiceArea> result = _context.ServiceAreas
                 .Include(x => x.District.Region)
                 .ToList();
-            return new ObjectResult(result);
+
+            return new ObjectResult(new HetsResponse(result));
         }
 
         /// <summary>
-        /// 
+        /// Delete service area
         /// </summary>
         /// <remarks>Deletes a Service Area</remarks>
         /// <param name="id">id of Service Area to delete</param>
         /// <response code="200">OK</response>
         /// <response code="404">Service Area not found</response>
-        public virtual IActionResult ServiceareasIdDeletePostAsync(int id)
+        public virtual IActionResult ServiceAreasIdDeletePostAsync(int id)
         {
-            var exists = _context.ServiceAreas.Any(a => a.Id == id);
+            bool exists = _context.ServiceAreas.Any(a => a.Id == id);
+
             if (exists)
             {
-                var item = _context.ServiceAreas.First(a => a.Id == id);
+                ServiceArea item = _context.ServiceAreas.First(a => a.Id == id);
+
                 if (item != null)
                 {
                     _context.ServiceAreas.Remove(item);
-                    // Save the changes
+
+                    // save the changes
                     _context.SaveChanges();
                 }
-                return new ObjectResult(item);
+
+                return new ObjectResult(new HetsResponse(item));
             }
-            else
-            {
-                // record not found
-                return new StatusCodeResult(404);
-            }
+
+            // record not found
+            return new ObjectResult(new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-01", _configuration)));
         }
 
         /// <summary>
-        /// 
+        /// Get service area by id
         /// </summary>
         /// <remarks>Returns a specific Service Area</remarks>
         /// <param name="id">id of Service Area to fetch</param>
         /// <response code="200">OK</response>
-        public virtual IActionResult ServiceareasIdGetAsync(int id)
+        public virtual IActionResult ServiceAreasIdGetAsync(int id)
         {
-            var exists = _context.ServiceAreas.Any(a => a.Id == id);
+            bool exists = _context.ServiceAreas.Any(a => a.Id == id);
+
             if (exists)
             {
-                var result = _context.ServiceAreas
+                ServiceArea result = _context.ServiceAreas
                     .Where(a => a.Id == id)
                     .Include(a => a.District.Region)
                     .FirstOrDefault();
-                return new ObjectResult(result);
+
+                return new ObjectResult(new HetsResponse(result));
             }
-            else
-            {
-                // record not found
-                return new StatusCodeResult(404);
-            }
+
+            // record not found
+            return new ObjectResult(new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-01", _configuration)));
         }
 
         /// <summary>
-        /// 
+        /// Update service area
         /// </summary>
         /// <remarks>Updates a Service Area</remarks>
         /// <param name="id">id of Service Area to update</param>
         /// <param name="item"></param>
         /// <response code="200">OK</response>
         /// <response code="404">Service Area not found</response>
-        public virtual IActionResult ServiceareasIdPutAsync(int id, ServiceArea item)
+        public virtual IActionResult ServiceAreasIdPutAsync(int id, ServiceArea item)
         {
-            var exists = _context.ServiceAreas.Any(a => a.Id == id);
+            bool exists = _context.ServiceAreas.Any(a => a.Id == id);
+
             if (exists && id == item.Id)
             {
                 AdjustRecord(item);
                 _context.ServiceAreas.Update(item);
-                // Save the changes
+
+                // save the changes
                 _context.SaveChanges();
-                return new ObjectResult(item);
+                return new ObjectResult(new HetsResponse(item));
             }
-            else
-            {
-                // record not found
-                return new StatusCodeResult(404);
-            }
+
+            // record not found
+            return new ObjectResult(new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-01", _configuration)));
         }
 
         /// <summary>
-        /// 
+        /// Create service area
         /// </summary>
         /// <remarks>Adds a Service Area</remarks>
         /// <param name="item"></param>
         /// <response code="200">OK</response>
-        public virtual IActionResult ServiceareasPostAsync(ServiceArea item)
+        public virtual IActionResult ServiceAreasPostAsync(ServiceArea item)
         {
             AdjustRecord(item);
-            var exists = _context.ServiceAreas.Any(a => a.Id == item.Id);
+            bool exists = _context.ServiceAreas.Any(a => a.Id == item.Id);
+
             if (exists)
             {
                 _context.ServiceAreas.Update(item);
@@ -192,9 +179,10 @@ namespace HETSAPI.Services.Impl
                 // record not found
                 _context.ServiceAreas.Add(item);
             }
-            // Save the changes
+
+            // save the changes
             _context.SaveChanges();
-            return new ObjectResult(item);
+            return new ObjectResult(new HetsResponse(item));
         }
     }
 }

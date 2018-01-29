@@ -1,18 +1,15 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 using HETSAPI.Models;
 using HETSAPI.ViewModels;
 
 namespace HETSAPI.Mappings
 {
     /// <summary>
-    /// Mappoing Extensions used to convert from Models to ViewModels
+    /// Mapping Extensions used to convert from Models to ViewModels
     /// </summary>
     public static class MappingExtensions
     {
-
         /// <summary>
         /// Convert User to CurrentUserViewModel
         /// </summary>
@@ -21,6 +18,7 @@ namespace HETSAPI.Mappings
         public static CurrentUserViewModel ToCurrentUserViewModel(this User model)
         {
             var dto = new CurrentUserViewModel();
+
             if (model != null)
             {
                 dto.Email = model.Email;
@@ -36,19 +34,21 @@ namespace HETSAPI.Mappings
             return dto;
         }
 
-        static private string convertDate (DateTime? dateObject)
+        private static string ConvertDate (DateTime? dateObject)
         {
             string result = "";
+
             if (dateObject != null)
             {
                 // Since the PDF template is raw HTML and won't convert a date object, we must adjust the time zone here.                    
-                TimeZoneInfo tzi = null;
+                TimeZoneInfo tzi;
+
                 try
                 {
                     // try the IANA timzeone first.
                     tzi = TimeZoneInfo.FindSystemTimeZoneById("America / Vancouver");
                 }
-                catch (Exception e)
+                catch
                 {
                     tzi = null;
                 }
@@ -59,12 +59,14 @@ namespace HETSAPI.Mappings
                     {
                         tzi = TimeZoneInfo.FindSystemTimeZoneById("Pacific Standard Time");
                     }
-                    catch (Exception e)
+                    catch 
                     {
                         tzi = null;
                     }
                 }
-                DateTime dt = DateTime.UtcNow;
+
+                DateTime dt;
+
                 if (tzi != null)
                 {
                     dt = TimeZoneInfo.ConvertTime((DateTime)dateObject, tzi);
@@ -75,23 +77,63 @@ namespace HETSAPI.Mappings
                     dt = (DateTime)dateObject;
 
                 }
+
                 result = dt.ToString("yyyy-MM-dd");
             }
+
             return result;
         }
 
+        /// <summary>
+        /// Printed rental agreement view model
+        /// </summary>
+        /// <param name="model"></param>
+        /// <returns></returns>
+        public static RentalRequestViewModel ToRentalRequestViewModel(this RentalRequest model)
+        {
+            var dto = new RentalRequestViewModel();
 
-        // view model for a printed rental agreement.  At this time the fields match a Rental Agreement.
+            if (model != null)
+            {
+                dto.Id = model.Id;
+                dto.Project = model.Project;
+                dto.LocalArea = model.LocalArea;
+                dto.Status = model.Status;
+                dto.DistrictEquipmentType = model.DistrictEquipmentType;
+                dto.EquipmentCount = model.EquipmentCount;
+                dto.ExpectedHours = model.ExpectedHours;
+                dto.ExpectedStartDate = model.ExpectedStartDate;
+                dto.ExpectedEndDate = model.ExpectedEndDate;
+                dto.FirstOnRotationList = model.FirstOnRotationList;
+                dto.Notes = model.Notes;
+                dto.Attachments = model.Attachments;
+                dto.History = model.History;
+                dto.RentalRequestAttachments = model.RentalRequestAttachments;
+                dto.RentalRequestRotationList = model.RentalRequestRotationList;
+
+                // calculate the Yes Count based on the RentalRequestList
+                dto.CalculateYesCount();                
+            }
+
+            return dto;
+        }        
+
+        /// <summary>
+        /// Printed rental agreement view model
+        /// </summary>
+        /// <param name="model"></param>
+        /// <returns></returns>
         public static RentalAgreementPdfViewModel ToViewModel (this RentalAgreement model)
         {
             var dto = new RentalAgreementPdfViewModel();
+
             if (model != null)
             {
-                dto.DatedOn = convertDate(model.DatedOn);                
+                dto.DatedOn = ConvertDate(model.DatedOn);                
                 dto.Equipment = model.Equipment;
                 dto.EquipmentRate = model.EquipmentRate;
                 dto.EstimateHours = model.EstimateHours;
-                dto.EstimateStartWork = convertDate(model.EstimateStartWork);                                  
+                dto.EstimateStartWork = ConvertDate(model.EstimateStartWork);                                  
                 dto.Id = model.Id;
                 dto.Note = model.Note;
                 dto.Number = model.Number;
@@ -103,70 +145,82 @@ namespace HETSAPI.Mappings
                 dto.Status = model.Status;
                 dto.TimeRecords = model.TimeRecords;                
             }
+
             return dto;
         }
 
         /// <summary>
-        /// 
+        /// Rental request search results view model
         /// </summary>
         /// <param name="model"></param>
         /// <returns></returns>
         public static RentalRequestSearchResultViewModel ToViewModel(this RentalRequest model)
         {
             var dto = new RentalRequestSearchResultViewModel();
+
             if (model != null)
             {
-                if (model.DistrictEquipmentType != null && model.DistrictEquipmentType != null)
+                if (model.DistrictEquipmentType != null)
                 {
                     dto.EquipmentTypeName = model.DistrictEquipmentType.EquipmentType.Name;
-                }                
+                }            
+                
                 dto.Id = model.Id;
                 dto.LocalArea = model.LocalArea;
+
                 if (model.Project != null)
                 {
                     dto.PrimaryContact = model.Project.PrimaryContact;
                     dto.ProjectName = model.Project.Name;
                     dto.ProjectId = model.Project.Id;
-                }                
+                }   
+                
                 dto.Status = model.Status;
                 dto.EquipmentCount = model.EquipmentCount;                
                 dto.ExpectedEndDate = model.ExpectedEndDate;
                 dto.ExpectedStartDate = model.ExpectedStartDate;
             }
+
             return dto;
         }
 
-        // ********* COMMON VIEW MODEL MAPPINGS
-
         /// <summary>
-        /// Convert Attachment to AttachmentViewModel
+        /// Attachment view model
         /// </summary>
         /// <param name="model"></param>
         /// <returns></returns>
         public static AttachmentViewModel ToViewModel(this Attachment model)
         {
             var dto = new AttachmentViewModel();
+
             if (model != null)
             {
                 dto.Description = model.Description;
                 dto.FileName = model.FileName;
-                dto.FileSize = model.FileContents.Length;
+
+                if (model.FileContents != null)
+                {
+                    dto.FileSize = model.FileContents.Length;
+                }
+
                 dto.Id = model.Id;
                 dto.Type = model.Type;
-                dto.LastUpdateTimestamp = model.LastUpdateTimestamp;
-                dto.LastUpdateUserid = model.LastUpdateUserid;                
+                dto.LastUpdateTimestamp = model.AppLastUpdateTimestamp;
+                dto.LastUpdateUserid = model.AppLastUpdateUserid;                
             }
+
             return dto;
         }
 
         /// <summary>
-        /// Converts a list of Attachments to a list of AttachmentViewModels
+        /// List of Attachments view model
         /// </summary>
         /// <param name="attachments"></param>
         /// <returns></returns>
         public static List<AttachmentViewModel> GetAttachmentListAsViewModel(List<Attachment> attachments)
         {
             List<AttachmentViewModel> result = new List<AttachmentViewModel>();
+
             foreach (Attachment attachment in attachments)
             {
                 if (attachment != null)
@@ -174,12 +228,19 @@ namespace HETSAPI.Mappings
                     result.Add(attachment.ToViewModel());
                 }
             }
+
             return result;
         }
 
+        /// <summary>
+        /// User view model
+        /// </summary>
+        /// <param name="model"></param>
+        /// <returns></returns>
         public static UserViewModel ToViewModel(this User model)
         {
             var dto = new UserViewModel();
+
             if (model != null)
             {
                 dto.Active = model.Active;
@@ -195,9 +256,15 @@ namespace HETSAPI.Mappings
             return dto;
         }
 
+        /// <summary>
+        /// User role view model
+        /// </summary>
+        /// <param name="model"></param>
+        /// <returns></returns>
         public static UserRoleViewModel ToViewModel(this UserRole model)
         {
             var dto = new UserRoleViewModel();
+
             if (model != null)
             {
                 dto.EffectiveDate = model.EffectiveDate;
@@ -208,9 +275,15 @@ namespace HETSAPI.Mappings
                 }
                 dto.Id = model.Id;
             }
+
             return dto;
         }
 
+        /// <summary>
+        /// Role view model
+        /// </summary>
+        /// <param name="model"></param>
+        /// <returns></returns>
         public static RoleViewModel ToViewModel(this Role model)
         {
             var dto = new RoleViewModel();
@@ -223,9 +296,15 @@ namespace HETSAPI.Mappings
             return dto;
         }
 
+        /// <summary>
+        /// Role permission view model
+        /// </summary>
+        /// <param name="model"></param>
+        /// <returns></returns>
         public static RolePermissionViewModel ToViewModel(this RolePermission model)
         {
             var dto = new RolePermissionViewModel();
+
             if (model != null)
             {
                 if (model.Permission != null)
@@ -238,12 +317,19 @@ namespace HETSAPI.Mappings
                 }
                 dto.Id = model.Id;
             }
+
             return dto;
         }
 
+        /// <summary>
+        /// Permission view model
+        /// </summary>
+        /// <param name="model"></param>
+        /// <returns></returns>
         public static PermissionViewModel ToViewModel(this Permission model)
         {
             var dto = new PermissionViewModel();
+
             if (model != null)
             {
                 dto.Id = model.Id;
@@ -251,9 +337,15 @@ namespace HETSAPI.Mappings
                 dto.Name = model.Name;
                 dto.Description = model.Description;
             }
+
             return dto;
         }
 
+        /// <summary>
+        /// Project search result view model
+        /// </summary>
+        /// <param name="model"></param>
+        /// <returns></returns>
         public static ProjectSearchResultViewModel ToViewModel(this Project model)
         {
             var dto = new ProjectSearchResultViewModel();
@@ -267,9 +359,15 @@ namespace HETSAPI.Mappings
             return dto;         
         }
 
+        /// <summary>
+        /// Equipment view model
+        /// </summary>
+        /// <param name="model"></param>
+        /// <returns></returns>
         public static EquipmentViewModel ToViewModel(this Equipment model)
         {
             var dto = new EquipmentViewModel();
+
             if (model != null)
             {
                 dto.ApprovedDate = model.ApprovedDate;
@@ -310,13 +408,23 @@ namespace HETSAPI.Mappings
                 dto.ToDate = model.ToDate;                
                 dto.Year = model.Year;
                 dto.YearsOfService = model.YearsOfService;
+
+                // calculate "seniority sort order" & round the seniority value (3 decimal places)
+                dto.CalculateSenioritySortOrder();
             }
+
             return dto;
         }
-
+        
+        /// <summary>
+        /// Group membership view model
+        /// </summary>
+        /// <param name="model"></param>
+        /// <returns></returns>
         public static GroupMembershipViewModel ToViewModel(this GroupMembership model)
         {
             var dto = new GroupMembershipViewModel();
+
             if (model != null)
             {
                 dto.Active = model.Active;
@@ -327,44 +435,59 @@ namespace HETSAPI.Mappings
                 dto.UserId = model.User.Id;
                 dto.Id = model.Id;
             }
+
             return dto;
         }
 
+        /// <summary>
+        /// Group view model
+        /// </summary>
+        /// <param name="model"></param>
+        /// <returns></returns>
         public static GroupViewModel ToViewModel(this Group model)
         {
-            var dto = new GroupViewModel();
+            GroupViewModel dto = new GroupViewModel();
+
             if (model != null)
             {
                 dto.Description = model.Description;
                 dto.Name = model.Name;
                 dto.Id = model.Id;
             }
+
             return dto;
         }
 
         /// <summary>
-        /// Converts a History record to a view model
+        /// History view model
         /// </summary>
         /// <param name="model"></param>
-        /// <param name="AffectedEntityId"></param>
+        /// <param name="affectedEntityId"></param>
         /// <returns></returns>
-        public static HistoryViewModel ToViewModel(this History model, int AffectedEntityId)
+        public static HistoryViewModel ToViewModel(this History model, int affectedEntityId)
         {
-            HistoryViewModel dto = new HistoryViewModel();
-            dto.AffectedEntityId = AffectedEntityId;
+            HistoryViewModel dto = new HistoryViewModel {AffectedEntityId = affectedEntityId};
+
             if (model != null)
             {
                 dto.HistoryText = model.HistoryText;
                 dto.Id = model.Id;
-                dto.LastUpdateTimestamp = model.LastUpdateTimestamp;
-                dto.LastUpdateUserid = model.LastUpdateUserid;
+                dto.LastUpdateTimestamp = model.AppLastUpdateTimestamp;
+                dto.LastUpdateUserid = model.AppLastUpdateUserid;
             }
+
             return dto;
         }
 
+        /// <summary>
+        /// User favorite view model
+        /// </summary>
+        /// <param name="model"></param>
+        /// <returns></returns>
         public static UserFavouriteViewModel ToViewModel(this UserFavourite model)
         {
             var dto = new UserFavouriteViewModel();
+
             if (model != null)
             {
                 dto.Type = model.Type;
@@ -373,8 +496,8 @@ namespace HETSAPI.Mappings
                 dto.Value = model.Value;
                 dto.Id = model.Id;
             }
+
             return dto;
-        }
-        
+        }        
     }
 }

@@ -1,25 +1,27 @@
-﻿using Microsoft.EntityFrameworkCore.Storage;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+﻿using System;
+using Microsoft.EntityFrameworkCore.Storage;
 
 namespace HETSAPI
 {
     /// <summary>
-    /// 
+    /// Db Context Transaction Wrapper
     /// </summary>
-    public class DbContextTransactionWrapper : IDbContextTransaction
+    public class DbContextTransactionWrapper : IDbContextTransaction, IDisposable
     {
-        private readonly IDbContextTransaction _transaction = null;
+        private readonly IDbContextTransaction _transaction;
 
         internal DbContextTransactionWrapper(IDbContextTransaction transaction, bool existingTransaction)
         {
             _transaction = transaction;
-            _existingTransaction = existingTransaction;
+            ExistingTransaction = existingTransaction;
         }
 
-        internal bool _existingTransaction { get; set; }
+        internal bool ExistingTransaction { get; set; }
+
+        /// <summary>
+        /// Database TRansaction Id
+        /// </summary>
+        public Guid TransactionId { get; set; }
 
         /// <summary>
         /// Commits all changes made to the database in the current transaction.
@@ -27,7 +29,7 @@ namespace HETSAPI
         public void Commit()
         {
             // Don't commit someone else's transaction
-            if (!_existingTransaction)
+            if (!ExistingTransaction)
             {
                 _transaction.Commit();
             }
@@ -39,7 +41,7 @@ namespace HETSAPI
         public void Rollback()
         {
             // Don't rollback someone else's transaction
-            if (!_existingTransaction)
+            if (!ExistingTransaction)
             {
                 _transaction.Rollback();
             }
@@ -48,14 +50,31 @@ namespace HETSAPI
         /// <summary>
         /// Performs application-defined tasks associated with freeing, releasing, or resetting 
         /// unmanaged resources.
-        /// </summary>
+        /// </summary>        
+        private bool _disposed;
+
         public void Dispose()
         {
-            // Don't dispose of someone else's transaction
-            if (!_existingTransaction)
-            {
-                _transaction.Dispose();
-            }
+            // Dispose of unmanaged resources.
+            Dispose(true);
+
+            // Suppress finalization.
+            GC.SuppressFinalize(this);
+        }
+
+        protected virtual void Dispose(bool disposing)
+        {
+            if (_disposed)
+                return;
+
+            if (disposing && !ExistingTransaction) _transaction.Dispose();
+
+            _disposed = true;
+        }
+
+        ~DbContextTransactionWrapper()
+        {
+            Dispose(false);
         }
     }
 }

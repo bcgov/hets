@@ -7,9 +7,14 @@ import { Alert, Button, ButtonGroup, Glyphicon, Label, DropdownButton, MenuItem,
 import { LinkContainer } from 'react-router-bootstrap';
 
 import _ from 'lodash';
+import Promise from 'bluebird';
 
 import EquipmentEditDialog from './dialogs/EquipmentEditDialog.jsx';
 import SeniorityEditDialog from './dialogs/SeniorityEditDialog.jsx';
+import AttachmentAddDialog from './dialogs/AttachmentAddDialog.jsx';
+import AttachmentEditDialog from './dialogs/AttachmentEditDialog.jsx';
+import DocumentsListDialog from './dialogs/DocumentsListDialog.jsx';
+import NotesDialog from './dialogs/NotesDialog.jsx';
 
 import * as Action from '../actionTypes';
 import * as Api from '../api';
@@ -45,6 +50,7 @@ var EquipmentDetail = React.createClass({
     equipmentSeniorityHistory: React.PropTypes.object,
     notes: React.PropTypes.object,
     attachments: React.PropTypes.object,
+    documents: React.PropTypes.object,
     history: React.PropTypes.object,
     params: React.PropTypes.object,
     ui: React.PropTypes.object,
@@ -60,8 +66,11 @@ var EquipmentDetail = React.createClass({
       loadingSeniorityData: false,
       loadingEquipmentHistory: false,
       showEditDialog: false,
+      showDocumentsDialog: false,
       showSeniorityDialog: false,
       showPhysicalAttachmentDialog: false,
+      showPhysicalAttachmentEditDialog: false,
+      showNotesDialog: false,
       equipmentPhysicalAttachment: {},
       ui : {
         // Physical Attachments
@@ -75,21 +84,42 @@ var EquipmentDetail = React.createClass({
     this.fetch();
   },
 
+  componentDidUpdate(prevProps) {
+    if (prevProps.params.equipmentId !== this.props.params.equipmentId) {
+      this.fetch();
+    }
+  },
+
   fetch() {
     this.setState({ loadingEquipment: true });
-    var equipId = this.props.params.equipmentId;
+    
+    var equipmentId = this.props.params.equipmentId;
+    var getEquipmentPromise = Api.getEquipment(equipmentId);
+    var documentsPromise = Api.getEquipmentDocuments(equipmentId);
+    var getEquipmentNotesPromise = Api.getEquipmentNotes(equipmentId);
     // Make several calls here
     // TODO Load equipment history, notes and attachments (docs)
     // TODO Load equipment seniority history
-    Api.getEquipment(equipId).finally(() => {
+
+    return Promise.all([getEquipmentPromise, documentsPromise, getEquipmentNotesPromise]).finally(() => {
       this.setState({ loadingEquipment: false });
     });
   },
 
   showNotes() {
+    this.setState({ showNotesDialog: true });
+  },
+
+  closeNotesDialog() {
+    this.setState({ showNotesDialog: false });
   },
 
   showDocuments() {
+    this.setState({ showDocumentsDialog: true });
+  },
+
+  closeDocumentsDialog() {
+    this.setState({ showDocumentsDialog: false });
   },
 
   showHistory() {
@@ -99,10 +129,11 @@ var EquipmentDetail = React.createClass({
   },
 
   print() {
-    // TODO Implement
+    window.print();
   },
 
-  addNote() {
+  saveNote(note) {
+    Api.addEquipmentNote(this.props.params.equipmentId, note);
   },
 
   addDocument() {
@@ -150,9 +181,8 @@ var EquipmentDetail = React.createClass({
     });
   },
 
-  openPhysicalAttachmentDialog(attachment) {
+  openPhysicalAttachmentDialog() {
     this.setState({
-      equipmentPhysicalAttachment: attachment,
       showPhysicalAttachmentDialog: true,
     });
   },
@@ -161,17 +191,37 @@ var EquipmentDetail = React.createClass({
     this.setState({ showPhysicalAttachmentDialog: false });
   },
 
-  addPhysicalAttachment() {
-    var newAttachment = {
-      id: 0,
-      equipment: this.props.equipment,
-    };
-    this.openPhysicalAttachmentDialog(newAttachment);
+  addPhysicalAttachment(attachment) {
+    Api.addPhysicalAttachment(attachment).then(() => {
+      var equipId = this.props.params.equipmentId;
+      Api.getEquipment(equipId);
+      this.closePhysicalAttachmentDialog();
+    });
   },
 
-  deletePhysicalAttachment(attachment) {
-    Api.deletePhysicalAttachment(attachment).then(() => {
-      // TODO Refresh attachment list
+  openPhysicalAttachmentEditDialog(attachment) {
+    this.setState({
+      equipmentPhysicalAttachment: attachment,
+      showPhysicalAttachmentEditDialog: true,
+    });
+  },
+
+  closePhysicalAttachmentEditDialog() {
+    this.setState({ showPhysicalAttachmentEditDialog: false });
+  },
+
+  updatePhysicalAttachment(attachment) {
+    Api.updatePhysicalAttachment(attachment).then(() => {
+      var equipId = this.props.params.equipmentId;
+      Api.getEquipment(equipId);
+      this.closePhysicalAttachmentEditDialog();
+    });
+  },
+
+  deletePhysicalAttachment(attachmentId) {
+    Api.deletePhysicalAttachment(attachmentId).then(() => {
+      var equipId = this.props.params.equipmentId;
+      Api.getEquipment(equipId);
     });
   },
 
@@ -190,16 +240,10 @@ var EquipmentDetail = React.createClass({
       <div>
         <Row id="equipment-top">
           <Col md={8}>
-            <Label bsStyle={ equipment.isApproved ? 'success' : 'danger'}>{ equipment.status }</Label>
-            <Label className={ equipment.isMaintenanceContractor ? '' : 'hide' }>Maintenance Contractor</Label>
-            <Label bsStyle={ equipment.isWorking ? 'danger' : 'success' }>{ equipment.isWorking ? 'Working' : 'Not Working' }</Label>
-            <Label bsStyle={ lastVerifiedStyle }>Last Verified: { formatDateTime(equipment.lastVerifiedDate, Constant.DATE_YEAR_SHORT_MONTH_DAY) }</Label>
-            <Unimplemented>
+            <Row>
               <Button title="Notes" onClick={ this.showNotes }>Notes ({ Object.keys(this.props.notes).length })</Button>
-            </Unimplemented>
-            <Unimplemented>
-              <Button title="Documents" onClick={ this.showDocuments }>Docs ({ Object.keys(this.props.attachments).length })</Button>
-            </Unimplemented>
+              <Button title="Documents" onClick={ this.showDocuments }>Documents ({ Object.keys(this.props.documents).length })</Button>
+            </Row>
           </Col>
           <Col md={4}>
             <div className="pull-right">
@@ -210,14 +254,18 @@ var EquipmentDetail = React.createClass({
                   <MenuItem key={ EQUIPMENT_ACTION_FOR_HIRE } eventKey={ EQUIPMENT_ACTION_FOR_HIRE }>{ EQUIPMENT_ACTION_FOR_HIRE }</MenuItem>
                 </DropdownButton>
               </Unimplemented>
-              <Unimplemented>
-                <Button onClick={ this.print }><Glyphicon glyph="print" title="Print" /></Button>
-              </Unimplemented>
+              <Button onClick={ this.print }><Glyphicon glyph="print" title="Print" /></Button>
               <LinkContainer to={{ pathname: this.state.returnUrl }}>
                 <Button title="Return to List"><Glyphicon glyph="arrow-left" /> Return to List</Button>
               </LinkContainer>
             </div>
           </Col>
+        </Row>
+        <Row id="equipment-bottom">
+          <Label bsStyle={ equipment.isApproved ? 'success' : 'danger'}>{ equipment.status }</Label>
+          <Label className={ equipment.isMaintenanceContractor ? '' : 'hide' }>Maintenance Contractor</Label>
+          <Label bsStyle={ equipment.isWorking ? 'danger' : 'success' }>{ equipment.isWorking ? 'Working' : 'Not Working' }</Label>
+          <Label bsStyle={ lastVerifiedStyle }>Last Verified: { formatDateTime(equipment.lastVerifiedDate, Constant.DATE_YEAR_SHORT_MONTH_DAY) }</Label>
         </Row>
 
         {(() => {
@@ -225,10 +273,10 @@ var EquipmentDetail = React.createClass({
 
           return <div id="equipment-header">
             <Row>
-              <ColDisplay md={12} labelProps={{ md: 4 }} label={ <h1>Company:</h1> }><h1><small>{ equipment.organizationName }</small></h1></ColDisplay>
+              <ColDisplay md={12} label={ <h1>Company:</h1> }><h1><small>{ equipment.organizationName }</small></h1></ColDisplay>
             </Row>
             <Row>
-              <ColDisplay md={12} labelProps={{ md: 4 }} label={ <h1>EquipId:</h1> }><h1><small>{ equipment.equipmentCode } ({ equipment.typeName })</small></h1></ColDisplay>
+              <ColDisplay md={12} label={ <h1>EquipId:</h1> }><h1><small>{ equipment.equipmentCode } ({ equipment.typeName })</small></h1></ColDisplay>
             </Row>
             <Row>
               <Col md={6}>
@@ -297,41 +345,50 @@ var EquipmentDetail = React.createClass({
           <Col md={6}>
             <Well>
               <h3>Attachments <span className="pull-right">
-                <Unimplemented>
-                  <Button title="Add Attachment" bsSize="small" onClick={this.addPhysicalAttachment}><Glyphicon glyph="plus" /></Button>
-                </Unimplemented>
+                <Button title="Add Attachment" bsSize="small" onClick={this.openPhysicalAttachmentDialog}><Glyphicon glyph="plus" /></Button>
               </span></h3>
               {(() => {
-                if (this.state.loadingPhysicalAttachments ) { return <div style={{ textAlign: 'center' }}><Spinner/></div>; }
-                if (Object.keys(this.props.equipmentPhysicalAttachments).length === 0) { return <Alert bsStyle="success" style={{ marginTop: 10 }}>No Attachments</Alert>; }
+                {/* if (this.state.loadingPhysicalAttachments ) { return <div style={{ textAlign: 'center' }}><Spinner/></div>; } */}
+                {/* if (Object.keys(this.props.equipmentPhysicalAttachments).length === 0) { return <Alert bsStyle="success" style={{ marginTop: 10 }}>No Attachments</Alert>; } */}
 
-                var physicalAttachments = _.sortBy(this.props.equipmentPhysicalAttachments, this.state.ui.sortField);
+                var physicalAttachments = _.sortBy(this.props.equipment.equipmentAttachments, this.state.ui.sortField);
                 if (this.state.ui.sortDesc) {
                   _.reverse(physicalAttachments);
-                }
+                } 
 
                 var headers = [
                   { field: 'attachmentTypeName', title: 'Type' },
-                  { field: 'attachmentDescription', title: 'Description' },
                   { field: 'blank' },
                 ];
 
-                return <SortTable id="physical-attachment-list" sortField={ this.state.ui.sortField } sortDesc={ this.state.ui.sortDesc } onSort={ this.updateUIState } headers={ headers }>
+                return <SortTable 
+                          id="physical-attachment-list" 
+                          sortField={ this.state.ui.sortField } 
+                          sortDesc={ this.state.ui.sortDesc } 
+                          onSort={ this.updateUIState } 
+                          headers={ headers }
+                        >
                   {
                     _.map(physicalAttachments, (attachment) => {
                       return <tr key={ attachment.id }>
                         <td>{ attachment.typeName }</td>
-                        <td>{ attachment.description }</td>
                         <td style={{ textAlign: 'right' }}>
                           <ButtonGroup>
-                            <Unimplemented>
-                              <Button className={ attachment.canEdit ? '' : 'hidden' } title="Edit Attachment" bsSize="xsmall" onClick={ this.openPhysicalAttachmentDialog.bind(this, attachment) }><Glyphicon glyph="pencil" /></Button>
-                            </Unimplemented>
-                            <Unimplemented>
-                              <OverlayTrigger trigger="click" placement="top" rootClose overlay={ <Confirm onConfirm={ this.deletePhysicalAttachment.bind(this, attachment) }/> }>
-                                <Button className={ attachment.canDelete ? '' : 'hidden' } title="Delete Attachment" bsSize="xsmall"><Glyphicon glyph="trash" /></Button>
-                              </OverlayTrigger>
-                            </Unimplemented>
+                            <Button 
+                              title="Edit Attachment" 
+                              bsSize="xsmall" 
+                              onClick={ this.openPhysicalAttachmentEditDialog.bind(this, attachment) }
+                            >
+                              <Glyphicon glyph="pencil" />
+                            </Button>
+                            <OverlayTrigger 
+                              trigger="click" 
+                              placement="top" 
+                              rootClose 
+                              overlay={ <Confirm onConfirm={ this.deletePhysicalAttachment.bind(this, attachment.id) }/> }
+                            >
+                              <Button title="Delete Attachment" bsSize="xsmall"><Glyphicon glyph="trash" /></Button>
+                            </OverlayTrigger>
                           </ButtonGroup>
                         </td>
                       </tr>;
@@ -402,12 +459,6 @@ var EquipmentDetail = React.createClass({
           <Col md={6}>
             <Well>
               <h3>History <span className="pull-right">
-                <Unimplemented>
-                  <Button title="Add note" bsSize="small" onClick={this.addNote}><Glyphicon glyph="plus" /> Add Note</Button>
-                </Unimplemented>
-                <Unimplemented>
-                  <Button title="Add document" bsSize="small" onClick={this.addDocument}><Glyphicon glyph="paperclip" /></Button>
-                </Unimplemented>
               </span></h3>
               {(() => {
                 if (this.state.loadingEquipmentHistory) { return <div style={{ textAlign: 'center' }}><Spinner/></div>; }
@@ -433,11 +484,43 @@ var EquipmentDetail = React.createClass({
           </Col>
         </Row>
       </div>
-      { this.state.showEditDialog &&
-        <EquipmentEditDialog show={ this.state.showEditDialog } onSave={ this.saveEdit } onClose= { this.closeEditDialog } />
+      <EquipmentEditDialog 
+        show={ this.state.showEditDialog } 
+        onSave={ this.saveEdit } 
+        onClose= { this.closeEditDialog } 
+      />
+      <SeniorityEditDialog 
+        show={ this.state.showSeniorityDialog } 
+        onSave={ this.saveSeniorityEdit } 
+        onClose={ this.closeSeniorityDialog } 
+      />
+      <AttachmentAddDialog 
+        show={ this.state.showPhysicalAttachmentDialog } 
+        onSave={ this.addPhysicalAttachment } 
+        onClose={ this.closePhysicalAttachmentDialog }
+        equipment={ equipment } 
+      />
+      <AttachmentEditDialog 
+        show={ this.state.showPhysicalAttachmentEditDialog } 
+        onSave={ this.updatePhysicalAttachment } 
+        onClose={ this.closePhysicalAttachmentEditDialog }
+        equipment={ equipment } 
+        attachment={ this.state.equipmentPhysicalAttachment }
+      />
+      { this.state.showDocumentsDialog &&
+        <DocumentsListDialog 
+          show={ this.props.equipment && this.state.showDocumentsDialog }  
+          parent={ this.props.equipment }
+          onClose={ this.closeDocumentsDialog } 
+        />
       }
-      { this.state.showSeniorityDialog &&
-        <SeniorityEditDialog show={ this.state.showSeniorityDialog } onSave={ this.saveSeniorityEdit } onClose= { this.closeSeniorityDialog } />
+      { this.state.showNotesDialog &&
+        <NotesDialog 
+          show={ this.state.showNotesDialog } 
+          onSave={ this.saveNote } 
+          onClose={ this.closeNotesDialog } 
+          notes={ this.props.notes }
+        />
       }
     </div>;
   },
@@ -451,6 +534,7 @@ function mapStateToProps(state) {
     equipmentSeniorityHistory: state.models.equipmentSeniorityHistory,
     notes: state.models.equipmentNotes,
     attachments: state.models.equipmentAttachments,
+    documents: state.models.documents,
     history: state.models.equipmentHistory,
     ui: state.ui.equipmentPhysicalAttachments,
   };

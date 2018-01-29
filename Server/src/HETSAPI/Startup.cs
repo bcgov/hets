@@ -1,19 +1,16 @@
-/*
- * REST API Documentation for the MOTI Hired Equipment Tracking System (HETS) Application
- *
- * The Hired Equipment Program is for owners/operators who have a dump truck, bulldozer, backhoe or  other piece of equipment they want to hire out to the transportation ministry for day labour and  emergency projects.  The Hired Equipment Program distributes available work to local equipment owners. The program is  based on seniority and is designed to deliver work to registered users fairly and efficiently  through the development of local area call-out lists. 
- *
- * OpenAPI spec version: v1
- * 
- * 
- */
-
+//***********************************************************************************************
+// REST API Documentation for the MOTI Hired Equipment Tracking System (HETS) Application
+//***********************************************************************************************
+// The Hired Equipment Program is for owners/operators who have a dump truck, bulldozer, backhoe 
+// or other piece of equipment they want to hire out to the transportation ministry for day 
+// labour and  emergency projects.  The Hired Equipment Program distributes available work to 
+// local equipment owners. The program is  based on seniority and is designed to deliver work 
+// to registered users fairly and efficiently  through the development of local 
+// area call-out lists. 
+//***********************************************************************************************
+// OpenAPI spec version: v1
+//***********************************************************************************************
 using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Threading.Tasks;
-using System.Xml.XPath;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
@@ -21,20 +18,16 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json.Serialization;
 using Swashbuckle.Swagger.Model;
-using Swashbuckle.SwaggerGen.Annotations;
 using Microsoft.EntityFrameworkCore;
-using HETSAPI.Models;
-using System.Text;
-using HETSAPI.Authorization;
-using HETSAPI.Authentication;
 using Microsoft.AspNetCore.Http.Features;
-using Microsoft.AspNetCore.Http;
+using System.Text;
+using System.Reflection;
 using Hangfire.PostgreSql;
 using Hangfire;
 using Hangfire.Console;
-using System.Reflection;
-using System.Runtime.Loader;
-using HETSAPI.Import;
+using HETSAPI.Models;
+using HETSAPI.Authorization;
+using HETSAPI.Authentication;
 
 namespace HETSAPI
 {
@@ -45,13 +38,20 @@ namespace HETSAPI
     {
         private readonly IHostingEnvironment _hostingEnv;
 
+        /// <summary>
+        /// HETS Configuration
+        /// </summary>
         public IConfigurationRoot Configuration { get; }
 
+        /// <summary>
+        /// Startup HETS Backend Services
+        /// </summary>
+        /// <param name="env"></param>        
         public Startup(IHostingEnvironment env)
         {
-            _hostingEnv = env;
+            _hostingEnv = env;            
 
-            var builder = new ConfigurationBuilder()
+            IConfigurationBuilder builder = new ConfigurationBuilder()
                 .SetBasePath(env.ContentRootPath)
                 .AddJsonFile("appsettings.json", optional: true, reloadOnChange: true)
                 .AddJsonFile($"appsettings.{env.EnvironmentName}.json", optional: true)
@@ -60,44 +60,54 @@ namespace HETSAPI
             Configuration = builder.Build();
         }
 
-        // This method gets called by the runtime. Use this method to add services to the container.
+        /// <summary>
+        /// Add services to the container
+        /// </summary>
+        /// <param name="services"></param>
         public void ConfigureServices(IServiceCollection services)
         {
             string connectionString = GetConnectionString();
 
-            services.AddAuthorization();
-            services.RegisterPermissionHandler();
-            services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
-            services.AddSingleton<IDbAppContextFactory, DbAppContextFactory>(CreateDbAppContextFactory);
-            services.AddSingleton<IConfiguration>(Configuration);
-
-            // Add database context
+            // add database context
             services.AddDbContext<DbAppContext>(options => options.UseNpgsql(connectionString));
+
+            // setup siteminder authentication (core 2.0)
+            services.AddAuthentication(options =>
+            {
+                options.DefaultAuthenticateScheme = SiteMinderAuthOptions.AuthenticationSchemeName;
+                options.DefaultChallengeScheme = SiteMinderAuthOptions.AuthenticationSchemeName;
+            }).AddSiteminderAuth(options =>
+            {
+
+            });
+
+            // setup authorization
+            services.AddAuthorization();
+            services.RegisterPermissionHandler();            
 
             // allow for large files to be uploaded
             services.Configure<FormOptions>(options =>
             {
                 options.MultipartBodyLengthLimit = 1073741824; // 1 GB
-            });
+            });                  
 
-            services.AddResponseCompression();
-
-            // Add framework services.
-            services.AddMvc(options => options.AddDefaultAuthorizationPolicyFilter())
+            services.AddMvc(options => options.AddDefaultAuthorizationPolicyFilter())                
                 .AddJsonOptions(
                     opts => {
                         opts.SerializerSettings.ContractResolver = new CamelCasePropertyNamesContractResolver();
                         opts.SerializerSettings.Formatting = Newtonsoft.Json.Formatting.Indented;
                         opts.SerializerSettings.DateFormatHandling = Newtonsoft.Json.DateFormatHandling.IsoDateFormat;
                         opts.SerializerSettings.DateTimeZoneHandling = Newtonsoft.Json.DateTimeZoneHandling.Utc;
+                        
                         // ReferenceLoopHandling is set to Ignore to prevent JSON parser issues with the user / roles model.
                         opts.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore;
                     });
-
-            // enable Hangfire
+                        
+            // enable Hangfire            
             PostgreSqlStorageOptions postgreSqlStorageOptions = new PostgreSqlStorageOptions {
                 SchemaName = "public"
-            }; 
+            };
+
             PostgreSqlStorage storage = new PostgreSqlStorage(connectionString, postgreSqlStorageOptions);
             services.AddHangfire(config => 
             {
@@ -105,44 +115,68 @@ namespace HETSAPI
                 config.UseConsole();
             });
 
-            // Configure Swagger
-            services.AddSwaggerGen();            
-            services.ConfigureSwaggerGen(options =>
+            // Configure Swagger - only required in the Development Environment
+            if (_hostingEnv.IsDevelopment())
             {
-                options.SingleApiVersion(new Info
+                services.AddSwaggerGen();
+                services.ConfigureSwaggerGen(options =>
                 {
-                    Version = "v1",
-                    Title = "HETS REST API",
-                    Description = "Hired Equipment Tracking System"
+                    options.SingleApiVersion(new Info
+                    {
+                        Version = "v1",
+                        Title = "HETS REST API",
+                        Description = "Hired Equipment Tracking System"
+                    });
+
+                    options.DescribeAllEnumsAsStrings();                    
                 });
-
-                options.DescribeAllEnumsAsStrings();
-
-                var comments = new XPathDocument($"{AppContext.BaseDirectory}{Path.DirectorySeparatorChar}{_hostingEnv.ApplicationName}.xml");
-                options.OperationFilter<XmlCommentsOperationFilter>(comments);
-                options.ModelFilter<XmlCommentsModelFilter>(comments);
-            });
+            }
 
             // Add application services.
             services.RegisterApplicationServices();
+
+            services.AddDistributedMemoryCache(); // Adds a default in-memory cache
+            services.AddSession();
         }
 
-        // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
+        /// <summary>
+        /// Configure the HTTP request pipeline
+        /// </summary>
+        /// <param name="app"></param>
+        /// <param name="env"></param>
+        /// <param name="loggerFactory"></param>
         public void Configure(IApplicationBuilder app, IHostingEnvironment env, ILoggerFactory loggerFactory)
         {
             loggerFactory.AddConsole(Configuration.GetSection("Logging"));
             loggerFactory.AddDebug();
 
-            TryMigrateDatabase(app, loggerFactory);
-            app.UseAuthentication(env);
-
-            if (env.IsDevelopment())
+            // web site error handler             
+            app.UseWhen(x => !x.Request.Path.Value.StartsWith("/api"), builder =>
             {
-                app.UseDeveloperExceptionPage();
+                builder.UseExceptionHandler(Configuration.GetSection("Constants:ErrorUrl").Value);
+            });
+            
+            // IMPORTANT: This session call MUST go before UseMvc()
+            app.UseSession();
+
+            // authenticate users
+            app.UseAuthentication();
+
+            // update database environment            
+            string updateDb = Configuration.GetSection("UpdateLocalDb").Value;
+            if (env.IsDevelopment() && updateDb.ToLower() != "false")
+            {
+                TryMigrateDatabase(app, loggerFactory);
             }
+            else if (!env.IsDevelopment())
+            {
+                TryMigrateDatabase(app, loggerFactory);
+            }
+
+            // do not start Hangfire if we are running tests. 
             bool startHangfire = true;
-#if DEBUG
-            // do not start Hangfire if we are running tests.        
+
+#if DEBUG                   
             foreach (var assem in Assembly.GetEntryAssembly().GetReferencedAssemblies())
             {
                 if (assem.FullName.ToLowerInvariant().StartsWith("xunit"))
@@ -159,37 +193,46 @@ namespace HETSAPI
                 app.UseHangfireServer();
 
                 // disable the back to site link
-                DashboardOptions dashboardOptions = new DashboardOptions();
-                dashboardOptions.AppPath = null;
+                DashboardOptions dashboardOptions = new DashboardOptions()
+                {
+                    AppPath = null
+                };
 
-                app.UseHangfireDashboard("/hangfire", dashboardOptions); // this enables the /hangfire action
-
+                // enable the /hangfire action
+                app.UseHangfireDashboard(Configuration.GetSection("Constants:HangfireUrl").Value, dashboardOptions);
             }
-
-
-            app.UseResponseCompression();
-            app.UseMvc();
-            app.UseDefaultFiles();
-            app.UseStaticFiles();
-            app.UseSwagger();
-            app.UseSwaggerUi();
-
+            
+            app.UseMvc(routes =>
+            {
+                routes.MapRoute(
+                    name: "default",
+                    template: "{controller=Home}/{action=Index}");
+            });            
+            
+            if (_hostingEnv.IsDevelopment())
+            {
+                app.UseSwagger();
+                app.UseSwaggerUi();
+            }
+            
             if (startHangfire)
             {
                 HangfireTools.ClearHangfire();
 
                 // this should be set as an environment variable.  
-                // Only enable when doing a new PROD deploy to populate CCW data and link it to the bus data.
+                // only enable when doing a new PROD deploy to populate CCW data and link it to the bus data.
                 if (!string.IsNullOrEmpty(Configuration["ENABLE_ANNUAL_ROLLOVER"]))
-                {
-                    CreateHangfireAnnualRolloverJob(loggerFactory);
-
+                {                    
+                    CreateHangfireAnnualRolloverJob(loggerFactory, Configuration);
                 }
-            }                       
+            }           
         }
 
-        // TODO:
-        // - Should database migration be done here; in Startup?
+        /// <summary>
+        /// Database Migration
+        /// </summary>
+        /// <param name="app"></param>
+        /// <param name="loggerFactory"></param>
         private void TryMigrateDatabase(IApplicationBuilder app, ILoggerFactory loggerFactory)
         {
             ILogger log = loggerFactory.CreateLogger(typeof(Startup));
@@ -197,7 +240,7 @@ namespace HETSAPI
 
             try
             {
-                using (var serviceScope = app.ApplicationServices.GetRequiredService<IServiceScopeFactory>().CreateScope())
+                using (IServiceScope serviceScope = app.ApplicationServices.GetRequiredService<IServiceScopeFactory>().CreateScope())
                 {
                     log.LogInformation("Fetching the application's database context ...");
                     DbContext context = serviceScope.ServiceProvider.GetService<DbAppContext>();
@@ -213,7 +256,7 @@ namespace HETSAPI
 
                     log.LogInformation("Adding/Updating seed data ...");
                     Seeders.SeedFactory<DbAppContext> seederFactory = new Seeders.SeedFactory<DbAppContext>(Configuration, _hostingEnv, loggerFactory);
-                    seederFactory.Seed(context as DbAppContext);
+                    seederFactory.Seed((DbAppContext) context);
                     log.LogInformation("Seeding operations are complete.");
                 }
 
@@ -231,14 +274,13 @@ namespace HETSAPI
             }
         }
 
-        // ToDo:
-        // - Replace the individual environment variables with one that naturally works with the configuration provider and how connection strings work.
-        // -- For instance:
-        // --- ConnectionStrings:Schoolbus or ConnectionStrings__Schoolbus
-        // -- This way the configuration provider is performing all of the lifting and the connection string can be retrieved in a single consistent manner.
+        /// <summary>
+        /// Retrieve database connection string
+        /// </summary>
+        /// <returns></returns>
         private string GetConnectionString()
         {
-            string connectionString = string.Empty;
+            string connectionString;
 
             string host = Configuration["DATABASE_SERVICE_NAME"];
             string username = Configuration["POSTGRESQL_USER"];
@@ -259,25 +301,17 @@ namespace HETSAPI
             return connectionString;
         }
 
-        private DbAppContextFactory CreateDbAppContextFactory(IServiceProvider serviceProvider)
-        {
-            DbContextOptionsBuilder<DbAppContext> options = new DbContextOptionsBuilder<DbAppContext>();
-            options.UseNpgsql(GetConnectionString());
-            DbAppContextFactory dbAppContextFactory = new DbAppContextFactory(null, options.Options);
-            return dbAppContextFactory;
-        }
-
-        
-
-        private void CreateHangfireAnnualRolloverJob(ILoggerFactory loggerFactory)
+        /// <summary>
+        /// Create Hangfire Jobs
+        /// </summary>
+        /// <param name="loggerFactory"></param>
+        /// <param name="configuration"></param>
+        private void CreateHangfireAnnualRolloverJob(ILoggerFactory loggerFactory, IConfiguration configuration)
         {
             // HETS has one job that runs at the end of each year.            
             ILogger log = loggerFactory.CreateLogger(typeof(Startup));
 
             // first check to see if Hangfire already has the job.
-
-
-
             log.LogInformation("Attempting setup of Hangfire Annual rollover job ...");
             
             try
@@ -285,9 +319,10 @@ namespace HETSAPI
                 string connectionString = GetConnectionString();
 
                 log.LogInformation("Creating Hangfire job for Annual rollover ...");
+
                 // every 5 minutes we see if a CCW record needs to be updated.  We only update one CCW record at a time.
                 // since the server is on UTC, we want UTC-7 for PDT midnight.                
-                RecurringJob.AddOrUpdate(() => SeniorityListExtensions.AnnualRolloverJob(null, connectionString), Cron.Yearly(3, 31, 17));                            
+                RecurringJob.AddOrUpdate(() => SeniorityListExtensions.AnnualRolloverJob(null, connectionString, configuration), Cron.Yearly(3, 31, 17));                            
             }
             catch (Exception e)
             {
@@ -295,10 +330,7 @@ namespace HETSAPI
                 msg.AppendLine("Failed to setup Hangfire job.");
 
                 log.LogCritical(new EventId(-1, "Hangfire job setup failed"), e, msg.ToString());
-            }
-            
+            }            
         }
-    }
-
-    
+    }    
 }

@@ -1,13 +1,4 @@
-/*
- * REST API Documentation for the MOTI Hired Equipment Tracking System (HETS) Application
- *
- * The Hired Equipment Program is for owners/operators who have a dump truck, bulldozer, backhoe or  other piece of equipment they want to hire out to the transportation ministry for day labour and  emergency projects.  The Hired Equipment Program distributes available work to local equipment owners. The program is  based on seniority and is designed to deliver work to registered users fairly and efficiently  through the development of local area call-out lists. 
- *
- * OpenAPI spec version: v1
- * 
- * 
- */
-
+using System.Security.Claims;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -23,19 +14,24 @@ namespace HETSAPI.Controllers
     /// </summary>
     /// <remarks>
     /// Provides examples of how to apply permission checks.
-    /// </remarks>
+    /// </remarks>    
     [Route("api/test")]
+    [ResponseCache(Location = ResponseCacheLocation.None, NoStore = true)]
     public class TestController : Controller
     {
         private readonly ITestService _service;
 
+        /// <summary>
+        /// Test Controller Constructor
+        /// </summary>
+        /// <param name="service"></param>
         public TestController(ITestService service)
         {
             _service = service;
         }
 
         /// <summary>
-        /// Echoes headers for trouble shooting purposes.
+        /// Echoes headers for troubleshooting purposes.
         /// </summary>
         [HttpGet]
         [Route("headers")]
@@ -72,6 +68,10 @@ namespace HETSAPI.Controllers
             return _service.GetLoginPermissionServiceMessage();
         }
 
+        /// <summary>
+        /// An example of a valid authentication message.
+        /// </summary>
+        /// <returns></returns>
         [HttpGet]
         [Route("authenticated")]
         [Authorize]
@@ -122,7 +122,7 @@ namespace HETSAPI.Controllers
         }
 
         /// <summary>
-        /// An example of applying claims based access using the <see cref="ClaimsPrincipalExtensions.IsInGroup(this ClaimsPrincipal user, string group)"/> extension method.
+        /// An example of applying claims based access using the <see cref="ClaimsPrincipalExtensions.IsInGroup(ClaimsPrincipal, string)"/> extension method.
         /// </summary>
         /// <remarks>
         /// The user must be a member of the "Other" group in order to call this endpoint.  The extension method is called inside the service implementation.
@@ -135,18 +135,57 @@ namespace HETSAPI.Controllers
         }
     }
 
+    /// <summary>
+    /// Test Service Interface
+    /// </summary>
     public interface ITestService
     {
+        /// <summary>
+        /// Echoes headers for troubleshooting purposes.
+        /// </summary>
+        /// <returns></returns>
         IActionResult EchoHeaders();
 
+        /// <summary>
+        /// An example of relying on the controller level to apply permissions.
+        /// </summary>
+        /// <returns></returns>
         IActionResult GetLoginPermissionAttributeMessage();
+
+        /// <summary>
+        /// An example of using the <see cref="ClaimsPrincipalExtensions.HasPermissions(ClaimsPrincipal, string[])"/> extension method at the service implementation level.
+        /// </summary>
+        /// <returns></returns>
         IActionResult GetLoginPermissionServiceMessage();
+
+        /// <summary>
+        /// An example of relying on the controller level to apply permissions.
+        /// </summary>
+        /// <returns></returns>
         IActionResult GetAuthenticatedMessage();
 
+        /// <summary>
+        /// An example of relying on the controller level to apply permissions.
+        /// </summary>
+        /// <returns></returns>
         IActionResult GetAdminPermissionAttributeMessage();
+
+        /// <summary>
+        /// An example of applying the <see cref="RequiresPermissionAttribute"/> at the service level.
+        /// </summary>
+        /// <returns></returns>
         IActionResult GetAdminPermissionServiceAttributeMessage();
+
+        /// <summary>
+        /// An example of using the <see cref="ClaimsPrincipalExtensions.HasPermissions(ClaimsPrincipal, string[])"/> extension method at the service implementation level.
+        /// </summary>
+        /// <returns></returns>
         IActionResult GetAdminPermissionServiceMessage();
 
+        /// <summary>
+        /// An example of using the <see cref="ClaimsPrincipalExtensions.IsInGroup(ClaimsPrincipal, string)"/> extension method at the service implementation level.
+        /// </summary>
+        /// <returns></returns>
         IActionResult GetOtherGroupServiceMessage();
     }
 
@@ -159,13 +198,18 @@ namespace HETSAPI.Controllers
     /// </remarks>
     public class TestService : ServiceBase, ITestService
     {
+        /// <summary>
+        /// Test Service Constructor
+        /// </summary>
+        /// <param name="httpContextAccessor"></param>
+        /// <param name="context"></param>
         public TestService(IHttpContextAccessor httpContextAccessor, DbAppContext context) : base(httpContextAccessor, context)
         {
             // Just pass things along to the base class.
         }
 
         /// <summary>
-        /// Echoes headers for trouble shooting purposes.
+        /// Echoes headers for troubleshooting purposes.
         /// </summary>
         public IActionResult EchoHeaders()
         {
@@ -199,7 +243,7 @@ namespace HETSAPI.Controllers
             }
             else
             {
-                return new ChallengeResult();
+                return new ForbidResult();
             }
         }
 
@@ -240,7 +284,7 @@ namespace HETSAPI.Controllers
         }
 
         /// <summary>
-        /// An example of using the <see cref="ClaimsPrincipalExtensions.IsInGroup(this ClaimsPrincipal user, string group)"/> extension method at the service implementation level.
+        /// An example of using the <see cref="ClaimsPrincipalExtensions.IsInGroup(ClaimsPrincipal, string)"/> extension method at the service implementation level.
         /// </summary>
         public IActionResult GetOtherGroupServiceMessage()
         {

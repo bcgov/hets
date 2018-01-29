@@ -1,40 +1,22 @@
-/*
- * REST API Documentation for the MOTI Hired Equipment Tracking System (HETS) Application
- *
- * The Hired Equipment Program is for owners/operators who have a dump truck, bulldozer, backhoe or  other piece of equipment they want to hire out to the transportation ministry for day labour and  emergency projects.  The Hired Equipment Program distributes available work to local equipment owners. The program is  based on seniority and is designed to deliver work to registered users fairly and efficiently  through the development of local area call-out lists. 
- *
- * OpenAPI spec version: v1
- * 
- * 
- */
-
-using System;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using System.ComponentModel;
-using System.IO;
-using System.Linq;
-using System.Net;
-using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
-using Newtonsoft.Json;
 using Swashbuckle.SwaggerGen.Annotations;
 using HETSAPI.Models;
-using HETSAPI.ViewModels;
 using HETSAPI.Services;
 using HETSAPI.Authorization;
 
 namespace HETSAPI.Controllers
 {
     /// <summary>
-    /// 
+    /// Region Controller
     /// </summary>
-    public partial class RegionController : Controller
+    [ResponseCache(Location = ResponseCacheLocation.None, NoStore = true)]
+    public class RegionController : Controller
     {
         private readonly IRegionService _service;
 
         /// <summary>
-        /// Create a controller and set the service
+        /// Region Controller Constructor
         /// </summary>
         public RegionController(IRegionService service)
         {
@@ -42,7 +24,7 @@ namespace HETSAPI.Controllers
         }
 
         /// <summary>
-        /// 
+        /// Create bulk region records
         /// </summary>
         /// <param name="items"></param>
         /// <response code="201">Region created</response>
@@ -52,11 +34,11 @@ namespace HETSAPI.Controllers
         [RequiresPermission(Permission.ADMIN)]
         public virtual IActionResult RegionsBulkPost([FromBody]Region[] items)
         {
-            return this._service.RegionsBulkPostAsync(items);
+            return _service.RegionsBulkPostAsync(items);
         }
 
         /// <summary>
-        /// 
+        /// Get all regions
         /// </summary>
         /// <response code="200">OK</response>
         [HttpGet]
@@ -65,11 +47,11 @@ namespace HETSAPI.Controllers
         [SwaggerResponse(200, type: typeof(List<Region>))]
         public virtual IActionResult RegionsGet()
         {
-            return this._service.RegionsGetAsync();
+            return _service.RegionsGetAsync();
         }
 
         /// <summary>
-        /// 
+        /// Delete region
         /// </summary>
         /// <param name="id">id of Region to delete</param>
         /// <response code="200">OK</response>
@@ -79,11 +61,11 @@ namespace HETSAPI.Controllers
         [SwaggerOperation("RegionsIdDeletePost")]
         public virtual IActionResult RegionsIdDeletePost([FromRoute]int id)
         {
-            return this._service.RegionsIdDeletePostAsync(id);
+            return _service.RegionsIdDeletePostAsync(id);
         }
 
         /// <summary>
-        /// 
+        /// Get districts associated with a region
         /// </summary>
         /// <remarks>Returns the districts for a specific region</remarks>
         /// <param name="id">id of Region for which to fetch the Districts</param>
@@ -94,11 +76,11 @@ namespace HETSAPI.Controllers
         [SwaggerResponse(200, type: typeof(List<District>))]
         public virtual IActionResult RegionsIdDistrictsGet([FromRoute]int id)
         {
-            return this._service.RegionsIdDistrictsGetAsync(id);
+            return _service.RegionsIdDistrictsGetAsync(id);
         }
 
         /// <summary>
-        /// 
+        /// Get region by id
         /// </summary>
         /// <param name="id">id of Region to fetch</param>
         /// <response code="200">OK</response>
@@ -109,13 +91,13 @@ namespace HETSAPI.Controllers
         [SwaggerResponse(200, type: typeof(Region))]
         public virtual IActionResult RegionsIdGet([FromRoute]int id)
         {
-            return this._service.RegionsIdGetAsync(id);
+            return _service.RegionsIdGetAsync(id);
         }
 
         /// <summary>
-        /// 
+        /// Update region
         /// </summary>
-        /// <param name="id">id of Region to fetch</param>
+        /// <param name="id">id of Region to update</param>
         /// <param name="item"></param>
         /// <response code="200">OK</response>
         /// <response code="404">Region not found</response>
@@ -125,11 +107,11 @@ namespace HETSAPI.Controllers
         [SwaggerResponse(200, type: typeof(Region))]
         public virtual IActionResult RegionsIdPut([FromRoute]int id, [FromBody]Region item)
         {
-            return this._service.RegionsIdPutAsync(id, item);
+            return _service.RegionsIdPutAsync(id, item);
         }
 
         /// <summary>
-        /// 
+        /// Create region
         /// </summary>
         /// <param name="item"></param>
         /// <response code="201">Region created</response>
@@ -139,7 +121,7 @@ namespace HETSAPI.Controllers
         [SwaggerResponse(200, type: typeof(Region))]
         public virtual IActionResult RegionsPost([FromBody]Region item)
         {
-            return this._service.RegionsPostAsync(item);
+            return _service.RegionsPostAsync(item);
         }
     }
 }

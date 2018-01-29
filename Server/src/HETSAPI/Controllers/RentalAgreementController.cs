@@ -1,40 +1,22 @@
-/*
- * REST API Documentation for the MOTI Hired Equipment Tracking System (HETS) Application
- *
- * The Hired Equipment Program is for owners/operators who have a dump truck, bulldozer, backhoe or  other piece of equipment they want to hire out to the transportation ministry for day labour and  emergency projects.  The Hired Equipment Program distributes available work to local equipment owners. The program is  based on seniority and is designed to deliver work to registered users fairly and efficiently  through the development of local area call-out lists. 
- *
- * OpenAPI spec version: v1
- * 
- * 
- */
-
-using System;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using System.ComponentModel;
-using System.IO;
-using System.Linq;
-using System.Net;
-using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
-using Newtonsoft.Json;
 using Swashbuckle.SwaggerGen.Annotations;
 using HETSAPI.Models;
-using HETSAPI.ViewModels;
 using HETSAPI.Services;
 using HETSAPI.Authorization;
 
 namespace HETSAPI.Controllers
 {
     /// <summary>
-    /// 
+    /// Rental Agreement Controller
     /// </summary>
-    public partial class RentalAgreementController : Controller
+    [ResponseCache(Location = ResponseCacheLocation.None, NoStore = true)]
+    public class RentalAgreementController : Controller
     {
         private readonly IRentalAgreementService _service;
 
         /// <summary>
-        /// Create a controller and set the service
+        /// Rental Agreement Controller Construtor
         /// </summary>
         public RentalAgreementController(IRentalAgreementService service)
         {
@@ -42,7 +24,7 @@ namespace HETSAPI.Controllers
         }
 
         /// <summary>
-        /// 
+        /// Create bulk rental agreement records
         /// </summary>
         /// <param name="items"></param>
         /// <response code="201">RentalAgreement created</response>
@@ -52,11 +34,11 @@ namespace HETSAPI.Controllers
         [RequiresPermission(Permission.ADMIN)]
         public virtual IActionResult RentalagreementsBulkPost([FromBody]RentalAgreement[] items)
         {
-            return this._service.RentalagreementsBulkPostAsync(items);
+            return _service.RentalagreementsBulkPostAsync(items);
         }
 
         /// <summary>
-        /// 
+        /// Get all rental agreements
         /// </summary>
         /// <response code="200">OK</response>
         [HttpGet]
@@ -65,11 +47,11 @@ namespace HETSAPI.Controllers
         [SwaggerResponse(200, type: typeof(List<RentalAgreement>))]
         public virtual IActionResult RentalagreementsGet()
         {
-            return this._service.RentalagreementsGetAsync();
+            return _service.RentalagreementsGetAsync();
         }
 
         /// <summary>
-        /// 
+        /// Delete rental agreement
         /// </summary>
         /// <param name="id">id of RentalAgreement to delete</param>
         /// <response code="200">OK</response>
@@ -79,11 +61,11 @@ namespace HETSAPI.Controllers
         [SwaggerOperation("RentalagreementsIdDeletePost")]
         public virtual IActionResult RentalagreementsIdDeletePost([FromRoute]int id)
         {
-            return this._service.RentalagreementsIdDeletePostAsync(id);
+            return _service.RentalagreementsIdDeletePostAsync(id);
         }
 
         /// <summary>
-        /// 
+        /// Get rental agreement by id
         /// </summary>
         /// <param name="id">id of RentalAgreement to fetch</param>
         /// <response code="200">OK</response>
@@ -94,11 +76,11 @@ namespace HETSAPI.Controllers
         [SwaggerResponse(200, type: typeof(RentalAgreement))]
         public virtual IActionResult RentalagreementsIdGet([FromRoute]int id)
         {
-            return this._service.RentalagreementsIdGetAsync(id);
+            return _service.RentalagreementsIdGetAsync(id);
         }
 
         /// <summary>
-        /// 
+        /// Get a pdf version of a rental agreement
         /// </summary>
         /// <remarks>Returns a PDF version of the specified rental agreement</remarks>
         /// <param name="id">id of RentalAgreement to obtain the PDF for</param>
@@ -108,13 +90,13 @@ namespace HETSAPI.Controllers
         [SwaggerOperation("RentalagreementsIdPdfGet")]
         public virtual IActionResult RentalagreementsIdPdfGet([FromRoute]int id)
         {
-            return this._service.RentalagreementsIdPdfGetAsync(id);
+            return _service.RentalagreementsIdPdfGetAsync(id);
         }
 
         /// <summary>
-        /// 
+        /// Update rental agreement
         /// </summary>
-        /// <param name="id">id of RentalAgreement to fetch</param>
+        /// <param name="id">id of RentalAgreement to update</param>
         /// <param name="item"></param>
         /// <response code="200">OK</response>
         /// <response code="404">RentalAgreement not found</response>
@@ -124,11 +106,11 @@ namespace HETSAPI.Controllers
         [SwaggerResponse(200, type: typeof(RentalAgreement))]
         public virtual IActionResult RentalagreementsIdPut([FromRoute]int id, [FromBody]RentalAgreement item)
         {
-            return this._service.RentalagreementsIdPutAsync(id, item);
+            return _service.RentalagreementsIdPutAsync(id, item);
         }
 
         /// <summary>
-        /// 
+        /// Create rental agreement
         /// </summary>
         /// <param name="item"></param>
         /// <response code="201">RentalAgreement created</response>
@@ -138,7 +120,73 @@ namespace HETSAPI.Controllers
         [SwaggerResponse(200, type: typeof(RentalAgreement))]
         public virtual IActionResult RentalagreementsPost([FromBody]RentalAgreement item)
         {
-            return this._service.RentalagreementsPostAsync(item);
+            return _service.RentalagreementsPostAsync(item);
         }
+
+        /// <summary>
+        /// Release (terminate) a rental agreement
+        /// </summary>
+        /// <param name="id">id of RentalAgreement to release</param>
+        /// <response code="200">OK</response>
+        /// <response code="404">RentalAgreement not found</response>
+        [HttpPost]
+        [Route("/api/rentalagreements/{id}/release")]
+        [SwaggerOperation("RentalagreementsIdReleasePost")]
+        [SwaggerResponse(200, type: typeof(RentalAgreement))]
+        public virtual IActionResult RentalagreementsIdReleasePost([FromRoute]int id)
+        {
+            return _service.RentalagreementsIdReleasePostAsync(id);
+        }
+
+        #region Rental Agreement Time Records
+
+        /// <summary>
+        /// Get time records associated with a rental agreement
+        /// </summary>
+        /// <remarks>Gets a Rental Agreement&#39;s Time Records</remarks>
+        /// <param name="id">id of Rental Agreement to fetch Time Records for</param>
+        /// <response code="200">OK</response>
+        [HttpGet]
+        [Route("/api/rentalagreements/{id}/timeRecords")]
+        [SwaggerOperation("RentalagreementsIdTimeRecordsGet")]
+        [SwaggerResponse(200, type: typeof(List<TimeRecord>))]
+        public virtual IActionResult RentalagreementsIdTimeRecordsGet([FromRoute]int id)
+        {
+            return _service.RentalAgreementsIdTimeRecordsGetAsync(id);
+        }
+
+        /// <summary>
+        /// Add a rental agreement time record
+        /// </summary>
+        /// <remarks>Adds Rental Agreement Time Records</remarks>
+        /// <param name="id">id of Rental Agreement to add a time record for</param>
+        /// <param name="item">Adds to Rental Agreement Time Records</param>
+        /// <response code="200">OK</response>
+        [HttpPost]
+        [Route("/api/rentalagreements/{id}/timeRecord")]
+        [SwaggerOperation("RentalagreementsIdTimeRecordsPost")]
+        [SwaggerResponse(200, type: typeof(TimeRecord))]
+        public virtual IActionResult RentalagreementsIdTimeRecordsPost([FromRoute]int id, [FromBody]TimeRecord item)
+        {
+            return _service.RentalAgreementsIdTimeRecordsPostAsync(id, item);
+        }
+
+        /// <summary>
+        /// Update or create an array of time records associated with a rental agreement
+        /// </summary>
+        /// <remarks>Adds Rental Agreement Time Records</remarks>
+        /// <param name="id">id of Rental Agreement to add a time record for</param>
+        /// <param name="items">Array of Rental Agreement Time Records</param>
+        /// <response code="200">OK</response>
+        [HttpPost]
+        [Route("/api/rentalagreements/{id}/timeRecords")]
+        [SwaggerOperation("RentalagreementsIdTimeRecordsBulkPostAsync")]
+        [SwaggerResponse(200, type: typeof(TimeRecord))]
+        public virtual IActionResult RentalagreementsIdTimeRecordsBulkPostAsync([FromRoute]int id, [FromBody]TimeRecord[] items)
+        {
+            return _service.RentalAgreementsIdTimeRecordsBulkPostAsync(id, items);
+        }
+
+        #endregion
     }
 }

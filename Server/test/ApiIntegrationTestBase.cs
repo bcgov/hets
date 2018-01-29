@@ -1,6 +1,5 @@
 ﻿using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.TestHost;
-using HETSAPI.Authentication;
 using System.IO;
 using System.Net.Http;
 
@@ -14,17 +13,16 @@ namespace HETSAPI.Test
         /// <summary>
         /// Setup the test
         /// </summary>        
-        public ApiIntegrationTestBase()
+        protected ApiIntegrationTestBase()
         {
             _server = new TestServer(new WebHostBuilder()
             .UseEnvironment("Development")
             .UseContentRoot(Directory.GetCurrentDirectory())
             .UseStartup<Startup>());          
 
-            DevAuthenticationOptions devAuthOptions = new DevAuthenticationOptions();
             string testUserName = "TMcTesterson";
             _client = _server.CreateClient();
-            _client.DefaultRequestHeaders.Add(devAuthOptions.AuthenticationTokenKey, testUserName);
+            _client.DefaultRequestHeaders.Add("DEV-USER", testUserName);
         }
     }
 }

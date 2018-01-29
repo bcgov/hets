@@ -1,51 +1,34 @@
-/*
- * REST API Documentation for the MOTI Hired Equipment Tracking System (HETS) Application
- *
- * The Hired Equipment Program is for owners/operators who have a dump truck, bulldozer, backhoe or  other piece of equipment they want to hire out to the transportation ministry for day labour and  emergency projects.  The Hired Equipment Program distributes available work to local equipment owners. The program is  based on seniority and is designed to deliver work to registered users fairly and efficiently  through the development of local area call-out lists. 
- *
- * OpenAPI spec version: v1
- * 
- * 
- */
-
-using System;
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using System.ComponentModel;
-using System.IO;
 using System.Linq;
-using System.Net;
-using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
-using Newtonsoft.Json;
 using HETSAPI.Models;
-using HETSAPI.ViewModels;
 using System.Security.Claims;
 using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 using HETSAPI.Mappings;
+using HETSAPI.ViewModels;
+using Microsoft.Extensions.Configuration;
 
 namespace HETSAPI.Services.Impl
 { 
     /// <summary>
-    /// 
+    /// Current User Service
     /// </summary>
     public class CurrentUserService : ServiceBase, ICurrentUserService
     {
-
         private readonly DbAppContext _context;
+        private readonly IConfiguration _configuration;
 
         /// <summary>
-        /// Create a service and set the database context
+        /// Current User Service Constructor
         /// </summary>
-        public CurrentUserService(IHttpContextAccessor httpContextAccessor, DbAppContext context) : base(httpContextAccessor, context)
+        public CurrentUserService(IHttpContextAccessor httpContextAccessor, DbAppContext context, IConfiguration configuration) : base(httpContextAccessor, context)
         {
             _context = context;
+            _configuration = configuration;
         }
 
-
         /// <summary>
-        /// 
+        /// Delete user favourites
         /// </summary>
         /// <remarks>Removes a specific user favourite</remarks>
         /// <param name="id">id of Favourite to delete</param>
@@ -53,36 +36,35 @@ namespace HETSAPI.Services.Impl
         public virtual IActionResult UsersCurrentFavouritesIdDeletePostAsync(int id)
         {
             // get the current user id
-            int? user_id = GetCurrentUserId();
-            if (user_id != null)
+            int? userId = GetCurrentUserId();
+
+            if (userId != null)
             {
-                bool exists = _context.UserFavourites.Where(x => x.User.Id == user_id)
+                bool exists = _context.UserFavourites.Where(x => x.User.Id == userId)
                     .Any(a => a.Id == id);
+
                 if (exists)
                 {
-                    var item = _context.UserFavourites.First(a => a.Id == id);
+                    UserFavourite item = _context.UserFavourites.First(a => a.Id == id);
 
                     _context.UserFavourites.Remove(item);
+
                     // Save the changes
                     _context.SaveChanges();
-                    return new ObjectResult(item);
+
+                    return new ObjectResult(new HetsResponse(item));
                 }
-                else
-                {
-                    // record not found
-                    return new StatusCodeResult(404);
-                }
-            }
-            else
-            {
-                return new StatusCodeResult(403);
+
+                // record not found
+                return new ObjectResult(new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-01", _configuration)));
             }
 
-
+            // record not found
+            return new ObjectResult(new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-01", _configuration)));
         }
 
         /// <summary>
-        /// 
+        /// Create favourites for a user
         /// </summary>
         /// <remarks>Create new favourite for the current user</remarks>
         /// <param name="item"></param>
@@ -90,39 +72,45 @@ namespace HETSAPI.Services.Impl
         public virtual IActionResult UsersCurrentFavouritesPostAsync(UserFavourite item)
         {
             item.User = null;
+
             // get the current user id
             int? id = GetCurrentUserId();
+
             if (id != null)
             {
-                bool user_exists = _context.Users.Any(a => a.Id == id);
-                if (user_exists)
+                bool userExists = _context.Users.Any(a => a.Id == id);
+
+                if (userExists)
                 {
                     User user = _context.Users.First(a => a.Id == id);
                     item.User = user;
                 }
             }
 
+            // get favourites
             bool exists = _context.UserFavourites.Any(a => a.Id == item.Id);
+
             if (exists)
             {
                 _context.UserFavourites.Update(item);
+
                 // Save the changes
                 _context.SaveChanges();
-                return new ObjectResult(item);
-            }
-            else
-            {
-                // record not found. add the record.
-                _context.UserFavourites.Add(item);
-                // Save the changes
-                _context.SaveChanges();
-                return new ObjectResult(item);
+
+                return new ObjectResult(new HetsResponse(item));
             }
 
+            // record not found - add the record
+            _context.UserFavourites.Add(item);
+
+            // save the changes
+            _context.SaveChanges();
+
+            return new ObjectResult(new HetsResponse(item));
         }
 
         /// <summary>
-        /// 
+        /// Updates user favourites
         /// </summary>
         /// <remarks>Updates a favourite</remarks>
         /// <param name="item"></param>
@@ -130,70 +118,73 @@ namespace HETSAPI.Services.Impl
         public virtual IActionResult UsersCurrentFavouritesPutAsync(UserFavourite item)
         {
             item.User = null;
+
             // get the current user id
             int? id = GetCurrentUserId();
+
             if (id != null)
             {
-                bool user_exists = _context.Users.Any(a => a.Id == id);
-                if (user_exists)
+                bool userExists = _context.Users.Any(a => a.Id == id);
+
+                if (userExists)
                 {
                     User user = _context.Users.First(a => a.Id == id);
                     item.User = user;
                 }
             }
 
+            // get favourites
             bool exists = _context.UserFavourites.Any(a => a.Id == item.Id);
+
             if (exists)
             {
                 _context.UserFavourites.Update(item);
+
                 // Save the changes
                 _context.SaveChanges();
-                return new ObjectResult(item);
+
+                return new ObjectResult(new HetsResponse(item));
             }
-            else
-            {
-                // record not found
-                return new StatusCodeResult(404);
-            }
+
+            // record not found
+            return new ObjectResult(new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-01", _configuration)));
         }
 
         /// <summary>
-        /// 
+        /// Get user favourites by type
         /// </summary>
         /// <remarks>Returns a user&#39;s favourites of a given type.  If type is empty, returns all.</remarks>
-        /// <param name="type">type of favourite to return</param>
+        /// <param name="favouritetype">type of favourite to return</param>
         /// <response code="200">OK</response>
         /// <response code="404">User not found</response>
-        public virtual IActionResult UsersCurrentFavouritesFavouritetypeGetAsync(string type)
+        public virtual IActionResult UsersCurrentFavouritesFavouritetypeGetAsync(string favouritetype)
         {
             // get the current user id
             int? id = GetCurrentUserId();
 
             if (id != null)
             {
-                var data = _context.UserFavourites
+                IQueryable<UserFavourite> data = _context.UserFavourites
                     .Where(x => x.User.Id == id)
                     .Select(x => x);
-                if (type != null)
+
+                if (favouritetype != null)
                 {
-                    data = data.Where(x => x.Type == type);
+                    data = data.Where(x => x.Type == favouritetype);
                 }
 
-                return new ObjectResult(data.ToList());
+                return new ObjectResult(new HetsResponse(data.ToList()));
             }
-            else
-            {
-                // no user context.
-                return new StatusCodeResult(403);
-            }
+
+            // record not found
+            return new ObjectResult(new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-01", _configuration)));
         }
 
         /// <summary>
-        /// 
+        /// Get current user
         /// </summary>
         /// <remarks>Get the currently logged in user</remarks>
         /// <response code="200">OK</response>
-
         public virtual IActionResult UsersCurrentGetAsync ()        
         {
             // get the current user id
@@ -202,30 +193,26 @@ namespace HETSAPI.Services.Impl
             if (id != null)
             {
                 User currentUser = _context.Users
-                                        .Include(x => x.District)
-                                        .Include(x => x.GroupMemberships)
-                                        .ThenInclude(y => y.Group)
-                                        .Include(x => x.UserRoles)
-                                        .ThenInclude(y => y.Role)
-                                        .ThenInclude(z => z.RolePermissions)
-                                        .ThenInclude(z => z.Permission)
-                                        .First(x => x.Id == id);
+                        .Include(x => x.District)
+                        .Include(x => x.GroupMemberships)
+                        .ThenInclude(y => y.Group)
+                        .Include(x => x.UserRoles)
+                        .ThenInclude(y => y.Role)
+                        .ThenInclude(z => z.RolePermissions)
+                        .ThenInclude(z => z.Permission)
+                        .First(x => x.Id == id);
 
-                var result = currentUser.ToCurrentUserViewModel();
+                CurrentUserViewModel result = currentUser.ToCurrentUserViewModel();
 
                 // get the name for the current logged in user
                 result.GivenName = User.FindFirst(ClaimTypes.GivenName).Value;
                 result.Surname = User.FindFirst(ClaimTypes.Surname).Value;
-                               
 
-                return new ObjectResult(result);
+                return new ObjectResult(new HetsResponse(result));
             }
-            else
-            {
-                return new StatusCodeResult(404); // no current user ID
-            }
+
+            // no record found
+            return new ObjectResult(new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-01", _configuration)));
         }
-
-
     }
 }

@@ -33,24 +33,24 @@ namespace HETSAPI.Test
 		/// <summary>
         /// Integration test for BulkPost
         /// </summary>
-		public async void TestBulkPost()
+		public async Task TestBulkPost()
 		{
             var request = new HttpRequestMessage(HttpMethod.Post, "/api/rentalrequests/bulk");
             request.Content = new StringContent("[]", Encoding.UTF8, "application/json");
 
             var response = await _client.SendAsync(request);
             response.EnsureSuccessStatusCode();
-        }		
-        
+        }		        
 		
 		[Fact]
         /// <summary>
         /// Integration test 
         /// </summary>
-        public async void TestBasic()
+        public async Task TestBasic()
         {
             string initialName = "InitialName";
             string changedName = "ChangedName";
+
             // first test the POST.
             var request = new HttpRequestMessage(HttpMethod.Post, "/api/rentalrequests");
 
@@ -99,7 +99,7 @@ namespace HETSAPI.Test
             // should get a 404 if we try a get now.
             request = new HttpRequestMessage(HttpMethod.Get, "/api/rentalrequests/" + id);
             response = await _client.SendAsync(request);
-            Assert.Equal(response.StatusCode, HttpStatusCode.NotFound);
+            Assert.Equal(HttpStatusCode.NotFound, response.StatusCode);
         }
 
 
@@ -130,27 +130,11 @@ namespace HETSAPI.Test
         /// <summary>
         /// Test the creation of the rotation list, a side effect of rental request record creation.
         /// </summary>
-        public async void TestRotationListNonDumpTruck()
-        {
-            /* 
-             * Create a temporary region, district, service area, local area
-             * Create an equipment type
-             * Create a district equipment type
-             * Create equipment for the various blocks in this region.
-             * Calculate the seniority for the region.
-             * Create a rental request
-             * verify that the rotation list was created properly.
-             * Delete rotation list
-             * Delete district equipment type, district equipment type, equipment type
-             * Delete local area, service area, district, region
-             */
-
+        public async Task TestRotationListNonDumpTruck()
+        {            
             string initialName = "InitialName";
-            string changedName = "ChangedName";
-
 
             // create a temporary region.
-
             var request = new HttpRequestMessage(HttpMethod.Post, "/api/regions");
             Region region = new Region();
             region.Name = initialName;
@@ -162,10 +146,7 @@ namespace HETSAPI.Test
 
             // parse as JSON.
             string jsonString = await response.Content.ReadAsStringAsync();
-
             region = JsonConvert.DeserializeObject<Region>(jsonString);
-            // get the id
-            var region_id = region.Id;
             
             request = new HttpRequestMessage(HttpMethod.Post, "/api/districts");
 
@@ -178,10 +159,10 @@ namespace HETSAPI.Test
             request.Content = new StringContent(jsonString, Encoding.UTF8, "application/json");
             response = await _client.SendAsync(request);
             response.EnsureSuccessStatusCode();       
+
             // parse as JSON.
             jsonString = await response.Content.ReadAsStringAsync();
             district = JsonConvert.DeserializeObject<District>(jsonString);            
-            var district_id = district.Id;
 
             // create a new Service Area
             request = new HttpRequestMessage(HttpMethod.Post, "/api/serviceareas");
@@ -193,10 +174,10 @@ namespace HETSAPI.Test
             request.Content = new StringContent(jsonString, Encoding.UTF8, "application/json");
             response = await _client.SendAsync(request);
             response.EnsureSuccessStatusCode();
+
             // parse as JSON.
             jsonString = await response.Content.ReadAsStringAsync();
             serviceArea = JsonConvert.DeserializeObject<ServiceArea>(jsonString);
-            var servicearea_id = serviceArea.Id;
 
             // create a new Local Area
             request = new HttpRequestMessage(HttpMethod.Post, "/api/localAreas");
@@ -208,10 +189,10 @@ namespace HETSAPI.Test
             request.Content = new StringContent(jsonString, Encoding.UTF8, "application/json");
             response = await _client.SendAsync(request);
             response.EnsureSuccessStatusCode();
+
             // parse as JSON.
             jsonString = await response.Content.ReadAsStringAsync();
             localArea = JsonConvert.DeserializeObject<LocalArea>(jsonString);
-            var localarea_id = localArea.Id;
 
             // create a new Equipment Type
             request = new HttpRequestMessage(HttpMethod.Post, "/api/equipmentTypes");
@@ -227,11 +208,10 @@ namespace HETSAPI.Test
             request.Content = new StringContent(jsonString, Encoding.UTF8, "application/json");
             response = await _client.SendAsync(request);
             response.EnsureSuccessStatusCode();
+
             // parse as JSON.
             jsonString = await response.Content.ReadAsStringAsync();
             equipmentType = JsonConvert.DeserializeObject<EquipmentType>(jsonString);
-            var equipmentType_id = district.Id;
-
 
             request = new HttpRequestMessage(HttpMethod.Post, "/api/districtEquipmentTypes");
 
@@ -245,10 +225,10 @@ namespace HETSAPI.Test
             request.Content = new StringContent(jsonString, Encoding.UTF8, "application/json");
             response = await _client.SendAsync(request);
             response.EnsureSuccessStatusCode();
+
             // parse as JSON.
             jsonString = await response.Content.ReadAsStringAsync();
-            districtEquipmentType = JsonConvert.DeserializeObject<DistrictEquipmentType>(jsonString);
-            var districtEquipmentTypeId = districtEquipmentType.Id;
+            districtEquipmentType = JsonConvert.DeserializeObject<DistrictEquipmentType>(jsonString);            
 
             // create equipment.
             int numberEquipment = 75;
@@ -314,7 +294,7 @@ namespace HETSAPI.Test
             // should get a 404 if we try a get now.
             request = new HttpRequestMessage(HttpMethod.Get, "/api/rentalrequests/" + id);
             response = await _client.SendAsync(request);
-            Assert.Equal(response.StatusCode, HttpStatusCode.NotFound);
+            Assert.Equal(HttpStatusCode.NotFound, response.StatusCode);
 
             // remove equipment.
 
@@ -327,7 +307,7 @@ namespace HETSAPI.Test
                 // should get a 404 if we try a get now.
                 request = new HttpRequestMessage(HttpMethod.Get, "/api/equipment/" + testEquipment[i].Id);
                 response = await _client.SendAsync(request);
-                Assert.Equal(response.StatusCode, HttpStatusCode.NotFound);
+                Assert.Equal(HttpStatusCode.NotFound, response.StatusCode);
             }
 
             // now remove the other temporary objects.
@@ -338,7 +318,7 @@ namespace HETSAPI.Test
             response.EnsureSuccessStatusCode();
             request = new HttpRequestMessage(HttpMethod.Get, "/api/districtEquipmentTypes/" + districtEquipmentType.Id);
             response = await _client.SendAsync(request);
-            Assert.Equal(response.StatusCode, HttpStatusCode.NotFound);
+            Assert.Equal(HttpStatusCode.NotFound, response.StatusCode);
 
             // equipmentType
             request = new HttpRequestMessage(HttpMethod.Post, "/api/equipmentTypes/" + equipmentType.Id + "/delete");
@@ -346,7 +326,7 @@ namespace HETSAPI.Test
             response.EnsureSuccessStatusCode();
             request = new HttpRequestMessage(HttpMethod.Get, "/api/equipmentTypes/" + equipmentType.Id);
             response = await _client.SendAsync(request);
-            Assert.Equal(response.StatusCode, HttpStatusCode.NotFound);
+            Assert.Equal(HttpStatusCode.NotFound, response.StatusCode);
 
             // localArea
             request = new HttpRequestMessage(HttpMethod.Post, "/api/localAreas/" + localArea.Id + "/delete");
@@ -354,7 +334,7 @@ namespace HETSAPI.Test
             response.EnsureSuccessStatusCode();
             request = new HttpRequestMessage(HttpMethod.Get, "/api/localAreas/" + localArea.Id);
             response = await _client.SendAsync(request);
-            Assert.Equal(response.StatusCode, HttpStatusCode.NotFound);
+            Assert.Equal(HttpStatusCode.NotFound, response.StatusCode);
 
             // Service Area
             request = new HttpRequestMessage(HttpMethod.Post, "/api/serviceareas/" + serviceArea.Id + "/delete");
@@ -362,7 +342,7 @@ namespace HETSAPI.Test
             response.EnsureSuccessStatusCode();
             request = new HttpRequestMessage(HttpMethod.Get, "/api/serviceareas/" + serviceArea.Id);
             response = await _client.SendAsync(request);
-            Assert.Equal(response.StatusCode, HttpStatusCode.NotFound);
+            Assert.Equal(HttpStatusCode.NotFound, response.StatusCode);
 
             // District
             request = new HttpRequestMessage(HttpMethod.Post, "/api/districts/" + district.Id + "/delete");
@@ -370,7 +350,7 @@ namespace HETSAPI.Test
             response.EnsureSuccessStatusCode();
             request = new HttpRequestMessage(HttpMethod.Get, "/api/districts/" + district.Id);
             response = await _client.SendAsync(request);
-            Assert.Equal(response.StatusCode, HttpStatusCode.NotFound);
+            Assert.Equal(HttpStatusCode.NotFound, response.StatusCode);
 
             // Region
             request = new HttpRequestMessage(HttpMethod.Post, "/api/regions/" + region.Id + "/delete");
@@ -378,7 +358,7 @@ namespace HETSAPI.Test
             response.EnsureSuccessStatusCode();
             request = new HttpRequestMessage(HttpMethod.Get, "/api/regions/" + region.Id);
             response = await _client.SendAsync(request);
-            Assert.Equal(response.StatusCode, HttpStatusCode.NotFound);
+            Assert.Equal(HttpStatusCode.NotFound, response.StatusCode);
         }
     }
 }

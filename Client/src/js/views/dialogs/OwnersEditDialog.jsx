@@ -14,6 +14,7 @@ import FilterDropdown from '../../components/FilterDropdown.jsx';
 import FormInputControl from '../../components/FormInputControl.jsx';
 
 import { isBlank } from '../../utils/string';
+import { OWNER_STATUS_CODE_APPROVED } from '../../constants';
 
 var OwnersEditDialog = React.createClass({
   propTypes: {
@@ -29,10 +30,13 @@ var OwnersEditDialog = React.createClass({
     var owner = this.props.owner;
     return {
       organizationName: owner.organizationName || '',
+      companyAddress: owner.companyAddress || '',
       localAreaId: owner.localArea.id || 0,
       doingBusinessAs: owner.doingBusinessAs || '',
       registeredCompanyNumber: owner.registeredCompanyNumber || '',
       status: owner.status || '',
+
+      companyAddressError: '',
       organizationNameError: '',
       localAreaError: '',
       statusError: '',
@@ -61,6 +65,7 @@ var OwnersEditDialog = React.createClass({
 
   isValid() {
     this.setState({
+      companyAddressError: '',
       organizationNameError: '',
       localAreaError: '',
       statusError: '',
@@ -76,12 +81,17 @@ var OwnersEditDialog = React.createClass({
     } else if (orgName !== owner.organizationName) {
       // Does the name already exist?
       var nameIgnoreCase = orgName.toLowerCase().trim();
-      var otherOwners = _.reject(this.props.owners, { id: owner.id });
+      var otherOwners = _.reject(this.props.owners.data, { id: owner.id });
       var other = _.find(otherOwners, other => other.organizationName.toLowerCase().trim() === nameIgnoreCase);
       if (other) {
         this.setState({ organizationNameError: 'This company name already exists in the system' });
         valid = false;
       }
+    }
+
+    if (isBlank(this.state.companyAddress)) {
+      this.setState({ companyAddressError: 'Company address is required' });
+      valid = false;
     }
 
     if (this.state.localAreaId === 0) {
@@ -92,9 +102,32 @@ var OwnersEditDialog = React.createClass({
     if (isBlank(this.state.status)) {
       this.setState({ statusError: 'Status is required' });
       valid = false;
+    } else if (this.state.status === OWNER_STATUS_CODE_APPROVED) {
+      this.setState({ statusError: this.statusRequirements() });
+      valid = false;
     }
 
     return valid;
+  },
+
+  statusRequirements() {
+    var owner = this.props.owner;
+    var requirements = [];
+    
+    if (!owner.primaryContact) {
+      requirements.push('Primary contact');
+    } 
+    if (isBlank(owner.workSafeBCPolicyNumber)) {
+      requirements.push('WorkSafeBC policy number');
+    }
+    if (!owner.companyAddress) {
+      requirements.push('Company address');
+    } 
+    if (!owner.meetsResidency) {
+      requirements.push('Meets residency');
+    }
+
+    return requirements;
   },
 
   onSave() {
@@ -110,15 +143,16 @@ var OwnersEditDialog = React.createClass({
   render() {
     var owner = this.props.owner;
     var localAreas = _.sortBy(this.props.localAreas, 'name');
+    var statusErrorText = this.state.statusError && this.state.statusError.length <= 1 ? 'The following is required:' : 'The following are required:';
 
-    return <EditDialog id="owners-edit" show={ this.props.show } bsSize="small"
+    return <EditDialog id="owners-edit" show={ this.props.show } 
       onClose={ this.props.onClose } onSave={ this.onSave } didChange={ this.didChange } isValid={ this.isValid }
       title= {
         <strong>Owner</strong>
       }>
       <Form>
         <FormGroup controlId="ownerEquipmentCodePrefix">
-          <ControlLabel>Equipment Prefix</ControlLabel>
+          <ControlLabel>Company Code</ControlLabel>
           <h4>{ owner.ownerEquipmentCodePrefix }</h4>
         </FormGroup>
         <FormGroup controlId="organizationName" validationState={ this.state.organizationNameError ? 'error' : null }>
@@ -126,16 +160,29 @@ var OwnersEditDialog = React.createClass({
           <FormInputControl type="text" value={ this.state.organizationName } updateState={ this.updateState } inputRef={ ref => { this.input = ref; }} />
           <HelpBlock>{ this.state.organizationNameError }</HelpBlock>
         </FormGroup>
+        <FormGroup controlId="companyAddress" validationState={ this.state.companyAddressError ? 'error' : null }>
+          <ControlLabel>Company Address <sup>*</sup></ControlLabel>
+          <FormInputControl type="text" value={ this.state.companyAddress } updateState={ this.updateState } />
+          <HelpBlock>{ this.state.companyAddressError }</HelpBlock>
+        </FormGroup>
         <FormGroup controlId="localAreaId" validationState={ this.state.localAreaError ? 'error' : null }>
           <ControlLabel>Local Area <sup>*</sup></ControlLabel>
-          <FilterDropdown id="localAreaId" items={ localAreas } selectedId={ this.state.localAreaId } updateState={ this.updateState } />
+          <FilterDropdown id="localAreaId" items={ localAreas } selectedId={ this.state.localAreaId } updateState={ this.updateState } className="full-width" />
           <HelpBlock>{ this.state.localAreaError }</HelpBlock>
         </FormGroup>
         <FormGroup controlId="status" validationState={ this.state.statusError ? 'error' : null }>
           <ControlLabel>Status <sup>*</sup></ControlLabel>
           <DropdownControl id="status" title={ this.state.status } updateState={ this.updateState }
-              items={[ Constant.OWNER_STATUS_CODE_APPROVED, Constant.OWNER_STATUS_CODE_PENDING, Constant.OWNER_STATUS_CODE_ARCHIVED ]} />
-          <HelpBlock>{ this.state.statusError }</HelpBlock>
+              items={[ Constant.OWNER_STATUS_CODE_APPROVED, Constant.OWNER_STATUS_CODE_PENDING, Constant.OWNER_STATUS_CODE_ARCHIVED ]} className="full-width" />
+          <HelpBlock>{ this.state.statusError && statusErrorText }
+            <ul>
+            { 
+              _.map(this.state.statusError, (error) => {
+                return <li>{ error }</li>;
+              })
+            }
+          </ul>
+          </HelpBlock>
         </FormGroup>
         <FormGroup controlId="doingBusinessAs">
           <ControlLabel>Doing Business As</ControlLabel>

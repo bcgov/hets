@@ -1,0 +1,27 @@
+#=========================================================
+# OpenShift template parameters for:
+# Component: .
+# JSON Template File: templates/server/server-deploy.json
+#=========================================================
+# NAME=server
+# SOURCE_IMAGE_NAME=server
+APPLICATION_DOMAIN=server-tran-hets-test.pathfinder.gov.bc.ca
+# IMAGE_NAMESPACE=tran-hets-tools
+TAG_NAME=test
+# PERSISTENT_VOLUME_NAME=server-docs-pvc
+# PERSISTENT_VOLUME_SIZE=1Gi
+# SECRET_VOLUME_NAME=hets-secret
+# DATABASE_SERVICE_NAME=postgresql
+# DATABASE_NAME=hets
+# DATABASE_DEPLOYMENT_NAME=postgresql
+# ADMIN_PASSWORD=[a-zA-Z0-9]{16}
+# USER_INITIALIZATION_FILE=/secrets/users.json
+# REGION_INITIALIZATION_FILE=/secrets/regions.json
+# DISTRICT_INITIALIZATION_FILE=/secrets/districts.json
+ASPNETCORE_ENVIRONMENT=Staging
+# UPLOAD_PATH=/uploads/
+# PDF_SERVICE_NAME=http://pdf:8080
+# CPU_LIMIT=500m
+# MEMORY_LIMIT=512Mi
+# CPU_REQUEST=50m
+# MEMORY_REQUEST=256Mi

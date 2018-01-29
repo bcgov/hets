@@ -1,105 +1,80 @@
-/*
- * REST API Documentation for the MOTI Hired Equipment Tracking System (HETS) Application
- *
- * The Hired Equipment Program is for owners/operators who have a dump truck, bulldozer, backhoe or  other piece of equipment they want to hire out to the transportation ministry for day labour and  emergency projects.  The Hired Equipment Program distributes available work to local equipment owners. The program is  based on seniority and is designed to deliver work to registered users fairly and efficiently  through the development of local area call-out lists. 
- *
- * OpenAPI spec version: v1
- * 
- * 
- */
-
 using System;
-using System.Linq;
-using System.IO;
 using System.Text;
-using System.Collections;
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using System.Runtime.Serialization;
 using Newtonsoft.Json;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.ComponentModel.DataAnnotations;
-using HETSAPI.Models;
 
 namespace HETSAPI.Models
 {
     /// <summary>
-    /// User specific settings for a specific location in the UI. The location and saved settings are internally defined by the UI.
+    /// User Favourites Database Model
     /// </summary>
-        [MetaDataExtension (Description = "User specific settings for a specific location in the UI. The location and saved settings are internally defined by the UI.")]
-
-    public partial class UserFavourite : AuditableEntity, IEquatable<UserFavourite>
+    [MetaData (Description = "User specific settings for a specific location in the UI. The location and saved settings are internally defined by the UI.")]
+    public sealed class UserFavourite : AuditableEntity, IEquatable<UserFavourite>
     {
         /// <summary>
         /// Default constructor, required by entity framework
         /// </summary>
         public UserFavourite()
         {
-            this.Id = 0;
+            Id = 0;
         }
 
         /// <summary>
         /// Initializes a new instance of the <see cref="UserFavourite" /> class.
         /// </summary>
-        /// <param name="Id">A system-generated unique identifier for a UserFavourite (required).</param>
-        /// <param name="Name">The user-defined name for the recorded settings. Allows the user to save different groups of settings and access each one easily when needed. (required).</param>
-        /// <param name="Value">The settings saved by the user. In general,  a UI defined chunk of json that stores the settings in place when the user created the favourite. (required).</param>
-        /// <param name="Type">The type of Favourite (required).</param>
-        /// <param name="User">The User who has this Favourite (required).</param>
-        /// <param name="IsDefault">True if this Favourite is the default for this Context Type. On first access to a context in a session the default favourite for the context it is invoked. If there is no default favourite,  a system-wide default is invoked. On return to the context within a session,  the last parameters used are reapplied..</param>
-        public UserFavourite(int Id, string Name, string Value, string Type, User User, bool? IsDefault = null)
+        /// <param name="id">A system-generated unique identifier for a UserFavourite (required).</param>
+        /// <param name="name">The user-defined name for the recorded settings. Allows the user to save different groups of settings and access each one easily when needed. (required).</param>
+        /// <param name="value">The settings saved by the user. In general,  a UI defined chunk of json that stores the settings in place when the user created the favourite. (required).</param>
+        /// <param name="type">The type of Favourite (required).</param>
+        /// <param name="user">The User who has this Favourite (required).</param>
+        /// <param name="isDefault">True if this Favourite is the default for this Context Type. On first access to a context in a session the default favourite for the context it is invoked. If there is no default favourite,  a system-wide default is invoked. On return to the context within a session,  the last parameters used are reapplied..</param>
+        public UserFavourite(int id, string name, string value, string type, User user, bool? isDefault = null)
         {   
-            this.Id = Id;
-            this.Name = Name;
-            this.Value = Value;
-            this.Type = Type;
-            this.User = User;
-
-
-
-
-            this.IsDefault = IsDefault;
+            Id = id;
+            Name = name;
+            Value = value;
+            Type = type;
+            User = user;
+            IsDefault = isDefault;
         }
 
         /// <summary>
         /// A system-generated unique identifier for a UserFavourite
         /// </summary>
         /// <value>A system-generated unique identifier for a UserFavourite</value>
-        [MetaDataExtension (Description = "A system-generated unique identifier for a UserFavourite")]
+        [MetaData (Description = "A system-generated unique identifier for a UserFavourite")]
         public int Id { get; set; }
         
         /// <summary>
         /// The user-defined name for the recorded settings. Allows the user to save different groups of settings and access each one easily when needed.
         /// </summary>
         /// <value>The user-defined name for the recorded settings. Allows the user to save different groups of settings and access each one easily when needed.</value>
-        [MetaDataExtension (Description = "The user-defined name for the recorded settings. Allows the user to save different groups of settings and access each one easily when needed.")]
-        [MaxLength(150)]
-        
+        [MetaData (Description = "The user-defined name for the recorded settings. Allows the user to save different groups of settings and access each one easily when needed.")]
+        [MaxLength(150)]        
         public string Name { get; set; }
         
         /// <summary>
         /// The settings saved by the user. In general,  a UI defined chunk of json that stores the settings in place when the user created the favourite.
         /// </summary>
         /// <value>The settings saved by the user. In general,  a UI defined chunk of json that stores the settings in place when the user created the favourite.</value>
-        [MetaDataExtension (Description = "The settings saved by the user. In general,  a UI defined chunk of json that stores the settings in place when the user created the favourite.")]
-        [MaxLength(2048)]
-        
+        [MetaData (Description = "The settings saved by the user. In general,  a UI defined chunk of json that stores the settings in place when the user created the favourite.")]
+        [MaxLength(2048)]        
         public string Value { get; set; }
         
         /// <summary>
         /// The type of Favourite
         /// </summary>
         /// <value>The type of Favourite</value>
-        [MetaDataExtension (Description = "The type of Favourite")]
-        [MaxLength(150)]
-        
+        [MetaData (Description = "The type of Favourite")]
+        [MaxLength(150)]        
         public string Type { get; set; }
         
         /// <summary>
         /// The User who has this Favourite
         /// </summary>
         /// <value>The User who has this Favourite</value>
-        [MetaDataExtension (Description = "The User who has this Favourite")]
+        [MetaData (Description = "The User who has this Favourite")]
         public User User { get; set; }
         
         /// <summary>
@@ -107,14 +82,14 @@ namespace HETSAPI.Models
         /// </summary>   
         [ForeignKey("User")]
 		[JsonIgnore]
-		[MetaDataExtension (Description = "The User who has this Favourite")]
+		[MetaData (Description = "The User who has this Favourite")]
         public int? UserId { get; set; }
         
         /// <summary>
         /// True if this Favourite is the default for this Context Type. On first access to a context in a session the default favourite for the context it is invoked. If there is no default favourite,  a system-wide default is invoked. On return to the context within a session,  the last parameters used are reapplied.
         /// </summary>
         /// <value>True if this Favourite is the default for this Context Type. On first access to a context in a session the default favourite for the context it is invoked. If there is no default favourite,  a system-wide default is invoked. On return to the context within a session,  the last parameters used are reapplied.</value>
-        [MetaDataExtension (Description = "True if this Favourite is the default for this Context Type. On first access to a context in a session the default favourite for the context it is invoked. If there is no default favourite,  a system-wide default is invoked. On return to the context within a session,  the last parameters used are reapplied.")]
+        [MetaData (Description = "True if this Favourite is the default for this Context Type. On first access to a context in a session the default favourite for the context it is invoked. If there is no default favourite,  a system-wide default is invoked. On return to the context within a session,  the last parameters used are reapplied.")]
         public bool? IsDefault { get; set; }
         
         /// <summary>
@@ -124,6 +99,7 @@ namespace HETSAPI.Models
         public override string ToString()
         {
             var sb = new StringBuilder();
+
             sb.Append("class UserFavourite {\n");
             sb.Append("  Id: ").Append(Id).Append("\n");
             sb.Append("  Name: ").Append(Name).Append("\n");
@@ -132,6 +108,7 @@ namespace HETSAPI.Models
             sb.Append("  User: ").Append(User).Append("\n");
             sb.Append("  IsDefault: ").Append(IsDefault).Append("\n");
             sb.Append("}\n");
+
             return sb.ToString();
         }
 
@@ -151,10 +128,9 @@ namespace HETSAPI.Models
         /// <returns>Boolean</returns>
         public override bool Equals(object obj)
         {
-            if (ReferenceEquals(null, obj)) { return false; }
+            if (obj is null) { return false; }
             if (ReferenceEquals(this, obj)) { return true; }
-            if (obj.GetType() != GetType()) { return false; }
-            return Equals((UserFavourite)obj);
+            return obj.GetType() == GetType() && Equals((UserFavourite)obj);
         }
 
         /// <summary>
@@ -164,39 +140,38 @@ namespace HETSAPI.Models
         /// <returns>Boolean</returns>
         public bool Equals(UserFavourite other)
         {
-
-            if (ReferenceEquals(null, other)) { return false; }
+            if (other is null) { return false; }
             if (ReferenceEquals(this, other)) { return true; }
 
             return                 
                 (
-                    this.Id == other.Id ||
-                    this.Id.Equals(other.Id)
+                    Id == other.Id ||
+                    Id.Equals(other.Id)
                 ) &&                 
                 (
-                    this.Name == other.Name ||
-                    this.Name != null &&
-                    this.Name.Equals(other.Name)
+                    Name == other.Name ||
+                    Name != null &&
+                    Name.Equals(other.Name)
                 ) &&                 
                 (
-                    this.Value == other.Value ||
-                    this.Value != null &&
-                    this.Value.Equals(other.Value)
+                    Value == other.Value ||
+                    Value != null &&
+                    Value.Equals(other.Value)
                 ) &&                 
                 (
-                    this.Type == other.Type ||
-                    this.Type != null &&
-                    this.Type.Equals(other.Type)
+                    Type == other.Type ||
+                    Type != null &&
+                    Type.Equals(other.Type)
                 ) &&                 
                 (
-                    this.User == other.User ||
-                    this.User != null &&
-                    this.User.Equals(other.User)
+                    User == other.User ||
+                    User != null &&
+                    User.Equals(other.User)
                 ) &&                 
                 (
-                    this.IsDefault == other.IsDefault ||
-                    this.IsDefault != null &&
-                    this.IsDefault.Equals(other.IsDefault)
+                    IsDefault == other.IsDefault ||
+                    IsDefault != null &&
+                    IsDefault.Equals(other.IsDefault)
                 );
         }
 
@@ -210,27 +185,33 @@ namespace HETSAPI.Models
             unchecked // Overflow is fine, just wrap
             {
                 int hash = 41;
-                // Suitable nullity checks
+
+                // Suitable nullity checks                                   
+                hash = hash * 59 + Id.GetHashCode();
+
+                if (Name != null)
+                {
+                    hash = hash * 59 + Name.GetHashCode();
+                }
+
+                if (Value != null)
+                {
+                    hash = hash * 59 + Value.GetHashCode();
+                }
+
+                if (Type != null)
+                {
+                    hash = hash * 59 + Type.GetHashCode();
+                }                
                                    
-                hash = hash * 59 + this.Id.GetHashCode();                if (this.Name != null)
+                if (User != null)
                 {
-                    hash = hash * 59 + this.Name.GetHashCode();
-                }                
-                                if (this.Value != null)
+                    hash = hash * 59 + User.GetHashCode();
+                }
+
+                if (IsDefault != null)
                 {
-                    hash = hash * 59 + this.Value.GetHashCode();
-                }                
-                                if (this.Type != null)
-                {
-                    hash = hash * 59 + this.Type.GetHashCode();
-                }                
-                                   
-                if (this.User != null)
-                {
-                    hash = hash * 59 + this.User.GetHashCode();
-                }                if (this.IsDefault != null)
-                {
-                    hash = hash * 59 + this.IsDefault.GetHashCode();
+                    hash = hash * 59 + IsDefault.GetHashCode();
                 }                
                 
                 return hash;

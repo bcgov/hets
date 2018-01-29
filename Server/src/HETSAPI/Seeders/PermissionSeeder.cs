@@ -9,7 +9,7 @@ namespace HETSAPI.Seeders
 {
     internal class PermissionSeeder : Seeder<DbAppContext>
     {
-        private string[] ProfileTriggers = { AllProfiles };
+        private readonly string[] ProfileTriggers = { AllProfiles };
 
         public PermissionSeeder(IConfiguration configuration, IHostingEnvironment env, ILoggerFactory loggerFactory) 
             : base(configuration, env, loggerFactory)

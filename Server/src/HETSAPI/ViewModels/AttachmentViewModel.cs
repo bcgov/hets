@@ -1,24 +1,7 @@
-/*
- * REST API Documentation for the MOTI Hired Equipment Tracking System (HETS) Application
- *
- * The Hired Equipment Program is for owners/operators who have a dump truck, bulldozer, backhoe or  other piece of equipment they want to hire out to the transportation ministry for day labour and  emergency projects.  The Hired Equipment Program distributes available work to local equipment owners. The program is  based on seniority and is designed to deliver work to registered users fairly and efficiently  through the development of local area call-out lists. 
- *
- * OpenAPI spec version: v1
- * 
- * 
- */
-
 using System;
-using System.Linq;
-using System.IO;
 using System.Text;
-using System.Collections;
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
 using System.Runtime.Serialization;
 using Newtonsoft.Json;
-using System.ComponentModel.DataAnnotations.Schema;
-using System.ComponentModel.DataAnnotations;
 using HETSAPI.Models;
 
 namespace HETSAPI.ViewModels
@@ -26,9 +9,9 @@ namespace HETSAPI.ViewModels
     /// <summary>
     /// Uploaded documents related to entity in the application - e.g. piece of Equipment, an Owner, a Project and so on.
     /// </summary>
-        [MetaDataExtension (Description = "Uploaded documents related to entity in the application - e.g. piece of Equipment, an Owner, a Project and so on.")]
+    [MetaData (Description = "Uploaded documents related to entity in the application - e.g. piece of Equipment, an Owner, a Project and so on.")]
     [DataContract]
-    public partial class AttachmentViewModel : IEquatable<AttachmentViewModel>
+    public sealed class AttachmentViewModel : IEquatable<AttachmentViewModel>
     {
         /// <summary>
         /// Default constructor, required by entity framework
@@ -51,7 +34,6 @@ namespace HETSAPI.ViewModels
         {   
             this.Id = Id;
             this.FileName = FileName;
-
             this.FileSize = FileSize;
             this.Description = Description;
             this.Type = Type;
@@ -64,7 +46,7 @@ namespace HETSAPI.ViewModels
         /// </summary>
         /// <value>A system-generated unique identifier for an Attachment</value>
         [DataMember(Name="id")]
-        [MetaDataExtension (Description = "A system-generated unique identifier for an Attachment")]
+        [MetaData (Description = "A system-generated unique identifier for an Attachment")]
         public int Id { get; set; }
 
         /// <summary>
@@ -72,7 +54,7 @@ namespace HETSAPI.ViewModels
         /// </summary>
         /// <value>Filename as passed by the user uploading the file</value>
         [DataMember(Name="fileName")]
-        [MetaDataExtension (Description = "Filename as passed by the user uploading the file")]
+        [MetaData (Description = "Filename as passed by the user uploading the file")]
         public string FileName { get; set; }
 
         /// <summary>
@@ -86,7 +68,7 @@ namespace HETSAPI.ViewModels
         /// </summary>
         /// <value>A note about the attachment,  optionally maintained by the user.</value>
         [DataMember(Name="description")]
-        [MetaDataExtension (Description = "A note about the attachment,  optionally maintained by the user.")]
+        [MetaData (Description = "A note about the attachment,  optionally maintained by the user.")]
         public string Description { get; set; }
 
         /// <summary>
@@ -94,7 +76,7 @@ namespace HETSAPI.ViewModels
         /// </summary>
         /// <value>Type of attachment</value>
         [DataMember(Name="type")]
-        [MetaDataExtension (Description = "Type of attachment")]
+        [MetaData (Description = "Type of attachment")]
         public string Type { get; set; }
 
         /// <summary>
@@ -102,7 +84,7 @@ namespace HETSAPI.ViewModels
         /// </summary>
         /// <value>Audit information - SM User Id for the User who most recently updated the record.</value>
         [DataMember(Name="lastUpdateUserid")]
-        [MetaDataExtension (Description = "Audit information - SM User Id for the User who most recently updated the record.")]
+        [MetaData (Description = "Audit information - SM User Id for the User who most recently updated the record.")]
         public string LastUpdateUserid { get; set; }
 
         /// <summary>
@@ -110,7 +92,7 @@ namespace HETSAPI.ViewModels
         /// </summary>
         /// <value>Audit information - Timestamp for record modification</value>
         [DataMember(Name="lastUpdateTimestamp")]
-        [MetaDataExtension (Description = "Audit information - Timestamp for record modification")]
+        [MetaData (Description = "Audit information - Timestamp for record modification")]
         public DateTime? LastUpdateTimestamp { get; set; }
 
         /// <summary>
@@ -148,10 +130,9 @@ namespace HETSAPI.ViewModels
         /// <returns>Boolean</returns>
         public override bool Equals(object obj)
         {
-            if (ReferenceEquals(null, obj)) { return false; }
+            if (obj is null) { return false; }
             if (ReferenceEquals(this, obj)) { return true; }
-            if (obj.GetType() != GetType()) { return false; }
-            return Equals((AttachmentViewModel)obj);
+            return obj.GetType() == GetType() && Equals((AttachmentViewModel)obj);
         }
 
         /// <summary>
@@ -162,7 +143,7 @@ namespace HETSAPI.ViewModels
         public bool Equals(AttachmentViewModel other)
         {
 
-            if (ReferenceEquals(null, other)) { return false; }
+            if (other is null) { return false; }
             if (ReferenceEquals(this, other)) { return true; }
 
             return                 

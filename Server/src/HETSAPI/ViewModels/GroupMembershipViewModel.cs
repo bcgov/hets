@@ -1,36 +1,18 @@
-/*
- * REST API Documentation for the MOTI Hired Equipment Tracking System (HETS) Application
- *
- * The Hired Equipment Program is for owners/operators who have a dump truck, bulldozer, backhoe or  other piece of equipment they want to hire out to the transportation ministry for day labour and  emergency projects.  The Hired Equipment Program distributes available work to local equipment owners. The program is  based on seniority and is designed to deliver work to registered users fairly and efficiently  through the development of local area call-out lists. 
- *
- * OpenAPI spec version: v1
- * 
- * 
- */
-
 using System;
-using System.Linq;
-using System.IO;
 using System.Text;
-using System.Collections;
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
 using System.Runtime.Serialization;
 using Newtonsoft.Json;
-using System.ComponentModel.DataAnnotations.Schema;
-using System.ComponentModel.DataAnnotations;
-using HETSAPI.Models;
 
 namespace HETSAPI.ViewModels
 {
     /// <summary>
-    /// 
+    /// Group Membership View Model
     /// </summary>
     [DataContract]
-    public partial class GroupMembershipViewModel : IEquatable<GroupMembershipViewModel>
+    public sealed class GroupMembershipViewModel : IEquatable<GroupMembershipViewModel>
     {
         /// <summary>
-        /// Default constructor, required by entity framework
+        /// Group Membership View Model Constructor
         /// </summary>
         public GroupMembershipViewModel()
         {
@@ -39,18 +21,16 @@ namespace HETSAPI.ViewModels
         /// <summary>
         /// Initializes a new instance of the <see cref="GroupMembershipViewModel" /> class.
         /// </summary>
-        /// <param name="Active">Active (required).</param>
-        /// <param name="GroupId">GroupId (required).</param>
-        /// <param name="UserId">UserId (required).</param>
-        /// <param name="Id">Id.</param>
-        public GroupMembershipViewModel(bool Active, int GroupId, int UserId, int? Id = null)
+        /// <param name="active">Active (required).</param>
+        /// <param name="groupId">GroupId (required).</param>
+        /// <param name="userId">UserId (required).</param>
+        /// <param name="id">Id.</param>
+        public GroupMembershipViewModel(bool active, int groupId, int userId, int? id = null)
         {   
-            this.Active = Active;
-            this.GroupId = GroupId;
-            this.UserId = UserId;
-
-
-            this.Id = Id;
+            Active = active;
+            GroupId = groupId;
+            UserId = userId;
+            Id = id;
         }
 
         /// <summary>
@@ -84,12 +64,14 @@ namespace HETSAPI.ViewModels
         public override string ToString()
         {
             var sb = new StringBuilder();
+
             sb.Append("class GroupMembershipViewModel {\n");
             sb.Append("  Active: ").Append(Active).Append("\n");
             sb.Append("  GroupId: ").Append(GroupId).Append("\n");
             sb.Append("  UserId: ").Append(UserId).Append("\n");
             sb.Append("  Id: ").Append(Id).Append("\n");
             sb.Append("}\n");
+
             return sb.ToString();
         }
 
@@ -112,6 +94,7 @@ namespace HETSAPI.ViewModels
             if (ReferenceEquals(null, obj)) { return false; }
             if (ReferenceEquals(this, obj)) { return true; }
             if (obj.GetType() != GetType()) { return false; }
+
             return Equals((GroupMembershipViewModel)obj);
         }
 
@@ -122,27 +105,26 @@ namespace HETSAPI.ViewModels
         /// <returns>Boolean</returns>
         public bool Equals(GroupMembershipViewModel other)
         {
-
             if (ReferenceEquals(null, other)) { return false; }
             if (ReferenceEquals(this, other)) { return true; }
 
             return                 
                 (
-                    this.Active == other.Active ||
-                    this.Active.Equals(other.Active)
+                    Active == other.Active ||
+                    Active.Equals(other.Active)
                 ) &&                 
                 (
-                    this.GroupId == other.GroupId ||
-                    this.GroupId.Equals(other.GroupId)
+                    GroupId == other.GroupId ||
+                    GroupId.Equals(other.GroupId)
                 ) &&                 
                 (
-                    this.UserId == other.UserId ||
-                    this.UserId.Equals(other.UserId)
+                    UserId == other.UserId ||
+                    UserId.Equals(other.UserId)
                 ) &&                 
                 (
-                    this.Id == other.Id ||
-                    this.Id != null &&
-                    this.Id.Equals(other.Id)
+                    Id == other.Id ||
+                    Id != null &&
+                    Id.Equals(other.Id)
                 );
         }
 
@@ -156,14 +138,15 @@ namespace HETSAPI.ViewModels
             unchecked // Overflow is fine, just wrap
             {
                 int hash = 41;
-                // Suitable nullity checks
-                   
-                hash = hash * 59 + this.Active.GetHashCode();
-                                                   
-                hash = hash * 59 + this.GroupId.GetHashCode();                                   
-                hash = hash * 59 + this.UserId.GetHashCode();                if (this.Id != null)
+
+                // Suitable nullity checks                   
+                hash = hash * 59 + Active.GetHashCode();                                                   
+                hash = hash * 59 + GroupId.GetHashCode();                                   
+                hash = hash * 59 + UserId.GetHashCode();
+
+                if (Id != null)
                 {
-                    hash = hash * 59 + this.Id.GetHashCode();
+                    hash = hash * 59 + Id.GetHashCode();
                 }                
                 
                 return hash;

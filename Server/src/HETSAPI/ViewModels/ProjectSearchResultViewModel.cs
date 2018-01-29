@@ -1,36 +1,19 @@
-/*
- * REST API Documentation for the MOTI Hired Equipment Tracking System (HETS) Application
- *
- * The Hired Equipment Program is for owners/operators who have a dump truck, bulldozer, backhoe or  other piece of equipment they want to hire out to the transportation ministry for day labour and  emergency projects.  The Hired Equipment Program distributes available work to local equipment owners. The program is  based on seniority and is designed to deliver work to registered users fairly and efficiently  through the development of local area call-out lists. 
- *
- * OpenAPI spec version: v1
- * 
- * 
- */
-
 using System;
-using System.Linq;
-using System.IO;
 using System.Text;
-using System.Collections;
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
 using System.Runtime.Serialization;
 using Newtonsoft.Json;
-using System.ComponentModel.DataAnnotations.Schema;
-using System.ComponentModel.DataAnnotations;
 using HETSAPI.Models;
 
 namespace HETSAPI.ViewModels
 {
     /// <summary>
-    /// 
+    /// Project Search Result View Model
     /// </summary>
     [DataContract]
-    public partial class ProjectSearchResultViewModel : IEquatable<ProjectSearchResultViewModel>
+    public sealed class ProjectSearchResultViewModel : IEquatable<ProjectSearchResultViewModel>
     {
         /// <summary>
-        /// Default constructor, required by entity framework
+        /// Project Search Result View Model Constructor
         /// </summary>
         public ProjectSearchResultViewModel()
         {
@@ -39,22 +22,23 @@ namespace HETSAPI.ViewModels
         /// <summary>
         /// Initializes a new instance of the <see cref="ProjectSearchResultViewModel" /> class.
         /// </summary>
-        /// <param name="Id">Id (required).</param>
-        /// <param name="District">District.</param>
-        /// <param name="Name">Name.</param>
-        /// <param name="PrimaryContact">PrimaryContact.</param>
-        /// <param name="Hires">count of RentalAgreement.status is Active for the project.</param>
-        /// <param name="Requests">count of RentalRequest.status is Active for the project.</param>
-        /// <param name="Status">Project status.</param>
-        public ProjectSearchResultViewModel(int Id, District District = null, string Name = null, Contact PrimaryContact = null, int? Hires = null, int? Requests = null, string Status = null)
+        /// <param name="id">Id (required).</param>
+        /// <param name="district">District.</param>
+        /// <param name="name">Name.</param>
+        /// <param name="primaryContact">PrimaryContact.</param>
+        /// <param name="hires">count of RentalAgreement.status is Active for the project.</param>
+        /// <param name="requests">count of RentalRequest.status is Active for the project.</param>
+        /// <param name="status">Project status.</param>
+        public ProjectSearchResultViewModel(int id, District district = null, string name = null, Contact primaryContact = null, 
+            int? hires = null, int? requests = null, string status = null)
         {   
-            this.Id = Id;
-            this.District = District;
-            this.Name = Name;
-            this.PrimaryContact = PrimaryContact;
-            this.Hires = Hires;
-            this.Requests = Requests;
-            this.Status = Status;
+            Id = id;
+            District = district;
+            Name = name;
+            PrimaryContact = primaryContact;
+            Hires = hires;
+            Requests = requests;
+            Status = status;
         }
 
         /// <summary>
@@ -86,7 +70,7 @@ namespace HETSAPI.ViewModels
         /// </summary>
         /// <value>count of RentalAgreement.status is Active for the project</value>
         [DataMember(Name="hires")]
-        [MetaDataExtension (Description = "count of RentalAgreement.status is Active for the project")]
+        [MetaData (Description = "count of RentalAgreement.status is Active for the project")]
         public int? Hires { get; set; }
 
         /// <summary>
@@ -94,7 +78,7 @@ namespace HETSAPI.ViewModels
         /// </summary>
         /// <value>count of RentalRequest.status is Active for the project</value>
         [DataMember(Name="requests")]
-        [MetaDataExtension (Description = "count of RentalRequest.status is Active for the project")]
+        [MetaData (Description = "count of RentalRequest.status is Active for the project")]
         public int? Requests { get; set; }
 
         /// <summary>
@@ -102,7 +86,7 @@ namespace HETSAPI.ViewModels
         /// </summary>
         /// <value>Project status</value>
         [DataMember(Name="status")]
-        [MetaDataExtension (Description = "Project status")]
+        [MetaData (Description = "Project status")]
         public string Status { get; set; }
 
         /// <summary>
@@ -112,6 +96,7 @@ namespace HETSAPI.ViewModels
         public override string ToString()
         {
             var sb = new StringBuilder();
+
             sb.Append("class ProjectSearchResultViewModel {\n");
             sb.Append("  Id: ").Append(Id).Append("\n");
             sb.Append("  District: ").Append(District).Append("\n");
@@ -121,6 +106,7 @@ namespace HETSAPI.ViewModels
             sb.Append("  Requests: ").Append(Requests).Append("\n");
             sb.Append("  Status: ").Append(Status).Append("\n");
             sb.Append("}\n");
+
             return sb.ToString();
         }
 
@@ -140,10 +126,9 @@ namespace HETSAPI.ViewModels
         /// <returns>Boolean</returns>
         public override bool Equals(object obj)
         {
-            if (ReferenceEquals(null, obj)) { return false; }
+            if (obj is null) { return false; }
             if (ReferenceEquals(this, obj)) { return true; }
-            if (obj.GetType() != GetType()) { return false; }
-            return Equals((ProjectSearchResultViewModel)obj);
+            return obj.GetType() == GetType() && Equals((ProjectSearchResultViewModel)obj);
         }
 
         /// <summary>
@@ -153,44 +138,43 @@ namespace HETSAPI.ViewModels
         /// <returns>Boolean</returns>
         public bool Equals(ProjectSearchResultViewModel other)
         {
-
-            if (ReferenceEquals(null, other)) { return false; }
+            if (other is null) { return false; }
             if (ReferenceEquals(this, other)) { return true; }
 
             return                 
                 (
-                    this.Id == other.Id ||
-                    this.Id.Equals(other.Id)
+                    Id == other.Id ||
+                    Id.Equals(other.Id)
                 ) &&                 
                 (
-                    this.District == other.District ||
-                    this.District != null &&
-                    this.District.Equals(other.District)
+                    District == other.District ||
+                    District != null &&
+                    District.Equals(other.District)
                 ) &&                 
                 (
-                    this.Name == other.Name ||
-                    this.Name != null &&
-                    this.Name.Equals(other.Name)
+                    Name == other.Name ||
+                    Name != null &&
+                    Name.Equals(other.Name)
                 ) &&                 
                 (
-                    this.PrimaryContact == other.PrimaryContact ||
-                    this.PrimaryContact != null &&
-                    this.PrimaryContact.Equals(other.PrimaryContact)
+                    PrimaryContact == other.PrimaryContact ||
+                    PrimaryContact != null &&
+                    PrimaryContact.Equals(other.PrimaryContact)
                 ) &&                 
                 (
-                    this.Hires == other.Hires ||
-                    this.Hires != null &&
-                    this.Hires.Equals(other.Hires)
+                    Hires == other.Hires ||
+                    Hires != null &&
+                    Hires.Equals(other.Hires)
                 ) &&                 
                 (
-                    this.Requests == other.Requests ||
-                    this.Requests != null &&
-                    this.Requests.Equals(other.Requests)
+                    Requests == other.Requests ||
+                    Requests != null &&
+                    Requests.Equals(other.Requests)
                 ) &&                 
                 (
-                    this.Status == other.Status ||
-                    this.Status != null &&
-                    this.Status.Equals(other.Status)
+                    Status == other.Status ||
+                    Status != null &&
+                    Status.Equals(other.Status)
                 );
         }
 
@@ -204,31 +188,38 @@ namespace HETSAPI.ViewModels
             unchecked // Overflow is fine, just wrap
             {
                 int hash = 41;
-                // Suitable nullity checks
-                                   
-                hash = hash * 59 + this.Id.GetHashCode();                   
-                if (this.District != null)
+                
+                // Suitable nullity checks                                   
+                hash = hash * 59 + Id.GetHashCode();
+
+                if (District != null)
                 {
-                    hash = hash * 59 + this.District.GetHashCode();
-                }                if (this.Name != null)
+                    hash = hash * 59 + District.GetHashCode();
+                }
+
+                if (Name != null)
                 {
-                    hash = hash * 59 + this.Name.GetHashCode();
+                    hash = hash * 59 + Name.GetHashCode();
                 }                
                                    
-                if (this.PrimaryContact != null)
+                if (PrimaryContact != null)
                 {
-                    hash = hash * 59 + this.PrimaryContact.GetHashCode();
-                }                if (this.Hires != null)
+                    hash = hash * 59 + PrimaryContact.GetHashCode();
+                }
+
+                if (Hires != null)
                 {
-                    hash = hash * 59 + this.Hires.GetHashCode();
-                }                
-                                if (this.Requests != null)
+                    hash = hash * 59 + Hires.GetHashCode();
+                }
+
+                if (Requests != null)
                 {
-                    hash = hash * 59 + this.Requests.GetHashCode();
-                }                
-                                if (this.Status != null)
+                    hash = hash * 59 + Requests.GetHashCode();
+                }
+
+                if (Status != null)
                 {
-                    hash = hash * 59 + this.Status.GetHashCode();
+                    hash = hash * 59 + Status.GetHashCode();
                 }                
                 
                 return hash;

@@ -1,43 +1,28 @@
-/*
- * REST API Documentation for the MOTI Hired Equipment Tracking System (HETS) Application
- *
- * The Hired Equipment Program is for owners/operators who have a dump truck, bulldozer, backhoe or  other piece of equipment they want to hire out to the transportation ministry for day labour and  emergency projects.  The Hired Equipment Program distributes available work to local equipment owners. The program is  based on seniority and is designed to deliver work to registered users fairly and efficiently  through the development of local area call-out lists. 
- *
- * OpenAPI spec version: v1
- * 
- * 
- */
-
-using System;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using System.ComponentModel;
-using System.IO;
 using System.Linq;
-using System.Net;
-using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using Newtonsoft.Json;
 using HETSAPI.Models;
 using HETSAPI.ViewModels;
-using HETSAPI.Mappings;
+using Microsoft.Extensions.Configuration;
 
 namespace HETSAPI.Services.Impl
 {
     /// <summary>
-    /// 
+    /// Rental Request Rotation List Service
     /// </summary>
     public class RentalRequestRotationListService : IRentalRequestRotationListService
     {
-        private readonly DbAppContext _context;        
+        private readonly DbAppContext _context;
+        private readonly IConfiguration _configuration;
 
         /// <summary>
-        /// Create a service and set the database context
+        /// Rental Request Rotation List Service Constructor
         /// </summary>
-        public RentalRequestRotationListService(DbAppContext context)
+        public RentalRequestRotationListService(DbAppContext context, IConfiguration configuration)
         {
             _context = context;
+            _configuration = configuration;
         }
 
         private void AdjustRecord(RentalRequestRotationList item)
@@ -57,20 +42,23 @@ namespace HETSAPI.Services.Impl
         }
 
         /// <summary>
-        /// 
+        /// Create bulk rental request rotation lists
         /// </summary>
         /// <param name="items"></param>
-        /// <response code="201">Project created</response>
+        /// <response code="201">Rental Request Rotation List created</response>
         public virtual IActionResult RentalrequestrotationlistsBulkPostAsync(RentalRequestRotationList[] items)
         {
             if (items == null)
             {
                 return new BadRequestResult();
             }
+
             foreach (RentalRequestRotationList item in items)
             {
                 AdjustRecord(item);
+
                 bool exists = _context.RentalRequestRotationLists.Any(a => a.Id == item.Id);
+
                 if (exists)
                 {
                     _context.RentalRequestRotationLists.Update(item);
@@ -80,113 +68,123 @@ namespace HETSAPI.Services.Impl
                     _context.RentalRequestRotationLists.Add(item);
                 }
             }
-            // Save the changes
+            // save the changes
             _context.SaveChanges();
+
             return new NoContentResult();
         }
 
         /// <summary>
-        /// 
+        /// Get all rental request rottion lists
         /// </summary>
         /// <response code="200">OK</response>
         public virtual IActionResult RentalrequestrotationlistsGetAsync()
         {
-            var result = _context.RentalRequestRotationLists
+            List<RentalRequestRotationList> result = _context.RentalRequestRotationLists
                 .Include(x => x.RentalAgreement)                            
-                .Include(x => x.Equipment)
+                .Include(x => x.Equipment)   
                 .ToList();
-            return new ObjectResult(result);
+
+            return new ObjectResult(new HetsResponse(result));
         }
 
         /// <summary>
-        /// 
+        /// Delete rental request rotation list
         /// </summary>
-        /// <param name="id">id of Project to delete</param>
+        /// <param name="id">id of Rental Request Rotation List to delete</param>
         /// <response code="200">OK</response>
-        /// <response code="404">Project not found</response>
+        /// <response code="404">Rental Request Rotation List not found</response>
         public virtual IActionResult RentalrequestrotationlistsIdDeletePostAsync(int id)
         {
-            var exists = _context.RentalRequestRotationLists.Any(a => a.Id == id);
+            bool exists = _context.RentalRequestRotationLists.Any(a => a.Id == id);
+
             if (exists)
             {
-                var item = _context.RentalRequestRotationLists.First(a => a.Id == id);
+                RentalRequestRotationList item = _context.RentalRequestRotationLists.First(a => a.Id == id);
+
                 if (item != null)
                 {
                     _context.RentalRequestRotationLists.Remove(item);
-                    // Save the changes
+
+                    // save the changes
                     _context.SaveChanges();
                 }
-                return new ObjectResult(item);
+
+                return new ObjectResult(new HetsResponse(item));
             }
-            else
-            {
-                // record not found
-                return new StatusCodeResult(404);
-            }
+
+            // record not found
+            return new ObjectResult(new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-01", _configuration)));
         }
 
         /// <summary>
-        /// 
+        /// Get rental request rotation list by id
         /// </summary>
-        /// <param name="id">id of Project to fetch</param>
+        /// <param name="id">id of Rental Request Rotation List to fetch</param>
         /// <response code="200">OK</response>
-        /// <response code="404">Project not found</response>
+        /// <response code="404">Rental Request Rotation List not found</response>
         public virtual IActionResult RentalrequestrotationlistsIdGetAsync(int id)
         {
-            var exists = _context.RentalRequestRotationLists.Any(a => a.Id == id);
+            bool exists = _context.RentalRequestRotationLists.Any(a => a.Id == id);
+
             if (exists)
             {
-                var result = _context.RentalRequestRotationLists
+                RentalRequestRotationList result = _context.RentalRequestRotationLists
                     .Include(x => x.RentalAgreement)                   
+                    .Include(x => x.Equipment)                        
+                        .ThenInclude(r => r.EquipmentAttachments)
                     .Include(x => x.Equipment)
-
+                        .ThenInclude(e => e.Owner)
+                            .ThenInclude(c => c.PrimaryContact)
                     .First(a => a.Id == id);
-                return new ObjectResult(result);
+
+                return new ObjectResult(new HetsResponse(result));
             }
-            else
-            {
-                // record not found
-                return new StatusCodeResult(404);
-            }
+
+            // record not found
+            return new ObjectResult(new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-01", _configuration)));
         }
 
         /// <summary>
-        /// 
+        /// Update rental request rotation list
         /// </summary>
-        /// <param name="id">id of Project to fetch</param>
+        /// <param name="id">id of Rental Request Rotation List to update</param>
         /// <param name="item"></param>
         /// <response code="200">OK</response>
-        /// <response code="404">Project not found</response>
+        /// <response code="404">Rental Request Rotation List not found</response>
         public virtual IActionResult RentalrequestrotationlistsIdPutAsync(int id, RentalRequestRotationList item)
         {
             AdjustRecord(item);
-            var exists = _context.RentalRequestRotationLists.Any(a => a.Id == id);
+
+            bool exists = _context.RentalRequestRotationLists.Any(a => a.Id == id);
+
             if (exists && id == item.Id)
             {
                 _context.RentalRequestRotationLists.Update(item);
-                // Save the changes
+
+                // save the changes
                 _context.SaveChanges();
-                return new ObjectResult(item);
+
+                return new ObjectResult(new HetsResponse(item));
             }
-            else
-            {
-                // record not found
-                return new StatusCodeResult(404);
-            }
+
+            // record not found
+            return new ObjectResult(new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-01", _configuration)));
         }
 
         /// <summary>
-        /// 
+        /// Create rental request rotation list
         /// </summary>
         /// <param name="item"></param>
-        /// <response code="201">Project created</response>
+        /// <response code="201">Rental Request Rotation List created</response>
         public virtual IActionResult RentalrequestrotationlistsPostAsync(RentalRequestRotationList item)
         {
             if (item != null)
             {
                 AdjustRecord(item);
 
-                var exists = _context.RentalRequestRotationLists.Any(a => a.Id == item.Id);
+                bool exists = _context.RentalRequestRotationLists.Any(a => a.Id == item.Id);
+
                 if (exists)
                 {
                     _context.RentalRequestRotationLists.Update(item);
@@ -196,15 +194,15 @@ namespace HETSAPI.Services.Impl
                     // record not found
                     _context.RentalRequestRotationLists.Add(item);
                 }
-                // Save the changes
+
+                // save the changes
                 _context.SaveChanges();
-                return new ObjectResult(item);
+
+                return new ObjectResult(new HetsResponse(item));
             }
-            else
-            {
-                return new StatusCodeResult(400);
-            }
-        }
-        
+
+            // no record to insert
+            return new ObjectResult(new HetsResponse("HETS-04", ErrorViewModel.GetDescription("HETS-04", _configuration)));
+        }        
     }
 }

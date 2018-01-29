@@ -30,7 +30,6 @@ import EditButton from '../components/EditButton.jsx';
 import History from '../components/History.jsx';
 import SortTable from '../components/SortTable.jsx';
 import Spinner from '../components/Spinner.jsx';
-import Unimplemented from '../components/Unimplemented.jsx';
 
 import { formatDateTime, today, toZuluTime } from '../utils/date';
 import { concat } from '../utils/string';
@@ -52,6 +51,7 @@ var OwnersDetail = React.createClass({
     uiContacts: React.PropTypes.object,
     uiEquipment: React.PropTypes.object,
     router: React.PropTypes.object,
+    notes: React.PropTypes.object,
   },
 
   getInitialState() {
@@ -125,10 +125,12 @@ var OwnersDetail = React.createClass({
   fetch() {
     this.setState({ loading: true });
 
-    var ownerPromise = Api.getOwner(this.props.params.ownerId);
-    var documentsPromise = Api.getOwnerDocuments(this.props.params.ownerId);
+    var ownerId = this.props.params.ownerId;
+    var ownerPromise = Api.getOwner(ownerId);
+    var documentsPromise = Api.getOwnerDocuments(ownerId);
+    var ownerNotesPromise = Api.getOwnerNotes(ownerId);
 
-    return Promise.all([ownerPromise, documentsPromise]).finally(() => {
+    return Promise.all([ownerPromise, documentsPromise, ownerNotesPromise]).finally(() => {
       this.setState({ loading: false });
     });
   },
@@ -318,12 +320,12 @@ var OwnersDetail = React.createClass({
     this.setState({ showNotesDialog: false });
   },
 
-  saveNote() {
-    console.log('save note');
+  saveNote(note) {
+    Api.addOwnerNote(this.props.params.ownerId, note);
   },
 
   print() {
-
+    window.print();
   },
 
   render() {
@@ -335,19 +337,15 @@ var OwnersDetail = React.createClass({
           if (this.state.loading) { return <div style={{ textAlign: 'center' }}><Spinner/></div>; }
 
           return <Row id="owners-top">
-            <Col md={10}>
+            <Col md={9}>
               <Label bsStyle={ owner.isApproved ? 'success' : 'danger'}>{ owner.status }</Label>
               <Label className={ owner.isMaintenanceContractor ? '' : 'hide' }>Maintenance Contractor</Label>
-              <Unimplemented>
-                <Button title="Notes" onClick={ this.openNotesDialog }>Notes ({ owner.notes.length })</Button>
-              </Unimplemented>
+              <Button title="Notes" onClick={ this.openNotesDialog }>Notes ({ Object.keys(this.props.notes).length })</Button>
               <Button title="Documents" onClick={ this.showDocuments }>Documents ({ Object.keys(this.props.documents).length })</Button>
             </Col>
-            <Col md={2}>
+            <Col md={3}>
               <div className="pull-right">
-                <Unimplemented>
-                  <Button onClick={ this.print }><Glyphicon glyph="print" title="Print" /></Button>
-                </Unimplemented>
+                <Button onClick={ this.print }><Glyphicon glyph="print" title="Print" /></Button>
                 <LinkContainer to={{ pathname: 'owners' }}>
                   <Button title="Return to List"><Glyphicon glyph="arrow-left" /> Return to List</Button>
                 </LinkContainer>
@@ -382,7 +380,10 @@ var OwnersDetail = React.createClass({
                     <ColDisplay md={12} labelProps={{ md: 4 }} label="Company">{ owner.organizationName }</ColDisplay>
                   </Row>
                   <Row>
-                    <ColDisplay md={12} labelProps={{ md: 4 }} label="Equipment Prefix">{ owner.ownerEquipmentCodePrefix }</ColDisplay>
+                    <ColDisplay md={12} labelProps={{ md: 4 }} label="Company Address">{ owner.companyAddress }</ColDisplay>
+                  </Row>
+                  <Row>
+                    <ColDisplay md={12} labelProps={{ md: 4 }} label="Company Code">{ owner.ownerEquipmentCodePrefix }</ColDisplay>
                   </Row>
                   <Row>
                     <ColDisplay md={12} labelProps={{ md: 4 }} label="Primary Contact">{ owner.primaryContactName }</ColDisplay>
@@ -525,9 +526,7 @@ var OwnersDetail = React.createClass({
           </Col>
         </Row>
       </div>
-      { this.state.showEquipmentDialog &&
-        <EquipmentAddDialog show={ this.state.showEquipmentDialog } onSave={ this.saveNewEquipment } onClose={ this.closeEquipmentDialog } />
-      }
+      <EquipmentAddDialog show={ this.state.showEquipmentDialog } onSave={ this.saveNewEquipment } onClose={ this.closeEquipmentDialog } />
       { this.state.showEditDialog &&
         <OwnersEditDialog show={ this.state.showEditDialog } onSave={ this.saveEdit } onClose={ this.closeEditDialog } />
       }
@@ -538,11 +537,20 @@ var OwnersDetail = React.createClass({
         <ContactsEditDialog show={ this.state.showContactDialog } contact={ this.state.contact } onSave={ this.saveContact } onClose={ this.closeContactDialog } />
       }
       { this.state.showDocumentsDialog &&
-        <DocumentsListDialog show={ this.state.showDocumentsDialog } parent={ owner } onClose={ this.closeDocumentsDialog } />
+        <DocumentsListDialog 
+          show={ owner && this.state.showDocumentsDialog } 
+          parent={ owner } 
+          onClose={ this.closeDocumentsDialog } 
+        />
       }
-      <NotesDialog show={ this.state.showNotesDialog } onSave={ this.saveNote } onClose={ this.closeNotesDialog } />
-
-
+      { this.state.showNotesDialog &&
+        <NotesDialog 
+          show={ this.state.showNotesDialog } 
+          onSave={ this.saveNote } 
+          onClose={ this.closeNotesDialog } 
+          notes={ this.props.notes }
+        />
+      }
       { /* TODO this.state.showPolicyDocumentsDialog && <OwnerPolicyDocumentsDialog /> */}
     </div>;
   },
@@ -552,7 +560,9 @@ var OwnersDetail = React.createClass({
 function mapStateToProps(state) {
   return {
     owner: state.models.owner,
+    notes: state.models.ownerNotes,
     equipment: state.models.equipment,
+    equipmentAttachments: state.models.equipmentAttachments,
     contact: state.models.contact,
     documents: state.models.documents,
     uiContacts: state.ui.ownerContacts,

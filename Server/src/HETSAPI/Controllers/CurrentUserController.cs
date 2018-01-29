@@ -1,40 +1,22 @@
-/*
- * REST API Documentation for the MOTI Hired Equipment Tracking System (HETS) Application
- *
- * The Hired Equipment Program is for owners/operators who have a dump truck, bulldozer, backhoe or  other piece of equipment they want to hire out to the transportation ministry for day labour and  emergency projects.  The Hired Equipment Program distributes available work to local equipment owners. The program is  based on seniority and is designed to deliver work to registered users fairly and efficiently  through the development of local area call-out lists. 
- *
- * OpenAPI spec version: v1
- * 
- * 
- */
-
-using System;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using System.ComponentModel;
-using System.IO;
-using System.Linq;
-using System.Net;
-using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
-using Newtonsoft.Json;
 using Swashbuckle.SwaggerGen.Annotations;
 using HETSAPI.Models;
 using HETSAPI.ViewModels;
 using HETSAPI.Services;
-using HETSAPI.Authorization;
 
 namespace HETSAPI.Controllers
 {
     /// <summary>
-    /// 
+    /// Current User Controller
     /// </summary>
-    public partial class CurrentUserController : Controller
+    [ResponseCache(Location = ResponseCacheLocation.None, NoStore = true)]
+    public class CurrentUserController : Controller
     {
         private readonly ICurrentUserService _service;
 
         /// <summary>
-        /// Create a controller and set the service
+        /// Current User Controller Constructor
         /// </summary>
         public CurrentUserController(ICurrentUserService service)
         {
@@ -42,7 +24,7 @@ namespace HETSAPI.Controllers
         }
 
         /// <summary>
-        /// 
+        /// Get faviourites for a user (by type)
         /// </summary>
         /// <remarks>Returns a users favourites of a given type.  If type is empty, returns all.</remarks>
         /// <param name="favouritetype">type of favourite to return</param>
@@ -50,15 +32,15 @@ namespace HETSAPI.Controllers
         /// <response code="404">User not found</response>
         [HttpGet]
         [Route("/api/users/current/favourites/{favouritetype}")]
-        [SwaggerOperation("UsersCurrentFavouritesFavouritetypeGet")]
+        [SwaggerOperation("UsersCurrentFavouritesFavouriteTypeGet")]
         [SwaggerResponse(200, type: typeof(List<UserFavourite>))]
-        public virtual IActionResult UsersCurrentFavouritesFavouritetypeGet([FromRoute]string favouritetype)
+        public virtual IActionResult UsersCurrentFavouritesFavouriteTypeGet([FromRoute]string favouritetype)
         {
-            return this._service.UsersCurrentFavouritesFavouritetypeGetAsync(favouritetype);
+            return _service.UsersCurrentFavouritesFavouritetypeGetAsync(favouritetype);
         }
 
         /// <summary>
-        /// 
+        /// Delete user favourite
         /// </summary>
         /// <remarks>Removes a specific user favourite</remarks>
         /// <param name="id">id of Favourite to delete</param>
@@ -68,11 +50,11 @@ namespace HETSAPI.Controllers
         [SwaggerOperation("UsersCurrentFavouritesIdDeletePost")]
         public virtual IActionResult UsersCurrentFavouritesIdDeletePost([FromRoute]int id)
         {
-            return this._service.UsersCurrentFavouritesIdDeletePostAsync(id);
+            return _service.UsersCurrentFavouritesIdDeletePostAsync(id);
         }
 
         /// <summary>
-        /// 
+        /// Create user favourite
         /// </summary>
         /// <remarks>Create new favourite for the current user</remarks>
         /// <param name="item"></param>
@@ -83,11 +65,11 @@ namespace HETSAPI.Controllers
         [SwaggerResponse(200, type: typeof(UserFavourite))]
         public virtual IActionResult UsersCurrentFavouritesPost([FromBody]UserFavourite item)
         {
-            return this._service.UsersCurrentFavouritesPostAsync(item);
+            return _service.UsersCurrentFavouritesPostAsync(item);
         }
 
         /// <summary>
-        /// 
+        /// Update a user favourite
         /// </summary>
         /// <remarks>Updates a favourite</remarks>
         /// <param name="item"></param>
@@ -98,11 +80,11 @@ namespace HETSAPI.Controllers
         [SwaggerResponse(200, type: typeof(UserFavourite))]
         public virtual IActionResult UsersCurrentFavouritesPut([FromBody]UserFavourite item)
         {
-            return this._service.UsersCurrentFavouritesPutAsync(item);
+            return _service.UsersCurrentFavouritesPutAsync(item);
         }
 
         /// <summary>
-        /// 
+        /// Get current logged on user
         /// </summary>
         /// <remarks>Get the currently logged in user</remarks>
         /// <response code="200">OK</response>
@@ -112,7 +94,7 @@ namespace HETSAPI.Controllers
         [SwaggerResponse(200, type: typeof(CurrentUserViewModel))]
         public virtual IActionResult UsersCurrentGet()
         {
-            return this._service.UsersCurrentGetAsync();
+            return _service.UsersCurrentGetAsync();
         }
     }
 }

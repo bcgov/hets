@@ -8,9 +8,14 @@ import { Link } from 'react-router';
 import { LinkContainer } from 'react-router-bootstrap';
 
 import _ from 'lodash';
+import Promise from 'bluebird';
 
 import ProjectsEditDialog from './dialogs/ProjectsEditDialog.jsx';
 import ContactsEditDialog from './dialogs/ContactsEditDialog.jsx';
+import DocumentsListDialog from './dialogs/DocumentsListDialog.jsx';
+import RentalRequestsAddDialog from './dialogs/RentalRequestsAddDialog.jsx';
+import TimeEntryDialog from './dialogs/TimeEntryDialog.jsx';
+import NotesDialog from './dialogs/NotesDialog.jsx';
 
 import * as Action from '../actionTypes';
 import * as Api from '../api';
@@ -27,6 +32,8 @@ import SortTable from '../components/SortTable.jsx';
 import Spinner from '../components/Spinner.jsx';
 import TableControl from '../components/TableControl.jsx';
 import Unimplemented from '../components/Unimplemented.jsx';
+import Confirm from '../components/Confirm.jsx';
+import OverlayTrigger from '../components/OverlayTrigger.jsx';
 
 import { formatDateTime } from '../utils/date';
 import { concat } from '../utils/string';
@@ -44,6 +51,7 @@ var ProjectsDetail = React.createClass({
     contact: React.PropTypes.object,
     notes: React.PropTypes.object,
     attachments: React.PropTypes.object,
+    documents: React.PropTypes.object,
     params: React.PropTypes.object,
     uiContacts: React.PropTypes.object,
     router: React.PropTypes.object,
@@ -56,10 +64,15 @@ var ProjectsDetail = React.createClass({
 
       showEditDialog: false,
       showContactDialog: false,
+      showAddRequestDialog: false,
+      showTimeEntryDialog: false,
+      showNotesDialog: false,
 
       includeCompletedRequests: false,
 
       contact: {},
+      
+      rentalRequest: {},
 
       // Contacts
       uiContacts : {
@@ -87,7 +100,13 @@ var ProjectsDetail = React.createClass({
 
   fetch() {
     this.setState({ loading: true });
-    return Api.getProject(this.props.params.projectId).finally(() => {
+
+    var projectId = this.props.params.projectId;
+    var getProjectPromise = Api.getProject(projectId);
+    var documentsPromise = Api.getProjectDocuments(projectId);
+    var getProjectNotesPromise = Api.getProjectNotes(projectId);
+
+    return Promise.all([getProjectPromise, documentsPromise, getProjectNotesPromise]).finally(() => {
       this.setState({ loading: false });
     });
   },
@@ -104,15 +123,23 @@ var ProjectsDetail = React.createClass({
   },
 
   showNotes() {
+    this.setState({ showNotesDialog: true });
+  },
 
+  closeNotesDialog() {
+    this.setState({ showNotesDialog: false });
   },
 
   showDocuments() {
-
+    this.setState({ showDocumentsDialog: true });
   },
 
-  addNote() {
+  closeDocumentsDialog() {
+    this.setState({ showDocumentsDialog: false });
+  },
 
+  saveNote(note) {
+    Api.addProjectNote(this.props.params.projectId, note);
   },
 
   addDocument() {
@@ -194,14 +221,7 @@ var ProjectsDetail = React.createClass({
     var log = isNew ? Log.projectContactAdded : Log.projectContactUpdated;
 
     contactPromise(this.props.project, contact).then(() => {
-      return log(this.props.project, this.props.contact).then(() => {
-        if (contact.isPrimary) {
-          return Api.updateProject({ ...this.props.project, ...{
-            contacts: null,
-            primaryContact: { id: this.state.contact.id },
-          }});
-        }
-      });
+      return log(this.props.project, this.props.contact);
     }).finally(() => {
       this.fetch();
       this.closeContactDialog();
@@ -209,11 +229,38 @@ var ProjectsDetail = React.createClass({
   },
 
   print() {
-
+    window.print();
   },
 
-  addRequest() {
+  openAddRequestDialog() {
+    this.setState({ showAddRequestDialog: true });
+  },
 
+  closeAddRequestDialog() {
+    this.setState({ showAddRequestDialog: false });
+  },
+
+  saveNewRequest(request) {
+    Api.addRentalRequest(request).then((response) => {
+      // Open it up
+      this.props.router.push({
+        pathname: `${ Constant.RENTAL_REQUESTS_PATHNAME }/${ response.id }`,
+      });
+    });
+  },
+
+  confirmEndHire() {
+    // todo: make network call
+  },
+
+  openTimeEntryDialog(rentalRequest) {
+    this.setState({ rentalRequest: rentalRequest }, () => {
+      this.setState({ showTimeEntryDialog: true });
+    });
+  },
+
+  closeTimeEntryDialog() {
+    this.setState({ showTimeEntryDialog: false });
   },
 
   render() {
@@ -222,20 +269,14 @@ var ProjectsDetail = React.createClass({
     return <div id="projects-detail">
       <div>
         <Row id="projects-top">
-          <Col md={10}>
+          <Col md={9}>
             <Label bsStyle={ project.isActive ? 'success' : 'danger'}>{ project.status }</Label>
-            <Unimplemented>
-              <Button title="Notes" onClick={ this.showNotes }>Notes ({ Object.keys(this.props.notes).length })</Button>
-            </Unimplemented>
-            <Unimplemented>
-              <Button title="Documents" onClick={ this.showDocuments }>Docs ({ Object.keys(this.props.attachments).length })</Button>
-            </Unimplemented>
+            <Button title="Notes" onClick={ this.showNotes }>Notes ({ Object.keys(this.props.notes).length })</Button>
+            <Button title="Documents" onClick={ this.showDocuments }>Documents ({ Object.keys(this.props.documents).length })</Button>
           </Col>
-          <Col md={2}>
+          <Col md={3}>
             <div className="pull-right">
-              <Unimplemented>
-                <Button onClick={ this.print }><Glyphicon glyph="print" title="Print" /></Button>
-              </Unimplemented>
+              <Button onClick={ this.print }><Glyphicon glyph="print" title="Print" /></Button>
               <LinkContainer to={{ pathname: Constant.PROJECTS_PATHNAME }}>
                 <Button title="Return to List"><Glyphicon glyph="arrow-left" /> Return to List</Button>
               </LinkContainer>
@@ -261,7 +302,7 @@ var ProjectsDetail = React.createClass({
         })()}
 
         <Row>
-          <Col md={6}>
+          <Col md={12}>
             <Well>
               <h3>Project Information <span className="pull-right">
                   <Button title="Edit Project" bsSize="small" onClick={ this.openEditDialog }><Glyphicon glyph="pencil" /></Button>
@@ -296,9 +337,7 @@ var ProjectsDetail = React.createClass({
                 <Unimplemented>
                   <CheckboxControl id="includeCompletedRequests" inline checked={ this.state.includeCompletedRequests } updateState={ this.updateState }><small>Show Completed</small></CheckboxControl>
                 </Unimplemented>
-                <Unimplemented>
-                  <Button title="Add Request" bsSize="small" onClick={ this.addRequest }><Glyphicon glyph="plus" /> Add</Button>
-                </Unimplemented>
+                <Button title="Add Request" bsSize="small" onClick={ this.openAddRequestDialog }><Glyphicon glyph="plus" /> Add</Button>
               </span></h3>
               {(() => {
                 if (this.state.loading) { return <div style={{ textAlign: 'center' }}><Spinner/></div>; }
@@ -322,12 +361,9 @@ var ProjectsDetail = React.createClass({
                     <td>{ item.equipmentTypeName }</td>
                     <td>TBD</td>
                     <td>N/A</td>
+                    <td>N/A</td>
+                    <td>N/A</td>
                   </tr>
-                );
-
-                // TODO Wire-up link to Time Records screen
-                const TimeEntryLink = ({ item }) => (
-                  <Link to={ '#' }>{ item.lastTimeRecord ? formatDateTime(item.lastTimeRecord, Constant.DATE_YEAR_SHORT_MONTH_DAY) : 'None' }</Link>
                 );
 
                 const RentalAgreementListItem = ({ item }) => (
@@ -335,7 +371,35 @@ var ProjectsDetail = React.createClass({
                     <td><Link to={ `equipment/${item.equipmentId}` }>{ item.equipmentCode }</Link></td>
                     <td>{ item.equipmentTypeName }</td>
                     <td>{ concat(item.equipmentMake, concat(item.equipmentModel, item.equipmentSize, '/'), '/') }</td>
-                    <td>{ item.isCompleted ? 'Completed' : <TimeEntryLink item={ item } /> }</td>
+                    <td>{ item.isCompleted ? 
+                      'Completed' 
+                      : 
+                      <Button 
+                        className="btn-link"
+                        bsSize="xsmall"
+                        onClick={ () => this.openTimeEntryDialog(item) }
+                      >
+                        { item.lastTimeRecord ? formatDateTime(item.lastTimeRecord, Constant.DATE_YEAR_SHORT_MONTH_DAY) : 'None' }
+                      </Button>
+                    }
+                    </td>
+                    <td>
+                      <Unimplemented>
+                        <OverlayTrigger 
+                          trigger="click" 
+                          placement="top" 
+                          rootClose 
+                          overlay={ <Confirm onConfirm={ this.confirmEndHire }/> }
+                        >
+                          <Button 
+                            bsSize="xsmall"
+                          >
+                            <Glyphicon glyph="check" />
+                          </Button>
+                        </OverlayTrigger>
+                      </Unimplemented>
+                    </td>
+                    <td><Link to={`${Constant.RENTAL_AGREEMENTS_PATHNAME}/${item.id}`}>Agreement</Link></td>
                   </tr>
                 );
 
@@ -344,6 +408,8 @@ var ProjectsDetail = React.createClass({
                   { field: 'equipmentTypeName', title: 'Type'             },
                   { field: 'equipmentMake',     title: 'Make/Model/Size'  },
                   { field: 'lastTimeRecord',    title: 'Time Entry'       },
+                  { field: 'release',           title: 'Release'          },
+                  { field: 'agreement',         title: 'Agreement'        },
                 ];
 
                 return <TableControl id="equipment-list" headers={ headers }>
@@ -360,7 +426,7 @@ var ProjectsDetail = React.createClass({
               })()}
             </Well>
           </Col>
-          <Col md={6}>
+          <Col md={12}>
             <Well>
               <h3>Contacts</h3>
               {(() => {
@@ -395,8 +461,8 @@ var ProjectsDetail = React.createClass({
                         <td>{ contact.role }</td>
                         <td style={{ textAlign: 'right' }}>
                           <ButtonGroup>
-                              <DeleteButton name="Contact" hide={ !contact.canDelete || contact.isPrimary } onConfirm={ this.deleteContact.bind(this, contact) } />
-                              <EditButton name="Contact" view={ !contact.canEdit } pathname={ contact.path } />
+                            <DeleteButton name="Contact" hide={ !contact.canDelete || contact.isPrimary } onConfirm={ this.deleteContact.bind(this, contact) } />
+                            <EditButton name="Contact" view={ !contact.canEdit } pathname={ contact.path } />
                           </ButtonGroup>
                         </td>
                       </tr>;
@@ -420,6 +486,37 @@ var ProjectsDetail = React.createClass({
       { this.state.showContactDialog &&
         <ContactsEditDialog show={ this.state.showContactDialog } contact={ this.state.contact } onSave={ this.saveContact } onClose={ this.closeContactDialog } />
       }
+      { this.state.showDocumentsDialog &&
+        <DocumentsListDialog 
+          show={ this.state.showDocumentsDialog } 
+          parent={ project } 
+          onClose={ this.closeDocumentsDialog } 
+        />
+      }
+      { this.state.showAddRequestDialog &&
+        <RentalRequestsAddDialog 
+          show={ this.state.showAddRequestDialog } 
+          onSave={ this.saveNewRequest } 
+          onClose={ this.closeAddRequestDialog } 
+          project={ project }
+        />
+      }
+      { this.state.showTimeEntryDialog &&
+        <TimeEntryDialog
+          show={ this.state.showTimeEntryDialog }
+          onClose={ this.closeTimeEntryDialog }
+          project={ project }
+          activeRentalRequest={ this.state.rentalRequest }
+        />
+      }
+      { this.state.showNotesDialog &&
+        <NotesDialog 
+          show={ this.state.showNotesDialog } 
+          onSave={ this.saveNote } 
+          onClose={ this.closeNotesDialog } 
+          notes={ this.props.notes }
+        />
+      }
     </div>;
   },
 });
@@ -431,6 +528,7 @@ function mapStateToProps(state) {
     contact: state.models.contact,
     notes: state.models.projectNotes,
     attachments: state.models.projectAttachments,
+    documents: state.models.documents,
     uiContacts: state.ui.projectContacts,
   };
 }

@@ -1,36 +1,18 @@
-/*
- * REST API Documentation for the MOTI Hired Equipment Tracking System (HETS) Application
- *
- * The Hired Equipment Program is for owners/operators who have a dump truck, bulldozer, backhoe or  other piece of equipment they want to hire out to the transportation ministry for day labour and  emergency projects.  The Hired Equipment Program distributes available work to local equipment owners. The program is  based on seniority and is designed to deliver work to registered users fairly and efficiently  through the development of local area call-out lists. 
- *
- * OpenAPI spec version: v1
- * 
- * 
- */
-
 using System;
-using System.Linq;
-using System.IO;
 using System.Text;
-using System.Collections;
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
 using System.Runtime.Serialization;
 using Newtonsoft.Json;
-using System.ComponentModel.DataAnnotations.Schema;
-using System.ComponentModel.DataAnnotations;
-using HETSAPI.Models;
 
 namespace HETSAPI.ViewModels
 {
     /// <summary>
-    /// 
+    /// Role View Model
     /// </summary>
     [DataContract]
-    public partial class RoleViewModel : IEquatable<RoleViewModel>
+    public sealed class RoleViewModel : IEquatable<RoleViewModel>
     {
         /// <summary>
-        /// Default constructor, required by entity framework
+        /// /// Role View Model Constructor
         /// </summary>
         public RoleViewModel()
         {
@@ -39,16 +21,14 @@ namespace HETSAPI.ViewModels
         /// <summary>
         /// Initializes a new instance of the <see cref="RoleViewModel" /> class.
         /// </summary>
-        /// <param name="Id">Id (required).</param>
-        /// <param name="Name">Name (required).</param>
-        /// <param name="Description">Description (required).</param>
-        public RoleViewModel(int Id, string Name, string Description)
+        /// <param name="id">Id (required).</param>
+        /// <param name="name">Name (required).</param>
+        /// <param name="description">Description (required).</param>
+        public RoleViewModel(int id, string name, string description)
         {   
-            this.Id = Id;
-            this.Name = Name;
-            this.Description = Description;
-
-
+            Id = id;
+            Name = name;
+            Description = description;
         }
 
         /// <summary>
@@ -76,11 +56,13 @@ namespace HETSAPI.ViewModels
         public override string ToString()
         {
             var sb = new StringBuilder();
+
             sb.Append("class RoleViewModel {\n");
             sb.Append("  Id: ").Append(Id).Append("\n");
             sb.Append("  Name: ").Append(Name).Append("\n");
             sb.Append("  Description: ").Append(Description).Append("\n");
             sb.Append("}\n");
+
             return sb.ToString();
         }
 
@@ -100,9 +82,10 @@ namespace HETSAPI.ViewModels
         /// <returns>Boolean</returns>
         public override bool Equals(object obj)
         {
-            if (ReferenceEquals(null, obj)) { return false; }
+            if (obj is null) { return false; }
             if (ReferenceEquals(this, obj)) { return true; }
             if (obj.GetType() != GetType()) { return false; }
+
             return Equals((RoleViewModel)obj);
         }
 
@@ -113,24 +96,23 @@ namespace HETSAPI.ViewModels
         /// <returns>Boolean</returns>
         public bool Equals(RoleViewModel other)
         {
-
-            if (ReferenceEquals(null, other)) { return false; }
+            if (other is null) { return false; }
             if (ReferenceEquals(this, other)) { return true; }
 
             return                 
                 (
-                    this.Id == other.Id ||
-                    this.Id.Equals(other.Id)
+                    Id == other.Id ||
+                    Id.Equals(other.Id)
                 ) &&                 
                 (
-                    this.Name == other.Name ||
-                    this.Name != null &&
-                    this.Name.Equals(other.Name)
+                    Name == other.Name ||
+                    Name != null &&
+                    Name.Equals(other.Name)
                 ) &&                 
                 (
-                    this.Description == other.Description ||
-                    this.Description != null &&
-                    this.Description.Equals(other.Description)
+                    Description == other.Description ||
+                    Description != null &&
+                    Description.Equals(other.Description)
                 );
         }
 
@@ -144,15 +126,18 @@ namespace HETSAPI.ViewModels
             unchecked // Overflow is fine, just wrap
             {
                 int hash = 41;
-                // Suitable nullity checks
-                                   
-                hash = hash * 59 + this.Id.GetHashCode();                if (this.Name != null)
+
+                // Suitable nullity checks                                   
+                hash = hash * 59 + Id.GetHashCode();
+
+                if (Name != null)
                 {
-                    hash = hash * 59 + this.Name.GetHashCode();
-                }                
-                                if (this.Description != null)
+                    hash = hash * 59 + Name.GetHashCode();
+                }
+
+                if (Description != null)
                 {
-                    hash = hash * 59 + this.Description.GetHashCode();
+                    hash = hash * 59 + Description.GetHashCode();
                 }                
                 
                 return hash;

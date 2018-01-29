@@ -24,12 +24,10 @@ namespace HETSAPI.Test
 {
     /// <summary>
     ///  Class for testing the model Project
-    /// </summary>
-    
+    /// </summary>    
     public class ProjectModelTests
     {
-        // TODO uncomment below to declare an instance variable for Project
-        private Project instance;
+        private readonly Project instance;
 
         /// <summary>
         /// Setup the test.

@@ -1,12 +1,12 @@
 ﻿using Hangfire;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+using Hangfire.Storage;
 
 namespace HETSAPI
 {
-    // various helper functions for Hangfire
+    /// <summary>
+    /// Hangfire helper functions
+    /// </summary>
     public static class HangfireTools
     {
         /// <summary>
@@ -14,13 +14,11 @@ namespace HETSAPI
         /// </summary>
         public static void ClearHangfire()
         {            
-            using (var connection = JobStorage.Current.GetConnection())
+            using (IStorageConnection connection = JobStorage.Current.GetConnection())
             {
                 // remove any servers older than 5 seconds.  
                 connection.RemoveTimedOutServers(TimeSpan.FromSeconds(5));
             }
-
         }
-
     }
 }

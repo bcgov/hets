@@ -1,80 +1,58 @@
-/*
- * REST API Documentation for the MOTI Hired Equipment Tracking System (HETS) Application
- *
- * The Hired Equipment Program is for owners/operators who have a dump truck, bulldozer, backhoe or  other piece of equipment they want to hire out to the transportation ministry for day labour and  emergency projects.  The Hired Equipment Program distributes available work to local equipment owners. The program is  based on seniority and is designed to deliver work to registered users fairly and efficiently  through the development of local area call-out lists. 
- *
- * OpenAPI spec version: v1
- * 
- * 
- */
-
 using System;
-using System.Linq;
-using System.IO;
 using System.Text;
-using System.Collections;
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using System.Runtime.Serialization;
 using Newtonsoft.Json;
 using System.ComponentModel.DataAnnotations.Schema;
-using System.ComponentModel.DataAnnotations;
-using HETSAPI.Models;
 
 namespace HETSAPI.Models
 {
     /// <summary>
-    /// The users associated with a given group that has been defined in the application.
+    /// Group Membership Database Model
     /// </summary>
-        [MetaDataExtension (Description = "The users associated with a given group that has been defined in the application.")]
-
-    public partial class GroupMembership : AuditableEntity, IEquatable<GroupMembership>
+    [MetaData (Description = "The users associated with a given group that has been defined in the application.")]
+    public sealed class GroupMembership : AuditableEntity, IEquatable<GroupMembership>
     {
         /// <summary>
         /// Default constructor, required by entity framework
         /// </summary>
         public GroupMembership()
         {
-            this.Id = 0;
+            Id = 0;
         }
 
         /// <summary>
         /// Initializes a new instance of the <see cref="GroupMembership" /> class.
         /// </summary>
-        /// <param name="Id">A system-generated unique identifier for a GroupMembership (required).</param>
-        /// <param name="Active">A flag indicating the User is active in the group. Set false to remove the user from the designated group. (required).</param>
-        /// <param name="Group">A foreign key reference to the system-generated unique identifier for a Group (required).</param>
-        /// <param name="User">A foreign key reference to the system-generated unique identifier for a User (required).</param>
-        public GroupMembership(int Id, bool Active, Group Group, User User)
+        /// <param name="id">A system-generated unique identifier for a GroupMembership (required).</param>
+        /// <param name="active">A flag indicating the User is active in the group. Set false to remove the user from the designated group. (required).</param>
+        /// <param name="group">A foreign key reference to the system-generated unique identifier for a Group (required).</param>
+        /// <param name="user">A foreign key reference to the system-generated unique identifier for a User (required).</param>
+        public GroupMembership(int id, bool active, Group @group, User user)
         {   
-            this.Id = Id;
-            this.Active = Active;
-            this.Group = Group;
-            this.User = User;
-
-
-
+            Id = id;
+            Active = active;
+            Group = @group;
+            User = user;
         }
 
         /// <summary>
         /// A system-generated unique identifier for a GroupMembership
         /// </summary>
         /// <value>A system-generated unique identifier for a GroupMembership</value>
-        [MetaDataExtension (Description = "A system-generated unique identifier for a GroupMembership")]
+        [MetaData (Description = "A system-generated unique identifier for a GroupMembership")]
         public int Id { get; set; }
         
         /// <summary>
         /// A flag indicating the User is active in the group. Set false to remove the user from the designated group.
         /// </summary>
         /// <value>A flag indicating the User is active in the group. Set false to remove the user from the designated group.</value>
-        [MetaDataExtension (Description = "A flag indicating the User is active in the group. Set false to remove the user from the designated group.")]
+        [MetaData (Description = "A flag indicating the User is active in the group. Set false to remove the user from the designated group.")]
         public bool Active { get; set; }
         
         /// <summary>
         /// A foreign key reference to the system-generated unique identifier for a Group
         /// </summary>
         /// <value>A foreign key reference to the system-generated unique identifier for a Group</value>
-        [MetaDataExtension (Description = "A foreign key reference to the system-generated unique identifier for a Group")]
+        [MetaData (Description = "A foreign key reference to the system-generated unique identifier for a Group")]
         public Group Group { get; set; }
         
         /// <summary>
@@ -82,14 +60,14 @@ namespace HETSAPI.Models
         /// </summary>   
         [ForeignKey("Group")]
 		[JsonIgnore]
-		[MetaDataExtension (Description = "A foreign key reference to the system-generated unique identifier for a Group")]
+		[MetaData (Description = "A foreign key reference to the system-generated unique identifier for a Group")]
         public int? GroupId { get; set; }
         
         /// <summary>
         /// A foreign key reference to the system-generated unique identifier for a User
         /// </summary>
         /// <value>A foreign key reference to the system-generated unique identifier for a User</value>
-        [MetaDataExtension (Description = "A foreign key reference to the system-generated unique identifier for a User")]
+        [MetaData (Description = "A foreign key reference to the system-generated unique identifier for a User")]
         public User User { get; set; }
         
         /// <summary>
@@ -97,7 +75,7 @@ namespace HETSAPI.Models
         /// </summary>   
         [ForeignKey("User")]
 		[JsonIgnore]
-		[MetaDataExtension (Description = "A foreign key reference to the system-generated unique identifier for a User")]
+		[MetaData (Description = "A foreign key reference to the system-generated unique identifier for a User")]
         public int? UserId { get; set; }
         
         /// <summary>
@@ -107,12 +85,14 @@ namespace HETSAPI.Models
         public override string ToString()
         {
             var sb = new StringBuilder();
+
             sb.Append("class GroupMembership {\n");
             sb.Append("  Id: ").Append(Id).Append("\n");
             sb.Append("  Active: ").Append(Active).Append("\n");
             sb.Append("  Group: ").Append(Group).Append("\n");
             sb.Append("  User: ").Append(User).Append("\n");
             sb.Append("}\n");
+
             return sb.ToString();
         }
 
@@ -132,10 +112,9 @@ namespace HETSAPI.Models
         /// <returns>Boolean</returns>
         public override bool Equals(object obj)
         {
-            if (ReferenceEquals(null, obj)) { return false; }
+            if (obj is null) { return false; }
             if (ReferenceEquals(this, obj)) { return true; }
-            if (obj.GetType() != GetType()) { return false; }
-            return Equals((GroupMembership)obj);
+            return obj.GetType() == GetType() && Equals((GroupMembership)obj);
         }
 
         /// <summary>
@@ -145,28 +124,27 @@ namespace HETSAPI.Models
         /// <returns>Boolean</returns>
         public bool Equals(GroupMembership other)
         {
-
-            if (ReferenceEquals(null, other)) { return false; }
+            if (other is null) { return false; }
             if (ReferenceEquals(this, other)) { return true; }
 
             return                 
                 (
-                    this.Id == other.Id ||
-                    this.Id.Equals(other.Id)
+                    Id == other.Id ||
+                    Id.Equals(other.Id)
                 ) &&                 
                 (
-                    this.Active == other.Active ||
-                    this.Active.Equals(other.Active)
+                    Active == other.Active ||
+                    Active.Equals(other.Active)
                 ) &&                 
                 (
-                    this.Group == other.Group ||
-                    this.Group != null &&
-                    this.Group.Equals(other.Group)
+                    Group == other.Group ||
+                    Group != null &&
+                    Group.Equals(other.Group)
                 ) &&                 
                 (
-                    this.User == other.User ||
-                    this.User != null &&
-                    this.User.Equals(other.User)
+                    User == other.User ||
+                    User != null &&
+                    User.Equals(other.User)
                 );
         }
 
@@ -180,19 +158,21 @@ namespace HETSAPI.Models
             unchecked // Overflow is fine, just wrap
             {
                 int hash = 41;
-                // Suitable nullity checks
+
+                // Suitable nullity checks                                   
+                hash = hash * 59 + Id.GetHashCode();                   
+                hash = hash * 59 + Active.GetHashCode();
                                    
-                hash = hash * 59 + this.Id.GetHashCode();                   
-                hash = hash * 59 + this.Active.GetHashCode();
-                                   
-                if (this.Group != null)
+                if (Group != null)
                 {
-                    hash = hash * 59 + this.Group.GetHashCode();
-                }                   
-                if (this.User != null)
-                {
-                    hash = hash * 59 + this.User.GetHashCode();
+                    hash = hash * 59 + Group.GetHashCode();
                 }
+
+                if (User != null)
+                {
+                    hash = hash * 59 + User.GetHashCode();
+                }
+
                 return hash;
             }
         }

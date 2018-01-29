@@ -1,40 +1,22 @@
-/*
- * REST API Documentation for the MOTI Hired Equipment Tracking System (HETS) Application
- *
- * The Hired Equipment Program is for owners/operators who have a dump truck, bulldozer, backhoe or  other piece of equipment they want to hire out to the transportation ministry for day labour and  emergency projects.  The Hired Equipment Program distributes available work to local equipment owners. The program is  based on seniority and is designed to deliver work to registered users fairly and efficiently  through the development of local area call-out lists. 
- *
- * OpenAPI spec version: v1
- * 
- * 
- */
-
-using System;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using System.ComponentModel;
-using System.IO;
-using System.Linq;
-using System.Net;
-using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
-using Newtonsoft.Json;
 using Swashbuckle.SwaggerGen.Annotations;
 using HETSAPI.Models;
-using HETSAPI.ViewModels;
 using HETSAPI.Services;
 using HETSAPI.Authorization;
 
 namespace HETSAPI.Controllers
 {
     /// <summary>
-    /// 
+    /// History Controller
     /// </summary>
-    public partial class HistoryController : Controller
+    [ResponseCache(Location = ResponseCacheLocation.None, NoStore = true)]
+    public class HistoryController : Controller
     {
         private readonly IHistoryService _service;
 
         /// <summary>
-        /// Create a controller and set the service
+        /// History Controller Constructor
         /// </summary>
         public HistoryController(IHistoryService service)
         {
@@ -42,7 +24,7 @@ namespace HETSAPI.Controllers
         }
 
         /// <summary>
-        /// 
+        /// Create bulk history records
         /// </summary>
         /// <param name="items"></param>
         /// <response code="201">History created</response>
@@ -52,11 +34,11 @@ namespace HETSAPI.Controllers
         [RequiresPermission(Permission.ADMIN)]
         public virtual IActionResult HistoriesBulkPost([FromBody]History[] items)
         {
-            return this._service.HistoriesBulkPostAsync(items);
+            return _service.HistoriesBulkPostAsync(items);
         }
 
         /// <summary>
-        /// 
+        /// Get all history
         /// </summary>
         /// <response code="200">OK</response>
         [HttpGet]
@@ -65,11 +47,11 @@ namespace HETSAPI.Controllers
         [SwaggerResponse(200, type: typeof(List<History>))]
         public virtual IActionResult HistoriesGet()
         {
-            return this._service.HistoriesGetAsync();
+            return _service.HistoriesGetAsync();
         }
 
         /// <summary>
-        /// 
+        /// Delete history
         /// </summary>
         /// <param name="id">id of History to delete</param>
         /// <response code="200">OK</response>
@@ -79,11 +61,11 @@ namespace HETSAPI.Controllers
         [SwaggerOperation("HistoriesIdDeletePost")]
         public virtual IActionResult HistoriesIdDeletePost([FromRoute]int id)
         {
-            return this._service.HistoriesIdDeletePostAsync(id);
+            return _service.HistoriesIdDeletePostAsync(id);
         }
 
         /// <summary>
-        /// 
+        /// Get history by id
         /// </summary>
         /// <param name="id">id of History to fetch</param>
         /// <response code="200">OK</response>
@@ -94,11 +76,11 @@ namespace HETSAPI.Controllers
         [SwaggerResponse(200, type: typeof(History))]
         public virtual IActionResult HistoriesIdGet([FromRoute]int id)
         {
-            return this._service.HistoriesIdGetAsync(id);
+            return _service.HistoriesIdGetAsync(id);
         }
 
         /// <summary>
-        /// 
+        /// Update history
         /// </summary>
         /// <param name="id">id of History to fetch</param>
         /// <param name="item"></param>
@@ -110,11 +92,11 @@ namespace HETSAPI.Controllers
         [SwaggerResponse(200, type: typeof(History))]
         public virtual IActionResult HistoriesIdPut([FromRoute]int id, [FromBody]History item)
         {
-            return this._service.HistoriesIdPutAsync(id, item);
+            return _service.HistoriesIdPutAsync(id, item);
         }
 
         /// <summary>
-        /// 
+        /// Create history
         /// </summary>
         /// <param name="item"></param>
         /// <response code="201">History created</response>
@@ -124,7 +106,7 @@ namespace HETSAPI.Controllers
         [SwaggerResponse(200, type: typeof(History))]
         public virtual IActionResult HistoriesPost([FromBody]History item)
         {
-            return this._service.HistoriesPostAsync(item);
+            return _service.HistoriesPostAsync(item);
         }
     }
 }

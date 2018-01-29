@@ -1,36 +1,21 @@
-/*
- * REST API Documentation for the MOTI Hired Equipment Tracking System (HETS) Application
- *
- * The Hired Equipment Program is for owners/operators who have a dump truck, bulldozer, backhoe or  other piece of equipment they want to hire out to the transportation ministry for day labour and  emergency projects.  The Hired Equipment Program distributes available work to local equipment owners. The program is  based on seniority and is designed to deliver work to registered users fairly and efficiently  through the development of local area call-out lists. 
- *
- * OpenAPI spec version: v1
- * 
- * 
- */
-
 using System;
 using System.Linq;
-using System.IO;
 using System.Text;
-using System.Collections;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
 using System.Runtime.Serialization;
 using Newtonsoft.Json;
-using System.ComponentModel.DataAnnotations.Schema;
-using System.ComponentModel.DataAnnotations;
 using HETSAPI.Models;
 
 namespace HETSAPI.ViewModels
 {
     /// <summary>
-    /// 
+    /// User View Model
     /// </summary>
     [DataContract]
-    public partial class UserViewModel : IEquatable<UserViewModel>
+    public sealed class UserViewModel : IEquatable<UserViewModel>
     {
         /// <summary>
-        /// Default constructor, required by entity framework
+        /// User View Model Constructor
         /// </summary>
         public UserViewModel()
         {
@@ -39,27 +24,28 @@ namespace HETSAPI.ViewModels
         /// <summary>
         /// Initializes a new instance of the <see cref="UserViewModel" /> class.
         /// </summary>
-        /// <param name="Id">Id (required).</param>
-        /// <param name="Active">Active (required).</param>
-        /// <param name="GivenName">GivenName.</param>
-        /// <param name="Surname">Surname.</param>
-        /// <param name="Email">Email.</param>
-        /// <param name="SmUserId">SmUserId.</param>
-        /// <param name="UserRoles">UserRoles.</param>
-        /// <param name="GroupMemberships">GroupMemberships.</param>
-        /// <param name="District">The District to which this User is affliated..</param>
-        public UserViewModel(int Id, bool Active, string GivenName = null, string Surname = null, string Email = null, string SmUserId = null, List<UserRole> UserRoles = null, List<GroupMembership> GroupMemberships = null, District District = null)
+        /// <param name="id">Id (required).</param>
+        /// <param name="active">Active (required).</param>
+        /// <param name="givenName">GivenName.</param>
+        /// <param name="surname">Surname.</param>
+        /// <param name="email">Email.</param>
+        /// <param name="smUserId">SmUserId.</param>
+        /// <param name="userRoles">UserRoles.</param>
+        /// <param name="groupMemberships">GroupMemberships.</param>
+        /// <param name="district">The District to which this User is affliated..</param>
+        public UserViewModel(int id, bool active, string givenName = null, string surname = null, string email = null, 
+            string smUserId = null, List<UserRole> userRoles = null, List<GroupMembership> groupMemberships = null, 
+            District district = null)
         {   
-            this.Id = Id;
-            this.Active = Active;
-
-            this.GivenName = GivenName;
-            this.Surname = Surname;
-            this.Email = Email;
-            this.SmUserId = SmUserId;
-            this.UserRoles = UserRoles;
-            this.GroupMemberships = GroupMemberships;
-            this.District = District;
+            Id = id;
+            Active = active;
+            GivenName = givenName;
+            Surname = surname;
+            Email = email;
+            SmUserId = smUserId;
+            UserRoles = userRoles;
+            GroupMemberships = groupMemberships;
+            District = district;
         }
 
         /// <summary>
@@ -115,7 +101,7 @@ namespace HETSAPI.ViewModels
         /// </summary>
         /// <value>The District to which this User is affliated.</value>
         [DataMember(Name="district")]
-        [MetaDataExtension (Description = "The District to which this User is affliated.")]
+        [MetaData (Description = "The District to which this User is affliated.")]
         public District District { get; set; }
 
         /// <summary>
@@ -125,6 +111,7 @@ namespace HETSAPI.ViewModels
         public override string ToString()
         {
             var sb = new StringBuilder();
+
             sb.Append("class UserViewModel {\n");
             sb.Append("  Id: ").Append(Id).Append("\n");
             sb.Append("  Active: ").Append(Active).Append("\n");
@@ -136,6 +123,7 @@ namespace HETSAPI.ViewModels
             sb.Append("  GroupMemberships: ").Append(GroupMemberships).Append("\n");
             sb.Append("  District: ").Append(District).Append("\n");
             sb.Append("}\n");
+
             return sb.ToString();
         }
 
@@ -155,10 +143,9 @@ namespace HETSAPI.ViewModels
         /// <returns>Boolean</returns>
         public override bool Equals(object obj)
         {
-            if (ReferenceEquals(null, obj)) { return false; }
+            if (obj is null) { return false; }
             if (ReferenceEquals(this, obj)) { return true; }
-            if (obj.GetType() != GetType()) { return false; }
-            return Equals((UserViewModel)obj);
+            return obj.GetType() == GetType() && Equals((UserViewModel)obj);
         }
 
         /// <summary>
@@ -168,53 +155,52 @@ namespace HETSAPI.ViewModels
         /// <returns>Boolean</returns>
         public bool Equals(UserViewModel other)
         {
-
-            if (ReferenceEquals(null, other)) { return false; }
+            if (other is null) { return false; }
             if (ReferenceEquals(this, other)) { return true; }
 
             return                 
                 (
-                    this.Id == other.Id ||
-                    this.Id.Equals(other.Id)
+                    Id == other.Id ||
+                    Id.Equals(other.Id)
                 ) &&                 
                 (
-                    this.Active == other.Active ||
-                    this.Active.Equals(other.Active)
+                    Active == other.Active ||
+                    Active.Equals(other.Active)
                 ) &&                 
                 (
-                    this.GivenName == other.GivenName ||
-                    this.GivenName != null &&
-                    this.GivenName.Equals(other.GivenName)
+                    GivenName == other.GivenName ||
+                    GivenName != null &&
+                    GivenName.Equals(other.GivenName)
                 ) &&                 
                 (
-                    this.Surname == other.Surname ||
-                    this.Surname != null &&
-                    this.Surname.Equals(other.Surname)
+                    Surname == other.Surname ||
+                    Surname != null &&
+                    Surname.Equals(other.Surname)
                 ) &&                 
                 (
-                    this.Email == other.Email ||
-                    this.Email != null &&
-                    this.Email.Equals(other.Email)
+                    Email == other.Email ||
+                    Email != null &&
+                    Email.Equals(other.Email)
                 ) &&                 
                 (
-                    this.SmUserId == other.SmUserId ||
-                    this.SmUserId != null &&
-                    this.SmUserId.Equals(other.SmUserId)
+                    SmUserId == other.SmUserId ||
+                    SmUserId != null &&
+                    SmUserId.Equals(other.SmUserId)
                 ) && 
                 (
-                    this.UserRoles == other.UserRoles ||
-                    this.UserRoles != null &&
-                    this.UserRoles.SequenceEqual(other.UserRoles)
+                    UserRoles == other.UserRoles ||
+                    UserRoles != null &&
+                    UserRoles.SequenceEqual(other.UserRoles)
                 ) && 
                 (
-                    this.GroupMemberships == other.GroupMemberships ||
-                    this.GroupMemberships != null &&
-                    this.GroupMemberships.SequenceEqual(other.GroupMemberships)
+                    GroupMemberships == other.GroupMemberships ||
+                    GroupMemberships != null &&
+                    GroupMemberships.SequenceEqual(other.GroupMemberships)
                 ) &&                 
                 (
-                    this.District == other.District ||
-                    this.District != null &&
-                    this.District.Equals(other.District)
+                    District == other.District ||
+                    District != null &&
+                    District.Equals(other.District)
                 );
         }
 
@@ -228,39 +214,46 @@ namespace HETSAPI.ViewModels
             unchecked // Overflow is fine, just wrap
             {
                 int hash = 41;
-                // Suitable nullity checks
-                                   
-                hash = hash * 59 + this.Id.GetHashCode();                   
-                hash = hash * 59 + this.Active.GetHashCode();
-                                if (this.GivenName != null)
+
+                // Suitable nullity checks                                   
+                hash = hash * 59 + Id.GetHashCode();                   
+                hash = hash * 59 + Active.GetHashCode();
+
+                if (GivenName != null)
                 {
-                    hash = hash * 59 + this.GivenName.GetHashCode();
-                }                
-                                if (this.Surname != null)
-                {
-                    hash = hash * 59 + this.Surname.GetHashCode();
-                }                
-                                if (this.Email != null)
-                {
-                    hash = hash * 59 + this.Email.GetHashCode();
-                }                
-                                if (this.SmUserId != null)
-                {
-                    hash = hash * 59 + this.SmUserId.GetHashCode();
-                }                
-                                   
-                if (this.UserRoles != null)
-                {
-                    hash = hash * 59 + this.UserRoles.GetHashCode();
-                }                   
-                if (this.GroupMemberships != null)
-                {
-                    hash = hash * 59 + this.GroupMemberships.GetHashCode();
-                }                   
-                if (this.District != null)
-                {
-                    hash = hash * 59 + this.District.GetHashCode();
+                    hash = hash * 59 + GivenName.GetHashCode();
                 }
+
+                if (Surname != null)
+                {
+                    hash = hash * 59 + Surname.GetHashCode();
+                }
+
+                if (Email != null)
+                {
+                    hash = hash * 59 + Email.GetHashCode();
+                }
+
+                if (SmUserId != null)
+                {
+                    hash = hash * 59 + SmUserId.GetHashCode();
+                }                
+                                   
+                if (UserRoles != null)
+                {
+                    hash = hash * 59 + UserRoles.GetHashCode();
+                }
+
+                if (GroupMemberships != null)
+                {
+                    hash = hash * 59 + GroupMemberships.GetHashCode();
+                }
+
+                if (District != null)
+                {
+                    hash = hash * 59 + District.GetHashCode();
+                }
+
                 return hash;
             }
         }

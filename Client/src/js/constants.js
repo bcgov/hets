@@ -38,7 +38,7 @@ export const PROJECT_STATUS_CODE_COMPLETED = 'Completed';
 
 // Rental Requests
 export const RENTAL_REQUEST_STATUS_CODE_IN_PROGRESS = 'In Progress';
-export const RENTAL_REQUEST_STATUS_CODE_COMPLETED = 'Completed';
+export const RENTAL_REQUEST_STATUS_CODE_COMPLETED = 'Complete';
 export const RENTAL_REQUEST_STATUS_CODE_CANCELLED = 'Cancelled';
 
 // Rental Agreements

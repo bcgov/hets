@@ -31,7 +31,7 @@ namespace HETSAPI.Test
 		/// <summary>
         /// Integration test for ServiceareasGet
         /// </summary>
-		public async void TestServiceareasBulk()
+		public async Task TestServiceareasBulk()
 		{	
             var request = new HttpRequestMessage(HttpMethod.Post, "/api/serviceareas/bulk");
             request.Content = new StringContent("[]", Encoding.UTF8, "application/json");
@@ -39,13 +39,12 @@ namespace HETSAPI.Test
             var response = await _client.SendAsync(request);
             response.EnsureSuccessStatusCode();
         }		
-        
-		
+        		
 		[Fact]
 		/// <summary>
         /// Integration test for Serviceareas
         /// </summary>
-		public async void TestServiceareas()
+		public async Task TestServiceareas()
 		{
             // first test the POST.
             var request = new HttpRequestMessage(HttpMethod.Post, "/api/serviceareas");
@@ -79,7 +78,7 @@ namespace HETSAPI.Test
 
             // parse as JSON.
             jsonString = await response.Content.ReadAsStringAsync();
-            servicearea = JsonConvert.DeserializeObject<ServiceArea>(jsonString);
+            JsonConvert.DeserializeObject<ServiceArea>(jsonString);
 
             // do a delete.
             request = new HttpRequestMessage(HttpMethod.Post, "/api/serviceareas/" + id + "/delete");
@@ -89,9 +88,7 @@ namespace HETSAPI.Test
             // should get a 404 if we try a get now.
             request = new HttpRequestMessage(HttpMethod.Get, "/api/serviceareas/" + id);
             response = await _client.SendAsync(request);
-            Assert.Equal(response.StatusCode, HttpStatusCode.NotFound);
-        }		
-        
-        
+            Assert.Equal(HttpStatusCode.NotFound, response.StatusCode);
+        }		                
     }
 }

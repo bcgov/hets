@@ -1,114 +1,96 @@
-/*
- * REST API Documentation for the MOTI Hired Equipment Tracking System (HETS) Application
- *
- * The Hired Equipment Program is for owners/operators who have a dump truck, bulldozer, backhoe or  other piece of equipment they want to hire out to the transportation ministry for day labour and  emergency projects.  The Hired Equipment Program distributes available work to local equipment owners. The program is  based on seniority and is designed to deliver work to registered users fairly and efficiently  through the development of local area call-out lists. 
- *
- * OpenAPI spec version: v1
- * 
- * 
- */
-
 using System;
 using System.Linq;
-using System.IO;
 using System.Text;
-using System.Collections;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using System.Runtime.Serialization;
 using Newtonsoft.Json;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.ComponentModel.DataAnnotations;
-using HETSAPI.Models;
 
 namespace HETSAPI.Models
 {
     /// <summary>
-    /// Information about the hiring of a specific piece of equipment to satisfy part or all of a request from a project. TABLE DEFINITION IN PROGRESS - MORE COLUMNS TO BE ADDED
+    /// Rental Agreement Database Model
     /// </summary>
-        [MetaDataExtension (Description = "Information about the hiring of a specific piece of equipment to satisfy part or all of a request from a project. TABLE DEFINITION IN PROGRESS - MORE COLUMNS TO BE ADDED")]
+    [MetaData (Description = "Information about the hiring of a specific piece of equipment to satisfy part or all of a request from a project. TABLE DEFINITION IN PROGRESS - MORE COLUMNS TO BE ADDED")]
 
-    public partial class RentalAgreement : AuditableEntity, IEquatable<RentalAgreement>
+    public sealed class RentalAgreement : AuditableEntity, IEquatable<RentalAgreement>
     {
         /// <summary>
-        /// Default constructor, required by entity framework
+        /// Rental Agreement Database Model Constructor (required by entity framework)
         /// </summary>
         public RentalAgreement()
         {
-            this.Id = 0;
+            Id = 0;
         }
 
         /// <summary>
         /// Initializes a new instance of the <see cref="RentalAgreement" /> class.
         /// </summary>
-        /// <param name="Id">A system-generated unique identifier for a RentalAgreement (required).</param>
-        /// <param name="Number">A system-generated unique rental agreement number in a format defined by the business as suitable for the business and client to see and use. (required).</param>
-        /// <param name="Status">The current status of the Rental Agreement, such as Active or Complete (required).</param>
-        /// <param name="Equipment">A foreign key reference to the system-generated unique identifier for an Equipment (required).</param>
-        /// <param name="Project">A foreign key reference to the system-generated unique identifier for a Project (required).</param>
-        /// <param name="RentalAgreementRates">RentalAgreementRates.</param>
-        /// <param name="RentalAgreementConditions">RentalAgreementConditions.</param>
-        /// <param name="TimeRecords">TimeRecords.</param>
-        /// <param name="Note">An optional note to be placed onto the Rental Agreement..</param>
-        /// <param name="EstimateStartWork">The estimated start date of the work to be placed on the rental agreement..</param>
-        /// <param name="DatedOn">The dated on date to put on the Rental Agreement..</param>
-        /// <param name="EstimateHours">The estimated number of hours of work to be put onto the Rental Agreement..</param>
-        /// <param name="EquipmentRate">The dollar rate for the piece of equipment itself for this Rental Agreement. Other rates associated with the Rental Agreement are in the Rental Agreement Rate table..</param>
-        /// <param name="RatePeriod">The period of the rental rate. The vast majority will be hourly, but the rate could apply across a different period, e.g. daily..</param>
-        /// <param name="RateComment">A comment about the rate for the piece of equipment..</param>
-        public RentalAgreement(int Id, string Number, string Status, Equipment Equipment, Project Project, List<RentalAgreementRate> RentalAgreementRates = null, List<RentalAgreementCondition> RentalAgreementConditions = null, List<TimeRecord> TimeRecords = null, string Note = null, DateTime? EstimateStartWork = null, DateTime? DatedOn = null, int? EstimateHours = null, float? EquipmentRate = null, string RatePeriod = null, string RateComment = null)
+        /// <param name="id">A system-generated unique identifier for a RentalAgreement (required).</param>
+        /// <param name="number">A system-generated unique rental agreement number in a format defined by the business as suitable for the business and client to see and use. (required).</param>
+        /// <param name="status">The current status of the Rental Agreement, such as Active or Complete (required).</param>
+        /// <param name="equipment">A foreign key reference to the system-generated unique identifier for an Equipment (required).</param>
+        /// <param name="project">A foreign key reference to the system-generated unique identifier for a Project (required).</param>
+        /// <param name="rentalAgreementRates">RentalAgreementRates.</param>
+        /// <param name="rentalAgreementConditions">RentalAgreementConditions.</param>
+        /// <param name="timeRecords">TimeRecords.</param>
+        /// <param name="note">An optional note to be placed onto the Rental Agreement..</param>
+        /// <param name="estimateStartWork">The estimated start date of the work to be placed on the rental agreement..</param>
+        /// <param name="datedOn">The dated on date to put on the Rental Agreement..</param>
+        /// <param name="estimateHours">The estimated number of hours of work to be put onto the Rental Agreement..</param>
+        /// <param name="equipmentRate">The dollar rate for the piece of equipment itself for this Rental Agreement. Other rates associated with the Rental Agreement are in the Rental Agreement Rate table..</param>
+        /// <param name="ratePeriod">The period of the rental rate. The vast majority will be hourly, but the rate could apply across a different period, e.g. daily..</param>
+        /// <param name="rateComment">A comment about the rate for the piece of equipment..</param>
+        public RentalAgreement(int id, string number, string status, Equipment equipment, Project project, 
+            List<RentalAgreementRate> rentalAgreementRates = null, List<RentalAgreementCondition> rentalAgreementConditions = null, 
+            List<TimeRecord> timeRecords = null, string note = null, DateTime? estimateStartWork = null, DateTime? datedOn = null, 
+            int? estimateHours = null, float? equipmentRate = null, string ratePeriod = null, string rateComment = null)
         {   
-            this.Id = Id;
-            this.Number = Number;
-            this.Status = Status;
-            this.Equipment = Equipment;
-            this.Project = Project;
-
-
-
-
-            this.RentalAgreementRates = RentalAgreementRates;
-            this.RentalAgreementConditions = RentalAgreementConditions;
-            this.TimeRecords = TimeRecords;
-            this.Note = Note;
-            this.EstimateStartWork = EstimateStartWork;
-            this.DatedOn = DatedOn;
-            this.EstimateHours = EstimateHours;
-            this.EquipmentRate = EquipmentRate;
-            this.RatePeriod = RatePeriod;
-            this.RateComment = RateComment;
+            Id = id;
+            Number = number;
+            Status = status;
+            Equipment = equipment;
+            Project = project;
+            RentalAgreementRates = rentalAgreementRates;
+            RentalAgreementConditions = rentalAgreementConditions;
+            TimeRecords = timeRecords;
+            Note = note;
+            EstimateStartWork = estimateStartWork;
+            DatedOn = datedOn;
+            EstimateHours = estimateHours;
+            EquipmentRate = equipmentRate;
+            RatePeriod = ratePeriod;
+            RateComment = rateComment;
         }
 
         /// <summary>
         /// A system-generated unique identifier for a RentalAgreement
         /// </summary>
         /// <value>A system-generated unique identifier for a RentalAgreement</value>
-        [MetaDataExtension (Description = "A system-generated unique identifier for a RentalAgreement")]
+        [MetaData (Description = "A system-generated unique identifier for a RentalAgreement")]
         public int Id { get; set; }
         
         /// <summary>
         /// A system-generated unique rental agreement number in a format defined by the business as suitable for the business and client to see and use.
         /// </summary>
         /// <value>A system-generated unique rental agreement number in a format defined by the business as suitable for the business and client to see and use.</value>
-        [MetaDataExtension (Description = "A system-generated unique rental agreement number in a format defined by the business as suitable for the business and client to see and use.")]
-        [MaxLength(30)]
-        
+        [MetaData (Description = "A system-generated unique rental agreement number in a format defined by the business as suitable for the business and client to see and use.")]
+        [MaxLength(30)]        
         public string Number { get; set; }
         
         /// <summary>
         /// The current status of the Rental Agreement, such as Active or Complete
         /// </summary>
         /// <value>The current status of the Rental Agreement, such as Active or Complete</value>
-        [MetaDataExtension (Description = "The current status of the Rental Agreement, such as Active or Complete")]
-        [MaxLength(50)]
-        
+        [MetaData (Description = "The current status of the Rental Agreement, such as Active or Complete")]
+        [MaxLength(50)]        
         public string Status { get; set; }
         
         /// <summary>
         /// A foreign key reference to the system-generated unique identifier for an Equipment
         /// </summary>
         /// <value>A foreign key reference to the system-generated unique identifier for an Equipment</value>
-        [MetaDataExtension (Description = "A foreign key reference to the system-generated unique identifier for an Equipment")]
+        [MetaData (Description = "A foreign key reference to the system-generated unique identifier for an Equipment")]
         public Equipment Equipment { get; set; }
         
         /// <summary>
@@ -116,14 +98,14 @@ namespace HETSAPI.Models
         /// </summary>   
         [ForeignKey("Equipment")]
 		[JsonIgnore]
-		[MetaDataExtension (Description = "A foreign key reference to the system-generated unique identifier for an Equipment")]
+		[MetaData (Description = "A foreign key reference to the system-generated unique identifier for an Equipment")]
         public int? EquipmentId { get; set; }
         
         /// <summary>
         /// A foreign key reference to the system-generated unique identifier for a Project
         /// </summary>
         /// <value>A foreign key reference to the system-generated unique identifier for a Project</value>
-        [MetaDataExtension (Description = "A foreign key reference to the system-generated unique identifier for a Project")]
+        [MetaData (Description = "A foreign key reference to the system-generated unique identifier for a Project")]
         public Project Project { get; set; }
         
         /// <summary>
@@ -131,7 +113,7 @@ namespace HETSAPI.Models
         /// </summary>   
         [ForeignKey("Project")]
 		[JsonIgnore]
-		[MetaDataExtension (Description = "A foreign key reference to the system-generated unique identifier for a Project")]
+		[MetaData (Description = "A foreign key reference to the system-generated unique identifier for a Project")]
         public int? ProjectId { get; set; }
         
         /// <summary>
@@ -153,55 +135,52 @@ namespace HETSAPI.Models
         /// An optional note to be placed onto the Rental Agreement.
         /// </summary>
         /// <value>An optional note to be placed onto the Rental Agreement.</value>
-        [MetaDataExtension (Description = "An optional note to be placed onto the Rental Agreement.")]
-        [MaxLength(2048)]
-        
+        [MetaData (Description = "An optional note to be placed onto the Rental Agreement.")]
+        [MaxLength(2048)]        
         public string Note { get; set; }
         
         /// <summary>
         /// The estimated start date of the work to be placed on the rental agreement.
         /// </summary>
         /// <value>The estimated start date of the work to be placed on the rental agreement.</value>
-        [MetaDataExtension (Description = "The estimated start date of the work to be placed on the rental agreement.")]
+        [MetaData (Description = "The estimated start date of the work to be placed on the rental agreement.")]
         public DateTime? EstimateStartWork { get; set; }
         
         /// <summary>
         /// The dated on date to put on the Rental Agreement.
         /// </summary>
         /// <value>The dated on date to put on the Rental Agreement.</value>
-        [MetaDataExtension (Description = "The dated on date to put on the Rental Agreement.")]
+        [MetaData (Description = "The dated on date to put on the Rental Agreement.")]
         public DateTime? DatedOn { get; set; }
         
         /// <summary>
         /// The estimated number of hours of work to be put onto the Rental Agreement.
         /// </summary>
         /// <value>The estimated number of hours of work to be put onto the Rental Agreement.</value>
-        [MetaDataExtension (Description = "The estimated number of hours of work to be put onto the Rental Agreement.")]
+        [MetaData (Description = "The estimated number of hours of work to be put onto the Rental Agreement.")]
         public int? EstimateHours { get; set; }
         
         /// <summary>
         /// The dollar rate for the piece of equipment itself for this Rental Agreement. Other rates associated with the Rental Agreement are in the Rental Agreement Rate table.
         /// </summary>
         /// <value>The dollar rate for the piece of equipment itself for this Rental Agreement. Other rates associated with the Rental Agreement are in the Rental Agreement Rate table.</value>
-        [MetaDataExtension (Description = "The dollar rate for the piece of equipment itself for this Rental Agreement. Other rates associated with the Rental Agreement are in the Rental Agreement Rate table.")]
+        [MetaData (Description = "The dollar rate for the piece of equipment itself for this Rental Agreement. Other rates associated with the Rental Agreement are in the Rental Agreement Rate table.")]
         public float? EquipmentRate { get; set; }
         
         /// <summary>
         /// The period of the rental rate. The vast majority will be hourly, but the rate could apply across a different period, e.g. daily.
         /// </summary>
         /// <value>The period of the rental rate. The vast majority will be hourly, but the rate could apply across a different period, e.g. daily.</value>
-        [MetaDataExtension (Description = "The period of the rental rate. The vast majority will be hourly, but the rate could apply across a different period, e.g. daily.")]
-        [MaxLength(50)]
-        
+        [MetaData (Description = "The period of the rental rate. The vast majority will be hourly, but the rate could apply across a different period, e.g. daily.")]
+        [MaxLength(50)]        
         public string RatePeriod { get; set; }
         
         /// <summary>
         /// A comment about the rate for the piece of equipment.
         /// </summary>
         /// <value>A comment about the rate for the piece of equipment.</value>
-        [MetaDataExtension (Description = "A comment about the rate for the piece of equipment.")]
-        [MaxLength(2048)]
-        
+        [MetaData (Description = "A comment about the rate for the piece of equipment.")]
+        [MaxLength(2048)]        
         public string RateComment { get; set; }
         
         /// <summary>
@@ -211,6 +190,7 @@ namespace HETSAPI.Models
         public override string ToString()
         {
             var sb = new StringBuilder();
+
             sb.Append("class RentalAgreement {\n");
             sb.Append("  Id: ").Append(Id).Append("\n");
             sb.Append("  Number: ").Append(Number).Append("\n");
@@ -228,6 +208,7 @@ namespace HETSAPI.Models
             sb.Append("  RatePeriod: ").Append(RatePeriod).Append("\n");
             sb.Append("  RateComment: ").Append(RateComment).Append("\n");
             sb.Append("}\n");
+
             return sb.ToString();
         }
 
@@ -247,10 +228,9 @@ namespace HETSAPI.Models
         /// <returns>Boolean</returns>
         public override bool Equals(object obj)
         {
-            if (ReferenceEquals(null, obj)) { return false; }
+            if (obj is null) { return false; }
             if (ReferenceEquals(this, obj)) { return true; }
-            if (obj.GetType() != GetType()) { return false; }
-            return Equals((RentalAgreement)obj);
+            return obj.GetType() == GetType() && Equals((RentalAgreement)obj);
         }
 
         /// <summary>
@@ -260,84 +240,83 @@ namespace HETSAPI.Models
         /// <returns>Boolean</returns>
         public bool Equals(RentalAgreement other)
         {
-
-            if (ReferenceEquals(null, other)) { return false; }
+            if (other is null) { return false; }
             if (ReferenceEquals(this, other)) { return true; }
 
             return                 
                 (
-                    this.Id == other.Id ||
-                    this.Id.Equals(other.Id)
+                    Id == other.Id ||
+                    Id.Equals(other.Id)
                 ) &&                 
                 (
-                    this.Number == other.Number ||
-                    this.Number != null &&
-                    this.Number.Equals(other.Number)
+                    Number == other.Number ||
+                    Number != null &&
+                    Number.Equals(other.Number)
                 ) &&                 
                 (
-                    this.Status == other.Status ||
-                    this.Status != null &&
-                    this.Status.Equals(other.Status)
+                    Status == other.Status ||
+                    Status != null &&
+                    Status.Equals(other.Status)
                 ) &&                 
                 (
-                    this.Equipment == other.Equipment ||
-                    this.Equipment != null &&
-                    this.Equipment.Equals(other.Equipment)
+                    Equipment == other.Equipment ||
+                    Equipment != null &&
+                    Equipment.Equals(other.Equipment)
                 ) &&                 
                 (
-                    this.Project == other.Project ||
-                    this.Project != null &&
-                    this.Project.Equals(other.Project)
+                    Project == other.Project ||
+                    Project != null &&
+                    Project.Equals(other.Project)
                 ) && 
                 (
-                    this.RentalAgreementRates == other.RentalAgreementRates ||
-                    this.RentalAgreementRates != null &&
-                    this.RentalAgreementRates.SequenceEqual(other.RentalAgreementRates)
+                    RentalAgreementRates == other.RentalAgreementRates ||
+                    RentalAgreementRates != null &&
+                    RentalAgreementRates.SequenceEqual(other.RentalAgreementRates)
                 ) && 
                 (
-                    this.RentalAgreementConditions == other.RentalAgreementConditions ||
-                    this.RentalAgreementConditions != null &&
-                    this.RentalAgreementConditions.SequenceEqual(other.RentalAgreementConditions)
+                    RentalAgreementConditions == other.RentalAgreementConditions ||
+                    RentalAgreementConditions != null &&
+                    RentalAgreementConditions.SequenceEqual(other.RentalAgreementConditions)
                 ) && 
                 (
-                    this.TimeRecords == other.TimeRecords ||
-                    this.TimeRecords != null &&
-                    this.TimeRecords.SequenceEqual(other.TimeRecords)
+                    TimeRecords == other.TimeRecords ||
+                    TimeRecords != null &&
+                    TimeRecords.SequenceEqual(other.TimeRecords)
                 ) &&                 
                 (
-                    this.Note == other.Note ||
-                    this.Note != null &&
-                    this.Note.Equals(other.Note)
+                    Note == other.Note ||
+                    Note != null &&
+                    Note.Equals(other.Note)
                 ) &&                 
                 (
-                    this.EstimateStartWork == other.EstimateStartWork ||
-                    this.EstimateStartWork != null &&
-                    this.EstimateStartWork.Equals(other.EstimateStartWork)
+                    EstimateStartWork == other.EstimateStartWork ||
+                    EstimateStartWork != null &&
+                    EstimateStartWork.Equals(other.EstimateStartWork)
                 ) &&                 
                 (
-                    this.DatedOn == other.DatedOn ||
-                    this.DatedOn != null &&
-                    this.DatedOn.Equals(other.DatedOn)
+                    DatedOn == other.DatedOn ||
+                    DatedOn != null &&
+                    DatedOn.Equals(other.DatedOn)
                 ) &&                 
                 (
-                    this.EstimateHours == other.EstimateHours ||
-                    this.EstimateHours != null &&
-                    this.EstimateHours.Equals(other.EstimateHours)
+                    EstimateHours == other.EstimateHours ||
+                    EstimateHours != null &&
+                    EstimateHours.Equals(other.EstimateHours)
                 ) &&                 
                 (
-                    this.EquipmentRate == other.EquipmentRate ||
-                    this.EquipmentRate != null &&
-                    this.EquipmentRate.Equals(other.EquipmentRate)
+                    EquipmentRate == other.EquipmentRate ||
+                    EquipmentRate != null &&
+                    EquipmentRate.Equals(other.EquipmentRate)
                 ) &&                 
                 (
-                    this.RatePeriod == other.RatePeriod ||
-                    this.RatePeriod != null &&
-                    this.RatePeriod.Equals(other.RatePeriod)
+                    RatePeriod == other.RatePeriod ||
+                    RatePeriod != null &&
+                    RatePeriod.Equals(other.RatePeriod)
                 ) &&                 
                 (
-                    this.RateComment == other.RateComment ||
-                    this.RateComment != null &&
-                    this.RateComment.Equals(other.RateComment)
+                    RateComment == other.RateComment ||
+                    RateComment != null &&
+                    RateComment.Equals(other.RateComment)
                 );
         }
 
@@ -351,63 +330,78 @@ namespace HETSAPI.Models
             unchecked // Overflow is fine, just wrap
             {
                 int hash = 41;
-                // Suitable nullity checks
+
+                // Suitable nullity checks                                   
+                hash = hash * 59 + Id.GetHashCode();
+
+                if (Number != null)
+                {
+                    hash = hash * 59 + Number.GetHashCode();
+                }
+
+                if (Status != null)
+                {
+                    hash = hash * 59 + Status.GetHashCode();
+                }                
                                    
-                hash = hash * 59 + this.Id.GetHashCode();                if (this.Number != null)
+                if (Equipment != null)
                 {
-                    hash = hash * 59 + this.Number.GetHashCode();
-                }                
-                                if (this.Status != null)
+                    hash = hash * 59 + Equipment.GetHashCode();
+                }
+
+                if (Project != null)
                 {
-                    hash = hash * 59 + this.Status.GetHashCode();
-                }                
-                                   
-                if (this.Equipment != null)
+                    hash = hash * 59 + Project.GetHashCode();
+                }
+
+                if (RentalAgreementRates != null)
                 {
-                    hash = hash * 59 + this.Equipment.GetHashCode();
-                }                   
-                if (this.Project != null)
+                    hash = hash * 59 + RentalAgreementRates.GetHashCode();
+                }
+
+                if (RentalAgreementConditions != null)
                 {
-                    hash = hash * 59 + this.Project.GetHashCode();
-                }                   
-                if (this.RentalAgreementRates != null)
+                    hash = hash * 59 + RentalAgreementConditions.GetHashCode();
+                }
+
+                if (TimeRecords != null)
                 {
-                    hash = hash * 59 + this.RentalAgreementRates.GetHashCode();
-                }                   
-                if (this.RentalAgreementConditions != null)
+                    hash = hash * 59 + TimeRecords.GetHashCode();
+                }
+
+                if (Note != null)
                 {
-                    hash = hash * 59 + this.RentalAgreementConditions.GetHashCode();
-                }                   
-                if (this.TimeRecords != null)
+                    hash = hash * 59 + Note.GetHashCode();
+                }
+
+                if (EstimateStartWork != null)
                 {
-                    hash = hash * 59 + this.TimeRecords.GetHashCode();
-                }                if (this.Note != null)
+                    hash = hash * 59 + EstimateStartWork.GetHashCode();
+                }
+
+                if (DatedOn != null)
                 {
-                    hash = hash * 59 + this.Note.GetHashCode();
-                }                
-                                if (this.EstimateStartWork != null)
+                    hash = hash * 59 + DatedOn.GetHashCode();
+                }
+
+                if (EstimateHours != null)
                 {
-                    hash = hash * 59 + this.EstimateStartWork.GetHashCode();
-                }                
-                                if (this.DatedOn != null)
+                    hash = hash * 59 + EstimateHours.GetHashCode();
+                }
+
+                if (EquipmentRate != null)
                 {
-                    hash = hash * 59 + this.DatedOn.GetHashCode();
-                }                
-                                if (this.EstimateHours != null)
+                    hash = hash * 59 + EquipmentRate.GetHashCode();
+                }
+
+                if (RatePeriod != null)
                 {
-                    hash = hash * 59 + this.EstimateHours.GetHashCode();
-                }                
-                                if (this.EquipmentRate != null)
+                    hash = hash * 59 + RatePeriod.GetHashCode();
+                }
+
+                if (RateComment != null)
                 {
-                    hash = hash * 59 + this.EquipmentRate.GetHashCode();
-                }                
-                                if (this.RatePeriod != null)
-                {
-                    hash = hash * 59 + this.RatePeriod.GetHashCode();
-                }                
-                                if (this.RateComment != null)
-                {
-                    hash = hash * 59 + this.RateComment.GetHashCode();
+                    hash = hash * 59 + RateComment.GetHashCode();
                 }                
                 
                 return hash;

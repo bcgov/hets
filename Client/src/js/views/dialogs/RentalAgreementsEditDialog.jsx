@@ -164,7 +164,7 @@ var RentalAgreementsEditDialog = React.createClass({
             <Row>
               <Col md={6}>
                 <FormGroup>
-                  <ControlLabel>Distric</ControlLabel>
+                  <ControlLabel>District</ControlLabel>
                   <FormControl.Static>{ this.props.rentalAgreement.districtName }</FormControl.Static>
                 </FormGroup>
               </Col>

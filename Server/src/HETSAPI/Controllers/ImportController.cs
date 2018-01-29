@@ -1,131 +1,71 @@
-﻿/*
- * REST API Documentation for the MOTI Hired Equipment Tracking System (HETS) Application
- *
- * The Hired Equipment Program is for owners/operators who have a dump truck, bulldozer, backhoe or  other piece of equipment they want to hire out to the transportation ministry for day labour and  emergency projects.  The Hired Equipment Program distributes available work to local equipment owners. The program is  based on seniority and is designed to deliver work to registered users fairly and efficiently  through the development of local area call-out lists. 
- *
- * OpenAPI spec version: v1
- * 
- * 
- */
-
-using Microsoft.AspNetCore.Authorization;
+﻿using Newtonsoft.Json;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using HETSAPI.Authorization;
-using HETSAPI.Models;
-using HETSAPI.Services.Impl;
-using HETSCommon;
+using Microsoft.Extensions.Configuration;
 using System.Collections.Generic;
 using System.IO;
 using System;
-using Microsoft.Extensions.Configuration;
-using Newtonsoft.Json;
+using System.Text;
+using HETSAPI.Helpers;
+using HETSAPI.Models;
+using HETSAPI.Services.Impl;
+using HETSAPI.ViewModels;
+using Microsoft.AspNetCore.Hosting;
 
-namespace SchoolBusAPI.Controllers
+namespace HETSAPI.Controllers
 {
-
     /// <summary>
-    /// This controller is used to handle importing data from the previous system.
+    /// This controller is used to handle importing data from the previous system (BC Bid)
     /// </summary>
-    [Route("api/import")]
-    public class ImportController
-    {
-        private readonly IImportService _service;
-        public ImportController(IImportService service)
+    [ResponseCache(Location = ResponseCacheLocation.None, NoStore = true)]
+    public class ImportController : Controller
+    {       
+        private readonly IHostingEnvironment _env;
+        private readonly IConfiguration _configuration;
+
+        /// <summary>
+        /// Import Controller Constructor
+        /// </summary>
+        /// <param name="env"></param>
+        /// <param name="configuration"></param>
+        public ImportController(IHostingEnvironment env, IConfiguration configuration)
         {
-            _service = service;
+            _env = env;
+            _configuration = configuration;
         }
 
         /// <summary>
-        /// Shows a basic file upload form
+        /// Default action
         /// </summary>
         /// <returns></returns>
-        [HttpGet]
-        [Route("upload")]
-        [Produces("text/html")]
-        public virtual IActionResult UploadGet()
+        public IActionResult Index()
         {
-            return new ObjectResult("<html><body><form method=\"post\" enctype=\"multipart/form-data\"><input type=\"file\" name = \"files\" multiple /><input type = \"submit\" value = \"Upload\" /></body></html>");
-        }
+            HomeViewModel home = new HomeViewModel
+            {
+                UserId = HttpContext.User.Identity.Name,
+                DevelopmentEnvironment = _env.IsDevelopment()
+            };
+
+            return View(home);
+        }        
 
         /// <summary>
         /// Receives uploaded files
         /// </summary>
         /// <param name="files"></param>
-        /// <returns></returns>
-        [HttpPost]
-        [Route("upload")]
-        [Produces("text/html")]
-        public virtual IActionResult UploadPost(IList<IFormFile> files)
+        /// <returns></returns>      
+        public IActionResult UploadPost(IList<IFormFile> files)
         {
-            return _service.UploadPostAsync(files);
+            // get the upload path from the app configuration
+            string uploadPath = _configuration["UploadPath"];
+
+            HomeViewModel home = UploadHelper.UploadFiles(files, uploadPath);
+
+            home.UserId = HttpContext.User.Identity.Name;
+            home.DevelopmentEnvironment = _env.IsDevelopment();
+
+            return View("Index", home);
         }        
     }
-
-
-    public interface IImportService
-    {        
-        IActionResult UploadPostAsync(IList<IFormFile> files);
-    }
-
-    public class ImportService : ServiceBase, IImportService
-    {
-        private readonly IConfiguration Configuration;
-        /// <summary>
-        /// Constructor
-        /// </summary>
-        /// <param name="httpContextAccessor"></param>
-        /// <param name="configuration"></param>
-        /// <param name="context"></param>
-        public ImportService(IHttpContextAccessor httpContextAccessor, IConfiguration configuration, DbAppContext context) : base(httpContextAccessor, context)
-        {
-            Configuration = configuration;
-        }
-
-        /// <summary>
-        ///  Basic file receiver for .NET Core
-        /// </summary>
-        /// <param name="files"></param>
-        /// <returns></returns>
-        public IActionResult UploadPostAsync(IList<IFormFile> files)
-        {            
-            string result = "";
-            string uploadPath = Configuration["UploadPath"];
-            if (string.IsNullOrEmpty (uploadPath))
-            {
-                result = "ERROR:  UploadPath environment variable is empty.  Set it to the path where files will be stored.";
-            }
-            else
-            {
-                try
-                {
-                    result = "<html><body><h1>Files Received:</h1><p>";
-                                       
-                    foreach (var file in files)
-                    {
-                        if (file.Length > 0)
-                        {
-                            // Add a unique file prefix to allow for a file to be uploaded multiple times.
-                            string filePrefix = "" + DateTime.Now.Year + "-" + DateTime.Now.Month + "-" + DateTime.Now.Day + "-" + DateTime.Now.Ticks + "-";
-                            using (var fileStream = new FileStream(Path.Combine(uploadPath, filePrefix + file.FileName), FileMode.Create))
-                            {
-                                file.CopyTo(fileStream);
-                                result = result + file.FileName + "<br>";
-                            }
-                        }
-                    }
-                    result = result + "<body></html>";
-                }
-                catch (Exception e)
-                {
-                    result = "<html><body><h1>Error:</h1><p><pre>";
-                    result = result + JsonConvert.SerializeObject(e) + "</pre></body></html>";
-                }
-            }            
-            return new ObjectResult(result);
-        }
-
-    }
-
 }
 

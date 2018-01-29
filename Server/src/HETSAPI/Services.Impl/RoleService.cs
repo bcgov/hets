@@ -1,47 +1,36 @@
-/*
- * REST API Documentation for the MOTI Hired Equipment Tracking System (HETS) Application
- *
- * The Hired Equipment Program is for owners/operators who have a dump truck, bulldozer, backhoe or  other piece of equipment they want to hire out to the transportation ministry for day labour and  emergency projects.  The Hired Equipment Program distributes available work to local equipment owners. The program is  based on seniority and is designed to deliver work to registered users fairly and efficiently  through the development of local area call-out lists. 
- *
- * OpenAPI spec version: v1
- * 
- * 
- */
-
 using System;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using System.ComponentModel;
-using System.IO;
 using System.Linq;
-using System.Net;
-using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using Newtonsoft.Json;
 using HETSAPI.Models;
 using HETSAPI.ViewModels;
 using HETSAPI.Mappings;
+using Microsoft.EntityFrameworkCore.Query;
+using Microsoft.EntityFrameworkCore.Storage;
+using Microsoft.Extensions.Configuration;
 
 namespace HETSAPI.Services.Impl
 {
     /// <summary>
-    /// 
+    /// Role Service
     /// </summary>
     public class RoleService : IRoleService
     {
         private readonly DbAppContext _context;
+        private readonly IConfiguration _configuration;
 
         /// <summary>
         /// Create a service and set the database context
         /// </summary>
-        public RoleService(DbAppContext context)
+        public RoleService(DbAppContext context, IConfiguration configuration)
         {
             _context = context;
+            _configuration = configuration;
         }
 
         /// <summary>
-        /// 
+        /// Create bulk role permission records
         /// </summary>
         /// <remarks>Bulk load of role permissions</remarks>
         /// <param name="items"></param>
@@ -52,16 +41,18 @@ namespace HETSAPI.Services.Impl
             {
                 return new BadRequestResult();
             }
+
             foreach (RolePermission item in items)
             {
                 // adjust the role
                 if (item.Role != null)
                 {
-                    int role_id = item.Role.Id;
-                    bool role_exists = _context.Roles.Any(a => a.Id == role_id);
-                    if (role_exists)
+                    int roleId = item.Role.Id;
+                    bool roleExists = _context.Roles.Any(a => a.Id == roleId);
+
+                    if (roleExists)
                     {
-                        Role role = _context.Roles.First(a => a.Id == role_id);
+                        Role role = _context.Roles.First(a => a.Id == roleId);
                         item.Role = role;
                     }
                 }
@@ -69,16 +60,18 @@ namespace HETSAPI.Services.Impl
                 // adjust the permission
                 if (item.Permission != null)
                 {
-                    int permission_id = item.Permission.Id;
-                    bool permission_exists = _context.Permissions.Any(a => a.Id == permission_id);
-                    if (permission_exists)
+                    int permissionId = item.Permission.Id;
+                    bool permissionExists = _context.Permissions.Any(a => a.Id == permissionId);
+
+                    if (permissionExists)
                     {
-                        Permission permission = _context.Permissions.First(a => a.Id == permission_id);
+                        Permission permission = _context.Permissions.First(a => a.Id == permissionId);
                         item.Permission = permission;
                     }
                 }
 
-                var exists = _context.RolePermissions.Any(a => a.Id == item.Id);
+                bool exists = _context.RolePermissions.Any(a => a.Id == item.Id);
+
                 if (exists)
                 {
                     _context.RolePermissions.Update(item);
@@ -88,14 +81,14 @@ namespace HETSAPI.Services.Impl
                     _context.RolePermissions.Add(item);
                 }
             }
-            // Save the changes
+
+            // save the changes
             _context.SaveChanges();
             return new NoContentResult();
         }
 
-
         /// <summary>
-        /// 
+        /// Create bulk role records
         /// </summary>
         /// <param name="items"></param>
         /// <response code="201">Permissions created</response>
@@ -105,9 +98,11 @@ namespace HETSAPI.Services.Impl
             {
                 return new BadRequestResult();
             }
+
             foreach (Role item in items)
             {
-                var exists = _context.Roles.Any(a => a.Id == item.Id);
+                bool exists = _context.Roles.Any(a => a.Id == item.Id);
+
                 if (exists)
                 {
                     _context.Roles.Update(item);
@@ -117,81 +112,88 @@ namespace HETSAPI.Services.Impl
                     _context.Roles.Add(item);
                 }
             }
-            // Save the changes
+
+            // save the changes
             _context.SaveChanges();
             return new NoContentResult();
         }
 
-
-
         /// <summary>
-        /// 
+        /// Get all roles
         /// </summary>
         /// <remarks>Returns a collection of roles</remarks>
         /// <response code="200">OK</response>
         public virtual IActionResult RolesGetAsync()
         {
             List<RoleViewModel> result = new List<RoleViewModel>();
-            var data = _context.Roles.Select(x => x);
-            foreach (var item in data)
+            IQueryable<Role> data = _context.Roles.Select(x => x);
+
+            foreach (Role item in data)
             {
                 result.Add(item.ToViewModel());
             }
-            return new ObjectResult(result);
+
+            return new ObjectResult(new HetsResponse(result));
         }
 
         /// <summary>
-        /// 
+        /// Delete role
         /// </summary>
         /// <param name="id">id of Role to delete</param>
         /// <response code="200">OK</response>
         /// <response code="404">Role not found</response>
         public virtual IActionResult RolesIdDeletePostAsync(int id)
         {
-            var role = _context.Roles.FirstOrDefault(x => x.Id == id);
+            Role role = _context.Roles.FirstOrDefault(x => x.Id == id);
+
             if (role == null)
             {
-                // Not Found
-                return new StatusCodeResult(404);
+                // record not found
+                return new ObjectResult(new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-01", _configuration)));
             }
+
             // remove associated role permission records
-            var itemsToRemove = _context.RolePermissions.Where(x => x.Role.Id == role.Id);
-            foreach (var item in itemsToRemove)
+            IQueryable<RolePermission> itemsToRemove = _context.RolePermissions.Where(x => x.Role.Id == role.Id);
+
+            foreach (RolePermission item in itemsToRemove)
             {
                 _context.RolePermissions.Remove(item);
             }
+
             _context.Roles.Remove(role);
             _context.SaveChanges();
-            return new ObjectResult(role.ToViewModel());
+
+            return new ObjectResult(new HetsResponse(role.ToViewModel()));
         }
 
         /// <summary>
-        /// 
+        /// Get role by id
         /// </summary>
         /// <param name="id">id of Role to fetch</param>
         /// <response code="200">OK</response>
         /// <response code="404">Role not found</response>
         public virtual IActionResult RolesIdGetAsync(int id)
         {
-            var role = _context.Roles.FirstOrDefault(x => x.Id == id);
+            Role role = _context.Roles.FirstOrDefault(x => x.Id == id);
+
             if (role == null)
             {
-                // Not Found
-                return new StatusCodeResult(404);
+                // record not found
+                return new ObjectResult(new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-01", _configuration)));
             }
-            return new ObjectResult(role.ToViewModel());
+
+            return new ObjectResult(new HetsResponse(role.ToViewModel()));
         }
 
         /// <summary>
-        /// 
+        /// Get permissions associated with a role
         /// </summary>
         /// <remarks>Get all the permissions for a role</remarks>
         /// <param name="id">id of Role to fetch</param>
         /// <response code="200">OK</response>
         public virtual IActionResult RolesIdPermissionsGetAsync(int id)
         {
-            // Eager loading of related data
-            var role = _context.Roles
+            Role role = _context.Roles
                 .Where(x => x.Id == id)
                 .Include(x => x.RolePermissions)
                 .ThenInclude(rp => rp.Permission)
@@ -199,19 +201,20 @@ namespace HETSAPI.Services.Impl
 
             if (role == null)
             {
-                // Not Found
-                return new StatusCodeResult(404);
+                // record not found
+                return new ObjectResult(new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-01", _configuration)));
             }
 
-            var dbPermissions = role.RolePermissions.Select(x => x.Permission);
+            IEnumerable<Permission> dbPermissions = role.RolePermissions.Select(x => x.Permission);
 
-            // Create DTO with serializable response
-            var result = dbPermissions.Select(x => x.ToViewModel()).ToList();
-            return new ObjectResult(result);
+            // create DTO with serializable response
+            List<PermissionViewModel> result = dbPermissions.Select(x => x.ToViewModel()).ToList();
+
+            return new ObjectResult(new HetsResponse(result));
         }
 
         /// <summary>
-        /// 
+        /// Update permissions associated with a role
         /// </summary>
         /// <remarks>Updates the permissions for a role</remarks>
         /// <param name="id">id of Role to update</param>
@@ -220,10 +223,9 @@ namespace HETSAPI.Services.Impl
         /// <response code="404">Role not found</response>
         public virtual IActionResult RolesIdPermissionsPutAsync(int id, PermissionViewModel[] items)
         {
-            using (var txn = _context.BeginTransaction())
+            using (IDbContextTransaction txn = _context.BeginTransaction())
             {
-                // Eager loading of related data
-                var role = _context.Roles
+                Role role = _context.Roles
                     .Where(x => x.Id == id)
                     .Include(x => x.RolePermissions)
                     .ThenInclude(rolePerm => rolePerm.Permission)
@@ -231,28 +233,31 @@ namespace HETSAPI.Services.Impl
 
                 if (role == null)
                 {
-                    // Not Found
-                    return new StatusCodeResult(404);
+                    // record not found
+                    return new ObjectResult(new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-01", _configuration)));
                 }
 
-                var allPermissions = _context.Permissions.ToList();
-                var permissionIds = items.Select(x => x.Id).ToList();
-                var existingPermissionIds = role.RolePermissions.Select(x => x.Permission.Id).ToList();
-                var permissionIdsToAdd = permissionIds.Where(x => !existingPermissionIds.Contains((int)x)).ToList();
+                List<Permission> allPermissions = _context.Permissions.ToList();
+                List<int?> permissionIds = items.Select(x => x.Id).ToList();
+                List<int> existingPermissionIds = role.RolePermissions.Select(x => x.Permission.Id).ToList();
+                List<int?> permissionIdsToAdd = permissionIds.Where(x => !existingPermissionIds.Contains((int)x)).ToList();
 
                 // Permissions to add
-                foreach (var permissionId in permissionIdsToAdd)
+                foreach (int? permissionId in permissionIdsToAdd)
                 {
-                    var permToAdd = allPermissions.FirstOrDefault(x => x.Id == permissionId);
+                    Permission permToAdd = allPermissions.FirstOrDefault(x => x.Id == permissionId);
+
                     if (permToAdd == null)
                     {
-                        // TODO throw new BusinessLayerException(string.Format("Invalid Permission Code {0}", code));
+                        throw new ArgumentException(string.Format("Invalid Permission Code {0}", permissionId));
                     }
+
                     role.AddPermission(permToAdd);
                 }
 
                 // Permissions to remove
                 List<RolePermission> permissionsToRemove = role.RolePermissions.Where(x => x.Permission != null && !permissionIds.Contains(x.Permission.Id)).ToList();
+
                 foreach (RolePermission perm in permissionsToRemove)
                 {
                     role.RemovePermission(perm.Permission);
@@ -263,16 +268,17 @@ namespace HETSAPI.Services.Impl
                 _context.SaveChanges();
                 txn.Commit();
 
-                var dbPermissions = role.RolePermissions.Select(x => x.Permission);
+                IEnumerable<Permission> dbPermissions = role.RolePermissions.Select(x => x.Permission);
 
-                // Create DTO with serializable response
-                var result = dbPermissions.Select(x => x.ToViewModel()).ToList();
-                return new ObjectResult(result);
+                // create DTO with serializable response
+                List<PermissionViewModel> result = dbPermissions.Select(x => x.ToViewModel()).ToList();
+
+                return new ObjectResult(new HetsResponse(result));
             }
         }
 
         /// <summary>
-        /// 
+        /// Add permissions to a role
         /// </summary>
         /// <remarks>Adds permissions to a role</remarks>
         /// <param name="id">id of Role to update</param>
@@ -281,11 +287,9 @@ namespace HETSAPI.Services.Impl
         /// <response code="404">Role not found</response>
         public virtual IActionResult RolesIdPermissionsPostAsync(int id, Permission[] items)
         {
-
-            using (var txn = _context.BeginTransaction())
+            using (IDbContextTransaction txn = _context.BeginTransaction())
             {
-                // Eager loading of related data
-                var role = _context.Roles
+                Role role = _context.Roles
                     .Where(x => x.Id == id)
                     .Include(x => x.RolePermissions)
                     .ThenInclude(rolePerm => rolePerm.Permission)
@@ -293,23 +297,25 @@ namespace HETSAPI.Services.Impl
 
                 if (role == null)
                 {
-                    // Not Found
-                    return new StatusCodeResult(404);
+                    // record not found
+                    return new ObjectResult(new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-01", _configuration)));
                 }
 
                 var allPermissions = _context.Permissions.ToList();
                 var permissionIds = items.Select(x => x.Id).ToList();
                 var existingPermissionIds = role.RolePermissions.Select(x => x.Permission.Id).ToList();
-                var permissionIdsToAdd = permissionIds.Where(x => !existingPermissionIds.Contains((int)x)).ToList();
+                var permissionIdsToAdd = permissionIds.Where(x => !existingPermissionIds.Contains(x)).ToList();
 
                 // Permissions to add
-                foreach (var permissionId in permissionIdsToAdd)
+                foreach (int permissionId in permissionIdsToAdd)
                 {
-                    var permToAdd = allPermissions.FirstOrDefault(x => x.Id == permissionId);
+                    Permission permToAdd = allPermissions.FirstOrDefault(x => x.Id == permissionId);
+
                     if (permToAdd == null)
                     {
-                        // TODO throw new BusinessLayerException(string.Format("Invalid Permission Code {0}", code));
+                        throw new ArgumentException(string.Format("Invalid Permission Code {0}", permissionId));
                     }
+
                     role.AddPermission(permToAdd);
                 }
 
@@ -317,16 +323,17 @@ namespace HETSAPI.Services.Impl
                 _context.SaveChanges();
                 txn.Commit();
 
-                var dbPermissions = role.RolePermissions.Select(x => x.Permission);
+                IEnumerable<Permission> dbPermissions = role.RolePermissions.Select(x => x.Permission);
 
                 // Create DTO with serializable response
-                var result = dbPermissions.Select(x => x.ToViewModel()).ToList();
-                return new ObjectResult(result);
+                List<PermissionViewModel> result = dbPermissions.Select(x => x.ToViewModel()).ToList();
+
+                return new ObjectResult(new HetsResponse(result));
             }            
         }
 
         /// <summary>
-        /// 
+        /// Add permission to a role
         /// </summary>
         /// <remarks>Adds permissions to a role</remarks>
         /// <param name="id">id of Role to update</param>
@@ -335,10 +342,9 @@ namespace HETSAPI.Services.Impl
         /// <response code="404">Role not found</response>
         public virtual IActionResult RolesIdPermissionsPostAsync(int id, PermissionViewModel item)
         {
-            using (var txn = _context.BeginTransaction())
+            using (IDbContextTransaction txn = _context.BeginTransaction())
             {
-                // Eager loading of related data
-                var role = _context.Roles
+                Role role = _context.Roles
                     .Where(x => x.Id == id)
                     .Include(x => x.RolePermissions)
                     .ThenInclude(rolePerm => rolePerm.Permission)
@@ -346,19 +352,22 @@ namespace HETSAPI.Services.Impl
 
                 if (role == null)
                 {
-                    // Not Found
-                    return new StatusCodeResult(404);
+                    // record not found
+                    return new ObjectResult(new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-01", _configuration)));
                 }
 
-                var allPermissions = _context.Permissions.ToList();
-                var existingPermissionCodes = role.RolePermissions.Select(x => x.Permission.Code).ToList();
+                List<Permission> allPermissions = _context.Permissions.ToList();
+                List<string> existingPermissionCodes = role.RolePermissions.Select(x => x.Permission.Code).ToList();
+
                 if (!existingPermissionCodes.Contains(item.Code))
                 {
-                    var permToAdd = allPermissions.FirstOrDefault(x => x.Code == item.Code);
+                    Permission permToAdd = allPermissions.FirstOrDefault(x => x.Code == item.Code);
+
                     if (permToAdd == null)
                     {
-                        // TODO throw new BusinessLayerException(string.Format("Invalid Permission Code {0}", code));
+                        throw new ArgumentException(string.Format("Invalid Permission Code {0}", item.Code));
                     }
+
                     role.AddPermission(permToAdd);
                 }
 
@@ -369,13 +378,14 @@ namespace HETSAPI.Services.Impl
                 List<RolePermission> dbPermissions = _context.RolePermissions.ToList();
 
                 // Create DTO with serializable response
-                var result = dbPermissions.Select(x => x.ToViewModel()).ToList();
-                return new ObjectResult(result);
+                List<RolePermissionViewModel> result = dbPermissions.Select(x => x.ToViewModel()).ToList();
+
+                return new ObjectResult(new HetsResponse(result));
             }
         }
 
         /// <summary>
-        /// 
+        /// Update role
         /// </summary>
         /// <param name="id">id of Role to update</param>
         /// <param name="item"></param>
@@ -383,24 +393,26 @@ namespace HETSAPI.Services.Impl
         /// <response code="404">Role not found</response>
         public virtual IActionResult RolesIdPutAsync(int id, RoleViewModel item)
         {
-            var role = _context.Roles.FirstOrDefault(x => x.Id == id);
+            Role role = _context.Roles.FirstOrDefault(x => x.Id == id);
+
             if (role == null)
             {
-                // Not Found
-                return new StatusCodeResult(404);
+                // record not found
+                return new ObjectResult(new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-01", _configuration)));
             }
 
             role.Name = item.Name;
             role.Description = item.Description;
             _context.Roles.Update(role);
 
-            // Save changes
+            // save changes
             _context.SaveChanges();
-            return new ObjectResult(role.ToViewModel());
+
+            return new ObjectResult(new HetsResponse(role.ToViewModel()));
         }
 
         /// <summary>
-        /// 
+        /// Get users associated with a role
         /// </summary>
         /// <remarks>Gets all the users for a role</remarks>
         /// <param name="id">id of Role to fetch</param>
@@ -438,11 +450,11 @@ namespace HETSAPI.Services.Impl
                 }
             }
 
-            return new ObjectResult(result);
+            return new ObjectResult(new HetsResponse(result));
         }
 
         /// <summary>
-        /// 
+        /// Update users associated with a role
         /// </summary>
         /// <remarks>Updates the users for a role</remarks>
         /// <param name="id">id of Role to update</param>
@@ -451,15 +463,15 @@ namespace HETSAPI.Services.Impl
         /// <response code="404">Role not found</response>
         public virtual IActionResult RolesIdUsersPutAsync(int id, UserRoleViewModel[] items)
         {
-            bool role_exists = _context.Roles.Any(x => x.Id == id);
-            bool data_changed = false;
-            if (role_exists)
+            bool roleExists = _context.Roles.Any(x => x.Id == id);
+            bool dataChanged = false;
+
+            if (roleExists)
             {
                 Role role = _context.Roles.First(x => x.Id == id);
 
                 // scan through users
-
-                var users = _context.Users
+                IIncludableQueryable<User, Role> users = _context.Users
                         .Include(x => x.UserRoles)
                         .ThenInclude(y => y.Role);
 
@@ -467,6 +479,7 @@ namespace HETSAPI.Services.Impl
                 {
                     // first see if it is one of our matches.                    
                     UserRoleViewModel foundItem = null;
+
                     foreach (var item in items)
                     {
                         if (item.UserId == user.Id)
@@ -476,7 +489,7 @@ namespace HETSAPI.Services.Impl
                         }
                     }
 
-                    if (foundItem == null) // delete the user role if it exists.
+                    if (foundItem == null) // delete the user role if it exists
                     {
                         foreach (UserRole userRole in user.UserRoles)
                         {
@@ -484,13 +497,14 @@ namespace HETSAPI.Services.Impl
                             {
                                 user.UserRoles.Remove(userRole);
                                 _context.Users.Update(user);
-                                data_changed = true;
+                                dataChanged = true;
                             }
                         }
                     }
-                    else // add the user role if it does not exist.
+                    else // add the user role if it does not exist
                     {
                         bool found = false;
+
                         foreach (UserRole userRole in user.UserRoles)
                         {
                             if (userRole.Role.Id == id)
@@ -498,46 +512,51 @@ namespace HETSAPI.Services.Impl
                                 found = true;
                             }
                         }
-                        if (found == false)
+
+                        if (!found)
                         {
-                            UserRole newUserRole = new UserRole();
-                            newUserRole.EffectiveDate = DateTime.Now;
-                            newUserRole.Role = role;
+                            UserRole newUserRole = new UserRole
+                            {
+                                EffectiveDate = DateTime.Now,
+                                Role = role
+                            };
+
                             user.UserRoles.Add(newUserRole);
                             _context.Users.Update(user);
-                            data_changed = true;
+                            dataChanged = true;
                         }
                     }
                 }
-                if (data_changed)
+                if (dataChanged)
                 {
                     _context.SaveChanges();
                 }
 
                 return new StatusCodeResult(200);
             }
-            else
-            {
-                return new StatusCodeResult(404);
-            }
 
+            // record not found
+            return new ObjectResult(new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-01", _configuration)));
         }
 
         /// <summary>
-        /// 
+        /// Create role
         /// </summary>
         /// <param name="item"></param>
         /// <response code="201">Role created</response>
         public virtual IActionResult RolesPostAsync(RoleViewModel item)
         {
-            var role = new Role();
-            role.Description = item.Description;
-            role.Name = item.Name;
+            Role role = new Role
+            {
+                Description = item.Description,
+                Name = item.Name
+            };
 
-            // Save changes
+            // save changes
             _context.Roles.Add(role);
             _context.SaveChanges();
-            return new ObjectResult(role.ToViewModel());
+
+            return new ObjectResult(new HetsResponse(role.ToViewModel()));
         }
     }
 }

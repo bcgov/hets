@@ -1,46 +1,31 @@
-/*
- * REST API Documentation for the MOTI Hired Equipment Tracking System (HETS) Application
- *
- * The Hired Equipment Program is for owners/operators who have a dump truck, bulldozer, backhoe or  other piece of equipment they want to hire out to the transportation ministry for day labour and  emergency projects.  The Hired Equipment Program distributes available work to local equipment owners. The program is  based on seniority and is designed to deliver work to registered users fairly and efficiently  through the development of local area call-out lists. 
- *
- * OpenAPI spec version: v1
- * 
- * 
- */
-
-using System;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using System.ComponentModel;
-using System.IO;
 using System.Linq;
-using System.Net;
-using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
-using Newtonsoft.Json;
 using HETSAPI.Models;
 using HETSAPI.ViewModels;
+using Microsoft.Extensions.Configuration;
 
 namespace HETSAPI.Services.Impl
 {
     /// <summary>
-    /// 
+    /// Local Area Rotation List Service
     /// </summary>
     public class LocalAreaRotationListService : ILocalAreaRotationListService
     {
         private readonly DbAppContext _context;
+        private readonly IConfiguration _configuration;
 
         /// <summary>
-        /// Create a service and set the database context
+        /// Local Area Rotation List Service Constructor
         /// </summary>
-        public LocalAreaRotationListService(DbAppContext context)
+        public LocalAreaRotationListService(DbAppContext context, IConfiguration configuration)
         {
             _context = context;
+            _configuration = configuration;
         }
 
         /// <summary>
-        /// 
+        /// Create bulk area rottion list records
         /// </summary>
         /// <param name="items"></param>
         /// <response code="201">DumpTruck created</response>
@@ -50,10 +35,12 @@ namespace HETSAPI.Services.Impl
             {
                 return new BadRequestResult();
             }
+
             foreach (LocalAreaRotationList item in items)
             {
                 // determine if this is an insert or an update            
                 bool exists = _context.LocalAreaRotationLists.Any(a => a.Id == item.Id);
+
                 if (exists)
                 {
                     _context.Update(item);
@@ -63,71 +50,75 @@ namespace HETSAPI.Services.Impl
                     _context.Add(item);
                 }
             }
+
             // Save the changes
             _context.SaveChanges();
+
             return new NoContentResult();
         }
 
         /// <summary>
-        /// 
+        /// Get all local area rotation lists
         /// </summary>
         /// <response code="200">OK</response>
         public virtual IActionResult LocalarearotationlistsGetAsync()
         {
-            var result = _context.LocalAreaRotationLists.ToList();
-            return new ObjectResult(result);
+            List<LocalAreaRotationList> result = _context.LocalAreaRotationLists.ToList();
+            return new ObjectResult(new HetsResponse(result));
         }
 
         /// <summary>
-        /// 
+        /// Delete local area rotation list
         /// </summary>
         /// <param name="id">id of DumpTruck to delete</param>
         /// <response code="200">OK</response>
         /// <response code="404">DumpTruck not found</response>
         public virtual IActionResult LocalarearotationlistsIdDeletePostAsync(int id)
         {
-            var exists = _context.LocalAreaRotationLists.Any(a => a.Id == id);
+            bool exists = _context.LocalAreaRotationLists.Any(a => a.Id == id);
+
             if (exists)
             {
-                var item = _context.LocalAreaRotationLists.First(a => a.Id == id);
+                LocalAreaRotationList item = _context.LocalAreaRotationLists.First(a => a.Id == id);
+
                 if (item != null)
                 {
                     _context.LocalAreaRotationLists.Remove(item);
+
                     // Save the changes
                     _context.SaveChanges();
                 }
-                return new ObjectResult(item);
+
+                return new ObjectResult(new HetsResponse(item));
             }
-            else
-            {
-                // record not found
-                return new StatusCodeResult(404);
-            }
+
+            // record not found
+            return new ObjectResult(new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-01", _configuration)));
         }
 
         /// <summary>
-        /// 
+        /// Get local area rotation list by id
         /// </summary>
         /// <param name="id">id of DumpTruck to fetch</param>
         /// <response code="200">OK</response>
         /// <response code="404">DumpTruck not found</response>
         public virtual IActionResult LocalarearotationlistsIdGetAsync(int id)
         {
-            var exists = _context.LocalAreaRotationLists.Any(a => a.Id == id);
+            bool exists = _context.LocalAreaRotationLists.Any(a => a.Id == id);
+
             if (exists)
             {
-                var result = _context.LocalAreaRotationLists.First(a => a.Id == id);
-                return new ObjectResult(result);
+                LocalAreaRotationList result = _context.LocalAreaRotationLists.First(a => a.Id == id);
+
+                return new ObjectResult(new HetsResponse(result));
             }
-            else
-            {
-                // record not found
-                return new StatusCodeResult(404);
-            }
+
+            // record not found
+            return new ObjectResult(new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-01", _configuration)));
         }
 
         /// <summary>
-        /// 
+        /// Update local area rotation list
         /// </summary>
         /// <param name="id">id of DumpTruck to fetch</param>
         /// <param name="item"></param>
@@ -135,29 +126,31 @@ namespace HETSAPI.Services.Impl
         /// <response code="404">DumpTruck not found</response>
         public virtual IActionResult LocalarearotationlistsIdPutAsync(int id, LocalAreaRotationList item)
         {
-            var exists = _context.LocalAreaRotationLists.Any(a => a.Id == id);
+            bool exists = _context.LocalAreaRotationLists.Any(a => a.Id == id);
+
             if (exists && id == item.Id)
             {
                 _context.LocalAreaRotationLists.Update(item);
+
                 // Save the changes
                 _context.SaveChanges();
-                return new ObjectResult(item);
+
+                return new ObjectResult(new HetsResponse(item));
             }
-            else
-            {
-                // record not found
-                return new StatusCodeResult(404);
-            }
+
+            // record not found
+            return new ObjectResult(new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-01", _configuration)));
         }
 
         /// <summary>
-        /// 
+        /// Create local area rotation list
         /// </summary>
         /// <param name="item"></param>
         /// <response code="201">DumpTruck created</response>
         public virtual IActionResult LocalarearotationlistsPostAsync(LocalAreaRotationList item)
         {
-            var exists = _context.LocalAreaRotationLists.Any(a => a.Id == item.Id);
+            bool exists = _context.LocalAreaRotationLists.Any(a => a.Id == item.Id);
+
             if (exists)
             {
                 _context.LocalAreaRotationLists.Update(item);
@@ -169,7 +162,8 @@ namespace HETSAPI.Services.Impl
             }
             // Save the changes
             _context.SaveChanges();
-            return new ObjectResult(item);
+
+            return new ObjectResult(new HetsResponse(item));
         }
     }
 }

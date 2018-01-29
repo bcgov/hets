@@ -24,11 +24,10 @@ namespace HETSAPI.Test
 {
     /// <summary>
     ///  Class for testing the model Equipment
-    /// </summary>
-    
+    /// </summary>    
     public class EquipmentModelTests
     {
-        private Equipment instance;
+        private readonly Equipment instance;
 
         /// <summary>
         /// Setup the test.
@@ -78,7 +77,7 @@ namespace HETSAPI.Test
             instance.DumpTruck = new DumpTruck();
             instance.CalculateSeniority();
 
-            Assert.Equal(instance.Seniority, 1322.33337F);
+            Assert.Equal(1322.33337F, instance.Seniority);
         }
 
         /// <summary>
@@ -92,43 +91,43 @@ namespace HETSAPI.Test
             Equipment changed = new Equipment();
 
             // both records have empty values
-            Assert.Equal(original.IsSeniorityAuditRequired(changed), false);
-            Assert.Equal(changed.IsSeniorityAuditRequired(original), false);
+            Assert.False(original.IsSeniorityAuditRequired(changed));
+            Assert.False(changed.IsSeniorityAuditRequired(original));
+
             // test nulls 
             changed.Seniority = 1.0f;
-            Assert.Equal(original.IsSeniorityAuditRequired(changed), true);
-            Assert.Equal(changed.IsSeniorityAuditRequired(original), true);
+            Assert.True(original.IsSeniorityAuditRequired(changed));
+            Assert.True(changed.IsSeniorityAuditRequired(original));
 
             changed = new Equipment();
             changed.LocalArea = new LocalArea();
-            Assert.Equal(original.IsSeniorityAuditRequired(changed), true);
-            Assert.Equal(changed.IsSeniorityAuditRequired(original), true);
-
+            Assert.True(original.IsSeniorityAuditRequired(changed));
+            Assert.True(changed.IsSeniorityAuditRequired(original));
 
             changed = new Equipment();
             changed.BlockNumber = 1;
-            Assert.Equal(original.IsSeniorityAuditRequired(changed), true);
-            Assert.Equal(changed.IsSeniorityAuditRequired(original), true);
+            Assert.True(original.IsSeniorityAuditRequired(changed));
+            Assert.True(changed.IsSeniorityAuditRequired(original));
 
             changed = new Equipment();
             changed.Owner = new Owner();
-            Assert.Equal(original.IsSeniorityAuditRequired(changed), true);
-            Assert.Equal(changed.IsSeniorityAuditRequired(original), true);
+            Assert.True(original.IsSeniorityAuditRequired(changed));
+            Assert.True(changed.IsSeniorityAuditRequired(original));
 
             changed = new Equipment();
             changed.ServiceHoursLastYear = 1.0f;
-            Assert.Equal(original.IsSeniorityAuditRequired(changed), true);
-            Assert.Equal(changed.IsSeniorityAuditRequired(original), true);
+            Assert.True(original.IsSeniorityAuditRequired(changed));
+            Assert.True(changed.IsSeniorityAuditRequired(original));
 
             changed = new Equipment();
             changed.ServiceHoursTwoYearsAgo = 1.0f;
-            Assert.Equal(original.IsSeniorityAuditRequired(changed), true);
-            Assert.Equal(changed.IsSeniorityAuditRequired(original), true);
+            Assert.True(original.IsSeniorityAuditRequired(changed));
+            Assert.True(changed.IsSeniorityAuditRequired(original));
 
             changed = new Equipment();
             changed.ServiceHoursThreeYearsAgo = 1.0f;
-            Assert.Equal(original.IsSeniorityAuditRequired(changed), true);
-            Assert.Equal(changed.IsSeniorityAuditRequired(original), true);
+            Assert.True(original.IsSeniorityAuditRequired(changed));
+            Assert.True(changed.IsSeniorityAuditRequired(original));
 
             // test different values
             changed = new Equipment();
@@ -136,117 +135,142 @@ namespace HETSAPI.Test
 
             changed.Seniority = 1.0f;
             original.Seniority = 2.0f;
-            Assert.Equal(original.IsSeniorityAuditRequired(changed), true);
-            Assert.Equal(changed.IsSeniorityAuditRequired(original), true);
+            Assert.True(original.IsSeniorityAuditRequired(changed));
+            Assert.True(changed.IsSeniorityAuditRequired(original));
 
             changed = new Equipment();
             changed.LocalArea = new LocalArea();
             changed.LocalArea.Name = "Area 1";
-            original = new Equipment();
-            original.LocalArea = new LocalArea();
+
+            original = new Equipment
+            {
+                LocalArea = new LocalArea()
+            };
+
             original.LocalArea.Name = "Area 2";
 
-            Assert.Equal(original.IsSeniorityAuditRequired(changed), true);
-            Assert.Equal(changed.IsSeniorityAuditRequired(original), true);
+            Assert.True(original.IsSeniorityAuditRequired(changed));
+            Assert.True(changed.IsSeniorityAuditRequired(original));
 
             changed = new Equipment();
             original = new Equipment();
             changed.BlockNumber = 1;
             original.BlockNumber = 2;
-            Assert.Equal(original.IsSeniorityAuditRequired(changed), true);
-            Assert.Equal(changed.IsSeniorityAuditRequired(original), true);
+            Assert.True(original.IsSeniorityAuditRequired(changed));
+            Assert.True(changed.IsSeniorityAuditRequired(original));
 
             changed = new Equipment();
             original = new Equipment();
-            changed.Owner = new Owner();
-            changed.Owner.OrganizationName = "Org 1";
-            original.Owner = new Owner();
-            original.Owner.OrganizationName = "Org 2";
 
-            Assert.Equal(original.IsSeniorityAuditRequired(changed), true);
-            Assert.Equal(changed.IsSeniorityAuditRequired(original), true);
+            changed.Owner = new Owner
+            {
+                OrganizationName = "Org 1"
+            };
+
+            original.Owner = new Owner
+            {
+                OrganizationName = "Org 2"
+            };
+
+            Assert.True(original.IsSeniorityAuditRequired(changed));
+            Assert.True(changed.IsSeniorityAuditRequired(original));
 
             changed = new Equipment();
-            original = new Equipment();
-            original.ServiceHoursLastYear = 2.0f;
+            original = new Equipment
+            {
+                ServiceHoursLastYear = 2.0f
+            };
+
             changed.ServiceHoursLastYear = 1.0f;
-            Assert.Equal(original.IsSeniorityAuditRequired(changed), true);
-            Assert.Equal(changed.IsSeniorityAuditRequired(original), true);
+            Assert.True(original.IsSeniorityAuditRequired(changed));
+            Assert.True(changed.IsSeniorityAuditRequired(original));
 
             changed = new Equipment();
-            original = new Equipment();
-            original.ServiceHoursTwoYearsAgo = 2.0f;
+            original = new Equipment
+            {
+                ServiceHoursTwoYearsAgo = 2.0f
+            };
             changed.ServiceHoursTwoYearsAgo = 1.0f;
-            Assert.Equal(original.IsSeniorityAuditRequired(changed), true);
-            Assert.Equal(changed.IsSeniorityAuditRequired(original), true);
+            Assert.True(original.IsSeniorityAuditRequired(changed));
+            Assert.True(changed.IsSeniorityAuditRequired(original));
 
             changed = new Equipment();
-            original = new Equipment();
-            original.ServiceHoursThreeYearsAgo = 2.0f;
+            original = new Equipment
+            {
+                ServiceHoursThreeYearsAgo = 2.0f
+            };
             changed.ServiceHoursThreeYearsAgo = 1.0f;
-            Assert.Equal(original.IsSeniorityAuditRequired(changed), true);
-            Assert.Equal(changed.IsSeniorityAuditRequired(original), true);
+            Assert.True(original.IsSeniorityAuditRequired(changed));
+            Assert.True(changed.IsSeniorityAuditRequired(original));
 
-            // now test cases where no change should be required.
-
+            // now test cases where no change should be required
             changed = new Equipment();
             original = new Equipment();
 
             changed.Seniority = 2.0f;
             original.Seniority = 2.0f;
-            Assert.Equal(original.IsSeniorityAuditRequired(changed), false);
-            Assert.Equal(changed.IsSeniorityAuditRequired(original), false);
+            Assert.False(original.IsSeniorityAuditRequired(changed));
+            Assert.False(changed.IsSeniorityAuditRequired(original));
 
-            changed = new Equipment();
-            changed.LocalArea = new LocalArea();
+            changed = new Equipment
+            {
+                LocalArea = new LocalArea()
+            };
             changed.LocalArea.Name = "Area 1";
-            original = new Equipment();
-            original.LocalArea = new LocalArea();
+            original = new Equipment
+            {
+                LocalArea = new LocalArea()
+            };
             original.LocalArea.Name = "Area 1";
 
-            Assert.Equal(original.IsSeniorityAuditRequired(changed), false);
-            Assert.Equal(changed.IsSeniorityAuditRequired(original), false);
+            Assert.False(original.IsSeniorityAuditRequired(changed));
+            Assert.False(changed.IsSeniorityAuditRequired(original));
 
             changed = new Equipment();
             original = new Equipment();
             changed.BlockNumber = 1;
             original.BlockNumber = 1;
-            Assert.Equal(original.IsSeniorityAuditRequired(changed), false);
-            Assert.Equal(changed.IsSeniorityAuditRequired(original), false);
+            Assert.False(original.IsSeniorityAuditRequired(changed));
+            Assert.False(changed.IsSeniorityAuditRequired(original));
 
             changed = new Equipment();
             original = new Equipment();
-            changed.Owner = new Owner();
-            changed.Owner.OrganizationName = "Org 1";
-            original.Owner = new Owner();
-            original.Owner.OrganizationName = "Org 1";
+            changed.Owner = new Owner
+            {
+                OrganizationName = "Org 1"
+            };
+            original.Owner = new Owner
+            {
+                OrganizationName = "Org 1"
+            };
 
-            Assert.Equal(original.IsSeniorityAuditRequired(changed), false);
-            Assert.Equal(changed.IsSeniorityAuditRequired(original), false);
+            Assert.False(original.IsSeniorityAuditRequired(changed));
+            Assert.False(changed.IsSeniorityAuditRequired(original));
 
             changed = new Equipment();
-            original = new Equipment();
-            original.ServiceHoursLastYear = 1.0f;
+            original = new Equipment
+            {
+                ServiceHoursLastYear = 1.0f
+            };
             changed.ServiceHoursLastYear = 1.0f;
-            Assert.Equal(original.IsSeniorityAuditRequired(changed), false);
-            Assert.Equal(changed.IsSeniorityAuditRequired(original), false);
+            Assert.False(original.IsSeniorityAuditRequired(changed));
+            Assert.False(changed.IsSeniorityAuditRequired(original));
 
             changed = new Equipment();
             original = new Equipment();
             original.ServiceHoursTwoYearsAgo = 1.0f;
             changed.ServiceHoursTwoYearsAgo = 1.0f;
-            Assert.Equal(original.IsSeniorityAuditRequired(changed), false);
-            Assert.Equal(changed.IsSeniorityAuditRequired(original), false);
+            Assert.False(original.IsSeniorityAuditRequired(changed));
+            Assert.False(changed.IsSeniorityAuditRequired(original));
 
             changed = new Equipment();
             original = new Equipment();
             original.ServiceHoursThreeYearsAgo = 1.0f;
             changed.ServiceHoursThreeYearsAgo = 1.0f;
-            Assert.Equal(original.IsSeniorityAuditRequired(changed), false);
-            Assert.Equal(changed.IsSeniorityAuditRequired(original), false);
+            Assert.False(original.IsSeniorityAuditRequired(changed));
+            Assert.False(changed.IsSeniorityAuditRequired(original));
 
             // test multiple fields
-
             changed = new Equipment();
             original = new Equipment();
 
@@ -270,8 +294,8 @@ namespace HETSAPI.Test
             changed.ServiceHoursTwoYearsAgo = 1.0f;
             changed.ServiceHoursThreeYearsAgo = 1.0f;
 
-            Assert.Equal(original.IsSeniorityAuditRequired(changed), false);
-            Assert.Equal(changed.IsSeniorityAuditRequired(original), false);
+            Assert.False(original.IsSeniorityAuditRequired(changed));
+            Assert.False(changed.IsSeniorityAuditRequired(original));
 
             changed = new Equipment();
             original = new Equipment();
@@ -296,11 +320,9 @@ namespace HETSAPI.Test
             changed.ServiceHoursTwoYearsAgo = 2.0f;
             changed.ServiceHoursThreeYearsAgo = 2.0f;
 
-            Assert.Equal(original.IsSeniorityAuditRequired(changed), true);
-            Assert.Equal(changed.IsSeniorityAuditRequired(original), true);
-
+            Assert.True(original.IsSeniorityAuditRequired(changed));
+            Assert.True(changed.IsSeniorityAuditRequired(original));
         }
-
     }	
 }
 

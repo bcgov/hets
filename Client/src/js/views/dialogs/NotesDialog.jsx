@@ -7,7 +7,6 @@ import { Form, Row, Col, FormGroup, ControlLabel, HelpBlock } from 'react-bootst
 import _ from 'lodash';
 // import Promise from 'bluebird';
 
-import * as Api from '../../api';
 // import * as Constant from '../../constants';
 
 import EditDialog from '../../components/EditDialog.jsx';
@@ -19,7 +18,7 @@ var NotesDialog = React.createClass({
     onSave: React.PropTypes.func.isRequired,
     onClose: React.PropTypes.func.isRequired,
     show: React.PropTypes.bool,
-    owner: React.PropTypes.obj,
+    notes: React.PropTypes.object,
   },
 
   getInitialState() {
@@ -28,13 +27,6 @@ var NotesDialog = React.createClass({
       note: '',
       noteError: '',
     };
-  },
-
-  componentDidMount() {
-    this.setState({ loading: true });
-    Api.getNotes().then(() => {
-      this.setState({ loading: false });
-    });
   },
 
   updateState(state, callback) {
@@ -64,13 +56,12 @@ var NotesDialog = React.createClass({
 
   onSave() {
     this.props.onSave({
-      note: this.state.note,
+      id: 0,
+      text: this.state.note,
     });
   },
 
   render() {
-    var owner = this.props.owner;
-
     if (this.state.loading) { return <div style={{ textAlign: 'center' }}><Spinner/></div>; }
 
     return <EditDialog id="notes" show={ this.props.show }
@@ -79,9 +70,9 @@ var NotesDialog = React.createClass({
         <strong>Notes</strong>
       }>
       { 
-        _.map(owner.notes, (note) => {
+        _.map(this.props.notes, (note) => {
           return (
-            <Row>
+            <Row key={note.id}>
               <Col md={12}>{note.text}</Col>
             </Row>
           );
@@ -104,7 +95,7 @@ var NotesDialog = React.createClass({
 
 function mapStateToProps(state) {
   return {
-    owner: state.models.owner,
+    notes: state.models.notes,
   };
 }
 

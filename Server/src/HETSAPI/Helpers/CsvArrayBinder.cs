@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
 using System.Runtime.ExceptionServices;
@@ -8,6 +7,9 @@ using Microsoft.AspNetCore.Mvc.ModelBinding;
 
 namespace HETSAPI.Helpers
 {
+    /// <summary>
+    /// Comma-Separated Value Binding Helper
+    /// </summary>
     public class CsvArrayBinder : IModelBinder
     {
         /// <summary>
@@ -17,13 +19,13 @@ namespace HETSAPI.Helpers
         /// <returns></returns>
         public Task BindModelAsync(ModelBindingContext bindingContext)
         {
-            // TODO: Fully document this section
             if (!bindingContext.ModelMetadata.IsEnumerableType)
             {
                 return Task.FromResult(0);
             }
 
-            var csvString = bindingContext.ValueProvider.GetValue(bindingContext.ModelName);
+            ValueProviderResult csvString = bindingContext.ValueProvider.GetValue(bindingContext.ModelName);
+
             if (csvString.Equals(ValueProviderResult.None))
             {
                 return Task.FromResult(0);
@@ -31,13 +33,13 @@ namespace HETSAPI.Helpers
 
             try
             {
-                var elementType = bindingContext.ModelMetadata.ElementType;
-                var converter = TypeDescriptor.GetConverter(elementType);
+                Type elementType = bindingContext.ModelMetadata.ElementType;
+                TypeConverter converter = TypeDescriptor.GetConverter(elementType);
 
                 var defaultValues = csvString.FirstValue.Split(new[] { "," }, StringSplitOptions.RemoveEmptyEntries)
                                 .Select(x => converter.ConvertFromString(x)).ToArray();
 
-                var typedValues = Array.CreateInstance(elementType, defaultValues.Length);
+                Array typedValues = Array.CreateInstance(elementType, defaultValues.Length);
 
                 defaultValues.CopyTo(typedValues, 0);
                 bindingContext.ModelState.SetModelValue(bindingContext.ModelName, csvString);
@@ -45,11 +47,11 @@ namespace HETSAPI.Helpers
             }
             catch (Exception e)
             {
-                // TODO: Return 400 Bad Request response when query value is malformed
                 if (e is FormatException && e.InnerException != null)
                 {
                     e = ExceptionDispatchInfo.Capture(e.InnerException).SourceException;
                 }
+
                 bindingContext.ModelState.TryAddModelError(bindingContext.ModelName, e, bindingContext.ModelMetadata);
             }
 

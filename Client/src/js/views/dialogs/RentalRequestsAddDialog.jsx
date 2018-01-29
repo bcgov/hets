@@ -2,7 +2,7 @@ import React from 'react';
 
 import { connect } from 'react-redux';
 
-import { Form, FormGroup, HelpBlock, ControlLabel } from 'react-bootstrap';
+import { Form, FormGroup, HelpBlock, ControlLabel, Alert } from 'react-bootstrap';
 
 import _ from 'lodash';
 import Promise from 'bluebird';
@@ -17,19 +17,22 @@ import Spinner from '../../components/Spinner.jsx';
 
 var RentalRequestsAddDialog = React.createClass({
   propTypes: {
+    rentalRequest: React.PropTypes.object,
     currentUser: React.PropTypes.object,
     localAreas: React.PropTypes.object,
     districtEquipmentTypes: React.PropTypes.object,
     projects: React.PropTypes.object,
+    project: React.PropTypes.object,
     onSave: React.PropTypes.func.isRequired,
     onClose: React.PropTypes.func.isRequired,
     show: React.PropTypes.bool,
   },
 
   getInitialState() {
+    const { project } = this.props;
     return {
       loading: false,
-      projectId: 0,
+      projectId: project ? project.id : 0,
       localAreaId: 0,
       equipmentTypeId: 0,
       count: 1,
@@ -123,6 +126,8 @@ var RentalRequestsAddDialog = React.createClass({
 
     var projects = _.sortBy(this.props.projects, 'name');
 
+    const { project } = this.props;
+
     return <EditDialog id="add-rental-request" show={ this.props.show } bsSize="small"
       onClose={ this.props.onClose } onSave={ this.onSave } didChange={ this.didChange } isValid={ this.isValid }
       title= {
@@ -131,22 +136,26 @@ var RentalRequestsAddDialog = React.createClass({
       <Form>
         <FormGroup controlId="projectId" validationState={ this.state.projectError ? 'error' : null }>
           <ControlLabel>Project <sup>*</sup></ControlLabel>
-          <FilterDropdown id="projectId" selectedId={ this.state.projectId } onSelect={ this.onProjectSelected } updateState={ this.updateState }
-            items={ projects }
-          />
+          { project ?
+            <div>{ project.name }</div>
+            :
+            <FilterDropdown id="projectId" selectedId={ this.state.projectId } onSelect={ this.onProjectSelected } updateState={ this.updateState }
+              items={ projects } className="full-width"
+            />
+          }
           <HelpBlock>{ this.state.projectError }</HelpBlock>
         </FormGroup>
         <FormGroup controlId="localAreaId" validationState={ this.state.localAreaError ? 'error' : null }>
           <ControlLabel>Local Area <sup>*</sup></ControlLabel>
           <FilterDropdown id="localAreaId" selectedId={ this.state.localAreaId } updateState={ this.updateState }
-            items={ localAreas }
+            items={ localAreas } className="full-width"
           />
           <HelpBlock>{ this.state.localAreaError }</HelpBlock>
         </FormGroup>
         <FormGroup controlId="equipmentTypeId" validationState={ this.state.equipmentTypeError ? 'error' : null }>
           <ControlLabel>Equipment Type <sup>*</sup></ControlLabel>
           <FilterDropdown id="equipmentTypeId" fieldName="districtEquipmentName" selectedId={ this.state.equipmentTypeId } updateState={ this.updateState }
-            items={ districtEquipmentTypes }
+            items={ districtEquipmentTypes } className="full-width"
           />
           <HelpBlock>{ this.state.equipmentTypeError }</HelpBlock>
         </FormGroup>
@@ -155,6 +164,9 @@ var RentalRequestsAddDialog = React.createClass({
           <FormInputControl type="number" min="0" value={ this.state.count } updateState={ this.updateState } />
           <HelpBlock>{ this.state.countError }</HelpBlock>
         </FormGroup>
+        { this.props.rentalRequest.error &&
+          <Alert bsStyle="danger">{ this.props.rentalRequest.errorMessage }</Alert>
+        }
       </Form>
     </EditDialog>;
   },
@@ -162,9 +174,10 @@ var RentalRequestsAddDialog = React.createClass({
 
 function mapStateToProps(state) {
   return {
+    rentalRequest: state.models.rentalRequest,
     currentUser: state.user,
     localAreas: state.lookups.localAreas,
-    districtEquipmentTypes: state.lookups.districtEquipmentTypes,
+    districtEquipmentTypes: state.lookups.districtEquipmentTypes.data,
     projects: state.lookups.projects,
   };
 }

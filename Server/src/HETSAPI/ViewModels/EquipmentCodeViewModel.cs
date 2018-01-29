@@ -1,37 +1,20 @@
-/*
- * REST API Documentation for the MOTI Hired Equipment Tracking System (HETS) Application
- *
- * The Hired Equipment Program is for owners/operators who have a dump truck, bulldozer, backhoe or  other piece of equipment they want to hire out to the transportation ministry for day labour and  emergency projects.  The Hired Equipment Program distributes available work to local equipment owners. The program is  based on seniority and is designed to deliver work to registered users fairly and efficiently  through the development of local area call-out lists. 
- *
- * OpenAPI spec version: v1
- * 
- * 
- */
-
 using System;
-using System.Linq;
-using System.IO;
 using System.Text;
-using System.Collections;
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
 using System.Runtime.Serialization;
 using Newtonsoft.Json;
-using System.ComponentModel.DataAnnotations.Schema;
-using System.ComponentModel.DataAnnotations;
 using HETSAPI.Models;
 
 namespace HETSAPI.ViewModels
 {
     /// <summary>
-    /// Equipment Code is a combination of the Owner Equipment Prefix and the numeric identifier for the next piece of equipment.
+    /// Equipment Code View Model
     /// </summary>
-        [MetaDataExtension (Description = "Equipment Code is a combination of the Owner Equipment Prefix and the numeric identifier for the next piece of equipment.")]
+    [MetaData (Description = "Equipment Code is a combination of the Owner Equipment Prefix and the numeric identifier for the next piece of equipment.")]
     [DataContract]
-    public partial class EquipmentCodeViewModel : IEquatable<EquipmentCodeViewModel>
+    public sealed class EquipmentCodeViewModel : IEquatable<EquipmentCodeViewModel>
     {
         /// <summary>
-        /// Default constructor, required by entity framework
+        /// Equipment Code View Model Constructor
         /// </summary>
         public EquipmentCodeViewModel()
         {
@@ -40,9 +23,10 @@ namespace HETSAPI.ViewModels
         /// <summary>
         /// Initializes a new instance of the <see cref="EquipmentCodeViewModel" /> class.
         /// </summary>
-        /// <param name="EquipmentCode">The Equipment Code.</param>
-        public EquipmentCodeViewModel(string EquipmentCode = null)
-        {               this.EquipmentCode = EquipmentCode;
+        /// <param name="equipmentCode">The Equipment Code.</param>
+        public EquipmentCodeViewModel(string equipmentCode)
+        {
+            EquipmentCode = equipmentCode;
         }
 
         /// <summary>
@@ -50,7 +34,7 @@ namespace HETSAPI.ViewModels
         /// </summary>
         /// <value>The Equipment Code</value>
         [DataMember(Name="equipmentCode")]
-        [MetaDataExtension (Description = "The Equipment Code")]
+        [MetaData (Description = "The Equipment Code")]
         public string EquipmentCode { get; set; }
 
         /// <summary>
@@ -60,9 +44,11 @@ namespace HETSAPI.ViewModels
         public override string ToString()
         {
             var sb = new StringBuilder();
+
             sb.Append("class EquipmentCodeViewModel {\n");
             sb.Append("  EquipmentCode: ").Append(EquipmentCode).Append("\n");
             sb.Append("}\n");
+
             return sb.ToString();
         }
 
@@ -82,10 +68,9 @@ namespace HETSAPI.ViewModels
         /// <returns>Boolean</returns>
         public override bool Equals(object obj)
         {
-            if (ReferenceEquals(null, obj)) { return false; }
+            if (obj is null) { return false; }
             if (ReferenceEquals(this, obj)) { return true; }
-            if (obj.GetType() != GetType()) { return false; }
-            return Equals((EquipmentCodeViewModel)obj);
+            return obj.GetType() == GetType() && Equals((EquipmentCodeViewModel)obj);
         }
 
         /// <summary>
@@ -95,15 +80,14 @@ namespace HETSAPI.ViewModels
         /// <returns>Boolean</returns>
         public bool Equals(EquipmentCodeViewModel other)
         {
-
-            if (ReferenceEquals(null, other)) { return false; }
+            if (other is null) { return false; }
             if (ReferenceEquals(this, other)) { return true; }
 
             return                 
                 (
-                    this.EquipmentCode == other.EquipmentCode ||
-                    this.EquipmentCode != null &&
-                    this.EquipmentCode.Equals(other.EquipmentCode)
+                    EquipmentCode == other.EquipmentCode ||
+                    EquipmentCode != null &&
+                    EquipmentCode.Equals(other.EquipmentCode)
                 );
         }
 
@@ -117,10 +101,11 @@ namespace HETSAPI.ViewModels
             unchecked // Overflow is fine, just wrap
             {
                 int hash = 41;
+
                 // Suitable nullity checks
-                if (this.EquipmentCode != null)
+                if (EquipmentCode != null)
                 {
-                    hash = hash * 59 + this.EquipmentCode.GetHashCode();
+                    hash = hash * 59 + EquipmentCode.GetHashCode();
                 }                
                 
                 return hash;

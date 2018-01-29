@@ -1,23 +1,13 @@
 using System;
-using System.Collections.Generic;
 using System.Data.Common;
 using System.Linq;
-using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
-
-using Npgsql;
-using Npgsql.EntityFrameworkCore.PostgreSQL;
 using System.Reflection;
 using Microsoft.EntityFrameworkCore.Storage;
 using System.Text.RegularExpressions;
 using System.ComponentModel.DataAnnotations.Schema;
-using System.ComponentModel.DataAnnotations;
 using Microsoft.EntityFrameworkCore.Metadata;
-using Microsoft.EntityFrameworkCore.Metadata.Internal;
 
-/// <summary>
-/// 
-/// </summary>
 namespace HETSAPI.Models
 {
     /// <summary>
@@ -33,25 +23,29 @@ namespace HETSAPI.Models
         /// <param name="context"></param>
         public DbCommentsUpdater(TContext context)
         {
-            this.context = context;
+            _context = context;
         }
 
-        readonly TContext context;
-        IDbContextTransaction transaction;
+        private readonly TContext _context;
+        private IDbContextTransaction _transaction;
 
         /// <summary>
         /// Update the database descriptions
         /// </summary>
         public void UpdateDatabaseDescriptions()
         {
-            Type contextType;
-            contextType = typeof(TContext);
-            var props = contextType.GetProperties(System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.Public);
-            DbConnection con = context.Database.GetDbConnection();
+            Type contextType = typeof(TContext);
+
+            var props = contextType.GetProperties(BindingFlags.Instance | BindingFlags.Public);
+
+            DbConnection con = _context.Database.GetDbConnection();
+
             try
             {
                 con.Open();
-                transaction = context.Database.BeginTransaction();
+
+                _transaction = _context.Database.BeginTransaction();
+
                 foreach (var prop in props)
                 {
                     if (prop.PropertyType.InheritsOrImplements((typeof(DbSet<>))))
@@ -60,22 +54,20 @@ namespace HETSAPI.Models
                         SetTableDescriptions(tableType);
                     }
                 }
-                transaction.Commit();
+
+                _transaction.Commit();
             }
             catch
             {
-                if (transaction != null)
-                    transaction.Rollback();
+                _transaction?.Rollback();
                 throw;
             }
             finally
             {
-
                 if (con.State == System.Data.ConnectionState.Open)
                 {
                     con.Close();
                 }
-
             }
         }
 
@@ -85,49 +77,42 @@ namespace HETSAPI.Models
         /// <param name="tableType"></param>
         private void SetTableDescriptions(Type tableType)
         {
-            var entityType = context.Model.FindEntityType(tableType);
+            IEntityType entityType = _context.Model.FindEntityType(tableType);
 
             string fullTableName = entityType.Relational().TableName;
             Regex regex = new Regex(@"(\[\w+\]\.)?\[(?<table>.*)\]");
             Match match = regex.Match(fullTableName);
-            string tableName;
-            if (match.Success)
-                tableName = match.Groups["table"].Value;
-            else
-                tableName = fullTableName;
 
-            var tableAttrs = tableType.GetTypeInfo().GetCustomAttributes(typeof(TableAttribute), false);
-            var tableAttrsArray = tableAttrs.ToArray<Attribute>();
-            if (tableAttrsArray.Length > 0)
+            string tableName = match.Success ? match.Groups["table"].Value : fullTableName;
+
+            object[] tableAttrs = tableType.GetTypeInfo().GetCustomAttributes(typeof(TableAttribute), false);
+
+            if (tableAttrs.Length > 0)
             {
-                tableName = ((TableAttribute)tableAttrsArray[0]).Name;
+                tableName = ((TableAttribute)tableAttrs[0]).Name;
             }
 
             //  get the table description
-            var tableExtAttrs = tableType.GetTypeInfo().GetCustomAttributes(typeof(MetaDataExtension), false);
-            var tableExtAttrssArray = tableExtAttrs.ToArray<Attribute>();
-            if (tableExtAttrssArray.Length > 0)
+            object[] tableExtAttrs = tableType.GetTypeInfo().GetCustomAttributes(typeof(MetaDataAttribute), false);
+            if (tableExtAttrs.Length > 0)
             {
-                SetTableDescription(tableName, ((MetaDataExtension)tableExtAttrssArray[0]).Description);
+                SetTableDescription(tableName, ((MetaDataAttribute)tableExtAttrs[0]).Description);
 
             }
 
-            foreach (Property entityProperty in entityType.GetProperties().OfType<Property>())
+            foreach (IProperty entityProperty in entityType.GetProperties())
             {
                 // Not all properties have MemberInfo, so a null check is required.
-                if (entityProperty.MemberInfo != null)
+                if (entityProperty.PropertyInfo != null)
                 {
                     // get the custom attributes for this field.                
-                    var attrs = entityProperty.MemberInfo.GetCustomAttributes(typeof(MetaDataExtension), false);
-                    var attrsArray = attrs.ToArray<Attribute>();
-                    if (attrsArray.Length > 0)
+                    object[] attrs = entityProperty.PropertyInfo.GetCustomAttributes(typeof(MetaDataAttribute), false);
+                    if (attrs.Length > 0)
                     {
-                        SetColumnDescription(tableName, entityProperty.Relational().ColumnName, ((MetaDataExtension)attrsArray[0]).Description);
+                        SetColumnDescription(tableName, entityProperty.Relational().ColumnName, ((MetaDataAttribute)attrs[0]).Description);
                     }
                 }
-
             }
-
         }
 
         /// <summary>
@@ -140,27 +125,34 @@ namespace HETSAPI.Models
         {
             // Postgres has the COMMENT command to update a description.
             string query = "COMMENT ON COLUMN \"" + tableName + "\".\"" + columnName + "\" IS '" + description.Replace("'", "\'") + "'";
-            context.Database.ExecuteSqlCommand(query);
+
+            _context.Database.ExecuteSqlCommand(query);
         }
 
         /// <summary>
         /// Set a column comment
         /// </summary>
         /// <param name="tableName"></param>
-        /// <param name="columnName"></param>
         /// <param name="description"></param>
         private void SetTableDescription(string tableName, string description)
         {
             // Postgres has the COMMENT command to update a description.
             string query = "COMMENT ON TABLE \"" + tableName + "\" IS '" + description.Replace("'", "\'") + "'";
-            context.Database.ExecuteSqlCommand(query);
+            _context.Database.ExecuteSqlCommand(query);
         }
-
-
     }
+
+    /// <summary>
+    /// Reflection Utility
+    /// </summary>
     public static class ReflectionUtil
     {
-
+        /// <summary>
+        /// Check for Inherits or Implements
+        /// </summary>
+        /// <param name="child"></param>
+        /// <param name="parent"></param>
+        /// <returns></returns>
         public static bool InheritsOrImplements(this Type child, Type parent)
         {
             parent = ResolveGenericTypeDefinition(parent);
@@ -200,12 +192,11 @@ namespace HETSAPI.Models
 
         private static Type ResolveGenericTypeDefinition(Type parent)
         {
-            var shouldUseGenericType = true;
-            if (parent.GetTypeInfo().IsGenericType && parent.GetGenericTypeDefinition() != parent)
-                shouldUseGenericType = false;
+            bool shouldUseGenericType = !(parent.GetTypeInfo().IsGenericType && parent.GetGenericTypeDefinition() != parent);
 
             if (parent.GetTypeInfo().IsGenericType && shouldUseGenericType)
                 parent = parent.GetGenericTypeDefinition();
+
             return parent;
         }
     }

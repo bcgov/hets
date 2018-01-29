@@ -1,40 +1,22 @@
-/*
- * REST API Documentation for the MOTI Hired Equipment Tracking System (HETS) Application
- *
- * The Hired Equipment Program is for owners/operators who have a dump truck, bulldozer, backhoe or  other piece of equipment they want to hire out to the transportation ministry for day labour and  emergency projects.  The Hired Equipment Program distributes available work to local equipment owners. The program is  based on seniority and is designed to deliver work to registered users fairly and efficiently  through the development of local area call-out lists. 
- *
- * OpenAPI spec version: v1
- * 
- * 
- */
-
-using System;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using System.ComponentModel;
-using System.IO;
-using System.Linq;
-using System.Net;
-using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
-using Newtonsoft.Json;
 using Swashbuckle.SwaggerGen.Annotations;
 using HETSAPI.Models;
-using HETSAPI.ViewModels;
 using HETSAPI.Services;
 using HETSAPI.Authorization;
 
 namespace HETSAPI.Controllers
 {
     /// <summary>
-    /// 
+    /// Local Area Controller
     /// </summary>
-    public partial class LocalAreaController : Controller
+    [ResponseCache(Location = ResponseCacheLocation.None, NoStore = true)]
+    public class LocalAreaController : Controller
     {
         private readonly ILocalAreaService _service;
 
         /// <summary>
-        /// Create a controller and set the service
+        /// Local Area Controller Constructor
         /// </summary>
         public LocalAreaController(ILocalAreaService service)
         {
@@ -42,7 +24,7 @@ namespace HETSAPI.Controllers
         }
 
         /// <summary>
-        /// 
+        /// Create bulk local area records
         /// </summary>
         /// <param name="items"></param>
         /// <response code="201">LocalArea created</response>
@@ -52,11 +34,11 @@ namespace HETSAPI.Controllers
         [RequiresPermission(Permission.ADMIN)]
         public virtual IActionResult LocalAreasBulkPost([FromBody]LocalArea[] items)
         {
-            return this._service.LocalAreasBulkPostAsync(items);
+            return _service.LocalAreasBulkPostAsync(items);
         }
 
         /// <summary>
-        /// 
+        /// Get all local areas
         /// </summary>
         /// <response code="200">OK</response>
         [HttpGet]
@@ -65,11 +47,11 @@ namespace HETSAPI.Controllers
         [SwaggerResponse(200, type: typeof(List<LocalArea>))]
         public virtual IActionResult LocalAreasGet()
         {
-            return this._service.LocalAreasGetAsync();
+            return _service.LocalAreasGetAsync();
         }
 
         /// <summary>
-        /// 
+        /// Delete local area
         /// </summary>
         /// <param name="id">id of LocalArea to delete</param>
         /// <response code="200">OK</response>
@@ -79,11 +61,11 @@ namespace HETSAPI.Controllers
         [SwaggerOperation("LocalAreasIdDeletePost")]
         public virtual IActionResult LocalAreasIdDeletePost([FromRoute]int id)
         {
-            return this._service.LocalAreasIdDeletePostAsync(id);
+            return _service.LocalAreasIdDeletePostAsync(id);
         }
 
         /// <summary>
-        /// 
+        /// Get local area by id
         /// </summary>
         /// <param name="id">id of LocalArea to fetch</param>
         /// <response code="200">OK</response>
@@ -94,13 +76,13 @@ namespace HETSAPI.Controllers
         [SwaggerResponse(200, type: typeof(LocalArea))]
         public virtual IActionResult LocalAreasIdGet([FromRoute]int id)
         {
-            return this._service.LocalAreasIdGetAsync(id);
+            return _service.LocalAreasIdGetAsync(id);
         }
 
         /// <summary>
-        /// 
+        /// Update local area
         /// </summary>
-        /// <param name="id">id of LocalArea to fetch</param>
+        /// <param name="id">id of LocalArea to update</param>
         /// <param name="item"></param>
         /// <response code="200">OK</response>
         /// <response code="404">LocalArea not found</response>
@@ -110,11 +92,11 @@ namespace HETSAPI.Controllers
         [SwaggerResponse(200, type: typeof(LocalArea))]
         public virtual IActionResult LocalAreasIdPut([FromRoute]int id, [FromBody]LocalArea item)
         {
-            return this._service.LocalAreasIdPutAsync(id, item);
+            return _service.LocalAreasIdPutAsync(id, item);
         }
 
         /// <summary>
-        /// 
+        /// Create local area
         /// </summary>
         /// <param name="item"></param>
         /// <response code="201">LocalArea created</response>
@@ -124,7 +106,7 @@ namespace HETSAPI.Controllers
         [SwaggerResponse(200, type: typeof(LocalArea))]
         public virtual IActionResult LocalAreasPost([FromBody]LocalArea item)
         {
-            return this._service.LocalAreasPostAsync(item);
+            return _service.LocalAreasPostAsync(item);
         }
     }
 }

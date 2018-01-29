@@ -24,12 +24,10 @@ namespace HETSAPI.Test
 {
     /// <summary>
     ///  Class for testing the model DistrictEquipmentType
-    /// </summary>
-    
+    /// </summary>    
     public class EquipmentTypeModelTests
     {
-        // TODO uncomment below to declare an instance variable for DistrictEquipmentType
-        private DistrictEquipmentType instance;
+        private readonly DistrictEquipmentType instance;
 
         /// <summary>
         /// Setup the test.

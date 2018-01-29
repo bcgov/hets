@@ -1,0 +1,88 @@
+﻿@{
+    ViewBag.Title = "HETSAPI - Api Error";
+}
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"]</title>    
+    
+    <style>
+        body {
+            background-color: #fff;
+            padding: 10px;
+            font-family: Verdana, Geneva, sans-serif;
+            font-size: 12pt;
+        }
+
+        .error {
+            color: #e21212;
+        }
+
+        .error-label {
+            border-bottom: #e21212;
+            border-bottom-width: 2px;
+            border-bottom-style: solid;
+        }
+    </style>
+    
+    <script language="javascript">
+        function homeClick() {
+            window.location.href = "/";
+        }
+
+        function updateUserId(userId) {
+            userId = userId.trim();
+
+            if (userId.length > 0) {
+                window.location.href = "/api/authentication/dev/token/" + userId;
+            }
+        }
+    </script>
+</head>
+<body>
+    <h2>@ViewData["Title"]</h2>
+    <hr />
+    <div>
+        <h3>Current User Id</h3>
+        <label>UserId:</label> &nbsp; @Model.UserId
+    </div>
+    
+    <hr />
+    <h2 class="error">An error occurred while processing your request.</h2>
+
+    <p>
+        <strong class="error error-label">Request ID:</strong> <code>@Model.RequestId</code>
+    </p>
+
+    <p>
+        <strong class="error error-label">Target Url:</strong> <code>@Model.OriginalUrl</code>
+    </p>
+    
+    <p>
+        <strong class="error error-label">Error:</strong> <code>@Model.Message</code>
+    </p>
+    
+    <p>
+        <strong class="error error-label">Inner Exception:</strong> <code>@Model.InnerMessage</code>
+    </p>
+    
+    <hr />
+
+    @if (Model.DevelopmentEnvironment)
+    {
+        <div>
+            <button onclick="homeClick();">Home</button>
+        </div>
+
+        <hr />
+        <div>
+            <h3>Reset User Id</h3>
+            <label>UserId:</label> <input text="" id="newUserId" />
+            <button onclick="updateUserId(newUserId.value);">Override User Context</button>
+        </div>
+        }
+
+    </body>
+</html>

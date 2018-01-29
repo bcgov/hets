@@ -2,15 +2,19 @@ import React from 'react';
 
 import { connect } from 'react-redux';
 
-import { Grid, Well, Row, Col } from 'react-bootstrap';
-import { Alert, Button, ButtonGroup, Glyphicon, Label } from 'react-bootstrap';
+import { Grid, Well, Row, Col, Alert, Button, ButtonGroup, Glyphicon, Label } from 'react-bootstrap';
 import { Link } from 'react-router';
 import { LinkContainer } from 'react-router-bootstrap';
 
 import _ from 'lodash';
+import Promise from 'bluebird';
+
+import Moment from 'moment';
 
 import HireOfferEditDialog from './dialogs/HireOfferEditDialog.jsx';
 import RentalRequestsEditDialog from './dialogs/RentalRequestsEditDialog.jsx';
+import DocumentsListDialog from './dialogs/DocumentsListDialog.jsx';
+import NotesDialog from './dialogs/NotesDialog.jsx';
 
 import * as Action from '../actionTypes';
 import * as Api from '../api';
@@ -22,6 +26,8 @@ import ColDisplay from '../components/ColDisplay.jsx';
 import Spinner from '../components/Spinner.jsx';
 import TableControl from '../components/TableControl.jsx';
 import Unimplemented from '../components/Unimplemented.jsx';
+import Confirm from '../components/Confirm.jsx';
+import OverlayTrigger from '../components/OverlayTrigger.jsx';
 
 import { formatDateTime } from '../utils/date';
 import { concat } from '../utils/string';
@@ -32,13 +38,20 @@ TODO:
 * Print / Notes / Docs / Contacts (TBD) / History / Request Status List / Clone / Request Attachments
 
 */
+const STATUS_YES = 'Yes';
+const STATUS_NO = 'No';
+const STATUS_FORCE_HIRE = 'Force Hire';
+const STATUS_ASKED = 'Asked';
+const STATUS_IN_PROGRESS = 'In Progress';
 
 var RentalRequestsDetail = React.createClass({
   propTypes: {
     rentalRequest: React.PropTypes.object,
+    rentalRequestRotationList: React.PropTypes.object,
     rentalAgreement: React.PropTypes.object,
     notes: React.PropTypes.object,
     attachments: React.PropTypes.object,
+    documents: React.PropTypes.object,
     history: React.PropTypes.object,
     params: React.PropTypes.object,
     ui: React.PropTypes.object,
@@ -53,8 +66,9 @@ var RentalRequestsDetail = React.createClass({
       showEditDialog: false,
       showHireOfferDialog: false,
       showContactDialog: false,
+      showNotesDialog: false, 
 
-      showHiredEquipment: false,
+      showAttachmentss: false,
 
       contact: {},
       rotationListHireOffer: {},
@@ -69,7 +83,14 @@ var RentalRequestsDetail = React.createClass({
 
   fetch() {
     this.setState({ loading: true });
-    Api.getRentalRequest(this.props.params.rentalRequestId).finally(() => {
+    var rentalRequestId = this.props.params.rentalRequestId;
+    var rentalRequestsPromise = Api.getRentalRequest(rentalRequestId);
+    var rotationListPromise = Api.getRentalRequestRotationList(rentalRequestId);
+    var documentsPromise = Api.getRentalRequestDocuments(rentalRequestId);
+    var rentalRequestNotesPromise = Api.getRentalRequestNotes(rentalRequestId);
+
+
+    return Promise.all([rentalRequestsPromise, rotationListPromise, documentsPromise, rentalRequestNotesPromise]).finally(() => {
       this.setState({ loading: false });
     });
   },
@@ -86,15 +107,23 @@ var RentalRequestsDetail = React.createClass({
   },
 
   showNotes() {
+    this.setState({ showNotesDialog: true });
+  },
 
+  closeNotesDialog() {
+    this.setState({ showNotesDialog: false });
   },
 
   showDocuments() {
-
+    this.setState({ showDocumentsDialog: true });
   },
 
-  addNote() {
+  closeDocumentsDialog() {
+    this.setState({ showDocumentsDialog: false });
+  },
 
+  saveNote(note) {
+    Api.addRentalRequestNote(this.props.params.rentalRequestId, note);
   },
 
   addDocument() {
@@ -127,14 +156,23 @@ var RentalRequestsDetail = React.createClass({
   },
 
   saveHireOffer(hireOffer) {
-    Api.updateRentalRequestRotationList(hireOffer, this.props.rentalRequest).finally(() => {
+    let hireOfferUpdated = { ...hireOffer };
+    delete hireOfferUpdated.isFirstNullRecord;
+    delete hireOfferUpdated.displayFields;
+    Api.updateRentalRequestRotationList(hireOfferUpdated, this.props.rentalRequest.data).then((response) => {
+
+      if (response.error) { return; }
+
       this.fetch();
+      if ((hireOffer.offerResponse === STATUS_YES || hireOffer.offerResponse === STATUS_FORCE_HIRE)) {
+        this.props.router.push({ pathname: `${Constant.RENTAL_AGREEMENTS_PATHNAME}/${response.rentalAgreement.id}` });
+      }
       this.closeHireOfferDialog();
     });
   },
 
   saveNewRentalAgreement(rentalRequestRotationList) {
-    var rentalRequest = this.props.rentalRequest;
+    var rentalRequest = this.props.rentalRequest.data;
 
     var newAgreement = {
       equipment: { id: rentalRequestRotationList.equipment.id },
@@ -168,7 +206,7 @@ var RentalRequestsDetail = React.createClass({
   },
 
   print() {
-
+    window.print();
   },
 
   addRequest() {
@@ -179,9 +217,21 @@ var RentalRequestsDetail = React.createClass({
     // TODO
   },
 
-  render() {
-    var rentalRequest = this.props.rentalRequest;
+  renderStatusText(listItem) {
+    let text = 'Hire';
+    if (listItem.offerResponse === STATUS_NO) {
+      text = listItem.offerRefusalReason;
+    } else if (listItem.offerResponse === STATUS_ASKED) {
+      text = `${listItem.offerResponse} (${Moment(listItem.askedDateTime).format('YYYY-MM-DD hh:mm A')})`;
+    } else if (listItem.offerResponse === STATUS_FORCE_HIRE || listItem.offerResponse === STATUS_YES) {
+      text = listItem.offerResponse;
+    }
+    return text;
+  },
 
+  render() {
+    var rentalRequest = this.props.rentalRequest.data;
+    
     return <div id="rental-requests-detail">
       <Row id="rental-requests-top">
         <Col md={10}>
@@ -189,12 +239,8 @@ var RentalRequestsDetail = React.createClass({
           <Unimplemented>
             <Button title="Clone" onClick={ this.cloneRequest }>Clone</Button>
           </Unimplemented>
-          <Unimplemented>
-            <Button title="Notes" onClick={ this.showNotes }>Notes ({ Object.keys(this.props.notes).length })</Button>
-          </Unimplemented>
-          <Unimplemented>
-            <Button title="Documents" onClick={ this.showDocuments }>Docs ({ Object.keys(this.props.attachments).length })</Button>
-          </Unimplemented>
+          <Button title="Notes" onClick={ this.showNotes }>Notes ({ Object.keys(this.props.notes).length })</Button>
+          <Button title="Documents" onClick={ this.showDocuments }>Documents ({ Object.keys(this.props.documents).length })</Button>
         </Col>
         <Col md={2}>
           <div className="pull-right">
@@ -205,46 +251,36 @@ var RentalRequestsDetail = React.createClass({
         </Col>
       </Row>
 
-      {(() => {
-        if (this.state.loading) { return <div style={{ textAlign: 'center' }}><Spinner/></div>; }
-
-        return <Grid fluid id="rental-requests-header">
-          <Row>
-            <ColDisplay md={12} labelProps={{ md: 1 }} label={ <h1>Project:</h1> }><h1><small>{ rentalRequest.projectName }</small></h1></ColDisplay>
-          </Row>
-        </Grid>;
-      })()}
-
-      <Well>
+      <Well className="request-information">
         <h3>Request Information <span className="pull-right">
           <Button title="Edit Rental Request" bsSize="small" onClick={ this.openEditDialog }><Glyphicon glyph="pencil" /></Button>
         </span></h3>
         {(() => {
           if (this.state.loading) { return <div style={{ textAlign: 'center' }}><Spinner/></div>; }
+          
+          var requestAttachments = rentalRequest.rentalRequestAttachments && rentalRequest.rentalRequestAttachments[0] ? rentalRequest.rentalRequestAttachments[0].attachment : 'None';
 
-          var numRequestAttachments = Object.keys(rentalRequest.rentalRequestAttachment || []).length;
-          var requestAttachments = (rentalRequest.rentalRequestAttachments || []).join(', ');
-
-          return <Grid fluid id="rental-requests-data">
+          return <Grid fluid id="rental-requests-data" className="nopadding">
             <Row>
-              <Col md={6}>
-                <ColDisplay md={12} labelProps={{ md: 4 }} label="Project">{ rentalRequest.projectName }</ColDisplay>
-                <ColDisplay md={12} labelProps={{ md: 4 }} label={ rentalRequest.primaryContactRole || 'Primary Contact' }>
+              <Col md={6} sm={6} xs={12}>
+                <ColDisplay md={12} xs={12} labelProps={{ md: 4 }} label="Project"><strong>{ rentalRequest.project && rentalRequest.project.name }</strong></ColDisplay>
+                <ColDisplay md={12} xs={12} labelProps={{ md: 4 }} label="Provincial Project Number"><strong>{ rentalRequest.project && rentalRequest.project.provincialProjectNumber }</strong></ColDisplay>
+                <ColDisplay md={12} xs={12} labelProps={{ md: 4 }} label={ rentalRequest.primaryContactRole || 'Primary Contact' }>
                   <Unimplemented>
                     <Button bsStyle="link" title="Show Contact" onClick={ this.openContactDialog.bind(this, rentalRequest.primaryContact) }>
                       { concat(rentalRequest.primaryContactName, rentalRequest.primaryContactPhone, ', ') }
                     </Button>
                   </Unimplemented>
                 </ColDisplay>
-                <ColDisplay md={12} labelProps={{ md: 4 }} label="Local Area">{ rentalRequest.localAreaName }</ColDisplay>
-                <ColDisplay md={12} labelProps={{ md: 4 }} label="Expected Hours">{ rentalRequest.expectedHours }</ColDisplay>
-                <ColDisplay md={12} labelProps={{ md: 4 }} label="Expected Start Date">{  formatDateTime(rentalRequest.expectedStartDate, Constant.DATE_YEAR_SHORT_MONTH_DAY) }</ColDisplay>
-                <ColDisplay md={12} labelProps={{ md: 4 }} label="Expected End Date">{ formatDateTime(rentalRequest.expectedEndDate, Constant.DATE_YEAR_SHORT_MONTH_DAY) }</ColDisplay>
+                <ColDisplay md={12} xs={12} labelProps={{ md: 4 }} label="Local Area">{ rentalRequest.localAreaName }</ColDisplay>
+                <ColDisplay md={12} xs={12} labelProps={{ md: 4 }} label="Equipment Type">{ rentalRequest.equipmentTypeName }</ColDisplay>
+                <ColDisplay md={12} xs={12} labelProps={{ md: 4 }} label="Count">{ rentalRequest.equipmentCount }</ColDisplay>
               </Col>
-              <Col md={6}>
-                <ColDisplay md={12} labelProps={{ md: 4 }} label="Equipment Type">{ rentalRequest.equipmentTypeName }</ColDisplay>
-                <ColDisplay md={12} labelProps={{ md: 4 }} label="Count">{ rentalRequest.equipmentCount }</ColDisplay>
-                <ColDisplay md={12} labelProps={{ md: 4 }} label="Attachment(s)">{ numRequestAttachments > 0 ? requestAttachments : 'None' }</ColDisplay>
+              <Col md={6} sm={6} xs={12}>
+                <ColDisplay md={12} xs={12} labelProps={{ md: 4 }} label="Attachment(s)">{ requestAttachments }</ColDisplay>
+                <ColDisplay md={12} xs={12} labelProps={{ md: 4 }} label="Expected Hours">{ rentalRequest.expectedHours }</ColDisplay>
+                <ColDisplay md={12} xs={12} labelProps={{ md: 4 }} label="Expected Start Date">{  formatDateTime(rentalRequest.expectedStartDate, Constant.DATE_YEAR_SHORT_MONTH_DAY) }</ColDisplay>
+                <ColDisplay md={12} xs={12} labelProps={{ md: 4 }} label="Expected End Date">{ formatDateTime(rentalRequest.expectedEndDate, Constant.DATE_YEAR_SHORT_MONTH_DAY) }</ColDisplay>
               </Col>
             </Row>
           </Grid>;
@@ -253,81 +289,116 @@ var RentalRequestsDetail = React.createClass({
 
       <Well>
         <h3>Request Status <span className="pull-right">
-          <Unimplemented>
-            <Button onClick={ this.print }><Glyphicon glyph="print" title="Print" /></Button>
-          </Unimplemented>
-          <CheckboxControl id="showHiredEquipment" inline checked={ this.state.showHiredEquipment } updateState={ this.updateState }><small>Show Hired</small></CheckboxControl>
+          <Button onClick={ this.print }><Glyphicon glyph="print" title="Print" /></Button>
+          <CheckboxControl id="showAttachments" inline updateState={ this.updateState }><small>Show Attachments</small></CheckboxControl>
         </span></h3>
         {(() => {
           if (this.state.loading) { return <div style={{ textAlign: 'center' }}><Spinner/></div>; }
-
-          var rotationList = rentalRequest.rentalRequestRotationList;
-
-          if (!this.state.showHiredEquipment) {
-            // Exclude equipment already hired
-            rotationList = _.reject(rotationList, { isHired: true });
-          }
+          
+          var rotationList = this.props.rentalRequestRotationList.data.rentalRequestRotationList;
 
           if (Object.keys(rotationList || []).length === 0) { return <Alert bsStyle="success" style={{ marginTop: 10 }}>No equipment</Alert>; }
-
+          
           // Sort in rotation list order
           rotationList = _.sortBy(rotationList, 'rotationListSortOrder');
-
+          
           var headers = [
-            { field: 'seniority',            title: 'Seniority'         },
-            { field: 'serviceHoursThisYear', title: 'YTD Hours'         },
-            { field: 'equipmentCode',        title: 'Equipment ID'      },
-            { field: 'equipmentDetails',     title: 'Equipment Details' },
-            { field: 'primaryContactName',   title: 'Contact'           },
-            { field: 'status',               title: 'Status'            },
+            { field: 'seniority',               title: 'Seniority'         },
+            { field: 'serviceHoursThisYear',    title: 'YTD Hours'         },
+            { field: 'equipmentCode',           title: 'Equipment ID'      },
+            { field: 'equipmentDetails',        title: 'Equipment Details' },
+            { field: 'equipmentOwner',           title: 'Owner'             },
+            { field: 'primaryContactName',      title: 'Contact'           },
+            { field: 'primaryContactWorkPhone', title: 'Work Phone'        },
+            { field: 'primaryContactCellPhone', title: 'Cell Phone'        },
+            { field: 'status',                  title: 'Status'            },
           ];
-
-          var separator = <span style={{ float: 'left'}}>{ '|' }</span>;
+          
+          var previousNullRecord = false;
 
           return <TableControl id="rotation-list" headers={ headers }>
             {
               _.map(rotationList, (listItem) => {
-                return <tr key={ listItem.id }>
-                  <td>{ listItem.seniority }</td>
-                  <td>{ listItem.serviceHoursThisYear }</td>
-                  <td><Link to={ `${Constant.EQUIPMENT_PATHNAME}/${listItem.equipmentId}` }>{ listItem.equipmentCode }</Link></td>
-                  <td>{ listItem.equipmentDetails }</td>
-                  <td>
-                    <Unimplemented>
-                      <Button bsStyle="link" title="Show Contact" onClick={ this.openContactDialog.bind(this, listItem.contact) }>
-                        { concat(listItem.contactName, listItem.contactPhone, ': ') }
-                      </Button>
-                    </Unimplemented>
-                  </td>
-                  <td>
-                    <ButtonGroup>
-                      <Button bsStyle="link" title="Show Offer" onClick={ this.openHireOfferDialog.bind(this, listItem) }>Offer</Button>
-                      { separator }
-                      {(() => {
-                        // If RentalRequestRotationList.rentalAgreement is non-null - go to that Rental Agreement.
-                        if (listItem.rentalAgreement && listItem.rentalAgreement.id) {
-                          return <Link title="Open Rental Agreement" to={ `${Constant.RENTAL_AGREEMENTS_PATHNAME}/${listItem.rentalAgreement.id}` }>Agreement</Link>;
+                const owner = listItem.equipment.owner;
+                var isFirstNullRecord = false;
+                // Set first null record to show correct response dialog link text
+                if (!previousNullRecord && !listItem.offerResponse && (rentalRequest.yesCount < rentalRequest.equipmentCount)) { 
+                  isFirstNullRecord = true; 
+                  previousNullRecord = true; 
+                }
+                return (
+                  <tr key={ listItem.id }>
+                    <td>{ listItem.displayFields.seniority }</td>
+                    <td>{ listItem.equipment.serviceHoursLastYear }</td>
+                    <td><Link to={ `${Constant.EQUIPMENT_PATHNAME}/${listItem.equipment.id}` }>{ listItem.equipment.equipmentCode }</Link></td>
+                    <td>{ listItem.displayFields.equipmentDetails }
+                      { this.state.showAttachments && 
+                      <div>
+                        Attachments:
+                        { listItem.equipment.equipmentAttachments && listItem.equipment.equipmentAttachments.map((item, i) => (
+                          <span key={item.id}> { item.typeName }
+                          { ((i + 1) < listItem.equipment.equipmentAttachments.length) &&
+                            <span>,</span>
+                          }
+                          </span>
+                        ))}
+                        { (!listItem.equipment.equipmentAttachments || listItem.equipment.equipmentAttachments.length === 0)  &&
+                          <span> none</span>
                         }
-                        // If RentalRequestRotationList.rentalAgreement is null - go to the Create New Rental Agreement with needed information about the new agreement
-                        return <Button bsStyle="link" title="Create Rental Agreement" onClick={ this.saveNewRentalAgreement.bind(this, listItem) }>Agreement</Button>;
-                      })()}
-                    </ButtonGroup>
-                  </td>
-                </tr>;
+                      </div>
+                      }
+                    </td>
+                    <td>{ owner && owner.organizationName }</td>
+                    <td>{ owner && owner.primaryContact && `${owner.primaryContact.givenName} ${owner.primaryContact.surname}` }</td>
+                    <td>{ owner && owner.primaryContact && owner.primaryContact.workPhoneNumber }</td>
+                    <td>{ owner && owner.primaryContact && owner.primaryContact.mobilePhoneNumber }</td>
+                    <td>
+                      <ButtonGroup>
+                        {(() => {
+                          listItem.isFirstNullRecord = isFirstNullRecord;
+                          if (listItem.maximumHours) {
+                            return (
+                              <OverlayTrigger 
+                                trigger="click" 
+                                placement="top" 
+                                title="This piece of equipment is has met or exceeded its Maximum Allowed Hours for this year. Are you sure you want to edit the Offer on this equipment?"
+                                rootClose 
+                                overlay={ <Confirm onConfirm={ this.openHireOfferDialog.bind(this, listItem) }/> }
+                              >
+                                <Button 
+                                  bsStyle="link"
+                                  bsSize="xsmall"
+                                >
+                                  Max. hours reached
+                                </Button>
+                              </OverlayTrigger>
+                            );
+                          }
+                          if (rentalRequest.status === STATUS_IN_PROGRESS && listItem.offerResponse !== STATUS_YES && listItem.offerResponse !== STATUS_FORCE_HIRE) {
+                            return (
+                              <Button 
+                              bsStyle="link" 
+                                title="Show Offer" 
+                                onClick={ this.openHireOfferDialog.bind(this, listItem) }
+                              >
+                                { this.renderStatusText(listItem, isFirstNullRecord) }
+                              </Button>
+                            );
+                          }
+                          return this.renderStatusText(listItem, isFirstNullRecord);
+                        })()}
+                      </ButtonGroup>
+                    </td>
+                  </tr>
+                );
               })
             }
           </TableControl>;
         })()}
       </Well>
 
-      <Well>
+      <Well className="history">
         <h3>History <span className="pull-right">
-          <Unimplemented>
-            <Button title="Add note" bsSize="small" onClick={ this.addNote }><Glyphicon glyph="plus" /> Add Note</Button>
-          </Unimplemented>
-          <Unimplemented>
-            <Button title="Add document" bsSize="small" onClick={ this.addDocument }><Glyphicon glyph="paperclip" /></Button>
-          </Unimplemented>
         </span></h3>
         {(() => {
           if (this.state.loadingHistory) { return <div style={{ textAlign: 'center' }}><Spinner/></div>; }
@@ -354,9 +425,30 @@ var RentalRequestsDetail = React.createClass({
         <RentalRequestsEditDialog show={ this.state.showEditDialog } onSave={ this.saveEdit } onClose={ this.closeEditDialog } />
       }
       { this.state.showHireOfferDialog &&
-        <HireOfferEditDialog show={ this.state.showHireOfferDialog } hireOffer={ this.state.rotationListHireOffer } onSave={ this.saveHireOffer } onClose={ this.closeHireOfferDialog } />
+        <HireOfferEditDialog 
+          show={ this.state.showHireOfferDialog } 
+          hireOffer={ this.state.rotationListHireOffer } 
+          onSave={ this.saveHireOffer } 
+          onClose={ this.closeHireOfferDialog } 
+          error={ this.props.rentalRequestRotationList.error }
+        />
       }
       { /* TODO this.state.showContactDialog && <ContactEditDialog /> */}
+      { this.state.showDocumentsDialog &&
+        <DocumentsListDialog 
+          show={ this.state.showDocumentsDialog } 
+          parent={ rentalRequest } 
+          onClose={ this.closeDocumentsDialog } 
+        />
+      }
+      { this.state.showNotesDialog &&
+        <NotesDialog 
+          show={ this.state.showNotesDialog } 
+          onSave={ this.saveNote } 
+          onClose={ this.closeNotesDialog } 
+          notes={ this.props.notes }
+        />
+      }
     </div>;
   },
 });
@@ -365,9 +457,11 @@ var RentalRequestsDetail = React.createClass({
 function mapStateToProps(state) {
   return {
     rentalRequest: state.models.rentalRequest,
+    rentalRequestRotationList: state.models.rentalRequestRotationList,
     rentalAgreement: state.models.rentalAgreement,
     notes: state.models.rentalRequestNotes,
     attachments: state.models.rentalRequestAttachments,
+    documents: state.models.documents,
     history: state.models.rentalRequestHistory,
   };
 }

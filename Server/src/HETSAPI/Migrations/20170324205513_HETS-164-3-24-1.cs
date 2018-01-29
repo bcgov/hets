@@ -1,6 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using Microsoft.EntityFrameworkCore.Migrations;
+﻿using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace HETSAPI.Migrations
 {
@@ -8,12 +6,12 @@ namespace HETSAPI.Migrations
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
-
+            // do nothing
         }
 
         protected override void Down(MigrationBuilder migrationBuilder)
         {
-
+            // do nothing
         }
     }
 }
