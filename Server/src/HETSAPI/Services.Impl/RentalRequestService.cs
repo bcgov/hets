@@ -465,7 +465,7 @@ namespace HETSAPI.Services.Impl
             if (exists)
             {
                 // check that we have a rotation list
-                RentalRequest result = _context.RentalRequests
+                RentalRequest result = _context.RentalRequests.AsNoTracking()
                     .Include(x => x.DistrictEquipmentType)
                         .ThenInclude(y => y.EquipmentType)
                     .Include(x => x.FirstOnRotationList)
@@ -473,6 +473,8 @@ namespace HETSAPI.Services.Impl
                     .Include(x => x.RentalRequestRotationList)
                         .ThenInclude(y => y.Equipment)
                             .ThenInclude(r => r.EquipmentAttachments)
+                        .ThenInclude(y => y.Equipment)
+                            .ThenInclude(r => r.LocalArea)
                     .Include(x => x.RentalRequestRotationList)
                         .ThenInclude(y => y.Equipment)
                             .ThenInclude(e => e.Owner)
