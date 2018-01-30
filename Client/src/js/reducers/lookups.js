@@ -13,7 +13,7 @@ const DEFAULT_LOOKUPS = {
   },
   groups: {},
   permissions: {},
-  rentalConditions: {},
+  rentalConditions: [],
 
   owners: { 
     data: {},
@@ -76,6 +76,9 @@ export default function lookupsReducer(state = DEFAULT_LOOKUPS, action) {
 
     case Action.UPDATE_USERS_LOOKUP:
       return { ...state, users: action.users };
+
+    case Action.UPDATE_RENTAL_CONDITIONS_LOOKUP:
+      return { ...state, rentalConditions: action.rentalConditions };
   }
 
   return state;

@@ -1543,6 +1543,14 @@ export function deleteRentalCondition(rentalCondition) {
   });
 }
 
+export function getRentalConditions() {
+  return new ApiRequest('/conditiontypes').get().then(response => {
+    var rentalConditions = response.data;
+
+    store.dispatch({ type: Action.UPDATE_RENTAL_CONDITIONS_LOOKUP, rentalConditions: rentalConditions });
+  });
+}
+
 ////////////////////
 // Look-ups
 ////////////////////

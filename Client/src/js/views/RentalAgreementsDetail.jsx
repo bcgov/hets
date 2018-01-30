@@ -70,7 +70,9 @@ var RentalAgreementsDetail = React.createClass({
 
   fetch() {
     this.setState({ loading: true });
-    return Api.getRentalAgreement(this.props.params.rentalAgreementId).finally(() => {
+    var getRentalAgreementPromise = Api.getRentalAgreement(this.props.params.rentalAgreementId);
+    var getRentalConditionsPromise = Api.getRentalConditions();
+    return Promise.all([getRentalAgreementPromise, getRentalConditionsPromise]).finally(() => {
       this.setState({ loading: false });
     });
   },
@@ -253,8 +255,7 @@ var RentalAgreementsDetail = React.createClass({
 
   render() {
     var rentalAgreement = this.props.rentalAgreement;
-    var rentalConditions = ['Condition 1', 'Condition 2', 'Non-Standard Condition']; // TODO this.props.rentalConditions
-    console.log(rentalAgreement);
+    var rentalConditions = this.props.rentalConditions;
 
     return <div id="rental-agreements-detail">
       <Row id="rental-agreements-top">

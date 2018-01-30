@@ -36,6 +36,7 @@ var RentalConditionsEditDialog = React.createClass({
   },
 
   updateState(state, callback) {
+    console.log(state, callback);
     this.setState(state, callback);
   },
 
@@ -78,6 +79,7 @@ var RentalConditionsEditDialog = React.createClass({
     // Read-only if the user cannot edit the rental agreement
     var isReadOnly = !this.props.rentalCondition.canEdit && this.props.rentalCondition.id !== 0;
     var conditions = _.sortBy(this.props.rentalConditions, 'displaySortOrder');
+    console.log(this.state);
 
     return <EditDialog id="rental-conditions-edit" show={ this.props.show }
       onClose={ this.props.onClose } onSave={ this.onSave } didChange={ this.didChange } isValid={ this.isValid }
@@ -91,8 +93,8 @@ var RentalConditionsEditDialog = React.createClass({
               <FormGroup controlId="conditionName" validationState={ this.state.conditionNameError ? 'error' : null }>
                 <ControlLabel>Rate Component <sup>*</sup></ControlLabel>
                 {/*TODO - use lookup list*/}
-                <DropdownControl id="conditionName" disabled={ isReadOnly } title={ this.state.conditionName } updateState={ this.updateState }
-                  items={ conditions } className="full-width" />
+                <DropdownControl id="conditionName" disabled={ isReadOnly } updateState={ this.updateState }
+                  items={ conditions } fieldName="description" selectedId={ this.state.conditionName } className="full-width" />
                 <HelpBlock>{ this.state.conditionNameError }</HelpBlock>
               </FormGroup>
             </Col>
