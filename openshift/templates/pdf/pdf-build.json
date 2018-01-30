@@ -154,7 +154,7 @@
       "displayName": "DotNet Npm Tools",
       "description": "Arguments for npm install.  Typically the folder containing the package.json file.",
       "required": true,
-      "value": "src/PDF.Server"
+      "value": "/tmp/src/src/PDF.Server/"
     },
     {
       "name": "OUTPUT_IMAGE_TAG",

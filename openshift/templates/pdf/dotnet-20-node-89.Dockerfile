@@ -11,7 +11,7 @@ ENV LTTNG_UST_REGISTER_TIMEOUT 0
 USER 0
 
 # Install git
-RUN yum install -y git && \
+RUN yum install -y bzip2 git && \
     yum clean all -y
 
 # Remove old version of Node
