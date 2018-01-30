@@ -119,7 +119,7 @@ var OwnersAddDialog = React.createClass({
       valid = false;
     }
 
-        if (isBlank(this.state.province)) {
+    if (isBlank(this.state.province)) {
       this.setState({ provinceError: 'Province is required' });
       valid = false;
     }

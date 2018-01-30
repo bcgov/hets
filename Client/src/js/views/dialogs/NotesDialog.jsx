@@ -63,7 +63,7 @@ var NotesDialog = React.createClass({
     });
   },
 
-  deleteNote(note) {
+  deleteNote() {
 
   },
 
