@@ -220,7 +220,7 @@ var OwnersDetail = React.createClass({
     // Update or add accordingly
     var isNew = !contact.id;
 
-    var contactPromise = isNew ? Api.addOwnerContact : Api.updateContact;
+    var contactPromise = isNew ? Api.addOwnerContact : Api.updateOwnerContact;
     var log = isNew ? Log.ownerContactAdded : Log.ownerContactUpdated;
 
     contactPromise(this.props.owner, contact).then(() => {

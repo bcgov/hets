@@ -636,7 +636,18 @@ export function deleteOwner(owner) {
 }
 
 export function addOwnerContact(owner, contact) {
-  return new ApiRequest(`/owners/${ owner.id }/contacts`).post(contact).then(response => {
+  return new ApiRequest(`/owners/${ owner.id }/contacts/${contact.isPrimary}`).post(contact).then(response => {
+    var contact = response.data;
+
+    // Add display fields
+    parseContact(contact, owner);
+
+    store.dispatch({ type: Action.ADD_CONTACT, contact: contact });
+  });
+}
+
+export function updateOwnerContact(owner, contact) {
+  return new ApiRequest(`/owners/${ owner.id }/contacts/${contact.isPrimary}`).put(contact).then(response => {
     var contact = response.data;
 
     // Add display fields
