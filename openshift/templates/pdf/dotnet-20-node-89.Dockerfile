@@ -29,9 +29,6 @@ RUN touch ~/.bash_profile \
     && nvm alias default $NODE_VERSION \
     && nvm use default \
     && npm install -g autorest
-	&& npm install -g fs
-	&& npm install -g html-pdf
-	&& npm install -g mustache
 
 RUN chmod -R a+rwx /usr/local/nvm
 RUN mkdir -p /opt/app-root
