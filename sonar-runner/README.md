@@ -1,28 +1,30 @@
-This example demonstrates how to analyze a simple Java project with Gradle.
-
 Prerequisites
 =============
-* [SonarQube](http://www.sonarqube.org/downloads/) 4.5+
+* [SonarQube](http://www.sonarqube.org/downloads/) 6.7+
+* Visual Studio
+* [SonarQube.Scanner.MSBuild.exe](https://docs.sonarqube.org/display/SCAN/Scanning+on+Windows)
 * [Gradle](http://www.gradle.org/) 2.1 or higher
 
 Usage
 =====
 * Analyze the project with SonarQube using Gradle:
 
-        gradle sonarqube [-Dsonar.host.url=... -Dsonar.jdbc.url=... -Dsonar.jdbc.username=... -Dsonar.jdbc.password=...]
+        ./gradlew sonarqube [-Dsonar.host.url=... -Dsonar.jdbc.url=... -Dsonar.jdbc.username=... -Dsonar.jdbc.password=...]
         
-Local Install
+Local Scan
 =============
-To install SonarQube locally do the following:
-* Download the version for your OS from [SonarQube](http://www.sonarqube.org/downloads/)
-* Install locally following the directions
-* Run server: http://localhost:9000
-* Review your build.gradle, you need to add the following property: ```property "sonar.host.url", "http://localhost:9000"```
-* run ./gradlew sonarqube from this directory
-* Go to web browser and review result
+To run the scans on your local development machine and report the results on the SonarQube Server you can do the following:
 
-Caveat
-======
-If you want to run this on windows on your machine you need to set the version in build.gradle to:
-```id "org.sonarqube" version "2.6.1".```
-Version 1.2 actually causes issues in Windows but not in Linux.       
+***Running the scan for all content except C# ***
+* Change your ```build.gradle``` (this is mandatory, otherwise you will overwrite an existing project):
+```
+        property "sonar.host.url", "https://sonarqube-tran-hets-tools.pathfinder.gov.bc.ca"
+        property "sonar.projectName", "HETS - OTHER - <INSERT YOUR NAME HERE>"
+        property "sonar.projectKey", "org.sonarqube:bcgov-hets-other-<INSERT YOUR NAME HERE>"
+````
+* In the sonar-runner directory run: ```gradlew sonarqube```
+
+***Running the scan for all C# content***
+* Install ```SonarQube.Scanner.MSBuild.exe```, follow the instructions under "On CI Server" [here](https://docs.sonarqube.org/display/SCAN/Scanning+on+Windows) all but step 6B.
+* Update the ```scanDotNet.cmd``` command to point to the right path for MSBUILD. The path should end with ```15.0\Bin\amd64\MSBuild.exe``` otherwise the build will not succeed.
+* Be aware that the system is trying to use the Sonarqube.Analysis file that is located in the directory where you installed ```SonarQube.Scanner.MSBuild.exe```.

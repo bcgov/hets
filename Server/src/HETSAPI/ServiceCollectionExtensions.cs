@@ -23,6 +23,7 @@ namespace HETSAPI
             services.AddTransient<IAttachmentService, AttachmentService>();
             services.AddTransient<IAttachmentUploadService, AttachmentUploadService>();
             services.AddTransient<ICityService, CityService>();
+            services.AddTransient<IConditionTypeService, ConditionTypeService>();
             services.AddTransient<IContactService, ContactService>();            
             services.AddTransient<ICurrentUserService, CurrentUserService>();
             services.AddTransient<IDistrictEquipmentTypeService, DistrictEquipmentTypeService>();
@@ -39,6 +40,7 @@ namespace HETSAPI
             services.AddTransient<IOwnerService, OwnerService>();
             services.AddTransient<IPermissionService, PermissionService>();
             services.AddTransient<IProjectService, ProjectService>();
+            services.AddTransient<IProvincialRateTypeService, ProvincialRateTypeService>();
             services.AddTransient<IRegionService, RegionService>();
             services.AddTransient<IRentalAgreementConditionService, RentalAgreementConditionService>();
             services.AddTransient<IRentalAgreementRateService, RentalAgreementRateService>();
