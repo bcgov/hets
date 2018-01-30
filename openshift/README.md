@@ -37,9 +37,9 @@ Before you deploy your local build configurations ...
 
 The client, server, and pdf components of the project use .Net 2.0 s2i images for their builds.  In the pathfinder environment these components utilize the `dotnet-20-rhel7` image which is available at registry.access.redhat.com/dotnet/dotnet-20-rhel7.  For local builds this image can still be downloaded, however you will receive errors during any builds (Docker builds) that try to use `yum` to install any additional packages.
 
-To resolve this issue the project defined builds for `dotnet-20-runtime-centos7` and `dotnet-20-centos7`; which at the time of writing were not available in image form.  The `dotnet-20-centos7` s2i image is the CentOS equivalent of the `dotnet-20-rhel7` s2i image that can be used for local development.  These two images are not used in the Pathfinder environment and exist only to be used in a local environment.
+To resolve this issue the project defines builds for `dotnet-20-runtime-centos7` and `dotnet-20-centos7`; which at the time of writing were not available in image form.  The `dotnet-20-centos7` s2i image is the CentOS equivalent of the `dotnet-20-rhel7` s2i image that can be used for local development.  These two images are not used in the Pathfinder environment and exist only to be used in a local environment.
 
-To switch to the `dotnet-20-centos7` image for local deployment, open your `client-build.local.param` file an update the following 2 lines;
+To switch to the `dotnet-20-centos7` image for local deployment, open your `client-build.local.param` and `dotnet-20-node-89-build.local.param` file and update the following 2 lines;
 
 ```
 # SOURCE_IMAGE_KIND=DockerImage
