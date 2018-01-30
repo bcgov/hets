@@ -65,6 +65,10 @@
               {
                 "name": "DOTNET_STARTUP_PROJECT",
                 "value": "${DOTNET_STARTUP_PROJECT}"
+              },
+              {
+                "name": "DOTNET_NPM_TOOLS",
+                "value": "${DOTNET_NPM_TOOLS}"
               }
             ],
             "incremental": false
@@ -144,6 +148,13 @@
       "description": "The path to the startup project for the .Net application.",
       "required": true,
       "value": "src/PDF.Server/PDF.Server.csproj"
+    },
+    {
+      "name": "DOTNET_NPM_TOOLS",
+      "displayName": "DotNet Npm Tools",
+      "description": "Arguments for npm install.  Typically the folder containing the package.json file.",
+      "required": true,
+      "value": "src/PDF.Server"
     },
     {
       "name": "OUTPUT_IMAGE_TAG",
