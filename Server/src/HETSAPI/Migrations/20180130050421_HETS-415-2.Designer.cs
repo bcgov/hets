@@ -11,9 +11,10 @@ using System;
 namespace HETSAPI.Migrations
 {
     [DbContext(typeof(DbAppContext))]
-    partial class DbAppContextModelSnapshot : ModelSnapshot
+    [Migration("20180130050421_HETS-415-2")]
+    partial class HETS4152
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -171,69 +172,6 @@ namespace HETSAPI.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("HET_CITY");
-                });
-
-            modelBuilder.Entity("HETSAPI.Models.ConditionType", b =>
-                {
-                    b.Property<string>("ConditionTypeCode")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnName("CONDITION_TYPE_CODE")
-                        .HasMaxLength(20);
-
-                    b.Property<bool>("Active")
-                        .HasColumnName("ACTIVE");
-
-                    b.Property<DateTime>("AppCreateTimestamp")
-                        .HasColumnName("APP_CREATE_TIMESTAMP");
-
-                    b.Property<string>("AppCreateUserDirectory")
-                        .HasColumnName("APP_CREATE_USER_DIRECTORY")
-                        .HasMaxLength(50);
-
-                    b.Property<string>("AppCreateUserGuid")
-                        .HasColumnName("APP_CREATE_USER_GUID")
-                        .HasMaxLength(255);
-
-                    b.Property<string>("AppCreateUserid")
-                        .HasColumnName("APP_CREATE_USERID")
-                        .HasMaxLength(255);
-
-                    b.Property<DateTime>("AppLastUpdateTimestamp")
-                        .HasColumnName("APP_LAST_UPDATE_TIMESTAMP");
-
-                    b.Property<string>("AppLastUpdateUserDirectory")
-                        .HasColumnName("APP_LAST_UPDATE_USER_DIRECTORY")
-                        .HasMaxLength(50);
-
-                    b.Property<string>("AppLastUpdateUserGuid")
-                        .HasColumnName("APP_LAST_UPDATE_USER_GUID")
-                        .HasMaxLength(255);
-
-                    b.Property<string>("AppLastUpdateUserid")
-                        .HasColumnName("APP_LAST_UPDATE_USERID")
-                        .HasMaxLength(255);
-
-                    b.Property<DateTime>("DbCreateTimestamp")
-                        .HasColumnName("DB_CREATE_TIMESTAMP");
-
-                    b.Property<string>("DbCreateUserId")
-                        .HasColumnName("DB_CREATE_USER_ID")
-                        .HasMaxLength(63);
-
-                    b.Property<DateTime>("DbLastUpdateTimestamp")
-                        .HasColumnName("DB_LAST_UPDATE_TIMESTAMP");
-
-                    b.Property<string>("DbLastUpdateUserId")
-                        .HasColumnName("DB_LAST_UPDATE_USER_ID")
-                        .HasMaxLength(63);
-
-                    b.Property<string>("Description")
-                        .HasColumnName("DESCRIPTION")
-                        .HasMaxLength(2048);
-
-                    b.HasKey("ConditionTypeCode");
-
-                    b.ToTable("HET_CONDITION_TYPE");
                 });
 
             modelBuilder.Entity("HETSAPI.Models.Contact", b =>
