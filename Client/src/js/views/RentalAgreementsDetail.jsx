@@ -44,6 +44,7 @@ var RentalAgreementsDetail = React.createClass({
     ui: React.PropTypes.object,
     location: React.PropTypes.object,
     router: React.PropTypes.object,
+    provincialRateTypes: React.PropTypes.array,
   },
 
   getInitialState() {
@@ -72,7 +73,8 @@ var RentalAgreementsDetail = React.createClass({
     this.setState({ loading: true });
     var getRentalAgreementPromise = Api.getRentalAgreement(this.props.params.rentalAgreementId);
     var getRentalConditionsPromise = Api.getRentalConditions();
-    return Promise.all([getRentalAgreementPromise, getRentalConditionsPromise]).finally(() => {
+    var getProvincialRateTypesPromise = Api.getProvincialRateTypes();
+    return Promise.all([getRentalAgreementPromise, getRentalConditionsPromise, getProvincialRateTypesPromise]).finally(() => {
       this.setState({ loading: false });
     });
   },
@@ -256,6 +258,7 @@ var RentalAgreementsDetail = React.createClass({
   render() {
     var rentalAgreement = this.props.rentalAgreement;
     var rentalConditions = this.props.rentalConditions;
+    var provincialRateTypes = this.props.provincialRateTypes;
 
     return <div id="rental-agreements-detail">
       <Row id="rental-agreements-top">
@@ -582,6 +585,7 @@ var RentalAgreementsDetail = React.createClass({
           rentalRate={ this.state.rentalRate } 
           onSave={ this.saveRentalRate } 
           onClose={ this.closeRentalRateDialog } 
+          provincialRateTypes={ provincialRateTypes }
         />
       }
       { this.state.showAttachmentRateDialog &&
@@ -613,6 +617,7 @@ function mapStateToProps(state) {
     notes: state.models.rentalAgreementNotes,
     history: state.models.rentalAgreementHistory,
     rentalConditions: state.lookups.rentalConditions,
+    provincialRateTypes: state.lookups.provincialRateTypes,
   };
 }
 

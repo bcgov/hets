@@ -21,6 +21,7 @@ var RentalRatesEditDialog = React.createClass({
     onSave: React.PropTypes.func.isRequired,
     onClose: React.PropTypes.func.isRequired,
     show: React.PropTypes.bool,
+    provincialRateTypes: React.PropTypes.array,
   },
 
   getInitialState() {
@@ -136,6 +137,7 @@ var RentalRatesEditDialog = React.createClass({
   render() {
     // Read-only if the user cannot edit the rental agreement
     var isReadOnly = !this.props.rentalRate.canEdit && this.props.rentalRate.id !== 0;
+    console.log(this.props.provincialRateTypes);
 
     return <EditDialog id="rental-rates-edit" show={ this.props.show }
       onClose={ this.props.onClose } onSave={ this.onSave } didChange={ this.didChange } isValid={ this.isValid }
@@ -150,7 +152,7 @@ var RentalRatesEditDialog = React.createClass({
                 <ControlLabel>Rate Component <sup>*</sup></ControlLabel>
                 {/*TODO - use lookup list*/}
                 <DropdownControl id="componentName" disabled={ isReadOnly } title={ this.state.componentName } updateState={ this.updateState }
-                  items={[ 'Base Rate', 'Rest Break Rate', 'Stand-By Rate', 'OT after 8 hours', 'OT after 12 hours' ]} />
+                  items={ this.props.provincialRateTypes } />
                 <HelpBlock>{ this.state.componentNameError }</HelpBlock>
               </FormGroup>
             </Col>

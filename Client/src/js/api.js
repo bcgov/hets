@@ -1637,6 +1637,14 @@ export function getPermissions() {
   });
 }
 
+export function getProvincialRateTypes() {
+  return new ApiRequest('/provincialratetypes').get().then(response => {
+    var provincialRateTypes = response.data;
+
+    store.dispatch({ type: Action.UPDATE_PROVINCIAL_RATE_TYPES_LOOKUP, provincialRateTypes: provincialRateTypes });
+  });
+}
+
 ////////////////////
 // Version
 ////////////////////
