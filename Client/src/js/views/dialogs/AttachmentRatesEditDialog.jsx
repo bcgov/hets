@@ -8,6 +8,7 @@ import _ from 'lodash';
 import DropdownControl from '../../components/DropdownControl.jsx';
 import EditDialog from '../../components/EditDialog.jsx';
 import FormInputControl from '../../components/FormInputControl.jsx';
+import CheckboxControl from '../../components/CheckboxControl.jsx';
 
 import { isBlank, formatCurrency } from '../../utils/string';
 
@@ -17,6 +18,7 @@ const DOLLAR_RATE = '$';
 var AttachmentRatesEditDialog = React.createClass({
   propTypes: {
     attachmentRate: React.PropTypes.object.isRequired,
+    rentalAgreement: React.PropTypes.object.isRequired,
     onSave: React.PropTypes.func.isRequired,
     onClose: React.PropTypes.func.isRequired,
     show: React.PropTypes.bool,
@@ -24,16 +26,17 @@ var AttachmentRatesEditDialog = React.createClass({
 
   getInitialState() {
     var attachmentRate = this.props.attachmentRate;
-    var rentalAgreement = attachmentRate.rentalAgreement;
+    var rentalAgreement = this.props.rentalAgreement;
     var isNew = attachmentRate.id === 0;
 
     return {
       isNew: isNew,
 
-      componentName: attachmentRate.componentName || '',
+      componentName: parseInt(attachmentRate.componentName) || '',
       rate: attachmentRate.rate || 0.0,
       percentOfEquipmentRate: attachmentRate.percentOfEquipmentRate || 0,
       comment: attachmentRate.comment || '',
+      includeInTotal: attachmentRate.includeInTotal || false,
       ratePeriod: rentalAgreement.ratePeriod,  // The period for attachments is the same as for the Pay Rate so is there, but not displayed.
 
       ui : {
@@ -122,8 +125,8 @@ var AttachmentRatesEditDialog = React.createClass({
 
   render() {
     var attachmentRate = this.props.attachmentRate;
-    var rentalAgreement = attachmentRate.rentalAgreement;
-    var attachments = _.sortBy(rentalAgreement.equipment.equipmentAttachments || [], 'typeName');
+    var rentalAgreement = this.props.rentalAgreement;
+    var attachments = _.sortBy(rentalAgreement.equipment && rentalAgreement.equipment.equipmentAttachments || [], 'typeName');
 
     // Read-only if the user cannot edit the rental agreement
     var isReadOnly = !attachmentRate.canEdit && attachmentRate.id !== 0;
@@ -140,8 +143,8 @@ var AttachmentRatesEditDialog = React.createClass({
               <FormGroup controlId="componentName" validationState={ this.state.componentNameError ? 'error' : null }>
                 <ControlLabel>Rate Component <sup>*</sup></ControlLabel>
                 {/*TODO - use lookup list*/}
-                <DropdownControl id="componentName" disabled={ isReadOnly } title={ this.state.componentName } updateState={ this.updateState }
-                  items={ attachments } />
+                <DropdownControl id="componentName" disabled={ isReadOnly } updateState={ this.updateState }
+                  items={ attachments } fieldName="typeName" selectedId={ this.state.componentName } className="full-width" />
                 <HelpBlock>{ this.state.componentNameError }</HelpBlock>
               </FormGroup>
             </Col>
@@ -171,6 +174,13 @@ var AttachmentRatesEditDialog = React.createClass({
               <FormGroup controlId="comment">
                 <ControlLabel>Comment</ControlLabel>
                 <FormInputControl componentClass="textarea" defaultValue={ this.state.comment } readOnly={ isReadOnly } updateState={ this.updateState } />
+              </FormGroup>
+            </Col>
+          </Row>
+          <Row>
+            <Col md={12}>
+              <FormGroup controlId="includeInTotal">
+                <CheckboxControl id="includeInTotal" checked={ this.state.includeInTotal } updateState={ this.updateState }>Include in total</CheckboxControl>
               </FormGroup>
             </Col>
           </Row>

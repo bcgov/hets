@@ -33,7 +33,6 @@ var RentalAgreementsEditDialog = React.createClass({
       estimateHours: this.props.rentalAgreement.estimateHours || 0,
       datedOn: this.props.rentalAgreement.datedOn || '',
       workSafeBCPolicyNumber: this.props.rentalAgreement.workSafeBCPolicyNumber || '',
-      note: this.props.rentalAgreement.note || '',
 
       estimateStartWorkError: '',
       estimateHoursError: '',
@@ -111,7 +110,6 @@ var RentalAgreementsEditDialog = React.createClass({
         estimateHours: this.state.estimateHours,
         datedOn: this.state.datedOn,
         workSafeBCPolicyNumber: this.state.workSafeBCPolicyNumber,
-        note: this.state.note,
       }});
     });
   },
@@ -172,14 +170,6 @@ var RentalAgreementsEditDialog = React.createClass({
                 <FormGroup controlId="workSafeBCPolicyNumber">
                   <ControlLabel>WorkSafeBC (WCB) Number</ControlLabel>
                   <FormInputControl type="text" defaultValue={ this.state.workSafeBCPolicyNumber } readOnly={ isReadOnly } updateState={ this.updateState }/>
-                </FormGroup>
-              </Col>
-            </Row>
-            <Row>
-              <Col md={12}>
-                <FormGroup controlId="note">
-                  <ControlLabel>Notes to Rental Agreement</ControlLabel>
-                  <FormInputControl componentClass="textarea" defaultValue={ this.state.note } readOnly={ isReadOnly } updateState={ this.updateState } />
                 </FormGroup>
               </Col>
             </Row>

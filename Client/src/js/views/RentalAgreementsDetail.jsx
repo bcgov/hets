@@ -156,7 +156,10 @@ var RentalAgreementsDetail = React.createClass({
   },
 
   closeAttachmentRateDialog() {
-    this.setState({ showAttachmentRateDialog: false });
+    this.setState({ 
+      attachmentRate: _.omit({ ...this.state.attachmentRate }, 'rentalAgreement', 'id', 'isAttachment'),
+      showAttachmentRateDialog: false,
+    });
   },
 
   addAttachmentRate() {
@@ -250,7 +253,7 @@ var RentalAgreementsDetail = React.createClass({
 
   render() {
     var rentalAgreement = this.props.rentalAgreement;
-    var rentalConditions = ['Condition 1', 'Condition 2', 'Non-Standard Conditions']; // TODO this.props.rentalConditions
+    var rentalConditions = ['Condition 1', 'Condition 2', 'Non-Standard Condition']; // TODO this.props.rentalConditions
     console.log(rentalAgreement);
 
     return <div id="rental-agreements-detail">
@@ -404,8 +407,10 @@ var RentalAgreementsDetail = React.createClass({
       <Well>
         <h3>Attachments</h3>
         {(() => {
+          var equipmentAttachments = rentalAgreement.equipment && rentalAgreement.equipment.equipmentAttachments;
+
           if (this.state.loading) { return <div style={{ textAlign: 'center' }}><Spinner/></div>; }
-          if (Object.keys(rentalAgreement.equipment.equipmentAttachments).length === 0) { return <Alert bsStyle="success" style={{ marginTop: 10 }}>This piece of equipment has no attachments</Alert>; }
+          if (Object.keys(equipmentAttachments).length === 0) { return <Alert bsStyle="success" style={{ marginTop: 10 }}>This piece of equipment has no attachments</Alert>; }
 
           // Only want attachments rates here - the rest are shown above
           var attachmentRates = _.filter(rentalAgreement.rentalAgreementRates, { isAttachment: true });
@@ -424,6 +429,7 @@ var RentalAgreementsDetail = React.createClass({
                   <th>Rate</th>
                   <th>Period</th>
                   <th>Comment</th>
+                  <th>Include in Total</th>
                   <th></th>
                 </tr>
               </thead>
@@ -442,10 +448,11 @@ var RentalAgreementsDetail = React.createClass({
                       </td>
                       <td>{ obj.ratePeriod }</td>
                       <td>{ obj.comment }</td>
+                      <td>{ obj.includeInTotal ? 'Yes' : 'No' }</td>
                       <td style={{ textAlign: 'right' }}>
                         <ButtonGroup>
                           <DeleteButton name="Attachment Rate" hide={ !obj.canDelete } onConfirm={ this.deleteAttachmentRate.bind(this, obj) }/>
-                          <EditButton name="Attachment Rate" view={ !obj.canEdit } onClick={ this.openAttachmentRateDialog.bind(this, obj) }/>
+                          <EditButton name="Attachment Rate" view={ !obj.canEdit } onClick={ this.openAttachmentRateDialog.bind(this, obj ) }/>
                         </ButtonGroup>
                       </td>
                     </tr>;
@@ -513,9 +520,6 @@ var RentalAgreementsDetail = React.createClass({
 
           return <Grid fluid>
             <Row>
-              <ColDisplay id="rental-agreements-note" md={12} labelProps={{ md: 2 }} fieldProps={{ md: 10 }} label="Notes to Rental Agreement:">{ rentalAgreement.note }</ColDisplay>
-            </Row>
-            <Row>
               <Col md={6}>
                 <ColDisplay md={12} labelProps={{ md: 4 }} label="Estimated Commencement:">{ formatDateTime(rentalAgreement.estimateStartWork, Constant.DATE_YEAR_SHORT_MONTH_DAY) }</ColDisplay>
                 <ColDisplay md={12} labelProps={{ md: 4 }} label="Point of Hire:">{ rentalAgreement.pointOfHire }</ColDisplay>
@@ -573,10 +577,22 @@ var RentalAgreementsDetail = React.createClass({
         <RentalRatesEditDialog show={ this.state.showRentalRateDialog } rentalRate={ this.state.rentalRate } onSave={ this.saveRentalRate } onClose={ this.closeRentalRateDialog } />
       }
       { this.state.showAttachmentRateDialog &&
-        <AttachmentRatesEditDialog show={ this.state.showAttachmentRateDialog } attachmentRate={ this.state.attachmentRate } onSave={ this.saveAttachmentRate } onClose={ this.closeAttachmentRateDialog } />
+        <AttachmentRatesEditDialog 
+          show={ this.state.showAttachmentRateDialog } 
+          attachmentRate={ this.state.attachmentRate } 
+          onSave={ this.saveAttachmentRate } 
+          onClose={ this.closeAttachmentRateDialog } 
+          rentalAgreement={ rentalAgreement }
+        />
       }
       { this.state.showConditionDialog &&
-        <RentalConditionsEditDialog show={ this.state.showConditionDialog } rentalCondition={ this.state.rentalCondition } rentalConditions={ rentalConditions } onSave={ this.saveCondition } onClose={ this.closeConditionDialog } />
+        <RentalConditionsEditDialog 
+          show={ this.state.showConditionDialog } 
+          rentalCondition={ this.state.rentalCondition } 
+          rentalConditions={ rentalConditions } 
+          onSave={ this.saveCondition } 
+          onClose={ this.closeConditionDialog } 
+        />
       }
     </div>;
   },
