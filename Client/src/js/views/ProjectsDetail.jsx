@@ -15,7 +15,7 @@ import ContactsEditDialog from './dialogs/ContactsEditDialog.jsx';
 import DocumentsListDialog from './dialogs/DocumentsListDialog.jsx';
 import RentalRequestsAddDialog from './dialogs/RentalRequestsAddDialog.jsx';
 import TimeEntryDialog from './dialogs/TimeEntryDialog.jsx';
-import NotesDialog from './dialogs/NotesDialog.jsx';
+// import NotesDialog from './dialogs/NotesDialog.jsx';
 
 import * as Action from '../actionTypes';
 import * as Api from '../api';
@@ -509,14 +509,14 @@ var ProjectsDetail = React.createClass({
           activeRentalRequest={ this.state.rentalRequest }
         />
       }
-      { this.state.showNotesDialog &&
+      {/* { this.state.showNotesDialog &&
         <NotesDialog 
           show={ this.state.showNotesDialog } 
           onSave={ this.saveNote } 
           onClose={ this.closeNotesDialog } 
           notes={ this.props.notes }
         />
-      }
+      } */}
     </div>;
   },
 });
