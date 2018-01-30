@@ -14,7 +14,7 @@ import SeniorityEditDialog from './dialogs/SeniorityEditDialog.jsx';
 import AttachmentAddDialog from './dialogs/AttachmentAddDialog.jsx';
 import AttachmentEditDialog from './dialogs/AttachmentEditDialog.jsx';
 import DocumentsListDialog from './dialogs/DocumentsListDialog.jsx';
-// import NotesDialog from './dialogs/NotesDialog.jsx';
+import NotesDialog from './dialogs/NotesDialog.jsx';
 
 import * as Action from '../actionTypes';
 import * as Api from '../api';
@@ -514,14 +514,14 @@ var EquipmentDetail = React.createClass({
           onClose={ this.closeDocumentsDialog } 
         />
       }
-      {/* { this.state.showNotesDialog &&
+       { this.state.showNotesDialog &&
         <NotesDialog 
           show={ this.state.showNotesDialog } 
           onSave={ this.saveNote } 
           onClose={ this.closeNotesDialog } 
           notes={ this.props.notes }
         />
-      } */}
+      } 
     </div>;
   },
 });

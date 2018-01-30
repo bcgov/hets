@@ -14,7 +14,7 @@ import Moment from 'moment';
 import HireOfferEditDialog from './dialogs/HireOfferEditDialog.jsx';
 import RentalRequestsEditDialog from './dialogs/RentalRequestsEditDialog.jsx';
 import DocumentsListDialog from './dialogs/DocumentsListDialog.jsx';
-// import NotesDialog from './dialogs/NotesDialog.jsx';
+import NotesDialog from './dialogs/NotesDialog.jsx';
 
 import * as Action from '../actionTypes';
 import * as Api from '../api';
@@ -441,14 +441,14 @@ var RentalRequestsDetail = React.createClass({
           onClose={ this.closeDocumentsDialog } 
         />
       }
-      {/* { this.state.showNotesDialog &&
+       { this.state.showNotesDialog &&
         <NotesDialog 
           show={ this.state.showNotesDialog } 
           onSave={ this.saveNote } 
           onClose={ this.closeNotesDialog } 
           notes={ this.props.notes }
         />
-      } */}
+      } 
     </div>;
   },
 });
