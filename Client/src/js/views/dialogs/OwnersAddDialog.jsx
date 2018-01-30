@@ -38,8 +38,12 @@ var OwnersAddDialog = React.createClass({
 
     return {
       name: '',
-      companyAdress: '',
-      companyCode: '',
+      address1: '',
+      address2: '',
+      city: '',
+      province: '',
+      postalCode: '',
+      ownerCode: '',
       localAreaId: defaultLocalAreaId.id || 0,
       meetsResidency: true,
       doingBusinessAs: '',
@@ -47,8 +51,11 @@ var OwnersAddDialog = React.createClass({
       status: Constant.OWNER_STATUS_CODE_PENDING,
 
       nameError: '',
-      companyAddressError: '',
-      companyCodeError: '',
+      address1Error: '',
+      cityError: '',
+      provinceError: '',
+      postalCodeError: '',
+      ownerCodeError: '',
       localAreaError: '',
       residencyError: '',
       statusError: '',
@@ -65,7 +72,7 @@ var OwnersAddDialog = React.createClass({
 
   didChange() {
     return notBlank(this.state.name) ||
-      notBlank(this.state.companyCode) ||
+      notBlank(this.state.ownerCode) ||
       this.state.meetsResidency !== false ||
       this.state.localAreaId !== 0;
   },
@@ -77,8 +84,11 @@ var OwnersAddDialog = React.createClass({
 
     this.setState({
       nameError: '',
-      companyAddressError: '',
-      companyCodeError: '',
+      address1Error: '',
+      cityError: '',
+      provinceError: '',
+      postalCodeError: '',
+      ownerCodeError: '',
       localAreaError: '',
       residencyError: '',
       statusError: '',
@@ -99,20 +109,35 @@ var OwnersAddDialog = React.createClass({
       }
     }
 
-    if (isBlank(this.state.companyAddress)) {
-      this.setState({ companyAddressError: 'Company address is required' });
+    if (isBlank(this.state.address1)) {
+      this.setState({ address1Error: 'Address line 1 is required' });
       valid = false;
     }
 
-    if (isBlank(this.state.companyCode)) {
-      this.setState({ companyCodeError: 'Equipment prefix is required' });
+    if (isBlank(this.state.city)) {
+      this.setState({ cityError: 'City is required' });
+      valid = false;
+    }
+
+        if (isBlank(this.state.province)) {
+      this.setState({ provinceError: 'Province is required' });
+      valid = false;
+    }
+
+    if (isBlank(this.state.postalCode)) {
+      this.setState({ postalCodeError: 'Postal code is required' });
+      valid = false;
+    }
+
+    if (isBlank(this.state.ownerCode)) {
+      this.setState({ ownerCodeError: 'Equipment prefix is required' });
       valid = false;
     } else {
-      var prefix = this.state.companyCode.toLowerCase().trim();
+      var prefix = this.state.ownerCode.toLowerCase().trim();
 
       // Prefix must only include letters, up to 5 characters
       if (!onlyLetters(prefix) || prefix.length > 5) {
-        this.setState({ companyCodeError: 'This equipment prefix must only include letters, up to 5 characters' });
+        this.setState({ ownerCodeError: 'This equipment prefix must only include letters, up to 5 characters' });
         valid = false;
       }
 
@@ -121,7 +146,7 @@ var OwnersAddDialog = React.createClass({
         return owner.ownerEquipmentCodePrefix.toLowerCase().trim() === prefix;
       });
       if (owner) {
-        this.setState({ companyCodeError: 'This equipment prefix already exists in the system' });
+        this.setState({ ownerCodeError: 'This equipment prefix already exists in the system' });
         valid = false;
       }
     }
@@ -142,8 +167,12 @@ var OwnersAddDialog = React.createClass({
   onSave() {
     this.props.onSave({
       organizationName: this.state.name,
-      companyAdress: this.state.companyAdress,
-      ownerEquipmentCodePrefix: this.state.companyCode,
+      address1: this.state.address1,
+      address2: this.state.address2,
+      city: this.state.city,
+      province: this.state.province,
+      postalCode: this.state.postalCode,
+      ownerCode: this.state.ownerCode,
       localArea: { id: this.state.localAreaId },
       meetsResidency: this.state.meetsResidency,
       status: Constant.OWNER_STATUS_CODE_APPROVED,
@@ -169,15 +198,34 @@ var OwnersAddDialog = React.createClass({
           <FormInputControl type="text" value={ this.state.name } updateState={ this.updateState } inputRef={ ref => { this.input = ref; }} />
           <HelpBlock>{ this.state.nameError }</HelpBlock>
         </FormGroup>
-        <FormGroup controlId="companyAddress" validationState={ this.state.companyAddressError ? 'error' : null }>
-          <ControlLabel>Company Address <sup>*</sup></ControlLabel>
-          <FormInputControl type="text" value={ this.state.companyAddress } updateState={ this.updateState } inputRef={ ref => { this.input = ref; }} />
-          <HelpBlock>{ this.state.companyAddressError }</HelpBlock>
+        <FormGroup controlId="address1" validationState={ this.state.address1Error ? 'error' : null }>
+          <ControlLabel>Address Line 1 <sup>*</sup></ControlLabel>
+          <FormInputControl type="text" value={ this.state.address1 } updateState={ this.updateState } inputRef={ ref => { this.input = ref; }} />
+          <HelpBlock>{ this.state.address1Error }</HelpBlock>
         </FormGroup>
-        <FormGroup controlId="companyCode" validationState={ this.state.companyCodeError ? 'error' : null }>
-          <ControlLabel>Company Code <sup>*</sup></ControlLabel>
-          <FormInputControl type="text" value={ this.state.companyCode } updateState={ this.updateState } />
-          <HelpBlock>{ this.state.companyCodeError || HELP_TEXT.prefix }</HelpBlock>
+        <FormGroup controlId="address2">
+          <ControlLabel>Address Line 2</ControlLabel>
+          <FormInputControl type="text" value={ this.state.address2 } updateState={ this.updateState } inputRef={ ref => { this.input = ref; }} />
+        </FormGroup>
+        <FormGroup controlId="city" validationState={ this.state.cityError ? 'error' : null }>
+          <ControlLabel>City <sup>*</sup></ControlLabel>
+          <FormInputControl type="text" value={ this.state.city } updateState={ this.updateState } inputRef={ ref => { this.input = ref; }} />
+          <HelpBlock>{ this.state.cityError }</HelpBlock>
+        </FormGroup>
+        <FormGroup controlId="province" validationState={ this.state.provinceError ? 'error' : null }>
+          <ControlLabel>Province <sup>*</sup></ControlLabel>
+          <FormInputControl type="text" value={ this.state.province } updateState={ this.updateState } inputRef={ ref => { this.input = ref; }} />
+          <HelpBlock>{ this.state.provinceError }</HelpBlock>
+        </FormGroup>
+        <FormGroup controlId="postalCode" validationState={ this.state.postalCodeError ? 'error' : null }>
+          <ControlLabel>Postal Code <sup>*</sup></ControlLabel>
+          <FormInputControl type="text" value={ this.state.postalCode } updateState={ this.updateState } inputRef={ ref => { this.input = ref; }} />
+          <HelpBlock>{ this.state.postalCodeError }</HelpBlock>
+        </FormGroup>
+        <FormGroup controlId="ownerCode" validationState={ this.state.ownerCodeError ? 'error' : null }>
+          <ControlLabel>Owner Code <sup>*</sup></ControlLabel>
+          <FormInputControl type="text" value={ this.state.ownerCode } updateState={ this.updateState } />
+          <HelpBlock>{ this.state.ownerCodeError || HELP_TEXT.prefix }</HelpBlock>
         </FormGroup>
         <FormGroup controlId="localAreaId" validationState={ this.state.localAreaError ? 'error' : null }>
           <ControlLabel>Local Area <sup>*</sup></ControlLabel>
