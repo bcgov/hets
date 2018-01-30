@@ -24,6 +24,9 @@ RUN touch ~/.bash_profile \
     && nvm alias default $NODE_VERSION \
     && nvm use default \
     && npm install -g autorest
+	&& npm install -g fs
+	&& npm install -g html-pdf
+	&& npm install -g mustache
 
 # RUN yum install -y curl && \
 #     yum clean all -y
