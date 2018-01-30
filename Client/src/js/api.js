@@ -988,6 +988,17 @@ export function addProjectContact(project, contact) {
   });
 }
 
+export function updateProjectContact(project, contact) {
+  return new ApiRequest(`/projects/${ project.id }/contacts/${contact.isPrimary}`).put(contact).then(response => {
+    var contact = response.data;
+
+    // Add display fields
+    parseContact(contact, project);
+
+    store.dispatch({ type: Action.ADD_CONTACT, contact: contact });
+  });
+}
+
 export function addProjectHistory(projectId, history) {
   return new ApiRequest(`/projects/${ projectId }/history`).post(history);
 }
