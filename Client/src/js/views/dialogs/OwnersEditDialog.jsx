@@ -62,6 +62,11 @@ var OwnersEditDialog = React.createClass({
     var owner = this.props.owner;
 
     if (this.state.organizationName !== owner.organizationName) { return true; }
+    if (this.state.address1 !== owner.address1) { return true; }
+    if (this.state.address2 !== owner.address2) { return true; }
+    if (this.state.city !== owner.city) { return true; }
+    if (this.state.province !== owner.province) { return true; }
+    if (this.state.postalCode !== owner.postalCode) { return true; }
     if (this.state.localAreaId !== owner.localArea.id) { return true; }
     if (this.state.doingBusinessAs !== owner.doingBusinessAs) { return true; }
     if (this.state.registeredCompanyNumber !== owner.registeredCompanyNumber) { return true; }
@@ -189,26 +194,26 @@ var OwnersEditDialog = React.createClass({
         </FormGroup>
         <FormGroup controlId="address1" validationState={ this.state.address1Error ? 'error' : null }>
           <ControlLabel>Address Line 1 <sup>*</sup></ControlLabel>
-          <FormInputControl type="text" value={ this.state.address1 } updateState={ this.updateState } inputRef={ ref => { this.input = ref; }} />
+          <FormInputControl type="text" value={ this.state.address1 } updateState={ this.updateState } />
           <HelpBlock>{ this.state.address1Error }</HelpBlock>
         </FormGroup>
         <FormGroup controlId="address2">
           <ControlLabel>Address Line 2</ControlLabel>
-          <FormInputControl type="text" value={ this.state.address2 } updateState={ this.updateState } inputRef={ ref => { this.input = ref; }} />
+          <FormInputControl type="text" value={ this.state.address2 } updateState={ this.updateState } />
         </FormGroup>
         <FormGroup controlId="city" validationState={ this.state.cityError ? 'error' : null }>
           <ControlLabel>City <sup>*</sup></ControlLabel>
-          <FormInputControl type="text" value={ this.state.city } updateState={ this.updateState } inputRef={ ref => { this.input = ref; }} />
+          <FormInputControl type="text" value={ this.state.city } updateState={ this.updateState } />
           <HelpBlock>{ this.state.cityError }</HelpBlock>
         </FormGroup>
         <FormGroup controlId="province" validationState={ this.state.provinceError ? 'error' : null }>
           <ControlLabel>Province <sup>*</sup></ControlLabel>
-          <FormInputControl type="text" value={ this.state.province } updateState={ this.updateState } inputRef={ ref => { this.input = ref; }} />
+          <FormInputControl type="text" value={ this.state.province } updateState={ this.updateState } />
           <HelpBlock>{ this.state.provinceError }</HelpBlock>
         </FormGroup>
         <FormGroup controlId="postalCode" validationState={ this.state.postalCodeError ? 'error' : null }>
           <ControlLabel>Postal Code <sup>*</sup></ControlLabel>
-          <FormInputControl type="text" value={ this.state.postalCode } updateState={ this.updateState } inputRef={ ref => { this.input = ref; }} />
+          <FormInputControl type="text" value={ this.state.postalCode } updateState={ this.updateState } />
           <HelpBlock>{ this.state.postalCodeError }</HelpBlock>
         </FormGroup>
         <FormGroup controlId="localAreaId" validationState={ this.state.localAreaError ? 'error' : null }>
