@@ -67,6 +67,11 @@ namespace HETSAPI.Models
         DbSet<City> Cities { get; set; }
 
         /// <summary>
+        /// ConditionType
+        /// </summary>
+        DbSet<ConditionType> ConditionTypes { get; set; }
+
+        /// <summary>
         /// Contact
         /// </summary>
         DbSet<Contact> Contacts { get; set; }
@@ -155,6 +160,11 @@ namespace HETSAPI.Models
         /// Project
         /// </summary>
         DbSet<Project> Projects { get; set; }
+
+        /// <summary>
+        /// ProvincialRateType
+        /// </summary>
+        DbSet<ProvincialRateType> ProvincialRateTypes { get; set; }
 
         /// <summary>
         /// Region
@@ -287,6 +297,11 @@ namespace HETSAPI.Models
         public DbSet<City> Cities { get; set; }
 
         /// <summary>
+        /// ConditionType
+        /// </summary>
+        public DbSet<ConditionType> ConditionTypes { get; set; }
+
+        /// <summary>
         /// Contact
         /// </summary>
         public DbSet<Contact> Contacts { get; set; }        
@@ -375,6 +390,11 @@ namespace HETSAPI.Models
         /// Project
         /// </summary>
         public DbSet<Project> Projects { get; set; }
+
+        /// <summary>
+        /// ProvincialRateType
+        /// </summary>
+        public DbSet<ProvincialRateType> ProvincialRateTypes { get; set; }
 
         /// <summary>
         /// Region
