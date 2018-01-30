@@ -10,12 +10,17 @@ ENV LTTNG_UST_REGISTER_TIMEOUT 0
 # Switch to root for package installs
 USER 0
 
+# Install git
+RUN yum install -y git && \
+    yum clean all -y
+
 # Remove old version of Node
 RUN rm -R /opt/rh/rh-nodejs6
 
 # Install newer verison of Node 
-ENV NODE_VERSION  v8.9.1
 ENV NVM_DIR /usr/local/nvm
+ENV NODE_VERSION  v8.9.1
+
 RUN touch ~/.bash_profile \
     && curl -o- https://raw.githubusercontent.com/creationix/nvm/v0.33.6/install.sh | bash \
     && . $NVM_DIR/nvm.sh \
@@ -24,9 +29,6 @@ RUN touch ~/.bash_profile \
     && nvm alias default $NODE_VERSION \
     && nvm use default \
     && npm install -g autorest
-
-# RUN yum install -y curl && \
-#     yum clean all -y
 
 RUN chmod -R a+rwx /usr/local/nvm
 RUN mkdir -p /opt/app-root

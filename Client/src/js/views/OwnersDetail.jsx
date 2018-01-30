@@ -15,7 +15,7 @@ import DocumentsListDialog from './dialogs/DocumentsListDialog.jsx';
 import EquipmentAddDialog from './dialogs/EquipmentAddDialog.jsx';
 import OwnersEditDialog from './dialogs/OwnersEditDialog.jsx';
 import OwnersPolicyEditDialog from './dialogs/OwnersPolicyEditDialog.jsx';
-// import NotesDialog from './dialogs/NotesDialog.jsx';
+import NotesDialog from './dialogs/NotesDialog.jsx';
 
 import * as Action from '../actionTypes';
 import * as Api from '../api';
@@ -545,14 +545,14 @@ var OwnersDetail = React.createClass({
           onClose={ this.closeDocumentsDialog } 
         />
       }
-      {/* { this.state.showNotesDialog &&
+       { this.state.showNotesDialog &&
         <NotesDialog 
           show={ this.state.showNotesDialog } 
           onSave={ this.saveNote } 
           onClose={ this.closeNotesDialog } 
           notes={ this.props.notes }
         />
-      } */}
+      } 
       { /* TODO this.state.showPolicyDocumentsDialog && <OwnerPolicyDocumentsDialog /> */}
     </div>;
   },
