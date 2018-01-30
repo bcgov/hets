@@ -14,6 +14,7 @@ import { isBlank, formatCurrency } from '../../utils/string';
 
 const PERCENT_RATE = '%';
 const DOLLAR_RATE = '$';
+const EQUIPMENT_ATTACHMENT_OTHER = 'Other';
 
 var AttachmentRatesEditDialog = React.createClass({
   propTypes: {
@@ -32,7 +33,7 @@ var AttachmentRatesEditDialog = React.createClass({
     return {
       isNew: isNew,
 
-      componentName: parseInt(attachmentRate.componentName) || '',
+      componentName: attachmentRate.componentName || '',
       rate: attachmentRate.rate || 0.0,
       percentOfEquipmentRate: attachmentRate.percentOfEquipmentRate || 0,
       comment: attachmentRate.comment || '',
@@ -45,6 +46,7 @@ var AttachmentRatesEditDialog = React.createClass({
       },
 
       componentNameError: '',
+      commentError: '',
       rateError: '',
     };
   },
@@ -91,6 +93,11 @@ var AttachmentRatesEditDialog = React.createClass({
       valid = false;
     }
 
+    if (this.state.componentName === EQUIPMENT_ATTACHMENT_OTHER && isBlank(this.state.comment)) {
+      this.setState({ commentError: 'Comment is required '});
+      valid = false;
+    }
+
     if (isBlank(this.state.ui.percentOrRateValue) ) {
       this.setState({ rateError: 'Pay rate is required' });
       valid = false;
@@ -126,8 +133,7 @@ var AttachmentRatesEditDialog = React.createClass({
   render() {
     var attachmentRate = this.props.attachmentRate;
     var rentalAgreement = this.props.rentalAgreement;
-    var attachments = _.sortBy(rentalAgreement.equipment && rentalAgreement.equipment.equipmentAttachments || [], 'typeName');
-
+    var attachments = _.map(rentalAgreement.equipment &&  [ ...rentalAgreement.equipment.equipmentAttachments, { typeName: EQUIPMENT_ATTACHMENT_OTHER } ] || [], 'typeName');
     // Read-only if the user cannot edit the rental agreement
     var isReadOnly = !attachmentRate.canEdit && attachmentRate.id !== 0;
 
@@ -144,7 +150,7 @@ var AttachmentRatesEditDialog = React.createClass({
                 <ControlLabel>Rate Component <sup>*</sup></ControlLabel>
                 {/*TODO - use lookup list*/}
                 <DropdownControl id="componentName" disabled={ isReadOnly } updateState={ this.updateState }
-                  items={ attachments } fieldName="typeName" selectedId={ this.state.componentName } className="full-width" />
+                  items={ attachments } title={ this.state.componentName } className="full-width" />
                 <HelpBlock>{ this.state.componentNameError }</HelpBlock>
               </FormGroup>
             </Col>
@@ -171,9 +177,10 @@ var AttachmentRatesEditDialog = React.createClass({
           </Row>
           <Row>
             <Col md={12}>
-              <FormGroup controlId="comment">
+              <FormGroup controlId="comment" validationState={ this.state.commentError ? 'error' : null }>
                 <ControlLabel>Comment</ControlLabel>
                 <FormInputControl componentClass="textarea" defaultValue={ this.state.comment } readOnly={ isReadOnly } updateState={ this.updateState } />
+                <HelpBlock>{ this.state.commentError }</HelpBlock>
               </FormGroup>
             </Col>
           </Row>

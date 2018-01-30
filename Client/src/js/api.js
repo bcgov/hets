@@ -1395,7 +1395,7 @@ export function releaseRentalAgreement(rentalAgreementId) {
 }
 
 export function generateRentalAgreementDocument(rentalAgreementId) {
-  return new ApiRequest(`rentalagreements/${rentalAgreementId}/pdf`).post().then((response) => {
+  return new ApiRequest(`rentalagreements/${rentalAgreementId}/pdf`).get().then((response) => {
     return response;
   });
 }

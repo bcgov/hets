@@ -15,7 +15,7 @@ import { NON_STANDARD_CONDITION } from '../../constants';
 var RentalConditionsEditDialog = React.createClass({
   propTypes: {
     rentalCondition: React.PropTypes.object.isRequired,
-    rentalConditions: React.PropTypes.object.isRequired,
+    rentalConditions: React.PropTypes.array.isRequired,
     onSave: React.PropTypes.func.isRequired,
     onClose: React.PropTypes.func.isRequired,
     show: React.PropTypes.bool,
@@ -36,7 +36,6 @@ var RentalConditionsEditDialog = React.createClass({
   },
 
   updateState(state, callback) {
-    console.log(state, callback);
     this.setState(state, callback);
   },
 
@@ -78,8 +77,7 @@ var RentalConditionsEditDialog = React.createClass({
   render() {
     // Read-only if the user cannot edit the rental agreement
     var isReadOnly = !this.props.rentalCondition.canEdit && this.props.rentalCondition.id !== 0;
-    var conditions = _.sortBy(this.props.rentalConditions, 'displaySortOrder');
-    console.log(this.state);
+    var conditions = _.map([ ...this.props.rentalConditions, { description: NON_STANDARD_CONDITION } ], 'description');
 
     return <EditDialog id="rental-conditions-edit" show={ this.props.show }
       onClose={ this.props.onClose } onSave={ this.onSave } didChange={ this.didChange } isValid={ this.isValid }
@@ -94,7 +92,7 @@ var RentalConditionsEditDialog = React.createClass({
                 <ControlLabel>Rate Component <sup>*</sup></ControlLabel>
                 {/*TODO - use lookup list*/}
                 <DropdownControl id="conditionName" disabled={ isReadOnly } updateState={ this.updateState }
-                  items={ conditions } fieldName="description" selectedId={ this.state.conditionName } className="full-width" />
+                  items={ conditions } title={ this.state.conditionName } className="full-width" />
                 <HelpBlock>{ this.state.conditionNameError }</HelpBlock>
               </FormGroup>
             </Col>

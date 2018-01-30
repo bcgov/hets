@@ -39,7 +39,7 @@ var RentalAgreementsDetail = React.createClass({
     rentalAgreement: React.PropTypes.object,
     notes: React.PropTypes.object,
     history: React.PropTypes.object,
-    rentalConditions: React.PropTypes.object,
+    rentalConditions: React.PropTypes.array,
     params: React.PropTypes.object,
     ui: React.PropTypes.object,
     location: React.PropTypes.object,
@@ -371,6 +371,7 @@ var RentalAgreementsDetail = React.createClass({
                   <th>Rate</th>
                   <th>Period</th>
                   <th>Comment</th>
+                  <th>Include in Total</th>
                   <th></th>
                 </tr>
               </thead>
@@ -389,6 +390,7 @@ var RentalAgreementsDetail = React.createClass({
                       </td>
                       <td>{ obj.ratePeriod }</td>
                       <td>{ obj.comment }</td>
+                      <td>{ obj.includeInTotal ? 'Yes' : 'No' }</td>
                       <td style={{ textAlign: 'right' }}>
                         <ButtonGroup>
                           <DeleteButton name="Rental rate" hide={ !obj.canDelete } onConfirm={ this.deleteRentalRate.bind(this, obj) }/>
@@ -426,7 +428,7 @@ var RentalAgreementsDetail = React.createClass({
             <Table striped condensed hover bordered>
               <thead>
                 <tr>
-                  <th>Rate Type</th>
+                  <th>Attachment</th>
                   <th>Rate</th>
                   <th>Period</th>
                   <th>Comment</th>
@@ -575,7 +577,12 @@ var RentalAgreementsDetail = React.createClass({
         <EquipmentRentalRatesEditDialog show={ this.state.showEquipmentRateDialog } onSave={ this.saveEquipmentRate } onClose={ this.closeEquipmentRateDialog } />
       }
       { this.state.showRentalRateDialog &&
-        <RentalRatesEditDialog show={ this.state.showRentalRateDialog } rentalRate={ this.state.rentalRate } onSave={ this.saveRentalRate } onClose={ this.closeRentalRateDialog } />
+        <RentalRatesEditDialog 
+          show={ this.state.showRentalRateDialog } 
+          rentalRate={ this.state.rentalRate } 
+          onSave={ this.saveRentalRate } 
+          onClose={ this.closeRentalRateDialog } 
+        />
       }
       { this.state.showAttachmentRateDialog &&
         <AttachmentRatesEditDialog 

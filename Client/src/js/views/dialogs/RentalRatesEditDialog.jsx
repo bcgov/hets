@@ -8,6 +8,7 @@ import * as Constant from '../../constants';
 import DropdownControl from '../../components/DropdownControl.jsx';
 import EditDialog from '../../components/EditDialog.jsx';
 import FormInputControl from '../../components/FormInputControl.jsx';
+import CheckboxControl from '../../components/CheckboxControl.jsx';
 
 import { isBlank, formatCurrency } from '../../utils/string';
 
@@ -34,6 +35,7 @@ var RentalRatesEditDialog = React.createClass({
       percentOfEquipmentRate: this.props.rentalRate.percentOfEquipmentRate || 0,
       ratePeriod: this.props.rentalRate.ratePeriod || '',
       comment: this.props.rentalRate.comment || '',
+      includeInTotal: this.props.rentalRate.includeInTotal || false,
 
       ui : {
         percentOrRateOption: isNew || this.props.rentalRate.percentOfEquipmentRate > 0 ? PERCENT_RATE : DOLLAR_RATE,
@@ -187,6 +189,13 @@ var RentalRatesEditDialog = React.createClass({
               <FormGroup controlId="comment">
                 <ControlLabel>Comment</ControlLabel>
                 <FormInputControl componentClass="textarea" defaultValue={ this.state.comment } readOnly={ isReadOnly } updateState={ this.updateState } />
+              </FormGroup>
+            </Col>
+          </Row>
+          <Row>
+            <Col md={12}>
+              <FormGroup controlId="includeInTotal">
+                <CheckboxControl id="includeInTotal" checked={ this.state.includeInTotal } updateState={ this.updateState }>Include in total</CheckboxControl>
               </FormGroup>
             </Col>
           </Row>
