@@ -60,7 +60,10 @@ namespace HETSAPI.Services.Impl
         /// <response code="200">OK</response>
         public virtual IActionResult ProvincialRateTypesGetAsync()
         {
-            var result = _context.ProvincialRateTypes.ToList();
+            var result = _context.ProvincialRateTypes
+                .Where(x => x.Active == true)
+                .ToList();
+
             return new ObjectResult(new HetsResponse(result));
         }        
     }

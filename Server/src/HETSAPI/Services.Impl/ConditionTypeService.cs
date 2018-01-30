@@ -60,7 +60,10 @@ namespace HETSAPI.Services.Impl
         /// <response code="200">OK</response>
         public virtual IActionResult ConditionTypesGetAsync()
         {
-            var result = _context.ConditionTypes.ToList();
+            var result = _context.ConditionTypes
+                .Where(x => x.Active == true)
+                .ToList();
+
             return new ObjectResult(new HetsResponse(result));
         }        
     }
