@@ -28,6 +28,43 @@ namespace HETSAPI.Import
         public static string OldTableProgress => OldTable + "_Progress";
 
         /// <summary>
+        /// Get the list of mapped records.  
+        /// </summary>
+        /// <param name="dbContext"></param>
+        /// <param name="fileLocation"></param>
+        /// <returns></returns>
+        public static List<ImportMapRecord> GetImportMap(DbAppContext dbContext, string fileLocation)
+        {
+            List<ImportMapRecord> result = new List<ImportMapRecord>();
+            string rootAttr = "ArrayOf" + OldTable;
+            XmlSerializer ser = new XmlSerializer(typeof(UserHets[]), new XmlRootAttribute(rootAttr));
+            MemoryStream memoryStream = ImportUtility.MemoryStreamGenerator(XmlFileName, OldTable, fileLocation, rootAttr);
+            UserHets[] legacyItems = (UserHets[])ser.Deserialize(memoryStream);
+
+            foreach (UserHets item in legacyItems)
+            {
+                ImportMap importMap = dbContext.ImportMaps.FirstOrDefault(x => x.OldTable == OldTable && x.OldKey == item.Popt_Id.ToString());
+
+                ImportMapRecord importMapRecord = new ImportMapRecord();
+
+                importMapRecord.TableName = NewTable;
+                importMapRecord.MappedColumn = "User_cd";
+                importMapRecord.OriginalValue = item.Popt_Id.ToString();
+                if (importMap != null)
+                {
+                    User mappedUser = dbContext.Users.FirstOrDefault (x => x.Id == importMap.NewKey);
+                    if (mappedUser != null)
+                    {
+                        importMapRecord.NewValue = mappedUser.SmUserId;
+                    }
+                }                                
+            
+            }
+
+            return result;
+        }
+
+        /// <summary>
         /// Import Users
         /// </summary>
         /// <param name="performContext"></param>
