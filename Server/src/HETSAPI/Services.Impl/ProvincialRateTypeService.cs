@@ -1,7 +1,9 @@
+using System.Collections.Generic;
 using System.Linq;
 using Microsoft.AspNetCore.Mvc;
 using HETSAPI.Models;
 using HETSAPI.ViewModels;
+using Microsoft.EntityFrameworkCore;
 
 namespace HETSAPI.Services.Impl
 {
@@ -60,9 +62,16 @@ namespace HETSAPI.Services.Impl
         /// <response code="200">OK</response>
         public virtual IActionResult ProvincialRateTypesGetAsync()
         {
-            var result = _context.ProvincialRateTypes
+            List<ProvincialRateType> result = _context.ProvincialRateTypes.AsNoTracking()
                 .Where(x => x.Active == true)
                 .ToList();
+
+            int pseudoId = 0;
+            foreach (ProvincialRateType rateType in result)
+            {
+                pseudoId++;
+                rateType.Id = pseudoId;
+            }
 
             return new ObjectResult(new HetsResponse(result));
         }        

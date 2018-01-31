@@ -1,5 +1,6 @@
 using System;
 using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 using System.Text;
 using Newtonsoft.Json;
 
@@ -30,8 +31,10 @@ namespace HETSAPI.Models
         /// <param name="isPercentRate">Indicates this ProvincialRateType is calculated as a percentage of the base rate (required).</param>
         /// <param name="isRateEditable">Indicates if a user can modify the rate for this ProvincialRateType (required).</param>
         /// <param name="isIncludedInTotal">Indicates if this rate is added to the total in the rental agreement (required).</param>
+        /// <param name="isInTotalEditable">Indicates if the user can override the default Included In Total value (required).</param>
         public ProvincialRateType(string rateType, string description, bool active, string periodType,
-            float? rate, bool isPercentRate, bool isRateEditable, bool isIncludedInTotal)
+            float? rate, bool isPercentRate, bool isRateEditable, bool isIncludedInTotal, 
+            bool isInTotalEditable)
         {   
             RateType = rateType;
             Description = description;
@@ -41,7 +44,15 @@ namespace HETSAPI.Models
             IsPercentRate = isPercentRate;
             IsRateEditable = isRateEditable;
             IsIncludedInTotal = isIncludedInTotal;
+            IsInTotalEditable = isInTotalEditable;
         }
+
+        /// <summary>
+        /// A pseudo id added to support UI dropdowns only
+        /// </summary>
+        /// <value>A pseudo id added to support UI dropdowns only</value>
+        [NotMapped]
+        public int Id { get; set; }
 
         /// <summary>
         /// A unique code value for a ProvincialRateType.
@@ -104,6 +115,13 @@ namespace HETSAPI.Models
         public bool IsIncludedInTotal { get; set; }
 
         /// <summary>
+        /// Indicates if the user can override the default Included In Total value.
+        /// </summary>
+        /// <value>Indicates if the user can override the default Included In Total value.</value>
+        [MetaData(Description = "Indicates if the user can override the default Included In Total value.")]
+        public bool IsInTotalEditable { get; set; }
+
+        /// <summary>
         /// Returns the string presentation of the object
         /// </summary>
         /// <returns>String presentation of the object</returns>
@@ -120,6 +138,7 @@ namespace HETSAPI.Models
             sb.Append("  IsPercentRate: ").Append(IsPercentRate).Append("\n");
             sb.Append("  IsRateEditable: ").Append(IsRateEditable).Append("\n");
             sb.Append("  IsIncludedInTotal: ").Append(IsIncludedInTotal).Append("\n");
+            sb.Append("  IsInTotalEditable: ").Append(IsIncludedInTotal).Append("\n");
             sb.Append("}\n");
 
             return sb.ToString();
@@ -190,6 +209,10 @@ namespace HETSAPI.Models
                 (
                     IsIncludedInTotal == other.IsIncludedInTotal ||
                     IsIncludedInTotal.Equals(other.IsIncludedInTotal)
+                ) &&
+                (
+                    IsInTotalEditable == other.IsInTotalEditable ||
+                    IsInTotalEditable.Equals(other.IsInTotalEditable)
                 );
         }
 
@@ -218,6 +241,7 @@ namespace HETSAPI.Models
                 hash = hash * 59 + IsPercentRate.GetHashCode();
                 hash = hash * 59 + IsRateEditable.GetHashCode();
                 hash = hash * 59 + IsIncludedInTotal.GetHashCode();
+                hash = hash * 59 + IsInTotalEditable.GetHashCode();
 
                 return hash;
             }
