@@ -108,9 +108,9 @@ namespace HETSAPI.Models
         public bool IsSeniorityAuditRequired(Equipment changed)            
         {
             bool result = (Seniority != changed.Seniority) || 
-                          (LocalArea != changed.LocalArea) || 
+                          (LocalArea.Id != changed.LocalArea.Id) || 
                           (BlockNumber != changed.BlockNumber) || 
-                          (Owner != changed.Owner) || 
+                          (Owner.Id != changed.Owner.Id) || 
                           (ServiceHoursLastYear != changed.ServiceHoursLastYear) || 
                           (ServiceHoursTwoYearsAgo != changed.ServiceHoursTwoYearsAgo) || 
                           (ServiceHoursThreeYearsAgo != changed.ServiceHoursThreeYearsAgo);

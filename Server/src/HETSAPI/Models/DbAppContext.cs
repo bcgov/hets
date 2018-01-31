@@ -516,35 +516,19 @@ namespace HETSAPI.Models
             }
 
             return result;
-        }
-
-        Object GetOriginalValue (EntityEntry entry, string fieldName)
-        {
-            Object result = null;
-            var property = entry.Metadata.FindProperty(fieldName);
-            if (property != null)
-            {
-                result = entry.OriginalValues[fieldName];
-            }
-            return result;
-        }
+        }       
 
         private void DoEquipmentAudit(List<SeniorityAudit> audits, EntityEntry entry , string smUserId)
         {
-            Equipment changed = (Equipment)entry.Entity;
+            Equipment changed = (Equipment)entry.Entity;            
 
-            Equipment original = new Equipment
-            {
-                SeniorityEffectiveDate = (DateTime?) GetOriginalValue(entry, "SeniorityEffectiveDate"),
-                Seniority = (float?) GetOriginalValue(entry, "Seniority"),
-                LocalArea = (LocalArea) GetOriginalValue(entry, "LocalArea"),
-                BlockNumber = (int?) GetOriginalValue(entry, "BlockNumber"),
-                Owner = (Owner) GetOriginalValue(entry, "Owner"),
-                ServiceHoursLastYear = (float?) GetOriginalValue(entry, "ServiceHoursLastYear"),
-                ServiceHoursTwoYearsAgo = (float?) GetOriginalValue(entry, "ServiceHoursTwoYearsAgo"),
-                ServiceHoursThreeYearsAgo = (float?) GetOriginalValue(entry, "ServiceHoursThreeYearsAgo")
-            };            
-            
+            int tempChangedId = changed.Id;
+
+            Equipment original = Equipments.AsNoTracking()
+                .Include(x => x.LocalArea)
+                .Include(x => x.Owner)
+                .First(a => a.Id == tempChangedId);            
+
             // compare the old and new
             if (changed.IsSeniorityAuditRequired(original))
             {
@@ -557,14 +541,18 @@ namespace HETSAPI.Models
                     EndDate = currentTime
                 };
 
-                changed.SeniorityEffectiveDate = currentTime;
-                seniorityAudit.Equipment = changed;
+                int tempLocalAreaId = original.LocalArea.Id;
+                int tempOwnerId = original.Owner.Id;
+
+                changed.SeniorityEffectiveDate = currentTime;                
                 seniorityAudit.AppCreateTimestamp = currentTime;
                 seniorityAudit.AppLastUpdateTimestamp = currentTime;
                 seniorityAudit.AppCreateUserid = smUserId;
                 seniorityAudit.AppLastUpdateUserid = smUserId;
-                seniorityAudit.LocalArea = original.LocalArea;
-                seniorityAudit.Owner = original.Owner;
+
+                seniorityAudit.EquipmentId = tempChangedId;
+                seniorityAudit.LocalAreaId = tempLocalAreaId;
+                seniorityAudit.OwnerId = tempOwnerId;
 
                 if (seniorityAudit.Owner != null)
                 {
