@@ -217,7 +217,7 @@ var ProjectsDetail = React.createClass({
   saveContact(contact) {
     var isNew = !contact.id;
 
-    var contactPromise = isNew ? Api.addProjectContact : Api.updateContact;
+    var contactPromise = isNew ? Api.addProjectContact : Api.updateProjectContact;
     var log = isNew ? Log.projectContactAdded : Log.projectContactUpdated;
 
     contactPromise(this.props.project, contact).then(() => {
