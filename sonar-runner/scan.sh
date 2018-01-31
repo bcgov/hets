@@ -7,3 +7,20 @@ dotnet restore
 dotnet build
 dotnet test
 mono /usr/lib/sonar-scanner/SonarQube.Scanner.MSBuild.exe end
+PATHXML=$(pwd -P)
+cd Common/src/HETSCommon/obj
+snyk test --json | snyk-to-html -o $PATHXML/hetscommon.html
+cd $PATHXML
+cd FrontEnd/src/FrontEnd/obj
+snyk test --json | snyk-to-html -o $PATHXML/frontend.html
+cd $PATHXML
+cd PDF/src/PDF.Server/obj
+snyk test --json | snyk-to-html -o $PATHXML/pdfserver.html
+cd $PATHXML
+cd Server/src/HETSAPI/obj
+snyk test --json | snyk-to-html -o $PATHXML/hetsapi.html
+cd $PATHXML
+cd Client
+npm install
+snyk test --json | snyk-to-html -o $PATHXML/client.html
+
