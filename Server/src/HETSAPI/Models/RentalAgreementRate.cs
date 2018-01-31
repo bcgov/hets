@@ -27,19 +27,22 @@ namespace HETSAPI.Models
         /// </summary>
         /// <param name="id">A system-generated unique identifier for a RentalAgreementRate (required).</param>
         /// <param name="rentalAgreement">A foreign key reference to the system-generated unique identifier for a Rental Agreement (required).</param>
+        /// <param name="isIncludedInTotal">Indicates if this rate is added to the total in the rental agreement.</param>
         /// <param name="componentName">Name of the component for the Rental Agreement for which the attached rates apply..</param>
         /// <param name="isAttachment">True if this rate is for an attachment to the piece of equipment..</param>
         /// <param name="rate">The dollar rate associated with this component of the rental agreement..</param>
         /// <param name="percentOfEquipmentRate">For other than the actual piece of equipment, the percent of the equipment rate to use for this component of the rental agreement..</param>
         /// <param name="ratePeriod">The period of the rental rate. The vast majority will be hourly, but the rate could apply across a different period, e.g. daily..</param>
-        /// <param name="comment">A comment about the rental of this component of the Rental Agreement..</param>
+        /// <param name="comment">A comment about the rental of this component of the Rental Agreement.</param>        
         /// <param name="timeRecords">TimeRecords.</param>
-        public RentalAgreementRate(int id, RentalAgreement rentalAgreement, string componentName = null, bool? isAttachment = null, 
-            float? rate = null, int? percentOfEquipmentRate = null, string ratePeriod = null, string comment = null, 
+        public RentalAgreementRate(int id, RentalAgreement rentalAgreement, bool isIncludedInTotal, 
+            string componentName = null, bool? isAttachment = null, float? rate = null, 
+            int? percentOfEquipmentRate = null, string ratePeriod = null, string comment = null,
             List<TimeRecord> timeRecords = null)
         {   
             Id = id;
             RentalAgreement = rentalAgreement;
+            IsIncludedInTotal = isIncludedInTotal;
             ComponentName = componentName;
             IsAttachment = isAttachment;
             Rate = rate;
@@ -70,7 +73,14 @@ namespace HETSAPI.Models
 		[JsonIgnore]
 		[MetaData (Description = "A foreign key reference to the system-generated unique identifier for a Rental Agreement")]
         public int? RentalAgreementId { get; set; }
-        
+
+        /// <summary>
+        /// Indicates if this rate is added to the total in the rental agreement.
+        /// </summary>
+        /// <value>Indicates if this rate is added to the total in the rental agreement.</value>
+        [MetaData(Description = "Indicates if this rate is added to the total in the rental agreement.")]
+        public bool IsIncludedInTotal { get; set; }
+
         /// <summary>
         /// Name of the component for the Rental Agreement for which the attached rates apply.
         /// </summary>
@@ -132,6 +142,7 @@ namespace HETSAPI.Models
             sb.Append("class RentalAgreementRate {\n");
             sb.Append("  Id: ").Append(Id).Append("\n");
             sb.Append("  RentalAgreement: ").Append(RentalAgreement).Append("\n");
+            sb.Append("  IsIncludedInTotal: ").Append(IsIncludedInTotal).Append("\n");
             sb.Append("  ComponentName: ").Append(ComponentName).Append("\n");
             sb.Append("  IsAttachment: ").Append(IsAttachment).Append("\n");
             sb.Append("  Rate: ").Append(Rate).Append("\n");
@@ -184,6 +195,10 @@ namespace HETSAPI.Models
                     RentalAgreement == other.RentalAgreement ||
                     RentalAgreement != null &&
                     RentalAgreement.Equals(other.RentalAgreement)
+                ) &&
+                (
+                    IsIncludedInTotal == other.IsIncludedInTotal ||
+                    IsIncludedInTotal.Equals(other.IsIncludedInTotal)
                 ) &&                 
                 (
                     ComponentName == other.ComponentName ||
@@ -240,6 +255,8 @@ namespace HETSAPI.Models
                 {
                     hash = hash * 59 + RentalAgreement.GetHashCode();
                 }
+
+                hash = hash * 59 + IsIncludedInTotal.GetHashCode();
 
                 if (ComponentName != null)
                 {
