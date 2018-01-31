@@ -12,6 +12,8 @@ USER 0
 
 # Install git
 RUN yum install -y bzip2 git && \
+    yum install libfreetype6 libfreetype6-dev \
+	yum install libfontconfig1 libfontconfig1-dev \
     yum clean all -y
 
 # Remove old version of Node
