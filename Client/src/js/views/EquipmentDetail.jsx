@@ -132,10 +132,6 @@ var EquipmentDetail = React.createClass({
     window.print();
   },
 
-  saveNote(note) {
-    Api.addEquipmentNote(this.props.params.equipmentId, note);
-  },
-
   addDocument() {
   },
 
@@ -517,7 +513,10 @@ var EquipmentDetail = React.createClass({
        { this.state.showNotesDialog &&
         <NotesDialog 
           show={ this.state.showNotesDialog } 
-          onSave={ this.saveNote } 
+          onSave={ Api.addEquipmentNote } 
+          id={ this.props.params.equipmentId }
+          getNotes={ Api.getEquipmentNotes }
+          onUpdate={ Api.updateNote }
           onClose={ this.closeNotesDialog } 
           notes={ this.props.notes }
         />

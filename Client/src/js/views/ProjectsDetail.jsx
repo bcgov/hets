@@ -138,10 +138,6 @@ var ProjectsDetail = React.createClass({
     this.setState({ showDocumentsDialog: false });
   },
 
-  saveNote(note) {
-    Api.addProjectNote(this.props.params.projectId, note);
-  },
-
   addDocument() {
 
   },
@@ -512,7 +508,10 @@ var ProjectsDetail = React.createClass({
        { this.state.showNotesDialog &&
         <NotesDialog 
           show={ this.state.showNotesDialog } 
-          onSave={ this.saveNote } 
+          onSave={ Api.addProjectNote } 
+          id={ this.props.params.projectId }
+          getNotes={ Api.getProjectNotes }
+          onUpdate={ Api.updateNote }
           onClose={ this.closeNotesDialog } 
           notes={ this.props.notes }
         />
