@@ -9,10 +9,9 @@ dotnet test
 mono /usr/lib/sonar-scanner/SonarQube.Scanner.MSBuild.exe end
 
 PATHXML=$(pwd -P)
-snyk test --file=HETS.sln --json > results.json
-snyk-to-html -i results.json -o hets.html
+snyk test --file=HETS.sln --json | snyk-to-html -o hets.html
 cd Client
 npm install
-snyk test --json > results.json
-snyk-to-html -i results.json -o $PATHXML/client.html
+snyk test --json | snyk-to-html -o $PATHXML/client.html
+cd ..
 
