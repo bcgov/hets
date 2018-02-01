@@ -638,18 +638,6 @@ export function deleteOwner(owner) {
 export function addOwnerContact(owner, contact) {
   return new ApiRequest(`/owners/${ owner.id }/contacts/${contact.isPrimary}`).post(contact).then(response => {
     var contact = response.data;
-
-    // Add display fields
-    parseContact(contact, owner);
-
-    store.dispatch({ type: Action.ADD_CONTACT, contact: contact });
-  });
-}
-
-export function updateOwnerContact(owner, contact) {
-  return new ApiRequest(`/owners/${ owner.id }/contacts/${contact.isPrimary}`).put(contact).then(response => {
-    var contact = response.data;
-
     // Add display fields
     parseContact(contact, owner);
 
@@ -979,17 +967,6 @@ export function addProjectTimeRecords(projectId, rentalRequestId, timeRecords) {
 
 export function addProjectContact(project, contact) {
   return new ApiRequest(`/projects/${ project.id }/contacts/${contact.isPrimary}`).post(contact).then(response => {
-    var contact = response.data;
-
-    // Add display fields
-    parseContact(contact, project);
-
-    store.dispatch({ type: Action.ADD_CONTACT, contact: contact });
-  });
-}
-
-export function updateProjectContact(project, contact) {
-  return new ApiRequest(`/projects/${ project.id }/contacts/${contact.isPrimary}`).put(contact).then(response => {
     var contact = response.data;
 
     // Add display fields
