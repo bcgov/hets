@@ -22,20 +22,21 @@ namespace HETSAPI.Models
         /// <summary>
         /// Initializes a new instance of the <see cref="Attachment" /> class.
         /// </summary>
-        /// <param name="Id">A system-generated unique identifier for an Attachment (required).</param>
-        /// <param name="FileName">Filename as passed by the user uploading the file (required).</param>
-        /// <param name="FileContents">Binary contents of the file (required).</param>
-        /// <param name="Description">A note about the attachment,  optionally maintained by the user..</param>
-        /// <param name="MimeType">Mime-Type for attachment..</param>
-        /// <param name="Type">Type of attachment.</param>
-        public Attachment(int Id, string FileName, byte[] FileContents, string Description = null, string MimeType = null, string Type = null)
+        /// <param name="id">A system-generated unique identifier for an Attachment (required).</param>
+        /// <param name="fileName">Filename as passed by the user uploading the file (required).</param>
+        /// <param name="fileContents">Binary contents of the file (required).</param>
+        /// <param name="description">A note about the attachment,  optionally maintained by the user..</param>
+        /// <param name="mimeType">Mime-Type for attachment..</param>
+        /// <param name="type">Type of attachment.</param>
+        public Attachment(int id, string fileName, byte[] fileContents, string description = null, 
+            string mimeType = null, string type = null)
         {
-            this.Id = Id;
-            this.FileName = FileName;
-            this.FileContents = FileContents;
-            this.Description = Description;
-            this.MimeType = MimeType;
-            this.Type = Type;
+            Id = id;
+            FileName = fileName;
+            FileContents = fileContents;
+            Description = description;
+            MimeType = mimeType;
+            Type = type;
         }
 
         /// <summary>
@@ -156,9 +157,9 @@ namespace HETSAPI.Models
                     Description.Equals(other.Description)
                 ) &&
                 (
-                    this.MimeType == other.MimeType ||
-                    this.MimeType != null &&
-                    this.MimeType.Equals(other.MimeType)
+                    MimeType == other.MimeType ||
+                    MimeType != null &&
+                    MimeType.Equals(other.MimeType)
                 ) &&                 
                 (
                     Type == other.Type ||
@@ -196,9 +197,9 @@ namespace HETSAPI.Models
                     hash = hash * 59 + Description.GetHashCode();
                 }
 
-                if (this.MimeType != null)
+                if (MimeType != null)
                 {
-                    hash = hash * 59 + this.MimeType.GetHashCode();
+                    hash = hash * 59 + MimeType.GetHashCode();
                 }
 
                 if (Type != null)
