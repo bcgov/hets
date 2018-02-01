@@ -122,10 +122,6 @@ var RentalRequestsDetail = React.createClass({
     this.setState({ showDocumentsDialog: false });
   },
 
-  saveNote(note) {
-    Api.addRentalRequestNote(this.props.params.rentalRequestId, note);
-  },
-
   addDocument() {
 
   },
@@ -445,7 +441,10 @@ var RentalRequestsDetail = React.createClass({
        { this.state.showNotesDialog &&
         <NotesDialog 
           show={ this.state.showNotesDialog } 
-          onSave={ this.saveNote } 
+          onSave={ Api.addRentalRequestNote } 
+          id={ this.props.params.rentalRequestId }
+          getNotes={ Api.getRentalRequestNotes }
+          onUpdate={ Api.updateNote }
           onClose={ this.closeNotesDialog } 
           notes={ this.props.notes }
         />

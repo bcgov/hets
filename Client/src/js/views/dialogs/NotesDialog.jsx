@@ -1,21 +1,26 @@
 import React from 'react';
 
-import { connect } from 'react-redux';
-
-import { Form, Row, Col, FormGroup, ControlLabel, HelpBlock, ButtonGroup } from 'react-bootstrap';
+import { ButtonGroup, Button, Glyphicon, Alert } from 'react-bootstrap';
 
 import _ from 'lodash';
 
-import EditDialog from '../../components/EditDialog.jsx';
-import Spinner from '../../components/Spinner.jsx';
-import FormInputControl from '../../components/FormInputControl.jsx';
+import * as Api from '../../api';
+
+import NotesAddDialog from './NotesAddDialog.jsx';
+import ModalDialog from '../../components/ModalDialog.jsx';
 import TableControl from '../../components/TableControl.jsx';
 import DeleteButton from '../../components/DeleteButton.jsx';
-import Unimplemented from '../../components/Unimplemented.jsx';
+import EditButton from '../../components/EditButton.jsx';
 
 var NotesDialog = React.createClass({
   propTypes: {
+    // Api function to call on save
     onSave: React.PropTypes.func.isRequired,
+    id: React.PropTypes.string.isRequired,
+    // Api function to call when updating a note
+    onUpdate: React.PropTypes.func.isRequired,
+    // Api call to get notes for particular entity
+    getNotes: React.PropTypes.func.isRequired,
     onClose: React.PropTypes.func.isRequired,
     show: React.PropTypes.bool,
     notes: React.PropTypes.object,
@@ -23,115 +28,93 @@ var NotesDialog = React.createClass({
 
   getInitialState() {
     return {
-      loading: false,
-      note: '',
-      noteError: '',
-      isNoLongerRelevant: false,
+      note: {},
     };
   },
 
-  updateState(state, callback) {
-    this.setState(state, callback);
+
+  openNotesAddDialog() {
+    this.setState({ showNotesAddDialog : true });
   },
 
-  didChange() {
-    if (this.state.note !== '') { return true; }
-
-    return false;
-  },
-
-  isValid() {
-    this.setState({
-      noteError: '',
-    });
-
-    var valid = true;
-
-    if (this.state.note === '') {
-      this.setState({ noteError: 'Note is required' });
-      valid = false;
-    }
-
-    return valid;
-  },
-
-  onSave() {
-    this.props.onSave({
-      id: 0,
-      text: this.state.note,
-      isNoLongerRelevant: false,
+  closeNotesAddDialog() {
+    this.setState({ 
+      note: {},
+      showNotesAddDialog: false,
     });
   },
 
-  deleteNote() {
-
+  onSave(note) {
+    this.props.onSave(this.props.id, note).then(() => {
+      this.closeNotesAddDialog();
+    });
   },
 
+  onUpdate(note) {
+    this.props.onUpdate(note).then(() => {
+      this.props.getNotes(this.props.id);
+      this.closeNotesAddDialog();
+    });
+  },
+
+  deleteNote(note) {
+    Api.deleteNote(note.id).then(() => {
+      this.props.getNotes(this.props.id);
+    });
+  },
+
+  editNote(note) {
+    this.setState({ 
+      note: note,
+      showNotesAddDialog: true, 
+    });
+  },
+ 
   render() {
-    if (this.state.loading) { return <div style={{ textAlign: 'center' }}><Spinner/></div>; }
 
-    return <EditDialog id="notes" show={ this.props.show }
-      onClose={ this.props.onClose } onSave={ this.onSave } isValid={ this.isValid } didChange={ this.didChange }
-      title= {
+    var headers = [
+      { field: 'note',            title: 'Note'  },
+      { field: 'blank'                           },
+    ];
+
+    return (
+      <ModalDialog id="notes" show={ this.props.show }
+        onClose={ this.props.onClose }
+        title= {
         <strong>Notes</strong>
       }>
-      { 
-        _.map(this.props.notes, (note) => {
-          return (
-            <Row key={note.id}>
-              <Col md={12}>{note.text}</Col>
-            </Row>
-          );
-        })
-      } 
-      <Row>
-         <Col md={12}>
-          <Form>
-            <FormGroup controlId="note" validationState={ this.state.noteError ? 'error' : null }>
-              <ControlLabel>Note</ControlLabel>
-              <FormInputControl componentClass="textarea" updateState={ this.updateState } /> 
-              <HelpBlock>{ this.state.noteError }</HelpBlock>
-            </FormGroup>
-          </Form>
-        </Col> 
-      </Row>
-      <Row>
-      {(()=> {
-        var headers = [
-          { field: 'date',             title: 'Date'    },
-          { field: 'user',             title: 'User'    },
-          { field: 'notes',            title: 'Notes'  },
-          { field: 'blank'                              },
-        ];
-
-        return <TableControl id="notes-list" headers={ headers }>
-          {
-            _.map(this.props.notes, (note) => {
-              return <tr key={ note.id }>
-                <td></td>
-                <td></td>
-                <td>{ note.text }</td>
-                <td style={{ textAlign: 'right' }}>
-                  <Unimplemented>
+        <TableControl id="notes-list" headers={ headers }>
+            {
+              _.map(this.props.notes, (note) => {
+                return <tr key={ note.id }>
+                  <td>{ note.text }</td>
+                  <td style={{ textAlign: 'right', minWidth: '60px' }}>
                     <ButtonGroup>
+                      <EditButton name="editNote" onClick={ this.editNote.bind(this, note) }/>
                       <DeleteButton name="note" onConfirm={ this.deleteNote.bind(this, note) }/>
                     </ButtonGroup>
-                  </Unimplemented>
-                </td>
-              </tr>;
-            })
-          }
-        </TableControl>;
-      })()}
-      </Row>
-    </EditDialog>;
+                  </td>
+                </tr>;
+              })
+            }
+        </TableControl>
+        {(() => {
+          if (!this.props.notes || Object.keys(this.props.notes).length === 0) { return <Alert bsStyle="success" style={{ marginTop: 10 }}>No notes</Alert>; }
+        })()}
+        <Button title="Add Note" bsSize="small" onClick={ this.openNotesAddDialog }><Glyphicon glyph="plus" />&nbsp;<strong>Add Note</strong></Button>
+        { this.state.showNotesAddDialog &&
+          <NotesAddDialog 
+            show={ this.state.showNotesAddDialog } 
+            onSave={ this.onSave } 
+            onUpdate={ this.onUpdate }
+            onClose={ this.closeNotesAddDialog } 
+            notes={ this.props.notes }
+            note={ this.state.note }
+          />
+        } 
+      </ModalDialog>
+    );
   },
 });
 
-function mapStateToProps(state) {
-  return {
-    notes: state.models.notes,
-  };
-}
-
-export default connect(mapStateToProps)(NotesDialog);
+export default NotesDialog;

@@ -1668,6 +1668,18 @@ export function getVersion() {
 // Notes
 ////////////////////
 
+export function deleteNote(id) {
+  return new ApiRequest(`/notes/${id}/delete`).post().then(response => {
+    return response;
+  });
+}
+
+export function updateNote(note) {
+  return new ApiRequest(`/notes/${note.id}`).put(note).then(response => {
+    return response;
+  });
+}
+
 // Need to change getNotes to get notes by individual entity. Currently gets all notes in the system
 export function getNotes() {
   return new ApiRequest('/notes').get().then(response => {

@@ -317,10 +317,6 @@ var OwnersDetail = React.createClass({
     this.setState({ showNotesDialog: false });
   },
 
-  saveNote(note) {
-    Api.addOwnerNote(this.props.params.ownerId, note);
-  },
-
   print() {
     window.print();
   },
@@ -545,12 +541,14 @@ var OwnersDetail = React.createClass({
        { this.state.showNotesDialog &&
         <NotesDialog 
           show={ this.state.showNotesDialog } 
-          onSave={ this.saveNote } 
+          onSave={ Api.addOwnerNote } 
+          id={ this.props.params.ownerId }
+          getNotes={ Api.getOwnerNotes }
+          onUpdate={ Api.updateNote }
           onClose={ this.closeNotesDialog } 
           notes={ this.props.notes }
         />
       } 
-      { /* TODO this.state.showPolicyDocumentsDialog && <OwnerPolicyDocumentsDialog /> */}
     </div>;
   },
 });
