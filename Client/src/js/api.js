@@ -1639,7 +1639,17 @@ export function getPermissions() {
 
 export function getProvincialRateTypes() {
   return new ApiRequest('/provincialratetypes').get().then(response => {
-    var provincialRateTypes = response.data;
+    var rateTypeOther = { 
+      id: 0, 
+      rateType: 'OTHER', 
+      description: 'Other',
+      rate: null,
+      isPercentRate: false,
+      isRateEditable: true,
+      isIncludedInTotal: false,
+      isInTotalEditable: true, 
+    };
+    var provincialRateTypes = [ ...response.data, rateTypeOther ];
 
     store.dispatch({ type: Action.UPDATE_PROVINCIAL_RATE_TYPES_LOOKUP, provincialRateTypes: provincialRateTypes });
   });

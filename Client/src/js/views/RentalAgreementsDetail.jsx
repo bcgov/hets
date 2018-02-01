@@ -454,7 +454,7 @@ var RentalAgreementsDetail = React.createClass({
                       </td>
                       <td>{ obj.ratePeriod }</td>
                       <td>{ obj.comment }</td>
-                      <td>{ obj.includeInTotal ? 'Yes' : 'No' }</td>
+                      <td>{ obj.isIncludedInTotal ? 'Yes' : 'No' }</td>
                       <td style={{ textAlign: 'right' }}>
                         <ButtonGroup>
                           <DeleteButton name="Attachment Rate" hide={ !obj.canDelete } onConfirm={ this.deleteAttachmentRate.bind(this, obj) }/>

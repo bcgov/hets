@@ -37,7 +37,7 @@ var AttachmentRatesEditDialog = React.createClass({
       rate: attachmentRate.rate || 0.0,
       percentOfEquipmentRate: attachmentRate.percentOfEquipmentRate || 0,
       comment: attachmentRate.comment || '',
-      includeInTotal: attachmentRate.includeInTotal || false,
+      includeInTotal: attachmentRate.isIncludedInTotal || false,
       ratePeriod: rentalAgreement.ratePeriod,  // The period for attachments is the same as for the Pay Rate so is there, but not displayed.
 
       ui : {
@@ -74,6 +74,7 @@ var AttachmentRatesEditDialog = React.createClass({
   didChange() {
     if (this.state.componentName !== this.props.attachmentRate.componentName) { return true; }
     if (this.state.rate !== this.props.attachmentRate.rate) { return true; }
+    if (this.state.includeInTotal !== this.props.attachmentRate.isIncludedInTotal) { return true; }
     if (this.state.percentOfEquipmentRate !== this.props.attachmentRate.percentOfEquipmentRate) { return true; }
     if (this.state.comment !== this.props.attachmentRate.comment) { return true; }
 
@@ -116,6 +117,7 @@ var AttachmentRatesEditDialog = React.createClass({
       percentOfEquipmentRate: this.state.percentOfEquipmentRate,
       ratePeriod: this.state.ratePeriod,
       comment: this.state.comment,
+      isIncludedInTotal: this.state.includeInTotal,
     }});
   },
 
