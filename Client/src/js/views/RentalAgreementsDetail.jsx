@@ -2,7 +2,7 @@ import React from 'react';
 
 import { connect } from 'react-redux';
 
-import { Link } from 'react-router';
+import { Link, browserHistory } from 'react-router';
 import { Grid, Well, Row, Col } from 'react-bootstrap';
 import { Table, Alert, Button, Glyphicon, Label, ButtonGroup } from 'react-bootstrap';
 import { LinkContainer } from 'react-router-bootstrap';
@@ -279,9 +279,7 @@ var RentalAgreementsDetail = React.createClass({
             <Unimplemented>
               <Button onClick={ this.email }><Glyphicon glyph="envelope" title="E-mail" /></Button>
             </Unimplemented>
-            <LinkContainer to={{ pathname: this.state.returnUrl }}>
-              <Button title="Return to List"><Glyphicon glyph="arrow-left" /> Return to List</Button>
-            </LinkContainer>
+            <Button title="Return to List" onClick={ browserHistory.goBack }><Glyphicon glyph="arrow-left" /> Return to List</Button>
           </div>
         </Col>
       </Row>
