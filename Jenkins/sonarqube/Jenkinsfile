@@ -23,7 +23,7 @@ node('sonarrunner') {
                 allowMissing: false,
                 alwaysLinkToLastBuild: false,
                 keepAll: true,
-                reportDir: '../',
+                reportDir: '.',
                 reportFiles: 'hets.html',
                 reportName: "HETS Vulnerability Report"
                 ])
@@ -31,7 +31,7 @@ node('sonarrunner') {
                 allowMissing: false,
                 alwaysLinkToLastBuild: false,
                 keepAll: true,
-                reportDir: '../',
+                reportDir: '.',
                 reportFiles: 'client.html',
                 reportName: "HETS Client Vulnerability Report"
                 ])   
