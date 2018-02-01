@@ -128,7 +128,7 @@ namespace HETSAPI.Services.Impl
         /// <response code="200">OK</response>
         public virtual IActionResult RentalagreementsGetAsync()
         {
-            List<RentalAgreement> result = _context.RentalAgreements
+            List<RentalAgreement> result = _context.RentalAgreements.AsNoTracking()
                 .Include(x => x.Equipment)
                     .ThenInclude(y => y.Owner)
                 .Include(x => x.Equipment)
@@ -186,11 +186,18 @@ namespace HETSAPI.Services.Impl
 
             if (exists)
             {
-                RentalAgreement result = _context.RentalAgreements
-                    .Include(x => x.Equipment).ThenInclude(y => y.Owner)
-                    .Include(x => x.Equipment).ThenInclude(y => y.EquipmentAttachments)
-                    .Include(x => x.Equipment).ThenInclude(y => y.LocalArea.ServiceArea.District.Region)
-                    .Include(x => x.Project).ThenInclude(p => p.District.Region)
+                RentalAgreement result = _context.RentalAgreements.AsNoTracking()
+                    .Include(x => x.Equipment)
+                        .ThenInclude(y => y.Owner)
+                    .Include(x => x.Equipment)
+                        .ThenInclude(y => y.DistrictEquipmentType)
+                            .ThenInclude(d => d.EquipmentType)
+                    .Include(x => x.Equipment)
+                        .ThenInclude(y => y.EquipmentAttachments)
+                    .Include(x => x.Equipment)
+                        .ThenInclude(y => y.LocalArea.ServiceArea.District.Region)
+                    .Include(x => x.Project)
+                        .ThenInclude(p => p.District.Region)
                     .Include(x => x.RentalAgreementConditions)
                     .Include(x => x.RentalAgreementRates)
                     .Include(x => x.TimeRecords)
