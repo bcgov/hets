@@ -179,13 +179,10 @@ namespace HETSAPI.Services.Impl
                 Equipment equipment = _context.Equipments.AsNoTracking()
                     .Include(x => x.LocalArea.ServiceArea.District.Region)
                     .Include(x => x.DistrictEquipmentType)
-                    .ThenInclude(d => d.EquipmentType)
+                        .ThenInclude(d => d.EquipmentType)
                     .Include(x => x.DumpTruck)
                     .Include(x => x.Owner)
                     .Include(x => x.EquipmentAttachments)
-                    .Include(x => x.Notes)
-                    .Include(x => x.Attachments)
-                    .Include(x => x.History)
                     .First(a => a.Id == id);
 
                 EquipmentViewModel result = equipment.ToViewModel();
@@ -233,12 +230,10 @@ namespace HETSAPI.Services.Impl
                     Equipment result = _context.Equipments.AsNoTracking()
                         .Include(x => x.LocalArea.ServiceArea.District.Region)
                         .Include(x => x.DistrictEquipmentType)
+                            .ThenInclude(d => d.EquipmentType)
                         .Include(x => x.DumpTruck)
                         .Include(x => x.Owner)
                         .Include(x => x.EquipmentAttachments)
-                        .Include(x => x.Notes)
-                        .Include(x => x.Attachments)
-                        .Include(x => x.History)
                         .First(a => a.Id == id);
 
                     return new ObjectResult(new HetsResponse(result));
@@ -320,12 +315,10 @@ namespace HETSAPI.Services.Impl
                 Equipment result = _context.Equipments.AsNoTracking()
                     .Include(x => x.LocalArea.ServiceArea.District.Region)
                     .Include(x => x.DistrictEquipmentType)
+                        .ThenInclude(d => d.EquipmentType)
                     .Include(x => x.DumpTruck)
                     .Include(x => x.Owner)
                     .Include(x => x.EquipmentAttachments)
-                    .Include(x => x.Notes)
-                    .Include(x => x.Attachments)
-                    .Include(x => x.History)
                     .First(a => a.Id == itemId);
 
                 return new ObjectResult(new HetsResponse(result));
