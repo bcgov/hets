@@ -464,7 +464,6 @@ namespace HETSAPI.Services.Impl
 
             if (exists)
             {
-                // check that we have a rotation list
                 RentalRequest result = _context.RentalRequests.AsNoTracking()
                     .Include(x => x.DistrictEquipmentType)
                         .ThenInclude(y => y.EquipmentType)
@@ -485,7 +484,7 @@ namespace HETSAPI.Services.Impl
                                 .ThenInclude(c => c.PrimaryContact)
                     .First(a => a.Id == id);
 
-                // resort list using: LocalArea / District Equipment Type and SenioritySortOrder (desc)
+                // re-sort list using: LocalArea / District Equipment Type and SenioritySortOrder (desc)
                 result.RentalRequestRotationList =
                     result.RentalRequestRotationList.OrderBy(e => e.RotationListSortOrder).ToList();
 
@@ -510,10 +509,7 @@ namespace HETSAPI.Services.Impl
         /// <response code="200">OK</response>
         /// <response code="404">RentalRequestRotationList not found</response>
         public virtual IActionResult RentalrequestRotationListIdPutAsync(int id, RentalRequestRotationList item)
-        {
-            // update the rental request rotation list item
-            AdjustRentalRequestRotationListRecord(item);
-
+        {            
             // check if we have the rental request and the rotation list is attached
             bool exists = _context.RentalRequests.Any(a => a.Id == id);
 
@@ -549,18 +545,19 @@ namespace HETSAPI.Services.Impl
             // update the rental request rotation list record
             // and count the "Yes"es
             // ******************************************************************  
-            RentalRequest rentalRequest = _context.RentalRequests                
-                .AsNoTracking()
+            RentalRequest rentalRequest = _context.RentalRequests
                 .Include(x => x.RentalRequestRotationList)
                     .ThenInclude(e => e.Equipment)
+                        .ThenInclude(o => o.Owner)
+                .Include(x => x.RentalRequestRotationList)
+                    .ThenInclude(e => e.Equipment)
+                       .ThenInclude(a => a.LocalArea)
                 .Include(x => x.DistrictEquipmentType)
                     .ThenInclude(d => d.EquipmentType)    
                 .Include(x => x.LocalArea)
                 .Include(x => x.Project)
                     .ThenInclude(y => y.RentalAgreements)
                 .First(a => a.Id == id);
-
-            _context.Entry(rentalRequest).State = EntityState.Detached;            
 
             // ******************************************************************
             // find the rotation list record to update
@@ -579,34 +576,45 @@ namespace HETSAPI.Services.Impl
             // ******************************************************************
             // update the rental request rotation list record
             // ******************************************************************
-            item.AppCreateTimestamp = rentalRequest.RentalRequestRotationList[rotationListIndex].AppCreateTimestamp;
-            item.AppCreateUserid = rentalRequest.RentalRequestRotationList[rotationListIndex].AppCreateUserid;
-            rentalRequest.RentalRequestRotationList[rotationListIndex] = item;
+            int tempEquipmentId = item.Equipment.Id;
+            int tempProjectId = rentalRequest.Project.Id;
+
+            rentalRequest.RentalRequestRotationList[rotationListIndex].EquipmentId = tempEquipmentId;
+            rentalRequest.RentalRequestRotationList[rotationListIndex].IsForceHire = item.IsForceHire;
+            rentalRequest.RentalRequestRotationList[rotationListIndex].AskedDateTime = item.AskedDateTime;
+            rentalRequest.RentalRequestRotationList[rotationListIndex].Note = item.Note;
+            rentalRequest.RentalRequestRotationList[rotationListIndex].OfferRefusalReason = item.OfferRefusalReason;
+            rentalRequest.RentalRequestRotationList[rotationListIndex].OfferResponse = item.OfferResponse;
+            rentalRequest.RentalRequestRotationList[rotationListIndex].OfferResponseDatetime = item.OfferResponseDatetime;
+            rentalRequest.RentalRequestRotationList[rotationListIndex].WasAsked = item.WasAsked;
+            rentalRequest.RentalRequestRotationList[rotationListIndex].OfferResponseNote = item.OfferResponseNote;
 
             // ******************************************************************
             // do we need to create a Rental Agreement?
-            // ******************************************************************
+            // ******************************************************************            
             if (item.IsForceHire == true ||
                 item.OfferResponse.Equals("Yes", StringComparison.InvariantCultureIgnoreCase))
             {
+                // generate the rental agreeement number
+                string agreementNumber = GetRentalAgreementNumber(item.Equipment);
+
                 RentalAgreement rentalAgreement = new RentalAgreement
                 {
-                    Equipment = item.Equipment,
+                    ProjectId = tempProjectId,
+                    EquipmentId = tempEquipmentId,
                     Project = rentalRequest.Project,
                     Status = "Active",
+                    Number = agreementNumber,
                     DatedOn = DateTime.Now                    
                 };
 
-                // generate the rental agreeement number
-                rentalAgreement.Number = GetRentalAgreementNumber(rentalAgreement);
-
-                // add new rental agreement to the project
-                rentalRequest.Project.RentalAgreements.Add(rentalAgreement);
+                _context.RentalAgreements.Add(rentalAgreement);
 
                 // relate the new rental agreement to the original rotation list record
-                rentalRequest.RentalRequestRotationList[rotationListIndex].RentalAgreement = rentalAgreement;
+                int tempRentalAgreementId = rentalAgreement.Id;
+                rentalRequest.RentalRequestRotationList[rotationListIndex].RentalAgreementId = tempRentalAgreementId;
                 
-                // relate it to return to our client (not for the db)
+                // relate it to return to our client (not for the db) **
                 item.RentalAgreement = rentalAgreement;
             }
 
@@ -650,7 +658,7 @@ namespace HETSAPI.Services.Impl
 
             // ******************************************************************
             // save the changes - Rental Request
-            // ******************************************************************
+            // ******************************************************************             
             _context.RentalRequests.Update(rentalRequest);
             _context.SaveChanges();
 
@@ -662,12 +670,12 @@ namespace HETSAPI.Services.Impl
         /// </summary>
         /// <param name="item"></param>
         /// <returns></returns>
-        private string GetRentalAgreementNumber(RentalAgreement item)
+        private string GetRentalAgreementNumber(Equipment item)
         {
             string result = "";
 
             // validate item.
-            if (item.Equipment != null && item.Equipment.LocalArea != null)
+            if (item != null && item.LocalArea != null)
             {
                 DateTime currentTime = DateTime.UtcNow;
 
@@ -679,13 +687,13 @@ namespace HETSAPI.Services.Impl
                     fiscalYear++;
                 }
 
-                int localAreaNumber = item.Equipment.LocalArea.LocalAreaNumber;
-                int localAreaId = item.Equipment.LocalArea.Id;
+                int localAreaNumber = item.LocalArea.LocalAreaNumber;
+                int localAreaId = item.LocalArea.Id;
 
                 DateTime fiscalYearStart = new DateTime(fiscalYear - 1, 1, 1);
 
                 // count the number of rental agreements in the system.
-                int currentCount = _context.RentalAgreements
+                int currentCount = _context.RentalAgreements.AsNoTracking()
                     .Include(x => x.Equipment.LocalArea)
                     .Count(x => x.Equipment.LocalArea.Id == localAreaId && x.AppCreateTimestamp >= fiscalYearStart);
 
@@ -990,8 +998,7 @@ namespace HETSAPI.Services.Impl
 
             if (exists)
             {
-                localAreaRotationList = _context.LocalAreaRotationLists
-                    .AsNoTracking()
+                localAreaRotationList = _context.LocalAreaRotationLists.AsNoTracking()
                     .Include(x => x.LocalArea)
                     .Include(x => x.AskNextBlock1)
                     .Include(x => x.AskNextBlock2)
@@ -1041,13 +1048,10 @@ namespace HETSAPI.Services.Impl
                 if (nextId != null)
                 {
                     newAreaRotationList.Id = localAreaRotationList.Id;
-                    newAreaRotationList.AskNextBlock1 = localAreaRotationList.AskNextBlock1;
                     newAreaRotationList.AskNextBlock1Id = localAreaRotationList.AskNextBlock1Id;
                     newAreaRotationList.AskNextBlock1Seniority = localAreaRotationList.AskNextBlock1Seniority;
-                    newAreaRotationList.AskNextBlock2 = localAreaRotationList.AskNextBlock2;
                     newAreaRotationList.AskNextBlock2Id = localAreaRotationList.AskNextBlock2Id;
                     newAreaRotationList.AskNextBlock2Seniority = localAreaRotationList.AskNextBlock2Seniority;
-                    newAreaRotationList.AskNextBlockOpen = localAreaRotationList.AskNextBlockOpen;
                     newAreaRotationList.AskNextBlockOpenId = localAreaRotationList.AskNextBlockOpenId;
                 }
 
@@ -1100,7 +1104,7 @@ namespace HETSAPI.Services.Impl
                         }
 
                         if (!foundCurrentRecord &&
-                            item.RentalRequestRotationList[i].Equipment.Id == nextId)
+                            item.RentalRequestRotationList[i].EquipmentId == nextId)
                         {
                             foundCurrentRecord = true;
                         }
@@ -1110,9 +1114,7 @@ namespace HETSAPI.Services.Impl
                 if (item.RentalRequestRotationList[nextRecordToAskIndex].Equipment.BlockNumber == 1 &&
                     item.RentalRequestRotationList[nextRecordToAskIndex].Equipment.BlockNumber <= numberOfBlocks)
                 {
-
-                    newAreaRotationList.AskNextBlock1 = item.RentalRequestRotationList[nextRecordToAskIndex].Equipment;
-                    newAreaRotationList.AskNextBlock1Id = newAreaRotationList.AskNextBlock1.Id;
+                    newAreaRotationList.AskNextBlock1Id = item.RentalRequestRotationList[nextRecordToAskIndex].EquipmentId;
                     newAreaRotationList.AskNextBlock1Seniority = item.RentalRequestRotationList[nextRecordToAskIndex].Equipment.Seniority;
                     newAreaRotationList.AskNextBlock2Id = null;
                     newAreaRotationList.AskNextBlock2Seniority = null;
@@ -1122,10 +1124,8 @@ namespace HETSAPI.Services.Impl
                 else if (item.RentalRequestRotationList[nextRecordToAskIndex].Equipment.BlockNumber == 2 &&
                          item.RentalRequestRotationList[nextRecordToAskIndex].Equipment.BlockNumber <= numberOfBlocks)
                 {
-                    newAreaRotationList.AskNextBlock2 = item.RentalRequestRotationList[nextRecordToAskIndex].Equipment;
-                    newAreaRotationList.AskNextBlock2Id = newAreaRotationList.AskNextBlock2.Id;
+                    newAreaRotationList.AskNextBlock2Id = item.RentalRequestRotationList[nextRecordToAskIndex].EquipmentId;
                     newAreaRotationList.AskNextBlock2Seniority = item.RentalRequestRotationList[nextRecordToAskIndex].Equipment.Seniority;
-                    newAreaRotationList.AskNextBlock1 = null;
                     newAreaRotationList.AskNextBlock1Id = null;
                     newAreaRotationList.AskNextBlock1Seniority = null;
                     newAreaRotationList.AskNextBlockOpen = null;
@@ -1133,12 +1133,9 @@ namespace HETSAPI.Services.Impl
                 }
                 else
                 {
-                    newAreaRotationList.AskNextBlockOpen = item.RentalRequestRotationList[nextRecordToAskIndex].Equipment;
-                    newAreaRotationList.AskNextBlockOpenId = newAreaRotationList.AskNextBlockOpen.Id;
-                    newAreaRotationList.AskNextBlock1 = null;
+                    newAreaRotationList.AskNextBlockOpenId = item.RentalRequestRotationList[nextRecordToAskIndex].EquipmentId;
                     newAreaRotationList.AskNextBlock1Id = null;
                     newAreaRotationList.AskNextBlock1Seniority = null;
-                    newAreaRotationList.AskNextBlock2 = null;
                     newAreaRotationList.AskNextBlock2Id = null;
                     newAreaRotationList.AskNextBlock2Seniority = null;
                 }
@@ -1153,27 +1150,7 @@ namespace HETSAPI.Services.Impl
                 }
             }            
         }
-
-        /// <summary>
-        /// Adjust the Rental Request Rotation List record
-        /// </summary>
-        /// <param name="item"></param>
-        private void AdjustRentalRequestRotationListRecord(RentalRequestRotationList item)
-        {
-            if (item != null)
-            {
-                if (item.Equipment != null)
-                {
-                    item.Equipment = _context.Equipments.FirstOrDefault(a => a.Id == item.Equipment.Id);
-                }
-
-                if (item.RentalAgreement != null)
-                {
-                    item.RentalAgreement = _context.RentalAgreements.FirstOrDefault(a => a.Id == item.RentalAgreement.Id);
-                }
-            }
-        }
-
+       
         #endregion
 
         #region Rental Request Note Records

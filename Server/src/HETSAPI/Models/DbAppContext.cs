@@ -519,9 +519,9 @@ namespace HETSAPI.Models
         }       
 
         private void DoEquipmentAudit(List<SeniorityAudit> audits, EntityEntry entry , string smUserId)
-        {
-            Equipment changed = (Equipment)entry.Entity;            
-
+        {            
+            Equipment changed = (Equipment)entry.Entity;
+            
             int tempChangedId = changed.Id;
 
             Equipment original = Equipments.AsNoTracking()
