@@ -512,29 +512,61 @@ namespace HETSAPI.Services.Impl
         /// <remarks>Replaces an Owner&#39;s Contacts</remarks>
         /// <param name="id">id of Owner to replace Contacts for</param>
         /// <param name="item">Replacement Owner contacts.</param>
+        /// <param name="primary"></param>
         /// <response code="200">OK</response>
-        public virtual IActionResult OwnersIdContactsPostAsync(int id, Contact item)
+        public virtual IActionResult OwnersIdContactsPostAsync(int id, Contact item, bool primary)
         {
             bool exists = _context.Owners.Any(a => a.Id == id);
 
             if (exists && item != null)
             {
                 Owner owner = _context.Owners
-                    .Include(x => x.LocalArea.ServiceArea.District.Region)
-                    .Include(x => x.EquipmentList)
-                    .ThenInclude(y => y.DistrictEquipmentType)
-                    .Include(x => x.Notes)
-                    .Include(x => x.Attachments)
-                    .Include(x => x.History)
                     .Include(x => x.Contacts)
                     .First(x => x.Id == id);
 
-                // adjust the incoming list.
-                item.Id = 0;
+                // ******************************************************************
+                // add or update contact
+                // ******************************************************************
+                if (item.Id > 0)
+                {
+                    int contactIndex = owner.Contacts.FindIndex(a => a.Id == item.Id);
 
-                _context.Contacts.Add(item);
-                owner.Contacts.Add(item);
-                _context.Owners.Update(owner);
+                    if (contactIndex < 0)
+                    {
+                        // record not found
+                        return new ObjectResult(new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-01", _configuration)));
+                    }
+
+                    owner.Contacts[contactIndex].Notes = item.Notes;
+                    owner.Contacts[contactIndex].Address1 = item.Address1;
+                    owner.Contacts[contactIndex].Address2 = item.Address2;
+                    owner.Contacts[contactIndex].City = item.City;
+                    owner.Contacts[contactIndex].EmailAddress = item.EmailAddress;
+                    owner.Contacts[contactIndex].FaxPhoneNumber = item.FaxPhoneNumber;
+                    owner.Contacts[contactIndex].GivenName = item.GivenName;
+                    owner.Contacts[contactIndex].MobilePhoneNumber = item.MobilePhoneNumber;
+                    owner.Contacts[contactIndex].PostalCode = item.PostalCode;
+                    owner.Contacts[contactIndex].Province = item.Province;
+                    owner.Contacts[contactIndex].Surname = item.Surname;
+                    owner.Contacts[contactIndex].Role = item.Role;
+
+                    if (primary)
+                    {
+                        owner.PrimaryContactId = item.Id;
+                    }
+                }
+                else  // add contact
+                {                    
+                    owner.Contacts.Add(item);
+
+                    _context.SaveChanges();
+
+                    if (primary)
+                    {
+                        owner.PrimaryContactId = item.Id;
+                    }
+                }
+
                 _context.SaveChanges();
 
                 return new ObjectResult(new HetsResponse(item));
@@ -543,7 +575,7 @@ namespace HETSAPI.Services.Impl
             // record not found
             return new ObjectResult(new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-01", _configuration)));
         }
-
+       
         /// <summary>
         /// Create owner contacts
         /// </summary>

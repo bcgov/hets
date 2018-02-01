@@ -649,12 +649,19 @@ namespace HETSAPI.Services.Impl
 
                     if (primary)
                     {
-                        project.PrimaryContact = item;
+                        project.PrimaryContactId = item.Id;
                     }
                 }
                 else  // add note
-                {
+                {                    
                     project.Contacts.Add(item);
+
+                    _context.SaveChanges();
+
+                    if (primary)
+                    {
+                        project.PrimaryContactId = item.Id;
+                    }
                 }
 
                 _context.SaveChanges();
@@ -924,7 +931,7 @@ namespace HETSAPI.Services.Impl
                 // *************************************************************
                 // return updated time records
                 // *************************************************************              
-                List < Note> notes = new List<Note>();
+                List<Note> notes = new List<Note>();
 
                 foreach (Note note in project.Notes)
                 {

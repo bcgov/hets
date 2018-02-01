@@ -105,8 +105,9 @@ namespace HETSAPI.Services
         /// <remarks>Adds Owner Contact</remarks>
         /// <param name="id">id of Owner to add a contact for</param>
         /// <param name="item">Adds to Owner Contact</param>
+        /// <param name="primary"></param>
         /// <response code="200">OK</response>
-        IActionResult OwnersIdContactsPostAsync(int id, Contact item);
+        IActionResult OwnersIdContactsPostAsync(int id, Contact item, bool primary);
 
         /// <summary>
         /// Update owner contacts

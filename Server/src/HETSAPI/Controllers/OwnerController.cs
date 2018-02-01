@@ -207,14 +207,15 @@ namespace HETSAPI.Controllers
         /// <remarks>Adds Owner Contact</remarks>
         /// <param name="id">id of Owner to add a contact for</param>
         /// <param name="item">Adds to Owner Contact</param>
+        /// <param name="primary"></param>
         /// <response code="200">OK</response>
         [HttpPost]
-        [Route("/api/owners/{id}/contacts")]
+        [Route("/api/owners/{id}/contacts/{primary}")]
         [SwaggerOperation("OwnersIdContactsPost")]
         [SwaggerResponse(200, type: typeof(Contact))]
-        public virtual IActionResult OwnersIdContactsPost([FromRoute]int id, [FromBody]Contact item)
+        public virtual IActionResult OwnersIdContactsPost([FromRoute]int id, [FromBody]Contact item, bool primary)
         {
-            return _service.OwnersIdContactsPostAsync(id, item);
+            return _service.OwnersIdContactsPostAsync(id, item, primary);
         }
 
         /// <summary>
