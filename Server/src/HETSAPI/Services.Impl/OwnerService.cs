@@ -173,13 +173,6 @@ namespace HETSAPI.Services.Impl
                     .Include(x => x.EquipmentList)
                         .ThenInclude(y => y.Owner)
                             .ThenInclude(c => c.PrimaryContact)
-                    .Include(x => x.EquipmentList).ThenInclude(y => y.EquipmentAttachments)
-                    .Include(x => x.EquipmentList).ThenInclude(y => y.Notes)
-                    .Include(x => x.EquipmentList).ThenInclude(y => y.Attachments)
-                    .Include(x => x.EquipmentList).ThenInclude(y => y.History)
-                    .Include(x => x.Notes)
-                    .Include(x => x.Attachments)
-                    .Include(x => x.History)
                     .Include(x => x.Contacts)
                     .First(a => a.Id == id);
 
@@ -296,8 +289,8 @@ namespace HETSAPI.Services.Impl
             IQueryable<Owner> data = _context.Owners.AsNoTracking()
                     .Where(x => x.LocalArea.ServiceArea.DistrictId.Equals(districtId))
                     .Include(x => x.LocalArea.ServiceArea.District.Region)
-                    .Include(x => x.Attachments)
-                    .Include(x => x.Contacts)
+                    .Include(x => x.EquipmentList)
+                    .Include(x => x.PrimaryContact)
                     .Select(x => x);            
 
             if (localAreasArray != null && localAreasArray.Length > 0)
