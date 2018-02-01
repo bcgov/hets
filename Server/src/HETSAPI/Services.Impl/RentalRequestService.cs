@@ -93,13 +93,11 @@ namespace HETSAPI.Services.Impl
         public virtual IActionResult RentalrequestsGetAsync()
         {
             List<RentalRequest> result = _context.RentalRequests.AsNoTracking()
-                .Include(x => x.RentalRequestAttachments)
-                .Include(x => x.DistrictEquipmentType)
-                .Include(x => x.FirstOnRotationList)
                 .Include(x => x.LocalArea.ServiceArea.District.Region)
-                .Include(x => x.Notes)
                 .Include(x => x.Project)
-                .Include(x => x.RentalRequestRotationList)
+                    .ThenInclude(c => c.PrimaryContact)
+                .Include(x => x.RentalRequestAttachments)
+                .Include(x => x.DistrictEquipmentType)                            
                 .ToList();
 
             List<RentalRequestViewModel> resultModel = new List<RentalRequestViewModel>();
@@ -160,11 +158,11 @@ namespace HETSAPI.Services.Impl
             if (exists)
             {
                 RentalRequest result = _context.RentalRequests.AsNoTracking()
-                    .Include(x => x.RentalRequestAttachments)
-                    .Include(x => x.DistrictEquipmentType)
                     .Include(x => x.LocalArea.ServiceArea.District.Region)
-                    .Include(x => x.Notes)
-                    .Include(x => x.Project.PrimaryContact)
+                    .Include(x => x.Project)
+                        .ThenInclude(c => c.PrimaryContact)
+                    .Include(x => x.RentalRequestAttachments)
+                    .Include(x => x.DistrictEquipmentType)                    
                     .First(a => a.Id == id);
                 
                 return new ObjectResult(new HetsResponse(result.ToRentalRequestViewModel()));
