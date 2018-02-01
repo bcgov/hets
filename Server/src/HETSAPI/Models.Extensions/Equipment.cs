@@ -124,7 +124,7 @@ namespace HETSAPI.Models
         /// <param name="context"></param>
         /// <param name="year"></param>
         /// <returns></returns>
-        public float GetYTDServiceHours(DbAppContext context, int year)
+        public float GetYtdServiceHours(DbAppContext context, int year)
         {
             float result = 0.0F;
 

@@ -134,7 +134,7 @@ namespace HETSAPI.Models
                                 // rollover the year
                                 equipment.ServiceHoursThreeYearsAgo = equipment.ServiceHoursTwoYearsAgo;
                                 equipment.ServiceHoursTwoYearsAgo = equipment.ServiceHoursLastYear;
-                                equipment.ServiceHoursLastYear = equipment.GetYTDServiceHours(dbContext, startingYear);
+                                equipment.ServiceHoursLastYear = equipment.GetYtdServiceHours(dbContext, startingYear);
                                 equipment.CalculateYearsOfService(DateTime.UtcNow.Year);
                             
                                 // blank out the override reason

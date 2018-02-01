@@ -187,74 +187,61 @@ namespace HETSAPI.Controllers
         public AttachmentUploadService(IHttpContextAccessor httpContextAccessor, DbAppContext context) : base(httpContextAccessor, context)
         {
             _context = context;
-        }
-
-        /// <summary>
-        /// Utility function used by the various attachment upload functions
-        /// </summary>
-        /// <param name="attachments">A list of attachments to add to</param>
-        /// <param name="files">The files to add to the attachments</param>
-        private void AddFilesToAttachments( List<Attachment> attachments, IList<IFormFile> files)
-        {
-            if (attachments == null)
-            {
-                attachments = new List<Attachment>();
-            }
-
-            //
-            // MOTI has requested that files be stored in the database.
-            //                                         
-            foreach (var file in files)
-            {
-                if (file.Length > 0)
-                {
-                    Attachment attachment = new Attachment();
-                    // strip out extra info in the file name.                        
-                    if (!string.IsNullOrEmpty(file.FileName))
-                    {
-                        attachment.FileName = Path.GetFileName(file.FileName);
-                    }
-
-                    // allocate storage for the file and create a memory stream
-                    attachment.FileContents = new byte[file.Length];                   
-                    MemoryStream fileStream = new MemoryStream(attachment.FileContents);
-                    file.CopyTo(fileStream);
-                    _context.Attachments.Add(attachment);
-                    attachments.Add(attachment);
-                }
-            }
-        }
+        }        
         
         /// <summary>
         /// Basic file receiver for .NET Core
         /// </summary>
-        /// <param name="id">Schoolbus Id</param>
+        /// <param name="id">Equipment Id</param>
         /// <param name="files">Files to add to attachments</param>
         /// <returns></returns>
         public IActionResult EquipmentIdAttachmentsPostAsync(int id, IList<IFormFile> files)
         {
             // validate the bus id            
             bool exists = _context.Equipments.Any(a => a.Id == id);
+
             if (exists)
             {
                 Equipment equipment = _context.Equipments
                     .Include(x => x.Attachments)     
                     .First(a => a.Id == id);
 
-                AddFilesToAttachments(equipment.Attachments, files);
+                foreach (var file in files)
+                {
+                    if (file.Length > 0)
+                    {
+                        Attachment attachment = new Attachment();
 
-                _context.Equipments.Update(equipment);
+                        // strip out extra info in the file name                   
+                        if (!string.IsNullOrEmpty(file.FileName))
+                        {
+                            attachment.FileName = Path.GetFileName(file.FileName);
+                        }
+
+                        // allocate storage for the file and create a memory stream
+                        attachment.FileContents = new byte[file.Length];
+
+                        using (MemoryStream fileStream = new MemoryStream(attachment.FileContents))
+                        {
+                            file.CopyTo(fileStream);
+                        }
+
+                        attachment.Type = GetType(attachment.FileName);
+                        attachment.MimeType = GetMimeType(attachment.Type);
+
+                        equipment.Attachments.Add(attachment);
+                    }
+                }
+
                 _context.SaveChanges();
 
                 List<AttachmentViewModel> result = MappingExtensions.GetAttachmentListAsViewModel(equipment.Attachments);
 
                 return new ObjectResult(result);
             }
-            else
-            {
-                // record not found
-                return new StatusCodeResult(404);
-            }
+
+            // record not found
+            return new StatusCodeResult(404);
         }
 
         /// <summary>
@@ -273,20 +260,42 @@ namespace HETSAPI.Controllers
                     .Include(x => x.Attachments)
                     .First(a => a.Id == id);
 
-                AddFilesToAttachments(project.Attachments, files);
+                foreach (var file in files)
+                {
+                    if (file.Length > 0)
+                    {
+                        Attachment attachment = new Attachment();
 
-                _context.Projects.Update(project);
+                        // strip out extra info in the file name                   
+                        if (!string.IsNullOrEmpty(file.FileName))
+                        {
+                            attachment.FileName = Path.GetFileName(file.FileName);
+                        }
+
+                        // allocate storage for the file and create a memory stream
+                        attachment.FileContents = new byte[file.Length];
+
+                        using (MemoryStream fileStream = new MemoryStream(attachment.FileContents))
+                        {
+                            file.CopyTo(fileStream);
+                        }
+
+                        attachment.Type = GetType(attachment.FileName);
+                        attachment.MimeType = GetMimeType(attachment.Type);
+
+                        project.Attachments.Add(attachment);
+                    }
+                }
+
                 _context.SaveChanges();
 
                 List<AttachmentViewModel> result = MappingExtensions.GetAttachmentListAsViewModel(project.Attachments);
 
                 return new ObjectResult(result);
             }
-            else
-            {
-                // record not found
-                return new StatusCodeResult(404);
-            }
+
+            // record not found
+            return new StatusCodeResult(404);
         }
 
         /// <summary>
@@ -305,20 +314,42 @@ namespace HETSAPI.Controllers
                     .Include(x => x.Attachments)
                     .First(a => a.Id == id);
 
-                AddFilesToAttachments(rentalRequest.Attachments, files);
+                foreach (var file in files)
+                {
+                    if (file.Length > 0)
+                    {
+                        Attachment attachment = new Attachment();
 
-                _context.RentalRequests.Update(rentalRequest);
+                        // strip out extra info in the file name                   
+                        if (!string.IsNullOrEmpty(file.FileName))
+                        {
+                            attachment.FileName = Path.GetFileName(file.FileName);
+                        }
+
+                        // allocate storage for the file and create a memory stream
+                        attachment.FileContents = new byte[file.Length];
+
+                        using (MemoryStream fileStream = new MemoryStream(attachment.FileContents))
+                        {
+                            file.CopyTo(fileStream);
+                        }
+
+                        attachment.Type = GetType(attachment.FileName);
+                        attachment.MimeType = GetMimeType(attachment.Type);
+
+                        rentalRequest.Attachments.Add(attachment);
+                    }
+                }
+
                 _context.SaveChanges();
 
                 List<AttachmentViewModel> result = MappingExtensions.GetAttachmentListAsViewModel(rentalRequest.Attachments);
 
                 return new ObjectResult(result);
             }
-            else
-            {
-                // record not found
-                return new StatusCodeResult(404);
-            }
+
+            // record not found
+            return new StatusCodeResult(404);
         }
 
         /// <summary>
@@ -337,20 +368,87 @@ namespace HETSAPI.Controllers
                     .Include(x => x.Attachments)
                     .First(a => a.Id == id);
 
-                AddFilesToAttachments(owner.Attachments, files);
+                foreach (var file in files)
+                {
+                    if (file.Length > 0)
+                    {
+                        Attachment attachment = new Attachment();
 
-                _context.Owners.Update(owner);
+                        // strip out extra info in the file name                   
+                        if (!string.IsNullOrEmpty(file.FileName))
+                        {
+                            attachment.FileName = Path.GetFileName(file.FileName);
+                        }
+
+                        // allocate storage for the file and create a memory stream
+                        attachment.FileContents = new byte[file.Length];
+
+                        using (MemoryStream fileStream = new MemoryStream(attachment.FileContents))
+                        {
+                            file.CopyTo(fileStream);
+                        }
+
+                        attachment.Type = GetType(attachment.FileName);
+                        attachment.MimeType = GetMimeType(attachment.Type);
+
+                        owner.Attachments.Add(attachment);
+                    }
+                }
+
                 _context.SaveChanges();
 
                 List<AttachmentViewModel> result = MappingExtensions.GetAttachmentListAsViewModel(owner.Attachments);
 
                 return new ObjectResult(result);
             }
-            else
+
+            // record not found
+            return new StatusCodeResult(404);
+        }
+
+        private string GetType(string fileName)
+        {
+            // get extension
+            int extStart = fileName.LastIndexOf('.');
+            if (extStart > 0)
             {
-                // record not found
-                return new StatusCodeResult(404);
+                return fileName.Substring(extStart + 1).ToLower();
             }
+
+            return "";
+        }
+
+        private string GetMimeType(string extension)
+        {
+            switch (extension.ToLower())
+            {
+                case "txt":
+                    return "text/plain";
+                case "png":
+                    return "image/png";
+                case "jpeg":
+                    return "image/jpeg";
+                case "jpg":
+                    return "image/jpeg";
+                case "gif":
+                    return "image/gif";
+                case "tif":
+                    return "image/tiff";
+                case "tiff":
+                    return "image/tiff";
+                case "pdf":
+                    return "application/pdf";
+                case "doc":
+                    return "application/msword";
+                case "docx":
+                    return "application/vnd.openxmlformats-officedocument.wordprocessingml.document";
+                case "xls":
+                    return "application/vnd.ms-excel";
+                case "xlsx":
+                    return "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet";
+            }
+
+            return "";
         }
     }
 }
