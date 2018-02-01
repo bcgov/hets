@@ -5,7 +5,6 @@ import { connect } from 'react-redux';
 import { Link, browserHistory } from 'react-router';
 import { Grid, Well, Row, Col } from 'react-bootstrap';
 import { Table, Alert, Button, Glyphicon, Label, ButtonGroup } from 'react-bootstrap';
-import { LinkContainer } from 'react-router-bootstrap';
 
 import _ from 'lodash';
 

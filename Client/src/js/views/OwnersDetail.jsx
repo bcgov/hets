@@ -217,13 +217,10 @@ var OwnersDetail = React.createClass({
   },
 
   saveContact(contact) {
-    // Update or add accordingly
     var isNew = !contact.id;
-
-    var contactPromise = isNew ? Api.addOwnerContact : Api.updateOwnerContact;
     var log = isNew ? Log.ownerContactAdded : Log.ownerContactUpdated;
 
-    contactPromise(this.props.owner, contact).then(() => {
+    Api.addOwnerContact(this.props.owner, contact).then(() => {
       // Use this.props.contact to get the contact id
       return log(this.props.owner, this.props.contact).then(() => {
         // Update primary contact info

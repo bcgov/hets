@@ -137,6 +137,7 @@ var RentalRequestsDetail = React.createClass({
   saveEdit(rentalRequest) {
     Api.updateRentalRequest(rentalRequest).finally(() => {
       this.closeEditDialog();
+      Api.getRentalRequestRotationList(this.props.params.rentalRequestId);
     });
   },
 
@@ -318,7 +319,7 @@ var RentalRequestsDetail = React.createClass({
                 const owner = listItem.equipment.owner;
                 var isFirstNullRecord = false;
                 // Set first null record to show correct response dialog link text
-                if (!previousNullRecord && !listItem.offerResponse && (rentalRequest.yesCount < rentalRequest.equipmentCount)) { 
+                if (!previousNullRecord && (listItem.offerResponse === STATUS_ASKED || !listItem.offerResponse) && (rentalRequest.yesCount < rentalRequest.equipmentCount)) { 
                   isFirstNullRecord = true; 
                   previousNullRecord = true; 
                 }
@@ -370,7 +371,7 @@ var RentalRequestsDetail = React.createClass({
                               </OverlayTrigger>
                             );
                           }
-                          if (rentalRequest.status === STATUS_IN_PROGRESS && listItem.offerResponse !== STATUS_YES && listItem.offerResponse !== STATUS_FORCE_HIRE) {
+                          if (rentalRequest.status === STATUS_IN_PROGRESS && (listItem.offerResponse === STATUS_ASKED || !listItem.offerResponse)) {
                             return (
                               <Button 
                               bsStyle="link" 
