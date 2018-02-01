@@ -26,40 +26,16 @@ node('sonarrunner') {
                 alwaysLinkToLastBuild: false,
                 keepAll: true,
                 reportDir: '../',
-                reportFiles: 'hetscommon.html',
-                reportName: "COMMON Vulnerability Report"
+                reportFiles: 'hets.html',
+                reportName: "HETS Vulnerability Report"
                 ])
-            publishHTML (target: [
-                allowMissing: false,
-                alwaysLinkToLastBuild: false,
-                keepAll: true,
-                reportDir: '../',
-                reportFiles: 'frontend.html',
-                reportName: "FrontEnd Vulnerability Report"
-                ])
-            publishHTML (target: [
-                allowMissing: false,
-                alwaysLinkToLastBuild: false,
-                keepAll: true,
-                reportDir: '../',
-                reportFiles: 'pdfserver.html',
-                reportName: "PDF Server Vulnerability Report"
-                ])
-            publishHTML (target: [
-                allowMissing: false,
-                alwaysLinkToLastBuild: false,
-                keepAll: true,
-                reportDir: '../',
-                reportFiles: 'hetsapi.html',
-                reportName: "API Vulnerability Report"
-                ])                  
             publishHTML (target: [
                 allowMissing: false,
                 alwaysLinkToLastBuild: false,
                 keepAll: true,
                 reportDir: '../',
                 reportFiles: 'client.html',
-                reportName: "Client Vulnerability Report"
+                reportName: "HETS Client Vulnerability Report"
                 ])   
         }
     }
