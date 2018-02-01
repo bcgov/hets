@@ -2,6 +2,7 @@ import React from 'react';
 
 import { connect } from 'react-redux';
 
+import { Link } from 'react-router';
 import { Grid, Well, Row, Col } from 'react-bootstrap';
 import { Table, Alert, Button, Glyphicon, Label, ButtonGroup } from 'react-bootstrap';
 import { LinkContainer } from 'react-router-bootstrap';
@@ -38,11 +39,12 @@ var RentalAgreementsDetail = React.createClass({
     rentalAgreement: React.PropTypes.object,
     notes: React.PropTypes.object,
     history: React.PropTypes.object,
-    rentalConditions: React.PropTypes.object,
+    rentalConditions: React.PropTypes.array,
     params: React.PropTypes.object,
     ui: React.PropTypes.object,
     location: React.PropTypes.object,
     router: React.PropTypes.object,
+    provincialRateTypes: React.PropTypes.array,
   },
 
   getInitialState() {
@@ -69,7 +71,10 @@ var RentalAgreementsDetail = React.createClass({
 
   fetch() {
     this.setState({ loading: true });
-    return Api.getRentalAgreement(this.props.params.rentalAgreementId).finally(() => {
+    var getRentalAgreementPromise = Api.getRentalAgreement(this.props.params.rentalAgreementId);
+    var getRentalConditionsPromise = Api.getRentalConditions();
+    var getProvincialRateTypesPromise = Api.getProvincialRateTypes();
+    return Promise.all([getRentalAgreementPromise, getRentalConditionsPromise, getProvincialRateTypesPromise]).finally(() => {
       this.setState({ loading: false });
     });
   },
@@ -155,7 +160,10 @@ var RentalAgreementsDetail = React.createClass({
   },
 
   closeAttachmentRateDialog() {
-    this.setState({ showAttachmentRateDialog: false });
+    this.setState({ 
+      attachmentRate: _.omit({ ...this.state.attachmentRate }, 'rentalAgreement', 'id', 'isAttachment'),
+      showAttachmentRateDialog: false,
+    });
   },
 
   addAttachmentRate() {
@@ -241,14 +249,16 @@ var RentalAgreementsDetail = React.createClass({
   generateRentalAgreementDocument() {
     // Temporary approach to download PDFs
     // TODO: Research proper download technique
-    this.setState({ rentalAgreementDocumentLoading: true });
-    window.open(`/api/rentalagreements/${ this.props.params.rentalAgreementId }/pdf`);
-    this.setState({ rentalAgreementDocumentLoading: false });
+    // this.setState({ rentalAgreementDocumentLoading: true });
+    // window.open(`/api/rentalagreements/${ this.props.params.rentalAgreementId }/pdf`);
+    // this.setState({ rentalAgreementDocumentLoading: false });
+    Api.generateRentalAgreementDocument(this.props.params.rentalAgreementId);
   },
 
   render() {
     var rentalAgreement = this.props.rentalAgreement;
-    var rentalConditions = ['Condition 1', 'Condition 2', 'Non-Standard Conditions']; // TODO this.props.rentalConditions
+    var rentalConditions = this.props.rentalConditions;
+    var provincialRateTypes = this.props.provincialRateTypes;
 
     return <div id="rental-agreements-detail">
       <Row id="rental-agreements-top">
@@ -279,37 +289,53 @@ var RentalAgreementsDetail = React.createClass({
       {(() => {
         if (this.state.loading) { return <div style={{ textAlign: 'center' }}><Spinner/></div>; }
 
-        return <Grid fluid id="rental-agreements-header">
-          <Row>
-            <ColDisplay md={12} labelProps={{ md: 4 }} label={ <h1>Project:</h1> }><h1><small>{ rentalAgreement.projectName }</small></h1></ColDisplay>
-          </Row>
-          <Row>
-            <ColDisplay md={12} labelProps={{ md: 4 }} label={ <h1>Equipment Type:</h1> }><h1><small>{ rentalAgreement.equipmentTypeName }</small></h1></ColDisplay>
-          </Row>
-          <Row>
-            <ColDisplay md={12} labelProps={{ md: 4 }} label={ <h1>Owner:</h1> }><h1><small>{ rentalAgreement.ownerName }</small></h1></ColDisplay>
-          </Row>
-          <Row>
-            <ColDisplay md={12} labelProps={{ md: 4 }} label={ <h1>Equipment ID:</h1> }><h1><small>{ rentalAgreement.equipmentCode }</small></h1></ColDisplay>
-          </Row>
-          <Row>
-            <ColDisplay md={12} labelProps={{ md: 4 }} label="Agreement Number:">{ rentalAgreement.number }</ColDisplay>
-          </Row>
-        </Grid>;
+        return (
+          <Well>
+            <Grid id="rental-agreements-header">
+              <Row>
+                <ColDisplay md={12} labelProps={{ md: 4 }} label={ <h3>Agreement Number:</h3>}>
+                  <small>{ rentalAgreement.number }</small>
+                </ColDisplay>
+              </Row>
+              <Row>
+                <ColDisplay md={12} labelProps={{ md: 4 }} label={ <h3>Owner:</h3> }>
+                  <small>{ rentalAgreement.ownerName }</small>
+                </ColDisplay>
+              </Row>
+              <Row>
+                <ColDisplay md={12} labelProps={{ md: 4 }} label={ <h3>Equipment ID:</h3> }>
+                  <Link to={{ pathname: 'equipment/' + rentalAgreement.equipment.id }}>
+                    <small>{ rentalAgreement.equipment.equipmentCode }</small>
+                  </Link>
+                </ColDisplay>
+              </Row>
+              <Row>
+                <ColDisplay md={12} labelProps={{ md: 4 }} label={ <h3>Equipment Serial Number:</h3> }>
+                  <small>{ rentalAgreement.equipment.serialNumber }</small>
+                </ColDisplay>
+              </Row>
+              <Row>
+                <ColDisplay md={12} labelProps={{ md: 4 }} label={ <h3>Equipment Yr Mk/Md/Sz:</h3> }>
+                  <small>{`${rentalAgreement.equipment.year} ${rentalAgreement.equipment.make}/${rentalAgreement.equipment.model}/${rentalAgreement.equipment.size}`}</small>
+                </ColDisplay>
+              </Row>
+              <Row>
+                <ColDisplay md={12} labelProps={{ md: 4 }} label={ <h3>Project:</h3> }>
+                  <small>{ rentalAgreement.project.name }</small>
+                </ColDisplay>
+              </Row>
+            </Grid>
+          </Well>
+        );
       })()}
 
       <Well>
         <h3>Rates</h3>
-        <div className="clearfix">
-          <span className="pull-right">
-            <Button title="Edit Pay Rate" bsSize="small" onClick={ this.openEquipmentRateDialog }><Glyphicon glyph="pencil" /></Button>
-          </span>
-        </div>
         {(() => {
           if (this.state.loading) { return <div style={{ textAlign: 'center' }}><Spinner/></div>; }
 
           return <div>
-            <Grid id="rental-rates" fluid>
+            <Grid id="rental-rates" fluid className="nopadding">
               <Row>
                 <Col md={3}>
                   <ColDisplay md={12} labelProps={{ md: 6 }} label="Pay Rate:">{ formatCurrency(rentalAgreement.equipmentRate) }</ColDisplay>
@@ -317,8 +343,11 @@ var RentalAgreementsDetail = React.createClass({
                 <Col md={3}>
                   <ColDisplay md={12} labelProps={{ md: 6 }} label="Period:">{ rentalAgreement.ratePeriod }</ColDisplay>
                 </Col>
-                <Col md={6}>
+                <Col md={5}>
                   <ColDisplay md={12} labelProps={{ md: 3 }} label="Comment:">{ rentalAgreement.rateComment }</ColDisplay>
+                </Col>
+                <Col md={1}>
+                  <EditButton title="Edit Pay Rate" className="pull-right" onClick={ this.openEquipmentRateDialog } />
                 </Col>
               </Row>
             </Grid>
@@ -345,6 +374,7 @@ var RentalAgreementsDetail = React.createClass({
                   <th>Rate</th>
                   <th>Period</th>
                   <th>Comment</th>
+                  <th>Include in Total</th>
                   <th></th>
                 </tr>
               </thead>
@@ -363,6 +393,7 @@ var RentalAgreementsDetail = React.createClass({
                       </td>
                       <td>{ obj.ratePeriod }</td>
                       <td>{ obj.comment }</td>
+                      <td>{ obj.includeInTotal ? 'Yes' : 'No' }</td>
                       <td style={{ textAlign: 'right' }}>
                         <ButtonGroup>
                           <DeleteButton name="Rental rate" hide={ !obj.canDelete } onConfirm={ this.deleteRentalRate.bind(this, obj) }/>
@@ -382,8 +413,10 @@ var RentalAgreementsDetail = React.createClass({
       <Well>
         <h3>Attachments</h3>
         {(() => {
+          var equipmentAttachments = rentalAgreement.equipment && rentalAgreement.equipment.equipmentAttachments;
+
           if (this.state.loading) { return <div style={{ textAlign: 'center' }}><Spinner/></div>; }
-          if (Object.keys(rentalAgreement.equipment.equipmentAttachments).length === 0) { return <Alert bsStyle="success" style={{ marginTop: 10 }}>This piece of equipment has no attachments</Alert>; }
+          if (Object.keys(equipmentAttachments).length === 0) { return <Alert bsStyle="success" style={{ marginTop: 10 }}>This piece of equipment has no attachments</Alert>; }
 
           // Only want attachments rates here - the rest are shown above
           var attachmentRates = _.filter(rentalAgreement.rentalAgreementRates, { isAttachment: true });
@@ -398,10 +431,11 @@ var RentalAgreementsDetail = React.createClass({
             <Table striped condensed hover bordered>
               <thead>
                 <tr>
-                  <th>Rate Type</th>
+                  <th>Attachment</th>
                   <th>Rate</th>
                   <th>Period</th>
                   <th>Comment</th>
+                  <th>Include in Total</th>
                   <th></th>
                 </tr>
               </thead>
@@ -420,10 +454,11 @@ var RentalAgreementsDetail = React.createClass({
                       </td>
                       <td>{ obj.ratePeriod }</td>
                       <td>{ obj.comment }</td>
+                      <td>{ obj.isIncludedInTotal ? 'Yes' : 'No' }</td>
                       <td style={{ textAlign: 'right' }}>
                         <ButtonGroup>
                           <DeleteButton name="Attachment Rate" hide={ !obj.canDelete } onConfirm={ this.deleteAttachmentRate.bind(this, obj) }/>
-                          <EditButton name="Attachment Rate" view={ !obj.canEdit } onClick={ this.openAttachmentRateDialog.bind(this, obj) }/>
+                          <EditButton name="Attachment Rate" view={ !obj.canEdit } onClick={ this.openAttachmentRateDialog.bind(this, obj ) }/>
                         </ButtonGroup>
                       </td>
                     </tr>;
@@ -491,9 +526,6 @@ var RentalAgreementsDetail = React.createClass({
 
           return <Grid fluid>
             <Row>
-              <ColDisplay id="rental-agreements-note" md={12} labelProps={{ md: 2 }} fieldProps={{ md: 10 }} label="Notes to Rental Agreement:">{ rentalAgreement.note }</ColDisplay>
-            </Row>
-            <Row>
               <Col md={6}>
                 <ColDisplay md={12} labelProps={{ md: 4 }} label="Estimated Commencement:">{ formatDateTime(rentalAgreement.estimateStartWork, Constant.DATE_YEAR_SHORT_MONTH_DAY) }</ColDisplay>
                 <ColDisplay md={12} labelProps={{ md: 4 }} label="Point of Hire:">{ rentalAgreement.pointOfHire }</ColDisplay>
@@ -539,9 +571,6 @@ var RentalAgreementsDetail = React.createClass({
       <Row id="rental-agreements-footer">
         <div className="pull-right">
           <Button title="Generate Rental Agreement PDF" onClick={ this.generateRentalAgreementDocument } bsStyle="primary">Generate</Button>
-          <Unimplemented>
-            <Button title="Cancel">Cancel</Button>
-          </Unimplemented>
         </div>
       </Row>
       { this.state.showEditDialog &&
@@ -551,13 +580,31 @@ var RentalAgreementsDetail = React.createClass({
         <EquipmentRentalRatesEditDialog show={ this.state.showEquipmentRateDialog } onSave={ this.saveEquipmentRate } onClose={ this.closeEquipmentRateDialog } />
       }
       { this.state.showRentalRateDialog &&
-        <RentalRatesEditDialog show={ this.state.showRentalRateDialog } rentalRate={ this.state.rentalRate } onSave={ this.saveRentalRate } onClose={ this.closeRentalRateDialog } />
+        <RentalRatesEditDialog 
+          show={ this.state.showRentalRateDialog } 
+          rentalRate={ this.state.rentalRate } 
+          onSave={ this.saveRentalRate } 
+          onClose={ this.closeRentalRateDialog } 
+          provincialRateTypes={ provincialRateTypes }
+        />
       }
       { this.state.showAttachmentRateDialog &&
-        <AttachmentRatesEditDialog show={ this.state.showAttachmentRateDialog } attachmentRate={ this.state.attachmentRate } onSave={ this.saveAttachmentRate } onClose={ this.closeAttachmentRateDialog } />
+        <AttachmentRatesEditDialog 
+          show={ this.state.showAttachmentRateDialog } 
+          attachmentRate={ this.state.attachmentRate } 
+          onSave={ this.saveAttachmentRate } 
+          onClose={ this.closeAttachmentRateDialog } 
+          rentalAgreement={ rentalAgreement }
+        />
       }
       { this.state.showConditionDialog &&
-        <RentalConditionsEditDialog show={ this.state.showConditionDialog } rentalCondition={ this.state.rentalCondition } rentalConditions={ rentalConditions } onSave={ this.saveCondition } onClose={ this.closeConditionDialog } />
+        <RentalConditionsEditDialog 
+          show={ this.state.showConditionDialog } 
+          rentalCondition={ this.state.rentalCondition } 
+          rentalConditions={ rentalConditions } 
+          onSave={ this.saveCondition } 
+          onClose={ this.closeConditionDialog } 
+        />
       }
     </div>;
   },
@@ -570,6 +617,7 @@ function mapStateToProps(state) {
     notes: state.models.rentalAgreementNotes,
     history: state.models.rentalAgreementHistory,
     rentalConditions: state.lookups.rentalConditions,
+    provincialRateTypes: state.lookups.provincialRateTypes,
   };
 }
 

@@ -1416,6 +1416,12 @@ export function releaseRentalAgreement(rentalAgreementId) {
   });
 }
 
+export function generateRentalAgreementDocument(rentalAgreementId) {
+  return new ApiRequest(`rentalagreements/${rentalAgreementId}/pdf`).get().then((response) => {
+    return response;
+  });
+}
+
 
 ////////////////////
 // Rental Rates
@@ -1559,6 +1565,14 @@ export function deleteRentalCondition(rentalCondition) {
   });
 }
 
+export function getRentalConditions() {
+  return new ApiRequest('/conditiontypes').get().then(response => {
+    var rentalConditions = response.data;
+
+    store.dispatch({ type: Action.UPDATE_RENTAL_CONDITIONS_LOOKUP, rentalConditions: rentalConditions });
+  });
+}
+
 ////////////////////
 // Look-ups
 ////////////////////
@@ -1642,6 +1656,24 @@ export function getPermissions() {
     var permissions = normalize(response.data);
 
     store.dispatch({ type: Action.UPDATE_PERMISSIONS_LOOKUP, permissions: permissions });
+  });
+}
+
+export function getProvincialRateTypes() {
+  return new ApiRequest('/provincialratetypes').get().then(response => {
+    var rateTypeOther = { 
+      id: 0, 
+      rateType: 'OTHER', 
+      description: 'Other',
+      rate: null,
+      isPercentRate: false,
+      isRateEditable: true,
+      isIncludedInTotal: false,
+      isInTotalEditable: true, 
+    };
+    var provincialRateTypes = [ ...response.data, rateTypeOther ];
+
+    store.dispatch({ type: Action.UPDATE_PROVINCIAL_RATE_TYPES_LOOKUP, provincialRateTypes: provincialRateTypes });
   });
 }
 

@@ -10,11 +10,12 @@ import EditDialog from '../../components/EditDialog.jsx';
 import FormInputControl from '../../components/FormInputControl.jsx';
 
 import { isBlank } from '../../utils/string';
+import { NON_STANDARD_CONDITION } from '../../constants';
 
 var RentalConditionsEditDialog = React.createClass({
   propTypes: {
     rentalCondition: React.PropTypes.object.isRequired,
-    rentalConditions: React.PropTypes.object.isRequired,
+    rentalConditions: React.PropTypes.array.isRequired,
     onSave: React.PropTypes.func.isRequired,
     onClose: React.PropTypes.func.isRequired,
     show: React.PropTypes.bool,
@@ -58,8 +59,8 @@ var RentalConditionsEditDialog = React.createClass({
       valid = false;
     }
 
-    if (this.state.conditionName === 'Non-Standard Conditions' && isBlank(this.state.comment)) {
-      this.setState({ commentError: 'Comment is required for non-standard condition' });
+    if (this.state.conditionName === NON_STANDARD_CONDITION && isBlank(this.state.comment)) {
+      this.setState({ commentError: 'Comment is required for non-standard conditions' });
       valid = false;
     }
 
@@ -76,7 +77,7 @@ var RentalConditionsEditDialog = React.createClass({
   render() {
     // Read-only if the user cannot edit the rental agreement
     var isReadOnly = !this.props.rentalCondition.canEdit && this.props.rentalCondition.id !== 0;
-    var conditions = _.sortBy(this.props.rentalConditions, 'displaySortOrder');
+    var conditions = _.map([ ...this.props.rentalConditions, { description: NON_STANDARD_CONDITION } ], 'description');
 
     return <EditDialog id="rental-conditions-edit" show={ this.props.show }
       onClose={ this.props.onClose } onSave={ this.onSave } didChange={ this.didChange } isValid={ this.isValid }
@@ -90,20 +91,23 @@ var RentalConditionsEditDialog = React.createClass({
               <FormGroup controlId="conditionName" validationState={ this.state.conditionNameError ? 'error' : null }>
                 <ControlLabel>Rate Component <sup>*</sup></ControlLabel>
                 {/*TODO - use lookup list*/}
-                <DropdownControl id="conditionName" disabled={ isReadOnly } title={ this.state.conditionName } updateState={ this.updateState }
-                  items={ conditions } />
+                <DropdownControl id="conditionName" disabled={ isReadOnly } updateState={ this.updateState }
+                  items={ conditions } title={ this.state.conditionName } className="full-width" />
                 <HelpBlock>{ this.state.conditionNameError }</HelpBlock>
               </FormGroup>
             </Col>
           </Row>
+          { this.state.conditionName === NON_STANDARD_CONDITION && 
           <Row>
             <Col md={12}>
-              <FormGroup controlId="comment">
+              <FormGroup controlId="comment" validationState={ this.state.commentError ? 'error' : null }>
                 <ControlLabel>Comment</ControlLabel>
                 <FormInputControl componentClass="textarea" defaultValue={ this.state.comment } readOnly={ isReadOnly } updateState={ this.updateState } />
+                <HelpBlock>{ this.state.commentError }</HelpBlock>
               </FormGroup>
             </Col>
           </Row>
+          }
         </Grid>
       </Form>
     </EditDialog>;
