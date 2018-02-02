@@ -129,7 +129,7 @@ var OwnersEditDialog = React.createClass({
     if (isBlank(this.state.status)) {
       this.setState({ statusError: 'Status is required' });
       valid = false;
-    } else if (this.state.status === OWNER_STATUS_CODE_APPROVED) {
+    } else if (this.state.status === OWNER_STATUS_CODE_APPROVED && (this.statusRequirements()).length > 0) {
       this.setState({ statusError: this.statusRequirements() });
       valid = false;
     }
@@ -147,7 +147,7 @@ var OwnersEditDialog = React.createClass({
     if (isBlank(owner.workSafeBCPolicyNumber)) {
       requirements.push('WorkSafeBC policy number');
     }
-    if (!owner.companyAddress) {
+    if (!owner.address1 || !owner.city || !owner.province || !owner.province) {
       requirements.push('Company address');
     } 
     if (!owner.meetsResidency) {
