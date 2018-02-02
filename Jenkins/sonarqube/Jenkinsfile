@@ -18,24 +18,29 @@ node('sonarrunner') {
         echo "SONARQUBE_URL: ${SONARQUBE_URL}"
 
         dir('sonar-runner') {
-            sh "./scan.sh"
-            publishHTML (target: [
-                allowMissing: false,
-                alwaysLinkToLastBuild: false,
-                keepAll: true,
-                reportDir: '../',
-                reportFiles: 'hets.html',
-                reportName: "HETS Vulnerability Report"
-                ])
-            publishHTML (target: [
-                allowMissing: false,
-                alwaysLinkToLastBuild: false,
-                keepAll: true,
-                reportDir: '../',
-                reportFiles: 'client.html',
-                reportName: "HETS Client Vulnerability Report"
-                ])   
-             sh returnStdout: true, script: "./gradlew sonarqube -Dsonar.host.url=${SONARQUBE_URL} -Dsonar.verbose=true --stacktrace --info  -Dsonar.sources=.."
+            try {
+                sh "./scan.sh"
+            } finally {
+                publishHTML (target: [
+                    allowMissing: false,
+                    alwaysLinkToLastBuild: true,
+                    keepAll: false,
+                    reportDir: '../',
+                    reportFiles: 'hets.html',
+                    reportName: "HETS Vulnerability Report"
+                    ])
+                publishHTML (target: [
+                    allowMissing: false,
+                    alwaysLinkToLastBuild: true,
+                    keepAll: false,
+                    reportDir: '../',
+                    reportFiles: 'client.html',
+                    reportName: "HETS Client Vulnerability Report"
+                    ])
+            }
+            try { 
+                sh returnStdout: true, script: "./gradlew sonarqube -Dsonar.host.url=${SONARQUBE_URL} -Dsonar.verbose=true --stacktrace --info  -Dsonar.sources=.."
+            } finally {}
         }
     }
 }	
