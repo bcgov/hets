@@ -8,7 +8,8 @@ import { Form, FormGroup, HelpBlock, ControlLabel } from 'react-bootstrap';
 import EditDialog from '../../components/EditDialog.jsx';
 import FormInputControl from '../../components/FormInputControl.jsx';
 
-import { isBlank } from '../../utils/string';
+import { isBlank, notBlank } from '../../utils/string';
+import { isValidYear } from '../../utils/date';
 
 var EquipmentEditDialog = React.createClass({
   propTypes: {
@@ -29,10 +30,9 @@ var EquipmentEditDialog = React.createClass({
       model: this.props.equipment.model || '',
       year: this.props.equipment.year || '',
       licencePlate: this.props.equipment.licencePlate || '',
-      operator: this.props.equipment.operator || '',
 
       serialNumberError: null,
-      licencePlateError: null,
+      yearError: null,
     };
   },
 
@@ -51,7 +51,6 @@ var EquipmentEditDialog = React.createClass({
     if (this.state.model !== this.props.equipment.model) { return true; }
     if (this.state.year !== this.props.equipment.year) { return true; }
     if (this.state.licencePlate !== this.props.equipment.licencePlate) { return true; }
-    if (this.state.operator !== this.props.equipment.operator) { return true; }
 
     return false;
   },
@@ -69,8 +68,8 @@ var EquipmentEditDialog = React.createClass({
       valid = false;
     }
 
-    if (isBlank(this.state.licencePlate)) {
-      this.setState({ licencePlateError: 'Licence plate is required' });
+    if (notBlank(this.state.year) && !isValidYear(this.state.year)) {
+      this.setState({ yearError: 'This is not a valid year.' });
       valid = false;
     }
 
@@ -85,7 +84,6 @@ var EquipmentEditDialog = React.createClass({
       model: this.state.model,
       year: this.state.year,
       licencePlate: this.state.licencePlate,
-      operator: this.state.operator,
     }});
   },
 
@@ -93,38 +91,38 @@ var EquipmentEditDialog = React.createClass({
     return <EditDialog id="equipment-edit" show={ this.props.show }
       onClose={ this.props.onClose } onSave={ this.onSave } didChange={ this.didChange } isValid={ this.isValid }
       title= { 
-        <strong>Equipment
-          <span>Serial Number: <small>{ this.props.equipment.serialNumber }</small></span>
-          <span>Plate: <small>{ this.props.equipment.licencePlate }</small></span>
-        </strong>
+        <strong>Equipment Id: <small>{ this.props.equipment.equipmentCode }</small></strong>
       }>
       {(() => {
         return <Form>
           <Grid fluid>
             <Row>
-              <Col md={6}>
-                <FormGroup controlId="serialNumber" validationState={ this.state.serialNumberError ? 'error' : null }>
-                  <ControlLabel>Serial Number <sup>*</sup></ControlLabel>
-                  <FormInputControl type="text" defaultValue={ this.state.serialNumber } updateState={ this.updateState } inputRef={ ref => { this.input = ref; }}/>
-                  <HelpBlock>{ this.state.serialNumberError }</HelpBlock>
-                </FormGroup>
-              </Col>
-              <Col md={6}>
-                <FormGroup controlId="licencePlate" validationState={ this.state.licencePlateError ? 'error' : null }>
-                  <ControlLabel>Licence Number <sup>*</sup></ControlLabel>
-                  <FormInputControl type="text" defaultValue={ this.state.licencePlate } updateState={ this.updateState }/>
-                  <HelpBlock>{ this.state.licencePlateError }</HelpBlock>
-                </FormGroup>
-              </Col>
-            </Row>
-            <Row>
-              <Col md={6}>
+              <Col md={12}>
                 <FormGroup controlId="make">
                   <ControlLabel>Make</ControlLabel>
                   <FormInputControl type="text" defaultValue={ this.state.make } updateState={ this.updateState }/>                  
                 </FormGroup>
               </Col>
-              <Col md={6}>
+            </Row>
+            <Row>
+              <Col md={12}>
+                <FormGroup controlId="model">
+                  <ControlLabel>Model</ControlLabel>
+                  <FormInputControl type="text" defaultValue={ this.state.model } updateState={ this.updateState }/>                  
+                </FormGroup>
+              </Col>
+            </Row>
+            <Row>
+              <Col md={12}>
+                <FormGroup controlId="year" validationState={ this.state.yearError ? 'error' : null }>
+                  <ControlLabel>Year</ControlLabel>
+                  <FormInputControl type="text" defaultValue={ this.state.year } updateState={ this.updateState }/>                  
+                  <HelpBlock>{ this.state.yearError }</HelpBlock>
+                </FormGroup>
+              </Col>
+            </Row>
+            <Row>
+              <Col md={12}>
                 <FormGroup controlId="size">
                   <ControlLabel>Size</ControlLabel>
                   <FormInputControl type="text" defaultValue={ this.state.size } updateState={ this.updateState }/>                  
@@ -132,27 +130,19 @@ var EquipmentEditDialog = React.createClass({
               </Col>
             </Row>
             <Row>
-              <Col md={6}>
-                <FormGroup controlId="model">
-                  <ControlLabel>Model</ControlLabel>
-                  <FormInputControl type="text" defaultValue={ this.state.model } updateState={ this.updateState }/>                  
+              <Col md={12}>
+                <FormGroup controlId="licencePlate">
+                  <ControlLabel>Licence Number</ControlLabel>
+                  <FormInputControl type="text" defaultValue={ this.state.licencePlate } updateState={ this.updateState }/>
                 </FormGroup>
-              </Col>
-              <Col md={6}>
-                {/* TODO Equipment type drop-down */}
               </Col>
             </Row>
             <Row>
-              <Col md={6}>
-                <FormGroup controlId="year">
-                  <ControlLabel>Year</ControlLabel>
-                  <FormInputControl type="text" defaultValue={ this.state.year } updateState={ this.updateState }/>                  
-                </FormGroup>
-              </Col>
-              <Col md={6}>
-                <FormGroup controlId="operator">
-                  <ControlLabel>Operator</ControlLabel>
-                  <FormInputControl type="text" defaultValue={ this.state.operator } updateState={ this.updateState }/>                  
+              <Col md={12}>
+                <FormGroup controlId="serialNumber" validationState={ this.state.serialNumberError ? 'error' : null }>
+                  <ControlLabel>Serial Number <sup>*</sup></ControlLabel>
+                  <FormInputControl type="text" defaultValue={ this.state.serialNumber } updateState={ this.updateState } inputRef={ ref => { this.input = ref; }}/>
+                  <HelpBlock>{ this.state.serialNumberError }</HelpBlock>
                 </FormGroup>
               </Col>
             </Row>

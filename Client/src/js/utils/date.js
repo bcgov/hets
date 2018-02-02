@@ -109,3 +109,8 @@ export function endOfPreviousFiscal(dateTime) {
   if (!fiscalEnd || !fiscalEnd.isValid()) { return ''; }
   return fiscalEnd.subtract(1, 'year').month('March').endOf('month');
 }
+
+export function isValidYear(year) {
+  let currentYear = new Date().getFullYear();
+  return (year.length === 4 && year.match(/\d{4}/) && parseInt(year, 10) <= currentYear && parseInt(year, 10) >= 1900 );
+}

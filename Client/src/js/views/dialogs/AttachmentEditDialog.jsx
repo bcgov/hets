@@ -16,15 +16,9 @@ var AttachmentEditDialog = React.createClass({
 
   getInitialState() {
     return {
-      typeName: '',
+      typeName: this.props.attachment.typeName,
       attachmentError: '',
     };
-  },
-
-  componentWillReceiveProps(nextProps) {
-    if (this.props.attachment !== nextProps.attachment) {
-      this.setState({ typeName: nextProps.attachment.typeName });
-    }
   },
 
   updateState(state, callback) {
