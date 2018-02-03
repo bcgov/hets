@@ -97,7 +97,7 @@ namespace HETSAPI.Services.Impl
                 .Include(x => x.Project)
                     .ThenInclude(c => c.PrimaryContact)
                 .Include(x => x.RentalRequestAttachments)
-                .Include(x => x.DistrictEquipmentType)                            
+                .Include(x => x.DistrictEquipmentType)   
                 .ToList();
 
             List<RentalRequestViewModel> resultModel = new List<RentalRequestViewModel>();
@@ -162,9 +162,11 @@ namespace HETSAPI.Services.Impl
                     .Include(x => x.Project)
                         .ThenInclude(c => c.PrimaryContact)
                     .Include(x => x.RentalRequestAttachments)
-                    .Include(x => x.DistrictEquipmentType)                    
+                    .Include(x => x.DistrictEquipmentType)
+                    .Include(x => x.RentalRequestRotationList)
                     .First(a => a.Id == id);
-                
+
+                // RentalRequestRotationList -> used to calculate and return the count of "Yes" + "Force Hire" requests
                 return new ObjectResult(new HetsResponse(result.ToRentalRequestViewModel()));
             }
 
@@ -187,9 +189,62 @@ namespace HETSAPI.Services.Impl
 
             if (exists && id == item.Id)
             {
-                _context.RentalRequests.Update(item);
+                // *************************************************************************
+                // need to check if we are going over the "count" and close this request
+                // *************************************************************************
+                RentalRequest rentalRequest = _context.RentalRequests
+                    .Include(x => x.LocalArea.ServiceArea.District.Region)
+                    .Include(x => x.Project)
+                        .ThenInclude(c => c.PrimaryContact)
+                    .Include(x => x.RentalRequestAttachments)
+                    .Include(x => x.DistrictEquipmentType)
+                    .Include(x => x.RentalRequestRotationList)
+                    .First(a => a.Id == id);
 
-                // save the changes
+                int hiredCount = 0;
+
+                foreach (RentalRequestRotationList equipment in rentalRequest.RentalRequestRotationList)
+                {
+                    if (equipment.OfferResponse != null &&
+                        equipment.OfferResponse.Equals("Yes", StringComparison.InvariantCultureIgnoreCase))
+                    {
+                        hiredCount++;
+                    }
+
+                    if (equipment.IsForceHire != null &&
+                        equipment.IsForceHire == true)
+                    {
+                        hiredCount++;
+                    }
+                }
+
+                // has the count changed - and is now less than the already "hired" equipment
+                if (item.EquipmentCount != rentalRequest.EquipmentCount &&
+                    hiredCount > item.EquipmentCount)
+                {
+                    //"HETS-07": "Rental Request count cannot be less than equipment already hired"
+                    return new ObjectResult(new HetsResponse("HETS-07", ErrorViewModel.GetDescription("HETS-07", _configuration)));
+                }
+
+                // if the number of hired records is now "over the count" - then close 
+                if (hiredCount >= item.EquipmentCount)
+                {
+                    item.Status = "Complete";
+                }
+
+                // *************************************************************************
+                // update rental request
+                // *************************************************************************
+                rentalRequest.Status = item.Status;                
+                rentalRequest.EquipmentCount = item.EquipmentCount;
+                rentalRequest.ExpectedEndDate = item.ExpectedEndDate;
+                rentalRequest.ExpectedStartDate = item.ExpectedStartDate;
+                rentalRequest.ExpectedHours = item.ExpectedHours;
+                rentalRequest.Attachments = item.Attachments;
+
+                // *************************************************************************
+                // save the changes - Done!
+                // *************************************************************************
                 _context.SaveChanges();
 
                 return new ObjectResult(new HetsResponse(item.ToRentalRequestViewModel()));

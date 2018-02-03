@@ -524,6 +524,12 @@ namespace HETSAPI.Models
             
             int tempChangedId = changed.Id;
 
+            // if this is an "empy" record - exit
+            if (tempChangedId <= 0)
+            {
+                return;
+            }
+
             Equipment original = Equipments.AsNoTracking()
                 .Include(x => x.LocalArea)
                 .Include(x => x.Owner)
