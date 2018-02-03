@@ -105,17 +105,49 @@ namespace HETSAPI.Models
         /// </summary>
         /// <param name="changed"></param>
         /// <returns>True if the changed record differes from this one</returns>
-        public bool IsSeniorityAuditRequired(Equipment changed)            
-        {
-            bool result = (Seniority != changed.Seniority) || 
-                          (LocalArea.Id != changed.LocalArea.Id) || 
-                          (BlockNumber != changed.BlockNumber) || 
-                          (Owner.Id != changed.Owner.Id) || 
-                          (ServiceHoursLastYear != changed.ServiceHoursLastYear) || 
-                          (ServiceHoursTwoYearsAgo != changed.ServiceHoursTwoYearsAgo) || 
-                          (ServiceHoursThreeYearsAgo != changed.ServiceHoursThreeYearsAgo);
+        public bool IsSeniorityAuditRequired(Equipment changed)
+        {            
+            // change to seniority -> write audit
+            if (Seniority != null && Seniority != changed.Seniority)
+            {
+                return true;
+            }
 
-            return result;
+            // change to local area -> write audit
+            if (LocalArea != null && LocalArea.Id != changed.LocalArea.Id)            
+            {
+                return true;
+            }
+
+            // change to block number -> write audit
+            if (BlockNumber != null && BlockNumber != changed.BlockNumber)
+            {
+                return true;
+            }
+
+            // change to owner -> write audit
+            if (Owner != null && Owner.Id != changed.Owner.Id)
+            {
+                return true;
+            }
+
+            // chenge to service hours
+            if (ServiceHoursLastYear != null && ServiceHoursLastYear != changed.ServiceHoursLastYear)
+            {
+                return true;
+            }
+
+            if (ServiceHoursTwoYearsAgo != null && ServiceHoursTwoYearsAgo != changed.ServiceHoursTwoYearsAgo)
+            {
+                return true;
+            }
+
+            if (ServiceHoursThreeYearsAgo != null && ServiceHoursThreeYearsAgo != changed.ServiceHoursThreeYearsAgo)
+            {
+                return true;
+            }
+              
+            return false;
         }
 
         /// <summary>
