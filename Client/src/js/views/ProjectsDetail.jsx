@@ -262,6 +262,18 @@ var ProjectsDetail = React.createClass({
   render() {
     var project = this.props.project;
 
+    // As per business requirements:
+    // "Lists the records - requests then rental agreements, within the groups, list in largest-to-smallest ID order (aka reverse chronological create)."
+    var rentalRequests = _.orderBy(project.rentalRequests, ['id'], ['desc']);
+    var rentalAgreements = _.orderBy(project.rentalAgreements, ['id'], ['desc']);
+    var combinedList =_.concat(rentalRequests, rentalAgreements);
+
+    var activeRequests = _.remove(rentalRequests, (x) => x.isActive);
+    // Exclude completed items
+    if (!this.state.includeCompletedRequests) {
+      _.remove(combinedList, (x) => !x.isActive);
+    }
+
     return <div id="projects-detail">
       <div>
         <Row id="projects-top">
@@ -329,7 +341,7 @@ var ProjectsDetail = React.createClass({
               })()}
             </Well>
             <Well>
-              <h3>Hired Equipment ({ (project.numberOfRequests) }) <span className="pull-right">
+              <h3>Hired Equipment / Requests ({ activeRequests.length }) <span className="pull-right">
                 <Unimplemented>
                   <CheckboxControl id="includeCompletedRequests" inline checked={ this.state.includeCompletedRequests } updateState={ this.updateState }><small>Show Completed</small></CheckboxControl>
                 </Unimplemented>
@@ -337,17 +349,6 @@ var ProjectsDetail = React.createClass({
               </span></h3>
               {(() => {
                 if (this.state.loading) { return <div style={{ textAlign: 'center' }}><Spinner/></div>; }
-
-                // As per business requirements:
-                // "Lists the records - requests then rental agreements, within the groups, list in largest-to-smallest ID order (aka reverse chronological create)."
-                var rentalRequests = _.orderBy(project.rentalRequests, ['id'], ['desc']);
-                var rentalAgreements = _.orderBy(project.rentalAgreements, ['id'], ['desc']);
-                var combinedList =_.concat(rentalRequests, rentalAgreements);
-
-                // Exclude completed items
-                if (!this.state.includeCompletedRequests) {
-                  _.remove(combinedList, (x) => !x.isActive);
-                }
 
                 if (Object.keys(combinedList).length === 0) { return <Alert bsStyle="success" style={{ marginTop: 10 }}>No equipment</Alert>; }
 

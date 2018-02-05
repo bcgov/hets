@@ -9,7 +9,7 @@ import DateControl from '../../components/DateControl.jsx';
 import EditDialog from '../../components/EditDialog.jsx';
 import FormInputControl from '../../components/FormInputControl.jsx';
 
-import { daysFromToday, isValidDate, toZuluTime } from '../../utils/date';
+import { daysFromToday, isValidDate, toZuluTime, today } from '../../utils/date';
 import { isBlank } from '../../utils/string';
 
 var SeniorityEditDialog = React.createClass({
@@ -29,7 +29,7 @@ var SeniorityEditDialog = React.createClass({
       serviceHoursLastYear: this.props.equipment.serviceHoursLastYear,
       serviceHoursTwoYearsAgo: this.props.equipment.serviceHoursTwoYearsAgo,
       serviceHoursThreeYearsAgo: this.props.equipment.serviceHoursThreeYearsAgo,
-      approvedDate: this.props.equipment.approvedDate,
+      approvedDate: this.props.equipment.approvedDate || today(),
       isSeniorityOverridden: this.props.equipment.isSeniorityOverridden,
       seniorityOverrideReason: this.props.equipment.seniorityOverrideReason,
 
@@ -126,10 +126,7 @@ var SeniorityEditDialog = React.createClass({
     return <EditDialog id="seniority-edit" show={ this.props.show }
       onClose={ this.props.onClose } onSave={ this.onSave } didChange={ this.didChange } isValid={ this.isValid }
       title= {
-        <strong>Equipment
-          <span>Serial Number: <small>{ this.props.equipment.serialNumber }</small></span>
-          <span>Plate: <small>{ this.props.equipment.licencePlate }</small></span>
-        </strong>
+        <strong>Equipment Id: <small>{ this.props.equipment.equipmentCode }</small></strong>
       }>
       {(() => {
         return <Form>

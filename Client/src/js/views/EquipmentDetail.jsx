@@ -3,7 +3,7 @@ import React from 'react';
 import { connect } from 'react-redux';
 
 import { Well, Row, Col } from 'react-bootstrap';
-import { Alert, Button, ButtonGroup, Glyphicon, Label, DropdownButton, MenuItem, Checkbox } from 'react-bootstrap';
+import { Alert, Button, ButtonGroup, Glyphicon, Label, DropdownButton, MenuItem } from 'react-bootstrap';
 import { LinkContainer } from 'react-router-bootstrap';
 
 import _ from 'lodash';
@@ -146,9 +146,6 @@ var EquipmentDetail = React.createClass({
     // TODO Implement
   },
 
-  registeredInAreaChanged() {
-  },
-
   openEditDialog() {
     this.setState({ showEditDialog: true });
   },
@@ -269,10 +266,10 @@ var EquipmentDetail = React.createClass({
 
           return <div id="equipment-header">
             <Row>
-              <ColDisplay md={12} label={ <h1>Company:</h1> }><h1><small>{ equipment.organizationName }</small></h1></ColDisplay>
+              <ColDisplay md={12} label={ <h1>Equipment Id:</h1> }><h1><small>{ equipment.equipmentCode } ({ equipment.typeName })</small></h1></ColDisplay>
             </Row>
             <Row>
-              <ColDisplay md={12} label={ <h1>EquipId:</h1> }><h1><small>{ equipment.equipmentCode } ({ equipment.typeName })</small></h1></ColDisplay>
+              <ColDisplay md={12} label={ <h1>Company:</h1> }><h1><small>{ equipment.organizationName }</small></h1></ColDisplay>
             </Row>
             <Row>
               <Col md={6}>
@@ -280,20 +277,15 @@ var EquipmentDetail = React.createClass({
                   <ColDisplay md={12} labelProps={{ md: 4 }} label="District Office:">{ equipment.districtName }</ColDisplay>
                 </Row>
                 <Row>
-                  <ColDisplay md={12} labelProps={{ md: 4 }} label="Service/Local Area:">{ equipment.localAreaName }</ColDisplay>
+                  <ColDisplay md={12} labelProps={{ md: 4 }} style={{ marginBottom: '20px' }} label="Service/Local Area:">{ equipment.localAreaName }</ColDisplay>
                 </Row>
-              </Col>
-              <Col md={6}>
-                <Unimplemented>
-                  <Checkbox onChange={this.registeredInAreaChanged}>Have you registered this piece of equipment in this area before?</Checkbox>
-                </Unimplemented>
               </Col>
             </Row>
           </div>;
         })()}
 
         <Row>
-          <Col md={6}>
+          <Col md={12}>
             <Well>
               <h3>Equipment Information <span className="pull-right">
                 <Button title="Edit Equipment" bsSize="small" onClick={ this.openEditDialog }><Glyphicon glyph="pencil" /></Button>
@@ -302,28 +294,21 @@ var EquipmentDetail = React.createClass({
                 if (this.state.loadingEquipment) { return <div style={{ textAlign: 'center' }}><Spinner /></div>; }
 
                 return <Row>
-                  <Col md={4}>
+                  <Col md={6}>
                     <Row>
-                      <ColDisplay labelProps={{ md: 6 }} label="Serial Number">{ equipment.serialNumber }
-                        { equipment.hasDuplicates ? <BadgeLabel bsStyle="danger">!</BadgeLabel> : null }
-                      </ColDisplay>
+                      <ColDisplay labelProps={{ md: 4 }} label="Make">{ equipment.make }</ColDisplay>
                     </Row>
                     <Row>
-                      <ColDisplay labelProps={{ md: 6 }} label="Make">{ equipment.make }</ColDisplay>
+                      <ColDisplay labelProps={{ md: 4 }} label="Model">{ equipment.model }</ColDisplay>
                     </Row>
                     <Row>
-                      <ColDisplay labelProps={{ md: 6 }} label="Model">{ equipment.model }</ColDisplay>
+                      <ColDisplay labelProps={{ md: 4 }} label="Year">{ equipment.year }</ColDisplay>
                     </Row>
-                    <Row>
-                      <ColDisplay labelProps={{ md: 6 }} label="Year">{ equipment.year }</ColDisplay>
-                    </Row>
-                    <Row>&nbsp;</Row>
-                  </Col>
-                  <Col md={8}>
-                    <Row>&nbsp;</Row>
                     <Row>
                       <ColDisplay labelProps={{ md: 4 }} label="Size">{ equipment.size }</ColDisplay>
                     </Row>
+                  </Col>
+                  <Col md={6}>
                     <Row>
                       <ColDisplay labelProps={{ md: 4 }} label="Type">{ equipment.typeName }</ColDisplay>
                     </Row>
@@ -331,14 +316,16 @@ var EquipmentDetail = React.createClass({
                       <ColDisplay labelProps={{ md: 4 }} label="Licence Number">{ equipment.licencePlate }</ColDisplay>
                     </Row>
                     <Row>
-                      <ColDisplay labelProps={{ md: 4 }} label="Operator">{ equipment.operator }</ColDisplay>
+                      <ColDisplay labelProps={{ md: 4 }} label="Serial Number">{ equipment.serialNumber }
+                        { equipment.hasDuplicates ? <BadgeLabel bsStyle="danger">!</BadgeLabel> : null }
+                      </ColDisplay>
                     </Row>
                   </Col>
                 </Row>;
               })()}
             </Well>
           </Col>
-          <Col md={6}>
+          <Col md={12}>
             <Well>
               <h3>Attachments <span className="pull-right">
                 <Button title="Add Attachment" bsSize="small" onClick={this.openPhysicalAttachmentDialog}><Glyphicon glyph="plus" /></Button>
@@ -396,7 +383,7 @@ var EquipmentDetail = React.createClass({
           </Col>
         </Row>
         <Row>
-          <Col md={6}>
+          <Col md={12}>
             <Well>
               <h3>Seniority<span className="pull-right">
                 <Button title="Edit Seniority" bsSize="small" onClick={this.openSeniorityDialog}><Glyphicon glyph="pencil" /></Button>
@@ -452,7 +439,7 @@ var EquipmentDetail = React.createClass({
               })()}
             </Well>
           </Col>
-          <Col md={6}>
+          <Col md={12}>
             <Well>
               <h3>History <span className="pull-right">
               </span></h3>
@@ -480,29 +467,37 @@ var EquipmentDetail = React.createClass({
           </Col>
         </Row>
       </div>
-      <EquipmentEditDialog 
-        show={ this.state.showEditDialog } 
-        onSave={ this.saveEdit } 
-        onClose= { this.closeEditDialog } 
-      />
-      <SeniorityEditDialog 
-        show={ this.state.showSeniorityDialog } 
-        onSave={ this.saveSeniorityEdit } 
-        onClose={ this.closeSeniorityDialog } 
-      />
-      <AttachmentAddDialog 
-        show={ this.state.showPhysicalAttachmentDialog } 
-        onSave={ this.addPhysicalAttachment } 
-        onClose={ this.closePhysicalAttachmentDialog }
-        equipment={ equipment } 
-      />
-      <AttachmentEditDialog 
-        show={ this.state.showPhysicalAttachmentEditDialog } 
-        onSave={ this.updatePhysicalAttachment } 
-        onClose={ this.closePhysicalAttachmentEditDialog }
-        equipment={ equipment } 
-        attachment={ this.state.equipmentPhysicalAttachment }
-      />
+      { this.state.showEditDialog &&
+        <EquipmentEditDialog 
+          show={ this.state.showEditDialog } 
+          onSave={ this.saveEdit } 
+          onClose= { this.closeEditDialog } 
+        />
+      }
+      { this.state.showSeniorityDialog &&
+        <SeniorityEditDialog 
+          show={ this.state.showSeniorityDialog } 
+          onSave={ this.saveSeniorityEdit } 
+          onClose={ this.closeSeniorityDialog } 
+        />
+      }
+      { this.state.showPhysicalAttachmentDialog &&
+        <AttachmentAddDialog 
+          show={ this.state.showPhysicalAttachmentDialog } 
+          onSave={ this.addPhysicalAttachment } 
+          onClose={ this.closePhysicalAttachmentDialog }
+          equipment={ equipment } 
+        />
+      }
+      { this.state.showPhysicalAttachmentEditDialog &&
+        <AttachmentEditDialog 
+          show={ this.state.showPhysicalAttachmentEditDialog } 
+          onSave={ this.updatePhysicalAttachment } 
+          onClose={ this.closePhysicalAttachmentEditDialog }
+          equipment={ equipment } 
+          attachment={ this.state.equipmentPhysicalAttachment }
+        />
+      }
       { this.state.showDocumentsDialog &&
         <DocumentsListDialog 
           show={ this.props.equipment && this.state.showDocumentsDialog }  

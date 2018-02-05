@@ -14,7 +14,8 @@ import FilterDropdown from '../../components/FilterDropdown.jsx';
 import FormInputControl from '../../components/FormInputControl.jsx';
 import Spinner from '../../components/Spinner.jsx';
 
-import { isBlank } from '../../utils/string';
+import { isBlank, notBlank } from '../../utils/string';
+import { isValidYear } from '../../utils/date';
 
 var EquipmentAddDialog = React.createClass({
   propTypes: {
@@ -30,15 +31,18 @@ var EquipmentAddDialog = React.createClass({
   getInitialState() {
     return {
       loading: false,
-      localAreaId: 0,
+      localAreaId: this.props.owner.localArea.id || 0,
       equipmentTypeId: 0,
+      licencePlate: '',
       serialNumber: '',
       make: '',
       model: '',
       year: '',
+      size: '',
       localAreaError: '',
       equipmentTypeError: '',
       serialNumberError: '',
+      yearError: '',
     };
   },
 
@@ -57,9 +61,11 @@ var EquipmentAddDialog = React.createClass({
     if (this.state.localAreaId !== 0) { return true; }
     if (this.state.equipmentTypeId !== 0) { return true; }
     if (this.state.serialNumber !== '') { return true; }
+    if (this.state.licencePlate !== '') { return true; }
     if (this.state.make !== '') { return true; }
     if (this.state.model !== '') { return true; }
     if (this.state.year !== '') { return true; }
+    if (this.state.size !== '') { return true; }
 
     return false;
   },
@@ -69,6 +75,7 @@ var EquipmentAddDialog = React.createClass({
       localAreaError: '',
       equipmentTypeError: '',
       serialNumberError: '',
+      yearError: '',
     });
 
     var valid = true;
@@ -88,6 +95,11 @@ var EquipmentAddDialog = React.createClass({
       valid = false;
     }
 
+    if (notBlank(this.state.year) && !isValidYear(this.state.year)) {
+      this.setState({ yearError: 'This is not a valid year.' });
+      valid = false;
+    }
+
     return valid;
   },
 
@@ -96,10 +108,12 @@ var EquipmentAddDialog = React.createClass({
       owner: { id: this.props.owner.id },
       localArea: { id: this.state.localAreaId },
       districtEquipmentType: { id: this.state.equipmentTypeId },
+      licencePlate: this.state.licencePlate,
       serialNumber: this.state.serialNumber,
       make: this.state.make,
       model: this.state.model,
       year: this.state.year,
+      size: this.state.size,
       status: Constant.EQUIPMENT_STATUS_CODE_APPROVED,
     });
   },
@@ -129,14 +143,6 @@ var EquipmentAddDialog = React.createClass({
           <ControlLabel>Owner</ControlLabel>
           <h4>{ owner.organizationName }</h4>
         </FormGroup>
-        <FormGroup controlId="equipmentTypeId" validationState={ this.state.equipmentTypeError ? 'error' : null }>
-          <ControlLabel>Equipment Type <sup>*</sup></ControlLabel>
-          <FilterDropdown id="equipmentTypeId" fieldName="districtEquipmentName" selectedId={ this.state.equipmentTypeId } updateState={ this.updateState }
-            items={ districtEquipmentTypes }
-            className="full-width"
-          />
-          <HelpBlock>{ this.state.equipmentTypeError }</HelpBlock>
-        </FormGroup>
         <FormGroup controlId="localAreaId" validationState={ this.state.localAreaError ? 'error' : null }>
           <ControlLabel>Local Area <sup>*</sup></ControlLabel>
           <FilterDropdown id="localAreaId" selectedId={ this.state.localAreaId } updateState={ this.updateState }
@@ -144,11 +150,6 @@ var EquipmentAddDialog = React.createClass({
             className="full-width"
           />
           <HelpBlock>{ this.state.localAreaError }</HelpBlock>
-        </FormGroup>
-        <FormGroup controlId="serialNumber" validationState={ this.state.serialNumberError ? 'error' : null }>
-          <ControlLabel>Serial Number <sup>*</sup></ControlLabel>
-          <FormInputControl type="text" defaultValue={ this.state.serialNumber } updateState={ this.updateState } inputRef={ ref => { this.input = ref; }}/>
-          <HelpBlock>{ this.state.serialNumberError }</HelpBlock>
         </FormGroup>
         <FormGroup controlId="make">
           <ControlLabel>Make</ControlLabel>
@@ -158,9 +159,31 @@ var EquipmentAddDialog = React.createClass({
           <ControlLabel>Model</ControlLabel>
           <FormInputControl type="text" defaultValue={ this.state.model } updateState={ this.updateState }/>
         </FormGroup>
-        <FormGroup controlId="year">
+        <FormGroup controlId="year" validationState={ this.state.yearError ? 'error' : null }>
           <ControlLabel>Year</ControlLabel>
           <FormInputControl type="text" defaultValue={ this.state.year } updateState={ this.updateState }/>
+          <HelpBlock>{ this.state.yearError }</HelpBlock>
+        </FormGroup>
+        <FormGroup controlId="size">
+          <ControlLabel>Size</ControlLabel>
+          <FormInputControl type="text" defaultValue={ this.state.size } updateState={ this.updateState }/>
+        </FormGroup>
+        <FormGroup controlId="equipmentTypeId" validationState={ this.state.equipmentTypeError ? 'error' : null }>
+          <ControlLabel>Equipment Type <sup>*</sup></ControlLabel>
+          <FilterDropdown id="equipmentTypeId" fieldName="districtEquipmentName" selectedId={ this.state.equipmentTypeId } updateState={ this.updateState }
+            items={ districtEquipmentTypes }
+            className="full-width"
+          />
+          <HelpBlock>{ this.state.equipmentTypeError }</HelpBlock>
+        </FormGroup>
+        <FormGroup controlId="licencePlate">
+          <ControlLabel>Licence Number</ControlLabel>
+          <FormInputControl type="text" defaultValue={ this.state.licencePlate } updateState={ this.updateState }/>
+        </FormGroup>
+        <FormGroup controlId="serialNumber" validationState={ this.state.serialNumberError ? 'error' : null }>
+          <ControlLabel>Serial Number <sup>*</sup></ControlLabel>
+          <FormInputControl type="text" defaultValue={ this.state.serialNumber } updateState={ this.updateState } inputRef={ ref => { this.input = ref; }}/>
+          <HelpBlock>{ this.state.serialNumberError }</HelpBlock>
         </FormGroup>
       </Form>
     </EditDialog>;
