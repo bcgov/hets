@@ -14,7 +14,6 @@ import * as Api from '../api';
 import * as Constant from '../constants';
 import store from '../store';
 
-import CheckboxControl from '../components/CheckboxControl.jsx';
 import DropdownControl from '../components/DropdownControl.jsx';
 import EditButton from '../components/EditButton.jsx';
 import Favourites from '../components/Favourites.jsx';
@@ -45,8 +44,6 @@ var Projects = React.createClass({
       showAddDialog: false,
       search: {
         statusCode: this.props.search.statusCode || '',
-        hires: this.props.search.hires || false,
-        requests: this.props.search.requests || false,
         projectName: this.props.search.projecName,
       },
       ui : {
@@ -61,14 +58,6 @@ var Projects = React.createClass({
 
     if (this.state.search.projectName) {
       searchParams.project = this.state.search.projectName;
-    }
-
-    if (this.state.search.hires) {
-      searchParams.hasHires = this.state.search.hires;
-    }
-
-    if (this.state.search.requests) {
-      searchParams.hasRequests = this.state.search.requests;
     }
 
     // Not yet implemented by API
@@ -162,12 +151,6 @@ var Projects = React.createClass({
                   items={[ Constant.PROJECT_STATUS_CODE_ACTIVE, Constant.PROJECT_STATUS_CODE_COMPLETED ]} />
               </Unimplemented>
               <FormInputControl id="projectName" type="text" placeholder="Project name" value={ this.state.search.projectName } updateState={ this.updateSearchState }></FormInputControl>
-              <Unimplemented>
-                <CheckboxControl inline id="hires" checked={ this.state.search.hires } updateState={ this.updateSearchState }> Hires</CheckboxControl>
-              </Unimplemented>
-              <Unimplemented>
-                <CheckboxControl inline id="requests" checked={ this.state.search.requests } updateState={ this.updateSearchState }> Requests</CheckboxControl>
-              </Unimplemented>
               <Button id="search-button" bsStyle="primary" onClick={ this.fetch }>Search</Button>
             </ButtonToolbar>
           </Col>
@@ -200,8 +183,8 @@ var Projects = React.createClass({
           { field: 'name',                   title: 'Project'                                        },
           { field: 'primaryContactName',     title: 'Primary Contact'                                },
           { field: 'primaryContactPhone',    title: 'Contact #'                                      },
-          { field: 'numberOfHires',          title: 'Hires',          style: { textAlign: 'center' } },
-          { field: 'numberOfRequests',       title: 'Requests',       style: { textAlign: 'center' } },
+          { field: 'hires',          title: 'Hires',          style: { textAlign: 'center' } },
+          { field: 'requests',       title: 'Requests',       style: { textAlign: 'center' } },
           { field: 'status',                 title: 'Status',         style: { textAlign: 'center' } },
           { field: 'addProject',             title: 'Add Project',    style: { textAlign: 'right'  },
             node: addProjectButton,
@@ -213,8 +196,8 @@ var Projects = React.createClass({
                 <td>{ project.name }</td>
                 <td>{ project.primaryContactName }</td>
                 <td>{ project.primaryContactPhone }</td>
-                <td style={{ textAlign: 'center' }}>{ project.numberOfHires }</td>
-                <td style={{ textAlign: 'center' }}>{ project.numberOfRequests }</td>
+                <td style={{ textAlign: 'center' }}>{ project.hires }</td>
+                <td style={{ textAlign: 'center' }}>{ project.requests }</td>
                 <td style={{ textAlign: 'center' }}>{ project.status }</td>
                 <td style={{ textAlign: 'right' }}>
                   <ButtonGroup>
