@@ -1639,7 +1639,7 @@ export function getPermissions() {
 export function getProvincialRateTypes() {
   return new ApiRequest('/provincialratetypes').get().then(response => {
     var rateTypeOther = { 
-      id: 0, 
+      id: 10000, 
       rateType: 'OTHER', 
       description: 'Other',
       rate: null,

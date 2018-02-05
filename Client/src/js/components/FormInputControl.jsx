@@ -28,6 +28,12 @@ var FormInputControl = React.createClass({
           value = '';
         }
       }
+      if (this.props.type === 'float' ) {
+        value = parseFloat(value);
+        if (_.isNaN(value)) {
+          value = '';
+        }
+      }
       this.props.updateState({ [e.target.id]: value });
     }
   },
@@ -35,7 +41,7 @@ var FormInputControl = React.createClass({
   render() {
     var props = _.omit(this.props, 'updateState');
 
-    return <FormControl { ...props } onChange={ this.changed }>
+    return <FormControl { ...props } type={ props.type === 'float' ? 'number' : props.type } onChange={ this.changed }>
       { this.props.children }
     </FormControl>;
   },

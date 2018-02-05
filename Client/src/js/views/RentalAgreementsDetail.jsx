@@ -291,34 +291,34 @@ var RentalAgreementsDetail = React.createClass({
             <Grid id="rental-agreements-header">
               <Row>
                 <ColDisplay md={12} labelProps={{ md: 4 }} label={ <h3>Agreement Number:</h3>}>
-                  <small>{ rentalAgreement.number }</small>
+                  <h2><small>{ rentalAgreement.number }</small></h2>
                 </ColDisplay>
               </Row>
               <Row>
                 <ColDisplay md={12} labelProps={{ md: 4 }} label={ <h3>Owner:</h3> }>
-                  <small>{ rentalAgreement.ownerName }</small>
+                  <h2><small>{ rentalAgreement.ownerName }</small></h2>
                 </ColDisplay>
               </Row>
               <Row>
                 <ColDisplay md={12} labelProps={{ md: 4 }} label={ <h3>Equipment ID:</h3> }>
                   <Link to={{ pathname: 'equipment/' + rentalAgreement.equipment.id }}>
-                    <small>{ rentalAgreement.equipment.equipmentCode }</small>
+                    <h2><small>{ rentalAgreement.equipment.equipmentCode }</small></h2>
                   </Link>
                 </ColDisplay>
               </Row>
               <Row>
                 <ColDisplay md={12} labelProps={{ md: 4 }} label={ <h3>Equipment Serial Number:</h3> }>
-                  <small>{ rentalAgreement.equipment.serialNumber }</small>
+                  <h2><small>{ rentalAgreement.equipment.serialNumber }</small></h2>
                 </ColDisplay>
               </Row>
               <Row>
                 <ColDisplay md={12} labelProps={{ md: 4 }} label={ <h3>Equipment Yr Mk/Md/Sz:</h3> }>
-                  <small>{`${rentalAgreement.equipment.year} ${rentalAgreement.equipment.make}/${rentalAgreement.equipment.model}/${rentalAgreement.equipment.size}`}</small>
+                  <h2><small>{`${rentalAgreement.equipment.year} ${rentalAgreement.equipment.make}/${rentalAgreement.equipment.model}/${rentalAgreement.equipment.size}`}</small></h2>
                 </ColDisplay>
               </Row>
               <Row>
                 <ColDisplay md={12} labelProps={{ md: 4 }} label={ <h3>Project:</h3> }>
-                  <small>{ rentalAgreement.project.name }</small>
+                  <h2><small>{ rentalAgreement.project.name }</small></h2>
                 </ColDisplay>
               </Row>
             </Grid>
@@ -390,7 +390,7 @@ var RentalAgreementsDetail = React.createClass({
                       </td>
                       <td>{ obj.ratePeriod }</td>
                       <td>{ obj.comment }</td>
-                      <td>{ obj.includeInTotal ? 'Yes' : 'No' }</td>
+                      <td>{ obj.isIncludedInTotal ? 'Yes' : 'No' }</td>
                       <td style={{ textAlign: 'right' }}>
                         <ButtonGroup>
                           <DeleteButton name="Rental rate" hide={ !obj.canDelete } onConfirm={ this.deleteRentalRate.bind(this, obj) }/>
@@ -410,10 +410,7 @@ var RentalAgreementsDetail = React.createClass({
       <Well>
         <h3>Attachments</h3>
         {(() => {
-          var equipmentAttachments = rentalAgreement.equipment && rentalAgreement.equipment.equipmentAttachments;
-
           if (this.state.loading) { return <div style={{ textAlign: 'center' }}><Spinner/></div>; }
-          if (Object.keys(equipmentAttachments).length === 0) { return <Alert bsStyle="success" style={{ marginTop: 10 }}>This piece of equipment has no attachments</Alert>; }
 
           // Only want attachments rates here - the rest are shown above
           var attachmentRates = _.filter(rentalAgreement.rentalAgreementRates, { isAttachment: true });
