@@ -94,14 +94,9 @@ var RentalAgreementsEditDialog = React.createClass({
   },
 
   onSave() {
-    // If WorkSafeBC Number is updated, it should be written back to the owner as an update
-    var didChange = this.state.workSafeBCPolicyNumber !== this.props.rentalAgreement.workSafeBCPolicyNumber;
-    var promise = didChange ? Api.updateOwner : Promise.resolve;
-
     // HACK Alert! this just ensures that the normalized data doesn't mess up the PUT call
-    promise({ ...this.props.owner, ...{
+    Promise.resolve({ ...this.props.owner, ...{
       contacts: null, // this just ensures that the normalized data doesn't mess up the PUT call
-      workSafeBCPolicyNumber: this.state.workSafeBCPolicyNumber,
     }}).then(() => {
       this.props.onSave({ ...this.props.rentalAgreement, ...{
         estimateStartWork: this.state.estimateStartWork,

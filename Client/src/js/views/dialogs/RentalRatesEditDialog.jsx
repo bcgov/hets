@@ -48,6 +48,7 @@ var RentalRatesEditDialog = React.createClass({
       componentNameError: '',
       rateError: '',
       ratePeriodError: '',
+      commentError: '',
     };
   },
 
@@ -107,6 +108,7 @@ var RentalRatesEditDialog = React.createClass({
       componentNameError: '',
       rateError: '',
       ratePeriodError: '',
+      commentError: '',
     });
 
     var valid = true;
@@ -126,6 +128,11 @@ var RentalRatesEditDialog = React.createClass({
 
     if (isBlank(this.state.ratePeriod)) {
       this.setState({ ratePeriodError: 'Period is required' });
+      valid = false;
+    }
+    
+    if (this.state.rateType.description === Constant.NON_STANDARD_CONDITION && isBlank(this.state.comment)) {
+      this.setState({ commentError: 'Comment is required for non-standard conditions' });
       valid = false;
     }
 
@@ -206,9 +213,10 @@ var RentalRatesEditDialog = React.createClass({
           </Row>
           <Row>
             <Col md={12}>
-              <FormGroup controlId="comment">
+              <FormGroup controlId="comment" validationState={ this.state.commentError ? 'error' : null }>
                 <ControlLabel>Comment</ControlLabel>
                 <FormInputControl componentClass="textarea" defaultValue={ this.state.comment } readOnly={ isReadOnly } updateState={ this.updateState } />
+                <HelpBlock>{ this.state.commentError }</HelpBlock>
               </FormGroup>
             </Col>
           </Row>

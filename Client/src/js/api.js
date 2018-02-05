@@ -10,7 +10,6 @@ import { daysAgo, sortableDateTime, today } from './utils/date';
 import _ from 'lodash';
 import Moment from 'moment';
 
-
 function normalize(response) {
   return _.fromPairs(response.map(object => [ object.id, object ]));
 }
@@ -1641,7 +1640,7 @@ export function getProvincialRateTypes() {
     var rateTypeOther = { 
       id: 10000, 
       rateType: 'OTHER', 
-      description: 'Other',
+      description: Constant.NON_STANDARD_CONDITION,
       rate: null,
       isPercentRate: false,
       isRateEditable: true,
