@@ -37,7 +37,7 @@ namespace HETSAPI.Models
         /// <param name="timeRecords">TimeRecords.</param>
         public RentalAgreementRate(int id, RentalAgreement rentalAgreement, bool isIncludedInTotal, 
             string componentName = null, bool? isAttachment = null, float? rate = null, 
-            int? percentOfEquipmentRate = null, string ratePeriod = null, string comment = null,
+            float? percentOfEquipmentRate = null, string ratePeriod = null, string comment = null,
             List<TimeRecord> timeRecords = null)
         {   
             Id = id;
@@ -108,7 +108,7 @@ namespace HETSAPI.Models
         /// </summary>
         /// <value>For other than the actual piece of equipment, the percent of the equipment rate to use for this component of the rental agreement.</value>
         [MetaData (Description = "For other than the actual piece of equipment, the percent of the equipment rate to use for this component of the rental agreement.")]
-        public int? PercentOfEquipmentRate { get; set; }
+        public float? PercentOfEquipmentRate { get; set; }
         
         /// <summary>
         /// The period of the rental rate. The vast majority will be hourly, but the rate could apply across a different period, e.g. daily.
