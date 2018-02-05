@@ -32,7 +32,6 @@ var RentalAgreementsEditDialog = React.createClass({
       estimateStartWork: this.props.rentalAgreement.estimateStartWork || '',
       estimateHours: this.props.rentalAgreement.estimateHours || 0,
       datedOn: this.props.rentalAgreement.datedOn || '',
-      workSafeBCPolicyNumber: this.props.rentalAgreement.workSafeBCPolicyNumber || '',
 
       estimateStartWorkError: '',
       estimateHoursError: '',
@@ -59,7 +58,6 @@ var RentalAgreementsEditDialog = React.createClass({
     if (this.state.estimateStartWork !== this.props.rentalAgreement.estimateStartWork) { return true; }
     if (this.state.estimateHours !== this.props.rentalAgreement.estimateHours) { return true; }
     if (this.state.datedOn !== this.props.rentalAgreement.datedOn) { return true; }
-    if (this.state.workSafeBCPolicyNumber !== this.props.rentalAgreement.workSafeBCPolicyNumber) { return true; }
     if (this.state.note !== this.props.rentalAgreement.note) { return true; }
 
     return false;
@@ -109,7 +107,6 @@ var RentalAgreementsEditDialog = React.createClass({
         estimateStartWork: this.state.estimateStartWork,
         estimateHours: this.state.estimateHours,
         datedOn: this.state.datedOn,
-        workSafeBCPolicyNumber: this.state.workSafeBCPolicyNumber,
       }});
     });
   },
@@ -167,9 +164,9 @@ var RentalAgreementsEditDialog = React.createClass({
                 </FormGroup>
               </Col>
               <Col md={6}>
-                <FormGroup controlId="workSafeBCPolicyNumber">
+                <FormGroup>
                   <ControlLabel>WorkSafeBC (WCB) Number</ControlLabel>
-                  <FormInputControl type="text" defaultValue={ this.state.workSafeBCPolicyNumber } readOnly={ isReadOnly } updateState={ this.updateState }/>
+                  <FormControl.Static>{ this.props.rentalAgreement.workSafeBCPolicyNumber }</FormControl.Static>
                 </FormGroup>
               </Col>
             </Row>

@@ -59,7 +59,6 @@ var RentalRatesEditDialog = React.createClass({
       var rateType = _.find(this.props.provincialRateTypes, {description: this.props.rentalRate.componentName } );
       this.setState({ 
         rateType: rateType, 
-        includeInTotal: rateType.isIncludedInTotal,
       });
     }
   },
@@ -73,9 +72,10 @@ var RentalRatesEditDialog = React.createClass({
     var rateType = _.find(provincialRateTypes, {id: state.componentName } );
     this.setState({ 
       rateType: rateType, 
-      percentOrRateValue: rateType.rate, 
+      rate: rateType.rate,
+      percentOrRateValue: rateType.rate ? rateType.rate : 0, 
+      percentOfEquipmentRate: rateType.isPercentRate ? rateType.rate : 0,
       percentOrRateOption: rateType.isPercentRate ? PERCENT_RATE : DOLLAR_RATE,
-      includeInTotal: rateType.isIncludedInTotal,
       ...state, 
     });
   },
@@ -97,6 +97,7 @@ var RentalRatesEditDialog = React.createClass({
     if (this.state.percentOfEquipmentRate !== this.props.rentalRate.percentOfEquipmentRate) { return true; }
     if (this.state.ratePeriod !== this.props.rentalRate.ratePeriod) { return true; }
     if (this.state.comment !== this.props.rentalRate.comment) { return true; }
+    if (this.state.includeInTotal !== this.props.rentalRate.isIncludedInTotal) { return true; }
 
     return false;
   },
@@ -138,14 +139,14 @@ var RentalRatesEditDialog = React.createClass({
       percentOfEquipmentRate: this.state.percentOfEquipmentRate,
       ratePeriod: this.state.ratePeriod,
       comment: this.state.comment,
+      isIncludedInTotal: this.state.includeInTotal,
     }});
   },
 
   dollarValue() {
     var option = this.state.percentOrRateOption;
-    var value = this.state.rate;
+    var value = this.state.percentOrRateValue;
     var equipmentRate = this.props.rentalRate.rentalAgreement ? this.props.rentalRate.rentalAgreement.equipmentRate : 0;
-
     if (option == PERCENT_RATE && value > 0) {
       return equipmentRate * value / 100;
     }
@@ -185,7 +186,7 @@ var RentalRatesEditDialog = React.createClass({
             <Col md={2}>
               <FormGroup controlId="percentOrRateValue" validationState={ this.state.rateError ? 'error' : null }>
                 <ControlLabel>Rate <sup>*</sup></ControlLabel>
-                <FormInputControl type="number" min={ 0 } value={ this.state.percentOrRateValue } disabled={ !this.state.rateType.isRateEditable } updateState={ this.updateUIState } />
+                <FormInputControl type="float" min={ 0 } value={ this.state.percentOrRateValue } disabled={ !this.state.rateType.isRateEditable } updateState={ this.updateUIState } />
                 <HelpBlock>{ this.state.rateError }</HelpBlock>
               </FormGroup>
             </Col>
