@@ -58,9 +58,11 @@ namespace HETSAPI.Services.Impl
         }
 
 
-        public async Task<IActionResult> AdminUserMap(string path)
+        public async Task<IActionResult> AdminUserMap(string userPath)
         {
             // create an excel spreadsheet that will show the data.
+            string uploadPath = _configuration["UploadPath"];
+            string path = uploadPath + userPath;
 
             string sWebRootFolder = "/tmp";
             string sFileName = @"usermap.xlsx";
