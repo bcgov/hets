@@ -15,7 +15,7 @@ RUN yum install -y bzip2 git && \
     yum clean all -y
 
 # Required for phantomjs
-RUN yum install fontconfig freetype freetype-devel fontconfig-devel libstdc++
+RUN yum install libfontconfig
 	
 # Remove old version of Node
 RUN rm -R /opt/rh/rh-nodejs6
