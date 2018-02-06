@@ -475,6 +475,10 @@ export function addEquipmentNote(equipmentId, note) {
   });
 }
 
+export function equipmentDuplicateCheck(id, serialNumber) {
+  return new ApiRequest(`/equipment/${id}/duplicates/${serialNumber}`).get().then((response => {
+  }));
+}
 
 ////////////////////
 // Physical Attachments
