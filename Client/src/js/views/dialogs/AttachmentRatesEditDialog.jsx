@@ -159,7 +159,7 @@ var AttachmentRatesEditDialog = React.createClass({
             <Col md={2}>
               <FormGroup controlId="percentOrRateValue" validationState={ this.state.rateError ? 'error' : null }>
                 <ControlLabel>Rate <sup>*</sup></ControlLabel>
-                <FormInputControl type="number" min={ 0 } defaultValue={ this.state.ui.percentOrRateValue } readOnly={ isReadOnly } updateState={ this.updateUIState } inputRef={ ref => { this.input = ref; }}/>
+                <FormInputControl type="float" min={ 0 } defaultValue={ this.state.ui.percentOrRateValue } readOnly={ isReadOnly } updateState={ this.updateUIState } inputRef={ ref => { this.input = ref; }}/>
                 <HelpBlock>{ this.state.rateError }</HelpBlock>
               </FormGroup>
             </Col>
