@@ -49,8 +49,8 @@ namespace HETSAPI.Controllers
         public virtual IActionResult OwnersGet()
         {
             return _service.OwnersGetAsync();
-        }        
-
+        }
+        
         /// <summary>
         /// Delete owner
         /// </summary>
