@@ -20,6 +20,7 @@ import { refresh } from '../actions/actions';
 import DateControl from '../components/DateControl.jsx';
 import DropdownControl from '../components/DropdownControl.jsx';
 import EditButton from '../components/EditButton.jsx';
+import DeleteButton from '../components/DeleteButton.jsx';
 import Favourites from '../components/Favourites.jsx';
 import FormInputControl from '../components/FormInputControl.jsx';
 import Mailto from '../components/Mailto.jsx';
@@ -198,6 +199,11 @@ var RentalRequests = React.createClass({
     window.print();
   },
 
+  cancelRequest(request) {
+    Api.cancelRentalRequest(request.id).then(() => {
+      this.fetch();
+    });
+  },
 
   render() {
     // Constrain the local area drop downs to those in the District of the current logged in user
@@ -283,6 +289,7 @@ var RentalRequests = React.createClass({
         ]}>
           {
             _.map(rentalRequests, (request) => {
+              console.log(request);
               return <tr key={ request.id } className={ request.isActive ? null : 'info' }>
                 <td>{ request.localAreaName }</td>
                 <td style={{ textAlign: 'center' }}>{ request.equipmentCount }</td>
@@ -302,6 +309,7 @@ var RentalRequests = React.createClass({
                 <td style={{ textAlign: 'center' }}>{ request.status }</td>
                 <td style={{ textAlign: 'right' }}>
                   <ButtonGroup>
+                    <DeleteButton name="Cancel Rental Request" hide={ request.canCancel } onConfirm={ this.cancelRequest.bind(this, request) }/>
                     <EditButton name="Rental Request" hide={ !request.canView } view pathname={ `${ Constant.RENTAL_REQUESTS_PATHNAME }/${ request.id }` }/>
                   </ButtonGroup>
                 </td>
