@@ -12,16 +12,17 @@ USER 0
 
 # Install git
 RUN yum install -y bzip2 git && \
-    yum install libfreetype6 libfreetype6-dev && \
-	yum install libfontconfig1 libfontconfig1-dev && \
     yum clean all -y
 
+# Required for phantomjs
+RUN yum install libfontconfig
+	
 # Remove old version of Node
 RUN rm -R /opt/rh/rh-nodejs6
 
-# Install newer verison of Node 
+# Install newer version of Node 
 ENV NVM_DIR /usr/local/nvm
-ENV NODE_VERSION  v9.3.1
+ENV NODE_VERSION  v8.9.4
 
 RUN touch ~/.bash_profile \
     && curl -o- https://raw.githubusercontent.com/creationix/nvm/v0.33.6/install.sh | bash \
@@ -40,7 +41,7 @@ RUN chown -R 1001:0 /opt/app-root && fix-permissions /opt/app-root
 # Run container by default as user with id 1001 (default)
 USER 1001
 
-env PATH "$PATH:/usr/local/nvm/versions/node/v9.3.1/bin/" 
+env PATH "$PATH:/usr/local/nvm/versions/node/v8.9.4/bin/" 
 
 # Directory with the sources is set as the working directory.
 WORKDIR /opt/app-root/src
