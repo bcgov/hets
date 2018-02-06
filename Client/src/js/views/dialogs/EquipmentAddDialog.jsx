@@ -81,17 +81,12 @@ var EquipmentAddDialog = React.createClass({
     var valid = true;
 
     if (this.state.localAreaId === 0) {
-      this.setState({ localAreaError: 'Local area is required' });
+      this.setState({ localAreaError: 'Local area is required.' });
       valid = false;
     }
 
     if (this.state.equipmentTypeId === 0) {
-      this.setState({ equipmentTypeError: 'Equipment type is required' });
-      valid = false;
-    }
-
-    if (isBlank(this.state.serialNumber)) {
-      this.setState({ serialNumberError: 'Serial number is required' });
+      this.setState({ equipmentTypeError: 'Equipment type is required.' });
       valid = false;
     }
 
@@ -100,7 +95,19 @@ var EquipmentAddDialog = React.createClass({
       valid = false;
     }
 
-    return valid;
+    if (isBlank(this.state.serialNumber)) {
+      this.setState({ serialNumberError: 'Serial number is required.' });
+      valid = false;
+    }
+
+    Api.equipmentDuplicateCheck(this.state.equipmentTypeId, this.state.serialNumber).then((response) => {
+      if (response.data.length > 0) {
+        this.setState({ serialNumberError: 'Serial number is currently in use.'});
+        valid = false;
+      }
+      return valid;
+    });
+
   },
 
   onSave() {
