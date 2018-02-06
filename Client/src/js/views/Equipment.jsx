@@ -104,7 +104,7 @@ var Equipment = React.createClass({
 
   componentDidMount() {
     var equipmentTypesPromise = Api.getDistrictEquipmentTypes(this.props.currentUser.district.id);
-    var ownersPromise = Api.getOwners();
+    var ownersPromise = Api.getOwnersByDistrict(this.props.currentUser.district.id);
     var favouritesPromise = Api.getFavourites('equipment');
 
     Promise.all([equipmentTypesPromise, ownersPromise, favouritesPromise]).then(() => {
