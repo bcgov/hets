@@ -494,8 +494,7 @@ namespace HETSAPI.Services.Impl
             if (exists)
             {
                 List<Equipment> result = _context.Equipments.AsNoTracking()
-                    .Include(x => x.DistrictEquipmentType)
-                        .ThenInclude(y => y.District)
+                    .Include(x => x.LocalArea.ServiceArea.District)
                     .Include(x => x.Owner)
                     .Where(x => x.SerialNumber == serialNumber &&
                                 x.Id != id &&
@@ -511,10 +510,17 @@ namespace HETSAPI.Services.Impl
                     DuplicateEquipmentViewModel duplicate = new DuplicateEquipmentViewModel
                     {
                         Id = idCount,
-                        SerialNumber = serialNumber,
-                        DistrictName = equipment.DistrictEquipmentType.District.Name,
+                        SerialNumber = serialNumber,                        
                         DuplicateEquipment = equipment
                     };
+
+                    duplicate.DistrictName = "";
+
+                    if (equipment.LocalArea.ServiceArea.District != null &&
+                        !string.IsNullOrEmpty(equipment.LocalArea.ServiceArea.District.Name))
+                    {
+                        duplicate.DistrictName = equipment.LocalArea.ServiceArea.District.Name;
+                    }
 
                     duplicates.Add(duplicate);
                 }
