@@ -113,6 +113,19 @@ namespace HETSAPI.Controllers
         }
 
         /// <summary>
+        /// Cancels a rental request (if no equipment has been hired)
+        /// </summary>
+        /// <param name="id">id of RentalRequest to cancel</param>
+        /// <response code="200">OK</response>
+        [HttpGet]
+        [Route("/api/rentalrequests/{id}/cancel")]
+        [SwaggerOperation("RentalrequestsIdGet")]
+        public virtual IActionResult RentalrequestsIdCancelGet([FromRoute]int id)
+        {
+            return _service.RentalrequestsIdCancelGetAsync(id);
+        }
+
+        /// <summary>
         /// Move a Rental Request from New (inactive) to In Progress (Active)
         /// </summary>
         /// <param name="id"></param>
