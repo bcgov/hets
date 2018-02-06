@@ -67,6 +67,13 @@ export function request(path, options) {
   options = options || {};
 
   var xhr = new XMLHttpRequest();
+  
+  // calling server service
+  console.log('Calling service. Path: ' + path);
+  
+  // setting a timeout on the request
+  xhr.timeout = 5000; // time in milliseconds (2 sec)
+  console.log('Setting timeout to 5 sec');
 
   if (!options.headers) { options.headers = {}; }
   if (!options.files) {
@@ -96,18 +103,25 @@ export function request(path, options) {
       if (!options.silent) { decrementRequests(); }
       xhr.abort();
     });
+	
     xhr.addEventListener('load', function() {
       if (xhr.status >= 400) {
         var err = new HttpError(`API ${method} ${path} failed (${xhr.status}) "${xhr.responseText}"`, method, path, xhr.status, xhr.responseText);
         reject(err);
       } else {
-        resolve(xhr);
+        console.log('Call complete! Path: ' + path);
+        resolve(xhr);        
       }
     });
 
     xhr.addEventListener('error', function() {
       reject(new HttpError(`Request ${method} ${path} failed to send`, method, path));
     });
+	
+    xhr.ontimeout = function () {
+      // XMLHttpRequest timed out. Do something here.
+      console.log('Request timed out!');
+    };
 
     var qs = _.map(options.querystring, (value, key) => `${encodeURIComponent(key)}=${encodeURIComponent(value)}`).join('&');
     xhr.open(method, `${path}${qs ? '?' : ''}${qs}`, true);
