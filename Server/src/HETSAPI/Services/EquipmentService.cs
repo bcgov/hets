@@ -76,6 +76,15 @@ namespace HETSAPI.Services
         IActionResult EquipmentSearchGetAsync(string localareas, string types, string equipmentAttachment, int? owner, string status, bool? hired, DateTime? notverifiedsincedate);
 
         /// <summary>
+        /// Get all duplicate equipment records
+        /// </summary>
+        /// <remarks>Gets all duplicate equipment records.</remarks>
+        /// <param name="id">Equipment id</param>
+        /// <param name="serialNumber">Serial Number</param>
+        /// <response code="200">OK</response>
+        IActionResult EquipmentIdEquipmentduplicatesGetAsync(int id, string serialNumber);
+
+        /// <summary>
         /// Recalculates seniority for the database
         /// </summary>
         /// <remarks>Used to calculate seniority for all database records.</remarks>
