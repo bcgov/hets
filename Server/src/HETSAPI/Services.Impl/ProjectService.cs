@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using Microsoft.AspNetCore.Mvc;
@@ -200,11 +201,36 @@ namespace HETSAPI.Services.Impl
                     .Include(x => x.PrimaryContact)
                     .Include(x => x.RentalRequests)
                         .ThenInclude(e => e.DistrictEquipmentType)
-                        .ThenInclude(d => d.EquipmentType)
+                            .ThenInclude(d => d.EquipmentType)
+                    .Include(x => x.RentalRequests)
+                        .ThenInclude(y => y.RentalRequestRotationList)
                     .Include(x => x.RentalAgreements)
                         .ThenInclude(e => e.Equipment)
-                        .ThenInclude(d => d.DistrictEquipmentType)
+                            .ThenInclude(d => d.DistrictEquipmentType)
                     .First(a => a.Id == id);
+
+                foreach (RentalRequest rentalRequest in result.RentalRequests)
+                {
+                    int temp = 0;
+
+                    foreach (RentalRequestRotationList equipment in rentalRequest.RentalRequestRotationList)
+                    {
+                        if (equipment.OfferResponse != null &&
+                            equipment.OfferResponse.Equals("Yes", StringComparison.InvariantCultureIgnoreCase))
+                        {
+                            temp++;
+                        }
+
+                        if (equipment.IsForceHire != null &&
+                            equipment.IsForceHire == true)
+                        {
+                            temp++;
+                        }
+                    }
+
+                    rentalRequest.YesCount = temp;
+                    rentalRequest.RentalRequestRotationList = null;
+                }
 
                 return new ObjectResult(new HetsResponse(result));
             }
