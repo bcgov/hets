@@ -209,8 +209,22 @@ namespace HETSAPI.Services.Impl
 
                 DateTime? originalSeniorityEffectiveDate = _context.GetEquipmentSeniorityEffectiveDate(id);
 
-                bool exists = _context.Equipments
-                    .Any(a => a.Id == id);
+                bool exists = _context.Equipments.Any(a => a.Id == id);
+
+                // check for duplicates (serial number)
+                if (exists &&
+                    id == item.Id &&
+                    !string.IsNullOrEmpty(item.SerialNumber))
+                {
+                    bool duplicatesExist = _context.Equipments.Any(x => x.SerialNumber == item.SerialNumber &&
+                                                                        x.Id != item.Id &&
+                                                                        x.ArchiveCode == "N");
+                    if (duplicatesExist)
+                    {
+                        // duplicate equipment error
+                        return new ObjectResult(new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-08", _configuration)));
+                    }
+                }
 
                 if (exists && id == item.Id)
                 {
@@ -259,6 +273,20 @@ namespace HETSAPI.Services.Impl
                 AdjustRecord(item);
 
                 bool exists = _context.Equipments.Any(a => a.Id == item.Id);
+
+                // check for duplicates (serial number)
+                if (exists &&
+                    !string.IsNullOrEmpty(item.SerialNumber))
+                {
+                    bool duplicatesExist = _context.Equipments.Any(x => x.SerialNumber == item.SerialNumber &&
+                                                                        x.Id != item.Id &&
+                                                                        x.ArchiveCode == "N");
+                    if (duplicatesExist)
+                    {
+                        // duplicate equipment error
+                        return new ObjectResult(new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-08", _configuration)));
+                    }
+                }
 
                 if (exists)
                 {
@@ -449,6 +477,58 @@ namespace HETSAPI.Services.Impl
 
             return numberOfBlocks;
         }
+
+
+        #region Duplicate Equiment
+
+        /// <summary>
+        /// Get all duplicate equipment records
+        /// </summary>
+        /// <param name="id">id of Equipment</param>
+        /// <param name="serialNumber">Serial Number of Equipment</param>
+        /// <response code="200">OK</response>
+        public virtual IActionResult EquipmentIdEquipmentduplicatesGetAsync(int id, string serialNumber)
+        {
+            bool exists = _context.Equipments.Any(x => x.Id == id);
+
+            if (exists)
+            {
+                List<Equipment> result = _context.Equipments.AsNoTracking()
+                    .Include(x => x.DistrictEquipmentType)
+                        .ThenInclude(y => y.District)
+                    .Include(x => x.Owner)
+                    .Where(x => x.SerialNumber == serialNumber &&
+                                x.Id != id &&
+                                x.ArchiveCode == "N").ToList();
+
+                List<DuplicateEquipmentViewModel> duplicates = new List<DuplicateEquipmentViewModel>();
+                int idCount = -1;
+
+                foreach (Equipment equipment in result)
+                {
+                    idCount++;
+
+                    DuplicateEquipmentViewModel duplicate = new DuplicateEquipmentViewModel
+                    {
+                        Id = idCount,
+                        SerialNumber = serialNumber,
+                        DistrictName = equipment.DistrictEquipmentType.District.Name,
+                        DuplicateEquipment = equipment
+                    };
+
+                    duplicates.Add(duplicate);
+                }
+
+                // return to the client            
+                return new ObjectResult(new HetsResponse(duplicates));
+            }
+
+            // record not found
+            return new ObjectResult(new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-01", _configuration)));
+        }
+
+        #endregion
+
 
         #region Recalculate Seniority
 

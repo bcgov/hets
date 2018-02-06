@@ -161,6 +161,27 @@ namespace HETSAPI.Controllers
             return _service.EquipmentRecalcSeniorityGetAsync(id);
         }
 
+
+        #region Duplicate Equipent Records
+
+        /// <summary>
+        /// Get all duplicate equipment records
+        /// </summary>
+        /// <param name="id">id of Equipment to fetch EquipmentAttachments for</param>
+        /// <param name="serialNumber"></param>
+        /// <response code="200">OK</response>
+        [HttpGet]
+        [Route("/api/equipment/{id}/duplicates/{serialNumber}")]
+        [SwaggerOperation("EquipmentIdEquipmentduplicatesGet")]
+        [SwaggerResponse(200, type: typeof(List<DuplicateEquipmentViewModel>))]
+        public virtual IActionResult EquipmentIdEquipmentduplicatesGet([FromRoute]int id, [FromRoute]string serialNumber)
+        {
+            return _service.EquipmentIdEquipmentduplicatesGetAsync(id, serialNumber);
+        }
+
+        #endregion
+
+
         #region Equipent Attachment Records
 
         /// <summary>
