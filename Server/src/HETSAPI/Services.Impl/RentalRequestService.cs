@@ -1196,7 +1196,7 @@ namespace HETSAPI.Services.Impl
                     for (int i = 0; i < item.RentalRequestRotationList.Count; i++)
                     {
                         bool forcedHire;
-                        bool hired;
+                        bool asked;
 
                         if (foundCurrentRecord &&
                             item.RentalRequestRotationList[i].IsForceHire != null &&
@@ -1215,20 +1215,21 @@ namespace HETSAPI.Services.Impl
 
                         if (foundCurrentRecord &&
                             item.RentalRequestRotationList[i].OfferResponse != null &&
-                            !item.RentalRequestRotationList[i].OfferResponse.Equals("Yes", StringComparison.InvariantCultureIgnoreCase))
+                            !item.RentalRequestRotationList[i].OfferResponse.Equals("Yes", StringComparison.InvariantCultureIgnoreCase) &&
+                            !item.RentalRequestRotationList[i].OfferResponse.Equals("No", StringComparison.InvariantCultureIgnoreCase))
                         {
-                            hired = false;
+                            asked = false;
                         }
                         else if (foundCurrentRecord && item.RentalRequestRotationList[i].OfferResponse == null)
                         {
-                            hired = false;
+                            asked = false;
                         }
                         else
                         {
-                            hired = true;
+                            asked = true;
                         }
 
-                        if (foundCurrentRecord && !forcedHire && !hired)
+                        if (foundCurrentRecord && !forcedHire && !asked)
                         {
                             // we've found our next record - exit and update the lists
                             nextRecordToAskIndex = i;

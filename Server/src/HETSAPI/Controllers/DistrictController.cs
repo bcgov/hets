@@ -123,5 +123,18 @@ namespace HETSAPI.Controllers
         {
             return _service.DistrictsPostAsync(item);
         }
+
+        /// <summary>
+        /// Get all owners by distict (minimal data returned) - lookup
+        /// </summary>
+        /// <response code="200">OK</response>
+        [HttpGet]
+        [Route("/api/district/{id}/owners")]
+        [SwaggerOperation("DistrictOwnersGet")]
+        [SwaggerResponse(200, type: typeof(List<Owner>))]
+        public virtual IActionResult DistrictOwnersGet([FromRoute]int id)
+        {
+            return _service.DistrictOwnersGetAsync(id);
+        }
     }
 }
