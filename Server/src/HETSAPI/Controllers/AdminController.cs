@@ -29,7 +29,6 @@ namespace HETSAPI.Controllers
         /// <param name="districts">comma seperated list of district IDs to process.</param>
         /// <response code="200">OK</response>
         /// <response code="404">Attachment not found in system</response>
-        [AllowAnonymous]
         [HttpGet]
         [Route("/api/admin/import")]
         [SwaggerOperation("AdminImportGet")]
@@ -45,7 +44,7 @@ namespace HETSAPI.Controllers
         /// <param name="districts">comma seperated list of district IDs to process.</param>
         /// <response code="200">OK</response>
         /// <response code="404">Attachment not found in system</response>
-        [AllowAnonymous]
+       
         [HttpGet]
         [Route("/api/admin/usermap")]
         [SwaggerOperation("AdminUserMap")]
