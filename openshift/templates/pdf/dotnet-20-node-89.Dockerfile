@@ -15,9 +15,9 @@ RUN yum install -y bzip2 git && \
     yum clean all -y
 
 # Install phantomjs
-RUN curl -O https://phantomjs.googlecode.com/files/phantomjs-1.9.1-linux-i686.tar.bz2
-RUN tar xvf phantomjs-1.9.1-linux-i686.tar.bz2
-RUN cp phantomjs-1.9.1-linux-i686/bin/phantomjs /usr/local/bin
+RUN curl -O https://phantomjs.googlecode.com/files/phantomjs-2.1.3.tar.gz
+RUN tar xvf phantomjs-2.1.3.tar.gz
+RUN cp phantomjs-2.1.3/bin/phantomjs /usr/local/bin
 RUN yum install freetype
 RUN yum install fontconfig	
 	
