@@ -15,7 +15,7 @@ RUN yum install -y bzip2 git && \
     yum clean all -y
 
 # Install phantomjs
-RUN curl -O https://phantomjs.googlecode.com/files/phantomjs-2.1.3.tar.gz
+RUN curl -O https://github.com/ariya/phantomjs/archive/2.1.3.tar.gz
 RUN tar xvf phantomjs-2.1.3.tar.gz
 RUN cp phantomjs-2.1.3/bin/phantomjs /usr/local/bin
 RUN yum install freetype
