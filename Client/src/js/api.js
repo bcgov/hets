@@ -1179,7 +1179,7 @@ export function addRentalRequestNote(rentalRequestId, note) {
 }
 
 export function cancelRentalRequest(rentalRequestId) {
-  return new ApiRequest(`rentalrequests/${rentalRequestId}/cancel`).post().then((response) => {
+  return new ApiRequest(`rentalrequests/${rentalRequestId}/cancel`).get().then((response) => {
     return response;
   });
 }
