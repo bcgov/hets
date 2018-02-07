@@ -15,11 +15,11 @@ RUN yum install -y bzip2 git && \
     yum clean all -y
 
 # Install phantomjs
-RUN yum install unzip
+RUN yum fastjar
 RUN curl -O https://github.com/ariya/phantomjs/archive/2.1.3.zip
 
 RUN ls -la
-RUN unzip 2.1.3.zip
+RUN jar xvf 2.1.3.zip
 
 RUN ls -la
 RUN cp 2.1.3/phantomjs-2.1.3/bin/phantomjs /usr/local/bin
