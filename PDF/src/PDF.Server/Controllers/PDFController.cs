@@ -25,11 +25,12 @@ namespace PDF.Server.Controllers
         /// <summary>
         /// Get HETS Rental Agreement
         /// </summary>
-        /// <param name="rentalAgreementJson"></param>
+        /// <param name="rentalAgreementJson">Serialized rental agreement</param>
+        /// <param name="name">Unique name for the generated Pdf (Result: 'RentalAgreement_' + name + '.pdf')</param>
         /// <returns></returns>
         [HttpPost]
-        [Route("pdf/rentalAgreement")]
-        public async Task<IActionResult> GetRentalAgreementPdf([FromBody]string rentalAgreementJson)
+        [Route("pdf/rentalAgreement/{name}")]
+        public async Task<IActionResult> GetRentalAgreementPdf([FromBody]string rentalAgreementJson, [FromRoute]string name)
         {
             try
             {
@@ -47,19 +48,18 @@ namespace PDF.Server.Controllers
 
                 // *************************************************************
                 // Convert results to Pdf
-                // *************************************************************
-                string options = @"{""height"": ""10.5in"",""width"": ""8in"",""orientation"": ""portrait""}";
+                // ************************************************************* 
+                string fileName = "RentalAgreement_" + name + ".pdf"; // to do - add id
 
                 PdfRequest pdfRequest = new PdfRequest()
                 {
                     Html = result,
-                    Options = options,
-                    PdfJsUrl = _configuration.GetSection("Constants").GetSection("PdfJsUrl").Value
+                    PdfFileName = fileName
                 };
 
-                JsonResponse jsonResult = await PdfDocument.BuildPdf(_nodeServices, pdfRequest);
+                byte[] pdfResponse = PdfDocument.BuildPdf(_configuration, pdfRequest);
 
-                return File(jsonResult.Data, "application/pdf");
+                return File(pdfResponse, "application/pdf");
             }
             catch (Exception e)
             {

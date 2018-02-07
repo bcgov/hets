@@ -24,20 +24,17 @@ namespace PDF.Server.Controllers
 
         [HttpGet]
         [Route("pdf/testPdf")]
-        public async Task<IActionResult> TestPdf()
+        public IActionResult TestPdf()
         {
-            string options = @"{""height"": ""10.5in"",""width"": ""8in"",""orientation"": ""portrait""}";
-
-            PdfRequest request = new PdfRequest()
+            PdfRequest pdfRequest = new PdfRequest()
             {
                 Html = "<h1>Hello World<h1>",
-                Options = options,
-                PdfJsUrl = _configuration.GetSection("Constants").GetSection("PdfJsUrl").Value
+                PdfFileName = "HelloWorld"
             };
 
-            JsonResponse result = await PdfDocument.BuildPdf(_nodeServices, request);
+            byte[] pdfResponse = PdfDocument.BuildPdf(_configuration, pdfRequest);
 
-            return File(result.Data, "application/pdf");
+            return File(pdfResponse, "application/pdf");
         }
 
         [HttpGet]
@@ -60,19 +57,16 @@ namespace PDF.Server.Controllers
 
                 // *************************************************************
                 // Convert results to Pdf
-                // *************************************************************
-                string options = @"{""height"": ""10.5in"",""width"": ""8in"",""orientation"": ""portrait""}";
-
+                // *************************************************************                
                 PdfRequest pdfRequest = new PdfRequest()
                 {
                     Html = "<h1>" + result + "<h1>",
-                    Options = options,
-                    PdfJsUrl = _configuration.GetSection("Constants").GetSection("PdfJsUrl").Value
+                    PdfFileName = "TestTemplate"
                 };
 
-                JsonResponse jsonResult = await PdfDocument.BuildPdf(_nodeServices, pdfRequest);
+                byte[] pdfResponse = PdfDocument.BuildPdf(_configuration, pdfRequest);
 
-                return File(jsonResult.Data, "application/pdf");
+                return File(pdfResponse, "application/pdf");
             }
             catch (Exception e)
             {

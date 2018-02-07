@@ -11,6 +11,7 @@ using System.Linq;
 using System.Net;
 using System.Net.Http;
 using System.Text;
+using System.Threading;
 using HETSAPI.Models;
 using HETSAPI.ViewModels;
 using HETSAPI.Mappings;
@@ -256,6 +257,13 @@ namespace HETSAPI.Services.Impl
                     targetUrl = pdfHost + pdfUrlLocal;
                 }
 
+                // generate pdf document name [unique portion only]
+                string ownerName = rentalAgreement.Equipment.Owner.OrganizationName.Trim().ToLower();
+                ownerName = Thread.CurrentThread.CurrentCulture.TextInfo.ToTitleCase(ownerName);
+                string fileName = rentalAgreement.Number + "_" + ownerName;
+
+                targetUrl = targetUrl + "/" + fileName;
+
                 // call the microservice
                 try
                 {
@@ -271,7 +279,7 @@ namespace HETSAPI.Services.Impl
 
                         result = new FileContentResult(bytetask.Result, "application/pdf")
                         {
-                            FileDownloadName = "RentalAgreement-" + rentalAgreement.Number + ".pdf"
+                            FileDownloadName = "RentalAgreement_" + fileName + ".pdf"
                         };
                     }
                 }
