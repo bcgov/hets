@@ -4,12 +4,9 @@ import { connect } from 'react-redux';
 
 import { Form, FormGroup, HelpBlock, ControlLabel, FormControl } from 'react-bootstrap';
 
-import _ from 'lodash';
-
 import * as Constant from '../../constants';
 
 import EditDialog from '../../components/EditDialog.jsx';
-import FilterDropdown from '../../components/FilterDropdown.jsx';
 import FormInputControl from '../../components/FormInputControl.jsx';
 
 import { isBlank, notBlank } from '../../utils/string';
