@@ -47,7 +47,7 @@ namespace PDF.Server.Helpers
 
                 // call the microservice                
                 HttpClient client = new HttpClient();
-                StringContent stringContent = new StringContent(JsonConvert.SerializeObject(request.Html), Encoding.UTF8, "application/json");
+                StringContent stringContent = new StringContent(request.Html);
                 HttpResponseMessage response = client.PostAsync(pdfService, stringContent).Result;
 
                 // success
