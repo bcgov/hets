@@ -200,5 +200,31 @@ namespace HETSAPI.Services.Impl
 
             return new ObjectResult(new HetsResponse(item));      
         }
+
+        #region District Owners
+
+        /// <summary>
+        /// Get all owners for a district
+        /// </summary>
+        /// <response code="200">OK</response>
+        public virtual IActionResult DistrictOwnersGetAsync(int id)
+        {
+            bool exists = _context.Districts.Any(a => a.Id == id);
+
+            if (exists)
+            {
+                List<Owner> result = _context.Owners.AsNoTracking()
+                    .Where(x => x.LocalArea.ServiceArea.District.Id == id)
+                    .OrderBy(x => x.OrganizationName)
+                    .ToList();
+
+                return new ObjectResult(new HetsResponse(result));
+            }
+
+            // record not found
+            return new ObjectResult(new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-01", _configuration)));
+        }
+
+        #endregion
     }
 }

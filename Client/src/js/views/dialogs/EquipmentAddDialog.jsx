@@ -81,17 +81,12 @@ var EquipmentAddDialog = React.createClass({
     var valid = true;
 
     if (this.state.localAreaId === 0) {
-      this.setState({ localAreaError: 'Local area is required' });
+      this.setState({ localAreaError: 'Local area is required.' });
       valid = false;
     }
 
     if (this.state.equipmentTypeId === 0) {
-      this.setState({ equipmentTypeError: 'Equipment type is required' });
-      valid = false;
-    }
-
-    if (isBlank(this.state.serialNumber)) {
-      this.setState({ serialNumberError: 'Serial number is required' });
+      this.setState({ equipmentTypeError: 'Equipment type is required.' });
       valid = false;
     }
 
@@ -100,21 +95,37 @@ var EquipmentAddDialog = React.createClass({
       valid = false;
     }
 
+    if (isBlank(this.state.serialNumber)) {
+      this.setState({ serialNumberError: 'Serial number is required.' });
+      valid = false;
+    }
+
     return valid;
   },
 
   onSave() {
-    this.props.onSave({
-      owner: { id: this.props.owner.id },
-      localArea: { id: this.state.localAreaId },
-      districtEquipmentType: { id: this.state.equipmentTypeId },
-      licencePlate: this.state.licencePlate,
-      serialNumber: this.state.serialNumber,
-      make: this.state.make,
-      model: this.state.model,
-      year: this.state.year,
-      size: this.state.size,
-      status: Constant.EQUIPMENT_STATUS_CODE_APPROVED,
+    Api.equipmentDuplicateCheck(this.state.equipmentTypeId, this.state.serialNumber).then((response) => {
+      if (response.data.length > 0) {
+        var districts = response.data.map((district) => {
+          return district.districtName;
+        });
+        this.setState({ 
+          serialNumberError: `Serial number is currently in use in the following district(s): ${districts.join(', ')}`,
+        });
+        return;
+      }
+      this.props.onSave({
+        owner: { id: this.props.owner.id },
+        localArea: { id: this.state.localAreaId },
+        districtEquipmentType: { id: this.state.equipmentTypeId },
+        licencePlate: this.state.licencePlate,
+        serialNumber: this.state.serialNumber,
+        make: this.state.make,
+        model: this.state.model,
+        year: this.state.year,
+        size: this.state.size,
+        status: Constant.EQUIPMENT_STATUS_CODE_APPROVED,
+      });
     });
   },
 

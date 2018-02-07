@@ -5,6 +5,8 @@ import { connect } from 'react-redux';
 import { Grid, Row, Col } from 'react-bootstrap';
 import { Form, FormGroup, HelpBlock, ControlLabel } from 'react-bootstrap';
 
+import * as Api from '../../api';
+
 import EditDialog from '../../components/EditDialog.jsx';
 import FormInputControl from '../../components/FormInputControl.jsx';
 
@@ -77,14 +79,25 @@ var EquipmentEditDialog = React.createClass({
   },
 
   onSave() {
-    this.props.onSave({ ...this.props.equipment, ...{
-      serialNumber: this.state.serialNumber,
-      make: this.state.make,
-      size: this.state.size,
-      model: this.state.model,
-      year: this.state.year,
-      licencePlate: this.state.licencePlate,
-    }});
+    Api.equipmentDuplicateCheck(this.props.equipment.districtEquipmentType.id, this.state.serialNumber).then((response) => {
+      if (response.data.length > 0) {
+        var districts = response.data.map((district) => {
+          return district.districtName;
+        });
+        this.setState({ 
+          serialNumberError: `Serial number is currently in use in the following district(s): ${districts.join(', ')}`,
+        });
+        return;
+      }
+      this.props.onSave({ ...this.props.equipment, ...{
+        serialNumber: this.state.serialNumber,
+        make: this.state.make,
+        size: this.state.size,
+        model: this.state.model,
+        year: this.state.year,
+        licencePlate: this.state.licencePlate,
+      }});
+    });
   },
 
   render() {

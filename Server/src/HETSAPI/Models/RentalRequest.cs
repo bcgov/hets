@@ -65,6 +65,14 @@ namespace HETSAPI.Models
         }
 
         /// <summary>
+        /// The count of yes (plus forced hires) responses from Equipment Owners (calculated field)
+        /// </summary>
+        /// <value>A system-generated unique identifier for a Request</value>
+        [MetaData(Description = "The count of yes (+forced hires) responses from Equipment Owners")]
+        [NotMapped]
+        public int YesCount { get; set; }
+
+        /// <summary>
         /// A system-generated unique identifier for a Request
         /// </summary>
         /// <value>A system-generated unique identifier for a Request</value>

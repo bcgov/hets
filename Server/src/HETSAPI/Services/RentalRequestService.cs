@@ -56,6 +56,13 @@ namespace HETSAPI.Services
         IActionResult RentalrequestsPostAsync(RentalRequest item);
 
         /// <summary>
+        /// Cancel a Rental Request (if no equipment has been hired)
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
+        IActionResult RentalrequestsIdCancelGetAsync(int id);
+
+        /// <summary>
         /// Move a Rental Request from New (inactive) to In Progress (Active)
         /// </summary>
         /// <param name="id"></param>

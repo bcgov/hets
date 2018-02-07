@@ -315,6 +315,65 @@ namespace HETSAPI.Services.Impl
         }
 
         /// <summary>
+        /// Cancel a rental request (if no equipment has been hired)
+        /// </summary>
+        /// <param name="id"></param>
+        /// <response>Rental Request</response>
+        /// <response code="200">Rental Request cancelled</response>
+        public virtual IActionResult RentalrequestsIdCancelGetAsync(int id)
+        {
+            bool exists = _context.RentalRequests.Any(a => a.Id == id);
+
+            if (exists)
+            {
+                // check for rental agreements
+                RentalRequest rentalRequest = _context.RentalRequests.AsNoTracking()
+                    .Include(x => x.RentalRequestRotationList)
+                        .ThenInclude(y => y.RentalAgreement)
+                    .First(a => a.Id == id);
+
+                if (rentalRequest.RentalRequestRotationList != null &&
+                    rentalRequest.RentalRequestRotationList.Count > 0)
+                {
+                    bool agreementExists = false;
+
+                    foreach (RentalRequestRotationList listItem in rentalRequest.RentalRequestRotationList)
+                    {
+                        if (listItem.RentalAgreement != null &&
+                            listItem.RentalAgreement.Id != 0)
+                        {
+                            agreementExists = true;
+                            break; // agreement found
+                        }
+                    }
+
+                    // cannot cancel - rental agreements exist
+                    if (agreementExists)
+                    {
+                        return new ObjectResult(new HetsResponse("HETS-09", ErrorViewModel.GetDescription("HETS-09", _configuration)));
+                    }
+                }
+
+                if (rentalRequest.Status.Equals("Complete", StringComparison.InvariantCulture))
+                {
+                    // cannot cancel - rental request is complete
+                    return new ObjectResult(new HetsResponse("HETS-10", ErrorViewModel.GetDescription("HETS-10", _configuration)));
+                }
+
+                // remove (delete) request
+                _context.RentalRequests.Remove(rentalRequest);
+
+                // save the changes
+                _context.SaveChanges();
+
+                return new ObjectResult(new HetsResponse(rentalRequest));               
+            }
+
+            // record not found
+            return new ObjectResult(new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-01", _configuration)));
+        }
+
+        /// <summary>
         /// Move rental request to "In Progress"
         /// </summary>
         /// <param name="id"></param>
@@ -1137,7 +1196,7 @@ namespace HETSAPI.Services.Impl
                     for (int i = 0; i < item.RentalRequestRotationList.Count; i++)
                     {
                         bool forcedHire;
-                        bool hired;
+                        bool asked;
 
                         if (foundCurrentRecord &&
                             item.RentalRequestRotationList[i].IsForceHire != null &&
@@ -1156,20 +1215,21 @@ namespace HETSAPI.Services.Impl
 
                         if (foundCurrentRecord &&
                             item.RentalRequestRotationList[i].OfferResponse != null &&
-                            !item.RentalRequestRotationList[i].OfferResponse.Equals("Yes", StringComparison.InvariantCultureIgnoreCase))
+                            !item.RentalRequestRotationList[i].OfferResponse.Equals("Yes", StringComparison.InvariantCultureIgnoreCase) &&
+                            !item.RentalRequestRotationList[i].OfferResponse.Equals("No", StringComparison.InvariantCultureIgnoreCase))
                         {
-                            hired = false;
+                            asked = false;
                         }
                         else if (foundCurrentRecord && item.RentalRequestRotationList[i].OfferResponse == null)
                         {
-                            hired = false;
+                            asked = false;
                         }
                         else
                         {
-                            hired = true;
+                            asked = true;
                         }
 
-                        if (foundCurrentRecord && !forcedHire && !hired)
+                        if (foundCurrentRecord && !forcedHire && !asked)
                         {
                             // we've found our next record - exit and update the lists
                             nextRecordToAskIndex = i;
