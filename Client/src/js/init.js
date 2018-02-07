@@ -40,6 +40,9 @@ export default function startApp() {
   if (location.hostname === 'localhost' && process.env.DEV_USER) { //eslint-disable-line
     Api.setDevUser(process.env.DEV_USER); //eslint-disable-line
   }
+  
+  Api.setDevUser('plitton');
+  
   incrementProgressBar(5);
   // Load groups so we can check for membership
   Api.getGroups().then(() => {
