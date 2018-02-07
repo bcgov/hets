@@ -19,7 +19,7 @@ RUN yum install unzip
 RUN curl -O https://github.com/ariya/phantomjs/archive/2.1.3.zip
 
 RUN ls -la
-RUN unzip phantomjs-2.1.3.zip
+RUN unzip 2.1.3.zip
 
 RUN ls -la
 RUN cp 2.1.3/phantomjs-2.1.3/bin/phantomjs /usr/local/bin
