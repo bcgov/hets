@@ -14,8 +14,12 @@ USER 0
 RUN yum install -y bzip2 git && \
     yum clean all -y
 
-# Required for phantomjs
-RUN yum install libfontconfig
+# Install phantomjs
+RUN curl -O https://phantomjs.googlecode.com/files/phantomjs-1.9.1-linux-i686.tar.bz2
+RUN tar xvf phantomjs-1.9.1-linux-i686.tar.bz2
+RUN cp phantomjs-1.9.1-linux-i686/bin/phantomjs /usr/local/bin
+RUN yum install freetype
+RUN yum install fontconfig	
 	
 # Remove old version of Node
 RUN rm -R /opt/rh/rh-nodejs6
