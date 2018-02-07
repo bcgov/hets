@@ -199,12 +199,6 @@ var RentalRequests = React.createClass({
     window.print();
   },
 
-  cancelRequest(request) {
-    Api.cancelRentalRequest(request.id).then(() => {
-      this.fetch();
-    });
-  },
-
   render() {
     // Constrain the local area drop downs to those in the District of the current logged in user
     var localAreas = _.chain(this.props.localAreas)
@@ -309,7 +303,6 @@ var RentalRequests = React.createClass({
                 <td style={{ textAlign: 'center' }}>{ request.status }</td>
                 <td style={{ textAlign: 'right' }}>
                   <ButtonGroup>
-                    <DeleteButton name="Cancel Rental Request" hide={ request.canCancel } onConfirm={ this.cancelRequest.bind(this, request) }/>
                     <EditButton name="Rental Request" hide={ !request.canView } view pathname={ `${ Constant.RENTAL_REQUESTS_PATHNAME }/${ request.id }` }/>
                   </ButtonGroup>
                 </td>
