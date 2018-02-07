@@ -55,10 +55,10 @@ namespace HETSAPI.Import
             ser.UnknownElement += UnknownElement;
 
             MemoryStream memoryStream = ImportUtility.MemoryStreamGenerator(XmlFileName, OldTable, fileLocation, rootAttr);
-            //XmlReader reader = new XmlTextReader(memoryStream);
-            //if (ser.CanDeserialize(reader)  )
-            //{
-                UserHETS[] legacyItems = (UserHETS[])ser.Deserialize(memoryStream);
+            XmlReader reader = new XmlTextReader(memoryStream);
+            if (ser.CanDeserialize(reader)  )
+            {
+                UserHETS[] legacyItems = (UserHETS[])ser.Deserialize(reader);
 
                 foreach (UserHETS item in legacyItems)
                 {
@@ -68,7 +68,7 @@ namespace HETSAPI.Import
 
                     importMapRecord.TableName = NewTable;
                     importMapRecord.MappedColumn = "User_cd";
-                    importMapRecord.OriginalValue = item.Popt_Id.ToString();
+                    importMapRecord.OriginalValue = item.User_Cd.ToString().Trim();
                     if (importMap != null)
                     {
                         User mappedUser = dbContext.Users.FirstOrDefault(x => x.Id == importMap.NewKey);
@@ -78,8 +78,10 @@ namespace HETSAPI.Import
                         }
                     }
 
+                    result.Add(importMapRecord);
+
                 }
-            //}
+            }
 
             
 
