@@ -20,7 +20,6 @@ import { refresh } from '../actions/actions';
 import DateControl from '../components/DateControl.jsx';
 import DropdownControl from '../components/DropdownControl.jsx';
 import EditButton from '../components/EditButton.jsx';
-import DeleteButton from '../components/DeleteButton.jsx';
 import Favourites from '../components/Favourites.jsx';
 import FormInputControl from '../components/FormInputControl.jsx';
 import Mailto from '../components/Mailto.jsx';
@@ -283,7 +282,6 @@ var RentalRequests = React.createClass({
         ]}>
           {
             _.map(rentalRequests, (request) => {
-              console.log(request);
               return <tr key={ request.id } className={ request.isActive ? null : 'info' }>
                 <td>{ request.localAreaName }</td>
                 <td style={{ textAlign: 'center' }}>{ request.equipmentCount }</td>
