@@ -27,7 +27,6 @@ var ProjectsAddDialog = React.createClass({
     return {
       name: '',
       provincialProjectNumber: '',
-      districtId: this.props.currentUser.district.id,
       information: '',
 
       nameError: '',
@@ -69,7 +68,7 @@ var ProjectsAddDialog = React.createClass({
     this.props.onSave({
       name: this.state.name,
       provincialProjectNumber: this.state.provincialProjectNumber,
-      district: { id: this.state.districtId },
+      district: { id: this.props.currentUser.district.id },
       information: this.state.information,
       status: Constant.PROJECT_STATUS_CODE_ACTIVE,
     });
