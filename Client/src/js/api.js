@@ -1178,6 +1178,12 @@ export function addRentalRequestNote(rentalRequestId, note) {
   });
 }
 
+export function cancelRentalRequest(rentalRequestId) {
+  return new ApiRequest(`rentalrequests/${rentalRequestId}/cancel`).post().then((response) => {
+    return response;
+  });
+}
+
 ////////////////////
 // Rental Request Rotation List
 ////////////////////
