@@ -119,7 +119,7 @@ namespace HETSAPI.Controllers
         /// <response code="200">OK</response>
         [HttpGet]
         [Route("/api/rentalrequests/{id}/cancel")]
-        [SwaggerOperation("RentalrequestsIdGet")]
+        [SwaggerOperation("RentalrequestsIdCancelGet")]
         public virtual IActionResult RentalrequestsIdCancelGet([FromRoute]int id)
         {
             return _service.RentalrequestsIdCancelGetAsync(id);

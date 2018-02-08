@@ -28,7 +28,7 @@ namespace PDF.Server.Helpers
                 // read template content
                 Assembly assembly = Assembly.GetExecutingAssembly();
                 string resourceName = "PDF.Server.Templates." + request.Template;
-                string templateContent = "";
+                string templateContent;
 
                 using (Stream stream = assembly.GetManifestResourceStream(resourceName))
                 {
