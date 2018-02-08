@@ -330,6 +330,7 @@ namespace HETSAPI.Services.Impl
                 RentalRequest rentalRequest = _context.RentalRequests.AsNoTracking()
                     .Include(x => x.RentalRequestRotationList)
                         .ThenInclude(y => y.RentalAgreement)
+                    .Include(x => x.RentalRequestAttachments)
                     .First(a => a.Id == id);
 
                 if (rentalRequest.RentalRequestRotationList != null &&
@@ -358,6 +359,12 @@ namespace HETSAPI.Services.Impl
                 {
                     // cannot cancel - rental request is complete
                     return new ObjectResult(new HetsResponse("HETS-10", ErrorViewModel.GetDescription("HETS-10", _configuration)));
+                }
+
+                // remove (detele) rental request attachments
+                foreach (RentalRequestAttachment attachment in rentalRequest.RentalRequestAttachments)                    
+                {
+                    _context.RentalRequestAttachments.Remove(attachment);
                 }
 
                 // remove (delete) request
