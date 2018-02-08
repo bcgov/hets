@@ -7,10 +7,12 @@ using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.IO;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading;
 using HETSAPI.Models;
 using HETSAPI.ViewModels;
@@ -259,6 +261,8 @@ namespace HETSAPI.Services.Impl
 
                 // generate pdf document name [unique portion only]
                 string ownerName = rentalAgreement.Equipment.Owner.OrganizationName.Trim().ToLower();
+                ownerName = CleanFileName(ownerName);
+                ownerName = ownerName.Replace(" ", "");
                 ownerName = Thread.CurrentThread.CurrentCulture.TextInfo.ToTitleCase(ownerName);
                 string fileName = rentalAgreement.Number + "_" + ownerName;
 
@@ -301,6 +305,11 @@ namespace HETSAPI.Services.Impl
 
             // record not found
             return new ObjectResult(new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-01", _configuration)));
+        }
+
+        private static string CleanFileName(string fileName)
+        {
+            return Path.GetInvalidFileNameChars().Aggregate(fileName, (current, c) => current.Replace(c.ToString(), string.Empty));
         }
 
         /// <summary>
