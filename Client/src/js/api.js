@@ -540,6 +540,12 @@ function parseOwner(owner) {
   owner.workSafeBCPolicyNumber = owner.workSafeBCPolicyNumber || '';
   owner.workSafeBCExpiryDate = owner.workSafeBCExpiryDate || '';
   owner.cglEndDate = owner.cglEndDate || '';
+  owner.address1 = owner.address1 || '';
+  owner.address2 = owner.address2 || '';
+  owner.city = owner.city || '';
+  owner.province = owner.province || '';
+  owner.postalCode = owner.postalCode || '';
+  owner.fullAddress = `${owner.address1} ${owner.address2} ${owner.city} ${owner.province} ${owner.postalCode}`;
 
   owner.path = `${ Constant.OWNERS_PATHNAME }/${ owner.id }`;
   owner.url = `#/${ owner.path }`;
@@ -697,6 +703,13 @@ export function addOwnerNote(ownerId, note) {
   return new ApiRequest(`/owners/${ ownerId }/note`).post(note).then(response => {
     var notes = normalize(response.data);
     store.dispatch({ type: Action.UPDATE_OWNER_NOTES, notes: notes });
+  });
+}
+
+export function changeOwnerStatus(status) {
+  // Todo - check endpoint
+  return new ApiRequest(`/owners/${status.id}/status`).post(status).then((response) => {
+    return response;
   });
 }
 

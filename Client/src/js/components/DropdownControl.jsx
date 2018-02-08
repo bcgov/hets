@@ -34,6 +34,7 @@ var DropdownControl = React.createClass({
     disabled: React.PropTypes.bool,
     onSelect: React.PropTypes.func,
     updateState: React.PropTypes.func,
+    staticTitle: React.PropTypes.bool,
   },
 
   getInitialState() {
@@ -90,10 +91,12 @@ var DropdownControl = React.createClass({
   itemSelected(keyEvent) {
     this.toggle(false);
 
-    this.setState({
-      selectedId: keyEvent || '',
-      title: this.buildTitle(keyEvent, this.props.items),
-    });
+    if (!this.props.staticTitle) {
+      this.setState({
+        selectedId: keyEvent || '',
+        title: this.buildTitle(keyEvent, this.props.items),
+      });
+    }
 
     var selected = this.state.simple ? keyEvent : _.find(this.props.items, { id: keyEvent });
 
@@ -115,7 +118,7 @@ var DropdownControl = React.createClass({
   },
 
   render() {
-    var props = _.omit(this.props, 'updateState', 'onSelect', 'items', 'selectedId', 'blankLine', 'fieldName', 'placeholder');
+    var props = _.omit(this.props, 'updateState', 'onSelect', 'items', 'selectedId', 'blankLine', 'fieldName', 'placeholder', 'staticTitle');
 
     return <Dropdown { ...props } className={ `dropdown-control ${this.props.className || ''}` }
       title={ this.state.title } open={ this.state.open } onToggle={ this.toggle }

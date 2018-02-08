@@ -2,8 +2,7 @@ import React from 'react';
 
 import { connect } from 'react-redux';
 
-import { Well, Row, Col } from 'react-bootstrap';
-import { Alert, Button, ButtonGroup, Glyphicon, Label } from 'react-bootstrap';
+import { Well, Row, Col, Alert, Button, ButtonGroup, Glyphicon, Label } from 'react-bootstrap';
 import { Link } from 'react-router';
 import { LinkContainer } from 'react-router-bootstrap';
 
@@ -16,6 +15,7 @@ import EquipmentAddDialog from './dialogs/EquipmentAddDialog.jsx';
 import OwnersEditDialog from './dialogs/OwnersEditDialog.jsx';
 import OwnersPolicyEditDialog from './dialogs/OwnersPolicyEditDialog.jsx';
 import NotesDialog from './dialogs/NotesDialog.jsx';
+import ChangeStatusDialog from './dialogs/ChangeStatusDialog.jsx';
 
 import * as Action from '../actionTypes';
 import * as Api from '../api';
@@ -23,13 +23,13 @@ import * as Constant from '../constants';
 import * as Log from '../history';
 import store from '../store';
 
-import CheckboxControl from '../components/CheckboxControl.jsx';
 import ColDisplay from '../components/ColDisplay.jsx';
 import DeleteButton from '../components/DeleteButton.jsx';
 import EditButton from '../components/EditButton.jsx';
 import History from '../components/History.jsx';
 import SortTable from '../components/SortTable.jsx';
 import Spinner from '../components/Spinner.jsx';
+import DropdownControl from '../components/DropdownControl.jsx';
 
 import { formatDateTime, today, toZuluTime } from '../utils/date';
 import { concat } from '../utils/string';
@@ -65,8 +65,11 @@ var OwnersDetail = React.createClass({
       showEquipmentDialog: false,
       showDocumentsDialog: false,
       showNotesDialog: false,
+      showChangeStatusDialog: false,
 
       contact: {},
+
+      status: '',
 
       // Contacts
       uiContacts : {
@@ -149,8 +152,28 @@ var OwnersDetail = React.createClass({
     });
   },
 
+  updateStatusState(state) {
+    if (state.status !== this.props.owner.status) {
+      this.setState(state, this.openChangeStatusDialog());
+    }
+  },
+
   showNotes() {
 
+  },
+
+  openChangeStatusDialog() {
+    this.setState({ showChangeStatusDialog: true });
+  },
+
+  closeChangeStatusDialog() {
+    this.setState({ showChangeStatusDialog: false });
+  },
+
+  onChangeStatus(status) {
+    Api.changeOwnerStatus(status).then(() => {
+      this.closeChangeStatusDialog();
+    });
   },
 
   showDocuments() {
@@ -322,14 +345,16 @@ var OwnersDetail = React.createClass({
           if (this.state.loading) { return <div style={{ textAlign: 'center' }}><Spinner/></div>; }
 
           return <Row id="owners-top">
-            <Col md={9}>
+            <Col md={6}>
               <Label bsStyle={ owner.isApproved ? 'success' : 'danger'}>{ owner.status }</Label>
               <Label className={ owner.isMaintenanceContractor ? '' : 'hide' }>Maintenance Contractor</Label>
               <Button title="Notes" onClick={ this.openNotesDialog }>Notes ({ Object.keys(this.props.notes).length })</Button>
               <Button title="Documents" onClick={ this.showDocuments }>Documents ({ Object.keys(this.props.documents).length })</Button>
             </Col>
-            <Col md={3}>
+            <Col md={6}>
               <div className="pull-right">
+                <DropdownControl id="status" title={ owner.status } updateState={ this.updateStatusState } staticTitle={true}
+                  items={_.pull([ Constant.OWNER_STATUS_CODE_APPROVED, Constant.OWNER_STATUS_CODE_PENDING, Constant.OWNER_STATUS_CODE_ARCHIVED ], owner.status)} />
                 <Button onClick={ this.print }><Glyphicon glyph="print" title="Print" /></Button>
                 <LinkContainer to={{ pathname: 'owners' }}>
                   <Button title="Return to List"><Glyphicon glyph="arrow-left" /> Return to List</Button>
@@ -352,47 +377,65 @@ var OwnersDetail = React.createClass({
         })()}
 
         <Row>
-          <Col md={6}>
+          <Col md={12}>
             <Well>
               <h3>Owner Information <span className="pull-right">
                 <Button title="Edit Owner" bsSize="small" onClick={ this.openEditDialog }><Glyphicon glyph="pencil" /></Button>
               </span></h3>
               {(() => {
                 if (this.state.loading) { return <div style={{ textAlign: 'center' }}><Spinner/></div>; }
-
+                
                 return <div id="owners-data">
                   <Row>
-                    <ColDisplay md={12} labelProps={{ md: 4 }} label="Company">{ owner.organizationName }</ColDisplay>
+                    <ColDisplay md={6} labelProps={{ md: 4 }} label="Company">{ owner.organizationName }</ColDisplay>
+                    <ColDisplay md={6} labelProps={{ md: 4 }} label="Company Address">{ owner.fullAddress }</ColDisplay>
                   </Row>
                   <Row>
-                    <ColDisplay md={12} labelProps={{ md: 4 }} label="Company Address">
-                      {`${owner.address1} ${owner.address2}, ${owner.city}, ${owner.province}, ${owner.postalCode}`}
-                    </ColDisplay>
+                    <ColDisplay md={6} labelProps={{ md: 4 }} label="Owner Code">{ owner.ownerCode }</ColDisplay>
+                    <ColDisplay md={6} labelProps={{ md: 4 }} label="Primary Contact">{ owner.primaryContactName }</ColDisplay>
                   </Row>
                   <Row>
-                    <ColDisplay md={12} labelProps={{ md: 4 }} label="Owner Code">{ owner.ownerCode }</ColDisplay>
+                    <ColDisplay md={6} labelProps={{ md: 4 }} label="Doing Business As">{ owner.doingBusinessAs }</ColDisplay>
+                    <ColDisplay md={6} labelProps={{ md: 4 }} label="Registered BC Company Number">{ owner.registeredCompanyNumber }</ColDisplay>
                   </Row>
                   <Row>
-                    <ColDisplay md={12} labelProps={{ md: 4 }} label="Primary Contact">{ owner.primaryContactName }</ColDisplay>
+                    <ColDisplay md={6} labelProps={{ md: 4 }} label="District Office">{ owner.districtName }</ColDisplay>
+                    <ColDisplay md={6} labelProps={{ md: 4 }} label="Service/Local Area">{ owner.localAreaName }</ColDisplay>
                   </Row>
                   <Row>
-                    <ColDisplay md={12} labelProps={{ md: 4 }} label="Doing Business As">{ owner.doingBusinessAs }</ColDisplay>
-                  </Row>
-                  <Row>
-                    <ColDisplay md={12} labelProps={{ md: 4 }} label="Registered BC Company Number">{ owner.registeredCompanyNumber }</ColDisplay>
-                  </Row>
-                  <Row>
-                    <ColDisplay md={12} labelProps={{ md: 4 }} label="District Office">{ owner.districtName }</ColDisplay>
-                  </Row>
-                  <Row>
-                    <ColDisplay md={12} labelProps={{ md: 4 }} label="Service/Local Area">{ owner.localAreaName }</ColDisplay>
-                  </Row>
-                  <Row>
-                    <ColDisplay md={12} labelProps={{ md: 4 }} label="Meets Residency?"><CheckboxControl checked={ owner.meetsResidency } disabled /></ColDisplay>
+                    <ColDisplay md={6} labelProps={{ md: 4 }} label="Meets Residency?">{ owner.meetsResidency ? 'Yes' : 'No' }</ColDisplay>
                   </Row>
                 </div>;
               })()}
             </Well>
+          </Col>
+          <Col md={12}>
+            <Well>
+              <h3>Policy <span className="pull-right">
+                <Button title="Edit Policy Information" bsSize="small" onClick={ this.openPolicyDialog }><Glyphicon glyph="pencil" /></Button>
+              </span></h3>
+              {(() => {
+                if (this.state.loading) { return <div style={{ textAlign: 'center' }}><Spinner/></div>; }
+
+                return <div id="owners-policy">
+                  <Row>
+                    <ColDisplay md={12} labelProps={{ md: 4 }} label="WorkSafeBC Policy">{ owner.workSafeBCPolicyNumber }</ColDisplay>
+                  </Row>
+                  <Row>
+                    <ColDisplay md={12} labelProps={{ md: 4 }} label="WorkSafeBC Expiry Date">
+                      { formatDateTime(owner.workSafeBCExpiryDate, Constant.DATE_YEAR_SHORT_MONTH_DAY) }
+                    </ColDisplay>
+                  </Row>
+                  <Row>
+                    <ColDisplay md={12} labelProps={{ md: 4 }} label="CGL Policy End Date">
+                      { formatDateTime(owner.cglEndDate, Constant.DATE_YEAR_SHORT_MONTH_DAY) }
+                    </ColDisplay>
+                  </Row>
+                </div>;
+              })()}
+            </Well>
+          </Col>
+          <Col md={12}>
             <Well>
               <h3>Equipment ({ owner.numberOfEquipment }) <span className="pull-right">
                 <Button title="Verify All Equipment" bsSize="small" onClick={ this.equipmentVerifyAll }>Verify All</Button>
@@ -437,31 +480,7 @@ var OwnersDetail = React.createClass({
               })()}
             </Well>
           </Col>
-          <Col md={6}>
-            <Well>
-              <h3>Policy <span className="pull-right">
-                <Button title="Edit Policy Information" bsSize="small" onClick={ this.openPolicyDialog }><Glyphicon glyph="pencil" /></Button>
-              </span></h3>
-              {(() => {
-                if (this.state.loading) { return <div style={{ textAlign: 'center' }}><Spinner/></div>; }
-
-                return <div id="owners-policy">
-                  <Row>
-                    <ColDisplay md={12} labelProps={{ md: 4 }} label="WorkSafeBC Policy">{ owner.workSafeBCPolicyNumber }</ColDisplay>
-                  </Row>
-                  <Row>
-                    <ColDisplay md={12} labelProps={{ md: 4 }} label="WorkSafeBC Expiry Date">
-                      { formatDateTime(owner.workSafeBCExpiryDate, Constant.DATE_YEAR_SHORT_MONTH_DAY) }
-                    </ColDisplay>
-                  </Row>
-                  <Row>
-                    <ColDisplay md={12} labelProps={{ md: 4 }} label="CGL Policy End Date">
-                      { formatDateTime(owner.cglEndDate, Constant.DATE_YEAR_SHORT_MONTH_DAY) }
-                    </ColDisplay>
-                  </Row>
-                </div>;
-              })()}
-            </Well>
+          <Col md={12}>
             <Well>
               <h3>Contacts</h3>
               {(() => {
@@ -514,7 +533,7 @@ var OwnersDetail = React.createClass({
         </Row>
       </div>
       { this.state.showEquipmentDialog &&
-      <EquipmentAddDialog show={ this.state.showEquipmentDialog } onSave={ this.saveNewEquipment } onClose={ this.closeEquipmentDialog } />
+        <EquipmentAddDialog show={ this.state.showEquipmentDialog } onSave={ this.saveNewEquipment } onClose={ this.closeEquipmentDialog } />
       }
       { this.state.showEditDialog &&
         <OwnersEditDialog show={ this.state.showEditDialog } onSave={ this.saveEdit } onClose={ this.closeEditDialog } />
@@ -543,6 +562,15 @@ var OwnersDetail = React.createClass({
           notes={ this.props.notes }
         />
       } 
+      { this.state.showChangeStatusDialog &&
+        <ChangeStatusDialog
+          show={ this.state.showChangeStatusDialog}
+          onClose={ this.closeChangeStatusDialog }
+          onSave={ this.onChangeStatus }
+          status={ this.state.status }
+          owner={ owner }
+        />
+      }
     </div>;
   },
 });
