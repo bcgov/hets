@@ -481,6 +481,13 @@ export function equipmentDuplicateCheck(id, serialNumber) {
   }));
 }
 
+export function changeEquipmentStatus(status) {
+  // Todo - check endpoint
+  return new ApiRequest(`/equipment/${status.id}/status`).post(status).then((response) => {
+    return response;
+  });
+}
+
 ////////////////////
 // Physical Attachments
 ////////////////////

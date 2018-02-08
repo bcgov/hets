@@ -9,23 +9,20 @@ import EditDialog from '../../components/EditDialog.jsx';
 import FormInputControl from '../../components/FormInputControl.jsx';
 
 import { isBlank } from '../../utils/string';
-import { OWNER_STATUS_CODE_APPROVED } from '../../constants';
 
-var ChangeStatusDialog = React.createClass({
+var ChangeEquipmentStatusDialog = React.createClass({
   propTypes: {
     onSave: React.PropTypes.func.isRequired,
     onClose: React.PropTypes.func.isRequired,
     show: React.PropTypes.bool,
     status: React.PropTypes.string.isRequired,
-    parent: React.PropTypes.object.isRequired,
-    owner: React.PropTypes.bool,
+    equipment: React.PropTypes.object.isRequired,
   },
 
   getInitialState() {
     return {
       comment: '',
       commentError: '',
-      statusError: '',
     };
   },
 
@@ -40,7 +37,6 @@ var ChangeStatusDialog = React.createClass({
   isValid() {
     this.setState({
       commentError: '',
-      statusError: '',
     });
 
     var valid = true;
@@ -50,46 +46,18 @@ var ChangeStatusDialog = React.createClass({
       valid = false;
     }
 
-    if (this.props.owner && this.props.status === OWNER_STATUS_CODE_APPROVED && (this.statusRequirements()).length > 0) {
-      this.setState({ statusError: this.statusRequirements() });
-      valid = false;
-    }
-
-
     return valid; 
-  },
-
-  statusRequirements() {
-    var parent = this.props.parent;
-    var requirements = [];
-    
-    if (!parent.primaryContact) {
-      requirements.push('Primary contact');
-    } 
-    if (isBlank(parent.workSafeBCPolicyNumber)) {
-      requirements.push('WorkSafeBC policy number');
-    }
-    if (!parent.address1 || !parent.city || !parent.province || !parent.province) {
-      requirements.push('Company address');
-    } 
-    if (!parent.meetsResidency) {
-      requirements.push('Meets residency');
-    }
-
-    return requirements;
   },
 
   onSave() {
     this.props.onSave({
-      id: this.props.parent.id,
+      id: this.props.owner.id,
       status: this.props.status,
       comment: this.state.comment,
     });
   },
 
   render() {
-    var statusErrorText = this.state.statusError && this.state.statusError.length <= 1 ? 'The following is also required:' : 'The following are also required:';
-
     return <EditDialog id="notes" show={ this.props.show }
       onClose={ this.props.onClose } onSave={ this.onSave } isValid={ this.isValid } didChange={ this.didChange }
       title= {
@@ -102,17 +70,6 @@ var ChangeStatusDialog = React.createClass({
               <ControlLabel>Comment</ControlLabel>
               <FormInputControl value={ this.state.comment } componentClass="textarea" updateState={ this.updateState } /> 
               <HelpBlock>{ this.state.commentError }</HelpBlock>
-              { this.props.owner &&
-              <HelpBlock>{ this.state.statusError && statusErrorText }
-                <ul>
-                { 
-                  _.map(this.state.statusError, (error) => {
-                    return <li>{ error }</li>;
-                  })
-                }
-              </ul>
-            </HelpBlock>
-            }
           </FormGroup>
         </Form>
       </Col> 

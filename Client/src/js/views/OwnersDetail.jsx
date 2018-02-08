@@ -2,7 +2,7 @@ import React from 'react';
 
 import { connect } from 'react-redux';
 
-import { Well, Row, Col, Alert, Button, ButtonGroup, Glyphicon, Label } from 'react-bootstrap';
+import { Well, Row, Col, Alert, Button, ButtonGroup, Glyphicon, Label, DropdownButton, MenuItem } from 'react-bootstrap';
 import { Link } from 'react-router';
 import { LinkContainer } from 'react-router-bootstrap';
 
@@ -29,7 +29,6 @@ import EditButton from '../components/EditButton.jsx';
 import History from '../components/History.jsx';
 import SortTable from '../components/SortTable.jsx';
 import Spinner from '../components/Spinner.jsx';
-import DropdownControl from '../components/DropdownControl.jsx';
 
 import { formatDateTime, today, toZuluTime } from '../utils/date';
 import { concat } from '../utils/string';
@@ -152,14 +151,14 @@ var OwnersDetail = React.createClass({
     });
   },
 
-  updateStatusState(state) {
-    if (state.status !== this.props.owner.status) {
-      this.setState(state, this.openChangeStatusDialog());
-    }
-  },
-
   showNotes() {
 
+  },
+
+  updateStatusState(state) {
+    if (state !== this.props.owner.status) {
+      this.setState({ status: state }, this.openChangeStatusDialog());
+    }
   },
 
   openChangeStatusDialog() {
@@ -336,26 +335,49 @@ var OwnersDetail = React.createClass({
     window.print();
   },
 
+
+  getStatusDropdownStyle() {
+    switch(this.props.owner.status) {
+      case(Constant.OWNER_STATUS_CODE_APPROVED):
+        return 'success';
+      case(Constant.OWNER_STATUS_CODE_PENDING):
+        return 'warning';
+      default: 
+        return 'default';
+    }
+  },
+
   render() {
     var owner = this.props.owner;
     
     return <div id="owners-detail">
       <div>
         {(() => {
+          var dropdownItems = _.pull([ Constant.OWNER_STATUS_CODE_APPROVED, Constant.OWNER_STATUS_CODE_PENDING, Constant.OWNER_STATUS_CODE_ARCHIVED ], owner.status);
+
           if (this.state.loading) { return <div style={{ textAlign: 'center' }}><Spinner/></div>; }
 
           return <Row id="owners-top">
-            <Col md={6}>
-              <Label bsStyle={ owner.isApproved ? 'success' : 'danger'}>{ owner.status }</Label>
-              <Label className={ owner.isMaintenanceContractor ? '' : 'hide' }>Maintenance Contractor</Label>
-              <Button title="Notes" onClick={ this.openNotesDialog }>Notes ({ Object.keys(this.props.notes).length })</Button>
+            <Col md={8}>
+              {/* <Label bsStyle={ owner.isApproved ? 'success' : 'danger'}>{ owner.status }</Label> */}
+              <DropdownButton
+                bsStyle={ this.getStatusDropdownStyle() }
+                title={ owner.status }
+                onSelect={ this.updateStatusState }
+              >
+              { _.map(dropdownItems.map((item, i) =>
+                <MenuItem key={ i } eventKey={ item }>{ item }</MenuItem>
+              ))}
+              </DropdownButton>
+              <Label className={ owner.isMaintenanceContractor ? 'ml-5' : 'hide' }>Maintenance Contractor</Label>
+              <Button className="ml-5 mr-5" title="Notes" onClick={ this.openNotesDialog }>Notes ({ Object.keys(this.props.notes).length })</Button>
               <Button title="Documents" onClick={ this.showDocuments }>Documents ({ Object.keys(this.props.documents).length })</Button>
             </Col>
-            <Col md={6}>
+            <Col md={4}>
               <div className="pull-right">
-                <DropdownControl id="status" title={ owner.status } updateState={ this.updateStatusState } staticTitle={true}
-                  items={_.pull([ Constant.OWNER_STATUS_CODE_APPROVED, Constant.OWNER_STATUS_CODE_PENDING, Constant.OWNER_STATUS_CODE_ARCHIVED ], owner.status)} />
-                <Button onClick={ this.print }><Glyphicon glyph="print" title="Print" /></Button>
+                {/* <DropdownControl id="status" title={ owner.status } updateState={ this.updateStatusState } staticTitle={true}
+                  items={_.pull([ Constant.OWNER_STATUS_CODE_APPROVED, Constant.OWNER_STATUS_CODE_PENDING, Constant.OWNER_STATUS_CODE_ARCHIVED ], owner.status)} /> */}
+                <Button className="mr-5" onClick={ this.print }><Glyphicon glyph="print" title="Print" /></Button>
                 <LinkContainer to={{ pathname: 'owners' }}>
                   <Button title="Return to List"><Glyphicon glyph="arrow-left" /> Return to List</Button>
                 </LinkContainer>
@@ -438,7 +460,7 @@ var OwnersDetail = React.createClass({
           <Col md={12}>
             <Well>
               <h3>Equipment ({ owner.numberOfEquipment }) <span className="pull-right">
-                <Button title="Verify All Equipment" bsSize="small" onClick={ this.equipmentVerifyAll }>Verify All</Button>
+                <Button className="mr-5" title="Verify All Equipment" bsSize="small" onClick={ this.equipmentVerifyAll }>Verify All</Button>
                 <Button title="Add Equipment" bsSize="small" onClick={ this.openEquipmentDialog }><Glyphicon glyph="plus" /></Button>
               </span></h3>
               {(() => {
@@ -568,7 +590,8 @@ var OwnersDetail = React.createClass({
           onClose={ this.closeChangeStatusDialog }
           onSave={ this.onChangeStatus }
           status={ this.state.status }
-          owner={ owner }
+          parent={ owner }
+          owner
         />
       }
     </div>;
