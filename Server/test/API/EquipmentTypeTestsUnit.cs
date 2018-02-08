@@ -18,7 +18,7 @@ namespace HETSAPI.Test
 		{			
             DbContextOptions<DbAppContext> options = new DbContextOptions<DbAppContext>();
             Mock<DbAppContext> dbAppContext = new Mock<DbAppContext>(null, options);
-            EquipmentTypeService _service = new EquipmentTypeService(dbAppContext.Object);
+            EquipmentTypeService _service = new EquipmentTypeService(dbAppContext.Object, null);
 			_EquipmentType = new EquipmentTypeController (_service);
 		}
 			

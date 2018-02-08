@@ -18,7 +18,7 @@ namespace HETSAPI.Test
 		{			
             DbContextOptions<DbAppContext> options = new DbContextOptions<DbAppContext>();
             Mock<DbAppContext> dbAppContext = new Mock<DbAppContext>(null, options);
-            DistrictService _service = new DistrictService(dbAppContext.Object);
+            DistrictService _service = new DistrictService(dbAppContext.Object, null);
             _DistrictApi = new DistrictController (_service);
 		}	
 		

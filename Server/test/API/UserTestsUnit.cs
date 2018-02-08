@@ -43,7 +43,7 @@ namespace HETSAPI.Test
 		{
             DbContextOptions<DbAppContext> options = new DbContextOptions<DbAppContext>();
             Mock<DbAppContext> dbAppContext = new Mock<DbAppContext>(null, options);           
-            UserService _service = new UserService(null, dbAppContext.Object);			
+            UserService _service = new UserService(null, dbAppContext.Object, null);			
             _UserApi = new UserController (_service);
 		}
 		
