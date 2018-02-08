@@ -443,12 +443,7 @@ namespace HETSAPI.Services.Impl
 
                 newItem.NumberOfBlocks = GetNumberOfBlocks(item) + 1;
                 result.Add(newItem);
-            }
-
-            // resort list using: LocalArea / District Equipment Type and SenioritySortOrder (desc)
-            result = result.OrderBy(e => e.LocalArea.Name)
-                .ThenBy(e => e.DistrictEquipmentType.DistrictEquipmentName)
-                .ThenByDescending(e => e.SenioritySortOrder).ToList();
+            }            
 
             // return to the client            
             return new ObjectResult(new HetsResponse(result));
