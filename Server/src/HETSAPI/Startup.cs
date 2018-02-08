@@ -107,13 +107,16 @@ namespace HETSAPI
             PostgreSqlStorageOptions postgreSqlStorageOptions = new PostgreSqlStorageOptions {
                 SchemaName = "public"
             };
-
-            PostgreSqlStorage storage = new PostgreSqlStorage(connectionString, postgreSqlStorageOptions);
-            services.AddHangfire(config => 
+            if (connectionString != null)
             {
-                config.UseStorage(storage);
-                config.UseConsole();
-            });
+                PostgreSqlStorage storage = new PostgreSqlStorage(connectionString, postgreSqlStorageOptions);
+                services.AddHangfire(config =>
+                {
+                    config.UseStorage(storage);
+                    config.UseConsole();
+                });
+            }
+            
 
             // Configure Swagger - only required in the Development Environment
             if (_hostingEnv.IsDevelopment())
@@ -162,16 +165,20 @@ namespace HETSAPI
             // authenticate users
             app.UseAuthentication();
 
-            // update database environment            
-            string updateDb = Configuration.GetSection("UpdateLocalDb").Value;
-            if (env.IsDevelopment() && updateDb.ToLower() != "false")
+            // update database environment 
+            if (Configuration != null)
             {
-                TryMigrateDatabase(app, loggerFactory);
+                string updateDb = Configuration.GetSection("UpdateLocalDb").Value;
+                if (env.IsDevelopment() && updateDb.ToLower() != "false")
+                {
+                    TryMigrateDatabase(app, loggerFactory);
+                }
+                else if (!env.IsDevelopment())
+                {
+                    TryMigrateDatabase(app, loggerFactory);
+                }
             }
-            else if (!env.IsDevelopment())
-            {
-                TryMigrateDatabase(app, loggerFactory);
-            }
+
 
             // do not start Hangfire if we are running tests. 
             bool startHangfire = true;

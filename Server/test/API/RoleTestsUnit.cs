@@ -43,7 +43,7 @@ namespace HETSAPI.Test
 		{
             DbContextOptions<DbAppContext> options = new DbContextOptions<DbAppContext>();
             Mock<DbAppContext> dbAppContext = new Mock<DbAppContext>(null, options);            
-            RoleService _service = new RoleService(dbAppContext.Object);			
+            RoleService _service = new RoleService(dbAppContext.Object, null);			
             _RoleApi = new RoleController (_service);
 		}
 			
