@@ -250,14 +250,7 @@ namespace HETSAPI.Services.Impl
                 // pass the request on to the Pdf Micro Service
                 string pdfHost = _configuration["PDF_SERVICE_NAME"];
                 string pdfUrl = _configuration.GetSection("Constants:PdfUrl").Value;
-                string pdfUrlLocal = _configuration.GetSection("Constants:PdfUrl-Local").Value;
-
-                string targetUrl = pdfHost + pdfUrl;
-
-                if (!string.IsNullOrEmpty(pdfUrlLocal) && _appContext.Request.Host.Host == "localhost")
-                {
-                    targetUrl = pdfHost + pdfUrlLocal;
-                }
+                string targetUrl = pdfHost + pdfUrl;                
 
                 // generate pdf document name [unique portion only]
                 string ownerName = rentalAgreement.Equipment.Owner.OrganizationName.Trim().ToLower();
