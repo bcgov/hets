@@ -1415,8 +1415,10 @@ namespace HETSAPI.Services.Impl
                 }                
 
                 // if this record hired previously - then skip
+                // if this record was asked but said no - then skip
                 if (previousRentalRequest.RentalRequestRotationList[i].OfferResponse != null &&
-                    previousRentalRequest.RentalRequestRotationList[i].OfferResponse.Equals("Yes", StringComparison.InvariantCultureIgnoreCase))
+                    (previousRentalRequest.RentalRequestRotationList[i].OfferResponse.Equals("Yes", StringComparison.InvariantCultureIgnoreCase) ||
+                     previousRentalRequest.RentalRequestRotationList[i].OfferResponse.Equals("No", StringComparison.InvariantCultureIgnoreCase)))
                 {
                     continue; // move to next record
                 }
@@ -1444,6 +1446,13 @@ namespace HETSAPI.Services.Impl
                 nextRecordToAskId = previousRentalRequest.RentalRequestRotationList[i].Equipment.Id;
                 nextRecordToAskSeniority = previousRentalRequest.RentalRequestRotationList[i].Equipment.Seniority;
                 break;                
+            }
+
+            // nothng found - defaulting back to the first in the new list!
+            if (nextRecordToAskId == 0)
+            {
+                nextRecordToAskId = newRentalRequest.RentalRequestRotationList[0].Equipment.Id;
+                nextRecordToAskSeniority = newRentalRequest.RentalRequestRotationList[0].Equipment.Seniority;
             }
 
             // *******************************************************************************
