@@ -12,11 +12,11 @@ using System.Linq;
 using System.Net;
 using System.Net.Http;
 using System.Text;
-using System.Text.RegularExpressions;
 using System.Threading;
 using HETSAPI.Models;
 using HETSAPI.ViewModels;
 using HETSAPI.Mappings;
+using Microsoft.Extensions.Logging;
 
 namespace HETSAPI.Services.Impl
 {   
@@ -28,16 +28,18 @@ namespace HETSAPI.Services.Impl
         private readonly HttpContext _appContext;
         private readonly DbAppContext _context;
         private readonly IConfiguration _configuration;
+        private readonly ILogger _logger;
 
         /// <summary>
         /// Create a service and set the database context
         /// </summary>
-        public RentalAgreementService(IHttpContextAccessor httpContextAccessor, IConfiguration configuration, DbAppContext context) 
+        public RentalAgreementService(IHttpContextAccessor httpContextAccessor, IConfiguration configuration, DbAppContext context, ILoggerFactory loggerFactory)
             : base(httpContextAccessor, context)
         {
             _appContext = httpContextAccessor.HttpContext;
             _context = context;
             _configuration = configuration;
+            _logger = loggerFactory.CreateLogger<RentalAgreementService>();
         }
 
         private void AdjustRecord(RentalAgreement item)
@@ -222,6 +224,8 @@ namespace HETSAPI.Services.Impl
         /// <response code="200">OK</response>
         public virtual IActionResult RentalagreementsIdPdfGetAsync(int id)
         {
+            _logger.LogInformation("Rental Agreement Pdf [Id: {0}]", id);
+
             FileContentResult result = null;
 
             RentalAgreement rentalAgreement = _context.RentalAgreements.AsNoTracking()
@@ -245,7 +249,9 @@ namespace HETSAPI.Services.Impl
                     Formatting = Formatting.Indented,
                     DateFormatHandling = DateFormatHandling.IsoDateFormat,
                     DateTimeZoneHandling = DateTimeZoneHandling.Utc
-                });                
+                });
+
+                _logger.LogInformation("Rental Agreement Pdf [Id: {0}] - Payload Length: {1}", id, payload.Length);
 
                 // pass the request on to the Pdf Micro Service
                 string pdfHost = _configuration["PDF_SERVICE_NAME"];
@@ -261,16 +267,22 @@ namespace HETSAPI.Services.Impl
 
                 targetUrl = targetUrl + "/" + fileName;
 
+                _logger.LogInformation("Rental Agreement Pdf [Id: {0}] - HETS Pdf Service Url: {1}", id, targetUrl);
+
                 // call the microservice
                 try
                 {
                     HttpClient client = new HttpClient();
-                    StringContent stringContent = new StringContent(JsonConvert.SerializeObject(payload), Encoding.UTF8, "application/json");                                 
+                    StringContent stringContent = new StringContent(JsonConvert.SerializeObject(payload), Encoding.UTF8, "application/json");
+
+                    _logger.LogInformation("Rental Agreement Pdf [Id: {0}] - Calling HETS Pdf Service", id);
                     HttpResponseMessage response = client.PostAsync(targetUrl, stringContent).Result;
                     
                     // success
                     if (response.StatusCode == HttpStatusCode.OK)
                     {
+                        _logger.LogInformation("Rental Agreement Pdf [Id: {0}] - HETS Pdf Service Response: OK", id);
+
                         var bytetask = response.Content.ReadAsByteArrayAsync();
                         bytetask.Wait();
 
@@ -278,6 +290,13 @@ namespace HETSAPI.Services.Impl
                         {
                             FileDownloadName = "RentalAgreement_" + fileName + ".pdf"
                         };
+
+                        _logger.LogInformation("Rental Agreement Pdf [Id: {0}] - HETS Pdf Filename: {1}", result.FileDownloadName);
+                        _logger.LogInformation("Rental Agreement Pdf [Id: {0}] - HETS Pdf Size: {1}", result.FileContents.Length);
+                    }
+                    else
+                    {
+                        _logger.LogInformation("Rental Agreement Pdf [Id: {0}] - HETS Pdf Service Response: {1}", id, response.StatusCode);
                     }
                 }
                 catch (Exception ex)
