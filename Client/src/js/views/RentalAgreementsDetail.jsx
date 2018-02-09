@@ -246,12 +246,9 @@ var RentalAgreementsDetail = React.createClass({
   },
 
   generateRentalAgreementDocument() {
-    // Temporary approach to download PDFs
-    // TODO: Research proper download technique
-    // this.setState({ rentalAgreementDocumentLoading: true });
-    // window.open(`/api/rentalagreements/${ this.props.params.rentalAgreementId }/pdf`);
-    // this.setState({ rentalAgreementDocumentLoading: false });
-    Api.generateRentalAgreementDocument(this.props.params.rentalAgreementId);
+    Api.generateRentalAgreementDocument(this.props.params.rentalAgreementId).finally(() => {
+      window.open(`/api/rentalagreements/${ this.props.params.rentalAgreementId }/pdf`);
+    });
   },
 
   render() {
