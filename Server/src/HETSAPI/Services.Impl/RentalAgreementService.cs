@@ -226,8 +226,6 @@ namespace HETSAPI.Services.Impl
         {
             _logger.LogInformation("Rental Agreement Pdf [Id: {0}]", id);
 
-            FileContentResult result = null;
-
             RentalAgreement rentalAgreement = _context.RentalAgreements.AsNoTracking()
                 .Include(x => x.Equipment).ThenInclude(y => y.Owner).ThenInclude(z => z.PrimaryContact)
                 .Include(x => x.Equipment).ThenInclude(y => y.DistrictEquipmentType)
@@ -283,16 +281,21 @@ namespace HETSAPI.Services.Impl
                     {
                         _logger.LogInformation("Rental Agreement Pdf [Id: {0}] - HETS Pdf Service Response: OK", id);
 
-                        var bytetask = response.Content.ReadAsByteArrayAsync();
-                        bytetask.Wait();
+                        var pdfResponseBytes = GetPdf(response);
 
-                        result = new FileContentResult(bytetask.Result, "application/pdf")
+                        // convert to string and log
+                        string pdfResponse = Encoding.Default.GetString(pdfResponseBytes);
+
+                        _logger.LogInformation("Rental Agreement Pdf [Id: {0}] - HETS Pdf Filename: {1}", fileName);
+                        _logger.LogInformation("Rental Agreement Pdf [Id: {0}] - HETS Pdf Size: {1}", pdfResponse.Length);
+
+                        // return content
+                        FileContentResult result = new FileContentResult(pdfResponseBytes, "application/pdf")
                         {
-                            FileDownloadName = "RentalAgreement_" + fileName + ".pdf"
+                            FileDownloadName = fileName
                         };
 
-                        _logger.LogInformation("Rental Agreement Pdf [Id: {0}] - HETS Pdf Filename: {1}", result.FileDownloadName);
-                        _logger.LogInformation("Rental Agreement Pdf [Id: {0}] - HETS Pdf Size: {1}", result.FileContents.Length);
+                        return result;
                     }
                     else
                     {
@@ -303,13 +306,7 @@ namespace HETSAPI.Services.Impl
                 {
                     Debug.Write("Error generating pdf: " + ex.Message);
                     return new ObjectResult(new HetsResponse("HETS-05", ErrorViewModel.GetDescription("HETS-05", _configuration)));
-                }
-
-                // check that the result has a value
-                if (result != null)
-                {
-                    return result;
-                }
+                }                
 
                 // problem occured
                 return new ObjectResult(new HetsResponse("HETS-05", ErrorViewModel.GetDescription("HETS-05", _configuration)));
@@ -322,6 +319,22 @@ namespace HETSAPI.Services.Impl
         private static string CleanFileName(string fileName)
         {
             return Path.GetInvalidFileNameChars().Aggregate(fileName, (current, c) => current.Replace(c.ToString(), string.Empty));
+        }
+
+        private static byte[] GetPdf(HttpResponseMessage response)
+        {
+            try
+            {
+                var pdfResponseBytes = response.Content.ReadAsByteArrayAsync();
+                pdfResponseBytes.Wait();
+
+                return pdfResponseBytes.Result;
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+                throw;
+            }            
         }
 
         /// <summary>

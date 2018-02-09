@@ -88,6 +88,7 @@ namespace HETSAPI.Controllers
         [HttpGet]
         [Route("/api/rentalagreements/{id}/pdf")]
         [SwaggerOperation("RentalagreementsIdPdfGet")]
+        [Produces("application/pdf")]
         public virtual IActionResult RentalagreementsIdPdfGet([FromRoute]int id)
         {
             return _service.RentalagreementsIdPdfGetAsync(id);
