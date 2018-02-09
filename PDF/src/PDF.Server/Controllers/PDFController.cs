@@ -73,7 +73,7 @@ namespace PDF.Server.Controllers
                 _logger.LogInformation("GetRentalAgreementPdf [FileName: {0}] - Pdf Length: {1}", name, pdfResponse.Length);
 
                 _logger.LogInformation("GetRentalAgreementPdf [FileName: {0}] - Done", name);
-                return File(pdfResponseBytes, "application/pdf");
+                return File(pdfResponseBytes, "application/pdf", name);
             }
             catch (Exception e)
             {
