@@ -11,9 +11,10 @@ using System;
 namespace HETSAPI.Migrations
 {
     [DbContext(typeof(DbAppContext))]
-    partial class DbAppContextModelSnapshot : ModelSnapshot
+    [Migration("20180209173702_HETS-488-1")]
+    partial class HETS4881
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -823,10 +824,6 @@ namespace HETSAPI.Migrations
                     b.Property<string>("Status")
                         .HasColumnName("STATUS")
                         .HasMaxLength(50);
-
-                    b.Property<string>("StatusComment")
-                        .HasColumnName("STATUS_COMMENT")
-                        .HasMaxLength(255);
 
                     b.Property<DateTime?>("ToDate")
                         .HasColumnName("TO_DATE");
@@ -1717,10 +1714,6 @@ namespace HETSAPI.Migrations
                     b.Property<string>("Status")
                         .HasColumnName("STATUS")
                         .HasMaxLength(50);
-
-                    b.Property<string>("StatusComment")
-                        .HasColumnName("STATUS_COMMENT")
-                        .HasMaxLength(255);
 
                     b.Property<string>("Surname")
                         .HasColumnName("SURNAME")
