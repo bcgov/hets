@@ -31,32 +31,33 @@ namespace HETSAPI.Models
         /// <param name="meetsResidency">True to indicate that the owner of the business has confirmed to the HETS Clerk that they meet the residency requirements of the HETS programme. See the published information about the MOTI HETS programme for information on the owner residency requirements. (required).</param>
         /// <param name="localArea">LocalArea (required).</param>
         /// <param name="status">The status of the owner record in the system. Current set of values are &amp;quot;Pending&amp;quot;, &amp;quot;Approved&amp;quot; and &amp;quot;Archived&amp;quot;. Pending is used when an owner self-registers and a HETS Clerk has not reviewed and Approved the record. Archived is when the owner is no longer part of the HETS programme. &amp;quot;Approved&amp;quot; is used in all other cases. (required).</param>
-        /// <param name="doingBusinessAs">An official (per BC Registries) alternate name for an Owner organization under which it does business. The application does not verify the name against any registry&amp;#x2F;lookup..</param>
-        /// <param name="registeredCompanyNumber">The BC Registries number under which the business is registered.  The application does not verify the number against any registry&amp;#x2F;lookup..</param>
-        /// <param name="primaryContact">Link to the designated Primary Contact..</param>
-        /// <param name="isMaintenanceContractor">True if the owner is contracted by MOTI to handle Maintenance activities in the area - e.g. provided services in address unscheduled issues on the roads in the area..</param>
-        /// <param name="workSafeBcPolicyNumber">The Owner&amp;#39;s WorkSafeBC (aka WCB) Insurance Policy Number..</param>        
-        /// <param name="workSafeBcExpiryDate">The expiration of the owner&amp;#39;s current WorkSafeBC (aka WCB) permit..</param>
-        /// <param name="givenName">The given name of the contact..</param>
-        /// <param name="surname">The surname of the contact..</param>
-        /// <param name="address1">Address 1 line of the address..</param>
-        /// <param name="address2">Address 2 line of the address..</param>
-        /// <param name="city">The City of the address..</param>
-        /// <param name="province">The Province of the address..</param>
-        /// <param name="postalCode">The postal code of the address..</param>
-        /// <param name="cglEndDate">The end date of the owner&amp;#39;s Commercial General Liability insurance coverage. Coverage is only needed prior to an owner&amp;#39;s piece of equipment starting a rental period (not when in the HETS program but not hired). The details of the coverage can be entered into a Note, or more often - attached as a scanned&amp;#x2F;faxed document..</param>
-        /// <param name="archiveCode">TO BE REVIEWED WITH THE BUSINESS - IS THIS NEEDED -A coded reason for why an owner record has been moved to Archived..</param>
-        /// <param name="archiveReason">A text note about why the owner record has been changed to Archived..</param>
-        /// <param name="archiveDate">The date the Owner record was changed to Archived and removed from active use in the system..</param>
+        /// <param name="statusComment">A comment field to capture information specific to the change of status.</param>
+        /// <param name="doingBusinessAs">An official (per BC Registries) alternate name for an Owner organization under which it does business. The application does not verify the name against any registry&amp;#x2F;lookup.</param>
+        /// <param name="registeredCompanyNumber">The BC Registries number under which the business is registered.  The application does not verify the number against any registry&amp;#x2F;lookup.</param>
+        /// <param name="primaryContact">Link to the designated Primary Contact.</param>
+        /// <param name="isMaintenanceContractor">True if the owner is contracted by MOTI to handle Maintenance activities in the area - e.g. provided services in address unscheduled issues on the roads in the area.</param>
+        /// <param name="workSafeBcPolicyNumber">The Owner&amp;#39;s WorkSafeBC (aka WCB) Insurance Policy Number.</param>        
+        /// <param name="workSafeBcExpiryDate">The expiration of the owner&amp;#39;s current WorkSafeBC (aka WCB) permit.</param>
+        /// <param name="givenName">The given name of the contact.</param>
+        /// <param name="surname">The surname of the contact.</param>
+        /// <param name="address1">Address 1 line of the address.</param>
+        /// <param name="address2">Address 2 line of the address.</param>
+        /// <param name="city">The City of the address.</param>
+        /// <param name="province">The Province of the address.</param>
+        /// <param name="postalCode">The postal code of the address.</param>
+        /// <param name="cglEndDate">The end date of the owner&amp;#39;s Commercial General Liability insurance coverage. Coverage is only needed prior to an owner&amp;#39;s piece of equipment starting a rental period (not when in the HETS program but not hired). The details of the coverage can be entered into a Note, or more often - attached as a scanned&amp;#x2F;faxed document.</param>
+        /// <param name="archiveCode">TO BE REVIEWED WITH THE BUSINESS - IS THIS NEEDED -A coded reason for why an owner record has been moved to Archived.</param>
+        /// <param name="archiveReason">A text note about why the owner record has been changed to Archived.</param>
+        /// <param name="archiveDate">The date the Owner record was changed to Archived and removed from active use in the system.</param>
         /// <param name="contacts">Contacts.</param>
         /// <param name="notes">Notes.</param>
         /// <param name="attachments">Attachments.</param>
         /// <param name="history">History.</param>
         /// <param name="equipmentList">EquipmentList.</param>
         public Owner(int id, string ownerCode, string organizationName, bool meetsResidency, LocalArea localArea, 
-            string status, string doingBusinessAs = null, string registeredCompanyNumber = null, Contact primaryContact = null, 
-            bool? isMaintenanceContractor = null, string workSafeBcPolicyNumber = null, DateTime? workSafeBcExpiryDate = null,
-            string givenName = null, string surname = null,
+            string status, string statusComment = null, string doingBusinessAs = null, string registeredCompanyNumber = null, 
+            Contact primaryContact = null,  bool? isMaintenanceContractor = null, string workSafeBcPolicyNumber = null, 
+            DateTime? workSafeBcExpiryDate = null, string givenName = null, string surname = null,
             string address1 = null, string address2 = null, string city = null, string province = null, string postalCode = null,
             DateTime? cglEndDate = null, string archiveCode = null, string archiveReason = null, DateTime? archiveDate = null, 
             List<Contact> contacts = null, List<Note> notes = null, List<Attachment> attachments = null, List<History> history = null, 
@@ -68,6 +69,7 @@ namespace HETSAPI.Models
             MeetsResidency = meetsResidency;
             LocalArea = localArea;
             Status = status;
+            StatusComment = statusComment;
             DoingBusinessAs = doingBusinessAs;
             RegisteredCompanyNumber = registeredCompanyNumber;
             PrimaryContact = primaryContact;
@@ -141,7 +143,16 @@ namespace HETSAPI.Models
         [MetaData (Description = "The status of the owner record in the system. Current set of values are &quot;Pending&quot;, &quot;Approved&quot; and &quot;Archived&quot;. Pending is used when an owner self-registers and a HETS Clerk has not reviewed and Approved the record. Archived is when the owner is no longer part of the HETS programme. &quot;Approved&quot; is used in all other cases.")]
         [MaxLength(50)]        
         public string Status { get; set; }
-        
+
+        /// <summary>
+        /// A comment field to capture information specific to the change of status.
+        /// </summary>
+        /// <value>A comment field to capture information specific to the change of status.</value>
+        [MetaData(Description = "A comment field to capture information specific to the change of status.")]
+        [MaxLength(255)]
+
+        public string StatusComment { get; set; }
+
         /// <summary>
         /// An official (per BC Registries) alternate name for an Owner organization under which it does business. The application does not verify the name against any registry&#x2F;lookup.
         /// </summary>
@@ -321,6 +332,7 @@ namespace HETSAPI.Models
             sb.Append("  MeetsResidency: ").Append(MeetsResidency).Append("\n");
             sb.Append("  LocalArea: ").Append(LocalArea).Append("\n");
             sb.Append("  Status: ").Append(Status).Append("\n");
+            sb.Append("  StatusComment: ").Append(StatusComment).Append("\n");
             sb.Append("  DoingBusinessAs: ").Append(DoingBusinessAs).Append("\n");
             sb.Append("  RegisteredCompanyNumber: ").Append(RegisteredCompanyNumber).Append("\n");
             sb.Append("  PrimaryContact: ").Append(PrimaryContact).Append("\n");
@@ -407,6 +419,11 @@ namespace HETSAPI.Models
                     Status == other.Status ||
                     Status != null &&
                     Status.Equals(other.Status)
+                ) &&
+                (
+                    StatusComment == other.StatusComment ||
+                    StatusComment != null &&
+                    StatusComment.Equals(other.StatusComment)
                 ) &&                 
                 (
                     DoingBusinessAs == other.DoingBusinessAs ||
@@ -554,6 +571,11 @@ namespace HETSAPI.Models
                 if (Status != null)
                 {
                     hash = hash * 59 + Status.GetHashCode();
+                }
+
+                if (StatusComment != null)
+                {
+                    hash = hash * 59 + StatusComment.GetHashCode();
                 }
 
                 if (DoingBusinessAs != null)
