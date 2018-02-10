@@ -58,33 +58,52 @@ namespace HETSAPI.Import
             XmlReader reader = new XmlTextReader(memoryStream);
             if (ser.CanDeserialize(reader)  )
             {
-                UserHETS[] legacyItems = (UserHETS[])ser.Deserialize(reader);
 
+                
+                UserHETS[] legacyItems = (UserHETS[])ser.Deserialize(reader);
+                List<string> usernames = new List<string>();
                 foreach (UserHETS item in legacyItems)
                 {
-                    ImportMap importMap = dbContext.ImportMaps.FirstOrDefault(x => x.OldTable == OldTable && x.OldKey == item.Popt_Id.ToString());
+                    string username = NormalizeUserCode(item.User_Cd);
+                    if (!usernames.Contains(username))
+                    {
+                        usernames.Add(username);
+                    }
+                }
 
+                usernames.Sort();
+                int currentUser = 0; 
+                foreach (string username in usernames)
+                {
                     ImportMapRecord importMapRecord = new ImportMapRecord();
 
                     importMapRecord.TableName = NewTable;
                     importMapRecord.MappedColumn = "User_cd";
-                    importMapRecord.OriginalValue = item.User_Cd.ToString().Trim();
-                    if (importMap != null)
-                    {
-                        User mappedUser = dbContext.Users.FirstOrDefault(x => x.Id == importMap.NewKey);
-                        if (mappedUser != null)
-                        {
-                            importMapRecord.NewValue = mappedUser.SmUserId;
-                        }
-                    }
-
+                    importMapRecord.OriginalValue = username;
+                    importMapRecord.NewValue = "User" + currentUser;
+                    currentUser++;
                     result.Add(importMapRecord);
+                }                   
+            }
+            
+            return result;
+        }
 
+        // normalize a user code from the legacy database.
+        public static string NormalizeUserCode(string userCode)
+        {
+            string result = "";
+            if (userCode != null)
+            {
+                result = userCode.ToUpper().Trim();
+                string idir_token = "IDIR\\";
+                int idirPos = result.IndexOf(idir_token);
+                if (idirPos > -1)
+                {
+                    result = result.Substring(idirPos + idir_token.Length);
                 }
             }
-
             
-
             return result;
         }
 
@@ -128,15 +147,87 @@ namespace HETSAPI.Import
                     legacyItems = legacyItems.Skip(ii).ToArray();
                 }
 
+                // the HETS raw data has multiple rows per user, it needs to be normalized.
+
+                List<string> usernames = new List<string>();
+                List<string> allNames = new List<string>();
+                performContext.WriteLine("Normalizing User Data - Pass 1 ");
+                progress.SetValue(0);
+                foreach (UserHETS item in legacyItems.WithProgress(progress))
+                {
+                    string username = NormalizeUserCode(item.User_Cd); 
+                    
+                    if (! usernames.Contains (username))
+                    {
+                        usernames.Add(username);
+                    }
+                    if (! allNames.Contains (item.Modified_By))
+                    {
+                        allNames.Add(item.Modified_By);
+                    }
+                    if (! allNames.Contains(item.Created_By))
+                    {
+                        allNames.Add(item.Created_By);
+                    }
+                }
+                performContext.WriteLine("Normalizing User Data - Pass 2");
+                progress.SetValue(0);
+                Dictionary<string, string> firstNames = new Dictionary<string, string>();
+                Dictionary<string, string> lastNames = new Dictionary<string, string>();
+
+                foreach (string name in allNames.WithProgress(progress))
+                {
+                    if (name != null)
+                    {
+                        string token = ", ";
+                        int firstPos = name.IndexOf(", ");
+                        string bracketIdirToken = "(IDIR\\";
+                        int secondPos = name.IndexOf(bracketIdirToken);
+
+                        if (firstPos > -1 && secondPos > -1)
+                        {
+                            string lastName = name.Substring(0, firstPos);
+                            firstPos = firstPos + 2; // comma and space
+                            string firstName = name.Substring(firstPos, secondPos - firstPos).Trim();
+                            string username = NormalizeUserCode(name.Substring(secondPos + bracketIdirToken.Length, name.Length - (secondPos + bracketIdirToken.Length + 1)));
+
+                            // see if we have the username.
+                            if (usernames.Contains(username))
+                            {
+                                // update the firstname and lastname data.
+                                firstNames[username] = firstName;
+                                lastNames[username] = lastName;
+                            }
+                        }
+                    }
+                }
+
+                performContext.WriteLine("Normalizing User Data - Pass 3");
+                progress.SetValue(0);
                 foreach (UserHETS item in legacyItems.WithProgress(progress))
                 {
                     // see if we have this one already
                     ImportMap importMap = dbContext.ImportMaps.FirstOrDefault(x => x.OldTable == OldTable && x.OldKey == item.Popt_Id.ToString());
-                    User instance = dbContext.Users.FirstOrDefault(x => item.User_Cd.ToUpper().IndexOf(x.SmUserId.ToUpper(), StringComparison.Ordinal) >= 0);
+
+                    string username = NormalizeUserCode(item.User_Cd);
+                    string firstName = "";
+                    string lastName = "";
+
+                    if (firstNames.ContainsKey(username))
+                    {
+                        firstName = firstNames[username];
+                    }
+
+                    if (lastNames.ContainsKey(username))
+                    {
+                        lastName = lastNames[username];
+                    }
+
+                    User instance = dbContext.Users.FirstOrDefault(x => x.SmUserId == username);
 
                     if (instance == null)
                     {
-                        CopyToInstance(dbContext, item, ref instance, systemId);
+                        CopyToInstance(dbContext, item, ref instance, systemId, username, firstName, lastName);
 
                         // new entry
                         if (importMap == null && instance != null)
@@ -174,9 +265,8 @@ namespace HETSAPI.Import
         /// <param name="oldObject"></param>
         /// <param name="user"></param>
         /// <param name="systemId"></param>
-        private static void CopyToInstance(DbAppContext dbContext, UserHETS oldObject, ref User user, string systemId)
+        private static void CopyToInstance(DbAppContext dbContext, UserHETS oldObject, ref User user, string systemId, string smUserId, string firstName, string lastName)
         {
-            string smUserId;
             int serviceAreaId;
 
             int startPos = oldObject.User_Cd.IndexOf(@"\", StringComparison.Ordinal) + 1;
@@ -184,7 +274,6 @@ namespace HETSAPI.Import
             try
             {
                 serviceAreaId = int.Parse (oldObject.Service_Area_Id);
-                smUserId = oldObject.User_Cd.Substring(startPos).Trim();
             }
             catch
             {
@@ -240,6 +329,8 @@ namespace HETSAPI.Import
                 try
                 {
                     user.SmUserId = smUserId;
+                    user.GivenName = firstName;
+                    user.Surname = lastName;
 
                     if (serArea != null)
                     {
