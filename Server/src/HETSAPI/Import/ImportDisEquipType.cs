@@ -267,61 +267,66 @@ namespace HETSAPI.Import
         private static void AddingDistrictEquipmentTypeInstance(DbAppContext dbContext, EquipType oldObject,
              DistrictEquipmentType instance, float equipRentalRateNo, string description, string serviceAreaName, bool addImportMaps)
         {
-            // add the instance (according to the rule of HETS-365)
-            List<DistrictEquipmentType> disEquipTypelist = dbContext.DistrictEquipmentTypes
-                .Where(x => x.DistrictId == instance.DistrictId)
-                .Where(x => x.DistrictEquipmentName.Substring(0, Math.Max(0, x.DistrictEquipmentName.IndexOf(Delim, StringComparison.Ordinal)))
-                                .IndexOf(instance.DistrictEquipmentName, StringComparison.Ordinal)>=0)
-                .Include(x => x.EquipmentType)
-                .ToList();
-
-            // HETS-365 Step 1
-            if (disEquipTypelist.Count == 0)  
+            // check to see if the DistrictEquipmentType record has data.
+            if (instance != null && instance.DistrictId != null && instance.DistrictEquipmentName != null)
             {
-                instance.DistrictEquipmentName += Delim + description;
-                dbContext.DistrictEquipmentTypes.Add(instance);
-                if (addImportMaps)
+                // add the instance (according to the rule of HETS-365)
+                List<DistrictEquipmentType> disEquipTypelist = dbContext.DistrictEquipmentTypes
+                    .Where(x => x.DistrictId == instance.DistrictId)
+                    .Where(x => x.DistrictEquipmentName.Substring(0, Math.Max(0, x.DistrictEquipmentName.IndexOf(Delim, StringComparison.Ordinal)))
+                                    .IndexOf(instance.DistrictEquipmentName, StringComparison.Ordinal) >= 0)
+                    .Include(x => x.EquipmentType)
+                    .ToList();
+
+                // HETS-365 Step 1
+                if (disEquipTypelist.Count == 0)
                 {
-                    ImportUtility.AddImportMap(dbContext, OldTable, oldObject.Equip_Type_Id.ToString(), NewTable, instance.Id);
-                }
-            }
-            else // HETS-365 Step 2
-            {
-
-                List<DistrictEquipmentType> list1 = disEquipTypelist
-                    .FindAll(x => Math.Abs((x.EquipmentType.BlueBookSection ?? 0.1) - equipRentalRateNo) <= ErrowAllowed);
-
-                // HETS-365 Step 2.1
-                if (list1.Count > 0 && addImportMaps)  
-                {
-                    ImportUtility.AddImportMap(dbContext, OldTable, oldObject.Equip_Type_Id.ToString(), 
-                        NewTable, list1.OrderBy(x => x.Id).FirstOrDefault().Id);
-                }
-
-                // check if XML.Description matches any of the HETS.Descriptions
-                List<DistrictEquipmentType> list2 = disEquipTypelist
-                    .FindAll(x => x.DistrictEquipmentName.Substring(x.DistrictEquipmentName.IndexOf(Delim, StringComparison.Ordinal) + Delim.Length)
-                                .IndexOf(description, StringComparison.Ordinal) >= 0);
-
-                // HETS-365 Step 2.1
-                if (list2.Count > 0 && addImportMaps)  
-                {
-                    ImportUtility.AddImportMap(dbContext, OldTable, oldObject.Equip_Type_Id.ToString(), 
-                        NewTable, list2.OrderBy(x => x.Id).FirstOrDefault().Id);
-                }
-
-                // HETS-365 Step 3
-                if (list1.Count == 0 && list2.Count == 0)  
-                {
-                    instance.DistrictEquipmentName += Delim0 + serviceAreaName + Delim + description;
+                    instance.DistrictEquipmentName += Delim + description;
                     dbContext.DistrictEquipmentTypes.Add(instance);
-
                     if (addImportMaps)
                     {
                         ImportUtility.AddImportMap(dbContext, OldTable, oldObject.Equip_Type_Id.ToString(), NewTable, instance.Id);
                     }
                 }
+                else // HETS-365 Step 2
+                {
+
+                    List<DistrictEquipmentType> list1 = disEquipTypelist
+                        .FindAll(x => Math.Abs((x.EquipmentType.BlueBookSection ?? 0.1) - equipRentalRateNo) <= ErrowAllowed);
+
+                    // HETS-365 Step 2.1
+                    if (list1.Count > 0 && addImportMaps)
+                    {
+                        ImportUtility.AddImportMap(dbContext, OldTable, oldObject.Equip_Type_Id.ToString(),
+                            NewTable, list1.OrderBy(x => x.Id).FirstOrDefault().Id);
+                    }
+
+                    // check if XML.Description matches any of the HETS.Descriptions
+                    List<DistrictEquipmentType> list2 = disEquipTypelist
+                        .FindAll(x => x.DistrictEquipmentName.Substring(x.DistrictEquipmentName.IndexOf(Delim, StringComparison.Ordinal) + Delim.Length)
+                                    .IndexOf(description, StringComparison.Ordinal) >= 0);
+
+                    // HETS-365 Step 2.1
+                    if (list2.Count > 0 && addImportMaps)
+                    {
+                        ImportUtility.AddImportMap(dbContext, OldTable, oldObject.Equip_Type_Id.ToString(),
+                            NewTable, list2.OrderBy(x => x.Id).FirstOrDefault().Id);
+                    }
+
+                    // HETS-365 Step 3
+                    if (list1.Count == 0 && list2.Count == 0)
+                    {
+                        instance.DistrictEquipmentName += Delim0 + serviceAreaName + Delim + description;
+                        dbContext.DistrictEquipmentTypes.Add(instance);
+
+                        if (addImportMaps)
+                        {
+                            ImportUtility.AddImportMap(dbContext, OldTable, oldObject.Equip_Type_Id.ToString(), NewTable, instance.Id);
+                        }
+                    }
+                }
             }
+            
         }
     }
 }

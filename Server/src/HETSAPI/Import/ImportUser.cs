@@ -280,17 +280,29 @@ namespace HETSAPI.Import
                 return;
             }
 
-            // add the user specified in oldObject.Modified_By and oldObject.Created_By if not there in the database
-            User modifiedBy = ImportUtility.AddUserFromString(dbContext, oldObject.Modified_By, systemId);
-            User createdBy = ImportUtility.AddUserFromString(dbContext, oldObject.Created_By, systemId);
 
-            if (createdBy.SmUserId == smUserId  )
+
+            // add the user specified in oldObject.Modified_By and oldObject.Created_By if not there in the database
+            User modifiedBy = null;
+            User createdBy = null;
+
+            if (oldObject.Modified_By != null)
+            {
+                modifiedBy = ImportUtility.AddUserFromString(dbContext, oldObject.Modified_By, systemId);
+            }
+            if (oldObject.Created_By != null)
+            {
+                createdBy = ImportUtility.AddUserFromString(dbContext, oldObject.Created_By, systemId);
+            }            
+
+            if (createdBy != null && createdBy.SmUserId != null && createdBy.SmUserId == smUserId  )
             {
                 user = createdBy;
+
                 return;
             }
 
-            if (  modifiedBy.SmUserId == smUserId)
+            if (  modifiedBy != null && modifiedBy.SmUserId != null && modifiedBy.SmUserId == smUserId)
             {
                 user = modifiedBy;
                 return;
