@@ -5,6 +5,7 @@ using HETSAPI.Models;
 using HETSAPI.ViewModels;
 using HETSAPI.Services;
 using HETSAPI.Authorization;
+using HETSAPI.Services.Impl;
 
 namespace HETSAPI.Controllers
 {
@@ -94,6 +95,21 @@ namespace HETSAPI.Controllers
         public virtual IActionResult OwnersIdPut([FromRoute]int id, [FromBody]Owner item)
         {
             return _service.OwnersIdPutAsync(id, item);
+        }
+
+        /// <summary>
+        /// Update owner status
+        /// </summary>
+        /// <param name="id">id of Owner to update</param>
+        /// <param name="item"></param>
+        /// <response code="200">OK</response>
+        [HttpPut]
+        [Route("/api/owners/{id}/status")]
+        [SwaggerOperation("OwnersIdStatusPut")]
+        [SwaggerResponse(200, type: typeof(Equipment))]
+        public virtual IActionResult OwnersIdStatusPut([FromRoute]int id, [FromBody]OwnerStatus item)
+        {
+            return _service.OwnersIdStatusPutAsync(id, item);
         }
 
         /// <summary>

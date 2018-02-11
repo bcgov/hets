@@ -6,6 +6,7 @@ using HETSAPI.Models;
 using HETSAPI.ViewModels;
 using HETSAPI.Services;
 using HETSAPI.Authorization;
+using HETSAPI.Services.Impl;
 
 namespace HETSAPI.Controllers
 {
@@ -110,7 +111,22 @@ namespace HETSAPI.Controllers
         {
             return _service.EquipmentIdPutAsync(id, item);
         }
-        
+
+        /// <summary>
+        /// Update equipment status
+        /// </summary>
+        /// <param name="id">id of Equipment to update</param>
+        /// <param name="item"></param>
+        /// <response code="200">OK</response>
+        [HttpPut]
+        [Route("/api/equipment/{id}/status")]
+        [SwaggerOperation("EquipmentIdStatusPut")]
+        [SwaggerResponse(200, type: typeof(Equipment))]
+        public virtual IActionResult EquipmentIdStatusPut([FromRoute]int id, [FromBody]EquipmentStatus item)
+        {
+            return _service.EquipmentIdStatusPutAsync(id, item);
+        }
+
         /// <summary>
         /// Create equipment
         /// </summary>

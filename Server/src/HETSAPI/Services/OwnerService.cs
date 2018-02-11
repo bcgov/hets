@@ -1,5 +1,6 @@
 using Microsoft.AspNetCore.Mvc;
 using HETSAPI.Models;
+using HETSAPI.Services.Impl;
 
 namespace HETSAPI.Services
 {
@@ -45,6 +46,14 @@ namespace HETSAPI.Services
         /// <response code="200">OK</response>
         /// <response code="404">Owner not found</response>
         IActionResult OwnersIdPutAsync(int id, Owner item);
+
+        /// <summary>
+        /// Update owner status
+        /// </summary>
+        /// <param name="id">id of Owner to update</param>
+        /// <param name="item"></param>
+        /// <response code="200">OK</response>
+        IActionResult OwnersIdStatusPutAsync(int id, OwnerStatus item);
 
         /// <summary>
         /// Create owner
