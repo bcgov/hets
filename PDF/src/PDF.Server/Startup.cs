@@ -4,7 +4,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json.Serialization;
-using Swashbuckle.Swagger.Model;
+using Swashbuckle.AspNetCore.Swagger;
 
 namespace PDF.Server
 {
@@ -61,16 +61,14 @@ namespace PDF.Server
             // Configure Swagger - only required in the Development Environment
             if (_hostingEnv.IsDevelopment())
             {                
-                services.AddSwaggerGen();
-                services.ConfigureSwaggerGen(options =>
+                services.AddSwaggerGen(options =>
                 {
-                    options.SingleApiVersion(new Info
+                    options.SwaggerDoc("v1", new Info
                     {
                         Version = "v1",
                         Title = "PDF REST API",
                         Description = "Pdf Generation Micro Service"
                     });
-
                     options.DescribeAllEnumsAsStrings();
                 });
             }
@@ -98,8 +96,14 @@ namespace PDF.Server
 
             if (_hostingEnv.IsDevelopment())
             {
+                string swaggerApi = Configuration.GetSection("Constants:SwaggerApiUrl").Value;
                 app.UseSwagger();
-                app.UseSwaggerUi();
+                app.UseSwaggerUI(options =>
+                {
+                    options.SwaggerEndpoint(swaggerApi, "PDF REST API v1");
+                    options.EnabledValidator(null);
+                    options.DocExpansion("none");
+                });
             }
         }
     }

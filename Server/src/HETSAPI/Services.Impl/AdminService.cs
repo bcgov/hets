@@ -57,25 +57,23 @@ namespace HETSAPI.Services.Impl
             return new ObjectResult(result);
         }
 
-
-        public async Task<IActionResult> AdminUserMap(string userPath)
+        public async Task<IActionResult> AdminUserMap(string path)
         {
             // create an excel spreadsheet that will show the data.
             string uploadPath = _configuration["UploadPath"];
-            string path = uploadPath + userPath;
+            string fullPath = uploadPath + path;
 
             string sWebRootFolder = "/tmp";
             string sFileName = @"usermap.xlsx";
-            string URL = string.Format("{0}://{1}/{2}", Request.Scheme, Request.Host, sFileName);
-            FileInfo file = new FileInfo(Path.Combine(sWebRootFolder, sFileName));
+
             var memory = new MemoryStream();
+
             using (var fs = new FileStream(Path.Combine(sWebRootFolder, sFileName), FileMode.Create, FileAccess.Write))
             {
-                IWorkbook workbook;
-                workbook = new XSSFWorkbook();
+                IWorkbook workbook = new XSSFWorkbook();
                 ISheet excelSheet = workbook.CreateSheet("User Map");
+                
                 // Create the header row.
-
                 IRow row = excelSheet.CreateRow(0);
                 row.CreateCell(0).SetCellValue("Table Name");
                 row.CreateCell(1).SetCellValue("Mapped Column");
@@ -83,8 +81,7 @@ namespace HETSAPI.Services.Impl
                 row.CreateCell(3).SetCellValue("New Value");
 
                 // use the import class to get data.
-
-                List<ImportMapRecord> records = ImportUser.GetImportMap(_context, path);
+                List<ImportMapRecord> records = ImportUser.GetImportMap(_context, fullPath);
                 int currentRow = 1;  
                 
                 // convert the list to an excel spreadsheet.
@@ -99,17 +96,20 @@ namespace HETSAPI.Services.Impl
                     currentRow++;
                 }
 
-
                  workbook.Write(fs);
             }
             using (var stream = new FileStream(Path.Combine(sWebRootFolder, sFileName), FileMode.Open))
             {
                 await stream.CopyToAsync(memory);
             }
+
             memory.Position = 0;
 
-            var fileStreamResult = new FileStreamResult(memory, "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
-            fileStreamResult.FileDownloadName = "UserMap.xlsx";
+            var fileStreamResult =
+                new FileStreamResult(memory, "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet")
+                {
+                    FileDownloadName = "UserMap.xlsx"
+                };
 
             return fileStreamResult;
         }

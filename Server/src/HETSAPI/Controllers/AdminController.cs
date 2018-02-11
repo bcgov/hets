@@ -1,5 +1,5 @@
 using Microsoft.AspNetCore.Mvc;
-using Swashbuckle.SwaggerGen.Annotations;
+using Swashbuckle.AspNetCore.SwaggerGen;
 using HETSAPI.Services;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
