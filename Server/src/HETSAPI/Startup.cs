@@ -17,7 +17,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json.Serialization;
-using Swashbuckle.Swagger.Model;
+using Swashbuckle.AspNetCore.Swagger;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Http.Features;
 using System.Text;
@@ -117,14 +117,12 @@ namespace HETSAPI
                 });
             }
             
-
             // Configure Swagger - only required in the Development Environment
             if (_hostingEnv.IsDevelopment())
             {
-                services.AddSwaggerGen();
-                services.ConfigureSwaggerGen(options =>
+                services.AddSwaggerGen(options =>
                 {
-                    options.SingleApiVersion(new Info
+                    options.SwaggerDoc("v1", new Info
                     {
                         Version = "v1",
                         Title = "HETS REST API",
@@ -218,8 +216,15 @@ namespace HETSAPI
             
             if (_hostingEnv.IsDevelopment())
             {
+                string swaggerApi = Configuration.GetSection("Constants:SwaggerApiUrl").Value;
                 app.UseSwagger();
-                app.UseSwaggerUi();
+                app.UseSwaggerUI(options =>
+                {
+                    options.SwaggerEndpoint(swaggerApi, "HETS REST API v1");
+                    options.SwaggerEndpoint(swaggerApi, "PDF REST API v1");
+                    options.EnabledValidator(null);
+                    options.DocExpansion("none");
+                });
             }
             
             if (startHangfire)
