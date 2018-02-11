@@ -1,6 +1,7 @@
 using System;
 using Microsoft.AspNetCore.Mvc;
 using HETSAPI.Models;
+using HETSAPI.Services.Impl;
 
 namespace HETSAPI.Services
 {
@@ -38,6 +39,14 @@ namespace HETSAPI.Services
         /// <response code="200">OK</response>
         /// <response code="404">Equipment not found</response>
         IActionResult EquipmentIdPutAsync(int id, Equipment item);
+
+        /// <summary>
+        /// Update equipment status
+        /// </summary>
+        /// <param name="id">id of Equipment to update</param>
+        /// <param name="item"></param>
+        /// <response code="200">OK</response>
+        IActionResult EquipmentIdStatusPutAsync(int id, EquipmentStatus item);
 
         /// <summary>
         /// Get equipment by id

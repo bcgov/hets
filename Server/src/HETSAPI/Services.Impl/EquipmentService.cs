@@ -12,6 +12,15 @@ using Microsoft.Extensions.Configuration;
 namespace HETSAPI.Services.Impl
 {
     /// <summary>
+    /// Equipment Status Class - required to update the status record only
+    /// </summary>
+    public class EquipmentStatus
+    {
+        public string Status { get; set; }
+        public string StatusComment { get; set; }
+    }
+
+    /// <summary>
     /// Equipment Service
     /// </summary>
     public class EquipmentService : ServiceBase, IEquipmentService
@@ -259,7 +268,47 @@ namespace HETSAPI.Services.Impl
 
             // record not found
             return new ObjectResult(new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-01", _configuration)));
-        }                   
+        }
+
+        /// <summary>
+        /// Update equipment status
+        /// </summary>
+        /// <param name="id">id of Equipment to update</param>
+        /// <param name="item"></param>
+        /// <response code="200">OK</response>
+        public virtual IActionResult EquipmentIdStatusPutAsync(int id, EquipmentStatus item)
+        {
+            if (item != null)
+            {
+                bool exists = _context.Equipments.Any(a => a.Id == id);
+
+                if (exists)
+                {
+                    Equipment equipment = _context.Equipments
+                        .Include(x => x.LocalArea.ServiceArea.District.Region)
+                        .Include(x => x.DistrictEquipmentType)
+                        .ThenInclude(d => d.EquipmentType)
+                        .Include(x => x.DumpTruck)
+                        .Include(x => x.Owner)
+                        .Include(x => x.EquipmentAttachments)
+                        .First(a => a.Id == id);
+
+                    equipment.Status = item.Status;
+                    equipment.StatusComment = item.StatusComment;
+
+                    // save the changes
+                    _context.SaveChanges();
+
+                    return new ObjectResult(new HetsResponse(equipment));
+                }
+
+                // record not found
+                return new ObjectResult(new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-01", _configuration)));
+            }
+
+            // record not found
+            return new ObjectResult(new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-01", _configuration)));
+        }
 
         /// <summary>
         /// Create equipment record
@@ -355,7 +404,7 @@ namespace HETSAPI.Services.Impl
             // record not found
             return new ObjectResult(new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-01", _configuration)));
         }
-
+        
         /// <summary>
         /// Searches Equipment
         /// </summary>
