@@ -209,8 +209,12 @@ namespace HETSAPI.Services.Impl
                             .ThenInclude(d => d.DistrictEquipmentType)
                     .First(a => a.Id == id);
 
+                // calculate the number of hired (yes, forced hire) equipment
+                // count active requests (In Progress)
+                int countActiveRequests = 0;
+
                 foreach (RentalRequest rentalRequest in result.RentalRequests)
-                {
+                {                    
                     int temp = 0;
 
                     foreach (RentalRequestRotationList equipment in rentalRequest.RentalRequestRotationList)
@@ -225,11 +229,43 @@ namespace HETSAPI.Services.Impl
                             equipment.IsForceHire == true)
                         {
                             temp++;
-                        }
+                        }                        
                     }
 
                     rentalRequest.YesCount = temp;
                     rentalRequest.RentalRequestRotationList = null;
+
+                    if (rentalRequest.Status == null ||
+                        rentalRequest.Status.Equals("In Progress", StringComparison.InvariantCultureIgnoreCase))
+                    {
+                        countActiveRequests++;
+                    }
+                }
+
+                // count active agreements (Active)
+                int countActiveAgreements = 0;
+
+                foreach (RentalAgreement rentalAgreement in result.RentalAgreements)
+                {                    
+                    if (rentalAgreement.Status == null ||
+                        rentalAgreement.Status.Equals("Active", StringComparison.InvariantCultureIgnoreCase))
+                    {
+                        countActiveAgreements++;
+                    }
+                }
+
+                // Only allow editing the "Status" field under the following conditions:
+                // * If Project.status is currently "Active" AND                
+                //   (All child RentalRequests.Status != "In Progress" AND All child RentalAgreement.status != "Active"))
+                // * If Project.status is currently != "Active"                               
+                if (result.Status.Equals("Active", StringComparison.InvariantCultureIgnoreCase) &&
+                    (countActiveRequests > 0 || countActiveAgreements > 0))
+                {
+                    result.CanEditStatus = false;
+                }
+                else
+                {
+                    result.CanEditStatus = true;
                 }
 
                 return new ObjectResult(new HetsResponse(result));

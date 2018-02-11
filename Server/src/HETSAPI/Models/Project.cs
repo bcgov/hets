@@ -60,6 +60,13 @@ namespace HETSAPI.Models
         }
 
         /// <summary>
+        /// A system generated value to identify if this project's status can be edited in the UI
+        /// </summary>
+        /// <value>A system generated value to identify if this project's status can be edited in the UI</value>
+        [NotMapped]
+        public bool CanEditStatus { get; set; }
+
+        /// <summary>
         /// A system-generated unique identifier for a Project
         /// </summary>
         /// <value>A system-generated unique identifier for a Project</value>
