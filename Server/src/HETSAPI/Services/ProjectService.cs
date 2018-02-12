@@ -67,7 +67,7 @@ namespace HETSAPI.Services
         IActionResult ProjectsSearchGetAsync(string districts, string project, bool? hasRequests, bool? hasHires, string status);
 
         /// <summary>
-        /// Get renatal agreements associated with a project by id
+        /// Get rental agreements associated with a project by id
         /// </summary>
         /// <param name="id">id of Project to fetch agreements for</param>
         /// <response code="200">OK</response>

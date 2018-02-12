@@ -441,7 +441,7 @@ namespace HETSAPI.Services.Impl
         /// </summary>
         /// <param name="id">Project id</param>
         /// <param name="item"></param>
-        /// <response code="201">Rental Agreement update</response>
+        /// <response code="200">Rental Agreement updated</response>
         public virtual IActionResult ProjectsRentalAgreementClonePostAsync(int id, ProjectRentalAgreementClone item)
         {
             if (item != null && id == item.ProjectId)
@@ -451,7 +451,7 @@ namespace HETSAPI.Services.Impl
                 if (!exists)
                 {
                    // record not found - project
-                    return new ObjectResult(new HetsResponse("HETS-04", ErrorViewModel.GetDescription("HETS-04", _configuration)));
+                    return new ObjectResult(new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-01", _configuration)));
                 }
                 
                 Project project = _context.Projects
@@ -459,6 +459,8 @@ namespace HETSAPI.Services.Impl
                         .ThenInclude(y => y.RentalAgreementRates)
                     .Include(x => x.RentalAgreements)
                         .ThenInclude(y => y.RentalAgreementConditions)
+                    .Include(x => x.RentalAgreements)
+                        .ThenInclude(y => y.TimeRecords)
                     .First(a => a.Id == id);
 
                 // check that the rental agreements exist
@@ -479,12 +481,31 @@ namespace HETSAPI.Services.Impl
                     return new ObjectResult(new HetsResponse("HETS-11", ErrorViewModel.GetDescription("HETS-11", _configuration)));
                 }
 
-                // ******************************************************************
-                // clone agreement
-                // ******************************************************************
                 int agreementToCloneIndex = project.RentalAgreements.FindIndex(a => a.Id == item.AgreementToCloneId);
                 int newRentalagreementIndex = project.RentalAgreements.FindIndex(a => a.Id == item.RentalAgreementId);
 
+                // ******************************************************************
+                // Business Rules in the backend:
+                // *Can't clone into an Agreement if it isn't Active
+                // *Can't clone into an Agreement if it has existing time records
+                // ******************************************************************
+                if (!project.RentalAgreements[newRentalagreementIndex].Status
+                    .Equals("Active", StringComparison.InvariantCultureIgnoreCase))
+                {
+                    // (RENTAL AGREEMENT) is not active
+                    return new ObjectResult(new HetsResponse("HETS-12", ErrorViewModel.GetDescription("HETS-12", _configuration)));
+                }
+
+                if (project.RentalAgreements[newRentalagreementIndex].TimeRecords != null &&
+                    project.RentalAgreements[newRentalagreementIndex].TimeRecords.Count > 0)
+                {
+                    // (RENTAL AGREEMENT) has tme records
+                    return new ObjectResult(new HetsResponse("HETS-13", ErrorViewModel.GetDescription("HETS-13", _configuration)));
+                }
+
+                // ******************************************************************
+                // clone agreement
+                // ******************************************************************
                 // update agreement attributes
                 project.RentalAgreements[newRentalagreementIndex].EstimateHours =
                     project.RentalAgreements[agreementToCloneIndex].EstimateHours;
