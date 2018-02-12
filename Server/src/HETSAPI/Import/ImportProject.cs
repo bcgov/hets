@@ -161,7 +161,12 @@ namespace HETSAPI.Import
                     {   //4 properties
                         instance.ProvincialProjectNumber = oldObject.Project_Num;
                         ServiceArea serviceArea = dbContext.ServiceAreas.FirstOrDefault(x => x.Id == oldObject.Service_Area_Id);
-                        District dis = dbContext.Districts.FirstOrDefault(x => x.Id == serviceArea.DistrictId);
+                        District dis = null;
+
+                        if (serviceArea != null && serviceArea.DistrictId != null)
+                        {
+                            dis = dbContext.Districts.FirstOrDefault(x => x.Id == serviceArea.DistrictId);
+                        }
 
                         if (dis != null)   
                         {
