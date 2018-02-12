@@ -248,19 +248,17 @@ namespace HETSAPI.Import
             try
             {
                 User sysUser = dbContext.Users.FirstOrDefault(x => x.SmUserId == systemId);
-
                 if (sysUser == null)
+                {
                     sysUser = new User();
-
-                sysUser.SmUserId = systemId;
-                sysUser.Surname = @"simon.di@gov.bc.ca";
-                sysUser.Surname = "System";
-                sysUser.GivenName = "HETS";
-                sysUser.Active = true;
-                sysUser.AppCreateTimestamp = DateTime.UtcNow;
-                dbContext.Users.Add(sysUser);
-
-                dbContext.SaveChangesForImport();
+                    sysUser.SmUserId = systemId;
+                    sysUser.Surname = "System";
+                    sysUser.GivenName = "HETS";
+                    sysUser.Active = true;
+                    sysUser.AppCreateTimestamp = DateTime.UtcNow;
+                    dbContext.Users.Add(sysUser);
+                    dbContext.SaveChangesForImport();
+                }
             }          
             catch
             {

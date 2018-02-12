@@ -1,3 +1,4 @@
+using System;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
@@ -5,8 +6,6 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.FileProviders;
 using Microsoft.Extensions.Logging;
 using FrontEnd.Handlers;
-using System;
-using System.IO;
 using Microsoft.Net.Http.Headers;
 using Newtonsoft.Json.Serialization;
 
@@ -83,7 +82,7 @@ namespace FrontEnd
             app.UseMvc();
             app.UseDefaultFiles();
 
-            string webFileFolder = "/opt/app-root/dist";
+            string webFileFolder = Configuration.GetSection("Constants").GetSection("WebFileFolder").Value;
 
             Console.WriteLine("Web root is " +  webFileFolder);
 

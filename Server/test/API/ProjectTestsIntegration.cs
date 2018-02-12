@@ -208,7 +208,6 @@ namespace HETSAPI.Test
 
             // test the post.
             Contact newContact = new Contact();
-            newContact.OrganizationName = "asdf";
 
             request = new HttpRequestMessage(HttpMethod.Post, "/api/projects/" + id + "/contacts");
             request.Content = new StringContent(JsonConvert.SerializeObject(newContact), Encoding.UTF8, "application/json");

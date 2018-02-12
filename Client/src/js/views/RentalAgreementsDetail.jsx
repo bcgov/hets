@@ -8,6 +8,8 @@ import { Table, Alert, Button, Glyphicon, Label, ButtonGroup } from 'react-boots
 
 import _ from 'lodash';
 
+import { buildApiPath } from '../utils/http.js';
+
 import AttachmentRatesEditDialog from './dialogs/AttachmentRatesEditDialog.jsx';
 import EquipmentRentalRatesEditDialog from './dialogs/EquipmentRentalRatesEditDialog.jsx';
 import RentalAgreementsEditDialog from './dialogs/RentalAgreementsEditDialog.jsx';
@@ -246,12 +248,9 @@ var RentalAgreementsDetail = React.createClass({
   },
 
   generateRentalAgreementDocument() {
-    // Temporary approach to download PDFs
-    // TODO: Research proper download technique
-    // this.setState({ rentalAgreementDocumentLoading: true });
-    // window.open(`/api/rentalagreements/${ this.props.params.rentalAgreementId }/pdf`);
-    // this.setState({ rentalAgreementDocumentLoading: false });
-    Api.generateRentalAgreementDocument(this.props.params.rentalAgreementId);
+    Api.generateRentalAgreementDocument(this.props.params.rentalAgreementId).finally(() => {
+      window.open(buildApiPath(`/rentalagreements/${ this.props.params.rentalAgreementId }/pdf`));
+    });
   },
 
   render() {

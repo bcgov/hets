@@ -12,6 +12,25 @@ using Microsoft.Extensions.Configuration;
 namespace HETSAPI.Services.Impl
 {
     /// <summary>
+    /// Equipment Status Class - required to update the status record only
+    /// </summary>
+    public class EquipmentStatus
+    {
+        public string Status { get; set; }
+        public string StatusComment { get; set; }
+    }
+
+    /// <summary>
+    /// Equipment Rental Agreement Clone Class - required to clone a previous agreement
+    /// </summary>
+    public class EquipmentRentalAgreementClone
+    {
+        public int EquipmentId { get; set; }
+        public int AgreementToCloneId { get; set; }
+        public int RentalAgreementId { get; set; }
+    }
+
+    /// <summary>
     /// Equipment Service
     /// </summary>
     public class EquipmentService : ServiceBase, IEquipmentService
@@ -259,7 +278,47 @@ namespace HETSAPI.Services.Impl
 
             // record not found
             return new ObjectResult(new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-01", _configuration)));
-        }                   
+        }
+
+        /// <summary>
+        /// Update equipment status
+        /// </summary>
+        /// <param name="id">id of Equipment to update</param>
+        /// <param name="item"></param>
+        /// <response code="200">OK</response>
+        public virtual IActionResult EquipmentIdStatusPutAsync(int id, EquipmentStatus item)
+        {
+            if (item != null)
+            {
+                bool exists = _context.Equipments.Any(a => a.Id == id);
+
+                if (exists)
+                {
+                    Equipment equipment = _context.Equipments
+                        .Include(x => x.LocalArea.ServiceArea.District.Region)
+                        .Include(x => x.DistrictEquipmentType)
+                        .ThenInclude(d => d.EquipmentType)
+                        .Include(x => x.DumpTruck)
+                        .Include(x => x.Owner)
+                        .Include(x => x.EquipmentAttachments)
+                        .First(a => a.Id == id);
+
+                    equipment.Status = item.Status;
+                    equipment.StatusComment = item.StatusComment;
+
+                    // save the changes
+                    _context.SaveChanges();
+
+                    return new ObjectResult(new HetsResponse(equipment));
+                }
+
+                // record not found
+                return new ObjectResult(new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-01", _configuration)));
+            }
+
+            // record not found
+            return new ObjectResult(new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-01", _configuration)));
+        }
 
         /// <summary>
         /// Create equipment record
@@ -355,7 +414,7 @@ namespace HETSAPI.Services.Impl
             // record not found
             return new ObjectResult(new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-01", _configuration)));
         }
-
+        
         /// <summary>
         /// Searches Equipment
         /// </summary>
@@ -473,6 +532,204 @@ namespace HETSAPI.Services.Impl
             return numberOfBlocks;
         }
 
+        # region Clone Equipment Agreements
+
+        /// <summary>
+        /// Get renatal agreements associated with an equipment id
+        /// </summary>
+        /// <param name="id">id of Equipment to fetch agreements for</param>
+        /// <response code="200">OK</response>
+        public virtual IActionResult EquipmentIdGetAgreementsAsync(int id)
+        {
+            bool exists = _context.Equipments.Any(a => a.Id == id);
+
+            if (exists)
+            {
+                List<RentalAgreement> result = _context.RentalAgreements.AsNoTracking()
+                    .Include(x => x.Equipment)
+                        .ThenInclude(d => d.DistrictEquipmentType)
+                    .Include(e => e.Equipment)
+                        .ThenInclude(a => a.EquipmentAttachments)
+                    .Where(x => x.EquipmentId == id)
+                    .ToList();
+
+                return new ObjectResult(new HetsResponse(result));
+            }
+
+            // record not found
+            return new ObjectResult(new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-01", _configuration)));
+        }
+
+        /// <summary>
+        /// Update a rental agreement by cloning a previous equipment's rental agreement
+        /// </summary>
+        /// <param name="id">Equipment id</param>
+        /// <param name="item"></param>
+        /// <response code="200">Rental Agreement updated</response>
+        public virtual IActionResult EquipmentRentalAgreementClonePostAsync(int id, EquipmentRentalAgreementClone item)
+        {
+            if (item != null && id == item.EquipmentId)
+            {
+                bool exists = _context.Equipments.Any(a => a.Id == id);
+
+                if (!exists)
+                {
+                    // record not found - equipment
+                    return new ObjectResult(new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-01", _configuration)));
+                }
+
+                List<RentalAgreement> agreements = _context.RentalAgreements
+                    .Include(x => x.Equipment)
+                        .ThenInclude(d => d.DistrictEquipmentType)
+                    .Include(e => e.Equipment)
+                        .ThenInclude(a => a.EquipmentAttachments)
+                    .Include(x =>x .RentalAgreementRates)
+                    .Include(x => x.RentalAgreementConditions)
+                    .Include(x => x.TimeRecords)
+                    .Where(x => x.EquipmentId == id)
+                    .ToList();                
+
+                // check that the rental agreements exist
+                exists = agreements.Any(a => a.Id == item.RentalAgreementId);
+
+                if (!exists)
+                {
+                    // (RENTAL AGREEMENT) record not found
+                    return new ObjectResult(new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-01", _configuration)));
+                }
+
+                // check that the rental agreement to clone exist
+                exists = agreements.Any(a => a.Id == item.AgreementToCloneId);
+
+                if (!exists)
+                {
+                    // (RENTAL AGREEMENT) record not found
+                    return new ObjectResult(new HetsResponse("HETS-11", ErrorViewModel.GetDescription("HETS-11", _configuration)));
+                }
+
+                int agreementToCloneIndex = agreements.FindIndex(a => a.Id == item.AgreementToCloneId);
+                int newRentalagreementIndex = agreements.FindIndex(a => a.Id == item.RentalAgreementId);
+
+                // ******************************************************************
+                // Business Rules in the backend:
+                // *Can't clone into an Agreement if it isn't Active
+                // *Can't clone into an Agreement if it has existing time records
+                // ******************************************************************
+                if (!agreements[newRentalagreementIndex].Status
+                    .Equals("Active", StringComparison.InvariantCultureIgnoreCase))
+                {
+                    // (RENTAL AGREEMENT) is not active
+                    return new ObjectResult(new HetsResponse("HETS-12", ErrorViewModel.GetDescription("HETS-12", _configuration)));
+                }
+
+                if (agreements[newRentalagreementIndex].TimeRecords != null &&
+                    agreements[newRentalagreementIndex].TimeRecords.Count > 0)
+                {
+                    // (RENTAL AGREEMENT) has tme records
+                    return new ObjectResult(new HetsResponse("HETS-13", ErrorViewModel.GetDescription("HETS-13", _configuration)));
+                }
+
+                // ******************************************************************
+                // clone agreement
+                // ******************************************************************
+                // update agreement attributes
+                agreements[newRentalagreementIndex].EstimateHours =
+                    agreements[agreementToCloneIndex].EstimateHours;
+
+                agreements[newRentalagreementIndex].EstimateStartWork =
+                    agreements[agreementToCloneIndex].EstimateStartWork;
+
+                agreements[newRentalagreementIndex].EquipmentRate =
+                    agreements[agreementToCloneIndex].EquipmentRate;
+
+                agreements[newRentalagreementIndex].Note =
+                    agreements[agreementToCloneIndex].Note;
+
+                agreements[newRentalagreementIndex].Number =
+                    agreements[agreementToCloneIndex].Number;
+
+                agreements[newRentalagreementIndex].RateComment =
+                    agreements[agreementToCloneIndex].RateComment;
+
+                agreements[newRentalagreementIndex].RatePeriod =
+                    agreements[agreementToCloneIndex].RatePeriod;
+
+                // update rates
+                agreements[newRentalagreementIndex].RentalAgreementRates = null;
+
+                foreach (RentalAgreementRate rate in agreements[agreementToCloneIndex].RentalAgreementRates)
+                {
+                    RentalAgreementRate temp = new RentalAgreementRate
+                    {
+                        Comment = rate.Comment,
+                        ComponentName = rate.ComponentName,
+                        Rate = rate.Rate,
+                        RatePeriod = rate.RatePeriod,
+                        IsIncludedInTotal = rate.IsIncludedInTotal,
+                        IsAttachment = rate.IsAttachment,
+                        PercentOfEquipmentRate = rate.PercentOfEquipmentRate
+                    };
+
+                    if (agreements[newRentalagreementIndex].RentalAgreementRates == null)
+                    {
+                        agreements[newRentalagreementIndex].RentalAgreementRates =
+                            new List<RentalAgreementRate>();
+                    }
+
+                    agreements[newRentalagreementIndex].RentalAgreementRates.Add(temp);
+                }
+
+                // update conditions
+                agreements[newRentalagreementIndex].RentalAgreementConditions = null;
+
+                foreach (RentalAgreementCondition condition in agreements[agreementToCloneIndex].RentalAgreementConditions)
+                {
+                    RentalAgreementCondition temp = new RentalAgreementCondition
+                    {
+                        Comment = condition.Comment,
+                        ConditionName = condition.ConditionName
+                    };
+
+                    if (agreements[newRentalagreementIndex].RentalAgreementConditions == null)
+                    {
+                        agreements[newRentalagreementIndex].RentalAgreementConditions =
+                            new List<RentalAgreementCondition>();
+                    }
+
+                    agreements[newRentalagreementIndex].RentalAgreementConditions.Add(temp);
+                }
+
+                // save the changes
+                _context.SaveChanges();
+
+                // ******************************************************************
+                // return update rental agreement to update the screen
+                // ******************************************************************
+                RentalAgreement result = _context.RentalAgreements.AsNoTracking()
+                    .Include(x => x.Equipment)
+                        .ThenInclude(y => y.Owner)
+                    .Include(x => x.Equipment)
+                        .ThenInclude(y => y.DistrictEquipmentType)
+                            .ThenInclude(d => d.EquipmentType)
+                    .Include(x => x.Equipment)
+                        .ThenInclude(y => y.EquipmentAttachments)
+                    .Include(x => x.Equipment)
+                        .ThenInclude(y => y.LocalArea.ServiceArea.District.Region)
+                    .Include(x => x.Project)
+                        .ThenInclude(p => p.District.Region)
+                    .Include(x => x.RentalAgreementConditions)
+                    .Include(x => x.RentalAgreementRates)
+                    .Include(x => x.TimeRecords)
+                    .First(a => a.Id == item.RentalAgreementId);
+
+                return new ObjectResult(new HetsResponse(result));
+            }
+
+            // record not found
+            return new ObjectResult(new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-01", _configuration)));
+        }
+
+        #endregion
 
         #region Duplicate Equiment
 
@@ -529,7 +786,6 @@ namespace HETSAPI.Services.Impl
         }
 
         #endregion
-
 
         #region Recalculate Seniority
 

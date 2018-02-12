@@ -12,6 +12,15 @@ using Microsoft.Extensions.Configuration;
 namespace HETSAPI.Services.Impl
 {
     /// <summary>
+    /// Owner Status Class - required to update the status record only
+    /// </summary>
+    public class OwnerStatus
+    {
+        public string Status { get; set; }
+        public string StatusComment { get; set; }
+    }
+
+    /// <summary>
     /// Owner Service
     /// </summary>
     public class OwnerService : ServiceBase, IOwnerService
@@ -209,6 +218,48 @@ namespace HETSAPI.Services.Impl
                     _context.SaveChanges();
 
                     return new ObjectResult(new HetsResponse(item));
+                }
+
+                // record not found
+                return new ObjectResult(new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-01", _configuration)));
+            }
+
+            // record not found
+            return new ObjectResult(new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-01", _configuration)));
+        }
+
+        /// <summary>
+        /// Update owner status
+        /// </summary>
+        /// <param name="id">id of Owner to update</param>
+        /// <param name="item"></param>
+        /// <response code="200">OK</response>
+        public virtual IActionResult OwnersIdStatusPutAsync(int id, OwnerStatus item)
+        {
+            if (item != null)
+            {
+                bool exists = _context.Owners.Any(a => a.Id == id);
+
+                if (exists)
+                {
+                    Owner owner = _context.Owners
+                        .Include(x => x.LocalArea.ServiceArea.District.Region)
+                        .Include(x => x.EquipmentList).ThenInclude(y => y.LocalArea.ServiceArea.District.Region)
+                        .Include(x => x.EquipmentList).ThenInclude(y => y.DistrictEquipmentType)
+                        .Include(x => x.EquipmentList).ThenInclude(y => y.DumpTruck)
+                        .Include(x => x.EquipmentList)
+                            .ThenInclude(y => y.Owner)
+                                .ThenInclude(c => c.PrimaryContact)
+                        .Include(x => x.Contacts)
+                        .First(a => a.Id == id);
+
+                    owner.Status = item.Status;
+                    owner.StatusComment = item.StatusComment;
+
+                    // save the changes
+                    _context.SaveChanges();
+
+                    return new ObjectResult(new HetsResponse(owner));
                 }
 
                 // record not found

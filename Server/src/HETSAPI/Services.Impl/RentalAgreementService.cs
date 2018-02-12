@@ -12,11 +12,11 @@ using System.Linq;
 using System.Net;
 using System.Net.Http;
 using System.Text;
-using System.Text.RegularExpressions;
 using System.Threading;
 using HETSAPI.Models;
 using HETSAPI.ViewModels;
 using HETSAPI.Mappings;
+using Microsoft.Extensions.Logging;
 
 namespace HETSAPI.Services.Impl
 {   
@@ -28,16 +28,18 @@ namespace HETSAPI.Services.Impl
         private readonly HttpContext _appContext;
         private readonly DbAppContext _context;
         private readonly IConfiguration _configuration;
+        private readonly ILogger _logger;
 
         /// <summary>
         /// Create a service and set the database context
         /// </summary>
-        public RentalAgreementService(IHttpContextAccessor httpContextAccessor, IConfiguration configuration, DbAppContext context) 
+        public RentalAgreementService(IHttpContextAccessor httpContextAccessor, IConfiguration configuration, DbAppContext context, ILoggerFactory loggerFactory)
             : base(httpContextAccessor, context)
         {
             _appContext = httpContextAccessor.HttpContext;
             _context = context;
             _configuration = configuration;
+            _logger = loggerFactory.CreateLogger<RentalAgreementService>();
         }
 
         private void AdjustRecord(RentalAgreement item)
@@ -222,7 +224,7 @@ namespace HETSAPI.Services.Impl
         /// <response code="200">OK</response>
         public virtual IActionResult RentalagreementsIdPdfGetAsync(int id)
         {
-            FileContentResult result = null;
+            _logger.LogInformation("Rental Agreement Pdf [Id: {0}]", id);
 
             RentalAgreement rentalAgreement = _context.RentalAgreements.AsNoTracking()
                 .Include(x => x.Equipment).ThenInclude(y => y.Owner).ThenInclude(z => z.PrimaryContact)
@@ -245,7 +247,9 @@ namespace HETSAPI.Services.Impl
                     Formatting = Formatting.Indented,
                     DateFormatHandling = DateFormatHandling.IsoDateFormat,
                     DateTimeZoneHandling = DateTimeZoneHandling.Utc
-                });                
+                });
+
+                _logger.LogInformation("Rental Agreement Pdf [Id: {0}] - Payload Length: {1}", id, payload.Length);
 
                 // pass the request on to the Pdf Micro Service
                 string pdfHost = _configuration["PDF_SERVICE_NAME"];
@@ -261,36 +265,48 @@ namespace HETSAPI.Services.Impl
 
                 targetUrl = targetUrl + "/" + fileName;
 
+                _logger.LogInformation("Rental Agreement Pdf [Id: {0}] - HETS Pdf Service Url: {1}", id, targetUrl);
+
                 // call the microservice
                 try
                 {
                     HttpClient client = new HttpClient();
-                    StringContent stringContent = new StringContent(JsonConvert.SerializeObject(payload), Encoding.UTF8, "application/json");                                 
+                    StringContent stringContent = new StringContent(JsonConvert.SerializeObject(payload), Encoding.UTF8, "application/json");
+
+                    _logger.LogInformation("Rental Agreement Pdf [Id: {0}] - Calling HETS Pdf Service", id);
                     HttpResponseMessage response = client.PostAsync(targetUrl, stringContent).Result;
                     
                     // success
                     if (response.StatusCode == HttpStatusCode.OK)
                     {
-                        var bytetask = response.Content.ReadAsByteArrayAsync();
-                        bytetask.Wait();
+                        _logger.LogInformation("Rental Agreement Pdf [Id: {0}] - HETS Pdf Service Response: OK", id);
 
-                        result = new FileContentResult(bytetask.Result, "application/pdf")
+                        var pdfResponseBytes = GetPdf(response);
+
+                        // convert to string and log
+                        string pdfResponse = Encoding.Default.GetString(pdfResponseBytes);
+
+                        _logger.LogInformation("Rental Agreement Pdf [Id: {0}] - HETS Pdf Filename: {1}", id, fileName);
+                        _logger.LogInformation("Rental Agreement Pdf [Id: {0}] - HETS Pdf Size: {1}", id, pdfResponse.Length);
+
+                        // return content
+                        FileContentResult result = new FileContentResult(pdfResponseBytes, "application/pdf")
                         {
-                            FileDownloadName = "RentalAgreement_" + fileName + ".pdf"
+                            FileDownloadName = fileName
                         };
+
+                        return result;
+                    }
+                    else
+                    {
+                        _logger.LogInformation("Rental Agreement Pdf [Id: {0}] - HETS Pdf Service Response: {1}", id, response.StatusCode);
                     }
                 }
                 catch (Exception ex)
                 {
                     Debug.Write("Error generating pdf: " + ex.Message);
                     return new ObjectResult(new HetsResponse("HETS-05", ErrorViewModel.GetDescription("HETS-05", _configuration)));
-                }
-
-                // check that the result has a value
-                if (result != null)
-                {
-                    return result;
-                }
+                }                
 
                 // problem occured
                 return new ObjectResult(new HetsResponse("HETS-05", ErrorViewModel.GetDescription("HETS-05", _configuration)));
@@ -303,6 +319,22 @@ namespace HETSAPI.Services.Impl
         private static string CleanFileName(string fileName)
         {
             return Path.GetInvalidFileNameChars().Aggregate(fileName, (current, c) => current.Replace(c.ToString(), string.Empty));
+        }
+
+        private static byte[] GetPdf(HttpResponseMessage response)
+        {
+            try
+            {
+                var pdfResponseBytes = response.Content.ReadAsByteArrayAsync();
+                pdfResponseBytes.Wait();
+
+                return pdfResponseBytes.Result;
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+                throw;
+            }            
         }
 
         /// <summary>

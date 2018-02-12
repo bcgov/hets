@@ -23,7 +23,7 @@ namespace HETSAPI.Test
 
             ILoggerFactory loggerFactory = new LoggerFactory();
 
-            GroupService _service = new GroupService(dbAppContext.Object, loggerFactory);
+            GroupService _service = new GroupService(dbAppContext.Object, null);
             _GroupApi = new GroupController (_service);
 		}
 		

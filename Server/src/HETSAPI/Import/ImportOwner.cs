@@ -165,10 +165,18 @@ namespace HETSAPI.Import
                 isNew = true;
                 owner = new Owner {Id = ++maxOwnerIndex};
             }
+            User modifiedBy = null;
+            User createdBy = null;
 
-            // add the user specified in oldObject.Modified_By and oldObject.Created_By if not there in the database
-            User modifiedBy = ImportUtility.AddUserFromString(dbContext, oldObject.Modified_By, systemId);
-            User createdBy = ImportUtility.AddUserFromString(dbContext, oldObject.Created_By, systemId);
+            if (oldObject.Modified_By != null)
+            {
+                modifiedBy = ImportUtility.AddUserFromString(dbContext, oldObject.Modified_By, systemId);
+            }
+            if (oldObject.Created_By != null)
+            {
+                createdBy = ImportUtility.AddUserFromString(dbContext, oldObject.Created_By, systemId);
+            }
+            
             
             try
             {
@@ -190,8 +198,12 @@ namespace HETSAPI.Import
 
             try
             {
-                owner.CGLEndDate =  
+                if (oldObject.CGL_End_Dt != null)
+                {
+                    owner.CGLEndDate =
                     DateTime.ParseExact(oldObject.CGL_End_Dt.Trim().Substring(0, 10), "yyyy-MM-dd", System.Globalization.CultureInfo.InvariantCulture);
+                }
+                
             }
             catch
             {
@@ -200,8 +212,12 @@ namespace HETSAPI.Import
 
             try
             {
-                owner.WorkSafeBCExpiryDate =  
+                if (oldObject.WCB_Expiry_Dt != null)
+                {
+                    owner.WorkSafeBCExpiryDate =
                     DateTime.ParseExact(oldObject.WCB_Expiry_Dt.Trim().Substring(0, 10), "yyyy-MM-dd", System.Globalization.CultureInfo.InvariantCulture);
+                }
+                
             }
             catch
             {
@@ -219,7 +235,10 @@ namespace HETSAPI.Import
 
             try
             {
-                owner.OrganizationName = oldObject.CGL_Company.Trim();
+                if (oldObject.CGL_Company != null)
+                {
+                    owner.OrganizationName = oldObject.CGL_Company.Trim();
+                }
             }
             catch
             {
@@ -254,6 +273,7 @@ namespace HETSAPI.Import
                 {
                     con.Surname = oldObject.Owner_Last_Name.Trim();
                     con.GivenName = oldObject.Owner_First_Name.Trim();
+                    con.Role = "Owner";
                     owner.Surname = oldObject.Owner_Last_Name.Trim();
                     owner.GivenName = oldObject.Owner_First_Name.Trim();
                     owner.OwnerCode = con.GivenName.Substring(0, 1) + con.Surname.Substring(0, 1);
@@ -268,7 +288,10 @@ namespace HETSAPI.Import
                 
                 try
                 {
-                    con.Notes = new string(oldObject.Comment.Take(511).ToArray());
+                    if (con.Notes != null)
+                    {
+                        con.Notes = new string(oldObject.Comment.Take(511).ToArray());
+                    }                    
                 }
                 catch
                 {
@@ -292,8 +315,11 @@ namespace HETSAPI.Import
                 {
                     owner.AppCreateTimestamp = DateTime.UtcNow;
                 }
-
-                con.AppCreateUserid = createdBy.SmUserId;
+                if (createdBy != null)
+                {
+                    con.AppCreateUserid = createdBy.SmUserId;
+                }
+                
                 owner.PrimaryContact = con;
                 dbContext.Owners.Add(owner);
             }
@@ -304,7 +330,10 @@ namespace HETSAPI.Import
                     owner.AppLastUpdateUserid = systemId;
                     owner.AppLastUpdateTimestamp = DateTime.UtcNow;
                     con.AppLastUpdateTimestamp = DateTime.UtcNow;
-                    con.AppLastUpdateUserid = modifiedBy.SmUserId;
+                    if (modifiedBy != null)
+                    {
+                        con.AppLastUpdateUserid = modifiedBy.SmUserId;
+                    }
                     owner.PrimaryContact = con;
                 }
                 catch

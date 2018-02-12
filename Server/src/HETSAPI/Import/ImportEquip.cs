@@ -153,11 +153,18 @@ namespace HETSAPI.Import
         {
             if (oldObject.Equip_Id <= 0)
                 return;
+            User modifiedBy = null;
+            User createdBy = null;
 
-            //Add the user specified in oldObject.Modified_By and oldObject.Created_By if not there in the database
-            User modifiedBy = ImportUtility.AddUserFromString(dbContext, oldObject.Modified_By, systemId);
-            User createdBy = ImportUtility.AddUserFromString(dbContext, oldObject.Created_By, systemId);
-
+            if (oldObject.Modified_By != null)
+            {
+                modifiedBy = ImportUtility.AddUserFromString(dbContext, oldObject.Modified_By, systemId);
+            }
+            if (oldObject.Created_By != null)
+            {
+                createdBy = ImportUtility.AddUserFromString(dbContext, oldObject.Created_By, systemId);
+            }
+            
             if (instance == null)
             {
                 instance = new Equipment
@@ -348,18 +355,32 @@ namespace HETSAPI.Import
                 }
 
                 instance.AppCreateTimestamp = DateTime.UtcNow;
-                instance.AppCreateUserid = createdBy.SmUserId;
+                if (createdBy != null)
+                {
+                    instance.AppCreateUserid = createdBy.SmUserId;
+                }
+                
                 dbContext.Equipments.Add(instance);
             }
             else
             {
                 instance = dbContext.Equipments.First(x => x.Id == oldObject.Equip_Id);
-                instance.AppLastUpdateUserid = modifiedBy.SmUserId;
+                if (modifiedBy != null)
+                {
+                    instance.AppLastUpdateUserid = modifiedBy.SmUserId;
+                }
 
                 try
                 {
-                    instance.AppLastUpdateUserid = modifiedBy.SmUserId;
-                    instance.AppLastUpdateTimestamp = DateTime.ParseExact(oldObject.Modified_Dt.Trim().Substring(0, 10), "yyyy-MM-dd", System.Globalization.CultureInfo.InvariantCulture);
+                    if (modifiedBy != null)
+                    {
+                        instance.AppLastUpdateUserid = modifiedBy.SmUserId;
+                    }
+                    if (oldObject.Modified_Dt != null)
+                    {
+                        instance.AppLastUpdateTimestamp = DateTime.ParseExact(oldObject.Modified_Dt.Trim().Substring(0, 10), "yyyy-MM-dd", System.Globalization.CultureInfo.InvariantCulture);
+                    }
+                    
                 }
                 catch (Exception e)
                 {

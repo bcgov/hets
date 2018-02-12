@@ -52,7 +52,7 @@ namespace PDF.Server.Controllers
                 _logger.LogInformation("GetRentalAgreementPdf [FileName: {0}] - Render Html", name);
                 string result = await TemplateHelper.RenderDocument(_nodeServices, request);
 
-                _logger.LogInformation("GetRentalAgreementPdf [FileName: {0}] - Html: {1}", name, result);
+                _logger.LogInformation("GetRentalAgreementPdf [FileName: {0}] - Html Length: {1}", name, result.Length);
 
                 // *************************************************************
                 // Convert results to Pdf
@@ -69,11 +69,11 @@ namespace PDF.Server.Controllers
                 byte[] pdfResponseBytes = PdfDocument.BuildPdf(_configuration, pdfRequest);
 
                 // convert to string and log
-                string pdfResponse = System.Text.Encoding.UTF8.GetString(pdfResponseBytes);
-                _logger.LogInformation("GetRentalAgreementPdf [FileName: {0}] - Pdf: {1}", name, pdfResponse);
+                string pdfResponse = System.Text.Encoding.Default.GetString(pdfResponseBytes);
+                _logger.LogInformation("GetRentalAgreementPdf [FileName: {0}] - Pdf Length: {1}", name, pdfResponse.Length);
 
                 _logger.LogInformation("GetRentalAgreementPdf [FileName: {0}] - Done", name);
-                return File(pdfResponse, "application/pdf");
+                return File(pdfResponseBytes, "application/pdf", name);
             }
             catch (Exception e)
             {
