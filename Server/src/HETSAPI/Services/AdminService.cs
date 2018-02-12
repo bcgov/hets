@@ -1,4 +1,5 @@
 using Microsoft.AspNetCore.Mvc;
+using System.Threading.Tasks;
 
 namespace HETSAPI.Services
 {
@@ -15,5 +16,7 @@ namespace HETSAPI.Services
         /// <response code="200">OK</response>
         /// <response code="404">Attachment not found in system</response>
         IActionResult AdminImportGetAsync(string path, string districts);
+
+        Task<IActionResult> AdminUserMap(string path);
     }
 }

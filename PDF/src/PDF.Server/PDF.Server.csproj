@@ -46,8 +46,4 @@
     <EmbeddedResource Include="Templates\sample.mustache" />
   </ItemGroup>
 
-  <ItemGroup>
-    <None Include="wwwroot\js\pdf.js" />
-  </ItemGroup>
-
 </Project>

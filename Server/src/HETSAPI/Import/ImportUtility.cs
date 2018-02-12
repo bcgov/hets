@@ -155,10 +155,15 @@ namespace HETSAPI.Import
             string tag = contents.Substring(startPos, endPos - startPos);
 
             contents = contents.Replace(tag, oldTable);
+            contents = contents.Replace("<" + oldTable, "\r\n<" + oldTable);
 
-            string fixedXml = "<?xml version=\"1.0\" encoding=\"utf-8\"?>\n" + 
-                              "<" + rootAttr + " xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\">\n" + 
-                              contents + "</" + rootAttr + ">";
+            string fixedXml = "<?xml version=\"1.0\" encoding=\"utf-8\"?>\r\n" + 
+                              "<" + rootAttr + " xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\">" + 
+                              contents + "\r\n</" + rootAttr + ">";
+
+            string fixedPath = fullPath + ".fixed.xml";
+            System.IO.File.WriteAllText(fixedPath, fixedXml);
+
 
             MemoryStream memoryStream = new MemoryStream(Encoding.UTF8.GetBytes(fixedXml));
             return memoryStream;

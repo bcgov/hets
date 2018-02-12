@@ -9,8 +9,6 @@
   "author": "",
   "license": "Apache-2.0",
   "dependencies": {
-    "fs": "0.0.1-security",
-    "html-pdf": "^2.1.0",
     "mustache": "^2.3.0"
   }
 }

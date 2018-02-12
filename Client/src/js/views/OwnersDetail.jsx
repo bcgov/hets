@@ -222,15 +222,7 @@ var OwnersDetail = React.createClass({
 
     Api.addOwnerContact(this.props.owner, contact).then(() => {
       // Use this.props.contact to get the contact id
-      return log(this.props.owner, this.props.contact).then(() => {
-        // Update primary contact info
-        if (contact.isPrimary) {
-          return Api.updateOwner({ ...this.props.owner, ...{
-            contacts: null, // this just ensures that the normalized data doesn't mess up the PUT call
-            primaryContact: { id: this.state.contact.id },
-          }});
-        }
-      });
+      return log(this.props.owner, this.props.contact);
     }).finally(() => {
       // In addition to refreshing the contacts, we need to update the owner
       // to get primary contact info and history.

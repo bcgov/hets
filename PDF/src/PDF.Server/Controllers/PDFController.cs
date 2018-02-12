@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.NodeServices;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Logging;
 using PDF.Server.Helpers;
 
 namespace PDF.Server.Controllers
@@ -15,24 +16,29 @@ namespace PDF.Server.Controllers
     {
         private readonly INodeServices _nodeServices;
         private readonly IConfigurationRoot _configuration;
+        private readonly ILogger _logger;
 
-        public PdfController(INodeServices nodeServices, IConfigurationRoot configuration)
+        public PdfController(INodeServices nodeServices, IConfigurationRoot configuration, ILoggerFactory loggerFactory)
         {
             _nodeServices = nodeServices;
-            _configuration = configuration;            
+            _configuration = configuration;
+            _logger = loggerFactory.CreateLogger<PdfController>();
         }
 
         /// <summary>
         /// Get HETS Rental Agreement
         /// </summary>
-        /// <param name="rentalAgreementJson"></param>
+        /// <param name="rentalAgreementJson">Serialized rental agreement</param>
+        /// <param name="name">Unique name for the generated Pdf (Result: 'RentalAgreement_' + name + '.pdf')</param>
         /// <returns></returns>
         [HttpPost]
-        [Route("pdf/rentalAgreement")]
-        public async Task<IActionResult> GetRentalAgreementPdf([FromBody]string rentalAgreementJson)
+        [Route("pdf/rentalAgreement/{name}")]
+        public async Task<IActionResult> GetRentalAgreementPdf([FromBody]string rentalAgreementJson, [FromRoute]string name)
         {
             try
             {
+                _logger.LogInformation("GetRentalAgreementPdf [FileName: {0}]", name);
+
                 // *************************************************************
                 // Create output using json and mustache template
                 // *************************************************************
@@ -43,23 +49,31 @@ namespace PDF.Server.Controllers
                     Template = _configuration.GetSection("Constants").GetSection("RentalTemplate").Value
                 };
 
+                _logger.LogInformation("GetRentalAgreementPdf [FileName: {0}] - Render Html", name);
                 string result = await TemplateHelper.RenderDocument(_nodeServices, request);
+
+                _logger.LogInformation("GetRentalAgreementPdf [FileName: {0}] - Html: {1}", name, result);
 
                 // *************************************************************
                 // Convert results to Pdf
-                // *************************************************************
-                string options = @"{""height"": ""10.5in"",""width"": ""8in"",""orientation"": ""portrait""}";
+                // ************************************************************* 
+                string fileName = "RentalAgreement_" + name + ".pdf"; // to do - add id
 
                 PdfRequest pdfRequest = new PdfRequest()
                 {
                     Html = result,
-                    Options = options,
-                    PdfJsUrl = _configuration.GetSection("Constants").GetSection("PdfJsUrl").Value
+                    PdfFileName = fileName
                 };
 
-                JsonResponse jsonResult = await PdfDocument.BuildPdf(_nodeServices, pdfRequest);
+                _logger.LogInformation("GetRentalAgreementPdf [FileName: {0}] - Gen Pdf", name);
+                byte[] pdfResponseBytes = PdfDocument.BuildPdf(_configuration, pdfRequest);
 
-                return File(jsonResult.Data, "application/pdf");
+                // convert to string and log
+                string pdfResponse = System.Text.Encoding.UTF8.GetString(pdfResponseBytes);
+                _logger.LogInformation("GetRentalAgreementPdf [FileName: {0}] - Pdf: {1}", name, pdfResponse);
+
+                _logger.LogInformation("GetRentalAgreementPdf [FileName: {0}] - Done", name);
+                return File(pdfResponse, "application/pdf");
             }
             catch (Exception e)
             {

@@ -7,10 +7,13 @@ using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.IO;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
 using System.Text;
+using System.Text.RegularExpressions;
+using System.Threading;
 using HETSAPI.Models;
 using HETSAPI.ViewModels;
 using HETSAPI.Mappings;
@@ -247,14 +250,16 @@ namespace HETSAPI.Services.Impl
                 // pass the request on to the Pdf Micro Service
                 string pdfHost = _configuration["PDF_SERVICE_NAME"];
                 string pdfUrl = _configuration.GetSection("Constants:PdfUrl").Value;
-                string pdfUrlLocal = _configuration.GetSection("Constants:PdfUrl-Local").Value;
+                string targetUrl = pdfHost + pdfUrl;                
 
-                string targetUrl = pdfHost + pdfUrl;
+                // generate pdf document name [unique portion only]
+                string ownerName = rentalAgreement.Equipment.Owner.OrganizationName.Trim().ToLower();
+                ownerName = CleanFileName(ownerName);
+                ownerName = ownerName.Replace(" ", "");
+                ownerName = Thread.CurrentThread.CurrentCulture.TextInfo.ToTitleCase(ownerName);
+                string fileName = rentalAgreement.Number + "_" + ownerName;
 
-                if (!string.IsNullOrEmpty(pdfUrlLocal) && _appContext.Request.Host.Host == "localhost")
-                {
-                    targetUrl = pdfHost + pdfUrlLocal;
-                }
+                targetUrl = targetUrl + "/" + fileName;
 
                 // call the microservice
                 try
@@ -271,7 +276,7 @@ namespace HETSAPI.Services.Impl
 
                         result = new FileContentResult(bytetask.Result, "application/pdf")
                         {
-                            FileDownloadName = "RentalAgreement-" + rentalAgreement.Number + ".pdf"
+                            FileDownloadName = "RentalAgreement_" + fileName + ".pdf"
                         };
                     }
                 }
@@ -293,6 +298,11 @@ namespace HETSAPI.Services.Impl
 
             // record not found
             return new ObjectResult(new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-01", _configuration)));
+        }
+
+        private static string CleanFileName(string fileName)
+        {
+            return Path.GetInvalidFileNameChars().Aggregate(fileName, (current, c) => current.Replace(c.ToString(), string.Empty));
         }
 
         /// <summary>

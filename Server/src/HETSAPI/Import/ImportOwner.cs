@@ -43,8 +43,19 @@ namespace HETSAPI.Import
             }
 
             List<Owner> data = new List<Owner>();
-            int maxOwnerIndex = dbContext.Owners.Max(x => x.Id);
-            int maxContactIndex = dbContext.Contacts.Max(x => x.Id);
+            int maxOwnerIndex = 0;
+
+            if (dbContext.Owners.Count() > 0)
+            {
+                maxOwnerIndex = dbContext.Owners.Max(x => x.Id);
+            }
+            int maxContactIndex = 0;
+
+            if (dbContext.Contacts.Count() > 0)
+            {
+                maxContactIndex = dbContext.Contacts.Max(x => x.Id);
+            }
+
 
             try
             {

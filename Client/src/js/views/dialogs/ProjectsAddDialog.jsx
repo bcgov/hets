@@ -2,14 +2,11 @@ import React from 'react';
 
 import { connect } from 'react-redux';
 
-import { Form, FormGroup, HelpBlock, ControlLabel } from 'react-bootstrap';
-
-import _ from 'lodash';
+import { Form, FormGroup, HelpBlock, ControlLabel, FormControl } from 'react-bootstrap';
 
 import * as Constant from '../../constants';
 
 import EditDialog from '../../components/EditDialog.jsx';
-import FilterDropdown from '../../components/FilterDropdown.jsx';
 import FormInputControl from '../../components/FormInputControl.jsx';
 
 import { isBlank, notBlank } from '../../utils/string';
@@ -17,7 +14,6 @@ import { isBlank, notBlank } from '../../utils/string';
 var ProjectsAddDialog = React.createClass({
   propTypes: {
     currentUser: React.PropTypes.object,
-    districts: React.PropTypes.object,
     onSave: React.PropTypes.func.isRequired,
     onClose: React.PropTypes.func.isRequired,
     show: React.PropTypes.bool,
@@ -28,11 +24,9 @@ var ProjectsAddDialog = React.createClass({
     return {
       name: '',
       provincialProjectNumber: '',
-      districtId: this.props.districts[this.props.currentUser.district.id] || 0,
       information: '',
 
       nameError: '',
-      districtError: '',
     };
   },
 
@@ -47,8 +41,7 @@ var ProjectsAddDialog = React.createClass({
   didChange() {
     return notBlank(this.state.name) ||
       notBlank(this.state.provincialProjectNumber) ||
-      notBlank(this.state.information) ||
-      this.state.districtId !== 0;
+      notBlank(this.state.information);
   },
 
   isValid() {
@@ -65,11 +58,6 @@ var ProjectsAddDialog = React.createClass({
       valid = false;
     }
 
-    if (this.state.districtId === 0) {
-      this.setState({ districtError: 'District is required' });
-      valid = false;
-    }
-
     return valid;
   },
 
@@ -77,15 +65,13 @@ var ProjectsAddDialog = React.createClass({
     this.props.onSave({
       name: this.state.name,
       provincialProjectNumber: this.state.provincialProjectNumber,
-      district: { id: this.state.districtId },
+      district: { id: this.props.currentUser.district.id },
       information: this.state.information,
       status: Constant.PROJECT_STATUS_CODE_ACTIVE,
     });
   },
 
   render() {
-    var districts = _.sortBy(this.props.districts, 'name');
-
     return <EditDialog id="add-project" show={ this.props.show } bsSize="small"
       onClose={ this.props.onClose } onSave={ this.onSave } didChange={ this.didChange } isValid={ this.isValid }
       title= {
@@ -102,9 +88,8 @@ var ProjectsAddDialog = React.createClass({
           <FormInputControl type="text" value={ this.state.provincialProjectNumber } updateState={ this.updateState } />
         </FormGroup>
         <FormGroup controlId="districtId" validationState={ this.state.districtError ? 'error' : null }>
-          <ControlLabel>District <sup>*</sup></ControlLabel>
-          <FilterDropdown id="districtId" items={ districts } selectedId={ this.state.districtId } updateState={ this.updateState } className="full-width" />
-          <HelpBlock>{ this.state.districtError }</HelpBlock>
+          <ControlLabel>District</ControlLabel>
+          <FormControl.Static>{ this.props.currentUser.district.name }</FormControl.Static>
         </FormGroup>
         <FormGroup controlId="information">
           <ControlLabel>Project Information</ControlLabel>
@@ -118,7 +103,6 @@ var ProjectsAddDialog = React.createClass({
 function mapStateToProps(state) {
   return {
     currentUser: state.user,
-    districts: state.lookups.districts,
   };
 }
 
