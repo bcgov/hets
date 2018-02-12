@@ -1,12 +1,10 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
-using System.IO;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
 using System.Text;
-using System.Threading;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using HETSAPI.Models;
@@ -428,12 +426,48 @@ namespace HETSAPI.Services.Impl
                 .Include(x => x.PrimaryContact)
                 .Include(x => x.EquipmentList)
                     .ThenInclude(a => a.EquipmentAttachments)
+                .Include(x => x.LocalArea)
+                    .ThenInclude(s => s.ServiceArea)
+                        .ThenInclude(d => d.District)
                 .Where(x => items.Contains(x.Id))
                 .ToList();            
 
             if (owners.Count > 0)
             {
-                string payload = JsonConvert.SerializeObject(owners, new JsonSerializerSettings
+                if (owners[0].LocalArea.ServiceArea.District == null)
+                {
+                    // missing district - data error [HETS-16]
+                    return new ObjectResult(new HetsResponse("HETS-16", ErrorViewModel.GetDescription("HETS-16", _configuration)));
+                }
+
+                // generate pdf document name [unique portion only]
+                string fileName = "OwnerVerification_" + DateTime.Now.Year + DateTime.Now.Month + DateTime.Now.Day;
+
+                // setup modev for submission to the Pdf service
+                OwnerVerificationPdfViewModel model = new OwnerVerificationPdfViewModel
+                {
+                    Title = fileName,
+                    DistrictId = owners[0].LocalArea.ServiceArea.District.Id,
+                    MinistryDistrictId = owners[0].LocalArea.ServiceArea.District.MinistryDistrictID,
+                    DistrictName = owners[0].LocalArea.ServiceArea.District.Name,
+                    DistrictAddress = "to be completed",
+                    DistrictContact = "to be completed"
+                };
+
+                // add owner records - must verify district ids too
+                foreach (Owner owner in owners)
+                {
+                    if (owner.LocalArea.ServiceArea.District.Id != model.DistrictId)
+                    {
+                        // missing district - data error [HETS-16]
+                        return new ObjectResult(new HetsResponse("HETS-16", ErrorViewModel.GetDescription("HETS-16", _configuration)));
+                    }
+
+                    model.Owners.Add(owner);
+                }
+
+                // setup payload
+                string payload = JsonConvert.SerializeObject(model, new JsonSerializerSettings
                 {
                     ReferenceLoopHandling = ReferenceLoopHandling.Ignore,
                     ContractResolver = new CamelCasePropertyNamesContractResolver(),
@@ -447,10 +481,7 @@ namespace HETSAPI.Services.Impl
                 // pass the request on to the Pdf Micro Service
                 string pdfHost = _configuration["PDF_SERVICE_NAME"];
                 string pdfUrl = _configuration.GetSection("Constants:OwnerVerificationPdfUrl").Value;
-                string targetUrl = pdfHost + pdfUrl;
-
-                // generate pdf document name [unique portion only]
-                string fileName = "OwnerVerification_" + DateTime.Now.Year + DateTime.Now.Month + DateTime.Now.Day;           
+                string targetUrl = pdfHost + pdfUrl;                          
 
                 targetUrl = targetUrl + "/" + fileName;
 
