@@ -482,8 +482,11 @@ export function equipmentDuplicateCheck(id, serialNumber) {
 }
 
 export function changeEquipmentStatus(status) {
-  // Todo - check endpoint
-  return new ApiRequest(`/equipment/${status.id}/status`).post(status).then((response) => {
+  return new ApiRequest(`/equipment/${status.id}/status`).put(status).then((response) => {
+    var equipment = response.data;
+    // Add display fields
+    parseEquipment(equipment);
+    store.dispatch({ type: Action.UPDATE_EQUIPMENT, equipment: equipment });
     return response;
   });
 }
@@ -714,8 +717,11 @@ export function addOwnerNote(ownerId, note) {
 }
 
 export function changeOwnerStatus(status) {
-  // Todo - check endpoint
-  return new ApiRequest(`/owners/${status.id}/status`).post(status).then((response) => {
+  return new ApiRequest(`/owners/${status.id}/status`).put(status).then((response) => {
+    var owner = response.data;
+    // Add display fields
+    parseOwner(owner);
+    store.dispatch({ type: Action.UPDATE_OWNER, owner: owner });
     return response;
   });
 }

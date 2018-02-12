@@ -83,7 +83,7 @@ var ChangeStatusDialog = React.createClass({
     this.props.onSave({
       id: this.props.parent.id,
       status: this.props.status,
-      comment: this.state.comment,
+      statusComment: this.state.comment,
     });
   },
 

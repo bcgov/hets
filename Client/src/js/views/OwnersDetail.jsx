@@ -341,7 +341,7 @@ var OwnersDetail = React.createClass({
       case(Constant.OWNER_STATUS_CODE_APPROVED):
         return 'success';
       case(Constant.OWNER_STATUS_CODE_PENDING):
-        return 'warning';
+        return 'danger';
       default: 
         return 'default';
     }
