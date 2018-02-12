@@ -1,5 +1,6 @@
 using Microsoft.AspNetCore.Mvc;
 using HETSAPI.Models;
+using HETSAPI.Services.Impl;
 
 namespace HETSAPI.Services
 {
@@ -64,6 +65,21 @@ namespace HETSAPI.Services
         /// <param name="status">if included, filter the results to those with a status matching this string</param>
         /// <response code="200">OK</response>
         IActionResult ProjectsSearchGetAsync(string districts, string project, bool? hasRequests, bool? hasHires, string status);
+
+        /// <summary>
+        /// Get renatal agreements associated with a project by id
+        /// </summary>
+        /// <param name="id">id of Project to fetch agreements for</param>
+        /// <response code="200">OK</response>
+        IActionResult ProjectsIdGetAgreementsAsync(int id);
+
+        /// <summary>
+        /// Update a rental agreement by cloning a previous project rental agreement
+        /// </summary>
+        /// <param name="id">Project id</param>
+        /// <param name="item"></param>
+        /// <response code="201">Rental Agreement update</response>
+        IActionResult ProjectsRentalAgreementClonePostAsync(int id, ProjectRentalAgreementClone item);
 
         /// <summary>
         /// Get time records for a project

@@ -5,6 +5,7 @@ using HETSAPI.Models;
 using HETSAPI.ViewModels;
 using HETSAPI.Services;
 using HETSAPI.Authorization;
+using HETSAPI.Services.Impl;
 
 namespace HETSAPI.Controllers
 {
@@ -129,6 +130,40 @@ namespace HETSAPI.Controllers
             return _service.ProjectsSearchGetAsync(districts, project, hasRequests, hasHires, status);
         }
 
+        # region Clone Project Agreements
+
+        /// <summary>
+        /// Get renatal agreements associated with a project by id
+        /// </summary>
+        /// <remarks>Gets a Project&#39;s Rental Agreements</remarks>
+        /// <param name="id">id of Project to fetch agreements for</param>
+        /// <response code="200">OK</response>
+        [HttpGet]
+        [Route("/api/projects/{id}/rentalAgreements")]
+        [SwaggerOperation("ProjectsIdRentalAgreementsGet")]
+        [SwaggerResponse(200, type: typeof(List<RentalAgreement>))]
+        public virtual IActionResult ProjectsIdRentalAgreementsGet([FromRoute]int id)
+        {
+            return _service.ProjectsIdGetAgreementsAsync(id);
+        }
+
+        /// <summary>
+        /// Update a rental agreement by cloning a previous project rental agreement
+        /// </summary>
+        /// <param name="id">Project id</param>
+        /// <param name="item"></param>
+        /// <response code="200">Rental Agreement cloned</response>
+        [HttpPost]
+        [Route("/api/projects/{id}/rentalAgreementClone")]
+        [SwaggerOperation("ProjectsRentalAgreementClonePost")]
+        [SwaggerResponse(200, type: typeof(RentalAgreement))]
+        public virtual IActionResult ProjectsRentalAgreementClonePost([FromRoute]int id, [FromBody]ProjectRentalAgreementClone item)
+        {
+            return _service.ProjectsRentalAgreementClonePostAsync(id, item);
+        }
+
+        #endregion
+
         #region Project Time Records
 
         /// <summary>
@@ -163,7 +198,7 @@ namespace HETSAPI.Controllers
         }
         
         /// <summary>
-        /// pdate or create an array of time records associated with a project
+        /// Update or create an array of time records associated with a project
         /// </summary>
         /// <remarks>Adds Project Time Records</remarks>
         /// <param name="id">id of Project to add a time record for</param>
