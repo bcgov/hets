@@ -59,16 +59,23 @@ namespace HETSAPI.Import
                 EquipUsage[] legacyItems = (EquipUsage[])ser.Deserialize(memoryStream);
 
                 //Use this list to save a trip to query database in each iteration
-                List<Equipment> equips = dbContext.Equipments
+                List<Equipment> equip_list = dbContext.Equipments
                         .Include(x => x.DumpTruck)
                         .Include(x => x.DistrictEquipmentType)
                         .ToList();
+                Dictionary<int, Equipment> equips = new Dictionary<int, Equipment>();
+
+                foreach (Equipment equip_item in equip_list)
+                {
+                    equips.Add(equip_item.Id, equip_item);
+                }
 
                 int ii = startPoint;
 
                 // skip the portion already processed
                 if (startPoint > 0)    
                 {
+                    performContext.WriteLine("*** skipping " + startPoint + " records done in a former process ***");
                     legacyItems = legacyItems.Skip(ii).ToArray();
                 }
 
@@ -114,12 +121,12 @@ namespace HETSAPI.Import
                             dbContext.ImportMaps.Update(importMap);
                         }
                     }
-
+                    ii++;
                     // save change to database periodically to avoid frequent writing to the database
-                    if (++ii % 10 == 0)
+                    if (ii % 100 == 0)
                     {                   
                         try
-                        {
+                        {                            
                             ImportUtility.AddImportMapForProgress(dbContext, OldTableProgress, ii.ToString(), BCBidImport.SigId);
                             dbContext.SaveChangesForImport();                            
                         }
@@ -159,7 +166,7 @@ namespace HETSAPI.Import
         /// <param name="equips"></param>
         /// <param name="systemId"></param>
         private static void CopyToTimeRecorded(DbAppContext dbContext, EquipUsage oldObject, 
-            ref RentalAgreement rentalAgreement, string note, string workedDate, List<Equipment> equips, string systemId)
+            ref RentalAgreement rentalAgreement, string note, string workedDate, Dictionary<int,Equipment> equips, string systemId)
         {            
             // add the user specified in oldObject.Modified_By and oldObject.Created_By if not there in the database
             User modifiedBy = ImportUtility.AddUserFromString(dbContext, "", systemId);
@@ -173,8 +180,13 @@ namespace HETSAPI.Import
                     TimeRecords = new List<TimeRecord>()
                 };
 
-                Equipment equip = equips.FirstOrDefault(x => x.Id == oldObject.Equip_Id); 
+                Equipment equip = null;
 
+                if (oldObject.Equip_Id != null && equips.ContainsKey ((int)oldObject.Equip_Id))
+                {
+                    equip = equips[(int)oldObject.Equip_Id];
+                }
+                
                 if (equip != null)
                 {
                     rentalAgreement.Equipment = equip;
