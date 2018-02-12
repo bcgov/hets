@@ -85,6 +85,21 @@ namespace HETSAPI.Services
         IActionResult EquipmentSearchGetAsync(string localareas, string types, string equipmentAttachment, int? owner, string status, bool? hired, DateTime? notverifiedsincedate);
 
         /// <summary>
+        /// Get rental agreements associated with an equipment id
+        /// </summary>
+        /// <param name="id">id of Equipment to fetch agreements for</param>
+        /// <response code="200">OK</response>
+        IActionResult EquipmentIdGetAgreementsAsync(int id);
+
+        /// <summary>
+        /// Update a rental agreement by cloning a previous equipment rental agreement
+        /// </summary>
+        /// <param name="id">Equipment id</param>
+        /// <param name="item"></param>
+        /// <response code="201">Rental Agreement update</response>
+        IActionResult EquipmentRentalAgreementClonePostAsync(int id, EquipmentRentalAgreementClone item);
+
+        /// <summary>
         /// Get all duplicate equipment records
         /// </summary>
         /// <remarks>Gets all duplicate equipment records.</remarks>

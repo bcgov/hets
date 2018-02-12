@@ -178,6 +178,41 @@ namespace HETSAPI.Controllers
         }
 
 
+        #region Clone Project Agreements
+
+        /// <summary>
+        /// Get renatal agreements associated with an equipment id
+        /// </summary>
+        /// <remarks>Gets as Equipment&#39;s Rental Agreements</remarks>
+        /// <param name="id">id of Equipment to fetch agreements for</param>
+        /// <response code="200">OK</response>
+        [HttpGet]
+        [Route("/api/equipment/{id}/rentalAgreements")]
+        [SwaggerOperation("EquipmentIdRentalAgreementsGet")]
+        [SwaggerResponse(200, type: typeof(List<RentalAgreement>))]
+        public virtual IActionResult EquipmentIdRentalAgreementsGet([FromRoute]int id)
+        {
+            return _service.EquipmentIdGetAgreementsAsync(id);
+        }
+
+        /// <summary>
+        /// Update a rental agreement by cloning a previous equipment rental agreement
+        /// </summary>
+        /// <param name="id">Project id</param>
+        /// <param name="item"></param>
+        /// <response code="200">Rental Agreement cloned</response>
+        [HttpPost]
+        [Route("/api/equipment/{id}/rentalAgreementClone")]
+        [SwaggerOperation("EquipmentRentalAgreementClonePost")]
+        [SwaggerResponse(200, type: typeof(RentalAgreement))]
+        public virtual IActionResult EquipmentRentalAgreementClonePost([FromRoute]int id, [FromBody]EquipmentRentalAgreementClone item)
+        {
+            return _service.EquipmentRentalAgreementClonePostAsync(id, item);
+        }
+
+        #endregion
+
+
         #region Duplicate Equipent Records
 
         /// <summary>
@@ -196,7 +231,6 @@ namespace HETSAPI.Controllers
         }
 
         #endregion
-
 
         #region Equipent Attachment Records
 
