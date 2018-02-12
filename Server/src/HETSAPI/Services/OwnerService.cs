@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using Microsoft.AspNetCore.Mvc;
 using HETSAPI.Models;
 using HETSAPI.Services.Impl;
@@ -73,6 +74,14 @@ namespace HETSAPI.Services
         /// <param name="hired">Hired</param>
         /// <response code="200">OK</response>
         IActionResult OwnersSearchGetAsync(string localAreas, string equipmentTypes, int? owner, string status, bool? hired);
+
+        /// <summary>
+        /// Get onwer verification pdf
+        /// </summary>
+        /// <remarks>Returns a PDF version of the owner vrification notices</remarks>
+        /// <param name="items">Array of owner id numbers to generate notices for</param>
+        /// <response code="200">OK</response>
+        IActionResult OwnersIdVerificationPdfPostAsync(List<int> items);
 
         /// <summary>
         /// Get owner equipment
