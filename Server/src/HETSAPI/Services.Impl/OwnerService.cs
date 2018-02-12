@@ -1,6 +1,12 @@
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
+using System.IO;
 using System.Linq;
+using System.Net;
+using System.Net.Http;
+using System.Text;
+using System.Threading;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using HETSAPI.Models;
@@ -8,6 +14,9 @@ using HETSAPI.ViewModels;
 using HETSAPI.Mappings;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Logging;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Serialization;
 
 namespace HETSAPI.Services.Impl
 {
@@ -18,7 +27,7 @@ namespace HETSAPI.Services.Impl
     {
         public string Status { get; set; }
         public string StatusComment { get; set; }
-    }
+    }    
 
     /// <summary>
     /// Owner Service
@@ -27,14 +36,16 @@ namespace HETSAPI.Services.Impl
     {
         private readonly DbAppContext _context;
         private readonly IConfiguration _configuration;
+        private readonly ILogger _logger;
 
         /// <summary>
         /// Owner Service Constructor
         /// </summary>
-        public OwnerService(IHttpContextAccessor httpContextAccessor, DbAppContext context, IConfiguration configuration) : base(httpContextAccessor, context)
+        public OwnerService(IHttpContextAccessor httpContextAccessor, DbAppContext context, IConfiguration configuration, ILoggerFactory loggerFactory) : base(httpContextAccessor, context)
         {
             _context = context;
             _configuration = configuration;
+            _logger = loggerFactory.CreateLogger<OwnerService>();
         }
 
         private void AdjustRecord(Owner item)
@@ -393,6 +404,122 @@ namespace HETSAPI.Services.Impl
             List<Owner> result = data.ToList();
             return new ObjectResult(new HetsResponse(result));
         }
+
+        #region Get Verification Pdfs
+
+        /// <summary>
+        /// Get onwer verification pdf
+        /// </summary>
+        /// <remarks>Returns a PDF version of the owner vrification notices</remarks>
+        /// <param name="items">Array of owner id numbers to generate notices for</param>
+        /// <response code="200">OK</response>
+        public virtual IActionResult OwnersIdVerificationPdfPostAsync(List<int> items)
+        {
+            if (items == null || items.Count <= 0)
+            {
+                // verification array is empty [HETS-14]
+                return new ObjectResult(new HetsResponse("HETS-14", ErrorViewModel.GetDescription("HETS-14", _configuration)));
+            }
+
+            _logger.LogInformation("Owner Verification Notices Pdf [Owner Count: {0}]", items.Count);
+
+            // get owner records
+            List<Owner> owners = _context.Owners.AsNoTracking()
+                .Include(x => x.PrimaryContact)
+                .Include(x => x.EquipmentList)
+                    .ThenInclude(a => a.EquipmentAttachments)
+                .Where(x => items.Contains(x.Id))
+                .ToList();            
+
+            if (owners.Count > 0)
+            {
+                string payload = JsonConvert.SerializeObject(owners, new JsonSerializerSettings
+                {
+                    ReferenceLoopHandling = ReferenceLoopHandling.Ignore,
+                    ContractResolver = new CamelCasePropertyNamesContractResolver(),
+                    Formatting = Formatting.Indented,
+                    DateFormatHandling = DateFormatHandling.IsoDateFormat,
+                    DateTimeZoneHandling = DateTimeZoneHandling.Utc
+                });
+
+                _logger.LogInformation("Owner Verification Notices Pdf - Payload Length: {0}", payload.Length);
+
+                // pass the request on to the Pdf Micro Service
+                string pdfHost = _configuration["PDF_SERVICE_NAME"];
+                string pdfUrl = _configuration.GetSection("Constants:OwnerVerificationPdfUrl").Value;
+                string targetUrl = pdfHost + pdfUrl;
+
+                // generate pdf document name [unique portion only]
+                string fileName = "OwnerVerification_" + DateTime.Now.Year + DateTime.Now.Month + DateTime.Now.Day;           
+
+                targetUrl = targetUrl + "/" + fileName;
+
+                _logger.LogInformation("Owner Verification Notices Pdf - HETS Pdf Service Url: {0}", targetUrl);
+
+                // call the microservice
+                try
+                {
+                    HttpClient client = new HttpClient();
+                    StringContent stringContent = new StringContent(JsonConvert.SerializeObject(payload), Encoding.UTF8, "application/json");
+
+                    _logger.LogInformation("Owner Verification Notices Pdf - Calling HETS Pdf Service");
+                    HttpResponseMessage response = client.PostAsync(targetUrl, stringContent).Result;
+
+                    // success
+                    if (response.StatusCode == HttpStatusCode.OK)
+                    {
+                        _logger.LogInformation("Owner Verification Notices Pdf - HETS Pdf Service Response: OK");
+
+                        var pdfResponseBytes = GetPdf(response);
+
+                        // convert to string and log
+                        string pdfResponse = Encoding.Default.GetString(pdfResponseBytes);
+
+                        _logger.LogInformation("Owner Verification Notices Pdf - HETS Pdf Filename: {0}", fileName);
+                        _logger.LogInformation("Owner Verification Notices Pdf - HETS Pdf Size: {0}", pdfResponse.Length);
+
+                        // return content
+                        FileContentResult result = new FileContentResult(pdfResponseBytes, "application/pdf")
+                        {
+                            FileDownloadName = fileName
+                        };
+
+                        return result;
+                    }
+
+                    _logger.LogInformation("Owner Verification Notices Pdf - HETS Pdf Service Response: {0}", response.StatusCode);
+                }
+                catch (Exception ex)
+                {
+                    Debug.Write("Error generating pdf: " + ex.Message);
+                    return new ObjectResult(new HetsResponse("HETS-15", ErrorViewModel.GetDescription("HETS-15", _configuration)));
+                }
+
+                // problem occured
+                return new ObjectResult(new HetsResponse("HETS-15", ErrorViewModel.GetDescription("HETS-15", _configuration)));
+            }
+
+            // record not found
+            return new ObjectResult(new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-01", _configuration)));
+        }        
+
+        private static byte[] GetPdf(HttpResponseMessage response)
+        {
+            try
+            {
+                var pdfResponseBytes = response.Content.ReadAsByteArrayAsync();
+                pdfResponseBytes.Wait();
+
+                return pdfResponseBytes.Result;
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+                throw;
+            }
+        }
+
+        #endregion
 
         #region Owner Equipment Records
 

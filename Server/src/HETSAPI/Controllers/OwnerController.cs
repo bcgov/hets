@@ -145,6 +145,24 @@ namespace HETSAPI.Controllers
             return _service.OwnersSearchGetAsync(localareas, equipmenttypes, owner, status, hired);
         }
 
+        #region Get Verification Pdfs
+
+        /// <summary>
+        /// Get onwer verification pdf
+        /// </summary>
+        /// <remarks>Returns a PDF version of the owner vrification notices</remarks>
+        /// <param name="items">Array of owner id numbers to generate notices for</param>
+        /// <response code="200">OK</response>
+        [HttpPost]
+        [Route("/api/owners/verificationPdf")]
+        [SwaggerOperation("OwnersIdVerificationPdfPost")]
+        public virtual IActionResult OwnersIdVerificationPdfPost([FromBody]List<int> items)
+        {
+            return _service.OwnersIdVerificationPdfPostAsync(items);
+        }
+
+        #endregion
+
         #region Owner Equipment Records
 
         /// <summary>

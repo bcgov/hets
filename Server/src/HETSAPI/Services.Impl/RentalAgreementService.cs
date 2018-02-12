@@ -25,7 +25,6 @@ namespace HETSAPI.Services.Impl
     /// </summary>
     public class RentalAgreementService : ServiceBase, IRentalAgreementService
     {
-        private readonly HttpContext _appContext;
         private readonly DbAppContext _context;
         private readonly IConfiguration _configuration;
         private readonly ILogger _logger;
@@ -36,7 +35,6 @@ namespace HETSAPI.Services.Impl
         public RentalAgreementService(IHttpContextAccessor httpContextAccessor, IConfiguration configuration, DbAppContext context, ILoggerFactory loggerFactory)
             : base(httpContextAccessor, context)
         {
-            _appContext = httpContextAccessor.HttpContext;
             _context = context;
             _configuration = configuration;
             _logger = loggerFactory.CreateLogger<RentalAgreementService>();
@@ -253,7 +251,7 @@ namespace HETSAPI.Services.Impl
 
                 // pass the request on to the Pdf Micro Service
                 string pdfHost = _configuration["PDF_SERVICE_NAME"];
-                string pdfUrl = _configuration.GetSection("Constants:PdfUrl").Value;
+                string pdfUrl = _configuration.GetSection("Constants:RentalAgreementPdfUrl").Value;
                 string targetUrl = pdfHost + pdfUrl;                
 
                 // generate pdf document name [unique portion only]
@@ -297,10 +295,8 @@ namespace HETSAPI.Services.Impl
 
                         return result;
                     }
-                    else
-                    {
-                        _logger.LogInformation("Rental Agreement Pdf [Id: {0}] - HETS Pdf Service Response: {1}", id, response.StatusCode);
-                    }
+
+                    _logger.LogInformation("Rental Agreement Pdf [Id: {0}] - HETS Pdf Service Response: {1}", id, response.StatusCode);
                 }
                 catch (Exception ex)
                 {
