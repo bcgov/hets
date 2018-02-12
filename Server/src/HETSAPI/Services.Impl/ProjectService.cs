@@ -12,6 +12,16 @@ using Microsoft.Extensions.Configuration;
 namespace HETSAPI.Services.Impl
 {
     /// <summary>
+    /// Project Rental Agreement Clone Class - required to clone a previous agreement
+    /// </summary>
+    public class ProjectRentalAgreementClone
+    {
+        public int ProjectId { get; set; }
+        public int AgreementToCloneId { get; set; }
+        public int RentalAgreementId { get; set; }
+    }
+
+    /// <summary>
     /// Project Service
     /// </summary>
     public class ProjectService : ServiceBase, IProjectService
@@ -394,6 +404,185 @@ namespace HETSAPI.Services.Impl
 
             return new ObjectResult(new HetsResponse(result));
         }
+
+        # region Clone Project Agreements
+
+        /// <summary>
+        /// Get renatal agreements associated with a project by id
+        /// </summary>
+        /// <param name="id">id of Project to fetch agreements for</param>
+        /// <response code="200">OK</response>
+        public virtual IActionResult ProjectsIdGetAgreementsAsync(int id)
+        {
+            bool exists = _context.Projects.Any(a => a.Id == id);
+
+            if (exists)
+            {
+                List<RentalAgreement> result = _context.Projects.AsNoTracking()
+                    .Include(x => x.RentalAgreements)
+                        .ThenInclude(e => e.Equipment)
+                            .ThenInclude(d => d.DistrictEquipmentType)
+                    .Include(x => x.RentalAgreements)
+                        .ThenInclude(e => e.Equipment)
+                            .ThenInclude(a => a.EquipmentAttachments)
+                    .First(x => x.Id == id)
+                    .RentalAgreements
+                    .ToList();
+
+                return new ObjectResult(new HetsResponse(result));
+            }
+
+            // record not found
+            return new ObjectResult(new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-01", _configuration)));
+        }
+
+        /// <summary>
+        /// Update a rental agreement by cloning a previous project rental agreement
+        /// </summary>
+        /// <param name="id">Project id</param>
+        /// <param name="item"></param>
+        /// <response code="201">Rental Agreement update</response>
+        public virtual IActionResult ProjectsRentalAgreementClonePostAsync(int id, ProjectRentalAgreementClone item)
+        {
+            if (item != null && id == item.ProjectId)
+            {
+                bool exists = _context.Projects.Any(a => a.Id == id);
+
+                if (!exists)
+                {
+                   // record not found - project
+                    return new ObjectResult(new HetsResponse("HETS-04", ErrorViewModel.GetDescription("HETS-04", _configuration)));
+                }
+                
+                Project project = _context.Projects
+                    .Include(x => x.RentalAgreements)
+                        .ThenInclude(y => y.RentalAgreementRates)
+                    .Include(x => x.RentalAgreements)
+                        .ThenInclude(y => y.RentalAgreementConditions)
+                    .First(a => a.Id == id);
+
+                // check that the rental agreements exist
+                exists = project.RentalAgreements.Any(a => a.Id == item.RentalAgreementId);
+
+                if (!exists)
+                {
+                    // (RENTAL AGREEMENT) record not found
+                    return new ObjectResult(new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-01", _configuration)));
+                }
+
+                // check that the rental agreement to clone exist
+                exists = project.RentalAgreements.Any(a => a.Id == item.AgreementToCloneId);
+
+                if (!exists)
+                {
+                    // (RENTAL AGREEMENT) record not found
+                    return new ObjectResult(new HetsResponse("HETS-11", ErrorViewModel.GetDescription("HETS-11", _configuration)));
+                }
+
+                // ******************************************************************
+                // clone agreement
+                // ******************************************************************
+                int agreementToCloneIndex = project.RentalAgreements.FindIndex(a => a.Id == item.AgreementToCloneId);
+                int newRentalagreementIndex = project.RentalAgreements.FindIndex(a => a.Id == item.RentalAgreementId);
+
+                // update agreement attributes
+                project.RentalAgreements[newRentalagreementIndex].EstimateHours =
+                    project.RentalAgreements[agreementToCloneIndex].EstimateHours;
+
+                project.RentalAgreements[newRentalagreementIndex].EstimateStartWork =
+                    project.RentalAgreements[agreementToCloneIndex].EstimateStartWork;
+
+                project.RentalAgreements[newRentalagreementIndex].EquipmentRate =
+                    project.RentalAgreements[agreementToCloneIndex].EquipmentRate;
+
+                project.RentalAgreements[newRentalagreementIndex].Note =
+                    project.RentalAgreements[agreementToCloneIndex].Note;
+
+                project.RentalAgreements[newRentalagreementIndex].Number =
+                    project.RentalAgreements[agreementToCloneIndex].Number;
+
+                project.RentalAgreements[newRentalagreementIndex].RateComment =
+                    project.RentalAgreements[agreementToCloneIndex].RateComment;
+
+                project.RentalAgreements[newRentalagreementIndex].RatePeriod =
+                    project.RentalAgreements[agreementToCloneIndex].RatePeriod;
+
+                // update rates
+                project.RentalAgreements[newRentalagreementIndex].RentalAgreementRates = null;
+
+                foreach (RentalAgreementRate rate in project.RentalAgreements[agreementToCloneIndex].RentalAgreementRates)
+                {
+                    RentalAgreementRate temp = new RentalAgreementRate
+                    {
+                        Comment = rate.Comment,
+                        ComponentName = rate.ComponentName,
+                        Rate = rate.Rate,
+                        RatePeriod = rate.RatePeriod,
+                        IsIncludedInTotal = rate.IsIncludedInTotal,
+                        IsAttachment = rate.IsAttachment,
+                        PercentOfEquipmentRate = rate.PercentOfEquipmentRate
+                    };
+
+                    if (project.RentalAgreements[newRentalagreementIndex].RentalAgreementRates == null)
+                    {
+                        project.RentalAgreements[newRentalagreementIndex].RentalAgreementRates = 
+                            new List<RentalAgreementRate>();
+                    }
+
+                    project.RentalAgreements[newRentalagreementIndex].RentalAgreementRates.Add(temp);                       
+                }
+
+                // update conditions
+                project.RentalAgreements[newRentalagreementIndex].RentalAgreementConditions = null;
+
+                foreach (RentalAgreementCondition condition in project.RentalAgreements[agreementToCloneIndex].RentalAgreementConditions)
+                {
+                    RentalAgreementCondition temp = new RentalAgreementCondition
+                    {
+                        Comment = condition.Comment,
+                        ConditionName = condition.ConditionName                        
+                    };
+
+                    if (project.RentalAgreements[newRentalagreementIndex].RentalAgreementConditions == null)
+                    {
+                        project.RentalAgreements[newRentalagreementIndex].RentalAgreementConditions =
+                            new List<RentalAgreementCondition>();
+                    }
+
+                    project.RentalAgreements[newRentalagreementIndex].RentalAgreementConditions.Add(temp);
+                }
+
+                // save the changes
+                _context.SaveChanges();
+
+                // ******************************************************************
+                // return update rental agreement to update the screen
+                // ******************************************************************
+                RentalAgreement result = _context.RentalAgreements.AsNoTracking()
+                    .Include(x => x.Equipment)
+                        .ThenInclude(y => y.Owner)
+                    .Include(x => x.Equipment)
+                        .ThenInclude(y => y.DistrictEquipmentType)
+                            .ThenInclude(d => d.EquipmentType)
+                    .Include(x => x.Equipment)
+                        .ThenInclude(y => y.EquipmentAttachments)
+                    .Include(x => x.Equipment)
+                        .ThenInclude(y => y.LocalArea.ServiceArea.District.Region)
+                    .Include(x => x.Project)
+                        .ThenInclude(p => p.District.Region)
+                    .Include(x => x.RentalAgreementConditions)
+                    .Include(x => x.RentalAgreementRates)
+                    .Include(x => x.TimeRecords)
+                    .First(a => a.Id == item.RentalAgreementId);
+
+                return new ObjectResult(new HetsResponse(result));
+            }
+
+            // record not found
+            return new ObjectResult(new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-01", _configuration)));
+        }
+
+        #endregion
 
         #region Project Time Records
 
