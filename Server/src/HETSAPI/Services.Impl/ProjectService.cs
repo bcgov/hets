@@ -205,84 +205,91 @@ namespace HETSAPI.Services.Impl
 
             if (exists)
             {
-                Project result = _context.Projects.AsNoTracking()
-                    .Include(x => x.District.Region)
-                    .Include(x => x.Contacts)                    
-                    .Include(x => x.PrimaryContact)
-                    .Include(x => x.RentalRequests)
-                        .ThenInclude(e => e.DistrictEquipmentType)
-                            .ThenInclude(d => d.EquipmentType)
-                    .Include(x => x.RentalRequests)
-                        .ThenInclude(y => y.RentalRequestRotationList)
-                    .Include(x => x.RentalAgreements)
-                        .ThenInclude(e => e.Equipment)
-                            .ThenInclude(d => d.DistrictEquipmentType)
-                    .First(a => a.Id == id);
-
-                // calculate the number of hired (yes, forced hire) equipment
-                // count active requests (In Progress)
-                int countActiveRequests = 0;
-
-                foreach (RentalRequest rentalRequest in result.RentalRequests)
-                {                    
-                    int temp = 0;
-
-                    foreach (RentalRequestRotationList equipment in rentalRequest.RentalRequestRotationList)
-                    {
-                        if (equipment.OfferResponse != null &&
-                            equipment.OfferResponse.Equals("Yes", StringComparison.InvariantCultureIgnoreCase))
-                        {
-                            temp++;
-                        }
-
-                        if (equipment.IsForceHire != null &&
-                            equipment.IsForceHire == true)
-                        {
-                            temp++;
-                        }                        
-                    }
-
-                    rentalRequest.YesCount = temp;
-                    rentalRequest.RentalRequestRotationList = null;
-
-                    if (rentalRequest.Status == null ||
-                        rentalRequest.Status.Equals("In Progress", StringComparison.InvariantCultureIgnoreCase))
-                    {
-                        countActiveRequests++;
-                    }
-                }
-
-                // count active agreements (Active)
-                int countActiveAgreements = 0;
-
-                foreach (RentalAgreement rentalAgreement in result.RentalAgreements)
-                {                    
-                    if (rentalAgreement.Status == null ||
-                        rentalAgreement.Status.Equals("Active", StringComparison.InvariantCultureIgnoreCase))
-                    {
-                        countActiveAgreements++;
-                    }
-                }
-
-                // Only allow editing the "Status" field under the following conditions:
-                // * If Project.status is currently "Active" AND                
-                //   (All child RentalRequests.Status != "In Progress" AND All child RentalAgreement.status != "Active"))
-                // * If Project.status is currently != "Active"                               
-                if (result.Status.Equals("Active", StringComparison.InvariantCultureIgnoreCase) &&
-                    (countActiveRequests > 0 || countActiveAgreements > 0))
-                {
-                    result.CanEditStatus = false;
-                }
-                else
-                {
-                    result.CanEditStatus = true;
-                }
+                Project result = GetProjectDetais(id);
 
                 return new ObjectResult(new HetsResponse(result));
             }
 
             // record not found
             return new ObjectResult(new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-01", _configuration)));
+        }
+
+        private Project GetProjectDetais(int id)
+        {            
+            Project result = _context.Projects.AsNoTracking()
+                .Include(x => x.District.Region)
+                .Include(x => x.Contacts)
+                .Include(x => x.PrimaryContact)
+                .Include(x => x.RentalRequests)
+                    .ThenInclude(e => e.DistrictEquipmentType)
+                        .ThenInclude(d => d.EquipmentType)
+                .Include(x => x.RentalRequests)
+                    .ThenInclude(y => y.RentalRequestRotationList)
+                .Include(x => x.RentalAgreements)
+                    .ThenInclude(e => e.Equipment)
+                        .ThenInclude(d => d.DistrictEquipmentType)
+                .First(a => a.Id == id);
+
+            // calculate the number of hired (yes, forced hire) equipment
+            // count active requests (In Progress)
+            int countActiveRequests = 0;
+
+            foreach (RentalRequest rentalRequest in result.RentalRequests)
+            {
+                int temp = 0;
+
+                foreach (RentalRequestRotationList equipment in rentalRequest.RentalRequestRotationList)
+                {
+                    if (equipment.OfferResponse != null &&
+                        equipment.OfferResponse.Equals("Yes", StringComparison.InvariantCultureIgnoreCase))
+                    {
+                        temp++;
+                    }
+
+                    if (equipment.IsForceHire != null &&
+                        equipment.IsForceHire == true)
+                    {
+                        temp++;
+                    }
+                }
+
+                rentalRequest.YesCount = temp;
+                rentalRequest.RentalRequestRotationList = null;
+
+                if (rentalRequest.Status == null ||
+                    rentalRequest.Status.Equals("In Progress", StringComparison.InvariantCultureIgnoreCase))
+                {
+                    countActiveRequests++;
+                }
+            }
+
+            // count active agreements (Active)
+            int countActiveAgreements = 0;
+
+            foreach (RentalAgreement rentalAgreement in result.RentalAgreements)
+            {
+                if (rentalAgreement.Status == null ||
+                    rentalAgreement.Status.Equals("Active", StringComparison.InvariantCultureIgnoreCase))
+                {
+                    countActiveAgreements++;
+                }
+            }
+
+            // Only allow editing the "Status" field under the following conditions:
+            // * If Project.status is currently "Active" AND                
+            //   (All child RentalRequests.Status != "In Progress" AND All child RentalAgreement.status != "Active"))
+            // * If Project.status is currently != "Active"                               
+            if (result.Status.Equals("Active", StringComparison.InvariantCultureIgnoreCase) &&
+                (countActiveRequests > 0 || countActiveAgreements > 0))
+            {
+                result.CanEditStatus = false;
+            }
+            else
+            {
+                result.CanEditStatus = true;
+            }
+
+            return result;
         }
 
         /// <summary>
@@ -305,7 +312,9 @@ namespace HETSAPI.Services.Impl
                 // save the changes
                 _context.SaveChanges();
 
-                return new ObjectResult(new HetsResponse(item));
+                Project result = GetProjectDetais(id);
+
+                return new ObjectResult(new HetsResponse(result));
             }
 
             // record not found
