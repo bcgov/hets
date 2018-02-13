@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Xml;
 using System.Xml.Serialization;
 using Hangfire.Console;
 using Hangfire.Console.Progress;
@@ -23,6 +24,108 @@ namespace HETSAPI.Import
         /// Progress Property
         /// </summary>
         public static string OldTableProgress => OldTable + "_Progress";
+
+
+        /// <summary>
+        /// Get the list of mapped records.  
+        /// </summary>
+        /// <param name="dbContext"></param>
+        /// <param name="fileLocation"></param>
+        /// <returns></returns>
+        public static List<ImportMapRecord> GetImportMap(DbAppContext dbContext, string fileLocation)
+        {
+            List<ImportMapRecord> result = new List<ImportMapRecord>();
+            string rootAttr = "ArrayOf" + OldTable;
+            XmlSerializer ser = new XmlSerializer(typeof(ImportModels.Owner[]), new XmlRootAttribute(rootAttr));
+            ser.UnknownAttribute += ImportUtility.UnknownAttribute;
+            ser.UnknownElement += ImportUtility.UnknownElement;
+
+
+            MemoryStream memoryStream = ImportUtility.MemoryStreamGenerator(XmlFileName, OldTable, fileLocation, rootAttr);
+            XmlReader reader = new XmlTextReader(memoryStream);
+            if (ser.CanDeserialize(reader))
+            {
+
+
+                ImportModels.Owner[] legacyItems = (ImportModels.Owner[])ser.Deserialize(reader);
+                List<string> keys = new List<string>();
+                Dictionary<string, string> givenNames = new Dictionary<string, string>();
+                Dictionary<string, string> surnames = new Dictionary<string, string>();
+                Dictionary<string, string> orgNames = new Dictionary<string, string>();
+                Dictionary<string, int> oldkeys = new Dictionary<string, int>();
+                foreach (ImportModels.Owner item in legacyItems)
+                {
+                    string givenName = item.Owner_First_Name;
+                    string surname = item.Owner_Last_Name;
+                    int oldKey = item.Popt_Id;
+                    string organizationName = "" + item.CGL_Company;
+                    string key = organizationName + " " + givenName + " " + surname;
+                    if (!keys.Contains(key))
+                    {
+                        keys.Add(key);
+                        givenNames.Add(key, givenName);
+                        surnames.Add(key, surname);
+                        orgNames.Add(key, organizationName);
+                        oldkeys.Add(key, oldKey);
+                    }
+                }
+
+                keys.Sort();
+                int currentOwner = 0;
+                foreach (string key in keys)
+                {
+
+                    ImportMapRecord importMapRecordOrganization = new ImportMapRecord();
+
+                    importMapRecordOrganization.TableName = NewTable;
+                    importMapRecordOrganization.MappedColumn = "OrganizationName";
+                    importMapRecordOrganization.OriginalValue = orgNames[key];
+                    importMapRecordOrganization.NewValue = "OwnerFirst" + currentOwner;
+                    result.Add(importMapRecordOrganization);
+
+                    ImportMapRecord importMapRecordFirstName = new ImportMapRecord();
+
+                    importMapRecordFirstName.TableName = NewTable;
+                    importMapRecordFirstName.MappedColumn = "Owner_First_Name";
+                    importMapRecordFirstName.OriginalValue = givenNames[key];
+                    importMapRecordFirstName.NewValue = "OwnerFirst" + currentOwner;
+                    result.Add(importMapRecordFirstName);
+
+                    ImportMapRecord importMapRecordLastName = new ImportMapRecord();
+
+                    importMapRecordLastName.TableName = NewTable;
+                    importMapRecordLastName.MappedColumn = "Owner_Last_Name";
+                    importMapRecordLastName.OriginalValue = givenNames[key];
+                    importMapRecordLastName.NewValue = "OwnerLast" + currentOwner;
+                    result.Add(importMapRecordLastName);
+
+                    // now update the owner record.
+                    ImportMap importMap = dbContext.ImportMaps.FirstOrDefault(x => x.OldTable == OldTable && x.OldKey == oldkeys[key].ToString());
+
+                    if (importMap != null)
+                    {
+                        Owner owner = dbContext.Owners.FirstOrDefault(x => x.Id == importMap.NewKey);
+                        if (owner != null)
+                        {
+                            owner.GivenName = "OwnerFirst" + currentOwner;
+                            owner.Surname = "OwnerLast" + currentOwner;                           
+
+                            owner.RegisteredCompanyNumber = ImportUtility.ScrambleString(owner.RegisteredCompanyNumber);
+                            owner.WorkSafeBCPolicyNumber = ImportUtility.ScrambleString(owner.WorkSafeBCPolicyNumber);
+                            owner.OrganizationName = "Company " + currentOwner;
+
+                            dbContext.Owners.Update(owner);
+                            dbContext.SaveChangesForImport();
+                        }
+                    }
+
+                    currentOwner++;
+
+                }
+            }
+
+            return result;
+        }
 
         /// <summary>
         /// Import Owner Records
@@ -343,7 +446,97 @@ namespace HETSAPI.Import
 
                 dbContext.Owners.Update(owner);
             }
-        }       
+        }
+
+        public static void Obfuscate(PerformContext performContext, DbAppContext dbContext, string sourceLocation, string destinationLocation, string systemId)
+        {
+            int startPoint = ImportUtility.CheckInterMapForStartPoint(dbContext, "Obfuscate_" + OldTableProgress, BCBidImport.SigId);
+
+            if (startPoint == BCBidImport.SigId)    // this means the import job it has done today is complete for all the records in the xml file.
+            {
+                performContext.WriteLine("*** Obfuscating " + XmlFileName + " is complete from the former process ***");
+                return;
+            }
+            try
+            {
+                string rootAttr = "ArrayOf" + OldTable;
+
+                // create Processer progress indicator
+                performContext.WriteLine("Processing " + OldTable);
+                IProgressBar progress = performContext.WriteProgressBar();
+                progress.SetValue(0);
+
+                // create serializer and serialize xml file
+                XmlSerializer ser = new XmlSerializer(typeof(ImportModels.Owner[]), new XmlRootAttribute(rootAttr));
+                MemoryStream memoryStream = ImportUtility.MemoryStreamGenerator(XmlFileName, OldTable, sourceLocation, rootAttr);
+                ImportModels.Owner[] legacyItems = (ImportModels.Owner[])ser.Deserialize(memoryStream);
+
+                List<string> usernames = new List<string>();
+                performContext.WriteLine("Obfuscating owner data");
+                progress.SetValue(0);
+                int currentOwner = 0;
+
+                List<ImportMapRecord> importMapRecords = new List<ImportMapRecord>();
+
+                foreach (ImportModels.Owner item in legacyItems.WithProgress(progress))
+                {
+                    item.Created_By = systemId;
+                    if (item.Modified_By != null)
+                    {
+                        item.Modified_By = systemId;
+                    }
+
+                    ImportMapRecord importMapRecordOrganization = new ImportMapRecord();
+
+                    importMapRecordOrganization.TableName = NewTable;
+                    importMapRecordOrganization.MappedColumn = "OrganizationName";
+                    importMapRecordOrganization.OriginalValue = item.CGL_Company;
+                    importMapRecordOrganization.NewValue = "Company " + currentOwner;
+                    importMapRecords.Add(importMapRecordOrganization);
+
+                    ImportMapRecord importMapRecordFirstName = new ImportMapRecord();
+
+                    importMapRecordFirstName.TableName = NewTable;
+                    importMapRecordFirstName.MappedColumn = "Owner_First_Name";
+                    importMapRecordFirstName.OriginalValue = item.Owner_First_Name;
+                    importMapRecordFirstName.NewValue = "OwnerFirst" + currentOwner;
+                    importMapRecords.Add(importMapRecordFirstName);
+
+                    ImportMapRecord importMapRecordLastName = new ImportMapRecord();
+
+                    importMapRecordLastName.TableName = NewTable;
+                    importMapRecordLastName.MappedColumn = "Owner_Last_Name";
+                    importMapRecordLastName.OriginalValue = item.Owner_Last_Name;
+                    importMapRecordLastName.NewValue = "OwnerLast" + currentOwner;
+                    importMapRecords.Add(importMapRecordLastName);
+
+
+                    item.Owner_First_Name = "OwnerFirst" + currentOwner;
+                    item.Owner_Last_Name = "OwnerLast" + currentOwner;
+                    item.Contact_Person = ImportUtility.ScrambleString(item.Contact_Person);
+                    item.Comment = ImportUtility.ScrambleString(item.Comment);
+                    item.WCB_Num = ImportUtility.ScrambleString(item.WCB_Num);
+                    item.CGL_Company = ImportUtility.ScrambleString(item.CGL_Company);
+                    item.CGL_Policy = ImportUtility.ScrambleString(item.CGL_Policy);
+
+                    currentOwner++;
+                }
+                
+                performContext.WriteLine("Writing " + XmlFileName + " to " + destinationLocation);
+                // write out the array.
+                FileStream fs = ImportUtility.GetObfuscationDestination(XmlFileName, destinationLocation);
+                ser.Serialize(fs, legacyItems);
+                fs.Close();
+                // write out the spreadsheet of import records.
+                ImportUtility.WriteImportRecordsToExcel(destinationLocation, importMapRecords, OldTable);
+
+            }
+            catch (Exception e)
+            {
+                performContext.WriteLine("*** ERROR ***");
+                performContext.WriteLine(e.ToString());
+            }
+        }
     }
 }
 

@@ -28,17 +28,7 @@ namespace HETSAPI.Import
         /// </summary>
         public static string OldTableProgress => OldTable + "_Progress";
 
-        static void UnknownElement(object sender, XmlElementEventArgs e)
-        {
-            Console.WriteLine("Unexpected element: {0} as line {1}, column {2}",
-                e.Element.Name, e.LineNumber, e.LinePosition);
-        }
 
-        static void UnknownAttribute(object sender, XmlAttributeEventArgs e)
-        {
-            Console.WriteLine("Unexpected attribute: {0} as line {1}, column {2}",
-                e.Attr.Name, e.LineNumber, e.LinePosition);
-        }
 
         /// <summary>
         /// Get the list of mapped records.  
@@ -51,8 +41,8 @@ namespace HETSAPI.Import
             List<ImportMapRecord> result = new List<ImportMapRecord>();
             string rootAttr = "ArrayOf" + OldTable;
             XmlSerializer ser = new XmlSerializer(typeof(UserHETS[]), new XmlRootAttribute(rootAttr));
-            ser.UnknownAttribute += UnknownAttribute;
-            ser.UnknownElement += UnknownElement;
+            ser.UnknownAttribute += ImportUtility.UnknownAttribute;
+            ser.UnknownElement += ImportUtility.UnknownElement;
 
             MemoryStream memoryStream = ImportUtility.MemoryStreamGenerator(XmlFileName, OldTable, fileLocation, rootAttr);
             XmlReader reader = new XmlTextReader(memoryStream);
@@ -401,6 +391,94 @@ namespace HETSAPI.Import
                 user.AppCreateTimestamp = DateTime.UtcNow;
                 user.Active = true;
                 dbContext.Users.Update(user);
+            }
+        }
+
+        public static void Obfuscate(PerformContext performContext, DbAppContext dbContext, string sourceLocation, string destinationLocation, string systemId)
+        {
+            int startPoint = ImportUtility.CheckInterMapForStartPoint(dbContext, "Obfuscate_" + OldTableProgress, BCBidImport.SigId);
+
+            if (startPoint == BCBidImport.SigId)    // this means the import job it has done today is complete for all the records in the xml file.
+            {
+                performContext.WriteLine("*** Obfuscating " + XmlFileName + " is complete from the former process ***");
+                return;
+            }
+            try
+            {
+                string rootAttr = "ArrayOf" + OldTable;
+
+                // create Processer progress indicator
+                performContext.WriteLine("Processing " + OldTable);
+                IProgressBar progress = performContext.WriteProgressBar();
+                progress.SetValue(0);
+
+                // create serializer and serialize xml file
+                XmlSerializer ser = new XmlSerializer(typeof(ImportModels.UserHETS[]), new XmlRootAttribute(rootAttr));
+                MemoryStream memoryStream = ImportUtility.MemoryStreamGenerator(XmlFileName, OldTable, sourceLocation, rootAttr);
+                ImportModels.UserHETS[] legacyItems = (ImportModels.UserHETS[])ser.Deserialize(memoryStream);
+
+                List<string> usernames = new List<string>();                
+                performContext.WriteLine("Normalizing User Data - Pass 1 ");
+                progress.SetValue(0);
+                foreach (UserHETS item in legacyItems.WithProgress(progress))
+                {
+                    string username = NormalizeUserCode(item.User_Cd);
+
+                    if (!usernames.Contains(username))
+                    {
+                        usernames.Add(username);
+
+                    }
+                }
+                // now create the mapping of old to new usernames.
+                Dictionary<string, int> userMap = new Dictionary<string, int>();
+
+                usernames.Sort();
+
+                int currentUser = 0;
+
+                List<ImportMapRecord> importMapRecords = new List<ImportMapRecord>();
+
+                foreach (string username in usernames)
+                {
+                    userMap.Add(username, currentUser);
+                    ImportMapRecord importMapRecord = new ImportMapRecord();
+                    importMapRecord.TableName = NewTable;
+                    importMapRecord.MappedColumn = "User_cd";
+                    importMapRecord.OriginalValue = username;
+                    importMapRecord.NewValue = "TESTER" + currentUser;
+                    importMapRecords.Add(importMapRecord);
+                    currentUser++;
+                }
+
+
+                performContext.WriteLine("Normalizing User Data - Pass 2");
+                progress.SetValue(0);
+                foreach (UserHETS item in legacyItems.WithProgress(progress))
+                {
+                    if (item.Modified_By != null)
+                    {
+                        item.Modified_By = systemId;
+                    }
+
+                    string oldCode = NormalizeUserCode(item.User_Cd);
+                    item.User_Cd = "TESTER" + userMap[oldCode].ToString();
+                    // special case for the user table - as the old data does not have first name / last name.
+                    item.Created_By = userMap[oldCode].ToString() + ", Tester (IDIR\\TESTER" + userMap[oldCode].ToString() + ")";
+                }
+                performContext.WriteLine("Writing " + XmlFileName + " to " + destinationLocation);
+                // write out the array.
+                FileStream fs = ImportUtility.GetObfuscationDestination(XmlFileName, destinationLocation);
+                ser.Serialize(fs, legacyItems);
+                fs.Close();
+                // write out the spreadsheet of import records.
+                ImportUtility.WriteImportRecordsToExcel(destinationLocation, importMapRecords, OldTable);
+
+            }
+            catch (Exception e)
+            {
+                performContext.WriteLine("*** ERROR ***");
+                performContext.WriteLine(e.ToString());
             }
         }
     }
