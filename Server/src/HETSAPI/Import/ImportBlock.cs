@@ -7,6 +7,7 @@ using System.Xml.Serialization;
 using Hangfire.Console.Progress;
 using HETSAPI.ImportModels;
 using HETSAPI.Models;
+using System.Collections.Generic;
 
 namespace HETSAPI.Import
 {
@@ -199,6 +200,55 @@ namespace HETSAPI.Import
 
                 dbContext.LocalAreaRotationLists.Add(instance);
             }            
+        }
+
+
+        public static void Obfuscate(PerformContext performContext, DbAppContext dbContext, string sourceLocation, string destinationLocation, string systemId)
+        {
+            int startPoint = ImportUtility.CheckInterMapForStartPoint(dbContext, "Obfuscate_" + OldTableProgress, BCBidImport.SigId);
+
+            if (startPoint == BCBidImport.SigId)    // this means the import job it has done today is complete for all the records in the xml file.
+            {
+                performContext.WriteLine("*** Obfuscating " + XmlFileName + " is complete from the former process ***");
+                return;
+            }
+            try
+            {
+                string rootAttr = "ArrayOf" + OldTable;
+
+                // create Processer progress indicator
+                performContext.WriteLine("Processing " + OldTable);
+                IProgressBar progress = performContext.WriteProgressBar();
+                progress.SetValue(0);
+
+                // create serializer and serialize xml file
+                XmlSerializer ser = new XmlSerializer(typeof(ImportModels.Block[]), new XmlRootAttribute(rootAttr));
+                MemoryStream memoryStream = ImportUtility.MemoryStreamGenerator(XmlFileName, OldTable, sourceLocation, rootAttr);
+                ImportModels.Block[] legacyItems = (ImportModels.Block[])ser.Deserialize(memoryStream);
+
+                performContext.WriteLine("Obfuscating Block data");
+                progress.SetValue(0);
+                
+                foreach (ImportModels.Block item in legacyItems.WithProgress(progress))
+                {
+                    item.Created_By = systemId;                    
+                    
+                    item.Closed_Comments = ImportUtility.ScrambleString(item.Closed_Comments);
+                }
+
+                performContext.WriteLine("Writing " + XmlFileName + " to " + destinationLocation);
+                // write out the array.
+                FileStream fs = ImportUtility.GetObfuscationDestination(XmlFileName, destinationLocation);
+                ser.Serialize(fs, legacyItems);
+                fs.Close();
+                // no excel for Block.
+
+            }
+            catch (Exception e)
+            {
+                performContext.WriteLine("*** ERROR ***");
+                performContext.WriteLine(e.ToString());
+            }
         }
     }
 }
