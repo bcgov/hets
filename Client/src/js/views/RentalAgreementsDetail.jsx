@@ -15,6 +15,7 @@ import EquipmentRentalRatesEditDialog from './dialogs/EquipmentRentalRatesEditDi
 import RentalAgreementsEditDialog from './dialogs/RentalAgreementsEditDialog.jsx';
 import RentalConditionsEditDialog from './dialogs/RentalConditionsEditDialog.jsx';
 import RentalRatesEditDialog from './dialogs/RentalRatesEditDialog.jsx';
+import CloneDialog from './dialogs/CloneDialog.jsx';
 
 import * as Api from '../api';
 import * as Constant from '../constants';
@@ -58,6 +59,9 @@ var RentalAgreementsDetail = React.createClass({
       showRentalRateDialog: false,
       showAttachmentRateDialog: false,
       showConditionDialog: false,
+      showCloneDialog: false,
+
+      cloneRentalAgreementError: '',
 
       returnUrl: (this.props.location.state || {}).returnUrl || Constant.RENTAL_REQUESTS_PATHNAME,
       rentalRate: {},
@@ -253,6 +257,29 @@ var RentalAgreementsDetail = React.createClass({
     });
   },
 
+  openCloneDialog() {
+    this.setState({ showCloneDialog: true });
+  },
+
+  closeCloneDialog() {
+    this.setState({ showCloneDialog: false, cloneRentalAgreementError: '' });
+  },
+
+  cloneRentalAgreement(rentalAgreementCloneId) {
+    var data = {
+      projectId: this.props.rentalAgreement.project.id,
+      agreementToCloneId: rentalAgreementCloneId,
+      rentalAgreementId: this.props.rentalAgreement.id,
+    };
+    this.setState({ cloneRentalAgreementError: '' });
+    Api.cloneProjectRentalAgreement(data).then(() => {
+      this.closeCloneDialog();
+    })
+    .catch((error) => {
+      this.setState({ cloneRentalAgreementError: error });
+    });
+  },
+
   render() {
     var rentalAgreement = this.props.rentalAgreement;
     var rentalConditions = this.props.rentalConditions;
@@ -271,12 +298,7 @@ var RentalAgreementsDetail = React.createClass({
         </Col>
         <Col md={4}>
           <div className="pull-right">
-            <Unimplemented>
-              <Button><Glyphicon glyph="time" title="Time Entry" /></Button>
-            </Unimplemented>
-            <Unimplemented>
-              <Button onClick={ this.email }><Glyphicon glyph="envelope" title="E-mail" /></Button>
-            </Unimplemented>
+            <Button disabled={ !rentalAgreement.isActive } onClick={ this.openCloneDialog }>Clone</Button>
             <Button title="Return to List" onClick={ browserHistory.goBack }><Glyphicon glyph="arrow-left" /> Return to List</Button>
           </div>
         </Col>
@@ -597,6 +619,15 @@ var RentalAgreementsDetail = React.createClass({
           rentalConditions={ rentalConditions } 
           onSave={ this.saveCondition } 
           onClose={ this.closeConditionDialog } 
+        />
+      }
+      { this.state.showCloneDialog &&
+        <CloneDialog 
+          show={ this.state.showCloneDialog }  
+          onSave={ this.cloneRentalAgreement } 
+          onClose={ this.closeCloneDialog }
+          rentalAgreement={ rentalAgreement }
+          cloneRentalAgreementError={ this.state.cloneRentalAgreementError  } 
         />
       }
     </div>;
