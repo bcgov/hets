@@ -117,7 +117,7 @@ var ProjectsEditDialog = React.createClass({
         <FormGroup controlId="projectStatus" validationState={ this.state.projectStatusCodeError ? 'error' : null }>
           <ControlLabel>Project Status</ControlLabel>
           <DropdownControl id="projectStatus" title={ this.state.projectStatus } updateState={ this.updateState } disabled={ !this.props.project.canEditStatus } 
-            placeholder="None" 
+            value={ this.state.projectStatus }
             items={[ Constant.PROJECT_STATUS_CODE_ACTIVE, Constant.PROJECT_STATUS_CODE_COMPLETED ]}
           />
           <HelpBlock>{ this.state.projectStatusCodeError }</HelpBlock>
