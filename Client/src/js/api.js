@@ -1050,6 +1050,13 @@ export function addProjectNote(projectId, note) {
   });
 }
 
+export function getProjectRentalAgreements(projectId) {
+  return new ApiRequest(`/projects/${ projectId }/rentalAgreements`).get().then(response => {
+    var rentalAgreements = normalize(response.data);
+    debugger //eslint-disable-line
+  });
+}
+
 ////////////////////
 // Rental Requests
 ////////////////////

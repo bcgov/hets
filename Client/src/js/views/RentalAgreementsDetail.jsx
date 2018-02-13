@@ -67,6 +67,7 @@ var RentalAgreementsDetail = React.createClass({
   },
 
   componentDidMount() {
+    Api.getProjectRentalAgreements(16);
     this.fetch();
   },
 
