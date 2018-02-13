@@ -186,7 +186,7 @@ var RentalAgreementsDetail = React.createClass({
   saveAttachmentRate(attachmentRate) {
     // Update or add accordingly
     var isNew = !attachmentRate.id;
-    var savePromise = isNew ? Api.addRentalRate : Api.updateRentalRate;
+    var savePromise = isNew ? Api.addRentalRates : Api.updateRentalRate;
 
     savePromise(attachmentRate).finally(() => {
       this.fetch();

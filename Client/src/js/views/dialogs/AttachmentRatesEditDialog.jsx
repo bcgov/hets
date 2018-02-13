@@ -1,7 +1,7 @@
 import React from 'react';
 
 import { Grid, Row, Col } from 'react-bootstrap';
-import { Form, FormGroup, HelpBlock, ControlLabel, FormControl, Button, Glyphicon } from 'react-bootstrap';
+import { Form, FormGroup, HelpBlock, ControlLabel, Button, Glyphicon } from 'react-bootstrap';
 
 import _ from 'lodash';
 
@@ -10,7 +10,7 @@ import EditDialog from '../../components/EditDialog.jsx';
 import FormInputControl from '../../components/FormInputControl.jsx';
 import CheckboxControl from '../../components/CheckboxControl.jsx';
 
-import { isBlank, formatCurrency } from '../../utils/string';
+import { isBlank } from '../../utils/string';
 
 const PERCENT_RATE = '%';
 const DOLLAR_RATE = '$';
@@ -37,7 +37,7 @@ var AttachmentRatesEditDialog = React.createClass({
       rate: attachmentRate.rate || 0.0,
       percentOfEquipmentRate: attachmentRate.percentOfEquipmentRate || 0,
       comment: attachmentRate.comment || '',
-      includeInTotal: attachmentRate.isIncludedInTotal || false,
+      isIncludedInTotal: attachmentRate.isIncludedInTotal || false,
       ratePeriod: rentalAgreement.ratePeriod,  // The period for attachments is the same as for the Pay Rate so is there, but not displayed.
       numberOfInputs: 1,
       forms: {
@@ -50,17 +50,19 @@ var AttachmentRatesEditDialog = React.createClass({
           percentOrRateValue: isNew ? 10 : this.props.attachmentRate.rate || this.props.attachmentRate.percentOfEquipmentRate || 0,
           commentError: '',
           componentNameError: '',
+          isIncludedInTotal: this.props.attachmentRate.isIncludedInTotal || false,
+          ratePeriod: rentalAgreement.ratePeriod,
         },
       },
 
-      ui : {
-        percentOrRateOption: isNew || this.props.attachmentRate.percentOfEquipmentRate > 0 ? PERCENT_RATE : DOLLAR_RATE,
-        percentOrRateValue: isNew ? 10 : this.props.attachmentRate.rate || this.props.attachmentRate.percentOfEquipmentRate || 0,  // Default for new records is 10%
-      },
+      // ui : {
+      //   percentOrRateOption: isNew || this.props.attachmentRate.percentOfEquipmentRate > 0 ? PERCENT_RATE : DOLLAR_RATE,
+      //   percentOrRateValue: isNew ? 10 : this.props.attachmentRate.rate || this.props.attachmentRate.percentOfEquipmentRate || 0,  // Default for new records is 10%
+      // },
 
-      componentNameError: '',
-      commentError: '',
-      rateError: '',
+      // componentNameError: '',
+      // commentError: '',
+      // rateError: '',
     };
   },
 
@@ -79,7 +81,6 @@ var AttachmentRatesEditDialog = React.createClass({
   },
 
   updateUIState(value) {
-    // var nextState = { ui: { ...this.state.ui, ...state } };
 
     // // Update rate and percentOfEquipmentRate fields from what has been entered in the form
     // var option = nextState.ui.percentOrRateOption;
@@ -93,7 +94,15 @@ var AttachmentRatesEditDialog = React.createClass({
     let stateValue = Object.values(value)[0];
     let number = property.match(/\d+/g)[0];
     let stateName = property.match(/[a-zA-Z]+/g)[0];
-    let state = { [stateName]:  stateValue };
+    // let nextState = { ui: { ...this.state.ui, ...value } };
+    let nextState = { ...this.state.forms, [number]: { ...this.state.forms[number], ...{ [stateName]: stateValue } } };
+    let option = nextState[number].percentOrRateOption;
+    let percentOrRateValue = nextState[number].percentOrRateValue;
+    let state = { 
+      [stateName]:  stateValue,
+      rate: option == DOLLAR_RATE ? percentOrRateValue : 0,
+      percentOfEquipmentRate: option == PERCENT_RATE ? percentOrRateValue : 0,
+    };
     let updatedState = { ...this.state.forms, [number]: { ...this.state.forms[number], ...state } };
     this.setState({ forms: updatedState });
   },
@@ -101,7 +110,7 @@ var AttachmentRatesEditDialog = React.createClass({
   didChange() {
     // if (this.state.componentName !== this.props.attachmentRate.componentName) { return true; }
     // if (this.state.rate !== this.props.attachmentRate.rate) { return true; }
-    // if (this.state.includeInTotal !== this.props.attachmentRate.isIncludedInTotal) { return true; }
+    // if (this.state.isIncludedInTotal !== this.props.attachmentRate.isIncludedInTotal) { return true; }
     // if (this.state.percentOfEquipmentRate !== this.props.attachmentRate.percentOfEquipmentRate) { return true; }
     // if (this.state.comment !== this.props.attachmentRate.comment) { return true; }
 
@@ -173,26 +182,35 @@ var AttachmentRatesEditDialog = React.createClass({
   },
 
   onSave() {
-    this.props.onSave({ ...this.props.attachmentRate, ...{
-      componentName: this.state.componentName,
-      rate: this.state.rate,
-      percentOfEquipmentRate: this.state.percentOfEquipmentRate,
-      ratePeriod: this.state.ratePeriod,
-      comment: this.state.comment,
-      isIncludedInTotal: this.state.includeInTotal,
-    }});
+    let forms = this.state.forms;
+    let attachments = Object.keys(forms).map((key) => {
+      delete forms[key].commentError;
+      delete forms[key].componentNameError;
+      delete forms[key].percentOrRateOption;
+      delete forms[key].percentOrRateValue;
+      return { ...this.props.rentalAgreement, rentalAgreement: { id: this.props.rentalAgreement.id }, ...forms[key] };
+    });
+    // this.props.onSave({ ...this.props.attachmentRate, ...{
+    //   componentName: this.state.componentName,
+    //   rate: this.state.rate,
+    //   percentOfEquipmentRate: this.state.percentOfEquipmentRate,
+    //   ratePeriod: this.state.ratePeriod,
+    //   comment: this.state.comment,
+    //   isIncludedInTotal: this.state.isIncludedInTotal,
+    // }});
+    this.props.onSave(attachments);
   },
 
-  dollarValue() {
-    var option = this.state.ui.percentOrRateOption;
-    var value = this.state.ui.percentOrRateValue;
-    var equipmentRate = this.props.attachmentRate.rentalAgreement ? this.props.attachmentRate.rentalAgreement.equipmentRate : 0;
+  // dollarValue() {
+  //   var option = this.state.ui.percentOrRateOption;
+  //   var value = this.state.ui.percentOrRateValue;
+  //   var equipmentRate = this.props.attachmentRate.rentalAgreement ? this.props.attachmentRate.rentalAgreement.equipmentRate : 0;
 
-    if (option == PERCENT_RATE && value > 0) {
-      return equipmentRate * value / 100;
-    }
-    return null;
-  },
+  //   if (option == PERCENT_RATE && value > 0) {
+  //     return equipmentRate * value / 100;
+  //   }
+  //   return null;
+  // },
 
   addInput() {
     if (this.state.numberOfInputs < 10) {
@@ -202,6 +220,16 @@ var AttachmentRatesEditDialog = React.createClass({
         forms: { 
           ...this.state.forms, 
           [numberOfInputs + 1]: { 
+            componentName: '',
+            comment: '',
+            rate: 0.0,
+            percentOfEquipmentRate: 0,
+            percentOrRateOption: PERCENT_RATE,
+            percentOrRateValue: 10,
+            commentError: '',
+            componentNameError: '',
+            isIncludedInTotal: false,
+            ratePeriod: this.props.rentalAgreement.ratePeriod,
           }, 
         },
       });
@@ -237,7 +265,7 @@ var AttachmentRatesEditDialog = React.createClass({
         <Form key={key}>
           <Grid fluid>
             <Row>
-              <Col md={6}>
+              <Col md={5}>
                 <FormGroup controlId="componentName" validationState={ this.state.forms[key].componentNameError ? 'error' : null }>
                   <ControlLabel>Rate Component <sup>*</sup></ControlLabel>
                   {/*TODO - use lookup list*/}
@@ -247,23 +275,29 @@ var AttachmentRatesEditDialog = React.createClass({
                 </FormGroup>
               </Col>
               <Col md={2}>
-                <FormGroup controlId="percentOrRateValue" validationState={ this.state.rateError ? 'error' : null }>
+                <FormGroup controlId={`percentOrRateValue${key}`} validationState={ this.state.rateError ? 'error' : null }>
                   <ControlLabel>Rate <sup>*</sup></ControlLabel>
-                  <FormInputControl type="float" min={ 0 } defaultValue={ this.state.ui.percentOrRateValue } readOnly={ isReadOnly } updateState={ this.updateUIState } inputRef={ ref => { this.input = ref; }}/>
+                  <FormInputControl type="float" min={ 0 } defaultValue={ this.state.forms[key].percentOrRateValue } readOnly={ isReadOnly } updateState={ this.updateUIState } inputRef={ ref => { this.input = ref; }}/>
                   <HelpBlock>{ this.state.rateError }</HelpBlock>
                 </FormGroup>
               </Col>
               <Col md={2}>
-                <FormGroup controlId="percentOrRateOption">
+                <FormGroup controlId={`percentOrRateOption${key}`}>
                   <ControlLabel>&nbsp;</ControlLabel>
-                  <DropdownControl id="percentOrRateOption" disabled={ isReadOnly } title={ this.state.ui.percentOrRateOption } updateState={ this.updateUIState }
+                  <DropdownControl id={`percentOrRateOption${key}`} disabled={ isReadOnly } title={ this.state.forms[key].percentOrRateOption } updateState={ this.updateUIState }
                     items={[ PERCENT_RATE, DOLLAR_RATE ]} />
                 </FormGroup>
               </Col>
-              <Col md={2}>
+              {/* <Col md={2}>
                 <FormGroup>
                   <ControlLabel>&nbsp;</ControlLabel>
                   <FormControl.Static id="dollar-value" title={ formatCurrency(this.dollarValue()) }>{ formatCurrency(this.dollarValue()) }</FormControl.Static>
+                </FormGroup>
+              </Col> */}
+              <Col md={3}>
+                <FormGroup controlId={`isIncludedInTotal${key}`}>
+                  <ControlLabel />
+                  <CheckboxControl id={`isIncludedInTotal${key}`} checked={ this.state.forms[key].isIncludedInTotal } updateState={ this.updateState }>Include in total</CheckboxControl>
                 </FormGroup>
               </Col>
             </Row>
@@ -277,11 +311,6 @@ var AttachmentRatesEditDialog = React.createClass({
               </Col>
             </Row>
             <Row>
-              <Col md={12}>
-                <FormGroup controlId="includeInTotal">
-                  <CheckboxControl id="includeInTotal" checked={ this.state.includeInTotal } updateState={ this.updateState }>Include in total</CheckboxControl>
-                </FormGroup>
-              </Col>
             </Row>
           </Grid>
           <hr />

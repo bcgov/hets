@@ -1513,6 +1513,18 @@ export function deleteRentalRate(rentalRate) {
   });
 }
 
+export function addRentalRates(rentalRates) {
+  return new ApiRequest('/rentalagreementrates/bulk').post(rentalRates).then(response => {
+    // var rentalRate = response.data;
+
+    // // Add display fields
+    // parseRentalRate(rentalRate);
+
+    // store.dispatch({ type: Action.ADD_RENTAL_RATE, rentalRate: rentalRate });
+  });
+}
+
+
 ////////////////////
 // Rental Conditions
 ////////////////////
