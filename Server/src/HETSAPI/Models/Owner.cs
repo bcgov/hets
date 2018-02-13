@@ -94,6 +94,46 @@ namespace HETSAPI.Models
             EquipmentList = equipmentList;
         }
 
+        #region Owner Verification Pdf Usage Only
+
+        /// <summary>
+        /// Pdf Document Title
+        /// </summary>
+        [NotMapped]
+        public string Title { get; set; }
+
+        /// <summary>
+        /// Gets or Sets the District Id
+        /// </summary>
+        [NotMapped]
+        public int DistrictId { get; set; }
+
+        /// <summary>
+        /// Gets or Sets the Ministry District Id
+        /// </summary>
+        [NotMapped]
+        public int MinistryDistrictId { get; set; }
+
+        /// <summary>
+        /// Gets or Sets the District Name
+        /// </summary>
+        [NotMapped]
+        public string DistrictName { get; set; }
+
+        /// <summary>
+        /// Gets or Sets the District Address String
+        /// </summary>
+        [NotMapped]
+        public string DistrictAddress { get; set; }
+
+        /// <summary>
+        /// Gets or Sets the District Contact (phone) String
+        /// </summary>
+        [NotMapped]
+        public string DistrictContact { get; set; }
+
+        #endregion
+
         /// <summary>
         /// A system-generated unique identifier for a Owner
         /// </summary>

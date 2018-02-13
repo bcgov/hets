@@ -454,14 +454,24 @@ namespace HETSAPI.Services.Impl
                     DistrictContact = "to be completed"
                 };
 
+                model.Owners = new List<Owner>();
+
                 // add owner records - must verify district ids too
                 foreach (Owner owner in owners)
                 {
-                    if (owner.LocalArea.ServiceArea.District.Id != model.DistrictId)
+                    if (owner.LocalArea.ServiceArea.District == null ||
+                        owner.LocalArea.ServiceArea.District.Id != model.DistrictId)
                     {
                         // missing district - data error [HETS-16]
                         return new ObjectResult(new HetsResponse("HETS-16", ErrorViewModel.GetDescription("HETS-16", _configuration)));
                     }
+
+                    owner.Title = model.Title;
+                    owner.DistrictId = model.DistrictId;
+                    owner.MinistryDistrictId = model.MinistryDistrictId;
+                    owner.DistrictName = model.DistrictName;
+                    owner.DistrictAddress = model.DistrictAddress;
+                    owner.DistrictContact = model.DistrictAddress;
 
                     model.Owners.Add(owner);
                 }
