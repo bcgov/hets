@@ -52,6 +52,10 @@ const DEFAULT_MODELS = {
   projectNotes: {},
   projectAttachments: {},
   projectHistory: {},
+  projectRentalAgreements: {
+    data: {},
+    error: '',
+  },
 
   rentalRequests: {
     data: {},
@@ -210,6 +214,12 @@ export default function modelsReducer(state = DEFAULT_MODELS, action) {
     
     case Action.UPDATE_PROJECT_NOTES: 
       return { ...state, projectNotes: action.notes };
+
+    case Action.UPDATE_PROJECT_RENTAL_AGREEMENTS:
+      return { ...state, projectRentalAgreements: { data: action.rentalAgreements } };
+
+    // case Action.UPDATE_PROJECT_RENTAL_AGREEMENTS_ERROR:
+    //   return { ...state, projectRentalAgreements: { ...state.projectRentalAgreements, error: action.error } };
     
     // Rental Requests
     case Action.RENTAL_REQUESTS_REQUEST: 

@@ -1059,7 +1059,23 @@ export function addProjectNote(projectId, note) {
 export function getProjectRentalAgreements(projectId) {
   return new ApiRequest(`/projects/${ projectId }/rentalAgreements`).get().then(response => {
     var rentalAgreements = normalize(response.data);
-    debugger //eslint-disable-line
+    store.dispatch({ type: Action.UPDATE_PROJECT_RENTAL_AGREEMENTS, rentalAgreements: rentalAgreements });
+    return rentalAgreements;
+  });
+}
+
+export function cloneProjectRentalAgreement(data) {
+  return new ApiRequest(`/projects/${ data.projectId }/rentalAgreementClone`).post(data).then(response => {
+
+    if (response.responseStatus === 'ERROR') {
+      return Promise.reject('There was an error cloning the rental agreement.');
+    }
+
+    var agreement = response.data;
+    // Add display fields
+    parseRentalAgreement(agreement);
+    store.dispatch({ type: Action.UPDATE_RENTAL_AGREEMENT, rentalAgreement: agreement });
+    return response;
   });
 }
 
