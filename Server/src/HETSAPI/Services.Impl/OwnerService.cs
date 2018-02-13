@@ -426,6 +426,8 @@ namespace HETSAPI.Services.Impl
                 .Include(x => x.PrimaryContact)
                 .Include(x => x.EquipmentList)
                     .ThenInclude(a => a.EquipmentAttachments)
+                .Include(x => x.EquipmentList)
+                    .ThenInclude(l => l.LocalArea)
                 .Include(x => x.LocalArea)
                     .ThenInclude(s => s.ServiceArea)
                         .ThenInclude(d => d.District)
@@ -446,6 +448,7 @@ namespace HETSAPI.Services.Impl
                 // setup modev for submission to the Pdf service
                 OwnerVerificationPdfViewModel model = new OwnerVerificationPdfViewModel
                 {
+                    ReportDate = DateTime.Now.ToString("yyyy-MM-dd"),
                     Title = fileName,
                     DistrictId = owners[0].LocalArea.ServiceArea.District.Id,
                     MinistryDistrictId = owners[0].LocalArea.ServiceArea.District.MinistryDistrictID,
