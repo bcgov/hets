@@ -23,6 +23,7 @@ namespace HETSAPI.ViewModels
         /// <summary>
         /// Initializes a new instance of the <see cref="OwnerVerificationPdfViewModel" /> class.
         /// </summary>
+        /// <param name="reportDate">Pdf Report Date</param>
         /// <param name="title">Pdf Document Title</param>
         /// <param name="districtId">The District Id</param>
         /// <param name="ministryDistrictId">The Ministry District Id</param>
@@ -30,9 +31,10 @@ namespace HETSAPI.ViewModels
         /// <param name="districtAddress">The District Address String</param>
         /// <param name="districtContact">The District Contact String</param>
         /// <param name="owners">A list of owner records (including equipment)</param>
-        public OwnerVerificationPdfViewModel(string title, int districtId, int ministryDistrictId, string districtName,
+        public OwnerVerificationPdfViewModel(string reportDate, string title, int districtId, int ministryDistrictId, string districtName,
             string districtAddress, string districtContact, List<Owner> owners)
         {
+            ReportDate = reportDate;
             Title = title;
             DistrictId = districtId;
             MinistryDistrictId = ministryDistrictId;
@@ -41,6 +43,12 @@ namespace HETSAPI.ViewModels
             DistrictContact = districtContact;
             Owners = owners;
         }
+
+        /// <summary>
+        /// Pdf Report Date
+        /// </summary>
+        [DataMember(Name = "reportDate")]
+        public string ReportDate { get; set; }
 
         /// <summary>
         /// Pdf Document Title
@@ -92,7 +100,8 @@ namespace HETSAPI.ViewModels
         {
             var sb = new StringBuilder();            
 
-            sb.Append("class RentalAgreementPdfViewModel {\n");
+            sb.Append("class RentalAgreementPdfViewModel {\n");            
+            sb.Append("  ReportDate: ").Append(ReportDate).Append("\n");
             sb.Append("  Title: ").Append(Title).Append("\n");
             sb.Append("  DistrictId: ").Append(DistrictId).Append("\n");
             sb.Append("  MinistryDistrictId: ").Append(MinistryDistrictId).Append("\n");
@@ -138,6 +147,9 @@ namespace HETSAPI.ViewModels
 
             return
                 (
+                    ReportDate == other.ReportDate ||
+                    ReportDate.Equals(other.ReportDate)
+                ) && (
                     Title == other.Title ||
                     Title.Equals(other.Title)
                 ) &&
@@ -177,8 +189,9 @@ namespace HETSAPI.ViewModels
             unchecked // Overflow is fine, just wrap
             {
                 int hash = 41;
-                
+
                 // Suitable nullity checks                                   
+                hash = hash * 59 + ReportDate.GetHashCode();
                 hash = hash * 59 + Title.GetHashCode();
                 hash = hash * 59 + DistrictId.GetHashCode();
                 hash = hash * 59 + MinistryDistrictId.GetHashCode();

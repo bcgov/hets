@@ -97,6 +97,12 @@ namespace HETSAPI.Models
         #region Owner Verification Pdf Usage Only
 
         /// <summary>
+        /// Pdf Report Date
+        /// </summary>
+        [NotMapped]
+        public string ReportDate { get; set; }
+
+        /// <summary>
         /// Pdf Document Title
         /// </summary>
         [NotMapped]
