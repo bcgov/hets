@@ -323,5 +323,43 @@ namespace HETSAPI.Import
                 dbContext.DumpTrucks.Update(instance);
             }
         }
+
+        public static void Obfuscate(PerformContext performContext, DbAppContext dbContext, string sourceLocation, string destinationLocation, string systemId)
+        {
+            int startPoint = ImportUtility.CheckInterMapForStartPoint(dbContext, "Obfuscate_" + OldTableProgress, BCBidImport.SigId);
+
+            if (startPoint == BCBidImport.SigId)    // this means the import job it has done today is complete for all the records in the xml file.
+            {
+                performContext.WriteLine("*** Obfuscating " + XmlFileName + " is complete from the former process ***");
+                return;
+            }
+            try
+            {
+                string rootAttr = "ArrayOf" + OldTable;
+
+                // create Processer progress indicator
+                performContext.WriteLine("Processing " + OldTable);
+
+                // create serializer and serialize xml file
+                XmlSerializer ser = new XmlSerializer(typeof(ImportModels.DumpTruck[]), new XmlRootAttribute(rootAttr));
+                MemoryStream memoryStream = ImportUtility.MemoryStreamGenerator(XmlFileName, OldTable, sourceLocation, rootAttr);
+                ImportModels.DumpTruck[] legacyItems = (ImportModels.DumpTruck[])ser.Deserialize(memoryStream);
+
+                // no fields to mask for dump truck - straight copy.
+
+                performContext.WriteLine("Writing " + XmlFileName + " to " + destinationLocation);
+                // write out the array.
+                FileStream fs = ImportUtility.GetObfuscationDestination(XmlFileName, destinationLocation);
+                ser.Serialize(fs, legacyItems);
+                fs.Close();
+                // no excel for DumpTruck.
+
+            }
+            catch (Exception e)
+            {
+                performContext.WriteLine("*** ERROR ***");
+                performContext.WriteLine(e.ToString());
+            }
+        }
     }
 }

@@ -57,61 +57,47 @@ namespace HETSAPI.Services.Impl
             return new ObjectResult(result);
         }
 
-        public async Task<IActionResult> AdminUserMap(string path)
+
+        public IActionResult AdminObfuscateGetAsync(string sourcePath, string destinationPath)
+        {
+            string result = "Created Obfuscation Job: ";
+
+            lock (_thisLock)
+            {
+                string uploadPath = _configuration["UploadPath"];
+                string connectionString = _context.Database.GetDbConnection().ConnectionString;
+
+                ImportUtility.CreateObfuscationDestination(uploadPath + destinationPath);
+
+                // use Hangfire
+                    string jobId = BackgroundJob.Enqueue(() => BCBidImport.ObfuscationJob(null, connectionString, uploadPath + sourcePath, uploadPath + destinationPath));
+                    result += jobId;
+                
+            }
+
+            return new ObjectResult(result);
+        }
+
+
+        public async Task<IActionResult> GetSpreadsheet(string userPath, string fileName)
         {
             // create an excel spreadsheet that will show the data.
             string uploadPath = _configuration["UploadPath"];
-            string fullPath = uploadPath + path;
+            string path = Path.Combine(uploadPath + userPath, fileName);
 
-            string sWebRootFolder = "/tmp";
-            string sFileName = @"usermap.xlsx";
-
-            var memory = new MemoryStream();
-
-            using (var fs = new FileStream(Path.Combine(sWebRootFolder, sFileName), FileMode.Create, FileAccess.Write))
-            {
-                IWorkbook workbook = new XSSFWorkbook();
-                ISheet excelSheet = workbook.CreateSheet("User Map");
-                
-                // Create the header row.
-                IRow row = excelSheet.CreateRow(0);
-                row.CreateCell(0).SetCellValue("Table Name");
-                row.CreateCell(1).SetCellValue("Mapped Column");
-                row.CreateCell(2).SetCellValue("Original Value");
-                row.CreateCell(3).SetCellValue("New Value");
-
-                // use the import class to get data.
-                List<ImportMapRecord> records = ImportUser.GetImportMap(_context, fullPath);
-                int currentRow = 1;  
-                
-                // convert the list to an excel spreadsheet.
-                foreach (ImportMapRecord record in records)
-                {
-                    IRow newRow = excelSheet.CreateRow(currentRow);
-                    newRow.CreateCell(0).SetCellValue(record.TableName);
-                    newRow.CreateCell(1).SetCellValue(record.MappedColumn);
-                    newRow.CreateCell(2).SetCellValue(record.OriginalValue);
-                    newRow.CreateCell(3).SetCellValue(record.NewValue);
-
-                    currentRow++;
-                }
-
-                 workbook.Write(fs);
-            }
-            using (var stream = new FileStream(Path.Combine(sWebRootFolder, sFileName), FileMode.Open))
+            MemoryStream memory = new MemoryStream();
+            
+            using (var stream = new FileStream(path, FileMode.Open))
             {
                 await stream.CopyToAsync(memory);
             }
 
             memory.Position = 0;
 
-            var fileStreamResult =
-                new FileStreamResult(memory, "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet")
-                {
-                    FileDownloadName = "UserMap.xlsx"
-                };
+            var fileStreamResult = new FileStreamResult(memory, "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
+            fileStreamResult.FileDownloadName = fileName;
 
             return fileStreamResult;
-        }
+        }        
     }
 }
