@@ -69,3 +69,7 @@ export const NANP_REGEX = /^(?:(?:\+?1\s*(?:[.-]\s*)?)?(?:\(\s*([2-9]1[02-9]|[2-
 
 // Conditions 
 export const NON_STANDARD_CONDITION = 'Other';
+
+// ResponseTypes
+
+export const RESPONSE_TYPE_BLOB = 'blob';
