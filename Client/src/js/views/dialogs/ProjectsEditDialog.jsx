@@ -88,12 +88,15 @@ var ProjectsEditDialog = React.createClass({
 
 
   onSave() {
-    this.props.onSave({ ...this.props.project, ...{
+    this.props.onSave({ 
+      id: this.props.project.id,
+      canEditStatus: this.props.project.canEditStatus,
+      district: this.props.project.district, 
       name: this.state.projectName,
       status: this.state.projectStatus,
       provincialProjectNumber: this.state.provincialProjectNumber,
       information: this.state.projectInformation,
-    }});
+    });
   },
 
   render() {
