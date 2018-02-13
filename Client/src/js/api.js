@@ -726,6 +726,12 @@ export function changeOwnerStatus(status) {
   });
 }
 
+export function verifyOwners(owners) {
+  return new ApiRequest('owners/verificationPdf').post(owners, { responseType: Constant.RESPONSE_TYPE_BLOB }).then((response) => {
+    return response;
+  });
+}
+
 ////////////////////
 // Contacts
 ////////////////////

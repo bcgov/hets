@@ -156,8 +156,27 @@ var Owners = React.createClass({
     window.print();
   },
 
-  verifyOwners() {
-
+  verifyOwners(ownerList) {
+    var owners = _.map(ownerList, owner => {
+      return owner.id;
+    });
+    Api.verifyOwners(owners).then((response) => {
+      var blob = new Blob([response], {type: 'image/pdf'});
+      //Create a link element, hide it, direct 
+      //it towards the blob, and then 'click' it programatically
+      let a = document.createElement('a');
+      a.style = 'display: none';
+      document.body.appendChild(a);
+      //Create a DOMString representing the blob 
+      //and point the link element towards it
+      let url = window.URL.createObjectURL(blob);
+      a.href = url;
+      a.download = 'ownersVerificationLetters.pdf';
+      //programatically click the link to trigger the download
+      a.click();
+      //release the reference to the file by revoking the Object URL
+      window.URL.revokeObjectURL(url);
+    });
   },
 
   render() {
@@ -179,12 +198,16 @@ var Owners = React.createClass({
 
     var numOwners = this.props.ownerList.loading ? '...' : Object.keys(this.props.ownerList.data).length;
 
+    var ownerList = _.sortBy(this.props.ownerList.data, this.state.ui.sortField);
+    
+    if (this.state.ui.sortDesc) {
+      _.reverse(ownerList);
+    }
+
     return <div id="owners-list">
       <PageHeader>Owners ({ numOwners })
         <div id="owners-buttons">
-          <Unimplemented>
-            <Button onClick={ this.verifyOwners }>Verify</Button>
-          </Unimplemented>
+          <Button onClick={ this.verifyOwners.bind(this, ownerList) }>Verify</Button>
           <ButtonGroup>
             <Unimplemented>
               <Button onClick={ this.email }><Glyphicon glyph="envelope" title="E-mail" /></Button>
@@ -223,11 +246,6 @@ var Owners = React.createClass({
         </Button>;
         if (this.props.owners.loading || this.props.ownerList.loading) { return <div style={{ textAlign: 'center' }}><Spinner/></div>; }
         if (Object.keys(this.props.ownerList.data).length === 0) { return <Alert bsStyle="success">No owners { addOwnerButton }</Alert>; }
-
-        var ownerList = _.sortBy(this.props.ownerList.data, this.state.ui.sortField);
-        if (this.state.ui.sortDesc) {
-          _.reverse(ownerList);
-        }
 
         return <SortTable sortField={ this.state.ui.sortField } sortDesc={ this.state.ui.sortDesc } onSort={ this.updateUIState } headers={[
           { field: 'localAreaName',          title: 'Local Area'                                      },
