@@ -192,6 +192,7 @@ namespace HETSAPI.Services.Impl
                         .ThenInclude(y => y.Owner)
                             .ThenInclude(c => c.PrimaryContact)
                     .Include(x => x.Contacts)
+                    .Include(x => x.PrimaryContact)
                     .First(a => a.Id == id);
 
                 return new ObjectResult(new HetsResponse(result));
@@ -260,6 +261,7 @@ namespace HETSAPI.Services.Impl
                             .ThenInclude(y => y.Owner)
                                 .ThenInclude(c => c.PrimaryContact)
                         .Include(x => x.Contacts)
+                        .Include(x => x.PrimaryContact)
                         .First(a => a.Id == id);
 
                     owner.Status = item.Status;
