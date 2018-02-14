@@ -62,7 +62,6 @@ var AttachmentRatesEditDialog = React.createClass({
   },
 
   updateState(value) {
-    // this.setState(state, callback);
     let property = Object.keys(value)[0];
     let stateValue = Object.values(value)[0];
     let number = property.match(/\d+/g)[0];

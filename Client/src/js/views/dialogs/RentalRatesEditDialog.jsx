@@ -1,7 +1,7 @@
 import React from 'react';
 
 import { Grid, Row, Col } from 'react-bootstrap';
-import { Form, FormGroup, HelpBlock, ControlLabel, FormControl } from 'react-bootstrap';
+import { Form, FormGroup, HelpBlock, ControlLabel, Button, Glyphicon } from 'react-bootstrap';
 
 import _ from 'lodash';
 
@@ -12,7 +12,7 @@ import EditDialog from '../../components/EditDialog.jsx';
 import FormInputControl from '../../components/FormInputControl.jsx';
 import CheckboxControl from '../../components/CheckboxControl.jsx';
 
-import { isBlank, formatCurrency } from '../../utils/string';
+import { isBlank } from '../../utils/string';
 
 const PERCENT_RATE = '%';
 const DOLLAR_RATE = '$';
@@ -21,6 +21,7 @@ var RentalRatesEditDialog = React.createClass({
   propTypes: {
     rentalRate: React.PropTypes.object.isRequired,
     onSave: React.PropTypes.func.isRequired,
+    onSaveMultiple: React.PropTypes.func.isRequired,
     onClose: React.PropTypes.func.isRequired,
     show: React.PropTypes.bool,
     provincialRateTypes: React.PropTypes.array,
@@ -31,133 +32,227 @@ var RentalRatesEditDialog = React.createClass({
 
     return {
       isNew: isNew,
+      numberOfInputs: 1,
 
-      isAttachment: this.props.rentalRate.isAttachment || false,
-      componentName: this.props.rentalRate.componentName || '',
-      rateType: {},
-      rate: this.props.rentalRate.rate || 0.0,
-      percentOfEquipmentRate: this.props.rentalRate.percentOfEquipmentRate || 0,
-      ratePeriod: this.props.rentalRate.ratePeriod || '',
-      comment: this.props.rentalRate.comment || '',
-      includeInTotal: this.props.rentalRate.includeInTotal || false,
+      forms: { 
+        1: { 
+          isAttachment: this.props.rentalRate.isAttachment || false,
+          componentName: this.props.rentalRate.componentName || '',
+          rateType: {},
+          rate: this.props.rentalRate.rate || 0.0,
+          percentOfEquipmentRate: this.props.rentalRate.percentOfEquipmentRate || 0,
+          ratePeriod: this.props.rentalRate.ratePeriod || isNew ? Constant.RENTAL_RATE_PERIOD_HOURLY : '',
+          comment: this.props.rentalRate.comment || '',
+          isIncludedInTotal: this.props.rentalRate.includeInTotal || false,
 
-      // UI fields
-      percentOrRateOption: isNew || this.props.rentalRate.percentOfEquipmentRate > 0 ? PERCENT_RATE : DOLLAR_RATE,
-      percentOrRateValue: this.props.rentalRate.rate || this.props.rentalRate.percentOfEquipmentRate || 0,
+          // UI fields
+          percentOrRateOption: isNew || this.props.rentalRate.percentOfEquipmentRate > 0 ? PERCENT_RATE : DOLLAR_RATE,
+          percentOrRateValue: this.props.rentalRate.rate || this.props.rentalRate.percentOfEquipmentRate || 0,
 
-      componentNameError: '',
-      rateError: '',
-      ratePeriodError: '',
-      commentError: '',
+          componentNameError: '',
+          rateError: '',
+          ratePeriodError: '',
+          commentError: '',
+        }, 
+      },
     };
   },
 
   componentDidMount() {
-    if (this.state.isNew) {
-      this.setState({ ratePeriod: Constant.RENTAL_RATE_PERIOD_HOURLY });
-    }
     if (this.props.rentalRate.componentName) {
       var rateType = _.find(this.props.provincialRateTypes, {description: this.props.rentalRate.componentName } );
-      this.setState({ 
-        rateType: rateType, 
-      });
+      let updatedState = { 
+        ...this.state.forms, 
+        1: { 
+          ...this.state.forms[1], 
+          rateType: rateType, 
+        }, 
+      };
+      this.setState({ forms: updatedState });
     }
   },
 
-  updateState(state, callback) {
-    this.setState(state, callback);
+  updateState(value) {
+    // this.setState(state, callback);
+    let property = Object.keys(value)[0];
+    let stateValue = Object.values(value)[0];
+    let number = property.match(/\d+/g)[0];
+    let stateName = property.match(/[a-zA-Z]+/g)[0];
+    let state = { [stateName]:  stateValue };
+    let updatedState = { ...this.state.forms, [number]: { ...this.state.forms[number], ...state } };
+    this.setState({ forms: updatedState });
   },
 
-  updateRateTypeState(state) {
-    var provincialRateTypes = this.props.provincialRateTypes;
-    var rateType = _.find(provincialRateTypes, {id: state.componentName } );
-    this.setState({ 
+  updateRateTypeState(value) {
+    let stateValue = Object.values(value)[0];
+    let provincialRateTypes = this.props.provincialRateTypes;
+    let rateType = _.find(provincialRateTypes, {id: stateValue } );
+    let property = Object.keys(value)[0];
+    let stateName = property.match(/[a-zA-Z]+/g)[0];
+    let number = property.match(/\d+/g)[0];
+    let state = { 
       rateType: rateType, 
       rate: rateType.rate,
       percentOrRateValue: rateType.rate ? rateType.rate : 0, 
       percentOfEquipmentRate: rateType.isPercentRate ? rateType.rate : 0,
       percentOrRateOption: rateType.isPercentRate ? PERCENT_RATE : DOLLAR_RATE,
-      ...state, 
-    });
+      [stateName]: stateValue,
+    };
+    let updatedState = { ...this.state.forms, [number]: { ...this.state.forms[number], ...state } };
+    this.setState({ forms: updatedState });
   },
 
-  updateUIState(state) {
+  updateUIState(value) {
+    let property = Object.keys(value)[0];
+    let stateValue = Object.values(value)[0];
+    let number = property.match(/\d+/g)[0];
+    let stateName = property.match(/[a-zA-Z]+/g)[0];
+    let state = { [stateName]:  stateValue };
     if (state.percentOrRateValue) {
-      let percentOfEquipmentRate = this.state.percentOrRateOption == PERCENT_RATE ? state.percentOrRateValue : 0;
-      let rate = this.state.percentOrRateOption == DOLLAR_RATE ? state.percentOrRateValue : 0;
-      return this.setState({ ...state, ...{ percentOfEquipmentRate: percentOfEquipmentRate, rate: rate } });
+      let percentOfEquipmentRate = this.state.forms[number].percentOrRateOption == PERCENT_RATE ? state.percentOrRateValue : 0;
+      let rate = this.state.forms[number].percentOrRateOption == DOLLAR_RATE ? state.percentOrRateValue : 0;
+      let updatedState = { 
+        ...this.state.forms, 
+        [number]: { 
+          ...this.state.forms[number], 
+          ...state,
+          percentOfEquipmentRate: percentOfEquipmentRate, 
+          rate: rate,  
+        }, 
+      };
+      return this.setState({ forms: updatedState });
     }
-    let percentOfEquipmentRate = state.percentOrRateOption == PERCENT_RATE ? this.state.percentOrRateValue : 0;
-    let rate = state.percentOrRateOption == DOLLAR_RATE ? this.state.percentOrRateValue : 0;
-    this.setState({ ...state, ...{ percentOfEquipmentRate: percentOfEquipmentRate, rate: rate } });
+    let percentOfEquipmentRate = state.percentOrRateOption == PERCENT_RATE ? this.state.forms[number].percentOrRateValue : 0;
+    let rate = state.percentOrRateOption == DOLLAR_RATE ? this.state.forms[number].percentOrRateValue : 0;
+    let updatedState = { 
+      ...this.state.forms, 
+      [number]: { 
+        ...this.state.forms[number], 
+        ...state,
+        percentOfEquipmentRate: percentOfEquipmentRate, 
+        rate: rate,  
+      }, 
+    };
+    return this.setState({ forms: updatedState });
   },
 
   didChange() {
-    if (this.state.componentName !== this.props.rentalRate.componentName) { return true; }
-    if (this.state.rate !== this.props.rentalRate.rate) { return true; }
-    if (this.state.percentOfEquipmentRate !== this.props.rentalRate.percentOfEquipmentRate) { return true; }
-    if (this.state.ratePeriod !== this.props.rentalRate.ratePeriod) { return true; }
-    if (this.state.comment !== this.props.rentalRate.comment) { return true; }
-    if (this.state.includeInTotal !== this.props.rentalRate.isIncludedInTotal) { return true; }
-
-    return false;
+    return true;
   },
 
   isValid() {
-    this.setState({
-      componentNameError: '',
-      rateError: '',
-      ratePeriodError: '',
-      commentError: '',
+    let forms = { ...this.state.forms };
+
+    let formsResetObj = forms;
+    Object.keys(forms).map((key) => {
+      let state = { 
+        ...forms[key], 
+        componentNameError: '',
+        rateError: '',
+        ratePeriodError: '',
+        commentError: '',
+      };
+      formsResetObj[key] = state;
+    });
+    
+    this.setState({ forms: formsResetObj });
+    let valid = true;
+
+    let formsErrorsObj = forms;
+    Object.keys(forms).map((key) => {
+
+      if (forms[key].rateType.description === Constant.NON_STANDARD_CONDITION && isBlank(forms[key].comment)) {
+        let state = { ...forms[key], commentError: 'Comment is required.' };
+        formsErrorsObj[key] = state;
+        valid = false;
+      }
+      
+      if (isBlank(forms[key].componentName)) {
+        let state = { ...forms[key], componentNameError: 'Rate type is required.' };
+        formsErrorsObj[key] = state;
+        valid = false;
+      }
+
+      if (isBlank(this.state.forms[key].ratePeriod)) {
+        let state = { ...forms[key], ratePeriodError: 'Period is required' };
+        formsErrorsObj[key] = state;
+        valid = false;
+      }
+
+      if (isBlank(this.state.forms[key].percentOrRateValue) ) {
+        let state = { ...forms[key], rateError: 'Pay rate is required' };
+        formsErrorsObj[key] = state;
+        valid = false;
+      } else if (this.state.forms[key].percentOrRateValue < 1) {
+        let state = { ...forms[key], rateError: 'Pay rate not valid' };
+        formsErrorsObj[key] = state;
+        valid = false;
+      }
+
     });
 
-    var valid = true;
-
-    if (isBlank(this.state.componentName)) {
-      this.setState({ componentNameError: 'Rate type is required' });
-      valid = false;
-    }
-
-    if (isBlank(this.state.percentOrRateValue) ) {
-      this.setState({ rateError: 'Pay rate is required' });
-      valid = false;
-    } else if (this.state.percentOrRateValue < 1) {
-      this.setState({ rateError: 'Pay rate not valid' });
-      valid = false;
-    }
-
-    if (isBlank(this.state.ratePeriod)) {
-      this.setState({ ratePeriodError: 'Period is required' });
-      valid = false;
-    }
-    
-    if (this.state.rateType.description === Constant.NON_STANDARD_CONDITION && isBlank(this.state.comment)) {
-      this.setState({ commentError: 'Comment is required for non-standard conditions' });
-      valid = false;
-    }
+    this.setState({ forms: formsErrorsObj });
 
     return valid;
   },
 
   onSave() {
-    this.props.onSave({ ...this.props.rentalRate, ...{
-      componentName: this.state.rateType.description,
-      rate: this.state.rate,
-      percentOfEquipmentRate: this.state.percentOfEquipmentRate,
-      ratePeriod: this.state.ratePeriod,
-      comment: this.state.comment,
-      isIncludedInTotal: this.state.includeInTotal,
-    }});
+    let forms = this.state.forms;
+    let attachments = Object.keys(forms).map((key) => {
+      return { 
+        rentalAgreement: { id: this.props.rentalRate.rentalAgreement.id }, 
+        componentName: this.state.forms[key].rateType.description,
+        rate: this.state.forms[key].rate,
+        percentOfEquipmentRate: this.state.forms[key].percentOfEquipmentRate,
+        ratePeriod: this.state.forms[key].ratePeriod,
+        comment: this.state.forms[key].comment,
+        isIncludedInTotal: this.state.forms[key].isIncludedInTotal,
+      };
+    });
+    this.state.isNew ? this.props.onSaveMultiple(attachments) : this.props.onSave(attachments[0]);
   },
 
-  dollarValue() {
-    var option = this.state.percentOrRateOption;
-    var value = this.state.percentOrRateValue;
-    var equipmentRate = this.props.rentalRate.rentalAgreement ? this.props.rentalRate.rentalAgreement.equipmentRate : 0;
-    if (option == PERCENT_RATE && value > 0) {
-      return equipmentRate * value / 100;
+  addInput() {
+    if (this.state.numberOfInputs < 10) {
+      let numberOfInputs = Object.keys(this.state.forms).length;
+      this.setState({ 
+        numberOfInputs: this.state.numberOfInputs + 1,
+        forms: { 
+          ...this.state.forms, 
+          [numberOfInputs + 1]: { 
+            isAttachment: this.props.rentalRate.isAttachment || false,
+            componentName: this.props.rentalRate.componentName || '',
+            rateType: {},
+            rate: this.props.rentalRate.rate || 0.0,
+            percentOfEquipmentRate: this.props.rentalRate.percentOfEquipmentRate || 0,
+            ratePeriod: this.props.rentalRate.ratePeriod || '',
+            comment: this.props.rentalRate.comment || '',
+            includeInTotal: this.props.rentalRate.includeInTotal || false,
+
+            // UI fields
+            percentOrRateOption: this.state.isNew || this.props.rentalRate.percentOfEquipmentRate > 0 ? PERCENT_RATE : DOLLAR_RATE,
+            percentOrRateValue: this.props.rentalRate.rate || this.props.rentalRate.percentOfEquipmentRate || 0,
+
+            componentNameError: '',
+            rateError: '',
+            ratePeriodError: '',
+            commentError: '',
+          }, 
+        },
+      });
     }
-    return null;
+  },
+
+  removeInput() {
+    if (this.state.numberOfInputs > 1) {
+      let numberOfInputs = Object.keys(this.state.forms).length;
+      let forms = { ...this.state.forms };
+      delete forms[numberOfInputs];
+      this.setState({ 
+        numberOfInputs: this.state.numberOfInputs - 1,
+        forms: forms, 
+      });
+    }
   },
 
   render() {
@@ -170,65 +265,85 @@ var RentalRatesEditDialog = React.createClass({
       title={
         <strong>Rental Agreement - Additional Rates</strong>
       }>
-      <Form>
-        <Grid fluid>
-          <Row>
-            <Col md={4}>
-              <FormGroup controlId="componentName" validationState={ this.state.componentNameError ? 'error' : null }>
-                <ControlLabel>Rate Component <sup>*</sup></ControlLabel>
-                <DropdownControl id="componentName" disabled={ isReadOnly } updateState={ this.updateRateTypeState }
-                  items={ provincialRateTypes } fieldName="description" selectedId={ this.state.rateType.id } />
-                <HelpBlock>{ this.state.componentNameError }</HelpBlock>
-              </FormGroup>
-            </Col>
-            <Col md={2}>
-              <FormGroup controlId="ratePeriod" validationState={ this.state.ratePeriodError ? 'error' : null }>
-                <ControlLabel>Period <sup>*</sup></ControlLabel>
-                {/*TODO - use lookup list*/}
-                <DropdownControl id="ratePeriod" title={ this.state.ratePeriod } updateState={ this.updateState }
-                  items={[ Constant.RENTAL_RATE_PERIOD_HOURLY, Constant.RENTAL_RATE_PERIOD_DAILY ]} disabled={ !this.state.rateType.isRateEditable }  />
-                <HelpBlock>{ this.state.ratePeriodError }</HelpBlock>
-              </FormGroup>
-            </Col>
-            <Col md={2}>
-              <FormGroup controlId="percentOrRateValue" validationState={ this.state.rateError ? 'error' : null }>
-                <ControlLabel>Rate <sup>*</sup></ControlLabel>
-                <FormInputControl type="float" min={ 0 } value={ this.state.percentOrRateValue } disabled={ !this.state.rateType.isRateEditable } updateState={ this.updateUIState } />
-                <HelpBlock>{ this.state.rateError }</HelpBlock>
-              </FormGroup>
-            </Col>
-            <Col md={2}>
-              <FormGroup controlId="percentOrRateOption">
-                <ControlLabel>&nbsp;</ControlLabel>
-                <DropdownControl id="percentOrRateOption" disabled={ !this.state.rateType.isRateEditable }  title={ this.state.percentOrRateOption } updateState={ this.updateUIState }
-                  items={[ DOLLAR_RATE, PERCENT_RATE ]} />
-              </FormGroup>
-            </Col>
-            <Col md={2}>
-              <FormGroup>
-                <ControlLabel>&nbsp;</ControlLabel>
-                <FormControl.Static id="dollar-value" title={ formatCurrency(this.dollarValue()) }>{ formatCurrency(this.dollarValue()) }</FormControl.Static>
-              </FormGroup>
-            </Col>
-          </Row>
-          <Row>
-            <Col md={12}>
-              <FormGroup controlId="comment" validationState={ this.state.commentError ? 'error' : null }>
-                <ControlLabel>Comment</ControlLabel>
-                <FormInputControl componentClass="textarea" defaultValue={ this.state.comment } readOnly={ isReadOnly } updateState={ this.updateState } />
-                <HelpBlock>{ this.state.commentError }</HelpBlock>
-              </FormGroup>
-            </Col>
-          </Row>
-          <Row>
-            <Col md={12}>
-              <FormGroup controlId="includeInTotal">
-                <CheckboxControl id="includeInTotal" disabled={ !this.state.rateType.isInTotalEditable } checked={ this.state.includeInTotal } updateState={ this.updateState }>Include in total</CheckboxControl>
-              </FormGroup>
-            </Col>
-          </Row>
-        </Grid>
-      </Form>
+      <div className="forms-container">
+      { Object.keys(this.state.forms).map(key => (
+        <Form key={key}>
+          <Grid fluid>
+            <Row>
+              <Col md={3}>
+                <FormGroup controlId={`componentName${key}`} validationState={ this.state.forms[key].componentNameError ? 'error' : null }>
+                  <ControlLabel>Rate Component <sup>*</sup></ControlLabel>
+                  <DropdownControl id={`componentName${key}`} disabled={ isReadOnly } updateState={ this.updateRateTypeState }
+                    items={ provincialRateTypes } fieldName="description" selectedId={ this.state.forms[key].rateType.id } />
+                  <HelpBlock>{ this.state.forms[key].componentNameError }</HelpBlock>
+                </FormGroup>
+              </Col>
+              <Col md={2}>
+                <FormGroup controlId={`ratePeriod${key}`} validationState={ this.state.forms[key].ratePeriodError ? 'error' : null }>
+                  <ControlLabel>Period <sup>*</sup></ControlLabel>
+                  {/*TODO - use lookup list*/}
+                  <DropdownControl id={`ratePeriod${key}`} title={ this.state.forms[key].ratePeriod } updateState={ this.updateState }
+                    items={[ Constant.RENTAL_RATE_PERIOD_HOURLY, Constant.RENTAL_RATE_PERIOD_DAILY ]} disabled={ !this.state.forms[key].rateType.isRateEditable }  />
+                  <HelpBlock>{ this.state.forms[key].ratePeriodError }</HelpBlock>
+                </FormGroup>
+              </Col>
+              <Col md={2}>
+                <FormGroup controlId={`percentOrRateValue${key}`} validationState={ this.state.forms[key].rateError ? 'error' : null }>
+                  <ControlLabel>Rate <sup>*</sup></ControlLabel>
+                  <FormInputControl type="float" min={ 0 } value={ this.state.forms[key].percentOrRateValue } disabled={ !this.state.forms[key].rateType.isRateEditable } updateState={ this.updateUIState } />
+                  <HelpBlock>{ this.state.forms[key].rateError }</HelpBlock>
+                </FormGroup>
+              </Col>
+              <Col md={2}>
+                <FormGroup controlId={`percentOrRateOption${key}`}>
+                  <ControlLabel>&nbsp;</ControlLabel>
+                  <DropdownControl id={`percentOrRateOption${key}`} disabled={ !this.state.forms[key].rateType.isRateEditable }  title={ this.state.forms[key].percentOrRateOption } updateState={ this.updateUIState }
+                    items={[ DOLLAR_RATE, PERCENT_RATE ]} />
+                </FormGroup>
+              </Col>
+              <Col md={3}>
+                <FormGroup controlId={`isIncludedInTotal${key}`}>
+                  <ControlLabel />
+                  <CheckboxControl id={`isIncludedInTotal${key}`} disabled={ !this.state.forms[key].rateType.isInTotalEditable } checked={ this.state.forms[key].isIncludedInTotal } updateState={ this.updateState }>Include in total</CheckboxControl>
+                </FormGroup>
+              </Col>
+            </Row>
+            <Row>
+              <Col md={12}>
+                <FormGroup controlId={`comment${key}`} validationState={ this.state.forms[key].commentError ? 'error' : null }>
+                  <ControlLabel>Comment</ControlLabel>
+                  <FormInputControl componentClass="textarea" defaultValue={ this.state.forms[key].comment } readOnly={ isReadOnly } updateState={ this.updateState } />
+                  <HelpBlock>{ this.state.forms[key].commentError }</HelpBlock>
+                </FormGroup>
+              </Col>
+            </Row>
+          </Grid>
+        </Form>
+      ))}
+      </div>
+      <Grid fluid>
+        <Row className="align-right">
+          <Col md={12}>
+          { this.state.isNew && this.state.numberOfInputs > 1 &&
+            <Button 
+              bsSize="xsmall"
+              className="remove-btn"
+              onClick={ this.removeInput }
+            >
+              <Glyphicon glyph="minus" />&nbsp;<strong>Remove</strong>
+            </Button>
+          }
+          { this.state.isNew && this.state.numberOfInputs < 10 && 
+            <Button 
+              bsSize="xsmall"
+              onClick={ this.addInput }
+            >
+              <Glyphicon glyph="plus" />&nbsp;<strong>Add</strong>
+            </Button>
+          }
+          </Col>
+        </Row>
+      </Grid>
     </EditDialog>;
   },
 });
