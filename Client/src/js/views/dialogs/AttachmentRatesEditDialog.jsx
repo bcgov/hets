@@ -148,7 +148,7 @@ var AttachmentRatesEditDialog = React.createClass({
             componentName: '',
             comment: '',
             rate: 0.0,
-            percentOfEquipmentRate: 0,
+            percentOfEquipmentRate: 10,
             percentOrRateOption: PERCENT_RATE,
             percentOrRateValue: 10,
             commentError: '',
