@@ -9,4 +9,26 @@
     text-align: right;
     text-overflow: ellipsis;
   }
+
+  .forms-container {
+
+    form {
+      border-bottom: 1px solid #ccc;
+      padding-bottom: 15px;
+      margin-bottom: 30px;
+
+      &:last-child {
+        border-bottom: none;
+        margin-bottom: 0;
+      }
+    }
+  }
+
+  .align-right {
+    text-align: right;
+  }
+
+  .remove-btn {
+    margin-right: 5px;
+  }
 }

@@ -1565,6 +1565,13 @@ export function deleteRentalRate(rentalRate) {
   });
 }
 
+export function addRentalRates(rentalAgreementId, attachmentRates) {
+  return new ApiRequest(`rentalagreements/${rentalAgreementId}/rateRecords`).post(attachmentRates).then(response => {
+    return response;
+  });
+}
+
+
 ////////////////////
 // Rental Conditions
 ////////////////////

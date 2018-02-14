@@ -198,6 +198,13 @@ var RentalAgreementsDetail = React.createClass({
     });
   },
 
+  saveAttachmentRates(attachmentRates) {
+    Api.addRentalRates(this.props.params.rentalAgreementId, attachmentRates).finally(() => {
+      this.fetch();
+      this.closeAttachmentRateDialog();
+    });
+  },
+
   openConditionDialog(rentalCondition) {
     this.setState({
       rentalCondition: rentalCondition,
@@ -614,7 +621,8 @@ var RentalAgreementsDetail = React.createClass({
         <AttachmentRatesEditDialog 
           show={ this.state.showAttachmentRateDialog } 
           attachmentRate={ this.state.attachmentRate } 
-          onSave={ this.saveAttachmentRate } 
+          onSave={ this.saveAttachmentRate }
+          onSaveMultiple={ this.saveAttachmentRates } 
           onClose={ this.closeAttachmentRateDialog } 
           rentalAgreement={ rentalAgreement }
         />
