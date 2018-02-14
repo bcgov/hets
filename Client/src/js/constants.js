@@ -73,3 +73,7 @@ export const NON_STANDARD_CONDITION = 'Other';
 // ResponseTypes
 
 export const RESPONSE_TYPE_BLOB = 'blob';
+
+// Cloning
+export const BY_PROJECT = 'By Project';
+export const BY_EQUIPMENT = 'By Equipment';
