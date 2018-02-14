@@ -157,6 +157,13 @@ var RentalAgreementsDetail = React.createClass({
     });
   },
 
+  saveRentalRates(rentalRates) {
+    Api.addRentalRates(this.props.params.rentalAgreementId, rentalRates).finally(() => {
+      this.fetch();
+      this.closeRentalRateDialog();
+    });
+  },
+
   openAttachmentRateDialog(attachmentRate) {
     this.setState({
       attachmentRate: attachmentRate,
@@ -613,6 +620,7 @@ var RentalAgreementsDetail = React.createClass({
           show={ this.state.showRentalRateDialog } 
           rentalRate={ this.state.rentalRate } 
           onSave={ this.saveRentalRate } 
+          onSaveMultiple={ this.saveRentalRates }
           onClose={ this.closeRentalRateDialog } 
           provincialRateTypes={ provincialRateTypes }
         />
