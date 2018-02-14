@@ -253,7 +253,7 @@ var Equipment = React.createClass({
                     <td>{ equip.typeName }</td>
                     <td><a href={ equip.ownerPath }>{ equip.organizationName }</a></td>
                     <td>{ equip.seniorityText }</td>
-                    <td>{ equip.isWorking ? equip.currentWorkDescription : 'N' }</td>
+                    <td>{ equip.isHired ? 'Y' : 'N' }</td>
                     <td>{ equip.make }</td>
                     <td>{ equip.model }</td>
                     <td>{ equip.size }</td>
