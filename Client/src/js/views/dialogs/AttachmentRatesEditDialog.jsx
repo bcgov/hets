@@ -21,6 +21,7 @@ var AttachmentRatesEditDialog = React.createClass({
     attachmentRate: React.PropTypes.object.isRequired,
     rentalAgreement: React.PropTypes.object.isRequired,
     onSave: React.PropTypes.func.isRequired,
+    onSaveMultiple: React.PropTypes.func.isRequired,
     onClose: React.PropTypes.func.isRequired,
     show: React.PropTypes.bool,
   },
@@ -45,7 +46,7 @@ var AttachmentRatesEditDialog = React.createClass({
           componentName: attachmentRate.componentName || '',
           comment: attachmentRate.comment || '',
           rate: attachmentRate.rate || 0.0,
-          percentOfEquipmentRate: attachmentRate.percentOfEquipmentRate || 0,
+          percentOfEquipmentRate: attachmentRate.percentOfEquipmentRate || isNew ? 10 : 0,
           percentOrRateOption: isNew || this.props.attachmentRate.percentOfEquipmentRate > 0 ? PERCENT_RATE : DOLLAR_RATE,
           percentOrRateValue: isNew ? 10 : this.props.attachmentRate.rate || this.props.attachmentRate.percentOfEquipmentRate || 0,
           commentError: '',
@@ -54,15 +55,6 @@ var AttachmentRatesEditDialog = React.createClass({
           ratePeriod: rentalAgreement.ratePeriod,
         },
       },
-
-      // ui : {
-      //   percentOrRateOption: isNew || this.props.attachmentRate.percentOfEquipmentRate > 0 ? PERCENT_RATE : DOLLAR_RATE,
-      //   percentOrRateValue: isNew ? 10 : this.props.attachmentRate.rate || this.props.attachmentRate.percentOfEquipmentRate || 0,  // Default for new records is 10%
-      // },
-
-      // componentNameError: '',
-      // commentError: '',
-      // rateError: '',
     };
   },
 
@@ -81,21 +73,13 @@ var AttachmentRatesEditDialog = React.createClass({
   },
 
   updateUIState(value) {
-
-    // // Update rate and percentOfEquipmentRate fields from what has been entered in the form
-    // var option = nextState.ui.percentOrRateOption;
-    // var value = nextState.ui.percentOrRateValue;
-
-    // this.setState({ ...nextState, ...{
-    //   rate: option == DOLLAR_RATE ? value : 0,
-    //   percentOfEquipmentRate: option == PERCENT_RATE ? value : 0,
-    // }}, callback);
     let property = Object.keys(value)[0];
     let stateValue = Object.values(value)[0];
     let number = property.match(/\d+/g)[0];
     let stateName = property.match(/[a-zA-Z]+/g)[0];
-    // let nextState = { ui: { ...this.state.ui, ...value } };
     let nextState = { ...this.state.forms, [number]: { ...this.state.forms[number], ...{ [stateName]: stateValue } } };
+
+    // Update rate and percentOfEquipmentRate fields from what has been entered in the form
     let option = nextState[number].percentOrRateOption;
     let percentOrRateValue = nextState[number].percentOrRateValue;
     let state = { 
@@ -108,43 +92,10 @@ var AttachmentRatesEditDialog = React.createClass({
   },
 
   didChange() {
-    // if (this.state.componentName !== this.props.attachmentRate.componentName) { return true; }
-    // if (this.state.rate !== this.props.attachmentRate.rate) { return true; }
-    // if (this.state.isIncludedInTotal !== this.props.attachmentRate.isIncludedInTotal) { return true; }
-    // if (this.state.percentOfEquipmentRate !== this.props.attachmentRate.percentOfEquipmentRate) { return true; }
-    // if (this.state.comment !== this.props.attachmentRate.comment) { return true; }
-
-    // return false;
     return true;
   },
 
   isValid() {
-    // this.setState({
-    //   componentNameError: '',
-    //   rateError: '',
-    // });
-
-    // var valid = true;
-
-    // if (isBlank(this.state.componentName)) {
-    //   this.setState({ componentNameError: 'Rate type is required' });
-    //   valid = false;
-    // }
-
-    // if (this.state.componentName === EQUIPMENT_ATTACHMENT_OTHER && isBlank(this.state.comment)) {
-    //   this.setState({ commentError: 'Comment is required '});
-    //   valid = false;
-    // }
-
-    // if (isBlank(this.state.ui.percentOrRateValue) ) {
-    //   this.setState({ rateError: 'Pay rate is required' });
-    //   valid = false;
-    // } else if (this.state.ui.percentOrRateValue < 1) {
-    //   this.setState({ rateError: 'Pay rate not valid' });
-    //   valid = false;
-    // }
-
-    // return valid;
     let forms = { ...this.state.forms };
 
     let formsResetObj = forms;
@@ -168,13 +119,6 @@ var AttachmentRatesEditDialog = React.createClass({
         formsErrorsObj[key] = state;
         valid = false;
       }
-      // if (isBlank(this.state.ui.percentOrRateValue) ) {
-      //   this.setState({ rateError: 'Pay rate is required' });
-      //   valid = false;
-      // } else if (this.state.ui.percentOrRateValue < 1) {
-      //   this.setState({ rateError: 'Pay rate not valid' });
-      //   valid = false;
-      // }
     });
     this.setState({ forms: formsErrorsObj });
 
@@ -188,29 +132,10 @@ var AttachmentRatesEditDialog = React.createClass({
       delete forms[key].componentNameError;
       delete forms[key].percentOrRateOption;
       delete forms[key].percentOrRateValue;
-      return { ...this.props.rentalAgreement, rentalAgreement: { id: this.props.rentalAgreement.id }, ...forms[key] };
+      return { ...this.props.attachmentRate, rentalAgreement: { id: this.props.rentalAgreement.id }, ...forms[key] };
     });
-    // this.props.onSave({ ...this.props.attachmentRate, ...{
-    //   componentName: this.state.componentName,
-    //   rate: this.state.rate,
-    //   percentOfEquipmentRate: this.state.percentOfEquipmentRate,
-    //   ratePeriod: this.state.ratePeriod,
-    //   comment: this.state.comment,
-    //   isIncludedInTotal: this.state.isIncludedInTotal,
-    // }});
-    this.props.onSave(attachments);
+    this.state.isNew ? this.props.onSaveMultiple(attachments) : this.props.onSave(attachments[0]);
   },
-
-  // dollarValue() {
-  //   var option = this.state.ui.percentOrRateOption;
-  //   var value = this.state.ui.percentOrRateValue;
-  //   var equipmentRate = this.props.attachmentRate.rentalAgreement ? this.props.attachmentRate.rentalAgreement.equipmentRate : 0;
-
-  //   if (option == PERCENT_RATE && value > 0) {
-  //     return equipmentRate * value / 100;
-  //   }
-  //   return null;
-  // },
 
   addInput() {
     if (this.state.numberOfInputs < 10) {
@@ -260,6 +185,7 @@ var AttachmentRatesEditDialog = React.createClass({
       title={
         <strong>Rental Agreement - Attachments</strong>
       }>
+      <div className="forms-container">
       { Object.keys(this.state.forms).map(key => {
         return (
         <Form key={key}>
@@ -288,12 +214,6 @@ var AttachmentRatesEditDialog = React.createClass({
                     items={[ PERCENT_RATE, DOLLAR_RATE ]} />
                 </FormGroup>
               </Col>
-              {/* <Col md={2}>
-                <FormGroup>
-                  <ControlLabel>&nbsp;</ControlLabel>
-                  <FormControl.Static id="dollar-value" title={ formatCurrency(this.dollarValue()) }>{ formatCurrency(this.dollarValue()) }</FormControl.Static>
-                </FormGroup>
-              </Col> */}
               <Col md={3}>
                 <FormGroup controlId={`isIncludedInTotal${key}`}>
                   <ControlLabel />
@@ -313,27 +233,33 @@ var AttachmentRatesEditDialog = React.createClass({
             <Row>
             </Row>
           </Grid>
-          <hr />
         </Form>
         );
       })}
-      { this.state.numberOfInputs < 10 && 
-        <Button 
-          bsSize="xsmall"
-          onClick={ this.addInput }
-        >
-          <Glyphicon glyph="plus" />&nbsp;<strong>Add</strong>
-        </Button>
-      }
-      { this.state.numberOfInputs > 1 &&
-        <Button 
-          bsSize="xsmall"
-          className="remove-btn"
-          onClick={ this.removeInput }
-        >
-          <Glyphicon glyph="minus" />&nbsp;<strong>Remove</strong>
-        </Button>
-      }
+      </div>
+      <Grid fluid>
+        <Row className="align-right">
+          <Col md={12}>
+          { this.state.isNew && this.state.numberOfInputs > 1 &&
+            <Button 
+              bsSize="xsmall"
+              className="remove-btn"
+              onClick={ this.removeInput }
+            >
+              <Glyphicon glyph="minus" />&nbsp;<strong>Remove</strong>
+            </Button>
+          }
+          { this.state.isNew && this.state.numberOfInputs < 10 && 
+            <Button 
+              bsSize="xsmall"
+              onClick={ this.addInput }
+            >
+              <Glyphicon glyph="plus" />&nbsp;<strong>Add</strong>
+            </Button>
+          }
+          </Col>
+        </Row>
+      </Grid>
     </EditDialog>;
   },
 });

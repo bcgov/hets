@@ -1513,8 +1513,8 @@ export function deleteRentalRate(rentalRate) {
   });
 }
 
-export function addRentalRates(rentalRates) {
-  return new ApiRequest('/rentalagreementrates/bulk').post(rentalRates).then(response => {
+export function addRentalRates(rentalAgreementId, attachmentRates) {
+  return new ApiRequest(`rentalagreements/${rentalAgreementId}/rateRecords`).post(attachmentRates).then(response => {
     // var rentalRate = response.data;
 
     // // Add display fields

@@ -186,9 +186,16 @@ var RentalAgreementsDetail = React.createClass({
   saveAttachmentRate(attachmentRate) {
     // Update or add accordingly
     var isNew = !attachmentRate.id;
-    var savePromise = isNew ? Api.addRentalRates : Api.updateRentalRate;
+    var savePromise = isNew ? Api.addRentalRate : Api.updateRentalRate;
 
     savePromise(attachmentRate).finally(() => {
+      this.fetch();
+      this.closeAttachmentRateDialog();
+    });
+  },
+
+  saveAttachmentRates(attachmentRates) {
+    Api.addRentalRates(this.props.params.rentalAgreementId, attachmentRates).finally(() => {
       this.fetch();
       this.closeAttachmentRateDialog();
     });
@@ -585,7 +592,8 @@ var RentalAgreementsDetail = React.createClass({
         <AttachmentRatesEditDialog 
           show={ this.state.showAttachmentRateDialog } 
           attachmentRate={ this.state.attachmentRate } 
-          onSave={ this.saveAttachmentRate } 
+          onSave={ this.saveAttachmentRate }
+          onSaveMultiple={ this.saveAttachmentRates } 
           onClose={ this.closeAttachmentRateDialog } 
           rentalAgreement={ rentalAgreement }
         />
