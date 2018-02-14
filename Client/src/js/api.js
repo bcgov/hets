@@ -491,6 +491,29 @@ export function changeEquipmentStatus(status) {
   });
 }
 
+export function getEquipmentRentalAgreements(equipmentId) {
+  return new ApiRequest(`/equipment/${ equipmentId }/rentalAgreements`).get().then(response => {
+    var rentalAgreements = normalize(response.data);
+    store.dispatch({ type: Action.UPDATE_EQUIPMENT_RENTAL_AGREEMENTS, rentalAgreements: rentalAgreements });
+    return rentalAgreements;
+  });
+}
+
+export function cloneEquipmentRentalAgreement(data) {
+  return new ApiRequest(`/equipment/${ data.equipmentId }/rentalAgreementClone`).post(data).then(response => {
+
+    if (response.responseStatus === 'ERROR') {
+      return Promise.reject('There was an error cloning the rental agreement.');
+    }
+
+    var agreement = response.data;
+    // Add display fields
+    parseRentalAgreement(agreement);
+    store.dispatch({ type: Action.UPDATE_RENTAL_AGREEMENT, rentalAgreement: agreement });
+    return response;
+  });
+}
+
 ////////////////////
 // Physical Attachments
 ////////////////////

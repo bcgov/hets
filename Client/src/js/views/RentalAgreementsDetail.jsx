@@ -265,14 +265,21 @@ var RentalAgreementsDetail = React.createClass({
     this.setState({ showCloneDialog: false, cloneRentalAgreementError: '' });
   },
 
-  cloneRentalAgreement(rentalAgreementCloneId) {
+  cloneRentalAgreement(rentalAgreementCloneId, type) {
     var data = {
       projectId: this.props.rentalAgreement.project.id,
       agreementToCloneId: rentalAgreementCloneId,
       rentalAgreementId: this.props.rentalAgreement.id,
     };
+    var clonePromise = Api.cloneProjectRentalAgreement(data);
+
+    if (type === Constant.BY_EQUIPMENT) {
+      data.equipmentId = this.props.rentalAgreement.equipment.id;      
+      clonePromise = Api.cloneEquipmentRentalAgreement(data);
+    }
+
     this.setState({ cloneRentalAgreementError: '' });
-    Api.cloneProjectRentalAgreement(data).then(() => {
+    clonePromise.then(() => {
       this.closeCloneDialog();
     })
     .catch((error) => {
