@@ -1515,12 +1515,7 @@ export function deleteRentalRate(rentalRate) {
 
 export function addRentalRates(rentalAgreementId, attachmentRates) {
   return new ApiRequest(`rentalagreements/${rentalAgreementId}/rateRecords`).post(attachmentRates).then(response => {
-    // var rentalRate = response.data;
-
-    // // Add display fields
-    // parseRentalRate(rentalRate);
-
-    // store.dispatch({ type: Action.ADD_RENTAL_RATE, rentalRate: rentalRate });
+    return response;
   });
 }
 
