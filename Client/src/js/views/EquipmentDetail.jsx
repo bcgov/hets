@@ -269,7 +269,7 @@ var EquipmentDetail = React.createClass({
               <Row>
                 <DropdownButton
                   bsStyle={ this.getStatusDropdownStyle() }
-                  title={ equipment.status }
+                  title={ equipment.status || '' }
                   onSelect={ this.updateStatusState }
                 >
                 { _.map(dropdownItems.map((item, i) =>
@@ -294,7 +294,7 @@ var EquipmentDetail = React.createClass({
         <Row id="equipment-bottom">
           {/* <Label bsStyle={ equipment.isApproved ? 'success' : 'danger'}>{ equipment.status }</Label> */}
           <Label className={ equipment.isMaintenanceContractor ? '' : 'hide' }>Maintenance Contractor</Label>
-          <Label bsStyle={ equipment.isWorking ? 'success' : 'default' }>{ equipment.isWorking ? 'Hired' : 'Not Hired' }</Label>
+          <Label bsStyle={ equipment.isHired ? 'success' : 'default' }>{ equipment.isHired ? 'Hired' : 'Not Hired' }</Label>
           <Label bsStyle={ lastVerifiedStyle }>Last Verified: { formatDateTime(equipment.lastVerifiedDate, Constant.DATE_YEAR_SHORT_MONTH_DAY) }</Label>
         </Row>
 

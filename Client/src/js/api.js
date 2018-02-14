@@ -357,7 +357,7 @@ function parseEquipment(equipment) {
   equipment.hasDuplicates = equipment.hasDuplicates || false;
   equipment.duplicateEquipment = equipment.duplicateEquipment || [];
 
-  equipment.isWorking = equipment.isWorking || false;
+  equipment.isHired = equipment.isHired || false;
   // TODO Descriptive text for time entries. Needs to be added to backend
   equipment.currentWorkDescription = equipment.currentWorkDescription || '' ;
 
