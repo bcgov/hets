@@ -122,6 +122,13 @@ namespace HETSAPI.Models
         }
 
         /// <summary>
+        /// A system generated value to identify if this equipment is currenty on an active Rental Agreement
+        /// </summary>
+        /// <value>A system generated value to identify if this equipment is currenty on an active Rental Agreement</value>
+        [NotMapped]
+        public bool IsHired { get; set; }
+
+        /// <summary>
         /// A system-generated unique identifier for a Equipment
         /// </summary>
         /// <value>A system-generated unique identifier for a Equipment</value>
