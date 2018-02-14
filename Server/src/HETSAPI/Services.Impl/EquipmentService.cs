@@ -174,14 +174,33 @@ namespace HETSAPI.Services.Impl
                     .Include(x => x.EquipmentAttachments)
                     .Include(x => x.Notes)
                     .Include(x => x.Attachments)
-                    .Include(x => x.History)
+                    .Include(x => x.History)                    
                     .First(a => a.Id == id);
+
+                result.IsHired = IsHired(id);
 
                 return new ObjectResult(new HetsResponse(result));
             }
 
             // record not found
             return new ObjectResult(new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-01", _configuration)));
+        }
+
+        // add an "IsHired" flag to indicate if this equipment is currently in use
+        private bool IsHired(int id)
+        {
+            // add an "IsHired" flag to indicate if this equipment is currently in use
+            RentalAgreement agreement = _context.RentalAgreements.AsNoTracking()
+                .Include(x => x.Equipment)
+                .FirstOrDefault(x => x.Equipment.Id == id &&
+                                     x.Status.Equals("Active", StringComparison.InvariantCultureIgnoreCase));
+
+            if (agreement != null)
+            {
+                return true;
+            }
+
+            return false;
         }
 
         /// <summary>
@@ -205,6 +224,8 @@ namespace HETSAPI.Services.Impl
                     .First(a => a.Id == id);
 
                 EquipmentViewModel result = equipment.ToViewModel();
+
+                result.IsHired = IsHired(id);
 
                 return new ObjectResult(new HetsResponse(result));
             }
@@ -269,6 +290,8 @@ namespace HETSAPI.Services.Impl
                         .Include(x => x.EquipmentAttachments)
                         .First(a => a.Id == id);
 
+                    result.IsHired = IsHired(id);
+
                     return new ObjectResult(new HetsResponse(result));
                 }
 
@@ -308,6 +331,8 @@ namespace HETSAPI.Services.Impl
 
                     // save the changes
                     _context.SaveChanges();
+
+                    equipment.IsHired = IsHired(id);
 
                     return new ObjectResult(new HetsResponse(equipment));
                 }
@@ -407,6 +432,8 @@ namespace HETSAPI.Services.Impl
                     .Include(x => x.Owner)
                     .Include(x => x.EquipmentAttachments)
                     .First(a => a.Id == itemId);
+
+                result.IsHired = IsHired(itemId);
 
                 return new ObjectResult(new HetsResponse(result));
             }

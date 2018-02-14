@@ -173,6 +173,13 @@ namespace HETSAPI.ViewModels
         [DataMember(Name = "numberOfBlocks")]
         public int NumberOfBlocks { get; set; }
 
+        /// <summary>
+        /// A system generated value to identify if this equipment is currenty on an active Rental Agreement
+        /// </summary>
+        /// <value>A system generated value to identify if this equipment is currenty on an active Rental Agreement</value>
+        [DataMember(Name = "isHired")]
+        public bool IsHired { get; set; }
+
         #region Equipment Model Properties
 
         /// <summary>
