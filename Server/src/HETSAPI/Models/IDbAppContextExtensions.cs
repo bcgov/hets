@@ -193,6 +193,7 @@ namespace HETSAPI.Models
             foreach (string userRole in userRoles)
             {
                 Role role = context.GetRole(userRole);
+
                 if (role != null)
                 {
                     user.UserRoles.Add(
@@ -211,13 +212,23 @@ namespace HETSAPI.Models
             foreach (string userGroup in userGroups)
             {
                 Group group = context.GetGroup(userGroup);
-                if (group != null)
+
+                if (group == null)
                 {
                     user.GroupMemberships.Add(
                         new GroupMembership
                         {
                             Active = true,
                             Group = context.GetGroup("Other")
+                        });
+                }
+                else
+                {
+                    user.GroupMemberships.Add(
+                        new GroupMembership
+                        {
+                            Active = true,
+                            Group = group
                         });
                 }
             }

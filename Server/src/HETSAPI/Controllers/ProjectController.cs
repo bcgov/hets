@@ -33,7 +33,7 @@ namespace HETSAPI.Controllers
         [HttpPost]
         [Route("/api/projects/bulk")]
         [SwaggerOperation("ProjectsBulkPost")]
-        [RequiresPermission(Permission.ADMIN)]
+        [RequiresPermission(Permission.Admin)]
         public virtual IActionResult ProjectsBulkPost([FromBody]Project[] items)
         {
             return _service.ProjectsBulkPostAsync(items);

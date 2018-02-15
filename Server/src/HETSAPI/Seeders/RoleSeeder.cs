@@ -10,24 +10,15 @@ namespace HETSAPI.Seeders
 {
     public class RoleSeeder : Seeder<DbAppContext>
     {
-        private readonly string[] ProfileTriggers = { AllProfiles };
+        private readonly string[] _profileTriggers = { AllProfiles };
 
         public RoleSeeder(IConfiguration configuration, IHostingEnvironment env, ILoggerFactory loggerFactory) 
             : base(configuration, env, loggerFactory)
         { }
 
-        protected override IEnumerable<string> TriggerProfiles
-        {
-            get { return ProfileTriggers; }
-        }
+        protected override IEnumerable<string> TriggerProfiles => _profileTriggers;
 
-        public override Type InvokeAfter
-        {
-            get
-            {
-                return typeof(PermissionSeeder);
-            }
-        }
+        public override Type InvokeAfter => typeof(PermissionSeeder);
 
         protected override void Invoke(DbAppContext context)
         {
@@ -44,39 +35,83 @@ namespace HETSAPI.Seeders
             {
                 new Role
                 {
-                    Name = "User",
-                    Description = "A regular user in the system.",
+                    Name = "HETS Clerk",
+                    Description = "HETS District User",
                     RolePermissions = permissions.Where(p =>
-                        new string[] { Permission.LOGIN }
+                        new[] { Permission.Login }
                         .Contains(p.Code))
                         .Select(p => new RolePermission()
                         {
                             Permission = p
-                        }).ToList()
+                        })
+                        .ToList()
+                },
+                new Role
+                {
+                    Name = "HETS Manager",
+                    Description = "HETS District User with additional permissions",
+                    RolePermissions = permissions.Where(p =>
+                            new[] { Permission.Login, Permission.DistrictCodeTableManagement }
+                                .Contains(p.Code))
+                        .Select(p => new RolePermission()
+                        {
+                            Permission = p
+                        })
+                        .ToList()
+                },
+                new Role
+                {
+                    Name = "HETS Application Administrator",
+                    Description = "HETS User with administrative permissions",
+                    RolePermissions = permissions.Where(p =>
+                            new[]
+                                {
+                                    Permission.Login, Permission.DistrictCodeTableManagement,
+                                    Permission.CodeTableManagement, Permission.UserManagement
+                                }
+                                .Contains(p.Code))
+                        .Select(p => new RolePermission()
+                        {
+                            Permission = p
+                        })
+                        .ToList()
                 },
                 new Role
                 {
                     Name = "Administrator",
-                    Description = "System Administrator; full access to the whole system.",
+                    Description = "System Administrator; full access to the whole system",
                     RolePermissions = permissions.Select(p => new RolePermission()
                     {
                         Permission = p
                     }).ToList()
                 },
+                new Role
+                {
+                    Name = "Data Conversion",
+                    Description = "Can import data into HETS",
+                    RolePermissions = permissions.Where(p =>
+                            new[] { Permission.ImportData }
+                                .Contains(p.Code))
+                        .Select(p => new RolePermission()
+                        {
+                            Permission = p
+                        })
+                        .ToList()
+                },
             };
 
-            _logger.LogDebug("Updating roles ...");
+            Logger.LogDebug("Updating roles ...");
             foreach (var role in roles)
             {
                 var r = context.GetRole(role.Name);
                 if (r == null)
                 {
-                    _logger.LogDebug($"Adding role; {role.Name} ...");
+                    Logger.LogDebug($"Adding role; {role.Name} ...");
                     context.Roles.Add(role);
                 }
                 else
                 {
-                    _logger.LogDebug($"Updating role; {r.Name} ...");
+                    Logger.LogDebug($"Updating role; {r.Name} ...");
                     r.Description = role.Description;
                 }
             }

@@ -31,7 +31,7 @@ namespace HETSAPI.Controllers
         [HttpPost]
         [Route("/api/equipmentAttachments/bulk")]
         [SwaggerOperation("EquipmentAttachmentsBulkPost")]
-        [RequiresPermission(Permission.ADMIN)]
+        [RequiresPermission(Permission.Admin)]
         public virtual IActionResult EquipmentAttachmentsBulkPost([FromBody]EquipmentAttachment[] items)
         {
             return _service.EquipmentAttachmentsBulkPostAsync(items);

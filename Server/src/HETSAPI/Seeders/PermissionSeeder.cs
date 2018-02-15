@@ -9,46 +9,46 @@ namespace HETSAPI.Seeders
 {
     internal class PermissionSeeder : Seeder<DbAppContext>
     {
-        private readonly string[] ProfileTriggers = { AllProfiles };
+        private readonly string[] _profileTriggers = { AllProfiles };
 
         public PermissionSeeder(IConfiguration configuration, IHostingEnvironment env, ILoggerFactory loggerFactory) 
             : base(configuration, env, loggerFactory)
         { }
 
-        protected override IEnumerable<string> TriggerProfiles
-        {
-            get { return ProfileTriggers; }
-        }
+        protected override IEnumerable<string> TriggerProfiles => _profileTriggers;
 
         protected override void Invoke(DbAppContext context)
         {
             UpdatePermissions(context);
             context.SaveChanges();
 
-            _logger.LogDebug("Listing permissions ...");
+            Logger.LogDebug("Listing permissions ...");
             foreach (var p in context.Permissions.ToList())
             {
-                _logger.LogDebug($"{p.Code}");
+                Logger.LogDebug($"{p.Code}");
             }
         }
 
         private void UpdatePermissions(DbAppContext context)
         {
-            var permissions = Permission.ALL_PERMISSIONS;
+            var permissions = Permission.AllPermissions;
 
-            _logger.LogDebug("Updating permissions ...");
-            foreach (var permission in permissions)
+            Logger.LogDebug("Updating permissions ...");
+
+            foreach (Permission permission in permissions)
             {
-                _logger.LogDebug($"Looking up {permission.Code} ...");
-                var p = context.Permissions.Where(x => x.Code == permission.Code).FirstOrDefault();
+                Logger.LogDebug($"Looking up {permission.Code} ...");
+
+                Permission p = context.Permissions.FirstOrDefault(x => x.Code == permission.Code);
+
                 if (p == null)
                 {
-                    _logger.LogDebug($"{permission.Code} does not exist, adding it ...");
+                    Logger.LogDebug($"{permission.Code} does not exist, adding it ...");
                     context.Permissions.Add(permission);
                 }
                 else
                 {
-                    _logger.LogDebug($"Updating the fields for {permission.Code} ...");
+                    Logger.LogDebug($"Updating the fields for {permission.Code} ...");
                     p.Description = permission.Description;
                     p.Name = permission.Name;
                 }

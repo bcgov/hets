@@ -34,7 +34,7 @@ namespace HETSAPI.Seeders
             _logger = _loggerFactory.CreateLogger(typeof(SeedFactory<T>));
             _configuration = configuration;
 
-            this.LoadSeeders();
+            LoadSeeders();
             _seederInstances.Sort(new SeederComparer<T>());
         }
 

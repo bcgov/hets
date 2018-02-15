@@ -31,7 +31,7 @@ namespace HETSAPI.Controllers
         [HttpPost]
         [Route("/api/rolepermissions/bulk")]
         [SwaggerOperation("RolepermissionsBulkPost")]
-        [RequiresPermission(Permission.ADMIN)]
+        [RequiresPermission(Permission.Admin)]
         public virtual IActionResult RolepermissionsBulkPost([FromBody]RolePermission[] items)
         {
             return _service.RolepermissionsBulkPostAsync(items);

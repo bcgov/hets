@@ -8,16 +8,13 @@ namespace HETSAPI.Seeders
 {
     public class RegionSeeder : Seeder<DbAppContext>
     {
-        private readonly string[] ProfileTriggers = { AllProfiles };
+        private readonly string[] _profileTriggers = { AllProfiles };
 
         public RegionSeeder(IConfiguration configuration, IHostingEnvironment env, ILoggerFactory loggerFactory) 
             : base(configuration, env, loggerFactory)
         { }
 
-        protected override IEnumerable<string> TriggerProfiles
-        {
-            get { return ProfileTriggers; }
-        }
+        protected override IEnumerable<string> TriggerProfiles => _profileTriggers;
 
         protected override void Invoke(DbAppContext context)
         {

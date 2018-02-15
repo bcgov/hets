@@ -34,7 +34,7 @@ namespace HETSAPI.Controllers
         [HttpPost]
         [Route("/api/equipment/bulk")]
         [SwaggerOperation("EquipmentBulkPost")]
-        [RequiresPermission(Permission.ADMIN)]
+        [RequiresPermission(Permission.Admin)]
         public virtual IActionResult EquipmentBulkPost([FromBody]Equipment[] items)
         {
             return _service.EquipmentBulkPostAsync(items);
@@ -171,7 +171,7 @@ namespace HETSAPI.Controllers
         [HttpGet]
         [Route("/api/equipment/{id}/recalcSeniority")]
         [SwaggerOperation("EquipmentRecalcSeniorityGet")]
-        [RequiresPermission(Permission.ADMIN)]
+        [RequiresPermission(Permission.Admin)]
         public virtual IActionResult EquipmentRecalcSeniorityGet([FromRoute]int id)
         {
             return _service.EquipmentRecalcSeniorityGetAsync(id);

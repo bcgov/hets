@@ -9,75 +9,86 @@ namespace HETSAPI.Models
     public sealed partial class Permission : IEquatable<Permission>
     {
         /// <summary>
-        /// Login Permission
+        /// Login (UI) Permission
         /// </summary>
-        public const string LOGIN = "LOGIN";
+        public const string Login = "Login";
 
         /// <summary>
         /// User Management Permission
         /// </summary>
-        public const string USER_MANAGEMENT = "USER_MANAGEMENT";
+        public const string UserManagement = "UserManagement";
 
         /// <summary>
         /// Roles and Permissions Permission
         /// </summary>
-        public const string ROLES_AND_PERMISSIONS = "ROLES_AND_PERMISSIONS";
+        public const string RolesAndPermissions = "RolesAndPermissions";
 
         /// <summary>
         /// Admin Perission
         /// </summary>
-        public const string ADMIN = "ADMIN";
+        public const string Admin = "Admin";
 
         /// <summary>
-        /// Recieve Notification Permission
+        /// Import Legacy Data Permission Permission
         /// </summary>
-        public const string RECEIVE_NOTIFICATIONS = "RECEIVE_NOTIFICATIONS";
+        public const string ImportData = "ImportData";
 
         /// <summary>
-        /// Assign Inspections Permission
+        /// Code Table Management Permission
         /// </summary>
-        public const string ASSIGN_INSPECTORS = "ASSIGN_INSPECTORS";
+        public const string CodeTableManagement = "CodeTableManagement";
+
+        /// <summary>
+        /// District Code Table Management Permission
+        /// </summary>
+        public const string DistrictCodeTableManagement = "DistrictCodeTableManagement";        
 
         /// <summary>
         /// All Permissions List
         /// </summary>
-        public static readonly IEnumerable<Permission> ALL_PERMISSIONS = new List<Permission>
+        public static readonly IEnumerable<Permission> AllPermissions = new List<Permission>
         {
             new Permission
             {
-                Code = LOGIN,
+                Code = Login,
                 Name = "Login",
-                Description = "Permission to login to the application"
+                Description = "Permission to login to the application and perform all Clerk functions within their designated District"
             },
             new Permission
             {
-                Code = USER_MANAGEMENT,
+                Code = UserManagement,
                 Name = "User Management",
                 Description = "Gives the user access to the User Management screens"
             },
             new Permission
             {
-                Code = ROLES_AND_PERMISSIONS,
+                Code = RolesAndPermissions,
                 Name = "Roles and Permissions",
                 Description = "Gives the user access to the Roles and Permissions screens"
             },
             new Permission
             {
-                Code = ADMIN,
+                Code = Admin,
                 Name = "Admin",
-                Description = "Allows the user to perform special administrative tasks."
+                Description = "Allows the user to perform special administrative tasks"
             },
             new Permission()
             {
-                Code = RECEIVE_NOTIFICATIONS,
-                Name = "Receive Notifications",
-                Description = "Enables the user to receive notifications intended for the user's group."
+                Code = ImportData,
+                Name = "Import Data",
+                Description = "Enables the user to import data from the legacy system"
             },
             new Permission()
             {
-                Code = ASSIGN_INSPECTORS,
-                Name = "Assign Inspectors",
-                Description = "A user granted this permission will be able to assign inspectors."
+                Code = CodeTableManagement,
+                Name = "Code Table Management",
+                Description = "Gives the user access to the Code Table Management screens"
+            },
+            new Permission()
+            {
+                Code = DistrictCodeTableManagement,
+                Name = "District Code Table Management",
+                Description = "Gives the user access to the District Code Table Management screens"
             }
         };
     }

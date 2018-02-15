@@ -40,9 +40,9 @@ namespace HETSAPI.Models
                 claims.Add(new Claim(ClaimTypes.Email, user.Email));
 
             if (user.Id != 0)
-                claims.Add(new Claim(User.USERID_CLAIM, user.Id.ToString()));
+                claims.Add(new Claim(User.UseridClaim, user.Id.ToString()));
 
-            var permissions = user.GetActivePermissions().Select(p => new Claim(User.PERMISSION_CLAIM, p.Code)).ToList();
+            var permissions = user.GetActivePermissions().Select(p => new Claim(User.PermissionClaim, p.Code)).ToList();
             if (permissions.Any())
                 claims.AddRange(permissions);
 
@@ -65,14 +65,11 @@ namespace HETSAPI.Models
 
             if (activeRoles != null)
             {                
-                var rolePermissions = activeRoles
+                IEnumerable<RolePermission> rolePermissions = activeRoles
                         .Where (x => x != null && x.RolePermissions != null)
                         .SelectMany(x => x.RolePermissions);
 
-                if (rolePermissions.Any())
-                {
-                    result = rolePermissions.Select(x => x.Permission).Distinct().ToList();
-                }
+                result = rolePermissions.Select(x => x.Permission).Distinct().ToList();
             }
 
             return result;            

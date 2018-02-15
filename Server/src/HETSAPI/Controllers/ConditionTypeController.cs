@@ -31,7 +31,7 @@ namespace HETSAPI.Controllers
         [HttpPost]
         [Route("/api/conditiontypes/bulk")]
         [SwaggerOperation("ConditionTypesBulkPost")]
-        [RequiresPermission(Permission.ADMIN)]
+        [RequiresPermission(Permission.Admin)]
         public virtual IActionResult ConditionTypesBulkPost([FromBody]ConditionType[] items)
         {
             return _service.ConditionTypesBulkPostAsync(items);

@@ -9,24 +9,15 @@ namespace HETSAPI.Seeders
 {
     public class UserSeeder : Seeder<DbAppContext>
     {
-        private readonly string[] ProfileTriggers = { AllProfiles };
+        private readonly string[] _profileTriggers = { AllProfiles };
 
         public UserSeeder(IConfiguration configuration, IHostingEnvironment env, ILoggerFactory loggerFactory) 
             : base(configuration, env, loggerFactory)
         { }
 
-        protected override IEnumerable<string> TriggerProfiles
-        {
-            get { return ProfileTriggers; }
-        }
+        protected override IEnumerable<string> TriggerProfiles => _profileTriggers;
 
-        public override Type InvokeAfter
-        {
-            get
-            {
-                return typeof(RoleSeeder);
-            }
-        }
+        public override Type InvokeAfter => typeof(RoleSeeder);
 
         protected override void Invoke(DbAppContext context)
         {
@@ -35,15 +26,14 @@ namespace HETSAPI.Seeders
 
         private void UpdateUsers(DbAppContext context)
         {
-            List<User> seedUsers = GetSeedUsers(context);
+            List<User> seedUsers = GetSeedUsers();
             foreach (var user in seedUsers)
             {
                 context.UpdateSeedUserInfo(user);
                 context.SaveChanges();
             }
 
-            AddInitialUsers(context);
-           
+            AddInitialUsers(context);           
         }
 
         private void AddInitialUsers(DbAppContext context)
@@ -51,12 +41,12 @@ namespace HETSAPI.Seeders
             context.AddInitialUsersFromFile(Configuration["UserInitializationFile"]);
         }
 
-        private List<User> GetSeedUsers(DbAppContext context)
+        private List<User> GetSeedUsers()
         {
             List<User> users = new List<User>(GetDefaultUsers());
 
             if (IsDevelopmentEnvironment)
-                users.AddRange(GetDevUsers(context));
+                users.AddRange(GetDevUsers());
 
             if (IsTestEnvironment || IsStagingEnvironment)
                 users.AddRange(GetTestUsers());
@@ -78,38 +68,9 @@ namespace HETSAPI.Seeders
         /// <summary>
         /// Returns a list of users to be populated in the Development environment.
         /// </summary>
-        private List<User> GetDevUsers(DbAppContext context)
+        private List<User> GetDevUsers()
         {
-            return new List<User>
-            {
-                new User
-                {
-                    Active = true,
-                    Email = "Testy.McTesterson@TestDomain.test",
-                    GivenName = "Testy",
-                    GroupMemberships = new List<GroupMembership>
-                    {
-                        new GroupMembership
-                        {
-                            Active = true,
-                            Group = context.GetGroup("Other")
-                        }
-                    },
-                    Guid = "2cbf7cb8d6b445f087fb82ad75566a9c",
-                    Initials = "TT",
-                    SmAuthorizationDirectory = "TEST",
-                    SmUserId = "TMcTesterson",
-                    Surname = "McTesterson",
-                    UserRoles = new List<UserRole>
-                    {
-                        new UserRole
-                        {
-                            EffectiveDate = DateTime.Now,
-                            Role = context.GetRole("Administrator")
-                        }
-                    }
-                }
-            };
+            return new List<User>();
         }
 
         /// <summary>

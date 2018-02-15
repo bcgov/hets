@@ -49,7 +49,7 @@ namespace HETSAPI.Controllers
         /// </remarks>
         [HttpGet]
         [Route("login/permission/attribute")]
-        [RequiresPermission(Permission.LOGIN)]
+        [RequiresPermission(Permission.Login)]
         public virtual IActionResult GetLoginPermissionAttributeMessage()
         {
             return _service.GetLoginPermissionAttributeMessage();
@@ -88,7 +88,7 @@ namespace HETSAPI.Controllers
         /// </remarks>
         [HttpGet]
         [Route("admin/permission/attribute")]
-        [RequiresPermission(Permission.ADMIN)]
+        [RequiresPermission(Permission.Admin)]
         public virtual IActionResult GetAdminPermissionAttributeMessage()
         {
             return _service.GetAdminPermissionAttributeMessage();
@@ -237,7 +237,7 @@ namespace HETSAPI.Controllers
         /// </summary>
         public IActionResult GetLoginPermissionServiceMessage()
         {
-            if (User.HasPermissions(Permission.LOGIN))
+            if (User.HasPermissions(Permission.Login))
             {
                 return Ok("You have permission to login to the application.  Permissions (permission based authorization) were checked inside the service implementation using the HasPermissions extension method.");
             }
@@ -262,7 +262,7 @@ namespace HETSAPI.Controllers
         /// This currently does not work.  Refer to the documentation on <see cref="RequiresPermissionAttribute"/> for details.
         /// As a workaround use the <see cref="ClaimsPrincipalExtensions.HasPermissions(ClaimsPrincipal, string[])"/> extension method when applying permissions inside the service implementation.
         /// </remarks>
-        [RequiresPermission(Permission.ADMIN)]
+        [RequiresPermission(Permission.Admin)]
         public IActionResult GetAdminPermissionServiceAttributeMessage()
         {
             return Ok("You have Admin permission to the application.  Permissions (permission based authorization) were checked using the RequiresPermission attribute set on the service method.");
@@ -273,7 +273,7 @@ namespace HETSAPI.Controllers
         /// </summary>
         public IActionResult GetAdminPermissionServiceMessage()
         {
-            if (User.HasPermissions(Permission.ADMIN))
+            if (User.HasPermissions(Permission.Admin))
             {
                 return Ok("You have Admin permission to the application.  Permissions (permission based authorization) were checked inside the service implementation using the HasPermissions extension method.");
             }
