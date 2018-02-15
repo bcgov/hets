@@ -570,14 +570,14 @@ var RentalAgreementsDetail = React.createClass({
           return <Grid fluid>
             <Row>
               <Col md={6}>
-                <ColDisplay md={12} labelProps={{ md: 4 }} label="Estimated Commencement:">{ formatDateTime(rentalAgreement.estimateStartWork, Constant.DATE_YEAR_SHORT_MONTH_DAY) }</ColDisplay>
-                <ColDisplay md={12} labelProps={{ md: 4 }} label="Point of Hire:">{ rentalAgreement.pointOfHire }</ColDisplay>
-                <ColDisplay md={12} labelProps={{ md: 4 }} label="District:">{ rentalAgreement.districtName }</ColDisplay>
+                <ColDisplay md={12} labelProps={{ md: 6 }} label="Estimated Commencement:">{ formatDateTime(rentalAgreement.estimateStartWork, Constant.DATE_YEAR_SHORT_MONTH_DAY) }</ColDisplay>
+                <ColDisplay md={12} labelProps={{ md: 6 }} label="Point of Hire:">{ rentalAgreement.pointOfHire }</ColDisplay>
+                <ColDisplay md={12} labelProps={{ md: 6 }} label="District:">{ rentalAgreement.districtName }</ColDisplay>
               </Col>
               <Col md={6}>
-                <ColDisplay md={12} labelProps={{ md: 4 }} label="Dated At:">{ formatDateTime(rentalAgreement.datedOn, Constant.DATE_YEAR_SHORT_MONTH_DAY) }</ColDisplay>
-                <ColDisplay md={12} labelProps={{ md: 4 }} label="Estimated Period Hours:">{ rentalAgreement.estimateHours }</ColDisplay>
-                <ColDisplay md={12} labelProps={{ md: 4 }} label="WorkSafeBC (WCB) Number:">{ rentalAgreement.workSafeBCPolicyNumber }</ColDisplay>
+                <ColDisplay md={12} labelProps={{ md: 6 }} label="Dated On:">{ formatDateTime(rentalAgreement.datedOn, Constant.DATE_YEAR_SHORT_MONTH_DAY) }</ColDisplay>
+                <ColDisplay md={12} labelProps={{ md: 6 }} label="Estimated Period Hours:">{ rentalAgreement.estimateHours }</ColDisplay>
+                <ColDisplay md={12} labelProps={{ md: 6 }} label="WorkSafeBC (WCB) Number:">{ rentalAgreement.workSafeBCPolicyNumber }</ColDisplay>
               </Col>
             </Row>
           </Grid>;
