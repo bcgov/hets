@@ -127,7 +127,7 @@ var EquipmentAddDialog = React.createClass({
         year: this.state.year,
         size: this.state.size,
         type: this.state.type,
-        status: Constant.EQUIPMENT_STATUS_CODE_APPROVED,
+        status: Constant.EQUIPMENT_STATUS_CODE_PENDING,
       });
     });
   },
