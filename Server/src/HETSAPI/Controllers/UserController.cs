@@ -32,7 +32,7 @@ namespace HETSAPI.Controllers
         [HttpPost]
         [Route("/api/usergroups/bulk")]
         [SwaggerOperation("UsergroupsBulkPost")]
-        [RequiresPermission(Permission.ADMIN)]
+        [RequiresPermission(Permission.Admin)]
         public virtual IActionResult UsergroupsBulkPost([FromBody]GroupMembership[] items)
         {
             return _service.UsergroupsBulkPostAsync(items);
@@ -46,7 +46,7 @@ namespace HETSAPI.Controllers
         [HttpPost]
         [Route("/api/users/bulk")]
         [SwaggerOperation("UsersBulkPost")]
-        [RequiresPermission(Permission.ADMIN)]
+        [RequiresPermission(Permission.Admin)]
         public virtual IActionResult UsersBulkPost([FromBody]User[] items)
         {
             return _service.UsersBulkPostAsync(items);
@@ -74,7 +74,7 @@ namespace HETSAPI.Controllers
         [HttpPost]
         [Route("/api/users/{id}/delete")]
         [SwaggerOperation("UsersIdDeletePost")]
-        [RequiresPermission(Permission.ADMIN)]
+        [RequiresPermission(Permission.Admin)]
         public virtual IActionResult UsersIdDeletePost([FromRoute]int id)
         {
             return _service.UsersIdDeletePostAsync(id);
@@ -139,7 +139,7 @@ namespace HETSAPI.Controllers
         [Route("/api/users/{id}/groups")]
         [SwaggerOperation("UsersIdGroupsPost")]
         [SwaggerResponse(200, type: typeof(List<GroupMembershipViewModel>))]
-        [RequiresPermission(Permission.ADMIN)]
+        [RequiresPermission(Permission.Admin)]
         public virtual IActionResult UsersIdGroupsPost([FromRoute]int id, [FromBody]GroupMembershipViewModel item)
         {
             return _service.UsersIdGroupsPostAsync(id, item);
@@ -157,7 +157,7 @@ namespace HETSAPI.Controllers
         [Route("/api/users/{id}/groups")]
         [SwaggerOperation("UsersIdGroupsPut")]
         [SwaggerResponse(200, type: typeof(List<GroupMembershipViewModel>))]
-        [RequiresPermission(Permission.ADMIN)]
+        [RequiresPermission(Permission.Admin)]
         public virtual IActionResult UsersIdGroupsPut([FromRoute]int id, [FromBody]GroupMembershipViewModel[] items)
         {
             return _service.UsersIdGroupsPutAsync(id, items);
@@ -174,7 +174,7 @@ namespace HETSAPI.Controllers
         [Route("/api/users/{id}/permissions")]
         [SwaggerOperation("UsersIdPermissionsGet")]
         [SwaggerResponse(200, type: typeof(List<PermissionViewModel>))]
-        [RequiresPermission(Permission.ADMIN)]
+        [RequiresPermission(Permission.Admin)]
         public virtual IActionResult UsersIdPermissionsGet([FromRoute]int id)
         {
             return _service.UsersIdPermissionsGetAsync(id);
@@ -191,7 +191,7 @@ namespace HETSAPI.Controllers
         [Route("/api/users/{id}")]
         [SwaggerOperation("UsersIdPut")]
         [SwaggerResponse(200, type: typeof(UserViewModel))]
-        [RequiresPermission(Permission.ADMIN)]
+        [RequiresPermission(Permission.Admin)]
         public virtual IActionResult UsersIdPut([FromRoute]int id, [FromBody]UserViewModel item)
         {
             return _service.UsersIdPutAsync(id, item);
@@ -224,7 +224,7 @@ namespace HETSAPI.Controllers
         [Route("/api/users/{id}/roles")]
         [SwaggerOperation("UsersIdRolesPost")]
         [SwaggerResponse(200, type: typeof(UserRoleViewModel))]
-        [RequiresPermission(Permission.ADMIN)]
+        [RequiresPermission(Permission.Admin)]
         public virtual IActionResult UsersIdRolesPost([FromRoute]int id, [FromBody]UserRoleViewModel item)
         {
             return _service.UsersIdRolesPostAsync(id, item);
@@ -242,7 +242,7 @@ namespace HETSAPI.Controllers
         [Route("/api/users/{id}/roles")]
         [SwaggerOperation("UsersIdRolesPut")]
         [SwaggerResponse(200, type: typeof(List<UserRoleViewModel>))]
-        [RequiresPermission(Permission.ADMIN)]
+        [RequiresPermission(Permission.Admin)]
         public virtual IActionResult UsersIdRolesPut([FromRoute]int id, [FromBody]UserRoleViewModel[] items)
         {
             return _service.UsersIdRolesPutAsync(id, items);
@@ -257,7 +257,7 @@ namespace HETSAPI.Controllers
         [Route("/api/users")]
         [SwaggerOperation("UsersPost")]
         [SwaggerResponse(200, type: typeof(UserViewModel))]
-        [RequiresPermission(Permission.ADMIN)]
+        [RequiresPermission(Permission.Admin)]
         public virtual IActionResult UsersPost([FromBody]UserViewModel item)
         {
             return _service.UsersPostAsync(item);

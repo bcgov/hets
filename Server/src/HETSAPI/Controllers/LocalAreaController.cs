@@ -31,7 +31,7 @@ namespace HETSAPI.Controllers
         [HttpPost]
         [Route("/api/localAreas/bulk")]
         [SwaggerOperation("LocalAreasBulkPost")]
-        [RequiresPermission(Permission.ADMIN)]
+        [RequiresPermission(Permission.Admin)]
         public virtual IActionResult LocalAreasBulkPost([FromBody]LocalArea[] items)
         {
             return _service.LocalAreasBulkPostAsync(items);

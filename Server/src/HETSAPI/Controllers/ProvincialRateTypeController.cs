@@ -31,7 +31,7 @@ namespace HETSAPI.Controllers
         [HttpPost]
         [Route("/api/provincialratetypes/bulk")]
         [SwaggerOperation("ProvincialRateTypesBulkPost")]
-        [RequiresPermission(Permission.ADMIN)]
+        [RequiresPermission(Permission.Admin)]
         public virtual IActionResult ProvincialRateTypesBulkPost([FromBody]ProvincialRateType[] items)
         {
             return _service.ProvincialRateTypesBulkPostAsync(items);

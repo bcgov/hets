@@ -33,7 +33,7 @@ namespace HETSAPI.Controllers
         [HttpPost]
         [Route("/api/rentalrequests/bulk")]
         [SwaggerOperation("RentalrequestsBulkPost")]
-        [RequiresPermission(Permission.ADMIN)]
+        [RequiresPermission(Permission.Admin)]
         public virtual IActionResult RentalrequestsBulkPost([FromBody]RentalRequest[] items)
         {
             return _service.RentalrequestsBulkPostAsync(items);
@@ -213,7 +213,7 @@ namespace HETSAPI.Controllers
         [HttpGet]
         [Route("/api/rentalrequests/{id}/recalcRotation")]
         [SwaggerOperation("RentalRequestsRotationListRecalcGet")]
-        [RequiresPermission(Permission.ADMIN)]
+        [RequiresPermission(Permission.Admin)]
         public virtual IActionResult RentalRequestsRotationListRecalcGet([FromRoute]int id)
         {
             return _service.RentalRequestsRotationListRecalcGetAsync(id);

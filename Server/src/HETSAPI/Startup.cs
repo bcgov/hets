@@ -221,7 +221,6 @@ namespace HETSAPI
                 app.UseSwaggerUI(options =>
                 {
                     options.SwaggerEndpoint(swaggerApi, "HETS REST API v1");
-                    options.SwaggerEndpoint(swaggerApi, "PDF REST API v1");
                     options.EnabledValidator(null);
                     options.DocExpansion("none");
                 });

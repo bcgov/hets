@@ -31,7 +31,7 @@ namespace HETSAPI.Controllers
         [HttpPost]
         [Route("/api/lookuplists/bulk")]
         [SwaggerOperation("LookuplistsBulkPost")]
-        [RequiresPermission(Permission.ADMIN)]
+        [RequiresPermission(Permission.Admin)]
         public virtual IActionResult LookuplistsBulkPost([FromBody]LookupList[] items)
         {
             return _service.LookuplistsBulkPostAsync(items);

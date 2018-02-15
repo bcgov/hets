@@ -31,7 +31,7 @@ namespace HETSAPI.Controllers
         [HttpPost]
         [Route("/api/timerecords/bulk")]
         [SwaggerOperation("TimerecordsBulkPost")]
-        [RequiresPermission(Permission.ADMIN)]
+        [RequiresPermission(Permission.Admin)]
         public virtual IActionResult TimerecordsBulkPost([FromBody]TimeRecord[] items)
         {
             return _service.TimerecordsBulkPostAsync(items);

@@ -31,7 +31,7 @@ namespace HETSAPI.Controllers
         [HttpPost]
         [Route("/api/histories/bulk")]
         [SwaggerOperation("HistoriesBulkPost")]
-        [RequiresPermission(Permission.ADMIN)]
+        [RequiresPermission(Permission.Admin)]
         public virtual IActionResult HistoriesBulkPost([FromBody]History[] items)
         {
             return _service.HistoriesBulkPostAsync(items);
