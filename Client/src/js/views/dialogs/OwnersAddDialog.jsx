@@ -48,7 +48,6 @@ var OwnersAddDialog = React.createClass({
       meetsResidency: true,
       doingBusinessAs: '',
       registeredCompanyNumber: '',
-      status: Constant.OWNER_STATUS_CODE_PENDING,
 
       nameError: '',
       address1Error: '',
@@ -175,7 +174,7 @@ var OwnersAddDialog = React.createClass({
       ownerCode: this.state.ownerCode,
       localArea: { id: this.state.localAreaId },
       meetsResidency: this.state.meetsResidency,
-      status: Constant.OWNER_STATUS_CODE_APPROVED,
+      status: Constant.OWNER_STATUS_CODE_PENDING,
       registeredCompanyNumber: this.state.registeredCompanyNumber,
       doingBusinessAs: this.state.doingBusinessAs,
     });
