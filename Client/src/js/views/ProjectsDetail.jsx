@@ -486,7 +486,12 @@ var ProjectsDetail = React.createClass({
         <ProjectsEditDialog show={ this.state.showEditDialog } onSave={ this.saveEdit } onClose={ this.closeEditDialog } />  
       }
       { this.state.showContactDialog &&
-        <ContactsEditDialog show={ this.state.showContactDialog } contact={ this.state.contact } onSave={ this.saveContact } onClose={ this.closeContactDialog } />
+        <ContactsEditDialog 
+          show={ this.state.showContactDialog } 
+          contact={ this.state.contact } 
+          onSave={ this.saveContact } 
+          onClose={ this.closeContactDialog } 
+        />
       }
       { this.state.showDocumentsDialog &&
         <DocumentsListDialog 
