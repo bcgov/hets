@@ -91,15 +91,7 @@ var RentalRequestsEditDialog = React.createClass({
       valid = false;
     }
 
-    if (isBlank(this.state.expectedEndDate)) {
-      this.setState({ expectedEndDateError: 'End date is required' });
-      valid = false;
-    } else if (!isValidDate(this.state.expectedEndDate)) {
-      this.setState({ expectedEndDateError: 'Date not valid' });
-      valid = false;
-    }
-
-    if (valid && Moment(this.state.expectedEndDate).isBefore(this.state.expectedStartDate)) {
+    if (Moment(this.state.expectedEndDate).isBefore(this.state.expectedStartDate)) {
       this.setState({ expectedEndDateError: 'End date must be later than the start date' });
       valid = false;
     }
@@ -135,45 +127,44 @@ var RentalRequestsEditDialog = React.createClass({
         return <Form>
           <Grid fluid>
             <Row>
-              <Col md={6}>
+              <Col md={12}>
                 <FormGroup>
                   <ControlLabel>Equipment Type</ControlLabel>
                   <FormControl.Static>{ this.props.rentalRequest.equipmentTypeName }</FormControl.Static>
                 </FormGroup>
               </Col>
-              <Col md={6}>
+              <Col md={12}>
                 <FormGroup>
                   <ControlLabel>Attachment(s)</ControlLabel>
-                  {/* <FormControl.Static>{ numRequestAttachments > 0 ? requestAttachments : 'None' }</FormControl.Static> */}
                   <FormInputControl id="rentalRequestAttachments" type="text" defaultValue={ this.state.rentalRequestAttachments } readOnly={ isReadOnly } updateState={ this.updateState } />
                 </FormGroup>
               </Col>
             </Row>
             <Row>
-              <Col md={6}>
+              <Col md={12}>
                 <FormGroup controlId="equipmentCount" validationState={ this.state.equipmentCountError ? 'error' : null }>
                   <ControlLabel>Count <sup>*</sup></ControlLabel>
                   <FormInputControl type="number" min={0} defaultValue={ this.state.equipmentCount } readOnly={ isReadOnly } updateState={ this.updateState } inputRef={ ref => { this.input = ref; }}/>
                   <HelpBlock>{ this.state.equipmentCountError }</HelpBlock>
                 </FormGroup>
               </Col>
-              <Col md={6}>
+              <Col md={12}>
                 <FormGroup controlId="expectedHours" validationState={ this.state.expectedHoursError ? 'error' : null }>
                   <ControlLabel>Expected Hours <sup>*</sup></ControlLabel>
-                  <FormInputControl type="number" className="full-width" min={0} defaultValue={ this.state.expectedHours } readOnly={ isReadOnly } updateState={ this.updateState }/>
+                  <FormInputControl type="number" min={0} defaultValue={ this.state.expectedHours } readOnly={ isReadOnly } updateState={ this.updateState }/>
                   <HelpBlock>{ this.state.expectedHoursError }</HelpBlock>
                 </FormGroup>
               </Col>
             </Row>
             <Row>
-              <Col md={6}>
+              <Col md={12}>
                 <FormGroup controlId="expectedStartDate" validationState={ this.state.expectedStartDateError ? 'error' : null }>
                   <ControlLabel>Start Date <sup>*</sup></ControlLabel>
                   <DateControl id="expectedStartDate" disabled={ isReadOnly } date={ this.state.expectedStartDate } updateState={ this.updateState } placeholder="mm/dd/yyyy" title="Dated At" />
                   <HelpBlock>{ this.state.expectedStartDateError }</HelpBlock>
                 </FormGroup>
               </Col>
-              <Col md={6}>
+              <Col md={12}>
                 <FormGroup controlId="expectedEndDate" validationState={ this.state.expectedEndDateError ? 'error' : null }>
                   <ControlLabel>End Date <sup>*</sup></ControlLabel>
                   <DateControl id="expectedEndDate" disabled={ isReadOnly } date={ this.state.expectedEndDate } updateState={ this.updateState } placeholder="mm/dd/yyyy" title="Dated At" />
