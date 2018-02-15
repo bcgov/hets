@@ -1615,6 +1615,12 @@ export function addRentalCondition(rentalCondition) {
   });
 }
 
+export function addRentalConditions(rentalAgreementId, rentalConditions) {
+  return new ApiRequest(`rentalagreements/${rentalAgreementId}/conditionRecords`).post(rentalConditions).then(response => {
+    return response;
+  });
+}
+
 export function updateRentalCondition(rentalCondition) {
   return new ApiRequest(`/rentalagreementconditions/${ rentalCondition.id }`).put(rentalCondition).then(response => {
     var rentalCondition = response.data;

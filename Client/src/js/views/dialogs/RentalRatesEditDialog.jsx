@@ -41,7 +41,7 @@ var RentalRatesEditDialog = React.createClass({
           rateType: {},
           rate: this.props.rentalRate.rate || 0.0,
           percentOfEquipmentRate: this.props.rentalRate.percentOfEquipmentRate || 0,
-          ratePeriod: this.props.rentalRate.ratePeriod || isNew ? Constant.RENTAL_RATE_PERIOD_HOURLY : '',
+          ratePeriod: this.props.rentalRate.ratePeriod || Constant.RENTAL_RATE_PERIOD_HOURLY,
           comment: this.props.rentalRate.comment || '',
           isIncludedInTotal: this.props.rentalRate.includeInTotal || false,
 
@@ -73,7 +73,6 @@ var RentalRatesEditDialog = React.createClass({
   },
 
   updateState(value) {
-    // this.setState(state, callback);
     let property = Object.keys(value)[0];
     let stateValue = Object.values(value)[0];
     let number = property.match(/\d+/g)[0];
@@ -200,6 +199,7 @@ var RentalRatesEditDialog = React.createClass({
     let forms = this.state.forms;
     let attachments = Object.keys(forms).map((key) => {
       return { 
+        id: this.props.rentalRate.id || 0,
         rentalAgreement: { id: this.props.rentalRate.rentalAgreement.id }, 
         componentName: this.state.forms[key].rateType.description,
         rate: this.state.forms[key].rate,
@@ -225,7 +225,7 @@ var RentalRatesEditDialog = React.createClass({
             rateType: {},
             rate: this.props.rentalRate.rate || 0.0,
             percentOfEquipmentRate: this.props.rentalRate.percentOfEquipmentRate || 0,
-            ratePeriod: this.props.rentalRate.ratePeriod || '',
+            ratePeriod: this.props.rentalRate.ratePeriod || Constant.RENTAL_RATE_PERIOD_HOURLY,
             comment: this.props.rentalRate.comment || '',
             includeInTotal: this.props.rentalRate.includeInTotal || false,
 
@@ -281,7 +281,6 @@ var RentalRatesEditDialog = React.createClass({
               <Col md={2}>
                 <FormGroup controlId={`ratePeriod${key}`} validationState={ this.state.forms[key].ratePeriodError ? 'error' : null }>
                   <ControlLabel>Period <sup>*</sup></ControlLabel>
-                  {/*TODO - use lookup list*/}
                   <DropdownControl id={`ratePeriod${key}`} title={ this.state.forms[key].ratePeriod } updateState={ this.updateState }
                     items={[ Constant.RENTAL_RATE_PERIOD_HOURLY, Constant.RENTAL_RATE_PERIOD_DAILY ]} disabled={ !this.state.forms[key].rateType.isRateEditable }  />
                   <HelpBlock>{ this.state.forms[key].ratePeriodError }</HelpBlock>

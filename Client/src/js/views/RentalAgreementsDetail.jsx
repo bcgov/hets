@@ -249,6 +249,13 @@ var RentalAgreementsDetail = React.createClass({
     });
   },
 
+  saveConditions(rentalConditions) {
+    Api.addRentalConditions(this.props.params.rentalAgreementId, rentalConditions).finally(() => {
+      this.fetch();
+      this.closeConditionDialog();
+    });
+  },
+
   email() {
 
   },
@@ -641,6 +648,7 @@ var RentalAgreementsDetail = React.createClass({
           rentalCondition={ this.state.rentalCondition } 
           rentalConditions={ rentalConditions } 
           onSave={ this.saveCondition } 
+          onSaveMultiple={ this.saveConditions }
           onClose={ this.closeConditionDialog } 
         />
       }
