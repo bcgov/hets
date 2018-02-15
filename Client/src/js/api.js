@@ -1146,6 +1146,10 @@ function parseRentalRequest(rentalRequest) {
   rentalRequest.primaryContactRole = rentalRequest.primaryContact ? rentalRequest.primaryContact.role : '';
   rentalRequest.primaryContactPhone = rentalRequest.primaryContact ? rentalRequest.primaryContact.workPhoneNumber || rentalRequest.primaryContact.mobilePhoneNumber || '' : '';
 
+  rentalRequest.projectPrimaryContactName = rentalRequest.project.primaryContact ? firstLastName(rentalRequest.project.primaryContact.givenName, rentalRequest.project.primaryContact.surname) : '';
+  rentalRequest.projectPrimaryContactEmail = rentalRequest.project.primaryContact ? rentalRequest.project.primaryContact.emailAddress : '';
+  rentalRequest.projectPrimaryContactRole = rentalRequest.project.primaryContact ? rentalRequest.project.primaryContact.role : '';
+  rentalRequest.projectPrimaryContactPhone = rentalRequest.project.primaryContact ? rentalRequest.project.primaryContact.workPhoneNumber || rentalRequest.project.primaryContact.mobilePhoneNumber || '' : '';
   // Flag element as a rental request.
   // Rental requests and rentals are merged and shown in a single list on Project Details screen
   rentalRequest.isRentalRequest = true;

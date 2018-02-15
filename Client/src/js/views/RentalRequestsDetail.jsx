@@ -25,7 +25,6 @@ import CheckboxControl from '../components/CheckboxControl.jsx';
 import ColDisplay from '../components/ColDisplay.jsx';
 import Spinner from '../components/Spinner.jsx';
 import TableControl from '../components/TableControl.jsx';
-import Unimplemented from '../components/Unimplemented.jsx';
 import Confirm from '../components/Confirm.jsx';
 import OverlayTrigger from '../components/OverlayTrigger.jsx';
 
@@ -65,12 +64,10 @@ var RentalRequestsDetail = React.createClass({
 
       showEditDialog: false,
       showHireOfferDialog: false,
-      showContactDialog: false,
       showNotesDialog: false, 
 
       showAttachmentss: false,
 
-      contact: {},
       rotationListHireOffer: {},
 
       isNew: this.props.params.rentalRequestId == 0,
@@ -187,31 +184,12 @@ var RentalRequestsDetail = React.createClass({
     });
   },
 
-  openContactDialog(contact) {
-    this.setState({
-      contact: contact,
-      showContactDialog: true,
-    });
-  },
-
-  closeContactDialog() {
-    this.setState({ showContactDialog: false });
-  },
-
-  saveContact() {
-    // TODO Save contact
-  },
-
   print() {
     window.print();
   },
 
   addRequest() {
 
-  },
-
-  cloneRequest() {
-    // TODO
   },
 
   renderStatusText(listItem) {
@@ -233,9 +211,6 @@ var RentalRequestsDetail = React.createClass({
       <Row id="rental-requests-top">
         <Col md={10}>
           <Label bsStyle={ rentalRequest.isActive ? 'success' : rentalRequest.isCancelled ? 'danger' : 'default' }>{ rentalRequest.status }</Label>
-          <Unimplemented>
-            <Button title="Clone" onClick={ this.cloneRequest }>Clone</Button>
-          </Unimplemented>
           <Button title="Notes" onClick={ this.showNotes }>Notes ({ Object.keys(this.props.notes).length })</Button>
           <Button title="Documents" onClick={ this.showDocuments }>Documents ({ Object.keys(this.props.documents).length })</Button>
         </Col>
@@ -254,7 +229,7 @@ var RentalRequestsDetail = React.createClass({
         </span></h3>
         {(() => {
           if (this.state.loading) { return <div style={{ textAlign: 'center' }}><Spinner/></div>; }
-          
+
           var requestAttachments = rentalRequest.rentalRequestAttachments && rentalRequest.rentalRequestAttachments[0] ? rentalRequest.rentalRequestAttachments[0].attachment : 'None';
 
           return <Grid fluid id="rental-requests-data" className="nopadding">
@@ -262,12 +237,8 @@ var RentalRequestsDetail = React.createClass({
               <Col md={6} sm={6} xs={12}>
                 <ColDisplay md={12} xs={12} labelProps={{ md: 4 }} label="Project"><strong>{ rentalRequest.project && rentalRequest.project.name }</strong></ColDisplay>
                 <ColDisplay md={12} xs={12} labelProps={{ md: 4 }} label="Provincial Project Number"><strong>{ rentalRequest.project && rentalRequest.project.provincialProjectNumber }</strong></ColDisplay>
-                <ColDisplay md={12} xs={12} labelProps={{ md: 4 }} label={ rentalRequest.primaryContactRole || 'Primary Contact' }>
-                  <Unimplemented>
-                    <Button bsStyle="link" title="Show Contact" onClick={ this.openContactDialog.bind(this, rentalRequest.primaryContact) }>
-                      { concat(rentalRequest.primaryContactName, rentalRequest.primaryContactPhone, ', ') }
-                    </Button>
-                  </Unimplemented>
+                <ColDisplay md={12} xs={12} labelProps={{ md: 4 }} label={ rentalRequest.projectPrimaryContactRole || 'Primary Contact' }>
+                  { concat(rentalRequest.projectPrimaryContactName, rentalRequest.projectPrimaryContactPhone, ', ') }
                 </ColDisplay>
                 <ColDisplay md={12} xs={12} labelProps={{ md: 4 }} label="Local Area">{ rentalRequest.localAreaName }</ColDisplay>
                 <ColDisplay md={12} xs={12} labelProps={{ md: 4 }} label="Equipment Type">{ rentalRequest.equipmentTypeName }</ColDisplay>
