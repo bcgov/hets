@@ -333,6 +333,9 @@ var EquipmentDetail = React.createClass({
                 return <Row>
                   <Col md={6}>
                     <Row>
+                      <ColDisplay labelProps={{ md: 4 }} label="Type">{ equipment.typeName }</ColDisplay>
+                    </Row>
+                    <Row>
                       <ColDisplay labelProps={{ md: 4 }} label="Make">{ equipment.make }</ColDisplay>
                     </Row>
                     <Row>
@@ -341,13 +344,13 @@ var EquipmentDetail = React.createClass({
                     <Row>
                       <ColDisplay labelProps={{ md: 4 }} label="Year">{ equipment.year }</ColDisplay>
                     </Row>
-                    <Row>
-                      <ColDisplay labelProps={{ md: 4 }} label="Size">{ equipment.size }</ColDisplay>
-                    </Row>
                   </Col>
                   <Col md={6}>
                     <Row>
-                      <ColDisplay labelProps={{ md: 4 }} label="Type">{ equipment.typeName }</ColDisplay>
+                      <ColDisplay labelProps={{ md: 4 }} label="Size">{ equipment.size }</ColDisplay>
+                    </Row>
+                    <Row>
+                      <ColDisplay labelProps={{ md: 4 }} label="Type">{ equipment.type }</ColDisplay>
                     </Row>
                     <Row>
                       <ColDisplay labelProps={{ md: 4 }} label="Licence Number">{ equipment.licencePlate }</ColDisplay>

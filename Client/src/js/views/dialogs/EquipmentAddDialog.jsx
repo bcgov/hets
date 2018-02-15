@@ -39,6 +39,7 @@ var EquipmentAddDialog = React.createClass({
       model: '',
       year: '',
       size: '',
+      type: '',
       localAreaError: '',
       equipmentTypeError: '',
       serialNumberError: '',
@@ -66,6 +67,7 @@ var EquipmentAddDialog = React.createClass({
     if (this.state.model !== '') { return true; }
     if (this.state.year !== '') { return true; }
     if (this.state.size !== '') { return true; }
+    if (this.state.type !== '') { return true; }
 
     return false;
   },
@@ -124,6 +126,7 @@ var EquipmentAddDialog = React.createClass({
         model: this.state.model,
         year: this.state.year,
         size: this.state.size,
+        type: this.state.type,
         status: Constant.EQUIPMENT_STATUS_CODE_APPROVED,
       });
     });
@@ -162,6 +165,14 @@ var EquipmentAddDialog = React.createClass({
           />
           <HelpBlock>{ this.state.localAreaError }</HelpBlock>
         </FormGroup>
+        <FormGroup controlId="equipmentTypeId" validationState={ this.state.equipmentTypeError ? 'error' : null }>
+          <ControlLabel>Equipment Type <sup>*</sup></ControlLabel>
+          <FilterDropdown id="equipmentTypeId" fieldName="districtEquipmentName" selectedId={ this.state.equipmentTypeId } updateState={ this.updateState }
+            items={ districtEquipmentTypes }
+            className="full-width"
+          />
+          <HelpBlock>{ this.state.equipmentTypeError }</HelpBlock>
+        </FormGroup>
         <FormGroup controlId="make">
           <ControlLabel>Make</ControlLabel>
           <FormInputControl type="text" defaultValue={ this.state.make } updateState={ this.updateState }/>
@@ -179,13 +190,9 @@ var EquipmentAddDialog = React.createClass({
           <ControlLabel>Size</ControlLabel>
           <FormInputControl type="text" defaultValue={ this.state.size } updateState={ this.updateState }/>
         </FormGroup>
-        <FormGroup controlId="equipmentTypeId" validationState={ this.state.equipmentTypeError ? 'error' : null }>
-          <ControlLabel>Equipment Type <sup>*</sup></ControlLabel>
-          <FilterDropdown id="equipmentTypeId" fieldName="districtEquipmentName" selectedId={ this.state.equipmentTypeId } updateState={ this.updateState }
-            items={ districtEquipmentTypes }
-            className="full-width"
-          />
-          <HelpBlock>{ this.state.equipmentTypeError }</HelpBlock>
+        <FormGroup controlId="type">
+          <ControlLabel>Type</ControlLabel>
+          <FormInputControl type="text" defaultValue={ this.state.type } updateState={ this.updateState }/>
         </FormGroup>
         <FormGroup controlId="licencePlate">
           <ControlLabel>Licence Number</ControlLabel>

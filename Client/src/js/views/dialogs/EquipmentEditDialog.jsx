@@ -32,6 +32,7 @@ var EquipmentEditDialog = React.createClass({
       model: this.props.equipment.model || '',
       year: this.props.equipment.year || '',
       licencePlate: this.props.equipment.licencePlate || '',
+      type: this.props.equipment.type || '',
 
       serialNumberError: null,
       yearError: null,
@@ -39,7 +40,7 @@ var EquipmentEditDialog = React.createClass({
   },
 
   componentDidMount() {
-    // this.input.focus();
+    this.input.focus();
   },
 
   updateState(state, callback) {
@@ -53,6 +54,7 @@ var EquipmentEditDialog = React.createClass({
     if (this.state.model !== this.props.equipment.model) { return true; }
     if (this.state.year !== this.props.equipment.year) { return true; }
     if (this.state.licencePlate !== this.props.equipment.licencePlate) { return true; }
+    if (this.state.type !== this.props.equipment.type) { return true; }    
 
     return false;
   },
@@ -96,6 +98,7 @@ var EquipmentEditDialog = React.createClass({
         model: this.state.model,
         year: this.state.year,
         licencePlate: this.state.licencePlate,
+        type: this.state.type,
       }});
     });
   },
@@ -113,7 +116,7 @@ var EquipmentEditDialog = React.createClass({
               <Col md={12}>
                 <FormGroup controlId="make">
                   <ControlLabel>Make</ControlLabel>
-                  <FormInputControl type="text" defaultValue={ this.state.make } updateState={ this.updateState }/>                  
+                  <FormInputControl type="text" defaultValue={ this.state.make } updateState={ this.updateState } inputRef={ ref => { this.input = ref; }}/>                  
                 </FormGroup>
               </Col>
             </Row>
@@ -144,6 +147,14 @@ var EquipmentEditDialog = React.createClass({
             </Row>
             <Row>
               <Col md={12}>
+                <FormGroup controlId="type">
+                  <ControlLabel>Type</ControlLabel>
+                  <FormInputControl type="text" defaultValue={ this.state.type } updateState={ this.updateState }/>                  
+                </FormGroup>
+              </Col>
+            </Row>
+            <Row>
+              <Col md={12}>
                 <FormGroup controlId="licencePlate">
                   <ControlLabel>Licence Number</ControlLabel>
                   <FormInputControl type="text" defaultValue={ this.state.licencePlate } updateState={ this.updateState }/>
@@ -154,7 +165,7 @@ var EquipmentEditDialog = React.createClass({
               <Col md={12}>
                 <FormGroup controlId="serialNumber" validationState={ this.state.serialNumberError ? 'error' : null }>
                   <ControlLabel>Serial Number <sup>*</sup></ControlLabel>
-                  <FormInputControl type="text" defaultValue={ this.state.serialNumber } updateState={ this.updateState } inputRef={ ref => { this.input = ref; }}/>
+                  <FormInputControl type="text" defaultValue={ this.state.serialNumber } updateState={ this.updateState } />
                   <HelpBlock>{ this.state.serialNumberError }</HelpBlock>
                 </FormGroup>
               </Col>
