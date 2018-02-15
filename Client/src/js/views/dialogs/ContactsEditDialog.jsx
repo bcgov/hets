@@ -27,18 +27,12 @@ var ContactsEditDialog = React.createClass({
 
       givenName: this.props.contact.givenName || '',
       surname: this.props.contact.surname || '',
-      organizationName: this.props.contact.organizationName || '',
       role: this.props.contact.role || '',
       notes: this.props.contact.notes || '',
       emailAddress: this.props.contact.emailAddress || '',
       workPhoneNumber: this.props.contact.workPhoneNumber || '',
       mobilePhoneNumber: this.props.contact.mobilePhoneNumber || '',
       faxPhoneNumber: this.props.contact.faxPhoneNumber || '',
-      address1: this.props.contact.address1 || '',
-      address2: this.props.contact.address2 || '',
-      city: this.props.contact.city || '',
-      province: this.props.contact.province || '',
-      postalCode: this.props.contact.postalCode || '',
       isPrimary: this.props.contact.isPrimary || false,
 
       givenNameError: false,
@@ -72,11 +66,6 @@ var ContactsEditDialog = React.createClass({
     if (this.state.workPhoneNumber !== this.props.contact.workPhoneNumber) { return true; }
     if (this.state.mobilePhoneNumber !== this.props.contact.mobilePhoneNumber) { return true; }
     if (this.state.faxPhoneNumber !== this.props.contact.faxPhoneNumber) { return true; }
-    if (this.state.address1 !== this.props.contact.address1) { return true; }
-    if (this.state.address2 !== this.props.contact.address2) { return true; }
-    if (this.state.city !== this.props.contact.city) { return true; }
-    if (this.state.province !== this.props.contact.province) { return true; }
-    if (this.state.postalCode !== this.props.contact.postalCode) { return true; }
     if (this.state.isPrimary !== this.props.contact.isPrimary) { return true; }
 
     return false;
@@ -146,18 +135,12 @@ var ContactsEditDialog = React.createClass({
     this.props.onSave({ ...this.props.contact, ...{
       givenName: this.state.givenName,
       surname: this.state.surname,
-      organizationName: this.state.organizationName,
       role: this.state.role,
       notes: this.state.notes,
       emailAddress: this.state.emailAddress,
       workPhoneNumber: this.state.workPhoneNumber,
       mobilePhoneNumber: this.state.mobilePhoneNumber,
       faxPhoneNumber: this.state.faxPhoneNumber,
-      address1: this.state.address1,
-      address2: this.state.address2,
-      city: this.state.city,
-      province: this.state.province,
-      postalCode: this.state.postalCode,
       isPrimary: this.state.isPrimary,
     }});
   },
@@ -166,7 +149,7 @@ var ContactsEditDialog = React.createClass({
     // Read-only if the user cannot edit the contact
     var isReadOnly = !this.props.contact.canEdit && this.props.contact.id !== 0;
 
-    return <EditDialog id="contacts-edit" show={ this.props.show } bsSize="large"
+    return <EditDialog id="contacts-edit" show={ this.props.show }
       onClose={ this.props.onClose } onSave={ this.onSave } didChange={ this.didChange } isValid={ this.isValid }
       title={ <span>
         <strong>Contact</strong>
@@ -179,88 +162,48 @@ var ContactsEditDialog = React.createClass({
         return <Form>
           <Grid fluid>
             <Row>
-              <Col md={3}>
+              <Col md={12}>
                 <FormGroup controlId="givenName" validationState={ this.state.givenNameError ? 'error' : null }>
                   <ControlLabel>Given Name <sup>*</sup></ControlLabel>
                   <FormInputControl type="text" defaultValue={ this.state.givenName } readOnly={ isReadOnly } updateState={ this.updateState } inputRef={ ref => { this.input = ref; }}/>
                   <HelpBlock>{ this.state.givenNameError }</HelpBlock>
                 </FormGroup>
               </Col>
-              <Col md={3}>
+              <Col md={12}>
                 <FormGroup controlId="surname" validationState={ this.state.surnameError ? 'error' : null }>
                   <ControlLabel>Surname <sup>*</sup></ControlLabel>
                   <FormInputControl type="text" defaultValue={ this.state.surname } readOnly={ isReadOnly } updateState={ this.updateState }/>
                   <HelpBlock>{ this.state.surnameError }</HelpBlock>
                 </FormGroup>
               </Col>
-              <Col md={3}>
-                <FormGroup controlId="organizationName">
-                  <ControlLabel>Organization</ControlLabel>
-                  <FormInputControl type="text" defaultValue={ this.state.organizationName } readOnly={ isReadOnly } updateState={ this.updateState }/>
-                </FormGroup>
-              </Col>
-              <Col md={3}>
+              <Col md={12}>
                 <FormGroup controlId="role">
                   <ControlLabel>Role</ControlLabel>
                   <FormInputControl type="text" defaultValue={ this.state.role } readOnly={ isReadOnly } updateState={ this.updateState }/>
                 </FormGroup>
               </Col>
-            </Row>
-            <Row>
-              <Col md={3}>
-                <FormGroup controlId="address1">
-                  <ControlLabel>Address 1</ControlLabel>
-                  <FormInputControl type="text" defaultValue={ this.state.address1 } readOnly={ isReadOnly } updateState={ this.updateState }/>
-                </FormGroup>
-              </Col>
-              <Col md={3}>
-                <FormGroup controlId="address2">
-                  <ControlLabel>Address 2</ControlLabel>
-                  <FormInputControl type="text" defaultValue={ this.state.address2 } readOnly={ isReadOnly } updateState={ this.updateState }/>
-                </FormGroup>
-              </Col>
-              <Col md={3}>
-                <FormGroup controlId="city">
-                  <ControlLabel>City</ControlLabel>
-                  <FormInputControl type="text" defaultValue={ this.state.city } readOnly={ isReadOnly } updateState={ this.updateState }/>
-                </FormGroup>
-              </Col>
-              <Col md={1}>
-                <FormGroup controlId="province">
-                  <ControlLabel>Province</ControlLabel>
-                  <FormInputControl type="text" defaultValue={ this.state.province } readOnly={ isReadOnly } updateState={ this.updateState }/>
-                </FormGroup>
-              </Col>
-              <Col md={2}>
-                <FormGroup controlId="postalCode">
-                  <ControlLabel>Postal Code</ControlLabel>
-                  <FormInputControl type="text" defaultValue={ this.state.postalCode } readOnly={ isReadOnly } updateState={ this.updateState }/>
-                </FormGroup>
-              </Col>
-            </Row>
-            <Row>
-              <Col md={3}>
+              <Col md={12}>
                 <FormGroup controlId="workPhoneNumber" validationState={ this.state.workPhoneNumberError ? 'error' : null }>
                   <ControlLabel>Work Phone</ControlLabel>
                   <FormInputControl type="text" defaultValue={ this.state.workPhoneNumber } placeholder="250-555-1212x123" readOnly={ isReadOnly } updateState={ this.updateState }/>
                   <HelpBlock>{ this.state.workPhoneNumberError }</HelpBlock>
                 </FormGroup>
               </Col>
-              <Col md={3}>
+              <Col md={12}>
                 <FormGroup controlId="mobilePhoneNumber" validationState={ this.state.mobilePhoneNumberError ? 'error' : null }>
                   <ControlLabel>Cell Phone</ControlLabel>
                   <FormInputControl type="text" defaultValue={ this.state.mobilePhoneNumber } placeholder="250-555-1212" readOnly={ isReadOnly } updateState={ this.updateState }/>
                   <HelpBlock>{ this.state.mobilePhoneNumberError }</HelpBlock>
                 </FormGroup>
               </Col>
-              <Col md={3}>
+              <Col md={12}>
                 <FormGroup controlId="faxPhoneNumber" validationState={ this.state.faxPhoneNumberError ? 'error' : null }>
                   <ControlLabel>Fax</ControlLabel>
                   <FormInputControl type="text" defaultValue={ this.state.faxPhoneNumber } placeholder="250-555-1212" readOnly={ isReadOnly } updateState={ this.updateState }/>
                   <HelpBlock>{ this.state.faxPhoneNumberError }</HelpBlock>
                 </FormGroup>
               </Col>
-              <Col md={3}>
+              <Col md={12}>
                 <FormGroup controlId="emailAddress" validationState={ this.state.emailAddressError ? 'error' : null }>
                   <ControlLabel>Email</ControlLabel>
                   <FormInputControl type="text" defaultValue={ this.state.emailAddress } readOnly={ isReadOnly } updateState={ this.updateState }/>
