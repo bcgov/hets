@@ -6,7 +6,6 @@
   #users-bar,
   #roles-bar, 
   .history,
-  .request-information,
   .btn-group, 
   .btn,
   .checkbox,
@@ -15,8 +14,45 @@
    }
   
   .template {
-    margin: 0 50px;
+    margin: 0px;
   }
+
+  #rental-requests-detail {
+
+    h3 {
+      padding: 0 15px;
+    }
+
+    .request-information {
+      padding: 0;
+    }
+
+    #rental-requests-data {
+    
+      .row > div {
+        display: inline-block;
+        width: 50%;
+      }
+    }
+
+    .well {
+      border: none;
+      margin-right: 100px;
+    }
+
+    #rotation-list {
+      font-size: 10px;
+    }
+
+    thead > tr > th:last-child {
+      display: none;
+    }
+
+    tbody > tr > td:nth-child(4) {
+      max-width: 150px;
+    }
+  }
+  
 
   .col-md-6 {
     float: initial;
