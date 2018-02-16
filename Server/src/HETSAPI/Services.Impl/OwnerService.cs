@@ -183,17 +183,23 @@ namespace HETSAPI.Services.Impl
 
             if (exists)
             {
+                // doe not return Archived Equipment
                 Owner result = _context.Owners.AsNoTracking()
                     .Include(x => x.LocalArea.ServiceArea.District.Region)
-                    .Include(x => x.EquipmentList).ThenInclude(y => y.LocalArea.ServiceArea.District.Region)
-                    .Include(x => x.EquipmentList).ThenInclude(y => y.DistrictEquipmentType)
-                    .Include(x => x.EquipmentList).ThenInclude(y => y.DumpTruck)
+                    .Include(x => x.EquipmentList)
+                        .ThenInclude(y => y.LocalArea.ServiceArea.District.Region)
+                    .Include(x => x.EquipmentList)
+                        .ThenInclude(y => y.DistrictEquipmentType)
+                    .Include(x => x.EquipmentList)
+                        .ThenInclude(y => y.DumpTruck)
                     .Include(x => x.EquipmentList)
                         .ThenInclude(y => y.Owner)
                             .ThenInclude(c => c.PrimaryContact)
                     .Include(x => x.Contacts)
                     .Include(x => x.PrimaryContact)
                     .First(a => a.Id == id);
+
+                result.EquipmentList.RemoveAll(y => y.Status.Equals("Archived", StringComparison.InvariantCultureIgnoreCase));
 
                 return new ObjectResult(new HetsResponse(result));
             }
@@ -254,15 +260,20 @@ namespace HETSAPI.Services.Impl
                 {
                     Owner owner = _context.Owners
                         .Include(x => x.LocalArea.ServiceArea.District.Region)
-                        .Include(x => x.EquipmentList).ThenInclude(y => y.LocalArea.ServiceArea.District.Region)
-                        .Include(x => x.EquipmentList).ThenInclude(y => y.DistrictEquipmentType)
-                        .Include(x => x.EquipmentList).ThenInclude(y => y.DumpTruck)
+                        .Include(x => x.EquipmentList)
+                            .ThenInclude(y => y.LocalArea.ServiceArea.District.Region)
+                        .Include(x => x.EquipmentList)
+                            .ThenInclude(y => y.DistrictEquipmentType)
+                        .Include(x => x.EquipmentList)
+                            .ThenInclude(y => y.DumpTruck)
                         .Include(x => x.EquipmentList)
                             .ThenInclude(y => y.Owner)
                                 .ThenInclude(c => c.PrimaryContact)
                         .Include(x => x.Contacts)
                         .Include(x => x.PrimaryContact)
                         .First(a => a.Id == id);
+
+                    owner.EquipmentList.RemoveAll(y => y.Status.Equals("Archived", StringComparison.InvariantCultureIgnoreCase));
 
                     owner.Status = item.Status;
                     owner.StatusComment = item.StatusComment;
@@ -280,6 +291,19 @@ namespace HETSAPI.Services.Impl
                             {
                                 equipment.Status = item.Status;
                                 equipment.StatusComment = item.StatusComment;
+
+                                if (equipment.Status.Equals("Archived", StringComparison.CurrentCultureIgnoreCase))
+                                {
+                                    equipment.ArchiveCode = "Y";
+                                    equipment.ArchiveDate = DateTime.UtcNow;
+                                    equipment.ArchiveReason = "Owner Archived";
+                                }
+                                else
+                                {
+                                    equipment.ArchiveCode = "N";
+                                    equipment.ArchiveDate = null;
+                                    equipment.ArchiveReason = null;
+                                }
                             }
                         }
                     }
