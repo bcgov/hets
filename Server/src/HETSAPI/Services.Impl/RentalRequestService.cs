@@ -1070,7 +1070,8 @@ namespace HETSAPI.Services.Impl
                 List<Equipment> blockEquipment = _context.Equipments
                     .Where(x => x.DistrictEquipmentType == item.DistrictEquipmentType &&
                                 x.BlockNumber == currentBlock &&
-                                x.LocalArea.Id == item.LocalArea.Id)
+                                x.LocalArea.Id == item.LocalArea.Id &&
+                                x.Status.Equals("Approved", StringComparison.InvariantCultureIgnoreCase))
                     .OrderByDescending(x => x.Seniority)
                     .ToList();
 
