@@ -316,6 +316,8 @@ function parseEquipment(equipment) {
   equipment.isArchived = equipment.status === Constant.EQUIPMENT_STATUS_CODE_ARCHIVED;
   equipment.isMaintenanceContractor = equipment.owner.isMaintenanceContractor === true;
 
+  equipment.ownerStatus = equipment.owner.status;
+
   // UI display fields
   equipment.serialNumber = equipment.serialNumber || '';
   equipment.equipmentCode = equipment.equipmentCode || '';

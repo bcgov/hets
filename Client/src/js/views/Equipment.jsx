@@ -258,7 +258,7 @@ var Equipment = React.createClass({
                     <td>{ equip.model }</td>
                     <td>{ equip.size }</td>
                     <td>{ Object.keys(equip.equipmentAttachments).length }</td>
-                    <td>{ equip.isApproved ? formatDateTime(equip.lastVerifiedDate, 'YYYY-MMM-DD') : 'Not Approved' }</td>
+                    <td>{ equip.isApproved ? formatDateTime(equip.lastVerifiedDate, 'YYYY-MMM-DD') : equip.isArchived ? 'Archived' : 'Not Approved' }</td>
                     <td style={{ textAlign: 'right' }}>
                       <LinkContainer to={{ pathname: 'equipment/' + equip.id }}>
                         <Button title="View Equipment" bsSize="xsmall"><Glyphicon glyph="edit" /></Button>
