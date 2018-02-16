@@ -579,6 +579,7 @@ function parseOwner(owner) {
   owner.province = owner.province || '';
   owner.postalCode = owner.postalCode || '';
   owner.fullAddress = `${owner.address1} ${owner.address2} ${owner.city} ${owner.province} ${owner.postalCode}`;
+  owner.ownerName = owner.givenName && owner.surname ? `${owner.givenName} ${owner.surname}` : '';
 
   owner.path = `${ Constant.OWNERS_PATHNAME }/${ owner.id }`;
   owner.url = `#/${ owner.path }`;
