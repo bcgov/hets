@@ -199,6 +199,7 @@ namespace HETSAPI.Services.Impl
                     .Include(x => x.PrimaryContact)
                     .First(a => a.Id == id);
 
+                // remove any archived equipment from the retured resultset
                 result.EquipmentList.RemoveAll(y => y.Status.Equals("Archived", StringComparison.InvariantCultureIgnoreCase));
 
                 return new ObjectResult(new HetsResponse(result));
@@ -272,9 +273,7 @@ namespace HETSAPI.Services.Impl
                         .Include(x => x.Contacts)
                         .Include(x => x.PrimaryContact)
                         .First(a => a.Id == id);
-
-                    owner.EquipmentList.RemoveAll(y => y.Status.Equals("Archived", StringComparison.InvariantCultureIgnoreCase));
-
+                   
                     owner.Status = item.Status;
                     owner.StatusComment = item.StatusComment;
 
@@ -321,12 +320,12 @@ namespace HETSAPI.Services.Impl
                             }
                         }
                     }
-
-                    // remove any *newly* archived equipment
-                    owner.EquipmentList.RemoveAll(y => y.Status.Equals("Archived", StringComparison.InvariantCultureIgnoreCase));
-
+                    
                     // save the changes
                     _context.SaveChanges();
+
+                    // remove any archived equipment from the retured resultset
+                    owner.EquipmentList.RemoveAll(y => y.Status.Equals("Archived", StringComparison.InvariantCultureIgnoreCase));
 
                     return new ObjectResult(new HetsResponse(owner));
                 }
