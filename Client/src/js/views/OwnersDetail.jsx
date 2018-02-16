@@ -409,23 +409,24 @@ var OwnersDetail = React.createClass({
                 
                 return <div id="owners-data">
                   <Row>
-                    <ColDisplay md={6} labelProps={{ md: 4 }} label="Company">{ owner.organizationName }</ColDisplay>
-                    <ColDisplay md={6} labelProps={{ md: 4 }} label="Company Address">{ owner.fullAddress }</ColDisplay>
+                    <ColDisplay md={6} labelProps={{ md: 6 }} label="Company">{ owner.organizationName }</ColDisplay>
+                    <ColDisplay md={6} labelProps={{ md: 6 }} label="Company Address">{ owner.fullAddress }</ColDisplay>
                   </Row>
                   <Row>
-                    <ColDisplay md={6} labelProps={{ md: 4 }} label="Owner Code">{ owner.ownerCode }</ColDisplay>
-                    <ColDisplay md={6} labelProps={{ md: 4 }} label="Primary Contact">{ owner.primaryContactName }</ColDisplay>
+                    <ColDisplay md={6} labelProps={{ md: 6 }} label="Owner Name">{ owner.ownerName }</ColDisplay>
+                    <ColDisplay md={6} labelProps={{ md: 6 }} label="Owner Code">{ owner.ownerCode }</ColDisplay>
                   </Row>
                   <Row>
-                    <ColDisplay md={6} labelProps={{ md: 4 }} label="Doing Business As">{ owner.doingBusinessAs }</ColDisplay>
-                    <ColDisplay md={6} labelProps={{ md: 4 }} label="Registered BC Company Number">{ owner.registeredCompanyNumber }</ColDisplay>
+                    <ColDisplay md={6} labelProps={{ md: 6 }} label="Primary Contact">{ owner.primaryContactName }</ColDisplay>
+                    <ColDisplay md={6} labelProps={{ md: 6 }} label="Doing Business As">{ owner.doingBusinessAs }</ColDisplay>
                   </Row>
                   <Row>
-                    <ColDisplay md={6} labelProps={{ md: 4 }} label="District Office">{ owner.districtName }</ColDisplay>
-                    <ColDisplay md={6} labelProps={{ md: 4 }} label="Service/Local Area">{ owner.localAreaName }</ColDisplay>
+                    <ColDisplay md={6} labelProps={{ md: 6 }} label="Registered BC Company Number">{ owner.registeredCompanyNumber }</ColDisplay>
+                    <ColDisplay md={6} labelProps={{ md: 6 }} label="District Office">{ owner.districtName }</ColDisplay>
                   </Row>
                   <Row>
-                    <ColDisplay md={6} labelProps={{ md: 4 }} label="Meets Residency?">{ owner.meetsResidency ? 'Yes' : 'No' }</ColDisplay>
+                    <ColDisplay md={6} labelProps={{ md: 6 }} label="Service/Local Area">{ owner.localAreaName }</ColDisplay>
+                    <ColDisplay md={6} labelProps={{ md: 6 }} label="Meets Residency?">{ owner.meetsResidency ? 'Yes' : 'No' }</ColDisplay>
                   </Row>
                 </div>;
               })()}
