@@ -803,10 +803,9 @@ namespace HETSAPI.Services.Impl
                     {
                         Id = idCount,
                         SerialNumber = serialNumber,                        
-                        DuplicateEquipment = equipment
+                        DuplicateEquipment = equipment,
+                        DistrictName = ""
                     };
-
-                    duplicate.DistrictName = "";
 
                     if (equipment.LocalArea.ServiceArea.District != null &&
                         !string.IsNullOrEmpty(equipment.LocalArea.ServiceArea.District.Name))

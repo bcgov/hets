@@ -278,6 +278,20 @@ namespace HETSAPI.Services.Impl
                     owner.Status = item.Status;
                     owner.StatusComment = item.StatusComment;
 
+                    // set owner arvhive attributes (if necessary)
+                    if (owner.Status.Equals("Archived", StringComparison.CurrentCultureIgnoreCase))
+                    {
+                        owner.ArchiveCode = "Y";
+                        owner.ArchiveDate = DateTime.UtcNow;
+                        owner.ArchiveReason = "Owner Archived";
+                    }
+                    else
+                    {
+                        owner.ArchiveCode = "N";
+                        owner.ArchiveDate = null;
+                        owner.ArchiveReason = null;
+                    }
+
                     // if the status = Archived or Pending - need to update all associated equipment too
                     // (if the Owner is "Activated" - it DOES NOT automatically activate the equipment)
                     if (!item.Status.Equals("Approved", StringComparison.InvariantCultureIgnoreCase))
