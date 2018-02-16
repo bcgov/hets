@@ -742,6 +742,15 @@ export function addOwnerNote(ownerId, note) {
   });
 }
 
+export function getOwnersByDistrict(districtId) {
+  return new ApiRequest(`district/${districtId}/owners`).get().then((response) => {
+    var owners = normalize(response.data);
+    // Add display fields
+    _.map(owners, owner => { parseOwner(owner); });
+    store.dispatch({ type: Action.UPDATE_OWNERS_LOOKUP, owners: owners });
+  });
+}
+
 export function changeOwnerStatus(status) {
   return new ApiRequest(`/owners/${status.id}/status`).put(status).then((response) => {
     var owner = response.data;
