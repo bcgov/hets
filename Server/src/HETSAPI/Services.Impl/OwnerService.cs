@@ -199,6 +199,7 @@ namespace HETSAPI.Services.Impl
                     .Include(x => x.PrimaryContact)
                     .First(a => a.Id == id);
 
+                // remove any archived equipment from the retured resultset
                 result.EquipmentList.RemoveAll(y => y.Status.Equals("Archived", StringComparison.InvariantCultureIgnoreCase));
 
                 return new ObjectResult(new HetsResponse(result));
@@ -272,11 +273,23 @@ namespace HETSAPI.Services.Impl
                         .Include(x => x.Contacts)
                         .Include(x => x.PrimaryContact)
                         .First(a => a.Id == id);
-
-                    owner.EquipmentList.RemoveAll(y => y.Status.Equals("Archived", StringComparison.InvariantCultureIgnoreCase));
-
+                   
                     owner.Status = item.Status;
                     owner.StatusComment = item.StatusComment;
+
+                    // set owner arvhive attributes (if necessary)
+                    if (owner.Status.Equals("Archived", StringComparison.CurrentCultureIgnoreCase))
+                    {
+                        owner.ArchiveCode = "Y";
+                        owner.ArchiveDate = DateTime.UtcNow;
+                        owner.ArchiveReason = "Owner Archived";
+                    }
+                    else
+                    {
+                        owner.ArchiveCode = "N";
+                        owner.ArchiveDate = null;
+                        owner.ArchiveReason = null;
+                    }
 
                     // if the status = Archived or Pending - need to update all associated equipment too
                     // (if the Owner is "Activated" - it DOES NOT automatically activate the equipment)
@@ -307,12 +320,12 @@ namespace HETSAPI.Services.Impl
                             }
                         }
                     }
-
-                    // remove any *newly* archived equipment
-                    owner.EquipmentList.RemoveAll(y => y.Status.Equals("Archived", StringComparison.InvariantCultureIgnoreCase));
-
+                    
                     // save the changes
                     _context.SaveChanges();
+
+                    // remove any archived equipment from the retured resultset
+                    owner.EquipmentList.RemoveAll(y => y.Status.Equals("Archived", StringComparison.InvariantCultureIgnoreCase));
 
                     return new ObjectResult(new HetsResponse(owner));
                 }
