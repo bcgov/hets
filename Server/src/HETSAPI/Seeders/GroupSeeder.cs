@@ -8,16 +8,13 @@ namespace HETSAPI.Seeders
 {
     public class GroupSeeder : Seeder<DbAppContext>
     {
-        private readonly string[] ProfileTriggers = { AllProfiles };
+        private readonly string[] _profileTriggers = { AllProfiles };
 
         public GroupSeeder(IConfiguration configuration, IHostingEnvironment env, ILoggerFactory loggerFactory) 
             : base(configuration, env, loggerFactory)
         { }
 
-        protected override IEnumerable<string> TriggerProfiles
-        {
-            get { return ProfileTriggers; }
-        }
+        protected override IEnumerable<string> TriggerProfiles => _profileTriggers;
 
         protected override void Invoke(DbAppContext context)
         {
@@ -32,32 +29,42 @@ namespace HETSAPI.Seeders
                 new Group
                 {
                     Name = "Other",
-                    Description = "Users in the system not part of any other group(s)."
+                    Description = "Users in the system not part of any other group(s)"
                 },
                 new Group
                 {
-                    Name = "Managers",
-                    Description = "The Managers group."
+                    Name = "HETS Application Administrators",
+                    Description = "HETS Application Administrators Group"
+                },
+                new Group
+                {
+                    Name = "HETS Managers",
+                    Description = "HETS Managers Group"
                 },
                 new Group
                 {
                     Name = "HETS Clerks",
-                    Description = "The HETS Clerks group."
+                    Description = "HETS Clerks Group"
+                },
+                new Group
+                {
+                    Name = "Administrators",
+                    Description = "System Administrators Group"
                 },
             };
 
-            _logger.LogDebug("Updating groups ...");
+            Logger.LogDebug("Updating groups ...");
             foreach (Group group in groups)
             {
                 Group g = context.GetGroup(group.Name);
                 if (g == null)
                 {
-                    _logger.LogDebug($"Adding group; {group.Name} ...");
+                    Logger.LogDebug($"Adding group; {group.Name} ...");
                     context.Groups.Add(group);
                 }
                 else
                 {
-                    _logger.LogDebug($"Updating group; {g.Name} ...");
+                    Logger.LogDebug($"Updating group; {g.Name} ...");
                     g.Description = group.Description;
                 }
             }

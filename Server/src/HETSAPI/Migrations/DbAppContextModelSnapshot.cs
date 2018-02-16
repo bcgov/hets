@@ -824,8 +824,16 @@ namespace HETSAPI.Migrations
                         .HasColumnName("STATUS")
                         .HasMaxLength(50);
 
+                    b.Property<string>("StatusComment")
+                        .HasColumnName("STATUS_COMMENT")
+                        .HasMaxLength(255);
+
                     b.Property<DateTime?>("ToDate")
                         .HasColumnName("TO_DATE");
+
+                    b.Property<string>("Type")
+                        .HasColumnName("TYPE")
+                        .HasMaxLength(50);
 
                     b.Property<string>("Year")
                         .HasColumnName("YEAR")
@@ -1709,6 +1717,10 @@ namespace HETSAPI.Migrations
                     b.Property<string>("Status")
                         .HasColumnName("STATUS")
                         .HasMaxLength(50);
+
+                    b.Property<string>("StatusComment")
+                        .HasColumnName("STATUS_COMMENT")
+                        .HasMaxLength(255);
 
                     b.Property<string>("Surname")
                         .HasColumnName("SURNAME")

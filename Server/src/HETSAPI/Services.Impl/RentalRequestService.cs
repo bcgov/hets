@@ -330,6 +330,7 @@ namespace HETSAPI.Services.Impl
                 RentalRequest rentalRequest = _context.RentalRequests.AsNoTracking()
                     .Include(x => x.RentalRequestRotationList)
                         .ThenInclude(y => y.RentalAgreement)
+                    .Include(x => x.RentalRequestAttachments)
                     .First(a => a.Id == id);
 
                 if (rentalRequest.RentalRequestRotationList != null &&
@@ -358,6 +359,12 @@ namespace HETSAPI.Services.Impl
                 {
                     // cannot cancel - rental request is complete
                     return new ObjectResult(new HetsResponse("HETS-10", ErrorViewModel.GetDescription("HETS-10", _configuration)));
+                }
+
+                // remove (detele) rental request attachments
+                foreach (RentalRequestAttachment attachment in rentalRequest.RentalRequestAttachments)                    
+                {
+                    _context.RentalRequestAttachments.Remove(attachment);
                 }
 
                 // remove (delete) request
@@ -1063,7 +1070,8 @@ namespace HETSAPI.Services.Impl
                 List<Equipment> blockEquipment = _context.Equipments
                     .Where(x => x.DistrictEquipmentType == item.DistrictEquipmentType &&
                                 x.BlockNumber == currentBlock &&
-                                x.LocalArea.Id == item.LocalArea.Id)
+                                x.LocalArea.Id == item.LocalArea.Id &&
+                                x.Status.Equals("Approved", StringComparison.InvariantCultureIgnoreCase))
                     .OrderByDescending(x => x.Seniority)
                     .ToList();
 
@@ -1408,8 +1416,10 @@ namespace HETSAPI.Services.Impl
                 }                
 
                 // if this record hired previously - then skip
+                // if this record was asked but said no - then skip
                 if (previousRentalRequest.RentalRequestRotationList[i].OfferResponse != null &&
-                    previousRentalRequest.RentalRequestRotationList[i].OfferResponse.Equals("Yes", StringComparison.InvariantCultureIgnoreCase))
+                    (previousRentalRequest.RentalRequestRotationList[i].OfferResponse.Equals("Yes", StringComparison.InvariantCultureIgnoreCase) ||
+                     previousRentalRequest.RentalRequestRotationList[i].OfferResponse.Equals("No", StringComparison.InvariantCultureIgnoreCase)))
                 {
                     continue; // move to next record
                 }
@@ -1437,6 +1447,13 @@ namespace HETSAPI.Services.Impl
                 nextRecordToAskId = previousRentalRequest.RentalRequestRotationList[i].Equipment.Id;
                 nextRecordToAskSeniority = previousRentalRequest.RentalRequestRotationList[i].Equipment.Seniority;
                 break;                
+            }
+
+            // nothng found - defaulting back to the first in the new list!
+            if (nextRecordToAskId == 0)
+            {
+                nextRecordToAskId = newRentalRequest.RentalRequestRotationList[0].Equipment.Id;
+                nextRecordToAskSeniority = newRentalRequest.RentalRequestRotationList[0].Equipment.Seniority;
             }
 
             // *******************************************************************************

@@ -1,7 +1,7 @@
 using System;
 using System.Collections.Generic;
 using Microsoft.AspNetCore.Mvc;
-using Swashbuckle.SwaggerGen.Annotations;
+using Swashbuckle.AspNetCore.SwaggerGen;
 using HETSAPI.Models;
 using HETSAPI.ViewModels;
 using HETSAPI.Services;
@@ -33,7 +33,7 @@ namespace HETSAPI.Controllers
         [HttpPost]
         [Route("/api/rentalrequests/bulk")]
         [SwaggerOperation("RentalrequestsBulkPost")]
-        [RequiresPermission(Permission.ADMIN)]
+        [RequiresPermission(Permission.Admin)]
         public virtual IActionResult RentalrequestsBulkPost([FromBody]RentalRequest[] items)
         {
             return _service.RentalrequestsBulkPostAsync(items);
@@ -119,7 +119,7 @@ namespace HETSAPI.Controllers
         /// <response code="200">OK</response>
         [HttpGet]
         [Route("/api/rentalrequests/{id}/cancel")]
-        [SwaggerOperation("RentalrequestsIdGet")]
+        [SwaggerOperation("RentalrequestsIdCancelGet")]
         public virtual IActionResult RentalrequestsIdCancelGet([FromRoute]int id)
         {
             return _service.RentalrequestsIdCancelGetAsync(id);
@@ -213,7 +213,7 @@ namespace HETSAPI.Controllers
         [HttpGet]
         [Route("/api/rentalrequests/{id}/recalcRotation")]
         [SwaggerOperation("RentalRequestsRotationListRecalcGet")]
-        [RequiresPermission(Permission.ADMIN)]
+        [RequiresPermission(Permission.Admin)]
         public virtual IActionResult RentalRequestsRotationListRecalcGet([FromRoute]int id)
         {
             return _service.RentalRequestsRotationListRecalcGetAsync(id);

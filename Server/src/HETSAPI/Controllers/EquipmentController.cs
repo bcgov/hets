@@ -1,11 +1,12 @@
 using System;
 using System.Collections.Generic;
 using Microsoft.AspNetCore.Mvc;
-using Swashbuckle.SwaggerGen.Annotations;
+using Swashbuckle.AspNetCore.SwaggerGen;
 using HETSAPI.Models;
 using HETSAPI.ViewModels;
 using HETSAPI.Services;
 using HETSAPI.Authorization;
+using HETSAPI.Services.Impl;
 
 namespace HETSAPI.Controllers
 {
@@ -33,7 +34,7 @@ namespace HETSAPI.Controllers
         [HttpPost]
         [Route("/api/equipment/bulk")]
         [SwaggerOperation("EquipmentBulkPost")]
-        [RequiresPermission(Permission.ADMIN)]
+        [RequiresPermission(Permission.Admin)]
         public virtual IActionResult EquipmentBulkPost([FromBody]Equipment[] items)
         {
             return _service.EquipmentBulkPostAsync(items);
@@ -110,7 +111,22 @@ namespace HETSAPI.Controllers
         {
             return _service.EquipmentIdPutAsync(id, item);
         }
-        
+
+        /// <summary>
+        /// Update equipment status
+        /// </summary>
+        /// <param name="id">id of Equipment to update</param>
+        /// <param name="item"></param>
+        /// <response code="200">OK</response>
+        [HttpPut]
+        [Route("/api/equipment/{id}/status")]
+        [SwaggerOperation("EquipmentIdStatusPut")]
+        [SwaggerResponse(200, type: typeof(Equipment))]
+        public virtual IActionResult EquipmentIdStatusPut([FromRoute]int id, [FromBody]EquipmentStatus item)
+        {
+            return _service.EquipmentIdStatusPutAsync(id, item);
+        }
+
         /// <summary>
         /// Create equipment
         /// </summary>
@@ -155,12 +171,45 @@ namespace HETSAPI.Controllers
         [HttpGet]
         [Route("/api/equipment/{id}/recalcSeniority")]
         [SwaggerOperation("EquipmentRecalcSeniorityGet")]
-        [RequiresPermission(Permission.ADMIN)]
+        [RequiresPermission(Permission.Admin)]
         public virtual IActionResult EquipmentRecalcSeniorityGet([FromRoute]int id)
         {
             return _service.EquipmentRecalcSeniorityGetAsync(id);
         }
 
+        #region Clone Project Agreements
+
+        /// <summary>
+        /// Get renatal agreements associated with an equipment id
+        /// </summary>
+        /// <remarks>Gets as Equipment&#39;s Rental Agreements</remarks>
+        /// <param name="id">id of Equipment to fetch agreements for</param>
+        /// <response code="200">OK</response>
+        [HttpGet]
+        [Route("/api/equipment/{id}/rentalAgreements")]
+        [SwaggerOperation("EquipmentIdRentalAgreementsGet")]
+        [SwaggerResponse(200, type: typeof(List<RentalAgreement>))]
+        public virtual IActionResult EquipmentIdRentalAgreementsGet([FromRoute]int id)
+        {
+            return _service.EquipmentIdGetAgreementsAsync(id);
+        }
+
+        /// <summary>
+        /// Update a rental agreement by cloning a previous equipment rental agreement
+        /// </summary>
+        /// <param name="id">Project id</param>
+        /// <param name="item"></param>
+        /// <response code="200">Rental Agreement cloned</response>
+        [HttpPost]
+        [Route("/api/equipment/{id}/rentalAgreementClone")]
+        [SwaggerOperation("EquipmentRentalAgreementClonePost")]
+        [SwaggerResponse(200, type: typeof(RentalAgreement))]
+        public virtual IActionResult EquipmentRentalAgreementClonePost([FromRoute]int id, [FromBody]EquipmentRentalAgreementClone item)
+        {
+            return _service.EquipmentRentalAgreementClonePostAsync(id, item);
+        }
+
+        #endregion
 
         #region Duplicate Equipent Records
 
@@ -180,7 +229,6 @@ namespace HETSAPI.Controllers
         }
 
         #endregion
-
 
         #region Equipent Attachment Records
 

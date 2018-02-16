@@ -1,6 +1,10 @@
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
+using System.Net;
+using System.Net.Http;
+using System.Text;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using HETSAPI.Models;
@@ -8,9 +12,21 @@ using HETSAPI.ViewModels;
 using HETSAPI.Mappings;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Logging;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Serialization;
 
 namespace HETSAPI.Services.Impl
 {
+    /// <summary>
+    /// Owner Status Class - required to update the status record only
+    /// </summary>
+    public class OwnerStatus
+    {
+        public string Status { get; set; }
+        public string StatusComment { get; set; }
+    }    
+
     /// <summary>
     /// Owner Service
     /// </summary>
@@ -18,14 +34,16 @@ namespace HETSAPI.Services.Impl
     {
         private readonly DbAppContext _context;
         private readonly IConfiguration _configuration;
+        private readonly ILogger _logger;
 
         /// <summary>
         /// Owner Service Constructor
         /// </summary>
-        public OwnerService(IHttpContextAccessor httpContextAccessor, DbAppContext context, IConfiguration configuration) : base(httpContextAccessor, context)
+        public OwnerService(IHttpContextAccessor httpContextAccessor, DbAppContext context, IConfiguration configuration, ILoggerFactory loggerFactory) : base(httpContextAccessor, context)
         {
             _context = context;
             _configuration = configuration;
+            _logger = loggerFactory.CreateLogger<OwnerService>();
         }
 
         private void AdjustRecord(Owner item)
@@ -165,16 +183,24 @@ namespace HETSAPI.Services.Impl
 
             if (exists)
             {
+                // doe not return Archived Equipment
                 Owner result = _context.Owners.AsNoTracking()
                     .Include(x => x.LocalArea.ServiceArea.District.Region)
-                    .Include(x => x.EquipmentList).ThenInclude(y => y.LocalArea.ServiceArea.District.Region)
-                    .Include(x => x.EquipmentList).ThenInclude(y => y.DistrictEquipmentType)
-                    .Include(x => x.EquipmentList).ThenInclude(y => y.DumpTruck)
+                    .Include(x => x.EquipmentList)
+                        .ThenInclude(y => y.LocalArea.ServiceArea.District.Region)
+                    .Include(x => x.EquipmentList)
+                        .ThenInclude(y => y.DistrictEquipmentType)
+                    .Include(x => x.EquipmentList)
+                        .ThenInclude(y => y.DumpTruck)
                     .Include(x => x.EquipmentList)
                         .ThenInclude(y => y.Owner)
                             .ThenInclude(c => c.PrimaryContact)
                     .Include(x => x.Contacts)
+                    .Include(x => x.PrimaryContact)
                     .First(a => a.Id == id);
+
+                // remove any archived equipment from the retured resultset
+                result.EquipmentList.RemoveAll(y => y.Status.Equals("Archived", StringComparison.InvariantCultureIgnoreCase));
 
                 return new ObjectResult(new HetsResponse(result));
             }
@@ -209,6 +235,99 @@ namespace HETSAPI.Services.Impl
                     _context.SaveChanges();
 
                     return new ObjectResult(new HetsResponse(item));
+                }
+
+                // record not found
+                return new ObjectResult(new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-01", _configuration)));
+            }
+
+            // record not found
+            return new ObjectResult(new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-01", _configuration)));
+        }
+
+        /// <summary>
+        /// Update owner status
+        /// </summary>
+        /// <param name="id">id of Owner to update</param>
+        /// <param name="item"></param>
+        /// <response code="200">OK</response>
+        public virtual IActionResult OwnersIdStatusPutAsync(int id, OwnerStatus item)
+        {
+            if (item != null)
+            {
+                bool exists = _context.Owners.Any(a => a.Id == id);
+
+                if (exists)
+                {
+                    Owner owner = _context.Owners
+                        .Include(x => x.LocalArea.ServiceArea.District.Region)
+                        .Include(x => x.EquipmentList)
+                            .ThenInclude(y => y.LocalArea.ServiceArea.District.Region)
+                        .Include(x => x.EquipmentList)
+                            .ThenInclude(y => y.DistrictEquipmentType)
+                        .Include(x => x.EquipmentList)
+                            .ThenInclude(y => y.DumpTruck)
+                        .Include(x => x.EquipmentList)
+                            .ThenInclude(y => y.Owner)
+                                .ThenInclude(c => c.PrimaryContact)
+                        .Include(x => x.Contacts)
+                        .Include(x => x.PrimaryContact)
+                        .First(a => a.Id == id);
+                   
+                    owner.Status = item.Status;
+                    owner.StatusComment = item.StatusComment;
+
+                    // set owner arvhive attributes (if necessary)
+                    if (owner.Status.Equals("Archived", StringComparison.CurrentCultureIgnoreCase))
+                    {
+                        owner.ArchiveCode = "Y";
+                        owner.ArchiveDate = DateTime.UtcNow;
+                        owner.ArchiveReason = "Owner Archived";
+                    }
+                    else
+                    {
+                        owner.ArchiveCode = "N";
+                        owner.ArchiveDate = null;
+                        owner.ArchiveReason = null;
+                    }
+
+                    // if the status = Archived or Pending - need to update all associated equipment too
+                    // (if the Owner is "Activated" - it DOES NOT automatically activate the equipment)
+                    if (!item.Status.Equals("Approved", StringComparison.InvariantCultureIgnoreCase))
+                    {
+                        foreach (Equipment equipment in owner.EquipmentList)
+                        {
+                            // if the equipment is already archived - leave it archived
+                            // if the equipment is already in the same state as the owner's new state - then ignore
+                            if (!equipment.Status.Equals("Archived", StringComparison.CurrentCultureIgnoreCase) &&
+                                !equipment.Status.Equals(item.Status, StringComparison.InvariantCultureIgnoreCase))
+                            {
+                                equipment.Status = item.Status;
+                                equipment.StatusComment = item.StatusComment;
+
+                                if (equipment.Status.Equals("Archived", StringComparison.CurrentCultureIgnoreCase))
+                                {
+                                    equipment.ArchiveCode = "Y";
+                                    equipment.ArchiveDate = DateTime.UtcNow;
+                                    equipment.ArchiveReason = "Owner Archived";
+                                }
+                                else
+                                {
+                                    equipment.ArchiveCode = "N";
+                                    equipment.ArchiveDate = null;
+                                    equipment.ArchiveReason = null;
+                                }
+                            }
+                        }
+                    }
+                    
+                    // save the changes
+                    _context.SaveChanges();
+
+                    // remove any archived equipment from the retured resultset
+                    owner.EquipmentList.RemoveAll(y => y.Status.Equals("Archived", StringComparison.InvariantCultureIgnoreCase));
+
+                    return new ObjectResult(new HetsResponse(owner));
                 }
 
                 // record not found
@@ -342,6 +461,168 @@ namespace HETSAPI.Services.Impl
             List<Owner> result = data.ToList();
             return new ObjectResult(new HetsResponse(result));
         }
+
+        #region Get Verification Pdfs
+
+        /// <summary>
+        /// Get onwer verification pdf
+        /// </summary>
+        /// <remarks>Returns a PDF version of the owner vrification notices</remarks>
+        /// <param name="items">Array of owner id numbers to generate notices for</param>
+        /// <response code="200">OK</response>
+        public virtual IActionResult OwnersIdVerificationPdfPostAsync(List<int> items)
+        {
+            if (items == null || items.Count <= 0)
+            {
+                // verification array is empty [HETS-14]
+                return new ObjectResult(new HetsResponse("HETS-14", ErrorViewModel.GetDescription("HETS-14", _configuration)));
+            }
+
+            _logger.LogInformation("Owner Verification Notices Pdf [Owner Count: {0}]", items.Count);
+
+            // get owner records
+            List<Owner> owners = _context.Owners.AsNoTracking()
+                .Include(x => x.PrimaryContact)
+                .Include(x => x.EquipmentList)
+                    .ThenInclude(a => a.EquipmentAttachments)
+                .Include(x => x.EquipmentList)
+                    .ThenInclude(l => l.LocalArea)
+                .Include(x => x.LocalArea)
+                    .ThenInclude(s => s.ServiceArea)
+                        .ThenInclude(d => d.District)
+                .Where(x => items.Contains(x.Id))
+                .ToList();            
+
+            if (owners.Count > 0)
+            {
+                if (owners[0].LocalArea.ServiceArea.District == null)
+                {
+                    // missing district - data error [HETS-16]
+                    return new ObjectResult(new HetsResponse("HETS-16", ErrorViewModel.GetDescription("HETS-16", _configuration)));
+                }
+
+                // generate pdf document name [unique portion only]
+                string fileName = "OwnerVerification_" + DateTime.Now.Year + DateTime.Now.Month + DateTime.Now.Day;
+
+                // setup modev for submission to the Pdf service
+                OwnerVerificationPdfViewModel model = new OwnerVerificationPdfViewModel
+                {
+                    ReportDate = DateTime.Now.ToString("yyyy-MM-dd"),
+                    Title = fileName,
+                    DistrictId = owners[0].LocalArea.ServiceArea.District.Id,
+                    MinistryDistrictId = owners[0].LocalArea.ServiceArea.District.MinistryDistrictID,
+                    DistrictName = owners[0].LocalArea.ServiceArea.District.Name,
+                    DistrictAddress = "to be completed",
+                    DistrictContact = "to be completed"
+                };
+
+                model.Owners = new List<Owner>();
+
+                // add owner records - must verify district ids too
+                foreach (Owner owner in owners)
+                {
+                    if (owner.LocalArea.ServiceArea.District == null ||
+                        owner.LocalArea.ServiceArea.District.Id != model.DistrictId)
+                    {
+                        // missing district - data error [HETS-16]
+                        return new ObjectResult(new HetsResponse("HETS-16", ErrorViewModel.GetDescription("HETS-16", _configuration)));
+                    }
+
+                    owner.Title = model.Title;
+                    owner.DistrictId = model.DistrictId;
+                    owner.MinistryDistrictId = model.MinistryDistrictId;
+                    owner.DistrictName = model.DistrictName;
+                    owner.DistrictAddress = model.DistrictAddress;
+                    owner.DistrictContact = model.DistrictAddress;
+
+                    model.Owners.Add(owner);
+                }
+
+                // setup payload
+                string payload = JsonConvert.SerializeObject(model, new JsonSerializerSettings
+                {
+                    ReferenceLoopHandling = ReferenceLoopHandling.Ignore,
+                    ContractResolver = new CamelCasePropertyNamesContractResolver(),
+                    Formatting = Formatting.Indented,
+                    DateFormatHandling = DateFormatHandling.IsoDateFormat,
+                    DateTimeZoneHandling = DateTimeZoneHandling.Utc
+                });
+
+                _logger.LogInformation("Owner Verification Notices Pdf - Payload Length: {0}", payload.Length);
+
+                // pass the request on to the Pdf Micro Service
+                string pdfHost = _configuration["PDF_SERVICE_NAME"];
+                string pdfUrl = _configuration.GetSection("Constants:OwnerVerificationPdfUrl").Value;
+                string targetUrl = pdfHost + pdfUrl;                          
+
+                targetUrl = targetUrl + "/" + fileName;
+
+                _logger.LogInformation("Owner Verification Notices Pdf - HETS Pdf Service Url: {0}", targetUrl);
+
+                // call the microservice
+                try
+                {
+                    HttpClient client = new HttpClient();
+                    StringContent stringContent = new StringContent(JsonConvert.SerializeObject(payload), Encoding.UTF8, "application/json");
+
+                    _logger.LogInformation("Owner Verification Notices Pdf - Calling HETS Pdf Service");
+                    HttpResponseMessage response = client.PostAsync(targetUrl, stringContent).Result;
+
+                    // success
+                    if (response.StatusCode == HttpStatusCode.OK)
+                    {
+                        _logger.LogInformation("Owner Verification Notices Pdf - HETS Pdf Service Response: OK");
+
+                        var pdfResponseBytes = GetPdf(response);
+
+                        // convert to string and log
+                        string pdfResponse = Encoding.Default.GetString(pdfResponseBytes);
+
+                        _logger.LogInformation("Owner Verification Notices Pdf - HETS Pdf Filename: {0}", fileName);
+                        _logger.LogInformation("Owner Verification Notices Pdf - HETS Pdf Size: {0}", pdfResponse.Length);
+
+                        // return content
+                        FileContentResult result = new FileContentResult(pdfResponseBytes, "application/pdf")
+                        {
+                            FileDownloadName = fileName
+                        };
+
+                        return result;
+                    }
+
+                    _logger.LogInformation("Owner Verification Notices Pdf - HETS Pdf Service Response: {0}", response.StatusCode);
+                }
+                catch (Exception ex)
+                {
+                    Debug.Write("Error generating pdf: " + ex.Message);
+                    return new ObjectResult(new HetsResponse("HETS-15", ErrorViewModel.GetDescription("HETS-15", _configuration)));
+                }
+
+                // problem occured
+                return new ObjectResult(new HetsResponse("HETS-15", ErrorViewModel.GetDescription("HETS-15", _configuration)));
+            }
+
+            // record not found
+            return new ObjectResult(new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-01", _configuration)));
+        }        
+
+        private static byte[] GetPdf(HttpResponseMessage response)
+        {
+            try
+            {
+                var pdfResponseBytes = response.Content.ReadAsByteArrayAsync();
+                pdfResponseBytes.Wait();
+
+                return pdfResponseBytes.Result;
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+                throw;
+            }
+        }
+
+        #endregion
 
         #region Owner Equipment Records
 

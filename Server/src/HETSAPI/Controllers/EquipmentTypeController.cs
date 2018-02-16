@@ -1,6 +1,6 @@
 using Microsoft.AspNetCore.Mvc;
 using System.Collections.Generic;
-using Swashbuckle.SwaggerGen.Annotations;
+using Swashbuckle.AspNetCore.SwaggerGen;
 using HETSAPI.Models;
 using HETSAPI.Services;
 using HETSAPI.Authorization;
@@ -31,7 +31,7 @@ namespace HETSAPI.Controllers
         [HttpPost]
         [Route("/api/equipmentTypes/bulk")]
         [SwaggerOperation("EquipmentTypesBulkPost")]
-        [RequiresPermission(Permission.ADMIN)]
+        [RequiresPermission(Permission.Admin)]
         public virtual IActionResult EquipmentTypesBulkPost([FromBody]EquipmentType[] items)
         {
             return _service.EquipmentTypesBulkPostAsync(items);

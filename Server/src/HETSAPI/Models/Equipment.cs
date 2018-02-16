@@ -30,44 +30,46 @@ namespace HETSAPI.Models
         /// <param name="districtEquipmentType">A foreign key reference to the system-generated unique identifier for a Equipment Type (required).</param>
         /// <param name="owner">A foreign key reference to the system-generated unique identifier for an Owner (required).</param>
         /// <param name="equipmentCode">A human-visible unique code for the piece of equipment, referenced for convenience by the system users - HETS Clerks and Equipment Owners. Generated at record creation time based on the unique Owner prefix (e.g. EDW) and a zero-filled unique number - resulting in a code like EDW-0083. (required).</param>
-        /// <param name="status">The current status of the equipment in a UI-controlled string. Initial values are Pending, Approved and Archived, but other values may be added. (required).</param>
+        /// <param name="status">The current status of the equipment in a UI-controlled string. Initial values are Pending, Approved and Archived, but other values may be added. (required).</param>        
         /// <param name="receivedDate">The date the piece of equipment was first received and recorded in HETS. (required).</param>
         /// <param name="lastVerifiedDate">The date the equipment was last verified by the HETS Clerk as being still in service in the Local Area and available for the HETS Programme. (required).</param>
-        /// <param name="approvedDate">The date the piece of equipment was first approved in HETS. Part of the seniority calculation for a piece of equipment is based on this date..</param>
-        /// <param name="isInformationUpdateNeeded">Set true if a need to update the information&amp;#x2F;status of the equipment is needed. Used during the processing of a request when an update is noted, but the Clerk does not have time to make the update..</param>
-        /// <param name="informationUpdateNeededReason">A note about why the needed information&amp;#x2F;status update that is needed about the equipment..</param>
-        /// <param name="licencePlate">The licence plate (if any) of the piece of equipment, as entered by the HETS Clerk..</param>
-        /// <param name="make">The make of the piece of equipment, as provided by the Equipment Owner..</param>
-        /// <param name="model">The model of the piece of equipment, as provided by the Equipment Owner..</param>
-        /// <param name="year">The model year of the piece of equipment, as provided by the Equipment Owner..</param>
+        /// <param name="statusComment">A comment field to capture information specific to the change of status.</param>
+        /// <param name="approvedDate">The date the piece of equipment was first approved in HETS. Part of the seniority calculation for a piece of equipment is based on this date.</param>
+        /// <param name="isInformationUpdateNeeded">Set true if a need to update the information&amp;#x2F;status of the equipment is needed. Used during the processing of a request when an update is noted, but the Clerk does not have time to make the update.</param>
+        /// <param name="informationUpdateNeededReason">A note about why the needed information&amp;#x2F;status update that is needed about the equipment.</param>
+        /// <param name="licencePlate">The licence plate (if any) of the piece of equipment, as entered by the HETS Clerk.</param>
+        /// <param name="make">The make of the piece of equipment, as provided by the Equipment Owner.</param>
+        /// <param name="model">The model of the piece of equipment, as provided by the Equipment Owner.</param>
+        /// <param name="year">The model year of the piece of equipment, as provided by the Equipment Owner.</param>
+        /// <param name="type">A user entered type field. Typically used by the business to identify unique characteristics regarding the piece of equipment.</param>
         /// <param name="operator">TO BE REVIEWED WITH THE BUSINESS - WHAT IS THIS?.</param>
         /// <param name="payRate">TO BE REVIEWED WITH THE BUSINESS - WHAT IS THIS?.</param>
         /// <param name="refuseRate">TO BE REVIEWED WITH THE BUSINESS - WHAT IS THIS?.</param>
-        /// <param name="serialNumber">The serial number of the piece of equipment as provided by the Equipment Owner. Used to detect and reconcile pieces of equipment moved between Local Areas. Duplicate serial numbers are flagged in the system but permitted. The duplicates are flagged in the UI until the HETS Clerks reconcile the differences - either correcting the serial number or archiving a piece of equipment moved to a new local area..</param>
-        /// <param name="size">The size of the piece of equipment, as provided by the Equipment Owner..</param>
+        /// <param name="serialNumber">The serial number of the piece of equipment as provided by the Equipment Owner. Used to detect and reconcile pieces of equipment moved between Local Areas. Duplicate serial numbers are flagged in the system but permitted. The duplicates are flagged in the UI until the HETS Clerks reconcile the differences - either correcting the serial number or archiving a piece of equipment moved to a new local area.</param>
+        /// <param name="size">The size of the piece of equipment, as provided by the Equipment Owner.</param>
         /// <param name="toDate">TO BE REVIEWED WITH THE BUSINESS - WHAT IS THIS?.</param>
         /// <param name="blockNumber">The current block number for the piece of equipment as calculated by the Seniority Algorthm for this equipment type in the local area. As currently defined y the business  - 1, 2 or Open.</param>
-        /// <param name="seniority">The current seniority calculation result for this piece of equipment. The calculation is based on the &amp;quot;numYears&amp;quot; of service + average hours of service over the last three fiscal years - as stored in the related fields (serviceHoursLastYear, serviceHoursTwoYearsAgo serviceHoursThreeYearsAgo)..</param>
-        /// <param name="numberInBlock">The number in the block of the piece of equipment so that it can be displayed to the user where it will be useful. This saves the user from having to figure out in their head the order when the list is displayed in Rotation Order..</param>
-        /// <param name="isSeniorityOverridden">True if the Seniority for the piece of equipment was manually overridden. Set if a user has gone in and explicitly updated the seniority base information. Indicates that underlying numbers were manually overridden..</param>
-        /// <param name="seniorityOverrideReason">A text reason for why the piece of equipments underlying data was overridden to change their seniority number..</param>
-        /// <param name="seniorityEffectiveDate">The time the seniority data in the record went into effect. Used to populate the SeniorityAudit table when the seniority data is next updated..</param>
-        /// <param name="yearsOfService">The number of years of active service of this piece of equipment at the time seniority is calculated - April 1 of the current FY..</param>
+        /// <param name="seniority">The current seniority calculation result for this piece of equipment. The calculation is based on the &amp;quot;numYears&amp;quot; of service + average hours of service over the last three fiscal years - as stored in the related fields (serviceHoursLastYear, serviceHoursTwoYearsAgo serviceHoursThreeYearsAgo).</param>
+        /// <param name="numberInBlock">The number in the block of the piece of equipment so that it can be displayed to the user where it will be useful. This saves the user from having to figure out in their head the order when the list is displayed in Rotation Order.</param>
+        /// <param name="isSeniorityOverridden">True if the Seniority for the piece of equipment was manually overridden. Set if a user has gone in and explicitly updated the seniority base information. Indicates that underlying numbers were manually overridden.</param>
+        /// <param name="seniorityOverrideReason">A text reason for why the piece of equipments underlying data was overridden to change their seniority number.</param>
+        /// <param name="seniorityEffectiveDate">The time the seniority data in the record went into effect. Used to populate the SeniorityAudit table when the seniority data is next updated.</param>
+        /// <param name="yearsOfService">The number of years of active service of this piece of equipment at the time seniority is calculated - April 1 of the current FY.</param>
         /// <param name="serviceHoursLastYear">Number of hours of service by this piece of equipment in the previous fiscal year.</param>
         /// <param name="serviceHoursTwoYearsAgo">Number of hours of service by this piece of equipment in the fiscal year before the last one - e.g. if current year is FY2018 then hours in FY2016.</param>
         /// <param name="serviceHoursThreeYearsAgo">Number of hours of service by this piece of equipment in the fiscal year three years ago - e.g. if current year is FY2018 then hours in FY2015.</param>
-        /// <param name="archiveCode">TO BE REVIEWED - A reason code indicating why a piece of equipment has been archived..</param>
-        /// <param name="archiveReason">An optional comment about why this piece of equipment has been archived..</param>
-        /// <param name="archiveDate">The date on which a user most recenly marked this piece of equipment as archived..</param>
-        /// <param name="dumpTruck">A link to a dump truck set if this piece of equipment is an equipment type flagged as a dump truck..</param>
+        /// <param name="archiveCode">TO BE REVIEWED - A reason code indicating why a piece of equipment has been archived.</param>
+        /// <param name="archiveReason">An optional comment about why this piece of equipment has been archived.</param>
+        /// <param name="archiveDate">The date on which a user most recenly marked this piece of equipment as archived.</param>
+        /// <param name="dumpTruck">A link to a dump truck set if this piece of equipment is an equipment type flagged as a dump truck.</param>
         /// <param name="equipmentAttachments">EquipmentAttachments.</param>
         /// <param name="notes">Notes.</param>
         /// <param name="attachments">Attachments.</param>
         /// <param name="history">History.</param>
         public Equipment(int id, LocalArea localArea, DistrictEquipmentType districtEquipmentType, Owner owner, string equipmentCode, 
-            string status, DateTime receivedDate, DateTime lastVerifiedDate, DateTime? approvedDate = null, 
+            string status, DateTime receivedDate, DateTime lastVerifiedDate, string statusComment = null, DateTime? approvedDate = null, 
             bool? isInformationUpdateNeeded = null, string informationUpdateNeededReason = null, string licencePlate = null, 
-            string make = null, string model = null, string year = null, string @operator = null, float? payRate = null, 
+            string make = null, string model = null, string year = null, string type = null, string @operator = null, float? payRate = null, 
             string refuseRate = null, string serialNumber = null, string size = null, DateTime? toDate = null, int? blockNumber = null, 
             float? seniority = null, int? numberInBlock = null, bool? isSeniorityOverridden = null, string seniorityOverrideReason = null, 
             DateTime? seniorityEffectiveDate = null, float? yearsOfService = null, float? serviceHoursLastYear = null, 
@@ -83,7 +85,8 @@ namespace HETSAPI.Models
             EquipmentCode = equipmentCode;
             Status = status;
             ReceivedDate = receivedDate;
-            LastVerifiedDate = lastVerifiedDate;            
+            LastVerifiedDate = lastVerifiedDate;
+            StatusComment = statusComment;
             ApprovedDate = approvedDate;
             IsInformationUpdateNeeded = isInformationUpdateNeeded;
             InformationUpdateNeededReason = informationUpdateNeededReason;
@@ -91,6 +94,7 @@ namespace HETSAPI.Models
             Make = make;
             Model = model;
             Year = year;
+            Type = type;
             Operator = @operator;
             PayRate = payRate;
             RefuseRate = refuseRate;
@@ -116,6 +120,13 @@ namespace HETSAPI.Models
             Attachments = attachments;
             History = history;
         }
+
+        /// <summary>
+        /// A system generated value to identify if this equipment is currenty on an active Rental Agreement
+        /// </summary>
+        /// <value>A system generated value to identify if this equipment is currenty on an active Rental Agreement</value>
+        [NotMapped]
+        public bool IsHired { get; set; }
 
         /// <summary>
         /// A system-generated unique identifier for a Equipment
@@ -202,6 +213,15 @@ namespace HETSAPI.Models
         public DateTime LastVerifiedDate { get; set; }
 
         /// <summary>
+        /// A comment field to capture information specific to the change of status.
+        /// </summary>
+        /// <value>A comment field to capture information specific to the change of status.</value>
+        [MetaData(Description = "A comment field to capture information specific to the change of status.")]
+        [MaxLength(255)]
+
+        public string StatusComment { get; set; }
+
+        /// <summary>
         /// The date the piece of equipment was first approved in HETS. Part of the seniority calculation for a piece of equipment is based on this date.
         /// </summary>
         /// <value>The date the piece of equipment was first approved in HETS. Part of the seniority calculation for a piece of equipment is based on this date.</value>
@@ -259,6 +279,15 @@ namespace HETSAPI.Models
         [MaxLength(15)]
 
         public string Year { get; set; }
+
+        /// <summary>
+        /// A user entered type field. Typically used by the business to identify unique characteristics regarding the piece of equipment.
+        /// </summary>
+        /// <value>A user entered type field. Typically used by the business to identify unique characteristics regarding the piece of equipment.</value>
+        [MetaData(Description = "A user entered type field. Typically used by the business to identify unique characteristics regarding the piece of equipment.")]
+        [MaxLength(50)]
+
+        public string Type { get; set; }
 
         /// <summary>
         /// TO BE REVIEWED WITH THE BUSINESS - WHAT IS THIS?
@@ -458,6 +487,7 @@ namespace HETSAPI.Models
             sb.Append("  Status: ").Append(Status).Append("\n");
             sb.Append("  ReceivedDate: ").Append(ReceivedDate).Append("\n");
             sb.Append("  LastVerifiedDate: ").Append(LastVerifiedDate).Append("\n");
+            sb.Append("  StatusComment: ").Append(StatusComment).Append("\n");
             sb.Append("  ApprovedDate: ").Append(ApprovedDate).Append("\n");
             sb.Append("  IsInformationUpdateNeeded: ").Append(IsInformationUpdateNeeded).Append("\n");
             sb.Append("  InformationUpdateNeededReason: ").Append(InformationUpdateNeededReason).Append("\n");
@@ -465,6 +495,7 @@ namespace HETSAPI.Models
             sb.Append("  Make: ").Append(Make).Append("\n");
             sb.Append("  Model: ").Append(Model).Append("\n");
             sb.Append("  Year: ").Append(Year).Append("\n");
+            sb.Append("  Type: ").Append(Type).Append("\n");
             sb.Append("  Operator: ").Append(Operator).Append("\n");
             sb.Append("  PayRate: ").Append(PayRate).Append("\n");
             sb.Append("  RefuseRate: ").Append(RefuseRate).Append("\n");
@@ -563,6 +594,11 @@ namespace HETSAPI.Models
                     LastVerifiedDate.Equals(other.LastVerifiedDate)
                 ) &&
                 (
+                    StatusComment == other.StatusComment ||
+                    StatusComment != null &&
+                    StatusComment.Equals(other.StatusComment)
+                ) &&
+                (
                     ApprovedDate == other.ApprovedDate ||
                     ApprovedDate != null &&
                     ApprovedDate.Equals(other.ApprovedDate)
@@ -596,6 +632,11 @@ namespace HETSAPI.Models
                     Year == other.Year ||
                     Year != null &&
                     Year.Equals(other.Year)
+                ) &&
+                (
+                    Type == other.Type ||
+                    Type != null &&
+                    Type.Equals(other.Type)
                 ) &&
                 (
                     Operator == other.Operator ||
@@ -759,7 +800,12 @@ namespace HETSAPI.Models
                 }
 
                 hash = hash * 59 + ReceivedDate.GetHashCode();
-                hash = hash * 59 + LastVerifiedDate.GetHashCode();                
+                hash = hash * 59 + LastVerifiedDate.GetHashCode();
+
+                if (StatusComment != null)
+                {
+                    hash = hash * 59 + StatusComment.GetHashCode();
+                }
 
                 if (ApprovedDate != null)
                 {
@@ -794,6 +840,11 @@ namespace HETSAPI.Models
                 if (Year != null)
                 {
                     hash = hash * 59 + Year.GetHashCode();
+                }
+
+                if (Type != null)
+                {
+                    hash = hash * 59 + Type.GetHashCode();
                 }
 
                 if (Operator != null)

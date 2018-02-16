@@ -1,6 +1,6 @@
 using System.Collections.Generic;
 using Microsoft.AspNetCore.Mvc;
-using Swashbuckle.SwaggerGen.Annotations;
+using Swashbuckle.AspNetCore.SwaggerGen;
 using HETSAPI.Models;
 using HETSAPI.Services;
 using HETSAPI.Authorization;
@@ -31,7 +31,7 @@ namespace HETSAPI.Controllers
         [HttpPost]
         [Route("/api/seniorityaudits/bulk")]
         [SwaggerOperation("SeniorityauditsBulkPost")]
-        [RequiresPermission(Permission.ADMIN)]
+        [RequiresPermission(Permission.Admin)]
         public virtual IActionResult SeniorityauditsBulkPost([FromBody]SeniorityAudit[] items)
         {
             return _service.SeniorityauditsBulkPostAsync(items);

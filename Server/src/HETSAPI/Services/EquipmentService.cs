@@ -1,6 +1,7 @@
 using System;
 using Microsoft.AspNetCore.Mvc;
 using HETSAPI.Models;
+using HETSAPI.Services.Impl;
 
 namespace HETSAPI.Services
 {
@@ -40,6 +41,14 @@ namespace HETSAPI.Services
         IActionResult EquipmentIdPutAsync(int id, Equipment item);
 
         /// <summary>
+        /// Update equipment status
+        /// </summary>
+        /// <param name="id">id of Equipment to update</param>
+        /// <param name="item"></param>
+        /// <response code="200">OK</response>
+        IActionResult EquipmentIdStatusPutAsync(int id, EquipmentStatus item);
+
+        /// <summary>
         /// Get equipment by id
         /// </summary>
         /// <param name="id">id of Equipment to fetch</param>
@@ -74,6 +83,21 @@ namespace HETSAPI.Services
         /// <param name="notverifiedsincedate">Not Verified Since Date</param>
         /// <response code="200">OK</response>
         IActionResult EquipmentSearchGetAsync(string localareas, string types, string equipmentAttachment, int? owner, string status, bool? hired, DateTime? notverifiedsincedate);
+
+        /// <summary>
+        /// Get rental agreements associated with an equipment id
+        /// </summary>
+        /// <param name="id">id of Equipment to fetch agreements for</param>
+        /// <response code="200">OK</response>
+        IActionResult EquipmentIdGetAgreementsAsync(int id);
+
+        /// <summary>
+        /// Update a rental agreement by cloning a previous equipment rental agreement
+        /// </summary>
+        /// <param name="id">Equipment id</param>
+        /// <param name="item"></param>
+        /// <response code="201">Rental Agreement update</response>
+        IActionResult EquipmentRentalAgreementClonePostAsync(int id, EquipmentRentalAgreementClone item);
 
         /// <summary>
         /// Get all duplicate equipment records

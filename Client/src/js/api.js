@@ -316,6 +316,8 @@ function parseEquipment(equipment) {
   equipment.isArchived = equipment.status === Constant.EQUIPMENT_STATUS_CODE_ARCHIVED;
   equipment.isMaintenanceContractor = equipment.owner.isMaintenanceContractor === true;
 
+  equipment.ownerStatus = equipment.owner.status;
+
   // UI display fields
   equipment.serialNumber = equipment.serialNumber || '';
   equipment.equipmentCode = equipment.equipmentCode || '';
@@ -357,7 +359,7 @@ function parseEquipment(equipment) {
   equipment.hasDuplicates = equipment.hasDuplicates || false;
   equipment.duplicateEquipment = equipment.duplicateEquipment || [];
 
-  equipment.isWorking = equipment.isWorking || false;
+  equipment.isHired = equipment.isHired || false;
   // TODO Descriptive text for time entries. Needs to be added to backend
   equipment.currentWorkDescription = equipment.currentWorkDescription || '' ;
 
@@ -475,6 +477,44 @@ export function addEquipmentNote(equipmentId, note) {
   });
 }
 
+export function equipmentDuplicateCheck(id, serialNumber) {
+  return new ApiRequest(`/equipment/${id}/duplicates/${serialNumber}`).get().then((response => {
+    return response;
+  }));
+}
+
+export function changeEquipmentStatus(status) {
+  return new ApiRequest(`/equipment/${status.id}/status`).put(status).then((response) => {
+    var equipment = response.data;
+    // Add display fields
+    parseEquipment(equipment);
+    store.dispatch({ type: Action.UPDATE_EQUIPMENT, equipment: equipment });
+    return response;
+  });
+}
+
+export function getEquipmentRentalAgreements(equipmentId) {
+  return new ApiRequest(`/equipment/${ equipmentId }/rentalAgreements`).get().then(response => {
+    var rentalAgreements = normalize(response.data);
+    store.dispatch({ type: Action.UPDATE_EQUIPMENT_RENTAL_AGREEMENTS, rentalAgreements: rentalAgreements });
+    return rentalAgreements;
+  });
+}
+
+export function cloneEquipmentRentalAgreement(data) {
+  return new ApiRequest(`/equipment/${ data.equipmentId }/rentalAgreementClone`).post(data).then(response => {
+
+    if (response.responseStatus === 'ERROR') {
+      return Promise.reject('There was an error cloning the rental agreement.');
+    }
+
+    var agreement = response.data;
+    // Add display fields
+    parseRentalAgreement(agreement);
+    store.dispatch({ type: Action.UPDATE_RENTAL_AGREEMENT, rentalAgreement: agreement });
+    return response;
+  });
+}
 
 ////////////////////
 // Physical Attachments
@@ -535,6 +575,13 @@ function parseOwner(owner) {
   owner.workSafeBCPolicyNumber = owner.workSafeBCPolicyNumber || '';
   owner.workSafeBCExpiryDate = owner.workSafeBCExpiryDate || '';
   owner.cglEndDate = owner.cglEndDate || '';
+  owner.address1 = owner.address1 || '';
+  owner.address2 = owner.address2 || '';
+  owner.city = owner.city || '';
+  owner.province = owner.province || '';
+  owner.postalCode = owner.postalCode || '';
+  owner.fullAddress = `${owner.address1} ${owner.address2} ${owner.city} ${owner.province} ${owner.postalCode}`;
+  owner.ownerName = owner.givenName && owner.surname ? `${owner.givenName} ${owner.surname}` : '';
 
   owner.path = `${ Constant.OWNERS_PATHNAME }/${ owner.id }`;
   owner.url = `#/${ owner.path }`;
@@ -700,8 +747,23 @@ export function getOwnersByDistrict(districtId) {
     var owners = normalize(response.data);
     // Add display fields
     _.map(owners, owner => { parseOwner(owner); });
-
     store.dispatch({ type: Action.UPDATE_OWNERS_LOOKUP, owners: owners });
+  });
+}
+
+export function changeOwnerStatus(status) {
+  return new ApiRequest(`/owners/${status.id}/status`).put(status).then((response) => {
+    var owner = response.data;
+    // Add display fields
+    parseOwner(owner);
+    store.dispatch({ type: Action.UPDATE_OWNER, owner: owner });
+    return response;
+  });
+}
+
+export function verifyOwners(owners) {
+  return new ApiRequest('owners/verificationPdf').post(owners, { responseType: Constant.RESPONSE_TYPE_BLOB }).then((response) => {
+    return response;
   });
 }
 
@@ -1029,6 +1091,29 @@ export function addProjectNote(projectId, note) {
   });
 }
 
+export function getProjectRentalAgreements(projectId) {
+  return new ApiRequest(`/projects/${ projectId }/rentalAgreements`).get().then(response => {
+    var rentalAgreements = normalize(response.data);
+    store.dispatch({ type: Action.UPDATE_PROJECT_RENTAL_AGREEMENTS, rentalAgreements: rentalAgreements });
+    return rentalAgreements;
+  });
+}
+
+export function cloneProjectRentalAgreement(data) {
+  return new ApiRequest(`/projects/${ data.projectId }/rentalAgreementClone`).post(data).then(response => {
+
+    if (response.responseStatus === 'ERROR') {
+      return Promise.reject('There was an error cloning the rental agreement.');
+    }
+
+    var agreement = response.data;
+    // Add display fields
+    parseRentalAgreement(agreement);
+    store.dispatch({ type: Action.UPDATE_RENTAL_AGREEMENT, rentalAgreement: agreement });
+    return response;
+  });
+}
+
 ////////////////////
 // Rental Requests
 ////////////////////
@@ -1073,6 +1158,10 @@ function parseRentalRequest(rentalRequest) {
   rentalRequest.primaryContactRole = rentalRequest.primaryContact ? rentalRequest.primaryContact.role : '';
   rentalRequest.primaryContactPhone = rentalRequest.primaryContact ? rentalRequest.primaryContact.workPhoneNumber || rentalRequest.primaryContact.mobilePhoneNumber || '' : '';
 
+  rentalRequest.projectPrimaryContactName = rentalRequest.project.primaryContact ? firstLastName(rentalRequest.project.primaryContact.givenName, rentalRequest.project.primaryContact.surname) : '';
+  rentalRequest.projectPrimaryContactEmail = rentalRequest.project.primaryContact ? rentalRequest.project.primaryContact.emailAddress : '';
+  rentalRequest.projectPrimaryContactRole = rentalRequest.project.primaryContact ? rentalRequest.project.primaryContact.role : '';
+  rentalRequest.projectPrimaryContactPhone = rentalRequest.project.primaryContact ? rentalRequest.project.primaryContact.workPhoneNumber || rentalRequest.project.primaryContact.mobilePhoneNumber || '' : '';
   // Flag element as a rental request.
   // Rental requests and rentals are merged and shown in a single list on Project Details screen
   rentalRequest.isRentalRequest = true;
@@ -1180,6 +1269,12 @@ export function addRentalRequestNote(rentalRequestId, note) {
   return new ApiRequest(`/rentalRequests/${ rentalRequestId }/note`).post(note).then(response => {
     var notes = normalize(response.data);
     store.dispatch({ type: Action.UPDATE_RENTAL_REQUEST_NOTES, notes: notes });
+  });
+}
+
+export function cancelRentalRequest(rentalRequestId) {
+  return new ApiRequest(`rentalrequests/${rentalRequestId}/cancel`).get().then((response) => {
+    return response;
   });
 }
 
@@ -1486,6 +1581,13 @@ export function deleteRentalRate(rentalRate) {
   });
 }
 
+export function addRentalRates(rentalAgreementId, attachmentRates) {
+  return new ApiRequest(`rentalagreements/${rentalAgreementId}/rateRecords`).post(attachmentRates).then(response => {
+    return response;
+  });
+}
+
+
 ////////////////////
 // Rental Conditions
 ////////////////////
@@ -1526,6 +1628,12 @@ export function addRentalCondition(rentalCondition) {
     parseRentalCondition(rentalCondition);
 
     store.dispatch({ type: Action.ADD_RENTAL_CONDITION, rentalCondition: rentalCondition });
+  });
+}
+
+export function addRentalConditions(rentalAgreementId, rentalConditions) {
+  return new ApiRequest(`rentalagreements/${rentalAgreementId}/conditionRecords`).post(rentalConditions).then(response => {
+    return response;
   });
 }
 

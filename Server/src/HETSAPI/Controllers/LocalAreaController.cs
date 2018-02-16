@@ -1,6 +1,6 @@
 using System.Collections.Generic;
 using Microsoft.AspNetCore.Mvc;
-using Swashbuckle.SwaggerGen.Annotations;
+using Swashbuckle.AspNetCore.SwaggerGen;
 using HETSAPI.Models;
 using HETSAPI.Services;
 using HETSAPI.Authorization;
@@ -31,7 +31,7 @@ namespace HETSAPI.Controllers
         [HttpPost]
         [Route("/api/localAreas/bulk")]
         [SwaggerOperation("LocalAreasBulkPost")]
-        [RequiresPermission(Permission.ADMIN)]
+        [RequiresPermission(Permission.Admin)]
         public virtual IActionResult LocalAreasBulkPost([FromBody]LocalArea[] items)
         {
             return _service.LocalAreasBulkPostAsync(items);

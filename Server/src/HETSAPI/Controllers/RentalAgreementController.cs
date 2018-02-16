@@ -1,6 +1,6 @@
 using System.Collections.Generic;
 using Microsoft.AspNetCore.Mvc;
-using Swashbuckle.SwaggerGen.Annotations;
+using Swashbuckle.AspNetCore.SwaggerGen;
 using HETSAPI.Models;
 using HETSAPI.Services;
 using HETSAPI.Authorization;
@@ -31,7 +31,7 @@ namespace HETSAPI.Controllers
         [HttpPost]
         [Route("/api/rentalagreements/bulk")]
         [SwaggerOperation("RentalagreementsBulkPost")]
-        [RequiresPermission(Permission.ADMIN)]
+        [RequiresPermission(Permission.Admin)]
         public virtual IActionResult RentalagreementsBulkPost([FromBody]RentalAgreement[] items)
         {
             return _service.RentalagreementsBulkPostAsync(items);
@@ -185,6 +185,108 @@ namespace HETSAPI.Controllers
         public virtual IActionResult RentalagreementsIdTimeRecordsBulkPostAsync([FromRoute]int id, [FromBody]TimeRecord[] items)
         {
             return _service.RentalAgreementsIdTimeRecordsBulkPostAsync(id, items);
+        }
+
+        #endregion
+
+        #region Rental Agreement Rate Records
+
+        /// <summary>
+        /// Get rate records associated with a rental agreement
+        /// </summary>
+        /// <remarks>Gets a Rental Agreement&#39;s Rate Records</remarks>
+        /// <param name="id">id of Rental Agreement to fetch Rate Records for</param>
+        /// <response code="200">OK</response>
+        [HttpGet]
+        [Route("/api/rentalagreements/{id}/rateRecords")]
+        [SwaggerOperation("RentalagreementsIdRentalAgreementRatesGet")]
+        [SwaggerResponse(200, type: typeof(List<RentalAgreementRate>))]
+        public virtual IActionResult RentalagreementsIdRentalAgreementRatesGet([FromRoute]int id)
+        {
+            return _service.RentalAgreementsIdRentalAgreementRatesGetAsync(id);
+        }
+
+        /// <summary>
+        /// Add a rental agreement rate record
+        /// </summary>
+        /// <remarks>Adds Rental Agreement Rate Records</remarks>
+        /// <param name="id">id of Rental Agreement to add a rate record for</param>
+        /// <param name="item">Adds to Rental Agreement Rate Records</param>
+        /// <response code="200">OK</response>
+        [HttpPost]
+        [Route("/api/rentalagreements/{id}/rateRecord")]
+        [SwaggerOperation("RentalagreementsIdRentalAgreementRatesPost")]
+        [SwaggerResponse(200, type: typeof(RentalAgreementRate))]
+        public virtual IActionResult RentalagreementsIdRentalAgreementRatesPost([FromRoute]int id, [FromBody]RentalAgreementRate item)
+        {
+            return _service.RentalAgreementsIdRentalAgreementRatesPostAsync(id, item);
+        }
+
+        /// <summary>
+        /// Update or create an array of rate records associated with a rental agreement
+        /// </summary>
+        /// <remarks>Adds Rental Agreement Rate Records</remarks>
+        /// <param name="id">id of Rental Agreement to add rate records for</param>
+        /// <param name="items">Array of Rental Agreement Rate Records</param>
+        /// <response code="200">OK</response>
+        [HttpPost]
+        [Route("/api/rentalagreements/{id}/rateRecords")]
+        [SwaggerOperation("RentalAgreementsIdRentalAgreementRatesBulkPost")]
+        [SwaggerResponse(200, type: typeof(RentalAgreementRate))]
+        public virtual IActionResult RentalAgreementsIdRentalAgreementRatesBulkPost([FromRoute]int id, [FromBody]RentalAgreementRate[] items)
+        {
+            return _service.RentalAgreementsIdRentalAgreementRatesBulkPostAsync(id, items);
+        }
+
+        #endregion
+
+        #region Rental Agreement Condition Records
+
+        /// <summary>
+        /// Get condition records associated with a rental agreement
+        /// </summary>
+        /// <remarks>Gets a Rental Agreement&#39;s Condition Records</remarks>
+        /// <param name="id">id of Rental Agreement to fetch Condition Records for</param>
+        /// <response code="200">OK</response>
+        [HttpGet]
+        [Route("/api/rentalagreements/{id}/conditionRecords")]
+        [SwaggerOperation("RentalagreementsIdRentalAgreementConditionsGet")]
+        [SwaggerResponse(200, type: typeof(List<RentalAgreementCondition>))]
+        public virtual IActionResult RentalagreementsIdRentalAgreementConditionsGet([FromRoute]int id)
+        {
+            return _service.RentalAgreementsIdRentalAgreementConditionsGetAsync(id);
+        }
+
+        /// <summary>
+        /// Add a rental agreement condition record
+        /// </summary>
+        /// <remarks>Adds Rental Agreement Condition Records</remarks>
+        /// <param name="id">id of Rental Agreement to add a condition record for</param>
+        /// <param name="item">Adds to Rental Agreement Condition Records</param>
+        /// <response code="200">OK</response>
+        [HttpPost]
+        [Route("/api/rentalagreements/{id}/conditionRecord")]
+        [SwaggerOperation("RentalagreementsIdRentalAgreementConditionsPost")]
+        [SwaggerResponse(200, type: typeof(RentalAgreementCondition))]
+        public virtual IActionResult RentalagreementsIdRentalAgreementConditionsPost([FromRoute]int id, [FromBody]RentalAgreementCondition item)
+        {
+            return _service.RentalAgreementsIdRentalAgreementConditionsPostAsync(id, item);
+        }
+
+        /// <summary>
+        /// Update or create an array of condition records associated with a rental agreement
+        /// </summary>
+        /// <remarks>Adds Rental Agreement Condition Records</remarks>
+        /// <param name="id">id of Rental Agreement to add condition records for</param>
+        /// <param name="items">Array of Rental Agreement Condition Records</param>
+        /// <response code="200">OK</response>
+        [HttpPost]
+        [Route("/api/rentalagreements/{id}/conditionRecords")]
+        [SwaggerOperation("RentalAgreementsIdRentalAgreementConditionsBulkPost")]
+        [SwaggerResponse(200, type: typeof(RentalAgreementCondition))]
+        public virtual IActionResult RentalAgreementsIdRentalAgreementConditionsBulkPost([FromRoute]int id, [FromBody]RentalAgreementCondition[] items)
+        {
+            return _service.RentalAgreementsIdRentalAgreementConditionsBulkPostAsync(id, items);
         }
 
         #endregion

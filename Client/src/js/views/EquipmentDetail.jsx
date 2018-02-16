@@ -15,6 +15,7 @@ import AttachmentAddDialog from './dialogs/AttachmentAddDialog.jsx';
 import AttachmentEditDialog from './dialogs/AttachmentEditDialog.jsx';
 import DocumentsListDialog from './dialogs/DocumentsListDialog.jsx';
 import NotesDialog from './dialogs/NotesDialog.jsx';
+import ChangeStatusDialog from './dialogs/ChangeStatusDialog.jsx';
 
 import * as Action from '../actionTypes';
 import * as Api from '../api';
@@ -30,11 +31,6 @@ import Spinner from '../components/Spinner.jsx';
 import Unimplemented from '../components/Unimplemented.jsx';
 
 import { formatDateTime } from '../utils/date';
-
-// Action drop-down items
-const EQUIPMENT_ACTION_ARCHIVE = 'Archive';
-const EQUIPMENT_ACTION_VERIFIED = 'Verified';
-const EQUIPMENT_ACTION_FOR_HIRE = 'For Hire';
 
 /*
 
@@ -71,6 +67,7 @@ var EquipmentDetail = React.createClass({
       showPhysicalAttachmentDialog: false,
       showPhysicalAttachmentEditDialog: false,
       showNotesDialog: false,
+      showChangeStatusDialog: false,
       equipmentPhysicalAttachment: {},
       ui : {
         // Physical Attachments
@@ -160,6 +157,26 @@ var EquipmentDetail = React.createClass({
     });
   },
 
+  updateStatusState(state) {
+    if (state !== this.props.equipment.status) {
+      this.setState({ status: state }, this.openChangeStatusDialog());
+    }
+  },
+
+  openChangeStatusDialog() {
+    this.setState({ showChangeStatusDialog: true });
+  },
+
+  closeChangeStatusDialog() {
+    this.setState({ showChangeStatusDialog: false });
+  },
+
+  onChangeStatus(status) {
+    Api.changeEquipmentStatus(status).then(() => {
+      this.closeChangeStatusDialog();
+    });
+  },
+
   openSeniorityDialog() {
     this.setState({ showSeniorityDialog: true });
   },
@@ -225,39 +242,70 @@ var EquipmentDetail = React.createClass({
     return 'success';
   },
 
+  getStatusDropdownStyle() {
+    switch(this.props.equipment.status) {
+      case(Constant.EQUIPMENT_STATUS_CODE_APPROVED):
+        return 'success';
+      case(Constant.EQUIPMENT_STATUS_CODE_PENDING):
+        return 'danger';
+      default: 
+        return 'default';
+    }
+  },
+
+  getStatuses() {
+    var dropdownItems = _.pull([ Constant.EQUIPMENT_STATUS_CODE_APPROVED, Constant.EQUIPMENT_STATUS_CODE_PENDING, Constant.EQUIPMENT_STATUS_CODE_ARCHIVED ], this.props.equipment.status);
+    if (this.props.equipment.ownerStatus === Constant.OWNER_STATUS_CODE_PENDING) {
+      return _.pull(dropdownItems, Constant.EQUIPMENT_STATUS_CODE_APPROVED);
+    } else if (this.props.equipment.ownerStatus === Constant.OWNER_STATUS_CODE_ARCHIVED) {
+      return [];
+    }
+    return dropdownItems;
+  },
+
   render() {
     var equipment = this.props.equipment;
     var lastVerifiedStyle = this.getLastVerifiedStyle(equipment);
+    var dropdownItems = this.getStatuses();
 
     return <div id="equipment-detail">
       <div>
-        <Row id="equipment-top">
-          <Col md={8}>
-            <Row>
-              <Button title="Notes" onClick={ this.showNotes }>Notes ({ Object.keys(this.props.notes).length })</Button>
-              <Button title="Documents" onClick={ this.showDocuments }>Documents ({ Object.keys(this.props.documents).length })</Button>
-            </Row>
-          </Col>
-          <Col md={4}>
-            <div className="pull-right">
-              <Unimplemented>
-                <DropdownButton id='equipment-action-drop-down' title='Actions' onSelect={ this.actionSelected }>
-                  <MenuItem key={ EQUIPMENT_ACTION_ARCHIVE } eventKey={ EQUIPMENT_ACTION_ARCHIVE }>{ EQUIPMENT_ACTION_ARCHIVE }</MenuItem>
-                  <MenuItem key={ EQUIPMENT_ACTION_VERIFIED } eventKey={ EQUIPMENT_ACTION_VERIFIED }>{ EQUIPMENT_ACTION_VERIFIED }</MenuItem>
-                  <MenuItem key={ EQUIPMENT_ACTION_FOR_HIRE } eventKey={ EQUIPMENT_ACTION_FOR_HIRE }>{ EQUIPMENT_ACTION_FOR_HIRE }</MenuItem>
+        {(() => {
+
+          if (this.state.loadingEquipment) { return <div style={{ textAlign: 'center' }}><Spinner/></div>; }
+
+          return <Row id="equipment-top">
+            <Col md={8}>
+              <Row>
+                <DropdownButton
+                  bsStyle={ this.getStatusDropdownStyle() }
+                  title={ equipment.status || '' }
+                  onSelect={ this.updateStatusState }
+                  disabled={ equipment.ownerStatus === Constant.OWNER_STATUS_CODE_ARCHIVED }
+                >
+                { _.map(dropdownItems.map((item, i) =>
+                  <MenuItem key={ i } eventKey={ item }>{ item }</MenuItem>
+                ))}
                 </DropdownButton>
-              </Unimplemented>
-              <Button onClick={ this.print }><Glyphicon glyph="print" title="Print" /></Button>
-              <LinkContainer to={{ pathname: this.state.returnUrl }}>
-                <Button title="Return to List"><Glyphicon glyph="arrow-left" /> Return to List</Button>
-              </LinkContainer>
-            </div>
-          </Col>
-        </Row>
+                <Button className="mr-5 ml-5" title="Notes" onClick={ this.showNotes }>Notes ({ Object.keys(this.props.notes).length })</Button>
+                <Button title="Documents" onClick={ this.showDocuments }>Documents ({ Object.keys(this.props.documents).length })</Button>
+              </Row>
+            </Col>
+            <Col md={4}>
+              <div className="pull-right">
+                <Button className="mr-5" onClick={ this.print }><Glyphicon glyph="print" title="Print" /></Button>
+                <LinkContainer to={{ pathname: this.state.returnUrl }}>
+                  <Button title="Return to List"><Glyphicon glyph="arrow-left" /> Return to List</Button>
+                </LinkContainer>
+              </div>
+            </Col>
+          </Row>;
+        })()}
+        
         <Row id="equipment-bottom">
-          <Label bsStyle={ equipment.isApproved ? 'success' : 'danger'}>{ equipment.status }</Label>
+          {/* <Label bsStyle={ equipment.isApproved ? 'success' : 'danger'}>{ equipment.status }</Label> */}
           <Label className={ equipment.isMaintenanceContractor ? '' : 'hide' }>Maintenance Contractor</Label>
-          <Label bsStyle={ equipment.isWorking ? 'danger' : 'success' }>{ equipment.isWorking ? 'Working' : 'Not Working' }</Label>
+          <Label bsStyle={ equipment.isHired ? 'success' : 'default' }>{ equipment.isHired ? 'Hired' : 'Not Hired' }</Label>
           <Label bsStyle={ lastVerifiedStyle }>Last Verified: { formatDateTime(equipment.lastVerifiedDate, Constant.DATE_YEAR_SHORT_MONTH_DAY) }</Label>
         </Row>
 
@@ -296,6 +344,9 @@ var EquipmentDetail = React.createClass({
                 return <Row>
                   <Col md={6}>
                     <Row>
+                      <ColDisplay labelProps={{ md: 4 }} label="Type">{ equipment.typeName }</ColDisplay>
+                    </Row>
+                    <Row>
                       <ColDisplay labelProps={{ md: 4 }} label="Make">{ equipment.make }</ColDisplay>
                     </Row>
                     <Row>
@@ -304,13 +355,13 @@ var EquipmentDetail = React.createClass({
                     <Row>
                       <ColDisplay labelProps={{ md: 4 }} label="Year">{ equipment.year }</ColDisplay>
                     </Row>
-                    <Row>
-                      <ColDisplay labelProps={{ md: 4 }} label="Size">{ equipment.size }</ColDisplay>
-                    </Row>
                   </Col>
                   <Col md={6}>
                     <Row>
-                      <ColDisplay labelProps={{ md: 4 }} label="Type">{ equipment.typeName }</ColDisplay>
+                      <ColDisplay labelProps={{ md: 4 }} label="Size">{ equipment.size }</ColDisplay>
+                    </Row>
+                    <Row>
+                      <ColDisplay labelProps={{ md: 4 }} label="Type">{ equipment.type }</ColDisplay>
                     </Row>
                     <Row>
                       <ColDisplay labelProps={{ md: 4 }} label="Licence Number">{ equipment.licencePlate }</ColDisplay>
@@ -516,6 +567,15 @@ var EquipmentDetail = React.createClass({
           notes={ this.props.notes }
         />
       } 
+      { this.state.showChangeStatusDialog &&
+        <ChangeStatusDialog
+          show={ this.state.showChangeStatusDialog}
+          onClose={ this.closeChangeStatusDialog }
+          onSave={ this.onChangeStatus }
+          status={ this.state.status }
+          parent={ equipment }
+        />
+      }
     </div>;
   },
 });

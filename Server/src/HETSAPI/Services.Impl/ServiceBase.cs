@@ -31,7 +31,7 @@ namespace HETSAPI.Services.Impl
             
             try
             {
-                string rawuid = User.FindFirst(Models.User.USERID_CLAIM).Value;
+                string rawuid = User.FindFirst(Models.User.UseridClaim).Value;
                 result = int.Parse(rawuid);
             }
             catch

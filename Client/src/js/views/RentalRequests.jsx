@@ -198,7 +198,6 @@ var RentalRequests = React.createClass({
     window.print();
   },
 
-
   render() {
     // Constrain the local area drop downs to those in the District of the current logged in user
     var localAreas = _.chain(this.props.localAreas)

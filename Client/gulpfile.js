@@ -177,7 +177,6 @@ gulp.task('fingerprint', () => {
 gulp.task('test:integration', function() {
   return gulp
     .src('test/index.html')
-    .pipe($.mochaPhantomjs());
 });
 
 gulp.task('test:unit', function() {

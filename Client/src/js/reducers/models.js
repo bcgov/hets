@@ -23,6 +23,9 @@ const DEFAULT_MODELS = {
   equipmentNotes: {},
   equipmentAttachments: {},
   equipmentHistory: {},
+  equipmentRentalAgreements: {
+    data: {},
+  },
 
   owners: {
     data: {},
@@ -52,6 +55,9 @@ const DEFAULT_MODELS = {
   projectNotes: {},
   projectAttachments: {},
   projectHistory: {},
+  projectRentalAgreements: {
+    data: {},
+  },
 
   rentalRequests: {
     data: {},
@@ -165,6 +171,9 @@ export default function modelsReducer(state = DEFAULT_MODELS, action) {
 
     case Action.UPDATE_EQUIPMENT_NOTES:
       return { ...state, equipmentNotes: action.notes };
+
+    case Action.UPDATE_EQUIPMENT_RENTAL_AGREEMENTS:
+      return { ...state, equipmentRentalAgreements: { data: action.rentalAgreements } };
     
     // Equipment Attachments
     case Action.UPDATE_EQUIPMENT_ATTACHMENTS:
@@ -210,6 +219,12 @@ export default function modelsReducer(state = DEFAULT_MODELS, action) {
     
     case Action.UPDATE_PROJECT_NOTES: 
       return { ...state, projectNotes: action.notes };
+
+    case Action.UPDATE_PROJECT_RENTAL_AGREEMENTS:
+      return { ...state, projectRentalAgreements: { data: action.rentalAgreements } };
+
+    // case Action.UPDATE_PROJECT_RENTAL_AGREEMENTS_ERROR:
+    //   return { ...state, projectRentalAgreements: { ...state.projectRentalAgreements, error: action.error } };
     
     // Rental Requests
     case Action.RENTAL_REQUESTS_REQUEST: 

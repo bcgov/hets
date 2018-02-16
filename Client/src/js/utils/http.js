@@ -4,6 +4,8 @@ import Promise from 'bluebird';
 import * as Action from '../actionTypes';
 import store from '../store';
 
+import * as Constant from '../constants';
+
 const ROOT_API_PREFIX = location.pathname === '/' ? '' : location.pathname.split('/').slice(0, -1).join('/');
 
 var numRequestsInFlight = 0;
@@ -66,14 +68,19 @@ Resource404.prototype = Object.create(Error.prototype, {
 export function request(path, options) {
   options = options || {};
 
-  var xhr = new XMLHttpRequest();
+  var xhr = new XMLHttpRequest();     
   
   // calling server service
   console.log('Calling service. Path: ' + path);
   
   // setting a timeout on the request
-  xhr.timeout = 5000; // time in milliseconds (2 sec)
-  console.log('Setting timeout to 5 sec');
+  if (path.indexOf('/pdf') !== -1) {
+    xhr.timeout = 15000; // time in milliseconds (15 sec)
+    console.log('Setting timeout to 15 sec - Pdf');  
+  } else {
+    xhr.timeout = 5000; // time in milliseconds (5 sec)
+    console.log('Setting timeout to 5 sec');
+  }  
 
   if (!options.headers) { options.headers = {}; }
   if (!options.files) {
@@ -96,6 +103,10 @@ export function request(path, options) {
     xhr.upload.addEventListener('load', function(/*e*/) {
       options.onUploadProgress(100);
     });
+  }
+  
+  if (options.responseType) {
+    xhr.responseType = options.responseType;
   }
 
   return new Promise((resolve, reject, onCancel) => {
@@ -170,6 +181,8 @@ export function jsonRequest(path, options) {
   return request(path, options).then(xhr => {
     if (xhr.status === 204) {
       return;
+    } else if (xhr.responseType === Constant.RESPONSE_TYPE_BLOB) {
+      return xhr.response;
     } else {
       return xhr.responseText ? JSON.parse(xhr.responseText) : null;
     }
@@ -186,6 +199,7 @@ export function jsonRequest(path, options) {
   });
 }
 
+
 export function buildApiPath(path) {
   return `${ROOT_API_PREFIX}/api/${path}`.replace('//', '/'); // remove double slashes
 }
@@ -198,8 +212,8 @@ ApiRequest.prototype.get = function apiGet(params) {
   return jsonRequest(this.path, { method: 'GET', querystring: params });
 };
 
-ApiRequest.prototype.post = function apiPost(data) {
-  return jsonRequest(this.path, { method: 'POST', body: data });
+ApiRequest.prototype.post = function apiPost(data, options) {
+  return jsonRequest(this.path, { method: 'POST', body: data, ...options });
 };
 
 ApiRequest.prototype.put = function apiPut(data) {

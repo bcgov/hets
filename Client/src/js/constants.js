@@ -23,12 +23,12 @@ export const PERMISSION_USER_MANAGEMENT = 'USER_MANAGEMENT';
 export const EQUIPMENT_DAYS_SINCE_VERIFIED_WARNING = 270;
 export const EQUIPMENT_DAYS_SINCE_VERIFIED_CRITICAL = 365;
 
-export const EQUIPMENT_STATUS_CODE_PENDING = 'Pending';
+export const EQUIPMENT_STATUS_CODE_PENDING = 'Unapproved';
 export const EQUIPMENT_STATUS_CODE_APPROVED = 'Approved';
 export const EQUIPMENT_STATUS_CODE_ARCHIVED = 'Archived';
 
 // Owners
-export const OWNER_STATUS_CODE_PENDING = 'Pending';
+export const OWNER_STATUS_CODE_PENDING = 'Unapproved';
 export const OWNER_STATUS_CODE_APPROVED = 'Approved';
 export const OWNER_STATUS_CODE_ARCHIVED = 'Archived';
 
@@ -69,3 +69,11 @@ export const NANP_REGEX = /^(?:(?:\+?1\s*(?:[.-]\s*)?)?(?:\(\s*([2-9]1[02-9]|[2-
 
 // Conditions 
 export const NON_STANDARD_CONDITION = 'Other';
+
+// ResponseTypes
+
+export const RESPONSE_TYPE_BLOB = 'blob';
+
+// Cloning
+export const BY_PROJECT = 'By Project';
+export const BY_EQUIPMENT = 'By Equipment';

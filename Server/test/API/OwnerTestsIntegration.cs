@@ -207,7 +207,6 @@ namespace HETSAPI.Test
 
             // test the post.
             Contact newContact = new Contact();
-            newContact.OrganizationName = "asdf";
 
             request = new HttpRequestMessage(HttpMethod.Post, "/api/owners/" + id + "/contacts");
             request.Content = new StringContent(JsonConvert.SerializeObject(newContact), Encoding.UTF8, "application/json");
@@ -397,7 +396,6 @@ namespace HETSAPI.Test
             // create a new object.
             Owner owner = new Owner();
             owner.OrganizationName = initialName;
-            owner.OwnerEquipmentCodePrefix = "TST";
             string jsonString = owner.ToJson();
 
             request.Content = new StringContent(jsonString, Encoding.UTF8, "application/json");
@@ -501,7 +499,7 @@ namespace HETSAPI.Test
             // create a new object.
             Owner owner = new Owner();
             owner.OrganizationName = initialName;
-            owner.OwnerEquipmentCodePrefix = "TST";
+            
             string jsonString = owner.ToJson();
 
             request.Content = new StringContent(jsonString, Encoding.UTF8, "application/json");

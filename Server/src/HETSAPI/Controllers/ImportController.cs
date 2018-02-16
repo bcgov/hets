@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using System.IO;
 using System;
 using System.Text;
+using HETSAPI.Authorization;
 using HETSAPI.Helpers;
 using HETSAPI.Models;
 using HETSAPI.Services.Impl;
@@ -47,13 +48,14 @@ namespace HETSAPI.Controllers
             };
 
             return View(home);
-        }        
+        }
 
         /// <summary>
         /// Receives uploaded files
         /// </summary>
         /// <param name="files"></param>
         /// <returns></returns>      
+        [RequiresPermission(Permission.ImportData)]
         public IActionResult UploadPost(IList<IFormFile> files)
         {
             // get the upload path from the app configuration

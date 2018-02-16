@@ -11,7 +11,6 @@ import * as Constant from '../../constants';
 import EditDialog from '../../components/EditDialog.jsx';
 import FormInputControl from '../../components/FormInputControl.jsx';
 import DropdownControl from '../../components/DropdownControl.jsx';
-import Unimplemented from '../../components/Unimplemented.jsx';
 
 import { isBlank } from '../../utils/string';
 
@@ -71,7 +70,7 @@ var ProjectsEditDialog = React.createClass({
       valid = false;
     } else if (projectName !== project.projectName) {
       var nameIgnoreCase = projectName.toLowerCase().trim();
-      var existingProjects = _.reject(this.props.projects, { id: project.id});
+      var existingProjects = _.reject(this.props.projects.data, { id: project.id});
       var existingProjectName = _.find(existingProjects, existingProjectName => existingProjectName.name.toLowerCase().trim() === nameIgnoreCase);
       if (existingProjectName) {
         this.setState({ projectNameError: 'This project name already exists'});
@@ -79,28 +78,30 @@ var ProjectsEditDialog = React.createClass({
       }
     }
 
-    // TODO: Project status validation
-    // if (isBlank(this.state.status)) {
-    //   this.setState({ projectStatusCodeError: 'Project status is required' });
-    //   valid = false;
-    // }
+    if (isBlank(this.state.projectStatus)) {
+      this.setState({ projectStatusCodeError: 'Project status is required' });
+      valid = false;
+    }
 
     return valid;
   },
 
 
   onSave() {
-    this.props.onSave({ ...this.props.project, ...{
+    this.props.onSave({ 
+      id: this.props.project.id,
+      canEditStatus: this.props.project.canEditStatus,
+      district: this.props.project.district, 
+      primaryContact: this.props.project.primaryContact,
       name: this.state.projectName,
       status: this.state.projectStatus,
       provincialProjectNumber: this.state.provincialProjectNumber,
       information: this.state.projectInformation,
-    }});
+    });
   },
 
   render() {
     // TODO: Restrict Information box resize
-    // TODO: Only allow edit of status when no hired equipment
     return <EditDialog id="projects-edit" show={ this.props.show } bsSize="small"
       onClose={ this.props.onClose } onSave={ this.onSave } didChange={ this.didChange } isValid={ this.isValid }
       title= {
@@ -116,16 +117,14 @@ var ProjectsEditDialog = React.createClass({
           <ControlLabel>Provincial Project Number</ControlLabel>
           <FormInputControl type="text" value={ this.state.provincialProjectNumber } updateState={ this.updateState } />
         </FormGroup>
-        <Unimplemented>
-        <FormGroup controlId="projectStatusCode" validationState={ this.state.projectStatusCodeError ? 'error' : null }>
+        <FormGroup controlId="projectStatus" validationState={ this.state.projectStatusCodeError ? 'error' : null }>
           <ControlLabel>Project Status</ControlLabel>
-          <DropdownControl id="projectStatusCode" title={ this.state.projectStatus } updateState={ this.updateState } disabled={ true } 
-            placeholder="None" blankLine 
+          <DropdownControl id="projectStatus" title={ this.state.projectStatus } updateState={ this.updateState } disabled={ !this.props.project.canEditStatus } 
+            value={ this.state.projectStatus }
             items={[ Constant.PROJECT_STATUS_CODE_ACTIVE, Constant.PROJECT_STATUS_CODE_COMPLETED ]}
           />
           <HelpBlock>{ this.state.projectStatusCodeError }</HelpBlock>
         </FormGroup>
-        </Unimplemented>
         <FormGroup controlId="projectInformation">
           <ControlLabel>Project Information</ControlLabel>
           <FormInputControl type="text" componentClass="textarea" rows="5" value={ this.state.projectInformation } updateState={ this.updateState } />

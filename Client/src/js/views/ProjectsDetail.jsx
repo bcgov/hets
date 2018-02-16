@@ -31,7 +31,6 @@ import History from '../components/History.jsx';
 import SortTable from '../components/SortTable.jsx';
 import Spinner from '../components/Spinner.jsx';
 import TableControl from '../components/TableControl.jsx';
-import Unimplemented from '../components/Unimplemented.jsx';
 import Confirm from '../components/Confirm.jsx';
 import OverlayTrigger from '../components/OverlayTrigger.jsx';
 
@@ -259,6 +258,13 @@ var ProjectsDetail = React.createClass({
     this.setState({ showTimeEntryDialog: false });
   },
 
+
+  cancelRequest(request) {
+    Api.cancelRentalRequest(request.id).then(() => {
+      this.fetch();
+    });
+  },
+
   render() {
     var project = this.props.project;
 
@@ -340,9 +346,7 @@ var ProjectsDetail = React.createClass({
             </Well>
             <Well>
               <h3>Hired Equipment / Requests<span className="pull-right">
-                <Unimplemented>
-                  <CheckboxControl id="includeCompletedRequests" inline checked={ this.state.includeCompletedRequests } updateState={ this.updateState }><small>Show Completed</small></CheckboxControl>
-                </Unimplemented>
+                <CheckboxControl id="includeCompletedRequests" inline checked={ this.state.includeCompletedRequests } updateState={ this.updateState }><small>Show Completed</small></CheckboxControl>
                 <Button title="Add Request" bsSize="small" onClick={ this.openAddRequestDialog }><Glyphicon glyph="plus" /> Add</Button>
               </span></h3>
               {(() => {
@@ -358,6 +362,9 @@ var ProjectsDetail = React.createClass({
                     <td>N/A</td>
                     <td>N/A</td>
                     <td>N/A</td>
+                    <td>
+                      <DeleteButton name="Cancel Rental Request" hide={ item.yesCount > 0 } onConfirm={ this.cancelRequest.bind(this, item) }/>
+                    </td>
                   </tr>
                 );
 
@@ -393,6 +400,7 @@ var ProjectsDetail = React.createClass({
                       </OverlayTrigger>
                     </td>
                     <td><Link to={`${Constant.RENTAL_AGREEMENTS_PATHNAME}/${item.id}`}>Agreement</Link></td>
+                    <td></td>
                   </tr>
                 );
 
@@ -403,6 +411,7 @@ var ProjectsDetail = React.createClass({
                   { field: 'lastTimeRecord',    title: 'Time Entry'       },
                   { field: 'release',           title: 'Release'          },
                   { field: 'agreement',         title: 'Agreement'        },
+                  { field: 'blank'                                        },
                 ];
 
                 return <TableControl id="equipment-list" headers={ headers }>
@@ -477,7 +486,12 @@ var ProjectsDetail = React.createClass({
         <ProjectsEditDialog show={ this.state.showEditDialog } onSave={ this.saveEdit } onClose={ this.closeEditDialog } />  
       }
       { this.state.showContactDialog &&
-        <ContactsEditDialog show={ this.state.showContactDialog } contact={ this.state.contact } onSave={ this.saveContact } onClose={ this.closeContactDialog } />
+        <ContactsEditDialog 
+          show={ this.state.showContactDialog } 
+          contact={ this.state.contact } 
+          onSave={ this.saveContact } 
+          onClose={ this.closeContactDialog } 
+        />
       }
       { this.state.showDocumentsDialog &&
         <DocumentsListDialog 

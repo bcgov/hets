@@ -17,7 +17,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json.Serialization;
-using Swashbuckle.Swagger.Model;
+using Swashbuckle.AspNetCore.Swagger;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Http.Features;
 using System.Text;
@@ -107,21 +107,22 @@ namespace HETSAPI
             PostgreSqlStorageOptions postgreSqlStorageOptions = new PostgreSqlStorageOptions {
                 SchemaName = "public"
             };
-
-            PostgreSqlStorage storage = new PostgreSqlStorage(connectionString, postgreSqlStorageOptions);
-            services.AddHangfire(config => 
+            if (connectionString != null)
             {
-                config.UseStorage(storage);
-                config.UseConsole();
-            });
-
+                PostgreSqlStorage storage = new PostgreSqlStorage(connectionString, postgreSqlStorageOptions);
+                services.AddHangfire(config =>
+                {
+                    config.UseStorage(storage);
+                    config.UseConsole();
+                });
+            }
+            
             // Configure Swagger - only required in the Development Environment
             if (_hostingEnv.IsDevelopment())
             {
-                services.AddSwaggerGen();
-                services.ConfigureSwaggerGen(options =>
+                services.AddSwaggerGen(options =>
                 {
-                    options.SingleApiVersion(new Info
+                    options.SwaggerDoc("v1", new Info
                     {
                         Version = "v1",
                         Title = "HETS REST API",
@@ -162,16 +163,20 @@ namespace HETSAPI
             // authenticate users
             app.UseAuthentication();
 
-            // update database environment            
-            string updateDb = Configuration.GetSection("UpdateLocalDb").Value;
-            if (env.IsDevelopment() && updateDb.ToLower() != "false")
+            // update database environment 
+            if (Configuration != null)
             {
-                TryMigrateDatabase(app, loggerFactory);
+                string updateDb = Configuration.GetSection("UpdateLocalDb").Value;
+                if (env.IsDevelopment() && updateDb.ToLower() != "false")
+                {
+                    TryMigrateDatabase(app, loggerFactory);
+                }
+                else if (!env.IsDevelopment())
+                {
+                    TryMigrateDatabase(app, loggerFactory);
+                }
             }
-            else if (!env.IsDevelopment())
-            {
-                TryMigrateDatabase(app, loggerFactory);
-            }
+
 
             // do not start Hangfire if we are running tests. 
             bool startHangfire = true;
@@ -211,8 +216,14 @@ namespace HETSAPI
             
             if (_hostingEnv.IsDevelopment())
             {
+                string swaggerApi = Configuration.GetSection("Constants:SwaggerApiUrl").Value;
                 app.UseSwagger();
-                app.UseSwaggerUi();
+                app.UseSwaggerUI(options =>
+                {
+                    options.SwaggerEndpoint(swaggerApi, "HETS REST API v1");
+                    options.EnabledValidator(null);
+                    options.DocExpansion("none");
+                });
             }
             
             if (startHangfire)

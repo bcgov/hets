@@ -75,7 +75,7 @@ namespace HETSAPI.Test
             instance.ServiceHoursTwoYearsAgo = 385;
             instance.ServiceHoursThreeYearsAgo = 426;
             instance.DumpTruck = new DumpTruck();
-            instance.CalculateSeniority();
+            instance.CalculateSeniority(1);
 
             Assert.Equal(1322.33337F, instance.Seniority);
         }

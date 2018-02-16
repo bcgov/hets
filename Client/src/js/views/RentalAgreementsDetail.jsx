@@ -8,11 +8,14 @@ import { Table, Alert, Button, Glyphicon, Label, ButtonGroup } from 'react-boots
 
 import _ from 'lodash';
 
+import { buildApiPath } from '../utils/http.js';
+
 import AttachmentRatesEditDialog from './dialogs/AttachmentRatesEditDialog.jsx';
 import EquipmentRentalRatesEditDialog from './dialogs/EquipmentRentalRatesEditDialog.jsx';
 import RentalAgreementsEditDialog from './dialogs/RentalAgreementsEditDialog.jsx';
 import RentalConditionsEditDialog from './dialogs/RentalConditionsEditDialog.jsx';
 import RentalRatesEditDialog from './dialogs/RentalRatesEditDialog.jsx';
+import CloneDialog from './dialogs/CloneDialog.jsx';
 
 import * as Api from '../api';
 import * as Constant from '../constants';
@@ -56,6 +59,9 @@ var RentalAgreementsDetail = React.createClass({
       showRentalRateDialog: false,
       showAttachmentRateDialog: false,
       showConditionDialog: false,
+      showCloneDialog: false,
+
+      cloneRentalAgreementError: '',
 
       returnUrl: (this.props.location.state || {}).returnUrl || Constant.RENTAL_REQUESTS_PATHNAME,
       rentalRate: {},
@@ -151,6 +157,13 @@ var RentalAgreementsDetail = React.createClass({
     });
   },
 
+  saveRentalRates(rentalRates) {
+    Api.addRentalRates(this.props.params.rentalAgreementId, rentalRates).finally(() => {
+      this.fetch();
+      this.closeRentalRateDialog();
+    });
+  },
+
   openAttachmentRateDialog(attachmentRate) {
     this.setState({
       attachmentRate: attachmentRate,
@@ -187,6 +200,13 @@ var RentalAgreementsDetail = React.createClass({
     var savePromise = isNew ? Api.addRentalRate : Api.updateRentalRate;
 
     savePromise(attachmentRate).finally(() => {
+      this.fetch();
+      this.closeAttachmentRateDialog();
+    });
+  },
+
+  saveAttachmentRates(attachmentRates) {
+    Api.addRentalRates(this.props.params.rentalAgreementId, attachmentRates).finally(() => {
       this.fetch();
       this.closeAttachmentRateDialog();
     });
@@ -229,6 +249,13 @@ var RentalAgreementsDetail = React.createClass({
     });
   },
 
+  saveConditions(rentalConditions) {
+    Api.addRentalConditions(this.props.params.rentalAgreementId, rentalConditions).finally(() => {
+      this.fetch();
+      this.closeConditionDialog();
+    });
+  },
+
   email() {
 
   },
@@ -246,12 +273,39 @@ var RentalAgreementsDetail = React.createClass({
   },
 
   generateRentalAgreementDocument() {
-    // Temporary approach to download PDFs
-    // TODO: Research proper download technique
-    // this.setState({ rentalAgreementDocumentLoading: true });
-    // window.open(`/api/rentalagreements/${ this.props.params.rentalAgreementId }/pdf`);
-    // this.setState({ rentalAgreementDocumentLoading: false });
-    Api.generateRentalAgreementDocument(this.props.params.rentalAgreementId);
+    Api.generateRentalAgreementDocument(this.props.params.rentalAgreementId).finally(() => {
+      window.open(buildApiPath(`/rentalagreements/${ this.props.params.rentalAgreementId }/pdf`));
+    });
+  },
+
+  openCloneDialog() {
+    this.setState({ showCloneDialog: true });
+  },
+
+  closeCloneDialog() {
+    this.setState({ showCloneDialog: false, cloneRentalAgreementError: '' });
+  },
+
+  cloneRentalAgreement(rentalAgreementCloneId, type) {
+    var data = {
+      projectId: this.props.rentalAgreement.project.id,
+      agreementToCloneId: rentalAgreementCloneId,
+      rentalAgreementId: this.props.rentalAgreement.id,
+    };
+    var clonePromise = Api.cloneProjectRentalAgreement(data);
+
+    if (type === Constant.BY_EQUIPMENT) {
+      data.equipmentId = this.props.rentalAgreement.equipment.id;      
+      clonePromise = Api.cloneEquipmentRentalAgreement(data);
+    }
+
+    this.setState({ cloneRentalAgreementError: '' });
+    clonePromise.then(() => {
+      this.closeCloneDialog();
+    })
+    .catch((error) => {
+      this.setState({ cloneRentalAgreementError: error });
+    });
   },
 
   render() {
@@ -272,12 +326,7 @@ var RentalAgreementsDetail = React.createClass({
         </Col>
         <Col md={4}>
           <div className="pull-right">
-            <Unimplemented>
-              <Button><Glyphicon glyph="time" title="Time Entry" /></Button>
-            </Unimplemented>
-            <Unimplemented>
-              <Button onClick={ this.email }><Glyphicon glyph="envelope" title="E-mail" /></Button>
-            </Unimplemented>
+            <Button disabled={ !rentalAgreement.isActive } onClick={ this.openCloneDialog }>Clone</Button>
             <Button title="Return to List" onClick={ browserHistory.goBack }><Glyphicon glyph="arrow-left" /> Return to List</Button>
           </div>
         </Col>
@@ -521,14 +570,14 @@ var RentalAgreementsDetail = React.createClass({
           return <Grid fluid>
             <Row>
               <Col md={6}>
-                <ColDisplay md={12} labelProps={{ md: 4 }} label="Estimated Commencement:">{ formatDateTime(rentalAgreement.estimateStartWork, Constant.DATE_YEAR_SHORT_MONTH_DAY) }</ColDisplay>
-                <ColDisplay md={12} labelProps={{ md: 4 }} label="Point of Hire:">{ rentalAgreement.pointOfHire }</ColDisplay>
-                <ColDisplay md={12} labelProps={{ md: 4 }} label="District:">{ rentalAgreement.districtName }</ColDisplay>
+                <ColDisplay md={12} labelProps={{ md: 6 }} label="Estimated Commencement:">{ formatDateTime(rentalAgreement.estimateStartWork, Constant.DATE_YEAR_SHORT_MONTH_DAY) }</ColDisplay>
+                <ColDisplay md={12} labelProps={{ md: 6 }} label="Point of Hire:">{ rentalAgreement.pointOfHire }</ColDisplay>
+                <ColDisplay md={12} labelProps={{ md: 6 }} label="District:">{ rentalAgreement.districtName }</ColDisplay>
               </Col>
               <Col md={6}>
-                <ColDisplay md={12} labelProps={{ md: 4 }} label="Dated At:">{ formatDateTime(rentalAgreement.datedOn, Constant.DATE_YEAR_SHORT_MONTH_DAY) }</ColDisplay>
-                <ColDisplay md={12} labelProps={{ md: 4 }} label="Estimated Period Hours:">{ rentalAgreement.estimateHours }</ColDisplay>
-                <ColDisplay md={12} labelProps={{ md: 4 }} label="WorkSafeBC (WCB) Number:">{ rentalAgreement.workSafeBCPolicyNumber }</ColDisplay>
+                <ColDisplay md={12} labelProps={{ md: 6 }} label="Dated On:">{ formatDateTime(rentalAgreement.datedOn, Constant.DATE_YEAR_SHORT_MONTH_DAY) }</ColDisplay>
+                <ColDisplay md={12} labelProps={{ md: 6 }} label="Estimated Period Hours:">{ rentalAgreement.estimateHours }</ColDisplay>
+                <ColDisplay md={12} labelProps={{ md: 6 }} label="WorkSafeBC (WCB) Number:">{ rentalAgreement.workSafeBCPolicyNumber }</ColDisplay>
               </Col>
             </Row>
           </Grid>;
@@ -578,6 +627,7 @@ var RentalAgreementsDetail = React.createClass({
           show={ this.state.showRentalRateDialog } 
           rentalRate={ this.state.rentalRate } 
           onSave={ this.saveRentalRate } 
+          onSaveMultiple={ this.saveRentalRates }
           onClose={ this.closeRentalRateDialog } 
           provincialRateTypes={ provincialRateTypes }
         />
@@ -586,7 +636,8 @@ var RentalAgreementsDetail = React.createClass({
         <AttachmentRatesEditDialog 
           show={ this.state.showAttachmentRateDialog } 
           attachmentRate={ this.state.attachmentRate } 
-          onSave={ this.saveAttachmentRate } 
+          onSave={ this.saveAttachmentRate }
+          onSaveMultiple={ this.saveAttachmentRates } 
           onClose={ this.closeAttachmentRateDialog } 
           rentalAgreement={ rentalAgreement }
         />
@@ -597,7 +648,17 @@ var RentalAgreementsDetail = React.createClass({
           rentalCondition={ this.state.rentalCondition } 
           rentalConditions={ rentalConditions } 
           onSave={ this.saveCondition } 
+          onSaveMultiple={ this.saveConditions }
           onClose={ this.closeConditionDialog } 
+        />
+      }
+      { this.state.showCloneDialog &&
+        <CloneDialog 
+          show={ this.state.showCloneDialog }  
+          onSave={ this.cloneRentalAgreement } 
+          onClose={ this.closeCloneDialog }
+          rentalAgreement={ rentalAgreement }
+          cloneRentalAgreementError={ this.state.cloneRentalAgreementError  } 
         />
       }
     </div>;

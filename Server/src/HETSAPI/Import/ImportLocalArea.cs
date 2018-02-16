@@ -142,14 +142,54 @@ namespace HETSAPI.Import
             }
         }
 
-        /// <summary>
-        /// Map data
-        /// </summary>
-        /// <param name="dbContext"></param>
-        /// <param name="oldObject"></param>
-        /// <param name="localArea"></param>
-        /// <param name="systemId"></param>
-        private static void CopyToInstance(DbAppContext dbContext, ImportModels.Area oldObject, ref LocalArea localArea, string systemId)
+        public static void Obfuscate(PerformContext performContext, DbAppContext dbContext, string sourceLocation, string destinationLocation, string systemId)
+        {
+            int startPoint = ImportUtility.CheckInterMapForStartPoint(dbContext, "Obfuscate_" + OldTableProgress, BCBidImport.SigId);
+
+            if (startPoint == BCBidImport.SigId)    // this means the import job it has done today is complete for all the records in the xml file.
+            {
+                performContext.WriteLine("*** Obfuscating " + XmlFileName + " is complete from the former process ***");
+                return;
+            }
+            try
+            {
+                string rootAttr = "ArrayOf" + OldTable;
+
+                // create Processer progress indicator
+                performContext.WriteLine("Processing " + OldTable);
+                IProgressBar progress = performContext.WriteProgressBar();
+                progress.SetValue(0);
+
+                // create serializer and serialize xml file
+                XmlSerializer ser = new XmlSerializer(typeof(ImportModels.Area[]), new XmlRootAttribute(rootAttr));
+                MemoryStream memoryStream = ImportUtility.MemoryStreamGenerator(XmlFileName, OldTable, sourceLocation, rootAttr);
+                ImportModels.Area[] legacyItems = (ImportModels.Area[])ser.Deserialize(memoryStream);
+
+                foreach (Area item in legacyItems.WithProgress(progress))
+                {
+                    item.Created_By = systemId;
+                }
+                performContext.WriteLine("Writing " + XmlFileName + " to " + destinationLocation);
+                // write out the array.
+                FileStream fs = ImportUtility.GetObfuscationDestination(XmlFileName, destinationLocation);
+                ser.Serialize(fs, legacyItems);
+                fs.Close();
+            }
+            catch (Exception e)
+            {
+                performContext.WriteLine("*** ERROR ***");
+                performContext.WriteLine(e.ToString());
+            }
+        }
+
+            /// <summary>
+            /// Map data
+            /// </summary>
+            /// <param name="dbContext"></param>
+            /// <param name="oldObject"></param>
+            /// <param name="localArea"></param>
+            /// <param name="systemId"></param>
+            private static void CopyToInstance(DbAppContext dbContext, ImportModels.Area oldObject, ref LocalArea localArea, string systemId)
         {
             bool isNew = false;
 

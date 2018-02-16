@@ -6,6 +6,11 @@ using Hangfire;
 using HETSAPI.Import;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Configuration;
+using System.IO;
+using NPOI.SS.UserModel;
+using NPOI.XSSF.UserModel;
+using System.Threading.Tasks;
+using System.Collections.Generic;
 
 namespace HETSAPI.Services.Impl
 {
@@ -50,6 +55,49 @@ namespace HETSAPI.Services.Impl
             }
 
             return new ObjectResult(result);
+        }
+
+
+        public IActionResult AdminObfuscateGetAsync(string sourcePath, string destinationPath)
+        {
+            string result = "Created Obfuscation Job: ";
+
+            lock (_thisLock)
+            {
+                string uploadPath = _configuration["UploadPath"];
+                string connectionString = _context.Database.GetDbConnection().ConnectionString;
+
+                ImportUtility.CreateObfuscationDestination(uploadPath + destinationPath);
+
+                // use Hangfire
+                    string jobId = BackgroundJob.Enqueue(() => BCBidImport.ObfuscationJob(null, connectionString, uploadPath + sourcePath, uploadPath + destinationPath));
+                    result += jobId;
+                
+            }
+
+            return new ObjectResult(result);
+        }
+
+
+        public async Task<IActionResult> GetSpreadsheet(string userPath, string fileName)
+        {
+            // create an excel spreadsheet that will show the data.
+            string uploadPath = _configuration["UploadPath"];
+            string path = Path.Combine(uploadPath + userPath, fileName);
+
+            MemoryStream memory = new MemoryStream();
+            
+            using (var stream = new FileStream(path, FileMode.Open))
+            {
+                await stream.CopyToAsync(memory);
+            }
+
+            memory.Position = 0;
+
+            var fileStreamResult = new FileStreamResult(memory, "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
+            fileStreamResult.FileDownloadName = fileName;
+
+            return fileStreamResult;
         }        
     }
 }

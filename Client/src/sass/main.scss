@@ -60,6 +60,16 @@ th {
   100%  { transform: rotate(360deg); }
 }
 
+// Spacing 
+
 .nopadding {
   padding: 0 !important;
+}
+
+.mr-5 {
+  margin-right: 5px;
+}
+
+.ml-5 {
+  margin-left: 5px;
 }

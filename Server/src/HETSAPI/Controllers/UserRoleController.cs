@@ -1,6 +1,6 @@
 using System.Collections.Generic;
 using Microsoft.AspNetCore.Mvc;
-using Swashbuckle.SwaggerGen.Annotations;
+using Swashbuckle.AspNetCore.SwaggerGen;
 using HETSAPI.Models;
 using HETSAPI.Services;
 using HETSAPI.Authorization;
@@ -31,7 +31,7 @@ namespace HETSAPI.Controllers
         [HttpPost]
         [Route("/api/userroles/bulk")]
         [SwaggerOperation("UserrolesBulkPost")]
-        [RequiresPermission(Permission.ADMIN)]
+        [RequiresPermission(Permission.Admin)]
         public virtual IActionResult UserrolesBulkPost([FromBody]UserRole[] items)
         {
             return _service.UserrolesBulkPostAsync(items);
@@ -59,7 +59,7 @@ namespace HETSAPI.Controllers
         [HttpPost]
         [Route("/api/userroles/{id}/delete")]
         [SwaggerOperation("UserrolesIdDeletePost")]
-        [RequiresPermission(Permission.ADMIN)]
+        [RequiresPermission(Permission.Admin)]
         public virtual IActionResult UserrolesIdDeletePost([FromRoute]int id)
         {
             return _service.UserrolesIdDeletePostAsync(id);
@@ -91,7 +91,7 @@ namespace HETSAPI.Controllers
         [Route("/api/userroles/{id}")]
         [SwaggerOperation("UserrolesIdPut")]
         [SwaggerResponse(200, type: typeof(UserRole))]
-        [RequiresPermission(Permission.ADMIN)]
+        [RequiresPermission(Permission.Admin)]
         public virtual IActionResult UserrolesIdPut([FromRoute]int id, [FromBody]UserRole item)
         {
             return _service.UserrolesIdPutAsync(id, item);
@@ -106,7 +106,7 @@ namespace HETSAPI.Controllers
         [Route("/api/userroles")]
         [SwaggerOperation("UserrolesPost")]
         [SwaggerResponse(200, type: typeof(UserRole))]
-        [RequiresPermission(Permission.ADMIN)]
+        [RequiresPermission(Permission.Admin)]
         public virtual IActionResult UserrolesPost([FromBody]UserRole item)
         {
             return _service.UserrolesPostAsync(item);

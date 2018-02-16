@@ -1,10 +1,11 @@
 using System.Collections.Generic;
 using Microsoft.AspNetCore.Mvc;
-using Swashbuckle.SwaggerGen.Annotations;
+using Swashbuckle.AspNetCore.SwaggerGen;
 using HETSAPI.Models;
 using HETSAPI.ViewModels;
 using HETSAPI.Services;
 using HETSAPI.Authorization;
+using HETSAPI.Services.Impl;
 
 namespace HETSAPI.Controllers
 {
@@ -32,7 +33,7 @@ namespace HETSAPI.Controllers
         [HttpPost]
         [Route("/api/owners/bulk")]
         [SwaggerOperation("OwnersBulkPost")]
-        [RequiresPermission(Permission.ADMIN)]
+        [RequiresPermission(Permission.Admin)]
         public virtual IActionResult OwnersBulkPost([FromBody]Owner[] items)
         {
             return _service.OwnersBulkPostAsync(items);
@@ -97,6 +98,21 @@ namespace HETSAPI.Controllers
         }
 
         /// <summary>
+        /// Update owner status
+        /// </summary>
+        /// <param name="id">id of Owner to update</param>
+        /// <param name="item"></param>
+        /// <response code="200">OK</response>
+        [HttpPut]
+        [Route("/api/owners/{id}/status")]
+        [SwaggerOperation("OwnersIdStatusPut")]
+        [SwaggerResponse(200, type: typeof(Equipment))]
+        public virtual IActionResult OwnersIdStatusPut([FromRoute]int id, [FromBody]OwnerStatus item)
+        {
+            return _service.OwnersIdStatusPutAsync(id, item);
+        }
+
+        /// <summary>
         /// Create owner
         /// </summary>
         /// <param name="item"></param>
@@ -128,6 +144,24 @@ namespace HETSAPI.Controllers
         {
             return _service.OwnersSearchGetAsync(localareas, equipmenttypes, owner, status, hired);
         }
+
+        #region Get Verification Pdfs
+
+        /// <summary>
+        /// Get onwer verification pdf
+        /// </summary>
+        /// <remarks>Returns a PDF version of the owner vrification notices</remarks>
+        /// <param name="items">Array of owner id numbers to generate notices for</param>
+        /// <response code="200">OK</response>
+        [HttpPost]
+        [Route("/api/owners/verificationPdf")]
+        [SwaggerOperation("OwnersIdVerificationPdfPost")]
+        public virtual IActionResult OwnersIdVerificationPdfPost([FromBody]List<int> items)
+        {
+            return _service.OwnersIdVerificationPdfPostAsync(items);
+        }
+
+        #endregion
 
         #region Owner Equipment Records
 

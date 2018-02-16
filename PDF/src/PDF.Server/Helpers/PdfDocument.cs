@@ -1,35 +1,65 @@
 ﻿using System;
-using Newtonsoft.Json.Linq;
-using Microsoft.AspNetCore.NodeServices;
-using System.Threading.Tasks;
+using System.Net;
+using System.Net.Http;
+using System.Text;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Configuration;
+using Newtonsoft.Json;
 
 namespace PDF.Server.Helpers
 {    
     public class PdfRequest
     {
         public string Html { get; set; }
-        public string Options { get; set; }
-        public string PdfJsUrl { get; set; }
-    }
-
-    public class JsonResponse
-    {
-        public string Type;
-        public byte[] Data;
-    }
+        public string PdfFileName { get; set; }
+    }    
 
     /// <summary>
     /// Generates a Pdf Document using html-pdf
     /// </summary>
     public static class PdfDocument
     {
-        public static async Task<JsonResponse> BuildPdf(INodeServices nodeServices, PdfRequest request)
+        public static byte[] BuildPdf(IConfigurationRoot configuration, PdfRequest request)
         {
             try
-            {
-                JObject options = JObject.Parse(request.Options);
-                JsonResponse result = await nodeServices.InvokeAsync<JsonResponse>(request.PdfJsUrl, request.Html, options);
-                return result;
+            {                
+                // validate request
+                if (string.IsNullOrEmpty(request.PdfFileName))
+                {
+                    throw new ArgumentException("Missing PdfFileName");
+                }
+
+                if (string.IsNullOrEmpty(request.Html))
+                {
+                    throw new ArgumentException("Missing Html content");
+                }
+                
+                // pass the request on to the new (weasy) Pdf Micro Service
+                string pdfService = configuration["Constants:WeasyPdfService"];
+
+                if (string.IsNullOrEmpty(pdfService))
+                {
+                    throw new ArgumentException("Missing PdfService setting (WeasyPdfService)");
+                }
+
+                // append new filename
+                pdfService = pdfService + "?filename=" + request.PdfFileName;                
+
+                // call the microservice                
+                HttpClient client = new HttpClient();
+                StringContent stringContent = new StringContent(request.Html);
+                HttpResponseMessage response = client.PostAsync(pdfService, stringContent).Result;
+
+                // success
+                if (response.StatusCode == HttpStatusCode.OK)
+                {
+                    var bytetask = response.Content.ReadAsByteArrayAsync();
+                    bytetask.Wait();
+
+                    return bytetask.Result;
+                }
+
+                throw new ApplicationException("PdfService Error (" + response.StatusCode + ")");
             }
             catch (Exception e)
             {

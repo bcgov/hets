@@ -13,12 +13,12 @@ namespace HETSAPI.Seeders
         public const string AllProfiles = "all";
 
         private readonly IHostingEnvironment _env;
-        protected ILogger _logger;
+        protected ILogger Logger;
 
         protected Seeder(IConfiguration configuration, IHostingEnvironment env, ILoggerFactory loggerFactory)
         {
             _env = env;
-            _logger = loggerFactory.CreateLogger(typeof(Seeder<T>));
+            Logger = loggerFactory.CreateLogger(typeof(Seeder<T>));
             Configuration = configuration;
         }
 
@@ -27,17 +27,17 @@ namespace HETSAPI.Seeders
             return _env.IsEnvironment(environmentName);
         }
 
-        protected bool IsDevelopmentEnvironment { get { return _env.IsDevelopment(); } }
+        protected bool IsDevelopmentEnvironment => _env.IsDevelopment();
 
-        protected bool IsTestEnvironment { get { return _env.IsEnvironment("Test"); } }
+        protected bool IsTestEnvironment => _env.IsEnvironment("Test");
 
-        protected bool IsStagingEnvironment { get { return _env.IsStaging(); } }
+        protected bool IsStagingEnvironment => _env.IsStaging();
 
-        protected bool IsProductionEnvironment { get { return _env.IsProduction(); } }
+        protected bool IsProductionEnvironment => _env.IsProduction();
 
         protected IConfiguration Configuration { get; private set; }
 
-        public virtual Type InvokeAfter { get { return null; } }
+        public virtual Type InvokeAfter => null;
 
         protected abstract IEnumerable<string> TriggerProfiles { get; }
 
@@ -47,12 +47,12 @@ namespace HETSAPI.Seeders
         {
             if (TriggerProfiles.Contains(_env.EnvironmentName, StringComparer.OrdinalIgnoreCase) || TriggerProfiles.Contains(AllProfiles, StringComparer.OrdinalIgnoreCase))
             {
-                _logger.LogDebug("The trigger for {0} ({1}) matches the deployment profile ({2}); executing...", GetType().Name, string.Join(", ", TriggerProfiles), AllProfiles);
+                Logger.LogDebug("The trigger for {0} ({1}) matches the deployment profile ({2}); executing...", GetType().Name, string.Join(", ", TriggerProfiles), AllProfiles);
                 Invoke(context);
             }
             else
             {
-                _logger.LogDebug("Trigger profile(s) for {0} ({1}), do not match the deployment profile ({2}); skipping...", GetType().Name, string.Join(", ", TriggerProfiles), _env.EnvironmentName);
+                Logger.LogDebug("Trigger profile(s) for {0} ({1}), do not match the deployment profile ({2}); skipping...", GetType().Name, string.Join(", ", TriggerProfiles), _env.EnvironmentName);
             }
         }
     }

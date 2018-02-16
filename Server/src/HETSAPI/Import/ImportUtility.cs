@@ -1,10 +1,13 @@
 ﻿using HETSAPI.Models;
+using NPOI.SS.UserModel;
+using NPOI.XSSF.UserModel;
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
+using System.Xml.Serialization;
 
 namespace HETSAPI.Import
 {
@@ -145,23 +148,50 @@ namespace HETSAPI.Import
         public static MemoryStream MemoryStreamGenerator(string xmlFileName, string oldTable, string fileLocation, string rootAttr)
         {
             string fullPath = fileLocation + Path.DirectorySeparatorChar + xmlFileName;
-
+            
             // remove all new lines
-            string contents = Regex.Replace(File.ReadAllText(fullPath), @"\r\n?|\n|s/\x00//g|[\x00-\x08\x0B\x0C\x0E-\x1F\x26]", "");  
+            string contents = Regex.Replace(File.ReadAllText(fullPath), @"\r\n?|\n|s/\x00//g|[\x00-\x08\x0B\x0C\x0E-\x1F\x26]", "");
 
-            // get the contents of the first tag
-            int startPos = contents.IndexOf('<') + 1;
-            int endPos = contents.IndexOf('>');
-            string tag = contents.Substring(startPos, endPos - startPos);
+            // determine if the file has not been processed.  
 
-            contents = contents.Replace(tag, oldTable);
+            string fixedXml = "";
 
-            string fixedXml = "<?xml version=\"1.0\" encoding=\"utf-8\"?>\n" + 
-                              "<" + rootAttr + " xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\">\n" + 
-                              contents + "</" + rootAttr + ">";
+            if (contents.IndexOf(rootAttr) == -1) // it has not been processed.
+            {
+                // get the contents of the first tag
+                int startPos = contents.IndexOf('<') + 1;
+                int endPos = contents.IndexOf('>');
+                string tag = contents.Substring(startPos, endPos - startPos);
+
+                contents = contents.Replace(tag, oldTable);
+                contents = contents.Replace("<" + oldTable, "\r\n<" + oldTable);
+
+                fixedXml = "<?xml version=\"1.0\" encoding=\"utf-8\"?>\r\n" +
+                                  "<" + rootAttr + " xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\">" +
+                                  contents + "\r\n</" + rootAttr + ">";
+
+                string fixedPath = fullPath + ".fixed.xml";
+                System.IO.File.WriteAllText(fixedPath, fixedXml);
+            }
+            else
+            {
+                fixedXml = contents;
+            }            
 
             MemoryStream memoryStream = new MemoryStream(Encoding.UTF8.GetBytes(fixedXml));
             return memoryStream;
+        }
+
+        public static void CreateObfuscationDestination (string fileLocation)
+        {
+            Directory.CreateDirectory(fileLocation);
+        }
+
+        public static FileStream GetObfuscationDestination(string xmlFileName, string fileLocation)
+        {
+            string destinationPath = fileLocation + Path.DirectorySeparatorChar + xmlFileName;
+            FileStream fs = new FileStream(destinationPath, FileMode.Create, FileAccess.Write);
+            return fs;
         }
 
         /// <summary>
@@ -243,19 +273,17 @@ namespace HETSAPI.Import
             try
             {
                 User sysUser = dbContext.Users.FirstOrDefault(x => x.SmUserId == systemId);
-
                 if (sysUser == null)
+                {
                     sysUser = new User();
-
-                sysUser.SmUserId = systemId;
-                sysUser.Surname = @"simon.di@gov.bc.ca";
-                sysUser.Surname = "System";
-                sysUser.GivenName = "HETS";
-                sysUser.Active = true;
-                sysUser.AppCreateTimestamp = DateTime.UtcNow;
-                dbContext.Users.Add(sysUser);
-
-                dbContext.SaveChangesForImport();
+                    sysUser.SmUserId = systemId;
+                    sysUser.Surname = "System";
+                    sysUser.GivenName = "HETS";
+                    sysUser.Active = true;
+                    sysUser.AppCreateTimestamp = DateTime.UtcNow;
+                    dbContext.Users.Add(sysUser);
+                    dbContext.SaveChangesForImport();
+                }
             }          
             catch
             {
@@ -292,6 +320,83 @@ namespace HETSAPI.Import
             }
 
             return roleId;
+        }
+
+        static public void UnknownElement(object sender, XmlElementEventArgs e)
+        {
+            Console.WriteLine("Unexpected element: {0} as line {1}, column {2}",
+                e.Element.Name, e.LineNumber, e.LinePosition);
+        }
+
+        static public void UnknownAttribute(object sender, XmlAttributeEventArgs e)
+        {
+            Console.WriteLine("Unexpected attribute: {0} as line {1}, column {2}",
+                e.Attr.Name, e.LineNumber, e.LinePosition);
+        }
+
+        // string scramble function from https://www.codeproject.com/Articles/820667/Sample-code-to-scramble-a-Word-using-Csharp-String
+
+        /// <summary>
+        /// Scramble a String
+        /// </summary>
+        /// <param name="input">A string</param>
+        /// <returns>The string scrambled</returns>
+        static public string ScrambleString (string input)
+        {
+            if (input != null)
+            {
+                char[] chars = new char[input.Length];
+                Random rand = new Random(10000);
+                int index = 0;
+                while (input.Length > 0)
+                { // Get a random number between 0 and the length of the word. 
+                    int next = rand.Next(0, input.Length - 1); // Take the character from the random position 
+                                                               //and add to our char array. 
+                    chars[index] = input[next];                // Remove the character from the word. 
+                    input = input.Substring(0, next) + input.Substring(next + 1);
+                    ++index;
+                }
+                return new String(chars);
+            }
+            else
+            {
+                return null;
+            }
+        }
+
+        static public void WriteImportRecordsToExcel (string destinationLocation, List<ImportMapRecord> records, string tableName)
+        {
+           
+            using (var fs = new FileStream(Path.Combine(destinationLocation, tableName + ".xlsx"), FileMode.Create, FileAccess.Write))
+            {
+                IWorkbook workbook;
+                workbook = new XSSFWorkbook();
+                ISheet excelSheet = workbook.CreateSheet(tableName + " Map");
+                // Create the header row.
+
+                IRow row = excelSheet.CreateRow(0);
+                row.CreateCell(0).SetCellValue("Table Name");
+                row.CreateCell(1).SetCellValue("Mapped Column");
+                row.CreateCell(2).SetCellValue("Original Value");
+                row.CreateCell(3).SetCellValue("New Value");
+
+                // use the import class to get data.
+
+                int currentRow = 1;
+
+                // convert the list to an excel spreadsheet.
+                foreach (ImportMapRecord record in records)
+                {
+                    IRow newRow = excelSheet.CreateRow(currentRow);
+                    newRow.CreateCell(0).SetCellValue(record.TableName);
+                    newRow.CreateCell(1).SetCellValue(record.MappedColumn);
+                    newRow.CreateCell(2).SetCellValue(record.OriginalValue);
+                    newRow.CreateCell(3).SetCellValue(record.NewValue);
+                    currentRow++;
+                }
+
+                workbook.Write(fs);
+            }
         }
     }
 }

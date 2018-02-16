@@ -6,15 +6,11 @@ import { Form, FormGroup, HelpBlock, ControlLabel } from 'react-bootstrap';
 
 import _ from 'lodash';
 
-import * as Constant from '../../constants';
-
-import DropdownControl from '../../components/DropdownControl.jsx';
 import EditDialog from '../../components/EditDialog.jsx';
 import FilterDropdown from '../../components/FilterDropdown.jsx';
 import FormInputControl from '../../components/FormInputControl.jsx';
 
 import { isBlank } from '../../utils/string';
-import { OWNER_STATUS_CODE_APPROVED } from '../../constants';
 
 var OwnersEditDialog = React.createClass({
   propTypes: {
@@ -30,6 +26,8 @@ var OwnersEditDialog = React.createClass({
     var owner = this.props.owner;
     return {
       organizationName: owner.organizationName || '',
+      givenName: owner.givenName || '',
+      surname: owner.surname || '',
       address1: owner.address1 || '',
       address2: owner.address2 || '',
       city: owner.city || '',
@@ -46,7 +44,6 @@ var OwnersEditDialog = React.createClass({
       postalCodeError: '',
       organizationNameError: '',
       localAreaError: '',
-      statusError: '',
     };
   },
 
@@ -62,6 +59,8 @@ var OwnersEditDialog = React.createClass({
     var owner = this.props.owner;
 
     if (this.state.organizationName !== owner.organizationName) { return true; }
+    if (this.state.givenName !== owner.givenName) { return true; }
+    if (this.state.surname !== owner.surname) { return true; }
     if (this.state.address1 !== owner.address1) { return true; }
     if (this.state.address2 !== owner.address2) { return true; }
     if (this.state.city !== owner.city) { return true; }
@@ -70,7 +69,6 @@ var OwnersEditDialog = React.createClass({
     if (this.state.localAreaId !== owner.localArea.id) { return true; }
     if (this.state.doingBusinessAs !== owner.doingBusinessAs) { return true; }
     if (this.state.registeredCompanyNumber !== owner.registeredCompanyNumber) { return true; }
-    if (this.state.status !== owner.status) { return true; }
 
     return false;
   },
@@ -80,7 +78,6 @@ var OwnersEditDialog = React.createClass({
       companyAddressError: '',
       organizationNameError: '',
       localAreaError: '',
-      statusError: '',
     });
 
     var valid = true;
@@ -126,40 +123,14 @@ var OwnersEditDialog = React.createClass({
       valid = false;
     }
 
-    if (isBlank(this.state.status)) {
-      this.setState({ statusError: 'Status is required' });
-      valid = false;
-    } else if (this.state.status === OWNER_STATUS_CODE_APPROVED && (this.statusRequirements()).length > 0) {
-      this.setState({ statusError: this.statusRequirements() });
-      valid = false;
-    }
-
     return valid;
-  },
-
-  statusRequirements() {
-    var owner = this.props.owner;
-    var requirements = [];
-    
-    if (!owner.primaryContact) {
-      requirements.push('Primary contact');
-    } 
-    if (isBlank(owner.workSafeBCPolicyNumber)) {
-      requirements.push('WorkSafeBC policy number');
-    }
-    if (!owner.address1 || !owner.city || !owner.province || !owner.province) {
-      requirements.push('Company address');
-    } 
-    if (!owner.meetsResidency) {
-      requirements.push('Meets residency');
-    }
-
-    return requirements;
   },
 
   onSave() {
     this.props.onSave({ ...this.props.owner, ...{
       organizationName: this.state.organizationName,
+      givenName: this.state.givenName,
+      surname: this.state.surname,
       address1: this.state.address1,
       address2: this.state.address2,
       city: this.state.city,
@@ -175,7 +146,6 @@ var OwnersEditDialog = React.createClass({
   render() {
     var owner = this.props.owner;
     var localAreas = _.sortBy(this.props.localAreas, 'name');
-    var statusErrorText = this.state.statusError && this.state.statusError.length <= 1 ? 'The following is required:' : 'The following are required:';
 
     return <EditDialog id="owners-edit" show={ this.props.show } 
       onClose={ this.props.onClose } onSave={ this.onSave } didChange={ this.didChange } isValid={ this.isValid }
@@ -191,6 +161,14 @@ var OwnersEditDialog = React.createClass({
           <ControlLabel>Company Name <sup>*</sup></ControlLabel>
           <FormInputControl type="text" value={ this.state.organizationName } updateState={ this.updateState } inputRef={ ref => { this.input = ref; }} />
           <HelpBlock>{ this.state.organizationNameError }</HelpBlock>
+        </FormGroup>
+        <FormGroup controlId="givenName">
+          <ControlLabel>First Name</ControlLabel>
+          <FormInputControl type="text" value={ this.state.givenName } updateState={ this.updateState } />
+        </FormGroup>
+        <FormGroup controlId="surname">
+          <ControlLabel>Last Name</ControlLabel>
+          <FormInputControl type="text" value={ this.state.surname } updateState={ this.updateState } />
         </FormGroup>
         <FormGroup controlId="address1" validationState={ this.state.address1Error ? 'error' : null }>
           <ControlLabel>Address Line 1 <sup>*</sup></ControlLabel>
@@ -220,20 +198,6 @@ var OwnersEditDialog = React.createClass({
           <ControlLabel>Local Area <sup>*</sup></ControlLabel>
           <FilterDropdown id="localAreaId" items={ localAreas } selectedId={ this.state.localAreaId } updateState={ this.updateState } className="full-width" />
           <HelpBlock>{ this.state.localAreaError }</HelpBlock>
-        </FormGroup>
-        <FormGroup controlId="status" validationState={ this.state.statusError ? 'error' : null }>
-          <ControlLabel>Status <sup>*</sup></ControlLabel>
-          <DropdownControl id="status" title={ this.state.status } updateState={ this.updateState }
-              items={[ Constant.OWNER_STATUS_CODE_APPROVED, Constant.OWNER_STATUS_CODE_PENDING, Constant.OWNER_STATUS_CODE_ARCHIVED ]} className="full-width" />
-          <HelpBlock>{ this.state.statusError && statusErrorText }
-            <ul>
-            { 
-              _.map(this.state.statusError, (error) => {
-                return <li>{ error }</li>;
-              })
-            }
-          </ul>
-          </HelpBlock>
         </FormGroup>
         <FormGroup controlId="doingBusinessAs">
           <ControlLabel>Doing Business As</ControlLabel>
