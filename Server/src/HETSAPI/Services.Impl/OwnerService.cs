@@ -308,6 +308,9 @@ namespace HETSAPI.Services.Impl
                         }
                     }
 
+                    // remove any *newly* archived equipment
+                    owner.EquipmentList.RemoveAll(y => y.Status.Equals("Archived", StringComparison.InvariantCultureIgnoreCase));
+
                     // save the changes
                     _context.SaveChanges();
 
