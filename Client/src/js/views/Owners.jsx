@@ -207,7 +207,7 @@ var Owners = React.createClass({
     return <div id="owners-list">
       <PageHeader>Owners ({ numOwners })
         <div id="owners-buttons">
-          <Button onClick={ this.verifyOwners.bind(this, ownerList) }>Verify</Button>
+          <Button onClick={ this.verifyOwners.bind(this, ownerList) }>Status Letters</Button>
           <ButtonGroup>
             <Unimplemented>
               <Button onClick={ this.email }><Glyphicon glyph="envelope" title="E-mail" /></Button>

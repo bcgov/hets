@@ -1,0 +1,19 @@
+#clone-dialog {
+  
+  .radio {
+    margin: 0;
+  }
+
+  .table tr > td {
+    vertical-align: middle;
+  }
+
+  .dropdown-control {
+    position: relative;
+    max-width: 225px;
+
+    .dropdown-menu {
+      width: 100%;
+    }
+  }
+}
