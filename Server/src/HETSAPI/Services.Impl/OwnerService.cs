@@ -267,6 +267,23 @@ namespace HETSAPI.Services.Impl
                     owner.Status = item.Status;
                     owner.StatusComment = item.StatusComment;
 
+                    // if the status = Archived or Pending - need to update all associated equipment too
+                    // (if the Owner is "Activated" - it DOES NOT automatically activate the equipment)
+                    if (!item.Status.Equals("Approved", StringComparison.InvariantCultureIgnoreCase))
+                    {
+                        foreach (Equipment equipment in owner.EquipmentList)
+                        {
+                            // if the equipment is already archived - leave it archived
+                            // if the equipment is already in the same state as the owner's new state - then ignore
+                            if (!equipment.Status.Equals("Archived", StringComparison.CurrentCultureIgnoreCase) &&
+                                !equipment.Status.Equals(item.Status, StringComparison.InvariantCultureIgnoreCase))
+                            {
+                                equipment.Status = item.Status;
+                                equipment.StatusComment = item.StatusComment;
+                            }
+                        }
+                    }
+
                     // save the changes
                     _context.SaveChanges();
 
