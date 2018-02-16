@@ -47,8 +47,4 @@
     <EmbeddedResource Include="Templates\rental_agreement.mustache" />
     <EmbeddedResource Include="Templates\sample.mustache" />
   </ItemGroup>
-
-  <ItemGroup>
-    <Content Include="node_modules\**" CopyToPublishDirectory="PreserveNewest" />
-  </ItemGroup>
 </Project>

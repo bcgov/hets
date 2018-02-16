@@ -63,6 +63,29 @@ namespace HETSAPI.ViewModels
         }
 
         /// <summary>
+        /// Uses the rates data to calculate the totals and setup the required data for printing
+        /// </summary>
+        public void CalculateTotals()
+        {
+            // setup the rates lists -> records in the total and records not included
+            RentalAgreementRatesWithTotal = RentalAgreementRates.FindAll(x => x.IsIncludedInTotal);
+            RentalAgreementRatesWithoutTotal = RentalAgreementRates.FindAll(x => !x.IsIncludedInTotal);
+
+            // calculate the total
+            float temp = 0.0F;
+
+            foreach (RentalAgreementRate rentalRate in RentalAgreementRatesWithTotal)
+            {
+                if (rentalRate.Rate != null)
+                {
+                    temp = temp + (float)rentalRate.Rate;
+                }
+            }
+
+            AgreementTotal = temp;
+        }
+
+        /// <summary>
         /// Gets or Sets Id
         /// </summary>
         [DataMember(Name="id")]
@@ -105,6 +128,24 @@ namespace HETSAPI.ViewModels
         /// </summary>
         [DataMember(Name="rentalAgreementRates")]
         public List<RentalAgreementRate> RentalAgreementRates { get; set; }
+
+        /// <summary>
+        /// Gets or Sets RentalAgreementRates -> that are included in the total
+        /// </summary>
+        [DataMember(Name = "rentalAgreementRatesWithTotal")]
+        public List<RentalAgreementRate> RentalAgreementRatesWithTotal { get; set; }
+
+        /// <summary>
+        /// The dollar total -> for all included rental agreement rate records
+        /// </summary>
+        [DataMember(Name = "agreementTotal")]
+        public float? AgreementTotal { get; set; }
+
+        /// <summary>
+        /// Gets or Sets RentalAgreementRates -> that aren't included in the total
+        /// </summary>
+        [DataMember(Name = "rentalAgreementRatesWithoutTotal")]
+        public List<RentalAgreementRate> RentalAgreementRatesWithoutTotal { get; set; }
 
         /// <summary>
         /// Gets or Sets RentalAgreementConditions
@@ -189,6 +230,9 @@ namespace HETSAPI.ViewModels
             sb.Append("  Equipment: ").Append(Equipment).Append("\n");
             sb.Append("  Project: ").Append(Project).Append("\n");
             sb.Append("  RentalAgreementRates: ").Append(RentalAgreementRates).Append("\n");
+            sb.Append("  RentalAgreementRatesWithTotal: ").Append(RentalAgreementRatesWithTotal).Append("\n");
+            sb.Append("  AgreementTotal: ").Append(AgreementTotal).Append("\n");
+            sb.Append("  RentalAgreementRatesWithoutTotal: ").Append(RentalAgreementRatesWithoutTotal).Append("\n");
             sb.Append("  RentalAgreementConditions: ").Append(RentalAgreementConditions).Append("\n");
             sb.Append("  TimeRecords: ").Append(TimeRecords).Append("\n");
             sb.Append("  Note: ").Append(Note).Append("\n");
@@ -263,6 +307,21 @@ namespace HETSAPI.ViewModels
                     RentalAgreementRates == other.RentalAgreementRates ||
                     RentalAgreementRates != null &&
                     RentalAgreementRates.SequenceEqual(other.RentalAgreementRates)
+                ) &&
+                (
+                    RentalAgreementRatesWithTotal == other.RentalAgreementRatesWithTotal ||
+                    RentalAgreementRatesWithTotal != null &&
+                    RentalAgreementRatesWithTotal.SequenceEqual(other.RentalAgreementRatesWithTotal)
+                ) &&
+                (
+                    AgreementTotal == other.AgreementTotal ||
+                    AgreementTotal != null &&
+                    AgreementTotal.Equals(other.AgreementTotal)
+                ) &&
+                (
+                    RentalAgreementRatesWithoutTotal == other.RentalAgreementRatesWithoutTotal ||
+                    RentalAgreementRatesWithoutTotal != null &&
+                    RentalAgreementRates.SequenceEqual(other.RentalAgreementRatesWithoutTotal)
                 ) && 
                 (
                     RentalAgreementConditions == other.RentalAgreementConditions ||
@@ -348,6 +407,16 @@ namespace HETSAPI.ViewModels
                 if (RentalAgreementRates != null)
                 {
                     hash = hash * 59 + RentalAgreementRates.GetHashCode();
+                }
+
+                if (RentalAgreementRatesWithTotal != null)
+                {
+                    hash = hash * 59 + RentalAgreementRatesWithTotal.GetHashCode();
+                }
+
+                if (RentalAgreementRatesWithoutTotal != null)
+                {
+                    hash = hash * 59 + RentalAgreementRatesWithoutTotal.GetHashCode();
                 }
 
                 if (RentalAgreementConditions != null)

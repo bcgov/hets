@@ -143,7 +143,9 @@ namespace HETSAPI.Mappings
                 dto.RentalAgreementConditions = model.RentalAgreementConditions;
                 dto.RentalAgreementRates = model.RentalAgreementRates;
                 dto.Status = model.Status;
-                dto.TimeRecords = model.TimeRecords;                
+                dto.TimeRecords = model.TimeRecords;
+
+                dto.CalculateTotals();
             }
 
             return dto;
