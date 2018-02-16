@@ -12,12 +12,14 @@ class OwnersSpecs extends GebReportingSpec {
         when: "I go to the HETS URL "
             def env = System.getenv()
             go baseUrl
+            waitFor { LoginPage }
         and: "I log in on the SiteMinder Login page"    
             at LoginPage
             userName.value(env['TEST_USERNAME'])
             passWord.value(env['TEST_PASSWORD'])
             logIn.click()
         then: "I will arrive at the HETS Home page"    
+            waitFor { HomePage }
             at HomePage
     }
 
@@ -25,7 +27,6 @@ class OwnersSpecs extends GebReportingSpec {
         when: "I go to the Owners Page"
             to OwnersPage
         then: "I should see all defined screen elements"
-            //waitFor { assert $("h1", text: startsWith("Owners (109)"))}
-            assert owners_table
+            waitFor { assert owners_table }
     }
 }
