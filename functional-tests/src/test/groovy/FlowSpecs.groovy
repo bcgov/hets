@@ -23,7 +23,7 @@ class FlowSpecs extends GebReportingSpec {
         when: "I go to the HETS URL "
             def env = System.getenv()
             go baseUrl
-            //to LoginPage
+            waitFor { LoginPage }
         and: "I log in on the SiteMinder Login page"    
             at LoginPage
             println env
@@ -43,10 +43,11 @@ class FlowSpecs extends GebReportingSpec {
     def "Navigate Page from: #startPage, click Link: #clickLink, Assert Page: #assertPage"(){
         when: "I am on #startPage"
             to startPage
+            waitFor { startPage }
         and: "I click on #clickLink"
             waitFor { page."$clickLink".click() }
         then: "I should see #assertPage"
-            waitFor { at assertPage }
+            waitFor { assertPage }
         where:
             startPage                 | clickLink                    || assertPage
             HomePage                  | "HomeLink"                   || HomePage
