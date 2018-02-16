@@ -320,7 +320,7 @@ namespace HETSAPI.Services.Impl
                     Equipment equipment = _context.Equipments
                         .Include(x => x.LocalArea.ServiceArea.District.Region)
                         .Include(x => x.DistrictEquipmentType)
-                        .ThenInclude(d => d.EquipmentType)
+                            .ThenInclude(d => d.EquipmentType)
                         .Include(x => x.DumpTruck)
                         .Include(x => x.Owner)
                         .Include(x => x.EquipmentAttachments)
@@ -328,6 +328,19 @@ namespace HETSAPI.Services.Impl
 
                     equipment.Status = item.Status;
                     equipment.StatusComment = item.StatusComment;
+
+                    if (equipment.Status.Equals("Archived", StringComparison.CurrentCultureIgnoreCase))
+                    {
+                        equipment.ArchiveCode = "Y";
+                        equipment.ArchiveDate = DateTime.UtcNow;
+                        equipment.ArchiveReason = "Equipment Archived";
+                    }
+                    else
+                    {
+                        equipment.ArchiveCode = "N";
+                        equipment.ArchiveDate = null;
+                        equipment.ArchiveReason = null;
+                    }
 
                     // save the changes
                     _context.SaveChanges();
