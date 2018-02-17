@@ -190,13 +190,12 @@ namespace HETSAPI.Services.Impl
         private bool IsHired(int id)
         {
             // add an "IsHired" flag to indicate if this equipment is currently in use
-            RentalAgreement agreement = _context.RentalAgreements.AsNoTracking()
+            IQueryable<RentalAgreement> agreements = _context.RentalAgreements.AsNoTracking()
                 .Include(x => x.Equipment)
-                .FirstOrDefault(x => x.Equipment.Id == id &&
-                                     x.Status.Equals("Active", StringComparison.InvariantCultureIgnoreCase));
-
-            if (agreement != null)
-            {
+                .Where(x => x.Status == "Active");
+            
+            if (agreements.Any(x => x.Equipment.Id == id))
+            { 
                 return true;
             }
 
