@@ -782,7 +782,8 @@ namespace HETSAPI.Services.Impl
         {
             bool exists = _context.Equipments.Any(x => x.Id == id);
 
-            if (exists)
+            // id = 0 -> need to allow for new records too
+            if (exists || id == 0)
             {
                 List<Equipment> result = _context.Equipments.AsNoTracking()
                     .Include(x => x.LocalArea.ServiceArea.District)
