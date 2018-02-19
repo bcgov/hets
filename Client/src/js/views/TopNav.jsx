@@ -16,9 +16,16 @@ var TopNav = React.createClass({
     currentUser: React.PropTypes.object,
     showWorkingIndicator: React.PropTypes.bool,
     requestError: React.PropTypes.object,
+    showNav: React.PropTypes.bool,
   },
 
-  render: function () {
+  getDefaultProps() {
+    return {
+      showNav: true,
+    };
+  },
+
+  render() {
     return <div id="header">
       <nav id="header-main" className="navbar navbar-default navbar-fixed-top">
         <div className="container">
@@ -30,38 +37,42 @@ var TopNav = React.createClass({
           <h1 id="banner">MOTI Hired Equipment Tracking System</h1>
         </div>
         <Navbar id="top-nav">
-          <Nav>
-            <LinkContainer to={{ pathname: `/${ Constant.HOME_PATHNAME }` }}>
-              <NavItem eventKey={ 1 }>Home</NavItem>
-            </LinkContainer>
-            <LinkContainer to={{ pathname: `/${ Constant.OWNERS_PATHNAME }` }}>
-              <NavItem eventKey={ 2 }>Owners</NavItem>
-            </LinkContainer>
-            <LinkContainer to={{ pathname: `/${ Constant.EQUIPMENT_PATHNAME }` }}>
-              <NavItem eventKey={ 3 }>Equipment</NavItem>
-            </LinkContainer>
-            <LinkContainer to={{ pathname: `/${ Constant.PROJECTS_PATHNAME }` }}>
-              <NavItem eventKey={ 5 }>Projects</NavItem>
-            </LinkContainer>
-            <LinkContainer to={{ pathname: `/${ Constant.RENTAL_REQUESTS_PATHNAME }` }}>
-              <NavItem eventKey={ 4 }>Requests</NavItem>
-            </LinkContainer>
-            { this.props.currentUser.hasPermission(Constant.PERMISSION_ADMIN) &&
-              <NavDropdown id="admin-dropdown" title="Administration">
-                <LinkContainer to={{ pathname: `/${ Constant.USERS_PATHNAME }` }}>
-                  <MenuItem eventKey={ 6 }>User Management</MenuItem>
-                </LinkContainer>
-                <LinkContainer to={{ pathname: `/${ Constant.ROLES_PATHNAME }` }}>
-                  <MenuItem eventKey={ 7 }>Roles and Permissions</MenuItem>
-                </LinkContainer>
-              </NavDropdown>
-            }
-          </Nav>
-          <Nav id="navbar-current-user" pullRight>
-            <NavItem>
-              {this.props.currentUser.fullName} <small>{this.props.currentUser.districtName} District</small>
-            </NavItem>
-          </Nav>
+          {this.props.showNav &&
+            <Nav>
+              <LinkContainer to={{ pathname: `/${ Constant.HOME_PATHNAME }` }}>
+                <NavItem eventKey={ 1 }>Home</NavItem>
+              </LinkContainer>
+              <LinkContainer to={{ pathname: `/${ Constant.OWNERS_PATHNAME }` }}>
+                <NavItem eventKey={ 2 }>Owners</NavItem>
+              </LinkContainer>
+              <LinkContainer to={{ pathname: `/${ Constant.EQUIPMENT_PATHNAME }` }}>
+                <NavItem eventKey={ 3 }>Equipment</NavItem>
+              </LinkContainer>
+              <LinkContainer to={{ pathname: `/${ Constant.PROJECTS_PATHNAME }` }}>
+                <NavItem eventKey={ 5 }>Projects</NavItem>
+              </LinkContainer>
+              <LinkContainer to={{ pathname: `/${ Constant.RENTAL_REQUESTS_PATHNAME }` }}>
+                <NavItem eventKey={ 4 }>Requests</NavItem>
+              </LinkContainer>
+              { this.props.currentUser.hasPermission(Constant.PERMISSION_ADMIN) &&
+                <NavDropdown id="admin-dropdown" title="Administration">
+                  <LinkContainer to={{ pathname: `/${ Constant.USERS_PATHNAME }` }}>
+                    <MenuItem eventKey={ 6 }>User Management</MenuItem>
+                  </LinkContainer>
+                  <LinkContainer to={{ pathname: `/${ Constant.ROLES_PATHNAME }` }}>
+                    <MenuItem eventKey={ 7 }>Roles and Permissions</MenuItem>
+                  </LinkContainer>
+                </NavDropdown>
+              }
+            </Nav>
+          }
+          {this.props.showNav &&
+            <Nav id="navbar-current-user" pullRight>
+              <NavItem>
+                {this.props.currentUser.fullName} <small>{this.props.currentUser.districtName} District</small>
+              </NavItem>
+            </Nav>
+          }
           <OverlayTrigger trigger="click" placement="bottom" rootClose overlay={
               <Popover id="error-message" title={ this.props.requestError.status + ' – API Error' }>
                 <p><small>{ this.props.requestError.message }</small></p>
