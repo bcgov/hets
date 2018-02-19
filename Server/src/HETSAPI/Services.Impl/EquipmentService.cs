@@ -190,13 +190,12 @@ namespace HETSAPI.Services.Impl
         private bool IsHired(int id)
         {
             // add an "IsHired" flag to indicate if this equipment is currently in use
-            RentalAgreement agreement = _context.RentalAgreements.AsNoTracking()
+            IQueryable<RentalAgreement> agreements = _context.RentalAgreements.AsNoTracking()
                 .Include(x => x.Equipment)
-                .FirstOrDefault(x => x.Equipment.Id == id &&
-                                     x.Status.Equals("Active", StringComparison.InvariantCultureIgnoreCase));
-
-            if (agreement != null)
-            {
+                .Where(x => x.Status == "Active");
+            
+            if (agreements.Any(x => x.Equipment.Id == id))
+            { 
                 return true;
             }
 
@@ -783,7 +782,8 @@ namespace HETSAPI.Services.Impl
         {
             bool exists = _context.Equipments.Any(x => x.Id == id);
 
-            if (exists)
+            // id = 0 -> need to allow for new records too
+            if (exists || id == 0)
             {
                 List<Equipment> result = _context.Equipments.AsNoTracking()
                     .Include(x => x.LocalArea.ServiceArea.District)
@@ -803,10 +803,9 @@ namespace HETSAPI.Services.Impl
                     {
                         Id = idCount,
                         SerialNumber = serialNumber,                        
-                        DuplicateEquipment = equipment
+                        DuplicateEquipment = equipment,
+                        DistrictName = ""
                     };
-
-                    duplicate.DistrictName = "";
 
                     if (equipment.LocalArea.ServiceArea.District != null &&
                         !string.IsNullOrEmpty(equipment.LocalArea.ServiceArea.District.Name))

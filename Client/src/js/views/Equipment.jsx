@@ -2,9 +2,7 @@ import React from 'react';
 
 import { connect } from 'react-redux';
 
-import { PageHeader, Well, Alert, Row, Col } from 'react-bootstrap';
-import { ButtonToolbar, Button, ButtonGroup, Glyphicon } from 'react-bootstrap';
-import { ControlLabel } from 'react-bootstrap';
+import { PageHeader, Well, Alert, Row, Col, ButtonToolbar, Button, ButtonGroup, Glyphicon, ControlLabel } from 'react-bootstrap';
 import { LinkContainer } from 'react-router-bootstrap';
 
 import _ from 'lodash';
@@ -104,7 +102,7 @@ var Equipment = React.createClass({
 
   componentDidMount() {
     var equipmentTypesPromise = Api.getDistrictEquipmentTypes(this.props.currentUser.district.id);
-    var ownersPromise = Api.getOwners();
+    var ownersPromise = Api.getOwnersByDistrict(this.props.currentUser.district.id);
     var favouritesPromise = Api.getFavourites('equipment');
 
     Promise.all([equipmentTypesPromise, ownersPromise, favouritesPromise]).then(() => {
@@ -157,10 +155,7 @@ var Equipment = React.createClass({
       .sortBy('name')
       .value();
 
-    var owners = _.chain(this.props.owners.data)
-      .filter(owner => owner.localArea.serviceArea.district.id == this.props.currentUser.district.id)
-      .sortBy('organizationName')
-      .value();
+    var owners = _.chain(this.props.owners.data).sortBy('organizationName').value();
 
     var districtEquipmentTypes = _.chain(this.props.districtEquipmentTypes.data)
       .filter(type => type.district.id == this.props.currentUser.district.id)
@@ -258,7 +253,7 @@ var Equipment = React.createClass({
                     <td>{ equip.model }</td>
                     <td>{ equip.size }</td>
                     <td>{ Object.keys(equip.equipmentAttachments).length }</td>
-                    <td>{ equip.isApproved ? formatDateTime(equip.lastVerifiedDate, 'YYYY-MMM-DD') : 'Not Approved' }</td>
+                    <td>{ equip.isApproved ? formatDateTime(equip.lastVerifiedDate, 'YYYY-MMM-DD') : equip.isArchived ? 'Archived' : 'Not Approved' }</td>
                     <td style={{ textAlign: 'right' }}>
                       <LinkContainer to={{ pathname: 'equipment/' + equip.id }}>
                         <Button title="View Equipment" bsSize="xsmall"><Glyphicon glyph="edit" /></Button>

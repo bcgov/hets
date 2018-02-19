@@ -22,7 +22,8 @@ class FlowSpecs extends GebReportingSpec {
     def "Login Once"(){
         when: "I go to the HETS URL "
             def env = System.getenv()
-            to LoginPage
+            go baseUrl
+            waitFor { LoginPage }
         and: "I log in on the SiteMinder Login page"    
             at LoginPage
             println env
@@ -33,7 +34,7 @@ class FlowSpecs extends GebReportingSpec {
             passWord.value(env['TEST_PASSWORD'])
 
             logIn.click()
-            to HomePage //force to Homepage
+            //to HomePage //force to Homepage
         then: "I will arrive at the HETS Home page"    
             at HomePage
     }
@@ -42,10 +43,11 @@ class FlowSpecs extends GebReportingSpec {
     def "Navigate Page from: #startPage, click Link: #clickLink, Assert Page: #assertPage"(){
         when: "I am on #startPage"
             to startPage
+            waitFor { startPage }
         and: "I click on #clickLink"
             waitFor { page."$clickLink".click() }
         then: "I should see #assertPage"
-            waitFor { at assertPage }
+            waitFor { assertPage }
         where:
             startPage                 | clickLink                    || assertPage
             HomePage                  | "HomeLink"                   || HomePage

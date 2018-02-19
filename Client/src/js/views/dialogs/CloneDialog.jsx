@@ -68,19 +68,25 @@ var CloneDialog = React.createClass({
 
   render() {
     var headers = [
-      { field: 'blank'                                              },
-      { field: 'equipmentType',            title: 'Equipment Type'  },
-      { field: 'equipmentMakeModelSize',   title: 'Make/Model/Size' },
-      { field: 'projectName',              title: 'Project Name'    },
-      { field: 'datedOn',                  title: 'Dated On'        },
+      { field: 'blank'                                                       },
+      { field: 'equipmentId',              title: 'Equipment ID'             },
+      { field: 'equipmentType',            title: 'Equipment Type'           },
+      { field: 'equipmentMakeModelSize',   title: 'Year Make/Model/Size'     },
+      { field: 'projectName',              title: 'Project Name'             },
+      { field: 'rentalAgreementNumber',    title: 'Rental Agreement #'       },
+      { field: 'datedOn',                  title: 'Dated On'                 },
     ];
 
     var rentalAgreements = _.filter(this.state.type === BY_PROJECT ? 
       this.props.projectRentalAgreements.data : this.props.equipmentRentalAgreements.data, item => { 
       return item.id !== this.props.rentalAgreement.id; 
     });
-    
-    return <EditDialog id="notes" show={ this.props.show }
+
+    rentalAgreements = _.reverse(_.sortBy(rentalAgreements, function(rentalAgreement) {
+      return rentalAgreement.datedOn;
+    }));
+        
+    return <EditDialog id="clone-dialog" show={ this.props.show } bsSize="large"
       onClose={ this.props.onClose } onSave={ this.onSave } isValid={ this.isValid } didChange={ this.didChange } saveText='Clone'
       title= {
         <strong>Clone Rental Agreement</strong>
@@ -91,7 +97,6 @@ var CloneDialog = React.createClass({
           <ControlLabel>Rental Agreements</ControlLabel>
             <DropdownControl id="type" updateState={ this.updateDropdownState }
               selectedId={ this.state.type } title={ this.state.type } items={[BY_PROJECT, BY_EQUIPMENT]}
-              className="full-width"
             />
           </FormGroup>
           <p>Select a rental agreement to clone...</p>
@@ -106,9 +111,11 @@ var CloneDialog = React.createClass({
                   _.map(rentalAgreements, (rentalAgreement) => {
                     return <tr key={ rentalAgreement.id }>
                       <td><Radio name="rentalAgreementId" value={ rentalAgreement.id } onChange={ this.updateState } /></td>
+                      <td>{ rentalAgreement.equipment.equipmentCode }</td>
                       <td>{ rentalAgreement.equipment.districtEquipmentType.districtEquipmentName }</td>
-                      <td>{`${rentalAgreement.equipment.make}/${rentalAgreement.equipment.model}/${rentalAgreement.equipment.size}`}</td>
+                      <td>{`${rentalAgreement.equipment.year} ${rentalAgreement.equipment.make}/${rentalAgreement.equipment.model}/${rentalAgreement.equipment.size}`}</td>
                       <td>{ rentalAgreement.project && rentalAgreement.project.name }</td>
+                      <td>{ rentalAgreement.rentalAgreementNumber }</td>
                       <td>{ formatDateTime(rentalAgreement.datedOn, 'YYYY-MMM-DD') }</td>
                     </tr>;
                   })

@@ -177,7 +177,6 @@ namespace HETSAPI.Controllers
             return _service.EquipmentRecalcSeniorityGetAsync(id);
         }
 
-
         #region Clone Project Agreements
 
         /// <summary>
@@ -211,7 +210,6 @@ namespace HETSAPI.Controllers
         }
 
         #endregion
-
 
         #region Duplicate Equipent Records
 

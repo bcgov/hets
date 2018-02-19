@@ -316,6 +316,8 @@ function parseEquipment(equipment) {
   equipment.isArchived = equipment.status === Constant.EQUIPMENT_STATUS_CODE_ARCHIVED;
   equipment.isMaintenanceContractor = equipment.owner.isMaintenanceContractor === true;
 
+  equipment.ownerStatus = equipment.owner.status;
+
   // UI display fields
   equipment.serialNumber = equipment.serialNumber || '';
   equipment.equipmentCode = equipment.equipmentCode || '';
@@ -737,6 +739,15 @@ export function addOwnerNote(ownerId, note) {
   return new ApiRequest(`/owners/${ ownerId }/note`).post(note).then(response => {
     var notes = normalize(response.data);
     store.dispatch({ type: Action.UPDATE_OWNER_NOTES, notes: notes });
+  });
+}
+
+export function getOwnersByDistrict(districtId) {
+  return new ApiRequest(`district/${districtId}/owners`).get().then((response) => {
+    var owners = normalize(response.data);
+    // Add display fields
+    _.map(owners, owner => { parseOwner(owner); });
+    store.dispatch({ type: Action.UPDATE_OWNERS_LOOKUP, owners: owners });
   });
 }
 

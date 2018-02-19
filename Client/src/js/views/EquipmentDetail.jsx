@@ -253,14 +253,24 @@ var EquipmentDetail = React.createClass({
     }
   },
 
+  getStatuses() {
+    var dropdownItems = _.pull([ Constant.EQUIPMENT_STATUS_CODE_APPROVED, Constant.EQUIPMENT_STATUS_CODE_PENDING, Constant.EQUIPMENT_STATUS_CODE_ARCHIVED ], this.props.equipment.status);
+    if (this.props.equipment.ownerStatus === Constant.OWNER_STATUS_CODE_PENDING) {
+      return _.pull(dropdownItems, Constant.EQUIPMENT_STATUS_CODE_APPROVED);
+    } else if (this.props.equipment.ownerStatus === Constant.OWNER_STATUS_CODE_ARCHIVED) {
+      return [];
+    }
+    return dropdownItems;
+  },
+
   render() {
     var equipment = this.props.equipment;
     var lastVerifiedStyle = this.getLastVerifiedStyle(equipment);
+    var dropdownItems = this.getStatuses();
 
     return <div id="equipment-detail">
       <div>
         {(() => {
-          var dropdownItems = _.pull([ Constant.EQUIPMENT_STATUS_CODE_APPROVED, Constant.EQUIPMENT_STATUS_CODE_PENDING, Constant.EQUIPMENT_STATUS_CODE_ARCHIVED ], equipment.status);
 
           if (this.state.loadingEquipment) { return <div style={{ textAlign: 'center' }}><Spinner/></div>; }
 
@@ -271,6 +281,7 @@ var EquipmentDetail = React.createClass({
                   bsStyle={ this.getStatusDropdownStyle() }
                   title={ equipment.status || '' }
                   onSelect={ this.updateStatusState }
+                  disabled={ equipment.ownerStatus === Constant.OWNER_STATUS_CODE_ARCHIVED }
                 >
                 { _.map(dropdownItems.map((item, i) =>
                   <MenuItem key={ i } eventKey={ item }>{ item }</MenuItem>
