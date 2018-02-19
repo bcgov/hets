@@ -110,7 +110,6 @@ var Owners = React.createClass({
   },
 
   fetch() {
-    console.log(this.buildSearchParams());
     Api.searchOwners(this.buildSearchParams());
   },
 
