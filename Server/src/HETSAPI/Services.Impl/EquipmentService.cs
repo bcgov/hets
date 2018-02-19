@@ -671,27 +671,22 @@ namespace HETSAPI.Services.Impl
                 // ******************************************************************
                 // clone agreement
                 // ******************************************************************
-                // update agreement attributes
-                agreements[newRentalagreementIndex].EstimateHours =
-                    agreements[agreementToCloneIndex].EstimateHours;
-
-                agreements[newRentalagreementIndex].EstimateStartWork =
-                    agreements[agreementToCloneIndex].EstimateStartWork;
-
+                // update agreement attributes                
                 agreements[newRentalagreementIndex].EquipmentRate =
                     agreements[agreementToCloneIndex].EquipmentRate;
 
                 agreements[newRentalagreementIndex].Note =
                     agreements[agreementToCloneIndex].Note;
 
-                agreements[newRentalagreementIndex].Number =
-                    agreements[agreementToCloneIndex].Number;
-
                 agreements[newRentalagreementIndex].RateComment =
                     agreements[agreementToCloneIndex].RateComment;
 
                 agreements[newRentalagreementIndex].RatePeriod =
                     agreements[agreementToCloneIndex].RatePeriod;
+
+                // setup new agreement number
+                string agreementNumber = RentalAgreementService.GetRentalAgreementNumber(agreements[newRentalagreementIndex], _context);
+                agreements[newRentalagreementIndex].Number = agreementNumber;
 
                 // update rates
                 agreements[newRentalagreementIndex].RentalAgreementRates = null;

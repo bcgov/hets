@@ -364,8 +364,9 @@ namespace HETSAPI.Services.Impl
         /// Get rental agreement
         /// </summary>
         /// <param name="item"></param>
+        /// <param name="context"></param>
         /// <returns></returns>
-        private string GetRentalAgreementNumber (RentalAgreement item)
+        public static string GetRentalAgreementNumber (RentalAgreement item, DbAppContext context)
         {
             string result = "";
 
@@ -388,9 +389,10 @@ namespace HETSAPI.Services.Impl
                 DateTime fiscalYearStart = new DateTime(fiscalYear - 1, 1, 1);
 
                 // count the number of rental agreements in the system.
-                int currentCount = _context.RentalAgreements
-                                        .Include(x => x.Equipment.LocalArea)
-                                        .Count(x => x.Equipment.LocalArea.Id == localAreaId && x.AppCreateTimestamp >= fiscalYearStart);
+                int currentCount = context.RentalAgreements
+                    .Include(x => x.Equipment.LocalArea)
+                    .Count(x => x.Equipment.LocalArea.Id == localAreaId && x.AppCreateTimestamp >= fiscalYearStart);
+
                 currentCount++;
 
                 // format of the Rental Agreement number is YYYY-#-####
@@ -419,7 +421,7 @@ namespace HETSAPI.Services.Impl
                 }
                 else
                 {
-                    item.Number = GetRentalAgreementNumber(item);
+                    item.Number = GetRentalAgreementNumber(item, _context);
 
                     // record not found
                     _context.RentalAgreements.Add(item);
