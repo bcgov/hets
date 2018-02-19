@@ -526,16 +526,17 @@ namespace HETSAPI.Services.Impl
                     project.RentalAgreements[agreementToCloneIndex].EquipmentRate;
 
                 project.RentalAgreements[newRentalagreementIndex].Note =
-                    project.RentalAgreements[agreementToCloneIndex].Note;
-
-                project.RentalAgreements[newRentalagreementIndex].Number =
-                    project.RentalAgreements[agreementToCloneIndex].Number;
+                    project.RentalAgreements[agreementToCloneIndex].Note;                
 
                 project.RentalAgreements[newRentalagreementIndex].RateComment =
                     project.RentalAgreements[agreementToCloneIndex].RateComment;
 
                 project.RentalAgreements[newRentalagreementIndex].RatePeriod =
                     project.RentalAgreements[agreementToCloneIndex].RatePeriod;
+
+                // setup new agreement number
+                string agreementNumber = RentalAgreementService.GetRentalAgreementNumber(project.RentalAgreements[newRentalagreementIndex], _context);
+                project.RentalAgreements[newRentalagreementIndex].Number = agreementNumber;
 
                 // update rates
                 project.RentalAgreements[newRentalagreementIndex].RentalAgreementRates = null;
