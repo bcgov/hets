@@ -2,11 +2,28 @@ import React from 'react';
 
 import { connect } from 'react-redux';
 
-import { PageHeader, Row, Col } from 'react-bootstrap';
+import { PageHeader, Row, Col, Button } from 'react-bootstrap';
+
+import * as Action from '../actionTypes';
 
 var Home = React.createClass({
   propTypes: {
     currentUser: React.PropTypes.object,
+  },
+
+  goUnapprovedOwners() {
+    var search = {
+      hired: false,
+      loaded: true,
+      ownerId: 0,
+      ownerName: "Owner",
+      selectedEquipmentTypesIds: [],
+      selectedLocalAreasIds: [],
+    }
+    this.setState({ search: { ...search, ...{ loaded: true } }}, () => {
+      store.dispatch({ type: Action.UPDATE_OWNERS_SEARCH, owners: this.state.search });
+      if (callback) { callback(); }
+    });
   },
 
   render: function() {
@@ -15,6 +32,7 @@ var Home = React.createClass({
       <Row>
         <Col md={8}>
           <h2>Home Page</h2>
+          <Button onClick={ this.goUnapprovedOwners }>See all unapproved owners</Button>
         </Col>
         <Col md={4}>
 
