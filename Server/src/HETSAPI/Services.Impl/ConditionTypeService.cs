@@ -74,7 +74,7 @@ namespace HETSAPI.Services.Impl
             // return for the current users district only
             int? districtId = _context.GetDistrictIdByUserId(GetCurrentUserId()).Single();
 
-            var result = _context.ConditionTypes
+            var result = _context.ConditionTypes.AsNoTracking()
                 .Include(x => x.District)
                 .Where(x => x.Active &&
                             x.District.Id == districtId)
@@ -169,12 +169,11 @@ namespace HETSAPI.Services.Impl
             // get the id (in the case of new records)
             id = item.Id;
 
-            // return the update record with associated district
+            // return the updated record
             List<ConditionType> result = _context.ConditionTypes.AsNoTracking()
                 .Include(x => x.District)
                 .Where(x => x.Id == id)
                 .ToList();
-
 
             return new ObjectResult(new HetsResponse(result));     
         }

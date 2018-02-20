@@ -40,17 +40,10 @@ namespace HETSAPI.Services
         /// <summary>
         /// 
         /// </summary>
-        /// <param name="id">id of DistrictEquipmentType to fetch</param>
+        /// <param name="id">id of DistrictEquipmentType to update (0 to create)</param>
         /// <param name="item"></param>
         /// <response code="200">OK</response>
         /// <response code="404">DistrictEquipmentType not found</response>
-        IActionResult DistrictEquipmentTypesIdPutAsync(int id, DistrictEquipmentType item);
-
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="item"></param>
-        /// <response code="201">DistrictEquipmentType created</response>
-        IActionResult DistrictEquipmentTypesPostAsync(DistrictEquipmentType item);
+        IActionResult DistrictEquipmentTypesIdPostAsync(int id, DistrictEquipmentType item);        
     }
 }
