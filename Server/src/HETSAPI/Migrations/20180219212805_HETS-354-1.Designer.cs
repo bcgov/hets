@@ -11,9 +11,10 @@ using System;
 namespace HETSAPI.Migrations
 {
     [DbContext(typeof(DbAppContext))]
-    partial class DbAppContextModelSnapshot : ModelSnapshot
+    [Migration("20180219212805_HETS-354-1")]
+    partial class HETS3541
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -234,12 +235,12 @@ namespace HETSAPI.Migrations
                         .HasColumnName("DESCRIPTION")
                         .HasMaxLength(2048);
 
-                    b.Property<int?>("DistrictAreaId")
-                        .HasColumnName("DISTRICT_AREA_ID");
+                    b.Property<int?>("DistrictId")
+                        .HasColumnName("DISTRICT_ID");
 
                     b.HasKey("Id");
 
-                    b.HasIndex("DistrictAreaId");
+                    b.HasIndex("DistrictId");
 
                     b.ToTable("HET_CONDITION_TYPE");
                 });
@@ -3197,9 +3198,9 @@ namespace HETSAPI.Migrations
 
             modelBuilder.Entity("HETSAPI.Models.ConditionType", b =>
                 {
-                    b.HasOne("HETSAPI.Models.LocalArea", "DistrictArea")
+                    b.HasOne("HETSAPI.Models.District", "District")
                         .WithMany()
-                        .HasForeignKey("DistrictAreaId");
+                        .HasForeignKey("DistrictId");
                 });
 
             modelBuilder.Entity("HETSAPI.Models.Contact", b =>
