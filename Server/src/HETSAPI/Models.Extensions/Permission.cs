@@ -41,7 +41,12 @@ namespace HETSAPI.Models
         /// <summary>
         /// District Code Table Management Permission
         /// </summary>
-        public const string DistrictCodeTableManagement = "DistrictCodeTableManagement";        
+        public const string DistrictCodeTableManagement = "DistrictCodeTableManagement";
+
+        /// <summary>
+        /// Business Login Permission
+        /// </summary>
+        public const string BusinessLogin = "BusinessLogin";
 
         /// <summary>
         /// All Permissions List
@@ -89,6 +94,12 @@ namespace HETSAPI.Models
                 Code = DistrictCodeTableManagement,
                 Name = "District Code Table Management",
                 Description = "Gives the user access to the District Code Table Management screens"
+            },
+            new Permission()
+            {
+                Code = BusinessLogin,
+                Name = "Business Login",
+                Description = "Permission to login to the business or owner facing application"
             }
         };
     }
