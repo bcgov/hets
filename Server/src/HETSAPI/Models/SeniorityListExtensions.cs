@@ -186,22 +186,13 @@ namespace HETSAPI.Models
                             {                                
                                 equipment.SeniorityEffectiveDate = DateTime.Now;
                                 equipment.BlockNumber = null;
-                                equipment.ServiceHoursLastYear = null;
-                                equipment.ServiceHoursLastYear = null;
-                                equipment.ServiceHoursTwoYearsAgo = null;
-                                equipment.ServiceHoursThreeYearsAgo = null;
                                 equipment.Seniority = null;
-
-                                if (equipment.Status == Equipment.StatusArchived)
-                                {
-                                    equipment.ArchiveCode = "Y";
-                                }
+                                equipment.NumberInBlock = null;
                             }
                             else
                             {                                
                                 equipment.CalculateSeniority(seniorityScoring);
                                 equipment.SeniorityEffectiveDate = DateTime.Now;
-                                equipment.ArchiveCode = "N";
                             }
                         
                             context.Equipments.Update(equipment);
