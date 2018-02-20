@@ -4,7 +4,6 @@ using System.Diagnostics;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
-using System.Security.Cryptography.X509Certificates;
 using System.Text;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -317,6 +316,10 @@ namespace HETSAPI.Services.Impl
                     {
                         foreach (Equipment equipment in owner.EquipmentList)
                         {
+                            // used for seniority recalc                            
+                            int localAreaId = equipment.LocalArea.Id;
+                            int districtEquipmentTypeId = equipment.DistrictEquipmentType.Id;
+
                             // if the equipment is already archived - leave it archived
                             // if the equipment is already in the same state as the owner's new state - then ignore
                             if (!equipment.Status.Equals("Archived", StringComparison.CurrentCultureIgnoreCase) &&
@@ -335,8 +338,11 @@ namespace HETSAPI.Services.Impl
                                 {
                                     equipment.ArchiveCode = "N";
                                     equipment.ArchiveDate = null;
-                                    equipment.ArchiveReason = null;
+                                    equipment.ArchiveReason = null;                                    
                                 }
+
+                                // recalc the senirity
+                                EquipmentService.EquipmentRecalcSeniority(localAreaId, districtEquipmentTypeId, _context, _configuration);
                             }
                         }
                     }

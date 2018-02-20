@@ -14,7 +14,7 @@ namespace HETSAPI.Models
         /// </summary>
         public const string StatusApproved = "Approved";
         public const string StatusArchived = "Archived";
-        public const string StatusPending = "Pending";
+        public const string StatusPending = "Unapproved";
 
         /// <summary>
         /// Calculate the Seniority for a piece of equipment
