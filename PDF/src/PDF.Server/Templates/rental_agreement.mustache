@@ -47,11 +47,11 @@
 
   .contact-info {
     vertical-align: top;
-    text-align: right;
+    text-align: left;
   }
 
   .agreement-number {
-    text-align: right;
+    text-align: left;
     font-size: 14px;
     vertical-align: top;
   }
@@ -90,6 +90,11 @@
   #address-block .value {
     width: 400px;
     white-space: normal;
+  }
+
+  #address-block .m-tb-5 {
+    display: inline-block;
+    vertical-align: top;
   }
 
   #note {
@@ -203,9 +208,9 @@
     text-align: center;
   }
 
-  #page-2 {
-    font-size: 12px;
-  }
+    #page-2 {
+      font-size: 12px;
+    }
 
   @media print {
     #page-2 {
@@ -265,14 +270,30 @@
           <td></td>
           <td class="contact-info">
             <div id="phone-block">
+              {{#equipment.owner.primaryContact.workPhoneNumber}} 
               <div>
-                <span class="label">Contact#:</span>
+                <span class="label">Work#:</span>
                 <span class="value">{{equipment.owner.primaryContact.workPhoneNumber}}</span>
               </div>
+              {{/equipment.owner.primaryContact.workPhoneNumber}} 
+              {{#equipment.owner.primaryContact.mobilePhoneNumber}} 
+              <div>
+                <span class="label">Cell#:</span>
+                <span class="value">{{equipment.owner.primaryContact.mobilePhoneNumber}}</span>
+              </div>
+              {{/equipment.owner.primaryContact.mobilePhoneNumber}}
+              {{#equipment.owner.primaryContact.faxPhoneNumber}} 
               <div>
                 <span class="label">Fax#:</span>
                 <span class="value">{{equipment.owner.primaryContact.faxPhoneNumber}}</span>
               </div>
+              {{/equipment.owner.primaryContact.faxPhoneNumber}}
+              {{#equipment.owner.primaryContact.email}} 
+              <div>
+                <span class="label">Email:</span>
+                <span class="value">{{equipment.owner.primaryContact.email}}</span>
+              </div>
+              {{#equipment.owner.primaryContact.email}} 
             </div>
           </td>
         </tr>
