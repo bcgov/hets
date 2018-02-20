@@ -38,7 +38,7 @@ namespace HETSAPI.Controllers
         }
 
         /// <summary>
-        /// Get all condition types
+        /// Get all condition types - filtered by user's District
         /// </summary>
         /// <response code="200">OK</response>
         [HttpGet]
@@ -48,6 +48,35 @@ namespace HETSAPI.Controllers
         public virtual IActionResult ConditionTypesGet()
         {
             return _service.ConditionTypesGetAsync();
-        }        
+        }
+
+        /// <summary>
+        /// Get a specific contition record
+        /// </summary>
+        /// <param name="id"></param>
+        /// <response code="200">OK</response>
+        [HttpGet]
+        [Route("/api/conditiontypes/{id}")]
+        [SwaggerOperation("ConditionTypesIdGet")]
+        [SwaggerResponse(200, type: typeof(ConditionType))]
+        public virtual IActionResult ConditionTypesIdGet([FromRoute]int id)
+        {
+            return _service.ConditionTypesIdGetAsync(id);
+        }
+
+        /// <summary>
+        /// Create or update a Condition Type
+        /// </summary>
+        /// <param name="id"></param>
+        /// <param name="item"></param>
+        /// <response code="201">Condition Type created or updated</response>
+        [HttpPost]
+        [Route("/api/conditiontypes/{id}")]
+        [SwaggerOperation("ConditionTypesIdPost")]
+        [SwaggerResponse(200, type: typeof(ConditionType))]
+        public virtual IActionResult ConditionTypesIdPost([FromRoute]int id, [FromBody]ConditionType item)
+        {
+            return _service.ConditionTypesIdPostAsync(id, item);
+        }
     }
 }

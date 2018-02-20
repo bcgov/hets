@@ -80,33 +80,18 @@ namespace HETSAPI.Controllers
         }
 
         /// <summary>
-        /// Update district equipment type
+        /// Create or update district equipment type
         /// </summary>
-        /// <param name="id">id of DistrictEquipmentType to fetch</param>
+        /// <param name="id">id of DistrictEquipmentType to update (0 to create)</param>
         /// <param name="item"></param>
         /// <response code="200">OK</response>
-        /// <response code="404">DistrictEquipmentType not found</response>
-        [HttpPut]
-        [Route("/api/districtEquipmentTypes/{id}")]
-        [SwaggerOperation("DistrictEquipmentTypesIdPut")]
-        [SwaggerResponse(200, type: typeof(DistrictEquipmentType))]
-        public virtual IActionResult DistrictEquipmentTypesIdPut([FromRoute]int id, [FromBody]DistrictEquipmentType item)
-        {
-            return _service.DistrictEquipmentTypesIdPutAsync(id, item);
-        }
-
-        /// <summary>
-        /// Create district equipment type
-        /// </summary>
-        /// <param name="item"></param>
-        /// <response code="201">DistrictEquipmentType created</response>
         [HttpPost]
-        [Route("/api/districtEquipmentTypes")]
-        [SwaggerOperation("DistrictEquipmentTypesPost")]
+        [Route("/api/districtEquipmentTypes/{id}")]
+        [SwaggerOperation("DistrictEquipmentTypesIdPost")]
         [SwaggerResponse(200, type: typeof(DistrictEquipmentType))]
-        public virtual IActionResult DistrictEquipmentTypesPost([FromBody]DistrictEquipmentType item)
+        public virtual IActionResult DistrictEquipmentTypesIdPost([FromRoute]int id, [FromBody]DistrictEquipmentType item)
         {
-            return _service.DistrictEquipmentTypesPostAsync(item);
-        }
+            return _service.DistrictEquipmentTypesIdPostAsync(id, item);
+        }       
     }
 }
