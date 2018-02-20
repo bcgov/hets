@@ -151,7 +151,7 @@ namespace HETSAPI.Services.Impl
         }
 
         /// <summary>
-        /// Update or create district equipment type
+        /// Create or update district equipment type
         /// </summary>
         /// <param name="id">id of DistrictEquipmentType to update (o to create)</param>
         /// <param name="item"></param>

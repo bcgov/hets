@@ -169,7 +169,7 @@ namespace HETSAPI.Services.Impl
             // get the id (in the case of new records)
             id = item.Id;
 
-            // return the updated record
+            // return the updated condition type record
             List<ConditionType> result = _context.ConditionTypes.AsNoTracking()
                 .Include(x => x.District)
                 .Where(x => x.Id == id)

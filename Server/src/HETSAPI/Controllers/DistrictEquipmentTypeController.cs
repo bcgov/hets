@@ -80,7 +80,7 @@ namespace HETSAPI.Controllers
         }
 
         /// <summary>
-        /// Update or create district equipment type
+        /// Create or update district equipment type
         /// </summary>
         /// <param name="id">id of DistrictEquipmentType to update (0 to create)</param>
         /// <param name="item"></param>
