@@ -277,21 +277,12 @@ namespace HETSAPI.Services.Impl
                         (originalSeniorityEffectiveDate != null && item.SeniorityEffectiveDate != null
                             && originalSeniorityEffectiveDate < item.SeniorityEffectiveDate))
                     {
-                        _context.UpdateBlocksFromEquipment(item,  _configuration);
-                    }
+                        EquipmentRecalcSeniority(item.LocalArea.Id, item.DistrictEquipmentType.Id);
+                    }                    
 
-                    Equipment result = _context.Equipments.AsNoTracking()
-                        .Include(x => x.LocalArea.ServiceArea.District.Region)
-                        .Include(x => x.DistrictEquipmentType)
-                            .ThenInclude(d => d.EquipmentType)
-                        .Include(x => x.DumpTruck)
-                        .Include(x => x.Owner)
-                        .Include(x => x.EquipmentAttachments)
-                        .First(a => a.Id == id);
+                    item.IsHired = IsHired(id);
 
-                    result.IsHired = IsHired(id);
-
-                    return new ObjectResult(new HetsResponse(result));
+                    return new ObjectResult(new HetsResponse(item));
                 }
 
                 // record not found
@@ -310,6 +301,10 @@ namespace HETSAPI.Services.Impl
         /// <response code="200">OK</response>
         public virtual IActionResult EquipmentIdStatusPutAsync(int id, EquipmentStatus item)
         {
+            bool recalcSeniority = false;
+            int localAreaId = 0;
+            int districtEquipmentTypeId = 0;
+
             if (item != null)
             {
                 bool exists = _context.Equipments.Any(a => a.Id == id);
@@ -339,11 +334,29 @@ namespace HETSAPI.Services.Impl
                         equipment.ArchiveCode = "N";
                         equipment.ArchiveDate = null;
                         equipment.ArchiveReason = null;
+
+                        // make sure the seniority is set when shifting to "Active" state
+                        // (if this was a new record with no block/seniority yet)
+                        if (equipment.BlockNumber == null && 
+                            equipment.Seniority == null &&
+                            equipment.Status.Equals("Approved", StringComparison.CurrentCultureIgnoreCase))
+                        {
+                            // recalc seniority
+                            recalcSeniority = true;
+                            localAreaId = equipment.LocalArea.Id;
+                            districtEquipmentTypeId = equipment.DistrictEquipmentType.Id;                            
+                        }
                     }
 
                     // save the changes
                     _context.SaveChanges();
 
+                    // recalc seniority (if required)
+                    if (recalcSeniority)
+                    {
+                        EquipmentRecalcSeniority(localAreaId, districtEquipmentTypeId);
+                    }
+                    
                     equipment.IsHired = IsHired(id);
 
                     return new ObjectResult(new HetsResponse(equipment));
@@ -391,7 +404,7 @@ namespace HETSAPI.Services.Impl
                 }
                 else
                 {
-                    // certain fields are set on new record - set defaults
+                    // certain fields are set on new record - set defaults (including status = "Inactive"
                     SetNewRecordFields(item);
 
                     _context.Equipments.Add(item);
@@ -415,39 +428,12 @@ namespace HETSAPI.Services.Impl
                     }                    
 
                     // save changes
-                    _context.SaveChanges();
-
-                    // update the seniority list to add this piece of equipment
-                    if (item.LocalAreaId != null && 
-                        item.DistrictEquipmentTypeId != null && 
-                        item.DistrictEquipmentType.EquipmentTypeId != null &&
-                        item.LocalAreaId != -1 && 
-                        item.DistrictEquipmentTypeId != -1 && 
-                        item.DistrictEquipmentType.EquipmentTypeId != -1)
-                    {
-                        int localAreaId = (int)item.LocalAreaId;
-                        int districtEquipmentTypeId = (int) item.DistrictEquipmentTypeId;
-                        int equipmentTypeId = (int) item.DistrictEquipmentType.EquipmentTypeId;
-
-                        _context.CalculateSeniorityList(localAreaId, districtEquipmentTypeId, equipmentTypeId, _configuration);
-                    }
+                    _context.SaveChanges();                    
                 }
+                
+                item.IsHired = IsHired(item.Id);
 
-                // return the full object for the client side code
-                int itemId = item.Id;
-
-                Equipment result = _context.Equipments.AsNoTracking()
-                    .Include(x => x.LocalArea.ServiceArea.District.Region)
-                    .Include(x => x.DistrictEquipmentType)
-                        .ThenInclude(d => d.EquipmentType)
-                    .Include(x => x.DumpTruck)
-                    .Include(x => x.Owner)
-                    .Include(x => x.EquipmentAttachments)
-                    .First(a => a.Id == itemId);
-
-                result.IsHired = IsHired(itemId);
-
-                return new ObjectResult(new HetsResponse(result));
+                return new ObjectResult(new HetsResponse(item));
             }
 
             // record not found
@@ -824,6 +810,39 @@ namespace HETSAPI.Services.Impl
         #region Recalculate Seniority
 
         /// <summary>
+        /// Recalculates seniority for a specific local area and equipment type
+        /// </summary>
+        private void EquipmentRecalcSeniority(int localAreaId, int districtEquipmentTypeId)
+        {
+            // check if the local area and equipment are valid
+            bool exists = _context.LocalAreas.Any(a => a.Id == localAreaId);
+
+            if (!exists)
+            {
+                throw new ArgumentException("Local Area is invalid");
+            }
+
+            exists = _context.DistrictEquipmentTypes.Any(a => a.Id == districtEquipmentTypeId);
+
+            if (!exists)
+            {
+                throw new ArgumentException("District Equipment Type is invalid");
+            }
+
+            // get the local area
+            LocalArea localArea = _context.LocalAreas
+                .First(x => x.Id == localAreaId);
+
+            // get the equipment
+            DistrictEquipmentType districtEquipmentType = _context.DistrictEquipmentTypes
+                .Include(x => x.EquipmentType)
+                .First(x => x.Id == districtEquipmentTypeId);
+
+            // recalc the seniority list
+            _context.CalculateSeniorityList(localArea.Id, districtEquipmentType.Id, districtEquipmentType.EquipmentType.Id, _configuration);             
+        }
+
+        /// <summary>
         /// Recalculates seniority for an entire region
         /// </summary>
         /// <remarks>Used to calculate seniority for all database records</remarks>
@@ -978,15 +997,18 @@ namespace HETSAPI.Services.Impl
         private void SetNewRecordFields(Equipment item)
         {
             item.ReceivedDate = DateTime.UtcNow;
-            item.LastVerifiedDate = DateTime.UtcNow;
-
-            item.Seniority = 0.0f;
-            item.YearsOfService = 0.0f;
-            item.ServiceHoursLastYear = 0.0f;
-            item.ServiceHoursTwoYearsAgo = 0.0f;
-            item.ServiceHoursThreeYearsAgo = 0.0f;
+            item.LastVerifiedDate = DateTime.UtcNow;            
+            
+            item.Seniority = 0.0F;
+            item.YearsOfService = 0.0F;
+            item.ServiceHoursLastYear = 0.0F;
+            item.ServiceHoursTwoYearsAgo = 0.0F;
+            item.ServiceHoursThreeYearsAgo = 0.0F;
             item.ArchiveCode = "N";
             item.IsSeniorityOverridden = false;
+
+            // new equipment MUST always start as unaproved - it isn't assigned to any block yet
+            item.Status = "Unapproved";
 
             // generate a new equipment code.
             if (item.Owner != null)
