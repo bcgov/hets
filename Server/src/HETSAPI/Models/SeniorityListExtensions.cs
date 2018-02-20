@@ -34,36 +34,7 @@ namespace HETSAPI.Models
             context.Entry(equipment ?? throw new InvalidOperationException()).State = EntityState.Detached;
             return result;
         }        
-
-        /// <summary>
-        /// Update blocks for the seniority list of a given piece of equipment
-        /// </summary>
-        /// <param name="context"></param>
-        /// <param name="equipment"></param>
-        /// <param name="configuration"></param>
-        public static void UpdateBlocksFromEquipment(this DbAppContext context, Equipment equipment, IConfiguration configuration)
-        {
-            if (equipment != null && 
-                equipment.LocalArea != null && 
-                equipment.DistrictEquipmentType != null && 
-                equipment.DistrictEquipmentType.EquipmentType != null)
-            {
-                int localAreaId = equipment.LocalArea.Id;
-                int equipmentTypeId = equipment.DistrictEquipmentType.EquipmentType.Id;
-                bool isDumpTruck = equipment.DistrictEquipmentType.EquipmentType.IsDumpTruck;
-
-                // get processing rules
-                SeniorityScoringRules scoringRules = new SeniorityScoringRules(configuration);
-
-                // get rules                                  
-                int blockSize = isDumpTruck ? scoringRules.GetBlockSize("DumpTruck") : scoringRules.GetBlockSize();
-                int totalBlocks = isDumpTruck ? scoringRules.GetTotalBlocks("DumpTruck") : scoringRules.GetTotalBlocks();
-
-                // update blocks
-                AssignBlocks(context, localAreaId, equipmentTypeId, blockSize, totalBlocks);
-            }
-        }
-
+        
         /// <summary>
         /// Hangfire job to do the Annual Rollover tasks
         /// </summary>
