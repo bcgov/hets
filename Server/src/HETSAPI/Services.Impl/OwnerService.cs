@@ -4,6 +4,7 @@ using System.Diagnostics;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
+using System.Security.Cryptography.X509Certificates;
 using System.Text;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -229,7 +230,26 @@ namespace HETSAPI.Services.Impl
 
                 if (exists && id == item.Id)
                 {
+                    // get the current owner record to check the local area
+                    Owner owner = _context.Owners.AsNoTracking()
+                        .Include(x => x.LocalArea)
+                        .First(x => x.Id == id);
+
                     _context.Owners.Update(item);
+
+                    // we need to update the equipment records to match any change in local area
+                    if (owner.LocalArea.Id != item.LocalArea.Id)
+                    {
+                        IQueryable<Equipment> equipmentList = _context.Equipments
+                            .Include(x => x.Owner)
+                            .Include(x => x.LocalArea)
+                            .Where(x => x.Owner.Id == id);
+
+                        foreach (Equipment equipment in equipmentList)
+                        {
+                            equipment.LocalAreaId = item.LocalArea.Id;
+                        }
+                    }
 
                     // save the changes
                     _context.SaveChanges();
