@@ -607,8 +607,15 @@ namespace HETSAPI.Services.Impl
                         .ThenInclude(d => d.DistrictEquipmentType)
                     .Include(e => e.Equipment)
                         .ThenInclude(a => a.EquipmentAttachments)
+                    .Include(e => e.Project)
                     .Where(x => x.EquipmentId == id)
                     .ToList();
+
+                // remove all of the additional agreements being returned
+                foreach (RentalAgreement agreement in result)
+                {
+                    agreement.Project.RentalAgreements = null;
+                }
 
                 return new ObjectResult(new HetsResponse(result));
             }
@@ -755,7 +762,7 @@ namespace HETSAPI.Services.Impl
                 _context.SaveChanges();
 
                 // ******************************************************************
-                // return update rental agreement to update the screen
+                // return updated rental agreement to update the screen
                 // ******************************************************************
                 RentalAgreement result = _context.RentalAgreements.AsNoTracking()
                     .Include(x => x.Equipment)
@@ -1116,11 +1123,11 @@ namespace HETSAPI.Services.Impl
 
             if (exists)
             {
-                Equipment schoolBus = _context.Equipments
+                Equipment equipment = _context.Equipments
                     .Include(x => x.History)
                     .First(a => a.Id == id);
 
-                List<History> data = schoolBus.History.OrderByDescending(y => y.AppLastUpdateTimestamp).ToList();
+                List<History> data = equipment.History.OrderByDescending(y => y.AppLastUpdateTimestamp).ToList();
 
                 if (offset == null)
                 {
@@ -1190,7 +1197,7 @@ namespace HETSAPI.Services.Impl
 
         #endregion
 
-        #region Equiment Attachments
+        #region Equipment Attachments
 
         /// <summary>
         /// Get "equipment attachments" associated with an equipment record
