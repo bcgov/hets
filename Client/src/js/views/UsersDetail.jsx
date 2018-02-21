@@ -30,6 +30,7 @@ import { isBlank, notBlank } from '../utils/string';
 
 var UsersDetail = React.createClass({
   propTypes: {
+    currentUser: React.PropTypes.object,
     user: React.PropTypes.object,
     groups: React.PropTypes.object,
     ui: React.PropTypes.object,
@@ -160,8 +161,14 @@ var UsersDetail = React.createClass({
     window.print();
   },
 
-  render: function() {
+  render() {
     var user = this.props.user;
+
+    if (!this.props.currentUser.hasPermission(Constant.PERMISSION_USER_MANAGEMENT)) { 
+      return (
+        <div>You do not have permission to view this page.</div>
+      ); 
+    }
 
     return <div id="users-detail">
       <div>
@@ -338,6 +345,7 @@ var ExpireOverlay = React.createClass({
 
 function mapStateToProps(state) {
   return {
+    currentUser: state.user,
     user: state.models.user,
     groups: state.lookups.groups,
     ui: state.ui.userRoles,

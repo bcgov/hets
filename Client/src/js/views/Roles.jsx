@@ -85,8 +85,14 @@ var Roles = React.createClass({
     window.print();
   },
 
-  render: function() {
+  render() {
     var numRoles = this.state.loading ? '...' : Object.keys(this.props.roles).length;
+
+    if (!this.props.currentUser.hasPermission(Constant.PERMISSION_ROLES_AND_PERMISSIONS)) { 
+      return (
+        <div>You do not have permission to view this page.</div>
+      ); 
+    }
 
     return <div id="roles-list">
       <PageHeader>Roles ({ numRoles })
