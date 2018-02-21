@@ -132,6 +132,12 @@ var Users = React.createClass({
 
     var numUsers = this.state.loading ? '...' : Object.keys(this.props.users).length;
 
+    if (!this.props.currentUser.hasPermission(Constant.PERMISSION_USER_MANAGEMENT)) { 
+      return (
+        <div>You do not have permission to view this page.</div>
+      ); 
+    }
+
     return <div id="users-list">
       <PageHeader>Users ({ numUsers })
         <ButtonGroup id="users-buttons">

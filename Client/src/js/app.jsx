@@ -23,12 +23,18 @@ import RolesDetail from './views/RolesDetail.jsx';
 import Version from './views/Version.jsx';
 import FourOhFour from './views/404.jsx';
 
+const hasPermission = () => {
+  if (store.getState().user.hasPermission(Constant.PERMISSION_BUSINESS_LOGIN)) {
+    hashHistory.push(Constant.BUSINESS_LOGIN);
+  } 
+};
 
 const App = <Provider store={ store }>
   <Router history={ hashHistory }>
     <Redirect from="/" to="/home"/>
-    <Route path="/" component={ Main }>
-      <Route path={ Constant.HOME_PATHNAME } component={ Home }/>
+    <Route path={ Constant.BUSINESS_LOGIN }/>
+    <Route path="/" component={ Main } onEnter={hasPermission}>
+      <Route path={ Constant.HOME_PATHNAME } component={ Home }/> 
       <Route path={ Constant.EQUIPMENT_PATHNAME } component={ Equipment }/>
       <Route path={ `${ Constant.EQUIPMENT_PATHNAME }/:equipmentId` } component={ EquipmentDetail }/>
       <Route path={ Constant.OWNERS_PATHNAME } component={ Owners }/>
