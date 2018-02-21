@@ -1039,7 +1039,8 @@ namespace HETSAPI.Services.Impl
 
             // *******************************************************************************
             // get the equipment based on the current seniority list for the area
-            // (and sort the results based on seniority)
+            // (and sort the results based on block then 
+            //      numberinblock -> ensures consistency with the UI)
             // *******************************************************************************
             for (int currentBlock = 1; currentBlock <= numberOfBlocks; currentBlock++)
             {
@@ -1049,7 +1050,7 @@ namespace HETSAPI.Services.Impl
                                 x.BlockNumber == currentBlock &&
                                 x.LocalArea.Id == item.LocalArea.Id &&
                                 x.Status.Equals("Approved", StringComparison.InvariantCultureIgnoreCase))
-                    .OrderByDescending(x => x.Seniority)
+                    .OrderBy(x => x.NumberInBlock)
                     .ToList();
 
                 int listSize = blockEquipment.Count;
