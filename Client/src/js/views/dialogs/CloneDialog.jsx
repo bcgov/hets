@@ -115,7 +115,7 @@ var CloneDialog = React.createClass({
                       <td>{ rentalAgreement.equipment.districtEquipmentType.districtEquipmentName }</td>
                       <td>{`${rentalAgreement.equipment.year} ${rentalAgreement.equipment.make}/${rentalAgreement.equipment.model}/${rentalAgreement.equipment.size}`}</td>
                       <td>{ rentalAgreement.project && rentalAgreement.project.name }</td>
-                      <td>{ rentalAgreement.rentalAgreementNumber }</td>
+                      <td>{ rentalAgreement.number }</td>
                       <td>{ formatDateTime(rentalAgreement.datedOn, 'YYYY-MMM-DD') }</td>
                     </tr>;
                   })
