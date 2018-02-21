@@ -175,7 +175,7 @@ var RolesDetail = React.createClass({
   render() {
     var role = this.props.role;
 
-    if (!this.props.currentUser.hasPermission(Constant.PERMISSION_ROLES_AND_PERMISSIONS)) { 
+    if (!this.props.currentUser.hasPermission(Constant.PERMISSION_ROLES_AND_PERMISSIONS) && !this.props.currentUser.hasPermission(Constant.PERMISSION_ADMIN)) { 
       return (
         <div>You do not have permission to view this page.</div>
       ); 
