@@ -44,7 +44,7 @@ var TopNav = React.createClass({
               <NavItem eventKey={ 5 }>Projects</NavItem>
             </LinkContainer>
             <LinkContainer to={{ pathname: `/${ Constant.RENTAL_REQUESTS_PATHNAME }` }}>
-              <NavItem eventKey={ 4 }>Requests</NavItem>
+              <NavItem eventKey={ 6 }>Requests</NavItem>
             </LinkContainer>
             { (this.props.currentUser.hasPermission(Constant.PERMISSION_ADMIN) || 
               this.props.currentUser.hasPermission(Constant.PERMISSION_USER_MANAGEMENT) ||
@@ -52,15 +52,20 @@ var TopNav = React.createClass({
               <NavDropdown id="admin-dropdown" title="Administration">
                 { this.props.currentUser.hasPermission(Constant.PERMISSION_USER_MANAGEMENT) &&
                   <LinkContainer to={{ pathname: `/${ Constant.USERS_PATHNAME }` }}>
-                    <MenuItem eventKey={ 6 }>User Management</MenuItem>
+                    <MenuItem eventKey={ 7 }>User Management</MenuItem>
                   </LinkContainer>
                 }
                 { this.props.currentUser.hasPermission(Constant.PERMISSION_ROLES_AND_PERMISSIONS) &&
                   <LinkContainer to={{ pathname: `/${ Constant.ROLES_PATHNAME }` }}>
-                    <MenuItem eventKey={ 7 }>Roles and Permissions</MenuItem>
+                    <MenuItem eventKey={ 8 }>Roles and Permissions</MenuItem>
                   </LinkContainer>
                 }
               </NavDropdown>
+            }
+            { this.props.currentUser.hasPermission(Constant.PERMISSION_DISTRICT_CODE_TABLE_MANAGEMENT) &&
+              <LinkContainer to={{ pathname: `/${ Constant.DISTRICT_ADMIN_PATHNAME }` }}>
+                <NavItem eventKey={ 9 }>District Admin</NavItem>
+              </LinkContainer>
             }
           </Nav>
           <Nav id="navbar-current-user" pullRight>

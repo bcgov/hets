@@ -132,7 +132,7 @@ var Users = React.createClass({
 
     var numUsers = this.state.loading ? '...' : Object.keys(this.props.users).length;
 
-    if (!this.props.currentUser.hasPermission(Constant.PERMISSION_USER_MANAGEMENT)) { 
+    if (!this.props.currentUser.hasPermission(Constant.PERMISSION_USER_MANAGEMENT) && !this.props.currentUser.hasPermission(Constant.PERMISSION_ADMIN)) { 
       return (
         <div>You do not have permission to view this page.</div>
       ); 

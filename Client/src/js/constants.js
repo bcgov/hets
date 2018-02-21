@@ -10,7 +10,8 @@ export const ROLES_PATHNAME = 'roles';
 export const VERSION_PATHNAME = 'version';
 export const CONTACTS_PATHNAME = 'contacts';
 export const DOCUMENTS_PATHNAME = 'documents';
-export const BUSINESS_LOGIN = '/business-login';
+export const BUSINESS_LOGIN_PATHNAME = '/business-login';
+export const DISTRICT_ADMIN_PATHNAME = 'district-admin';
 
 // Permissions
 export const PERMISSION_LOGIN = 'Login';
@@ -20,6 +21,7 @@ export const PERMISSION_USER_MANAGEMENT = 'UserManagement';
 export const PERMISSION_ROLES_AND_PERMISSIONS = 'RolesAndPermissions';
 export const PERMISSION_IMPORT_DATA = 'ImportData';
 export const PERMISSION_CODE_TABLE_MANAGEMENT = 'CodeTableManagement';
+export const PERMISSION_DISTRICT_CODE_TABLE_MANAGEMENT = 'DistrictCodeTableManagement';
 export const PERMISSION_ASSIGN_INSPECTORS = 'ASSIGN_INSPECTORS';
 export const PERMISSION_RECEIVE_NOTIFICATIONS = 'RECEIVE_NOTIFICATIONS';
 
