@@ -1697,6 +1697,7 @@ export function getRegions() {
 
 export function getLocalAreas() {
   return new ApiRequest('/localareas').get().then(response => {
+    console.log(response);
     var localAreas = normalize(response.data);
 
     store.dispatch({ type: Action.UPDATE_LOCAL_AREAS_LOOKUP, localAreas: localAreas });
