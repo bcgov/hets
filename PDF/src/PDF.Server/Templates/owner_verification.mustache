@@ -6,6 +6,7 @@
     <style>
         @page {
             margin: 0;
+            size: landscape;
         }
 
         body {
@@ -137,8 +138,8 @@
         }
 
         @media print {
-            #page-break {
-                page-break-before: always;
+            .owner {
+                page-break-after: always;
             }
         }
     </style>
@@ -146,8 +147,7 @@
 <body>
 
     {{#owners}}
-    <div class="page-break"></div>
-    <div>
+    <div class="owner">
         <div>
             <div id="header" class="clearfix">
                 <div id="logo">
@@ -208,7 +208,7 @@
             <div id="equipment-table">
                 <table border="1" cellpadding="1" cellspacing="1">
                     <tr>
-                        <th>Still in use? (Yes/No)</th>
+                        <th>Still in use?</th>
                         <th>Equipment Id</th>
                         <th>Local Area</th>
                         <th>Year/Make/Model/Serial Number/Size</th>
@@ -217,7 +217,7 @@
                     </tr>
                     {{#equipmentList}}
                     <tr>
-                        <td>&nbsp;</td>
+                        <td>Yes/No</td>
                         <td>{{id}}</td>
                         <td>{{localArea.name}}</td>
                         <td>{{year}}/{{make}}/{{model}}/{{serialNumber}}/{{size}}</td>
