@@ -356,9 +356,17 @@ var ProjectsDetail = React.createClass({
 
                 const RentalRequestListItem = ({ item }) => (
                   <tr key={ item.id }>
-                    <td><Link to={ `rental-requests/${item.id}` }>Request</Link></td>
+                    <td>
+                      <Link 
+                        to={ `rental-requests/${item.id}` } 
+                        className={item.status === Constant.RENTAL_REQUEST_STATUS_CODE_COMPLETED ? 'light' : ''}
+                      >
+                      Request
+                      </Link>
+                    </td>
                     <td>{ item.equipmentTypeName }</td>
                     <td>TBD</td>
+                    <td>N/A</td>
                     <td>N/A</td>
                     <td>N/A</td>
                     <td>N/A</td>
@@ -370,9 +378,16 @@ var ProjectsDetail = React.createClass({
 
                 const RentalAgreementListItem = ({ item }) => (
                   <tr key={ item.id }>
-                    <td><Link to={ `equipment/${item.equipmentId}` }>{ item.equipmentCode }</Link></td>
+                    <td>
+                      <Link 
+                        to={ `equipment/${item.equipmentId}` }
+                        className={item.status === Constant.RENTAL_REQUEST_STATUS_CODE_COMPLETED ? 'light' : ''}
+                      >
+                        { item.equipmentCode }
+                      </Link>
+                    </td>
                     <td>{ item.equipmentTypeName }</td>
-                    <td>{ concat(item.equipmentMake, concat(item.equipmentModel, item.equipmentSize, '/'), '/') }</td>
+                    <td>{ `${item.equipment.year} ${concat(item.equipmentMake, concat(item.equipmentModel, item.equipmentSize, '/'), '/')} `}</td>
                     <td>{ item.isCompleted ? 
                       'Completed' 
                       : 
@@ -386,6 +401,9 @@ var ProjectsDetail = React.createClass({
                     }
                     </td>
                     <td>
+                    { item.status === Constant.RENTAL_REQUEST_STATUS_CODE_COMPLETED ?
+                      <div>Released</div>
+                      :
                       <OverlayTrigger 
                         trigger="click" 
                         placement="top" 
@@ -398,8 +416,10 @@ var ProjectsDetail = React.createClass({
                           <Glyphicon glyph="check" />
                         </Button>
                       </OverlayTrigger>
+                    }
                     </td>
                     <td><Link to={`${Constant.RENTAL_AGREEMENTS_PATHNAME}/${item.id}`}>Agreement</Link></td>
+                    <td>{ formatDateTime(item.datedOn, Constant.DATE_YEAR_SHORT_MONTH_DAY) }</td>
                     <td></td>
                   </tr>
                 );
@@ -407,10 +427,11 @@ var ProjectsDetail = React.createClass({
                 var headers = [
                   { field: 'equipmentCode',     title: 'ID'               },
                   { field: 'equipmentTypeName', title: 'Type'             },
-                  { field: 'equipmentMake',     title: 'Make/Model/Size'  },
+                  { field: 'equipmentMake',     title: 'Year Make/Model/Size'  },
                   { field: 'lastTimeRecord',    title: 'Time Entry'       },
                   { field: 'release',           title: 'Release'          },
                   { field: 'agreement',         title: 'Agreement'        },
+                  { field: 'hiredDate',         title: 'Hired Date'       },
                   { field: 'blank'                                        },
                 ];
 
