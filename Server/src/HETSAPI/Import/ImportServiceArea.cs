@@ -41,7 +41,6 @@ namespace HETSAPI.Import
             try
             {
                 string rootAttr = "ArrayOf" + OldTable;
-
                 performContext.WriteLine("Processing Service Areas");
                 IProgressBar progress = performContext.WriteProgressBar();
                 progress.SetValue(0);
@@ -60,13 +59,9 @@ namespace HETSAPI.Import
 
                     Models.ServiceArea serviceArea = dbContext.ServiceAreas.FirstOrDefault(x => x.Name == item.Service_Area_Desc.Trim());
 
-                    if (serviceArea == null)
-                    {
-                        serviceArea = new Models.ServiceArea();
-                    }
 
                     // new entry
-                    if (importMap == null) 
+                    if (importMap == null)
                     {
                         if (item.Service_Area_Cd != "000")
                         {
@@ -77,14 +72,12 @@ namespace HETSAPI.Import
                     else // update
                     {
                         // record was deleted
-                        if (serviceArea.Name == null) 
+                        if (serviceArea.Name == null)
                         {
                             CopyToInstance(performContext, dbContext, item, ref serviceArea, systemId);
-
                             // update the import map
                             importMap.NewKey = serviceArea.Id;
                             dbContext.ImportMaps.Update(importMap);
-                            dbContext.SaveChangesForImport();
                         }
                         else // ordinary update
                         {
@@ -93,13 +86,14 @@ namespace HETSAPI.Import
                             // touch the import map
                             importMap.AppLastUpdateTimestamp = DateTime.UtcNow;
                             dbContext.ImportMaps.Update(importMap);
-                            dbContext.SaveChangesForImport();
                         }
                     }
                 }
 
                 performContext.WriteLine("*** Importing " + XmlFileName + " is Done ***");
                 ImportUtility.AddImportMap(dbContext, OldTable, completed, NewTable, SigId);
+
+                dbContext.SaveChangesForImport();
             }
             catch (Exception e)
             {
@@ -137,7 +131,7 @@ namespace HETSAPI.Import
 
             District district = dbContext.Districts.FirstOrDefault(x => x.MinistryDistrictID == oldObject.District_Area_Id);
 
-            if (district == null)   
+            if (district == null)
             {
                 // this means that the District is not in the database 
                 // (this happens when the production data does not include district Other than "Lower Mainland" or all the districts)
@@ -168,21 +162,12 @@ namespace HETSAPI.Import
                 dbContext.ServiceAreas.Update(serviceArea);
             }
 
-            try
-            {
-                dbContext.SaveChangesForImport();
-            }
-            catch (Exception e)
-            {
-                performContext.WriteLine("*** ERROR With add or update Service Area ***");
-                performContext.WriteLine(e.ToString());
-            }
         }
 
 
         public static void Obfuscate(PerformContext performContext, DbAppContext dbContext, string sourceLocation, string destinationLocation, string systemId)
         {
-            
+
             try
             {
                 string rootAttr = "ArrayOf" + OldTable;
