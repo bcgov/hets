@@ -708,11 +708,7 @@ namespace HETSAPI.Services.Impl
 
                 agreements[newRentalagreementIndex].RatePeriod =
                     agreements[agreementToCloneIndex].RatePeriod;
-
-                // setup new agreement number
-                string agreementNumber = RentalAgreementService.GetRentalAgreementNumber(agreements[newRentalagreementIndex], _context);
-                agreements[newRentalagreementIndex].Number = agreementNumber;
-
+                
                 // update rates
                 agreements[newRentalagreementIndex].RentalAgreementRates = null;
 
