@@ -364,8 +364,7 @@ namespace HETSAPI.Services.Impl
                             equipment.Seniority == null &&
                             equipment.Status.Equals("Approved", StringComparison.CurrentCultureIgnoreCase))
                         {
-                            // set the approved date (only the first time the record is approved in the system)
-                            equipment.ApprovedDate = DateTime.UtcNow;
+                            // per HETS-536 -> ignore and let the user set the "Approved Date" date
 
                             // recalc seniority (move into a block)
                             recalcSeniority = true;
@@ -1032,8 +1031,11 @@ namespace HETSAPI.Services.Impl
         private void SetNewRecordFields(Equipment item)
         {
             item.ReceivedDate = DateTime.UtcNow;
-            item.LastVerifiedDate = DateTime.UtcNow;            
+            item.LastVerifiedDate = DateTime.UtcNow;          
             
+            // per JIRA HETS-536
+            item.ApprovedDate = DateTime.UtcNow;
+
             item.Seniority = 0.0F;
             item.YearsOfService = 0.0F;
             item.ServiceHoursLastYear = 0.0F;
