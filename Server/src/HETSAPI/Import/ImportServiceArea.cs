@@ -6,7 +6,7 @@ using System.Linq;
 using System.Xml.Serialization;
 using Hangfire.Console.Progress;
 using HETSAPI.Models;
-using ServiceArea = HETSAPI.ImportModels.ServiceArea;
+using Service_Area = HETSAPI.ImportModels.Service_Area;
 
 namespace HETSAPI.Import
 {
@@ -34,6 +34,7 @@ namespace HETSAPI.Import
 
             if (importMap != null)
             {
+                performContext.WriteLine("*** Importing " + XmlFileName + " is complete from the former process ***");
                 return;
             }
 
@@ -46,11 +47,13 @@ namespace HETSAPI.Import
                 progress.SetValue(0);
 
                 // create serializer and serialize xml file
-                XmlSerializer ser = new XmlSerializer(typeof(ServiceArea[]), new XmlRootAttribute(rootAttr));
+                XmlSerializer ser = new XmlSerializer(typeof(ImportModels.Service_Area[]), new XmlRootAttribute(rootAttr));
+                ser.UnknownAttribute += ImportUtility.UnknownAttribute;
+                ser.UnknownElement += ImportUtility.UnknownElement;
                 MemoryStream memoryStream = ImportUtility.MemoryStreamGenerator(XmlFileName, OldTable, fileLocation, rootAttr);
-                ServiceArea[] legacyItems = (ServiceArea[])ser.Deserialize(memoryStream);
+                ImportModels.Service_Area[] legacyItems = (ImportModels.Service_Area[])ser.Deserialize(memoryStream);
 
-                foreach (ServiceArea item in legacyItems.WithProgress(progress))
+                foreach (ImportModels.Service_Area item in legacyItems.WithProgress(progress))
                 {
                     // see if we have this one already
                     importMap = dbContext.ImportMaps.FirstOrDefault(x => x.OldTable == OldTable && x.OldKey == item.Service_Area_Id.ToString());
@@ -65,7 +68,7 @@ namespace HETSAPI.Import
                     // new entry
                     if (importMap == null) 
                     {
-                        if (item.Service_Area_Cd > 0)
+                        if (item.Service_Area_Cd != "000")
                         {
                             CopyToInstance(performContext, dbContext, item, ref serviceArea, systemId);
                             ImportUtility.AddImportMap(dbContext, OldTable, item.Service_Area_Id.ToString(), NewTable, serviceArea.Id);
@@ -113,7 +116,7 @@ namespace HETSAPI.Import
         /// <param name="oldObject"></param>
         /// <param name="serviceArea"></param>
         /// <param name="systemId"></param>
-        private static void CopyToInstance(PerformContext performContext, DbAppContext dbContext, ServiceArea oldObject, ref Models.ServiceArea serviceArea, string systemId)
+        private static void CopyToInstance(PerformContext performContext, DbAppContext dbContext, Service_Area oldObject, ref Models.ServiceArea serviceArea, string systemId)
         {
             bool isNew = false;
 
@@ -130,7 +133,7 @@ namespace HETSAPI.Import
             serviceArea.MinistryServiceAreaID = oldObject.Service_Area_Id;
             serviceArea.DistrictId = oldObject.District_Area_Id;
             serviceArea.Name = oldObject.Service_Area_Desc.Trim();
-            serviceArea.AreaNumber = oldObject.Service_Area_Cd;
+            serviceArea.AreaNumber = int.Parse(oldObject.Service_Area_Cd);
 
             District district = dbContext.Districts.FirstOrDefault(x => x.MinistryDistrictID == oldObject.District_Area_Id);
 
@@ -175,6 +178,48 @@ namespace HETSAPI.Import
                 performContext.WriteLine(e.ToString());
             }
         }
+
+
+        public static void Obfuscate(PerformContext performContext, DbAppContext dbContext, string sourceLocation, string destinationLocation, string systemId)
+        {
+            
+            try
+            {
+                string rootAttr = "ArrayOf" + OldTable;
+
+                // create Processer progress indicator
+                performContext.WriteLine("Processing " + OldTable);
+                IProgressBar progress = performContext.WriteProgressBar();
+                progress.SetValue(0);
+
+                // create serializer and serialize xml file
+                XmlSerializer ser = new XmlSerializer(typeof(ImportModels.Service_Area[]), new XmlRootAttribute(rootAttr));
+                ser.UnknownAttribute += ImportUtility.UnknownAttribute;
+                ser.UnknownElement += ImportUtility.UnknownElement;
+                MemoryStream memoryStream = ImportUtility.MemoryStreamGenerator(XmlFileName, OldTable, sourceLocation, rootAttr);
+                ImportModels.Service_Area[] legacyItems = (ImportModels.Service_Area[])ser.Deserialize(memoryStream);
+
+                foreach (Service_Area item in legacyItems.WithProgress(progress))
+                {
+                    item.Created_By = systemId;
+                }
+                performContext.WriteLine("Writing " + XmlFileName + " to " + destinationLocation);
+                // write out the array.
+                FileStream fs = ImportUtility.GetObfuscationDestination(XmlFileName, destinationLocation);
+                ser.Serialize(fs, legacyItems);
+                fs.Close();
+            }
+            catch (Exception e)
+            {
+                performContext.WriteLine("*** ERROR ***");
+                performContext.WriteLine(e.ToString());
+            }
+        }
+
+
     }
+
+
+
 }
 
