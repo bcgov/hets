@@ -49,6 +49,7 @@ namespace HETSAPI.ViewModels
         /// <param name="toDate">TO BE REVIEWED WITH THE BUSINESS - WHAT IS THIS?.</param>
         /// <param name="blockNumber">The current block number for the piece of equipment as calculated by the Seniority Algorthm for this equipment type in the local area. As currently defined y the business  - 1, 2 or Open.</param>
         /// <param name="seniority">The current seniority calculation result for this piece of equipment. The calculation is based on the &amp;quot;numYears&amp;quot; of service + average hours of service over the last three fiscal years - as stored in the related fields (serviceHoursLastYear, serviceHoursTwoYearsAgo serviceHoursThreeYearsAgo)..</param>
+        /// <param name="numberInBlock">The number in the block of the piece of equipment so that it can be displayed to the user where it will be useful. This saves the user from having to figure out in their head the order when the list is displayed in Rotation Order.</param>
         /// <param name="isSeniorityOverridden">True if the Seniority for the piece of equipment was manually overridden. Set if a user has gone in and explicitly updated the seniority base information. Indicates that underlying numbers were manually overridden..</param>
         /// <param name="seniorityOverrideReason">A text reason for why the piece of equipments underlying data was overridden to change their seniority number..</param>
         /// <param name="seniorityEffectiveDate">The time the seniority data in the record went into effect. Used to populate the SeniorityAudit table when the seniority data is next updated..</param>
@@ -76,7 +77,7 @@ namespace HETSAPI.ViewModels
             string informationUpdateNeededReason = null, string licencePlate = null, string make = null, string model = null, 
             string year = null, string type = null, string @operator = null, float? payRate = null, string refuseRate = null, 
             string serialNumber = null, string size = null, DateTime? toDate = null, float? blockNumber = null, 
-            float? seniority = null, bool? isSeniorityOverridden = null, string seniorityOverrideReason = null, 
+            float? seniority = null, int ? numberInBlock = null, bool? isSeniorityOverridden = null, string seniorityOverrideReason = null, 
             DateTime? seniorityEffectiveDate = null, float? yearsOfService = null, float? serviceHoursLastYear = null, 
             float? serviceHoursTwoYearsAgo = null, float? serviceHoursThreeYearsAgo = null, string archiveCode = null, 
             string archiveReason = null, DateTime? archiveDate = null, DumpTruck dumpTruck = null, 
@@ -109,6 +110,7 @@ namespace HETSAPI.ViewModels
             ToDate = toDate;
             BlockNumber = (int)blockNumber;
             Seniority = seniority;
+            NumberInBlock = numberInBlock;
             IsSeniorityOverridden = isSeniorityOverridden;
             SeniorityOverrideReason = seniorityOverrideReason;
             SeniorityEffectiveDate = seniorityEffectiveDate;
@@ -148,16 +150,12 @@ namespace HETSAPI.ViewModels
                 BlockNumber = 0;
             }
 
-            if (Seniority != null && Seniority > 0)
+            if (NumberInBlock == null)
             {
-                temp = (float)Math.Round((float)Seniority, 3, MidpointRounding.AwayFromZero);
-                Seniority = temp;
-
-                // sort order function
-                temp = (10 - (float)BlockNumber) * 10000 + (10000 + temp);                
+                NumberInBlock = 0;
             }
 
-            SenioritySortOrder = temp;
+            SenioritySortOrder = ((int)BlockNumber * 100) + (int)NumberInBlock;
             return temp;
         }
 
@@ -371,6 +369,13 @@ namespace HETSAPI.ViewModels
         public float? Seniority { get; set; }
 
         /// <summary>
+        /// The number in the block of the piece of equipment so that it can be displayed to the user where it will be useful. This saves the user from having to figure out in their head the order when the list is displayed in Rotation Order.
+        /// </summary>
+        /// <value>The number in the block of the piece of equipment so that it can be displayed to the user where it will be useful. This saves the user from having to figure out in their head the order when the list is displayed in Rotation Order.</value>
+        [MetaData(Description = "The number in the block of the piece of equipment so that it can be displayed to the user where it will be useful. This saves the user from having to figure out in their head the order when the list is displayed in Rotation Order.")]
+        public int? NumberInBlock { get; set; }
+
+        /// <summary>
         /// True if the Seniority for the piece of equipment was manually overridden. Set if a user has gone in and explicitly updated the seniority base information. Indicates that underlying numbers were manually overridden.
         /// </summary>
         /// <value>True if the Seniority for the piece of equipment was manually overridden. Set if a user has gone in and explicitly updated the seniority base information. Indicates that underlying numbers were manually overridden.</value>
@@ -557,6 +562,7 @@ namespace HETSAPI.ViewModels
             sb.Append("  ToDate: ").Append(ToDate).Append("\n");
             sb.Append("  BlockNumber: ").Append(BlockNumber).Append("\n");
             sb.Append("  Seniority: ").Append(Seniority).Append("\n");
+            sb.Append("  NumberInBlock: ").Append(NumberInBlock).Append("\n");
             sb.Append("  IsSeniorityOverridden: ").Append(IsSeniorityOverridden).Append("\n");
             sb.Append("  SeniorityOverrideReason: ").Append(SeniorityOverrideReason).Append("\n");
             sb.Append("  SeniorityEffectiveDate: ").Append(SeniorityEffectiveDate).Append("\n");
@@ -735,6 +741,11 @@ namespace HETSAPI.ViewModels
                     Seniority == other.Seniority ||
                     Seniority != null &&
                     Seniority.Equals(other.Seniority)
+                ) &&
+                (
+                    NumberInBlock == other.NumberInBlock ||
+                    NumberInBlock != null &&
+                    NumberInBlock.Equals(other.NumberInBlock)
                 ) &&                 
                 (
                     IsSeniorityOverridden == other.IsSeniorityOverridden ||
@@ -970,6 +981,11 @@ namespace HETSAPI.ViewModels
                 if (Seniority != null)
                 {
                     hash = hash * 59 + Seniority.GetHashCode();
+                }
+
+                if (NumberInBlock != null)
+                {
+                    hash = hash * 59 + NumberInBlock.GetHashCode();
                 }
 
                 if (IsSeniorityOverridden != null)
