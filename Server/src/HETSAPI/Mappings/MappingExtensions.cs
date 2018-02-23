@@ -399,6 +399,7 @@ namespace HETSAPI.Mappings
                 dto.ReceivedDate = model.ReceivedDate;
                 dto.RefuseRate = model.RefuseRate;
                 dto.Seniority = model.Seniority;
+                dto.NumberInBlock = model.NumberInBlock;
                 dto.SeniorityEffectiveDate = model.SeniorityEffectiveDate;
                 dto.SeniorityOverrideReason = model.SeniorityOverrideReason;
                 dto.SerialNumber = model.SerialNumber;
