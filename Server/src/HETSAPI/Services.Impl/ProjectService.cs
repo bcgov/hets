@@ -363,8 +363,9 @@ namespace HETSAPI.Services.Impl
         /// <param name="hasRequests">if true then only include Projects with active Requests</param>
         /// <param name="hasHires">if true then only include Projects with active Rental Agreements</param>
         /// <param name="status">if included, filter the results to those with a status matching this string</param>
+        /// <param name="projectNumber"></param>
         /// <response code="200">OK</response>
-        public virtual IActionResult ProjectsSearchGetAsync(string districts, string project, bool? hasRequests, bool? hasHires, string status)
+        public virtual IActionResult ProjectsSearchGetAsync(string districts, string project, bool? hasRequests, bool? hasHires, string status, string projectNumber)
         {
             int?[] districtTokens = ParseIntArray(districts);
 
@@ -395,6 +396,13 @@ namespace HETSAPI.Services.Impl
             if (status != null)
             {
                 data = data.Where(x => String.Equals(x.Status, status, StringComparison.CurrentCultureIgnoreCase));
+            }
+
+            // project number
+            if (projectNumber != null)
+            {
+                // allow for case insensitive search of project name
+                data = data.Where(x => x.ProvincialProjectNumber.ToLowerInvariant().Contains(project.ToLowerInvariant()));
             }
 
             // **********************************************************************
