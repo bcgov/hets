@@ -6,7 +6,7 @@ stage('ZAP Security Scan') {
             checkout scm
             dir('zap') {
                 def retVal = sh returnStatus: true, script: '/zap/zap-x.sh -last_scan_report /home/jenkins/workspace/tran-hets-tools-zap-pipeline/zap/index.html -session /home/jenkins/workspace/tran-hets-tools-zap-pipeline/zap/HETS -cmd'
-                publishHTML([allowMissing: false, alwaysLinkToLastBuild: false, keepAll: true, reportDir: '/home/jenkins/workspace/tran-hets-tools-zap-pipeline/zap', reportFiles: 'index.html', reportName: 'ZAP Scan', reportTitles: 'ZAP Scan - Build: ${BUILD_ID}'])
+                publishHTML([allowMissing: false, alwaysLinkToLastBuild: false, keepAll: true, reportDir: '/home/jenkins/workspace/tran-hets-tools-zap-pipeline/zap', reportFiles: 'index.html', reportName: 'ZAP Scan', reportTitles: 'ZAP Scan Report'])
                 echo "Return value is: ${retVal}"
             }
     }
