@@ -179,6 +179,8 @@ namespace HETSAPI.Services.Impl
 
                 result.IsHired = IsHired(id);
 
+                result.NumberInBlock = GetNumberOfBlocks(result);
+
                 return new ObjectResult(new HetsResponse(result));
             }
 
@@ -545,18 +547,27 @@ namespace HETSAPI.Services.Impl
 
             if (notverifiedsincedate != null)
             {
-                data = data.Where(x => x.LastVerifiedDate >= notverifiedsincedate);
+                data = data.Where(x => x.LastVerifiedDate < notverifiedsincedate);
             }
-            
+
             // **********************************************************************
             // convert Equipment Model to View Model
             // **********************************************************************
+            SeniorityScoringRules scoringRules = new SeniorityScoringRules(_configuration);
+            
             List<EquipmentViewModel> result = new List<EquipmentViewModel>();
 
             foreach (Equipment item in data)
             {
                 EquipmentViewModel newItem = item.ToViewModel();
-                newItem.NumberOfBlocks = GetNumberOfBlocks(item) + 1;
+
+                if (item.DistrictEquipmentType != null)
+                {
+                    newItem.NumberOfBlocks = item.DistrictEquipmentType.EquipmentType.IsDumpTruck
+                        ? scoringRules.GetTotalBlocks("DumpTruck") + 1
+                        : scoringRules.GetTotalBlocks() + 1;
+                }
+
                 result.Add(newItem);
             }            
 
@@ -578,7 +589,7 @@ namespace HETSAPI.Services.Impl
                 SeniorityScoringRules scoringRules = new SeniorityScoringRules(_configuration);
 
                 numberOfBlocks = item.DistrictEquipmentType.EquipmentType.IsDumpTruck ?
-                    scoringRules.GetTotalBlocks("DumpTruck") : scoringRules.GetTotalBlocks();
+                    scoringRules.GetTotalBlocks("DumpTruck") + 1 : scoringRules.GetTotalBlocks() + 1;
             }
             catch
             {
