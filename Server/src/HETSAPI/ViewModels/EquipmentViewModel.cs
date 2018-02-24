@@ -65,6 +65,7 @@ namespace HETSAPI.ViewModels
         /// <param name="notes">Notes.</param>
         /// <param name="attachments">Attachments.</param>
         /// <param name="history">History.</param>
+        /// <param name="rentalAgreements">RentalAgreements.</param>
         /// <param name="seniorityAudit">SeniorityAudit.</param>
         /// <param name="serviceHoursThisYear">number of hours worked on current fiscal year.</param>
         /// <param name="hasDuplicates">HasDuplicates.</param>
@@ -82,7 +83,7 @@ namespace HETSAPI.ViewModels
             float? serviceHoursTwoYearsAgo = null, float? serviceHoursThreeYearsAgo = null, string archiveCode = null, 
             string archiveReason = null, DateTime? archiveDate = null, DumpTruck dumpTruck = null, 
             List<EquipmentAttachment> equipmentAttachments = null, List<Note> notes = null, List<Attachment> attachments = null, 
-            List<History> history = null, List<SeniorityAudit> seniorityAudit = null, int? serviceHoursThisYear = null, 
+            List<History> history = null, List<RentalAgreement> rentalAgreements = null, List<SeniorityAudit> seniorityAudit = null, int? serviceHoursThisYear = null, 
             bool? hasDuplicates = null, List<Equipment> duplicateEquipment = null, bool? isWorking = null, 
             DateTime? lastTimeRecordDateThisYear = null)
         {   
@@ -126,6 +127,7 @@ namespace HETSAPI.ViewModels
             Notes = notes;
             Attachments = attachments;
             History = history;
+            RentalAgreements = rentalAgreements;
             SeniorityAudit = seniorityAudit;
             ServiceHoursThisYear = serviceHoursThisYear;
             HasDuplicates = hasDuplicates;
@@ -157,6 +159,21 @@ namespace HETSAPI.ViewModels
 
             SenioritySortOrder = ((int)BlockNumber * 100) + (int)NumberInBlock;
             return temp;
+        }
+
+        /// <summary>
+        /// Function to determine if thsi piece of equipment is hired
+        /// </summary>
+        public void CheckIsHired()
+        {
+            IsHired = false;
+
+            int? count = RentalAgreements?.Count(x => x.Status == "Active");
+
+            if (count > 0)
+            {
+                IsHired = true;
+            }
         }
 
         /// <summary>
@@ -488,6 +505,12 @@ namespace HETSAPI.ViewModels
         public List<History> History { get; set; }
 
         /// <summary>
+        /// Gets or Sets Rental Agreements
+        /// </summary>
+        [DataMember(Name = "rentalAgreements")]
+        public List<RentalAgreement> RentalAgreements { get; set; }
+
+        /// <summary>
         /// Gets or Sets SeniorityAudit
         /// </summary>
         [DataMember(Name="seniorityAudit")]
@@ -578,6 +601,7 @@ namespace HETSAPI.ViewModels
             sb.Append("  Notes: ").Append(Notes).Append("\n");
             sb.Append("  Attachments: ").Append(Attachments).Append("\n");
             sb.Append("  History: ").Append(History).Append("\n");
+            sb.Append("  RentalAgreements: ").Append(RentalAgreements).Append("\n");
             sb.Append("  SeniorityAudit: ").Append(SeniorityAudit).Append("\n");
             sb.Append("  ServiceHoursThisYear: ").Append(ServiceHoursThisYear).Append("\n");
             sb.Append("  HasDuplicates: ").Append(HasDuplicates).Append("\n");
@@ -821,6 +845,11 @@ namespace HETSAPI.ViewModels
                     History == other.History ||
                     History != null &&
                     History.SequenceEqual(other.History)
+                ) &&
+                (
+                    RentalAgreements == other.RentalAgreements ||
+                    RentalAgreements != null &&
+                    RentalAgreements.SequenceEqual(other.RentalAgreements)
                 ) && 
                 (
                     SeniorityAudit == other.SeniorityAudit ||
@@ -1061,6 +1090,11 @@ namespace HETSAPI.ViewModels
                 if (History != null)
                 {
                     hash = hash * 59 + History.GetHashCode();
+                }
+
+                if (RentalAgreements != null)
+                {
+                    hash = hash * 59 + RentalAgreements.GetHashCode();
                 }
 
                 if (SeniorityAudit != null)

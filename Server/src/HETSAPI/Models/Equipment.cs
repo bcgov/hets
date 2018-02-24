@@ -64,8 +64,9 @@ namespace HETSAPI.Models
         /// <param name="dumpTruck">A link to a dump truck set if this piece of equipment is an equipment type flagged as a dump truck.</param>
         /// <param name="equipmentAttachments">EquipmentAttachments.</param>
         /// <param name="notes">Notes.</param>
-        /// <param name="attachments">Attachments.</param>
+        /// <param name="attachments">Attachments.</param>        
         /// <param name="history">History.</param>
+        /// <param name="rentalAgreements">RentalAgreements.</param>
         public Equipment(int id, LocalArea localArea, DistrictEquipmentType districtEquipmentType, Owner owner, string equipmentCode, 
             string status, DateTime receivedDate, DateTime lastVerifiedDate, string statusComment = null, DateTime? approvedDate = null, 
             bool? isInformationUpdateNeeded = null, string informationUpdateNeededReason = null, string licencePlate = null, 
@@ -76,7 +77,7 @@ namespace HETSAPI.Models
             float? serviceHoursTwoYearsAgo = null, float? serviceHoursThreeYearsAgo = null, string archiveCode = null, 
             string archiveReason = null, DateTime? archiveDate = null, DumpTruck dumpTruck = null, 
             List<EquipmentAttachment> equipmentAttachments = null, List<Note> notes = null, List<Attachment> attachments = null, 
-            List<History> history = null)
+            List<History> history = null, List<RentalAgreement> rentalAgreements = null)
         {
             Id = id;
             LocalArea = localArea;
@@ -119,6 +120,7 @@ namespace HETSAPI.Models
             Notes = notes;
             Attachments = attachments;
             History = history;
+            RentalAgreements = rentalAgreements;
         }
 
         /// <summary>
@@ -472,6 +474,11 @@ namespace HETSAPI.Models
         public List<History> History { get; set; }
 
         /// <summary>
+        /// Gets or Sets Rental Agreements
+        /// </summary>
+        public List<RentalAgreement> RentalAgreements { get; set; }
+
+        /// <summary>
         /// Returns the string presentation of the object
         /// </summary>
         /// <returns>String presentation of the object</returns>
@@ -520,6 +527,7 @@ namespace HETSAPI.Models
             sb.Append("  Notes: ").Append(Notes).Append("\n");
             sb.Append("  Attachments: ").Append(Attachments).Append("\n");
             sb.Append("  History: ").Append(History).Append("\n");
+            sb.Append("  RentalAgreements: ").Append(RentalAgreements).Append("\n");
             sb.Append("}\n");
             return sb.ToString();
         }
@@ -757,6 +765,11 @@ namespace HETSAPI.Models
                     History == other.History ||
                     History != null &&
                     History.SequenceEqual(other.History)
+                ) &&
+                (
+                    RentalAgreements == other.RentalAgreements ||
+                    RentalAgreements != null &&
+                    RentalAgreements.SequenceEqual(other.RentalAgreements)
                 );
         }
 
@@ -965,6 +978,11 @@ namespace HETSAPI.Models
                 if (History != null)
                 {
                     hash = hash * 59 + History.GetHashCode();
+                }
+
+                if (RentalAgreements != null)
+                {
+                    hash = hash * 59 + RentalAgreements.GetHashCode();
                 }
 
                 return hash;

@@ -75,11 +75,11 @@ export function request(path, options) {
   
   // setting a timeout on the request
   if (path.indexOf('/pdf') !== -1) {
-    xhr.timeout = 15000; // time in milliseconds (15 sec)
-    console.log('Setting timeout to 15 sec - Pdf');  
+    xhr.timeout = 20000; // time in milliseconds (20 sec)
+    console.log('Setting timeout to 20 sec - Pdf');  
   } else {
-    xhr.timeout = 5000; // time in milliseconds (5 sec)
-    console.log('Setting timeout to 5 sec');
+    xhr.timeout = 20000; // time in milliseconds (20 sec)
+    console.log('Setting timeout to 20 sec');
   }  
 
   if (!options.headers) { options.headers = {}; }
