@@ -120,14 +120,15 @@ namespace HETSAPI.Controllers
         /// <param name="hasRequests">if true then only include Projects with active Requests</param>
         /// <param name="hasHires">if true then only include Projects with active Rental Agreements</param>
         /// <param name="status">if included, filter the results to those with a status matching this string</param>
+        /// <param name="projectNumber"></param>
         /// <response code="200">OK</response>
         [HttpGet]
         [Route("/api/projects/search")]
         [SwaggerOperation("ProjectsSearchGet")]
         [SwaggerResponse(200, type: typeof(List<ProjectSearchResultViewModel>))]
-        public virtual IActionResult ProjectsSearchGet([FromQuery]string districts, [FromQuery]string project, [FromQuery]bool? hasRequests, [FromQuery]bool? hasHires, [FromQuery]string status)
+        public virtual IActionResult ProjectsSearchGet([FromQuery]string districts, [FromQuery]string project, [FromQuery]bool? hasRequests, [FromQuery]bool? hasHires, [FromQuery]string status, [FromQuery]string projectNumber)
         {
-            return _service.ProjectsSearchGetAsync(districts, project, hasRequests, hasHires, status);
+            return _service.ProjectsSearchGetAsync(districts, project, hasRequests, hasHires, status, projectNumber);
         }
 
         # region Clone Project Agreements

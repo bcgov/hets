@@ -363,22 +363,25 @@ namespace HETSAPI.Services.Impl
         /// <param name="hasRequests">if true then only include Projects with active Requests</param>
         /// <param name="hasHires">if true then only include Projects with active Rental Agreements</param>
         /// <param name="status">if included, filter the results to those with a status matching this string</param>
+        /// <param name="projectNumber"></param>
         /// <response code="200">OK</response>
-        public virtual IActionResult ProjectsSearchGetAsync(string districts, string project, bool? hasRequests, bool? hasHires, string status)
+        public virtual IActionResult ProjectsSearchGetAsync(string districts, string project, bool? hasRequests, bool? hasHires, string status, string projectNumber)
         {
             int?[] districtTokens = ParseIntArray(districts);
 
             // default search results must be limited to user
             int? districtId = _context.GetDistrictIdByUserId(GetCurrentUserId()).Single();
 
-            IQueryable<Project> data = _context.Projects.AsNoTracking()
-                .Where(x => x.DistrictId.Equals(districtId))
+            IQueryable<Project> data = _context.Projects.AsNoTracking()                
                 .Include(x => x.District.Region)
                 .Include(x => x.PrimaryContact)
                 .Include(x => x.RentalAgreements)
                 .Include(x => x.RentalRequests)
-                .Select(x => x);
+                .Where(x => x.DistrictId.Equals(districtId));
 
+            // **********************************************************************
+            // filter results based on search critera
+            // **********************************************************************
             if (districtTokens != null && districts.Length > 0)
             {
                 data = data.Where(x => districtTokens.Contains(x.District.Id));
@@ -390,26 +393,27 @@ namespace HETSAPI.Services.Impl
                 data = data.Where(x => x.Name.ToLowerInvariant().Contains(project.ToLowerInvariant()));
             }
 
+            if (status != null)
+            {
+                data = data.Where(x => String.Equals(x.Status, status, StringComparison.CurrentCultureIgnoreCase));
+            }
+
+            // project number
+            if (projectNumber != null)
+            {
+                // allow for case insensitive search of project name
+                data = data.Where(x => x.ProvincialProjectNumber.ToLowerInvariant().Contains(project.ToLowerInvariant()));
+            }
+
+            // **********************************************************************
+            // convert Project Model to View Model
+            // **********************************************************************
             List<ProjectSearchResultViewModel> result = new List<ProjectSearchResultViewModel>();
 
             foreach (Project item in data)
             {
-                item.ToViewModel();
                 result.Add(item.ToViewModel());
-            }
-
-            // second pass to do calculated fields.
-            foreach (ProjectSearchResultViewModel projectSearchResultViewModel in result)
-            {
-                // calculated fields.
-                projectSearchResultViewModel.Requests = _context.RentalRequests
-                    .Include(x => x.Project)
-                    .Count(x => x.Project.Id == projectSearchResultViewModel.Id);
-
-                projectSearchResultViewModel.Hires = _context.RentalAgreements
-                    .Include(x => x.Project)
-                    .Count(x => x.Project.Id == projectSearchResultViewModel.Id);
-            }
+            }            
 
             return new ObjectResult(new HetsResponse(result));
         }

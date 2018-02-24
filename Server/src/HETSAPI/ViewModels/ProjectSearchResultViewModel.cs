@@ -1,4 +1,6 @@
 using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 using System.Runtime.Serialization;
 using Newtonsoft.Json;
@@ -29,8 +31,11 @@ namespace HETSAPI.ViewModels
         /// <param name="hires">count of RentalAgreement.status is Active for the project.</param>
         /// <param name="requests">count of RentalRequest.status is Active for the project.</param>
         /// <param name="status">Project status.</param>
+        /// <param name="rentalRequests">The Rental Requests associated with this Project.</param>
+        /// <param name="rentalAgreements">The Rental Agreements associated with this Project.</param>
         public ProjectSearchResultViewModel(int id, District district = null, string name = null, Contact primaryContact = null, 
-            int? hires = null, int? requests = null, string status = null)
+            int? hires = null, int? requests = null, string status = null, List<RentalRequest> rentalRequests = null, 
+            List<RentalAgreement> rentalAgreements = null)
         {   
             Id = id;
             District = district;
@@ -39,6 +44,24 @@ namespace HETSAPI.ViewModels
             Hires = hires;
             Requests = requests;
             Status = status;
+            RentalRequests = rentalRequests;
+            RentalAgreements = rentalAgreements;
+        }
+
+        /// <summary>
+        /// Function to count rental requests
+        /// </summary>
+        public void CountRequests()
+        {
+            Requests = RentalRequests.Count;
+        }
+
+        /// <summary>
+        /// Function to count rental agreements
+        /// </summary>
+        public void CountHires()
+        {
+            Hires = RentalAgreements.Count;
         }
 
         /// <summary>
@@ -90,6 +113,20 @@ namespace HETSAPI.ViewModels
         public string Status { get; set; }
 
         /// <summary>
+        /// The Rental Requests associated with this Project
+        /// </summary>
+        /// <value>The Rental Requests associated with this Project</value>
+        [MetaData(Description = "The Rental Requests associated with this Project")]
+        public List<RentalRequest> RentalRequests { get; set; }
+
+        /// <summary>
+        /// The Rental Agreements associated with this Project
+        /// </summary>
+        /// <value>The Rental Agreements associated with this Project</value>
+        [MetaData(Description = "The Rental Agreements associated with this Project")]
+        public List<RentalAgreement> RentalAgreements { get; set; }
+
+        /// <summary>
         /// Returns the string presentation of the object
         /// </summary>
         /// <returns>String presentation of the object</returns>
@@ -105,6 +142,8 @@ namespace HETSAPI.ViewModels
             sb.Append("  Hires: ").Append(Hires).Append("\n");
             sb.Append("  Requests: ").Append(Requests).Append("\n");
             sb.Append("  Status: ").Append(Status).Append("\n");
+            sb.Append("  RentalRequests: ").Append(RentalRequests).Append("\n");
+            sb.Append("  RentalAgreements: ").Append(RentalAgreements).Append("\n");
             sb.Append("}\n");
 
             return sb.ToString();
@@ -175,6 +214,16 @@ namespace HETSAPI.ViewModels
                     Status == other.Status ||
                     Status != null &&
                     Status.Equals(other.Status)
+                ) &&
+                (
+                    RentalRequests == other.RentalRequests ||
+                    RentalRequests != null &&
+                    RentalRequests.SequenceEqual(other.RentalRequests)
+                ) &&
+                (
+                    RentalAgreements == other.RentalAgreements ||
+                    RentalAgreements != null &&
+                    RentalAgreements.SequenceEqual(other.RentalAgreements)
                 );
         }
 
@@ -220,8 +269,18 @@ namespace HETSAPI.ViewModels
                 if (Status != null)
                 {
                     hash = hash * 59 + Status.GetHashCode();
-                }                
-                
+                }
+
+                if (RentalRequests != null)
+                {
+                    hash = hash * 59 + RentalRequests.GetHashCode();
+                }
+
+                if (RentalAgreements != null)
+                {
+                    hash = hash * 59 + RentalAgreements.GetHashCode();
+                }
+
                 return hash;
             }
         }

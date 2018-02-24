@@ -354,9 +354,19 @@ namespace HETSAPI.Mappings
             if (model != null)
             {
                 dto.Id = model.Id;
+                dto.Status = model.Status;
                 dto.Name = model.Name;
                 dto.PrimaryContact = model.PrimaryContact;
                 dto.District= model.District;
+                dto.RentalRequests = model.RentalRequests;
+                dto.RentalAgreements = model.RentalAgreements;
+
+                // calculate request and hire count
+                dto.CountRequests();                
+                dto.CountHires();
+
+                dto.RentalRequests = null;
+                dto.RentalAgreements = null;
             }
             return dto;         
         }
