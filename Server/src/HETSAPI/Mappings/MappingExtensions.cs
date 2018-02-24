@@ -393,6 +393,7 @@ namespace HETSAPI.Mappings
                 dto.Make = model.Make;
                 dto.Model = model.Model;
                 dto.Notes = model.Notes;
+                dto.RentalAgreements = model.RentalAgreements;
                 dto.Operator = model.Operator;
                 dto.Owner = model.Owner;
                 dto.PayRate = model.PayRate;
@@ -414,6 +415,9 @@ namespace HETSAPI.Mappings
 
                 // calculate "seniority sort order" & round the seniority value (3 decimal places)
                 dto.CalculateSenioritySortOrder();
+                dto.CheckIsHired();
+
+                dto.RentalAgreements = null;
             }
 
             return dto;

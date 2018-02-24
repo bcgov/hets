@@ -487,7 +487,7 @@ namespace HETSAPI.Services.Impl
             int? owner, string status, bool? hired, DateTime? notverifiedsincedate)
         {
             int?[] localareasArray = ParseIntArray(localareas);
-            int?[] typesArray = ParseIntArray(types);
+            int?[] typesArray = ParseIntArray(types);            
 
             // **********************************************************************
             // get initial resultset - results must be limited to user's dsitrict
@@ -495,13 +495,13 @@ namespace HETSAPI.Services.Impl
             int? districtId = _context.GetDistrictIdByUserId(GetCurrentUserId()).Single();
 
             IQueryable<Equipment> data = _context.Equipments.AsNoTracking()
-                .Where(x => x.LocalArea.ServiceArea.DistrictId.Equals(districtId))
                 .Include(x => x.LocalArea)
                 .Include(x => x.DistrictEquipmentType)
-                    .ThenInclude(y => y.EquipmentType)
+                .ThenInclude(y => y.EquipmentType)
                 .Include(x => x.Owner)
-                .Include(x => x.EquipmentAttachments)                
-                .Select(x => x);
+                .Include(x => x.EquipmentAttachments)
+                .Include(x => x.RentalAgreements)
+                .Where(x => x.LocalArea.ServiceArea.DistrictId.Equals(districtId));                
 
             // **********************************************************************
             // filter results based on search critera
@@ -526,13 +526,14 @@ namespace HETSAPI.Services.Impl
                 data = data.Where(x => String.Equals(x.Status, status, StringComparison.CurrentCultureIgnoreCase));
             }
 
-            // is the equipment is hired (search criteria)
+            // is the equipment hired (search criteria)
             if (hired == true)
             {
                 IQueryable<int?> hiredEquipmentQuery = _context.RentalAgreements
-                                    .Where(agreement => agreement.Status == "Active")
-                                    .Select(agreement => agreement.EquipmentId)
-                                    .Distinct();
+                    .Where(x => x.Equipment.LocalArea.ServiceArea.DistrictId.Equals(districtId))
+                    .Where(agreement => agreement.Status == "Active")
+                    .Select(agreement => agreement.EquipmentId)
+                    .Distinct();
 
                 data = data.Where(e => hiredEquipmentQuery.Contains(e.Id));
             }
@@ -555,7 +556,6 @@ namespace HETSAPI.Services.Impl
             foreach (Equipment item in data)
             {
                 EquipmentViewModel newItem = item.ToViewModel();
-
                 newItem.NumberOfBlocks = GetNumberOfBlocks(item) + 1;
                 result.Add(newItem);
             }            
