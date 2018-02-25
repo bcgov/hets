@@ -44,7 +44,8 @@ var Projects = React.createClass({
       showAddDialog: false,
       search: {
         statusCode: this.props.search.statusCode || '',
-        projectName: this.props.search.projecName,
+        projectName: this.props.search.projectName,
+        projectNumber: this.props.search.projectNumber || '',
       },
       ui : {
         sortField: this.props.ui.sortField || 'name',
@@ -60,10 +61,13 @@ var Projects = React.createClass({
       searchParams.project = this.state.search.projectName;
     }
 
-    // Not yet implemented by API
-    // if (this.state.search.status) {
-    //   searchParams.status = this.state.search.statusCode;
-    // }
+    if (this.state.search.statusCode) {
+      searchParams.status = this.state.search.statusCode;
+    }
+
+    if (this.state.search.projectNumber) {
+      searchParams.projectNumber = this.state.search.projectNumber;
+    }
 
     return searchParams;
 
@@ -146,11 +150,10 @@ var Projects = React.createClass({
         <Row>
           <Col md={10}>
             <ButtonToolbar id="projects-filters">
-              <Unimplemented>
-                <DropdownControl id="statusCode" title={ this.state.search.statusCode } updateState={ this.updateSearchState } blankLine="(All)" placeholder="Status"
-                  items={[ Constant.PROJECT_STATUS_CODE_ACTIVE, Constant.PROJECT_STATUS_CODE_COMPLETED ]} />
-              </Unimplemented>
+              <DropdownControl id="statusCode" title={ this.state.search.statusCode } updateState={ this.updateSearchState } blankLine="(All)" placeholder="Status"
+                items={[ Constant.PROJECT_STATUS_CODE_ACTIVE, Constant.PROJECT_STATUS_CODE_COMPLETED ]} />
               <FormInputControl id="projectName" type="text" placeholder="Project name" value={ this.state.search.projectName } updateState={ this.updateSearchState }></FormInputControl>
+              <FormInputControl id="projectNumber" type="text" placeholder="Project number" value={ this.state.search.projectNumber } updateState={ this.updateSearchState }></FormInputControl>
               <Button id="search-button" bsStyle="primary" onClick={ this.fetch }>Search</Button>
             </ButtonToolbar>
           </Col>
