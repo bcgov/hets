@@ -55,6 +55,8 @@ namespace HETSAPI.Import
 
                 // create serializer and serialize xml file
                 XmlSerializer ser = new XmlSerializer(typeof(RotationDoc[]), new XmlRootAttribute(rootAttr));
+                ser.UnknownAttribute += ImportUtility.UnknownAttribute;
+                ser.UnknownElement += ImportUtility.UnknownElement;
                 MemoryStream memoryStream = ImportUtility.MemoryStreamGenerator(XmlFileName, OldTable, fileLocation, rootAttr);
                 RotationDoc[] legacyItems = (RotationDoc[])ser.Deserialize(memoryStream);
 
@@ -195,6 +197,8 @@ namespace HETSAPI.Import
 
                 // create serializer and serialize xml file
                 XmlSerializer ser = new XmlSerializer(typeof(ImportModels.RotationDoc[]), new XmlRootAttribute(rootAttr));
+                ser.UnknownAttribute += ImportUtility.UnknownAttribute;
+                ser.UnknownElement += ImportUtility.UnknownElement;
                 MemoryStream memoryStream = ImportUtility.MemoryStreamGenerator(XmlFileName, OldTable, sourceLocation, rootAttr);
                 ImportModels.RotationDoc[] legacyItems = (ImportModels.RotationDoc[])ser.Deserialize(memoryStream);
 

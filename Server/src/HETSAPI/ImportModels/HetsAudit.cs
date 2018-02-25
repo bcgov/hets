@@ -5,6 +5,7 @@ namespace HETSAPI.ImportModels
     /// <summary>
     /// HETS Audit Import Mapping
     /// </summary>
+    [XmlType(TypeName = "HETS_Audit")]
     public class HetsAudit
     {
         /// <summary>

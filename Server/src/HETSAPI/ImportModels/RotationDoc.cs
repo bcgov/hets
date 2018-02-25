@@ -5,6 +5,7 @@ namespace HETSAPI.ImportModels
     /// <summary>
     /// Rotation Document Import Model
     /// </summary>
+    [XmlType(TypeName = "Rotation_Doc")]
     public class RotationDoc
     {
         /// <summary>

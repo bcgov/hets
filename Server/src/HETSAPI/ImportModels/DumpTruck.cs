@@ -5,6 +5,7 @@ namespace HETSAPI.ImportModels
     /// <summary>
     /// Dump Track Import Model
     /// </summary>
+    [XmlType(TypeName = "Dump_Truck")]
     public class DumpTruck 
     {
         /// <summary>

@@ -5,6 +5,7 @@ namespace HETSAPI.ImportModels
     /// <summary>
     /// HETS City Import Mapping
     /// </summary>
+    [XmlType(TypeName = "HETS_City")]
     public class HetsCity
     {
         /// <summary>
