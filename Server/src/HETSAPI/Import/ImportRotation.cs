@@ -156,7 +156,17 @@ namespace HETSAPI.Import
             {
                 instance = new Note();
 
-                Equipment equip = equips.FirstOrDefault(x => x.Id == oldObject.Equip_Id);
+                // get the new ID.
+                var importMap = dbContext.ImportMaps.FirstOrDefault(x => x.OldKey == oldObject.Equip_Id.ToString() && x.OldTable == "Equip");
+
+
+
+                Equipment equip = null;
+
+                if (importMap != null)
+                {
+                    equip = equips.FirstOrDefault(x => x.Id == importMap.NewKey);
+                }
 
                 if (equip != null)
                 {
@@ -197,7 +207,7 @@ namespace HETSAPI.Import
 
                 // create serializer and serialize xml file
                 XmlSerializer ser = new XmlSerializer(typeof(ImportModels.RotationDoc[]), new XmlRootAttribute(rootAttr));
-                ser.UnknownAttribute += ImportUtility.UnknownAttribute;
+                                ser.UnknownAttribute += ImportUtility.UnknownAttribute;
                 ser.UnknownElement += ImportUtility.UnknownElement;
                 MemoryStream memoryStream = ImportUtility.MemoryStreamGenerator(XmlFileName, OldTable, sourceLocation, rootAttr);
                 ImportModels.RotationDoc[] legacyItems = (ImportModels.RotationDoc[])ser.Deserialize(memoryStream);

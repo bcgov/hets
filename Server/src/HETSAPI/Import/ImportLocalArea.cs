@@ -200,6 +200,7 @@ namespace HETSAPI.Import
             {
                 isNew = true;
                 localArea = new LocalArea {Id = oldObject.Area_Id};
+                localArea.LocalAreaNumber = oldObject.Area_Id;
             }
 
             try
