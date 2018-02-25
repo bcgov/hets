@@ -204,15 +204,23 @@ namespace HETSAPI.Import
 
                 if (oldObject.Area_Id != null)
                 {
-                    LocalArea area = dbContext.LocalAreas.FirstOrDefault(x => x.Id == oldObject.Area_Id);
+                    LocalArea area = dbContext.LocalAreas.FirstOrDefault(x => x.LocalAreaNumber == oldObject.Area_Id);
                     if (area != null)
                         instance.LocalArea = area;
                 }
 
                 if (oldObject.Equip_Type_Id != null)
                 {
+                    // get the new ID for the Equip Type.
+                    var importMap = dbContext.ImportMaps.FirstOrDefault(x => x.OldKey == oldObject.Equip_Type_Id.ToString() && x.OldTable == "EquipType");
+
                     //Equipment_TYPE_ID is copied to the table of HET_DISTRICT_DISTRICT_TYPE as key
-                    DistrictEquipmentType equipType = dbContext.DistrictEquipmentTypes.FirstOrDefault(x => x.Id == oldObject.Equip_Type_Id);
+                    DistrictEquipmentType equipType = null;
+
+                    if (importMap != null)
+                    {
+                        equipType = dbContext.DistrictEquipmentTypes.FirstOrDefault(x => x.EquipmentTypeId == importMap.NewKey);
+                    }
 
                     if (equipType != null)
                     {

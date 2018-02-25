@@ -6,7 +6,7 @@ using System.Linq;
 using System.Xml.Serialization;
 using Hangfire.Console.Progress;
 using HETSAPI.Models;
-using Service_Area = HETSAPI.ImportModels.Service_Area;
+using ServiceArea = HETSAPI.ImportModels.ServiceArea;
 
 namespace HETSAPI.Import
 {
@@ -46,13 +46,13 @@ namespace HETSAPI.Import
                 progress.SetValue(0);
 
                 // create serializer and serialize xml file
-                XmlSerializer ser = new XmlSerializer(typeof(ImportModels.Service_Area[]), new XmlRootAttribute(rootAttr));
+                XmlSerializer ser = new XmlSerializer(typeof(ImportModels.ServiceArea[]), new XmlRootAttribute(rootAttr));
                 ser.UnknownAttribute += ImportUtility.UnknownAttribute;
                 ser.UnknownElement += ImportUtility.UnknownElement;
                 MemoryStream memoryStream = ImportUtility.MemoryStreamGenerator(XmlFileName, OldTable, fileLocation, rootAttr);
-                ImportModels.Service_Area[] legacyItems = (ImportModels.Service_Area[])ser.Deserialize(memoryStream);
+                ImportModels.ServiceArea[] legacyItems = (ImportModels.ServiceArea[])ser.Deserialize(memoryStream);
 
-                foreach (ImportModels.Service_Area item in legacyItems.WithProgress(progress))
+                foreach (ImportModels.ServiceArea item in legacyItems.WithProgress(progress))
                 {
                     // see if we have this one already
                     importMap = dbContext.ImportMaps.FirstOrDefault(x => x.OldTable == OldTable && x.OldKey == item.Service_Area_Id.ToString());
@@ -110,7 +110,7 @@ namespace HETSAPI.Import
         /// <param name="oldObject"></param>
         /// <param name="serviceArea"></param>
         /// <param name="systemId"></param>
-        private static void CopyToInstance(PerformContext performContext, DbAppContext dbContext, Service_Area oldObject, ref Models.ServiceArea serviceArea, string systemId)
+        private static void CopyToInstance(PerformContext performContext, DbAppContext dbContext, ServiceArea oldObject, ref Models.ServiceArea serviceArea, string systemId)
         {
             bool isNew = false;
 
@@ -178,13 +178,13 @@ namespace HETSAPI.Import
                 progress.SetValue(0);
 
                 // create serializer and serialize xml file
-                XmlSerializer ser = new XmlSerializer(typeof(ImportModels.Service_Area[]), new XmlRootAttribute(rootAttr));
+                XmlSerializer ser = new XmlSerializer(typeof(ImportModels.ServiceArea[]), new XmlRootAttribute(rootAttr));
                 ser.UnknownAttribute += ImportUtility.UnknownAttribute;
                 ser.UnknownElement += ImportUtility.UnknownElement;
                 MemoryStream memoryStream = ImportUtility.MemoryStreamGenerator(XmlFileName, OldTable, sourceLocation, rootAttr);
-                ImportModels.Service_Area[] legacyItems = (ImportModels.Service_Area[])ser.Deserialize(memoryStream);
+                ImportModels.ServiceArea[] legacyItems = (ImportModels.ServiceArea[])ser.Deserialize(memoryStream);
 
-                foreach (Service_Area item in legacyItems.WithProgress(progress))
+                foreach (ServiceArea item in legacyItems.WithProgress(progress))
                 {
                     item.Created_By = systemId;
                 }

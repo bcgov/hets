@@ -151,7 +151,7 @@ namespace HETSAPI.Import
                 {
                     Id = oldObject.Equip_Type_Id,
                     IsDumpTruck = false
-                };
+                };                
 
                 try
                 {

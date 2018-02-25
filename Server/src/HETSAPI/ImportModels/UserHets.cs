@@ -5,7 +5,7 @@ namespace HETSAPI.ImportModels
     /// <summary>
     /// HETS User Import Model
     /// </summary>
-    [XmlRoot("UserHETS")]
+    [XmlType(TypeName = "User_HETS")]
     public class UserHETS
     {
         // <User_HETS><Popt_ID>2927873</Popt_ID>

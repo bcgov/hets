@@ -166,7 +166,16 @@ namespace HETSAPI.Import
                 instance = new EquipmentAttachment();
                 int equipId = oldObject.Equip_Id ?? -1;
 
-                Equipment equipment = equips.FirstOrDefault(x => x.Id == equipId);
+                // get the new ID.
+                var importMap = dbContext.ImportMaps.FirstOrDefault(x => x.OldKey == oldObject.Equip_Id.ToString() && x.OldTable == "Equip");
+                
+                Equipment equipment = null;
+                if (importMap != null)
+                {
+                    equipment = equips.FirstOrDefault(x => x.Id == importMap.NewKey);
+                }
+
+                
                 if (equipment != null)
                 {
                     instance.Equipment = equipment;

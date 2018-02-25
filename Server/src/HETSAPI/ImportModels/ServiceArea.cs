@@ -5,7 +5,8 @@ namespace HETSAPI.ImportModels
     /// <summary>
     /// Service Area Import Model
     /// </summary>
-    public class Service_Area
+    [XmlType(TypeName = "Service_Area")]    
+    public class ServiceArea
     {
         /// <summary>
         /// Service Area Id
