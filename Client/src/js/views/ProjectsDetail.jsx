@@ -438,6 +438,7 @@ var ProjectsDetail = React.createClass({
                 return <TableControl id="equipment-list" headers={ headers }>
                   {
                     _.map(combinedList, (listItem) => {
+                      console.log(listItem);
                       if (listItem.isRentalRequest) {
                         return <RentalRequestListItem item={ listItem } project={ project } />;
                       } else {
