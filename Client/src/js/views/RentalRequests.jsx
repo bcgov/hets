@@ -224,7 +224,7 @@ var RentalRequests = React.createClass({
                 <MultiDropdown id="selectedLocalAreasIds" placeholder="Local Areas"
                   items={ localAreas } selectedIds={ this.state.search.selectedLocalAreasIds } updateState={ this.updateSearchState } showMaxItems={ 2 } />
                 <DropdownControl id="status" title={ this.state.search.status } updateState={ this.updateSearchState } blankLine="(All)" placeholder="Status"
-                    items={[ Constant.RENTAL_REQUEST_STATUS_CODE_IN_PROGRESS, Constant.RENTAL_REQUEST_STATUS_CODE_COMPLETED, Constant.RENTAL_REQUEST_STATUS_CODE_CANCELLED ]} />
+                    items={[ Constant.RENTAL_REQUEST_STATUS_CODE_IN_PROGRESS, Constant.RENTAL_REQUEST_STATUS_CODE_COMPLETED ]} />
                 <FormInputControl id="projectName" type="text" placeholder="Project name" value={ this.state.search.projectName } updateState={ this.updateSearchState }></FormInputControl>
               </ButtonToolbar>
             </Row>
@@ -285,7 +285,7 @@ var RentalRequests = React.createClass({
               return <tr key={ request.id } className={ request.isActive ? null : 'info' }>
                 <td>{ request.localAreaName }</td>
                 <td style={{ textAlign: 'center' }}>{ request.equipmentCount }</td>
-                <td>{ request.equipmentTypeName }</td>
+                <td>{ request.districtEquipmentType.districtEquipmentName }</td>
                 <td style={{ textAlign: 'center' }}>{ formatDateTime(request.expectedStartDate, Constant.DATE_YEAR_SHORT_MONTH_DAY) }</td>
                 <td style={{ textAlign: 'center' }}>{ formatDateTime(request.expectedEndDate, Constant.DATE_YEAR_SHORT_MONTH_DAY) }</td>
                 <td>
