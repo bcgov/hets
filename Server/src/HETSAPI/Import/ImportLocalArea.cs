@@ -40,7 +40,7 @@ namespace HETSAPI.Import
             if (startPoint == BCBidImport.SigId)    // this means the import job it has done today is complete for all the records in the xml file.
             {
                 performContext.WriteLine("*** Importing " + XmlFileName + " is complete from the former process ***");
-                //return;
+                return;
             }
 
             try
@@ -62,7 +62,7 @@ namespace HETSAPI.Import
                 // skip the portion already processed
                 if (startPoint > 0)    
                 {
-                    //legacyItems = legacyItems.Skip(ii).ToArray();
+                    legacyItems = legacyItems.Skip(ii).ToArray();
                 }
 
                 foreach (Area item in legacyItems.WithProgress(progress))
