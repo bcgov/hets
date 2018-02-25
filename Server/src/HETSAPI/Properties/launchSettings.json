@@ -12,10 +12,17 @@
       "commandName": "IISExpress",
       "launchBrowser": true,
       "environmentVariables": {
-        "ASPNETCORE_ENVIRONMENT": "Development",
-        "DATABASE_SERVICE_NAME": "localhost",
+        "Key": "Value",
+        "UpdateLocalDb": "true",
+        "POSTGRESQL_PASSWORD2": "3fvOLn2TmCTAg5o5",
+        "RegionInitializationFile": "/secrets/regions.json",
+        "POSTGRESQL_USER2": "userGE5",
+        "DistrictInitializationFile": "/secrets/districts.json",
         "POSTGRESQL_DATABASE": "hets",
+        "ASPNETCORE_ENVIRONMENT": "Development",
         "POSTGRESQL_USER": "user6DA",
+        "DATABASE_SERVICE_NAME": "localhost",
+        "UserInitializationFile": "/secrets/users.json",
         "POSTGRESQL_PASSWORD": "IhUFdcC0wGJeIMDJ"
       }
     }

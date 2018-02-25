@@ -54,6 +54,9 @@ namespace HETSAPI.Import
 
                 // create serializer and serialize xml file
                 XmlSerializer ser = new XmlSerializer(typeof(Project[]), new XmlRootAttribute(rootAttr));
+                ser.UnknownAttribute += ImportUtility.UnknownAttribute;
+                ser.UnknownElement += ImportUtility.UnknownElement;
+
                 MemoryStream memoryStream = ImportUtility.MemoryStreamGenerator(XmlFileName, OldTable, fileLocation, rootAttr);
                 Project[] legacyItems = (Project[])ser.Deserialize(memoryStream);
 
@@ -161,7 +164,7 @@ namespace HETSAPI.Import
                     try
                     {   //4 properties
                         instance.ProvincialProjectNumber = oldObject.Project_Num;
-                        ServiceArea serviceArea = dbContext.ServiceAreas.FirstOrDefault(x => x.Id == oldObject.Service_Area_Id);
+                        ServiceArea serviceArea = dbContext.ServiceAreas.FirstOrDefault(x => x.MinistryServiceAreaID == oldObject.Service_Area_Id);
                         District dis = null;
 
                         if (serviceArea != null && serviceArea.DistrictId != null)
@@ -295,7 +298,7 @@ namespace HETSAPI.Import
 
                     item.Project_Num = newProjectNum;
                     item.Job_Desc1 = ImportUtility.ScrambleString(item.Job_Desc1);
-                    item.Job_Desc1 = ImportUtility.ScrambleString(item.Job_Desc1);
+                    item.Job_Desc2 = ImportUtility.ScrambleString(item.Job_Desc2);
                     
                 }
 
