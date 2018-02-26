@@ -1747,6 +1747,24 @@ export function getDistrictEquipmentTypes(districtId) {
   });
 }
 
+export function addDistrictEquipmentType(equipment) {
+  return new ApiRequest(`/districtequipmenttypes/${equipment.id}`).post(equipment).then(response => {
+    return response;
+  });
+}
+
+export function updateDistrictEquipmentType(equipment) {
+  return new ApiRequest(`/districtequipmenttypes/${equipment.id}`).post(equipment).then(response => {
+    return response;
+  });
+}
+
+export function deleteDistrictEquipmentType(equipment) {
+  return new ApiRequest(`/districtequipmenttypes/${equipment.id}/delete`).post().then(response => {
+    return response;
+  });
+}
+
 export function getGroups() {
   return new ApiRequest('/groups').get().then(response => {
     var groups = normalize(response.data);

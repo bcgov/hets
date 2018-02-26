@@ -5,7 +5,7 @@ import { Form, FormGroup, HelpBlock, ControlLabel } from 'react-bootstrap';
 import EditDialog from '../../components/EditDialog.jsx';
 import FormInputControl from '../../components/FormInputControl.jsx';
 
-var ConditionAddDialog = React.createClass({
+var ConditionAddEditDialog = React.createClass({
   propTypes: {
     onSave: React.PropTypes.func.isRequired,
     onClose: React.PropTypes.func.isRequired,
@@ -30,8 +30,10 @@ var ConditionAddDialog = React.createClass({
   },
 
   didChange() {
-    if (this.state.typeCode !== '') { return true; }
-    if (this.state.description !== '') { return true; }
+    if (this.state.isNew && this.state.typeCode !== '') { return true; }
+    if (this.state.isNew && this.state.description !== '') { return true; }
+    if (!this.state.isNew && this.state.typeCode !== this.props.condition.conditionTypeCode) { return true; }
+    if (!this.state.isNew && this.state.description !== this.props.condition.description) { return true; }
 
     return false;
   },
@@ -74,12 +76,12 @@ var ConditionAddDialog = React.createClass({
       }>
       <Form>
         <FormGroup controlId="typeCode" validationState={ this.state.typeCodeError ? 'error' : null }>
-          <ControlLabel>Type Code</ControlLabel>
+          <ControlLabel>Type Code <sup>*</sup></ControlLabel>
           <FormInputControl type="text" value={ this.state.typeCode } updateState={ this.updateState }/>
           <HelpBlock>{ this.state.typeCodeError }</HelpBlock>
         </FormGroup>
         <FormGroup controlId="description" validationState={ this.state.descriptionError ? 'error' : null }>
-          <ControlLabel>Description</ControlLabel>
+          <ControlLabel>Description <sup>*</sup></ControlLabel>
           <FormInputControl type="text" value={ this.state.description } updateState={ this.updateState }/>
           <HelpBlock>{ this.state.descriptionError }</HelpBlock>
         </FormGroup>
@@ -88,4 +90,4 @@ var ConditionAddDialog = React.createClass({
   },
 });
 
-export default ConditionAddDialog;
+export default ConditionAddEditDialog;
