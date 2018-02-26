@@ -41,28 +41,24 @@ export default function startApp() {
     Api.setDevUser(process.env.DEV_USER); //eslint-disable-line
   }
   incrementProgressBar(5);
-  // Load groups so we can check for membership
-  Api.getGroups().then(() => {
-    incrementProgressBar(25);
-    // Load current user next.
-    return Api.getCurrentUser().then(() => {
-      incrementProgressBar(50);
-      // Check permissions?
+  // Load current user next.
+  Api.getCurrentUser().then(() => {
+    incrementProgressBar(33);
+    // Check permissions?
 
-      // Get lookups.
-      var citiesPromise = Api.getCities();
-      var districtsPromise = Api.getDistricts();
-      var regionsPromise = Api.getRegions();
-      var serviceAreasPromise = Api.getServiceAreas();
-      var localAreasPromise = Api.getLocalAreas();
-      var permissionsPromise = Api.getPermissions();
+    // Get lookups.
+    var citiesPromise = Api.getCities();
+    var districtsPromise = Api.getDistricts();
+    var regionsPromise = Api.getRegions();
+    var serviceAreasPromise = Api.getServiceAreas();
+    var localAreasPromise = Api.getLocalAreas();
+    var permissionsPromise = Api.getPermissions();
 
-      return Promise.all([citiesPromise, districtsPromise, regionsPromise, serviceAreasPromise, localAreasPromise, permissionsPromise]).then(() => {
-        incrementProgressBar(75);
-        // Wrapping in a setTimeout to silence an error from Bluebird's promise lib about API requests
-        // made inside of component{Will,Did}Mount.
-        setTimeout(renderApp, 0);
-      });
+    return Promise.all([citiesPromise, districtsPromise, regionsPromise, serviceAreasPromise, localAreasPromise, permissionsPromise]).then(() => {
+      incrementProgressBar(66);
+      // Wrapping in a setTimeout to silence an error from Bluebird's promise lib about API requests
+      // made inside of component{Will,Did}Mount.
+      setTimeout(renderApp, 0);
     });
   }).catch(err => {
     showError(err);
