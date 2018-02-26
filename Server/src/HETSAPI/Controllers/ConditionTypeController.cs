@@ -44,6 +44,7 @@ namespace HETSAPI.Controllers
         [HttpGet]
         [Route("/api/conditiontypes")]
         [SwaggerOperation("ConditionTypesGet")]
+        [RequiresPermission(Permission.Admin)]
         [SwaggerResponse(200, type: typeof(List<ConditionType>))]
         public virtual IActionResult ConditionTypesGet()
         {
@@ -59,6 +60,7 @@ namespace HETSAPI.Controllers
         [Route("/api/conditiontypes/{id}")]
         [SwaggerOperation("ConditionTypesIdGet")]
         [SwaggerResponse(200, type: typeof(ConditionType))]
+        [RequiresPermission(Permission.Login)]
         public virtual IActionResult ConditionTypesIdGet([FromRoute]int id)
         {
             return _service.ConditionTypesIdGetAsync(id);
@@ -74,6 +76,7 @@ namespace HETSAPI.Controllers
         [Route("/api/conditiontypes/{id}")]
         [SwaggerOperation("ConditionTypesIdPost")]
         [SwaggerResponse(200, type: typeof(ConditionType))]
+        [RequiresPermission(Permission.DistrictCodeTableManagement)]
         public virtual IActionResult ConditionTypesIdPost([FromRoute]int id, [FromBody]ConditionType item)
         {
             return _service.ConditionTypesIdPostAsync(id, item);

@@ -105,6 +105,5 @@ namespace HETSAPI.Controllers
         {
             return await _service.GetSpreadsheet(path, "UserHETS.xlsx");
         }
-
     }
 }

@@ -1,5 +1,6 @@
 using Microsoft.AspNetCore.Mvc;
 using System.Collections.Generic;
+using HETSAPI.Authorization;
 using Swashbuckle.AspNetCore.SwaggerGen;
 using HETSAPI.Models;
 using HETSAPI.ViewModels;
@@ -34,6 +35,7 @@ namespace HETSAPI.Controllers
         [Route("/api/users/current/favourites/{favouritetype}")]
         [SwaggerOperation("UsersCurrentFavouritesFavouriteTypeGet")]
         [SwaggerResponse(200, type: typeof(List<UserFavourite>))]
+        [RequiresPermission(Permission.Login)]
         public virtual IActionResult UsersCurrentFavouritesFavouriteTypeGet([FromRoute]string favouritetype)
         {
             return _service.UsersCurrentFavouritesFavouritetypeGetAsync(favouritetype);
@@ -48,6 +50,7 @@ namespace HETSAPI.Controllers
         [HttpPost]
         [Route("/api/users/current/favourites/{id}/delete")]
         [SwaggerOperation("UsersCurrentFavouritesIdDeletePost")]
+        [RequiresPermission(Permission.Login)]
         public virtual IActionResult UsersCurrentFavouritesIdDeletePost([FromRoute]int id)
         {
             return _service.UsersCurrentFavouritesIdDeletePostAsync(id);
@@ -63,6 +66,7 @@ namespace HETSAPI.Controllers
         [Route("/api/users/current/favourites")]
         [SwaggerOperation("UsersCurrentFavouritesPost")]
         [SwaggerResponse(200, type: typeof(UserFavourite))]
+        [RequiresPermission(Permission.Login)]
         public virtual IActionResult UsersCurrentFavouritesPost([FromBody]UserFavourite item)
         {
             return _service.UsersCurrentFavouritesPostAsync(item);
@@ -78,6 +82,7 @@ namespace HETSAPI.Controllers
         [Route("/api/users/current/favourites")]
         [SwaggerOperation("UsersCurrentFavouritesPut")]
         [SwaggerResponse(200, type: typeof(UserFavourite))]
+        [RequiresPermission(Permission.Login)]
         public virtual IActionResult UsersCurrentFavouritesPut([FromBody]UserFavourite item)
         {
             return _service.UsersCurrentFavouritesPutAsync(item);
@@ -92,6 +97,7 @@ namespace HETSAPI.Controllers
         [Route("/api/users/current")]
         [SwaggerOperation("UsersCurrentGet")]
         [SwaggerResponse(200, type: typeof(CurrentUserViewModel))]
+        [RequiresPermission(Permission.Login)]
         public virtual IActionResult UsersCurrentGet()
         {
             return _service.UsersCurrentGetAsync();
