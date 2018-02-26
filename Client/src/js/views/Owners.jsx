@@ -23,14 +23,6 @@ import FilterDropdown from '../components/FilterDropdown.jsx';
 import MultiDropdown from '../components/MultiDropdown.jsx';
 import SortTable from '../components/SortTable.jsx';
 import Spinner from '../components/Spinner.jsx';
-import Unimplemented from '../components/Unimplemented.jsx';
-
-/*
-
-TODO:
-* Print / Email / Verify
-
-*/
 
 var Owners = React.createClass({
   propTypes: {
@@ -147,11 +139,7 @@ var Owners = React.createClass({
       });
     });
   },
-
-  email() {
-
-  },
-
+  
   print() {
     window.print();
   },
@@ -209,9 +197,6 @@ var Owners = React.createClass({
         <div id="owners-buttons">
           <Button onClick={ this.verifyOwners.bind(this, ownerList) }>Status Letters</Button>
           <ButtonGroup>
-            <Unimplemented>
-              <Button onClick={ this.email }><Glyphicon glyph="envelope" title="E-mail" /></Button>
-            </Unimplemented>
             <Button onClick={ this.print }><Glyphicon glyph="print" title="Print" /></Button>
           </ButtonGroup>
         </div>

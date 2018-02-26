@@ -18,8 +18,6 @@ import OverlayTrigger from '../components/OverlayTrigger.jsx';
 import SearchControl from '../components/SearchControl.jsx';
 import SortTable from '../components/SortTable.jsx';
 import Spinner from '../components/Spinner.jsx';
-import Unimplemented from '../components/Unimplemented.jsx';
-
 
 var Roles = React.createClass({
   propTypes: {
@@ -77,10 +75,6 @@ var Roles = React.createClass({
     });
   },
 
-  email() {
-
-  },
-
   print() {
     window.print();
   },
@@ -97,9 +91,6 @@ var Roles = React.createClass({
     return <div id="roles-list">
       <PageHeader>Roles ({ numRoles })
         <ButtonGroup id="roles-buttons">
-          <Unimplemented>
-            <Button onClick={ this.email }><Glyphicon glyph="envelope" title="E-mail" /></Button>
-          </Unimplemented>
           <Button onClick={ this.print }><Glyphicon glyph="print" title="Print" /></Button>
         </ButtonGroup>
       </PageHeader>
