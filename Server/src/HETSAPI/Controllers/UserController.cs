@@ -23,21 +23,7 @@ namespace HETSAPI.Controllers
         {
             _service = service;
         }
-
-        /// <summary>
-        /// Create bulk user group records
-        /// </summary>
-        /// <param name="items"></param>
-        /// <response code="201">User created</response>
-        [HttpPost]
-        [Route("/api/usergroups/bulk")]
-        [SwaggerOperation("UsergroupsBulkPost")]
-        [RequiresPermission(Permission.Admin)]
-        public virtual IActionResult UsergroupsBulkPost([FromBody]GroupMembership[] items)
-        {
-            return _service.UsergroupsBulkPostAsync(items);
-        }
-
+        
         /// <summary>
         /// Create bulk users
         /// </summary>
@@ -109,59 +95,7 @@ namespace HETSAPI.Controllers
         public virtual IActionResult UsersIdGet([FromRoute]int id)
         {
             return _service.UsersIdGetAsync(id);
-        }
-
-        /// <summary>
-        /// Get all groups for a user
-        /// </summary>
-        /// <remarks>Returns all groups that a user is a member of</remarks>
-        /// <param name="id">id of User to fetch</param>
-        /// <response code="200">OK</response>
-        /// <response code="404">User not found</response>
-        [HttpGet]
-        [Route("/api/users/{id}/groups")]
-        [SwaggerOperation("UsersIdGroupsGet")]
-        [SwaggerResponse(200, type: typeof(List<GroupMembershipViewModel>))]
-        public virtual IActionResult UsersIdGroupsGet([FromRoute]int id)
-        {
-            return _service.UsersIdGroupsGetAsync(id);
-        }
-
-        /// <summary>
-        /// Add a user to a group
-        /// </summary>
-        /// <remarks>Add to the active set of groups for a user</remarks>
-        /// <param name="id">id of User to update</param>
-        /// <param name="item"></param>
-        /// <response code="200">OK</response>
-        /// <response code="404">User not found</response>
-        [HttpPost]
-        [Route("/api/users/{id}/groups")]
-        [SwaggerOperation("UsersIdGroupsPost")]
-        [SwaggerResponse(200, type: typeof(List<GroupMembershipViewModel>))]
-        [RequiresPermission(Permission.Admin)]
-        public virtual IActionResult UsersIdGroupsPost([FromRoute]int id, [FromBody]GroupMembershipViewModel item)
-        {
-            return _service.UsersIdGroupsPostAsync(id, item);
-        }
-
-        /// <summary>
-        /// Update groups associated with a user
-        /// </summary>
-        /// <remarks>Updates the active set of groups for a user</remarks>
-        /// <param name="id">id of User to update</param>
-        /// <param name="items"></param>
-        /// <response code="200">OK</response>
-        /// <response code="404">User not found</response>
-        [HttpPut]
-        [Route("/api/users/{id}/groups")]
-        [SwaggerOperation("UsersIdGroupsPut")]
-        [SwaggerResponse(200, type: typeof(List<GroupMembershipViewModel>))]
-        [RequiresPermission(Permission.Admin)]
-        public virtual IActionResult UsersIdGroupsPut([FromRoute]int id, [FromBody]GroupMembershipViewModel[] items)
-        {
-            return _service.UsersIdGroupsPutAsync(id, items);
-        }
+        }        
 
         /// <summary>
         /// Get permissions for a user

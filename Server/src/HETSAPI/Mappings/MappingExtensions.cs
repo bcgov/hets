@@ -28,7 +28,6 @@ namespace HETSAPI.Mappings
                 dto.District = model.District;
                 dto.SmAuthorizationDirectory = model.SmAuthorizationDirectory;
                 dto.SmUserId = model.SmUserId;
-                dto.GroupMemberships = model.GroupMemberships;
                 dto.UserRoles = model.UserRoles;
             }
             return dto;
@@ -252,7 +251,6 @@ namespace HETSAPI.Mappings
                 dto.Surname = model.Surname;
                 dto.Id = model.Id;
                 dto.District = model.District;
-                dto.GroupMemberships = model.GroupMemberships;
                 dto.UserRoles = model.UserRoles;
             }
             return dto;
@@ -432,49 +430,7 @@ namespace HETSAPI.Mappings
 
             return dto;
         }
-        
-        /// <summary>
-        /// Group membership view model
-        /// </summary>
-        /// <param name="model"></param>
-        /// <returns></returns>
-        public static GroupMembershipViewModel ToViewModel(this GroupMembership model)
-        {
-            var dto = new GroupMembershipViewModel();
-
-            if (model != null)
-            {
-                dto.Active = model.Active;
-                if (model.Group != null)
-                {
-                    dto.GroupId = model.Group.Id;
-                }
-                dto.UserId = model.User.Id;
-                dto.Id = model.Id;
-            }
-
-            return dto;
-        }
-
-        /// <summary>
-        /// Group view model
-        /// </summary>
-        /// <param name="model"></param>
-        /// <returns></returns>
-        public static GroupViewModel ToViewModel(this Group model)
-        {
-            GroupViewModel dto = new GroupViewModel();
-
-            if (model != null)
-            {
-                dto.Description = model.Description;
-                dto.Name = model.Name;
-                dto.Id = model.Id;
-            }
-
-            return dto;
-        }
-
+               
         /// <summary>
         /// History view model
         /// </summary>

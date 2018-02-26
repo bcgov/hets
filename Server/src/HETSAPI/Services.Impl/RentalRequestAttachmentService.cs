@@ -39,7 +39,7 @@ namespace HETSAPI.Services.Impl
             foreach (RentalRequestAttachment item in items)
             {
                 // determine if this is an insert or an update            
-                bool exists = _context.LookupLists.Any(a => a.Id == item.Id);
+                bool exists = _context.RentalRequestAttachments.Any(a => a.Id == item.Id);
                 if (exists)
                 {
                     _context.Update(item);
@@ -62,7 +62,7 @@ namespace HETSAPI.Services.Impl
         /// <response code="200">OK</response>
         public virtual IActionResult RentalrequestattachmentsGetAsync()
         {
-            List<LookupList> result = _context.LookupLists.ToList();
+            List<RentalRequestAttachment> result = _context.RentalRequestAttachments.ToList();
             return new ObjectResult(new HetsResponse(result));
         }
 
@@ -74,15 +74,15 @@ namespace HETSAPI.Services.Impl
         /// <response code="404">Rental Request Attachment not found</response>
         public virtual IActionResult RentalrequestattachmentsIdDeletePostAsync(int id)
         {
-            bool exists = _context.LookupLists.Any(a => a.Id == id);
+            bool exists = _context.RentalRequestAttachments.Any(a => a.Id == id);
 
             if (exists)
             {
-                LookupList item = _context.LookupLists.First(a => a.Id == id);
+                RentalRequestAttachment item = _context.RentalRequestAttachments.First(a => a.Id == id);
 
                 if (item != null)
                 {
-                    _context.LookupLists.Remove(item);
+                    _context.RentalRequestAttachments.Remove(item);
 
                     // save the changes
                     _context.SaveChanges();
@@ -103,11 +103,11 @@ namespace HETSAPI.Services.Impl
         /// <response code="404">Rental Request Attachment not found</response>
         public virtual IActionResult RentalrequestattachmentsIdGetAsync(int id)
         {
-            bool exists = _context.LookupLists.Any(a => a.Id == id);
+            bool exists = _context.RentalRequestAttachments.Any(a => a.Id == id);
 
             if (exists)
             {
-                LookupList result = _context.LookupLists.First(a => a.Id == id);
+                RentalRequestAttachment result = _context.RentalRequestAttachments.First(a => a.Id == id);
 
                 return new ObjectResult(new HetsResponse(result));
             }
@@ -125,7 +125,7 @@ namespace HETSAPI.Services.Impl
         /// <response code="404">Rental Request Attachment not found</response>
         public virtual IActionResult RentalrequestattachmentsIdPutAsync(int id, RentalRequestAttachment item)
         {
-            bool exists = _context.LookupLists.Any(a => a.Id == id);
+            bool exists = _context.RentalRequestAttachments.Any(a => a.Id == id);
 
             if (exists && id == item.Id)
             {

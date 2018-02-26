@@ -31,11 +31,9 @@ namespace HETSAPI.ViewModels
         /// <param name="email">Email.</param>
         /// <param name="smUserId">SmUserId.</param>
         /// <param name="userRoles">UserRoles.</param>
-        /// <param name="groupMemberships">GroupMemberships.</param>
         /// <param name="district">The District to which this User is affliated..</param>
         public UserViewModel(int id, bool active, string givenName = null, string surname = null, string email = null, 
-            string smUserId = null, List<UserRole> userRoles = null, List<GroupMembership> groupMemberships = null, 
-            District district = null)
+            string smUserId = null, List<UserRole> userRoles = null, District district = null)
         {   
             Id = id;
             Active = active;
@@ -44,7 +42,6 @@ namespace HETSAPI.ViewModels
             Email = email;
             SmUserId = smUserId;
             UserRoles = userRoles;
-            GroupMemberships = groupMemberships;
             District = district;
         }
 
@@ -91,12 +88,6 @@ namespace HETSAPI.ViewModels
         public List<UserRole> UserRoles { get; set; }
 
         /// <summary>
-        /// Gets or Sets GroupMemberships
-        /// </summary>
-        [DataMember(Name="groupMemberships")]
-        public List<GroupMembership> GroupMemberships { get; set; }
-
-        /// <summary>
         /// The District to which this User is affliated.
         /// </summary>
         /// <value>The District to which this User is affliated.</value>
@@ -120,7 +111,6 @@ namespace HETSAPI.ViewModels
             sb.Append("  Email: ").Append(Email).Append("\n");
             sb.Append("  SmUserId: ").Append(SmUserId).Append("\n");
             sb.Append("  UserRoles: ").Append(UserRoles).Append("\n");
-            sb.Append("  GroupMemberships: ").Append(GroupMemberships).Append("\n");
             sb.Append("  District: ").Append(District).Append("\n");
             sb.Append("}\n");
 
@@ -191,11 +181,6 @@ namespace HETSAPI.ViewModels
                     UserRoles == other.UserRoles ||
                     UserRoles != null &&
                     UserRoles.SequenceEqual(other.UserRoles)
-                ) && 
-                (
-                    GroupMemberships == other.GroupMemberships ||
-                    GroupMemberships != null &&
-                    GroupMemberships.SequenceEqual(other.GroupMemberships)
                 ) &&                 
                 (
                     District == other.District ||
@@ -242,11 +227,6 @@ namespace HETSAPI.ViewModels
                 if (UserRoles != null)
                 {
                     hash = hash * 59 + UserRoles.GetHashCode();
-                }
-
-                if (GroupMemberships != null)
-                {
-                    hash = hash * 59 + GroupMemberships.GetHashCode();
                 }
 
                 if (District != null)

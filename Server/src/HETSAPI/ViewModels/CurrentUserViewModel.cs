@@ -32,11 +32,10 @@ namespace HETSAPI.ViewModels
         /// <param name="smUserId">SmUserId.</param>
         /// <param name="smAuthorizationDirectory">SmAuthorizationDirectory.</param>
         /// <param name="userRoles">UserRoles.</param>
-        /// <param name="groupMemberships">GroupMemberships.</param>
         /// <param name="district">The District to which this User is affliated..</param>
         public CurrentUserViewModel(int id, string givenName = null, string surname = null, string email = null, bool? active = null, 
             string smUserId = null, string smAuthorizationDirectory = null, List<UserRole> userRoles = null, 
-            List<GroupMembership> groupMemberships = null, District district = null)
+            District district = null)
         {
             Id = id;
             GivenName = givenName;
@@ -46,7 +45,6 @@ namespace HETSAPI.ViewModels
             SmUserId = smUserId;
             SmAuthorizationDirectory = smAuthorizationDirectory;
             UserRoles = userRoles;
-            GroupMemberships = groupMemberships;
             District = district;
         }
 
@@ -96,13 +94,7 @@ namespace HETSAPI.ViewModels
         /// Gets or Sets UserRoles
         /// </summary>
         [DataMember(Name="userRoles")]
-        public List<UserRole> UserRoles { get; set; }
-
-        /// <summary>
-        /// Gets or Sets GroupMemberships
-        /// </summary>
-        [DataMember(Name="groupMemberships")]
-        public List<GroupMembership> GroupMemberships { get; set; }
+        public List<UserRole> UserRoles { get; set; }        
 
         /// <summary>
         /// The District to which this User is affliated.
@@ -129,7 +121,6 @@ namespace HETSAPI.ViewModels
             sb.Append("  SmUserId: ").Append(SmUserId).Append("\n");
             sb.Append("  SmAuthorizationDirectory: ").Append(SmAuthorizationDirectory).Append("\n");
             sb.Append("  UserRoles: ").Append(UserRoles).Append("\n");
-            sb.Append("  GroupMemberships: ").Append(GroupMemberships).Append("\n");
             sb.Append("  District: ").Append(District).Append("\n");
             sb.Append("}\n");
 
@@ -207,11 +198,6 @@ namespace HETSAPI.ViewModels
                     UserRoles == other.UserRoles ||
                     UserRoles != null &&
                     UserRoles.SequenceEqual(other.UserRoles)
-                ) && 
-                (
-                    GroupMemberships == other.GroupMemberships ||
-                    GroupMemberships != null &&
-                    GroupMemberships.SequenceEqual(other.GroupMemberships)
                 ) &&                 
                 (
                     District == other.District ||
@@ -270,12 +256,7 @@ namespace HETSAPI.ViewModels
                 if (UserRoles != null)
                 {
                     hash = hash * 59 + UserRoles.GetHashCode();
-                }
-
-                if (GroupMemberships != null)
-                {
-                    hash = hash * 59 + GroupMemberships.GetHashCode();
-                }
+                }                
 
                 if (District != null)
                 {

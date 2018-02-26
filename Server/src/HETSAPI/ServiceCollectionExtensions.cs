@@ -32,10 +32,8 @@ namespace HETSAPI
             services.AddTransient<IEquipmentAttachmentService, EquipmentAttachmentService>();
             services.AddTransient<IEquipmentService, EquipmentService>();
             services.AddTransient<IEquipmentTypeService, EquipmentTypeService>();
-            services.AddTransient<IGroupService, GroupService>();
             services.AddTransient<IHistoryService, HistoryService>();
             services.AddTransient<ILocalAreaService, LocalAreaService>();
-            services.AddTransient<ILookupListService, LookupListService>();
             services.AddTransient<INoteService, NoteService>();
             services.AddTransient<IOwnerService, OwnerService>();
             services.AddTransient<IPermissionService, PermissionService>();
