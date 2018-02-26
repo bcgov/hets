@@ -12,7 +12,7 @@ var DistrictEquipmentTypeAddEditDialog = React.createClass({
     onClose: React.PropTypes.func.isRequired,
     show: React.PropTypes.bool,
     districtEquipmentType: React.PropTypes.object,
-    equipmentTypes: React.PropTypes.object,
+    equipmentTypes: React.PropTypes.array,
   },
 
   getInitialState() {
@@ -78,7 +78,7 @@ var DistrictEquipmentTypeAddEditDialog = React.createClass({
       <Form>
         <FormGroup controlId="equipmentTypeId" validationState={ this.state.equipmentTypeIdError ? 'error' : null }>
           <ControlLabel>Equipment Type <sup>*</sup></ControlLabel>
-          <FilterDropdown id="equipmentTypeId" fieldName="name" selectedId={ this.state.equipmentTypeId } updateState={ this.updateState }
+          <FilterDropdown id="equipmentTypeId" fieldName="name" selectedId={ parseInt(this.state.equipmentTypeId, 10) } updateState={ this.updateState }
             items={ this.props.equipmentTypes }
             className="full-width"
           />

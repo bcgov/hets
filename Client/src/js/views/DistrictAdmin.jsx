@@ -2,14 +2,11 @@ import React from 'react';
 
 import { connect } from 'react-redux';
 
-import { PageHeader, Row, Col, Button, ButtonGroup, Glyphicon, Well } from 'react-bootstrap';
+import { PageHeader, Button, ButtonGroup, Glyphicon, Well } from 'react-bootstrap';
 
 import _ from 'lodash';
 
-import * as Action from '../actionTypes';
 import * as Api from '../api';
-import * as Constant from '../constants';
-import store from '../store';
 
 import TableControl from '../components/TableControl.jsx';
 import Spinner from '../components/Spinner.jsx';
@@ -21,7 +18,7 @@ import DistrictEquipmentTypeAddEditDialog from './dialogs/DistrictEquipmentTypeA
 var DistrictAdmin = React.createClass({
   propTypes: {
     currentUser: React.PropTypes.object,
-    rentalConditions: React.PropTypes.object,
+    rentalConditions: React.PropTypes.array,
     districtEquipmentTypes: React.PropTypes.object,
     equipmentTypes: React.PropTypes.object,
     router: React.PropTypes.object,
