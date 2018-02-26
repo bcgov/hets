@@ -79,18 +79,7 @@ namespace HETSAPI.Models
                     .FirstOrDefault();
 
             return role;
-        }
-
-        /// <summary>
-        /// Returns a group based on the group name
-        /// </summary>
-        /// <param name="context"></param>
-        /// <param name="name"></param>
-        /// <returns></returns>
-        public static Group GetGroup(this IDbAppContext context, string name)
-        {
-            return context.Groups.FirstOrDefault(x => x.Name.Equals(name, StringComparison.OrdinalIgnoreCase));
-        }
+        }        
 
         /// <summary>
         /// Returns a user based on the guid
@@ -102,7 +91,6 @@ namespace HETSAPI.Models
         {
             User user = context.Users.Where(x => x.Guid != null && x.Guid.Equals(guid, StringComparison.OrdinalIgnoreCase))
                     .Include(u => u.UserRoles).ThenInclude(r => r.Role).ThenInclude(rp => rp.RolePermissions).ThenInclude(p => p.Permission)
-                    .Include(u => u.GroupMemberships).ThenInclude(gm => gm.Group)
                     .FirstOrDefault();
 
             return user;
@@ -118,7 +106,6 @@ namespace HETSAPI.Models
         {
             User user = context.Users.Where(x => x.SmUserId != null && x.SmUserId.Equals(smUserId, StringComparison.OrdinalIgnoreCase))
                     .Include(u => u.UserRoles).ThenInclude(r => r.Role).ThenInclude(rp => rp.RolePermissions).ThenInclude(p => p.Permission)
-                    .Include(u => u.GroupMemberships).ThenInclude(gm => gm.Group)
                     .FirstOrDefault();
 
             return user;
@@ -203,35 +190,7 @@ namespace HETSAPI.Models
                             Role = role
                         });
                 }
-            }
-
-            string[] userGroups = initialUser.GroupMemberships.Select(x => x.Group.Name).ToArray();
-            if (user.GroupMemberships == null)
-                user.GroupMemberships = new List<GroupMembership>();
-
-            foreach (string userGroup in userGroups)
-            {
-                Group group = context.GetGroup(userGroup);
-
-                if (group == null)
-                {
-                    user.GroupMemberships.Add(
-                        new GroupMembership
-                        {
-                            Active = true,
-                            Group = context.GetGroup("Other")
-                        });
-                }
-                else
-                {
-                    user.GroupMemberships.Add(
-                        new GroupMembership
-                        {
-                            Active = true,
-                            Group = group
-                        });
-                }
-            }
+            }            
             
             context.Users.Update(user);
             context.SaveChanges();
@@ -530,21 +489,7 @@ namespace HETSAPI.Models
                     {
                         user.UserRoles.Add(item);
                     }
-                }
-
-                // Sync Groups
-                if (user.GroupMemberships != null)
-                {
-                    foreach (GroupMembership item in user.GroupMemberships)
-                    {
-                        context.Entry(item).State = EntityState.Deleted;
-                    }
-
-                    foreach (GroupMembership item in userInfo.GroupMemberships)
-                    {
-                        user.GroupMemberships.Add(item);
-                    }
-                }
+                }                
             }
         }
     }

@@ -35,11 +35,10 @@ namespace HETSAPI.Models
 		/// <param name="guid">The GUID unique to the user as provided by the authentication system. In this case, authentication is done by Siteminder and the GUID uniquely identifies the user within the user directories managed by Siteminder - e.g. IDIR and BCeID. The GUID is equivalent to the IDIR Id, but is guaranteed unique to a person, while the IDIR ID is not - IDIR IDs can be recycled..</param>
 		/// <param name="smAuthorizationDirectory">The user directory service used by Siteminder to authenticate the user - usually IDIR or BCeID..</param>
 		/// <param name="userRoles">UserRoles.</param>
-		/// <param name="groupMemberships">GroupMemberships.</param>
 		/// <param name="district">The District that the User belongs to.</param>
 		public User(int id, string givenName, string surname, bool active, string initials = null, string email = null, 
 		    string smUserId = null, string guid = null, string smAuthorizationDirectory = null, List<UserRole> userRoles = null, 
-		    List<GroupMembership> groupMemberships = null, District district = null)
+		    District district = null)
 		{
 			Id = id;
 			GivenName = givenName;
@@ -51,7 +50,6 @@ namespace HETSAPI.Models
 			Guid = guid;
 			SmAuthorizationDirectory = smAuthorizationDirectory;
 			UserRoles = userRoles;
-			GroupMemberships = groupMemberships;
 			District = district;
 		}
 
@@ -128,12 +126,7 @@ namespace HETSAPI.Models
 		/// <summary>
 		/// Gets or Sets UserRoles
 		/// </summary>
-		public List<UserRole> UserRoles { get; set; }
-
-		/// <summary>
-		/// Gets or Sets GroupMemberships
-		/// </summary>
-		public List<GroupMembership> GroupMemberships { get; set; }
+		public List<UserRole> UserRoles { get; set; }		
 
 		/// <summary>
 		/// The District that the User belongs to
@@ -169,7 +162,6 @@ namespace HETSAPI.Models
 			sb.Append("  Guid: ").Append(Guid).Append("\n");
 			sb.Append("  SmAuthorizationDirectory: ").Append(SmAuthorizationDirectory).Append("\n");
 			sb.Append("  UserRoles: ").Append(UserRoles).Append("\n");
-			sb.Append("  GroupMemberships: ").Append(GroupMemberships).Append("\n");
 			sb.Append("  District: ").Append(District).Append("\n");
 			sb.Append("}\n");
 
@@ -257,11 +249,6 @@ namespace HETSAPI.Models
 					UserRoles.SequenceEqual(other.UserRoles)
 				) &&
 				(
-					GroupMemberships == other.GroupMemberships ||
-					GroupMemberships != null &&
-					GroupMemberships.SequenceEqual(other.GroupMemberships)
-				) &&
-				(
 					District == other.District ||
 					District != null &&
 					District.Equals(other.District)
@@ -322,11 +309,6 @@ namespace HETSAPI.Models
 				if (UserRoles != null)
 				{
 					hash = hash * 59 + UserRoles.GetHashCode();
-				}
-
-			    if (GroupMemberships != null)
-				{
-					hash = hash * 59 + GroupMemberships.GetHashCode();
 				}
 
 			    if (District != null)

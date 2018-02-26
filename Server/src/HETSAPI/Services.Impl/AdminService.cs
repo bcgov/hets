@@ -7,10 +7,7 @@ using HETSAPI.Import;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Configuration;
 using System.IO;
-using NPOI.SS.UserModel;
-using NPOI.XSSF.UserModel;
 using System.Threading.Tasks;
-using System.Collections.Generic;
 
 namespace HETSAPI.Services.Impl
 {
@@ -79,23 +76,26 @@ namespace HETSAPI.Services.Impl
         }
 
 
-        public async Task<IActionResult> GetSpreadsheet(string userPath, string fileName)
+        public async Task<IActionResult> GetSpreadsheet(string path, string filename)
         {
             // create an excel spreadsheet that will show the data.
             string uploadPath = _configuration["UploadPath"];
-            string path = Path.Combine(uploadPath + userPath, fileName);
+            string fullPath = Path.Combine(uploadPath + path, filename);
 
             MemoryStream memory = new MemoryStream();
             
-            using (var stream = new FileStream(path, FileMode.Open))
+            using (FileStream stream = new FileStream(fullPath, FileMode.Open))
             {
                 await stream.CopyToAsync(memory);
             }
 
             memory.Position = 0;
 
-            var fileStreamResult = new FileStreamResult(memory, "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
-            fileStreamResult.FileDownloadName = fileName;
+            var fileStreamResult =
+                new FileStreamResult(memory, "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet")
+                {
+                    FileDownloadName = filename
+                };
 
             return fileStreamResult;
         }        
