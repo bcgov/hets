@@ -45,6 +45,7 @@ namespace HETSAPI.Controllers
         [Route("/api/provincialratetypes")]
         [SwaggerOperation("ProvincialRateTypesGet")]
         [SwaggerResponse(200, type: typeof(List<ProvincialRateType>))]
+        [RequiresPermission(Permission.Login)]
         public virtual IActionResult ProvincialRateTypesGet()
         {
             return _service.ProvincialRateTypesGetAsync();
