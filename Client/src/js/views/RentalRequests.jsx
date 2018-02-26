@@ -25,16 +25,8 @@ import FormInputControl from '../components/FormInputControl.jsx';
 import Mailto from '../components/Mailto.jsx';
 import MultiDropdown from '../components/MultiDropdown.jsx';
 import SortTable from '../components/SortTable.jsx';
-import Unimplemented from '../components/Unimplemented.jsx';
 
 import { formatDateTime, startOfCurrentFiscal, endOfCurrentFiscal, startOfPreviousFiscal, endOfPreviousFiscal, toZuluTime } from '../utils/date';
-
-/*
-
-TODO:
-* Print / Email
-
-*/
 
 const WITHIN_30_DAYS = 'Within 30 Days';
 const THIS_MONTH = 'This Month';
@@ -190,10 +182,6 @@ var RentalRequests = React.createClass({
     });
   },
 
-  email() {
-
-  },
-
   print() {
     window.print();
   },
@@ -210,9 +198,6 @@ var RentalRequests = React.createClass({
     return <div id="rental-requests-list">
       <PageHeader>Rental Requests ({ numRentalRequests })
         <ButtonGroup id="rental-requests-buttons">
-          <Unimplemented>
-            <Button onClick={ this.email }><Glyphicon glyph="envelope" title="E-mail" /></Button>
-          </Unimplemented>
           <Button onClick={ this.print }><Glyphicon glyph="print" title="Print" /></Button>
         </ButtonGroup>
       </PageHeader>
