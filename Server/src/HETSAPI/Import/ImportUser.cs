@@ -65,12 +65,14 @@ namespace HETSAPI.Import
                 int currentUser = 0; 
                 foreach (string username in usernames)
                 {
-                    ImportMapRecord importMapRecord = new ImportMapRecord();
+                    ImportMapRecord importMapRecord = new ImportMapRecord
+                    {
+                        TableName = NewTable,
+                        MappedColumn = "User_cd",
+                        OriginalValue = username,
+                        NewValue = "User" + currentUser
+                    };
 
-                    importMapRecord.TableName = NewTable;
-                    importMapRecord.MappedColumn = "User_cd";
-                    importMapRecord.OriginalValue = username;
-                    importMapRecord.NewValue = "User" + currentUser;
                     currentUser++;
                     result.Add(importMapRecord);
                 }                   
@@ -367,7 +369,6 @@ namespace HETSAPI.Import
             {
                 user = dbContext.Users
                     .Include(x => x.UserRoles)
-                    .Include(x => x.GroupMemberships)
                     .First(x => x.SmUserId == smUserId);
 
                 // if the user does not have the user role, add the user role
