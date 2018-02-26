@@ -21,6 +21,7 @@ var DistrictAdmin = React.createClass({
   propTypes: {
     currentUser: React.PropTypes.object,
     rentalConditions: React.PropTypes.object,
+    districtEquipmentTypes: React.PropTypes.object,
     router: React.PropTypes.object,
   },
 
@@ -33,6 +34,7 @@ var DistrictAdmin = React.createClass({
 
   componentDidMount() {
     Api.getRentalConditions();
+    Api.getDistrictEquipmentTypes(this.props.currentUser.district.id);
   },
 
   addCondition() {
@@ -67,9 +69,52 @@ var DistrictAdmin = React.createClass({
     });
   },
 
+  addDistrictEquipmentType() {
+
+  },
+
+  editDistrictEquipmentType(equipment) {
+
+  },
+
+  deleteDistrictEquipmentType(equipment) {
+
+  },
+
   render() {
     return <div id="home">
       <PageHeader>District Admin</PageHeader>
+
+      {(() => {
+        if (this.props.rentalConditions.loading) { return <div style={{ textAlign: 'center' }}><Spinner/></div>; }
+
+        var addDistrictEquipmentButton = <Button title="Add District Equipment" bsSize="xsmall" onClick={ this.addDistrictEquipmentType }><Glyphicon glyph="plus" />&nbsp;<strong>Add District Equipment Type</strong></Button>;
+
+        return (
+          <TableControl headers={[
+            { field: 'districtEquipmentName',         title: 'District Equipment Name'  },
+            { field: 'addDistrictEquipmentType', title: 'Add District Equipment Type',  style: { textAlign: 'right'  },
+              node: addDistrictEquipmentButton,
+            },
+          ]}>
+            {
+              _.map(this.props.districtEquipmentTypes.data, (equipment) => {
+                console.log(equipment);
+                return <tr key={ equipment.id }>
+                  <td>{ equipment.districtEquipmentName }</td>
+                   <td style={{ textAlign: 'right' }}>
+                    <OverlayTrigger trigger="click" placement="top" rootClose overlay={ <Confirm onConfirm={ this.deleteDistrictEquipmentType.bind(this, equipment) }/> }>
+                      <Button title="Delete District Equipment Type" bsSize="xsmall"><Glyphicon glyph="trash" /></Button>
+                    </OverlayTrigger>
+                    <Button title="Edit District Equipment Type" bsSize="xsmall" onClick={ this.editDistrictEquipmentType.bind(this, equipment) }><Glyphicon glyph="edit" /></Button>
+                  </td> 
+                </tr>;
+              })
+            }
+          </TableControl>
+        );
+      })()}
+
 
       {(() => {
         if (this.props.rentalConditions.loading) { return <div style={{ textAlign: 'center' }}><Spinner/></div>; }
@@ -119,6 +164,7 @@ function mapStateToProps(state) {
   return {
     currentUser: state.user,
     rentalConditions: state.lookups.rentalConditions,
+    districtEquipmentTypes: state.lookups.districtEquipmentTypes,
   };
 }
 
