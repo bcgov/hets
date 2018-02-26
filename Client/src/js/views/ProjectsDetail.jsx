@@ -317,7 +317,7 @@ var ProjectsDetail = React.createClass({
           <Col md={12}>
             <Well>
               <h3>Project Information <span className="pull-right">
-                  <Button title="Edit Project" bsSize="small" onClick={ this.openEditDialog }><Glyphicon glyph="pencil" /></Button>
+                <Button title="Edit Project" bsSize="small" onClick={ this.openEditDialog }><Glyphicon glyph="pencil" /></Button>
               </span></h3>
               {(() => {
                 if (this.state.loading) { return <div style={{ textAlign: 'center' }}><Spinner/></div>; }
