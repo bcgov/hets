@@ -29,7 +29,7 @@ namespace HETSAPI.Controllers
         /// Create bulk project records
         /// </summary>
         /// <param name="items"></param>
-        /// <response code="201">Project created</response>
+        /// <response code="200">Project created</response>
         [HttpPost]
         [Route("/api/projects/bulk")]
         [SwaggerOperation("ProjectsBulkPost")]
@@ -38,44 +38,17 @@ namespace HETSAPI.Controllers
         {
             return _service.ProjectsBulkPostAsync(items);
         }
-
-        /// <summary>
-        /// Get all projects
-        /// </summary>
-        /// <response code="200">OK</response>
-        [HttpGet]
-        [Route("/api/projects")]
-        [SwaggerOperation("ProjectsGet")]
-        [SwaggerResponse(200, type: typeof(List<Project>))]
-        public virtual IActionResult ProjectsGet()
-        {
-            return _service.ProjectsGetAsync();
-        }
-
-        /// <summary>
-        /// Delete project
-        /// </summary>
-        /// <param name="id">id of Project to delete</param>
-        /// <response code="200">OK</response>
-        /// <response code="404">Project not found</response>
-        [HttpPost]
-        [Route("/api/projects/{id}/delete")]
-        [SwaggerOperation("ProjectsIdDeletePost")]
-        public virtual IActionResult ProjectsIdDeletePost([FromRoute]int id)
-        {
-            return _service.ProjectsIdDeletePostAsync(id);
-        }
-
+        
         /// <summary>
         /// Get project by id
         /// </summary>
         /// <param name="id">id of Project to fetch</param>
         /// <response code="200">OK</response>
-        /// <response code="404">Project not found</response>
         [HttpGet]
         [Route("/api/projects/{id}")]
         [SwaggerOperation("ProjectsIdGet")]
         [SwaggerResponse(200, type: typeof(Project))]
+        [RequiresPermission(Permission.Login)]
         public virtual IActionResult ProjectsIdGet([FromRoute]int id)
         {
             return _service.ProjectsIdGetAsync(id);
@@ -87,11 +60,11 @@ namespace HETSAPI.Controllers
         /// <param name="id">id of Project to update</param>
         /// <param name="item"></param>
         /// <response code="200">OK</response>
-        /// <response code="404">Project not found</response>
         [HttpPut]
         [Route("/api/projects/{id}")]
         [SwaggerOperation("ProjectsIdPut")]
         [SwaggerResponse(200, type: typeof(Project))]
+        [RequiresPermission(Permission.Login)]
         public virtual IActionResult ProjectsIdPut([FromRoute]int id, [FromBody]Project item)
         {
             return _service.ProjectsIdPutAsync(id, item);
@@ -101,11 +74,12 @@ namespace HETSAPI.Controllers
         /// Create project
         /// </summary>
         /// <param name="item"></param>
-        /// <response code="201">Project created</response>
+        /// <response code="200">Project created</response>
         [HttpPost]
         [Route("/api/projects")]
         [SwaggerOperation("ProjectsPost")]
         [SwaggerResponse(200, type: typeof(Project))]
+        [RequiresPermission(Permission.Login)]
         public virtual IActionResult ProjectsPost([FromBody]Project item)
         {
             return _service.ProjectsPostAsync(item);
@@ -126,6 +100,7 @@ namespace HETSAPI.Controllers
         [Route("/api/projects/search")]
         [SwaggerOperation("ProjectsSearchGet")]
         [SwaggerResponse(200, type: typeof(List<ProjectSearchResultViewModel>))]
+        [RequiresPermission(Permission.Login)]
         public virtual IActionResult ProjectsSearchGet([FromQuery]string districts, [FromQuery]string project, [FromQuery]bool? hasRequests, [FromQuery]bool? hasHires, [FromQuery]string status, [FromQuery]string projectNumber)
         {
             return _service.ProjectsSearchGetAsync(districts, project, hasRequests, hasHires, status, projectNumber);
@@ -143,6 +118,7 @@ namespace HETSAPI.Controllers
         [Route("/api/projects/{id}/rentalAgreements")]
         [SwaggerOperation("ProjectsIdRentalAgreementsGet")]
         [SwaggerResponse(200, type: typeof(List<RentalAgreement>))]
+        [RequiresPermission(Permission.Login)]
         public virtual IActionResult ProjectsIdRentalAgreementsGet([FromRoute]int id)
         {
             return _service.ProjectsIdGetAgreementsAsync(id);
@@ -158,6 +134,7 @@ namespace HETSAPI.Controllers
         [Route("/api/projects/{id}/rentalAgreementClone")]
         [SwaggerOperation("ProjectsRentalAgreementClonePost")]
         [SwaggerResponse(200, type: typeof(RentalAgreement))]
+        [RequiresPermission(Permission.Login)]
         public virtual IActionResult ProjectsRentalAgreementClonePost([FromRoute]int id, [FromBody]ProjectRentalAgreementClone item)
         {
             return _service.ProjectsRentalAgreementClonePostAsync(id, item);
@@ -177,6 +154,7 @@ namespace HETSAPI.Controllers
         [Route("/api/projects/{id}/timeRecords")]
         [SwaggerOperation("ProjectsIdTimeRecordsGet")]
         [SwaggerResponse(200, type: typeof(List<TimeRecord>))]
+        [RequiresPermission(Permission.Login)]
         public virtual IActionResult ProjectsIdTimeRecordsGet([FromRoute]int id)
         {
             return _service.ProjectsIdTimeRecordsGetAsync(id);
@@ -193,6 +171,7 @@ namespace HETSAPI.Controllers
         [Route("/api/projects/{id}/timeRecord")]
         [SwaggerOperation("ProjectsIdTimeRecordsPost")]
         [SwaggerResponse(200, type: typeof(TimeRecord))]
+        [RequiresPermission(Permission.Login)]
         public virtual IActionResult ProjectsIdTimeRecordsPost([FromRoute]int id, [FromBody]TimeRecord item)
         {
             return _service.ProjectsIdTimeRecordsPostAsync(id, item);
@@ -209,6 +188,7 @@ namespace HETSAPI.Controllers
         [Route("/api/projects/{id}/timeRecords")]
         [SwaggerOperation("ProjectsIdTimeRecordsBulkPostAsync")]
         [SwaggerResponse(200, type: typeof(TimeRecord))]
+        [RequiresPermission(Permission.Login)]
         public virtual IActionResult ProjectsIdTimeRecordsBulkPostAsync([FromRoute]int id, [FromBody]TimeRecord[] items)
         {
             return _service.ProjectsIdTimeRecordsBulkPostAsync(id, items);
@@ -228,6 +208,7 @@ namespace HETSAPI.Controllers
         [Route("/api/projects/{id}/equipment")]
         [SwaggerOperation("ProjectsIdEquipmentGet")]
         [SwaggerResponse(200, type: typeof(List<RentalAgreement>))]
+        [RequiresPermission(Permission.Login)]
         public virtual IActionResult ProjectsIdEquipmentGet([FromRoute]int id)
         {
             return _service.ProjectsIdEquipmentGetAsync(id);
@@ -243,11 +224,11 @@ namespace HETSAPI.Controllers
         /// <remarks>Returns attachments for a particular Project</remarks>
         /// <param name="id">id of Project to fetch attachments for</param>
         /// <response code="200">OK</response>
-        /// <response code="404">Project not found</response>
         [HttpGet]
         [Route("/api/projects/{id}/attachments")]
         [SwaggerOperation("ProjectsIdAttachmentsGet")]
         [SwaggerResponse(200, type: typeof(List<AttachmentViewModel>))]
+        [RequiresPermission(Permission.Login)]
         public virtual IActionResult ProjectsIdAttachmentsGet([FromRoute]int id)
         {
             return _service.ProjectsIdAttachmentsGetAsync(id);
@@ -267,6 +248,7 @@ namespace HETSAPI.Controllers
         [Route("/api/projects/{id}/contacts")]
         [SwaggerOperation("ProjectsIdContactsGet")]
         [SwaggerResponse(200, type: typeof(List<Contact>))]
+        [RequiresPermission(Permission.Login)]
         public virtual IActionResult ProjectsIdContactsGet([FromRoute]int id)
         {
             return _service.ProjectsIdContactsGetAsync(id);
@@ -284,6 +266,7 @@ namespace HETSAPI.Controllers
         [Route("/api/projects/{id}/contacts/{primary}")]
         [SwaggerOperation("ProjectsIdContactsPost")]
         [SwaggerResponse(200, type: typeof(Contact))]
+        [RequiresPermission(Permission.Login)]
         public virtual IActionResult ProjectsIdContactsPost([FromRoute]int id, [FromRoute]bool primary, [FromBody]Contact item)
         {
             return _service.ProjectsIdContactsPostAsync(id, item, primary);
@@ -300,6 +283,7 @@ namespace HETSAPI.Controllers
         [Route("/api/projects/{id}/contacts")]
         [SwaggerOperation("ProjectsIdContactsPut")]
         [SwaggerResponse(200, type: typeof(List<Contact>))]
+        [RequiresPermission(Permission.Login)]
         public virtual IActionResult ProjectsIdContactsPut([FromRoute]int id, [FromBody]Contact[] item)
         {
             return _service.ProjectsIdContactsPutAsync(id, item);
@@ -321,6 +305,7 @@ namespace HETSAPI.Controllers
         [Route("/api/projects/{id}/history")]
         [SwaggerOperation("ProjectsIdHistoryGet")]
         [SwaggerResponse(200, type: typeof(List<HistoryViewModel>))]
+        [RequiresPermission(Permission.Login)]
         public virtual IActionResult ProjectsIdHistoryGet([FromRoute]int id, [FromQuery]int? offset, [FromQuery]int? limit)
         {
             return _service.ProjectsIdHistoryGetAsync(id, offset, limit);
@@ -333,10 +318,11 @@ namespace HETSAPI.Controllers
         /// <param name="id">id of Project to fetch History for</param>
         /// <param name="item"></param>
         /// <response code="200">OK</response>
-        /// <response code="201">History created</response>
+        /// <response code="200">History created</response>
         [HttpPost]
         [Route("/api/projects/{id}/history")]
         [SwaggerOperation("ProjectsIdHistoryPost")]
+        [RequiresPermission(Permission.Login)]
         public virtual IActionResult ProjectsIdHistoryPost([FromRoute]int id, [FromBody]History item)
         {
             return _service.ProjectsIdHistoryPostAsync(id, item);
@@ -355,6 +341,7 @@ namespace HETSAPI.Controllers
         [Route("/api/projects/{id}/notes")]
         [SwaggerOperation("ProjectsIdNotesGet")]
         [SwaggerResponse(200, type: typeof(List<Note>))]
+        [RequiresPermission(Permission.Login)]
         public virtual IActionResult ProjectsIdNotesGet([FromRoute]int id)
         {
             return _service.ProjectsIdNotesGetAsync(id);
@@ -371,6 +358,7 @@ namespace HETSAPI.Controllers
         [Route("/api/projects/{id}/note")]
         [SwaggerOperation("ProjectsIdNotePost")]
         [SwaggerResponse(200, type: typeof(Note))]
+        [RequiresPermission(Permission.Login)]
         public virtual IActionResult ProjectsIdNotePost([FromRoute]int id, [FromBody]Note item)
         {
             return _service.ProjectsIdNotesPostAsync(id, item);
@@ -387,6 +375,7 @@ namespace HETSAPI.Controllers
         [Route("/api/projects/{id}/notes")]
         [SwaggerOperation("ProjectsIdNotesBulkPostAsync")]
         [SwaggerResponse(200, type: typeof(TimeRecord))]
+        [RequiresPermission(Permission.Login)]
         public virtual IActionResult ProjectsIdNotesBulkPostAsync([FromRoute]int id, [FromBody]Note[] items)
         {
             return _service.ProjectsIdNotesBulkPostAsync(id, items);
