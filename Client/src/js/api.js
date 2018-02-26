@@ -1667,6 +1667,24 @@ export function getRentalConditions() {
   });
 }
 
+export function deleteCondition(id) {
+  return new ApiRequest(`/conditiontypes/${id}/delete`).post().then(response => {
+    return response;
+  });
+}
+
+export function addCondition(condition) {
+  return new ApiRequest('conditiontypes/0').post(condition).then(response => {
+    return response;
+  });
+}
+
+export function updateCondition(condition) {
+  return new ApiRequest(`conditiontypes/${condition.id}`).post(condition).then(response => {
+    return response;
+  });
+}
+
 ////////////////////
 // Look-ups
 ////////////////////
