@@ -45,6 +45,7 @@ namespace HETSAPI.Controllers
         [Route("/api/districtEquipmentTypes")]
         [SwaggerOperation("DistrictEquipmentTypesGet")]
         [SwaggerResponse(200, type: typeof(List<DistrictEquipmentType>))]
+        [RequiresPermission(Permission.Login)]
         public virtual IActionResult DistrictEquipmentTypesGet()
         {
             return _service.DistrictEquipmentTypesGetAsync();
@@ -59,6 +60,7 @@ namespace HETSAPI.Controllers
         [HttpPost]
         [Route("/api/districtEquipmentTypes/{id}/delete")]
         [SwaggerOperation("DistrictEquipmentTypesIdDeletePost")]
+        [RequiresPermission(Permission.DistrictCodeTableManagement)]
         public virtual IActionResult DistrictEquipmentTypesIdDeletePost([FromRoute]int id)
         {
             return _service.DistrictEquipmentTypesIdDeletePostAsync(id);
@@ -74,6 +76,7 @@ namespace HETSAPI.Controllers
         [Route("/api/districtEquipmentTypes/{id}")]
         [SwaggerOperation("DistrictEquipmentTypesIdGet")]
         [SwaggerResponse(200, type: typeof(DistrictEquipmentType))]
+        [RequiresPermission(Permission.DistrictCodeTableManagement)]
         public virtual IActionResult DistrictEquipmentTypesIdGet([FromRoute]int id)
         {
             return _service.DistrictEquipmentTypesIdGetAsync(id);
@@ -89,6 +92,7 @@ namespace HETSAPI.Controllers
         [Route("/api/districtEquipmentTypes/{id}")]
         [SwaggerOperation("DistrictEquipmentTypesIdPost")]
         [SwaggerResponse(200, type: typeof(DistrictEquipmentType))]
+        [RequiresPermission(Permission.DistrictCodeTableManagement)]
         public virtual IActionResult DistrictEquipmentTypesIdPost([FromRoute]int id, [FromBody]DistrictEquipmentType item)
         {
             return _service.DistrictEquipmentTypesIdPostAsync(id, item);
