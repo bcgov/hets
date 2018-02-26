@@ -269,32 +269,32 @@
           </td>
           <td></td>
           <td class="contact-info">
-            <div id="phone-block">
-              {{#equipment.owner.primaryContact.workPhoneNumber}} 
-              <div>
-                <span class="label">Work#:</span>
-                <span class="value">{{equipment.owner.primaryContact.workPhoneNumber}}</span>
+              <div id="phone-block">
+                  {{#equipment.owner.primaryContact.workPhoneNumber}}
+                  <div>
+                      <span class="label">Work#:</span>
+                      <span class="value">{{equipment.owner.primaryContact.workPhoneNumber}}</span>
+                  </div>
+                  {{/equipment.owner.primaryContact.workPhoneNumber}}
+                  {{#equipment.owner.primaryContact.mobilePhoneNumber}}
+                  <div>
+                      <span class="label">Cell#:</span>
+                      <span class="value">{{equipment.owner.primaryContact.mobilePhoneNumber}}</span>
+                  </div>
+                  {{/equipment.owner.primaryContact.mobilePhoneNumber}}
+                  {{#equipment.owner.primaryContact.faxPhoneNumber}}
+                  <div>
+                      <span class="label">Fax#:</span>
+                      <span class="value">{{equipment.owner.primaryContact.faxPhoneNumber}}</span>
+                  </div>
+                  {{/equipment.owner.primaryContact.faxPhoneNumber}}
+                  {{#equipment.owner.primaryContact.emailAddress}}
+                  <div>
+                      <span class="label">Email:</span>
+                      <span class="value">{{equipment.owner.primaryContact.emailAddress}}</span>
+                  </div>
+                  {{#equipment.owner.primaryContact.emailAddress}}
               </div>
-              {{/equipment.owner.primaryContact.workPhoneNumber}} 
-              {{#equipment.owner.primaryContact.mobilePhoneNumber}} 
-              <div>
-                <span class="label">Cell#:</span>
-                <span class="value">{{equipment.owner.primaryContact.mobilePhoneNumber}}</span>
-              </div>
-              {{/equipment.owner.primaryContact.mobilePhoneNumber}}
-              {{#equipment.owner.primaryContact.faxPhoneNumber}} 
-              <div>
-                <span class="label">Fax#:</span>
-                <span class="value">{{equipment.owner.primaryContact.faxPhoneNumber}}</span>
-              </div>
-              {{/equipment.owner.primaryContact.faxPhoneNumber}}
-              {{#equipment.owner.primaryContact.email}} 
-              <div>
-                <span class="label">Email:</span>
-                <span class="value">{{equipment.owner.primaryContact.emailAddress}}</span>
-              </div>
-              {{#equipment.owner.primaryContact.emailAddress}} 
-            </div>
           </td>
         </tr>
       </tbody>
