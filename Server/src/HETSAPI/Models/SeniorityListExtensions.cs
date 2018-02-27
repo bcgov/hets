@@ -4,7 +4,6 @@ using Hangfire.Console.Progress;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Linq;
 using Microsoft.Extensions.Configuration;
 
@@ -152,9 +151,6 @@ namespace HETSAPI.Models
         {
             try
             {          
-                Debug.WriteLine("CalculateSeniorityList [LocalAreaId: " + localAreaId + 
-                                " | EquipmentType: " + districtEquipmentTypeId + "]");
-
                 // validate data
                 if (context != null &&
                     context.LocalAreas.Any(x => x.Id == localAreaId) &&
@@ -231,7 +227,7 @@ namespace HETSAPI.Models
                     .Where(x => x.Status == Equipment.StatusApproved &&
                                 x.LocalArea.Id == localAreaId &&
                                 x.DistrictEquipmentTypeId == districtEquipmentTypeId)
-                    .OrderByDescending(x => x.Seniority)
+                    .OrderByDescending(x => x.Seniority).ThenBy(x => x.ReceivedDate)
                     .Select(x => x)
                     .ToList();
 
@@ -277,30 +273,15 @@ namespace HETSAPI.Models
                 }
 
                 // check if the current block is full
-                if (currentBlock < totalBlocks - 1 && blocks[currentBlock].Count >= blockSize)
+                if (currentBlock < (totalBlocks - 1) && blocks[currentBlock].Count >= blockSize)
                 {
                     return false; // not adding this record to the block
                 }            
 
                 // check if this record's Owner already exists in the block   
-                if (currentBlock < totalBlocks - 1 && blocks[currentBlock].Contains(equipment.Owner.Id))
+                if (currentBlock < (totalBlocks - 1) && blocks[currentBlock].Contains(equipment.Owner.Id))
                 {
-                    // add record to the next block         
-                    if (blocks[currentBlock + 1] == null)
-                    {
-                        blocks[currentBlock + 1] = new List<int>();
-                    }
-
-                    blocks[currentBlock + 1].Add(equipment.Owner.Id);
-
-                    // update the equipment record
-                    equipment.BlockNumber = currentBlock + 2;
-                    equipment.NumberInBlock = blocks[currentBlock + 1].Count;
-
-                    context.Equipments.Update(equipment);
-                    context.SaveChanges();
-
-                    return true;
+                    return false; // not adding this record to the block
                 }
 
                 // add record to the block                        
