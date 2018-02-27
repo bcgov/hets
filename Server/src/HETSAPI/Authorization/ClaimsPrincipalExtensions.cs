@@ -8,7 +8,7 @@ namespace HETSAPI.Authorization
     /// Calaims Principal Extension
     /// </summary>
     public static class ClaimsPrincipalExtensions
-    {
+    {        
         /// <summary>
         /// Check if the user has permission to execute the method
         /// </summary>
@@ -16,7 +16,7 @@ namespace HETSAPI.Authorization
         /// <param name="permissions"></param>
         /// <returns></returns>
         public static bool HasPermissions(this ClaimsPrincipal user, params string[] permissions)
-        {
+        {            
             if (!user.HasClaim(c => c.Type == User.PermissionClaim))
                 return false;
 

@@ -2,6 +2,8 @@
 using Microsoft.Extensions.DependencyInjection;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Http;
 
 namespace HETSAPI.Authorization
 {
@@ -29,6 +31,15 @@ namespace HETSAPI.Authorization
     /// </remarks>
     public class PermissionHandler : AuthorizationHandler<PermissionRequirement>
     {
+        private readonly HttpContext _httpContext;
+        private readonly IHostingEnvironment _hostingEnv;
+
+        public PermissionHandler(IHttpContextAccessor httpContextAccessor, IHostingEnvironment hostingEnv)
+        {
+            _httpContext = httpContextAccessor.HttpContext;
+            _hostingEnv = hostingEnv;
+        }       
+
         /// <summary>
         /// Permission Handler
         /// </summary>
@@ -37,6 +48,29 @@ namespace HETSAPI.Authorization
         /// <returns></returns>
         protected override async Task HandleRequirementAsync(AuthorizationHandlerContext context, PermissionRequirement requirement)
         {
+            // leave outside "if" for debugging
+            string temp = "";
+
+            // **************************************************
+            // Check if we have a Dev Environment Cookie
+            // **************************************************
+            if (_hostingEnv.IsDevelopment())
+            {
+                temp = _httpContext.Request.Cookies["DEV-USER"];
+
+                if (!string.IsNullOrEmpty(temp))
+                {
+                    // access granted
+                    context.Succeed(requirement);
+
+                    await Task.CompletedTask;
+                    return;
+                }
+            }
+            
+            // **************************************************
+            // If not - check the users permissions
+            // **************************************************
             if (context.User.HasPermissions(requirement.RequiredPermissions.ToArray()))
             {
                 // access granted

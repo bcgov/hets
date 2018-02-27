@@ -178,8 +178,8 @@ namespace HETSAPI.Services.Impl
                     .First(a => a.Id == id);
 
                 result.IsHired = IsHired(id);
-
                 result.NumberInBlock = GetNumberOfBlocks(result);
+                result.HoursYtd = result.GetYtdServiceHours(_context, DateTime.Now.Year);
 
                 return new ObjectResult(new HetsResponse(result));
             }
@@ -230,6 +230,8 @@ namespace HETSAPI.Services.Impl
                 EquipmentViewModel result = equipment.ToViewModel();
 
                 result.IsHired = IsHired(id);
+                result.NumberInBlock = GetNumberOfBlocks(equipment);
+                result.HoursYtd = equipment.GetYtdServiceHours(_context, DateTime.Now.Year);                
 
                 return new ObjectResult(new HetsResponse(result));
             }
@@ -299,6 +301,8 @@ namespace HETSAPI.Services.Impl
                         .First(a => a.Id == id);
 
                     result.IsHired = IsHired(id);
+                    result.NumberInBlock = GetNumberOfBlocks(result);
+                    result.HoursYtd = result.GetYtdServiceHours(_context, DateTime.Now.Year);
 
                     return new ObjectResult(new HetsResponse(result));
                 }
@@ -499,7 +503,7 @@ namespace HETSAPI.Services.Impl
             IQueryable<Equipment> data = _context.Equipments.AsNoTracking()
                 .Include(x => x.LocalArea)
                 .Include(x => x.DistrictEquipmentType)
-                .ThenInclude(y => y.EquipmentType)
+                    .ThenInclude(y => y.EquipmentType)
                 .Include(x => x.Owner)
                 .Include(x => x.EquipmentAttachments)
                 .Include(x => x.RentalAgreements)
