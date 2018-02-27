@@ -76,14 +76,66 @@ namespace HETSAPI.ViewModels
 
             foreach (RentalAgreementRate rentalRate in RentalAgreementRatesWithTotal)
             {
-                if (rentalRate.Rate != null)
+                if (rentalRate.PercentOfEquipmentRate != null &&
+                    EquipmentRate != null &&
+                    rentalRate.PercentOfEquipmentRate > 0)
+                {
+                    rentalRate.Rate = (float)rentalRate.PercentOfEquipmentRate * (float)EquipmentRate;
+                    temp = temp + (float)rentalRate.Rate;
+                }
+                else if (rentalRate.Rate != null)
                 {
                     temp = temp + (float)rentalRate.Rate;
                 }
+
+                // format the rate / percent at the same time
+                rentalRate.RateString = FormatRateString(rentalRate);
+            }
+
+            // add the base amount to the total too
+            if (EquipmentRate != null)
+            {
+                temp = temp + (float)EquipmentRate;
             }
 
             AgreementTotal = temp;
+
+            // format the total
+            AgreementTotalString = string.Format("$ {0:0.00}", AgreementTotal);
+
+            // format the rate / percent values
+            foreach (RentalAgreementRate rentalRate in RentalAgreementRatesWithoutTotal)
+            {
+                if (rentalRate.PercentOfEquipmentRate != null &&
+                    EquipmentRate != null &&
+                    rentalRate.PercentOfEquipmentRate > 0)
+                {
+                    rentalRate.Rate = (float)rentalRate.PercentOfEquipmentRate * (float)EquipmentRate;
+                }
+
+                rentalRate.RateString = FormatRateString(rentalRate);                
+            }
         }
+
+        private static string FormatRateString(RentalAgreementRate rentalRate)
+        {
+            string temp = "";
+
+            // format the rate
+            if (rentalRate.Rate != null)
+            {
+                temp = string.Format("$ {0:0.00}", rentalRate.Rate);
+            }
+
+            // format the percent
+            if (rentalRate.PercentOfEquipmentRate != null &&
+                rentalRate.PercentOfEquipmentRate > 0)
+            {
+                temp = temp + string.Format(" ({0:0}%)", rentalRate.PercentOfEquipmentRate);
+            }            
+
+            return temp;
+        }        
 
         /// <summary>
         /// Gets or Sets Id
@@ -140,6 +192,12 @@ namespace HETSAPI.ViewModels
         /// </summary>
         [DataMember(Name = "agreementTotal")]
         public float? AgreementTotal { get; set; }
+
+        /// <summary>
+        /// Used for the Pdf only (formatted version of the agreement total ($))
+        /// </summary>
+        [DataMember(Name = "agreementTotalString")]
+        public string AgreementTotalString { get; set; }
 
         /// <summary>
         /// Gets or Sets RentalAgreementRates -> that aren't included in the total
