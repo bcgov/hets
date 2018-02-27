@@ -26,6 +26,7 @@ namespace HETSAPI.ViewModels
         /// <param name="localArea">LocalArea.</param>
         /// <param name="equipmentCount">EquipmentCount.</param>
         /// <param name="equipmentTypeName">EquipmentTypeName.</param>
+        /// <param name="districtEquipmentName">District Equipment Name.</param>
         /// <param name="projectName">ProjectName.</param>
         /// <param name="primaryContact">PrimaryContact.</param>
         /// <param name="status">Project status.</param>
@@ -33,13 +34,14 @@ namespace HETSAPI.ViewModels
         /// <param name="expectedStartDate">ExpectedStartDate.</param>
         /// <param name="expectedEndDate">ExpectedEndDate.</param>
         public RentalRequestSearchResultViewModel(int id, LocalArea localArea = null, int? equipmentCount = null, 
-            string equipmentTypeName = null, string projectName = null, Contact primaryContact = null, string status = null, 
+            string equipmentTypeName = null, string districtEquipmentName = null, string projectName = null, Contact primaryContact = null, string status = null, 
             int? projectId = null, DateTime? expectedStartDate = null, DateTime? expectedEndDate = null)
         {   
             Id = id;
             LocalArea = localArea;
             EquipmentCount = equipmentCount;
             EquipmentTypeName = equipmentTypeName;
+            DistrictEquipmentName = districtEquipmentName;
             ProjectName = projectName;
             PrimaryContact = primaryContact;
             Status = status;
@@ -71,6 +73,12 @@ namespace HETSAPI.ViewModels
         /// </summary>
         [DataMember(Name="equipmentTypeName")]
         public string EquipmentTypeName { get; set; }
+
+        /// <summary>
+        /// Gets or Sets District Equipment Name
+        /// </summary>
+        [DataMember(Name = "districtEquipmentName")]
+        public string DistrictEquipmentName { get; set; }
 
         /// <summary>
         /// Gets or Sets ProjectName
@@ -123,6 +131,7 @@ namespace HETSAPI.ViewModels
             sb.Append("  LocalArea: ").Append(LocalArea).Append("\n");
             sb.Append("  EquipmentCount: ").Append(EquipmentCount).Append("\n");
             sb.Append("  EquipmentTypeName: ").Append(EquipmentTypeName).Append("\n");
+            sb.Append("  DistrictEquipmentName: ").Append(DistrictEquipmentName).Append("\n");
             sb.Append("  ProjectName: ").Append(ProjectName).Append("\n");
             sb.Append("  PrimaryContact: ").Append(PrimaryContact).Append("\n");
             sb.Append("  Status: ").Append(Status).Append("\n");
@@ -184,6 +193,11 @@ namespace HETSAPI.ViewModels
                     EquipmentTypeName == other.EquipmentTypeName ||
                     EquipmentTypeName != null &&
                     EquipmentTypeName.Equals(other.EquipmentTypeName)
+                ) &&
+                (
+                    DistrictEquipmentName == other.DistrictEquipmentName ||
+                    DistrictEquipmentName != null &&
+                    DistrictEquipmentName.Equals(other.DistrictEquipmentName)
                 ) &&                 
                 (
                     ProjectName == other.ProjectName ||
@@ -244,6 +258,11 @@ namespace HETSAPI.ViewModels
                 if (EquipmentTypeName != null)
                 {
                     hash = hash * 59 + EquipmentTypeName.GetHashCode();
+                }
+
+                if (DistrictEquipmentName != null)
+                {
+                    hash = hash * 59 + DistrictEquipmentName.GetHashCode();
                 }
 
                 if (ProjectName != null)

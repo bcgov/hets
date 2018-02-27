@@ -491,10 +491,11 @@ namespace HETSAPI.Services.Impl
             int?[] localareasArray = ParseIntArray(localareas);
 
             IQueryable<RentalRequest> data = _context.RentalRequests.AsNoTracking()
-                    .Include(x => x.LocalArea.ServiceArea.District.Region)
-                    .Include(x => x.DistrictEquipmentType.EquipmentType)
-                    .Include(x => x.Project.PrimaryContact)
-                    .Select(x => x);
+                .Include(x => x.LocalArea.ServiceArea.District.Region)
+                .Include(x => x.DistrictEquipmentType)
+                    .ThenInclude(y => y.EquipmentType)                
+                .Include(x => x.Project.PrimaryContact)
+                .Select(x => x);
 
             // Default search results must be limited to user
             int? districtId = _context.GetDistrictIdByUserId(GetCurrentUserId()).Single();

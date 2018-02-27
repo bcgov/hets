@@ -164,7 +164,8 @@ namespace HETSAPI.Mappings
                 if (model.DistrictEquipmentType != null)
                 {
                     dto.EquipmentTypeName = model.DistrictEquipmentType.EquipmentType.Name;
-                }            
+                    dto.DistrictEquipmentName = model.DistrictEquipmentType.DistrictEquipmentName;
+                }
                 
                 dto.Id = model.Id;
                 dto.LocalArea = model.LocalArea;
