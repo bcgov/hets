@@ -126,9 +126,14 @@ namespace HETSAPI.Models
         /// <summary>
         /// A system generated value to identify if this equipment is currenty on an active Rental Agreement
         /// </summary>
-        /// <value>A system generated value to identify if this equipment is currenty on an active Rental Agreement</value>
         [NotMapped]
         public bool IsHired { get; set; }
+
+        /// <summary>
+        /// Hours YTD (calculated)
+        /// </summary>
+        [NotMapped]
+        public float? HoursYtd { get; set; }
 
         /// <summary>
         /// A system-generated unique identifier for a Equipment
@@ -188,7 +193,6 @@ namespace HETSAPI.Models
         /// <value>A human-visible unique code for the piece of equipment, referenced for convenience by the system users - HETS Clerks and Equipment Owners. Generated at record creation time based on the unique Owner prefix (e.g. EDW) and a zero-filled unique number - resulting in a code like EDW-0083.</value>
         [MetaData (Description = "A human-visible unique code for the piece of equipment, referenced for convenience by the system users - HETS Clerks and Equipment Owners. Generated at record creation time based on the unique Owner prefix (e.g. EDW) and a zero-filled unique number - resulting in a code like EDW-0083.")]
         [MaxLength(25)]
-
         public string EquipmentCode { get; set; }
 
         /// <summary>
@@ -197,7 +201,6 @@ namespace HETSAPI.Models
         /// <value>The current status of the equipment in a UI-controlled string. Initial values are Pending, Approved and Archived, but other values may be added.</value>
         [MetaData (Description = "The current status of the equipment in a UI-controlled string. Initial values are Pending, Approved and Archived, but other values may be added.")]
         [MaxLength(50)]
-
         public string Status { get; set; }
 
         /// <summary>
@@ -220,7 +223,6 @@ namespace HETSAPI.Models
         /// <value>A comment field to capture information specific to the change of status.</value>
         [MetaData(Description = "A comment field to capture information specific to the change of status.")]
         [MaxLength(255)]
-
         public string StatusComment { get; set; }
 
         /// <summary>
@@ -243,7 +245,6 @@ namespace HETSAPI.Models
         /// <value>A note about why the needed information&#x2F;status update that is needed about the equipment.</value>
         [MetaData (Description = "A note about why the needed information&#x2F;status update that is needed about the equipment.")]
         [MaxLength(2048)]
-
         public string InformationUpdateNeededReason { get; set; }
 
         /// <summary>
@@ -252,7 +253,6 @@ namespace HETSAPI.Models
         /// <value>The licence plate (if any) of the piece of equipment, as entered by the HETS Clerk.</value>
         [MetaData (Description = "The licence plate (if any) of the piece of equipment, as entered by the HETS Clerk.")]
         [MaxLength(20)]
-
         public string LicencePlate { get; set; }
 
         /// <summary>
@@ -261,7 +261,6 @@ namespace HETSAPI.Models
         /// <value>The make of the piece of equipment, as provided by the Equipment Owner.</value>
         [MetaData (Description = "The make of the piece of equipment, as provided by the Equipment Owner.")]
         [MaxLength(50)]
-
         public string Make { get; set; }
 
         /// <summary>
@@ -270,7 +269,6 @@ namespace HETSAPI.Models
         /// <value>The model of the piece of equipment, as provided by the Equipment Owner.</value>
         [MetaData (Description = "The model of the piece of equipment, as provided by the Equipment Owner.")]
         [MaxLength(50)]
-
         public string Model { get; set; }
 
         /// <summary>
@@ -279,7 +277,6 @@ namespace HETSAPI.Models
         /// <value>The model year of the piece of equipment, as provided by the Equipment Owner.</value>
         [MetaData (Description = "The model year of the piece of equipment, as provided by the Equipment Owner.")]
         [MaxLength(15)]
-
         public string Year { get; set; }
 
         /// <summary>
@@ -288,7 +285,6 @@ namespace HETSAPI.Models
         /// <value>A user entered type field. Typically used by the business to identify unique characteristics regarding the piece of equipment.</value>
         [MetaData(Description = "A user entered type field. Typically used by the business to identify unique characteristics regarding the piece of equipment.")]
         [MaxLength(50)]
-
         public string Type { get; set; }
 
         /// <summary>
@@ -297,7 +293,6 @@ namespace HETSAPI.Models
         /// <value>TO BE REVIEWED WITH THE BUSINESS - WHAT IS THIS?</value>
         [MetaData (Description = "TO BE REVIEWED WITH THE BUSINESS - WHAT IS THIS?")]
         [MaxLength(255)]
-
         public string Operator { get; set; }
 
         /// <summary>
@@ -313,7 +308,6 @@ namespace HETSAPI.Models
         /// <value>TO BE REVIEWED WITH THE BUSINESS - WHAT IS THIS?</value>
         [MetaData (Description = "TO BE REVIEWED WITH THE BUSINESS - WHAT IS THIS?")]
         [MaxLength(255)]
-
         public string RefuseRate { get; set; }
 
         /// <summary>
@@ -322,7 +316,6 @@ namespace HETSAPI.Models
         /// <value>The serial number of the piece of equipment as provided by the Equipment Owner. Used to detect and reconcile pieces of equipment moved between Local Areas. Duplicate serial numbers are flagged in the system but permitted. The duplicates are flagged in the UI until the HETS Clerks reconcile the differences - either correcting the serial number or archiving a piece of equipment moved to a new local area.</value>
         [MetaData (Description = "The serial number of the piece of equipment as provided by the Equipment Owner. Used to detect and reconcile pieces of equipment moved between Local Areas. Duplicate serial numbers are flagged in the system but permitted. The duplicates are flagged in the UI until the HETS Clerks reconcile the differences - either correcting the serial number or archiving a piece of equipment moved to a new local area.")]
         [MaxLength(100)]
-
         public string SerialNumber { get; set; }
 
         /// <summary>
@@ -414,12 +407,11 @@ namespace HETSAPI.Models
         public float? ServiceHoursThreeYearsAgo { get; set; }
 
         /// <summary>
-        /// TO BE REVIEWED - A reason code indicating why a piece of equipment has been archived.
+        /// Archive code (Y/N) indicating if a piece of equipment has been archived.
         /// </summary>
-        /// <value>TO BE REVIEWED - A reason code indicating why a piece of equipment has been archived.</value>
-        [MetaData (Description = "TO BE REVIEWED - A reason code indicating why a piece of equipment has been archived.")]
+        /// <value>Archive code (Y/N) indicating if a piece of equipment has been archived.</value>
+        [MetaData (Description = "Archive code (Y/N) indicating if a piece of equipment has been archived.")]
         [MaxLength(50)]
-
         public string ArchiveCode { get; set; }
 
         /// <summary>

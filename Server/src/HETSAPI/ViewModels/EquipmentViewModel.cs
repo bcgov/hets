@@ -195,6 +195,12 @@ namespace HETSAPI.ViewModels
         [DataMember(Name = "isHired")]
         public bool IsHired { get; set; }
 
+        /// <summary>
+        /// Hours YTD (calculated)
+        /// </summary>
+        [DataMember(Name = "hoursYtd")]
+        public float? HoursYtd { get; set; }
+
         #region Equipment Model Properties
 
         /// <summary>
