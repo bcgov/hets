@@ -391,13 +391,7 @@ var ProjectsDetail = React.createClass({
                     <td>{ item.isCompleted ? 
                       'Completed' 
                       : 
-                      <Button 
-                        className="btn-link"
-                        bsSize="xsmall"
-                        onClick={ () => this.openTimeEntryDialog(item) }
-                      >
-                        { item.lastTimeRecord ? formatDateTime(item.lastTimeRecord, Constant.DATE_YEAR_SHORT_MONTH_DAY) : 'None' }
-                      </Button>
+                      <EditButton name="Contact" onClick={this.openTimeEntryDialog.bind(this, item)} />
                     }
                     </td>
                     <td>
