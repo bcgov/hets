@@ -270,7 +270,7 @@ var RentalRequests = React.createClass({
               return <tr key={ request.id } className={ request.isActive ? null : 'info' }>
                 <td>{ request.localAreaName }</td>
                 <td style={{ textAlign: 'center' }}>{ request.equipmentCount }</td>
-                <td>{ request.districtEquipmentType.districtEquipmentName }</td>
+                <td>{ request.districtEquipmentName }</td>
                 <td style={{ textAlign: 'center' }}>{ formatDateTime(request.expectedStartDate, Constant.DATE_YEAR_SHORT_MONTH_DAY) }</td>
                 <td style={{ textAlign: 'center' }}>{ formatDateTime(request.expectedEndDate, Constant.DATE_YEAR_SHORT_MONTH_DAY) }</td>
                 <td>
