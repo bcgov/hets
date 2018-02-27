@@ -175,7 +175,6 @@ var Owners = React.createClass({
       .value();
 
     var owners = _.chain(this.props.owners.data)
-      .filter(owner => owner.localArea.serviceArea && owner.localArea.serviceArea.district.id == this.props.currentUser.district.id)
       .sortBy('organizationName')
       .value();
 
