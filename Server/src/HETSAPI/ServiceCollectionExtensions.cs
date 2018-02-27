@@ -49,7 +49,6 @@ namespace HETSAPI
             services.AddTransient<IRoleService, RoleService>();
             services.AddTransient<IServiceAreaService, ServiceAreaService>();
             services.AddTransient<ISeniorityAuditService, SeniorityAuditService>();
-            services.AddTransient<ITestService, TestService>();
             services.AddTransient<ITimeRecordService, TimeRecordService>();
             services.AddTransient<IUserService, UserService>();
             return services;
