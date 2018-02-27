@@ -23,22 +23,23 @@ namespace HETSAPI.ViewModels
         /// <summary>
         /// Initializes a new instance of the <see cref="AttachmentViewModel" /> class.
         /// </summary>
-        /// <param name="Id">A system-generated unique identifier for an Attachment (required).</param>
-        /// <param name="FileName">Filename as passed by the user uploading the file (required).</param>
-        /// <param name="FileSize">FileSize.</param>
-        /// <param name="Description">A note about the attachment,  optionally maintained by the user..</param>
-        /// <param name="Type">Type of attachment.</param>
-        /// <param name="LastUpdateUserid">Audit information - SM User Id for the User who most recently updated the record..</param>
-        /// <param name="LastUpdateTimestamp">Audit information - Timestamp for record modification.</param>
-        public AttachmentViewModel(int Id, string FileName, int? FileSize = null, string Description = null, string Type = null, string LastUpdateUserid = null, DateTime? LastUpdateTimestamp = null)
+        /// <param name="id">A system-generated unique identifier for an Attachment (required).</param>
+        /// <param name="fileName">Filename as passed by the user uploading the file (required).</param>
+        /// <param name="fileSize">FileSize.</param>
+        /// <param name="description">A note about the attachment,  optionally maintained by the user..</param>
+        /// <param name="type">Type of attachment.</param>
+        /// <param name="lastUpdateUserid">Audit information - SM User Id for the User who most recently updated the record..</param>
+        /// <param name="lastUpdateTimestamp">Audit information - Timestamp for record modification.</param>
+        public AttachmentViewModel(int id, string fileName, int? fileSize = null, string description = null, 
+            string type = null, string lastUpdateUserid = null, DateTime? lastUpdateTimestamp = null)
         {   
-            this.Id = Id;
-            this.FileName = FileName;
-            this.FileSize = FileSize;
-            this.Description = Description;
-            this.Type = Type;
-            this.LastUpdateUserid = LastUpdateUserid;
-            this.LastUpdateTimestamp = LastUpdateTimestamp;
+            Id = id;
+            FileName = fileName;
+            FileSize = fileSize;
+            Description = description;
+            Type = type;
+            LastUpdateUserid = lastUpdateUserid;
+            LastUpdateTimestamp = lastUpdateTimestamp;
         }
 
         /// <summary>
@@ -148,38 +149,38 @@ namespace HETSAPI.ViewModels
 
             return                 
                 (
-                    this.Id == other.Id ||
-                    this.Id.Equals(other.Id)
+                    Id == other.Id ||
+                    Id.Equals(other.Id)
                 ) &&                 
                 (
-                    this.FileName == other.FileName ||
-                    this.FileName != null &&
-                    this.FileName.Equals(other.FileName)
+                    FileName == other.FileName ||
+                    FileName != null &&
+                    FileName.Equals(other.FileName)
                 ) &&                 
                 (
-                    this.FileSize == other.FileSize ||
-                    this.FileSize != null &&
-                    this.FileSize.Equals(other.FileSize)
+                    FileSize == other.FileSize ||
+                    FileSize != null &&
+                    FileSize.Equals(other.FileSize)
                 ) &&                 
                 (
-                    this.Description == other.Description ||
-                    this.Description != null &&
-                    this.Description.Equals(other.Description)
+                    Description == other.Description ||
+                    Description != null &&
+                    Description.Equals(other.Description)
                 ) &&                 
                 (
-                    this.Type == other.Type ||
-                    this.Type != null &&
-                    this.Type.Equals(other.Type)
+                    Type == other.Type ||
+                    Type != null &&
+                    Type.Equals(other.Type)
                 ) &&                 
                 (
-                    this.LastUpdateUserid == other.LastUpdateUserid ||
-                    this.LastUpdateUserid != null &&
-                    this.LastUpdateUserid.Equals(other.LastUpdateUserid)
+                    LastUpdateUserid == other.LastUpdateUserid ||
+                    LastUpdateUserid != null &&
+                    LastUpdateUserid.Equals(other.LastUpdateUserid)
                 ) &&                 
                 (
-                    this.LastUpdateTimestamp == other.LastUpdateTimestamp ||
-                    this.LastUpdateTimestamp != null &&
-                    this.LastUpdateTimestamp.Equals(other.LastUpdateTimestamp)
+                    LastUpdateTimestamp == other.LastUpdateTimestamp ||
+                    LastUpdateTimestamp != null &&
+                    LastUpdateTimestamp.Equals(other.LastUpdateTimestamp)
                 );
         }
 
@@ -195,29 +196,29 @@ namespace HETSAPI.ViewModels
                 int hash = 41;
                 // Suitable nullity checks
                                    
-                hash = hash * 59 + this.Id.GetHashCode();                if (this.FileName != null)
+                hash = hash * 59 + Id.GetHashCode();                if (FileName != null)
                 {
-                    hash = hash * 59 + this.FileName.GetHashCode();
+                    hash = hash * 59 + FileName.GetHashCode();
                 }                
-                                if (this.FileSize != null)
+                                if (FileSize != null)
                 {
-                    hash = hash * 59 + this.FileSize.GetHashCode();
+                    hash = hash * 59 + FileSize.GetHashCode();
                 }                
-                                if (this.Description != null)
+                                if (Description != null)
                 {
-                    hash = hash * 59 + this.Description.GetHashCode();
+                    hash = hash * 59 + Description.GetHashCode();
                 }                
-                                if (this.Type != null)
+                                if (Type != null)
                 {
-                    hash = hash * 59 + this.Type.GetHashCode();
+                    hash = hash * 59 + Type.GetHashCode();
                 }                
-                                if (this.LastUpdateUserid != null)
+                                if (LastUpdateUserid != null)
                 {
-                    hash = hash * 59 + this.LastUpdateUserid.GetHashCode();
+                    hash = hash * 59 + LastUpdateUserid.GetHashCode();
                 }                
-                                if (this.LastUpdateTimestamp != null)
+                                if (LastUpdateTimestamp != null)
                 {
-                    hash = hash * 59 + this.LastUpdateTimestamp.GetHashCode();
+                    hash = hash * 59 + LastUpdateTimestamp.GetHashCode();
                 }                
                 
                 return hash;

@@ -28,19 +28,19 @@ namespace HETSAPI.Authentication
             if (user == null)
                 return null;
 
-            if (guid != null)
+            if (guid == null)
+                return user;
+
+            if (string.IsNullOrEmpty(user.Guid))
             {
-                if (string.IsNullOrEmpty(user.Guid))
-                {
-                    // self register (write the users Guid to thd db)
-                    user.Guid = guid;
-                    context.SaveChanges();
-                }
-                else if (!user.Guid.Equals(guid, StringComparison.OrdinalIgnoreCase))
-                {
-                    // invalid account - guid doesn't match user credential
-                    return null;
-                }
+                // self register (write the users Guid to thd db)
+                user.Guid = guid;
+                context.SaveChanges();
+            }
+            else if (!user.Guid.Equals(guid, StringComparison.OrdinalIgnoreCase))
+            {
+                // invalid account - guid doesn't match user credential
+                return null;
             }
 
             return user;

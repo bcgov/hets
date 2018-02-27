@@ -63,7 +63,7 @@ namespace HETSAPI.Services.Impl
         public virtual IActionResult ProvincialRateTypesGetAsync()
         {
             List<ProvincialRateType> result = _context.ProvincialRateTypes.AsNoTracking()
-                .Where(x => x.Active == true)
+                .Where(x => x.Active)
                 .ToList();
 
             int pseudoId = 0;

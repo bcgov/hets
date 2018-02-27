@@ -35,7 +35,7 @@ namespace HETSAPI.Seeders
 
         protected bool IsProductionEnvironment => _env.IsProduction();
 
-        protected IConfiguration Configuration { get; private set; }
+        protected IConfiguration Configuration { get; set; }
 
         public virtual Type InvokeAfter => null;
 

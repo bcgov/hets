@@ -37,7 +37,7 @@ namespace HETSAPI.Authentication
         {
             // write metadata
             string json = JsonConvert.SerializeObject(this, Formatting.Indented,
-                new JsonSerializerSettings()
+                new JsonSerializerSettings
                     {
                         ReferenceLoopHandling = ReferenceLoopHandling.Ignore
                     }

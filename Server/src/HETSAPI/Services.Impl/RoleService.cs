@@ -220,7 +220,6 @@ namespace HETSAPI.Services.Impl
         /// <param name="id">id of Role to update</param>
         /// <param name="items"></param>
         /// <response code="200">OK</response>
-        /// <response code="404">Role not found</response>
         public virtual IActionResult RolesIdPermissionsPutAsync(int id, PermissionViewModel[] items)
         {
             using (IDbContextTransaction txn = _context.BeginTransaction())

@@ -7,7 +7,7 @@ using Microsoft.Extensions.Configuration;
 namespace HETSAPI.Services.Impl
 {
     /// <summary>
-    /// Equipment TYpe Service
+    /// Equipment Type Service
     /// </summary>
     public class EquipmentTypeService : IEquipmentTypeService
     {
@@ -22,13 +22,7 @@ namespace HETSAPI.Services.Impl
             _context = context;
             _configuration = configuration;
         }
-
-
-        private void AdjustRecord(EquipmentType item)
-        {
-            // Equipment Type no longer has any child objects.
-        }
-
+        
         /// <summary>
         /// Create bulk equipment type records
         /// </summary>
@@ -42,9 +36,7 @@ namespace HETSAPI.Services.Impl
             }
 
             foreach (EquipmentType item in items)
-            {
-                AdjustRecord(item);
-                
+            {                
                 // determine if this is an insert or an update            
                 bool exists = _context.EquipmentTypes.Any(a => a.Id == item.Id);
 

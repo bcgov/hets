@@ -99,7 +99,8 @@ namespace HETSAPI.Import
         /// </summary>
         /// <param name="context"></param>
         /// <param name="connectionstring"></param>
-        /// <param name="fileLocation"></param>
+        /// <param name="sourceFileLocation"></param>
+        /// <param name="destinationFileLocation"></param>
         public static void ObfuscationJob(PerformContext context, string connectionstring, string sourceFileLocation, string destinationFileLocation)
         {
             // open a connection to the database.

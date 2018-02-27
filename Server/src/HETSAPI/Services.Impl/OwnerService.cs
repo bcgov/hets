@@ -539,10 +539,9 @@ namespace HETSAPI.Services.Impl
                     MinistryDistrictId = owners[0].LocalArea.ServiceArea.District.MinistryDistrictID,
                     DistrictName = owners[0].LocalArea.ServiceArea.District.Name,
                     DistrictAddress = "to be completed",
-                    DistrictContact = "to be completed"
+                    DistrictContact = "to be completed",
+                    Owners = new List<Owner>()
                 };
-
-                model.Owners = new List<Owner>();
 
                 // add owner records - must verify district ids too
                 foreach (Owner owner in owners)
@@ -706,9 +705,9 @@ namespace HETSAPI.Services.Impl
                 Owner owner = _context.Owners
                     .Include(x => x.LocalArea.ServiceArea.District.Region)
                     .Include(x => x.EquipmentList)
-                    .ThenInclude(y => y.DistrictEquipmentType)
+                        .ThenInclude(y => y.DistrictEquipmentType)
                     .Include(x => x.EquipmentList)
-                    .ThenInclude(y => y.Owner)
+                        .ThenInclude(y => y.Owner)
                     .Include(x => x.Notes)
                     .Include(x => x.Attachments)
                     .Include(x => x.History)
@@ -716,7 +715,7 @@ namespace HETSAPI.Services.Impl
                     .First(x => x.Id == id);
 
                 // adjust the incoming list
-                for (int i = 0; i < items.Count(); i++)
+                for (int i = 0; i < items.Length; i++)
                 {
                     Equipment item = items[i];
 
@@ -894,7 +893,7 @@ namespace HETSAPI.Services.Impl
                 Owner owner = _context.Owners
                     .Include(x => x.LocalArea.ServiceArea.District.Region)
                     .Include(x => x.EquipmentList)
-                    .ThenInclude(y => y.DistrictEquipmentType)
+                        .ThenInclude(y => y.DistrictEquipmentType)
                     .Include(x => x.Notes)
                     .Include(x => x.Attachments)
                     .Include(x => x.History)
@@ -902,7 +901,7 @@ namespace HETSAPI.Services.Impl
                     .First(x => x.Id == id);
 
                 // adjust the incoming list
-                for (int i = 0; i < items.Count(); i++)
+                for (int i = 0; i < items.Length; i++)
                 {
                     Contact item = items[i];
 
