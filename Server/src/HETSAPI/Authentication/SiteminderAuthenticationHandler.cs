@@ -1,9 +1,7 @@
 ﻿using System;
-using System.IO;
 using System.Security.Claims;
 using System.Text.Encodings.Web;
 using System.Threading.Tasks;
-using HETSAPI.Helpers;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
@@ -62,52 +60,52 @@ namespace HETSAPI.Authentication
         /// <summary>
         /// User GUID
         /// </summary>
-        public string SiteMinderUserGuidKey { get; private set; }
+        public string SiteMinderUserGuidKey { get; set; }
 
         /// <summary>
         /// User Id
         /// </summary>
-        public string SiteMinderUniversalIdKey { get; private set; }
+        public string SiteMinderUniversalIdKey { get; set; }
 
         /// <summary>
         /// User Name
         /// </summary>
-        public string SiteMinderUserNameKey { get; private set; }
+        public string SiteMinderUserNameKey { get; set; }
 
         /// <summary>
         /// User's Display Name
         /// </summary>
-        public string SiteMinderUserDisplayNameKey { get; private set; }
+        public string SiteMinderUserDisplayNameKey { get; set; }
 
         /// <summary>
         /// Missing SiteMinder UserId Error
         /// </summary>
-        public string MissingSiteMinderUserIdError { get; private set; }
+        public string MissingSiteMinderUserIdError { get; set; }
 
         /// <summary>
         /// Missing SiteMinder Guid Error
         /// </summary>
-        public string MissingSiteMinderGuidError { get; private set; }
+        public string MissingSiteMinderGuidError { get; set; }
 
         /// <summary>
         /// Missing Database UserId Error
         /// </summary>
-        public string MissingDbUserIdError { get; private set; }
+        public string MissingDbUserIdError { get; set; }
 
         /// <summary>
         /// Inactive Database UserId Error
         /// </summary>
-        public string InactivegDbUserIdError { get; private set; }
+        public string InactivegDbUserIdError { get; set; }
 
         /// <summary>
         /// Development Environment Authentication Key
         /// </summary>
-        public string DevAuthenticationTokenKey { get; private set; }
+        public string DevAuthenticationTokenKey { get; set; }
 
         /// <summary>
         /// Development Environment efault UserId
         /// </summary>
-        public string DevDefaultUserId { get; private set; }
+        public string DevDefaultUserId { get; set; }
     }
     #endregion    
 

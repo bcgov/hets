@@ -967,7 +967,7 @@ namespace HETSAPI.Services.Impl
                     .First(x => x.Id == id);
 
                 // adjust the incoming list
-                for (int i = 0; i < items.Count(); i++)
+                for (int i = 0; i < items.Length; i++)
                 {
                     Contact item = items[i];
 

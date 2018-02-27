@@ -15,7 +15,7 @@ namespace HETSAPI.Services.Impl
             DbContext = context;
         }
 
-        protected IDbAppContext DbContext { get; private set;  }
+        protected IDbAppContext DbContext { get; set;  }
 
         protected HttpRequest Request => _httpContextAccessor.HttpContext.Request;
 

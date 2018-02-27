@@ -24,9 +24,8 @@ namespace HETSAPI.Services
         /// Returns the obfuscation map stored as a spreadsheet
         /// </summary>
         /// <param name="path"></param>
+        /// <param name="filename"></param>
         /// <returns></returns>
-        Task<IActionResult> GetSpreadsheet(string path, string filename);
-
-        
+        Task<IActionResult> GetSpreadsheet(string path, string filename);        
     }
 }

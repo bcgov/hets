@@ -6,7 +6,7 @@ namespace HETSAPI
     /// <summary>
     /// Db Context Transaction Wrapper
     /// </summary>
-    public class DbContextTransactionWrapper : IDbContextTransaction, IDisposable
+    public class DbContextTransactionWrapper : IDbContextTransaction
     {
         private readonly IDbContextTransaction _transaction;
 
