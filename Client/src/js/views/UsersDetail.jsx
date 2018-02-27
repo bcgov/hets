@@ -44,8 +44,6 @@ var UsersDetail = React.createClass({
       showEditDialog: false,
       showUserRoleDialog: false,
 
-      isNew: this.props.params.userId === '0',
-
       ui: {
         // User roles
         sortField: this.props.ui.sortField || 'roleName',
@@ -56,9 +54,8 @@ var UsersDetail = React.createClass({
   },
 
   componentDidMount() {
-    if (this.state.isNew) {
-      // Clear the spinner
-      this.setState({ loading: false });
+    // if new user
+    if (this.props.params.userId === '0') {
       // Clear the user store
       store.dispatch({ type: Action.UPDATE_USER, user: {
         id: 0,
@@ -70,6 +67,12 @@ var UsersDetail = React.createClass({
       // Open editor to add new user
       this.openEditDialog();
     } else {
+      this.fetch();
+    }
+  },
+
+  componentWillReceiveProps(nextProps) {
+    if (this.props.params.userId !== nextProps.params.userId) {
       this.fetch();
     }
   },
@@ -97,13 +100,11 @@ var UsersDetail = React.createClass({
   },
 
   onSaveEdit(user) {
-    var savePromise = this.state.isNew ? Api.addUser : Api.updateUser;
+    var savePromise = this.props.params.userId === '0' ? Api.addUser : Api.updateUser;
     savePromise(user).then(() => {
-      if (this.state.isNew) {
+      if (this.props.params.userId === '0') {
         // Make sure we get the new user's ID
         user.id = this.props.user.id;
-      }
-      if (this.state.isNew) {
         // Reload the screen using new user id
         this.props.router.push({
           pathname: `${ Constant.USERS_PATHNAME }/${ user.id }`,
@@ -115,7 +116,7 @@ var UsersDetail = React.createClass({
 
   onCloseEdit() {
     this.closeEditDialog();
-    if (this.state.isNew) {
+    if (this.props.params.userId === '0') {
       // Go back to user list if cancelling new user
       this.props.router.push({
         pathname: Constant.USERS_PATHNAME,
@@ -168,10 +169,10 @@ var UsersDetail = React.createClass({
     return <div id="users-detail">
       <div>
         <Row id="users-top">
-          <Col md={10}>
+          <Col md={8}>
             <Label bsStyle={ user.active ? 'success' : 'danger'}>{ user.active ? 'Verified Active' : 'Inactive' }</Label>
           </Col>
-          <Col md={2}>
+          <Col md={4}>
             <div className="pull-right">
               <Button onClick={ this.print }><Glyphicon glyph="print" title="Print" /></Button>
               <LinkContainer to={{ pathname: Constant.USERS_PATHNAME }}>

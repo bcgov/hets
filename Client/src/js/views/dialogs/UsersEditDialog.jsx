@@ -13,7 +13,6 @@ import DropdownControl from '../../components/DropdownControl.jsx';
 import EditDialog from '../../components/EditDialog.jsx';
 import FilterDropdown from '../../components/FilterDropdown.jsx';
 import FormInputControl from '../../components/FormInputControl.jsx';
-import MultiDropdown from '../../components/MultiDropdown.jsx';
 
 import { isBlank } from '../../utils/string';
 
@@ -28,7 +27,6 @@ var UsersEditDialog = React.createClass({
   },
 
   getInitialState() {
-
     return {
       isNew: this.props.user.id == 0,
 
@@ -128,52 +126,50 @@ var UsersEditDialog = React.createClass({
   render() {
     var districts = _.sortBy(this.props.districts, 'name');
 
-    return <EditDialog id="users-edit" show={ this.props.show } bsSize="large"
+    return <EditDialog id="users-edit" show={ this.props.show }
       onClose={ this.props.onClose } onSave={ this.onSave } didChange={ this.didChange } isValid={ this.isValid }
       title= { <strong>User</strong> }>
       {(() => {
         return <Form>
           <Grid fluid>
             <Row>
-              <Col md={4}>
+              <Col md={12}>
                 <FormGroup controlId="givenName" validationState={ this.state.givenNameError ? 'error' : null }>
                   <ControlLabel>Given Name <sup>*</sup></ControlLabel>
                   <FormInputControl type="text" defaultValue={ this.state.givenName } updateState={ this.updateState } inputRef={ ref => { this.input = ref; }}/>
                   <HelpBlock>{ this.state.givenNameError }</HelpBlock>
                 </FormGroup>
               </Col>
-              <Col md={4}>
+              <Col md={12}>
                 <FormGroup controlId="surname" validationState={ this.state.surnameError ? 'error' : null }>
                   <ControlLabel>Surname <sup>*</sup></ControlLabel>
                   <FormInputControl type="text" defaultValue={ this.state.surname } updateState={ this.updateState }/>
                   <HelpBlock>{ this.state.surnameError }</HelpBlock>
                 </FormGroup>
               </Col>
-              <Col md={2}>
+              <Col md={12}>
                 <FormGroup controlId="smUserId" validationState={ this.state.smUserIdError ? 'error' : null }>
                   <ControlLabel>User ID <sup>*</sup></ControlLabel>
                   <FormInputControl type="text" defaultValue={ this.state.smUserId } updateState={ this.updateState }/>
                   <HelpBlock>{ this.state.smUserIdError }</HelpBlock>
                 </FormGroup>
               </Col>
-              <Col md={2}>
+              <Col md={12}>
                 <FormGroup controlId="status">
                   <ControlLabel>Status</ControlLabel>
                   <DropdownControl id="status" title={ this.state.status } updateState={ this.updateStatus }
-                    items={[ Constant.USER_STATUS_ACTIVE, Constant.USER_STATUS_ARCHIVED ]}
+                    items={[ Constant.USER_STATUS_ACTIVE, Constant.USER_STATUS_ARCHIVED ]} className="full-width"
                   />
                 </FormGroup>
               </Col>
-            </Row>
-            <Row>
-              <Col md={4}>
+              <Col md={12}>
                 <FormGroup controlId="email" validationState={ this.state.emailError ? 'error' : null }>
                   <ControlLabel>E-mail <sup>*</sup></ControlLabel>
                   <FormInputControl type="text" defaultValue={ this.state.email } updateState={ this.updateState }/>
                   <HelpBlock>{ this.state.emailError }</HelpBlock>
                 </FormGroup>
               </Col>
-              <Col md={4}>
+              <Col md={12}>
                 <FormGroup controlId="districtId" validationState={ this.state.districtIdError ? 'error' : null }>
                   <ControlLabel>District <sup>*</sup></ControlLabel>
                   <FilterDropdown id="districtId" placeholder="None" blankLine
