@@ -21,23 +21,10 @@ function normalize(response) {
 function parseUser(user) {
   if (!user.district) { user.district = { id: 0, name: '' }; }
   if (!user.userRoles) { user.userRoles = []; }
-  if (!user.groupMemberships) { user.groupMemberships = []; }
 
   user.name = lastFirstName(user.surname, user.givenName);
   user.fullName = firstLastName(user.givenName, user.surname);
   user.districtName = user.district.name;
-
-  user.groupNames = _.chain(user.groupMemberships)
-    .filter(membership => membership.group && membership.group.name)
-    .map(membership => membership.group.name)
-    .sortBy(name => name)
-    .join(', ')
-    .value();
-
-  // This field is formatted to be used in updateUserGroups(), which expects
-  // [ { groupId: 1 }, { groupId: 2 }, ... ]
-  user.groupIds = _.filter(user.groupMemberships, membership => membership.group && membership.group.id)
-    .map(membership => { return { groupId: membership.group.id }; });
 
   _.each(user.userRoles, userRole => {
     userRole.roleId = userRole.role && userRole.role.id ? userRole.role.id : 0;
@@ -141,13 +128,6 @@ export function deleteUser(user) {
     parseUser(user);
 
     store.dispatch({ type: Action.DELETE_USER, user: user });
-  });
-}
-
-export function updateUserGroups(user) {
-  return new ApiRequest(`/users/${ user.id }/groups`).put(user.groupIds).then(() => {
-    // After updating the user's group, refresh the user state.
-    return getUser(user.id);
   });
 }
 
@@ -1763,14 +1743,6 @@ export function updateDistrictEquipmentType(equipment) {
 export function deleteDistrictEquipmentType(equipment) {
   return new ApiRequest(`/districtequipmenttypes/${equipment.id}/delete`).post().then(response => {
     return response;
-  });
-}
-
-export function getGroups() {
-  return new ApiRequest('/groups').get().then(response => {
-    var groups = normalize(response.data);
-
-    store.dispatch({ type: Action.UPDATE_GROUPS_LOOKUP, groups: groups });
   });
 }
 

@@ -32,7 +32,6 @@ var UsersDetail = React.createClass({
   propTypes: {
     currentUser: React.PropTypes.object,
     user: React.PropTypes.object,
-    groups: React.PropTypes.object,
     ui: React.PropTypes.object,
     params: React.PropTypes.object,
     router: React.PropTypes.object,
@@ -104,16 +103,12 @@ var UsersDetail = React.createClass({
         // Make sure we get the new user's ID
         user.id = this.props.user.id;
       }
-      // Update the user's groups next. This call will
-      // update the user state after completion.
-      Api.updateUserGroups(user).then(() => {
-        if (this.state.isNew) {
-          // Reload the screen using new user id
-          this.props.router.push({
-            pathname: `${ Constant.USERS_PATHNAME }/${ user.id }`,
-          });
-        }
-      });
+      if (this.state.isNew) {
+        // Reload the screen using new user id
+        this.props.router.push({
+          pathname: `${ Constant.USERS_PATHNAME }/${ user.id }`,
+        });
+      }
     });
     this.closeEditDialog();
   },
@@ -213,7 +208,6 @@ var UsersDetail = React.createClass({
                   <Row>
                     <ColDisplay md={3} label="Surname">{ user.surname }</ColDisplay>
                     <ColDisplay md={3} label="District">{ user.districtName }</ColDisplay>
-                    <ColDisplay md={6} label="Groups">{ user.groupNames }</ColDisplay>
                   </Row>
                 </div>;
               })()}
@@ -347,7 +341,6 @@ function mapStateToProps(state) {
   return {
     currentUser: state.user,
     user: state.models.user,
-    groups: state.lookups.groups,
     ui: state.ui.userRoles,
   };
 }

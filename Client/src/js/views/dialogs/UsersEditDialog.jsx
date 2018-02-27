@@ -21,7 +21,6 @@ var UsersEditDialog = React.createClass({
   propTypes: {
     user: React.PropTypes.object,
     districts: React.PropTypes.object,
-    groups: React.PropTypes.object,
 
     onSave: React.PropTypes.func.isRequired,
     onClose: React.PropTypes.func.isRequired,
@@ -39,7 +38,6 @@ var UsersEditDialog = React.createClass({
       smUserId: this.props.user.smUserId || '',
       email: this.props.user.email || '',
       districtId: this.props.user.district.id || 0,
-      selectedGroupsIds: this.props.user.groupIds.map(groupIds => { return groupIds.groupId; }) || [],
 
       status: this.props.user.active ? Constant.USER_STATUS_ACTIVE : Constant.USER_STATUS_ARCHIVED,
 
@@ -48,7 +46,6 @@ var UsersEditDialog = React.createClass({
       smUserIdError: false,
       emailError: false,
       districtIdError: false,
-      selectedGroupsIdsError: false,
     };
   },
 
@@ -74,7 +71,6 @@ var UsersEditDialog = React.createClass({
     if (this.state.smUserId !== this.props.user.smUserId) { return true; }
     if (this.state.email !== this.props.user.email) { return true; }
     if (this.state.districtId !== this.props.user.districtId) { return true; }
-    if (!_.isEqual(this.state.selectedGroupsIds, this.props.user.groupIds)) { return true; }
 
     return false;
   },
@@ -86,7 +82,6 @@ var UsersEditDialog = React.createClass({
       smUserIdError: false,
       emailError: false,
       districtIdError: false,
-      selectedGroupsIdsError: false,
     });
 
     var valid = true;
@@ -116,11 +111,6 @@ var UsersEditDialog = React.createClass({
       valid = false;
     }
 
-    if (this.state.selectedGroupsIds.length === 0) {
-      this.setState({ selectedGroupsIdsError: 'Group is required' });
-      valid = false;
-    }
-
     return valid;
   },
 
@@ -132,13 +122,11 @@ var UsersEditDialog = React.createClass({
       smUserId: this.state.smUserId,
       email: this.state.email,
       district: { id: this.state.districtId },
-      groupIds: this.state.selectedGroupsIds.map(groupId => { return { groupId: groupId }; }),
     }});
   },
 
   render() {
     var districts = _.sortBy(this.props.districts, 'name');
-    var groups = _.sortBy(this.props.groups, 'name');
 
     return <EditDialog id="users-edit" show={ this.props.show } bsSize="large"
       onClose={ this.props.onClose } onSave={ this.onSave } didChange={ this.didChange } isValid={ this.isValid }
@@ -193,15 +181,6 @@ var UsersEditDialog = React.createClass({
                   <HelpBlock>{ this.state.districtIdError }</HelpBlock>
                 </FormGroup>
               </Col>
-              <Col md={4}>
-                <FormGroup controlId="selectedGroupsIds" validationState={ this.state.selectedGroupsIdsError ? 'error' : null }>
-                  <ControlLabel>Groups <sup>*</sup></ControlLabel>
-                  <MultiDropdown id="selectedGroupsIds" placeholder="None"
-                    items={ groups } selectedIds={ this.state.selectedGroupsIds } updateState={ this.updateState } showMaxItems={ 2 }
-                    className="full-width" />
-                  <HelpBlock>{ this.state.selectedGroupsIdsError }</HelpBlock>
-                </FormGroup>
-              </Col>
             </Row>
           </Grid>
         </Form>;
@@ -214,7 +193,6 @@ function mapStateToProps(state) {
   return {
     user: state.models.user,
     districts: state.lookups.districts,
-    groups: state.lookups.groups,
   };
 }
 
