@@ -5,7 +5,7 @@
     <title>Owner Verification Notices</title>
     <style>
         @page {
-            margin: 0;
+            margin: 1.5cm 0;
             size: landscape;
         }
 
@@ -98,12 +98,10 @@
 
         #equipment-table {
             margin-top: 12px;
-            float: left;
             font-size: 12px;
             line-height: 12px;
             color: #000000;
             text-align: left;
-            vertical-align: top;
             width: 100%;
         }
 
@@ -128,9 +126,9 @@
         }
 
         #list-column ul li {
-            list-style-type: circle;
-            margin-left: 14px;
-            padding-left: 0px;
+            list-style-type: none;
+            margin: 0;
+            padding: 0;
         }
 
         @media print {
@@ -214,7 +212,7 @@
                     {{#equipmentList}}
                     <tr>
                         <td>Yes/No</td>
-                        <td>{{id}}</td>
+                        <td>{{equipmentCode}}</td>
                         <td>{{localArea.name}}</td>
                         <td>{{year}}/{{make}}/{{model}}/{{serialNumber}}/{{size}}</td>
                         <td id="list-column">
