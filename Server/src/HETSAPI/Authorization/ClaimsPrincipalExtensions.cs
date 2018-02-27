@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Linq;
 using HETSAPI.Models;
 using System.Security.Claims;
 
@@ -21,7 +20,28 @@ namespace HETSAPI.Authorization
             if (!user.HasClaim(c => c.Type == User.PermissionClaim))
                 return false;
 
-            return permissions.Any(permission => !user.HasClaim(User.PermissionClaim, permission));
+            bool hasRequiredPermissions = false;
+
+            if (!user.HasClaim(c => c.Type == User.PermissionClaim))
+                return false;
+
+            if (user.HasClaim(c => c.Type == User.PermissionClaim))                
+            {
+                bool hasPermissions = true;
+                
+                foreach (string permission in permissions)
+                {
+                    if (!user.HasClaim(User.PermissionClaim, permission))
+                    {
+                        hasPermissions = false;
+                        break;
+                    }
+                }
+                
+                hasRequiredPermissions = hasPermissions;
+            }
+            
+            return hasRequiredPermissions;
         }
 
         /// <summary>
