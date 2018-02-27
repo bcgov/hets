@@ -1667,6 +1667,24 @@ export function getRentalConditions() {
   });
 }
 
+export function deleteCondition(id) {
+  return new ApiRequest(`/conditiontypes/${id}/delete`).post().then(response => {
+    return response;
+  });
+}
+
+export function addCondition(condition) {
+  return new ApiRequest('conditiontypes/0').post(condition).then(response => {
+    return response;
+  });
+}
+
+export function updateCondition(condition) {
+  return new ApiRequest(`conditiontypes/${condition.id}`).post(condition).then(response => {
+    return response;
+  });
+}
+
 ////////////////////
 // Look-ups
 ////////////////////
@@ -1726,6 +1744,24 @@ export function getDistrictEquipmentTypes(districtId) {
     var districtEquipmentTypes = normalize(filteredResponse);
 
     store.dispatch({ type: Action.UPDATE_DISTRICT_EQUIPMENT_TYPES_LOOKUP, districtEquipmentTypes: districtEquipmentTypes });
+  });
+}
+
+export function addDistrictEquipmentType(equipment) {
+  return new ApiRequest(`/districtequipmenttypes/${equipment.id}`).post(equipment).then(response => {
+    return response;
+  });
+}
+
+export function updateDistrictEquipmentType(equipment) {
+  return new ApiRequest(`/districtequipmenttypes/${equipment.id}`).post(equipment).then(response => {
+    return response;
+  });
+}
+
+export function deleteDistrictEquipmentType(equipment) {
+  return new ApiRequest(`/districtequipmenttypes/${equipment.id}/delete`).post().then(response => {
+    return response;
   });
 }
 
