@@ -1660,6 +1660,7 @@ export function deleteRentalCondition(rentalCondition) {
 }
 
 export function getRentalConditions() {
+  store.dispatch({ type: Action.RENTAL_CONDITIONS_LOOKUP_REQUEST });
   return new ApiRequest('/conditiontypes').get().then(response => {
     var rentalConditions = response.data;
 
