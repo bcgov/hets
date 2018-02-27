@@ -449,7 +449,7 @@ var EquipmentDetail = React.createClass({
                     <ColDisplay md={12} labelProps={{ md: 4 }} label="Seniority">{ equipment.seniorityText }</ColDisplay>
                   </Row>
                   <Row>
-                    <ColDisplay md={12} labelProps={{ md: 4 }} label="Hours YTD">{ equipment.serviceHoursThisYear }</ColDisplay>
+                    <ColDisplay md={12} labelProps={{ md: 4 }} label="Hours YTD">{ equipment.hoursYtd }</ColDisplay>
                   </Row>
                   <Row>
                     <ColDisplay md={12} labelProps={{ md: 4 }} label={ <span>Hours { equipment.lastYear }</span> }>{ equipment.serviceHoursLastYear }</ColDisplay>
