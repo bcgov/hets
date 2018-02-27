@@ -431,11 +431,11 @@ var ProjectsDetail = React.createClass({
 
                 return <TableControl id="equipment-list" headers={ headers }>
                   {
-                    _.map(combinedList, (listItem) => {
+                    _.map(combinedList, (listItem, index) => {
                       if (listItem.isRentalRequest) {
-                        return <RentalRequestListItem item={ listItem } project={ project } />;
+                        return <RentalRequestListItem key={index} item={ listItem } project={ project } />;
                       } else {
-                        return <RentalAgreementListItem item={ listItem } />;
+                        return <RentalAgreementListItem key={index} item={ listItem } />;
                       }
                     })
                   }

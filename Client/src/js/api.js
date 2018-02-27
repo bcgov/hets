@@ -925,7 +925,7 @@ function parseProject(project) {
 function formatTimeRecords(timeRecords, rentalRequestId) {
   let formattedTimeRecords = Object.keys(timeRecords).map((key) => {
     let timeRecord = {};
-    timeRecord.enteredDate = timeRecords[key].date;
+    timeRecord.workedDate = timeRecords[key].date;
     timeRecord.hours = timeRecords[key].hours;
     timeRecord.timePeriod = 'Week';
     timeRecord.rentalAgreement = { id: rentalRequestId };
