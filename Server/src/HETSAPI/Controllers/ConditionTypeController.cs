@@ -44,7 +44,7 @@ namespace HETSAPI.Controllers
         [HttpGet]
         [Route("/api/conditiontypes")]
         [SwaggerOperation("ConditionTypesGet")]
-        [RequiresPermission(Permission.Admin)]
+        [RequiresPermission(Permission.DistrictCodeTableManagement)]
         [SwaggerResponse(200, type: typeof(List<ConditionType>))]
         public virtual IActionResult ConditionTypesGet()
         {

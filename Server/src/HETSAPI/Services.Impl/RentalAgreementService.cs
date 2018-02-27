@@ -528,13 +528,15 @@ namespace HETSAPI.Services.Impl
                         return new ObjectResult(new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-01", _configuration)));
                     }
 
-                    agreement.TimeRecords[timeIndex].EnteredDate = item.EnteredDate;
+                    agreement.TimeRecords[timeIndex].EnteredDate = DateTime.Now.ToUniversalTime();
                     agreement.TimeRecords[timeIndex].Hours = item.Hours;
                     agreement.TimeRecords[timeIndex].TimePeriod = item.TimePeriod;
                     agreement.TimeRecords[timeIndex].WorkedDate = item.WorkedDate;
                 }
                 else // add time record
                 {
+                    item.EnteredDate = DateTime.Now.ToUniversalTime();
+
                     agreement.TimeRecords.Add(item);
                 }
 
@@ -587,13 +589,15 @@ namespace HETSAPI.Services.Impl
                             return new ObjectResult(new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-01", _configuration)));
                         }
 
-                        agreement.TimeRecords[timeIndex].EnteredDate = item.EnteredDate;
+                        agreement.TimeRecords[timeIndex].EnteredDate = DateTime.Now.ToUniversalTime();
                         agreement.TimeRecords[timeIndex].Hours = item.Hours;
                         agreement.TimeRecords[timeIndex].TimePeriod = item.TimePeriod;
                         agreement.TimeRecords[timeIndex].WorkedDate = item.WorkedDate;
                     }
                     else // add time record
                     {
+                        item.EnteredDate = DateTime.Now.ToUniversalTime();
+
                         agreement.TimeRecords.Add(item);
                     }
 

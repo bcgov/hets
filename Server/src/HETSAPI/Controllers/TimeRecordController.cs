@@ -35,5 +35,19 @@ namespace HETSAPI.Controllers
         {
             return _service.TimerecordsBulkPostAsync(items);
         }        
+
+        /// <summary>	
+        /// Delete time record	
+        /// </summary>	
+        /// <param name="id">id of TimeRecord to delete</param>	
+        /// <response code="200">OK</response>	
+        [HttpPost]	
+        [Route("/api/timerecords/{id}/delete")]	
+        [SwaggerOperation("TimerecordsIdDeletePost")]
+        [RequiresPermission(Permission.Login)]
+        public virtual IActionResult TimerecordsIdDeletePost([FromRoute]int id)
+        {	
+            return _service.TimerecordsIdDeletePostAsync(id);	
+        }
     }
 }
