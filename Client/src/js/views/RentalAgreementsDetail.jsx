@@ -671,7 +671,7 @@ function mapStateToProps(state) {
     rentalAgreement: state.models.rentalAgreement,
     notes: state.models.rentalAgreementNotes,
     history: state.models.rentalAgreementHistory,
-    rentalConditions: state.lookups.rentalConditions,
+    rentalConditions: state.lookups.rentalConditions.data,
     provincialRateTypes: state.lookups.provincialRateTypes,
   };
 }

@@ -13,7 +13,10 @@ const DEFAULT_LOOKUPS = {
   },
   groups: {},
   permissions: {},
-  rentalConditions: [],
+  rentalConditions: {
+    data: [],
+    loading: false,
+  },
   provincialRateTypes: [],
 
   owners: { 
@@ -79,7 +82,10 @@ export default function lookupsReducer(state = DEFAULT_LOOKUPS, action) {
       return { ...state, users: action.users };
 
     case Action.UPDATE_RENTAL_CONDITIONS_LOOKUP:
-      return { ...state, rentalConditions: action.rentalConditions };
+      return { ...state, rentalConditions: { data: action.rentalConditions, loading: false } };
+
+    case Action.RENTAL_CONDITIONS_LOOKUP_REQUEST: 
+      return { ...state, rentalConditions: { ...state.rentalConditions, loading: true } };
 
     case Action.UPDATE_PROVINCIAL_RATE_TYPES_LOOKUP: 
       return { ...state, provincialRateTypes: action.provincialRateTypes };

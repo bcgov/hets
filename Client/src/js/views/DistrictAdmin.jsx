@@ -113,15 +113,15 @@ var DistrictAdmin = React.createClass({
     return <div id="district-admin">
       <PageHeader>District Admin</PageHeader>
 
-      {(() => {
-        if (this.props.rentalConditions.loading) { return <div style={{ textAlign: 'center' }}><Spinner/></div>; }
+      <Well>
+        <h3>Manage District Equipment Types</h3>
+        {(() => {
+          if (this.props.districtEquipmentTypes.loading) { return <div style={{ textAlign: 'center' }}><Spinner/></div>; }
 
 
-        var addDistrictEquipmentButton = <Button title="Add District Equipment" bsSize="xsmall" onClick={ this.addDistrictEquipmentType }><Glyphicon glyph="plus" />&nbsp;<strong>Add District Equipment Type</strong></Button>;
+          var addDistrictEquipmentButton = <Button title="Add District Equipment" bsSize="xsmall" onClick={ this.addDistrictEquipmentType }><Glyphicon glyph="plus" />&nbsp;<strong>Add District Equipment Type</strong></Button>;
 
-        return (
-          <Well>
-            <h3>Manage District Equipment Types</h3>
+          return (
             <TableControl headers={[
               { field: 'districtEquipmentName',         title: 'District Equipment Name'  },
               { field: 'equipmentType',                 title: 'Equipment Type'           },
@@ -146,19 +146,19 @@ var DistrictAdmin = React.createClass({
                 })
               }
             </TableControl>
-          </Well>
-        );
-      })()}
+          );
+        })()}
+      </Well>
 
 
-      {(() => {
-        if (this.props.rentalConditions.loading) { return <div style={{ textAlign: 'center' }}><Spinner/></div>; }
+      <Well>
+        <h3>Manage Conditions</h3>
+        {(() => {
+          if (this.props.rentalConditions.loading) { return <div style={{ textAlign: 'center' }}><Spinner/></div>; }
 
-        var addConditionButton = <Button title="Add Condition" bsSize="xsmall" onClick={ this.addCondition }><Glyphicon glyph="plus" />&nbsp;<strong>Add Condition</strong></Button>;
+          var addConditionButton = <Button title="Add Condition" bsSize="xsmall" onClick={ this.addCondition }><Glyphicon glyph="plus" />&nbsp;<strong>Add Condition</strong></Button>;
 
-        return (
-          <Well>
-            <h3>Manage Conditions</h3>
+          return (
             <TableControl headers={[
               { field: 'code',         title: 'Condition Code'  },
               { field: 'description',  title: 'Description'     },
@@ -167,7 +167,7 @@ var DistrictAdmin = React.createClass({
               },
             ]}>
               {
-                _.map(this.props.rentalConditions, (condition) => {
+                _.map(this.props.rentalConditions.data, (condition) => {
                   return <tr key={ condition.id }>
                     <td>{ condition.conditionTypeCode }</td>
                     <td>{ condition.description }</td>
@@ -183,9 +183,9 @@ var DistrictAdmin = React.createClass({
                 })
               }
             </TableControl>
-          </Well>
-        );
-      })()}
+          );
+        })()}
+      </Well>
 
       { this.state.showConditionAddEditDialog &&
         <ConditionAddEditDialog
