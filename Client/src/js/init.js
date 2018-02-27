@@ -41,8 +41,6 @@ export default function startApp() {
     Api.setDevUser(process.env.DEV_USER); //eslint-disable-line
   }
   
-  Api.setDevUser('plitton');
-  
   incrementProgressBar(5);
   // Load current user next.
   Api.getCurrentUser().then(() => {
