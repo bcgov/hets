@@ -53,6 +53,12 @@ namespace HETSAPI.Models
         }
 
         /// <summary>
+        /// Used for the Pdf only (formatted version of the rate ($) or Percent (%) value
+        /// </summary>
+        [NotMapped]
+        public string RateString { get; set; }
+
+        /// <summary>
         /// A system-generated unique identifier for a RentalAgreementRate
         /// </summary>
         /// <value>A system-generated unique identifier for a RentalAgreementRate</value>
