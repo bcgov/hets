@@ -60,21 +60,7 @@ namespace HETSAPI.Services
         /// </summary>
         /// <param name="id"></param>
         /// <returns></returns>
-        IActionResult RentalrequestsIdCancelGetAsync(int id);
-
-        /// <summary>
-        /// Move a Rental Request from New (inactive) to In Progress (Active)
-        /// </summary>
-        /// <param name="id"></param>
-        /// <returns></returns>
-        IActionResult RentalrequestsInProgressPostAsync(int id);
-
-        /// <summary>
-        /// Move a Rental Request from In Progress (Active) to Complete
-        /// </summary>
-        /// <param name="id"></param>
-        /// <returns></returns>
-        IActionResult RentalrequestsCompletePostAsync(int id);
+        IActionResult RentalrequestsIdCancelGetAsync(int id);        
 
         /// <summary>
         /// Searches RentalRequests
