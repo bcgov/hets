@@ -64,5 +64,19 @@ namespace HETSAPI.Controllers
         {
             return _service.DistrictOwnersGetAsync(id);
         }
+
+        /// <summary>
+        /// Get all local areas by distict (minimal data returned) - lookup
+        /// </summary>
+        /// <response code="200">OK</response>
+        [HttpGet]
+        [Route("/api/district/{id}/localAreas")]
+        [SwaggerOperation("DistrictLocalAreasGet")]
+        [SwaggerResponse(200, type: typeof(List<LocalArea>))]
+        [RequiresPermission(Permission.Login)]
+        public virtual IActionResult DistrictLocalAreasGet([FromRoute]int id)
+        {
+            return _service.DistrictLocalAreasGetAsync(id);
+        }
     }
 }

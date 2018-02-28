@@ -136,6 +136,12 @@ namespace HETSAPI.Models
         public float? HoursYtd { get; set; }
 
         /// <summary>
+        /// Returns the Number of Blocks for this Piece of Equipment
+        /// </summary>
+        [NotMapped]
+        public int NumberOfBlocks { get; set; }
+
+        /// <summary>
         /// A system-generated unique identifier for a Equipment
         /// </summary>
         /// <value>A system-generated unique identifier for a Equipment</value>

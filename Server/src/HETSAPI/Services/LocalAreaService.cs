@@ -13,12 +13,6 @@ namespace HETSAPI.Services
         /// </summary>
         /// <param name="items"></param>
         /// <response code="201">LocalArea created</response>
-        IActionResult LocalAreasBulkPostAsync(LocalArea[] items);
-
-        /// <summary>
-        /// Get all local areas
-        /// </summary>
-        /// <response code="200">OK</response>
-        IActionResult LocalAreasGetAsync();        
+        IActionResult LocalAreasBulkPostAsync(LocalArea[] items);  
     }
 }

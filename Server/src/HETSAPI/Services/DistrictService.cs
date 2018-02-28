@@ -26,5 +26,11 @@ namespace HETSAPI.Services
         /// </summary>
         /// <response code="200">OK</response>
         IActionResult DistrictOwnersGetAsync(int id);
+
+        /// <summary>
+        /// Get all local areas by district (minimal data returned) - lookup
+        /// </summary>
+        /// <response code="200">OK</response>
+        IActionResult DistrictLocalAreasGetAsync(int id);
     }
 }
