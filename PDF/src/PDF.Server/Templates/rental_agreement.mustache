@@ -6,14 +6,17 @@
   <style>
 
   @page {
-    margin: 0;
+    margin: 0 0 1cm 0;
+    size: letter;
     
     @bottom-right {
+      font-size: 12px;
       content: counter(page) "/" counter(pages);
     }
    
     @bottom-left {
-      content: "H0246";
+      font-size: 12px;
+      content: "H0246(2018/10/06)";
     }
   }
 
@@ -98,7 +101,6 @@
   }
 
   .inner-table .value {
-    width: 300px;
     white-space: normal;
   }
 
@@ -128,12 +130,10 @@
     text-align: center;
   }
 
-  #table-block {
-    min-height: 400px;
-  }
-
   #main-table {
     table-layout: fixed;
+    min-height: 375px;
+    margin-bottom: 25px;
   }
 
   h1, h2 {
@@ -264,7 +264,7 @@
             <div class="m-tb-5 bold">Unit Identifier: <span class="underline uppercase">{{equipmentCode}}</span></div>
           </td>
           <td></td>
-          <td>
+          <td style="width: 100%">
             <table id="agreement-number" class="inner-table">
               <tr>
                 <td class="bold">Rental Agreement Number:</td>
@@ -277,7 +277,7 @@
           <td class="align-top">
             <table class="inner-table">
               <tr>
-                <td class="label m-tb-5">Name of Registered Owner or Firm:</td>
+                <td class="label m-tb-5" style="width: 200px">Name of Registered Owner or Firm:</td>
                 <td class="value m-tb-5">{{equipment.owner.organizationName}}</td>
               </tr>
             </table>
@@ -328,7 +328,7 @@
         </tr>
         <tr>
           <td>{{equipment.year}} {{equipment.make}}/{{equipment.model}}/{{equipment.size}}/{{equipment.serialNumber}}</td>
-          <td class="rate">${{equipmentRate}}</td>
+          <td class="rate">${{equipmentRate}}/{{ratePeriod}}</td>
           <td>{{rateComment}}</td>
         </tr>
         {{#rentalAgreementRatesWithTotal}}
@@ -352,23 +352,20 @@
           <td>{{comment}}</td>
         </tr>
         {{/rentalAgreementRatesWithoutTotal}}
-      </table>
-
-      {{#rentalAgreementConditions}}
-      <table>
-        <tr>
-          <th>Condition</th>
-          <th>Comment</th>
-        </tr>
+        <tr><td></td><td></td><td></td></tr>
+        <tr><td class="bold">Conditions</td><td></td><td></td></tr>
+        {{#rentalAgreementConditions}}
         <tr>
           <td>{{conditionName}}</td>
+          <td></td>
           <td>{{comment}}</td>
         </tr>
+        {{/rentalAgreementConditions}}
+        <tr style="height: 100%"><td></td><td></td><td></td></tr>
       </table>
-      {{/rentalAgreementConditions}}
     </div>
 
-    <p>The above listed equipment will be used for Project #<span class="uppercase">{{project.provincialProjectNumber}} {{project.name}}</span> within the <span class="uppercase">{{project.district.name}}</span> District for an estimated period of {{estimateHours}} hours commencing {{estimateStartWork}}. Point of hire is <span class="uppercase underline">{{equipment.localArea.name}}</span></p>
+    <p>The above listed equipment will be used for Project #<span class="uppercase bold">{{project.provincialProjectNumber}} {{project.name}}</span> within the <span class="uppercase bold">{{project.district.name}}</span> District for an estimated period of <span class="bold">{{estimateHours}}</span> hours commencing <span class="bold">{{estimateStartWork}}</span>. Point of hire is <span class="uppercase underline bold">{{equipment.localArea.name}}</span></p>
 
     <div id="see-other-side"><b>OWNER</b> &mdash; PLEASE SEE OTHER SIDE <b>FOR OTHER PROVISIONS</b></div>
 
