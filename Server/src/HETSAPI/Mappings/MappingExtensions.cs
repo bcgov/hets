@@ -374,59 +374,70 @@ namespace HETSAPI.Mappings
         /// Equipment view model
         /// </summary>
         /// <param name="model"></param>
+        /// <param name="scoringRules"></param>
         /// <returns></returns>
-        public static EquipmentViewModel ToViewModel(this Equipment model)
+        public static EquipmentViewModel ToViewModel(this Equipment model, SeniorityScoringRules scoringRules)
         {
             var dto = new EquipmentViewModel();
 
             if (model != null)
             {
-                dto.ApprovedDate = model.ApprovedDate;
-                dto.ArchiveCode = model.ArchiveCode;
-                dto.ArchiveDate = model.ArchiveDate;
-                dto.ArchiveReason = model.ArchiveReason;
-                dto.Attachments = model.Attachments;
-                dto.BlockNumber = model.BlockNumber;
-                dto.DumpTruck = model.DumpTruck;
-                dto.EquipmentCode = model.EquipmentCode;
-                dto.EquipmentAttachments = model.EquipmentAttachments;
-                dto.DistrictEquipmentType = model.DistrictEquipmentType;
-                dto.History = model.History;
+                int numberOfBlocks = 0;
+
+                // get number of blocks for this equiment type
+                if (model.DistrictEquipmentType != null)
+                {
+                    numberOfBlocks = model.DistrictEquipmentType.EquipmentType.IsDumpTruck
+                        ? scoringRules.GetTotalBlocks("DumpTruck") + 1
+                        : scoringRules.GetTotalBlocks() + 1;
+                }
+
+                // get equipment seniority
+                float seniority = 0F;
+                if (model.Seniority != null)
+                {
+                    seniority = (float)model.Seniority;
+                }
+
+                // get equipment block number
+                int blockNumber = 0;
+                if (model.BlockNumber != null)
+                {
+                    blockNumber = (int)model.BlockNumber;
+                }
+
+                // get equipment block number
+                int numberInBlock = 0;
+                if (model.NumberInBlock != null)
+                {
+                    numberInBlock = (int)model.NumberInBlock;
+                }
+
+                // *************************************************************
+                // Map data to ciew model
+                // *************************************************************
                 dto.Id = model.Id;
-                dto.InformationUpdateNeededReason = model.InformationUpdateNeededReason;
-                dto.IsInformationUpdateNeeded = model.IsInformationUpdateNeeded;
-                dto.IsSeniorityOverridden = model.IsSeniorityOverridden;
-                dto.LastVerifiedDate = model.LastVerifiedDate;
-                dto.LicencePlate = model.LicencePlate;
-                dto.LocalArea = model.LocalArea;
+
+                if (model.DistrictEquipmentType != null)
+                {
+                    dto.EquipmentType = model.DistrictEquipmentType.DistrictEquipmentName;
+                }
+
+                if (model.Owner != null)
+                {
+                    dto.OwnerName = model.Owner.OrganizationName;
+                }
+                
+                dto.SeniorityString = dto.FormatSeniorityString(seniority, blockNumber, numberOfBlocks);
+
+                dto.IsHired = dto.CheckIsHired(model.RentalAgreements);
+
                 dto.Make = model.Make;
                 dto.Model = model.Model;
-                dto.Notes = model.Notes;
-                dto.RentalAgreements = model.RentalAgreements;
-                dto.Operator = model.Operator;
-                dto.Owner = model.Owner;
-                dto.PayRate = model.PayRate;
-                dto.ReceivedDate = model.ReceivedDate;
-                dto.RefuseRate = model.RefuseRate;
-                dto.Seniority = model.Seniority;
-                dto.NumberInBlock = model.NumberInBlock;
-                dto.SeniorityEffectiveDate = model.SeniorityEffectiveDate;
-                dto.SeniorityOverrideReason = model.SeniorityOverrideReason;
-                dto.SerialNumber = model.SerialNumber;
-                dto.ServiceHoursLastYear = model.ServiceHoursLastYear;
-                dto.ServiceHoursTwoYearsAgo = model.ServiceHoursTwoYearsAgo;
-                dto.ServiceHoursThreeYearsAgo = model.ServiceHoursThreeYearsAgo;
                 dto.Size = model.Size;
-                dto.Status = model.Status;
-                dto.ToDate = model.ToDate;                
-                dto.Year = model.Year;
-                dto.YearsOfService = model.YearsOfService;
-
-                // calculate "seniority sort order" & round the seniority value (3 decimal places)
-                dto.CalculateSenioritySortOrder();
-                dto.CheckIsHired();
-
-                dto.RentalAgreements = null;
+                dto.AttachmentCount = dto.CalculateAttachmentCount(model.EquipmentAttachments);
+                dto.LastVerifiedDate = model.LastVerifiedDate;
+                dto.SenioritySortOrder = dto.CalculateSenioritySortOrder(blockNumber, numberInBlock);                                
             }
 
             return dto;

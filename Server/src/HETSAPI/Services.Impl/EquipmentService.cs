@@ -449,22 +449,12 @@ namespace HETSAPI.Services.Impl
             // **********************************************************************
             // convert Equipment Model to View Model
             // **********************************************************************
-            SeniorityScoringRules scoringRules = new SeniorityScoringRules(_configuration);
-            
-            List<EquipmentViewModel> result = new List<EquipmentViewModel>();
+            SeniorityScoringRules scoringRules = new SeniorityScoringRules(_configuration);            
+            List<EquipmentViewModel> result = new List<EquipmentViewModel>();            
 
             foreach (Equipment item in data)
             {
-                EquipmentViewModel newItem = item.ToViewModel();
-
-                if (item.DistrictEquipmentType != null)
-                {
-                    newItem.NumberOfBlocks = item.DistrictEquipmentType.EquipmentType.IsDumpTruck
-                        ? scoringRules.GetTotalBlocks("DumpTruck") + 1
-                        : scoringRules.GetTotalBlocks() + 1;
-                }
-
-                result.Add(newItem);
+                result.Add(item.ToViewModel(scoringRules));                
             }            
 
             // return to the client            
