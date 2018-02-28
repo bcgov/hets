@@ -426,6 +426,7 @@ namespace HETSAPI.Mappings
                 if (model.Owner != null)
                 {
                     dto.OwnerName = model.Owner.OrganizationName;
+                    dto.OwnerId = model.OwnerId;
                 }
                 
                 dto.SeniorityString = dto.FormatSeniorityString(seniority, blockNumber, numberOfBlocks);
@@ -435,6 +436,7 @@ namespace HETSAPI.Mappings
                 dto.Make = model.Make;
                 dto.Model = model.Model;
                 dto.Size = model.Size;
+                dto.EquipmentCode = model.EquipmentCode;
                 dto.AttachmentCount = dto.CalculateAttachmentCount(model.EquipmentAttachments);
                 dto.LastVerifiedDate = model.LastVerifiedDate;
                 dto.SenioritySortOrder = dto.CalculateSenioritySortOrder(blockNumber, numberInBlock);                                

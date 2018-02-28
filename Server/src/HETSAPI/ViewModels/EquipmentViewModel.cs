@@ -27,25 +27,30 @@ namespace HETSAPI.ViewModels
         /// <param name="id">A system-generated unique identifier for a Equipment (required).</param>
         /// <param name="equipmentType">District Equipment Type</param>
         /// <param name="ownerName">Owner Name</param>        
+        /// <param name="ownerId">Owner Id</param>        
         /// <param name="isHired">Is Hired</param>   
         /// <param name="seniorityString">Seniority String</param>
         /// <param name="make">Make</param>
         /// <param name="model">Model</param>
         /// <param name="size">Size</param>
-        /// <param name="attachmentCount">Attachment Count</param>
+        /// <param name="equipmentCode">Equipment Code</param>
+        /// <param name="attachmentCount">Attachment Count</param>       
         /// <param name="lastVerifiedDate">Last verified Date</param>        
-        public EquipmentViewModel(int id, string equipmentType = null, string ownerName = null, bool isHired = false, 
-            string seniorityString = null, string make = null, string model = null, string size = null, 
+        public EquipmentViewModel(int id, string equipmentType = null, string ownerName = null, 
+            int? ownerId = null, bool isHired = false, string seniorityString = null, 
+            string make = null, string model = null, string size = null, string equipmentCode = null,
             int attachmentCount = 0, DateTime? lastVerifiedDate = null)
         {   
             Id = id;
             EquipmentType = equipmentType;
             OwnerName = ownerName;
+            OwnerId = ownerId;
             IsHired = isHired;
             SeniorityString = seniorityString;
             Make = make;
             Model = model;
             Size = size;
+            EquipmentCode = equipmentCode;
             AttachmentCount = attachmentCount;
             LastVerifiedDate = lastVerifiedDate;                       
         }
@@ -120,6 +125,12 @@ namespace HETSAPI.ViewModels
         public string OwnerName { get; set; }
 
         /// <summary>
+        /// Owner Id (from Owner)
+        /// </summary>
+        [DataMember(Name = "ownerId")]
+        public int? OwnerId { get; set; }
+
+        /// <summary>
         /// Identify if this equipment is currenty on an active Rental Agreement
         /// </summary>
         [DataMember(Name = "isHired")]
@@ -148,6 +159,12 @@ namespace HETSAPI.ViewModels
         /// </summary>
         [DataMember(Name = "size")]
         public string Size { get; set; }
+
+        /// <summary>
+        /// Equipment code
+        /// </summary>
+        [DataMember(Name = "equipmentCode")]
+        public string EquipmentCode { get; set; }
 
         /// <summary>
         /// Attachment Count (Equipment Attachments)
@@ -187,10 +204,12 @@ namespace HETSAPI.ViewModels
             sb.Append("  Id: ").Append(Id).Append("\n");
             sb.Append("  EquipmentType: ").Append(EquipmentType).Append("\n");
             sb.Append("  OwnerName: ").Append(OwnerName).Append("\n");
+            sb.Append("  OwnerId: ").Append(OwnerId).Append("\n");
             sb.Append("  IsHired: ").Append(IsHired).Append("\n");
             sb.Append("  Make: ").Append(Make).Append("\n");
             sb.Append("  Model: ").Append(Model).Append("\n");
             sb.Append("  Size: ").Append(Size).Append("\n");
+            sb.Append("  EquipmentCode: ").Append(EquipmentCode).Append("\n");
             sb.Append("  AttachmentCount: ").Append(AttachmentCount).Append("\n");
             sb.Append("  LastVerifiedDate: ").Append(LastVerifiedDate).Append("\n");
             sb.Append("  SenioritySortOrder: ").Append(SenioritySortOrder).Append("\n");
@@ -246,9 +265,14 @@ namespace HETSAPI.ViewModels
                     OwnerName.Equals(other.OwnerName)
                 ) &&                 
                 (
+                    OwnerId == other.OwnerId ||
+                    OwnerId != null &&
+                    OwnerId.Equals(other.OwnerId)
+                ) &&
+                (
                     IsHired == other.IsHired ||
                     IsHired.Equals(other.IsHired)
-                ) &&                 
+                ) &&
                 (
                     SeniorityString == other.SeniorityString ||
                     SeniorityString != null &&
@@ -268,6 +292,11 @@ namespace HETSAPI.ViewModels
                     Size == other.Size ||
                     Size != null &&
                     Size.Equals(other.Size)
+                ) &&
+                (
+                    EquipmentCode == other.EquipmentCode ||
+                    EquipmentCode != null &&
+                    EquipmentCode.Equals(other.EquipmentCode)
                 ) &&
                 (
                     AttachmentCount == other.AttachmentCount ||
@@ -290,16 +319,11 @@ namespace HETSAPI.ViewModels
         /// <returns>Hash code</returns>
         public override int GetHashCode()
         {
-            // credit: http://stackoverflow.com/a/263416/677735
+            // credit: http://stackoverflow.com/a/263416/677735 
             unchecked // Overflow is fine, just wrap
             {
                 int hash = 41;
-
-                /*
-            sb.Append("  LastVerifiedDate: ").Append(LastVerifiedDate).Append("\n");
-            sb.Append("  SenioritySortOrder: ").Append(SenioritySortOrder).Append("\n");
-                 */
-
+               
                 // Suitable nullity checks                                   
                 hash = hash * 59 + Id.GetHashCode();   
                 
@@ -311,6 +335,11 @@ namespace HETSAPI.ViewModels
                 if (OwnerName != null)
                 {
                     hash = hash * 59 + OwnerName.GetHashCode();
+                }
+
+                if (OwnerId != null)
+                {
+                    hash = hash * 59 + OwnerId.GetHashCode();
                 }
 
                 hash = hash * 59 + IsHired.GetHashCode();
