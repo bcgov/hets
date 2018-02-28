@@ -15,8 +15,8 @@ const argv = require('minimist')(process.argv.slice(2));
 const PORT = argv.port || 4375;
 const HOST = argv.host || 'localhost';
 
-const API_HOST = argv.apihost || 'localhost';
-const API_PORT = argv.apiport || process.env.BC_GOV_HETS_API_PORT || 55217;
+const API_HOST = argv.apihost || 'server-tran-hets-dev.pathfinder.gov.bc.ca';
+const API_PORT = argv.apiport || process.env.BC_GOV_HETS_API_PORT || 80;
 
 // set variable via $ gulp --production
 var IS_PRODUCTION = !!argv.production;

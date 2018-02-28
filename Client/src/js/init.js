@@ -38,9 +38,15 @@ function renderApp() {
 
 export default function startApp() {
   if (location.hostname === 'localhost' && process.env.DEV_USER) { //eslint-disable-line
-    Api.setDevUser(process.env.DEV_USER); //eslint-disable-line
+    return Api.setDevUser(process.env.DEV_USER).finally(() => { //eslint-disable-line
+      initializeApp();
+    }); 
   }
-  
+
+  return initializeApp();
+}
+
+function initializeApp() {
   incrementProgressBar(5);
   // Load current user next.
   Api.getCurrentUser().then(() => {
