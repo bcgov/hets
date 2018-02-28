@@ -313,72 +313,70 @@ var RentalAgreementsDetail = React.createClass({
     var rentalConditions = this.props.rentalConditions;
     var provincialRateTypes = this.props.provincialRateTypes;
 
-    return <div id="rental-agreements-detail">
-      <Row id="rental-agreements-top">
-        <Col md={8}>
-          <Label bsStyle={ rentalAgreement.isActive ? 'success' : 'danger' }>{ rentalAgreement.status }</Label>
-          <Unimplemented>
-            <Button title="History" onClick={ this.showHistory }>History</Button>
-          </Unimplemented>
-          <Unimplemented>
-            <Button title="Notes" onClick={ this.showNotes }>Notes ({ Object.keys(this.props.notes).length })</Button>
-          </Unimplemented>
-        </Col>
-        <Col md={4}>
-          <div className="pull-right">
-            <Button disabled={ !rentalAgreement.isActive } onClick={ this.openCloneDialog }>Clone</Button>
-            <Button title="Return to List" onClick={ browserHistory.goBack }><Glyphicon glyph="arrow-left" /> Return to List</Button>
-          </div>
-        </Col>
-      </Row>
+    return (
+      <div id="rental-agreements-detail">
 
       {(() => {
-        if (this.state.loading) { return <div style={{ textAlign: 'center' }}><Spinner/></div>; }
+        if (this.state.loading) { return <div className="spinner-container"><Spinner/></div>; }
 
         return (
-          <Well>
-            <Grid id="rental-agreements-header">
-              <Row>
-                <ColDisplay md={12} labelProps={{ md: 4 }} label={ <h3>Agreement Number:</h3>}>
-                  <h2><small>{ rentalAgreement.number }</small></h2>
-                </ColDisplay>
-              </Row>
-              <Row>
-                <ColDisplay md={12} labelProps={{ md: 4 }} label={ <h3>Owner:</h3> }>
-                  <h2><small>{ rentalAgreement.ownerName }</small></h2>
-                </ColDisplay>
-              </Row>
-              <Row>
-                <ColDisplay md={12} labelProps={{ md: 4 }} label={ <h3>Equipment ID:</h3> }>
-                  <Link to={{ pathname: 'equipment/' + rentalAgreement.equipment.id }}>
-                    <h2><small>{ rentalAgreement.equipment.equipmentCode }</small></h2>
-                  </Link>
-                </ColDisplay>
-              </Row>
-              <Row>
-                <ColDisplay md={12} labelProps={{ md: 4 }} label={ <h3>Equipment Serial Number:</h3> }>
-                  <h2><small>{ rentalAgreement.equipment.serialNumber }</small></h2>
-                </ColDisplay>
-              </Row>
-              <Row>
-                <ColDisplay md={12} labelProps={{ md: 4 }} label={ <h3>Equipment Yr Mk/Md/Sz:</h3> }>
-                  <h2><small>{`${rentalAgreement.equipment.year} ${rentalAgreement.equipment.make}/${rentalAgreement.equipment.model}/${rentalAgreement.equipment.size}`}</small></h2>
-                </ColDisplay>
-              </Row>
-              <Row>
-                <ColDisplay md={12} labelProps={{ md: 4 }} label={ <h3>Project:</h3> }>
-                  <h2><small>{ rentalAgreement.project.name }</small></h2>
-                </ColDisplay>
-              </Row>
-            </Grid>
-          </Well>
+          <Row id="rental-agreements-top">
+            <Col md={8}>
+              <Label bsStyle={ rentalAgreement.isActive ? 'success' : 'danger' }>{ rentalAgreement.status }</Label>
+              <Unimplemented>
+                <Button title="History" onClick={ this.showHistory }>History</Button>
+              </Unimplemented>
+              <Unimplemented>
+                <Button title="Notes" onClick={ this.showNotes }>Notes ({ Object.keys(this.props.notes).length })</Button>
+              </Unimplemented>
+            </Col>
+            <Col md={4}>
+              <div className="pull-right">
+                <Button disabled={ !rentalAgreement.isActive } onClick={ this.openCloneDialog }>Clone</Button>
+                <Button title="Return to List" onClick={ browserHistory.goBack }><Glyphicon glyph="arrow-left" /> Return to List</Button>
+              </div>
+            </Col>
+          </Row>
         );
       })()}
 
       <Well>
+      {(() => {
+        if (this.state.loading) { return <div className="spinner-container"><Spinner/></div>; }
+
+        return (
+          <div id="rental-agreements-header">
+            <h3>Rental Agreement</h3>
+            <Row>
+              <ColDisplay lg={6} labelProps={{ md: 4 }} label="Agreement Number:">{ rentalAgreement.number }</ColDisplay>
+              <ColDisplay lg={6} labelProps={{ md: 4 }} label="Owner:">{ rentalAgreement.ownerName }</ColDisplay>
+            </Row>
+            <Row>
+            </Row>
+            <Row>
+              <ColDisplay md={12} labelProps={{ md: 4 }} label="Equipment ID:">
+                <Link to={{ pathname: 'equipment/' + rentalAgreement.equipment.id }}>{ rentalAgreement.equipment.equipmentCode }</Link></ColDisplay>
+            </Row>
+            <Row>
+              <ColDisplay md={12} labelProps={{ md: 4 }} label="Equipment Serial Number:">{ rentalAgreement.equipment.serialNumber }</ColDisplay>
+            </Row>
+            <Row>
+              <ColDisplay md={12} labelProps={{ md: 4 }} label="Equipment Yr Mk/Md/Sz:">
+                {`${rentalAgreement.equipment.year} ${rentalAgreement.equipment.make}/${rentalAgreement.equipment.model}/${rentalAgreement.equipment.size}`}
+              </ColDisplay>
+            </Row>
+            <Row>
+              <ColDisplay md={12} labelProps={{ md: 4 }} label="Project:">{ rentalAgreement.project.name }</ColDisplay>
+            </Row>
+          </div>
+        );
+      })()}
+      </Well>
+
+      <Well>
         <h3>Rates</h3>
         {(() => {
-          if (this.state.loading) { return <div style={{ textAlign: 'center' }}><Spinner/></div>; }
+          if (this.state.loading) { return <div className="spinner-container"><Spinner/></div>; }
 
           return <div>
             <Grid id="rental-rates" fluid className="nopadding">
@@ -401,7 +399,7 @@ var RentalAgreementsDetail = React.createClass({
         })()}
 
         {(() => {
-          if (this.state.loading) { return <div style={{ textAlign: 'center' }}><Spinner/></div>; }
+          if (this.state.loading) { return; }
 
           // Exclude attachment rates - those are shown on the next section
           var rentalRates = _.reject(rentalAgreement.rentalAgreementRates, { isAttachment: true });
@@ -410,7 +408,7 @@ var RentalAgreementsDetail = React.createClass({
               <Glyphicon glyph="plus" />
           </Button>;
 
-          if (Object.keys(rentalRates || []).length === 0) { return <div><Alert bsStyle="success" style={{ marginTop: 10 }}>No additional rates</Alert>{ button }</div>; }
+          if (Object.keys(rentalRates || []).length === 0) { return <div><Alert bsStyle="success">No additional rates</Alert>{ button }</div>; }
 
           return <div>
             <Table striped condensed hover bordered>
@@ -459,7 +457,7 @@ var RentalAgreementsDetail = React.createClass({
       <Well>
         <h3>Attachments</h3>
         {(() => {
-          if (this.state.loading) { return <div style={{ textAlign: 'center' }}><Spinner/></div>; }
+          if (this.state.loading) { return <div className="spinner-container"><Spinner/></div>; }
 
           // Only want attachments rates here - the rest are shown above
           var attachmentRates = _.filter(rentalAgreement.rentalAgreementRates, { isAttachment: true });
@@ -468,7 +466,7 @@ var RentalAgreementsDetail = React.createClass({
             <Glyphicon glyph="plus" />
           </Button>;
 
-          if (Object.keys(attachmentRates || []).length === 0) { return <div><Alert bsStyle="success" style={{ marginTop: 10 }}>No attachment rates</Alert>{ button }</div>; }
+          if (Object.keys(attachmentRates || []).length === 0) { return <div><Alert bsStyle="success">No attachment rates</Alert>{ button }</div>; }
 
           return <div id="attachment-rates">
             <Table striped condensed hover bordered>
@@ -517,7 +515,7 @@ var RentalAgreementsDetail = React.createClass({
       <Well>
         <h3>Conditions</h3>
         {(() => {
-          if (this.state.loading) { return <div style={{ textAlign: 'center' }}><Spinner/></div>; }
+          if (this.state.loading) { return <div className="spinner-container"><Spinner/></div>; }
 
           var rentalConditions = rentalAgreement.rentalAgreementConditions;
 
@@ -525,7 +523,7 @@ var RentalAgreementsDetail = React.createClass({
             <Glyphicon glyph="plus" />
           </Button>;
 
-          if (Object.keys(rentalConditions || []).length === 0) { return <div><Alert bsStyle="success" style={{ marginTop: 10 }}>No rental conditions</Alert>{ button }</div>; }
+          if (Object.keys(rentalConditions || []).length === 0) { return <div><Alert bsStyle="success">No rental conditions</Alert>{ button }</div>; }
 
           return <div id="rental-conditions">
             <Table striped condensed hover bordered>
@@ -565,9 +563,9 @@ var RentalAgreementsDetail = React.createClass({
           </span>
         </div>
         {(() => {
-          if (this.state.loading) { return <div style={{ textAlign: 'center' }}><Spinner/></div>; }
+          if (this.state.loading) { return <div className="spinner-container"><Spinner/></div>; }
 
-          return <Grid fluid>
+          return (
             <Row>
               <Col md={6}>
                 <ColDisplay md={12} labelProps={{ md: 6 }} label="Estimated Commencement:">{ formatDateTime(rentalAgreement.estimateStartWork, Constant.DATE_YEAR_SHORT_MONTH_DAY) }</ColDisplay>
@@ -580,7 +578,7 @@ var RentalAgreementsDetail = React.createClass({
                 <ColDisplay md={12} labelProps={{ md: 6 }} label="WorkSafeBC (WCB) Number:">{ rentalAgreement.workSafeBCPolicyNumber }</ColDisplay>
               </Col>
             </Row>
-          </Grid>;
+          );
         })()}
       </Well>
 
@@ -591,8 +589,8 @@ var RentalAgreementsDetail = React.createClass({
           </Unimplemented>
         </span></h3>
         {(() => {
-          if (this.state.loading) { return <div style={{ textAlign: 'center' }}><Spinner/></div>; }
-          if (Object.keys(this.props.history || []).length === 0) { return <Alert bsStyle="success" style={{ marginTop: 10 }}>No history</Alert>; }
+          if (this.state.loading) { return <div className="spinner-container"><Spinner/></div>; }
+          if (Object.keys(this.props.history || []).length === 0) { return <Alert bsStyle="success">No history</Alert>; }
 
           var history = _.sortBy(this.props.history, 'createdDate');
 
@@ -661,7 +659,8 @@ var RentalAgreementsDetail = React.createClass({
           cloneRentalAgreementError={ this.state.cloneRentalAgreementError  } 
         />
       }
-    </div>;
+      </div>
+    );
   },
 });
 

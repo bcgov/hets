@@ -67,16 +67,13 @@
 }
 
 #equipment-detail {
-  #equipment-top {
-    margin: 0 5px;
-  }
   
-  #equipment-bottom {
-    margin: 15px 5px;
+  .top-container {
+    margin: 0 5px;
   }
 
-  #equipment-header {
-    margin: 0 5px;
+  #equipment-bottom {
+    margin: 15px 0;
   }
 
   .well {
