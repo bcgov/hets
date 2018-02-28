@@ -355,7 +355,7 @@ var OwnersDetail = React.createClass({
         {(() => {
           var dropdownItems = _.pull([ Constant.OWNER_STATUS_CODE_APPROVED, Constant.OWNER_STATUS_CODE_PENDING, Constant.OWNER_STATUS_CODE_ARCHIVED ], owner.status);
 
-          if (this.state.loading) { return <div style={{ textAlign: 'center' }}><Spinner/></div>; }
+          if (this.state.loading) { return <div className="spinner-container"><Spinner/></div>; }
 
           return <Row id="owners-top">
             <Col md={8}>
@@ -387,8 +387,6 @@ var OwnersDetail = React.createClass({
         })()}
 
         {(() => {
-          if (this.state.loading) { return <div style={{ textAlign: 'center' }}><Spinner/></div>; }
-
           return <div id="owners-header">
             <Row>
               <Col md={12}>
@@ -405,7 +403,7 @@ var OwnersDetail = React.createClass({
                 <Button title="Edit Owner" bsSize="small" onClick={ this.openEditDialog }><Glyphicon glyph="pencil" /></Button>
               </span></h3>
               {(() => {
-                if (this.state.loading) { return <div style={{ textAlign: 'center' }}><Spinner/></div>; }
+                if (this.state.loading) { return <div className="spinner-container"><Spinner/></div>; }
                 
                 return <div id="owners-data">
                   <Row>
@@ -438,7 +436,7 @@ var OwnersDetail = React.createClass({
                 <Button title="Edit Policy Information" bsSize="small" onClick={ this.openPolicyDialog }><Glyphicon glyph="pencil" /></Button>
               </span></h3>
               {(() => {
-                if (this.state.loading) { return <div style={{ textAlign: 'center' }}><Spinner/></div>; }
+                if (this.state.loading) { return <div className="spinner-container"><Spinner/></div>; }
 
                 return <div id="owners-policy">
                   <Row>
@@ -465,8 +463,9 @@ var OwnersDetail = React.createClass({
                 <Button title="Add Equipment" bsSize="small" onClick={ this.openEquipmentDialog }><Glyphicon glyph="plus" /></Button>
               </span></h3>
               {(() => {
-                if (this.state.loading) { return <div style={{ textAlign: 'center' }}><Spinner/></div>; }
-                if (!owner.equipmentList || owner.equipmentList.length === 0) { return <Alert bsStyle="success" style={{ marginTop: 10 }}>No equipment</Alert>; }
+                if (this.state.loading) { return <div className="spinner-container"><Spinner/></div>; }
+
+                if (!owner.equipmentList || owner.equipmentList.length === 0) { return <Alert bsStyle="success">No equipment</Alert>; }
 
                 var equipmentList = _.sortBy(owner.equipmentList, this.state.uiEquipment.sortField);
                 if (this.state.uiEquipment.sortDesc) {
@@ -507,7 +506,7 @@ var OwnersDetail = React.createClass({
             <Well>
               <h3>Contacts</h3>
               {(() => {
-                if (this.state.loading ) { return <div style={{ textAlign: 'center' }}><Spinner/></div>; }
+                if (this.state.loading ) { return <div className="spinner-container"><Spinner/></div>; }
 
                 var addContactButton = <Button title="Add Contact" onClick={ this.addContact } bsSize="xsmall"><Glyphicon glyph="plus" />&nbsp;<strong>Add</strong></Button>;
 

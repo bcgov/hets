@@ -57,10 +57,7 @@ var EquipmentDetail = React.createClass({
     return {
       // If we are coming in through the Owner screen then return to it; otherwise go back to Equipment search
       returnUrl: (this.props.location.state || {}).returnUrl || Constant.EQUIPMENT_PATHNAME,
-      loadingEquipment: false,
-      loadingPhysicalAttachments: false,
-      loadingSeniorityData: false,
-      loadingEquipmentHistory: false,
+      loading: false,
       showEditDialog: false,
       showDocumentsDialog: false,
       showSeniorityDialog: false,
@@ -88,18 +85,15 @@ var EquipmentDetail = React.createClass({
   },
 
   fetch() {
-    this.setState({ loadingEquipment: true });
+    this.setState({ loading: true });
     
     var equipmentId = this.props.params.equipmentId;
     var getEquipmentPromise = Api.getEquipment(equipmentId);
     var documentsPromise = Api.getEquipmentDocuments(equipmentId);
     var getEquipmentNotesPromise = Api.getEquipmentNotes(equipmentId);
-    // Make several calls here
-    // TODO Load equipment history, notes and attachments (docs)
-    // TODO Load equipment seniority history
 
     return Promise.all([getEquipmentPromise, documentsPromise, getEquipmentNotesPromise]).finally(() => {
-      this.setState({ loadingEquipment: false });
+      // this.setState({ loading: false });
     });
   },
 
@@ -272,64 +266,59 @@ var EquipmentDetail = React.createClass({
       <div>
         {(() => {
 
-          if (this.state.loadingEquipment) { return <div style={{ textAlign: 'center' }}><Spinner/></div>; }
+          if (this.state.loading) { return <div className="spinner-container"><Spinner/></div>; }
 
-          return <Row id="equipment-top">
-            <Col md={8}>
-              <Row>
-                <DropdownButton
-                  bsStyle={ this.getStatusDropdownStyle() }
-                  title={ equipment.status || '' }
-                  onSelect={ this.updateStatusState }
-                  disabled={ equipment.ownerStatus === Constant.OWNER_STATUS_CODE_ARCHIVED }
-                >
-                { _.map(dropdownItems.map((item, i) =>
-                  <MenuItem key={ i } eventKey={ item }>{ item }</MenuItem>
-                ))}
-                </DropdownButton>
-                <Button className="mr-5 ml-5" title="Notes" onClick={ this.showNotes }>Notes ({ Object.keys(this.props.notes).length })</Button>
-                <Button title="Documents" onClick={ this.showDocuments }>Documents ({ Object.keys(this.props.documents).length })</Button>
+          return (
+            <div>
+              <Row id="equipment-top">
+                <Col md={8}>
+                  <Row>
+                    <DropdownButton
+                      bsStyle={ this.getStatusDropdownStyle() }
+                      title={ equipment.status || '' }
+                      onSelect={ this.updateStatusState }
+                      disabled={ equipment.ownerStatus === Constant.OWNER_STATUS_CODE_ARCHIVED }
+                    >
+                    { _.map(dropdownItems.map((item, i) =>
+                      <MenuItem key={ i } eventKey={ item }>{ item }</MenuItem>
+                    ))}
+                    </DropdownButton>
+                    <Button className="mr-5 ml-5" title="Notes" onClick={ this.showNotes }>Notes ({ Object.keys(this.props.notes).length })</Button>
+                    <Button title="Documents" onClick={ this.showDocuments }>Documents ({ Object.keys(this.props.documents).length })</Button>
+                  </Row>
+                </Col>
+                <Col md={4}>
+                  <div className="pull-right">
+                    <Button className="mr-5" onClick={ this.print }><Glyphicon glyph="print" title="Print" /></Button>
+                    <LinkContainer to={{ pathname: this.state.returnUrl }}>
+                      <Button title="Return to List"><Glyphicon glyph="arrow-left" /> Return to List</Button>
+                    </LinkContainer>
+                  </div>
+                </Col>
               </Row>
-            </Col>
-            <Col md={4}>
-              <div className="pull-right">
-                <Button className="mr-5" onClick={ this.print }><Glyphicon glyph="print" title="Print" /></Button>
-                <LinkContainer to={{ pathname: this.state.returnUrl }}>
-                  <Button title="Return to List"><Glyphicon glyph="arrow-left" /> Return to List</Button>
-                </LinkContainer>
-              </div>
-            </Col>
-          </Row>;
-        })()}
-        
-        <Row id="equipment-bottom">
-          {/* <Label bsStyle={ equipment.isApproved ? 'success' : 'danger'}>{ equipment.status }</Label> */}
-          <Label className={ equipment.isMaintenanceContractor ? '' : 'hide' }>Maintenance Contractor</Label>
-          <Label bsStyle={ equipment.isHired ? 'success' : 'default' }>{ equipment.isHired ? 'Hired' : 'Not Hired' }</Label>
-          <Label bsStyle={ lastVerifiedStyle }>Last Verified: { formatDateTime(equipment.lastVerifiedDate, Constant.DATE_YEAR_SHORT_MONTH_DAY) }</Label>
-        </Row>
-
-        {(() => {
-          if (this.state.loadingEquipment) { return <div style={{ textAlign: 'center' }}><Spinner/></div>; }
-
-          return <div id="equipment-header">
-            <Row>
-              <ColDisplay md={12} label={ <h1>Equipment Id:</h1> }><h1><small>{ equipment.equipmentCode } ({ equipment.typeName })</small></h1></ColDisplay>
-            </Row>
-            <Row>
-              <ColDisplay md={12} label={ <h1>Company:</h1> }><h1><small>{ equipment.organizationName }</small></h1></ColDisplay>
-            </Row>
-            <Row>
-              <Col md={6}>
-                <Row>
-                  <ColDisplay md={12} labelProps={{ md: 4 }} label="District Office:">{ equipment.districtName }</ColDisplay>
-                </Row>
-                <Row>
-                  <ColDisplay md={12} labelProps={{ md: 4 }} style={{ marginBottom: '20px' }} label="Service/Local Area:">{ equipment.localAreaName }</ColDisplay>
-                </Row>
-              </Col>
-            </Row>
-          </div>;
+              <Row id="equipment-bottom">
+                <Label className={ equipment.isMaintenanceContractor ? '' : 'hide' }>Maintenance Contractor</Label>
+                <Label bsStyle={ equipment.isHired ? 'success' : 'default' }>{ equipment.isHired ? 'Hired' : 'Not Hired' }</Label>
+                <Label bsStyle={ lastVerifiedStyle }>Last Verified: { formatDateTime(equipment.lastVerifiedDate, Constant.DATE_YEAR_SHORT_MONTH_DAY) }</Label>
+              </Row>
+              <Row id="equipment-header">
+                <ColDisplay md={12} label={ <h1>Equipment Id:</h1> }><h1><small>{ equipment.equipmentCode } ({ equipment.typeName })</small></h1></ColDisplay>
+              </Row>
+              <Row>
+                <ColDisplay md={12} label={ <h1>Company:</h1> }><h1><small>{ equipment.organizationName }</small></h1></ColDisplay>
+              </Row>
+              <Row>
+                <Col md={6}>
+                  <Row>
+                    <ColDisplay md={12} labelProps={{ md: 4 }} label="District Office:">{ equipment.districtName }</ColDisplay>
+                  </Row>
+                  <Row>
+                    <ColDisplay md={12} labelProps={{ md: 4 }} style={{ marginBottom: '20px' }} label="Service/Local Area:">{ equipment.localAreaName }</ColDisplay>
+                  </Row>
+                </Col>
+              </Row>
+            </div>
+          );
         })()}
 
         <Row>
@@ -339,7 +328,7 @@ var EquipmentDetail = React.createClass({
                 <Button title="Edit Equipment" bsSize="small" onClick={ this.openEditDialog }><Glyphicon glyph="pencil" /></Button>
               </span></h3>
               {(() => {
-                if (this.state.loadingEquipment) { return <div style={{ textAlign: 'center' }}><Spinner /></div>; }
+                if (this.state.loading) { return <div className="spinner-container"><Spinner /></div>; }
 
                 return <Row>
                   <Col md={6}>
@@ -382,8 +371,8 @@ var EquipmentDetail = React.createClass({
                 <Button title="Add Attachment" bsSize="small" onClick={this.openPhysicalAttachmentDialog}><Glyphicon glyph="plus" /></Button>
               </span></h3>
               {(() => {
-                {/* if (this.state.loadingPhysicalAttachments ) { return <div style={{ textAlign: 'center' }}><Spinner/></div>; } */}
-                {/* if (Object.keys(this.props.equipmentPhysicalAttachments).length === 0) { return <Alert bsStyle="success" style={{ marginTop: 10 }}>No Attachments</Alert>; } */}
+                if (this.state.loading ) { return <div className="spinner-container"><Spinner/></div>; } 
+                if (Object.keys(this.props.equipmentPhysicalAttachments).length === 0) { return <Alert bsStyle="success">No Attachments</Alert>; }
 
                 var physicalAttachments = _.sortBy(this.props.equipment.equipmentAttachments, this.state.ui.sortField);
                 if (this.state.ui.sortDesc) {
@@ -440,7 +429,7 @@ var EquipmentDetail = React.createClass({
                 <Button title="Edit Seniority" bsSize="small" onClick={this.openSeniorityDialog}><Glyphicon glyph="pencil" /></Button>
               </span></h3>
               {(() => {
-                if (this.state.loadingSeniorityData) { return <div style={{ textAlign: 'center' }}><Spinner/></div>; }
+                if (this.state.loading) { return <div className="spinner-container"><Spinner/></div>; }
 
                 var seniorityHistory = this.props.equipmentSeniorityHistory;  // TODO
 
@@ -495,7 +484,7 @@ var EquipmentDetail = React.createClass({
               <h3>History <span className="pull-right">
               </span></h3>
               {(() => {
-                if (this.state.loadingEquipmentHistory) { return <div style={{ textAlign: 'center' }}><Spinner/></div>; }
+                if (this.state.loading) { return <div className="spinner-container"><Spinner/></div>; }
                 if (Object.keys(this.props.history || []).length === 0) { return <Alert bsStyle="success" style={{ marginTop: 10 }}>No history</Alert>; }
 
                 var history = _.sortBy(this.props.history, 'createdDate');
