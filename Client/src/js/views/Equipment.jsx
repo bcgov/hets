@@ -213,7 +213,7 @@ var Equipment = React.createClass({
         if (this.props.equipmentList.success) {
           return (
             <SortTable sortField={ this.state.ui.sortField } sortDesc={ this.state.ui.sortDesc } onSort={ this.updateUIState } headers={[
-              { field: 'equipmentCode',        title: 'ID'            },
+              { field: 'equipmentCode',        title: 'Equipment ID'  },
               { field: 'typeName',             title: 'Type'          },
               { field: 'organizationName',     title: 'Owner'         },
               { field: 'senioritySortOrder',   title: 'Seniority'     },
@@ -229,15 +229,15 @@ var Equipment = React.createClass({
                 _.map(equipmentList, (equip) => {
                   return <tr key={ equip.id }>
                     <td>{ equip.equipmentCode }</td>
-                    <td>{ equip.typeName }</td>
-                    <td><a href={ equip.ownerPath }>{ equip.organizationName }</a></td>
-                    <td>{ equip.seniorityText }</td>
+                    <td>{ equip.equipmentType }</td>
+                    <td><a href={ equip.ownerPath }>{ equip.ownerName }</a></td>
+                    <td>{ equip.seniorityString }</td>
                     <td>{ equip.isHired ? 'Y' : 'N' }</td>
                     <td>{ equip.make }</td>
                     <td>{ equip.model }</td>
                     <td>{ equip.size }</td>
-                    <td>{ Object.keys(equip.equipmentAttachments).length }</td>
-                    <td>{ equip.isApproved ? formatDateTime(equip.lastVerifiedDate, 'YYYY-MMM-DD') : equip.isArchived ? 'Archived' : 'Not Approved' }</td>
+                    <td>{ equip.attachmentCount }</td>
+                    <td>{ formatDateTime(equip.lastVerifiedDate, 'YYYY-MMM-DD') }</td>
                     <td style={{ textAlign: 'right' }}>
                       <LinkContainer to={{ pathname: 'equipment/' + equip.id }}>
                         <Button title="View Equipment" bsSize="xsmall"><Glyphicon glyph="edit" /></Button>

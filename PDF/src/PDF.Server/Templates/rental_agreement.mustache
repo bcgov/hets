@@ -10,11 +10,13 @@
     size: letter;
     
     @bottom-right {
+      margin: 0 1cm 0 0;
       font-size: 12px;
       content: counter(page) "/" counter(pages);
     }
    
     @bottom-left {
+      margin: 0 0 0 1cm;
       font-size: 12px;
       content: "H0246(2018/10/06)";
     }
@@ -263,7 +265,7 @@
           <td>
             <div class="m-tb-5 bold">Unit Identifier: <span class="underline uppercase">{{equipmentCode}}</span></div>
           </td>
-          <td></td>
+          <td style="width: 10px"></td>
           <td style="width: 100%">
             <table id="agreement-number" class="inner-table">
               <tr>
@@ -277,7 +279,7 @@
           <td class="align-top">
             <table class="inner-table">
               <tr>
-                <td class="label m-tb-5" style="width: 200px">Name of Registered Owner or Firm:</td>
+                <td class="label m-tb-5" style="width: 250px">Name of Registered Owner or Firm:</td>
                 <td class="value m-tb-5">{{equipment.owner.organizationName}}</td>
               </tr>
             </table>
@@ -328,13 +330,13 @@
         </tr>
         <tr>
           <td>{{equipment.year}} {{equipment.make}}/{{equipment.model}}/{{equipment.size}}/{{equipment.serialNumber}}</td>
-          <td class="rate">${{equipmentRate}}/{{ratePeriod}}</td>
+          <td class="rate">${{equipmentRate}}</td>
           <td>{{rateComment}}</td>
         </tr>
         {{#rentalAgreementRatesWithTotal}}
         <tr>
           <td>{{componentName}}</td>
-          <td class="rate">{{rateString}}</td>
+          <td class="rate">{{rateString}}/{{ratePeriod}}</td>
           <td>{{comment}}</td>
         </tr>
         {{/rentalAgreementRatesWithTotal}}
@@ -348,7 +350,7 @@
         {{#rentalAgreementRatesWithoutTotal}}
         <tr>
           <td>{{componentName}}</td>
-          <td class="rate">${{rate}}</td>
+          <td class="rate">${{rate}}/{{ratePeriod}}</td>
           <td>{{comment}}</td>
         </tr>
         {{/rentalAgreementRatesWithoutTotal}}
@@ -361,7 +363,7 @@
           <td>{{comment}}</td>
         </tr>
         {{/rentalAgreementConditions}}
-        <tr style="height: 100%"><td></td><td></td><td></td></tr>
+        <tr style="height: 100%"><td></td><td></td><td style="height: 100%"></td></tr>
       </table>
     </div>
 
