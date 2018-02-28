@@ -170,7 +170,6 @@ var Owners = React.createClass({
   render() {
     // Constrain the local area drop downs to those in the District of the current logged in user
     var localAreas = _.chain(this.props.localAreas)
-      .filter(localArea => localArea.serviceArea && localArea.serviceArea.district.id == this.props.currentUser.district.id)
       .sortBy('name')
       .value();
 
