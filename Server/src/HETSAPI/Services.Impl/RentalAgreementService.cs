@@ -95,7 +95,7 @@ namespace HETSAPI.Services.Impl
         /// Create bulk rental agreement records
         /// </summary>
         /// <param name="items"></param>
-        /// <response code="201">Project created</response>
+        /// <response code="200">Project created</response>
         public virtual IActionResult RentalagreementsBulkPostAsync(RentalAgreement[] items)
         {
             if (items == null)
@@ -123,58 +123,6 @@ namespace HETSAPI.Services.Impl
             _context.SaveChanges();
 
             return new NoContentResult();
-        }
-
-        /// <summary>
-        /// Get all rental agreements
-        /// </summary>
-        /// <response code="200">OK</response>
-        public virtual IActionResult RentalagreementsGetAsync()
-        {
-            List<RentalAgreement> result = _context.RentalAgreements.AsNoTracking()
-                .Include(x => x.Equipment)
-                    .ThenInclude(y => y.Owner)
-                .Include(x => x.Equipment)
-                    .ThenInclude(y => y.EquipmentAttachments)
-                .Include(x => x.Equipment)
-                    .ThenInclude(y => y.LocalArea.ServiceArea.District.Region)
-                .Include(x => x.Project)
-                    .ThenInclude (p => p.District.Region)
-                .Include(x => x.RentalAgreementConditions)
-                .Include(x => x.RentalAgreementRates)
-                .Include(x => x.TimeRecords)
-                .ToList();
-
-            return new ObjectResult(new HetsResponse(result));
-        }
-
-        /// <summary>
-        /// Delete rental agreement
-        /// </summary>
-        /// <param name="id">id of Project to delete</param>
-        /// <response code="200">OK</response>
-        /// <response code="404">Project not found</response>
-        public virtual IActionResult RentalagreementsIdDeletePostAsync(int id)
-        {
-            bool exists = _context.RentalAgreements.Any(a => a.Id == id);
-
-            if (exists)
-            {
-                RentalAgreement item = _context.RentalAgreements.First(a => a.Id == id);
-
-                if (item != null)
-                {
-                    _context.RentalAgreements.Remove(item);
-
-                    // save the changes
-                    _context.SaveChanges();
-                }
-
-                return new ObjectResult(new HetsResponse(item));
-            }
-
-            // record not found
-            return new ObjectResult(new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-01", _configuration)));
         }
 
         /// <summary>
@@ -406,7 +354,7 @@ namespace HETSAPI.Services.Impl
         /// Create rental agreement
         /// </summary>
         /// <param name="item"></param>
-        /// <response code="201">Project created</response>
+        /// <response code="200">Project created</response>
         public virtual IActionResult RentalagreementsPostAsync(RentalAgreement item)
         {
             if (item != null)
@@ -441,7 +389,7 @@ namespace HETSAPI.Services.Impl
         /// Release (terminate) a rental agreement
         /// </summary>
         /// /// <param name="id">Id of Rental Agreement to release</param>
-        /// <response code="201">Rental Agreement released</response>
+        /// <response code="200">Rental Agreement released</response>
         public virtual IActionResult RentalagreementsIdReleasePostAsync(int id)
         {
             bool exists = _context.RentalAgreements.Any(a => a.Id == id);
@@ -923,7 +871,5 @@ namespace HETSAPI.Services.Impl
         }
 
         #endregion
-
-
     }
 }

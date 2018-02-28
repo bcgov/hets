@@ -56,7 +56,7 @@ namespace HETSAPI.Services.Impl
         /// Create bulk rental request records
         /// </summary>
         /// <param name="items"></param>
-        /// <response code="201">Project created</response>
+        /// <response code="200">Project created</response>
         public virtual IActionResult RentalrequestsBulkPostAsync(RentalRequest[] items)
         {
             if (items == null)
@@ -85,72 +85,12 @@ namespace HETSAPI.Services.Impl
 
             return new NoContentResult();
         }
-
-        /// <summary>
-        /// Get all rental requests
-        /// </summary>
-        /// <response code="200">OK</response>
-        public virtual IActionResult RentalrequestsGetAsync()
-        {
-            List<RentalRequest> result = _context.RentalRequests.AsNoTracking()
-                .Include(x => x.LocalArea.ServiceArea.District.Region)
-                .Include(x => x.Project)
-                    .ThenInclude(c => c.PrimaryContact)
-                .Include(x => x.RentalRequestAttachments)
-                .Include(x => x.DistrictEquipmentType)   
-                .ToList();
-
-            List<RentalRequestViewModel> resultModel = new List<RentalRequestViewModel>();
-
-            foreach (RentalRequest rentalRequest in result)
-            {
-                resultModel.Add(rentalRequest.ToRentalRequestViewModel());
-            }
-
-            return new ObjectResult(new HetsResponse(resultModel));
-        }
-
-        /// <summary>
-        /// Delete rental request
-        /// </summary>
-        /// <param name="id">id of Project to delete</param>
-        /// <response code="200">OK</response>
-        /// <response code="404">Project not found</response>
-        public virtual IActionResult RentalrequestsIdDeletePostAsync(int id)
-        {
-            RentalRequest item = _context.RentalRequests
-                .Include(x => x.RentalRequestRotationList)
-                .FirstOrDefault(a => a.Id == id);
-
-            if (item != null)
-            {
-                // remove the rotation list if it exists
-                if (item.RentalRequestRotationList != null)
-                {
-                    foreach (RentalRequestRotationList rentalRequestRotationList in item.RentalRequestRotationList)
-                    {
-                        _context.RentalRequestRotationLists.Remove(rentalRequestRotationList);
-                    }
-                }
-
-                _context.RentalRequests.Remove(item);
-
-                // save the changes
-                _context.SaveChanges();
-
-                return new ObjectResult(new HetsResponse(item));
-            }
-
-            // record not found
-            return new ObjectResult(new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-01", _configuration)));
-        }
-
+        
         /// <summary>
         /// Get rental request by id
         /// </summary>
         /// <param name="id">id of Rental Request to fetch</param>
         /// <response code="200">OK</response>
-        /// <response code="404">Project not found</response>
         public virtual IActionResult RentalrequestsIdGetAsync(int id)
         {
             bool exists = _context.RentalRequests.Any(a => a.Id == id);
@@ -180,7 +120,6 @@ namespace HETSAPI.Services.Impl
         /// <param name="id">id of Rental Request to update</param>
         /// <param name="item"></param>
         /// <response code="200">OK</response>
-        /// <response code="404">Project not found</response>
         public virtual IActionResult RentalrequestsIdPutAsync(int id, RentalRequest item)
         {
             AdjustRecord(item);
@@ -261,7 +200,6 @@ namespace HETSAPI.Services.Impl
         /// <param name="item"></param>
         /// <response>Rental Request</response>
         /// <response code="200">Rental Request created</response>
-        /// <response code="405">In Progress Rental Request already exists</response>
         public virtual IActionResult RentalrequestsPostAsync(RentalRequest item)
         {
             if (item != null)
@@ -382,7 +320,7 @@ namespace HETSAPI.Services.Impl
         }        
 
         /// <summary>
-        /// Searches rental requests
+        /// Search rental requests
         /// </summary>
         /// <remarks>Used for the rental request search page.</remarks>
         /// <param name="localareas">Local areas (comma seperated list of id numbers)</param>

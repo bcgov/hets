@@ -33,53 +33,7 @@ namespace HETSAPI.Services.Impl
             {
                 item.District = _context.Districts.FirstOrDefault(x => x.Id == item.District.Id);
             }
-        }        
-
-        /// <summary>
-        /// Create bulk user role records
-        /// </summary>
-        /// <remarks>Adds a number of user roles</remarks>
-        /// <param name="items"></param>
-        /// <response code="200">OK</response>
-        public virtual IActionResult UserrolesBulkPostAsync(UserRole[] items)
-        {
-            if (items == null)
-            {
-                return new BadRequestResult();
-            }
-
-            foreach (UserRole item in items)
-            {
-                // adjust the role
-                if (item.Role != null)
-                {
-                    int roleId = item.Role.Id;
-
-                    bool userExists = _context.Roles.Any(a => a.Id == roleId);
-
-                    if (userExists)
-                    {
-                        Role role = _context.Roles.First(a => a.Id == roleId);
-                        item.Role = role;
-                    }
-                }
-
-                bool exists = _context.UserRoles.Any(a => a.Id == item.Id);
-
-                if (exists)
-                {
-                    _context.UserRoles.Update(item);
-                }
-                else
-                {
-                    _context.UserRoles.Add(item);
-                }
-            }
-
-            // Save the changes
-            _context.SaveChanges();
-            return new NoContentResult();
-        }
+        }                
 
         /// <summary>
         /// Create bulk user records

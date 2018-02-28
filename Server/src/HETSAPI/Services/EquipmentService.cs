@@ -14,22 +14,15 @@ namespace HETSAPI.Services
         /// Create bulk equipment records
         /// </summary>
         /// <param name="items"></param>
-        /// <response code="201">Equipment created</response>
+        /// <response code="200">Equipment created</response>
         IActionResult EquipmentBulkPostAsync(Equipment[] items);
 
         /// <summary>
-        /// Get all equipment
+        /// Get equipment by id
         /// </summary>
+        /// <param name="id">id of Equipment to fetch</param>
         /// <response code="200">OK</response>
-        IActionResult EquipmentGetAsync();
-
-        /// <summary>
-        /// Delete equipment
-        /// </summary>
-        /// <param name="id">id of Equipment to delete</param>
-        /// <response code="200">OK</response>
-        /// <response code="404">Equipment not found</response>
-        IActionResult EquipmentIdDeletePostAsync(int id);
+        IActionResult EquipmentIdGetAsync(int id);
         
         /// <summary>
         /// Update equipment
@@ -47,27 +40,12 @@ namespace HETSAPI.Services
         /// <param name="item"></param>
         /// <response code="200">OK</response>
         IActionResult EquipmentIdStatusPutAsync(int id, EquipmentStatus item);
-
-        /// <summary>
-        /// Get equipment by id
-        /// </summary>
-        /// <param name="id">id of Equipment to fetch</param>
-        /// <response code="200">OK</response>
-        /// <response code="404">Equipment not found</response>
-        IActionResult EquipmentIdGetAsync(int id);              
-
-        /// <summary>
-        /// Get equipment by id (ViewModel)
-        /// </summary>
-        /// <param name="id">id of Equipment to fetch EquipmentViewModel for</param>
-        /// <response code="200">OK</response>
-        IActionResult EquipmentIdViewGetAsync(int id);
-
+        
         /// <summary>
         /// Create equipment
         /// </summary>
         /// <param name="item"></param>
-        /// <response code="201">Equipment created</response>
+        /// <response code="200">Equipment created</response>
         IActionResult EquipmentPostAsync(Equipment item);
         
         /// <summary>
@@ -96,7 +74,7 @@ namespace HETSAPI.Services
         /// </summary>
         /// <param name="id">Equipment id</param>
         /// <param name="item"></param>
-        /// <response code="201">Rental Agreement update</response>
+        /// <response code="200">Rental Agreement update</response>
         IActionResult EquipmentRentalAgreementClonePostAsync(int id, EquipmentRentalAgreementClone item);
 
         /// <summary>
@@ -129,7 +107,6 @@ namespace HETSAPI.Services
         /// <remarks>Returns attachments for a particular Equipment</remarks>
         /// <param name="id">id of Equipment to fetch attachments for</param>
         /// <response code="200">OK</response>
-        /// <response code="404">Equipment not found</response>
         IActionResult EquipmentIdAttachmentsGetAsync(int id);        
 
         /// <summary>
@@ -149,7 +126,6 @@ namespace HETSAPI.Services
         /// <param name="id">id of Equipment to add History for</param>
         /// <param name="item"></param>
         /// <response code="200">OK</response>
-        /// <response code="201">History created</response>
         IActionResult EquipmentIdHistoryPostAsync(int id, History item);
 
         /// <summary>

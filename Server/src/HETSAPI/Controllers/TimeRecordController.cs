@@ -37,7 +37,7 @@ namespace HETSAPI.Controllers
         }        
 
         /// <summary>	
-        /// Delete time record	
+        /// Delete a time record	
         /// </summary>	
         /// <param name="id">id of TimeRecord to delete</param>	
         /// <response code="200">OK</response>	

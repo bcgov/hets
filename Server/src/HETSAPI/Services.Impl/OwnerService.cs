@@ -99,7 +99,7 @@ namespace HETSAPI.Services.Impl
         /// Create bulk owner records
         /// </summary>
         /// <param name="items"></param>
-        /// <response code="201">Owner created</response>
+        /// <response code="200">Owner created</response>
         public virtual IActionResult OwnersBulkPostAsync(Owner[] items)
         {
             if (items == null)
@@ -127,48 +127,6 @@ namespace HETSAPI.Services.Impl
             // save the changes
             _context.SaveChanges();
             return new NoContentResult();
-        }
-
-        /// <summary>
-        /// Get all owners
-        /// </summary>
-        /// <response code="200">OK</response>
-        public virtual IActionResult OwnersGetAsync()
-        {
-            List<Owner> result = _context.Owners.AsNoTracking()
-                .Include(x => x.LocalArea.ServiceArea.District.Region)
-                .ToList();
-
-            return new ObjectResult(new HetsResponse(result));
-        }
-
-        /// <summary>
-        /// Delete owner
-        /// </summary>
-        /// <param name="id">id of Owner to delete</param>
-        /// <response code="200">OK</response>
-        /// <response code="404">Owner not found</response>
-        public virtual IActionResult OwnersIdDeletePostAsync(int id)
-        {
-            bool exists = _context.Owners.Any(a => a.Id == id);
-
-            if (exists)
-            {
-                Owner item = _context.Owners.First(a => a.Id == id);
-
-                if (item != null)
-                {
-                    _context.Owners.Remove(item);
-
-                    // save the changes
-                    _context.SaveChanges();
-                }
-
-                return new ObjectResult(new HetsResponse(item));
-            }
-
-            // record not found
-            return new ObjectResult(new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-01", _configuration)));
         }
 
         /// <summary>
@@ -362,35 +320,13 @@ namespace HETSAPI.Services.Impl
 
             // record not found
             return new ObjectResult(new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-01", _configuration)));
-        }
-
-        /// <summary>
-        /// Returns contacts for a specific owner
-        /// </summary>
-        /// <param name="id"></param>
-        /// <returns></returns>
-        private List<Contact> GetOwnerContacts(int id)
-        {
-            List<Contact> result = null;
-
-            Owner owner = _context.Owners
-                .Include(x => x.Contacts)
-                .FirstOrDefault(x => x.Id == id);
-
-            if (owner != null)
-            {
-                result = owner.Contacts;
-                _context.Entry(owner).State = EntityState.Detached;
-            }
-
-            return result;
-        }
+        }        
 
         /// <summary>
         /// Create owner
         /// </summary>
         /// <param name="item"></param>
-        /// <response code="201">Owner created</response>
+        /// <response code="200">Owner created</response>
         public virtual IActionResult OwnersPostAsync(Owner item)
         {
             AdjustRecord(item);
@@ -786,6 +722,23 @@ namespace HETSAPI.Services.Impl
         #endregion
 
         #region Owner Contacts 
+        
+        private List<Contact> GetOwnerContacts(int id)
+        {
+            List<Contact> result = null;
+
+            Owner owner = _context.Owners
+                .Include(x => x.Contacts)
+                .FirstOrDefault(x => x.Id == id);
+
+            if (owner != null)
+            {
+                result = owner.Contacts;
+                _context.Entry(owner).State = EntityState.Detached;
+            }
+
+            return result;
+        }
 
         /// <summary>
         /// Get all contacts associated with an owner
@@ -1028,7 +981,7 @@ namespace HETSAPI.Services.Impl
         /// <param name="id">id of Owner to add History for</param>
         /// <param name="item"></param>
         /// <response code="200">OK</response>
-        /// <response code="201">History created</response>
+        /// <response code="200">History created</response>
         public virtual IActionResult OwnersIdHistoryPostAsync(int id, History item)
         {
             HistoryViewModel result = new HistoryViewModel();

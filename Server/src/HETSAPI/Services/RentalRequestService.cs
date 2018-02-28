@@ -17,25 +17,10 @@ namespace HETSAPI.Services
         IActionResult RentalrequestsBulkPostAsync(RentalRequest[] items);
 
         /// <summary>
-        /// Get all rental requests
-        /// </summary>
-        /// <response code="200">OK</response>
-        IActionResult RentalrequestsGetAsync();
-
-        /// <summary>
-        /// Delete rental request
-        /// </summary>
-        /// <param name="id">id of RentalRequest to delete</param>
-        /// <response code="200">OK</response>
-        /// <response code="404">RentalRequest not found</response>
-        IActionResult RentalrequestsIdDeletePostAsync(int id);
-
-        /// <summary>
         /// Get the rental request by id
         /// </summary>
         /// <param name="id">id of RentalRequest to fetch</param>
         /// <response code="200">OK</response>
-        /// <response code="404">RentalRequest not found</response>
         IActionResult RentalrequestsIdGetAsync(int id);
 
         /// <summary>
@@ -44,7 +29,6 @@ namespace HETSAPI.Services
         /// <param name="id">id of RentalRequest to update</param>
         /// <param name="item"></param>
         /// <response code="200">OK</response>
-        /// <response code="404">RentalRequest not found</response>
         IActionResult RentalrequestsIdPutAsync(int id, RentalRequest item);
 
         /// <summary>
@@ -52,7 +36,6 @@ namespace HETSAPI.Services
         /// </summary>
         /// <param name="item"></param>
         /// <response code="200">Rental Request created</response>
-        /// <response code="405">In Progress Rental Request already exists</response>
         IActionResult RentalrequestsPostAsync(RentalRequest item);
 
         /// <summary>
@@ -79,7 +62,6 @@ namespace HETSAPI.Services
         /// </summary>
         /// <param name="id">id of RentalRequest to fetch</param>
         /// <response code="200">OK</response>
-        /// <response code="404">RentalRequest not found</response>
         IActionResult RentalrequestsIdRotationListGetAsync(int id);
 
         /// <summary>
@@ -89,7 +71,6 @@ namespace HETSAPI.Services
         /// <param name="id">id of RentalRequest to update</param>
         /// <param name="item"></param>
         /// <response code="200">OK</response>
-        /// <response code="404">RentalRequestRotationList not found</response>
         IActionResult RentalrequestRotationListIdPutAsync(int id, RentalRequestRotationList item);
 
         /// <summary>
@@ -104,7 +85,6 @@ namespace HETSAPI.Services
         /// <remarks>Returns attachments for a particular RentalRequest</remarks>
         /// <param name="id">id of RentalRequest to fetch attachments for</param>
         /// <response code="200">OK</response>
-        /// <response code="404">RentalRequest not found</response>
         IActionResult RentalrequestsIdAttachmentsGetAsync(int id);
 
         /// <summary>
@@ -124,7 +104,6 @@ namespace HETSAPI.Services
         /// <param name="id">id of RentalRequest to add History for</param>
         /// <param name="item"></param>
         /// <response code="200">OK</response>
-        /// <response code="201">History created</response>
         IActionResult RentalrequestsIdHistoryPostAsync(int id, History item);
 
         /// <summary>

@@ -54,22 +54,7 @@ namespace HETSAPI.Controllers
         {
             return _service.EquipmentIdGetAsync(id);
         }
-
-        /// <summary>
-        /// Get equipment view model by id
-        /// </summary>
-        /// <param name="id">id of Equipment to fetch EquipmentViewModel for</param>
-        /// <response code="200">OK</response>
-        [HttpGet]
-        [Route("/api/equipment/{id}/view")]
-        [SwaggerOperation("EquipmentIdViewGet")]
-        [SwaggerResponse(200, type: typeof(EquipmentViewModel))]
-        [RequiresPermission(Permission.Login)]
-        public virtual IActionResult EquipmentIdViewGet([FromRoute]int id)
-        {
-            return _service.EquipmentIdViewGetAsync(id);
-        }
-
+        
         /// <summary>
         /// Update equipment
         /// </summary>

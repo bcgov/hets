@@ -43,7 +43,7 @@ namespace HETSAPI.Test
 		{			
             DbContextOptions<DbAppContext> options = new DbContextOptions<DbAppContext>();
             Mock<DbAppContext> dbAppContext = new Mock<DbAppContext>(null, options);			                    
-            ServiceAreaService _service = new ServiceAreaService(dbAppContext.Object, null);			
+            ServiceAreaService _service = new ServiceAreaService(dbAppContext.Object);			
             _ServiceAreaApi = new ServiceAreaController (_service);
 		}	
 		

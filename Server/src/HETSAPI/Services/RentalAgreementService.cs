@@ -16,20 +16,6 @@ namespace HETSAPI.Services
         IActionResult RentalagreementsBulkPostAsync(RentalAgreement[] items);
 
         /// <summary>
-        /// Get all rental agreements
-        /// </summary>
-        /// <response code="200">OK</response>
-        IActionResult RentalagreementsGetAsync();
-
-        /// <summary>
-        /// Delete rental agreement
-        /// </summary>
-        /// <param name="id">id of RentalAgreement to delete</param>
-        /// <response code="200">OK</response>
-        /// <response code="404">RentalAgreement not found</response>
-        IActionResult RentalagreementsIdDeletePostAsync(int id);
-
-        /// <summary>
         /// Get rental agreement by id
         /// </summary>
         /// <param name="id">id of RentalAgreement to fetch</param>

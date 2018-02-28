@@ -17,20 +17,6 @@ namespace HETSAPI.Services
         IActionResult ProjectsBulkPostAsync(Project[] items);
 
         /// <summary>
-        /// Get all projects
-        /// </summary>
-        /// <response code="200">OK</response>
-        IActionResult ProjectsGetAsync();
-
-        /// <summary>
-        /// Delete project
-        /// </summary>
-        /// <param name="id">id of Project to delete</param>
-        /// <response code="200">OK</response>
-        /// <response code="404">Project not found</response>
-        IActionResult ProjectsIdDeletePostAsync(int id);
-
-        /// <summary>
         /// Get project
         /// </summary>
         /// <param name="id">id of Project to fetch</param>
@@ -55,7 +41,7 @@ namespace HETSAPI.Services
         IActionResult ProjectsPostAsync(Project item);
 
         /// <summary>
-        /// Searches Projects
+        /// Search Projects
         /// </summary>
         /// <remarks>Used for the project search page.</remarks>
         /// <param name="districts">Districts (comma seperated list of id numbers)</param>
