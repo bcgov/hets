@@ -1418,7 +1418,7 @@ namespace HETSAPI.Services.Impl
                 {
                     if (newRentalRequest.RentalRequestRotationList[i].Equipment.BlockNumber != b + 1)
                     {
-                        break; // done with the block
+                        continue; // move to the next record
                     }
 
                     masterSortOrder++;
