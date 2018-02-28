@@ -106,5 +106,31 @@ namespace HETSAPI.Services.Impl
         }
 
         #endregion
+
+        #region District Local Areas
+
+        /// <summary>
+        /// Get all local areas for a district
+        /// </summary>
+        /// <response code="200">OK</response>
+        public virtual IActionResult DistrictLocalAreasGetAsync(int id)
+        {
+            bool exists = _context.Districts.Any(a => a.Id == id);
+
+            if (exists)
+            {
+                List<LocalArea> result = _context.LocalAreas.AsNoTracking()
+                    .Where(x => x.ServiceArea.District.Id == id)
+                    .OrderBy(x => x.Name)
+                    .ToList();
+
+                return new ObjectResult(new HetsResponse(result));
+            }
+
+            // record not found
+            return new ObjectResult(new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-01", _configuration)));
+        }
+
+        #endregion
     }
 }

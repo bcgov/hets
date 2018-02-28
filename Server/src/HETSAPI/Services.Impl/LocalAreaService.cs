@@ -1,9 +1,6 @@
-using System.Collections.Generic;
 using System.Linq;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
 using HETSAPI.Models;
-using HETSAPI.ViewModels;
 
 namespace HETSAPI.Services.Impl
 {
@@ -61,19 +58,6 @@ namespace HETSAPI.Services.Impl
             _context.SaveChanges();
 
             return new NoContentResult();
-        }
-
-        /// <summary>
-        /// Get all local areas
-        /// </summary>
-        /// <response code="200">OK</response>
-        public virtual IActionResult LocalAreasGetAsync()
-        {
-            List<LocalArea> result = _context.LocalAreas
-                .Include(x => x.ServiceArea.District.Region)
-                .ToList();
-
-            return new ObjectResult(new HetsResponse(result));
         }        
     }
 }

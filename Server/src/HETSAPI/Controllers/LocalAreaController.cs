@@ -1,4 +1,3 @@
-using System.Collections.Generic;
 using Microsoft.AspNetCore.Mvc;
 using Swashbuckle.AspNetCore.SwaggerGen;
 using HETSAPI.Models;
@@ -35,20 +34,6 @@ namespace HETSAPI.Controllers
         public virtual IActionResult LocalAreasBulkPost([FromBody]LocalArea[] items)
         {
             return _service.LocalAreasBulkPostAsync(items);
-        }
-
-        /// <summary>
-        /// Get all local areas
-        /// </summary>
-        /// <response code="200">OK</response>
-        [HttpGet]
-        [Route("/api/localAreas")]
-        [SwaggerOperation("LocalAreasGet")]
-        [SwaggerResponse(200, type: typeof(List<LocalArea>))]
-        [RequiresPermission(Permission.Login)]
-        public virtual IActionResult LocalAreasGet()
-        {
-            return _service.LocalAreasGetAsync();
         }        
     }
 }

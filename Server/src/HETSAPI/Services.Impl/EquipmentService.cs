@@ -106,7 +106,7 @@ namespace HETSAPI.Services.Impl
                     .First(a => a.Id == id);
 
                 result.IsHired = IsHired(id);
-                result.NumberInBlock = GetNumberOfBlocks(result);
+                result.NumberOfBlocks = GetNumberOfBlocks(result);
                 result.HoursYtd = result.GetYtdServiceHours(_context, DateTime.Now.Year);
 
                 return new ObjectResult(new HetsResponse(result));
@@ -191,9 +191,9 @@ namespace HETSAPI.Services.Impl
                         .Include(x => x.Attachments)
                         .Include(x => x.History)
                         .First(a => a.Id == id);
-
+                    
                     result.IsHired = IsHired(id);
-                    result.NumberInBlock = GetNumberOfBlocks(result);
+                    result.NumberOfBlocks = GetNumberOfBlocks(result);
                     result.HoursYtd = result.GetYtdServiceHours(_context, DateTime.Now.Year);
 
                     return new ObjectResult(new HetsResponse(result));
