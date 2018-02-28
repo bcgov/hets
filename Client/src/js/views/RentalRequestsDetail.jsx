@@ -228,7 +228,7 @@ var RentalRequestsDetail = React.createClass({
           <Button title="Edit Rental Request" bsSize="small" onClick={ this.openEditDialog }><Glyphicon glyph="pencil" /></Button>
         </span></h3>
         {(() => {
-          if (this.state.loading) { return <div style={{ textAlign: 'center' }}><Spinner/></div>; }
+          if (this.state.loading) { return <div className="spinner-container"><Spinner/></div>; }
 
           var requestAttachments = rentalRequest.rentalRequestAttachments && rentalRequest.rentalRequestAttachments[0] ? rentalRequest.rentalRequestAttachments[0].attachment : 'None';
 
@@ -261,11 +261,11 @@ var RentalRequestsDetail = React.createClass({
           <CheckboxControl id="showAttachments" inline updateState={ this.updateState }><small>Show Attachments</small></CheckboxControl>
         </span></h3>
         {(() => {
-          if (this.state.loading) { return <div style={{ textAlign: 'center' }}><Spinner/></div>; }
+          if (this.state.loading) { return <div className="spinner-container"><Spinner/></div>; }
           
           var rotationList = this.props.rentalRequestRotationList.data.rentalRequestRotationList;
 
-          if (Object.keys(rotationList || []).length === 0) { return <Alert bsStyle="success" style={{ marginTop: 10 }}>No equipment</Alert>; }
+          if (Object.keys(rotationList || []).length === 0) { return <Alert bsStyle="success">No equipment</Alert>; }
           
           // Sort in rotation list order
           rotationList = _.sortBy(rotationList, 'rotationListSortOrder');
@@ -369,8 +369,8 @@ var RentalRequestsDetail = React.createClass({
         <h3>History <span className="pull-right">
         </span></h3>
         {(() => {
-          if (this.state.loadingHistory) { return <div style={{ textAlign: 'center' }}><Spinner/></div>; }
-          if (Object.keys(this.props.history).length === 0) { return <Alert bsStyle="success" style={{ marginTop: 10 }}>No history</Alert>; }
+          if (this.state.loadingHistory) { return <div className="spinner-container"><Spinner/></div>; }
+          if (Object.keys(this.props.history).length === 0) { return <Alert bsStyle="success">No history</Alert>; }
 
           var history = _.sortBy(this.props.history, 'createdDate');
 
