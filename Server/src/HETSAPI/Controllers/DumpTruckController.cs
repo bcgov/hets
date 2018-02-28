@@ -26,7 +26,7 @@ namespace HETSAPI.Controllers
         /// Create bulk dump truck records
         /// </summary>
         /// <param name="items"></param>
-        /// <response code="201">DumpTruck created</response>
+        /// <response code="200">DumpTruck created</response>
         [HttpPost]
         [Route("/api/dumptrucks/bulk")]
         [SwaggerOperation("DumptrucksBulkPost")]

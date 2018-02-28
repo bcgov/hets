@@ -18,7 +18,7 @@ namespace HETSAPI.Test
 		{			
             DbContextOptions<DbAppContext> options = new DbContextOptions<DbAppContext>();
             Mock<DbAppContext> dbAppContext = new Mock<DbAppContext>(null, options);
-            DumpTruckService _service = new DumpTruckService(dbAppContext.Object, null);
+            DumpTruckService _service = new DumpTruckService(dbAppContext.Object);
             _DumpTruck = new DumpTruckController (_service);
 		}	
 		

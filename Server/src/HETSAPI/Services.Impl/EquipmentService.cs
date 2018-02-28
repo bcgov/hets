@@ -80,85 +80,13 @@ namespace HETSAPI.Services.Impl
             _context.SaveChanges();
 
             return new NoContentResult();
-        }
-
-        /// <summary>
-        /// Get all equipment records
-        /// </summary>
-        /// <response code="200">OK</response>
-        public virtual IActionResult EquipmentGetAsync()
-        {
-            List<Equipment> result = _context.Equipments.AsNoTracking()
-                    .Include(x => x.LocalArea.ServiceArea.District.Region)
-                    .Include(x => x.DistrictEquipmentType)
-                    .Include(x => x.DumpTruck)
-                    .Include(x => x.Owner)
-                    .Include(x => x.EquipmentAttachments)
-                    .Include(x => x.Notes)
-                    .Include(x => x.Attachments)
-                    .Include(x => x.History)
-                    .ToList();
-
-            return new ObjectResult(new HetsResponse(result));
-        }
-
-        
-        /// <summary>
-        /// Delete equipment record
-        /// </summary>
-        /// <param name="id">id of Equipment to delete</param>
-        /// <response code="200">OK</response>
-        /// <response code="404">Equipment not found</response>
-        public virtual IActionResult EquipmentIdDeletePostAsync(int id)
-        {
-            bool exists = _context.Equipments.Any(a => a.Id == id);
-
-            if (exists)
-            {
-                // remove associated seniority audits
-                RemoveSeniorityAudits(id);
-
-                Equipment item = _context.Equipments
-                    .Include(x => x.LocalArea)
-                    .Include(x => x.DistrictEquipmentType)
-                    .Include(x => x.DistrictEquipmentType.EquipmentType)
-                    .First(a => a.Id == id);
-
-                int localAreaId = -1;
-                int districtEquipmentTypeId = -1;
-                int equipmentTypeId = -1;
-
-                if (item.LocalArea != null && item.DistrictEquipmentType != null && item.DistrictEquipmentType.EquipmentType != null)
-                {
-                    localAreaId = item.LocalArea.Id;
-                    districtEquipmentTypeId = item.DistrictEquipmentType.Id;
-                    equipmentTypeId = item.DistrictEquipmentType.EquipmentType.Id;
-                }
-
-                _context.Equipments.Remove(item);
-
-                // save the changes
-                _context.SaveChanges();
-
-                // update the seniority list
-                if (localAreaId != -1 && districtEquipmentTypeId != -1 && equipmentTypeId != -1)
-                {
-                    _context.CalculateSeniorityList(localAreaId, districtEquipmentTypeId, equipmentTypeId, _configuration);
-                }
-
-                return new ObjectResult(new HetsResponse(item));
-            }
-
-            // record not found
-            return new ObjectResult(new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-01", _configuration)));
-        }
-
+        }        
+                
         /// <summary>
         /// Get equipment record
         /// </summary>
         /// <param name="id">id of Equipment to fetch</param>
         /// <response code="200">OK</response>
-        /// <response code="404">Equipment not found</response>
         public virtual IActionResult EquipmentIdGetAsync(int id)
         {
             bool exists = _context.Equipments.Any(a => a.Id == id);
@@ -202,43 +130,7 @@ namespace HETSAPI.Services.Impl
             }
 
             return false;
-        }
-
-        /// <summary>
-        /// Get equipment record by id
-        /// </summary>
-        /// <param name="id">id of Equipment to fetch EquipmentViewModel for</param>
-        /// <response code="200">OK</response>
-        public virtual IActionResult EquipmentIdViewGetAsync(int id)
-        {
-            bool exists = _context.Equipments.Any(a => a.Id == id);
-
-            if (exists)
-            {
-                Equipment equipment = _context.Equipments.AsNoTracking()
-                    .Include(x => x.LocalArea.ServiceArea.District.Region)
-                    .Include(x => x.DistrictEquipmentType)
-                        .ThenInclude(d => d.EquipmentType)
-                    .Include(x => x.DumpTruck)
-                    .Include(x => x.Owner)
-                    .Include(x => x.EquipmentAttachments)
-                    .Include(x => x.Notes)
-                    .Include(x => x.Attachments)
-                    .Include(x => x.History)
-                    .First(a => a.Id == id);
-
-                EquipmentViewModel result = equipment.ToViewModel();
-
-                result.IsHired = IsHired(id);
-                result.NumberInBlock = GetNumberOfBlocks(equipment);
-                result.HoursYtd = equipment.GetYtdServiceHours(_context, DateTime.Now.Year);                
-
-                return new ObjectResult(new HetsResponse(result));
-            }
-
-            // record not found
-            return new ObjectResult(new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-01", _configuration)));
-        }
+        }        
 
         /// <summary>
         /// Update equipment record
@@ -1093,33 +985,7 @@ namespace HETSAPI.Services.Impl
         }
 
         #endregion
-
-        #region Equipment Audit
-
-        /// <summary>
-        /// Delete seniority audit records
-        /// </summary>
-        /// <param name="equipmentId"></param>
-        private void RemoveSeniorityAudits(int equipmentId)
-        {
-            List<SeniorityAudit> seniorityAudits = _context.SeniorityAudits
-                .Include(x => x.Equipment)
-                .Where(x => x.Equipment.Id == equipmentId)
-                .ToList();
-
-            if (seniorityAudits.Count > 0)
-            {
-                foreach (SeniorityAudit seniorityAudit in seniorityAudits)
-                {
-                    _context.SeniorityAudits.Remove(seniorityAudit);
-                }
-            }
-
-            _context.SaveChanges();
-        }
-
-        #endregion
-
+        
         #region Equipment History
 
         /// <summary>

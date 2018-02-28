@@ -12,7 +12,7 @@ namespace HETSAPI.Services
         /// Create bulk condition type records
         /// </summary>
         /// <param name="items"></param>
-        /// <response code="201">City created</response>
+        /// <response code="200">City created</response>
         IActionResult ConditionTypesBulkPostAsync(ConditionType[] items);
 
         /// <summary>

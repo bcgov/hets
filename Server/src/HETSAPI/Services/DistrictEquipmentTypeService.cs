@@ -4,7 +4,7 @@ using HETSAPI.Models;
 namespace HETSAPI.Services
 {
     /// <summary>
-    /// 
+    /// District Equipment Type Service
     /// </summary>
     public interface IDistrictEquipmentTypeService
     {
@@ -12,7 +12,7 @@ namespace HETSAPI.Services
         /// Create bulk district equipent type records
         /// </summary>
         /// <param name="items"></param>
-        /// <response code="201">DistrictEquipmentType created</response>
+        /// <response code="200">DistrictEquipmentType created</response>
         IActionResult DistrictEquipmentTypesBulkPostAsync(DistrictEquipmentType[] items);
 
         /// <summary>
@@ -26,7 +26,6 @@ namespace HETSAPI.Services
         /// </summary>
         /// <param name="id">id of DistrictEquipmentType to delete</param>
         /// <response code="200">OK</response>
-        /// <response code="404">DistrictEquipmentType not found</response>
         IActionResult DistrictEquipmentTypesIdDeletePostAsync(int id);
 
         /// <summary>
@@ -34,7 +33,6 @@ namespace HETSAPI.Services
         /// </summary>
         /// <param name="id">id of DistrictEquipmentType to fetch</param>
         /// <response code="200">OK</response>
-        /// <response code="404">DistrictEquipmentType not found</response>
         IActionResult DistrictEquipmentTypesIdGetAsync(int id);
 
         /// <summary>
@@ -43,7 +41,6 @@ namespace HETSAPI.Services
         /// <param name="id">id of DistrictEquipmentType to update (0 to create)</param>
         /// <param name="item"></param>
         /// <response code="200">OK</response>
-        /// <response code="404">DistrictEquipmentType not found</response>
         IActionResult DistrictEquipmentTypesIdPostAsync(int id, DistrictEquipmentType item);        
     }
 }

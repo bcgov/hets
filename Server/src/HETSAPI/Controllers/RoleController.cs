@@ -28,7 +28,7 @@ namespace HETSAPI.Controllers
         /// Create bulk role records
         /// </summary>
         /// <param name="items"></param>
-        /// <response code="201">Role created</response>
+        /// <response code="200">Role created</response>
         [HttpPost]
         [Route("/api/roles/bulk")]
         [SwaggerOperation("RolesBulkPost")]
@@ -104,7 +104,6 @@ namespace HETSAPI.Controllers
         /// <param name="id">id of Role to update</param>
         /// <param name="item"></param>
         /// <response code="200">OK</response>
-        /// <response code="404">Role not found</response>
         [HttpPost]
         [Route("/api/roles/{id}/permissions")]
         [SwaggerOperation("RolesIdPermissionsPost")]
@@ -122,7 +121,6 @@ namespace HETSAPI.Controllers
         /// <param name="id">id of Role to update</param>
         /// <param name="items"></param>
         /// <response code="200">OK</response>
-        /// <response code="404">Role not found</response>
         [HttpPut]
         [Route("/api/roles/{id}/permissions")]
         [SwaggerOperation("RolesIdPermissionsPut")]
@@ -139,7 +137,6 @@ namespace HETSAPI.Controllers
         /// <param name="id">id of Role to update</param>
         /// <param name="item"></param>
         /// <response code="200">OK</response>
-        /// <response code="404">Role not found</response>
         [HttpPut]
         [Route("/api/roles/{id}")]
         [SwaggerOperation("RolesIdPut")]
@@ -154,7 +151,7 @@ namespace HETSAPI.Controllers
         /// Create role
         /// </summary>
         /// <param name="item"></param>
-        /// <response code="201">Role created</response>
+        /// <response code="200">Role created</response>
         [HttpPost]
         [Route("/api/roles")]
         [SwaggerOperation("RolesPost")]

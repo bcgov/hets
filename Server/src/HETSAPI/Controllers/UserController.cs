@@ -69,7 +69,7 @@ namespace HETSAPI.Controllers
         /// <summary>
         /// Get user favorites
         /// </summary>
-        /// <remarks>Returns a user&#39;s favourites of a given context type</remarks>
+        /// <remarks>Returns a use favourites</remarks>
         /// <param name="id">id of User to fetch favorites for</param>
         /// <response code="200">OK</response>
         [HttpGet]

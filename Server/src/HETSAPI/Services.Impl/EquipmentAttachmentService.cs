@@ -34,7 +34,7 @@ namespace HETSAPI.Services.Impl
         /// Create bulk equipment attachment records
         /// </summary>
         /// <param name="items"></param>
-        /// <response code="201">Equipment created</response>
+        /// <response code="200">Equipment created</response>
         public virtual IActionResult EquipmentAttachmentsBulkPostAsync(EquipmentAttachment[] items)
         {
             if (items == null)
@@ -66,24 +66,10 @@ namespace HETSAPI.Services.Impl
         }
 
         /// <summary>
-        /// Get all equipment attachments records
-        /// </summary>
-        /// <response code="200">OK</response>
-        public virtual IActionResult EquipmentAttachmentsGetAsync()
-        {            
-            var result = _context.EquipmentAttachments
-                    .Include(x => x.Equipment)                  
-                    .ToList();
-
-            return new ObjectResult(new HetsResponse(result));
-        }
-
-        /// <summary>
         /// Delete equipment attachment 
         /// </summary>
         /// <param name="id">id of Equipment to delete</param>
         /// <response code="200">OK</response>
-        /// <response code="404">Equipment not found</response>
         public virtual IActionResult EquipmentAttachmentsIdDeletePostAsync(int id)
         {
             bool exists = _context.EquipmentAttachments.Any(a => a.Id == id);
@@ -105,35 +91,11 @@ namespace HETSAPI.Services.Impl
         }
 
         /// <summary>
-        /// Get equipment attachment by id
-        /// </summary>
-        /// <param name="id">id of Equipment to fetch</param>
-        /// <response code="200">OK</response>
-        /// <response code="404">Equipment not found</response>
-        public virtual IActionResult EquipmentAttachmentsIdGetAsync(int id)
-        {
-            bool exists = _context.EquipmentAttachments.Any(a => a.Id == id);
-
-            if (exists)
-            {
-                EquipmentAttachment result = _context.EquipmentAttachments
-                    .Include(x => x.Equipment)                  
-                    .First(a => a.Id == id);
-
-                return new ObjectResult(new HetsResponse(result));
-            }
-
-            // record not found
-            return new ObjectResult(new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-01", _configuration)));
-        }
-
-        /// <summary>
         /// Update equipment attachment
         /// </summary>
         /// <param name="id">id of Equipment to update</param>
         /// <param name="item"></param>
         /// <response code="200">OK</response>
-        /// <response code="404">Equipment not found</response>
         public virtual IActionResult EquipmentAttachmentsIdPutAsync(int id, EquipmentAttachment item)
         {
             if (item != null)
@@ -169,7 +131,7 @@ namespace HETSAPI.Services.Impl
         /// Create equipment attachments
         /// </summary>
         /// <param name="item"></param>
-        /// <response code="201">Equipment Attachment created</response>
+        /// <response code="200">Equipment Attachment created</response>
         public virtual IActionResult EquipmentAttachmentsPostAsync(EquipmentAttachment item)
         {
             if (item != null)
