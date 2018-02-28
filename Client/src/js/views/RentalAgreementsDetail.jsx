@@ -348,10 +348,10 @@ var RentalAgreementsDetail = React.createClass({
           <div id="rental-agreements-header">
             <h3>Rental Agreement</h3>
             <Row>
-              <ColDisplay lg={6} labelProps={{ md: 4 }} label="Agreement Number:">{ rentalAgreement.number }</ColDisplay>
-              <ColDisplay lg={6} labelProps={{ md: 4 }} label="Owner:">{ rentalAgreement.ownerName }</ColDisplay>
+              <ColDisplay md={12} labelProps={{ md: 4 }} label="Agreement Number:">{ rentalAgreement.number }</ColDisplay>
             </Row>
             <Row>
+              <ColDisplay md={12} labelProps={{ md: 4 }} label="Owner:">{ rentalAgreement.ownerName }</ColDisplay>
             </Row>
             <Row>
               <ColDisplay md={12} labelProps={{ md: 4 }} label="Equipment ID:">
