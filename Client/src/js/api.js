@@ -62,6 +62,7 @@ export function getCurrentUser() {
     };
 
     store.dispatch({ type: Action.UPDATE_CURRENT_USER, user: user });
+    return user;
   });
 }
 
@@ -1694,8 +1695,8 @@ export function getRegions() {
   });
 }
 
-export function getLocalAreas() {
-  return new ApiRequest('/localareas').get().then(response => {
+export function getLocalAreas(id) {
+  return new ApiRequest(`district/${id}/localAreas`).get().then(response => {
     var localAreas = normalize(response.data);
 
     store.dispatch({ type: Action.UPDATE_LOCAL_AREAS_LOOKUP, localAreas: localAreas });

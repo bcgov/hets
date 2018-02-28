@@ -49,16 +49,16 @@ export default function startApp() {
 function initializeApp() {
   incrementProgressBar(5);
   // Load current user next.
-  Api.getCurrentUser().then(() => {
+  Api.getCurrentUser().then((response) => {
     incrementProgressBar(33);
+    var districtId = response.district.id;
     // Check permissions?
-
     // Get lookups.
     var citiesPromise = Api.getCities();
     var districtsPromise = Api.getDistricts();
     var regionsPromise = Api.getRegions();
     var serviceAreasPromise = Api.getServiceAreas();
-    var localAreasPromise = Api.getLocalAreas();
+    var localAreasPromise = Api.getLocalAreas(districtId);
     var permissionsPromise = Api.getPermissions();
 
     return Promise.all([citiesPromise, districtsPromise, regionsPromise, serviceAreasPromise, localAreasPromise, permissionsPromise]).then(() => {
