@@ -32,7 +32,6 @@ namespace HETSAPI
             services.AddTransient<IEquipmentAttachmentService, EquipmentAttachmentService>();
             services.AddTransient<IEquipmentService, EquipmentService>();
             services.AddTransient<IEquipmentTypeService, EquipmentTypeService>();
-            services.AddTransient<IHistoryService, HistoryService>();
             services.AddTransient<ILocalAreaService, LocalAreaService>();
             services.AddTransient<INoteService, NoteService>();
             services.AddTransient<IOwnerService, OwnerService>();
@@ -43,12 +42,9 @@ namespace HETSAPI
             services.AddTransient<IRentalAgreementConditionService, RentalAgreementConditionService>();
             services.AddTransient<IRentalAgreementRateService, RentalAgreementRateService>();
             services.AddTransient<IRentalAgreementService, RentalAgreementService>();
-            services.AddTransient<IRentalRequestAttachmentService, RentalRequestAttachmentService>();
-            services.AddTransient<IRentalRequestRotationListService, RentalRequestRotationListService>();
             services.AddTransient<IRentalRequestService, RentalRequestService>();
             services.AddTransient<IRoleService, RoleService>();
             services.AddTransient<IServiceAreaService, ServiceAreaService>();
-            services.AddTransient<ISeniorityAuditService, SeniorityAuditService>();
             services.AddTransient<ITimeRecordService, TimeRecordService>();
             services.AddTransient<IUserService, UserService>();
             return services;

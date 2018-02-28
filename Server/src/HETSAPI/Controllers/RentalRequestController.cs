@@ -100,7 +100,7 @@ namespace HETSAPI.Controllers
         }        
 
         /// <summary>
-        /// Searches RentalRequests
+        /// Search Rental Requests
         /// </summary>
         /// <remarks>Used for the rental request search page.</remarks>
         /// <param name="localareas">Local Areas (comma seperated list of id numbers)</param>

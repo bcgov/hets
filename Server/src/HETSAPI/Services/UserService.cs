@@ -5,7 +5,7 @@ using HETSAPI.ViewModels;
 namespace HETSAPI.Services
 {
     /// <summary>
-    /// 
+    /// User Service
     /// </summary>
     public interface IUserService
     {        

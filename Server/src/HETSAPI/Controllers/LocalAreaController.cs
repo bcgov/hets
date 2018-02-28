@@ -27,7 +27,7 @@ namespace HETSAPI.Controllers
         /// Create bulk local area records
         /// </summary>
         /// <param name="items"></param>
-        /// <response code="201">LocalArea created</response>
+        /// <response code="200">LocalArea created</response>
         [HttpPost]
         [Route("/api/localAreas/bulk")]
         [SwaggerOperation("LocalAreasBulkPost")]

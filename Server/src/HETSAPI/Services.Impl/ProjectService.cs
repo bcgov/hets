@@ -148,52 +148,6 @@ namespace HETSAPI.Services.Impl
         }
 
         /// <summary>
-        /// Get all projects
-        /// </summary>
-        /// <response code="200">OK</response>
-        public virtual IActionResult ProjectsGetAsync()
-        {
-            List<Project> result = _context.Projects.AsNoTracking()
-                .Include(x => x.District.Region)
-                .Include(x => x.Contacts)                
-                .Include(x => x.PrimaryContact)
-                .Include(x => x.RentalRequests)
-                .Include(x => x.RentalAgreements)
-                .ToList();
-
-            return new ObjectResult(new HetsResponse(result));
-        }
-
-        /// <summary>
-        /// Delete project
-        /// </summary>
-        /// <param name="id">id of Project to delete</param>
-        /// <response code="200">OK</response>
-        /// <response code="404">Project not found</response>
-        public virtual IActionResult ProjectsIdDeletePostAsync(int id)
-        {
-            bool exists = _context.Projects.Any(a => a.Id == id);
-
-            if (exists)
-            {
-                Project item = _context.Projects.First(a => a.Id == id);
-
-                if (item != null)
-                {
-                    _context.Projects.Remove(item);
-
-                    // save the changes
-                    _context.SaveChanges();
-                }
-
-                return new ObjectResult(new HetsResponse(item));
-            }
-
-            // record not found
-            return new ObjectResult(new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-01", _configuration)));
-        }
-
-        /// <summary>
         /// Get project by id
         /// </summary>
         /// <param name="id">id of Project to fetch</param>
@@ -402,7 +356,7 @@ namespace HETSAPI.Services.Impl
             if (projectNumber != null)
             {
                 // allow for case insensitive search of project name
-                data = data.Where(x => x.ProvincialProjectNumber.ToLowerInvariant().Contains(project.ToLowerInvariant()));
+                data = data.Where(x => String.Equals(x.ProvincialProjectNumber, projectNumber, StringComparison.CurrentCultureIgnoreCase));
             }
 
             // **********************************************************************
@@ -700,13 +654,15 @@ namespace HETSAPI.Services.Impl
                         return new ObjectResult(new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-01", _configuration)));
                     }
 
-                    project.RentalAgreements[indexRental].TimeRecords[timeIndex].EnteredDate = item.EnteredDate;
+                    project.RentalAgreements[indexRental].TimeRecords[timeIndex].EnteredDate = DateTime.Now.ToUniversalTime();
                     project.RentalAgreements[indexRental].TimeRecords[timeIndex].Hours = item.Hours;
                     project.RentalAgreements[indexRental].TimeRecords[timeIndex].TimePeriod = item.TimePeriod;
                     project.RentalAgreements[indexRental].TimeRecords[timeIndex].WorkedDate = item.WorkedDate;
                 }
                 else // add time record
                 {                    
+                    item.EnteredDate = DateTime.Now.ToUniversalTime();
+
                     project.RentalAgreements[indexRental].TimeRecords.Add(item);
                 }
                 
@@ -789,13 +745,15 @@ namespace HETSAPI.Services.Impl
                                 ErrorViewModel.GetDescription("HETS-01", _configuration)));
                         }
 
-                        project.RentalAgreements[indexRental].TimeRecords[timeIndex].EnteredDate = item.EnteredDate;
+                        project.RentalAgreements[indexRental].TimeRecords[timeIndex].EnteredDate = DateTime.Now.ToUniversalTime();
                         project.RentalAgreements[indexRental].TimeRecords[timeIndex].Hours = item.Hours;
                         project.RentalAgreements[indexRental].TimeRecords[timeIndex].TimePeriod = item.TimePeriod;
                         project.RentalAgreements[indexRental].TimeRecords[timeIndex].WorkedDate = item.WorkedDate;
                     }
                     else // add time record
                     {
+                        item.EnteredDate = DateTime.Now.ToUniversalTime();
+
                         project.RentalAgreements[indexRental].TimeRecords.Add(item);
                     }
 

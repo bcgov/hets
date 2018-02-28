@@ -49,6 +49,19 @@ namespace HETSAPI.Controllers
         public virtual IActionResult AttachmentsIdDeletePost([FromRoute]int id)
         {
             return _service.AttachmentsIdDeletePostAsync(id);
-        }        
+        }
+
+        /// <summary>
+        /// Returns the binary file component of an attachment
+        /// </summary>
+        /// <param name="id">Attachment Id</param>
+        /// <response code="200">OK</response>
+        [HttpGet]
+        [Route("/api/attachments/{id}/download")]
+        [SwaggerOperation("AttachmentsIdDownloadGet")]
+        public virtual IActionResult AttachmentsIdDownloadGet([FromRoute]int id)
+        {
+            return _service.AttachmentsIdDownloadGetAsync(id);
+        }
     }
 }

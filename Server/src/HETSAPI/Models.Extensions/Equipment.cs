@@ -160,13 +160,27 @@ namespace HETSAPI.Models
         {
             float result = 0.0F;
 
-            DateTime startingDate = new DateTime(year, 3, 31);
+            // *******************************************************************************
+            // determine current fscal year - check for existing rotation lists this year
+            // *******************************************************************************
+            DateTime fiscalStart;
 
-            // get all the time data since then
+            if (DateTime.Now.Month == 1 || DateTime.Now.Month == 2 || DateTime.Now.Month == 3)
+            {
+                fiscalStart = new DateTime(DateTime.Now.AddYears(-1).Year, 4, 1);
+            }
+            else
+            {
+                fiscalStart = new DateTime(DateTime.Now.Year, 4, 1);
+            }
+
+            // *******************************************************************************
+            // get all the time data for the current fiscal year
+            // *******************************************************************************
             float? summation = context.TimeRecords
                    .Include(x => x.RentalAgreement.Equipment)
                    .Where(x => x.RentalAgreement.Equipment.Id == Id && 
-                               x.WorkedDate >= startingDate)
+                               x.WorkedDate >= fiscalStart)
                    .Sum(x => x.Hours);
 
             if (summation != null)
