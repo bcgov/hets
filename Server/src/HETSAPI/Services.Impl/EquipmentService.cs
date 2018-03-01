@@ -368,7 +368,7 @@ namespace HETSAPI.Services.Impl
             // record not found
             return new ObjectResult(new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-01", _configuration)));
         }
-        
+
         /// <summary>
         /// Searches Equipment
         /// </summary>
@@ -380,9 +380,10 @@ namespace HETSAPI.Services.Impl
         /// <param name="status">Status</param>
         /// <param name="hired">Hired</param>
         /// <param name="notverifiedsincedate">Not Verified Since Date</param>
+        /// <param name="equipmentId"></param>
         /// <response code="200">OK</response>
         public virtual IActionResult EquipmentSearchGetAsync(string localareas, string types, string equipmentAttachment, 
-            int? owner, string status, bool? hired, DateTime? notverifiedsincedate)
+            int? owner, string status, bool? hired, DateTime? notverifiedsincedate, string equipmentId = null)
         {
             int?[] localareasArray = ParseIntArray(localareas);
             int?[] typesArray = ParseIntArray(types);            
@@ -444,6 +445,12 @@ namespace HETSAPI.Services.Impl
             if (notverifiedsincedate != null)
             {
                 data = data.Where(x => x.LastVerifiedDate < notverifiedsincedate);
+            }
+
+            // Ministry refer to the EquipmentCode as the "equipmentId" - its not the db id
+            if (equipmentId != null)
+            {
+                data = data.Where(x => x.EquipmentCode.ToLower().Contains(equipmentId.ToLower()));
             }
 
             // **********************************************************************
