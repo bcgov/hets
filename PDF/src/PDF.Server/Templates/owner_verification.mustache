@@ -89,6 +89,14 @@
             min-width: 300px;
         }
 
+        #owner-contact-middle {
+            font-size: 14px;
+            line-height: 15px;
+            color: #355980;
+            text-align: left;
+            min-width: 300px;
+        }
+
         #owner-contact-right {
             font-size: 14px;
             line-height: 15px;
@@ -142,6 +150,7 @@
 </head>
 <body>
 
+    {{#owners}}
     <div class="owner">
         <div>
             <div id="header" class="clearfix">
@@ -166,7 +175,6 @@
                 <tr>
                     <td>
                         <div id="owner-contact-left">
-                            {{#owners}}
                             <table>
                                 <tr>
                                     <td>Owner: </td>
@@ -181,13 +189,11 @@
                                     <td>{{address2}}{{#address2}}, {{/address2}}{{city}}{{#city}}, {{/city}}{{province}}  {{postalCode}}</td>
                                 </tr>
                             </table>
-                            {{/owners}}
                         </div>
                     </td>
 
                     <td>   
                         <div id="owner-contact-middle">
-                            {{#owners}}
                             <table>
                                 {{#primaryContact.workPhoneNumber}}
                                 <tr>
@@ -214,7 +220,6 @@
                                 </tr>
                                 {{/primaryContact.emailAddress}}
                             </table>
-                            {{/owners}}
                         </div>
                     </td>
 
@@ -230,7 +235,6 @@
                                     <td>Owner Code: </td>
                                     <td>{{ownerCode}}</td>
                                 </tr>
-                                {{/owners}}
                             </table>
                         </div>
                     </td>
@@ -238,7 +242,6 @@
             </table>
 
             <div id="equipment-table">
-                {{#owners}}
                 <table border="1" cellpadding="1" cellspacing="1">
                     <tr>
                         <th>Still in use?</th>
@@ -261,9 +264,10 @@
                     </tr>
                     {{/equipmentList}}
                 </table>
-                {{/owners}}
             </div>
         </div>
+    </div>
+    {{/owners}}
 
 </body>
 </html>
