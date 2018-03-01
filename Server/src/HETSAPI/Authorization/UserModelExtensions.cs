@@ -48,11 +48,7 @@ namespace HETSAPI.Models
 
             var roles = user.GetActiveRoles().Select(r => new Claim(ClaimTypes.Role, r.Name)).ToList();
             if (roles.Any())
-                claims.AddRange(roles);
-
-            var groups = user.GetActiveGroups().Select(g => new Claim(ClaimTypes.GroupSid, g.Name)).ToList();
-            if (groups.Any())
-                claims.AddRange(groups);
+                claims.AddRange(roles);            
 
             return claims;
         }
@@ -89,20 +85,6 @@ namespace HETSAPI.Models
                 .Select(x => x.Role).ToList();
 
             return roles;
-        }
-
-        private static List<Group> GetActiveGroups(this User user)
-        {
-            List<Group> groups = new List<Group>();
-
-            if (user.GroupMemberships == null)
-                return groups;
-
-            groups = user.GroupMemberships
-                .Where(x => x.Active)
-                .Select(x => x.Group).ToList();
-
-            return groups;
-        }
+        }        
     }
 }

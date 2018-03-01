@@ -59,7 +59,7 @@ var RentalRequestsAddDialog = React.createClass({
   componentDidMount() {
     this.setState({ loading: true });
     var equipmentTypesPromise = Api.getDistrictEquipmentTypes(this.props.currentUser.district.id);
-    var projectsPromise = Api.getProjects();  // TODO This API call returns unnecessary data for this popup. It should be replaced with a lightweight version of projects (name, Id)
+    var projectsPromise = Api.searchProjects();
     Promise.all([equipmentTypesPromise, projectsPromise]).then(() => {
       this.setState({ loading: false });
     });
@@ -168,7 +168,6 @@ var RentalRequestsAddDialog = React.createClass({
 
     // Constrain the local area drop downs to those in the District of the current logged in user
     var localAreas = _.chain(this.props.localAreas)
-      .filter(localArea => localArea.serviceArea.district.id == this.props.currentUser.district.id)
       .sortBy('name')
       .value();
 
@@ -177,7 +176,7 @@ var RentalRequestsAddDialog = React.createClass({
       .sortBy('districtEquipmentName')
       .value();
 
-    var projects = _.sortBy(this.props.projects, 'name');
+    var projects = _.sortBy(this.props.projects.data, 'name');
 
     const { project } = this.props;
 
@@ -268,7 +267,7 @@ function mapStateToProps(state) {
     currentUser: state.user,
     localAreas: state.lookups.localAreas,
     districtEquipmentTypes: state.lookups.districtEquipmentTypes.data,
-    projects: state.lookups.projects,
+    projects: state.models.projects,
   };
 }
 

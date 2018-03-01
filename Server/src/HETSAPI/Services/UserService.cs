@@ -5,17 +5,10 @@ using HETSAPI.ViewModels;
 namespace HETSAPI.Services
 {
     /// <summary>
-    /// 
+    /// User Service
     /// </summary>
     public interface IUserService
-    {
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="items"></param>
-        /// <response code="201">User created</response>
-        IActionResult UsergroupsBulkPostAsync(GroupMembership[] items);
-
+    {        
         /// <summary>
         /// 
         /// </summary>
@@ -52,37 +45,8 @@ namespace HETSAPI.Services
         /// <param name="id">id of User to fetch</param>
         /// <response code="200">OK</response>
         /// <response code="404">User not found</response>
-        IActionResult UsersIdGetAsync(int id);
-
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <remarks>Returns all groups that a user is a member of</remarks>
-        /// <param name="id">id of User to fetch</param>
-        /// <response code="200">OK</response>
-        /// <response code="404">User not found</response>
-        IActionResult UsersIdGroupsGetAsync(int id);
-
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <remarks>Add to the active set of groups for a user</remarks>
-        /// <param name="id">id of User to update</param>
-        /// <param name="item"></param>
-        /// <response code="200">OK</response>
-        /// <response code="404">User not found</response>
-        IActionResult UsersIdGroupsPostAsync(int id, GroupMembershipViewModel item);
-
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <remarks>Updates the active set of groups for a user</remarks>
-        /// <param name="id">id of User to update</param>
-        /// <param name="items"></param>
-        /// <response code="200">OK</response>
-        /// <response code="404">User not found</response>
-        IActionResult UsersIdGroupsPutAsync(int id, GroupMembershipViewModel[] items);
-
+        IActionResult UsersIdGetAsync(int id);        
+        
         /// <summary>
         /// 
         /// </summary>

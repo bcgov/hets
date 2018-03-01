@@ -194,12 +194,10 @@ namespace HETSAPI.Services.Impl
             {
                 User currentUser = _context.Users
                         .Include(x => x.District)
-                        .Include(x => x.GroupMemberships)
-                        .ThenInclude(y => y.Group)
                         .Include(x => x.UserRoles)
-                        .ThenInclude(y => y.Role)
-                        .ThenInclude(z => z.RolePermissions)
-                        .ThenInclude(z => z.Permission)
+                            .ThenInclude(y => y.Role)
+                                .ThenInclude(z => z.RolePermissions)
+                                    .ThenInclude(z => z.Permission)
                         .First(x => x.Id == id);
 
                 CurrentUserViewModel result = currentUser.ToCurrentUserViewModel();

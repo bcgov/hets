@@ -34,38 +34,36 @@ namespace HETSAPI.Import
 
             if (importMap != null)
             {
+                performContext.WriteLine("*** Importing " + XmlFileName + " is complete from the former process ***");
                 return;
             }
 
             try
             {
                 string rootAttr = "ArrayOf" + OldTable;
-
                 performContext.WriteLine("Processing Service Areas");
                 IProgressBar progress = performContext.WriteProgressBar();
                 progress.SetValue(0);
 
                 // create serializer and serialize xml file
-                XmlSerializer ser = new XmlSerializer(typeof(ServiceArea[]), new XmlRootAttribute(rootAttr));
+                XmlSerializer ser = new XmlSerializer(typeof(ImportModels.ServiceArea[]), new XmlRootAttribute(rootAttr));
+                ser.UnknownAttribute += ImportUtility.UnknownAttribute;
+                ser.UnknownElement += ImportUtility.UnknownElement;
                 MemoryStream memoryStream = ImportUtility.MemoryStreamGenerator(XmlFileName, OldTable, fileLocation, rootAttr);
-                ServiceArea[] legacyItems = (ServiceArea[])ser.Deserialize(memoryStream);
+                ImportModels.ServiceArea[] legacyItems = (ImportModels.ServiceArea[])ser.Deserialize(memoryStream);
 
-                foreach (ServiceArea item in legacyItems.WithProgress(progress))
+                foreach (ImportModels.ServiceArea item in legacyItems.WithProgress(progress))
                 {
                     // see if we have this one already
                     importMap = dbContext.ImportMaps.FirstOrDefault(x => x.OldTable == OldTable && x.OldKey == item.Service_Area_Id.ToString());
 
                     Models.ServiceArea serviceArea = dbContext.ServiceAreas.FirstOrDefault(x => x.Name == item.Service_Area_Desc.Trim());
 
-                    if (serviceArea == null)
-                    {
-                        serviceArea = new Models.ServiceArea();
-                    }
 
                     // new entry
-                    if (importMap == null) 
+                    if (importMap == null)
                     {
-                        if (item.Service_Area_Cd > 0)
+                        if (item.Service_Area_Cd != "000")
                         {
                             CopyToInstance(performContext, dbContext, item, ref serviceArea, systemId);
                             ImportUtility.AddImportMap(dbContext, OldTable, item.Service_Area_Id.ToString(), NewTable, serviceArea.Id);
@@ -74,14 +72,12 @@ namespace HETSAPI.Import
                     else // update
                     {
                         // record was deleted
-                        if (serviceArea.Name == null) 
+                        if (serviceArea.Name == null)
                         {
                             CopyToInstance(performContext, dbContext, item, ref serviceArea, systemId);
-
                             // update the import map
                             importMap.NewKey = serviceArea.Id;
                             dbContext.ImportMaps.Update(importMap);
-                            dbContext.SaveChangesForImport();
                         }
                         else // ordinary update
                         {
@@ -90,13 +86,14 @@ namespace HETSAPI.Import
                             // touch the import map
                             importMap.AppLastUpdateTimestamp = DateTime.UtcNow;
                             dbContext.ImportMaps.Update(importMap);
-                            dbContext.SaveChangesForImport();
                         }
                     }
                 }
 
                 performContext.WriteLine("*** Importing " + XmlFileName + " is Done ***");
                 ImportUtility.AddImportMap(dbContext, OldTable, completed, NewTable, SigId);
+
+                dbContext.SaveChangesForImport();
             }
             catch (Exception e)
             {
@@ -130,11 +127,11 @@ namespace HETSAPI.Import
             serviceArea.MinistryServiceAreaID = oldObject.Service_Area_Id;
             serviceArea.DistrictId = oldObject.District_Area_Id;
             serviceArea.Name = oldObject.Service_Area_Desc.Trim();
-            serviceArea.AreaNumber = oldObject.Service_Area_Cd;
+            serviceArea.AreaNumber = int.Parse(oldObject.Service_Area_Cd);
 
             District district = dbContext.Districts.FirstOrDefault(x => x.MinistryDistrictID == oldObject.District_Area_Id);
 
-            if (district == null)   
+            if (district == null)
             {
                 // this means that the District is not in the database 
                 // (this happens when the production data does not include district Other than "Lower Mainland" or all the districts)
@@ -165,16 +162,49 @@ namespace HETSAPI.Import
                 dbContext.ServiceAreas.Update(serviceArea);
             }
 
+        }
+
+
+        public static void Obfuscate(PerformContext performContext, DbAppContext dbContext, string sourceLocation, string destinationLocation, string systemId)
+        {
+
             try
             {
-                dbContext.SaveChangesForImport();
+                string rootAttr = "ArrayOf" + OldTable;
+
+                // create Processer progress indicator
+                performContext.WriteLine("Processing " + OldTable);
+                IProgressBar progress = performContext.WriteProgressBar();
+                progress.SetValue(0);
+
+                // create serializer and serialize xml file
+                XmlSerializer ser = new XmlSerializer(typeof(ImportModels.ServiceArea[]), new XmlRootAttribute(rootAttr));
+                ser.UnknownAttribute += ImportUtility.UnknownAttribute;
+                ser.UnknownElement += ImportUtility.UnknownElement;
+                MemoryStream memoryStream = ImportUtility.MemoryStreamGenerator(XmlFileName, OldTable, sourceLocation, rootAttr);
+                ImportModels.ServiceArea[] legacyItems = (ImportModels.ServiceArea[])ser.Deserialize(memoryStream);
+
+                foreach (ServiceArea item in legacyItems.WithProgress(progress))
+                {
+                    item.Created_By = systemId;
+                }
+                performContext.WriteLine("Writing " + XmlFileName + " to " + destinationLocation);
+                // write out the array.
+                FileStream fs = ImportUtility.GetObfuscationDestination(XmlFileName, destinationLocation);
+                ser.Serialize(fs, legacyItems);
+                fs.Close();
             }
             catch (Exception e)
             {
-                performContext.WriteLine("*** ERROR With add or update Service Area ***");
+                performContext.WriteLine("*** ERROR ***");
                 performContext.WriteLine(e.ToString());
             }
         }
+
+
     }
+
+
+
 }
 

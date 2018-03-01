@@ -2,6 +2,8 @@ import React from 'react';
 
 import { connect } from 'react-redux';
 
+import { Link } from 'react-router';
+
 import { PageHeader, Well, Alert, Row, Col, ButtonToolbar, Button, ButtonGroup, Glyphicon, ControlLabel } from 'react-bootstrap';
 import { LinkContainer } from 'react-router-bootstrap';
 
@@ -23,16 +25,8 @@ import FormInputControl from '../components/FormInputControl.jsx';
 import MultiDropdown from '../components/MultiDropdown.jsx';
 import SortTable from '../components/SortTable.jsx';
 import Spinner from '../components/Spinner.jsx';
-import Unimplemented from '../components/Unimplemented.jsx';
 
 import { formatDateTime, toZuluTime } from '../utils/date';
-
-/*
-
-TODO:
-* Print / Email
-
-*/
 
 var Equipment = React.createClass({
   propTypes: {
@@ -57,7 +51,7 @@ var Equipment = React.createClass({
         ownerName: this.props.search.ownerName || 'Owner',
         lastVerifiedDate: this.props.search.lastVerifiedDate || '',
         hired: this.props.search.hired || false,
-        statusCode: this.props.search.statusCode || '',
+        statusCode: this.props.search.statusCode || Constant.EQUIPMENT_STATUS_CODE_APPROVED,
       },
       ui : {
         sortField: this.props.ui.sortField || 'seniorityText',
@@ -101,6 +95,7 @@ var Equipment = React.createClass({
   },
 
   componentDidMount() {
+    this.fetch();
     var equipmentTypesPromise = Api.getDistrictEquipmentTypes(this.props.currentUser.district.id);
     var ownersPromise = Api.getOwnersByDistrict(this.props.currentUser.district.id);
     var favouritesPromise = Api.getFavourites('equipment');
@@ -114,7 +109,6 @@ var Equipment = React.createClass({
           return;
         }
       }
-      this.fetch();
     });
   },
 
@@ -140,10 +134,6 @@ var Equipment = React.createClass({
     this.updateSearchState(JSON.parse(favourite.value), this.fetch);
   },
 
-  email() {
-
-  },
-
   print() {
     window.print();
   },
@@ -151,7 +141,6 @@ var Equipment = React.createClass({
   render() {
     // Constrain the local area drop downs to those in the District of the current logged in user
     var localAreas = _.chain(this.props.localAreas)
-      .filter(localArea => localArea.serviceArea.district.id == this.props.currentUser.district.id)
       .sortBy('name')
       .value();
 
@@ -167,9 +156,6 @@ var Equipment = React.createClass({
     return <div id="equipment-list">
       <PageHeader>Equipment ({ numResults })
         <ButtonGroup id="equipment-buttons">
-          <Unimplemented>
-            <Button onClick={ this.email }><Glyphicon glyph="envelope" title="E-mail" /></Button>
-          </Unimplemented>
           <Button onClick={ this.print }><Glyphicon glyph="print" title="Print" /></Button>
         </ButtonGroup>
       </PageHeader>
@@ -229,7 +215,7 @@ var Equipment = React.createClass({
         if (this.props.equipmentList.success) {
           return (
             <SortTable sortField={ this.state.ui.sortField } sortDesc={ this.state.ui.sortDesc } onSort={ this.updateUIState } headers={[
-              { field: 'equipmentCode',        title: 'ID'            },
+              { field: 'equipmentCode',        title: 'Equipment ID'  },
               { field: 'typeName',             title: 'Type'          },
               { field: 'organizationName',     title: 'Owner'         },
               { field: 'senioritySortOrder',   title: 'Seniority'     },
@@ -245,15 +231,15 @@ var Equipment = React.createClass({
                 _.map(equipmentList, (equip) => {
                   return <tr key={ equip.id }>
                     <td>{ equip.equipmentCode }</td>
-                    <td>{ equip.typeName }</td>
-                    <td><a href={ equip.ownerPath }>{ equip.organizationName }</a></td>
-                    <td>{ equip.seniorityText }</td>
+                    <td>{ equip.equipmentType }</td>
+                    <td><Link to={`${Constant.OWNERS_PATHNAME}/${equip.ownerId}`}>{ equip.ownerName }</Link></td>
+                    <td>{ equip.seniorityString }</td>
                     <td>{ equip.isHired ? 'Y' : 'N' }</td>
                     <td>{ equip.make }</td>
                     <td>{ equip.model }</td>
                     <td>{ equip.size }</td>
-                    <td>{ Object.keys(equip.equipmentAttachments).length }</td>
-                    <td>{ equip.isApproved ? formatDateTime(equip.lastVerifiedDate, 'YYYY-MMM-DD') : equip.isArchived ? 'Archived' : 'Not Approved' }</td>
+                    <td>{ equip.attachmentCount }</td>
+                    <td>{ formatDateTime(equip.lastVerifiedDate, 'YYYY-MMM-DD') }</td>
                     <td style={{ textAlign: 'right' }}>
                       <LinkContainer to={{ pathname: 'equipment/' + equip.id }}>
                         <Button title="View Equipment" bsSize="xsmall"><Glyphicon glyph="edit" /></Button>

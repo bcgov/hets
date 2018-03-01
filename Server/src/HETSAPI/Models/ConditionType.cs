@@ -1,5 +1,6 @@
 using System;
 using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 using System.Text;
 using Newtonsoft.Json;
 
@@ -22,23 +23,46 @@ namespace HETSAPI.Models
         /// <summary>
         /// Initializes a new instance of the <see cref="ConditionType" /> class.
         /// </summary>
-        /// <param name="conditionTypeCode">A unique code value for a ConditionType (required).</param>
+        /// <param name="id">A unique id for the ConditionType record (required).</param>
+        /// <param name="conditionTypeCode">A code value for a ConditionType (required).</param>
         /// <param name="description">A description of the ConditionType as used in the rental agreement (required).</param>
         /// <param name="active">A flag indicating if this ConditionType should be used on new rental agreements (required).</param>
-        public ConditionType(string conditionTypeCode, string description, bool active)
+        /// <param name="district">A District that this condition is associated with</param>
+        public ConditionType(int id, string conditionTypeCode, string description, bool active, District district)
         {
+            Id = id;
             ConditionTypeCode = conditionTypeCode;
             Description = description;
             Active = active;
+            District = district;
         }
+
+        /// <summary>
+        /// A unique id for the ConditionType record (required).
+        /// </summary>   
+        /// <value>A unique id for the ConditionType record (required).</value>
+        [MetaData(Description = "A unique id for the ConditionType record (required).")]
+        [Key]
+        public int Id { get; set; }
+
+        /// <summary>
+        /// Gets or Sets District
+        /// </summary>
+        public District District { get; set; }
+
+        /// <summary>
+        /// Foreign key for District
+        /// </summary>   
+        [ForeignKey("District")]
+        [JsonIgnore]
+        public int? DistrictId { get; set; }
 
         /// <summary>
         /// A unique code value for a ConditionType.
         /// </summary>
         /// <value>A unique code value for a ConditionType.</value>
-        [MetaData (Description = "A unique code value for a ConditionType.")]
-        [MaxLength(20)]
-        [Key]
+        [MetaData (Description = "A code value for a ConditionType (required).")]
+        [MaxLength(20)]        
         public string ConditionTypeCode { get; set; }
 
         /// <summary>
@@ -65,6 +89,8 @@ namespace HETSAPI.Models
             var sb = new StringBuilder();
 
             sb.Append("class ConditionType {\n");
+            sb.Append("  Id: ").Append(Id).Append("\n");
+            sb.Append("  District: ").Append(District).Append("\n");
             sb.Append("  ConditionTypeCode: ").Append(ConditionTypeCode).Append("\n");
             sb.Append("  Description: ").Append(Description).Append("\n");
             sb.Append("  Active: ").Append(Active).Append("\n");
@@ -106,6 +132,14 @@ namespace HETSAPI.Models
 
             return
                 (
+                    Id == other.Id ||
+                    Id.Equals(other.Id)
+                ) &&
+                (
+                    District == other.District ||
+                    District.Equals(other.District)
+                ) &&
+                (
                     ConditionTypeCode == other.ConditionTypeCode ||
                     ConditionTypeCode.Equals(other.ConditionTypeCode)
                 ) &&                 
@@ -131,6 +165,13 @@ namespace HETSAPI.Models
                 int hash = 41;
 
                 // Suitable nullity checks                                   
+                hash = hash * 59 + Id.GetHashCode();
+
+                if (District != null)
+                {
+                    hash = hash * 59 + District.GetHashCode();
+                }
+
                 hash = hash * 59 + ConditionTypeCode.GetHashCode();                   
                 hash = hash * 59 + Description.GetHashCode();
                 hash = hash * 59 + Active.GetHashCode();                

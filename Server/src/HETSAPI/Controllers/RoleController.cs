@@ -28,7 +28,7 @@ namespace HETSAPI.Controllers
         /// Create bulk role records
         /// </summary>
         /// <param name="items"></param>
-        /// <response code="201">Role created</response>
+        /// <response code="200">Role created</response>
         [HttpPost]
         [Route("/api/roles/bulk")]
         [SwaggerOperation("RolesBulkPost")]
@@ -46,6 +46,7 @@ namespace HETSAPI.Controllers
         [Route("/api/roles")]
         [SwaggerOperation("RolesGet")]
         [SwaggerResponse(200, type: typeof(List<RoleViewModel>))]
+        [RequiresPermission(Permission.Login)]
         public virtual IActionResult RolesGet()
         {
             return _service.RolesGetAsync();
@@ -55,12 +56,11 @@ namespace HETSAPI.Controllers
         /// Delete role
         /// </summary>
         /// <param name="id">id of Role to delete</param>
-        /// <response code="200">OK</response>
-        /// <response code="404">Role not found</response>
+        /// <response code="200">OK</response>        
         [HttpPost]
         [Route("/api/roles/{id}/delete")]
         [SwaggerOperation("RolesIdDeletePost")]
-        [RequiresPermission(Permission.Admin)]
+        [RequiresPermission(Permission.RolesAndPermissions)]
         public virtual IActionResult RolesIdDeletePost([FromRoute]int id)
         {
             return _service.RolesIdDeletePostAsync(id);
@@ -71,11 +71,11 @@ namespace HETSAPI.Controllers
         /// </summary>
         /// <param name="id">id of Role to fetch</param>
         /// <response code="200">OK</response>
-        /// <response code="404">Role not found</response>
         [HttpGet]
         [Route("/api/roles/{id}")]
         [SwaggerOperation("RolesIdGet")]
         [SwaggerResponse(200, type: typeof(RoleViewModel))]
+        [RequiresPermission(Permission.RolesAndPermissions)]
         public virtual IActionResult RolesIdGet([FromRoute]int id)
         {
             return _service.RolesIdGetAsync(id);
@@ -91,6 +91,7 @@ namespace HETSAPI.Controllers
         [Route("/api/roles/{id}/permissions")]
         [SwaggerOperation("RolesIdPermissionsGet")]
         [SwaggerResponse(200, type: typeof(List<PermissionViewModel>))]
+        [RequiresPermission(Permission.RolesAndPermissions)]
         public virtual IActionResult RolesIdPermissionsGet([FromRoute]int id)
         {
             return _service.RolesIdPermissionsGetAsync(id);
@@ -103,12 +104,11 @@ namespace HETSAPI.Controllers
         /// <param name="id">id of Role to update</param>
         /// <param name="item"></param>
         /// <response code="200">OK</response>
-        /// <response code="404">Role not found</response>
         [HttpPost]
         [Route("/api/roles/{id}/permissions")]
         [SwaggerOperation("RolesIdPermissionsPost")]
         [SwaggerResponse(200, type: typeof(List<PermissionViewModel>))]
-        [RequiresPermission(Permission.Admin)]
+        [RequiresPermission(Permission.RolesAndPermissions)]
         public virtual IActionResult RolesIdPermissionsPost([FromRoute]int id, [FromBody]PermissionViewModel item)
         {
             return _service.RolesIdPermissionsPostAsync(id, item);
@@ -121,12 +121,11 @@ namespace HETSAPI.Controllers
         /// <param name="id">id of Role to update</param>
         /// <param name="items"></param>
         /// <response code="200">OK</response>
-        /// <response code="404">Role not found</response>
         [HttpPut]
         [Route("/api/roles/{id}/permissions")]
         [SwaggerOperation("RolesIdPermissionsPut")]
         [SwaggerResponse(200, type: typeof(List<PermissionViewModel>))]
-        [RequiresPermission(Permission.Admin)]
+        [RequiresPermission(Permission.RolesAndPermissions)]
         public virtual IActionResult RolesIdPermissionsPut([FromRoute]int id, [FromBody]PermissionViewModel[] items)
         {
             return _service.RolesIdPermissionsPutAsync(id, items);
@@ -138,60 +137,26 @@ namespace HETSAPI.Controllers
         /// <param name="id">id of Role to update</param>
         /// <param name="item"></param>
         /// <response code="200">OK</response>
-        /// <response code="404">Role not found</response>
         [HttpPut]
         [Route("/api/roles/{id}")]
         [SwaggerOperation("RolesIdPut")]
         [SwaggerResponse(200, type: typeof(RoleViewModel))]
-        [RequiresPermission(Permission.Admin)]
+        [RequiresPermission(Permission.RolesAndPermissions)]
         public virtual IActionResult RolesIdPut([FromRoute]int id, [FromBody]RoleViewModel item)
         {
             return _service.RolesIdPutAsync(id, item);
-        }
-
-        /// <summary>
-        /// Get users associated with a role
-        /// </summary>
-        /// <remarks>Gets all the users for a role</remarks>
-        /// <param name="id">id of Role to fetch</param>
-        /// <response code="200">OK</response>
-        [HttpGet]
-        [Route("/api/roles/{id}/users")]
-        [SwaggerOperation("RolesIdUsersGet")]
-        [SwaggerResponse(200, type: typeof(List<UserRoleViewModel>))]
-        public virtual IActionResult RolesIdUsersGet([FromRoute]int id)
-        {
-            return _service.RolesIdUsersGetAsync(id);
-        }
-
-        /// <summary>
-        /// Update users with a role
-        /// </summary>
-        /// <remarks>Updates the users for a role</remarks>
-        /// <param name="id">id of Role to update</param>
-        /// <param name="items"></param>
-        /// <response code="200">OK</response>
-        /// <response code="404">Role not found</response>
-        [HttpPut]
-        [Route("/api/roles/{id}/users")]
-        [SwaggerOperation("RolesIdUsersPut")]
-        [SwaggerResponse(200, type: typeof(List<UserRoleViewModel>))]
-        [RequiresPermission(Permission.Admin)]
-        public virtual IActionResult RolesIdUsersPut([FromRoute]int id, [FromBody]UserRoleViewModel[] items)
-        {
-            return _service.RolesIdUsersPutAsync(id, items);
-        }
+        }        
 
         /// <summary>
         /// Create role
         /// </summary>
         /// <param name="item"></param>
-        /// <response code="201">Role created</response>
+        /// <response code="200">Role created</response>
         [HttpPost]
         [Route("/api/roles")]
         [SwaggerOperation("RolesPost")]
         [SwaggerResponse(200, type: typeof(RoleViewModel))]
-        [RequiresPermission(Permission.Admin)]
+        [RequiresPermission(Permission.RolesAndPermissions)]
         public virtual IActionResult RolesPost([FromBody]RoleViewModel item)
         {
             return _service.RolesPostAsync(item);

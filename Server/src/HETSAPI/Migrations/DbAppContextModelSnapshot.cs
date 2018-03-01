@@ -175,10 +175,9 @@ namespace HETSAPI.Migrations
 
             modelBuilder.Entity("HETSAPI.Models.ConditionType", b =>
                 {
-                    b.Property<string>("ConditionTypeCode")
+                    b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnName("CONDITION_TYPE_CODE")
-                        .HasMaxLength(20);
+                        .HasColumnName("CONDITION_TYPE_ID");
 
                     b.Property<bool>("Active")
                         .HasColumnName("ACTIVE");
@@ -213,6 +212,10 @@ namespace HETSAPI.Migrations
                         .HasColumnName("APP_LAST_UPDATE_USERID")
                         .HasMaxLength(255);
 
+                    b.Property<string>("ConditionTypeCode")
+                        .HasColumnName("CONDITION_TYPE_CODE")
+                        .HasMaxLength(20);
+
                     b.Property<DateTime>("DbCreateTimestamp")
                         .HasColumnName("DB_CREATE_TIMESTAMP");
 
@@ -231,7 +234,12 @@ namespace HETSAPI.Migrations
                         .HasColumnName("DESCRIPTION")
                         .HasMaxLength(2048);
 
-                    b.HasKey("ConditionTypeCode");
+                    b.Property<int?>("DistrictId")
+                        .HasColumnName("DISTRICT_ID");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("DistrictId");
 
                     b.ToTable("HET_CONDITION_TYPE");
                 });
@@ -993,7 +1001,7 @@ namespace HETSAPI.Migrations
 
                     b.Property<string>("Name")
                         .HasColumnName("NAME")
-                        .HasMaxLength(50);
+                        .HasMaxLength(150);
 
                     b.Property<int>("NumberOfBlocks")
                         .HasColumnName("NUMBER_OF_BLOCKS");
@@ -1001,137 +1009,6 @@ namespace HETSAPI.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("HET_EQUIPMENT_TYPE");
-                });
-
-            modelBuilder.Entity("HETSAPI.Models.Group", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnName("GROUP_ID");
-
-                    b.Property<DateTime>("AppCreateTimestamp")
-                        .HasColumnName("APP_CREATE_TIMESTAMP");
-
-                    b.Property<string>("AppCreateUserDirectory")
-                        .HasColumnName("APP_CREATE_USER_DIRECTORY")
-                        .HasMaxLength(50);
-
-                    b.Property<string>("AppCreateUserGuid")
-                        .HasColumnName("APP_CREATE_USER_GUID")
-                        .HasMaxLength(255);
-
-                    b.Property<string>("AppCreateUserid")
-                        .HasColumnName("APP_CREATE_USERID")
-                        .HasMaxLength(255);
-
-                    b.Property<DateTime>("AppLastUpdateTimestamp")
-                        .HasColumnName("APP_LAST_UPDATE_TIMESTAMP");
-
-                    b.Property<string>("AppLastUpdateUserDirectory")
-                        .HasColumnName("APP_LAST_UPDATE_USER_DIRECTORY")
-                        .HasMaxLength(50);
-
-                    b.Property<string>("AppLastUpdateUserGuid")
-                        .HasColumnName("APP_LAST_UPDATE_USER_GUID")
-                        .HasMaxLength(255);
-
-                    b.Property<string>("AppLastUpdateUserid")
-                        .HasColumnName("APP_LAST_UPDATE_USERID")
-                        .HasMaxLength(255);
-
-                    b.Property<DateTime>("DbCreateTimestamp")
-                        .HasColumnName("DB_CREATE_TIMESTAMP");
-
-                    b.Property<string>("DbCreateUserId")
-                        .HasColumnName("DB_CREATE_USER_ID")
-                        .HasMaxLength(63);
-
-                    b.Property<DateTime>("DbLastUpdateTimestamp")
-                        .HasColumnName("DB_LAST_UPDATE_TIMESTAMP");
-
-                    b.Property<string>("DbLastUpdateUserId")
-                        .HasColumnName("DB_LAST_UPDATE_USER_ID")
-                        .HasMaxLength(63);
-
-                    b.Property<string>("Description")
-                        .HasColumnName("DESCRIPTION")
-                        .HasMaxLength(2048);
-
-                    b.Property<string>("Name")
-                        .HasColumnName("NAME")
-                        .HasMaxLength(150);
-
-                    b.HasKey("Id");
-
-                    b.ToTable("HET_GROUP");
-                });
-
-            modelBuilder.Entity("HETSAPI.Models.GroupMembership", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnName("GROUP_MEMBERSHIP_ID");
-
-                    b.Property<bool>("Active")
-                        .HasColumnName("ACTIVE");
-
-                    b.Property<DateTime>("AppCreateTimestamp")
-                        .HasColumnName("APP_CREATE_TIMESTAMP");
-
-                    b.Property<string>("AppCreateUserDirectory")
-                        .HasColumnName("APP_CREATE_USER_DIRECTORY")
-                        .HasMaxLength(50);
-
-                    b.Property<string>("AppCreateUserGuid")
-                        .HasColumnName("APP_CREATE_USER_GUID")
-                        .HasMaxLength(255);
-
-                    b.Property<string>("AppCreateUserid")
-                        .HasColumnName("APP_CREATE_USERID")
-                        .HasMaxLength(255);
-
-                    b.Property<DateTime>("AppLastUpdateTimestamp")
-                        .HasColumnName("APP_LAST_UPDATE_TIMESTAMP");
-
-                    b.Property<string>("AppLastUpdateUserDirectory")
-                        .HasColumnName("APP_LAST_UPDATE_USER_DIRECTORY")
-                        .HasMaxLength(50);
-
-                    b.Property<string>("AppLastUpdateUserGuid")
-                        .HasColumnName("APP_LAST_UPDATE_USER_GUID")
-                        .HasMaxLength(255);
-
-                    b.Property<string>("AppLastUpdateUserid")
-                        .HasColumnName("APP_LAST_UPDATE_USERID")
-                        .HasMaxLength(255);
-
-                    b.Property<DateTime>("DbCreateTimestamp")
-                        .HasColumnName("DB_CREATE_TIMESTAMP");
-
-                    b.Property<string>("DbCreateUserId")
-                        .HasColumnName("DB_CREATE_USER_ID")
-                        .HasMaxLength(63);
-
-                    b.Property<DateTime>("DbLastUpdateTimestamp")
-                        .HasColumnName("DB_LAST_UPDATE_TIMESTAMP");
-
-                    b.Property<string>("DbLastUpdateUserId")
-                        .HasColumnName("DB_LAST_UPDATE_USER_ID")
-                        .HasMaxLength(63);
-
-                    b.Property<int?>("GroupId")
-                        .HasColumnName("GROUP_ID");
-
-                    b.Property<int?>("UserId")
-                        .HasColumnName("USER_ID");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("GroupId");
-
-                    b.HasIndex("UserId");
-
-                    b.ToTable("HET_GROUP_MEMBERSHIP");
                 });
 
             modelBuilder.Entity("HETSAPI.Models.History", b =>
@@ -1441,79 +1318,6 @@ namespace HETSAPI.Migrations
                     b.HasIndex("LocalAreaId");
 
                     b.ToTable("HET_LOCAL_AREA_ROTATION_LIST");
-                });
-
-            modelBuilder.Entity("HETSAPI.Models.LookupList", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnName("LOOKUP_LIST_ID");
-
-                    b.Property<DateTime>("AppCreateTimestamp")
-                        .HasColumnName("APP_CREATE_TIMESTAMP");
-
-                    b.Property<string>("AppCreateUserDirectory")
-                        .HasColumnName("APP_CREATE_USER_DIRECTORY")
-                        .HasMaxLength(50);
-
-                    b.Property<string>("AppCreateUserGuid")
-                        .HasColumnName("APP_CREATE_USER_GUID")
-                        .HasMaxLength(255);
-
-                    b.Property<string>("AppCreateUserid")
-                        .HasColumnName("APP_CREATE_USERID")
-                        .HasMaxLength(255);
-
-                    b.Property<DateTime>("AppLastUpdateTimestamp")
-                        .HasColumnName("APP_LAST_UPDATE_TIMESTAMP");
-
-                    b.Property<string>("AppLastUpdateUserDirectory")
-                        .HasColumnName("APP_LAST_UPDATE_USER_DIRECTORY")
-                        .HasMaxLength(50);
-
-                    b.Property<string>("AppLastUpdateUserGuid")
-                        .HasColumnName("APP_LAST_UPDATE_USER_GUID")
-                        .HasMaxLength(255);
-
-                    b.Property<string>("AppLastUpdateUserid")
-                        .HasColumnName("APP_LAST_UPDATE_USERID")
-                        .HasMaxLength(255);
-
-                    b.Property<string>("CodeName")
-                        .HasColumnName("CODE_NAME")
-                        .HasMaxLength(30);
-
-                    b.Property<string>("ContextName")
-                        .HasColumnName("CONTEXT_NAME")
-                        .HasMaxLength(100);
-
-                    b.Property<DateTime>("DbCreateTimestamp")
-                        .HasColumnName("DB_CREATE_TIMESTAMP");
-
-                    b.Property<string>("DbCreateUserId")
-                        .HasColumnName("DB_CREATE_USER_ID")
-                        .HasMaxLength(63);
-
-                    b.Property<DateTime>("DbLastUpdateTimestamp")
-                        .HasColumnName("DB_LAST_UPDATE_TIMESTAMP");
-
-                    b.Property<string>("DbLastUpdateUserId")
-                        .HasColumnName("DB_LAST_UPDATE_USER_ID")
-                        .HasMaxLength(63);
-
-                    b.Property<int?>("DisplaySortOrder")
-                        .HasColumnName("DISPLAY_SORT_ORDER");
-
-                    b.Property<bool>("IsDefault")
-                        .HasColumnName("IS_DEFAULT");
-
-                    b.Property<string>("Value")
-                        .HasColumnName("VALUE")
-                        .HasMaxLength(100);
-
-                    b.HasKey("Id");
-
-                    b.ToTable("HET_LOOKUP_LIST");
                 });
 
             modelBuilder.Entity("HETSAPI.Models.Note", b =>
@@ -3022,6 +2826,74 @@ namespace HETSAPI.Migrations
                     b.ToTable("HET_USER");
                 });
 
+            modelBuilder.Entity("HETSAPI.Models.UserDistrict", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnName("USER_DISTRICT_ID");
+
+                    b.Property<DateTime>("AppCreateTimestamp")
+                        .HasColumnName("APP_CREATE_TIMESTAMP");
+
+                    b.Property<string>("AppCreateUserDirectory")
+                        .HasColumnName("APP_CREATE_USER_DIRECTORY")
+                        .HasMaxLength(50);
+
+                    b.Property<string>("AppCreateUserGuid")
+                        .HasColumnName("APP_CREATE_USER_GUID")
+                        .HasMaxLength(255);
+
+                    b.Property<string>("AppCreateUserid")
+                        .HasColumnName("APP_CREATE_USERID")
+                        .HasMaxLength(255);
+
+                    b.Property<DateTime>("AppLastUpdateTimestamp")
+                        .HasColumnName("APP_LAST_UPDATE_TIMESTAMP");
+
+                    b.Property<string>("AppLastUpdateUserDirectory")
+                        .HasColumnName("APP_LAST_UPDATE_USER_DIRECTORY")
+                        .HasMaxLength(50);
+
+                    b.Property<string>("AppLastUpdateUserGuid")
+                        .HasColumnName("APP_LAST_UPDATE_USER_GUID")
+                        .HasMaxLength(255);
+
+                    b.Property<string>("AppLastUpdateUserid")
+                        .HasColumnName("APP_LAST_UPDATE_USERID")
+                        .HasMaxLength(255);
+
+                    b.Property<DateTime>("DbCreateTimestamp")
+                        .HasColumnName("DB_CREATE_TIMESTAMP");
+
+                    b.Property<string>("DbCreateUserId")
+                        .HasColumnName("DB_CREATE_USER_ID")
+                        .HasMaxLength(63);
+
+                    b.Property<DateTime>("DbLastUpdateTimestamp")
+                        .HasColumnName("DB_LAST_UPDATE_TIMESTAMP");
+
+                    b.Property<string>("DbLastUpdateUserId")
+                        .HasColumnName("DB_LAST_UPDATE_USER_ID")
+                        .HasMaxLength(63);
+
+                    b.Property<int?>("DistrictId")
+                        .HasColumnName("DISTRICT_ID");
+
+                    b.Property<bool>("IsPrimary")
+                        .HasColumnName("IS_PRIMARY");
+
+                    b.Property<int?>("UserId")
+                        .HasColumnName("USER_ID");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("DistrictId");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("HET_USER_DISTRICT");
+                });
+
             modelBuilder.Entity("HETSAPI.Models.UserFavourite", b =>
                 {
                     b.Property<int>("Id")
@@ -3187,6 +3059,13 @@ namespace HETSAPI.Migrations
                         .HasForeignKey("RentalRequestId");
                 });
 
+            modelBuilder.Entity("HETSAPI.Models.ConditionType", b =>
+                {
+                    b.HasOne("HETSAPI.Models.District", "District")
+                        .WithMany()
+                        .HasForeignKey("DistrictId");
+                });
+
             modelBuilder.Entity("HETSAPI.Models.Contact", b =>
                 {
                     b.HasOne("HETSAPI.Models.Owner")
@@ -3240,17 +3119,6 @@ namespace HETSAPI.Migrations
                     b.HasOne("HETSAPI.Models.Equipment", "Equipment")
                         .WithMany("EquipmentAttachments")
                         .HasForeignKey("EquipmentId");
-                });
-
-            modelBuilder.Entity("HETSAPI.Models.GroupMembership", b =>
-                {
-                    b.HasOne("HETSAPI.Models.Group", "Group")
-                        .WithMany()
-                        .HasForeignKey("GroupId");
-
-                    b.HasOne("HETSAPI.Models.User", "User")
-                        .WithMany("GroupMemberships")
-                        .HasForeignKey("UserId");
                 });
 
             modelBuilder.Entity("HETSAPI.Models.History", b =>
@@ -3346,7 +3214,7 @@ namespace HETSAPI.Migrations
             modelBuilder.Entity("HETSAPI.Models.RentalAgreement", b =>
                 {
                     b.HasOne("HETSAPI.Models.Equipment", "Equipment")
-                        .WithMany()
+                        .WithMany("RentalAgreements")
                         .HasForeignKey("EquipmentId");
 
                     b.HasOne("HETSAPI.Models.Project", "Project")
@@ -3458,6 +3326,17 @@ namespace HETSAPI.Migrations
                     b.HasOne("HETSAPI.Models.District", "District")
                         .WithMany()
                         .HasForeignKey("DistrictId");
+                });
+
+            modelBuilder.Entity("HETSAPI.Models.UserDistrict", b =>
+                {
+                    b.HasOne("HETSAPI.Models.District", "District")
+                        .WithMany()
+                        .HasForeignKey("DistrictId");
+
+                    b.HasOne("HETSAPI.Models.User", "User")
+                        .WithMany()
+                        .HasForeignKey("UserId");
                 });
 
             modelBuilder.Entity("HETSAPI.Models.UserFavourite", b =>

@@ -99,7 +99,7 @@ namespace HETSAPI.Services.Impl
         /// Create bulk owner records
         /// </summary>
         /// <param name="items"></param>
-        /// <response code="201">Owner created</response>
+        /// <response code="200">Owner created</response>
         public virtual IActionResult OwnersBulkPostAsync(Owner[] items)
         {
             if (items == null)
@@ -127,48 +127,6 @@ namespace HETSAPI.Services.Impl
             // save the changes
             _context.SaveChanges();
             return new NoContentResult();
-        }
-
-        /// <summary>
-        /// Get all owners
-        /// </summary>
-        /// <response code="200">OK</response>
-        public virtual IActionResult OwnersGetAsync()
-        {
-            List<Owner> result = _context.Owners.AsNoTracking()
-                .Include(x => x.LocalArea.ServiceArea.District.Region)
-                .ToList();
-
-            return new ObjectResult(new HetsResponse(result));
-        }
-
-        /// <summary>
-        /// Delete owner
-        /// </summary>
-        /// <param name="id">id of Owner to delete</param>
-        /// <response code="200">OK</response>
-        /// <response code="404">Owner not found</response>
-        public virtual IActionResult OwnersIdDeletePostAsync(int id)
-        {
-            bool exists = _context.Owners.Any(a => a.Id == id);
-
-            if (exists)
-            {
-                Owner item = _context.Owners.First(a => a.Id == id);
-
-                if (item != null)
-                {
-                    _context.Owners.Remove(item);
-
-                    // save the changes
-                    _context.SaveChanges();
-                }
-
-                return new ObjectResult(new HetsResponse(item));
-            }
-
-            // record not found
-            return new ObjectResult(new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-01", _configuration)));
         }
 
         /// <summary>
@@ -229,7 +187,26 @@ namespace HETSAPI.Services.Impl
 
                 if (exists && id == item.Id)
                 {
+                    // get the current owner record to check the local area
+                    Owner owner = _context.Owners.AsNoTracking()
+                        .Include(x => x.LocalArea)
+                        .First(x => x.Id == id);
+
                     _context.Owners.Update(item);
+
+                    // we need to update the equipment records to match any change in local area
+                    if (owner.LocalArea.Id != item.LocalArea.Id)
+                    {
+                        IQueryable<Equipment> equipmentList = _context.Equipments
+                            .Include(x => x.Owner)
+                            .Include(x => x.LocalArea)
+                            .Where(x => x.Owner.Id == id);
+
+                        foreach (Equipment equipment in equipmentList)
+                        {
+                            equipment.LocalAreaId = item.LocalArea.Id;
+                        }
+                    }
 
                     // save the changes
                     _context.SaveChanges();
@@ -297,6 +274,10 @@ namespace HETSAPI.Services.Impl
                     {
                         foreach (Equipment equipment in owner.EquipmentList)
                         {
+                            // used for seniority recalc                            
+                            int localAreaId = equipment.LocalArea.Id;
+                            int districtEquipmentTypeId = equipment.DistrictEquipmentType.Id;
+
                             // if the equipment is already archived - leave it archived
                             // if the equipment is already in the same state as the owner's new state - then ignore
                             if (!equipment.Status.Equals("Archived", StringComparison.CurrentCultureIgnoreCase) &&
@@ -315,8 +296,11 @@ namespace HETSAPI.Services.Impl
                                 {
                                     equipment.ArchiveCode = "N";
                                     equipment.ArchiveDate = null;
-                                    equipment.ArchiveReason = null;
+                                    equipment.ArchiveReason = null;                                    
                                 }
+
+                                // recalc the senirity
+                                EquipmentService.EquipmentRecalcSeniority(localAreaId, districtEquipmentTypeId, _context, _configuration);
                             }
                         }
                     }
@@ -336,35 +320,13 @@ namespace HETSAPI.Services.Impl
 
             // record not found
             return new ObjectResult(new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-01", _configuration)));
-        }
-
-        /// <summary>
-        /// Returns contacts for a specific owner
-        /// </summary>
-        /// <param name="id"></param>
-        /// <returns></returns>
-        private List<Contact> GetOwnerContacts(int id)
-        {
-            List<Contact> result = null;
-
-            Owner owner = _context.Owners
-                .Include(x => x.Contacts)
-                .FirstOrDefault(x => x.Id == id);
-
-            if (owner != null)
-            {
-                result = owner.Contacts;
-                _context.Entry(owner).State = EntityState.Detached;
-            }
-
-            return result;
-        }
+        }        
 
         /// <summary>
         /// Create owner
         /// </summary>
         /// <param name="item"></param>
-        /// <response code="201">Owner created</response>
+        /// <response code="200">Owner created</response>
         public virtual IActionResult OwnersPostAsync(Owner item)
         {
             AdjustRecord(item);
@@ -513,10 +475,9 @@ namespace HETSAPI.Services.Impl
                     MinistryDistrictId = owners[0].LocalArea.ServiceArea.District.MinistryDistrictID,
                     DistrictName = owners[0].LocalArea.ServiceArea.District.Name,
                     DistrictAddress = "to be completed",
-                    DistrictContact = "to be completed"
+                    DistrictContact = "to be completed",
+                    Owners = new List<Owner>()
                 };
-
-                model.Owners = new List<Owner>();
 
                 // add owner records - must verify district ids too
                 foreach (Owner owner in owners)
@@ -680,9 +641,9 @@ namespace HETSAPI.Services.Impl
                 Owner owner = _context.Owners
                     .Include(x => x.LocalArea.ServiceArea.District.Region)
                     .Include(x => x.EquipmentList)
-                    .ThenInclude(y => y.DistrictEquipmentType)
+                        .ThenInclude(y => y.DistrictEquipmentType)
                     .Include(x => x.EquipmentList)
-                    .ThenInclude(y => y.Owner)
+                        .ThenInclude(y => y.Owner)
                     .Include(x => x.Notes)
                     .Include(x => x.Attachments)
                     .Include(x => x.History)
@@ -690,7 +651,7 @@ namespace HETSAPI.Services.Impl
                     .First(x => x.Id == id);
 
                 // adjust the incoming list
-                for (int i = 0; i < items.Count(); i++)
+                for (int i = 0; i < items.Length; i++)
                 {
                     Equipment item = items[i];
 
@@ -761,6 +722,23 @@ namespace HETSAPI.Services.Impl
         #endregion
 
         #region Owner Contacts 
+        
+        private List<Contact> GetOwnerContacts(int id)
+        {
+            List<Contact> result = null;
+
+            Owner owner = _context.Owners
+                .Include(x => x.Contacts)
+                .FirstOrDefault(x => x.Id == id);
+
+            if (owner != null)
+            {
+                result = owner.Contacts;
+                _context.Entry(owner).State = EntityState.Detached;
+            }
+
+            return result;
+        }
 
         /// <summary>
         /// Get all contacts associated with an owner
@@ -868,7 +846,7 @@ namespace HETSAPI.Services.Impl
                 Owner owner = _context.Owners
                     .Include(x => x.LocalArea.ServiceArea.District.Region)
                     .Include(x => x.EquipmentList)
-                    .ThenInclude(y => y.DistrictEquipmentType)
+                        .ThenInclude(y => y.DistrictEquipmentType)
                     .Include(x => x.Notes)
                     .Include(x => x.Attachments)
                     .Include(x => x.History)
@@ -876,7 +854,7 @@ namespace HETSAPI.Services.Impl
                     .First(x => x.Id == id);
 
                 // adjust the incoming list
-                for (int i = 0; i < items.Count(); i++)
+                for (int i = 0; i < items.Length; i++)
                 {
                     Contact item = items[i];
 
@@ -1003,7 +981,7 @@ namespace HETSAPI.Services.Impl
         /// <param name="id">id of Owner to add History for</param>
         /// <param name="item"></param>
         /// <response code="200">OK</response>
-        /// <response code="201">History created</response>
+        /// <response code="200">History created</response>
         public virtual IActionResult OwnersIdHistoryPostAsync(int id, History item)
         {
             HistoryViewModel result = new HistoryViewModel();

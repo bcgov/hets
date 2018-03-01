@@ -28,7 +28,6 @@ namespace HETSAPI.Mappings
                 dto.District = model.District;
                 dto.SmAuthorizationDirectory = model.SmAuthorizationDirectory;
                 dto.SmUserId = model.SmUserId;
-                dto.GroupMemberships = model.GroupMemberships;
                 dto.UserRoles = model.UserRoles;
             }
             return dto;
@@ -165,7 +164,8 @@ namespace HETSAPI.Mappings
                 if (model.DistrictEquipmentType != null)
                 {
                     dto.EquipmentTypeName = model.DistrictEquipmentType.EquipmentType.Name;
-                }            
+                    dto.DistrictEquipmentName = model.DistrictEquipmentType.DistrictEquipmentName;
+                }
                 
                 dto.Id = model.Id;
                 dto.LocalArea = model.LocalArea;
@@ -252,7 +252,6 @@ namespace HETSAPI.Mappings
                 dto.Surname = model.Surname;
                 dto.Id = model.Id;
                 dto.District = model.District;
-                dto.GroupMemberships = model.GroupMemberships;
                 dto.UserRoles = model.UserRoles;
             }
             return dto;
@@ -354,9 +353,19 @@ namespace HETSAPI.Mappings
             if (model != null)
             {
                 dto.Id = model.Id;
+                dto.Status = model.Status;
                 dto.Name = model.Name;
                 dto.PrimaryContact = model.PrimaryContact;
                 dto.District= model.District;
+                dto.RentalRequests = model.RentalRequests;
+                dto.RentalAgreements = model.RentalAgreements;
+
+                // calculate request and hire count
+                dto.CountRequests();                
+                dto.CountHires();
+
+                dto.RentalRequests = null;
+                dto.RentalAgreements = null;
             }
             return dto;         
         }
@@ -365,101 +374,77 @@ namespace HETSAPI.Mappings
         /// Equipment view model
         /// </summary>
         /// <param name="model"></param>
+        /// <param name="scoringRules"></param>
         /// <returns></returns>
-        public static EquipmentViewModel ToViewModel(this Equipment model)
+        public static EquipmentViewModel ToViewModel(this Equipment model, SeniorityScoringRules scoringRules)
         {
             var dto = new EquipmentViewModel();
 
             if (model != null)
             {
-                dto.ApprovedDate = model.ApprovedDate;
-                dto.ArchiveCode = model.ArchiveCode;
-                dto.ArchiveDate = model.ArchiveDate;
-                dto.ArchiveReason = model.ArchiveReason;
-                dto.Attachments = model.Attachments;
-                dto.BlockNumber = model.BlockNumber;
-                dto.DumpTruck = model.DumpTruck;
-                dto.EquipmentCode = model.EquipmentCode;
-                dto.EquipmentAttachments = model.EquipmentAttachments;
-                dto.DistrictEquipmentType = model.DistrictEquipmentType;
-                dto.History = model.History;
+                int numberOfBlocks = 0;
+
+                // get number of blocks for this equiment type
+                if (model.DistrictEquipmentType != null)
+                {
+                    numberOfBlocks = model.DistrictEquipmentType.EquipmentType.IsDumpTruck
+                        ? scoringRules.GetTotalBlocks("DumpTruck") + 1
+                        : scoringRules.GetTotalBlocks() + 1;
+                }
+
+                // get equipment seniority
+                float seniority = 0F;
+                if (model.Seniority != null)
+                {
+                    seniority = (float)model.Seniority;
+                }
+
+                // get equipment block number
+                int blockNumber = 0;
+                if (model.BlockNumber != null)
+                {
+                    blockNumber = (int)model.BlockNumber;
+                }
+
+                // get equipment block number
+                int numberInBlock = 0;
+                if (model.NumberInBlock != null)
+                {
+                    numberInBlock = (int)model.NumberInBlock;
+                }
+
+                // *************************************************************
+                // Map data to ciew model
+                // *************************************************************
                 dto.Id = model.Id;
-                dto.InformationUpdateNeededReason = model.InformationUpdateNeededReason;
-                dto.IsInformationUpdateNeeded = model.IsInformationUpdateNeeded;
-                dto.IsSeniorityOverridden = model.IsSeniorityOverridden;
-                dto.LastVerifiedDate = model.LastVerifiedDate;
-                dto.LicencePlate = model.LicencePlate;
-                dto.LocalArea = model.LocalArea;
+
+                if (model.DistrictEquipmentType != null)
+                {
+                    dto.EquipmentType = model.DistrictEquipmentType.DistrictEquipmentName;
+                }
+
+                if (model.Owner != null)
+                {
+                    dto.OwnerName = model.Owner.OrganizationName;
+                    dto.OwnerId = model.OwnerId;
+                }
+                
+                dto.SeniorityString = dto.FormatSeniorityString(seniority, blockNumber, numberOfBlocks);
+
+                dto.IsHired = dto.CheckIsHired(model.RentalAgreements);
+
                 dto.Make = model.Make;
                 dto.Model = model.Model;
-                dto.Notes = model.Notes;
-                dto.Operator = model.Operator;
-                dto.Owner = model.Owner;
-                dto.PayRate = model.PayRate;
-                dto.ReceivedDate = model.ReceivedDate;
-                dto.RefuseRate = model.RefuseRate;
-                dto.Seniority = model.Seniority;
-                dto.SeniorityEffectiveDate = model.SeniorityEffectiveDate;
-                dto.SeniorityOverrideReason = model.SeniorityOverrideReason;
-                dto.SerialNumber = model.SerialNumber;
-                dto.ServiceHoursLastYear = model.ServiceHoursLastYear;
-                dto.ServiceHoursTwoYearsAgo = model.ServiceHoursTwoYearsAgo;
-                dto.ServiceHoursThreeYearsAgo = model.ServiceHoursThreeYearsAgo;
                 dto.Size = model.Size;
-                dto.Status = model.Status;
-                dto.ToDate = model.ToDate;                
-                dto.Year = model.Year;
-                dto.YearsOfService = model.YearsOfService;
-
-                // calculate "seniority sort order" & round the seniority value (3 decimal places)
-                dto.CalculateSenioritySortOrder();
+                dto.EquipmentCode = model.EquipmentCode;
+                dto.AttachmentCount = dto.CalculateAttachmentCount(model.EquipmentAttachments);
+                dto.LastVerifiedDate = model.LastVerifiedDate;
+                dto.SenioritySortOrder = dto.CalculateSenioritySortOrder(blockNumber, numberInBlock);                                
             }
 
             return dto;
         }
-        
-        /// <summary>
-        /// Group membership view model
-        /// </summary>
-        /// <param name="model"></param>
-        /// <returns></returns>
-        public static GroupMembershipViewModel ToViewModel(this GroupMembership model)
-        {
-            var dto = new GroupMembershipViewModel();
-
-            if (model != null)
-            {
-                dto.Active = model.Active;
-                if (model.Group != null)
-                {
-                    dto.GroupId = model.Group.Id;
-                }
-                dto.UserId = model.User.Id;
-                dto.Id = model.Id;
-            }
-
-            return dto;
-        }
-
-        /// <summary>
-        /// Group view model
-        /// </summary>
-        /// <param name="model"></param>
-        /// <returns></returns>
-        public static GroupViewModel ToViewModel(this Group model)
-        {
-            GroupViewModel dto = new GroupViewModel();
-
-            if (model != null)
-            {
-                dto.Description = model.Description;
-                dto.Name = model.Name;
-                dto.Id = model.Id;
-            }
-
-            return dto;
-        }
-
+               
         /// <summary>
         /// History view model
         /// </summary>

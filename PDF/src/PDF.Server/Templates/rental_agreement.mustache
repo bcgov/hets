@@ -4,6 +4,24 @@
   <meta charset="utf-8">
   <title>{{title}}</title>
   <style>
+
+  @page {
+    margin: 0 0 1cm 0;
+    size: letter;
+    
+    @bottom-right {
+      margin: 0 1cm 0 0;
+      font-size: 12px;
+      content: counter(page) "/" counter(pages);
+    }
+   
+    @bottom-left {
+      margin: 0 0 0 1cm;
+      font-size: 12px;
+      content: "H0246(2018/10/06)";
+    }
+  }
+
   body {
     background-color: white;
     color: black;
@@ -42,19 +60,21 @@
 
   .contact-info {
     vertical-align: top;
-    text-align: right;
+    text-align: left;
   }
 
-  .agreement-number {
-    text-align: right;
-    font-size: 14px;
-    vertical-align: top;
+  table#agreement-number {
+    width: auto;
   }
 
   img {
     height: 100%;
   }
 
+  #table-block {
+    min-height: 400px;
+  }
+  
   #contact-block {
     margin-top: 30px;
   }
@@ -82,9 +102,16 @@
     text-align: right;
   }
 
-  #address-block .value {
-    width: 400px;
+  table.inner-table {
+    border: none;
+  }
+
+  .inner-table .value {
     white-space: normal;
+  }
+
+  .inner-table .m-tb-5 {
+    vertical-align: top;
   }
 
   #note {
@@ -109,12 +136,10 @@
     text-align: center;
   }
 
-  #table-block {
-    min-height: 400px;
-  }
-
   #main-table {
     table-layout: fixed;
+    min-height: 375px;
+    margin-bottom: 25px;
   }
 
   h1, h2 {
@@ -198,8 +223,17 @@
     text-align: center;
   }
 
+  .align-top {
+    vertical-align: top;
+  }
+
+    #page-2 {
+      font-size: 12px;
+    }
+
   @media print {
     #page-2 {
+      margin-top: 1cm;
       page-break-before: always;
     }
   }
@@ -234,36 +268,64 @@
       <tbody>
         <tr>
           <td>
-            <div class="m-tb-5">Unit Identifier: <span class="underline uppercase">{{id}}</span></div>
+            <div class="m-tb-5 bold">Unit Identifier: <span class="underline uppercase">{{equipmentCode}}</span></div>
           </td>
-          <td></td>
-          <td class="agreement-number">
-            <div>Rental Agreement Number: {{number}}</div>
+          <td style="width: 10px"></td>
+          <td>
+            <table id="agreement-number" class="inner-table">
+              <tr>
+                <td class="bold">Rental Agreement Number:</td>
+                <td class="bold">{{number}}</td>
+              </tr>
+            </table>
           </td>
         </tr>
         <tr>
-          <td>
-            <div class="m-tb-5">Name of Registered Owner or Firm: <span class="underline uppercase">{{equipment.owner.organizationName}}</span></div>
-            <div id="address-block">
-              <div class="label m-tb-5">Address:</div>
-              <div class="value m-tb-5">
-                {{equipment.owner.primaryContact.address1}} {{equipment.owner.primaryContact.address1}} 
-                {{equipment.owner.primaryContact.city}} {{equipment.owner.primaryContact.province}} 
-                {{equipment.owner.primaryContact.postalCode}}
-              </div>
-            </div>
+          <td class="align-top">
+            <table class="inner-table" style="width: auto">
+              <tr>
+                <td class="label m-tb-5">Name of Registered Owner or Firm:</td>
+                <td class="value m-tb-5">{{equipment.owner.organizationName}}</td>
+              </tr>
+            </table>
+            <table class="inner-table">
+              <tr>
+                <td class="label m-tb-5">Address:</td>
+                <td class="value m-tb-5">
+                  {{equipment.owner.primaryContact.address1}} {{equipment.owner.primaryContact.address1}} 
+                  {{equipment.owner.primaryContact.city}} {{equipment.owner.primaryContact.province}} 
+                  {{equipment.owner.primaryContact.postalCode}}
+                </td>
+              </tr>
+            </table>
           </td>
           <td></td>
           <td class="contact-info">
             <div id="phone-block">
+              {{#equipment.owner.primaryContact.workPhoneNumber}}
               <div>
-                <span class="label">Contact#:</span>
+                <span class="label">Work#:</span>
                 <span class="value">{{equipment.owner.primaryContact.workPhoneNumber}}</span>
               </div>
+              {{/equipment.owner.primaryContact.workPhoneNumber}}
+              {{#equipment.owner.primaryContact.mobilePhoneNumber}}
+              <div>
+                <span class="label">Cell#:</span>
+                <span class="value">{{equipment.owner.primaryContact.mobilePhoneNumber}}</span>
+              </div>
+              {{/equipment.owner.primaryContact.mobilePhoneNumber}}
+              {{#equipment.owner.primaryContact.faxPhoneNumber}}
               <div>
                 <span class="label">Fax#:</span>
                 <span class="value">{{equipment.owner.primaryContact.faxPhoneNumber}}</span>
               </div>
+              {{/equipment.owner.primaryContact.faxPhoneNumber}}
+              {{#equipment.owner.primaryContact.emailAddress}}
+              <div>
+                <span class="label">Email:</span>
+                <span class="value">{{equipment.owner.primaryContact.emailAddress}}</span>
+              </div>
+              {{/equipment.owner.primaryContact.emailAddress}}
             </div>
           </td>
         </tr>
@@ -280,55 +342,45 @@
           <th>Comments</th>
         </tr>
         <tr>
-          <td>{{equipment.districtEquipmentType.districtEquipmentName}}</td>
+          <td>{{equipment.year}} {{equipment.make}}/{{equipment.model}}/{{equipment.size}}/{{equipment.serialNumber}}</td>
           <td class="rate">${{equipmentRate}}</td>
           <td>{{rateComment}}</td>
         </tr>
         {{#rentalAgreementRatesWithTotal}}
         <tr>
           <td>{{componentName}}</td>
-          <td class="rate">${{rate}}</td>
+          <td class="rate">{{rateString}}/{{ratePeriod}}</td>
           <td>{{comment}}</td>
         </tr>
         {{/rentalAgreementRatesWithTotal}}
         <tr>
           <td class="bold">Total</td>
           <td class="rate bold">
-            {{agreementTotal}}
+            ${{agreementTotal}}
           </td>
           <td></td>
         </tr>
         {{#rentalAgreementRatesWithoutTotal}}
         <tr>
           <td>{{componentName}}</td>
-          <td class="rate">${{rate}}</td>
+          <td class="rate">${{rate}}/{{ratePeriod}}</td>
           <td>{{comment}}</td>
         </tr>
         {{/rentalAgreementRatesWithoutTotal}}
-      </table>
-
-      {{#equipment.rentalAgreementConditions}}
-      <table>
-        <tr>
-          <th>Condition</th>
-          <th>Comment</th>
-        </tr>
+        <tr><td></td><td></td><td></td></tr>
+        <tr><td class="bold">Conditions</td><td></td><td></td></tr>
+        {{#rentalAgreementConditions}}
         <tr>
           <td>{{conditionName}}</td>
+          <td></td>
           <td>{{comment}}</td>
         </tr>
+        {{/rentalAgreementConditions}}
+        <tr style="height: 100%"><td></td><td></td><td style="height: 100%"></td></tr>
       </table>
-      {{/equipment.rentalAgreementConditions}}
-
-      {{#note}}
-      <div class="clearfix">
-        <div id="note">Note: </div>
-        <div id="note-box">{{note}}</div>
-      </div>
-      {{/note}}
     </div>
 
-    <p>The above listed equipment will be used for Project #<span class="uppercase">{{project.provincialProjectNumber}} {{project.name}}</span> within the <span class="uppercase">{{project.district.name}}</span> District for an estimated period of {{estimateHours}} hours commencing {{estimateStartWork}}. Point of hire is <span class="uppercase underline">{{equipment.localArea.name}}</span></p>
+    <p>The above listed equipment will be used for Project #<span class="uppercase bold">{{project.provincialProjectNumber}} {{project.name}}</span> within the <span class="uppercase bold">{{project.district.name}}</span> District for an estimated period of <span class="bold">{{estimateHours}}</span> hours commencing <span class="bold">{{estimateStartWork}}</span>. Point of hire is <span class="uppercase underline bold">{{equipment.localArea.name}}</span></p>
 
     <div id="see-other-side"><b>OWNER</b> &mdash; PLEASE SEE OTHER SIDE <b>FOR OTHER PROVISIONS</b></div>
 

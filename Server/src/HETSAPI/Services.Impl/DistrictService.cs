@@ -25,7 +25,7 @@ namespace HETSAPI.Services.Impl
             _configuration = configuration;
         }
 
-        public void AdjustRecord (District item)
+        private void AdjustRecord (District item)
         {
             if (item != null && item.Region != null)
                 item.Region = _context.Regions.FirstOrDefault(x => x.Id == item.Region.Id);
@@ -79,127 +79,7 @@ namespace HETSAPI.Services.Impl
                     .ToList();
 
             return new ObjectResult(new HetsResponse(result));
-        }
-
-        /// <summary>
-        /// Delete district
-        /// </summary>
-        /// <remarks>Deletes a district</remarks>
-        /// <param name="id">id of District to delete</param>
-        /// <response code="200">OK</response>
-        /// <response code="404">District not found</response>
-        public virtual IActionResult DistrictsIdDeletePostAsync(int id)
-        {
-            bool exists = _context.Districts.Any(a => a.Id == id);
-
-            if (exists)
-            {
-                District item = _context.Districts.First(a => a.Id == id);
-
-                if (item != null)
-                {
-                    _context.Districts.Remove(item);
-
-                    // Save the changes
-                    _context.SaveChanges();
-                }
-
-                return new ObjectResult(new HetsResponse(item));
-            }
-
-            // record not found
-            return new ObjectResult(new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-01", _configuration)));
-        }
-
-        /// <summary>
-        /// Get district by id
-        /// </summary>
-        /// <remarks>Returns a specific district</remarks>
-        /// <param name="id">id of Districts to fetch</param>
-        /// <response code="200">OK</response>
-        public virtual IActionResult DistrictsIdGetAsync(int id)
-        {
-            bool exists = _context.Districts.Any(a => a.Id == id);
-
-            if (exists)
-            {
-                District result = _context.Districts
-                    .Where(a => a.Id == id)
-                    .Include(a => a.Region)
-                    .FirstOrDefault();
-                    
-                return new ObjectResult(new HetsResponse(result));
-            }
-
-            // record not found
-            return new ObjectResult(new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-01", _configuration)));
-        }
-
-        /// <summary>
-        /// Update district
-        /// </summary>
-        /// <remarks>Updates a district</remarks>
-        /// <param name="id">id of District to update</param>
-        /// <param name="item"></param>
-        /// <response code="200">OK</response>
-        /// <response code="404">District not found</response>
-        public virtual IActionResult DistrictsIdPutAsync(int id, District item)
-        {
-            bool exists = _context.Districts.Any(a => a.Id == id);
-
-            if (exists && id == item.Id)
-            {
-                AdjustRecord(item);
-                _context.Districts.Update(item);
-
-                // Save the changes
-                _context.SaveChanges();
-
-                return new ObjectResult(new HetsResponse(item));
-            }
-
-            // record not found
-            return new ObjectResult(new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-01", _configuration)));
-        }
-
-        /// <summary>
-        /// Get service areas associated with a district
-        /// </summary>
-        /// <remarks>Returns the Service Areas for a specific region</remarks>
-        /// <param name="id">id of District for which to fetch the ServiceAreas</param>
-        /// <response code="200">OK</response>
-        public virtual IActionResult DistrictsIdServiceareasGetAsync(int id)
-        {
-            var result = "";
-            return new ObjectResult(new HetsResponse(result));
-        }
-
-        /// <summary>
-        /// Create district
-        /// </summary>
-        /// <remarks>Adds a district</remarks>
-        /// <param name="item"></param>
-        /// <response code="200">OK</response>
-        public virtual IActionResult DistrictsPostAsync(District item)
-        {            
-            AdjustRecord(item);
-
-            bool exists = _context.Districts.Any(a => a.Id == item.Id);
-
-            if (exists )
-            {
-                _context.Districts.Update(item);            
-            }
-            else
-            {
-                // record not found
-                _context.Districts.Add(item);                
-            }
-
-            _context.SaveChanges();
-
-            return new ObjectResult(new HetsResponse(item));      
-        }
+        }        
 
         #region District Owners
 
@@ -216,6 +96,32 @@ namespace HETSAPI.Services.Impl
                 List<Owner> result = _context.Owners.AsNoTracking()
                     .Where(x => x.LocalArea.ServiceArea.District.Id == id)
                     .OrderBy(x => x.OrganizationName)
+                    .ToList();
+
+                return new ObjectResult(new HetsResponse(result));
+            }
+
+            // record not found
+            return new ObjectResult(new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-01", _configuration)));
+        }
+
+        #endregion
+
+        #region District Local Areas
+
+        /// <summary>
+        /// Get all local areas for a district
+        /// </summary>
+        /// <response code="200">OK</response>
+        public virtual IActionResult DistrictLocalAreasGetAsync(int id)
+        {
+            bool exists = _context.Districts.Any(a => a.Id == id);
+
+            if (exists)
+            {
+                List<LocalArea> result = _context.LocalAreas.AsNoTracking()
+                    .Where(x => x.ServiceArea.District.Id == id)
+                    .OrderBy(x => x.Name)
                     .ToList();
 
                 return new ObjectResult(new HetsResponse(result));

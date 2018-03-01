@@ -21,23 +21,10 @@ function normalize(response) {
 function parseUser(user) {
   if (!user.district) { user.district = { id: 0, name: '' }; }
   if (!user.userRoles) { user.userRoles = []; }
-  if (!user.groupMemberships) { user.groupMemberships = []; }
 
   user.name = lastFirstName(user.surname, user.givenName);
   user.fullName = firstLastName(user.givenName, user.surname);
   user.districtName = user.district.name;
-
-  user.groupNames = _.chain(user.groupMemberships)
-    .filter(membership => membership.group && membership.group.name)
-    .map(membership => membership.group.name)
-    .sortBy(name => name)
-    .join(', ')
-    .value();
-
-  // This field is formatted to be used in updateUserGroups(), which expects
-  // [ { groupId: 1 }, { groupId: 2 }, ... ]
-  user.groupIds = _.filter(user.groupMemberships, membership => membership.group && membership.group.id)
-    .map(membership => { return { groupId: membership.group.id }; });
 
   _.each(user.userRoles, userRole => {
     userRole.roleId = userRole.role && userRole.role.id ? userRole.role.id : 0;
@@ -75,6 +62,7 @@ export function getCurrentUser() {
     };
 
     store.dispatch({ type: Action.UPDATE_CURRENT_USER, user: user });
+    return user;
   });
 }
 
@@ -141,13 +129,6 @@ export function deleteUser(user) {
     parseUser(user);
 
     store.dispatch({ type: Action.DELETE_USER, user: user });
-  });
-}
-
-export function updateUserGroups(user) {
-  return new ApiRequest(`/users/${ user.id }/groups`).put(user.groupIds).then(() => {
-    // After updating the user's group, refresh the user state.
-    return getUser(user.id);
   });
 }
 
@@ -945,7 +926,7 @@ function parseProject(project) {
 function formatTimeRecords(timeRecords, rentalRequestId) {
   let formattedTimeRecords = Object.keys(timeRecords).map((key) => {
     let timeRecord = {};
-    timeRecord.enteredDate = timeRecords[key].date;
+    timeRecord.workedDate = timeRecords[key].date;
     timeRecord.hours = timeRecords[key].hours;
     timeRecord.timePeriod = 'Week';
     timeRecord.rentalAgreement = { id: rentalRequestId };
@@ -1660,10 +1641,29 @@ export function deleteRentalCondition(rentalCondition) {
 }
 
 export function getRentalConditions() {
+  store.dispatch({ type: Action.RENTAL_CONDITIONS_LOOKUP_REQUEST });
   return new ApiRequest('/conditiontypes').get().then(response => {
     var rentalConditions = response.data;
 
     store.dispatch({ type: Action.UPDATE_RENTAL_CONDITIONS_LOOKUP, rentalConditions: rentalConditions });
+  });
+}
+
+export function deleteCondition(id) {
+  return new ApiRequest(`/conditiontypes/${id}/delete`).post().then(response => {
+    return response;
+  });
+}
+
+export function addCondition(condition) {
+  return new ApiRequest('conditiontypes/0').post(condition).then(response => {
+    return response;
+  });
+}
+
+export function updateCondition(condition) {
+  return new ApiRequest(`conditiontypes/${condition.id}`).post(condition).then(response => {
+    return response;
   });
 }
 
@@ -1695,8 +1695,8 @@ export function getRegions() {
   });
 }
 
-export function getLocalAreas() {
-  return new ApiRequest('/localareas').get().then(response => {
+export function getLocalAreas(id) {
+  return new ApiRequest(`district/${id}/localAreas`).get().then(response => {
     var localAreas = normalize(response.data);
 
     store.dispatch({ type: Action.UPDATE_LOCAL_AREAS_LOOKUP, localAreas: localAreas });
@@ -1729,11 +1729,21 @@ export function getDistrictEquipmentTypes(districtId) {
   });
 }
 
-export function getGroups() {
-  return new ApiRequest('/groups').get().then(response => {
-    var groups = normalize(response.data);
+export function addDistrictEquipmentType(equipment) {
+  return new ApiRequest(`/districtequipmenttypes/${equipment.id}`).post(equipment).then(response => {
+    return response;
+  });
+}
 
-    store.dispatch({ type: Action.UPDATE_GROUPS_LOOKUP, groups: groups });
+export function updateDistrictEquipmentType(equipment) {
+  return new ApiRequest(`/districtequipmenttypes/${equipment.id}`).post(equipment).then(response => {
+    return response;
+  });
+}
+
+export function deleteDistrictEquipmentType(equipment) {
+  return new ApiRequest(`/districtequipmenttypes/${equipment.id}/delete`).post().then(response => {
+    return response;
   });
 }
 

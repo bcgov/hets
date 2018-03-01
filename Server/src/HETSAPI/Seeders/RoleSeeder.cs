@@ -38,9 +38,12 @@ namespace HETSAPI.Seeders
                     Name = "HETS Clerk",
                     Description = "HETS District User",
                     RolePermissions = permissions.Where(p =>
-                        new[] { Permission.Login }
+                        new[]
+                            {
+                                Permission.Login
+                            }
                         .Contains(p.Code))
-                        .Select(p => new RolePermission()
+                        .Select(p => new RolePermission
                         {
                             Permission = p
                         })
@@ -51,9 +54,13 @@ namespace HETSAPI.Seeders
                     Name = "HETS Manager",
                     Description = "HETS District User with additional permissions",
                     RolePermissions = permissions.Where(p =>
-                            new[] { Permission.Login, Permission.DistrictCodeTableManagement }
+                            new[] 
+                                {
+                                    Permission.Login,
+                                    Permission.DistrictCodeTableManagement
+                                }
                                 .Contains(p.Code))
-                        .Select(p => new RolePermission()
+                        .Select(p => new RolePermission
                         {
                             Permission = p
                         })
@@ -66,11 +73,13 @@ namespace HETSAPI.Seeders
                     RolePermissions = permissions.Where(p =>
                             new[]
                                 {
-                                    Permission.Login, Permission.DistrictCodeTableManagement,
-                                    Permission.CodeTableManagement, Permission.UserManagement
+                                    Permission.Login,
+                                    Permission.DistrictCodeTableManagement,
+                                    Permission.CodeTableManagement,
+                                    Permission.UserManagement
                                 }
                                 .Contains(p.Code))
-                        .Select(p => new RolePermission()
+                        .Select(p => new RolePermission
                         {
                             Permission = p
                         })
@@ -80,24 +89,40 @@ namespace HETSAPI.Seeders
                 {
                     Name = "Administrator",
                     Description = "System Administrator; full access to the whole system",
-                    RolePermissions = permissions.Select(p => new RolePermission()
-                    {
-                        Permission = p
-                    }).ToList()
+                    RolePermissions = permissions.Where(p =>
+                            new[]
+                                {
+                                    Permission.Login,
+                                    Permission.DistrictCodeTableManagement,
+                                    Permission.CodeTableManagement,
+                                    Permission.UserManagement,
+                                    Permission.RolesAndPermissions,
+                                    Permission.Admin,
+                                    Permission.ImportData
+                                }
+                                .Contains(p.Code))
+                        .Select(p => new RolePermission
+                        {
+                            Permission = p
+                        })
+                        .ToList()
                 },
                 new Role
                 {
                     Name = "Data Conversion",
                     Description = "Can import data into HETS",
                     RolePermissions = permissions.Where(p =>
-                            new[] { Permission.ImportData }
+                            new[]
+                                {
+                                    Permission.ImportData
+                                }
                                 .Contains(p.Code))
-                        .Select(p => new RolePermission()
+                        .Select(p => new RolePermission
                         {
                             Permission = p
                         })
                         .ToList()
-                },
+                }
             };
 
             Logger.LogDebug("Updating roles ...");

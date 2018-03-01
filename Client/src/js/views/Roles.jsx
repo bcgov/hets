@@ -18,8 +18,6 @@ import OverlayTrigger from '../components/OverlayTrigger.jsx';
 import SearchControl from '../components/SearchControl.jsx';
 import SortTable from '../components/SortTable.jsx';
 import Spinner from '../components/Spinner.jsx';
-import Unimplemented from '../components/Unimplemented.jsx';
-
 
 var Roles = React.createClass({
   propTypes: {
@@ -77,23 +75,22 @@ var Roles = React.createClass({
     });
   },
 
-  email() {
-
-  },
-
   print() {
     window.print();
   },
 
-  render: function() {
+  render() {
     var numRoles = this.state.loading ? '...' : Object.keys(this.props.roles).length;
+
+    if (!this.props.currentUser.hasPermission(Constant.PERMISSION_ROLES_AND_PERMISSIONS) && !this.props.currentUser.hasPermission(Constant.PERMISSION_ADMIN)) { 
+      return (
+        <div>You do not have permission to view this page.</div>
+      ); 
+    }
 
     return <div id="roles-list">
       <PageHeader>Roles ({ numRoles })
         <ButtonGroup id="roles-buttons">
-          <Unimplemented>
-            <Button onClick={ this.email }><Glyphicon glyph="envelope" title="E-mail" /></Button>
-          </Unimplemented>
           <Button onClick={ this.print }><Glyphicon glyph="print" title="Print" /></Button>
         </ButtonGroup>
       </PageHeader>

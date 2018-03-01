@@ -14,7 +14,6 @@ namespace HETSAPI.Services
         /// <remarks>Returns a users favourites of a given type.  If type is empty, returns all.</remarks>
         /// <param name="favouritetype">type of favourite to return</param>
         /// <response code="200">OK</response>
-        /// <response code="404">User not found</response>
         IActionResult UsersCurrentFavouritesFavouritetypeGetAsync(string favouritetype);
 
         /// <summary>
@@ -30,7 +29,7 @@ namespace HETSAPI.Services
         /// </summary>
         /// <remarks>Create new favourite for the current user</remarks>
         /// <param name="item"></param>
-        /// <response code="201">UserFavourite created</response>
+        /// <response code="200">UserFavourite created</response>
         IActionResult UsersCurrentFavouritesPostAsync(UserFavourite item);
 
         /// <summary>
@@ -38,7 +37,7 @@ namespace HETSAPI.Services
         /// </summary>
         /// <remarks>Updates a favourite</remarks>
         /// <param name="item"></param>
-        /// <response code="201">UserFavourite created</response>
+        /// <response code="200">UserFavourite created</response>
         IActionResult UsersCurrentFavouritesPutAsync(UserFavourite item);
 
         /// <summary>

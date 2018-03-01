@@ -198,7 +198,7 @@ namespace HETSAPI
                 app.UseHangfireServer();
 
                 // disable the back to site link
-                DashboardOptions dashboardOptions = new DashboardOptions()
+                DashboardOptions dashboardOptions = new DashboardOptions
                 {
                     AppPath = null
                 };

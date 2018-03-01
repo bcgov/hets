@@ -39,6 +39,11 @@
 }
 
 #projects-detail {
+
+  .top-container {
+    margin: 0 5px;
+  }
+
   #projects-top {
     margin-bottom: 10px;
 
@@ -75,10 +80,6 @@
 
   h3 {
     font-weight: 600;
-  }
-
-  #projects-header {
-    margin: 0 5px;
   }
 }
 

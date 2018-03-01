@@ -23,26 +23,12 @@ namespace HETSAPI.Controllers
         {
             _service = service;
         }
-
-        /// <summary>
-        /// Create bulk user group records
-        /// </summary>
-        /// <param name="items"></param>
-        /// <response code="201">User created</response>
-        [HttpPost]
-        [Route("/api/usergroups/bulk")]
-        [SwaggerOperation("UsergroupsBulkPost")]
-        [RequiresPermission(Permission.Admin)]
-        public virtual IActionResult UsergroupsBulkPost([FromBody]GroupMembership[] items)
-        {
-            return _service.UsergroupsBulkPostAsync(items);
-        }
-
+        
         /// <summary>
         /// Create bulk users
         /// </summary>
         /// <param name="items"></param>
-        /// <response code="201">User created</response>
+        /// <response code="200">User created</response>
         [HttpPost]
         [Route("/api/users/bulk")]
         [SwaggerOperation("UsersBulkPost")]
@@ -60,6 +46,7 @@ namespace HETSAPI.Controllers
         [Route("/api/users")]
         [SwaggerOperation("UsersGet")]
         [SwaggerResponse(200, type: typeof(List<UserViewModel>))]
+        [RequiresPermission(Permission.UserManagement)]
         public virtual IActionResult UsersGet()
         {
             return _service.UsersGetAsync();
@@ -70,11 +57,10 @@ namespace HETSAPI.Controllers
         /// </summary>
         /// <param name="id">id of User to delete</param>
         /// <response code="200">OK</response>
-        /// <response code="404">User not found</response>
         [HttpPost]
         [Route("/api/users/{id}/delete")]
         [SwaggerOperation("UsersIdDeletePost")]
-        [RequiresPermission(Permission.Admin)]
+        [RequiresPermission(Permission.UserManagement)]
         public virtual IActionResult UsersIdDeletePost([FromRoute]int id)
         {
             return _service.UsersIdDeletePostAsync(id);
@@ -83,14 +69,14 @@ namespace HETSAPI.Controllers
         /// <summary>
         /// Get user favorites
         /// </summary>
-        /// <remarks>Returns a user&#39;s favourites of a given context type</remarks>
+        /// <remarks>Returns a use favourites</remarks>
         /// <param name="id">id of User to fetch favorites for</param>
         /// <response code="200">OK</response>
-        /// <response code="404">User not found</response>
         [HttpGet]
         [Route("/api/users/{id}/favourites")]
         [SwaggerOperation("UsersIdFavouritesGet")]
         [SwaggerResponse(200, type: typeof(List<UserFavouriteViewModel>))]
+        [RequiresPermission(Permission.UserManagement)]
         public virtual IActionResult UsersIdFavouritesGet([FromRoute]int id)
         {
             return _service.UsersIdFavouritesGetAsync(id);
@@ -101,67 +87,15 @@ namespace HETSAPI.Controllers
         /// </summary>
         /// <param name="id">id of User to fetch</param>
         /// <response code="200">OK</response>
-        /// <response code="404">User not found</response>
         [HttpGet]
         [Route("/api/users/{id}")]
         [SwaggerOperation("UsersIdGet")]
         [SwaggerResponse(200, type: typeof(UserViewModel))]
+        [RequiresPermission(Permission.UserManagement)]
         public virtual IActionResult UsersIdGet([FromRoute]int id)
         {
             return _service.UsersIdGetAsync(id);
-        }
-
-        /// <summary>
-        /// Get all groups for a user
-        /// </summary>
-        /// <remarks>Returns all groups that a user is a member of</remarks>
-        /// <param name="id">id of User to fetch</param>
-        /// <response code="200">OK</response>
-        /// <response code="404">User not found</response>
-        [HttpGet]
-        [Route("/api/users/{id}/groups")]
-        [SwaggerOperation("UsersIdGroupsGet")]
-        [SwaggerResponse(200, type: typeof(List<GroupMembershipViewModel>))]
-        public virtual IActionResult UsersIdGroupsGet([FromRoute]int id)
-        {
-            return _service.UsersIdGroupsGetAsync(id);
-        }
-
-        /// <summary>
-        /// Add a user to a group
-        /// </summary>
-        /// <remarks>Add to the active set of groups for a user</remarks>
-        /// <param name="id">id of User to update</param>
-        /// <param name="item"></param>
-        /// <response code="200">OK</response>
-        /// <response code="404">User not found</response>
-        [HttpPost]
-        [Route("/api/users/{id}/groups")]
-        [SwaggerOperation("UsersIdGroupsPost")]
-        [SwaggerResponse(200, type: typeof(List<GroupMembershipViewModel>))]
-        [RequiresPermission(Permission.Admin)]
-        public virtual IActionResult UsersIdGroupsPost([FromRoute]int id, [FromBody]GroupMembershipViewModel item)
-        {
-            return _service.UsersIdGroupsPostAsync(id, item);
-        }
-
-        /// <summary>
-        /// Update groups associated with a user
-        /// </summary>
-        /// <remarks>Updates the active set of groups for a user</remarks>
-        /// <param name="id">id of User to update</param>
-        /// <param name="items"></param>
-        /// <response code="200">OK</response>
-        /// <response code="404">User not found</response>
-        [HttpPut]
-        [Route("/api/users/{id}/groups")]
-        [SwaggerOperation("UsersIdGroupsPut")]
-        [SwaggerResponse(200, type: typeof(List<GroupMembershipViewModel>))]
-        [RequiresPermission(Permission.Admin)]
-        public virtual IActionResult UsersIdGroupsPut([FromRoute]int id, [FromBody]GroupMembershipViewModel[] items)
-        {
-            return _service.UsersIdGroupsPutAsync(id, items);
-        }
+        }        
 
         /// <summary>
         /// Get permissions for a user
@@ -169,12 +103,11 @@ namespace HETSAPI.Controllers
         /// <remarks>Returns the set of permissions for a user</remarks>
         /// <param name="id">id of User to fetch</param>
         /// <response code="200">OK</response>
-        /// <response code="404">User not found</response>
         [HttpGet]
         [Route("/api/users/{id}/permissions")]
         [SwaggerOperation("UsersIdPermissionsGet")]
         [SwaggerResponse(200, type: typeof(List<PermissionViewModel>))]
-        [RequiresPermission(Permission.Admin)]
+        [RequiresPermission(Permission.UserManagement)]
         public virtual IActionResult UsersIdPermissionsGet([FromRoute]int id)
         {
             return _service.UsersIdPermissionsGetAsync(id);
@@ -186,12 +119,11 @@ namespace HETSAPI.Controllers
         /// <param name="id">id of User to update</param>
         /// <param name="item"></param>
         /// <response code="200">OK</response>
-        /// <response code="404">User not found</response>
         [HttpPut]
         [Route("/api/users/{id}")]
         [SwaggerOperation("UsersIdPut")]
         [SwaggerResponse(200, type: typeof(UserViewModel))]
-        [RequiresPermission(Permission.Admin)]
+        [RequiresPermission(Permission.UserManagement)]
         public virtual IActionResult UsersIdPut([FromRoute]int id, [FromBody]UserViewModel item)
         {
             return _service.UsersIdPutAsync(id, item);
@@ -203,11 +135,11 @@ namespace HETSAPI.Controllers
         /// <remarks>Returns the roles for a user</remarks>
         /// <param name="id">id of User to fetch</param>
         /// <response code="200">OK</response>
-        /// <response code="404">User not found</response>
         [HttpGet]
         [Route("/api/users/{id}/roles")]
         [SwaggerOperation("UsersIdRolesGet")]
         [SwaggerResponse(200, type: typeof(List<UserRoleViewModel>))]
+        [RequiresPermission(Permission.UserManagement)]
         public virtual IActionResult UsersIdRolesGet([FromRoute]int id)
         {
             return _service.UsersIdRolesGetAsync(id);
@@ -219,12 +151,12 @@ namespace HETSAPI.Controllers
         /// <remarks>Adds a role to a user</remarks>
         /// <param name="id">id of User to update</param>
         /// <param name="item"></param>
-        /// <response code="201">Role created for user</response>
+        /// <response code="200">Role created for user</response>
         [HttpPost]
         [Route("/api/users/{id}/roles")]
         [SwaggerOperation("UsersIdRolesPost")]
         [SwaggerResponse(200, type: typeof(UserRoleViewModel))]
-        [RequiresPermission(Permission.Admin)]
+        [RequiresPermission(Permission.UserManagement)]
         public virtual IActionResult UsersIdRolesPost([FromRoute]int id, [FromBody]UserRoleViewModel item)
         {
             return _service.UsersIdRolesPostAsync(id, item);
@@ -237,12 +169,11 @@ namespace HETSAPI.Controllers
         /// <param name="id">id of User to update</param>
         /// <param name="items"></param>
         /// <response code="200">OK</response>
-        /// <response code="404">User not found</response>
         [HttpPut]
         [Route("/api/users/{id}/roles")]
         [SwaggerOperation("UsersIdRolesPut")]
         [SwaggerResponse(200, type: typeof(List<UserRoleViewModel>))]
-        [RequiresPermission(Permission.Admin)]
+        [RequiresPermission(Permission.UserManagement)]
         public virtual IActionResult UsersIdRolesPut([FromRoute]int id, [FromBody]UserRoleViewModel[] items)
         {
             return _service.UsersIdRolesPutAsync(id, items);
@@ -252,12 +183,12 @@ namespace HETSAPI.Controllers
         /// Create user
         /// </summary>
         /// <param name="item"></param>
-        /// <response code="201">User created</response>
+        /// <response code="200">User created</response>
         [HttpPost]
         [Route("/api/users")]
         [SwaggerOperation("UsersPost")]
         [SwaggerResponse(200, type: typeof(UserViewModel))]
-        [RequiresPermission(Permission.Admin)]
+        [RequiresPermission(Permission.UserManagement)]
         public virtual IActionResult UsersPost([FromBody]UserViewModel item)
         {
             return _service.UsersPostAsync(item);
@@ -275,6 +206,7 @@ namespace HETSAPI.Controllers
         [Route("/api/users/search")]        
         [SwaggerOperation("UsersSearchGet")]
         [SwaggerResponse(200, type: typeof(List<UserViewModel>))]
+        [RequiresPermission(Permission.UserManagement)]
         public virtual IActionResult UsersSearchGet([FromQuery]string districts, [FromQuery]string surname, [FromQuery]bool? includeInactive)
         {
             return _service.UsersSearchGetAsync(districts, surname, includeInactive);

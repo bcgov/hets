@@ -30,8 +30,8 @@ import { isBlank, notBlank } from '../utils/string';
 
 var UsersDetail = React.createClass({
   propTypes: {
+    currentUser: React.PropTypes.object,
     user: React.PropTypes.object,
-    groups: React.PropTypes.object,
     ui: React.PropTypes.object,
     params: React.PropTypes.object,
     router: React.PropTypes.object,
@@ -44,8 +44,6 @@ var UsersDetail = React.createClass({
       showEditDialog: false,
       showUserRoleDialog: false,
 
-      isNew: this.props.params.userId === '0',
-
       ui: {
         // User roles
         sortField: this.props.ui.sortField || 'roleName',
@@ -56,9 +54,8 @@ var UsersDetail = React.createClass({
   },
 
   componentDidMount() {
-    if (this.state.isNew) {
-      // Clear the spinner
-      this.setState({ loading: false });
+    // if new user
+    if (this.props.params.userId === '0') {
       // Clear the user store
       store.dispatch({ type: Action.UPDATE_USER, user: {
         id: 0,
@@ -70,6 +67,12 @@ var UsersDetail = React.createClass({
       // Open editor to add new user
       this.openEditDialog();
     } else {
+      this.fetch();
+    }
+  },
+
+  componentWillReceiveProps(nextProps) {
+    if (this.props.params.userId !== nextProps.params.userId) {
       this.fetch();
     }
   },
@@ -97,29 +100,23 @@ var UsersDetail = React.createClass({
   },
 
   onSaveEdit(user) {
-    var savePromise = this.state.isNew ? Api.addUser : Api.updateUser;
+    var savePromise = this.props.params.userId === '0' ? Api.addUser : Api.updateUser;
     savePromise(user).then(() => {
-      if (this.state.isNew) {
+      if (this.props.params.userId === '0') {
         // Make sure we get the new user's ID
         user.id = this.props.user.id;
+        // Reload the screen using new user id
+        this.props.router.push({
+          pathname: `${ Constant.USERS_PATHNAME }/${ user.id }`,
+        });
       }
-      // Update the user's groups next. This call will
-      // update the user state after completion.
-      Api.updateUserGroups(user).then(() => {
-        if (this.state.isNew) {
-          // Reload the screen using new user id
-          this.props.router.push({
-            pathname: `${ Constant.USERS_PATHNAME }/${ user.id }`,
-          });
-        }
-      });
     });
     this.closeEditDialog();
   },
 
   onCloseEdit() {
     this.closeEditDialog();
-    if (this.state.isNew) {
+    if (this.props.params.userId === '0') {
       // Go back to user list if cancelling new user
       this.props.router.push({
         pathname: Constant.USERS_PATHNAME,
@@ -160,16 +157,22 @@ var UsersDetail = React.createClass({
     window.print();
   },
 
-  render: function() {
+  render() {
     var user = this.props.user;
+
+    if (!this.props.currentUser.hasPermission(Constant.PERMISSION_USER_MANAGEMENT) && !this.props.currentUser.hasPermission(Constant.PERMISSION_ADMIN)) { 
+      return (
+        <div>You do not have permission to view this page.</div>
+      ); 
+    }
 
     return <div id="users-detail">
       <div>
         <Row id="users-top">
-          <Col md={10}>
+          <Col md={8}>
             <Label bsStyle={ user.active ? 'success' : 'danger'}>{ user.active ? 'Verified Active' : 'Inactive' }</Label>
           </Col>
-          <Col md={2}>
+          <Col md={4}>
             <div className="pull-right">
               <Button onClick={ this.print }><Glyphicon glyph="print" title="Print" /></Button>
               <LinkContainer to={{ pathname: Constant.USERS_PATHNAME }}>
@@ -206,7 +209,6 @@ var UsersDetail = React.createClass({
                   <Row>
                     <ColDisplay md={3} label="Surname">{ user.surname }</ColDisplay>
                     <ColDisplay md={3} label="District">{ user.districtName }</ColDisplay>
-                    <ColDisplay md={6} label="Groups">{ user.groupNames }</ColDisplay>
                   </Row>
                 </div>;
               })()}
@@ -338,8 +340,8 @@ var ExpireOverlay = React.createClass({
 
 function mapStateToProps(state) {
   return {
+    currentUser: state.user,
     user: state.models.user,
-    groups: state.lookups.groups,
     ui: state.ui.userRoles,
   };
 }

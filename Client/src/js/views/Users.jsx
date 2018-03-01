@@ -22,8 +22,6 @@ import MultiDropdown from '../components/MultiDropdown.jsx';
 import OverlayTrigger from '../components/OverlayTrigger.jsx';
 import SortTable from '../components/SortTable.jsx';
 import Spinner from '../components/Spinner.jsx';
-import Unimplemented from '../components/Unimplemented.jsx';
-
 
 var Users = React.createClass({
   propTypes: {
@@ -119,10 +117,6 @@ var Users = React.createClass({
     });
   },
 
-  email() {
-
-  },
-
   print() {
     window.print();
   },
@@ -132,12 +126,15 @@ var Users = React.createClass({
 
     var numUsers = this.state.loading ? '...' : Object.keys(this.props.users).length;
 
+    if (!this.props.currentUser.hasPermission(Constant.PERMISSION_USER_MANAGEMENT) && !this.props.currentUser.hasPermission(Constant.PERMISSION_ADMIN)) { 
+      return (
+        <div>You do not have permission to view this page.</div>
+      ); 
+    }
+
     return <div id="users-list">
       <PageHeader>Users ({ numUsers })
         <ButtonGroup id="users-buttons">
-          <Unimplemented>
-            <Button onClick={ this.email }><Glyphicon glyph="envelope" title="E-mail" /></Button>
-          </Unimplemented>
           <Button onClick={ this.print }><Glyphicon glyph="print" title="Print" /></Button>
         </ButtonGroup>
       </PageHeader>

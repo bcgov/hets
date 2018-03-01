@@ -64,25 +64,16 @@ Resource404.prototype = Object.create(Error.prototype, {
   }},
 });
 
-
 export function request(path, options) {
   options = options || {};
 
   var xhr = new XMLHttpRequest();     
   
   // calling server service
-  console.log('Calling service. Path: ' + path);
-  
-  // setting a timeout on the request
-  if (path.indexOf('/pdf') !== -1) {
-    xhr.timeout = 15000; // time in milliseconds (15 sec)
-    console.log('Setting timeout to 15 sec - Pdf');  
-  } else {
-    xhr.timeout = 5000; // time in milliseconds (5 sec)
-    console.log('Setting timeout to 5 sec');
-  }  
+  console.log('Calling service. Path: ' + path);   
 
   if (!options.headers) { options.headers = {}; }
+  
   if (!options.files) {
     options.headers = Object.assign({
       'Content-Type': 'application/x-www-form-urlencoded',
@@ -104,7 +95,7 @@ export function request(path, options) {
       options.onUploadProgress(100);
     });
   }
-  
+
   if (options.responseType) {
     xhr.responseType = options.responseType;
   }
@@ -114,7 +105,7 @@ export function request(path, options) {
       if (!options.silent) { decrementRequests(); }
       xhr.abort();
     });
-	
+
     xhr.addEventListener('load', function() {
       if (xhr.status >= 400) {
         var err = new HttpError(`API ${method} ${path} failed (${xhr.status}) "${xhr.responseText}"`, method, path, xhr.status, xhr.responseText);
@@ -129,11 +120,6 @@ export function request(path, options) {
       reject(new HttpError(`Request ${method} ${path} failed to send`, method, path));
     });
 	
-    xhr.ontimeout = function () {
-      // XMLHttpRequest timed out. Do something here.
-      console.log('Request timed out!');
-    };
-
     var qs = _.map(options.querystring, (value, key) => `${encodeURIComponent(key)}=${encodeURIComponent(value)}`).join('&');
     xhr.open(method, `${path}${qs ? '?' : ''}${qs}`, true);
 
@@ -164,7 +150,6 @@ export function request(path, options) {
     if (!options.silent) { decrementRequests(); }
   });
 }
-
 
 export function jsonRequest(path, options) {
   var jsonHeaders = {
@@ -198,7 +183,6 @@ export function jsonRequest(path, options) {
     }
   });
 }
-
 
 export function buildApiPath(path) {
   return `${ROOT_API_PREFIX}/api/${path}`.replace('//', '/'); // remove double slashes

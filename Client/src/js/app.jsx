@@ -21,14 +21,21 @@ import Users from './views/Users.jsx';
 import UsersDetail from './views/UsersDetail.jsx';
 import Roles from './views/Roles.jsx';
 import RolesDetail from './views/RolesDetail.jsx';
+import DistrictAdmin from './views/DistrictAdmin.jsx';
 import Version from './views/Version.jsx';
 import FourOhFour from './views/404.jsx';
 
+const hasPermission = () => {
+  if (store.getState().user.hasPermission(Constant.PERMISSION_BUSINESS_LOGIN)) {
+    hashHistory.push(Constant.BUSINESS_LOGIN_PATHNAME);
+  }
+};
 
 const App = <Provider store={ store }>
   <Router history={ hashHistory }>
     <Redirect from="/" to="/home"/>
-    <Route path={ Constant.BUSINESS_PORTAL } component={ BusinessPortal }/>
+
+    <Route path={ Constant.BUSINESS_LOGIN_PATHNAME } component={ BusinessPortal }/>
 
     <Route path="/" component={ Main }>
       <Route path={ Constant.HOME_PATHNAME } component={ Home }/>
@@ -47,6 +54,7 @@ const App = <Provider store={ store }>
       <Route path={ `${ Constant.USERS_PATHNAME }/:userId` } component={ UsersDetail }/>
       <Route path={ Constant.ROLES_PATHNAME } component={ Roles }/>
       <Route path={ `${ Constant.ROLES_PATHNAME }/:roleId` } component={ RolesDetail }/>
+      <Route path={ Constant.DISTRICT_ADMIN_PATHNAME } component={ DistrictAdmin } />
       <Route path={ Constant.VERSION_PATHNAME } component={ Version }/>
       <Route path="*" component={ FourOhFour }/>
     </Route>

@@ -33,121 +33,7 @@ namespace HETSAPI.Services.Impl
             {
                 item.District = _context.Districts.FirstOrDefault(x => x.Id == item.District.Id);
             }
-        }
-
-        /// <summary>
-        /// Create bulk user group records
-        /// </summary>
-        /// <remarks>Adds a number of user groups</remarks>
-        /// <param name="items"></param>
-        /// <response code="200">OK</response>
-        public virtual IActionResult UsergroupsBulkPostAsync(GroupMembership[] items)
-        {
-            if (items == null)
-            {
-                return new BadRequestResult();
-            }
-
-            foreach (GroupMembership item in items)
-            {
-                // adjust the user
-                if (item.User != null)
-                {
-                    int userId = item.User.Id;
-
-                    bool userExists = _context.Users.Any(a => a.Id == userId);
-
-                    if (userExists)
-                    {
-                        User user = _context.Users.First(a => a.Id == userId);
-                        item.User = user;
-                    }
-                    else
-                    {
-                        item.User = null;
-                    }
-                }
-
-                // adjust the group
-                if (item.Group != null)
-                {
-                    int groupId = item.Group.Id;
-
-                    bool groupExists = _context.Groups.Any(a => a.Id == groupId);
-
-                    if (groupExists)
-                    {
-                        Group group = _context.Groups.First(a => a.Id == groupId);
-                        item.Group = group;
-                    }
-                    else
-                    {
-                        item.Group = null;
-                    }
-                }
-
-                bool exists = _context.GroupMemberships.Any(a => a.Id == item.Id);
-
-                if (exists)
-                {
-                    _context.GroupMemberships.Update(item);
-                }
-                else
-                {
-                    _context.GroupMemberships.Add(item);
-                }
-            }
-
-            // Save the changes
-            _context.SaveChanges();
-            return new NoContentResult();
-        }
-
-        /// <summary>
-        /// Create bulk user role records
-        /// </summary>
-        /// <remarks>Adds a number of user roles</remarks>
-        /// <param name="items"></param>
-        /// <response code="200">OK</response>
-        public virtual IActionResult UserrolesBulkPostAsync(UserRole[] items)
-        {
-            if (items == null)
-            {
-                return new BadRequestResult();
-            }
-
-            foreach (UserRole item in items)
-            {
-                // adjust the role
-                if (item.Role != null)
-                {
-                    int roleId = item.Role.Id;
-
-                    bool userExists = _context.Roles.Any(a => a.Id == roleId);
-
-                    if (userExists)
-                    {
-                        Role role = _context.Roles.First(a => a.Id == roleId);
-                        item.Role = role;
-                    }
-                }
-
-                bool exists = _context.UserRoles.Any(a => a.Id == item.Id);
-
-                if (exists)
-                {
-                    _context.UserRoles.Update(item);
-                }
-                else
-                {
-                    _context.UserRoles.Add(item);
-                }
-            }
-
-            // Save the changes
-            _context.SaveChanges();
-            return new NoContentResult();
-        }
+        }                
 
         /// <summary>
         /// Create bulk user records
@@ -193,12 +79,10 @@ namespace HETSAPI.Services.Impl
         {
             List<UserViewModel> result = _context.Users
                 .Include(x => x.District)
-                .Include(x => x.GroupMemberships)
-                .ThenInclude(y => y.Group)
                 .Include(x => x.UserRoles)
-                .ThenInclude(y => y.Role)
-                .ThenInclude(z => z.RolePermissions)
-                .ThenInclude(z => z.Permission)
+                    .ThenInclude(y => y.Role)
+                        .ThenInclude(z => z.RolePermissions)
+                            .ThenInclude(z => z.Permission)
                 .Select(x => x.ToViewModel()).ToList();
 
             return new ObjectResult(new HetsResponse(result));
@@ -215,7 +99,6 @@ namespace HETSAPI.Services.Impl
         {
             User user = _context.Users
                 .Include(x => x.UserRoles)
-                .Include(x => x.GroupMemberships)
                 .FirstOrDefault(x => x.Id == id);
 
             if (user == null)
@@ -230,15 +113,7 @@ namespace HETSAPI.Services.Impl
                 {
                     _context.UserRoles.Remove(item);
                 }
-            }
-
-            if (user.GroupMemberships != null)
-            {
-                foreach (GroupMembership item in user.GroupMemberships)
-                {
-                    _context.GroupMemberships.Remove(item);
-                }
-            }
+            }            
 
             _context.Users.Remove(user);
             _context.SaveChanges();
@@ -415,12 +290,10 @@ namespace HETSAPI.Services.Impl
         {
             User user = _context.Users
                 .Include(x => x.District)
-                .Include(x => x.GroupMemberships)
-                .ThenInclude(y => y.Group)
                 .Include(x => x.UserRoles)
-                .ThenInclude(y => y.Role)
-                .ThenInclude(z => z.RolePermissions)
-                .ThenInclude(z => z.Permission)
+                    .ThenInclude(y => y.Role)
+                        .ThenInclude(z => z.RolePermissions)
+                            .ThenInclude(z => z.Permission)
                 .FirstOrDefault(x => x.Id == id);
 
             if (user == null)
@@ -430,178 +303,7 @@ namespace HETSAPI.Services.Impl
             }
 
             return new ObjectResult(new HetsResponse(user.ToViewModel()));
-        }
-
-        /// <summary>
-        /// Get groups associated with a user
-        /// </summary>
-        /// <remarks>Returns all groups that a user is a member of</remarks>
-        /// <param name="id">id of User to fetch</param>
-        /// <response code="200">OK</response>
-        /// <response code="404">User not found</response>
-        public virtual IActionResult UsersIdGroupsGetAsync(int id)
-        {
-            User user = _context.Users
-                .Include(x => x.GroupMemberships)
-                .ThenInclude(y => y.Group)
-                .First(x => x.Id == id);
-
-            if (user == null)
-            {
-                // record not found
-                return new ObjectResult(new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-01", _configuration)));
-            }
-
-            List<GroupMembershipViewModel> result = new List<GroupMembershipViewModel>();
-
-            List<GroupMembership> data = user.GroupMemberships;
-
-            foreach (GroupMembership item in data)
-            {
-                if (item != null)
-                {
-                    GroupMembershipViewModel record = item.ToViewModel();
-                    result.Add(record);
-                }
-            }
-
-            return new ObjectResult(new HetsResponse(result));
-        }
-
-        /// <summary>
-        /// Update groups associated with a user
-        /// </summary>
-        /// <remarks>Updates the active set of groups for a user</remarks>
-        /// <param name="id">id of User to update</param>
-        /// <param name="items"></param>
-        /// <response code="200">OK</response>
-        /// <response code="404">User not found</response>
-        public virtual IActionResult UsersIdGroupsPutAsync(int id, GroupMembershipViewModel[] items)
-        {
-            bool exists = _context.Users.Any(x => x.Id == id);
-
-            // not found
-            if (!exists) return new StatusCodeResult(400);
-           
-            User user = _context.Users
-                .Include(x => x.District)
-                .Include(x => x.GroupMemberships)
-                .ThenInclude(y => y.Group)
-                .Include(x => x.UserRoles)
-                .ThenInclude(y => y.Role)
-                .ThenInclude(z => z.RolePermissions)
-                .ThenInclude(z => z.Permission)
-                .First(x => x.Id == id);
-
-            if (user.GroupMemberships == null)
-            {
-                user.GroupMemberships = new List<GroupMembership>();
-            }
-            else
-            {
-                // existing data, clear it.
-                foreach (GroupMembership groupMembership in user.GroupMemberships)
-                {
-                    if (_context.GroupMemberships.Any(x => x.Id == groupMembership.Id))
-                    {
-                        GroupMembership delete = _context.GroupMemberships.First(x => x.Id == groupMembership.Id);
-                        _context.Remove(delete);
-                    }
-                }
-
-                user.GroupMemberships.Clear();
-            }
-
-            foreach (GroupMembershipViewModel item in items)
-            {
-                if (item != null)
-                {
-                    // check the role id
-                    bool groupExists = _context.Groups.Any(x => x.Id == item.GroupId);
-
-                    if (groupExists)
-                    {
-                        // create a new UserRole based on the view model.
-                        GroupMembership groupMembership = new GroupMembership();
-
-                        Group group = _context.Groups.First(x => x.Id == item.GroupId);
-
-                        groupMembership.Group = group;
-                        groupMembership.User = user;
-
-                        _context.Add(groupMembership);
-
-                        if (!user.GroupMemberships.Contains(groupMembership))
-                        {
-                            user.GroupMemberships.Add(groupMembership);
-                        }
-                    }
-                }
-            }
-
-            _context.Update(user);
-            _context.SaveChanges();
-
-            return new StatusCodeResult(201);            
-        }
-
-        /// <summary>
-        /// Add a user to a group
-        /// </summary>
-        /// <remarks>Adds a user to groups</remarks>
-        /// <param name="id">id of User to update</param>
-        /// <param name="item"></param>
-        /// <response code="200">OK</response>
-        /// <response code="404">User not found</response>
-        public virtual IActionResult UsersIdGroupsPostAsync(int id, GroupMembershipViewModel item)
-        {
-            bool exists = _context.Users.Any(a => a.Id == id);
-
-            // record not found
-            if (!exists || item == null) return new ObjectResult(new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-01", _configuration)));
-            
-            // update the given user's group membership.
-            User user = _context.Users
-                .Include(x => x.District)
-                .Include(x => x.GroupMemberships)
-                .ThenInclude(y => y.Group)
-                .Include(x => x.UserRoles)
-                .ThenInclude(y => y.Role)
-                .ThenInclude(z => z.RolePermissions)
-                .ThenInclude(z => z.Permission)
-                .First(a => a.Id == id);
-
-            // add new item
-            bool found = false;
-
-            foreach (GroupMembership parameterItem in user.GroupMemberships)
-            {
-                if (parameterItem.Group != null && parameterItem.Group.Id == item.GroupId)
-                {
-                    found = true;
-                }
-            }
-
-            if (found) return new NoContentResult();
-                
-            GroupMembership groupMembership = new GroupMembership {User = user};
-
-            // set user and group. 
-            bool groupExists = _context.Groups.Any(a => a.Id == item.GroupId);
-
-            if (groupExists)
-            {
-                Group group = _context.Groups.First(a => a.Id == item.GroupId);
-                groupMembership.Group = group;
-            }
-
-            user.GroupMemberships.Add(groupMembership);
-
-            _context.Update(user);
-            _context.SaveChanges();                
-
-            return new NoContentResult();        
-        }
+        }                    
         
         /// <summary>
         /// Get permissions associated with a user
@@ -614,12 +316,10 @@ namespace HETSAPI.Services.Impl
         {
             User user = _context.Users
                 .Include(x => x.District)
-                .Include(x => x.GroupMemberships)
-                .ThenInclude(y => y.Group)
                 .Include(x => x.UserRoles)
-                .ThenInclude(y => y.Role)
-                .ThenInclude(z => z.RolePermissions)
-                .ThenInclude(z => z.Permission)
+                    .ThenInclude(y => y.Role)
+                        .ThenInclude(z => z.RolePermissions)
+                            .ThenInclude(z => z.Permission)
                 .FirstOrDefault(x => x.Id == id);
 
             // not found
@@ -656,12 +356,10 @@ namespace HETSAPI.Services.Impl
         {
             User user = _context.Users
                 .Include(x => x.District)
-                .Include(x => x.GroupMemberships)
-                .ThenInclude(y => y.Group)
                 .Include(x => x.UserRoles)
-                .ThenInclude(y => y.Role)
-                .ThenInclude(z => z.RolePermissions)
-                .ThenInclude(z => z.Permission)
+                    .ThenInclude(y => y.Role)
+                        .ThenInclude(z => z.RolePermissions)
+                            .ThenInclude(z => z.Permission)
                 .FirstOrDefault(x => x.Id == id);
 
             // record not found
@@ -774,12 +472,10 @@ namespace HETSAPI.Services.Impl
             
             User user = _context.Users
                 .Include(x => x.District)
-                .Include(x => x.GroupMemberships)
-                .ThenInclude(y => y.Group)
                 .Include(x => x.UserRoles)
-                .ThenInclude(y => y.Role)
-                .ThenInclude(z => z.RolePermissions)
-                .ThenInclude(z => z.Permission)
+                    .ThenInclude(y => y.Role)
+                        .ThenInclude(z => z.RolePermissions)
+                            .ThenInclude(z => z.Permission)
                 .First(x => x.Id == id);
 
             if (user.UserRoles == null)
@@ -824,12 +520,10 @@ namespace HETSAPI.Services.Impl
            
             User user = _context.Users
                 .Include(x => x.District)
-                .Include(x => x.GroupMemberships)
-                .ThenInclude(y => y.Group)
                 .Include(x => x.UserRoles)
-                .ThenInclude(y => y.Role)
-                .ThenInclude(z => z.RolePermissions)
-                .ThenInclude(z => z.Permission)
+                    .ThenInclude(y => y.Role)
+                        .ThenInclude(z => z.RolePermissions)
+                            .ThenInclude(z => z.Permission)
                 .First(x => x.Id == id);
 
             if (user.UserRoles == null)
@@ -932,12 +626,10 @@ namespace HETSAPI.Services.Impl
             // Loading of related data
             IQueryable<User> data = _context.Users
                 .Include(x => x.District)
-                .Include(x => x.GroupMemberships)
-                .ThenInclude(y => y.Group)
                 .Include(x => x.UserRoles)
-                .ThenInclude(y => y.Role)
-                .ThenInclude(z => z.RolePermissions)
-                .ThenInclude(z => z.Permission)
+                    .ThenInclude(y => y.Role)
+                        .ThenInclude(z => z.RolePermissions)
+                            .ThenInclude(z => z.Permission)
                 .Select(x => x);
 
             // Note that Districts searches SchoolBus Districts, not SchoolBusOwner Districts

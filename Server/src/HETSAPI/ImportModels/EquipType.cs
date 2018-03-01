@@ -5,6 +5,7 @@ namespace HETSAPI.ImportModels
     /// <summary>
     /// Equip(ment) Type Import Mapping
     /// </summary>
+    [XmlType(TypeName = "Equip_Type")]
     public class EquipType
     {
         /// <summary>

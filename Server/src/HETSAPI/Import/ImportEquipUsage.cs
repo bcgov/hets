@@ -181,10 +181,17 @@ namespace HETSAPI.Import
                 };
 
                 Equipment equip = null;
+                
 
                 if (oldObject.Equip_Id != null && equips.ContainsKey ((int)oldObject.Equip_Id))
                 {
-                    equip = equips[(int)oldObject.Equip_Id];
+                    ImportMap importMap = dbContext.ImportMaps.FirstOrDefault(x => x.OldTable == "Equip" && x.OldKey == oldObject.Equip_Id.ToString());
+
+                    if (importMap != null)
+                    {
+                        equip = equips[importMap.NewKey];
+                    }
+                    
                 }
                 
                 if (equip != null)
@@ -193,7 +200,13 @@ namespace HETSAPI.Import
                     rentalAgreement.EquipmentId = equip.Id;
                 }
 
-                Models.Project proj = dbContext.Projects.FirstOrDefault(x => x.Id == oldObject.Project_Id);
+                Models.Project proj = null;
+
+                ImportMap importMapProject = dbContext.ImportMaps.FirstOrDefault(x => x.OldTable == "Project" && x.OldKey == oldObject.Project_Id.ToString()); 
+                if (importMapProject != null)
+                {
+                    proj = dbContext.Projects.FirstOrDefault(x => x.Id == importMapProject.NewKey);
+                }
 
                 if (proj != null)
                 {

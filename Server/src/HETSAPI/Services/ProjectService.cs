@@ -17,20 +17,6 @@ namespace HETSAPI.Services
         IActionResult ProjectsBulkPostAsync(Project[] items);
 
         /// <summary>
-        /// Get all projects
-        /// </summary>
-        /// <response code="200">OK</response>
-        IActionResult ProjectsGetAsync();
-
-        /// <summary>
-        /// Delete project
-        /// </summary>
-        /// <param name="id">id of Project to delete</param>
-        /// <response code="200">OK</response>
-        /// <response code="404">Project not found</response>
-        IActionResult ProjectsIdDeletePostAsync(int id);
-
-        /// <summary>
         /// Get project
         /// </summary>
         /// <param name="id">id of Project to fetch</param>
@@ -55,7 +41,7 @@ namespace HETSAPI.Services
         IActionResult ProjectsPostAsync(Project item);
 
         /// <summary>
-        /// Searches Projects
+        /// Search Projects
         /// </summary>
         /// <remarks>Used for the project search page.</remarks>
         /// <param name="districts">Districts (comma seperated list of id numbers)</param>
@@ -63,8 +49,9 @@ namespace HETSAPI.Services
         /// <param name="hasRequests">if true then only include Projects with active Requests</param>
         /// <param name="hasHires">if true then only include Projects with active Rental Agreements</param>
         /// <param name="status">if included, filter the results to those with a status matching this string</param>
+        /// <param name="projectNumber"></param>
         /// <response code="200">OK</response>
-        IActionResult ProjectsSearchGetAsync(string districts, string project, bool? hasRequests, bool? hasHires, string status);
+        IActionResult ProjectsSearchGetAsync(string districts, string project, bool? hasRequests, bool? hasHires, string status, string projectNumber);
 
         /// <summary>
         /// Get rental agreements associated with a project by id

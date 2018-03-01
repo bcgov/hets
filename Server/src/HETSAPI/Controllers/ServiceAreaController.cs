@@ -27,7 +27,7 @@ namespace HETSAPI.Controllers
         /// Create bulk service area records
         /// </summary>
         /// <param name="items"></param>
-        /// <response code="201">ServiceArea created</response>
+        /// <response code="200">ServiceArea created</response>
         [HttpPost]
         [Route("/api/serviceareas/bulk")]
         [SwaggerOperation("ServiceareasBulkPost")]
@@ -45,68 +45,10 @@ namespace HETSAPI.Controllers
         [Route("/api/serviceareas")]
         [SwaggerOperation("ServiceareasGet")]
         [SwaggerResponse(200, type: typeof(List<ServiceArea>))]
+        [RequiresPermission(Permission.Login)]
         public virtual IActionResult ServiceareasGet()
         {
             return _service.ServiceAreasGetAsync();
-        }
-
-        /// <summary>
-        /// Delete service area
-        /// </summary>
-        /// <param name="id">id of ServiceArea to delete</param>
-        /// <response code="200">OK</response>
-        /// <response code="404">ServiceArea not found</response>
-        [HttpPost]
-        [Route("/api/serviceareas/{id}/delete")]
-        [SwaggerOperation("ServiceareasIdDeletePost")]
-        public virtual IActionResult ServiceareasIdDeletePost([FromRoute]int id)
-        {
-            return _service.ServiceAreasIdDeletePostAsync(id);
-        }
-
-        /// <summary>
-        /// Get service area by id
-        /// </summary>
-        /// <param name="id">id of ServiceArea to fetch</param>
-        /// <response code="200">OK</response>
-        /// <response code="404">ServiceArea not found</response>
-        [HttpGet]
-        [Route("/api/serviceareas/{id}")]
-        [SwaggerOperation("ServiceareasIdGet")]
-        [SwaggerResponse(200, type: typeof(ServiceArea))]
-        public virtual IActionResult ServiceareasIdGet([FromRoute]int id)
-        {
-            return _service.ServiceAreasIdGetAsync(id);
-        }
-
-        /// <summary>
-        /// Update service area
-        /// </summary>
-        /// <param name="id">id of ServiceArea to update</param>
-        /// <param name="item"></param>
-        /// <response code="200">OK</response>
-        /// <response code="404">ServiceArea not found</response>
-        [HttpPut]
-        [Route("/api/serviceareas/{id}")]
-        [SwaggerOperation("ServiceareasIdPut")]
-        [SwaggerResponse(200, type: typeof(ServiceArea))]
-        public virtual IActionResult ServiceareasIdPut([FromRoute]int id, [FromBody]ServiceArea item)
-        {
-            return _service.ServiceAreasIdPutAsync(id, item);
-        }
-
-        /// <summary>
-        /// Create service area
-        /// </summary>
-        /// <param name="item"></param>
-        /// <response code="201">ServiceArea created</response>
-        [HttpPost]
-        [Route("/api/serviceareas")]
-        [SwaggerOperation("ServiceareasPost")]
-        [SwaggerResponse(200, type: typeof(ServiceArea))]
-        public virtual IActionResult ServiceareasPost([FromBody]ServiceArea item)
-        {
-            return _service.ServiceAreasPostAsync(item);
-        }
+        }        
     }
 }

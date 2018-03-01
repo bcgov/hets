@@ -5,6 +5,7 @@ namespace HETSAPI.ImportModels
     /// <summary>
     /// Service Area Import Model
     /// </summary>
+    [XmlType(TypeName = "Service_Area")]    
     public class ServiceArea
     {
         /// <summary>
@@ -17,7 +18,7 @@ namespace HETSAPI.ImportModels
         /// Service Area Code
         /// </summary>
         [XmlElement("Service_Area_Cd")]
-        public int Service_Area_Cd { get; set; }
+        public string Service_Area_Cd { get; set; }
 
         /// <summary>
         /// Service Area Description
@@ -52,8 +53,16 @@ namespace HETSAPI.ImportModels
         /// <summary>
         /// Fax
         /// </summary>
-        [XmlElement("Fax ")]
+        [XmlElement("Fax")]
         public string Fax { get; set; }
+
+        /// <summary>
+        /// Sup_Docs - optional
+        /// </summary>
+        [XmlElement(ElementName = "Sup_Docs", IsNullable = true)]
+        public string Sup_Docs { get; set; }
+        
+        [XmlIgnore] public bool Sup_DocsSpecified { get; set; }
 
         /// <summary>
         /// Fiscal Start

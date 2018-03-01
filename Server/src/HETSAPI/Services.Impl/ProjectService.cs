@@ -148,52 +148,6 @@ namespace HETSAPI.Services.Impl
         }
 
         /// <summary>
-        /// Get all projects
-        /// </summary>
-        /// <response code="200">OK</response>
-        public virtual IActionResult ProjectsGetAsync()
-        {
-            List<Project> result = _context.Projects.AsNoTracking()
-                .Include(x => x.District.Region)
-                .Include(x => x.Contacts)                
-                .Include(x => x.PrimaryContact)
-                .Include(x => x.RentalRequests)
-                .Include(x => x.RentalAgreements)
-                .ToList();
-
-            return new ObjectResult(new HetsResponse(result));
-        }
-
-        /// <summary>
-        /// Delete project
-        /// </summary>
-        /// <param name="id">id of Project to delete</param>
-        /// <response code="200">OK</response>
-        /// <response code="404">Project not found</response>
-        public virtual IActionResult ProjectsIdDeletePostAsync(int id)
-        {
-            bool exists = _context.Projects.Any(a => a.Id == id);
-
-            if (exists)
-            {
-                Project item = _context.Projects.First(a => a.Id == id);
-
-                if (item != null)
-                {
-                    _context.Projects.Remove(item);
-
-                    // save the changes
-                    _context.SaveChanges();
-                }
-
-                return new ObjectResult(new HetsResponse(item));
-            }
-
-            // record not found
-            return new ObjectResult(new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-01", _configuration)));
-        }
-
-        /// <summary>
         /// Get project by id
         /// </summary>
         /// <param name="id">id of Project to fetch</param>
@@ -363,22 +317,25 @@ namespace HETSAPI.Services.Impl
         /// <param name="hasRequests">if true then only include Projects with active Requests</param>
         /// <param name="hasHires">if true then only include Projects with active Rental Agreements</param>
         /// <param name="status">if included, filter the results to those with a status matching this string</param>
+        /// <param name="projectNumber"></param>
         /// <response code="200">OK</response>
-        public virtual IActionResult ProjectsSearchGetAsync(string districts, string project, bool? hasRequests, bool? hasHires, string status)
+        public virtual IActionResult ProjectsSearchGetAsync(string districts, string project, bool? hasRequests, bool? hasHires, string status, string projectNumber)
         {
             int?[] districtTokens = ParseIntArray(districts);
 
             // default search results must be limited to user
             int? districtId = _context.GetDistrictIdByUserId(GetCurrentUserId()).Single();
 
-            IQueryable<Project> data = _context.Projects.AsNoTracking()
-                .Where(x => x.DistrictId.Equals(districtId))
+            IQueryable<Project> data = _context.Projects.AsNoTracking()                
                 .Include(x => x.District.Region)
                 .Include(x => x.PrimaryContact)
                 .Include(x => x.RentalAgreements)
                 .Include(x => x.RentalRequests)
-                .Select(x => x);
+                .Where(x => x.DistrictId.Equals(districtId));
 
+            // **********************************************************************
+            // filter results based on search critera
+            // **********************************************************************
             if (districtTokens != null && districts.Length > 0)
             {
                 data = data.Where(x => districtTokens.Contains(x.District.Id));
@@ -390,26 +347,27 @@ namespace HETSAPI.Services.Impl
                 data = data.Where(x => x.Name.ToLowerInvariant().Contains(project.ToLowerInvariant()));
             }
 
+            if (status != null)
+            {
+                data = data.Where(x => String.Equals(x.Status, status, StringComparison.CurrentCultureIgnoreCase));
+            }
+
+            // project number
+            if (projectNumber != null)
+            {
+                // allow for case insensitive search of project name
+                data = data.Where(x => String.Equals(x.ProvincialProjectNumber, projectNumber, StringComparison.CurrentCultureIgnoreCase));
+            }
+
+            // **********************************************************************
+            // convert Project Model to View Model
+            // **********************************************************************
             List<ProjectSearchResultViewModel> result = new List<ProjectSearchResultViewModel>();
 
             foreach (Project item in data)
             {
-                item.ToViewModel();
                 result.Add(item.ToViewModel());
-            }
-
-            // second pass to do calculated fields.
-            foreach (ProjectSearchResultViewModel projectSearchResultViewModel in result)
-            {
-                // calculated fields.
-                projectSearchResultViewModel.Requests = _context.RentalRequests
-                    .Include(x => x.Project)
-                    .Count(x => x.Project.Id == projectSearchResultViewModel.Id);
-
-                projectSearchResultViewModel.Hires = _context.RentalAgreements
-                    .Include(x => x.Project)
-                    .Count(x => x.Project.Id == projectSearchResultViewModel.Id);
-            }
+            }            
 
             return new ObjectResult(new HetsResponse(result));
         }
@@ -515,28 +473,19 @@ namespace HETSAPI.Services.Impl
                 // ******************************************************************
                 // clone agreement
                 // ******************************************************************
-                // update agreement attributes
-                project.RentalAgreements[newRentalagreementIndex].EstimateHours =
-                    project.RentalAgreements[agreementToCloneIndex].EstimateHours;
-
-                project.RentalAgreements[newRentalagreementIndex].EstimateStartWork =
-                    project.RentalAgreements[agreementToCloneIndex].EstimateStartWork;
-
+                // update agreement attributes                
                 project.RentalAgreements[newRentalagreementIndex].EquipmentRate =
                     project.RentalAgreements[agreementToCloneIndex].EquipmentRate;
 
                 project.RentalAgreements[newRentalagreementIndex].Note =
-                    project.RentalAgreements[agreementToCloneIndex].Note;
-
-                project.RentalAgreements[newRentalagreementIndex].Number =
-                    project.RentalAgreements[agreementToCloneIndex].Number;
+                    project.RentalAgreements[agreementToCloneIndex].Note;                
 
                 project.RentalAgreements[newRentalagreementIndex].RateComment =
                     project.RentalAgreements[agreementToCloneIndex].RateComment;
 
                 project.RentalAgreements[newRentalagreementIndex].RatePeriod =
                     project.RentalAgreements[agreementToCloneIndex].RatePeriod;
-
+                
                 // update rates
                 project.RentalAgreements[newRentalagreementIndex].RentalAgreementRates = null;
 
@@ -699,18 +648,20 @@ namespace HETSAPI.Services.Impl
                         return new ObjectResult(new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-01", _configuration)));
                     }
 
-                    project.RentalAgreements[indexRental].TimeRecords[timeIndex].EnteredDate = item.EnteredDate;
+                    project.RentalAgreements[indexRental].TimeRecords[timeIndex].EnteredDate = DateTime.Now.ToUniversalTime();
                     project.RentalAgreements[indexRental].TimeRecords[timeIndex].Hours = item.Hours;
                     project.RentalAgreements[indexRental].TimeRecords[timeIndex].TimePeriod = item.TimePeriod;
                     project.RentalAgreements[indexRental].TimeRecords[timeIndex].WorkedDate = item.WorkedDate;
                 }
                 else // add time record
                 {                    
+                    item.EnteredDate = DateTime.Now.ToUniversalTime();
+
                     project.RentalAgreements[indexRental].TimeRecords.Add(item);
                 }
                 
                 _context.SaveChanges();
-
+                              
                 // *************************************************************
                 // return updated time records
                 // *************************************************************
@@ -788,13 +739,15 @@ namespace HETSAPI.Services.Impl
                                 ErrorViewModel.GetDescription("HETS-01", _configuration)));
                         }
 
-                        project.RentalAgreements[indexRental].TimeRecords[timeIndex].EnteredDate = item.EnteredDate;
+                        project.RentalAgreements[indexRental].TimeRecords[timeIndex].EnteredDate = DateTime.Now.ToUniversalTime();
                         project.RentalAgreements[indexRental].TimeRecords[timeIndex].Hours = item.Hours;
                         project.RentalAgreements[indexRental].TimeRecords[timeIndex].TimePeriod = item.TimePeriod;
                         project.RentalAgreements[indexRental].TimeRecords[timeIndex].WorkedDate = item.WorkedDate;
                     }
                     else // add time record
                     {
+                        item.EnteredDate = DateTime.Now.ToUniversalTime();
+
                         project.RentalAgreements[indexRental].TimeRecords.Add(item);
                     }
 
@@ -966,7 +919,7 @@ namespace HETSAPI.Services.Impl
                     .First(x => x.Id == id);
 
                 // adjust the incoming list
-                for (int i = 0; i < items.Count(); i++)
+                for (int i = 0; i < items.Length; i++)
                 {
                     Contact item = items[i];
 

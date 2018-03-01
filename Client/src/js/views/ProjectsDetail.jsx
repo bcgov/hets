@@ -2,10 +2,11 @@ import React from 'react';
 
 import { connect } from 'react-redux';
 
+import { browserHistory } from 'react-router';
+
 import { Well, Row, Col } from 'react-bootstrap';
 import { Alert, Button, ButtonGroup, Glyphicon, Label } from 'react-bootstrap';
 import { Link } from 'react-router';
-import { LinkContainer } from 'react-router-bootstrap';
 
 import _ from 'lodash';
 import Promise from 'bluebird';
@@ -278,49 +279,49 @@ var ProjectsDetail = React.createClass({
       _.remove(combinedList, (x) => !x.isActive);
     }
 
-    return <div id="projects-detail">
-      <div>
-        <Row id="projects-top">
-          <Col md={9}>
-            <Label bsStyle={ project.isActive ? 'success' : 'danger'}>{ project.status }</Label>
-            <Button title="Notes" onClick={ this.showNotes }>Notes ({ Object.keys(this.props.notes).length })</Button>
-            <Button title="Documents" onClick={ this.showDocuments }>Documents ({ Object.keys(this.props.documents).length })</Button>
-          </Col>
-          <Col md={3}>
-            <div className="pull-right">
-              <Button onClick={ this.print }><Glyphicon glyph="print" title="Print" /></Button>
-              <LinkContainer to={{ pathname: Constant.PROJECTS_PATHNAME }}>
-                <Button title="Return to List"><Glyphicon glyph="arrow-left" /> Return to List</Button>
-              </LinkContainer>
-            </div>
-          </Col>
-        </Row>
-
+    return (
+      <div id="projects-detail">
+        <div>
         {(() => {
-          if (this.state.loading) { return <div style={{ textAlign: 'center' }}><Spinner/></div>; }
+          if (this.state.loading) { return <div className="spinner-container"><Spinner/></div>; }
 
-          return <div id="projects-header">
-            <Row>
-              <Col md={12}>
-                <h1>Project: <small>{ project.name }</small></h1>
-              </Col>
-            </Row>
-            <Row>
-              <Col md={12}>
-                <h1>District: <small>{ project.districtName }</small></h1>
-              </Col>
-            </Row>
-          </div>;
+          return (
+            <div className="top-container">
+              <Row id="projects-top">
+                <Col md={9}>
+                  <Label bsStyle={ project.isActive ? 'success' : 'danger'}>{ project.status }</Label>
+                  <Button title="Notes" onClick={ this.showNotes }>Notes ({ Object.keys(this.props.notes).length })</Button>
+                  <Button title="Documents" onClick={ this.showDocuments }>Documents ({ Object.keys(this.props.documents).length })</Button>
+                </Col>
+                <Col md={3}>
+                  <div className="pull-right">
+                    <Button onClick={ this.print }><Glyphicon glyph="print" title="Print" /></Button>
+                    <Button title="Return to List" onClick={ browserHistory.goBack }><Glyphicon glyph="arrow-left" /> Return to List</Button>
+                  </div>
+                </Col>
+              </Row>
+              <Row id="projects-header">
+                <Col md={12}>
+                  <h1>Project: <small>{ project.name }</small></h1>
+                </Col>
+              </Row>
+              <Row>
+                <Col md={12}>
+                  <h1>District: <small>{ project.districtName }</small></h1>
+                </Col>
+              </Row>
+            </div>
+          );
         })()}
 
         <Row>
           <Col md={12}>
             <Well>
               <h3>Project Information <span className="pull-right">
-                  <Button title="Edit Project" bsSize="small" onClick={ this.openEditDialog }><Glyphicon glyph="pencil" /></Button>
+                <Button title="Edit Project" bsSize="small" onClick={ this.openEditDialog }><Glyphicon glyph="pencil" /></Button>
               </span></h3>
               {(() => {
-                if (this.state.loading) { return <div style={{ textAlign: 'center' }}><Spinner/></div>; }
+                if (this.state.loading) { return <div className="spinner-container"><Spinner/></div>; }
 
                 var mailto = <a href={ `mailto:${project.primaryContactEmail}` }>
                   { project.primaryContactName }
@@ -350,15 +351,23 @@ var ProjectsDetail = React.createClass({
                 <Button title="Add Request" bsSize="small" onClick={ this.openAddRequestDialog }><Glyphicon glyph="plus" /> Add</Button>
               </span></h3>
               {(() => {
-                if (this.state.loading) { return <div style={{ textAlign: 'center' }}><Spinner/></div>; }
+                if (this.state.loading) { return <div className="spinner-container"><Spinner/></div>; }
 
-                if (Object.keys(combinedList).length === 0) { return <Alert bsStyle="success" style={{ marginTop: 10 }}>No equipment</Alert>; }
+                if (Object.keys(combinedList).length === 0) { return <Alert bsStyle="success">No equipment</Alert>; }
 
                 const RentalRequestListItem = ({ item }) => (
                   <tr key={ item.id }>
-                    <td><Link to={ `rental-requests/${item.id}` }>Request</Link></td>
+                    <td>
+                      <Link 
+                        to={ `rental-requests/${item.id}` } 
+                        className={item.status === Constant.RENTAL_REQUEST_STATUS_CODE_COMPLETED ? 'light' : ''}
+                      >
+                      Request
+                      </Link>
+                    </td>
                     <td>{ item.equipmentTypeName }</td>
                     <td>TBD</td>
+                    <td>N/A</td>
                     <td>N/A</td>
                     <td>N/A</td>
                     <td>N/A</td>
@@ -370,22 +379,26 @@ var ProjectsDetail = React.createClass({
 
                 const RentalAgreementListItem = ({ item }) => (
                   <tr key={ item.id }>
-                    <td><Link to={ `equipment/${item.equipmentId}` }>{ item.equipmentCode }</Link></td>
+                    <td>
+                      <Link 
+                        to={ `equipment/${item.equipmentId}` }
+                        className={item.status === Constant.RENTAL_REQUEST_STATUS_CODE_COMPLETED ? 'light' : ''}
+                      >
+                        { item.equipmentCode }
+                      </Link>
+                    </td>
                     <td>{ item.equipmentTypeName }</td>
-                    <td>{ concat(item.equipmentMake, concat(item.equipmentModel, item.equipmentSize, '/'), '/') }</td>
+                    <td>{ `${item.equipment.year} ${concat(item.equipmentMake, concat(item.equipmentModel, item.equipmentSize, '/'), '/')} `}</td>
                     <td>{ item.isCompleted ? 
                       'Completed' 
                       : 
-                      <Button 
-                        className="btn-link"
-                        bsSize="xsmall"
-                        onClick={ () => this.openTimeEntryDialog(item) }
-                      >
-                        { item.lastTimeRecord ? formatDateTime(item.lastTimeRecord, Constant.DATE_YEAR_SHORT_MONTH_DAY) : 'None' }
-                      </Button>
+                      <EditButton name="Contact" onClick={this.openTimeEntryDialog.bind(this, item)} />
                     }
                     </td>
                     <td>
+                    { item.status === Constant.RENTAL_REQUEST_STATUS_CODE_COMPLETED ?
+                      <div>Released</div>
+                      :
                       <OverlayTrigger 
                         trigger="click" 
                         placement="top" 
@@ -398,8 +411,10 @@ var ProjectsDetail = React.createClass({
                           <Glyphicon glyph="check" />
                         </Button>
                       </OverlayTrigger>
+                    }
                     </td>
                     <td><Link to={`${Constant.RENTAL_AGREEMENTS_PATHNAME}/${item.id}`}>Agreement</Link></td>
+                    <td>{ formatDateTime(item.datedOn, Constant.DATE_YEAR_SHORT_MONTH_DAY) }</td>
                     <td></td>
                   </tr>
                 );
@@ -407,20 +422,21 @@ var ProjectsDetail = React.createClass({
                 var headers = [
                   { field: 'equipmentCode',     title: 'ID'               },
                   { field: 'equipmentTypeName', title: 'Type'             },
-                  { field: 'equipmentMake',     title: 'Make/Model/Size'  },
+                  { field: 'equipmentMake',     title: 'Year Make/Model/Size'  },
                   { field: 'lastTimeRecord',    title: 'Time Entry'       },
                   { field: 'release',           title: 'Release'          },
                   { field: 'agreement',         title: 'Agreement'        },
+                  { field: 'hiredDate',         title: 'Hired Date'       },
                   { field: 'blank'                                        },
                 ];
 
                 return <TableControl id="equipment-list" headers={ headers }>
                   {
-                    _.map(combinedList, (listItem) => {
+                    _.map(combinedList, (listItem, index) => {
                       if (listItem.isRentalRequest) {
-                        return <RentalRequestListItem item={ listItem } project={ project } />;
+                        return <RentalRequestListItem key={index} item={ listItem } project={ project } />;
                       } else {
-                        return <RentalAgreementListItem item={ listItem } />;
+                        return <RentalAgreementListItem key={index} item={ listItem } />;
                       }
                     })
                   }
@@ -432,7 +448,7 @@ var ProjectsDetail = React.createClass({
             <Well>
               <h3>Contacts</h3>
               {(() => {
-                if (this.state.loading ) { return <div style={{ textAlign: 'center' }}><Spinner/></div>; }
+                if (this.state.loading ) { return <div className="spinner-container"><Spinner/></div>; }
 
                 var addContactButton = <Button title="Add Contact" onClick={ this.addContact } bsSize="xsmall"><Glyphicon glyph="plus" />&nbsp;<strong>Add</strong></Button>;
 
@@ -516,7 +532,7 @@ var ProjectsDetail = React.createClass({
           activeRentalRequest={ this.state.rentalRequest }
         />
       }
-       { this.state.showNotesDialog &&
+      { this.state.showNotesDialog &&
         <NotesDialog 
           show={ this.state.showNotesDialog } 
           onSave={ Api.addProjectNote } 
@@ -527,7 +543,8 @@ var ProjectsDetail = React.createClass({
           notes={ this.props.notes }
         />
       } 
-    </div>;
+      </div>
+    );
   },
 });
 

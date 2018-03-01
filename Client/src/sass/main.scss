@@ -21,6 +21,11 @@
   white-space: nowrap;
 }
 
+.spinner-container {
+  text-align: center;
+  padding: 0.5rem 0;
+}
+
 .spinner {
   display: inline-block;
   vertical-align: baseline;
@@ -58,6 +63,20 @@ th {
 @keyframes rotate {
   0%    { transform: rotate(0deg); }
   100%  { transform: rotate(360deg); }
+}
+
+a.light {
+  color: grey;
+}
+
+// Bootstrap overrides 
+
+.alert-success {
+  margin-top: 30px;
+  
+  &:before {
+    content: '';
+  }
 }
 
 // Spacing 

@@ -105,17 +105,7 @@ namespace HETSAPI.Models
         /// Equipment Type
         /// </summary>
         DbSet<EquipmentType> EquipmentTypes { get; set; }     
-        
-        /// <summary>
-        /// Group
-        /// </summary>
-        DbSet<Group> Groups { get; set; }
-
-        /// <summary>
-        /// Group Membership
-        /// </summary>
-        DbSet<GroupMembership> GroupMemberships { get; set; }        
-
+                
         /// <summary>
         /// History (log of activity)
         /// </summary>
@@ -134,12 +124,7 @@ namespace HETSAPI.Models
         /// <summary>
         /// Local Area Rotation List
         /// </summary>
-        DbSet<LocalAreaRotationList> LocalAreaRotationLists { get; set; }
-
-        /// <summary>
-        /// Lookup List
-        /// </summary>
-        DbSet<LookupList> LookupLists { get; set; }
+        DbSet<LocalAreaRotationList> LocalAreaRotationLists { get; set; }        
 
         /// <summary>
         /// Note
@@ -225,6 +210,11 @@ namespace HETSAPI.Models
         /// Time Record
         /// </summary>
         DbSet<TimeRecord> TimeRecords { get; set; }
+
+        /// <summary>
+        /// User Districts
+        /// </summary>
+        DbSet<UserDistrict> UserDistricts { get; set; }
 
         /// <summary>
         /// User
@@ -335,17 +325,7 @@ namespace HETSAPI.Models
         /// Equipment Type
         /// </summary>
         public DbSet<EquipmentType> EquipmentTypes { get; set; }
-
-        /// <summary>
-        /// Group
-        /// </summary>
-        public DbSet<Group> Groups { get; set; }
-
-        /// <summary>
-        /// Group Membership
-        /// </summary>
-        public DbSet<GroupMembership> GroupMemberships { get; set; }
-
+        
         /// <summary>
         /// History (activity log)
         /// </summary>
@@ -365,12 +345,7 @@ namespace HETSAPI.Models
         /// Local Area Rotation List
         /// </summary>
         public DbSet<LocalAreaRotationList> LocalAreaRotationLists { get; set; }
-
-        /// <summary>
-        /// Lookup List
-        /// </summary>
-        public DbSet<LookupList> LookupLists { get; set; }
-
+        
         /// <summary>
         /// Note
         /// </summary>
@@ -455,6 +430,11 @@ namespace HETSAPI.Models
         /// Time Record
         /// </summary>
         public DbSet<TimeRecord> TimeRecords { get; set; }
+
+        /// <summary>
+        /// User Districts
+        /// </summary>
+        public DbSet<UserDistrict> UserDistricts { get; set; }
 
         /// <summary>
         /// User

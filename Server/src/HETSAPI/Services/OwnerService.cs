@@ -14,29 +14,14 @@ namespace HETSAPI.Services
         /// Create bulk owner records
         /// </summary>
         /// <param name="items"></param>
-        /// <response code="201">Owner created</response>
+        /// <response code="200">Owner created</response>
         IActionResult OwnersBulkPostAsync(Owner[] items);
-
-        /// <summary>
-        /// Get all owners
-        /// </summary>
-        /// <response code="200">OK</response>
-        IActionResult OwnersGetAsync();
-
-        /// <summary>
-        /// Delete owner
-        /// </summary>
-        /// <param name="id">id of Owner to delete</param>
-        /// <response code="200">OK</response>
-        /// <response code="404">Owner not found</response>
-        IActionResult OwnersIdDeletePostAsync(int id);
 
         /// <summary>
         /// Get owner by id
         /// </summary>
         /// <param name="id">id of Owner to fetch</param>
         /// <response code="200">OK</response>
-        /// <response code="404">Owner not found</response>
         IActionResult OwnersIdGetAsync(int id);
 
         /// <summary>
@@ -45,7 +30,6 @@ namespace HETSAPI.Services
         /// <param name="id">id of Owner to update</param>
         /// <param name="item"></param>
         /// <response code="200">OK</response>
-        /// <response code="404">Owner not found</response>
         IActionResult OwnersIdPutAsync(int id, Owner item);
 
         /// <summary>
@@ -60,7 +44,7 @@ namespace HETSAPI.Services
         /// Create owner
         /// </summary>
         /// <param name="item"></param>
-        /// <response code="201">Owner created</response>
+        /// <response code="200">Owner created</response>
         IActionResult OwnersPostAsync(Owner item);
 
         /// <summary>
@@ -153,7 +137,7 @@ namespace HETSAPI.Services
         /// <param name="id">id of Owner to add History for</param>
         /// <param name="item"></param>
         /// <response code="200">OK</response>
-        /// <response code="201">History created</response>
+        /// <response code="200">History created</response>
         IActionResult OwnersIdHistoryPostAsync(int id, History item);
 
         /// <summary>

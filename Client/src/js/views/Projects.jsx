@@ -20,14 +20,6 @@ import Favourites from '../components/Favourites.jsx';
 import FormInputControl from '../components/FormInputControl.jsx';
 import SortTable from '../components/SortTable.jsx';
 import Spinner from '../components/Spinner.jsx';
-import Unimplemented from '../components/Unimplemented.jsx';
-
-/*
-
-TODO:
-* Print / Email
-
-*/
 
 var Projects = React.createClass({
   propTypes: {
@@ -43,8 +35,9 @@ var Projects = React.createClass({
     return {
       showAddDialog: false,
       search: {
-        statusCode: this.props.search.statusCode || '',
-        projectName: this.props.search.projecName,
+        statusCode: this.props.search.statusCode || Constant.PROJECT_STATUS_CODE_ACTIVE,
+        projectName: this.props.search.projectName,
+        projectNumber: this.props.search.projectNumber || '',
       },
       ui : {
         sortField: this.props.ui.sortField || 'name',
@@ -60,10 +53,13 @@ var Projects = React.createClass({
       searchParams.project = this.state.search.projectName;
     }
 
-    // Not yet implemented by API
-    // if (this.state.search.status) {
-    //   searchParams.status = this.state.search.statusCode;
-    // }
+    if (this.state.search.statusCode) {
+      searchParams.status = this.state.search.statusCode;
+    }
+
+    if (this.state.search.projectNumber) {
+      searchParams.projectNumber = this.state.search.projectNumber;
+    }
 
     return searchParams;
 
@@ -122,10 +118,6 @@ var Projects = React.createClass({
     });
   },
 
-  email() {
-
-  },
-
   print() {
     window.print();
   },
@@ -136,9 +128,6 @@ var Projects = React.createClass({
     return <div id="projects-list">
       <PageHeader>Projects ({ numProjects })
         <ButtonGroup id="projects-buttons">
-          <Unimplemented>
-            <Button onClick={ this.email }><Glyphicon glyph="envelope" title="E-mail" /></Button>
-          </Unimplemented>
           <Button onClick={ this.print }><Glyphicon glyph="print" title="Print" /></Button>
         </ButtonGroup>
       </PageHeader>
@@ -146,11 +135,10 @@ var Projects = React.createClass({
         <Row>
           <Col md={10}>
             <ButtonToolbar id="projects-filters">
-              <Unimplemented>
-                <DropdownControl id="statusCode" title={ this.state.search.statusCode } updateState={ this.updateSearchState } blankLine="(All)" placeholder="Status"
-                  items={[ Constant.PROJECT_STATUS_CODE_ACTIVE, Constant.PROJECT_STATUS_CODE_COMPLETED ]} />
-              </Unimplemented>
+              <DropdownControl id="statusCode" title={ this.state.search.statusCode } updateState={ this.updateSearchState } blankLine="(All)" placeholder="Status"
+                items={[ Constant.PROJECT_STATUS_CODE_ACTIVE, Constant.PROJECT_STATUS_CODE_COMPLETED ]} />
               <FormInputControl id="projectName" type="text" placeholder="Project name" value={ this.state.search.projectName } updateState={ this.updateSearchState }></FormInputControl>
+              <FormInputControl id="projectNumber" type="text" placeholder="Project number" value={ this.state.search.projectNumber } updateState={ this.updateSearchState }></FormInputControl>
               <Button id="search-button" bsStyle="primary" onClick={ this.fetch }>Search</Button>
             </ButtonToolbar>
           </Col>

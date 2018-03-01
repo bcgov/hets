@@ -23,14 +23,6 @@ import FilterDropdown from '../components/FilterDropdown.jsx';
 import MultiDropdown from '../components/MultiDropdown.jsx';
 import SortTable from '../components/SortTable.jsx';
 import Spinner from '../components/Spinner.jsx';
-import Unimplemented from '../components/Unimplemented.jsx';
-
-/*
-
-TODO:
-* Print / Email / Verify
-
-*/
 
 var Owners = React.createClass({
   propTypes: {
@@ -56,7 +48,7 @@ var Owners = React.createClass({
         ownerId: this.props.search.ownerId || 0,
         ownerName: this.props.search.ownerName || 'Owner',
         hired: this.props.search.hired || false,
-        statusCode: this.props.search.statusCode || '',
+        statusCode: this.props.search.statusCode || Constant.OWNER_STATUS_CODE_APPROVED,
       },
 
       ui : {
@@ -93,7 +85,7 @@ var Owners = React.createClass({
 
   componentDidMount() {
     var equipmentTypesPromise = Api.getDistrictEquipmentTypes(this.props.currentUser.district.id);
-    var ownersPromise = Api.getOwners();
+    var ownersPromise = Api.getOwnersByDistrict(this.props.currentUser.district.id);
     var favouritesPromise = Api.getFavourites('owner');
 
     Promise.all([equipmentTypesPromise, ownersPromise, favouritesPromise]).then(() => {
@@ -147,11 +139,7 @@ var Owners = React.createClass({
       });
     });
   },
-
-  email() {
-
-  },
-
+  
   print() {
     window.print();
   },
@@ -182,12 +170,10 @@ var Owners = React.createClass({
   render() {
     // Constrain the local area drop downs to those in the District of the current logged in user
     var localAreas = _.chain(this.props.localAreas)
-      .filter(localArea => localArea.serviceArea.district.id == this.props.currentUser.district.id)
       .sortBy('name')
       .value();
 
     var owners = _.chain(this.props.owners.data)
-      .filter(owner => owner.localArea.serviceArea.district.id == this.props.currentUser.district.id)
       .sortBy('organizationName')
       .value();
 
@@ -209,9 +195,6 @@ var Owners = React.createClass({
         <div id="owners-buttons">
           <Button onClick={ this.verifyOwners.bind(this, ownerList) }>Status Letters</Button>
           <ButtonGroup>
-            <Unimplemented>
-              <Button onClick={ this.email }><Glyphicon glyph="envelope" title="E-mail" /></Button>
-            </Unimplemented>
             <Button onClick={ this.print }><Glyphicon glyph="print" title="Print" /></Button>
           </ButtonGroup>
         </div>
@@ -281,7 +264,6 @@ var Owners = React.createClass({
     </div>;
   },
 });
-
 
 function mapStateToProps(state) {
   return {

@@ -4,6 +4,11 @@
     <meta charset="utf-8">
     <title>Owner Verification Notices</title>
     <style>
+        @page {
+            margin: 1.5cm 0;
+            size: landscape;
+        }
+
         body {
             background-color: white;
             color: black;
@@ -15,10 +20,11 @@
 
         #header {
             position: relative;
+            text-align: center;
         }
 
         #logo {
-            float: left;
+            display: inline-block;
             width: 160px;
             height: 50px;
         }
@@ -28,7 +34,7 @@
         }
 
         #word-mark {
-            float: left;
+            display: inline-block;
             margin-top: 9px;
             padding-left: 10px;
             padding-top: 3px;
@@ -39,6 +45,7 @@
             color: #355980;
             border-left: 2px solid #999;
             text-align: center;
+            vertical-align: top;
         }
 
         .clearfix:after {
@@ -65,34 +72,36 @@
             text-align: center;
         }
 
+        #contact-info {
+            width: 100%;
+        }
+
+        #contact-info td {
+            vertical-align: top;
+        }
+
         #owner-contact-left {
-            float: left;
             font-size: 14px;
             line-height: 15px;
             color: #355980;
             text-align: left;
-            width: 300px;
             min-width: 300px;
         }
 
         #owner-contact-right {
-            float: right;
             font-size: 14px;
             line-height: 15px;
             color: #355980;
             text-align: left;
-            width: 300px;
             min-width: 300px;
         }
 
         #equipment-table {
             margin-top: 12px;
-            float: left;
             font-size: 12px;
             line-height: 12px;
             color: #000000;
             text-align: left;
-            vertical-align: top;
             width: 100%;
         }
 
@@ -117,13 +126,13 @@
         }
 
         #list-column ul li {
-            list-style-type: circle;
-            margin-left: 14px;
-            padding-left: 0px;
+            list-style-type: none;
+            margin: 0;
+            padding: 0;
         }
 
         @media print {
-            #page-break {
+            .owner {
                 page-break-before: always;
             }
         }
@@ -132,8 +141,7 @@
 <body>
 
     {{#owners}}
-    <div class="page-break"></div>
-    <div>
+    <div class="owner">
         <div>
             <div id="header" class="clearfix">
                 <div id="logo">
@@ -153,57 +161,63 @@
 
             <hr />
 
-            <div id="owner-contact-left">
-                <table>
-                    <tr>
-                        <td>Owner: </td>
-                        <td>{{organizationName}}</td>
-                    </tr>
-                    <tr>
-                        <td>Address: </td>
-                        <td>{{address1}}</td>
-                    </tr>
-                    <tr>
-                        <td>&nbsp;</td>
-                        <td>{{address2}}{{#address2}}, {{/address2}}{{city}}{{#city}}, {{/city}}{{province}}  {{postalCode}}</td>
-                    </tr>
-                </table>
-            </div>
+            <table id="contact-info">
+                <tr>
+                    <td>
+                        <div id="owner-contact-left">
+                            <table>
+                                <tr>
+                                    <td>Owner: </td>
+                                    <td>{{organizationName}}</td>
+                                </tr>
+                                <tr>
+                                    <td>Address: </td>
+                                    <td>{{address1}}</td>
+                                </tr>
+                                <tr>
+                                    <td>&nbsp;</td>
+                                    <td>{{address2}}{{#address2}}, {{/address2}}{{city}}{{#city}}, {{/city}}{{province}}  {{postalCode}}</td>
+                                </tr>
+                            </table>
+                        </div>
+                    </td>
 
-            <div id="owner-contact-right">
-                <table>
-                    <tr>
-                        <td>Date: </td>
-                        <td>{{reportDate}}</td>
-                    </tr>
-                    <tr>
-                        <td>Owner Code: </td>
-                        <td>{{ownerCode}}</td>
-                    </tr>
-                </table>
-            </div>
+                    <td>   
+                        <div id="owner-contact-right">
+                            <table>
+                                <tr>
+                                    <td>Date: </td>
+                                    <td>{{reportDate}}</td>
+                                </tr>
+                                <tr>
+                                    <td>Owner Code: </td>
+                                    <td>{{ownerCode}}</td>
+                                </tr>
+                            </table>
+                        </div>
+                    </td>
+                </tr>
+            </table>
 
             <div id="equipment-table">
                 <table border="1" cellpadding="1" cellspacing="1">
                     <tr>
+                        <th>Still in use?</th>
                         <th>Equipment Id</th>
                         <th>Local Area</th>
                         <th>Year/Make/Model/Serial Number/Size</th>
                         <th>Attachments</th>
-                        <th>Last Verified</th>
-                        <th>Still in use? (Yes/No)</th>
                         <th>Owner Comments (sold, retired, etc.)</th>
                     </tr>
                     {{#equipmentList}}
                     <tr>
-                        <td>{{id}}</td>
+                        <td>Yes/No</td>
+                        <td>{{equipmentCode}}</td>
                         <td>{{localArea.name}}</td>
                         <td>{{year}}/{{make}}/{{model}}/{{serialNumber}}/{{size}}</td>
                         <td id="list-column">
                             <ul>{{#equipmentAttachments}}<li>{{typeName}}</li>{{/equipmentAttachments}}</ul>
                         </td>
-                        <td>{{approvedDate}}</td>
-                        <td>&nbsp;</td>
                         <td>&nbsp;</td>
                     </tr>
                     {{/equipmentList}}

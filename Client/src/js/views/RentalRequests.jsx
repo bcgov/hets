@@ -25,16 +25,8 @@ import FormInputControl from '../components/FormInputControl.jsx';
 import Mailto from '../components/Mailto.jsx';
 import MultiDropdown from '../components/MultiDropdown.jsx';
 import SortTable from '../components/SortTable.jsx';
-import Unimplemented from '../components/Unimplemented.jsx';
 
 import { formatDateTime, startOfCurrentFiscal, endOfCurrentFiscal, startOfPreviousFiscal, endOfPreviousFiscal, toZuluTime } from '../utils/date';
-
-/*
-
-TODO:
-* Print / Email
-
-*/
 
 const WITHIN_30_DAYS = 'Within 30 Days';
 const THIS_MONTH = 'This Month';
@@ -190,10 +182,6 @@ var RentalRequests = React.createClass({
     });
   },
 
-  email() {
-
-  },
-
   print() {
     window.print();
   },
@@ -201,7 +189,6 @@ var RentalRequests = React.createClass({
   render() {
     // Constrain the local area drop downs to those in the District of the current logged in user
     var localAreas = _.chain(this.props.localAreas)
-      .filter(localArea => localArea.serviceArea.district.id == this.props.currentUser.district.id)
       .sortBy('name')
       .value();
 
@@ -210,9 +197,6 @@ var RentalRequests = React.createClass({
     return <div id="rental-requests-list">
       <PageHeader>Rental Requests ({ numRentalRequests })
         <ButtonGroup id="rental-requests-buttons">
-          <Unimplemented>
-            <Button onClick={ this.email }><Glyphicon glyph="envelope" title="E-mail" /></Button>
-          </Unimplemented>
           <Button onClick={ this.print }><Glyphicon glyph="print" title="Print" /></Button>
         </ButtonGroup>
       </PageHeader>
@@ -224,7 +208,7 @@ var RentalRequests = React.createClass({
                 <MultiDropdown id="selectedLocalAreasIds" placeholder="Local Areas"
                   items={ localAreas } selectedIds={ this.state.search.selectedLocalAreasIds } updateState={ this.updateSearchState } showMaxItems={ 2 } />
                 <DropdownControl id="status" title={ this.state.search.status } updateState={ this.updateSearchState } blankLine="(All)" placeholder="Status"
-                    items={[ Constant.RENTAL_REQUEST_STATUS_CODE_IN_PROGRESS, Constant.RENTAL_REQUEST_STATUS_CODE_COMPLETED, Constant.RENTAL_REQUEST_STATUS_CODE_CANCELLED ]} />
+                    items={[ Constant.RENTAL_REQUEST_STATUS_CODE_IN_PROGRESS, Constant.RENTAL_REQUEST_STATUS_CODE_COMPLETED ]} />
                 <FormInputControl id="projectName" type="text" placeholder="Project name" value={ this.state.search.projectName } updateState={ this.updateSearchState }></FormInputControl>
               </ButtonToolbar>
             </Row>
@@ -285,7 +269,7 @@ var RentalRequests = React.createClass({
               return <tr key={ request.id } className={ request.isActive ? null : 'info' }>
                 <td>{ request.localAreaName }</td>
                 <td style={{ textAlign: 'center' }}>{ request.equipmentCount }</td>
-                <td>{ request.equipmentTypeName }</td>
+                <td>{ request.districtEquipmentName }</td>
                 <td style={{ textAlign: 'center' }}>{ formatDateTime(request.expectedStartDate, Constant.DATE_YEAR_SHORT_MONTH_DAY) }</td>
                 <td style={{ textAlign: 'center' }}>{ formatDateTime(request.expectedEndDate, Constant.DATE_YEAR_SHORT_MONTH_DAY) }</td>
                 <td>

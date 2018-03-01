@@ -30,7 +30,7 @@ namespace HETSAPI.Controllers
         /// Create bulk equipment records
         /// </summary>
         /// <param name="items"></param>
-        /// <response code="201">Equipment created</response>
+        /// <response code="200">Equipment created</response>
         [HttpPost]
         [Route("/api/equipment/bulk")]
         [SwaggerOperation("EquipmentBulkPost")]
@@ -38,75 +38,34 @@ namespace HETSAPI.Controllers
         public virtual IActionResult EquipmentBulkPost([FromBody]Equipment[] items)
         {
             return _service.EquipmentBulkPostAsync(items);
-        }
-
-        /// <summary>
-        /// Get all equipment records
-        /// </summary>
-        /// <response code="200">OK</response>
-        [HttpGet]
-        [Route("/api/equipment")]
-        [SwaggerOperation("EquipmentGet")]
-        [SwaggerResponse(200, type: typeof(List<Equipment>))]
-        public virtual IActionResult EquipmentGet()
-        {
-            return _service.EquipmentGetAsync();
-        }
-
-        /// <summary>
-        /// Delete equipment
-        /// </summary>
-        /// <param name="id">id of Equipment to delete</param>
-        /// <response code="200">OK</response>
-        /// <response code="404">Equipment not found</response>
-        [HttpPost]
-        [Route("/api/equipment/{id}/delete")]
-        [SwaggerOperation("EquipmentIdDeletePost")]
-        public virtual IActionResult EquipmentIdDeletePost([FromRoute]int id)
-        {
-            return _service.EquipmentIdDeletePostAsync(id);
-        }
+        }                
 
         /// <summary>
         /// Get equipment by id
         /// </summary>
         /// <param name="id">id of Equipment to fetch</param>
         /// <response code="200">OK</response>
-        /// <response code="404">Equipment not found</response>
         [HttpGet]
         [Route("/api/equipment/{id}")]
         [SwaggerOperation("EquipmentIdGet")]
         [SwaggerResponse(200, type: typeof(Equipment))]
+        [RequiresPermission(Permission.Login)]
         public virtual IActionResult EquipmentIdGet([FromRoute]int id)
         {
             return _service.EquipmentIdGetAsync(id);
         }
-
-        /// <summary>
-        /// Get equipment view model by id
-        /// </summary>
-        /// <param name="id">id of Equipment to fetch EquipmentViewModel for</param>
-        /// <response code="200">OK</response>
-        [HttpGet]
-        [Route("/api/equipment/{id}/view")]
-        [SwaggerOperation("EquipmentIdViewGet")]
-        [SwaggerResponse(200, type: typeof(EquipmentViewModel))]
-        public virtual IActionResult EquipmentIdViewGet([FromRoute]int id)
-        {
-            return _service.EquipmentIdViewGetAsync(id);
-        }
-
+        
         /// <summary>
         /// Update equipment
         /// </summary>
         /// <param name="id">id of Equipment to update</param>
         /// <param name="item"></param>
         /// <response code="200">OK</response>
-        /// <response code="404">Equipment not found</response>
         [HttpPut]
         [Route("/api/equipment/{id}")]
         [SwaggerOperation("EquipmentIdPut")]
         [SwaggerResponse(200, type: typeof(Equipment))]
+        [RequiresPermission(Permission.Login)]
         public virtual IActionResult EquipmentIdPut([FromRoute]int id, [FromBody]Equipment item)
         {
             return _service.EquipmentIdPutAsync(id, item);
@@ -122,6 +81,7 @@ namespace HETSAPI.Controllers
         [Route("/api/equipment/{id}/status")]
         [SwaggerOperation("EquipmentIdStatusPut")]
         [SwaggerResponse(200, type: typeof(Equipment))]
+        [RequiresPermission(Permission.Login)]
         public virtual IActionResult EquipmentIdStatusPut([FromRoute]int id, [FromBody]EquipmentStatus item)
         {
             return _service.EquipmentIdStatusPutAsync(id, item);
@@ -131,11 +91,12 @@ namespace HETSAPI.Controllers
         /// Create equipment
         /// </summary>
         /// <param name="item"></param>
-        /// <response code="201">Equipment created</response>
+        /// <response code="200">Equipment created</response>
         [HttpPost]
         [Route("/api/equipment")]
         [SwaggerOperation("EquipmentPost")]
         [SwaggerResponse(200, type: typeof(Equipment))]
+        [RequiresPermission(Permission.Login)]
         public virtual IActionResult EquipmentPost([FromBody]Equipment item)
         {
             return _service.EquipmentPostAsync(item);
@@ -157,25 +118,11 @@ namespace HETSAPI.Controllers
         [Route("/api/equipment/search")]
         [SwaggerOperation("EquipmentSearchGet")]
         [SwaggerResponse(200, type: typeof(List<EquipmentViewModel>))]
+        [RequiresPermission(Permission.Login)]
         public virtual IActionResult EquipmentSearchGet([FromQuery]string localareas, [FromQuery]string types, [FromQuery]string equipmentAttachment, [FromQuery]int? owner, [FromQuery]string status, [FromQuery]bool? hired, [FromQuery]DateTime? notverifiedsincedate)
         {
             return _service.EquipmentSearchGetAsync(localareas, types, equipmentAttachment, owner, status, hired, notverifiedsincedate);
-        }
-
-        /// <summary>
-        /// Recalculates seniority
-        /// </summary>
-        /// <remarks>Used to calculate seniority for all database records.</remarks>
-        /// <param name="id">Region to recalculate</param>
-        /// <response code="200">OK</response>
-        [HttpGet]
-        [Route("/api/equipment/{id}/recalcSeniority")]
-        [SwaggerOperation("EquipmentRecalcSeniorityGet")]
-        [RequiresPermission(Permission.Admin)]
-        public virtual IActionResult EquipmentRecalcSeniorityGet([FromRoute]int id)
-        {
-            return _service.EquipmentRecalcSeniorityGetAsync(id);
-        }
+        }        
 
         #region Clone Project Agreements
 
@@ -189,6 +136,7 @@ namespace HETSAPI.Controllers
         [Route("/api/equipment/{id}/rentalAgreements")]
         [SwaggerOperation("EquipmentIdRentalAgreementsGet")]
         [SwaggerResponse(200, type: typeof(List<RentalAgreement>))]
+        [RequiresPermission(Permission.Login)]
         public virtual IActionResult EquipmentIdRentalAgreementsGet([FromRoute]int id)
         {
             return _service.EquipmentIdGetAgreementsAsync(id);
@@ -204,6 +152,7 @@ namespace HETSAPI.Controllers
         [Route("/api/equipment/{id}/rentalAgreementClone")]
         [SwaggerOperation("EquipmentRentalAgreementClonePost")]
         [SwaggerResponse(200, type: typeof(RentalAgreement))]
+        [RequiresPermission(Permission.Login)]
         public virtual IActionResult EquipmentRentalAgreementClonePost([FromRoute]int id, [FromBody]EquipmentRentalAgreementClone item)
         {
             return _service.EquipmentRentalAgreementClonePostAsync(id, item);
@@ -223,6 +172,7 @@ namespace HETSAPI.Controllers
         [Route("/api/equipment/{id}/duplicates/{serialNumber}")]
         [SwaggerOperation("EquipmentIdEquipmentduplicatesGet")]
         [SwaggerResponse(200, type: typeof(List<DuplicateEquipmentViewModel>))]
+        [RequiresPermission(Permission.Login)]
         public virtual IActionResult EquipmentIdEquipmentduplicatesGet([FromRoute]int id, [FromRoute]string serialNumber)
         {
             return _service.EquipmentIdEquipmentduplicatesGetAsync(id, serialNumber);
@@ -241,6 +191,7 @@ namespace HETSAPI.Controllers
         [Route("/api/equipment/{id}/equipmentattachments")]
         [SwaggerOperation("EquipmentIdEquipmentattachmentsGet")]
         [SwaggerResponse(200, type: typeof(List<EquipmentAttachment>))]
+        [RequiresPermission(Permission.Login)]
         public virtual IActionResult EquipmentIdEquipmentattachmentsGet([FromRoute]int id)
         {
             return _service.EquipmentIdEquipmentattachmentsGetAsync(id);
@@ -256,11 +207,11 @@ namespace HETSAPI.Controllers
         /// <remarks>Returns attachments for a particular Equipment</remarks>
         /// <param name="id">id of Equipment to fetch attachments for</param>
         /// <response code="200">OK</response>
-        /// <response code="404">Equipment not found</response>
         [HttpGet]
         [Route("/api/equipment/{id}/attachments")]
         [SwaggerOperation("EquipmentIdAttachmentsGet")]
         [SwaggerResponse(200, type: typeof(List<AttachmentViewModel>))]
+        [RequiresPermission(Permission.Login)]
         public virtual IActionResult EquipmentIdAttachmentsGet([FromRoute]int id)
         {
             return _service.EquipmentIdAttachmentsGetAsync(id);
@@ -282,6 +233,7 @@ namespace HETSAPI.Controllers
         [Route("/api/equipment/{id}/history")]
         [SwaggerOperation("EquipmentIdHistoryGet")]
         [SwaggerResponse(200, type: typeof(List<HistoryViewModel>))]
+        [RequiresPermission(Permission.Login)]
         public virtual IActionResult EquipmentIdHistoryGet([FromRoute]int id, [FromQuery]int? offset, [FromQuery]int? limit)
         {
             return _service.EquipmentIdHistoryGetAsync(id, offset, limit);
@@ -298,6 +250,7 @@ namespace HETSAPI.Controllers
         [HttpPost]
         [Route("/api/equipment/{id}/history")]
         [SwaggerOperation("EquipmentIdHistoryPost")]
+        [RequiresPermission(Permission.Login)]
         public virtual IActionResult EquipmentIdHistoryPost([FromRoute]int id, [FromBody]History item)
         {
             return _service.EquipmentIdHistoryPostAsync(id, item);
@@ -316,6 +269,7 @@ namespace HETSAPI.Controllers
         [Route("/api/equipment/{id}/notes")]
         [SwaggerOperation("EquipmentsIdNotesGet")]
         [SwaggerResponse(200, type: typeof(List<Note>))]
+        [RequiresPermission(Permission.Login)]
         public virtual IActionResult EquipmentIdNotesGet([FromRoute]int id)
         {
             return _service.EquipmentIdNotesGetAsync(id);
@@ -332,6 +286,7 @@ namespace HETSAPI.Controllers
         [Route("/api/equipment/{id}/note")]
         [SwaggerOperation("EquipmentIdNotePost")]
         [SwaggerResponse(200, type: typeof(Note))]
+        [RequiresPermission(Permission.Login)]
         public virtual IActionResult EquipmentIdNotePost([FromRoute]int id, [FromBody]Note item)
         {
             return _service.EquipmentIdNotesPostAsync(id, item);
@@ -348,6 +303,7 @@ namespace HETSAPI.Controllers
         [Route("/api/equipment/{id}/notes")]
         [SwaggerOperation("EquipmentIdNotesBulkPostAsync")]
         [SwaggerResponse(200, type: typeof(TimeRecord))]
+        [RequiresPermission(Permission.Login)]
         public virtual IActionResult EquipmentIdNotesBulkPostAsync([FromRoute]int id, [FromBody]Note[] items)
         {
             return _service.EquipmentIdNotesBulkPostAsync(id, items);

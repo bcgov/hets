@@ -4,7 +4,6 @@ using HETSAPI.Services;
 using System.Threading.Tasks;
 using HETSAPI.Authorization;
 using HETSAPI.Models;
-using Microsoft.AspNetCore.Authorization;
 
 namespace HETSAPI.Controllers
 {
@@ -105,6 +104,5 @@ namespace HETSAPI.Controllers
         {
             return await _service.GetSpreadsheet(path, "UserHETS.xlsx");
         }
-
     }
 }
