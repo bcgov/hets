@@ -57,7 +57,7 @@ namespace HETSAPI.Models
         /// </summary>
         /// <value>The generic name of an equipment type - e.g. Dump Truck, Excavator and so on.</value>
         [MetaData (Description = "The generic name of an equipment type - e.g. Dump Truck, Excavator and so on.")]
-        [MaxLength(50)]        
+        [MaxLength(150)]        
         public string Name { get; set; }
         
         /// <summary>
