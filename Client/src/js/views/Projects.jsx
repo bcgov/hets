@@ -35,7 +35,7 @@ var Projects = React.createClass({
     return {
       showAddDialog: false,
       search: {
-        statusCode: this.props.search.statusCode || '',
+        statusCode: this.props.search.statusCode || Constant.PROJECT_STATUS_CODE_ACTIVE,
         projectName: this.props.search.projectName,
         projectNumber: this.props.search.projectNumber || '',
       },
