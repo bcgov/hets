@@ -2,6 +2,8 @@ import React from 'react';
 
 import { connect } from 'react-redux';
 
+import { Link } from 'react-router';
+
 import { PageHeader, Well, Alert, Row, Col, ButtonToolbar, Button, ButtonGroup, Glyphicon, ControlLabel } from 'react-bootstrap';
 import { LinkContainer } from 'react-router-bootstrap';
 
@@ -230,7 +232,7 @@ var Equipment = React.createClass({
                   return <tr key={ equip.id }>
                     <td>{ equip.equipmentCode }</td>
                     <td>{ equip.equipmentType }</td>
-                    <td><a href={ equip.ownerPath }>{ equip.ownerName }</a></td>
+                    <td><Link to={`${Constant.OWNERS_PATHNAME}/${equip.ownerId}`}>{ equip.ownerName }</Link></td>
                     <td>{ equip.seniorityString }</td>
                     <td>{ equip.isHired ? 'Y' : 'N' }</td>
                     <td>{ equip.make }</td>
