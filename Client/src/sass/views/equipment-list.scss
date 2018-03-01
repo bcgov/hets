@@ -1,5 +1,32 @@
+@import '../mixins';
+
 #equipment-list {
+
+  #equipment-bar > .row {
+    @include flex;
+
+    .col-md-2 {
+      @include flex;
+      flex-direction: column;
+      justify-content: space-between;
+      align-items: flex-end;
+    }
+  }
+
   #equipment-filters-first-row {
+    @include flex;
+
+    .btn-group {
+      flex-grow: 1;
+    }
+
+    .btn-group .btn {
+      margin-left: 0;
+      width: 100%;
+      max-width: 100%;
+      text-align: left;
+    }
+
     margin-top: -10px;
 
     > label {
@@ -21,29 +48,33 @@
   }
 
   #equipment-filters-second-row {
-    margin-top: 10px;
+    @include flex;
+    padding: 0 7px;
 
-    label {
-      margin-top: 7px;
+    .input-container {
       margin-left: 7px;
+      flex-grow: 1;
+    }
+
+    #lastVerifiedDate {
+
+      label {
+        float: initial;
+      }
+
+      .input-group {
+        display: block;
+        float: initial;
+      }
     }
 
     .form-control {
       margin: 0;
     }
 
-    #equipment-attachments {
-      label {
-        float: left;
-        font-weight: normal;
-      }
-
-      input {
-        float: left;
-        min-width: 175px;
-        width: auto;
-        margin-left: 10px;
-      }
+    label {
+      margin: 7px 0;
+      font-weight: normal;
     }
   }
 
