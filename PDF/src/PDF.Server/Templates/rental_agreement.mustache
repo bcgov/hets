@@ -74,7 +74,7 @@
   #table-block {
     min-height: 400px;
   }
-
+  
   #contact-block {
     margin-top: 30px;
   }
@@ -233,6 +233,7 @@
 
   @media print {
     #page-2 {
+      margin-top: 1cm;
       page-break-before: always;
     }
   }
@@ -270,7 +271,7 @@
             <div class="m-tb-5 bold">Unit Identifier: <span class="underline uppercase">{{equipmentCode}}</span></div>
           </td>
           <td style="width: 10px"></td>
-          <td style="width: 100%">
+          <td>
             <table id="agreement-number" class="inner-table">
               <tr>
                 <td class="bold">Rental Agreement Number:</td>
@@ -281,9 +282,9 @@
         </tr>
         <tr>
           <td class="align-top">
-            <table class="inner-table">
+            <table class="inner-table" style="width: auto">
               <tr>
-                <td class="label m-tb-5" style="width: 250px">Name of Registered Owner or Firm:</td>
+                <td class="label m-tb-5">Name of Registered Owner or Firm:</td>
                 <td class="value m-tb-5">{{equipment.owner.organizationName}}</td>
               </tr>
             </table>
@@ -301,22 +302,30 @@
           <td></td>
           <td class="contact-info">
             <div id="phone-block">
+              {{#equipment.owner.primaryContact.workPhoneNumber}}
               <div>
                 <span class="label">Work#:</span>
                 <span class="value">{{equipment.owner.primaryContact.workPhoneNumber}}</span>
               </div>
+              {{/equipment.owner.primaryContact.workPhoneNumber}}
+              {{#equipment.owner.primaryContact.mobilePhoneNumber}}
               <div>
                 <span class="label">Cell#:</span>
                 <span class="value">{{equipment.owner.primaryContact.mobilePhoneNumber}}</span>
               </div>
+              {{/equipment.owner.primaryContact.mobilePhoneNumber}}
+              {{#equipment.owner.primaryContact.faxPhoneNumber}}
               <div>
                 <span class="label">Fax#:</span>
                 <span class="value">{{equipment.owner.primaryContact.faxPhoneNumber}}</span>
               </div>
+              {{/equipment.owner.primaryContact.faxPhoneNumber}}
+              {{#equipment.owner.primaryContact.emailAddress}}
               <div>
                 <span class="label">Email:</span>
                 <span class="value">{{equipment.owner.primaryContact.emailAddress}}</span>
               </div>
+              {{/equipment.owner.primaryContact.emailAddress}}
             </div>
           </td>
         </tr>
