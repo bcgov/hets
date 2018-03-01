@@ -37,7 +37,8 @@ namespace PDF.Server.Controllers
         {
             try
             {
-                _logger.LogInformation("GetRentalAgreementPdf [FileName: {0}]", name);
+                string fileName = "RentalAgreement_" + name + ".pdf";
+                _logger.LogInformation("GetRentalAgreementPdf [FileName: {0}]", fileName);
 
                 // *************************************************************
                 // Create output using json and mustache template
@@ -49,31 +50,29 @@ namespace PDF.Server.Controllers
                     Template = _configuration.GetSection("Constants").GetSection("RentalTemplate").Value
                 };
 
-                _logger.LogInformation("GetRentalAgreementPdf [FileName: {0}] - Render Html", name);
+                _logger.LogInformation("GetRentalAgreementPdf [FileName: {0}] - Render Html", fileName);
                 string result = await TemplateHelper.RenderDocument(_nodeServices, request);
 
-                _logger.LogInformation("GetRentalAgreementPdf [FileName: {0}] - Html Length: {1}", name, result.Length);
+                _logger.LogInformation("GetRentalAgreementPdf [FileName: {0}] - Html Length: {1}", fileName, result.Length);
 
                 // *************************************************************
                 // Convert results to Pdf
-                // ************************************************************* 
-                string fileName = "RentalAgreement_" + name + ".pdf";
-
+                // *************************************************************                 
                 PdfRequest pdfRequest = new PdfRequest()
                 {
                     Html = result,
                     PdfFileName = fileName
                 };
 
-                _logger.LogInformation("GetRentalAgreementPdf [FileName: {0}] - Gen Pdf", name);
+                _logger.LogInformation("GetRentalAgreementPdf [FileName: {0}] - Gen Pdf", fileName);
                 byte[] pdfResponseBytes = PdfDocument.BuildPdf(_configuration, pdfRequest);
 
                 // convert to string and log
                 string pdfResponse = System.Text.Encoding.Default.GetString(pdfResponseBytes);
-                _logger.LogInformation("GetRentalAgreementPdf [FileName: {0}] - Pdf Length: {1}", name, pdfResponse.Length);
+                _logger.LogInformation("GetRentalAgreementPdf [FileName: {0}] - Pdf Length: {1}", fileName, pdfResponse.Length);
 
-                _logger.LogInformation("GetRentalAgreementPdf [FileName: {0}] - Done", name);
-                return File(pdfResponseBytes, "application/pdf", name);
+                _logger.LogInformation("GetRentalAgreementPdf [FileName: {0}] - Done", fileName);
+                return File(pdfResponseBytes, "application/pdf", fileName);
             }
             catch (Exception e)
             {
@@ -94,7 +93,8 @@ namespace PDF.Server.Controllers
         {
             try
             {
-                _logger.LogInformation("GetOwnerVerificationPdf [FileName: {0}]", name);
+                string fileName = name + ".pdf";
+                _logger.LogInformation("GetOwnerVerificationPdf [FileName: {0}]", fileName);
 
                 // *************************************************************
                 // Create output using json and mustache template
@@ -106,31 +106,29 @@ namespace PDF.Server.Controllers
                     Template = _configuration.GetSection("Constants").GetSection("OwnerVerificationTemplate").Value
                 };
 
-                _logger.LogInformation("GetOwnerVerificationPdf [FileName: {0}] - Render Html", name);
+                _logger.LogInformation("GetOwnerVerificationPdf [FileName: {0}] - Render Html", fileName);
                 string result = await TemplateHelper.RenderDocument(_nodeServices, request);
 
-                _logger.LogInformation("GetOwnerVerificationPdf [FileName: {0}] - Html Length: {1}", name, result.Length);
+                _logger.LogInformation("GetOwnerVerificationPdf [FileName: {0}] - Html Length: {1}", fileName, result.Length);
 
                 // *************************************************************
                 // Convert results to Pdf
-                // ************************************************************* 
-                string fileName = name + ".pdf";
-
+                // *************************************************************                 
                 PdfRequest pdfRequest = new PdfRequest()
                 {
                     Html = result,
                     PdfFileName = fileName
                 };
 
-                _logger.LogInformation("GetOwnerVerificationPdf [FileName: {0}] - Gen Pdf", name);
+                _logger.LogInformation("GetOwnerVerificationPdf [FileName: {0}] - Gen Pdf", fileName);
                 byte[] pdfResponseBytes = PdfDocument.BuildPdf(_configuration, pdfRequest);
 
                 // convert to string and log
                 string pdfResponse = System.Text.Encoding.Default.GetString(pdfResponseBytes);
-                _logger.LogInformation("GetOwnerVerificationPdf [FileName: {0}] - Pdf Length: {1}", name, pdfResponse.Length);
+                _logger.LogInformation("GetOwnerVerificationPdf [FileName: {0}] - Pdf Length: {1}", fileName, pdfResponse.Length);
 
-                _logger.LogInformation("GetOwnerVerificationPdf [FileName: {0}] - Done", name);
-                return File(pdfResponseBytes, "application/pdf", name);
+                _logger.LogInformation("GetOwnerVerificationPdf [FileName: {0}] - Done", fileName);
+                return File(pdfResponseBytes, "application/pdf", fileName);
             }
             catch (Exception e)
             {
