@@ -265,7 +265,6 @@ var Owners = React.createClass({
   },
 });
 
-
 function mapStateToProps(state) {
   return {
     currentUser: state.user,

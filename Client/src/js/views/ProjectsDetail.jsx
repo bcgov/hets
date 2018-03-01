@@ -2,10 +2,11 @@ import React from 'react';
 
 import { connect } from 'react-redux';
 
+import { browserHistory } from 'react-router';
+
 import { Well, Row, Col } from 'react-bootstrap';
 import { Alert, Button, ButtonGroup, Glyphicon, Label } from 'react-bootstrap';
 import { Link } from 'react-router';
-import { LinkContainer } from 'react-router-bootstrap';
 
 import _ from 'lodash';
 import Promise from 'bluebird';
@@ -295,9 +296,7 @@ var ProjectsDetail = React.createClass({
                 <Col md={3}>
                   <div className="pull-right">
                     <Button onClick={ this.print }><Glyphicon glyph="print" title="Print" /></Button>
-                    <LinkContainer to={{ pathname: Constant.PROJECTS_PATHNAME }}>
-                      <Button title="Return to List"><Glyphicon glyph="arrow-left" /> Return to List</Button>
-                    </LinkContainer>
+                    <Button title="Return to List" onClick={ browserHistory.goBack }><Glyphicon glyph="arrow-left" /> Return to List</Button>
                   </div>
                 </Col>
               </Row>

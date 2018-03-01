@@ -2,9 +2,10 @@ import React from 'react';
 
 import { connect } from 'react-redux';
 
+import { browserHistory } from 'react-router';
+
 import { Well, Row, Col } from 'react-bootstrap';
 import { Alert, Button, ButtonGroup, Glyphicon, Label, DropdownButton, MenuItem } from 'react-bootstrap';
-import { LinkContainer } from 'react-router-bootstrap';
 
 import _ from 'lodash';
 import Promise from 'bluebird';
@@ -291,9 +292,7 @@ var EquipmentDetail = React.createClass({
                   <Col md={4}>
                     <div className="pull-right">
                       <Button className="mr-5" onClick={ this.print }><Glyphicon glyph="print" title="Print" /></Button>
-                      <LinkContainer to={{ pathname: this.state.returnUrl }}>
-                        <Button title="Return to List"><Glyphicon glyph="arrow-left" /> Return to List</Button>
-                      </LinkContainer>
+                      <Button title="Return to List" onClick={ browserHistory.goBack }><Glyphicon glyph="arrow-left" /> Return to List</Button>
                     </div>
                   </Col>
                 </Row>
