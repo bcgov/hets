@@ -100,7 +100,7 @@ namespace HETSAPI.Controllers
         public virtual IActionResult EquipmentPost([FromBody]Equipment item)
         {
             return _service.EquipmentPostAsync(item);
-        }        
+        }
 
         /// <summary>
         /// Searches Equipment
@@ -113,15 +113,16 @@ namespace HETSAPI.Controllers
         /// <param name="status">Status</param>
         /// <param name="hired">Hired</param>
         /// <param name="notverifiedsincedate">Not Verified Since Date</param>
+        /// <param name="equipmentId">Equipment Code</param>
         /// <response code="200">OK</response>
         [HttpGet]
         [Route("/api/equipment/search")]
         [SwaggerOperation("EquipmentSearchGet")]
         [SwaggerResponse(200, type: typeof(List<EquipmentViewModel>))]
         [RequiresPermission(Permission.Login)]
-        public virtual IActionResult EquipmentSearchGet([FromQuery]string localareas, [FromQuery]string types, [FromQuery]string equipmentAttachment, [FromQuery]int? owner, [FromQuery]string status, [FromQuery]bool? hired, [FromQuery]DateTime? notverifiedsincedate)
+        public virtual IActionResult EquipmentSearchGet([FromQuery]string localareas, [FromQuery]string types, [FromQuery]string equipmentAttachment, [FromQuery]int? owner, [FromQuery]string status, [FromQuery]bool? hired, [FromQuery]DateTime? notverifiedsincedate, [FromQuery]string equipmentId = null)
         {
-            return _service.EquipmentSearchGetAsync(localareas, types, equipmentAttachment, owner, status, hired, notverifiedsincedate);
+            return _service.EquipmentSearchGetAsync(localareas, types, equipmentAttachment, owner, status, hired, notverifiedsincedate, equipmentId);
         }        
 
         #region Clone Project Agreements
