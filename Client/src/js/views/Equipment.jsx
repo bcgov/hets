@@ -51,7 +51,7 @@ var Equipment = React.createClass({
         ownerName: this.props.search.ownerName || 'Owner',
         lastVerifiedDate: this.props.search.lastVerifiedDate || '',
         hired: this.props.search.hired || false,
-        statusCode: this.props.search.statusCode || '',
+        statusCode: this.props.search.statusCode || Constant.EQUIPMENT_STATUS_CODE_APPROVED,
       },
       ui : {
         sortField: this.props.ui.sortField || 'seniorityText',

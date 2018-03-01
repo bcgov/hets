@@ -48,7 +48,7 @@ var Owners = React.createClass({
         ownerId: this.props.search.ownerId || 0,
         ownerName: this.props.search.ownerName || 'Owner',
         hired: this.props.search.hired || false,
-        statusCode: this.props.search.statusCode || '',
+        statusCode: this.props.search.statusCode || Constant.OWNER_STATUS_CODE_APPROVED,
       },
 
       ui : {
