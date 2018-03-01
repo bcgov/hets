@@ -168,6 +168,10 @@ export function ownerContactDeleted(owner, contact) {
   return log(owner.historyEntity, OWNER_CONTACT_DELETED, contact.historyEntity);
 }
 
+export function ownerEquipmentAdded(owner, equipment) {
+  return log(owner.historyEntity, OWNER_EQUIPMENT_ADDED, equipment.historyEntity);
+}
+
 export function projectAdded(project) {
   return log(project.historyEntity, PROJECT_ADDED);
 }

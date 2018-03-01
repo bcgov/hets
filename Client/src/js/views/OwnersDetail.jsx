@@ -263,8 +263,10 @@ var OwnersDetail = React.createClass({
   },
 
   saveNewEquipment(equipment) {
+    // var log = isNew ? Log.ownerContactAdded : Log.ownerContactUpdated;
     Api.addEquipment(equipment).then(() => {
       // Open it up
+      Log.ownerEquipmentAdded(this.props.owner, equipment);
       this.props.router.push({
         pathname: `${Constant.EQUIPMENT_PATHNAME}/${this.props.equipment.id}`,
         state: { returnUrl: `${Constant.OWNERS_PATHNAME}/${this.props.owner.id}` },
