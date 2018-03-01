@@ -31,7 +31,6 @@ namespace HETSAPI.ViewModels
         /// <param name="project">A foreign key reference to the system-generated unique identifier for a Project.</param>
         /// <param name="rentalAgreementRates">RentalAgreementRates.</param>
         /// <param name="rentalAgreementConditions">RentalAgreementConditions.</param>
-        /// <param name="timeRecords">TimeRecords.</param>
         /// <param name="note">An optional note to be placed onto the Rental Agreement..</param>
         /// <param name="estimateStartWork">The estimated start date of the work to be placed on the rental agreement..</param>
         /// <param name="datedOn">The dated on date to put on the Rental Agreement..</param>
@@ -41,7 +40,7 @@ namespace HETSAPI.ViewModels
         /// <param name="rateComment">A comment about the rate for the piece of equipment..</param>
         public RentalAgreementPdfViewModel(int id, string number = null, string status = null, Equipment equipment = null, 
             Project project = null, List<RentalAgreementRate> rentalAgreementRates = null, 
-            List<RentalAgreementCondition> rentalAgreementConditions = null, List<TimeRecord> timeRecords = null, 
+            List<RentalAgreementCondition> rentalAgreementConditions = null,  
             string note = null, string estimateStartWork = null, string datedOn = null, int? estimateHours = null, 
             float? equipmentRate = null, string ratePeriod = null, string rateComment = null)
         {   
@@ -52,7 +51,6 @@ namespace HETSAPI.ViewModels
             Project = project;
             RentalAgreementRates = rentalAgreementRates;
             RentalAgreementConditions = rentalAgreementConditions;
-            TimeRecords = timeRecords;
             Note = note;
             EstimateStartWork = estimateStartWork;
             DatedOn = datedOn;
@@ -100,6 +98,9 @@ namespace HETSAPI.ViewModels
 
             AgreementTotal = temp;
 
+            // format the base rate
+            BaseRateString = string.Format("$ {0:0.00} / {1}", EquipmentRate, RatePeriod);
+
             // format the total
             AgreementTotalString = string.Format("$ {0:0.00}", AgreementTotal);
 
@@ -124,14 +125,14 @@ namespace HETSAPI.ViewModels
             // format the rate
             if (rentalRate.Rate != null)
             {
-                temp = string.Format("$ {0:0.00}", rentalRate.Rate);
+                temp = string.Format("$ {0:0.00} / {1}", rentalRate.Rate, rentalRate.RatePeriod);
             }
 
             // format the percent
             if (rentalRate.PercentOfEquipmentRate != null &&
                 rentalRate.PercentOfEquipmentRate > 0)
             {
-                temp = temp + string.Format(" ({0:0}%)", rentalRate.PercentOfEquipmentRate);
+                temp = string.Format("({0:0}%) ", rentalRate.PercentOfEquipmentRate) + temp;
             }            
 
             return temp;
@@ -200,6 +201,12 @@ namespace HETSAPI.ViewModels
         public string AgreementTotalString { get; set; }
 
         /// <summary>
+        /// Used for the Pdf only (formatted version of the base rate ($))
+        /// </summary>
+        [DataMember(Name = "baseRateString")]
+        public string BaseRateString { get; set; }
+
+        /// <summary>
         /// Gets or Sets RentalAgreementRates -> that aren't included in the total
         /// </summary>
         [DataMember(Name = "rentalAgreementRatesWithoutTotal")]
@@ -210,12 +217,6 @@ namespace HETSAPI.ViewModels
         /// </summary>
         [DataMember(Name="rentalAgreementConditions")]
         public List<RentalAgreementCondition> RentalAgreementConditions { get; set; }
-
-        /// <summary>
-        /// Gets or Sets TimeRecords
-        /// </summary>
-        [DataMember(Name="timeRecords")]
-        public List<TimeRecord> TimeRecords { get; set; }
 
         /// <summary>
         /// An optional note to be placed onto the Rental Agreement.
@@ -292,7 +293,6 @@ namespace HETSAPI.ViewModels
             sb.Append("  AgreementTotal: ").Append(AgreementTotal).Append("\n");
             sb.Append("  RentalAgreementRatesWithoutTotal: ").Append(RentalAgreementRatesWithoutTotal).Append("\n");
             sb.Append("  RentalAgreementConditions: ").Append(RentalAgreementConditions).Append("\n");
-            sb.Append("  TimeRecords: ").Append(TimeRecords).Append("\n");
             sb.Append("  Note: ").Append(Note).Append("\n");
             sb.Append("  EstimateStartWork: ").Append(EstimateStartWork).Append("\n");
             sb.Append("  DatedOn: ").Append(DatedOn).Append("\n");
@@ -385,11 +385,6 @@ namespace HETSAPI.ViewModels
                     RentalAgreementConditions == other.RentalAgreementConditions ||
                     RentalAgreementConditions != null &&
                     RentalAgreementConditions.SequenceEqual(other.RentalAgreementConditions)
-                ) && 
-                (
-                    TimeRecords == other.TimeRecords ||
-                    TimeRecords != null &&
-                    TimeRecords.SequenceEqual(other.TimeRecords)
                 ) &&                 
                 (
                     Note == other.Note ||
@@ -481,12 +476,7 @@ namespace HETSAPI.ViewModels
                 {
                     hash = hash * 59 + RentalAgreementConditions.GetHashCode();
                 }
-
-                if (TimeRecords != null)
-                {
-                    hash = hash * 59 + TimeRecords.GetHashCode();
-                }
-
+                
                 if (Note != null)
                 {
                     hash = hash * 59 + Note.GetHashCode();
