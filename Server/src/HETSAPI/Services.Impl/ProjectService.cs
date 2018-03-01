@@ -473,13 +473,7 @@ namespace HETSAPI.Services.Impl
                 // ******************************************************************
                 // clone agreement
                 // ******************************************************************
-                // update agreement attributes
-                project.RentalAgreements[newRentalagreementIndex].EstimateHours =
-                    project.RentalAgreements[agreementToCloneIndex].EstimateHours;
-
-                project.RentalAgreements[newRentalagreementIndex].EstimateStartWork =
-                    project.RentalAgreements[agreementToCloneIndex].EstimateStartWork;
-
+                // update agreement attributes                
                 project.RentalAgreements[newRentalagreementIndex].EquipmentRate =
                     project.RentalAgreements[agreementToCloneIndex].EquipmentRate;
 
