@@ -2,10 +2,7 @@ import React from 'react';
 
 import { connect } from 'react-redux';
 
-import { Link } from 'react-router';
-
 import { PageHeader, Well, Alert, Row, Col, ButtonToolbar, Button, ButtonGroup, Glyphicon, ControlLabel } from 'react-bootstrap';
-import { LinkContainer } from 'react-router-bootstrap';
 
 import _ from 'lodash';
 import Moment from 'moment';
@@ -23,10 +20,10 @@ import Favourites from '../components/Favourites.jsx';
 import FilterDropdown from '../components/FilterDropdown.jsx';
 import FormInputControl from '../components/FormInputControl.jsx';
 import MultiDropdown from '../components/MultiDropdown.jsx';
-import SortTable from '../components/SortTable.jsx';
 import Spinner from '../components/Spinner.jsx';
+import EquipmentTable from './EquipmentTable.jsx';
 
-import { formatDateTime, toZuluTime } from '../utils/date';
+import { toZuluTime } from '../utils/date';
 
 var Equipment = React.createClass({
   propTypes: {
@@ -52,6 +49,7 @@ var Equipment = React.createClass({
         lastVerifiedDate: this.props.search.lastVerifiedDate || '',
         hired: this.props.search.hired || false,
         statusCode: this.props.search.statusCode || Constant.EQUIPMENT_STATUS_CODE_APPROVED,
+        equipmentId: this.props.search.equipmentId || '',
       },
       ui : {
         sortField: this.props.ui.sortField || 'seniorityText',
@@ -179,9 +177,13 @@ var Equipment = React.createClass({
             <Row>
               <ButtonToolbar id="equipment-filters-second-row">
                 <DateControl id="lastVerifiedDate" date={ this.state.search.lastVerifiedDate } updateState={ this.updateSearchState } placeholder="mm/dd/yyyy" label="Not Verified Since:" title="Last Verified Date"/>
-                <div id="equipment-attachments">
+                <div className="input-container">
                   <ControlLabel>Attachment:</ControlLabel>
                   <FormInputControl id="equipmentAttachment" type="text" value={ this.state.search.equipmentAttachment } updateState={ this.updateSearchState } />
+                </div>
+                <div className="input-container">
+                  <ControlLabel>Equipment Id:</ControlLabel>
+                  <FormInputControl id="equipmentId" type="text" value={ this.state.search.equipmentId } updateState={ this.updateSearchState } />
                 </div>
               </ButtonToolbar>
             </Row>
@@ -206,51 +208,15 @@ var Equipment = React.createClass({
         if (Object.keys(this.props.equipmentList.data).length === 0 && this.props.equipmentList.success) { 
           return <Alert bsStyle="success">No equipment</Alert>; 
         }
-
-        var equipmentList = _.sortBy(this.props.equipmentList.data, this.state.ui.sortField);
-        if (this.state.ui.sortDesc) {
-          _.reverse(equipmentList);
-        }
         
-        if (this.props.equipmentList.success) {
-          return (
-            <SortTable sortField={ this.state.ui.sortField } sortDesc={ this.state.ui.sortDesc } onSort={ this.updateUIState } headers={[
-              { field: 'equipmentCode',        title: 'Equipment ID'  },
-              { field: 'typeName',             title: 'Type'          },
-              { field: 'organizationName',     title: 'Owner'         },
-              { field: 'senioritySortOrder',   title: 'Seniority'     },
-              { field: 'isWorking',            title: 'Hired'         },
-              { field: 'make',                 title: 'Make'          },
-              { field: 'model',                title: 'Model'         },
-              { field: 'size',                 title: 'Size'          },
-              { field: 'equipmentAttachments', title: 'Attachments'   },
-              { field: 'lastVerifiedDate',     title: 'Last Verified' },
-              { field: 'blank'                                        },
-            ]}>
-              {
-                _.map(equipmentList, (equip) => {
-                  return <tr key={ equip.id }>
-                    <td>{ equip.equipmentCode }</td>
-                    <td>{ equip.equipmentType }</td>
-                    <td><Link to={`${Constant.OWNERS_PATHNAME}/${equip.ownerId}`}>{ equip.ownerName }</Link></td>
-                    <td>{ equip.seniorityString }</td>
-                    <td>{ equip.isHired ? 'Y' : 'N' }</td>
-                    <td>{ equip.make }</td>
-                    <td>{ equip.model }</td>
-                    <td>{ equip.size }</td>
-                    <td>{ equip.attachmentCount }</td>
-                    <td>{ formatDateTime(equip.lastVerifiedDate, 'YYYY-MMM-DD') }</td>
-                    <td style={{ textAlign: 'right' }}>
-                      <LinkContainer to={{ pathname: 'equipment/' + equip.id }}>
-                        <Button title="View Equipment" bsSize="xsmall"><Glyphicon glyph="edit" /></Button>
-                      </LinkContainer>
-                    </td>
-                  </tr>;
-                })
-              }
-            </SortTable>
-          );
-        }
+        return (
+          <EquipmentTable
+            ui={this.state.ui}
+            updateUIState={this.updateUIState}
+            equipmentList={this.props.equipmentList.data}
+          />
+        );
+
       })()}
 
     </div>;
