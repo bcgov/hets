@@ -5,7 +5,7 @@
     <title>Owner Verification Notices</title>
     <style>
         @page {
-            margin: 1.5cm 0;
+            margin: 0;
             size: landscape;
         }
 
@@ -74,6 +74,7 @@
 
         #contact-info {
             width: 100%;
+            table-layout: fixed;
         }
 
         #contact-info td {
@@ -133,6 +134,7 @@
 
         @media print {
             .owner {
+                margin-top: 1.5cm;
                 page-break-before: always;
             }
         }
@@ -140,7 +142,6 @@
 </head>
 <body>
 
-    {{#owners}}
     <div class="owner">
         <div>
             <div id="header" class="clearfix">
@@ -165,6 +166,7 @@
                 <tr>
                     <td>
                         <div id="owner-contact-left">
+                            {{#owners}}
                             <table>
                                 <tr>
                                     <td>Owner: </td>
@@ -179,6 +181,40 @@
                                     <td>{{address2}}{{#address2}}, {{/address2}}{{city}}{{#city}}, {{/city}}{{province}}  {{postalCode}}</td>
                                 </tr>
                             </table>
+                            {{/owners}}
+                        </div>
+                    </td>
+
+                    <td>   
+                        <div id="owner-contact-middle">
+                            {{#owners}}
+                            <table>
+                                {{#primaryContact.workPhoneNumber}}
+                                <tr>
+                                    <td>Work: </td>
+                                    <td>{{primaryContact.workPhoneNumber}}</td>
+                                </tr>
+                                {{/primaryContact.workPhoneNumber}}
+                                {{#primaryContact.mobilePhoneNumber}}
+                                <tr>
+                                    <td>Mobile: </td>
+                                    <td>{{primaryContact.mobilePhoneNumber}}</td>
+                                </tr>
+                                {{/primaryContact.mobilePhoneNumber}}
+                                {{#primaryContact.faxPhoneNumber}}
+                                <tr>
+                                    <td>Fax: </td>
+                                    <td>{{primaryContact.faxPhoneNumber}}</td>
+                                </tr>
+                                {{/primaryContact.faxPhoneNumber}}
+                                {{#primaryContact.emailAddress}}
+                                <tr>
+                                    <td>Email: </td>
+                                    <td>{{primaryContact.emailAddress}}</td>
+                                </tr>
+                                {{/primaryContact.emailAddress}}
+                            </table>
+                            {{/owners}}
                         </div>
                     </td>
 
@@ -189,10 +225,12 @@
                                     <td>Date: </td>
                                     <td>{{reportDate}}</td>
                                 </tr>
+                                {{#owners}}
                                 <tr>
                                     <td>Owner Code: </td>
                                     <td>{{ownerCode}}</td>
                                 </tr>
+                                {{/owners}}
                             </table>
                         </div>
                     </td>
@@ -200,6 +238,7 @@
             </table>
 
             <div id="equipment-table">
+                {{#owners}}
                 <table border="1" cellpadding="1" cellspacing="1">
                     <tr>
                         <th>Still in use?</th>
@@ -222,9 +261,9 @@
                     </tr>
                     {{/equipmentList}}
                 </table>
+                {{/owners}}
             </div>
         </div>
-        {{/owners}}
 
 </body>
 </html>
