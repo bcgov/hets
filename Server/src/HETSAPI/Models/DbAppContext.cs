@@ -212,6 +212,11 @@ namespace HETSAPI.Models
         DbSet<TimeRecord> TimeRecords { get; set; }
 
         /// <summary>
+        /// User Districts
+        /// </summary>
+        DbSet<UserDistrict> UserDistricts { get; set; }
+
+        /// <summary>
         /// User
         /// </summary>
         DbSet<User> Users { get; set; }
@@ -425,6 +430,11 @@ namespace HETSAPI.Models
         /// Time Record
         /// </summary>
         public DbSet<TimeRecord> TimeRecords { get; set; }
+
+        /// <summary>
+        /// User Districts
+        /// </summary>
+        public DbSet<UserDistrict> UserDistricts { get; set; }
 
         /// <summary>
         /// User
