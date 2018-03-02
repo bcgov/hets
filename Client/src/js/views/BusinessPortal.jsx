@@ -1,6 +1,6 @@
 import React from 'react';
 import { connect } from 'react-redux';
-import { PageHeader/* , Row, Col */, Well, Form, FormGroup, FormControl, HelpBlock, Button } from 'react-bootstrap';
+import { PageHeader, Well, Form, FormGroup, FormControl, Button } from 'react-bootstrap';
 
 import Main from './Main.jsx';
 import Spinner from '../components/Spinner.jsx';
