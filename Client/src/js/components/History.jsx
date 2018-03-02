@@ -15,7 +15,7 @@ import store from '../store';
 import SortTable from './SortTable.jsx';
 import Spinner from './Spinner.jsx';
 
-import { formatDateTime } from '../utils/date';
+import { formatDateTimeUTCToLocal } from '../utils/date';
 
 
 // API limit: how many to fetch first time
@@ -67,7 +67,7 @@ var HistoryComponent = React.createClass({
     this.setState({ loading: true });
     return History.get(this.props.historyEntity, 0, first ? API_LIMIT : null).then(() => {
       var history = _.map(this.props.history, history => {
-        history.formattedTimestamp = formatDateTime(history.lastUpdateTimestamp, Constant.DATE_TIME_LOG);
+        history.formattedTimestamp = formatDateTimeUTCToLocal(history.lastUpdateTimestamp, Constant.DATE_TIME_LOG);
         history.event = History.renderEvent(history.historyText, this.props.onClose);
         return history;
       });
@@ -113,8 +113,8 @@ var HistoryComponent = React.createClass({
             _.map(history, (history) => {
               return <tr key={ history.id }>
                 <td>{ history.formattedTimestamp }</td>
-                 <td>{ history.lastUpdateUserid }</td> 
-                 <td className="history-event" colSpan="2">{ history.event }</td> 
+                <td>{ history.lastUpdateUserid }</td> 
+                <td className="history-event" colSpan="2">{ history.event }</td> 
               </tr>;
             })
           }
