@@ -11,7 +11,6 @@ namespace HETSAPI.ViewModels
     /// <summary>
     /// Equipment View Model
     /// </summary>
-    [MetaData (Description = "A piece of equipment in the HETS system. Each piece of equipment is of a specific equipment type, owned by an Owner, and is within a Local Area.")]
     [DataContract]
     public sealed class EquipmentViewModel : IEquatable<EquipmentViewModel>
     {
@@ -26,537 +25,172 @@ namespace HETSAPI.ViewModels
         /// Initializes a new instance of the <see cref="EquipmentViewModel" /> class.
         /// </summary>
         /// <param name="id">A system-generated unique identifier for a Equipment (required).</param>
-        /// <param name="localArea">LocalArea.</param>
-        /// <param name="districtEquipmentType">A foreign key reference to the system-generated unique identifier for a Equipment Type.</param>
-        /// <param name="owner">Owner.</param>
-        /// <param name="equipmentCode">A human-visible unique code for the piece of equipment, referenced for convenience by the system users - HETS Clerks and Equipment Owners. Generated at record creation time based on the unique Owner prefix (e.g. EDW) and a zero-filled unique number - resulting in a code like EDW-0083..</param>
-        /// <param name="status">The current status of the equipment in a UI-controlled string. Initial values are Pending, Approved and Archived, but other values may be added..</param>
-        /// <param name="receivedDate">The date the piece of equipment was first received and recorded in HETS..</param>
-        /// <param name="approvedDate">The date the piece of equipment was first approved in HETS. Part of the seniority calculation for a piece of equipment is based on this date..</param>
-        /// <param name="lastVerifiedDate">The date the equipment was last verified by the HETS Clerk as being still in service in the Local Area and available for the HETS Programme..</param>
-        /// <param name="isInformationUpdateNeeded">Set true if a need to update the information&amp;#x2F;status of the equipment is needed. Used during the processing of a request when an update is noted, but the Clerk does not have time to make the update..</param>
-        /// <param name="informationUpdateNeededReason">A note about why the needed information&amp;#x2F;status update that is needed about the equipment..</param>
-        /// <param name="licencePlate">The licence plate (if any) of the piece of equipment, as entered by the HETS Clerk..</param>
-        /// <param name="make">The make of the piece of equipment, as provided by the Equipment Owner..</param>
-        /// <param name="model">The model of the piece of equipment, as provided by the Equipment Owner..</param>
-        /// <param name="year">The model year of the piece of equipment, as provided by the Equipment Owner..</param>
-        /// <param name="type">TO BE REVIEWED WITH THE BUSINESS - WHAT IS THIS?.</param>
-        /// <param name="operator">TO BE REVIEWED WITH THE BUSINESS - WHAT IS THIS?.</param>
-        /// <param name="payRate">TO BE REVIEWED WITH THE BUSINESS - WHAT IS THIS?.</param>
-        /// <param name="refuseRate">TO BE REVIEWED WITH THE BUSINESS - WHAT IS THIS?.</param>
-        /// <param name="serialNumber">The serial number of the piece of equipment as provided by the Equipment Owner. Used to detect and reconcile pieces of equipment moved between Local Areas. Duplicate serial numbers are flagged in the system but permitted. The duplicates are flagged in the UI until the HETS Clerks reconcile the differences - either correcting the serial number or archiving a piece of equipment moved to a new local area..</param>
-        /// <param name="size">The size of the piece of equipment, as provided by the Equipment Owner..</param>
-        /// <param name="toDate">TO BE REVIEWED WITH THE BUSINESS - WHAT IS THIS?.</param>
-        /// <param name="blockNumber">The current block number for the piece of equipment as calculated by the Seniority Algorthm for this equipment type in the local area. As currently defined y the business  - 1, 2 or Open.</param>
-        /// <param name="seniority">The current seniority calculation result for this piece of equipment. The calculation is based on the &amp;quot;numYears&amp;quot; of service + average hours of service over the last three fiscal years - as stored in the related fields (serviceHoursLastYear, serviceHoursTwoYearsAgo serviceHoursThreeYearsAgo)..</param>
-        /// <param name="numberInBlock">The number in the block of the piece of equipment so that it can be displayed to the user where it will be useful. This saves the user from having to figure out in their head the order when the list is displayed in Rotation Order.</param>
-        /// <param name="isSeniorityOverridden">True if the Seniority for the piece of equipment was manually overridden. Set if a user has gone in and explicitly updated the seniority base information. Indicates that underlying numbers were manually overridden..</param>
-        /// <param name="seniorityOverrideReason">A text reason for why the piece of equipments underlying data was overridden to change their seniority number..</param>
-        /// <param name="seniorityEffectiveDate">The time the seniority data in the record went into effect. Used to populate the SeniorityAudit table when the seniority data is next updated..</param>
-        /// <param name="yearsOfService">The number of years of active service of this piece of equipment at the time seniority is calculated - April 1 of the current FY..</param>
-        /// <param name="serviceHoursLastYear">Number of hours of service by this piece of equipment in the previous fiscal year.</param>
-        /// <param name="serviceHoursTwoYearsAgo">Number of hours of service by this piece of equipment in the fiscal year before the last one - e.g. if current year is FY2018 then hours in FY2016.</param>
-        /// <param name="serviceHoursThreeYearsAgo">Number of hours of service by this piece of equipment in the fiscal year three years ago - e.g. if current year is FY2018 then hours in FY2015.</param>
-        /// <param name="archiveCode">TO BE REVIEWED - A reason code indicating why a piece of equipment has been archived..</param>
-        /// <param name="archiveReason">An optional comment about why this piece of equipment has been archived..</param>
-        /// <param name="archiveDate">The date on which a user most recenly marked this piece of equipment as archived..</param>
-        /// <param name="dumpTruck">A link to a dump truck set if this piece of equipment is an equipment type flagged as a dump truck..</param>
-        /// <param name="equipmentAttachments">EquipmentAttachments.</param>
-        /// <param name="notes">Notes.</param>
-        /// <param name="attachments">Attachments.</param>
-        /// <param name="history">History.</param>
-        /// <param name="rentalAgreements">RentalAgreements.</param>
-        /// <param name="seniorityAudit">SeniorityAudit.</param>
-        /// <param name="serviceHoursThisYear">number of hours worked on current fiscal year.</param>
-        /// <param name="hasDuplicates">HasDuplicates.</param>
-        /// <param name="duplicateEquipment">DuplicateEquipment.</param>
-        /// <param name="isWorking">true if the equipment is working.</param>
-        /// <param name="lastTimeRecordDateThisYear">LastTimeRecordDateThisYear.</param>
-        public EquipmentViewModel(int id, LocalArea localArea = null, DistrictEquipmentType districtEquipmentType = null, 
-            Owner owner = null, string equipmentCode = null, string status = null, DateTime? receivedDate = null, 
-            DateTime? approvedDate = null, DateTime? lastVerifiedDate = null, bool? isInformationUpdateNeeded = null, 
-            string informationUpdateNeededReason = null, string licencePlate = null, string make = null, string model = null, 
-            string year = null, string type = null, string @operator = null, float? payRate = null, string refuseRate = null, 
-            string serialNumber = null, string size = null, DateTime? toDate = null, float? blockNumber = null, 
-            float? seniority = null, int ? numberInBlock = null, bool? isSeniorityOverridden = null, string seniorityOverrideReason = null, 
-            DateTime? seniorityEffectiveDate = null, float? yearsOfService = null, float? serviceHoursLastYear = null, 
-            float? serviceHoursTwoYearsAgo = null, float? serviceHoursThreeYearsAgo = null, string archiveCode = null, 
-            string archiveReason = null, DateTime? archiveDate = null, DumpTruck dumpTruck = null, 
-            List<EquipmentAttachment> equipmentAttachments = null, List<Note> notes = null, List<Attachment> attachments = null, 
-            List<History> history = null, List<RentalAgreement> rentalAgreements = null, List<SeniorityAudit> seniorityAudit = null, int? serviceHoursThisYear = null, 
-            bool? hasDuplicates = null, List<Equipment> duplicateEquipment = null, bool? isWorking = null, 
-            DateTime? lastTimeRecordDateThisYear = null)
+        /// <param name="equipmentType">District Equipment Type</param>
+        /// <param name="ownerName">Owner Name</param>        
+        /// <param name="ownerId">Owner Id</param>        
+        /// <param name="isHired">Is Hired</param>   
+        /// <param name="seniorityString">Seniority String</param>
+        /// <param name="make">Make</param>
+        /// <param name="model">Model</param>
+        /// <param name="size">Size</param>
+        /// <param name="equipmentCode">Equipment Code</param>
+        /// <param name="attachmentCount">Attachment Count</param>       
+        /// <param name="lastVerifiedDate">Last verified Date</param>        
+        public EquipmentViewModel(int id, string equipmentType = null, string ownerName = null, 
+            int? ownerId = null, bool isHired = false, string seniorityString = null, 
+            string make = null, string model = null, string size = null, string equipmentCode = null,
+            int attachmentCount = 0, DateTime? lastVerifiedDate = null)
         {   
             Id = id;
-            LocalArea = localArea;
-            DistrictEquipmentType = districtEquipmentType;
-            Owner = owner;
-            EquipmentCode = equipmentCode;
-            Status = status;
-            ReceivedDate = receivedDate;
-            ApprovedDate = approvedDate;
-            LastVerifiedDate = lastVerifiedDate;
-            IsInformationUpdateNeeded = isInformationUpdateNeeded;
-            InformationUpdateNeededReason = informationUpdateNeededReason;
-            LicencePlate = licencePlate;
+            EquipmentType = equipmentType;
+            OwnerName = ownerName;
+            OwnerId = ownerId;
+            IsHired = isHired;
+            SeniorityString = seniorityString;
             Make = make;
             Model = model;
-            Year = year;
-            Type = type;
-            Operator = @operator;
-            PayRate = payRate;
-            RefuseRate = refuseRate;
-            SerialNumber = serialNumber;
             Size = size;
-            ToDate = toDate;
-            BlockNumber = (int)blockNumber;
-            Seniority = seniority;
-            NumberInBlock = numberInBlock;
-            IsSeniorityOverridden = isSeniorityOverridden;
-            SeniorityOverrideReason = seniorityOverrideReason;
-            SeniorityEffectiveDate = seniorityEffectiveDate;
-            YearsOfService = yearsOfService;
-            ServiceHoursLastYear = serviceHoursLastYear;
-            ServiceHoursTwoYearsAgo = serviceHoursTwoYearsAgo;
-            ServiceHoursThreeYearsAgo = serviceHoursThreeYearsAgo;
-            ArchiveCode = archiveCode;
-            ArchiveReason = archiveReason;
-            ArchiveDate = archiveDate;
-            DumpTruck = dumpTruck;
-            EquipmentAttachments = equipmentAttachments;
-            Notes = notes;
-            Attachments = attachments;
-            History = history;
-            RentalAgreements = rentalAgreements;
-            SeniorityAudit = seniorityAudit;
-            ServiceHoursThisYear = serviceHoursThisYear;
-            HasDuplicates = hasDuplicates;
-            DuplicateEquipment = duplicateEquipment;
-            IsWorking = isWorking;
-            LastTimeRecordDateThisYear = lastTimeRecordDateThisYear;
+            EquipmentCode = equipmentCode;
+            AttachmentCount = attachmentCount;
+            LastVerifiedDate = lastVerifiedDate;                       
+        }
 
-            // calculate "seniority sort order" & round the seniority value (3 decimal places)
-            CalculateSenioritySortOrder();
+        /// <summary>
+        /// Create/format Seniority String
+        /// </summary>
+        public string FormatSeniorityString(float seniority = 0F, int blockNumber = 0, int numberOfBlocks = 3)
+        {
+            // E.g. For equipment with 3 blocks
+            // 1 - 133.277
+            // 2 - 323.333
+            // Open - 21.333
+            // The last block is always open
+
+            if (blockNumber < numberOfBlocks)
+            {
+                return string.Format("{0} - {1:0.###}", blockNumber, seniority);
+            }
+
+            return string.Format("Open - {0:0.###}", seniority);
         }
 
         /// <summary>
         /// Function to create a sortable value for the seniority column
         /// Calculate "seniority sort order" & round the seniority value (3 decimal places)
         /// </summary>
-        public float CalculateSenioritySortOrder()
+        public int CalculateSenioritySortOrder(int blockNumber = 0, int numberInBlock = 0)
         {
-            float temp = 0;
-            
-            if (BlockNumber == null)
-            {
-                BlockNumber = 0;
-            }
-
-            if (NumberInBlock == null)
-            {
-                NumberInBlock = 0;
-            }
-
-            SenioritySortOrder = ((int)BlockNumber * 100) + (int)NumberInBlock;
-            return temp;
+            return (blockNumber * 100) + numberInBlock;
         }
 
         /// <summary>
         /// Function to determine if thsi piece of equipment is hired
         /// </summary>
-        public void CheckIsHired()
+        public bool CheckIsHired(List<RentalAgreement> rentalAgreements)
         {
-            IsHired = false;
+            int? count = rentalAgreements?.Count(x => x.Status == "Active");
 
-            int? count = RentalAgreements?.Count(x => x.Status == "Active");
-
-            if (count > 0)
-            {
-                IsHired = true;
-            }
+            return count > 0;
         }
+
+        /// <summary>
+        /// Calculate attachment count
+        /// </summary>
+        public int CalculateAttachmentCount(List<EquipmentAttachment> attachments)
+        {
+            return attachments?.Count ?? 0;
+        }
+
+        //*******************************************************************
+        // Equipment Search Screen - Data Attributes
+        //*******************************************************************
+
+        /// <summary>
+        /// A system-generated unique identifier for a Equipment
+        /// </summary>
+        [DataMember(Name = "id")]
+        [MetaData(Description = "A system-generated unique identifier for a Equipment")]
+        public int Id { get; set; }
+
+        /// <summary>
+        /// Equipment Type (from District Equipment Type)
+        /// </summary>
+        [DataMember(Name = "equipmentType")]
+        public string EquipmentType { get; set; }
+
+        /// <summary>
+        /// Owner Name (from Owner)
+        /// </summary>
+        [DataMember(Name = "ownerName")]
+        public string OwnerName { get; set; }
+
+        /// <summary>
+        /// Owner Id (from Owner)
+        /// </summary>
+        [DataMember(Name = "ownerId")]
+        public int? OwnerId { get; set; }
+
+        /// <summary>
+        /// Identify if this equipment is currenty on an active Rental Agreement
+        /// </summary>
+        [DataMember(Name = "isHired")]
+        public bool IsHired { get; set; }
+
+        /// <summary>
+        /// Seniority String
+        /// </summary>
+        [DataMember(Name = "seniorityString")]
+        public string SeniorityString { get; set; }
+
+        /// <summary>
+        /// Equipment Make
+        /// </summary>
+        [DataMember(Name = "make")]
+        public string Make { get; set; }
+
+        /// <summary>
+        /// Equipment model
+        /// </summary>
+        [DataMember(Name = "model")]
+        public string Model { get; set; }
+
+        /// <summary>
+        /// Equipment size
+        /// </summary>
+        [DataMember(Name = "size")]
+        public string Size { get; set; }
+
+        /// <summary>
+        /// Equipment code
+        /// </summary>
+        [DataMember(Name = "equipmentCode")]
+        public string EquipmentCode { get; set; }
+
+        /// <summary>
+        /// Attachment Count (Equipment Attachments)
+        /// </summary>
+        [DataMember(Name = "attachmentCount")]
+        public int AttachmentCount { get; set; }
+
+        /// <summary>
+        /// Equipment last verified date
+        /// </summary>
+        [DataMember(Name = "lastVerifiedDate")]
+        public DateTime? LastVerifiedDate { get; set; }
+
+        //*******************************************************************
+        // Equipment Search Screen - Additional Attributes
+        //*******************************************************************
 
         /// <summary>
         /// Used to sort the Equipment by Seniority in the UI
         /// </summary>
         [DataMember(Name = "senioritySortOrder")]
-        public float SenioritySortOrder { get; set; }
+        public int SenioritySortOrder { get; set; }
 
-        /// <summary>
-        /// Returns the Number of Blocks for this Piece of Equipment
-        /// </summary>
-        [DataMember(Name = "numberOfBlocks")]
-        public int NumberOfBlocks { get; set; }
-
-        /// <summary>
-        /// A system generated value to identify if this equipment is currenty on an active Rental Agreement
-        /// </summary>
-        /// <value>A system generated value to identify if this equipment is currenty on an active Rental Agreement</value>
-        [DataMember(Name = "isHired")]
-        public bool IsHired { get; set; }
-
-        /// <summary>
-        /// Hours YTD (calculated)
-        /// </summary>
-        [DataMember(Name = "hoursYtd")]
-        public float? HoursYtd { get; set; }
-
-        #region Equipment Model Properties
-
-        /// <summary>
-        /// A system-generated unique identifier for a Equipment
-        /// </summary>
-        /// <value>A system-generated unique identifier for a Equipment</value>
-        [DataMember(Name="id")]
-        [MetaData (Description = "A system-generated unique identifier for a Equipment")]
-        public int Id { get; set; }
-
-        /// <summary>
-        /// Gets or Sets LocalArea
-        /// </summary>
-        [DataMember(Name="localArea")]
-        public LocalArea LocalArea { get; set; }
-
-        /// <summary>
-        /// A foreign key reference to the system-generated unique identifier for a Equipment Type
-        /// </summary>
-        /// <value>A foreign key reference to the system-generated unique identifier for a Equipment Type</value>
-        [DataMember(Name="districtEquipmentType")]
-        [MetaData (Description = "A foreign key reference to the system-generated unique identifier for a Equipment Type")]
-        public DistrictEquipmentType DistrictEquipmentType { get; set; }
-
-        /// <summary>
-        /// Gets or Sets Owner
-        /// </summary>
-        [DataMember(Name="owner")]
-        public Owner Owner { get; set; }
-
-        /// <summary>
-        /// A human-visible unique code for the piece of equipment, referenced for convenience by the system users - HETS Clerks and Equipment Owners. Generated at record creation time based on the unique Owner prefix (e.g. EDW) and a zero-filled unique number - resulting in a code like EDW-0083.
-        /// </summary>
-        /// <value>A human-visible unique code for the piece of equipment, referenced for convenience by the system users - HETS Clerks and Equipment Owners. Generated at record creation time based on the unique Owner prefix (e.g. EDW) and a zero-filled unique number - resulting in a code like EDW-0083.</value>
-        [DataMember(Name="equipmentCode")]
-        [MetaData (Description = "A human-visible unique code for the piece of equipment, referenced for convenience by the system users - HETS Clerks and Equipment Owners. Generated at record creation time based on the unique Owner prefix (e.g. EDW) and a zero-filled unique number - resulting in a code like EDW-0083.")]
-        public string EquipmentCode { get; set; }
-
-        /// <summary>
-        /// The current status of the equipment in a UI-controlled string. Initial values are Pending, Approved and Archived, but other values may be added.
-        /// </summary>
-        /// <value>The current status of the equipment in a UI-controlled string. Initial values are Pending, Approved and Archived, but other values may be added.</value>
-        [DataMember(Name="status")]
-        [MetaData (Description = "The current status of the equipment in a UI-controlled string. Initial values are Pending, Approved and Archived, but other values may be added.")]
-        public string Status { get; set; }
-
-        /// <summary>
-        /// The date the piece of equipment was first received and recorded in HETS.
-        /// </summary>
-        /// <value>The date the piece of equipment was first received and recorded in HETS.</value>
-        [DataMember(Name="receivedDate")]
-        [MetaData (Description = "The date the piece of equipment was first received and recorded in HETS.")]
-        public DateTime? ReceivedDate { get; set; }
-
-        /// <summary>
-        /// The date the piece of equipment was first approved in HETS. Part of the seniority calculation for a piece of equipment is based on this date.
-        /// </summary>
-        /// <value>The date the piece of equipment was first approved in HETS. Part of the seniority calculation for a piece of equipment is based on this date.</value>
-        [DataMember(Name="approvedDate")]
-        [MetaData (Description = "The date the piece of equipment was first approved in HETS. Part of the seniority calculation for a piece of equipment is based on this date.")]
-        public DateTime? ApprovedDate { get; set; }
-
-        /// <summary>
-        /// The date the equipment was last verified by the HETS Clerk as being still in service in the Local Area and available for the HETS Programme.
-        /// </summary>
-        /// <value>The date the equipment was last verified by the HETS Clerk as being still in service in the Local Area and available for the HETS Programme.</value>
-        [DataMember(Name="lastVerifiedDate")]
-        [MetaData (Description = "The date the equipment was last verified by the HETS Clerk as being still in service in the Local Area and available for the HETS Programme.")]
-        public DateTime? LastVerifiedDate { get; set; }
-
-        /// <summary>
-        /// Set true if a need to update the information&#x2F;status of the equipment is needed. Used during the processing of a request when an update is noted, but the Clerk does not have time to make the update.
-        /// </summary>
-        /// <value>Set true if a need to update the information&#x2F;status of the equipment is needed. Used during the processing of a request when an update is noted, but the Clerk does not have time to make the update.</value>
-        [DataMember(Name="isInformationUpdateNeeded")]
-        [MetaData (Description = "Set true if a need to update the information&amp;#x2F;status of the equipment is needed. Used during the processing of a request when an update is noted, but the Clerk does not have time to make the update.")]
-        public bool? IsInformationUpdateNeeded { get; set; }
-
-        /// <summary>
-        /// A note about why the needed information&#x2F;status update that is needed about the equipment.
-        /// </summary>
-        /// <value>A note about why the needed information&#x2F;status update that is needed about the equipment.</value>
-        [DataMember(Name="informationUpdateNeededReason")]
-        [MetaData (Description = "A note about why the needed information&amp;#x2F;status update that is needed about the equipment.")]
-        public string InformationUpdateNeededReason { get; set; }
-
-        /// <summary>
-        /// The licence plate (if any) of the piece of equipment, as entered by the HETS Clerk.
-        /// </summary>
-        /// <value>The licence plate (if any) of the piece of equipment, as entered by the HETS Clerk.</value>
-        [DataMember(Name="licencePlate")]
-        [MetaData (Description = "The licence plate (if any) of the piece of equipment, as entered by the HETS Clerk.")]
-        public string LicencePlate { get; set; }
-
-        /// <summary>
-        /// The make of the piece of equipment, as provided by the Equipment Owner.
-        /// </summary>
-        /// <value>The make of the piece of equipment, as provided by the Equipment Owner.</value>
-        [DataMember(Name="make")]
-        [MetaData (Description = "The make of the piece of equipment, as provided by the Equipment Owner.")]
-        public string Make { get; set; }
-
-        /// <summary>
-        /// The model of the piece of equipment, as provided by the Equipment Owner.
-        /// </summary>
-        /// <value>The model of the piece of equipment, as provided by the Equipment Owner.</value>
-        [DataMember(Name="model")]
-        [MetaData (Description = "The model of the piece of equipment, as provided by the Equipment Owner.")]
-        public string Model { get; set; }
-
-        /// <summary>
-        /// The model year of the piece of equipment, as provided by the Equipment Owner.
-        /// </summary>
-        /// <value>The model year of the piece of equipment, as provided by the Equipment Owner.</value>
-        [DataMember(Name="year")]
-        [MetaData (Description = "The model year of the piece of equipment, as provided by the Equipment Owner.")]
-        public string Year { get; set; }
-
-        /// <summary>
-        /// TO BE REVIEWED WITH THE BUSINESS - WHAT IS THIS?
-        /// </summary>
-        /// <value>TO BE REVIEWED WITH THE BUSINESS - WHAT IS THIS?</value>
-        [DataMember(Name="type")]
-        [MetaData (Description = "TO BE REVIEWED WITH THE BUSINESS - WHAT IS THIS?")]
-        public string Type { get; set; }
-
-        /// <summary>
-        /// TO BE REVIEWED WITH THE BUSINESS - WHAT IS THIS?
-        /// </summary>
-        /// <value>TO BE REVIEWED WITH THE BUSINESS - WHAT IS THIS?</value>
-        [DataMember(Name="operator")]
-        [MetaData (Description = "TO BE REVIEWED WITH THE BUSINESS - WHAT IS THIS?")]
-        public string Operator { get; set; }
-
-        /// <summary>
-        /// TO BE REVIEWED WITH THE BUSINESS - WHAT IS THIS?
-        /// </summary>
-        /// <value>TO BE REVIEWED WITH THE BUSINESS - WHAT IS THIS?</value>
-        [DataMember(Name="payRate")]
-        [MetaData (Description = "TO BE REVIEWED WITH THE BUSINESS - WHAT IS THIS?")]
-        public float? PayRate { get; set; }
-
-        /// <summary>
-        /// TO BE REVIEWED WITH THE BUSINESS - WHAT IS THIS?
-        /// </summary>
-        /// <value>TO BE REVIEWED WITH THE BUSINESS - WHAT IS THIS?</value>
-        [DataMember(Name="refuseRate")]
-        [MetaData (Description = "TO BE REVIEWED WITH THE BUSINESS - WHAT IS THIS?")]
-        public string RefuseRate { get; set; }
-
-        /// <summary>
-        /// The serial number of the piece of equipment as provided by the Equipment Owner. Used to detect and reconcile pieces of equipment moved between Local Areas. Duplicate serial numbers are flagged in the system but permitted. The duplicates are flagged in the UI until the HETS Clerks reconcile the differences - either correcting the serial number or archiving a piece of equipment moved to a new local area.
-        /// </summary>
-        /// <value>The serial number of the piece of equipment as provided by the Equipment Owner. Used to detect and reconcile pieces of equipment moved between Local Areas. Duplicate serial numbers are flagged in the system but permitted. The duplicates are flagged in the UI until the HETS Clerks reconcile the differences - either correcting the serial number or archiving a piece of equipment moved to a new local area.</value>
-        [DataMember(Name="serialNumber")]
-        [MetaData (Description = "The serial number of the piece of equipment as provided by the Equipment Owner. Used to detect and reconcile pieces of equipment moved between Local Areas. Duplicate serial numbers are flagged in the system but permitted. The duplicates are flagged in the UI until the HETS Clerks reconcile the differences - either correcting the serial number or archiving a piece of equipment moved to a new local area.")]
-        public string SerialNumber { get; set; }
-
-        /// <summary>
-        /// The size of the piece of equipment, as provided by the Equipment Owner.
-        /// </summary>
-        /// <value>The size of the piece of equipment, as provided by the Equipment Owner.</value>
-        [DataMember(Name="size")]
-        [MetaData (Description = "The size of the piece of equipment, as provided by the Equipment Owner.")]
-        public string Size { get; set; }
-
-        /// <summary>
-        /// TO BE REVIEWED WITH THE BUSINESS - WHAT IS THIS?
-        /// </summary>
-        /// <value>TO BE REVIEWED WITH THE BUSINESS - WHAT IS THIS?</value>
-        [DataMember(Name="toDate")]
-        [MetaData (Description = "TO BE REVIEWED WITH THE BUSINESS - WHAT IS THIS?")]
-        public DateTime? ToDate { get; set; }
-
-        /// <summary>
-        /// The current block number for the piece of equipment as calculated by the Seniority Algorthm for this equipment type in the local area. As currently defined y the business  - 1, 2 or Open
-        /// </summary>
-        /// <value>The current block number for the piece of equipment as calculated by the Seniority Algorthm for this equipment type in the local area. As currently defined y the business  - 1, 2 or Open</value>
-        [DataMember(Name="blockNumber")]
-        [MetaData (Description = "The current block number for the piece of equipment as calculated by the Seniority Algorthm for this equipment type in the local area. As currently defined y the business  - 1, 2 or Open")]
-        public int? BlockNumber { get; set; }
-
-        /// <summary>
-        /// The current seniority calculation result for this piece of equipment. The calculation is based on the &quot;numYears&quot; of service + average hours of service over the last three fiscal years - as stored in the related fields (serviceHoursLastYear, serviceHoursTwoYearsAgo serviceHoursThreeYearsAgo).
-        /// </summary>
-        /// <value>The current seniority calculation result for this piece of equipment. The calculation is based on the &quot;numYears&quot; of service + average hours of service over the last three fiscal years - as stored in the related fields (serviceHoursLastYear, serviceHoursTwoYearsAgo serviceHoursThreeYearsAgo).</value>
-        [DataMember(Name="seniority")]
-        [MetaData (Description = "The current seniority calculation result for this piece of equipment. The calculation is based on the &amp;quot;numYears&amp;quot; of service + average hours of service over the last three fiscal years - as stored in the related fields (serviceHoursLastYear, serviceHoursTwoYearsAgo serviceHoursThreeYearsAgo).")]
-        public float? Seniority { get; set; }
-
-        /// <summary>
-        /// The number in the block of the piece of equipment so that it can be displayed to the user where it will be useful. This saves the user from having to figure out in their head the order when the list is displayed in Rotation Order.
-        /// </summary>
-        /// <value>The number in the block of the piece of equipment so that it can be displayed to the user where it will be useful. This saves the user from having to figure out in their head the order when the list is displayed in Rotation Order.</value>
-        [MetaData(Description = "The number in the block of the piece of equipment so that it can be displayed to the user where it will be useful. This saves the user from having to figure out in their head the order when the list is displayed in Rotation Order.")]
-        public int? NumberInBlock { get; set; }
-
-        /// <summary>
-        /// True if the Seniority for the piece of equipment was manually overridden. Set if a user has gone in and explicitly updated the seniority base information. Indicates that underlying numbers were manually overridden.
-        /// </summary>
-        /// <value>True if the Seniority for the piece of equipment was manually overridden. Set if a user has gone in and explicitly updated the seniority base information. Indicates that underlying numbers were manually overridden.</value>
-        [DataMember(Name="isSeniorityOverridden")]
-        [MetaData (Description = "True if the Seniority for the piece of equipment was manually overridden. Set if a user has gone in and explicitly updated the seniority base information. Indicates that underlying numbers were manually overridden.")]
-        public bool? IsSeniorityOverridden { get; set; }
-
-        /// <summary>
-        /// A text reason for why the piece of equipments underlying data was overridden to change their seniority number.
-        /// </summary>
-        /// <value>A text reason for why the piece of equipments underlying data was overridden to change their seniority number.</value>
-        [DataMember(Name="seniorityOverrideReason")]
-        [MetaData (Description = "A text reason for why the piece of equipments underlying data was overridden to change their seniority number.")]
-        public string SeniorityOverrideReason { get; set; }
-
-        /// <summary>
-        /// The time the seniority data in the record went into effect. Used to populate the SeniorityAudit table when the seniority data is next updated.
-        /// </summary>
-        /// <value>The time the seniority data in the record went into effect. Used to populate the SeniorityAudit table when the seniority data is next updated.</value>
-        [DataMember(Name="seniorityEffectiveDate")]
-        [MetaData (Description = "The time the seniority data in the record went into effect. Used to populate the SeniorityAudit table when the seniority data is next updated.")]
-        public DateTime? SeniorityEffectiveDate { get; set; }
-
-        /// <summary>
-        /// The number of years of active service of this piece of equipment at the time seniority is calculated - April 1 of the current FY.
-        /// </summary>
-        /// <value>The number of years of active service of this piece of equipment at the time seniority is calculated - April 1 of the current FY.</value>
-        [DataMember(Name="yearsOfService")]
-        [MetaData (Description = "The number of years of active service of this piece of equipment at the time seniority is calculated - April 1 of the current FY.")]
-        public float? YearsOfService { get; set; }
-
-        /// <summary>
-        /// Number of hours of service by this piece of equipment in the previous fiscal year
-        /// </summary>
-        /// <value>Number of hours of service by this piece of equipment in the previous fiscal year</value>
-        [DataMember(Name="serviceHoursLastYear")]
-        [MetaData (Description = "Number of hours of service by this piece of equipment in the previous fiscal year")]
-        public float? ServiceHoursLastYear { get; set; }
-
-        /// <summary>
-        /// Number of hours of service by this piece of equipment in the fiscal year before the last one - e.g. if current year is FY2018 then hours in FY2016
-        /// </summary>
-        /// <value>Number of hours of service by this piece of equipment in the fiscal year before the last one - e.g. if current year is FY2018 then hours in FY2016</value>
-        [DataMember(Name="serviceHoursTwoYearsAgo")]
-        [MetaData (Description = "Number of hours of service by this piece of equipment in the fiscal year before the last one - e.g. if current year is FY2018 then hours in FY2016")]
-        public float? ServiceHoursTwoYearsAgo { get; set; }
-
-        /// <summary>
-        /// Number of hours of service by this piece of equipment in the fiscal year three years ago - e.g. if current year is FY2018 then hours in FY2015
-        /// </summary>
-        /// <value>Number of hours of service by this piece of equipment in the fiscal year three years ago - e.g. if current year is FY2018 then hours in FY2015</value>
-        [DataMember(Name="serviceHoursThreeYearsAgo")]
-        [MetaData (Description = "Number of hours of service by this piece of equipment in the fiscal year three years ago - e.g. if current year is FY2018 then hours in FY2015")]
-        public float? ServiceHoursThreeYearsAgo { get; set; }
-
-        /// <summary>
-        /// TO BE REVIEWED - A reason code indicating why a piece of equipment has been archived.
-        /// </summary>
-        /// <value>TO BE REVIEWED - A reason code indicating why a piece of equipment has been archived.</value>
-        [DataMember(Name="archiveCode")]
-        [MetaData (Description = "TO BE REVIEWED - A reason code indicating why a piece of equipment has been archived.")]
-        public string ArchiveCode { get; set; }
-
-        /// <summary>
-        /// An optional comment about why this piece of equipment has been archived.
-        /// </summary>
-        /// <value>An optional comment about why this piece of equipment has been archived.</value>
-        [DataMember(Name="archiveReason")]
-        [MetaData (Description = "An optional comment about why this piece of equipment has been archived.")]
-        public string ArchiveReason { get; set; }
-
-        /// <summary>
-        /// The date on which a user most recenly marked this piece of equipment as archived.
-        /// </summary>
-        /// <value>The date on which a user most recenly marked this piece of equipment as archived.</value>
-        [DataMember(Name="archiveDate")]
-        [MetaData (Description = "The date on which a user most recenly marked this piece of equipment as archived.")]
-        public DateTime? ArchiveDate { get; set; }
-
-        /// <summary>
-        /// A link to a dump truck set if this piece of equipment is an equipment type flagged as a dump truck.
-        /// </summary>
-        /// <value>A link to a dump truck set if this piece of equipment is an equipment type flagged as a dump truck.</value>
-        [DataMember(Name="dumpTruck")]
-        [MetaData (Description = "A link to a dump truck set if this piece of equipment is an equipment type flagged as a dump truck.")]
-        public DumpTruck DumpTruck { get; set; }
-
-        /// <summary>
-        /// Gets or Sets EquipmentAttachments
-        /// </summary>
-        [DataMember(Name="equipmentAttachments")]
-        public List<EquipmentAttachment> EquipmentAttachments { get; set; }
-
-        /// <summary>
-        /// Gets or Sets Notes
-        /// </summary>
-        [DataMember(Name="notes")]
-        public List<Note> Notes { get; set; }
-
-        /// <summary>
-        /// Gets or Sets Attachments
-        /// </summary>
-        [DataMember(Name="attachments")]
-        public List<Attachment> Attachments { get; set; }
-
-        /// <summary>
-        /// Gets or Sets History
-        /// </summary>
-        [DataMember(Name="history")]
-        public List<History> History { get; set; }
-
-        /// <summary>
-        /// Gets or Sets Rental Agreements
-        /// </summary>
-        [DataMember(Name = "rentalAgreements")]
-        public List<RentalAgreement> RentalAgreements { get; set; }
-
-        /// <summary>
-        /// Gets or Sets SeniorityAudit
-        /// </summary>
-        [DataMember(Name="seniorityAudit")]
-        public List<SeniorityAudit> SeniorityAudit { get; set; }
-
-        /// <summary>
-        /// number of hours worked on current fiscal year
-        /// </summary>
-        /// <value>number of hours worked on current fiscal year</value>
-        [DataMember(Name="serviceHoursThisYear")]
-        [MetaData (Description = "number of hours worked on current fiscal year")]
-        public int? ServiceHoursThisYear { get; set; }
-
-        /// <summary>
-        /// Gets or Sets HasDuplicates
-        /// </summary>
-        [DataMember(Name="hasDuplicates")]
-        public bool? HasDuplicates { get; set; }
-
-        /// <summary>
-        /// Gets or Sets DuplicateEquipment
-        /// </summary>
-        [DataMember(Name="duplicateEquipment")]
-        public List<Equipment> DuplicateEquipment { get; set; }
-
-        /// <summary>
-        /// true if the equipment is working
-        /// </summary>
-        /// <value>true if the equipment is working</value>
-        [DataMember(Name="isWorking")]
-        [MetaData (Description = "true if the equipment is working")]
-        public bool? IsWorking { get; set; }
-
-        /// <summary>
-        /// Gets or Sets LastTimeRecordDateThisYear
-        /// </summary>
-        [DataMember(Name="lastTimeRecordDateThisYear")]
-        public DateTime? LastTimeRecordDateThisYear { get; set; }
-
-        #endregion        
+        //*******************************************************************
+        // Standard HETS Model Methods
+        //*******************************************************************
 
         /// <summary>
         /// Returns the string presentation of the object
@@ -564,58 +198,21 @@ namespace HETSAPI.ViewModels
         /// <returns>String presentation of the object</returns>
         public override string ToString()
         {
-            var sb = new StringBuilder();
+            var sb = new StringBuilder();            
 
             sb.Append("class EquipmentViewModel {\n");
             sb.Append("  Id: ").Append(Id).Append("\n");
-            sb.Append("  LocalArea: ").Append(LocalArea).Append("\n");
-            sb.Append("  DistrictEquipmentType: ").Append(DistrictEquipmentType).Append("\n");
-            sb.Append("  Owner: ").Append(Owner).Append("\n");
-            sb.Append("  EquipmentCode: ").Append(EquipmentCode).Append("\n");
-            sb.Append("  Status: ").Append(Status).Append("\n");
-            sb.Append("  ReceivedDate: ").Append(ReceivedDate).Append("\n");
-            sb.Append("  ApprovedDate: ").Append(ApprovedDate).Append("\n");
-            sb.Append("  LastVerifiedDate: ").Append(LastVerifiedDate).Append("\n");
-            sb.Append("  IsInformationUpdateNeeded: ").Append(IsInformationUpdateNeeded).Append("\n");
-            sb.Append("  InformationUpdateNeededReason: ").Append(InformationUpdateNeededReason).Append("\n");
-            sb.Append("  LicencePlate: ").Append(LicencePlate).Append("\n");
+            sb.Append("  EquipmentType: ").Append(EquipmentType).Append("\n");
+            sb.Append("  OwnerName: ").Append(OwnerName).Append("\n");
+            sb.Append("  OwnerId: ").Append(OwnerId).Append("\n");
+            sb.Append("  IsHired: ").Append(IsHired).Append("\n");
             sb.Append("  Make: ").Append(Make).Append("\n");
             sb.Append("  Model: ").Append(Model).Append("\n");
-            sb.Append("  Year: ").Append(Year).Append("\n");
-            sb.Append("  Type: ").Append(Type).Append("\n");
-            sb.Append("  Operator: ").Append(Operator).Append("\n");
-            sb.Append("  PayRate: ").Append(PayRate).Append("\n");
-            sb.Append("  RefuseRate: ").Append(RefuseRate).Append("\n");
-            sb.Append("  SerialNumber: ").Append(SerialNumber).Append("\n");
             sb.Append("  Size: ").Append(Size).Append("\n");
-            sb.Append("  ToDate: ").Append(ToDate).Append("\n");
-            sb.Append("  BlockNumber: ").Append(BlockNumber).Append("\n");
-            sb.Append("  Seniority: ").Append(Seniority).Append("\n");
-            sb.Append("  NumberInBlock: ").Append(NumberInBlock).Append("\n");
-            sb.Append("  IsSeniorityOverridden: ").Append(IsSeniorityOverridden).Append("\n");
-            sb.Append("  SeniorityOverrideReason: ").Append(SeniorityOverrideReason).Append("\n");
-            sb.Append("  SeniorityEffectiveDate: ").Append(SeniorityEffectiveDate).Append("\n");
-            sb.Append("  YearsOfService: ").Append(YearsOfService).Append("\n");
-            sb.Append("  ServiceHoursLastYear: ").Append(ServiceHoursLastYear).Append("\n");
-            sb.Append("  ServiceHoursTwoYearsAgo: ").Append(ServiceHoursTwoYearsAgo).Append("\n");
-            sb.Append("  ServiceHoursThreeYearsAgo: ").Append(ServiceHoursThreeYearsAgo).Append("\n");
-            sb.Append("  ArchiveCode: ").Append(ArchiveCode).Append("\n");
-            sb.Append("  ArchiveReason: ").Append(ArchiveReason).Append("\n");
-            sb.Append("  ArchiveDate: ").Append(ArchiveDate).Append("\n");
-            sb.Append("  DumpTruck: ").Append(DumpTruck).Append("\n");
-            sb.Append("  EquipmentAttachments: ").Append(EquipmentAttachments).Append("\n");
-            sb.Append("  Notes: ").Append(Notes).Append("\n");
-            sb.Append("  Attachments: ").Append(Attachments).Append("\n");
-            sb.Append("  History: ").Append(History).Append("\n");
-            sb.Append("  RentalAgreements: ").Append(RentalAgreements).Append("\n");
-            sb.Append("  SeniorityAudit: ").Append(SeniorityAudit).Append("\n");
-            sb.Append("  ServiceHoursThisYear: ").Append(ServiceHoursThisYear).Append("\n");
-            sb.Append("  HasDuplicates: ").Append(HasDuplicates).Append("\n");
-            sb.Append("  DuplicateEquipment: ").Append(DuplicateEquipment).Append("\n");
-            sb.Append("  IsWorking: ").Append(IsWorking).Append("\n");
-            sb.Append("  LastTimeRecordDateThisYear: ").Append(LastTimeRecordDateThisYear).Append("\n");
+            sb.Append("  EquipmentCode: ").Append(EquipmentCode).Append("\n");
+            sb.Append("  AttachmentCount: ").Append(AttachmentCount).Append("\n");
+            sb.Append("  LastVerifiedDate: ").Append(LastVerifiedDate).Append("\n");
             sb.Append("  SenioritySortOrder: ").Append(SenioritySortOrder).Append("\n");
-            sb.Append("  NumberOfBlocks: ").Append(NumberOfBlocks).Append("\n");            
             sb.Append("}\n");
 
             return sb.ToString();
@@ -652,240 +249,67 @@ namespace HETSAPI.ViewModels
             if (other is null) { return false; }
             if (ReferenceEquals(this, other)) { return true; }
 
-            return                 
+            return
                 (
                     Id == other.Id ||
                     Id.Equals(other.Id)
                 ) &&                 
                 (
-                    LocalArea == other.LocalArea ||
-                    LocalArea != null &&
-                    LocalArea.Equals(other.LocalArea)
+                    EquipmentType == other.EquipmentType ||
+                    EquipmentType != null &&
+                    EquipmentType.Equals(other.EquipmentType)
                 ) &&                 
                 (
-                    DistrictEquipmentType == other.DistrictEquipmentType ||
-                    DistrictEquipmentType != null &&
-                    DistrictEquipmentType.Equals(other.DistrictEquipmentType)
+                    OwnerName == other.OwnerName ||
+                    OwnerName != null &&
+                    OwnerName.Equals(other.OwnerName)
                 ) &&                 
                 (
-                    Owner == other.Owner ||
-                    Owner != null &&
-                    Owner.Equals(other.Owner)
-                ) &&                 
+                    OwnerId == other.OwnerId ||
+                    OwnerId != null &&
+                    OwnerId.Equals(other.OwnerId)
+                ) &&
+                (
+                    IsHired == other.IsHired ||
+                    IsHired.Equals(other.IsHired)
+                ) &&
+                (
+                    SeniorityString == other.SeniorityString ||
+                    SeniorityString != null &&
+                    SeniorityString.Equals(other.SeniorityString)
+                ) &&
+                (
+                    Make == other.Make ||
+                    Make != null &&
+                    Make.Equals(other.Make)
+                ) &&
+                (
+                    Model == other.Model ||
+                    Model != null &&
+                    Model.Equals(other.Model)
+                ) &&
+                (
+                    Size == other.Size ||
+                    Size != null &&
+                    Size.Equals(other.Size)
+                ) &&
                 (
                     EquipmentCode == other.EquipmentCode ||
                     EquipmentCode != null &&
                     EquipmentCode.Equals(other.EquipmentCode)
-                ) &&                 
+                ) &&
                 (
-                    Status == other.Status ||
-                    Status != null &&
-                    Status.Equals(other.Status)
-                ) &&                 
-                (
-                    ReceivedDate == other.ReceivedDate ||
-                    ReceivedDate != null &&
-                    ReceivedDate.Equals(other.ReceivedDate)
-                ) &&                 
-                (
-                    ApprovedDate == other.ApprovedDate ||
-                    ApprovedDate != null &&
-                    ApprovedDate.Equals(other.ApprovedDate)
-                ) &&                 
+                    AttachmentCount == other.AttachmentCount ||
+                    AttachmentCount.Equals(other.AttachmentCount)
+                ) &&
                 (
                     LastVerifiedDate == other.LastVerifiedDate ||
                     LastVerifiedDate != null &&
                     LastVerifiedDate.Equals(other.LastVerifiedDate)
                 ) &&                 
                 (
-                    IsInformationUpdateNeeded == other.IsInformationUpdateNeeded ||
-                    IsInformationUpdateNeeded != null &&
-                    IsInformationUpdateNeeded.Equals(other.IsInformationUpdateNeeded)
-                ) &&                 
-                (
-                    InformationUpdateNeededReason == other.InformationUpdateNeededReason ||
-                    InformationUpdateNeededReason != null &&
-                    InformationUpdateNeededReason.Equals(other.InformationUpdateNeededReason)
-                ) &&                 
-                (
-                    LicencePlate == other.LicencePlate ||
-                    LicencePlate != null &&
-                    LicencePlate.Equals(other.LicencePlate)
-                ) &&                 
-                (
-                    Make == other.Make ||
-                    Make != null &&
-                    Make.Equals(other.Make)
-                ) &&                 
-                (
-                    Model == other.Model ||
-                    Model != null &&
-                    Model.Equals(other.Model)
-                ) &&                 
-                (
-                    Year == other.Year ||
-                    Year != null &&
-                    Year.Equals(other.Year)
-                ) &&                 
-                (
-                    Type == other.Type ||
-                    Type != null &&
-                    Type.Equals(other.Type)
-                ) &&                 
-                (
-                    Operator == other.Operator ||
-                    Operator != null &&
-                    Operator.Equals(other.Operator)
-                ) &&                 
-                (
-                    PayRate == other.PayRate ||
-                    PayRate != null &&
-                    PayRate.Equals(other.PayRate)
-                ) &&                 
-                (
-                    RefuseRate == other.RefuseRate ||
-                    RefuseRate != null &&
-                    RefuseRate.Equals(other.RefuseRate)
-                ) &&                 
-                (
-                    SerialNumber == other.SerialNumber ||
-                    SerialNumber != null &&
-                    SerialNumber.Equals(other.SerialNumber)
-                ) &&                 
-                (
-                    Size == other.Size ||
-                    Size != null &&
-                    Size.Equals(other.Size)
-                ) &&                 
-                (
-                    ToDate == other.ToDate ||
-                    ToDate != null &&
-                    ToDate.Equals(other.ToDate)
-                ) &&                 
-                (
-                    BlockNumber == other.BlockNumber ||
-                    BlockNumber != null &&
-                    BlockNumber.Equals(other.BlockNumber)
-                ) &&                 
-                (
-                    Seniority == other.Seniority ||
-                    Seniority != null &&
-                    Seniority.Equals(other.Seniority)
-                ) &&
-                (
-                    NumberInBlock == other.NumberInBlock ||
-                    NumberInBlock != null &&
-                    NumberInBlock.Equals(other.NumberInBlock)
-                ) &&                 
-                (
-                    IsSeniorityOverridden == other.IsSeniorityOverridden ||
-                    IsSeniorityOverridden != null &&
-                    IsSeniorityOverridden.Equals(other.IsSeniorityOverridden)
-                ) &&                 
-                (
-                    SeniorityOverrideReason == other.SeniorityOverrideReason ||
-                    SeniorityOverrideReason != null &&
-                    SeniorityOverrideReason.Equals(other.SeniorityOverrideReason)
-                ) &&                 
-                (
-                    SeniorityEffectiveDate == other.SeniorityEffectiveDate ||
-                    SeniorityEffectiveDate != null &&
-                    SeniorityEffectiveDate.Equals(other.SeniorityEffectiveDate)
-                ) &&                 
-                (
-                    YearsOfService == other.YearsOfService ||
-                    YearsOfService != null &&
-                    YearsOfService.Equals(other.YearsOfService)
-                ) &&                 
-                (
-                    ServiceHoursLastYear == other.ServiceHoursLastYear ||
-                    ServiceHoursLastYear != null &&
-                    ServiceHoursLastYear.Equals(other.ServiceHoursLastYear)
-                ) &&                 
-                (
-                    ServiceHoursTwoYearsAgo == other.ServiceHoursTwoYearsAgo ||
-                    ServiceHoursTwoYearsAgo != null &&
-                    ServiceHoursTwoYearsAgo.Equals(other.ServiceHoursTwoYearsAgo)
-                ) &&                 
-                (
-                    ServiceHoursThreeYearsAgo == other.ServiceHoursThreeYearsAgo ||
-                    ServiceHoursThreeYearsAgo != null &&
-                    ServiceHoursThreeYearsAgo.Equals(other.ServiceHoursThreeYearsAgo)
-                ) &&                 
-                (
-                    ArchiveCode == other.ArchiveCode ||
-                    ArchiveCode != null &&
-                    ArchiveCode.Equals(other.ArchiveCode)
-                ) &&                 
-                (
-                    ArchiveReason == other.ArchiveReason ||
-                    ArchiveReason != null &&
-                    ArchiveReason.Equals(other.ArchiveReason)
-                ) &&                 
-                (
-                    ArchiveDate == other.ArchiveDate ||
-                    ArchiveDate != null &&
-                    ArchiveDate.Equals(other.ArchiveDate)
-                ) &&                 
-                (
-                    DumpTruck == other.DumpTruck ||
-                    DumpTruck != null &&
-                    DumpTruck.Equals(other.DumpTruck)
-                ) && 
-                (
-                    EquipmentAttachments == other.EquipmentAttachments ||
-                    EquipmentAttachments != null &&
-                    EquipmentAttachments.SequenceEqual(other.EquipmentAttachments)
-                ) && 
-                (
-                    Notes == other.Notes ||
-                    Notes != null &&
-                    Notes.SequenceEqual(other.Notes)
-                ) && 
-                (
-                    Attachments == other.Attachments ||
-                    Attachments != null &&
-                    Attachments.SequenceEqual(other.Attachments)
-                ) && 
-                (
-                    History == other.History ||
-                    History != null &&
-                    History.SequenceEqual(other.History)
-                ) &&
-                (
-                    RentalAgreements == other.RentalAgreements ||
-                    RentalAgreements != null &&
-                    RentalAgreements.SequenceEqual(other.RentalAgreements)
-                ) && 
-                (
-                    SeniorityAudit == other.SeniorityAudit ||
-                    SeniorityAudit != null &&
-                    SeniorityAudit.SequenceEqual(other.SeniorityAudit)
-                ) &&                 
-                (
-                    ServiceHoursThisYear == other.ServiceHoursThisYear ||
-                    ServiceHoursThisYear != null &&
-                    ServiceHoursThisYear.Equals(other.ServiceHoursThisYear)
-                ) &&                 
-                (
-                    HasDuplicates == other.HasDuplicates ||
-                    HasDuplicates != null &&
-                    HasDuplicates.Equals(other.HasDuplicates)
-                ) && 
-                (
-                    DuplicateEquipment == other.DuplicateEquipment ||
-                    DuplicateEquipment != null &&
-                    DuplicateEquipment.SequenceEqual(other.DuplicateEquipment)
-                ) &&                 
-                (
-                    IsWorking == other.IsWorking ||
-                    IsWorking != null &&
-                    IsWorking.Equals(other.IsWorking)
-                ) &&                 
-                (
-                    LastTimeRecordDateThisYear == other.LastTimeRecordDateThisYear ||
-                    LastTimeRecordDateThisYear != null &&
-                    LastTimeRecordDateThisYear.Equals(other.LastTimeRecordDateThisYear)
+                    SenioritySortOrder == other.SenioritySortOrder ||
+                    SenioritySortOrder.Equals(other.SenioritySortOrder)
                 );
         }
 
@@ -895,68 +319,30 @@ namespace HETSAPI.ViewModels
         /// <returns>Hash code</returns>
         public override int GetHashCode()
         {
-            // credit: http://stackoverflow.com/a/263416/677735
+            // credit: http://stackoverflow.com/a/263416/677735 
             unchecked // Overflow is fine, just wrap
             {
                 int hash = 41;
-
+               
                 // Suitable nullity checks                                   
                 hash = hash * 59 + Id.GetHashCode();   
                 
-                if (LocalArea != null)
+                if (EquipmentType != null)
                 {
-                    hash = hash * 59 + LocalArea.GetHashCode();
+                    hash = hash * 59 + EquipmentType.GetHashCode();
                 }
 
-                if (DistrictEquipmentType != null)
+                if (OwnerName != null)
                 {
-                    hash = hash * 59 + DistrictEquipmentType.GetHashCode();
+                    hash = hash * 59 + OwnerName.GetHashCode();
                 }
 
-                if (Owner != null)
+                if (OwnerId != null)
                 {
-                    hash = hash * 59 + Owner.GetHashCode();
+                    hash = hash * 59 + OwnerId.GetHashCode();
                 }
 
-                if (EquipmentCode != null)
-                {
-                    hash = hash * 59 + EquipmentCode.GetHashCode();
-                }
-
-                if (Status != null)
-                {
-                    hash = hash * 59 + Status.GetHashCode();
-                }
-
-                if (ReceivedDate != null)
-                {
-                    hash = hash * 59 + ReceivedDate.GetHashCode();
-                }
-
-                if (ApprovedDate != null)
-                {
-                    hash = hash * 59 + ApprovedDate.GetHashCode();
-                }
-
-                if (LastVerifiedDate != null)
-                {
-                    hash = hash * 59 + LastVerifiedDate.GetHashCode();
-                }
-
-                if (IsInformationUpdateNeeded != null)
-                {
-                    hash = hash * 59 + IsInformationUpdateNeeded.GetHashCode();
-                }
-
-                if (InformationUpdateNeededReason != null)
-                {
-                    hash = hash * 59 + InformationUpdateNeededReason.GetHashCode();
-                }
-
-                if (LicencePlate != null)
-                {
-                    hash = hash * 59 + LicencePlate.GetHashCode();
-                }
+                hash = hash * 59 + IsHired.GetHashCode();
 
                 if (Make != null)
                 {
@@ -968,170 +354,19 @@ namespace HETSAPI.ViewModels
                     hash = hash * 59 + Model.GetHashCode();
                 }
 
-                if (Year != null)
-                {
-                    hash = hash * 59 + Year.GetHashCode();
-                }
-
-                if (Type != null)
-                {
-                    hash = hash * 59 + Type.GetHashCode();
-                }
-
-                if (Operator != null)
-                {
-                    hash = hash * 59 + Operator.GetHashCode();
-                }
-
-                if (PayRate != null)
-                {
-                    hash = hash * 59 + PayRate.GetHashCode();
-                }
-
-                if (RefuseRate != null)
-                {
-                    hash = hash * 59 + RefuseRate.GetHashCode();
-                }
-
-                if (SerialNumber != null)
-                {
-                    hash = hash * 59 + SerialNumber.GetHashCode();
-                }
-
                 if (Size != null)
                 {
                     hash = hash * 59 + Size.GetHashCode();
                 }
 
-                if (ToDate != null)
+                hash = hash * 59 + AttachmentCount.GetHashCode();
+                
+                if (LastVerifiedDate != null)
                 {
-                    hash = hash * 59 + ToDate.GetHashCode();
+                    hash = hash * 59 + LastVerifiedDate.GetHashCode();
                 }
 
-                if (BlockNumber != null)
-                {
-                    hash = hash * 59 + BlockNumber.GetHashCode();
-                }
-
-                if (Seniority != null)
-                {
-                    hash = hash * 59 + Seniority.GetHashCode();
-                }
-
-                if (NumberInBlock != null)
-                {
-                    hash = hash * 59 + NumberInBlock.GetHashCode();
-                }
-
-                if (IsSeniorityOverridden != null)
-                {
-                    hash = hash * 59 + IsSeniorityOverridden.GetHashCode();
-                }
-
-                if (SeniorityOverrideReason != null)
-                {
-                    hash = hash * 59 + SeniorityOverrideReason.GetHashCode();
-                }
-
-                if (SeniorityEffectiveDate != null)
-                {
-                    hash = hash * 59 + SeniorityEffectiveDate.GetHashCode();
-                }
-
-                if (YearsOfService != null)
-                {
-                    hash = hash * 59 + YearsOfService.GetHashCode();
-                }
-
-                if (ServiceHoursLastYear != null)
-                {
-                    hash = hash * 59 + ServiceHoursLastYear.GetHashCode();
-                }
-
-                if (ServiceHoursTwoYearsAgo != null)
-                {
-                    hash = hash * 59 + ServiceHoursTwoYearsAgo.GetHashCode();
-                }
-
-                if (ServiceHoursThreeYearsAgo != null)
-                {
-                    hash = hash * 59 + ServiceHoursThreeYearsAgo.GetHashCode();
-                }
-
-                if (ArchiveCode != null)
-                {
-                    hash = hash * 59 + ArchiveCode.GetHashCode();
-                }
-
-                if (ArchiveReason != null)
-                {
-                    hash = hash * 59 + ArchiveReason.GetHashCode();
-                }
-
-                if (ArchiveDate != null)
-                {
-                    hash = hash * 59 + ArchiveDate.GetHashCode();
-                }                
-                                   
-                if (DumpTruck != null)
-                {
-                    hash = hash * 59 + DumpTruck.GetHashCode();
-                }
-
-                if (EquipmentAttachments != null)
-                {
-                    hash = hash * 59 + EquipmentAttachments.GetHashCode();
-                }
-
-                if (Notes != null)
-                {
-                    hash = hash * 59 + Notes.GetHashCode();
-                }
-
-                if (Attachments != null)
-                {
-                    hash = hash * 59 + Attachments.GetHashCode();
-                }
-
-                if (History != null)
-                {
-                    hash = hash * 59 + History.GetHashCode();
-                }
-
-                if (RentalAgreements != null)
-                {
-                    hash = hash * 59 + RentalAgreements.GetHashCode();
-                }
-
-                if (SeniorityAudit != null)
-                {
-                    hash = hash * 59 + SeniorityAudit.GetHashCode();
-                }
-
-                if (ServiceHoursThisYear != null)
-                {
-                    hash = hash * 59 + ServiceHoursThisYear.GetHashCode();
-                }
-
-                if (HasDuplicates != null)
-                {
-                    hash = hash * 59 + HasDuplicates.GetHashCode();
-                }                
-                                   
-                if (DuplicateEquipment != null)
-                {
-                    hash = hash * 59 + DuplicateEquipment.GetHashCode();
-                }
-
-                if (IsWorking != null)
-                {
-                    hash = hash * 59 + IsWorking.GetHashCode();
-                }
-
-                if (LastTimeRecordDateThisYear != null)
-                {
-                    hash = hash * 59 + LastTimeRecordDateThisYear.GetHashCode();
-                }                
+                hash = hash * 59 + SenioritySortOrder.GetHashCode();                                          
                 
                 return hash;
             }

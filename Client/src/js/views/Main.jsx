@@ -9,11 +9,12 @@ import Footer from './Footer.jsx';
 var Main = React.createClass({
   propTypes: {
     children: React.PropTypes.object,
+    showNav: React.PropTypes.bool,
   },
 
   render: function() {
     return <div id ="main">
-      <TopNav/>
+      <TopNav showNav={this.props.showNav}/>
       <div id="screen" className="template container">
         {this.props.children}
       </div>

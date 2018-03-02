@@ -47,7 +47,7 @@ namespace HETSAPI.Services
         /// <param name="item"></param>
         /// <response code="200">Equipment created</response>
         IActionResult EquipmentPostAsync(Equipment item);
-        
+
         /// <summary>
         /// Searches Equipment
         /// </summary>
@@ -59,8 +59,10 @@ namespace HETSAPI.Services
         /// <param name="status">Status</param>
         /// <param name="hired">Hired</param>
         /// <param name="notverifiedsincedate">Not Verified Since Date</param>
+        /// <param name="equipmentId"></param>
         /// <response code="200">OK</response>
-        IActionResult EquipmentSearchGetAsync(string localareas, string types, string equipmentAttachment, int? owner, string status, bool? hired, DateTime? notverifiedsincedate);
+        IActionResult EquipmentSearchGetAsync(string localareas, string types, string equipmentAttachment, int? owner,
+            string status, bool? hired, DateTime? notverifiedsincedate, string equipmentId = null);
 
         /// <summary>
         /// Get rental agreements associated with an equipment id

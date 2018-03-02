@@ -7,6 +7,7 @@ import store from './store';
 
 import Main from './views/Main.jsx';
 import Home from './views/Home.jsx';
+import BusinessPortal from './views/BusinessPortal.jsx';
 import Equipment from './views/Equipment.jsx';
 import EquipmentDetail from './views/EquipmentDetail.jsx';
 import Owners from './views/Owners.jsx';
@@ -33,9 +34,9 @@ function hasPermission() {
 const App = <Provider store={ store }>
   <Router history={ hashHistory }>
     <Redirect from="/" to="/home"/>
-    <Route path={ Constant.BUSINESS_LOGIN_PATHNAME }/>
-    <Route path="/" component={ Main } onEnter={hasPermission}>
-      <Route path={ Constant.HOME_PATHNAME } component={ Home }/> 
+    <Route path={ Constant.BUSINESS_LOGIN_PATHNAME } component={ BusinessPortal }/>
+    <Route path="/" component={ Main } onEnter={ hasPermission }>
+      <Route path={ Constant.HOME_PATHNAME } component={ Home }/>
       <Route path={ Constant.EQUIPMENT_PATHNAME } component={ Equipment }/>
       <Route path={ `${ Constant.EQUIPMENT_PATHNAME }/:equipmentId` } component={ EquipmentDetail }/>
       <Route path={ Constant.OWNERS_PATHNAME } component={ Owners }/>

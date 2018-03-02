@@ -1244,6 +1244,8 @@ namespace HETSAPI.Services.Impl
             // use the previous rotation list to determine where we were
             // ** if we find a record that was force hired - this is where we continue
             // ** otherwse - we pick the record after the last hire
+            // ** if all records in that block were ASKED - then we need to start the new list
+            //    at the same point as the old list (2018-03-01)
             // *******************************************************************************   
             RentalRequest previousRentalRequest = _context.RentalRequests.AsNoTracking()
                 .Include(x => x.RentalRequestRotationList)
@@ -1272,35 +1274,64 @@ namespace HETSAPI.Services.Impl
                 nextRecordToAskBlock[b] = 0;
                 blockSize[b] = newRentalRequest.RentalRequestRotationList.Count(x => x.Equipment.BlockNumber == (b + 1));
 
-                foreach (RentalRequestRotationList listItem in previousRentalRequest.RentalRequestRotationList)
+                int blockRecordCount = 0;
+                int blockRecordOneIndex = -1;
+
+                for (int i = 0; i < previousRentalRequest.RentalRequestRotationList.Count; i++)
                 {
                     // make sure we're working in the right block
-                    if (listItem.Equipment.BlockNumber != (b + 1))
+                    if (previousRentalRequest.RentalRequestRotationList[i].Equipment.BlockNumber != (b + 1))
                     {
                         continue; // move to next record
+                    }
+
+                    blockRecordCount++;
+
+                    if (blockRecordOneIndex == -1)
+                    {
+                        blockRecordOneIndex = i;
                     }
 
                     // if this record hired previously - then skip
                     // if this record was asked but said no - then skip
-                    if (listItem.OfferResponse != null &&
-                        (listItem.OfferResponse.Equals("Yes", StringComparison.InvariantCultureIgnoreCase) ||
-                         listItem.OfferResponse.Equals("No", StringComparison.InvariantCultureIgnoreCase)))
+                    if (previousRentalRequest.RentalRequestRotationList[i].OfferResponse != null &&
+                        (previousRentalRequest.RentalRequestRotationList[i].OfferResponse.Equals("Yes", StringComparison.InvariantCultureIgnoreCase) ||
+                         previousRentalRequest.RentalRequestRotationList[i].OfferResponse.Equals("No", StringComparison.InvariantCultureIgnoreCase)))
                     {
+                        if (blockRecordCount >= blockSize[b] && blockSize[b] > 1)
+                        {
+                            // we've reached the end of our block - and nothing has been found
+                            // (i.e. all records in that block were ASKED)
+                            // Therefore: start the new list at the same point as the old list
+                            nextRecordToAskId[b] = previousRentalRequest.RentalRequestRotationList[blockRecordOneIndex].Equipment.Id;
+                            nextRecordToAskBlock[b] = b;
+
+                            // find this record in the new list...
+                            for (int j = 0; j < newRentalRequest.RentalRequestRotationList.Count; j++)
+                            {
+                                if (previousRentalRequest.RentalRequestRotationList[blockRecordOneIndex].Equipment.Id == newRentalRequest.RentalRequestRotationList[j].Equipment.Id)
+                                {
+                                    nextRecordToAskIndex[b] = j;
+                                    break;
+                                }
+                            }
+                        }
+
                         continue; // move to next record
                     }
 
                     // if this record isn't on our NEW list - then we need to continue to the next record
-                    bool found = false;
+                    bool found = false;                    
 
                     for (int j = 0; j < newRentalRequest.RentalRequestRotationList.Count; j++)
                     {
-                        if (listItem.Equipment.Id == newRentalRequest.RentalRequestRotationList[j].Equipment.Id)
+                        if (previousRentalRequest.RentalRequestRotationList[i].Equipment.Id == newRentalRequest.RentalRequestRotationList[j].Equipment.Id)
                         {
                             nextRecordToAskIndex[b] = j;
                             found = true;
                             break;
                         }
-                    }
+                    }                    
 
                     if (!found)
                     {
@@ -1308,15 +1339,15 @@ namespace HETSAPI.Services.Impl
                     }
 
                     // we've found our next record - exit and update the lists
-                    nextRecordToAskId[b] = listItem.Equipment.Id;
+                    nextRecordToAskId[b] = previousRentalRequest.RentalRequestRotationList[i].Equipment.Id;
 
-                    if (listItem.Equipment.Seniority == null)
+                    if (previousRentalRequest.RentalRequestRotationList[i].Equipment.Seniority == null)
                     {
                         nextRecordToAskSeniority[b] = 0.0F;
                     }
                     else
                     {
-                        nextRecordToAskSeniority[b] = (float) listItem.Equipment.Seniority;
+                        nextRecordToAskSeniority[b] = (float) previousRentalRequest.RentalRequestRotationList[i].Equipment.Seniority;
                     }
 
                     nextRecordToAskBlock[b] = b;
@@ -1418,7 +1449,7 @@ namespace HETSAPI.Services.Impl
                 {
                     if (newRentalRequest.RentalRequestRotationList[i].Equipment.BlockNumber != b + 1)
                     {
-                        break; // done with the block
+                        continue; // move to the next record
                     }
 
                     masterSortOrder++;
