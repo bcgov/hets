@@ -107,6 +107,35 @@ namespace HETSAPI.Services.Impl
         }
 
         /// <summary>
+        /// Delete condition type
+        /// </summary>
+        /// <param name="id">id of ConditionType to delete</param>
+        /// <response code="200">OK</response>
+        /// <response code="404">DistrictEquipmentType not found</response>
+        public virtual IActionResult ConditionTypesIdDeletePostAsync(int id)
+        {
+            bool exists = _context.ConditionTypes.Any(a => a.Id == id);
+
+            if (exists)
+            {
+                ConditionType item = _context.ConditionTypes.First(a => a.Id == id);
+
+                if (item != null)
+                {
+                    _context.ConditionTypes.Remove(item);
+
+                    // Save the changes
+                    _context.SaveChanges();
+                }
+
+                return new ObjectResult(new HetsResponse(item));
+            }
+
+            // record not found
+            return new ObjectResult(new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-01", _configuration)));
+        }
+
+        /// <summary>
         /// Update or create a condition type record
         /// </summary>
         /// <remarks>Update or create a condition type record</remarks>

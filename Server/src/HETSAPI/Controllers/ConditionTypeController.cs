@@ -46,9 +46,24 @@ namespace HETSAPI.Controllers
         [SwaggerOperation("ConditionTypesGet")]
         [RequiresPermission(Permission.Login)]
         [SwaggerResponse(200, type: typeof(List<ConditionType>))]
+        [RequiresPermission(Permission.Login)]
         public virtual IActionResult ConditionTypesGet()
         {
             return _service.ConditionTypesGetAsync();
+        }
+
+        /// <summary>
+        /// Delete condition type
+        /// </summary>
+        /// <param name="id">id of ConditionType to delete</param>
+        /// <response code="200">OK</response>
+        [HttpPost]
+        [Route("/api/conditiontypes/{id}/delete")]
+        [SwaggerOperation("ConditionTypesIdDeletePost")]
+        [RequiresPermission(Permission.DistrictCodeTableManagement)]
+        public virtual IActionResult ConditionTypesIdDeletePost([FromRoute]int id)
+        {
+            return _service.ConditionTypesIdDeletePostAsync(id);
         }
 
         /// <summary>
