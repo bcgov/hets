@@ -174,10 +174,10 @@ var RentalRequests = React.createClass({
   },
 
   saveNewRequest(request) {
-    Api.addRentalRequest(request).then(() => {
+    Api.addRentalRequest(request).then((request) => {
       // Open it up
       this.props.router.push({
-        pathname: `${ Constant.RENTAL_REQUESTS_PATHNAME }/${ this.props.rentalRequest.id }`,
+        pathname: `${ Constant.RENTAL_REQUESTS_PATHNAME }/${ request.id }`,
       });
     });
   },
