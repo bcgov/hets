@@ -1,6 +1,7 @@
 import * as Action from './actionTypes';
 import * as Constant from './constants';
 import * as History from './history';
+import * as Log from './history';
 import store from './store';
 
 import { ApiRequest } from './utils/http';
@@ -568,6 +569,8 @@ function parseOwner(owner) {
   owner.url = `#/${ owner.path }`;
   owner.name = owner.organizationName;
   owner.historyEntity = History.makeHistoryEntity(History.OWNER, owner);
+  owner.documentsAdded = Log.ownerDocumentsAdded;
+  owner.documentDeleted = Log.ownerDocumentDeleted;
 
   // Add display fields for owner contacts
   owner.contacts = normalize(owner.contacts);
@@ -854,8 +857,10 @@ function getFileSizeString(fileSizeInBytes) {
 function parseDocument(document) {
   document.fileSizeDisplay = getFileSizeString(document.fileSize);
   document.timestampSort = sortableDateTime(document.lastUpdateTimestamp);
+  document.name = document.fileName;
 
   document.canDelete = true;
+  document.historyEntity = History.makeHistoryEntity(History.DOCUMENT, document);
 }
 
 export function deleteDocument(document) {

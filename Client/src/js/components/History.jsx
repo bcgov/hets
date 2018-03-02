@@ -48,24 +48,10 @@ var HistoryComponent = React.createClass({
     };
   },
 
-  componentDidMount() {
-    this.setState({ loading: true });
-    Api.getUsers().then(() => {
-      return this.fetch(true);
-    }).finally(() => {
-      this.setState({ loading: false });
-    });
-  },
-
   componentWillReceiveProps(nextProps) {
     if (nextProps.refresh && !this.props.refresh) {
       this.fetch(true);
     }
-  },
-
-  getUserName(smUserId) {
-    var user = _.find(this.props.users, user => { return user.smUserId === smUserId; });
-    return user ? user.name : smUserId;
   },
 
   updateUIState(state, callback) {
@@ -81,7 +67,6 @@ var HistoryComponent = React.createClass({
     this.setState({ loading: true });
     return History.get(this.props.historyEntity, 0, first ? API_LIMIT : null).then(() => {
       var history = _.map(this.props.history, history => {
-        history.userName = this.getUserName(history.lastUpdateUserid);
         history.formattedTimestamp = formatDateTime(history.lastUpdateTimestamp, Constant.DATE_TIME_LOG);
         history.event = History.renderEvent(history.historyText, this.props.onClose);
         return history;
@@ -123,13 +108,12 @@ var HistoryComponent = React.createClass({
                   </Button>,
           },
         ];
-
         return <SortTable id="history-list" sortField={ this.state.ui.sortField } sortDesc={ this.state.ui.sortDesc } onSort={ this.updateUIState } headers={ headers }>
           {
             _.map(history, (history) => {
               return <tr key={ history.id }>
                 <td>{ history.formattedTimestamp }</td>
-                <td>{ history.userName }</td>
+                 <td>{ history.lastUpdateUserid }</td> 
                 <td className="history-event" colSpan="2">{ history.event }</td>
               </tr>;
             })

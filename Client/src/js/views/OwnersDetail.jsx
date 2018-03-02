@@ -203,6 +203,7 @@ var OwnersDetail = React.createClass({
   saveEdit(owner) {
     // This just ensures that the normalized data doesn't mess up the PUT call
     Api.updateOwner({ ...owner, contacts: null }).finally(() => {
+      Log.ownerModified(this.props.owner);
       this.closeEditDialog();
     });
   },
@@ -293,6 +294,7 @@ var OwnersDetail = React.createClass({
       lastVerifiedDate: toZuluTime(today()),
       owner: { id: this.props.owner.id },
     }}).then(() => {
+      Log.ownerEquipmentVerified(this.props.owner, equipment);
       this.fetch();
     });
   },
@@ -308,6 +310,7 @@ var OwnersDetail = React.createClass({
   savePolicyEdit(owner) {
     // This just ensures that the normalized data doesn't mess up the PUT call
     Api.updateOwner({ ...owner, contacts: null }).finally(() => {
+      Log.ownerModifiedPolicy(this.props.owner);
       this.closePolicyDialog();
     });
   },
@@ -549,7 +552,7 @@ var OwnersDetail = React.createClass({
             </Well>
             <Well>
               <h3>History</h3>
-              { owner.historyEntity && <History historyEntity={ owner.historyEntity } refresh={ this.state.loading } /> }
+              { owner.historyEntity && <History historyEntity={ owner.historyEntity } refresh={ !this.state.loading } /> }
             </Well>
           </Col>
         </Row>

@@ -11,6 +11,7 @@ export const REQUEST = 'Request';
 export const USER = 'User';
 export const ROLE = 'Role';
 export const CONTACT = 'Contact';
+export const DOCUMENT = 'Document';
 
 // History Events
 export const OWNER_ADDED = 'Owner %e was added.';
@@ -18,6 +19,10 @@ export const OWNER_MODIFIED = 'Owner %e was modified.';
 export const OWNER_MODIFIED_STATUS = 'Owner %e status is %e.';
 export const OWNER_MODIFIED_NAME = 'Owner %e is now %e';
 export const OWNER_EQUIPMENT_ADDED = 'Owner %e added equipment %e.';
+export const OWNER_EQUIPMENT_VERIFIED = 'Owner %e verified equipment %e.';
+export const OWNER_MODIFIED_POLICY = 'Owner %e modified policy.';
+export const OWNER_DOCUMENTS_ADDED = 'Owner %e added documents.';
+export const OWNER_DOCUMENT_DELETED = 'Owner %e removed document %e.';
 
 export const OWNER_CONTACT_ADDED = 'Owner %e added contact %e.';
 export const OWNER_CONTACT_UPDATED = 'Owner %e modified contact %e.';
@@ -152,6 +157,10 @@ export function get(historyEntity, offset, limit) {
 }
 
 // Logging
+export function ownerModified(owner) {
+  return log(owner.historyEntity, OWNER_MODIFIED);
+}
+
 export function ownerAdded(owner) {
   return log(owner.historyEntity, OWNER_ADDED);
 }
@@ -168,8 +177,24 @@ export function ownerContactDeleted(owner, contact) {
   return log(owner.historyEntity, OWNER_CONTACT_DELETED, contact.historyEntity);
 }
 
+export function ownerModifiedPolicy(owner) {
+  return log(owner.historyEntity, OWNER_MODIFIED_POLICY);
+}
+
 export function ownerEquipmentAdded(owner, equipment) {
   return log(owner.historyEntity, OWNER_EQUIPMENT_ADDED, equipment.historyEntity);
+}
+
+export function ownerEquipmentVerified(owner, equipment) {
+  return log(owner.historyEntity, OWNER_EQUIPMENT_VERIFIED, equipment.historyEntity);
+}
+
+export function ownerDocumentsAdded(owner) {
+  return log(owner.historyEntity, OWNER_DOCUMENTS_ADDED);
+}
+
+export function ownerDocumentDeleted(owner, document) {
+  return log(owner.historyEntity, OWNER_DOCUMENT_DELETED, document.historyEntity);
 }
 
 export function projectAdded(project) {
