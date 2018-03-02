@@ -236,6 +236,7 @@ namespace HETSAPI.Import
                 instance.Operator = oldObject.Operator == null ? "" : new string(oldObject.Operator.Take(255).ToArray());
                 instance.SerialNumber = oldObject.Serial_Num == null ? "" : new string(oldObject.Serial_Num.Take(100).ToArray());
                 instance.Status = oldObject.Status_Cd == null ? "" : new string(oldObject.Status_Cd.Take(50).ToArray());
+                instance.Type = oldObject.Type == null ? "" : oldObject.Type.Trim();
 
                 if (oldObject.Pay_Rate != null)
                 {
