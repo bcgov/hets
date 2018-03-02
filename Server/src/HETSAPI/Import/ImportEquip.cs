@@ -372,7 +372,31 @@ namespace HETSAPI.Import
                 {
                     instance.AppCreateUserid = createdBy.SmUserId;
                 }
-                
+
+                // adjust status and archive date fields.
+                if (instance.ArchiveCode != null && instance.ArchiveCode.Trim().ToUpper().Equals("Y"))
+                {
+                    instance.Status = "Archived";
+                    instance.ArchiveDate = DateTime.UtcNow;
+                }
+                else
+                {
+                    if (instance.Status != null && instance.ArchiveCode != null && instance.ArchiveCode.Trim().ToUpper().Equals("N"))
+                    {
+                        if (instance.Status.Trim().ToUpper().Equals("U"))
+                        {
+                            instance.ArchiveDate = null;
+                            instance.Status = "Unapproved";
+                        }
+                        else if (instance.Status.Trim().ToUpper().Equals("A"))
+                        {
+                            instance.ArchiveDate = null;
+                            instance.Status = "Approved";
+                        }
+                    }                    
+                }
+
+
                 dbContext.Equipments.Add(instance);
             }
             else
