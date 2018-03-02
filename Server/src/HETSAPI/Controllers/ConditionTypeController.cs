@@ -27,7 +27,7 @@ namespace HETSAPI.Controllers
         /// Create bulk condition type records
         /// </summary>
         /// <param name="items"></param>
-        /// <response code="201">Condition Types created</response>
+        /// <response code="200">Condition Types created</response>
         [HttpPost]
         [Route("/api/conditiontypes/bulk")]
         [SwaggerOperation("ConditionTypesBulkPost")]
@@ -71,7 +71,7 @@ namespace HETSAPI.Controllers
         /// </summary>
         /// <param name="id"></param>
         /// <param name="item"></param>
-        /// <response code="201">Condition Type created or updated</response>
+        /// <response code="200">Condition Type created or updated</response>
         [HttpPost]
         [Route("/api/conditiontypes/{id}")]
         [SwaggerOperation("ConditionTypesIdPost")]
