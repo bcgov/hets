@@ -349,6 +349,8 @@ function parseEquipment(equipment) {
   equipment.url = `#/${ equipment.path }`;
   equipment.name = `code ${ equipment.equipmentCode }`;
   equipment.historyEntity = History.makeHistoryEntity(History.EQUIPMENT, equipment);
+  equipment.documentsAdded = Log.equipmentDocumentsAdded;
+  equipment.documentDeleted = Log.equipmentDocumentDeleted;
 
   equipment.getDocumentsPromise = getEquipmentDocuments;
   equipment.uploadDocumentPath = `/equipment/${ equipment.id }/attachments`;

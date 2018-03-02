@@ -21,6 +21,7 @@ import ChangeStatusDialog from './dialogs/ChangeStatusDialog.jsx';
 import * as Action from '../actionTypes';
 import * as Api from '../api';
 import * as Constant from '../constants';
+import * as Log from '../history';
 import store from '../store';
 
 import BadgeLabel from '../components/BadgeLabel.jsx';
@@ -29,6 +30,7 @@ import Confirm from '../components/Confirm.jsx';
 import OverlayTrigger from '../components/OverlayTrigger.jsx';
 import SortTable from '../components/SortTable.jsx';
 import Spinner from '../components/Spinner.jsx';
+import History from '../components/History.jsx';
 import Unimplemented from '../components/Unimplemented.jsx';
 
 import { formatDateTime } from '../utils/date';
@@ -148,6 +150,7 @@ var EquipmentDetail = React.createClass({
 
   saveEdit(equipment) {
     Api.updateEquipment(equipment).finally(() => {
+      Log.equipmentModified(this.props.equipment);
       this.closeEditDialog();
     });
   },
@@ -168,6 +171,7 @@ var EquipmentDetail = React.createClass({
 
   onChangeStatus(status) {
     Api.changeEquipmentStatus(status).then(() => {
+      Log.equipmentStatusModified(this.props.equipment, status.status);
       this.closeChangeStatusDialog();
     });
   },
@@ -182,6 +186,7 @@ var EquipmentDetail = React.createClass({
 
   saveSeniorityEdit(equipment) {
     Api.updateEquipment(equipment).finally(() => {
+      Log.equipmentSeniorityModified(this.props.equipment);
       this.closeSeniorityDialog();
     });
   },
@@ -198,6 +203,7 @@ var EquipmentDetail = React.createClass({
 
   addPhysicalAttachment(attachment) {
     Api.addPhysicalAttachment(attachment).then(() => {
+      Log.equipmentAttachmentAdded(this.props.equipment, attachment.typeName);
       var equipId = this.props.params.equipmentId;
       Api.getEquipment(equipId);
       this.closePhysicalAttachmentDialog();
@@ -481,28 +487,10 @@ var EquipmentDetail = React.createClass({
             </Col>
             <Col md={12}>
               <Well>
-                <h3>History <span className="pull-right">
-                </span></h3>
-                {(() => {
-                  if (this.state.loading) { return <div className="spinner-container"><Spinner/></div>; }
-                  if (Object.keys(this.props.history || []).length === 0) { return <Alert bsStyle="success">No history</Alert>; }
-
-                  var history = _.sortBy(this.props.history, 'createdDate');
-
-                  const HistoryEntry = ({ createdDate, historyText }) => (
-                    <Row>
-                      <ColDisplay md={12} labelProps={{ md: 2 }} label={ formatDateTime(createdDate, Constant.DATE_YEAR_SHORT_MONTH_DAY) }>
-                        { historyText }
-                      </ColDisplay>
-                    </Row>
-                  );
-
-                  return <div id="equipment-history">
-                    {
-                      _.map(history, (entry) => <HistoryEntry { ...entry } />)
-                    }
-                  </div>;
-                })()}
+                <h3>History <span className="pull-right"></span></h3>
+                { equipment.historyEntity &&
+                  <History historyEntity={ equipment.historyEntity } refresh={ !this.state.loading } />
+                }
               </Well>
             </Col>
           </Row>

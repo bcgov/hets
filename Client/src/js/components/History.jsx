@@ -114,7 +114,7 @@ var HistoryComponent = React.createClass({
               return <tr key={ history.id }>
                 <td>{ history.formattedTimestamp }</td>
                  <td>{ history.lastUpdateUserid }</td> 
-                <td className="history-event" colSpan="2">{ history.event }</td>
+                 <td className="history-event" colSpan="2">{ history.event }</td> 
               </tr>;
             })
           }
