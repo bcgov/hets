@@ -333,7 +333,11 @@ namespace HETSAPI.Import
                 {
                     try
                     {
-                        instance.Size = oldObject.Size;
+                        if (oldObject.Size != null && !oldObject.Size.Trim().Equals("#x20;"))
+                        {
+                            instance.Size = oldObject.Size;
+                        }
+                        
                     }
                     catch
                     {
