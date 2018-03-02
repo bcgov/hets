@@ -1158,6 +1158,8 @@ function parseRentalRequest(rentalRequest) {
   rentalRequest.url = `#/${ rentalRequest.path }`;
   rentalRequest.name = 'TBD';
   rentalRequest.historyEntity = History.makeHistoryEntity(History.REQUEST, rentalRequest);
+  rentalRequest.documentsAdded = Log.rentalRequestDocumentsAdded;
+  rentalRequest.documentDeleted = Log.rentalRequestDocumentDeleted;
 
   rentalRequest.getDocumentsPromise = getRentalRequestDocuments;
   rentalRequest.uploadDocumentPath = `/rentalrequests/${ rentalRequest.id }/attachments`;

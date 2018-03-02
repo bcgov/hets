@@ -14,6 +14,7 @@ import RentalRequestsAddDialog from './dialogs/RentalRequestsAddDialog.jsx';
 import * as Action from '../actionTypes';
 import * as Api from '../api';
 import * as Constant from '../constants';
+import * as Log from '../history';
 import store from '../store';
 import { refresh } from '../actions/actions';
 
@@ -176,8 +177,9 @@ var RentalRequests = React.createClass({
   saveNewRequest(request) {
     Api.addRentalRequest(request).then(() => {
       // Open it up
+      Log.rentalRequestAdded(this.props.rentalRequest.data);
       this.props.router.push({
-        pathname: `${ Constant.RENTAL_REQUESTS_PATHNAME }/${ this.props.rentalRequest.id }`,
+        pathname: `${ Constant.RENTAL_REQUESTS_PATHNAME }/${ this.props.rentalRequest.data.id }`,
       });
     });
   },

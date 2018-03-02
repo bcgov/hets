@@ -50,6 +50,11 @@ export const EQUIPMENT_ATTACHMENT_ADDED = 'Equipment %e added attachment %e.';
 export const EQUIPMENT_ATTACHMENT_UPDATED = 'Equipment %e modified attachment %e.';
 export const EQUIPMENT_ATTACHMENT_DELETED = 'Equipment %e removed attachment %e.';
 
+export const RENTAL_REQUEST_ADDED = 'Rental request %e was added.';
+export const RENTAL_REQUEST_MODIFIED = 'Rental request %e was modified.';
+export const RENTAL_REQUEST_DOCUMENTS_ADDED = 'Rental request %e added documents.';
+export const RENTAL_REQUEST_DOCUMENT_DELETED = 'Rental request %e removed document %e.';
+
 // Helper to create an entity object
 export function makeHistoryEntity(type, entity) {
   return {
@@ -259,4 +264,20 @@ export function equipmentAttachmentUpdated(equipment, attachment) {
 
 export function equipmentAttachmentDeleted(equipment, attachment) {
   return log(equipment.historyEntity, EQUIPMENT_ATTACHMENT_DELETED, { description: attachment });
+}
+
+export function rentalRequestAdded(rentalRequest) {
+  return log(rentalRequest.historyEntity, RENTAL_REQUEST_ADDED);
+}
+
+export function rentalRequestModified(rentalRequest) {
+  return log(rentalRequest.historyEntity, RENTAL_REQUEST_MODIFIED);
+}
+
+export function rentalRequestDocumentsAdded(rentalRequest) {
+  return log(rentalRequest.historyEntity, RENTAL_REQUEST_DOCUMENTS_ADDED);
+}
+
+export function rentalRequestDocumentDeleted(rentalRequest, document) {
+  return log(rentalRequest.historyEntity, RENTAL_REQUEST_DOCUMENT_DELETED, document.historyEntity);
 }
