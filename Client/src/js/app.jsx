@@ -24,11 +24,11 @@ import DistrictAdmin from './views/DistrictAdmin.jsx';
 import Version from './views/Version.jsx';
 import FourOhFour from './views/404.jsx';
 
-const hasPermission = () => {
+function hasPermission() {
   if (store.getState().user.hasPermission(Constant.PERMISSION_BUSINESS_LOGIN)) {
     hashHistory.push(Constant.BUSINESS_LOGIN_PATHNAME);
   } 
-};
+}
 
 const App = <Provider store={ store }>
   <Router history={ hashHistory }>
