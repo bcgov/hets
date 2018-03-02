@@ -15,9 +15,11 @@
 
   #equipment-filters-first-row {
     @include flex;
+    flex-wrap: wrap;
 
     .btn-group {
-      flex-grow: 1;
+      width: calc(100% / 5);
+      min-width: 150px;
     }
 
     .btn-group .btn {
