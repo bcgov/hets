@@ -158,6 +158,7 @@ var OwnersDetail = React.createClass({
 
   updateStatusState(state) {
     if (state !== this.props.owner.status) {
+      Log.ownerModifiedStatus(this.props.owner, state);
       this.setState({ status: state }, this.openChangeStatusDialog());
     }
   },

@@ -157,12 +157,16 @@ export function get(historyEntity, offset, limit) {
 }
 
 // Logging
+export function ownerAdded(owner) {
+  return log(owner.historyEntity, OWNER_ADDED);
+}
+
 export function ownerModified(owner) {
   return log(owner.historyEntity, OWNER_MODIFIED);
 }
 
-export function ownerAdded(owner) {
-  return log(owner.historyEntity, OWNER_ADDED);
+export function ownerModifiedStatus(owner, status) {
+  return log(owner.historyEntity, OWNER_MODIFIED_STATUS, { description: status });
 }
 
 export function ownerContactAdded(owner, contact) {
