@@ -396,6 +396,8 @@ namespace HETSAPI.Import
                     }                    
                 }
 
+                // set Last Verified Date to March 31, 2018.
+                instance.LastVerifiedDate = DateTime.Parse("2018-03-31 0:00:01");
 
                 dbContext.Equipments.Add(instance);
             }
