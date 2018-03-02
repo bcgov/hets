@@ -80,8 +80,13 @@ var Equipment = React.createClass({
     if (this.state.search.selectedLocalAreasIds.length > 0) {
       searchParams.localareas = this.state.search.selectedLocalAreasIds;
     }
+
     if (this.state.search.selectedEquipmentTypesIds.length > 0) {
       searchParams.types = this.state.search.selectedEquipmentTypesIds;
+    }
+
+    if (this.state.search.equipmentId) {
+      searchParams.equipmentId = this.state.search.equipmentId;
     }
 
     var notVerifiedSinceDate = Moment(this.state.search.lastVerifiedDate);

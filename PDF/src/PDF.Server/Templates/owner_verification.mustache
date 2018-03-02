@@ -230,7 +230,6 @@
                                     <td>Date: </td>
                                     <td>{{reportDate}}</td>
                                 </tr>
-                                {{#owners}}
                                 <tr>
                                     <td>Owner Code: </td>
                                     <td>{{ownerCode}}</td>
@@ -258,7 +257,7 @@
                         <td>{{localArea.name}}</td>
                         <td>{{year}}/{{make}}/{{model}}/{{serialNumber}}/{{size}}</td>
                         <td id="list-column">
-                            <ul>{{#equipmentAttachments}}<li>{{typeName}}</li>{{/equipmentAttachments}}</ul>
+                            <ul>{{#equipmentAttachments}}<li style="margin: 0">{{typeName}}</li>{{/equipmentAttachments}}</ul>
                         </td>
                         <td>&nbsp;</td>
                     </tr>
