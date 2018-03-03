@@ -56,7 +56,6 @@ namespace HETSAPI.Controllers
         /// </summary>
         /// <param name="id">id of DistrictEquipmentType to delete</param>
         /// <response code="200">OK</response>
-        /// <response code="404">DistrictEquipmentType not found</response>
         [HttpPost]
         [Route("/api/districtEquipmentTypes/{id}/delete")]
         [SwaggerOperation("DistrictEquipmentTypesIdDeletePost")]

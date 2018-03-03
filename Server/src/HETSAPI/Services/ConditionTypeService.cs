@@ -28,6 +28,13 @@ namespace HETSAPI.Services
         IActionResult ConditionTypesIdGetAsync(int id);
 
         /// <summary>
+        /// Delete condition type
+        /// </summary>
+        /// <param name="id">id of ConditionType to delete</param>
+        /// <response code="200">OK</response>
+        IActionResult ConditionTypesIdDeletePostAsync(int id);
+
+        /// <summary>
         /// Update or create a condition type record
         /// </summary>
         /// <param name="id">id of ConditionTYpe for updating</param>
