@@ -29,6 +29,7 @@ namespace HETSAPI.Authentication
         private const string ConstMissingSiteMinderGuidError = "Missing SiteMinder Guid";
         private const string ConstMissingDbUserIdError = "Could not find UserId in the HETS database";
         private const string ConstInactivegDbUserIdError = "HETS database UserId is inactive";
+        private const string ConstInvalidPermissions = "HETS UserId does not have valid permissions";
 
         /// <summary>
         /// DEfault Constructor
@@ -43,6 +44,7 @@ namespace HETSAPI.Authentication
             MissingSiteMinderGuidError = ConstMissingSiteMinderGuidError;
             MissingDbUserIdError = ConstMissingDbUserIdError;
             InactivegDbUserIdError = ConstInactivegDbUserIdError;
+            InvalidPermissions = ConstInvalidPermissions;
             DevAuthenticationTokenKey = ConstDevAuthenticationTokenKey;
             DevDefaultUserId = ConstDevDefaultUserId;
         }        
@@ -96,6 +98,11 @@ namespace HETSAPI.Authentication
         /// Inactive Database UserId Error
         /// </summary>
         public string InactivegDbUserIdError { get; set; }
+
+        /// <summary>
+        /// User does not jave active / valid permissions
+        /// </summary>
+        public string InvalidPermissions { get; set; }
 
         /// <summary>
         /// Development Environment Authentication Key
@@ -264,6 +271,19 @@ namespace HETSAPI.Authentication
                 {
                     _logger.LogWarning(options.InactivegDbUserIdError + " (" + userId + ")");
                     return Task.FromResult(AuthenticateResult.Fail(options.InactivegDbUserIdError));
+                }                
+
+                // **************************************************
+                // Validate / check user permissions
+                // **************************************************
+                ClaimsPrincipal userPrincipal = userSettings.HetsUser.ToClaimsPrincipal(options.Scheme);
+
+                if (!userPrincipal.HasClaim(User.PermissionClaim, Permission.Login) &&
+                    !userPrincipal.HasClaim(User.PermissionClaim, Permission.BusinessLogin) &&
+                    !userPrincipal.HasClaim(User.PermissionClaim, Permission.ImportData))
+                {
+                    _logger.LogWarning(options.MissingDbUserIdError + " (" + userId + ")");
+                    return Task.FromResult(AuthenticateResult.Fail(options.InvalidPermissions));
                 }
 
                 // **************************************************
@@ -271,16 +291,18 @@ namespace HETSAPI.Authentication
                 // **************************************************
                 _logger.LogInformation("Authentication successful: " + userId);
                 _logger.LogInformation("Setting identity and creating session for: " + userId);
-                
+
                 // create session info
                 userSettings.UserId = userId;
                 userSettings.UserAuthenticated = true;
 
-                // update user settings
+                // **************************************************
+                // Update user settings
+                // **************************************************                
                 UserSettings.SaveUserSettings(userSettings, context);
 
                 // done!
-                principal = userSettings.HetsUser.ToClaimsPrincipal(options.Scheme);
+                principal = userPrincipal;
                 return Task.FromResult(AuthenticateResult.Success(new AuthenticationTicket(principal, null, Options.Scheme)));
             }
             catch (Exception exception)
