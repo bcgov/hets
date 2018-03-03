@@ -74,7 +74,6 @@ namespace HETSAPI.Services.Impl
         /// </summary>
         /// <remarks>Returns all users</remarks>
         /// <response code="200">OK</response>
-        /// <response code="404">User not found</response>
         public virtual IActionResult UsersGetAsync()
         {
             List<UserViewModel> result = _context.Users
@@ -94,7 +93,6 @@ namespace HETSAPI.Services.Impl
         /// <remarks>Deletes a user</remarks>
         /// <param name="id">id of User to delete</param>
         /// <response code="200">OK</response>
-        /// <response code="404">User not found</response>
         public virtual IActionResult UsersIdDeletePostAsync(int id)
         {
             User user = _context.Users
@@ -127,7 +125,6 @@ namespace HETSAPI.Services.Impl
         /// <remarks>Returns a user&#39;s favourites of a given context type</remarks>
         /// <param name="id">id of User to fetch favorites for</param>
         /// <response code="200">OK</response>
-        /// <response code="404">User not found</response>
         public virtual IActionResult UsersIdFavouritesGetAsync(int id)
         {
             User user = _context.Users.FirstOrDefault(x => x.Id == id);
@@ -152,7 +149,6 @@ namespace HETSAPI.Services.Impl
         /// <param name="id">id of User to update</param>
         /// <param name="items"></param>
         /// <response code="200">OK</response>
-        /// <response code="404">User not found</response>
         public virtual IActionResult UsersIdFavouritesPutAsync(int id, UserFavourite[] items)
         {
             bool exists = _context.Users.Any(a => a.Id == id);
@@ -218,7 +214,6 @@ namespace HETSAPI.Services.Impl
         /// <param name="id">id of User to update</param>
         /// <param name="items"></param>
         /// <response code="200">OK</response>
-        /// <response code="404">User not found</response>
         public virtual IActionResult UsersIdFavouritesPostAsync(int id, UserFavourite[] items)
         {
             bool exists = _context.Users.Any(a => a.Id == id);
@@ -285,7 +280,6 @@ namespace HETSAPI.Services.Impl
         /// <remarks>Returns data for a particular user</remarks>
         /// <param name="id">id of User to fetch</param>
         /// <response code="200">OK</response>
-        /// <response code="404">User not found</response>
         public virtual IActionResult UsersIdGetAsync(int id)
         {
             User user = _context.Users
@@ -311,7 +305,6 @@ namespace HETSAPI.Services.Impl
         /// <remarks>Returns the set of permissions for a user</remarks>
         /// <param name="id">id of User to fetch</param>
         /// <response code="200">OK</response>
-        /// <response code="404">User not found</response>
         public virtual IActionResult UsersIdPermissionsGetAsync(int id)
         {
             User user = _context.Users
@@ -351,7 +344,6 @@ namespace HETSAPI.Services.Impl
         /// <param name="id">id of User to update</param>
         /// <param name="item"></param>
         /// <response code="200">OK</response>
-        /// <response code="404">User not found</response>
         public virtual IActionResult UsersIdPutAsync(int id, UserViewModel item)
         {
             User user = _context.Users
@@ -401,7 +393,6 @@ namespace HETSAPI.Services.Impl
         /// <remarks>Returns the roles for a user</remarks>
         /// <param name="id">id of User to fetch</param>
         /// <response code="200">OK</response>
-        /// <response code="404">User not found</response>
         public virtual IActionResult UsersIdRolesGetAsync(int id)
         {
             User user = _context.Users
@@ -450,7 +441,7 @@ namespace HETSAPI.Services.Impl
         /// <remarks>Adds a role to a user</remarks>
         /// <param name="id">id of User to update</param>
         /// <param name="item"></param>
-        /// <response code="201">Role created for user</response>
+        /// <response code="200">Role created for user</response>
         public virtual IActionResult UsersIdRolesPostAsync(int id, UserRoleViewModel item)
         {
             bool exists = _context.Users.Any(x => x.Id == id);
@@ -500,7 +491,7 @@ namespace HETSAPI.Services.Impl
             _context.Update(user);
             _context.SaveChanges();
 
-            return new StatusCodeResult(201);                                
+            return new StatusCodeResult(200);                                
         }
 
         /// <summary>
@@ -510,7 +501,6 @@ namespace HETSAPI.Services.Impl
         /// <param name="id">id of User to update</param>
         /// <param name="items"></param>
         /// <response code="200">OK</response>
-        /// <response code="404">User not found</response>
         public virtual IActionResult UsersIdRolesPutAsync(int id, UserRoleViewModel[] items)
         {
             bool exists = _context.Users.Any(x => x.Id == id);
@@ -573,7 +563,7 @@ namespace HETSAPI.Services.Impl
             _context.Update(user);
             _context.SaveChanges();
 
-            return new StatusCodeResult(201);            
+            return new StatusCodeResult(200);            
         }
 
         /// <summary>
@@ -581,7 +571,7 @@ namespace HETSAPI.Services.Impl
         /// </summary>
         /// <param name="item"></param>
         /// <remarks>Create new user</remarks>
-        /// <response code="201">User created</response>
+        /// <response code="200">User created</response>
         public virtual IActionResult UsersPostAsync(UserViewModel item)
         {
             User user = new User
