@@ -87,8 +87,9 @@ namespace HETSAPI.Mappings
         /// Printed rental agreement view model
         /// </summary>
         /// <param name="model"></param>
+        /// <param name="context"></param>
         /// <returns></returns>
-        public static RentalRequestViewModel ToRentalRequestViewModel(this RentalRequest model)
+        public static RentalRequestViewModel ToRentalRequestViewModel(this RentalRequest model, DbAppContext context)
         {
             var dto = new RentalRequestViewModel();
 
@@ -111,7 +112,20 @@ namespace HETSAPI.Mappings
                 dto.RentalRequestRotationList = model.RentalRequestRotationList;
 
                 // calculate the Yes Count based on the RentalRequestList
-                dto.CalculateYesCount();                
+                dto.CalculateYesCount();
+
+                // calculate YTD hours for the equipment records
+                if (dto.RentalRequestRotationList != null)
+                {
+                    foreach (RentalRequestRotationList rotationList in dto.RentalRequestRotationList)
+                    {
+                        if (rotationList.Equipment != null)
+                        {
+                            rotationList.Equipment.HoursYtd =
+                                rotationList.Equipment.GetYtdServiceHours(context, DateTime.Now.Year);
+                        }
+                    }
+                }
             }
 
             return dto;
