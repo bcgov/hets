@@ -47,16 +47,13 @@ namespace HETSAPI.Authorization
         /// <param name="requirement"></param>
         /// <returns></returns>
         protected override async Task HandleRequirementAsync(AuthorizationHandlerContext context, PermissionRequirement requirement)
-        {
-            // leave outside "if" for debugging
-            string temp = "";
-
+        {            
             // **************************************************
             // Check if we have a Dev Environment Cookie
             // **************************************************
             if (_hostingEnv.IsDevelopment())
             {
-                temp = _httpContext.Request.Cookies["DEV-USER"];
+                string temp = _httpContext.Request.Cookies["DEV-USER"];
 
                 if (!string.IsNullOrEmpty(temp))
                 {
