@@ -232,6 +232,8 @@ namespace HETSAPI.Services.Impl
                         // convert to string and log
                         string pdfResponse = Encoding.Default.GetString(pdfResponseBytes);
 
+                        fileName = fileName + ".pdf";
+
                         _logger.LogInformation("Rental Agreement Pdf [Id: {0}] - HETS Pdf Filename: {1}", id, fileName);
                         _logger.LogInformation("Rental Agreement Pdf [Id: {0}] - HETS Pdf Size: {1}", id, pdfResponse.Length);
 
