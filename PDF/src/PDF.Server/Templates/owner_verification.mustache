@@ -242,14 +242,16 @@
 
             <div id="equipment-table">
                 <table border="1" cellpadding="1" cellspacing="1">
-                    <tr>
-                        <th>Still in use?</th>
-                        <th>Equipment Id</th>
-                        <th>Local Area</th>
-                        <th>Year/Make/Model/Serial Number/Size</th>
-                        <th>Attachments</th>
-                        <th>Owner Comments (sold, retired, etc.)</th>
-                    </tr>
+                    <thead>
+                        <tr>
+                            <th>Still in use?</th>
+                            <th>Equipment Id</th>
+                            <th>Local Area</th>
+                            <th>Year/Make/Model/Serial Number/Size</th>
+                            <th>Attachments</th>
+                            <th>Owner Comments (sold, retired, etc.)</th>
+                        </tr>
+                    </thead>>
                     {{#equipmentList}}
                     <tr>
                         <td>Yes/No</td>
@@ -257,7 +259,7 @@
                         <td>{{localArea.name}}</td>
                         <td>{{year}}/{{make}}/{{model}}/{{serialNumber}}/{{size}}</td>
                         <td id="list-column">
-                            <ul>{{#equipmentAttachments}}<li style="margin: 0">{{typeName}}</li>{{/equipmentAttachments}}</ul>
+                        {{#equipmentAttachments}}<div style="margin: 0">{{typeName}}</div>{{/equipmentAttachments}}
                         </td>
                         <td>&nbsp;</td>
                     </tr>
