@@ -344,7 +344,7 @@
         </tr>
         <tr>
           <td>{{equipment.year}} {{equipment.make}}/{{equipment.model}}/{{equipment.size}}/{{equipment.serialNumber}}</td>
-          <td class="rate">${{equipmentRate}} / {{ratePeriod}}</td>
+          <td class="rate">{{baseRateString}}</td>
           <td>{{rateComment}}</td>
         </tr>
         {{#rentalAgreementRatesWithTotal}}
@@ -356,7 +356,7 @@
         {{/rentalAgreementRatesWithTotal}}
         <tr>
           <td class="bold">Total</td>
-          <td class="rate bold">${{agreementTotal}}/{{ratePeriod}}</td>
+          <td class="rate bold">{{agreementTotalString}}</td>
           <td></td>
         </tr>
         {{#rentalAgreementRatesWithoutTotal}}
