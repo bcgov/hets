@@ -2,6 +2,8 @@ import React from 'react';
 
 import { connect } from 'react-redux';
 
+import { browserHistory } from 'react-router';
+
 import { Grid, Well, Row, Col, Alert, Button, ButtonGroup, Glyphicon, Label } from 'react-bootstrap';
 import { Link } from 'react-router';
 import { LinkContainer } from 'react-router-bootstrap';
@@ -219,9 +221,7 @@ var RentalRequestsDetail = React.createClass({
         </Col>
         <Col md={2}>
           <div className="pull-right">
-            <LinkContainer to={{ pathname: Constant.RENTAL_REQUESTS_PATHNAME }}>
-              <Button title="Return to List"><Glyphicon glyph="arrow-left" /> Return to List</Button>
-            </LinkContainer>
+            <Button title="Return to List" onClick={ browserHistory.goBack }><Glyphicon glyph="arrow-left" /> Return to List</Button>
           </div>
         </Col>
       </Row>
