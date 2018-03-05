@@ -78,7 +78,7 @@ namespace HETSAPI.ViewModels
                     EquipmentRate != null &&
                     rentalRate.PercentOfEquipmentRate > 0)
                 {
-                    rentalRate.Rate = (float)rentalRate.PercentOfEquipmentRate * (float)EquipmentRate;
+                    rentalRate.Rate = (float)rentalRate.PercentOfEquipmentRate * ((float)EquipmentRate / 100);
                     temp = temp + (float)rentalRate.Rate;
                 }
                 else if (rentalRate.Rate != null)
@@ -99,10 +99,10 @@ namespace HETSAPI.ViewModels
             AgreementTotal = temp;
 
             // format the base rate
-            BaseRateString = string.Format("$ {0:0.00} / {1}", EquipmentRate, RatePeriod);
+            BaseRateString = string.Format("$ {0:0.00} / {1}", EquipmentRate, FormatRatePeriod(RatePeriod));
 
             // format the total
-            AgreementTotalString = string.Format("$ {0:0.00}", AgreementTotal);
+            AgreementTotalString = string.Format("$ {0:0.00} / {1}", AgreementTotal, FormatRatePeriod(RatePeriod));
 
             // format the rate / percent values
             foreach (RentalAgreementRate rentalRate in RentalAgreementRatesWithoutTotal)
@@ -111,11 +111,27 @@ namespace HETSAPI.ViewModels
                     EquipmentRate != null &&
                     rentalRate.PercentOfEquipmentRate > 0)
                 {
-                    rentalRate.Rate = (float)rentalRate.PercentOfEquipmentRate * (float)EquipmentRate;
+                    rentalRate.Rate = (float)rentalRate.PercentOfEquipmentRate * ((float)EquipmentRate / 100);
                 }
 
                 rentalRate.RateString = FormatRateString(rentalRate);                
             }
+        }
+
+        private static string FormatRatePeriod(string period)
+        {
+            switch (period.ToLower())
+            {
+                case "daily":
+                case "dy":
+                    return "Dy";
+
+                case "hourly":
+                case "hr":
+                    return "Hr";
+            }
+
+            return period;
         }
 
         private static string FormatRateString(RentalAgreementRate rentalRate)
@@ -125,7 +141,7 @@ namespace HETSAPI.ViewModels
             // format the rate
             if (rentalRate.Rate != null)
             {
-                temp = string.Format("$ {0:0.00} / {1}", rentalRate.Rate, rentalRate.RatePeriod);
+                temp = string.Format("$ {0:0.00} / {1}", rentalRate.Rate, FormatRatePeriod(rentalRate.RatePeriod));
             }
 
             // format the percent
