@@ -297,7 +297,7 @@ var RentalRequestsDetail = React.createClass({
                 return (
                   <tr key={ listItem.id }>
                     <td>{ listItem.displayFields.seniority }</td>
-                    <td>{ listItem.equipment.serviceHoursLastYear }</td>
+                    <td>{ listItem.equipment.hoursYtd }</td>
                     <td><Link to={ `${Constant.EQUIPMENT_PATHNAME}/${listItem.equipment.id}` }>{ listItem.equipment.equipmentCode }</Link></td>
                     <td>{ listItem.displayFields.equipmentDetails }
                       { this.state.showAttachments && 
@@ -401,7 +401,6 @@ var RentalRequestsDetail = React.createClass({
           error={ this.props.rentalRequestRotationList.error }
         />
       }
-      { /* TODO this.state.showContactDialog && <ContactEditDialog /> */}
       { this.state.showDocumentsDialog &&
         <DocumentsListDialog 
           show={ this.state.showDocumentsDialog } 
