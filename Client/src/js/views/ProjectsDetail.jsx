@@ -152,6 +152,7 @@ var ProjectsDetail = React.createClass({
 
   saveEdit(project) {
     Api.updateProject(project).finally(() => {
+      Log.projectModified(this.props.project);
       this.closeEditDialog();
     });
   },
@@ -492,7 +493,7 @@ var ProjectsDetail = React.createClass({
             <Well>
               <h3>History</h3>
               { project.historyEntity && 
-                <History historyEntity={ project.historyEntity } refresh={ this.state.loading } />
+                <History historyEntity={ project.historyEntity } refresh={ !this.state.loading } />
               }
             </Well>
           </Col>

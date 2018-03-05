@@ -35,6 +35,8 @@ export const PROJECT_EQUIPMENT_ADDED = 'Project %e added equipment %e.';
 export const PROJECT_CONTACT_ADDED = 'Project %e added contact %e.';
 export const PROJECT_CONTACT_UPDATED = 'Project %e modified contact %e.';
 export const PROJECT_CONTACT_DELETED = 'Project %e removed contact %e.';
+export const PROJECT_DOCUMENTS_ADDED = 'Project %e added documents.';
+export const PROJECT_DOCUMENT_DELETED = 'Project %e removed document %e.';
 
 export const USER_ADDED = 'User %e was added.';
 export const USER_MODIFIED = 'User %e was modified.';
@@ -218,6 +220,10 @@ export function projectAdded(project) {
   return log(project.historyEntity, PROJECT_ADDED);
 }
 
+export function projectModified(project) {
+  return log(project.historyEntity, PROJECT_MODIFIED);
+}
+
 export function projectContactAdded(project, contact) {
   return log(project.historyEntity, PROJECT_CONTACT_ADDED, contact.historyEntity);
 }
@@ -228,6 +234,14 @@ export function projectContactUpdated(project, contact) {
 
 export function projectContactDeleted(project, contact) {
   return log(project.historyEntity, PROJECT_CONTACT_DELETED, contact.historyEntity);
+}
+
+export function projectDocumentsAdded(project) {
+  return log(project.historyEntity, PROJECT_DOCUMENTS_ADDED);
+}
+
+export function projectDocumentDeleted(project, document) {
+  return log(project.historyEntity, PROJECT_DOCUMENT_DELETED, document.historyEntity);
 }
 
 export function equipmentAdded(equipment) {

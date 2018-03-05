@@ -900,6 +900,8 @@ function parseProject(project) {
   project.path = `${ Constant.PROJECTS_PATHNAME }/${ project.id }`;
   project.url = `#/${ project.path }`;
   project.historyEntity = History.makeHistoryEntity(History.PROJECT, project);
+  project.documentsAdded = Log.projectDocumentsAdded;
+  project.documentDeleted = Log.projectDocumentDeleted;
 
   // Add display fields for contacts
   project.contacts = normalize(project.contacts);
