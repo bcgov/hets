@@ -371,13 +371,15 @@ var EquipmentDetail = React.createClass({
                   <Button title="Add Attachment" bsSize="small" onClick={this.openPhysicalAttachmentDialog}><Glyphicon glyph="plus" /></Button>
                 </span></h3>
                 {(() => {
+                  console.log(equipment);
                   if (this.state.loading ) { return <div className="spinner-container"><Spinner/></div>; } 
-                  if (Object.keys(this.props.equipmentPhysicalAttachments).length === 0) { return <Alert bsStyle="success">No Attachments</Alert>; }
+                  if (equipment.equipmentAttachments && Object.keys(equipment.equipmentAttachments).length === 0) { return <Alert bsStyle="success">No Attachments</Alert>; }
 
-                  var physicalAttachments = _.sortBy(this.props.equipment.equipmentAttachments, this.state.ui.sortField);
+                  var physicalAttachments = _.sortBy(equipment.equipmentAttachments, this.state.ui.sortField);
                   if (this.state.ui.sortDesc) {
                     _.reverse(physicalAttachments);
                   } 
+
 
                   var headers = [
                     { field: 'attachmentTypeName', title: 'Type' },
