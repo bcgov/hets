@@ -30,7 +30,6 @@ namespace HETSAPI.Controllers
         /// <remarks>Returns a users favourites of a given type.  If type is empty, returns all.</remarks>
         /// <param name="favouritetype">type of favourite to return</param>
         /// <response code="200">OK</response>
-        /// <response code="404">User not found</response>
         [HttpGet]
         [Route("/api/users/current/favourites/{favouritetype}")]
         [SwaggerOperation("UsersCurrentFavouritesFavouriteTypeGet")]
@@ -61,7 +60,7 @@ namespace HETSAPI.Controllers
         /// </summary>
         /// <remarks>Create new favourite for the current user</remarks>
         /// <param name="item"></param>
-        /// <response code="201">UserFavourite created</response>
+        /// <response code="200">UserFavourite created</response>
         [HttpPost]
         [Route("/api/users/current/favourites")]
         [SwaggerOperation("UsersCurrentFavouritesPost")]

@@ -393,7 +393,7 @@ var ProjectsDetail = React.createClass({
                     <td>{ item.isCompleted ? 
                       'Completed' 
                       : 
-                      <EditButton name="Contact" onClick={this.openTimeEntryDialog.bind(this, item)} />
+                      <EditButton name="Time Entry" onClick={this.openTimeEntryDialog.bind(this, item)} />
                     }
                     </td>
                     <td>

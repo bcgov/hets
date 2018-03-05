@@ -424,6 +424,29 @@ namespace HETSAPI.Import
                 }
                 
                 owner.PrimaryContact = con;
+
+                // adjust status and archive date fields.
+                if (owner.ArchiveCode != null && owner.ArchiveCode.Trim().ToUpper().Equals("Y"))
+                {
+                    owner.Status = "Archived";
+                    owner.ArchiveDate = DateTime.UtcNow;
+                }
+                else
+                {
+                    owner.ArchiveDate = null;
+                    if (owner.Status != null && owner.ArchiveCode != null && owner.ArchiveCode.Trim().ToUpper().Equals("N"))
+                    {
+                        if (owner.Status.Trim().ToUpper().Equals("U"))
+                        {                            
+                            owner.Status = "Unapproved";
+                        }
+                        else if (owner.Status.Trim().ToUpper().Equals("A"))
+                        {                         
+                            owner.Status = "Approved";
+                        }
+                    }
+                }
+
                 dbContext.Owners.Add(owner);
             }
             else  // the owner existed in the database

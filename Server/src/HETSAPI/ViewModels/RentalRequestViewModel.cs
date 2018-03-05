@@ -106,7 +106,7 @@ namespace HETSAPI.ViewModels
             YesCount = temp;
 
             return temp;
-        }
+        }        
 
         /// <summary>
         /// Returns the Number of Blocks for this Rotation List

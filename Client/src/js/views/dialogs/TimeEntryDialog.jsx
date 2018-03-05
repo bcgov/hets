@@ -161,7 +161,7 @@ var TimeEntryDialog = React.createClass({
       return (
         <Row>
           <Col sm={4} className="nopadding">
-            <div>{ formatDateTime(timeRecord.enteredDate, 'YYYY-MMM-DD') }</div>
+            <div>{ formatDateTime(timeRecord.workedDate, 'YYYY-MMM-DD') }</div>
           </Col>
           <Col sm={4} className="nopadding">
             <div>{ timeRecord.hours }</div>

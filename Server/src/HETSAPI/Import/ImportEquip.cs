@@ -236,6 +236,7 @@ namespace HETSAPI.Import
                 instance.Operator = oldObject.Operator == null ? "" : new string(oldObject.Operator.Take(255).ToArray());
                 instance.SerialNumber = oldObject.Serial_Num == null ? "" : new string(oldObject.Serial_Num.Take(100).ToArray());
                 instance.Status = oldObject.Status_Cd == null ? "" : new string(oldObject.Status_Cd.Take(50).ToArray());
+                instance.Type = oldObject.Type == null ? "" : oldObject.Type.Trim();
 
                 if (oldObject.Pay_Rate != null)
                 {
@@ -332,7 +333,11 @@ namespace HETSAPI.Import
                 {
                     try
                     {
-                        instance.Size = oldObject.Size;
+                        if (oldObject.Size != null && !oldObject.Size.Trim().Equals("#x20;"))
+                        {
+                            instance.Size = oldObject.Size;
+                        }
+                        
                     }
                     catch
                     {
@@ -367,7 +372,33 @@ namespace HETSAPI.Import
                 {
                     instance.AppCreateUserid = createdBy.SmUserId;
                 }
-                
+
+                // adjust status and archive date fields.
+                if (instance.ArchiveCode != null && instance.ArchiveCode.Trim().ToUpper().Equals("Y"))
+                {
+                    instance.Status = "Archived";
+                    instance.ArchiveDate = DateTime.UtcNow;
+                }
+                else
+                {
+                    if (instance.Status != null && instance.ArchiveCode != null && instance.ArchiveCode.Trim().ToUpper().Equals("N"))
+                    {
+                        if (instance.Status.Trim().ToUpper().Equals("U"))
+                        {
+                            instance.ArchiveDate = null;
+                            instance.Status = "Unapproved";
+                        }
+                        else if (instance.Status.Trim().ToUpper().Equals("A"))
+                        {
+                            instance.ArchiveDate = null;
+                            instance.Status = "Approved";
+                        }
+                    }                    
+                }
+
+                // set Last Verified Date to March 31, 2018.
+                instance.LastVerifiedDate = DateTime.Parse("2018-03-31 0:00:01");
+
                 dbContext.Equipments.Add(instance);
             }
             else

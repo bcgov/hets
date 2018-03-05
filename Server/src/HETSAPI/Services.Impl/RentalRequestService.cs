@@ -104,10 +104,11 @@ namespace HETSAPI.Services.Impl
                     .Include(x => x.RentalRequestAttachments)
                     .Include(x => x.DistrictEquipmentType)
                     .Include(x => x.RentalRequestRotationList)
+                        .ThenInclude(y => y.Equipment)
                     .First(a => a.Id == id);
 
                 // RentalRequestRotationList -> used to calculate and return the count of "Yes" + "Force Hire" requests
-                return new ObjectResult(new HetsResponse(result.ToRentalRequestViewModel()));
+                return new ObjectResult(new HetsResponse(result.ToRentalRequestViewModel(_context)));
             }
 
             // record not found
@@ -138,6 +139,7 @@ namespace HETSAPI.Services.Impl
                     .Include(x => x.RentalRequestAttachments)
                     .Include(x => x.DistrictEquipmentType)
                     .Include(x => x.RentalRequestRotationList)
+                        .ThenInclude(y => y.Equipment)
                     .First(a => a.Id == id);
 
                 int hiredCount = 0;
@@ -187,7 +189,7 @@ namespace HETSAPI.Services.Impl
                 // *************************************************************************
                 _context.SaveChanges();
 
-                return new ObjectResult(new HetsResponse(item.ToRentalRequestViewModel()));
+                return new ObjectResult(new HetsResponse(item.ToRentalRequestViewModel(_context)));
             }
 
             // record not found
@@ -269,6 +271,8 @@ namespace HETSAPI.Services.Impl
                 RentalRequest rentalRequest = _context.RentalRequests.AsNoTracking()
                     .Include(x => x.RentalRequestRotationList)
                         .ThenInclude(y => y.RentalAgreement)
+                    .Include(x => x.RentalRequestRotationList)
+                        .ThenInclude(y => y.Equipment)
                     .Include(x => x.RentalRequestAttachments)
                     .First(a => a.Id == id);
 
@@ -421,7 +425,6 @@ namespace HETSAPI.Services.Impl
         /// </summary>
         /// <param name="id">id of Rental Request to fetch</param>
         /// <response code="200">OK</response>
-        /// <response code="404">Project not found</response>
         public virtual IActionResult RentalrequestsIdRotationListGetAsync(int id)
         {
             bool exists = _context.RentalRequests.Any(a => a.Id == id);
@@ -449,11 +452,10 @@ namespace HETSAPI.Services.Impl
                     .First(a => a.Id == id);
 
                 // re-sort list using: LocalArea / District Equipment Type and SenioritySortOrder (desc)
-                result.RentalRequestRotationList =
-                    result.RentalRequestRotationList.OrderBy(e => e.RotationListSortOrder).ToList();
+                result.RentalRequestRotationList = result.RentalRequestRotationList.OrderBy(e => e.RotationListSortOrder).ToList();
 
                 // return the number of blocks in this list
-                RentalRequestViewModel rentalRequest = result.ToRentalRequestViewModel();
+                RentalRequestViewModel rentalRequest = result.ToRentalRequestViewModel(_context);
                 rentalRequest.NumberOfBlocks = GetNumberOfBlocks(result) + 1;
 
                 // return view model
@@ -714,7 +716,7 @@ namespace HETSAPI.Services.Impl
                         .First(a => a.Id == rentalRequestId);
                 }
 
-                return new ObjectResult(new HetsResponse(result.ToRentalRequestViewModel()));
+                return new ObjectResult(new HetsResponse(result.ToRentalRequestViewModel(_context)));
             }
 
             // record not found

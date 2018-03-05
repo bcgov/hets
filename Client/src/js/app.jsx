@@ -25,19 +25,17 @@ import DistrictAdmin from './views/DistrictAdmin.jsx';
 import Version from './views/Version.jsx';
 import FourOhFour from './views/404.jsx';
 
-const hasPermission = () => {
+function hasPermission() {
   if (store.getState().user.hasPermission(Constant.PERMISSION_BUSINESS_LOGIN)) {
     hashHistory.push(Constant.BUSINESS_LOGIN_PATHNAME);
-  }
-};
+  } 
+}
 
 const App = <Provider store={ store }>
   <Router history={ hashHistory }>
     <Redirect from="/" to="/home"/>
-
     <Route path={ Constant.BUSINESS_LOGIN_PATHNAME } component={ BusinessPortal }/>
-
-    <Route path="/" component={ Main }>
+    <Route path="/" component={ Main } onEnter={ hasPermission }>
       <Route path={ Constant.HOME_PATHNAME } component={ Home }/>
       <Route path={ Constant.EQUIPMENT_PATHNAME } component={ Equipment }/>
       <Route path={ `${ Constant.EQUIPMENT_PATHNAME }/:equipmentId` } component={ EquipmentDetail }/>

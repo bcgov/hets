@@ -1,3 +1,4 @@
+using System;
 using System.Linq;
 using Microsoft.AspNetCore.Mvc;
 using HETSAPI.Models;
@@ -205,6 +206,17 @@ namespace HETSAPI.Services.Impl
                 // get the name for the current logged in user
                 result.GivenName = User.FindFirst(ClaimTypes.GivenName).Value;
                 result.Surname = User.FindFirst(ClaimTypes.Surname).Value;
+
+                // remove inactive roles
+                for (int i = currentUser.UserRoles.Count - 1; i >= 0; i--)
+                {
+                    if (currentUser.UserRoles[i].EffectiveDate > DateTime.UtcNow ||
+                        (currentUser.UserRoles[i].ExpiryDate != null &&
+                         currentUser.UserRoles[i].ExpiryDate < DateTime.UtcNow))
+                    {
+                        currentUser.UserRoles.RemoveAt(i);
+                    }
+                }
 
                 return new ObjectResult(new HetsResponse(result));
             }
