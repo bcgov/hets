@@ -158,6 +158,7 @@ var OwnersDetail = React.createClass({
 
   updateStatusState(state) {
     if (state !== this.props.owner.status) {
+      Log.ownerModifiedStatus(this.props.owner, state);
       this.setState({ status: state }, this.openChangeStatusDialog());
     }
   },
@@ -203,6 +204,7 @@ var OwnersDetail = React.createClass({
   saveEdit(owner) {
     // This just ensures that the normalized data doesn't mess up the PUT call
     Api.updateOwner({ ...owner, contacts: null }).finally(() => {
+      Log.ownerModified(this.props.owner);
       this.closeEditDialog();
     });
   },
@@ -265,6 +267,8 @@ var OwnersDetail = React.createClass({
   saveNewEquipment(equipment) {
     Api.addEquipment(equipment).then(() => {
       // Open it up
+      Log.ownerEquipmentAdded(this.props.owner, this.props.equipment);
+      Log.equipmentAdded(this.props.equipment);
       this.props.router.push({
         pathname: `${Constant.EQUIPMENT_PATHNAME}/${this.props.equipment.id}`,
         state: { returnUrl: `${Constant.OWNERS_PATHNAME}/${this.props.owner.id}` },
@@ -292,6 +296,7 @@ var OwnersDetail = React.createClass({
       lastVerifiedDate: toZuluTime(today()),
       owner: { id: this.props.owner.id },
     }}).then(() => {
+      Log.ownerEquipmentVerified(this.props.owner, equipment);
       this.fetch();
     });
   },
@@ -307,6 +312,7 @@ var OwnersDetail = React.createClass({
   savePolicyEdit(owner) {
     // This just ensures that the normalized data doesn't mess up the PUT call
     Api.updateOwner({ ...owner, contacts: null }).finally(() => {
+      Log.ownerModifiedPolicy(this.props.owner);
       this.closePolicyDialog();
     });
   },
@@ -548,7 +554,7 @@ var OwnersDetail = React.createClass({
             </Well>
             <Well>
               <h3>History</h3>
-              { owner.historyEntity && <History historyEntity={ owner.historyEntity } refresh={ this.state.loading } /> }
+              { owner.historyEntity && <History historyEntity={ owner.historyEntity } refresh={ !this.state.loading } /> }
             </Well>
           </Col>
         </Row>

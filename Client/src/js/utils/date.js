@@ -17,6 +17,14 @@ export function formatDateTime(dateTime, format) {
   return dt.format(format);
 }
 
+export function formatDateTimeUTCToLocal(dateTime, format) {
+  if (!dateTime) { return ''; }
+  var dt = Moment.utc(dateTime).local();
+  if (!dt || !dt.isValid()) { return ''; }
+  if (!format) { format = Constant.DATE_TIME_ISO_8601; }
+  return dt.format(format);
+}
+
 export function sortableDateTime(dateTime) {
   if (!dateTime) { return 0; }
   var dt = Moment.utc(dateTime);

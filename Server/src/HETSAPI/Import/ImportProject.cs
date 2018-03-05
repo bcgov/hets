@@ -240,6 +240,9 @@ namespace HETSAPI.Import
                     // do nothing
                 }
 
+                // set the status to Active so the project will show in the user interface.
+                instance.Status = "Active";
+
                 dbContext.Projects.Add(instance);
             }
             else

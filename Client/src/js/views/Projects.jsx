@@ -12,6 +12,7 @@ import ProjectsAddDialog from './dialogs/ProjectsAddDialog.jsx';
 import * as Action from '../actionTypes';
 import * as Api from '../api';
 import * as Constant from '../constants';
+import * as Log from '../history';
 import store from '../store';
 
 import DropdownControl from '../components/DropdownControl.jsx';
@@ -111,6 +112,7 @@ var Projects = React.createClass({
 
   saveNewProject(project) {
     Api.addProject(project).then(() => {
+      Log.projectAdded(this.props.project);
       // Open it up
       this.props.router.push({
         pathname: `${ Constant.PROJECTS_PATHNAME }/${ this.props.project.id }`,

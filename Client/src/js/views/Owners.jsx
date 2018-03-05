@@ -13,6 +13,7 @@ import OwnersAddDialog from './dialogs/OwnersAddDialog.jsx';
 import * as Action from '../actionTypes';
 import * as Api from '../api';
 import * as Constant from '../constants';
+import * as Log from '../history';
 import store from '../store';
 
 import CheckboxControl from '../components/CheckboxControl.jsx';
@@ -133,6 +134,7 @@ var Owners = React.createClass({
 
   saveNewOwner(owner) {
     Api.addOwner(owner).then(() => {
+      Log.ownerAdded(this.props.owner);
       // Open it up
       this.props.router.push({
         pathname: `${ Constant.OWNERS_PATHNAME }/${ this.props.owner.id }`,

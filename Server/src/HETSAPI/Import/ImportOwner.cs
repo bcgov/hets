@@ -533,7 +533,15 @@ namespace HETSAPI.Import
                     importMapRecordLastName.NewValue = "OwnerLast" + currentOwner;
                     importMapRecords.Add(importMapRecordLastName);
 
+                    ImportMapRecord importMapRecordOwnerCode = new ImportMapRecord();
 
+                    importMapRecordOwnerCode.TableName = NewTable;
+                    importMapRecordOwnerCode.MappedColumn = "Owner_Cd";
+                    importMapRecordOwnerCode.OriginalValue = item.Owner_Cd;
+                    importMapRecordOwnerCode.NewValue = "OO" + currentOwner;
+                    importMapRecords.Add(importMapRecordOwnerCode);
+
+                    item.Owner_Cd = "OO" + currentOwner;
                     item.Owner_First_Name = "OwnerFirst" + currentOwner;
                     item.Owner_Last_Name = "OwnerLast" + currentOwner;
                     item.Contact_Person = ImportUtility.ScrambleString(item.Contact_Person);
