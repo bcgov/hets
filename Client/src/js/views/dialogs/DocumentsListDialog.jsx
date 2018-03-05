@@ -11,6 +11,7 @@ import { request, buildApiPath } from '../../utils/http';
 import * as Action from '../../actionTypes';
 import * as Api from '../../api';
 import * as Constant from '../../constants';
+import * as Log from '../../history';
 import store from '../../store';
 
 import DeleteButton from '../../components/DeleteButton.jsx';
@@ -90,6 +91,7 @@ var DocumentsListDialog = React.createClass({
   
   deleteDocument(document) {
     Api.deleteDocument(document).then(() => {
+      this.props.parent.documentDeleted(this.props.parent, document);
       return this.fetch();
     });
   },
@@ -112,6 +114,7 @@ var DocumentsListDialog = React.createClass({
     };
 
     this.uploadPromise = request(buildApiPath(this.props.parent.uploadDocumentPath), options).then(() => {
+      this.props.parent.documentsAdded(this.props.parent);
       this.setState({ uploadInProgress: false, percentUploaded: null });
       this.fetch();
     }, (err) => {

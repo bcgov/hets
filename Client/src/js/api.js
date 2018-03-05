@@ -1,6 +1,7 @@
 import * as Action from './actionTypes';
 import * as Constant from './constants';
 import * as History from './history';
+import * as Log from './history';
 import store from './store';
 
 import { ApiRequest } from './utils/http';
@@ -348,6 +349,8 @@ function parseEquipment(equipment) {
   equipment.url = `#/${ equipment.path }`;
   equipment.name = `code ${ equipment.equipmentCode }`;
   equipment.historyEntity = History.makeHistoryEntity(History.EQUIPMENT, equipment);
+  equipment.documentsAdded = Log.equipmentDocumentsAdded;
+  equipment.documentDeleted = Log.equipmentDocumentDeleted;
 
   equipment.getDocumentsPromise = getEquipmentDocuments;
   equipment.uploadDocumentPath = `/equipment/${ equipment.id }/attachments`;
@@ -568,6 +571,8 @@ function parseOwner(owner) {
   owner.url = `#/${ owner.path }`;
   owner.name = owner.organizationName;
   owner.historyEntity = History.makeHistoryEntity(History.OWNER, owner);
+  owner.documentsAdded = Log.ownerDocumentsAdded;
+  owner.documentDeleted = Log.ownerDocumentDeleted;
 
   // Add display fields for owner contacts
   owner.contacts = normalize(owner.contacts);
@@ -854,8 +859,10 @@ function getFileSizeString(fileSizeInBytes) {
 function parseDocument(document) {
   document.fileSizeDisplay = getFileSizeString(document.fileSize);
   document.timestampSort = sortableDateTime(document.lastUpdateTimestamp);
+  document.name = document.fileName;
 
   document.canDelete = true;
+  document.historyEntity = History.makeHistoryEntity(History.DOCUMENT, document);
 }
 
 export function deleteDocument(document) {
@@ -893,6 +900,8 @@ function parseProject(project) {
   project.path = `${ Constant.PROJECTS_PATHNAME }/${ project.id }`;
   project.url = `#/${ project.path }`;
   project.historyEntity = History.makeHistoryEntity(History.PROJECT, project);
+  project.documentsAdded = Log.projectDocumentsAdded;
+  project.documentDeleted = Log.projectDocumentDeleted;
 
   // Add display fields for contacts
   project.contacts = normalize(project.contacts);
@@ -1151,6 +1160,8 @@ function parseRentalRequest(rentalRequest) {
   rentalRequest.url = `#/${ rentalRequest.path }`;
   rentalRequest.name = 'TBD';
   rentalRequest.historyEntity = History.makeHistoryEntity(History.REQUEST, rentalRequest);
+  rentalRequest.documentsAdded = Log.rentalRequestDocumentsAdded;
+  rentalRequest.documentDeleted = Log.rentalRequestDocumentDeleted;
 
   rentalRequest.getDocumentsPromise = getRentalRequestDocuments;
   rentalRequest.uploadDocumentPath = `/rentalrequests/${ rentalRequest.id }/attachments`;

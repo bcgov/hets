@@ -34,7 +34,7 @@ var OwnersAddDialog = React.createClass({
     // Local Area (default to the first local area of the District of the logged in User, but allow any local area to be selected)
     var currentUser = this.props.currentUser;
     var localAreas = this.props.localAreas;
-    var defaultLocalAreaId = _.find(localAreas, (x) => x.serviceArea.district.id === currentUser.district.id);
+    // var defaultLocalAreaId = _.find(localAreas, (x) => x.serviceArea.district.id === currentUser.district.id);
 
     return {
       name: '',
@@ -44,7 +44,8 @@ var OwnersAddDialog = React.createClass({
       province: '',
       postalCode: '',
       ownerCode: '',
-      localAreaId: defaultLocalAreaId.id || 0,
+      // localAreaId: defaultLocalAreaId.id || 0,
+      localAreaId: 0,
       meetsResidency: true,
       doingBusinessAs: '',
       registeredCompanyNumber: '',

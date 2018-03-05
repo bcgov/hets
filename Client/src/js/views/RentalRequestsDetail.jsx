@@ -19,6 +19,7 @@ import NotesDialog from './dialogs/NotesDialog.jsx';
 import * as Action from '../actionTypes';
 import * as Api from '../api';
 import * as Constant from '../constants';
+import * as Log from '../history';
 import store from '../store';
 
 import CheckboxControl from '../components/CheckboxControl.jsx';
@@ -26,6 +27,7 @@ import ColDisplay from '../components/ColDisplay.jsx';
 import Spinner from '../components/Spinner.jsx';
 import TableControl from '../components/TableControl.jsx';
 import Confirm from '../components/Confirm.jsx';
+import History from '../components/History.jsx';
 import OverlayTrigger from '../components/OverlayTrigger.jsx';
 
 import { formatDateTime } from '../utils/date';
@@ -133,6 +135,7 @@ var RentalRequestsDetail = React.createClass({
 
   saveEdit(rentalRequest) {
     Api.updateRentalRequest(rentalRequest).finally(() => {
+      Log.rentalRequestModified(this.props.rentalRequest.data);
       this.closeEditDialog();
       Api.getRentalRequestRotationList(this.props.params.rentalRequestId);
     });
@@ -366,28 +369,10 @@ var RentalRequestsDetail = React.createClass({
       </Well>
 
       <Well className="history">
-        <h3>History <span className="pull-right">
-        </span></h3>
-        {(() => {
-          if (this.state.loadingHistory) { return <div className="spinner-container"><Spinner/></div>; }
-          if (Object.keys(this.props.history).length === 0) { return <Alert bsStyle="success">No history</Alert>; }
-
-          var history = _.sortBy(this.props.history, 'createdDate');
-
-          const HistoryEntry = ({ createdDate, historyText }) => (
-            <Row>
-              <ColDisplay md={12} labelProps={{ md: 2 }} label={ formatDateTime(createdDate, Constant.DATE_YEAR_SHORT_MONTH_DAY) }>
-                { historyText }
-              </ColDisplay>
-            </Row>
-          );
-
-          return <div id="rental-requests-history">
-            {
-              _.map(history, (entry) => <HistoryEntry { ...entry } />)
-            }
-          </div>;
-        })()}
+        <h3>History <span className="pull-right"></span></h3>
+        { rentalRequest.historyEntity &&
+          <History historyEntity={ rentalRequest.historyEntity } refresh={ !this.state.loading } />
+        }
       </Well>
       { this.state.showEditDialog &&
         <RentalRequestsEditDialog show={ this.state.showEditDialog } onSave={ this.saveEdit } onClose={ this.closeEditDialog } />
