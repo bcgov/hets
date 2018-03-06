@@ -478,7 +478,7 @@ namespace HETSAPI.Services.Impl
                         return new ObjectResult(new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-01", _configuration)));
                     }
 
-                    agreement.TimeRecords[timeIndex].EnteredDate = DateTime.Now.ToUniversalTime();
+                    agreement.TimeRecords[timeIndex].EnteredDate = DateTime.UtcNow;
                     agreement.TimeRecords[timeIndex].Hours = item.Hours;
                     agreement.TimeRecords[timeIndex].TimePeriod = item.TimePeriod;
                     agreement.TimeRecords[timeIndex].WorkedDate = item.WorkedDate;
@@ -539,7 +539,7 @@ namespace HETSAPI.Services.Impl
                             return new ObjectResult(new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-01", _configuration)));
                         }
 
-                        agreement.TimeRecords[timeIndex].EnteredDate = DateTime.Now.ToUniversalTime();
+                        agreement.TimeRecords[timeIndex].EnteredDate = DateTime.UtcNow;
                         agreement.TimeRecords[timeIndex].Hours = item.Hours;
                         agreement.TimeRecords[timeIndex].TimePeriod = item.TimePeriod;
                         agreement.TimeRecords[timeIndex].WorkedDate = item.WorkedDate;

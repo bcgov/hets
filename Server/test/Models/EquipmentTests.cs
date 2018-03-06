@@ -45,20 +45,7 @@ namespace HETSAPI.Test
         public void EquipmentInstanceTest()
         {
             Assert.IsType<Equipment>(instance);  
-        }
-
-        /// <summary>
-        /// Test the years of service calculation
-        /// </summary>
-        [Fact]
-        public void YearsOfServiceTest()
-        {
-            // Sept. 18, 2012 should be 4.54 for 2017
-            instance.ReceivedDate = new DateTime(2012, 9, 18);
-            instance.CalculateYearsOfService(2017);
-            float yearsOfService = (float) instance.YearsOfService;
-            Assert.Equal(4.53424644F, yearsOfService);
-        }     
+        }         
         
         [Fact]   
         public void SeniorityTest()

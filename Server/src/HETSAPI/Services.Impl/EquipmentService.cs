@@ -107,7 +107,7 @@ namespace HETSAPI.Services.Impl
 
                 result.IsHired = IsHired(id);
                 result.NumberOfBlocks = GetNumberOfBlocks(result);
-                result.HoursYtd = result.GetYtdServiceHours(_context, DateTime.Now.Year);
+                result.HoursYtd = result.GetYtdServiceHours(_context, DateTime.UtcNow.Year);
 
                 return new ObjectResult(new HetsResponse(result));
             }
@@ -194,7 +194,7 @@ namespace HETSAPI.Services.Impl
                     
                     result.IsHired = IsHired(id);
                     result.NumberOfBlocks = GetNumberOfBlocks(result);
-                    result.HoursYtd = result.GetYtdServiceHours(_context, DateTime.Now.Year);
+                    result.HoursYtd = result.GetYtdServiceHours(_context, DateTime.UtcNow.Year);
 
                     return new ObjectResult(new HetsResponse(result));
                 }
@@ -333,9 +333,50 @@ namespace HETSAPI.Services.Impl
                 }
                 else
                 {
-                    // certain fields are set on new record - set defaults (including status = "Inactive"
+                    // ***********************************************************************************
+                    // Set default values for new piece of Equipment
+                    // certain fields are set on new record - set defaults (including status = "Inactive")
+                    // ***********************************************************************************
                     SetNewRecordFields(item);
 
+                    // ***********************************************************************************
+                    // Calculate Years of Service for new record
+                    // ***********************************************************************************
+                    // Business Rules:
+                    // 1. When the equipment is added the years registered is set to a fraction of the 
+                    //    fiscal left from the registered date to the end of current fiscal 
+                    //    (decimals: 3 places)
+                    // 2. On roll over the years registered increments by one for each year the equipment 
+                    //    stays active ((might need use the TO_DATE field to track when last it was rolled over)
+                    //    TO_DATE = END OF CURRENT FISCAL
+
+                    // determine end of current fscal year
+                    DateTime fiscalEnd;
+
+                    if (DateTime.UtcNow.Month == 1 || DateTime.UtcNow.Month == 2 || DateTime.UtcNow.Month == 3)
+                    {
+                        fiscalEnd = new DateTime(DateTime.UtcNow.Year, 3, 31);
+                    }
+                    else
+                    {
+                        fiscalEnd = new DateTime(DateTime.UtcNow.AddYears(1).Year, 3, 31);
+                    }
+
+                    // is this a leap year?
+                    if (DateTime.IsLeapYear(fiscalEnd.Year))
+                    {
+                        item.YearsOfService = (float) Math.Round((fiscalEnd - DateTime.UtcNow).TotalDays / 366, 3);
+                    }
+                    else
+                    {
+                        item.YearsOfService = (float)Math.Round((fiscalEnd - DateTime.UtcNow).TotalDays / 365, 3);
+                    }
+
+                    item.ToDate = fiscalEnd;
+
+                    // ***********************************************************************************
+                    // Save record
+                    // ***********************************************************************************
                     _context.Equipments.Add(item);
                     _context.SaveChanges();
 

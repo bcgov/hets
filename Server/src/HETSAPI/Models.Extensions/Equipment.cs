@@ -57,47 +57,35 @@ namespace HETSAPI.Models
         /// <summary>
         /// Calculate Years of Service for Equipment
         /// </summary>
-        /// <param name="year"></param>
-        public void CalculateYearsOfService(int year)
+        /// <param name="now"></param>
+        public void CalculateYearsOfService(DateTime now)
         {
-            /*  
-             *  Years of service is calculated annually as Apr. 1 - Date Registered as a decimal number of years. 
-             *  E.g. for FY 2017, equipment registered on Sept. 18, 2012 would be 4.54 years.
-             *  The Excel - yearfrac() function can be used to verify years of service calculations              
-             */
+            // ***********************************************************************************
+            // Calculate Years of Service
+            // ***********************************************************************************
+            // Business Rules:
+            // 1. When the equipment is added the years registered is set to a fraction of the 
+            //    fiscal left from the registered date to the end of current fiscal 
+            //    (decimals: 3 places)
+            // 2. On roll over the years registered increments by one for each year the equipment 
+            //    stays active ((might need use the TO_DATE field to track when last it was rolled over)
+            //    TO_DATE = END OF CURRENT FISCAL
 
-            DateTime dateRegistered = ReceivedDate;
+            // determine end of current fscal year
+            DateTime fiscalEnd;
 
-            // first calculate the year difference.
-            DateTime april1 = new DateTime(year, 4, 1);
-
-            int yearDifference = april1.Year - dateRegistered.Year;
-
-            DateTime firstApril1 = new DateTime(dateRegistered.Year, 4, 1);
-
-            if (dateRegistered > firstApril1)
+            if (now.Month == 1 || now.Month == 2 || now.Month == 3)
             {
-                // reduce the year count by 1.
-                --yearDifference;
+                fiscalEnd = new DateTime(now.Year, 3, 31);
+            }
+            else
+            {
+                fiscalEnd = new DateTime(now.AddYears(1).Year, 3, 31);
             }
 
-            dateRegistered = dateRegistered.AddYears( yearDifference);
-
-            // now calculate the difference in the last fiscal year.
-
-            // since the date is calculated from April 1, we are only concerned about sitations where the current year is a leap year.
-            float daysInYear = 365.0F;
-
-            if (DateTime.IsLeapYear(april1.Year))
-            {
-                daysInYear = 366.0F;
-            }                            
-
-            TimeSpan diff = april1.Subtract(dateRegistered);
-
-            float remainder = (float)(diff.TotalDays / daysInYear);
-
-            YearsOfService = yearDifference + remainder;                       
+            // calculate and set the To Date
+            YearsOfService = YearsOfService + 1;
+            ToDate = fiscalEnd;               
         }
 
         /// <summary>
@@ -165,13 +153,13 @@ namespace HETSAPI.Models
             // *******************************************************************************
             DateTime fiscalStart;
 
-            if (DateTime.Now.Month == 1 || DateTime.Now.Month == 2 || DateTime.Now.Month == 3)
+            if (DateTime.UtcNow.Month == 1 || DateTime.UtcNow.Month == 2 || DateTime.UtcNow.Month == 3)
             {
-                fiscalStart = new DateTime(DateTime.Now.AddYears(-1).Year, 4, 1);
+                fiscalStart = new DateTime(DateTime.UtcNow.AddYears(-1).Year, 4, 1);
             }
             else
             {
-                fiscalStart = new DateTime(DateTime.Now.Year, 4, 1);
+                fiscalStart = new DateTime(DateTime.UtcNow.Year, 4, 1);
             }
 
             // *******************************************************************************
