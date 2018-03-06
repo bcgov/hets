@@ -1009,34 +1009,39 @@ namespace HETSAPI.Services.Impl
 
             if (exists)
             {
-                Project project = _context.Projects.AsNoTracking()
-                    .Include(x => x.History)
-                    .First(a => a.Id == id);
-
-                List<History> data = project.History.OrderByDescending(y => y.AppLastUpdateTimestamp).ToList();
-
-                if (offset == null)
-                {
-                    offset = 0;
-                }
-
-                if (limit == null)
-                {
-                    limit = data.Count - offset;
-                }
-
-                List<HistoryViewModel> result = new List<HistoryViewModel>();
-
-                for (int i = (int)offset; i < data.Count && i < offset + limit; i++)
-                {
-                    result.Add(data[i].ToViewModel(id));
-                }
-
-                return new ObjectResult(new HetsResponse(result));
+                return new ObjectResult(new HetsResponse(GetHistoryRecords(id, offset, limit)));
             }
 
             // record not found
             return new ObjectResult(new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-01", _configuration)));
+        }
+
+        private List<HistoryViewModel> GetHistoryRecords(int id, int? offset, int? limit)
+        {
+            Project project = _context.Projects.AsNoTracking()
+                .Include(x => x.History)
+                .First(a => a.Id == id);
+
+            List<History> data = project.History.OrderByDescending(y => y.AppLastUpdateTimestamp).ToList();
+
+            if (offset == null)
+            {
+                offset = 0;
+            }
+
+            if (limit == null)
+            {
+                limit = data.Count - offset;
+            }
+
+            List<HistoryViewModel> result = new List<HistoryViewModel>();
+
+            for (int i = (int)offset; i < data.Count && i < offset + limit; i++)
+            {
+                result.Add(data[i].ToViewModel());
+            }
+
+            return result;
         }
 
         /// <summary>
@@ -1049,35 +1054,26 @@ namespace HETSAPI.Services.Impl
         /// <response code="201">History created</response>
         public virtual IActionResult ProjectsIdHistoryPostAsync(int id, History item)
         {
-            HistoryViewModel result = new HistoryViewModel();
-
             bool exists = _context.Projects.Any(a => a.Id == id);
 
             if (exists)
             {
-                Project project = _context.Projects
-                    .Include(x => x.History)
+                Project project = _context.Projects.AsNoTracking()
                     .First(a => a.Id == id);
 
-                if (project.History == null)
+                History history = new History
                 {
-                    project.History = new List<History>();
-                }
+                    Id = 0,
+                    HistoryText = item.HistoryText,
+                    CreatedDate = item.CreatedDate,
+                    ProjectId = project.Id
+                };
 
-                // force add
-                item.Id = 0;
-                project.History.Add(item);
-                _context.Projects.Update(project);
+                _context.Historys.Add(history);
                 _context.SaveChanges();
             }
 
-            result.HistoryText = item.HistoryText;
-            result.Id = item.Id;
-            result.LastUpdateTimestamp = item.AppLastUpdateTimestamp;
-            result.LastUpdateUserid = item.AppLastUpdateUserid;
-            result.AffectedEntityId = id;
-
-            return new ObjectResult(new HetsResponse(result));
+            return new ObjectResult(new HetsResponse(GetHistoryRecords(id, null, null)));
         }
 
         #endregion
