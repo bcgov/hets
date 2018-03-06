@@ -6,7 +6,6 @@ import { browserHistory } from 'react-router';
 
 import { Grid, Well, Row, Col, Alert, Button, ButtonGroup, Glyphicon, Label } from 'react-bootstrap';
 import { Link } from 'react-router';
-import { LinkContainer } from 'react-router-bootstrap';
 
 import _ from 'lodash';
 import Promise from 'bluebird';
