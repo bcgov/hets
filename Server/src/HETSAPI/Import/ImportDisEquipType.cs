@@ -199,7 +199,7 @@ namespace HETSAPI.Import
 
             if (instance == null)
             {
-                instance = new DistrictEquipmentType {Id = oldObject.Equip_Type_Id};
+                instance = new DistrictEquipmentType();
 
                 string typeCode = "";
 
@@ -283,6 +283,7 @@ namespace HETSAPI.Import
                 {
                     instance.DistrictEquipmentName += Delim + description;
                     dbContext.DistrictEquipmentTypes.Add(instance);
+                    dbContext.SaveChanges();
                     if (addImportMaps)
                     {
                         ImportUtility.AddImportMap(dbContext, OldTable, oldObject.Equip_Type_Id.ToString(), NewTable, instance.Id);
