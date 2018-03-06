@@ -628,6 +628,7 @@ var RentalAgreementsDetail = React.createClass({
           onSaveMultiple={ this.saveRentalRates }
           onClose={ this.closeRentalRateDialog } 
           provincialRateTypes={ provincialRateTypes }
+          rentalAgreement={ rentalAgreement }
         />
       }
       { this.state.showAttachmentRateDialog &&
