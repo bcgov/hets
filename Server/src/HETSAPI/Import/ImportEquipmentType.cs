@@ -15,7 +15,7 @@ namespace HETSAPI.Import
     /// </summary>
     public static class ImportEquipmentType
     {
-        const string OldTable = "EquipType";
+        const string OldTable = "Equip_Type";
         const string NewTable = "HET_EQUIPMMENT_TYPE";
         const string XmlFileName = "Equip_Type.xml";
 
