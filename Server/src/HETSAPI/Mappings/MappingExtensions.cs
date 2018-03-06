@@ -462,11 +462,10 @@ namespace HETSAPI.Mappings
         /// History view model
         /// </summary>
         /// <param name="model"></param>
-        /// <param name="affectedEntityId"></param>
         /// <returns></returns>
-        public static HistoryViewModel ToViewModel(this History model, int affectedEntityId)
+        public static HistoryViewModel ToViewModel(this History model)
         {
-            HistoryViewModel dto = new HistoryViewModel {AffectedEntityId = affectedEntityId};
+            HistoryViewModel dto = new HistoryViewModel();
 
             if (model != null)
             {
@@ -474,6 +473,7 @@ namespace HETSAPI.Mappings
                 dto.Id = model.Id;
                 dto.LastUpdateTimestamp = model.AppLastUpdateTimestamp;
                 dto.LastUpdateUserid = model.AppLastUpdateUserid;
+                dto.AffectedEntityId = model.Id;
             }
 
             return dto;
