@@ -571,7 +571,7 @@ namespace HETSAPI.Services.Impl
                     Project = rentalRequest.Project,
                     Status = "Active",
                     Number = agreementNumber,
-                    DatedOn = DateTime.Now,
+                    DatedOn = DateTime.UtcNow,
                     EstimateHours = rentalRequest.ExpectedHours,
                     EstimateStartWork = rentalRequest.ExpectedStartDate
                 };
@@ -1169,13 +1169,13 @@ namespace HETSAPI.Services.Impl
             // *******************************************************************************
             DateTime fiscalStart;
 
-            if (DateTime.Now.Month == 1 || DateTime.Now.Month == 2 || DateTime.Now.Month == 3)
+            if (DateTime.UtcNow.Month == 1 || DateTime.UtcNow.Month == 2 || DateTime.UtcNow.Month == 3)
             {
-                fiscalStart = new DateTime(DateTime.Now.AddYears(-1).Year, 4, 1);
+                fiscalStart = new DateTime(DateTime.UtcNow.AddYears(-1).Year, 4, 1);
             }
             else
             {
-                fiscalStart = new DateTime(DateTime.Now.Year, 4, 1);
+                fiscalStart = new DateTime(DateTime.UtcNow.Year, 4, 1);
             }
 
             // get the last rotation list created this fiscal year

@@ -648,7 +648,7 @@ namespace HETSAPI.Services.Impl
                         return new ObjectResult(new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-01", _configuration)));
                     }
 
-                    project.RentalAgreements[indexRental].TimeRecords[timeIndex].EnteredDate = DateTime.Now.ToUniversalTime();
+                    project.RentalAgreements[indexRental].TimeRecords[timeIndex].EnteredDate = DateTime.UtcNow;
                     project.RentalAgreements[indexRental].TimeRecords[timeIndex].Hours = item.Hours;
                     project.RentalAgreements[indexRental].TimeRecords[timeIndex].TimePeriod = item.TimePeriod;
                     project.RentalAgreements[indexRental].TimeRecords[timeIndex].WorkedDate = item.WorkedDate;
@@ -739,7 +739,7 @@ namespace HETSAPI.Services.Impl
                                 ErrorViewModel.GetDescription("HETS-01", _configuration)));
                         }
 
-                        project.RentalAgreements[indexRental].TimeRecords[timeIndex].EnteredDate = DateTime.Now.ToUniversalTime();
+                        project.RentalAgreements[indexRental].TimeRecords[timeIndex].EnteredDate = DateTime.UtcNow;
                         project.RentalAgreements[indexRental].TimeRecords[timeIndex].Hours = item.Hours;
                         project.RentalAgreements[indexRental].TimeRecords[timeIndex].TimePeriod = item.TimePeriod;
                         project.RentalAgreements[indexRental].TimeRecords[timeIndex].WorkedDate = item.WorkedDate;

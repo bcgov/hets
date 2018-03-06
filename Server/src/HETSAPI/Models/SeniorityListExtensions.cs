@@ -105,7 +105,7 @@ namespace HETSAPI.Models
                                 equipment.ServiceHoursThreeYearsAgo = equipment.ServiceHoursTwoYearsAgo;
                                 equipment.ServiceHoursTwoYearsAgo = equipment.ServiceHoursLastYear;
                                 equipment.ServiceHoursLastYear = equipment.GetYtdServiceHours(dbContext, startingYear);
-                                equipment.CalculateYearsOfService(DateTime.UtcNow.Year);
+                                equipment.CalculateYearsOfService(DateTime.UtcNow);
                             
                                 // blank out the override reason
                                 equipment.SeniorityOverrideReason = "";
@@ -180,7 +180,7 @@ namespace HETSAPI.Models
                         {
                             if (equipment.Status != Equipment.StatusApproved)
                             {                                
-                                equipment.SeniorityEffectiveDate = DateTime.Now;
+                                equipment.SeniorityEffectiveDate = DateTime.UtcNow;
                                 equipment.BlockNumber = null;
                                 equipment.Seniority = null;
                                 equipment.NumberInBlock = null;
@@ -188,7 +188,7 @@ namespace HETSAPI.Models
                             else
                             {                                
                                 equipment.CalculateSeniority(seniorityScoring);
-                                equipment.SeniorityEffectiveDate = DateTime.Now;
+                                equipment.SeniorityEffectiveDate = DateTime.UtcNow;
                             }
                         
                             context.Equipments.Update(equipment);
