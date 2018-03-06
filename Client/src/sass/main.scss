@@ -79,6 +79,13 @@ a.light {
   }
 }
 
+.alert-warning {
+
+  &:before {
+    content: '';
+  }
+}
+
 // Spacing 
 
 .nopadding {

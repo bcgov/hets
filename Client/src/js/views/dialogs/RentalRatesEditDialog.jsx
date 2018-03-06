@@ -1,7 +1,7 @@
 import React from 'react';
 
 import { Grid, Row, Col } from 'react-bootstrap';
-import { Form, FormGroup, HelpBlock, ControlLabel, Button, Glyphicon } from 'react-bootstrap';
+import { Form, FormGroup, HelpBlock, ControlLabel, Button, Glyphicon, Alert } from 'react-bootstrap';
 
 import _ from 'lodash';
 
@@ -25,6 +25,7 @@ var RentalRatesEditDialog = React.createClass({
     onClose: React.PropTypes.func.isRequired,
     show: React.PropTypes.bool,
     provincialRateTypes: React.PropTypes.array,
+    rentalAgreement: React.PropTypes.object,
   },
 
   getInitialState() {
@@ -44,6 +45,7 @@ var RentalRatesEditDialog = React.createClass({
           ratePeriod: this.props.rentalRate.ratePeriod || Constant.RENTAL_RATE_PERIOD_HOURLY,
           comment: this.props.rentalRate.comment || '',
           isIncludedInTotal: this.props.rentalRate.includeInTotal || false,
+          differentRatePeriods: false,
 
           // UI fields
           percentOrRateOption: isNew || this.props.rentalRate.percentOfEquipmentRate > 0 ? PERCENT_RATE : DOLLAR_RATE,
@@ -79,6 +81,27 @@ var RentalRatesEditDialog = React.createClass({
     let stateName = property.match(/[a-zA-Z]+/g)[0];
     let state = { [stateName]:  stateValue };
     let updatedState = { ...this.state.forms, [number]: { ...this.state.forms[number], ...state } };
+    this.setState({ forms: updatedState });
+  },
+
+  updateRatePeriodState(value) {
+    let property = Object.keys(value)[0];
+    let stateValue = Object.values(value)[0];
+    let number = property.match(/\d+/g)[0];
+    let stateName = property.match(/[a-zA-Z]+/g)[0];
+    let state = { [stateName]:  stateValue };
+    let updatedState = { 
+      ...this.state.forms, 
+      [number]: { 
+        ...this.state.forms[number], 
+        ...state, 
+      },
+    };
+    if (this.props.rentalAgreement.ratePeriod === stateValue) {
+      updatedState[number].differentRatePeriods = false;
+    } else {
+      updatedState[number].differentRatePeriods = true;
+    }
     this.setState({ forms: updatedState });
   },
 
@@ -281,7 +304,7 @@ var RentalRatesEditDialog = React.createClass({
               <Col md={2}>
                 <FormGroup controlId={`ratePeriod${key}`} validationState={ this.state.forms[key].ratePeriodError ? 'error' : null }>
                   <ControlLabel>Period <sup>*</sup></ControlLabel>
-                  <DropdownControl id={`ratePeriod${key}`} title={ this.state.forms[key].ratePeriod } updateState={ this.updateState }
+                  <DropdownControl id={`ratePeriod${key}`} title={ this.state.forms[key].ratePeriod } updateState={ this.updateRatePeriodState }
                     items={[ Constant.RENTAL_RATE_PERIOD_HOURLY, Constant.RENTAL_RATE_PERIOD_DAILY ]} disabled={ !this.state.forms[key].rateType.isRateEditable }  />
                   <HelpBlock>{ this.state.forms[key].ratePeriodError }</HelpBlock>
                 </FormGroup>
@@ -303,7 +326,7 @@ var RentalRatesEditDialog = React.createClass({
               <Col md={3}>
                 <FormGroup controlId={`isIncludedInTotal${key}`}>
                   <ControlLabel />
-                  <CheckboxControl id={`isIncludedInTotal${key}`} disabled={ !this.state.forms[key].rateType.isInTotalEditable } checked={ this.state.forms[key].isIncludedInTotal } updateState={ this.updateState }>Include in total</CheckboxControl>
+                  <CheckboxControl id={`isIncludedInTotal${key}`} disabled={ !this.state.forms[key].rateType.isInTotalEditable || this.state.forms[key].differentRatePeriods } checked={ this.state.forms[key].isIncludedInTotal } updateState={ this.updateState }>Include in total</CheckboxControl>
                 </FormGroup>
               </Col>
             </Row>
@@ -316,6 +339,13 @@ var RentalRatesEditDialog = React.createClass({
                 </FormGroup>
               </Col>
             </Row>
+            { this.state.forms[key].differentRatePeriods && 
+              <Row>
+                <Col md={12}>
+                  <Alert bsStyle="warning">Only rates with same period as the pay rate can be added to the total.</Alert>
+                </Col>
+              </Row>
+            }
           </Grid>
         </Form>
       ))}
