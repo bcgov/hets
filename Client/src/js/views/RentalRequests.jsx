@@ -175,7 +175,7 @@ var RentalRequests = React.createClass({
   },
 
   saveNewRequest(request) {
-    Api.addRentalRequest(request).then((request) => {
+    Api.addRentalRequest(request).then(() => {
       // Open it up
       Log.rentalRequestAdded(this.props.rentalRequest.data);
       this.props.router.push({

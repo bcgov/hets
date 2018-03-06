@@ -11,7 +11,6 @@ import { request, buildApiPath } from '../../utils/http';
 import * as Action from '../../actionTypes';
 import * as Api from '../../api';
 import * as Constant from '../../constants';
-import * as Log from '../../history';
 import store from '../../store';
 
 import DeleteButton from '../../components/DeleteButton.jsx';
