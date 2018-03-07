@@ -21,6 +21,7 @@ export const OWNER_MODIFIED_NAME = 'Owner %e is now %e';
 export const OWNER_EQUIPMENT_ADDED = 'Owner %e added equipment %e.';
 export const OWNER_EQUIPMENT_VERIFIED = 'Owner %e verified equipment %e.';
 export const OWNER_MODIFIED_POLICY = 'Owner %e modified policy.';
+export const OWNER_DOCUMENT_ADDED = 'Owner %e added document %e.';
 export const OWNER_DOCUMENTS_ADDED = 'Owner %e added documents.';
 export const OWNER_DOCUMENT_DELETED = 'Owner %e removed document %e.';
 export const OWNER_CONTACT_ADDED = 'Owner %e added contact %e.';
@@ -35,6 +36,7 @@ export const PROJECT_EQUIPMENT_ADDED = 'Project %e added equipment %e.';
 export const PROJECT_CONTACT_ADDED = 'Project %e added contact %e.';
 export const PROJECT_CONTACT_UPDATED = 'Project %e modified contact %e.';
 export const PROJECT_CONTACT_DELETED = 'Project %e removed contact %e.';
+export const PROJECT_DOCUMENT_ADDED = 'Project %e added document %e.';
 export const PROJECT_DOCUMENTS_ADDED = 'Project %e added documents.';
 export const PROJECT_DOCUMENT_DELETED = 'Project %e removed document %e.';
 
@@ -46,6 +48,7 @@ export const EQUIPMENT_ADDED = 'Equipment %e was added.';
 export const EQUIPMENT_MODIFIED = 'Equipment %e was modified.';
 export const EQUIPMENT_STATUS_MODIFIED = 'Equipment %e status is %e.';
 export const EQUIPMENT_SENIORITY_MODIFIED = 'Equipment %e seniority was modified.';
+export const EQUIPMENT_DOCUMENT_ADDED = 'Equipment %e added document %e.';
 export const EQUIPMENT_DOCUMENTS_ADDED = 'Equipment %e added documents.';
 export const EQUIPMENT_DOCUMENT_DELETED = 'Equipment %e removed document %e.';
 export const EQUIPMENT_ATTACHMENT_ADDED = 'Equipment %e added attachment %e.';
@@ -54,6 +57,7 @@ export const EQUIPMENT_ATTACHMENT_DELETED = 'Equipment %e removed attachment %e.
 
 export const RENTAL_REQUEST_ADDED = 'Rental request %e was added.';
 export const RENTAL_REQUEST_MODIFIED = 'Rental request %e was modified.';
+export const RENTAL_REQUEST_DOCUMENT_ADDED = 'Rental request %e added document %e.';
 export const RENTAL_REQUEST_DOCUMENTS_ADDED = 'Rental request %e added documents.';
 export const RENTAL_REQUEST_DOCUMENT_DELETED = 'Rental request %e removed document %e.';
 
@@ -208,6 +212,10 @@ export function ownerEquipmentVerified(owner, equipment) {
   return log(owner.historyEntity, OWNER_EQUIPMENT_VERIFIED, equipment.historyEntity);
 }
 
+export function ownerDocumentAdded(owner, document) {
+  return log(owner.historyEntity, OWNER_DOCUMENT_ADDED, { description: document });
+}
+
 export function ownerDocumentsAdded(owner) {
   return log(owner.historyEntity, OWNER_DOCUMENTS_ADDED);
 }
@@ -236,6 +244,10 @@ export function projectContactDeleted(project, contact) {
   return log(project.historyEntity, PROJECT_CONTACT_DELETED, contact.historyEntity);
 }
 
+export function projectDocumentAdded(project, document) {
+  return log(project.historyEntity, PROJECT_DOCUMENT_ADDED, { description: document });
+}
+
 export function projectDocumentsAdded(project) {
   return log(project.historyEntity, PROJECT_DOCUMENTS_ADDED);
 }
@@ -258,6 +270,10 @@ export function equipmentSeniorityModified(equipment) {
 
 export function equipmentStatusModified(equipment, status) {
   return log(equipment.historyEntity, EQUIPMENT_STATUS_MODIFIED, { description: status });
+}
+
+export function equipmentDocumentAdded(equipment, document) {
+  return log(equipment.historyEntity, EQUIPMENT_DOCUMENT_ADDED, { description: document });
 }
 
 export function equipmentDocumentsAdded(equipment) {
@@ -286,6 +302,10 @@ export function rentalRequestAdded(rentalRequest) {
 
 export function rentalRequestModified(rentalRequest) {
   return log(rentalRequest.historyEntity, RENTAL_REQUEST_MODIFIED);
+}
+
+export function rentalRequestDocumentAdded(rentalRequest, document) {
+  return log(rentalRequest.historyEntity, RENTAL_REQUEST_DOCUMENT_ADDED, { description: document });
 }
 
 export function rentalRequestDocumentsAdded(rentalRequest) {

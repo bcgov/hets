@@ -113,7 +113,9 @@ var DocumentsListDialog = React.createClass({
     };
 
     this.uploadPromise = request(buildApiPath(this.props.parent.uploadDocumentPath), options).then(() => {
-      this.props.parent.documentsAdded(this.props.parent);
+      _.map(files, ((file) => {
+        this.props.parent.documentAdded(this.props.parent, file.name);
+      }));
       this.setState({ uploadInProgress: false, percentUploaded: null });
       this.fetch();
     }, (err) => {
