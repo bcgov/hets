@@ -64,16 +64,7 @@ var HistoryComponent = React.createClass({
     // Easy mode: show 10 the first time and let the user load all of them with the
     // "Show More" button. Can adapt for paginated / offset&limit calls if necessary.
     this.setState({ loading: true });
-    return History.get(this.props.historyEntity, 0, first ? API_LIMIT : null).then(() => {
-      var history = _.map(this.props.history, history => {
-        history.formattedTimestamp = formatDateTimeUTCToLocal(history.lastUpdateTimestamp, Constant.DATE_TIME_LOG);
-        history.event = History.renderEvent(history.historyText, this.props.onClose);
-        return history;
-      });
-      this.setState({
-        history: history,
-      });
-    }).finally(() => {
+    return History.get(this.props.historyEntity, 0, first ? API_LIMIT : null).finally(() => {
       this.setState({
         loading: false,
         canShowMore: first && Object.keys(this.props.history).length >= API_LIMIT,
@@ -90,9 +81,16 @@ var HistoryComponent = React.createClass({
       {(() => {
         if (this.state.loading) { return <div style={{ textAlign: 'center' }}><Spinner/></div>; }
 
-        if (Object.keys(this.state.history).length === 0) { return <Alert bsStyle="success">No history</Alert>; }
+        if (Object.keys(this.props.history).length === 0) { return <Alert bsStyle="success">No history</Alert>; }
 
-        var history = _.sortBy(this.state.history, this.state.ui.sortField);
+        var unsortedHistory = _.map(this.props.history, history => {
+          history.formattedTimestamp = formatDateTimeUTCToLocal(history.lastUpdateTimestamp, Constant.DATE_TIME_LOG);
+          history.event = History.renderEvent(history.historyText, this.props.onClose);
+          return history;
+        });
+
+        var history = _.sortBy(unsortedHistory, this.state.ui.sortField);
+
         if (this.state.ui.sortDesc) {
           _.reverse(history);
         }

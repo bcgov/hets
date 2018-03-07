@@ -419,7 +419,13 @@ export function updateEquipment(equipment) {
 }
 
 export function addEquipmentHistory(equipmentId, history) {
-  return new ApiRequest(`/equipment/${ equipmentId }/history`).post(history);
+  return new ApiRequest(`/equipment/${ equipmentId }/history`).post(history).then((response) => {
+    var history = normalize(response.data);
+    // Add display fields
+    _.map(history, history => { parseHistory(history); });
+
+    store.dispatch({ type: Action.UPDATE_HISTORY, history: history });
+  });
 }
 
 export function getEquipmentHistory(equipmentId, params) {
@@ -680,7 +686,13 @@ export function addOwnerContact(owner, contact) {
 }
 
 export function addOwnerHistory(ownerId, history) {
-  return new ApiRequest(`/owners/${ ownerId }/history`).post(history);
+  return new ApiRequest(`/owners/${ ownerId }/history`).post(history).then((response) => {
+    var history = normalize(response.data);
+    // Add display fields
+    _.map(history, history => { parseHistory(history); });
+
+    store.dispatch({ type: Action.UPDATE_HISTORY, history: history });
+  });
 }
 
 export function getOwnerHistory(ownerId, params) {
@@ -1041,7 +1053,13 @@ export function addProjectContact(project, contact) {
 }
 
 export function addProjectHistory(projectId, history) {
-  return new ApiRequest(`/projects/${ projectId }/history`).post(history);
+  return new ApiRequest(`/projects/${ projectId }/history`).post(history).then((response) => {
+    var history = normalize(response.data);
+    // Add display fields
+    _.map(history, history => { parseHistory(history); });
+
+    store.dispatch({ type: Action.UPDATE_HISTORY, history: history });
+  });
 }
 
 export function getProjectHistory(projectId, params) {
@@ -1225,7 +1243,13 @@ export function updateRentalRequest(rentalRequest) {
 }
 
 export function addRentalRequestHistory(requestId, history) {
-  return new ApiRequest(`/rentalrequests/${ requestId }/history`).post(history);
+  return new ApiRequest(`/rentalrequests/${ requestId }/history`).post(history).then((response) => {
+    var history = normalize(response.data);
+    // Add display fields
+    _.map(history, history => { parseHistory(history); });
+
+    store.dispatch({ type: Action.UPDATE_HISTORY, history: history });
+  });
 }
 
 export function getRentalRequestHistory(requestId, params) {
