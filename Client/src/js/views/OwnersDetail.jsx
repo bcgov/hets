@@ -463,52 +463,6 @@ var OwnersDetail = React.createClass({
           </Col>
           <Col md={12}>
             <Well>
-              <h3>Equipment ({ owner.numberOfEquipment }) <span className="pull-right">
-                <Button className="mr-5" title="Verify All Equipment" bsSize="small" onClick={ this.equipmentVerifyAll }>Verify All</Button>
-                <Button title="Add Equipment" bsSize="small" onClick={ this.openEquipmentDialog }><Glyphicon glyph="plus" /></Button>
-              </span></h3>
-              {(() => {
-                if (this.state.loading) { return <div className="spinner-container"><Spinner/></div>; }
-
-                if (!owner.equipmentList || owner.equipmentList.length === 0) { return <Alert bsStyle="success">No equipment</Alert>; }
-
-                var equipmentList = _.sortBy(owner.equipmentList, this.state.uiEquipment.sortField);
-                if (this.state.uiEquipment.sortDesc) {
-                  _.reverse(equipmentList);
-                }
-
-                var headers = [
-                  { field: 'equipmentCode',    title: 'ID'                  },
-                  { field: 'typeName',         title: 'Type'                },
-                  { field: 'make',             title: 'Make/Model/Size' },
-                  { field: 'lastVerifiedDate', title: 'Last Verified'       },
-                  { field: 'blank' },
-                ];
-
-                return <SortTable id="equipment-list" sortField={ this.state.uiEquipment.sortField } sortDesc={ this.state.uiEquipment.sortDesc } onSort={ this.updateEquipmentUIState } headers={ headers }>
-                  {
-                    _.map(equipmentList, (equipment) => {
-                      const location = {
-                        pathname: `${Constant.EQUIPMENT_PATHNAME}/${equipment.id}`,
-                        state: { returnUrl: `${Constant.OWNERS_PATHNAME}/${owner.id}` },
-                      };
-                      return <tr key={ equipment.id }>
-                        <td><Link to={ location }>{ equipment.equipmentCode }</Link></td>
-                        <td>{ equipment.typeName }</td>
-                        <td>{ concat(equipment.make, concat(equipment.model, equipment.size, '/'), '/') }</td>
-                        <td>{ equipment.isApproved ? formatDateTime(equipment.lastVerifiedDate, Constant.DATE_YEAR_SHORT_MONTH_DAY) : 'Not Approved' }</td>
-                        <td style={{ textAlign: 'right' }}>
-                          <Button title="Verify Equipment" bsSize="xsmall" onClick={ this.equipmentVerify.bind(this, equipment) }><Glyphicon glyph="ok" /> OK</Button>
-                        </td>
-                      </tr>;
-                    })
-                  }
-                </SortTable>;
-              })()}
-            </Well>
-          </Col>
-          <Col md={12}>
-            <Well>
               <h3>Contacts</h3>
               {(() => {
                 if (this.state.loading ) { return <div className="spinner-container"><Spinner/></div>; }
@@ -557,6 +511,52 @@ var OwnersDetail = React.createClass({
               { owner.historyEntity && <History historyEntity={ owner.historyEntity } refresh={ !this.state.loading } /> }
             </Well>
           </Col>
+          <Col md={12}>
+            <Well>
+              <h3>Equipment ({ owner.numberOfEquipment }) <span className="pull-right">
+                <Button className="mr-5" title="Verify All Equipment" bsSize="small" onClick={ this.equipmentVerifyAll }>Verify All</Button>
+                <Button title="Add Equipment" bsSize="small" onClick={ this.openEquipmentDialog }><Glyphicon glyph="plus" /></Button>
+              </span></h3>
+              {(() => {
+                if (this.state.loading) { return <div className="spinner-container"><Spinner/></div>; }
+
+                if (!owner.equipmentList || owner.equipmentList.length === 0) { return <Alert bsStyle="success">No equipment</Alert>; }
+
+                var equipmentList = _.sortBy(owner.equipmentList, this.state.uiEquipment.sortField);
+                if (this.state.uiEquipment.sortDesc) {
+                  _.reverse(equipmentList);
+                }
+
+                var headers = [
+                  { field: 'equipmentCode',    title: 'ID'                  },
+                  { field: 'typeName',         title: 'Type'                },
+                  { field: 'make',             title: 'Make/Model/Size' },
+                  { field: 'lastVerifiedDate', title: 'Last Verified'       },
+                  { field: 'blank' },
+                ];
+
+                return <SortTable id="equipment-list" sortField={ this.state.uiEquipment.sortField } sortDesc={ this.state.uiEquipment.sortDesc } onSort={ this.updateEquipmentUIState } headers={ headers }>
+                  {
+                    _.map(equipmentList, (equipment) => {
+                      const location = {
+                        pathname: `${Constant.EQUIPMENT_PATHNAME}/${equipment.id}`,
+                        state: { returnUrl: `${Constant.OWNERS_PATHNAME}/${owner.id}` },
+                      };
+                      return <tr key={ equipment.id }>
+                        <td><Link to={ location }>{ equipment.equipmentCode }</Link></td>
+                        <td>{ equipment.typeName }</td>
+                        <td>{ concat(equipment.make, concat(equipment.model, equipment.size, '/'), '/') }</td>
+                        <td>{ equipment.isApproved ? formatDateTime(equipment.lastVerifiedDate, Constant.DATE_YEAR_SHORT_MONTH_DAY) : 'Not Approved' }</td>
+                        <td style={{ textAlign: 'right' }}>
+                          <Button title="Verify Equipment" bsSize="xsmall" onClick={ this.equipmentVerify.bind(this, equipment) }><Glyphicon glyph="ok" /> OK</Button>
+                        </td>
+                      </tr>;
+                    })
+                  }
+                </SortTable>;
+              })()}
+            </Well>
+          </Col>
         </Row>
       </div>
       { this.state.showEquipmentDialog &&
@@ -569,7 +569,13 @@ var OwnersDetail = React.createClass({
         <OwnersPolicyEditDialog show={ this.state.showPolicyDialog } onSave={ this.savePolicyEdit } onClose={ this.closePolicyDialog } />
       }
       { this.state.showContactDialog &&
-        <ContactsEditDialog show={ this.state.showContactDialog } contact={ this.state.contact } onSave={ this.saveContact } onClose={ this.closeContactDialog } />
+        <ContactsEditDialog 
+          show={ this.state.showContactDialog } 
+          contact={ this.state.contact } 
+          onSave={ this.saveContact } 
+          onClose={ this.closeContactDialog } 
+          isFirstContact={!this.props.owner.contacts || Object.keys(this.props.owner.contacts).length === 0}
+        />
       }
       { this.state.showDocumentsDialog &&
         <DocumentsListDialog 
