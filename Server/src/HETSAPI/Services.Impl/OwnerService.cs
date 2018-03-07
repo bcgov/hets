@@ -489,6 +489,7 @@ namespace HETSAPI.Services.Impl
                         return new ObjectResult(new HetsResponse("HETS-16", ErrorViewModel.GetDescription("HETS-16", _configuration)));
                     }
 
+                    owner.ReportDate = model.ReportDate;
                     owner.Title = model.Title;
                     owner.DistrictId = model.DistrictId;
                     owner.MinistryDistrictId = model.MinistryDistrictId;
@@ -538,6 +539,8 @@ namespace HETSAPI.Services.Impl
 
                         // convert to string and log
                         string pdfResponse = Encoding.Default.GetString(pdfResponseBytes);
+
+                        fileName = fileName + ".pdf";
 
                         _logger.LogInformation("Owner Verification Notices Pdf - HETS Pdf Filename: {0}", fileName);
                         _logger.LogInformation("Owner Verification Notices Pdf - HETS Pdf Size: {0}", pdfResponse.Length);
