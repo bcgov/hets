@@ -148,7 +148,7 @@ namespace HETSAPI.ViewModels
             if (rentalRate.PercentOfEquipmentRate != null &&
                 rentalRate.PercentOfEquipmentRate > 0)
             {
-                temp = string.Format("({0:0.##}%) ", rentalRate.PercentOfEquipmentRate) + temp;
+                temp = string.Format("({0:0.00}%) ", rentalRate.PercentOfEquipmentRate) + temp;
             }            
 
             return temp;
