@@ -507,12 +507,6 @@ var OwnersDetail = React.createClass({
               })()}
             </Well>
             <Well>
-              <h3>History</h3>
-              { owner.historyEntity && <History historyEntity={ owner.historyEntity } refresh={ !this.state.loading } /> }
-            </Well>
-          </Col>
-          <Col md={12}>
-            <Well>
               <h3>Equipment ({ owner.numberOfEquipment }) <span className="pull-right">
                 <Button className="mr-5" title="Verify All Equipment" bsSize="small" onClick={ this.equipmentVerifyAll }>Verify All</Button>
                 <Button title="Add Equipment" bsSize="small" onClick={ this.openEquipmentDialog }><Glyphicon glyph="plus" /></Button>
@@ -555,6 +549,10 @@ var OwnersDetail = React.createClass({
                   }
                 </SortTable>;
               })()}
+            </Well>
+            <Well>
+              <h3>History</h3>
+              { owner.historyEntity && <History historyEntity={ owner.historyEntity } refresh={ !this.state.loading } /> }
             </Well>
           </Col>
         </Row>
