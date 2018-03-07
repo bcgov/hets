@@ -147,6 +147,12 @@ export function updateUserRoles(userId, userRoleArray) {
   });
 }
 
+export function getUserDistricts() {
+  return new ApiRequest('/userdistricts').get().then((response) => {
+    return response;
+  });
+}
+
 ////////////////////
 // Roles,  Permissions
 ////////////////////
