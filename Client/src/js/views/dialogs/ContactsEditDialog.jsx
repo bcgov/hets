@@ -19,6 +19,7 @@ var ContactsEditDialog = React.createClass({
     onSave: React.PropTypes.func.isRequired,
     onClose: React.PropTypes.func.isRequired,
     show: React.PropTypes.bool,
+    isFirstContact: React.PropTypes.bool,
   },
 
   getInitialState() {
@@ -33,7 +34,7 @@ var ContactsEditDialog = React.createClass({
       workPhoneNumber: this.props.contact.workPhoneNumber || '',
       mobilePhoneNumber: this.props.contact.mobilePhoneNumber || '',
       faxPhoneNumber: this.props.contact.faxPhoneNumber || '',
-      isPrimary: this.props.contact.isPrimary || false,
+      isPrimary: this.props.contact.isPrimary || this.props.isFirstContact || false,
 
       givenNameError: false,
       surnameError: false,
