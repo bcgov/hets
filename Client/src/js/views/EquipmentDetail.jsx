@@ -223,6 +223,7 @@ var EquipmentDetail = React.createClass({
 
   updatePhysicalAttachment(attachment) {
     Api.updatePhysicalAttachment(attachment).then(() => {
+      Log.equipmentAttachmentUpdated(this.props.equipment, attachment.typeName);
       var equipId = this.props.params.equipmentId;
       Api.getEquipment(equipId);
       this.closePhysicalAttachmentEditDialog();
@@ -231,6 +232,8 @@ var EquipmentDetail = React.createClass({
 
   deletePhysicalAttachment(attachmentId) {
     Api.deletePhysicalAttachment(attachmentId).then(() => {
+      let attachment = _.find(this.props.equipment.equipmentAttachments, ((attachment) => attachment.id === attachmentId ));
+      Log.equipmentAttachmentDeleted(this.props.equipment, attachment.typeName);
       var equipId = this.props.params.equipmentId;
       Api.getEquipment(equipId);
     });

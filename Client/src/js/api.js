@@ -349,6 +349,7 @@ function parseEquipment(equipment) {
   equipment.url = `#/${ equipment.path }`;
   equipment.name = `code ${ equipment.equipmentCode }`;
   equipment.historyEntity = History.makeHistoryEntity(History.EQUIPMENT, equipment);
+  equipment.documentAdded = Log.equipmentDocumentAdded;
   equipment.documentsAdded = Log.equipmentDocumentsAdded;
   equipment.documentDeleted = Log.equipmentDocumentDeleted;
 
@@ -571,6 +572,7 @@ function parseOwner(owner) {
   owner.url = `#/${ owner.path }`;
   owner.name = owner.organizationName;
   owner.historyEntity = History.makeHistoryEntity(History.OWNER, owner);
+  owner.documentAdded = Log.ownerDocumentAdded;
   owner.documentsAdded = Log.ownerDocumentsAdded;
   owner.documentDeleted = Log.ownerDocumentDeleted;
 
@@ -900,6 +902,7 @@ function parseProject(project) {
   project.path = `${ Constant.PROJECTS_PATHNAME }/${ project.id }`;
   project.url = `#/${ project.path }`;
   project.historyEntity = History.makeHistoryEntity(History.PROJECT, project);
+  project.documentAdded = Log.projectDocumentAdded;
   project.documentsAdded = Log.projectDocumentsAdded;
   project.documentDeleted = Log.projectDocumentDeleted;
 
@@ -1160,6 +1163,7 @@ function parseRentalRequest(rentalRequest) {
   rentalRequest.url = `#/${ rentalRequest.path }`;
   rentalRequest.name = 'TBD';
   rentalRequest.historyEntity = History.makeHistoryEntity(History.REQUEST, rentalRequest);
+  rentalRequest.documentAdded = Log.rentalRequestDocumentAdded;
   rentalRequest.documentsAdded = Log.rentalRequestDocumentsAdded;
   rentalRequest.documentDeleted = Log.rentalRequestDocumentDeleted;
 
