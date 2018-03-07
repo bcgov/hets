@@ -74,7 +74,6 @@
  #table-block {
     min-height: 400px;
   }
-  
   #contact-block {
     margin-top: 30px;
   }
@@ -165,10 +164,6 @@
     width: 100%;
   }
 
-  tr:nth-child(odd) {
-    background: #eee
-  }
-
   th {
     background: #ddd
   }
@@ -190,7 +185,6 @@
 
   .rate {
     text-align: right;
-    width: 125px;
   }
 
   .clearfix:after {
@@ -269,7 +263,7 @@
       <tbody>
         <tr>
           <td>
-            <div class="m-tb-5 bold">Unit Identifier: <span class="underline uppercase">{{equipment.equipmentCode}}</span></div>
+            <div class="m-tb-5 bold">Unit Identifier: <span class="underline uppercase">{{equipmentCode}}</span></div>
           </td>
           <td style="width: 10px"></td>
           <td style="width: 50%">
@@ -281,6 +275,7 @@
             </table>
           </td>
         </tr>
+        <tr style="height: 15px"><td></td><td></td><td></td></tr>
         <tr>
           <td class="align-top">
             <table class="inner-table" style="width: auto">
@@ -289,7 +284,7 @@
                 <td class="value m-tb-5">{{equipment.owner.organizationName}}</td>
               </tr>
             </table>
-            <table class="inner-table">
+            <table class="inner-table" style="margin-top: 15px;">
               <tr>
                 <td class="label m-tb-5" style="padding-right: 5px">Address:</td>
                 <td class="value m-tb-5">
@@ -333,20 +328,21 @@
       </tbody>
     </table>
 
-    <p>I hereby agree to rent to the Ministry of Transportation and Infrastructure of the Province of British Columbia the following equipment at the rental rates as shown:</p>
+    <p style="margin: 15px 0 5px 0">I hereby agree to rent to the Ministry of Transportation and Infrastructure of the Province of British Columbia the following equipment at the rental rates as shown:</p>
 
     <div id="table-block">
       <table id="main-table">
         <tr>
           <th>Equipment</th>
-          <th>Rate</th>
+          <th style="width: 125px">Rate</th>
           <th>Comments</th>
         </tr>
         <tr>
           <td>{{equipment.year}} {{equipment.make}}/{{equipment.model}}/{{equipment.size}}/{{equipment.serialNumber}}</td>
-          <td class="rate">{{baseRateString}}</td>
+          <td class="rate">${{equipmentRate}}/{{ratePeriod}}</td>
           <td>{{rateComment}}</td>
         </tr>
+        <tr style="height: 15px"><td></td><td></td><td></td></tr>
         {{#rentalAgreementRatesWithTotal}}
         <tr>
           <td>{{componentName}}</td>
@@ -354,19 +350,21 @@
           <td>{{comment}}</td>
         </tr>
         {{/rentalAgreementRatesWithTotal}}
+        <tr style="height: 15px"><td></td><td></td><td></td></tr>
         <tr>
-          <td class="bold">Total</td>
-          <td class="rate bold">{{agreementTotalString}}</td>
           <td></td>
+          <td class="rate bold">${{agreementTotal}}/{{ratePeriod}}</td>
+          <td class="bold">Total</td>
         </tr>
+        <tr style="height: 15px"><td></td><td></td><td></td></tr>
         {{#rentalAgreementRatesWithoutTotal}}
         <tr>
           <td>{{componentName}}</td>
-          <td class="rate">{{rateString}}</td>
+          <td class="rate">${{rateString}}</td>
           <td>{{comment}}</td>
         </tr>
         {{/rentalAgreementRatesWithoutTotal}}
-        <tr><td></td><td></td><td></td></tr>
+        <tr style="height: 15px"><td></td><td></td><td></td></tr>
         <tr><td class="bold">Conditions</td><td></td><td></td></tr>
         {{#rentalAgreementConditions}}
         <tr>
@@ -375,7 +373,7 @@
           <td>{{comment}}</td>
         </tr>
         {{/rentalAgreementConditions}}
-        <tr style="height: 100%"><td></td><td></td><td style="height: 100%"></td></tr>
+        <tr style="height: 100%; line-height: 100%;"><td></td><td></td><td style="height: 100%; color: transparent">hidden</td></tr>
       </table>
     </div>
 
