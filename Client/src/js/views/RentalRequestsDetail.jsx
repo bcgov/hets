@@ -227,7 +227,9 @@ var RentalRequestsDetail = React.createClass({
 
       <Well className="request-information">
         <h3>Request Information <span className="pull-right">
-          <Button title="Edit Rental Request" bsSize="small" onClick={ this.openEditDialog }><Glyphicon glyph="pencil" /></Button>
+          { rentalRequest.status !== Constant.RENTAL_REQUEST_STATUS_CODE_COMPLETED &&
+            <Button title="Edit Rental Request" bsSize="small" onClick={ this.openEditDialog }><Glyphicon glyph="pencil" /></Button>
+          }
         </span></h3>
         {(() => {
           if (this.state.loading) { return <div className="spinner-container"><Spinner/></div>; }
