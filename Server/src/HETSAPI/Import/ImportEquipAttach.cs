@@ -36,9 +36,9 @@ namespace HETSAPI.Import
         public static void Import(PerformContext performContext, DbAppContext dbContext, string fileLocation, string systemId)
         {
             // check the start point. If startPoint == sigId then it is already completed
-            int startPoint = ImportUtility.CheckInterMapForStartPoint(dbContext, OldTableProgress, BCBidImport.SigId);
+            int startPoint = ImportUtility.CheckInterMapForStartPoint(dbContext, OldTableProgress, BcBidImport.SigId);
 
-            if (startPoint == BCBidImport.SigId)    // This means the import job it has done today is complete for all the records in the xml file.
+            if (startPoint == BcBidImport.SigId)    // This means the import job it has done today is complete for all the records in the xml file.
             {
                 performContext.WriteLine("*** Importing " + XmlFileName + " is complete from the former process ***");
                 return;
@@ -116,7 +116,7 @@ namespace HETSAPI.Import
                     {
                         try
                         {
-                            ImportUtility.AddImportMapForProgress(dbContext, OldTableProgress, ii.ToString(), BCBidImport.SigId);
+                            ImportUtility.AddImportMapForProgress(dbContext, OldTableProgress, ii.ToString(), BcBidImport.SigId);
                             dbContext.SaveChangesForImport();
                         }
                         catch (Exception e)
@@ -129,7 +129,7 @@ namespace HETSAPI.Import
                 try
                 {
                     performContext.WriteLine("*** Importing " + XmlFileName + " is Done ***");
-                    ImportUtility.AddImportMapForProgress(dbContext, OldTableProgress, BCBidImport.SigId.ToString(), BCBidImport.SigId);
+                    ImportUtility.AddImportMapForProgress(dbContext, OldTableProgress, BcBidImport.SigId.ToString(), BcBidImport.SigId);
                     dbContext.SaveChangesForImport();
                 }
                 catch (Exception e)
@@ -164,9 +164,8 @@ namespace HETSAPI.Import
             if (instance == null)
             {
                 instance = new EquipmentAttachment();
-                int equipId = oldObject.Equip_Id ?? -1;
 
-                // get the new ID.
+                // get the new ID
                 var importMap = dbContext.ImportMaps.FirstOrDefault(x => x.OldKey == oldObject.Equip_Id.ToString() && x.OldTable == "Equip");
                 
                 Equipment equipment = null;
@@ -182,7 +181,7 @@ namespace HETSAPI.Import
                     instance.EquipmentId = equipment.Id;
                 }
 
-                instance.Description = oldObject.Attach_Desc == null ? "" : oldObject.Attach_Desc;
+                instance.Description = oldObject.Attach_Desc ?? "";
                 instance.TypeName = (oldObject.Attach_Seq_Num ?? -1).ToString();
 
                 if (oldObject.Created_Dt != null && oldObject.Created_Dt.Trim().Length>=10)
@@ -199,6 +198,7 @@ namespace HETSAPI.Import
             {
                 instance = dbContext.EquipmentAttachments
                     .First(x => x.EquipmentId == oldObject.Equip_Id && x.TypeName == (oldObject.Attach_Seq_Num?? -2).ToString());
+
                 instance.AppLastUpdateUserid = systemId;
                 instance.AppLastUpdateTimestamp = DateTime.UtcNow;
                 dbContext.EquipmentAttachments.Update(instance);
@@ -207,9 +207,9 @@ namespace HETSAPI.Import
 
         public static void Obfuscate(PerformContext performContext, DbAppContext dbContext, string sourceLocation, string destinationLocation, string systemId)
         {
-            int startPoint = ImportUtility.CheckInterMapForStartPoint(dbContext, "Obfuscate_" + OldTableProgress, BCBidImport.SigId);
+            int startPoint = ImportUtility.CheckInterMapForStartPoint(dbContext, "Obfuscate_" + OldTableProgress, BcBidImport.SigId);
 
-            if (startPoint == BCBidImport.SigId)    // this means the import job it has done today is complete for all the records in the xml file.
+            if (startPoint == BcBidImport.SigId)    // this means the import job it has done today is complete for all the records in the xml file.
             {
                 performContext.WriteLine("*** Obfuscating " + XmlFileName + " is complete from the former process ***");
                 return;
@@ -224,26 +224,27 @@ namespace HETSAPI.Import
                 progress.SetValue(0);
 
                 // create serializer and serialize xml file
-                XmlSerializer ser = new XmlSerializer(typeof(ImportModels.EquipAttach[]), new XmlRootAttribute(rootAttr));
+                XmlSerializer ser = new XmlSerializer(typeof(EquipAttach[]), new XmlRootAttribute(rootAttr));
                 MemoryStream memoryStream = ImportUtility.MemoryStreamGenerator(XmlFileName, OldTable, sourceLocation, rootAttr);
-                ImportModels.EquipAttach[] legacyItems = (ImportModels.EquipAttach[])ser.Deserialize(memoryStream);
+                EquipAttach[] legacyItems = (EquipAttach[])ser.Deserialize(memoryStream);
 
                 performContext.WriteLine("Obfuscating EquipAttach data");
                 progress.SetValue(0);
 
-                foreach (ImportModels.EquipAttach item in legacyItems.WithProgress(progress))
+                foreach (EquipAttach item in legacyItems.WithProgress(progress))
                 {
                     item.Created_By = systemId;
 
                 }
 
                 performContext.WriteLine("Writing " + XmlFileName + " to " + destinationLocation);
+
                 // write out the array.
                 FileStream fs = ImportUtility.GetObfuscationDestination(XmlFileName, destinationLocation);
                 ser.Serialize(fs, legacyItems);
                 fs.Close();
-                // no excel for EquipAttach.
 
+                // no excel for EquipAttach.
             }
             catch (Exception e)
             {

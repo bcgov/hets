@@ -1,6 +1,5 @@
 ﻿using Hangfire.Console;
 using Hangfire.Server;
-using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -89,7 +88,8 @@ namespace HETSAPI.Import
             {
                 result = userCode.ToUpper().Trim();
                 string idir_token = "IDIR\\";
-                int idirPos = result.IndexOf(idir_token);
+                int idirPos = result.IndexOf(idir_token, StringComparison.Ordinal);
+
                 if (idirPos > -1)
                 {
                     result = result.Substring(idirPos + idir_token.Length);
@@ -109,9 +109,9 @@ namespace HETSAPI.Import
         public static void Import(PerformContext performContext, DbAppContext dbContext, string fileLocation, string systemId)
         {
             // check the start point. If startPoint ==  sigId then it is already completed
-            int startPoint = ImportUtility.CheckInterMapForStartPoint(dbContext, OldTableProgress, BCBidImport.SigId);
+            int startPoint = ImportUtility.CheckInterMapForStartPoint(dbContext, OldTableProgress, BcBidImport.SigId);
 
-            if (startPoint == BCBidImport.SigId)    // this means the import job it has done today is complete for all the records in the xml file.
+            if (startPoint == BcBidImport.SigId)    // this means the import job it has done today is complete for all the records in the xml file.
             {
                 performContext.WriteLine("*** Importing " + XmlFileName + " is complete from the former process ***");
                 return;
@@ -139,103 +139,58 @@ namespace HETSAPI.Import
                     legacyItems = legacyItems.Skip(ii).ToArray();
                 }
 
-                // the HETS raw data has multiple rows per user, it needs to be normalized.
+                // create an array of names using the created by and modified by values in the data
+                performContext.WriteLine("Extracting first and last names");
+                progress.SetValue(0);
 
-                List<string> usernames = new List<string>();
-                List<string> allNames = new List<string>();
-                performContext.WriteLine("Normalizing User Data - Pass 1 ");
-                progress.SetValue(0);
-                foreach (UserHETS item in legacyItems.WithProgress(progress))
-                {
-                    string username = NormalizeUserCode(item.User_Cd); 
-                    
-                    if (! usernames.Contains (username))
-                    {
-                        usernames.Add(username);
-                    }
-                    if (! allNames.Contains (item.Modified_By))
-                    {
-                        allNames.Add(item.Modified_By);
-                    }
-                    if (! allNames.Contains(item.Created_By))
-                    {
-                        allNames.Add(item.Created_By);
-                    }
-                }
-                performContext.WriteLine("Normalizing User Data - Pass 2");
-                progress.SetValue(0);
                 Dictionary<string, string> firstNames = new Dictionary<string, string>();
                 Dictionary<string, string> lastNames = new Dictionary<string, string>();
 
-                foreach (string name in allNames.WithProgress(progress))
+                foreach (UserHETS item in legacyItems.WithProgress(progress))
                 {
-                    if (name != null)
-                    {
-                        string token = ", ";
-                        int firstPos = name.IndexOf(", ");
-                        string bracketIdirToken = "(IDIR\\";
-                        int secondPos = name.IndexOf(bracketIdirToken);
+                    string name = item.Created_By;
+                    GetNameParts(name, ref firstNames, ref lastNames);
 
-                        if (firstPos > -1 && secondPos > -1)
-                        {
-                            string lastName = name.Substring(0, firstPos);
-                            firstPos = firstPos + 2; // comma and space
-                            string firstName = name.Substring(firstPos, secondPos - firstPos).Trim();
-                            string username = NormalizeUserCode(name.Substring(secondPos + bracketIdirToken.Length, name.Length - (secondPos + bracketIdirToken.Length + 1)));
-
-                            // see if we have the username.
-                            if (usernames.Contains(username))
-                            {
-                                // update the firstname and lastname data.
-                                firstNames[username] = firstName;
-                                lastNames[username] = lastName;
-                            }
-                        }
-                    }
+                    name = item.Modified_By;
+                    GetNameParts(name, ref firstNames, ref lastNames);
                 }
 
-                performContext.WriteLine("Normalizing User Data - Pass 3");
+                // import the data
+                performContext.WriteLine("Importing User Data");
                 progress.SetValue(0);
+
                 foreach (UserHETS item in legacyItems.WithProgress(progress))
                 {
                     // see if we have this one already
                     ImportMap importMap = dbContext.ImportMaps.FirstOrDefault(x => x.OldTable == OldTable && x.OldKey == item.Popt_Id.ToString());
 
                     string username = NormalizeUserCode(item.User_Cd);
-                    string firstName = "";
-                    string lastName = "";
+                    string firstName = GetNamePart(username, firstNames);
+                    string lastName = GetNamePart(username, lastNames);
 
-                    if (firstNames.ContainsKey(username))
-                    {
-                        firstName = firstNames[username];
-                    }
-
-                    if (lastNames.ContainsKey(username))
-                    {
-                        lastName = lastNames[username];
-                    }
+                    username = username.ToLower();
 
                     User instance = dbContext.Users.FirstOrDefault(x => x.SmUserId == username);
 
-                    if (instance == null)
+                    // if the user exists - move to the next record
+                    if (instance != null) continue;
+
+                    CopyToInstance(dbContext, item, ref instance, systemId, username, firstName, lastName);
+
+                    // new entry
+                    if (importMap == null && instance != null)
                     {
-                        CopyToInstance(dbContext, item, ref instance, systemId, username, firstName, lastName);
+                        ImportUtility.AddImportMap(dbContext, OldTable, item.Popt_Id, NewTable, instance.Id);
+                    }
 
-                        // new entry
-                        if (importMap == null && instance != null)
-                        {
-                            ImportUtility.AddImportMap(dbContext, OldTable, item.Popt_Id.ToString(), NewTable, instance.Id);
-                        }
-
-                        ImportUtility.AddImportMapForProgress(dbContext, OldTableProgress, (++ii).ToString(), BCBidImport.SigId);
-                        dbContext.SaveChangesForImport();
-                    }                    
+                    ImportUtility.AddImportMapForProgress(dbContext, OldTableProgress, (++ii).ToString(), BcBidImport.SigId);
+                    dbContext.SaveChangesForImport();
                 }
 
                 try
                 {
                     performContext.WriteLine("*** Importing " + XmlFileName + " is Done ***");
-                    ImportUtility.AddImportMapForProgress(dbContext, OldTableProgress, BCBidImport.SigId.ToString(), BCBidImport.SigId);
+                    ImportUtility.AddImportMapForProgress(dbContext, OldTableProgress, BcBidImport.SigId.ToString(), BcBidImport.SigId);
                     dbContext.SaveChangesForImport();
                 }
                 catch (Exception e)
@@ -250,6 +205,47 @@ namespace HETSAPI.Import
             }            
         }
 
+        private static string GetNamePart(string username, Dictionary<string, string> names)
+        {
+            if (username != null &&
+                names.ContainsKey(username))
+            {
+                string temp = names[username];
+                return temp;
+            }
+
+            return "";
+        }        
+
+        private static void GetNameParts(string name, ref Dictionary<string, string> firstNames, ref Dictionary<string, string> lastNames)
+        {
+            if (name != null)
+            {
+                int firstPos = name.IndexOf(", ", StringComparison.Ordinal);
+                string bracketIdirToken = "(IDIR\\";
+                int secondPos = name.IndexOf(bracketIdirToken, StringComparison.Ordinal);
+
+                if (firstPos > -1 && secondPos > -1)
+                {
+                    // extract first and last name from string
+                    string lastName = name.Substring(0, firstPos);
+                    firstPos = firstPos + 2; // comma and space
+                    string firstName = name.Substring(firstPos, secondPos - firstPos).Trim();
+
+                    // extract user id
+                    string username = NormalizeUserCode(name.Substring(secondPos + bracketIdirToken.Length, name.Length - (secondPos + bracketIdirToken.Length + 1)));
+
+                    // see if we have this username
+                    if (!firstNames.ContainsKey(username))
+                    {
+                        // update the firstname and lastname data.
+                        firstNames[username] = firstName;
+                        lastNames[username] = lastName;
+                    }
+                }
+            }
+        }
+
         /// <summary>
         /// Map data
         /// </summary>
@@ -257,149 +253,101 @@ namespace HETSAPI.Import
         /// <param name="oldObject"></param>
         /// <param name="user"></param>
         /// <param name="systemId"></param>
+        /// <param name="smUserId"></param>
+        /// <param name="firstName"></param>
+        /// <param name="lastName"></param>
         private static void CopyToInstance(DbAppContext dbContext, UserHETS oldObject, ref User user, string systemId, string smUserId, string firstName, string lastName)
         {
+            // Authority -> A = Active -> for import purposes ignore all others
+            // File contains multiple records per user (1 for each dsitrict they can access)
+            // We are currently importing 1 only -> where Default_Service_Area = Y
+            if (oldObject.Default_Service_Area != "Y")
+            {
+                return;
+            }
+
+            if (user == null)
+            {
+                user = new User();
+            }
+            
+            user.GivenName = firstName;
+            user.Surname = lastName;
+            user.Active = true;
+            user.SmUserId = smUserId;
+            user.SmAuthorizationDirectory = "IDIR";
+
+            // create initials
+            string temp = "";
+            if (!string.IsNullOrEmpty(lastName) && lastName.Length > 0)
+            {
+                temp = lastName.Substring(0, 1).ToUpper();
+            }
+
+            if (!string.IsNullOrEmpty(firstName) && firstName.Length > 0)
+            {
+                temp = temp + firstName.Substring(0, 1).ToUpper();
+            }
+
+            user.Initials = temp;
+
+            // map user to the correct service area
             int serviceAreaId;
-
-            int startPos = oldObject.User_Cd.IndexOf(@"\", StringComparison.Ordinal) + 1;
-
+            
             try
             {
-                serviceAreaId = int.Parse (oldObject.Service_Area_Id);
+                serviceAreaId = int.Parse(oldObject.Service_Area_Id);
             }
             catch
             {
                 return;
             }
 
+            ServiceArea serviceArea = dbContext.ServiceAreas.FirstOrDefault(x => x.MinistryServiceAreaID == serviceAreaId);
 
-
-            // add the user specified in oldObject.Modified_By and oldObject.Created_By if not there in the database
-            User modifiedBy = null;
-            User createdBy = null;
-
-            if (oldObject.Modified_By != null)
+            if (serviceArea == null)
             {
-                modifiedBy = ImportUtility.AddUserFromString(dbContext, oldObject.Modified_By, systemId);
-            }
-            if (oldObject.Created_By != null)
-            {
-                createdBy = ImportUtility.AddUserFromString(dbContext, oldObject.Created_By, systemId);
-            }            
-
-            if (createdBy != null && createdBy.SmUserId != null && createdBy.SmUserId == smUserId  )
-            {
-                user = createdBy;
-
+                // not mapped correctly
                 return;
             }
 
-            if (  modifiedBy != null && modifiedBy.SmUserId != null && modifiedBy.SmUserId == smUserId)
-            {
-                user = modifiedBy;
-                return;
-            }
+            user.DistrictId = serviceArea.DistrictId;
 
+            // set the user's role - all new users will be added with basic access only
             UserRole userRole = new UserRole();
 
-            string authority;
+            Role role = dbContext.Roles.FirstOrDefault(x => x.Name == "HETS Clerk");
 
-            try
+            int roleId = -1;
+
+            if (role != null)
             {
-                authority = oldObject.Authority.Trim();
+                roleId = role.Id;
             }
-            catch
-            {
-                // regular User
-                authority = ""; 
-            }
+             
+            // add user and role
+            user.AppCreateTimestamp = DateTime.UtcNow;
+            user.AppCreateUserid = systemId;
+            user.AppLastUpdateUserid = systemId;
+            user.AppLastUpdateTimestamp = DateTime.UtcNow;
+                
+            userRole.Role = dbContext.Roles.First(x => x.Id == roleId);
+            userRole.EffectiveDate = DateTime.UtcNow.AddDays(-1);
 
+            userRole.AppCreateTimestamp = DateTime.UtcNow;
+            userRole.AppCreateUserid = systemId;
+            userRole.AppLastUpdateUserid = systemId;
+            userRole.AppLastUpdateTimestamp = DateTime.UtcNow;                
 
-            int roleId = ImportUtility.GetRoleIdFromAuthority(authority);
-
-            User user1 = dbContext.Users.FirstOrDefault(x => x.SmUserId == smUserId);
-
-            ServiceArea serArea = dbContext.ServiceAreas
-                .Include(x=>x.District)
-                .FirstOrDefault(x => x.MinistryServiceAreaID == serviceAreaId);
-
-            if (user1 == null)
-            {
-                if (user == null)
-                {
-                    user = new User();
-                }
-
-                try
-                {
-                    user.SmUserId = smUserId;
-                    user.GivenName = firstName;
-                    user.Surname = lastName;
-
-                    if (serArea != null)
-                    {
-                        user.District = serArea.District;
-                        user.DistrictId = serArea.DistrictId;
-                    }
-                }
-                catch
-                {
-                    // do nothing
-                }
-
-                user.AppCreateTimestamp = DateTime.UtcNow;
-                user.AppCreateUserid = createdBy.SmUserId;                
-
-                //a dd user Role - Role Id is limited to 1, or 2
-                if (roleId > 2)
-                {
-                    roleId = 1;
-                }
-
-                userRole.Role = dbContext.Roles.First(x => x.Id == roleId);
-                userRole.AppCreateTimestamp = DateTime.UtcNow;
-                userRole.ExpiryDate = DateTime.UtcNow.AddMonths(12);
-                userRole.AppCreateUserid = createdBy.SmUserId;
-                userRole.EffectiveDate = DateTime.UtcNow.AddDays(-1);
-
-                user.UserRoles = new List<UserRole> {userRole};
-                dbContext.Users.Add(user);
-            }
-            else
-            {
-                user = dbContext.Users
-                    .Include(x => x.UserRoles)
-                    .First(x => x.SmUserId == smUserId);
-
-                // if the user does not have the user role, add the user role
-                if (user.UserRoles == null)
-                {
-                    user.UserRoles = new List<UserRole>();
-                }
-
-                // if the role does not exist for the user, add the user role for the user
-                if (user.UserRoles.FirstOrDefault(x => x.RoleId == roleId) == null)
-                {
-                    userRole.Role = dbContext.Roles.First(x => x.Id == roleId);
-                    userRole.AppCreateTimestamp = DateTime.UtcNow;
-                    userRole.ExpiryDate = DateTime.UtcNow.AddMonths(12);
-                    userRole.AppCreateUserid = createdBy.SmUserId;
-                    userRole.EffectiveDate = DateTime.UtcNow.AddDays(-1);
-                    user.UserRoles.Add(userRole);
-                }
-
-                user.AppLastUpdateUserid = createdBy.SmUserId;
-                user.AppCreateTimestamp = DateTime.UtcNow;
-                user.Active = true;
-                dbContext.Users.Update(user);
-            }
+            user.UserRoles = new List<UserRole> {userRole};
+            dbContext.Users.Add(user);
         }
 
         public static void Obfuscate(PerformContext performContext, DbAppContext dbContext, string sourceLocation, string destinationLocation, string systemId)
         {
-            int startPoint = ImportUtility.CheckInterMapForStartPoint(dbContext, "Obfuscate_" + OldTableProgress, BCBidImport.SigId);
+            int startPoint = ImportUtility.CheckInterMapForStartPoint(dbContext, "Obfuscate_" + OldTableProgress, BcBidImport.SigId);
 
-            if (startPoint == BCBidImport.SigId)    // this means the import job it has done today is complete for all the records in the xml file.
+            if (startPoint == BcBidImport.SigId)    // this means the import job it has done today is complete for all the records in the xml file.
             {
                 performContext.WriteLine("*** Obfuscating " + XmlFileName + " is complete from the former process ***");
                 return;
@@ -414,67 +362,19 @@ namespace HETSAPI.Import
                 progress.SetValue(0);
 
                 // create serializer and serialize xml file
-                XmlSerializer ser = new XmlSerializer(typeof(ImportModels.UserHETS[]), new XmlRootAttribute(rootAttr));
+                XmlSerializer ser = new XmlSerializer(typeof(UserHETS[]), new XmlRootAttribute(rootAttr));
                 MemoryStream memoryStream = ImportUtility.MemoryStreamGenerator(XmlFileName, OldTable, sourceLocation, rootAttr);
-                ImportModels.UserHETS[] legacyItems = (ImportModels.UserHETS[])ser.Deserialize(memoryStream);
+                UserHETS[] legacyItems = (UserHETS[])ser.Deserialize(memoryStream);
 
-                List<string> usernames = new List<string>();                
-                performContext.WriteLine("Normalizing User Data - Pass 1 ");
-                progress.SetValue(0);
                 foreach (UserHETS item in legacyItems.WithProgress(progress))
                 {
-                    string username = NormalizeUserCode(item.User_Cd);
-
-                    if (!usernames.Contains(username))
-                    {
-                        usernames.Add(username);
-
-                    }
-                }
-                // now create the mapping of old to new usernames.
-                Dictionary<string, int> userMap = new Dictionary<string, int>();
-
-                usernames.Sort();
-
-                int currentUser = 0;
-
-                List<ImportMapRecord> importMapRecords = new List<ImportMapRecord>();
-
-                foreach (string username in usernames)
-                {
-                    userMap.Add(username, currentUser);
-                    ImportMapRecord importMapRecord = new ImportMapRecord();
-                    importMapRecord.TableName = NewTable;
-                    importMapRecord.MappedColumn = "User_cd";
-                    importMapRecord.OriginalValue = username;
-                    importMapRecord.NewValue = "TESTER" + currentUser;
-                    importMapRecords.Add(importMapRecord);
-                    currentUser++;
+                    item.Created_By = systemId;
                 }
 
-
-                performContext.WriteLine("Normalizing User Data - Pass 2");
-                progress.SetValue(0);
-                foreach (UserHETS item in legacyItems.WithProgress(progress))
-                {
-                    if (item.Modified_By != null)
-                    {
-                        item.Modified_By = systemId;
-                    }
-
-                    string oldCode = NormalizeUserCode(item.User_Cd);
-                    item.User_Cd = "TESTER" + userMap[oldCode].ToString();
-                    // special case for the user table - as the old data does not have first name / last name.
-                    item.Created_By = userMap[oldCode].ToString() + ", Tester (IDIR\\TESTER" + userMap[oldCode].ToString() + ")";
-                }
-                performContext.WriteLine("Writing " + XmlFileName + " to " + destinationLocation);
-                // write out the array.
+                // write out the array
                 FileStream fs = ImportUtility.GetObfuscationDestination(XmlFileName, destinationLocation);
                 ser.Serialize(fs, legacyItems);
                 fs.Close();
-                // write out the spreadsheet of import records.
-                ImportUtility.WriteImportRecordsToExcel(destinationLocation, importMapRecords, OldTable);
-
             }
             catch (Exception e)
             {
