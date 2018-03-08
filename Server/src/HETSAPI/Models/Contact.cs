@@ -2,6 +2,7 @@ using System;
 using System.Text;
 using Newtonsoft.Json;
 using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace HETSAPI.Models
 {
@@ -55,7 +56,7 @@ namespace HETSAPI.Models
             City = city;
             Province = province;
             PostalCode = postalCode;
-        }
+        }        
 
         /// <summary>
         /// A system-generated unique identifier for a Contact
@@ -167,6 +168,38 @@ namespace HETSAPI.Models
         [MetaData(Description = "The postal code of the address.")]
         [MaxLength(15)]
         public string PostalCode { get; set; }
+        
+        /// <summary>
+        /// Link to the Owner
+        /// </summary>
+        /// <value>Link to the Owner</value>
+        [MetaData(Description = "Link to the Owner.")]
+        [NotMapped]
+        public Owner Owner { get; set; }
+
+        /// <summary>
+        /// Foreign key for Owner 
+        /// </summary>   
+        [ForeignKey("Owner")]
+        [JsonIgnore]
+        [MetaData(Description = "Link to the Owner.")]
+        public int? OwnerId { get; set; }
+        
+        /// <summary>
+        /// Link to the Project
+        /// </summary>
+        /// <value>Link to the Project</value>
+        [MetaData(Description = "Link to the Project.")]
+        [NotMapped]
+        public Project Project { get; set; }
+
+        /// <summary>
+        /// Foreign key for Project 
+        /// </summary>   
+        [ForeignKey("Project")]
+        [JsonIgnore]
+        [MetaData(Description = "Link to the Project.")]
+        public int? ProjectId { get; set; }
 
         /// <summary>
         /// Returns the string presentation of the object
@@ -377,7 +410,7 @@ namespace HETSAPI.Models
                 {
                     hash = hash * 59 + PostalCode.GetHashCode();
                 }
-
+               
                 return hash;
             }
         }

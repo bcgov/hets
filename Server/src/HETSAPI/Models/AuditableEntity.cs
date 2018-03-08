@@ -10,6 +10,13 @@ namespace HETSAPI.Models
     public class AuditableEntity
     {
         /// <summary>
+        /// Used to manage concurrency for the application.
+        /// </summary>
+        [MetaData(Description = "Used to manage concurrency for the application.")]
+        [JsonIgnore]
+        public int ConcurrencyControlNumber { get; set; }
+
+        /// <summary>
         /// The user account name of the application user who performed the action that created the record (e.g. 'JSMITH'). This value is not preceded by the directory name. 
         /// </summary>
         [MetaData(Description = "The user account name of the application user who performed the action that created the record (e.g. JSMITH). This value is not preceded by the directory name. ")]
@@ -99,7 +106,6 @@ namespace HETSAPI.Models
         [MetaData(Description = "The user or proxy account that created or last updated the record.")]
         [MaxLength(63)]
         [JsonIgnore]
-        public string DbLastUpdateUserId { get; set; }
-       
+        public string DbLastUpdateUserId { get; set; }        
     }
 }

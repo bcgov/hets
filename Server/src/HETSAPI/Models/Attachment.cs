@@ -2,6 +2,7 @@ using System;
 using System.Text;
 using Newtonsoft.Json;
 using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace HETSAPI.Models
 {
@@ -84,7 +85,68 @@ namespace HETSAPI.Models
         [MetaData (Description = "Type of attachment")]
         [MaxLength(255)]        
         public string Type { get; set; }
-        
+
+        /// <summary>
+        /// Link to the Owner
+        /// </summary>
+        /// <value>Link to the Owner</value>
+        [MetaData(Description = "Link to the Owner.")]
+        public Owner Owner { get; set; }
+
+        /// <summary>
+        /// Foreign key for Owner 
+        /// </summary>   
+        [ForeignKey("Owner")]
+        [JsonIgnore]
+        [MetaData(Description = "Link to the Owner.")]
+        public int? OwnerId { get; set; }
+
+        /// <summary>
+        /// Link to the Project
+        /// </summary>
+        /// <value>Link to the Project</value>
+        [MetaData(Description = "Link to the Project.")]
+        public Project Project { get; set; }
+
+        /// <summary>
+        /// Foreign key for Project 
+        /// </summary>   
+        [ForeignKey("Project")]
+        [JsonIgnore]
+        [MetaData(Description = "Link to the Project.")]
+        public int? ProjectId { get; set; }
+
+        /// <summary>
+        /// Link to the Equipment
+        /// </summary>
+        /// <value>Link to the Equipment</value>
+        [MetaData(Description = "Link to the Equipment.")]
+        public Equipment Equipment { get; set; }
+
+        /// <summary>
+        /// Foreign key for Equipment 
+        /// </summary>   
+        [ForeignKey("Equipment")]
+        [JsonIgnore]
+        [MetaData(Description = "Link to the Equipment.")]
+        public int? EquipmentId { get; set; }
+
+        /// <summary>
+        /// Link to the RentalRequest
+        /// </summary>
+        /// <value>Link to the Equipment</value>
+        [MetaData(Description = "Link to the RentalRequest.")]
+        public RentalRequest RentalRequest { get; set; }
+
+        /// <summary>
+        /// Foreign key for RentalRequest 
+        /// </summary>   
+        [ForeignKey("RentalRequest")]
+        [JsonIgnore]
+        [MetaData(Description = "Link to the RentalRequest.")]
+        public int? RentalRequestId { get; set; }
+
+
         /// <summary>
         /// Returns the string presentation of the object
         /// </summary>

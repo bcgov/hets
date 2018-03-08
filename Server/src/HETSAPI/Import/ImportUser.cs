@@ -27,8 +27,6 @@ namespace HETSAPI.Import
         /// </summary>
         public static string OldTableProgress => OldTable + "_Progress";
 
-
-
         /// <summary>
         /// Get the list of mapped records.  
         /// </summary>
@@ -39,19 +37,17 @@ namespace HETSAPI.Import
         {
             List<ImportMapRecord> result = new List<ImportMapRecord>();
             string rootAttr = "ArrayOf" + OldTable;
-            XmlSerializer ser = new XmlSerializer(typeof(UserHETS[]), new XmlRootAttribute(rootAttr));
+            XmlSerializer ser = new XmlSerializer(typeof(UserHets[]), new XmlRootAttribute(rootAttr));
             ser.UnknownAttribute += ImportUtility.UnknownAttribute;
             ser.UnknownElement += ImportUtility.UnknownElement;
 
             MemoryStream memoryStream = ImportUtility.MemoryStreamGenerator(XmlFileName, OldTable, fileLocation, rootAttr);
             XmlReader reader = new XmlTextReader(memoryStream);
             if (ser.CanDeserialize(reader)  )
-            {
-
-                
-                UserHETS[] legacyItems = (UserHETS[])ser.Deserialize(reader);
+            {                
+                UserHets[] legacyItems = (UserHets[])ser.Deserialize(reader);
                 List<string> usernames = new List<string>();
-                foreach (UserHETS item in legacyItems)
+                foreach (UserHets item in legacyItems)
                 {
                     string username = NormalizeUserCode(item.User_Cd);
                     if (!usernames.Contains(username))
@@ -127,9 +123,9 @@ namespace HETSAPI.Import
                 progress.SetValue(0);
 
                 // create serializer and serialize xml file
-                XmlSerializer ser = new XmlSerializer(typeof(UserHETS[]), new XmlRootAttribute(rootAttr));
+                XmlSerializer ser = new XmlSerializer(typeof(UserHets[]), new XmlRootAttribute(rootAttr));
                 MemoryStream memoryStream = ImportUtility.MemoryStreamGenerator(XmlFileName, OldTable, fileLocation, rootAttr);
-                UserHETS[] legacyItems = (UserHETS[])ser.Deserialize(memoryStream);
+                UserHets[] legacyItems = (UserHets[])ser.Deserialize(memoryStream);
 
                 int ii = startPoint;
 
@@ -146,7 +142,7 @@ namespace HETSAPI.Import
                 Dictionary<string, string> firstNames = new Dictionary<string, string>();
                 Dictionary<string, string> lastNames = new Dictionary<string, string>();
 
-                foreach (UserHETS item in legacyItems.WithProgress(progress))
+                foreach (UserHets item in legacyItems.WithProgress(progress))
                 {
                     string name = item.Created_By;
                     GetNameParts(name, ref firstNames, ref lastNames);
@@ -159,7 +155,7 @@ namespace HETSAPI.Import
                 performContext.WriteLine("Importing User Data");
                 progress.SetValue(0);
 
-                foreach (UserHETS item in legacyItems.WithProgress(progress))
+                foreach (UserHets item in legacyItems.WithProgress(progress))
                 {
                     // see if we have this one already
                     ImportMap importMap = dbContext.ImportMaps.FirstOrDefault(x => x.OldTable == OldTable && x.OldKey == item.Popt_Id.ToString());
@@ -256,7 +252,7 @@ namespace HETSAPI.Import
         /// <param name="smUserId"></param>
         /// <param name="firstName"></param>
         /// <param name="lastName"></param>
-        private static void CopyToInstance(DbAppContext dbContext, UserHETS oldObject, ref User user, string systemId, string smUserId, string firstName, string lastName)
+        private static void CopyToInstance(DbAppContext dbContext, UserHets oldObject, ref User user, string systemId, string smUserId, string firstName, string lastName)
         {
             // Authority -> A = Active -> for import purposes ignore all others
             // File contains multiple records per user (1 for each dsitrict they can access)
@@ -362,11 +358,11 @@ namespace HETSAPI.Import
                 progress.SetValue(0);
 
                 // create serializer and serialize xml file
-                XmlSerializer ser = new XmlSerializer(typeof(UserHETS[]), new XmlRootAttribute(rootAttr));
+                XmlSerializer ser = new XmlSerializer(typeof(UserHets[]), new XmlRootAttribute(rootAttr));
                 MemoryStream memoryStream = ImportUtility.MemoryStreamGenerator(XmlFileName, OldTable, sourceLocation, rootAttr);
-                UserHETS[] legacyItems = (UserHETS[])ser.Deserialize(memoryStream);
+                UserHets[] legacyItems = (UserHets[])ser.Deserialize(memoryStream);
 
-                foreach (UserHETS item in legacyItems.WithProgress(progress))
+                foreach (UserHets item in legacyItems.WithProgress(progress))
                 {
                     item.Created_By = systemId;
                 }

@@ -61,7 +61,9 @@ namespace HETSAPI.Models
         /// <param name="archiveCode">TO BE REVIEWED - A reason code indicating why a piece of equipment has been archived.</param>
         /// <param name="archiveReason">An optional comment about why this piece of equipment has been archived.</param>
         /// <param name="archiveDate">The date on which a user most recenly marked this piece of equipment as archived.</param>
-        /// <param name="dumpTruck">A link to a dump truck set if this piece of equipment is an equipment type flagged as a dump truck.</param>
+        /// <param name="licencedGvw">The Gross Vehicle Weight for which the vehicle is licensed. GVW includes the vehicle&#39;s chassis, body, engine, engine fluids, fuel, accessories, driver, passengers and cargo but excluding that of any trailers.</param>
+        /// <param name="legalCapacity">The legal capacity of the dump truck.</param>
+        /// <param name="pupLegalCapacity">The pup legal capacity.</param>
         /// <param name="equipmentAttachments">EquipmentAttachments.</param>
         /// <param name="notes">Notes.</param>
         /// <param name="attachments">Attachments.</param>        
@@ -75,9 +77,9 @@ namespace HETSAPI.Models
             float? seniority = null, int? numberInBlock = null, bool? isSeniorityOverridden = null, string seniorityOverrideReason = null, 
             DateTime? seniorityEffectiveDate = null, float? yearsOfService = null, float? serviceHoursLastYear = null, 
             float? serviceHoursTwoYearsAgo = null, float? serviceHoursThreeYearsAgo = null, string archiveCode = null, 
-            string archiveReason = null, DateTime? archiveDate = null, DumpTruck dumpTruck = null, 
-            List<EquipmentAttachment> equipmentAttachments = null, List<Note> notes = null, List<Attachment> attachments = null, 
-            List<History> history = null, List<RentalAgreement> rentalAgreements = null)
+            string archiveReason = null, DateTime? archiveDate = null, string licencedGvw = null, string legalCapacity = null, 
+            string pupLegalCapacity = null, List<EquipmentAttachment> equipmentAttachments = null, List<Note> notes = null, 
+            List<Attachment> attachments = null, List<History> history = null, List<RentalAgreement> rentalAgreements = null)
         {
             Id = id;
             LocalArea = localArea;
@@ -115,7 +117,9 @@ namespace HETSAPI.Models
             ArchiveCode = archiveCode;
             ArchiveReason = archiveReason;
             ArchiveDate = archiveDate;
-            DumpTruck = dumpTruck;
+            LicencedGvw = licencedGvw;
+            LegalCapacity = legalCapacity;
+            PupLegalCapacity = pupLegalCapacity;
             EquipmentAttachments = equipmentAttachments;
             Notes = notes;
             Attachments = attachments;
@@ -436,21 +440,32 @@ namespace HETSAPI.Models
         [MetaData (Description = "The date on which a user most recenly marked this piece of equipment as archived.")]
         public DateTime? ArchiveDate { get; set; }
 
-        /// <summary>
-        /// A link to a dump truck set if this piece of equipment is an equipment type flagged as a dump truck.
-        /// </summary>
-        /// <value>A link to a dump truck set if this piece of equipment is an equipment type flagged as a dump truck.</value>
-        [MetaData (Description = "A link to a dump truck set if this piece of equipment is an equipment type flagged as a dump truck.")]
-        public DumpTruck DumpTruck { get; set; }
+        // Dump Truck Attributes
 
         /// <summary>
-        /// Foreign key for DumpTruck
+        /// The Gross Vehicle Weight for which the vehicle is licensed. GVW includes the vehicle&#39;s chassis, body, engine, engine fluids, fuel, accessories, driver, passengers and cargo but excluding that of any trailers.
         /// </summary>
-        [ForeignKey("DumpTruck")]
-		[JsonIgnore]
-		[MetaData (Description = "A link to a dump truck set if this piece of equipment is an equipment type flagged as a dump truck.")]
-        public int? DumpTruckId { get; set; }
+        /// <value>The Gross Vehicle Weight for which the vehicle is licensed. GVW includes the vehicle&#39;s chassis, body, engine, engine fluids, fuel, accessories, driver, passengers and cargo but excluding that of any trailers.</value>
+        [MetaData(Description = "The Gross Vehicle Weight for which the vehicle is licensed. GVW includes the vehicle&#39;s chassis, body, engine, engine fluids, fuel, accessories, driver, passengers and cargo but excluding that of any trailers.")]
+        [MaxLength(150)]
+        public string LicencedGvw { get; set; }
 
+        /// <summary>
+        /// The legal capacity of the dump truck.
+        /// </summary>
+        /// <value>The legal capacity of the dump truck.</value>
+        [MetaData(Description = "The legal capacity of the dump truck.")]
+        [MaxLength(150)]
+        public string LegalCapacity { get; set; }
+
+        /// <summary>
+        /// The pup legal capacity.
+        /// </summary>
+        /// <value>The pup legal capacity.</value>
+        [MetaData(Description = "The pup legal capacity.")]
+        [MaxLength(150)]
+        public string PupLegalCapacity { get; set; }
+        
         /// <summary>
         /// Gets or Sets EquipmentAttachments
         /// </summary>
@@ -520,7 +535,9 @@ namespace HETSAPI.Models
             sb.Append("  ArchiveCode: ").Append(ArchiveCode).Append("\n");
             sb.Append("  ArchiveReason: ").Append(ArchiveReason).Append("\n");
             sb.Append("  ArchiveDate: ").Append(ArchiveDate).Append("\n");
-            sb.Append("  DumpTruck: ").Append(DumpTruck).Append("\n");
+            sb.Append("  LicencedGvw: ").Append(LicencedGvw).Append("\n");
+            sb.Append("  LegalCapacity: ").Append(LegalCapacity).Append("\n");
+            sb.Append("  PupLegalCapacity: ").Append(PupLegalCapacity).Append("\n");
             sb.Append("  EquipmentAttachments: ").Append(EquipmentAttachments).Append("\n");
             sb.Append("  Notes: ").Append(Notes).Append("\n");
             sb.Append("  Attachments: ").Append(Attachments).Append("\n");
@@ -740,9 +757,19 @@ namespace HETSAPI.Models
                     ArchiveDate.Equals(other.ArchiveDate)
                 ) &&
                 (
-                    DumpTruck == other.DumpTruck ||
-                    DumpTruck != null &&
-                    DumpTruck.Equals(other.DumpTruck)
+                    LicencedGvw == other.LicencedGvw ||
+                    LicencedGvw != null &&
+                    LicencedGvw.Equals(other.LicencedGvw)
+                ) &&
+                (
+                    LegalCapacity == other.LegalCapacity ||
+                    LegalCapacity != null &&
+                    LegalCapacity.Equals(other.LegalCapacity)
+                ) &&
+                (
+                    PupLegalCapacity == other.PupLegalCapacity ||
+                    PupLegalCapacity != null &&
+                    PupLegalCapacity.Equals(other.PupLegalCapacity)
                 ) &&
                 (
                     EquipmentAttachments == other.EquipmentAttachments ||
@@ -953,9 +980,19 @@ namespace HETSAPI.Models
                     hash = hash * 59 + ArchiveDate.GetHashCode();
                 }
 
-                if (DumpTruck != null)
+                if (LicencedGvw != null)
                 {
-                    hash = hash * 59 + DumpTruck.GetHashCode();
+                    hash = hash * 59 + LicencedGvw.GetHashCode();
+                }
+
+                if (LegalCapacity != null)
+                {
+                    hash = hash * 59 + LegalCapacity.GetHashCode();
+                }
+
+                if (PupLegalCapacity != null)
+                {
+                    hash = hash * 59 + PupLegalCapacity.GetHashCode();
                 }
 
                 if (EquipmentAttachments != null)

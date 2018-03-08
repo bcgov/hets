@@ -3,6 +3,7 @@ using NPOI.SS.UserModel;
 using NPOI.XSSF.UserModel;
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Text;
@@ -214,29 +215,37 @@ namespace HETSAPI.Import
                     int leftBreakPos = userString.IndexOf(@"(", StringComparison.Ordinal);
                     int startPos = userString.IndexOf(@"\", StringComparison.Ordinal);
                     int rightBreakPos = userString.IndexOf(@")", StringComparison.Ordinal);
-                    string surName = userString.Substring(0, commaPos);
-                    string givenName = userString.Substring(commaPos + 2, leftBreakPos - commaPos - 2);
-                    string smUserId = userString.Substring(startPos + 1, rightBreakPos - startPos - 1).Trim();
+                    string surName = userString.Substring(0, commaPos).Trim();
+                    string givenName = userString.Substring(commaPos + 2, leftBreakPos - commaPos - 2).Trim();
+                    string smUserId = userString.Substring(startPos + 1, rightBreakPos - startPos - 1).Trim().ToLower();
 
                     User user = dbContext.Users.FirstOrDefault(x => string.Equals(x.SmUserId, smUserId, StringComparison.OrdinalIgnoreCase));
 
                     if (user == null)
                     {
+                        // always add as inactive!
                         user = new User
                         {
-                            Surname = surName.Trim(),
-                            GivenName = givenName.Trim(),
-                            SmUserId = smUserId.Trim()
-                        };
+                            Surname = surName,
+                            GivenName = givenName,
+                            SmUserId = smUserId,
+                            Active = false,
+                            AppCreateTimestamp = DateTime.UtcNow,
+                            AppCreateUserid = smSystemId,
+                            AppLastUpdateTimestamp = DateTime.UtcNow,                            
+                            AppLastUpdateUserid = smSystemId
+                        };                        
 
                         dbContext.Users.Add(user);
                         dbContext.SaveChangesForImport();
                     }
-                    else if (user.Surname==null && surName.Trim().Length >=1)
+                    else if (user.Surname == null && surName.Length >= 1)
                     {
+                        user.Surname = surName;
+                        user.GivenName = givenName;
+                        user.AppLastUpdateTimestamp = DateTime.UtcNow;
+                        user.AppLastUpdateUserid = smSystemId;
 
-                        user.Surname = surName.Trim();
-                        user.GivenName = givenName.Trim();
                         dbContext.Users.Update(user);
                     }
 
@@ -281,7 +290,28 @@ namespace HETSAPI.Import
             {
                 // do nothing
             }
-        }        
+        }
+
+        public static string GetCapitalCase(string textField)
+        {
+            return CultureInfo.CurrentCulture.TextInfo.ToTitleCase(textField.ToLower());
+        }
+
+        // assumes name is broken up by a specific seperator type (e.g. " ")
+        public static string GetNamePart(string fullName, int part, string seperator = " ")
+        {
+            string[] nameParts = fullName.Split(seperator);
+
+            string tempNamePart = "";
+
+            if (nameParts.Length >= part)
+            {
+                tempNamePart = nameParts[part].Trim();
+                return GetCapitalCase(tempNamePart);
+            }
+
+            return tempNamePart;
+        }
 
         public static void UnknownElement(object sender, XmlElementEventArgs e)
         {

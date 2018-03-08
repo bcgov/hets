@@ -62,7 +62,6 @@ namespace HETSAPI.Import
 
                 //Use this list to save a trip to query database in each iteration
                 List<Equipment> equips = dbContext.Equipments
-                        .Include(x => x.DumpTruck)
                         .Include(x => x.DistrictEquipmentType)
                         .ToList();
 

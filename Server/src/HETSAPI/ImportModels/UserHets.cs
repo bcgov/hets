@@ -6,7 +6,7 @@ namespace HETSAPI.ImportModels
     /// HETS User Import Model
     /// </summary>
     [XmlType(TypeName = "User_HETS")]
-    public class UserHETS
+    public class UserHets
     {
         // <User_HETS><Popt_ID>2927873</Popt_ID>
         //<Service_Area_Id>1</Service_Area_Id>
@@ -17,7 +17,6 @@ namespace HETSAPI.ImportModels
         //<Created_By>HETSCONV</Created_By>
         //<Modified_Dt>2010-02-11T00:00:00</Modified_Dt>
         //<Modified_By>Harwood, Ann  (IDIR\aharwood)</Modified_By></User_HETS>
-
 
         /// <summary>
         /// Popt Id
