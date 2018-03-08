@@ -41,9 +41,9 @@ namespace HETSAPI.Import
         public static void Import(PerformContext performContext, DbAppContext dbContext, string fileLocation, string systemId)
         { 
             // check the start point. If startPoint ==  sigId then it is already completed
-            int startPoint = ImportUtility.CheckInterMapForStartPoint(dbContext, OldTableProgress, BCBidImport.SigId);
+            int startPoint = ImportUtility.CheckInterMapForStartPoint(dbContext, OldTableProgress, BcBidImport.SigId);
 
-            if (startPoint == BCBidImport.SigId)    // this means the import job it has done today is complete for all the records in the xml file.
+            if (startPoint == BcBidImport.SigId)    // this means the import job it has done today is complete for all the records in the xml file.
             {
                 performContext.WriteLine("*** Importing " + XmlFileName + " is complete from the former process ***");
                 return;
@@ -149,7 +149,7 @@ namespace HETSAPI.Import
                     {
                         try
                         {
-                            ImportUtility.AddImportMapForProgress(dbContext, OldTableProgress, ii.ToString(), BCBidImport.SigId);
+                            ImportUtility.AddImportMapForProgress(dbContext, OldTableProgress, ii.ToString(), BcBidImport.SigId);
                             dbContext.SaveChangesForImport();
                         }
                         catch (Exception e)
@@ -162,7 +162,7 @@ namespace HETSAPI.Import
                 try
                 {
                     performContext.WriteLine("*** Importing " + XmlFileName + " is Done ***");
-                    ImportUtility.AddImportMapForProgress(dbContext, OldTableProgress, BCBidImport.SigId.ToString(), BCBidImport.SigId);
+                    ImportUtility.AddImportMapForProgress(dbContext, OldTableProgress, BcBidImport.SigId.ToString(), BcBidImport.SigId);
                     dbContext.SaveChangesForImport();
                 }
                 catch (Exception e)
@@ -298,8 +298,12 @@ namespace HETSAPI.Import
                     // HETS-365 Step 2.1
                     if (list1.Count > 0 && addImportMaps)
                     {
-                        ImportUtility.AddImportMap(dbContext, OldTable, oldObject.Equip_Type_Id.ToString(),
-                            NewTable, list1.OrderBy(x => x.Id).FirstOrDefault().Id);
+                        DistrictEquipmentType temp = list1.OrderBy(x => x.Id).FirstOrDefault();
+
+                        if (temp != null)
+                        {
+                            ImportUtility.AddImportMap(dbContext, OldTable, oldObject.Equip_Type_Id.ToString(), NewTable, temp.Id);
+                        }
                     }
 
                     // check if XML.Description matches any of the HETS.Descriptions
@@ -310,8 +314,12 @@ namespace HETSAPI.Import
                     // HETS-365 Step 2.1
                     if (list2.Count > 0 && addImportMaps)
                     {
-                        ImportUtility.AddImportMap(dbContext, OldTable, oldObject.Equip_Type_Id.ToString(),
-                            NewTable, list2.OrderBy(x => x.Id).FirstOrDefault().Id);
+                        DistrictEquipmentType temp = list2.OrderBy(x => x.Id).FirstOrDefault();
+
+                        if (temp != null)
+                        {
+                            ImportUtility.AddImportMap(dbContext, OldTable, oldObject.Equip_Type_Id.ToString(), NewTable, temp.Id);
+                        }                        
                     }
 
                     // HETS-365 Step 3
@@ -326,17 +334,14 @@ namespace HETSAPI.Import
                         }
                     }
                 }
-            }
-            
+            }            
         }
-
-
 
         public static void Obfuscate(PerformContext performContext, DbAppContext dbContext, string sourceLocation, string destinationLocation, string systemId)
         {
-            int startPoint = ImportUtility.CheckInterMapForStartPoint(dbContext, "Obfuscate_" + OldTableProgress, BCBidImport.SigId);
+            int startPoint = ImportUtility.CheckInterMapForStartPoint(dbContext, "Obfuscate_" + OldTableProgress, BcBidImport.SigId);
 
-            if (startPoint == BCBidImport.SigId)    // this means the import job it has done today is complete for all the records in the xml file.
+            if (startPoint == BcBidImport.SigId)    // this means the import job it has done today is complete for all the records in the xml file.
             {
                 performContext.WriteLine("*** Obfuscating " + XmlFileName + " is complete from the former process ***");
                 return;
@@ -351,14 +356,14 @@ namespace HETSAPI.Import
                 progress.SetValue(0);
 
                 // create serializer and serialize xml file
-                XmlSerializer ser = new XmlSerializer(typeof(ImportModels.EquipType[]), new XmlRootAttribute(rootAttr));
+                XmlSerializer ser = new XmlSerializer(typeof(EquipType[]), new XmlRootAttribute(rootAttr));
                 MemoryStream memoryStream = ImportUtility.MemoryStreamGenerator(XmlFileName, OldTable, sourceLocation, rootAttr);
-                ImportModels.EquipType[] legacyItems = (ImportModels.EquipType[])ser.Deserialize(memoryStream);
+                EquipType[] legacyItems = (EquipType[])ser.Deserialize(memoryStream);
 
                 performContext.WriteLine("Obfuscating EquipType data");
                 progress.SetValue(0);
 
-                foreach (ImportModels.EquipType item in legacyItems.WithProgress(progress))
+                foreach (EquipType item in legacyItems.WithProgress(progress))
                 {
                     item.Created_By = systemId;
 
@@ -369,12 +374,13 @@ namespace HETSAPI.Import
                 }
 
                 performContext.WriteLine("Writing " + XmlFileName + " to " + destinationLocation);
-                // write out the array.
+
+                // write out the array
                 FileStream fs = ImportUtility.GetObfuscationDestination(XmlFileName, destinationLocation);
                 ser.Serialize(fs, legacyItems);
                 fs.Close();
-                // no excel for EquipType.
-
+                
+                // no excel for EquipType
             }
             catch (Exception e)
             {

@@ -31,7 +31,7 @@ namespace HETSAPI.Services.Impl
 
         public IActionResult AdminImportGetAsync(string path, string districts)
         {
-            string result = "Created Job: ";
+            string result = "";
 
             lock (_thisLock)
             {
@@ -41,12 +41,14 @@ namespace HETSAPI.Services.Impl
                 if (districts != null && districts == "388888")
                 {
                     // not using Hangfire
-                    BCBidImport.ImportJob(null, connectionString, uploadPath + path);
+                    BcBidImport.ImportJob(null, connectionString, uploadPath + path);
+                    result = "Import complete";
                 }
                 else
                 {
                     // use Hangfire
-                    string jobId = BackgroundJob.Enqueue(() => BCBidImport.ImportJob(null, connectionString, uploadPath + path));
+                    result = "Created Job: ";
+                    string jobId = BackgroundJob.Enqueue(() => BcBidImport.ImportJob(null, connectionString, uploadPath + path));
                     result += jobId;
                 }
             }
@@ -67,7 +69,7 @@ namespace HETSAPI.Services.Impl
                 ImportUtility.CreateObfuscationDestination(uploadPath + destinationPath);
 
                 // use Hangfire
-                    string jobId = BackgroundJob.Enqueue(() => BCBidImport.ObfuscationJob(null, connectionString, uploadPath + sourcePath, uploadPath + destinationPath));
+                    string jobId = BackgroundJob.Enqueue(() => BcBidImport.ObfuscationJob(null, connectionString, uploadPath + sourcePath, uploadPath + destinationPath));
                     result += jobId;
                 
             }
@@ -78,26 +80,31 @@ namespace HETSAPI.Services.Impl
 
         public async Task<IActionResult> GetSpreadsheet(string path, string filename)
         {
-            // create an excel spreadsheet that will show the data.
-            string uploadPath = _configuration["UploadPath"];
-            string fullPath = Path.Combine(uploadPath + path, filename);
-
-            MemoryStream memory = new MemoryStream();
-            
-            using (FileStream stream = new FileStream(fullPath, FileMode.Open))
+            // create an excel spreadsheet that will show the data.            
+            if (_configuration != null)
             {
-                await stream.CopyToAsync(memory);
+                string uploadPath = _configuration["UploadPath"];
+                string fullPath = Path.Combine(uploadPath + path, filename);
+
+                MemoryStream memory = new MemoryStream();
+            
+                using (FileStream stream = new FileStream(fullPath, FileMode.Open))
+                {
+                    await stream.CopyToAsync(memory);
+                }
+
+                memory.Position = 0;
+
+                FileStreamResult fileStreamResult =
+                    new FileStreamResult(memory, "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet")
+                    {
+                        FileDownloadName = filename
+                    };
+
+                return fileStreamResult;
             }
 
-            memory.Position = 0;
-
-            var fileStreamResult =
-                new FileStreamResult(memory, "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet")
-                {
-                    FileDownloadName = filename
-                };
-
-            return fileStreamResult;
+            return null;
         }        
     }
 }

@@ -35,9 +35,9 @@ namespace HETSAPI.Import
         public static void Import(PerformContext performContext, DbAppContext dbContext, string fileLocation, string systemId)
         {
             // check the start point. If startPoint ==  sigId then it is already completed
-            int startPoint = ImportUtility.CheckInterMapForStartPoint(dbContext, OldTableProgress, BCBidImport.SigId);
+            int startPoint = ImportUtility.CheckInterMapForStartPoint(dbContext, OldTableProgress, BcBidImport.SigId);
 
-            if (startPoint == BCBidImport.SigId)    // this means the import job it has done today is complete for all the records in the xml file.
+            if (startPoint == BcBidImport.SigId)    // this means the import job it has done today is complete for all the records in the xml file.
             {
                 performContext.WriteLine("*** Importing " + XmlFileName + " is complete from the former process ***");
                 return;
@@ -112,7 +112,7 @@ namespace HETSAPI.Import
                 try
                 {
                     performContext.WriteLine("*** Importing " + XmlFileName + " is Done ***");
-                    ImportUtility.AddImportMapForProgress(dbContext, OldTableProgress, BCBidImport.SigId.ToString(), BCBidImport.SigId);
+                    ImportUtility.AddImportMapForProgress(dbContext, OldTableProgress, BcBidImport.SigId.ToString(), BcBidImport.SigId);
                     dbContext.SaveChangesForImport();
                 }
                 catch (Exception e)
@@ -147,14 +147,31 @@ namespace HETSAPI.Import
             {
                 instance = new DistrictEquipmentType {Id = oldObject.Equip_Type_Id};
 
-                try 
+                try
                 {
-                    instance.DistrictEquipmentName = oldObject.Equip_Type_Cd.Length >= 10 ? 
-                        oldObject.Equip_Type_Cd.Substring(0, 10) : 
-                        oldObject.Equip_Type_Cd
-                       + "-" + ( oldObject.Equip_Type_Desc.Length >= 210 ? 
-                            oldObject.Equip_Type_Desc.Substring(0, 210) : 
-                            oldObject.Equip_Type_Desc);
+                    string temp;
+
+                    if (oldObject.Equip_Type_Cd.Length >= 10)
+                    {
+                        temp = oldObject.Equip_Type_Cd.Substring(0, 10);
+                    }
+                    else
+                    {
+                        temp = oldObject.Equip_Type_Cd;
+                    }
+
+                    temp = temp + "-";
+
+                    if (oldObject.Equip_Type_Desc.Length >= 210)
+                    {
+                        temp = temp + oldObject.Equip_Type_Desc.Substring(0, 210);
+                    }
+                    else
+                    {
+                        temp = oldObject.Equip_Type_Desc;
+                    }
+
+                    instance.DistrictEquipmentName = temp;
                 }
                 catch
                 {

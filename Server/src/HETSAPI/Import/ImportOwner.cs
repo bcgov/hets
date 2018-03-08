@@ -137,9 +137,9 @@ namespace HETSAPI.Import
         public static void Import(PerformContext performContext, DbAppContext dbContext, string fileLocation, string systemId)
         {
             // check the start point. If startPoint ==  sigId then it is already completed
-            int startPoint = ImportUtility.CheckInterMapForStartPoint(dbContext, OldTableProgress, BCBidImport.SigId);
+            int startPoint = ImportUtility.CheckInterMapForStartPoint(dbContext, OldTableProgress, BcBidImport.SigId);
 
-            if (startPoint == BCBidImport.SigId)    // this means the import job it has done today is complete for all the records in the xml file.    // This means the import job it has done today is complete for all the records in the xml file.
+            if (startPoint == BcBidImport.SigId)    // this means the import job it has done today is complete for all the records in the xml file.    // This means the import job it has done today is complete for all the records in the xml file.
             {
                 performContext.WriteLine("*** Importing " + XmlFileName + " is complete from the former process ***");
                 return;
@@ -221,7 +221,7 @@ namespace HETSAPI.Import
                     {
                         try
                         {
-                            ImportUtility.AddImportMapForProgress(dbContext, OldTableProgress, ii.ToString(), BCBidImport.SigId);
+                            ImportUtility.AddImportMapForProgress(dbContext, OldTableProgress, ii.ToString(), BcBidImport.SigId);
                             dbContext.SaveChangesForImport();
                         }
                         catch (Exception e)
@@ -234,7 +234,7 @@ namespace HETSAPI.Import
                 try
                 {
                     performContext.WriteLine("*** Importing " + XmlFileName + " is Done ***");
-                    ImportUtility.AddImportMapForProgress(dbContext, OldTableProgress, BCBidImport.SigId.ToString(), BCBidImport.SigId);
+                    ImportUtility.AddImportMapForProgress(dbContext, OldTableProgress, BcBidImport.SigId.ToString(), BcBidImport.SigId);
                     dbContext.SaveChangesForImport();
                 }
                 catch (Exception e)
@@ -473,9 +473,9 @@ namespace HETSAPI.Import
 
         public static void Obfuscate(PerformContext performContext, DbAppContext dbContext, string sourceLocation, string destinationLocation, string systemId)
         {
-            int startPoint = ImportUtility.CheckInterMapForStartPoint(dbContext, "Obfuscate_" + OldTableProgress, BCBidImport.SigId);
+            int startPoint = ImportUtility.CheckInterMapForStartPoint(dbContext, "Obfuscate_" + OldTableProgress, BcBidImport.SigId);
 
-            if (startPoint == BCBidImport.SigId)    // this means the import job it has done today is complete for all the records in the xml file.
+            if (startPoint == BcBidImport.SigId)    // this means the import job it has done today is complete for all the records in the xml file.
             {
                 performContext.WriteLine("*** Obfuscating " + XmlFileName + " is complete from the former process ***");
                 return;
@@ -494,9 +494,9 @@ namespace HETSAPI.Import
                 MemoryStream memoryStream = ImportUtility.MemoryStreamGenerator(XmlFileName, OldTable, sourceLocation, rootAttr);
                 ImportModels.Owner[] legacyItems = (ImportModels.Owner[])ser.Deserialize(memoryStream);
 
-                List<string> usernames = new List<string>();
                 performContext.WriteLine("Obfuscating owner data");
                 progress.SetValue(0);
+
                 int currentOwner = 0;
 
                 List<ImportMapRecord> importMapRecords = new List<ImportMapRecord>();
@@ -504,41 +504,50 @@ namespace HETSAPI.Import
                 foreach (ImportModels.Owner item in legacyItems.WithProgress(progress))
                 {
                     item.Created_By = systemId;
+
                     if (item.Modified_By != null)
                     {
                         item.Modified_By = systemId;
                     }
 
-                    ImportMapRecord importMapRecordOrganization = new ImportMapRecord();
+                    ImportMapRecord importMapRecordOrganization = new ImportMapRecord
+                    {
+                        TableName = NewTable,
+                        MappedColumn = "OrganizationName",
+                        OriginalValue = item.CGL_Company,
+                        NewValue = "Company " + currentOwner
+                    };
 
-                    importMapRecordOrganization.TableName = NewTable;
-                    importMapRecordOrganization.MappedColumn = "OrganizationName";
-                    importMapRecordOrganization.OriginalValue = item.CGL_Company;
-                    importMapRecordOrganization.NewValue = "Company " + currentOwner;
                     importMapRecords.Add(importMapRecordOrganization);
 
-                    ImportMapRecord importMapRecordFirstName = new ImportMapRecord();
+                    ImportMapRecord importMapRecordFirstName = new ImportMapRecord
+                    {
+                        TableName = NewTable,
+                        MappedColumn = "Owner_First_Name",
+                        OriginalValue = item.Owner_First_Name,
+                        NewValue = "OwnerFirst" + currentOwner
+                    };
 
-                    importMapRecordFirstName.TableName = NewTable;
-                    importMapRecordFirstName.MappedColumn = "Owner_First_Name";
-                    importMapRecordFirstName.OriginalValue = item.Owner_First_Name;
-                    importMapRecordFirstName.NewValue = "OwnerFirst" + currentOwner;
                     importMapRecords.Add(importMapRecordFirstName);
 
-                    ImportMapRecord importMapRecordLastName = new ImportMapRecord();
+                    ImportMapRecord importMapRecordLastName = new ImportMapRecord
+                    {
+                        TableName = NewTable,
+                        MappedColumn = "Owner_Last_Name",
+                        OriginalValue = item.Owner_Last_Name,
+                        NewValue = "OwnerLast" + currentOwner
+                    };
 
-                    importMapRecordLastName.TableName = NewTable;
-                    importMapRecordLastName.MappedColumn = "Owner_Last_Name";
-                    importMapRecordLastName.OriginalValue = item.Owner_Last_Name;
-                    importMapRecordLastName.NewValue = "OwnerLast" + currentOwner;
                     importMapRecords.Add(importMapRecordLastName);
 
-                    ImportMapRecord importMapRecordOwnerCode = new ImportMapRecord();
+                    ImportMapRecord importMapRecordOwnerCode = new ImportMapRecord
+                    {
+                        TableName = NewTable,
+                        MappedColumn = "Owner_Cd",
+                        OriginalValue = item.Owner_Cd,
+                        NewValue = "OO" + currentOwner
+                    };
 
-                    importMapRecordOwnerCode.TableName = NewTable;
-                    importMapRecordOwnerCode.MappedColumn = "Owner_Cd";
-                    importMapRecordOwnerCode.OriginalValue = item.Owner_Cd;
-                    importMapRecordOwnerCode.NewValue = "OO" + currentOwner;
                     importMapRecords.Add(importMapRecordOwnerCode);
 
                     item.Owner_Cd = "OO" + currentOwner;

@@ -35,9 +35,9 @@ namespace HETSAPI.Import
         public static void Import(PerformContext performContext, DbAppContext dbContext, string fileLocation, string systemId)
         {
             // check the start point. If startPoint == sigId then it is already completed
-            int startPoint = ImportUtility.CheckInterMapForStartPoint(dbContext, OldTableProgress, BCBidImport.SigId);
+            int startPoint = ImportUtility.CheckInterMapForStartPoint(dbContext, OldTableProgress, BcBidImport.SigId);
 
-            if (startPoint == BCBidImport.SigId)    // this means the import job it has done today is complete for all the records in the xml file.
+            if (startPoint == BcBidImport.SigId)    // this means the import job it has done today is complete for all the records in the xml file.
             {
                 performContext.WriteLine("*** Importing " + XmlFileName + " is complete from the former process ***");
                 return;
@@ -111,7 +111,7 @@ namespace HETSAPI.Import
                     {
                         try
                         {
-                            ImportUtility.AddImportMapForProgress(dbContext, OldTableProgress, ii.ToString(), BCBidImport.SigId);
+                            ImportUtility.AddImportMapForProgress(dbContext, OldTableProgress, ii.ToString(), BcBidImport.SigId);
                             dbContext.SaveChangesForImport();
                         }
                         catch (Exception e)
@@ -124,7 +124,7 @@ namespace HETSAPI.Import
                 try
                 {
                     performContext.WriteLine("*** Importing " + XmlFileName + " is Done ***");
-                    ImportUtility.AddImportMapForProgress(dbContext, OldTableProgress, BCBidImport.SigId.ToString(), BCBidImport.SigId);
+                    ImportUtility.AddImportMapForProgress(dbContext, OldTableProgress, BcBidImport.SigId.ToString(), BcBidImport.SigId);
                     dbContext.SaveChangesForImport();
                 }
                 catch (Exception e)
@@ -256,9 +256,9 @@ namespace HETSAPI.Import
 
         public static void Obfuscate(PerformContext performContext, DbAppContext dbContext, string sourceLocation, string destinationLocation, string systemId)
         {
-            int startPoint = ImportUtility.CheckInterMapForStartPoint(dbContext, "Obfuscate_" + OldTableProgress, BCBidImport.SigId);
+            int startPoint = ImportUtility.CheckInterMapForStartPoint(dbContext, "Obfuscate_" + OldTableProgress, BcBidImport.SigId);
 
-            if (startPoint == BCBidImport.SigId)    // this means the import job it has done today is complete for all the records in the xml file.
+            if (startPoint == BcBidImport.SigId)    // this means the import job it has done today is complete for all the records in the xml file.
             {
                 performContext.WriteLine("*** Obfuscating " + XmlFileName + " is complete from the former process ***");
                 return;
@@ -273,43 +273,44 @@ namespace HETSAPI.Import
                 progress.SetValue(0);
 
                 // create serializer and serialize xml file
-                XmlSerializer ser = new XmlSerializer(typeof(ImportModels.Project[]), new XmlRootAttribute(rootAttr));
+                XmlSerializer ser = new XmlSerializer(typeof(Project[]), new XmlRootAttribute(rootAttr));
                 MemoryStream memoryStream = ImportUtility.MemoryStreamGenerator(XmlFileName, OldTable, sourceLocation, rootAttr);
-                ImportModels.Project[] legacyItems = (ImportModels.Project[])ser.Deserialize(memoryStream);
+                Project[] legacyItems = (Project[])ser.Deserialize(memoryStream);
 
                 performContext.WriteLine("Obfuscating Project data");
                 progress.SetValue(0);
-                int currentOwner = 0;
 
                 List<ImportMapRecord> importMapRecords = new List<ImportMapRecord>();
 
-                foreach (ImportModels.Project item in legacyItems.WithProgress(progress))
+                foreach (Project item in legacyItems.WithProgress(progress))
                 {
                     item.Created_By = systemId;
 
                     Random random = new Random();
                     string newProjectNum = random.Next(10000).ToString();
 
-                    ImportMapRecord importMapRecordOrganization = new ImportMapRecord();
+                    ImportMapRecord importMapRecordOrganization = new ImportMapRecord
+                    {
+                        TableName = NewTable,
+                        MappedColumn = "Project_Num",
+                        OriginalValue = item.Project_Num,
+                        NewValue = newProjectNum
+                    };
 
-
-                    importMapRecordOrganization.TableName = NewTable;
-                    importMapRecordOrganization.MappedColumn = "Project_Num";
-                    importMapRecordOrganization.OriginalValue = item.Project_Num;
-                    importMapRecordOrganization.NewValue = newProjectNum;
                     importMapRecords.Add(importMapRecordOrganization);
 
                     item.Project_Num = newProjectNum;
                     item.Job_Desc1 = ImportUtility.ScrambleString(item.Job_Desc1);
-                    item.Job_Desc2 = ImportUtility.ScrambleString(item.Job_Desc2);
-                    
+                    item.Job_Desc2 = ImportUtility.ScrambleString(item.Job_Desc2);                    
                 }
 
                 performContext.WriteLine("Writing " + XmlFileName + " to " + destinationLocation);
+
                 // write out the array.
                 FileStream fs = ImportUtility.GetObfuscationDestination(XmlFileName, destinationLocation);
                 ser.Serialize(fs, legacyItems);
                 fs.Close();
+
                 // write out the spreadsheet of import records.
                 ImportUtility.WriteImportRecordsToExcel(destinationLocation, importMapRecords, OldTable);
 

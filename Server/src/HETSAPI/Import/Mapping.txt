@@ -259,7 +259,10 @@ Owner.xml
 		
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 XML File: User.xml is related to tables: HET_USER
-In User.xml, notice that <Authority> is related to roles. There are 4 choice in the xml file: A, N, R, U. It seems that A is administrator. Not sure what other three means. In our existing HETS_ROLE, we have two: Admin and regular users.
+In User.xml, notice that <Authority> is related to roles. There are 4 choice in the xml file: A, N, R, U. 
+All new users will be given the basic role only (Login)
+File contains multiple records per user - 1 for each dsitrict they can access 
+(currently importing 1 only -> where Default_Service_Area = Y
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
     <Popt_ID>2927873 
     <Service_Area_Id>1							"DISTRICT_ID",  (related to )
