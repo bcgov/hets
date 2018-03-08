@@ -1,7 +1,6 @@
 ﻿using Hangfire.Console;
 using Hangfire.Server;
 using System;
-using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Xml.Serialization;
@@ -202,6 +201,7 @@ namespace HETSAPI.Import
             if (localArea == null)
             {
                 isNew = true;
+
                 localArea = new LocalArea
                 {
                     Id = oldObject.Area_Id,
@@ -209,7 +209,7 @@ namespace HETSAPI.Import
                 };
             }
 
-            localArea.Name = GetCapitalCase(oldObject.Area_Desc.Trim());
+            localArea.Name = ImportUtility.GetCapitalCase(oldObject.Area_Desc.Trim());
             
             // map to the correct service area
             ServiceArea serviceArea = dbContext.ServiceAreas.FirstOrDefault(x => x.MinistryServiceAreaID == oldObject.Service_Area_Id);
@@ -239,12 +239,7 @@ namespace HETSAPI.Import
 
                 dbContext.LocalAreas.Update(localArea);
             }
-        }
-
-        private static string GetCapitalCase(string textField)
-        {
-            return CultureInfo.CurrentCulture.TextInfo.ToTitleCase(textField.ToLower());
-        }
+        }        
     }
 }
 

@@ -132,28 +132,31 @@ namespace HETSAPI.Import
                 serviceArea.Name = serviceArea.Name.Replace(" CA", "");
             }
 
-            serviceArea.AreaNumber = int.Parse(oldObject.Service_Area_Cd);            
-
-            District district = dbContext.Districts.FirstOrDefault(x => x.MinistryDistrictID == oldObject.District_Area_Id);
-
-            if (district == null)
+            // service area number
+            if (oldObject.Service_Area_Cd != null)
             {
-                // this means that the District is not in the database 
-                // (this happens when the production data does not include district Other than "Lower Mainland" or all the districts)
-                return;
+                serviceArea.AreaNumber = int.Parse(oldObject.Service_Area_Cd);
             }
 
-            serviceArea.DistrictId = district.Id;
+            // get the district for this service area
+            int tempServiceAreaId = GetServiceAreaId(serviceArea.Name);
 
-            try
+            if (tempServiceAreaId > 0)
+            {                
+
+                District district = dbContext.Districts.FirstOrDefault(x => x.MinistryDistrictID == tempServiceAreaId);
+
+                if (district != null)
+                {
+                    serviceArea.DistrictId = district.Id;
+                }
+            }
+
+            if (oldObject.FiscalStart != null)
             {
                 serviceArea.StartDate = DateTime.ParseExact(oldObject.FiscalStart.Trim().Substring(0, 10), "yyyy-MM-dd", System.Globalization.CultureInfo.InvariantCulture);
             }
-            catch
-            {
-                // do nothing
-            }
-
+            
             if (isNew)
             {
                 serviceArea.AppCreateUserid = systemId;
@@ -208,6 +211,75 @@ namespace HETSAPI.Import
                 performContext.WriteLine(e.ToString());
             }
         }
+
+        /// <summary>
+        /// Unfortunately this has to me manually mapped
+        /// However, the data is static and won't change
+        /// </summary>
+        /// <param name="serviceAreaName"></param>
+        /// <returns></returns>
+        private static int GetServiceAreaId(string serviceAreaName)
+        {
+            switch (serviceAreaName.Trim().ToLower())
+            {
+                case "fraser valley":
+                case "lower mainland":
+                case "sunshine coast":
+                case "howe sound":
+                    return 1;
+
+                case "south island":
+                case "central island":
+                case "north island":
+                    return 2;
+
+                case "selkirk":
+                case "east kootenay":
+                    return 3;
+
+                case "central kootenay":
+                case "kootenay boundary":
+                    return 4;
+
+                case "okanagan - shuswap":
+                case "south okanagan":
+                    return 5;
+
+                case "thompson":
+                case "nicola":
+                    return 6;
+
+                case "northriboo":
+                case "centralriboo":
+                case "Southriboo":
+                    return 7;
+
+                case "north peace":
+                case "south peace":
+                    return 8;
+
+                case "nechako":
+                case "robson":
+                case "fort george":
+                    return 9;
+
+                case "stikine":
+                case "bulkley - nass":
+                case "lakes":
+                    return 10;
+
+                case "north coast":
+                case "skeena":
+                    return 11;
+
+                case "non-bc":
+                    return 12;
+
+                case "unknown":
+                    return 12;
+            }
+
+            return 0;
+        }
     }
 }
-

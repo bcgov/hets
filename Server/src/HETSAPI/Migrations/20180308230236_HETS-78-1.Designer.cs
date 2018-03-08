@@ -11,9 +11,10 @@ using System;
 namespace HETSAPI.Migrations
 {
     [DbContext(typeof(DbAppContext))]
-    partial class DbAppContextModelSnapshot : ModelSnapshot
+    [Migration("20180308230236_HETS-78-1")]
+    partial class HETS781
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -55,9 +56,6 @@ namespace HETSAPI.Migrations
                     b.Property<string>("AppLastUpdateUserid")
                         .HasColumnName("APP_LAST_UPDATE_USERID")
                         .HasMaxLength(255);
-
-                    b.Property<int>("ConcurrencyControlNumber")
-                        .HasColumnName("CONCURRENCY_CONTROL_NUMBER");
 
                     b.Property<DateTime>("DbCreateTimestamp")
                         .HasColumnName("DB_CREATE_TIMESTAMP");
@@ -153,9 +151,6 @@ namespace HETSAPI.Migrations
                         .HasColumnName("APP_LAST_UPDATE_USERID")
                         .HasMaxLength(255);
 
-                    b.Property<int>("ConcurrencyControlNumber")
-                        .HasColumnName("CONCURRENCY_CONTROL_NUMBER");
-
                     b.Property<DateTime>("DbCreateTimestamp")
                         .HasColumnName("DB_CREATE_TIMESTAMP");
 
@@ -217,9 +212,6 @@ namespace HETSAPI.Migrations
                     b.Property<string>("AppLastUpdateUserid")
                         .HasColumnName("APP_LAST_UPDATE_USERID")
                         .HasMaxLength(255);
-
-                    b.Property<int>("ConcurrencyControlNumber")
-                        .HasColumnName("CONCURRENCY_CONTROL_NUMBER");
 
                     b.Property<string>("ConditionTypeCode")
                         .HasColumnName("CONDITION_TYPE_CODE")
@@ -300,9 +292,6 @@ namespace HETSAPI.Migrations
                     b.Property<string>("City")
                         .HasColumnName("CITY")
                         .HasMaxLength(100);
-
-                    b.Property<int>("ConcurrencyControlNumber")
-                        .HasColumnName("CONCURRENCY_CONTROL_NUMBER");
 
                     b.Property<DateTime>("DbCreateTimestamp")
                         .HasColumnName("DB_CREATE_TIMESTAMP");
@@ -409,9 +398,6 @@ namespace HETSAPI.Migrations
                         .HasColumnName("APP_LAST_UPDATE_USERID")
                         .HasMaxLength(255);
 
-                    b.Property<int>("ConcurrencyControlNumber")
-                        .HasColumnName("CONCURRENCY_CONTROL_NUMBER");
-
                     b.Property<DateTime>("DbCreateTimestamp")
                         .HasColumnName("DB_CREATE_TIMESTAMP");
 
@@ -487,9 +473,6 @@ namespace HETSAPI.Migrations
                     b.Property<string>("AppLastUpdateUserid")
                         .HasColumnName("APP_LAST_UPDATE_USERID")
                         .HasMaxLength(255);
-
-                    b.Property<int>("ConcurrencyControlNumber")
-                        .HasColumnName("CONCURRENCY_CONTROL_NUMBER");
 
                     b.Property<DateTime>("DbCreateTimestamp")
                         .HasColumnName("DB_CREATE_TIMESTAMP");
@@ -576,9 +559,6 @@ namespace HETSAPI.Migrations
 
                     b.Property<int?>("BlockNumber")
                         .HasColumnName("BLOCK_NUMBER");
-
-                    b.Property<int>("ConcurrencyControlNumber")
-                        .HasColumnName("CONCURRENCY_CONTROL_NUMBER");
 
                     b.Property<DateTime>("DbCreateTimestamp")
                         .HasColumnName("DB_CREATE_TIMESTAMP");
@@ -757,9 +737,6 @@ namespace HETSAPI.Migrations
                         .HasColumnName("APP_LAST_UPDATE_USERID")
                         .HasMaxLength(255);
 
-                    b.Property<int>("ConcurrencyControlNumber")
-                        .HasColumnName("CONCURRENCY_CONTROL_NUMBER");
-
                     b.Property<DateTime>("DbCreateTimestamp")
                         .HasColumnName("DB_CREATE_TIMESTAMP");
 
@@ -834,9 +811,6 @@ namespace HETSAPI.Migrations
                     b.Property<float?>("BlueBookSection")
                         .HasColumnName("BLUE_BOOK_SECTION");
 
-                    b.Property<int>("ConcurrencyControlNumber")
-                        .HasColumnName("CONCURRENCY_CONTROL_NUMBER");
-
                     b.Property<DateTime>("DbCreateTimestamp")
                         .HasColumnName("DB_CREATE_TIMESTAMP");
 
@@ -910,9 +884,6 @@ namespace HETSAPI.Migrations
                     b.Property<string>("AppLastUpdateUserid")
                         .HasColumnName("APP_LAST_UPDATE_USERID")
                         .HasMaxLength(255);
-
-                    b.Property<int>("ConcurrencyControlNumber")
-                        .HasColumnName("CONCURRENCY_CONTROL_NUMBER");
 
                     b.Property<DateTime?>("CreatedDate")
                         .HasColumnName("CREATED_DATE");
@@ -996,9 +967,6 @@ namespace HETSAPI.Migrations
                         .HasColumnName("APP_LAST_UPDATE_USERID")
                         .HasMaxLength(255);
 
-                    b.Property<int>("ConcurrencyControlNumber")
-                        .HasColumnName("CONCURRENCY_CONTROL_NUMBER");
-
                     b.Property<DateTime>("DbCreateTimestamp")
                         .HasColumnName("DB_CREATE_TIMESTAMP");
 
@@ -1066,9 +1034,6 @@ namespace HETSAPI.Migrations
                     b.Property<string>("AppLastUpdateUserid")
                         .HasColumnName("APP_LAST_UPDATE_USERID")
                         .HasMaxLength(255);
-
-                    b.Property<int>("ConcurrencyControlNumber")
-                        .HasColumnName("CONCURRENCY_CONTROL_NUMBER");
 
                     b.Property<DateTime>("DbCreateTimestamp")
                         .HasColumnName("DB_CREATE_TIMESTAMP");
@@ -1158,9 +1123,6 @@ namespace HETSAPI.Migrations
                     b.Property<int?>("AskNextBlockOpenId")
                         .HasColumnName("ASK_NEXT_BLOCK_OPEN_ID");
 
-                    b.Property<int>("ConcurrencyControlNumber")
-                        .HasColumnName("CONCURRENCY_CONTROL_NUMBER");
-
                     b.Property<DateTime>("DbCreateTimestamp")
                         .HasColumnName("DB_CREATE_TIMESTAMP");
 
@@ -1231,9 +1193,6 @@ namespace HETSAPI.Migrations
                     b.Property<string>("AppLastUpdateUserid")
                         .HasColumnName("APP_LAST_UPDATE_USERID")
                         .HasMaxLength(255);
-
-                    b.Property<int>("ConcurrencyControlNumber")
-                        .HasColumnName("CONCURRENCY_CONTROL_NUMBER");
 
                     b.Property<DateTime>("DbCreateTimestamp")
                         .HasColumnName("DB_CREATE_TIMESTAMP");
@@ -1346,9 +1305,6 @@ namespace HETSAPI.Migrations
                     b.Property<string>("City")
                         .HasColumnName("CITY")
                         .HasMaxLength(100);
-
-                    b.Property<int>("ConcurrencyControlNumber")
-                        .HasColumnName("CONCURRENCY_CONTROL_NUMBER");
 
                     b.Property<DateTime>("DbCreateTimestamp")
                         .HasColumnName("DB_CREATE_TIMESTAMP");
@@ -1472,9 +1428,6 @@ namespace HETSAPI.Migrations
                         .HasColumnName("CODE")
                         .HasMaxLength(50);
 
-                    b.Property<int>("ConcurrencyControlNumber")
-                        .HasColumnName("CONCURRENCY_CONTROL_NUMBER");
-
                     b.Property<DateTime>("DbCreateTimestamp")
                         .HasColumnName("DB_CREATE_TIMESTAMP");
 
@@ -1537,9 +1490,6 @@ namespace HETSAPI.Migrations
                     b.Property<string>("AppLastUpdateUserid")
                         .HasColumnName("APP_LAST_UPDATE_USERID")
                         .HasMaxLength(255);
-
-                    b.Property<int>("ConcurrencyControlNumber")
-                        .HasColumnName("CONCURRENCY_CONTROL_NUMBER");
 
                     b.Property<DateTime>("DbCreateTimestamp")
                         .HasColumnName("DB_CREATE_TIMESTAMP");
@@ -1626,9 +1576,6 @@ namespace HETSAPI.Migrations
                         .HasColumnName("APP_LAST_UPDATE_USERID")
                         .HasMaxLength(255);
 
-                    b.Property<int>("ConcurrencyControlNumber")
-                        .HasColumnName("CONCURRENCY_CONTROL_NUMBER");
-
                     b.Property<DateTime>("DbCreateTimestamp")
                         .HasColumnName("DB_CREATE_TIMESTAMP");
 
@@ -1707,9 +1654,6 @@ namespace HETSAPI.Migrations
                         .HasColumnName("APP_LAST_UPDATE_USERID")
                         .HasMaxLength(255);
 
-                    b.Property<int>("ConcurrencyControlNumber")
-                        .HasColumnName("CONCURRENCY_CONTROL_NUMBER");
-
                     b.Property<DateTime>("DbCreateTimestamp")
                         .HasColumnName("DB_CREATE_TIMESTAMP");
 
@@ -1780,9 +1724,6 @@ namespace HETSAPI.Migrations
                     b.Property<string>("AppLastUpdateUserid")
                         .HasColumnName("APP_LAST_UPDATE_USERID")
                         .HasMaxLength(255);
-
-                    b.Property<int>("ConcurrencyControlNumber")
-                        .HasColumnName("CONCURRENCY_CONTROL_NUMBER");
 
                     b.Property<DateTime?>("DatedOn")
                         .HasColumnName("DATED_ON");
@@ -1885,9 +1826,6 @@ namespace HETSAPI.Migrations
                         .HasColumnName("COMMENT")
                         .HasMaxLength(2048);
 
-                    b.Property<int>("ConcurrencyControlNumber")
-                        .HasColumnName("CONCURRENCY_CONTROL_NUMBER");
-
                     b.Property<string>("ConditionName")
                         .HasColumnName("CONDITION_NAME")
                         .HasMaxLength(150);
@@ -1959,9 +1897,6 @@ namespace HETSAPI.Migrations
                     b.Property<string>("ComponentName")
                         .HasColumnName("COMPONENT_NAME")
                         .HasMaxLength(150);
-
-                    b.Property<int>("ConcurrencyControlNumber")
-                        .HasColumnName("CONCURRENCY_CONTROL_NUMBER");
 
                     b.Property<DateTime>("DbCreateTimestamp")
                         .HasColumnName("DB_CREATE_TIMESTAMP");
@@ -2038,9 +1973,6 @@ namespace HETSAPI.Migrations
                     b.Property<string>("AppLastUpdateUserid")
                         .HasColumnName("APP_LAST_UPDATE_USERID")
                         .HasMaxLength(255);
-
-                    b.Property<int>("ConcurrencyControlNumber")
-                        .HasColumnName("CONCURRENCY_CONTROL_NUMBER");
 
                     b.Property<DateTime>("DbCreateTimestamp")
                         .HasColumnName("DB_CREATE_TIMESTAMP");
@@ -2137,9 +2069,6 @@ namespace HETSAPI.Migrations
                         .HasColumnName("ATTACHMENT")
                         .HasMaxLength(150);
 
-                    b.Property<int>("ConcurrencyControlNumber")
-                        .HasColumnName("CONCURRENCY_CONTROL_NUMBER");
-
                     b.Property<DateTime>("DbCreateTimestamp")
                         .HasColumnName("DB_CREATE_TIMESTAMP");
 
@@ -2202,9 +2131,6 @@ namespace HETSAPI.Migrations
 
                     b.Property<DateTime?>("AskedDateTime")
                         .HasColumnName("ASKED_DATE_TIME");
-
-                    b.Property<int>("ConcurrencyControlNumber")
-                        .HasColumnName("CONCURRENCY_CONTROL_NUMBER");
 
                     b.Property<DateTime>("DbCreateTimestamp")
                         .HasColumnName("DB_CREATE_TIMESTAMP");
@@ -2303,9 +2229,6 @@ namespace HETSAPI.Migrations
                         .HasColumnName("APP_LAST_UPDATE_USERID")
                         .HasMaxLength(255);
 
-                    b.Property<int>("ConcurrencyControlNumber")
-                        .HasColumnName("CONCURRENCY_CONTROL_NUMBER");
-
                     b.Property<DateTime>("DbCreateTimestamp")
                         .HasColumnName("DB_CREATE_TIMESTAMP");
 
@@ -2368,9 +2291,6 @@ namespace HETSAPI.Migrations
                     b.Property<string>("AppLastUpdateUserid")
                         .HasColumnName("APP_LAST_UPDATE_USERID")
                         .HasMaxLength(255);
-
-                    b.Property<int>("ConcurrencyControlNumber")
-                        .HasColumnName("CONCURRENCY_CONTROL_NUMBER");
 
                     b.Property<DateTime>("DbCreateTimestamp")
                         .HasColumnName("DB_CREATE_TIMESTAMP");
@@ -2439,9 +2359,6 @@ namespace HETSAPI.Migrations
 
                     b.Property<int?>("BlockNumber")
                         .HasColumnName("BLOCK_NUMBER");
-
-                    b.Property<int>("ConcurrencyControlNumber")
-                        .HasColumnName("CONCURRENCY_CONTROL_NUMBER");
 
                     b.Property<DateTime>("DbCreateTimestamp")
                         .HasColumnName("DB_CREATE_TIMESTAMP");
@@ -2545,9 +2462,6 @@ namespace HETSAPI.Migrations
                     b.Property<int?>("AreaNumber")
                         .HasColumnName("AREA_NUMBER");
 
-                    b.Property<int>("ConcurrencyControlNumber")
-                        .HasColumnName("CONCURRENCY_CONTROL_NUMBER");
-
                     b.Property<DateTime>("DbCreateTimestamp")
                         .HasColumnName("DB_CREATE_TIMESTAMP");
 
@@ -2620,9 +2534,6 @@ namespace HETSAPI.Migrations
                     b.Property<string>("AppLastUpdateUserid")
                         .HasColumnName("APP_LAST_UPDATE_USERID")
                         .HasMaxLength(255);
-
-                    b.Property<int>("ConcurrencyControlNumber")
-                        .HasColumnName("CONCURRENCY_CONTROL_NUMBER");
 
                     b.Property<DateTime>("DbCreateTimestamp")
                         .HasColumnName("DB_CREATE_TIMESTAMP");
@@ -2704,9 +2615,6 @@ namespace HETSAPI.Migrations
                     b.Property<string>("AppLastUpdateUserid")
                         .HasColumnName("APP_LAST_UPDATE_USERID")
                         .HasMaxLength(255);
-
-                    b.Property<int>("ConcurrencyControlNumber")
-                        .HasColumnName("CONCURRENCY_CONTROL_NUMBER");
 
                     b.Property<DateTime>("DbCreateTimestamp")
                         .HasColumnName("DB_CREATE_TIMESTAMP");
@@ -2796,9 +2704,6 @@ namespace HETSAPI.Migrations
                         .HasColumnName("APP_LAST_UPDATE_USERID")
                         .HasMaxLength(255);
 
-                    b.Property<int>("ConcurrencyControlNumber")
-                        .HasColumnName("CONCURRENCY_CONTROL_NUMBER");
-
                     b.Property<DateTime>("DbCreateTimestamp")
                         .HasColumnName("DB_CREATE_TIMESTAMP");
 
@@ -2866,9 +2771,6 @@ namespace HETSAPI.Migrations
                     b.Property<string>("AppLastUpdateUserid")
                         .HasColumnName("APP_LAST_UPDATE_USERID")
                         .HasMaxLength(255);
-
-                    b.Property<int>("ConcurrencyControlNumber")
-                        .HasColumnName("CONCURRENCY_CONTROL_NUMBER");
 
                     b.Property<DateTime>("DbCreateTimestamp")
                         .HasColumnName("DB_CREATE_TIMESTAMP");
@@ -2944,9 +2846,6 @@ namespace HETSAPI.Migrations
                     b.Property<string>("AppLastUpdateUserid")
                         .HasColumnName("APP_LAST_UPDATE_USERID")
                         .HasMaxLength(255);
-
-                    b.Property<int>("ConcurrencyControlNumber")
-                        .HasColumnName("CONCURRENCY_CONTROL_NUMBER");
 
                     b.Property<DateTime>("DbCreateTimestamp")
                         .HasColumnName("DB_CREATE_TIMESTAMP");

@@ -75,14 +75,14 @@ namespace HETSAPI.Import
                     {
                         if (item.Equip_Id > 0)
                         {
-                            Models.DumpTruck instance = null;
+                            Models.Equipment instance = null;
                             CopyToInstance(dbContext, item, ref instance, systemId);
                             ImportUtility.AddImportMap(dbContext, OldTable, item.Equip_Id.ToString(), NewTable, instance.Id);
                         }
                     }
                     else // update
                     {
-                        Models.DumpTruck instance = dbContext.DumpTrucks.FirstOrDefault(x => x.Id == importMap.NewKey);
+                        Models.Equipment instance = dbContext.Equipments.FirstOrDefault(x => x.Id == importMap.NewKey);
 
                         // record was deleted
                         if (instance == null) 
@@ -143,10 +143,13 @@ namespace HETSAPI.Import
         /// <param name="oldObject"></param>
         /// <param name="instance"></param>
         /// <param name="systemId"></param>
-        private static void CopyToInstance(DbAppContext dbContext, DumpTruck oldObject, ref Models.DumpTruck instance, string systemId)
+        private static void CopyToInstance(DbAppContext dbContext, DumpTruck oldObject, ref Models.Equipment instance, string systemId)
         {
             if (oldObject.Equip_Id <= 0)
                 return;
+
+            return;
+            /*
 
             //Add the user specified in oldObject.Modified_By and oldObject.Created_By if not there in the database
             User modifiedBy = ImportUtility.AddUserFromString(dbContext, "", systemId);
@@ -322,6 +325,7 @@ namespace HETSAPI.Import
                 instance.AppLastUpdateTimestamp = DateTime.UtcNow;
                 dbContext.DumpTrucks.Update(instance);
             }
+            */
         }
 
         public static void Obfuscate(PerformContext performContext, DbAppContext dbContext, string sourceLocation, string destinationLocation, string systemId)

@@ -27,8 +27,7 @@ namespace HETSAPI
             services.AddTransient<IContactService, ContactService>();            
             services.AddTransient<ICurrentUserService, CurrentUserService>();
             services.AddTransient<IDistrictEquipmentTypeService, DistrictEquipmentTypeService>();
-            services.AddTransient<IDistrictService, DistrictService>();            
-            services.AddTransient<IDumpTruckService, DumpTruckService>();                        
+            services.AddTransient<IDistrictService, DistrictService>();                                
             services.AddTransient<IEquipmentAttachmentService, EquipmentAttachmentService>();
             services.AddTransient<IEquipmentService, EquipmentService>();
             services.AddTransient<IEquipmentTypeService, EquipmentTypeService>();

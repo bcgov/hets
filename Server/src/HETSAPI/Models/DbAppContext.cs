@@ -84,12 +84,7 @@ namespace HETSAPI.Models
         /// <summary>
         /// District Equipment Type (district specific equipment subtypes)
         /// </summary>
-        DbSet<DistrictEquipmentType> DistrictEquipmentTypes { get; set; }
-
-        /// <summary>
-        /// Dump Truck (subtype if Equipment)
-        /// </summary>
-        DbSet<DumpTruck> DumpTrucks { get; set; }
+        DbSet<DistrictEquipmentType> DistrictEquipmentTypes { get; set; }        
 
         /// <summary>
         /// Equipment
@@ -300,12 +295,7 @@ namespace HETSAPI.Models
         /// District
         /// </summary>
         public DbSet<District> Districts { get; set; }
-
-        /// <summary>
-        /// Dump Truck (subtype of Equipment)
-        /// </summary>
-        public DbSet<DumpTruck> DumpTrucks { get; set; }
-
+        
         /// <summary>
         /// Equipment
         /// </summary>
