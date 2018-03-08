@@ -138,8 +138,12 @@
 
   #main-table {
     table-layout: fixed;
-    height: 370px;
+    min-height: 375px;
     margin-bottom: 25px;
+  }
+
+  #main-table tr:last-child {
+    height: 100% !important;
   }
 
   h1, h2 {
@@ -263,13 +267,13 @@
       <tbody>
         <tr>
           <td>
-            <div class="m-tb-5 bold">Unit Identifier: <span class="underline uppercase">{{equipmentCode}}</span></div>
+            <div class="m-tb-5 bold">Unit Identifier: <span class="underline uppercase">{{equipment.equipmentCode}}</span></div>
           </td>
           <td style="width: 10px"></td>
           <td style="width: 50%">
             <table id="agreement-number" class="inner-table">
               <tr>
-                <td class="bold">Rental Agreement Number: </td>
+                <td class="bold" style="padding-right: 5px">Rental Agreement Number:</td>
                 <td class="bold">{{number}}</td>
               </tr>
             </table>
@@ -280,13 +284,13 @@
           <td class="align-top">
             <table class="inner-table" style="width: auto">
               <tr>
-                <td class="label m-tb-5">Name of Registered Owner or Firm: </td>
+                <td class="label m-tb-5" style="padding-right: 5px">Name of Registered Owner or Firm:</td>
                 <td class="value m-tb-5">{{equipment.owner.organizationName}}</td>
               </tr>
             </table>
             <table class="inner-table" style="margin-top: 15px;">
               <tr>
-                <td class="label m-tb-5">Address: </td>
+                <td class="label m-tb-5" style="padding-right: 5px">Address:</td>
                 <td class="value m-tb-5">
                   {{equipment.owner.primaryContact.address1}} {{equipment.owner.primaryContact.address1}} 
                   {{equipment.owner.primaryContact.city}} {{equipment.owner.primaryContact.province}} 
@@ -365,12 +369,12 @@
         </tr>
         {{/rentalAgreementRatesWithoutTotal}}
         <tr style="height: 15px"><td></td><td></td><td></td></tr>
-        <tr><td class="bold">Conditions</td><td></td><td></td></tr>
+        <tr><td></td><td></td><td class="bold">Conditions</td></tr>
         {{#rentalAgreementConditions}}
         <tr>
-          <td>{{conditionName}}</td>
           <td></td>
-          <td>{{comment}}</td>
+          <td></td>
+          <td>{{conditionName}}</td>
         </tr>
         {{/rentalAgreementConditions}}
       </table>
