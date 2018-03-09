@@ -158,7 +158,6 @@ var OwnersDetail = React.createClass({
 
   updateStatusState(state) {
     if (state !== this.props.owner.status) {
-      Log.ownerModifiedStatus(this.props.owner, state);
       this.setState({ status: state }, this.openChangeStatusDialog());
     }
   },
@@ -172,8 +171,23 @@ var OwnersDetail = React.createClass({
   },
 
   onChangeStatus(status) {
+    var currentStatus = this.props.owner.status;
+    var equipmentList = { ...this.props.owner.equipmentList };
     Api.changeOwnerStatus(status).then(() => {
       this.closeChangeStatusDialog();
+      Log.ownerModifiedStatus(this.props.owner, status.status);
+      // If owner status goes from approved to unapproved/archived or unapproved to archived
+      // this will change all it's equipment statuses. This should be reflected in the equipment history.
+      if (
+        (currentStatus === Constant.OWNER_STATUS_CODE_APPROVED || currentStatus === Constant.OWNER_STATUS_CODE_PENDING) 
+        && (status.status === Constant.OWNER_STATUS_CODE_PENDING || status.status === Constant.OWNER_STATUS_CODE_ARCHIVED)
+      ) {
+        _.map(equipmentList, equipment => {
+          if (equipment.status !== status.status) {
+            Log.equipmentStatusModified(equipment, status.status);
+          }
+        });
+      } 
     });
   },
 
@@ -366,7 +380,6 @@ var OwnersDetail = React.createClass({
 
           return <Row id="owners-top">
             <Col md={8}>
-              {/* <Label bsStyle={ owner.isApproved ? 'success' : 'danger'}>{ owner.status }</Label> */}
               <DropdownButton
                 bsStyle={ this.getStatusDropdownStyle() }
                 title={ owner.status }

@@ -166,6 +166,7 @@ var RentalRequestsDetail = React.createClass({
         this.props.router.push({ pathname: `${Constant.RENTAL_AGREEMENTS_PATHNAME}/${response.rentalAgreement.id}` });
       }
       this.closeHireOfferDialog();
+      Log.rentalRequestEquipmentHired(this.props.rentalRequest.data, hireOffer.equipment, hireOffer.offerResponse);
     });
   },
 

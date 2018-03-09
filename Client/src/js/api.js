@@ -1359,6 +1359,15 @@ function parseRentalRequestRotationList(rotationListItem, rentalRequest = {}) {
 
 function parseRotationListItem(item, numberOfBlocks) {
   item.equipment = item.equipment || {};
+  item.equipment = { 
+    ...item.equipment,
+    historyEntity: History.makeHistoryEntity(History.EQUIPMENT, { 
+      ...item.equipment, 
+      name: item.equipment.equipmentCode, 
+      path: `${ Constant.EQUIPMENT_PATHNAME }/${ item.equipment.id }`,
+      url: `#/${ Constant.EQUIPMENT_PATHNAME }/${ item.equipment.id }`,
+    }),
+  } || {};
   item.displayFields = {};
   item.displayFields.equipmentDetails = concat(item.equipment.year, concat(item.equipment.make, concat(item.equipment.model, concat(item.equipment.serialNumber, item.equipment.size, '/'), '/'), '/'), ' ');
   item.displayFields.seniority = getSeniorityDisplayName(item.equipment.blockNumber, numberOfBlocks, item.equipment.seniority, item.equipment.numberInBlock);
@@ -1426,6 +1435,15 @@ function parseRentalAgreement(agreement) {
   agreement.rentalAgreementConditions = normalize(agreement.rentalAgreementConditions);
   _.map(agreement.rentalAgreementRates, obj => parseRentalRate(obj, agreement));
   _.map(agreement.rentalAgreementConditions, obj => parseRentalCondition(obj, agreement));
+
+  agreement.equipment = { ...agreement.equipment,
+    historyEntity: History.makeHistoryEntity(History.EQUIPMENT, { 
+      ...agreement.equipment, 
+      name: agreement.equipment.equipmentCode, 
+      path: `${ Constant.EQUIPMENT_PATHNAME }/${ agreement.equipment.id }`,
+      url: `#/${ Constant.EQUIPMENT_PATHNAME }/${ agreement.equipment.id }`,
+    }),
+  } || {};
 
   // UI display fields
   agreement.status = agreement.status || Constant.RENTAL_AGREEMENT_STATUS_CODE_ACTIVE;  // TODO
