@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Xml;
@@ -258,212 +259,244 @@ namespace HETSAPI.Import
         private static void CopyToInstance(DbAppContext dbContext, ImportModels.Owner oldObject, ref Owner owner,
           string systemId, ref int maxOwnerIndex)
         {
-            bool isNew = false;
-
-            if (owner == null)
+            try
             {
-                isNew = true;
-                owner = new Owner {Id = ++maxOwnerIndex};
-            }
-            
-            // ***********************************************
-            // set owner code
-            // ***********************************************
-            owner.OwnerCode = oldObject.Owner_Cd;
+                bool isNew = false;
 
-            // ***********************************************
-            // maintenance contractor
-            // ***********************************************
-            if (oldObject.Maintenance_Contractor != null)
-            {
-                owner.IsMaintenanceContractor = (oldObject.Maintenance_Contractor.Trim() == "Y");
-            }
-
-            // ***********************************************
-            // set local area
-            // ***********************************************
-            var localArea = dbContext.LocalAreas.FirstOrDefault(x => x.Id == oldObject.Area_Id);
-
-            if (localArea != null)
-            {
-                owner.LocalAreaId = localArea.Id;
-            }
-
-            // ***********************************************
-            // set other attributes
-            // ***********************************************
-            if (oldObject.CGL_End_Dt != null)
-            {
-                owner.CGLEndDate = 
-                    DateTime.ParseExact(oldObject.CGL_End_Dt.Trim().Substring(0, 10), "yyyy-MM-dd", System.Globalization.CultureInfo.InvariantCulture);
-            }
-                            
-            if (oldObject.WCB_Expiry_Dt != null)
-            {
-                owner.WorkSafeBCExpiryDate = 
-                    DateTime.ParseExact(oldObject.WCB_Expiry_Dt.Trim().Substring(0, 10), "yyyy-MM-dd", System.Globalization.CultureInfo.InvariantCulture);
-            }
-
-            if (owner.WorkSafeBCPolicyNumber != null)
-            {
-                owner.WorkSafeBCPolicyNumber = oldObject.WCB_Num.Trim();
-            }
-
-            if (oldObject.CGL_Company != null)
-            {
-                owner.OrganizationName = oldObject.CGL_Company.Trim();
-            }
-
-            // ***********************************************
-            // manage archive and owner status
-            // ***********************************************
-            string tempArchive = oldObject.Archive_Cd;
-            string tempStatus = oldObject.Status_Cd.Trim();
-
-            if (tempArchive == "Y")
-            {
-                // arvhived!
-                owner.ArchiveCode = "Y";
-                owner.ArchiveDate = DateTime.UtcNow;
-                owner.ArchiveReason = "Imported from BC Bid";
-
-                if (oldObject.Archive_Reason != null && oldObject.Archive_Reason.Trim().Length >= 1)
+                if (owner == null)
                 {
-                    owner.ArchiveReason = oldObject.Archive_Reason.Trim();
+                    isNew = true;
+                    owner = new Owner {Id = ++maxOwnerIndex};
                 }
-            }
-            else
-            {
-                owner.ArchiveCode = "N";
-                owner.ArchiveDate = null;
-                owner.ArchiveReason = null;
 
-                owner.Status = tempStatus == "A" ? 
-                    "Approved" : 
-                    "Unapproved";
+                // ***********************************************
+                // set owner code
+                // ***********************************************
+                owner.OwnerCode = oldObject.Owner_Cd.Trim().ToUpper();
 
-                owner.StatusComment = string.Format("Imported from BC Bid ({0})", tempStatus);
-            }
-
-            // ***********************************************
-            // manage contacts & owner information
-            // ***********************************************
-            string tempOwnerFirstName = "";
-            string tempOwnerLastName = "";
-
-            if (oldObject.Owner_First_Name != null && !oldObject.Owner_First_Name.Trim().Equals("#x20;"))
-            {
-                tempOwnerFirstName = ImportUtility.GetCapitalCase(oldObject.Owner_First_Name.Trim());
-            }
-
-            if (oldObject.Owner_Last_Name != null && !oldObject.Owner_Last_Name.Trim().Equals("#x20;"))
-            {
-                tempOwnerLastName = ImportUtility.GetCapitalCase(oldObject.Owner_Last_Name.Trim());
-            }
-
-            owner.Surname = tempOwnerLastName;
-            owner.GivenName = tempOwnerFirstName;
-
-            // no company name (yet) will create one for now
-            owner.OrganizationName = string.Format("{0} - {1} {2}", owner.OwnerCode, tempOwnerFirstName, tempOwnerLastName);
-
-            // contact
-            string tempContactPerson = "";
-
-            if (oldObject.Contact_Person != null && !oldObject.Contact_Person.Trim().Equals("#x20;"))
-            {
-                tempContactPerson = ImportUtility.GetCapitalCase(oldObject.Contact_Person.Trim());
-            }
-
-            // add the owner as a contact (default to primary)
-            int tempId = owner.Id;
-
-            Contact contact = dbContext.Contacts
-                .FirstOrDefault(x => String.Equals(x.GivenName, tempOwnerLastName, StringComparison.InvariantCultureIgnoreCase) &&
-                                     String.Equals(x.Surname, tempOwnerLastName, StringComparison.InvariantCultureIgnoreCase) &&
-                                     x.OwnerId == tempId);
-
-            // only add if they don't already exist
-            if (contact != null)
-            {
-                contact = new Contact
+                // ***********************************************
+                // maintenance contractor
+                // ***********************************************
+                if (oldObject.Maintenance_Contractor != null)
                 {
-                    Surname = tempOwnerLastName,
-                    GivenName = tempOwnerFirstName,
-                    Role = "Owner",
-                    FaxPhoneNumber = "",
-                    Province = "BC",
-                    Notes = "",
-                    AppCreateUserid = systemId,
-                    AppCreateTimestamp = DateTime.UtcNow,
-                    AppLastUpdateUserid = systemId,
-                    AppLastUpdateTimestamp = DateTime.UtcNow
-                };
+                    owner.IsMaintenanceContractor = (oldObject.Maintenance_Contractor.Trim() == "Y");
+                }
 
-                owner.Contacts.Add(contact);
-                owner.PrimaryContact = contact;
-            }
+                // ***********************************************
+                // set local area
+                // ***********************************************
+                var localArea = dbContext.LocalAreas.FirstOrDefault(x => x.Id == oldObject.Area_Id);
 
-            // is the contact the same as the owner?
-            if (!tempContactPerson.Contains(tempOwnerFirstName) ||
-                !tempContactPerson.Contains(tempOwnerLastName))
-            {
-                // split the name
-                string tempContactFirstName = ImportUtility.GetNamePart(tempContactPerson, 1);
-                string tempContactLastName = ImportUtility.GetNamePart(tempContactPerson, 2);
-
-                Contact contact2 = dbContext.Contacts
-                    .FirstOrDefault(x => String.Equals(x.GivenName, tempContactFirstName, StringComparison.InvariantCultureIgnoreCase) &&
-                                         String.Equals(x.Surname, tempContactLastName, StringComparison.InvariantCultureIgnoreCase) &&
-                                         x.OwnerId == tempId);
-
-                if (contact2 == null)
+                if (localArea != null)
                 {
-                    string tempComment = "";
+                    owner.LocalAreaId = localArea.Id;
+                }
 
-                    if (oldObject.Comment != null && !oldObject.Comment.Trim().Equals("#x20;"))
+                // ***********************************************
+                // set other attributes
+                // ***********************************************
+                if (oldObject.CGL_End_Dt != null && oldObject.CGL_End_Dt != "1900-01-01T00:00:00")
+                {
+                    owner.CGLEndDate =
+                        DateTime.ParseExact(oldObject.CGL_End_Dt.Trim().Substring(0, 10), "yyyy-MM-dd",
+                            System.Globalization.CultureInfo.InvariantCulture);
+                }
+
+                if (oldObject.WCB_Expiry_Dt != null && oldObject.WCB_Expiry_Dt != "1900-01-01T00:00:00")
+                {
+                    owner.WorkSafeBCExpiryDate =
+                        DateTime.ParseExact(oldObject.WCB_Expiry_Dt.Trim().Substring(0, 10), "yyyy-MM-dd",
+                            System.Globalization.CultureInfo.InvariantCulture);
+                }
+
+                if (owner.WorkSafeBCPolicyNumber != null)
+                {
+                    owner.WorkSafeBCPolicyNumber = oldObject.WCB_Num.Trim();
+                }
+
+                if (oldObject.CGL_Policy != null)
+                {
+                    owner.CglPolicyNumber = oldObject.CGL_Policy.Trim();
+                }
+
+                // ***********************************************
+                // manage archive and owner status
+                // ***********************************************
+                string tempArchive = oldObject.Archive_Cd;
+                string tempStatus = oldObject.Status_Cd.Trim();
+
+                if (tempArchive == "Y")
+                {
+                    // arvhived!
+                    owner.ArchiveCode = "Y";
+                    owner.ArchiveDate = DateTime.UtcNow;
+                    owner.ArchiveReason = "Imported from BC Bid";
+
+                    if (oldObject.Archive_Reason != null && oldObject.Archive_Reason.Trim().Length >= 1)
                     {
-                        tempComment = oldObject.Comment.Trim().Replace("#x0D;", " ");                        
+                        owner.ArchiveReason = oldObject.Archive_Reason.Trim();
                     }
+                }
+                else
+                {
+                    owner.ArchiveCode = "N";
+                    owner.ArchiveDate = null;
+                    owner.ArchiveReason = null;
 
-                    contact2 = new Contact
+                    owner.Status = tempStatus == "A" ? "Approved" : "Unapproved";
+
+                    owner.StatusComment = string.Format("Imported from BC Bid ({0})", tempStatus);
+                }
+
+                // ***********************************************
+                // manage contacts & owner information
+                // ***********************************************
+                string tempOwnerFirstName = "";
+                string tempOwnerLastName = "";
+
+                if (oldObject.Owner_First_Name != null && !oldObject.Owner_First_Name.Trim().Equals("#x20;"))
+                {
+                    tempOwnerFirstName = ImportUtility.GetCapitalCase(oldObject.Owner_First_Name.Trim());
+                }
+
+                if (oldObject.Owner_Last_Name != null && !oldObject.Owner_Last_Name.Trim().Equals("#x20;"))
+                {
+                    tempOwnerLastName = ImportUtility.GetCapitalCase(oldObject.Owner_Last_Name.Trim());
+                }
+
+                owner.Surname = tempOwnerLastName;
+                owner.GivenName = tempOwnerFirstName;
+
+                // no company name (yet) will create one for now
+                owner.OrganizationName =
+                    string.Format("{0} - {1} {2}", owner.OwnerCode, tempOwnerFirstName, tempOwnerLastName);
+
+                // contact
+                string tempContactPerson = "";
+
+                if (oldObject.Contact_Person != null && !oldObject.Contact_Person.Trim().Equals("#x20;"))
+                {
+                    tempContactPerson = ImportUtility.GetCapitalCase(oldObject.Contact_Person.Trim());
+                }
+
+                // add the owner as a contact (default to primary)
+                int tempId = owner.Id;
+
+                Contact contact = dbContext.Contacts
+                    .FirstOrDefault(x =>
+                        String.Equals(x.GivenName, tempOwnerLastName, StringComparison.InvariantCultureIgnoreCase) &&
+                        String.Equals(x.Surname, tempOwnerLastName, StringComparison.InvariantCultureIgnoreCase));
+
+                // only add if they don't already exist
+                if (contact == null)
+                {
+                    contact = new Contact
                     {
                         Surname = tempOwnerLastName,
                         GivenName = tempOwnerFirstName,
                         Role = "Owner",
                         FaxPhoneNumber = "",
                         Province = "BC",
-                        Notes = tempComment,
+                        Notes = "",
                         AppCreateUserid = systemId,
                         AppCreateTimestamp = DateTime.UtcNow,
                         AppLastUpdateUserid = systemId,
                         AppLastUpdateTimestamp = DateTime.UtcNow
                     };
 
+                    if (owner.Contacts == null)
+                    {
+                        owner.Contacts = new List<Contact>();
+                    }
 
-                    owner.Contacts.Add(contact2);
-                    owner.PrimaryContact = contact2; // since this was the default in the file - make it primary
+                    dbContext.Contacts.Add(contact);
+                    owner.PrimaryContactId = contact.Id;
+                }
+
+                // is the contact the same as the owner?
+                if (!string.IsNullOrEmpty(tempContactPerson))
+                {
+                    // split the name
+                    string tempContactFirstName = ImportUtility.GetNamePart(tempContactPerson, 1);
+                    string tempContactLastName = ImportUtility.GetNamePart(tempContactPerson, 2);
+
+                    // check if the name is unique
+                    if ((!String.Equals(tempContactFirstName, tempOwnerFirstName,
+                             StringComparison.InvariantCultureIgnoreCase) &&
+                         !String.Equals(tempContactLastName, tempOwnerLastName,
+                             StringComparison.InvariantCultureIgnoreCase)) ||
+                        (!String.Equals(tempContactFirstName, tempOwnerFirstName,
+                             StringComparison.InvariantCultureIgnoreCase) &&
+                         !String.Equals(tempContactFirstName, tempOwnerLastName,
+                             StringComparison.InvariantCultureIgnoreCase) &&
+                         !string.IsNullOrEmpty(tempContactLastName)))
+                    {
+                        Contact contact2 = dbContext.Contacts
+                            .FirstOrDefault(x =>
+                                String.Equals(x.GivenName, tempContactFirstName,
+                                    StringComparison.InvariantCultureIgnoreCase) &&
+                                String.Equals(x.Surname, tempContactLastName,
+                                    StringComparison.InvariantCultureIgnoreCase));
+
+                        if (contact2 == null)
+                        {
+                            string tempComment = "";
+
+                            if (oldObject.Comment != null && !oldObject.Comment.Trim().Equals("#x20;"))
+                            {
+                                tempComment = oldObject.Comment.Trim().Replace("#x0D;", " ");
+                            }
+
+                            contact2 = new Contact
+                            {
+                                Surname = tempOwnerLastName,
+                                GivenName = tempOwnerFirstName,
+                                Role = "Owner",
+                                FaxPhoneNumber = "",
+                                Province = "BC",
+                                Notes = tempComment,
+                                AppCreateUserid = systemId,
+                                AppCreateTimestamp = DateTime.UtcNow,
+                                AppLastUpdateUserid = systemId,
+                                AppLastUpdateTimestamp = DateTime.UtcNow
+                            };
+
+                            if (owner.Contacts == null)
+                            {
+                                owner.Contacts = new List<Contact>();
+                            }
+
+                            dbContext.Contacts.Add(contact2);
+                            owner.PrimaryContact = contact2; // since this was the default in the file - make it primary
+                        }
+                    }
+                }
+
+                // ***********************************************
+                // create or update owner
+                // ***********************************************            
+                if (isNew)
+                {
+                    owner.AppCreateUserid = systemId;
+                    owner.AppCreateTimestamp = DateTime.UtcNow;
+                    owner.AppLastUpdateUserid = systemId;
+                    owner.AppLastUpdateTimestamp = DateTime.UtcNow;
+
+                    dbContext.Owners.Add(owner);
+                }
+                else // the owner existed in the database
+                {
+                    owner.AppLastUpdateUserid = systemId;
+                    owner.AppLastUpdateTimestamp = DateTime.UtcNow;
+
+                    dbContext.Owners.Update(owner);
                 }
             }
-
-            // ***********************************************
-            // create or update owner
-            // ***********************************************            
-            if (isNew)
+            catch (Exception ex)
             {
-                owner.AppCreateUserid = systemId;
-                owner.AppCreateTimestamp = DateTime.UtcNow;
-                owner.AppLastUpdateUserid = systemId;
-                owner.AppLastUpdateTimestamp = DateTime.UtcNow;
-
-                dbContext.Owners.Add(owner);
-            }
-            else  // the owner existed in the database
-            {
-                owner.AppLastUpdateUserid = systemId;
-                owner.AppLastUpdateTimestamp = DateTime.UtcNow;                    
-                
-                dbContext.Owners.Update(owner);
+                Debug.Print("***Error*** - Owner Code: " + owner.OwnerCode);
+                Debug.Print(ex.Message);
+                throw;
             }
         }
 

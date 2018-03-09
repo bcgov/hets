@@ -306,7 +306,7 @@ namespace HETSAPI.Import
 
             if (nameParts.Length >= part)
             {
-                tempNamePart = nameParts[part].Trim();
+                tempNamePart = nameParts[part - 1].Trim();
                 return GetCapitalCase(tempNamePart);
             }
 
