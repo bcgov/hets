@@ -167,39 +167,7 @@ namespace HETSAPI.Models
         /// <value>The postal code of the address.</value>
         [MetaData(Description = "The postal code of the address.")]
         [MaxLength(15)]
-        public string PostalCode { get; set; }
-        
-        /// <summary>
-        /// Link to the Owner
-        /// </summary>
-        /// <value>Link to the Owner</value>
-        [MetaData(Description = "Link to the Owner.")]
-        [NotMapped]
-        public Owner Owner { get; set; }
-
-        /// <summary>
-        /// Foreign key for Owner 
-        /// </summary>   
-        [ForeignKey("Owner")]
-        [JsonIgnore]
-        [MetaData(Description = "Link to the Owner.")]
-        public int? OwnerId { get; set; }
-        
-        /// <summary>
-        /// Link to the Project
-        /// </summary>
-        /// <value>Link to the Project</value>
-        [MetaData(Description = "Link to the Project.")]
-        [NotMapped]
-        public Project Project { get; set; }
-
-        /// <summary>
-        /// Foreign key for Project 
-        /// </summary>   
-        [ForeignKey("Project")]
-        [JsonIgnore]
-        [MetaData(Description = "Link to the Project.")]
-        public int? ProjectId { get; set; }
+        public string PostalCode { get; set; }                
 
         /// <summary>
         /// Returns the string presentation of the object
