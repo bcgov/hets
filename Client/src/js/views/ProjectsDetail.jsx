@@ -241,12 +241,14 @@ var ProjectsDetail = React.createClass({
       this.props.router.push({
         pathname: `${ Constant.RENTAL_REQUESTS_PATHNAME }/${ response.id }`,
       });
+      Log.projectRentalRequestAdded(this.props.project, response);
     });
   },
 
   confirmEndHire(item) {
     Api.releaseRentalAgreement(item.id).then(() => {
       Api.getProject(this.props.params.projectId);
+      Log.projectEquipmentReleased(this.props.project, item.equipment);
     });
   },
 
