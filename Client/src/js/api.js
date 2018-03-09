@@ -425,7 +425,13 @@ export function updateEquipment(equipment) {
 }
 
 export function addEquipmentHistory(equipmentId, history) {
-  return new ApiRequest(`/equipment/${ equipmentId }/history`).post(history);
+  return new ApiRequest(`/equipment/${ equipmentId }/history`).post(history).then((response) => {
+    var history = normalize(response.data);
+    // Add display fields
+    _.map(history, history => { parseHistory(history); });
+
+    store.dispatch({ type: Action.UPDATE_HISTORY, history: history });
+  });
 }
 
 export function getEquipmentHistory(equipmentId, params) {
@@ -686,7 +692,13 @@ export function addOwnerContact(owner, contact) {
 }
 
 export function addOwnerHistory(ownerId, history) {
-  return new ApiRequest(`/owners/${ ownerId }/history`).post(history);
+  return new ApiRequest(`/owners/${ ownerId }/history`).post(history).then((response) => {
+    var history = normalize(response.data);
+    // Add display fields
+    _.map(history, history => { parseHistory(history); });
+
+    store.dispatch({ type: Action.UPDATE_HISTORY, history: history });
+  });
 }
 
 export function getOwnerHistory(ownerId, params) {
@@ -1047,7 +1059,13 @@ export function addProjectContact(project, contact) {
 }
 
 export function addProjectHistory(projectId, history) {
-  return new ApiRequest(`/projects/${ projectId }/history`).post(history);
+  return new ApiRequest(`/projects/${ projectId }/history`).post(history).then((response) => {
+    var history = normalize(response.data);
+    // Add display fields
+    _.map(history, history => { parseHistory(history); });
+
+    store.dispatch({ type: Action.UPDATE_HISTORY, history: history });
+  });
 }
 
 export function getProjectHistory(projectId, params) {
@@ -1231,7 +1249,13 @@ export function updateRentalRequest(rentalRequest) {
 }
 
 export function addRentalRequestHistory(requestId, history) {
-  return new ApiRequest(`/rentalrequests/${ requestId }/history`).post(history);
+  return new ApiRequest(`/rentalrequests/${ requestId }/history`).post(history).then((response) => {
+    var history = normalize(response.data);
+    // Add display fields
+    _.map(history, history => { parseHistory(history); });
+
+    store.dispatch({ type: Action.UPDATE_HISTORY, history: history });
+  });
 }
 
 export function getRentalRequestHistory(requestId, params) {
@@ -1341,6 +1365,15 @@ function parseRentalRequestRotationList(rotationListItem, rentalRequest = {}) {
 
 function parseRotationListItem(item, numberOfBlocks) {
   item.equipment = item.equipment || {};
+  item.equipment = { 
+    ...item.equipment,
+    historyEntity: History.makeHistoryEntity(History.EQUIPMENT, { 
+      ...item.equipment, 
+      name: item.equipment.equipmentCode, 
+      path: `${ Constant.EQUIPMENT_PATHNAME }/${ item.equipment.id }`,
+      url: `#/${ Constant.EQUIPMENT_PATHNAME }/${ item.equipment.id }`,
+    }),
+  } || {};
   item.displayFields = {};
   item.displayFields.equipmentDetails = concat(item.equipment.year, concat(item.equipment.make, concat(item.equipment.model, concat(item.equipment.serialNumber, item.equipment.size, '/'), '/'), '/'), ' ');
   item.displayFields.seniority = getSeniorityDisplayName(item.equipment.blockNumber, numberOfBlocks, item.equipment.seniority, item.equipment.numberInBlock);
@@ -1408,6 +1441,15 @@ function parseRentalAgreement(agreement) {
   agreement.rentalAgreementConditions = normalize(agreement.rentalAgreementConditions);
   _.map(agreement.rentalAgreementRates, obj => parseRentalRate(obj, agreement));
   _.map(agreement.rentalAgreementConditions, obj => parseRentalCondition(obj, agreement));
+
+  agreement.equipment = { ...agreement.equipment,
+    historyEntity: History.makeHistoryEntity(History.EQUIPMENT, { 
+      ...agreement.equipment, 
+      name: agreement.equipment.equipmentCode, 
+      path: `${ Constant.EQUIPMENT_PATHNAME }/${ agreement.equipment.id }`,
+      url: `#/${ Constant.EQUIPMENT_PATHNAME }/${ agreement.equipment.id }`,
+    }),
+  } || {};
 
   // UI display fields
   agreement.status = agreement.status || Constant.RENTAL_AGREEMENT_STATUS_CODE_ACTIVE;  // TODO

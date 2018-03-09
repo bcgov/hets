@@ -2,6 +2,7 @@ using System;
 using System.Text;
 using Newtonsoft.Json;
 using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace HETSAPI.Models
 {
@@ -55,7 +56,7 @@ namespace HETSAPI.Models
             City = city;
             Province = province;
             PostalCode = postalCode;
-        }
+        }        
 
         /// <summary>
         /// A system-generated unique identifier for a Contact
@@ -166,7 +167,7 @@ namespace HETSAPI.Models
         /// <value>The postal code of the address.</value>
         [MetaData(Description = "The postal code of the address.")]
         [MaxLength(15)]
-        public string PostalCode { get; set; }
+        public string PostalCode { get; set; }                
 
         /// <summary>
         /// Returns the string presentation of the object
@@ -377,7 +378,7 @@ namespace HETSAPI.Models
                 {
                     hash = hash * 59 + PostalCode.GetHashCode();
                 }
-
+               
                 return hash;
             }
         }

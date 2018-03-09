@@ -39,6 +39,8 @@ export const PROJECT_CONTACT_DELETED = 'Project %e removed contact %e.';
 export const PROJECT_DOCUMENT_ADDED = 'Project %e added document %e.';
 export const PROJECT_DOCUMENTS_ADDED = 'Project %e added documents.';
 export const PROJECT_DOCUMENT_DELETED = 'Project %e removed document %e.';
+export const PROJECT_EQUIPMENT_RELEASED = 'Project %e released equipment %e.';
+export const PROJECT_RENTAL_REQUEST_ADDED = 'Project %e added rental request %e.';
 
 export const USER_ADDED = 'User %e was added.';
 export const USER_MODIFIED = 'User %e was modified.';
@@ -56,10 +58,11 @@ export const EQUIPMENT_ATTACHMENT_UPDATED = 'Equipment %e modified attachment %e
 export const EQUIPMENT_ATTACHMENT_DELETED = 'Equipment %e removed attachment %e.';
 
 export const RENTAL_REQUEST_ADDED = 'Rental request %e was added.';
-export const RENTAL_REQUEST_MODIFIED = 'Rental request %e was modified.';
+export const RENTAL_REQUEST_MODIFIED = 'Rental request was modified.';
 export const RENTAL_REQUEST_DOCUMENT_ADDED = 'Rental request %e added document %e.';
 export const RENTAL_REQUEST_DOCUMENTS_ADDED = 'Rental request %e added documents.';
 export const RENTAL_REQUEST_DOCUMENT_DELETED = 'Rental request %e removed document %e.';
+export const RENTAL_REQUEST_EQUIPMENT_HIRED = 'Rental request %e equipment %e was given a response of %e.';
 
 // Helper to create an entity object
 export function makeHistoryEntity(type, entity) {
@@ -256,6 +259,14 @@ export function projectDocumentDeleted(project, document) {
   return log(project.historyEntity, PROJECT_DOCUMENT_DELETED, document.historyEntity);
 }
 
+export function projectEquipmentReleased(project, equipment) {
+  return log(project.historyEntity, PROJECT_EQUIPMENT_RELEASED, equipment.historyEntity);
+}
+
+export function projectRentalRequestAdded(project, rentalRequest) {
+  return log(project.historyEntity, PROJECT_RENTAL_REQUEST_ADDED, rentalRequest.historyEntity);
+}
+
 export function equipmentAdded(equipment) {
   return log(equipment.historyEntity, EQUIPMENT_ADDED);
 }
@@ -314,4 +325,9 @@ export function rentalRequestDocumentsAdded(rentalRequest) {
 
 export function rentalRequestDocumentDeleted(rentalRequest, document) {
   return log(rentalRequest.historyEntity, RENTAL_REQUEST_DOCUMENT_DELETED, document.historyEntity);
+}
+
+export function rentalRequestEquipmentHired(rentalRequest, equipment, offerResponse) {
+  console.log(equipment);
+  return log(rentalRequest.historyEntity, RENTAL_REQUEST_EQUIPMENT_HIRED, equipment.historyEntity, { description: offerResponse });
 }

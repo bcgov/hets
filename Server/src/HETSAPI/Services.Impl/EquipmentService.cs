@@ -97,7 +97,6 @@ namespace HETSAPI.Services.Impl
                     .Include(x => x.LocalArea.ServiceArea.District.Region)
                     .Include(x => x.DistrictEquipmentType)
                         .ThenInclude(d => d.EquipmentType)
-                    .Include(x => x.DumpTruck)
                     .Include(x => x.Owner)
                     .Include(x => x.EquipmentAttachments)
                     .Include(x => x.Notes)
@@ -184,7 +183,6 @@ namespace HETSAPI.Services.Impl
                         .Include(x => x.LocalArea.ServiceArea.District.Region)
                         .Include(x => x.DistrictEquipmentType)
                             .ThenInclude(d => d.EquipmentType)
-                        .Include(x => x.DumpTruck)
                         .Include(x => x.Owner)
                         .Include(x => x.EquipmentAttachments)
                         .Include(x => x.Notes)
@@ -227,7 +225,6 @@ namespace HETSAPI.Services.Impl
                         .Include(x => x.LocalArea.ServiceArea.District.Region)
                         .Include(x => x.DistrictEquipmentType)
                             .ThenInclude(d => d.EquipmentType)
-                        .Include(x => x.DumpTruck)
                         .Include(x => x.Owner)
                         .Include(x => x.EquipmentAttachments)
                         .First(a => a.Id == id);                                      
@@ -892,13 +889,7 @@ namespace HETSAPI.Services.Impl
                 {
                     item.DistrictEquipmentType = _context.DistrictEquipmentTypes.FirstOrDefault(a => a.Id == item.DistrictEquipmentType.Id);
                 }
-
-                // dump truck details
-                if (item.DumpTruck != null)
-                {
-                    item.DumpTruck = _context.DumpTrucks.FirstOrDefault(a => a.Id == item.DumpTruck.Id);
-                }
-
+                
                 // owner
                 if (item.Owner != null)
                 {

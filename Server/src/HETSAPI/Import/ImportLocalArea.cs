@@ -35,9 +35,9 @@ namespace HETSAPI.Import
         public static void Import(PerformContext performContext, DbAppContext dbContext, string fileLocation, string systemId)
         {
             // check the start point. If startPoint ==  sigId then it is already completed
-            int startPoint = ImportUtility.CheckInterMapForStartPoint(dbContext, OldTableProgress, BCBidImport.SigId);
+            int startPoint = ImportUtility.CheckInterMapForStartPoint(dbContext, OldTableProgress, BcBidImport.SigId);
 
-            if (startPoint == BCBidImport.SigId)    // this means the import job it has done today is complete for all the records in the xml file.
+            if (startPoint == BcBidImport.SigId)    // this means the import job it has done today is complete for all the records in the xml file.
             {
                 performContext.WriteLine("*** Importing " + XmlFileName + " is complete from the former process ***");
                 return;
@@ -53,9 +53,9 @@ namespace HETSAPI.Import
                 progress.SetValue(0);
 
                 // create serializer and serialize xml file
-                XmlSerializer ser = new XmlSerializer(typeof(ImportModels.Area[]), new XmlRootAttribute(rootAttr));
+                XmlSerializer ser = new XmlSerializer(typeof(Area[]), new XmlRootAttribute(rootAttr));
                 MemoryStream memoryStream = ImportUtility.MemoryStreamGenerator(XmlFileName, OldTable, fileLocation, rootAttr);
-                ImportModels.Area[] legacyItems = (ImportModels.Area[])ser.Deserialize(memoryStream);
+                Area[] legacyItems = (Area[])ser.Deserialize(memoryStream);
 
                 int ii = startPoint;
 
@@ -114,7 +114,7 @@ namespace HETSAPI.Import
                     {
                         try
                         {
-                            ImportUtility.AddImportMapForProgress(dbContext, OldTableProgress, ii.ToString(), BCBidImport.SigId);
+                            ImportUtility.AddImportMapForProgress(dbContext, OldTableProgress, ii.ToString(), BcBidImport.SigId);
                             dbContext.SaveChangesForImport();
                         }
                         catch (Exception e)
@@ -127,7 +127,7 @@ namespace HETSAPI.Import
                 try
                 {
                     performContext.WriteLine("*** Importing " + XmlFileName + " is Done ***");
-                    ImportUtility.AddImportMapForProgress(dbContext, OldTableProgress, BCBidImport.SigId.ToString(), BCBidImport.SigId);
+                    ImportUtility.AddImportMapForProgress(dbContext, OldTableProgress, BcBidImport.SigId.ToString(), BcBidImport.SigId);
                     dbContext.SaveChangesForImport();
                 }
                 catch (Exception e)
@@ -144,9 +144,9 @@ namespace HETSAPI.Import
 
         public static void Obfuscate(PerformContext performContext, DbAppContext dbContext, string sourceLocation, string destinationLocation, string systemId)
         {
-            int startPoint = ImportUtility.CheckInterMapForStartPoint(dbContext, "Obfuscate_" + OldTableProgress, BCBidImport.SigId);
+            int startPoint = ImportUtility.CheckInterMapForStartPoint(dbContext, "Obfuscate_" + OldTableProgress, BcBidImport.SigId);
 
-            if (startPoint == BCBidImport.SigId)    // this means the import job it has done today is complete for all the records in the xml file.
+            if (startPoint == BcBidImport.SigId)    // this means the import job it has done today is complete for all the records in the xml file.
             {
                 performContext.WriteLine("*** Obfuscating " + XmlFileName + " is complete from the former process ***");
                 return;
@@ -161,16 +161,18 @@ namespace HETSAPI.Import
                 progress.SetValue(0);
 
                 // create serializer and serialize xml file
-                XmlSerializer ser = new XmlSerializer(typeof(ImportModels.Area[]), new XmlRootAttribute(rootAttr));
+                XmlSerializer ser = new XmlSerializer(typeof(Area[]), new XmlRootAttribute(rootAttr));
                 MemoryStream memoryStream = ImportUtility.MemoryStreamGenerator(XmlFileName, OldTable, sourceLocation, rootAttr);
-                ImportModels.Area[] legacyItems = (ImportModels.Area[])ser.Deserialize(memoryStream);
+                Area[] legacyItems = (Area[])ser.Deserialize(memoryStream);
 
                 foreach (Area item in legacyItems.WithProgress(progress))
                 {
                     item.Created_By = systemId;
                 }
+
                 performContext.WriteLine("Writing " + XmlFileName + " to " + destinationLocation);
-                // write out the array.
+
+                // write out the array
                 FileStream fs = ImportUtility.GetObfuscationDestination(XmlFileName, destinationLocation);
                 ser.Serialize(fs, legacyItems);
                 fs.Close();
@@ -182,14 +184,14 @@ namespace HETSAPI.Import
             }
         }
 
-            /// <summary>
-            /// Map data
-            /// </summary>
-            /// <param name="dbContext"></param>
-            /// <param name="oldObject"></param>
-            /// <param name="localArea"></param>
-            /// <param name="systemId"></param>
-            private static void CopyToInstance(DbAppContext dbContext, ImportModels.Area oldObject, ref LocalArea localArea, string systemId)
+        /// <summary>
+        /// Map data
+        /// </summary>
+        /// <param name="dbContext"></param>
+        /// <param name="oldObject"></param>
+        /// <param name="localArea"></param>
+        /// <param name="systemId"></param>
+        private static void CopyToInstance(DbAppContext dbContext, Area oldObject, ref LocalArea localArea, string systemId)
         {
             bool isNew = false;
 
@@ -199,42 +201,45 @@ namespace HETSAPI.Import
             if (localArea == null)
             {
                 isNew = true;
-                localArea = new LocalArea {Id = oldObject.Area_Id};
-                localArea.LocalAreaNumber = oldObject.Area_Id;
+
+                localArea = new LocalArea
+                {
+                    Id = oldObject.Area_Id,
+                    LocalAreaNumber = oldObject.Area_Id
+                };
             }
 
-            try
+            localArea.Name = ImportUtility.GetCapitalCase(oldObject.Area_Desc.Trim());
+            
+            // map to the correct service area
+            ServiceArea serviceArea = dbContext.ServiceAreas.FirstOrDefault(x => x.MinistryServiceAreaID == oldObject.Service_Area_Id);
+
+            if (serviceArea == null)
             {
-                localArea.Name = oldObject.Area_Desc.Trim();
-            }
-            catch
-            {
-                // do nothing
+                // not mapped correctly
+                return;
             }
 
-            try
-            {
-                ServiceArea serviceArea = dbContext.ServiceAreas.FirstOrDefault(x => x.MinistryServiceAreaID == oldObject.Service_Area_Id);
-                localArea.ServiceArea = serviceArea;
-            }
-            catch
-            {
-                // do nothing
-            }
+            localArea.ServiceAreaId = serviceArea.Id;
+            
 
             if (isNew)
             {
                 localArea.AppCreateUserid = systemId;
                 localArea.AppCreateTimestamp = DateTime.UtcNow;
+                localArea.AppLastUpdateUserid = systemId;
+                localArea.AppLastUpdateTimestamp = DateTime.UtcNow;
+
                 dbContext.LocalAreas.Add(localArea);
             }
             else
             {
                 localArea.AppLastUpdateUserid = systemId;
                 localArea.AppLastUpdateTimestamp = DateTime.UtcNow;
+
                 dbContext.LocalAreas.Update(localArea);
             }
-        }
+        }        
     }
 }
 

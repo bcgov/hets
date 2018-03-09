@@ -46,42 +46,42 @@ namespace HETSAPI.Import
                 progress.SetValue(0);
 
                 // create serializer and serialize xml file
-                XmlSerializer ser = new XmlSerializer(typeof(ImportModels.ServiceArea[]), new XmlRootAttribute(rootAttr));
+                XmlSerializer ser = new XmlSerializer(typeof(ServiceArea[]), new XmlRootAttribute(rootAttr));
                 ser.UnknownAttribute += ImportUtility.UnknownAttribute;
                 ser.UnknownElement += ImportUtility.UnknownElement;
                 MemoryStream memoryStream = ImportUtility.MemoryStreamGenerator(XmlFileName, OldTable, fileLocation, rootAttr);
-                ImportModels.ServiceArea[] legacyItems = (ImportModels.ServiceArea[])ser.Deserialize(memoryStream);
+                ServiceArea[] legacyItems = (ServiceArea[])ser.Deserialize(memoryStream);
 
-                foreach (ImportModels.ServiceArea item in legacyItems.WithProgress(progress))
+                foreach (ServiceArea item in legacyItems.WithProgress(progress))
                 {
                     // see if we have this one already
                     importMap = dbContext.ImportMaps.FirstOrDefault(x => x.OldTable == OldTable && x.OldKey == item.Service_Area_Id.ToString());
 
                     Models.ServiceArea serviceArea = dbContext.ServiceAreas.FirstOrDefault(x => x.Name == item.Service_Area_Desc.Trim());
 
-
                     // new entry
                     if (importMap == null)
                     {
                         if (item.Service_Area_Cd != "000")
                         {
-                            CopyToInstance(performContext, dbContext, item, ref serviceArea, systemId);
+                            CopyToInstance(dbContext, item, ref serviceArea, systemId);
                             ImportUtility.AddImportMap(dbContext, OldTable, item.Service_Area_Id.ToString(), NewTable, serviceArea.Id);
                         }
                     }
                     else // update
                     {
                         // record was deleted
-                        if (serviceArea.Name == null)
+                        if (serviceArea != null && serviceArea.Name == null)
                         {
-                            CopyToInstance(performContext, dbContext, item, ref serviceArea, systemId);
+                            CopyToInstance(dbContext, item, ref serviceArea, systemId);
+
                             // update the import map
                             importMap.NewKey = serviceArea.Id;
                             dbContext.ImportMaps.Update(importMap);
                         }
                         else // ordinary update
                         {
-                            CopyToInstance(performContext, dbContext, item, ref serviceArea, systemId);
+                            CopyToInstance(dbContext, item, ref serviceArea, systemId);
 
                             // touch the import map
                             importMap.AppLastUpdateTimestamp = DateTime.UtcNow;
@@ -105,12 +105,11 @@ namespace HETSAPI.Import
         /// <summary>
         /// Map data
         /// </summary>
-        /// <param name="performContext"></param>
         /// <param name="dbContext"></param>
         /// <param name="oldObject"></param>
         /// <param name="serviceArea"></param>
         /// <param name="systemId"></param>
-        private static void CopyToInstance(PerformContext performContext, DbAppContext dbContext, ServiceArea oldObject, ref Models.ServiceArea serviceArea, string systemId)
+        private static void CopyToInstance(DbAppContext dbContext, ServiceArea oldObject, ref Models.ServiceArea serviceArea, string systemId)
         {
             bool isNew = false;
 
@@ -124,50 +123,60 @@ namespace HETSAPI.Import
                 return;
 
             serviceArea.Id = oldObject.Service_Area_Id;
-            serviceArea.MinistryServiceAreaID = oldObject.Service_Area_Id;
-            serviceArea.DistrictId = oldObject.District_Area_Id;
+            serviceArea.MinistryServiceAreaID = oldObject.Service_Area_Id;            
             serviceArea.Name = oldObject.Service_Area_Desc.Trim();
-            serviceArea.AreaNumber = int.Parse(oldObject.Service_Area_Cd);
 
-            District district = dbContext.Districts.FirstOrDefault(x => x.MinistryDistrictID == oldObject.District_Area_Id);
-
-            if (district == null)
+            // remove " CA" from Service Area Names
+            if (serviceArea.Name.EndsWith(" CA"))
             {
-                // this means that the District is not in the database 
-                // (this happens when the production data does not include district Other than "Lower Mainland" or all the districts)
-                return;
+                serviceArea.Name = serviceArea.Name.Replace(" CA", "");
             }
 
-            serviceArea.District = district;
+            // service area number
+            if (oldObject.Service_Area_Cd != null)
+            {
+                serviceArea.AreaNumber = int.Parse(oldObject.Service_Area_Cd);
+            }
 
-            try
+            // get the district for this service area
+            int tempServiceAreaId = GetServiceAreaId(serviceArea.Name);
+
+            if (tempServiceAreaId > 0)
+            {                
+
+                District district = dbContext.Districts.FirstOrDefault(x => x.MinistryDistrictID == tempServiceAreaId);
+
+                if (district != null)
+                {
+                    serviceArea.DistrictId = district.Id;
+                }
+            }
+
+            if (oldObject.FiscalStart != null)
             {
                 serviceArea.StartDate = DateTime.ParseExact(oldObject.FiscalStart.Trim().Substring(0, 10), "yyyy-MM-dd", System.Globalization.CultureInfo.InvariantCulture);
             }
-            catch
-            {
-                // do nothing
-            }
-
+            
             if (isNew)
             {
                 serviceArea.AppCreateUserid = systemId;
                 serviceArea.AppCreateTimestamp = DateTime.UtcNow;
+                serviceArea.AppLastUpdateUserid = systemId;
+                serviceArea.AppLastUpdateTimestamp = DateTime.UtcNow;
+
                 dbContext.ServiceAreas.Add(serviceArea);
             }
             else
             {
                 serviceArea.AppLastUpdateUserid = systemId;
                 serviceArea.AppLastUpdateTimestamp = DateTime.UtcNow;
+
                 dbContext.ServiceAreas.Update(serviceArea);
             }
-
         }
-
 
         public static void Obfuscate(PerformContext performContext, DbAppContext dbContext, string sourceLocation, string destinationLocation, string systemId)
         {
-
             try
             {
                 string rootAttr = "ArrayOf" + OldTable;
@@ -178,17 +187,19 @@ namespace HETSAPI.Import
                 progress.SetValue(0);
 
                 // create serializer and serialize xml file
-                XmlSerializer ser = new XmlSerializer(typeof(ImportModels.ServiceArea[]), new XmlRootAttribute(rootAttr));
+                XmlSerializer ser = new XmlSerializer(typeof(ServiceArea[]), new XmlRootAttribute(rootAttr));
                 ser.UnknownAttribute += ImportUtility.UnknownAttribute;
                 ser.UnknownElement += ImportUtility.UnknownElement;
                 MemoryStream memoryStream = ImportUtility.MemoryStreamGenerator(XmlFileName, OldTable, sourceLocation, rootAttr);
-                ImportModels.ServiceArea[] legacyItems = (ImportModels.ServiceArea[])ser.Deserialize(memoryStream);
+                ServiceArea[] legacyItems = (ServiceArea[])ser.Deserialize(memoryStream);
 
                 foreach (ServiceArea item in legacyItems.WithProgress(progress))
                 {
                     item.Created_By = systemId;
                 }
+
                 performContext.WriteLine("Writing " + XmlFileName + " to " + destinationLocation);
+
                 // write out the array.
                 FileStream fs = ImportUtility.GetObfuscationDestination(XmlFileName, destinationLocation);
                 ser.Serialize(fs, legacyItems);
@@ -201,10 +212,74 @@ namespace HETSAPI.Import
             }
         }
 
+        /// <summary>
+        /// Unfortunately this has to me manually mapped
+        /// However, the data is static and won't change
+        /// </summary>
+        /// <param name="serviceAreaName"></param>
+        /// <returns></returns>
+        private static int GetServiceAreaId(string serviceAreaName)
+        {
+            switch (serviceAreaName.Trim().ToLower())
+            {
+                case "fraser valley":
+                case "lower mainland":
+                case "sunshine coast":
+                case "howe sound":
+                    return 1;
 
+                case "south island":
+                case "central island":
+                case "north island":
+                    return 2;
+
+                case "selkirk":
+                case "east kootenay":
+                    return 3;
+
+                case "central kootenay":
+                case "kootenay boundary":
+                    return 4;
+
+                case "okanagan - shuswap":
+                case "south okanagan":
+                    return 5;
+
+                case "thompson":
+                case "nicola":
+                    return 6;
+
+                case "northriboo":
+                case "centralriboo":
+                case "Southriboo":
+                    return 7;
+
+                case "north peace":
+                case "south peace":
+                    return 8;
+
+                case "nechako":
+                case "robson":
+                case "fort george":
+                    return 9;
+
+                case "stikine":
+                case "bulkley - nass":
+                case "lakes":
+                    return 10;
+
+                case "north coast":
+                case "skeena":
+                    return 11;
+
+                case "non-bc":
+                    return 12;
+
+                case "unknown":
+                    return 12;
+            }
+
+            return 0;
+        }
     }
-
-
-
 }
-

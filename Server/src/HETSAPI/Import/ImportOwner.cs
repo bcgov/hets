@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Xml;
@@ -25,7 +26,6 @@ namespace HETSAPI.Import
         /// </summary>
         public static string OldTableProgress => OldTable + "_Progress";
 
-
         /// <summary>
         /// Get the list of mapped records.  
         /// </summary>
@@ -40,19 +40,19 @@ namespace HETSAPI.Import
             ser.UnknownAttribute += ImportUtility.UnknownAttribute;
             ser.UnknownElement += ImportUtility.UnknownElement;
 
-
             MemoryStream memoryStream = ImportUtility.MemoryStreamGenerator(XmlFileName, OldTable, fileLocation, rootAttr);
             XmlReader reader = new XmlTextReader(memoryStream);
+
             if (ser.CanDeserialize(reader))
             {
-
-
                 ImportModels.Owner[] legacyItems = (ImportModels.Owner[])ser.Deserialize(reader);
+
                 List<string> keys = new List<string>();
                 Dictionary<string, string> givenNames = new Dictionary<string, string>();
                 Dictionary<string, string> surnames = new Dictionary<string, string>();
                 Dictionary<string, string> orgNames = new Dictionary<string, string>();
                 Dictionary<string, int> oldkeys = new Dictionary<string, int>();
+
                 foreach (ImportModels.Owner item in legacyItems)
                 {
                     string givenName = item.Owner_First_Name;
@@ -60,6 +60,7 @@ namespace HETSAPI.Import
                     int oldKey = item.Popt_Id;
                     string organizationName = "" + item.CGL_Company;
                     string key = organizationName + " " + givenName + " " + surname;
+
                     if (!keys.Contains(key))
                     {
                         keys.Add(key);
@@ -74,29 +75,34 @@ namespace HETSAPI.Import
                 int currentOwner = 0;
                 foreach (string key in keys)
                 {
+                    ImportMapRecord importMapRecordOrganization = new ImportMapRecord
+                    {
+                        TableName = NewTable,
+                        MappedColumn = "OrganizationName",
+                        OriginalValue = orgNames[key],
+                        NewValue = "OwnerFirst" + currentOwner
+                    };
 
-                    ImportMapRecord importMapRecordOrganization = new ImportMapRecord();
-
-                    importMapRecordOrganization.TableName = NewTable;
-                    importMapRecordOrganization.MappedColumn = "OrganizationName";
-                    importMapRecordOrganization.OriginalValue = orgNames[key];
-                    importMapRecordOrganization.NewValue = "OwnerFirst" + currentOwner;
                     result.Add(importMapRecordOrganization);
 
-                    ImportMapRecord importMapRecordFirstName = new ImportMapRecord();
+                    ImportMapRecord importMapRecordFirstName = new ImportMapRecord
+                    {
+                        TableName = NewTable,
+                        MappedColumn = "Owner_First_Name",
+                        OriginalValue = givenNames[key],
+                        NewValue = "OwnerFirst" + currentOwner
+                    };
 
-                    importMapRecordFirstName.TableName = NewTable;
-                    importMapRecordFirstName.MappedColumn = "Owner_First_Name";
-                    importMapRecordFirstName.OriginalValue = givenNames[key];
-                    importMapRecordFirstName.NewValue = "OwnerFirst" + currentOwner;
                     result.Add(importMapRecordFirstName);
 
-                    ImportMapRecord importMapRecordLastName = new ImportMapRecord();
+                    ImportMapRecord importMapRecordLastName = new ImportMapRecord
+                    {
+                        TableName = NewTable,
+                        MappedColumn = "Owner_Last_Name",
+                        OriginalValue = givenNames[key],
+                        NewValue = "OwnerLast" + currentOwner
+                    };
 
-                    importMapRecordLastName.TableName = NewTable;
-                    importMapRecordLastName.MappedColumn = "Owner_Last_Name";
-                    importMapRecordLastName.OriginalValue = givenNames[key];
-                    importMapRecordLastName.NewValue = "OwnerLast" + currentOwner;
                     result.Add(importMapRecordLastName);
 
                     // now update the owner record.
@@ -120,7 +126,6 @@ namespace HETSAPI.Import
                     }
 
                     currentOwner++;
-
                 }
             }
 
@@ -136,10 +141,10 @@ namespace HETSAPI.Import
         /// <param name="systemId"></param>
         public static void Import(PerformContext performContext, DbAppContext dbContext, string fileLocation, string systemId)
         {
-            // check the start point. If startPoint ==  sigId then it is already completed
-            int startPoint = ImportUtility.CheckInterMapForStartPoint(dbContext, OldTableProgress, BCBidImport.SigId);
+            // check the start point. If startPoint == sigId then it is already completed
+            int startPoint = ImportUtility.CheckInterMapForStartPoint(dbContext, OldTableProgress, BcBidImport.SigId);
 
-            if (startPoint == BCBidImport.SigId)    // this means the import job it has done today is complete for all the records in the xml file.    // This means the import job it has done today is complete for all the records in the xml file.
+            if (startPoint == BcBidImport.SigId)    // this means the import job it has done today is complete for all the records in the xml file.    // This means the import job it has done today is complete for all the records in the xml file.
             {
                 performContext.WriteLine("*** Importing " + XmlFileName + " is complete from the former process ***");
                 return;
@@ -148,18 +153,11 @@ namespace HETSAPI.Import
             List<Owner> data = new List<Owner>();
             int maxOwnerIndex = 0;
 
-            if (dbContext.Owners.Count() > 0)
+            if (dbContext.Owners.Any())
             {
                 maxOwnerIndex = dbContext.Owners.Max(x => x.Id);
             }
-            int maxContactIndex = 0;
-
-            if (dbContext.Contacts.Count() > 0)
-            {
-                maxContactIndex = dbContext.Contacts.Max(x => x.Id);
-            }
-
-
+            
             try
             {
                 string rootAttr = "ArrayOf" + OldTable;
@@ -191,16 +189,17 @@ namespace HETSAPI.Import
                     if (importMap == null)
                     {
                         Owner owner = null;
-                        CopyToInstance(dbContext, item, ref owner, systemId, ref maxOwnerIndex, ref maxContactIndex);
+                        CopyToInstance(dbContext, item, ref owner, systemId, ref maxOwnerIndex);
                         data.Add(owner);
                         ImportUtility.AddImportMap(dbContext, OldTable, item.Popt_Id.ToString(), NewTable, owner.Id);
                     }
                     else // update
                     {
                         Owner owner = dbContext.Owners.FirstOrDefault(x => x.Id == importMap.NewKey);
+
                         if (owner == null) // record was deleted
                         {
-                            CopyToInstance(dbContext, item, ref owner, systemId, ref maxOwnerIndex, ref maxContactIndex);
+                            CopyToInstance(dbContext, item, ref owner, systemId, ref maxOwnerIndex);
 
                             // update the import map
                             importMap.NewKey = owner.Id;
@@ -208,7 +207,7 @@ namespace HETSAPI.Import
                         }
                         else // ordinary update.
                         {
-                            CopyToInstance(dbContext, item, ref owner, systemId, ref maxOwnerIndex, ref maxContactIndex);
+                            CopyToInstance(dbContext, item, ref owner, systemId, ref maxOwnerIndex);
                             
                             // touch the import map
                             importMap.AppLastUpdateTimestamp = DateTime.UtcNow;
@@ -221,7 +220,7 @@ namespace HETSAPI.Import
                     {
                         try
                         {
-                            ImportUtility.AddImportMapForProgress(dbContext, OldTableProgress, ii.ToString(), BCBidImport.SigId);
+                            ImportUtility.AddImportMapForProgress(dbContext, OldTableProgress, ii.ToString(), BcBidImport.SigId);
                             dbContext.SaveChangesForImport();
                         }
                         catch (Exception e)
@@ -234,7 +233,7 @@ namespace HETSAPI.Import
                 try
                 {
                     performContext.WriteLine("*** Importing " + XmlFileName + " is Done ***");
-                    ImportUtility.AddImportMapForProgress(dbContext, OldTableProgress, BCBidImport.SigId.ToString(), BCBidImport.SigId);
+                    ImportUtility.AddImportMapForProgress(dbContext, OldTableProgress, BcBidImport.SigId.ToString(), BcBidImport.SigId);
                     dbContext.SaveChangesForImport();
                 }
                 catch (Exception e)
@@ -257,225 +256,255 @@ namespace HETSAPI.Import
         /// <param name="owner"></param>
         /// <param name="systemId"></param>
         /// <param name="maxOwnerIndex"></param>
-        /// <param name="maxContactIndex"></param>
         private static void CopyToInstance(DbAppContext dbContext, ImportModels.Owner oldObject, ref Owner owner,
-          string systemId, ref int maxOwnerIndex, ref int maxContactIndex)
+          string systemId, ref int maxOwnerIndex)
         {
-            bool isNew = false;
-
-            if (owner == null)
-            {
-                isNew = true;
-                owner = new Owner {Id = ++maxOwnerIndex};
-            }
-            User modifiedBy = null;
-            User createdBy = null;
-
-            if (oldObject.Modified_By != null)
-            {
-                modifiedBy = ImportUtility.AddUserFromString(dbContext, oldObject.Modified_By, systemId);
-            }
-            if (oldObject.Created_By != null)
-            {
-                createdBy = ImportUtility.AddUserFromString(dbContext, oldObject.Created_By, systemId);
-            }
-            
-            
             try
             {
-                owner.IsMaintenanceContractor = (oldObject.Maintenance_Contractor.Trim() == "Y");
-            }
-            catch
-            {
-                // do nothing
-            }
+                bool isNew = false;
 
-            try
-            {
-                owner.LocalArea = dbContext.LocalAreas.FirstOrDefault(x => x.Id == oldObject.Area_Id);
-            }
-            catch
-            {
-                // do nothing
-            }
+                if (owner == null)
+                {
+                    isNew = true;
+                    owner = new Owner {Id = ++maxOwnerIndex};
+                }
 
-            try
-            {
-                if (oldObject.CGL_End_Dt != null)
+                // ***********************************************
+                // set owner code
+                // ***********************************************
+                owner.OwnerCode = oldObject.Owner_Cd.Trim().ToUpper();
+
+                // ***********************************************
+                // maintenance contractor
+                // ***********************************************
+                if (oldObject.Maintenance_Contractor != null)
+                {
+                    owner.IsMaintenanceContractor = (oldObject.Maintenance_Contractor.Trim() == "Y");
+                }
+
+                // ***********************************************
+                // set local area
+                // ***********************************************
+                var localArea = dbContext.LocalAreas.FirstOrDefault(x => x.Id == oldObject.Area_Id);
+
+                if (localArea != null)
+                {
+                    owner.LocalAreaId = localArea.Id;
+                }
+
+                // ***********************************************
+                // set other attributes
+                // ***********************************************
+                if (oldObject.CGL_End_Dt != null && oldObject.CGL_End_Dt != "1900-01-01T00:00:00")
                 {
                     owner.CGLEndDate =
-                    DateTime.ParseExact(oldObject.CGL_End_Dt.Trim().Substring(0, 10), "yyyy-MM-dd", System.Globalization.CultureInfo.InvariantCulture);
+                        DateTime.ParseExact(oldObject.CGL_End_Dt.Trim().Substring(0, 10), "yyyy-MM-dd",
+                            System.Globalization.CultureInfo.InvariantCulture);
                 }
-                
-            }
-            catch
-            {
-                // do nothing
-            }
 
-            try
-            {
-                if (oldObject.WCB_Expiry_Dt != null)
+                if (oldObject.WCB_Expiry_Dt != null && oldObject.WCB_Expiry_Dt != "1900-01-01T00:00:00")
                 {
                     owner.WorkSafeBCExpiryDate =
-                    DateTime.ParseExact(oldObject.WCB_Expiry_Dt.Trim().Substring(0, 10), "yyyy-MM-dd", System.Globalization.CultureInfo.InvariantCulture);
-                }
-                
-            }
-            catch
-            {
-                // do nothing
-            }
-
-            try
-            {
-                owner.WorkSafeBCPolicyNumber = oldObject.WCB_Num.Trim();
-            }
-            catch
-            {
-                // do nothing
-            }
-
-            try
-            {
-                if (oldObject.CGL_Company != null)
-                {
-                    owner.OrganizationName = oldObject.CGL_Company.Trim();
-                }
-            }
-            catch
-            {
-                // do nothing
-            }
-
-            try
-            {
-                owner.ArchiveCode = oldObject.Archive_Cd;
-            }
-            catch
-            {
-                // do nothing
-            }
-
-            try
-            {
-                owner.Status = oldObject.Status_Cd.Trim();
-            }
-            catch
-            {
-                // do nothing
-            }
-
-            Contact con = dbContext.Contacts.FirstOrDefault(x => x.GivenName.ToUpper() == oldObject.Owner_First_Name.Trim().ToUpper() && x.Surname.ToUpper() == oldObject.Owner_Last_Name.Trim().ToUpper());
-
-            if (con == null)
-            {
-                con = new Contact(++maxContactIndex);
-
-                try
-                {
-                    con.Surname = oldObject.Owner_Last_Name.Trim();
-                    con.GivenName = oldObject.Owner_First_Name.Trim();
-                    con.Role = "Owner";
-                    owner.Surname = oldObject.Owner_Last_Name.Trim();
-                    owner.GivenName = oldObject.Owner_First_Name.Trim();
-                    owner.OwnerCode = con.GivenName.Substring(0, 1) + con.Surname.Substring(0, 1);
-                }
-                catch
-                {
-                    // do nothing
+                        DateTime.ParseExact(oldObject.WCB_Expiry_Dt.Trim().Substring(0, 10), "yyyy-MM-dd",
+                            System.Globalization.CultureInfo.InvariantCulture);
                 }
 
-                con.FaxPhoneNumber = "";
-                con.Province = "BC";
-                
-                try
+                if (owner.WorkSafeBCPolicyNumber != null)
                 {
-                    if (con.Notes != null)
-                    {
-                        con.Notes = new string(oldObject.Comment.Take(511).ToArray());
-                    }                    
-                }
-                catch
-                {
-                    // do nothing
+                    owner.WorkSafeBCPolicyNumber = oldObject.WCB_Num.Trim();
                 }
 
-                dbContext.Contacts.Add(con);
-            }
-
-            // TODO finish mapping here 
-            if (isNew)
-            {
-                owner.AppCreateUserid = createdBy.SmUserId;
-
-                try
+                if (oldObject.CGL_Policy != null)
                 {
-                    owner.AppCreateTimestamp = 
-                        DateTime.ParseExact(oldObject.Created_Dt.Trim().Substring(0, 10), "yyyy-MM-dd", System.Globalization.CultureInfo.InvariantCulture);
+                    owner.CglPolicyNumber = oldObject.CGL_Policy.Trim();
                 }
-                catch
-                {
-                    owner.AppCreateTimestamp = DateTime.UtcNow;
-                }
-                if (createdBy != null)
-                {
-                    con.AppCreateUserid = createdBy.SmUserId;
-                }
-                
-                owner.PrimaryContact = con;
 
-                // adjust status and archive date fields.
-                if (owner.ArchiveCode != null && owner.ArchiveCode.Trim().ToUpper().Equals("Y"))
+                // ***********************************************
+                // manage archive and owner status
+                // ***********************************************
+                string tempArchive = oldObject.Archive_Cd;
+                string tempStatus = oldObject.Status_Cd.Trim();
+
+                if (tempArchive == "Y")
                 {
-                    owner.Status = "Archived";
+                    // arvhived!
+                    owner.ArchiveCode = "Y";
                     owner.ArchiveDate = DateTime.UtcNow;
+                    owner.ArchiveReason = "Imported from BC Bid";
+
+                    if (oldObject.Archive_Reason != null && oldObject.Archive_Reason.Trim().Length >= 1)
+                    {
+                        owner.ArchiveReason = oldObject.Archive_Reason.Trim();
+                    }
                 }
                 else
                 {
+                    owner.ArchiveCode = "N";
                     owner.ArchiveDate = null;
-                    if (owner.Status != null && owner.ArchiveCode != null && owner.ArchiveCode.Trim().ToUpper().Equals("N"))
+                    owner.ArchiveReason = null;
+
+                    owner.Status = tempStatus == "A" ? "Approved" : "Unapproved";
+
+                    owner.StatusComment = string.Format("Imported from BC Bid ({0})", tempStatus);
+                }
+
+                // ***********************************************
+                // manage contacts & owner information
+                // ***********************************************
+                string tempOwnerFirstName = "";
+                string tempOwnerLastName = "";
+
+                if (oldObject.Owner_First_Name != null && !oldObject.Owner_First_Name.Trim().Equals("#x20;"))
+                {
+                    tempOwnerFirstName = ImportUtility.GetCapitalCase(oldObject.Owner_First_Name.Trim());
+                }
+
+                if (oldObject.Owner_Last_Name != null && !oldObject.Owner_Last_Name.Trim().Equals("#x20;"))
+                {
+                    tempOwnerLastName = ImportUtility.GetCapitalCase(oldObject.Owner_Last_Name.Trim());
+                }
+
+                owner.Surname = tempOwnerLastName;
+                owner.GivenName = tempOwnerFirstName;
+
+                // no company name (yet) will create one for now
+                owner.OrganizationName =
+                    string.Format("{0} - {1} {2}", owner.OwnerCode, tempOwnerFirstName, tempOwnerLastName);
+
+                // contact
+                string tempContactPerson = "";
+
+                if (oldObject.Contact_Person != null && !oldObject.Contact_Person.Trim().Equals("#x20;"))
+                {
+                    tempContactPerson = ImportUtility.GetCapitalCase(oldObject.Contact_Person.Trim());
+                }
+
+                // add the owner as a contact (default to primary)
+                int tempId = owner.Id;
+
+                Contact contact = dbContext.Contacts
+                    .FirstOrDefault(x =>
+                        String.Equals(x.GivenName, tempOwnerLastName, StringComparison.InvariantCultureIgnoreCase) &&
+                        String.Equals(x.Surname, tempOwnerLastName, StringComparison.InvariantCultureIgnoreCase));
+
+                // only add if they don't already exist
+                if (contact == null)
+                {
+                    contact = new Contact
                     {
-                        if (owner.Status.Trim().ToUpper().Equals("U"))
-                        {                            
-                            owner.Status = "Unapproved";
-                        }
-                        else if (owner.Status.Trim().ToUpper().Equals("A"))
-                        {                         
-                            owner.Status = "Approved";
+                        Surname = tempOwnerLastName,
+                        GivenName = tempOwnerFirstName,
+                        Role = "Owner",
+                        FaxPhoneNumber = "",
+                        Province = "BC",
+                        Notes = "",
+                        AppCreateUserid = systemId,
+                        AppCreateTimestamp = DateTime.UtcNow,
+                        AppLastUpdateUserid = systemId,
+                        AppLastUpdateTimestamp = DateTime.UtcNow
+                    };
+
+                    if (owner.Contacts == null)
+                    {
+                        owner.Contacts = new List<Contact>();
+                    }
+
+                    dbContext.Contacts.Add(contact);
+                    owner.PrimaryContactId = contact.Id;
+                }
+
+                // is the contact the same as the owner?
+                if (!string.IsNullOrEmpty(tempContactPerson))
+                {
+                    // split the name
+                    string tempContactFirstName = ImportUtility.GetNamePart(tempContactPerson, 1);
+                    string tempContactLastName = ImportUtility.GetNamePart(tempContactPerson, 2);
+
+                    // check if the name is unique
+                    if ((!String.Equals(tempContactFirstName, tempOwnerFirstName,
+                             StringComparison.InvariantCultureIgnoreCase) &&
+                         !String.Equals(tempContactLastName, tempOwnerLastName,
+                             StringComparison.InvariantCultureIgnoreCase)) ||
+                        (!String.Equals(tempContactFirstName, tempOwnerFirstName,
+                             StringComparison.InvariantCultureIgnoreCase) &&
+                         !String.Equals(tempContactFirstName, tempOwnerLastName,
+                             StringComparison.InvariantCultureIgnoreCase) &&
+                         !string.IsNullOrEmpty(tempContactLastName)))
+                    {
+                        Contact contact2 = dbContext.Contacts
+                            .FirstOrDefault(x =>
+                                String.Equals(x.GivenName, tempContactFirstName,
+                                    StringComparison.InvariantCultureIgnoreCase) &&
+                                String.Equals(x.Surname, tempContactLastName,
+                                    StringComparison.InvariantCultureIgnoreCase));
+
+                        if (contact2 == null)
+                        {
+                            string tempComment = "";
+
+                            if (oldObject.Comment != null && !oldObject.Comment.Trim().Equals("#x20;"))
+                            {
+                                tempComment = oldObject.Comment.Trim().Replace("#x0D;", " ");
+                            }
+
+                            contact2 = new Contact
+                            {
+                                Surname = tempOwnerLastName,
+                                GivenName = tempOwnerFirstName,
+                                Role = "Owner",
+                                FaxPhoneNumber = "",
+                                Province = "BC",
+                                Notes = tempComment,
+                                AppCreateUserid = systemId,
+                                AppCreateTimestamp = DateTime.UtcNow,
+                                AppLastUpdateUserid = systemId,
+                                AppLastUpdateTimestamp = DateTime.UtcNow
+                            };
+
+                            if (owner.Contacts == null)
+                            {
+                                owner.Contacts = new List<Contact>();
+                            }
+
+                            dbContext.Contacts.Add(contact2);
+                            owner.PrimaryContact = contact2; // since this was the default in the file - make it primary
                         }
                     }
                 }
 
-                dbContext.Owners.Add(owner);
-            }
-            else  // the owner existed in the database
-            {
-                try
+                // ***********************************************
+                // create or update owner
+                // ***********************************************            
+                if (isNew)
+                {
+                    owner.AppCreateUserid = systemId;
+                    owner.AppCreateTimestamp = DateTime.UtcNow;
+                    owner.AppLastUpdateUserid = systemId;
+                    owner.AppLastUpdateTimestamp = DateTime.UtcNow;
+
+                    dbContext.Owners.Add(owner);
+                }
+                else // the owner existed in the database
                 {
                     owner.AppLastUpdateUserid = systemId;
                     owner.AppLastUpdateTimestamp = DateTime.UtcNow;
-                    con.AppLastUpdateTimestamp = DateTime.UtcNow;
-                    if (modifiedBy != null)
-                    {
-                        con.AppLastUpdateUserid = modifiedBy.SmUserId;
-                    }
-                    owner.PrimaryContact = con;
-                }
-                catch
-                {
-                    // do nothing
-                }
 
-                dbContext.Owners.Update(owner);
+                    dbContext.Owners.Update(owner);
+                }
+            }
+            catch (Exception ex)
+            {
+                Debug.Print("***Error*** - Owner Code: " + owner.OwnerCode);
+                Debug.Print(ex.Message);
+                throw;
             }
         }
 
         public static void Obfuscate(PerformContext performContext, DbAppContext dbContext, string sourceLocation, string destinationLocation, string systemId)
         {
-            int startPoint = ImportUtility.CheckInterMapForStartPoint(dbContext, "Obfuscate_" + OldTableProgress, BCBidImport.SigId);
+            int startPoint = ImportUtility.CheckInterMapForStartPoint(dbContext, "Obfuscate_" + OldTableProgress, BcBidImport.SigId);
 
-            if (startPoint == BCBidImport.SigId)    // this means the import job it has done today is complete for all the records in the xml file.
+            if (startPoint == BcBidImport.SigId)    // this means the import job it has done today is complete for all the records in the xml file.
             {
                 performContext.WriteLine("*** Obfuscating " + XmlFileName + " is complete from the former process ***");
                 return;
@@ -494,9 +523,9 @@ namespace HETSAPI.Import
                 MemoryStream memoryStream = ImportUtility.MemoryStreamGenerator(XmlFileName, OldTable, sourceLocation, rootAttr);
                 ImportModels.Owner[] legacyItems = (ImportModels.Owner[])ser.Deserialize(memoryStream);
 
-                List<string> usernames = new List<string>();
                 performContext.WriteLine("Obfuscating owner data");
                 progress.SetValue(0);
+
                 int currentOwner = 0;
 
                 List<ImportMapRecord> importMapRecords = new List<ImportMapRecord>();
@@ -504,41 +533,50 @@ namespace HETSAPI.Import
                 foreach (ImportModels.Owner item in legacyItems.WithProgress(progress))
                 {
                     item.Created_By = systemId;
+
                     if (item.Modified_By != null)
                     {
                         item.Modified_By = systemId;
                     }
 
-                    ImportMapRecord importMapRecordOrganization = new ImportMapRecord();
+                    ImportMapRecord importMapRecordOrganization = new ImportMapRecord
+                    {
+                        TableName = NewTable,
+                        MappedColumn = "OrganizationName",
+                        OriginalValue = item.CGL_Company,
+                        NewValue = "Company " + currentOwner
+                    };
 
-                    importMapRecordOrganization.TableName = NewTable;
-                    importMapRecordOrganization.MappedColumn = "OrganizationName";
-                    importMapRecordOrganization.OriginalValue = item.CGL_Company;
-                    importMapRecordOrganization.NewValue = "Company " + currentOwner;
                     importMapRecords.Add(importMapRecordOrganization);
 
-                    ImportMapRecord importMapRecordFirstName = new ImportMapRecord();
+                    ImportMapRecord importMapRecordFirstName = new ImportMapRecord
+                    {
+                        TableName = NewTable,
+                        MappedColumn = "Owner_First_Name",
+                        OriginalValue = item.Owner_First_Name,
+                        NewValue = "OwnerFirst" + currentOwner
+                    };
 
-                    importMapRecordFirstName.TableName = NewTable;
-                    importMapRecordFirstName.MappedColumn = "Owner_First_Name";
-                    importMapRecordFirstName.OriginalValue = item.Owner_First_Name;
-                    importMapRecordFirstName.NewValue = "OwnerFirst" + currentOwner;
                     importMapRecords.Add(importMapRecordFirstName);
 
-                    ImportMapRecord importMapRecordLastName = new ImportMapRecord();
+                    ImportMapRecord importMapRecordLastName = new ImportMapRecord
+                    {
+                        TableName = NewTable,
+                        MappedColumn = "Owner_Last_Name",
+                        OriginalValue = item.Owner_Last_Name,
+                        NewValue = "OwnerLast" + currentOwner
+                    };
 
-                    importMapRecordLastName.TableName = NewTable;
-                    importMapRecordLastName.MappedColumn = "Owner_Last_Name";
-                    importMapRecordLastName.OriginalValue = item.Owner_Last_Name;
-                    importMapRecordLastName.NewValue = "OwnerLast" + currentOwner;
                     importMapRecords.Add(importMapRecordLastName);
 
-                    ImportMapRecord importMapRecordOwnerCode = new ImportMapRecord();
+                    ImportMapRecord importMapRecordOwnerCode = new ImportMapRecord
+                    {
+                        TableName = NewTable,
+                        MappedColumn = "Owner_Cd",
+                        OriginalValue = item.Owner_Cd,
+                        NewValue = "OO" + currentOwner
+                    };
 
-                    importMapRecordOwnerCode.TableName = NewTable;
-                    importMapRecordOwnerCode.MappedColumn = "Owner_Cd";
-                    importMapRecordOwnerCode.OriginalValue = item.Owner_Cd;
-                    importMapRecordOwnerCode.NewValue = "OO" + currentOwner;
                     importMapRecords.Add(importMapRecordOwnerCode);
 
                     item.Owner_Cd = "OO" + currentOwner;

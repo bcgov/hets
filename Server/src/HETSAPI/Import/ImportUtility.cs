@@ -3,6 +3,7 @@ using NPOI.SS.UserModel;
 using NPOI.XSSF.UserModel;
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Text;
@@ -84,11 +85,11 @@ namespace HETSAPI.Import
 
             if (importMapList.Count == 0)
             {
-                AddImportMap(dbContext, oldTable, oldKey, BCBidImport.TodayDate, newKey);
+                AddImportMap(dbContext, oldTable, oldKey, BcBidImport.TodayDate, newKey);
             }
             else
             {
-                //Sometimes there are multiple progress entries exists for the same xml file import. 
+                // Sometimes there are multiple progress entries exists for the same xml file import. 
                 // In that case, the extra one should be deleted and the correct one should be updated. 
                 int maxProgressCount = importMapList.Max(t => int.Parse(t.OldKey));
 
@@ -96,7 +97,7 @@ namespace HETSAPI.Import
                 {
                     if (importMap.OldKey == maxProgressCount.ToString())
                     {
-                        importMap.NewTable = BCBidImport.TodayDate;
+                        importMap.NewTable = BcBidImport.TodayDate;
                         importMap.OldKey = Math.Max(int.Parse(oldKey), maxProgressCount).ToString();
                         importMap.AppLastUpdateTimestamp = DateTime.Now;
                         dbContext.ImportMaps.Update(importMap);
@@ -121,23 +122,14 @@ namespace HETSAPI.Import
         /// <returns></returns>
         public static int CheckInterMapForStartPoint(DbAppContext dbContext, string oldTableProgress, int sigId)
         {
-            int startPoint;
-
             ImportMap importMap = (from u in dbContext.ImportMaps
                                    where u.OldTable == oldTableProgress && u.NewKey == sigId
                                    orderby int.Parse(u.OldKey) descending select u ).FirstOrDefault();
 
             // OlkdKey is recorded where the import progress stopped last time
             // when it stores the value of sigId, it signals the completion of the import of the corresponding xml file
-            if (importMap != null)
-            {                    
-                startPoint = int.Parse(importMap.OldKey);
-            }
-            else    
-            {
-                // if the table of Import_MAP does not have any entry (row), it means the importing process has not started yet
-                startPoint = 0;         
-            }
+            int startPoint = importMap != null ? int.Parse(importMap.OldKey) : 0;
+
             return startPoint;
         }
         
@@ -153,10 +145,9 @@ namespace HETSAPI.Import
             string contents = Regex.Replace(File.ReadAllText(fullPath), @"\r\n?|\n|s/\x00//g|[\x00-\x08\x0B\x0C\x0E-\x1F\x26]", "");
 
             // determine if the file has not been processed.  
+            string fixedXml;
 
-            string fixedXml = "";
-
-            if (contents.IndexOf(rootAttr) == -1) // it has not been processed.
+            if (contents.IndexOf(rootAttr, StringComparison.Ordinal) == -1) // it has not been processed
             {
                 // get the contents of the first tag
                 int startPos = contents.IndexOf('<') + 1;
@@ -171,7 +162,7 @@ namespace HETSAPI.Import
                                   contents + "\r\n</" + rootAttr + ">";
 
                 string fixedPath = fullPath + ".fixed.xml";
-                System.IO.File.WriteAllText(fixedPath, fixedXml);
+                File.WriteAllText(fixedPath, fixedXml);
             }
             else
             {
@@ -195,7 +186,7 @@ namespace HETSAPI.Import
         }
 
         /// <summary>
-        /// Given a userString like: "Espey, Carol  (IDIR\cespey)"  Format the user and Add the user if no in the database
+        /// Given a userString like: "Espey, Carol (IDIR\cespey)" - frmat the user and add the user if no in the database
         /// Return the user or a default system user called "SYSTEM_HETS" as smSystemId
         /// </summary>
         /// <param name="dbContext"></param>
@@ -224,29 +215,37 @@ namespace HETSAPI.Import
                     int leftBreakPos = userString.IndexOf(@"(", StringComparison.Ordinal);
                     int startPos = userString.IndexOf(@"\", StringComparison.Ordinal);
                     int rightBreakPos = userString.IndexOf(@")", StringComparison.Ordinal);
-                    string surName = userString.Substring(0, commaPos);
-                    string givenName = userString.Substring(commaPos + 2, leftBreakPos - commaPos - 2);
-                    string smUserId = userString.Substring(startPos + 1, rightBreakPos - startPos - 1).Trim();
+                    string surName = userString.Substring(0, commaPos).Trim();
+                    string givenName = userString.Substring(commaPos + 2, leftBreakPos - commaPos - 2).Trim();
+                    string smUserId = userString.Substring(startPos + 1, rightBreakPos - startPos - 1).Trim().ToLower();
 
                     User user = dbContext.Users.FirstOrDefault(x => string.Equals(x.SmUserId, smUserId, StringComparison.OrdinalIgnoreCase));
 
                     if (user == null)
                     {
+                        // always add as inactive!
                         user = new User
                         {
-                            Surname = surName.Trim(),
-                            GivenName = givenName.Trim(),
-                            SmUserId = smUserId.Trim()
-                        };
+                            Surname = surName,
+                            GivenName = givenName,
+                            SmUserId = smUserId,
+                            Active = false,
+                            AppCreateTimestamp = DateTime.UtcNow,
+                            AppCreateUserid = smSystemId,
+                            AppLastUpdateTimestamp = DateTime.UtcNow,                            
+                            AppLastUpdateUserid = smSystemId
+                        };                        
 
                         dbContext.Users.Add(user);
                         dbContext.SaveChangesForImport();
                     }
-                    else if (user.Surname==null && surName.Trim().Length >=1)
+                    else if (user.Surname == null && surName.Length >= 1)
                     {
+                        user.Surname = surName;
+                        user.GivenName = givenName;
+                        user.AppLastUpdateTimestamp = DateTime.UtcNow;
+                        user.AppLastUpdateUserid = smSystemId;
 
-                        user.Surname = surName.Trim();
-                        user.GivenName = givenName.Trim();
                         dbContext.Users.Update(user);
                     }
 
@@ -257,10 +256,8 @@ namespace HETSAPI.Import
                     return dbContext.Users.FirstOrDefault(x => x.SmUserId == smSystemId);
                 }
             }
-            else
-            {
-                return dbContext.Users.FirstOrDefault(x => x.SmUserId == smSystemId);
-            }
+
+            return dbContext.Users.FirstOrDefault(x => x.SmUserId == smSystemId);
         }
 
         /// <summary>
@@ -273,14 +270,18 @@ namespace HETSAPI.Import
             try
             {
                 User sysUser = dbContext.Users.FirstOrDefault(x => x.SmUserId == systemId);
+
                 if (sysUser == null)
                 {
-                    sysUser = new User();
-                    sysUser.SmUserId = systemId;
-                    sysUser.Surname = "System";
-                    sysUser.GivenName = "HETS";
-                    sysUser.Active = true;
-                    sysUser.AppCreateTimestamp = DateTime.UtcNow;
+                    sysUser = new User
+                    {
+                        SmUserId = systemId,
+                        Surname = "System",
+                        GivenName = "HETS",
+                        Active = true,
+                        AppCreateTimestamp = DateTime.UtcNow
+                    };
+
                     dbContext.Users.Add(sysUser);
                     dbContext.SaveChangesForImport();
                 }
@@ -291,47 +292,35 @@ namespace HETSAPI.Import
             }
         }
 
-        /// <summary>
-        /// Convert Authority to userRole id
-        /// </summary>
-        /// <param name="authority"></param>
-        /// <returns></returns>
-        public static int GetRoleIdFromAuthority(string authority)
+        public static string GetCapitalCase(string textField)
         {
-            int roleId;
+            return CultureInfo.CurrentCulture.TextInfo.ToTitleCase(textField.ToLower());
+        }
 
-            switch (authority)
+        // assumes name is broken up by a specific seperator type (e.g. " ")
+        public static string GetNamePart(string fullName, int part, string seperator = " ")
+        {
+            string[] nameParts = fullName.Split(seperator);
+
+            string tempNamePart = "";
+
+            if (nameParts.Length >= part)
             {
-                case "A":
-                    roleId = 2; // Adminsitrator
-                    break;
-                case "N":
-                    roleId = 1; // Regular User
-                    break;
-                case "R":
-                    roleId = 1; // Special Admin?
-                    break;
-                case "U":
-                    roleId = 1; // User Management?
-                    break;
-                default:
-                    roleId = 1; // Unknown as regular user?
-                    break;
+                tempNamePart = nameParts[part - 1].Trim();
+                return GetCapitalCase(tempNamePart);
             }
 
-            return roleId;
+            return tempNamePart;
         }
 
-        static public void UnknownElement(object sender, XmlElementEventArgs e)
+        public static void UnknownElement(object sender, XmlElementEventArgs e)
         {
-            Console.WriteLine("Unexpected element: {0} as line {1}, column {2}",
-                e.Element.Name, e.LineNumber, e.LinePosition);
+            Console.WriteLine("Unexpected element: {0} as line {1}, column {2}", e.Element.Name, e.LineNumber, e.LinePosition);
         }
 
-        static public void UnknownAttribute(object sender, XmlAttributeEventArgs e)
+        public static void UnknownAttribute(object sender, XmlAttributeEventArgs e)
         {
-            Console.WriteLine("Unexpected attribute: {0} as line {1}, column {2}",
-                e.Attr.Name, e.LineNumber, e.LinePosition);
+            Console.WriteLine("Unexpected attribute: {0} as line {1}, column {2}", e.Attr.Name, e.LineNumber, e.LinePosition);
         }
 
         // string scramble function from https://www.codeproject.com/Articles/820667/Sample-code-to-scramble-a-Word-using-Csharp-String
@@ -341,39 +330,39 @@ namespace HETSAPI.Import
         /// </summary>
         /// <param name="input">A string</param>
         /// <returns>The string scrambled</returns>
-        static public string ScrambleString (string input)
+        public static string ScrambleString (string input)
         {
             if (input != null)
             {
                 char[] chars = new char[input.Length];
                 Random rand = new Random(10000);
                 int index = 0;
+
                 while (input.Length > 0)
-                { // Get a random number between 0 and the length of the word. 
+                { 
+                    // get a random number between 0 and the length of the word. 
                     int next = rand.Next(0, input.Length - 1); // Take the character from the random position 
                                                                //and add to our char array. 
                     chars[index] = input[next];                // Remove the character from the word. 
                     input = input.Substring(0, next) + input.Substring(next + 1);
                     ++index;
                 }
+
                 return new String(chars);
             }
-            else
-            {
-                return null;
-            }
+
+            return null;
         }
 
-        static public void WriteImportRecordsToExcel (string destinationLocation, List<ImportMapRecord> records, string tableName)
+        public static void WriteImportRecordsToExcel (string destinationLocation, List<ImportMapRecord> records, string tableName)
         {
            
             using (var fs = new FileStream(Path.Combine(destinationLocation, tableName + ".xlsx"), FileMode.Create, FileAccess.Write))
             {
-                IWorkbook workbook;
-                workbook = new XSSFWorkbook();
+                IWorkbook workbook = new XSSFWorkbook();
                 ISheet excelSheet = workbook.CreateSheet(tableName + " Map");
-                // Create the header row.
 
+                // Create the header row.
                 IRow row = excelSheet.CreateRow(0);
                 row.CreateCell(0).SetCellValue("Table Name");
                 row.CreateCell(1).SetCellValue("Mapped Column");
@@ -381,7 +370,6 @@ namespace HETSAPI.Import
                 row.CreateCell(3).SetCellValue("New Value");
 
                 // use the import class to get data.
-
                 int currentRow = 1;
 
                 // convert the list to an excel spreadsheet.

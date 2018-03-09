@@ -2,6 +2,7 @@ using System;
 using System.Text;
 using Newtonsoft.Json;
 using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace HETSAPI.Models
 {
@@ -83,8 +84,8 @@ namespace HETSAPI.Models
         /// <value>Type of attachment</value>
         [MetaData (Description = "Type of attachment")]
         [MaxLength(255)]        
-        public string Type { get; set; }
-        
+        public string Type { get; set; }       
+
         /// <summary>
         /// Returns the string presentation of the object
         /// </summary>

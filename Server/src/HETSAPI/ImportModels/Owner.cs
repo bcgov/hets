@@ -108,7 +108,13 @@ namespace HETSAPI.ImportModels
         /// </summary>
         [XmlElement("Archive_Cd")]
         public string Archive_Cd { get; set; }
-        
+
+        /// <summary>
+        /// Archive Reason
+        /// </summary>
+        [XmlElement("Archive_Reason")]
+        public string Archive_Reason { get; set; }
+
         /// <summary>
         /// Service Area Id
         /// </summary>

@@ -9,7 +9,7 @@ namespace HETSAPI.Import
     /// <summary>
     /// BC Bid Data Import Functions
     /// </summary>
-    public static class BCBidImport
+    public static class BcBidImport
     {
         private const string SystemId = "SYSTEM_HETS";
 
@@ -41,21 +41,25 @@ namespace HETSAPI.Import
             // adding system Account if not there in the database
             ImportUtility.InsertSystemUser(dbContext, SystemId);
 
+            /*
+            //*** Importing the Service Areas from file ServiceArea.xml (HET_SERVICE_AREA)
             dbContext = new DbAppContext(null, options.Options);
             ImportServiceArea.Import(context, dbContext, fileLocation, SystemId);
-
-            //*** Importing the Local Areas from the file of Area.xml to the table of HET_LOCAL_AREA
+            
+            //*** Importing the Local Areas from file of Area.xml to the table of HET_LOCAL_AREA
             dbContext = new DbAppContext(null, options.Options);
-            ImportLocalArea.Import(context, dbContext, fileLocation, SystemId);            
+            ImportLocalArea.Import(context, dbContext, fileLocation, SystemId);
 
             //*** Users from User_HETS.xml. This has effects on Table HET_USER and HET_USER_ROLE  
             dbContext = new DbAppContext(null, options.Options);
             ImportUser.Import(context, dbContext, fileLocation, SystemId);
+            */
 
             //*** Owners: This has effects on Table HETS_OWNER and HETS_Contact
             dbContext = new DbAppContext(null, options.Options);
             ImportOwner.Import(context, dbContext, fileLocation, SystemId);
 
+            /*
             //*** Import Dump_Truck  from Dump_Truck.xml   
             dbContext = new DbAppContext(null, options.Options);
             ImportProject.Import(context, dbContext, fileLocation, SystemId);
@@ -91,6 +95,7 @@ namespace HETSAPI.Import
             //*** Import the table of  "HET_RENTAL_AGREEMENT" and "HET_TIME_RECORD";  from Equip_Usage.xml   
             dbContext = new DbAppContext(null, options.Options);
             ImportRotation.Import(context, dbContext, fileLocation, SystemId);
+            */
         }
 
 

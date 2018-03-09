@@ -46,6 +46,7 @@ namespace HETSAPI.Models
         /// <param name="province">The Province of the address.</param>
         /// <param name="postalCode">The postal code of the address.</param>
         /// <param name="cglEndDate">The end date of the owner&amp;#39;s Commercial General Liability insurance coverage. Coverage is only needed prior to an owner&amp;#39;s piece of equipment starting a rental period (not when in the HETS program but not hired). The details of the coverage can be entered into a Note, or more often - attached as a scanned&amp;#x2F;faxed document.</param>
+        /// <param name="cglPolicyNumber">The owner&amp;#39;s Commercial General Liability Policy Number</param>
         /// <param name="archiveCode">TO BE REVIEWED WITH THE BUSINESS - IS THIS NEEDED -A coded reason for why an owner record has been moved to Archived.</param>
         /// <param name="archiveReason">A text note about why the owner record has been changed to Archived.</param>
         /// <param name="archiveDate">The date the Owner record was changed to Archived and removed from active use in the system.</param>
@@ -59,7 +60,7 @@ namespace HETSAPI.Models
             Contact primaryContact = null,  bool? isMaintenanceContractor = null, string workSafeBcPolicyNumber = null, 
             DateTime? workSafeBcExpiryDate = null, string givenName = null, string surname = null,
             string address1 = null, string address2 = null, string city = null, string province = null, string postalCode = null,
-            DateTime? cglEndDate = null, string archiveCode = null, string archiveReason = null, DateTime? archiveDate = null, 
+            DateTime? cglEndDate = null, string cglPolicyNumber = null, string archiveCode = null, string archiveReason = null, DateTime? archiveDate = null, 
             List<Contact> contacts = null, List<Note> notes = null, List<Attachment> attachments = null, List<History> history = null, 
             List<Equipment> equipmentList = null)
         {   
@@ -84,6 +85,7 @@ namespace HETSAPI.Models
             Province = province;
             PostalCode = postalCode;
             CGLEndDate = cglEndDate;
+            CglPolicyNumber = cglPolicyNumber;
             ArchiveCode = archiveCode;
             ArchiveReason = archiveReason;
             ArchiveDate = archiveDate;
@@ -314,7 +316,15 @@ namespace HETSAPI.Models
         /// <value>The end date of the owner&#39;s Commercial General Liability insurance coverage. Coverage is only needed prior to an owner&#39;s piece of equipment starting a rental period (not when in the HETS program but not hired). The details of the coverage can be entered into a Note, or more often - attached as a scanned&#x2F;faxed document.</value>
         [MetaData (Description = "The end date of the owner&#39;s Commercial General Liability insurance coverage. Coverage is only needed prior to an owner&#39;s piece of equipment starting a rental period (not when in the HETS program but not hired). The details of the coverage can be entered into a Note, or more often - attached as a scanned&#x2F;faxed document.")]
         public DateTime? CGLEndDate { get; set; }
-        
+
+        /// <summary>
+        /// The owner&amp;#39;s Commercial General Liability Policy Number
+        /// </summary>
+        /// <value>The owner&amp;#39;s Commercial General Liability Policy Number</value>
+        [MetaData(Description = "The owner&amp;#39;s Commercial General Liability Policy Number")]
+        [MaxLength(50)]
+        public string CglPolicyNumber { get; set; }        
+
         /// <summary>
         /// TO BE REVIEWED WITH THE BUSINESS - IS THIS NEEDED -A coded reason for why an owner record has been moved to Archived.
         /// </summary>
@@ -393,6 +403,7 @@ namespace HETSAPI.Models
             sb.Append("  Province: ").Append(Province).Append("\n");
             sb.Append("  PostalCode: ").Append(PostalCode).Append("\n");
             sb.Append("  CGLEndDate: ").Append(CGLEndDate).Append("\n");
+            sb.Append("  CglPolicyNumber: ").Append(CglPolicyNumber).Append("\n");            
             sb.Append("  ArchiveCode: ").Append(ArchiveCode).Append("\n");
             sb.Append("  ArchiveReason: ").Append(ArchiveReason).Append("\n");
             sb.Append("  ArchiveDate: ").Append(ArchiveDate).Append("\n");
@@ -540,7 +551,12 @@ namespace HETSAPI.Models
                     CGLEndDate == other.CGLEndDate ||
                     CGLEndDate != null &&
                     CGLEndDate.Equals(other.CGLEndDate)
-                ) &&                 
+                ) &&
+                (
+                    CglPolicyNumber == other.CglPolicyNumber ||
+                    CglPolicyNumber != null &&
+                    CglPolicyNumber.Equals(other.CglPolicyNumber)
+                ) &&                
                 (
                     ArchiveCode == other.ArchiveCode ||
                     ArchiveCode != null &&
@@ -693,6 +709,11 @@ namespace HETSAPI.Models
                 {
                     hash = hash * 59 + CGLEndDate.GetHashCode();
                 }
+
+                if (CglPolicyNumber != null)
+                {
+                    hash = hash * 59 + CglPolicyNumber.GetHashCode();
+                }                
 
                 if (ArchiveCode != null)
                 {
