@@ -893,7 +893,7 @@ namespace HETSAPI.Services.Impl
 
         #endregion
 
-        #region Onwer Attachments
+        #region Owner Attachments
 
         /// <summary>
         /// Get all attachments associated with an owner
