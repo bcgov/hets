@@ -1,6 +1,8 @@
 ﻿using Hangfire.Console;
 using Hangfire.Server;
 using System;
+using System.Data;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Xml.Serialization;
@@ -16,7 +18,7 @@ namespace HETSAPI.Import
     public static class ImportEquipmentType
     {
         const string OldTable = "Equip_Type";
-        const string NewTable = "HET_EQUIPMMENT_TYPE";
+        const string NewTable = "HET_EQUIPMENT_TYPE";
         const string XmlFileName = "Equip_Type.xml";
 
         /// <summary>
@@ -25,7 +27,7 @@ namespace HETSAPI.Import
         public static string OldTableProgress => OldTable + "_Progress";
 
         /// <summary>
-        /// IMport Equipment Types
+        /// Import Equipment Types
         /// </summary>
         /// <param name="performContext"></param>
         /// <param name="dbContext"></param>
@@ -42,6 +44,13 @@ namespace HETSAPI.Import
                 return;
             }
 
+            int maxEquipTypeIndex = 0;
+
+            if (dbContext.EquipmentTypes.Any())
+            {
+                maxEquipTypeIndex = dbContext.EquipmentTypes.Max(x => x.Id);
+            }
+
             try
             {
                 string rootAttr = "ArrayOf" + OldTable;
@@ -56,43 +65,30 @@ namespace HETSAPI.Import
                 MemoryStream memoryStream = ImportUtility.MemoryStreamGenerator(XmlFileName, OldTable, fileLocation, rootAttr);
                 EquipType[] legacyItems = (EquipType[])ser.Deserialize(memoryStream);
 
-                int ii = 0;
+                int ii = startPoint;
+
+                // skip the portion already processed
+                if (startPoint > 0)
+                {
+                    legacyItems = legacyItems.Skip(ii).ToArray();
+                }
+
+                Debug.WriteLine(string.Format("Importing EquipmentType Data. Total Records: {0}", legacyItems.Count()));
 
                 foreach (EquipType item in legacyItems.WithProgress(progress))
                 {
                     // see if we have this one already
                     ImportMap importMap = dbContext.ImportMaps.FirstOrDefault(x => x.OldTable == OldTable && x.OldKey == item.Equip_Type_Id.ToString());
 
-                    // new entry
-                    if (importMap == null) 
+                    // new entry (only import new records of Equipment Type)
+                    if (importMap == null && item.Equip_Type_Id > 0)
                     {
-                        if (item.Equip_Type_Id > 0)
-                        {
-                            EquipmentType instance = null;
-                            CopyToInstance(dbContext, item, ref instance, systemId);
-                            ImportUtility.AddImportMap(dbContext, OldTable, item.Equip_Type_Id.ToString(), NewTable, instance.Id);
-                        }
-                    }
-                    else // update
-                    {
-                        EquipmentType instance = dbContext.EquipmentTypes.FirstOrDefault(x => x.Id == importMap.NewKey);
+                        EquipmentType equipType = null;
+                        CopyToInstance(dbContext, item, ref equipType, systemId, ref maxEquipTypeIndex);
 
-                        // record was deleted
-                        if (instance == null) 
+                        if (equipType != null)
                         {
-                            CopyToInstance(dbContext, item, ref instance, systemId);
-
-                            // update the import map
-                            importMap.NewKey = instance.Id;
-                            dbContext.ImportMaps.Update(importMap);
-                        }
-                        else // ordinary update
-                        {
-                            CopyToInstance(dbContext, item, ref instance, systemId);
-
-                            // touch the import map
-                            importMap.AppLastUpdateTimestamp = DateTime.UtcNow;
-                            dbContext.ImportMaps.Update(importMap);
+                            ImportUtility.AddImportMap(dbContext, OldTable, item.Equip_Type_Id.ToString(), NewTable, equipType.Id);
                         }
                     }
 
@@ -119,13 +115,16 @@ namespace HETSAPI.Import
                 }
                 catch (Exception e)
                 {
-                    performContext.WriteLine("Error saving data " + e.Message);
+                    string temp = string.Format("Error saving data (EquipmentTypeIndex: {0}): {1}", maxEquipTypeIndex, e.Message);
+                    performContext.WriteLine(temp);
+                    throw new DataException(temp);
                 }
             }
             catch (Exception e)
             {
                 performContext.WriteLine("*** ERROR ***");
                 performContext.WriteLine(e.ToString());
+                throw;
             }
         }
 
@@ -134,65 +133,54 @@ namespace HETSAPI.Import
         /// </summary>
         /// <param name="dbContext"></param>
         /// <param name="oldObject"></param>
-        /// <param name="instance"></param>
+        /// <param name="equipType"></param>
         /// <param name="systemId"></param>
-        private static void CopyToInstance(DbAppContext dbContext, EquipType oldObject, ref EquipmentType instance, string systemId)
+        /// <param name="maxEquipTypeIndex"></param>
+        private static void CopyToInstance(DbAppContext dbContext, EquipType oldObject, 
+            ref EquipmentType equipType, string systemId, ref int maxEquipTypeIndex)
         {
             if (oldObject.Equip_Type_Id <= 0)
                 return;
 
-            // add the user specified in oldObject.Modified_By and oldObject.Created_By if not there in the database
-            User modifiedBy = ImportUtility.AddUserFromString(dbContext, oldObject.Modified_By, systemId);
-            User createdBy = ImportUtility.AddUserFromString(dbContext, oldObject.Created_By, systemId);
-
-            if (instance == null)
+            if (equipType != null)
             {
-                instance = new EquipmentType
-                {
-                    Id = oldObject.Equip_Type_Id,
-                    IsDumpTruck = false
-                };                
-
-                try
-                {
-                    instance.ExtendHours = float.Parse(oldObject.Extend_Hours.Trim());
-                    instance.MaximumHours = float.Parse(oldObject.Max_Hours.Trim());
-                    instance.MaxHoursSub = float.Parse(oldObject.Max_Hours_Sub.Trim());
-                }
-                catch
-                {
-                    // do nothing
-                }
-
-                try
-                {
-                    instance.Name = oldObject.Equip_Type_Cd.Trim();
-                }
-                catch
-                {
-                    // do nothing
-                }
-
-                instance.AppCreateTimestamp = DateTime.UtcNow;
-                instance.AppCreateUserid = createdBy.SmUserId;
-                dbContext.EquipmentTypes.Add(instance);
+                return; 
             }
-            else
+
+            // get the equipment type
+            string tempEquipTypeCode = ImportUtility.CleanString(oldObject.Equip_Type_Cd).ToUpper();
+
+            // check if we have this type already
+            bool exists = dbContext.EquipmentTypes.Any(x => x.Name == tempEquipTypeCode);
+
+            if (exists)
             {
-                instance = dbContext.EquipmentTypes.First(x => x.Id == oldObject.Equip_Type_Id);
-                instance.AppLastUpdateUserid = modifiedBy.SmUserId;
-
-                try
-                {
-                    instance.AppLastUpdateTimestamp =  DateTime.ParseExact(oldObject.Modified_Dt.Trim().Substring(0, 10), "yyyy-MM-dd", System.Globalization.CultureInfo.InvariantCulture);
-                }
-                catch
-                {
-                    // do nothing
-                }
-
-                dbContext.EquipmentTypes.Update(instance);
+                return;
             }
+
+            // add new equipment type
+            equipType = new EquipmentType
+            {
+                Id = ++maxEquipTypeIndex,
+                IsDumpTruck = false,
+                ExtendHours = ImportUtility.GetFloatValue(oldObject.Extend_Hours),
+                MaximumHours = ImportUtility.GetFloatValue(oldObject.Max_Hours),
+                MaxHoursSub = ImportUtility.GetFloatValue(oldObject.Max_Hours_Sub),
+                BlueBookRateNumber = ImportUtility.GetFloatValue(oldObject.Equip_Rental_Rate_No),
+                BlueBookSection = ImportUtility.GetFloatValue(oldObject.Equip_Rental_Rate_Page)
+            };
+           
+            if (!string.IsNullOrEmpty(tempEquipTypeCode))
+            {
+                equipType.Name = tempEquipTypeCode;
+            }
+
+            equipType.AppCreateUserid = systemId;
+            equipType.AppCreateTimestamp = DateTime.UtcNow;
+            equipType.AppLastUpdateUserid = systemId;
+            equipType.AppLastUpdateTimestamp = DateTime.UtcNow;
+
+            dbContext.EquipmentTypes.Add(equipType);   
         }
     }
 }

@@ -151,7 +151,6 @@ namespace HETSAPI.Import
                 return;
             }
 
-            List<Owner> data = new List<Owner>();
             int maxOwnerIndex = 0;
 
             if (dbContext.Owners.Any())
@@ -181,6 +180,8 @@ namespace HETSAPI.Import
                     legacyItems = legacyItems.Skip(ii).ToArray();
                 }
 
+                Debug.WriteLine(string.Format("Importing Owner Data. Total Records: {0}", legacyItems.Count()));
+
                 foreach (ImportModels.Owner item in legacyItems.WithProgress(progress))
                 {
                     // see if we have this one already.
@@ -191,29 +192,7 @@ namespace HETSAPI.Import
                     {
                         Owner owner = null;
                         CopyToInstance(dbContext, item, ref owner, systemId, ref maxOwnerIndex);
-                        data.Add(owner);
                         ImportUtility.AddImportMap(dbContext, OldTable, item.Popt_Id.ToString(), NewTable, owner.Id);
-                    }
-                    else // update
-                    {
-                        Owner owner = dbContext.Owners.FirstOrDefault(x => x.Id == importMap.NewKey);
-
-                        if (owner == null) // record was deleted
-                        {
-                            CopyToInstance(dbContext, item, ref owner, systemId, ref maxOwnerIndex);
-
-                            // update the import map
-                            importMap.NewKey = owner.Id;
-                            dbContext.ImportMaps.Update(importMap);
-                        }
-                        else // ordinary update.
-                        {
-                            CopyToInstance(dbContext, item, ref owner, systemId, ref maxOwnerIndex);
-                            
-                            // touch the import map
-                            importMap.AppLastUpdateTimestamp = DateTime.UtcNow;
-                            dbContext.ImportMaps.Update(importMap);
-                        }
                     }
 
                     // save change to database periodically to avoid frequent writing to the database
@@ -267,14 +246,13 @@ namespace HETSAPI.Import
         {
             try
             {
-                bool isNew = false;
-
-                if (owner == null)
+                if (owner != null)
                 {
-                    isNew = true;
-                    owner = new Owner {Id = ++maxOwnerIndex};
+                    return;
                 }
 
+                owner = new Owner {Id = ++maxOwnerIndex};
+                
                 // ***********************************************
                 // set owner code -- stop at ANTH
                 // ***********************************************
@@ -558,24 +536,14 @@ namespace HETSAPI.Import
                 }
 
                 // ***********************************************
-                // create or update owner
-                // ***********************************************            
-                if (isNew)
-                {
-                    owner.AppCreateUserid = systemId;
-                    owner.AppCreateTimestamp = DateTime.UtcNow;
-                    owner.AppLastUpdateUserid = systemId;
-                    owner.AppLastUpdateTimestamp = DateTime.UtcNow;
+                // create owner
+                // ***********************************************                            
+                owner.AppCreateUserid = systemId;
+                owner.AppCreateTimestamp = DateTime.UtcNow;
+                owner.AppLastUpdateUserid = systemId;
+                owner.AppLastUpdateTimestamp = DateTime.UtcNow;
 
-                    dbContext.Owners.Add(owner);
-                }
-                else // the owner existed in the database
-                {
-                    owner.AppLastUpdateUserid = systemId;
-                    owner.AppLastUpdateTimestamp = DateTime.UtcNow;
-
-                    dbContext.Owners.Update(owner);
-                }
+                dbContext.Owners.Add(owner);                
             }
             catch (Exception ex)
             {
