@@ -2,15 +2,14 @@ import React from 'react';
 
 import { connect } from 'react-redux';
 
-import { Well, Row, Col  } from 'react-bootstrap';
-import { Alert, Label, Button, Glyphicon, Popover } from 'react-bootstrap';
-import { Form, FormGroup, HelpBlock } from 'react-bootstrap';
+import { Well, Row, Col, Alert, Label, Button, Glyphicon, Popover, Form, FormGroup, HelpBlock, ButtonGroup } from 'react-bootstrap';
 import { LinkContainer } from 'react-router-bootstrap';
 
 import _ from 'lodash';
 
 import UserRoleAddDialog from './dialogs/UserRoleAddDialog.jsx';
 import UsersEditDialog from './dialogs/UsersEditDialog.jsx';
+import DistrictEditDialog from './dialogs/DistrictEditDialog.jsx';
 
 import * as Action from '../actionTypes';
 import * as Api from '../api';
@@ -23,6 +22,8 @@ import DateControl from '../components/DateControl.jsx';
 import OverlayTrigger from '../components/OverlayTrigger.jsx';
 import SortTable from '../components/SortTable.jsx';
 import Spinner from '../components/Spinner.jsx';
+import Confirm from '../components/Confirm.jsx';
+import TableControl from '../components/TableControl.jsx';
 
 import { daysFromToday, formatDateTime, today, isValidDate, toZuluTime } from '../utils/date';
 import { isBlank, notBlank } from '../utils/string';
@@ -33,6 +34,9 @@ var UsersDetail = React.createClass({
     currentUser: React.PropTypes.object,
     user: React.PropTypes.object,
     ui: React.PropTypes.object,
+    rentalConditions: React.PropTypes.object,
+    userDistricts: React.PropTypes.object,
+    districts: React.PropTypes.object,
     params: React.PropTypes.object,
     router: React.PropTypes.object,
   },
@@ -41,8 +45,11 @@ var UsersDetail = React.createClass({
     return {
       loading: true,
 
+      district: {},
+
       showEditDialog: false,
       showUserRoleDialog: false,
+      showDistrictEditDialog: false,
 
       ui: {
         // User roles
@@ -79,7 +86,9 @@ var UsersDetail = React.createClass({
 
   fetch() {
     this.setState({ loading: true });
-    Api.getUser(this.props.params.userId).finally(() => {
+    var getUserPromise = Api.getUser(this.props.params.userId);
+    var getUserDistrictsPromise = Api.getUserDistricts();
+    Promise.all([getUserPromise, getUserDistrictsPromise]).finally(() => {
       this.setState({ loading: false });
     });
   },
@@ -157,6 +166,40 @@ var UsersDetail = React.createClass({
     window.print();
   },
 
+  openDistrictEditDialog() {
+    this.setState({ showDistrictEditDialog: true });
+  },
+
+  closeDistrictEditDialog() {
+    this.setState({ showDistrictEditDialog: false });
+  },
+
+  addUserDistrict() {
+    this.setState({ district: { id: 0 }, showDistrictEditDialog: true });
+  },
+
+  editUserDistrict(district) {
+    this.setState({ district, showDistrictEditDialog: true });
+  },
+
+  saveDistrict(district) {
+    var isNew = district.id === 0;
+    if (isNew) {
+      Api.addUserDistrict(district).then(() => {
+        this.closeDistrictEditDialog();
+      });
+    } else {
+      Api.editUserDistrict(district).then(() => {
+        this.closeDistrictEditDialog();
+      });
+    }
+  },
+
+  deleteDistrict(district) {
+    console.log(district);
+    Api.deleteUserDistrict(district);
+  },
+
   render() {
     var user = this.props.user;
 
@@ -211,6 +254,42 @@ var UsersDetail = React.createClass({
                     <ColDisplay md={3} label="District">{ user.districtName }</ColDisplay>
                   </Row>
                 </div>;
+              })()}
+            </Well>
+          </Col>
+        </Row>
+        <Row>
+          <Col md={12}>
+            <Well>
+              <h3>Districts</h3>
+              {(() => {
+                if (this.props.userDistricts.loading) { return <div style={{ textAlign: 'center' }}><Spinner/></div>; }
+
+                var addDistrictButton = <Button title="Add District" bsSize="xsmall" onClick={ this.addUserDistrict }><Glyphicon glyph="plus" />&nbsp;<strong>Add District</strong></Button>;
+                return (
+                  <TableControl headers={[
+                    { field: 'name',         title: 'District Name'  },
+                    { field: 'addCondition', title: 'Add Condition',  style: { textAlign: 'right'  },
+                      node: addDistrictButton,
+                    },
+                  ]}>
+                    {
+                      _.map(this.props.userDistricts.data, (district) => {
+                        return <tr key={ district.id }>
+                          <td>{ district.isPrimary && <Glyphicon glyph="star" /> }{ district.district.name }</td>
+                          <td style={{ textAlign: 'right' }}>
+                            <ButtonGroup>
+                              <OverlayTrigger trigger="click" placement="top" rootClose overlay={ <Confirm onConfirm={ this.deleteDistrict.bind(this, district) } /> }>
+                                <Button title="Delete District" bsSize="xsmall"><Glyphicon glyph="trash" /></Button>
+                              </OverlayTrigger>
+                              <Button title="Edit District" bsSize="xsmall" onClick={ this.editUserDistrict.bind(this, district) }><Glyphicon glyph="edit" /></Button>
+                            </ButtonGroup>
+                          </td>
+                        </tr>;
+                      })
+                    }
+                  </TableControl>
+                );
               })()}
             </Well>
           </Col>
@@ -278,10 +357,28 @@ var UsersDetail = React.createClass({
         </Row>
       </div>
       { this.state.showEditDialog &&
-        <UsersEditDialog show={ this.state.showEditDialog } onSave={ this.onSaveEdit } onClose= { this.onCloseEdit } />
+        <UsersEditDialog 
+          show={ this.state.showEditDialog } 
+          onSave={ this.onSaveEdit } 
+          onClose= { this.onCloseEdit } 
+        />
       }
       { this.state.showUserRoleDialog &&
-        <UserRoleAddDialog show={ this.state.showUserRoleDialog } onSave={ this.addUserRole } onClose= { this.closeUserRoleDialog } />
+        <UserRoleAddDialog 
+          show={ this.state.showUserRoleDialog } 
+          onSave={ this.addUserRole } 
+          onClose={ this.closeUserRoleDialog } 
+        />
+      }
+      { this.state.showDistrictEditDialog && 
+        <DistrictEditDialog 
+          show={ this.state.showDistrictEditDialog } 
+          onSave={ this.saveDistrict } 
+          onClose={ this.closeDistrictEditDialog }
+          districts={ this.props.districts } 
+          user={ this.props.user }
+          district={ this.state.district }
+        />
       }
     </div>;
   },
@@ -343,6 +440,9 @@ function mapStateToProps(state) {
     currentUser: state.user,
     user: state.models.user,
     ui: state.ui.userRoles,
+    rentalConditions: state.lookups.rentalConditions,
+    userDistricts: state.models.userDistricts,
+    districts: state.lookups.districts,    
   };
 }
 
