@@ -453,6 +453,11 @@ var OwnersDetail = React.createClass({
                     </ColDisplay>
                   </Row>
                   <Row>
+                    <ColDisplay md={12} labelProps={{ md: 4 }} label="CGL Policy Number">
+                      { owner.cglPolicyNumber }
+                    </ColDisplay>
+                  </Row>
+                  <Row>
                     <ColDisplay md={12} labelProps={{ md: 4 }} label="CGL Policy End Date">
                       { formatDateTime(owner.cglEndDate, Constant.DATE_YEAR_SHORT_MONTH_DAY) }
                     </ColDisplay>
