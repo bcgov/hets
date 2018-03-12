@@ -87,8 +87,7 @@ var UsersDetail = React.createClass({
   fetch() {
     this.setState({ loading: true });
     var getUserPromise = Api.getUser(this.props.params.userId);
-    var getUserDistrictsPromise = Api.getUserDistricts();
-    Promise.all([getUserPromise, getUserDistrictsPromise]).finally(() => {
+    Promise.all([getUserPromise]).finally(() => {
       this.setState({ loading: false });
     });
   },
@@ -278,12 +277,14 @@ var UsersDetail = React.createClass({
                         return <tr key={ district.id }>
                           <td>{ district.isPrimary && <Glyphicon glyph="star" /> }{ district.district.name }</td>
                           <td style={{ textAlign: 'right' }}>
-                            <ButtonGroup>
-                              <OverlayTrigger trigger="click" placement="top" rootClose overlay={ <Confirm onConfirm={ this.deleteDistrict.bind(this, district) } /> }>
-                                <Button title="Delete District" bsSize="xsmall"><Glyphicon glyph="trash" /></Button>
-                              </OverlayTrigger>
-                              <Button title="Edit District" bsSize="xsmall" onClick={ this.editUserDistrict.bind(this, district) }><Glyphicon glyph="edit" /></Button>
-                            </ButtonGroup>
+                            { !district.isPrimary && 
+                              <ButtonGroup>
+                                <OverlayTrigger trigger="click" placement="top" rootClose overlay={ <Confirm onConfirm={ this.deleteDistrict.bind(this, district) } /> }>
+                                  <Button title="Delete District" bsSize="xsmall"><Glyphicon glyph="trash" /></Button>
+                                </OverlayTrigger>
+                                <Button title="Edit District" bsSize="xsmall" onClick={ this.editUserDistrict.bind(this, district) }><Glyphicon glyph="edit" /></Button>
+                              </ButtonGroup>
+                            }
                           </td>
                         </tr>;
                       })

@@ -174,6 +174,12 @@ export function deleteUserDistrict(district) {
   });
 }
 
+export function switchUserDistrict(districtId) {
+  return new ApiRequest(`/userdistricts/${districtId}/switch`).post().then((response) => {
+    return response;
+  });
+}
+
 ////////////////////
 // Roles,  Permissions
 ////////////////////

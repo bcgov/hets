@@ -72,7 +72,7 @@ var DistrictEditDialog = React.createClass({
     return <EditDialog id="equipment-add" show={ this.props.show } bsSize="small"
       onClose={ this.props.onClose } onSave={ this.onSave } didChange={ this.didChange } isValid={ this.isValid }
       title= {
-        <strong>Add District</strong>
+        <strong>{ this.state.isNew ? 'Add District' : 'Edit District' }</strong>
       }>
       <Form>
         <FormGroup controlId="districtId" validationState={ this.state.districtIdError ? 'error' : null }>
@@ -80,9 +80,7 @@ var DistrictEditDialog = React.createClass({
             items={ districts } selectedId={ this.state.districtId } updateState={ this.updateState } />
           <HelpBlock>{ this.state.districtIdError }</HelpBlock>
         </FormGroup>
-        { !(!this.state.isNew && this.props.district.isPrimary) &&
-          <CheckboxControl id="isPrimary" checked={ this.state.isPrimary } updateState={ this.updateState }>Primary District</CheckboxControl>
-        }
+        <CheckboxControl id="isPrimary" checked={ this.state.isPrimary } updateState={ this.updateState }>Primary District</CheckboxControl>
       </Form>
     </EditDialog>;
   },

@@ -1,3 +1,5 @@
+@import './mixins.scss';
+
 #banner {
   float: left;
   margin-top: 20px;
@@ -16,6 +18,11 @@
   -webkit-box-shadow: 0px 3px 3px 1px rgba(51, 51, 51, 0.5);
   -moz-box-shadow: 0px 3px 3px 1px rgba(51, 51, 51, 0.5);
   box-shadow: 0px 3px 3px 1px rgba(51, 51, 51, 0.5);
+
+  > .container {
+    @include flex;
+    align-items: center;
+  }
 
   #working-indicator {
     position: absolute;
@@ -48,6 +55,23 @@
     span {
       margin-left: 5px;
     }
+  }
+
+  #navbar-current-user {
+    margin-left: auto;
+  }
+
+  #profile-menu + .dropdown-menu {
+    padding: 15px 15px 5px 15px;
+
+    .form-group {
+      margin-top: 10px;
+    }
+
+    .dropdown-control, .dropdown-control .btn {
+      width: 100%;
+    }
+
   }
 }
 

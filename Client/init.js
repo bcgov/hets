@@ -57,8 +57,9 @@ export default function startApp() {
       var serviceAreasPromise = Api.getServiceAreas();
       var localAreasPromise = Api.getLocalAreas();
       var permissionsPromise = Api.getPermissions();
+      var getUserDistrictsPromise = Api.getUserDistricts();
 
-      return Promise.all([citiesPromise, districtsPromise, regionsPromise, serviceAreasPromise, localAreasPromise, permissionsPromise]).then(() => {
+      return Promise.all([citiesPromise, districtsPromise, regionsPromise, serviceAreasPromise, localAreasPromise, permissionsPromise, getUserDistrictsPromise]).then(() => {
         incrementProgressBar(75);
         // Wrapping in a setTimeout to silence an error from Bluebird's promise lib about API requests
         // made inside of component{Will,Did}Mount.
