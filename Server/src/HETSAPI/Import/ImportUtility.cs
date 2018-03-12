@@ -119,12 +119,33 @@ namespace HETSAPI.Import
         /// <param name="dbContext"></param>
         /// <param name="oldTableProgress"></param>
         /// <param name="sigId"></param>
+        /// <param name="newTable"></param>
         /// <returns></returns>
-        public static int CheckInterMapForStartPoint(DbAppContext dbContext, string oldTableProgress, int sigId)
+        public static int CheckInterMapForStartPoint(DbAppContext dbContext, string oldTableProgress, int sigId, string newTable = null)
         {
-            ImportMap importMap = (from u in dbContext.ImportMaps
-                                   where u.OldTable == oldTableProgress && u.NewKey == sigId
-                                   orderby int.Parse(u.OldKey) descending select u ).FirstOrDefault();
+            ImportMap importMap;
+
+            if (newTable == null)
+            {
+                importMap = (
+                    from u in dbContext.ImportMaps
+                    where u.OldTable == oldTableProgress && 
+                          u.NewKey == sigId
+                    orderby int.Parse(u.OldKey) descending
+                    select u)
+                    .FirstOrDefault();
+            }
+            else
+            {
+                importMap = (
+                        from u in dbContext.ImportMaps
+                        where u.OldTable == oldTableProgress && 
+                              u.NewKey == sigId &&
+                              u.NewTable == newTable
+                        orderby int.Parse(u.OldKey) descending
+                        select u)
+                    .FirstOrDefault();
+            }
 
             // OlkdKey is recorded where the import progress stopped last time
             // when it stores the value of sigId, it signals the completion of the import of the corresponding xml file
@@ -306,6 +327,22 @@ namespace HETSAPI.Import
 
             return null;
         }
+
+        public static float? GetFloatValue(string floatField)
+        {
+            if (!string.IsNullOrEmpty(floatField))
+            {
+                floatField = floatField.Trim();
+
+                if (float.TryParse(floatField, out float temp))
+                {
+                    return temp;
+                }
+            }
+            
+            return null;
+        }
+
 
         public static string CleanString(string textField)
         {

@@ -1,6 +1,7 @@
 ﻿using Hangfire.Console;
 using Hangfire.Server;
 using System;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Xml.Serialization;
@@ -52,6 +53,8 @@ namespace HETSAPI.Import
                 MemoryStream memoryStream = ImportUtility.MemoryStreamGenerator(XmlFileName, OldTable, fileLocation, rootAttr);
                 ServiceArea[] legacyItems = (ServiceArea[])ser.Deserialize(memoryStream);
 
+                Debug.WriteLine(string.Format("Importing ServiceArea Data. Total Records: {0}", legacyItems.Count()));
+
                 foreach (ServiceArea item in legacyItems.WithProgress(progress))
                 {
                     // see if we have this one already
@@ -60,33 +63,10 @@ namespace HETSAPI.Import
                     Models.ServiceArea serviceArea = dbContext.ServiceAreas.FirstOrDefault(x => x.Name == item.Service_Area_Desc.Trim());
 
                     // new entry
-                    if (importMap == null)
+                    if (importMap == null && item.Service_Area_Cd != "000")
                     {
-                        if (item.Service_Area_Cd != "000")
-                        {
-                            CopyToInstance(dbContext, item, ref serviceArea, systemId);
-                            ImportUtility.AddImportMap(dbContext, OldTable, item.Service_Area_Id.ToString(), NewTable, serviceArea.Id);
-                        }
-                    }
-                    else // update
-                    {
-                        // record was deleted
-                        if (serviceArea != null && serviceArea.Name == null)
-                        {
-                            CopyToInstance(dbContext, item, ref serviceArea, systemId);
-
-                            // update the import map
-                            importMap.NewKey = serviceArea.Id;
-                            dbContext.ImportMaps.Update(importMap);
-                        }
-                        else // ordinary update
-                        {
-                            CopyToInstance(dbContext, item, ref serviceArea, systemId);
-
-                            // touch the import map
-                            importMap.AppLastUpdateTimestamp = DateTime.UtcNow;
-                            dbContext.ImportMaps.Update(importMap);
-                        }
+                        CopyToInstance(dbContext, item, ref serviceArea, systemId);
+                        ImportUtility.AddImportMap(dbContext, OldTable, item.Service_Area_Id.ToString(), NewTable, serviceArea.Id);
                     }
                 }
 
@@ -112,11 +92,8 @@ namespace HETSAPI.Import
         /// <param name="systemId"></param>
         private static void CopyToInstance(DbAppContext dbContext, ServiceArea oldObject, ref Models.ServiceArea serviceArea, string systemId)
         {
-            bool isNew = false;
-
             if (serviceArea == null)
             {
-                isNew = true;
                 serviceArea = new Models.ServiceArea();
             }
 
@@ -158,22 +135,12 @@ namespace HETSAPI.Import
                 serviceArea.StartDate = DateTime.ParseExact(oldObject.FiscalStart.Trim().Substring(0, 10), "yyyy-MM-dd", System.Globalization.CultureInfo.InvariantCulture);
             }
             
-            if (isNew)
-            {
-                serviceArea.AppCreateUserid = systemId;
-                serviceArea.AppCreateTimestamp = DateTime.UtcNow;
-                serviceArea.AppLastUpdateUserid = systemId;
-                serviceArea.AppLastUpdateTimestamp = DateTime.UtcNow;
+            serviceArea.AppCreateUserid = systemId;
+            serviceArea.AppCreateTimestamp = DateTime.UtcNow;
+            serviceArea.AppLastUpdateUserid = systemId;
+            serviceArea.AppLastUpdateTimestamp = DateTime.UtcNow;
 
-                dbContext.ServiceAreas.Add(serviceArea);
-            }
-            else
-            {
-                serviceArea.AppLastUpdateUserid = systemId;
-                serviceArea.AppLastUpdateTimestamp = DateTime.UtcNow;
-
-                dbContext.ServiceAreas.Update(serviceArea);
-            }
+            dbContext.ServiceAreas.Add(serviceArea);                        
         }
 
         public static void Obfuscate(PerformContext performContext, DbAppContext dbContext, string sourceLocation, string destinationLocation, string systemId)
@@ -242,7 +209,7 @@ namespace HETSAPI.Import
                 case "kootenay boundary":
                     return 4;
 
-                case "okanagan - shuswap":
+                case "okanagan shuswap":
                 case "south okanagan":
                     return 5;
 
@@ -250,9 +217,9 @@ namespace HETSAPI.Import
                 case "nicola":
                     return 6;
 
-                case "northriboo":
-                case "centralriboo":
-                case "Southriboo":
+                case "north cariboo":
+                case "central cariboo":
+                case "south cariboo":
                     return 7;
 
                 case "north peace":
@@ -265,7 +232,7 @@ namespace HETSAPI.Import
                     return 9;
 
                 case "stikine":
-                case "bulkley - nass":
+                case "bulkley nass":
                 case "lakes":
                     return 10;
 

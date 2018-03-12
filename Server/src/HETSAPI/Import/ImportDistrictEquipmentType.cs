@@ -1,12 +1,15 @@
 ﻿using Hangfire.Console;
 using Hangfire.Server;
 using System;
+using System.Data;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Xml.Serialization;
 using Hangfire.Console.Progress;
 using HETSAPI.ImportModels;
 using HETSAPI.Models;
+using Microsoft.EntityFrameworkCore;
 using ServiceArea = HETSAPI.Models.ServiceArea;
 
 namespace HETSAPI.Import
@@ -16,8 +19,8 @@ namespace HETSAPI.Import
     /// </summary>
     public static class ImportDistrictEquipmentType
     {
-        const string OldTable = "EquipType";
-        const string NewTable = "HET_EQUIPMMENT_TYPE";
+        const string OldTable = "Equip_Type";
+        const string NewTable = "HET_DISTRICT_EQUIPMENT_TYPE";
         const string XmlFileName = "Equip_Type.xml";
 
         /// <summary>
@@ -35,7 +38,7 @@ namespace HETSAPI.Import
         public static void Import(PerformContext performContext, DbAppContext dbContext, string fileLocation, string systemId)
         {
             // check the start point. If startPoint ==  sigId then it is already completed
-            int startPoint = ImportUtility.CheckInterMapForStartPoint(dbContext, OldTableProgress, BcBidImport.SigId);
+            int startPoint = ImportUtility.CheckInterMapForStartPoint(dbContext, OldTableProgress, BcBidImport.SigId, NewTable);
 
             if (startPoint == BcBidImport.SigId)    // this means the import job it has done today is complete for all the records in the xml file.
             {
@@ -43,11 +46,18 @@ namespace HETSAPI.Import
                 return;
             }
 
+            int maxEquipTypeIndex = 0;
+
+            if (dbContext.DistrictEquipmentTypes.Any())
+            {
+                maxEquipTypeIndex = dbContext.DistrictEquipmentTypes.Max(x => x.Id);
+            }
+
             try
             {
                 string rootAttr = "ArrayOf" + OldTable;
 
-                //Create Processer progress indicator
+                // create Processer progress indicator
                 performContext.WriteLine("Processing " + OldTable);
                 IProgressBar progress = performContext.WriteProgressBar();
                 progress.SetValue(0);
@@ -57,42 +67,30 @@ namespace HETSAPI.Import
                 MemoryStream memoryStream = ImportUtility.MemoryStreamGenerator(XmlFileName, OldTable, fileLocation, rootAttr);
                 EquipType[] legacyItems = (EquipType[])ser.Deserialize(memoryStream);
 
-                int ii = 0;
+                int ii = startPoint;
+
+                // skip the portion already processed
+                if (startPoint > 0)
+                {
+                    legacyItems = legacyItems.Skip(ii).ToArray();
+                }
+
+                Debug.WriteLine(string.Format("Importing DistrictEquipmentType Data. Total Records: {0}", legacyItems.Count()));
 
                 foreach (EquipType item in legacyItems.WithProgress(progress))
                 {
                     // see if we have this one already
-                    ImportMap importMap = dbContext.ImportMaps.FirstOrDefault(x => x.OldTable == OldTable && x.OldKey == item.Equip_Type_Id.ToString());
+                    ImportMap importMap = dbContext.ImportMaps
+                        .FirstOrDefault(x => x.OldTable == OldTable && 
+                                             x.OldKey == item.Equip_Type_Id.ToString() &&
+                                             x.NewTable == NewTable);
 
                     // new entry
-                    if (importMap == null)
+                    if (importMap == null && item.Equip_Type_Id > 0)
                     {
-                        if (item.Equip_Type_Id > 0)
-                        {
-                            DistrictEquipmentType instance = null;
-                            CopyToInstance(dbContext, item, ref instance, systemId);
-                            ImportUtility.AddImportMap(dbContext, OldTable, item.Equip_Type_Id.ToString(), NewTable, instance.Id);
-                        }
-                    }
-                    else // update
-                    {
-                        DistrictEquipmentType instance = dbContext.DistrictEquipmentTypes.FirstOrDefault(x => x.Id == importMap.NewKey);
-                        if (instance == null) // record was deleted
-                        {
-                            CopyToInstance(dbContext, item, ref instance, systemId);
-
-                            // update the import map
-                            importMap.NewKey = instance.Id;
-                            dbContext.ImportMaps.Update(importMap);
-                        }
-                        else // ordinary update
-                        {
-                            CopyToInstance(dbContext, item, ref instance, systemId);
-
-                            // touch the import map
-                            importMap.AppLastUpdateTimestamp = DateTime.UtcNow;
-                            dbContext.ImportMaps.Update(importMap);
-                        }
+                        DistrictEquipmentType equipType = null;
+                        CopyToInstance(dbContext, item, ref equipType, systemId, ref maxEquipTypeIndex);
+                        ImportUtility.AddImportMap(dbContext, OldTable, item.Equip_Type_Id.ToString(), NewTable, equipType.Id);
                     }
 
                     // save change to database periodically to avoid frequent writing to the database
@@ -117,13 +115,16 @@ namespace HETSAPI.Import
                 }
                 catch (Exception e)
                 {
-                    performContext.WriteLine("Error saving data " + e.Message);
+                    string temp = string.Format("Error saving data (DistrictEquipmentTypeIndex: {0}): {1}", maxEquipTypeIndex, e.Message);
+                    performContext.WriteLine(temp);
+                    throw new DataException(temp);
                 }
             }
             catch (Exception e)
             {
                 performContext.WriteLine("*** ERROR ***");
                 performContext.WriteLine(e.ToString());
+                throw;
             }
         }
 
@@ -132,66 +133,71 @@ namespace HETSAPI.Import
         /// </summary>
         /// <param name="dbContext"></param>
         /// <param name="oldObject"></param>
-        /// <param name="instance"></param>
+        /// <param name="equipType"></param>
         /// <param name="systemId"></param>
-        private static void CopyToInstance(DbAppContext dbContext, EquipType oldObject, ref DistrictEquipmentType instance, string systemId)
+        /// <param name="maxEquipTypeIndex"></param>
+        private static void CopyToInstance(DbAppContext dbContext, EquipType oldObject, 
+            ref DistrictEquipmentType equipType, string systemId, ref int maxEquipTypeIndex)
         {
             if (oldObject.Equip_Type_Id <= 0)
-                return;
-
-            // add the user specified in oldObject.Modified_By and oldObject.Created_By if not there in the database
-            ImportUtility.AddUserFromString(dbContext, oldObject.Modified_By, systemId);
-            User createdBy = ImportUtility.AddUserFromString(dbContext, oldObject.Created_By, systemId);
-
-            if (instance == null)
             {
-                instance = new DistrictEquipmentType {Id = oldObject.Equip_Type_Id};
-
-                try
-                {
-                    string temp;
-
-                    if (oldObject.Equip_Type_Cd.Length >= 10)
-                    {
-                        temp = oldObject.Equip_Type_Cd.Substring(0, 10);
-                    }
-                    else
-                    {
-                        temp = oldObject.Equip_Type_Cd;
-                    }
-
-                    temp = temp + "-";
-
-                    if (oldObject.Equip_Type_Desc.Length >= 210)
-                    {
-                        temp = temp + oldObject.Equip_Type_Desc.Substring(0, 210);
-                    }
-                    else
-                    {
-                        temp = oldObject.Equip_Type_Desc;
-                    }
-
-                    instance.DistrictEquipmentName = temp;
-                }
-                catch
-                {
-                    // do nothing
-                }
-
-                ServiceArea serviceArea = dbContext.ServiceAreas.FirstOrDefault(x => x.MinistryServiceAreaID == oldObject.Service_Area_Id);
-
-                if (serviceArea != null)
-                {
-                    int districtId = serviceArea.DistrictId ?? 0;
-                    District dis = dbContext.Districts.FirstOrDefault(x => x.RegionId == districtId);
-                    instance.DistrictId = districtId;
-                    instance.District = dis;
-                }
-
-                instance.AppCreateTimestamp = DateTime.UtcNow;
-                instance.AppCreateUserid = createdBy.SmUserId;              
-                dbContext.DistrictEquipmentTypes.Add(instance);
+                return;
             }
+
+            if (equipType != null)
+            {
+                return;
+            }
+
+            // get the equipment type
+            string tempEquipTypeCode = ImportUtility.CleanString(oldObject.Equip_Type_Cd).ToUpper();
+
+            // get the parent equipment type
+            EquipmentType type = dbContext.EquipmentTypes.FirstOrDefault(x => x.Name == tempEquipTypeCode);
+
+            if (type == null)
+            {
+                throw new ArgumentException(
+                    string.Format("Cannot find Equipment Type (Equipment Type Code: {0} | Equipment Type Id: {1})", 
+                        tempEquipTypeCode, oldObject.Equip_Type_Id));
+            }
+
+            // get the description
+            string tempDistrictDescription = ImportUtility.CleanString(oldObject.Equip_Type_Desc);
+            tempDistrictDescription = ImportUtility.GetCapitalCase(tempDistrictDescription);
+
+            // add new district equipment type
+            int tempId = type.Id;
+
+            equipType = new DistrictEquipmentType
+            {
+                Id = ++maxEquipTypeIndex,
+                EquipmentTypeId = tempId,
+                DistrictEquipmentName = tempDistrictDescription
+            };
+                                      
+            // set the district
+            ServiceArea serviceArea = dbContext.ServiceAreas
+                .Include(x => x.District)
+                .FirstOrDefault(x => x.MinistryServiceAreaID == oldObject.Service_Area_Id);
+
+            if (serviceArea == null)
+            {
+                throw new ArgumentException(
+                    string.Format("Cannot find Service Area (Service Area Id: {0} | Equipment Type Id: {1})",
+                        oldObject.Service_Area_Id, oldObject.Equip_Type_Id));
+            }
+
+            int districtId = serviceArea.District.Id;
+            equipType.DistrictId = districtId;
+
+            // save district equipment type record
+            equipType.AppCreateUserid = systemId;
+            equipType.AppCreateTimestamp = DateTime.UtcNow;
+            equipType.AppLastUpdateUserid = systemId;
+            equipType.AppLastUpdateTimestamp = DateTime.UtcNow;
+
+            dbContext.DistrictEquipmentTypes.Add(equipType);
         }
     }
 }
