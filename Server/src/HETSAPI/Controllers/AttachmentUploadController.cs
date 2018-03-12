@@ -254,6 +254,7 @@ namespace HETSAPI.Controllers
         {
             // validate the bus id            
             bool exists = _context.Projects.Any(a => a.Id == id);
+
             if (exists)
             {
                 Project project = _context.Projects
@@ -307,7 +308,8 @@ namespace HETSAPI.Controllers
         public IActionResult RentalRequestIdAttachmentsPostAsync(int id, IList<IFormFile> files)
         {
             // validate the bus id            
-            bool exists = _context.Equipments.Any(a => a.Id == id);
+            bool exists = _context.RentalRequests.Any(a => a.Id == id);
+
             if (exists)
             {
                 RentalRequest rentalRequest = _context.RentalRequests

@@ -416,6 +416,8 @@ namespace HETSAPI.Services.Impl
             return new ObjectResult(new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-01", _configuration)));
         }
 
+
+
         #endregion
 
         #region Rental Request Rotation List
