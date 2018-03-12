@@ -120,6 +120,7 @@ namespace HETSAPI.Import
                         catch (Exception e)
                         {
                             performContext.WriteLine("Error saving data " + e.Message);
+                            throw;
                         }
                     }
                 }
@@ -133,6 +134,7 @@ namespace HETSAPI.Import
                 catch (Exception e)
                 {
                     performContext.WriteLine("Error saving data " + e.Message);
+                    throw;
                 }
             }
             catch (Exception e)

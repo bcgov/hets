@@ -292,9 +292,61 @@ namespace HETSAPI.Import
             }
         }
 
+        public static DateTime? CleanDateTime(string dateTimeField)
+        {
+            if (dateTimeField != null && dateTimeField != "1900-01-01T00:00:00")
+            {
+                dateTimeField = dateTimeField.Trim();
+
+                if (dateTimeField.Length >= 10)
+                {
+                    return DateTime.ParseExact(dateTimeField.Substring(0, 10), "yyyy-MM-dd", CultureInfo.InvariantCulture);
+                }                
+            }
+
+            return null;
+        }
+
+        public static string CleanString(string textField)
+        {
+            if (textField == null) { return ""; }
+
+            string temp = textField.Trim().ToLower();
+            temp = temp.Replace(@"#x0d;", "");
+            temp = temp.Replace(@"#x20;", "");
+            temp = temp.Replace(@"amp;", "&");
+            temp = temp.Replace("unknown", "");
+            temp = temp.Replace(@"?", "");
+
+            return temp;
+        }
+
         public static string GetCapitalCase(string textField)
         {
             return CultureInfo.CurrentCulture.TextInfo.ToTitleCase(textField.ToLower());
+        }
+
+        public static string GetUppercaseFirst(string textField)
+        {
+            if (string.IsNullOrEmpty(textField))
+            {
+                return string.Empty;
+            }
+
+            char[] a = textField.ToCharArray();
+            a[0] = char.ToUpper(a[0]);
+
+            // check if we have any periods (".")            
+            for (int i = 0; i < a.Length; i++)
+            {
+                if (a[i] == '.' && i < a.Length - 1)
+                {
+                    a[i + 1] = char.ToUpper(a[0]);
+                }
+            }
+
+            // return result
+            return new string(a);
         }
 
         // assumes name is broken up by a specific seperator type (e.g. " ")
