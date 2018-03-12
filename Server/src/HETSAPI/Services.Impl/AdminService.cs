@@ -35,21 +35,30 @@ namespace HETSAPI.Services.Impl
 
             lock (_thisLock)
             {
-                string uploadPath = _configuration["UploadPath"];
-                string connectionString = _context.Database.GetDbConnection().ConnectionString;
+                try
+                {                
+                    string uploadPath = _configuration["UploadPath"];
+                    string connectionString = _context.Database.GetDbConnection().ConnectionString;
 
-                if (districts != null && districts == "388888")
-                {
-                    // not using Hangfire
-                    BcBidImport.ImportJob(null, connectionString, uploadPath + path);
-                    result = "Import complete";
+                    if (districts != null && districts == "388888")
+                    {
+                        // not using Hangfire
+                        BcBidImport.ImportJob(null, connectionString, uploadPath + path);
+                        result = "Import complete";
+                    }
+                    else
+                    {
+                        // use Hangfire
+                        result = "Created Job: ";
+                        string jobId = BackgroundJob.Enqueue(() => BcBidImport.ImportJob(null, connectionString, uploadPath + path));
+                        result += jobId;
+                    }
                 }
-                else
+                catch (Exception e)
                 {
-                    // use Hangfire
-                    result = "Created Job: ";
-                    string jobId = BackgroundJob.Enqueue(() => BcBidImport.ImportJob(null, connectionString, uploadPath + path));
-                    result += jobId;
+                    Console.WriteLine(e);
+                    result = "*** Import Error *** <br/>";
+                    result = result + e.Message;
                 }
             }
 

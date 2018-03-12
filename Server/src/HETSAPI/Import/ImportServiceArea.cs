@@ -99,6 +99,7 @@ namespace HETSAPI.Import
             {
                 performContext.WriteLine("*** ERROR ***");
                 performContext.WriteLine(e.ToString());
+                throw;
             }
         }
 
