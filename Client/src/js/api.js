@@ -297,6 +297,7 @@ function parseEquipment(equipment) {
   equipment.isNew = equipment.status === Constant.EQUIPMENT_STATUS_CODE_PENDING;
   equipment.isArchived = equipment.status === Constant.EQUIPMENT_STATUS_CODE_ARCHIVED;
   equipment.isMaintenanceContractor = equipment.owner.isMaintenanceContractor === true;
+  equipment.isDumpTruck = equipment.districtEquipmentType.equipmentType && equipment.districtEquipmentType.equipmentType.isDumpTruck || false;
 
   equipment.ownerStatus = equipment.owner.status;
 
