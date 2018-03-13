@@ -458,10 +458,10 @@ var OwnersDetail = React.createClass({
 
                 return <div id="owners-policy">
                   <Row>
-                    <ColDisplay md={12} labelProps={{ md: 4 }} label="WorkSafeBC Policy">{ owner.workSafeBCPolicyNumber }</ColDisplay>
+                    <ColDisplay md={12} labelProps={{ md: 4 }} label="WCB Number">{ owner.workSafeBCPolicyNumber }</ColDisplay>
                   </Row>
                   <Row>
-                    <ColDisplay md={12} labelProps={{ md: 4 }} label="WorkSafeBC Expiry Date">
+                    <ColDisplay md={12} labelProps={{ md: 4 }} label="WCB Expiry Date">
                       { formatDateTime(owner.workSafeBCExpiryDate, Constant.DATE_YEAR_SHORT_MONTH_DAY) }
                     </ColDisplay>
                   </Row>
