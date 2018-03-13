@@ -353,6 +353,16 @@ var EquipmentDetail = React.createClass({
                       <Row>
                         <ColDisplay labelProps={{ md: 4 }} label="Year">{ equipment.year }</ColDisplay>
                       </Row>
+                      { equipment.isDumpTruck &&
+                        <div>
+                          <Row>
+                            <ColDisplay labelProps={{ md: 4 }} label="Licenced GVW">{ equipment.licencedGvw }</ColDisplay>
+                          </Row>
+                          <Row>
+                            <ColDisplay labelProps={{ md: 4 }} label="Legal Capacity">{ equipment.legalCapacity }</ColDisplay>
+                          </Row>
+                        </div>
+                      }
                     </Col>
                     <Col md={6}>
                       <Row>
@@ -369,6 +379,11 @@ var EquipmentDetail = React.createClass({
                           { equipment.hasDuplicates ? <BadgeLabel bsStyle="danger">!</BadgeLabel> : null }
                         </ColDisplay>
                       </Row>
+                      { equipment.isDumpTruck && 
+                        <Row>
+                          <ColDisplay labelProps={{ md: 4 }} label="Pup Legal Capacity">{ equipment.pupLegalCapacity }</ColDisplay>
+                        </Row>
+                      }
                     </Col>
                   </Row>;
                 })()}

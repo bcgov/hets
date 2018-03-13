@@ -33,6 +33,9 @@ var EquipmentEditDialog = React.createClass({
       year: this.props.equipment.year || '',
       licencePlate: this.props.equipment.licencePlate || '',
       type: this.props.equipment.type || '',
+      licencedGvw: this.props.equipment.licencedGvw || '',
+      legalCapacity: this.props.equipment.legalCapacity || '',
+      pupLegalCapacity: this.props.equipment.pupLegalCapacity || '',
 
       serialNumberError: null,
       yearError: null,
@@ -55,6 +58,9 @@ var EquipmentEditDialog = React.createClass({
     if (this.state.year !== this.props.equipment.year) { return true; }
     if (this.state.licencePlate !== this.props.equipment.licencePlate) { return true; }
     if (this.state.type !== this.props.equipment.type) { return true; }    
+    if (this.state.licencedGvw !== this.props.equipment.licencedGvw) { return true; }   
+    if (this.state.legalCapacity !== this.props.equipment.legalCapacity) { return true; }   
+    if (this.state.pupLegalCapacity !== this.props.equipment.pupLegalCapacity) { return true; }   
 
     return false;
   },
@@ -99,15 +105,20 @@ var EquipmentEditDialog = React.createClass({
         year: this.state.year,
         licencePlate: this.state.licencePlate,
         type: this.state.type,
+        licencedGvw: this.state.licencedGvw,
+        legalCapacity: this.state.legalCapacity,
+        pupLegalCapacity: this.state.pupLegalCapacity,
       }});
     });
   },
 
   render() {
+    var equipment = this.props.equipment;
+
     return <EditDialog id="equipment-edit" show={ this.props.show }
       onClose={ this.props.onClose } onSave={ this.onSave } didChange={ this.didChange } isValid={ this.isValid }
       title= { 
-        <strong>Equipment Id: <small>{ this.props.equipment.equipmentCode }</small></strong>
+        <strong>Equipment Id: <small>{ equipment.equipmentCode }</small></strong>
       }>
       {(() => {
         return <Form>
@@ -170,6 +181,34 @@ var EquipmentEditDialog = React.createClass({
                 </FormGroup>
               </Col>
             </Row>
+            { equipment.isDumpTruck &&
+              <div>
+                <Row>
+                  <Col md={12}>
+                    <FormGroup controlId="licencedGvw">
+                      <ControlLabel>Licenced GVW</ControlLabel>
+                      <FormInputControl type="text" defaultValue={ this.state.licencedGvw } updateState={ this.updateState }/>                  
+                    </FormGroup>
+                  </Col>
+                </Row>
+                <Row>
+                  <Col md={12}>
+                    <FormGroup controlId="legalCapacity">
+                      <ControlLabel>Legal Capacity</ControlLabel>
+                      <FormInputControl type="text" defaultValue={ this.state.legalCapacity } updateState={ this.updateState }/>                  
+                    </FormGroup>
+                  </Col>
+                </Row>
+                <Row>
+                  <Col md={12}>
+                    <FormGroup controlId="pupLegalCapacity">
+                      <ControlLabel>Pup Legal Capacity</ControlLabel>
+                      <FormInputControl type="text" defaultValue={ this.state.pupLegalCapacity } updateState={ this.updateState }/>                  
+                    </FormGroup>
+                  </Col>
+                </Row>
+              </div>
+            }
           </Grid>
         </Form>;
       })()}
