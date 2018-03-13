@@ -180,7 +180,7 @@ namespace HETSAPI.Import
                     legacyItems = legacyItems.Skip(ii).ToArray();
                 }
 
-                Debug.WriteLine(string.Format("Importing Owner Data. Total Records: {0}", legacyItems.Count()));
+                Debug.WriteLine("Importing Owner Data. Total Records: " + legacyItems.Length);
 
                 foreach (ImportModels.Owner item in legacyItems.WithProgress(progress))
                 {
@@ -254,7 +254,7 @@ namespace HETSAPI.Import
                 owner = new Owner {Id = ++maxOwnerIndex};
                 
                 // ***********************************************
-                // set owner code -- stop at ANTH
+                // set owner code
                 // ***********************************************
                 string tempOwnerCode = ImportUtility.CleanString(oldObject.Owner_Cd).ToUpper();
 
@@ -307,7 +307,7 @@ namespace HETSAPI.Import
 
                 if (tempArchive == "Y")
                 {
-                    // arvhived!
+                    // archived!
                     owner.ArchiveCode = "Y";
                     owner.ArchiveDate = DateTime.UtcNow;
                     owner.ArchiveReason = "Imported from BC Bid";
@@ -659,6 +659,7 @@ namespace HETSAPI.Import
             {
                 performContext.WriteLine("*** ERROR ***");
                 performContext.WriteLine(e.ToString());
+                throw;
             }
         }
     }

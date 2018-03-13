@@ -109,5 +109,13 @@ namespace HETSAPI.Services
         /// <param name="includeInactive">True if Inactive users will be returned</param>
         /// <response code="200">OK</response>
         IActionResult UsersSearchGetAsync(string districts, string surname, bool? includeInactive);
+
+        /// <summary>
+        /// Get user districts
+        /// </summary>
+        /// <remarks>Returns a users' districts</remarks>
+        /// <param name="id">id of User to fetch districts for</param>
+        /// <response code="200">OK</response>        
+        IActionResult UsersIdDistrictsGetAsync(int id);
     }
 }

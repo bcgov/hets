@@ -648,5 +648,21 @@ namespace HETSAPI.Services.Impl
 
             return new ObjectResult(new HetsResponse(result));
         }
+
+        /// <summary>
+        /// Get user districts by id
+        /// </summary>
+        /// <remarks>Returns a user&#39;s districts</remarks>
+        /// <param name="id">id of User to fetch districts for</param>
+        /// <response code="200">OK</response>
+        public virtual IActionResult UsersIdDistrictsGetAsync(int id)
+        {
+            IQueryable<District> districts = _context.UserDistricts
+                .Include(x => x.District)
+                .Where(x => x.UserId == id)
+                .Select(x => x.District);             
+
+            return new ObjectResult(new HetsResponse(districts));
+        }
     }
 }

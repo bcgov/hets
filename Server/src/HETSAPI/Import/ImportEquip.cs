@@ -2,6 +2,8 @@
 using Hangfire.Server;
 using System;
 using System.Collections.Generic;
+using System.Data;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Xml.Serialization;
@@ -43,6 +45,13 @@ namespace HETSAPI.Import
                 return;
             }
 
+            int maxEquipmentIndex = 0;
+
+            if (dbContext.Owners.Any())
+            {
+                maxEquipmentIndex = dbContext.Equipments.Max(x => x.Id);
+            }
+
             try
             {
                 string rootAttr = "ArrayOf" + OldTable;
@@ -65,47 +74,19 @@ namespace HETSAPI.Import
                     legacyItems = legacyItems.Skip(ii).ToArray();
                 }
 
+                Debug.WriteLine("Importing Equipment Data. Total Records: " + legacyItems.Length);
+
                 foreach (Equip item in legacyItems.WithProgress(progress))
                 {
                     // see if we have this one already
-                    ImportMap importMap = dbContext.ImportMaps.FirstOrDefault(x =>
-                        x.OldTable == OldTable && x.OldKey == item.Equip_Id.ToString());
+                    ImportMap importMap = dbContext.ImportMaps.FirstOrDefault(x => x.OldTable == OldTable && x.OldKey == item.Equip_Id.ToString());
 
                     // new entry
-                    if (importMap == null)
+                    if (importMap == null && item.Equip_Id > 0)
                     {
-                        if (item.Equip_Id > 0)
-                        {
-                            Equipment instance = null;
-                            CopyToInstance(performContext, dbContext, item, ref instance, systemId);
-                            ImportUtility.AddImportMap(dbContext, OldTable, item.Equip_Id.ToString(), NewTable,
-                                instance.Id);
-                        }
-                    }
-                    else // update
-                    {
-                        Equipment instance = dbContext.Equipments.FirstOrDefault(x => x.Id == importMap.NewKey);
-
-                        // record was deleted
-                        if (instance == null && item.Equip_Id > 0)
-                        {
-                            CopyToInstance(performContext, dbContext, item, ref instance, systemId);
-
-                            // update the import map
-                            importMap.NewKey = instance.Id;
-                            dbContext.ImportMaps.Update(importMap);
-                        }
-                        else // ordinary update
-                        {
-                            if (item.Equip_Id > 0)
-                            {
-                                CopyToInstance(performContext, dbContext, item, ref instance, systemId);
-
-                                // touch the import map
-                                importMap.AppLastUpdateTimestamp = DateTime.UtcNow;
-                                dbContext.ImportMaps.Update(importMap);
-                            }
-                        }
+                        Equipment instance = null;
+                        CopyToInstance(dbContext, item, ref instance, systemId, ref maxEquipmentIndex);
+                        ImportUtility.AddImportMap(dbContext, OldTable, item.Equip_Id.ToString(), NewTable, instance.Id);
                     }
 
                     // save change to database periodically to avoid frequent writing to the database
@@ -131,302 +112,317 @@ namespace HETSAPI.Import
                 }
                 catch (Exception e)
                 {
-                    performContext.WriteLine("Error saving data " + e.Message);
+                    string temp = string.Format("Error saving data (EquipmentIndex: {0}): {1}", maxEquipmentIndex, e.Message);
+                    performContext.WriteLine(temp);
+                    throw new DataException(temp);
                 }
             }
             catch (Exception e)
             {
                 performContext.WriteLine("*** ERROR ***");
                 performContext.WriteLine(e.ToString());
+                throw;
             }
         }
 
         /// <summary>
         /// Map data 
         /// </summary>
-        /// <param name="performContext"></param>
         /// <param name="dbContext"></param>
         /// <param name="oldObject"></param>
-        /// <param name="instance"></param>
+        /// <param name="equipment"></param>
         /// <param name="systemId"></param>
-        private static void CopyToInstance(PerformContext performContext, DbAppContext dbContext, Equip oldObject, ref Equipment instance, string systemId)
+        /// <param name="maxEquipmentIndex"></param>
+        private static void CopyToInstance(DbAppContext dbContext, Equip oldObject, ref Equipment equipment, string systemId, ref int maxEquipmentIndex)
         {
-            if (oldObject.Equip_Id <= 0)
-                return;
-            User modifiedBy = null;
-            User createdBy = null;
-
-            if (oldObject.Modified_By != null)
+            try
             {
-                modifiedBy = ImportUtility.AddUserFromString(dbContext, oldObject.Modified_By, systemId);
-            }
-            if (oldObject.Created_By != null)
-            {
-                createdBy = ImportUtility.AddUserFromString(dbContext, oldObject.Created_By, systemId);
-            }
-            
-            if (instance == null)
-            {
-                instance = new Equipment
+                if (oldObject.Equip_Id <= 0)
                 {
-                    Id = oldObject.Equip_Id,
-                    ArchiveCode = oldObject.Archive_Cd == null
-                        ? ""
-                        : new string(oldObject.Archive_Cd.Take(50).ToArray()),
-                    ArchiveReason = oldObject.Archive_Reason == null
-                        ? ""
-                        : new string(oldObject.Archive_Reason.Take(2048).ToArray()),
-                    LicencePlate = oldObject.Licence == null ? "" : new string(oldObject.Licence.Take(20).ToArray())
-                };
-
-                if (oldObject.Approved_Dt != null)
-                {
-                    instance.ApprovedDate = DateTime.ParseExact(oldObject.Approved_Dt.Trim().Substring(0, 10), "yyyy-MM-dd", System.Globalization.CultureInfo.InvariantCulture);
-                }
-
-                if (oldObject.Received_Dt != null)
-                {
-                    instance.ReceivedDate = DateTime.ParseExact(oldObject.Received_Dt.Trim().Substring(0, 10), "yyyy-MM-dd", System.Globalization.CultureInfo.InvariantCulture);
-                }
-
-                if (oldObject.Comment != null)
-                {
-                    instance.Notes = new List<Note>();
-
-                    Note note = new Note
-                    {
-                        Text = new string(oldObject.Comment.Take(2048).ToArray()),
-                        IsNoLongerRelevant = true
-                    };
-
-                    instance.Notes.Add(note);
-                }
-
-                if (oldObject.Area_Id != null)
-                {
-                    LocalArea area = dbContext.LocalAreas.FirstOrDefault(x => x.LocalAreaNumber == oldObject.Area_Id);
-                    if (area != null)
-                        instance.LocalArea = area;
-                }
-
-                if (oldObject.Equip_Type_Id != null)
-                {
-                    // get the new ID for the Equip Type.
-                    var importMap = dbContext.ImportMaps.FirstOrDefault(x => x.OldKey == oldObject.Equip_Type_Id.ToString() && x.OldTable == "EquipType");
-
-                    //Equipment_TYPE_ID is copied to the table of HET_DISTRICT_DISTRICT_TYPE as key
-                    DistrictEquipmentType equipType = null;
-
-                    if (importMap != null)
-                    {
-                        equipType = dbContext.DistrictEquipmentTypes.FirstOrDefault(x => x.EquipmentTypeId == importMap.NewKey);
-                    }
-
-                    if (equipType != null)
-                    {
-                        instance.DistrictEquipmentType = equipType;
-                        instance.DistrictEquipmentTypeId = oldObject.Equip_Type_Id;
-                    }
-                }
-
-                instance.EquipmentCode = oldObject.Equip_Cd == null ? "" : new string(oldObject.Equip_Cd.Take(25).ToArray());
-                instance.Model = oldObject.Model == null ? "" : new string(oldObject.Model.Take(50).ToArray());
-                instance.Make = oldObject.Make == null ? "" : new string(oldObject.Make.Take(50).ToArray());
-                instance.Year = oldObject.Year == null ? "" : new string(oldObject.Year.Take(15).ToArray());
-                instance.Operator = oldObject.Operator == null ? "" : new string(oldObject.Operator.Take(255).ToArray());
-                instance.SerialNumber = oldObject.Serial_Num == null ? "" : new string(oldObject.Serial_Num.Take(100).ToArray());
-                instance.Status = oldObject.Status_Cd == null ? "" : new string(oldObject.Status_Cd.Take(50).ToArray());
-                instance.Type = oldObject.Type == null ? "" : oldObject.Type.Trim();
-
-                if (oldObject.Pay_Rate != null)
-                {
-                    try
-                    {
-                        instance.PayRate = float.Parse(oldObject.Pay_Rate.Trim());
-                    }
-                    catch
-                    {
-                        instance.PayRate = (float)0.0;
-                    }
-                }
-
-                if (instance.Seniority != null)
-                {
-                    try
-                    {
-                        instance.Seniority = float.Parse(oldObject.Seniority.Trim());
-                    }
-                    catch
-                    {
-                        instance.Seniority = (float)0.0;
-                    }
-                }
-
-                // find the owner which is referenced in the equipment of the xml file entry Through ImportMaps because owner_ID is not prop_ID
-                ImportMap map = dbContext.ImportMaps.FirstOrDefault(x => x.OldTable == ImportOwner.OldTable && x.OldKey == oldObject.Owner_Popt_Id.ToString());
-
-                if (map != null)
-                {
-                    Models.Owner owner = dbContext.Owners.FirstOrDefault(x => x.Id == map.NewKey);
-                    if (owner != null)
-                    {
-                        instance.Owner = owner;
-                        Contact con = dbContext.Contacts.FirstOrDefault(x => x.Id == owner.PrimaryContactId);
-
-                        // update owner contact address
-                        if (con != null)            
-                        {
-                            try
-                            {
-                                con.Address1 = oldObject.Addr1;
-                                con.Address2 = oldObject.Addr2;
-                                con.City = oldObject.City;
-                                con.PostalCode = oldObject.Postal;
-                                con.Province = "BC";
-                                dbContext.Contacts.Update(con);
-                            }
-                            catch (Exception e)
-                            {
-                                performContext.WriteLine("Error mapping data " + e.Message);
-                            }
-                        }
-                    }
+                    return;
                 }
                 
-                if (oldObject.Seniority != null)
+                equipment = new Equipment { Id = ++maxEquipmentIndex };
+
+                // ***********************************************
+                // set equipment attributes
+                // ***********************************************
+                string tempLicense = ImportUtility.CleanString(oldObject.Licence).ToUpper();
+
+                if (tempLicense != null)
                 {
-                    try
-                    {
-                        instance.Seniority = float.Parse(oldObject.Seniority.Trim());
-                    }
-                    catch
-                    {
-                        instance.Seniority = (float)0.0;
-                    }
+                    equipment.LicencePlate = tempLicense;
                 }
 
-                if (oldObject.Num_Years != null)
-                {
-                    try
-                    {
-                        instance.YearsOfService = float.Parse(oldObject.Num_Years.Trim());
-                    }
-                    catch
-                    {
-                        instance.YearsOfService = (float)0.0;
-                    }
-                }
+                equipment.ApprovedDate = ImportUtility.CleanDateTime(oldObject.Approved_Dt);
 
-                if (oldObject.Block_Num != null)
-                {
-                    try
-                    {
-                        instance.BlockNumber = decimal.ToInt32(Decimal.Parse(oldObject.Block_Num, System.Globalization.NumberStyles.Float));
-                    }
-                    catch
-                    {
-                        // do nothing
-                    }
-                }
+                DateTime? tempReceivedDate = ImportUtility.CleanDateTime(oldObject.Received_Dt);
 
-                if (oldObject.Size != null)
+                if (tempReceivedDate != null)
                 {
-                    try
-                    {
-                        if (oldObject.Size != null && !oldObject.Size.Trim().Equals("#x20;"))
-                        {
-                            instance.Size = oldObject.Size;
-                        }
-                        
-                    }
-                    catch
-                    {
-                        // do nothing
-                    }
-                }
-
-                if (oldObject.YTD1 != null && oldObject.YTD2 != null && oldObject.YTD3 != null)
-                {
-                    try
-                    {
-                        instance.ServiceHoursLastYear = (float)Decimal.Parse(oldObject.YTD1, System.Globalization.NumberStyles.Any);
-                    }
-                    catch
-                    {
-                        instance.ServiceHoursLastYear = (float)0.0;
-                    }
-                    try
-                    {
-                        instance.ServiceHoursTwoYearsAgo = (float)Decimal.Parse(oldObject.YTD2, System.Globalization.NumberStyles.Any); 
-                        instance.ServiceHoursThreeYearsAgo = (float)Decimal.Parse(oldObject.YTD3, System.Globalization.NumberStyles.Any);  
-                    }
-                    catch
-                    {
-                        instance.ServiceHoursTwoYearsAgo = (float)0.0;
-                        instance.ServiceHoursThreeYearsAgo = (float)0.0;
-                    }
-                }
-
-                instance.AppCreateTimestamp = DateTime.UtcNow;
-                if (createdBy != null)
-                {
-                    instance.AppCreateUserid = createdBy.SmUserId;
-                }
-
-                // adjust status and archive date fields.
-                if (instance.ArchiveCode != null && instance.ArchiveCode.Trim().ToUpper().Equals("Y"))
-                {
-                    instance.Status = "Archived";
-                    instance.ArchiveDate = DateTime.UtcNow;
+                    equipment.ReceivedDate = (DateTime)tempReceivedDate;
                 }
                 else
                 {
-                    if (instance.Status != null && instance.ArchiveCode != null && instance.ArchiveCode.Trim().ToUpper().Equals("N"))
-                    {
-                        if (instance.Status.Trim().ToUpper().Equals("U"))
-                        {
-                            instance.ArchiveDate = null;
-                            instance.Status = "Unapproved";
-                        }
-                        else if (instance.Status.Trim().ToUpper().Equals("A"))
-                        {
-                            instance.ArchiveDate = null;
-                            instance.Status = "Approved";
-                        }
-                    }                    
+                    throw new DataException(string.Format("Received Date cannot be null (EquipmentIndex: {0}", maxEquipmentIndex));
                 }
 
-                // set Last Verified Date to March 31, 2018.
-                instance.LastVerifiedDate = DateTime.Parse("2018-03-31 0:00:01");
+                // equipment code
+                string tempEquipmentCode = ImportUtility.CleanString(oldObject.Equip_Cd).ToUpper();
 
-                dbContext.Equipments.Add(instance);
+                if (!string.IsNullOrEmpty(tempEquipmentCode))
+                {
+                    equipment.EquipmentCode = tempEquipmentCode;
+                }
+                else
+                {
+                    throw new DataException(string.Format("Equipment Code cannot be null (EquipmentIndex: {0}", maxEquipmentIndex));
+                }
+
+                // pay rate
+                float? tempPayRate = ImportUtility.GetFloatValue(oldObject.Pay_Rate);
+
+                if (tempPayRate != null)
+                {
+                    equipment.PayRate = tempPayRate;                    
+                }
+
+                // ***********************************************
+                // make, model, year, etc.
+                // ***********************************************
+                string tempMake = ImportUtility.CleanString(oldObject.Make);
+
+                if (!string.IsNullOrEmpty(tempMake))
+                {
+                    equipment.Make = tempMake;
+                }
+
+                // model
+                string tempModel = ImportUtility.CleanString(oldObject.Model);
+
+                if (!string.IsNullOrEmpty(tempModel))
+                {
+                    equipment.Model = tempModel;
+                }
+
+                // year
+                string tempYear = ImportUtility.CleanString(oldObject.Year);
+
+                if (!string.IsNullOrEmpty(tempYear))
+                {
+                    equipment.Year = tempYear;
+                }
+
+                // size
+                string tempSize = ImportUtility.CleanString(oldObject.Size);
+
+                if (!string.IsNullOrEmpty(tempSize))
+                {
+                    equipment.Size = tempSize;
+                }                
+
+                // serial number
+                string tempSerialNumber = ImportUtility.CleanString(oldObject.Serial_Num);
+
+                if (!string.IsNullOrEmpty(tempSerialNumber))
+                {
+                    equipment.SerialNumber = tempSerialNumber;
+                }
+
+                // operator
+                string tempOperator = ImportUtility.CleanString(oldObject.Operator);
+
+                if (!string.IsNullOrEmpty(tempOperator))
+                {
+                    equipment.Operator = tempOperator ?? null;
+                }
+
+                // ***********************************************
+                // set the equipment status
+                // ***********************************************
+                string tempArchive = oldObject.Archive_Cd;
+                string tempStatus = oldObject.Status_Cd.Trim();
+
+                if (tempArchive == "Y")
+                {
+                    // archived!
+                    equipment.ArchiveCode = "Y";
+                    equipment.ArchiveDate = DateTime.UtcNow;
+                    equipment.ArchiveReason = "Imported from BC Bid";
+                    equipment.Status = "Archived";
+
+                    string tempArchiveReason = ImportUtility.CleanString(oldObject.Archive_Reason);
+
+                    if (!string.IsNullOrEmpty(tempArchiveReason))
+                    {
+                        equipment.ArchiveReason = ImportUtility.GetUppercaseFirst(tempArchiveReason);
+                    }
+                }
+                else
+                {
+                    equipment.ArchiveCode = "N";
+                    equipment.ArchiveDate = null;
+                    equipment.ArchiveReason = null;
+                    equipment.Status = tempStatus == "A" ? "Approved" : "Unapproved";
+                    equipment.StatusComment = string.Format("Imported from BC Bid ({0})", tempStatus);
+                }                                               
+
+                // ***********************************************
+                // add comment into the notes field
+                // ***********************************************
+                string tempComment = ImportUtility.CleanString(oldObject.Comment);
+                
+                if (!string.IsNullOrEmpty(tempComment))
+                {
+                    tempComment = ImportUtility.GetCapitalCase(tempComment);
+
+                    equipment.Notes = new List<Note>();
+
+                    Note note = new Note
+                    {
+                        Text = tempComment,
+                        IsNoLongerRelevant = false
+                    };
+
+                    equipment.Notes.Add(note);
+                }
+
+                // ***********************************************
+                // add equipment to the correct area
+                // ***********************************************
+                if (oldObject.Area_Id != null)
+                {
+                    LocalArea area = dbContext.LocalAreas.FirstOrDefault(x => x.LocalAreaNumber == oldObject.Area_Id);
+
+                    if (area != null)
+                    {
+                        int tempAreaId = area.Id;
+                        equipment.LocalAreaId = tempAreaId;
+                    }
+                }
+
+                if (equipment.LocalAreaId == null)
+                {
+                    throw new DataException(string.Format("Local Area cannot be null (EquipmentIndex: {0}", maxEquipmentIndex));
+                }
+
+                // ***********************************************
+                // set the equipment type
+                // ***********************************************
+                if (oldObject.Equip_Type_Id != null)
+                {
+                    // get the new id for the "District" Equipment Type
+                    ImportMap equipMap = dbContext.ImportMaps
+                        .FirstOrDefault(x => x.OldTable == ImportDistrictEquipmentType.OldTable &&
+                                             x.OldKey == oldObject.Equip_Type_Id.ToString() &&
+                                             x.NewTable == ImportDistrictEquipmentType.NewTable);
+
+                    if (equipMap != null)
+                    {
+                        DistrictEquipmentType distEquipType = dbContext.DistrictEquipmentTypes.FirstOrDefault(x => x.DistrictId == equipMap.NewKey);
+
+                        if (distEquipType != null)
+                        {
+                            int tempEquipmentId = distEquipType.Id;
+                            equipment.DistrictEquipmentTypeId = tempEquipmentId;
+                        }
+
+                        // is this a dump truck?
+                        if (!string.IsNullOrEmpty(oldObject.Reg_Dump_Trk) && oldObject.Reg_Dump_Trk == "Y")
+                        {
+                            // update the equipment type record -> IsDumpTruck = True
+                            EquipmentType equipType = dbContext.EquipmentTypes.FirstOrDefault(x => x.Id == distEquipType.EquipmentTypeId);
+
+                            if (equipType != null)
+                            {
+                                equipType.IsDumpTruck = true;
+                                dbContext.EquipmentTypes.Update(equipType);
+                            }
+                        }
+                    }
+                }
+
+                if (equipment.DistrictEquipmentTypeId == null)
+                {
+                    throw new DataException(string.Format("Equipment Type cannot be null (EquipmentIndex: {0}", maxEquipmentIndex));
+                }
+
+                // ***********************************************
+                // set the equipment owner
+                // ***********************************************                
+                ImportMap ownerMap = dbContext.ImportMaps.FirstOrDefault(x => x.OldTable == ImportOwner.OldTable && 
+                                                                              x.OldKey == oldObject.Owner_Popt_Id.ToString());
+
+                if (ownerMap != null)
+                {
+                    Models.Owner owner = dbContext.Owners.FirstOrDefault(x => x.Id == ownerMap.NewKey);
+
+                    if (owner != null)
+                    {
+                        int tempOwnerId = owner.Id;
+                        equipment.OwnerId = tempOwnerId;
+
+                        // set address fields on the owner record
+                        if (string.IsNullOrEmpty(owner.Address1))
+                        {
+                            owner.Address1 = ImportUtility.CleanString(oldObject.Addr1);
+                            owner.Address2 = ImportUtility.CleanString(oldObject.Addr2);
+                            owner.City = ImportUtility.CleanString(oldObject.City);
+                            owner.PostalCode = ImportUtility.CleanString(oldObject.Postal);
+                            owner.Province = "BC";
+
+                            dbContext.Owners.Update(owner);
+                        }                        
+                    }
+                }
+
+                if (equipment.OwnerId == null)
+                {
+                    throw new DataException(string.Format("Owner cannot be null (EquipmentIndex: {0}", maxEquipmentIndex));
+                }
+
+                // ***********************************************                
+                // set seniority and hours
+                // ***********************************************                
+                float? tempSeniority = ImportUtility.GetFloatValue(oldObject.Seniority);
+                equipment.Seniority = tempSeniority ?? 0.0F;
+
+                float? tempYearsOfService = ImportUtility.GetFloatValue(oldObject.Num_Years);
+                equipment.YearsOfService = tempYearsOfService ?? 0.0F;
+
+                int? tempBlockNumber = ImportUtility.GetIntValue(oldObject.Block_Num);
+                equipment.BlockNumber = tempBlockNumber ?? null;
+
+                float? tempServiceHoursLastYear = ImportUtility.GetFloatValue(oldObject.YTD1);
+                equipment.ServiceHoursLastYear = tempServiceHoursLastYear ?? 0.0F;
+
+                float? tempServiceHoursTwoYearsAgo = ImportUtility.GetFloatValue(oldObject.YTD2);
+                equipment.ServiceHoursTwoYearsAgo = tempServiceHoursTwoYearsAgo ?? 0.0F;
+
+                float? tempServiceHoursThreeYearsAgo = ImportUtility.GetFloatValue(oldObject.YTD3);
+                equipment.ServiceHoursThreeYearsAgo = tempServiceHoursThreeYearsAgo ?? 0.0F;
+
+                // ***********************************************
+                // set last verified date (default to March 31, 2018)
+                // ***********************************************                
+                equipment.LastVerifiedDate = DateTime.Parse("2018-03-31 0:00:01");                        
+
+                // ***********************************************
+                // create equipment
+                // ***********************************************                            
+                equipment.AppCreateUserid = systemId;
+                equipment.AppCreateTimestamp = DateTime.UtcNow;
+                equipment.AppLastUpdateUserid = systemId;
+                equipment.AppLastUpdateTimestamp = DateTime.UtcNow;
+
+                dbContext.Equipments.Add(equipment);
             }
-            else
+            catch (Exception ex)
             {
-                instance = dbContext.Equipments.First(x => x.Id == oldObject.Equip_Id);
-                if (modifiedBy != null)
-                {
-                    instance.AppLastUpdateUserid = modifiedBy.SmUserId;
-                }
-
-                try
-                {
-                    if (modifiedBy != null)
-                    {
-                        instance.AppLastUpdateUserid = modifiedBy.SmUserId;
-                    }
-                    if (oldObject.Modified_Dt != null)
-                    {
-                        instance.AppLastUpdateTimestamp = DateTime.ParseExact(oldObject.Modified_Dt.Trim().Substring(0, 10), "yyyy-MM-dd", System.Globalization.CultureInfo.InvariantCulture);
-                    }
-                    
-                }
-                catch (Exception e)
-                {
-                    performContext.WriteLine("Error mapping data " + e.Message);
-                }
-
-                dbContext.Equipments.Update(instance);
+                Debug.WriteLine("***Error*** - Equipment Code: " + equipment.EquipmentCode);
+                Debug.WriteLine("***Error*** - Master Equipment Index: " + maxEquipmentIndex);
+                Debug.WriteLine(ex.Message);
+                throw;
             }
         }
 
@@ -449,16 +445,16 @@ namespace HETSAPI.Import
                 progress.SetValue(0);
 
                 // create serializer and serialize xml file
-                XmlSerializer ser = new XmlSerializer(typeof(ImportModels.Equip[]), new XmlRootAttribute(rootAttr));
+                XmlSerializer ser = new XmlSerializer(typeof(Equip[]), new XmlRootAttribute(rootAttr));
                 MemoryStream memoryStream = ImportUtility.MemoryStreamGenerator(XmlFileName, OldTable, sourceLocation, rootAttr);
-                ImportModels.Equip[] legacyItems = (ImportModels.Equip[])ser.Deserialize(memoryStream);
+                Equip[] legacyItems = (Equip[])ser.Deserialize(memoryStream);
 
                 performContext.WriteLine("Obfuscating Equip data");
                 progress.SetValue(0);
 
                 List<ImportMapRecord> importMapRecords = new List<ImportMapRecord>();
 
-                foreach (ImportModels.Equip item in legacyItems.WithProgress(progress))
+                foreach (Equip item in legacyItems.WithProgress(progress))
                 {
                     item.Created_By = systemId;
                     if (item.Modified_By != null)
@@ -469,13 +465,14 @@ namespace HETSAPI.Import
                     Random random = new Random();
                     string newSerialNum = random.Next(10000).ToString();
 
-                    ImportMapRecord importMapRecordOrganization = new ImportMapRecord();
+                    ImportMapRecord importMapRecordOrganization = new ImportMapRecord
+                    {
+                        TableName = NewTable,
+                        MappedColumn = "Serial_Num",
+                        OriginalValue = item.Serial_Num,
+                        NewValue = newSerialNum
+                    };
 
-
-                    importMapRecordOrganization.TableName = NewTable;
-                    importMapRecordOrganization.MappedColumn = "Serial_Num";
-                    importMapRecordOrganization.OriginalValue = item.Serial_Num;
-                    importMapRecordOrganization.NewValue = newSerialNum;
                     importMapRecords.Add(importMapRecordOrganization);
 
                     item.Serial_Num = newSerialNum;
@@ -489,18 +486,20 @@ namespace HETSAPI.Import
                 }
 
                 performContext.WriteLine("Writing " + XmlFileName + " to " + destinationLocation);
-                // write out the array.
+
+                // write out the array
                 FileStream fs = ImportUtility.GetObfuscationDestination(XmlFileName, destinationLocation);
                 ser.Serialize(fs, legacyItems);
                 fs.Close();
+
                 // write out the spreadsheet of import records.
                 ImportUtility.WriteImportRecordsToExcel(destinationLocation, importMapRecords, OldTable);
-
             }
             catch (Exception e)
             {
                 performContext.WriteLine("*** ERROR ***");
                 performContext.WriteLine(e.ToString());
+                throw;
             }
         }
     }
