@@ -194,7 +194,7 @@ var EquipmentEditDialog = React.createClass({
                 <Row>
                   <Col md={12}>
                     <FormGroup controlId="legalCapacity">
-                      <ControlLabel>Legal Capacity</ControlLabel>
+                      <ControlLabel>Truck Legal Capacity</ControlLabel>
                       <FormInputControl type="text" defaultValue={ this.state.legalCapacity } updateState={ this.updateState }/>                  
                     </FormGroup>
                   </Col>
