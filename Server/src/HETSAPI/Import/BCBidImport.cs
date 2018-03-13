@@ -65,16 +65,15 @@ namespace HETSAPI.Import
             dbContext = new DbAppContext(null, options.Options);
             ImportDistrictEquipmentType.Import(context, dbContext, fileLocation, SystemId);
 
+            //*** Import Equipment from Equip.xml  (HET_EQUIPMENT)
+            dbContext = new DbAppContext(null, options.Options);
+            ImportEquip.Import(context, dbContext, fileLocation, SystemId);
 
             /*
             //*** Import the table of "HET_DISTRICT_EQUIPMENT_TYPE"  from Block.xml   
             dbContext = new DbAppContext(null, options.Options);
             ImportBlock.Import(context, dbContext, fileLocation,  SystemId);
-           
-            //*** Import Equiptment  from Equip.xml  This has effects on Table HET_USER and HET_EQUIP
-            dbContext = new DbAppContext(null, options.Options);
-            ImportEquip.Import(context, dbContext, fileLocation, SystemId);
-            
+                       
             //*** Import Dump_Truck from Dump_Truck.xml (HET_EQUIPMENT_TYPE)  
             dbContext = new DbAppContext(null, options.Options);
             ImportDumpTruck.Import(context, dbContext, fileLocation, SystemId);
@@ -110,40 +109,45 @@ namespace HETSAPI.Import
             DbAppContext dbContext = new DbAppContext(null, options.Options);
             context.WriteLine("Starting Data Import Job");
 
-
             // adding system Account if not there in the database
             ImportUtility.InsertSystemUser(dbContext, SystemId);
             dbContext = new DbAppContext(null, options.Options);
+            
             // Process local areas.
             ImportLocalArea.Obfuscate(context, dbContext, sourceFileLocation, destinationFileLocation, SystemId);
             dbContext = new DbAppContext(null, options.Options);
 
             ImportServiceArea.Obfuscate(context, dbContext, sourceFileLocation, destinationFileLocation, SystemId);
             dbContext = new DbAppContext(null, options.Options);
+            
             //*** Users from User_HETS.xml. This has effects on Table HET_USER and HET_USER_ROLE              
             ImportUser.Obfuscate(context, dbContext, sourceFileLocation, destinationFileLocation, SystemId);
             dbContext = new DbAppContext(null, options.Options);
+            
             //*** Owners: This has effects on Table HETS_OWNER and HETS_Contact            
             ImportOwner.Obfuscate(context, dbContext, sourceFileLocation, destinationFileLocation, SystemId);
             dbContext = new DbAppContext(null, options.Options);
+            
             //*** Import Dump_Truck  from Dump_Truck.xml               
             ImportProject.Obfuscate(context, dbContext, sourceFileLocation, destinationFileLocation, SystemId);
             dbContext = new DbAppContext(null, options.Options);
-            //*** Import Equipment type from EquipType.xml This has effects on Table HET_USER and HET_EQUIPMENT_TYPE              
-            ImportDisEquipType.Obfuscate(context, dbContext, sourceFileLocation, destinationFileLocation, SystemId);
-            dbContext = new DbAppContext(null, options.Options);
+
             //*** Import Equiptment  from Equip.xml  This has effects on Table HET_USER and HET_EQUIP            
             ImportEquip.Obfuscate(context, dbContext, sourceFileLocation, destinationFileLocation, SystemId);
             dbContext = new DbAppContext(null, options.Options);
+            
             //*** Import Dump_Truck  from Dump_Truck.xml               
             ImportDumpTruck.Obfuscate(context, dbContext, sourceFileLocation, destinationFileLocation, SystemId);
             dbContext = new DbAppContext(null, options.Options);
             var watch = System.Diagnostics.Stopwatch.StartNew();
+            
             //*** Import Equipment_Attached  from Equip_Attach.xml               
             ImportEquipAttach.Obfuscate(context, dbContext, sourceFileLocation, destinationFileLocation, SystemId);
             dbContext = new DbAppContext(null, options.Options);
+            
             //*** Import the table of "HET_DISTRICT_EQUIPMENT_TYPE"  from Block.xml               
             ImportBlock.Obfuscate(context, dbContext, sourceFileLocation, destinationFileLocation, SystemId);
+
             watch.Stop();
             long elapsedMs = watch.ElapsedMilliseconds;
             Console.WriteLine(elapsedMs.ToString());

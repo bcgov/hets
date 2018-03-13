@@ -38,7 +38,7 @@ namespace HETSAPI.Controllers
         }
 
         /// <summary>
-        /// Get all user districts for the user
+        /// Get all user districts for the logged on user
         /// </summary>
         /// <response code="200">OK</response>
         [HttpGet]
@@ -50,11 +50,11 @@ namespace HETSAPI.Controllers
         {
             return _service.UserDistrictsGetAsync();
         }
-
+        
         /// <summary>	
         /// Delete user district	
         /// </summary>	
-        /// <param name="id">id of Note to delete</param>	
+        /// <param name="id">id of User District to delete</param>	
         /// <response code="200">OK</response>	
         [HttpPost]
         [Route("/api/userdistricts/{id}/delete")]

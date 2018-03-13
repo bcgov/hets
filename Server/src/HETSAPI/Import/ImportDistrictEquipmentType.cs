@@ -19,9 +19,9 @@ namespace HETSAPI.Import
     /// </summary>
     public static class ImportDistrictEquipmentType
     {
-        const string OldTable = "Equip_Type";
-        const string NewTable = "HET_DISTRICT_EQUIPMENT_TYPE";
-        const string XmlFileName = "Equip_Type.xml";
+        public const string OldTable = "Equip_Type";
+        public const string NewTable = "HET_DISTRICT_EQUIPMENT_TYPE";
+        public const string XmlFileName = "Equip_Type.xml";
 
         /// <summary>
         /// Progress Property
@@ -75,7 +75,7 @@ namespace HETSAPI.Import
                     legacyItems = legacyItems.Skip(ii).ToArray();
                 }
 
-                Debug.WriteLine(string.Format("Importing DistrictEquipmentType Data. Total Records: {0}", legacyItems.Count()));
+                Debug.WriteLine("Importing DistrictEquipmentType Data. Total Records: " + legacyItems.Length);
 
                 foreach (EquipType item in legacyItems.WithProgress(progress))
                 {

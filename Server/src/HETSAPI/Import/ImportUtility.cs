@@ -326,7 +326,7 @@ namespace HETSAPI.Import
             }
 
             return null;
-        }
+        }        
 
         public static float? GetFloatValue(string floatField)
         {
@@ -343,6 +343,20 @@ namespace HETSAPI.Import
             return null;
         }
 
+        public static int? GetIntValue(string intField)
+        {
+            if (!string.IsNullOrEmpty(intField))
+            {
+                intField = intField.Trim();
+
+                if (int.TryParse(intField, out int temp))
+                {
+                    return temp;
+                }
+            }
+
+            return null;
+        }
 
         public static string CleanString(string textField)
         {

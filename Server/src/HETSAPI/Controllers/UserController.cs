@@ -211,5 +211,21 @@ namespace HETSAPI.Controllers
         {
             return _service.UsersSearchGetAsync(districts, surname, includeInactive);
         }
+
+        /// <summary>
+        /// Get user districts
+        /// </summary>
+        /// <remarks>Returns a users districts</remarks>
+        /// <param name="id">id of User to fetch districts for</param>
+        /// <response code="200">OK</response>
+        [HttpGet]
+        [Route("/api/users/{id}/districts")]
+        [SwaggerOperation("UsersIdDistrictsGet")]
+        [SwaggerResponse(200, type: typeof(List<UserDistrict>))]
+        [RequiresPermission(Permission.UserManagement)]
+        public virtual IActionResult UsersIdDistrictsGet([FromRoute]int id)
+        {
+            return _service.UsersIdDistrictsGetAsync(id);
+        }
     }
 }
