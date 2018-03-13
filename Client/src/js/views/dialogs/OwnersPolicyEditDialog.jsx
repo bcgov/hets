@@ -97,12 +97,12 @@ var OwnersPolicyEditDialog = React.createClass({
       }>
       <Form>
         <FormGroup controlId="workSafeBCPolicyNumber" validationState={ this.state.workSafeBCPolicyNumberError ? 'error' : null }>
-          <ControlLabel>WBC Policy Number <sup>*</sup></ControlLabel>
+          <ControlLabel>WCB Number <sup>*</sup></ControlLabel>
           <FormInputControl type="text" value={ this.state.workSafeBCPolicyNumber } updateState={ this.updateState } inputRef={ ref => { this.input = ref; }} />
           <HelpBlock>{ this.state.workSafeBCPolicyNumberError }</HelpBlock>
         </FormGroup>
         <FormGroup controlId="workSafeBCExpiryDate" validationState={ this.state.workSafeBCExpiryDateError ? 'error' : null }>
-          <ControlLabel>WBC Expiry Date</ControlLabel>
+          <ControlLabel>WCB Expiry Date</ControlLabel>
           <DateControl id="workSafeBCExpiryDate" date={ this.state.workSafeBCExpiryDate } updateState={ this.updateState } placeholder="mm/dd/yyyy" />
           <HelpBlock>{ this.state.workSafeBCExpiryDateError }</HelpBlock>
         </FormGroup>
