@@ -40,6 +40,10 @@ var EquipmentAddDialog = React.createClass({
       year: '',
       size: '',
       type: '',
+      licencedGvw: '',
+      legalCapacity: '',
+      pupLegalCapacity: '',
+
       localAreaError: '',
       equipmentTypeError: '',
       serialNumberError: '',
@@ -68,6 +72,9 @@ var EquipmentAddDialog = React.createClass({
     if (this.state.year !== '') { return true; }
     if (this.state.size !== '') { return true; }
     if (this.state.type !== '') { return true; }
+    if (this.state.licencedGvw !== '') { return true; }
+    if (this.state.legalCapacity !== '') { return true; }
+    if (this.state.pupLegalCapacity !== '') { return true; }
 
     return false;
   },
@@ -127,6 +134,9 @@ var EquipmentAddDialog = React.createClass({
         year: this.state.year,
         size: this.state.size,
         type: this.state.type,
+        licencedGvw: this.state.licencedGvw,
+        legalCapacity: this.state.legalCapacity,
+        pupLegalCapacity: this.state.pupLegalCapacity,
         status: Constant.EQUIPMENT_STATUS_CODE_PENDING,
       });
     });
@@ -145,6 +155,12 @@ var EquipmentAddDialog = React.createClass({
       .filter(type => type.district.id == this.props.currentUser.district.id)
       .sortBy('districtEquipmentName')
       .value();
+
+    var equipment = _.find(districtEquipmentTypes, equipment => {
+      return equipment.id == this.state.equipmentTypeId; 
+    });
+
+    var isDumpTruck = equipment && equipment.equipmentType.isDumpTruck;
 
     return <EditDialog id="equipment-add" show={ this.props.show }
       onClose={ this.props.onClose } onSave={ this.onSave } didChange={ this.didChange } isValid={ this.isValid }
@@ -202,6 +218,22 @@ var EquipmentAddDialog = React.createClass({
           <FormInputControl type="text" defaultValue={ this.state.serialNumber } updateState={ this.updateState } inputRef={ ref => { this.input = ref; }}/>
           <HelpBlock>{ this.state.serialNumberError }</HelpBlock>
         </FormGroup>
+        { isDumpTruck &&
+          <div>
+            <FormGroup controlId="licencedGvw">
+              <ControlLabel>Licenced GVW</ControlLabel>
+              <FormInputControl type="text" defaultValue={ this.state.licencedGvw } updateState={ this.updateState }/>                  
+            </FormGroup>
+            <FormGroup controlId="legalCapacity">
+              <ControlLabel>Truck Legal Capacity</ControlLabel>
+              <FormInputControl type="text" defaultValue={ this.state.legalCapacity } updateState={ this.updateState }/>                  
+            </FormGroup>
+            <FormGroup controlId="pupLegalCapacity">
+              <ControlLabel>Pup Legal Capacity</ControlLabel>
+              <FormInputControl type="text" defaultValue={ this.state.pupLegalCapacity } updateState={ this.updateState }/>                  
+            </FormGroup>
+          </div>
+        }
       </Form>
     </EditDialog>;
   },

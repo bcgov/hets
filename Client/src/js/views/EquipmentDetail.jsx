@@ -359,7 +359,7 @@ var EquipmentDetail = React.createClass({
                             <ColDisplay labelProps={{ md: 4 }} label="Licenced GVW">{ equipment.licencedGvw }</ColDisplay>
                           </Row>
                           <Row>
-                            <ColDisplay labelProps={{ md: 4 }} label="Legal Capacity">{ equipment.legalCapacity }</ColDisplay>
+                            <ColDisplay labelProps={{ md: 4 }} label="Truck Legal Capacity">{ equipment.legalCapacity }</ColDisplay>
                           </Row>
                         </div>
                       }
