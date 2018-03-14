@@ -191,35 +191,50 @@ var TimeEntryDialog = React.createClass({
         <Form>
           <Grid fluid>
             <Row>
-              <FormGroup>
-                <ControlLabel>Project</ControlLabel>
-                <div>{this.props.project.name}</div>
-              </FormGroup>
-            </Row>
-            <Row>
-              <FormGroup>
-                <ControlLabel>Equipment ID</ControlLabel>
+              <Col sm={4}>              
+                  <div className="text-label">Project</div>
+                  <div>{this.props.project.name}</div>
+              </Col>
+              <Col sm={4}>
+                  <div className="text-label">Project Number</div>
+                  <div>{ this.props.project.provincialProjectNumber }</div>
+              </Col>
+              <Col sm={4}>
+                <div className="text-label">Equipment ID</div>
                 <div>{ activeRentalRequest.equipment.equipmentCode }</div>
-              </FormGroup>
+              </Col>
             </Row>
-            <Row>
-              <Col sm={4} className="nopadding"><div className="column-title">Week Ending</div></Col>
-              <Col sm={4} className="nopadding"><div className="column-title">Hours</div></Col>
-            </Row>
-            { (sortedTimeRecords.length === 0) && 
-              <div>No time records have been added yet.</div>
-            }
-            { (sortedTimeRecords.length > 0) && !this.state.showAllTimeRecords ?
-              <TimeRecordItem timeRecord={sortedTimeRecords[0]} />
-              :
-              <ul className="time-records-list">
-              { _.map(sortedTimeRecords, timeRecord => (
-                <li key={timeRecord.id} className="list-item">
-                  <TimeRecordItem timeRecord={timeRecord} />
-                </li>
-              ))}
-              </ul>
-            }
+            <div className="time-entries-container">
+              <Row>
+                <Col sm={4}><div className="column-title">Week Ending</div></Col>
+                <Col sm={4}><div className="column-title">Hours</div></Col>
+              </Row>
+              { (sortedTimeRecords.length === 0) &&
+                <Row> 
+                  <Col sm={12}><div>No time records have been added yet.</div></Col>
+                </Row>
+              }
+
+              { (sortedTimeRecords.length > 0) && !this.state.showAllTimeRecords ?
+                <Row>
+                  <Col sm={12}>
+                    <TimeRecordItem timeRecord={sortedTimeRecords[0]} />
+                  </Col>
+                </Row>
+                :
+                <Row>
+                  <Col sm={12}>
+                    <ul className="time-records-list">
+                    { _.map(sortedTimeRecords, timeRecord => (
+                      <li key={timeRecord.id} className="list-item">
+                        <TimeRecordItem timeRecord={timeRecord} />
+                      </li>
+                    ))}
+                    </ul>
+                  </Col>
+                </Row>
+              }
+            </div>
             { (sortedTimeRecords.length > 1) && 
               <Button onClick={ this.showAllTimeRecords }>{ this.state.showAllTimeRecords ? 'Hide' : 'Show All' }</Button>
             }
@@ -227,7 +242,7 @@ var TimeEntryDialog = React.createClass({
             { Object.keys(this.state.timeEntry).map(key => {
               return (
                 <Row key={key}>
-                  <Col sm={4} className="nopadding">
+                  <Col sm={4}>
                     <FormGroup validationState={ this.state.timeEntry[key].errorDate ? 'error' : null }>
                       <ControlLabel>Week Ending</ControlLabel>
                       <DateControl
@@ -241,7 +256,7 @@ var TimeEntryDialog = React.createClass({
                       <HelpBlock>{ this.state.timeEntry[key].errorDate }</HelpBlock>
                     </FormGroup>
                   </Col>  
-                  <Col sm={4} className="nopadding">
+                  <Col sm={4}>
                     <FormGroup validationState={ this.state.timeEntry[key].errorHours ? 'error' : null }>
                       <ControlLabel>Hours</ControlLabel>
                       <FormInputControl 
@@ -257,23 +272,27 @@ var TimeEntryDialog = React.createClass({
                 </Row>
               );
             })}
-            { this.state.numberOfInputs < 10 && 
-              <Button 
-                bsSize="xsmall"
-                onClick={ this.addTimeEntryInput }
-              >
-                <Glyphicon glyph="plus" />&nbsp;<strong>Add</strong>
-              </Button>
-            }
-            { this.state.numberOfInputs > 1 &&
-              <Button 
-                bsSize="xsmall"
-                className="remove-btn"
-                onClick={ this.removeTimeEntryInput }
-              >
-                <Glyphicon glyph="minus" />&nbsp;<strong>Remove</strong>
-              </Button>
-            }
+            <Row>
+              <Col sm={12}>
+              { this.state.numberOfInputs < 10 && 
+                <Button 
+                  bsSize="xsmall"
+                  onClick={ this.addTimeEntryInput }
+                >
+                  <Glyphicon glyph="plus" />&nbsp;<strong>Add</strong>
+                </Button>
+              }
+              { this.state.numberOfInputs > 1 &&
+                <Button 
+                  bsSize="xsmall"
+                  className="remove-btn"
+                  onClick={ this.removeTimeEntryInput }
+                >
+                  <Glyphicon glyph="minus" />&nbsp;<strong>Remove</strong>
+                </Button>
+              }
+              </Col>
+            </Row>  
           </Grid>
         </Form>
        } 
