@@ -16,6 +16,7 @@ var DistrictEditDialog = React.createClass({
     districts: React.PropTypes.object,
     user: React.PropTypes.object,
     district: React.PropTypes.object,
+    userDistricts: React.PropTypes.object,
   },
 
   getInitialState() {
@@ -67,7 +68,14 @@ var DistrictEditDialog = React.createClass({
   },
 
   render() {
-    var districts = _.sortBy(this.props.districts, 'name');
+    var userDistricts = _.map(this.props.userDistricts, district => district.district.id );
+
+    var districts = _.chain(this.props.districts)
+      .sortBy('name')
+      .reject(district => { 
+        return _.includes(userDistricts, district.id); 
+      } )
+      .value();
 
     return <EditDialog id="equipment-add" show={ this.props.show } bsSize="small"
       onClose={ this.props.onClose } onSave={ this.onSave } didChange={ this.didChange } isValid={ this.isValid }

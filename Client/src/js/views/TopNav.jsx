@@ -2,6 +2,8 @@ import React from 'react';
 
 import { connect } from 'react-redux';
 
+import _ from 'lodash';
+
 import { Navbar, Nav, NavItem, NavDropdown, MenuItem, OverlayTrigger, Dropdown, Popover, Button, Glyphicon, ControlLabel, FormGroup } from 'react-bootstrap';
 import { LinkContainer } from 'react-router-bootstrap';
 
@@ -28,7 +30,8 @@ var TopNav = React.createClass({
   },
 
   updateUserDistrict(state) {
-    Api.switchUserDistrict(state.districtId).then(() => {
+    var district = _.find(this.props.currentUserDistricts.data, district => { return district.district.id === state.districtId; });
+    Api.switchUserDistrict(district.id).then(() => {
       location.reload();
     });
   },

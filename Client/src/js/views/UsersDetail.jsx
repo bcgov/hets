@@ -382,6 +382,7 @@ var UsersDetail = React.createClass({
           districts={ this.props.districts } 
           user={ this.props.user }
           district={ this.state.district }
+          userDistricts={ this.props.userDistricts.data }
         />
       }
     </div>;
