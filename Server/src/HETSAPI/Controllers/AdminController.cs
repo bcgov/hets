@@ -26,8 +26,9 @@ namespace HETSAPI.Controllers
         /// <summary>
         /// Start the import process
         /// </summary>
-        /// <param name="path">location of the extracted files to parse.  Relative to the folder where files are stored</param>
-        /// <param name="districts">comma seperated list of district IDs to process.</param>
+        /// <param name="path">Location of the extracted files to parse (relative to the folder where files are stored)</param>
+        /// <param name="realTime">Execute in real time</param>
+        /// <param name="clearDb">Clean the db before execution</param>
         /// <response code="200">OK</response>
         /// <response code="404">Attachment not found in system</response>
         ///         
@@ -35,9 +36,13 @@ namespace HETSAPI.Controllers
         [Route("/api/admin/import")]
         [SwaggerOperation("AdminImportGet")]
         [RequiresPermission(Permission.Admin)]
-        public virtual IActionResult AdminImportGet([FromQuery]string path, [FromQuery]string districts)
+        public virtual IActionResult AdminImportGet([FromQuery]string path, [FromQuery]string realTime, [FromQuery]string clearDb)
         {
-            return _service.AdminImportGetAsync(path, districts);
+            // get realtime eecution value
+            bool boolRealTime = !string.IsNullOrEmpty(realTime) && realTime.ToLower() == "true";
+            bool boolClearDb = !string.IsNullOrEmpty(clearDb) && clearDb.ToLower() == "true";
+
+            return _service.AdminImportGetAsync(path, boolRealTime, boolClearDb);
         }
 
         [HttpGet]

@@ -76,16 +76,19 @@ namespace HETSAPI.Import
         /// <param name="dbContext"></param>
         /// <param name="oldTable"></param>   This is lile "Owner_Progress" for th eimport progress entry (row) of Import_Map table
         /// <param name="oldKey"></param>  This is where stopped last time in string If this is "388888", then complete
-        /// <param name="newKey"></param>  This is always a constant; for identification of progress entry of the table only. This is extraneous.
-        public static void AddImportMapForProgress(DbAppContext dbContext, string oldTable, string oldKey, int newKey)
+        /// <param name="newKey"></param>
+        /// <param name="newTable"></param>
+        public static void AddImportMapForProgress(DbAppContext dbContext, string oldTable, string oldKey, int newKey, string newTable)
         {
             List<ImportMap> importMapList = dbContext.ImportMaps
-                .Where(x => x.OldTable == oldTable && x.NewKey == newKey)
+                .Where(x => x.OldTable == oldTable && 
+                            x.NewKey == newKey &&
+                            x.NewTable == newTable)
                 .ToList();
 
             if (importMapList.Count == 0)
             {
-                AddImportMap(dbContext, oldTable, oldKey, BcBidImport.TodayDate, newKey);
+                AddImportMap(dbContext, oldTable, oldKey, newTable, newKey);
             }
             else
             {
@@ -97,7 +100,7 @@ namespace HETSAPI.Import
                 {
                     if (importMap.OldKey == maxProgressCount.ToString())
                     {
-                        importMap.NewTable = BcBidImport.TodayDate;
+                        importMap.NewTable = newTable;
                         importMap.OldKey = Math.Max(int.Parse(oldKey), maxProgressCount).ToString();
                         importMap.AppLastUpdateTimestamp = DateTime.Now;
                         dbContext.ImportMaps.Update(importMap);
@@ -121,23 +124,9 @@ namespace HETSAPI.Import
         /// <param name="sigId"></param>
         /// <param name="newTable"></param>
         /// <returns></returns>
-        public static int CheckInterMapForStartPoint(DbAppContext dbContext, string oldTableProgress, int sigId, string newTable = null)
+        public static int CheckInterMapForStartPoint(DbAppContext dbContext, string oldTableProgress, int sigId, string newTable)
         {
-            ImportMap importMap;
-
-            if (newTable == null)
-            {
-                importMap = (
-                    from u in dbContext.ImportMaps
-                    where u.OldTable == oldTableProgress && 
-                          u.NewKey == sigId
-                    orderby int.Parse(u.OldKey) descending
-                    select u)
-                    .FirstOrDefault();
-            }
-            else
-            {
-                importMap = (
+            ImportMap importMap = (
                         from u in dbContext.ImportMaps
                         where u.OldTable == oldTableProgress && 
                               u.NewKey == sigId &&
@@ -145,7 +134,6 @@ namespace HETSAPI.Import
                         orderby int.Parse(u.OldKey) descending
                         select u)
                     .FirstOrDefault();
-            }
 
             // OlkdKey is recorded where the import progress stopped last time
             // when it stores the value of sigId, it signals the completion of the import of the corresponding xml file

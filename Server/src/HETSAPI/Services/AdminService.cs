@@ -11,11 +11,11 @@ namespace HETSAPI.Services
         /// <summary>
         /// Starts the import process
         /// </summary>
-        /// <param name="path">location of the extracted files to parse.  Relative to the folder where files are stored</param>
-        /// <param name="districts">comma seperated list of district IDs to process.</param>
+        /// <param name="path">Location of the extracted files to parse (relative to the folder where files are stored)</param>
+        /// <param name="realTime">Execute in real time</param>
+        /// <param name="clearDb">Clean the db before execution</param>
         /// <response code="200">OK</response>
-        /// <response code="404">Attachment not found in system</response>
-        IActionResult AdminImportGetAsync(string path, string districts);
+        IActionResult AdminImportGetAsync(string path, bool realTime, bool clearDb);
 
         // copies source files with obfuscation
         IActionResult AdminObfuscateGetAsync(string sourcePath, string destinationPath);
