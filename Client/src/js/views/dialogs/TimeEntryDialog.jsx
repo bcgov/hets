@@ -191,39 +191,39 @@ var TimeEntryDialog = React.createClass({
         <Form>
           <Grid fluid>
             <Row>
-              <Col sm={4}>              
+              <Col xs={4}>              
                   <div className="text-label">Project</div>
                   <div>{this.props.project.name}</div>
               </Col>
-              <Col sm={4}>
+              <Col xs={4}>
                   <div className="text-label">Project Number</div>
                   <div>{ this.props.project.provincialProjectNumber }</div>
               </Col>
-              <Col sm={4}>
+              <Col xs={4}>
                 <div className="text-label">Equipment ID</div>
                 <div>{ activeRentalRequest.equipment.equipmentCode }</div>
               </Col>
             </Row>
             <div className="time-entries-container">
               <Row>
-                <Col sm={4}><div className="column-title">Week Ending</div></Col>
-                <Col sm={4}><div className="column-title">Hours</div></Col>
+                <Col xs={4}><div className="column-title">Week Ending</div></Col>
+                <Col xs={4}><div className="column-title">Hours</div></Col>
               </Row>
               { (sortedTimeRecords.length === 0) &&
                 <Row> 
-                  <Col sm={12}><div>No time records have been added yet.</div></Col>
+                  <Col xs={12}><div>No time records have been added yet.</div></Col>
                 </Row>
               }
 
               { (sortedTimeRecords.length > 0) && !this.state.showAllTimeRecords ?
                 <Row>
-                  <Col sm={12}>
+                  <Col xs={12}>
                     <TimeRecordItem timeRecord={sortedTimeRecords[0]} />
                   </Col>
                 </Row>
                 :
                 <Row>
-                  <Col sm={12}>
+                  <Col xs={12}>
                     <ul className="time-records-list">
                     { _.map(sortedTimeRecords, timeRecord => (
                       <li key={timeRecord.id} className="list-item">
@@ -273,7 +273,7 @@ var TimeEntryDialog = React.createClass({
               );
             })}
             <Row>
-              <Col sm={12}>
+              <Col xs={12}>
               { this.state.numberOfInputs < 10 && 
                 <Button 
                   bsSize="xsmall"
