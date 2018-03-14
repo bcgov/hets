@@ -86,43 +86,7 @@ var OwnersDetail = React.createClass({
   },
 
   componentDidMount() {
-    this.fetch().then(() => {
-      if (this.props.params.contactId) {
-        this.openContact(this.props);
-      }
-    });
-  },
-
-  componentWillReceiveProps(nextProps) {
-    if (!_.isEqual(nextProps.params, this.props.params)) {
-      if (nextProps.params.contactId &&  nextProps.params.contactId !== this.props.params.contactId) {
-        this.openContact(nextProps);
-      }
-    }
-  },
-
-  openContact(props) {
-    var contact = null;
-
-    if (props.params.contactId === '0') {
-      // New
-      contact = {
-        id: 0,
-        owner: props.owner,
-      };
-    } else if (props.params.contactId) {
-      // Open the contact for viewing if possible
-      contact = props.owner.contacts[props.params.contactId];
-    }
-
-    if (contact) {
-      this.openContactDialog(contact);
-    } else {
-      // Reset owner location
-      this.props.router.push({
-        pathname: this.props.owner.path,
-      });
-    }
+    this.fetch();
   },
 
   fetch() {
@@ -223,7 +187,18 @@ var OwnersDetail = React.createClass({
     });
   },
 
-  openContactDialog(contact) {
+  openContactDialog(contactId) {
+    var contact;
+    if (contactId === 0) {
+      // New
+      contact = {
+        id: 0,
+        owner: this.props.owner,
+      };
+    } else if (contactId) {
+      // Open the contact for viewing if possible
+      contact = this.props.owner.contacts[contactId];
+    }
     this.setState({
       contact: contact,
       showContactDialog: true,
@@ -231,18 +206,7 @@ var OwnersDetail = React.createClass({
   },
 
   closeContactDialog() {
-    this.setState({ showContactDialog: false }, () => {
-      // Reset owner location
-      this.props.router.push({
-        pathname: this.props.owner.path,
-      });
-    });
-  },
-
-  addContact() {
-    this.props.router.push({
-      pathname: `${ this.props.owner.path }/${ Constant.CONTACTS_PATHNAME }/0`,
-    });
+    this.setState({ showContactDialog: false });
   },
 
   deleteContact(contact) {
@@ -485,7 +449,7 @@ var OwnersDetail = React.createClass({
               {(() => {
                 if (this.state.loading ) { return <div className="spinner-container"><Spinner/></div>; }
 
-                var addContactButton = <Button title="Add Contact" onClick={ this.addContact } bsSize="xsmall"><Glyphicon glyph="plus" />&nbsp;<strong>Add</strong></Button>;
+                var addContactButton = <Button title="Add Contact" onClick={ this.openContactDialog.bind(this, 0) } bsSize="xsmall"><Glyphicon glyph="plus" />&nbsp;<strong>Add</strong></Button>;
 
                 if (!owner.contacts || Object.keys(owner.contacts).length === 0) { return <Alert bsStyle="success">No contacts { addContactButton }</Alert>; }
 
@@ -515,7 +479,7 @@ var OwnersDetail = React.createClass({
                         <td style={{ textAlign: 'right' }}>
                           <ButtonGroup>
                             <DeleteButton name="Contact" hide={ !contact.canDelete || contact.isPrimary } onConfirm={ this.deleteContact.bind(this, contact) }/>
-                            <EditButton name="Contact" view={ !contact.canEdit } pathname={ contact.path }/>
+                            <EditButton name="Contact" view={ !contact.canEdit } onClick={ this.openContactDialog.bind(this, contact.id) } />
                           </ButtonGroup>
                         </td>
                       </tr>;

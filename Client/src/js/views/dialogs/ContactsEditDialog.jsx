@@ -128,7 +128,6 @@ var ContactsEditDialog = React.createClass({
       valid = false;
     }
 
-
     return valid;
   },
 
