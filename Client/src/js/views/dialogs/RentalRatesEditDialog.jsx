@@ -76,7 +76,7 @@ var RentalRatesEditDialog = React.createClass({
 
   updateState(value) {
     let property = Object.keys(value)[0];
-    let stateValue = Object.values(value)[0];
+    let stateValue = _.values(value)[0];
     let number = property.match(/\d+/g)[0];
     let stateName = property.match(/[a-zA-Z]+/g)[0];
     let state = { [stateName]:  stateValue };
@@ -86,7 +86,7 @@ var RentalRatesEditDialog = React.createClass({
 
   updateRatePeriodState(value) {
     let property = Object.keys(value)[0];
-    let stateValue = Object.values(value)[0];
+    let stateValue = _.values(value)[0];
     let number = property.match(/\d+/g)[0];
     let stateName = property.match(/[a-zA-Z]+/g)[0];
     let state = { [stateName]:  stateValue };
@@ -106,7 +106,7 @@ var RentalRatesEditDialog = React.createClass({
   },
 
   updateRateTypeState(value) {
-    let stateValue = Object.values(value)[0];
+    let stateValue = _.values(value)[0];
     let provincialRateTypes = this.props.provincialRateTypes;
     let rateType = _.find(provincialRateTypes, {id: stateValue } );
     let property = Object.keys(value)[0];
@@ -126,7 +126,7 @@ var RentalRatesEditDialog = React.createClass({
 
   updateUIState(value) {
     let property = Object.keys(value)[0];
-    let stateValue = Object.values(value)[0];
+    let stateValue = _.values(value)[0];
     let number = property.match(/\d+/g)[0];
     let stateName = property.match(/[a-zA-Z]+/g)[0];
     let state = { [stateName]:  stateValue };

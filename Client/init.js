@@ -2,6 +2,7 @@ import $ from 'jquery';
 import React from 'react';
 import ReactDOM from 'react-dom';
 import Promise from 'bluebird';
+import 'babel-polyfill';
 
 import './utils/shims';
 
@@ -37,7 +38,7 @@ function renderApp() {
 }
 
 export default function startApp() {
-  if (location.hostname === 'localhost' && process.env.DEV_USER) { //eslint-disable-lint
+  if (location.hostname === 'localhost' && process.env.DEV_USER) { //eslint-disable-line
     Api.setDevUser(process.env.DEV_USER); //eslint-disable-line
   }
   
