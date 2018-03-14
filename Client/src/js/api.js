@@ -147,8 +147,15 @@ export function updateUserRoles(userId, userRoleArray) {
   });
 }
 
-export function getUserDistricts() {
+export function getCurrentUserDistricts() {
   return new ApiRequest('/userdistricts').get().then((response) => {
+    store.dispatch({ type: Action.CURRENT_USER_DISTRICTS, currentUserDistricts: response.data });
+    return response;
+  });
+}
+
+export function getUserDistricts(userId) {
+  return new ApiRequest(`users/${userId}/districts`).get().then((response) => {
     store.dispatch({ type: Action.USER_DISTRICTS, userDistricts: response.data });
     return response;
   });

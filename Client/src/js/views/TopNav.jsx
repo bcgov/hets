@@ -18,7 +18,7 @@ var TopNav = React.createClass({
     showWorkingIndicator: React.PropTypes.bool,
     requestError: React.PropTypes.object,
     showNav: React.PropTypes.bool,
-    userDistricts: React.PropTypes.object,
+    currentUserDistricts: React.PropTypes.object,
   },
 
   getDefaultProps() {
@@ -34,7 +34,7 @@ var TopNav = React.createClass({
   },
 
   render() {
-    var userDistricts = this.props.userDistricts.data.map(district => { 
+    var userDistricts = this.props.currentUserDistricts.data.map(district => { 
       return { ...district, districtName: district.district.name, id: district.district.id }; 
     });
 
@@ -130,7 +130,7 @@ function mapStateToProps(state) {
     currentUser: state.user,
     showWorkingIndicator: state.ui.requests.waiting,
     requestError: state.ui.requests.error,
-    userDistricts: state.models.userDistricts,
+    currentUserDistricts: state.models.currentUserDistricts,
   };
 }
 

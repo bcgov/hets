@@ -87,7 +87,8 @@ var UsersDetail = React.createClass({
   fetch() {
     this.setState({ loading: true });
     var getUserPromise = Api.getUser(this.props.params.userId);
-    Promise.all([getUserPromise]).finally(() => {
+    var getUserDistrictsPromise = Api.getUserDistricts(this.props.params.userId);
+    Promise.all([getUserPromise, getUserDistrictsPromise]).finally(() => {
       this.setState({ loading: false });
     });
   },
@@ -195,7 +196,6 @@ var UsersDetail = React.createClass({
   },
 
   deleteDistrict(district) {
-    console.log(district);
     Api.deleteUserDistrict(district);
   },
 
@@ -262,9 +262,12 @@ var UsersDetail = React.createClass({
             <Well>
               <h3>Districts</h3>
               {(() => {
+                var addDistrictButton = <Button title="Add District" bsSize="xsmall" onClick={ this.addUserDistrict }><Glyphicon glyph="plus" />&nbsp;<strong>Add District</strong></Button>;
+                
                 if (this.props.userDistricts.loading) { return <div style={{ textAlign: 'center' }}><Spinner/></div>; }
 
-                var addDistrictButton = <Button title="Add District" bsSize="xsmall" onClick={ this.addUserDistrict }><Glyphicon glyph="plus" />&nbsp;<strong>Add District</strong></Button>;
+                if (this.props.userDistricts.data.length === 0) { return <Alert bsStyle="success">No Districts { addDistrictButton }</Alert>; }
+
                 return (
                   <TableControl headers={[
                     { field: 'name',         title: 'District Name'  },
