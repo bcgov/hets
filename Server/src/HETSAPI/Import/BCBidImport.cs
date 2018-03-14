@@ -73,19 +73,24 @@ namespace HETSAPI.Import
             dbContext = new DbAppContext(null, options.Options);
             ImportEquip.Import(context, dbContext, fileLocation, SystemId);
 
-            //*** Import Dump_Truck from Dump_Truck.xml (HET_EQUIPMENT_TYPE)  
+            //*** Import Dump Truck from Dump_Truck.xml (HET_EQUIPMENT_TYPE)  
             dbContext = new DbAppContext(null, options.Options);
             ImportDumpTruck.Import(context, dbContext, fileLocation, SystemId);
 
-            //*** Import Equipment_Attached from Equip_Attach.xml   
+            //*** Import Equipment Attachments from Equip_Attach.xml   
             dbContext = new DbAppContext(null, options.Options);
             ImportEquipAttach.Import(context, dbContext, fileLocation, SystemId);
 
-            /*
+            //*** Import Projects from Project.xml   
+            dbContext = new DbAppContext(null, options.Options);
+            ImportProject.Import(context, dbContext, fileLocation, SystemId);
+
+
+            /*             
             //*** Import the table of "HET_DISTRICT_EQUIPMENT_TYPE"  from Block.xml   
             dbContext = new DbAppContext(null, options.Options);
-            ImportBlock.Import(context, dbContext, fileLocation,  SystemId);                                   
-                        
+            ImportBlock.Import(context, dbContext, fileLocation, SystemId);
+
             //*** Import the table of  "HET_RENTAL_AGREEMENT" and "HET_TIME_RECORD";  from Equip_Usage.xml   
             dbContext = new DbAppContext(null, options.Options);
             ImportEquipUsage.Import(context, dbContext, fileLocation, SystemId);
@@ -149,11 +154,11 @@ namespace HETSAPI.Import
             ImportEquipAttach.Obfuscate(context, dbContext, sourceFileLocation, destinationFileLocation, SystemId);
             dbContext = new DbAppContext(null, options.Options);
 
-            /*
             // Process projects
             ImportProject.Obfuscate(context, dbContext, sourceFileLocation, destinationFileLocation, SystemId);
-            dbContext = new DbAppContext(null, options.Options);            
-                                    
+            dbContext = new DbAppContext(null, options.Options);
+
+            /*                                                          
             // Process blocks
             ImportBlock.Obfuscate(context, dbContext, sourceFileLocation, destinationFileLocation, SystemId);
             dbContext = new DbAppContext(null, options.Options);
