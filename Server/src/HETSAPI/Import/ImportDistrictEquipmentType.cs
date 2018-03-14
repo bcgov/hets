@@ -9,7 +9,6 @@ using System.Xml.Serialization;
 using Hangfire.Console.Progress;
 using HETSAPI.ImportModels;
 using HETSAPI.Models;
-using Microsoft.AspNetCore.Mvc.ViewFeatures;
 using Microsoft.EntityFrameworkCore;
 using ServiceArea = HETSAPI.Models.ServiceArea;
 
@@ -180,7 +179,7 @@ namespace HETSAPI.Import
                 };
                                       
                 // set the district
-                ServiceArea serviceArea = dbContext.ServiceAreas
+                ServiceArea serviceArea = dbContext.ServiceAreas.AsNoTracking()
                     .Include(x => x.District)
                     .FirstOrDefault(x => x.MinistryServiceAreaID == oldObject.Service_Area_Id);
 

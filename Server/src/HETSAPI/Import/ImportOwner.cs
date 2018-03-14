@@ -299,6 +299,26 @@ namespace HETSAPI.Import
                     owner.CglPolicyNumber = null;
                 }
 
+                /*** New Fields being added
+                 <Company_Name> 
+                 <Ph_Country_Code> 
+                 <Ph_Area_Code> 
+                 <Ph_Number> 
+                 <Ph_Extension> 
+                 <Fax_Country_Code>
+                 <Fax_Area_Code> 
+                 <Fax_Number> 
+                 <Fax_Extension> 
+                 <Cell_Country_Code> 
+                 <Cell_Area_Code> 
+                 <Cell_Number> 
+                 <Cell_Extension> 
+                 <Contact_Country_Code> 
+                 <Contact_Area_Code> 
+                 <Contact_Number> 
+                 <Contact_Extension>
+                 */
+
                 // ***********************************************
                 // manage archive and owner status
                 // ***********************************************

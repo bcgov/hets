@@ -7,6 +7,7 @@ using System.Linq;
 using System.Xml.Serialization;
 using Hangfire.Console.Progress;
 using HETSAPI.Models;
+using Microsoft.EntityFrameworkCore;
 using ServiceArea = HETSAPI.ImportModels.ServiceArea;
 
 namespace HETSAPI.Import
@@ -126,7 +127,8 @@ namespace HETSAPI.Import
                 if (tempServiceAreaId > 0)
                 {                
 
-                    District district = dbContext.Districts.FirstOrDefault(x => x.MinistryDistrictID == tempServiceAreaId);
+                    District district = dbContext.Districts.AsNoTracking()
+                        .FirstOrDefault(x => x.MinistryDistrictID == tempServiceAreaId);
 
                     if (district != null)
                     {

@@ -62,6 +62,7 @@ namespace HETSAPI.Import
                 List<Equipment> equip_list = dbContext.Equipments
                         .Include(x => x.DistrictEquipmentType)
                         .ToList();
+
                 Dictionary<int, Equipment> equips = new Dictionary<int, Equipment>();
 
                 foreach (Equipment equip_item in equip_list)

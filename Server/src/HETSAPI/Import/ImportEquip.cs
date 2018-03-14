@@ -10,6 +10,7 @@ using System.Xml.Serialization;
 using Hangfire.Console.Progress;
 using HETSAPI.ImportModels;
 using HETSAPI.Models;
+using Microsoft.EntityFrameworkCore;
 
 namespace HETSAPI.Import
 {
@@ -290,15 +291,18 @@ namespace HETSAPI.Import
                 
                 if (!string.IsNullOrEmpty(tempComment))
                 {
-                    tempComment = ImportUtility.GetCapitalCase(tempComment);
-
-                    equipment.Notes = new List<Note>();
+                    tempComment = ImportUtility.GetUppercaseFirst(tempComment);
 
                     Note note = new Note
                     {
                         Text = tempComment,
                         IsNoLongerRelevant = false
                     };
+
+                    if (equipment.Notes == null)
+                    {
+                        equipment.Notes = new List<Note>();
+                    }
 
                     equipment.Notes.Add(note);
                 }
@@ -308,7 +312,8 @@ namespace HETSAPI.Import
                 // ***********************************************
                 if (oldObject.Area_Id != null)
                 {
-                    LocalArea area = dbContext.LocalAreas.FirstOrDefault(x => x.LocalAreaNumber == oldObject.Area_Id);
+                    LocalArea area = dbContext.LocalAreas.AsNoTracking()
+                        .FirstOrDefault(x => x.LocalAreaNumber == oldObject.Area_Id);
 
                     if (area != null)
                     {
@@ -330,7 +335,7 @@ namespace HETSAPI.Import
                     // get the new id for the "District" Equipment Type
                     string tempEquipmentTypeId = oldObject.Equip_Type_Id.ToString();
 
-                    ImportMap equipMap = dbContext.ImportMaps
+                    ImportMap equipMap = dbContext.ImportMaps.AsNoTracking()
                         .FirstOrDefault(x => x.OldTable == ImportDistrictEquipmentType.OldTable &&
                                              x.OldKey == tempEquipmentTypeId &&
                                              x.NewTable == ImportDistrictEquipmentType.NewTable);
@@ -368,8 +373,9 @@ namespace HETSAPI.Import
                 // ***********************************************
                 // set the equipment owner
                 // ***********************************************                
-                ImportMap ownerMap = dbContext.ImportMaps.FirstOrDefault(x => x.OldTable == ImportOwner.OldTable && 
-                                                                              x.OldKey == oldObject.Owner_Popt_Id.ToString());
+                ImportMap ownerMap = dbContext.ImportMaps.AsNoTracking()
+                    .FirstOrDefault(x => x.OldTable == ImportOwner.OldTable && 
+                                         x.OldKey == oldObject.Owner_Popt_Id.ToString());
 
                 if (ownerMap != null)
                 {

@@ -2,12 +2,15 @@
 using Hangfire.Server;
 using System;
 using System.Collections.Generic;
+using System.Data;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Xml.Serialization;
 using HETSAPI.Models;
 using Project = HETSAPI.ImportModels.Project;
 using Hangfire.Console.Progress;
+using Microsoft.EntityFrameworkCore;
 
 namespace HETSAPI.Import
 {
@@ -43,6 +46,13 @@ namespace HETSAPI.Import
                 return;
             }
 
+            int maxProjectIndex = 0;
+
+            if (dbContext.Projects.Any())
+            {
+                maxProjectIndex = dbContext.Projects.Max(x => x.Id);
+            }
+
             try
             {
                 string rootAttr = "ArrayOf" + OldTable;
@@ -68,42 +78,19 @@ namespace HETSAPI.Import
                     legacyItems = legacyItems.Skip(ii).ToArray();
                 }
 
+                Debug.WriteLine("Importing Project Data. Total Records: " + legacyItems.Length);
+
                 foreach (Project item in legacyItems.WithProgress(progress))
                 {
                     // see if we have this one already
                     ImportMap importMap = dbContext.ImportMaps.FirstOrDefault(x => x.OldTable == OldTable && x.OldKey == item.Project_Id.ToString());
 
                     // new entry
-                    if (importMap == null) 
+                    if (importMap == null && item.Project_Id > 0)
                     {
-                        if (item.Project_Id > 0)
-                        {
-                            Models.Project instance = null;
-                            CopyToInstance(dbContext, item, ref instance, systemId);
-                            ImportUtility.AddImportMap(dbContext, OldTable, item.Project_Id.ToString(), NewTable, instance.Id);
-                        }
-                    }
-                    else // update
-                    {
-                        Models.Project instance = dbContext.Projects.FirstOrDefault(x => x.Id == importMap.NewKey);
-
-                        // record was deleted
-                        if (instance == null) 
-                        {
-                            CopyToInstance(dbContext, item, ref instance, systemId);
-
-                            // update the import map
-                            importMap.NewKey = instance.Id;
-                            dbContext.ImportMaps.Update(importMap);
-                        }
-                        else // ordinary update.
-                        {
-                            CopyToInstance(dbContext, item, ref instance, systemId);
-
-                            // touch the import map
-                            importMap.AppLastUpdateTimestamp = DateTime.UtcNow;
-                            dbContext.ImportMaps.Update(importMap);
-                        }
+                        Models.Project instance = null;
+                        CopyToInstance(dbContext, item, ref instance, systemId, ref maxProjectIndex);
+                        ImportUtility.AddImportMap(dbContext, OldTable, item.Project_Id.ToString(), NewTable, instance.Id);
                     }
 
                     // save change to database periodically to avoid frequent writing to the database
@@ -129,13 +116,16 @@ namespace HETSAPI.Import
                 }
                 catch (Exception e)
                 {
-                    performContext.WriteLine("Error saving data " + e.Message);
+                    string temp = string.Format("Error saving data (ProjectIndex: {0}): {1}", maxProjectIndex, e.Message);
+                    performContext.WriteLine(temp);
+                    throw new DataException(temp);
                 }
             }
             catch (Exception e)
             {
                 performContext.WriteLine("*** ERROR ***");
                 performContext.WriteLine(e.ToString());
+                throw;
             }
         }
 
@@ -144,113 +134,83 @@ namespace HETSAPI.Import
         /// </summary>
         /// <param name="dbContext"></param>
         /// <param name="oldObject"></param>
-        /// <param name="instance"></param>
+        /// <param name="project"></param>
         /// <param name="systemId"></param>
-        private static void CopyToInstance(DbAppContext dbContext, Project oldObject, ref Models.Project instance, string systemId)
+        /// <param name="maxProjectIndex"></param>
+        private static void CopyToInstance(DbAppContext dbContext, Project oldObject, ref Models.Project project, 
+            string systemId, ref int maxProjectIndex)
         {
-            if (oldObject.Project_Id <= 0)
-                return;
-
-            // add the user specified in oldObject.Modified_By and oldObject.Created_By if not there in the database
-            User modifiedBy = ImportUtility.AddUserFromString(dbContext, "", systemId);
-            User createdBy = ImportUtility.AddUserFromString(dbContext, oldObject.Created_By, systemId);
-
-            if (instance == null)
+            try
             {
-                instance = new Models.Project {Id = oldObject.Project_Id};
-
-                try
+                if (project != null)
                 {
-                    try
-                    {   //4 properties
-                        instance.ProvincialProjectNumber = oldObject.Project_Num;
-                        ServiceArea serviceArea = dbContext.ServiceAreas.FirstOrDefault(x => x.MinistryServiceAreaID == oldObject.Service_Area_Id);
-                        District dis = null;
-
-                        if (serviceArea != null && serviceArea.DistrictId != null)
-                        {
-                            dis = dbContext.Districts.FirstOrDefault(x => x.Id == serviceArea.DistrictId);
-                        }
-
-                        if (dis != null)   
-                        {
-                            instance.District = dis;
-                            instance.DistrictId = dis.Id;
-                        }
-                        else   
-                        {
-                            // this means that the District Id is not in the database
-                            // (happens when the production data does not include district Other than "Lower Mainland" or all the districts)
-                            return;
-                        }
-                    }
-                    catch
-                    {
-                        // do nothing
-                    }
-
-                    try
-                    {
-                        instance.Name = oldObject.Job_Desc1;
-                    }
-                    catch 
-                    {
-                        // do nothing
-                    }
-
-                    try
-                    {
-                        instance.Information = oldObject.Job_Desc2;
-                    }
-                    catch
-                    {
-                        // do nothing
-                    }
-
-                    try
-                    {
-                        instance.Notes = new List<Note>();
-
-                        Note note = new Note
-                        {
-                            Text = new string(oldObject.Job_Desc2.Take(2048).ToArray()),
-                            IsNoLongerRelevant = true
-                        };
-
-                        instance.Notes.Add(note);
-                    }
-                    catch
-                    {
-                        // do nothing
-                    }
-                    
-                    try
-                    {   
-                        instance.AppCreateTimestamp = DateTime.ParseExact(oldObject.Created_Dt.Trim().Substring(0, 10), "yyyy-MM-dd", System.Globalization.CultureInfo.InvariantCulture);
-                    }
-                    catch
-                    {
-                        instance.AppCreateTimestamp = DateTime.UtcNow;
-                    }
-
-                    instance.AppCreateUserid = createdBy.SmUserId;
-                }
-                catch
-                {
-                    // do nothing
+                    return;
                 }
 
-                // set the status to Active so the project will show in the user interface.
-                instance.Status = "Active";
+                project = new Models.Project { Id = ++maxProjectIndex };
 
-                dbContext.Projects.Add(instance);
+                // ***********************************************
+                // set project properties
+                // ***********************************************
+                string tempProjectNumber = ImportUtility.CleanString(oldObject.Project_Num).ToUpper();
+                if (!string.IsNullOrEmpty(tempProjectNumber))
+                {
+                    project.ProvincialProjectNumber = tempProjectNumber;
+                }
+
+                // project name
+                string tempName = ImportUtility.CleanString(oldObject.Job_Desc1).ToUpper();
+                if (!string.IsNullOrEmpty(tempName))
+                {
+                    tempName = ImportUtility.GetCapitalCase(tempName);
+                    project.Name = tempName;
+                }
+
+                // project information
+                string tempInformation = ImportUtility.CleanString(oldObject.Job_Desc2);
+                if (!string.IsNullOrEmpty(tempInformation))
+                {
+                    tempInformation = ImportUtility.GetUppercaseFirst(tempInformation);
+                    project.Information = tempInformation;
+                }                
+
+                // ***********************************************
+                // set service area for the project
+                // ***********************************************
+                ServiceArea serviceArea = dbContext.ServiceAreas.AsNoTracking()
+                    .Include(x => x.District)
+                    .FirstOrDefault(x => x.MinistryServiceAreaID == oldObject.Service_Area_Id);
+
+                if (serviceArea == null)
+                {
+                    throw new DataException(string.Format("Service Area cannot be null (ProjectIndex: {0}", maxProjectIndex));
+                }
+
+                int tempDistrictId = serviceArea.District.Id;
+
+                project.DistrictId = tempDistrictId;
+                
+                // ***********************************************
+                // default the project to Active
+                // ***********************************************
+                project.Status = "Active";
+
+                // ***********************************************
+                // create project
+                // ***********************************************                            
+                project.AppCreateUserid = systemId;
+                project.AppCreateTimestamp = DateTime.UtcNow;
+                project.AppLastUpdateUserid = systemId;
+                project.AppLastUpdateTimestamp = DateTime.UtcNow;
+
+                dbContext.Projects.Add(project);
             }
-            else
+            catch (Exception ex)
             {
-                instance = dbContext.Projects.First(x => x.Id == oldObject.Project_Id);
-                instance.AppLastUpdateUserid = modifiedBy.SmUserId;
-                instance.AppLastUpdateTimestamp = DateTime.UtcNow;
-                dbContext.Projects.Update(instance);
+                Debug.WriteLine("***Error*** - Project Name: " + oldObject.Job_Desc1);
+                Debug.WriteLine("***Error*** - Master project Index: " + maxProjectIndex);
+                Debug.WriteLine(ex.Message);
+                throw;
             }
         }
 

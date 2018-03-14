@@ -9,6 +9,7 @@ using System.Linq;
 using System.Xml.Serialization;
 using Hangfire.Console.Progress;
 using HETSAPI.ImportModels;
+using Microsoft.EntityFrameworkCore;
 
 namespace HETSAPI.Import
 {
@@ -150,9 +151,10 @@ namespace HETSAPI.Import
                 // ************************************************
                 string tempId = oldObject.Equip_Id.ToString();
 
-                ImportMap map = dbContext.ImportMaps.FirstOrDefault(x => x.OldKey == tempId &&
-                                                                         x.OldTable == ImportEquip.OldTable &&
-                                                                         x.NewTable == ImportEquip.NewTable);
+                ImportMap map = dbContext.ImportMaps.AsNoTracking()
+                    .FirstOrDefault(x => x.OldKey == tempId &&
+                                         x.OldTable == ImportEquip.OldTable &&
+                                         x.NewTable == ImportEquip.NewTable);
 
                 if (map == null)
                 {
@@ -162,7 +164,8 @@ namespace HETSAPI.Import
                 // ************************************************
                 // get the equipment record
                 // ************************************************
-                Equipment equipment = dbContext.Equipments.FirstOrDefault(x => x.Id == map.NewKey);
+                Equipment equipment = dbContext.Equipments.AsNoTracking()
+                    .FirstOrDefault(x => x.Id == map.NewKey);
 
                 if (equipment == null)
                 {

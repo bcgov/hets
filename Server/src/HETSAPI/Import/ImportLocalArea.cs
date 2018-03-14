@@ -8,6 +8,7 @@ using System.Xml.Serialization;
 using Hangfire.Console.Progress;
 using HETSAPI.ImportModels;
 using HETSAPI.Models;
+using Microsoft.EntityFrameworkCore;
 using ServiceArea = HETSAPI.Models.ServiceArea;
 
 namespace HETSAPI.Import
@@ -118,7 +119,8 @@ namespace HETSAPI.Import
                 };
 
                 // map to the correct service area
-                ServiceArea serviceArea = dbContext.ServiceAreas.FirstOrDefault(x => x.MinistryServiceAreaID == oldObject.Service_Area_Id);
+                ServiceArea serviceArea = dbContext.ServiceAreas.AsNoTracking()
+                    .FirstOrDefault(x => x.MinistryServiceAreaID == oldObject.Service_Area_Id);
 
                 if (serviceArea == null)
                 {
