@@ -18,9 +18,9 @@ namespace HETSAPI.Import
     /// </summary>
     public static class ImportEquip
     {
-        const string OldTable = "Equip";
-        const string NewTable = "HET_EQUIPMMENT";
-        const string XmlFileName = "Equip.xml";
+        public const string OldTable = "Equip";
+        public const string NewTable = "HET_EQUIPMENT";
+        public const string XmlFileName = "Equip.xml";
 
         /// <summary>
         /// Progress Property
@@ -144,10 +144,11 @@ namespace HETSAPI.Import
 
                 equipment = new Equipment { Id = ++maxEquipmentIndex };
 
-                // there is a problem with 1 equipment record - skipping it until the export is resolved
+                // there is a problem with 1 equipment record
+                // Per BC Bid - the correct Owner Id should be: 8786195
                 if (oldObject.Equip_Id == 19165)
                 {
-                    return;
+                    oldObject.Owner_Popt_Id = 8786195;
                 }          
 
                 // ***********************************************

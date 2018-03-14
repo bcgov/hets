@@ -140,65 +140,75 @@ namespace HETSAPI.Import
         private static void CopyToInstance(DbAppContext dbContext, EquipType oldObject, 
             ref DistrictEquipmentType equipType, string systemId, ref int maxEquipTypeIndex)
         {
-            if (oldObject.Equip_Type_Id <= 0)
+            try
             {
-                return;
-            }
+                if (oldObject.Equip_Type_Id <= 0)
+                {
+                    return;
+                }
 
-            if (equipType != null)
-            {
-                return;
-            }
+                if (equipType != null)
+                {
+                    return;
+                }
 
-            // get the equipment type
-            string tempEquipTypeCode = ImportUtility.CleanString(oldObject.Equip_Type_Cd).ToUpper();
+                // get the equipment type
+                string tempEquipTypeCode = ImportUtility.CleanString(oldObject.Equip_Type_Cd).ToUpper();
 
-            // get the parent equipment type
-            EquipmentType type = dbContext.EquipmentTypes.FirstOrDefault(x => x.Name == tempEquipTypeCode);
+                // get the parent equipment type
+                EquipmentType type = dbContext.EquipmentTypes.FirstOrDefault(x => x.Name == tempEquipTypeCode);
 
-            if (type == null)
-            {
-                throw new ArgumentException(
-                    string.Format("Cannot find Equipment Type (Equipment Type Code: {0} | Equipment Type Id: {1})", 
-                        tempEquipTypeCode, oldObject.Equip_Type_Id));
-            }
+                if (type == null)
+                {
+                    throw new ArgumentException(
+                        string.Format("Cannot find Equipment Type (Equipment Type Code: {0} | Equipment Type Id: {1})", 
+                            tempEquipTypeCode, oldObject.Equip_Type_Id));
+                }
 
-            // get the description
-            string tempDistrictDescription = ImportUtility.CleanString(oldObject.Equip_Type_Desc);
-            tempDistrictDescription = ImportUtility.GetCapitalCase(tempDistrictDescription);
+                // get the description
+                string tempDistrictDescription = ImportUtility.CleanString(oldObject.Equip_Type_Desc);
+                tempDistrictDescription = ImportUtility.GetCapitalCase(tempDistrictDescription);
 
-            // add new district equipment type
-            int tempId = type.Id;
+                // add new district equipment type
+                int tempId = type.Id;
 
-            equipType = new DistrictEquipmentType
-            {
-                Id = ++maxEquipTypeIndex,
-                EquipmentTypeId = tempId,
-                DistrictEquipmentName = tempDistrictDescription
-            };
+                equipType = new DistrictEquipmentType
+                {
+                    Id = ++maxEquipTypeIndex,
+                    EquipmentTypeId = tempId,
+                    DistrictEquipmentName = tempDistrictDescription
+                };
                                       
-            // set the district
-            ServiceArea serviceArea = dbContext.ServiceAreas
-                .Include(x => x.District)
-                .FirstOrDefault(x => x.MinistryServiceAreaID == oldObject.Service_Area_Id);
+                // set the district
+                ServiceArea serviceArea = dbContext.ServiceAreas
+                    .Include(x => x.District)
+                    .FirstOrDefault(x => x.MinistryServiceAreaID == oldObject.Service_Area_Id);
 
-            if (serviceArea == null)
-            {
-                throw new ArgumentException(
-                    string.Format("Cannot find Service Area (Service Area Id: {0} | Equipment Type Id: {1})",
-                        oldObject.Service_Area_Id, oldObject.Equip_Type_Id));
+                if (serviceArea == null)
+                {
+                    throw new ArgumentException(
+                        string.Format("Cannot find Service Area (Service Area Id: {0} | Equipment Type Id: {1})",
+                            oldObject.Service_Area_Id, oldObject.Equip_Type_Id));
+                }
+
+                int districtId = serviceArea.District.Id;
+                equipType.DistrictId = districtId;
+
+                // save district equipment type record
+                equipType.AppCreateUserid = systemId;
+                equipType.AppCreateTimestamp = DateTime.UtcNow;
+                equipType.AppLastUpdateUserid = systemId;
+                equipType.AppLastUpdateTimestamp = DateTime.UtcNow;
+
+                dbContext.DistrictEquipmentTypes.Add(equipType);
             }
-
-            int districtId = serviceArea.District.Id;
-            equipType.DistrictId = districtId;
-
-            // save district equipment type record
-            equipType.AppCreateUserid = systemId;
-            equipType.AppCreateTimestamp = DateTime.UtcNow;
-            equipType.AppLastUpdateUserid = systemId;
-            equipType.AppLastUpdateTimestamp = DateTime.UtcNow;
-
-            dbContext.DistrictEquipmentTypes.Add(equipType);
+            catch (Exception ex)
+            {
+                Debug.WriteLine("***Error*** - (Old) Equipment Code: " + oldObject.Equip_Type_Cd);
+                Debug.WriteLine("***Error*** - Master District Equipment Index: " + maxEquipTypeIndex);
+                Debug.WriteLine(ex.Message);
+                throw;
+            }
         }
     }
 }

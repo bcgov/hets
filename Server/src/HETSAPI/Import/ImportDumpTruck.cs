@@ -2,11 +2,12 @@
 using Hangfire.Server;
 using HETSAPI.Models;
 using System;
+using System.Data;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Xml.Serialization;
 using Hangfire.Console.Progress;
-using HETSAPI.ImportModels;
 using DumpTruck = HETSAPI.ImportModels.DumpTruck;
 
 namespace HETSAPI.Import
@@ -16,9 +17,9 @@ namespace HETSAPI.Import
     /// </summary>
     public static class ImportDumpTruck
     {
-        const string OldTable = "Dump_Truck";
-        const string NewTable = "Dump_Truck";
-        const string XmlFileName = "Dump_Truck.xml";
+        public const string OldTable = "Dump_Truck";
+        public const string NewTable = "HET_EQUIPMENT";
+        public const string XmlFileName = "Dump_Truck.xml";
 
         /// <summary>
         /// Progress Property
@@ -65,8 +66,13 @@ namespace HETSAPI.Import
                     legacyItems = legacyItems.Skip(ii).ToArray();
                 }
 
+                Debug.WriteLine("Importing Dump Truck Data. Total Records: " + legacyItems.Length);
+                int lastEquipmentIndex = -1;
+
                 foreach (DumpTruck item in legacyItems.WithProgress(progress))
                 {
+                    lastEquipmentIndex = item.Equip_Id;
+
                     // see if we have this one already
                     ImportMap importMap = dbContext.ImportMaps.FirstOrDefault(x => x.OldTable == OldTable && x.OldKey == item.Equip_Id.ToString());
 
@@ -74,7 +80,7 @@ namespace HETSAPI.Import
                     if (importMap == null && item.Equip_Id > 0)
                     {
                         CopyToInstance(dbContext, item, systemId);
-                        ImportUtility.AddImportMap(dbContext, OldTable, item.Equip_Id.ToString(), NewTable, 0);
+                        ImportUtility.AddImportMap(dbContext, OldTable, item.Equip_Id.ToString(), NewTable, item.Equip_Id);
                     }
 
                     // save change to database periodically to avoid frequent writing to the database
@@ -100,13 +106,16 @@ namespace HETSAPI.Import
                 }
                 catch (Exception e)
                 {
-                    performContext.WriteLine("Error saving data " + e.Message);
+                    string temp = string.Format("Error saving data (Dumptruck EquipmentIndex: {0}): {1}", lastEquipmentIndex, e.Message);
+                    performContext.WriteLine(temp);
+                    throw new DataException(temp);
                 }
             }
             catch (Exception e)
             {
                 performContext.WriteLine("*** ERROR ***");
                 performContext.WriteLine(e.ToString());
+                throw;
             }            
         }
 
@@ -118,39 +127,85 @@ namespace HETSAPI.Import
         /// <param name="systemId"></param>
         private static void CopyToInstance(DbAppContext dbContext, DumpTruck oldObject, string systemId)
         {
-            if (oldObject.Equip_Id <= 0)
+            try
             {
-                return;
-            }
+                if (oldObject.Equip_Id <= 0)
+                {
+                    return;
+                }
 
-            // dump truck records update the equipment type - IS_DUMP_TRUCK
-            string tempId = oldObject.Equip_Id.ToString();
+                // dump truck records update the equipment record
+                // find the original equiopment record
+                string tempId = oldObject.Equip_Id.ToString();
 
-            ImportMap map = dbContext.ImportMaps.FirstOrDefault(x => x.OldKey == tempId && 
-                                                                     x.OldTable == "Equip_Type" &&
-                                                                     x.NewKey > 0);
+                ImportMap map = dbContext.ImportMaps.FirstOrDefault(x => x.OldKey == tempId && 
+                                                                         x.OldTable == ImportEquip.OldTable &&
+                                                                         x.NewTable == ImportEquip.NewTable);
 
-            if (map != null)
-            {
+                if (map == null)
+                {
+                    return; // ignore and move to the next record
+                }
+
+                // ************************************************
                 // get the equipment record and update
-                EquipmentType equipType = dbContext.EquipmentTypes.FirstOrDefault(x => x.Id == map.NewKey);
+                // ************************************************
+                Equipment equipment = dbContext.Equipments.FirstOrDefault(x => x.Id == map.NewKey);
 
-                if (equipType == null)
-                {
-                    throw new ArgumentException(string.Format("Cannot locate Equipment Type record (Dump Truck Equip Id: {0}", tempId));
+                if (equipment == null)
+                {                
+                    throw new ArgumentException(string.Format("Cannot locate Equipment record (DumpTruck Equip Id: {0}", tempId));
                 }
 
-                if (equipType.IsDumpTruck)
+                // set dump truck attributes
+                string tempLicensedGvw = ImportUtility.CleanString(oldObject.Licenced_GVW);
+                if (!string.IsNullOrEmpty(tempLicensedGvw))
                 {
-                    return; // already updated
+                    equipment.LicencedGvw = tempLicensedGvw;
                 }
 
-                equipType.IsDumpTruck = true;
-                equipType.AppLastUpdateUserid = systemId;
-                equipType.AppLastUpdateTimestamp = DateTime.UtcNow;
+                string tempLegalCapacity = ImportUtility.CleanString(oldObject.Legal_Capacity);
+                if (!string.IsNullOrEmpty(tempLegalCapacity))
+                {
+                    equipment.LegalCapacity = tempLegalCapacity;
+                }
 
-                dbContext.EquipmentTypes.Update(equipType);
-            }                      
+                string tempPupLegalCapacity = ImportUtility.CleanString(oldObject.Legal_PUP_Tare_Weight);
+
+                if (!string.IsNullOrEmpty(tempPupLegalCapacity))
+                {
+                    equipment.PupLegalCapacity = tempPupLegalCapacity;
+                }
+
+                equipment.AppLastUpdateUserid = systemId;
+                equipment.AppLastUpdateTimestamp = DateTime.UtcNow;
+
+                dbContext.Equipments.Update(equipment);
+
+                // ************************************************
+                // get the equipment type record and update
+                // ************************************************
+                int? tempEquipTypeId = equipment.DistrictEquipmentTypeId;
+
+                if (tempEquipTypeId == null) return;
+            
+                EquipmentType equipmentType = dbContext.EquipmentTypes.FirstOrDefault(x => x.Id == tempEquipTypeId);
+
+                if (equipmentType != null && !equipmentType.IsDumpTruck)
+                {
+                    equipmentType.IsDumpTruck = true;
+                    equipmentType.AppLastUpdateUserid = systemId;
+                    equipmentType.AppLastUpdateTimestamp = DateTime.UtcNow;
+
+                    dbContext.EquipmentTypes.Update(equipmentType);
+                }
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine("***Error*** - (Old) Equipment Id: " + oldObject.Equip_Id);
+                Debug.WriteLine(ex.Message);
+                throw;
+            }
         }
 
         public static void Obfuscate(PerformContext performContext, DbAppContext dbContext, string sourceLocation, string destinationLocation, string systemId)

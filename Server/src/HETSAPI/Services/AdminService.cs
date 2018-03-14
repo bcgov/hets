@@ -13,9 +13,8 @@ namespace HETSAPI.Services
         /// </summary>
         /// <param name="path">Location of the extracted files to parse (relative to the folder where files are stored)</param>
         /// <param name="realTime">Execute in real time</param>
-        /// <param name="clearDb">Clean the db before execution</param>
         /// <response code="200">OK</response>
-        IActionResult AdminImportGetAsync(string path, bool realTime, bool clearDb);
+        IActionResult AdminImportGetAsync(string path, bool realTime);
 
         // copies source files with obfuscation
         IActionResult AdminObfuscateGetAsync(string sourcePath, string destinationPath);
