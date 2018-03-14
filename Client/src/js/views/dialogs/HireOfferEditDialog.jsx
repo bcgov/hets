@@ -10,6 +10,7 @@ import Promise from 'bluebird';
 import * as Api from '../../api';
 
 import ConfirmForceHireDialog from '../dialogs/ConfirmForceHireDialog.jsx';
+import ConfirmDialog from '../dialogs/ConfirmDialog.jsx';
 
 import CheckboxControl from '../../components/CheckboxControl.jsx';
 import DropdownControl from '../../components/DropdownControl.jsx';
@@ -66,6 +67,7 @@ var HireOfferEditDialog = React.createClass({
       offerRefusalReasonError: '',
 
       showConfirmForceHireDialog: false,
+      showConfirmMaxHoursHireDialog: false,
 
       equipmentVerifiedActive: false,
       equipmentInformationUpdateNeeded: false,
@@ -163,6 +165,16 @@ var HireOfferEditDialog = React.createClass({
   },
 
   saveHireOffer() {
+    var isDumpTruck = this.props.hireOffer.equipment.districtEquipmentType.equipmentType.isDumpTruck;
+    var hoursYtd = this.props.hireOffer.equipment.hoursYtd;
+    console.log(isDumpTruck, hoursYtd);
+    if (this.state.offerStatus !== STATUS_NO && !isDumpTruck && hoursYtd < 300) {
+      return this.openConfirmMaxHoursHireDialog();
+    }
+    if (this.state.offerStatus !== STATUS_NO && isDumpTruck && hoursYtd < 600) {
+      return this.openConfirmMaxHoursHireDialog();
+    }
+
     var props = this.buildEquipmentProps();
 
     // Update Equipment props only if they changed
@@ -193,6 +205,14 @@ var HireOfferEditDialog = React.createClass({
 
   closeConfirmForceHireDialog() {
     this.setState({ showConfirmForceHireDialog: false });
+  },
+
+  openConfirmMaxHoursHireDialog() {
+    this.setState({ showConfirmMaxHoursHireDialog: true });
+  },
+
+  closeConfirmMaxHoursHireDialog() {
+    this.setState({ showConfirmMaxHoursHireDialog: false });
   },
 
   render() {
@@ -293,32 +313,25 @@ var HireOfferEditDialog = React.createClass({
                 </FormGroup>
               </Col>
             </Row>
-            {/* { this.props.error &&
-              <Alert bsStyle="danger">
-                { this.props.error.description }
-              </Alert>  
-            } */}
-            {/* Todo will be used in future */}
-            {/* <Row>
-              <Col md={12}>
-                <FormGroup controlId="equipmentInformationUpdateNeeded">
-                  <CheckboxControl id="equipmentInformationUpdateNeeded" checked={ this.state.equipmentInformationUpdateNeeded } updateState={ this.updateState }>Flag Equipment Updates</CheckboxControl>
-                </FormGroup>
-              </Col>
-            </Row>
-            <Row>
-              <Col md={12}>
-                <FormGroup controlId="equipmentInformationUpdateNeededReason">
-                  <ControlLabel>Update Reason</ControlLabel>
-                  <FormInputControl componentClass="textarea" defaultValue={ this.state.equipmentInformationUpdateNeededReason } readOnly={ isReadOnly } updateState={ this.updateState } />
-                </FormGroup>
-              </Col>
-            </Row> */}
           </Grid>
         </Form>;
       })()}
       { this.state.showConfirmForceHireDialog &&
-        <ConfirmForceHireDialog show={ this.state.showConfirmForceHireDialog } onSave={ this.onConfirmForceHire } onClose={ this.closeConfirmForceHireDialog } />
+        <ConfirmForceHireDialog 
+          show={ this.state.showConfirmForceHireDialog } 
+          onSave={ this.onConfirmForceHire } 
+          onClose={ this.closeConfirmForceHireDialog } 
+        />
+      }
+      { this.state.showConfirmMaxHoursHireDialog &&
+        <ConfirmDialog 
+          show={ this.state.showConfirmMaxHoursHireDialog } 
+          onSave={ this.onConfirmForceHire } 
+          onClose={ this.closeConfirmMaxHoursHireDialog } 
+          title="Confirm Hire"
+        >
+          <p>Equipment/Dump Truck has already reached maximum hours for the year. Do you still want to hire this Equipment/Dump Truck?</p>
+        </ConfirmDialog>
       }
     </EditDialog>;
   },
