@@ -74,7 +74,7 @@ namespace HETSAPI.Services.Impl
             // return for the current user only
             int? userId = GetCurrentUserId();
 
-            var result = _context.UserDistricts.AsNoTracking()
+            List<UserDistrict> result = _context.UserDistricts.AsNoTracking()
                 .Include(x => x.User)
                 .Include(x => x.District)
                 .Where(x => x.User.Id == userId)

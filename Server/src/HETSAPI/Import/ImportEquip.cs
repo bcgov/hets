@@ -37,7 +37,7 @@ namespace HETSAPI.Import
         public static void Import(PerformContext performContext, DbAppContext dbContext, string fileLocation, string systemId)
         {
             // check the start point. If startPoint ==  sigId then it is already completed
-            int startPoint = ImportUtility.CheckInterMapForStartPoint(dbContext, OldTableProgress, BcBidImport.SigId);
+            int startPoint = ImportUtility.CheckInterMapForStartPoint(dbContext, OldTableProgress, BcBidImport.SigId, NewTable);
 
             if (startPoint == BcBidImport.SigId)    // this means the import job it has done today is complete for all the records in the xml file.
             {
@@ -47,7 +47,7 @@ namespace HETSAPI.Import
 
             int maxEquipmentIndex = 0;
 
-            if (dbContext.Owners.Any())
+            if (dbContext.Equipments.Any())
             {
                 maxEquipmentIndex = dbContext.Equipments.Max(x => x.Id);
             }
@@ -94,7 +94,7 @@ namespace HETSAPI.Import
                     {
                         try
                         {
-                            ImportUtility.AddImportMapForProgress(dbContext, OldTableProgress, ii.ToString(), BcBidImport.SigId);
+                            ImportUtility.AddImportMapForProgress(dbContext, OldTableProgress, ii.ToString(), BcBidImport.SigId, NewTable);
                             dbContext.SaveChangesForImport();
                         }
                         catch (Exception e)
@@ -107,7 +107,7 @@ namespace HETSAPI.Import
                 try
                 {
                     performContext.WriteLine("*** Importing " + XmlFileName + " is Done ***");
-                    ImportUtility.AddImportMapForProgress(dbContext, OldTableProgress, BcBidImport.SigId.ToString(), BcBidImport.SigId);
+                    ImportUtility.AddImportMapForProgress(dbContext, OldTableProgress, BcBidImport.SigId.ToString(), BcBidImport.SigId, NewTable);
                     dbContext.SaveChangesForImport();
                 }
                 catch (Exception e)
@@ -141,101 +141,14 @@ namespace HETSAPI.Import
                 {
                     return;
                 }
-                
+
                 equipment = new Equipment { Id = ++maxEquipmentIndex };
 
-                // ***********************************************
-                // set equipment attributes
-                // ***********************************************
-                string tempLicense = ImportUtility.CleanString(oldObject.Licence).ToUpper();
-
-                if (tempLicense != null)
+                // there is a problem with 1 equipment record - skipping it until the export is resolved
+                if (oldObject.Equip_Id == 19165)
                 {
-                    equipment.LicencePlate = tempLicense;
-                }
-
-                equipment.ApprovedDate = ImportUtility.CleanDateTime(oldObject.Approved_Dt);
-
-                DateTime? tempReceivedDate = ImportUtility.CleanDateTime(oldObject.Received_Dt);
-
-                if (tempReceivedDate != null)
-                {
-                    equipment.ReceivedDate = (DateTime)tempReceivedDate;
-                }
-                else
-                {
-                    throw new DataException(string.Format("Received Date cannot be null (EquipmentIndex: {0}", maxEquipmentIndex));
-                }
-
-                // equipment code
-                string tempEquipmentCode = ImportUtility.CleanString(oldObject.Equip_Cd).ToUpper();
-
-                if (!string.IsNullOrEmpty(tempEquipmentCode))
-                {
-                    equipment.EquipmentCode = tempEquipmentCode;
-                }
-                else
-                {
-                    throw new DataException(string.Format("Equipment Code cannot be null (EquipmentIndex: {0}", maxEquipmentIndex));
-                }
-
-                // pay rate
-                float? tempPayRate = ImportUtility.GetFloatValue(oldObject.Pay_Rate);
-
-                if (tempPayRate != null)
-                {
-                    equipment.PayRate = tempPayRate;                    
-                }
-
-                // ***********************************************
-                // make, model, year, etc.
-                // ***********************************************
-                string tempMake = ImportUtility.CleanString(oldObject.Make);
-
-                if (!string.IsNullOrEmpty(tempMake))
-                {
-                    equipment.Make = tempMake;
-                }
-
-                // model
-                string tempModel = ImportUtility.CleanString(oldObject.Model);
-
-                if (!string.IsNullOrEmpty(tempModel))
-                {
-                    equipment.Model = tempModel;
-                }
-
-                // year
-                string tempYear = ImportUtility.CleanString(oldObject.Year);
-
-                if (!string.IsNullOrEmpty(tempYear))
-                {
-                    equipment.Year = tempYear;
-                }
-
-                // size
-                string tempSize = ImportUtility.CleanString(oldObject.Size);
-
-                if (!string.IsNullOrEmpty(tempSize))
-                {
-                    equipment.Size = tempSize;
-                }                
-
-                // serial number
-                string tempSerialNumber = ImportUtility.CleanString(oldObject.Serial_Num);
-
-                if (!string.IsNullOrEmpty(tempSerialNumber))
-                {
-                    equipment.SerialNumber = tempSerialNumber;
-                }
-
-                // operator
-                string tempOperator = ImportUtility.CleanString(oldObject.Operator);
-
-                if (!string.IsNullOrEmpty(tempOperator))
-                {
-                    equipment.Operator = tempOperator ?? null;
-                }
+                    return;
+                }          
 
                 // ***********************************************
                 // set the equipment status
@@ -265,7 +178,109 @@ namespace HETSAPI.Import
                     equipment.ArchiveReason = null;
                     equipment.Status = tempStatus == "A" ? "Approved" : "Unapproved";
                     equipment.StatusComment = string.Format("Imported from BC Bid ({0})", tempStatus);
-                }                                               
+                }
+
+                // ***********************************************
+                // set equipment attributes
+                // ***********************************************
+                string tempLicense = ImportUtility.CleanString(oldObject.Licence).ToUpper();
+
+                if (!string.IsNullOrEmpty(tempLicense))
+                {
+                    equipment.LicencePlate = tempLicense;
+                }
+
+                equipment.ApprovedDate = ImportUtility.CleanDateTime(oldObject.Approved_Dt);
+
+                DateTime? tempReceivedDate = ImportUtility.CleanDateTime(oldObject.Received_Dt);
+
+                if (tempReceivedDate != null)
+                {
+                    equipment.ReceivedDate = (DateTime)tempReceivedDate;
+                }
+                else
+                {
+                    if (equipment.ArchiveCode == "N" && equipment.Status == "Approved")
+                    {
+                        throw new DataException(string.Format("Received Date cannot be null (EquipmentIndex: {0}", maxEquipmentIndex));
+                    }                    
+                }
+
+                // equipment code
+                string tempEquipmentCode = ImportUtility.CleanString(oldObject.Equip_Cd).ToUpper();
+
+                if (!string.IsNullOrEmpty(tempEquipmentCode))
+                {
+                    equipment.EquipmentCode = tempEquipmentCode;
+                }
+                else
+                {
+                    if (equipment.ArchiveCode == "N" && equipment.Status == "Approved")
+                    {
+                        throw new DataException(string.Format("Equipment Code cannot be null (EquipmentIndex: {0}", maxEquipmentIndex));
+                    }                    
+                }
+
+                // pay rate
+                float? tempPayRate = ImportUtility.GetFloatValue(oldObject.Pay_Rate);
+
+                if (tempPayRate != null)
+                {
+                    equipment.PayRate = tempPayRate;                    
+                }
+
+                // ***********************************************
+                // make, model, year, etc.
+                // ***********************************************
+                string tempMake = ImportUtility.CleanString(oldObject.Make);
+
+                if (!string.IsNullOrEmpty(tempMake))
+                {
+                    tempMake = ImportUtility.GetCapitalCase(tempMake);
+                    equipment.Make = tempMake;
+                }
+
+                // model
+                string tempModel = ImportUtility.CleanString(oldObject.Model).ToUpper();
+
+                if (!string.IsNullOrEmpty(tempModel))
+                {
+                    equipment.Model = tempModel;
+                }
+
+                // year
+                string tempYear = ImportUtility.CleanString(oldObject.Year);
+
+                if (!string.IsNullOrEmpty(tempYear))
+                {
+                    equipment.Year = tempYear;
+                }
+
+                // size
+                string tempSize = ImportUtility.CleanString(oldObject.Size);
+
+                if (!string.IsNullOrEmpty(tempSize))
+                {
+                    tempSize = ImportUtility.GetCapitalCase(tempSize);
+
+                    equipment.Size = tempSize;
+                }                
+
+                // serial number
+                string tempSerialNumber = ImportUtility.CleanString(oldObject.Serial_Num).ToUpper();
+
+                if (!string.IsNullOrEmpty(tempSerialNumber))
+                {
+                    equipment.SerialNumber = tempSerialNumber;
+                }
+
+                // operator
+                string tempOperator = ImportUtility.CleanString(oldObject.Operator);
+
+                if (!string.IsNullOrEmpty(tempOperator))
+                {
+                    equipment.Operator = tempOperator ?? null;
+                }                                                        
 
                 // ***********************************************
                 // add comment into the notes field
@@ -301,7 +316,7 @@ namespace HETSAPI.Import
                     }
                 }
 
-                if (equipment.LocalAreaId == null)
+                if (equipment.LocalAreaId == null && equipment.ArchiveCode == "N" && equipment.Status == "Approved")
                 {
                     throw new DataException(string.Format("Local Area cannot be null (EquipmentIndex: {0}", maxEquipmentIndex));
                 }
@@ -312,14 +327,16 @@ namespace HETSAPI.Import
                 if (oldObject.Equip_Type_Id != null)
                 {
                     // get the new id for the "District" Equipment Type
+                    string tempEquipmentTypeId = oldObject.Equip_Type_Id.ToString();
+
                     ImportMap equipMap = dbContext.ImportMaps
                         .FirstOrDefault(x => x.OldTable == ImportDistrictEquipmentType.OldTable &&
-                                             x.OldKey == oldObject.Equip_Type_Id.ToString() &&
+                                             x.OldKey == tempEquipmentTypeId &&
                                              x.NewTable == ImportDistrictEquipmentType.NewTable);
 
                     if (equipMap != null)
                     {
-                        DistrictEquipmentType distEquipType = dbContext.DistrictEquipmentTypes.FirstOrDefault(x => x.DistrictId == equipMap.NewKey);
+                        DistrictEquipmentType distEquipType = dbContext.DistrictEquipmentTypes.FirstOrDefault(x => x.Id == equipMap.NewKey);
 
                         if (distEquipType != null)
                         {
@@ -342,7 +359,7 @@ namespace HETSAPI.Import
                     }
                 }
 
-                if (equipment.DistrictEquipmentTypeId == null)
+                if (equipment.DistrictEquipmentTypeId == null && equipment.ArchiveCode == "N" && equipment.Status == "Approved")
                 {
                     throw new DataException(string.Format("Equipment Type cannot be null (EquipmentIndex: {0}", maxEquipmentIndex));
                 }
@@ -365,10 +382,19 @@ namespace HETSAPI.Import
                         // set address fields on the owner record
                         if (string.IsNullOrEmpty(owner.Address1))
                         {
-                            owner.Address1 = ImportUtility.CleanString(oldObject.Addr1);
-                            owner.Address2 = ImportUtility.CleanString(oldObject.Addr2);
-                            owner.City = ImportUtility.CleanString(oldObject.City);
-                            owner.PostalCode = ImportUtility.CleanString(oldObject.Postal);
+                            string tempAddress1 = ImportUtility.CleanString(oldObject.Addr1);
+                            tempAddress1 = ImportUtility.GetCapitalCase(tempAddress1);
+
+                            string tempAddress2 = ImportUtility.CleanString(oldObject.Addr2);
+                            tempAddress2 = ImportUtility.GetCapitalCase(tempAddress2);
+
+                            string tempCity = ImportUtility.CleanString(oldObject.City);
+                            tempCity = ImportUtility.GetCapitalCase(tempCity);
+
+                            owner.Address1 = tempAddress1;
+                            owner.Address2 = tempAddress2;
+                            owner.City = tempCity;
+                            owner.PostalCode = ImportUtility.CleanString(oldObject.Postal).ToUpper();
                             owner.Province = "BC";
 
                             dbContext.Owners.Update(owner);
@@ -376,7 +402,7 @@ namespace HETSAPI.Import
                     }
                 }
 
-                if (equipment.OwnerId == null)
+                if (equipment.OwnerId == null && equipment.ArchiveCode != "Y")
                 {
                     throw new DataException(string.Format("Owner cannot be null (EquipmentIndex: {0}", maxEquipmentIndex));
                 }
@@ -428,7 +454,7 @@ namespace HETSAPI.Import
 
         public static void Obfuscate(PerformContext performContext, DbAppContext dbContext, string sourceLocation, string destinationLocation, string systemId)
         {
-            int startPoint = ImportUtility.CheckInterMapForStartPoint(dbContext, "Obfuscate_" + OldTableProgress, BcBidImport.SigId);
+            int startPoint = ImportUtility.CheckInterMapForStartPoint(dbContext, "Obfuscate_" + OldTableProgress, BcBidImport.SigId, NewTable);
 
             if (startPoint == BcBidImport.SigId)    // this means the import job it has done today is complete for all the records in the xml file.
             {

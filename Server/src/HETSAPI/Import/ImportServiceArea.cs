@@ -53,7 +53,7 @@ namespace HETSAPI.Import
                 MemoryStream memoryStream = ImportUtility.MemoryStreamGenerator(XmlFileName, OldTable, fileLocation, rootAttr);
                 ServiceArea[] legacyItems = (ServiceArea[])ser.Deserialize(memoryStream);
 
-                Debug.WriteLine(string.Format("Importing ServiceArea Data. Total Records: {0}", legacyItems.Count()));
+                Debug.WriteLine("Importing ServiceArea Data. Total Records: " + legacyItems.Length);
 
                 foreach (ServiceArea item in legacyItems.WithProgress(progress))
                 {

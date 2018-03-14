@@ -9,6 +9,7 @@ using System.Xml.Serialization;
 using Hangfire.Console.Progress;
 using HETSAPI.ImportModels;
 using HETSAPI.Models;
+using Microsoft.AspNetCore.Mvc.ViewFeatures;
 using Microsoft.EntityFrameworkCore;
 using ServiceArea = HETSAPI.Models.ServiceArea;
 
@@ -110,7 +111,7 @@ namespace HETSAPI.Import
                 try
                 {
                     performContext.WriteLine("*** Importing " + XmlFileName + " is Done ***");
-                    ImportUtility.AddImportMapForProgress(dbContext, OldTableProgress, BcBidImport.SigId.ToString(), BcBidImport.SigId);
+                    ImportUtility.AddImportMapForProgress(dbContext, OldTableProgress, BcBidImport.SigId.ToString(), BcBidImport.SigId, NewTable);
                     dbContext.SaveChangesForImport();
                 }
                 catch (Exception e)

@@ -29,9 +29,9 @@ namespace HETSAPI.Services.Impl
             _configuration = configuration;
         }
 
-        public IActionResult AdminImportGetAsync(string path, string districts)
+        public IActionResult AdminImportGetAsync(string path, bool realTime, bool clearDb)
         {
-            string result = "";
+            string result;
 
             lock (_thisLock)
             {
@@ -40,7 +40,13 @@ namespace HETSAPI.Services.Impl
                     string uploadPath = _configuration["UploadPath"];
                     string connectionString = _context.Database.GetDbConnection().ConnectionString;
 
-                    if (districts != null && districts == "388888")
+                    // clear database
+                    if (clearDb)
+                    {
+                        // todo - cleanout the database before loading data
+                    }
+
+                    if (realTime)
                     {
                         // not using Hangfire
                         BcBidImport.ImportJob(null, connectionString, uploadPath + path);
@@ -57,8 +63,7 @@ namespace HETSAPI.Services.Impl
                 catch (Exception e)
                 {
                     Console.WriteLine(e);
-                    result = "*** Import Error *** <br/>";
-                    result = result + e.Message;
+                    result = @"*** Import Error ***: " + e.Message;
                 }
             }
 

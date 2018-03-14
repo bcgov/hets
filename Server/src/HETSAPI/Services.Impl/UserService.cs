@@ -657,12 +657,13 @@ namespace HETSAPI.Services.Impl
         /// <response code="200">OK</response>
         public virtual IActionResult UsersIdDistrictsGetAsync(int id)
         {
-            IQueryable<District> districts = _context.UserDistricts
+            List<UserDistrict> result = _context.UserDistricts.AsNoTracking()
+                .Include(x => x.User)
                 .Include(x => x.District)
                 .Where(x => x.UserId == id)
-                .Select(x => x.District);             
+                .ToList();            
 
-            return new ObjectResult(new HetsResponse(districts));
+            return new ObjectResult(new HetsResponse(result));
         }
     }
 }
