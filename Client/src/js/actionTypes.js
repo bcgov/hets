@@ -53,6 +53,8 @@ export const UPDATE_USERS = 'UPDATE_USERS';
 export const UPDATE_USER = 'UPDATE_USER';
 export const ADD_USER = 'ADD_USER';
 export const DELETE_USER = 'DELETE_USER';
+export const USER_DISTRICTS = 'USER_DISTRICTS';
+export const CURRENT_USER_DISTRICTS = 'CURRENT_USER_DISTRICTS';
 
 // Favourites
 export const FAVOURITES_REQUEST = 'FAVOURITES_REQUEST';

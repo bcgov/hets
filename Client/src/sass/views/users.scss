@@ -47,6 +47,10 @@
 #users-detail {
   #users-top {
     margin-bottom: 10px;
+
+    .btn {
+      margin-left: 5px;
+    }
   }
 
   #users-access {
@@ -76,16 +80,11 @@
     height: 16px;
   }
 
-  .btn {
-    margin-left: 5px;
-  }
-
   .col-display-label {
     width: 100px;
   }
 
   .alert {
-    top-margin: 10px;
 
     .btn {
       float: right;

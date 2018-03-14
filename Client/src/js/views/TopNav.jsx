@@ -2,13 +2,16 @@ import React from 'react';
 
 import { connect } from 'react-redux';
 
-import { Navbar, Nav, NavItem, NavDropdown, MenuItem, OverlayTrigger } from 'react-bootstrap';
-import { Popover, Button, Glyphicon } from 'react-bootstrap';
+import _ from 'lodash';
+
+import { Navbar, Nav, NavItem, NavDropdown, MenuItem, OverlayTrigger, Dropdown, Popover, Button, Glyphicon, ControlLabel, FormGroup } from 'react-bootstrap';
 import { LinkContainer } from 'react-router-bootstrap';
 
 import * as Constant from '../constants';
+import * as Api from '../api';
 
 import Spinner from '../components/Spinner.jsx';
+import DropdownControl from '../components/DropdownControl.jsx';
 
 
 var TopNav = React.createClass({
@@ -17,6 +20,7 @@ var TopNav = React.createClass({
     showWorkingIndicator: React.PropTypes.bool,
     requestError: React.PropTypes.object,
     showNav: React.PropTypes.bool,
+    currentUserDistricts: React.PropTypes.object,
   },
 
   getDefaultProps() {
@@ -25,7 +29,18 @@ var TopNav = React.createClass({
     };
   },
 
+  updateUserDistrict(state) {
+    var district = _.find(this.props.currentUserDistricts.data, district => { return district.district.id === state.districtId; });
+    Api.switchUserDistrict(district.id).then(() => {
+      location.reload();
+    });
+  },
+
   render() {
+    var userDistricts = this.props.currentUserDistricts.data.map(district => { 
+      return { ...district, districtName: district.district.name, id: district.district.id }; 
+    });
+
     return <div id="header">
       <nav id="header-main" className="navbar navbar-default navbar-fixed-top">
         <div className="container">
@@ -79,9 +94,20 @@ var TopNav = React.createClass({
           }
           {this.props.showNav &&
             <Nav id="navbar-current-user" pullRight>
-              <NavItem>
-                {this.props.currentUser.fullName} <small>{this.props.currentUser.districtName} District</small>
-              </NavItem>
+              <Dropdown
+                id="profile-menu"
+              >
+                <Dropdown.Toggle><Glyphicon glyph="user" /></Dropdown.Toggle>
+                <Dropdown.Menu>
+                  <div>{this.props.currentUser.fullName}</div>
+                  <FormGroup controlId="districtId">
+                    <ControlLabel>District</ControlLabel>
+                    <DropdownControl id="districtId" updateState={ this.updateUserDistrict }
+                      selectedId={ this.props.currentUser.district.id } fieldName="districtName" items={ userDistricts }
+                    />
+                  </FormGroup>
+                </Dropdown.Menu>
+              </Dropdown>
             </Nav>
           }
           <OverlayTrigger trigger="click" placement="bottom" rootClose overlay={
@@ -107,6 +133,7 @@ function mapStateToProps(state) {
     currentUser: state.user,
     showWorkingIndicator: state.ui.requests.waiting,
     requestError: state.ui.requests.error,
+    currentUserDistricts: state.models.currentUserDistricts,
   };
 }
 

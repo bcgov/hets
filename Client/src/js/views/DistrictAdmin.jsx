@@ -37,6 +37,7 @@ var DistrictAdmin = React.createClass({
     Api.getRentalConditions();
     Api.getDistrictEquipmentTypes(this.props.currentUser.district.id);
     Api.getEquipmentTypes();
+    Api.getUserDistricts();
   },
 
   addCondition() {

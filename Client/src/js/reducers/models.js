@@ -5,6 +5,14 @@ import _ from 'lodash';
 const DEFAULT_MODELS = {
   users: {},
   user: {},
+  userDistricts: {
+    data: {}, 
+    loading: false,
+  },
+  currentUserDistricts: {
+    data: {},
+    loading: false,
+  },
 
   favourites: {
     data: {},
@@ -119,6 +127,12 @@ export default function modelsReducer(state = DEFAULT_MODELS, action) {
     
     case Action.DELETE_USER:
       return { ...state, user: action.user };
+
+    case Action.USER_DISTRICTS: 
+      return { ...state, userDistricts: { data: action.userDistricts, loading: false } };
+
+    case Action.CURRENT_USER_DISTRICTS: 
+      return { ...state, currentUserDistricts: { data: action.currentUserDistricts, loading: false } };
     
     // Favourites
     case Action.FAVOURITES_REQUEST:

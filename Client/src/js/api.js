@@ -147,6 +147,46 @@ export function updateUserRoles(userId, userRoleArray) {
   });
 }
 
+export function getCurrentUserDistricts() {
+  return new ApiRequest('/userdistricts').get().then((response) => {
+    store.dispatch({ type: Action.CURRENT_USER_DISTRICTS, currentUserDistricts: response.data });
+    return response;
+  });
+}
+
+export function getUserDistricts(userId) {
+  return new ApiRequest(`users/${userId}/districts`).get().then((response) => {
+    store.dispatch({ type: Action.USER_DISTRICTS, userDistricts: response.data });
+    return response;
+  });
+}
+
+export function addUserDistrict(district) {
+  return new ApiRequest(`/userdistricts/${district.id}`).post(district).then((response) => {
+    store.dispatch({ type: Action.USER_DISTRICTS, userDistricts: response.data });
+    return response;
+  });
+}
+
+export function editUserDistrict(district) {
+  return new ApiRequest(`/userdistricts/${district.id}`).post(district).then((response) => {
+    store.dispatch({ type: Action.USER_DISTRICTS, userDistricts: response.data });
+    return response;
+  });
+}
+
+export function deleteUserDistrict(district) {
+  return new ApiRequest(`/userdistricts/${district.id}/delete`).post().then((response) => {
+    return response;
+  });
+}
+
+export function switchUserDistrict(districtId) {
+  return new ApiRequest(`/userdistricts/${districtId}/switch`).post().then((response) => {
+    return response;
+  });
+}
+
 ////////////////////
 // Roles,  Permissions
 ////////////////////
