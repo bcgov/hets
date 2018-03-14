@@ -1,9 +1,9 @@
 ﻿using Hangfire.Console;
 using Hangfire.Server;
 using HETSAPI.Models;
-using Microsoft.EntityFrameworkCore;
 using System;
-using System.Collections.Generic;
+using System.Data;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Xml.Serialization;
@@ -44,6 +44,13 @@ namespace HETSAPI.Import
                 return;
             }
 
+            int maxEquipAttachIndex = 0;
+
+            if (dbContext.EquipmentAttachments.Any())
+            {
+                maxEquipAttachIndex = dbContext.EquipmentAttachments.Max(x => x.Id);
+            }
+
             try
             {
                 string rootAttr = "ArrayOf" + OldTable;
@@ -57,12 +64,7 @@ namespace HETSAPI.Import
                 XmlSerializer ser = new XmlSerializer(typeof(EquipAttach[]), new XmlRootAttribute(rootAttr));
                 MemoryStream memoryStream = ImportUtility.MemoryStreamGenerator(XmlFileName, OldTable, fileLocation, rootAttr);
                 EquipAttach[] legacyItems = (EquipAttach[])ser.Deserialize(memoryStream);
-
-                // use this list to save a trip to query database in each iteration
-                List<Equipment> equips = dbContext.Equipments
-                        .Include(x => x.DistrictEquipmentType)
-                        .ToList();
-
+                
                 int ii = startPoint;
 
                 // skip the portion already processed
@@ -71,6 +73,8 @@ namespace HETSAPI.Import
                     legacyItems = legacyItems.Skip(ii).ToArray();
                 }
 
+                Debug.WriteLine("Importing Equipment Attachment Data. Total Records: " + legacyItems.Length);
+
                 foreach (EquipAttach item in legacyItems.WithProgress(progress))
                 {
                     // see if we have this one already. We used old combine because item.Equip_Id is not unique
@@ -78,36 +82,11 @@ namespace HETSAPI.Import
                     ImportMap importMap = dbContext.ImportMaps.FirstOrDefault(x => x.OldTable == OldTable && x.OldKey == oldKeyCombined);
 
                     // new entry
-                    if (importMap == null) 
+                    if (importMap == null && item.Equip_Id > 0)
                     {
-                        if (item.Equip_Id > 0)
-                        {
-                            EquipmentAttachment instance = null;
-                            CopyToInstance(dbContext, item, ref instance, equips, systemId);
-                            ImportUtility.AddImportMap(dbContext, OldTable, oldKeyCombined, NewTable, instance.Id);
-                        }
-                    }
-                    else // update
-                    {
-                        EquipmentAttachment instance = dbContext.EquipmentAttachments.FirstOrDefault(x => x.Id == importMap.NewKey);
-
-                        // record was deleted
-                        if (instance == null)
-                        {
-                            CopyToInstance(dbContext, item, ref instance, equips, systemId);
-
-                            // update the import map.
-                            importMap.NewKey = instance.Id;
-                            dbContext.ImportMaps.Update(importMap);
-                        }
-                        else // ordinary update.
-                        {
-                            CopyToInstance(dbContext, item, ref instance, equips, systemId);
-
-                            // touch the import map
-                            importMap.AppLastUpdateTimestamp = DateTime.UtcNow;
-                            dbContext.ImportMaps.Update(importMap);
-                        }
+                        EquipmentAttachment instance = null;
+                        CopyToInstance(dbContext, item, ref instance, systemId, ref maxEquipAttachIndex);
+                        ImportUtility.AddImportMap(dbContext, OldTable, oldKeyCombined, NewTable, instance.Id);
                     }
 
                     // save change to database periodically to avoid frequent writing to the database
@@ -133,13 +112,16 @@ namespace HETSAPI.Import
                 }
                 catch (Exception e)
                 {
-                    performContext.WriteLine("Error saving data " + e.Message);
+                    string temp = string.Format("Error saving data (EquipmentAttachmentIndex: {0}): {1}", maxEquipAttachIndex, e.Message);
+                    performContext.WriteLine(temp);
+                    throw new DataException(temp);
                 }
             }
             catch (Exception e)
             {
                 performContext.WriteLine("*** ERROR ***");
                 performContext.WriteLine(e.ToString());
+                throw;
             }            
         }
 
@@ -148,59 +130,80 @@ namespace HETSAPI.Import
         /// </summary>
         /// <param name="dbContext"></param>
         /// <param name="oldObject"></param>
-        /// <param name="instance"></param>
-        /// <param name="equips"></param>
+        /// <param name="equipAttach"></param>
         /// <param name="systemId"></param>
-        private static void CopyToInstance(DbAppContext dbContext, EquipAttach oldObject, ref EquipmentAttachment instance,
-            List<Equipment> equips, string systemId)
+        /// <param name="maxEquipAttachIndex"></param>
+        private static void CopyToInstance(DbAppContext dbContext, EquipAttach oldObject, ref EquipmentAttachment equipAttach,
+            string systemId, ref int maxEquipAttachIndex)
         {
-            if (oldObject.Equip_Id <= 0)
-                return;
-
-            // Add the user specified in oldObject.Modified_By and oldObject.Created_By if not there in the database
-            User createdBy = ImportUtility.AddUserFromString(dbContext, oldObject.Created_By, systemId);
-
-            if (instance == null)
+            try
             {
-                instance = new EquipmentAttachment();
-
-                // get the new ID
-                var importMap = dbContext.ImportMaps.FirstOrDefault(x => x.OldKey == oldObject.Equip_Id.ToString() && x.OldTable == "Equip");
-                
-                Equipment equipment = null;
-                if (importMap != null)
+                if (oldObject.Equip_Id <= 0)
                 {
-                    equipment = equips.FirstOrDefault(x => x.Id == importMap.NewKey);
+                    return;
                 }
 
-                
-                if (equipment != null)
+                equipAttach = new EquipmentAttachment { Id = ++maxEquipAttachIndex };
+
+                // ************************************************
+                // get the imported equipment record map
+                // ************************************************
+                string tempId = oldObject.Equip_Id.ToString();
+
+                ImportMap map = dbContext.ImportMaps.FirstOrDefault(x => x.OldKey == tempId &&
+                                                                         x.OldTable == ImportEquip.OldTable &&
+                                                                         x.NewTable == ImportEquip.NewTable);
+
+                if (map == null)
                 {
-                    instance.Equipment = equipment;
-                    instance.EquipmentId = equipment.Id;
+                    return; // ignore and move to the next record
                 }
 
-                instance.Description = oldObject.Attach_Desc ?? "";
-                instance.TypeName = (oldObject.Attach_Seq_Num ?? -1).ToString();
+                // ************************************************
+                // get the equipment record
+                // ************************************************
+                Equipment equipment = dbContext.Equipments.FirstOrDefault(x => x.Id == map.NewKey);
 
-                if (oldObject.Created_Dt != null && oldObject.Created_Dt.Trim().Length>=10)
+                if (equipment == null)
                 {
-                    instance.AppCreateTimestamp =
-                        DateTime.ParseExact(oldObject.Created_Dt.Trim().Substring(0, 10), "yyyy-MM-dd", System.Globalization.CultureInfo.InvariantCulture);
+                    throw new ArgumentException(string.Format("Cannot locate Equipment record (EquipAttach Equip Id: {0}", tempId));
                 }
 
-                instance.AppCreateUserid = createdBy.SmUserId;
+                // ************************************************
+                // set the equipment attachment attributes
+                // ************************************************
+                int tempEquipmentId = equipment.Id;
+                equipAttach.EquipmentId = tempEquipmentId;
 
-                dbContext.EquipmentAttachments.Add(instance);
+                string tempDescription = ImportUtility.CleanString(oldObject.Attach_Desc);
+
+                if (string.IsNullOrEmpty(tempDescription)) return; // don't add blank attachments
+
+                tempDescription = ImportUtility.GetCapitalCase(tempDescription);
+                equipAttach.Description = tempDescription;
+
+                if (oldObject.Attach_Seq_Num != null)
+                {
+                    string tempSequence = oldObject.Attach_Seq_Num.ToString();
+                    equipAttach.TypeName = tempSequence;
+                }
+
+                // ***********************************************
+                // create equipment attachment
+                // ***********************************************                            
+                equipAttach.AppCreateUserid = systemId;
+                equipAttach.AppCreateTimestamp = DateTime.UtcNow;
+                equipAttach.AppLastUpdateUserid = systemId;
+                equipAttach.AppLastUpdateTimestamp = DateTime.UtcNow;
+
+                dbContext.EquipmentAttachments.Add(equipAttach);
             }
-            else
+            catch (Exception ex)
             {
-                instance = dbContext.EquipmentAttachments
-                    .First(x => x.EquipmentId == oldObject.Equip_Id && x.TypeName == (oldObject.Attach_Seq_Num?? -2).ToString());
-
-                instance.AppLastUpdateUserid = systemId;
-                instance.AppLastUpdateTimestamp = DateTime.UtcNow;
-                dbContext.EquipmentAttachments.Update(instance);
+                Debug.WriteLine("***Error*** - Equipment Attachment: " + equipAttach.Description);
+                Debug.WriteLine("***Error*** - Master Equipment Attachment Index: " + maxEquipAttachIndex);
+                Debug.WriteLine(ex.Message);
+                throw;
             }
         }
 
@@ -238,12 +241,12 @@ namespace HETSAPI.Import
 
                 performContext.WriteLine("Writing " + XmlFileName + " to " + destinationLocation);
 
-                // write out the array.
+                // write out the array
                 FileStream fs = ImportUtility.GetObfuscationDestination(XmlFileName, destinationLocation);
                 ser.Serialize(fs, legacyItems);
                 fs.Close();
 
-                // no excel for EquipAttach.
+                // no excel for EquipAttach
             }
             catch (Exception e)
             {

@@ -139,48 +139,57 @@ namespace HETSAPI.Import
         private static void CopyToInstance(DbAppContext dbContext, EquipType oldObject, 
             ref EquipmentType equipType, string systemId, ref int maxEquipTypeIndex)
         {
-            if (oldObject.Equip_Type_Id <= 0)
-                return;
-
-            if (equipType != null)
+            try
             {
-                return; 
-            }
+                if (oldObject.Equip_Type_Id <= 0)
+                    return;
 
-            // get the equipment type
-            string tempEquipTypeCode = ImportUtility.CleanString(oldObject.Equip_Type_Cd).ToUpper();
+                if (equipType != null)
+                {
+                    return; 
+                }
 
-            // check if we have this type already
-            bool exists = dbContext.EquipmentTypes.Any(x => x.Name == tempEquipTypeCode);
+                // get the equipment type
+                string tempEquipTypeCode = ImportUtility.CleanString(oldObject.Equip_Type_Cd).ToUpper();
 
-            if (exists)
-            {
-                return;
-            }
+                // check if we have this type already
+                bool exists = dbContext.EquipmentTypes.Any(x => x.Name == tempEquipTypeCode);
 
-            // add new equipment type
-            equipType = new EquipmentType
-            {
-                Id = ++maxEquipTypeIndex,
-                IsDumpTruck = false,
-                ExtendHours = ImportUtility.GetFloatValue(oldObject.Extend_Hours),
-                MaximumHours = ImportUtility.GetFloatValue(oldObject.Max_Hours),
-                MaxHoursSub = ImportUtility.GetFloatValue(oldObject.Max_Hours_Sub),
-                BlueBookRateNumber = ImportUtility.GetFloatValue(oldObject.Equip_Rental_Rate_No),
-                BlueBookSection = ImportUtility.GetFloatValue(oldObject.Equip_Rental_Rate_Page)
-            };
+                if (exists)
+                {
+                    return;
+                }
+
+                // add new equipment type
+                equipType = new EquipmentType
+                {
+                    Id = ++maxEquipTypeIndex,
+                    IsDumpTruck = false,
+                    ExtendHours = ImportUtility.GetFloatValue(oldObject.Extend_Hours),
+                    MaximumHours = ImportUtility.GetFloatValue(oldObject.Max_Hours),
+                    MaxHoursSub = ImportUtility.GetFloatValue(oldObject.Max_Hours_Sub),
+                    BlueBookRateNumber = ImportUtility.GetFloatValue(oldObject.Equip_Rental_Rate_No),
+                    BlueBookSection = ImportUtility.GetFloatValue(oldObject.Equip_Rental_Rate_Page)
+                };
            
-            if (!string.IsNullOrEmpty(tempEquipTypeCode))
-            {
-                equipType.Name = tempEquipTypeCode;
+                if (!string.IsNullOrEmpty(tempEquipTypeCode))
+                {
+                    equipType.Name = tempEquipTypeCode;
+                }
+
+                equipType.AppCreateUserid = systemId;
+                equipType.AppCreateTimestamp = DateTime.UtcNow;
+                equipType.AppLastUpdateUserid = systemId;
+                equipType.AppLastUpdateTimestamp = DateTime.UtcNow;
+
+                dbContext.EquipmentTypes.Add(equipType);
             }
-
-            equipType.AppCreateUserid = systemId;
-            equipType.AppCreateTimestamp = DateTime.UtcNow;
-            equipType.AppLastUpdateUserid = systemId;
-            equipType.AppLastUpdateTimestamp = DateTime.UtcNow;
-
-            dbContext.EquipmentTypes.Add(equipType);   
+            catch (Exception ex)
+            {
+                Debug.WriteLine("***Error*** - Master Equipment Type Index: " + maxEquipTypeIndex);
+                Debug.WriteLine(ex.Message);
+                throw;
+            }
         }
     }
 }

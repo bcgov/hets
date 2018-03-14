@@ -17,9 +17,13 @@ namespace HETSAPI.Import
     public static class ImportServiceArea
     {
         const string OldTable = "Service_Area";
-        const string NewTable = "ServiceArea";
+        const string NewTable = "HET_SERVICE_AREA";
         const string XmlFileName = "Service_Area.xml";
-        const int SigId = 150000;
+
+        /// <summary>
+        /// Progress Property
+        /// </summary>
+        public static string OldTableProgress => OldTable + "_Progress";
 
         /// <summary>
         /// Import Service Areas
@@ -30,10 +34,10 @@ namespace HETSAPI.Import
         /// <param name="systemId"></param>
         public static void Import(PerformContext performContext, DbAppContext dbContext, string fileLocation, string systemId)
         {
-            string completed = DateTime.Now.ToString("d") + "-" + "Completed";
-            ImportMap importMap = dbContext.ImportMaps.FirstOrDefault(x => x.OldTable == OldTable && x.OldKey == completed && x.NewKey == SigId);
+            // check the start point. If startPoint == sigId then it is already completed
+            int startPoint = ImportUtility.CheckInterMapForStartPoint(dbContext, OldTableProgress, BcBidImport.SigId, NewTable);
 
-            if (importMap != null)
+            if (startPoint == BcBidImport.SigId)    // this means the import job it has done today is complete for all the records in the xml file.
             {
                 performContext.WriteLine("*** Importing " + XmlFileName + " is complete from the former process ***");
                 return;
@@ -58,21 +62,19 @@ namespace HETSAPI.Import
                 foreach (ServiceArea item in legacyItems.WithProgress(progress))
                 {
                     // see if we have this one already
-                    importMap = dbContext.ImportMaps.FirstOrDefault(x => x.OldTable == OldTable && x.OldKey == item.Service_Area_Id.ToString());
-
-                    Models.ServiceArea serviceArea = dbContext.ServiceAreas.FirstOrDefault(x => x.Name == item.Service_Area_Desc.Trim());
+                    ImportMap importMap = dbContext.ImportMaps.FirstOrDefault(x => x.OldTable == OldTable && x.OldKey == item.Service_Area_Id.ToString());                    
 
                     // new entry
                     if (importMap == null && item.Service_Area_Cd != "000")
                     {
+                        Models.ServiceArea serviceArea = null;
                         CopyToInstance(dbContext, item, ref serviceArea, systemId);
                         ImportUtility.AddImportMap(dbContext, OldTable, item.Service_Area_Id.ToString(), NewTable, serviceArea.Id);
                     }
                 }
 
                 performContext.WriteLine("*** Importing " + XmlFileName + " is Done ***");
-                ImportUtility.AddImportMap(dbContext, OldTable, completed, NewTable, SigId);
-
+                ImportUtility.AddImportMapForProgress(dbContext, OldTableProgress, BcBidImport.SigId.ToString(), BcBidImport.SigId, NewTable);
                 dbContext.SaveChangesForImport();
             }
             catch (Exception e)
@@ -92,55 +94,64 @@ namespace HETSAPI.Import
         /// <param name="systemId"></param>
         private static void CopyToInstance(DbAppContext dbContext, ServiceArea oldObject, ref Models.ServiceArea serviceArea, string systemId)
         {
-            if (serviceArea == null)
+            try
             {
-                serviceArea = new Models.ServiceArea();
-            }
-
-            if (oldObject.Service_Area_Id <= 0)
-                return;
-
-            serviceArea.Id = oldObject.Service_Area_Id;
-            serviceArea.MinistryServiceAreaID = oldObject.Service_Area_Id;            
-            serviceArea.Name = oldObject.Service_Area_Desc.Trim();
-
-            // remove " CA" from Service Area Names
-            if (serviceArea.Name.EndsWith(" CA"))
-            {
-                serviceArea.Name = serviceArea.Name.Replace(" CA", "");
-            }
-
-            // service area number
-            if (oldObject.Service_Area_Cd != null)
-            {
-                serviceArea.AreaNumber = int.Parse(oldObject.Service_Area_Cd);
-            }
-
-            // get the district for this service area
-            int tempServiceAreaId = GetServiceAreaId(serviceArea.Name);
-
-            if (tempServiceAreaId > 0)
-            {                
-
-                District district = dbContext.Districts.FirstOrDefault(x => x.MinistryDistrictID == tempServiceAreaId);
-
-                if (district != null)
+                if (serviceArea == null)
                 {
-                    serviceArea.DistrictId = district.Id;
+                    serviceArea = new Models.ServiceArea();
                 }
-            }
 
-            if (oldObject.FiscalStart != null)
-            {
-                serviceArea.StartDate = DateTime.ParseExact(oldObject.FiscalStart.Trim().Substring(0, 10), "yyyy-MM-dd", System.Globalization.CultureInfo.InvariantCulture);
-            }
+                if (oldObject.Service_Area_Id <= 0)
+                    return;
+
+                serviceArea.Id = oldObject.Service_Area_Id;
+                serviceArea.MinistryServiceAreaID = oldObject.Service_Area_Id;            
+                serviceArea.Name = oldObject.Service_Area_Desc.Trim();
+
+                // remove " CA" from Service Area Names
+                if (serviceArea.Name.EndsWith(" CA"))
+                {
+                    serviceArea.Name = serviceArea.Name.Replace(" CA", "");
+                }
+
+                // service area number
+                if (oldObject.Service_Area_Cd != null)
+                {
+                    serviceArea.AreaNumber = int.Parse(oldObject.Service_Area_Cd);
+                }
+
+                // get the district for this service area
+                int tempServiceAreaId = GetServiceAreaId(serviceArea.Name);
+
+                if (tempServiceAreaId > 0)
+                {                
+
+                    District district = dbContext.Districts.FirstOrDefault(x => x.MinistryDistrictID == tempServiceAreaId);
+
+                    if (district != null)
+                    {
+                        serviceArea.DistrictId = district.Id;
+                    }
+                }
+
+                if (oldObject.FiscalStart != null)
+                {
+                    serviceArea.StartDate = DateTime.ParseExact(oldObject.FiscalStart.Trim().Substring(0, 10), "yyyy-MM-dd", System.Globalization.CultureInfo.InvariantCulture);
+                }
             
-            serviceArea.AppCreateUserid = systemId;
-            serviceArea.AppCreateTimestamp = DateTime.UtcNow;
-            serviceArea.AppLastUpdateUserid = systemId;
-            serviceArea.AppLastUpdateTimestamp = DateTime.UtcNow;
+                serviceArea.AppCreateUserid = systemId;
+                serviceArea.AppCreateTimestamp = DateTime.UtcNow;
+                serviceArea.AppLastUpdateUserid = systemId;
+                serviceArea.AppLastUpdateTimestamp = DateTime.UtcNow;
 
-            dbContext.ServiceAreas.Add(serviceArea);                        
+                dbContext.ServiceAreas.Add(serviceArea);
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine("***Error*** - Service Area Id: " + oldObject.Service_Area_Id);
+                Debug.WriteLine(ex.Message);
+                throw;
+            }
         }
 
         public static void Obfuscate(PerformContext performContext, DbAppContext dbContext, string sourceLocation, string destinationLocation, string systemId)

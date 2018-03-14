@@ -29,7 +29,7 @@ namespace HETSAPI.Services.Impl
             _configuration = configuration;
         }
 
-        public IActionResult AdminImportGetAsync(string path, bool realTime, bool clearDb)
+        public IActionResult AdminImportGetAsync(string path, bool realTime)
         {
             string result;
 
@@ -38,13 +38,7 @@ namespace HETSAPI.Services.Impl
                 try
                 {                
                     string uploadPath = _configuration["UploadPath"];
-                    string connectionString = _context.Database.GetDbConnection().ConnectionString;
-
-                    // clear database
-                    if (clearDb)
-                    {
-                        // todo - cleanout the database before loading data
-                    }
+                    string connectionString = _context.Database.GetDbConnection().ConnectionString;                    
 
                     if (realTime)
                     {
