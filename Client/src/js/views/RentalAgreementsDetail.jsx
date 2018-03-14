@@ -7,6 +7,7 @@ import { Grid, Well, Row, Col } from 'react-bootstrap';
 import { Table, Alert, Button, Glyphicon, Label, ButtonGroup } from 'react-bootstrap';
 
 import _ from 'lodash';
+import Promise from 'bluebird';
 
 import { buildApiPath } from '../utils/http.js';
 
