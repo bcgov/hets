@@ -65,7 +65,7 @@ namespace HETSAPI.Services.Impl
         }
 
         /// <summary>
-        /// Get all user districts
+        /// Get all user districts for the current logged on user
         /// </summary>
         /// <remarks>Returns a list of user districts</remarks>
         /// <response code="200">OK</response>
@@ -118,23 +118,26 @@ namespace HETSAPI.Services.Impl
 
             if (exists)
             {
-                UserDistrict item = _context.UserDistricts.First(a => a.Id == id);
+                UserDistrict item = _context.UserDistricts
+                    .Include(x => x.User)
+                    .First(a => a.Id == id);
 
-                if (item != null)
-                {
-                    _context.UserDistricts.Remove(item);
+                int userId = item.User.Id;               
 
-                    // save the changes
-                    _context.SaveChanges();
-                }
+                // remove record
+                _context.UserDistricts.Remove(item);
+
+                // save the changes
+                _context.SaveChanges();
 
                 // return the updated user district records
-                List<UserDistrict> result = _context.UserDistricts.AsNoTracking()
+                List<UserDistrict> userDistricts = _context.UserDistricts
                     .Include(x => x.User)
                     .Include(x => x.District)
+                    .Where(x => x.User.Id == userId)
                     .ToList();
 
-                return new ObjectResult(new HetsResponse(result));
+                return new ObjectResult(new HetsResponse(userDistricts));
             }
 
             // record not found
@@ -156,7 +159,13 @@ namespace HETSAPI.Services.Impl
                 return new ObjectResult(new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-01", _configuration)));
             }
 
-            int? userId = GetCurrentUserId();
+            if (item.User == null)
+            {
+                // record not found
+                return new ObjectResult(new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-01", _configuration)));
+            }
+
+            int userId = item.User.Id;
 
             List<UserDistrict> userDistricts = _context.UserDistricts
                 .Include(x => x.User)
