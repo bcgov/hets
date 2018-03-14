@@ -156,6 +156,14 @@ var HireOfferEditDialog = React.createClass({
   },
 
   onSave() {
+    var isDumpTruck = this.props.hireOffer.equipment.districtEquipmentType.equipmentType.isDumpTruck;
+    var hoursYtd = this.props.hireOffer.equipment.hoursYtd;
+    if (this.state.offerStatus !== STATUS_NO && !isDumpTruck && hoursYtd > 300) {
+      return this.openConfirmMaxHoursHireDialog();
+    }
+    if (this.state.offerStatus !== STATUS_NO && isDumpTruck && hoursYtd > 600) {
+      return this.openConfirmMaxHoursHireDialog();
+    }
 
     if (this.state.offerStatus == STATUS_FORCE_HIRE) {
       return this.openConfirmForceHireDialog();
@@ -164,17 +172,23 @@ var HireOfferEditDialog = React.createClass({
     this.saveHireOffer();
   },
 
-  saveHireOffer() {
-    var isDumpTruck = this.props.hireOffer.equipment.districtEquipmentType.equipmentType.isDumpTruck;
-    var hoursYtd = this.props.hireOffer.equipment.hoursYtd;
-    console.log(isDumpTruck, hoursYtd);
-    if (this.state.offerStatus !== STATUS_NO && !isDumpTruck && hoursYtd < 300) {
-      return this.openConfirmMaxHoursHireDialog();
-    }
-    if (this.state.offerStatus !== STATUS_NO && isDumpTruck && hoursYtd < 600) {
-      return this.openConfirmMaxHoursHireDialog();
+  onCancelMaxHoursHire() {
+    this.setState({
+      offerStatus: STATUS_NO,
+      offerRefusalReason: MAXIMUM_HOURS_REACHED,
+    });
+    this.closeConfirmMaxHoursHireDialog();
+  },
+
+  onConfirmMaxHoursHire() {
+    if (this.state.offerStatus == STATUS_FORCE_HIRE) {
+      return this.openConfirmForceHireDialog();
     }
 
+    this.saveHireOffer();
+  },
+
+  saveHireOffer() {
     var props = this.buildEquipmentProps();
 
     // Update Equipment props only if they changed
@@ -326,11 +340,11 @@ var HireOfferEditDialog = React.createClass({
       { this.state.showConfirmMaxHoursHireDialog &&
         <ConfirmDialog 
           show={ this.state.showConfirmMaxHoursHireDialog } 
-          onSave={ this.onConfirmForceHire } 
-          onClose={ this.closeConfirmMaxHoursHireDialog } 
+          onSave={ this.onConfirmMaxHoursHire } 
+          onClose={ this.onCancelMaxHoursHire } 
           title="Confirm Hire"
         >
-          <p>Equipment/Dump Truck has already reached maximum hours for the year. Do you still want to hire this Equipment/Dump Truck?</p>
+          <p>Equipment/Dump Truck has already reached the maximum hours for the year. Do you still want to hire this Equipment/Dump Truck?</p>
         </ConfirmDialog>
       }
     </EditDialog>;

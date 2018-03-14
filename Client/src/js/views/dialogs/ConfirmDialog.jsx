@@ -11,6 +11,14 @@ var ConfirmDialog = React.createClass({
     children: React.PropTypes.node,
   },
 
+  didChange() {
+    return true;
+  },
+
+  isValid() {
+    return true;
+  },
+
   onSave() {
     this.props.onSave();
   },
@@ -21,7 +29,7 @@ var ConfirmDialog = React.createClass({
       title={
         <strong>{ this.props.title }</strong>
       }
-      backdropClassName="confirm"
+      closeText="Cancel" saveText="Confirm" backdropClassName="confirm"
       >
         { this.props.children }
     </EditDialog>;
