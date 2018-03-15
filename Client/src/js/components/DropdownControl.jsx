@@ -2,8 +2,6 @@ import React from 'react';
 
 import { Dropdown, MenuItem, Popover, OverlayTrigger } from 'react-bootstrap';
 
-import RootCloseMenu from './RootCloseMenu.jsx';
-
 import _ from 'lodash';
 
 var DropdownControl = React.createClass({
@@ -124,7 +122,7 @@ var DropdownControl = React.createClass({
       title={ this.state.title } open={ this.state.open } onToggle={ this.toggle }
     >
       <Dropdown.Toggle title={ this.state.title } />
-      <RootCloseMenu bsRole="menu">
+      <Dropdown.Menu bsRole="menu">
         { this.props.items.length > 0 &&
           <ul>
             { this.props.blankLine &&
@@ -150,7 +148,7 @@ var DropdownControl = React.createClass({
             }
           </ul>
         }
-      </RootCloseMenu>
+      </Dropdown.Menu>
     </Dropdown>;
   },
 });

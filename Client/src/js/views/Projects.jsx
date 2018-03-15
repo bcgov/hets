@@ -2,8 +2,7 @@ import React from 'react';
 
 import { connect } from 'react-redux';
 
-import { PageHeader, Well, Alert, Row, Col } from 'react-bootstrap';
-import { ButtonToolbar, Button, ButtonGroup, Glyphicon } from 'react-bootstrap';
+import { PageHeader, Well, Alert, Row, Col, ButtonToolbar, Button, ButtonGroup, Glyphicon, Form  } from 'react-bootstrap';
 
 import _ from 'lodash';
 
@@ -135,15 +134,17 @@ var Projects = React.createClass({
       </PageHeader>
       <Well id="projects-bar" bsSize="small" className="clearfix">
         <Row>
-          <Col md={10}>
-            <ButtonToolbar id="projects-filters">
-              <DropdownControl id="statusCode" title={ this.state.search.statusCode } updateState={ this.updateSearchState } blankLine="(All)" placeholder="Status"
-                items={[ Constant.PROJECT_STATUS_CODE_ACTIVE, Constant.PROJECT_STATUS_CODE_COMPLETED ]} />
-              <FormInputControl id="projectName" type="text" placeholder="Project name" value={ this.state.search.projectName } updateState={ this.updateSearchState }></FormInputControl>
-              <FormInputControl id="projectNumber" type="text" placeholder="Project number" value={ this.state.search.projectNumber } updateState={ this.updateSearchState }></FormInputControl>
-              <Button id="search-button" bsStyle="primary" onClick={ this.fetch }>Search</Button>
-            </ButtonToolbar>
-          </Col>
+          <Form>
+            <Col md={10}>
+              <ButtonToolbar id="projects-filters">
+                <DropdownControl id="statusCode" title={ this.state.search.statusCode } updateState={ this.updateSearchState } blankLine="(All)" placeholder="Status"
+                  items={[ Constant.PROJECT_STATUS_CODE_ACTIVE, Constant.PROJECT_STATUS_CODE_COMPLETED ]} />
+                <FormInputControl id="projectName" type="text" placeholder="Project name" value={ this.state.search.projectName } updateState={ this.updateSearchState }></FormInputControl>
+                <FormInputControl id="projectNumber" type="text" placeholder="Project number" value={ this.state.search.projectNumber } updateState={ this.updateSearchState }></FormInputControl>
+                <Button id="search-button" bsStyle="primary" type="submit" onClick={ this.fetch }>Search</Button>
+              </ButtonToolbar>
+            </Col>
+          </Form>
           <Col md={2}>
             <Row id="projects-faves">
               <Favourites id="projects-faves-dropdown" type="project" favourites={ this.props.favourites.data } data={ this.state.search } onSelect={ this.loadFavourite } pullRight />
@@ -164,7 +165,14 @@ var Projects = React.createClass({
           return <Alert bsStyle="success">No Projects { addProjectButton }</Alert>; 
         }
 
-        var projects = _.sortBy(this.props.projects.data, this.state.ui.sortField);
+        var projects = _.sortBy(this.props.projects.data, project => {
+          var sortValue = project[this.state.ui.sortField];
+          if (typeof sortValue === 'string') {
+            return sortValue.toLowerCase();
+          }
+          return sortValue;
+        });
+        
         if (this.state.ui.sortDesc) {
           _.reverse(projects);
         }

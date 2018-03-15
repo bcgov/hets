@@ -2,8 +2,7 @@ import React from 'react';
 
 import { connect } from 'react-redux';
 
-import { PageHeader, Well, Alert, Row, Col } from 'react-bootstrap';
-import { ButtonToolbar, Button, ButtonGroup, Glyphicon } from 'react-bootstrap';
+import { PageHeader, Well, Alert, Row, Col, ButtonToolbar, Button, ButtonGroup, Glyphicon, Form } from 'react-bootstrap';
 
 import _ from 'lodash';
 import Promise from 'bluebird';
@@ -186,7 +185,12 @@ var Owners = React.createClass({
 
     var numOwners = this.props.ownerList.loading ? '...' : Object.keys(this.props.ownerList.data).length;
 
-    var ownerList = _.sortBy(this.props.ownerList.data, this.state.ui.sortField);
+    var ownerList = _.sortBy(this.props.ownerList.data, owner => {
+      if (typeof owner[this.state.ui.sortField] === 'string') {
+        return owner[this.state.ui.sortField].toLowerCase();
+      }
+      return owner[this.state.ui.sortField];
+    });
     
     if (this.state.ui.sortDesc) {
       _.reverse(ownerList);
@@ -204,18 +208,20 @@ var Owners = React.createClass({
       <Well id="owners-bar" bsSize="small" className="clearfix">
         <Row>
           <Col md={9}>
-            <ButtonToolbar id="owners-filters">
-              <MultiDropdown id="selectedLocalAreasIds" placeholder="Local Areas"
-                items={ localAreas } selectedIds={ this.state.search.selectedLocalAreasIds } updateState={ this.updateSearchState } showMaxItems={ 2 } />
-              <DropdownControl id="statusCode" title={ this.state.search.statusCode } updateState={ this.updateSearchState } blankLine="(All)" placeholder="Status"
-                  items={[ Constant.OWNER_STATUS_CODE_APPROVED, Constant.OWNER_STATUS_CODE_PENDING, Constant.OWNER_STATUS_CODE_ARCHIVED ]} />
-              <MultiDropdown id="selectedEquipmentTypesIds" placeholder="Equipment Types" fieldName="districtEquipmentName"
-                items={ districtEquipmentTypes } selectedIds={ this.state.search.selectedEquipmentTypesIds } updateState={ this.updateSearchState } showMaxItems={ 2 } />
-              <FilterDropdown id="ownerId" placeholder="Owner" fieldName="organizationName" blankLine="(All)"
-                items={ owners } selectedId={ this.state.search.ownerId } updateState={ this.updateSearchState } />
-              <CheckboxControl inline id="hired" checked={ this.state.search.hired } updateState={ this.updateSearchState }>Hired</CheckboxControl>
-              <Button id="search-button" bsStyle="primary" onClick={ this.fetch }>Search</Button>
-            </ButtonToolbar>
+            <Form>
+              <ButtonToolbar id="owners-filters">
+                <MultiDropdown id="selectedLocalAreasIds" placeholder="Local Areas"
+                  items={ localAreas } selectedIds={ this.state.search.selectedLocalAreasIds } updateState={ this.updateSearchState } showMaxItems={ 2 } />
+                <DropdownControl id="statusCode" title={ this.state.search.statusCode } updateState={ this.updateSearchState } blankLine="(All)" placeholder="Status"
+                    items={[ Constant.OWNER_STATUS_CODE_APPROVED, Constant.OWNER_STATUS_CODE_PENDING, Constant.OWNER_STATUS_CODE_ARCHIVED ]} />
+                <MultiDropdown id="selectedEquipmentTypesIds" placeholder="Equipment Types" fieldName="districtEquipmentName"
+                  items={ districtEquipmentTypes } selectedIds={ this.state.search.selectedEquipmentTypesIds } updateState={ this.updateSearchState } showMaxItems={ 2 } />
+                <FilterDropdown id="ownerId" placeholder="Owner" fieldName="organizationName" blankLine="(All)"
+                  items={ owners } selectedId={ this.state.search.ownerId } updateState={ this.updateSearchState } />
+                <CheckboxControl inline id="hired" checked={ this.state.search.hired } updateState={ this.updateSearchState }>Hired</CheckboxControl>
+                <Button id="search-button" bsStyle="primary" type="submit" onClick={ this.fetch }>Search</Button>
+              </ButtonToolbar>
+            </Form>
           </Col>
           <Col md={3}>
             <Row id="owners-faves">
