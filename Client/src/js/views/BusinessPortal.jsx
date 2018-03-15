@@ -5,7 +5,7 @@ import { PageHeader, Well, Form, FormGroup, FormControl, Button } from 'react-bo
 import Main from './Main.jsx';
 import Spinner from '../components/Spinner.jsx';
 
-var Home = React.createClass({
+var BusinessPortal = React.createClass({
   propTypes: {
     currentUser: React.PropTypes.object,
     districtOwners: React.PropTypes.array,
@@ -101,4 +101,4 @@ function mapStateToProps(state) {
   };
 }
 
-export default connect(mapStateToProps)(Home);
+export default connect(mapStateToProps)(BusinessPortal);

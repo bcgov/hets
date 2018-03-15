@@ -11,6 +11,7 @@ export const VERSION_PATHNAME = 'version';
 export const CONTACTS_PATHNAME = 'contacts';
 export const DOCUMENTS_PATHNAME = 'documents';
 export const BUSINESS_LOGIN_PATHNAME = '/business-login';
+export const BUSINESS_OWNER_PATHNAME = '/business-owner';
 export const DISTRICT_ADMIN_PATHNAME = 'district-admin';
 
 // Permissions
@@ -83,3 +84,8 @@ export const RESPONSE_TYPE_BLOB = 'blob';
 // Cloning
 export const BY_PROJECT = 'By Project';
 export const BY_EQUIPMENT = 'By Equipment';
+
+export var headerHeight = 0;
+export function setHeaderHeight(num) {
+  headerHeight = num;
+}

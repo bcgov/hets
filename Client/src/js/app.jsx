@@ -8,6 +8,7 @@ import store from './store';
 import Main from './views/Main.jsx';
 import Home from './views/Home.jsx';
 import BusinessPortal from './views/BusinessPortal.jsx';
+import BusinessOwner from './views/BusinessOwner.jsx';
 import Equipment from './views/Equipment.jsx';
 import EquipmentDetail from './views/EquipmentDetail.jsx';
 import Owners from './views/Owners.jsx';
@@ -28,13 +29,14 @@ import FourOhFour from './views/404.jsx';
 function hasPermission() {
   if (store.getState().user.hasPermission(Constant.PERMISSION_BUSINESS_LOGIN)) {
     hashHistory.push(Constant.BUSINESS_LOGIN_PATHNAME);
-  } 
+  }
 }
 
 const App = <Provider store={ store }>
   <Router history={ hashHistory }>
     <Redirect from="/" to="/home"/>
     <Route path={ Constant.BUSINESS_LOGIN_PATHNAME } component={ BusinessPortal }/>
+    <Route path={ Constant.BUSINESS_OWNER_PATHNAME } component={ BusinessOwner }/>
     <Route path="/" component={ Main } onEnter={ hasPermission }>
       <Route path={ Constant.HOME_PATHNAME } component={ Home }/>
       <Route path={ Constant.EQUIPMENT_PATHNAME } component={ Equipment }/>
