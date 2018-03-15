@@ -12,7 +12,7 @@
         body {
             background-color: #fff;
             padding: 10px;
-            font-family: Verdana, Geneva, sans-serif;
+            font-family: Helvetica;
             font-size: 12pt;
         }      
 
@@ -36,36 +36,41 @@
     </script>
 </head>
 <body>
-<h2>@ViewData["Title"]</h2>
-<hr/>
-<div>
-    <h3>Current User Id</h3>
-    <label>UserId:</label> &nbsp; @Model.UserId
-</div>
-
-@if (Model.DevelopmentEnvironment)
-{
-    <hr/>
+    <h2>@ViewData["Title"]</h2>
+    <hr />
     <div>
-        <h3>Reset User Id</h3>
-        <label>UserId:</label> <input text="" id="newUserId"/>
-        <button onclick="updateUserId(newUserId.value);">Override User Context</button>&nbsp;&nbsp;
-        <button onclick="expireUserId();">Clear User Context</button>
+        <h3>Current User Id</h3>
+        <label>UserId:</label> &nbsp; @Model.UserId
     </div>
-}
 
-@if (Model.DevelopmentEnvironment)
-{
-    <hr/>
-    <div>
-        <h4>View HETS API</h4>
-        <a href="~/swagger/">Swagger</a>
-    </div>    
-    <hr/>
-    <div>
-        <h4>Hangfire Monitor</h4>
-        <a href="~/hangfire">Hangfire</a>
-    </div>    
-}
+    @if (Model.DevelopmentEnvironment)
+    {
+        <hr />
+        <div>
+            <h3>Reset User Id</h3>
+            <label>UserId:</label> <input text="" id="newUserId" />
+            <button onclick="updateUserId(newUserId.value);">Override User Context</button>&nbsp;&nbsp;
+            <button onclick="expireUserId();">Clear User Context</button>
+        </div>
+    }
+
+    @if (Model.DevelopmentEnvironment)
+    {
+        <hr />
+        <div>
+            <h4>View HETS API</h4>
+            <a href="~/swagger/">Swagger</a>
+        </div>
+        <hr />
+        <div>
+            <h4>Import BC Bid Data</h4>
+            <a href="~/Import">Import</a>
+        </div>
+        <hr />
+        <div>
+            <h4>Hangfire Monitor</h4>
+            <a href="~/hangfire">Hangfire</a>
+        </div>
+    }
 </body>
 </html>
