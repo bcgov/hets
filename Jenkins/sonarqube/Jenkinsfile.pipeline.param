@@ -1,9 +1,9 @@
 #=========================================================
 # OpenShift Jenkins pipeline template parameters for:
-# Jenkinsfile: ./Jenkins/funtest/Jenkinsfile
+# Jenkinsfile: ./Jenkins/sonarqube/Jenkinsfile
 # JSON Template File: https://raw.githubusercontent.com/BCDevOps/openshift-tools/master/provisioning/pipeline/resources/pipeline-build.json
 #=========================================================
-NAME=funtest
+NAME=sonarqube
 # GITHUB_WEBHOOK_SECRET=[a-zA-Z0-9]{40}
 SOURCE_REPOSITORY_URL=https://github.com/bcgov/hets.git
 SOURCE_REPOSITORY_REF=master
