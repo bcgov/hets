@@ -29,7 +29,6 @@ namespace HETSAPI.Controllers
         /// <param name="path">Location of the extracted files to parse (relative to the folder where files are stored)</param>
         /// <param name="realTime">Execute in real time</param>
         /// <response code="200">OK</response>
-        /// <response code="404">Attachment not found in system</response>
         ///         
         [HttpGet]
         [Route("/api/admin/import")]
