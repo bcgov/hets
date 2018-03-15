@@ -184,19 +184,26 @@ var UsersDetail = React.createClass({
 
   saveDistrict(district) {
     var isNew = district.id === 0;
-    if (isNew) {
-      Api.addUserDistrict(district).then(() => {
-        this.closeDistrictEditDialog();
-      });
-    } else {
-      Api.editUserDistrict(district).then(() => {
-        this.closeDistrictEditDialog();
-      });
-    }
+    var promise;
+    isNew ? promise =  Api.addUserDistrict(district) : promise = Api.editUserDistrict(district);
+    promise.then((response) => {
+      if (district.user.id === this.props.currentUser.id) {
+        this.updateCurrentUserDistricts(response.data);
+      }
+      this.closeDistrictEditDialog();
+    }); 
   },
 
   deleteDistrict(district) {
-    Api.deleteUserDistrict(district);
+    Api.deleteUserDistrict(district).then((response) => {
+      if (district.user.id === this.props.currentUser.id) {
+        this.updateCurrentUserDistricts(response.data);
+      }
+    });
+  },
+
+  updateCurrentUserDistricts(districts) {
+    store.dispatch({ type: Action.CURRENT_USER_DISTRICTS, currentUserDistricts: districts });
   },
 
   render() {

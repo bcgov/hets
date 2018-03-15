@@ -177,6 +177,7 @@ export function editUserDistrict(district) {
 
 export function deleteUserDistrict(district) {
   return new ApiRequest(`/userdistricts/${district.id}/delete`).post().then((response) => {
+    store.dispatch({ type: Action.USER_DISTRICTS, userDistricts: response.data });
     return response;
   });
 }
