@@ -2,7 +2,7 @@ import React from 'react';
 
 import { connect } from 'react-redux';
 
-import { PageHeader, Well, Alert, Row, Col, ButtonToolbar, Button, ButtonGroup, Glyphicon, ControlLabel } from 'react-bootstrap';
+import { PageHeader, Well, Alert, Row, Col, ButtonToolbar, Button, ButtonGroup, Glyphicon, ControlLabel, Form } from 'react-bootstrap';
 
 import _ from 'lodash';
 import Moment from 'moment';
@@ -163,45 +163,47 @@ var Equipment = React.createClass({
         </ButtonGroup>
       </PageHeader>
       <Well id="equipment-bar" bsSize="small" className="clearfix">
-        <Row>
-          <Col md={10}>
-            <Row>
-              <ButtonToolbar id="equipment-filters-first-row">
-                <MultiDropdown id="selectedLocalAreasIds" placeholder="Local Areas"
-                  items={ localAreas } selectedIds={ this.state.search.selectedLocalAreasIds } updateState={ this.updateSearchState } showMaxItems={ 2 } />
-                <DropdownControl id="statusCode" title={ this.state.search.statusCode } updateState={ this.updateSearchState } blankLine="(All)" placeholder="Status"
-                  items={[ Constant.EQUIPMENT_STATUS_CODE_APPROVED, Constant.EQUIPMENT_STATUS_CODE_PENDING, Constant.EQUIPMENT_STATUS_CODE_ARCHIVED ]}
-                />
-                <MultiDropdown id="selectedEquipmentTypesIds" placeholder="Equipment Types" fieldName="districtEquipmentName"
-                  items={ districtEquipmentTypes } selectedIds={ this.state.search.selectedEquipmentTypesIds } updateState={ this.updateSearchState } showMaxItems={ 2 } />
-                <FilterDropdown id="ownerId" placeholder="Owner" fieldName="organizationName" blankLine="(All)"
-                  items={ owners } selectedId={ this.state.search.ownerId } updateState={ this.updateSearchState } />
-                <CheckboxControl inline id="hired" checked={ this.state.search.hired } updateState={ this.updateSearchState }>Hired</CheckboxControl>
-              </ButtonToolbar>
-            </Row>
-            <Row>
-              <ButtonToolbar id="equipment-filters-second-row">
-                <DateControl id="lastVerifiedDate" date={ this.state.search.lastVerifiedDate } updateState={ this.updateSearchState } placeholder="mm/dd/yyyy" label="Not Verified Since:" title="Last Verified Date"/>
-                <div className="input-container">
-                  <ControlLabel>Attachment:</ControlLabel>
-                  <FormInputControl id="equipmentAttachment" type="text" value={ this.state.search.equipmentAttachment } updateState={ this.updateSearchState } />
-                </div>
-                <div className="input-container">
-                  <ControlLabel>Equipment Id:</ControlLabel>
-                  <FormInputControl id="equipmentId" type="text" value={ this.state.search.equipmentId } updateState={ this.updateSearchState } />
-                </div>
-              </ButtonToolbar>
-            </Row>
-          </Col>
-          <Col md={2}>
-            <Row id="equipment-faves">
-              <Favourites id="equipment-faves-dropdown" type="equipment" favourites={ this.props.favourites.data } data={ this.state.search } onSelect={ this.loadFavourite } pullRight />
-            </Row>
-            <Row id="equipment-search">
-              <Button id="search-button" bsStyle="primary" onClick={ this.fetch }>Search</Button>
-            </Row>
-          </Col>
-        </Row>
+        <Form>
+          <Row>
+            <Col md={10}>
+                <Row>
+                  <ButtonToolbar id="equipment-filters-first-row">
+                    <MultiDropdown id="selectedLocalAreasIds" placeholder="Local Areas"
+                      items={ localAreas } selectedIds={ this.state.search.selectedLocalAreasIds } updateState={ this.updateSearchState } showMaxItems={ 2 } />
+                    <DropdownControl id="statusCode" title={ this.state.search.statusCode } updateState={ this.updateSearchState } blankLine="(All)" placeholder="Status"
+                      items={[ Constant.EQUIPMENT_STATUS_CODE_APPROVED, Constant.EQUIPMENT_STATUS_CODE_PENDING, Constant.EQUIPMENT_STATUS_CODE_ARCHIVED ]}
+                    />
+                    <MultiDropdown id="selectedEquipmentTypesIds" placeholder="Equipment Types" fieldName="districtEquipmentName"
+                      items={ districtEquipmentTypes } selectedIds={ this.state.search.selectedEquipmentTypesIds } updateState={ this.updateSearchState } showMaxItems={ 2 } />
+                    <FilterDropdown id="ownerId" placeholder="Owner" fieldName="organizationName" blankLine="(All)"
+                      items={ owners } selectedId={ this.state.search.ownerId } updateState={ this.updateSearchState } />
+                    <CheckboxControl inline id="hired" checked={ this.state.search.hired } updateState={ this.updateSearchState }>Hired</CheckboxControl>
+                  </ButtonToolbar>
+                </Row>
+                <Row>
+                  <ButtonToolbar id="equipment-filters-second-row">
+                    <DateControl id="lastVerifiedDate" date={ this.state.search.lastVerifiedDate } updateState={ this.updateSearchState } placeholder="mm/dd/yyyy" label="Not Verified Since:" title="Last Verified Date"/>
+                    <div className="input-container">
+                      <ControlLabel>Attachment:</ControlLabel>
+                      <FormInputControl id="equipmentAttachment" type="text" value={ this.state.search.equipmentAttachment } updateState={ this.updateSearchState } />
+                    </div>
+                    <div className="input-container">
+                      <ControlLabel>Equipment Id:</ControlLabel>
+                      <FormInputControl id="equipmentId" type="text" value={ this.state.search.equipmentId } updateState={ this.updateSearchState } />
+                    </div>
+                  </ButtonToolbar>
+                </Row>
+              </Col>
+              <Col md={2}>
+                <Row id="equipment-faves">
+                  <Favourites id="equipment-faves-dropdown" type="equipment" favourites={ this.props.favourites.data } data={ this.state.search } onSelect={ this.loadFavourite } pullRight />
+                </Row>
+                <Row id="equipment-search">
+                  <Button id="search-button" bsStyle="primary" type="submit" onClick={ this.fetch }>Search</Button>
+                </Row>
+              </Col>
+          </Row>
+        </Form>
       </Well>
 
       {(() => {

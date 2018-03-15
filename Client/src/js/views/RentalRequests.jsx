@@ -2,8 +2,7 @@ import React from 'react';
 
 import { connect } from 'react-redux';
 
-import { Well, Alert, Row, Col } from 'react-bootstrap';
-import { PageHeader, ButtonToolbar, Button, ButtonGroup, Glyphicon } from 'react-bootstrap';
+import { Well, Alert, Row, Col, PageHeader, ButtonToolbar, Button, ButtonGroup, Glyphicon, Form } from 'react-bootstrap';
 import { Link } from 'react-router';
 
 import _ from 'lodash';
@@ -203,42 +202,44 @@ var RentalRequests = React.createClass({
         </ButtonGroup>
       </PageHeader>
       <Well id="rental-requests-bar" bsSize="small" className="clearfix">
-        <Row>
-          <Col md={10}>
-            <Row>
-              <ButtonToolbar id="rental-requests-filters">
-                <MultiDropdown id="selectedLocalAreasIds" placeholder="Local Areas"
-                  items={ localAreas } selectedIds={ this.state.search.selectedLocalAreasIds } updateState={ this.updateSearchState } showMaxItems={ 2 } />
-                <DropdownControl id="status" title={ this.state.search.status } updateState={ this.updateSearchState } blankLine="(All)" placeholder="Status"
-                    items={[ Constant.RENTAL_REQUEST_STATUS_CODE_IN_PROGRESS, Constant.RENTAL_REQUEST_STATUS_CODE_COMPLETED ]} />
-                <FormInputControl id="projectName" type="text" placeholder="Project name" value={ this.state.search.projectName } updateState={ this.updateSearchState }></FormInputControl>
-              </ButtonToolbar>
-            </Row>
-            <Row>
-              <ButtonToolbar id="rental-requests-date-filters">
-                <DropdownControl id="dateRange" title={ this.state.search.dateRange } updateState={ this.updateSearchState } blankLine="(All)" placeholder="Expected Start Date"
-                    items={[ WITHIN_30_DAYS, THIS_MONTH, THIS_QUARTER, THIS_FISCAL, LAST_MONTH, LAST_QUARTER, LAST_FISCAL, CUSTOM ]}
-                />
-                {(() => {
-                  if (this.state.search.dateRange === CUSTOM) {
-                    return <span>
-                      <DateControl id="startDate" date={ this.state.search.startDate } updateState={ this.updateSearchState } placeholder="mm/dd/yyyy" label="From:" title="start date"/>
-                      <DateControl id="endDate" date={ this.state.search.endDate } updateState={ this.updateSearchState } placeholder="mm/dd/yyyy" label="To:" title="end date"/>
-                    </span>;
-                  }
-                })()}
-              </ButtonToolbar>
-            </Row>
-          </Col>
-          <Col md={2}>
-            <Row id="rental-requests-faves">
-              <Favourites id="rental-requests-faves-dropdown" type="rentalRequests" favourites={ this.props.favourites.data } data={ this.state.search } onSelect={ this.loadFavourite } pullRight />
-            </Row>
-            <Row id="rental-requests-search">
-              <Button id="search-button" bsStyle="primary" onClick={ this.fetch }>Search</Button>
-            </Row>
-          </Col>
-        </Row>
+        <Form>
+          <Row>
+            <Col md={10}>
+              <Row>
+                <ButtonToolbar id="rental-requests-filters">
+                  <MultiDropdown id="selectedLocalAreasIds" placeholder="Local Areas"
+                    items={ localAreas } selectedIds={ this.state.search.selectedLocalAreasIds } updateState={ this.updateSearchState } showMaxItems={ 2 } />
+                  <DropdownControl id="status" title={ this.state.search.status } updateState={ this.updateSearchState } blankLine="(All)" placeholder="Status"
+                      items={[ Constant.RENTAL_REQUEST_STATUS_CODE_IN_PROGRESS, Constant.RENTAL_REQUEST_STATUS_CODE_COMPLETED ]} />
+                  <FormInputControl id="projectName" type="text" placeholder="Project name" value={ this.state.search.projectName } updateState={ this.updateSearchState }></FormInputControl>
+                </ButtonToolbar>
+              </Row>
+              <Row>
+                <ButtonToolbar id="rental-requests-date-filters">
+                  <DropdownControl id="dateRange" title={ this.state.search.dateRange } updateState={ this.updateSearchState } blankLine="(All)" placeholder="Expected Start Date"
+                      items={[ WITHIN_30_DAYS, THIS_MONTH, THIS_QUARTER, THIS_FISCAL, LAST_MONTH, LAST_QUARTER, LAST_FISCAL, CUSTOM ]}
+                  />
+                  {(() => {
+                    if (this.state.search.dateRange === CUSTOM) {
+                      return <span>
+                        <DateControl id="startDate" date={ this.state.search.startDate } updateState={ this.updateSearchState } placeholder="mm/dd/yyyy" label="From:" title="start date"/>
+                        <DateControl id="endDate" date={ this.state.search.endDate } updateState={ this.updateSearchState } placeholder="mm/dd/yyyy" label="To:" title="end date"/>
+                      </span>;
+                    }
+                  })()}
+                </ButtonToolbar>
+              </Row>
+            </Col>
+            <Col md={2}>
+              <Row id="rental-requests-faves">
+                <Favourites id="rental-requests-faves-dropdown" type="rentalRequests" favourites={ this.props.favourites.data } data={ this.state.search } onSelect={ this.loadFavourite } pullRight />
+              </Row>
+              <Row id="rental-requests-search">
+                <Button id="search-button" bsStyle="primary" type="submit" onClick={ this.fetch }>Search</Button>
+              </Row>
+            </Col>
+          </Row>
+        </Form>
       </Well>
 
       {(() => {
@@ -248,7 +249,14 @@ var RentalRequests = React.createClass({
 
         if (Object.keys(this.props.rentalRequests).length === 0) { return <Alert bsStyle="success">No Rental Requests { addRentalRequestButton }</Alert>; }
 
-        var rentalRequests = _.sortBy(this.props.rentalRequests.data, this.state.ui.sortField);
+        var rentalRequests = _.sortBy(this.props.rentalRequests.data, rentalRequest => {
+          var sortValue = rentalRequest[this.state.ui.sortField];
+          if (typeof sortValue === 'string') {
+            return sortValue.toLowerCase();
+          }
+          return sortValue;
+        });
+
         if (this.state.ui.sortDesc) {
           _.reverse(rentalRequests);
         }
@@ -256,7 +264,7 @@ var RentalRequests = React.createClass({
         return <SortTable sortField={ this.state.ui.sortField } sortDesc={ this.state.ui.sortDesc } onSort={ this.updateUIState } headers={[
           { field: 'localAreaName',          title: 'Local Area'                                      },
           { field: 'equipmentCount',         title: 'Pieces',          style: { textAlign: 'center' } },
-          { field: 'equipmentTypeName',      title: 'Equipment Type'                                  },
+          { field: 'districtEquipmentName',  title: 'Equipment Type'                                  },
           { field: 'expectedStartDate',      title: 'Start Date',      style: { textAlign: 'center' } },
           { field: 'expectedEndDate',        title: 'End Date',        style: { textAlign: 'center' } },
           { field: 'projectName',            title: 'Project'                                         },
