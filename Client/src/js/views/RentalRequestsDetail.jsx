@@ -377,7 +377,11 @@ var RentalRequestsDetail = React.createClass({
         }
       </Well>
       { this.state.showEditDialog &&
-        <RentalRequestsEditDialog show={ this.state.showEditDialog } onSave={ this.saveEdit } onClose={ this.closeEditDialog } />
+        <RentalRequestsEditDialog 
+          show={ this.state.showEditDialog } 
+          onSave={ this.saveEdit } 
+          onClose={ this.closeEditDialog } 
+        />
       }
       { this.state.showHireOfferDialog &&
         <HireOfferEditDialog 
