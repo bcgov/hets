@@ -18,9 +18,9 @@ namespace HETSAPI.Import
     /// </summary>
     public static class ImportLocalArea
     {
-        const string OldTable = "Area";
-        const string NewTable = "HET_LOCAL_AREA";
-        const string XmlFileName = "Area.xml";
+        public const string OldTable = "Area";
+        public const string NewTable = "HET_LOCAL_AREA";
+        public const string XmlFileName = "Area.xml";
 
         /// <summary>
         /// Progress Property

@@ -217,7 +217,8 @@ namespace HETSAPI.Models
         /// <param name="districtEquipmentTypeId"></param>
         /// <param name="blockSize"></param>
         /// <param name="totalBlocks"></param>
-        public static void AssignBlocks(DbAppContext context, int localAreaId, int districtEquipmentTypeId, int blockSize, int totalBlocks)
+        /// <param name="saveChanges"></param>
+        public static void AssignBlocks(DbAppContext context, int localAreaId, int districtEquipmentTypeId, int blockSize, int totalBlocks, bool saveChanges = true)
         {
             try
             {            
@@ -242,7 +243,7 @@ namespace HETSAPI.Models
                     // iterate the blocks and add the record
                     for (int i = 0; i < totalBlocks; i++)
                     {
-                        if (AddedToBlock(context, i, totalBlocks, blockSize, blocks, equipment))
+                        if (AddedToBlock(context, i, totalBlocks, blockSize, blocks, equipment, saveChanges))
                         {                        
                             break; // move to next record
                         }
@@ -257,7 +258,8 @@ namespace HETSAPI.Models
             }
         }
 
-        private static bool AddedToBlock(DbAppContext context, int currentBlock, int totalBlocks, int blockSize, List<int>[] blocks, Equipment equipment)
+        private static bool AddedToBlock(DbAppContext context, int currentBlock, int totalBlocks, 
+            int blockSize, List<int>[] blocks, Equipment equipment, bool saveChanges = true)
         {
             try
             {            
@@ -292,7 +294,11 @@ namespace HETSAPI.Models
                 equipment.NumberInBlock = blocks[currentBlock].Count;
             
                 context.Equipments.Update(equipment);
-                context.SaveChanges();
+
+                if (saveChanges)
+                {
+                    context.SaveChanges();
+                }
 
                 // record added to the block
                 return true;

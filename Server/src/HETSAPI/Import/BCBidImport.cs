@@ -3,6 +3,7 @@ using Hangfire.Server;
 using Microsoft.EntityFrameworkCore;
 using System;
 using HETSAPI.Models;
+using Microsoft.Extensions.Configuration;
 
 namespace HETSAPI.Import
 {
@@ -27,9 +28,10 @@ namespace HETSAPI.Import
         /// Hangfire job to do the data import tasks.
         /// </summary>
         /// <param name="context"></param>
+        /// <param name="configuration"></param>
         /// <param name="connectionstring"></param>
         /// <param name="fileLocation"></param>
-        public static void ImportJob(PerformContext context, string connectionstring, string fileLocation)
+        public static void ImportJob(PerformContext context, IConfiguration configuration, string connectionstring, string fileLocation)
         {
             // open a connection to the database.
             DbContextOptionsBuilder<DbAppContext> options = new DbContextOptionsBuilder<DbAppContext>();
@@ -77,19 +79,24 @@ namespace HETSAPI.Import
             dbContext = new DbAppContext(null, options.Options);
             ImportDumpTruck.Import(context, dbContext, fileLocation, SystemId);
 
-            //*** Import Equipment Attachments from Equip_Attach.xml   
+            //*** Import Equipment Attachments from Equip_Attach.xml (HET_EQUIPMENT_ATTACHMENT)  
             dbContext = new DbAppContext(null, options.Options);
             ImportEquipAttach.Import(context, dbContext, fileLocation, SystemId);
 
-            //*** Import Projects from Project.xml   
+            //*** Process Equipment Block Assigments
+            dbContext = new DbAppContext(null, options.Options);
+            ImportEquip.ProcessBlocks(context, configuration, dbContext, SystemId);
+
+            //*** Import Projects from Project.xml (HET_PROJECT)
             dbContext = new DbAppContext(null, options.Options);
             ImportProject.Import(context, dbContext, fileLocation, SystemId);
 
-
-            /*             
-            //*** Import the table of "HET_DISTRICT_EQUIPMENT_TYPE"  from Block.xml   
+            //*** Import Blocks / Local Area Rotation List from Block.xml ("HET_DISTRICT_ROTATION_LIST")
             dbContext = new DbAppContext(null, options.Options);
             ImportBlock.Import(context, dbContext, fileLocation, SystemId);
+
+            /*             
+            
 
             //*** Import the table of  "HET_RENTAL_AGREEMENT" and "HET_TIME_RECORD";  from Equip_Usage.xml   
             dbContext = new DbAppContext(null, options.Options);
