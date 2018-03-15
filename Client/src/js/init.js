@@ -5,6 +5,7 @@ import Promise from 'bluebird';
 
 import './utils/shims';
 
+
 Promise.config({
   cancellation: true,
 });
@@ -12,6 +13,8 @@ Promise.config({
 import App from './app.jsx';
 import * as Api from './api';
 import { ApiError } from './utils/http';
+
+import * as Constant from './constants';
 
 var initializationEl = document.querySelector('#initialization');
 var progressBarEl = initializationEl.querySelector('.progress-bar');
@@ -33,14 +36,14 @@ function renderApp() {
 
   ReactDOM.render(App, appElement);
 
-  $('#screen').css('padding-top', $('#header-main').height() + 10);
+  Constant.setHeaderHeight($('#header-main').height() + 10);
 }
 
 export default function startApp() {
   if (location.hostname === 'localhost' && process.env.DEV_USER) { //eslint-disable-line
     return Api.setDevUser(process.env.DEV_USER).finally(() => { //eslint-disable-line
       initializeApp();
-    }); 
+    });
   }
 
   return initializeApp();

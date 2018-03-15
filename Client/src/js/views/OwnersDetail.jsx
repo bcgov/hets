@@ -143,7 +143,7 @@ var OwnersDetail = React.createClass({
       // If owner status goes from approved to unapproved/archived or unapproved to archived
       // this will change all it's equipment statuses. This should be reflected in the equipment history.
       if (
-        (currentStatus === Constant.OWNER_STATUS_CODE_APPROVED || currentStatus === Constant.OWNER_STATUS_CODE_PENDING) 
+        (currentStatus === Constant.OWNER_STATUS_CODE_APPROVED || currentStatus === Constant.OWNER_STATUS_CODE_PENDING)
         && (status.status === Constant.OWNER_STATUS_CODE_PENDING || status.status === Constant.OWNER_STATUS_CODE_ARCHIVED)
       ) {
         _.map(equipmentList, equipment => {
@@ -151,7 +151,7 @@ var OwnersDetail = React.createClass({
             Log.equipmentStatusModified(equipment, status.status);
           }
         });
-      } 
+      }
     });
   },
 
@@ -327,14 +327,14 @@ var OwnersDetail = React.createClass({
         return 'success';
       case(Constant.OWNER_STATUS_CODE_PENDING):
         return 'danger';
-      default: 
+      default:
         return 'default';
     }
   },
 
   render() {
     var owner = this.props.owner;
-    
+
     return <div id="owners-detail">
       <div>
         {(() => {
@@ -386,7 +386,7 @@ var OwnersDetail = React.createClass({
               </span></h3>
               {(() => {
                 if (this.state.loading) { return <div className="spinner-container"><Spinner/></div>; }
-                
+
                 return <div id="owners-data">
                   <Row>
                     <ColDisplay md={6} labelProps={{ md: 6 }} label="Company">{ owner.organizationName }</ColDisplay>
@@ -549,32 +549,32 @@ var OwnersDetail = React.createClass({
         <OwnersPolicyEditDialog show={ this.state.showPolicyDialog } onSave={ this.savePolicyEdit } onClose={ this.closePolicyDialog } />
       }
       { this.state.showContactDialog &&
-        <ContactsEditDialog 
-          show={ this.state.showContactDialog } 
-          contact={ this.state.contact } 
-          onSave={ this.saveContact } 
-          onClose={ this.closeContactDialog } 
+        <ContactsEditDialog
+          show={ this.state.showContactDialog }
+          contact={ this.state.contact }
+          onSave={ this.saveContact }
+          onClose={ this.closeContactDialog }
           isFirstContact={!this.props.owner.contacts || Object.keys(this.props.owner.contacts).length === 0}
         />
       }
       { this.state.showDocumentsDialog &&
-        <DocumentsListDialog 
-          show={ owner && this.state.showDocumentsDialog } 
-          parent={ owner } 
-          onClose={ this.closeDocumentsDialog } 
+        <DocumentsListDialog
+          show={ owner && this.state.showDocumentsDialog }
+          parent={ owner }
+          onClose={ this.closeDocumentsDialog }
         />
       }
        { this.state.showNotesDialog &&
-        <NotesDialog 
-          show={ this.state.showNotesDialog } 
-          onSave={ Api.addOwnerNote } 
+        <NotesDialog
+          show={ this.state.showNotesDialog }
+          onSave={ Api.addOwnerNote }
           id={ this.props.params.ownerId }
           getNotes={ Api.getOwnerNotes }
           onUpdate={ Api.updateNote }
-          onClose={ this.closeNotesDialog } 
+          onClose={ this.closeNotesDialog }
           notes={ this.props.notes }
         />
-      } 
+      }
       { this.state.showChangeStatusDialog &&
         <ChangeStatusDialog
           show={ this.state.showChangeStatusDialog}
