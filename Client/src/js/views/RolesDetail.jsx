@@ -188,7 +188,7 @@ var RolesDetail = React.createClass({
           <div className="pull-right">
             <Button onClick={ this.print }><Glyphicon glyph="print" title="Print" /></Button>
             <LinkContainer to={{ pathname: Constant.ROLES_PATHNAME }}>
-              <Button title="Return to List"><Glyphicon glyph="arrow-left" /> Return to List</Button>
+              <Button title="Return"><Glyphicon glyph="arrow-left" /> Return</Button>
             </LinkContainer>
           </div>
         </Col>

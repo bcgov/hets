@@ -221,7 +221,7 @@ var RentalRequestsDetail = React.createClass({
         </Col>
         <Col md={2}>
           <div className="pull-right">
-            <Button title="Return to List" onClick={ browserHistory.goBack }><Glyphicon glyph="arrow-left" /> Return to List</Button>
+            <Button title="Return" onClick={ browserHistory.goBack }><Glyphicon glyph="arrow-left" /> Return</Button>
           </div>
         </Col>
       </Row>

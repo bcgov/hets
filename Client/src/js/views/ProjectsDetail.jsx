@@ -83,19 +83,7 @@ var ProjectsDetail = React.createClass({
   },
 
   componentDidMount() {
-    this.fetch().then(() => {
-      if (this.props.params.contactId) {
-        this.openContact(this.props);
-      }
-    });
-  },
-
-  componentWillReceiveProps(nextProps) {
-    if (!_.isEqual(nextProps.params, this.props.params)) {
-      if (nextProps.params.contactId &&  nextProps.params.contactId !== this.props.params.contactId) {
-        this.openContact(nextProps);
-      }
-    }
+    this.fetch();
   },
 
   fetch() {
@@ -157,7 +145,18 @@ var ProjectsDetail = React.createClass({
     });
   },
 
-  openContactDialog(contact) {
+  openContactDialog(contactId) {
+    var contact;
+    if (contactId === 0) {
+      // New
+      contact = {
+        id: 0,
+        owner: this.props.project,
+      };
+    } else if (contactId) {
+      // Open the contact for viewing if possible
+      contact = this.props.project.contacts[contactId];
+    }
     this.setState({
       contact: contact,
       showContactDialog: true,
@@ -165,42 +164,7 @@ var ProjectsDetail = React.createClass({
   },
 
   closeContactDialog() {
-    this.setState({ showContactDialog: false }, () => {
-      //Reset project location
-      this.props.router.push({
-        pathname: this.props.project.path,
-      });
-    });
-  },
-
-  openContact(props) {
-    var contact = null;
-
-    if (props.params.contactId === '0') {
-      // New Contact
-      contact = {
-        id: 0,
-        project: props.project,
-      };
-    } else if (props.params.contactId) {
-      // Select contact for viewing if possible
-      contact = props.project.contacts[props.params.contactId];
-    }
-
-    if (contact) {
-      this.openContactDialog(contact);
-    } else {
-      this.props.router.push({
-        pathname: this.props.project.path,
-      });
-    }
-  },
-
-  addContact() {
-    this.openContactDialog({ id: 0 });
-    this.props.router.push({
-      pathname: `${ this.props.project.path }/${ Constant.CONTACTS_PATHNAME }/0`,
-    });
+    this.setState({ showContactDialog: false });
   },
 
   deleteContact(contact) {
@@ -299,7 +263,7 @@ var ProjectsDetail = React.createClass({
                 <Col md={3}>
                   <div className="pull-right">
                     <Button onClick={ this.print }><Glyphicon glyph="print" title="Print" /></Button>
-                    <Button title="Return to List" onClick={ browserHistory.goBack }><Glyphicon glyph="arrow-left" /> Return to List</Button>
+                    <Button title="Return" onClick={ browserHistory.goBack }><Glyphicon glyph="arrow-left" /> Return</Button>
                   </div>
                 </Col>
               </Row>
@@ -453,7 +417,7 @@ var ProjectsDetail = React.createClass({
               {(() => {
                 if (this.state.loading ) { return <div className="spinner-container"><Spinner/></div>; }
 
-                var addContactButton = <Button title="Add Contact" onClick={ this.addContact } bsSize="xsmall"><Glyphicon glyph="plus" />&nbsp;<strong>Add</strong></Button>;
+                var addContactButton = <Button title="Add Contact" onClick={ this.openContactDialog.bind(this, 0) } bsSize="xsmall"><Glyphicon glyph="plus" />&nbsp;<strong>Add</strong></Button>;
 
                 if (!project.contacts || Object.keys(project.contacts).length === 0) { return <Alert bsStyle="success">No contacts <span className="pull-right">{ addContactButton }</span></Alert>; }
                 
@@ -483,7 +447,7 @@ var ProjectsDetail = React.createClass({
                         <td style={{ textAlign: 'right' }}>
                           <ButtonGroup>
                             <DeleteButton name="Contact" hide={ !contact.canDelete || contact.isPrimary } onConfirm={ this.deleteContact.bind(this, contact) } />
-                            <EditButton name="Contact" view={ !contact.canEdit } pathname={ contact.path } />
+                            <EditButton name="Contact" view={ !contact.canEdit } onClick={ this.openContactDialog.bind(this, contact.id) } />
                           </ButtonGroup>
                         </td>
                       </tr>;
