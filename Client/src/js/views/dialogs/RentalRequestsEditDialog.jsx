@@ -68,10 +68,13 @@ var RentalRequestsEditDialog = React.createClass({
     var valid = true;
 
     if (isBlank(this.state.equipmentCount)) {
-      this.setState({ equipmentCountError: 'Equipment count is required' });
+      this.setState({ equipmentCountError: 'Count is required' });
       valid = false;
     } else if (this.state.equipmentCount < 1) {
-      this.setState({ equipmentCountError: 'Equipment count not valid' });
+      this.setState({ equipmentCountError: 'Count not valid' });
+      valid = false;
+    } else if (this.state.equipmentCount < this.props.rentalRequest.yesCount) {
+      this.setState({ equipmentCountError: 'Count can not be less than number of equipment already hired' });
       valid = false;
     }
 
