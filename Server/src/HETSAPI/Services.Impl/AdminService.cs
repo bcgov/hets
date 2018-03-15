@@ -43,14 +43,14 @@ namespace HETSAPI.Services.Impl
                     if (realTime)
                     {
                         // not using Hangfire
-                        BcBidImport.ImportJob(null, connectionString, uploadPath + path);
+                        BcBidImport.ImportJob(null, _configuration, connectionString, uploadPath + path);
                         result = "Import complete";
                     }
                     else
                     {
                         // use Hangfire
                         result = "Created Job: ";
-                        string jobId = BackgroundJob.Enqueue(() => BcBidImport.ImportJob(null, connectionString, uploadPath + path));
+                        string jobId = BackgroundJob.Enqueue(() => BcBidImport.ImportJob(null, _configuration, connectionString, uploadPath + path));
                         result += jobId;
                     }
                 }
@@ -63,7 +63,6 @@ namespace HETSAPI.Services.Impl
 
             return new ObjectResult(result);
         }
-
 
         public IActionResult AdminObfuscateGetAsync(string sourcePath, string destinationPath)
         {

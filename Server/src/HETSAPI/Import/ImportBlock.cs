@@ -7,7 +7,9 @@ using System.Xml.Serialization;
 using Hangfire.Console.Progress;
 using HETSAPI.ImportModels;
 using HETSAPI.Models;
-using System.Collections.Generic;
+using System.Data;
+using System.Diagnostics;
+using Microsoft.EntityFrameworkCore;
 
 namespace HETSAPI.Import
 {
@@ -43,6 +45,13 @@ namespace HETSAPI.Import
                 return;
             }
 
+            int maxBlockIndex = 0;
+
+            if (dbContext.RentalRequestRotationLists.Any())
+            {
+                maxBlockIndex = dbContext.RentalRequestRotationLists.Max(x => x.Id);
+            }
+
             try
             {
                 string rootAttr = "ArrayOf" + OldTable;
@@ -65,50 +74,29 @@ namespace HETSAPI.Import
                     legacyItems = legacyItems.Skip(ii).ToArray();
                 }
 
+                Debug.WriteLine("Importing Block Data. Total Records: " + legacyItems.Length);
+
                 foreach (Block item in legacyItems.WithProgress(progress))
                 {
-                    int areaId = item.Area_Id ?? 0;
-                    int equipmentTypeId = item.Equip_Type_Id ?? 0;
-                    int blockNum = Convert.ToInt32(float.Parse(item.Block_Num ?? "0.0"));
-
-                    // this is for conversion record hope this is unique
-                    string oldUniqueId = ((areaId * 10000 + equipmentTypeId) * 100 + blockNum).ToString();
+                    string areaId = item.Area_Id.ToString();
+                    string equipmentTypeId = item.Equip_Type_Id.ToString();
+                    string createdDate = item.Created_Dt;
+                    string oldUniqueId = string.Format("{0}-{1}-{2}", areaId, equipmentTypeId, createdDate);
 
                     // see if we have this one already
                     ImportMap importMap = dbContext.ImportMaps.FirstOrDefault(x => x.OldTable == OldTable && x.OldKey == oldUniqueId);
 
                     // new entry
-                    if (importMap == null) 
+                    if (importMap == null && item.Area_Id > 0)
                     {
-                        if (areaId > 0)
+                        LocalAreaRotationList instance = null;
+                        CopyToInstance(dbContext, item, ref instance, systemId, ref maxBlockIndex);
+
+                        if (instance != null)
                         {
-                            LocalAreaRotationList instance = null;
-                            CopyToInstance(dbContext, item, ref instance, systemId);
                             ImportUtility.AddImportMap(dbContext, OldTable, oldUniqueId, NewTable, instance.Id);
                         }
-                    }
-                    else // update
-                    {
-                        LocalAreaRotationList instance = dbContext.LocalAreaRotationLists.FirstOrDefault(x => x.Id == importMap.NewKey);
-
-                        // record was deleted
-                        if (instance == null) 
-                        {
-                            CopyToInstance(dbContext, item, ref instance, systemId);
-
-                            // update the import map
-                            importMap.NewKey = instance.Id;
-                            dbContext.ImportMaps.Update(importMap);
-                        }
-                        else // ordinary update
-                        {
-                            CopyToInstance(dbContext, item, ref instance, systemId);
-
-                            // touch the import map
-                            importMap.AppLastUpdateTimestamp = DateTime.UtcNow;
-                            dbContext.ImportMaps.Update(importMap);
-                        }
-                    }
+                    }                    
 
                     // save change to database periodically to avoid frequent writing to the database
                     if (++ii % 500 == 0)
@@ -133,13 +121,16 @@ namespace HETSAPI.Import
                 }
                 catch (Exception e)
                 {
-                    performContext.WriteLine("Error saving data " + e.Message);
+                    string temp = string.Format("Error saving data (BlockIndex: {0}): {1}", maxBlockIndex, e.Message);
+                    performContext.WriteLine(temp);
+                    throw new DataException(temp);
                 }
             }
             catch (Exception e)
             {
                 performContext.WriteLine("*** ERROR ***");
                 performContext.WriteLine(e.ToString());
+                throw;
             }            
         }
 
@@ -148,60 +139,175 @@ namespace HETSAPI.Import
         /// </summary>
         /// <param name="dbContext"></param>
         /// <param name="oldObject"></param>
-        /// <param name="instance"></param>
+        /// <param name="rotationList"></param>
         /// <param name="systemId"></param>
-        private static void CopyToInstance(DbAppContext dbContext, Block oldObject, ref LocalAreaRotationList instance, string systemId)
+        /// <param name="maxBlockIndex"></param>
+        private static void CopyToInstance(DbAppContext dbContext, Block oldObject, ref LocalAreaRotationList rotationList, 
+            string systemId, ref int maxBlockIndex)
         {
-            if (oldObject.Area_Id <= 0)
-                return;
-
-            // add the user specified in oldObject.Modified_By and oldObject.Created_By if not there in the database
-            User createdBy = ImportUtility.AddUserFromString(dbContext, oldObject.Created_By, systemId);
-
-            int equipmentTypeId = oldObject.Equip_Type_Id ?? 0;
-            int blockNum = Convert.ToInt32(float.Parse(oldObject.Block_Num == null ? "0.0" : oldObject.Block_Num));
-            
-            if (instance == null)
+            try
             {
-                instance = new LocalAreaRotationList();
-                
-                DistrictEquipmentType disEquipType = dbContext.DistrictEquipmentTypes.FirstOrDefault(x => x.Id == equipmentTypeId);
-                if (disEquipType != null)
+                bool isNew = false;
+
+                if (oldObject.Area_Id <= 0)
                 {
-                    instance.DistrictEquipmentType = disEquipType;
-                    instance.DistrictEquipmentTypeId = disEquipType.Id;
+                    return; // ignore these records
                 }
 
-                // extract AskNextBlock*Id which is the secondary key of Equip.Id
-                int equipId = oldObject.Last_Hired_Equip_Id ?? 0;
-
-                if (dbContext.Equipments.Any(x => x.Id == equipId))   
+                if (oldObject.Equip_Type_Id <= 0)
                 {
-                    switch (blockNum)
+                    return; // ignore these records
+                }
+
+                if (oldObject.Last_Hired_Equip_Id <= 0)
+                {
+                    return; // ignore these records
+                }
+
+                // ***********************************************
+                // get the area record
+                // ***********************************************
+                string tempOldAreaId = oldObject.Area_Id.ToString();
+
+                ImportMap mapArea = dbContext.ImportMaps.AsNoTracking()
+                    .FirstOrDefault(x => x.OldKey == tempOldAreaId &&
+                                         x.OldTable == ImportLocalArea.OldTable &&
+                                         x.NewTable == ImportLocalArea.NewTable);
+
+                if (mapArea == null)
+                {
+                    throw new DataException(string.Format("Area Id cannot be null (BlockIndex: {0})", maxBlockIndex));
+                }
+
+                LocalArea area = dbContext.LocalAreas.AsNoTracking()
+                    .FirstOrDefault(x => x.Id == mapArea.NewKey);
+
+                if (area == null)
+                {
+                    throw new ArgumentException(string.Format("Cannot locate Local Area record (Local Area Id: {0})", tempOldAreaId));
+                }
+
+                // ***********************************************
+                // get the equipment type record
+                // ***********************************************
+                string tempOldEquipTypeId = oldObject.Equip_Type_Id.ToString();
+
+                ImportMap mapEquipType = dbContext.ImportMaps.AsNoTracking()
+                    .FirstOrDefault(x => x.OldKey == tempOldEquipTypeId &&
+                                         x.OldTable == ImportDistrictEquipmentType.OldTable &&
+                                         x.NewTable == ImportDistrictEquipmentType.NewTable);
+
+                if (mapEquipType == null)
+                {
+                    throw new DataException(string.Format("Equipment Type Id cannot be null (BlockIndex: {0})", maxBlockIndex));
+                }
+
+                DistrictEquipmentType equipmentType = dbContext.DistrictEquipmentTypes.AsNoTracking()
+                    .FirstOrDefault(x => x.Id == mapEquipType.NewKey);
+
+                if (equipmentType == null)
+                {
+                    throw new ArgumentException(string.Format("Cannot locate District Equipment Type record (Equipment Type Id: {0})", tempOldEquipTypeId));
+                }
+
+                // ***********************************************
+                // see if a record already exists
+                // ***********************************************
+                rotationList = dbContext.LocalAreaRotationLists
+                    .FirstOrDefault(x => x.LocalAreaId == area.Id &&
+                                         x.DistrictEquipmentTypeId == equipmentType.Id);
+
+                if (rotationList == null)
+                {
+                    isNew = true;
+
+                    // create new list
+                    rotationList = new LocalAreaRotationList
                     {
-                        case 1:
-                            instance.AskNextBlockOpenId = equipId;
-                            break;
-                        case 2:
-                            instance.AskNextBlock1Id = equipId;
-                            break;
-                        case 3:
-                            instance.AskNextBlock2Id = equipId;
-                            break;                        
-                    }
+                        Id = ++maxBlockIndex,
+                        LocalAreaId = area.Id,
+                        DistrictEquipmentTypeId = equipmentType.Id,
+                        AppCreateUserid = systemId,
+                        AppCreateTimestamp = DateTime.UtcNow
+                    };
                 }
-
-                instance.AppCreateUserid = createdBy.SmUserId;
-
-                if (oldObject.Created_Dt != null)
+                else
                 {
-                    instance.AppCreateTimestamp = DateTime.ParseExact(oldObject.Created_Dt.Trim().Substring(0, 10), "yyyy-MM-dd", System.Globalization.CultureInfo.InvariantCulture);
+                    // record already exists - just testing updates 
+                    Debug.WriteLine("Record Id: " + rotationList.Id);
                 }
 
-                dbContext.LocalAreaRotationLists.Add(instance);
-            }            
-        }
+                // ***********************************************
+                // get the equipment record
+                // ***********************************************
+                string tempOldEquipId = oldObject.Last_Hired_Equip_Id.ToString();
 
+                ImportMap mapEquip = dbContext.ImportMaps.AsNoTracking()
+                    .FirstOrDefault(x => x.OldKey == tempOldEquipId &&
+                                         x.OldTable == ImportEquip.OldTable &&
+                                         x.NewTable == ImportEquip.NewTable);
+
+                if (mapEquip == null)
+                {
+                    throw new DataException(string.Format("Equipment Id cannot be null (BlockIndex: {0})", maxBlockIndex));
+                }
+
+                Equipment equipment = dbContext.Equipments.AsNoTracking()
+                    .FirstOrDefault(x => x.Id == mapEquip.NewKey);
+
+                if (equipment == null)
+                {
+                    throw new ArgumentException(string.Format("Cannot locate Equipment record (Equipment Id: {0})", tempOldEquipId));
+                }
+
+                // ***********************************************
+                // update the "Ask Next" values
+                // ***********************************************                
+                float? blockNum = ImportUtility.GetFloatValue(oldObject.Block_Num);
+
+                if (blockNum == null)
+                {
+                    throw new DataException(string.Format("Block Number cannot be null (BlockIndex: {0}", maxBlockIndex));
+                }
+                            
+                // extract AskNextBlock*Id which is the secondary key of Equip.Id                
+                switch (blockNum)
+                {
+                    case 1:
+                        rotationList.AskNextBlock1Id = equipment.Id;
+                        rotationList.AskNextBlock1Seniority = equipment.Seniority;
+                        break;
+                    case 2:
+                        rotationList.AskNextBlock2Id = equipment.Id;
+                        rotationList.AskNextBlock2Seniority = equipment.Seniority;
+                        break;
+                    case 3:                        
+                        rotationList.AskNextBlockOpenId = equipment.Id;
+                        break;                        
+                }
+                
+                // ***********************************************
+                // update or create equipment
+                // ***********************************************  
+                equipment.AppLastUpdateUserid = systemId;
+                equipment.AppLastUpdateTimestamp = DateTime.UtcNow;
+
+                if (isNew)
+                {
+                    dbContext.LocalAreaRotationLists.Add(rotationList);
+                }
+                else
+                {
+                    dbContext.LocalAreaRotationLists.Update(rotationList);
+                }                
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine("***Error*** - Master Block Index: " + maxBlockIndex);
+                Debug.WriteLine(ex.Message);
+                throw;
+            }
+        }
 
         public static void Obfuscate(PerformContext performContext, DbAppContext dbContext, string sourceLocation, string destinationLocation, string systemId)
         {
@@ -222,14 +328,14 @@ namespace HETSAPI.Import
                 progress.SetValue(0);
 
                 // create serializer and serialize xml file
-                XmlSerializer ser = new XmlSerializer(typeof(ImportModels.Block[]), new XmlRootAttribute(rootAttr));
+                XmlSerializer ser = new XmlSerializer(typeof(Block[]), new XmlRootAttribute(rootAttr));
                 MemoryStream memoryStream = ImportUtility.MemoryStreamGenerator(XmlFileName, OldTable, sourceLocation, rootAttr);
-                ImportModels.Block[] legacyItems = (ImportModels.Block[])ser.Deserialize(memoryStream);
+                Block[] legacyItems = (Block[])ser.Deserialize(memoryStream);
 
                 performContext.WriteLine("Obfuscating Block data");
                 progress.SetValue(0);
                 
-                foreach (ImportModels.Block item in legacyItems.WithProgress(progress))
+                foreach (Block item in legacyItems.WithProgress(progress))
                 {
                     item.Created_By = systemId;                    
                     
@@ -237,12 +343,13 @@ namespace HETSAPI.Import
                 }
 
                 performContext.WriteLine("Writing " + XmlFileName + " to " + destinationLocation);
-                // write out the array.
+                
+                // write out the array
                 FileStream fs = ImportUtility.GetObfuscationDestination(XmlFileName, destinationLocation);
                 ser.Serialize(fs, legacyItems);
                 fs.Close();
-                // no excel for Block.
 
+                // no excel for Block.
             }
             catch (Exception e)
             {

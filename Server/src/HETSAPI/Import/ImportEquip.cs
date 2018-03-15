@@ -11,6 +11,7 @@ using Hangfire.Console.Progress;
 using HETSAPI.ImportModels;
 using HETSAPI.Models;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
 
 namespace HETSAPI.Import
 {
@@ -27,6 +28,144 @@ namespace HETSAPI.Import
         /// Progress Property
         /// </summary>
         public static string OldTableProgress => OldTable + "_Progress";
+
+        /// <summary>
+        /// Recalculate the block assignment for each piece of equipment
+        /// </summary>
+        /// <param name="performContext"></param>
+        /// <param name="configuration"></param>
+        /// <param name="dbContext"></param>
+        /// <param name="systemId"></param>
+        public static void ProcessBlocks(PerformContext performContext, IConfiguration configuration, DbAppContext dbContext, string systemId)
+        {
+            try
+            {
+                performContext.WriteLine("*** Recalculating Equipment Block Assignment ***");
+                Debug.WriteLine("Recalculating Equipment Block Assignment");
+
+                int ii = 0;
+                string _oldTableProgress = "BlockAssignment_Progress";
+                string _newTable = "BlockAssignment";
+
+                // check if the block assignment has already been completed
+                int startPoint = ImportUtility.CheckInterMapForStartPoint(dbContext, _oldTableProgress, BcBidImport.SigId, _newTable);
+
+                if (startPoint == BcBidImport.SigId)    // this means the assignment job is complete
+                {
+                    performContext.WriteLine("*** Recalculating Equipment Block Assignment is complete from the former process ***");
+                    return;
+                }
+
+                // ************************************************************
+                // cleanup old block assignment status records
+                // ************************************************************
+                List<ImportMap> importMapList = dbContext.ImportMaps
+                    .Where(x => x.OldTable == _oldTableProgress &&
+                                x.NewTable == _newTable)
+                    .ToList();
+
+                foreach (ImportMap importMap in importMapList)
+                {
+                    dbContext.ImportMaps.Remove(importMap);                    
+                }
+
+                dbContext.SaveChanges();
+
+                // ************************************************************
+                // get processing rules
+                // ************************************************************
+                SeniorityScoringRules scoringRules = new SeniorityScoringRules(configuration);
+
+                // ************************************************************
+                // get all local areas 
+                // (using active equipment to minimize the results)
+                // ************************************************************
+                List<LocalArea> localAreas = dbContext.Equipments
+                    .Include(x => x.LocalArea)
+                    .Where(x => x.Status == Equipment.StatusApproved &&
+                                x.ArchiveCode == "N")
+                    .Select(x => x.LocalArea)
+                    .Distinct()
+                    .ToList();
+
+                // ************************************************************
+                // get all district equipment types
+                // (using active equipment to minimize the results)
+                // ************************************************************
+                List<DistrictEquipmentType> equipmentTypes = dbContext.Equipments
+                    .Include(x => x.DistrictEquipmentType)
+                    .Where(x => x.Status == Equipment.StatusApproved &&
+                                x.ArchiveCode == "N")
+                    .Select(x => x.DistrictEquipmentType)   
+                    .Distinct()
+                    .ToList();
+
+                // ************************************************************************
+                // iterate the data and update the assugnment blocks 
+                // (seniority is already calculated)
+                // ************************************************************************
+                Debug.WriteLine("Recalculating Equipment Block Assignment - Local Area Record Count: " + localAreas.Count);
+
+                foreach (LocalArea localArea in localAreas)
+                {
+                    foreach (DistrictEquipmentType districtEquipmentType in equipmentTypes)
+                    {
+                        // get the associated equipment type
+                        EquipmentType equipmentTypeRecord = dbContext.EquipmentTypes.FirstOrDefault(x => x.Id == districtEquipmentType.EquipmentTypeId);
+
+                        if (equipmentTypeRecord == null)
+                        {
+                            throw new DataException(string.Format("Invalid District Equipment Type. No associated Equipment Type record (District Equipment Id: {0})", districtEquipmentType.Id));
+                        }
+
+                        // get rules                  
+                        int blockSize = equipmentTypeRecord.IsDumpTruck ? scoringRules.GetBlockSize("DumpTruck") : scoringRules.GetBlockSize();
+                        int totalBlocks = equipmentTypeRecord.IsDumpTruck ? scoringRules.GetTotalBlocks("DumpTruck") : scoringRules.GetTotalBlocks();
+
+                        // assign blocks
+                        SeniorityListExtensions.AssignBlocks(dbContext, localArea.Id, districtEquipmentType.Id, blockSize, totalBlocks, false);
+
+                        // save change to database periodically to avoid frequent writing to the database
+                        if (ii++ % 1000 == 0)
+                        {
+                            try
+                            {
+                                Debug.WriteLine("Recalculating Equipment Block Assignment - Index: " + ii);
+                                ImportUtility.AddImportMapForProgress(dbContext, _oldTableProgress, ii.ToString(), BcBidImport.SigId, _newTable);
+                                dbContext.SaveChangesForImport();
+                            }
+                            catch (Exception e)
+                            {
+                                performContext.WriteLine("Error saving data " + e.Message);
+                            }
+                        }
+                    }
+                }
+
+                // ************************************************************
+                // save final set of updates
+                // ************************************************************
+                try
+                {
+                    performContext.WriteLine("*** Recalculating Equipment Block Assignment is Done ***");
+                    Debug.WriteLine("Recalculating Equipment Block Assignment is Done");
+                    ImportUtility.AddImportMapForProgress(dbContext, _oldTableProgress, BcBidImport.SigId.ToString(), BcBidImport.SigId, _newTable);
+                    dbContext.SaveChangesForImport();
+                }
+                catch (Exception e)
+                {
+                    string temp = string.Format("Error saving data (Record: {0}): {1}", ii, e.Message);
+                    performContext.WriteLine(temp);
+                    throw new DataException(temp);
+                }
+            }
+            catch (Exception e)
+            {
+                performContext.WriteLine("*** ERROR ***");
+                performContext.WriteLine(e.ToString());
+                throw;
+            }
+        }
 
         /// <summary>
         /// Import Equipment
