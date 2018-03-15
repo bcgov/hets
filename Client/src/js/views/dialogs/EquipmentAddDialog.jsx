@@ -146,10 +146,8 @@ var EquipmentAddDialog = React.createClass({
     if (this.state.loading) { return <div style={{ textAlign: 'center' }}><Spinner/></div>; }
 
     var owner = this.props.owner;
-    // Constrain the local area drop downs to those in the District of the current logged in user
-    var localAreas = _.chain(this.props.localAreas)
-      .sortBy('name')
-      .value();
+
+    var localAreas = _.sortBy(this.props.localAreas, 'name');
 
     var districtEquipmentTypes = _.chain(this.props.districtEquipmentTypes)
       .filter(type => type.district.id == this.props.currentUser.district.id)

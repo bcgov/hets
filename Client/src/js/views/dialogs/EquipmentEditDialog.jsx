@@ -2,13 +2,15 @@ import React from 'react';
 
 import { connect } from 'react-redux';
 
-import { Grid, Row, Col } from 'react-bootstrap';
-import { Form, FormGroup, HelpBlock, ControlLabel } from 'react-bootstrap';
+import _ from 'lodash';
+
+import { Grid, Row, Col, Form, FormGroup, HelpBlock, ControlLabel } from 'react-bootstrap';
 
 import * as Api from '../../api';
 
 import EditDialog from '../../components/EditDialog.jsx';
 import FormInputControl from '../../components/FormInputControl.jsx';
+import FilterDropdown from '../../components/FilterDropdown.jsx';
 
 import { isBlank, notBlank } from '../../utils/string';
 import { isValidYear } from '../../utils/date';
@@ -16,6 +18,7 @@ import { isValidYear } from '../../utils/date';
 var EquipmentEditDialog = React.createClass({
   propTypes: {
     equipment: React.PropTypes.object,
+    localAreas: React.PropTypes.object,
 
     onSave: React.PropTypes.func.isRequired,
     onClose: React.PropTypes.func.isRequired,
@@ -26,6 +29,7 @@ var EquipmentEditDialog = React.createClass({
     return {
       isNew: this.props.equipment.id === 0,
 
+      localAreaId: this.props.equipment.localArea.id || 0,
       serialNumber: this.props.equipment.serialNumber || '',
       make: this.props.equipment.make || '',
       size: this.props.equipment.size || '',
@@ -51,6 +55,7 @@ var EquipmentEditDialog = React.createClass({
   },
 
   didChange() {
+    if (this.state.localAreaId !== this.props.equipment.localArea.id) { return true; }
     if (this.state.serialNumber !== this.props.equipment.serialNumber) { return true; }
     if (this.state.make !== this.props.equipment.make) { return true; }
     if (this.state.size !== this.props.equipment.size) { return true; }
@@ -98,6 +103,7 @@ var EquipmentEditDialog = React.createClass({
         return;
       }
       this.props.onSave({ ...this.props.equipment, ...{
+        localArea: { id: this.state.localAreaId },
         serialNumber: this.state.serialNumber,
         make: this.state.make,
         size: this.state.size,
@@ -115,6 +121,8 @@ var EquipmentEditDialog = React.createClass({
   render() {
     var equipment = this.props.equipment;
 
+    var localAreas = _.sortBy(this.props.localAreas, 'name');
+
     return <EditDialog id="equipment-edit" show={ this.props.show }
       onClose={ this.props.onClose } onSave={ this.onSave } didChange={ this.didChange } isValid={ this.isValid }
       title= { 
@@ -123,6 +131,18 @@ var EquipmentEditDialog = React.createClass({
       {(() => {
         return <Form>
           <Grid fluid>
+            <Row>
+              <Col md={12}>
+                <FormGroup controlId="localAreaId" validationState={ this.state.localAreaError ? 'error' : null }>
+                  <ControlLabel>Local Area</ControlLabel>
+                  <FilterDropdown id="localAreaId" selectedId={ this.state.localAreaId } updateState={ this.updateState }
+                    items={ localAreas }
+                    className="full-width"
+                  />
+                  <HelpBlock>{ this.state.localAreaError }</HelpBlock>
+                </FormGroup>
+              </Col>
+            </Row>
             <Row>
               <Col md={12}>
                 <FormGroup controlId="make">
@@ -219,6 +239,7 @@ var EquipmentEditDialog = React.createClass({
 function mapStateToProps(state) {
   return {
     equipment: state.models.equipment,
+    localAreas: state.lookups.localAreas,
   };
 }
 
