@@ -362,7 +362,7 @@ var OwnersDetail = React.createClass({
                 {/* <DropdownControl id="status" title={ owner.status } updateState={ this.updateStatusState } staticTitle={true}
                   items={_.pull([ Constant.OWNER_STATUS_CODE_APPROVED, Constant.OWNER_STATUS_CODE_PENDING, Constant.OWNER_STATUS_CODE_ARCHIVED ], owner.status)} /> */}
                 <Button className="mr-5" onClick={ this.print }><Glyphicon glyph="print" title="Print" /></Button>
-                <Button title="Return to List" onClick={ browserHistory.goBack }><Glyphicon glyph="arrow-left" /> Return to List</Button>
+                <Button title="Return" onClick={ browserHistory.goBack }><Glyphicon glyph="arrow-left" /> Return</Button>
               </div>
             </Col>
           </Row>;

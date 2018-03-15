@@ -24,20 +24,22 @@ var UsersEditDialog = React.createClass({
     onSave: React.PropTypes.func.isRequired,
     onClose: React.PropTypes.func.isRequired,
     show: React.PropTypes.bool,
+    isNew: React.PropTypes.bool,
   },
 
   getInitialState() {
+    var isNew = this.props.isNew;
     return {
-      isNew: this.props.user.id == 0,
+      isNew: isNew,
 
-      active: this.props.user.active === true,
-      givenName: this.props.user.givenName || '',
-      surname: this.props.user.surname || '',
-      smUserId: this.props.user.smUserId || '',
-      email: this.props.user.email || '',
-      districtId: this.props.user.district.id || 0,
+      active: !isNew ? this.props.user.active === true : false,
+      givenName: !isNew ? this.props.user.givenName : '',
+      surname: !isNew ? this.props.user.surname : '',
+      smUserId: !isNew ? this.props.user.smUserId : '',
+      email: !isNew ? this.props.user.email : '',
+      districtId: !isNew ? this.props.user.district.id : 0,
 
-      status: this.props.user.active ? Constant.USER_STATUS_ACTIVE : Constant.USER_STATUS_ARCHIVED,
+      status: !isNew && this.props.user.active ? Constant.USER_STATUS_ACTIVE : Constant.USER_STATUS_ARCHIVED,
 
       givenNameError: false,
       surnameError: false,

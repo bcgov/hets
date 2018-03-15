@@ -14,6 +14,8 @@ import * as Api from '../api';
 import * as Constant from '../constants';
 import store from '../store';
 
+import UsersEditDialog from './dialogs/UsersEditDialog.jsx';
+
 import CheckboxControl from '../components/CheckboxControl.jsx';
 import Confirm from '../components/Confirm.jsx';
 import Favourites from '../components/Favourites.jsx';
@@ -32,11 +34,14 @@ var Users = React.createClass({
     favourites: React.PropTypes.object,
     search: React.PropTypes.object,
     ui: React.PropTypes.object,
+    router: React.PropTypes.object,
   },
 
   getInitialState() {
     return {
       loading: true,
+
+      showUsersEditDialog: false,
 
       search: {
         selectedDistrictsIds: this.props.search.selectedDistrictsIds || [],
@@ -121,6 +126,26 @@ var Users = React.createClass({
     window.print();
   },
 
+  openUsersEditDialog() {
+    this.setState({ showUsersEditDialog: true });
+  },
+
+  closeUsersEditDialog() {
+    this.setState({ showUsersEditDialog: false });
+  },
+
+  onSaveEdit(user) {
+    Api.addUser(user).then(() => {
+        // Make sure we get the new user's ID
+      user.id = this.props.user.id;
+      // Reload the screen using new user id
+      this.props.router.push({
+        pathname: `${ Constant.USERS_PATHNAME }/${ user.id }`,
+      });
+    });
+    this.closeEditDialog();
+  },
+
   render() {
     var districts = _.sortBy(this.props.districts, 'name');
 
@@ -164,9 +189,8 @@ var Users = React.createClass({
         {(() => {
           if (this.state.loading) { return <div style={{ textAlign: 'center' }}><Spinner/></div>; }
 
-          var addUserButton = <LinkContainer to={{ pathname: `${ Constant.USERS_PATHNAME }/0` }}>
-            <Button title="Add User" bsSize="xsmall"><Glyphicon glyph="plus" />&nbsp;<strong>Add User</strong></Button>
-          </LinkContainer>;
+          var addUserButton = <Button title="Add User" bsSize="xsmall" onClick={ this.openUsersEditDialog }><Glyphicon glyph="plus" />&nbsp;<strong>Add User</strong></Button>;
+
           if (Object.keys(this.props.users).length === 0) { return <Alert bsStyle="success">No users { addUserButton }</Alert>; }
 
           var users = _.sortBy(this.props.users, this.state.ui.sortField);
@@ -206,6 +230,14 @@ var Users = React.createClass({
           </SortTable>;
         })()}
       </div>
+      { this.state.showUsersEditDialog &&
+        <UsersEditDialog 
+          show={ this.state.showUsersEditDialog } 
+          onSave={ this.onSaveEdit } 
+          onClose= { this.closeUsersEditDialog }
+          isNew 
+        />
+      }
     </div>;
   },
 });

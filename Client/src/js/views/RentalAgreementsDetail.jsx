@@ -334,7 +334,7 @@ var RentalAgreementsDetail = React.createClass({
             <Col md={4}>
               <div className="pull-right">
                 <Button disabled={ !rentalAgreement.isActive } onClick={ this.openCloneDialog }>Clone</Button>
-                <Button title="Return to List" onClick={ browserHistory.goBack }><Glyphicon glyph="arrow-left" /> Return to List</Button>
+                <Button title="Return" onClick={ browserHistory.goBack }><Glyphicon glyph="arrow-left" /> Return</Button>
               </div>
             </Col>
           </Row>

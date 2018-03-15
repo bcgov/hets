@@ -167,29 +167,6 @@ var ProjectsDetail = React.createClass({
     this.setState({ showContactDialog: false });
   },
 
-  // openContact(props) {
-  //   var contact = null;
-
-  //   if (props.params.contactId === '0') {
-  //     // New Contact
-  //     contact = {
-  //       id: 0,
-  //       project: props.project,
-  //     };
-  //   } else if (props.params.contactId) {
-  //     // Select contact for viewing if possible
-  //     contact = props.project.contacts[props.params.contactId];
-  //   }
-
-  //   if (contact) {
-  //     this.openContactDialog(contact);
-  //   } else {
-  //     this.props.router.push({
-  //       pathname: this.props.project.path,
-  //     });
-  //   }
-  // },
-
   deleteContact(contact) {
     Api.deleteContact(contact).then(() => {
       Log.projectContactDeleted(this.props.project, this.props.contact).then(() => {
@@ -286,7 +263,7 @@ var ProjectsDetail = React.createClass({
                 <Col md={3}>
                   <div className="pull-right">
                     <Button onClick={ this.print }><Glyphicon glyph="print" title="Print" /></Button>
-                    <Button title="Return to List" onClick={ browserHistory.goBack }><Glyphicon glyph="arrow-left" /> Return to List</Button>
+                    <Button title="Return" onClick={ browserHistory.goBack }><Glyphicon glyph="arrow-left" /> Return</Button>
                   </div>
                 </Col>
               </Row>

@@ -109,9 +109,9 @@ var UsersDetail = React.createClass({
   },
 
   onSaveEdit(user) {
-    var savePromise = this.props.params.userId === '0' ? Api.addUser : Api.updateUser;
+    var savePromise = this.props.params.userId ? Api.updateUser : Api.addUser;
     savePromise(user).then(() => {
-      if (this.props.params.userId === '0') {
+      if (!this.props.params.userId) {
         // Make sure we get the new user's ID
         user.id = this.props.user.id;
         // Reload the screen using new user id
@@ -218,7 +218,7 @@ var UsersDetail = React.createClass({
             <div className="pull-right">
               <Button onClick={ this.print }><Glyphicon glyph="print" title="Print" /></Button>
               <LinkContainer to={{ pathname: Constant.USERS_PATHNAME }}>
-                <Button title="Return to List"><Glyphicon glyph="arrow-left" /> Return to List</Button>
+                <Button title="Return"><Glyphicon glyph="arrow-left" /> Return</Button>
               </LinkContainer>
             </div>
           </Col>
