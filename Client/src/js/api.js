@@ -1920,7 +1920,7 @@ export function getNotes() {
 
 export function setDevUser(user) {
   return new ApiRequest(`/authentication/dev/token/${user}`).get().then(response => {    
-    return normalize(response.data);
+    return response;
   });
 }
 

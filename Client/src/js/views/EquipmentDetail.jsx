@@ -285,6 +285,7 @@ var EquipmentDetail = React.createClass({
                   <Col md={8}>
                     <Row>
                       <DropdownButton
+                        id="owner-status"
                         bsStyle={ this.getStatusDropdownStyle() }
                         title={ equipment.status || '' }
                         onSelect={ this.updateStatusState }
