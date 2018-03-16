@@ -73,6 +73,8 @@
 
  #table-block {
     min-height: 400px;
+    margin-bottom: 25px;
+    border: 1px solid black;
   }
   #contact-block {
     margin-top: 30px;
@@ -138,12 +140,16 @@
 
   #main-table {
     table-layout: fixed;
-    min-height: 375px;
-    margin-bottom: 25px;
+    min-height: 400px;
+    border: none;
   }
 
   #main-table tr:last-child {
     height: 100% !important;
+  }
+
+  #main-table th:last-child {
+    border-right: none;
   }
 
   h1, h2 {
@@ -370,12 +376,14 @@
         {{/rentalAgreementRatesWithoutTotal}}
         <tr style="height: 15px"><td></td><td></td><td></td></tr>
         <tr><td></td><td></td><td class="bold">Conditions</td></tr>
+        <tr style="height: 15px"><td></td><td></td><td></td></tr>
         {{#rentalAgreementConditions}}
         <tr>
           <td></td>
           <td></td>
           <td>{{conditionName}}</td>
         </tr>
+        <tr style="height: 15px"><td></td><td></td><td></td></tr>
         {{/rentalAgreementConditions}}
       </table>
     </div>
