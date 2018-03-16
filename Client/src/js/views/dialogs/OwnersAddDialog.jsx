@@ -13,7 +13,7 @@ import EditDialog from '../../components/EditDialog.jsx';
 import FilterDropdown from '../../components/FilterDropdown.jsx';
 import FormInputControl from '../../components/FormInputControl.jsx';
 
-import { isBlank, notBlank, onlyLetters } from '../../utils/string';
+import { isBlank, onlyLetters } from '../../utils/string';
 
 const HELP_TEXT = {
   prefix: 'This field must include only letters, up to 5 characters and be unique across all owners',
