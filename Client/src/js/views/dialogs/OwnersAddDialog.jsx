@@ -38,6 +38,8 @@ var OwnersAddDialog = React.createClass({
 
     return {
       name: '',
+      givenName: '',
+      surname: '',
       address1: '',
       address2: '',
       city: '',
@@ -71,10 +73,20 @@ var OwnersAddDialog = React.createClass({
   },
 
   didChange() {
-    return notBlank(this.state.name) ||
-      notBlank(this.state.ownerCode) ||
-      this.state.meetsResidency !== false ||
-      this.state.localAreaId !== 0;
+    if (this.state.organizationName !== '') { return true; }
+    if (this.state.givenName !== '') { return true; }
+    if (this.state.surname !== '') { return true; }
+    if (this.state.address1 !== '') { return true; }
+    if (this.state.address2 !== '') { return true; }
+    if (this.state.city !== '') { return true; }
+    if (this.state.province !== '') { return true; }
+    if (this.state.postalCode !== '') { return true; }
+    if (this.state.ownerCode !== '') { return true; }
+    if (this.state.localAreaId !== 0) { return true; }
+    if (this.state.doingBusinessAs !== '') { return true; }
+    if (this.state.registeredCompanyNumber !== '') { return true; }
+
+    return false;
   },
 
   isValid() {
@@ -167,6 +179,8 @@ var OwnersAddDialog = React.createClass({
   onSave() {
     this.props.onSave({
       organizationName: this.state.name,
+      givenName: this.state.givenName,
+      surname: this.state.surname,
       address1: this.state.address1,
       address2: this.state.address2,
       city: this.state.city,
@@ -197,6 +211,14 @@ var OwnersAddDialog = React.createClass({
           <ControlLabel>Company Name <sup>*</sup></ControlLabel>
           <FormInputControl type="text" value={ this.state.name } updateState={ this.updateState } inputRef={ ref => { this.input = ref; }} />
           <HelpBlock>{ this.state.nameError }</HelpBlock>
+        </FormGroup>
+        <FormGroup controlId="givenName">
+          <ControlLabel>First Name</ControlLabel>
+          <FormInputControl type="text" value={ this.state.givenName } updateState={ this.updateState } />
+        </FormGroup>
+        <FormGroup controlId="surname">
+          <ControlLabel>Last Name</ControlLabel>
+          <FormInputControl type="text" value={ this.state.surname } updateState={ this.updateState } />
         </FormGroup>
         <FormGroup controlId="address1" validationState={ this.state.address1Error ? 'error' : null }>
           <ControlLabel>Address Line 1 <sup>*</sup></ControlLabel>
