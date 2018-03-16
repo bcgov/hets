@@ -34,6 +34,7 @@ namespace HETSAPI.Controllers
         /// Default action
         /// </summary>
         /// <returns></returns>
+        [Route("/api/Import")]
         [RequiresPermission(Permission.ImportData)]
         public IActionResult Index()
         {
@@ -51,6 +52,7 @@ namespace HETSAPI.Controllers
         /// </summary>
         /// <param name="files"></param>
         /// <returns></returns>      
+        [Route("/api/UploadPost")]
         [RequiresPermission(Permission.ImportData)]
         public IActionResult UploadPost(IList<IFormFile> files)
         {
