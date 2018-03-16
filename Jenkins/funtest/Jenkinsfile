@@ -8,7 +8,7 @@ podTemplate(label: 'bddstack', name: 'bddstack', serviceAccount: 'jenkins', clou
     resourceLimitMemory: '4Gi',
     workingDir: '/home/jenkins',
     command: '',
-    args: '${computer.jnlpmac} ${computer.name}'
+    args: '${computer.jnlpmac} ${computer.name}',
     envVars: [
         secretEnvVar(key: 'TEST_USERNAME', secretName: 'bddtest-secret', secretKey: 'TEST_USERNAME'),
         secretEnvVar(key: 'TEST_PASSWORD', secretName: 'bddtest-secret', secretKey: 'TEST_PASSWORD')
