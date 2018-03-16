@@ -40,4 +40,5 @@ podTemplate(label: 'sonarrunner', name: 'sonarrunner', serviceAccount: 'jenkins'
                 } finally {}
             }
         }
-    }	
+    }
+}    	
