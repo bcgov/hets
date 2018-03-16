@@ -6,6 +6,7 @@ import { Well, Row, Col, Alert, Label, Button, Glyphicon, Popover, Form, FormGro
 import { LinkContainer } from 'react-router-bootstrap';
 
 import _ from 'lodash';
+import Promise from 'bluebird';
 
 import UserRoleAddDialog from './dialogs/UserRoleAddDialog.jsx';
 import UsersEditDialog from './dialogs/UsersEditDialog.jsx';

@@ -2,6 +2,7 @@ import React from 'react';
 import { connect } from 'react-redux';
 
 import _ from 'lodash';
+import Promise from 'bluebird';
 
 import { Row, Col, Radio, Alert, FormGroup, ControlLabel } from 'react-bootstrap';
 
