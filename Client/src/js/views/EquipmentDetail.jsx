@@ -467,13 +467,13 @@ var EquipmentDetail = React.createClass({
                       <ColDisplay md={12} labelProps={{ md: 4 }} label="Hours YTD">{ equipment.hoursYtd }</ColDisplay>
                     </Row>
                     <Row>
-                      <ColDisplay md={12} labelProps={{ md: 4 }} label={ <span>Hours { equipment.lastYear }</span> }>{ equipment.serviceHoursLastYear }</ColDisplay>
+                      <ColDisplay md={12} labelProps={{ md: 4 }} label={ <span>Hours { equipment.lastYear - 1 }</span> }>{ equipment.serviceHoursLastYear }</ColDisplay>
                     </Row>
                     <Row>
-                      <ColDisplay md={12} labelProps={{ md: 4 }} label={ <span>Hours { equipment.twoYearsAgo }</span> }>{ equipment.serviceHoursTwoYearsAgo }</ColDisplay>
+                      <ColDisplay md={12} labelProps={{ md: 4 }} label={ <span>Hours { equipment.twoYearsAgo - 1 }</span> }>{ equipment.serviceHoursTwoYearsAgo }</ColDisplay>
                     </Row>
                     <Row>
-                      <ColDisplay md={12} labelProps={{ md: 4 }} label={ <span>Hours { equipment.threeYearsAgo }</span> }>{ equipment.serviceHoursThreeYearsAgo }</ColDisplay>
+                      <ColDisplay md={12} labelProps={{ md: 4 }} label={ <span>Hours { equipment.threeYearsAgo - 1 }</span> }>{ equipment.serviceHoursThreeYearsAgo }</ColDisplay>
                     </Row>
                     <Row>
                       <ColDisplay md={12} labelProps={{ md: 4 }} label="Received Date">
