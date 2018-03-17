@@ -3,6 +3,7 @@ using Hangfire.Server;
 using System;
 using System.Collections.Generic;
 using System.Data;
+using System.Data.Common;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
@@ -19,14 +20,54 @@ namespace HETSAPI.Import
     /// </summary>
     public static class ImportProject
     {
-        const string OldTable = "Project";
-        const string NewTable = "HET_PROJECT";
-        const string XmlFileName = "Project.xml";
+        public const string OldTable = "Project";
+        public const string NewTable = "HET_PROJECT";
+        public const string XmlFileName = "Project.xml";
 
         /// <summary>
         /// Progress Property
         /// </summary>
         public static string OldTableProgress => OldTable + "_Progress";
+
+        /// <summary>
+        /// Fix the sequence for the tables populated by the import process
+        /// </summary>
+        /// <param name="performContext"></param>
+        /// <param name="dbContext"></param>
+        public static void ResetSequence(PerformContext performContext, DbAppContext dbContext)
+        {
+            try
+            {
+                performContext.WriteLine("*** Resetting HET_PROJECT database sequence after import ***");
+                Debug.WriteLine("Resetting HET_PROJECT database sequence after import");
+
+                if (dbContext.Projects.Any())
+                {
+                    // get max key
+                    int maxKey = dbContext.Projects.Max(x => x.Id);
+                    maxKey = maxKey + 1;
+
+                    using (DbCommand command = dbContext.Database.GetDbConnection().CreateCommand())
+                    {
+                        // check if this code already exists
+                        command.CommandText = string.Format(@"ALTER SEQUENCE public.""HET_PROJECT_PROJECT_ID_seq"" RESTART WITH {0};", maxKey);
+
+                        dbContext.Database.OpenConnection();
+                        command.ExecuteNonQuery();
+                        dbContext.Database.CloseConnection();
+                    }
+                }
+
+                performContext.WriteLine("*** Done resetting HET_PROJECT database sequence after import ***");
+                Debug.WriteLine("Resetting HET_PROJECT database sequence after import - Done!");
+            }
+            catch (Exception e)
+            {
+                performContext.WriteLine("*** ERROR ***");
+                performContext.WriteLine(e.ToString());
+                throw;
+            }
+        }
 
         /// <summary>
         /// Import Projects

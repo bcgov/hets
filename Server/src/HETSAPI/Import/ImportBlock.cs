@@ -8,6 +8,7 @@ using Hangfire.Console.Progress;
 using HETSAPI.ImportModels;
 using HETSAPI.Models;
 using System.Data;
+using System.Data.Common;
 using System.Diagnostics;
 using Microsoft.EntityFrameworkCore;
 
@@ -26,6 +27,46 @@ namespace HETSAPI.Import
         /// Progress Property
         /// </summary>
         public static string OldTableProgress => OldTable + "_Progress";
+
+        /// <summary>
+        /// Fix the sequence for the tables populated by the import process
+        /// </summary>
+        /// <param name="performContext"></param>
+        /// <param name="dbContext"></param>
+        public static void ResetSequence(PerformContext performContext, DbAppContext dbContext)
+        {
+            try
+            {
+                performContext.WriteLine("*** Resetting HET_LOCAL_AREA_ROTATION_LIST database sequence after import ***");
+                Debug.WriteLine("Resetting HET_LOCAL_AREA_ROTATION_LIST database sequence after import");
+
+                if (dbContext.LocalAreaRotationLists.Any())
+                {
+                    // get max key
+                    int maxKey = dbContext.LocalAreaRotationLists.Max(x => x.Id);
+                    maxKey = maxKey + 1;
+
+                    using (DbCommand command = dbContext.Database.GetDbConnection().CreateCommand())
+                    {
+                        // check if this code already exists
+                        command.CommandText = string.Format(@"ALTER SEQUENCE public.""HET_LOCAL_AREA_ROTATION_LIST_LOCAL_AREA_ROTATION_LIST_ID_seq"" RESTART WITH {0};", maxKey);
+
+                        dbContext.Database.OpenConnection();
+                        command.ExecuteNonQuery();
+                        dbContext.Database.CloseConnection();
+                    }
+                }
+
+                performContext.WriteLine("*** Done resetting HET_LOCAL_AREA_ROTATION_LIST database sequence after import ***");
+                Debug.WriteLine("Resetting HET_LOCAL_AREA_ROTATION_LIST database sequence after import - Done!");
+            }
+            catch (Exception e)
+            {
+                performContext.WriteLine("*** ERROR ***");
+                performContext.WriteLine(e.ToString());
+                throw;
+            }
+        }
 
         /// <summary>
         /// Import Rotaion List
@@ -162,6 +203,50 @@ namespace HETSAPI.Import
                 if (oldObject.Last_Hired_Equip_Id <= 0)
                 {
                     return; // ignore these records
+                }
+
+                // ***********************************************
+                // we only need records from the current fiscal
+                // so ignore all others
+                // ***********************************************
+                DateTime fiscalStart;
+                DateTime fiscalEnd;
+
+                if (DateTime.UtcNow.Month == 1 || DateTime.UtcNow.Month == 2 || DateTime.UtcNow.Month == 3)
+                {
+                    fiscalEnd = new DateTime(DateTime.UtcNow.Year, 3, 31);
+                }
+                else
+                {
+                    fiscalEnd = new DateTime(DateTime.UtcNow.AddYears(1).Year, 3, 31);
+                }                
+
+                if (DateTime.UtcNow.Month == 1 || DateTime.UtcNow.Month == 2 || DateTime.UtcNow.Month == 3)
+                {
+                    fiscalStart = new DateTime(DateTime.UtcNow.AddYears(-1).Year, 4, 1);
+                }
+                else
+                {
+                    fiscalStart = new DateTime(DateTime.UtcNow.Year, 4, 1);
+                }
+
+                string tempRecordDate = oldObject.Created_Dt;
+
+                if (string.IsNullOrEmpty(tempRecordDate))
+                {
+                    return; // ignore if we don't have a created date
+                }
+
+                if (!string.IsNullOrEmpty(tempRecordDate))
+                {
+                    DateTime? recordDate = ImportUtility.CleanDateTime(tempRecordDate);
+
+                    if (recordDate == null ||
+                        recordDate < fiscalStart ||
+                        recordDate > fiscalEnd)
+                    {
+                        return; // ignore this record - it is outside of the current fiscal year
+                    }
                 }
 
                 // ***********************************************

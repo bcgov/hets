@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Data;
+using System.Data.Common;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
@@ -10,6 +11,7 @@ using Hangfire.Console;
 using Hangfire.Console.Progress;
 using Hangfire.Server;
 using HETSAPI.Models;
+using Microsoft.EntityFrameworkCore;
 
 namespace HETSAPI.Import
 {
@@ -18,14 +20,109 @@ namespace HETSAPI.Import
     /// </summary>
     public static class ImportOwner
     {
-        public static string OldTable => "Owner";
-        public static string NewTable => "HET_OWNER";
-        public static string XmlFileName => "Owner.xml";
+        public const string OldTable = "Owner";
+        public const string NewTable = "HET_OWNER";
+        public const string XmlFileName = "Owner.xml";
 
         /// <summary>
         /// Progress Property
         /// </summary>
         public static string OldTableProgress => OldTable + "_Progress";
+
+        /// <summary>
+        /// Fix the sequence for the tables populated by the import process
+        /// </summary>
+        /// <param name="performContext"></param>
+        /// <param name="dbContext"></param>
+        public static void ResetSequence(PerformContext performContext, DbAppContext dbContext)
+        {
+            try
+            {
+                // **************************************
+                // Owners
+                // **************************************
+                performContext.WriteLine("*** Resetting HET_OWNER database sequence after import ***");
+                Debug.WriteLine("Resetting HET_OWNER database sequence after import");
+
+                if (dbContext.Owners.Any())
+                {
+                    // get max key
+                    int maxKey = dbContext.Owners.Max(x => x.Id);
+                    maxKey = maxKey + 1;
+
+                    using (DbCommand command = dbContext.Database.GetDbConnection().CreateCommand())
+                    {
+                        // check if this code already exists
+                        command.CommandText = string.Format(@"ALTER SEQUENCE public.""HET_OWNER_OWNER_ID_seq"" RESTART WITH {0};", maxKey);
+
+                        dbContext.Database.OpenConnection();
+                        command.ExecuteNonQuery();
+                        dbContext.Database.CloseConnection();
+                    }
+                }
+
+                performContext.WriteLine("*** Done resetting HET_OWNER database sequence after import ***");
+                Debug.WriteLine("Resetting HET_OWNER database sequence after import - Done!");
+
+                // **************************************
+                // Contacts
+                // **************************************
+                performContext.WriteLine("*** Resetting HET_CONTACT database sequence after import ***");
+                Debug.WriteLine("Resetting HET_CONTACT database sequence after import");
+
+                if (dbContext.Contacts.Any())
+                {
+                    // get max key
+                    int maxKey = dbContext.Contacts.Max(x => x.Id);
+                    maxKey = maxKey + 1;
+
+                    using (DbCommand command = dbContext.Database.GetDbConnection().CreateCommand())
+                    {
+                        // check if this code already exists
+                        command.CommandText = string.Format(@"ALTER SEQUENCE public.""HET_CONTACT_CONTACT_ID_seq"" RESTART WITH {0};", maxKey);
+
+                        dbContext.Database.OpenConnection();
+                        command.ExecuteNonQuery();
+                        dbContext.Database.CloseConnection();
+                    }
+                }
+
+                performContext.WriteLine("*** Done resetting HET_CONTACT database sequence after import ***");
+                Debug.WriteLine("Resetting HET_CONTACT database sequence after import - Done!");
+
+                // **************************************
+                // Notes
+                // **************************************
+                performContext.WriteLine("*** Resetting HET_NOTE database sequence after import ***");
+                Debug.WriteLine("Resetting HET_NOTE database sequence after import");
+
+                if (dbContext.Notes.Any())
+                {
+                    // get max key
+                    int maxKey = dbContext.Notes.Max(x => x.Id);
+                    maxKey = maxKey + 1;
+
+                    using (DbCommand command = dbContext.Database.GetDbConnection().CreateCommand())
+                    {
+                        // check if this code already exists
+                        command.CommandText = string.Format(@"ALTER SEQUENCE public.""HET_NOTE_NOTE_ID_seq"" RESTART WITH {0};", maxKey);
+
+                        dbContext.Database.OpenConnection();
+                        command.ExecuteNonQuery();
+                        dbContext.Database.CloseConnection();
+                    }
+                }
+
+                performContext.WriteLine("*** Done resetting HET_NOTE database sequence after import ***");
+                Debug.WriteLine("Resetting HET_NOTE database sequence after import - Done!");
+            }
+            catch (Exception e)
+            {
+                performContext.WriteLine("*** ERROR ***");
+                performContext.WriteLine(e.ToString());
+                throw;
+            }
+        }
 
         /// <summary>
         /// Get the list of mapped records.  

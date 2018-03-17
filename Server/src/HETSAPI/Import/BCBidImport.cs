@@ -2,6 +2,7 @@
 using Hangfire.Server;
 using Microsoft.EntityFrameworkCore;
 using System;
+using System.Diagnostics;
 using HETSAPI.Models;
 using Microsoft.Extensions.Configuration;
 
@@ -91,23 +92,30 @@ namespace HETSAPI.Import
             dbContext = new DbAppContext(null, options.Options);
             ImportProject.Import(context, dbContext, fileLocation, SystemId);
 
-            //*** Import Blocks / Local Area Rotation List from Block.xml ("HET_DISTRICT_ROTATION_LIST")
+            //*** Import Blocks / Local Area Rotation List from Block.xml (HET_DISTRICT_ROTATION_LIST)
             dbContext = new DbAppContext(null, options.Options);
             ImportBlock.Import(context, dbContext, fileLocation, SystemId);
 
-            /*             
-            
-
-            //*** Import the table of  "HET_RENTAL_AGREEMENT" and "HET_TIME_RECORD";  from Equip_Usage.xml   
+            //*** Import Equipment Usage (Time) from Equip_Usage.xml (HET_RENTAL_AGREEMENT and HET_TIME_RECORD) 
             dbContext = new DbAppContext(null, options.Options);
             ImportEquipUsage.Import(context, dbContext, fileLocation, SystemId);
 
-            //*** Import the table of  "HET_RENTAL_AGREEMENT" and "HET_TIME_RECORD";  from Equip_Usage.xml   
+            // *** Final Step - fix the database sequences
             dbContext = new DbAppContext(null, options.Options);
-            ImportRotation.Import(context, dbContext, fileLocation, SystemId);
-            */
+            ImportServiceArea.ResetSequence(context, dbContext);
+            ImportLocalArea.ResetSequence(context, dbContext);
+            ImportCity.ResetSequence(context, dbContext);
+            ImportUser.ResetSequence(context, dbContext);
+            ImportOwner.ResetSequence(context, dbContext);            
+            ImportEquipmentType.ResetSequence(context, dbContext);
+            ImportDistrictEquipmentType.ResetSequence(context, dbContext);
+            ImportEquip.ResetSequence(context, dbContext);
+            ImportEquipAttach.ResetSequence(context, dbContext);
+            ImportProject.ResetSequence(context, dbContext);
+            ImportBlock.ResetSequence(context, dbContext);
+            ImportEquipUsage.ResetSequence(context, dbContext);
         }
-
+        
 
         /// <summary>
         /// Hangfire job to do the data import tasks.
@@ -165,18 +173,12 @@ namespace HETSAPI.Import
             ImportProject.Obfuscate(context, dbContext, sourceFileLocation, destinationFileLocation, SystemId);
             dbContext = new DbAppContext(null, options.Options);
 
-            /*                                                          
             // Process blocks
             ImportBlock.Obfuscate(context, dbContext, sourceFileLocation, destinationFileLocation, SystemId);
             dbContext = new DbAppContext(null, options.Options);
 
             // Process equipment usage               
-            ImportEquipUsage.Obfuscate(context, dbContext, sourceFileLocation, destinationFileLocation, SystemId);
-            dbContext = new DbAppContext(null, options.Options);
-
-            // process rotation data         
-            ImportRotation.Obfuscate(context, dbContext, sourceFileLocation, destinationFileLocation, SystemId);
-            */
+            ImportEquipUsage.Obfuscate(context, dbContext, sourceFileLocation, destinationFileLocation, SystemId);     
         }
     }
 }

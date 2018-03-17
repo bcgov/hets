@@ -20,7 +20,7 @@ namespace HETSAPI.Seeders
         protected override void Invoke(DbAppContext context)
         {
             UpdateDistricts(context);
-            context.SaveChanges();
+            context.SaveChangesForImport();
         }
 
         public override Type InvokeAfter => typeof(RegionSeeder);
@@ -32,7 +32,6 @@ namespace HETSAPI.Seeders
             foreach (District district in seedUsers)
             {
                 context.UpdateSeedDistrictInfo(district);
-                context.SaveChanges();
             }
 
             AddInitialDistricts(context);            
