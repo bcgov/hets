@@ -74,6 +74,8 @@
  #table-block {
     height: 400px !important;
     max-height: 400px !important;
+    overflow: hidden !important;
+    border-bottom: 1px solid black;
     margin-bottom: 50px;
   }
   #contact-block {
@@ -143,6 +145,7 @@
     height: 400px !important;
     min-height: 400px !important;
     max-height: 400px !important;
+    border-bottom: none;
   }
 
   h1, h2 {
@@ -378,6 +381,7 @@
         </tr>
         <tr style="height: 15px"><td></td><td></td><td></td></tr>
         {{/rentalAgreementConditions}}
+        <tr style="height: 100%; max-height: 250px"><td></td><td></td><td></td></tr>
       </table>
     </div>
 
