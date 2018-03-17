@@ -76,6 +76,7 @@ var TimeEntryDialog = React.createClass({
     Object.keys(timeEntry).map((key) => {
       let state = { ...timeEntry[key], errorHours: '', errorDate: '' };
       timeEntryResetObj[key] = state;
+      return;
     });
     
     this.setState({ timeEntry: timeEntryResetObj });
@@ -93,6 +94,8 @@ var TimeEntryDialog = React.createClass({
         timeEntryErrorsObj[key] = state;
         valid = false;
       }
+
+      return;
     });
     this.setState({ timeEntry: timeEntryErrorsObj });
 
@@ -154,7 +157,7 @@ var TimeEntryDialog = React.createClass({
     var equipment = this.props.activeRentalRequest.equipment;
     var isDumpTruck = equipment.districtEquipmentType.equipmentType.isDumpTruck;
     
-    if ((isDumpTruck && equipment.hoursYtd > (0.85 * 600)) || (equipment.hoursYtd < (0.85 * 300))) {
+    if ((isDumpTruck && equipment.hoursYtd > (0.85 * 600)) || (equipment.hoursYtd > (0.85 * 300))) {
       return true;
     }
 
