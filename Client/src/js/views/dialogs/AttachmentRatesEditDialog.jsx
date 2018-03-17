@@ -101,6 +101,7 @@ var AttachmentRatesEditDialog = React.createClass({
     Object.keys(forms).map((key) => {
       let state = { ...forms[key], componentNameError: '', commentError: '' };
       formsResetObj[key] = state;
+      return;
     });
     
     this.setState({ forms: formsResetObj });
@@ -118,6 +119,7 @@ var AttachmentRatesEditDialog = React.createClass({
         formsErrorsObj[key] = state;
         valid = false;
       }
+      return;
     });
     this.setState({ forms: formsErrorsObj });
 

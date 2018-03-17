@@ -1409,7 +1409,7 @@ function parseRotationListItem(item, numberOfBlocks) {
       path: `${ Constant.EQUIPMENT_PATHNAME }/${ item.equipment.id }`,
       url: `#/${ Constant.EQUIPMENT_PATHNAME }/${ item.equipment.id }`,
     }),
-  } || {};
+  };
   item.displayFields = {};
   item.displayFields.equipmentDetails = concat(item.equipment.year, concat(item.equipment.make, concat(item.equipment.model, concat(item.equipment.serialNumber, item.equipment.size, '/'), '/'), '/'), ' ');
   item.displayFields.seniority = getSeniorityDisplayName(item.equipment.blockNumber, numberOfBlocks, item.equipment.seniority, item.equipment.numberInBlock);
@@ -1485,7 +1485,7 @@ function parseRentalAgreement(agreement) {
       path: `${ Constant.EQUIPMENT_PATHNAME }/${ agreement.equipment.id }`,
       url: `#/${ Constant.EQUIPMENT_PATHNAME }/${ agreement.equipment.id }`,
     }),
-  } || {};
+  };
 
   // UI display fields
   agreement.status = agreement.status || Constant.RENTAL_AGREEMENT_STATUS_CODE_ACTIVE;  // TODO

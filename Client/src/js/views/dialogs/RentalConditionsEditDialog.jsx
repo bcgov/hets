@@ -62,6 +62,7 @@ var RentalConditionsEditDialog = React.createClass({
     Object.keys(forms).map((key) => {
       let state = { ...forms[key], conditionNameError: '', commentError: '' };
       formsResetObj[key] = state;
+      return;
     });
     
     this.setState({ forms: formsResetObj });
@@ -81,7 +82,8 @@ var RentalConditionsEditDialog = React.createClass({
         formsErrorsObj[key] = state;
         valid = false;
       }
-
+      
+      return;
     });
 
     this.setState({ forms: formsErrorsObj });

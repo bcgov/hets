@@ -211,6 +211,7 @@ var RentalRatesEditDialog = React.createClass({
         valid = false;
       }
 
+      return;
     });
 
     this.setState({ forms: formsErrorsObj });
