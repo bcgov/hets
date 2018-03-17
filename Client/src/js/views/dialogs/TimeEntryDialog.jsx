@@ -150,6 +150,17 @@ var TimeEntryDialog = React.createClass({
     this.setState({ showAllTimeRecords: !this.state.showAllTimeRecords });
   },
 
+  getHoursYtdClassName() {
+    var equipment = this.props.activeRentalRequest.equipment;
+    var isDumpTruck = equipment.districtEquipmentType.equipmentType.isDumpTruck;
+    
+    if ((isDumpTruck && equipment.hoursYtd > (0.85 * 600)) || (equipment.hoursYtd < (0.85 * 300))) {
+      return true;
+    }
+
+    return false;
+  },
+
   render() {
     const activeRentalRequest = this.props.activeRentalRequest;
     const isValidDate = function( current ){
@@ -191,17 +202,23 @@ var TimeEntryDialog = React.createClass({
         <Form>
           <Grid fluid>
             <Row>
-              <Col xs={4}>              
+              <Col xs={3}>              
                   <div className="text-label">Project</div>
                   <div>{this.props.project.name}</div>
               </Col>
-              <Col xs={4}>
+              <Col xs={3}>
                   <div className="text-label">Project Number</div>
                   <div>{ this.props.project.provincialProjectNumber }</div>
               </Col>
-              <Col xs={4}>
+              <Col xs={3}>
                 <div className="text-label">Equipment ID</div>
                 <div>{ activeRentalRequest.equipment.equipmentCode }</div>
+              </Col>
+              <Col xs={3}>
+                <div className="text-label">YTD Hours</div>
+                <div className={ this.getHoursYtdClassName() ? 'highlight' : '' }>
+                  { activeRentalRequest.equipment.hoursYtd }{ this.getHoursYtdClassName() && <span className="small-text"> (Near max. hours)</span> }
+                </div>
               </Col>
             </Row>
             <div className="time-entries-container">

@@ -1,4 +1,3 @@
-import $ from 'jquery';
 import React from 'react';
 import ReactDOM from 'react-dom';
 import Promise from 'bluebird';
@@ -13,8 +12,6 @@ Promise.config({
 import App from './app.jsx';
 import * as Api from './api';
 import { ApiError } from './utils/http';
-
-import * as Constant from './constants';
 
 var initializationEl = document.querySelector('#initialization');
 var progressBarEl = initializationEl.querySelector('.progress-bar');
@@ -34,9 +31,8 @@ function renderApp() {
 
   const appElement = document.querySelector('#app');
 
+  
   ReactDOM.render(App, appElement);
-
-  Constant.setHeaderHeight($('#header-main').height() + 10);
 }
 
 export default function startApp() {
