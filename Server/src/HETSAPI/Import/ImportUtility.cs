@@ -287,8 +287,12 @@ namespace HETSAPI.Import
                         SmUserId = systemId,
                         Surname = "System",
                         GivenName = "HETS",
+                        Initials = "SH",
                         Active = true,
-                        AppCreateTimestamp = DateTime.UtcNow
+                        AppCreateTimestamp = DateTime.UtcNow,
+                        AppLastUpdateTimestamp = DateTime.UtcNow,
+                        AppCreateUserid = systemId,
+                        AppLastUpdateUserid = systemId
                     };
 
                     dbContext.Users.Add(sysUser);

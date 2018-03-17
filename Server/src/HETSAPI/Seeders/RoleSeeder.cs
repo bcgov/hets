@@ -10,6 +10,8 @@ namespace HETSAPI.Seeders
 {
     public class RoleSeeder : Seeder<DbAppContext>
     {
+        private const string SystemId = "SYSTEM_HETS";
+
         private readonly string[] _profileTriggers = { AllProfiles };
 
         public RoleSeeder(IConfiguration configuration, IHostingEnvironment env, ILoggerFactory loggerFactory) 
@@ -23,15 +25,15 @@ namespace HETSAPI.Seeders
         protected override void Invoke(DbAppContext context)
         {
             UpdateRoles(context);
-            context.SaveChanges();
+            context.SaveChangesForImport();
         }
 
         private void UpdateRoles(DbAppContext context)
         {
-            var permissions = context.Permissions.ToList();
+            List<Permission> permissions = context.Permissions.ToList();
 
             // Load the roles
-            var roles = new List<Role>
+            List<Role> roles = new List<Role>
             {
                 new Role
                 {
@@ -45,7 +47,11 @@ namespace HETSAPI.Seeders
                         .Contains(p.Code))
                         .Select(p => new RolePermission
                         {
-                            Permission = p
+                            Permission = p,
+                            AppCreateUserid = SystemId,
+                            AppCreateTimestamp = DateTime.UtcNow,
+                            AppLastUpdateUserid = SystemId,
+                            AppLastUpdateTimestamp = DateTime.UtcNow
                         })
                         .ToList()
                 },
@@ -62,7 +68,11 @@ namespace HETSAPI.Seeders
                                 .Contains(p.Code))
                         .Select(p => new RolePermission
                         {
-                            Permission = p
+                            Permission = p,
+                            AppCreateUserid = SystemId,
+                            AppCreateTimestamp = DateTime.UtcNow,
+                            AppLastUpdateUserid = SystemId,
+                            AppLastUpdateTimestamp = DateTime.UtcNow
                         })
                         .ToList()
                 },
@@ -81,7 +91,11 @@ namespace HETSAPI.Seeders
                                 .Contains(p.Code))
                         .Select(p => new RolePermission
                         {
-                            Permission = p
+                            Permission = p,
+                            AppCreateUserid = SystemId,
+                            AppCreateTimestamp = DateTime.UtcNow,
+                            AppLastUpdateUserid = SystemId,
+                            AppLastUpdateTimestamp = DateTime.UtcNow
                         })
                         .ToList()
                 },
@@ -103,7 +117,11 @@ namespace HETSAPI.Seeders
                                 .Contains(p.Code))
                         .Select(p => new RolePermission
                         {
-                            Permission = p
+                            Permission = p,
+                            AppCreateUserid = SystemId,
+                            AppCreateTimestamp = DateTime.UtcNow,
+                            AppLastUpdateUserid = SystemId,
+                            AppLastUpdateTimestamp = DateTime.UtcNow
                         })
                         .ToList()
                 },
@@ -119,19 +137,31 @@ namespace HETSAPI.Seeders
                                 .Contains(p.Code))
                         .Select(p => new RolePermission
                         {
-                            Permission = p
+                            Permission = p,
+                            AppCreateUserid = SystemId,
+                            AppCreateTimestamp = DateTime.UtcNow,
+                            AppLastUpdateUserid = SystemId,
+                            AppLastUpdateTimestamp = DateTime.UtcNow
                         })
                         .ToList()
                 }
             };
 
             Logger.LogDebug("Updating roles ...");
-            foreach (var role in roles)
+
+            foreach (Role role in roles)
             {
-                var r = context.GetRole(role.Name);
+                Role r = context.GetRole(role.Name);
+
                 if (r == null)
                 {
                     Logger.LogDebug($"Adding role; {role.Name} ...");
+
+                    role.AppCreateUserid = SystemId;
+                    role.AppCreateTimestamp = DateTime.UtcNow;
+                    role.AppLastUpdateUserid = SystemId;
+                    role.AppLastUpdateTimestamp = DateTime.UtcNow;
+
                     context.Roles.Add(role);
                 }
                 else

@@ -264,7 +264,7 @@ namespace HETSAPI
                     DbCommentsUpdater<DbAppContext> updater = new DbCommentsUpdater<DbAppContext>((DbAppContext)context);
                     updater.UpdateDatabaseDescriptions();
                     log.LogInformation("The database documentation has been updated.");
-
+                    
                     log.LogInformation("Adding/Updating seed data ...");
                     Seeders.SeedFactory<DbAppContext> seederFactory = new Seeders.SeedFactory<DbAppContext>(Configuration, _hostingEnv, loggerFactory);
                     seederFactory.Seed((DbAppContext) context);

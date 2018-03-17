@@ -116,7 +116,7 @@ namespace HETSAPI.Services.Impl
         /// Create bulk project records
         /// </summary>
         /// <param name="items"></param>
-        /// <response code="201">Project created</response>
+        /// <response code="200">Project created</response>
         public virtual IActionResult ProjectsBulkPostAsync(Project[] items)
         {
             if (items == null)
@@ -152,7 +152,6 @@ namespace HETSAPI.Services.Impl
         /// </summary>
         /// <param name="id">id of Project to fetch</param>
         /// <response code="200">OK</response>
-        /// <response code="404">Project not found</response>
         public virtual IActionResult ProjectsIdGetAsync(int id)
         {
             bool exists = _context.Projects.Any(a => a.Id == id);
@@ -252,7 +251,6 @@ namespace HETSAPI.Services.Impl
         /// <param name="id">id of Project to fetch</param>
         /// <param name="item"></param>
         /// <response code="200">OK</response>
-        /// <response code="404">Project not found</response>
         public virtual IActionResult ProjectsIdPutAsync(int id, Project item)
         {
             AdjustRecord(item);
@@ -279,7 +277,7 @@ namespace HETSAPI.Services.Impl
         /// Create project
         /// </summary>
         /// <param name="item"></param>
-        /// <response code="201">Project created</response>
+        /// <response code="200">Project created</response>
         public virtual IActionResult ProjectsPostAsync(Project item)
         {
             if (item != null)
@@ -971,7 +969,6 @@ namespace HETSAPI.Services.Impl
         /// <remarks>Returns attachments for a particular Project</remarks>
         /// <param name="id">id of Project to fetch attachments for</param>
         /// <response code="200">OK</response>
-        /// <response code="404">Project not found</response>
         public virtual IActionResult ProjectsIdAttachmentsGetAsync(int id)
         {
             bool exists = _context.Projects.Any(a => a.Id == id);
@@ -1051,7 +1048,7 @@ namespace HETSAPI.Services.Impl
         /// <param name="id">id of Project to fetch History for</param>
         /// <param name="item"></param>
         /// <response code="200">OK</response>
-        /// <response code="201">History created</response>
+        /// <response code="200">History created</response>
         public virtual IActionResult ProjectsIdHistoryPostAsync(int id, History item)
         {
             bool exists = _context.Projects.Any(a => a.Id == id);

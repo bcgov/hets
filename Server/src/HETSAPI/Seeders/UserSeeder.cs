@@ -22,15 +22,16 @@ namespace HETSAPI.Seeders
         protected override void Invoke(DbAppContext context)
         {
             UpdateUsers(context);
+            context.SaveChangesForImport();
         }
 
         private void UpdateUsers(DbAppContext context)
         {
             List<User> seedUsers = GetSeedUsers();
-            foreach (var user in seedUsers)
+
+            foreach (User user in seedUsers)
             {
-                context.UpdateSeedUserInfo(user);
-                context.SaveChanges();
+                context.UpdateSeedUserInfo(user);                
             }
 
             AddInitialUsers(context);           

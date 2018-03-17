@@ -44,6 +44,7 @@ namespace HETSAPI.Seeders
 
             Assembly assembly = typeof(SeedFactory<T>).GetTypeInfo().Assembly;
             List<Type> types = assembly.GetTypes().Where(t => t.GetTypeInfo().IsSubclassOf(typeof(Seeder<T>))).ToList();
+
             foreach (Type type in types)
             {
                 _logger.LogDebug($"\tCreating instance of {type.Name}...");
@@ -69,10 +70,8 @@ namespace HETSAPI.Seeders
         {            
             public override int Compare(Seeder<TY> x, Seeder<TY> y)
             {
-                // < 0 x is less than y
-                // = 0 same
-                // > 0 x greater than y
                 int rtnValue = 0;
+
                 if (y != null && x != null && (x.InvokeAfter == y.InvokeAfter))
                 {
                     rtnValue = 0;

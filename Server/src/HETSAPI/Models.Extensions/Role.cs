@@ -13,11 +13,12 @@ namespace HETSAPI.Models
         /// <param name="permission">The permission to add.</param>
         public void AddPermission(Permission permission)
         {
-            var rolePermission = new RolePermission
+            RolePermission rolePermission = new RolePermission
             {
                 Permission = permission,
                 Role = this
             };
+
             RolePermissions.Add(rolePermission);
         }
 
@@ -27,7 +28,8 @@ namespace HETSAPI.Models
         /// <param name="permission">The permission to remove.</param>
         public void RemovePermission(Permission permission)
         {
-            var permissionToRemove = RolePermissions.FirstOrDefault(x => x.Permission.Code == permission.Code);
+            RolePermission permissionToRemove = RolePermissions.FirstOrDefault(x => x.Permission.Code == permission.Code);
+
             if (permissionToRemove != null)
             {
                 RolePermissions.Remove(permissionToRemove);
