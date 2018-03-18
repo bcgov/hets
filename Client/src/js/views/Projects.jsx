@@ -83,6 +83,11 @@ var Projects = React.createClass({
     Api.searchProjects(this.buildSearchParams());
   },
 
+  search(e) {
+    e.preventDefault();
+    this.fetch();
+  },  
+
   updateSearchState(state, callback) {
     this.setState({ search: { ...this.state.search, ...state, ...{ loaded: true } }}, () =>{
       store.dispatch({ type: Action.UPDATE_PROJECTS_SEARCH, projects: this.state.search });
@@ -134,14 +139,14 @@ var Projects = React.createClass({
       </PageHeader>
       <Well id="projects-bar" bsSize="small" className="clearfix">
         <Row>
-          <Form>
+          <Form onSubmit={ this.search }>
             <Col md={10}>
               <ButtonToolbar id="projects-filters">
                 <DropdownControl id="statusCode" title={ this.state.search.statusCode } updateState={ this.updateSearchState } blankLine="(All)" placeholder="Status"
                   items={[ Constant.PROJECT_STATUS_CODE_ACTIVE, Constant.PROJECT_STATUS_CODE_COMPLETED ]} />
                 <FormInputControl id="projectName" type="text" placeholder="Project name" value={ this.state.search.projectName } updateState={ this.updateSearchState }></FormInputControl>
                 <FormInputControl id="projectNumber" type="text" placeholder="Project number" value={ this.state.search.projectNumber } updateState={ this.updateSearchState }></FormInputControl>
-                <Button id="search-button" bsStyle="primary" type="submit" onClick={ this.fetch }>Search</Button>
+                <Button id="search-button" bsStyle="primary" type="submit">Search</Button>
               </ButtonToolbar>
             </Col>
           </Form>

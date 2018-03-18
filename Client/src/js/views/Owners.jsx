@@ -105,6 +105,11 @@ var Owners = React.createClass({
     Api.searchOwners(this.buildSearchParams());
   },
 
+  search(e) {
+    e.preventDefault(); 
+    this.fetch();
+  },
+
   updateSearchState(state, callback) {
     this.setState({ search: { ...this.state.search, ...state, ...{ loaded: true } }}, () => {
       store.dispatch({ type: Action.UPDATE_OWNERS_SEARCH, owners: this.state.search });
@@ -212,7 +217,7 @@ var Owners = React.createClass({
       <Well id="owners-bar" bsSize="small" className="clearfix">
         <Row>
           <Col md={9}>
-            <Form>
+            <Form onSubmit={ this.search }>
               <ButtonToolbar id="owners-filters">
                 <MultiDropdown id="selectedLocalAreasIds" placeholder="Local Areas"
                   items={ localAreas } selectedIds={ this.state.search.selectedLocalAreasIds } updateState={ this.updateSearchState } showMaxItems={ 2 } />
@@ -223,7 +228,7 @@ var Owners = React.createClass({
                 <FilterDropdown id="ownerId" placeholder="Owner" fieldName="organizationName" blankLine="(All)"
                   items={ owners } selectedId={ this.state.search.ownerId } updateState={ this.updateSearchState } />
                 <CheckboxControl inline id="hired" checked={ this.state.search.hired } updateState={ this.updateSearchState }>Hired</CheckboxControl>
-                <Button id="search-button" bsStyle="primary" type="submit" onClick={ this.fetch }>Search</Button>
+                <Button id="search-button" bsStyle="primary" type="submit">Search</Button>
               </ButtonToolbar>
             </Form>
           </Col>

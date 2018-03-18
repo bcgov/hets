@@ -146,6 +146,11 @@ var RentalRequests = React.createClass({
     Api.searchRentalRequests(this.buildSearchParams());
   },
 
+  search(e) {
+    e.preventDefault();
+    this.fetch();
+  },
+
   updateSearchState(state, callback) {
     this.setState({ search: { ...this.state.search, ...state, ...{ loaded: true } }}, () =>{
       store.dispatch({ type: Action.UPDATE_RENTAL_REQUESTS_SEARCH, rentalRequests: this.state.search });
@@ -202,7 +207,7 @@ var RentalRequests = React.createClass({
         </ButtonGroup>
       </PageHeader>
       <Well id="rental-requests-bar" bsSize="small" className="clearfix">
-        <Form>
+        <Form onSubmit={ this.search }>
           <Row>
             <Col md={10}>
               <Row>
@@ -235,7 +240,7 @@ var RentalRequests = React.createClass({
                 <Favourites id="rental-requests-faves-dropdown" type="rentalRequests" favourites={ this.props.favourites.data } data={ this.state.search } onSelect={ this.loadFavourite } pullRight />
               </Row>
               <Row id="rental-requests-search">
-                <Button id="search-button" bsStyle="primary" type="submit" onClick={ this.fetch }>Search</Button>
+                <Button id="search-button" bsStyle="primary" type="submit">Search</Button>
               </Row>
             </Col>
           </Row>

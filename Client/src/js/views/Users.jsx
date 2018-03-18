@@ -2,8 +2,7 @@ import React from 'react';
 
 import { connect } from 'react-redux';
 
-import { PageHeader, Well, Alert, Row, Col } from 'react-bootstrap';
-import { ButtonToolbar, Button, ButtonGroup, Glyphicon, InputGroup } from 'react-bootstrap';
+import { PageHeader, Well, Alert, Row, Col, ButtonToolbar, Button, ButtonGroup, Glyphicon, InputGroup, Form } from 'react-bootstrap';
 import { LinkContainer } from 'react-router-bootstrap';
 
 import _ from 'lodash';
@@ -98,6 +97,11 @@ var Users = React.createClass({
     });
   },
 
+  search(e) {
+    e.preventDefault();
+    this.fetch();
+  },
+
   updateSearchState(state, callback) {
     this.setState({ search: { ...this.state.search, ...state, ...{ loaded: true } }}, () =>{
       store.dispatch({ type: Action.UPDATE_USERS_SEARCH, users: this.state.search });
@@ -167,16 +171,18 @@ var Users = React.createClass({
         <Well id="users-bar" bsSize="small" className="clearfix">
           <Row>
             <Col md={10}>
-              <ButtonToolbar id="users-search">
-                <MultiDropdown id="selectedDistrictsIds" placeholder="Districts"
-                  items={ districts } selectedIds={ this.state.search.selectedDistrictsIds } updateState={ this.updateSearchState } showMaxItems={ 2 } />
-                <InputGroup>
-                  <InputGroup.Addon>Surname</InputGroup.Addon>
-                  <FormInputControl id="surname" type="text" value={ this.state.search.surname } updateState={ this.updateSearchState }/>
-                </InputGroup>
-                <CheckboxControl inline id="hideInactive" value={ this.state.search.hideInactive } updateState={ this.updateSearchState }>Hide Inactive</CheckboxControl>
-                <Button id="search-button" bsStyle="primary" onClick={ this.fetch }>Search</Button>
-              </ButtonToolbar>
+              <Form onSubmit={ this.search }>
+                <ButtonToolbar id="users-search">
+                  <MultiDropdown id="selectedDistrictsIds" placeholder="Districts"
+                    items={ districts } selectedIds={ this.state.search.selectedDistrictsIds } updateState={ this.updateSearchState } showMaxItems={ 2 } />
+                  <InputGroup>
+                    <InputGroup.Addon>Surname</InputGroup.Addon>
+                    <FormInputControl id="surname" type="text" value={ this.state.search.surname } updateState={ this.updateSearchState }/>
+                  </InputGroup>
+                  <CheckboxControl inline id="hideInactive" value={ this.state.search.hideInactive } updateState={ this.updateSearchState }>Hide Inactive</CheckboxControl>
+                  <Button id="search-button" bsStyle="primary" type="submit">Search</Button>
+                </ButtonToolbar>
+              </Form>
             </Col>
             <Col md={2}>
               <Row id="users-faves">
