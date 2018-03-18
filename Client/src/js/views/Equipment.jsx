@@ -119,6 +119,11 @@ var Equipment = React.createClass({
     Api.searchEquipmentList(this.buildSearchParams());
   },
 
+  search(e) {
+    e.preventDefault();
+    this.fetch();
+  },
+
   updateSearchState(state, callback) {
     this.setState({ search: { ...this.state.search, ...state }}, () => {
       store.dispatch({ type: Action.UPDATE_EQUIPMENT_LIST_SEARCH, equipmentList: this.state.search });
@@ -163,7 +168,7 @@ var Equipment = React.createClass({
         </ButtonGroup>
       </PageHeader>
       <Well id="equipment-bar" bsSize="small" className="clearfix">
-        <Form>
+        <Form onSubmit={ this.search }>
           <Row>
             <Col md={10}>
                 <Row>
@@ -199,7 +204,7 @@ var Equipment = React.createClass({
                   <Favourites id="equipment-faves-dropdown" type="equipment" favourites={ this.props.favourites.data } data={ this.state.search } onSelect={ this.loadFavourite } pullRight />
                 </Row>
                 <Row id="equipment-search">
-                  <Button id="search-button" bsStyle="primary" type="submit" onClick={ this.fetch }>Search</Button>
+                  <Button id="search-button" bsStyle="primary" type="submit">Search</Button>
                 </Row>
               </Col>
           </Row>
