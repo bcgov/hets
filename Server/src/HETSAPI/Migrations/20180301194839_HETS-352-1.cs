@@ -8,12 +8,12 @@ namespace HETSAPI.Migrations
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
-
+            // added in error (do not remove or it might cause an EF error)
         }
 
         protected override void Down(MigrationBuilder migrationBuilder)
         {
-
+            // added in error (do not remove or it might cause an EF error)
         }
     }
 }

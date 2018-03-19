@@ -154,5 +154,14 @@ namespace HETSAPI.Services
         /// <param name="items">Array of Equipment Notes</param>
         /// <response code="200">OK</response>
         IActionResult EquipmentIdNotesBulkPostAsync(int id, Note[] items);
+
+        /// <summary>
+        /// Get a pdf version of the seniority list
+        /// </summary>
+        /// <remarks>Returns a PDF version of the seniority list</remarks>
+        /// <param name="localareas">Local Areas (comma seperated list of id numbers)</param>
+        /// <param name="types">Equipment Types (comma seperated list of id numbers)</param>
+        /// <response code="200">OK</response>
+        IActionResult EquipmentSeniorityListPdfGetAsync(string localareas, string types);        
     }
 }

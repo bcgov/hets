@@ -38,19 +38,20 @@ namespace HETSAPI.Services.Impl
                 try
                 {                
                     string uploadPath = _configuration["UploadPath"];
+                    string seniorityScoringRules = _configuration["SeniorityScoringRules"];
                     string connectionString = _context.Database.GetDbConnection().ConnectionString;                    
 
                     if (realTime)
                     {
                         // not using Hangfire
-                        BcBidImport.ImportJob(null, _configuration, connectionString, uploadPath + path);
+                        BcBidImport.ImportJob(null, seniorityScoringRules, connectionString, uploadPath + path);
                         result = "Import complete";
                     }
                     else
                     {
                         // use Hangfire
                         result = "Created Job: ";
-                        string jobId = BackgroundJob.Enqueue(() => BcBidImport.ImportJob(null, _configuration, connectionString, uploadPath + path));
+                        string jobId = BackgroundJob.Enqueue(() => BcBidImport.ImportJob(null, seniorityScoringRules, connectionString, uploadPath + path));
                         result += jobId;
                     }
                 }
@@ -76,39 +77,39 @@ namespace HETSAPI.Services.Impl
                 ImportUtility.CreateObfuscationDestination(uploadPath + destinationPath);
 
                 // use Hangfire
-                    string jobId = BackgroundJob.Enqueue(() => BcBidImport.ObfuscationJob(null, connectionString, uploadPath + sourcePath, uploadPath + destinationPath));
-                    result += jobId;
-                
+                string jobId = BackgroundJob.Enqueue(() => BcBidImport.ObfuscationJob(null, connectionString, uploadPath + sourcePath, uploadPath + destinationPath));
+                result += jobId;                
             }
 
             return new ObjectResult(result);
         }
 
-
-        public async Task<IActionResult> GetSpreadsheet(string path, string filename)
+        public IActionResult GetSpreadsheet(string path, string filename)
         {
-            // create an excel spreadsheet that will show the data.            
-            if (_configuration != null)
+            // create an excel spreadsheet that will show the data       
+            lock (_thisLock)
             {
-                string uploadPath = _configuration["UploadPath"];
-                string fullPath = Path.Combine(uploadPath + path, filename);
-
-                MemoryStream memory = new MemoryStream();
-            
-                using (FileStream stream = new FileStream(fullPath, FileMode.Open))
+                if (_configuration != null)
                 {
-                    await stream.CopyToAsync(memory);
-                }
+                    string uploadPath = _configuration["UploadPath"];
+                    string fullPath = Path.Combine(uploadPath + path, filename);
 
-                memory.Position = 0;
+                    MemoryStream memory = new MemoryStream();
 
-                FileStreamResult fileStreamResult =
-                    new FileStreamResult(memory, "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet")
+                    using (FileStream stream = new FileStream(fullPath, FileMode.Open))
+                    {
+                        stream.CopyToAsync(memory).Wait();
+                    }
+
+                    memory.Position = 0;
+
+                    FileStreamResult fileStreamResult = new FileStreamResult(memory, "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet")
                     {
                         FileDownloadName = filename
                     };
 
-                return fileStreamResult;
+                    return fileStreamResult;
+                }
             }
 
             return null;

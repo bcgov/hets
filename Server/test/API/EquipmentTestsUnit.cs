@@ -4,6 +4,8 @@ using Moq;
 using HETSAPI.Models;
 using HETSAPI.Controllers;
 using HETSAPI.Services.Impl;
+using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace HETSAPI.Test
 {
@@ -18,7 +20,14 @@ namespace HETSAPI.Test
 		{			
             DbContextOptions<DbAppContext> options = new DbContextOptions<DbAppContext>();
             Mock<DbAppContext> dbAppContext = new Mock<DbAppContext>(null, options);
-            EquipmentService _service = new EquipmentService(null, dbAppContext.Object, null);
+
+            var serviceProvider = new ServiceCollection()
+                .AddLogging()
+                .BuildServiceProvider();
+
+            var loggerFactory = serviceProvider.GetService<ILoggerFactory>();
+
+            EquipmentService _service = new EquipmentService(null, dbAppContext.Object, null, loggerFactory);
             _Equipment = new EquipmentController (_service);
 		}	
 		

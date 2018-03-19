@@ -1,7 +1,6 @@
 using Microsoft.AspNetCore.Mvc;
 using Swashbuckle.AspNetCore.SwaggerGen;
 using HETSAPI.Services;
-using System.Threading.Tasks;
 using HETSAPI.Authorization;
 using HETSAPI.Models;
 
@@ -60,9 +59,9 @@ namespace HETSAPI.Controllers
         [Route("/api/admin/equipmap")]
         [SwaggerOperation("AdminEquipMap")]
         [RequiresPermission(Permission.Admin)]
-        public async Task<IActionResult> AdminEquipMap(string path)
+        public IActionResult AdminEquipMap(string path)
         {
-            return await _service.GetSpreadsheet(path, "Equip.xlsx");
+            return _service.GetSpreadsheet(path, "Equip.xlsx");
         }
 
         /// <summary>
@@ -74,9 +73,9 @@ namespace HETSAPI.Controllers
         [Route("/api/admin/ownermap")]
         [SwaggerOperation("AdminOwnerMap")]
         [RequiresPermission(Permission.Admin)]
-        public async Task<IActionResult> AdminOwnerMap(string path)
+        public IActionResult AdminOwnerMap(string path)
         {
-            return await _service.GetSpreadsheet(path, "Owner.xlsx");
+            return _service.GetSpreadsheet(path, "Owner.xlsx");
         }
 
         /// <summary>
@@ -88,9 +87,9 @@ namespace HETSAPI.Controllers
         [Route("/api/admin/projectmap")]
         [SwaggerOperation("AdminProjectMap")]
         [RequiresPermission(Permission.Admin)]
-        public async Task<IActionResult> AdminProjectMap(string path)
+        public IActionResult AdminProjectMap(string path)
         {
-            return await _service.GetSpreadsheet(path, "Project.xlsx");
+            return _service.GetSpreadsheet(path, "Project.xlsx");
         }
 
         /// <summary>
@@ -102,9 +101,9 @@ namespace HETSAPI.Controllers
         [Route("/api/admin/usermap")]
         [SwaggerOperation("AdminUserMap")]
         [RequiresPermission(Permission.Admin)]
-        public async Task<IActionResult> AdminUserMap(string path)
+        public IActionResult AdminUserMap(string path)
         {
-            return await _service.GetSpreadsheet(path, "UserHETS.xlsx");
+            return _service.GetSpreadsheet(path, "UserHETS.xlsx");
         }
     }
 }
