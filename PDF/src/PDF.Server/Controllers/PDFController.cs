@@ -136,5 +136,61 @@ namespace PDF.Server.Controllers
                 throw;
             }
         }
+
+        /// <summary>
+        /// Get HETS Seniority List
+        /// </summary>
+        /// <param name="seniorityListJson">Serialized senioritylkist data</param>
+        /// <param name="name">Unique name for the generated Pdf (Result: name + '.pdf')</param>
+        /// <returns></returns>
+        [HttpPost]
+        [Route("pdf/seniorityList/{name}")]
+        public async Task<IActionResult> GetSeniorityListPdf([FromBody]string seniorityListJson, [FromRoute]string name)
+        {
+            try
+            {
+                string fileName = name + ".pdf";
+                _logger.LogInformation("GetSeniorityListPdf [FileName: {0}]", fileName);
+
+                // *************************************************************
+                // Create output using json and mustache template
+                // *************************************************************
+                RenderRequest request = new RenderRequest()
+                {
+                    JsonString = seniorityListJson,
+                    RenderJsUrl = _configuration.GetSection("Constants").GetSection("RenderJsUrl").Value,
+                    Template = _configuration.GetSection("Constants").GetSection("SeniorityListTemplate").Value
+                };
+
+                _logger.LogInformation("GetSeniorityListPdf [FileName: {0}] - Render Html", fileName);
+                string result = await TemplateHelper.RenderDocument(_nodeServices, request);
+
+                _logger.LogInformation("GetSeniorityListPdf [FileName: {0}] - Html Length: {1}", fileName, result.Length);
+
+                // *************************************************************
+                // Convert results to Pdf
+                // *************************************************************                 
+                PdfRequest pdfRequest = new PdfRequest()
+                {
+                    Html = result,
+                    PdfFileName = fileName
+                };
+
+                _logger.LogInformation("GetSeniorityListPdf [FileName: {0}] - Gen Pdf", fileName);
+                byte[] pdfResponseBytes = PdfDocument.BuildPdf(_configuration, pdfRequest);
+
+                // convert to string and log
+                string pdfResponse = System.Text.Encoding.Default.GetString(pdfResponseBytes);
+                _logger.LogInformation("GetSeniorityListPdf [FileName: {0}] - Pdf Length: {1}", fileName, pdfResponse.Length);
+
+                _logger.LogInformation("GetSeniorityListPdf [FileName: {0}] - Done", fileName);
+                return File(pdfResponseBytes, "application/pdf", fileName);
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+                throw;
+            }
+        }
     }
 }

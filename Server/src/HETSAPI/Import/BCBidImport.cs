@@ -2,9 +2,7 @@
 using Hangfire.Server;
 using Microsoft.EntityFrameworkCore;
 using System;
-using System.Diagnostics;
 using HETSAPI.Models;
-using Microsoft.Extensions.Configuration;
 
 namespace HETSAPI.Import
 {
@@ -29,10 +27,10 @@ namespace HETSAPI.Import
         /// Hangfire job to do the data import tasks.
         /// </summary>
         /// <param name="context"></param>
-        /// <param name="configuration"></param>
+        /// <param name="seniorityScoringRules"></param>
         /// <param name="connectionstring"></param>
         /// <param name="fileLocation"></param>
-        public static void ImportJob(PerformContext context, IConfiguration configuration, string connectionstring, string fileLocation)
+        public static void ImportJob(PerformContext context, string seniorityScoringRules, string connectionstring, string fileLocation)
         {
             // open a connection to the database.
             DbContextOptionsBuilder<DbAppContext> options = new DbContextOptionsBuilder<DbAppContext>();
@@ -86,7 +84,7 @@ namespace HETSAPI.Import
 
             //*** Process Equipment Block Assigments
             dbContext = new DbAppContext(null, options.Options);
-            ImportEquip.ProcessBlocks(context, configuration, dbContext, SystemId);
+            ImportEquip.ProcessBlocks(context, seniorityScoringRules, dbContext, SystemId);
 
             //*** Import Projects from Project.xml (HET_PROJECT)
             dbContext = new DbAppContext(null, options.Options);
@@ -114,8 +112,7 @@ namespace HETSAPI.Import
             ImportProject.ResetSequence(context, dbContext);
             ImportBlock.ResetSequence(context, dbContext);
             ImportEquipUsage.ResetSequence(context, dbContext);
-        }
-        
+        }        
 
         /// <summary>
         /// Hangfire job to do the data import tasks.

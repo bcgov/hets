@@ -74,10 +74,10 @@ namespace HETSAPI.Import
         /// Recalculate the block assignment for each piece of equipment
         /// </summary>
         /// <param name="performContext"></param>
-        /// <param name="configuration"></param>
+        /// <param name="seniorityScoringRules"></param>
         /// <param name="dbContext"></param>
         /// <param name="systemId"></param>
-        public static void ProcessBlocks(PerformContext performContext, IConfiguration configuration, DbAppContext dbContext, string systemId)
+        public static void ProcessBlocks(PerformContext performContext, string seniorityScoringRules, DbAppContext dbContext, string systemId)
         {
             try
             {
@@ -115,7 +115,7 @@ namespace HETSAPI.Import
                 // ************************************************************
                 // get processing rules
                 // ************************************************************
-                SeniorityScoringRules scoringRules = new SeniorityScoringRules(configuration);
+                SeniorityScoringRules scoringRules = new SeniorityScoringRules(seniorityScoringRules);
 
                 // ************************************************************
                 // get all local areas 

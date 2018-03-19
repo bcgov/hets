@@ -459,6 +459,79 @@ namespace HETSAPI.Mappings
         }
 
         /// <summary>
+        /// Seniority List view model
+        /// </summary>
+        /// <param name="model"></param>
+        /// <param name="scoringRules"></param>
+        /// <returns></returns>
+        public static SeniorityViewModel ToSeniorityViewModel(this Equipment model, SeniorityScoringRules scoringRules)
+        {
+            var dto = new SeniorityViewModel();
+
+            if (model != null)
+            {
+                int numberOfBlocks = 0;
+
+                // get number of blocks for this equiment type
+                if (model.DistrictEquipmentType != null)
+                {
+                    numberOfBlocks = model.DistrictEquipmentType.EquipmentType.IsDumpTruck
+                        ? scoringRules.GetTotalBlocks("DumpTruck") + 1
+                        : scoringRules.GetTotalBlocks() + 1;
+                }
+
+                // get equipment seniority
+                float seniority = 0F;
+                if (model.Seniority != null)
+                {
+                    seniority = (float)model.Seniority;
+                }
+
+                // get equipment block number
+                int blockNumber = 0;
+                if (model.BlockNumber != null)
+                {
+                    blockNumber = (int)model.BlockNumber;
+                }
+
+                // get equipment block number
+                int numberInBlock = 0;
+                if (model.NumberInBlock != null)
+                {
+                    numberInBlock = (int)model.NumberInBlock;
+                }
+
+                // *************************************************************
+                // Map data to view model
+                // *************************************************************
+                dto.Id = model.Id;
+
+                if (model.DistrictEquipmentType != null)
+                {
+                    dto.EquipmentType = model.DistrictEquipmentType.DistrictEquipmentName;
+                }
+
+                if (model.Owner != null)
+                {
+                    dto.OwnerName = model.Owner.OrganizationName;
+                    dto.OwnerId = model.OwnerId;
+                }
+
+                dto.SeniorityString = dto.FormatSeniorityString(seniority, blockNumber, numberOfBlocks);
+
+                dto.Make = model.Make;
+                dto.Model = model.Model;
+                dto.Size = model.Size;
+                dto.EquipmentCode = model.EquipmentCode;
+                dto.AttachmentCount = dto.CalculateAttachmentCount(model.EquipmentAttachments);
+                dto.LastVerifiedDate = model.LastVerifiedDate;
+                dto.SenioritySortOrder = dto.CalculateSenioritySortOrder(blockNumber, numberInBlock);
+            }
+
+            return dto;
+        }
+
+        /// <summary>
         /// Owner view model
         /// </summary>
         /// <param name="model"></param>
@@ -496,6 +569,8 @@ namespace HETSAPI.Mappings
                 {
                     dto.CalculateEquipmentCount(model.EquipmentList);
                 }
+
+                dto.Status = model.Status;
             }
 
             return dto;
