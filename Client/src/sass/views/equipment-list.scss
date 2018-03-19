@@ -1,4 +1,5 @@
 @import '../mixins';
+@import '../variables';
 
 #equipment-list {
 
@@ -90,6 +91,12 @@
 
   #equipment-faves {
     float: right;
+
+    @media only screen and (max-width: $screen-lg) {
+      .dropdown-toggle {
+        margin: 10px 5px 0 5px;
+      }
+    }
   }
 
   #search-button {
