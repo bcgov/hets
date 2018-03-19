@@ -73,17 +73,16 @@ var TimeEntryDialog = React.createClass({
     let timeEntry = { ...this.state.timeEntry };
 
     let timeEntryResetObj = timeEntry;
-    Object.keys(timeEntry).map((key) => {
+    Object.keys(timeEntry).forEach((key) => {
       let state = { ...timeEntry[key], errorHours: '', errorDate: '' };
       timeEntryResetObj[key] = state;
-      return;
     });
     
     this.setState({ timeEntry: timeEntryResetObj });
     let valid = true;
 
     let timeEntryErrorsObj = timeEntry;
-    Object.keys(timeEntry).map((key) => {
+    Object.keys(timeEntry).forEach((key) => {
       if (isBlank(timeEntry[key].hours)) {
         let state = { ...timeEntry[key], errorHours: 'Hours are required' };
         timeEntryErrorsObj[key] = state;
@@ -94,8 +93,6 @@ var TimeEntryDialog = React.createClass({
         timeEntryErrorsObj[key] = state;
         valid = false;
       }
-
-      return;
     });
     this.setState({ timeEntry: timeEntryErrorsObj });
 
