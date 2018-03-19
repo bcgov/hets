@@ -258,7 +258,6 @@ var Owners = React.createClass({
         ]}>
           {
             _.map(ownerList, (owner) => {
-              console.log(owner);
               return <tr key={ owner.id } className={ owner.isApproved ? null : 'info' }>
                 <td>{ owner.localAreaName }</td>
                 <td>{ owner.organizationName }</td>
