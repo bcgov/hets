@@ -1,7 +1,7 @@
 .file-picker {
   display: inline-block;
 
-  input[type="file"] {
+  input[type='file'] {
     display: none;
   }
 
@@ -14,11 +14,11 @@
 .file-upload {
   .progress {
     width: 500px;
-    margin: 6px 0px;
+    margin: 6px 0;
   }
 
   .file-upload-error-message {
-    color: #9A133E;
+    color: #9a133e;
     position: relative;
     cursor: pointer;
     padding-right: 20px;
@@ -41,7 +41,7 @@
   }
 
   ol.file-list {
-    border-bottom: 1px solid #EEE;
+    border-bottom: 1px solid #eeeeee;
     margin: 0 0 20px 0;
     padding: 0 0 15px 0;
     list-style: none;
@@ -51,7 +51,7 @@
       margin: 0 -15px;
 
       &:hover {
-        background-color: #EEE;
+        background-color: #eeeeee;
       }
 
       .glyphicon {
@@ -59,7 +59,7 @@
         cursor: pointer;
 
         &:hover {
-          color: #9E0A0A;
+          color: #9e0a0a;
         }
       }
     }

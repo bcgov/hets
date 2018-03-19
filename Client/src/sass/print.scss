@@ -14,11 +14,10 @@
    }
   
   .template {
-    margin: 0px;
+    margin: 0;
   }
 
   #rental-requests-detail {
-
     h3 {
       padding: 0 15px;
     }
@@ -28,7 +27,6 @@
     }
 
     #rental-requests-data {
-    
       .row > div {
         display: inline-block;
         width: 50%;
@@ -53,7 +51,6 @@
     }
   }
   
-
   .col-md-6 {
     float: initial;
   }  
