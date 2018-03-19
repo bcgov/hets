@@ -50,6 +50,12 @@ namespace HETSAPI.Controllers
 
             path = path.Replace("/import", "");
 
+            // this will need to be removed once the Reverse Proxy is fixed
+            if (!_env.IsDevelopment())
+            {
+                path = "/hets" + path;
+            }
+
             HomeViewModel home = new HomeViewModel
             {
                 UserId = HttpContext.User.Identity.Name,
@@ -77,6 +83,12 @@ namespace HETSAPI.Controllers
             }
 
             path = path.Replace("/uploadpost", "");
+
+            // this will need to be removed once the Reverse Proxy is fixed
+            if (!_env.IsDevelopment())
+            {
+                path = "/hets" + path;
+            }
 
             // get the upload path from the app configuration
             string uploadPath = _configuration["UploadPath"];
