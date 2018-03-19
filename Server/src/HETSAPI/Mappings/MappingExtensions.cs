@@ -457,7 +457,50 @@ namespace HETSAPI.Mappings
 
             return dto;
         }
-               
+
+        /// <summary>
+        /// Owner view model
+        /// </summary>
+        /// <param name="model"></param>
+        /// <returns></returns>
+        public static OwnerViewModel ToViewModel(this Owner model)
+        {
+            var dto = new OwnerViewModel();
+
+            if (model != null)
+            {                
+                dto.Id = model.Id;
+                dto.OwnerCode = model.OwnerCode;
+                dto.OrganizationName = model.OrganizationName;
+
+                if (model.LocalArea != null)
+                {
+                    dto.LocalAreaName = model.LocalArea.Name;
+                }
+
+                if (model.PrimaryContact != null)
+                {
+                    string tempName = model.PrimaryContact.GivenName.Trim();
+
+                    if (!string.IsNullOrEmpty(tempName))
+                    {
+                        tempName = tempName + " ";
+                    }
+
+                    tempName = tempName + model.PrimaryContact.Surname.Trim();
+
+                    dto.PrimaryContactName = tempName;
+                }
+
+                if (model.EquipmentList != null)
+                {
+                    dto.CalculateEquipmentCount(model.EquipmentList);
+                }
+            }
+
+            return dto;
+        }
+
         /// <summary>
         /// History view model
         /// </summary>

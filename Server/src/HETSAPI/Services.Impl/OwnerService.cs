@@ -415,7 +415,16 @@ namespace HETSAPI.Services.Impl
                 data = data.Where(x => x.Id == owner);
             }
 
-            List<Owner> result = data.ToList();
+            // **********************************************************************
+            // convert Owner Model to View Model
+            // **********************************************************************
+            List<OwnerViewModel> result = new List<OwnerViewModel>();
+
+            foreach (Owner item in data)
+            {
+                result.Add(item.ToViewModel());
+            }
+
             return new ObjectResult(new HetsResponse(result));
         }
 
