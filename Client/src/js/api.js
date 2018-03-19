@@ -656,9 +656,6 @@ export function searchOwners(params) {
   store.dispatch({ type: Action.OWNERS_REQUEST });
   return new ApiRequest('/owners/search').get(params).then(response => {
     var owners = normalize(response.data);
-
-    // Add display fields
-    _.map(owners, owner => { parseOwner(owner); });
     store.dispatch({ type: Action.UPDATE_OWNERS, owners: owners });
   });
 }
