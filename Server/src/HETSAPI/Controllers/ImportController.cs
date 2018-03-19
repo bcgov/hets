@@ -16,16 +16,19 @@ namespace HETSAPI.Controllers
     [ResponseCache(Location = ResponseCacheLocation.None, NoStore = true)]
     public class ImportController : Controller
     {
+        private readonly HttpContext _context;
         private readonly IHostingEnvironment _env;
         private readonly IConfiguration _configuration;
 
         /// <summary>
         /// Import Controller Constructor
         /// </summary>
+        /// <param name="httpContextAccessor"></param>
         /// <param name="env"></param>
         /// <param name="configuration"></param>
-        public ImportController(IHostingEnvironment env, IConfiguration configuration)
+        public ImportController(IHttpContextAccessor httpContextAccessor, IHostingEnvironment env, IConfiguration configuration)
         {
+            _context = httpContextAccessor.HttpContext;
             _env = env;
             _configuration = configuration;
         }
@@ -38,10 +41,20 @@ namespace HETSAPI.Controllers
         [RequiresPermission(Permission.ImportData)]
         public IActionResult Index()
         {
+            string path = _context.Request.Path.ToString().ToLower();
+
+            if (!path.EndsWith(@"/"))
+            {
+                path = path + @"/";
+            }
+
+            path = path.Replace("/import", "");
+
             HomeViewModel home = new HomeViewModel
             {
                 UserId = HttpContext.User.Identity.Name,
-                DevelopmentEnvironment = _env.IsDevelopment()
+                DevelopmentEnvironment = _env.IsDevelopment(),
+                Action = path + "UploadPost"
             };
 
             return View(home);
@@ -56,6 +69,15 @@ namespace HETSAPI.Controllers
         [RequiresPermission(Permission.ImportData)]
         public IActionResult UploadPost(IList<IFormFile> files)
         {
+            string path = _context.Request.Path.ToString().ToLower();
+
+            if (!path.EndsWith(@"/"))
+            {
+                path = path + @"/";
+            }
+
+            path = path.Replace("/uploadpost", "");
+
             // get the upload path from the app configuration
             string uploadPath = _configuration["UploadPath"];
 
@@ -63,6 +85,7 @@ namespace HETSAPI.Controllers
 
             home.UserId = HttpContext.User.Identity.Name;
             home.DevelopmentEnvironment = _env.IsDevelopment();
+            home.Action = path + "UploadPost";
 
             return View("Index", home);
         }
