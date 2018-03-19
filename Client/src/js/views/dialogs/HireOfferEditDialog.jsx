@@ -173,8 +173,12 @@ var HireOfferEditDialog = React.createClass({
   },
 
   onCancelMaxHoursHire() {
-    this.offerStatusChanged(STATUS_NO);
-    this.setState({ offerRefusalReason: MAXIMUM_HOURS_REACHED });
+    if (this.state.offerResponse === STATUS_FORCE_HIRE) {
+      this.setState(this.getInitialState());
+    } else {
+      this.offerStatusChanged(STATUS_NO);
+      this.setState({ offerRefusalReason: MAXIMUM_HOURS_REACHED });
+    }
     this.closeConfirmMaxHoursHireDialog();
   },
 
