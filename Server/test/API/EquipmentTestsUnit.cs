@@ -10,25 +10,12 @@ using Microsoft.Extensions.DependencyInjection;
 namespace HETSAPI.Test
 {
 	public class EquipmentUnitTest 
-    { 		
-		private readonly EquipmentController _Equipment;
-		
+    { 						
 		/// <summary>
         /// Setup the test
         /// </summary>        
 		public EquipmentUnitTest()
-		{			
-            DbContextOptions<DbAppContext> options = new DbContextOptions<DbAppContext>();
-            Mock<DbAppContext> dbAppContext = new Mock<DbAppContext>(null, options);
-
-            var serviceProvider = new ServiceCollection()
-                .AddLogging()
-                .BuildServiceProvider();
-
-            var loggerFactory = serviceProvider.GetService<ILoggerFactory>();
-
-            EquipmentService _service = new EquipmentService(null, dbAppContext.Object, null, loggerFactory);
-            _Equipment = new EquipmentController (_service);
+		{            
 		}	
 		
 		[Fact]
