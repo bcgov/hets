@@ -10,6 +10,7 @@ import { daysAgo, sortableDateTime, today } from './utils/date';
 
 import _ from 'lodash';
 import Moment from 'moment';
+import Promise from 'bluebird';
 
 function normalize(response) {
   return _.fromPairs(response.map(object => [ object.id, object ]));
