@@ -202,14 +202,6 @@ var TimeEntryDialog = React.createClass({
         <Form>
           <Grid fluid>
             <Row>
-              <Col xs={3}>              
-                  <div className="text-label">Project</div>
-                  <div>{this.props.project.name}</div>
-              </Col>
-              <Col xs={3}>
-                  <div className="text-label">Project Number</div>
-                  <div>{ this.props.project.provincialProjectNumber }</div>
-              </Col>
               <Col xs={3}>
                 <div className="text-label">Equipment ID</div>
                 <div>{ activeRentalRequest.equipment.equipmentCode }</div>
@@ -219,6 +211,14 @@ var TimeEntryDialog = React.createClass({
                 <div className={ this.getHoursYtdClassName() ? 'highlight' : '' }>
                   { activeRentalRequest.equipment.hoursYtd }{ this.getHoursYtdClassName() && <span className="small-text"> (Near max. hours)</span> }
                 </div>
+              </Col>
+              <Col xs={3}>              
+                  <div className="text-label">Project</div>
+                  <div>{this.props.project.name}</div>
+              </Col>
+              <Col xs={3}>
+                  <div className="text-label">Project Number</div>
+                  <div>{ this.props.project.provincialProjectNumber }</div>
               </Col>
             </Row>
             <div className="time-entries-container">
