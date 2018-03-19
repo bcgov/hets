@@ -59,17 +59,16 @@ var RentalConditionsEditDialog = React.createClass({
     let forms = { ...this.state.forms };
 
     let formsResetObj = forms;
-    Object.keys(forms).map((key) => {
+    Object.keys(forms).forEach((key) => {
       let state = { ...forms[key], conditionNameError: '', commentError: '' };
       formsResetObj[key] = state;
-      return;
     });
     
     this.setState({ forms: formsResetObj });
     let valid = true;
 
     let formsErrorsObj = forms;
-    Object.keys(forms).map((key) => {
+    Object.keys(forms).forEach((key) => {
 
       if (forms[key].conditionName === NON_STANDARD_CONDITION && isBlank(forms[key].comment)) {
         let state = { ...forms[key], commentError: 'Comment is required for non-standard conditions.' };
@@ -83,7 +82,6 @@ var RentalConditionsEditDialog = React.createClass({
         valid = false;
       }
       
-      return;
     });
 
     this.setState({ forms: formsErrorsObj });
