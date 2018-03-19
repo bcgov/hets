@@ -158,10 +158,10 @@ var HireOfferEditDialog = React.createClass({
   onSave() {
     var isDumpTruck = this.props.hireOffer.equipment.districtEquipmentType.equipmentType.isDumpTruck;
     var hoursYtd = this.props.hireOffer.equipment.hoursYtd;
-    if (this.state.offerStatus !== STATUS_NO && !isDumpTruck && hoursYtd >= 300) {
+    if (this.state.offerStatus !== STATUS_NO && !isDumpTruck && hoursYtd <= 300) {
       return this.openConfirmMaxHoursHireDialog();
     }
-    if (this.state.offerStatus !== STATUS_NO && isDumpTruck && hoursYtd >= 600) {
+    if (this.state.offerStatus !== STATUS_NO && isDumpTruck && hoursYtd <= 600) {
       return this.openConfirmMaxHoursHireDialog();
     }
 
@@ -173,8 +173,12 @@ var HireOfferEditDialog = React.createClass({
   },
 
   onCancelMaxHoursHire() {
-    this.offerStatusChanged(STATUS_NO);
-    this.setState({ offerRefusalReason: MAXIMUM_HOURS_REACHED });
+    if (this.state.offerResponse === STATUS_FORCE_HIRE) {
+      this.setState(this.getInitialState());
+    } else {
+      this.offerStatusChanged(STATUS_NO);
+      this.setState({ offerRefusalReason: MAXIMUM_HOURS_REACHED });
+    }
     this.closeConfirmMaxHoursHireDialog();
   },
 
