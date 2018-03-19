@@ -77,10 +77,7 @@ namespace HETSAPI.Models
                 List<EquipmentType> equipmentTypes = dbContext.EquipmentTypes.ToList();
 
                 // The annual rollover will process all local areas in turn
-                List<LocalArea> localAreas = dbContext.LocalAreas.ToList();
-
-                // since this action is meant to run at the end of March, YTD calcs will always start from the year prior.
-                int startingYear = DateTime.UtcNow.Year - 1;
+                List<LocalArea> localAreas = dbContext.LocalAreas.ToList();                
 
                 foreach (LocalArea localArea in localAreas.WithProgress(progress))
                 {                
@@ -119,7 +116,7 @@ namespace HETSAPI.Models
                                 // rollover the year
                                 equipment.ServiceHoursThreeYearsAgo = equipment.ServiceHoursTwoYearsAgo;
                                 equipment.ServiceHoursTwoYearsAgo = equipment.ServiceHoursLastYear;
-                                equipment.ServiceHoursLastYear = equipment.GetYtdServiceHours(dbContext, startingYear);
+                                equipment.ServiceHoursLastYear = equipment.GetYtdServiceHours(dbContext);
                                 equipment.CalculateYearsOfService(DateTime.UtcNow);
                             
                                 // blank out the override reason

@@ -116,7 +116,7 @@ namespace HETSAPI.Services.Impl
 
                 result.IsHired = IsHired(id);
                 result.NumberOfBlocks = GetNumberOfBlocks(result);
-                result.HoursYtd = result.GetYtdServiceHours(_context, DateTime.UtcNow.Year);
+                result.HoursYtd = result.GetYtdServiceHours(_context);
 
                 return new ObjectResult(new HetsResponse(result));
             }
@@ -202,7 +202,7 @@ namespace HETSAPI.Services.Impl
                     
                     result.IsHired = IsHired(id);
                     result.NumberOfBlocks = GetNumberOfBlocks(result);
-                    result.HoursYtd = result.GetYtdServiceHours(_context, DateTime.UtcNow.Year);
+                    result.HoursYtd = result.GetYtdServiceHours(_context);
 
                     return new ObjectResult(new HetsResponse(result));
                 }
@@ -1373,7 +1373,7 @@ namespace HETSAPI.Services.Impl
 
             foreach (Equipment item in data)
             {
-                result.Add(item.ToSeniorityViewModel(scoringRules));
+                result.Add(item.ToSeniorityViewModel(scoringRules, _context));
             }
 
             // **********************************************************************
