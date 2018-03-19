@@ -250,7 +250,7 @@ var Owners = React.createClass({
           { field: 'localAreaName',          title: 'Local Area'                                      },
           { field: 'organizationName',       title: 'Company'                                         },
           { field: 'primaryContactName',     title: 'Primary Contact'                                 },
-          { field: 'numberOfEquipment',      title: 'Equipment',       style: { textAlign: 'center' } },
+          { field: 'equipmentCount',         title: 'Equipment',       style: { textAlign: 'center' } },
           { field: 'status',                 title: 'Status',          style: { textAlign: 'center' } },
           { field: 'addOwner',               title: 'Add Owner',       style: { textAlign: 'right'  },
             node: addOwnerButton,
@@ -258,11 +258,12 @@ var Owners = React.createClass({
         ]}>
           {
             _.map(ownerList, (owner) => {
+              console.log(owner);
               return <tr key={ owner.id } className={ owner.isApproved ? null : 'info' }>
                 <td>{ owner.localAreaName }</td>
                 <td>{ owner.organizationName }</td>
                 <td>{ owner.primaryContactName }</td>
-                <td style={{ textAlign: 'center' }}>{ owner.numberOfEquipment }</td>
+                <td style={{ textAlign: 'center' }}>{ owner.equipmentCount }</td>
                 <td style={{ textAlign: 'center' }}>{ owner.status }</td>
                 <td style={{ textAlign: 'right' }}>
                   <ButtonGroup>
