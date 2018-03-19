@@ -258,7 +258,7 @@ var Owners = React.createClass({
         ]}>
           {
             _.map(ownerList, (owner) => {
-              return <tr key={ owner.id } className={ owner.isApproved ? null : 'info' }>
+              return <tr key={ owner.id } className={ owner.status === Constant.OWNER_STATUS_CODE_APPROVED ? null : 'info' }>
                 <td>{ owner.localAreaName }</td>
                 <td>{ owner.organizationName }</td>
                 <td>{ owner.primaryContactName }</td>
@@ -266,7 +266,7 @@ var Owners = React.createClass({
                 <td style={{ textAlign: 'center' }}>{ owner.status }</td>
                 <td style={{ textAlign: 'right' }}>
                   <ButtonGroup>
-                    <EditButton name="Owner" hide={ !owner.canView } view pathname={ `${ Constant.OWNERS_PATHNAME }/${ owner.id }` }/>
+                    <EditButton name="Owner" view pathname={ `${ Constant.OWNERS_PATHNAME }/${ owner.id }` }/>
                   </ButtonGroup>
                 </td>
               </tr>;
