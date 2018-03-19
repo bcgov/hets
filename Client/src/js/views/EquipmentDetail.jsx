@@ -282,7 +282,7 @@ var EquipmentDetail = React.createClass({
             return (
               <div className="top-container">
                 <Row id="equipment-top">
-                  <Col md={8}>
+                  <Col sm={9}>
                     <Row>
                       <DropdownButton
                         id="owner-status"
@@ -299,7 +299,7 @@ var EquipmentDetail = React.createClass({
                       <Button title="Documents" onClick={ this.showDocuments }>Documents ({ Object.keys(this.props.documents).length })</Button>
                     </Row>
                   </Col>
-                  <Col md={4}>
+                  <Col sm={3}>
                     <div className="pull-right">
                       <Button className="mr-5" onClick={ this.print }><Glyphicon glyph="print" title="Print" /></Button>
                       <Button title="Return" onClick={ browserHistory.goBack }><Glyphicon glyph="arrow-left" /> Return</Button>

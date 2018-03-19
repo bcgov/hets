@@ -343,7 +343,7 @@ var OwnersDetail = React.createClass({
           if (this.state.loading) { return <div className="spinner-container"><Spinner/></div>; }
 
           return <Row id="owners-top">
-            <Col md={8}>
+            <Col sm={9}>
               <DropdownButton
                 bsStyle={ this.getStatusDropdownStyle() }
                 title={ owner.status }
@@ -357,7 +357,7 @@ var OwnersDetail = React.createClass({
               <Button className="ml-5 mr-5" title="Notes" onClick={ this.openNotesDialog }>Notes ({ Object.keys(this.props.notes).length })</Button>
               <Button title="Documents" onClick={ this.showDocuments }>Documents ({ Object.keys(this.props.documents).length })</Button>
             </Col>
-            <Col md={4}>
+            <Col sm={3}>
               <div className="pull-right">
                 {/* <DropdownControl id="status" title={ owner.status } updateState={ this.updateStatusState } staticTitle={true}
                   items={_.pull([ Constant.OWNER_STATUS_CODE_APPROVED, Constant.OWNER_STATUS_CODE_PENDING, Constant.OWNER_STATUS_CODE_ARCHIVED ], owner.status)} /> */}

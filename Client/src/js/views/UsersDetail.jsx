@@ -219,10 +219,10 @@ var UsersDetail = React.createClass({
     return <div id="users-detail">
       <div>
         <Row id="users-top">
-          <Col md={8}>
+          <Col sm={8}>
             <Label bsStyle={ user.active ? 'success' : 'danger'}>{ user.active ? 'Verified Active' : 'Inactive' }</Label>
           </Col>
-          <Col md={4}>
+          <Col sm={4}>
             <div className="pull-right">
               <Button onClick={ this.print }><Glyphicon glyph="print" title="Print" /></Button>
               <LinkContainer to={{ pathname: Constant.USERS_PATHNAME }}>

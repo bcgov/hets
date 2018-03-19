@@ -215,7 +215,7 @@ var Owners = React.createClass({
       </PageHeader>
       <Well id="owners-bar" bsSize="small" className="clearfix">
         <Row>
-          <Col md={9}>
+          <Col sm={10}>
             <Form onSubmit={ this.search }>
               <ButtonToolbar id="owners-filters">
                 <MultiDropdown id="selectedLocalAreasIds" placeholder="Local Areas"
@@ -231,7 +231,7 @@ var Owners = React.createClass({
               </ButtonToolbar>
             </Form>
           </Col>
-          <Col md={3}>
+          <Col sm={2}>
             <Row id="owners-faves">
               <Favourites id="owners-faves-dropdown" type="owner" favourites={ this.props.favourites.data } data={ this.state.search } onSelect={ this.loadFavourite } pullRight />
             </Row>
