@@ -155,6 +155,10 @@ namespace HETSAPI.Import
             dbContext = new DbAppContext(null, options.Options);
 
             // process equipment
+            ImportEquipmentType.Obfuscate(context, dbContext, sourceFileLocation, destinationFileLocation, SystemId);
+            dbContext = new DbAppContext(null, options.Options);
+
+            // process equipment
             ImportEquip.Obfuscate(context, dbContext, sourceFileLocation, destinationFileLocation, SystemId);
             dbContext = new DbAppContext(null, options.Options);
 

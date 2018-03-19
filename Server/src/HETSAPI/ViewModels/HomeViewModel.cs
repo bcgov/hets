@@ -54,5 +54,10 @@
         /// File Names of Imported Files (Raw Html) Result
         /// </summary>
         public string FileNames { get; set; }
+
+        /// <summary>
+        /// Action for the Upload form
+        /// </summary>
+        public string Action { get; set; }
     }    
 }
