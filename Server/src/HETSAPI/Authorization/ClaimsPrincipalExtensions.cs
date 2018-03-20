@@ -45,6 +45,41 @@ namespace HETSAPI.Authorization
         }
 
         /// <summary>
+        /// Check if the user has one of the required permission to execute the method
+        /// </summary>
+        /// <param name="user"></param>
+        /// <param name="permissions"></param>
+        /// <returns></returns>
+        public static bool HasOnePermission(this ClaimsPrincipal user, params string[] permissions)
+        {
+            if (!user.HasClaim(c => c.Type == User.PermissionClaim))
+                return false;
+
+            bool hasRequiredPermissions = false;
+
+            if (!user.HasClaim(c => c.Type == User.PermissionClaim))
+                return false;
+
+            if (user.HasClaim(c => c.Type == User.PermissionClaim))
+            {
+                bool hasPermissions = false;
+
+                foreach (string permission in permissions)
+                {
+                    if (user.HasClaim(User.PermissionClaim, permission))
+                    {
+                        hasPermissions = true;
+                        break;
+                    }
+                }
+
+                hasRequiredPermissions = hasPermissions;
+            }
+
+            return hasRequiredPermissions;
+        }
+
+        /// <summary>
         /// Check if the user is a member if the group
         /// </summary>
         /// <param name="user"></param>
