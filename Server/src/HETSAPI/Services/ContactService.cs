@@ -13,6 +13,13 @@ namespace HETSAPI.Services
         /// </summary>
         /// <param name="items"></param>
         /// <response code="200">Contact created</response>
-        IActionResult ContactsBulkPostAsync(Contact[] items);        
+        IActionResult ContactsBulkPostAsync(Contact[] items);
+
+        /// <summary>
+        /// Delete contact
+        /// </summary>
+        /// <param name="id">id of Contact to delete</param>
+        /// <response code="200">OK</response>
+        IActionResult ContactsIdDeletePostAsync(int id);
     }
 }
