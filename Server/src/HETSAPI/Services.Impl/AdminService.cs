@@ -7,7 +7,7 @@ using HETSAPI.Import;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Configuration;
 using System.IO;
-using System.Threading.Tasks;
+using System.Text;
 
 namespace HETSAPI.Services.Impl
 {
@@ -38,7 +38,12 @@ namespace HETSAPI.Services.Impl
                 try
                 {                
                     string uploadPath = _configuration["UploadPath"];
-                    string seniorityScoringRules = _configuration["SeniorityScoringRules"];
+
+                    // serialize scoring rules from config into json string
+                    IConfigurationSection scoringRules = _configuration.GetSection("SeniorityScoringRules");
+                    string seniorityScoringRules = GetConfigJson(scoringRules);
+
+                    // get connection string
                     string connectionString = _context.Database.GetDbConnection().ConnectionString;                    
 
                     if (realTime)
@@ -63,6 +68,44 @@ namespace HETSAPI.Services.Impl
             }
 
             return new ObjectResult(result);
+        }
+
+        private string GetConfigJson(IConfigurationSection scoringRules)
+        {
+            string jsonString = RecurseConfigJson(scoringRules);
+
+            if (jsonString.EndsWith(",}}"))
+            {
+                jsonString = jsonString.Replace(",}}", "}}");
+            }
+
+            return jsonString;
+        }
+
+        private string RecurseConfigJson(IConfigurationSection scoringRules)
+        {
+            StringBuilder temp = new StringBuilder();
+
+            temp.Append("{");
+
+            // check for children
+            foreach (IConfigurationSection section in scoringRules.GetChildren())
+            {
+                temp.Append(@"""" + section.Key + @"""" + ":");
+
+                if (section.Value == null)
+                {
+                    temp.Append(RecurseConfigJson(section));
+                }
+                else
+                {
+                    temp.Append(@"""" + section.Value + @"""" + ",");
+                }
+            }
+
+            string jsonString = temp.ToString();            
+            jsonString = jsonString + "}";
+            return jsonString;
         }
 
         public IActionResult AdminObfuscateGetAsync(string sourcePath, string destinationPath)

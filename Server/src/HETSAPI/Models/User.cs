@@ -22,23 +22,24 @@ namespace HETSAPI.Models
 			Id = 0;
 		}
 
-		/// <summary>
-		/// Initializes a new instance of the <see cref="User" /> class.
-		/// </summary>
-		/// <param name="id">A system-generated unique identifier for a User (required).</param>
-		/// <param name="givenName">Given name of the user. (required).</param>
-		/// <param name="surname">Surname of the user. (required).</param>
-		/// <param name="active">A flag indicating the User is active in the system. Set false to remove access to the system for the user. (required).</param>
-		/// <param name="initials">Initials of the user, to be presented where screen space is at a premium..</param>
-		/// <param name="email">The email address of the user in the system..</param>
-		/// <param name="smUserId">Security Manager User ID.</param>
-		/// <param name="guid">The GUID unique to the user as provided by the authentication system. In this case, authentication is done by Siteminder and the GUID uniquely identifies the user within the user directories managed by Siteminder - e.g. IDIR and BCeID. The GUID is equivalent to the IDIR Id, but is guaranteed unique to a person, while the IDIR ID is not - IDIR IDs can be recycled..</param>
-		/// <param name="smAuthorizationDirectory">The user directory service used by Siteminder to authenticate the user - usually IDIR or BCeID..</param>
-		/// <param name="userRoles">UserRoles.</param>
-		/// <param name="district">The District that the User belongs to.</param>
-		public User(int id, string givenName, string surname, bool active, string initials = null, string email = null, 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="User" /> class.
+        /// </summary>
+        /// <param name="id">A system-generated unique identifier for a User (required).</param>
+        /// <param name="givenName">Given name of the user. (required).</param>
+        /// <param name="surname">Surname of the user. (required).</param>
+        /// <param name="active">A flag indicating the User is active in the system. Set false to remove access to the system for the user. (required).</param>
+        /// <param name="initials">Initials of the user, to be presented where screen space is at a premium..</param>
+        /// <param name="email">The email address of the user in the system..</param>
+        /// <param name="smUserId">Security Manager User ID.</param>
+        /// <param name="guid">The GUID unique to the user as provided by the authentication system. In this case, authentication is done by Siteminder and the GUID uniquely identifies the user within the user directories managed by Siteminder - e.g. IDIR and BCeID. The GUID is equivalent to the IDIR Id, but is guaranteed unique to a person, while the IDIR ID is not - IDIR IDs can be recycled..</param>
+        /// <param name="smAuthorizationDirectory">The user directory service used by Siteminder to authenticate the user - usually IDIR or BCeID..</param>
+        /// <param name="userRoles">UserRoles</param>
+        /// <param name="district">The District that the User belongs to.</param>
+        /// <param name="userDistricts">UserDistricts</param>
+        public User(int id, string givenName, string surname, bool active, string initials = null, string email = null, 
 		    string smUserId = null, string guid = null, string smAuthorizationDirectory = null, List<UserRole> userRoles = null, 
-		    District district = null)
+		    District district = null, List<UserDistrict> userDistricts = null)
 		{
 			Id = id;
 			GivenName = givenName;
@@ -51,6 +52,7 @@ namespace HETSAPI.Models
 			SmAuthorizationDirectory = smAuthorizationDirectory;
 			UserRoles = userRoles;
 			District = district;
+		    UserDistricts = userDistricts;
 		}
 
 		/// <summary>
@@ -143,11 +145,16 @@ namespace HETSAPI.Models
 		[MetaData (Description = "The District that the User belongs to")]
 		public int? DistrictId { get; set; }
 
-		/// <summary>
-		/// Returns the string presentation of the object
-		/// </summary>
-		/// <returns>String presentation of the object</returns>
-		public override string ToString()
+	    /// <summary>
+	    /// Gets or Sets UserDistricts
+	    /// </summary>
+	    public List<UserDistrict> UserDistricts { get; set; }
+
+        /// <summary>
+        /// Returns the string presentation of the object
+        /// </summary>
+        /// <returns>String presentation of the object</returns>
+        public override string ToString()
 		{
 			var sb = new StringBuilder();
 
@@ -163,7 +170,8 @@ namespace HETSAPI.Models
 			sb.Append("  SmAuthorizationDirectory: ").Append(SmAuthorizationDirectory).Append("\n");
 			sb.Append("  UserRoles: ").Append(UserRoles).Append("\n");
 			sb.Append("  District: ").Append(District).Append("\n");
-			sb.Append("}\n");
+		    sb.Append("  UserDistricts: ").Append(UserDistricts).Append("\n");
+            sb.Append("}\n");
 
 			return sb.ToString();
 		}
@@ -252,7 +260,12 @@ namespace HETSAPI.Models
 					District == other.District ||
 					District != null &&
 					District.Equals(other.District)
-				);
+			    ) &&
+			    (
+			        UserDistricts == other.UserDistricts ||
+			        UserDistricts != null &&
+			        UserDistricts.SequenceEqual(other.UserDistricts)
+			    );
 		}
 
 		/// <summary>
@@ -316,7 +329,12 @@ namespace HETSAPI.Models
 					hash = hash * 59 + District.GetHashCode();
 				}
 
-			    return hash;
+			    if (UserDistricts != null)
+			    {
+			        hash = hash * 59 + UserDistricts.GetHashCode();
+			    }
+
+                return hash;
 			}
 		}
 

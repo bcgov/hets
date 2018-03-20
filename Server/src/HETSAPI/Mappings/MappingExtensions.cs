@@ -122,7 +122,7 @@ namespace HETSAPI.Mappings
                         if (rotationList.Equipment != null)
                         {
                             rotationList.Equipment.HoursYtd =
-                                rotationList.Equipment.GetYtdServiceHours(context, DateTime.Now.Year);
+                                rotationList.Equipment.GetYtdServiceHours(context);
                         }
                     }
                 }
@@ -463,8 +463,9 @@ namespace HETSAPI.Mappings
         /// </summary>
         /// <param name="model"></param>
         /// <param name="scoringRules"></param>
+        /// <param name="context"></param>
         /// <returns></returns>
-        public static SeniorityViewModel ToSeniorityViewModel(this Equipment model, SeniorityScoringRules scoringRules)
+        public static SeniorityViewModel ToSeniorityViewModel(this Equipment model, SeniorityScoringRules scoringRules, DbAppContext context)
         {
             var dto = new SeniorityViewModel();
 
@@ -519,12 +520,28 @@ namespace HETSAPI.Mappings
 
                 dto.SeniorityString = dto.FormatSeniorityString(seniority, blockNumber, numberOfBlocks);
 
+                // format the seniority value
+                dto.Seniority = string.Format("{0:0.###}", model.Seniority);
+
                 dto.Make = model.Make;
                 dto.Model = model.Model;
                 dto.Size = model.Size;
                 dto.EquipmentCode = model.EquipmentCode;
-                dto.AttachmentCount = dto.CalculateAttachmentCount(model.EquipmentAttachments);
-                dto.LastVerifiedDate = model.LastVerifiedDate;
+
+                dto.YearsRegistered = model.YearsOfService.ToString();
+
+                // calculate and format the ytd hours
+                float tempHours = model.GetYtdServiceHours(context);
+                dto.YtdHours = string.Format("{0:0.###}", tempHours);
+
+                // format the hours
+                dto.HoursYearMinus1 = string.Format("{0:0.###}", model.ServiceHoursLastYear);
+                dto.HoursYearMinus2 = string.Format("{0:0.###}", model.ServiceHoursTwoYearsAgo);
+                dto.HoursYearMinus3 = string.Format("{0:0.###}", model.ServiceHoursThreeYearsAgo);
+
+                // get last called value
+
+
                 dto.SenioritySortOrder = dto.CalculateSenioritySortOrder(blockNumber, numberInBlock);
             }
 

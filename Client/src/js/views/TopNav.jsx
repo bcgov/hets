@@ -36,6 +36,10 @@ var TopNav = React.createClass({
     });
   },
 
+  logout() {
+    window.location.href = Constant.LOGOUT;
+  },
+
   render() {
     var userDistricts = this.props.currentUserDistricts.data.map(district => { 
       return { ...district, districtName: district.district.name, id: district.district.id }; 
@@ -106,6 +110,7 @@ var TopNav = React.createClass({
                       selectedId={ this.props.currentUser.district.id } fieldName="districtName" items={ userDistricts }
                     />
                   </FormGroup>
+                  <Button onClick={ this.logout } bsStyle="primary">Logout</Button>
                 </Dropdown.Menu>
               </Dropdown>
             </Nav>
