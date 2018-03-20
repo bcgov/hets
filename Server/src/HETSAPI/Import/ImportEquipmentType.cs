@@ -251,7 +251,7 @@ namespace HETSAPI.Import
                 performContext.WriteLine("Processing " + OldTable);
 
                 // create serializer and serialize xml file
-                XmlSerializer ser = new XmlSerializer(typeof(DumpTruck[]), new XmlRootAttribute(rootAttr));
+                XmlSerializer ser = new XmlSerializer(typeof(EquipType[]), new XmlRootAttribute(rootAttr));
                 MemoryStream memoryStream = ImportUtility.MemoryStreamGenerator(XmlFileName, OldTable, sourceLocation, rootAttr);
                 EquipType[] legacyItems = (EquipType[])ser.Deserialize(memoryStream);
 

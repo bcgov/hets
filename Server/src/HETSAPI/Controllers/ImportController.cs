@@ -98,7 +98,7 @@ namespace HETSAPI.Controllers
                 path = @"/" + path;
             }
 
-            if (env.IsProduction())
+            if (!env.IsDevelopment())
             {
                 path = "/hets" + path;
             }
