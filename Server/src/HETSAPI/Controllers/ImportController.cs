@@ -1,5 +1,4 @@
-﻿using System;
-using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using System.Collections.Generic;
@@ -42,7 +41,7 @@ namespace HETSAPI.Controllers
         [RequiresPermission(Permission.ImportData)]
         public IActionResult Index()
         {
-            string path = GetServerPath(_context);            
+            string path = GetServerPath(_context, _env);
             path = path.Replace("import", "");            
 
             HomeViewModel home = new HomeViewModel
@@ -64,7 +63,7 @@ namespace HETSAPI.Controllers
         [RequiresPermission(Permission.ImportData)]
         public IActionResult UploadPost(IList<IFormFile> files)
         {
-            string path = GetServerPath(_context);            
+            string path = GetServerPath(_context, _env);            
             path = path.Replace("uploadpost", "");
             
             // get the upload path from the app configuration
@@ -83,25 +82,28 @@ namespace HETSAPI.Controllers
         /// Returns Uri (as string)
         /// </summary>
         /// <param name="context"></param>
+        /// <param name="env"></param>
         /// <returns></returns>
-        private static string GetServerPath(HttpContext context)
+        private static string GetServerPath(HttpContext context, IHostingEnvironment env)
         {
-            int? port = context.Request.Host.Port;
+            string path = context.Request.Path.ToString().ToLower();
 
-            UriBuilder uriBuilder = port != null ? 
-                new UriBuilder(context.Request.Scheme, context.Request.Host.Host, (int)port) : 
-                new UriBuilder(context.Request.Scheme, context.Request.Host.Host);
-
-            string tempUri = uriBuilder.Uri.ToString().ToLower();
-
-            if(tempUri.EndsWith(@"/"))
+            if (path.EndsWith(@"/"))
             {
-                tempUri = tempUri.Substring(0, tempUri.Length - 1);
+                path = path.Substring(0, path.Length - 1);
             }
 
-            tempUri = tempUri + context.Request.Path.ToString().ToLower();            
+            if (!path.StartsWith(@"/"))
+            {
+                path = @"/" + path;
+            }
 
-            return tempUri;
+            if (env.IsProduction())
+            {
+                path = "/hets" + path;
+            }
+            
+            return path;
         }
     }
 }
