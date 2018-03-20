@@ -20,7 +20,9 @@ namespace HETSAPI.Authorization
             // Default authorization policy enforced via a global authorization filter
             AuthorizationPolicy requireLoginPolicy = new AuthorizationPolicyBuilder()
                 .RequireAuthenticatedUser()
-                .RequireClaim(User.PermissionClaim, Permission.Login)
+                .RequireAssertion(
+                    context => context.User.HasOnePermission(Permission.Login, Permission.BusinessLogin, Permission.ImportData)
+                    )
                 .Build();
 
             AuthorizeFilter filter = new AuthorizeFilter(requireLoginPolicy);
