@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using System;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using System.Collections.Generic;
@@ -41,20 +42,8 @@ namespace HETSAPI.Controllers
         [RequiresPermission(Permission.ImportData)]
         public IActionResult Index()
         {
-            string path = _context.Request.Path.ToString().ToLower();
-
-            if (!path.EndsWith(@"/"))
-            {
-                path = path + @"/";
-            }
-
-            path = path.Replace("/import", "");
-
-            // this will need to be removed once the Reverse Proxy is fixed
-            if (!_env.IsDevelopment())
-            {
-                path = "/hets" + path;
-            }
+            string path = GetServerPath(_context);            
+            path = path.Replace("import", "");            
 
             HomeViewModel home = new HomeViewModel
             {
@@ -75,21 +64,9 @@ namespace HETSAPI.Controllers
         [RequiresPermission(Permission.ImportData)]
         public IActionResult UploadPost(IList<IFormFile> files)
         {
-            string path = _context.Request.Path.ToString().ToLower();
-
-            if (!path.EndsWith(@"/"))
-            {
-                path = path + @"/";
-            }
-
-            path = path.Replace("/uploadpost", "");
-
-            // this will need to be removed once the Reverse Proxy is fixed
-            if (!_env.IsDevelopment())
-            {
-                path = "/hets" + path;
-            }
-
+            string path = GetServerPath(_context);            
+            path = path.Replace("uploadpost", "");
+            
             // get the upload path from the app configuration
             string uploadPath = _configuration["UploadPath"];
 
@@ -100,6 +77,31 @@ namespace HETSAPI.Controllers
             home.Action = path + "UploadPost";
 
             return View("Index", home);
+        }
+
+        /// <summary>
+        /// Returns Uri (as string)
+        /// </summary>
+        /// <param name="context"></param>
+        /// <returns></returns>
+        private static string GetServerPath(HttpContext context)
+        {
+            int? port = context.Request.Host.Port;
+
+            UriBuilder uriBuilder = port != null ? 
+                new UriBuilder(context.Request.Scheme, context.Request.Host.Host, (int)port) : 
+                new UriBuilder(context.Request.Scheme, context.Request.Host.Host);
+
+            string tempUri = uriBuilder.Uri.ToString().ToLower();
+
+            if(tempUri.EndsWith(@"/"))
+            {
+                tempUri = tempUri.Substring(0, tempUri.Length - 1);
+            }
+
+            tempUri = tempUri + context.Request.Path.ToString().ToLower();            
+
+            return tempUri;
         }
     }
 }
