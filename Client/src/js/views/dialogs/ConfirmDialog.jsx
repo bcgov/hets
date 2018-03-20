@@ -8,6 +8,8 @@ var ConfirmDialog = React.createClass({
     onClose: React.PropTypes.func.isRequired,
     show: React.PropTypes.bool,
     title: React.PropTypes.string,
+    saveText: React.PropTypes.string,
+    closeText: React.PropTypes.string,
     children: React.PropTypes.node,
   },
 
@@ -24,12 +26,12 @@ var ConfirmDialog = React.createClass({
   },
 
   render() {
-    return <EditDialog id="confirm-force-hire" show={ this.props.show }
+    return <EditDialog id="confirm-dialog" show={ this.props.show }
       onClose={ this.props.onClose } onSave={ this.onSave } didChange={ this.didChange } isValid={ this.isValid }
       title={
         <strong>{ this.props.title }</strong>
       }
-      closeText="Cancel" saveText="Confirm" backdropClassName="confirm"
+      closeText={ this.props.closeText || 'Cancel' } saveText={ this.props.saveText || 'Confirm' } backdropClassName="confirm"
       >
         { this.props.children }
     </EditDialog>;

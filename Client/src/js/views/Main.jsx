@@ -12,6 +12,7 @@ import * as Constant from '../constants';
 import TopNav from './TopNav.jsx';
 import Footer from './Footer.jsx';
 import ConfirmDialog from './dialogs/ConfirmDialog.jsx';
+import Countdown from '../components/Countdown.jsx';
 
 var Main = React.createClass({
   propTypes: {
@@ -31,6 +32,7 @@ var Main = React.createClass({
   },
   
   onCloseSessionTimeoutDialog() {
+    // Temporary: endpoint to keep session active
     Api.getCurrentUser();
     store.dispatch({ type: Action.CLOSE_SESSION_TIMEOUT_DIALOG });
   },
@@ -49,10 +51,16 @@ var Main = React.createClass({
       <ConfirmDialog
         title="Session Expiry"
         show={ this.props.showSessionTimeoutDialog }
-        onSave={ this.onEndSession }
-        onClose={ this.onCloseSessionTimeoutDialog }
+        onClose={ this.onEndSession }
+        onSave={ this.onCloseSessionTimeoutDialog }
+        closeText="End Session"
+        saveText="Keep Session"
       >
-        Your session will time out in ---. Would you like to keep the session active or end the session?
+        Your session will time out in 
+        <Countdown 
+          time={122} 
+          onEnd={ this.onEndSession }
+        />. Would you like to keep the session active or end the session?
       </ConfirmDialog>
     </div>;
   },

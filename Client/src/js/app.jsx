@@ -37,10 +37,10 @@ export var showSessionTimoutDialog = function() {
   store.dispatch({ type: Action.SHOW_SESSION_TIMEOUT_DIALOG });
 };
 
-export var sessionTimer = window.setInterval(showSessionTimoutDialog, 4000);
+export var sessionTimer = window.setInterval(showSessionTimoutDialog, Constant.SESSION_TIMOUT);
 
 export function setTimerInterval() {
-  sessionTimer = window.setInterval(showSessionTimoutDialog, 4000);
+  sessionTimer = window.setInterval(showSessionTimoutDialog, Constant.SESSION_TIMOUT);
 }
 
 const App = <Provider store={ store }>
