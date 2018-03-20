@@ -3,6 +3,7 @@ import { Provider } from 'react-redux';
 import { Router, Route, Redirect, hashHistory } from 'react-router';
 
 import * as Constant from './constants';
+import * as Action from './actionTypes';
 import store from './store';
 
 import Main from './views/Main.jsx';
@@ -30,6 +31,16 @@ function hasPermission() {
   if (store.getState().user.hasPermission(Constant.PERMISSION_BUSINESS_LOGIN)) {
     hashHistory.push(Constant.BUSINESS_LOGIN_PATHNAME);
   }
+}
+
+export var showSessionTimoutDialog = function() {
+  store.dispatch({ type: Action.SHOW_SESSION_TIMEOUT_DIALOG });
+};
+
+export var sessionTimer = window.setInterval(showSessionTimoutDialog, 4000);
+
+export function setTimerInterval() {
+  sessionTimer = window.setInterval(showSessionTimoutDialog, 4000);
 }
 
 const App = <Provider store={ store }>
