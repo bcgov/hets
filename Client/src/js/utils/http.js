@@ -6,6 +6,8 @@ import store from '../store';
 
 import * as Constant from '../constants';
 
+import { sessionTimer, setTimerInterval } from '../app.jsx';
+
 const ROOT_API_PREFIX = location.pathname === '/' ? '' : location.pathname.split('/').slice(0, -1).join('/');
 
 var numRequestsInFlight = 0;
@@ -152,6 +154,9 @@ export function request(path, options) {
 }
 
 export function jsonRequest(path, options) {
+  window.clearInterval(sessionTimer);
+  setTimerInterval();
+
   var jsonHeaders = {
     'Accept': 'application/json',
   };

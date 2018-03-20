@@ -92,3 +92,6 @@ export var headerHeight = 0;
 export function setHeaderHeight(num) {
   headerHeight = num;
 }
+
+// Session
+export const SESSION_TIMOUT = 1440000;
