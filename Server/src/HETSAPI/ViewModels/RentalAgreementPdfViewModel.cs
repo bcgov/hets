@@ -61,6 +61,39 @@ namespace HETSAPI.ViewModels
         }
 
         /// <summary>
+        /// Look for "Other" and replace with Comment text
+        /// </summary>
+        public void FixOther()
+        {
+            foreach (RentalAgreementRate rentalRate in RentalAgreementRatesWithTotal)
+            {
+                if (rentalRate.ComponentName.Equals("Other", StringComparison.InvariantCultureIgnoreCase))
+                {
+                    rentalRate.ComponentName = rentalRate.Comment;
+                    rentalRate.Comment = "";
+                }
+            }            
+
+            foreach (RentalAgreementRate rentalRate in RentalAgreementRatesWithoutTotal)
+            {
+                if (rentalRate.ComponentName.Equals("Other", StringComparison.InvariantCultureIgnoreCase))
+                {
+                    rentalRate.ComponentName = rentalRate.Comment;
+                    rentalRate.Comment = "";
+                }
+            }
+
+            foreach (RentalAgreementCondition condition in RentalAgreementConditions)
+            {
+                if (condition.ConditionName.Equals("Other", StringComparison.InvariantCultureIgnoreCase))
+                {
+                    condition.ConditionName = condition.Comment;
+                    condition.Comment = "";
+                }
+            }
+        }
+
+        /// <summary>
         /// Uses the rates data to calculate the totals and setup the required data for printing
         /// </summary>
         public void CalculateTotals()
@@ -120,15 +153,22 @@ namespace HETSAPI.ViewModels
 
         private static string FormatRatePeriod(string period)
         {
-            switch (period.ToLower())
+            if (!string.IsNullOrEmpty(period))
             {
-                case "daily":
-                case "dy":
-                    return "Dy";
+                switch (period.ToLower())
+                {
+                    case "daily":
+                    case "dy":
+                        return "Dy";
 
-                case "hourly":
-                case "hr":
-                    return "Hr";
+                    case "hourly":
+                    case "hr":
+                        return "Hr";
+                }
+            }
+            else
+            {
+                period = "";
             }
 
             return period;
