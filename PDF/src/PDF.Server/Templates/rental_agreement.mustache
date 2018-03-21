@@ -332,51 +332,70 @@
     <p style="margin-top: 15px; margin-bottom: 15px;">I hereby agree to rent to the Ministry of Transportation and Infrastructure of the Province of British Columbia the following equipment at the rental rates as shown:</p>
 
     <div id="table-block">
-      <table id="main-table" style="height: 425px">
-        <tr>
-          <th>Equipment</th>
-          <th style="width: 150px">Rate</th>
-          <th>Comments</th>
-        </tr>
-        <tr>
-          <td>{{equipment.year}} {{equipment.make}}/{{equipment.model}}/{{equipment.size}}/{{equipment.serialNumber}}</td>
-          <td class="rate">{{baseRateString}}</td>
-          <td>{{rateComment}}</td>
-        </tr>
-        <tr style="height: 15px"><td></td><td></td><td></td></tr>
-        {{#rentalAgreementRatesWithTotal}}
-        <tr>
-          <td>{{componentName}}</td>
-          <td class="rate">{{rateString}}</td>
-          <td>{{comment}}</td>
-        </tr>
-        {{/rentalAgreementRatesWithTotal}}
-        <tr style="height: 15px"><td></td><td></td><td></td></tr>
-        <tr>
-          <td></td>
-          <td class="rate bold">{{agreementTotalString}}</td>
-          <td class="bold">Total</td>
-        </tr>
-        <tr style="height: 15px"><td></td><td></td><td></td></tr>
-        {{#rentalAgreementRatesWithoutTotal}}
-        <tr>
-          <td>{{componentName}}</td>
-          <td class="rate">{{rateString}}</td>
-          <td>{{comment}}</td>
-        </tr>
-        {{/rentalAgreementRatesWithoutTotal}}
-        <tr style="height: 15px"><td></td><td></td><td></td></tr>
-        <tr><td></td><td></td><td class="bold">Conditions</td></tr>
-        <tr style="height: 15px"><td></td><td></td><td></td></tr>
-        {{#rentalAgreementConditions}}
-        <tr>
-          <td></td>
-          <td></td>
-          <td>{{conditionName}}</td>
-        </tr>
-        <tr style="height: 15px"><td></td><td></td><td></td></tr>
-        {{/rentalAgreementConditions}}
-      </table>
+        <table id="main-table" style="height: 425px">
+            <tr>
+                <th>Equipment</th>
+                <th style="width: 150px">Rate</th>
+                <th>Comments</th>
+            </tr>
+            <tr>
+                <td>{{equipment.year}} {{equipment.make}}/{{equipment.model}}/{{equipment.size}}/{{equipment.serialNumber}}</td>
+                <td class="rate">{{baseRateString}}</td>
+                <td>{{rateComment}}</td>
+            </tr>
+            <tr style="height: 15px"><td></td><td></td><td></td></tr>
+            {{#rentalAgreementRatesWithTotal}}
+            <tr>
+                <td>{{componentName}}</td>
+                <td class="rate">{{rateString}}</td>
+                <td>{{comment}}</td>
+            </tr>
+            {{/rentalAgreementRatesWithTotal}}
+            <tr style="height: 15px"><td></td><td></td><td></td></tr>
+            <tr>
+                <td></td>
+                <td class="rate bold">{{agreementTotalString}}</td>
+                <td class="bold">Total</td>
+            </tr>
+            <tr style="height: 15px"><td></td><td></td><td></td></tr>
+            {{#rentalAgreementRatesWithoutTotal}}
+            <tr>
+                <td>{{componentName}}</td>
+                <td class="rate">{{rateString}}</td>
+                <td>{{comment}}</td>
+            </tr>
+            {{/rentalAgreementRatesWithoutTotal}}
+            <tr style="height: 15px"><td></td><td></td><td></td></tr>
+            {{#rentalAgreementRatesOvertime}}
+            <tr>
+                <td>{{componentName}}</td>
+                <td class="rate">{{rateString}}</td>
+                <td>{{comment}}</td>
+            </tr>
+            {{/rentalAgreementRatesOvertime}}
+            <tr style="height: 15px"><td></td><td></td><td></td></tr>
+            <tr><td></td><td></td><td class="bold">Conditions</td></tr>
+            <tr style="height: 15px"><td></td><td></td><td></td></tr>
+            {{#rentalAgreementConditions}}
+            <tr>
+                <td></td>
+                <td></td>
+                <td>{{conditionName}}</td>
+            </tr>
+            <tr style="height: 15px"><td></td><td></td><td></td></tr>
+            {{/rentalAgreementConditions}}
+            <tr style="height: 15px"><td></td><td></td><td></td></tr>
+            <tr><td></td><td></td><td class="bold">Conditions</td></tr>
+            <tr style="height: 15px"><td></td><td></td><td></td></tr>
+            {{#rentalAgreementConditions}}
+            <tr>
+                <td></td>
+                <td></td>
+                <td>{{conditionName}}</td>
+            </tr>
+            <tr style="height: 15px"><td></td><td></td><td></td></tr>
+            {{/rentalAgreementConditions}}
+        </table>
     </div>
 
     <p>The above listed equipment will be used for Project #<span class="uppercase bold">{{project.provincialProjectNumber}} {{project.name}}</span> within the <span class="uppercase bold">{{project.district.name}}</span> District for an estimated period of <span class="bold">{{estimateHours}}</span> hours commencing <span class="bold">{{estimateStartWork}}</span>. Point of hire is <span class="uppercase underline bold">{{equipment.localArea.name}}</span></p>

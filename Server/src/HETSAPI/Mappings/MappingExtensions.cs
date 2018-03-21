@@ -158,6 +158,7 @@ namespace HETSAPI.Mappings
                 dto.Status = model.Status;
 
                 dto.CalculateTotals();
+                dto.FixOther();
             }
 
             return dto;

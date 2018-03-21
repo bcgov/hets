@@ -58,7 +58,40 @@ namespace HETSAPI.ViewModels
             EquipmentRate = equipmentRate;
             RatePeriod = ratePeriod;
             RateComment = rateComment;
-        }        
+        }
+
+        /// <summary>
+        /// Look for "Other" and replace with Comment text
+        /// </summary>
+        public void FixOther()
+        {
+            foreach (RentalAgreementRate rentalRate in RentalAgreementRatesWithTotal)
+            {
+                if (rentalRate.ComponentName.Equals("Other", StringComparison.InvariantCultureIgnoreCase))
+                {
+                    rentalRate.ComponentName = rentalRate.Comment;
+                    rentalRate.Comment = "";
+                }
+            }            
+
+            foreach (RentalAgreementRate rentalRate in RentalAgreementRatesWithoutTotal)
+            {
+                if (rentalRate.ComponentName.Equals("Other", StringComparison.InvariantCultureIgnoreCase))
+                {
+                    rentalRate.ComponentName = rentalRate.Comment;
+                    rentalRate.Comment = "";
+                }
+            }
+
+            foreach (RentalAgreementCondition condition in RentalAgreementConditions)
+            {
+                if (condition.ConditionName.Equals("Other", StringComparison.InvariantCultureIgnoreCase))
+                {
+                    condition.ConditionName = condition.Comment;
+                    condition.Comment = "";
+                }
+            }
+        }
 
         /// <summary>
         /// Uses the rates data to calculate the totals and setup the required data for printing
