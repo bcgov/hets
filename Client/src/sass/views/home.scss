@@ -2,6 +2,14 @@
   height: 200px;
 }
 
-#home .btn {
-  margin-right: 5px;
+#home {
+
+  [class*='col-'] {
+    padding-left: 7px;
+    padding-right: 7px;
+  }
+  
+  .btn {
+    margin-right: 5px;
+  }
 }

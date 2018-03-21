@@ -551,7 +551,7 @@ export function cloneEquipmentRentalAgreement(data) {
 }
 
 export function equipmentSeniorityListPdf(localAreas, types) {
-  return new ApiRequest('/equipment/seniorityListPdf').post({ localAreas, types }).then(response => {
+  return new ApiRequest(`/equipment/seniorityListPdf?localareas=${localAreas}&types=${types}`).get().then(response => {
     return response;
   });
 }

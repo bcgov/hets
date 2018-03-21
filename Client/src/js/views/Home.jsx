@@ -74,27 +74,25 @@ var Home = React.createClass({
 
     return <div id="home">
       <PageHeader>{this.props.currentUser.fullName}<br/>{this.props.currentUser.districtName} District</PageHeader>
-      <Well>
-        <Row>
-          <Col md={8}>
+      <Row>
+        <Col md={6}>
+          <Well>
             <Button onClick={ this.goToUnapprovedOwners }>Unapproved owners ({Object.keys(this.props.unapprovedOwners.data).length})</Button>
             <Button onClick={ this.goToUnapprovedEquipment }>Unapproved equipment ({Object.keys(this.props.unapprovedEquipment.data).length})</Button>          
-          </Col>
-        </Row>
-      </Well>
-      <Well>
-        <Row>
-          <Form onSubmit={ this.getRotationList }>
-            <Col md={12}>
+          </Well>
+        </Col>
+        <Col md={6}>
+          <Well>
+            <Form onSubmit={ this.getRotationList }>
               <MultiDropdown id="selectedEquipmentTypesIds" placeholder="Equipment Types" fieldName="districtEquipmentName"
                 items={ districtEquipmentTypes } updateState={ this.updateState} showMaxItems={ 2 } />
               <MultiDropdown id="selectedLocalAreasIds" placeholder="Local Areas"
                 items={ localAreas } updateState={ this.updateState } showMaxItems={ 2 } />
               <Button id="submit-button" bsStyle="primary" type="submit">Get Rotation List</Button>
-            </Col>
-          </Form>
-        </Row>
-      </Well>
+            </Form>
+          </Well>
+        </Col>
+      </Row>
     </div>;
   },
 });
