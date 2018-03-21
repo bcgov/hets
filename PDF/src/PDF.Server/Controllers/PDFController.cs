@@ -155,6 +155,11 @@ namespace PDF.Server.Controllers
                 // *************************************************************
                 // Create output using json and mustache template
                 // *************************************************************
+                if (seniorityListJson == "[]")
+                {
+                    seniorityListJson = @"{""Empty"": ""true""}";
+                }
+
                 RenderRequest request = new RenderRequest()
                 {
                     JsonString = seniorityListJson,
