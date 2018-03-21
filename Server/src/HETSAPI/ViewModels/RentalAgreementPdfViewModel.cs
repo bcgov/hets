@@ -58,7 +58,7 @@ namespace HETSAPI.ViewModels
             EquipmentRate = equipmentRate;
             RatePeriod = ratePeriod;
             RateComment = rateComment;
-        }
+        }        
 
         /// <summary>
         /// Uses the rates data to calculate the totals and setup the required data for printing
@@ -120,15 +120,22 @@ namespace HETSAPI.ViewModels
 
         private static string FormatRatePeriod(string period)
         {
-            switch (period.ToLower())
+            if (!string.IsNullOrEmpty(period))
             {
-                case "daily":
-                case "dy":
-                    return "Dy";
+                switch (period.ToLower())
+                {
+                    case "daily":
+                    case "dy":
+                        return "Dy";
 
-                case "hourly":
-                case "hr":
-                    return "Hr";
+                    case "hourly":
+                    case "hr":
+                        return "Hr";
+                }
+            }
+            else
+            {
+                period = "";
             }
 
             return period;
