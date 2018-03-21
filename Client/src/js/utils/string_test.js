@@ -1,6 +1,8 @@
 /*global describe, it  */
 /*eslint-env node*/
 
+// Import currently not working - update needed in pipeline
+
 // var assert = require('assert');
 // import { dasherize, plural } from './string';
 
