@@ -146,6 +146,12 @@ namespace HETSAPI.Models
         public int NumberOfBlocks { get; set; }
 
         /// <summary>
+        /// Returns the Maxumum Hours for this Type of Equipment
+        /// </summary>
+        [NotMapped]
+        public int MaximumHours { get; set; }
+
+        /// <summary>
         /// A system-generated unique identifier for a Equipment
         /// </summary>
         /// <value>A system-generated unique identifier for a Equipment</value>

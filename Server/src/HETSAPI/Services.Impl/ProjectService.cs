@@ -226,6 +226,25 @@ namespace HETSAPI.Services.Impl
                 {
                     countActiveAgreements++;
                 }
+
+                // get the max hours for this equipment type
+                if (rentalAgreement.Equipment != null &&
+                    rentalAgreement.Equipment.DistrictEquipmentType != null &&
+                    rentalAgreement.Equipment.DistrictEquipmentType.EquipmentType != null)
+                {
+                    if (rentalAgreement.Equipment.DistrictEquipmentType.EquipmentType.IsDumpTruck)
+                    {
+                        int dumpValue = Convert.ToInt32(_configuration.GetSection("MaximumHours:DumpTruck").Value);
+                        rentalAgreement.Equipment.MaximumHours = dumpValue;
+                    }
+                    else
+                    {
+                        int defValue = Convert.ToInt32(_configuration.GetSection("MaximumHours:Default").Value);
+                        rentalAgreement.Equipment.MaximumHours = defValue;
+                    }
+
+                    rentalAgreement.Equipment.HoursYtd = rentalAgreement.Equipment.GetYtdServiceHours(_context);
+                }
             }
 
             // Only allow editing the "Status" field under the following conditions:
