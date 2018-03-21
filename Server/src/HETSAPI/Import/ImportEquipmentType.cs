@@ -2,6 +2,7 @@
 using Hangfire.Server;
 using System;
 using System.Data;
+using System.Data.Common;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
@@ -9,6 +10,7 @@ using System.Xml.Serialization;
 using Hangfire.Console.Progress;
 using HETSAPI.ImportModels;
 using HETSAPI.Models;
+using Microsoft.EntityFrameworkCore;
 
 namespace HETSAPI.Import
 {
@@ -25,6 +27,46 @@ namespace HETSAPI.Import
         /// Progress Property
         /// </summary>
         public static string OldTableProgress => OldTable + "_Progress";
+
+        /// <summary>
+        /// Fix the sequence for the tables populated by the import process
+        /// </summary>
+        /// <param name="performContext"></param>
+        /// <param name="dbContext"></param>
+        public static void ResetSequence(PerformContext performContext, DbAppContext dbContext)
+        {
+            try
+            {
+                performContext.WriteLine("*** Resetting HET_EQUIPMENT_TYPE database sequence after import ***");
+                Debug.WriteLine("Resetting HET_EQUIPMENT_TYPE database sequence after import");
+
+                if (dbContext.EquipmentTypes.Any())
+                {
+                    // get max key
+                    int maxKey = dbContext.EquipmentTypes.Max(x => x.Id);
+                    maxKey = maxKey + 1;
+
+                    using (DbCommand command = dbContext.Database.GetDbConnection().CreateCommand())
+                    {
+                        // check if this code already exists
+                        command.CommandText = string.Format(@"ALTER SEQUENCE public.""HET_EQUIPMENT_TYPE_EQUIPMENT_TYPE_ID_seq"" RESTART WITH {0};", maxKey);
+
+                        dbContext.Database.OpenConnection();
+                        command.ExecuteNonQuery();
+                        dbContext.Database.CloseConnection();
+                    }
+                }
+
+                performContext.WriteLine("*** Done resetting HET_EQUIPMENT_TYPE database sequence after import ***");
+                Debug.WriteLine("Resetting HET_EQUIPMENT_TYPE database sequence after import - Done!");
+            }
+            catch (Exception e)
+            {
+                performContext.WriteLine("*** ERROR ***");
+                performContext.WriteLine(e.ToString());
+                throw;
+            }
+        }
 
         /// <summary>
         /// Import Equipment Types
@@ -189,6 +231,44 @@ namespace HETSAPI.Import
                 Debug.WriteLine("***Error*** - Master Equipment Type Index: " + maxEquipTypeIndex);
                 Debug.WriteLine(ex.Message);
                 throw;
+            }
+        }
+
+        public static void Obfuscate(PerformContext performContext, DbAppContext dbContext, string sourceLocation, string destinationLocation, string systemId)
+        {
+            int startPoint = ImportUtility.CheckInterMapForStartPoint(dbContext, "Obfuscate_" + OldTableProgress, BcBidImport.SigId, NewTable);
+
+            if (startPoint == BcBidImport.SigId)    // this means the import job it has done today is complete for all the records in the xml file.
+            {
+                performContext.WriteLine("*** Obfuscating " + XmlFileName + " is complete from the former process ***");
+                return;
+            }
+            try
+            {
+                string rootAttr = "ArrayOf" + OldTable;
+
+                // create Processer progress indicator
+                performContext.WriteLine("Processing " + OldTable);
+
+                // create serializer and serialize xml file
+                XmlSerializer ser = new XmlSerializer(typeof(EquipType[]), new XmlRootAttribute(rootAttr));
+                MemoryStream memoryStream = ImportUtility.MemoryStreamGenerator(XmlFileName, OldTable, sourceLocation, rootAttr);
+                EquipType[] legacyItems = (EquipType[])ser.Deserialize(memoryStream);
+
+                // no fields to mask for equipment type - straight copy
+                performContext.WriteLine("Writing " + XmlFileName + " to " + destinationLocation);
+
+                // write out the array.
+                FileStream fs = ImportUtility.GetObfuscationDestination(XmlFileName, destinationLocation);
+                ser.Serialize(fs, legacyItems);
+                fs.Close();
+
+                // no excel for DumpTruck.
+            }
+            catch (Exception e)
+            {
+                performContext.WriteLine("*** ERROR ***");
+                performContext.WriteLine(e.ToString());
             }
         }
     }

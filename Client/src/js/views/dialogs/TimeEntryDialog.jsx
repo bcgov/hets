@@ -73,17 +73,16 @@ var TimeEntryDialog = React.createClass({
     let timeEntry = { ...this.state.timeEntry };
 
     let timeEntryResetObj = timeEntry;
-    Object.keys(timeEntry).map((key) => {
+    Object.keys(timeEntry).forEach((key) => {
       let state = { ...timeEntry[key], errorHours: '', errorDate: '' };
       timeEntryResetObj[key] = state;
-      return;
     });
     
     this.setState({ timeEntry: timeEntryResetObj });
     let valid = true;
 
     let timeEntryErrorsObj = timeEntry;
-    Object.keys(timeEntry).map((key) => {
+    Object.keys(timeEntry).forEach((key) => {
       if (isBlank(timeEntry[key].hours)) {
         let state = { ...timeEntry[key], errorHours: 'Hours are required' };
         timeEntryErrorsObj[key] = state;
@@ -94,8 +93,6 @@ var TimeEntryDialog = React.createClass({
         timeEntryErrorsObj[key] = state;
         valid = false;
       }
-
-      return;
     });
     this.setState({ timeEntry: timeEntryErrorsObj });
 
@@ -205,14 +202,6 @@ var TimeEntryDialog = React.createClass({
         <Form>
           <Grid fluid>
             <Row>
-              <Col xs={3}>              
-                  <div className="text-label">Project</div>
-                  <div>{this.props.project.name}</div>
-              </Col>
-              <Col xs={3}>
-                  <div className="text-label">Project Number</div>
-                  <div>{ this.props.project.provincialProjectNumber }</div>
-              </Col>
               <Col xs={3}>
                 <div className="text-label">Equipment ID</div>
                 <div>{ activeRentalRequest.equipment.equipmentCode }</div>
@@ -222,6 +211,14 @@ var TimeEntryDialog = React.createClass({
                 <div className={ this.getHoursYtdClassName() ? 'highlight' : '' }>
                   { activeRentalRequest.equipment.hoursYtd }{ this.getHoursYtdClassName() && <span className="small-text"> (Near max. hours)</span> }
                 </div>
+              </Col>
+              <Col xs={3}>              
+                  <div className="text-label">Project</div>
+                  <div>{this.props.project.name}</div>
+              </Col>
+              <Col xs={3}>
+                  <div className="text-label">Project Number</div>
+                  <div>{ this.props.project.provincialProjectNumber }</div>
               </Col>
             </Row>
             <div className="time-entries-container">

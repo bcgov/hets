@@ -214,12 +214,12 @@ var RentalRequestsDetail = React.createClass({
     
     return <div id="rental-requests-detail">
       <Row id="rental-requests-top">
-        <Col md={10}>
+        <Col sm={10}>
           <Label bsStyle={ rentalRequest.isActive ? 'success' : rentalRequest.isCancelled ? 'danger' : 'default' }>{ rentalRequest.status }</Label>
           <Button title="Notes" onClick={ this.showNotes }>Notes ({ Object.keys(this.props.notes).length })</Button>
           <Button title="Documents" onClick={ this.showDocuments }>Documents ({ Object.keys(this.props.documents).length })</Button>
         </Col>
-        <Col md={2}>
+        <Col sm={2}>
           <div className="pull-right">
             <Button title="Return" onClick={ browserHistory.goBack }><Glyphicon glyph="arrow-left" /> Return</Button>
           </div>

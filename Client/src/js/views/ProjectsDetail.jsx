@@ -255,12 +255,12 @@ var ProjectsDetail = React.createClass({
           return (
             <div className="top-container">
               <Row id="projects-top">
-                <Col md={9}>
+                <Col sm={9}>
                   <Label bsStyle={ project.isActive ? 'success' : 'danger'}>{ project.status }</Label>
                   <Button title="Notes" onClick={ this.showNotes }>Notes ({ Object.keys(this.props.notes).length })</Button>
                   <Button title="Documents" onClick={ this.showDocuments }>Documents ({ Object.keys(this.props.documents).length })</Button>
                 </Col>
-                <Col md={3}>
+                <Col sm={3}>
                   <div className="pull-right">
                     <Button onClick={ this.print }><Glyphicon glyph="print" title="Print" /></Button>
                     <Button title="Return" onClick={ browserHistory.goBack }><Glyphicon glyph="arrow-left" /> Return</Button>

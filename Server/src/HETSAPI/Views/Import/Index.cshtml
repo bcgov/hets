@@ -67,7 +67,7 @@
         
         
         <label>Please select a ".zip" file then click on Upload:</label>
-        <form method="post" enctype="multipart/form-data" action="@Url.Action("UploadPost", "Import")">
+        <form method="post" enctype="multipart/form-data" action="@Model.Action">
             <input type="file" name="files" multiple style="width: 500px; height: 30px; font-size: 14px;" />
             <input type="submit" value="Upload" style="width: 100px; height: 30px; font-size: 14px;" />
         </form>

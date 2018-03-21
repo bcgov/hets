@@ -13,6 +13,9 @@ export const DOCUMENTS_PATHNAME = 'documents';
 export const BUSINESS_LOGIN_PATHNAME = '/business-login';
 export const BUSINESS_OWNER_PATHNAME = '/business-owner';
 export const DISTRICT_ADMIN_PATHNAME = 'district-admin';
+export const LOGOUT = (process.env.NODE_ENV === 'production') ? //eslint-disable-line
+  'https://logon.gov.bc.ca/clp-cgi/logoff.cgi' : 
+  'https://logontest.gov.bc.ca/clp-cgi/logoff.cgi';
 
 // Permissions
 export const PERMISSION_LOGIN = 'Login';
@@ -89,3 +92,6 @@ export var headerHeight = 0;
 export function setHeaderHeight(num) {
   headerHeight = num;
 }
+
+// Session
+export const SESSION_TIMOUT = 1440000;

@@ -7,7 +7,7 @@ using HETSAPI.Models;
 namespace HETSAPI.Seeders
 {
     public class RegionSeeder : Seeder<DbAppContext>
-    {
+    {        
         private readonly string[] _profileTriggers = { AllProfiles };
 
         public RegionSeeder(IConfiguration configuration, IHostingEnvironment env, ILoggerFactory loggerFactory) 
@@ -19,7 +19,7 @@ namespace HETSAPI.Seeders
         protected override void Invoke(DbAppContext context)
         {
             UpdateRegions(context);
-            context.SaveChanges();
+            context.SaveChangesForImport();
         }
 
         private void UpdateRegions(DbAppContext context)
@@ -29,7 +29,6 @@ namespace HETSAPI.Seeders
             foreach (Region region in seedRegions)
             {
                 context.UpdateSeedRegionInfo(region);
-                context.SaveChanges();
             }
 
             AddInitialRegions(context);            

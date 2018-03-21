@@ -98,17 +98,16 @@ var AttachmentRatesEditDialog = React.createClass({
     let forms = { ...this.state.forms };
 
     let formsResetObj = forms;
-    Object.keys(forms).map((key) => {
+    Object.keys(forms).forEach((key) => {
       let state = { ...forms[key], componentNameError: '', commentError: '' };
       formsResetObj[key] = state;
-      return;
     });
     
     this.setState({ forms: formsResetObj });
     let valid = true;
 
     let formsErrorsObj = forms;
-    Object.keys(forms).map((key) => {
+    Object.keys(forms).forEach((key) => {
       if (forms[key].componentName === EQUIPMENT_ATTACHMENT_OTHER && isBlank(forms[key].comment)) {
         let state = { ...forms[key], commentError: 'Comment is required.' };
         formsErrorsObj[key] = state;
@@ -119,7 +118,6 @@ var AttachmentRatesEditDialog = React.createClass({
         formsErrorsObj[key] = state;
         valid = false;
       }
-      return;
     });
     this.setState({ forms: formsErrorsObj });
 

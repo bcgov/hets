@@ -97,6 +97,7 @@ namespace HETSAPI.Services.Impl
         {
             User user = _context.Users
                 .Include(x => x.UserRoles)
+                .Include(x => x.UserDistricts)
                 .FirstOrDefault(x => x.Id == id);
 
             if (user == null)
@@ -111,7 +112,15 @@ namespace HETSAPI.Services.Impl
                 {
                     _context.UserRoles.Remove(item);
                 }
-            }            
+            }
+
+            if (user.UserDistricts != null)
+            {
+                foreach (UserDistrict item in user.UserDistricts)
+                {
+                    _context.UserDistricts.Remove(item);
+                }
+            }
 
             _context.Users.Remove(user);
             _context.SaveChanges();
@@ -348,6 +357,7 @@ namespace HETSAPI.Services.Impl
         {
             User user = _context.Users
                 .Include(x => x.District)
+                .Include(x => x.UserDistricts)
                 .Include(x => x.UserRoles)
                     .ThenInclude(y => y.Role)
                         .ThenInclude(z => z.RolePermissions)
@@ -376,13 +386,54 @@ namespace HETSAPI.Services.Impl
                         .Include(x => x.Region)
                         .First(x => x.Id == item.District.Id);
 
-                    user.District = district;
+                    user.DistrictId = district.Id;
+
+                    // check if we need to add this to the User District List too
+                    bool userDistrictExists = false;
+
+                    foreach (UserDistrict userDistrict in user.UserDistricts)
+                    {
+                        if (userDistrict.DistrictId == item.District.Id)
+                        {
+                            userDistrictExists = true;
+                            break;
+                        }
+                    }
+
+                    // if not found - then add it!
+                    if (!userDistrictExists)
+                    {
+                        UserDistrict newUserDistrict = new UserDistrict
+                        {
+                            UserId = item.Id,
+                            DistrictId = district.Id
+                        };
+
+                        if (user.UserDistricts == null)
+                        {
+                            user.UserDistricts = new List<UserDistrict>();
+                            newUserDistrict.IsPrimary = true;
+                        }
+
+
+                        user.UserDistricts.Add(newUserDistrict);
+                    }
                 }
             }
 
             // save changes
             _context.Users.Update(user);
             _context.SaveChanges();
+
+            // update the data to be returned
+            user = _context.Users
+                .Include(x => x.District)
+                .Include(x => x.UserDistricts)
+                .Include(x => x.UserRoles)
+                    .ThenInclude(y => y.Role)
+                        .ThenInclude(z => z.RolePermissions)
+                            .ThenInclude(z => z.Permission)
+                .FirstOrDefault(x => x.Id == id);
 
             return new ObjectResult(new HetsResponse(user.ToViewModel()));
         }
@@ -584,6 +635,20 @@ namespace HETSAPI.Services.Impl
                 SmUserId = item.SmUserId
             };
 
+            UserDistrict newUserDistrict = new UserDistrict
+            {
+                UserId = item.Id,
+                DistrictId = item.District.Id
+            };
+
+            if (user.UserDistricts == null)
+            {
+                user.UserDistricts = new List<UserDistrict>();
+                newUserDistrict.IsPrimary = true;
+            }
+
+            user.UserDistricts.Add(newUserDistrict);
+
             AdjustUser(user);
             bool exists = _context.Users.Any(x => x.Id == user.Id);
 
@@ -594,7 +659,7 @@ namespace HETSAPI.Services.Impl
             else
             {
                 _context.Users.Add(user);
-            }
+            }                                    
 
             _context.SaveChanges();
 

@@ -166,7 +166,7 @@ var RentalRatesEditDialog = React.createClass({
     let forms = { ...this.state.forms };
 
     let formsResetObj = forms;
-    Object.keys(forms).map((key) => {
+    Object.keys(forms).forEach((key) => {
       let state = { 
         ...forms[key], 
         componentNameError: '',
@@ -181,7 +181,7 @@ var RentalRatesEditDialog = React.createClass({
     let valid = true;
 
     let formsErrorsObj = forms;
-    Object.keys(forms).map((key) => {
+    Object.keys(forms).forEach((key) => {
 
       if (forms[key].rateType.description === Constant.NON_STANDARD_CONDITION && isBlank(forms[key].comment)) {
         let state = { ...forms[key], commentError: 'Comment is required.' };
@@ -210,8 +210,6 @@ var RentalRatesEditDialog = React.createClass({
         formsErrorsObj[key] = state;
         valid = false;
       }
-
-      return;
     });
 
     this.setState({ forms: formsErrorsObj });

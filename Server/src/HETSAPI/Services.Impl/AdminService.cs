@@ -7,7 +7,7 @@ using HETSAPI.Import;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Configuration;
 using System.IO;
-using System.Threading.Tasks;
+using System.Text;
 
 namespace HETSAPI.Services.Impl
 {
@@ -38,19 +38,25 @@ namespace HETSAPI.Services.Impl
                 try
                 {                
                     string uploadPath = _configuration["UploadPath"];
+
+                    // serialize scoring rules from config into json string
+                    IConfigurationSection scoringRules = _configuration.GetSection("SeniorityScoringRules");
+                    string seniorityScoringRules = GetConfigJson(scoringRules);
+
+                    // get connection string
                     string connectionString = _context.Database.GetDbConnection().ConnectionString;                    
 
                     if (realTime)
                     {
                         // not using Hangfire
-                        BcBidImport.ImportJob(null, _configuration, connectionString, uploadPath + path);
+                        BcBidImport.ImportJob(null, seniorityScoringRules, connectionString, uploadPath + path);
                         result = "Import complete";
                     }
                     else
                     {
                         // use Hangfire
                         result = "Created Job: ";
-                        string jobId = BackgroundJob.Enqueue(() => BcBidImport.ImportJob(null, _configuration, connectionString, uploadPath + path));
+                        string jobId = BackgroundJob.Enqueue(() => BcBidImport.ImportJob(null, seniorityScoringRules, connectionString, uploadPath + path));
                         result += jobId;
                     }
                 }
@@ -62,6 +68,44 @@ namespace HETSAPI.Services.Impl
             }
 
             return new ObjectResult(result);
+        }
+
+        private string GetConfigJson(IConfigurationSection scoringRules)
+        {
+            string jsonString = RecurseConfigJson(scoringRules);
+
+            if (jsonString.EndsWith(",}}"))
+            {
+                jsonString = jsonString.Replace(",}}", "}}");
+            }
+
+            return jsonString;
+        }
+
+        private string RecurseConfigJson(IConfigurationSection scoringRules)
+        {
+            StringBuilder temp = new StringBuilder();
+
+            temp.Append("{");
+
+            // check for children
+            foreach (IConfigurationSection section in scoringRules.GetChildren())
+            {
+                temp.Append(@"""" + section.Key + @"""" + ":");
+
+                if (section.Value == null)
+                {
+                    temp.Append(RecurseConfigJson(section));
+                }
+                else
+                {
+                    temp.Append(@"""" + section.Value + @"""" + ",");
+                }
+            }
+
+            string jsonString = temp.ToString();            
+            jsonString = jsonString + "}";
+            return jsonString;
         }
 
         public IActionResult AdminObfuscateGetAsync(string sourcePath, string destinationPath)
@@ -76,39 +120,39 @@ namespace HETSAPI.Services.Impl
                 ImportUtility.CreateObfuscationDestination(uploadPath + destinationPath);
 
                 // use Hangfire
-                    string jobId = BackgroundJob.Enqueue(() => BcBidImport.ObfuscationJob(null, connectionString, uploadPath + sourcePath, uploadPath + destinationPath));
-                    result += jobId;
-                
+                string jobId = BackgroundJob.Enqueue(() => BcBidImport.ObfuscationJob(null, connectionString, uploadPath + sourcePath, uploadPath + destinationPath));
+                result += jobId;                
             }
 
             return new ObjectResult(result);
         }
 
-
-        public async Task<IActionResult> GetSpreadsheet(string path, string filename)
+        public IActionResult GetSpreadsheet(string path, string filename)
         {
-            // create an excel spreadsheet that will show the data.            
-            if (_configuration != null)
+            // create an excel spreadsheet that will show the data       
+            lock (_thisLock)
             {
-                string uploadPath = _configuration["UploadPath"];
-                string fullPath = Path.Combine(uploadPath + path, filename);
-
-                MemoryStream memory = new MemoryStream();
-            
-                using (FileStream stream = new FileStream(fullPath, FileMode.Open))
+                if (_configuration != null)
                 {
-                    await stream.CopyToAsync(memory);
-                }
+                    string uploadPath = _configuration["UploadPath"];
+                    string fullPath = Path.Combine(uploadPath + path, filename);
 
-                memory.Position = 0;
+                    MemoryStream memory = new MemoryStream();
 
-                FileStreamResult fileStreamResult =
-                    new FileStreamResult(memory, "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet")
+                    using (FileStream stream = new FileStream(fullPath, FileMode.Open))
+                    {
+                        stream.CopyToAsync(memory).Wait();
+                    }
+
+                    memory.Position = 0;
+
+                    FileStreamResult fileStreamResult = new FileStreamResult(memory, "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet")
                     {
                         FileDownloadName = filename
                     };
 
-                return fileStreamResult;
+                    return fileStreamResult;
+                }
             }
 
             return null;

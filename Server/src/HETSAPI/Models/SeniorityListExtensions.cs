@@ -6,9 +6,24 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using Microsoft.Extensions.Configuration;
+using Newtonsoft.Json;
 
 namespace HETSAPI.Models
-{
+{    
+    public class RuleType
+    {
+        public int Default { get; set; }
+        public int DumpTruck { get; set; }
+    }
+
+    public class ScoringRules
+    {
+        public RuleType EquipmentScore { get; set; }
+        public RuleType BlockSize { get; set; }
+        public RuleType TotalBlocks { get; set; }
+    }
+
+
     /// <summary>
     /// Seniority List Database Model Extension
     /// </summary>
@@ -62,10 +77,7 @@ namespace HETSAPI.Models
                 List<EquipmentType> equipmentTypes = dbContext.EquipmentTypes.ToList();
 
                 // The annual rollover will process all local areas in turn
-                List<LocalArea> localAreas = dbContext.LocalAreas.ToList();
-
-                // since this action is meant to run at the end of March, YTD calcs will always start from the year prior.
-                int startingYear = DateTime.UtcNow.Year - 1;
+                List<LocalArea> localAreas = dbContext.LocalAreas.ToList();                
 
                 foreach (LocalArea localArea in localAreas.WithProgress(progress))
                 {                
@@ -104,7 +116,7 @@ namespace HETSAPI.Models
                                 // rollover the year
                                 equipment.ServiceHoursThreeYearsAgo = equipment.ServiceHoursTwoYearsAgo;
                                 equipment.ServiceHoursTwoYearsAgo = equipment.ServiceHoursLastYear;
-                                equipment.ServiceHoursLastYear = equipment.GetYtdServiceHours(dbContext, startingYear);
+                                equipment.ServiceHoursLastYear = equipment.GetYtdServiceHours(dbContext);
                                 equipment.CalculateYearsOfService(DateTime.UtcNow);
                             
                                 // blank out the override reason
@@ -384,7 +396,33 @@ namespace HETSAPI.Models
                 Console.WriteLine(e);
                 throw;
             }
-        }                
+        }
+
+        public SeniorityScoringRules(string seniorityScoringRules)
+        {
+            try
+            {
+                // convert string to json object
+                ScoringRules rules = JsonConvert.DeserializeObject<ScoringRules>(seniorityScoringRules);
+
+                // Equipment Score
+                _equipmentScore.Add("Default", rules.EquipmentScore.Default);
+                _equipmentScore.Add("DumpTruck", rules.EquipmentScore.Default);
+
+                // Block Size
+                _blockSize.Add("Default", rules.BlockSize.Default);
+                _blockSize.Add("DumpTruck", rules.BlockSize.Default);
+
+                // Total Blocks"
+                _totalBlocks.Add("Default", rules.TotalBlocks.Default);
+                _totalBlocks.Add("DumpTruck", rules.TotalBlocks.Default);
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+                throw;
+            }
+        }
 
         public int GetEquipmentScore(string type = null)
         {

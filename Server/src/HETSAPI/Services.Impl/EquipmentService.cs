@@ -1,6 +1,10 @@
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
+using System.Net;
+using System.Net.Http;
+using System.Text;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using HETSAPI.Models;
@@ -8,6 +12,9 @@ using HETSAPI.ViewModels;
 using HETSAPI.Mappings;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Logging;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Serialization;
 
 namespace HETSAPI.Services.Impl
 {
@@ -28,7 +35,7 @@ namespace HETSAPI.Services.Impl
         public int EquipmentId { get; set; }
         public int AgreementToCloneId { get; set; }
         public int RentalAgreementId { get; set; }
-    }
+    }    
 
     /// <summary>
     /// Equipment Service
@@ -37,14 +44,17 @@ namespace HETSAPI.Services.Impl
     {
         private readonly DbAppContext _context;
         private readonly IConfiguration _configuration;
+        private readonly ILogger _logger;
 
         /// <summary>
         /// Equipment Service Constructor
         /// </summary>
-        public EquipmentService(IHttpContextAccessor httpContextAccessor, DbAppContext context, IConfiguration configuration) : base(httpContextAccessor, context)
+        public EquipmentService(IHttpContextAccessor httpContextAccessor, DbAppContext context, IConfiguration configuration, ILoggerFactory loggerFactory) 
+            : base(httpContextAccessor, context)
         {
             _context = context;
             _configuration = configuration;
+            _logger = loggerFactory.CreateLogger<EquipmentService>();
         }        
 
         /// <summary>
@@ -106,7 +116,7 @@ namespace HETSAPI.Services.Impl
 
                 result.IsHired = IsHired(id);
                 result.NumberOfBlocks = GetNumberOfBlocks(result);
-                result.HoursYtd = result.GetYtdServiceHours(_context, DateTime.UtcNow.Year);
+                result.HoursYtd = result.GetYtdServiceHours(_context);
 
                 return new ObjectResult(new HetsResponse(result));
             }
@@ -192,7 +202,7 @@ namespace HETSAPI.Services.Impl
                     
                     result.IsHired = IsHired(id);
                     result.NumberOfBlocks = GetNumberOfBlocks(result);
-                    result.HoursYtd = result.GetYtdServiceHours(_context, DateTime.UtcNow.Year);
+                    result.HoursYtd = result.GetYtdServiceHours(_context);
 
                     return new ObjectResult(new HetsResponse(result));
                 }
@@ -1315,6 +1325,142 @@ namespace HETSAPI.Services.Impl
 
             // record not found
             return new ObjectResult(new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-01", _configuration)));
+        }
+
+        #endregion
+
+        #region Equipment Seniority List
+
+        /// <summary>
+        /// Get a pdf version of the seniority list
+        /// </summary>
+        /// <remarks>Returns a PDF version of the seniority list</remarks>
+        /// <param name="localareas">Local Areas (array of id numbers)</param>
+        /// <param name="types">Equipment Types (array of id numbers)</param>
+        /// <response code="200">OK</response>
+        public IActionResult EquipmentSeniorityListPdfGetAsync(string localareas, string types)
+        {
+            _logger.LogInformation("Equipment Seniority List Pdf");
+
+            int?[] localareasArray = ParseIntArray(localareas);
+            int?[] typesArray = ParseIntArray(types);
+
+            int? districtId = _context.GetDistrictIdByUserId(GetCurrentUserId()).Single();
+
+            IQueryable<Equipment> data = _context.Equipments.AsNoTracking()
+                .Include(x => x.LocalArea)
+                .Include(x => x.DistrictEquipmentType)
+                    .ThenInclude(y => y.EquipmentType)
+                .Include(x => x.Owner)
+                .Include(x => x.RentalAgreements)
+                .Where(x => x.LocalArea.ServiceArea.DistrictId.Equals(districtId));
+
+            if (localareasArray != null && localareasArray.Length > 0)
+            {
+                data = data.Where(x => localareasArray.Contains(x.LocalArea.Id));
+            }
+
+            if (typesArray != null && typesArray.Length > 0)
+            {
+                data = data.Where(x => typesArray.Contains(x.DistrictEquipmentType.Id));
+            }
+
+            // **********************************************************************
+            // convert Equipment Model to Pdf View Model
+            // **********************************************************************
+            SeniorityScoringRules scoringRules = new SeniorityScoringRules(_configuration);
+            List<SeniorityViewModel> result = new List<SeniorityViewModel>();
+
+            foreach (Equipment item in data)
+            {
+                result.Add(item.ToSeniorityViewModel(scoringRules, _context));
+            }
+
+            // **********************************************************************
+            // create the payload and call the pdf service
+            // **********************************************************************
+            string payload = JsonConvert.SerializeObject(result, new JsonSerializerSettings
+            {
+                ReferenceLoopHandling = ReferenceLoopHandling.Ignore,
+                ContractResolver = new CamelCasePropertyNamesContractResolver(),
+                Formatting = Formatting.Indented,
+                DateFormatHandling = DateFormatHandling.IsoDateFormat,
+                DateTimeZoneHandling = DateTimeZoneHandling.Utc
+            });
+
+            _logger.LogInformation("Equipment Seniority List Pdf - Payload Length: {0}", payload.Length);
+
+            // pass the request on to the Pdf Micro Service
+            string pdfHost = _configuration["PDF_SERVICE_NAME"];
+            string pdfUrl = _configuration.GetSection("Constants:SeniorityListPdfUrl").Value;
+            string targetUrl = pdfHost + pdfUrl;
+
+            // generate pdf document name [unique portion only]
+            string fileName = "HETS_SeniorityList";
+
+            targetUrl = targetUrl + "/" + fileName;
+
+            _logger.LogInformation("Equipment Seniority List Pdf - HETS Pdf Service Url: {0}", targetUrl);
+
+            // call the microservice
+            try
+            {
+                HttpClient client = new HttpClient();
+                StringContent stringContent = new StringContent(JsonConvert.SerializeObject(payload), Encoding.UTF8, "application/json");
+
+                _logger.LogInformation("Equipment Seniority List Pdf - Calling HETS Pdf Service");
+                HttpResponseMessage response = client.PostAsync(targetUrl, stringContent).Result;
+
+                // success
+                if (response.StatusCode == HttpStatusCode.OK)
+                {
+                    _logger.LogInformation("Equipment Seniority List Pdf - HETS Pdf Service Response: OK");
+
+                    var pdfResponseBytes = GetPdf(response);
+
+                    // convert to string and log
+                    string pdfResponse = Encoding.Default.GetString(pdfResponseBytes);
+
+                    fileName = fileName + ".pdf";
+
+                    _logger.LogInformation("Equipment Seniority List Pdf - HETS Pdf Filename: {0}", fileName);
+                    _logger.LogInformation("Equipment Seniority List Pdf - HETS Pdf Size: {0}", pdfResponse.Length);
+
+                    // return content
+                    FileContentResult pdfResult = new FileContentResult(pdfResponseBytes, "application/pdf")
+                    {
+                        FileDownloadName = fileName
+                    };
+
+                    return pdfResult;
+                }
+
+                _logger.LogInformation("Equipment Seniority List Pdf - HETS Pdf Service Response: {0}", response.StatusCode);
+
+                // problem occured
+                return new ObjectResult(new HetsResponse("HETS-05", ErrorViewModel.GetDescription("HETS-05", _configuration)));
+            }
+            catch (Exception ex)
+            {
+                Debug.Write("Error generating pdf: " + ex.Message);
+                return new ObjectResult(new HetsResponse("HETS-05", ErrorViewModel.GetDescription("HETS-05", _configuration)));
+            }            
+        }
+
+        private static byte[] GetPdf(HttpResponseMessage response)
+        {
+            try
+            {
+                var pdfResponseBytes = response.Content.ReadAsByteArrayAsync();
+                pdfResponseBytes.Wait();
+
+                return pdfResponseBytes.Result;
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+                throw;
+            }
         }
 
         #endregion

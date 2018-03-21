@@ -25,6 +25,6 @@ namespace HETSAPI.Services
         /// <param name="path"></param>
         /// <param name="filename"></param>
         /// <returns></returns>
-        Task<IActionResult> GetSpreadsheet(string path, string filename);        
+        IActionResult GetSpreadsheet(string path, string filename);        
     }
 }

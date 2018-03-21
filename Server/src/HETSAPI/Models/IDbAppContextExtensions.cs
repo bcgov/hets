@@ -4,6 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using HETSAPI.Import;
 
 namespace HETSAPI.Models
 {
@@ -12,6 +13,8 @@ namespace HETSAPI.Models
     /// </summary>
     public static class DbAppContextExtensions
     {
+        private const string SystemId = "SYSTEM_HETS";
+
         /// <summary>
         /// Returns a district for a given Ministry Id
         /// </summary>
@@ -156,9 +159,12 @@ namespace HETSAPI.Models
                 Initials = initialUser.Initials,
                 SmAuthorizationDirectory = initialUser.SmAuthorizationDirectory,
                 SmUserId = initialUser.SmUserId,
-                Surname = initialUser.Surname
+                Surname = initialUser.Surname,
+                AppCreateUserid = SystemId,
+                AppCreateTimestamp = DateTime.UtcNow,
+                AppLastUpdateUserid = SystemId,
+                AppLastUpdateTimestamp = DateTime.UtcNow
             };
-
 
             District district = null;
 
@@ -167,10 +173,7 @@ namespace HETSAPI.Models
                 district = context.GetDistrictByMinistryDistrictId(initialUser.District.MinistryDistrictID);
             }
 
-            user.District = district;
-
-            context.Users.Add(user);
-            context.SaveChanges();
+            user.District = district;            
 
             string[] userRoles = initialUser.UserRoles.Select(x => x.Role.Name).ToArray();
 
@@ -187,13 +190,16 @@ namespace HETSAPI.Models
                         new UserRole
                         {
                             EffectiveDate = DateTime.UtcNow,
-                            Role = role
+                            Role = role,
+                            AppCreateUserid = SystemId,
+                            AppCreateTimestamp = DateTime.UtcNow,
+                            AppLastUpdateUserid = SystemId,
+                            AppLastUpdateTimestamp = DateTime.UtcNow
                         });
                 }
-            }            
-            
-            context.Users.Update(user);
-            context.SaveChanges();
+            }
+
+            context.Users.Add(user);
         }
 
         /// <summary>
@@ -240,11 +246,14 @@ namespace HETSAPI.Models
             {
                 MinistryRegionID = initialRegion.MinistryRegionID,
                 Name = initialRegion.Name,
-                StartDate = initialRegion.StartDate
+                StartDate = initialRegion.StartDate,
+                AppCreateUserid = SystemId,
+                AppCreateTimestamp = DateTime.UtcNow,
+                AppLastUpdateUserid = SystemId,
+                AppLastUpdateTimestamp = DateTime.UtcNow
             };
 
             context.Regions.Add(region);
-            context.SaveChanges();
         }
 
         /// <summary>
@@ -290,7 +299,11 @@ namespace HETSAPI.Models
             {
                 MinistryDistrictID = initialDistrict.MinistryDistrictID,
                 Name = initialDistrict.Name,
-                StartDate = initialDistrict.StartDate
+                StartDate = initialDistrict.StartDate,
+                AppCreateUserid = SystemId,
+                AppCreateTimestamp = DateTime.UtcNow,
+                AppLastUpdateUserid = SystemId,
+                AppLastUpdateTimestamp = DateTime.UtcNow
             };
 
             if (initialDistrict.Region != null)
@@ -304,7 +317,6 @@ namespace HETSAPI.Models
             }
 
             context.Districts.Add(district);
-            context.SaveChanges();
         }
 
         /// <summary>
@@ -349,7 +361,11 @@ namespace HETSAPI.Models
             {
                 MinistryServiceAreaID = initialServiceArea.MinistryServiceAreaID,
                 Name = initialServiceArea.Name,
-                StartDate = initialServiceArea.StartDate
+                StartDate = initialServiceArea.StartDate,
+                AppCreateUserid = SystemId,
+                AppCreateTimestamp = DateTime.UtcNow,
+                AppLastUpdateUserid = SystemId,
+                AppLastUpdateTimestamp = DateTime.UtcNow
             };
 
             if (initialServiceArea.District != null)
@@ -363,7 +379,6 @@ namespace HETSAPI.Models
             }
 
             context.ServiceAreas.Add(serviceArea);
-            context.SaveChanges();
         }
 
         /// <summary>
@@ -373,6 +388,9 @@ namespace HETSAPI.Models
         /// <param name="districtInfo"></param>
         public static void UpdateSeedDistrictInfo(this DbAppContext context, District districtInfo)
         {
+            // adding system Account if not there in the database
+            ImportUtility.InsertSystemUser(context, SystemId);
+
             // Adjust the region.
             int ministryRegionId = districtInfo.Region.MinistryRegionID;
 
@@ -390,6 +408,11 @@ namespace HETSAPI.Models
             District district = context.GetDistrictByMinistryDistrictId(districtInfo.MinistryDistrictID);
             if (district == null)
             {
+                districtInfo.AppCreateUserid = SystemId;
+                districtInfo.AppCreateTimestamp = DateTime.UtcNow;
+                districtInfo.AppLastUpdateUserid = SystemId;
+                districtInfo.AppLastUpdateTimestamp = DateTime.UtcNow;
+
                 context.Districts.Add(districtInfo);
             }
             else
@@ -407,9 +430,18 @@ namespace HETSAPI.Models
         /// <param name="regionInfo"></param>
         public static void UpdateSeedRegionInfo(this DbAppContext context, Region regionInfo)
         {
+            // adding system Account if not there in the database
+            ImportUtility.InsertSystemUser(context, SystemId);
+
             Region region = context.GetRegionByMinistryRegionId(regionInfo.MinistryRegionID);
+
             if (region == null)
             {
+                regionInfo.AppCreateUserid = SystemId;
+                regionInfo.AppCreateTimestamp = DateTime.UtcNow;
+                regionInfo.AppLastUpdateUserid = SystemId;
+                regionInfo.AppLastUpdateTimestamp = DateTime.UtcNow;
+
                 context.Regions.Add(regionInfo);
             }
             else
@@ -426,6 +458,9 @@ namespace HETSAPI.Models
         /// <param name="serviceAreaInfo"></param>
         public static void UpdateSeedServiceAreaInfo(this DbAppContext context, ServiceArea serviceAreaInfo)
         {
+            // adding system Account if not there in the database
+            ImportUtility.InsertSystemUser(context, SystemId);
+
             // Adjust the district.
             int ministryDistrictId = serviceAreaInfo.District.MinistryDistrictID;
             var exists = context.Districts.Any(a => a.MinistryDistrictID == ministryDistrictId);
@@ -443,6 +478,11 @@ namespace HETSAPI.Models
             ServiceArea serviceArea = context.GetServiceAreaByMinistryServiceAreaId(serviceAreaInfo.MinistryServiceAreaID);
             if (serviceArea == null)
             {
+                serviceAreaInfo.AppCreateUserid = SystemId;
+                serviceAreaInfo.AppCreateTimestamp = DateTime.UtcNow;
+                serviceAreaInfo.AppLastUpdateUserid = SystemId;
+                serviceAreaInfo.AppLastUpdateTimestamp = DateTime.UtcNow;
+
                 context.ServiceAreas.Add(serviceAreaInfo);
             }
             else
@@ -460,10 +500,18 @@ namespace HETSAPI.Models
         /// <param name="userInfo"></param>
         public static void UpdateSeedUserInfo(this DbAppContext context, User userInfo)
         {
+            // adding system Account if not there in the database
+            ImportUtility.InsertSystemUser(context, SystemId);
+
             User user = context.GetUserByGuid(userInfo.Guid);
 
             if (user == null)
             {
+                userInfo.AppCreateUserid = SystemId;
+                userInfo.AppCreateTimestamp = DateTime.UtcNow;
+                userInfo.AppLastUpdateUserid = SystemId;
+                userInfo.AppLastUpdateTimestamp = DateTime.UtcNow;
+
                 context.Users.Add(userInfo);
             }
             else
@@ -487,6 +535,11 @@ namespace HETSAPI.Models
 
                     foreach (UserRole item in userInfo.UserRoles)
                     {
+                        item.AppCreateUserid = SystemId;
+                        item.AppCreateTimestamp = DateTime.UtcNow;
+                        item.AppLastUpdateUserid = SystemId;
+                        item.AppLastUpdateTimestamp = DateTime.UtcNow;
+
                         user.UserRoles.Add(item);
                     }
                 }                

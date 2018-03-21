@@ -10,6 +10,7 @@ import { daysAgo, sortableDateTime, today } from './utils/date';
 
 import _ from 'lodash';
 import Moment from 'moment';
+import Promise from 'bluebird';
 
 function normalize(response) {
   return _.fromPairs(response.map(object => [ object.id, object ]));
@@ -655,9 +656,6 @@ export function searchOwners(params) {
   store.dispatch({ type: Action.OWNERS_REQUEST });
   return new ApiRequest('/owners/search').get(params).then(response => {
     var owners = normalize(response.data);
-
-    // Add display fields
-    _.map(owners, owner => { parseOwner(owner); });
     store.dispatch({ type: Action.UPDATE_OWNERS, owners: owners });
   });
 }

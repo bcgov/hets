@@ -2,6 +2,7 @@
 using Hangfire.Server;
 using System;
 using System.Data;
+using System.Data.Common;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
@@ -27,6 +28,46 @@ namespace HETSAPI.Import
         /// Progress Property
         /// </summary>
         public static string OldTableProgress => OldTable + "_Progress";
+
+        /// <summary>
+        /// Fix the sequence for the tables populated by the import process
+        /// </summary>
+        /// <param name="performContext"></param>
+        /// <param name="dbContext"></param>
+        public static void ResetSequence(PerformContext performContext, DbAppContext dbContext)
+        {
+            try
+            {
+                performContext.WriteLine("*** Resetting HET_DISTRICT_EQUIPMENT_TYPE database sequence after import ***");
+                Debug.WriteLine("Resetting HET_DISTRICT_EQUIPMENT_TYPE database sequence after import");
+
+                if (dbContext.DistrictEquipmentTypes.Any())
+                {
+                    // get max key
+                    int maxKey = dbContext.DistrictEquipmentTypes.Max(x => x.Id);
+                    maxKey = maxKey + 1;
+
+                    using (DbCommand command = dbContext.Database.GetDbConnection().CreateCommand())
+                    {
+                        // check if this code already exists
+                        command.CommandText = string.Format(@"ALTER SEQUENCE public.""HET_DISTRICT_EQUIPMENT_TYPE_DISTRICT_EQUIPMENT_TYPE_ID_seq"" RESTART WITH {0};", maxKey);
+
+                        dbContext.Database.OpenConnection();
+                        command.ExecuteNonQuery();
+                        dbContext.Database.CloseConnection();
+                    }
+                }
+
+                performContext.WriteLine("*** Done resetting HET_DISTRICT_EQUIPMENT_TYPE database sequence after import ***");
+                Debug.WriteLine("Resetting HET_DISTRICT_EQUIPMENT_TYPE database sequence after import - Done!");
+            }
+            catch (Exception e)
+            {
+                performContext.WriteLine("*** ERROR ***");
+                performContext.WriteLine(e.ToString());
+                throw;
+            }
+        }
 
         /// <summary>
         /// Import District Equipment Types

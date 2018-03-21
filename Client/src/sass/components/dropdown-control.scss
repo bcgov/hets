@@ -19,18 +19,18 @@
   }
 
   .dropdown-menu {
-    padding: 0px;
+    padding: 0;
 
     ul {
-      margin: 0px;
-      padding: 0px 0px;
+      margin: 0;
+      padding: 0;
       list-style: none;
       max-height: 262px;
       overflow-y: auto;
     }
 
     li {
-      margin: 0px;
+      margin: 0;
     }
 
     a {
@@ -67,6 +67,6 @@
     color: #a94442;
     border-color: #a94442;
     -webkit-box-shadow: inset 0 1px 1px rgba(0, 0, 0, .075);
-            box-shadow: inset 0 1px 1px rgba(0, 0, 0, .075);
+    box-shadow: inset 0 1px 1px rgba(0, 0, 0, .075);
   }
 }

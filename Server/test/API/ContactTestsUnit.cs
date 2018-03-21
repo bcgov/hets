@@ -15,12 +15,7 @@ namespace HETSAPI.Test
         /// Setup the test
         /// </summary>        
 		public ContactUnitTest()
-		{			
-            DbContextOptions<DbAppContext> options = new DbContextOptions<DbAppContext>();
-            Mock<DbAppContext> dbAppContext = new Mock<DbAppContext>(null, options);			                   
-
-            ContactService _service = new ContactService(dbAppContext.Object);			
-            _Contact = new ContactController (_service);
+		{			            
 		}	
 		
 		[Fact]

@@ -170,7 +170,7 @@ var Users = React.createClass({
       <div>
         <Well id="users-bar" bsSize="small" className="clearfix">
           <Row>
-            <Col md={10}>
+            <Col sm={10}>
               <Form onSubmit={ this.search }>
                 <ButtonToolbar id="users-search">
                   <MultiDropdown id="selectedDistrictsIds" placeholder="Districts"
@@ -184,7 +184,7 @@ var Users = React.createClass({
                 </ButtonToolbar>
               </Form>
             </Col>
-            <Col md={2}>
+            <Col sm={2}>
               <Row id="users-faves">
                 <Favourites id="users-faves-dropdown" type="user" favourites={ this.props.favourites.data } data={ this.state.search } onSelect={ this.loadFavourite } pullRight />
               </Row>

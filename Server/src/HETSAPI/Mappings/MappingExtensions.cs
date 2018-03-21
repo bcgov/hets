@@ -122,7 +122,7 @@ namespace HETSAPI.Mappings
                         if (rotationList.Equipment != null)
                         {
                             rotationList.Equipment.HoursYtd =
-                                rotationList.Equipment.GetYtdServiceHours(context, DateTime.Now.Year);
+                                rotationList.Equipment.GetYtdServiceHours(context);
                         }
                     }
                 }
@@ -457,7 +457,142 @@ namespace HETSAPI.Mappings
 
             return dto;
         }
-               
+
+        /// <summary>
+        /// Seniority List view model
+        /// </summary>
+        /// <param name="model"></param>
+        /// <param name="scoringRules"></param>
+        /// <param name="context"></param>
+        /// <returns></returns>
+        public static SeniorityViewModel ToSeniorityViewModel(this Equipment model, SeniorityScoringRules scoringRules, DbAppContext context)
+        {
+            var dto = new SeniorityViewModel();
+
+            if (model != null)
+            {
+                int numberOfBlocks = 0;
+
+                // get number of blocks for this equiment type
+                if (model.DistrictEquipmentType != null)
+                {
+                    numberOfBlocks = model.DistrictEquipmentType.EquipmentType.IsDumpTruck
+                        ? scoringRules.GetTotalBlocks("DumpTruck") + 1
+                        : scoringRules.GetTotalBlocks() + 1;
+                }
+
+                // get equipment seniority
+                float seniority = 0F;
+                if (model.Seniority != null)
+                {
+                    seniority = (float)model.Seniority;
+                }
+
+                // get equipment block number
+                int blockNumber = 0;
+                if (model.BlockNumber != null)
+                {
+                    blockNumber = (int)model.BlockNumber;
+                }
+
+                // get equipment block number
+                int numberInBlock = 0;
+                if (model.NumberInBlock != null)
+                {
+                    numberInBlock = (int)model.NumberInBlock;
+                }
+
+                // *************************************************************
+                // Map data to view model
+                // *************************************************************
+                dto.Id = model.Id;
+
+                if (model.DistrictEquipmentType != null)
+                {
+                    dto.EquipmentType = model.DistrictEquipmentType.DistrictEquipmentName;
+                }
+
+                if (model.Owner != null)
+                {
+                    dto.OwnerName = model.Owner.OrganizationName;
+                    dto.OwnerId = model.OwnerId;
+                }
+
+                dto.SeniorityString = dto.FormatSeniorityString(seniority, blockNumber, numberOfBlocks);
+
+                // format the seniority value
+                dto.Seniority = string.Format("{0:0.###}", model.Seniority);
+
+                dto.Make = model.Make;
+                dto.Model = model.Model;
+                dto.Size = model.Size;
+                dto.EquipmentCode = model.EquipmentCode;
+
+                dto.YearsRegistered = model.YearsOfService.ToString();
+
+                // calculate and format the ytd hours
+                float tempHours = model.GetYtdServiceHours(context);
+                dto.YtdHours = string.Format("{0:0.###}", tempHours);
+
+                // format the hours
+                dto.HoursYearMinus1 = string.Format("{0:0.###}", model.ServiceHoursLastYear);
+                dto.HoursYearMinus2 = string.Format("{0:0.###}", model.ServiceHoursTwoYearsAgo);
+                dto.HoursYearMinus3 = string.Format("{0:0.###}", model.ServiceHoursThreeYearsAgo);
+
+                // get last called value
+
+
+                dto.SenioritySortOrder = dto.CalculateSenioritySortOrder(blockNumber, numberInBlock);
+            }
+
+            return dto;
+        }
+
+        /// <summary>
+        /// Owner view model
+        /// </summary>
+        /// <param name="model"></param>
+        /// <returns></returns>
+        public static OwnerViewModel ToViewModel(this Owner model)
+        {
+            var dto = new OwnerViewModel();
+
+            if (model != null)
+            {                
+                dto.Id = model.Id;
+                dto.OwnerCode = model.OwnerCode;
+                dto.OrganizationName = model.OrganizationName;
+
+                if (model.LocalArea != null)
+                {
+                    dto.LocalAreaName = model.LocalArea.Name;
+                }
+
+                if (model.PrimaryContact != null)
+                {
+                    string tempName = model.PrimaryContact.GivenName.Trim();
+
+                    if (!string.IsNullOrEmpty(tempName))
+                    {
+                        tempName = tempName + " ";
+                    }
+
+                    tempName = tempName + model.PrimaryContact.Surname.Trim();
+
+                    dto.PrimaryContactName = tempName;
+                }
+
+                if (model.EquipmentList != null)
+                {
+                    dto.CalculateEquipmentCount(model.EquipmentList);
+                }
+
+                dto.Status = model.Status;
+            }
+
+            return dto;
+        }
+
         /// <summary>
         /// History view model
         /// </summary>

@@ -25,7 +25,7 @@ var SortTable = React.createClass({
   },
 
   render() {
-    return <div id={ this.props.id }>
+    return <div id={ this.props.id } className="table-container">
       <Table condensed striped hover>
         <thead>
           <tr>

@@ -155,11 +155,10 @@ var Owners = React.createClass({
       return owner.id;
     });
     Api.verifyOwners(owners).then((response) => {
-      var blob;
+      var blob = new Blob([response], {type: 'image/pdf'});
       if (window.navigator.msSaveBlob) {
         blob = window.navigator.msSaveBlob([response], 'owner_status_letters.pdf');
       }
-      blob = new Blob([response], {type: 'image/pdf'});
       //Create a link element, hide it, direct 
       //it towards the blob, and then 'click' it programatically
       let a = document.createElement('a');
@@ -216,7 +215,7 @@ var Owners = React.createClass({
       </PageHeader>
       <Well id="owners-bar" bsSize="small" className="clearfix">
         <Row>
-          <Col md={9}>
+          <Col sm={10}>
             <Form onSubmit={ this.search }>
               <ButtonToolbar id="owners-filters">
                 <MultiDropdown id="selectedLocalAreasIds" placeholder="Local Areas"
@@ -232,7 +231,7 @@ var Owners = React.createClass({
               </ButtonToolbar>
             </Form>
           </Col>
-          <Col md={3}>
+          <Col sm={2}>
             <Row id="owners-faves">
               <Favourites id="owners-faves-dropdown" type="owner" favourites={ this.props.favourites.data } data={ this.state.search } onSelect={ this.loadFavourite } pullRight />
             </Row>
@@ -251,7 +250,7 @@ var Owners = React.createClass({
           { field: 'localAreaName',          title: 'Local Area'                                      },
           { field: 'organizationName',       title: 'Company'                                         },
           { field: 'primaryContactName',     title: 'Primary Contact'                                 },
-          { field: 'numberOfEquipment',      title: 'Equipment',       style: { textAlign: 'center' } },
+          { field: 'equipmentCount',         title: 'Equipment',       style: { textAlign: 'center' } },
           { field: 'status',                 title: 'Status',          style: { textAlign: 'center' } },
           { field: 'addOwner',               title: 'Add Owner',       style: { textAlign: 'right'  },
             node: addOwnerButton,
@@ -259,15 +258,15 @@ var Owners = React.createClass({
         ]}>
           {
             _.map(ownerList, (owner) => {
-              return <tr key={ owner.id } className={ owner.isApproved ? null : 'info' }>
+              return <tr key={ owner.id } className={ owner.status === Constant.OWNER_STATUS_CODE_APPROVED ? null : 'info' }>
                 <td>{ owner.localAreaName }</td>
                 <td>{ owner.organizationName }</td>
                 <td>{ owner.primaryContactName }</td>
-                <td style={{ textAlign: 'center' }}>{ owner.numberOfEquipment }</td>
+                <td style={{ textAlign: 'center' }}>{ owner.equipmentCount }</td>
                 <td style={{ textAlign: 'center' }}>{ owner.status }</td>
                 <td style={{ textAlign: 'right' }}>
                   <ButtonGroup>
-                    <EditButton name="Owner" hide={ !owner.canView } view pathname={ `${ Constant.OWNERS_PATHNAME }/${ owner.id }` }/>
+                    <EditButton name="Owner" view pathname={ `${ Constant.OWNERS_PATHNAME }/${ owner.id }` }/>
                   </ButtonGroup>
                 </td>
               </tr>;

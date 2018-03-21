@@ -4,22 +4,18 @@ using Moq;
 using HETSAPI.Models;
 using HETSAPI.Controllers;
 using HETSAPI.Services.Impl;
+using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace HETSAPI.Test
 {
 	public class EquipmentUnitTest 
-    { 		
-		private readonly EquipmentController _Equipment;
-		
+    { 						
 		/// <summary>
         /// Setup the test
         /// </summary>        
 		public EquipmentUnitTest()
-		{			
-            DbContextOptions<DbAppContext> options = new DbContextOptions<DbAppContext>();
-            Mock<DbAppContext> dbAppContext = new Mock<DbAppContext>(null, options);
-            EquipmentService _service = new EquipmentService(null, dbAppContext.Object, null);
-            _Equipment = new EquipmentController (_service);
+		{            
 		}	
 		
 		[Fact]

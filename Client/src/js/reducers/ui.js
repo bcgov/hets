@@ -19,6 +19,7 @@ const DEFAULT_STATE = {
   roles: {},
   history: {},
   documents: {},
+  showSessionTimeoutDialog: false,
 };
 
 export default function uiReducer(state = DEFAULT_STATE, action) {
@@ -79,6 +80,14 @@ export default function uiReducer(state = DEFAULT_STATE, action) {
 
     case Action.UPDATE_DOCUMENTS_UI:
       return { ...state, documents: action.documents };
+
+    // Modals
+
+    case Action.SHOW_SESSION_TIMEOUT_DIALOG: 
+      return { ...state, showSessionTimeoutDialog: true };
+
+    case Action.CLOSE_SESSION_TIMEOUT_DIALOG: 
+      return { ...state, showSessionTimeoutDialog: false };
   }
 
   return { ...state, ...newState };

@@ -1,9 +1,9 @@
-@import "gov3";
-@import "init";
-@import "header";
-@import "print";
-@import "views/all";
-@import "components/all";
+@import 'gov3';
+@import 'init';
+@import 'header';
+@import 'print';
+@import 'views/all';
+@import 'components/all';
 
 #app {
   height: 100%;
@@ -14,7 +14,7 @@
 }
 
 .page-header {
-  margin: 20px 0px;
+  margin: 20px 0;
 }
 
 .nowrap {
@@ -23,7 +23,7 @@
 
 .spinner-container {
   text-align: center;
-  padding: 0.5rem 0;
+  padding: .5rem 0;
 }
 
 .spinner {
@@ -31,7 +31,7 @@
   vertical-align: baseline;
   width: 24px;
   height: 24px;
-  animation: rotate 0.8s infinite linear;
+  animation: rotate .8s infinite linear;
   border: 2px solid #2e6da4;
   border-right-color: transparent !important;
   border-radius: 50%;
@@ -80,7 +80,6 @@ a.light {
 }
 
 .alert-warning {
-
   &:before {
     content: '';
   }
@@ -105,4 +104,13 @@ a.light {
 .text-label {
   font-weight: bold;
   margin: 5px 0;
+}
+
+.table-container {
+  overflow-y: auto;
+}
+
+#confirm-dialog .timer {
+  margin-left: 3px;
+  font-weight: bold;
 }

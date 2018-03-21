@@ -161,7 +161,7 @@ namespace HETSAPI.Controllers
 
         #endregion
 
-        #region Duplicate Equipent Records
+        #region Duplicate Equipment Records
 
         /// <summary>
         /// Get all duplicate equipment records
@@ -181,7 +181,7 @@ namespace HETSAPI.Controllers
 
         #endregion
 
-        #region Equipent Attachment Records
+        #region Equipment Attachment Records
 
         /// <summary>
         /// Get all equipment attachments for an equipment record
@@ -310,6 +310,26 @@ namespace HETSAPI.Controllers
             return _service.EquipmentIdNotesBulkPostAsync(id, items);
         }
 
-        #endregion        
+        #endregion
+
+        #region Seniority List Pdf
+
+        /// <summary>
+        /// Get a pdf version of the seniority list
+        /// </summary>
+        /// <remarks>Returns a PDF version of the seniority list</remarks>
+        /// <param name="localareas">Local Areas (comma seperated list of id numbers)</param>
+        /// <param name="types">Equipment Types (comma seperated list of id numbers)</param>
+        /// <response code="200">OK</response>
+        [HttpGet]
+        [Route("/api/equipment/seniorityListPdf")]
+        [SwaggerOperation("EquipmentSeniorityListPdfGet")]
+        [RequiresPermission(Permission.Login)]
+        public virtual IActionResult EquipmentSeniorityListPdfGet([FromQuery]string localareas, [FromQuery]string types)
+        {
+            return _service.EquipmentSeniorityListPdfGetAsync(localareas, types);
+        }
+
+        #endregion
     }
 }

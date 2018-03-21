@@ -236,6 +236,16 @@ namespace HETSAPI.Authentication
                         userId = context.Request.Headers[options.SiteMinderUniversalIdKey];
                     }
 
+                    // check if the AD name is in the credential - and remove
+                    int start = userId.IndexOf("\\", StringComparison.Ordinal);
+
+                    if (start > -1)
+                    {
+                        userId = userId.Substring(start + 1);
+                    }
+
+                    userId = userId.ToLower();
+
                     siteMinderGuid = context.Request.Headers[options.SiteMinderUserGuidKey];
 
                     // **************************************************

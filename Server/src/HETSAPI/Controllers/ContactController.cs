@@ -34,6 +34,20 @@ namespace HETSAPI.Controllers
         public virtual IActionResult ContactsBulkPost([FromBody]Contact[] items)
         {
             return _service.ContactsBulkPostAsync(items);
-        }        
+        }
+
+        /// <summary>
+        /// Delete contact
+        /// </summary>
+        /// <param name="id">id of Contact to delete</param>
+        /// <response code="200">OK</response>
+        [HttpPost]
+        [Route("/api/contacts/{id}/delete")]
+        [SwaggerOperation("ContactsIdDeletePost")]
+        [RequiresPermission(Permission.Login)]
+        public virtual IActionResult ContactsIdDeletePost([FromRoute]int id)
+        {
+            return this._service.ContactsIdDeletePostAsync(id);
+        }
     }
 }
