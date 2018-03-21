@@ -1353,7 +1353,8 @@ namespace HETSAPI.Services.Impl
                     .ThenInclude(y => y.EquipmentType)
                 .Include(x => x.Owner)
                 .Include(x => x.RentalAgreements)
-                .Where(x => x.LocalArea.ServiceArea.DistrictId.Equals(districtId));
+                .Where(x => x.LocalArea.ServiceArea.DistrictId.Equals(districtId) &&
+                            x.Status == Equipment.StatusApproved);
 
             if (localareasArray != null && localareasArray.Length > 0)
             {
@@ -1376,10 +1377,13 @@ namespace HETSAPI.Services.Impl
                 result.Add(item.ToSeniorityViewModel(scoringRules, _context));
             }
 
+            // convert result into our object for use in the Pfd generation
+            SeniorityListPdfViewModel seniorityList = new SeniorityListPdfViewModel {SeniorityList = result};
+
             // **********************************************************************
             // create the payload and call the pdf service
             // **********************************************************************
-            string payload = JsonConvert.SerializeObject(result, new JsonSerializerSettings
+            string payload = JsonConvert.SerializeObject(seniorityList, new JsonSerializerSettings
             {
                 ReferenceLoopHandling = ReferenceLoopHandling.Ignore,
                 ContractResolver = new CamelCasePropertyNamesContractResolver(),
