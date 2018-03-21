@@ -4,16 +4,16 @@ import geb.Page
 import extensions.ReactJSAware
 
 class HomePage extends Page implements ReactJSAware {
-    static at = { reactReady && title == "MOTI Hired Equipment Tracking System" && $("#navbar-current-user > li > a", text: startsWith("Hets Test"))}
+    static at = { reactReady && title == "MOTI Hired Equipment Tracking System" && $("button", id:"profile-menu")}
     static url = "?#/home"
 
     static content = {
-        HomeLink { $("a", text:"Home")[0] }
-        OwnersLink { $("a", text:"Owners")[0] }
-        EquipmentLink { $("a", text:"Equipment")[0] }
-        RequestsLink { $("a", text:"Requests")[0] }
-        Projectslink { $("a", text:"Projects")[0] }
-        AdministrationLink { $("a", text:"Administration")[0] } 
-          
+        HomeLink { $("a", text:"Home", "action":"push") }
+        OwnersLink { $("a", text:"Owners", "action":"push") }
+        EquipmentLink { $("a", text:"Equipment", "action":"push") }
+        RequestsLink { $("a", text:"Requests", "action":"push") }
+        Projectslink { $("a", text:"Projects", "action":"push") }
+        AdministrationLink { $("a", text:"Administration", "action":"push") } 
+        DistrictadminLink { $("a", text:"District Admin", "action":"push") } 
     }
 }
