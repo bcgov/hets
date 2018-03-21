@@ -4,9 +4,19 @@
 
 #home {
 
-  [class*='col-'] {
-    padding-left: 7px;
-    padding-right: 7px;
+  .btn-container {
+    padding: 7px;
+  }
+
+  .fixed-width {
+
+    &.small .dropdown-toggle {
+      width: 125px;
+    }
+    
+    .dropdown-toggle {
+      width: 150px;
+    }
   }
   
   .btn {
