@@ -791,11 +791,11 @@ namespace HETSAPI.Import
                     item.Owner_Cd = "OO" + currentOwner;
                     item.Owner_First_Name = "OwnerFirst" + currentOwner;
                     item.Owner_Last_Name = "OwnerLast" + currentOwner;
-                    item.Contact_Person = ImportUtility.ScrambleString(item.Contact_Person);
-                    item.Comment = ImportUtility.ScrambleString(item.Comment);
-                    item.WCB_Num = ImportUtility.ScrambleString(item.WCB_Num);
-                    item.CGL_Company = ImportUtility.ScrambleString(item.CGL_Company);
-                    item.CGL_Policy = ImportUtility.ScrambleString(item.CGL_Policy);
+                    item.Contact_Person = ImportUtility.ScrambleString(ImportUtility.CleanString(item.Contact_Person));
+                    item.Comment = ImportUtility.ScrambleString(ImportUtility.CleanString(item.Comment));
+                    item.WCB_Num = ImportUtility.ScrambleString(ImportUtility.CleanString(item.WCB_Num));
+                    item.CGL_Company = ImportUtility.ScrambleString(ImportUtility.CleanString(item.CGL_Company));
+                    item.CGL_Policy = ImportUtility.ScrambleString(ImportUtility.CleanString(item.CGL_Policy));
 
                     currentOwner++;
                 }

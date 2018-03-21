@@ -224,13 +224,10 @@ namespace HETSAPI.Import
                 if (string.IsNullOrEmpty(tempDescription)) return; // don't add blank attachments
 
                 tempDescription = ImportUtility.GetCapitalCase(tempDescription);
-                equipAttach.Description = tempDescription;
 
-                if (oldObject.Attach_Seq_Num != null)
-                {
-                    string tempSequence = oldObject.Attach_Seq_Num.ToString();
-                    equipAttach.TypeName = tempSequence;
-                }
+                // populate Name and Description with the same value
+                equipAttach.Description = tempDescription;
+                equipAttach.TypeName = tempDescription;               
 
                 // ***********************************************
                 // create equipment attachment
