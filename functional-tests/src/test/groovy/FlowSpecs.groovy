@@ -52,9 +52,9 @@ class FlowSpecs extends GebReportingSpec {
             startPage                 | clickLink                    || assertPage
             HomePage                  | "HomeLink"                   || HomePage
             HomePage                  | "OwnersLink"                 || OwnersPage
-            HomePage                  | "EquipmentLink"              || EquipmentPage
-            HomePage                  | "RequestsLink"               || RequestPage
-            HomePage                  | "Projectslink"               || ProjectPage
+            //HomePage                  | "EquipmentLink"              || EquipmentPage
+            //HomePage                  | "RequestsLink"               || RequestPage
+            //HomePage                  | "Projectslink"               || ProjectPage
             //HomePage                  | "AdministrationLink"         || AdminPage
 
             //Test Externally Linked Pages

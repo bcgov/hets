@@ -570,16 +570,24 @@ namespace HETSAPI.Mappings
 
                 if (model.PrimaryContact != null)
                 {
-                    string tempName = model.PrimaryContact.GivenName.Trim();
+                    string tempName = "";
 
-                    if (!string.IsNullOrEmpty(tempName))
+                    if (!string.IsNullOrEmpty(model.PrimaryContact.GivenName))
                     {
-                        tempName = tempName + " ";
+                        tempName = model.PrimaryContact.GivenName.Trim();
+
+                        if (!string.IsNullOrEmpty(tempName))
+                        {
+                            tempName = tempName + " ";
+                        }
                     }
 
-                    tempName = tempName + model.PrimaryContact.Surname.Trim();
+                    if (!string.IsNullOrEmpty(model.PrimaryContact.Surname))
+                    {
+                        tempName = tempName + model.PrimaryContact.Surname.Trim();
+                    }
 
-                    dto.PrimaryContactName = tempName;
+                    dto.PrimaryContactName = tempName;                    
                 }
 
                 if (model.EquipmentList != null)

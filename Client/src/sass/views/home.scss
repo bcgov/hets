@@ -2,6 +2,24 @@
   height: 200px;
 }
 
-#home .btn {
-  margin-right: 5px;
+#home {
+
+  .btn-container {
+    padding: 7px;
+  }
+
+  .fixed-width {
+
+    &.small .dropdown-toggle {
+      width: 125px;
+    }
+    
+    .dropdown-toggle {
+      width: 150px;
+    }
+  }
+  
+  .btn {
+    margin-right: 5px;
+  }
 }

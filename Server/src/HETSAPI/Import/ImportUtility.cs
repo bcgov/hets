@@ -437,7 +437,7 @@ namespace HETSAPI.Import
                 { 
                     // get a random number between 0 and the length of the word. 
                     int next = rand.Next(0, input.Length - 1); // Take the character from the random position 
-                                                               //and add to our char array. 
+                                                               // and add to our char array. 
                     chars[index] = input[next];                // Remove the character from the word. 
                     input = input.Substring(0, next) + input.Substring(next + 1);
                     ++index;

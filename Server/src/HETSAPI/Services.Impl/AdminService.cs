@@ -74,9 +74,9 @@ namespace HETSAPI.Services.Impl
         {
             string jsonString = RecurseConfigJson(scoringRules);
 
-            if (jsonString.EndsWith(",}}"))
+            if (jsonString.EndsWith("},"))
             {
-                jsonString = jsonString.Replace(",}}", "}}");
+                jsonString = jsonString.Substring(0, jsonString.Length - 1);
             }
 
             return jsonString;
@@ -95,7 +95,7 @@ namespace HETSAPI.Services.Impl
 
                 if (section.Value == null)
                 {
-                    temp.Append(RecurseConfigJson(section));
+                    temp.Append(RecurseConfigJson(section));                    
                 }
                 else
                 {
@@ -103,8 +103,14 @@ namespace HETSAPI.Services.Impl
                 }
             }
 
-            string jsonString = temp.ToString();            
-            jsonString = jsonString + "}";
+            string jsonString = temp.ToString();
+
+            if (jsonString.EndsWith(","))
+            {
+                jsonString = jsonString.Substring(0, jsonString.Length - 1);
+            }
+
+            jsonString = jsonString + "},";
             return jsonString;
         }
 

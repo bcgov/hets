@@ -177,7 +177,7 @@ var Favourites = React.createClass({
           <Button onClick={ this.addFavourite }>Favourite Current Selection</Button>
         </div>
         {(() => {
-          if (Object.keys(this.state.favourites).length === 0) { return <Alert bsStyle="success" style={{ marginBottom: 0 }}>No favourites</Alert>; }
+          if (Object.keys(this.state.favourites).length === 0) { return <Alert bsStyle="success" style={{ margin: '5px' }}>No favourites</Alert>; }
 
           return <ul>
             {

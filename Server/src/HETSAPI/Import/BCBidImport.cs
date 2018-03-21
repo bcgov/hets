@@ -98,6 +98,10 @@ namespace HETSAPI.Import
             dbContext = new DbAppContext(null, options.Options);
             ImportEquipUsage.Import(context, dbContext, fileLocation, SystemId);
 
+            // *** Fix Contact Foreign Key Relationships
+            dbContext = new DbAppContext(null, options.Options);
+            ImportOwner.FixPrimaryContacts(context, dbContext);
+
             // *** Final Step - fix the database sequences
             dbContext = new DbAppContext(null, options.Options);
             ImportServiceArea.ResetSequence(context, dbContext);
