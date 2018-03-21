@@ -125,6 +125,64 @@ namespace HETSAPI.Import
         }
 
         /// <summary>
+        /// Fix the primary contact foreign keys
+        /// </summary>
+        /// <param name="performContext"></param>
+        /// <param name="dbContext"></param>
+        public static void FixPrimaryContacts(PerformContext performContext, DbAppContext dbContext)
+        {
+            try
+            {
+                int ii = 0;
+
+                performContext.WriteLine("*** Resetting HET_OWNER contact foreign keys ***");
+                Debug.WriteLine("Resetting HET_OWNER contact foreign keys");
+
+                IQueryable<Owner> owners = dbContext.Owners
+                    .Include(x => x.PrimaryContact)
+                    .Where(x => x.PrimaryContactId != null);
+
+                foreach (Owner owner in owners)
+                {
+                    int? contactId = owner.PrimaryContactId;
+
+                    if (contactId != null)
+                    {
+                        // get contact and update
+                        Contact contact = dbContext.Contacts.FirstOrDefault(x => x.Id == contactId);
+
+                        if (owner.Contacts == null)
+                        {
+                            owner.Contacts = new List<Contact>();
+                        }
+
+                        owner.Contacts.Add(contact);
+                        dbContext.Owners.Update(owner);
+                    }
+
+                    // save change to database periodically to avoid frequent writing to the database
+                    if (++ii % 500 == 0)
+                    {
+                        dbContext.SaveChangesForImport();                        
+                    }
+                }
+
+                // save last batch
+                dbContext.SaveChangesForImport();
+                
+
+                performContext.WriteLine("*** Done resetting HET_OWNER contact foreign keys ***");
+                Debug.WriteLine("Resetting HET_OWNER contact foreign keys - Done!");                
+            }
+            catch (Exception e)
+            {
+                performContext.WriteLine("*** ERROR ***");
+                performContext.WriteLine(e.ToString());
+                throw;
+            }
+        }
+
+        /// <summary>
         /// Get the list of mapped records.  
         /// </summary>
         /// <param name="dbContext"></param>
@@ -395,27 +453,7 @@ namespace HETSAPI.Import
                 {
                     owner.CglPolicyNumber = null;
                 }
-
-                /*** New Fields being added
-                 <Company_Name> 
-                 <Ph_Country_Code> 
-                 <Ph_Area_Code> 
-                 <Ph_Number> 
-                 <Ph_Extension> 
-                 <Fax_Country_Code>
-                 <Fax_Area_Code> 
-                 <Fax_Number> 
-                 <Fax_Extension> 
-                 <Cell_Country_Code> 
-                 <Cell_Area_Code> 
-                 <Cell_Number> 
-                 <Cell_Extension> 
-                 <Contact_Country_Code> 
-                 <Contact_Area_Code> 
-                 <Contact_Number> 
-                 <Contact_Extension>
-                 */
-
+                
                 // ***********************************************
                 // manage archive and owner status
                 // ***********************************************
@@ -588,8 +626,8 @@ namespace HETSAPI.Import
                         {
                             foreach (Contact contactItem in owner.Contacts)
                             {
-                                if (!String.Equals(contactItem.GivenName, tempContactFirstName, StringComparison.InvariantCultureIgnoreCase) &&
-                                    !String.Equals(contactItem.Surname, tempContactLastName, StringComparison.InvariantCultureIgnoreCase))
+                                if (String.Equals(contactItem.GivenName, tempContactFirstName, StringComparison.InvariantCultureIgnoreCase) &&
+                                    String.Equals(contactItem.Surname, tempContactLastName, StringComparison.InvariantCultureIgnoreCase))
                                 {
                                     contactExists = true;
                                 }
