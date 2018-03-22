@@ -57,8 +57,28 @@ var Home = React.createClass({
     this.setState(state);
   },
 
-  getRotationList() {
-    Api.equipmentSeniorityListPdf(this.state.selectedLocalAreasIds, this.state.selectedEquipmentTypesIds);
+  getRotationList(e) {
+    e.preventDefault();
+    Api.equipmentSeniorityListPdf(this.state.selectedLocalAreasIds, this.state.selectedEquipmentTypesIds).then(response => {
+      var blob = new Blob([response], {type: 'image/pdf'});
+      if (window.navigator.msSaveBlob) {
+        blob = window.navigator.msSaveBlob([response], 'equipment_rotation_list.pdf');
+      }
+      //Create a link element, hide it, direct 
+      //it towards the blob, and then 'click' it programatically
+      let a = document.createElement('a');
+      a.style = 'display: none';
+      document.body.appendChild(a);
+      //Create a DOMString representing the blob 
+      //and point the link element towards it
+      let url = window.URL.createObjectURL(blob);
+      a.href = url;
+      a.download = 'equipmentRotationList.pdf';
+      //programatically click the link to trigger the download
+      a.click();
+      //release the reference to the file by revoking the Object URL
+      window.URL.revokeObjectURL(url);
+    });
   },
 
   render() {
