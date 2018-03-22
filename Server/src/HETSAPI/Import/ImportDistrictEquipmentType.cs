@@ -188,26 +188,43 @@ namespace HETSAPI.Import
                 }
 
                 // get the equipment type
-                float? tempBlueBookSection = ImportUtility.GetFloatValue(oldObject.Equip_Rental_Rate_No);
+                float? tempBlueBookRate = ImportUtility.GetFloatValue(oldObject.Equip_Rental_Rate_No);
 
-                if (tempBlueBookSection == null)
+                if (tempBlueBookRate == null)
                 {
                     return;
-                }                              
+                }
 
                 // get the parent equipment type
-                EquipmentType type = dbContext.EquipmentTypes.FirstOrDefault(x => x.BlueBookSection == tempBlueBookSection);
+                EquipmentType type = dbContext.EquipmentTypes.FirstOrDefault(x => x.BlueBookSection == tempBlueBookRate);
+
+                // if it's not found - try to round up to the "parent" blue book section
+                if (type == null)
+                {
+                    int tempIntBlueBookRate = Convert.ToInt32(tempBlueBookRate);
+                    type = dbContext.EquipmentTypes.FirstOrDefault(x => x.BlueBookSection == tempIntBlueBookRate);
+                }
+
+                // finally - if that's not found - map to 0 (MISCELLANEOUS)
+                if (type == null)
+                {
+                    int tempIntBlueBookRate = 0;
+                    type = dbContext.EquipmentTypes.FirstOrDefault(x => x.BlueBookSection == tempIntBlueBookRate);
+                }
 
                 if (type == null)
                 {
                     throw new ArgumentException(
-                        string.Format("Cannot find Equipment Type (Blue Book Section: {0} | Equipment Type Id: {1})",
-                            tempBlueBookSection.ToString(), oldObject.Equip_Type_Id));
+                        string.Format("Cannot find Equipment Type (Blue Book Rate Number: {0} | Equipment Type Id: {1})",
+                            tempBlueBookRate.ToString(), oldObject.Equip_Type_Id));
                 }
 
                 // get the description
                 string tempDistrictDescription = ImportUtility.CleanString(oldObject.Equip_Type_Desc);
                 tempDistrictDescription = ImportUtility.GetCapitalCase(tempDistrictDescription);
+
+                string tempAbbrev = ImportUtility.CleanString(oldObject.Equip_Type_Cd).ToUpper();
+                tempDistrictDescription = string.Format("{0} - {1}", tempAbbrev, tempDistrictDescription);
 
                 // add new district equipment type
                 int tempId = type.Id;

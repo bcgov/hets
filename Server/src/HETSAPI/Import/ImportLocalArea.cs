@@ -152,11 +152,14 @@ namespace HETSAPI.Import
                     return;
                 }
 
+                string tempLocalArea = ImportUtility.CleanString(oldObject.Area_Desc);
+                tempLocalArea = ImportUtility.GetCapitalCase(tempLocalArea);
+
                 localArea = new LocalArea
                 {
                     Id = oldObject.Area_Id,
                     LocalAreaNumber = oldObject.Area_Id,
-                    Name = ImportUtility.GetCapitalCase(oldObject.Area_Desc.Trim())
+                    Name = tempLocalArea
                 };
 
                 // map to the correct service area
