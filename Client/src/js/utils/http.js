@@ -197,8 +197,8 @@ export function ApiRequest(path) {
   this.path = buildApiPath(path);
 }
 
-ApiRequest.prototype.get = function apiGet(params) {
-  return jsonRequest(this.path, { method: 'GET', querystring: params });
+ApiRequest.prototype.get = function apiGet(params, options) {
+  return jsonRequest(this.path, { method: 'GET', querystring: params, ...options });
 };
 
 ApiRequest.prototype.post = function apiPost(data, options) {
