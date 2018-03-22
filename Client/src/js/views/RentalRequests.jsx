@@ -248,11 +248,11 @@ var RentalRequests = React.createClass({
       </Well>
 
       {(() => {
-        var addRentalRequestButton = <Button title="Add Rental Request" bsSize="small" onClick={ this.openAddDialog }>
+        var addRentalRequestButton = <Button title="Add Rental Request" bsSize="xsmall" onClick={ this.openAddDialog }>
           <Glyphicon glyph="plus" />&nbsp;<strong>Add Rental Request</strong>
         </Button>;
 
-        if (Object.keys(this.props.rentalRequests).length === 0) { return <Alert bsStyle="success">No Rental Requests { addRentalRequestButton }</Alert>; }
+        if (Object.keys(this.props.rentalRequests.data).length === 0) { return <Alert bsStyle="success">No Rental Requests { addRentalRequestButton }</Alert>; }
 
         var rentalRequests = _.sortBy(this.props.rentalRequests.data, rentalRequest => {
           var sortValue = rentalRequest[this.state.ui.sortField];

@@ -101,7 +101,7 @@ var Home = React.createClass({
             <Button onClick={ this.goToUnapprovedEquipment }>Unapproved equipment ({Object.keys(this.props.unapprovedEquipment.data).length})</Button>          
           </Col>
           <Col md={6} className="btn-container">
-            <Form onSubmit={ this.getRotationList }>
+            <Form className="rotation-list-form" onSubmit={ this.getRotationList }>
               <MultiDropdown id="selectedEquipmentTypesIds" className="fixed-width" placeholder="Equipment Types" fieldName="districtEquipmentName"
                 items={ districtEquipmentTypes } updateState={ this.updateState} showMaxItems={ 2 } />
               <MultiDropdown id="selectedLocalAreasIds" className="fixed-width small" placeholder="Local Areas"
