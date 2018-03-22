@@ -348,7 +348,7 @@ namespace HETSAPI.Models
         }
 
         /// <summary>
-        /// Adds a district to the system, only if it does not exist.
+        /// Adds a condition to the system, only if it does not exist.
         /// </summary>
         private static void AddInitialCondition(this IDbAppContext context, ConditionType initialCondition)
         {
@@ -383,7 +383,84 @@ namespace HETSAPI.Models
 
             context.ConditionTypes.Add(condition);
         }
-        
+
+        /// <summary>
+        /// Adds initial EquipmentTypes from a (json) file
+        /// </summary>
+        /// <param name="context"></param>
+        /// <param name="equipmentTypesJsonPath"></param>
+        public static void AddInitialEquipmentTypesFromFile(this IDbAppContext context, string equipmentTypesJsonPath)
+        {
+            if (!string.IsNullOrEmpty(equipmentTypesJsonPath) && File.Exists(equipmentTypesJsonPath))
+            {
+                string equipmentTypesJson = File.ReadAllText(equipmentTypesJsonPath);
+                context.AddInitialEquipmentTypes(equipmentTypesJson);
+            }
+        }
+
+        private static void AddInitialEquipmentTypes(this IDbAppContext context, string equipmentTypesJson)
+        {
+            List<EquipmentType> equipmentTypes = JsonConvert.DeserializeObject<List<EquipmentType>>(equipmentTypesJson);
+            if (equipmentTypes != null)
+            {
+                context.AddInitialEquipmentTypes(equipmentTypes);
+            }
+        }
+
+        private static void AddInitialEquipmentTypes(this IDbAppContext context, List<EquipmentType> equipmentTypes)
+        {
+            equipmentTypes.ForEach(context.AddInitialEquipmentType);
+        }
+
+        /// <summary>
+        /// Adds a equipment type to the system, only if it does not exist.
+        /// </summary>
+        private static void AddInitialEquipmentType(this IDbAppContext context, EquipmentType initialEquipmentType)
+        {
+            // Blue Book Rate Number equates to the Section in the Blue Book
+            // e.g. 16.1 == "Dump Truck"
+            // The Blue Book Sections are the master list for all Equipment Types
+            EquipmentType equipType = context.EquipmentTypes.FirstOrDefault(x => x.BlueBookRateNumber == initialEquipmentType.BlueBookRateNumber);
+
+            if (equipType != null)
+            {
+                // update the record
+                equipType.BlueBookRateNumber = initialEquipmentType.BlueBookRateNumber;
+                equipType.BlueBookSection = initialEquipmentType.BlueBookSection;
+                equipType.ExtendHours = initialEquipmentType.ExtendHours;
+                equipType.IsDumpTruck = initialEquipmentType.IsDumpTruck;
+                equipType.MaxHoursSub = initialEquipmentType.MaxHoursSub;
+                equipType.MaximumHours = initialEquipmentType.MaximumHours;
+                equipType.Name = initialEquipmentType.Name;
+                equipType.NumberOfBlocks = initialEquipmentType.NumberOfBlocks;
+                equipType.AppLastUpdateUserid = SystemId;
+                equipType.AppLastUpdateTimestamp = DateTime.UtcNow;
+
+                context.EquipmentTypes.Update(equipType);
+            }
+            else
+            {
+                // create new equipment type
+                equipType = new EquipmentType
+                {
+                    BlueBookRateNumber = initialEquipmentType.BlueBookRateNumber,
+                    BlueBookSection = initialEquipmentType.BlueBookSection,
+                    ExtendHours = initialEquipmentType.ExtendHours,
+                    IsDumpTruck = initialEquipmentType.IsDumpTruck,
+                    MaxHoursSub = initialEquipmentType.MaxHoursSub,
+                    MaximumHours = initialEquipmentType.MaximumHours,
+                    Name = initialEquipmentType.Name,
+                    NumberOfBlocks = initialEquipmentType.NumberOfBlocks,
+                    AppCreateUserid = SystemId,
+                    AppCreateTimestamp = DateTime.UtcNow,
+                    AppLastUpdateUserid = SystemId,
+                    AppLastUpdateTimestamp = DateTime.UtcNow
+                };
+
+                context.EquipmentTypes.Add(equipType);
+            }            
+        }
+
         /// <summary>
         /// Create servive areas from a (json) file
         /// </summary>

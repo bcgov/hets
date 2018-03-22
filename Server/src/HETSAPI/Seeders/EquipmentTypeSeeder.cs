@@ -7,11 +7,11 @@ using HETSAPI.Models;
 
 namespace HETSAPI.Seeders
 {
-    public class ConditionSeeder : Seeder<DbAppContext>
+    public class EquipmentTypeSeeder : Seeder<DbAppContext>
     {
         private readonly string[] _profileTriggers = { AllProfiles };
 
-        public ConditionSeeder(IConfiguration configuration, IHostingEnvironment env, ILoggerFactory loggerFactory) 
+        public EquipmentTypeSeeder(IConfiguration configuration, IHostingEnvironment env, ILoggerFactory loggerFactory) 
             : base(configuration, env, loggerFactory)
         { }
 
@@ -19,24 +19,24 @@ namespace HETSAPI.Seeders
 
         protected override void Invoke(DbAppContext context)
         {
-            UpdateConditions(context);
+            UpdateEquipmentTypes(context);
             context.SaveChangesForImport();
         }
 
         public override Type InvokeAfter => typeof(DistrictSeeder);
 
         /// <summary>
-        /// Add new equipment types only - users can edit online so we don't want to update again
+        /// Add or update equipment types onl
         /// </summary>
         /// <param name="context"></param>
-        private void UpdateConditions(DbAppContext context)
+        private void UpdateEquipmentTypes(DbAppContext context)
         {            
-            AddInitialConditions(context);            
+            AddInitialEquipmentTypes(context);            
         }
 
-        private void AddInitialConditions(DbAppContext context)
+        private void AddInitialEquipmentTypes(DbAppContext context)
         {
-            context.AddInitialConditionsFromFile(Configuration["ConditionsInitializationFile"]);
+            context.AddInitialEquipmentTypesFromFile(Configuration["EquipmentTypesInitializationFile"]);
         }        
     }
 }
