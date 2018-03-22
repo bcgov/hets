@@ -152,9 +152,8 @@ var TimeEntryDialog = React.createClass({
 
   getHoursYtdClassName() {
     var equipment = this.props.activeRentalRequest.equipment;
-    var isDumpTruck = equipment.districtEquipmentType.equipmentType.isDumpTruck;
     
-    if ((isDumpTruck && equipment.hoursYtd > (0.85 * 600)) || (equipment.hoursYtd > (0.85 * 300))) {
+    if (equipment.hoursYtd > (0.85 * equipment.maximumHours)) {
       return true;
     }
 
@@ -171,13 +170,13 @@ var TimeEntryDialog = React.createClass({
     const TimeRecordItem = ({ timeRecord }) => {
       return (
         <Row>
-          <Col sm={4} className="nopadding">
+          <Col xs={3}>
             <div>{ formatDateTime(timeRecord.workedDate, 'YYYY-MMM-DD') }</div>
           </Col>
-          <Col sm={4} className="nopadding">
+          <Col xs={3}>
             <div>{ timeRecord.hours }</div>
           </Col>
-          <Col sm={2}>
+          <Col xs={6}>
             <DeleteButton name="Document" onConfirm={ this.deleteTimeRecord.bind(this, timeRecord) }/>
           </Col>
         </Row>
@@ -209,7 +208,7 @@ var TimeEntryDialog = React.createClass({
               <Col xs={3}>
                 <div className="text-label">YTD Hours</div>
                 <div className={ this.getHoursYtdClassName() ? 'highlight' : '' }>
-                  { activeRentalRequest.equipment.hoursYtd }{ this.getHoursYtdClassName() && <span className="small-text"> (Near max. hours)</span> }
+                  { activeRentalRequest.equipment.hoursYtd }{ this.getHoursYtdClassName() }
                 </div>
               </Col>
               <Col xs={3}>              
@@ -223,8 +222,8 @@ var TimeEntryDialog = React.createClass({
             </Row>
             <div className="time-entries-container">
               <Row>
-                <Col xs={4}><div className="column-title">Week Ending</div></Col>
-                <Col xs={4}><div className="column-title">Hours</div></Col>
+                <Col xs={3}><div className="column-title">Week Ending</div></Col>
+                <Col xs={3}><div className="column-title">Hours</div></Col>
               </Row>
               { (sortedTimeRecords.length === 0) &&
                 <Row> 
@@ -234,9 +233,7 @@ var TimeEntryDialog = React.createClass({
 
               { (sortedTimeRecords.length > 0) && !this.state.showAllTimeRecords ?
                 <Row>
-                  <Col xs={12}>
-                    <TimeRecordItem timeRecord={sortedTimeRecords[0]} />
-                  </Col>
+                  <TimeRecordItem timeRecord={sortedTimeRecords[0]} />
                 </Row>
                 :
                 <Row>

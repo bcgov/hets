@@ -58,7 +58,7 @@ var Main = React.createClass({
       >
         Your session will time out in 
         <Countdown 
-          time={122} 
+          time={300} 
           onEnd={ this.onEndSession }
         />. Would you like to keep the session active or end the session?
       </ConfirmDialog>
