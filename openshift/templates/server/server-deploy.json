@@ -221,6 +221,10 @@
                     "value": "${CONDITIONS_INITIALIZATION_FILE}"
                   },
                   {
+                    "name": "EquipmentTypesInitializationFile",
+                    "value": "${EQUIPMENT_INITIALIZATION_FILE}"
+                  },
+                  {
                     "name": "ASPNETCORE_ENVIRONMENT",
                     "value": "${ASPNETCORE_ENVIRONMENT}"
                   },
@@ -374,6 +378,13 @@
       "description": "The file to be used for initializing conditions.  This file is loaded from a secret during deployment.",
       "required": true,
       "value": "/secrets/conditions.json"
+    },
+    {
+      "name": "EQUIPMENT_INITIALIZATION_FILE",
+      "displayName": "Equipment Type Initialization File",
+      "description": "The file to be used for initializing equipment types.  This file is loaded from a secret during deployment.",
+      "required": true,
+      "value": "/secrets/equipment.json"
     },
     {
       "name": "ASPNETCORE_ENVIRONMENT",
