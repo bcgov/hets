@@ -417,9 +417,9 @@ var ProjectsDetail = React.createClass({
               {(() => {
                 if (this.state.loading ) { return <div className="spinner-container"><Spinner/></div>; }
 
-                var addContactButton = <Button title="Add Contact" onClick={ this.openContactDialog.bind(this, 0) } bsSize="xsmall"><Glyphicon glyph="plus" />&nbsp;<strong>Add</strong></Button>;
+                var addContactButton = <Button title="Add Contact" onClick={ this.openContactDialog.bind(this, 0) } bsSize="small"><Glyphicon glyph="plus" />&nbsp;<strong>Add</strong></Button>;
 
-                if (!project.contacts || Object.keys(project.contacts).length === 0) { return <Alert bsStyle="success">No contacts <span className="pull-right">{ addContactButton }</span></Alert>; }
+                if (!project.contacts || Object.keys(project.contacts).length === 0) { return <Alert bsStyle="success">No contacts { addContactButton }</Alert>; }
                 
                 var contacts = _.sortBy(project.contacts, this.state.uiContacts.sortField);
                 if (this.state.uiContacts.sortDesc) {

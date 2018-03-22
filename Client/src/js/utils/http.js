@@ -99,6 +99,7 @@ export function request(path, options) {
   }
 
   if (options.responseType) {
+    xhr.open('POST', path);
     xhr.responseType = options.responseType;
   }
 
