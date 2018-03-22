@@ -7,6 +7,7 @@ import { PageHeader, Button, ButtonGroup, Glyphicon, Well } from 'react-bootstra
 import _ from 'lodash';
 
 import * as Api from '../api';
+import * as Constant from '../constants';
 
 import TableControl from '../components/TableControl.jsx';
 import Spinner from '../components/Spinner.jsx';
@@ -110,6 +111,12 @@ var DistrictAdmin = React.createClass({
     var equipmentTypes = _.chain(this.props.equipmentTypes)
       .sortBy('name')
       .value();
+
+    if (!this.props.currentUser.hasPermission(Constant.PERMISSION_DISTRICT_CODE_TABLE_MANAGEMENT) && !this.props.currentUser.hasPermission(Constant.PERMISSION_ADMIN)) { 
+      return (
+        <div>You do not have permission to view this page.</div>
+      ); 
+    }
 
     return <div id="district-admin">
       <PageHeader>District Admin</PageHeader>
