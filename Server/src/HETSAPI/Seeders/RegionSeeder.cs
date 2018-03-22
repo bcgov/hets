@@ -56,7 +56,7 @@ namespace HETSAPI.Seeders
         }
 
         /// <summary>
-        /// Returns a list of users to be populated in all environments.
+        /// Returns a list of regions to be populated in all environments.
         /// </summary>
         private List<Region> GetDefaultRegions()
         {

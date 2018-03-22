@@ -18,6 +18,7 @@ TAG_NAME=test
 # USER_INITIALIZATION_FILE=/secrets/users.json
 # REGION_INITIALIZATION_FILE=/secrets/regions.json
 # DISTRICT_INITIALIZATION_FILE=/secrets/districts.json
+# CONDITIONS_INITIALIZATION_FILE=/secrets/conditions.json
 ASPNETCORE_ENVIRONMENT=Staging
 # UPLOAD_PATH=/uploads/
 # PDF_SERVICE_NAME=http://pdf:8080

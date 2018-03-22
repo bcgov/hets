@@ -320,6 +320,71 @@ namespace HETSAPI.Models
         }
 
         /// <summary>
+        /// Adds initial Conditions from a (json) file
+        /// </summary>
+        /// <param name="context"></param>
+        /// <param name="conditionsJsonPath"></param>
+        public static void AddInitialConditionsFromFile(this IDbAppContext context, string conditionsJsonPath)
+        {
+            if (!string.IsNullOrEmpty(conditionsJsonPath) && File.Exists(conditionsJsonPath))
+            {
+                string conditionsJson = File.ReadAllText(conditionsJsonPath);
+                context.AddInitialConditions(conditionsJson);
+            }
+        }
+
+        private static void AddInitialConditions(this IDbAppContext context, string conditionsJson)
+        {
+            List<ConditionType> conditions = JsonConvert.DeserializeObject<List<ConditionType>>(conditionsJson);
+            if (conditions != null)
+            {
+                context.AddInitialConditions(conditions);
+            }
+        }
+
+        private static void AddInitialConditions(this IDbAppContext context, List<ConditionType> conditions)
+        {
+            conditions.ForEach(context.AddInitialCondition);
+        }
+
+        /// <summary>
+        /// Adds a district to the system, only if it does not exist.
+        /// </summary>
+        private static void AddInitialCondition(this IDbAppContext context, ConditionType initialCondition)
+        {
+            int conditionCount = context.ConditionTypes.Count();
+
+            if (conditionCount > 0)
+            {
+                return;
+            }
+
+            // ignore id from the file - use the sequence to insert
+            ConditionType condition = new ConditionType
+            {
+                Active = true,
+                ConditionTypeCode = initialCondition.ConditionTypeCode,
+                Description = initialCondition.Description,
+                AppCreateUserid = SystemId,
+                AppCreateTimestamp = DateTime.UtcNow,
+                AppLastUpdateUserid = SystemId,
+                AppLastUpdateTimestamp = DateTime.UtcNow                
+            };
+
+            if (initialCondition.District != null)
+            {
+                District district = context.Districts.First(x => x.Id == initialCondition.District.Id);
+                condition.DistrictId = district.Id;
+            }
+            else
+            {
+                condition.District = null;
+            }
+
+            context.ConditionTypes.Add(condition);
+        }
+        
+        /// <summary>
         /// Create servive areas from a (json) file
         /// </summary>
         /// <param name="context"></param>
@@ -422,7 +487,7 @@ namespace HETSAPI.Models
                 district.StartDate = districtInfo.StartDate;
             }
         }
-
+        
         /// <summary>
         /// Update region
         /// </summary>

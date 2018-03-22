@@ -217,6 +217,10 @@
                     "value": "${DISTRICT_INITIALIZATION_FILE}"
                   },
                   {
+                    "name": "ConditionsInitializationFile",
+                    "value": "${CONDITIONS_INITIALIZATION_FILE}"
+                  },
+                  {
                     "name": "ASPNETCORE_ENVIRONMENT",
                     "value": "${ASPNETCORE_ENVIRONMENT}"
                   },
@@ -363,6 +367,13 @@
       "description": "The file to be used for initializing districts.  This file is loaded from a secret during deployment.",
       "required": true,
       "value": "/secrets/districts.json"
+    },
+    {
+      "name": "CONDITIONS_INITIALIZATION_FILE",
+      "displayName": "Conditions Initialization File",
+      "description": "The file to be used for initializing conditions.  This file is loaded from a secret during deployment.",
+      "required": true,
+      "value": "/secrets/conditions.json"
     },
     {
       "name": "ASPNETCORE_ENVIRONMENT",
