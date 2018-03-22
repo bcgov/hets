@@ -85,7 +85,7 @@ var Projects = React.createClass({
 
   search(e) {
     e.preventDefault();
-    this.fetch();
+    this.fetch(); 
   },  
 
   updateSearchState(state, callback) {

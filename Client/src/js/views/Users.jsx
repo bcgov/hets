@@ -195,7 +195,7 @@ var Users = React.createClass({
         {(() => {
           if (this.state.loading) { return <div style={{ textAlign: 'center' }}><Spinner/></div>; }
 
-          var addUserButton = <Button title="Add User" bsSize="xsmall" onClick={ this.openUsersEditDialog }><Glyphicon glyph="plus" />&nbsp;<strong>Add User</strong></Button>;
+          var addUserButton = <Button title="Add User" bsSize="small" onClick={ this.openUsersEditDialog }><Glyphicon glyph="plus" />&nbsp;<strong>Add User</strong></Button>;
 
           if (Object.keys(this.props.users).length === 0) { return <Alert bsStyle="success">No users { addUserButton }</Alert>; }
 

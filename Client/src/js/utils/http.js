@@ -98,7 +98,10 @@ export function request(path, options) {
     });
   }
 
-  if (options.responseType) {
+  if (options.responseType && window.navigator.appName !== 'Netscape') {
+    xhr.responseType = options.responseType;
+  } else if (options.responseType && window.navigator.appName === 'Netscape') {
+    xhr.open(options.method, path);
     xhr.responseType = options.responseType;
   }
 
@@ -197,8 +200,8 @@ export function ApiRequest(path) {
   this.path = buildApiPath(path);
 }
 
-ApiRequest.prototype.get = function apiGet(params) {
-  return jsonRequest(this.path, { method: 'GET', querystring: params });
+ApiRequest.prototype.get = function apiGet(params, options) {
+  return jsonRequest(this.path, { method: 'GET', querystring: params, ...options });
 };
 
 ApiRequest.prototype.post = function apiPost(data, options) {
