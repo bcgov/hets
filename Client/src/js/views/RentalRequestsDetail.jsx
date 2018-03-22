@@ -155,7 +155,7 @@ var RentalRequestsDetail = React.createClass({
 
   saveHireOffer(hireOffer) {
     let hireOfferUpdated = { ...hireOffer };
-    delete hireOfferUpdated.isFirstNullRecord;
+    delete hireOfferUpdated.showAllResponseFields;
     delete hireOfferUpdated.displayFields;
     Api.updateRentalRequestRotationList(hireOfferUpdated, this.props.rentalRequest.data).then((response) => {
 
@@ -286,18 +286,17 @@ var RentalRequestsDetail = React.createClass({
             { field: 'primaryContactCellPhone', title: 'Cell Phone'        },
             { field: 'status',                  title: 'Status'            },
           ];
-          
-          var previousNullRecord = false;
+
+          var numberEquipmentAvailableForNormalHire = rentalRequest.equipmentCount - rentalRequest.yesCount;
 
           return <TableControl id="rotation-list" headers={ headers }>
             {
               _.map(rotationList, (listItem) => {
                 const owner = listItem.equipment.owner;
-                var isFirstNullRecord = false;
-                // Set first null record to show correct response dialog link text
-                if (!previousNullRecord && (listItem.offerResponse === STATUS_ASKED || !listItem.offerResponse) && (rentalRequest.yesCount < rentalRequest.equipmentCount)) { 
-                  isFirstNullRecord = true; 
-                  previousNullRecord = true; 
+                var showAllResponseFields = false;
+                if ((numberEquipmentAvailableForNormalHire > 0) && (listItem.offerResponse === STATUS_ASKED || !listItem.offerResponse) && (rentalRequest.yesCount < rentalRequest.equipmentCount)) { 
+                  showAllResponseFields = true;  
+                  numberEquipmentAvailableForNormalHire -= 1;
                 }
                 return (
                   <tr key={ listItem.id }>
@@ -328,7 +327,7 @@ var RentalRequestsDetail = React.createClass({
                     <td>
                       <ButtonGroup>
                         {(() => {
-                          listItem.isFirstNullRecord = isFirstNullRecord;
+                          listItem.showAllResponseFields = showAllResponseFields;
                           if (listItem.maximumHours) {
                             return (
                               <OverlayTrigger 
@@ -354,11 +353,11 @@ var RentalRequestsDetail = React.createClass({
                                 title="Show Offer" 
                                 onClick={ this.openHireOfferDialog.bind(this, listItem) }
                               >
-                                { this.renderStatusText(listItem, isFirstNullRecord) }
+                                { this.renderStatusText(listItem) }
                               </Button>
                             );
                           }
-                          return this.renderStatusText(listItem, isFirstNullRecord);
+                          return this.renderStatusText(listItem);
                         })()}
                       </ButtonGroup>
                     </td>

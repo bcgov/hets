@@ -264,7 +264,7 @@ var HireOfferEditDialog = React.createClass({
                       <Radio 
                         onChange={ this.offerStatusChanged.bind(this, STATUS_ASKED) } 
                         checked={ this.state.offerStatus == STATUS_ASKED }
-                        disabled={ !this.props.hireOffer.isFirstNullRecord && !this.props.hireOffer.offerResponse }
+                        disabled={ !this.props.hireOffer.showAllResponseFields && !this.props.hireOffer.offerResponse }
                       >
                         Asked
                       </Radio>
@@ -277,7 +277,7 @@ var HireOfferEditDialog = React.createClass({
                       <Radio 
                         onChange={ this.offerStatusChanged.bind(this, STATUS_YES) } 
                         checked={ this.state.offerStatus == STATUS_YES }
-                        disabled={ !this.props.hireOffer.isFirstNullRecord && !this.props.hireOffer.offerResponse }
+                        disabled={ !this.props.hireOffer.showAllResponseFields && !this.props.hireOffer.offerResponse }
                       >
                         Yes
                       </Radio>
@@ -290,7 +290,7 @@ var HireOfferEditDialog = React.createClass({
                       <Radio 
                         onChange={ this.offerStatusChanged.bind(this, STATUS_NO) } 
                         checked={ this.state.offerStatus == STATUS_NO }
-                        disabled={ !this.props.hireOffer.isFirstNullRecord && !this.props.hireOffer.offerResponse }
+                        disabled={ !this.props.hireOffer.showAllResponseFields && !this.props.hireOffer.offerResponse }
                       >
                         No
                       </Radio>
