@@ -1,3 +1,5 @@
+@import 'variables';
+
 #home_image {
   height: 200px;
 }
@@ -25,5 +27,11 @@
 
   .rotation-list-form {
     text-align: right;
+  }
+
+  @media only screen and (max-width: $screen-lg) {
+    .rotation-list-form {
+      text-align: left;
+    }
   }
 }
