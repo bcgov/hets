@@ -27,9 +27,9 @@ namespace HETSAPI.Seeders
 
         private void UpdateDistricts(DbAppContext context)
         {
-            List<District> seedUsers = GetSeedDistricts();
+            List<District> seeddistricts = GetSeedDistricts();
 
-            foreach (District district in seedUsers)
+            foreach (District district in seeddistricts)
             {
                 context.UpdateSeedDistrictInfo(district);
             }
@@ -59,7 +59,7 @@ namespace HETSAPI.Seeders
         }
 
         /// <summary>
-        /// Returns a list of users to be populated in all environments.
+        /// Returns a list of districts to be populated in all environments.
         /// </summary>
         private List<District> GetDefaultDistricts()
         {
@@ -67,7 +67,7 @@ namespace HETSAPI.Seeders
         }
 
         /// <summary>
-        /// Returns a list of users to be populated in the Development environment.
+        /// Returns a list of districts to be populated in the Development environment.
         /// </summary>
         private List<District> GetDevDistricts()
         {
@@ -75,7 +75,7 @@ namespace HETSAPI.Seeders
         }
 
         /// <summary>
-        /// Returns a list of users to be populated in the Test environment.
+        /// Returns a list of districts to be populated in the Test environment.
         /// </summary>
         private List<District> GetTestDistricts()
         {
@@ -83,7 +83,7 @@ namespace HETSAPI.Seeders
         }
 
         /// <summary>
-        /// Returns a list of users to be populated in the Production environment.
+        /// Returns a list of districts to be populated in the Production environment.
         /// </summary>
         private List<District> GetProdDistricts()
         {
