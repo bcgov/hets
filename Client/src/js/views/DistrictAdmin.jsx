@@ -2,7 +2,7 @@ import React from 'react';
 
 import { connect } from 'react-redux';
 
-import { PageHeader, Button, ButtonGroup, Glyphicon, Well } from 'react-bootstrap';
+import { PageHeader, Button, ButtonGroup, Glyphicon, Well, Alert } from 'react-bootstrap';
 
 import _ from 'lodash';
 
@@ -126,8 +126,9 @@ var DistrictAdmin = React.createClass({
         {(() => {
           if (this.props.districtEquipmentTypes.loading) { return <div style={{ textAlign: 'center' }}><Spinner/></div>; }
 
-
           var addDistrictEquipmentButton = <Button title="Add District Equipment" bsSize="xsmall" onClick={ this.addDistrictEquipmentType }><Glyphicon glyph="plus" />&nbsp;<strong>Add District Equipment Type</strong></Button>;
+
+          if (Object.keys(this.props.districtEquipmentTypes.data).length === 0) { return <Alert bsStyle="success">No users { addDistrictEquipmentButton }</Alert>; }
 
           return (
             <TableControl headers={[
@@ -165,6 +166,8 @@ var DistrictAdmin = React.createClass({
           if (this.props.rentalConditions.loading) { return <div style={{ textAlign: 'center' }}><Spinner/></div>; }
 
           var addConditionButton = <Button title="Add Condition" bsSize="xsmall" onClick={ this.addCondition }><Glyphicon glyph="plus" />&nbsp;<strong>Add Condition</strong></Button>;
+
+          if (Object.keys(this.props.rentalConditions.data).length === 0) { return <Alert bsStyle="success">No users { addConditionButton }</Alert>; }
 
           return (
             <TableControl headers={[

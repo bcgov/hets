@@ -242,7 +242,7 @@ var Owners = React.createClass({
       </Well>
 
       {(() => {
-        var addOwnerButton = <Button title="Add Owner" bsSize="small" onClick={ this.openAddDialog }>
+        var addOwnerButton = <Button title="Add Owner" bsSize="xsmall" onClick={ this.openAddDialog }>
           <Glyphicon glyph="plus" />&nbsp;<strong>Add Owner</strong>
         </Button>;
         if (this.props.owners.loading || this.props.ownerList.loading) { return <div style={{ textAlign: 'center' }}><Spinner/></div>; }
