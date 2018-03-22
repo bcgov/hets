@@ -181,28 +181,28 @@ namespace HETSAPI.Import
             ref DistrictEquipmentType equipType, string systemId, ref int maxEquipTypeIndex)
         {
             try
-            {
-                if (oldObject.Equip_Type_Id <= 0)
-                {
-                    return;
-                }
-
+            {                
                 if (equipType != null)
                 {
                     return;
                 }
 
                 // get the equipment type
-                string tempEquipTypeCode = ImportUtility.CleanString(oldObject.Equip_Type_Cd).ToUpper();
+                float? tempBlueBookSection = ImportUtility.GetFloatValue(oldObject.Equip_Rental_Rate_No);
+
+                if (tempBlueBookSection == null)
+                {
+                    return;
+                }                              
 
                 // get the parent equipment type
-                EquipmentType type = dbContext.EquipmentTypes.FirstOrDefault(x => x.Name == tempEquipTypeCode);
+                EquipmentType type = dbContext.EquipmentTypes.FirstOrDefault(x => x.BlueBookSection == tempBlueBookSection);
 
                 if (type == null)
                 {
                     throw new ArgumentException(
-                        string.Format("Cannot find Equipment Type (Equipment Type Code: {0} | Equipment Type Id: {1})", 
-                            tempEquipTypeCode, oldObject.Equip_Type_Id));
+                        string.Format("Cannot find Equipment Type (Blue Book Section: {0} | Equipment Type Id: {1})",
+                            tempBlueBookSection.ToString(), oldObject.Equip_Type_Id));
                 }
 
                 // get the description

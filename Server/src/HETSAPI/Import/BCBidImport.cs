@@ -60,11 +60,7 @@ namespace HETSAPI.Import
 
             //*** Import Owners from Owner.xml (HETS_OWNER and HETS_Contact)
             dbContext = new DbAppContext(null, options.Options);
-            ImportOwner.Import(context, dbContext, fileLocation, SystemId);
-
-            //*** Import Equipment Type from EquipType.xml (HET_EQUIPMENT_TYPE)
-            dbContext = new DbAppContext(null, options.Options);
-            ImportEquipmentType.Import(context, dbContext, fileLocation, SystemId);
+            ImportOwner.Import(context, dbContext, fileLocation, SystemId);            
 
             //*** Import District Equipment Type from EquipType.xml (HET_DISTRICT_EQUIPMENT_TYPE)
             dbContext = new DbAppContext(null, options.Options);
@@ -109,7 +105,6 @@ namespace HETSAPI.Import
             ImportCity.ResetSequence(context, dbContext);
             ImportUser.ResetSequence(context, dbContext);
             ImportOwner.ResetSequence(context, dbContext);            
-            ImportEquipmentType.ResetSequence(context, dbContext);
             ImportDistrictEquipmentType.ResetSequence(context, dbContext);
             ImportEquip.ResetSequence(context, dbContext);
             ImportEquipAttach.ResetSequence(context, dbContext);
@@ -156,10 +151,6 @@ namespace HETSAPI.Import
             
             // process owners
             ImportOwner.Obfuscate(context, dbContext, sourceFileLocation, destinationFileLocation, SystemId);
-            dbContext = new DbAppContext(null, options.Options);
-
-            // process equipment
-            ImportEquipmentType.Obfuscate(context, dbContext, sourceFileLocation, destinationFileLocation, SystemId);
             dbContext = new DbAppContext(null, options.Options);
 
             // process equipment

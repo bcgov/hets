@@ -180,25 +180,7 @@ namespace HETSAPI.Import
                 equipment.AppLastUpdateUserid = systemId;
                 equipment.AppLastUpdateTimestamp = DateTime.UtcNow;
 
-                dbContext.Equipments.Update(equipment);
-
-                // ************************************************
-                // get the equipment type record and update
-                // ************************************************
-                int? tempEquipTypeId = equipment.DistrictEquipmentTypeId;
-
-                if (tempEquipTypeId == null) return;
-            
-                EquipmentType equipmentType = dbContext.EquipmentTypes.FirstOrDefault(x => x.Id == tempEquipTypeId);
-
-                if (equipmentType != null && !equipmentType.IsDumpTruck)
-                {
-                    equipmentType.IsDumpTruck = true;
-                    equipmentType.AppLastUpdateUserid = systemId;
-                    equipmentType.AppLastUpdateTimestamp = DateTime.UtcNow;
-
-                    dbContext.EquipmentTypes.Update(equipmentType);
-                }
+                dbContext.Equipments.Update(equipment);                
             }
             catch (Exception ex)
             {
