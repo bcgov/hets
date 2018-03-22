@@ -427,6 +427,14 @@ namespace HETSAPI.Import
                 }
 
                 // ***********************************************
+                // residency
+                // ***********************************************
+                if (oldObject.Local_To_Area != null)
+                {
+                    owner.MeetsResidency = (oldObject.Local_To_Area.Trim() == "Y");
+                }
+
+                // ***********************************************
                 // set local area
                 // ***********************************************                
                 LocalArea localArea = dbContext.LocalAreas.FirstOrDefault(x => x.Id == oldObject.Area_Id);

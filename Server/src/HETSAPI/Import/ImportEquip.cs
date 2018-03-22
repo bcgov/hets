@@ -12,7 +12,6 @@ using Hangfire.Console.Progress;
 using HETSAPI.ImportModels;
 using HETSAPI.Models;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Configuration;
 
 namespace HETSAPI.Import
 {

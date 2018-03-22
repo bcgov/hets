@@ -350,7 +350,7 @@ namespace HETSAPI.Models
         /// <summary>
         /// Adds a condition to the system, only if it does not exist.
         /// </summary>
-        private static void AddInitialCondition(this IDbAppContext context, ConditionType initialCondition)
+        public static void AddInitialCondition(this IDbAppContext context, ConditionType initialCondition)
         {
             int conditionCount = context.ConditionTypes.Count();
 
@@ -415,7 +415,7 @@ namespace HETSAPI.Models
         /// <summary>
         /// Adds a equipment type to the system, only if it does not exist.
         /// </summary>
-        private static void AddInitialEquipmentType(this IDbAppContext context, EquipmentType initialEquipmentType)
+        public static void AddInitialEquipmentType(this IDbAppContext context, EquipmentType initialEquipmentType)
         {
             // Blue Book Rate Number equates to the Section in the Blue Book
             // e.g. 16.1 == "Dump Truck"

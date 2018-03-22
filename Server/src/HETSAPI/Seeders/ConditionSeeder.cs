@@ -30,13 +30,68 @@ namespace HETSAPI.Seeders
         /// </summary>
         /// <param name="context"></param>
         private void UpdateConditions(DbAppContext context)
-        {            
+        {
+            List<ConditionType> seedConditionTypes = GetSeedConditionTypes();
+
+            foreach (ConditionType conditionType in seedConditionTypes)
+            {
+                context.AddInitialCondition(conditionType);
+            }
+
             AddInitialConditions(context);            
         }
 
         private void AddInitialConditions(DbAppContext context)
         {
             context.AddInitialConditionsFromFile(Configuration["ConditionsInitializationFile"]);
-        }        
+        }
+
+        private List<ConditionType> GetSeedConditionTypes()
+        {
+            List<ConditionType> conditionTypes = new List<ConditionType>(GetDefaultConditionTypes());
+
+            if (IsDevelopmentEnvironment)
+                conditionTypes.AddRange(GetDevConditionTypes());
+
+            if (IsTestEnvironment || IsStagingEnvironment)
+                conditionTypes.AddRange(GetTestConditionTypes());
+
+            if (IsProductionEnvironment)
+                conditionTypes.AddRange(GetProdConditionTypes());
+
+            return conditionTypes;
+        }
+
+        /// <summary>
+        /// Returns a list of conditionTypes to be populated in all environments
+        /// </summary>
+        private List<ConditionType> GetDefaultConditionTypes()
+        {
+            return new List<ConditionType>();
+        }
+
+        /// <summary>
+        /// Returns a list of conditionTypes to be populated in the Development environment
+        /// </summary>
+        private List<ConditionType> GetDevConditionTypes()
+        {
+            return new List<ConditionType>();
+        }
+
+        /// <summary>
+        /// Returns a list of conditionTypes to be populated in the Test environment
+        /// </summary>
+        private List<ConditionType> GetTestConditionTypes()
+        {
+            return new List<ConditionType>();
+        }
+
+        /// <summary>
+        /// Returns a list of conditionTypes to be populated in the Production environment
+        /// </summary>
+        private List<ConditionType> GetProdConditionTypes()
+        {
+            return new List<ConditionType>();
+        }
     }
 }
