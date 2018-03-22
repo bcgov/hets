@@ -4,6 +4,7 @@
 @import 'print';
 @import 'views/all';
 @import 'components/all';
+@import 'mixins';
 
 #app {
   height: 100%;
@@ -72,10 +73,16 @@ a.light {
 // Bootstrap overrides 
 
 .alert-success {
+  @include flex;
+  align-items: center;
   margin-top: 30px;
   
   &:before {
     content: '';
+  }
+
+  .btn {
+    margin-left: auto;
   }
 }
 

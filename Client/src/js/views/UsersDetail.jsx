@@ -270,7 +270,7 @@ var UsersDetail = React.createClass({
             <Well>
               <h3>Districts</h3>
               {(() => {
-                var addDistrictButton = <Button title="Add District" bsSize="xsmall" onClick={ this.addUserDistrict }><Glyphicon glyph="plus" />&nbsp;<strong>Add District</strong></Button>;
+                var addDistrictButton = <Button title="Add District" bsSize="small" onClick={ this.addUserDistrict }><Glyphicon glyph="plus" />&nbsp;<strong>Add District</strong></Button>;
                 
                 if (this.props.userDistricts.loading) { return <div style={{ textAlign: 'center' }}><Spinner/></div>; }
 

@@ -98,7 +98,10 @@ export function request(path, options) {
     });
   }
 
-  if (options.responseType) {
+  if (options.responseType && window.navigator.appName !== 'Netscape') {
+    xhr.responseType = options.responseType;
+  } else if (options.responseType && window.navigator.appName === 'Netscape') {
+    xhr.open(options.method, path);
     xhr.responseType = options.responseType;
   }
 
