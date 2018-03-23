@@ -8,9 +8,7 @@ using HETSAPI.Services.Impl;
 namespace HETSAPI.Test
 {
 	public class ContactUnitTest 
-    { 		
-		private readonly ContactController _Contact;
-		
+    { 			
 		/// <summary>
         /// Setup the test
         /// </summary>        

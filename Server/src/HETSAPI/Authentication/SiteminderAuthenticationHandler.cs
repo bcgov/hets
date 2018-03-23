@@ -188,6 +188,11 @@ namespace HETSAPI.Authentication
                     url.Contains("/hangfire") ||
                     url.Contains("/swagger") ||
                     url.Contains(".map") ||
+                    url.Contains(".png") ||
+                    url.Contains(".css") ||
+                    url.Contains(".eot") ||
+                    url.Contains(".woff") ||
+                    url.Contains(".ttf") ||
                     url.Contains(".js"))
                 {
                     return Task.FromResult(AuthenticateResult.NoResult());
