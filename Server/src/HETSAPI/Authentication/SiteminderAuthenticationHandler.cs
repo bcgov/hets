@@ -240,8 +240,14 @@ namespace HETSAPI.Authentication
                         userId = context.Request.Headers[options.SiteMinderUniversalIdKey];
                     }
 
+                    // if we still don't have an id - then we cannot authenticate this user
+                    if (string.IsNullOrEmpty(userId))
+                    {
+                        return Task.FromResult(AuthenticateResult.Fail(options.MissingSiteMinderUserIdError));
+                    }
+
                     // check if the AD name is in the credential - and remove
-                    int start = userId.IndexOf("\\", StringComparison.Ordinal);
+                        int start = userId.IndexOf("\\", StringComparison.Ordinal);
 
                     if (start > -1)
                     {
