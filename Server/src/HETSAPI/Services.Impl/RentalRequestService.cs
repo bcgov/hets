@@ -310,6 +310,24 @@ namespace HETSAPI.Services.Impl
                     _context.RentalRequestAttachments.Remove(attachment);
                 }
 
+                // remove (detele) rental request attachments
+                foreach (Attachment attachment in rentalRequest.Attachments)
+                {
+                    _context.Attachments.Remove(attachment);
+                }
+
+                // remove (detele) rental request notes
+                foreach (Note note in rentalRequest.Notes)
+                {
+                    _context.Notes.Remove(note);
+                }
+
+                // remove (detele) rental request history
+                foreach (History history in rentalRequest.History)
+                {
+                    _context.Historys.Remove(history);
+                }
+
                 // remove (delete) request
                 _context.RentalRequests.Remove(rentalRequest);
 
