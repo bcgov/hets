@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using System.Security.Claims;
 using System.Text.Encodings.Web;
 using System.Threading.Tasks;
@@ -9,6 +10,7 @@ using Microsoft.AspNetCore.Http.Extensions;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using HETSAPI.Models;
+using Microsoft.EntityFrameworkCore;
 
 namespace HETSAPI.Authentication
 {    
@@ -221,7 +223,7 @@ namespace HETSAPI.Authentication
                     _logger.LogInformation("User already authenticated with active session: " + userSettings.UserId);
                     principal = userSettings.HetsUser.ToClaimsPrincipal(options.Scheme);
                     return Task.FromResult(AuthenticateResult.Success(new AuthenticationTicket(principal, null, Options.Scheme)));
-                }
+                }                               
 
                 // **************************************************
                 // Authenticate based on SiteMinder Headers
@@ -281,7 +283,33 @@ namespace HETSAPI.Authentication
                 {
                     _logger.LogWarning(options.InactivegDbUserIdError + " (" + userId + ")");
                     return Task.FromResult(AuthenticateResult.Fail(options.InactivegDbUserIdError));
-                }                
+                }
+
+                // **************************************************
+                // Update the user back to their default district
+                // **************************************************
+                UserDistrict district = dbAppContext.UserDistricts.AsNoTracking()
+                    .Include(x => x.User)
+                    .Include(x => x.District)
+                    .FirstOrDefault(x => x.UserId == userSettings.HetsUser.Id &&
+                                         x.IsPrimary);
+
+                // if we don't find a primary - look for the first one in the list
+                if (district == null)
+                {
+                    district = dbAppContext.UserDistricts.AsNoTracking()
+                        .Include(x => x.User)
+                        .Include(x => x.District)
+                        .FirstOrDefault(x => x.User.Id == userSettings.HetsUser.Id);
+                }
+
+                // update the current district for the user
+                if (district != null && userSettings.HetsUser.DistrictId != district.Id)
+                {
+                    userSettings.HetsUser.DistrictId = district.District.Id;
+                    dbAppContext.Users.Update(userSettings.HetsUser);
+                    dbAppContext.SaveChanges();
+                }
 
                 // **************************************************
                 // Validate / check user permissions
@@ -294,7 +322,7 @@ namespace HETSAPI.Authentication
                 {
                     _logger.LogWarning(options.MissingDbUserIdError + " (" + userId + ")");
                     return Task.FromResult(AuthenticateResult.Fail(options.InvalidPermissions));
-                }
+                }                
 
                 // **************************************************
                 // Create authenticated user
@@ -310,8 +338,10 @@ namespace HETSAPI.Authentication
                 // Update user settings
                 // **************************************************                
                 UserSettings.SaveUserSettings(userSettings, context);
-
+                
+                // **************************************************
                 // done!
+                // **************************************************
                 principal = userPrincipal;
                 return Task.FromResult(AuthenticateResult.Success(new AuthenticationTicket(principal, null, Options.Scheme)));
             }
