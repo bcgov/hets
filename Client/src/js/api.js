@@ -309,6 +309,12 @@ export function deleteFavourite(favourite) {
   });
 }
 
+export function logoffUser() {
+  return new ApiRequest('/users/current/logoff').get().then(() => {
+    return;
+  });
+}
+
 ////////////////////
 // Equipment
 ////////////////////

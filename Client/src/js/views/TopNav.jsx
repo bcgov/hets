@@ -37,7 +37,9 @@ var TopNav = React.createClass({
   },
 
   logout() {
-    window.location.href = Constant.LOGOUT;
+    Api.logoffUser().then(() => {
+      window.location.href = Constant.LOGOUT;
+    });
   },
 
   render() {
