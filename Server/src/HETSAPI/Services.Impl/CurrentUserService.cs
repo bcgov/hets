@@ -259,9 +259,7 @@ namespace HETSAPI.Services.Impl
 
                 if (district != null)
                 {
-                    int? userId = GetCurrentUserId();
-
-                    user = _context.Users.First(a => a.Id == userId);
+                    user = _context.Users.First(a => a.Id == id);
                     user.DistrictId = district.Id;
 
                     _context.SaveChanges();
