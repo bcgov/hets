@@ -1,6 +1,7 @@
 ﻿using Newtonsoft.Json;
 using Microsoft.AspNetCore.Http;
 using HETSAPI.Models;
+using Microsoft.Extensions.Logging;
 
 namespace HETSAPI.Authentication
 {
@@ -73,7 +74,7 @@ namespace HETSAPI.Authentication
                 {
                     HttpOnly = true,
                     Secure = true,
-                    SameSite = SameSiteMode.Strict
+                    SameSite = SameSiteMode.Strict                    
                 });          
         }
 
@@ -90,13 +91,19 @@ namespace HETSAPI.Authentication
         /// Retrieve UserSettings from Session
         /// </summary>
         /// <param name="context"></param>
+        /// <param name="logger"></param>
         /// <returns></returns>
-        public static UserSettings ReadUserSettings(HttpContext context)
+        public static UserSettings ReadUserSettings(HttpContext context, ILogger logger)
         {
             UserSettings userSettings = new UserSettings();
 
-            if (context.Request.Cookies["UserSettings"] == null) return userSettings;
+            if (context.Request.Cookies["UserSettings"] == null)
+            {
+                logger.LogInformation("UserSettings cookie not found");
+                return userSettings;
+            }
 
+            logger.LogInformation("UserSettings cookie found - deserializing");
             string settingsTemp = context.Request.Cookies["UserSettings"];
 
             return !string.IsNullOrEmpty(settingsTemp) ? CreateFromJson(settingsTemp) : userSettings;

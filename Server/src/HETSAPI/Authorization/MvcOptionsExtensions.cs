@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Authorization;
+﻿using System.Diagnostics;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Authorization;
 using HETSAPI.Models;
@@ -17,6 +18,8 @@ namespace HETSAPI.Authorization
         /// <returns></returns>
         public static MvcOptions AddDefaultAuthorizationPolicyFilter(this MvcOptions options)
         {            
+            Debug.WriteLine("Applying global authorization policy");
+            
             // Default authorization policy enforced via a global authorization filter
             AuthorizationPolicy requireLoginPolicy = new AuthorizationPolicyBuilder()
                 .RequireAuthenticatedUser()
