@@ -94,21 +94,6 @@ namespace HETSAPI.Controllers
         public virtual IActionResult UserDistrictsIdSwitchPost([FromRoute]int id)
         {
             return _service.UserDistrictsIdSwitchPostAsync(id);
-        }
-
-        /// <summary>
-        /// Logout User - Switch back to Primary
-        /// </summary>
-        /// <param name="id"></param>
-        /// <response code="200">User District switched</response>
-        [HttpPost]
-        [Route("/api/userdistricts/{id}/logoff")]
-        [SwaggerOperation("UserDistrictsIdLogoffPost")]
-        [SwaggerResponse(200, type: typeof(UserDistrict))]
-        [RequiresPermission(Permission.Login)]
-        public virtual IActionResult UserDistrictsIdLogoffPost([FromRoute]int id)
-        {
-            return _service.UserDistrictsIdLogoffPostAsync(id);
-        }
+        }        
     }
 }

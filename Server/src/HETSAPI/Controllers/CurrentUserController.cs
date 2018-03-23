@@ -101,5 +101,19 @@ namespace HETSAPI.Controllers
         {
             return _service.UsersCurrentGetAsync();
         }
+
+        /// <summary>
+        /// Logout User - Switch back to Primary
+        /// </summary>
+        /// <response code="200">User District switched</response>
+        [HttpPost]
+        [Route("/api/users/current/logoff")]
+        [SwaggerOperation("UserDistrictsIdLogoffPost")]
+        [SwaggerResponse(200, type: typeof(UserDistrict))]
+        [RequiresPermission(Permission.Login)]
+        public virtual IActionResult UsersCurrentLogoffPost()
+        {
+            return _service.UsersCurrentLogoffPostAsync();
+        }
     }
 }
