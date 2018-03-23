@@ -65,7 +65,16 @@ namespace HETSAPI.Authentication
         public static void SaveUserSettings(UserSettings userSettings, HttpContext context)
         {
             string temp = userSettings.GetJson();
-            context.Session.SetString("UserSettings", temp);
+
+            context.Response.Cookies.Append(
+                "UserSettings",
+                temp,
+                new CookieOptions
+                {
+                    HttpOnly = true,
+                    Secure = true,
+                    SameSite = SameSiteMode.Strict
+                });          
         }
 
         /// <summary>
@@ -74,7 +83,7 @@ namespace HETSAPI.Authentication
         /// <param name="context"></param>
         public static void ClearUserSettings(HttpContext context)
         {
-            context.Session.Clear();
+            context.Response.Cookies.Delete("UserSettings");
         }
 
         /// <summary>
@@ -86,9 +95,9 @@ namespace HETSAPI.Authentication
         {
             UserSettings userSettings = new UserSettings();
 
-            if (context.Session.GetString("UserSettings") == null) return userSettings;
+            if (context.Request.Cookies["UserSettings"] == null) return userSettings;
 
-            string settingsTemp = context.Session.GetString("UserSettings");
+            string settingsTemp = context.Request.Cookies["UserSettings"];
 
             return !string.IsNullOrEmpty(settingsTemp) ? CreateFromJson(settingsTemp) : userSettings;
         }

@@ -135,9 +135,6 @@ namespace HETSAPI
 
             // Add application services.
             services.RegisterApplicationServices();
-
-            services.AddDistributedMemoryCache(); // Adds a default in-memory cache
-            services.AddSession();
         }
 
         /// <summary>
@@ -157,9 +154,6 @@ namespace HETSAPI
                 builder.UseExceptionHandler(Configuration.GetSection("Constants:ErrorUrl").Value);
             });
             
-            // IMPORTANT: This session call MUST go before UseMvc()
-            app.UseSession();
-
             // authenticate users
             app.UseAuthentication();
 
