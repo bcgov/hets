@@ -48,5 +48,12 @@ namespace HETSAPI.Services
         /// <param name="id">id of user district to switch to</param>
         /// <response code="200">OK</response>
         IActionResult UserDistrictsIdSwitchPostAsync(int id);
+
+        /// <summary>
+        /// Logoff user - switch to default district
+        /// </summary>
+        /// <param name="id">id of user district to logoff</param>
+        /// <response code="200">OK</response>
+        IActionResult UserDistrictsIdLogoffPostAsync(int id);
     }
 }
