@@ -303,25 +303,25 @@ namespace HETSAPI.Authentication
                 // **************************************************
                 if (userSettings.HetsUser != null)
                 {
-                    UserDistrict district = dbAppContext.UserDistricts.AsNoTracking()
+                    UserDistrict userDistrict = dbAppContext.UserDistricts.AsNoTracking()
                         .Include(x => x.User)
                         .Include(x => x.District)
-                        .FirstOrDefault(x => x.UserId == userSettings.HetsUser.Id &&
+                        .FirstOrDefault(x => x.User.Id == userSettings.HetsUser.Id &&
                                              x.IsPrimary);
 
                     // if we don't find a primary - look for the first one in the list
-                    if (district == null)
+                    if (userDistrict == null)
                     {
-                        district = dbAppContext.UserDistricts.AsNoTracking()
+                        userDistrict = dbAppContext.UserDistricts.AsNoTracking()
                             .Include(x => x.User)
                             .Include(x => x.District)
                             .FirstOrDefault(x => x.User.Id == userSettings.HetsUser.Id);
                     }
 
                     // update the current district for the user
-                    if (district != null && userSettings.HetsUser.DistrictId != district.Id)
+                    if (userDistrict != null && userSettings.HetsUser.DistrictId != userDistrict.District.Id)
                     {
-                        userSettings.HetsUser.DistrictId = district.District.Id;
+                        userSettings.HetsUser.DistrictId = userDistrict.District.Id;
                         dbAppContext.Users.Update(userSettings.HetsUser);
                         dbAppContext.SaveChanges();
                     }

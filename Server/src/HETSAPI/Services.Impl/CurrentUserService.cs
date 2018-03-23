@@ -239,16 +239,16 @@ namespace HETSAPI.Services.Impl
 
             if (id != null)
             {
-                UserDistrict district = _context.UserDistricts.AsNoTracking()
+                UserDistrict userDistrict = _context.UserDistricts.AsNoTracking()
                     .Include(x => x.User)
                     .Include(x => x.District)
-                    .FirstOrDefault(x => x.UserId == id &&
+                    .FirstOrDefault(x => x.User.Id == id &&
                                          x.IsPrimary);
 
                 // if we don't find a primary - look for the first one in the list
-                if (district == null)
+                if (userDistrict == null)
                 {
-                    district = _context.UserDistricts.AsNoTracking()
+                    userDistrict = _context.UserDistricts.AsNoTracking()
                         .Include(x => x.User)
                         .Include(x => x.District)
                         .FirstOrDefault(x => x.User.Id == id);
@@ -257,10 +257,10 @@ namespace HETSAPI.Services.Impl
                 // update the current district for the user
                 User user = null;
 
-                if (district != null)
+                if (userDistrict != null)
                 {
                     user = _context.Users.First(a => a.Id == id);
-                    user.DistrictId = district.Id;
+                    user.DistrictId = userDistrict.District.Id;
 
                     _context.SaveChanges();
                 }
