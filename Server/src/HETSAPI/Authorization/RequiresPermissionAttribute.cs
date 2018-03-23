@@ -50,6 +50,24 @@ namespace HETSAPI.Authorization
             /// <returns></returns>
             public async Task OnResourceExecutionAsync(ResourceExecutingContext context, ResourceExecutionDelegate next)
             {
+                // check the context - ignore certain paths
+                string url = context.HttpContext.Request.Path;
+
+                if (url.Contains("/authentication/dev") ||
+                    url.Contains("/error") ||
+                    url.Contains("/hangfire") ||
+                    url.Contains("/swagger") ||
+                    url.Contains(".map") ||
+                    url.Contains(".png") ||
+                    url.Contains(".css") ||
+                    url.Contains(".eot") ||
+                    url.Contains(".woff") ||
+                    url.Contains(".ttf") ||
+                    url.Contains(".js"))
+                {
+                    await next();
+                }
+
                 AuthorizationResult result = await _authService.AuthorizeAsync(context.HttpContext.User,
                     context.ActionDescriptor.DisplayName,
                     _requiredPermissions);
