@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics;
 using HETSAPI.Models;
 using System.Security.Claims;
 
@@ -52,6 +53,8 @@ namespace HETSAPI.Authorization
         /// <returns></returns>
         public static bool HasOnePermission(this ClaimsPrincipal user, params string[] permissions)
         {
+            Debug.WriteLine(string.Format("Global authorization policy checking for permission ({0})", user.Identity.Name));
+
             if (!user.HasClaim(c => c.Type == User.PermissionClaim))
                 return false;
 
@@ -75,6 +78,10 @@ namespace HETSAPI.Authorization
 
                 hasRequiredPermissions = hasPermissions;
             }
+
+            Debug.WriteLine(hasRequiredPermissions
+                ? string.Format("Global authorization policy - permission granted ({0})", user.Identity.Name)
+                : string.Format("Global authorization policy - permission denied ({0})", user.Identity.Name));
 
             return hasRequiredPermissions;
         }

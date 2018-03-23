@@ -190,6 +190,7 @@ namespace HETSAPI.Authentication
                     url.Contains(".map") ||
                     url.Contains(".png") ||
                     url.Contains(".css") ||
+                    url.Contains(".ico") ||
                     url.Contains(".eot") ||
                     url.Contains(".woff") ||
                     url.Contains(".ttf") ||
@@ -216,7 +217,7 @@ namespace HETSAPI.Authentication
                 try
                 {
                     _logger.LogInformation("Checking user session");
-                    userSettings = UserSettings.ReadUserSettings(context);
+                    userSettings = UserSettings.ReadUserSettings(context, _logger);
                 }
                 catch
                 {

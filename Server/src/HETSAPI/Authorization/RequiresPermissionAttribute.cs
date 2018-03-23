@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
 using System;
+using System.Diagnostics;
 using System.Text;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
@@ -53,6 +54,9 @@ namespace HETSAPI.Authorization
                 // check the context - ignore certain paths
                 string url = context.HttpContext.Request.Path;
 
+                Debug.WriteLine(string.Format("Authorizing request (user: {0} | path: {1})",
+                    context.HttpContext.User.Identity.Name, url));
+
                 if (url.Contains("/authentication/dev") ||
                     url.Contains("/error") ||
                     url.Contains("/hangfire") ||
@@ -60,6 +64,7 @@ namespace HETSAPI.Authorization
                     url.Contains(".map") ||
                     url.Contains(".png") ||
                     url.Contains(".css") ||
+                    url.Contains(".ico") ||
                     url.Contains(".eot") ||
                     url.Contains(".woff") ||
                     url.Contains(".ttf") ||
