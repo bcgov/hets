@@ -45,10 +45,7 @@ namespace HETSAPI.Controllers
 
             string temp = HttpContext.Request.Cookies[_options.DevAuthenticationTokenKey];
             Debug.WriteLine("Current Cookie User: " + temp);
-
-            // clear session
-            HttpContext.Session.Clear();
-
+            
             // crearte new "dev" user cookie
             Response.Cookies.Append(
                 _options.DevAuthenticationTokenKey,
@@ -79,10 +76,7 @@ namespace HETSAPI.Controllers
 
             string temp = HttpContext.Request.Cookies[_options.DevAuthenticationTokenKey];
             Debug.WriteLine("Current Cookie User: " + temp);
-
-            // clear session
-            HttpContext.Session.Clear();
-
+            
             // expire "dev" user cookie
             Response.Cookies.Append(
                 _options.DevAuthenticationTokenKey,
