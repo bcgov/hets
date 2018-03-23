@@ -45,8 +45,7 @@ namespace FrontEnd.Handlers
                 // set http security headers   
                 context.Response.Headers[HeaderNames.CacheControl] = "no-cache";
                 context.Response.Headers[HeaderNames.CacheControl] = "no-cache, no-store, must-revalidate, private";
-                context.Response.Headers[HeaderNames.Pragma] = "no-cache";
-                context.Response.Headers[HeaderNames.Expires] = "-1";
+                context.Response.Headers[HeaderNames.Pragma] = "no-cache";                
                 context.Response.Headers["X-Frame-Options"] = "SAMEORIGIN";
                 context.Response.Headers["X-XSS-Protection"] = "1; mode=block";
                 context.Response.Headers["X-Content-Type-Options"] = "nosniff";                
