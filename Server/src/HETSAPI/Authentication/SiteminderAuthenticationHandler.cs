@@ -288,27 +288,30 @@ namespace HETSAPI.Authentication
                 // **************************************************
                 // Update the user back to their default district
                 // **************************************************
-                UserDistrict district = dbAppContext.UserDistricts.AsNoTracking()
-                    .Include(x => x.User)
-                    .Include(x => x.District)
-                    .FirstOrDefault(x => x.UserId == userSettings.HetsUser.Id &&
-                                         x.IsPrimary);
-
-                // if we don't find a primary - look for the first one in the list
-                if (district == null)
+                if (userSettings.HetsUser != null)
                 {
-                    district = dbAppContext.UserDistricts.AsNoTracking()
+                    UserDistrict district = dbAppContext.UserDistricts.AsNoTracking()
                         .Include(x => x.User)
                         .Include(x => x.District)
-                        .FirstOrDefault(x => x.User.Id == userSettings.HetsUser.Id);
-                }
+                        .FirstOrDefault(x => x.UserId == userSettings.HetsUser.Id &&
+                                             x.IsPrimary);
 
-                // update the current district for the user
-                if (district != null && userSettings.HetsUser.DistrictId != district.Id)
-                {
-                    userSettings.HetsUser.DistrictId = district.District.Id;
-                    dbAppContext.Users.Update(userSettings.HetsUser);
-                    dbAppContext.SaveChanges();
+                    // if we don't find a primary - look for the first one in the list
+                    if (district == null)
+                    {
+                        district = dbAppContext.UserDistricts.AsNoTracking()
+                            .Include(x => x.User)
+                            .Include(x => x.District)
+                            .FirstOrDefault(x => x.User.Id == userSettings.HetsUser.Id);
+                    }
+
+                    // update the current district for the user
+                    if (district != null && userSettings.HetsUser.DistrictId != district.Id)
+                    {
+                        userSettings.HetsUser.DistrictId = district.District.Id;
+                        dbAppContext.Users.Update(userSettings.HetsUser);
+                        dbAppContext.SaveChanges();
+                    }
                 }
 
                 // **************************************************
