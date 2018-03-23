@@ -1,6 +1,5 @@
 using System.Collections.Generic;
 using System.Linq;
-using HETSAPI.Authentication;
 using Microsoft.AspNetCore.Mvc;
 using HETSAPI.Models;
 using HETSAPI.ViewModels;
@@ -15,7 +14,6 @@ namespace HETSAPI.Services.Impl
     /// </summary>
     public class UserDistrictService : ServiceBase, IUserDistrictService
     {
-        private readonly HttpContext _httpContext;
         private readonly DbAppContext _context;
         private readonly IConfiguration _configuration;
 
@@ -24,7 +22,6 @@ namespace HETSAPI.Services.Impl
         /// </summary>
         public UserDistrictService(IHttpContextAccessor httpContextAccessor, DbAppContext context, IConfiguration configuration) : base(httpContextAccessor, context)
         {
-            _httpContext = httpContextAccessor.HttpContext;
             _context = context;
             _configuration = configuration;
         }
@@ -360,55 +357,7 @@ namespace HETSAPI.Services.Impl
 
             // record not found
             return new ObjectResult(new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-01", _configuration)));
-        }
-
-        /// <summary>
-        /// Logoff user - set district back to primary
-        /// </summary>
-        /// <param name="id">id of user district to switch to</param>
-        /// <response code="200">OK</response>
-        public virtual IActionResult UserDistrictsIdLogoffPostAsync(int id)
-        {
-            bool exists = _context.UserDistricts.Any(a => a.Id == id);
-
-            if (exists)
-            {
-                UserDistrict district = _context.UserDistricts.AsNoTracking()
-                    .Include(x => x.User)
-                    .Include(x => x.District)
-                    .FirstOrDefault(x => x.UserId == id &&
-                                         x.IsPrimary);
-
-                // if we don't find a primary - look for the first one in the list
-                if (district == null)
-                {
-                    district = _context.UserDistricts.AsNoTracking()
-                        .Include(x => x.User)
-                        .Include(x => x.District)
-                        .FirstOrDefault(x => x.User.Id == id);
-                }
-
-                // update the current district for the user
-                User user = null;
-
-                if (district != null)
-                {
-                    int? userId = GetCurrentUserId();
-
-                    user = _context.Users.First(a => a.Id == userId);
-                    user.DistrictId = district.Id;
-
-                    _context.SaveChanges();
-                }
-
-                UserSettings.ClearUserSettings(_httpContext);
-
-                return new ObjectResult(new HetsResponse(user));
-            }
-
-            // record not found
-            return new ObjectResult(new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-01", _configuration)));
-        }
+        }        
 
         /// <summary>
         /// Set the users district back to its default

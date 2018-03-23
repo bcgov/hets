@@ -3,6 +3,7 @@ using System.Linq;
 using Microsoft.AspNetCore.Mvc;
 using HETSAPI.Models;
 using System.Security.Claims;
+using HETSAPI.Authentication;
 using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 using HETSAPI.Mappings;
@@ -16,6 +17,7 @@ namespace HETSAPI.Services.Impl
     /// </summary>
     public class CurrentUserService : ServiceBase, ICurrentUserService
     {
+        private readonly HttpContext _httpContext;
         private readonly DbAppContext _context;
         private readonly IConfiguration _configuration;
 
@@ -24,6 +26,7 @@ namespace HETSAPI.Services.Impl
         /// </summary>
         public CurrentUserService(IHttpContextAccessor httpContextAccessor, DbAppContext context, IConfiguration configuration) : base(httpContextAccessor, context)
         {
+            _httpContext = httpContextAccessor.HttpContext;
             _context = context;
             _configuration = configuration;
         }
@@ -186,7 +189,7 @@ namespace HETSAPI.Services.Impl
         /// </summary>
         /// <remarks>Get the currently logged in user</remarks>
         /// <response code="200">OK</response>
-        public virtual IActionResult UsersCurrentGetAsync ()        
+        public virtual IActionResult UsersCurrentGetAsync()        
         {
             // get the current user id
             int? id = GetCurrentUserId();
@@ -222,6 +225,54 @@ namespace HETSAPI.Services.Impl
             }
 
             // no record found
+            return new ObjectResult(new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-01", _configuration)));
+        }
+
+        /// <summary>
+        /// Logoff user - set district back to primary
+        /// </summary>
+        /// <response code="200">OK</response>
+        public virtual IActionResult UsersCurrentLogoffPostAsync()
+        {
+            // get the current user id
+            int? id = GetCurrentUserId();
+
+            if (id != null)
+            {
+                UserDistrict district = _context.UserDistricts.AsNoTracking()
+                    .Include(x => x.User)
+                    .Include(x => x.District)
+                    .FirstOrDefault(x => x.UserId == id &&
+                                         x.IsPrimary);
+
+                // if we don't find a primary - look for the first one in the list
+                if (district == null)
+                {
+                    district = _context.UserDistricts.AsNoTracking()
+                        .Include(x => x.User)
+                        .Include(x => x.District)
+                        .FirstOrDefault(x => x.User.Id == id);
+                }
+
+                // update the current district for the user
+                User user = null;
+
+                if (district != null)
+                {
+                    int? userId = GetCurrentUserId();
+
+                    user = _context.Users.First(a => a.Id == userId);
+                    user.DistrictId = district.Id;
+
+                    _context.SaveChanges();
+                }
+
+                UserSettings.ClearUserSettings(_httpContext);
+
+                return new ObjectResult(new HetsResponse(user));
+            }
+
+            // record not found
             return new ObjectResult(new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-01", _configuration)));
         }
     }

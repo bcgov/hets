@@ -46,5 +46,11 @@ namespace HETSAPI.Services
         /// <remarks>Get the currently logged in user</remarks>
         /// <response code="200">OK</response>
         IActionResult UsersCurrentGetAsync();
+
+        /// <summary>
+        /// Logoff user - switch to default district
+        /// </summary>
+        /// <response code="200">OK</response>
+        IActionResult UsersCurrentLogoffPostAsync();
     }
 }
