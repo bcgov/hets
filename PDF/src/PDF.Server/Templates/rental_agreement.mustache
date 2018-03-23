@@ -289,7 +289,7 @@
               <tr>
                 <td class="label m-tb-5" style="padding-right: 5px">Address:</td>
                 <td class="value m-tb-5">
-                  {{equipment.owner.address1}} {{equipment.owner.address1}} 
+                  {{equipment.owner.address1}} {{equipment.owner.address2}} 
                   {{equipment.owner.city}} {{equipment.owner.province}} 
                   {{equipment.owner.postalCode}}
                 </td>
@@ -375,18 +375,7 @@
           {{/rentalAgreementRatesOvertime}}
           <tr style="height: 15px"><td></td><td></td><td></td></tr>
           <tr><td></td><td></td><td class="bold">Conditions</td></tr>
-          <tr style="height: 15px"><td></td><td></td><td></td></tr>
-          {{#rentalAgreementConditions}}
-          <tr>
-              <td></td>
-              <td></td>
-              <td>{{conditionName}}</td>
-          </tr>
-          <tr style="height: 15px"><td></td><td></td><td></td></tr>
-          {{/rentalAgreementConditions}}
-          <tr style="height: 15px"><td></td><td></td><td></td></tr>
-          <tr><td></td><td></td><td class="bold">Conditions</td></tr>
-          <tr style="height: 15px"><td></td><td></td><td></td></tr>
+          <tr style="height: 15px"><td></td><td></td><td></td></tr>          
           {{#rentalAgreementConditions}}
           <tr>
               <td></td>
