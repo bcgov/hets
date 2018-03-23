@@ -75,7 +75,7 @@ var NotesAddDialog = React.createClass({
         <strong>Add Note</strong>
       }>
       <Row>
-         <Col md={12}>
+        <Col md={12}>
           <Form>
             <FormGroup controlId="note" validationState={ this.state.noteError ? 'error' : null }>
               <ControlLabel>Note</ControlLabel>

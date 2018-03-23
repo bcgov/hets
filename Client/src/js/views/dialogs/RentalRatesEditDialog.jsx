@@ -288,71 +288,71 @@ var RentalRatesEditDialog = React.createClass({
         <strong>Rental Agreement - Additional Rates</strong>
       }>
       <div className="forms-container">
-      { Object.keys(this.state.forms).map(key => (
-        <Form key={key}>
-          <Grid fluid>
-            <Row>
-              <Col md={3}>
-                <FormGroup controlId={`componentName${key}`} validationState={ this.state.forms[key].componentNameError ? 'error' : null }>
-                  <ControlLabel>Rate Component <sup>*</sup></ControlLabel>
-                  <DropdownControl id={`componentName${key}`} disabled={ isReadOnly } updateState={ this.updateRateTypeState }
-                    items={ provincialRateTypes } fieldName="description" selectedId={ this.state.forms[key].rateType.id } />
-                  <HelpBlock>{ this.state.forms[key].componentNameError }</HelpBlock>
-                </FormGroup>
-              </Col>
-              <Col md={2}>
-                <FormGroup controlId={`ratePeriod${key}`} validationState={ this.state.forms[key].ratePeriodError ? 'error' : null }>
-                  <ControlLabel>Period <sup>*</sup></ControlLabel>
-                  <DropdownControl id={`ratePeriod${key}`} title={ this.state.forms[key].ratePeriod } updateState={ this.updateRatePeriodState }
-                    items={[ Constant.RENTAL_RATE_PERIOD_HOURLY, Constant.RENTAL_RATE_PERIOD_DAILY ]} disabled={ !this.state.forms[key].rateType.isRateEditable }  />
-                  <HelpBlock>{ this.state.forms[key].ratePeriodError }</HelpBlock>
-                </FormGroup>
-              </Col>
-              <Col md={2}>
-                <FormGroup controlId={`percentOrRateValue${key}`} validationState={ this.state.forms[key].rateError ? 'error' : null }>
-                  <ControlLabel>Rate <sup>*</sup></ControlLabel>
-                  <FormInputControl type="float" min={ 0 } value={ this.state.forms[key].percentOrRateValue } disabled={ !this.state.forms[key].rateType.isRateEditable } updateState={ this.updateUIState } />
-                  <HelpBlock>{ this.state.forms[key].rateError }</HelpBlock>
-                </FormGroup>
-              </Col>
-              <Col md={2}>
-                <FormGroup controlId={`percentOrRateOption${key}`}>
-                  <ControlLabel>&nbsp;</ControlLabel>
-                  <DropdownControl id={`percentOrRateOption${key}`} disabled={ !this.state.forms[key].rateType.isRateEditable }  title={ this.state.forms[key].percentOrRateOption } updateState={ this.updateUIState }
-                    items={[ DOLLAR_RATE, PERCENT_RATE ]} />
-                </FormGroup>
-              </Col>
-              <Col md={3}>
-                <FormGroup controlId={`isIncludedInTotal${key}`}>
-                  <ControlLabel />
-                  <CheckboxControl id={`isIncludedInTotal${key}`} disabled={ !this.state.forms[key].rateType.isInTotalEditable || this.state.forms[key].differentRatePeriods } checked={ this.state.forms[key].isIncludedInTotal } updateState={ this.updateState }>Include in total</CheckboxControl>
-                </FormGroup>
-              </Col>
-            </Row>
-            <Row>
-              <Col md={12}>
-                <FormGroup controlId={`comment${key}`} validationState={ this.state.forms[key].commentError ? 'error' : null }>
-                  <ControlLabel>Comment</ControlLabel>
-                  <FormInputControl componentClass="textarea" defaultValue={ this.state.forms[key].comment } readOnly={ isReadOnly } updateState={ this.updateState } />
-                  <HelpBlock>{ this.state.forms[key].commentError }</HelpBlock>
-                </FormGroup>
-              </Col>
-            </Row>
-            { this.state.forms[key].differentRatePeriods && 
+        { Object.keys(this.state.forms).map(key => (
+          <Form key={key}>
+            <Grid fluid>
+              <Row>
+                <Col md={3}>
+                  <FormGroup controlId={`componentName${key}`} validationState={ this.state.forms[key].componentNameError ? 'error' : null }>
+                    <ControlLabel>Rate Component <sup>*</sup></ControlLabel>
+                    <DropdownControl id={`componentName${key}`} disabled={ isReadOnly } updateState={ this.updateRateTypeState }
+                      items={ provincialRateTypes } fieldName="description" selectedId={ this.state.forms[key].rateType.id } />
+                    <HelpBlock>{ this.state.forms[key].componentNameError }</HelpBlock>
+                  </FormGroup>
+                </Col>
+                <Col md={2}>
+                  <FormGroup controlId={`ratePeriod${key}`} validationState={ this.state.forms[key].ratePeriodError ? 'error' : null }>
+                    <ControlLabel>Period <sup>*</sup></ControlLabel>
+                    <DropdownControl id={`ratePeriod${key}`} title={ this.state.forms[key].ratePeriod } updateState={ this.updateRatePeriodState }
+                      items={[ Constant.RENTAL_RATE_PERIOD_HOURLY, Constant.RENTAL_RATE_PERIOD_DAILY ]} disabled={ !this.state.forms[key].rateType.isRateEditable }  />
+                    <HelpBlock>{ this.state.forms[key].ratePeriodError }</HelpBlock>
+                  </FormGroup>
+                </Col>
+                <Col md={2}>
+                  <FormGroup controlId={`percentOrRateValue${key}`} validationState={ this.state.forms[key].rateError ? 'error' : null }>
+                    <ControlLabel>Rate <sup>*</sup></ControlLabel>
+                    <FormInputControl type="float" min={ 0 } value={ this.state.forms[key].percentOrRateValue } disabled={ !this.state.forms[key].rateType.isRateEditable } updateState={ this.updateUIState } />
+                    <HelpBlock>{ this.state.forms[key].rateError }</HelpBlock>
+                  </FormGroup>
+                </Col>
+                <Col md={2}>
+                  <FormGroup controlId={`percentOrRateOption${key}`}>
+                    <ControlLabel>&nbsp;</ControlLabel>
+                    <DropdownControl id={`percentOrRateOption${key}`} disabled={ !this.state.forms[key].rateType.isRateEditable }  title={ this.state.forms[key].percentOrRateOption } updateState={ this.updateUIState }
+                      items={[ DOLLAR_RATE, PERCENT_RATE ]} />
+                  </FormGroup>
+                </Col>
+                <Col md={3}>
+                  <FormGroup controlId={`isIncludedInTotal${key}`}>
+                    <ControlLabel />
+                    <CheckboxControl id={`isIncludedInTotal${key}`} disabled={ !this.state.forms[key].rateType.isInTotalEditable || this.state.forms[key].differentRatePeriods } checked={ this.state.forms[key].isIncludedInTotal } updateState={ this.updateState }>Include in total</CheckboxControl>
+                  </FormGroup>
+                </Col>
+              </Row>
+              <Row>
+                <Col md={12}>
+                  <FormGroup controlId={`comment${key}`} validationState={ this.state.forms[key].commentError ? 'error' : null }>
+                    <ControlLabel>Comment</ControlLabel>
+                    <FormInputControl componentClass="textarea" defaultValue={ this.state.forms[key].comment } readOnly={ isReadOnly } updateState={ this.updateState } />
+                    <HelpBlock>{ this.state.forms[key].commentError }</HelpBlock>
+                  </FormGroup>
+                </Col>
+              </Row>
+              { this.state.forms[key].differentRatePeriods && 
               <Row>
                 <Col md={12}>
                   <Alert bsStyle="warning">Only rates with same period as the pay rate can be added to the total.</Alert>
                 </Col>
               </Row>
-            }
-          </Grid>
-        </Form>
-      ))}
+              }
+            </Grid>
+          </Form>
+        ))}
       </div>
       <Grid fluid>
         <Row className="align-right">
           <Col md={12}>
-          { this.state.isNew && this.state.numberOfInputs > 1 &&
+            { this.state.isNew && this.state.numberOfInputs > 1 &&
             <Button 
               bsSize="xsmall"
               className="remove-btn"
@@ -360,15 +360,15 @@ var RentalRatesEditDialog = React.createClass({
             >
               <Glyphicon glyph="minus" />&nbsp;<strong>Remove</strong>
             </Button>
-          }
-          { this.state.isNew && this.state.numberOfInputs < 10 && 
+            }
+            { this.state.isNew && this.state.numberOfInputs < 10 && 
             <Button 
               bsSize="xsmall"
               onClick={ this.addInput }
             >
               <Glyphicon glyph="plus" />&nbsp;<strong>Add</strong>
             </Button>
-          }
+            }
           </Col>
         </Row>
       </Grid>

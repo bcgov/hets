@@ -349,9 +349,9 @@ var OwnersDetail = React.createClass({
                 title={ owner.status }
                 onSelect={ this.updateStatusState }
               >
-              { _.map(dropdownItems.map((item, i) =>
-                <MenuItem key={ i } eventKey={ item }>{ item }</MenuItem>
-              ))}
+                { dropdownItems.map((item, i) => (
+                  <MenuItem key={ i } eventKey={ item }>{ item }</MenuItem>
+                ))}
               </DropdownButton>
               <Label className={ owner.isMaintenanceContractor ? 'ml-5' : 'hide' }>Maintenance Contractor</Label>
               <Button className="ml-5 mr-5" title="Notes" onClick={ this.openNotesDialog }>Notes ({ Object.keys(this.props.notes).length })</Button>
@@ -564,7 +564,7 @@ var OwnersDetail = React.createClass({
           onClose={ this.closeDocumentsDialog }
         />
       }
-       { this.state.showNotesDialog &&
+      { this.state.showNotesDialog &&
         <NotesDialog
           show={ this.state.showNotesDialog }
           onSave={ Api.addOwnerNote }

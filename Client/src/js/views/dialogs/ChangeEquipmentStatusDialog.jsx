@@ -64,17 +64,17 @@ var ChangeEquipmentStatusDialog = React.createClass({
         <strong>Reason for Status Change</strong>
       }>
       <Row>
-         <Col md={12}>
+        <Col md={12}>
           <Form>
             <FormGroup controlId="comment" validationState={ this.state.commentError ? 'error' : null }>
               <ControlLabel>Comment</ControlLabel>
               <FormInputControl value={ this.state.comment } componentClass="textarea" updateState={ this.updateState } /> 
               <HelpBlock>{ this.state.commentError }</HelpBlock>
-          </FormGroup>
-        </Form>
-      </Col> 
-    </Row>
-  </EditDialog>;
+            </FormGroup>
+          </Form>
+        </Col> 
+      </Row>
+    </EditDialog>;
   },
 });
 

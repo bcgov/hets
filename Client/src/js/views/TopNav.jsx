@@ -118,10 +118,10 @@ var TopNav = React.createClass({
             </Nav>
           }
           <OverlayTrigger trigger="click" placement="bottom" rootClose overlay={
-              <Popover id="error-message" title={ this.props.requestError.status + ' – API Error' }>
-                <p><small>{ this.props.requestError.message }</small></p>
-              </Popover>
-            }>
+            <Popover id="error-message" title={ this.props.requestError.status + ' – API Error' }>
+              <p><small>{ this.props.requestError.message }</small></p>
+            </Popover>
+          }>
             <Button id="error-indicator" className={ this.props.requestError.message ? '' : 'hide' } bsStyle="danger" bsSize="xsmall">
               Error
               <Glyphicon glyph="exclamation-sign" />

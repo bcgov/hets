@@ -139,21 +139,21 @@ var RentalConditionsEditDialog = React.createClass({
         <strong>Rental Agreement - Conditions</strong>
       }>
       <div className="forms-container">
-      { Object.keys(this.state.forms).map(key => (
-        <Form key={key}>
-          <Grid fluid>
-            <Row>
-              <Col md={12}>
-                <FormGroup controlId={`conditionName${key}`} validationState={ this.state.forms[key].conditionNameError ? 'error' : null }>
-                  <ControlLabel>Rate Component <sup>*</sup></ControlLabel>
-                  {/*TODO - use lookup list*/}
-                  <DropdownControl id={`conditionName${key}`}  disabled={ isReadOnly } updateState={ this.updateState }
-                    items={ conditions } title={ this.state.forms[key].conditionName } className="full-width" />
-                  <HelpBlock>{ this.state.forms[key].conditionNameError }</HelpBlock>
-                </FormGroup>
-              </Col>
-            </Row>
-            { this.state.forms[key].conditionName === NON_STANDARD_CONDITION && 
+        { Object.keys(this.state.forms).map(key => (
+          <Form key={key}>
+            <Grid fluid>
+              <Row>
+                <Col md={12}>
+                  <FormGroup controlId={`conditionName${key}`} validationState={ this.state.forms[key].conditionNameError ? 'error' : null }>
+                    <ControlLabel>Rate Component <sup>*</sup></ControlLabel>
+                    {/*TODO - use lookup list*/}
+                    <DropdownControl id={`conditionName${key}`}  disabled={ isReadOnly } updateState={ this.updateState }
+                      items={ conditions } title={ this.state.forms[key].conditionName } className="full-width" />
+                    <HelpBlock>{ this.state.forms[key].conditionNameError }</HelpBlock>
+                  </FormGroup>
+                </Col>
+              </Row>
+              { this.state.forms[key].conditionName === NON_STANDARD_CONDITION && 
             <Row>
               <Col md={12}>
                 <FormGroup controlId={`comment${key}`} validationState={ this.state.forms[key].commentError ? 'error' : null }>
@@ -163,15 +163,15 @@ var RentalConditionsEditDialog = React.createClass({
                 </FormGroup>
               </Col>
             </Row>
-            }
-          </Grid>
-        </Form>
-      ))}
+              }
+            </Grid>
+          </Form>
+        ))}
       </div>
       <Grid fluid>
         <Row className="align-right">
           <Col md={12}>
-          { this.state.isNew && this.state.numberOfInputs > 1 &&
+            { this.state.isNew && this.state.numberOfInputs > 1 &&
             <Button 
               bsSize="xsmall"
               className="remove-btn"
@@ -179,15 +179,15 @@ var RentalConditionsEditDialog = React.createClass({
             >
               <Glyphicon glyph="minus" />&nbsp;<strong>Remove</strong>
             </Button>
-          }
-          { this.state.isNew && this.state.numberOfInputs < 10 && 
+            }
+            { this.state.isNew && this.state.numberOfInputs < 10 && 
             <Button 
               bsSize="xsmall"
               onClick={ this.addInput }
             >
               <Glyphicon glyph="plus" />&nbsp;<strong>Add</strong>
             </Button>
-          }
+            }
           </Col>
         </Row>
       </Grid>

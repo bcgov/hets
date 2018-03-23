@@ -24,8 +24,7 @@ var BusinessPortal = React.createClass({
     this.setState({ waiting: true, errors: {} });
 
     // TODO: XHR request
-    new Promise((resolve) => setTimeout(resolve, 5 * 1000))
-    .then(() => {
+    new Promise((resolve) => setTimeout(resolve, 5 * 1000)).then(() => {
       // TODO goto owner details screen on success
     }).catch((err) => {
       console.error(err);
@@ -65,12 +64,12 @@ var BusinessPortal = React.createClass({
 
           <div id="existing-district-owners">
             <h4>HETS District Owners already associated with your BCeID:</h4>
-            {this.props.districtOwners.map(districtOwner => {
-              return <Well>
-                  <p>{districtOwner.companyName}</p>
-                  <p>{districtOwner.ownerName}</p>
-                </Well>;
-            })}
+            {this.props.districtOwners.map(districtOwner => (
+              <Well>
+                <p>{districtOwner.companyName}</p>
+                <p>{districtOwner.ownerName}</p>
+              </Well> 
+            ))}
           </div>
 
           <div id="enter-secret-key">

@@ -119,7 +119,7 @@ var Version = React.createClass({
             <Row>
               <ColDisplay md={12} labelProps={{ md: 2 }} label="Build Time">{ formatDateTime(this.state.buildTime, Constant.DATE_TIME_READABLE) }</ColDisplay>
             </Row>
-{/*
+            {/*
             <Row>
               <ColDisplay md={12} labelProps={{ md: 2 }} label="Version">{ this.state.version }</ColDisplay>
             </Row>

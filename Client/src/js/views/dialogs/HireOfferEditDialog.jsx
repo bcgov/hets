@@ -308,7 +308,7 @@ var HireOfferEditDialog = React.createClass({
                     <ControlLabel>Refusal Reason</ControlLabel>
                     <DropdownControl id="offerRefusalReason" className="full-width" disabled={ isReadOnly } title={ this.state.offerRefusalReason } updateState={ this.updateState }
                       items={ refusalReasons } />
-                      <HelpBlock>{ this.state.offerRefusalReasonError }</HelpBlock>
+                    <HelpBlock>{ this.state.offerRefusalReasonError }</HelpBlock>
                   </FormGroup>
                 </Col>
               </Row>

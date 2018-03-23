@@ -95,7 +95,7 @@ var CloneDialog = React.createClass({
       <Row>
         <Col md={12}>
           <FormGroup controlId="type">
-          <ControlLabel>Rental Agreements</ControlLabel>
+            <ControlLabel>Rental Agreements</ControlLabel>
             <DropdownControl id="type" updateState={ this.updateDropdownState }
               selectedId={ this.state.type } title={ this.state.type } items={[BY_PROJECT, BY_EQUIPMENT]}
             />

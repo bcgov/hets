@@ -33,8 +33,7 @@ var BusinessOwner = React.createClass({
     this.setState({ loading: true });
 
     // TODO: Make a real API call. Faked via a 2s timeout for now.
-    new Promise((resolve) => setTimeout(resolve, 2 * 1000))
-    .then(() => {
+    new Promise((resolve) => setTimeout(resolve, 2 * 1000)).then(() => {
       // TODO: call setState() with actual response from API.
       this.setState({
         owner: {

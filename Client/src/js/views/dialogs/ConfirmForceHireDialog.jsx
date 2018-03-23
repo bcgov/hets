@@ -60,7 +60,7 @@ var ConfirmForceHireDialog = React.createClass({
         <strong>Force Hire</strong>
       }
       backdropClassName="confirm-force-hire"
-      >
+    >
       <Form>
         <Grid fluid>
           <Col md={12}>
