@@ -38,7 +38,9 @@ var Main = React.createClass({
   },
 
   onEndSession() {
-    window.location.href = Constant.LOGOUT;
+    Api.logoffUser().then(() => {
+      window.location.href = Constant.LOGOUT;
+    });
   },
 
   render: function() {
