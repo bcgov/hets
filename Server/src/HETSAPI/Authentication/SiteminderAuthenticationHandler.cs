@@ -185,6 +185,8 @@ namespace HETSAPI.Authentication
 
                 if (url.Contains("/authentication/dev") ||
                     url.Contains("/error") ||
+                    url.Contains("/hangfire") ||
+                    url.Contains("/swagger") ||
                     url.Contains(".map") ||
                     url.Contains(".js"))
                 {
