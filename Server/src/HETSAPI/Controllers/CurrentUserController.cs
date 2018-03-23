@@ -106,7 +106,7 @@ namespace HETSAPI.Controllers
         /// Logout User - Switch back to Primary
         /// </summary>
         /// <response code="200">User District switched</response>
-        [HttpPost]
+        [HttpGet]
         [Route("/api/users/current/logoff")]
         [SwaggerOperation("UserDistrictsIdLogoffPost")]
         [SwaggerResponse(200, type: typeof(UserDistrict))]
