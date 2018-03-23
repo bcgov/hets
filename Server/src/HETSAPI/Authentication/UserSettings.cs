@@ -69,6 +69,15 @@ namespace HETSAPI.Authentication
         }
 
         /// <summary>
+        /// Clear UserSettings
+        /// </summary>
+        /// <param name="context"></param>
+        public static void ClearUserSettings(HttpContext context)
+        {
+            context.Session.Clear();
+        }
+
+        /// <summary>
         /// Retrieve UserSettings from Session
         /// </summary>
         /// <param name="context"></param>
