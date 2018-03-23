@@ -916,10 +916,11 @@ function getFileSizeString(fileSizeInBytes) {
     return adjusted.toFixed(1);
   };
 
-  return gbytes ? `${ ceiling10(gbytes) } GB` : (
-         mbytes ? `${ ceiling10(mbytes) } MB` : (
-         kbytes ? `${ Math.ceil(kbytes) } KB` :
-                  `${ bytes } bytes`));
+  return gbytes ? 
+    `${ ceiling10(gbytes) } GB` 
+    : (mbytes ? `${ ceiling10(mbytes) } MB` 
+      : (kbytes ? `${ Math.ceil(kbytes) } KB` 
+        : `${ bytes } bytes`));
 }
 
 function parseDocument(document) {

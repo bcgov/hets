@@ -89,10 +89,10 @@ var FileUpload = React.createClass({
     }
 
     return <div id={ this.props.id } className={ classNames.join(' ') }>
-        { fileUploadButton }
-        { uploadProgressBar }
-        { error }
-      </div>;
+      { fileUploadButton }
+      { uploadProgressBar }
+      { error }
+    </div>;
   },
 });
 

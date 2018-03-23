@@ -81,22 +81,22 @@ var NotesDialog = React.createClass({
       <ModalDialog id="notes" show={ this.props.show }
         onClose={ this.props.onClose }
         title= {
-        <strong>Notes</strong>
-      }>
+          <strong>Notes</strong>
+        }>
         <TableControl id="notes-list" headers={ headers }>
-            {
-              _.map(this.props.notes, (note) => {
-                return <tr key={ note.id }>
-                  <td>{ note.text }</td>
-                  <td style={{ textAlign: 'right', minWidth: '60px' }}>
-                    <ButtonGroup>
-                      <EditButton name="editNote" onClick={ this.editNote.bind(this, note) }/>
-                      <DeleteButton name="note" onConfirm={ this.deleteNote.bind(this, note) }/>
-                    </ButtonGroup>
-                  </td>
-                </tr>;
-              })
-            }
+          {
+            _.map(this.props.notes, (note) => {
+              return <tr key={ note.id }>
+                <td>{ note.text }</td>
+                <td style={{ textAlign: 'right', minWidth: '60px' }}>
+                  <ButtonGroup>
+                    <EditButton name="editNote" onClick={ this.editNote.bind(this, note) }/>
+                    <DeleteButton name="note" onConfirm={ this.deleteNote.bind(this, note) }/>
+                  </ButtonGroup>
+                </td>
+              </tr>;
+            })
+          }
         </TableControl>
         {(() => {
           if (!this.props.notes || Object.keys(this.props.notes).length === 0) { return <Alert bsStyle="success" style={{ marginTop: 10 }}>No notes</Alert>; }

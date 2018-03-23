@@ -249,257 +249,257 @@ var ProjectsDetail = React.createClass({
     return (
       <div id="projects-detail">
         <div>
-        {(() => {
-          if (this.state.loading) { return <div className="spinner-container"><Spinner/></div>; }
+          {(() => {
+            if (this.state.loading) { return <div className="spinner-container"><Spinner/></div>; }
 
-          return (
-            <div className="top-container">
-              <Row id="projects-top">
-                <Col sm={9}>
-                  <Label bsStyle={ project.isActive ? 'success' : 'danger'}>{ project.status }</Label>
-                  <Button title="Notes" onClick={ this.showNotes }>Notes ({ Object.keys(this.props.notes).length })</Button>
-                  <Button title="Documents" onClick={ this.showDocuments }>Documents ({ Object.keys(this.props.documents).length })</Button>
-                </Col>
-                <Col sm={3}>
-                  <div className="pull-right">
-                    <Button onClick={ this.print }><Glyphicon glyph="print" title="Print" /></Button>
-                    <Button title="Return" onClick={ browserHistory.goBack }><Glyphicon glyph="arrow-left" /> Return</Button>
-                  </div>
-                </Col>
-              </Row>
-              <Row id="projects-header">
-                <Col md={12}>
-                  <h1>Project: <small>{ project.name }</small></h1>
-                </Col>
-              </Row>
-              <Row>
-                <Col md={12}>
-                  <h1>District: <small>{ project.districtName }</small></h1>
-                </Col>
-              </Row>
-            </div>
-          );
-        })()}
+            return (
+              <div className="top-container">
+                <Row id="projects-top">
+                  <Col sm={9}>
+                    <Label bsStyle={ project.isActive ? 'success' : 'danger'}>{ project.status }</Label>
+                    <Button title="Notes" onClick={ this.showNotes }>Notes ({ Object.keys(this.props.notes).length })</Button>
+                    <Button title="Documents" onClick={ this.showDocuments }>Documents ({ Object.keys(this.props.documents).length })</Button>
+                  </Col>
+                  <Col sm={3}>
+                    <div className="pull-right">
+                      <Button onClick={ this.print }><Glyphicon glyph="print" title="Print" /></Button>
+                      <Button title="Return" onClick={ browserHistory.goBack }><Glyphicon glyph="arrow-left" /> Return</Button>
+                    </div>
+                  </Col>
+                </Row>
+                <Row id="projects-header">
+                  <Col md={12}>
+                    <h1>Project: <small>{ project.name }</small></h1>
+                  </Col>
+                </Row>
+                <Row>
+                  <Col md={12}>
+                    <h1>District: <small>{ project.districtName }</small></h1>
+                  </Col>
+                </Row>
+              </div>
+            );
+          })()}
 
-        <Row>
-          <Col md={12}>
-            <Well>
-              <h3>Project Information <span className="pull-right">
-                <Button title="Edit Project" bsSize="small" onClick={ this.openEditDialog }><Glyphicon glyph="pencil" /></Button>
-              </span></h3>
-              {(() => {
-                if (this.state.loading) { return <div className="spinner-container"><Spinner/></div>; }
+          <Row>
+            <Col md={12}>
+              <Well>
+                <h3>Project Information <span className="pull-right">
+                  <Button title="Edit Project" bsSize="small" onClick={ this.openEditDialog }><Glyphicon glyph="pencil" /></Button>
+                </span></h3>
+                {(() => {
+                  if (this.state.loading) { return <div className="spinner-container"><Spinner/></div>; }
 
-                var mailto = <a href={ `mailto:${project.primaryContactEmail}` }>
-                  { project.primaryContactName }
-                </a>;
+                  var mailto = <a href={ `mailto:${project.primaryContactEmail}` }>
+                    { project.primaryContactName }
+                  </a>;
 
-                return <div id="projects-data">
-                  <Row>
-                    <ColDisplay md={12} labelProps={{ md: 4 }} label="Project">{ project.name }</ColDisplay>
-                  </Row>
-                  <Row>
-                    <ColDisplay md={12} labelProps={{ md: 4 }} label={ project.primaryContactRole || 'Primary Contact' }>
-                      { project.primaryContactEmail ? mailto : `${project.primaryContactName}` }{ project.primaryContactPhone ? `, ${project.primaryContactPhone}` : '' }
-                    </ColDisplay>
-                  </Row>
-                  <Row>
-                    <ColDisplay md={12} labelProps={{ md: 4 }} label="Provincial Project Number">{ project.provincialProjectNumber }</ColDisplay>
-                  </Row>
-                  <Row>
-                    <ColDisplay md={12} labelProps={{ md: 4 }} fieldProps={{ md: 7 }} label="Information">{ project.information }</ColDisplay>
-                  </Row>
-                </div>;
-              })()}
-            </Well>
-            <Well>
-              <h3>Hired Equipment / Requests<span className="pull-right">
-                <CheckboxControl id="includeCompletedRequests" inline checked={ this.state.includeCompletedRequests } updateState={ this.updateState }><small>Show Completed</small></CheckboxControl>
-                <Button title="Add Request" bsSize="small" onClick={ this.openAddRequestDialog }><Glyphicon glyph="plus" /> Add</Button>
-              </span></h3>
-              {(() => {
-                if (this.state.loading) { return <div className="spinner-container"><Spinner/></div>; }
+                  return <div id="projects-data">
+                    <Row>
+                      <ColDisplay md={12} labelProps={{ md: 4 }} label="Project">{ project.name }</ColDisplay>
+                    </Row>
+                    <Row>
+                      <ColDisplay md={12} labelProps={{ md: 4 }} label={ project.primaryContactRole || 'Primary Contact' }>
+                        { project.primaryContactEmail ? mailto : `${project.primaryContactName}` }{ project.primaryContactPhone ? `, ${project.primaryContactPhone}` : '' }
+                      </ColDisplay>
+                    </Row>
+                    <Row>
+                      <ColDisplay md={12} labelProps={{ md: 4 }} label="Provincial Project Number">{ project.provincialProjectNumber }</ColDisplay>
+                    </Row>
+                    <Row>
+                      <ColDisplay md={12} labelProps={{ md: 4 }} fieldProps={{ md: 7 }} label="Information">{ project.information }</ColDisplay>
+                    </Row>
+                  </div>;
+                })()}
+              </Well>
+              <Well>
+                <h3>Hired Equipment / Requests<span className="pull-right">
+                  <CheckboxControl id="includeCompletedRequests" inline checked={ this.state.includeCompletedRequests } updateState={ this.updateState }><small>Show Completed</small></CheckboxControl>
+                  <Button title="Add Request" bsSize="small" onClick={ this.openAddRequestDialog }><Glyphicon glyph="plus" /> Add</Button>
+                </span></h3>
+                {(() => {
+                  if (this.state.loading) { return <div className="spinner-container"><Spinner/></div>; }
 
-                if (Object.keys(combinedList).length === 0) { return <Alert bsStyle="success">No equipment</Alert>; }
+                  if (Object.keys(combinedList).length === 0) { return <Alert bsStyle="success">No equipment</Alert>; }
 
-                const RentalRequestListItem = ({ item }) => (
-                  <tr key={ item.id }>
-                    <td>
-                      <Link 
-                        to={ `rental-requests/${item.id}` } 
-                        className={item.status === Constant.RENTAL_REQUEST_STATUS_CODE_COMPLETED ? 'light' : ''}
-                      >
-                      Request
-                      </Link>
-                    </td>
-                    <td>{ item.equipmentTypeName }</td>
-                    <td>TBD</td>
-                    <td>N/A</td>
-                    <td>N/A</td>
-                    <td>N/A</td>
-                    <td>N/A</td>
-                    <td>
-                      <DeleteButton name="Cancel Rental Request" hide={ item.yesCount > 0 } onConfirm={ this.cancelRequest.bind(this, item) }/>
-                    </td>
-                  </tr>
-                );
-
-                const RentalAgreementListItem = ({ item }) => (
-                  <tr key={ item.id }>
-                    <td>
-                      <Link 
-                        to={ `equipment/${item.equipmentId}` }
-                        className={item.status === Constant.RENTAL_REQUEST_STATUS_CODE_COMPLETED ? 'light' : ''}
-                      >
-                        { item.equipmentCode }
-                      </Link>
-                    </td>
-                    <td>{ item.equipmentTypeName }</td>
-                    <td>{ `${item.equipment.year} ${concat(item.equipmentMake, concat(item.equipmentModel, item.equipmentSize, '/'), '/')} `}</td>
-                    <td>{ item.isCompleted ? 
-                      'Completed' 
-                      : 
-                      <EditButton name="Time Entry" onClick={this.openTimeEntryDialog.bind(this, item)} />
-                    }
-                    </td>
-                    <td>
-                    { item.status === Constant.RENTAL_REQUEST_STATUS_CODE_COMPLETED ?
-                      <div>Released</div>
-                      :
-                      <OverlayTrigger 
-                        trigger="click" 
-                        placement="top" 
-                        rootClose 
-                        overlay={ <Confirm onConfirm={ this.confirmEndHire.bind(this, item) }/> }
-                      >
-                        <Button 
-                          bsSize="xsmall"
+                  const RentalRequestListItem = ({ item }) => (
+                    <tr key={ item.id }>
+                      <td>
+                        <Link 
+                          to={ `rental-requests/${item.id}` } 
+                          className={item.status === Constant.RENTAL_REQUEST_STATUS_CODE_COMPLETED ? 'light' : ''}
                         >
-                          <Glyphicon glyph="check" />
-                        </Button>
-                      </OverlayTrigger>
-                    }
-                    </td>
-                    <td><Link to={`${Constant.RENTAL_AGREEMENTS_PATHNAME}/${item.id}`}>Agreement</Link></td>
-                    <td>{ formatDateTime(item.datedOn, Constant.DATE_YEAR_SHORT_MONTH_DAY) }</td>
-                    <td></td>
-                  </tr>
-                );
+                      Request
+                        </Link>
+                      </td>
+                      <td>{ item.equipmentTypeName }</td>
+                      <td>TBD</td>
+                      <td>N/A</td>
+                      <td>N/A</td>
+                      <td>N/A</td>
+                      <td>N/A</td>
+                      <td>
+                        <DeleteButton name="Cancel Rental Request" hide={ item.yesCount > 0 } onConfirm={ this.cancelRequest.bind(this, item) }/>
+                      </td>
+                    </tr>
+                  );
 
-                var headers = [
-                  { field: 'equipmentCode',     title: 'ID'               },
-                  { field: 'equipmentTypeName', title: 'Type'             },
-                  { field: 'equipmentMake',     title: 'Year Make/Model/Size'  },
-                  { field: 'lastTimeRecord',    title: 'Time Entry'       },
-                  { field: 'release',           title: 'Release'          },
-                  { field: 'agreement',         title: 'Agreement'        },
-                  { field: 'hiredDate',         title: 'Hired Date'       },
-                  { field: 'blank'                                        },
-                ];
-
-                return <TableControl id="equipment-list" headers={ headers }>
-                  {
-                    _.map(combinedList, (listItem, index) => {
-                      if (listItem.isRentalRequest) {
-                        return <RentalRequestListItem key={index} item={ listItem } project={ project } />;
-                      } else {
-                        return <RentalAgreementListItem key={index} item={ listItem } />;
+                  const RentalAgreementListItem = ({ item }) => (
+                    <tr key={ item.id }>
+                      <td>
+                        <Link 
+                          to={ `equipment/${item.equipmentId}` }
+                          className={item.status === Constant.RENTAL_REQUEST_STATUS_CODE_COMPLETED ? 'light' : ''}
+                        >
+                          { item.equipmentCode }
+                        </Link>
+                      </td>
+                      <td>{ item.equipmentTypeName }</td>
+                      <td>{ `${item.equipment.year} ${concat(item.equipmentMake, concat(item.equipmentModel, item.equipmentSize, '/'), '/')} `}</td>
+                      <td>{ item.isCompleted ? 
+                        'Completed' 
+                        : 
+                        <EditButton name="Time Entry" onClick={this.openTimeEntryDialog.bind(this, item)} />
                       }
-                    })
-                  }
-                </TableControl>;
-              })()}
-            </Well>
-          </Col>
-          <Col md={12}>
-            <Well>
-              <h3>Contacts</h3>
-              {(() => {
-                if (this.state.loading ) { return <div className="spinner-container"><Spinner/></div>; }
+                      </td>
+                      <td>
+                        { item.status === Constant.RENTAL_REQUEST_STATUS_CODE_COMPLETED ?
+                          <div>Released</div>
+                          :
+                          <OverlayTrigger 
+                            trigger="click" 
+                            placement="top" 
+                            rootClose 
+                            overlay={ <Confirm onConfirm={ this.confirmEndHire.bind(this, item) }/> }
+                          >
+                            <Button 
+                              bsSize="xsmall"
+                            >
+                              <Glyphicon glyph="check" />
+                            </Button>
+                          </OverlayTrigger>
+                        }
+                      </td>
+                      <td><Link to={`${Constant.RENTAL_AGREEMENTS_PATHNAME}/${item.id}`}>Agreement</Link></td>
+                      <td>{ formatDateTime(item.datedOn, Constant.DATE_YEAR_SHORT_MONTH_DAY) }</td>
+                      <td></td>
+                    </tr>
+                  );
 
-                var addContactButton = <Button title="Add Contact" onClick={ this.openContactDialog.bind(this, 0) } bsSize="small"><Glyphicon glyph="plus" />&nbsp;<strong>Add</strong></Button>;
+                  var headers = [
+                    { field: 'equipmentCode',     title: 'ID'               },
+                    { field: 'equipmentTypeName', title: 'Type'             },
+                    { field: 'equipmentMake',     title: 'Year Make/Model/Size'  },
+                    { field: 'lastTimeRecord',    title: 'Time Entry'       },
+                    { field: 'release',           title: 'Release'          },
+                    { field: 'agreement',         title: 'Agreement'        },
+                    { field: 'hiredDate',         title: 'Hired Date'       },
+                    { field: 'blank'                                        },
+                  ];
 
-                if (!project.contacts || Object.keys(project.contacts).length === 0) { return <Alert bsStyle="success">No contacts { addContactButton }</Alert>; }
+                  return <TableControl id="equipment-list" headers={ headers }>
+                    {
+                      _.map(combinedList, (listItem, index) => {
+                        if (listItem.isRentalRequest) {
+                          return <RentalRequestListItem key={index} item={ listItem } project={ project } />;
+                        } else {
+                          return <RentalAgreementListItem key={index} item={ listItem } />;
+                        }
+                      })
+                    }
+                  </TableControl>;
+                })()}
+              </Well>
+            </Col>
+            <Col md={12}>
+              <Well>
+                <h3>Contacts</h3>
+                {(() => {
+                  if (this.state.loading ) { return <div className="spinner-container"><Spinner/></div>; }
+
+                  var addContactButton = <Button title="Add Contact" onClick={ this.openContactDialog.bind(this, 0) } bsSize="small"><Glyphicon glyph="plus" />&nbsp;<strong>Add</strong></Button>;
+
+                  if (!project.contacts || Object.keys(project.contacts).length === 0) { return <Alert bsStyle="success">No contacts { addContactButton }</Alert>; }
                 
-                var contacts = _.sortBy(project.contacts, this.state.uiContacts.sortField);
-                if (this.state.uiContacts.sortDesc) {
-                  _.reverse(contacts);
-                }
-
-                var headers = [
-                  { field: 'name',  title: 'Name'         },
-                  { field: 'phone', title: 'Phone Number' },
-                  { field: 'emailAddress', title: 'Email'        },
-                  { field: 'role',  title: 'Role'         },
-                  { field: 'addContact',   title: 'Add Contact', style: { textAlign: 'right'  },
-                    node: addContactButton,
-                  },
-                ];
-
-                return <SortTable id="contact-list" sortField={ this.state.uiContacts.sortField } sortDesc={ this.state.uiContacts.sortDesc } onSort={ this.updateContactsUIState } headers={ headers }>
-                  {
-                    _.map(contacts, (contact) => {
-                      return <tr key={ contact.id }>
-                        <td>{ contact.isPrimary && <Glyphicon glyph="star" /> } { contact.name } </td>
-                        <td>{ contact.phone }</td>
-                        <td><a href={ `mailto:${ contact.emailAddress }` } target="_blank">{ contact.emailAddress }</a></td>
-                        <td>{ contact.role }</td>
-                        <td style={{ textAlign: 'right' }}>
-                          <ButtonGroup>
-                            <DeleteButton name="Contact" hide={ !contact.canDelete || contact.isPrimary } onConfirm={ this.deleteContact.bind(this, contact) } />
-                            <EditButton name="Contact" view={ !contact.canEdit } onClick={ this.openContactDialog.bind(this, contact.id) } />
-                          </ButtonGroup>
-                        </td>
-                      </tr>;
-                    })
+                  var contacts = _.sortBy(project.contacts, this.state.uiContacts.sortField);
+                  if (this.state.uiContacts.sortDesc) {
+                    _.reverse(contacts);
                   }
-                </SortTable>;
-              })()}
-            </Well>
-            <Well>
-              <h3>History</h3>
-              { project.historyEntity && 
+
+                  var headers = [
+                    { field: 'name',  title: 'Name'         },
+                    { field: 'phone', title: 'Phone Number' },
+                    { field: 'emailAddress', title: 'Email'        },
+                    { field: 'role',  title: 'Role'         },
+                    { field: 'addContact',   title: 'Add Contact', style: { textAlign: 'right'  },
+                      node: addContactButton,
+                    },
+                  ];
+
+                  return <SortTable id="contact-list" sortField={ this.state.uiContacts.sortField } sortDesc={ this.state.uiContacts.sortDesc } onSort={ this.updateContactsUIState } headers={ headers }>
+                    {
+                      _.map(contacts, (contact) => {
+                        return <tr key={ contact.id }>
+                          <td>{ contact.isPrimary && <Glyphicon glyph="star" /> } { contact.name } </td>
+                          <td>{ contact.phone }</td>
+                          <td><a href={ `mailto:${ contact.emailAddress }` } target="_blank">{ contact.emailAddress }</a></td>
+                          <td>{ contact.role }</td>
+                          <td style={{ textAlign: 'right' }}>
+                            <ButtonGroup>
+                              <DeleteButton name="Contact" hide={ !contact.canDelete || contact.isPrimary } onConfirm={ this.deleteContact.bind(this, contact) } />
+                              <EditButton name="Contact" view={ !contact.canEdit } onClick={ this.openContactDialog.bind(this, contact.id) } />
+                            </ButtonGroup>
+                          </td>
+                        </tr>;
+                      })
+                    }
+                  </SortTable>;
+                })()}
+              </Well>
+              <Well>
+                <h3>History</h3>
+                { project.historyEntity && 
                 <History historyEntity={ project.historyEntity } refresh={ !this.state.loading } />
-              }
-            </Well>
-          </Col>
-        </Row>
-      </div>
-      { this.state.showEditDialog &&
+                }
+              </Well>
+            </Col>
+          </Row>
+        </div>
+        { this.state.showEditDialog &&
         <ProjectsEditDialog show={ this.state.showEditDialog } onSave={ this.saveEdit } onClose={ this.closeEditDialog } />  
-      }
-      { this.state.showContactDialog &&
+        }
+        { this.state.showContactDialog &&
         <ContactsEditDialog 
           show={ this.state.showContactDialog } 
           contact={ this.state.contact } 
           onSave={ this.saveContact } 
           onClose={ this.closeContactDialog } 
         />
-      }
-      { this.state.showDocumentsDialog &&
+        }
+        { this.state.showDocumentsDialog &&
         <DocumentsListDialog 
           show={ this.state.showDocumentsDialog } 
           parent={ project } 
           onClose={ this.closeDocumentsDialog } 
         />
-      }
-      { this.state.showAddRequestDialog &&
+        }
+        { this.state.showAddRequestDialog &&
         <RentalRequestsAddDialog 
           show={ this.state.showAddRequestDialog } 
           onSave={ this.saveNewRequest } 
           onClose={ this.closeAddRequestDialog } 
           project={ project }
         />
-      }
-      { this.state.showTimeEntryDialog &&
+        }
+        { this.state.showTimeEntryDialog &&
         <TimeEntryDialog
           show={ this.state.showTimeEntryDialog }
           onClose={ this.closeTimeEntryDialog }
           project={ project }
           activeRentalRequest={ this.state.rentalRequest }
         />
-      }
-      { this.state.showNotesDialog &&
+        }
+        { this.state.showNotesDialog &&
         <NotesDialog 
           show={ this.state.showNotesDialog } 
           onSave={ Api.addProjectNote } 
@@ -509,7 +509,7 @@ var ProjectsDetail = React.createClass({
           onClose={ this.closeNotesDialog } 
           notes={ this.props.notes }
         />
-      } 
+        } 
       </div>
     );
   },

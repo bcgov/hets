@@ -350,14 +350,14 @@ var UsersDetail = React.createClass({
                           &nbsp;{ daysFromToday(userRole.expiryDate) < 0 ? <Glyphicon glyph="asterisk" /> : '' }
                         </td>
                         <td style={{ textAlign: 'right' }}>
-                        {
-                          userRole.expiryDate ? null :
-                          <OverlayTrigger trigger="click" placement="left" rootClose
-                            overlay={ <ExpireOverlay userRole={ userRole } onSave={ this.updateUserRole }/> }
-                          >
-                            <Button title="Expire User Role" bsSize="xsmall"><Glyphicon glyph="pencil" />&nbsp;Expire</Button>
-                          </OverlayTrigger>
-                        }
+                          {
+                            userRole.expiryDate ? null :
+                              <OverlayTrigger trigger="click" placement="left" rootClose
+                                overlay={ <ExpireOverlay userRole={ userRole } onSave={ this.updateUserRole }/> }
+                              >
+                                <Button title="Expire User Role" bsSize="xsmall"><Glyphicon glyph="pencil" />&nbsp;Expire</Button>
+                              </OverlayTrigger>
+                          }
                         </td>
                       </tr>;
                     })

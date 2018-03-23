@@ -101,8 +101,8 @@ var HistoryComponent = React.createClass({
           { field: 'event', noSort: true, title: 'Event'     },
           { field: 'showMore',            title: 'Show More', style: { textAlign: 'right'  },
             node: <Button bsSize="xsmall" onClick={ this.showMore } className={ this.state.canShowMore ? '' : 'hidden' }>
-                    <Glyphicon glyph="refresh" title="Show More" />
-                  </Button>,
+              <Glyphicon glyph="refresh" title="Show More" />
+            </Button>,
           },
         ];
         return <SortTable id="history-list" sortField={ this.state.ui.sortField } sortDesc={ this.state.ui.sortDesc } onSort={ this.updateUIState } headers={ headers }>

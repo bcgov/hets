@@ -96,7 +96,7 @@ var ChangeStatusDialog = React.createClass({
         <strong>Reason for Status Change</strong>
       }>
       <Row>
-         <Col md={12}>
+        <Col md={12}>
           <Form>
             <FormGroup controlId="comment" validationState={ this.state.commentError ? 'error' : null }>
               <ControlLabel>Comment</ControlLabel>
@@ -105,19 +105,19 @@ var ChangeStatusDialog = React.createClass({
               { this.props.owner &&
               <HelpBlock>{ this.state.statusError && statusErrorText }
                 <ul>
-                { 
-                  _.map(this.state.statusError, (error) => {
-                    return <li>{ error }</li>;
-                  })
-                }
-              </ul>
-            </HelpBlock>
-            }
-          </FormGroup>
-        </Form>
-      </Col> 
-    </Row>
-  </EditDialog>;
+                  { 
+                    _.map(this.state.statusError, (error) => {
+                      return <li>{ error }</li>;
+                    })
+                  }
+                </ul>
+              </HelpBlock>
+              }
+            </FormGroup>
+          </Form>
+        </Col> 
+      </Row>
+    </EditDialog>;
   },
 });
 

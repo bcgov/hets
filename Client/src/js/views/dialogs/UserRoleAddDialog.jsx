@@ -110,9 +110,9 @@ var UserRoleAddDialog = React.createClass({
             <Col md={4}>
               <FormGroup controlId="roleId" validationState={ this.state.roleIdError ? 'error' : null }>
                 <ControlLabel>Role <sup>*</sup></ControlLabel>
-                  <DropdownControl id="roleId" placeholder="None" blankLine
-                    items={ roles } selectedId={ this.state.roleId } updateState={ this.updateState }
-                  />
+                <DropdownControl id="roleId" placeholder="None" blankLine
+                  items={ roles } selectedId={ this.state.roleId } updateState={ this.updateState }
+                />
                 <HelpBlock>{ this.state.roleIdError }</HelpBlock>
               </FormGroup>
             </Col>

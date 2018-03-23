@@ -130,7 +130,7 @@ var ProjectsEditDialog = React.createClass({
           <FormInputControl type="text" componentClass="textarea" rows="5" value={ this.state.projectInformation } updateState={ this.updateState } />
         </FormGroup>
       </Form>
-      </EditDialog>;
+    </EditDialog>;
   },
 });
 

@@ -291,9 +291,9 @@ var EquipmentDetail = React.createClass({
                         onSelect={ this.updateStatusState }
                         disabled={ equipment.ownerStatus === Constant.OWNER_STATUS_CODE_ARCHIVED }
                       >
-                      { _.map(dropdownItems.map((item, i) =>
-                        <MenuItem key={ i } eventKey={ item }>{ item }</MenuItem>
-                      ))}
+                        { dropdownItems.map((item, i) => (
+                          <MenuItem key={ i } eventKey={ item }>{ item }</MenuItem>
+                        ))}
                       </DropdownButton>
                       <Button className="mr-5 ml-5" title="Notes" onClick={ this.showNotes }>Notes ({ Object.keys(this.props.notes).length })</Button>
                       <Button title="Documents" onClick={ this.showDocuments }>Documents ({ Object.keys(this.props.documents).length })</Button>
@@ -411,12 +411,12 @@ var EquipmentDetail = React.createClass({
                   ];
 
                   return <SortTable 
-                            id="physical-attachment-list" 
-                            sortField={ this.state.ui.sortField } 
-                            sortDesc={ this.state.ui.sortDesc } 
-                            onSort={ this.updateUIState } 
-                            headers={ headers }
-                          >
+                    id="physical-attachment-list" 
+                    sortField={ this.state.ui.sortField } 
+                    sortDesc={ this.state.ui.sortDesc } 
+                    onSort={ this.updateUIState } 
+                    headers={ headers }
+                  >
                     {
                       _.map(physicalAttachments, (attachment) => {
                         return <tr key={ attachment.id }>

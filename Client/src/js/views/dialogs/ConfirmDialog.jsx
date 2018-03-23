@@ -32,8 +32,8 @@ var ConfirmDialog = React.createClass({
         <strong>{ this.props.title }</strong>
       }
       closeText={ this.props.closeText || 'Cancel' } saveText={ this.props.saveText || 'Confirm' } backdropClassName="confirm"
-      >
-        { this.props.children }
+    >
+      { this.props.children }
     </EditDialog>;
   },
 });

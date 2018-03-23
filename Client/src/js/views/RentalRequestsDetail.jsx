@@ -309,9 +309,9 @@ var RentalRequestsDetail = React.createClass({
                         Attachments:
                         { listItem.equipment.equipmentAttachments && listItem.equipment.equipmentAttachments.map((item, i) => (
                           <span key={item.id}> { item.typeName }
-                          { ((i + 1) < listItem.equipment.equipmentAttachments.length) &&
+                            { ((i + 1) < listItem.equipment.equipmentAttachments.length) &&
                             <span>,</span>
-                          }
+                            }
                           </span>
                         ))}
                         { (!listItem.equipment.equipmentAttachments || listItem.equipment.equipmentAttachments.length === 0)  &&
@@ -349,7 +349,7 @@ var RentalRequestsDetail = React.createClass({
                           if (rentalRequest.status === STATUS_IN_PROGRESS && (listItem.offerResponse === STATUS_ASKED || !listItem.offerResponse)) {
                             return (
                               <Button 
-                              bsStyle="link" 
+                                bsStyle="link" 
                                 title="Show Offer" 
                                 onClick={ this.openHireOfferDialog.bind(this, listItem) }
                               >
@@ -398,7 +398,7 @@ var RentalRequestsDetail = React.createClass({
           onClose={ this.closeDocumentsDialog } 
         />
       }
-       { this.state.showNotesDialog &&
+      { this.state.showNotesDialog &&
         <NotesDialog 
           show={ this.state.showNotesDialog } 
           onSave={ Api.addRentalRequestNote } 

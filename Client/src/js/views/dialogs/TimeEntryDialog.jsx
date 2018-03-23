@@ -195,108 +195,108 @@ var TimeEntryDialog = React.createClass({
           <strong>Hets Time Entry</strong>
         }
       >
-       { this.props.rentalRequest.loading  ? 
-        <div style={{ textAlign: 'center' }}><Spinner/></div>
-        :
-        <Form>
-          <Grid fluid>
-            <Row>
-              <Col xs={3}>
-                <div className="text-label">Equipment ID</div>
-                <div>{ activeRentalRequest.equipment.equipmentCode }</div>
-              </Col>
-              <Col xs={3}>
-                <div className="text-label">YTD Hours</div>
-                <div className={ this.getHoursYtdClassName() ? 'highlight' : '' }>
-                  { activeRentalRequest.equipment.hoursYtd }{ this.getHoursYtdClassName() }
-                </div>
-              </Col>
-              <Col xs={3}>              
+        { this.props.rentalRequest.loading  ? 
+          <div style={{ textAlign: 'center' }}><Spinner/></div>
+          :
+          <Form>
+            <Grid fluid>
+              <Row>
+                <Col xs={3}>
+                  <div className="text-label">Equipment ID</div>
+                  <div>{ activeRentalRequest.equipment.equipmentCode }</div>
+                </Col>
+                <Col xs={3}>
+                  <div className="text-label">YTD Hours</div>
+                  <div className={ this.getHoursYtdClassName() ? 'highlight' : '' }>
+                    { activeRentalRequest.equipment.hoursYtd }{ this.getHoursYtdClassName() }
+                  </div>
+                </Col>
+                <Col xs={3}>              
                   <div className="text-label">Project</div>
                   <div>{this.props.project.name}</div>
-              </Col>
-              <Col xs={3}>
+                </Col>
+                <Col xs={3}>
                   <div className="text-label">Project Number</div>
                   <div>{ this.props.project.provincialProjectNumber }</div>
-              </Col>
-            </Row>
-            <div className="time-entries-container">
-              <Row>
-                <Col xs={3}><div className="column-title">Week Ending</div></Col>
-                <Col xs={3}><div className="column-title">Hours</div></Col>
+                </Col>
               </Row>
-              { (sortedTimeRecords.length === 0) &&
+              <div className="time-entries-container">
+                <Row>
+                  <Col xs={3}><div className="column-title">Week Ending</div></Col>
+                  <Col xs={3}><div className="column-title">Hours</div></Col>
+                </Row>
+                { (sortedTimeRecords.length === 0) &&
                 <Row> 
                   <Col xs={12}><div>No time records have been added yet.</div></Col>
                 </Row>
-              }
+                }
 
-              { (sortedTimeRecords.length > 0) && !this.state.showAllTimeRecords ?
-                <Row>
-                  <TimeRecordItem timeRecord={sortedTimeRecords[0]} />
-                </Row>
-                :
-                <Row>
-                  <Col xs={12}>
-                    <ul className="time-records-list">
-                    { _.map(sortedTimeRecords, timeRecord => (
-                      <li key={timeRecord.id} className="list-item">
-                        <TimeRecordItem timeRecord={timeRecord} />
-                      </li>
-                    ))}
-                    </ul>
-                  </Col>
-                </Row>
-              }
-            </div>
-            { (sortedTimeRecords.length > 1) && 
+                { (sortedTimeRecords.length > 0) && !this.state.showAllTimeRecords ?
+                  <Row>
+                    <TimeRecordItem timeRecord={sortedTimeRecords[0]} />
+                  </Row>
+                  :
+                  <Row>
+                    <Col xs={12}>
+                      <ul className="time-records-list">
+                        { _.map(sortedTimeRecords, timeRecord => (
+                          <li key={timeRecord.id} className="list-item">
+                            <TimeRecordItem timeRecord={timeRecord} />
+                          </li>
+                        ))}
+                      </ul>
+                    </Col>
+                  </Row>
+                }
+              </div>
+              { (sortedTimeRecords.length > 1) && 
               <Button onClick={ this.showAllTimeRecords }>{ this.state.showAllTimeRecords ? 'Hide' : 'Show All' }</Button>
-            }
-            <hr />
-            { Object.keys(this.state.timeEntry).map(key => {
-              return (
-                <Row key={key}>
-                  <Col sm={4}>
-                    <FormGroup validationState={ this.state.timeEntry[key].errorDate ? 'error' : null }>
-                      <ControlLabel>Week Ending</ControlLabel>
-                      <DateControl
-                        id={`date${key}`}
-                        name='date'
-                        isValidDate={ isValidDate } 
-                        date={ this.state.timeEntry[key].date }
-                        updateState={ this.updateTimeEntryState } 
-                        placeholder="mm/dd/yyyy"   
-                      />
-                      <HelpBlock>{ this.state.timeEntry[key].errorDate }</HelpBlock>
-                    </FormGroup>
-                  </Col>  
-                  <Col sm={4}>
-                    <FormGroup validationState={ this.state.timeEntry[key].errorHours ? 'error' : null }>
-                      <ControlLabel>Hours</ControlLabel>
-                      <FormInputControl 
-                        id={`hours${key}`} 
-                        name='hours'
-                        type="number" 
-                        value={ this.state.timeEntry[key].hours }
-                        updateState={ this.updateTimeEntryState } 
-                      />
-                      <HelpBlock>{ this.state.timeEntry[key].errorHours }</HelpBlock>
-                    </FormGroup>
-                  </Col>
-                </Row>
-              );
-            })}
-            <Row>
-              <Col xs={12}>
-              { this.state.numberOfInputs < 10 && 
+              }
+              <hr />
+              { Object.keys(this.state.timeEntry).map(key => {
+                return (
+                  <Row key={key}>
+                    <Col sm={4}>
+                      <FormGroup validationState={ this.state.timeEntry[key].errorDate ? 'error' : null }>
+                        <ControlLabel>Week Ending</ControlLabel>
+                        <DateControl
+                          id={`date${key}`}
+                          name='date'
+                          isValidDate={ isValidDate } 
+                          date={ this.state.timeEntry[key].date }
+                          updateState={ this.updateTimeEntryState } 
+                          placeholder="mm/dd/yyyy"   
+                        />
+                        <HelpBlock>{ this.state.timeEntry[key].errorDate }</HelpBlock>
+                      </FormGroup>
+                    </Col>  
+                    <Col sm={4}>
+                      <FormGroup validationState={ this.state.timeEntry[key].errorHours ? 'error' : null }>
+                        <ControlLabel>Hours</ControlLabel>
+                        <FormInputControl 
+                          id={`hours${key}`} 
+                          name='hours'
+                          type="number" 
+                          value={ this.state.timeEntry[key].hours }
+                          updateState={ this.updateTimeEntryState } 
+                        />
+                        <HelpBlock>{ this.state.timeEntry[key].errorHours }</HelpBlock>
+                      </FormGroup>
+                    </Col>
+                  </Row>
+                );
+              })}
+              <Row>
+                <Col xs={12}>
+                  { this.state.numberOfInputs < 10 && 
                 <Button 
                   bsSize="xsmall"
                   onClick={ this.addTimeEntryInput }
                 >
                   <Glyphicon glyph="plus" />&nbsp;<strong>Add</strong>
                 </Button>
-              }
-              { this.state.numberOfInputs > 1 &&
+                  }
+                  { this.state.numberOfInputs > 1 &&
                 <Button 
                   bsSize="xsmall"
                   className="remove-btn"
@@ -304,12 +304,12 @@ var TimeEntryDialog = React.createClass({
                 >
                   <Glyphicon glyph="minus" />&nbsp;<strong>Remove</strong>
                 </Button>
-              }
-              </Col>
-            </Row>  
-          </Grid>
-        </Form>
-       } 
+                  }
+                </Col>
+              </Row>  
+            </Grid>
+          </Form>
+        } 
       </EditDialog>
     );
   },

@@ -68,8 +68,8 @@ gulp.task('js:shims', function() {
   return gulp.src(JS_SHIMS)
     .pipe(devOnlyPlumber())
     .pipe($.sourcemaps.init({ loadMaps: true }))
-      .pipe(IS_PRODUCTION ? $.uglify(uglifyOptions) : $.util.noop())
-      .pipe($.concat('shims.js'))
+    .pipe(IS_PRODUCTION ? $.uglify(uglifyOptions) : $.util.noop())
+    .pipe($.concat('shims.js'))
     .pipe($.sourcemaps.write('./maps'))
     .pipe(gulp.dest(`${DIST_DIR}/js/`));
 });
@@ -100,9 +100,9 @@ gulp.task('templates', function() {
 gulp.task('sass', function() {
   return gulp.src('src/sass/main.scss')
     .pipe($.sourcemaps.init())
-      .pipe($.sass().on('error', $.sass.logError))
-      .pipe($.autoprefixer())
-      .pipe(IS_PRODUCTION ? $.cleanCss() : $.util.noop())
+    .pipe($.sass().on('error', $.sass.logError))
+    .pipe($.autoprefixer())
+    .pipe(IS_PRODUCTION ? $.cleanCss() : $.util.noop())
     .pipe($.sourcemaps.write('./maps'))
     .pipe($.size({ title : 'css' }))
     .pipe(gulp.dest(DIST_DIR + '/css/'));
@@ -120,9 +120,9 @@ gulp.task('css:vendor', function() {
   return gulp.src(libs)
     .pipe(devOnlyPlumber())
     .pipe($.sourcemaps.init({ loadMaps: true }))
-      .pipe($.autoprefixer())
-      .pipe(IS_PRODUCTION ? $.cleanCss() : $.util.noop())
-      .pipe($.concat('vendor.css'))
+    .pipe($.autoprefixer())
+    .pipe(IS_PRODUCTION ? $.cleanCss() : $.util.noop())
+    .pipe($.concat('vendor.css'))
     .pipe($.sourcemaps.write('./maps'))
     .pipe(gulp.dest(DIST_DIR + '/css/'));
 });
@@ -176,7 +176,7 @@ gulp.task('fingerprint', () => {
 
 gulp.task('test:integration', function() {
   return gulp
-    .src('test/index.html')
+    .src('test/index.html');
 });
 
 gulp.task('test:unit', function() {
