@@ -177,7 +177,6 @@ namespace HETSAPI
                 }
             }
 
-
             // do not start Hangfire if we are running tests. 
             bool startHangfire = true;
 
@@ -200,7 +199,7 @@ namespace HETSAPI
                 // disable the back to site link
                 DashboardOptions dashboardOptions = new DashboardOptions
                 {
-                    AppPath = null
+                    AppPath = null                    
                 };
 
                 // enable the /hangfire action
@@ -224,19 +223,7 @@ namespace HETSAPI
                     options.EnabledValidator(null);
                     options.DocExpansion("none");
                 });
-            }
-            
-            if (startHangfire)
-            {
-                HangfireTools.ClearHangfire();
-
-                // this should be set as an environment variable.  
-                // only enable when doing a new PROD deploy to populate CCW data and link it to the bus data.
-                if (!string.IsNullOrEmpty(Configuration["ENABLE_ANNUAL_ROLLOVER"]))
-                {                    
-                    CreateHangfireAnnualRolloverJob(loggerFactory, Configuration);
-                }
-            }           
+            }                                
         }
 
         /// <summary>
@@ -310,38 +297,6 @@ namespace HETSAPI
             }
 
             return connectionString;
-        }
-
-        /// <summary>
-        /// Create Hangfire Jobs
-        /// </summary>
-        /// <param name="loggerFactory"></param>
-        /// <param name="configuration"></param>
-        private void CreateHangfireAnnualRolloverJob(ILoggerFactory loggerFactory, IConfiguration configuration)
-        {
-            // HETS has one job that runs at the end of each year.            
-            ILogger log = loggerFactory.CreateLogger(typeof(Startup));
-
-            // first check to see if Hangfire already has the job.
-            log.LogInformation("Attempting setup of Hangfire Annual rollover job ...");
-            
-            try
-            {
-                string connectionString = GetConnectionString();
-
-                log.LogInformation("Creating Hangfire job for Annual rollover ...");
-
-                // every 5 minutes we see if a CCW record needs to be updated.  We only update one CCW record at a time.
-                // since the server is on UTC, we want UTC-7 for PDT midnight.                
-                RecurringJob.AddOrUpdate(() => SeniorityListExtensions.AnnualRolloverJob(null, connectionString, configuration), Cron.Yearly(3, 31, 17));                            
-            }
-            catch (Exception e)
-            {
-                StringBuilder msg = new StringBuilder();
-                msg.AppendLine("Failed to setup Hangfire job.");
-
-                log.LogCritical(new EventId(-1, "Hangfire job setup failed"), e, msg.ToString());
-            }            
-        }
+        }        
     }    
 }

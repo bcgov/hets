@@ -2,6 +2,7 @@ using System;
 using System.Linq;
 using System.Text;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Runtime.Serialization;
 using Newtonsoft.Json;
 using HETSAPI.Models;
@@ -98,11 +99,26 @@ namespace HETSAPI.ViewModels
         /// </summary>
         public void CalculateTotals()
         {
-            // setup the rates lists -> records in the total and records not included
-            RentalAgreementRatesWithTotal = RentalAgreementRates.FindAll(x => x.IsIncludedInTotal);
-            RentalAgreementRatesWithoutTotal = RentalAgreementRates.FindAll(x => !x.IsIncludedInTotal);
+            // **********************************************
+            // setup the rates lists -> 
+            // 1. overtime records
+            // 2. records in the total and 
+            // 3. records not included
+            // **********************************************
+            RentalAgreementRatesOvertime = RentalAgreementRates
+                .FindAll(x => x.ComponentName.StartsWith("Overtime", true, CultureInfo.InvariantCulture));
 
+            RentalAgreementRatesWithTotal = RentalAgreementRates
+                .FindAll(x => x.IsIncludedInTotal &&
+                              !x.ComponentName.StartsWith("Overtime", true, CultureInfo.InvariantCulture));
+
+            RentalAgreementRatesWithoutTotal = RentalAgreementRates
+                .FindAll(x => !x.IsIncludedInTotal &&
+                              !x.ComponentName.StartsWith("Overtime", true, CultureInfo.InvariantCulture));
+
+            // **********************************************
             // calculate the total
+            // **********************************************
             float temp = 0.0F;
 
             foreach (RentalAgreementRate rentalRate in RentalAgreementRatesWithTotal)
@@ -137,7 +153,21 @@ namespace HETSAPI.ViewModels
             // format the total
             AgreementTotalString = string.Format("$ {0:0.00} / {1}", AgreementTotal, FormatRatePeriod(RatePeriod));
 
+            // **********************************************
             // format the rate / percent values
+            // **********************************************
+            foreach (RentalAgreementRate rentalRate in RentalAgreementRatesOvertime)
+            {
+                if (rentalRate.PercentOfEquipmentRate != null &&
+                    EquipmentRate != null &&
+                    rentalRate.PercentOfEquipmentRate > 0)
+                {
+                    rentalRate.Rate = (float)rentalRate.PercentOfEquipmentRate * ((float)EquipmentRate / 100);
+                }
+
+                rentalRate.RateString = FormatRateString(rentalRate);
+            }
+
             foreach (RentalAgreementRate rentalRate in RentalAgreementRatesWithoutTotal)
             {
                 if (rentalRate.PercentOfEquipmentRate != null &&
@@ -243,6 +273,12 @@ namespace HETSAPI.ViewModels
         /// </summary>
         [DataMember(Name = "rentalAgreementRatesWithTotal")]
         public List<RentalAgreementRate> RentalAgreementRatesWithTotal { get; set; }
+
+        /// <summary>
+        /// Gets or Sets RentalAgreementRates -> that are included in the total
+        /// </summary>
+        [DataMember(Name = "rentalAgreementRatesOvertime")]
+        public List<RentalAgreementRate> RentalAgreementRatesOvertime { get; set; }
 
         /// <summary>
         /// The dollar total -> for all included rental agreement rate records

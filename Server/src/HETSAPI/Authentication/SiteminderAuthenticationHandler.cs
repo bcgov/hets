@@ -195,6 +195,7 @@ namespace HETSAPI.Authentication
                     url.Contains(".ttf") ||
                     url.Contains(".js"))
                 {
+                    _logger.LogInformation("Bypassing authentication process ({0})", url);
                     return Task.FromResult(AuthenticateResult.NoResult());
                 }
 
@@ -227,7 +228,7 @@ namespace HETSAPI.Authentication
                     (userSettings.UserAuthenticated && !string.IsNullOrEmpty(userId) &&
                      !string.IsNullOrEmpty(userSettings.UserId) && userSettings.UserId == userId))
                 {
-                    _logger.LogInformation("User already authenticated with active session: " + userSettings.UserId);
+                    _logger.LogInformation("User already authenticated with active session: {0}" , userSettings.UserId);
                     principal = userSettings.HetsUser.ToClaimsPrincipal(options.Scheme);
                     return Task.FromResult(AuthenticateResult.Success(new AuthenticationTicket(principal, null, Options.Scheme)));
                 }                               
@@ -235,7 +236,7 @@ namespace HETSAPI.Authentication
                 // **************************************************
                 // Authenticate based on SiteMinder Headers
                 // **************************************************
-                _logger.LogDebug("Parsing the HTTP headers for SiteMinder authentication credential");
+                _logger.LogInformation("Parsing the HTTP headers for SiteMinder authentication credential");
 
                 if (string.IsNullOrEmpty(userId))
                 {
@@ -321,6 +322,8 @@ namespace HETSAPI.Authentication
                     // update the current district for the user
                     if (userDistrict != null && userSettings.HetsUser.DistrictId != userDistrict.District.Id)
                     {
+                        _logger.LogInformation("Resetting users district back to primary ({0})", userSettings.HetsUser.SmUserId);
+
                         userSettings.HetsUser.DistrictId = userDistrict.District.Id;
                         dbAppContext.Users.Update(userSettings.HetsUser);
                         dbAppContext.SaveChanges();
