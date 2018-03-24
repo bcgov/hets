@@ -168,8 +168,6 @@ namespace HETSAPI.Authentication
 
             try
             {
-                ClaimsPrincipal principal;
-
                 HttpContext context = Request.HttpContext;
                 IDbAppContext dbAppContext = (DbAppContext)context.RequestServices.GetService(typeof(DbAppContext));
                 IHostingEnvironment hostingEnv = (IHostingEnvironment)context.RequestServices.GetService(typeof(IHostingEnvironment));
@@ -212,30 +210,7 @@ namespace HETSAPI.Authentication
                         _logger.LogInformation("Dev Authentication token found ({0})", temp);
                         userId = temp;
                     }
-                }
-
-                // **************************************************
-                // Check if the user session is already created
-                // **************************************************
-                try
-                {
-                    _logger.LogInformation("Checking user session");
-                    userSettings = UserSettings.ReadUserSettings(context, _logger);
-                }
-                catch
-                {
-                    //do nothing
-                }
-
-                // is user authenticated - if so we're done
-                if ((userSettings.UserAuthenticated && string.IsNullOrEmpty(userId)) ||
-                    (userSettings.UserAuthenticated && !string.IsNullOrEmpty(userId) &&
-                     !string.IsNullOrEmpty(userSettings.UserId) && userSettings.UserId == userId))
-                {
-                    _logger.LogInformation("User already authenticated with active session: {0}" , userSettings.UserId);
-                    principal = userSettings.HetsUser.ToClaimsPrincipal(options.Scheme);
-                    return Task.FromResult(AuthenticateResult.Success(new AuthenticationTicket(principal, null, Options.Scheme)));
-                }                               
+                }                                            
 
                 // **************************************************
                 // Authenticate based on SiteMinder Headers
@@ -355,21 +330,12 @@ namespace HETSAPI.Authentication
                 // Create authenticated user
                 // **************************************************
                 _logger.LogInformation("Authentication successful: " + userId);
-                _logger.LogInformation("Setting identity and creating session for: " + userId);
-
-                // create session info
-                userSettings.UserId = userId;
-                userSettings.UserAuthenticated = true;
-
-                // **************************************************
-                // Update user settings
-                // **************************************************                
-                UserSettings.SaveUserSettings(userSettings, context);
+                _logger.LogInformation("Setting identity and creating session for: " + userId);                
                 
                 // **************************************************
                 // done!
                 // **************************************************
-                principal = userPrincipal;
+                ClaimsPrincipal principal = userPrincipal;
                 return Task.FromResult(AuthenticateResult.Success(new AuthenticationTicket(principal, null, Options.Scheme)));
             }
             catch (Exception exception)

@@ -263,9 +263,7 @@ namespace HETSAPI.Services.Impl
                     user.DistrictId = userDistrict.District.Id;
 
                     _context.SaveChanges();
-                }
-
-                UserSettings.ClearUserSettings(_httpContext);
+                }                
 
                 return new ObjectResult(new HetsResponse(user));
             }
