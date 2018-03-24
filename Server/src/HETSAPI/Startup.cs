@@ -190,7 +190,7 @@ namespace HETSAPI
                 // enable Hangfire
                 BackgroundJobServerOptions options = new BackgroundJobServerOptions
                 {
-                    WorkerCount = Environment.ProcessorCount * 10
+                    WorkerCount = Environment.ProcessorCount * 5
                 };
 
                 app.UseHangfireServer(options);
