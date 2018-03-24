@@ -101,8 +101,7 @@ namespace PDF.Server
                 app.UseSwaggerUI(options =>
                 {
                     options.SwaggerEndpoint(swaggerApi, "PDF REST API v1");
-                    options.EnabledValidator(null);
-                    options.DocExpansion("none");
+                    options.DocExpansion(DocExpansion.None);
                 });
             }
         }

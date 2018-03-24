@@ -8,6 +8,7 @@ namespace HETSAPI.Controllers
     /// Default home controller for the HETSAPI
     /// </summary>
     [ResponseCache(Location = ResponseCacheLocation.None, NoStore = true)]
+    [ApiExplorerSettings(IgnoreApi = true)]
     public class HomeController : Controller
     {
         private readonly IHostingEnvironment _env;
