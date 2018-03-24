@@ -75,7 +75,7 @@ namespace HETSAPI.Authentication
                 {
                     Path = "/",
                     HttpOnly = true,
-                    Secure = true,
+                    Secure = false,
                     SameSite = SameSiteMode.None,
                     Expires = DateTime.UtcNow.AddMinutes(30)
                 });          
