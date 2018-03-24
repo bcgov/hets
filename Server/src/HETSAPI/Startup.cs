@@ -188,12 +188,7 @@ namespace HETSAPI
             if (startHangfire)
             {
                 // enable Hangfire
-                BackgroundJobServerOptions options = new BackgroundJobServerOptions
-                {
-                    WorkerCount = Environment.ProcessorCount * 5
-                };
-
-                app.UseHangfireServer(options);
+                app.UseHangfireServer();
 
                 // disable the back to site link
                 DashboardOptions dashboardOptions = new DashboardOptions
