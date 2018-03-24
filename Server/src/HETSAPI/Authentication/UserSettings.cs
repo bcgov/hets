@@ -1,4 +1,5 @@
-﻿using Newtonsoft.Json;
+﻿using System;
+using Newtonsoft.Json;
 using Microsoft.AspNetCore.Http;
 using HETSAPI.Models;
 using Microsoft.Extensions.Logging;
@@ -75,7 +76,8 @@ namespace HETSAPI.Authentication
                     Path = "/",
                     HttpOnly = true,
                     Secure = true,
-                    SameSite = SameSiteMode.Strict                    
+                    SameSite = SameSiteMode.Strict,
+                    Expires = DateTime.UtcNow.AddMinutes(30)
                 });          
         }
 
