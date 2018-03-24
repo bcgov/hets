@@ -188,15 +188,21 @@ namespace HETSAPI
             if (startHangfire)
             {
                 // enable Hangfire
-                app.UseHangfireServer();
+                BackgroundJobServerOptions options = new BackgroundJobServerOptions
+                {
+                    WorkerCount = Environment.ProcessorCount * 10
+                };
+
+                app.UseHangfireServer(options);
 
                 // disable the back to site link
                 DashboardOptions dashboardOptions = new DashboardOptions
                 {
-                    AppPath = null                    
+                    AppPath = null,                    
+                    Authorization = new[] { new HangfireAuthorizationFilter() }
                 };
 
-                // enable the /hangfire action
+                // enable the hangfire dashboard
                 app.UseHangfireDashboard(Configuration.GetSection("Constants:HangfireUrl").Value, dashboardOptions);
             }
             
@@ -290,6 +296,6 @@ namespace HETSAPI
             }
 
             return connectionString;
-        }        
+        }             
     }    
 }
