@@ -75,7 +75,7 @@ namespace HETSAPI.Authentication
                     Path = "/",
                     HttpOnly = true,
                     Secure = true,
-                    SameSite = SameSiteMode.Strict                    
+                    SameSite = SameSiteMode.None                    
                 });          
         }
 

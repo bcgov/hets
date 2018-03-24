@@ -239,11 +239,11 @@ namespace HETSAPI.Authentication
 
                 // **************************************************
                 // Authenticate based on SiteMinder Headers
-                // **************************************************
-                _logger.LogInformation("Parsing the HTTP headers for SiteMinder authentication credential");
-
+                // **************************************************                
                 if (string.IsNullOrEmpty(userId))
                 {
+                    _logger.LogInformation("Parsing the HTTP headers for SiteMinder authentication credential");
+
                     userId = context.Request.Headers[options.SiteMinderUserNameKey];
                     if (string.IsNullOrEmpty(userId))
                     {
@@ -287,6 +287,8 @@ namespace HETSAPI.Authentication
                 // **************************************************
                 // Validate credential against database              
                 // **************************************************
+                _logger.LogInformation("Validating credential against the HETS db");
+
                 userSettings.HetsUser = hostingEnv.IsDevelopment()
                     ? dbAppContext.LoadUser(userId)
                     : dbAppContext.LoadUser(userId, siteMinderGuid);
@@ -337,6 +339,8 @@ namespace HETSAPI.Authentication
                 // **************************************************
                 // Validate / check user permissions
                 // **************************************************
+                _logger.LogInformation("Validating user permissions");
+
                 ClaimsPrincipal userPrincipal = userSettings.HetsUser.ToClaimsPrincipal(options.Scheme);
 
                 if (!userPrincipal.HasClaim(User.PermissionClaim, Permission.Login) &&
