@@ -72,6 +72,7 @@ namespace HETSAPI.Authentication
                 temp,
                 new CookieOptions
                 {
+                    Path = "/",
                     HttpOnly = true,
                     Secure = true,
                     SameSite = SameSiteMode.Strict                    

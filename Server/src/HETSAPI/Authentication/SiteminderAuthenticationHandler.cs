@@ -208,7 +208,10 @@ namespace HETSAPI.Authentication
                     string temp = context.Request.Cookies[options.DevAuthenticationTokenKey];
 
                     if (!string.IsNullOrEmpty(temp))
+                    {
+                        _logger.LogInformation("Dev Authentication token found ({0})", temp);
                         userId = temp;
+                    }
                 }
 
                 // **************************************************
