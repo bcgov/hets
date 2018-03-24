@@ -7,6 +7,7 @@ using HETSAPI.Helpers;
 using HETSAPI.Models;
 using HETSAPI.ViewModels;
 using Microsoft.AspNetCore.Hosting;
+using Swashbuckle.AspNetCore.Swagger;
 
 namespace HETSAPI.Controllers
 {
@@ -14,6 +15,7 @@ namespace HETSAPI.Controllers
     /// This controller is used to handle importing data from the previous system (BC Bid)
     /// </summary>
     [ResponseCache(Location = ResponseCacheLocation.None, NoStore = true)]
+    [ApiExplorerSettings(IgnoreApi = true)]
     public class ImportController : Controller
     {
         private readonly HttpContext _context;
@@ -25,7 +27,7 @@ namespace HETSAPI.Controllers
         /// </summary>
         /// <param name="httpContextAccessor"></param>
         /// <param name="env"></param>
-        /// <param name="configuration"></param>
+        /// <param name="configuration"></param>        
         public ImportController(IHttpContextAccessor httpContextAccessor, IHostingEnvironment env, IConfiguration configuration)
         {
             _context = httpContextAccessor.HttpContext;
@@ -39,6 +41,7 @@ namespace HETSAPI.Controllers
         /// <returns></returns>
         [Route("/api/Import")]
         [RequiresPermission(Permission.ImportData)]
+        
         public IActionResult Index()
         {
             string path = GetServerPath(_context, _env);

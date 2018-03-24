@@ -24,35 +24,35 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="Microsoft.AspNetCore" Version="2.0.1" />
-    <PackageReference Include="Microsoft.AspNetCore.Authentication" Version="2.0.1" />
-    <PackageReference Include="Microsoft.AspNetCore.Authentication.Abstractions" Version="2.0.1" />
-    <PackageReference Include="Microsoft.AspNetCore.Authentication.OAuth" Version="2.0.1" />
-    <PackageReference Include="Microsoft.AspNetCore.Diagnostics" Version="2.0.1" />
-    <PackageReference Include="Microsoft.AspNetCore.Hosting" Version="2.0.1" />
-    <PackageReference Include="Microsoft.AspNetCore.Http.Abstractions" Version="2.0.1" />
-    <PackageReference Include="Microsoft.AspNetCore.Mvc" Version="2.0.2" />
-    <PackageReference Include="Microsoft.AspNetCore.Mvc.Abstractions" Version="2.0.2" />
-    <PackageReference Include="Microsoft.AspNetCore.Mvc.Core" Version="2.0.2" />
-    <PackageReference Include="Microsoft.AspNetCore.Mvc.Formatters.Json" Version="2.0.2" />
+    <PackageReference Include="Microsoft.AspNetCore" Version="2.0.2" />
+    <PackageReference Include="Microsoft.AspNetCore.Authentication" Version="2.0.3" />
+    <PackageReference Include="Microsoft.AspNetCore.Authentication.Abstractions" Version="2.0.2" />
+    <PackageReference Include="Microsoft.AspNetCore.Authentication.OAuth" Version="2.0.3" />
+    <PackageReference Include="Microsoft.AspNetCore.Diagnostics" Version="2.0.2" />
+    <PackageReference Include="Microsoft.AspNetCore.Hosting" Version="2.0.2" />
+    <PackageReference Include="Microsoft.AspNetCore.Http.Abstractions" Version="2.0.2" />
+    <PackageReference Include="Microsoft.AspNetCore.Mvc" Version="2.0.3" />
+    <PackageReference Include="Microsoft.AspNetCore.Mvc.Abstractions" Version="2.0.3" />
+    <PackageReference Include="Microsoft.AspNetCore.Mvc.Core" Version="2.0.3" />
+    <PackageReference Include="Microsoft.AspNetCore.Mvc.Formatters.Json" Version="2.0.3" />
     <PackageReference Include="Microsoft.AspNetCore.Proxy" Version="0.2.0" />
-    <PackageReference Include="Microsoft.AspNetCore.Razor.Runtime" Version="2.0.1" />
-    <PackageReference Include="Microsoft.AspNetCore.ResponseCompression" Version="2.0.1" />
-    <PackageReference Include="Microsoft.AspNetCore.StaticFiles" Version="2.0.1" />
-    <PackageReference Include="Microsoft.EntityFrameworkCore" Version="2.0.1" />
-    <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="2.0.1">
+    <PackageReference Include="Microsoft.AspNetCore.Razor.Runtime" Version="2.0.2" />
+    <PackageReference Include="Microsoft.AspNetCore.ResponseCompression" Version="2.0.2" />
+    <PackageReference Include="Microsoft.AspNetCore.StaticFiles" Version="2.0.2" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore" Version="2.0.2" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="2.0.2">
       <PrivateAssets>All</PrivateAssets>
     </PackageReference>
-    <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="2.0.1" />
-    <PackageReference Include="Microsoft.Extensions.Configuration.EnvironmentVariables" Version="2.0.0" />
-    <PackageReference Include="Microsoft.Extensions.Configuration.FileExtensions" Version="2.0.0" />
-    <PackageReference Include="Microsoft.Extensions.Configuration.Json" Version="2.0.0" />
-    <PackageReference Include="Microsoft.Extensions.Logging" Version="2.0.0" />
-    <PackageReference Include="Microsoft.Extensions.Logging.Console" Version="2.0.0" />
-    <PackageReference Include="Microsoft.Extensions.Logging.Debug" Version="2.0.0" />
-    <PackageReference Include="Microsoft.Extensions.Options.ConfigurationExtensions" Version="2.0.0" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="2.0.2" />
+    <PackageReference Include="Microsoft.Extensions.Configuration.EnvironmentVariables" Version="2.0.1" />
+    <PackageReference Include="Microsoft.Extensions.Configuration.FileExtensions" Version="2.0.1" />
+    <PackageReference Include="Microsoft.Extensions.Configuration.Json" Version="2.0.1" />
+    <PackageReference Include="Microsoft.Extensions.Logging" Version="2.0.1" />
+    <PackageReference Include="Microsoft.Extensions.Logging.Console" Version="2.0.1" />
+    <PackageReference Include="Microsoft.Extensions.Logging.Debug" Version="2.0.1" />
+    <PackageReference Include="Microsoft.Extensions.Options.ConfigurationExtensions" Version="2.0.1" />
     <PackageReference Include="NETStandard.Library" Version="2.0.1" />
-    <PackageReference Include="SonarAnalyzer.CSharp" Version="6.8.1.4648" />
+    <PackageReference Include="SonarAnalyzer.CSharp" Version="6.8.2.4717" />
     <PackageReference Include="System.Xml.XmlDocument" Version="4.3.0" />
     <PackageReference Include="System.Xml.XPath.XmlDocument" Version="4.3.0" />
   </ItemGroup>
