@@ -41,8 +41,6 @@ export default function startApp() {
       initializeApp();
     });
   }
-
-  Api.setDevUser('plitton');
   return initializeApp();
 }
 
