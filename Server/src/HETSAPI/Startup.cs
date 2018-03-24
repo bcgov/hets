@@ -187,7 +187,7 @@ namespace HETSAPI
 
             if (startHangfire)
             {
-                // enable Hangfire
+                // enable Hangfire - default worker processes
                 app.UseHangfireServer();
 
                 // disable the back to site link
