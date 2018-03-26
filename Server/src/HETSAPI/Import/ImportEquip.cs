@@ -120,38 +120,34 @@ namespace HETSAPI.Import
                 // get all local areas 
                 // (using active equipment to minimize the results)
                 // ************************************************************
-                List<LocalArea> localAreas = dbContext.Equipments
+                IQueryable<LocalArea> localAreas = dbContext.Equipments.AsNoTracking()
                     .Include(x => x.LocalArea)
                     .Where(x => x.Status == Equipment.StatusApproved &&
                                 x.ArchiveCode == "N")
                     .Select(x => x.LocalArea)
-                    .Distinct()
-                    .ToList();
-
-                // ************************************************************
-                // get all district equipment types
-                // (using active equipment to minimize the results)
-                // ************************************************************
-                List<DistrictEquipmentType> equipmentTypes = dbContext.Equipments
-                    .Include(x => x.DistrictEquipmentType)
-                    .Where(x => x.Status == Equipment.StatusApproved &&
-                                x.ArchiveCode == "N")
-                    .Select(x => x.DistrictEquipmentType)   
-                    .Distinct()
-                    .ToList();
-
+                    .Distinct();
+                
                 // ************************************************************************
                 // iterate the data and update the assugnment blocks 
                 // (seniority is already calculated)
                 // ************************************************************************
-                Debug.WriteLine("Recalculating Equipment Block Assignment - Local Area Record Count: " + localAreas.Count);
+                Debug.WriteLine("Recalculating Equipment Block Assignment - Local Area Record Count: " + localAreas.Count());
 
                 foreach (LocalArea localArea in localAreas)
                 {
+                    IQueryable<DistrictEquipmentType> equipmentTypes = dbContext.Equipments.AsNoTracking()
+                        .Include(x => x.DistrictEquipmentType)
+                        .Where(x => x.Status == Equipment.StatusApproved &&
+                                    x.ArchiveCode == "N" &&
+                                    x.LocalArea.Id == localArea.Id)
+                        .Select(x => x.DistrictEquipmentType)
+                        .Distinct();
+
                     foreach (DistrictEquipmentType districtEquipmentType in equipmentTypes)
                     {
                         // get the associated equipment type
-                        EquipmentType equipmentTypeRecord = dbContext.EquipmentTypes.FirstOrDefault(x => x.Id == districtEquipmentType.EquipmentTypeId);
+                        EquipmentType equipmentTypeRecord = dbContext.EquipmentTypes
+                            .FirstOrDefault(x => x.Id == districtEquipmentType.EquipmentTypeId);
 
                         if (equipmentTypeRecord == null)
                         {
