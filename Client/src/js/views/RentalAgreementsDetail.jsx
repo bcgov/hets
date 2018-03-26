@@ -3,8 +3,7 @@ import React from 'react';
 import { connect } from 'react-redux';
 
 import { Link, browserHistory } from 'react-router';
-import { Grid, Well, Row, Col } from 'react-bootstrap';
-import { Table, Alert, Button, Glyphicon, Label, ButtonGroup } from 'react-bootstrap';
+import { Well, Row, Col, Table, Alert, Button, Glyphicon, Label, ButtonGroup } from 'react-bootstrap';
 
 import _ from 'lodash';
 import Promise from 'bluebird';
@@ -269,10 +268,6 @@ var RentalAgreementsDetail = React.createClass({
 
   },
 
-  showHistory() {
-
-  },
-
   generateRentalAgreementDocument() {
     Api.generateRentalAgreementDocument(this.props.params.rentalAgreementId).finally(() => {
       window.open(buildApiPath(`/rentalagreements/${ this.props.params.rentalAgreementId }/pdf`));
@@ -322,16 +317,13 @@ var RentalAgreementsDetail = React.createClass({
 
           return (
             <Row id="rental-agreements-top">
-              <Col md={8}>
+              <Col sm={9}>
                 <Label bsStyle={ rentalAgreement.isActive ? 'success' : 'danger' }>{ rentalAgreement.status }</Label>
-                <Unimplemented>
-                  <Button title="History" onClick={ this.showHistory }>History</Button>
-                </Unimplemented>
                 <Unimplemented>
                   <Button title="Notes" onClick={ this.showNotes }>Notes ({ Object.keys(this.props.notes).length })</Button>
                 </Unimplemented>
               </Col>
-              <Col md={4}>
+              <Col sm={3}>
                 <div className="pull-right">
                   <Button disabled={ !rentalAgreement.isActive } onClick={ this.openCloneDialog }>Clone</Button>
                   <Button title="Return" onClick={ browserHistory.goBack }><Glyphicon glyph="arrow-left" /> Return</Button>
@@ -346,30 +338,30 @@ var RentalAgreementsDetail = React.createClass({
             if (this.state.loading) { return <div className="spinner-container"><Spinner/></div>; }
 
             return (
-              <div id="rental-agreements-header">
+              <Row id="rental-agreements-header">
                 <h3>Rental Agreement</h3>
-                <Row>
-                  <ColDisplay md={12} labelProps={{ md: 4 }} label="Agreement Number:">{ rentalAgreement.number }</ColDisplay>
-                </Row>
-                <Row>
-                  <ColDisplay md={12} labelProps={{ md: 4 }} label="Owner:">{ rentalAgreement.ownerName }</ColDisplay>
-                </Row>
-                <Row>
-                  <ColDisplay md={12} labelProps={{ md: 4 }} label="Equipment ID:">
-                    <Link to={{ pathname: 'equipment/' + rentalAgreement.equipment.id }}>{ rentalAgreement.equipment.equipmentCode }</Link></ColDisplay>
-                </Row>
-                <Row>
-                  <ColDisplay md={12} labelProps={{ md: 4 }} label="Equipment Serial Number:">{ rentalAgreement.equipment.serialNumber }</ColDisplay>
-                </Row>
-                <Row>
-                  <ColDisplay md={12} labelProps={{ md: 4 }} label="Equipment Yr Mk/Md/Sz:">
-                    {`${rentalAgreement.equipment.year} ${rentalAgreement.equipment.make}/${rentalAgreement.equipment.model}/${rentalAgreement.equipment.size}`}
+                <Col lg={4} md={6} sm={12} xs={12}>
+                  <ColDisplay labelProps={{ xs: 4 }} fieldProps={{ xs: 8 }} label="Agreement Number:">{ rentalAgreement.number }</ColDisplay>
+                </Col>
+                <Col lg={4} md={6} sm={12} xs={12}>
+                  <ColDisplay labelProps={{ xs: 4 }} fieldProps={{ xs: 8 }} label="Owner:">{ rentalAgreement.ownerName }</ColDisplay>
+                </Col>
+                <Col lg={4} md={6} sm={12} xs={12}>
+                  <ColDisplay labelProps={{ xs: 4 }} fieldProps={{ xs: 8 }} label="Equipment ID:">
+                    <Link to={{ pathname: 'equipment/' + rentalAgreement.equipment.id }}>{ rentalAgreement.equipment.equipmentCode }</Link>
                   </ColDisplay>
-                </Row>
-                <Row>
-                  <ColDisplay md={12} labelProps={{ md: 4 }} label="Project:">{ rentalAgreement.project.name }</ColDisplay>
-                </Row>
-              </div>
+                </Col>
+                <Col lg={4} md={6} sm={12} xs={12}>
+                  <ColDisplay labelProps={{ xs: 4 }} fieldProps={{ xs: 8 }} label="Equipment Serial Number:">{ rentalAgreement.equipment.serialNumber }</ColDisplay>
+                </Col>
+                <Col lg={4} md={6} sm={12} xs={12}>
+                  <ColDisplay labelProps={{ xs: 4 }} fieldProps={{ xs: 8 }} label="Equipment Yr Mk/Md/Sz:">
+                    {`${rentalAgreement.equipment.year} ${rentalAgreement.equipment.make}/${rentalAgreement.equipment.model}/${rentalAgreement.equipment.size}`}</ColDisplay>
+                </Col>
+                <Col lg={4} md={6} sm={12} xs={12}>
+                  <ColDisplay labelProps={{ xs: 4 }} fieldProps={{ xs: 8 }} label="Project:">{ rentalAgreement.project.name }</ColDisplay>
+                </Col>
+              </Row>
             );
           })()}
         </Well>
@@ -379,24 +371,18 @@ var RentalAgreementsDetail = React.createClass({
           {(() => {
             if (this.state.loading) { return <div className="spinner-container"><Spinner/></div>; }
 
-            return <div>
-              <Grid id="rental-rates" fluid className="nopadding">
-                <Row>
-                  <Col md={3}>
-                    <ColDisplay md={12} labelProps={{ md: 6 }} label="Pay Rate:">{ formatCurrency(rentalAgreement.equipmentRate) }</ColDisplay>
-                  </Col>
-                  <Col md={3}>
-                    <ColDisplay md={12} labelProps={{ md: 6 }} label="Period:">{ rentalAgreement.ratePeriod }</ColDisplay>
-                  </Col>
-                  <Col md={5}>
-                    <ColDisplay md={12} labelProps={{ md: 3 }} label="Comment:">{ rentalAgreement.rateComment }</ColDisplay>
-                  </Col>
-                  <Col md={1}>
-                    <EditButton title="Edit Pay Rate" className="pull-right" onClick={ this.openEquipmentRateDialog } />
-                  </Col>
-                </Row>
-              </Grid>
-            </div>;
+            return <Row className="rental-rates">
+              <Col sm={3} xs={12}>
+                <strong>Pay Rate: </strong>{ formatCurrency(rentalAgreement.equipmentRate) }
+              </Col>
+              <Col sm={3} xs={12}>
+                <strong>Period: </strong>{ rentalAgreement.ratePeriod }
+              </Col>
+              <Col sm={5} xs={12}>
+                <strong>Comment: </strong>{ rentalAgreement.rateComment }
+              </Col>
+              <EditButton title="Edit Pay Rate" className="edit-rate-btn" onClick={ this.openEquipmentRateDialog } />
+            </Row>;
           })()}
 
           {(() => {
@@ -568,15 +554,23 @@ var RentalAgreementsDetail = React.createClass({
 
             return (
               <Row>
-                <Col md={6}>
-                  <ColDisplay md={12} labelProps={{ md: 6 }} label="Estimated Commencement:">{ formatDateTime(rentalAgreement.estimateStartWork, Constant.DATE_YEAR_SHORT_MONTH_DAY) }</ColDisplay>
-                  <ColDisplay md={12} labelProps={{ md: 6 }} label="Point of Hire:">{ rentalAgreement.pointOfHire }</ColDisplay>
-                  <ColDisplay md={12} labelProps={{ md: 6 }} label="District:">{ rentalAgreement.districtName }</ColDisplay>
+                <Col lg={4} md={6} sm={12} xs={12}>
+                  <ColDisplay labelProps={{ xs: 4 }} fieldProps={{ xs: 8 }} label="Estimated Commencement:">{ formatDateTime(rentalAgreement.estimateStartWork, Constant.DATE_YEAR_SHORT_MONTH_DAY) }</ColDisplay>
                 </Col>
-                <Col md={6}>
-                  <ColDisplay md={12} labelProps={{ md: 6 }} label="Dated On:">{ formatDateTime(rentalAgreement.datedOn, Constant.DATE_YEAR_SHORT_MONTH_DAY) }</ColDisplay>
-                  <ColDisplay md={12} labelProps={{ md: 6 }} label="Estimated Period Hours:">{ rentalAgreement.estimateHours }</ColDisplay>
-                  <ColDisplay md={12} labelProps={{ md: 6 }} label="WorkSafeBC (WCB) Number:">{ rentalAgreement.workSafeBCPolicyNumber }</ColDisplay>
+                <Col lg={4} md={6} sm={12} xs={12}>
+                  <ColDisplay labelProps={{ xs: 4 }} fieldProps={{ xs: 8 }} label="Point of Hire:">{ rentalAgreement.pointOfHire }</ColDisplay>
+                </Col>
+                <Col lg={4} md={6} sm={12} xs={12}>
+                  <ColDisplay labelProps={{ xs: 4 }} fieldProps={{ xs: 8 }} label="District:">{ rentalAgreement.districtName }</ColDisplay>
+                </Col>
+                <Col lg={4} md={6} sm={12} xs={12}>
+                  <ColDisplay labelProps={{ xs: 4 }} fieldProps={{ xs: 8 }} label="Dated On:">{ formatDateTime(rentalAgreement.datedOn, Constant.DATE_YEAR_SHORT_MONTH_DAY) }</ColDisplay>
+                </Col>
+                <Col lg={4} md={6} sm={12} xs={12}>
+                  <ColDisplay labelProps={{ xs: 4 }} fieldProps={{ xs: 8 }} label="Estimated Period Hours:">{ rentalAgreement.estimateHours }</ColDisplay>
+                </Col>
+                <Col lg={4} md={6} sm={12} xs={12}>
+                  <ColDisplay labelProps={{ xs: 4 }} fieldProps={{ xs: 8 }} label="WorkSafeBC (WCB) Number:">{ rentalAgreement.workSafeBCPolicyNumber }</ColDisplay>
                 </Col>
               </Row>
             );

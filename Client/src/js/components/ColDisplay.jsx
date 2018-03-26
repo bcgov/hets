@@ -1,8 +1,7 @@
 import React from 'react';
-import { Col } from 'react-bootstrap';
+import { Row, Col } from 'react-bootstrap';
 
 import _ from 'lodash';
-
 
 var ColDisplay = React.createClass({
   propTypes: {
@@ -15,14 +14,14 @@ var ColDisplay = React.createClass({
   render() {
     var props = _.omit(this.props, 'label', 'labelProps', 'fieldProps');
 
-    return <Col { ...props }>
-      <Col { ...this.props.labelProps } style={{ float: 'left' }} className="col-display-label">
+    return <Row { ...props }>
+      <Col { ...this.props.labelProps } style={{ paddingRight: 15, wordWrap: 'break-word' }}>
         <strong>{ this.props.label }</strong>
       </Col>
-      <Col { ...this.props.fieldProps } style={{ float: 'left', paddingLeft: 10 }} className="col-display-field">
+      <Col { ...this.props.fieldProps } style={{ paddingRight: 15, wordWrap: 'break-word' }}>
         { this.props.children }
       </Col>
-    </Col>;
+    </Row>;
   },
 });
 

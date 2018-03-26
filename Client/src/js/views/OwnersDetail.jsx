@@ -389,24 +389,36 @@ var OwnersDetail = React.createClass({
 
                 return <div id="owners-data">
                   <Row>
-                    <ColDisplay md={6} labelProps={{ md: 6 }} label="Company">{ owner.organizationName }</ColDisplay>
-                    <ColDisplay md={6} labelProps={{ md: 6 }} label="Company Address">{ owner.fullAddress }</ColDisplay>
-                  </Row>
-                  <Row>
-                    <ColDisplay md={6} labelProps={{ md: 6 }} label="Owner Name">{ owner.ownerName }</ColDisplay>
-                    <ColDisplay md={6} labelProps={{ md: 6 }} label="Owner Code">{ owner.ownerCode }</ColDisplay>
-                  </Row>
-                  <Row>
-                    <ColDisplay md={6} labelProps={{ md: 6 }} label="Primary Contact">{ owner.primaryContactName }</ColDisplay>
-                    <ColDisplay md={6} labelProps={{ md: 6 }} label="Doing Business As">{ owner.doingBusinessAs }</ColDisplay>
-                  </Row>
-                  <Row>
-                    <ColDisplay md={6} labelProps={{ md: 6 }} label="Registered BC Company Number">{ owner.registeredCompanyNumber }</ColDisplay>
-                    <ColDisplay md={6} labelProps={{ md: 6 }} label="District Office">{ owner.districtName }</ColDisplay>
-                  </Row>
-                  <Row>
-                    <ColDisplay md={6} labelProps={{ md: 6 }} label="Service/Local Area">{ owner.localAreaName }</ColDisplay>
-                    <ColDisplay md={6} labelProps={{ md: 6 }} label="Meets Residency?">{ owner.meetsResidency ? 'Yes' : 'No' }</ColDisplay>
+                    <Col lg={4} md={6} sm={12} xs={12}>
+                      <ColDisplay labelProps={{ xs: 4 }} fieldProps={{ xs: 8 }} label="Company">{ owner.organizationName }</ColDisplay>
+                    </Col>
+                    <Col lg={4} md={6} sm={12} xs={12}>
+                      <ColDisplay labelProps={{ xs: 4 }} fieldProps={{ xs: 8 }} label="Company Address">{ owner.fullAddress }</ColDisplay>
+                    </Col>
+                    <Col lg={4} md={6} sm={12} xs={12}>
+                      <ColDisplay labelProps={{ xs: 4 }} fieldProps={{ xs: 8 }} label="Owner Name">{ owner.ownerName }</ColDisplay>
+                    </Col>
+                    <Col lg={4} md={6} sm={12} xs={12}>
+                      <ColDisplay labelProps={{ xs: 4 }} fieldProps={{ xs: 8 }} label="Owner Code">{ owner.ownerCode }</ColDisplay>
+                    </Col>
+                    <Col lg={4} md={6} sm={12} xs={12}>
+                      <ColDisplay labelProps={{ xs: 4 }} fieldProps={{ xs: 8 }} label="Primary Contact">{ owner.primaryContactName }</ColDisplay>
+                    </Col>
+                    <Col lg={4} md={6} sm={12} xs={12}>
+                      <ColDisplay labelProps={{ xs: 4 }} fieldProps={{ xs: 8 }} label="Doing Business As">{ owner.doingBusinessAs }</ColDisplay>
+                    </Col>
+                    <Col lg={4} md={6} sm={12} xs={12}>
+                      <ColDisplay labelProps={{ xs: 4 }} fieldProps={{ xs: 8 }} label="Registered BC Company Number">{ owner.registeredCompanyNumber }</ColDisplay>
+                    </Col>
+                    <Col lg={4} md={6} sm={12} xs={12}>
+                      <ColDisplay labelProps={{ xs: 4 }} fieldProps={{ xs: 8 }} label="District Office">{ owner.districtName }</ColDisplay>
+                    </Col>
+                    <Col lg={4} md={6} sm={12} xs={12}>
+                      <ColDisplay labelProps={{ xs: 4 }} fieldProps={{ xs: 8 }} label="Service/Local Area">{ owner.localAreaName }</ColDisplay>
+                    </Col>
+                    <Col lg={4} md={6} sm={12} xs={12}>
+                      <ColDisplay labelProps={{ xs: 4 }} fieldProps={{ xs: 8 }} label="Meets Residency?">{ owner.meetsResidency ? 'Yes' : 'No' }</ColDisplay>
+                    </Col>
                   </Row>
                 </div>;
               })()}
@@ -420,26 +432,26 @@ var OwnersDetail = React.createClass({
               {(() => {
                 if (this.state.loading) { return <div className="spinner-container"><Spinner/></div>; }
 
-                return <div id="owners-policy">
-                  <Row>
-                    <ColDisplay md={12} labelProps={{ md: 4 }} label="WCB Number">{ owner.workSafeBCPolicyNumber }</ColDisplay>
-                  </Row>
-                  <Row>
-                    <ColDisplay md={12} labelProps={{ md: 4 }} label="WCB Expiry Date">
+                return <Row id="owners-policy">
+                  <Col lg={4} md={6} sm={12} xs={12}>
+                    <ColDisplay labelProps={{ xs: 4 }} fieldProps={{ xs: 8 }} label="WCB Number">{ owner.workSafeBCPolicyNumber }</ColDisplay>
+                  </Col>
+                  <Col lg={4} md={6} sm={12} xs={12}>
+                    <ColDisplay labelProps={{ xs: 4 }} fieldProps={{ xs: 8 }} label="WCB Expiry Date">
                       { formatDateTime(owner.workSafeBCExpiryDate, Constant.DATE_YEAR_SHORT_MONTH_DAY) }
                     </ColDisplay>
-                  </Row>
-                  <Row>
-                    <ColDisplay md={12} labelProps={{ md: 4 }} label="CGL Policy Number">
+                  </Col>
+                  <Col lg={4} md={6} sm={12} xs={12}>
+                    <ColDisplay labelProps={{ xs: 4 }} fieldProps={{ xs: 8 }} label="CGL Policy Number">
                       { owner.cglPolicyNumber }
                     </ColDisplay>
-                  </Row>
-                  <Row>
-                    <ColDisplay md={12} labelProps={{ md: 4 }} label="CGL Policy End Date">
+                  </Col>
+                  <Col lg={4} md={6} sm={12} xs={12}>
+                    <ColDisplay labelProps={{ xs: 4 }} fieldProps={{ xs: 8 }} label="CGL Policy End Date">
                       { formatDateTime(owner.cglEndDate, Constant.DATE_YEAR_SHORT_MONTH_DAY) }
                     </ColDisplay>
-                  </Row>
-                </div>;
+                  </Col>
+                </Row>;
               })()}
             </Well>
           </Col>
