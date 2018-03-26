@@ -174,13 +174,12 @@ namespace HETSAPI.Services.Impl
                 .Include(x => x.Contacts)
                 .Include(x => x.PrimaryContact)
                 .Include(x => x.RentalRequests)
-                    .ThenInclude(e => e.DistrictEquipmentType)
-                        .ThenInclude(d => d.EquipmentType)
+                    .ThenInclude(y => y.DistrictEquipmentType)
                 .Include(x => x.RentalRequests)
                     .ThenInclude(y => y.RentalRequestRotationList)
                 .Include(x => x.RentalAgreements)
-                    .ThenInclude(e => e.Equipment)
-                        .ThenInclude(d => d.DistrictEquipmentType)
+                    .ThenInclude(y => y.Equipment)
+                        .ThenInclude(z => z.DistrictEquipmentType)
                 .First(a => a.Id == id);
 
             // calculate the number of hired (yes, forced hire) equipment
@@ -225,26 +224,7 @@ namespace HETSAPI.Services.Impl
                     rentalAgreement.Status.Equals("Active", StringComparison.InvariantCultureIgnoreCase))
                 {
                     countActiveAgreements++;
-                }
-
-                // get the max hours for this equipment type
-                if (rentalAgreement.Equipment != null &&
-                    rentalAgreement.Equipment.DistrictEquipmentType != null &&
-                    rentalAgreement.Equipment.DistrictEquipmentType.EquipmentType != null)
-                {
-                    if (rentalAgreement.Equipment.DistrictEquipmentType.EquipmentType.IsDumpTruck)
-                    {
-                        int dumpValue = Convert.ToInt32(_configuration.GetSection("MaximumHours:DumpTruck").Value);
-                        rentalAgreement.Equipment.MaximumHours = dumpValue;
-                    }
-                    else
-                    {
-                        int defValue = Convert.ToInt32(_configuration.GetSection("MaximumHours:Default").Value);
-                        rentalAgreement.Equipment.MaximumHours = defValue;
-                    }
-
-                    rentalAgreement.Equipment.HoursYtd = rentalAgreement.Equipment.GetYtdServiceHours(_context);
-                }
+                }                
             }
 
             // Only allow editing the "Status" field under the following conditions:
