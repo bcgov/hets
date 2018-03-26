@@ -557,29 +557,40 @@ namespace HETSAPI.Models
         {
             // update the audit fields for this item.
             string smUserId = null;
+
             if (_httpContextAccessor != null)
+            {
                 smUserId = GetCurrentUserId();
+            }
 
-            var modifiedEntries = ChangeTracker.Entries()
-                    .Where(e => e.State == EntityState.Added || e.State == EntityState.Modified);
+            // get all of the modified records
+            IEnumerable<EntityEntry> modifiedEntries = ChangeTracker.Entries()
+                    .Where(e => e.State == EntityState.Added || 
+                                e.State == EntityState.Modified);
 
+            // manage the audit columns and the concurrency column
             DateTime currentTime = DateTime.UtcNow;
 
-            List<SeniorityAudit> seniorityAudits = new List<SeniorityAudit>();
+            List <SeniorityAudit> seniorityAudits = new List<SeniorityAudit>();
 
-            foreach (var entry in modifiedEntries)
+            foreach (EntityEntry entry in modifiedEntries)
             {
                 if (entry.Entity.GetType().InheritsOrImplements(typeof(AuditableEntity)))
                 {
-                    var theObject = (AuditableEntity)entry.Entity;
+                    AuditableEntity theObject = (AuditableEntity)entry.Entity;
 
                     theObject.AppLastUpdateUserid = smUserId;
                     theObject.AppLastUpdateTimestamp = currentTime;
-
+                    
                     if (entry.State == EntityState.Added)
                     {
                         theObject.AppCreateUserid = smUserId;
                         theObject.AppCreateTimestamp = currentTime;
+                        theObject.ConcurrencyControlNumber = 1;
+                    }
+                    else
+                    {
+                        theObject.ConcurrencyControlNumber = theObject.ConcurrencyControlNumber + 1;
                     }
                 }
 
@@ -591,6 +602,7 @@ namespace HETSAPI.Models
 
             int result = base.SaveChanges();
 
+            // manage seniority audit records
             if (seniorityAudits.Count > 0)
             {
                 foreach (SeniorityAudit seniorityAudit in seniorityAudits)
