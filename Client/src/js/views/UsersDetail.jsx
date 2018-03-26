@@ -252,13 +252,11 @@ var UsersDetail = React.createClass({
 
                 return <div id="user-data">
                   <Row>
-                    <ColDisplay md={3} label="Given Name">{ user.givenName }</ColDisplay>
-                    <ColDisplay md={3} label="User ID">{ user.smUserId }</ColDisplay>
-                    <ColDisplay md={6} label="E-mail">{ user.email }</ColDisplay>
-                  </Row>
-                  <Row>
-                    <ColDisplay md={3} label="Surname">{ user.surname }</ColDisplay>
-                    <ColDisplay md={3} label="District">{ user.districtName }</ColDisplay>
+                    <ColDisplay lg={4} md={6} sm={6} xs={12} label="Given Name">{ user.givenName }</ColDisplay>
+                    <ColDisplay lg={4} md={6} sm={6} xs={12} label="Surname">{ user.surname }</ColDisplay>
+                    <ColDisplay lg={4} md={6} sm={6} xs={12} label="User ID">{ user.smUserId }</ColDisplay>
+                    <ColDisplay lg={4} md={6} sm={6} xs={12} label="E-mail">{ user.email }</ColDisplay>
+                    <ColDisplay lg={4} md={6} sm={6} xs={12} label="District">{ user.districtName }</ColDisplay>
                   </Row>
                 </div>;
               })()}
