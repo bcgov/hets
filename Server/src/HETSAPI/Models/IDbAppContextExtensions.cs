@@ -422,7 +422,7 @@ namespace HETSAPI.Models
             // e.g. 16.1 == "Dump Truck"
             // The Blue Book Sections are the master list for all Equipment Types
             EquipmentType equipType = context.EquipmentTypes
-                .FirstOrDefault(x => x.BlueBookRateNumber == initialEquipmentType.BlueBookRateNumber);
+                .FirstOrDefault(x => x.BlueBookSection == initialEquipmentType.BlueBookSection);
 
             string equipmentTypeName = string.Format("{0} - {1}",
                 initialEquipmentType.BlueBookSection,
