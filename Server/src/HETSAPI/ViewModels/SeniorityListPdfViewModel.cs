@@ -6,6 +6,13 @@ using Newtonsoft.Json;
 
 namespace HETSAPI.ViewModels
 {
+    public class SeniorityListRecord
+    {
+        public string LocalAreaName { get; set; }
+        public string DistrictEquipmentTypeName { get; set; }
+        public List<SeniorityViewModel> SeniorityList { get; set; }
+    }
+
     /// <summary>
     /// Seniority List Pdf View Model
     /// </summary>
@@ -22,17 +29,17 @@ namespace HETSAPI.ViewModels
         /// <summary>
         /// Initializes a new instance of the <see cref="SeniorityListPdfViewModel" /> class.
         /// </summary>
-        /// <param name="seniorityList">List of equipment</param>
-        public SeniorityListPdfViewModel(List<SeniorityViewModel> seniorityList)
+        /// <param name="seniorityListRecords">List of seniority list records</param>
+        public SeniorityListPdfViewModel(List<SeniorityListRecord> seniorityListRecords)
         {
-            SeniorityList = seniorityList;
+            SeniorityListRecords = seniorityListRecords;
         }
 
         /// <summary>
-        /// Gets or Sets SeniorityList
+        /// Gets or Sets Seniority List Records
         /// </summary>
-        [DataMember(Name= "seniorityList")]
-        public List<SeniorityViewModel> SeniorityList { get; set; }        
+        [DataMember(Name= "seniorityListRecords")]
+        public List<SeniorityListRecord> SeniorityListRecords { get; set; }        
 
         /// <summary>
         /// Returns the string presentation of the object
@@ -43,7 +50,7 @@ namespace HETSAPI.ViewModels
             var sb = new StringBuilder();
 
             sb.Append("class SeniorityListPdfViewModel {\n");
-            sb.Append("  SeniorityList: ").Append(SeniorityList).Append("\n");            
+            sb.Append("  SeniorityListRecords: ").Append(SeniorityListRecords).Append("\n");            
             sb.Append("}\n");
 
             return sb.ToString();
@@ -82,8 +89,8 @@ namespace HETSAPI.ViewModels
 
             return                 
                 (
-                    SeniorityList == other.SeniorityList ||
-                    SeniorityList.Equals(other.SeniorityList)
+                    SeniorityListRecords == other.SeniorityListRecords ||
+                    SeniorityListRecords.Equals(other.SeniorityListRecords)
                 );
         }
 
@@ -99,7 +106,7 @@ namespace HETSAPI.ViewModels
                 int hash = 41;
 
                 // Suitable nullity checks                                   
-                hash = hash * 59 + SeniorityList.GetHashCode();
+                hash = hash * 59 + SeniorityListRecords.GetHashCode();
                 
                 return hash;
             }

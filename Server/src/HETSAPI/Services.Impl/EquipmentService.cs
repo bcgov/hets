@@ -1354,7 +1354,8 @@ namespace HETSAPI.Services.Impl
                 .Include(x => x.Owner)
                 .Include(x => x.RentalAgreements)
                 .Where(x => x.LocalArea.ServiceArea.DistrictId.Equals(districtId) &&
-                            x.Status == Equipment.StatusApproved);
+                            x.Status == Equipment.StatusApproved)
+                .OrderBy(x => x.LocalArea).ThenBy(x => x.DistrictEquipmentType);
 
             if (localareasArray != null && localareasArray.Length > 0)
             {
@@ -1369,16 +1370,46 @@ namespace HETSAPI.Services.Impl
             // **********************************************************************
             // convert Equipment Model to Pdf View Model
             // **********************************************************************
-            SeniorityScoringRules scoringRules = new SeniorityScoringRules(_configuration);
-            List<SeniorityViewModel> result = new List<SeniorityViewModel>();
+            SeniorityListPdfViewModel seniorityList = new SeniorityListPdfViewModel();
+            SeniorityScoringRules scoringRules = new SeniorityScoringRules(_configuration);            
+            SeniorityListRecord listRecord = new SeniorityListRecord();
 
             foreach (Equipment item in data)
             {
-                result.Add(item.ToSeniorityViewModel(scoringRules, _context));
+                if (listRecord.LocalAreaName != item.LocalArea.Name ||
+                    listRecord.DistrictEquipmentTypeName != item.DistrictEquipmentType.DistrictEquipmentName)
+                {
+                    if (!string.IsNullOrEmpty(listRecord.LocalAreaName))
+                    {
+                        if (seniorityList.SeniorityListRecords == null)
+                        {
+                            seniorityList.SeniorityListRecords = new List<SeniorityListRecord>();
+                        }
+
+                        seniorityList.SeniorityListRecords.Add(listRecord);
+                    }
+
+                    listRecord = new SeniorityListRecord
+                    {
+                        LocalAreaName = item.LocalArea.Name,
+                        DistrictEquipmentTypeName = item.DistrictEquipmentType.DistrictEquipmentName,
+                        SeniorityList = new List<SeniorityViewModel>()
+                    };
+                }
+
+                listRecord.SeniorityList.Add(item.ToSeniorityViewModel(scoringRules, _context));
             }
 
-            // convert result into our object for use in the Pfd generation
-            SeniorityListPdfViewModel seniorityList = new SeniorityListPdfViewModel {SeniorityList = result};
+            // add last record
+            if (!string.IsNullOrEmpty(listRecord.LocalAreaName))
+            {
+                if (seniorityList.SeniorityListRecords == null)
+                {
+                    seniorityList.SeniorityListRecords = new List<SeniorityListRecord>();
+                }
+
+                seniorityList.SeniorityListRecords.Add(listRecord);
+            }
 
             // **********************************************************************
             // create the payload and call the pdf service
