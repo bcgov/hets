@@ -44,7 +44,7 @@ namespace HETSAPI.Services.Impl
                     string seniorityScoringRules = GetConfigJson(scoringRules);
 
                     // get connection string
-                    string connectionString = _context.Database.GetDbConnection().ConnectionString;                    
+                    string connectionString = GetConnectionString();
 
                     if (realTime)
                     {
@@ -162,6 +162,37 @@ namespace HETSAPI.Services.Impl
             }
 
             return null;
-        }        
+        }
+
+        /// <summary>
+        /// Retrieve database connection string
+        /// </summary>
+        /// <returns></returns>
+        private string GetConnectionString()
+        {
+            string connectionString;
+
+            lock (_thisLock)
+            {               
+                string host = _configuration["DATABASE_SERVICE_NAME"];
+                string username = _configuration["POSTGRESQL_USER"];
+                string password = _configuration["POSTGRESQL_PASSWORD"];
+                string database = _configuration["POSTGRESQL_DATABASE"];
+
+                if (string.IsNullOrEmpty(host) || string.IsNullOrEmpty(username) || string.IsNullOrEmpty(password) ||
+                    string.IsNullOrEmpty(database))
+                {
+                    // When things get cleaned up properly, this is the only call we'll have to make.
+                    connectionString = _configuration.GetConnectionString("HETS");
+                }
+                else
+                {
+                    // Environment variables override all other settings; same behaviour as the configuration provider when things get cleaned up. 
+                    connectionString = $"Host={host};Username={username};Password={password};Database={database};";
+                }
+            }
+
+            return connectionString;
+        }
     }
 }
