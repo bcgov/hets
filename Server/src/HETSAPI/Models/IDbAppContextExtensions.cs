@@ -401,6 +401,7 @@ namespace HETSAPI.Models
         private static void AddInitialEquipmentTypes(this IDbAppContext context, string equipmentTypesJson)
         {
             List<EquipmentType> equipmentTypes = JsonConvert.DeserializeObject<List<EquipmentType>>(equipmentTypesJson);
+
             if (equipmentTypes != null)
             {
                 context.AddInitialEquipmentTypes(equipmentTypes);
@@ -420,10 +421,15 @@ namespace HETSAPI.Models
             // Blue Book Rate Number equates to the Section in the Blue Book
             // e.g. 16.1 == "Dump Truck"
             // The Blue Book Sections are the master list for all Equipment Types
-            EquipmentType equipType = context.EquipmentTypes.FirstOrDefault(x => x.BlueBookRateNumber == initialEquipmentType.BlueBookRateNumber);
+            EquipmentType equipType = context.EquipmentTypes
+                .FirstOrDefault(x => x.BlueBookRateNumber == initialEquipmentType.BlueBookRateNumber);
+
+            string equipmentTypeName = string.Format("{0} - {1}",
+                initialEquipmentType.BlueBookSection,
+                initialEquipmentType.Name);
 
             if (equipType != null)
-            {
+            {                
                 // update the record
                 equipType.BlueBookRateNumber = initialEquipmentType.BlueBookRateNumber;
                 equipType.BlueBookSection = initialEquipmentType.BlueBookSection;
@@ -431,7 +437,7 @@ namespace HETSAPI.Models
                 equipType.IsDumpTruck = initialEquipmentType.IsDumpTruck;
                 equipType.MaxHoursSub = initialEquipmentType.MaxHoursSub;
                 equipType.MaximumHours = initialEquipmentType.MaximumHours;
-                equipType.Name = initialEquipmentType.Name;
+                equipType.Name = equipmentTypeName;
                 equipType.NumberOfBlocks = initialEquipmentType.NumberOfBlocks;
                 equipType.AppLastUpdateUserid = SystemId;
                 equipType.AppLastUpdateTimestamp = DateTime.UtcNow;
@@ -449,7 +455,7 @@ namespace HETSAPI.Models
                     IsDumpTruck = initialEquipmentType.IsDumpTruck,
                     MaxHoursSub = initialEquipmentType.MaxHoursSub,
                     MaximumHours = initialEquipmentType.MaximumHours,
-                    Name = initialEquipmentType.Name,
+                    Name = equipmentTypeName,
                     NumberOfBlocks = initialEquipmentType.NumberOfBlocks,
                     AppCreateUserid = SystemId,
                     AppCreateTimestamp = DateTime.UtcNow,
