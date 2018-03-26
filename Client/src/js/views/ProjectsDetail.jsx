@@ -495,7 +495,6 @@ var ProjectsDetail = React.createClass({
         <TimeEntryDialog
           show={ this.state.showTimeEntryDialog }
           onClose={ this.closeTimeEntryDialog }
-          project={ project }
           activeRentalRequest={ this.state.rentalRequest }
         />
         }
