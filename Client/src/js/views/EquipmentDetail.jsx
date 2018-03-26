@@ -154,7 +154,7 @@ var EquipmentDetail = React.createClass({
 
   onChangeStatus(status) {
     Api.changeEquipmentStatus(status).then(() => {
-      Log.equipmentStatusModified(this.props.equipment, status.status);
+      Log.equipmentStatusModified(this.props.equipment, status.status, status.statusComment);
       this.closeChangeStatusDialog();
     });
   },
