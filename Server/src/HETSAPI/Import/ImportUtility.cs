@@ -412,43 +412,40 @@ namespace HETSAPI.Import
         {
             string tempNumber = "";
 
-            countryCode = CleanString(countryCode).ToLower();
+            // ignoring country code - no room in the database (can add back after switch to new db model)
             areaCode = CleanString(areaCode).ToLower();
             number = CleanString(number).ToLower();
             extension = CleanString(extension).ToLower();
-
-            if (!string.IsNullOrEmpty(countryCode))
-            {
-                countryCode = countryCode.Replace("+", "");
-                countryCode = "+" + countryCode;
-                tempNumber = countryCode;
-            }
-
+            
             if (!string.IsNullOrEmpty(areaCode))
             {
                 areaCode = areaCode.Replace("(", "");
                 areaCode = areaCode.Replace(")", "");
-                areaCode = "(" + areaCode + ")";
 
-                if (!string.IsNullOrEmpty(tempNumber))
-                {
-                    tempNumber = " " + areaCode;
-                }
-                else
-                {
-                    tempNumber = countryCode;
-                }                
+                tempNumber = areaCode;
             }
 
             if (!string.IsNullOrEmpty(number))
             {
                 number = number.Replace("-", "");
                 number = number.Replace(" ", "");
-                number = string.Format("{0:###-####}", number);
 
+                bool parseNumebr = Int32.TryParse(number, out int numberInt);
+
+                if (parseNumebr)
+                {
+                    number = string.Format("{0:###-####}", numberInt);
+                }
+                else if (number.Length == 7)
+                {
+                    string temp1 = number.Substring(0, 3);
+                    string temp2 = number.Substring(3, 4);
+                    number = temp1 + "-" + temp2;
+                }
+                
                 if (!string.IsNullOrEmpty(tempNumber))
                 {
-                    tempNumber = " " + number;
+                    tempNumber = tempNumber + "-" + number;
                 }
                 else
                 {
@@ -461,11 +458,11 @@ namespace HETSAPI.Import
                 extension = extension.Replace("x", "");
                 extension = extension.Replace("ext.", "");
                 extension = extension.Replace("ext", "");
-                extension = "ext. " + extension;
+                extension = "x" + extension;
 
                 if (!string.IsNullOrEmpty(tempNumber))
                 {
-                    tempNumber = " " + extension;
+                    tempNumber = tempNumber + " " + extension;
                 }
                 else
                 {
