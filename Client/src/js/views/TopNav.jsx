@@ -33,6 +33,7 @@ var TopNav = React.createClass({
     var district = _.find(this.props.currentUserDistricts.data, district => { return district.district.id === state.districtId; });
     Api.switchUserDistrict(district.id).then(() => {
       location.reload();
+      this.context.router.push({ pathname: Constant.HOME_PATHNAME });
     });
   },
 
@@ -134,6 +135,10 @@ var TopNav = React.createClass({
   },
 });
 
+TopNav.contextTypes = {
+  router: React.PropTypes.func.isRequired,
+};
+
 
 function mapStateToProps(state) {
   return {
@@ -144,4 +149,4 @@ function mapStateToProps(state) {
   };
 }
 
-export default connect(mapStateToProps, null, null, { pure:false })(TopNav);
+export default connect(mapStateToProps, null, null, { pure: false })(TopNav);
