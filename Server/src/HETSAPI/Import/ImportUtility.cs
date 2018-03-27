@@ -408,6 +408,74 @@ namespace HETSAPI.Import
             return tempNamePart;
         }
 
+        public static string FormatPhone(string countryCode, string areaCode, string number, string extension)
+        {
+            string tempNumber = "";
+
+            countryCode = CleanString(countryCode).ToLower();
+            areaCode = CleanString(areaCode).ToLower();
+            number = CleanString(number).ToLower();
+            extension = CleanString(extension).ToLower();
+
+            if (!string.IsNullOrEmpty(countryCode))
+            {
+                countryCode = countryCode.Replace("+", "");
+                countryCode = "+" + countryCode;
+                tempNumber = countryCode;
+            }
+
+            if (!string.IsNullOrEmpty(areaCode))
+            {
+                areaCode = areaCode.Replace("(", "");
+                areaCode = areaCode.Replace(")", "");
+                areaCode = "(" + areaCode + ")";
+
+                if (!string.IsNullOrEmpty(tempNumber))
+                {
+                    tempNumber = " " + areaCode;
+                }
+                else
+                {
+                    tempNumber = countryCode;
+                }                
+            }
+
+            if (!string.IsNullOrEmpty(number))
+            {
+                number = number.Replace("-", "");
+                number = number.Replace(" ", "");
+                number = string.Format("{0:###-####}", number);
+
+                if (!string.IsNullOrEmpty(tempNumber))
+                {
+                    tempNumber = " " + number;
+                }
+                else
+                {
+                    tempNumber = number;
+                }
+            }
+
+            if (!string.IsNullOrEmpty(extension))
+            {
+                extension = extension.Replace("x", "");
+                extension = extension.Replace("ext.", "");
+                extension = extension.Replace("ext", "");
+                extension = "ext. " + extension;
+
+                if (!string.IsNullOrEmpty(tempNumber))
+                {
+                    tempNumber = " " + extension;
+                }
+                else
+                {
+                    tempNumber = extension;
+                }
+            }
+
+            return tempNumber;
+        }
+
         public static void UnknownElement(object sender, XmlElementEventArgs e)
         {
             Console.WriteLine("Unexpected element: {0} as line {1}, column {2}", e.Element.Name, e.LineNumber, e.LinePosition);
