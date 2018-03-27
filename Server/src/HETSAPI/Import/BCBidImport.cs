@@ -153,16 +153,16 @@ namespace HETSAPI.Import
             ImportOwner.Obfuscate(context, dbContext, sourceFileLocation, destinationFileLocation, SystemId);
             dbContext = new DbAppContext(null, options.Options);
 
-            // process equipment
-            ImportEquip.Obfuscate(context, dbContext, sourceFileLocation, destinationFileLocation, SystemId);
-            dbContext = new DbAppContext(null, options.Options);
-
             // process dump trucks             
             ImportDumpTruck.Obfuscate(context, dbContext, sourceFileLocation, destinationFileLocation, SystemId);
             dbContext = new DbAppContext(null, options.Options);
 
             // Process equipment attachments              
             ImportEquipAttach.Obfuscate(context, dbContext, sourceFileLocation, destinationFileLocation, SystemId);
+            dbContext = new DbAppContext(null, options.Options);
+
+            // process equipment
+            ImportEquip.Obfuscate(context, dbContext, sourceFileLocation, destinationFileLocation, SystemId);
             dbContext = new DbAppContext(null, options.Options);
 
             // Process projects

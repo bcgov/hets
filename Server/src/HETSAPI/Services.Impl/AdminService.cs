@@ -120,8 +120,11 @@ namespace HETSAPI.Services.Impl
 
             lock (_thisLock)
             {
+                // get upload path
                 string uploadPath = _configuration["UploadPath"];
-                string connectionString = _context.Database.GetDbConnection().ConnectionString;
+
+                // get connection string
+                string connectionString = GetConnectionString();
 
                 ImportUtility.CreateObfuscationDestination(uploadPath + destinationPath);
 
