@@ -115,6 +115,10 @@
                     "value": "${NUM_BACKUPS}"
                   },
                   {
+                    "name": "BACKUP_PERIOD",
+                    "value": "${BACKUP_PERIOD}"
+                  },
+                  {
                     "name": "DATABASE_SERVICE_NAME",
                     "value": "${DATABASE_SERVICE_NAME}"
                   },
@@ -237,8 +241,8 @@
     },
     {
       "name": "BACKUP_PERIOD",
-      "displayName": "Time period between backups in a format used by the sleep command",
-      "description": "Time period between backups in a format used by the sleep command",
+      "displayName": "Period (d,m,s) between backups in a format used by the sleep command",
+      "description": "Period (d,m,s) between backups in a format used by the sleep command",
       "required": true,
       "value": "1d"
     },
