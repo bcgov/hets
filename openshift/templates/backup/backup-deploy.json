@@ -111,6 +111,10 @@
                     "value": "${BACKUP_DIR}"
                   },
                   {
+                    "name": "NUM_BACKUPS",
+                    "value": "${NUM_BACKUPS}"
+                  },
+                  {
                     "name": "DATABASE_SERVICE_NAME",
                     "value": "${DATABASE_SERVICE_NAME}"
                   },
@@ -223,6 +227,20 @@
       "description": "The name of the root backup directory",
       "required": true,
       "value": "/backups/"
+    },
+    {
+      "name": "NUM_BACKUPS",
+      "displayName": "The number of backup files to be retained",
+      "description": "The number of backup files to be retained",
+      "required": true,
+      "value": "31"
+    },
+    {
+      "name": "BACKUP_PERIOD",
+      "displayName": "Time period between backups in a format used by the sleep command",
+      "description": "Time period between backups in a format used by the sleep command",
+      "required": true,
+      "value": "1d"
     },
     {
       "name": "PERSISTENT_VOLUME_NAME",
