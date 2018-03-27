@@ -283,7 +283,9 @@ namespace HETSAPI.Authentication
                 // **************************************************
                 // Update the user back to their default district
                 // **************************************************
-                if (userSettings.HetsUser != null)
+                string tempSwitch = context.Request.Cookies["HETSDistrict"];
+
+                if (string.IsNullOrEmpty(tempSwitch) && userSettings.HetsUser != null)
                 {
                     UserDistrict userDistrict = dbAppContext.UserDistricts.AsNoTracking()
                         .Include(x => x.User)

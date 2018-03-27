@@ -186,7 +186,7 @@ namespace HETSAPI.Services.Impl
 
                     memory.Position = 0;
 
-                    FileStreamResult fileStreamResult = new FileStreamResult(memory, "application/zip, application/octet-stream")
+                    FileStreamResult fileStreamResult = new FileStreamResult(memory, "application/octet-stream")
                     {
                         FileDownloadName = filename
                     };

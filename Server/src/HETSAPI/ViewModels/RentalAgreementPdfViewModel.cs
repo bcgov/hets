@@ -106,15 +106,18 @@ namespace HETSAPI.ViewModels
             // 3. records not included
             // **********************************************
             RentalAgreementRatesOvertime = RentalAgreementRates
-                .FindAll(x => x.ComponentName.StartsWith("Overtime", true, CultureInfo.InvariantCulture));
+                .FindAll(x => x.ComponentName.StartsWith("Overtime", true, CultureInfo.InvariantCulture))
+                .OrderBy(x => x.Id).ToList();
 
             RentalAgreementRatesWithTotal = RentalAgreementRates
                 .FindAll(x => x.IsIncludedInTotal &&
-                              !x.ComponentName.StartsWith("Overtime", true, CultureInfo.InvariantCulture));
+                              !x.ComponentName.StartsWith("Overtime", true, CultureInfo.InvariantCulture))
+                .OrderBy(x => x.Id).ToList(); 
 
             RentalAgreementRatesWithoutTotal = RentalAgreementRates
                 .FindAll(x => !x.IsIncludedInTotal &&
-                              !x.ComponentName.StartsWith("Overtime", true, CultureInfo.InvariantCulture));
+                              !x.ComponentName.StartsWith("Overtime", true, CultureInfo.InvariantCulture))
+                .OrderBy(x => x.Id).ToList();
 
             // **********************************************
             // calculate the total
