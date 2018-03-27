@@ -538,12 +538,12 @@ namespace HETSAPI.Import
                     owner.OrganizationName = owner.OwnerCode;
                     tempName = owner.OrganizationName;
                 }
-                else if (!string.IsNullOrEmpty(owner.OwnerCode))
+                else if (string.IsNullOrEmpty(tempCompanyName) && !string.IsNullOrEmpty(owner.OwnerCode))
                 {
                     owner.OrganizationName = string.Format("{0} - {1} {2}", owner.OwnerCode, tempOwnerFirstName, tempOwnerLastName);
                     tempName = owner.OrganizationName;
                 }
-                else
+                else if (string.IsNullOrEmpty(tempCompanyName))
                 {
                     owner.OrganizationName = string.Format("{0} {1}", tempOwnerFirstName, tempOwnerLastName);
                     tempName = owner.OrganizationName;

@@ -166,38 +166,7 @@ namespace HETSAPI.Services.Impl
 
             return null;
         }
-
-        public IActionResult GetData(string filename)
-        {
-            // download data file
-            lock (_thisLock)
-            {
-                if (_configuration != null)
-                {
-                    string uploadPath = _configuration["UploadPath"];
-                    string fullPath = Path.Combine(uploadPath, filename);
-
-                    MemoryStream memory = new MemoryStream();
-
-                    using (FileStream stream = new FileStream(fullPath, FileMode.Open))
-                    {
-                        stream.CopyToAsync(memory).Wait();
-                    }
-
-                    memory.Position = 0;
-
-                    FileStreamResult fileStreamResult = new FileStreamResult(memory, "application/octet-stream")
-                    {
-                        FileDownloadName = filename
-                    };
-
-                    return fileStreamResult;
-                }
-            }
-
-            return null;
-        }
-
+        
         /// <summary>
         /// Retrieve database connection string
         /// </summary>
