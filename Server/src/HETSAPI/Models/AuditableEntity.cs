@@ -13,7 +13,6 @@ namespace HETSAPI.Models
         /// Used to manage concurrency for the application.
         /// </summary>
         [MetaData(Description = "Used to manage concurrency for the application.")]
-        [JsonIgnore]
         public int ConcurrencyControlNumber { get; set; }
 
         /// <summary>
