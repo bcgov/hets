@@ -25,8 +25,8 @@ while true; do
 		mv $DBFILE.sql.gz.in_progress $DBFILE.sql.gz
 		echo "Database backup written to $DBFILE.sql.gz"
 		
-		# cull backups older than 31 days.  (SB-331)
-		find $BACKUP_DIR* -type d -ctime +${NUM_BACKUPS} | xargs rm -rf
+		# cull backups to a limit of NUM_BACKUPS
+		find ${BACKUP_DIR}* | grep gz | sort -r | sed "1,${NUM_BACKUPS}d" | xargs rm -rf
 	fi;
 	echo "Current Backups:"
 	ls -alh ${BACKUP_DIR}/*/*sql.gz*
