@@ -29,6 +29,16 @@
   h3 {
     font-weight: 600;
   }
+
+  .rental-rates {
+    position: relative;
+
+    .edit-rate-btn {
+      position: absolute;
+      right: 0;
+      top: 0;
+    }
+  }
 }
 
 #rental-agreements-edit {

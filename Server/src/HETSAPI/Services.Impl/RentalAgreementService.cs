@@ -432,20 +432,61 @@ namespace HETSAPI.Services.Impl
         {
             bool exists = _context.RentalAgreements.Any(a => a.Id == id);
 
-            if (exists)
+            if (!exists)
             {
-                RentalAgreement agreement = _context.RentalAgreements.AsNoTracking()
-                    .Include(x => x.TimeRecords)
-                    .First(x => x.Id == id);
+                return new ObjectResult(new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-01", _configuration)));
+            }
+            
+            return new ObjectResult(new HetsResponse(GetRentalAgreementsTimeRecords(id)));
+        }
 
-                List<TimeRecord> timeRecords = new List<TimeRecord>();
-                timeRecords.AddRange(agreement.TimeRecords);
+        private TimeRecordViewModel GetRentalAgreementsTimeRecords(int id)
+        {
+            RentalAgreement agreement = _context.RentalAgreements.AsNoTracking()
+                .Include(x => x.Equipment)
+                .ThenInclude(y => y.DistrictEquipmentType)
+                .ThenInclude(z => z.EquipmentType)
+                .Include(x => x.Project)
+                .Include(x => x.TimeRecords)
+                .First(x => x.Id == id);
 
-                return new ObjectResult(new HetsResponse(timeRecords));
+            // get the max hours for this equipment type
+            float? hoursYtd = 0.0F;
+            int maxHours = 0;
+            string equipmentCode = "";
+
+            if (agreement.Equipment != null &&
+                agreement.Equipment.DistrictEquipmentType != null &&
+                agreement.Equipment.DistrictEquipmentType.EquipmentType != null)
+            {
+                maxHours = Convert.ToInt32(agreement.Equipment.DistrictEquipmentType.EquipmentType.IsDumpTruck ?
+                    _configuration.GetSection("MaximumHours:DumpTruck").Value :
+                    _configuration.GetSection("MaximumHours:Default").Value);
+
+                hoursYtd = agreement.Equipment.GetYtdServiceHours(_context);
+
+                equipmentCode = agreement.Equipment.EquipmentCode;
             }
 
-            // record not found
-            return new ObjectResult(new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-01", _configuration)));
+            // get the project info
+            string projectName = "";
+            string projectNumber = "";
+
+            if (agreement.Project != null)
+            {
+                projectName = agreement.Project.Name;
+                projectNumber = agreement.Project.ProvincialProjectNumber;
+            }
+
+            TimeRecordViewModel response = new TimeRecordViewModel { TimeRecords = new List<TimeRecord>() };
+            response.TimeRecords.AddRange(agreement.TimeRecords);
+            response.EquipmentCode = equipmentCode;
+            response.ProjectName = projectName;
+            response.ProvincialProjectNumber = projectNumber;
+            response.HoursYtd = hoursYtd;
+            response.MaximumHours = maxHours;
+
+            return response;
         }
 
         /// <summary>
@@ -494,12 +535,8 @@ namespace HETSAPI.Services.Impl
 
                 // *************************************************************
                 // return updated time records
-                // *************************************************************
-                List<TimeRecord> timeRecords = new List<TimeRecord>();
-
-                timeRecords.AddRange(agreement.TimeRecords);
-
-                return new ObjectResult(new HetsResponse(timeRecords));
+                // *************************************************************                
+                return new ObjectResult(new HetsResponse(GetRentalAgreementsTimeRecords(id)));
             }
 
             // record not found

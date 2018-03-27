@@ -1566,7 +1566,7 @@ export function updateRentalAgreement(agreement) {
 
 export function getRentalAgreementTimeRecords(rentalAgreementId) {
   return new ApiRequest(`rentalagreements/${rentalAgreementId}/timeRecords`).get().then(response => {
-    var rentalAgreementTimeRecords = normalize(response.data);
+    var rentalAgreementTimeRecords = response.data;
 
     store.dispatch({ type: Action.RENTAL_AGREEMENT_TIME_RECORDS, rentalAgreementTimeRecords: rentalAgreementTimeRecords });
   });

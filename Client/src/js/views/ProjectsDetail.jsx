@@ -294,22 +294,22 @@ var ProjectsDetail = React.createClass({
                     { project.primaryContactName }
                   </a>;
 
-                  return <div id="projects-data">
-                    <Row>
-                      <ColDisplay md={12} labelProps={{ md: 4 }} label="Project">{ project.name }</ColDisplay>
-                    </Row>
-                    <Row>
-                      <ColDisplay md={12} labelProps={{ md: 4 }} label={ project.primaryContactRole || 'Primary Contact' }>
+                  return <Row id="projects-data">
+                    <Col lg={4} md={6} sm={12} xs={12}>
+                      <ColDisplay labelProps={{ xs: 4 }} fieldProps={{ xs: 8 }} label="Project">{ project.name }</ColDisplay>
+                    </Col>
+                    <Col lg={4} md={6} sm={12} xs={12}>
+                      <ColDisplay labelProps={{ xs: 4 }} fieldProps={{ xs: 8 }} label={ project.primaryContactRole || 'Primary Contact' }>
                         { project.primaryContactEmail ? mailto : `${project.primaryContactName}` }{ project.primaryContactPhone ? `, ${project.primaryContactPhone}` : '' }
                       </ColDisplay>
-                    </Row>
-                    <Row>
-                      <ColDisplay md={12} labelProps={{ md: 4 }} label="Provincial Project Number">{ project.provincialProjectNumber }</ColDisplay>
-                    </Row>
-                    <Row>
-                      <ColDisplay md={12} labelProps={{ md: 4 }} fieldProps={{ md: 7 }} label="Information">{ project.information }</ColDisplay>
-                    </Row>
-                  </div>;
+                    </Col>
+                    <Col lg={4} md={6} sm={12} xs={12}>
+                      <ColDisplay labelProps={{ xs: 4 }} fieldProps={{ xs: 8 }} label="Provincial Project Number">{ project.provincialProjectNumber }</ColDisplay>
+                    </Col>
+                    <Col lg={4} md={6} sm={12} xs={12}>
+                      <ColDisplay labelProps={{ xs: 4 }} fieldProps={{ xs: 8 }} label="Information">{ project.information }</ColDisplay>
+                    </Col>
+                  </Row>;
                 })()}
               </Well>
               <Well>
@@ -495,7 +495,6 @@ var ProjectsDetail = React.createClass({
         <TimeEntryDialog
           show={ this.state.showTimeEntryDialog }
           onClose={ this.closeTimeEntryDialog }
-          project={ project }
           activeRentalRequest={ this.state.rentalRequest }
         />
         }

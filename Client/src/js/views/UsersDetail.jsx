@@ -250,17 +250,23 @@ var UsersDetail = React.createClass({
               {(() => {
                 if (this.state.loading) { return <div style={{ textAlign: 'center' }}><Spinner/></div>; }
 
-                return <div id="user-data">
-                  <Row>
-                    <ColDisplay md={3} label="Given Name">{ user.givenName }</ColDisplay>
-                    <ColDisplay md={3} label="User ID">{ user.smUserId }</ColDisplay>
-                    <ColDisplay md={6} label="E-mail">{ user.email }</ColDisplay>
-                  </Row>
-                  <Row>
-                    <ColDisplay md={3} label="Surname">{ user.surname }</ColDisplay>
-                    <ColDisplay md={3} label="District">{ user.districtName }</ColDisplay>
-                  </Row>
-                </div>;
+                return <Row id="user-data">
+                  <Col lg={4} md={6} sm={12} xs={12}>
+                    <ColDisplay labelProps={{ xs: 4 }} fieldProps={{ xs: 8 }} label="Given Name">{ user.givenName }</ColDisplay>
+                  </Col>
+                  <Col lg={4} md={6} sm={12} xs={12}>
+                    <ColDisplay labelProps={{ xs: 4 }} fieldProps={{ xs: 8 }} label="Surname">{ user.surname }</ColDisplay>
+                  </Col>
+                  <Col lg={4} md={6} sm={12} xs={12}>
+                    <ColDisplay labelProps={{ xs: 4 }} fieldProps={{ xs: 8 }} label="User ID">{ user.smUserId }</ColDisplay>
+                  </Col>
+                  <Col lg={4} md={6} sm={12} xs={12}>
+                    <ColDisplay labelProps={{ xs: 4 }} fieldProps={{ xs: 8 }} label="E-mail">{ user.email }</ColDisplay>
+                  </Col>
+                  <Col lg={4} md={6} sm={12} xs={12}>
+                    <ColDisplay labelProps={{ xs: 4 }} fieldProps={{ xs: 8 }} label="District">{ user.districtName }</ColDisplay>
+                  </Col>
+                </Row>;
               })()}
             </Well>
           </Col>

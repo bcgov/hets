@@ -31,7 +31,6 @@ import OverlayTrigger from '../components/OverlayTrigger.jsx';
 import SortTable from '../components/SortTable.jsx';
 import Spinner from '../components/Spinner.jsx';
 import History from '../components/History.jsx';
-import Unimplemented from '../components/Unimplemented.jsx';
 
 import { formatDateTime } from '../utils/date';
 
@@ -46,7 +45,6 @@ var EquipmentDetail = React.createClass({
   propTypes: {
     equipment: React.PropTypes.object,
     equipmentPhysicalAttachments: React.PropTypes.object,
-    equipmentSeniorityHistory: React.PropTypes.object,
     notes: React.PropTypes.object,
     attachments: React.PropTypes.object,
     documents: React.PropTypes.object,
@@ -58,8 +56,6 @@ var EquipmentDetail = React.createClass({
 
   getInitialState() {
     return {
-      // If we are coming in through the Owner screen then return to it; otherwise go back to Equipment search
-      returnUrl: (this.props.location.state || {}).returnUrl || Constant.EQUIPMENT_PATHNAME,
       loading: false,
       showEditDialog: false,
       showDocumentsDialog: false,
@@ -116,17 +112,8 @@ var EquipmentDetail = React.createClass({
     this.setState({ showDocumentsDialog: false });
   },
 
-  showHistory() {
-  },
-
-  showSeniorityHistory() {
-  },
-
   print() {
     window.print();
-  },
-
-  addDocument() {
   },
 
   updateUIState(state, callback) {
@@ -134,10 +121,6 @@ var EquipmentDetail = React.createClass({
       store.dispatch({ type: Action.UPDATE_PHYSICAL_ATTACHMENTS_UI, equipmentPhysicalAttachments: this.state.ui });
       if (callback) { callback(); }
     });
-  },
-
-  actionSelected(/*eventKey*/) {
-    // TODO Implement
   },
 
   openEditDialog() {
@@ -311,20 +294,18 @@ var EquipmentDetail = React.createClass({
                   <Label bsStyle={ equipment.isHired ? 'success' : 'default' }>{ equipment.isHired ? 'Hired' : 'Not Hired' }</Label>
                   <Label bsStyle={ lastVerifiedStyle }>Last Verified: { formatDateTime(equipment.lastVerifiedDate, Constant.DATE_YEAR_SHORT_MONTH_DAY) }</Label>
                 </Row>
-                <Row id="equipment-header">
-                  <ColDisplay md={12} label={ <h1>Equipment Id:</h1> }><h1><small>{ equipment.equipmentCode } ({ equipment.typeName })</small></h1></ColDisplay>
-                </Row>
-                <Row>
-                  <ColDisplay md={12} label={ <h1>Company:</h1> }><h1><small>{ equipment.organizationName }</small></h1></ColDisplay>
-                </Row>
-                <Row>
-                  <Col md={6}>
-                    <Row>
-                      <ColDisplay md={12} labelProps={{ md: 4 }} label="District Office:">{ equipment.districtName }</ColDisplay>
-                    </Row>
-                    <Row>
-                      <ColDisplay md={12} labelProps={{ md: 4 }} style={{ marginBottom: '20px' }} label="Service/Local Area:">{ equipment.localAreaName }</ColDisplay>
-                    </Row>
+                <Row className="equipment-header">
+                  <Col xs={12}>
+                    <h1>Equipment Id: <small>{ equipment.equipmentCode } ({ equipment.typeName })</small></h1>
+                  </Col>
+                  <Col xs={12}>
+                    <h1>Company: <small>{ equipment.organizationName }</small></h1>
+                  </Col>
+                  <Col xs={12}>
+                    <strong>District Office:</strong> { equipment.districtName }
+                  </Col>
+                  <Col xs={12}>
+                    <strong>Service/Local Area:</strong> { equipment.localAreaName }
                   </Col>
                 </Row>
               </div>
@@ -341,51 +322,48 @@ var EquipmentDetail = React.createClass({
                   if (this.state.loading) { return <div className="spinner-container"><Spinner /></div>; }
 
                   return <Row>
-                    <Col md={6}>
-                      <Row>
-                        <ColDisplay labelProps={{ md: 4 }} label="Type">{ equipment.typeName }</ColDisplay>
-                      </Row>
-                      <Row>
-                        <ColDisplay labelProps={{ md: 4 }} label="Make">{ equipment.make }</ColDisplay>
-                      </Row>
-                      <Row>
-                        <ColDisplay labelProps={{ md: 4 }} label="Model">{ equipment.model }</ColDisplay>
-                      </Row>
-                      <Row>
-                        <ColDisplay labelProps={{ md: 4 }} label="Year">{ equipment.year }</ColDisplay>
-                      </Row>
-                      { equipment.isDumpTruck &&
-                        <div>
-                          <Row>
-                            <ColDisplay labelProps={{ md: 4 }} label="Licenced GVW">{ equipment.licencedGvw }</ColDisplay>
-                          </Row>
-                          <Row>
-                            <ColDisplay labelProps={{ md: 4 }} label="Truck Legal Capacity">{ equipment.legalCapacity }</ColDisplay>
-                          </Row>
-                        </div>
-                      }
+                    <Col lg={4} md={6} sm={12} xs={12}>
+                      <ColDisplay labelProps={{ xs: 4 }} fieldProps={{ xs: 8 }} label="Equipment Type">{ equipment.typeName }</ColDisplay>
                     </Col>
-                    <Col md={6}>
-                      <Row>
-                        <ColDisplay labelProps={{ md: 4 }} label="Size">{ equipment.size }</ColDisplay>
-                      </Row>
-                      <Row>
-                        <ColDisplay labelProps={{ md: 4 }} label="Type">{ equipment.type }</ColDisplay>
-                      </Row>
-                      <Row>
-                        <ColDisplay labelProps={{ md: 4 }} label="Licence Number">{ equipment.licencePlate }</ColDisplay>
-                      </Row>
-                      <Row>
-                        <ColDisplay labelProps={{ md: 4 }} label="Serial Number">{ equipment.serialNumber }
-                          { equipment.hasDuplicates ? <BadgeLabel bsStyle="danger">!</BadgeLabel> : null }
-                        </ColDisplay>
-                      </Row>
-                      { equipment.isDumpTruck && 
-                        <Row>
-                          <ColDisplay labelProps={{ md: 4 }} label="Pup Legal Capacity">{ equipment.pupLegalCapacity }</ColDisplay>
-                        </Row>
-                      }
+                    <Col lg={4} md={6} sm={12} xs={12}>
+                      <ColDisplay labelProps={{ xs: 4 }} fieldProps={{ xs: 8 }} label="Make">{ equipment.make }</ColDisplay>
                     </Col>
+                    <Col lg={4} md={6} sm={12} xs={12}>
+                      <ColDisplay labelProps={{ xs: 4 }} fieldProps={{ xs: 8 }} label="Model">{ equipment.model }</ColDisplay>
+                    </Col>
+                    <Col lg={4} md={6} sm={12} xs={12}>
+                      <ColDisplay labelProps={{ xs: 4 }} fieldProps={{ xs: 8 }} label="Year">{ equipment.year }</ColDisplay>
+                    </Col>
+                    <Col lg={4} md={6} sm={12} xs={12}>
+                      <ColDisplay labelProps={{ xs: 4 }} fieldProps={{ xs: 8 }} label="Size">{ equipment.size }</ColDisplay>
+                    </Col>
+                    { equipment.isDumpTruck &&
+                      <div>
+                        <Col lg={4} md={6} sm={12} xs={12}>
+                          <ColDisplay labelProps={{ xs: 4 }} fieldProps={{ xs: 8 }} label="Licenced GVW">{ equipment.licencedGvw }</ColDisplay>
+                        </Col>
+                        <Col lg={4} md={6} sm={12} xs={12}>
+                          <ColDisplay labelProps={{ xs: 4 }} fieldProps={{ xs: 8 }} label="Truck Legal Capacity">{ equipment.legalCapacity }</ColDisplay>
+                        </Col>
+                      </div>
+                    }
+                    <Col lg={4} md={6} sm={12} xs={12}>
+                      <ColDisplay labelProps={{ xs: 4 }} fieldProps={{ xs: 8 }} label="Type">{ equipment.type }</ColDisplay>
+                    </Col>
+                    <Col lg={4} md={6} sm={12} xs={12}>
+                      <ColDisplay labelProps={{ xs: 4 }} fieldProps={{ xs: 8 }} label="Licence Number">{ equipment.licencePlate }</ColDisplay>
+                    </Col>
+                    <Col lg={4} md={6} sm={12} xs={12}>
+                      <ColDisplay labelProps={{ xs: 4 }} fieldProps={{ xs: 8 }} label="Serial Number">
+                        { equipment.serialNumber }
+                        { equipment.hasDuplicates ? <BadgeLabel bsStyle="danger">!</BadgeLabel> : null }
+                      </ColDisplay>
+                    </Col>
+                    { equipment.isDumpTruck && 
+                      <Col lg={4} md={6} sm={12} xs={12}>
+                        <ColDisplay labelProps={{ xs: 4 }} fieldProps={{ xs: 8 }} label="Pup Legal Capacity">{ equipment.pupLegalCapacity }</ColDisplay>
+                      </Col>
+                    }
                   </Row>;
                 })()}
               </Well>
@@ -457,51 +435,44 @@ var EquipmentDetail = React.createClass({
                 {(() => {
                   if (this.state.loading) { return <div className="spinner-container"><Spinner/></div>; }
 
-                  var seniorityHistory = this.props.equipmentSeniorityHistory;  // TODO
-
-                  return <div>
-                    <Row>
-                      <ColDisplay md={12} labelProps={{ md: 4 }} label="Seniority">{ equipment.seniorityText }</ColDisplay>
-                    </Row>
-                    <Row>
-                      <ColDisplay md={12} labelProps={{ md: 4 }} label="Hours YTD">{ equipment.hoursYtd }</ColDisplay>
-                    </Row>
-                    <Row>
-                      <ColDisplay md={12} labelProps={{ md: 4 }} label={ <span>Hours { equipment.lastYear - 1 }</span> }>{ equipment.serviceHoursLastYear }</ColDisplay>
-                    </Row>
-                    <Row>
-                      <ColDisplay md={12} labelProps={{ md: 4 }} label={ <span>Hours { equipment.twoYearsAgo - 1 }</span> }>{ equipment.serviceHoursTwoYearsAgo }</ColDisplay>
-                    </Row>
-                    <Row>
-                      <ColDisplay md={12} labelProps={{ md: 4 }} label={ <span>Hours { equipment.threeYearsAgo - 1 }</span> }>{ equipment.serviceHoursThreeYearsAgo }</ColDisplay>
-                    </Row>
-                    <Row>
-                      <ColDisplay md={12} labelProps={{ md: 4 }} label="Received Date">
+                  return <Row>
+                    <Col lg={12}>
+                      <ColDisplay labelProps={{ xs: 4 }} fieldProps={{ xs: 8 }} label="Seniority">{ equipment.seniorityText }</ColDisplay>
+                    </Col>
+                    <Col lg={12}>
+                      <ColDisplay labelProps={{ xs: 4 }} fieldProps={{ xs: 8 }} label="Hours YTD">{ equipment.hoursYtd }</ColDisplay>
+                    </Col>
+                    <Col lg={12}>
+                      <ColDisplay labelProps={{ xs: 4 }} fieldProps={{ xs: 8 }} label={ <span>Hours { equipment.lastYear - 1 }</span> }>{ equipment.serviceHoursLastYear }</ColDisplay>
+                    </Col>
+                    <Col lg={12}>
+                      <ColDisplay labelProps={{ xs: 4 }} fieldProps={{ xs: 8 }} label={ <span>Hours { equipment.twoYearsAgo - 1 }</span> }>{ equipment.serviceHoursTwoYearsAgo }</ColDisplay>
+                    </Col>
+                    <Col lg={12}>
+                      <ColDisplay labelProps={{ xs: 4 }} fieldProps={{ xs: 8 }} label={ <span>Hours { equipment.threeYearsAgo - 1 }</span> }>{ equipment.serviceHoursThreeYearsAgo }</ColDisplay>
+                    </Col>
+                    <Col lg={12}>
+                      <ColDisplay labelProps={{ xs: 4 }} fieldProps={{ xs: 8 }} label="Years Registered">{ equipment.yearsOfService }</ColDisplay>
+                    </Col>
+                    <Col lg={12}>
+                      <ColDisplay labelProps={{ xs: 4 }} fieldProps={{ xs: 8 }} label="Received Date">
                         { formatDateTime(equipment.receivedDate, Constant.DATE_YEAR_SHORT_MONTH_DAY) }
                       </ColDisplay>
-                    </Row>
-                    <Row>
-                      <ColDisplay md={12} labelProps={{ md: 4 }} label="Registered Date">
+                    </Col>
+                    <Col lg={12}>
+                      <ColDisplay labelProps={{ xs: 4 }} fieldProps={{ xs: 8 }} label="Registered Date">
                         { formatDateTime(equipment.approvedDate, Constant.DATE_YEAR_SHORT_MONTH_DAY) }
                       </ColDisplay>
-                    </Row>
-                    <Row>
-                      <ColDisplay md={12} labelProps={{ md: 4 }} label="Years Registered">{ equipment.yearsOfService }</ColDisplay>
-                    </Row>
-                    <Row>
-                      <ColDisplay md={12} labelProps={{ md: 4 }} label="Override Status">
+                    </Col>
+                    <Col lg={12}>
+                      <ColDisplay labelProps={{ xs: 4 }} fieldProps={{ xs: 8 }} label="Override Status">
                         { equipment.isSeniorityOverridden ? 'Manually Updated' : 'Not Overriden'}
                       </ColDisplay>
-                    </Row>
-                    <Row>
-                      <ColDisplay labelProps={{ md: 4 }} label="Override Reason">{ equipment.seniorityOverrideReason }</ColDisplay>
-                      <span className="pull-right">
-                        <Unimplemented>
-                          <Button className="pull-right" title="Show Seniority History" bsSize="small" onClick={ this.showSeniorityHistory} >All ({ Object.keys(seniorityHistory).length })</Button>
-                        </Unimplemented>
-                      </span>
-                    </Row>
-                  </div>;
+                    </Col>
+                    <Col lg={12}>
+                      <ColDisplay labelProps={{ xs: 4 }} fieldProps={{ xs: 8 }} label="Override Reason">{ equipment.seniorityOverrideReason }</ColDisplay>
+                    </Col>
+                  </Row>;
                 })()}
               </Well>
             </Col>
@@ -583,7 +554,6 @@ function mapStateToProps(state) {
   return {
     equipment: state.models.equipment,
     equipmentPhysicalAttachments: state.models.equipmentPhysicalAttachments,
-    equipmentSeniorityHistory: state.models.equipmentSeniorityHistory,
     notes: state.models.equipmentNotes,
     attachments: state.models.equipmentAttachments,
     documents: state.models.documents,
